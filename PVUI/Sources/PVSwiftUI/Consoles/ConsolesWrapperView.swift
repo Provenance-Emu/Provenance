@@ -58,6 +58,15 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 
 @available(iOS 14, tvOS 14, *)
 struct ConsolesWrapperView: SwiftUI.View {
+    /// Stable value type for tab metadata so view state does not retain live
+    /// database objects between refreshes.
+    private struct ConsoleTabItem: Identifiable, Hashable {
+        let identifier: String
+        let name: String
+        let iconName: String
+
+        var id: String { identifier }
+    }
 
     // MARK: - Properties
 
@@ -86,8 +95,8 @@ struct ConsolesWrapperView: SwiftUI.View {
     /// State to control the presentation of ImportStatusView
     @State private var showImportStatusView = false
 
-    /// Cache for sorted consoles to avoid repeated array conversions
-    @State private var cachedSortedConsoles: [PVSystem] = []
+    /// Cache for sorted console tabs to avoid retaining stale live objects.
+    @State private var cachedSortedConsoles: [ConsoleTabItem] = []
 
     /// Cache for rasterized tab icons to avoid repeated image processing
     private static var iconCache: [String: Image] = [:]
@@ -96,6 +105,10 @@ struct ConsolesWrapperView: SwiftUI.View {
     @State private var loadedIcons: [String: Image] = [:]
     /// Track consoles whose views have been instantiated to keep them alive after first load
     @State private var loadedConsoleIDs: Set<String> = []
+    /// Track icon loading work so refreshes can cancel stale tasks.
+    @State private var iconLoadTask: Task<Void, Never>?
+    /// Track artwork preloading so rapid tab changes do not queue redundant work.
+    @State private var artworkPreloadTask: Task<Void, Never>?
 
     /// State for game info presentation
     struct GameInfoState: Identifiable {
@@ -201,6 +214,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         .environment(\.rootDelegate, rootDelegate)
         .onAppear {
             isVisible = true
+            refreshConsoleState()
 
             // Navigate to the home tab on appearance if a search action is pending
             // (covers cold-launch: LibraryNavigator already has the action queued).
@@ -210,25 +224,6 @@ struct ConsolesWrapperView: SwiftUI.View {
             if case .search = LibraryNavigator.shared.pendingAction,
                delegate.selectedTab != "home" {
                 delegate.setTab("home")
-            }
-
-            // Defer non-critical operations to background
-            Task.detached(priority: .utility) {
-                // Initialize cached sorted consoles off main thread
-                await MainActor.run {
-                    self.updateCachedSortedConsoles()
-                }
-
-                // Preload artwork for visible console off main thread (lazy loading)
-                let selectedConsole = await MainActor.run {
-                    self.consoles.first(where: { $0.identifier == self.delegate.selectedTab })
-                }
-                if let console = selectedConsole {
-                    await self.preloadArtworkForConsole(console)
-                }
-
-                // Load tab icons asynchronously off main thread
-                await self.loadTabIconsAsync()
             }
         }
         .onReceive(LibraryNavigator.shared.$pendingAction) { action in
@@ -240,25 +235,30 @@ struct ConsolesWrapperView: SwiftUI.View {
             }
         }
         .onChange(of: viewModel.sortConsolesAscending) { _ in
-            // Update cache off main thread
-            Task.detached(priority: .utility) {
-                await MainActor.run {
-                    self.updateCachedSortedConsoles()
-                }
-            }
+            refreshConsoleState()
         }
-        .onChange(of: consoles.count) { _ in
-            // Update cache off main thread
-            Task.detached(priority: .utility) {
-                await MainActor.run {
-                    self.updateCachedSortedConsoles()
-                }
-                // Reload icons for new consoles
-                await self.loadTabIconsAsync()
-            }
+        .onChange(of: consolesSignature) { _ in
+            refreshConsoleState()
+        }
+        .onChange(of: bootupStateManager.isBootupCompleted) { _ in
+            refreshConsoleState()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gameLibraryDidUpdate)) { _ in
+            refreshConsoleState()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .PVGameImported)) { _ in
+            refreshConsoleState()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .GameImporterDidFinish)) { _ in
+            refreshConsoleState()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .RomDatabaseInitialized)) { _ in
+            refreshConsoleState()
         }
         .onDisappear {
             isVisible = false
+            iconLoadTask?.cancel()
+            artworkPreloadTask?.cancel()
         }
         .ignoresSafeArea(edges: .all)
         .padding(.top, 14)
@@ -270,16 +270,79 @@ struct ConsolesWrapperView: SwiftUI.View {
         gameInfoState = GameInfoState(id: gameId)
     }
 
-    /// Update the cached sorted consoles (thread-safe)
+    /// Signature used to detect console-list changes beyond simple count updates.
+    private var consolesSignature: String {
+        Array(consoles)
+            .map { "\($0.identifier)|\($0.name)|\($0.iconName)" }
+            .joined(separator: "||")
+    }
+
+    /// Rebuilds cached console metadata and reconciles related lazy-loading state.
+    private func refreshConsoleState() {
+        updateCachedSortedConsoles()
+        reconcileSelectedTab()
+        scheduleSelectedConsoleArtworkPreload()
+        scheduleIconLoad()
+    }
+
+    /// Builds the cached console metadata from the current live results.
     private func updateCachedSortedConsoles() {
         let ascending = viewModel.sortConsolesAscending
         let consolesArray = Array(consoles)
+            .filter { $0.identifier != SystemIdentifier.RetroArch.rawValue || forceRetroarchConsole }
+            .map {
+                ConsoleTabItem(
+                    identifier: $0.identifier,
+                    name: $0.name,
+                    iconName: $0.iconName
+                )
+            }
         cachedSortedConsoles = ascending ? consolesArray : consolesArray.reversed()
     }
 
+    /// Ensures the selected tab and lazy caches still reference valid consoles.
+    private func reconcileSelectedTab() {
+        let validConsoleIDs = Set(cachedSortedConsoles.map(\.identifier))
+        let alwaysValidTabs = Set(["home", "debug", "test"])
+
+        loadedConsoleIDs.formIntersection(validConsoleIDs)
+        if !validConsoleIDs.contains(previousTab) {
+            previousTab = ""
+        }
+
+        let selectedTab = delegate.selectedTab
+        guard validConsoleIDs.contains(selectedTab) || alwaysValidTabs.contains(selectedTab) else {
+            delegate.setTab("home")
+            previousTab = ""
+            return
+        }
+    }
+
+    /// Returns the current live console matching the cached tab metadata.
+    private func liveConsole(for identifier: String) -> PVSystem? {
+        consoles.first(where: { $0.identifier == identifier })
+    }
+
     /// Optimized sorted consoles with caching
-    private func sortedConsoles() -> [PVSystem] {
+    private func sortedConsoles() -> [ConsoleTabItem] {
         return cachedSortedConsoles
+    }
+
+    /// Starts icon loading with a priority order that favors the visible tabs first.
+    private func scheduleIconLoad() {
+        iconLoadTask?.cancel()
+        iconLoadTask = Task(priority: .userInitiated) {
+            await loadTabIconsAsync()
+        }
+    }
+
+    /// Starts artwork preloading for the currently selected console, if any.
+    private func scheduleSelectedConsoleArtworkPreload() {
+        artworkPreloadTask?.cancel()
+        guard let console = liveConsole(for: delegate.selectedTab) else { return }
+        artworkPreloadTask = Task(priority: .utility) {
+            await preloadArtworkForConsole(console)
+        }
     }
 
     private var glowColor: Color {
@@ -324,48 +387,46 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ViewBuilder
     var consolesList: some View {
         let consoles = sortedConsoles()
-        ForEach(consoles, id: \.identifier) { (console: PVSystem) in
-            if console.identifier != SystemIdentifier.RetroArch.rawValue || forceRetroarchConsole { // Skip RetroArch unless in forced
-                let isRenderable = shouldRenderConsoleTab(console.identifier, consoles: consoles) || loadedConsoleIDs.contains(console.identifier)
-                ZStack {
-                    if isRenderable {
-                        ConsoleGamesView(
-                            console: console,
-                            viewModel: viewModel,
-                            rootDelegate: rootDelegate,
-                            showGameInfo: showGameInfo
-                        )
-                        .id(console.identifier) // Keep ConsoleGamesView instance stable
-                        .onAppear {
-                            loadedConsoleIDs.insert(console.identifier)
-                        }
-                    }
-
-                    if !loadedConsoleIDs.contains(console.identifier) {
-                        ConsolePlaceholderView(systemName: console.name)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ForEach(consoles) { console in
+            let isRenderable = shouldRenderConsoleTab(console.identifier, consoles: consoles) || loadedConsoleIDs.contains(console.identifier)
+            ZStack {
+                if isRenderable, let liveConsole = liveConsole(for: console.identifier) {
+                    ConsoleGamesView(
+                        console: liveConsole,
+                        viewModel: viewModel,
+                        rootDelegate: rootDelegate,
+                        showGameInfo: showGameInfo
+                    )
+                    .id(console.identifier) // Keep ConsoleGamesView instance stable
+                    .onAppear {
+                        loadedConsoleIDs.insert(console.identifier)
                     }
                 }
-                .background(RetroTheme.retroBackground)
-                .toolbarColorScheme(SwiftUI.ColorScheme.dark, for: SwiftUI.ToolbarPlacement.tabBar)
-                .tag(console.identifier)
-                .tabItem {
-                    let iconName = console.iconName
-                    if let icon = loadedIcons[iconName] {
-                        Label {
-                            Text(console.name)
-                        } icon: { icon }
-                    } else {
-                        // Generic fallback while loading
-                        Label(console.name, systemImage: "gamecontroller")
-                            .imageScale(.medium)
-                    }
+
+                if !loadedConsoleIDs.contains(console.identifier) || liveConsole(for: console.identifier) == nil {
+                    ConsolePlaceholderView(systemName: console.name)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            .background(RetroTheme.retroBackground)
+            .toolbarColorScheme(SwiftUI.ColorScheme.dark, for: SwiftUI.ToolbarPlacement.tabBar)
+            .tag(console.identifier)
+            .tabItem {
+                let iconName = console.iconName
+                if let icon = loadedIcons[iconName] {
+                    Label {
+                        Text(console.name)
+                    } icon: { icon }
+                } else {
+                    // Generic fallback while loading
+                    Label(console.name, systemImage: "gamecontroller")
+                        .imageScale(.medium)
                 }
             }
         }
     }
 
-    private func shouldRenderConsoleTab(_ identifier: String, consoles: [PVSystem]) -> Bool {
+    private func shouldRenderConsoleTab(_ identifier: String, consoles: [ConsoleTabItem]) -> Bool {
         if identifier == delegate.selectedTab { return true }
         if identifier == previousTab { return true }
 
@@ -385,16 +446,8 @@ struct ConsolesWrapperView: SwiftUI.View {
                 previousTab = delegate.selectedTab
                 // Set the new tab immediately (main thread operation)
                 delegate.setTab(newTab)
-
-                // Preload artwork off main thread to avoid blocking tab switch
-                Task.detached(priority: .utility) {
-                    let selectedConsole = await MainActor.run {
-                        self.consoles.first(where: { $0.identifier == newTab })
-                    }
-                    if let console = selectedConsole {
-                        await self.preloadArtworkForConsole(console)
-                    }
-                }
+                scheduleSelectedConsoleArtworkPreload()
+                scheduleIconLoad()
             }
         )
 
@@ -451,35 +504,59 @@ struct ConsolesWrapperView: SwiftUI.View {
     /// Load tab icons asynchronously off the main thread
     private func loadTabIconsAsync() async {
         let consolesToLoad = await MainActor.run {
-            sortedConsoles()
+            prioritizedConsolesForIconLoading()
         }
-
-        var newIcons: [String: Image] = [:]
+        var seenIconNames = Set<String>()
 
         for console in consolesToLoad {
+            if Task.isCancelled { return }
             let iconName = console.iconName
-            if iconName.isEmpty { continue }
+            if iconName.isEmpty || !seenIconNames.insert(iconName).inserted { continue }
 
             // Check static cache first (thread-safe read)
             if let cached = Self.iconCache[iconName] {
-                newIcons[iconName] = cached
+                await MainActor.run {
+                    loadedIcons[iconName] = cached
+                }
                 continue
             }
 
             // Load and rasterize icon off main thread
             if let icon = await rasterizeTabIconAsync(named: iconName) {
-                newIcons[iconName] = icon
-                // Update static cache
                 await MainActor.run {
                     Self.iconCache[iconName] = icon
+                    loadedIcons[iconName] = icon
                 }
             }
         }
+    }
 
-        // Update UI on main thread
-        await MainActor.run {
-            loadedIcons.merge(newIcons) { _, new in new }
+    /// Orders icon loading so the selected and neighboring tabs become visible first.
+    private func prioritizedConsolesForIconLoading() -> [ConsoleTabItem] {
+        let consoles = sortedConsoles()
+        guard !consoles.isEmpty else { return [] }
+
+        var prioritized: [ConsoleTabItem] = []
+        var seenIDs = Set<String>()
+
+        func appendConsole(_ console: ConsoleTabItem?) {
+            guard let console = console, seenIDs.insert(console.identifier).inserted else { return }
+            prioritized.append(console)
         }
+
+        appendConsole(consoles.first(where: { $0.identifier == delegate.selectedTab }))
+        appendConsole(consoles.first(where: { $0.identifier == previousTab }))
+
+        if let selectedIndex = consoles.firstIndex(where: { $0.identifier == delegate.selectedTab }) {
+            appendConsole(selectedIndex > 0 ? consoles[selectedIndex - 1] : nil)
+            appendConsole(selectedIndex + 1 < consoles.count ? consoles[selectedIndex + 1] : nil)
+        }
+
+        for console in consoles {
+            appendConsole(console)
+        }
+
+        return prioritized
     }
 
     /// Async icon rasterization to avoid blocking main thread
