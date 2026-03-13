@@ -205,11 +205,26 @@ static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
     return apple;
 }
 
+// Helper: clamp scaled mouse deltas to the int16_t range expected by cocoa_input_data_t.
+static int16_t st_clamp_mouse_delta(CGFloat value) {
+    if (value > (CGFloat)INT16_MAX) {
+        return INT16_MAX;
+    }
+    if (value < (CGFloat)INT16_MIN) {
+        return INT16_MIN;
+    }
+    return (int16_t)value;
+}
+
 // Drive relative mouse movement for Hatari / Atari ST.
 // The TouchTrackpadView sends normalised 0–1 cursor positions accumulated from touchpad
 // deltas.  We recover the per-event delta, scale it, and write it to mouse_rel_x/y which
 // is what RETRO_DEVICE_MOUSE cores (Hatari) read each frame.
-static void st_ra_update_mouse_rel(CGPoint normPos) {
+//
+// Some callers (e.g. tvOS Siri Remote pan handler) may instead send already-relative
+// deltas.  In that case, values will typically fall outside the [0, 1] range, and we
+// treat the incoming point directly as a delta without consulting st_mouse_prev.
+static void st_ra_update_mouse_rel(CGPoint point) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
 
@@ -220,16 +235,44 @@ static void st_ra_update_mouse_rel(CGPoint normPos) {
     apple->window_pos_x = 0;
     apple->window_pos_y = 0;
 
-    if (st_mouse_prev.valid) {
-        CGFloat dx = normPos.x - st_mouse_prev.x;
-        CGFloat dy = normPos.y - st_mouse_prev.y;
-        // Assign to rel fields; RetroArch resets these each poll.
-        apple->mouse_rel_x = (int16_t)(dx * ST_MOUSE_SCALE);
-        apple->mouse_rel_y = (int16_t)(dy * ST_MOUSE_SCALE);
+    BOOL isNormalized =
+        (point.x >= 0.0f && point.x <= 1.0f &&
+         point.y >= 0.0f && point.y <= 1.0f);
+
+    CGFloat dx = 0.0f;
+    CGFloat dy = 0.0f;
+
+    if (isNormalized) {
+        // Absolute normalised 0–1 coordinates: compute per-event delta from the last point.
+        if (st_mouse_prev.valid) {
+            dx = point.x - st_mouse_prev.x;
+            dy = point.y - st_mouse_prev.y;
+        }
+
+        // Update the tracked absolute position for the next event.
+        st_mouse_prev.x     = point.x;
+        st_mouse_prev.y     = point.y;
+        st_mouse_prev.valid = YES;
+
+        // On the very first event (valid was NO), we have no prior position and therefore no
+        // delta to send; in that case dx/dy remain zero and we emit no movement.
+    } else {
+        // Already-relative deltas: use the incoming values directly.
+        dx = point.x;
+        dy = point.y;
+
+        // This path does not maintain a consistent absolute position, so reset the tracking
+        // state to avoid mixing coordinate systems across events.
+        st_mouse_prev.valid = NO;
     }
-    st_mouse_prev.x     = normPos.x;
-    st_mouse_prev.y     = normPos.y;
-    st_mouse_prev.valid = YES;
+
+    // Assign to rel fields if we have a non-zero delta; RetroArch resets these each poll.
+    if (dx != 0.0f || dy != 0.0f) {
+        CGFloat scaledX = dx * ST_MOUSE_SCALE;
+        CGFloat scaledY = dy * ST_MOUSE_SCALE;
+        apple->mouse_rel_x = st_clamp_mouse_delta(scaledX);
+        apple->mouse_rel_y = st_clamp_mouse_delta(scaledY);
+    }
 }
 
 - (void)mouseMovedAt:(CGPoint)point {
