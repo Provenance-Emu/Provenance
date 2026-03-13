@@ -234,15 +234,15 @@ struct RetroMenuView: View {
                                 }
                             })
                             .id("main")
-                            // Show CORE tab if core has actions or options
-                            if hasCoreFeatures {
-                                categoryButton(title: "CORE", isSelected: selectedCategory == .core, action: {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        selectedCategory = .core
-                                    }
-                                })
-                                .id("core")
-                            }
+                            // Always show CORE tab so sibling tabs stay in a fixed position.
+                            // Grey it out in-place when no core features are available.
+                            categoryButton(title: "CORE", isSelected: selectedCategory == .core, action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedCategory = .core
+                                }
+                            })
+                            .id("core")
+                            .opacity(hasCoreFeatures ? 1.0 : 0.4)
                             categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .states
@@ -555,40 +555,44 @@ struct RetroMenuView: View {
 
     // Save state related buttons
     private var stateMenuButtons: some View {
-        VStack(spacing: menuSpacing) {
-            if emulatorVC.core.supportsSaveStates {
-                // Save state button (cyan = write/save)
-                menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroCyan) {
-                    // Capture screenshot while emulator is still paused
-                    let screenshot = emulatorVC.captureScreenshot()
-                    dismissAction(true)
-                    Task { @MainActor in
-                        do {
-                            try await emulatorVC.createNewSaveState(auto: false, screenshot: screenshot)
-                        } catch {
-                            ELOG("Failed to save state: \(error.localizedDescription)")
-                        }
+        // Capture support flag once so button positions stay fixed regardless of capability.
+        let supportsSaveStates = emulatorVC.core.supportsSaveStates
+        return VStack(spacing: menuSpacing) {
+            // Save state button (cyan = write/save)
+            // Always rendered at position 1; dimmed in-place when unsupported so sibling
+            // buttons (screenshot, recording) don't shift.
+            menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroCyan) {
+                // Capture screenshot while emulator is still paused
+                let screenshot = emulatorVC.captureScreenshot()
+                dismissAction(true)
+                Task { @MainActor in
+                    do {
+                        try await emulatorVC.createNewSaveState(auto: false, screenshot: screenshot)
+                    } catch {
+                        ELOG("Failed to save state: \(error.localizedDescription)")
                     }
                 }
-
-                // Load state button (blue = read/load)
-                menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: .retroBlue) {
-                    dismissMenuForSubSheetThen {
-                        emulatorVC.showSaveStateMenu()
-                    }
-                }
-
-                // Save states list button (purple = browse)
-                menuButton(title: "SAVE STATES", icon: "list.bullet", color: .retroPurple) {
-                    dismissMenuForSubSheetThen {
-                        emulatorVC.showSaveStateMenu()
-                    }
-                }
-            } else {
-                Text("Save states not supported")
-                    .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
-                    .padding()
             }
+            .opacity(supportsSaveStates ? 1.0 : 0.4)
+            .allowsHitTesting(supportsSaveStates)
+
+            // Load state button (blue = read/load) — always at position 2
+            menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: .retroBlue) {
+                dismissMenuForSubSheetThen {
+                    emulatorVC.showSaveStateMenu()
+                }
+            }
+            .opacity(supportsSaveStates ? 1.0 : 0.4)
+            .allowsHitTesting(supportsSaveStates)
+
+            // Save states list button (purple = browse) — always at position 3
+            menuButton(title: "SAVE STATES", icon: "list.bullet", color: .retroPurple) {
+                dismissMenuForSubSheetThen {
+                    emulatorVC.showSaveStateMenu()
+                }
+            }
+            .opacity(supportsSaveStates ? 1.0 : 0.4)
+            .allowsHitTesting(supportsSaveStates)
 
             // Screenshot button (yellow = capture)
 #if os(iOS) || targetEnvironment(macCatalyst)
