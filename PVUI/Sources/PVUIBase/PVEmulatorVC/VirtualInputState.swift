@@ -20,7 +20,6 @@
 /// Copyright © 2026 Provenance Emu. All rights reserved.
 ///
 
-#if canImport(UIKit)
 import Foundation
 import Combine
 
@@ -83,4 +82,4 @@ public final class VirtualInputState: ObservableObject {
     }
 }
 
-#endif // canImport(UIKit)
+
