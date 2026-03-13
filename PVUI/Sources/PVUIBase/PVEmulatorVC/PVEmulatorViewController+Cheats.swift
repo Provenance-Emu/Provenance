@@ -316,15 +316,31 @@ extension PVEmulatorViewController {
                            realm.object(ofType: PVCheats.self, forPrimaryKey: cheatInfo.id) != nil {
                             continue
                         } else {
-                            // Build the cheat object on the current (main) thread.
-                            // We MUST NOT use @ThreadSafe here — ThreadSafeReference requires
-                            // a *managed* (in-Realm) object, and asRealm() returns an unmanaged
-                            // object created via Object.build{}, which would cause a fatal error.
-                            // Use a synchronous write since we are already on the main actor.
-                            let realmCheat = cheatInfo.asRealm()
+                            // Build the PVCheats object directly using the already-open realm
+                            // so we never open a second Realm instance inside the write path
+                            // (asRealm() used to call try! Realm() which could crash).
                             do {
                                 try realm.write {
-                                    realm.add(realmCheat)
+                                    guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: cheatInfo.game.md5Hash) else {
+                                        ELOG("recoverCheatCodes: game not found for md5=\(cheatInfo.game.md5Hash), skipping")
+                                        return
+                                    }
+                                    let fileURL = cheatInfo.game.file.fileName.cheatsPath
+                                        .appendingPathComponent(cheatInfo.file.fileName)
+                                    let saveFile = PVFile(withURL: fileURL, relativeRoot: .iCloud)
+                                    let pvCheat = PVCheats(
+                                        withGame: pvGame,
+                                        core: core,
+                                        code: cheatInfo.code,
+                                        type: cheatInfo.type,
+                                        codeType: cheatInfo.codeType,
+                                        enabled: cheatInfo.enabled,
+                                        file: saveFile
+                                    )
+                                    pvCheat.id = cheatInfo.id
+                                    pvCheat.date = cheatInfo.date
+                                    pvCheat.lastOpened = cheatInfo.lastOpened
+                                    realm.add(pvCheat)
                                 }
                             } catch {
                                 ELOG("Failed to add recovered cheat to Realm: \(error)")

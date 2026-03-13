@@ -201,15 +201,29 @@ public struct iOSCheatsView: View {
     private func loadCheats() {
         if let coreID = coreID {
             let predicate = NSPredicate(format: "core.identifier == %@", coreID)
-            allCheats = cheats.filter(predicate).sorted(byKeyPath: "date", ascending: true).map { $0 }
+            allCheats = cheats.filter(predicate)
+                .sorted(byKeyPath: "date", ascending: true)
+                .filter { !$0.isInvalidated }
+                .map { $0 }
         } else {
-            allCheats = cheats.sorted(byKeyPath: "date", ascending: true).map { $0 }
+            allCheats = cheats
+                .sorted(byKeyPath: "date", ascending: true)
+                .filter { !$0.isInvalidated }
+                .map { $0 }
         }
     }
 
     private func toggleCheat(_ cheat: PVCheats, at index: Int) {
+        guard !cheat.isInvalidated else {
+            loadCheats(); return
+        }
+        // Use the realm that manages this object — opening a fresh Realm() risks
+        // a different instance and causes a cross-Realm write crash.
+        guard let realm = cheat.realm else {
+            ELOG("toggleCheat: cheat has no associated realm")
+            return
+        }
         do {
-            let realm = try Realm()
             try realm.write { cheat.enabled.toggle() }
             onUpdateCheat(cheat, UInt8(min(index, Int(UInt8.max))))
             loadCheats()
@@ -219,6 +233,9 @@ public struct iOSCheatsView: View {
     }
 
     private func deleteCheat(_ cheat: PVCheats) {
+        guard !cheat.isInvalidated else {
+            loadCheats(); return
+        }
         do {
             try cheat.delete()
             loadCheats()
@@ -239,28 +256,35 @@ private struct iOSCheatRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
-            Circle()
-                .fill(cheat.enabled ? Color.green : Color.gray.opacity(0.4))
-                .frame(width: 10, height: 10)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(displayName)
-                    .font(.headline)
-                    .lineLimit(1)
-                Text(cheat.code ?? "")
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            }
-
-            Spacer()
-
-            Text(cheat.enabled ? "ON" : "OFF")
-                .font(.caption.bold())
-                .foregroundStyle(cheat.enabled ? Color.green : Color.secondary)
+        // Guard against Realm invalidation: if the object was deleted or the
+        // Realm refreshed mid-render, any property access would crash.
+        guard !cheat.isInvalidated else {
+            return AnyView(EmptyView())
         }
-        .padding(.vertical, 4)
+        return AnyView(
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(cheat.enabled ? Color.green : Color.gray.opacity(0.4))
+                    .frame(width: 10, height: 10)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(displayName)
+                        .font(.headline)
+                        .lineLimit(1)
+                    Text(cheat.code ?? "")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Text(cheat.enabled ? "ON" : "OFF")
+                    .font(.caption.bold())
+                    .foregroundStyle(cheat.enabled ? Color.green : Color.secondary)
+            }
+            .padding(.vertical, 4)
+        )
     }
 }
 
@@ -772,8 +796,12 @@ struct iOSEditCheatView: View {
         let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
         let code = cheatCode.trimmingCharacters(in: .whitespaces)
         guard !code.isEmpty else { return }
+        guard !cheat.isInvalidated, let realm = cheat.realm else {
+            ELOG("saveCheat: cheat is invalidated or detached from Realm")
+            dismiss()
+            return
+        }
         do {
-            let realm = try Realm()
             try realm.write {
                 cheat.code = code
                 cheat.type = name

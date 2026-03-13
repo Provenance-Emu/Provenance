@@ -91,17 +91,27 @@ extension Cheats: RealmRepresentable {
     }
 
     public func asRealm() -> PVCheats {
+        // Open Realm BEFORE entering the build closure so we can fall back
+        // gracefully if it fails, rather than crashing with try!.
+        let realm = try? Realm()
+        if realm == nil {
+            ELOG("Cheats.asRealm: Realm() failed — game/core will be built as standalone objects")
+        }
         return PVCheats.build { object in
             object.id = id
-            let realm = try! Realm()
-            if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
-                object.game = rmGame
+            if let realm = realm {
+                if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                    object.game = rmGame
+                } else {
+                    object.game = game.asRealm()
+                }
+                if let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) {
+                    object.core = rmCore
+                } else {
+                    object.core = core.asRealm()
+                }
             } else {
                 object.game = game.asRealm()
-            }
-            if let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) {
-                object.core = rmCore
-            } else {
                 object.core = core.asRealm()
             }
             object.date = date

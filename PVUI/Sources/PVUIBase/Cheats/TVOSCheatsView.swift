@@ -375,18 +375,28 @@ public struct TVOSCheatsView: View {
     private func loadCheats() {
         if let coreID = coreID {
             let predicate = NSPredicate(format: "core.identifier == %@", coreID)
-            allCheats = cheats.filter(predicate).sorted(byKeyPath: "date", ascending: true).map { $0 }
+            allCheats = cheats.filter(predicate)
+                .sorted(byKeyPath: "date", ascending: true)
+                .filter { !$0.isInvalidated }
+                .map { $0 }
         } else {
-            allCheats = cheats.sorted(byKeyPath: "date", ascending: true).map { $0 }
+            allCheats = cheats
+                .sorted(byKeyPath: "date", ascending: true)
+                .filter { !$0.isInvalidated }
+                .map { $0 }
         }
     }
 
     private func toggleCheat(_ cheat: PVCheats, at index: Int) {
+        guard !cheat.isInvalidated else {
+            loadCheats(); return
+        }
+        guard let realm = cheat.realm else {
+            ELOG("toggleCheat: cheat has no associated realm")
+            return
+        }
         do {
-            let realm = try Realm()
-            try realm.write {
-                cheat.enabled.toggle()
-            }
+            try realm.write { cheat.enabled.toggle() }
             onUpdateCheat(cheat, UInt8(min(index, Int(UInt8.max))))
             loadCheats()
         } catch {
@@ -395,6 +405,9 @@ public struct TVOSCheatsView: View {
     }
 
     private func deleteCheat(_ cheat: PVCheats) {
+        guard !cheat.isInvalidated else {
+            loadCheats(); return
+        }
         do {
             try cheat.delete()
             loadCheats()
@@ -418,11 +431,12 @@ struct CheatRowView: View {
     @FocusState private var isFocused: Bool
 
     private var cheatType: String {
-        cheat.type ?? ""
+        cheat.isInvalidated ? "" : (cheat.type ?? "")
     }
 
     var body: some View {
-        Button(action: onToggle) {
+        guard !cheat.isInvalidated else { return AnyView(EmptyView()) }
+        return AnyView(Button(action: onToggle) {
             HStack(spacing: 24) {
                 // Status indicator
                 Circle()
@@ -498,7 +512,7 @@ struct CheatRowView: View {
         }
         .buttonStyle(.plain)
         .focused($isFocused)
-    }
+    ) // AnyView
 }
 
 // MARK: - Add Cheat View
@@ -952,8 +966,12 @@ struct TVOSEditCheatView: View {
         guard !code.isEmpty else { return }
         let trimmedName = cheatName.trimmingCharacters(in: .whitespaces)
         let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
+        guard !cheat.isInvalidated, let realm = cheat.realm else {
+            ELOG("saveCheat: cheat is invalidated or detached from Realm")
+            dismiss()
+            return
+        }
         do {
-            let realm = try Realm()
             try realm.write {
                 cheat.code = code
                 cheat.type = name
