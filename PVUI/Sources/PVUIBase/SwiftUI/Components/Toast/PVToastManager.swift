@@ -111,8 +111,21 @@ public final class PVToastManager: ObservableObject {
     }
 
     private func scheduleAutoDismiss(id: String, after duration: TimeInterval) {
+        // Treat non-positive durations as "immediate dismiss"
+        if duration <= 0 {
+            Task { @MainActor [weak self] in
+                self?.removeToast(withID: id)
+            }
+            return
+        }
+
+        // Clamp duration to avoid overflow when converting to UInt64 nanoseconds
+        let maxDurationSeconds = TimeInterval(UInt64.max) / 1_000_000_000.0
+        let clampedDuration = min(duration, maxDurationSeconds)
+        let delayNanoseconds = UInt64(clampedDuration * 1_000_000_000.0)
+
         let task = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+            try? await Task.sleep(nanoseconds: delayNanoseconds)
             guard !Task.isCancelled else { return }
             await MainActor.run {
                 self?.removeToast(withID: id)
