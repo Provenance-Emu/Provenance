@@ -14,7 +14,7 @@ import PVThemes
 import PVLogging
 
 /// Sort options for the all-saves browser
-enum SaveStatesBrowserSort: String, CaseIterable, Identifiable {
+private enum SaveStatesBrowserSort: String, CaseIterable, Identifiable {
     case dateDescending = "Most Recent"
     case dateAscending  = "Oldest First"
     case gameName       = "Game Name"
