@@ -127,16 +127,24 @@ struct HomeView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var bootupStateManager = AppState.shared.bootupStateManager
 
+    /// Maximum number of recent save states scanned for the Recent Saves carousel.
+    /// Caps the O(n) deduplication pass to avoid scanning unbounded Realm result sets
+    /// when autosaves accumulate (the carousel can only display a fixed number of items).
+    private static let recentSaveStateScanLimit = 100
+
     /// Save state IDs for Recent Saves carousel navigation.
     /// When showAutoSavesInRecents is false (default), deduplicates timed autosaves:
     /// at most one (the latest) autosave per game is included to prevent flooding.
     /// Manual saves are always included. Mirrors the filter in RealmContinuesDataDriver.
+    /// Only the first `recentSaveStateScanLimit` records are examined to bound the cost
+    /// of repeated calls from gamepad navigation helpers.
     private var recentSaveStateIDs: [String] {
+        let window = recentSaveStates.prefix(Self.recentSaveStateScanLimit)
         if showAutoSavesInRecents {
-            return recentSaveStates.compactMap { $0.isInvalidated ? nil : $0.id }
+            return window.compactMap { $0.isInvalidated ? nil : $0.id }
         }
         var seenAutoSaveGameIDs = Set<String>()
-        return recentSaveStates.compactMap { state -> String? in
+        return window.compactMap { state -> String? in
             guard !state.isInvalidated else { return nil }
             if state.isAutosave {
                 let gameID = state.game?.id ?? ""

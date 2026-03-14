@@ -115,7 +115,8 @@ public final class RetroSaveStatesStore: ObservableObject {
     /// Loads recent save states across all systems
     @discardableResult
     public func loadAllRecent(limit: Int = 50) async -> [RetroSaveStateItem] {
-        await fetchSaveStates(predicate: NSPredicate(value: true), limit: limit, deduplicateAutosaves: true)
+        let predicate = NSPredicate(format: "game != nil && game.system != nil")
+        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: true)
     }
 
     /// Loads recent save states filtered by multiple system IDs
@@ -124,7 +125,7 @@ public final class RetroSaveStatesStore: ObservableObject {
         guard !systemIDs.isEmpty else {
             return await loadAllRecent(limit: limit)
         }
-        let predicate = NSPredicate(format: "game.systemIdentifier IN %@", Array(systemIDs))
+        let predicate = NSPredicate(format: "game != nil && game.system != nil && game.systemIdentifier IN %@", Array(systemIDs))
         return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: true)
     }
 
@@ -214,9 +215,14 @@ public final class RetroSaveStatesStore: ObservableObject {
                         .filter(predicate)
                         .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
 
+                    // When deduplicating, fetch a larger window so that after removing duplicate
+                    // autosaves we still have enough items to fill `limit`. Without this, a batch
+                    // that is mostly autosaves from the same game could yield far fewer than `limit`
+                    // results after the dedup pass.
+                    let fetchLimit: Int? = (deduplicateAutosaves && limit != nil) ? limit.map { $0 * 4 } : limit
                     let collection: [PVSaveState] = {
-                        if let limit {
-                            return Array(results.prefix(limit))
+                        if let fetchLimit {
+                            return Array(results.prefix(fetchLimit))
                         } else {
                             return Array(results)
                         }
@@ -226,9 +232,9 @@ public final class RetroSaveStatesStore: ObservableObject {
                     if deduplicateAutosaves {
                         // For "Recent Saves" strips: show at most one (the latest) autosave per game.
                         // collection is already date-descending, so the first autosave seen per game
-                        // is the most recent one.
+                        // is the most recent one. Apply `limit` after deduplication.
                         var seenAutoSaveGameIDs = Set<String>()
-                        items = collection.compactMap { state -> RetroSaveStateItem? in
+                        let deduped = collection.compactMap { state -> RetroSaveStateItem? in
                             if state.isAutosave {
                                 let gameID = state.game?.id ?? ""
                                 guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
@@ -237,6 +243,7 @@ public final class RetroSaveStatesStore: ObservableObject {
                             }
                             return self.mapSaveState(state)
                         }
+                        items = limit.map { Array(deduped.prefix($0)) } ?? deduped
                     } else {
                         items = collection.compactMap { state in
                             self.mapSaveState(state)
