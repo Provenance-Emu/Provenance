@@ -67,8 +67,29 @@ public final class CoreLoader: Sendable {
         /// Store result — concurrent first-load races are benign (last writer wins)
         cacheStorage.withLock { $0 = plists }
 
+        /// Populate the JIT requirement registry from each loaded plist.
+        /// This is the single place where Core.plist JIT data flows into the registry —
+        /// no hardcoded identifier list is needed anywhere else.
+        registerJITRequirements(from: plists)
+
         ILOG("Cached \(plists.count) core plists for future use")
         return plists
+    }
+
+    /// Reads `PVJITRequirement` from each plist and registers it in the shared registry.
+    static private func registerJITRequirements(from plists: [EmulatorCoreInfoPlist]) {
+        let registry = PVJITRequirementRegistry.shared
+        for plist in plists {
+            if let raw = plist.jitRequirementRawValue {
+                registry.register(rawValue: raw, forCoreIdentifier: plist.identifier)
+            }
+            /// Also handle sub-cores (e.g. libretro cores embedded in RetroArch's plist)
+            for subCore in plist.subCores ?? [] {
+                if let raw = subCore.jitRequirementRawValue {
+                    registry.register(rawValue: raw, forCoreIdentifier: subCore.identifier)
+                }
+            }
+        }
     }
 
     /// Internal method that actually loads the core plists

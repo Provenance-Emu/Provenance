@@ -26,6 +26,8 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     /// Prefer `EmulatorCoreInfoProvider.supportedCheatTypes` for typed access.
     public let PVSupportedCheatTypes: [String]?
     public let PVCores: [CorePlistEntry]? // SubCoreEntry
+    /// JIT requirement level for this core. Mirrors `PVJITRequirement` key in `Core.plist`.
+    public let PVJITRequirement: String?
 }
 
 public extension CorePlistEntry {
@@ -46,7 +48,8 @@ public extension CorePlistEntry {
             PVContentless: plist.contentless,
             PVAppStoreDisabled: plist.appStoreDisabled,
             PVSupportedCheatTypes: cheatTypeStrings,
-            PVCores: subCores
+            PVCores: subCores,
+            PVJITRequirement: plist.jitRequirementRawValue
         )
     }
 }

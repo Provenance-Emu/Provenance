@@ -16,5 +16,7 @@
 	<string>https://github.com/flyinghead/flycast</string>
 	<key>PVProjectVersion</key>
 	<string>1.1</string>
+	<key>PVJITRequirement</key>
+	<string>optional</string>
 </dict>
 </plist>

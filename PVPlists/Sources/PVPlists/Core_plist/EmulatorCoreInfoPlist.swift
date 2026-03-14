@@ -28,11 +28,15 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     /// The cheat code formats supported by this core, parsed from `PVSupportedCheatTypes`.
     public let supportedCheatTypes: [CheatCodeTypes]
     public let subCores:  [EmulatorCoreInfoPlist]?
+    /// Raw `PVJITRequirement` string from `Core.plist` (e.g. `"required"`, `"optional"`).
+    /// `nil` means the key was absent — callers should treat `nil` as *not required*.
+    public let jitRequirementRawValue: String?
 
     public init(identifier: String, principleClass: String, supportedSystems: [String],
                 projectName: String, projectURL: String, projectVersion: String,
                 disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false,
-                supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil) {
+                supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil,
+                jitRequirementRawValue: String? = nil) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -44,6 +48,7 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.appStoreDisabled = appStoreDisabled
         self.supportedCheatTypes = supportedCheatTypes
         self.subCores = subCores
+        self.jitRequirementRawValue = jitRequirementRawValue
     }
 
     public init?(fromInfoDictionary dict: [String: Any]) {
@@ -119,6 +124,9 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         } else {
             self.subCores = nil
         }
+
+        /// JIT requirement — optional key; absent means notRequired
+        self.jitRequirementRawValue = dict["PVJITRequirement"] as? String
     }
 
     public convenience init?(fromURL plistPath: URL) throws {
@@ -155,7 +163,8 @@ public extension EmulatorCoreInfoPlist {
             contentless: e.PVContentless ?? false,
             appStoreDisabled: e.PVAppStoreDisabled ?? false,
             supportedCheatTypes: cheatTypes,
-            subCores: subCores
+            subCores: subCores,
+            jitRequirementRawValue: e.PVJITRequirement
         )
     }
 }

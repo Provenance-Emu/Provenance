@@ -16,5 +16,7 @@
 	<string>https://github.com/emuPlace/emuThreeDS</string>
 	<key>PVProjectVersion</key>
 	<string>1.0.6</string>
+	<key>PVJITRequirement</key>
+	<string>required</string>
 </dict>
 </plist>

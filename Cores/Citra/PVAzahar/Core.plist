@@ -18,5 +18,7 @@
 	<string>git</string>
 	<key>PVDisabled</key>
 	<true/>
+	<key>PVJITRequirement</key>
+	<string>required</string>
 </dict>
 </plist>
