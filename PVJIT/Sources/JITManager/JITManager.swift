@@ -12,6 +12,7 @@
 import Foundation
 import PVLogging
 import DebuggerUtils
+import Security
 
 #if _USE_ALTKIT
 import SideKit
@@ -31,6 +32,27 @@ public final class DOLJitManager {
     private var auxError: String?
     private var hasAcquiredJit = false
     private var isDiscoveringAltserver = false
+    /// The detected JIT source. Starts as `.none`; updated after acquisition
+    /// and refined by UIKit-capable detection (see `JITSourceDetector`).
+    private var jitSource: JITSource = .none
+
+    private func hasNativeJitEntitlement() -> Bool {
+        let entitlementKey = "com.apple.developer.kernel.allow-jit" as CFString
+
+        guard let task = SecTaskCreateFromSelf(nil) else {
+            return false
+        }
+
+        guard let value = SecTaskCopyValueForEntitlement(task, entitlementKey, nil) else {
+            return false
+        }
+
+        if CFGetTypeID(value) == CFBooleanGetTypeID() {
+            return CFBooleanGetValue((value as! CFBoolean))
+        }
+
+        return false
+    }
 
     private init() {}
 
@@ -38,8 +60,21 @@ public final class DOLJitManager {
     func attemptToAcquireJitOnStartup() {
 #if targetEnvironment(simulator)
         jitType = .notRestricted
-#elseif NONJAILBROKEN
-        if #available(iOS 14.5, tvOS 14.5, *) {
+#else
+        // iOS 26+ native JIT entitlement — highest priority after simulator.
+        // JITAuthorizer is a private/SPI class introduced in iOS 26 that authorizes
+        // JIT when the app has `com.apple.developer.kernel.allow-jit` entitlement.
+        // TODO: Replace NSClassFromString lookup with a direct import when public API.
+        if NSClassFromString("JITAuthorizer") != nil, hasNativeJitEntitlement() {
+            jitType = .nativeEntitlement
+        }
+        // TrollStore installs apps with unrestricted `get-task-allow` entitlement.
+        // Detect via known file-system markers left by TrollStore on-device.
+        else if isInstalledViaTrollStore() {
+            jitType = .trollStore
+        }
+#if NONJAILBROKEN
+        else if #available(iOS 14.5, tvOS 14.5, *) {
             jitType = .debugger
         } else if #available(iOS 14.4, tvOS 14.4, *) {
             var size = 0
@@ -67,8 +102,11 @@ public final class DOLJitManager {
             jitType = .debugger
         }
 #else // jailbroken
-        jitType = .debugger
+        else {
+            jitType = .debugger
+        }
 #endif
+#endif // !simulator
 
         switch jitType {
         case .debugger:
@@ -81,13 +119,20 @@ public final class DOLJitManager {
                 hasAcquiredJit = SetProcessDebuggedWithDaemon()
             }
 #endif
-        case .allowUnsigned, .notRestricted:
+        case .allowUnsigned, .notRestricted, .nativeEntitlement, .trollStore:
             hasAcquiredJit = true
         case .ptrace:
             SetProcessDebuggedWithPTrace()
             hasAcquiredJit = true
-        case .none:
+        case .stikDebug, .none:
+            // .stikDebug requires explicit call to attemptToAcquireJitByStikDebug().
             break
+        }
+
+        // Perform file-system-only JIT source detection (UIKit checks are done
+        // by JITSourceDetector in the PVJIT target and fed in via setJITSource).
+        if hasAcquiredJit {
+            jitSource = detectJITSourceFileSystem()
         }
     }
 
@@ -216,6 +261,59 @@ public final class DOLJitManager {
         dataTask.resume()
     }
 
+    /// Asks StikDebug to attach its debugger to the current process via HTTP.
+    ///
+    /// StikDebug exposes a lightweight HTTP server over its VPN tunnel (similar
+    /// to JitStreamer). Calling this method sends a POST request to the StikDebug
+    /// attach endpoint. The call completes asynchronously; JIT is available once
+    /// `recheckHasAcquiredJit()` returns `true` (or the `DOLJitAcquired`
+    /// notification fires from `attemptToAcquireJitByWaitingForDebugger`).
+    ///
+    /// - Note: The VPN tunnel must be active before calling this method.
+    ///         StikDebug uses `10.80.80.2` as its tunnel gateway.
+    public
+    func attemptToAcquireJitByStikDebug() {
+        if jitType != .debugger && jitType != .stikDebug {
+            ELOG("StikDebug: unexpected jitType \(jitType)")
+            return
+        }
+
+        if hasAcquiredJit {
+            ILOG("StikDebug: JIT already acquired")
+            return
+        }
+
+        // StikDebug uses a VPN tunnel with gateway 10.80.80.2 and an HTTP
+        // attach endpoint mirroring JitStreamer's protocol.
+        let pid = getpid()
+        let urlString = "http://10.80.80.2/attach/\(pid)/"
+        ILOG("StikDebug: POST \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            ELOG("StikDebug: failed to construct URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = Data()
+        request.timeoutInterval = 10
+
+        let dataTask = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                ELOG("StikDebug: \(error.localizedDescription)")
+                return
+            }
+            if let response = response {
+                ILOG("StikDebug: Response: \(response)")
+            }
+            if let data = data, !data.isEmpty {
+                ILOG("StikDebug: \(String(data: data, encoding: .utf8) ?? "")")
+            }
+        }
+        dataTask.resume()
+    }
+
     public
     func getJitType() -> DOLJitType {
         return jitType
@@ -234,6 +332,82 @@ public final class DOLJitManager {
     public
     func getAuxiliaryError() -> String? {
         return auxError
+    }
+
+    /// Returns the currently detected JIT source.
+    public func getJITSource() -> JITSource {
+        return jitSource
+    }
+
+    /// Allows the UIKit-capable layer (`JITSourceDetector`) to refine the
+    /// detected source after URL-scheme checks complete.
+    public func setJITSource(_ source: JITSource) {
+        jitSource = source
+    }
+
+    // MARK: - File-system JIT Source Detection
+
+    /// Performs lightweight, file-system-only detection of the JIT source.
+    /// URL-scheme checks (StikDebug) are handled by `JITSourceDetector` in
+    /// the PVJIT target which has access to UIKit.
+    private func detectJITSourceFileSystem() -> JITSource {
+#if targetEnvironment(simulator)
+        return .system
+#else
+        // iOS 26+ native JIT API — `nativeEntitlement` jitType maps to `.system`.
+        // TODO: Replace NSClassFromString lookup with a direct import when the
+        //       JITAuthorizer API becomes public (currently private/SPI in iOS 26).
+        if jitType == .nativeEntitlement || NSClassFromString("JITAuthorizer") != nil {
+            return .system
+        }
+
+        // TrollStore installs apps with unrestricted `get-task-allow` entitlement.
+        if isInstalledViaTrollStore() {
+            return .trollStore
+        }
+
+        // Jailbroken / developer-provisioned builds that acquire JIT via a
+        // system daemon (jailbreakd) are treated as "system" since there is
+        // no specific third-party app involved.
+#if !NONJAILBROKEN
+        return .system
+#else
+        // Non-jailbroken; source will be refined by JITSourceDetector (UIKit layer).
+        return .unknown
+#endif
+#endif
+    }
+
+    // MARK: - TrollStore Detection
+
+    /// Returns `true` if **this app** was installed via TrollStore.
+    ///
+    /// TrollStore grants unrestricted entitlements (including `get-task-allow`)
+    /// at install time and leaves identifiable file-system markers on the device.
+    /// We combine both checks so that TrollStore being present on the device alone
+    /// is not sufficient — the app must also carry `get-task-allow`, which TrollStore
+    /// injects but AltStore/App Store builds do not in release configurations.
+    public func isInstalledViaTrollStore() -> Bool {
+        // 1. Check device-wide TrollStore installation markers.
+        let deviceMarkers = [
+            "/var/mobile/Library/Application Support/TrollStore",
+            "/usr/lib/TrollStore",
+            "/var/containers/Bundle/TrollStore",
+        ]
+        guard deviceMarkers.contains(where: { FileManager.default.fileExists(atPath: $0) }) else {
+            return false
+        }
+
+        // 2. Verify this binary carries `get-task-allow` (injected by TrollStore at
+        //    install time; not present in App Store or AltStore release builds).
+        guard let task = SecTaskCreateFromSelf(nil) else { return false }
+        guard let value = SecTaskCopyValueForEntitlement(task, "get-task-allow" as CFString, nil) else {
+            return false
+        }
+        if CFGetTypeID(value) == CFBooleanGetTypeID() {
+            return CFBooleanGetValue((value as! CFBoolean))
+        }
+        return false
     }
 
     private func getCpuArchitecture() -> String? {

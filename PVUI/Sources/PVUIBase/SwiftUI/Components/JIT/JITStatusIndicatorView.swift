@@ -42,11 +42,11 @@ public enum JITStatus: Equatable {
     public var label: String {
         switch self {
         case .active:
-            return "Performance Mode"
+            return "JIT Active"
         case .interpreterFallback:
             return "Compatibility Mode"
         case .unavailable:
-            return "Performance Mode Unavailable"
+            return "JIT Unavailable"
         case .notApplicable:
             return ""
         }
@@ -64,6 +64,10 @@ public enum JITStatus: Equatable {
 public final class JITStatusViewModel: ObservableObject {
     @Published public var status: JITStatus = .notApplicable
     @Published public var isExpanded: Bool = false
+    /// The detected JIT acquisition source (e.g. AltStore, StikDebug, TrollStore).
+    #if canImport(JITManager)
+    @Published public var jitSource: JITSource = .none
+    #endif
 
     #if canImport(JITManager)
     private var jitManager: DOLJitManager { DOLJitManager.shared }
@@ -78,6 +82,14 @@ public final class JITStatusViewModel: ObservableObject {
         status = fixedStatus
     }
 
+    #if canImport(JITManager)
+    /// Creates a view model with a fixed status and source, useful for previews and testing
+    public init(fixedStatus: JITStatus, fixedSource: JITSource) {
+        status = fixedStatus
+        jitSource = fixedSource
+    }
+    #endif
+
     /// Updates the JIT status based on the current JIT manager state
     public func updateStatus() {
         #if canImport(JITManager)
@@ -86,24 +98,34 @@ public final class JITStatusViewModel: ObservableObject {
 
         if jitType == .none {
             status = .notApplicable
+            jitSource = .none
         } else if isJITEnabled {
             status = .active
+            jitSource = jitManager.getJITSource()
         } else {
             // For now, show as interpreter fallback
             // TODO: Update when JIT Capability Matrix (#2793) is implemented
             // to distinguish between "interpreter fallback" vs "JIT required but failed"
             status = .interpreterFallback
+            jitSource = .none
         }
         #else
         status = .notApplicable
         #endif
     }
 
-    /// Returns a brief explanation of the current mode
+    /// Returns a brief explanation of the current mode, including the JIT source when active.
     public var explanation: String {
         switch status {
         case .active:
+            #if canImport(JITManager)
+            let sourceNote = jitSource != .none && jitSource != .unknown
+                ? " via \(jitSource.displayName)"
+                : ""
+            return "JIT compilation is active\(sourceNote), providing full-speed emulation with dynamic recompilation."
+            #else
             return "JIT compilation is active, providing full-speed emulation with dynamic recompilation."
+            #endif
         case .interpreterFallback:
             return "Running in interpreter mode. Emulation may be slower. Connect to a debugger or use AltJIT to enable JIT."
         case .unavailable:
@@ -111,6 +133,31 @@ public final class JITStatusViewModel: ObservableObject {
         case .notApplicable:
             return ""
         }
+    }
+
+    /// Short label shown in the HUD badge.
+    /// When JIT is active and a specific source is known, appends the source name.
+    public var indicatorLabel: String {
+        #if canImport(JITManager)
+        guard status == .active, jitSource != .none, jitSource != .unknown else {
+            return status.label
+        }
+        return "JIT · \(jitSource.displayName)"
+        #else
+        return status.label
+        #endif
+    }
+
+    /// Accessibility label for the indicator button.
+    public var indicatorAccessibilityLabel: String {
+        #if canImport(JITManager)
+        guard status == .active, jitSource != .none, jitSource != .unknown else {
+            return "JIT Status: \(status.label)"
+        }
+        return "JIT Status: Active via \(jitSource.displayName)"
+        #else
+        return "JIT Status: \(status.label)"
+        #endif
     }
 
     /// Toggle expanded state
@@ -126,6 +173,9 @@ public final class JITStatusViewModel: ObservableObject {
 /// Compact popover content showing the JIT status explanation
 private struct JITExplanationPopoverView: View {
     let status: JITStatus
+#if canImport(JITManager)
+    let jitSource: JITSource
+#endif
     let explanation: String
 
     var body: some View {
@@ -134,8 +184,17 @@ private struct JITExplanationPopoverView: View {
                 Circle()
                     .fill(status.iconColor)
                     .frame(width: 10, height: 10)
-                Text(status.label)
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(status.label)
+                        .font(.headline)
+#if canImport(JITManager)
+                    if status == .active, jitSource != .none, jitSource != .unknown {
+                        Text("via \(jitSource.displayName)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+#endif
+                }
             }
             Text(explanation)
                 .font(.subheadline)
@@ -172,8 +231,8 @@ public struct JITStatusIndicatorView: View {
                             .frame(width: 10, height: 10)
                             .shadow(color: viewModel.status.iconColor.opacity(0.6), radius: 4, x: 0, y: 0)
 
-                        // Label
-                        Text(viewModel.status.label)
+                        // Label — shows source name (e.g. "JIT · AltStore") when active and source is known
+                        Text(viewModel.indicatorLabel)
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                     }
@@ -189,14 +248,22 @@ public struct JITStatusIndicatorView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
-                .accessibilityLabel("JIT Status: \(viewModel.status.label)")
+                .accessibilityLabel(viewModel.indicatorAccessibilityLabel)
                 .accessibilityHint("Tap to show details about the current emulation mode")
                 #if !os(tvOS)
                 .popover(isPresented: $showExplanation, arrowEdge: .top) {
+                    #if canImport(JITManager)
+                    JITExplanationPopoverView(
+                        status: viewModel.status,
+                        jitSource: viewModel.jitSource,
+                        explanation: viewModel.explanation
+                    )
+                    #else
                     JITExplanationPopoverView(
                         status: viewModel.status,
                         explanation: viewModel.explanation
                     )
+                    #endif
                     .presentationCompactAdaptation(.popover)
                 }
                 #else
@@ -204,7 +271,7 @@ public struct JITStatusIndicatorView: View {
                 #endif
             }
         }
-        #if canImport(PVJIT)
+        #if canImport(JITManager)
         .onReceive(NotificationCenter.default.publisher(for: .DOLJitAcquired)) { _ in
             viewModel.updateStatus()
         }
