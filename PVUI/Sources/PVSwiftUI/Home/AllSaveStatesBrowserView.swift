@@ -55,6 +55,13 @@ public struct AllSaveStatesBrowserView: View {
     @State private var sortOrder: SaveStatesBrowserSort = .dateDescending
     @State private var showFavoritesOnly = false
 
+    /// Paging is only used for the default date-descending view without a favourites filter.
+    /// Other sorts and the favourites filter require the full dataset to be correct,
+    /// so we fall back to loading everything at once.
+    private var shouldUsePaging: Bool {
+        sortOrder == .dateDescending && !showFavoritesOnly
+    }
+
     #if os(tvOS)
     @FocusState private var focusedItemID: String?
     #endif
@@ -140,10 +147,16 @@ public struct AllSaveStatesBrowserView: View {
                 recomputeGroupedItems()
             }
             .onChange(of: sortOrder) { _ in
+                // Re-sort what's already loaded immediately for responsiveness, then
+                // reload from the store in case the new sort needs a different fetch order
+                // (e.g. Oldest First requires ascending DB queries, not just group reordering).
                 recomputeGroupedItems()
+                Task { await loadItems() }
             }
             .onChange(of: showFavoritesOnly) { _ in
-                recomputeGroupedItems()
+                // Favourites filter requires the full dataset so the user doesn't see
+                // "no favourites" when they simply haven't been loaded yet.
+                Task { await loadItems() }
             }
     }
 
@@ -155,8 +168,10 @@ public struct AllSaveStatesBrowserView: View {
 
             if isLoading {
                 loadingView
-            } else if groupedItems.isEmpty && !hasMorePages {
+            } else if groupedItems.isEmpty && !hasMorePages && !isLoadingMore {
                 emptyView
+            } else if groupedItems.isEmpty && isLoadingMore {
+                loadingView
             } else {
                 browserList
             }
@@ -399,31 +414,44 @@ public struct AllSaveStatesBrowserView: View {
             do {
                 try RomDatabase.sharedInstance.delete(saveState: saveState)
                 store.removeFromCache(id: item.id, systemID: systemId)
-                // Reload after deletion
-                await loadItems()
+                // Remove from local list immediately for snappy UI, then reload for consistency
+                items.removeAll { $0.id == item.id }
+                recomputeGroupedItems()
             } catch {
                 ELOG("AllSaveStatesBrowserView: Failed to delete save state: \(error)")
             }
         }
     }
 
-    /// Loads the first page and resets pagination state.
+    /// Loads the first page (or all items) and resets pagination state.
+    ///
+    /// Paging is only used when `sortOrder == .dateDescending` and `showFavoritesOnly` is off.
+    /// Other configurations load the full dataset so sort/filter correctness is guaranteed.
     private func loadItems() async {
         isLoading = true
         currentOffset = 0
-        hasMorePages = true
-        let page = await store.loadPage(offset: 0, pageSize: Self.pageSize)
-        items = page
-        hasMorePages = page.count == Self.pageSize
-        currentOffset = page.count
+
+        if shouldUsePaging {
+            hasMorePages = true
+            let page = await store.loadPage(offset: 0, pageSize: Self.pageSize, ascending: false)
+            items = page
+            hasMorePages = page.count == Self.pageSize
+            currentOffset = page.count
+        } else {
+            // Load everything; sort is applied client-side by recomputeGroupedItems().
+            hasMorePages = false
+            items = await store.loadAll()
+        }
+
         isLoading = false
     }
 
     /// Appends the next page of results (called when the scroll sentinel appears).
+    /// Only invoked when `shouldUsePaging` is true.
     private func loadNextPage() async {
         guard hasMorePages, !isLoadingMore else { return }
         isLoadingMore = true
-        let page = await store.loadPage(offset: currentOffset, pageSize: Self.pageSize)
+        let page = await store.loadPage(offset: currentOffset, pageSize: Self.pageSize, ascending: false)
         items.append(contentsOf: page)
         currentOffset += page.count
         hasMorePages = page.count == Self.pageSize

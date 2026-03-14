@@ -230,18 +230,15 @@ public final class RetroSaveStatesStore: ObservableObject {
 
     /// Loads a page of save states using cursor-based (offset) pagination.
     ///
-    /// Results are sorted by date descending — the same ordering used by all
-    /// other fetch methods — so callers can append successive pages to build
-    /// a complete, incrementally-displayed list.
-    ///
     /// - Parameters:
     ///   - offset: Number of items to skip (0 for the first page).
     ///   - pageSize: Maximum number of items to return.
+    ///   - ascending: When `true`, results are sorted oldest-first; otherwise newest-first (default).
     /// - Returns: Items for the requested page.  An empty array means the caller
     ///            has reached the end of the data set.
     @discardableResult
-    public func loadPage(offset: Int, pageSize: Int) async -> [RetroSaveStateItem] {
-        await fetchSaveStates(predicate: NSPredicate(value: true), offset: offset, limit: pageSize)
+    public func loadPage(offset: Int, pageSize: Int, ascending: Bool = false) async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: NSPredicate(value: true), offset: offset, limit: pageSize, ascending: ascending)
     }
 
     /// Returns the total number of save states (used to detect end-of-data).
@@ -259,7 +256,7 @@ public final class RetroSaveStatesStore: ObservableObject {
         }
     }
 
-    /// Fetches save states matching `predicate`, sorted newest-first.
+    /// Fetches save states matching `predicate`, sorted newest-first by default.
     /// - Parameters:
     ///   - predicate: Realm filter predicate.
     ///   - limit: Maximum number of results to return; `nil` fetches all (used by full management UI).
@@ -267,10 +264,10 @@ public final class RetroSaveStatesStore: ObservableObject {
     ///     all manual saves are always included. Defaults to `false` so the full save management
     ///     UI remains unfiltered.
     private func fetchSaveStates(predicate: NSPredicate, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
-        await fetchSaveStates(predicate: predicate, offset: 0, limit: limit, deduplicateAutosaves: deduplicateAutosaves)
+        await fetchSaveStates(predicate: predicate, offset: 0, limit: limit, ascending: false, deduplicateAutosaves: deduplicateAutosaves)
     }
 
-    private func fetchSaveStates(predicate: NSPredicate, offset: Int, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
+    private func fetchSaveStates(predicate: NSPredicate, offset: Int, limit: Int?, ascending: Bool = false, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
         await withCheckedContinuation { continuation in
             workQueue.async {
                 let validatedOffset = max(0, offset)
@@ -283,7 +280,7 @@ public final class RetroSaveStatesStore: ObservableObject {
                     let realm = try Realm()
                     let results = realm.objects(PVSaveState.self)
                         .filter(predicate)
-                        .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
+                        .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: ascending)
 
                     // Use direct index access for efficient Realm lazy-loading with offset/limit.
                     // When deduplicating, fetch a larger window so that after removing duplicate
