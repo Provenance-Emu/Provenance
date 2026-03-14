@@ -10,7 +10,7 @@ final class BPSPatcherTests: XCTestCase {
 
     private let patcher = BPSPatcher()
 
-    // MARK: - VLI / CRC helpers (self-contained, no @testable dependency)
+    // MARK: - VLI / CRC helpers (self-contained; do not call internal APIs)
 
     /// Encode an integer as a BPS/UPS variable-length integer.
     ///
