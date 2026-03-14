@@ -24,6 +24,22 @@ public struct RetroSaveStateItem: Identifiable, Hashable {
     public let createdWithCoreVersion: String?
     /// The core identifier that created this save state, if known.
     public let coreIdentifier: String?
+    
+    public init(id: String, gameId: String, gameTitle: String, systemId: String, systemName: String, date: Date, isAutosave: Bool, isFavorite: Bool, fileSize: Int, imageURL: URL? = nil, coreName: String, createdWithCoreVersion: String? = nil, coreIdentifier: String? = nil) {
+        self.id = id
+        self.gameId = gameId
+        self.gameTitle = gameTitle
+        self.systemId = systemId
+        self.systemName = systemName
+        self.date = date
+        self.isAutosave = isAutosave
+        self.isFavorite = isFavorite
+        self.fileSize = fileSize
+        self.imageURL = imageURL
+        self.coreName = coreName
+        self.createdWithCoreVersion = createdWithCoreVersion
+        self.coreIdentifier = coreIdentifier
+    }
 }
 
 /// Shared store for save-state queries, thumbnail loading, and caching
