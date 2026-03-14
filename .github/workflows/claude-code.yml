@@ -18,7 +18,7 @@ on:
         description: 'PR number to act on'
         required: true
       action:
-        description: 'Action: fix_ai_review | ai_approved | fix_rebase_conflict'
+        description: 'Action: fix_ai_review | ai_approved | fix_rebase_conflict | fix_copilot_review | copilot_approved'
         required: true
 
 permissions:
@@ -42,6 +42,7 @@ jobs:
     # 5. /claude-fix in a PR comment
     # 6. Dispatched by ai-review.yml (fix_ai_review or ai_approved)
     # 7. Dispatched by rebase workflow (fix_rebase_conflict)
+    # 8. Dispatched by copilot-review-poller.yml (fix_copilot_review or copilot_approved)
     if: |
       (github.event_name == 'issue_comment' &&
        contains(github.event.comment.body, '@claude')) ||
@@ -187,6 +188,8 @@ jobs:
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_ai_review' && format('The AI reviewer requested changes on PR #{0}. Read ALL review comments and fix every issue. Post a marker comment when done.', github.event.inputs.pr_number) || '' }}
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'ai_approved' && format('The AI reviewer has approved PR #{0} (or max review cycles reached). Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review.', github.event.inputs.pr_number) || '' }}
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_rebase_conflict' && format('PR #{0} has rebase conflicts that must be resolved. Follow the conflict resolution instructions below.', github.event.inputs.pr_number) || '' }}
+            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_copilot_review' && format('GitHub Copilot requested changes on PR #{0}. Read ALL Copilot review comments and inline suggestions, fix every issue, post a marker comment `<!-- copilot-review-processed:REVIEW_ID -->` (replace REVIEW_ID with the review ID from the comment) when done, then push.', github.event.inputs.pr_number) || '' }}
+            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'copilot_approved' && format('GitHub Copilot has approved PR #{0} (or max Copilot review cycles reached). Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review.', github.event.inputs.pr_number) || '' }}
             ${{ contains(github.event.comment.body || '', '/claude-fix') && 'Fix all pending review comments on this PR. Read the full review, address each comment, commit fixes, and push.' || '' }}
             ${{ github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' && '⚠️ @claude COMMENT ON EXISTING PR: You are responding to a comment on an EXISTING open PR. You MUST work on that PR branch directly — NEVER create a new branch or open a new PR. Steps: 1) Get the branch: `gh pr view $PR_NUM --json headRefName --jq .headRefName` (where PR_NUM is the issue/PR number from GitHub Context above) 2) Checkout it: `git fetch origin && git checkout <branch> && git pull origin <branch>` 3) Make all requested changes 4) Commit and push to SAME branch: `git push origin <branch>` 5) The existing PR updates automatically — you are done. Never use `gh pr create`.' || '' }}
 

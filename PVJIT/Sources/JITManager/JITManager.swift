@@ -73,39 +73,41 @@ public final class DOLJitManager {
         else if isInstalledViaTrollStore() {
             jitType = .trollStore
         }
-#if NONJAILBROKEN
-        else if #available(iOS 14.5, tvOS 14.5, *) {
-            jitType = .debugger
-        } else if #available(iOS 14.4, tvOS 14.4, *) {
-            var size = 0
-            sysctlbyname("kern.osversion", nil, &size, nil, 0)
-            var buildString = [CChar](repeating: 0, count: size)
-            sysctlbyname("kern.osversion", &buildString, &size, nil, 0)
-            let buildStr = String(cString: buildString)
-
-            if buildStr == "18D5030e" && canAcquireJitByUnsigned() {
-                jitType = .allowUnsigned
-            } else {
-                jitType = .debugger
-            }
-        } else if #available(iOS 14.2, tvOS 14.2, *) {
-            if canAcquireJitByUnsigned() {
-                jitType = .allowUnsigned
-            } else {
-                jitType = .debugger
-            }
-        } else if #available(iOS 14.0, tvOS 14.0, *) {
-            jitType = .debugger
-        } else if #available(iOS 13.5, tvOS 13.4, *) {
-            jitType = .ptrace
-        } else {
-            jitType = .debugger
-        }
-#else // jailbroken
         else {
+#if NONJAILBROKEN
+            if #available(iOS 14.5, tvOS 14.5, *) {
+                jitType = .debugger
+            } else {
+                if #available(iOS 14.4, tvOS 14.4, *) {
+                    var size = 0
+                    sysctlbyname("kern.osversion", nil, &size, nil, 0)
+                    var buildString = [CChar](repeating: 0, count: size)
+                    sysctlbyname("kern.osversion", &buildString, &size, nil, 0)
+                    let buildStr = String(cString: buildString)
+
+                    if buildStr == "18D5030e" && canAcquireJitByUnsigned() {
+                        jitType = .allowUnsigned
+                    } else {
+                        jitType = .debugger
+                    }
+                } else if #available(iOS 14.2, tvOS 14.2, *) {
+                    if canAcquireJitByUnsigned() {
+                        jitType = .allowUnsigned
+                    } else {
+                        jitType = .debugger
+                    }
+                } else if #available(iOS 14.0, tvOS 14.0, *) {
+                    jitType = .debugger
+                } else if #available(iOS 13.5, tvOS 13.4, *) {
+                    jitType = .ptrace
+                } else {
+                    jitType = .debugger
+                }
+            }
+#else // jailbroken
             jitType = .debugger
-        }
 #endif
+        }
 #endif // !simulator
 
         switch jitType {

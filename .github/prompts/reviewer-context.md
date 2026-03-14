@@ -218,3 +218,30 @@ Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
 - `PVToastHostingController.install(in:position:)` is the canonical way to embed the overlay into any `UIViewController`.
 - Do **not** use `StatusMessageManager` for in-game (emulator session) notifications; use `PVToastManager`.
 - `StatusMessageManager` remains the correct choice for library-level (import, scan, sync) notifications shown outside the emulator.
+
+---
+
+## Platform Support (for Availability Guard checks)
+
+| Platform | Minimum Version | Priority |
+|----------|----------------|----------|
+| iOS | 17.0 | Primary — always must compile |
+| tvOS | 17.0 | Primary — always must compile |
+| macOS | 14.0 (Catalyst/native) | Aspirational — guard with `#if os(macOS)` |
+| watchOS | 10.0 | Aspirational — non-UI code only |
+| visionOS | 1.0 | Aspirational — guard with `#if os(visionOS)` |
+| Linux | (no version) | Unit tests only (Tier 0–2 modules) |
+
+**When reviewing `@available` annotations**: verify they include BOTH `iOS X` AND `tvOS X`.
+Missing `tvOS` in an `@available` guard is a 🟡 MINOR issue. Missing iOS is 🟠 MAJOR.
+
+Tier 0–2 modules that use Darwin-only APIs without `#if canImport(Darwin)` guards
+will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT otherwise.
+
+## GitHub Workflow Awareness
+
+Reviewers should be aware of — but NOT flag as code issues — the following:
+- `.changelog/<PR_NUMBER>.md` fragment files — expected, do not flag as noise
+- `whats-new.json` entries with unconfirmed future versions — flag as 🟡 MINOR
+- Project board updates (`https://github.com/orgs/Provenance-Emu/projects/1/views/1`) — check that significant PRs are on the board
+- Epic/sub-task references — PRs for sub-tasks should reference parent epic with "Part of #N"

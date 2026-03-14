@@ -1,0 +1,241 @@
+name: Update Sideload Feed
+
+# Regenerates AltStore + SideStore JSON source files and commits them
+# to the gh-pages branch whenever a release or alpha build is published.
+#
+# The JSON files are hosted at:
+#   https://provenance-emu.github.io/Provenance/altstore-source.json
+#   https://provenance-emu.github.io/Provenance/sidestore-source.json
+# (or via raw GitHub if gh-pages isn't configured — see below)
+#
+# IPAs are attached as GitHub Release assets — no login required to download.
+# AltStore/SideStore can fetch them directly with curl.
+
+on:
+  release:
+    types: [published, edited]
+  workflow_run:
+    workflows: ["Build and Upload Provenance"]
+    types: [completed]
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-feed:
+    name: Generate sideload JSON feed
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'release' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate AltStore + SideStore JSON
+        id: generate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+
+          REPO_URL="https://github.com/${REPO}"
+          RAW_BASE="https://github.com/${REPO}/releases/download"
+
+          # ── Fetch all non-draft releases (stable + pre-release) ───────────
+          ALL_RELEASES=$(gh api "repos/${REPO}/releases?per_page=20" \
+            --jq '[.[] | select(.draft == false)]' 2>/dev/null || echo "[]")
+
+          STABLE_RELEASES=$(echo "$ALL_RELEASES" | \
+            jq '[.[] | select(.prerelease == false and (.tag_name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")))]')
+
+          ALPHA_RELEASE=$(echo "$ALL_RELEASES" | \
+            jq 'map(select(.tag_name == "alpha")) | first // empty')
+
+          # ── Helper: build an app entry from a release ─────────────────────
+          build_app_entry() {
+            local release_json="$1"
+            local channel="$2"  # "stable" or "alpha"
+
+            TAG=$(echo "$release_json" | jq -r '.tag_name')
+            NAME=$(echo "$release_json" | jq -r '.name // .tag_name')
+            BODY=$(echo "$release_json" | jq -r '.body // ""')
+            DATE=$(echo "$release_json" | jq -r '.published_at // .created_at')
+            DATE_SHORT=$(echo "$DATE" | cut -c1-10)
+
+            # Find iOS and tvOS IPAs in release assets
+            IOS_URL=$(echo "$release_json" | \
+              jq -r '.assets[] | select(.name | test("iOS\\.ipa$|ios\\.ipa$|-iOS\\.ipa$")) | .browser_download_url' \
+              | head -1)
+            TVOS_URL=$(echo "$release_json" | \
+              jq -r '.assets[] | select(.name | test("tvOS\\.ipa$|tvos\\.ipa$|-tvOS\\.ipa$")) | .browser_download_url' \
+              | head -1)
+
+            # Truncate changelog for JSON (AltStore has a 3000-char limit)
+            CHANGELOG=$(echo "$BODY" | sed 's/\r//g' | head -c 2800 || echo "")
+
+            # Version for display (strip 'alpha' prefix if present)
+            if [ "$channel" = "alpha" ]; then
+              DISPLAY_VERSION="alpha-$(echo "$TAG" | cut -c1-7 2>/dev/null || echo "$TAG")"
+              BUILD=$(date +%Y%m%d)
+            else
+              DISPLAY_VERSION="$TAG"
+              BUILD=$(echo "$TAG" | tr -d '.')
+            fi
+
+            # Emit entries for each IPA found
+            ENTRIES="["
+            FIRST=true
+
+            if [ -n "$IOS_URL" ]; then
+              SIZE=$(curl -sI "$IOS_URL" | grep -i content-length | awk '{print $2}' | tr -d '\r' || echo "0")
+              [ "$FIRST" = "true" ] && FIRST=false || ENTRIES="${ENTRIES},"
+              ENTRIES="${ENTRIES}$(jq -n \
+                --arg version "$DISPLAY_VERSION" \
+                --arg date "$DATE_SHORT" \
+                --arg url "$IOS_URL" \
+                --arg size "$SIZE" \
+                --arg changelog "$CHANGELOG" \
+                --arg platform "iOS" \
+                '{
+                  version: $version,
+                  date: $date,
+                  localizedDescription: $changelog,
+                  downloadURL: $url,
+                  size: ($size | tonumber? // 0),
+                  minOSVersion: "17.0"
+                }')"
+            fi
+
+            if [ -n "$TVOS_URL" ]; then
+              SIZE=$(curl -sI "$TVOS_URL" | grep -i content-length | awk '{print $2}' | tr -d '\r' || echo "0")
+              [ "$FIRST" = "true" ] && FIRST=false || ENTRIES="${ENTRIES},"
+              ENTRIES="${ENTRIES}$(jq -n \
+                --arg version "$DISPLAY_VERSION" \
+                --arg date "$DATE_SHORT" \
+                --arg url "$TVOS_URL" \
+                --arg size "$SIZE" \
+                --arg changelog "$CHANGELOG" \
+                '{
+                  version: $version,
+                  date: $date,
+                  localizedDescription: $changelog,
+                  downloadURL: $url,
+                  size: ($size | tonumber? // 0),
+                  minOSVersion: "17.0"
+                }')"
+            fi
+
+            ENTRIES="${ENTRIES}]"
+            echo "$ENTRIES"
+          }
+
+          # ── Build versions array from stable releases ─────────────────────
+          VERSIONS_JSON="[]"
+
+          while IFS= read -r release; do
+            ENTRY=$(build_app_entry "$release" "stable")
+            if [ "$ENTRY" != "[]" ]; then
+              VERSIONS_JSON=$(echo "$VERSIONS_JSON" | jq ". + $ENTRY")
+            fi
+          done < <(echo "$STABLE_RELEASES" | jq -c '.[]')
+
+          # Add alpha if available
+          if [ -n "$ALPHA_RELEASE" ] && [ "$ALPHA_RELEASE" != "null" ]; then
+            ALPHA_ENTRY=$(build_app_entry "$ALPHA_RELEASE" "alpha")
+            if [ "$ALPHA_ENTRY" != "[]" ]; then
+              VERSIONS_JSON=$(echo "$VERSIONS_JSON" | jq ". + $ALPHA_ENTRY")
+            fi
+          fi
+
+          LATEST_VERSION=$(echo "$STABLE_RELEASES" | jq -r 'first.tag_name // "3.3.0"')
+          TODAY=$(date -u +"%Y-%m-%d")
+
+          # ── AltStore source JSON ──────────────────────────────────────────
+          cat > /tmp/altstore-source.json << JSONEOF
+          {
+            "name": "Provenance Emulator",
+            "identifier": "com.provenance-emu.provenance.altstore",
+            "sourceURL": "https://provenance-emu.github.io/Provenance/altstore-source.json",
+            "apps": [
+              {
+                "name": "Provenance",
+                "bundleIdentifier": "com.provenance-emu.provenance",
+                "developerName": "Provenance-EMU",
+                "subtitle": "Multi-system retro emulator for iOS & tvOS",
+                "localizedDescription": "Provenance supports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more. Features iCloud sync, controller skins, RetroAchievements, and a beautiful native UI.",
+                "iconURL": "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Assets.xcassets/AppIcon.appiconset/appicon-1024.png",
+                "tintColor": "8A2BE2",
+                "screenshotURLs": [],
+                "versions": $VERSIONS_JSON,
+                "appPermissions": {
+                  "entitlements": [
+                    { "name": "com.apple.security.application-groups" },
+                    { "name": "com.apple.developer.icloud-services" },
+                    { "name": "com.apple.developer.icloud-container-identifiers" }
+                  ],
+                  "privacy": [
+                    { "name": "LocalNetwork", "usageDescription": "Used to discover and connect to local network game servers for netplay." },
+                    { "name": "Camera", "usageDescription": "Used to scan QR codes for importing game data." }
+                  ]
+                }
+              }
+            ],
+            "news": []
+          }
+          JSONEOF
+
+          # Substitute the versions array
+          jq --argjson versions "$VERSIONS_JSON" '.apps[0].versions = $versions' \
+            /tmp/altstore-source.json > /tmp/altstore-source-final.json
+
+          # ── SideStore source JSON (same schema, different sourceURL) ───────
+          jq '.identifier = "com.provenance-emu.provenance.sidestore" |
+              .sourceURL = "https://provenance-emu.github.io/Provenance/sidestore-source.json"' \
+            /tmp/altstore-source-final.json > /tmp/sidestore-source-final.json
+
+          echo "Generated feed with $(echo "$VERSIONS_JSON" | jq 'length') version entries."
+          echo "versions_count=$(echo "$VERSIONS_JSON" | jq 'length')" >> "$GITHUB_OUTPUT"
+
+      - name: Commit feed to docs/ folder
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p docs
+          cp /tmp/altstore-source-final.json docs/altstore-source.json
+          cp /tmp/sidestore-source-final.json docs/sidestore-source.json
+
+          # Also write a simple index pointing to the feeds
+          cat > docs/sideload.md << 'MDEOF'
+          # Provenance Sideload Feeds
+
+          Add one of these URLs to your sideloading app:
+
+          | App | Feed URL |
+          |-----|----------|
+          | AltStore / AltStore PAL | `https://provenance-emu.github.io/Provenance/altstore-source.json` |
+          | SideStore | `https://provenance-emu.github.io/Provenance/sidestore-source.json` |
+
+          IPAs are hosted as GitHub Release assets and are publicly downloadable without a GitHub account.
+
+          > **Alpha / Develop builds** are included in the feed under the `alpha` channel.
+          > These are built from the `develop` branch on every successful CI run.
+          MDEOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add docs/altstore-source.json docs/sidestore-source.json docs/sideload.md
+
+          if git diff --cached --quiet; then
+            echo "No changes to feed — skipping commit."
+          else
+            git commit -m "chore(sideload): update AltStore/SideStore JSON feed [skip ci]"
+            git push origin HEAD
+          fi

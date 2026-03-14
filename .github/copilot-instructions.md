@@ -170,6 +170,89 @@ Task { @MainActor in
 #endif
 ```
 
+## Platform Support Matrix
+
+### Primary Targets (always must compile and work)
+- **iOS 17+** — minimum deployment target
+- **tvOS 17+** — minimum deployment target
+
+### Aspirational Targets (compile where possible, especially non-UI code)
+- **macOS 14+** (Sonoma) — Catalyst and native Mac support; use `#if os(macOS)` guards
+- **watchOS 10+** — limited scope; non-UI utility code only
+- **visionOS 1+** — spatial computing; UI guards required with `#if os(visionOS)`
+
+### Unit Test Platform
+- **Linux** — Tier 0–2 modules should compile on Linux for CI unit tests via `swift test`
+- Avoid Darwin-only APIs in Tier 0–2 without `#if canImport(Darwin)` guards
+
+### Guards
+```swift
+#if os(iOS)
+    // iOS-only (touch, UIKit specifics)
+#elseif os(tvOS)
+    // tvOS-only (Focus Engine, no touch)
+#elseif os(macOS)
+    // Mac-only
+#elseif os(watchOS)
+    // watchOS-only
+#elseif os(visionOS)
+    // visionOS-only
+#endif
+```
+
+## GitHub Project & Issue Workflow
+
+### Project Board
+All issues and PRs should be tracked on the [Provenance Roadmap](https://github.com/orgs/Provenance-Emu/projects/1/views/1).
+
+### Labels
+Use these labels consistently:
+- `bug` — regressions or broken behavior
+- `enhancement` — new features or improvements
+- `Epic` — parent issue grouping related sub-tasks
+- `agent-work` — issue assigned to Claude/AI agent lane
+- `cursor-work` — issue assigned to Cursor agent lane
+- `ai-reviewing` — PR currently being reviewed by AI
+- `ai-reviewed` — PR review complete
+- `needs-fixes` — review found issues requiring changes
+- `ready-for-review` — AI review passed, awaiting @JoeMatt
+
+### Epics & Sub-tickets
+- Epic issues use the `Epic` label and list sub-tasks as checkboxes in the body
+- Sub-tasks reference their parent epic with "Part of #EPIC_NUMBER" in the PR/issue body
+- Close sub-tasks by merging their PR; epic auto-closes when all checkboxes are checked
+
+### Tagging Reviewers
+- Tag **@JoeMatt** for final human review on any significant change
+- Tag **@copilot** in a PR comment to request a Copilot review pass
+- Tag **@claude** in a PR comment to request a Claude fix/review pass
+- Do NOT tag both simultaneously — one at a time
+
+### WhatsNew / Release Notes
+See "## WhatsNew & Release Versioning" section below for rules.
+
+## WhatsNew & Release Versioning
+
+### CRITICAL: Never Guess Version Numbers
+
+The `whats-new.json` file (`PVUI/Sources/PVSwiftUI/Resources/whats-new.json`) drives
+the in-app "What's New" sheet. Agents MUST NOT add entries with speculative future version
+numbers. **The current released version is the latest git tag** — check with:
+```bash
+git tag --sort=-v:refname | head -1
+```
+
+### Rules for Agents
+1. **Only add a `whats-new.json` entry when**: the PR contains a major user-visible feature AND the target version has been explicitly confirmed in the issue/PR
+2. **Never invent version numbers** — if unsure, skip the entry and note it in the PR body with `TODO: add whats-new entry for version X.Y.Z`
+3. **Version format**: semver string matching the Xcode `MARKETING_VERSION` (e.g. `"3.3.0"`)
+4. **Max 6 features** per version entry
+5. **Do NOT modify existing entries** for already-shipped versions
+
+### Changelog Fragments
+Prefer adding `.changelog/<PR_NUMBER>.md` fragments over editing `CHANGELOG.md` directly.
+The consolidation workflow (`consolidate-changelog.yml`) merges fragments on PR merge.
+
 ## Important Conventions
 
 - The `develop` branch is the main development branch
