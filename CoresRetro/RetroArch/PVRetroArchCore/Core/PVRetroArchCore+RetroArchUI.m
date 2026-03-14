@@ -655,19 +655,38 @@ void extract_bundles();
     /// compatibility with any code that reads from the parent directory.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
         /// Ensure the hatari working subdirectory exists.
+        BOOL hatariWorkDirUsable = YES;
         NSString *hatariWorkDir = [systemDirectory stringByAppendingPathComponent:@"hatari"];
-        if (![fm fileExistsAtPath:hatariWorkDir]) {
+        BOOL isDir = NO;
+        if ([fm fileExistsAtPath:hatariWorkDir isDirectory:&isDir]) {
+            if (!isDir) {
+                ELOG(@"Expected hatari working path to be a directory but found a file at %@", hatariWorkDir);
+                hatariWorkDirUsable = NO;
+            }
+        } else {
             NSError *mkdirError = nil;
-            [fm createDirectoryAtPath:hatariWorkDir withIntermediateDirectories:YES attributes:nil error:&mkdirError];
-            if (mkdirError) {
-                ELOG(@"Failed to create hatari working dir %@: %@", hatariWorkDir, mkdirError.localizedDescription);
+            BOOL created = [fm createDirectoryAtPath:hatariWorkDir
+                         withIntermediateDirectories:YES
+                                          attributes:nil
+                                               error:&mkdirError];
+            if (!created) {
+                if (mkdirError) {
+                    ELOG(@"Failed to create hatari working dir %@: %@", hatariWorkDir, mkdirError.localizedDescription);
+                } else {
+                    ELOG(@"Failed to create hatari working dir %@ for an unknown reason.", hatariWorkDir);
+                }
+                hatariWorkDirUsable = NO;
             } else {
                 ILOG(@"Created hatari working directory: %@", hatariWorkDir);
             }
         }
 
+        if (!hatariWorkDirUsable) {
+            WLOG(@"Hatari working directory unavailable; falling back to system directory: %@", systemDirectory);
+        }
+
         NSString *tosImagePath     = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
-        NSString *hatariTosPath    = [hatariWorkDir    stringByAppendingPathComponent:@"tos.img"];
+        NSString *hatariTosPath    = hatariWorkDirUsable ? [hatariWorkDir stringByAppendingPathComponent:@"tos.img"] : tosImagePath;
         NSString *biosTosPath      = [self.BIOSPath    stringByAppendingPathComponent:@"tos.img"];
 
         if ([fm fileExistsAtPath:biosTosPath]) {
