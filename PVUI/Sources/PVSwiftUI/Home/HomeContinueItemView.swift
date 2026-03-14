@@ -179,13 +179,6 @@ struct HomeContinueItemView: SwiftUI.View {
                         }
                     }
                 )
-
-                // Stack badge — top-right corner, tappable.
-                if stackDepth > 1 {
-                    stackBadge
-                        .padding(6)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                }
             }
             .frame(height: height)
             .clipShape(Rectangle())
@@ -299,6 +292,15 @@ struct HomeContinueItemView: SwiftUI.View {
         }
         .onAppear { isVisible = true }
         .onDisappear { isVisible = false }
+        // Stack badge is overlaid as a sibling of the Button (not nested inside it).
+        // Nested Buttons in SwiftUI don't receive taps reliably; this overlay approach
+        // keeps the badge as a separate hit-testing target with its own tap area.
+        .overlay(alignment: .topTrailing) {
+            if stackDepth > 1 {
+                stackBadge
+                    .padding(6)
+            }
+        }
     }
 
     // MARK: - Stack Badge

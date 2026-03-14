@@ -136,10 +136,12 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
     /// Converts a Realm collection into display models.
     ///
     /// When `showAllAutosaves` is false (default):
-    /// - Autosaves from the same game within `sessionBoundaryInterval` are grouped into a
-    ///   single representative card. The most-recent autosave is the visible card; older
-    ///   autosaves from the same session are stored in `stackedSaves` for the filmstrip.
-    /// - Autosaves separated by a gap > `sessionBoundaryInterval` start a new stack entry.
+    /// - At most **one** autosave card is shown per game (the most-recent one).
+    /// - Older autosaves for that game — whether from the same session or an older one —
+    ///   are appended to that representative's `stackedSaves` filmstrip.
+    ///   Within a session (gap ≤ `sessionBoundaryInterval`) they go into the normal stack;
+    ///   cross-session autosaves are also folded into the same card rather than creating a
+    ///   second top-level card, keeping the carousel free of per-game duplicates.
     /// - Manual saves are never grouped.
     ///
     /// When `showAllAutosaves` is true every save is included individually.
@@ -147,9 +149,10 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
         from collection: C,
         showAllAutosaves: Bool
     ) -> [ContinueItemModel] where C.Element == PVSaveState {
-        // (gameID) -> (representativeDate, index into resultModels)
-        // Tracks the newest autosave representative per game for the *current* session.
-        var gameSessionRep: [String: (latestDate: Date, modelIndex: Int)] = [:]
+        // (gameID) -> index into resultModels for that game's autosave representative.
+        // Only the *first* (newest) autosave per game gets its own card; all subsequent
+        // autosaves for that game are appended to the representative's filmstrip stack.
+        var gameRepIndex: [String: Int] = [:]
         var resultModels: [ContinueItemModel] = []
 
         for state in collection.prefix(500) {
@@ -159,24 +162,16 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                 let gameID = state.game?.id ?? ""
                 guard !gameID.isEmpty else { continue }
 
-                if let existing = gameSessionRep[gameID] {
-                    // Collection is date-descending, so existing.latestDate >= state.date.
-                    let gap = existing.latestDate.timeIntervalSince(state.date)
-                    if gap <= sessionBoundaryInterval {
-                        // Same session: append this older save to the representative's stack.
-                        let stackedItem = ContinueItemModel(saveState: state)
-                        resultModels[existing.modelIndex].stackedSaves.append(stackedItem)
-                    } else {
-                        // New session: start a fresh representative for this game.
-                        let newIndex = resultModels.count
-                        resultModels.append(ContinueItemModel(saveState: state))
-                        gameSessionRep[gameID] = (latestDate: state.date, modelIndex: newIndex)
-                    }
+                if let existingIndex = gameRepIndex[gameID] {
+                    // A representative already exists for this game — fold this older autosave
+                    // into its filmstrip regardless of session boundary. This enforces the
+                    // "at most one autosave card per game" policy.
+                    resultModels[existingIndex].stackedSaves.append(ContinueItemModel(saveState: state))
                 } else {
-                    // First autosave for this game: it becomes the session representative.
+                    // First autosave for this game: it becomes the representative card.
                     let newIndex = resultModels.count
                     resultModels.append(ContinueItemModel(saveState: state))
-                    gameSessionRep[gameID] = (latestDate: state.date, modelIndex: newIndex)
+                    gameRepIndex[gameID] = newIndex
                 }
             } else {
                 // Manual save (or showAllAutosaves=true): always include individually.

@@ -9,7 +9,6 @@
 #if canImport(SwiftUI)
 import SwiftUI
 import PVThemes
-import PVLogging
 
 // MARK: - AutoSaveFilmstripView
 
