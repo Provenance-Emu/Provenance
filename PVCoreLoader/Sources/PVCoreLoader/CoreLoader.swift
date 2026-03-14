@@ -77,8 +77,11 @@ public final class CoreLoader: Sendable {
     }
 
     /// Reads `PVJITRequirement` from each plist and registers it in the shared registry.
+    /// The registry is cleared first so that entries for cores that are no longer present
+    /// in the active core list do not remain stale.
     static private func registerJITRequirements(from plists: [EmulatorCoreInfoPlist]) {
         let registry = PVJITRequirementRegistry.shared
+        registry.reset()
         for plist in plists {
             if let raw = plist.jitRequirementRawValue {
                 registry.register(rawValue: raw, forCoreIdentifier: plist.identifier)
