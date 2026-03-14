@@ -92,16 +92,10 @@ public actor PatchCache {
         let combined = Data((romHash + patchHash).utf8)
         return String(SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32))
 #else
-        // Linux fallback: combine CRC32 of both inputs as a hex key.
-        func crc32(_ data: Data) -> UInt32 {
-            var crc: UInt32 = 0xFFFF_FFFF
-            for byte in data {
-                crc ^= UInt32(byte)
-                for _ in 0..<8 { crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1)) }
-            }
-            return ~crc
-        }
-        return String(format: "%08x%08x%08x%08x", crc32(romData), crc32(patchData), romData.count, patchData.count)
+        // Linux fallback: use shared CRC32 helper for deterministic key on platforms without CryptoKit.
+        let romCRC = patchCRC32(romData)
+        let patchCRC = patchCRC32(patchData)
+        return String(format: "%08x%08x%08x%08x", romCRC, patchCRC, romData.count, patchData.count)
 #endif
     }
 }
