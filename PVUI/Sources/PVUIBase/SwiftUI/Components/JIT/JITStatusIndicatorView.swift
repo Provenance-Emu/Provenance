@@ -12,9 +12,6 @@ import PVThemes
 #if canImport(JITManager)
 import JITManager
 #endif
-#if canImport(PVJIT)
-import PVJIT
-#endif
 
 // MARK: - JIT Status Types
 
