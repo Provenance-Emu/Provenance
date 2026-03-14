@@ -165,7 +165,7 @@ public extension String {
     /// For runtime launch decisions, prefer querying `PVEmulatorCore.jitRequirement`
     /// (the richer `PVPrimitives.PVJITRequirement` 4-case enum).
     var jitPlistRequirement: PVJITPlistRequirement {
-        jitPlistRequirement(forCoreIdentifier: self)
+        PVJITRequirementRegistry.shared.requirement(forCoreIdentifier: self)
     }
 }
 
