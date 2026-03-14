@@ -63,6 +63,14 @@ typedef enum PVN64Button: NSInteger PVN64Button;
     /// store these here so the GC / ARC doesn't collect them between calls.
     char * __nullable _gbCartROMCStr[4];
     char * __nullable _gbCartSaveCStr[4];
+
+    /// Virtual memory pak buffers used in PLUGIN_RAW (Smart Pak) mode.
+    /// Each controller port gets 32KB of SRAM matching the real N64 memory pak.
+    /// Addresses 0x0000–0x7FFF (32 bytes per access = 1024 blocks).
+    uint8_t mempakBuffer[4][0x8000];
+
+    /// Dirty flags: set when a write to a pak buffer has not yet been flushed to disk.
+    BOOL mempakDirty[4];
 }
 
 @property (nonatomic, assign) int videoWidth;
@@ -90,6 +98,18 @@ typedef enum PVN64Button: NSInteger PVN64Button;
 - (nullable NSString *) gbCartSavePathForPort:(NSInteger)port;
 
 - (void) swapBuffers;
+
+/// Load virtual mempak data from disk into the in-memory buffer for the given port (0–3).
+/// Called at game start. Silently succeeds if no file exists (fresh pak).
+- (void) loadMempakForPort:(NSInteger)port;
+
+/// Persist the in-memory mempak buffer for the given port (0–3) to disk.
+/// Only writes if the dirty flag is set.
+- (void) saveMempakForPort:(NSInteger)port;
+
+/// Save all dirty mempak buffers to disk. Call on pause/stop.
+- (void) saveAllMempaks;
+
 @end
 
 extern __weak PVMupenBridge * __nullable _current;

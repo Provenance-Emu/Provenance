@@ -786,7 +786,7 @@ static void *dlopen_myself()
 
 - (void)parseOptions {
     // Parse controller pak options and set controller modes
-    // Values: 1=None, 2=Memory Pak, 3=Rumble Pak, 4=Transfer Pak, 5=Raw
+    // Values: 1=None, 2=Memory Pak, 3=Rumble Pak, 4=Transfer Pak, 5=Raw/Smart Pak
     int pak1 = [MupenGameCoreOptions controllerPak1Option];
     int pak2 = [MupenGameCoreOptions controllerPak2Option];
     int pak3 = [MupenGameCoreOptions controllerPak3Option];
@@ -798,6 +798,89 @@ static void *dlopen_myself()
     [self setMode:pak4 forController:3];
 
     ILOG(@"Controller paks configured: P1=%d, P2=%d, P3=%d, P4=%d", pak1, pak2, pak3, pak4);
+
+    // Load virtual mempak data for any controller in PLUGIN_RAW (Smart Pak) mode.
+    // PLUGIN_RAW = 5; only those ports use our in-memory mempak buffer.
+    int paks[4] = {pak1, pak2, pak3, pak4};
+    for (int i = 0; i < 4; i++) {
+        if (paks[i] == 5) {
+            [self loadMempakForPort:i];
+        }
+    }
+}
+
+#pragma mark - Virtual Mempak (PLUGIN_RAW / Smart Pak)
+
+/// Returns the filesystem path for the mempak save file for the given port.
+/// Format: <batterySavesPath>/<romName>_controller<N+1>.mpk
+- (nullable NSString *)mempakPathForPort:(NSInteger)port {
+    NSString *savesDir = self.batterySavesPath;
+    NSString *name = self.romName;
+    if (savesDir.length == 0 || name.length == 0) {
+        WLOG(@"[Mempak] Cannot derive path: batterySavesPath=%@ romName=%@", savesDir, name);
+        return nil;
+    }
+    NSString *fileName = [NSString stringWithFormat:@"%@_controller%ld.mpk", name, (long)(port + 1)];
+    return [savesDir stringByAppendingPathComponent:fileName];
+}
+
+- (void)loadMempakForPort:(NSInteger)port {
+    if (port < 0 || port >= 4) return;
+
+    NSString *path = [self mempakPathForPort:port];
+    if (!path) return;
+
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (data && data.length >= 0x8000) {
+        memcpy(mempakBuffer[port], data.bytes, 0x8000);
+        mempakDirty[port] = NO;
+        ILOG(@"[Mempak] Loaded controller %ld pak from %@", (long)(port + 1), path);
+    } else if (data) {
+        WLOG(@"[Mempak] File too small (%lu bytes) for controller %ld, starting fresh", (unsigned long)data.length, (long)(port + 1));
+        memset(mempakBuffer[port], 0x00, 0x8000);
+        mempakDirty[port] = NO;
+    } else {
+        // No file yet — fresh pak, all zeros (game will format it on first access)
+        memset(mempakBuffer[port], 0x00, 0x8000);
+        mempakDirty[port] = NO;
+        ILOG(@"[Mempak] No save file for controller %ld — starting with empty pak", (long)(port + 1));
+    }
+}
+
+- (void)saveMempakForPort:(NSInteger)port {
+    if (port < 0 || port >= 4) return;
+    if (!mempakDirty[port]) return;
+
+    NSString *path = [self mempakPathForPort:port];
+    if (!path) return;
+
+    // Ensure the saves directory exists.
+    NSString *dir = [path stringByDeletingLastPathComponent];
+    NSError *err = nil;
+    [[NSFileManager defaultManager] createDirectoryAtPath:dir
+                                withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:&err];
+    if (err) {
+        ELOG(@"[Mempak] Failed to create saves directory %@: %@", dir, err.localizedDescription);
+        return;
+    }
+
+    NSData *data = [NSData dataWithBytes:mempakBuffer[port] length:0x8000];
+    if ([data writeToFile:path atomically:YES]) {
+        mempakDirty[port] = NO;
+        DLOG(@"[Mempak] Saved controller %ld pak to %@", (long)(port + 1), path);
+    } else {
+        ELOG(@"[Mempak] Failed to write controller %ld pak to %@", (long)(port + 1), path);
+    }
+}
+
+- (void)saveAllMempaks {
+    for (int i = 0; i < 4; i++) {
+        if (mempakDirty[i]) {
+            [self saveMempakForPort:i];
+        }
+    }
 }
 
 @end
