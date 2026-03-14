@@ -787,7 +787,8 @@ void extract_bundles();
         NSString *hatariCfgSource  = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"hatari.cfg" ofType:nil];
 
         if (hatariCfgSource) {
-            NSString *hatariCfgContent = [NSString stringWithContentsOfFile:hatariCfgSource encoding:NSUTF8StringEncoding error:nil];
+            NSError *templateReadError = nil;
+            NSString *hatariCfgContent = [NSString stringWithContentsOfFile:hatariCfgSource encoding:NSUTF8StringEncoding error:&templateReadError];
             if (hatariCfgContent) {
                 /// Embed the absolute TOS path so Hatari finds the ROM regardless of cwd.
                 hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szTosImageFileName = tos.img"
@@ -799,20 +800,47 @@ void extract_bundles();
                 }
                 hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szDiskImageDirectory = ~/Documents/ROMs/com.provenance.atarist/"
                                                                                withString:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
+                NSError *regexError = nil;
                 NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"szDiskImageDirectory = ~/Documents/ROMs/[^\\n]+"
-                                                                                        options:0 error:nil];
-                hatariCfgContent = [regex stringByReplacingMatchesInString:hatariCfgContent
-                                                                   options:0
-                                                                     range:NSMakeRange(0, hatariCfgContent.length)
-                                                              withTemplate:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
+                                                                                        options:0
+                                                                                          error:&regexError];
+                if (regex) {
+                    hatariCfgContent = [regex stringByReplacingMatchesInString:hatariCfgContent
+                                                                       options:0
+                                                                         range:NSMakeRange(0, hatariCfgContent.length)
+                                                                  withTemplate:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
+                } else if (regexError) {
+                    ELOG(@"Failed to create NSRegularExpression for Hatari disk image directory: %@", regexError);
+                }
 
                 /// Write to hatari working dir first (this is where Hatari looks).
-                [hatariCfgContent writeToFile:hatariWorkCfgPath atomically:NO encoding:NSUTF8StringEncoding error:nil];
+                NSError *workWriteError = nil;
+                BOOL workWriteOK = [hatariCfgContent writeToFile:hatariWorkCfgPath
+                                                      atomically:NO
+                                                        encoding:NSUTF8StringEncoding
+                                                           error:&workWriteError];
                 /// Also write to the legacy location.
-                [hatariCfgContent writeToFile:hatariCfgPath atomically:NO encoding:NSUTF8StringEncoding error:nil];
-                ILOG(@"hatari.cfg written to working dir (%@) and legacy path (%@)", hatariWorkCfgPath, hatariCfgPath);
-                ILOG(@"  TOS path: %@, ROMs dir: %@", tosImagePath, romsDirectory);
+                NSError *legacyWriteError = nil;
+                BOOL legacyWriteOK = [hatariCfgContent writeToFile:hatariCfgPath
+                                                        atomically:NO
+                                                          encoding:NSUTF8StringEncoding
+                                                             error:&legacyWriteError];
+
+                if (workWriteOK && legacyWriteOK) {
+                    ILOG(@"hatari.cfg written to working dir (%@) and legacy path (%@)", hatariWorkCfgPath, hatariCfgPath);
+                    ILOG(@"  TOS path: %@, ROMs dir: %@", tosImagePath, romsDirectory);
+                } else {
+                    if (!workWriteOK) {
+                        ELOG(@"Failed to write hatari.cfg to working dir %@: %@", hatariWorkCfgPath, workWriteError);
+                    }
+                    if (!legacyWriteOK) {
+                        ELOG(@"Failed to write hatari.cfg to legacy path %@: %@", hatariCfgPath, legacyWriteError);
+                    }
+                }
             } else {
+                if (templateReadError) {
+                    ELOG(@"Failed to read hatari.cfg template from %@: %@", hatariCfgSource, templateReadError);
+                }
                 [self syncResource:hatariCfgSource to:hatariCfgPath];
                 [self syncResource:hatariCfgSource to:hatariWorkCfgPath];
             }
