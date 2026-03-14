@@ -370,7 +370,15 @@ public struct AllSaveStatesBrowserView: View {
                 ELOG("AllSaveStatesBrowserView: Save state not found for id: \(item.id)")
                 return
             }
-            let systemId = saveState.game?.systemIdentifier ?? ""
+            let systemId: String
+            if !item.systemId.isEmpty {
+                systemId = item.systemId
+            } else if let derivedSystemId = saveState.game?.systemIdentifier, !derivedSystemId.isEmpty {
+                systemId = derivedSystemId
+            } else {
+                ELOG("AllSaveStatesBrowserView: Missing system identifier for save state id: \(item.id)")
+                systemId = ""
+            }
             do {
                 try RomDatabase.sharedInstance.delete(saveState: saveState)
                 store.removeFromCache(id: item.id, systemID: systemId)
