@@ -161,7 +161,9 @@ public final class JITStatusViewModel: ObservableObject {
 /// Compact popover content showing the JIT status explanation
 private struct JITExplanationPopoverView: View {
     let status: JITStatus
+#if canImport(JITManager)
     let jitSource: JITSource
+#endif
     let explanation: String
 
     var body: some View {
@@ -173,11 +175,13 @@ private struct JITExplanationPopoverView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(status.label)
                         .font(.headline)
+#if canImport(JITManager)
                     if status == .active, jitSource != .none, jitSource != .unknown {
                         Text("via \(jitSource.displayName)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+#endif
                 }
             }
             Text(explanation)
