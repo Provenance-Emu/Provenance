@@ -139,6 +139,13 @@ public final class RetroSaveStatesStore: ObservableObject {
         return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: dedup)
     }
 
+    /// Loads all save states across all systems with no limit.
+    /// Prefer this over ``loadAllRecent(limit:)`` when the full library is needed.
+    @discardableResult
+    public func loadAll() async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: NSPredicate(value: true), limit: nil)
+    }
+
     /// Loads recent save states filtered by multiple system IDs.
     /// Respects the `showAutoSavesInRecents` preference — deduplicates by default.
     @discardableResult
@@ -221,7 +228,36 @@ public final class RetroSaveStatesStore: ObservableObject {
         }
     }
 
-    /// Fetches save states matching `predicate`, sorted newest-first.
+    /// Loads a page of save states using cursor-based (offset) pagination.
+    ///
+    /// - Parameters:
+    ///   - offset: Number of items to skip (0 for the first page).
+    ///   - pageSize: Maximum number of items to return.
+    ///   - ascending: When `true`, results are sorted oldest-first; otherwise newest-first (default).
+    /// - Returns: Items for the requested page.  An empty array means the caller
+    ///            has reached the end of the data set.
+    @discardableResult
+    public func loadPage(offset: Int, pageSize: Int, ascending: Bool = false) async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: NSPredicate(value: true), offset: offset, limit: pageSize, ascending: ascending)
+    }
+
+    /// Returns the total number of save states (used to detect end-of-data).
+    public func totalSaveStateCount() async -> Int {
+        await withCheckedContinuation { continuation in
+            workQueue.async {
+                do {
+                    let realm = try Realm()
+                    let count = realm.objects(PVSaveState.self).count
+                    continuation.resume(returning: count)
+                } catch {
+                    ELOG("RetroSaveStatesStore: Failed to count save states: \(error)")
+                    continuation.resume(returning: 0)
+                }
+            }
+        }
+    }
+
+    /// Fetches save states matching `predicate`, sorted newest-first by default.
     /// - Parameters:
     ///   - predicate: Realm filter predicate.
     ///   - limit: Maximum number of results to return; `nil` fetches all (used by full management UI).
@@ -229,26 +265,47 @@ public final class RetroSaveStatesStore: ObservableObject {
     ///     all manual saves are always included. Defaults to `false` so the full save management
     ///     UI remains unfiltered.
     private func fetchSaveStates(predicate: NSPredicate, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: predicate, offset: 0, limit: limit, ascending: false, deduplicateAutosaves: deduplicateAutosaves)
+    }
+
+    private func fetchSaveStates(predicate: NSPredicate, offset: Int, limit: Int?, ascending: Bool = false, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
         await withCheckedContinuation { continuation in
             workQueue.async {
+                let validatedOffset = max(0, offset)
+                if let limit, limit <= 0 {
+                    continuation.resume(returning: [])
+                    return
+                }
+
                 do {
                     let realm = try Realm()
                     let results = realm.objects(PVSaveState.self)
                         .filter(predicate)
-                        .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
+                        .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: ascending)
 
+                    // Fast-path: no offset and no limit — materialise the whole set cheaply.
+                    if validatedOffset == 0 && limit == nil && !deduplicateAutosaves {
+                        let items = Array(results).compactMap { self.mapSaveState($0) }
+                        continuation.resume(returning: items)
+                        return
+                    }
+
+                    // Use direct index access for efficient Realm lazy-loading with offset/limit.
                     // When deduplicating, fetch a larger window so that after removing duplicate
-                    // autosaves we still have enough items to fill `limit`. Without this, a batch
-                    // that is mostly autosaves from the same game could yield far fewer than `limit`
-                    // results after the dedup pass.
-                    let fetchLimit: Int? = (deduplicateAutosaves && limit != nil) ? limit.map { $0 * 4 } : limit
-                    let collection: [PVSaveState] = {
-                        if let fetchLimit {
-                            return Array(results.prefix(fetchLimit))
-                        } else {
-                            return Array(results)
-                        }
-                    }()
+                    // autosaves we still have enough items to fill `limit`.
+                    let totalCount = results.count
+                    let startIndex = min(validatedOffset, totalCount)
+                    let rawLimit: Int? = (deduplicateAutosaves && limit != nil) ? limit.map { $0 * 4 } : limit
+                    let endIndex: Int
+                    if let rawLimit {
+                        endIndex = min(startIndex + rawLimit, totalCount)
+                    } else {
+                        endIndex = totalCount
+                    }
+
+                    let collection: [PVSaveState] = startIndex < endIndex
+                        ? (startIndex..<endIndex).map { results[$0] }
+                        : []
 
                     let items: [RetroSaveStateItem]
                     if deduplicateAutosaves {

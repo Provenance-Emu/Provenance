@@ -49,6 +49,7 @@ public struct RetroMainView: View {
     private var tabItems: [RetroTabItem] {
         var items = [
             RetroTabItem(title: "Games", systemImage: "gamecontroller"),
+            RetroTabItem(title: "Save States", systemImage: "clock.arrow.circlepath"),
             RetroTabItem(title: "Settings", systemImage: "gear"),
             RetroTabItem(title: "Status", systemImage: "info")
         ]
@@ -97,6 +98,7 @@ public struct RetroMainView: View {
                 selection: $selectedTab,
                 content: {
                     // Content views for each tab
+                    // Tab indices: 0=Games, 1=Save States, 2=Settings, 3=Status, 4=Debug (optional)
                     ZStack {
                         // Show the appropriate view based on the selected tab
                         if selectedTab == 0 {
@@ -108,8 +110,13 @@ public struct RetroMainView: View {
                                 .modifier(FocusTabBarOnExitModifier())
 #endif
                         } else if selectedTab == 1 {
-                            SettingsWrapperView()
+                            SaveStateBrowserView()
+#if os(tvOS)
+                                .modifier(FocusTabBarOnExitModifier())
+#endif
                         } else if selectedTab == 2 {
+                            SettingsWrapperView()
+                        } else if selectedTab == 3 {
                             Group {
 #if os(tvOS)
                                 // On tvOS, let RetroStatusControlView handle its own scrolling for better focus management
@@ -130,7 +137,7 @@ public struct RetroMainView: View {
                             }
                             .tag("status")
                             .ignoresSafeArea(.all, edges: .bottom)
-                        } else if selectedTab == 3 && showFeatureFlagsDebug {
+                        } else if selectedTab == 4 && showFeatureFlagsDebug {
                             RetroDebugView()
 #if os(tvOS)
                                 .modifier(FocusTabBarOnExitModifier())
