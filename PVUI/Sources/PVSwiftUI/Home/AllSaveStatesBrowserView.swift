@@ -75,12 +75,19 @@ public struct AllSaveStatesBrowserView: View {
 
     // MARK: - Derived data
 
+    @State private var groupedItemsCache: [(key: String, value: [RetroSaveStateItem])] = []
+
     private var filteredItems: [RetroSaveStateItem] {
         showFavoritesOnly ? items.filter { $0.isFavorite } : items
     }
 
     private var groupedItems: [(key: String, value: [RetroSaveStateItem])] {
-        let grouped = Dictionary(grouping: filteredItems, by: { $0.gameId })
+        groupedItemsCache
+    }
+
+    private func recomputeGroupedItems() {
+        let sourceItems = filteredItems
+        let grouped = Dictionary(grouping: sourceItems, by: { $0.gameId })
 
         // Precompute per-group metadata so the sort comparator is O(1) per comparison.
         var metadata = [String: (newest: Date, oldest: Date, title: String)]()
@@ -94,7 +101,7 @@ public struct AllSaveStatesBrowserView: View {
             metadata[key] = (newest: newest, oldest: oldest, title: title)
         }
 
-        return grouped.sorted { lhs, rhs in
+        groupedItemsCache = grouped.sorted { lhs, rhs in
             guard let lhsMeta = metadata[lhs.key],
                   let rhsMeta = metadata[rhs.key] else {
                 // Fallback to key-based ordering if metadata is missing for any reason.
@@ -127,6 +134,16 @@ public struct AllSaveStatesBrowserView: View {
                 guard items.isEmpty else { return }
                 #endif
                 await loadItems()
+                recomputeGroupedItems()
+            }
+            .onChange(of: items) { _ in
+                recomputeGroupedItems()
+            }
+            .onChange(of: sortOrder) { _ in
+                recomputeGroupedItems()
+            }
+            .onChange(of: showFavoritesOnly) { _ in
+                recomputeGroupedItems()
             }
     }
 
