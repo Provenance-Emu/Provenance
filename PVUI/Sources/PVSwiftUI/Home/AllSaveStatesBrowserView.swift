@@ -304,8 +304,7 @@ public struct AllSaveStatesBrowserView: View {
 
     private func manageGame(gameId: String) {
         Task { @MainActor in
-            let realm = RomDatabase.sharedInstance.realm
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameId) else {
+            guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId) else {
                 ELOG("AllSaveStatesBrowserView: Game not found for id: \(gameId)")
                 return
             }
@@ -315,8 +314,7 @@ public struct AllSaveStatesBrowserView: View {
 
     private func deleteSaveState(item: RetroSaveStateItem) {
         Task { @MainActor in
-            let realm = RomDatabase.sharedInstance.realm
-            guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: item.id) else {
+            guard let saveState = RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: item.id) else {
                 ELOG("AllSaveStatesBrowserView: Save state not found for id: \(item.id)")
                 return
             }

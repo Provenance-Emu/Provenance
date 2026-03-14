@@ -10,37 +10,13 @@
 //
 
 import SwiftUI
-import RealmSwift
 import PVLibrary
+import PVRealm
 import PVThemes
 import PVUIBase
 import PVLogging
 
 // MARK: - Data Models
-
-/// Lightweight snapshot of a PVSaveState for UI use, decoupled from Realm.
-private struct SaveStateBrowserItem: Identifiable {
-    let id: String
-    let date: Date
-    let isAutosave: Bool
-    let coreVersion: String?
-    let screenshotURL: URL?
-    /// Resolves the live Realm object on demand (e.g. for launch/delete).
-    let resolver: () -> PVSaveState?
-
-    init(saveState: PVSaveState) {
-        let snap = saveState.isFrozen ? saveState : saveState.freeze()
-        self.id = snap.id
-        self.date = snap.date
-        self.isAutosave = snap.isAutosave
-        self.coreVersion = snap.createdWithCoreVersion
-        self.screenshotURL = snap.image?.url
-        let pk = snap.id
-        self.resolver = {
-            RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: pk)
-        }
-    }
-}
 
 /// A group of save states belonging to a single game.
 private struct SaveStateGameGroup: Identifiable {
@@ -48,7 +24,7 @@ private struct SaveStateGameGroup: Identifiable {
     let gameTitle: String
     let artworkURL: URL?        // local file URL for artwork (may be nil)
     let systemShortName: String?
-    var items: [SaveStateBrowserItem]
+    var items: [RetroSaveStateItem]
 }
 
 // MARK: - Main View
@@ -57,70 +33,32 @@ private struct SaveStateGameGroup: Identifiable {
 /// grouped by game title. Each game row can be expanded to see its
 /// individual save states.
 ///
+/// Data is fetched via ``RetroSaveStatesStore`` (never directly from Realm)
+/// so it is forward-compatible with the planned SwiftData migration (#2510).
+///
 /// Accessible from the main app via the "Save States" tab in RetroMainView.
 public struct SaveStateBrowserView: View {
 
-    @ObservedResults(
-        PVSaveState.self,
-        filter: NSPredicate(format: "game != nil AND game.system != nil"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
-    ) private var allSaveStates
+    @ObservedObject private var store: RetroSaveStatesStore = .shared
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var showAutosaves: Bool = false
     @State private var expandedGameIDs: Set<String> = []
     @State private var searchText: String = ""
 
-    @ObservedObject private var themeManager = ThemeManager.shared
+    /// Pre-built group list, recomputed asynchronously on load and filter changes.
+    @State private var computedGroups: [SaveStateGameGroup] = []
+    /// Raw items fetched from the store — filtering/grouping is applied client-side.
+    @State private var allItems: [RetroSaveStateItem] = []
 
     public init() {}
-
-    // MARK: - Computed Groups
-
-    private var groups: [SaveStateGameGroup] {
-        var dict: [String: SaveStateGameGroup] = [:]
-        var order: [String] = []
-
-        for state in allSaveStates {
-            guard !state.isInvalidated,
-                  let game = state.game, !game.isInvalidated else { continue }
-
-            // Filter autosaves unless toggle is on
-            if !showAutosaves && state.isAutosave { continue }
-
-            // Search filter (applied to game title)
-            if !searchText.isEmpty {
-                guard game.title.localizedCaseInsensitiveContains(searchText) else { continue }
-            }
-
-            let gameID = game.id
-            let item = SaveStateBrowserItem(saveState: state)
-
-            if dict[gameID] != nil {
-                dict[gameID]!.items.append(item)
-            } else {
-                order.append(gameID)
-                dict[gameID] = SaveStateGameGroup(
-                    id: gameID,
-                    gameTitle: game.title,
-                    artworkURL: game.originalArtworkFile?.url,
-                    systemShortName: game.system?.shortName,
-                    items: [item]
-                )
-            }
-        }
-
-        // Sort alphabetically by game title
-        return order
-            .compactMap { dict[$0] }
-            .sorted { $0.gameTitle.localizedCaseInsensitiveCompare($1.gameTitle) == .orderedAscending }
-    }
 
     // MARK: - Body
 
     public var body: some View {
         NavigationView {
             Group {
-                if groups.isEmpty {
+                if computedGroups.isEmpty {
                     emptyStateView
                 } else {
                     gameList
@@ -148,6 +86,52 @@ public struct SaveStateBrowserView: View {
         #if os(iOS)
         .navigationViewStyle(.stack)
         #endif
+        .task {
+            allItems = await store.loadAll()
+            applyFilters()
+        }
+        .onChange(of: showAutosaves) { _ in applyFilters() }
+        .onChange(of: searchText) { _ in applyFilters() }
+    }
+
+    // MARK: - Data Helpers
+
+    /// Filters and groups `allItems` client-side, then stores the result.
+    ///
+    /// Runs on the MainActor synchronously so SwiftUI picks up the change
+    /// immediately. RomDatabase artwork lookups are main-thread safe.
+    @MainActor
+    private func applyFilters() {
+        var dict: [String: SaveStateGameGroup] = [:]
+        var order: [String] = []
+
+        for item in allItems {
+            if !showAutosaves && item.isAutosave { continue }
+            if !searchText.isEmpty {
+                guard item.gameTitle.localizedCaseInsensitiveContains(searchText) else { continue }
+            }
+
+            if dict[item.gameId] != nil {
+                dict[item.gameId]!.items.append(item)
+            } else {
+                order.append(item.gameId)
+                // Look up artwork via RomDatabase (the DB manager layer, not raw Realm)
+                let artworkURL = RomDatabase.sharedInstance
+                    .object(ofType: PVGame.self, wherePrimaryKeyEquals: item.gameId)?
+                    .originalArtworkFile?.url
+                dict[item.gameId] = SaveStateGameGroup(
+                    id: item.gameId,
+                    gameTitle: item.gameTitle,
+                    artworkURL: artworkURL,
+                    systemShortName: item.systemName.isEmpty ? nil : item.systemName,
+                    items: [item]
+                )
+            }
+        }
+
+        computedGroups = order
+            .compactMap { dict[$0] }
+            .sorted { $0.gameTitle.localizedCaseInsensitiveCompare($1.gameTitle) == .orderedAscending }
     }
 
     // MARK: - Subviews
@@ -193,13 +177,18 @@ public struct SaveStateBrowserView: View {
     @ViewBuilder
     private var gameList: some View {
         List {
-            ForEach(groups) { group in
+            ForEach(computedGroups) { group in
                 Section {
                     if expandedGameIDs.contains(group.id) {
                         ForEach(group.items) { item in
                             SaveStateBrowserItemRow(
                                 item: item,
-                                gameTitle: group.gameTitle
+                                gameTitle: group.gameTitle,
+                                onDeleted: {
+                                    // Remove from allItems and recompute
+                                    allItems.removeAll { $0.id == item.id }
+                                    applyFilters()
+                                }
                             )
                         }
                     }
@@ -293,8 +282,9 @@ private struct SaveStateBrowserGameHeader: View {
 // MARK: - Save State Row
 
 private struct SaveStateBrowserItemRow: View {
-    let item: SaveStateBrowserItem
+    let item: RetroSaveStateItem
     let gameTitle: String
+    let onDeleted: () -> Void
 
     @State private var showDeleteAlert: Bool = false
 
@@ -309,7 +299,7 @@ private struct SaveStateBrowserItemRow: View {
         HStack(spacing: 12) {
             // Screenshot thumbnail
             CachedAsyncImageView(
-                url: item.screenshotURL,
+                url: item.imageURL,
                 fallbackImage: UIImage.missingArtworkImage(gameTitle: "Save State", ratio: 1.78),
                 height: 48,
                 zoomFactor: 1.0
@@ -324,7 +314,7 @@ private struct SaveStateBrowserItemRow: View {
                     .font(.subheadline)
                     .lineLimit(1)
 
-                if let version = item.coreVersion {
+                if let version = item.createdWithCoreVersion {
                     Text("Core v\(version)")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -339,14 +329,9 @@ private struct SaveStateBrowserItemRow: View {
 
             Spacer()
 
-            // Play button
+            // Play button — launch via the store (DB-layer, not raw Realm)
             Button {
-                if let state = item.resolver() {
-                    SceneCoordinator.shared.launchSaveState(
-                        state.freeze(),
-                        core: state.core?.freeze()
-                    )
-                }
+                Task { await RetroSaveStatesStore.shared.openSaveState(id: item.id) }
             } label: {
                 Image(systemName: "play.fill")
                     .foregroundColor(.accentColor)
@@ -375,6 +360,7 @@ private struct SaveStateBrowserItemRow: View {
                 ) {
                     do {
                         try RomDatabase.sharedInstance.delete(saveState: state)
+                        onDeleted()
                     } catch {
                         ELOG("SaveStateBrowserView: Failed to delete save state: \(error)")
                     }

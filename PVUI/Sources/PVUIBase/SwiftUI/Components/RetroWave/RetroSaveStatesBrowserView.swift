@@ -139,6 +139,13 @@ public final class RetroSaveStatesStore: ObservableObject {
         return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: dedup)
     }
 
+    /// Loads all save states across all systems with no limit.
+    /// Prefer this over ``loadAllRecent(limit:)`` when the full library is needed.
+    @discardableResult
+    public func loadAll() async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: NSPredicate(value: true), limit: nil)
+    }
+
     /// Loads recent save states filtered by multiple system IDs.
     /// Respects the `showAutoSavesInRecents` preference — deduplicates by default.
     @discardableResult
