@@ -164,9 +164,23 @@ public final class GCControllerHapticsManager {
         guard let controller = playerControllers[player] else {
             VLOG("[GCHaptics] No controller registered for player \(player + 1) — falling back to Taptic Engine")
             #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
-            let intensity = max(0, min(1, _cachedIntensityMultiplier))
+            let baseIntensity = max(0, min(1, _cachedIntensityMultiplier))
+            let paramsMax = max(params.lowFrequency, params.highFrequency)
+            let paramsScale = max(0, min(1, paramsMax))
+            let intensity = baseIntensity * paramsScale
             guard intensity > 0 else { return }
-            let generator = UIImpactFeedbackGenerator(style: .medium)
+
+            let feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle
+            switch params.duration {
+            case ..<0.05:
+                feedbackStyle = .light
+            case ..<0.25:
+                feedbackStyle = .medium
+            default:
+                feedbackStyle = .heavy
+            }
+
+            let generator = UIImpactFeedbackGenerator(style: feedbackStyle)
             generator.prepare()
             generator.impactOccurred(intensity: CGFloat(intensity))
             #endif
