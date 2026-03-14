@@ -59,52 +59,52 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     }
 
     public init?(fromInfoDictionary dict: [String: Any]) {
-        /// Identifier
+        // Identifier
         guard let identifier = dict["PVCoreIdentifier"] as? String else {
             return nil
         }
         self.identifier = identifier
 
-        /// Principle Class
+        // Principle Class
         guard let principleClass = dict["PVPrincipleClass"] as? String else {
             return nil
         }
         self.principleClass = principleClass
 
-        /// Supported systems
+        // Supported systems
         guard let supportedSystems = dict["PVSupportedSystems"] as? [String] else {
             return nil
         }
         self.supportedSystems = supportedSystems
 
-        /// Project name
+        // Project name
         guard let projectName = dict["PVProjectName"] as? String else {
             return nil
         }
         self.projectName = projectName
 
-        /// Project URL
+        // Project URL
         guard let projectURL = dict["PVProjectURL"] as? String else {
             return nil
         }
         self.projectURL = projectURL
 
-        /// Project Version
+        // Project Version
         guard let projectVersion = dict["PVProjectVersion"] as? String else {
             return nil
         }
         self.projectVersion = projectVersion
 
-        /// Disabled
+        // Disabled
         self.disabled = dict["PVDisabled"] as? Bool ?? false
 
-        /// Contentless
+        // Contentless
         self.contentless = dict["PVContentless"] as? Bool ?? false
 
-        /// AppStore Disabled
+        // AppStore Disabled
         self.appStoreDisabled = dict["PVAppStoreDisabled"] as? Bool ?? false
 
-        /// Supported cheat types — parse display-name strings into typed enum values.
+        // Supported cheat types — parse display-name strings into typed enum values.
         if let rawCheatTypes = dict["PVSupportedCheatTypes"] as? [Any] {
             let stringCheatTypes = rawCheatTypes.compactMap { $0 as? String }
             if stringCheatTypes.count != rawCheatTypes.count {
@@ -123,7 +123,7 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
             self.supportedCheatTypes = []
         }
 
-        /// Subcores
+        // Subcores
         if let subCores = dict["PVCores"] as? [[String:Any]] {
             self.subCores = subCores.compactMap {
                 return Self.init(fromInfoDictionary: $0)
@@ -132,10 +132,10 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
             self.subCores = nil
         }
 
-        /// JIT requirement — optional key; absent means notRequired
+        // JIT requirement — optional key; absent means notRequired
         self.jitRequirementRawValue = dict["PVJITRequirement"] as? String
 
-        /// JIT-disabled flag — core disabled specifically because JIT is unavailable
+        // JIT-disabled flag — core disabled specifically because JIT is unavailable
         self.jitDisabledWithoutJIT = dict["PVJITDisabledWithoutJIT"] as? Bool ?? false
     }
 
