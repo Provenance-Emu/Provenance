@@ -574,7 +574,7 @@ struct RetroMenuView: View {
                 }
             }
             .opacity(supportsSaveStates ? 1.0 : 0.4)
-            .allowsHitTesting(supportsSaveStates)
+            .disabled(!supportsSaveStates)
 
             // Load state button (blue = read/load) — always at position 2
             menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: .retroBlue) {
@@ -583,7 +583,7 @@ struct RetroMenuView: View {
                 }
             }
             .opacity(supportsSaveStates ? 1.0 : 0.4)
-            .allowsHitTesting(supportsSaveStates)
+            .disabled(!supportsSaveStates)
 
             // Save states list button (purple = browse) — always at position 3
             menuButton(title: "SAVE STATES", icon: "list.bullet", color: .retroPurple) {
@@ -592,7 +592,7 @@ struct RetroMenuView: View {
                 }
             }
             .opacity(supportsSaveStates ? 1.0 : 0.4)
-            .allowsHitTesting(supportsSaveStates)
+            .disabled(!supportsSaveStates)
 
             // Screenshot button (yellow = capture)
 #if os(iOS) || targetEnvironment(macCatalyst)
