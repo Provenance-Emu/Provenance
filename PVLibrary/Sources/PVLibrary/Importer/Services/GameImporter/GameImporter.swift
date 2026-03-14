@@ -635,7 +635,13 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        await self.initCorePlists()
+        do {
+            try await self.initCorePlists()
+        } catch {
+            ELOG("GameImporter: Failed to initialize core plists before initSystems: \(error.localizedDescription)")
+            initialized.leave()
+            return
+        }
         let fm = FileManager.default
         createDefaultDirectories(fm: fm)
 
@@ -718,14 +724,14 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// fine-grained progress reporting before invoking `initSystems()`.
     /// `CoreLoader.getCorePlists()` performs synchronous filesystem I/O; it is
     /// run inside a detached task so the main-actor thread is never blocked.
-    fileprivate enum GameImporterError: Error {
+    fileprivate enum CorePlistInitializationError: Error {
         case systemsPlistNotFound(bundle: Bundle)
     }
 
     public func initCorePlists() async throws {
         let bundle = ThisBundle
         guard let systemsPlistURL = bundle.url(forResource: "systems", withExtension: "plist") else {
-            let error = GameImporterError.systemsPlistNotFound(bundle: bundle)
+            let error = CorePlistInitializationError.systemsPlistNotFound(bundle: bundle)
             ELOG("GameImporter: Failed to locate systems.plist in bundle \(bundle): \(error)")
             throw error
         }

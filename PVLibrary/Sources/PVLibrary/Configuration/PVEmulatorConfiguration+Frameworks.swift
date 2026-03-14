@@ -97,7 +97,7 @@ public extension PVEmulatorConfiguration {
         // newly-registered cores for non-boot call paths (e.g. reset library).
         // Boot-time initialization may still trigger an additional reload later,
         // but correctness is preferred over skipping a potentially stale cache.
-        RomDatabase.reloadCache(force: true)
+        await RomDatabase.reloadCache(force: true)
         #if DEBUG
         printListOfSystems()
         #endif

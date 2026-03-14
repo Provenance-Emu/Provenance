@@ -419,7 +419,7 @@ public class AppState: ObservableObject {
         bootupStateManager.updateTaskProgress("Loading system definitions…", fraction: 0.06)
         do {
             try await withTimeout(seconds: 45) {
-                await GameImporter.shared.initCorePlists()
+                try await GameImporter.shared.initCorePlists()
             }
             ILOG("AppState: initCorePlists() completed")
         } catch let error as TimeoutError {
