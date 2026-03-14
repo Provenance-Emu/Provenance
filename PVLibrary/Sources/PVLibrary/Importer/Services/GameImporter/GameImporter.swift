@@ -737,9 +737,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
         await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
         // Scan frameworks directory off the main actor to avoid blocking UI updates.
-        let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
+        var corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
             CoreLoader.getCorePlists()
         }.value
+        corePlists = CoreLoader.mergeDiscoveredLibretroCores(into: corePlists)
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
