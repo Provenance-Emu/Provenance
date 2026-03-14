@@ -149,6 +149,7 @@ public struct PVToastStackView: View {
         GeometryReader { geo in
             ZStack(alignment: position.alignment) {
                 Color.clear
+                    .allowsHitTesting(false)
                 VStack(spacing: 8) {
                     ForEach(manager.toasts) { toast in
                         PVToastItemView(toast: toast) {
@@ -168,7 +169,6 @@ public struct PVToastStackView: View {
                 .frame(maxWidth: min(geo.size.width, 480))
             }
         }
-        .allowsHitTesting(true)
         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: manager.toasts.map(\.id))
     }
 }
