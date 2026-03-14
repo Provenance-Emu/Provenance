@@ -60,6 +60,7 @@ struct PVToastItemView: View {
                 .multilineTextAlignment(.leading)
                 .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityLabel("\(toast.type.accessibilityLabel): \(toast.message)")
 
             Spacer(minLength: 4)
 
@@ -91,9 +92,6 @@ struct PVToastItemView: View {
                 )
         )
         .shadow(color: toast.type.color.opacity(0.4), radius: 6, x: 0, y: 2)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(toast.type.accessibilityLabel): \(toast.message)")
-        .accessibilityAddTraits(.isStaticText)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
