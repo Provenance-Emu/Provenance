@@ -75,20 +75,33 @@ public struct AllSaveStatesBrowserView: View {
 
     private var groupedItems: [(key: String, value: [RetroSaveStateItem])] {
         let grouped = Dictionary(grouping: filteredItems, by: { $0.gameId })
+
+        // Precompute per-group metadata so the sort comparator is O(1) per comparison.
+        var metadata = [String: (newest: Date, oldest: Date, title: String)]()
+        metadata.reserveCapacity(grouped.count)
+
+        for (key, items) in grouped {
+            let dates = items.map(\.date)
+            let newest = dates.max() ?? .distantPast
+            let oldest = dates.min() ?? .distantFuture
+            let title = items.first?.gameTitle ?? ""
+            metadata[key] = (newest: newest, oldest: oldest, title: title)
+        }
+
         return grouped.sorted { lhs, rhs in
+            guard let lhsMeta = metadata[lhs.key],
+                  let rhsMeta = metadata[rhs.key] else {
+                // Fallback to key-based ordering if metadata is missing for any reason.
+                return lhs.key < rhs.key
+            }
+
             switch sortOrder {
             case .dateDescending:
-                let lhsDate = lhs.value.map(\.date).max() ?? .distantPast
-                let rhsDate = rhs.value.map(\.date).max() ?? .distantPast
-                return lhsDate > rhsDate
+                return lhsMeta.newest > rhsMeta.newest
             case .dateAscending:
-                let lhsDate = lhs.value.map(\.date).min() ?? .distantFuture
-                let rhsDate = rhs.value.map(\.date).min() ?? .distantFuture
-                return lhsDate < rhsDate
+                return lhsMeta.oldest < rhsMeta.oldest
             case .gameName:
-                let a = lhs.value.first?.gameTitle ?? ""
-                let b = rhs.value.first?.gameTitle ?? ""
-                return a.localizedCaseInsensitiveCompare(b) == .orderedAscending
+                return lhsMeta.title.localizedCaseInsensitiveCompare(rhsMeta.title) == .orderedAscending
             }
         }
     }
