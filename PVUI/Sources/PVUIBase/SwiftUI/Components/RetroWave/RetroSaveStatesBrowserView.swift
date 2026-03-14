@@ -34,6 +34,9 @@ public final class RetroSaveStatesStore: ObservableObject {
     @Published public private(set) var statesBySystem: [String: [RetroSaveStateItem]] = [:]
     @Published public private(set) var statesByGame: [String: [RetroSaveStateItem]] = [:]
 
+    /// Tracks whether the cached recent items for a system were built with autosave deduplication enabled.
+    private var recentDedupFlags: [String: Bool] = [:]
+
     private let imageCache = NSCache<NSString, UIImage>()
     private let workQueue = DispatchQueue(label: "org.provenance.retrowave.savestates", qos: .userInitiated)
 
@@ -53,11 +56,16 @@ public final class RetroSaveStatesStore: ObservableObject {
     /// surfaces stay in sync with the same user preference.
     @discardableResult
     public func loadRecent(forSystemID systemID: String, limit: Int = 8) async -> [RetroSaveStateItem] {
-        if let cached = await MainActor.run(body: { recentBySystem[systemID] }), !cached.isEmpty {
+        let dedup = !Defaults[.showAutoSavesInRecents]
+
+        let (cachedItems, cachedDedupFlag): ([RetroSaveStateItem]?, Bool?) = await MainActor.run {
+            (recentBySystem[systemID], recentDedupFlags[systemID])
+        }
+
+        if let cached = cachedItems, !cached.isEmpty, cachedDedupFlag == dedup {
             return cached
         }
 
-        let dedup = !Defaults[.showAutoSavesInRecents]
         let items = await fetchSaveStates(
             predicate: NSPredicate(format: "game.systemIdentifier == %@", systemID),
             limit: limit,
@@ -66,6 +74,7 @@ public final class RetroSaveStatesStore: ObservableObject {
 
         await MainActor.run {
             recentBySystem[systemID] = items
+            recentDedupFlags[systemID] = dedup
         }
 
         return items
@@ -74,7 +83,10 @@ public final class RetroSaveStatesStore: ObservableObject {
     /// Invalidates the cached recent saves for a system and re-fetches from Realm
     @discardableResult
     public func reloadRecent(forSystemID systemID: String, limit: Int = 8) async -> [RetroSaveStateItem] {
-        await MainActor.run { recentBySystem[systemID] = nil }
+        await MainActor.run {
+            recentBySystem[systemID] = nil
+            recentDedupFlags[systemID] = nil
+        }
         return await loadRecent(forSystemID: systemID, limit: limit)
     }
 
