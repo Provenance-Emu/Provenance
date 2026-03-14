@@ -745,27 +745,37 @@ void extract_bundles();
                 }
 
                 if (!tosIsZip) {
-                    /// Write to system/tos.img (backward-compat / absolute path in hatari.cfg)
-                    NSError *writeError = nil;
-                    if (![tosToWrite writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
-                        ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);
-                    } else {
-                        ILOG(@"TOS image written to system dir: %@ (%lu bytes)", tosImagePath, (unsigned long)tosToWrite.length);
-                    }
-
-                    /// Also write to system/hatari/tos.img — Hatari's working directory.
-                    /// This ensures Hatari finds the correct (and possibly repaired) ROM even
-                    /// if it cannot read the absolute path from hatari.cfg (e.g., stale cfg).
-                    writeError = nil;
-                    if (![tosToWrite writeToFile:hatariTosPath options:NSDataWritingAtomic error:&writeError]) {
-                        ELOG(@"Failed to write TOS image to hatari working dir %@: %@", hatariTosPath, writeError.localizedDescription);
-                    } else {
-                        ILOG(@"TOS image written to hatari working dir: %@", hatariTosPath);
-                    }
-
                     unsigned long long sizeBytes = tosToWrite.length;
-                    if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
-                        WLOG(@"TOS image size %llu bytes is not a typical TOS size (192KB, 256KB, or 512KB)", sizeBytes);
+
+                    /* Basic sanity check: avoid overwriting an existing, valid TOS image
+                     * with an obviously too-small payload (e.g. truncated/corrupt file).
+                     * Typical TOS images are 192KB, 256KB, or 512KB. We allow anything
+                     * >= 128KB but warn if it's not one of the common sizes.
+                     */
+                    if (sizeBytes < 128*1024) {
+                        WLOG(@"TOS image size %llu bytes is too small to be a valid TOS image. Skipping copy to avoid overwriting existing image.", sizeBytes);
+                    } else {
+                        /// Write to system/tos.img (backward-compat / absolute path in hatari.cfg)
+                        NSError *writeError = nil;
+                        if (![tosToWrite writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
+                            ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);
+                        } else {
+                            ILOG(@"TOS image written to system dir: %@ (%lu bytes)", tosImagePath, (unsigned long)tosToWrite.length);
+                        }
+
+                        /// Also write to system/hatari/tos.img — Hatari's working directory.
+                        /// This ensures Hatari finds the correct (and possibly repaired) ROM even
+                        /// if it cannot read the absolute path from hatari.cfg (e.g., stale cfg).
+                        writeError = nil;
+                        if (![tosToWrite writeToFile:hatariTosPath options:NSDataWritingAtomic error:&writeError]) {
+                            ELOG(@"Failed to write TOS image to hatari working dir %@: %@", hatariTosPath, writeError.localizedDescription);
+                        } else {
+                            ILOG(@"TOS image written to hatari working dir: %@", hatariTosPath);
+                        }
+
+                        if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
+                            WLOG(@"TOS image size %llu bytes is not a typical TOS size (192KB, 256KB, or 512KB)", sizeBytes);
+                        }
                     }
                 }
             }
