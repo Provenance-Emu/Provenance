@@ -525,6 +525,66 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
 
         ILOG("Assign controller \(controller.vendorName ?? "nil")")
+
+        let id = controllerIdentifier(for: controller)
+        var mode = slotMode(for: controller)
+
+        // Guard against invalid persisted slot values. Treat out-of-range slots as `.auto`
+        // to avoid crashing in `setController(_:toPlayer:)` when constructing GCControllerPlayerIndex.
+        switch mode {
+        case .preferred(let slot), .always(let slot):
+            let validRange = 1...8
+            if !validRange.contains(slot) {
+                WLOG("Invalid controller slot \(slot) for controller [\(id)]; treating as .auto")
+                mode = .auto
+            }
+        case .auto:
+            break
+        }
+
+        switch mode {
+        case .auto:
+            break // fall through to auto-assign below
+
+        case .preferred(let slot):
+            // Claim the preferred slot only if it is currently free.
+            if controller(forPlayer: slot) == nil {
+                ILOG("Controller [\(id)] assigned to preferred slot \(slot)")
+                setController(controller, toPlayer: slot)
+                NotificationCenter.default.post(name: .PVControllerManagerControllerReassigned, object: self)
+                return true
+            } else {
+                ILOG("Controller [\(id)] preferred slot \(slot) occupied; falling back to auto-assign")
+            }
+
+        case .always(let slot):
+            // Always claim `slot`, bumping any current occupant to the next available slot.
+            let occupant = controller(forPlayer: slot)
+            if let occupant = occupant {
+                let occupantID = controllerIdentifier(for: occupant)
+                if case .always(let occupantSlot) = slotMode(for: occupant), occupantSlot == slot {
+                    WLOG("⚠️ Controller slot conflict: both \"\(id)\" and \"\(occupantID)\" have .always(\(slot)). Last-connected (\"\(id)\") wins.")
+                }
+                // Evict occupant before claiming the slot.
+                setController(nil, toPlayer: slot)
+            }
+            ILOG("Controller [\(id)] claimed slot \(slot) (always mode)")
+            setController(controller, toPlayer: slot)
+            if let occupant = occupant {
+                ILOG("Bumping evicted controller [\(controllerIdentifier(for: occupant))] from slot \(slot)")
+                _ = assignAuto(occupant)
+            }
+            NotificationCenter.default.post(name: .PVControllerManagerControllerReassigned, object: self)
+            return true
+        }
+
+        return assignAuto(controller)
+    }
+
+    /// Auto-assign a controller to the first available slot, preferring to displace
+    /// remote / keyboard controllers with physical gamepads (tvOS Siri Remote behaviour).
+    @discardableResult
+    private func assignAuto(_ controller: GCController) -> Bool {
         // Assign the controller to the first player without a controller assigned, or
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
         for i in 1 ... 8 {
@@ -912,6 +972,119 @@ public final class SortOptionsTableViewController: UIViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - Player-Slot Preferences
+
+public extension PVControllerManager {
+
+    /// A stable string identifier for a controller, used as a dictionary key for preferences.
+    /// Uses ``GCController/vendorName`` when available, falling back to ``GCController/productCategory``.
+    func controllerIdentifier(for controller: GCController) -> String {
+        return controller.vendorName ?? controller.productCategory
+    }
+
+    // MARK: ControllerSlotMode API
+
+    /// Returns the saved ``ControllerSlotMode`` for a controller, or `.auto` when none is stored.
+    func slotMode(for controller: GCController) -> ControllerSlotMode {
+        let id = controllerIdentifier(for: controller)
+        return Defaults[.controllerSlotModes][id] ?? .auto
+    }
+
+    /// Persists the ``ControllerSlotMode`` for a controller.
+    /// Setting `.auto` removes any stored preference (identical to calling ``clearSlotMode(for:)``).
+    func setSlotMode(_ mode: ControllerSlotMode, for controller: GCController) {
+        let id = controllerIdentifier(for: controller)
+        var modes = Defaults[.controllerSlotModes]
+        if case .auto = mode {
+            modes.removeValue(forKey: id)
+        } else {
+            modes[id] = mode
+        }
+        Defaults[.controllerSlotModes] = modes
+        ILOG("Saved slot mode \(mode) for controller [\(id)]")
+    }
+
+    /// Removes any saved slot mode for a controller, reverting to `.auto`.
+    func clearSlotMode(for controller: GCController) {
+        setSlotMode(.auto, for: controller)
+    }
+
+    // MARK: Convenience Int-based API (kept for backward compatibility)
+
+    /// Returns the stored preferred player slot (1–8) for a controller, or `nil` if none has been saved.
+    ///
+    /// This is a convenience wrapper over ``slotMode(for:)``.  It returns the slot number embedded in
+    /// `.preferred(n)` or `.always(n)` modes, and `nil` for `.auto`.
+    func preferredPlayer(for controller: GCController) -> Int? {
+        return slotMode(for: controller).preferredSlot
+    }
+
+    /// Stores the preferred player slot for a controller so it is honoured on the next connect/reconnect.
+    /// Pass `nil` (or a value outside 1–8) to clear the preference.
+    ///
+    /// This sets the slot mode to `.preferred(n)` (or `.auto` to clear), preserving any existing `.always(n)` override
+    /// only when the requested slot number matches `n`.  Use ``setSlotMode(_:for:)`` to set `.always` mode explicitly.
+    func setPreferredPlayer(_ player: Int?, for controller: GCController) {
+        guard let player = player, player >= 1, player <= 8 else {
+            clearSlotMode(for: controller)
+            return
+        }
+        // Preserve .always if currently set to the same slot; otherwise write .preferred.
+        if case .always(let current) = slotMode(for: controller), current == player {
+            return // no change needed
+        }
+        setSlotMode(.preferred(player), for: controller)
+    }
+
+    /// Stores the preferred player slot using the controller's current player index.
+    /// Call this after the user has manually re-ordered controllers so the preference is persisted.
+    func saveCurrentPlayerSlotAsPreference(for controller: GCController) {
+        if let currentSlot = index(forController: controller) {
+            setPreferredPlayer(currentSlot, for: controller)
+        }
+    }
+
+    // MARK: Re-apply on scene activation
+
+    /// Re-applies saved slot preferences for all currently connected controllers.
+    ///
+    /// Call this when the emulator scene becomes active (e.g. after a tvOS focus/wake event) to
+    /// restore preferred assignments that may have been reset by the system while the app was
+    /// in the background.
+    @MainActor
+    func reapplyPreferences() {
+        let liveControllers = Array(allLiveControllers.values)
+        guard !liveControllers.isEmpty else { return }
+
+        ILOG("Re-applying controller slot preferences for \(liveControllers.count) controller(s)")
+
+        // Sort by priority so that .always controllers claim their slot first,
+        // then .preferred, then .auto — avoiding unnecessary eviction cascades.
+        let sorted = liveControllers.sorted { a, b in
+            slotPriority(for: a) > slotPriority(for: b)
+        }
+
+        // Clear all player slots so we start from a clean state.
+        for i in 1...8 { setController(nil, toPlayer: i) }
+
+        // Re-assign each controller respecting its stored mode.
+        for controller in sorted {
+            assign(controller)
+        }
+    }
+}
+
+private extension PVControllerManager {
+    /// Numeric sort priority used when ordering controllers in `reapplyPreferences()`.
+    func slotPriority(for controller: GCController) -> Int {
+        switch slotMode(for: controller) {
+        case .always:    return 2
+        case .preferred: return 1
+        case .auto:      return 0
+        }
     }
 }
 
