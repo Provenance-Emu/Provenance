@@ -106,7 +106,7 @@ public final class PVToastManager: ObservableObject {
         let toast = PVToast(id: id, message: message, type: type, icon: icon, duration: .infinity, isPersistent: true)
         enqueue(toast)
         postAccessibilityAnnouncement(toast)
-        return PVToastHandle(id: id, manager: self)
+        return PVToastHandle(id: id)
     }
 
     /// Dismiss a toast by its string id.
