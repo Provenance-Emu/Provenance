@@ -146,41 +146,47 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         let candidates = collectCandidateExecutables()
         ILOG("DynamicLibretroScanner: \(candidates.count) candidate dylib/framework paths found")
 
-        var newCores: [DiscoveredLibretroCore] = []
+        // Filter already-probed paths before the concurrent dlopen step.
+        let unprobed = candidates.filter { url in
+            !probedPaths.withLock { $0.contains(url.path) }
+        }
 
-        for url in candidates {
-            let path = url.path
+        guard !unprobed.isEmpty else {
+            ILOG("DynamicLibretroScanner: all candidates already probed — scan complete (0 new)")
+            return []
+        }
 
-            // Skip paths we have already probed (dlopen is expensive).
-            let alreadyProbed = probedPaths.withLock { $0.contains(path) }
-            if alreadyProbed {
-                DLOG("DynamicLibretroScanner: skipping already-probed \(url.lastPathComponent)")
-                continue
-            }
+        ILOG("DynamicLibretroScanner: probing \(unprobed.count) new candidates concurrently")
 
-            guard let core = probe(executableURL: url) else {
-                probedPaths.withLock { $0.insert(path) }
-                continue
-            }
-            probedPaths.withLock { $0.insert(path) }
+        // dlopen/dlclose are thread-safe on Darwin; probe all candidates in parallel.
+        let probedResults = OSAllocatedUnfairLock<[DiscoveredLibretroCore]>(initialState: [])
+
+        DispatchQueue.concurrentPerform(iterations: unprobed.count) { i in
+            let url = unprobed[i]
+            defer { probedPaths.withLock { $0.insert(url.path) } }
+
+            guard let core = probe(executableURL: url) else { return }
 
             let id = core.syntheticIdentifier
-
-            // Skip if already known via a static plist
-            if knownIdentifiers.contains(id) {
+            guard !knownIdentifiers.contains(id) else {
                 DLOG("DynamicLibretroScanner: skipping known core \(id)")
-                continue
+                return
             }
+            probedResults.withLock { $0.append(core) }
+        }
 
-            let insertedCore = discoveredStorage.withLock { cache -> DiscoveredLibretroCore? in
-                guard cache[id] == nil else { return nil }
+        // Merge into the persistent cache and collect truly new cores.
+        var newCores: [DiscoveredLibretroCore] = []
+        for core in probedResults.withLock({ $0 }) {
+            let id = core.syntheticIdentifier
+            let inserted = discoveredStorage.withLock { cache -> Bool in
+                guard cache[id] == nil else { return false }
                 cache[id] = core
-                return core
+                return true
             }
-
-            if let insertedCore {
-                newCores.append(insertedCore)
-                ILOG("DynamicLibretroScanner: discovered new core '\(insertedCore.libraryName)' v\(insertedCore.libraryVersion) → \(id)")
+            if inserted {
+                newCores.append(core)
+                ILOG("DynamicLibretroScanner: discovered new core '\(core.libraryName)' v\(core.libraryVersion) → \(id)")
             }
         }
 

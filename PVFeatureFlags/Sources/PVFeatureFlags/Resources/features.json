@@ -36,6 +36,12 @@
             "enabled": true,
             "minVersion": "3.0.5",
             "description": "Enables online lookup for cheat codes via GitHub API with 24h disk cache."
+        },
+        "dynamicLibretroScanner": {
+            "enabled": false,
+            "minVersion": "3.3.0",
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Scans Frameworks/ at startup for bare .libretro.framework dylibs and registers them as thin-wrapper cores (no RetroArch binary required). Off by default — enable in Settings > Advanced > Feature Flags to test."
         }
     }
 }
