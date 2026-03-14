@@ -13,6 +13,41 @@ import PVThemes
 import JITManager
 #endif
 
+// MARK: - JIT Support Level
+
+/// Describes how critical JIT is for the current core, used to tailor UI messaging.
+///
+/// Derived from `PVPrimitives.PVJITRequirement` when the core object is available,
+/// or from `JITCoreCapability` keyword-matching as a fallback.
+public enum CoreJITSupportLevel: Equatable {
+    /// Core **requires** JIT; will crash, freeze, or produce garbage without it.
+    /// Corresponds to `PVJITRequirement.requiredOrCrash`.
+    case required
+
+    /// Core **auto-detects** JIT availability and selects an appropriate execution
+    /// back-end automatically.  No user action is needed — launch is always safe.
+    /// Corresponds to `PVJITRequirement.automaticWithFallback` (e.g. Dolphin).
+    case automatic
+
+    /// JIT **improves** performance or accuracy; the core runs without it using a
+    /// fallback execution path.
+    /// - Parameter fallbackMode: Human-readable name of the fallback shown in UI
+    ///   (e.g. `"Interpreter"`, `"Cached Interpreter"`).
+    /// Corresponds to `PVJITRequirement.optional(fallback:)`.
+    case recommended(fallbackMode: String)
+
+    /// This core has no JIT code path — the indicator is not shown.
+    case notApplicable
+
+    /// Whether the user should be prompted to enable JIT (i.e. action is required/recommended).
+    public var requiresUserAction: Bool {
+        switch self {
+        case .required, .recommended: return true
+        case .automatic, .notApplicable: return false
+        }
+    }
+}
+
 // MARK: - JIT Status Types
 
 /// Represents the current JIT status for display in the HUD
@@ -70,8 +105,12 @@ public final class JITStatusViewModel: ObservableObject {
     #endif
 
     /// Whether the current core strictly requires JIT (vs. merely benefiting from it).
-    /// Set via `JITStatusIndicatorViewController.updateForCore(id:)` before calling `updateStatus()`.
+    /// Set via `JITStatusIndicatorViewController.updateForCore(...)` before calling `updateStatus()`.
     public var coreJITIsRequired: Bool = false
+
+    /// The JIT support level for the current core, used to generate differentiated UI messages.
+    /// Set alongside `coreJITIsRequired` via `JITStatusIndicatorViewController.updateForCore(...)`.
+    public var coreSupportLevel: CoreJITSupportLevel = .notApplicable
 
     #if canImport(JITManager)
     private var jitManager: DOLJitManager { DOLJitManager.shared }
@@ -129,7 +168,8 @@ public final class JITStatusViewModel: ObservableObject {
     }
 
     /// Returns a brief explanation of the current mode (shown in the compact alert on tap).
-    /// Includes the JIT acquisition source when active.
+    /// The message is tailored to the core's JIT support level so users understand
+    /// whether action is required, recommended, or handled automatically.
     public var explanation: String {
         switch status {
         case .active:
@@ -141,12 +181,42 @@ public final class JITStatusViewModel: ObservableObject {
             #else
             return "JIT compilation active — best performance enabled."
             #endif
+
         case .interpreterFallback:
-            return "JIT unavailable — some cores may run slower or be unstable."
+            switch coreSupportLevel {
+            case .automatic:
+                // Core self-manages JIT (e.g. Dolphin) — no user action needed
+                return "JIT is managed automatically by this core. Performance adjusts based on JIT availability — no action required."
+            case .recommended(let fallbackMode):
+                // JIT improves performance but core has a working fallback
+                return "Running in \(fallbackMode) mode — JIT is recommended for better performance. Enable JIT via SideJITServer, AltStore, or StikDebug to improve emulation speed."
+            default:
+                return "JIT unavailable — running in compatibility mode. Enable JIT via SideJITServer, AltStore, or StikDebug for better performance."
+            }
+
         case .unavailable:
-            return "This game requires JIT to run. Enable JIT via SideJITServer, AltStore, or StikDebug."
+            // JIT is strictly required — strong call to action
+            return "JIT is required for this game and is not currently active. Without JIT this core may crash, freeze, or run incorrectly. Enable JIT via SideJITServer, AltStore, or StikDebug."
+
         case .notApplicable:
             return ""
+        }
+    }
+
+    /// Short alert title reflecting the support level of the current core.
+    public var alertTitle: String {
+        switch status {
+        case .active:
+            return "JIT Active"
+        case .interpreterFallback:
+            switch coreSupportLevel {
+            case .automatic: return "JIT Auto-Managed"
+            default: return "JIT Recommended"
+            }
+        case .unavailable:
+            return "JIT Required"
+        case .notApplicable:
+            return "JIT Status"
         }
     }
 

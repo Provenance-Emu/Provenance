@@ -87,12 +87,28 @@ public final class JITStatusIndicatorViewController: UIViewController {
     }
 
     /// Presents a compact `UIAlertController` describing the current JIT status.
+    ///
+    /// The alert title and message are tailored to the core's support level:
+    /// - **JIT Required**: strong call to action with setup instructions
+    /// - **JIT Recommended**: explains performance benefit and how to enable
+    /// - **JIT Auto-Managed**: informs the user no action is needed
+    /// - **JIT Active**: confirms optimal performance is running
     private func presentStatusAlert() {
-        let title = viewModel.status.label.isEmpty ? "JIT Status" : viewModel.status.label
+        let title = viewModel.alertTitle
         let message = viewModel.explanation
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
+
+        // When JIT is inactive and the user should take action, add a second button
+        // that opens the app's JIT settings (if available via PVSettings) or shows
+        // the in-app guide for enabling JIT.
+        if viewModel.coreSupportLevel.requiresUserAction && viewModel.status != .active {
+            let settingsAction = UIAlertAction(title: "How to Enable JIT", style: .default) { [weak self] _ in
+                self?.presentJITEnableGuide()
+            }
+            alert.addAction(settingsAction)
+        }
 
         // Present from the parent (emulator) VC so the alert sits above the game view
         let presenter = parent ?? self
@@ -100,6 +116,30 @@ public final class JITStatusIndicatorViewController: UIViewController {
             return
         }
         presenter.present(alert, animated: true)
+    }
+
+    /// Presents a brief guide alert listing ways to enable JIT.
+    private func presentJITEnableGuide() {
+        let guide = UIAlertController(
+            title: "Enabling JIT",
+            message: """
+            JIT compilation can be enabled using one of the following tools:
+
+            • AltStore / AltServer — free, requires a Mac or PC to refresh periodically
+            • SideStore — wireless alternative to AltStore
+            • SideJITServer — lightweight local server for over-the-air JIT
+            • StikDebug — on-device JIT enabler (requires compatible setup)
+            • TrollStore — permanent JIT for supported iOS/iPadOS versions
+
+            After enabling JIT, return to the game and the indicator will update automatically.
+            """,
+            preferredStyle: .alert
+        )
+        guide.addAction(UIAlertAction(title: "OK", style: .default))
+
+        let presenter = parent ?? self
+        guard presenter.presentedViewController == nil else { return }
+        presenter.present(guide, animated: true)
     }
 
     private func setupNotificationObservers() {
@@ -169,14 +209,34 @@ public final class JITStatusIndicatorViewController: UIViewController {
     /// should be shown (`isJITRelevant`) and whether the core strictly requires JIT
     /// (`coreIsJITRequired`), which gates the `.unavailable` status.
     public func updateForCore(id coreIdentifier: String) {
-        let isRelevant = JITCoreCapability.isJITRelevant(coreIdentifier)
-        let isRequired = JITCoreCapability.coreIsJITRequired(coreIdentifier)
+        let capability = JITCoreCapability.capability(for: coreIdentifier)
+        let isRelevant = capability != nil
+        let isRequired = capability?.isJITRequired == true
+        // Keyword-based path: default to .recommended — the authoritative path
+        // via updateForCore(isRelevant:isRequired:supportLevel:) uses PVJITRequirement.
+        let supportLevel: CoreJITSupportLevel = isRelevant
+            ? (isRequired ? .required : .recommended(fallbackMode: "Compatibility"))
+            : .notApplicable
+        updateForCore(isRelevant: isRelevant, isRequired: isRequired, supportLevel: supportLevel)
+    }
 
+    /// Updates the indicator with explicit relevancy, requirement, and support-level information.
+    ///
+    /// This is the preferred entry-point when the authoritative `PVJITRequirement` is available.
+    /// - Parameters:
+    ///   - isRelevant: `true` when the core uses JIT at all (show the HUD pill).
+    ///     Pass `core.jitRequirement.hasJIT`.
+    ///   - isRequired: `true` when the core requires JIT to run without crashing.
+    ///     Pass `core.jitRequirement == .requiredOrCrash`.
+    ///   - supportLevel: `CoreJITSupportLevel` derived from `PVJITRequirement` for rich messaging.
+    public func updateForCore(isRelevant: Bool, isRequired: Bool, supportLevel: CoreJITSupportLevel) {
         if isRelevant {
+            viewModel.coreSupportLevel = supportLevel
             viewModel.coreJITIsRequired = isRequired
             viewModel.updateStatus()
             handleStatusTransition()
         } else {
+            viewModel.coreSupportLevel = .notApplicable
             viewModel.coreJITIsRequired = false
             viewModel.status = .notApplicable
             handleStatusTransition()
@@ -184,18 +244,19 @@ public final class JITStatusIndicatorViewController: UIViewController {
     }
 
     /// Updates the status based on whether the current core requires JIT.
-    /// Prefer `updateForCore(id:)` when you have the core identifier available,
-    /// as it also determines whether JIT is strictly required vs. merely beneficial.
+    ///
+    /// When `requiresJIT` is `false`, the core is treated as JIT-relevant but not required
+    /// (i.e. the indicator remains visible with `.interpreterFallback` status when JIT is
+    /// inactive).  The `.notApplicable` state is only set when the core genuinely has no JIT
+    /// path, which should be gated upstream by `coreRequiresJIT()`.
+    ///
+    /// Prefer `updateForCore(isRelevant:isRequired:supportLevel:)` when you have the full
+    /// `PVJITRequirement` available, as it enables differentiated support-level messaging.
     public func updateForCore(requiresJIT: Bool) {
-        if requiresJIT {
-            viewModel.coreJITIsRequired = true
-            viewModel.updateStatus()
-            handleStatusTransition()
-        } else {
-            viewModel.coreJITIsRequired = false
-            viewModel.status = .notApplicable
-            handleStatusTransition()
-        }
+        viewModel.coreSupportLevel = requiresJIT ? .required : .recommended(fallbackMode: "Compatibility")
+        viewModel.coreJITIsRequired = requiresJIT
+        viewModel.updateStatus()
+        handleStatusTransition()
     }
 
     /// Manually refresh the JIT status

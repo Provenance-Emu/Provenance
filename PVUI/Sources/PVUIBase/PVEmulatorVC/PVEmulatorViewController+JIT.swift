@@ -123,11 +123,29 @@ public extension PVEmulatorViewController {
         ])
         indicator.didMove(toParent: self)
 
-        // Inform the indicator whether this core strictly requires JIT.
-        // Use PVEmulatorCore.jitRequirement (set as a Swift property override on each
-        // PVEmulatorCore subclass, populated by the JIT Capability Matrix from #2793).
-        // Only `.requiredOrCrash` cores gate the `.unavailable` status / persistent toast.
-        indicator.updateForCore(requiresJIT: core.jitRequirement == .requiredOrCrash)
+        // Inform the indicator of the full JIT support level using the authoritative
+        // PVJITRequirement property (JIT Capability Matrix, #2793).  This drives both
+        // visibility (isRelevant) and the differentiated support-level messaging
+        // (required / automatic / recommended) shown in the compact alert.
+        let jitReq = core.jitRequirement
+        let supportLevel: CoreJITSupportLevel
+        switch jitReq {
+        case .requiredOrCrash:
+            supportLevel = .required
+        case .automaticWithFallback:
+            // Core self-detects JIT (e.g. Dolphin) — no user action needed
+            supportLevel = .automatic
+        case .optional(let fallback):
+            // JIT improves performance; core runs in fallback mode without it
+            supportLevel = .recommended(fallbackMode: fallback)
+        case .notSupported:
+            supportLevel = .notApplicable
+        }
+        indicator.updateForCore(
+            isRelevant: jitReq.hasJIT,
+            isRequired: jitReq == .requiredOrCrash,
+            supportLevel: supportLevel
+        )
     }
 
     @MainActor
