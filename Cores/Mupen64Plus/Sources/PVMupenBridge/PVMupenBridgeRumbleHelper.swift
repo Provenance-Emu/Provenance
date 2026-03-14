@@ -89,7 +89,7 @@ public final class PVMupenBridgeRumbleHelper: NSObject {
         Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
             if #available(iOS 14.0, tvOS 14.0, *) {
-                GCControllerHapticsManager.shared.register(controller: nil, forPlayer: player)
+                GCControllerHapticsManager.shared.stopRumble(player: player)
                 return
             }
 #endif
