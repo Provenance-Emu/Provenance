@@ -1706,7 +1706,7 @@ private struct AnalogDeadzoneSection: View {
 
     private let modeLabels = ["Auto", "Universal", "Core-Managed"]
     private let modeDescriptions = [
-        "Skip universal if core has its own deadzone",
+        "Skip universal if core reports managing deadzone",
         "Always apply universal deadzone",
         "Let each core manage its own deadzone"
     ]
