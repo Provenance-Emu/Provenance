@@ -99,19 +99,4 @@ public enum PVJITRequirement: Sendable {
     }
 }
 
-extension PVJITRequirement: Equatable {
-    public static func == (lhs: PVJITRequirement, rhs: PVJITRequirement) -> Bool {
-        switch (lhs, rhs) {
-        case (.notSupported, .notSupported):
-            return true
-        case (.optional(let l), .optional(let r)):
-            return l == r
-        case (.requiredOrCrash, .requiredOrCrash):
-            return true
-        case (.automaticWithFallback, .automaticWithFallback):
-            return true
-        default:
-            return false
-        }
-    }
-}
+extension PVJITRequirement: Equatable {}

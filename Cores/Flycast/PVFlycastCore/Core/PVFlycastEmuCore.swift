@@ -17,7 +17,11 @@ import PVCoreBridgeRetro
 open class PVFlycastEmuCore: PVEmulatorCore {
 
     let _bridge: PVFlycastEmuCoreBridge = .init()
-    
+
+    /// Flycast supports a pure-interpreter path when JIT is unavailable.
+    /// JIT recompiler gives a significant performance boost but is not required.
+    open override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)

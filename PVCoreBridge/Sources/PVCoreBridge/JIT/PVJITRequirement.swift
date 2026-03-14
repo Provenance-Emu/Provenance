@@ -86,6 +86,9 @@ public final class PVJITRequirementRegistry: Sendable {
     private init() {}
 
     private let storage = OSAllocatedUnfairLock<[String: PVJITPlistRequirement]>(initialState: [:])
+    /// Identifiers of cores that are disabled solely because they need JIT.
+    /// Populated from `PVJITDisabledWithoutJIT = true` in Core.plist.
+    private let jitDisabledStorage = OSAllocatedUnfairLock<Set<String>>(initialState: [])
 
     // MARK: Registration
 
@@ -113,11 +116,41 @@ public final class PVJITRequirementRegistry: Sendable {
         storage.withLock { $0[identifier.lowercased()] ?? .notRequired }
     }
 
+    // MARK: JIT-Disabled Registration
+
+    /// Marks a core identifier as "disabled because JIT is unavailable".
+    ///
+    /// Called by `CoreLoader` for each plist that has `PVJITDisabledWithoutJIT = true`.
+    /// The app layer can call `jitDisabledCoreIdentifiers()` after acquiring JIT to find
+    /// cores that should be auto-enabled.
+    public func registerJITDisabled(forCoreIdentifier identifier: String) {
+        jitDisabledStorage.withLock { $0.insert(identifier.lowercased()) }
+    }
+
+    /// Returns all core identifiers that are disabled solely because JIT is unavailable.
+    ///
+    /// Use this after JIT is acquired to auto-enable relevant cores.
+    public func jitDisabledCoreIdentifiers() -> [String] {
+        jitDisabledStorage.withLock { Array($0) }
+    }
+
+    // MARK: Reset
+
+    /// Clears all registered entries.
+    ///
+    /// Called by `CoreLoader` when reloading core plists to remove stale entries
+    /// for cores that are no longer present in the active core list.
+    public func reset() {
+        storage.withLock { $0.removeAll() }
+        jitDisabledStorage.withLock { $0.removeAll() }
+    }
+
     // MARK: Testing support
 
     /// Removes all registered entries. Intended for use in unit tests only.
+    @inline(__always)
     public func _resetForTesting() {
-        storage.withLock { $0.removeAll() }
+        reset()
     }
 }
 

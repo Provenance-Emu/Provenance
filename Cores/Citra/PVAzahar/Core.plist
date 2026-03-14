@@ -18,6 +18,8 @@
 	<string>git</string>
 	<key>PVDisabled</key>
 	<true/>
+	<key>PVJITDisabledWithoutJIT</key>
+	<true/>
 	<key>PVJITRequirement</key>
 	<string>required</string>
 </dict>

@@ -86,13 +86,27 @@ public final class CoreLoader: Sendable {
             if let raw = plist.jitRequirementRawValue {
                 registry.register(rawValue: raw, forCoreIdentifier: plist.identifier)
             }
+            if plist.jitDisabledWithoutJIT {
+                registry.registerJITDisabled(forCoreIdentifier: plist.identifier)
+            }
             /// Also handle sub-cores (e.g. libretro cores embedded in RetroArch's plist)
             for subCore in plist.subCores ?? [] {
                 if let raw = subCore.jitRequirementRawValue {
                     registry.register(rawValue: raw, forCoreIdentifier: subCore.identifier)
                 }
+                if subCore.jitDisabledWithoutJIT {
+                    registry.registerJITDisabled(forCoreIdentifier: subCore.identifier)
+                }
             }
         }
+    }
+
+    /// Returns identifiers of cores that are currently disabled solely because JIT is required.
+    ///
+    /// Call this after JIT is acquired to find cores that should be auto-enabled.
+    /// Part of the smart JIT acquisition flow (#2794).
+    public static func jitDisabledCoreIdentifiers() -> [String] {
+        PVJITRequirementRegistry.shared.jitDisabledCoreIdentifiers()
     }
 
     /// Internal method that actually loads the core plists

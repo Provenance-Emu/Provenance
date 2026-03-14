@@ -31,12 +31,18 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     /// Raw `PVJITRequirement` string from `Core.plist` (e.g. `"required"`, `"optional"`).
     /// `nil` means the key was absent — callers should treat `nil` as *not required*.
     public let jitRequirementRawValue: String?
+    /// When `true`, the core is currently disabled *only* because it requires JIT and
+    /// JIT was unavailable at packaging time.  The app layer should auto-enable this
+    /// core when JIT is successfully acquired.
+    /// Maps to the `PVJITDisabledWithoutJIT` key in `Core.plist`.
+    public let jitDisabledWithoutJIT: Bool
 
     public init(identifier: String, principleClass: String, supportedSystems: [String],
                 projectName: String, projectURL: String, projectVersion: String,
                 disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false,
                 supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil,
-                jitRequirementRawValue: String? = nil) {
+                jitRequirementRawValue: String? = nil,
+                jitDisabledWithoutJIT: Bool = false) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -49,6 +55,7 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.supportedCheatTypes = supportedCheatTypes
         self.subCores = subCores
         self.jitRequirementRawValue = jitRequirementRawValue
+        self.jitDisabledWithoutJIT = jitDisabledWithoutJIT
     }
 
     public init?(fromInfoDictionary dict: [String: Any]) {
@@ -127,6 +134,9 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
 
         /// JIT requirement — optional key; absent means notRequired
         self.jitRequirementRawValue = dict["PVJITRequirement"] as? String
+
+        /// JIT-disabled flag — core disabled specifically because JIT is unavailable
+        self.jitDisabledWithoutJIT = dict["PVJITDisabledWithoutJIT"] as? Bool ?? false
     }
 
     public convenience init?(fromURL plistPath: URL) throws {
@@ -164,7 +174,8 @@ public extension EmulatorCoreInfoPlist {
             appStoreDisabled: e.PVAppStoreDisabled ?? false,
             supportedCheatTypes: cheatTypes,
             subCores: subCores,
-            jitRequirementRawValue: e.PVJITRequirement
+            jitRequirementRawValue: e.PVJITRequirement,
+            jitDisabledWithoutJIT: e.PVJITDisabledWithoutJIT ?? false
         )
     }
 }
@@ -185,4 +196,6 @@ func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     && lhs.appStoreDisabled == (rhs.PVAppStoreDisabled ?? false)
     && lhs.supportedCheatTypes == rhsCheatTypes
     && lhs.subCores == subCores
+    && lhs.jitRequirementRawValue == rhs.PVJITRequirement
+    && lhs.jitDisabledWithoutJIT == (rhs.PVJITDisabledWithoutJIT ?? false)
 }

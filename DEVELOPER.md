@@ -37,6 +37,7 @@ Provenance uses **two complementary JIT classification types**:
 | Mupen64Plus (N64) | `.optional(fallback: "Interpreter")` | JIT recompiler; interpreter fallback |
 | PPSSPP (PSP) | `.optional(fallback: "Interpreter")` | JIT for full-speed PSP; interpreter available |
 | Flycast (Dreamcast) | `.optional(fallback: "Interpreter")` | JIT recompiler available; interpreter fallback |
+| Play! (PS2) | `.requiredOrCrash` | Crashes or produces garbage output without JIT |
 | Azahar / Citra (3DS) | `.requiredOrCrash` | Hard crash without JIT when `enableJIT=true` |
 | emuThree (3DS) | `.requiredOrCrash` | Same Citra codebase; same JIT requirement |
 
@@ -70,12 +71,37 @@ case .requiredOrCrash:
 Override `jitRequirement` in the core's `PVEmulatorCore` subclass:
 
 ```swift
-open override var jitRequirement: PVJITRequirement {
+open override var jitRequirement: PVPrimitives.PVJITRequirement {
     .optional(fallback: "Interpreter")
 }
 ```
 
 The default implementation returns `.notSupported`, so only JIT-capable cores need to override.
+
+Also add a `PVJITRequirement` key to the core's `Core.plist`:
+
+```xml
+<key>PVJITRequirement</key>
+<string>optional</string>  <!-- "required" | "optional" | "notRequired" -->
+```
+
+### Auto-Enabling JIT-Disabled Cores
+
+Some cores are shipped with `PVDisabled = true` because they require JIT to run at all
+(e.g., Azahar/3DS). Mark them with `PVJITDisabledWithoutJIT = true` so the runtime can
+auto-enable them once JIT is successfully acquired:
+
+```xml
+<key>PVDisabled</key>
+<true/>
+<key>PVJITDisabledWithoutJIT</key>
+<true/>
+<key>PVJITRequirement</key>
+<string>required</string>
+```
+
+The app layer (#2794) will query `EmulatorCoreInfoPlist.jitDisabledWithoutJIT` to find
+these cores and toggle them on when a JIT entitlement is obtained.
 
 ## Building
 

@@ -135,10 +135,14 @@ Higher tiers may import lower tiers. **Never the reverse.**
   when a Swift subclass override is not available.
 - **DO NOT** use the same name `PVJITRequirement` for both types — `PVEmulatorCore`
   does `@_exported import` of both modules; duplicate names cause compiler ambiguity.
-- **CRITICAL for `.requiredOrCrash` cores** (Azahar, emuThree): the app layer MUST acquire JIT
+- **CRITICAL for `.requiredOrCrash` cores** (Azahar, emuThree, Play!): the app layer MUST acquire JIT
   before launching. Skipping this check will crash the emulator.
 - When adding a new core, always override `jitRequirement` in the `PVEmulatorCore` subclass.
   For plist-driven cores, also add a `PVJITRequirement` key to `Core.plist`.
+- **`PVJITDisabledWithoutJIT`** — if a core is shipped `PVDisabled = true` solely because
+  it crashes without JIT, also set `PVJITDisabledWithoutJIT = true`. The runtime (#2794) uses
+  `CoreLoader.jitDisabledCoreIdentifiers()` to auto-enable these cores once JIT is acquired.
+  Do NOT set this flag for cores disabled for reasons other than JIT (broken, unfinished, etc.).
 
 ### DS Dual-Screen Skins
 - `supportsSkins` flag on native DS cores (`PVDesmume2015Core`, `PVMelonDSCore`).

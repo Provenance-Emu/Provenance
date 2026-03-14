@@ -17,8 +17,12 @@ import PVEmulatorCore
 open class PVPlayCore: PVEmulatorCore, @unchecked Sendable {
 
     // MARK: Lifecycle
-    
+
     let _bridge: PVPlayCoreBridge = .init()
+
+    /// Play! (PS2) requires JIT for correct operation; it will crash or produce
+    /// garbage output without a JIT entitlement.
+    open override var jitRequirement: PVJITRequirement { .requiredOrCrash }
 
     public required init() {
         super.init()
