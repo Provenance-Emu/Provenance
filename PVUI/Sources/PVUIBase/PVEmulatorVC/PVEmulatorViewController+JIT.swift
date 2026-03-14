@@ -123,7 +123,13 @@ public extension PVEmulatorViewController {
         ])
         indicator.didMove(toParent: self)
 
-        indicator.updateForCore(requiresJIT: true)
+        // Inform the indicator whether this core strictly requires JIT,
+        // which gates the `.unavailable` status and the persistent error toast.
+        if let coreId = core.coreIdentifier {
+            indicator.updateForCore(id: coreId)
+        } else {
+            indicator.updateForCore(requiresJIT: false)
+        }
     }
 
     @MainActor

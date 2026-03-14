@@ -33,12 +33,22 @@ private final class PassthroughView: UIView {
 /// to the game content below.  When the user taps the pill, a compact
 /// `UIAlertController` is presented from the nearest view controller in the
 /// hierarchy — no full-screen cover sheet.
+///
+/// ## PVToast notifications
+/// Status transitions automatically post in-game toasts via `PVToastManager`:
+///  - JIT acquired → `.jit` success toast (auto-dismissed after 4 s)
+///  - JIT unavailable for a required core → persistent `.error` toast until status changes
 @MainActor
 public final class JITStatusIndicatorViewController: UIViewController {
 
     public let viewModel = JITStatusViewModel()
     private var hostingController: UIHostingController<JITStatusIndicatorView>?
     private var cancellables = Set<AnyCancellable>()
+
+    /// Stable id for the persistent "JIT unavailable" toast so it can be deduped / dismissed.
+    private let jitUnavailableToastID = "jit-unavailable"
+    /// Previous status, used to detect transitions for toast firing.
+    private var previousStatus: JITStatus = .notApplicable
 
     public override func loadView() {
         let passthrough = PassthroughView()
@@ -77,7 +87,6 @@ public final class JITStatusIndicatorViewController: UIViewController {
     }
 
     /// Presents a compact `UIAlertController` describing the current JIT status.
-    /// This replaces the previous SwiftUI popover / cover-sheet approach.
     private func presentStatusAlert() {
         let title = viewModel.status.label.isEmpty ? "JIT Status" : viewModel.status.label
         let message = viewModel.explanation
@@ -97,25 +106,89 @@ public final class JITStatusIndicatorViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.viewModel.updateStatus()
+                self?.handleStatusTransition()
             }
             .store(in: &cancellables)
         #endif
 
-        // Also set up a periodic check in case the JIT status changes
+        // Periodic check in case the JIT status changes between notification posts
         Timer.publish(every: 2.0, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 self?.viewModel.updateStatus()
+                self?.handleStatusTransition()
             }
             .store(in: &cancellables)
     }
 
-    /// Updates the status based on whether the core requires JIT
-    /// - Parameter requiresJIT: Whether the current core requires JIT
+    /// Posts PVToast notifications when the JIT status transitions to a new state.
+    private func handleStatusTransition() {
+        let newStatus = viewModel.status
+        guard newStatus != previousStatus else { return }
+        defer { previousStatus = newStatus }
+
+        switch newStatus {
+        case .active:
+            // Dismiss any lingering "unavailable" toast
+            PVToastManager.shared.dismiss(id: jitUnavailableToastID)
+            let label = viewModel.indicatorLabel
+            PVToastManager.shared.show("JIT active — \(label)", type: .jit, duration: 4.0)
+
+        case .unavailable:
+            // Persistent toast so the user always sees the guidance
+            PVToastManager.shared.showPersistent(
+                "JIT required — enable via AltStore, SideJITServer, or StikDebug",
+                id: jitUnavailableToastID,
+                type: .error,
+                icon: "bolt.slash.fill"
+            )
+
+        case .interpreterFallback:
+            PVToastManager.shared.dismiss(id: jitUnavailableToastID)
+            if previousStatus == .active {
+                PVToastManager.shared.show(
+                    "JIT lost — running in compatibility mode",
+                    type: .warning,
+                    duration: 5.0
+                )
+            }
+
+        case .notApplicable:
+            PVToastManager.shared.dismiss(id: jitUnavailableToastID)
+        }
+    }
+
+    // MARK: - Public API
+
+    /// Updates the indicator for the given core identifier.
+    ///
+    /// Looks up `JITCoreCapability` to determine both whether the indicator
+    /// should be shown (`isJITRelevant`) and whether the core strictly requires JIT
+    /// (`coreIsJITRequired`), which gates the `.unavailable` status.
+    public func updateForCore(id coreIdentifier: String) {
+        let isRelevant = JITCoreCapability.isJITRelevant(coreIdentifier)
+        let isRequired = JITCoreCapability.coreIsJITRequired(coreIdentifier)
+
+        if isRelevant {
+            viewModel.coreJITIsRequired = isRequired
+            viewModel.updateStatus()
+            handleStatusTransition()
+        } else {
+            viewModel.coreJITIsRequired = false
+            viewModel.status = .notApplicable
+        }
+    }
+
+    /// Updates the status based on whether the current core requires JIT.
+    /// Prefer `updateForCore(id:)` when you have the core identifier available,
+    /// as it also determines whether JIT is strictly required vs. merely beneficial.
     public func updateForCore(requiresJIT: Bool) {
         if requiresJIT {
+            viewModel.coreJITIsRequired = true
             viewModel.updateStatus()
+            handleStatusTransition()
         } else {
+            viewModel.coreJITIsRequired = false
             viewModel.status = .notApplicable
         }
     }
@@ -123,6 +196,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
     /// Manually refresh the JIT status
     public func refreshStatus() {
         viewModel.updateStatus()
+        handleStatusTransition()
     }
 
     deinit {

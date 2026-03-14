@@ -69,6 +69,10 @@ public final class JITStatusViewModel: ObservableObject {
     @Published public var jitSource: JITSource = .none
     #endif
 
+    /// Whether the current core strictly requires JIT (vs. merely benefiting from it).
+    /// Set via `JITStatusIndicatorViewController.updateForCore(id:)` before calling `updateStatus()`.
+    public var coreJITIsRequired: Bool = false
+
     #if canImport(JITManager)
     private var jitManager: DOLJitManager { DOLJitManager.shared }
     #endif
@@ -90,22 +94,32 @@ public final class JITStatusViewModel: ObservableObject {
     }
     #endif
 
-    /// Updates the JIT status based on the current JIT manager state
+    /// Updates the JIT status based on the current JIT manager state.
+    ///
+    /// When `coreJITIsRequired` is `true` and JIT cannot be acquired, sets `.unavailable`
+    /// so the indicator surfaces the "This game requires JIT" guidance message.
     public func updateStatus() {
         #if canImport(JITManager)
         let isJITEnabled = jitManager.appHasAcquiredJit()
         let jitType = jitManager.getJitType()
 
         if jitType == .none {
-            status = .notApplicable
+            if coreJITIsRequired {
+                // JIT subsystem absent and the core needs it — surface guidance message
+                status = .unavailable
+            } else {
+                status = .notApplicable
+            }
             jitSource = .none
         } else if isJITEnabled {
             status = .active
             jitSource = jitManager.getJITSource()
+        } else if coreJITIsRequired {
+            // JIT subsystem present but not acquired, and the core strictly requires it
+            status = .unavailable
+            jitSource = .none
         } else {
-            // For now, show as interpreter fallback
-            // TODO: Update when JIT Capability Matrix (#2793) is implemented
-            // to distinguish between "interpreter fallback" vs "JIT required but failed"
+            // JIT subsystem present but not acquired; core only benefits from JIT
             status = .interpreterFallback
             jitSource = .none
         }
