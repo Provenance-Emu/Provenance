@@ -22,21 +22,16 @@ import UIKit
 /// without `await`.
 public final class PVToastHandle: Sendable {
     public let id: String
-    // `nonisolated(unsafe)` (SE-0414): the weak reference is only ever read inside
-    // `Task { @MainActor in }`, which serialises access correctly.
-    nonisolated(unsafe) private weak var manager: PVToastManager?
 
-    init(id: String, manager: PVToastManager) {
+    init(id: String) {
         self.id = id
-        self.manager = manager
     }
 
     /// Dismiss the associated persistent toast.
-    /// Safe to call from any actor or thread — internally hops to `@MainActor`.
+    /// Safe to call from any actor or thread — internally hops to `@MainActor`
+    /// via `PVToastManager.shared.dismissAsync(id:)`.
     public nonisolated func dismiss() {
-        Task { @MainActor [weak manager, id] in
-            manager?.dismiss(id: id)
-        }
+        PVToastManager.shared.dismissAsync(id: id)
     }
 }
 
