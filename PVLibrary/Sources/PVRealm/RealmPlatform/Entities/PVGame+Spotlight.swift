@@ -15,6 +15,8 @@ import CoreSpotlight
 
 import CoreServices
 import PVMediaCache
+import PVPrimitives
+import UniformTypeIdentifiers
 
 #if canImport(UIKit)
 import UIKit
@@ -35,10 +37,11 @@ public extension PVGame {
             return CSSearchableItemAttributeSet()
         }
 
-        /// Create a content set using a known base UTType so the OS can surface it in Spotlight/Siri.
-        /// Using UTType.data (public.data) as the base since "org.provenance-emu.game" exported
-        /// types may not be recognized in extension processes.
-        let contentSet = CSSearchableItemAttributeSet(contentType: .data)
+        /// Create a content set using the registered Provenance ROM UTI so the OS can surface
+        /// it in Spotlight/Siri with the right content classification.
+        /// com.provenance.rom is exported in the app's Info.plist (UTExportedTypeDeclarations)
+        /// and conforms to public.data, so Spotlight will index it correctly.
+        let contentSet = CSSearchableItemAttributeSet(contentType: .rom)
 
         // Primary metadata — set both title and displayName so Spotlight and Siri both match
         contentSet.title = title

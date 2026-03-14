@@ -13,6 +13,7 @@ import PVPrimitives
 import RxSwift
 import RxCocoa
 import CoreSpotlight
+import UniformTypeIdentifiers
 import PVRealm
 import RealmSwift
 import PVLogging
@@ -585,8 +586,9 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
         // Process each save state
         for (saveState, game) in saveStatesWithGames {
-            // Create attribute set
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
+            // Create attribute set using the registered Provenance save-state UTI
+            // com.provenance.savestate is exported in the app's Info.plist and conforms to public.data
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .savestate)
             let saveStateTitle = "Save State: \(game.title)"
             attributeSet.title = saveStateTitle
             attributeSet.displayName = saveStateTitle
