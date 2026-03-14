@@ -156,20 +156,35 @@ public struct SaveStateBrowserView: View {
     @ViewBuilder
     private var emptyStateView: some View {
         VStack(spacing: 16) {
-            Image(systemName: "clock.arrow.circlepath")
-                .font(.system(size: 56))
-                .foregroundColor(.secondary)
+            if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 56))
+                    .foregroundColor(.secondary)
 
-            Text("No Save States")
-                .font(.title2.weight(.semibold))
+                Text("No Save States")
+                    .font(.title2.weight(.semibold))
 
-            Text(showAutosaves
-                ? "You haven't created any save states yet."
-                : "No manual save states found. Tap the clock icon to include autosaves.")
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                Text(showAutosaves
+                    ? "You haven't created any save states yet."
+                    : "No manual save states found. Tap the clock icon to include autosaves.")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            } else {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 56))
+                    .foregroundColor(.secondary)
+
+                Text("No Results")
+                    .font(.title2.weight(.semibold))
+
+                Text("No save states match your search.")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
