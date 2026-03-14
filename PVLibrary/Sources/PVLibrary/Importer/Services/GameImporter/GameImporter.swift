@@ -740,7 +740,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         var corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
             CoreLoader.getCorePlists()
         }.value
-        corePlists = PVDynamicLibretroCoreScanner.mergeDiscoveredLibretroCores(into: corePlists)
+        corePlists = CoreLoader.mergeDiscoveredLibretroCores(into: corePlists)
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
