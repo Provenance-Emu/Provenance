@@ -150,7 +150,8 @@ public final class PVToastManager: ObservableObject {
         // Clamp duration to avoid overflow when converting to UInt64 nanoseconds
         let maxDurationSeconds = TimeInterval(UInt64.max) / 1_000_000_000.0
         let clampedDuration = min(duration, maxDurationSeconds)
-        let delayNanoseconds = UInt64(clampedDuration * 1_000_000_000.0)
+        let nanosecondsDouble = min(clampedDuration * 1_000_000_000.0, Double(UInt64.max))
+        let delayNanoseconds = UInt64(nanosecondsDouble)
 
         let task = Task { [weak self] in
             try? await Task.sleep(nanoseconds: delayNanoseconds)
