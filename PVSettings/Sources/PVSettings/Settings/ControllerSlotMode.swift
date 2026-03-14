@@ -48,7 +48,9 @@ public enum ControllerSlotMode: Equatable, Defaults.Serializable {
             guard let string = object else { return nil }
             if string == "auto" { return .auto }
             let parts = string.split(separator: ":", maxSplits: 1)
-            guard parts.count == 2, let slot = Int(parts[1]) else { return nil }
+            guard parts.count == 2, let slot = Int(parts[1]), (1...8).contains(slot) else {
+                return nil
+            }
             switch String(parts[0]) {
             case "preferred": return .preferred(slot)
             case "always":    return .always(slot)
