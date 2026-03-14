@@ -27,7 +27,9 @@ public final class PVToastHandle: @unchecked Sendable {
 
     /// Dismiss the associated persistent toast.
     public func dismiss() {
-        manager?.dismiss(id: id)
+        Task { @MainActor [weak manager, id] in
+            manager?.dismiss(id: id)
+        }
     }
 }
 
