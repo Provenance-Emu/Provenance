@@ -13,7 +13,6 @@ import RealmSwift
 import CoreSpotlight
 #endif
 
-import CoreServices
 import PVMediaCache
 import PVPrimitives
 import UniformTypeIdentifiers
