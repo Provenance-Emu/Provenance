@@ -10,48 +10,6 @@ final class UPSPatcherTests: XCTestCase {
 
     private let patcher = UPSPatcher()
 
-    // MARK: - VLI / CRC helpers (self-contained, no @testable dependency)
-
-    /// Encode an integer as a BPS/UPS variable-length integer.
-    ///
-    /// Encoding mirrors the `readVLI` decode algorithm used by the patchers.
-    /// Single-byte form: `0x80 | value` for value ∈ 0…127.
-    /// Multi-byte form:  emit `value & 0x7F`, subtract 128, shift right 7, repeat.
-    private func encodeVLI(_ n: Int) -> [UInt8] {
-        var bytes: [UInt8] = []
-        var value = n
-        while true {
-            if value <= 127 {
-                bytes.append(UInt8(0x80 | value))
-                break
-            } else {
-                bytes.append(UInt8(value & 0x7F))
-                value = (value - 128) >> 7
-            }
-        }
-        return bytes
-    }
-
-    /// Write a UInt32 as 4 bytes little-endian.
-    private func le32(_ value: UInt32) -> [UInt8] {
-        [UInt8(value & 0xFF),
-         UInt8((value >> 8) & 0xFF),
-         UInt8((value >> 16) & 0xFF),
-         UInt8((value >> 24) & 0xFF)]
-    }
-
-    /// CRC32 — identical to the `patchCRC32` implementation in PatcherUtilities.swift.
-    private func crc32(_ data: Data) -> UInt32 {
-        var crc: UInt32 = 0xFFFF_FFFF
-        for byte in data {
-            crc ^= UInt32(byte)
-            for _ in 0..<8 {
-                crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
-            }
-        }
-        return ~crc
-    }
-
     // MARK: - Patch builder
 
     /// Build a minimal valid UPS patch that transforms `source` into `target`.
@@ -273,7 +231,11 @@ final class UPSPatcherTests: XCTestCase {
         // Drop 2 bytes — the patch CRC field is now corrupt.
         valid = valid.dropLast(2)
 
-        XCTAssertThrowsError(try patcher.apply(patch: valid, to: source))
+        XCTAssertThrowsError(try patcher.apply(patch: valid, to: source)) { error in
+            guard case PatchError.crcMismatch = error else {
+                return XCTFail("Expected crcMismatch for truncated patch, got \(error)")
+            }
+        }
     }
 
     // MARK: - Source size mismatch

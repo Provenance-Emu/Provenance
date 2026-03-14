@@ -95,7 +95,7 @@ public actor PatchCache {
         // Linux fallback: use shared CRC32 helper for deterministic key on platforms without CryptoKit.
         let romCRC = patchCRC32(romData)
         let patchCRC = patchCRC32(patchData)
-        return String(format: "%08x%08x%08x%08x", romCRC, patchCRC, romData.count, patchData.count)
+        return String(format: "%08x%08x%08x%08x", romCRC, patchCRC, UInt32(truncatingIfNeeded: romData.count), UInt32(truncatingIfNeeded: patchData.count))
 #endif
     }
 }
