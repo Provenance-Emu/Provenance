@@ -49,7 +49,7 @@ public final class PVToastManager: ObservableObject {
     public static let shared = PVToastManager()
 
     // MARK: Published state
-    /// Current toast queue, newest first (bottom of the stack).
+    /// Current toast queue, oldest first (newest at the end).
     @Published public private(set) var toasts: [PVToast] = []
 
     // MARK: Private state
