@@ -108,3 +108,115 @@ private extension Comparable {
         return Swift.min(Swift.max(self, range.lowerBound), range.upperBound)
     }
 }
+
+// MARK: - Core Compatibility Catalog
+
+/// Tracks which emulator cores have been updated to support coordinated deadzone handling.
+///
+/// This catalog is the authoritative record of adoption progress. As new cores gain
+/// support, add an entry here so users and reviewers can see the rolling coverage.
+/// The Settings UI surfaces this automatically — no changelog digging required.
+public struct CoreDeadzoneCompatibilityCatalog {
+
+    /// How well a core integrates with the shared deadzone system.
+    public enum SupportLevel: Int, Comparable, CaseIterable {
+        /// Core uses `PVApplyAnalogDeadzone()` on true-analog axes — full coordination.
+        case native = 3
+        /// Core uses `PVAnalogDigitalThreshold()` max-wins logic — no double-processing.
+        case coordinated = 2
+        /// Some inputs covered; others still need work.
+        case partial = 1
+        /// Gap is known; a fix is planned in a future PR.
+        case pending = 0
+
+        public static func < (lhs: SupportLevel, rhs: SupportLevel) -> Bool {
+            lhs.rawValue < rhs.rawValue
+        }
+
+        public var label: String {
+            switch self {
+            case .native:      return "Native"
+            case .coordinated: return "Coordinated"
+            case .partial:     return "Partial"
+            case .pending:     return "Planned"
+            }
+        }
+
+        /// SF Symbol name that best represents this level.
+        public var symbolName: String {
+            switch self {
+            case .native:      return "checkmark.seal.fill"
+            case .coordinated: return "checkmark.circle.fill"
+            case .partial:     return "exclamationmark.circle"
+            case .pending:     return "clock.badge.checkmark"
+            }
+        }
+    }
+
+    /// A single core's deadzone support record.
+    public struct Entry: Identifiable {
+        public let id: String            // pvCoreIdentifier
+        public let displayName: String
+        public let systems: [String]     // human-readable system names
+        public let level: SupportLevel
+        public let notes: String?
+
+        public init(id: String, displayName: String, systems: [String],
+                    level: SupportLevel, notes: String? = nil) {
+            self.id = id
+            self.displayName = displayName
+            self.systems = systems
+            self.level = level
+            self.notes = notes
+        }
+    }
+
+    // MARK: Catalog entries
+    // Keep sorted: supported first, pending last.
+    public static let entries: [Entry] = [
+        .init(id: "com.provenance.core.fceu",
+              displayName: "FCEU",
+              systems: ["NES", "FDS"],
+              level: .coordinated,
+              notes: "Max-wins digital threshold — user setting or 10% core default, whichever is larger."),
+        .init(id: "com.provenance.core.mednafen",
+              displayName: "Mednafen",
+              systems: ["NES", "SNES", "PCE", "PSX", "WonderSwan", "GB/GBC", "GBA", "NGP", "Saturn"],
+              level: .coordinated,
+              notes: "Max-wins digital threshold via MednafenAnalogDigitalThreshold()."),
+        .init(id: "com.provenance.core.flycast",
+              displayName: "Flycast",
+              systems: ["Dreamcast"],
+              level: .native,
+              notes: "PVApplyAnalogDeadzone() on left-thumbstick X/Y before s8 conversion."),
+        .init(id: "com.provenance.core.mupen64plus",
+              displayName: "Mupen64Plus",
+              systems: ["N64"],
+              level: .pending,
+              notes: "Passes raw axis values — deadzone coordination planned for a future PR."),
+        .init(id: "com.provenance.core.dolphin",
+              displayName: "Dolphin",
+              systems: ["GameCube", "Wii"],
+              level: .pending,
+              notes: "Motion-specific deadzone — requires separate handling; future PR."),
+    ]
+
+    // MARK: Computed helpers
+
+    /// Cores whose deadzone is fully or partially coordinated.
+    public static var supportedEntries: [Entry] {
+        entries.filter { $0.level >= .coordinated }
+    }
+
+    /// Cores not yet coordinated.
+    public static var pendingEntries: [Entry] {
+        entries.filter { $0.level < .coordinated }
+    }
+
+    /// Quick summary string suitable for a settings footer (e.g. "3 of 5 cores coordinated").
+    public static var progressSummary: String {
+        let done = supportedEntries.count
+        let total = entries.count
+        return "\(done) of \(total) cores have native deadzone coordination"
+    }
+}
