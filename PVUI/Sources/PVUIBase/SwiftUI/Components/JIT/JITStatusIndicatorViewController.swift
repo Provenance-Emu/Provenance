@@ -96,6 +96,9 @@ public final class JITStatusIndicatorViewController: UIViewController {
 
         // Present from the parent (emulator) VC so the alert sits above the game view
         let presenter = parent ?? self
+        guard presenter.presentedViewController == nil else {
+            return
+        }
         presenter.present(alert, animated: true)
     }
 
