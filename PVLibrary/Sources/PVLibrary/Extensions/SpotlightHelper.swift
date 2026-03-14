@@ -96,13 +96,15 @@ public class SpotlightHelper {
         let database = RomDatabase.sharedInstance
         let realm = database.realm
         
-        // Get all games from the database and freeze them for thread-safe access
+        // Get all games from the database and freeze them individually for thread-safe access
         let allGames = realm.objects(PVGame.self)
-        let frozenGames = allGames.map { $0.freeze() }
-        ILOG("Found \(frozenGames.count) games to index")
+        let totalGames = allGames.count
+        ILOG("Found \(totalGames) games to index")
         
         // Process each game
-        for frozenGame in frozenGames {
+        for game in allGames {
+            let frozenGame = game.freeze()
+            
             // Create the searchable item
             let attributeSet = frozenGame.spotlightContentSet
             
