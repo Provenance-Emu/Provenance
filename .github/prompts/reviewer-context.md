@@ -191,3 +191,11 @@ Higher tiers may import lower tiers. **Never the reverse.**
 
 Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
 `PVCheevos` is Tier 0 (no dependencies on higher tiers).
+
+## New Patterns (2026)
+
+### PVToast In-Game Notification System
+- `PVToastManager.shared` (Tier 6, `PVUIBase`) is `@MainActor` — all calls must be on the main actor.
+- `PVToastHostingController.install(in:position:)` is the canonical way to embed the overlay into any `UIViewController`.
+- Do **not** use `StatusMessageManager` for in-game (emulator session) notifications; use `PVToastManager`.
+- `StatusMessageManager` remains the correct choice for library-level (import, scan, sync) notifications shown outside the emulator.

@@ -494,6 +494,12 @@
         "symbolColor": "gray",
         "title": "N64 Transfer Pak",
         "subtitle": "Transfer Pak protocol support — enabling Pokémon Stadium and other games that use the Transfer Pak accessory."
+      },
+      {
+        "symbolName": "bell.badge.fill",
+        "symbolColor": "purple",
+        "title": "In-Game Toast Notifications",
+        "subtitle": "Save states, achievements, JIT status, and controller events now appear as unobtrusive toast overlays with retrowave styling — no more missed notifications."
       }
     ]
   }
