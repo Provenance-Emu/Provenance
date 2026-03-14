@@ -81,5 +81,3 @@ public final class VirtualInputState: ObservableObject {
         isMouseVisible = visible
     }
 }
-
-

@@ -136,13 +136,14 @@ extension PVEmulatorViewController {
         virtualKeyboardHostingVC != nil
     }
 
-    /// Call this after the core has started and the view hierarchy is ready.
-    /// Wires the `VirtualInputState` action callbacks, then auto-shows the
-    /// keyboard if the core requires it and no hardware keyboard is connected.
+    /// Wire `VirtualInputState` toggle callbacks and auto-show the keyboard
+    /// for cores that require it.
     ///
+    /// Call this on iOS after `setupVirtualMouseIfNeeded()` so that the mouse
+    /// overlay is already installed before the toggle closures are wired.
     /// Hardware keyboard observation is started first so the virtual keyboard
     /// is never briefly shown then hidden when a physical keyboard is already
-    /// connected.
+    /// connected at launch.
     public func setupVirtualInputOverlaysIfNeeded() {
         // Wire action callbacks on the shared state object so SwiftUI buttons
         // and UIKit buttons both route through the same typed interface.

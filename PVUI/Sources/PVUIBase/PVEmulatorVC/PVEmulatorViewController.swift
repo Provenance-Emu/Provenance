@@ -793,8 +793,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             addControllerOverlay()
         }
         initMenuButton()
-        // Install visible mouse cursor + touch trackpad for mouse-supporting cores
+        // Install cursor overlay + touch trackpad for mouse-supporting cores, then wire
+        // all virtual-input toggle closures and honour keyboard auto-show config.
+        // setupVirtualMouseIfNeeded() is idempotent; setupVirtualInputOverlaysIfNeeded()
+        // also calls it via showVirtualMouse when the core supports mouse.
         setupVirtualMouseIfNeeded()
+        setupVirtualInputOverlaysIfNeeded()
         #endif
 
         configureFPSCounterPreferenceObservationIfNeeded()
@@ -819,15 +823,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Set up the indicator light overlay for JIT status, etc.
         setupIndicatorOverlay()
-
-        #if !os(tvOS)
-        // Show virtual keyboard / mouse cursor overlays for capable cores (e.g. DOS)
-        if #available(iOS 14.0, *) {
-            Task { @MainActor in
-                self.setupVirtualInputOverlaysIfNeeded()
-            }
-        }
-        #endif
 
         #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour

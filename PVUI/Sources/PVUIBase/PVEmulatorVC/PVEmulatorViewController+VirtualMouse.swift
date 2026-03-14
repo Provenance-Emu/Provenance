@@ -108,8 +108,6 @@ extension PVEmulatorViewController {
     public func hideVirtualMouse() {
         guard isVirtualMouseVisible else { return }
         teardownVirtualMouse()
-        // Update the shared state so all observers stay in sync.
-        virtualInputState.setMouseVisible(false)
     }
 
     /// Toggle virtual mouse visibility.
@@ -121,14 +119,19 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Remove cursor overlay and trackpad if present (called on teardown / core change).
-    /// Must be called on the main actor (enforced by the `@MainActor` extension).
+    /// Remove cursor overlay and trackpad if present, and update shared state.
+    ///
+    /// This is the single teardown path used by both `hideVirtualMouse()` and
+    /// the deinit cleanup route (`takeVirtualMouseCleanupHandles`), ensuring
+    /// `VirtualInputState.isMouseVisible` is always reset to `false` on removal.
     func teardownVirtualMouse() {
         touchTrackpadView?.removeFromSuperview()
         touchTrackpadView = nil
         cursorHostingController?.view.removeFromSuperview()
         cursorHostingController?.removeFromParent()
         cursorHostingController = nil
+        // Keep shared state in sync regardless of which teardown path was taken.
+        virtualInputState.setMouseVisible(false)
     }
 
     /// Refresh the trackpad's authoritative game-viewport rect.
