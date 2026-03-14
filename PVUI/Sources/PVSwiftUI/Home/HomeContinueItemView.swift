@@ -8,6 +8,7 @@
 import SwiftUI
 import PVThemes
 import RealmSwift
+import PVLogging
 
 /// Optimized HomeContinueItemView with cached image loading and efficient retro effects.
 ///
