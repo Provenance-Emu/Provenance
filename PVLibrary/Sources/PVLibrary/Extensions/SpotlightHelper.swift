@@ -8,8 +8,10 @@
 
 import Foundation
 import CoreSpotlight
+import PVPrimitives
 import PVSupport
 import RealmSwift
+import UniformTypeIdentifiers
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -94,22 +96,17 @@ public class SpotlightHelper {
         let database = RomDatabase.sharedInstance
         let realm = database.realm
         
-        // Get all games from the database
+        // Get all games from the database and freeze them individually for thread-safe access
         let allGames = realm.objects(PVGame.self)
-        ILOG("Found \(allGames.count) games to index")
+        let totalGames = allGames.count
+        ILOG("Found \(totalGames) games to index")
         
         // Process each game
         for game in allGames {
-            // Create a frozen copy of the game to safely use across threads
             let frozenGame = game.freeze()
             
             // Create the searchable item
             let attributeSet = frozenGame.spotlightContentSet
-            
-            // Add system information if available
-            if let system = frozenGame.system {
-                attributeSet.contentType = "\(system.manufacturer) \(system.name)"
-            }
             
             // Add keywords for better searchability
             if var keywords = attributeSet.keywords as? [String] {
@@ -181,8 +178,9 @@ public class SpotlightHelper {
             // Get the associated game
             guard let game = frozenSaveState.game else { continue }
             
-            // Create attribute set
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
+            // Create attribute set using the registered Provenance save-state UTI
+            // com.provenance.savestate is exported in the app's Info.plist and conforms to public.data
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .savestate)
             let saveStateTitle = "Save State: \(game.title)"
             attributeSet.title = saveStateTitle
             attributeSet.displayName = saveStateTitle
