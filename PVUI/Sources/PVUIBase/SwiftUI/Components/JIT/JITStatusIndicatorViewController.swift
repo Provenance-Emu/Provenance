@@ -12,11 +12,27 @@ import Combine
 import PVJIT
 #endif
 
+// MARK: - PassthroughView
+
+/// A transparent container view that forwards touches to its subviews only.
+/// Any touch that does not land on a subview returns `nil` from `hitTest`,
+/// letting it fall through to the game view beneath the overlay.
+private final class PassthroughView: UIView {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let hit = super.hitTest(point, with: event)
+        return hit === self ? nil : hit
+    }
+}
+
+// MARK: - JITStatusIndicatorViewController
+
 /// A UIViewController that hosts the SwiftUI JIT status indicator.
 /// Add it as a child of `PVEmulatorViewController` so it floats above the GPU view.
 ///
-/// When the user taps the indicator pill, a compact `UIAlertController` is presented
-/// from the nearest view controller in the hierarchy — no full-screen cover sheet.
+/// The root view is a `PassthroughView` so touches outside the pill fall through
+/// to the game content below.  When the user taps the pill, a compact
+/// `UIAlertController` is presented from the nearest view controller in the
+/// hierarchy — no full-screen cover sheet.
 @MainActor
 public final class JITStatusIndicatorViewController: UIViewController {
 
@@ -24,15 +40,15 @@ public final class JITStatusIndicatorViewController: UIViewController {
     private var hostingController: UIHostingController<JITStatusIndicatorView>?
     private var cancellables = Set<AnyCancellable>()
 
+    public override func loadView() {
+        let passthrough = PassthroughView()
+        passthrough.backgroundColor = .clear
+        passthrough.isUserInteractionEnabled = true
+        view = passthrough
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
-        // The overlay itself should not intercept touches; only the pill button
-        // inside the hosting view does.  UIHostingController clips its content,
-        // so we leave `isUserInteractionEnabled = true` at both levels and rely
-        // on SwiftUI's hit-testing to ignore the transparent background.
-        view.isUserInteractionEnabled = true
-
         setupHostingController()
         setupNotificationObservers()
     }

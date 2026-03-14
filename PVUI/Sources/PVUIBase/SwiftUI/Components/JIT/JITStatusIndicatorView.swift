@@ -169,44 +169,6 @@ public final class JITStatusViewModel: ObservableObject {
     }
 }
 
-// MARK: - JIT Explanation Popover
-
-/// Compact popover content showing the JIT status explanation
-private struct JITExplanationPopoverView: View {
-    let status: JITStatus
-#if canImport(JITManager)
-    let jitSource: JITSource
-#endif
-    let explanation: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(status.iconColor)
-                    .frame(width: 10, height: 10)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(status.label)
-                        .font(.headline)
-#if canImport(JITManager)
-                    if status == .active, jitSource != .none, jitSource != .unknown {
-                        Text("via \(jitSource.displayName)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-#endif
-                }
-            }
-            Text(explanation)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding()
-        .frame(maxWidth: 280)
-    }
-}
-
 // MARK: - JIT Status Indicator View
 
 /// A small, unobtrusive JIT status indicator for the emulator HUD.
