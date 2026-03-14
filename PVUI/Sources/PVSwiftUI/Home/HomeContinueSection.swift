@@ -86,11 +86,21 @@ protocol ContinuesDataDriver {
 }
 
 /// Realm-backed implementation.
+///
+/// - Note: When the SwiftData migration (#2510) is complete, a `SwiftDataContinuesDataDriver`
+///   conforming to `ContinuesDataDriver` should be introduced alongside this class.
+///   `ContinueItemModel` is already decoupled from Realm types, so views require no changes.
+///   Only the `resolver` closures inside `ContinueItemModel.init(saveState:)` will need
+///   a SwiftData-equivalent lookup path.
 final class RealmContinuesDataDriver: ContinuesDataDriver {
     private let queue = DispatchQueue(label: "org.provenance.realm.continues.driver", qos: .userInitiated)
 
-    /// Autosaves within this interval of each other (newest → older) belong to the same session.
-    /// A gap larger than this creates a new session stack entry for that game.
+    /// Threshold used by `AutoSaveFilmstripView` to display a prominent "session break" divider
+    /// between two saves with a large time gap. Does **not** affect stacking logic in `buildModels`
+    /// (all autosaves for a game are folded into a single card regardless of session gap).
+    ///
+    /// Future: `PVRecentGame.lastPlayedDate` could serve as a more precise session anchor so that
+    /// autosaves are grouped per actual play session rather than by a fixed time window.
     static let sessionBoundaryInterval: TimeInterval = 2 * 3600  // 2 hours
 
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
@@ -179,8 +189,13 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
             }
         }
 
-        // Re-sort by date descending so manual saves and autosave representatives interleave correctly.
-        return resultModels.sorted { $0.date > $1.date }
+        // Re-sort by date descending so manual saves and autosave representatives interleave
+        // correctly. Secondary sort by ID provides a deterministic tie-break for saves with
+        // identical timestamps (prevents focus/signature churn in the carousel).
+        return resultModels.sorted {
+            if $0.date != $1.date { return $0.date > $1.date }
+            return $0.id < $1.id
+        }
     }
 }
 

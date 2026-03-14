@@ -4,6 +4,7 @@ import PVLibrary
 import PVRealm
 import PVUIBase
 import PVLogging
+import PVSettings
 import UIKit
 
 /// Lightweight value used for rendering save states without live Realm bindings
@@ -47,20 +48,20 @@ public final class RetroSaveStatesStore: ObservableObject {
 
     /// Loads the most recent save states for a system.
     ///
-    /// Note: This is used by RetroWave/tvOS shelves and always deduplicates
-    /// auto-saves (`deduplicateAutosaves: true`). The user setting
-    /// `showAutoSavesInRecents` only affects the Home continue strip and is
-    /// not consulted here.
+    /// Deduplicates autosaves unless the user has enabled "Show All Auto-Saves in Recent Saves"
+    /// (`showAutoSavesInRecents`). This mirrors the behaviour of the Home continue strip so both
+    /// surfaces stay in sync with the same user preference.
     @discardableResult
     public func loadRecent(forSystemID systemID: String, limit: Int = 8) async -> [RetroSaveStateItem] {
         if let cached = await MainActor.run(body: { recentBySystem[systemID] }), !cached.isEmpty {
             return cached
         }
 
+        let dedup = !Defaults[.showAutoSavesInRecents]
         let items = await fetchSaveStates(
             predicate: NSPredicate(format: "game.systemIdentifier == %@", systemID),
             limit: limit,
-            deduplicateAutosaves: true // Always deduplicate autosaves for RetroWave shelves
+            deduplicateAutosaves: dedup
         )
 
         await MainActor.run {
@@ -117,21 +118,25 @@ public final class RetroSaveStatesStore: ObservableObject {
         return items
     }
 
-    /// Loads recent save states across all systems
+    /// Loads recent save states across all systems.
+    /// Respects the `showAutoSavesInRecents` preference — deduplicates by default.
     @discardableResult
     public func loadAllRecent(limit: Int = 50) async -> [RetroSaveStateItem] {
         let predicate = NSPredicate(format: "game != nil && game.system != nil")
-        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: true)
+        let dedup = !Defaults[.showAutoSavesInRecents]
+        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: dedup)
     }
 
-    /// Loads recent save states filtered by multiple system IDs
+    /// Loads recent save states filtered by multiple system IDs.
+    /// Respects the `showAutoSavesInRecents` preference — deduplicates by default.
     @discardableResult
     public func loadAllRecent(forSystemIDs systemIDs: Set<String>, limit: Int = 100) async -> [RetroSaveStateItem] {
         guard !systemIDs.isEmpty else {
             return await loadAllRecent(limit: limit)
         }
         let predicate = NSPredicate(format: "game != nil && game.system != nil && game.systemIdentifier IN %@", Array(systemIDs))
-        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: true)
+        let dedup = !Defaults[.showAutoSavesInRecents]
+        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: dedup)
     }
 
     /// Returns all system IDs that have at least one save state

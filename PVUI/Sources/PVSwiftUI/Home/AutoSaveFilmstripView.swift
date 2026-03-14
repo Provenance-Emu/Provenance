@@ -195,13 +195,12 @@ struct AutoSaveFilmstripView: View {
 
     // MARK: - Time Gap Indicator
 
-    /// Threshold after which a time gap is treated as a "session break" in the UI.
-    private static let sessionBreakInterval: TimeInterval = 2 * 60 * 60
-
     /// Vertical divider between two saves annotated with the time elapsed between them.
+    /// A gap exceeding `RealmContinuesDataDriver.sessionBoundaryInterval` (2 h) is shown
+    /// as a prominent session-break indicator.
     private func timeGapIndicator(between newer: Date, and older: Date) -> some View {
         let gap = newer.timeIntervalSince(older)
-        let isLargeGap = gap > AutoSaveFilmstripView.sessionBreakInterval
+        let isLargeGap = gap > RealmContinuesDataDriver.sessionBoundaryInterval
 
         return VStack(spacing: 4) {
             if isLargeGap {
