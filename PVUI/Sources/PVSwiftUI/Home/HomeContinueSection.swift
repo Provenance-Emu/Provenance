@@ -25,23 +25,37 @@ struct ContinueItemModel: Identifiable, Hashable {
     let imageURL: URL?
     let date: Date
     let systemIdentifier: String?
+    /// Whether this save was created automatically (timed/session autosave).
+    let isAutosave: Bool
+    /// Other autosaves from the same gaming session collapsed behind this representative.
+    /// Sorted newest → oldest. Empty for non-autosaves or when showAllAutosaves is on.
+    var stackedSaves: [ContinueItemModel]
     let resolver: () -> PVSaveState?
+
+    /// Total number of saves represented by this card (1 + stacked).
+    var stackDepth: Int { 1 + stackedSaves.count }
+    /// True when there are hidden autosaves stacked behind this card.
+    var isStacked: Bool { !stackedSaves.isEmpty }
 
     init(id: String,
          gameTitle: String?,
          imageURL: URL?,
          date: Date,
          systemIdentifier: String?,
+         isAutosave: Bool = false,
+         stackedSaves: [ContinueItemModel] = [],
          resolver: @escaping () -> PVSaveState?) {
         self.id = id
         self.gameTitle = gameTitle
         self.imageURL = imageURL
         self.date = date
         self.systemIdentifier = systemIdentifier
+        self.isAutosave = isAutosave
+        self.stackedSaves = stackedSaves
         self.resolver = resolver
     }
 
-    init(saveState: PVSaveState) {
+    init(saveState: PVSaveState, stackedSaves: [ContinueItemModel] = []) {
         // Freeze for thread safety but keep resolver for context actions.
         let snapshot = saveState.isFrozen ? saveState : saveState.freeze()
         self.id = snapshot.id
@@ -49,6 +63,8 @@ struct ContinueItemModel: Identifiable, Hashable {
         self.imageURL = snapshot.image?.url
         self.date = snapshot.date
         self.systemIdentifier = snapshot.game?.systemIdentifier
+        self.isAutosave = snapshot.isAutosave
+        self.stackedSaves = stackedSaves
         let primaryKey = snapshot.id
         self.resolver = {
             RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: primaryKey)
@@ -70,11 +86,27 @@ protocol ContinuesDataDriver {
 }
 
 /// Realm-backed implementation.
+///
+/// - Note: When the SwiftData migration (#2510) is complete, a `SwiftDataContinuesDataDriver`
+///   conforming to `ContinuesDataDriver` should be introduced alongside this class.
+///   `ContinueItemModel` is already decoupled from Realm types, so views require no changes.
+///   Only the `resolver` closures inside `ContinueItemModel.init(saveState:)` will need
+///   a SwiftData-equivalent lookup path.
 final class RealmContinuesDataDriver: ContinuesDataDriver {
     private let queue = DispatchQueue(label: "org.provenance.realm.continues.driver", qos: .userInitiated)
 
+    /// Threshold used by `AutoSaveFilmstripView` to display a prominent "session break" divider
+    /// between two saves with a large time gap. Does **not** affect stacking logic in `buildModels`
+    /// (all autosaves for a game are folded into a single card regardless of session gap).
+    ///
+    /// Future: `PVRecentGame.lastPlayedDate` could serve as a more precise session anchor so that
+    /// autosaves are grouped per actual play session rather than by a fixed time window.
+    static let sessionBoundaryInterval: TimeInterval = 2 * 3600  // 2 hours
+
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
-        AsyncStream { continuation in
+        // Capture setting at stream-start time. The view will restart the stream on change.
+        let showAllAutosaves = Defaults[.showAutoSavesInRecents]
+        return AsyncStream { continuation in
             queue.async { [weak self] in
                 guard let self else { return }
                 do {
@@ -91,13 +123,11 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                         switch change {
                         case .initial(let collection),
                              .update(let collection, _, _, _):
-                            let models = collection
-                                .prefix(500) // safety cap to avoid huge bursts
-                                .compactMap { state -> ContinueItemModel? in
-                                    guard !state.isInvalidated else { return nil }
-                                    return ContinueItemModel(saveState: state)
-                                }
-                            continuation.yield(Array(models))
+                            let models = Self.buildModels(
+                                from: collection,
+                                showAllAutosaves: showAllAutosaves
+                            )
+                            continuation.yield(models)
                         case .error(let error):
                             ELOG("RealmContinuesDataDriver observe error: \(error.localizedDescription)")
                         }
@@ -110,6 +140,61 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                     ELOG("RealmContinuesDataDriver failed to open Realm: \(error.localizedDescription)")
                 }
             }
+        }
+    }
+
+    /// Converts a Realm collection into display models.
+    ///
+    /// When `showAllAutosaves` is false (default):
+    /// - At most **one** autosave card is shown per game (the most-recent one).
+    /// - Older autosaves for that game — whether from the same session or an older one —
+    ///   are appended to that representative's `stackedSaves` filmstrip.
+    ///   Within a session (gap ≤ `sessionBoundaryInterval`) they go into the normal stack;
+    ///   cross-session autosaves are also folded into the same card rather than creating a
+    ///   second top-level card, keeping the carousel free of per-game duplicates.
+    /// - Manual saves are never grouped.
+    ///
+    /// When `showAllAutosaves` is true every save is included individually.
+    static func buildModels<C: Collection>(
+        from collection: C,
+        showAllAutosaves: Bool
+    ) -> [ContinueItemModel] where C.Element == PVSaveState {
+        // (gameID) -> index into resultModels for that game's autosave representative.
+        // Only the *first* (newest) autosave per game gets its own card; all subsequent
+        // autosaves for that game are appended to the representative's filmstrip stack.
+        var gameRepIndex: [String: Int] = [:]
+        var resultModels: [ContinueItemModel] = []
+
+        for state in collection.prefix(500) {
+            guard !state.isInvalidated else { continue }
+
+            if !showAllAutosaves, state.isAutosave {
+                let gameID = state.game?.id ?? ""
+                guard !gameID.isEmpty else { continue }
+
+                if let existingIndex = gameRepIndex[gameID] {
+                    // A representative already exists for this game — fold this older autosave
+                    // into its filmstrip regardless of session boundary. This enforces the
+                    // "at most one autosave card per game" policy.
+                    resultModels[existingIndex].stackedSaves.append(ContinueItemModel(saveState: state))
+                } else {
+                    // First autosave for this game: it becomes the representative card.
+                    let newIndex = resultModels.count
+                    resultModels.append(ContinueItemModel(saveState: state))
+                    gameRepIndex[gameID] = newIndex
+                }
+            } else {
+                // Manual save (or showAllAutosaves=true): always include individually.
+                resultModels.append(ContinueItemModel(saveState: state))
+            }
+        }
+
+        // Re-sort by date descending so manual saves and autosave representatives interleave
+        // correctly. Secondary sort by ID provides a deterministic tie-break for saves with
+        // identical timestamps (prevents focus/signature churn in the carousel).
+        return resultModels.sorted {
+            if $0.date != $1.date { return $0.date > $1.date }
+            return $0.id < $1.id
         }
     }
 }
@@ -469,6 +554,8 @@ struct HomeContinueSection: SwiftUI.View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
+    @Default(.showAutoSavesInRecents) private var showAutoSavesInRecents
+
     /// Filtered save states based on console identifier
     /// Data driver to allow different persistence backends.
     var dataDriver: ContinuesDataDriver = RealmContinuesDataDriver()
@@ -673,18 +760,7 @@ struct HomeContinueSection: SwiftUI.View {
             #if !os(tvOS)
             hapticGenerator.prepare()
             #endif
-            driverTask?.cancel()
-            driverTask = Task.detached(priority: .utility) { [consoleIdentifier] in
-                for await items in dataDriver.stream(consoleIdentifier: consoleIdentifier) {
-                    await MainActor.run {
-                        allItems = items
-                        totalSaveStatesCount = items.count
-                        lastAppliedFilteredSignature = 0
-                        updateSaveStateLimit(viewModel.currentLimit)
-                        syncSelectionState()
-                    }
-                }
-            }
+            restartDriverTask()
 
             // Only update the limit when the view first appears
             if !hasAppeared {
@@ -706,6 +782,10 @@ struct HomeContinueSection: SwiftUI.View {
             continuousNavigationTask?.cancel()
             filteredSaveStatesUpdateTask?.cancel()
             driverTask?.cancel()
+        }
+        .onChange(of: showAutoSavesInRecents) { _ in
+            // Restart the driver so it re-queries with the updated autosave display policy.
+            restartDriverTask()
         }
         .onChange(of: parentFocusedItem) { _ in
             syncSelectionState()
@@ -803,7 +883,7 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     /// A lightweight signature representing what this view actually cares about:
-    /// count + (id,date) for the first N items in the current sort order.
+    /// count + (id, date, stackDepth) for the first N items in the current sort order.
     private func filteredItemsSignature(limit: Int) -> Int {
         var hasher = Hasher()
         hasher.combine(allItems.count)
@@ -813,9 +893,27 @@ struct HomeContinueSection: SwiftUI.View {
                 let item = allItems[idx]
                 hasher.combine(item.id)
                 hasher.combine(item.date.timeIntervalSince1970)
+                hasher.combine(item.stackedSaves.count)
             }
         }
         return hasher.finalize()
+    }
+
+    /// Cancels any running driver task and starts a fresh one.
+    /// Call from `.onAppear` and whenever a setting that affects the query changes.
+    private func restartDriverTask() {
+        driverTask?.cancel()
+        driverTask = Task.detached(priority: .utility) { [consoleIdentifier] in
+            for await items in dataDriver.stream(consoleIdentifier: consoleIdentifier) {
+                await MainActor.run {
+                    allItems = items
+                    totalSaveStatesCount = items.count
+                    lastAppliedFilteredSignature = 0
+                    updateSaveStateLimit(viewModel.currentLimit)
+                    syncSelectionState()
+                }
+            }
+        }
     }
 
     private func setupGamepadHandling() {
@@ -1077,6 +1175,7 @@ extension ContinueItemModel {
             imageURL: imageURL,
             date: date,
             systemIdentifier: systemIdentifier,
+            isAutosave: state.isAutosave,
             resolver: {
                 // Hybrid resolver: fetch from Realm during migration so that
                 // game-launch actions keep working before the action layer is

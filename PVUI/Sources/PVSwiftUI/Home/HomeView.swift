@@ -36,6 +36,7 @@ struct HomeView: SwiftUI.View {
     @Default(.showRecentGames) private var showRecentGames
     @Default(.showSearchbar) private var showSearchbar
     @Default(.showFavorites) private var showFavorites
+    @Default(.showAutoSavesInRecents) private var showAutoSavesInRecents
 
     // Import status view properties
     @State private var showImportStatusView = false
@@ -126,9 +127,38 @@ struct HomeView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var bootupStateManager = AppState.shared.bootupStateManager
 
+    /// Maximum number of recent save states scanned for the Recent Saves carousel.
+    /// Caps the O(n) deduplication pass to avoid scanning unbounded Realm result sets
+    /// when autosaves accumulate (the carousel can only display a fixed number of items).
+    private static let recentSaveStateScanLimit = 100
+
+    /// Save state IDs for Recent Saves carousel navigation.
+    /// When showAutoSavesInRecents is false (default), deduplicates timed autosaves:
+    /// at most one (the latest) autosave per game is included to prevent flooding.
+    /// Manual saves are always included. Mirrors the filter in RealmContinuesDataDriver.
+    /// Only the first `recentSaveStateScanLimit` records are examined to bound the cost
+    /// of repeated calls from gamepad navigation helpers.
+    private var recentSaveStateIDs: [String] {
+        let window = recentSaveStates.prefix(Self.recentSaveStateScanLimit)
+        if showAutoSavesInRecents {
+            return window.compactMap { $0.isInvalidated ? nil : $0.id }
+        }
+        var seenAutoSaveGameIDs = Set<String>()
+        return window.compactMap { state -> String? in
+            guard !state.isInvalidated else { return nil }
+            if state.isAutosave {
+                let gameID = state.game?.id ?? ""
+                guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
+                    return nil
+                }
+            }
+            return state.id
+        }
+    }
+
     private var availableSections: [HomeSectionType] {
         [
-            (showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
+            (showRecentSaveStates && !recentSaveStateIDs.isEmpty) ? .recentSaveStates : nil,
             (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
             (showFavorites && !favorites.isEmpty) ? .favorites : nil,
             !mostPlayed.isEmpty ? .mostPlayed : nil,
@@ -263,7 +293,7 @@ struct HomeView: SwiftUI.View {
         .task {
             // Set initial focus
             if let firstSection = [
-                showRecentSaveStates && !recentSaveStates.isEmpty ? HomeSectionType.recentSaveStates : nil,
+                showRecentSaveStates && !recentSaveStateIDs.isEmpty ? HomeSectionType.recentSaveStates : nil,
                 showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
                 showFavorites && !favorites.isEmpty ? .favorites : nil,
                 !allGames.isEmpty ? .allGames : nil
@@ -963,7 +993,7 @@ struct HomeView: SwiftUI.View {
     private func getLastItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.last?.id
+            return recentSaveStateIDs.last
         case .recentlyPlayedGames:
             return recentlyPlayedGames.last?.game?.id
         case .favorites:
@@ -978,7 +1008,7 @@ struct HomeView: SwiftUI.View {
     private func getItemsForSection(_ section: HomeSectionType) -> [String] {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.map { $0.id }
+            return recentSaveStateIDs
         case .recentlyPlayedGames:
             return recentlyPlayedGames.compactMap { $0.game?.id }
         case .favorites:
@@ -993,7 +1023,7 @@ struct HomeView: SwiftUI.View {
     private func getFirstItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.first?.id
+            return recentSaveStateIDs.first
         case .recentlyPlayedGames:
             return recentlyPlayedGames.first?.game?.id
         case .favorites:
@@ -1136,7 +1166,7 @@ struct HomeView: SwiftUI.View {
 
     private func setInitialFocus() {
         if let firstSection = [
-            showRecentSaveStates && !recentSaveStates.isEmpty ? HomeSectionType.recentSaveStates : nil,
+            showRecentSaveStates && !recentSaveStateIDs.isEmpty ? HomeSectionType.recentSaveStates : nil,
             showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
             showFavorites && !favorites.isEmpty ? .favorites : nil,
             !allGames.isEmpty ? .allGames : nil

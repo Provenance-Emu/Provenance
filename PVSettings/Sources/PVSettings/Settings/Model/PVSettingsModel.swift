@@ -31,6 +31,10 @@ extension Defaults.Keys {
 
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
 
+    /// When false (default), the Recent Saves carousel collapses timed autosaves: only the
+    /// most recent autosave per game is shown. When true, every autosave is listed.
+    static let showAutoSavesInRecents = Key<Bool>("showAutoSavesInRecents", default: false)
+
     static let showGameBadges = Key<Bool>("showGameBadges", default: true)
 
     static let showRecentGames = Key<Bool>("showRecentGames", default: true)

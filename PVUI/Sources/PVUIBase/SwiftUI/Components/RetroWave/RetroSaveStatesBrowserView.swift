@@ -4,6 +4,7 @@ import PVLibrary
 import PVRealm
 import PVUIBase
 import PVLogging
+import PVSettings
 import UIKit
 
 /// Lightweight value used for rendering save states without live Realm bindings
@@ -33,6 +34,9 @@ public final class RetroSaveStatesStore: ObservableObject {
     @Published public private(set) var statesBySystem: [String: [RetroSaveStateItem]] = [:]
     @Published public private(set) var statesByGame: [String: [RetroSaveStateItem]] = [:]
 
+    /// Tracks whether the cached recent items for a system were built with autosave deduplication enabled.
+    private var recentDedupFlags: [String: Bool] = [:]
+
     private let imageCache = NSCache<NSString, UIImage>()
     private let workQueue = DispatchQueue(label: "org.provenance.retrowave.savestates", qos: .userInitiated)
 
@@ -45,20 +49,32 @@ public final class RetroSaveStatesStore: ObservableObject {
         }
     }
 
-    /// Loads the most recent save states for a system
+    /// Loads the most recent save states for a system.
+    ///
+    /// Deduplicates autosaves unless the user has enabled "Show All Auto-Saves in Recent Saves"
+    /// (`showAutoSavesInRecents`). This mirrors the behaviour of the Home continue strip so both
+    /// surfaces stay in sync with the same user preference.
     @discardableResult
     public func loadRecent(forSystemID systemID: String, limit: Int = 8) async -> [RetroSaveStateItem] {
-        if let cached = await MainActor.run(body: { recentBySystem[systemID] }), !cached.isEmpty {
+        let dedup = !Defaults[.showAutoSavesInRecents]
+
+        let (cachedItems, cachedDedupFlag): ([RetroSaveStateItem]?, Bool?) = await MainActor.run {
+            (recentBySystem[systemID], recentDedupFlags[systemID])
+        }
+
+        if let cached = cachedItems, !cached.isEmpty, cachedDedupFlag == dedup {
             return cached
         }
 
         let items = await fetchSaveStates(
             predicate: NSPredicate(format: "game.systemIdentifier == %@", systemID),
-            limit: limit
+            limit: limit,
+            deduplicateAutosaves: dedup
         )
 
         await MainActor.run {
             recentBySystem[systemID] = items
+            recentDedupFlags[systemID] = dedup
         }
 
         return items
@@ -67,7 +83,10 @@ public final class RetroSaveStatesStore: ObservableObject {
     /// Invalidates the cached recent saves for a system and re-fetches from Realm
     @discardableResult
     public func reloadRecent(forSystemID systemID: String, limit: Int = 8) async -> [RetroSaveStateItem] {
-        await MainActor.run { recentBySystem[systemID] = nil }
+        await MainActor.run {
+            recentBySystem[systemID] = nil
+            recentDedupFlags[systemID] = nil
+        }
         return await loadRecent(forSystemID: systemID, limit: limit)
     }
 
@@ -111,20 +130,25 @@ public final class RetroSaveStatesStore: ObservableObject {
         return items
     }
 
-    /// Loads recent save states across all systems
+    /// Loads recent save states across all systems.
+    /// Respects the `showAutoSavesInRecents` preference — deduplicates by default.
     @discardableResult
     public func loadAllRecent(limit: Int = 50) async -> [RetroSaveStateItem] {
-        await fetchSaveStates(predicate: NSPredicate(value: true), limit: limit)
+        let predicate = NSPredicate(format: "game != nil && game.system != nil")
+        let dedup = !Defaults[.showAutoSavesInRecents]
+        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: dedup)
     }
 
-    /// Loads recent save states filtered by multiple system IDs
+    /// Loads recent save states filtered by multiple system IDs.
+    /// Respects the `showAutoSavesInRecents` preference — deduplicates by default.
     @discardableResult
     public func loadAllRecent(forSystemIDs systemIDs: Set<String>, limit: Int = 100) async -> [RetroSaveStateItem] {
         guard !systemIDs.isEmpty else {
             return await loadAllRecent(limit: limit)
         }
-        let predicate = NSPredicate(format: "game.systemIdentifier IN %@", Array(systemIDs))
-        return await fetchSaveStates(predicate: predicate, limit: limit)
+        let predicate = NSPredicate(format: "game != nil && game.system != nil && game.systemIdentifier IN %@", Array(systemIDs))
+        let dedup = !Defaults[.showAutoSavesInRecents]
+        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: dedup)
     }
 
     /// Returns all system IDs that have at least one save state
@@ -197,7 +221,14 @@ public final class RetroSaveStatesStore: ObservableObject {
         }
     }
 
-    private func fetchSaveStates(predicate: NSPredicate, limit: Int?) async -> [RetroSaveStateItem] {
+    /// Fetches save states matching `predicate`, sorted newest-first.
+    /// - Parameters:
+    ///   - predicate: Realm filter predicate.
+    ///   - limit: Maximum number of results to return; `nil` fetches all (used by full management UI).
+    ///   - deduplicateAutosaves: When `true`, only the most-recent autosave per game is included;
+    ///     all manual saves are always included. Defaults to `false` so the full save management
+    ///     UI remains unfiltered.
+    private func fetchSaveStates(predicate: NSPredicate, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
         await withCheckedContinuation { continuation in
             workQueue.async {
                 do {
@@ -206,16 +237,39 @@ public final class RetroSaveStatesStore: ObservableObject {
                         .filter(predicate)
                         .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
 
+                    // When deduplicating, fetch a larger window so that after removing duplicate
+                    // autosaves we still have enough items to fill `limit`. Without this, a batch
+                    // that is mostly autosaves from the same game could yield far fewer than `limit`
+                    // results after the dedup pass.
+                    let fetchLimit: Int? = (deduplicateAutosaves && limit != nil) ? limit.map { $0 * 4 } : limit
                     let collection: [PVSaveState] = {
-                        if let limit {
-                            return Array(results.prefix(limit))
+                        if let fetchLimit {
+                            return Array(results.prefix(fetchLimit))
                         } else {
                             return Array(results)
                         }
                     }()
 
-                    let items = collection.compactMap { state in
-                        self.mapSaveState(state)
+                    let items: [RetroSaveStateItem]
+                    if deduplicateAutosaves {
+                        // For "Recent Saves" strips: show at most one (the latest) autosave per game.
+                        // collection is already date-descending, so the first autosave seen per game
+                        // is the most recent one. Apply `limit` after deduplication.
+                        var seenAutoSaveGameIDs = Set<String>()
+                        let deduped = collection.compactMap { state -> RetroSaveStateItem? in
+                            if state.isAutosave {
+                                let gameID = state.game?.id ?? ""
+                                guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
+                                    return nil
+                                }
+                            }
+                            return self.mapSaveState(state)
+                        }
+                        items = limit.map { Array(deduped.prefix($0)) } ?? deduped
+                    } else {
+                        items = collection.compactMap { state in
+                            self.mapSaveState(state)
+                        }
                     }
                     continuation.resume(returning: items)
                 } catch {
