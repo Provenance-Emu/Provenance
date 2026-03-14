@@ -760,18 +760,7 @@ struct HomeContinueSection: SwiftUI.View {
             #if !os(tvOS)
             hapticGenerator.prepare()
             #endif
-            driverTask?.cancel()
-            driverTask = Task.detached(priority: .utility) { [consoleIdentifier] in
-                for await items in dataDriver.stream(consoleIdentifier: consoleIdentifier) {
-                    await MainActor.run {
-                        allItems = items
-                        totalSaveStatesCount = items.count
-                        lastAppliedFilteredSignature = 0
-                        updateSaveStateLimit(viewModel.currentLimit)
-                        syncSelectionState()
-                    }
-                }
-            }
+            restartDriverTask()
 
             // Only update the limit when the view first appears
             if !hasAppeared {
@@ -796,18 +785,7 @@ struct HomeContinueSection: SwiftUI.View {
         }
         .onChange(of: showAutoSavesInRecents) { _ in
             // Restart the driver so it re-queries with the updated autosave display policy.
-            driverTask?.cancel()
-            driverTask = Task.detached(priority: .utility) { [consoleIdentifier] in
-                for await items in dataDriver.stream(consoleIdentifier: consoleIdentifier) {
-                    await MainActor.run {
-                        allItems = items
-                        totalSaveStatesCount = items.count
-                        lastAppliedFilteredSignature = 0
-                        updateSaveStateLimit(viewModel.currentLimit)
-                        syncSelectionState()
-                    }
-                }
-            }
+            restartDriverTask()
         }
         .onChange(of: parentFocusedItem) { _ in
             syncSelectionState()
@@ -919,6 +897,23 @@ struct HomeContinueSection: SwiftUI.View {
             }
         }
         return hasher.finalize()
+    }
+
+    /// Cancels any running driver task and starts a fresh one.
+    /// Call from `.onAppear` and whenever a setting that affects the query changes.
+    private func restartDriverTask() {
+        driverTask?.cancel()
+        driverTask = Task.detached(priority: .utility) { [consoleIdentifier] in
+            for await items in dataDriver.stream(consoleIdentifier: consoleIdentifier) {
+                await MainActor.run {
+                    allItems = items
+                    totalSaveStatesCount = items.count
+                    lastAppliedFilteredSignature = 0
+                    updateSaveStateLimit(viewModel.currentLimit)
+                    syncSelectionState()
+                }
+            }
+        }
     }
 
     private func setupGamepadHandling() {
