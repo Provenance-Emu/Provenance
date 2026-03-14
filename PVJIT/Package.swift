@@ -85,7 +85,7 @@ let package = Package(
         // MARK: SwiftPM tests
         .testTarget(
             name: "PVJITTests",
-            dependencies: ["PVJIT"])
+            dependencies: ["PVJIT", "JITManager"])
     ],
     swiftLanguageVersions: [.v5]
 )

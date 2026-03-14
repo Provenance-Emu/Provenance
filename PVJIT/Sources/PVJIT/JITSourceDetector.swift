@@ -26,15 +26,18 @@ public enum JITSourceDetector {
 
     /// Runs all detection heuristics and stores the result in `DOLJitManager`.
     /// Should be called after `attemptToAcquireJitOnStartup()` so file-system
-    /// detection has already run and we only refine `.unknown` sources, plus `.none`
-    /// once JIT has actually been acquired.
+    /// detection has already run. Only refines `.unknown` or `.none` sources, and
+    /// only when JIT has actually been acquired — never sets a source speculatively
+    /// based solely on URL-scheme availability before JIT is active.
     public static func detect() {
         let manager = DOLJitManager.shared
 
         // Only refine; don't overwrite a confident result from the file-system pass.
+        // Require JIT to actually be acquired before updating the source — otherwise
+        // URL-scheme availability alone could incorrectly imply JIT is active.
         let current = manager.getJITSource()
         let hasAcquiredJit = manager.appHasAcquiredJit()
-        guard current == .unknown || (current == .none && hasAcquiredJit) else { return }
+        guard hasAcquiredJit, current == .unknown || current == .none else { return }
 
         let detected = detectSource()
         if detected != .unknown {

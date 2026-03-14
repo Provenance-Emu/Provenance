@@ -380,18 +380,34 @@ public final class DOLJitManager {
 
     // MARK: - TrollStore Detection
 
-    /// Returns `true` if the app was installed via TrollStore.
+    /// Returns `true` if **this app** was installed via TrollStore.
     ///
     /// TrollStore grants unrestricted entitlements (including `get-task-allow`)
-    /// at install time and leaves identifiable file-system markers. This check
-    /// is filesystem-only and requires no entitlements or special permissions.
+    /// at install time and leaves identifiable file-system markers on the device.
+    /// We combine both checks so that TrollStore being present on the device alone
+    /// is not sufficient — the app must also carry `get-task-allow`, which TrollStore
+    /// injects but AltStore/App Store builds do not in release configurations.
     public func isInstalledViaTrollStore() -> Bool {
-        let markers = [
+        // 1. Check device-wide TrollStore installation markers.
+        let deviceMarkers = [
             "/var/mobile/Library/Application Support/TrollStore",
             "/usr/lib/TrollStore",
             "/var/containers/Bundle/TrollStore",
         ]
-        return markers.contains(where: { FileManager.default.fileExists(atPath: $0) })
+        guard deviceMarkers.contains(where: { FileManager.default.fileExists(atPath: $0) }) else {
+            return false
+        }
+
+        // 2. Verify this binary carries `get-task-allow` (injected by TrollStore at
+        //    install time; not present in App Store or AltStore release builds).
+        guard let task = SecTaskCreateFromSelf(nil) else { return false }
+        guard let value = SecTaskCopyValueForEntitlement(task, "get-task-allow" as CFString, nil) else {
+            return false
+        }
+        if CFGetTypeID(value) == CFBooleanGetTypeID() {
+            return CFBooleanGetValue((value as! CFBoolean))
+        }
+        return false
     }
 
     private func getCpuArchitecture() -> String? {
