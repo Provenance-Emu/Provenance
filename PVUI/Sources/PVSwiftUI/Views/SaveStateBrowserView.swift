@@ -360,6 +360,7 @@ private struct SaveStateBrowserItemRow: View {
                 ) {
                     do {
                         try RomDatabase.sharedInstance.delete(saveState: state)
+                        RetroSaveStatesStore.shared.removeFromCache(id: item.id, systemID: item.systemId)
                         onDeleted()
                     } catch {
                         ELOG("SaveStateBrowserView: Failed to delete save state: \(error)")
