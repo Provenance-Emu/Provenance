@@ -318,9 +318,7 @@ public struct AllSaveStatesBrowserView: View {
             }
             let systemId = saveState.game?.systemIdentifier ?? ""
             do {
-                try realm.write {
-                    realm.delete(saveState)
-                }
+                try RomDatabase.sharedInstance.delete(saveState: saveState)
                 store.removeFromCache(id: item.id, systemID: systemId)
                 // Reload after deletion
                 await loadItems()
