@@ -10,10 +10,10 @@ import Foundation
 import GameController
 #endif
 import PVLogging
-import PVPrimitives
 
 @_exported import PVAudio
 @_exported import PVCoreBridge
+@_exported import PVPrimitives
 
 public typealias OptionalCore = PVEmulatorCore & CoreOptional
 
@@ -287,6 +287,20 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 
     /// Whether this core supports dual screens (e.g., 3DS, DS)
     @objc dynamic open var supportsDualScreens: Bool { false }
+
+    // MARK: JIT
+
+    /// Describes how this core uses JIT compilation.
+    ///
+    /// The default is `.notSupported`.  Subclasses that benefit from or require
+    /// JIT must override this property.  The app layer uses this value to decide
+    /// whether to attempt JIT acquisition before launching a game.
+    ///
+    /// See `PVPrimitives.PVJITRequirement` for available cases.
+    /// The return type is fully qualified to avoid ambiguity: both `PVCoreBridge`
+    /// (which defines `PVJITPlistRequirement`) and `PVPrimitives` are `@_exported import`-ed
+    /// from this module, so unqualified `PVJITRequirement` could be misread.
+    open var jitRequirement: PVPrimitives.PVJITRequirement { .notSupported }
 
     @objc dynamic open var supportsAudioVisualizer: Bool { true }
 }

@@ -16,5 +16,7 @@
 	<string>https://github.com/jpd002/Play-</string>
 	<key>PVProjectVersion</key>
 	<string>0.58</string>
+	<key>PVJITRequirement</key>
+	<string>required</string>
 </dict>
 </plist>

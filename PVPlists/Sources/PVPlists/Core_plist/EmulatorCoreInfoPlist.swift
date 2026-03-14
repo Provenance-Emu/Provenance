@@ -28,11 +28,21 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     /// The cheat code formats supported by this core, parsed from `PVSupportedCheatTypes`.
     public let supportedCheatTypes: [CheatCodeTypes]
     public let subCores:  [EmulatorCoreInfoPlist]?
+    /// Raw `PVJITRequirement` string from `Core.plist` (e.g. `"required"`, `"optional"`).
+    /// `nil` means the key was absent — callers should treat `nil` as *not required*.
+    public let jitRequirementRawValue: String?
+    /// When `true`, the core is currently disabled *only* because it requires JIT and
+    /// JIT was unavailable at packaging time.  The app layer should auto-enable this
+    /// core when JIT is successfully acquired.
+    /// Maps to the `PVJITDisabledWithoutJIT` key in `Core.plist`.
+    public let jitDisabledWithoutJIT: Bool
 
     public init(identifier: String, principleClass: String, supportedSystems: [String],
                 projectName: String, projectURL: String, projectVersion: String,
                 disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false,
-                supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil) {
+                supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil,
+                jitRequirementRawValue: String? = nil,
+                jitDisabledWithoutJIT: Bool = false) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -44,55 +54,57 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.appStoreDisabled = appStoreDisabled
         self.supportedCheatTypes = supportedCheatTypes
         self.subCores = subCores
+        self.jitRequirementRawValue = jitRequirementRawValue
+        self.jitDisabledWithoutJIT = jitDisabledWithoutJIT
     }
 
     public init?(fromInfoDictionary dict: [String: Any]) {
-        /// Identifier
+        // Identifier
         guard let identifier = dict["PVCoreIdentifier"] as? String else {
             return nil
         }
         self.identifier = identifier
 
-        /// Principle Class
+        // Principle Class
         guard let principleClass = dict["PVPrincipleClass"] as? String else {
             return nil
         }
         self.principleClass = principleClass
 
-        /// Supported systems
+        // Supported systems
         guard let supportedSystems = dict["PVSupportedSystems"] as? [String] else {
             return nil
         }
         self.supportedSystems = supportedSystems
 
-        /// Project name
+        // Project name
         guard let projectName = dict["PVProjectName"] as? String else {
             return nil
         }
         self.projectName = projectName
 
-        /// Project URL
+        // Project URL
         guard let projectURL = dict["PVProjectURL"] as? String else {
             return nil
         }
         self.projectURL = projectURL
 
-        /// Project Version
+        // Project Version
         guard let projectVersion = dict["PVProjectVersion"] as? String else {
             return nil
         }
         self.projectVersion = projectVersion
 
-        /// Disabled
+        // Disabled
         self.disabled = dict["PVDisabled"] as? Bool ?? false
 
-        /// Contentless
+        // Contentless
         self.contentless = dict["PVContentless"] as? Bool ?? false
 
-        /// AppStore Disabled
+        // AppStore Disabled
         self.appStoreDisabled = dict["PVAppStoreDisabled"] as? Bool ?? false
 
-        /// Supported cheat types — parse display-name strings into typed enum values.
+        // Supported cheat types — parse display-name strings into typed enum values.
         if let rawCheatTypes = dict["PVSupportedCheatTypes"] as? [Any] {
             let stringCheatTypes = rawCheatTypes.compactMap { $0 as? String }
             if stringCheatTypes.count != rawCheatTypes.count {
@@ -111,7 +123,7 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
             self.supportedCheatTypes = []
         }
 
-        /// Subcores
+        // Subcores
         if let subCores = dict["PVCores"] as? [[String:Any]] {
             self.subCores = subCores.compactMap {
                 return Self.init(fromInfoDictionary: $0)
@@ -119,6 +131,12 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         } else {
             self.subCores = nil
         }
+
+        // JIT requirement — optional key; absent means notRequired
+        self.jitRequirementRawValue = dict["PVJITRequirement"] as? String
+
+        // JIT-disabled flag — core disabled specifically because JIT is unavailable
+        self.jitDisabledWithoutJIT = dict["PVJITDisabledWithoutJIT"] as? Bool ?? false
     }
 
     public convenience init?(fromURL plistPath: URL) throws {
@@ -155,7 +173,9 @@ public extension EmulatorCoreInfoPlist {
             contentless: e.PVContentless ?? false,
             appStoreDisabled: e.PVAppStoreDisabled ?? false,
             supportedCheatTypes: cheatTypes,
-            subCores: subCores
+            subCores: subCores,
+            jitRequirementRawValue: e.PVJITRequirement,
+            jitDisabledWithoutJIT: e.PVJITDisabledWithoutJIT ?? false
         )
     }
 }
@@ -176,4 +196,6 @@ func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     && lhs.appStoreDisabled == (rhs.PVAppStoreDisabled ?? false)
     && lhs.supportedCheatTypes == rhsCheatTypes
     && lhs.subCores == subCores
+    && lhs.jitRequirementRawValue == rhs.PVJITRequirement
+    && lhs.jitDisabledWithoutJIT == (rhs.PVJITDisabledWithoutJIT ?? false)
 }

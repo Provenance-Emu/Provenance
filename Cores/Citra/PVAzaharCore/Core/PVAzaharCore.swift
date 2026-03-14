@@ -21,6 +21,9 @@ public final class PVAzaharCore: PVEmulatorCore {
 
     public override var supportsSkins: Bool { false }
 
+    /// Azahar (Citra-based 3DS) crashes without JIT when `enableJIT` is true.
+    public override var jitRequirement: PVJITRequirement { .requiredOrCrash }
+
     let _bridge: PVAzaharCoreBridge = .init()
     
     // MARK: Audio

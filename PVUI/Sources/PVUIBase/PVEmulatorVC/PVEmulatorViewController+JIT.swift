@@ -6,6 +6,7 @@
 //  Part of issue #2796.
 //
 
+import PVEmulatorCore
 import PVSettings
 import SwiftUI
 import Combine
@@ -73,9 +74,8 @@ public extension PVEmulatorViewController {
     #if canImport(PVJIT)
     @MainActor
     private func applyJITIndicatorVisibilityPreference(_ enabled: Bool) {
-        // Skip for cores that don't support JIT
-        // For now, we show the indicator for all cores that have JIT capability
-        // When the JIT Capability Matrix (#2793) is implemented, this can be refined
+        // The JIT Capability Matrix (PVJITRequirement, #2793) is used inside coreRequiresJIT()
+        // to decide whether the indicator is relevant for the current core.
 
         if enabled {
             setupJITIndicator()
@@ -139,18 +139,16 @@ public extension PVEmulatorViewController {
 
     /// Determines if the current core requires or benefits from JIT.
     /// Returns `false` for cores that do not use JIT to avoid showing the indicator on every core.
-    /// When the JIT Capability Matrix (#2793) is implemented, this should delegate to it.
+    /// Uses `PVEmulatorCore.jitRequirement` (the `PVPrimitives.PVJITRequirement` 4-case enum)
+    /// for an authoritative, per-core answer without string lookups (#2793).
     private func coreRequiresJIT() -> Bool {
         // Quick-exit: if the JIT manager has no JIT type configured, JIT is not in play at all
         guard DOLJitManager.shared.getJitType() != .none else { return false }
 
-        // Check core identifier against known JIT-requiring cores (Dolphin/GameCube/Wii).
-        // TODO: Replace with the JIT Capability Matrix (#2793) when available.
-        if let coreId = core.coreIdentifier?.lowercased() {
-            let jitCoreKeywords = ["dolphin", "pvdolphin", "gamecube", "wii", "ps2", "dreamcast", "flycast", "mupen"]
-            return jitCoreKeywords.contains(where: { coreId.contains($0) })
-        }
-        return false
+        // Use the core's own jitRequirement property — set as a Swift override on each
+        // PVEmulatorCore subclass. hasJIT is true for .optional, .requiredOrCrash, and
+        // .automaticWithFallback; false only for .notSupported.
+        return core.jitRequirement.hasJIT
     }
     #endif
 }

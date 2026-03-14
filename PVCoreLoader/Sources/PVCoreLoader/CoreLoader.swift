@@ -67,8 +67,46 @@ public final class CoreLoader: Sendable {
         /// Store result — concurrent first-load races are benign (last writer wins)
         cacheStorage.withLock { $0 = plists }
 
+        /// Populate the JIT requirement registry from each loaded plist.
+        /// This is the single place where Core.plist JIT data flows into the registry —
+        /// no hardcoded identifier list is needed anywhere else.
+        registerJITRequirements(from: plists)
+
         ILOG("Cached \(plists.count) core plists for future use")
         return plists
+    }
+
+    /// Reads `PVJITRequirement` from each plist and registers it in the shared registry.
+    /// The registry is cleared first so that entries for cores that are no longer present
+    /// in the active core list do not remain stale.
+    static private func registerJITRequirements(from plists: [EmulatorCoreInfoPlist]) {
+        let registry = PVJITRequirementRegistry.shared
+        registry.reset()
+        for plist in plists {
+            if let raw = plist.jitRequirementRawValue {
+                registry.register(rawValue: raw, forCoreIdentifier: plist.identifier)
+            }
+            if plist.jitDisabledWithoutJIT {
+                registry.registerJITDisabled(forCoreIdentifier: plist.identifier)
+            }
+            /// Also handle sub-cores (e.g. libretro cores embedded in RetroArch's plist)
+            for subCore in plist.subCores ?? [] {
+                if let raw = subCore.jitRequirementRawValue {
+                    registry.register(rawValue: raw, forCoreIdentifier: subCore.identifier)
+                }
+                if subCore.jitDisabledWithoutJIT {
+                    registry.registerJITDisabled(forCoreIdentifier: subCore.identifier)
+                }
+            }
+        }
+    }
+
+    /// Returns identifiers of cores that are currently disabled solely because JIT is required.
+    ///
+    /// Call this after JIT is acquired to find cores that should be auto-enabled.
+    /// Part of the smart JIT acquisition flow (#2794).
+    public static func jitDisabledCoreIdentifiers() -> [String] {
+        PVJITRequirementRegistry.shared.jitDisabledCoreIdentifiers()
     }
 
     /// Internal method that actually loads the core plists

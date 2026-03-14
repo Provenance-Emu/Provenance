@@ -125,6 +125,25 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Both use `@Environment(\.pvEmulatorCoordinator)` — don't access directly from core bridge.
 - Platform-specific layouts (C64, ZX Spectrum, CPC) in `PVUI/Sources/PVSwiftUI/VirtualKeyboard/`.
 
+### JIT Capability Matrix
+- **`PVPrimitives.PVJITRequirement`** — rich 4-case Swift enum (`.notSupported`,
+  `.optional(fallback:)`, `.automaticWithFallback`, `.requiredOrCrash`).
+  Used as `PVEmulatorCore.jitRequirement` open property; subclasses override.
+- **`PVCoreBridge.PVJITPlistRequirement`** — simple 3-case plist-driven enum
+  (`.notRequired`, `.optional`, `.required`). Parsed from `Core.plist` by
+  `CoreLoader` and stored in `PVJITRequirementRegistry`. For startup-time fallback
+  when a Swift subclass override is not available.
+- **DO NOT** use the same name `PVJITRequirement` for both types — `PVEmulatorCore`
+  does `@_exported import` of both modules; duplicate names cause compiler ambiguity.
+- **CRITICAL for `.requiredOrCrash` cores** (Azahar, emuThree, Play!): the app layer MUST acquire JIT
+  before launching. Skipping this check will crash the emulator.
+- When adding a new core, always override `jitRequirement` in the `PVEmulatorCore` subclass.
+  For plist-driven cores, also add a `PVJITRequirement` key to `Core.plist`.
+- **`PVJITDisabledWithoutJIT`** — if a core is shipped `PVDisabled = true` solely because
+  it crashes without JIT, also set `PVJITDisabledWithoutJIT = true`. The runtime (#2794) uses
+  `CoreLoader.jitDisabledCoreIdentifiers()` to auto-enable these cores once JIT is acquired.
+  Do NOT set this flag for cores disabled for reasons other than JIT (broken, unfinished, etc.).
+
 ### DS Dual-Screen Skins
 - `supportsSkins` flag on native DS cores (`PVDesmume2015Core`, `PVMelonDSCore`).
 - `DefaultDeltaSkin` layout handles dual-screen sizing independently.

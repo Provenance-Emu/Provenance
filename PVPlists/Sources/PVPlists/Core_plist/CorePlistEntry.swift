@@ -26,6 +26,12 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     /// Prefer `EmulatorCoreInfoProvider.supportedCheatTypes` for typed access.
     public let PVSupportedCheatTypes: [String]?
     public let PVCores: [CorePlistEntry]? // SubCoreEntry
+    /// JIT requirement level for this core. Mirrors `PVJITRequirement` key in `Core.plist`.
+    public let PVJITRequirement: String?
+    /// When `true`, this core is currently disabled *only* because JIT is required but
+    /// unavailable on the device.  The app layer can auto-enable the core when JIT is
+    /// successfully acquired.  Mirrors `PVJITDisabledWithoutJIT` key in `Core.plist`.
+    public let PVJITDisabledWithoutJIT: Bool?
 }
 
 public extension CorePlistEntry {
@@ -46,7 +52,9 @@ public extension CorePlistEntry {
             PVContentless: plist.contentless,
             PVAppStoreDisabled: plist.appStoreDisabled,
             PVSupportedCheatTypes: cheatTypeStrings,
-            PVCores: subCores
+            PVCores: subCores,
+            PVJITRequirement: plist.jitRequirementRawValue,
+            PVJITDisabledWithoutJIT: plist.jitDisabledWithoutJIT ? true : nil
         )
     }
 }
@@ -66,5 +74,7 @@ func ==(lhs: CorePlistEntry, rhs: EmulatorCoreInfoPlist) -> Bool {
     rhs.contentless == (lhs.PVContentless ?? false) &&
     rhs.appStoreDisabled == (lhs.PVAppStoreDisabled ?? false) &&
     rhs.supportedCheatTypes == lhsCheatTypes &&
-    subCores == lhs.PVCores
+    subCores == lhs.PVCores &&
+    rhs.jitRequirementRawValue == lhs.PVJITRequirement &&
+    rhs.jitDisabledWithoutJIT == (lhs.PVJITDisabledWithoutJIT ?? false)
 }

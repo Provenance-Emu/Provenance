@@ -4,6 +4,105 @@ __Developers should start here first for breif instructions for building and wor
 
 ## Documentation
 
+## JIT Capability Matrix
+
+Provenance uses **two complementary JIT classification types**:
+
+| Type | Module | Purpose |
+|------|--------|---------|
+| `PVPrimitives.PVJITRequirement` | `PVPrimitives` | Rich 4-case Swift enum; override in each `PVEmulatorCore` subclass |
+| `PVCoreBridge.PVJITPlistRequirement` | `PVCoreBridge` | Simple 3-case plist-parsed type; populated at runtime by `CoreLoader` |
+
+> **Note:** The two types have different names on purpose — both `PVEmulatorCore` and
+> `PVCoreBridge` are `@_exported import`-ed by downstream modules, so using the same
+> name in both would cause ambiguous-type compiler errors.
+
+### `PVPrimitives.PVJITRequirement` — per-core Swift property
+
+| Case | Meaning | Safe without JIT? |
+|------|---------|-------------------|
+| `.notSupported` | Core has no JIT code path | ✅ Yes |
+| `.optional(fallback:)` | JIT improves perf/accuracy; interpreter fallback available | ✅ Yes |
+| `.automaticWithFallback` | Core self-detects JIT and selects execution path automatically | ✅ Yes |
+| `.requiredOrCrash` | Core crashes or produces garbage without JIT | ❌ No |
+
+### Known JIT-Capable Cores
+
+| Core | `PVJITRequirement` (Swift) | Notes |
+|------|---------------------------|-------|
+| Dolphin (Wii/GC) | `.automaticWithFallback` | Selects JIT or Cached Interpreter at startup; never crashes without JIT |
+| melonDS (DS) | `.optional(fallback: "Interpreter")` | JIT recompiler boosts DS performance |
+| DeSmuME 2015 (DS) | `.optional(fallback: "Interpreter")` | Older DS core, optional JIT |
+| PCSX Rearmed (PSX) | `.optional(fallback: "Interpreter")` | ARM dynarec; interpreter always available |
+| Mupen64Plus (N64) | `.optional(fallback: "Interpreter")` | JIT recompiler; interpreter fallback |
+| PPSSPP (PSP) | `.optional(fallback: "Interpreter")` | JIT for full-speed PSP; interpreter available |
+| Flycast (Dreamcast) | `.optional(fallback: "Interpreter")` | JIT recompiler available; interpreter fallback |
+| Play! (PS2) | `.requiredOrCrash` | Crashes or produces garbage output without JIT |
+| Azahar / Citra (3DS) | `.requiredOrCrash` | Hard crash without JIT when `enableJIT=true` |
+| emuThree (3DS) | `.requiredOrCrash` | Same Citra codebase; same JIT requirement |
+
+### Usage
+
+Query a core's JIT requirement before launching a game:
+
+```swift
+let core: PVEmulatorCore = ...
+
+switch core.jitRequirement {
+case .notSupported:
+    break  // no JIT needed — launch immediately
+case .optional(let fallback):
+    // Try to acquire JIT; warn user if unavailable (will run via fallback)
+    acquireJITIfAvailable()
+case .automaticWithFallback:
+    // Attempt JIT acquisition, but launch regardless of outcome
+    acquireJITIfAvailable()
+case .requiredOrCrash:
+    // Must acquire JIT or refuse to launch
+    guard acquireJIT() else {
+        showJITRequiredError()
+        return
+    }
+}
+```
+
+### Adding a New Core
+
+Override `jitRequirement` in the core's `PVEmulatorCore` subclass:
+
+```swift
+open override var jitRequirement: PVPrimitives.PVJITRequirement {
+    .optional(fallback: "Interpreter")
+}
+```
+
+The default implementation returns `.notSupported`, so only JIT-capable cores need to override.
+
+Also add a `PVJITRequirement` key to the core's `Core.plist`:
+
+```xml
+<key>PVJITRequirement</key>
+<string>optional</string>  <!-- "required" | "optional" | "notRequired" -->
+```
+
+### Auto-Enabling JIT-Disabled Cores
+
+Some cores are shipped with `PVDisabled = true` because they require JIT to run at all
+(e.g., Azahar/3DS). Mark them with `PVJITDisabledWithoutJIT = true` so the runtime can
+auto-enable them once JIT is successfully acquired:
+
+```xml
+<key>PVDisabled</key>
+<true/>
+<key>PVJITDisabledWithoutJIT</key>
+<true/>
+<key>PVJITRequirement</key>
+<string>required</string>
+```
+
+The app layer (#2794) will query `EmulatorCoreInfoPlist.jitDisabledWithoutJIT` to find
+these cores and toggle them on when a JIT entitlement is obtained.
+
 ## Building
 
 ### Setup Code Signing

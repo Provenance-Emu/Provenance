@@ -23,6 +23,9 @@ public final class PVEmuThreeCore: PVEmulatorCore {
 
     public override var supportsDualScreens: Bool { true }
 
+    /// emuThree (Citra-based 3DS) crashes without JIT when `enableJIT` is true.
+    public override var jitRequirement: PVJITRequirement { .requiredOrCrash }
+
     let _bridge: PVEmuThreeCoreBridge = .init()
 
     // MARK: Audio

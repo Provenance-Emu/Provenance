@@ -16,6 +16,9 @@ import PVCoreBridgeRetro
 @objcMembers
 open class PVPCSXRearmedCore: PVEmulatorCore {
 
+    /// PCSX Rearmed uses a lightweight ARM dynarec (JIT); falls back to interpreter.
+    public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
+
     let _bridge: PVPCSXRearmedCoreBridge = .init()
     
     public required init() {

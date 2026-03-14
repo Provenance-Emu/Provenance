@@ -20,6 +20,8 @@ public final class PVMelonDSCore: PVEmulatorCore {
 
     public override var supportsDualScreens: Bool { true }
 
+    /// melonDS can use JIT for better DS performance; falls back to interpreter.
+    public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
 
     lazy var _bridge: PVMelonDSCoreBridge = .init()
     

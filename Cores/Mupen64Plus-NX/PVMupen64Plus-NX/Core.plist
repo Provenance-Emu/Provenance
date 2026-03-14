@@ -22,5 +22,7 @@
 	<array>
 		<string>Game Shark</string>
 	</array>
+	<key>PVJITRequirement</key>
+	<string>optional</string>
 </dict>
 </plist>
