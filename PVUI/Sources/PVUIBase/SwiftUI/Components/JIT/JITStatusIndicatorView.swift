@@ -13,6 +13,41 @@ import PVThemes
 import JITManager
 #endif
 
+// MARK: - JIT Support Level
+
+/// Describes how critical JIT is for the current core, used to tailor UI messaging.
+///
+/// Derived from `PVPrimitives.PVJITRequirement` when the core object is available,
+/// or from `JITCoreCapability` keyword-matching as a fallback.
+public enum CoreJITSupportLevel: Equatable {
+    /// Core **requires** JIT; will crash, freeze, or produce garbage without it.
+    /// Corresponds to `PVJITRequirement.requiredOrCrash`.
+    case required
+
+    /// Core **auto-detects** JIT availability and selects an appropriate execution
+    /// back-end automatically.  No user action is needed — launch is always safe.
+    /// Corresponds to `PVJITRequirement.automaticWithFallback` (e.g. Dolphin).
+    case automatic
+
+    /// JIT **improves** performance or accuracy; the core runs without it using a
+    /// fallback execution path.
+    /// - Parameter fallbackMode: Human-readable name of the fallback shown in UI
+    ///   (e.g. `"Interpreter"`, `"Cached Interpreter"`).
+    /// Corresponds to `PVJITRequirement.optional(fallback:)`.
+    case recommended(fallbackMode: String)
+
+    /// This core has no JIT code path — the indicator is not shown.
+    case notApplicable
+
+    /// Whether the user should be prompted to enable JIT (i.e. action is required/recommended).
+    public var requiresUserAction: Bool {
+        switch self {
+        case .required, .recommended: return true
+        case .automatic, .notApplicable: return false
+        }
+    }
+}
+
 // MARK: - JIT Status Types
 
 /// Represents the current JIT status for display in the HUD
@@ -69,6 +104,14 @@ public final class JITStatusViewModel: ObservableObject {
     @Published public var jitSource: JITSource = .none
     #endif
 
+    /// Whether the current core strictly requires JIT (vs. merely benefiting from it).
+    /// Set via `JITStatusIndicatorViewController.updateForCore(...)` before calling `updateStatus()`.
+    public var coreJITIsRequired: Bool = false
+
+    /// The JIT support level for the current core, used to generate differentiated UI messages.
+    /// Set alongside `coreJITIsRequired` via `JITStatusIndicatorViewController.updateForCore(...)`.
+    public var coreSupportLevel: CoreJITSupportLevel = .notApplicable
+
     #if canImport(JITManager)
     private var jitManager: DOLJitManager { DOLJitManager.shared }
     #endif
@@ -90,22 +133,32 @@ public final class JITStatusViewModel: ObservableObject {
     }
     #endif
 
-    /// Updates the JIT status based on the current JIT manager state
+    /// Updates the JIT status based on the current JIT manager state.
+    ///
+    /// When `coreJITIsRequired` is `true` and JIT cannot be acquired, sets `.unavailable`
+    /// so the indicator surfaces the "This game requires JIT" guidance message.
     public func updateStatus() {
         #if canImport(JITManager)
         let isJITEnabled = jitManager.appHasAcquiredJit()
         let jitType = jitManager.getJitType()
 
         if jitType == .none {
-            status = .notApplicable
+            if coreJITIsRequired {
+                // JIT subsystem absent and the core needs it — surface guidance message
+                status = .unavailable
+            } else {
+                status = .notApplicable
+            }
             jitSource = .none
         } else if isJITEnabled {
             status = .active
             jitSource = jitManager.getJITSource()
+        } else if coreJITIsRequired {
+            // JIT subsystem present but not acquired, and the core strictly requires it
+            status = .unavailable
+            jitSource = .none
         } else {
-            // For now, show as interpreter fallback
-            // TODO: Update when JIT Capability Matrix (#2793) is implemented
-            // to distinguish between "interpreter fallback" vs "JIT required but failed"
+            // JIT subsystem present but not acquired; core only benefits from JIT
             status = .interpreterFallback
             jitSource = .none
         }
@@ -114,7 +167,9 @@ public final class JITStatusViewModel: ObservableObject {
         #endif
     }
 
-    /// Returns a brief explanation of the current mode, including the JIT source when active.
+    /// Returns a brief explanation of the current mode (shown in the compact alert on tap).
+    /// The message is tailored to the core's JIT support level so users understand
+    /// whether action is required, recommended, or handled automatically.
     public var explanation: String {
         switch status {
         case .active:
@@ -122,16 +177,46 @@ public final class JITStatusViewModel: ObservableObject {
             let sourceNote = jitSource != .none && jitSource != .unknown
                 ? " via \(jitSource.displayName)"
                 : ""
-            return "JIT compilation is active\(sourceNote), providing full-speed emulation with dynamic recompilation."
+            return "JIT compilation active\(sourceNote) — best performance enabled."
             #else
-            return "JIT compilation is active, providing full-speed emulation with dynamic recompilation."
+            return "JIT compilation active — best performance enabled."
             #endif
+
         case .interpreterFallback:
-            return "Running in interpreter mode. Emulation may be slower. Connect to a debugger or use AltJIT to enable JIT."
+            switch coreSupportLevel {
+            case .automatic:
+                // Core self-manages JIT (e.g. Dolphin) — no user action needed
+                return "JIT is managed automatically by this core. Performance adjusts based on JIT availability — no action required."
+            case .recommended(let fallbackMode):
+                // JIT improves performance but core has a working fallback
+                return "Running in \(fallbackMode) mode — JIT is recommended for better performance. Enable JIT via SideJITServer, AltStore, or StikDebug to improve emulation speed."
+            default:
+                return "JIT unavailable — running in compatibility mode. Enable JIT via SideJITServer, AltStore, or StikDebug for better performance."
+            }
+
         case .unavailable:
-            return "JIT is required for this core but could not be acquired. Performance will be significantly reduced."
+            // JIT is strictly required — strong call to action
+            return "JIT is required for this game and is not currently active. Without JIT this core may crash, freeze, or run incorrectly. Enable JIT via SideJITServer, AltStore, or StikDebug."
+
         case .notApplicable:
             return ""
+        }
+    }
+
+    /// Short alert title reflecting the support level of the current core.
+    public var alertTitle: String {
+        switch status {
+        case .active:
+            return "JIT Active"
+        case .interpreterFallback:
+            switch coreSupportLevel {
+            case .automatic: return "JIT Auto-Managed"
+            default: return "JIT Recommended"
+            }
+        case .unavailable:
+            return "JIT Required"
+        case .notApplicable:
+            return "JIT Status"
         }
     }
 
@@ -168,61 +253,27 @@ public final class JITStatusViewModel: ObservableObject {
     }
 }
 
-// MARK: - JIT Explanation Popover
-
-/// Compact popover content showing the JIT status explanation
-private struct JITExplanationPopoverView: View {
-    let status: JITStatus
-#if canImport(JITManager)
-    let jitSource: JITSource
-#endif
-    let explanation: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(status.iconColor)
-                    .frame(width: 10, height: 10)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(status.label)
-                        .font(.headline)
-#if canImport(JITManager)
-                    if status == .active, jitSource != .none, jitSource != .unknown {
-                        Text("via \(jitSource.displayName)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-#endif
-                }
-            }
-            Text(explanation)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding()
-        .frame(maxWidth: 280)
-    }
-}
-
 // MARK: - JIT Status Indicator View
 
-/// A small, unobtrusive JIT status indicator for the emulator HUD
+/// A small, unobtrusive JIT status indicator for the emulator HUD.
+/// Tap the indicator to trigger `onTap`, which the hosting UIViewController
+/// uses to present a compact `UIAlertController` — no full-screen sheet.
 public struct JITStatusIndicatorView: View {
     @StateObject private var viewModel: JITStatusViewModel
-    @State private var showExplanation: Bool = false
+    /// Called when the user taps the indicator pill.  The hosting layer is
+    /// responsible for presenting the compact alert (UIAlertController).
+    public var onTap: (() -> Void)?
 
-    public init(viewModel: JITStatusViewModel? = nil) {
+    public init(viewModel: JITStatusViewModel? = nil, onTap: (() -> Void)? = nil) {
         _viewModel = StateObject(wrappedValue: viewModel ?? JITStatusViewModel())
+        self.onTap = onTap
     }
 
     public var body: some View {
         ZStack {
             if viewModel.status.isVisible {
-                // Main indicator button — tap shows a compact popover, not a cover sheet
                 Button(action: {
-                    showExplanation.toggle()
+                    onTap?()
                 }) {
                     HStack(spacing: 8) {
                         // Status dot
@@ -249,50 +300,13 @@ public struct JITStatusIndicatorView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .accessibilityLabel(viewModel.indicatorAccessibilityLabel)
-                .accessibilityHint("Tap to show details about the current emulation mode")
-                #if !os(tvOS)
-                .popover(isPresented: $showExplanation, arrowEdge: .top) {
-                    explanationPopoverContent
-                }
-                #else
-                // TODO: A tvOS version of the JIT popover?
-                #endif
+                .accessibilityHint("Tap to see details about the current emulation mode")
             }
         }
         #if canImport(JITManager)
         .onReceive(NotificationCenter.default.publisher(for: .DOLJitAcquired)) { _ in
             viewModel.updateStatus()
         }
-        #endif
-    }
-
-    @ViewBuilder
-    private var explanationPopoverContent: some View {
-        #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
-        if #available(iOS 16.4, macCatalyst 16.4, visionOS 1.0, *) {
-            baseExplanationPopoverContent
-                .presentationCompactAdaptation(.popover)
-        } else {
-            baseExplanationPopoverContent
-        }
-        #else
-        baseExplanationPopoverContent
-        #endif
-    }
-
-    @ViewBuilder
-    private var baseExplanationPopoverContent: some View {
-        #if canImport(JITManager)
-        JITExplanationPopoverView(
-            status: viewModel.status,
-            jitSource: viewModel.jitSource,
-            explanation: viewModel.explanation
-        )
-        #else
-        JITExplanationPopoverView(
-            status: viewModel.status,
-            explanation: viewModel.explanation
-        )
         #endif
     }
 }
