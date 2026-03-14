@@ -6,8 +6,9 @@
 //  Replaces the ad-hoc hardcoded keyword array that previously lived in
 //  PVEmulatorViewController+JIT.swift.
 //
-//  When the full JIT Capability Matrix (#2793) lands, this file should be
-//  replaced by a protocol-based lookup against the core's manifest.
+//  The authoritative source is `PVEmulatorCore.jitRequirement` (PVPrimitives.PVJITRequirement,
+//  introduced in #2793). Use this keyword-based enum only when a core object isn't available
+//  (e.g. pre-launch checks or UI components that don't hold a core reference).
 //
 
 /// Known core categories and their relationship to JIT.
@@ -15,21 +16,26 @@
 /// Each case carries the keyword fragments that appear in a core's
 /// `coreIdentifier` string.
 ///
-/// Use these helpers as the single source of truth for JIT gating in `PVUIBase`:
+/// > Note: When you have access to the core object, prefer `PVEmulatorCore.jitRequirement`
+/// > (a `PVPrimitives.PVJITRequirement`) for an authoritative, per-core answer.
+/// > This enum is a keyword-based fallback for contexts where the core object isn't available.
+///
+/// Helpers:
 ///  - `JITCoreCapability.isJITRelevant(_:)` — true for any core that uses JIT at all (show HUD)
 ///  - `JITCoreCapability.coreIsJITRequired(_:)` — true only for cores where JIT is mandatory
+///    (i.e. corresponds to `.requiredOrCrash` in `PVJITRequirement`)
 public enum JITCoreCapability: CaseIterable {
-    /// Dolphin — GameCube / Wii emulator (JIT strongly required for playable speed)
+    /// Dolphin — GameCube / Wii emulator (automatic with fallback; never crashes without JIT)
     case dolphin
-    /// PPSSPP — Sony PSP emulator (JIT strongly recommended)
+    /// PPSSPP — Sony PSP emulator (optional; interpreter fallback available)
     case ppsspp
-    /// Azahar / Citra — Nintendo 3DS emulator (JIT strongly recommended)
+    /// Azahar / Citra / emuThree — Nintendo 3DS emulator (JIT required; crashes without it)
     case azahar
-    /// Flycast — Sega Dreamcast / NAOMI emulator (JIT recommended, not required)
+    /// Flycast — Sega Dreamcast / NAOMI emulator (optional; software renderer fallback)
     case flycast
-    /// Mupen64Plus — Nintendo 64 emulator (JIT recommended, not required)
+    /// Mupen64Plus — Nintendo 64 emulator (optional; cached interpreter fallback)
     case mupen
-    /// PCSX2-based cores — Sony PlayStation 2 (JIT required)
+    /// Play! / PCSX2-based cores — Sony PlayStation 2 (JIT required; crashes without it)
     case pcsx2
 
     // MARK: - Metadata
@@ -47,13 +53,24 @@ public enum JITCoreCapability: CaseIterable {
         }
     }
 
-    /// Whether this core category generally **requires** JIT for good performance.
-    /// `false` means JIT is merely recommended / beneficial, not essential.
+    /// Whether this core category **requires** JIT to run at all.
+    ///
+    /// `true` corresponds to `.requiredOrCrash` in `PVPrimitives.PVJITRequirement` —
+    /// the core will crash, freeze, or produce garbage without JIT.
+    /// `false` means JIT is beneficial (recommended) but the core has a working fallback.
+    ///
+    /// Matches the per-core `jitRequirement` overrides shipped in #2793:
+    ///  - Azahar / emuThree → `.requiredOrCrash` → `true`
+    ///  - Play (PCSX2) → `.requiredOrCrash` → `true`
+    ///  - Dolphin → `.automaticWithFallback` → `false`
+    ///  - PPSSPP → `.optional("Interpreter")` → `false`
+    ///  - Flycast → `.optional(...)` → `false`
+    ///  - Mupen64Plus → `.optional("Cached Interpreter")` → `false`
     public var isJITRequired: Bool {
         switch self {
-        case .dolphin, .ppsspp, .azahar, .pcsx2:
+        case .azahar, .pcsx2:
             return true
-        case .flycast, .mupen:
+        case .dolphin, .ppsspp, .flycast, .mupen:
             return false
         }
     }
