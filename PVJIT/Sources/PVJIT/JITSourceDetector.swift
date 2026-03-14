@@ -9,7 +9,7 @@
 //  NOTE: URL-scheme detection via UIApplication.canOpenURL requires the scheme
 //  to be listed in LSApplicationQueriesSchemes in the app's Info.plist.
 //  If the scheme is not listed, canOpenURL always returns false on iOS 9+.
-//  Required entries: "stikdebug", "apple-magnifier"
+//  Required LSApplicationQueriesSchemes entries for this detector: "stikdebug", "altstore", "sidestore"
 //
 
 #if canImport(UIKit)
