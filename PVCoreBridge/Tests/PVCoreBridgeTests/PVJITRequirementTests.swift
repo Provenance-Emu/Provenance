@@ -30,10 +30,12 @@ final class PVJITRequirementTests: XCTestCase {
         super.setUp()
         registry._resetForTesting()
         // Simulate what CoreLoader does at startup when it reads Core.plist files.
-        // Dolphin uses .optional (not .required) because PVDolphinCore.jitRequirement
-        // = .automaticWithFallback — it self-detects and never crashes without JIT.
-        registry.register(.required, forCoreIdentifier: azaharID)
-        registry.register(.required, forCoreIdentifier: emuThreeID)
+        // Azahar and emuThree use .optional because both cores implement
+        // jitRequirement = .automaticWithFallback — they detect JIT at runtime
+        // and fall back to interpreter, so launch is always safe without JIT.
+        // Dolphin similarly uses .optional for the same reason.
+        registry.register(.optional, forCoreIdentifier: azaharID)
+        registry.register(.optional, forCoreIdentifier: emuThreeID)
         registry.register(.optional, forCoreIdentifier: dolphinID)
         registry.register(.required, forCoreIdentifier: playID)
         registry.register(.optional, forCoreIdentifier: mupen64PlusID)
@@ -46,14 +48,17 @@ final class PVJITRequirementTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Required cores
+    // MARK: - Optional (automaticWithFallback) cores
 
-    func testAzaharRequiresJIT() {
-        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: azaharID), .required)
+    func testAzaharIsOptional() {
+        // Azahar auto-detects JIT (jitRequirement = .automaticWithFallback) and falls
+        // back to interpreter — so plist classification is .optional, not .required.
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: azaharID), .optional)
     }
 
-    func testEmuThreeRequiresJIT() {
-        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: emuThreeID), .required)
+    func testEmuThreeIsOptional() {
+        // emuThreeDS also implements .automaticWithFallback; launch is always safe.
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: emuThreeID), .optional)
     }
 
     func testDolphinIsOptional() {
@@ -61,6 +66,8 @@ final class PVJITRequirementTests: XCTestCase {
         // so it is classified as .optional at the plist registry level — not .required.
         XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: dolphinID), .optional)
     }
+
+    // MARK: - Required cores
 
     func testPlayRequiresJIT() {
         XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: playID), .required)
@@ -105,7 +112,7 @@ final class PVJITRequirementTests: XCTestCase {
     func testLookupIsCaseInsensitive() {
         XCTAssertEqual(
             jitPlistRequirement(forCoreIdentifier: azaharID.uppercased()),
-            .required
+            .optional
         )
     }
 

@@ -17,6 +17,6 @@
 	<key>PVProjectVersion</key>
 	<string>1.0.6</string>
 	<key>PVJITRequirement</key>
-	<string>required</string>
+	<string>optional</string>
 </dict>
 </plist>

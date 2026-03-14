@@ -16,11 +16,7 @@
 	<string>https://azahar-emu.org</string>
 	<key>PVProjectVersion</key>
 	<string>git</string>
-	<key>PVDisabled</key>
-	<true/>
-	<key>PVJITDisabledWithoutJIT</key>
-	<true/>
 	<key>PVJITRequirement</key>
-	<string>required</string>
+	<string>optional</string>
 </dict>
 </plist>
