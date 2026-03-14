@@ -9,6 +9,8 @@
 import Foundation
 #if canImport(CryptoKit)
 import CryptoKit
+#elseif canImport(Crypto)
+import Crypto
 #endif
 
 /// Manages a disk cache of pre-applied patched ROMs.
@@ -91,11 +93,23 @@ public actor PatchCache {
         let patchHash = SHA256.hash(data: patchData).compactMap { String(format: "%02x", $0) }.joined()
         let combined = Data((romHash + patchHash).utf8)
         return String(SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32))
+#elseif canImport(Crypto)
+        let romHash = Crypto.SHA256.hash(data: romData).compactMap { String(format: "%02x", $0) }.joined()
+        let patchHash = Crypto.SHA256.hash(data: patchData).compactMap { String(format: "%02x", $0) }.joined()
+        let combined = Data((romHash + patchHash).utf8)
+        return String(Crypto.SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32))
 #else
-        // Linux fallback: use shared CRC32 helper for deterministic key on platforms without CryptoKit.
+        // Fallback: deterministic but weaker hash for platforms without CryptoKit or Crypto.
+        // Includes CRC32 of both inputs and their (possibly truncated) sizes.
         let romCRC = patchCRC32(romData)
         let patchCRC = patchCRC32(patchData)
-        return String(format: "%08x%08x%08x%08x", romCRC, patchCRC, UInt32(truncatingIfNeeded: romData.count), UInt32(truncatingIfNeeded: patchData.count))
+        return String(
+            format: "%08x%08x%08x%08x",
+            romCRC,
+            patchCRC,
+            UInt32(truncatingIfNeeded: romData.count),
+            UInt32(truncatingIfNeeded: patchData.count)
+        )
 #endif
     }
 }
