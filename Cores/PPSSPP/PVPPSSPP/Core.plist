@@ -16,5 +16,7 @@
 	<string>https://github.com/hrydgard/ppsspp.git</string>
 	<key>PVProjectVersion</key>
 	<string>v1.13.2-2467</string>
+	<key>PVJITRequirement</key>
+	<string>optional</string>
 </dict>
 </plist>

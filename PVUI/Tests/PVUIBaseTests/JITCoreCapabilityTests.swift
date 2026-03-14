@@ -2,16 +2,16 @@
 //  JITCoreCapabilityTests.swift
 //  PVUIBaseTests
 //
-//  Unit tests for JITCoreCapability keyword-based lookup helpers.
+//  Unit tests for JITCoreCapability registry-aware lookup helpers.
 //
-//  These tests verify the keyword-matching heuristic used when a core object isn't
-//  available.  The authoritative classification lives in each core's
-//  `PVEmulatorCore.jitRequirement` property (PVPrimitives.PVJITRequirement, #2793).
+//  These tests verify the two-stage lookup: PVJITRequirementRegistry (runtime plist data)
+//  first, then compile-time keyword matching as a fallback.
+//  In this test context the registry is empty so all lookups fall through to keyword matching.
 //
-//  JIT classifications (aligned with PVJITRequirement overrides from #2793):
-//   Required (crashes without JIT):   Azahar / emuThree / Citra, Play (PS2/PCSX2)
-//   Automatic with fallback:          Dolphin (self-detects; never crashes without JIT)
-//   Optional (interpreter fallback):  PPSSPP, Mupen64Plus, Flycast
+//  JIT classifications (from Core.plist PVJITRequirement keys and Swift jitRequirement overrides):
+//   Required (crashes without JIT):   Play (PS2/PCSX2) — plist "required", Swift .requiredOrCrash
+//   Automatic with fallback:          Dolphin, Azahar, emuThree — plist "optional", Swift .automaticWithFallback
+//   Optional (interpreter fallback):  PPSSPP, Mupen64Plus, Flycast — plist "optional", Swift .optional
 //   Not supported:                    SNES, NES, GB, GBA, …
 //
 
@@ -94,22 +94,29 @@ struct JITCoreCapabilityTests {
 
     // MARK: - coreIsJITRequired (only cores that crash without JIT)
 
-    @Test("azahar and pcsx2/Play are JIT-required (crash without JIT)")
+    @Test("only pcsx2/Play are JIT-required (crash without JIT); azahar/citra are optional")
     func jitRequiredCores() {
-        // These map to .requiredOrCrash in PVJITRequirement (#2793)
-        #expect(JITCoreCapability.coreIsJITRequired("azahar") == true)
-        #expect(JITCoreCapability.coreIsJITRequired("citra") == true)
+        // Play (PS2) maps to plist "required" / Swift .requiredOrCrash
         #expect(JITCoreCapability.coreIsJITRequired("ps2") == true)
         #expect(JITCoreCapability.coreIsJITRequired("pcsx2") == true)
+        // Azahar/citra use .automaticWithFallback — plist "optional", not "required"
+        #expect(JITCoreCapability.coreIsJITRequired("azahar") == false)
+        #expect(JITCoreCapability.coreIsJITRequired("citra") == false)
+        #expect(JITCoreCapability.coreIsJITRequired("emuthree") == false)
     }
 
-    @Test("dolphin is JIT-relevant but NOT JIT-required (automatic with fallback)")
+    @Test("dolphin and azahar are JIT-relevant but NOT JIT-required (automatic with fallback)")
     func dolphinNotJITRequired() {
-        // Dolphin uses .automaticWithFallback — it self-detects JIT and never crashes without it
+        // Dolphin and Azahar use .automaticWithFallback — they self-detect JIT and never crash without it
         #expect(JITCoreCapability.isJITRelevant("dolphin") == true)
         #expect(JITCoreCapability.coreIsJITRequired("dolphin") == false)
         #expect(JITCoreCapability.coreIsJITRequired("pvdolphin") == false)
         #expect(JITCoreCapability.coreIsJITRequired("gamecube") == false)
+
+        #expect(JITCoreCapability.isJITRelevant("azahar") == true)
+        #expect(JITCoreCapability.coreIsJITRequired("azahar") == false)
+        #expect(JITCoreCapability.coreIsJITRequired("citra") == false)
+        #expect(JITCoreCapability.coreIsJITRequired("emuthree") == false)
     }
 
     @Test("ppsspp is JIT-relevant but NOT JIT-required (interpreter fallback)")
@@ -183,7 +190,7 @@ struct JITCoreCapabilityTests {
         #expect(JITCoreCapability.isJITRelevant("FLYCAST") == true)
         #expect(JITCoreCapability.isJITRelevant("SNES9X") == false)
         #expect(JITCoreCapability.coreIsJITRequired("FLYCAST") == false)
-        #expect(JITCoreCapability.coreIsJITRequired("AZAHAR") == true)
+        #expect(JITCoreCapability.coreIsJITRequired("AZAHAR") == false)
     }
 
     // MARK: - Deprecated API compatibility

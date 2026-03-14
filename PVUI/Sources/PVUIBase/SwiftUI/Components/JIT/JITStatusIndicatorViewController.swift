@@ -205,15 +205,12 @@ public final class JITStatusIndicatorViewController: UIViewController {
 
     /// Updates the indicator for the given core identifier.
     ///
-    /// Looks up `JITCoreCapability` to determine both whether the indicator
-    /// should be shown (`isJITRelevant`) and whether the core strictly requires JIT
-    /// (`coreIsJITRequired`), which gates the `.unavailable` status.
+    /// Delegates to `JITCoreCapability.isJITRelevant(_:)` and `coreIsJITRequired(_:)`,
+    /// which consult `PVJITRequirementRegistry` (runtime plist data) first and fall back
+    /// to compile-time keyword matching for partial identifiers or pre-CoreLoader contexts.
     public func updateForCore(id coreIdentifier: String) {
-        let capability = JITCoreCapability.capability(for: coreIdentifier)
-        let isRelevant = capability != nil
-        let isRequired = capability?.isJITRequired == true
-        // Keyword-based path: default to .recommended — the authoritative path
-        // via updateForCore(isRelevant:isRequired:supportLevel:) uses PVJITRequirement.
+        let isRelevant = JITCoreCapability.isJITRelevant(coreIdentifier)
+        let isRequired = JITCoreCapability.coreIsJITRequired(coreIdentifier)
         let supportLevel: CoreJITSupportLevel = isRelevant
             ? (isRequired ? .required : .recommended(fallbackMode: "Compatibility"))
             : .notApplicable
