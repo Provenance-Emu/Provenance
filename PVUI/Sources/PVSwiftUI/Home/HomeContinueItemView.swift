@@ -12,9 +12,9 @@ import PVLogging
 
 /// Optimized HomeContinueItemView with cached image loading and efficient retro effects.
 ///
-/// When the save is part of a session stack (`model.isStacked == true`), the card renders
+/// When the save is part of an autosave stack (`model.isStacked == true`), the card renders
 /// ghost cards behind it to convey depth, and a badge shows how many autosaves are hidden.
-/// Long-pressing the card (or tapping the badge) opens `AutoSaveFilmstripView`.
+/// Long-pressing the card (or tapping the badge) opens `AutoSaveFilmstripView` to browse the autosave timeline.
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueItemView: SwiftUI.View {
     // Use computed properties instead of @ObservedRealmObject to reduce re-renders
@@ -229,7 +229,7 @@ struct HomeContinueItemView: SwiftUI.View {
                     triggerFilmstripExpansion()
                 } label: {
                     Label(
-                        "View \(stackDepth) Session Saves…",
+                        "View \(stackDepth) Autosaves…",
                         systemImage: "square.stack.3d.up"
                     )
                 }
