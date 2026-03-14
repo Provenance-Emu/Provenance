@@ -2,7 +2,7 @@
 //  AutoSaveFilmstripView.swift
 //  PVUI
 //
-//  A filmstrip timeline presenting all autosaves from a single gaming session.
+//  A filmstrip timeline presenting the autosave history for a game.
 //  Triggered by long-pressing a stacked autosave card in the Recent Saves section.
 //
 
@@ -12,11 +12,11 @@ import PVThemes
 
 // MARK: - AutoSaveFilmstripView
 
-/// Presents all autosaves from one gaming session as a horizontal filmstrip timeline.
+/// Presents the autosave history for a game as a horizontal filmstrip timeline.
 ///
 /// Each save appears as a thumbnail "frame". Vertical time-gap dividers between frames
-/// show how much time passed between consecutive saves. A session-boundary indicator
-/// (large gap > 2 h) makes long breaks visually prominent.
+/// show how much time passed between consecutive saves. Large gaps (for example, > 2 h)
+/// make potential session boundaries and long breaks visually prominent.
 ///
 /// The view is designed to be presented as a `.sheet` from `HomeContinueItemView`.
 @available(iOS 15, tvOS 15, *)
@@ -26,7 +26,7 @@ struct AutoSaveFilmstripView: View {
 
     /// Display name of the game these saves belong to.
     let gameTitle: String?
-    /// All saves in the session, **newest first**. Must contain at least one item.
+    /// All saves to display, **newest first**. Must contain at least one item.
     let allSaves: [ContinueItemModel]
     /// Called when the user taps a thumbnail or the primary "Load" button.
     let onSelect: (ContinueItemModel) -> Void
@@ -72,7 +72,7 @@ struct AutoSaveFilmstripView: View {
     private var headerBar: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Session Autosaves")
+                Text("Autosave History")
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .foregroundStyle(accentGradient)
                 if let title = gameTitle {
