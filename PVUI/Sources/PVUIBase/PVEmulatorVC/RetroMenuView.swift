@@ -2008,30 +2008,38 @@ struct RetroMenuView: View {
 
         for url in urls {
             do {
-                // Import the skin
+                // Import the skin archive
                 try await DeltaSkinManager.shared.importSkin(from: url)
 
-                // Reload skins to include the new one
+                // Reload skins so the newly imported skin is available for immediate selection/application
                 await DeltaSkinManager.shared.reloadSkins()
 
-                // Reload available skins in the picker
+                // Reload available skins in the picker UI
                 await MainActor.run {
                     didLoadSkins = false
                 }
 
-                // Show success message
+                // Optionally show a success notification that the skin was imported;
+                // the most recently imported skin will be applied automatically using the current SKINS tab scope.
                 await MainActor.run {
-                    // Optionally show a success notification
+                    // e.g. present a toast/banner if desired
                 }
             } catch {
                 ELOG("Failed to import skin from \(url.lastPathComponent): \(error)")
             }
         }
 
-        // After importing, auto-apply the new skin using the scope already chosen in the SKINS tab
+        // After importing, automatically apply the most recently imported skin immediately,
+        // using whichever scope is currently selected in the SKINS tab (no separate Apply button step).
         if let skins = try? await DeltaSkinManager.shared.skins(for: systemId),
            let lastImported = skins.last {
-            await applySkinSelection(skinName: lastImported.name, identifier: lastImported.identifier, orientation: currentOrientation, scope: selectedSkinScope)
+            ILOG("skins: Auto-applying imported skin '\(lastImported.name)' (\(lastImported.identifier ?? "no identifier")) with scope \(selectedSkinScope)")
+            await applySkinSelection(
+                skinName: lastImported.name,
+                identifier: lastImported.identifier,
+                orientation: currentOrientation,
+                scope: selectedSkinScope
+            )
             await applySkinAndFilterChanges()
         }
     }
