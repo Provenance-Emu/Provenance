@@ -548,7 +548,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
         case .preferred(let slot):
             // Claim the preferred slot only if it is currently free.
-            if controller(forPlayer: slot) == nil {
+            if self.controller(forPlayer: slot) == nil {
                 ILOG("Controller [\(id)] assigned to preferred slot \(slot)")
                 setController(controller, toPlayer: slot)
                 NotificationCenter.default.post(name: .PVControllerManagerControllerReassigned, object: self)
@@ -559,7 +559,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
         case .always(let slot):
             // Always claim `slot`, bumping any current occupant to the next available slot.
-            let occupant = controller(forPlayer: slot)
+            let occupant = self.controller(forPlayer: slot)
             if let occupant = occupant {
                 let occupantID = controllerIdentifier(for: occupant)
                 if case .always(let occupantSlot) = slotMode(for: occupant), occupantSlot == slot {

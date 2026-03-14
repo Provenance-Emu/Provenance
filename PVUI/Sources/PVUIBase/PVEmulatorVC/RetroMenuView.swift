@@ -242,7 +242,7 @@ struct RetroMenuView: View {
                                 }
                             })
                             .id("core")
-                            .opacity(hasCoreFeatures && coreActions?.isEmpty == false ? 1.0 : 0.4)
+                            .opacity(hasCoreFeatures && (emulatorVC.core as? CoreActions)?.coreActions?.isEmpty == false ? 1.0 : 0.4)
                             categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .states
