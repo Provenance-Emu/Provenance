@@ -649,49 +649,123 @@ void extract_bundles();
     }
     NSString *systemDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
 
-    /// Sync TOS image to RetroArch system directory for Hatari core.
-    /// The TOS ROM is copied unmodified — no byte patching.
-    /// The previous byte-mutation (SPIKE 2823) at offsets 8–11 corrupted the load address,
-    /// causing wrong colors, graphical glitches, and unstable boot. Fix: #2823.
+    /// Hatari libretro sets its working directory to <system_dir>/hatari/ and looks for
+    /// hatari.cfg and tos.img THERE.  We must write both files to that subdirectory so
+    /// Hatari picks up the correct TOS ROM and config.  We also write to system_dir/ for
+    /// compatibility with any code that reads from the parent directory.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
-        NSString *tosImagePath = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
-        NSString *biosTosPath = [self.BIOSPath stringByAppendingPathComponent:@"tos.img"];
+        /// Ensure the hatari working subdirectory exists.
+        NSString *hatariWorkDir = [systemDirectory stringByAppendingPathComponent:@"hatari"];
+        if (![fm fileExistsAtPath:hatariWorkDir]) {
+            NSError *mkdirError = nil;
+            [fm createDirectoryAtPath:hatariWorkDir withIntermediateDirectories:YES attributes:nil error:&mkdirError];
+            if (mkdirError) {
+                ELOG(@"Failed to create hatari working dir %@: %@", hatariWorkDir, mkdirError.localizedDescription);
+            } else {
+                ILOG(@"Created hatari working directory: %@", hatariWorkDir);
+            }
+        }
+
+        NSString *tosImagePath     = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
+        NSString *hatariTosPath    = [hatariWorkDir    stringByAppendingPathComponent:@"tos.img"];
+        NSString *biosTosPath      = [self.BIOSPath    stringByAppendingPathComponent:@"tos.img"];
 
         if ([fm fileExistsAtPath:biosTosPath]) {
-            /// Read and validate the source BIOS before touching the destination.
             NSError *readError = nil;
             NSData *tosData = [NSData dataWithContentsOfFile:biosTosPath options:NSDataReadingMappedIfSafe error:&readError];
             if (readError || !tosData) {
                 ELOG(@"Failed to read TOS image from %@: %@", biosTosPath, readError.localizedDescription);
             } else {
                 BOOL tosIsZip = NO;
+                NSMutableData *tosToWrite = [tosData mutableCopy];
+
                 if (tosData.length >= 16) {
                     const unsigned char *bytes = (const unsigned char *)tosData.bytes;
                     ILOG(@"TOS image: %lu bytes, header: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
                          (unsigned long)tosData.length,
                          bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7],
                          bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
+
                     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
-                        /// Source looks like a ZIP archive — do not overwrite a potentially valid
-                        /// existing tos.img with invalid data.
                         ELOG(@"TOS image appears to be a ZIP file — it must be extracted first. Skipping copy.");
                         tosIsZip = YES;
+                    }
+
+                    if (!tosIsZip && tosData.length >= 12) {
+                        /// Hatari reads the TOS load address as:
+                        ///   TosAddress = SDL_SwapBE32(*(Uint32 *)&pTosFile[8])
+                        /// On little-endian iOS, *(Uint32 *) reads: bytes[8] as LSB … bytes[11] as MSB.
+                        /// SDL_SwapBE32 then reverses all 4 bytes, so:
+                        ///   TosAddress = bytes[11] | (bytes[10]<<8) | (bytes[9]<<16) | (bytes[8]<<24)
+                        ///
+                        /// Valid TOS addresses: 0x00FC0000 (TOS 1.x), 0x00E00000 (TOS 2.x), 0x00E80000 (TOS 4.x).
+                        /// The CORRECT byte layout in the file for TOS 1.x is [0x00, 0xFC, 0x00, 0x00] at offset 8.
+                        ///
+                        /// A common corruption is [0x00, 0x00, 0xFC, 0x00] (bytes[9] and bytes[10] swapped),
+                        /// which gives TosAddress = 0x0000FC00 (reported as "$fc00" — the exact error seen).
+                        /// This was introduced by the old byte-patching hack which wrote the wrong byte order.
+                        /// We detect this and correct it so Hatari validation passes.
+                        uint32_t tosAddr = ((uint32_t)bytes[11]) |
+                                           ((uint32_t)bytes[10] << 8) |
+                                           ((uint32_t)bytes[9]  << 16) |
+                                           ((uint32_t)bytes[8]  << 24);
+
+                        ILOG(@"TOS load address (as Hatari reads it): 0x%08X", tosAddr);
+
+                        BOOL addrValid = (tosAddr == 0x00FC0000 ||
+                                          tosAddr == 0x00E00000 ||
+                                          tosAddr == 0x00E80000);
+
+                        if (!addrValid) {
+                            /// Compute what the bytes SHOULD be for the intended address.
+                            /// If the address field looks like a byte-swapped version of a valid address,
+                            /// swap bytes[9] and bytes[10] to repair it.
+                            uint32_t correctedAddr = 0;
+                            if (tosAddr == 0x0000FC00) correctedAddr = 0x00FC0000; // TOS 1.x swapped
+                            if (tosAddr == 0x0000E000) correctedAddr = 0x00E00000; // TOS 2.x swapped
+                            if (tosAddr == 0x000E8000) correctedAddr = 0x00E80000; // TOS 4.x swapped
+
+                            if (correctedAddr != 0) {
+                                unsigned char *fixedBytes = (unsigned char *)tosToWrite.mutableBytes;
+                                fixedBytes[8]  = (correctedAddr >> 24) & 0xFF;
+                                fixedBytes[9]  = (correctedAddr >> 16) & 0xFF;
+                                fixedBytes[10] = (correctedAddr >>  8) & 0xFF;
+                                fixedBytes[11] = (correctedAddr      ) & 0xFF;
+                                ILOG(@"Corrected TOS address bytes from 0x%08X to 0x%08X "
+                                     @"(bytes[8-11]: %02X %02X %02X %02X -> %02X %02X %02X %02X)",
+                                     tosAddr, correctedAddr,
+                                     bytes[8], bytes[9], bytes[10], bytes[11],
+                                     fixedBytes[8], fixedBytes[9], fixedBytes[10], fixedBytes[11]);
+                            } else {
+                                WLOG(@"TOS address 0x%08X is not a recognised valid or correctable value — "
+                                     @"copying as-is; Hatari may reject the ROM.", tosAddr);
+                            }
+                        }
                     }
                 }
 
                 if (!tosIsZip) {
-                    /// Source validated; write atomically — NSDataWritingAtomic writes to a temp file
-                    /// then renames, so no pre-delete is needed and the last known-good tos.img is
-                    /// preserved if the write fails (e.g. low disk space).
+                    /// Write to system/tos.img (backward-compat / absolute path in hatari.cfg)
                     NSError *writeError = nil;
-                    if (![tosData writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
+                    if (![tosToWrite writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
                         ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);
                     } else {
-                        unsigned long long sizeBytes = tosData.length;
-                        if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
-                            WLOG(@"TOS image size %llu bytes is not a typical size (192KB, 256KB, or 512KB)", sizeBytes);
-                        }
-                        ILOG(@"TOS image synced to system directory (unmodified): %@ (%llu bytes)", tosImagePath, sizeBytes);
+                        ILOG(@"TOS image written to system dir: %@ (%lu bytes)", tosImagePath, (unsigned long)tosToWrite.length);
+                    }
+
+                    /// Also write to system/hatari/tos.img — Hatari's working directory.
+                    /// This ensures Hatari finds the correct (and possibly repaired) ROM even
+                    /// if it cannot read the absolute path from hatari.cfg (e.g., stale cfg).
+                    writeError = nil;
+                    if (![tosToWrite writeToFile:hatariTosPath options:NSDataWritingAtomic error:&writeError]) {
+                        ELOG(@"Failed to write TOS image to hatari working dir %@: %@", hatariTosPath, writeError.localizedDescription);
+                    } else {
+                        ILOG(@"TOS image written to hatari working dir: %@", hatariTosPath);
+                    }
+
+                    unsigned long long sizeBytes = tosToWrite.length;
+                    if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
+                        WLOG(@"TOS image size %llu bytes is not a typical TOS size (192KB, 256KB, or 512KB)", sizeBytes);
                     }
                 }
             }
@@ -700,28 +774,31 @@ void extract_bundles();
         }
     }
 
-    /// Update hatari.cfg with dynamic paths (must be updated each time as app dir can change on iOS)
-    /// Only relevant for Hatari/AtariST; do not copy/sync for every other system.
+    /// Update hatari.cfg with dynamic paths.
+    /// CRITICAL: Hatari libretro changes its working directory to <system_dir>/hatari/ before
+    /// opening hatari.cfg.  We must write the cfg to BOTH locations:
+    ///   1. system/hatari/hatari.cfg  — Hatari's working dir (where it actually looks)
+    ///   2. system/hatari.cfg         — legacy location (some older code paths reference this)
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
-        NSString *hatariCfgPath = [systemDirectory stringByAppendingPathComponent:@"hatari.cfg"];
-        NSString *hatariCfgSource = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"hatari.cfg" ofType:nil];
+        NSString *hatariWorkDir    = [systemDirectory stringByAppendingPathComponent:@"hatari"];
+        NSString *hatariCfgPath    = [systemDirectory stringByAppendingPathComponent:@"hatari.cfg"];
+        NSString *hatariWorkCfgPath = [hatariWorkDir  stringByAppendingPathComponent:@"hatari.cfg"];
+        NSString *tosImagePath     = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
+        NSString *hatariCfgSource  = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"hatari.cfg" ofType:nil];
+
         if (hatariCfgSource) {
             NSString *hatariCfgContent = [NSString stringWithContentsOfFile:hatariCfgSource encoding:NSUTF8StringEncoding error:nil];
             if (hatariCfgContent) {
-                /// Update TOS image path with full absolute path
-                NSString *tosImagePath = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
+                /// Embed the absolute TOS path so Hatari finds the ROM regardless of cwd.
                 hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szTosImageFileName = tos.img"
                                                                                withString:[NSString stringWithFormat:@"szTosImageFileName = %@", tosImagePath]];
 
-                /// Update disk image directory - expand tilde and use full path
                 NSString *romsDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"ROMs"];
                 if (self.systemIdentifier) {
                     romsDirectory = [romsDirectory stringByAppendingPathComponent:self.systemIdentifier];
                 }
-                /// Replace tilde path with full absolute path
                 hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szDiskImageDirectory = ~/Documents/ROMs/com.provenance.atarist/"
                                                                                withString:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
-                /// Also handle case where system identifier might be different
                 NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"szDiskImageDirectory = ~/Documents/ROMs/[^\\n]+"
                                                                                         options:0 error:nil];
                 hatariCfgContent = [regex stringByReplacingMatchesInString:hatariCfgContent
@@ -729,11 +806,15 @@ void extract_bundles();
                                                                      range:NSMakeRange(0, hatariCfgContent.length)
                                                               withTemplate:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
 
+                /// Write to hatari working dir first (this is where Hatari looks).
+                [hatariCfgContent writeToFile:hatariWorkCfgPath atomically:NO encoding:NSUTF8StringEncoding error:nil];
+                /// Also write to the legacy location.
                 [hatariCfgContent writeToFile:hatariCfgPath atomically:NO encoding:NSUTF8StringEncoding error:nil];
-                ILOG(@"Updated hatari.cfg with TOS path: %@ and ROMs directory: %@", tosImagePath, romsDirectory);
+                ILOG(@"hatari.cfg written to working dir (%@) and legacy path (%@)", hatariWorkCfgPath, hatariCfgPath);
+                ILOG(@"  TOS path: %@, ROMs dir: %@", tosImagePath, romsDirectory);
             } else {
-                /// Fallback to standard sync if we can't read the source
                 [self syncResource:hatariCfgSource to:hatariCfgPath];
+                [self syncResource:hatariCfgSource to:hatariWorkCfgPath];
             }
         }
     }
@@ -742,6 +823,16 @@ void extract_bundles();
     content = [content stringByAppendingString:
                [NSString stringWithFormat:@"system_directory = \"%@\"\n", systemDirectory]];
     ILOG(@"System directory set to: %@", systemDirectory);
+
+    /// Hatari/AtariST core option: disable ACSI hard-disk boot so the core does not pass
+    /// "--acsi <empty>" to Hatari when no HD image is configured.  The Hatari libretro core
+    /// queries "hatari_boot_hd" via GET_VARIABLE; if the value is invalid or missing the core
+    /// defaults to passing an empty --acsi argument which causes Hatari to print an error and
+    /// (on some builds) refuse to start.  Setting "disabled" here prevents that code path.
+    if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
+        content = [content stringByAppendingString:@"hatari_boot_hd = \"disabled\"\n"];
+        ILOG(@"Hatari: hatari_boot_hd set to disabled to prevent empty --acsi argument.");
+    }
 
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
