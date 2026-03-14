@@ -273,6 +273,12 @@ public final class RetroSaveStatesStore: ObservableObject {
     private func fetchSaveStates(predicate: NSPredicate, offset: Int, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
         await withCheckedContinuation { continuation in
             workQueue.async {
+                let validatedOffset = max(0, offset)
+                if let limit, limit <= 0 {
+                    continuation.resume(returning: [])
+                    return
+                }
+
                 do {
                     let realm = try Realm()
                     let results = realm.objects(PVSaveState.self)
@@ -283,7 +289,7 @@ public final class RetroSaveStatesStore: ObservableObject {
                     // When deduplicating, fetch a larger window so that after removing duplicate
                     // autosaves we still have enough items to fill `limit`.
                     let totalCount = results.count
-                    let startIndex = min(offset, totalCount)
+                    let startIndex = min(validatedOffset, totalCount)
                     let rawLimit: Int? = (deduplicateAutosaves && limit != nil) ? limit.map { $0 * 4 } : limit
                     let endIndex: Int
                     if let rawLimit {
