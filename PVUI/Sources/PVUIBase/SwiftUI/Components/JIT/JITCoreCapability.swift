@@ -46,10 +46,10 @@ public enum JITCoreCapability: CaseIterable {
         switch self {
         case .dolphin:  return ["dolphin", "pvdolphin", "gamecube", "wii"]
         case .ppsspp:   return ["ppsspp"]
-        case .azahar:   return ["azahar", "citra", "3ds"]
+        case .azahar:   return ["azahar", "citra", "3ds", "emuthree"]
         case .flycast:  return ["flycast", "dreamcast"]
         case .mupen:    return ["mupen", "n64"]
-        case .pcsx2:    return ["ps2", "pcsx2"]
+        case .pcsx2:    return ["ps2", "pcsx2", "play"]
         }
     }
 
