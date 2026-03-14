@@ -190,6 +190,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
         } else {
             viewModel.coreJITIsRequired = false
             viewModel.status = .notApplicable
+            handleStatusTransition()
         }
     }
 
