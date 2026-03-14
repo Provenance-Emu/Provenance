@@ -25,23 +25,37 @@ struct ContinueItemModel: Identifiable, Hashable {
     let imageURL: URL?
     let date: Date
     let systemIdentifier: String?
+    /// Whether this save was created automatically (timed/session autosave).
+    let isAutosave: Bool
+    /// Other autosaves from the same gaming session collapsed behind this representative.
+    /// Sorted newest → oldest. Empty for non-autosaves or when showAllAutosaves is on.
+    var stackedSaves: [ContinueItemModel]
     let resolver: () -> PVSaveState?
+
+    /// Total number of saves represented by this card (1 + stacked).
+    var stackDepth: Int { 1 + stackedSaves.count }
+    /// True when there are hidden autosaves stacked behind this card.
+    var isStacked: Bool { !stackedSaves.isEmpty }
 
     init(id: String,
          gameTitle: String?,
          imageURL: URL?,
          date: Date,
          systemIdentifier: String?,
+         isAutosave: Bool = false,
+         stackedSaves: [ContinueItemModel] = [],
          resolver: @escaping () -> PVSaveState?) {
         self.id = id
         self.gameTitle = gameTitle
         self.imageURL = imageURL
         self.date = date
         self.systemIdentifier = systemIdentifier
+        self.isAutosave = isAutosave
+        self.stackedSaves = stackedSaves
         self.resolver = resolver
     }
 
-    init(saveState: PVSaveState) {
+    init(saveState: PVSaveState, stackedSaves: [ContinueItemModel] = []) {
         // Freeze for thread safety but keep resolver for context actions.
         let snapshot = saveState.isFrozen ? saveState : saveState.freeze()
         self.id = snapshot.id
@@ -49,6 +63,8 @@ struct ContinueItemModel: Identifiable, Hashable {
         self.imageURL = snapshot.image?.url
         self.date = snapshot.date
         self.systemIdentifier = snapshot.game?.systemIdentifier
+        self.isAutosave = snapshot.isAutosave
+        self.stackedSaves = stackedSaves
         let primaryKey = snapshot.id
         self.resolver = {
             RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: primaryKey)
@@ -73,6 +89,10 @@ protocol ContinuesDataDriver {
 final class RealmContinuesDataDriver: ContinuesDataDriver {
     private let queue = DispatchQueue(label: "org.provenance.realm.continues.driver", qos: .userInitiated)
 
+    /// Autosaves within this interval of each other (newest → older) belong to the same session.
+    /// A gap larger than this creates a new session stack entry for that game.
+    static let sessionBoundaryInterval: TimeInterval = 2 * 3600  // 2 hours
+
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
         // Capture setting at stream-start time. The view will restart the stream on change.
         let showAllAutosaves = Defaults[.showAutoSavesInRecents]
@@ -93,25 +113,11 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                         switch change {
                         case .initial(let collection),
                              .update(let collection, _, _, _):
-                            // When showAllAutosaves is false (default), deduplicate timed autosaves:
-                            // show at most one (the latest) autosave per game to prevent UI flooding.
-                            // Manual saves (isAutosave == false) are always included.
-                            // Collection is already sorted date-descending, so the first autosave
-                            // encountered for each game is the most recent one.
-                            var seenAutoSaveGameIDs = Set<String>()
-                            let models = collection
-                                .prefix(500) // safety cap to avoid huge bursts
-                                .compactMap { state -> ContinueItemModel? in
-                                    guard !state.isInvalidated else { return nil }
-                                    if !showAllAutosaves, state.isAutosave {
-                                        let gameID = state.game?.id ?? ""
-                                        guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
-                                            return nil
-                                        }
-                                    }
-                                    return ContinueItemModel(saveState: state)
-                                }
-                            continuation.yield(Array(models))
+                            let models = Self.buildModels(
+                                from: collection,
+                                showAllAutosaves: showAllAutosaves
+                            )
+                            continuation.yield(models)
                         case .error(let error):
                             ELOG("RealmContinuesDataDriver observe error: \(error.localizedDescription)")
                         }
@@ -125,6 +131,61 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                 }
             }
         }
+    }
+
+    /// Converts a Realm collection into display models.
+    ///
+    /// When `showAllAutosaves` is false (default):
+    /// - Autosaves from the same game within `sessionBoundaryInterval` are grouped into a
+    ///   single representative card. The most-recent autosave is the visible card; older
+    ///   autosaves from the same session are stored in `stackedSaves` for the filmstrip.
+    /// - Autosaves separated by a gap > `sessionBoundaryInterval` start a new stack entry.
+    /// - Manual saves are never grouped.
+    ///
+    /// When `showAllAutosaves` is true every save is included individually.
+    static func buildModels<C: Collection>(
+        from collection: C,
+        showAllAutosaves: Bool
+    ) -> [ContinueItemModel] where C.Element == PVSaveState {
+        // (gameID) -> (representativeDate, index into resultModels)
+        // Tracks the newest autosave representative per game for the *current* session.
+        var gameSessionRep: [String: (latestDate: Date, modelIndex: Int)] = [:]
+        var resultModels: [ContinueItemModel] = []
+
+        for state in collection.prefix(500) {
+            guard !state.isInvalidated else { continue }
+
+            if !showAllAutosaves, state.isAutosave {
+                let gameID = state.game?.id ?? ""
+                guard !gameID.isEmpty else { continue }
+
+                if let existing = gameSessionRep[gameID] {
+                    // Collection is date-descending, so existing.latestDate >= state.date.
+                    let gap = existing.latestDate.timeIntervalSince(state.date)
+                    if gap <= sessionBoundaryInterval {
+                        // Same session: append this older save to the representative's stack.
+                        let stackedItem = ContinueItemModel(saveState: state)
+                        resultModels[existing.modelIndex].stackedSaves.append(stackedItem)
+                    } else {
+                        // New session: start a fresh representative for this game.
+                        let newIndex = resultModels.count
+                        resultModels.append(ContinueItemModel(saveState: state))
+                        gameSessionRep[gameID] = (latestDate: state.date, modelIndex: newIndex)
+                    }
+                } else {
+                    // First autosave for this game: it becomes the session representative.
+                    let newIndex = resultModels.count
+                    resultModels.append(ContinueItemModel(saveState: state))
+                    gameSessionRep[gameID] = (latestDate: state.date, modelIndex: newIndex)
+                }
+            } else {
+                // Manual save (or showAllAutosaves=true): always include individually.
+                resultModels.append(ContinueItemModel(saveState: state))
+            }
+        }
+
+        // Re-sort by date descending so manual saves and autosave representatives interleave correctly.
+        return resultModels.sorted { $0.date > $1.date }
     }
 }
 
@@ -834,7 +895,7 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     /// A lightweight signature representing what this view actually cares about:
-    /// count + (id,date) for the first N items in the current sort order.
+    /// count + (id, date, stackDepth) for the first N items in the current sort order.
     private func filteredItemsSignature(limit: Int) -> Int {
         var hasher = Hasher()
         hasher.combine(allItems.count)
@@ -844,6 +905,7 @@ struct HomeContinueSection: SwiftUI.View {
                 let item = allItems[idx]
                 hasher.combine(item.id)
                 hasher.combine(item.date.timeIntervalSince1970)
+                hasher.combine(item.stackedSaves.count)
             }
         }
         return hasher.finalize()
@@ -1108,6 +1170,7 @@ extension ContinueItemModel {
             imageURL: imageURL,
             date: date,
             systemIdentifier: systemIdentifier,
+            isAutosave: state.isAutosave,
             resolver: {
                 // Hybrid resolver: fetch from Realm during migration so that
                 // game-launch actions keep working before the action layer is
