@@ -4,6 +4,8 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
 import PVUIBase
+import PVSettings
+import Defaults
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -373,6 +375,42 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     // MARK: - Analog stick
 
+    /// Returns `true` when the universal deadzone should be skipped for `core`.
+    ///
+    /// Decision is made according to `Defaults[.coreDeadzoneMode]`:
+    /// - **auto (0)**: skip if the core's bridge conforms to `CoreDeadzoneCapable`
+    ///   and returns `coreHandlesDeadzone == true`.
+    /// - **universal (1)**: never skip — always apply the universal deadzone.
+    /// - **coreManaged (2)**: always skip — trust the core.
+    private func shouldSkipUniversalDeadzone(for core: PVEmulatorCore) -> Bool {
+        let mode = CoreDeadzoneMode(rawValue: Defaults[.coreDeadzoneMode]) ?? .auto
+        switch mode {
+        case .universal:
+            return false
+        case .coreManaged:
+            return true
+        case .auto:
+            // Check explicit protocol conformance on the bridge
+            if let capable = core.bridge as? CoreDeadzoneCapable {
+                return capable.coreHandlesDeadzone
+            }
+            // Also check the core itself (some cores don't use a separate bridge)
+            if let capable = core as? CoreDeadzoneCapable {
+                return capable.coreHandlesDeadzone
+            }
+            return false
+        }
+    }
+
+    /// Applies the universal analog deadzone to `(x, y)` if appropriate for `core`.
+    private func applyUniversalDeadzone(x: Float, y: Float, core: PVEmulatorCore) -> (Float, Float) {
+        let deadzone = Float(Defaults[.analogDeadzone])
+        guard deadzone > 0, !shouldSkipUniversalDeadzone(for: core) else {
+            return (x, y)
+        }
+        return (x.applyingDeadzone(deadzone), y.applyingDeadzone(deadzone))
+    }
+
     /// Handle analog stick movement
     func analogStickMoved(_ stickId: String, x: Float, y: Float) {
         ILOG("🔵 analogStickMoved called: stickId=\(stickId), x=\(x), y=\(y)")
@@ -381,6 +419,11 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("No emulator core available for analog stick: \(stickId)")
             return
         }
+
+        // Apply universal deadzone (may be a no-op depending on settings and core)
+        var x = x
+        var y = y
+        (x, y) = applyUniversalDeadzone(x: x, y: y, core: core)
 
         DLOG("Analog stick moved: \(stickId), x: \(x), y: \(y)")
 

@@ -21,7 +21,10 @@
 //#include "fceux/src/state.h"
 //#include "fceux/src/emufile.h"
 
-#define DEADZONE 0.1f
+// Default analog→digital conversion threshold.  PVAnalogDigitalThreshold()
+// returns the larger of this value and the user-configured universal deadzone,
+// so setting a bigger universal deadzone also enlarges the NES digital threshold.
+#define DEADZONE PVAnalogDigitalThreshold(0.1f)
 static const uint32_t NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
 
 // FCEU packs all 4 players into 2 ports (32-bit each):

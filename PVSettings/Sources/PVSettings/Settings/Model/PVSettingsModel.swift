@@ -126,6 +126,22 @@ public extension Defaults.Keys {
     /// Range 0.1 – 5.0; default is 1.0 (1:1 pixel mapping).
     static let tvOSSiriRemoteMouseSensitivity = Key<Double>("tvOSSiriRemoteMouseSensitivity", default: 1.0)
 #endif
+
+    /// Universal analog-stick deadzone applied by the shared input path.
+    /// Range 0.0 (no deadzone) – 0.5 (50 % of axis range).  Default 0.0.
+    /// This value is applied additively on top of any hardware-level deadzoning
+    /// provided by the GameController framework.
+    static let analogDeadzone = Key<Float>("analogDeadzone", default: 0.0)
+
+    /// Controls when the universal analog-stick deadzone is applied versus
+    /// when responsibility is deferred to a core-managed deadzone setting.
+    ///
+    /// Raw Int maps to `CoreDeadzoneMode` in PVCoreBridge:
+    ///   0 = auto (skip universal only when the active core/bridge conforms
+    ///       to `CoreDeadzoneCapable`)
+    ///   1 = universal (always apply)
+    ///   2 = coreManaged (never apply universal; trust each core)
+    static let coreDeadzoneMode = Key<Int>("coreDeadzoneMode", default: 0)
 }
 
 public enum ButtonPressEffect: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {

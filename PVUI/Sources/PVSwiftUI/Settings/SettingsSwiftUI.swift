@@ -1640,6 +1640,8 @@ private struct ControllerSection: View {
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
     @Default(.hapticFeedback) var hapticFeedback
     @Default(.controllerHapticIntensity) var controllerHapticIntensity
+    @Default(.analogDeadzone) var analogDeadzone
+    @Default(.coreDeadzoneMode) var coreDeadzoneMode
 
     var body: some View {
         Group {
@@ -1692,7 +1694,156 @@ private struct ControllerSection: View {
             #if !os(tvOS)
             OnScreenControllerSection()
             #endif
+            AnalogDeadzoneSection(analogDeadzone: $analogDeadzone, coreDeadzoneMode: $coreDeadzoneMode)
         }
+    }
+}
+
+/// Settings section for analog-stick deadzone coordination.
+private struct AnalogDeadzoneSection: View {
+    @Binding var analogDeadzone: Float
+    @Binding var coreDeadzoneMode: Int
+    @State private var showingCompatibility = false
+
+    private let modeLabels = ["Auto", "Universal", "Core-Managed"]
+    private let modeDescriptions = [
+        "Skip universal if core reports managing deadzone",
+        "Always apply universal deadzone",
+        "Let each core manage its own deadzone"
+    ]
+
+    var body: some View {
+        Section(
+            header: Text("Analog Deadzone"),
+            footer: Text(CoreDeadzoneCompatibilityCatalog.progressSummary)
+                .foregroundColor(.secondary)
+        ) {
+            VStack(alignment: .leading, spacing: 4) {
+                SettingsRow(title: "Universal Deadzone",
+                            subtitle: "Dead region at center of analog sticks (0 = off). Applied on top of hardware deadzoning.",
+                            icon: .sfSymbol("circle.dashed"))
+                RetroWaveSlider(value: $analogDeadzone, in: 0.0...0.5, step: 0.01) {
+                    Text("Deadzone")
+                } minimumValueLabel: {
+                    Image(systemName: "circle")
+                } maximumValueLabel: {
+                    Image(systemName: "circle.dashed")
+                }
+            }
+            Picker("Core Deadzone Mode", selection: $coreDeadzoneMode) {
+                ForEach(0..<modeLabels.count, id: \.self) { index in
+                    VStack(alignment: .leading) {
+                        Text(modeLabels[index])
+                        Text(modeDescriptions[index])
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .tag(index)
+                }
+            }
+            .pickerStyle(.menu)
+            Button {
+                showingCompatibility = true
+            } label: {
+                HStack {
+                    Image(systemName: "list.bullet.clipboard")
+                        .foregroundColor(.accentColor)
+                    Text("Core Compatibility")
+                    Spacer()
+                    let done = CoreDeadzoneCompatibilityCatalog.supportedEntries.count
+                    let total = CoreDeadzoneCompatibilityCatalog.entries.count
+                    Text("\(done)/\(total)")
+                        .foregroundColor(.secondary)
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+            .sheet(isPresented: $showingCompatibility) {
+                CoreDeadzoneCompatibilityView()
+            }
+        }
+    }
+}
+
+/// Full-screen sheet listing all cores and their deadzone coordination status.
+private struct CoreDeadzoneCompatibilityView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationView {
+            List {
+                Section(header: Text("Coordinated")) {
+                    ForEach(CoreDeadzoneCompatibilityCatalog.supportedEntries) { entry in
+                        CoreDeadzoneEntryRow(entry: entry)
+                    }
+                }
+                if !CoreDeadzoneCompatibilityCatalog.pendingEntries.isEmpty {
+                    Section(header: Text("Coming Soon")) {
+                        ForEach(CoreDeadzoneCompatibilityCatalog.pendingEntries) { entry in
+                            CoreDeadzoneEntryRow(entry: entry)
+                        }
+                    }
+                }
+                Section(footer: Text("Native: analog axes are deadzoned precisely before conversion. Coordinated: digital-threshold cores apply a max-wins rule so the user setting and core default never compound.")) {
+                    EmptyView()
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Deadzone Support")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+/// Single row in the compatibility list.
+private struct CoreDeadzoneEntryRow: View {
+    let entry: CoreDeadzoneCompatibilityCatalog.Entry
+
+    private var levelColor: Color {
+        switch entry.level {
+        case .native:      return .green
+        case .coordinated: return .blue
+        case .partial:     return .orange
+        case .pending:     return .secondary
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Image(systemName: entry.level.symbolName)
+                    .foregroundColor(levelColor)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(entry.displayName)
+                        .font(.body)
+                    Text(entry.systems.joined(separator: ", "))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Text(entry.level.label)
+                    .font(.caption)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(levelColor.opacity(0.15))
+                    .foregroundColor(levelColor)
+                    .clipShape(Capsule())
+            }
+            if let notes = entry.notes {
+                Text(notes)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 24)
+            }
+        }
+        .padding(.vertical, 2)
     }
 }
 

@@ -8,10 +8,23 @@
 
 #pragma once
 #import <Foundation/Foundation.h>
+#import <math.h>
 
-#define DEADZONE                0.1f
-#define OUTSIDE_DEADZONE(x)     gamepad.leftThumbstick.x.value > DEADZONE
-#define DPAD_PRESSED(x)         [[dpad x] isPressed]?:OUTSIDE_DEADZONE(x)
+// MARK: - Analog deadzone helpers (Mednafen)
+//
+// MEDNAFEN_DEADZONE_FALLBACK is the historical per-core default (10%).
+// MednafenAnalogDigitalThreshold() returns the larger of that value and the
+// user-configured universal deadzone from PVSettings/NSUserDefaults, so the
+// two settings do not compound — whichever is larger wins.
+#define MEDNAFEN_DEADZONE_FALLBACK 0.1f
+static inline float MednafenAnalogDigitalThreshold(void) __attribute__((unused));
+static inline float MednafenAnalogDigitalThreshold(void) {
+    float dz = (float)[[NSUserDefaults standardUserDefaults] floatForKey:@"analogDeadzone"];
+    return (dz > MEDNAFEN_DEADZONE_FALLBACK) ? dz : MEDNAFEN_DEADZONE_FALLBACK;
+}
+#define DEADZONE                MednafenAnalogDigitalThreshold()
+#define OUTSIDE_DEADZONE(x)     (gamepad.leftThumbstick.x.value > DEADZONE)
+#define DPAD_PRESSED(x)         ([[dpad x] isPressed] ?: OUTSIDE_DEADZONE(x))
     
 #pragma mark - Input maps
 static int PCEMap[] = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12};

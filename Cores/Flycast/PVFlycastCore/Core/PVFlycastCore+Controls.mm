@@ -112,11 +112,14 @@ s8 joyx[4], joyy[4];
             (gamepad.rightTrigger.isPressed || (startButton && startButton.isPressed)) ? kcode[playerIndex] &= ~(DC_BTN_START) : kcode[playerIndex] |= (DC_BTN_START);
 
 
-            float xvalue = gamepad.leftThumbstick.xAxis.value;
+            // Apply universal analog deadzone (from PVSettings) before converting
+            // to the core's s8 range.  PVApplyAnalogDeadzone() rescales the output
+            // so the full [-1, 1] range is still reachable outside the dead region.
+            float xvalue = PVApplyAnalogDeadzone(gamepad.leftThumbstick.xAxis.value);
             s8 x=(s8)(xvalue*127);
             joyx[playerIndex] = x;
 
-            float yvalue = gamepad.leftThumbstick.yAxis.value;
+            float yvalue = PVApplyAnalogDeadzone(gamepad.leftThumbstick.yAxis.value);
             s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
             joyy[playerIndex] = y;
 
