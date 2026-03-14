@@ -736,11 +736,14 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw error
         }
         await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
-        // Scan frameworks directory off the main actor to avoid blocking UI updates.
-        var corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
-            CoreLoader.getCorePlists()
+        // Run both filesystem I/O and the dynamic libretro scan (which calls
+        // DispatchQueue.concurrentPerform / dlopen) on a background thread.
+        // Neither operation is MainActor-safe — calling either on the main thread
+        // blocks the UI and causes the watchdog-visible "app hang" symptoms.
+        let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
+            let plists = CoreLoader.getCorePlists()
+            return CoreLoader.mergeDiscoveredLibretroCores(into: plists)
         }.value
-        corePlists = CoreLoader.mergeDiscoveredLibretroCores(into: corePlists)
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 

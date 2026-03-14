@@ -42,6 +42,12 @@ void MupenAudioLenChanged()
 {
     GET_CURRENT_AND_RETURN();
 
+    // Don't write audio samples when the emulator is paused.  This prevents
+    // the choppy audio bleed-through that occurs because the N64 core runs
+    // on its own thread and continues calling this callback until the core's
+    // internal pause state takes effect.
+    if (!current.isRunning) { return; }
+
     const int LenReg = *AudioInfo.AI_LEN_REG;
     uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
 

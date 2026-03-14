@@ -713,16 +713,23 @@ static void *dlopen_myself()
 - (void)setPauseEmulation:(BOOL)flag
 {
     [super setPauseEmulation:flag];
-//    [self parseOptions];
-// TODO: Fix pause
-//    CoreDoCommand(M64CMD_PAUSE, flag, NULL);
 
     if (flag)
     {
+        // Unblock any pending frame-sync waits so the core thread can exit the
+        // VIChangeXFB callback and process the pause state change below.
         dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
         [self.frontBufferCondition lock];
         [self.frontBufferCondition signal];
         [self.frontBufferCondition unlock];
+        // Tell the Mupen64Plus core to enter its internal pause state.
+        // The core run-loop checks this flag and suspends until M64CMD_RESUME.
+        CoreDoCommand(M64CMD_PAUSE, 0, NULL);
+    }
+    else
+    {
+        // Wake the Mupen64Plus core run-loop back up.
+        CoreDoCommand(M64CMD_RESUME, 0, NULL);
     }
 }
 

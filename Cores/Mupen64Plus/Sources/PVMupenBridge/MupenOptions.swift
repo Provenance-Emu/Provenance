@@ -33,9 +33,12 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
          #define PLUGIN_TRANSFER_PAK         4 /* not implemented for non raw data */
          #define PLUGIN_RAW                  5 /* the controller plugin is passed in raw data */
          */
-        // Default: P1+P2 use Memory Pak (backwards-compatible with existing saves).
-        // Set to "Smart Pak (Memory + Rumble)" (value 5) for rumble + saves on same port.
-        let defaultValue = index <= 1 ? 2 : 5
+        // Default all controllers to Smart Pak (PLUGIN_RAW = 5).
+        // Smart Pak handles both memory saves (0x0000–0x7FFF) and rumble (0xC000)
+        // in the same slot, so saves are not lost and rumble-enabled games like
+        // GoldenEye 007 and Starfox 64 work without user configuration.
+        // Existing mempak save data is preserved — Smart Pak uses identical storage.
+        let defaultValue = 5
         return .enumeration(.init(title: "Controller Pak \(index)",
                                   description: nil,
                                   requiresRestart: true),
