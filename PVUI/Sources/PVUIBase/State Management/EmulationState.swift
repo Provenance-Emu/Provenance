@@ -36,6 +36,15 @@ public final class EmulationUIState : ObservableObject {
     /// The core to use for launching (if specified, bypasses core selection)
     public var currentCore: PVCore? = nil
 
+    /// ID of a save state whose version-mismatch warning was already confirmed by
+    /// `SceneCoordinator` during the pre-launch flow.
+    ///
+    /// The emulator VC consumes this value (clears to `nil`) on the first
+    /// `loadSaveState()` call and skips the duplicate confirmation dialog.
+    /// Any subsequent in-session loads (e.g. user picking a state from the pause
+    /// menu) will see `nil` here and go through the normal prompt path.
+    public var confirmedMismatchSaveStateID: String? = nil
+
     @discardableResult
     public func reset() -> (PVEmulatorCore?, PVEmualatorControllerProtocol?, PVGame?) {
         defer {
@@ -44,6 +53,7 @@ public final class EmulationUIState : ObservableObject {
             currentGame = nil
             currentSaveState = nil
             currentCore = nil
+            confirmedMismatchSaveStateID = nil
             isRecording = false
         }
         return (core, emulator, currentGame)

@@ -906,7 +906,9 @@ public class SceneCoordinator: ObservableObject {
         // Determine which core to use: explicit core parameter, save state's core, or nil
         let coreToUse: PVCore? = core ?? preparedSaveState?.core
 
-        // Check save state version mismatch before launching
+        // Check save state version mismatch before launching.
+        // If the user approves (or there is no mismatch), record the save state ID so
+        // the emulator VC skips the identical check when it loads the state on boot.
         if let stateToCheck = preparedSaveState {
             let shouldProceed = await SaveStateVersionChecker.confirmLoad(
                 saveState: stateToCheck,
@@ -917,6 +919,9 @@ public class SceneCoordinator: ObservableObject {
                 ILOG("SceneCoordinator: User cancelled save state launch due to version mismatch")
                 return
             }
+            // Mark this save state as already version-checked for this launch so the
+            // emulator VC does not re-prompt on its own load call.
+            AppState.shared.emulationUIState.confirmedMismatchSaveStateID = stateToCheck.id
         }
 
         // Set the current game, save state, and core in EmulationUIState

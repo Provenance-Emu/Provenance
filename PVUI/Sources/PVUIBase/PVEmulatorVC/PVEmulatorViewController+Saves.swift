@@ -84,13 +84,27 @@ public extension PVEmulatorViewController {
         // Confirm version mismatch with user before loading.
         // The load task is intentionally deferred until after the user confirms,
         // so that cancelling the dialog reliably prevents the load.
-        let shouldLoad = await SaveStateVersionChecker.confirmLoad(
-            saveState: state,
-            overrideCore: core,
-            on: self
-        )
-        guard shouldLoad else {
-            return false
+        //
+        // Skip the prompt when SceneCoordinator already confirmed this exact save state
+        // during the pre-launch flow (library → emulator boot). Consume the confirmation
+        // token so any subsequent in-session loads (e.g. from the pause menu) still prompt.
+        let alreadyConfirmed: Bool
+        if AppState.shared.emulationUIState.confirmedMismatchSaveStateID == state.id {
+            AppState.shared.emulationUIState.confirmedMismatchSaveStateID = nil
+            alreadyConfirmed = true
+        } else {
+            alreadyConfirmed = false
+        }
+
+        if !alreadyConfirmed {
+            let shouldLoad = await SaveStateVersionChecker.confirmLoad(
+                saveState: state,
+                overrideCore: core,
+                on: self
+            )
+            guard shouldLoad else {
+                return false
+            }
         }
 
         // Perform the actual load only after user confirmation
