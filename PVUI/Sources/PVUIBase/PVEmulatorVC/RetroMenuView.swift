@@ -846,10 +846,8 @@ struct RetroMenuView: View {
     @State private var availableSkinObjects: [DeltaSkinProtocol] = []
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
-    @State private var showingSkinScopeAlert = false
     @State private var showingDocumentPicker = false
     @State private var showingSkinCatalog = false
-    @State private var pendingSkinSelection: (name: String, identifier: String, orientation: SkinOrientation)? = nil
     #if os(iOS)
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
     #else
@@ -871,6 +869,9 @@ struct RetroMenuView: View {
     @Default(.buttonSound) var buttonSound
     @State internal var showingButtonEffectPicker = false
     @State internal var showingButtonSoundPicker = false
+
+    // Scope to save skin selection under (set once, applies to all picks in the session)
+    @State private var selectedSkinScope: SkinScope = .game
 
     private var skinsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
@@ -909,128 +910,88 @@ struct RetroMenuView: View {
 
                 Spacer(minLength: 0)
             } else {
-                // Current skin selection - simplified UI
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("SKIN SELECTION")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
+                // ── SKIN SELECTION ──────────────────────────────────────────
+                skinSectionHeader("SKIN SELECTION", systemImage: "paintbrush.pointed")
 
-                // Current skin button - shows current orientation's skin
-                Button(action: {
-                    // Use current device orientation for skin selection
-                    #if !os(tvOS)
-                    currentOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
-                    #else
-                    currentOrientation = .landscape
-                    #endif
-                    showingSkinPicker = true
-                }) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            HStack(spacing: 4) {
-                                Image(systemName: currentOrientation == .portrait ? "rectangle.portrait" : "rectangle.landscape")
-                                    .font(.system(size: 10))
-                                Text(currentOrientation == .portrait ? "PORTRAIT SKIN" : "LANDSCAPE SKIN")
-                                    .font(.system(size: 10, weight: .bold))
-                            }
-                            .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
-                            Text(currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin)
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
-                        }
+                // Scope picker — choose where to save the skin BEFORE picking it.
+                // This replaces the post-selection alert with an upfront control.
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("SAVE FOR")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.6))
+                        .tracking(1.5)
 
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
+                    Picker("Scope", selection: $selectedSkinScope) {
+                        Text("Session").tag(SkinScope.session)
+                        Text("This Game").tag(SkinScope.game)
+                        Text("System").tag(SkinScope.system)
                     }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                    .opacity(palette.dark ? 0.6 : 0.9)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
-                            )
-                    )
+                    .pickerStyle(.segmented)
                 }
-                .buttonStyle(PlainButtonStyle())
+
+                // Portrait + Landscape selectors — both always visible.
+                // Wrapping in a VStack lets us attach the shared sheet here.
+                VStack(spacing: 8) {
+                    skinOrientationRow(orientation: .portrait)
+                    skinOrientationRow(orientation: .landscape)
+                }
                 .sheet(isPresented: $showingSkinPicker, onDismiss: {
-                    // Ensure we don't get stuck in a loading state if dismissed while loading
-                    if isLoadingSkins {
-                        isLoadingSkins = false
-                    }
+                    if isLoadingSkins { isLoadingSkins = false }
                 }) {
                     skinPickerView
                 }
 
-                // Import skin button
-                Button(action: {
-                    showingDocumentPicker = true
-                }) {
-                    HStack {
-                        Image(systemName: "square.and.arrow.down")
-                            .font(.system(size: 14, weight: .medium))
-                        Text("IMPORT SKIN")
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                    .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                    .opacity(palette.dark ? 0.6 : 0.9)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
-                            )
-                    )
+                // ── BUTTON CONTROLS ─────────────────────────────────────────
+                skinSectionHeader("BUTTON CONTROLS", systemImage: "hand.tap")
+
+                menuButton(title: "BUTTON EFFECT", icon: "wand.and.sparkles", color: .retroPurple) {
+                    showingButtonEffectPicker = true
                 }
-                .buttonStyle(PlainButtonStyle())
+                .overlay(alignment: .trailing) {
+                    Text(buttonPressEffect.description)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.55))
+                        .lineLimit(1)
+                        .padding(.trailing, 38)
+                        .allowsHitTesting(false)
+                }
+                .sheet(isPresented: $showingButtonEffectPicker) {
+                    buttonEffectPickerView
+                }
+
+                menuButton(title: "BUTTON SOUND", icon: "speaker.wave.2", color: .retroBlue) {
+                    showingButtonSoundPicker = true
+                }
+                .overlay(alignment: .trailing) {
+                    Text(buttonSound.description)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.55))
+                        .lineLimit(1)
+                        .padding(.trailing, 38)
+                        .allowsHitTesting(false)
+                }
+                .sheet(isPresented: $showingButtonSoundPicker) {
+                    buttonSoundPickerView
+                }
+
+                // ── TOOLS ───────────────────────────────────────────────────
+                skinSectionHeader("TOOLS", systemImage: "wrench.and.screwdriver")
+
+                menuButton(title: "IMPORT SKIN FILE", icon: "square.and.arrow.down", color: .retroCyan) {
+                    showingDocumentPicker = true
+                }
 #if !os(tvOS)
                 .sheet(isPresented: $showingDocumentPicker) {
                     SkinDocumentPicker { urls in
-                        Task {
-                            await importSkins(from: urls)
-                        }
+                        Task { await importSkins(from: urls) }
                     }
                 }
-                #endif
+#endif
 
-                // Browse online catalog button
-                Button(action: {
+                menuButton(title: "BROWSE SKIN CATALOG", icon: "arrow.down.circle.fill", color: .retroOrange) {
                     showingSkinCatalog = true
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.down.circle.fill")
-                            .font(.system(size: 14, weight: .medium))
-                        Text("BROWSE CATALOG")
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                    .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                    .opacity(palette.dark ? 0.6 : 0.9)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
-                            )
-                    )
                 }
-                .buttonStyle(PlainButtonStyle())
                 .sheet(isPresented: $showingSkinCatalog, onDismiss: {
-                    // Reload skin list so any newly downloaded/selected skin is reflected in the tab
                     Task {
                         await MainActor.run { didLoadSkins = false }
                         await loadAvailableSkins()
@@ -1042,146 +1003,9 @@ struct RetroMenuView: View {
                         )
                         .toolbar {
                             ToolbarItem(placement: .topBarTrailing) {
-                                Button("Done") {
-                                    showingSkinCatalog = false
-                                }
+                                Button("Done") { showingSkinCatalog = false }
                             }
                         }
-                    }
-                }
-
-                .alert("Save Skin Selection", isPresented: $showingSkinScopeAlert) {
-                    Button("Session Only") {
-                        ILOG("skins: Alert - Session Only selected")
-                        if let pending = pendingSkinSelection {
-                            ILOG("skins: Alert - Applying session skin: \(pending.name)")
-                            Task {
-                                await applySkinSelection(skinName: pending.name, identifier: pending.identifier, orientation: pending.orientation, scope: .session)
-                            }
-                        } else {
-                            ELOG("skins: Alert - Session Only selected but pendingSkinSelection is nil")
-                        }
-                        pendingSkinSelection = nil
-                    }
-                    Button("This Game") {
-                        ILOG("skins: Alert - This Game selected")
-                        if let pending = pendingSkinSelection {
-                            ILOG("skins: Alert - Applying game skin: \(pending.name)")
-                            Task {
-                                await applySkinSelection(skinName: pending.name, identifier: pending.identifier, orientation: pending.orientation, scope: .game)
-                            }
-                        } else {
-                            ELOG("skins: Alert - This Game selected but pendingSkinSelection is nil")
-                        }
-                        pendingSkinSelection = nil
-                    }
-                    Button("This System") {
-                        ILOG("skins: Alert - This System selected")
-                        if let pending = pendingSkinSelection {
-                            ILOG("skins: Alert - Applying system skin: \(pending.name)")
-                            Task {
-                                await applySkinSelection(skinName: pending.name, identifier: pending.identifier, orientation: pending.orientation, scope: .system)
-                            }
-                        } else {
-                            ELOG("skins: Alert - This System selected but pendingSkinSelection is nil")
-                        }
-                        pendingSkinSelection = nil
-                    }
-                    Button("Cancel", role: .cancel) {
-                        ILOG("skins: Alert - Cancel selected")
-                        pendingSkinSelection = nil
-                    }
-                } message: {
-                    if let pending = pendingSkinSelection {
-                        Text("How would you like to save '\(pending.name)' for \(pending.orientation == .portrait ? "portrait" : "landscape") orientation?")
-                    }
-                }
-            }
-
-                // Button Effect Selection
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("BUTTON EFFECT")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
-
-                    Button(action: {
-                        // Show button effect picker
-                        showingButtonEffectPicker = true
-                    }) {
-                        HStack {
-                            Text(buttonPressEffect.description)
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
-                        }
-                        .padding(12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(
-                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                        .opacity(palette.dark ? 0.6 : 0.9)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
-                                )
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .sheet(isPresented: $showingButtonEffectPicker) {
-                        buttonEffectPickerView
-                    }
-                }
-
-                // Button Sound Selection
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("BUTTON SOUND")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
-
-                    Button(action: {
-                        // Show button sound picker
-                        showingButtonSoundPicker = true
-                    }) {
-                        HStack {
-                            Text(buttonSound.description)
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
-
-                            Spacer()
-
-                            Image(systemName: "speaker.wave.2")
-                                .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
-                        }
-                        .padding(12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(
-                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                        .opacity(palette.dark ? 0.6 : 0.9)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
-                                )
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .sheet(isPresented: $showingButtonSoundPicker) {
-                        buttonSoundPickerView
-                    }
-                }
-
-                // Apply button - applies both skin and filter changes after dismissing menu
-                menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: .retroGreen) {
-                    dismissAction(true)
-                    // Apply skin and filter changes after menu is dismissed
-                    Task {
-                        await applySkinAndFilterChanges()
                     }
                 }
 
@@ -1189,6 +1013,93 @@ struct RetroMenuView: View {
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
+        // Pre-load skin names as soon as the SKINS tab becomes visible
+        .task {
+            if !didLoadSkins && !isLoadingSkins {
+                await loadAvailableSkins()
+            }
+        }
+    }
+
+    /// Styled section-header label used inside `skinsMenuButtons`.
+    @ViewBuilder
+    private func skinSectionHeader(_ title: String, systemImage: String) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: systemImage)
+                .font(.system(size: 10, weight: .bold))
+            Text(title)
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .tracking(1.5)
+        }
+        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.55))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 6)
+    }
+
+    /// A tappable row that opens the skin picker for a specific orientation.
+    @ViewBuilder
+    private func skinOrientationRow(orientation: SkinOrientation) -> some View {
+        let isPortrait = orientation == .portrait
+        let skinName   = isPortrait ? selectedPortraitSkin : selectedLandscapeSkin
+        let icon       = isPortrait ? "rectangle.portrait" : "rectangle"
+        let color: Color = isPortrait ? .retroBlue : .retroPurple
+        let label      = isPortrait ? "PORTRAIT" : "LANDSCAPE"
+
+        Button {
+            currentOrientation = orientation
+            showingSkinPicker  = true
+        } label: {
+            HStack {
+                Image(systemName: icon)
+                    .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
+                    .foregroundColor(color)
+                    .shadow(color: color.opacity(0.8), radius: 4, x: 0, y: 0)
+                    .frame(width: 30)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(label)
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundColor(color.opacity(0.85))
+                        .tracking(1.5)
+                    Text(skinName)
+                        .font(.system(size: isLandscape ? 15 : 17, weight: .semibold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(color.opacity(0.55))
+            }
+            .padding(.vertical, isLandscape ? 10 : 12)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(color.opacity(0.08))
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.black.opacity(0.6))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(color, lineWidth: 1.5)
+                    )
+            )
+            .shadow(color: color.opacity(0.35), radius: 6, x: 0, y: 0)
+        }
+        .retroFocusButtonStyle(
+            focusScale: 1.06,
+            cornerRadius: 12,
+            primaryColor: color,
+            secondaryColor: palette.settingsCellBackground?.swiftUIColor ?? color,
+            glowRadius: 10,
+            showBorder: false,
+            showGlow: true,
+            showScale: true
+        )
     }
 
     // Skin picker sheet view with retrowave styling
@@ -1286,9 +1197,11 @@ struct RetroMenuView: View {
                                     skinId: nil,
                                     onSelect: {
                                         showingSkinPicker = false
-                                        // Show scope selection alert
-                                        pendingSkinSelection = (name: "Default", identifier: "", orientation: currentOrientation)
-                                        showingSkinScopeAlert = true
+                                        // Apply immediately using the scope already chosen in the SKINS tab
+                                        Task {
+                                            await applySkinSelection(skinName: "Default", identifier: "", orientation: currentOrientation, scope: selectedSkinScope)
+                                            await applySkinAndFilterChanges()
+                                        }
                                     }
                                 )
 
@@ -1301,9 +1214,11 @@ struct RetroMenuView: View {
                                         isHovered: isHoveredSkinId == skin.identifier,
                                         onSelect: {
                                             showingSkinPicker = false
-                                            // Show scope selection alert
-                                            pendingSkinSelection = (name: skin.name, identifier: skin.identifier, orientation: currentOrientation)
-                                            showingSkinScopeAlert = true
+                                            // Apply immediately using the scope already chosen in the SKINS tab
+                                            Task {
+                                                await applySkinSelection(skinName: skin.name, identifier: skin.identifier, orientation: currentOrientation, scope: selectedSkinScope)
+                                                await applySkinAndFilterChanges()
+                                            }
                                         }
                                     )
                                 }
@@ -2113,13 +2028,11 @@ struct RetroMenuView: View {
             }
         }
 
-        // After importing, prompt user to use the new skin
+        // After importing, auto-apply the new skin using the scope already chosen in the SKINS tab
         if let skins = try? await DeltaSkinManager.shared.skins(for: systemId),
            let lastImported = skins.last {
-            await MainActor.run {
-                pendingSkinSelection = (name: lastImported.name, identifier: lastImported.identifier, orientation: currentOrientation)
-                showingSkinScopeAlert = true
-            }
+            await applySkinSelection(skinName: lastImported.name, identifier: lastImported.identifier, orientation: currentOrientation, scope: selectedSkinScope)
+            await applySkinAndFilterChanges()
         }
     }
 
