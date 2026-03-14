@@ -2701,13 +2701,46 @@ struct RetroMenuView: View {
         role: MenuButtonRole = .secondary,
         action: @escaping () -> Void
     ) -> some View {
+        struct MenuButtonVisualConfig {
+            let iconGlowRadius: CGFloat
+            let outerGlowRadius: CGFloat
+            let outerGlowOpacity: Double
+            let borderWidth: CGFloat
+            let backgroundTint: Double
+            let titleWeight: Font.Weight
+        }
+
         // Visual tuning per role
-        let iconGlowRadius: CGFloat   = role == .destructive ? 8  : role == .primary ? 6  : 4
-        let outerGlowRadius: CGFloat  = role == .destructive ? 12 : role == .primary ? 10 : 6
-        let outerGlowOpacity: Double  = role == .destructive ? 0.6 : role == .primary ? 0.5 : 0.3
-        let borderWidth: CGFloat      = role == .destructive ? 2.0 : role == .primary ? 2.0 : 1.5
-        let backgroundTint: Double    = role == .destructive ? 0.18 : role == .primary ? 0.14 : 0.08
-        let titleWeight: Font.Weight  = role == .primary ? .heavy : .bold
+        let config: MenuButtonVisualConfig
+        switch role {
+        case .destructive:
+            config = MenuButtonVisualConfig(
+                iconGlowRadius: 8,
+                outerGlowRadius: 12,
+                outerGlowOpacity: 0.6,
+                borderWidth: 2.0,
+                backgroundTint: 0.18,
+                titleWeight: .bold
+            )
+        case .primary:
+            config = MenuButtonVisualConfig(
+                iconGlowRadius: 6,
+                outerGlowRadius: 10,
+                outerGlowOpacity: 0.5,
+                borderWidth: 2.0,
+                backgroundTint: 0.14,
+                titleWeight: .heavy
+            )
+        case .secondary:
+            config = MenuButtonVisualConfig(
+                iconGlowRadius: 4,
+                outerGlowRadius: 6,
+                outerGlowOpacity: 0.3,
+                borderWidth: 1.5,
+                backgroundTint: 0.08,
+                titleWeight: .bold
+            )
+        }
 
         return Button(action: action) {
             HStack {
@@ -2715,11 +2748,11 @@ struct RetroMenuView: View {
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
                     .foregroundColor(color)
                     // Neon glow on icon — matches AudioVisualizerButton reference style
-                    .shadow(color: color.opacity(0.9), radius: iconGlowRadius, x: 0, y: 0)
+                    .shadow(color: color.opacity(0.9), radius: config.iconGlowRadius, x: 0, y: 0)
                     .frame(width: 30)
 
                 Text(title)
-                    .font(.system(size: isLandscape ? 16 : 18, weight: titleWeight))
+                    .font(.system(size: isLandscape ? 16 : 18, weight: config.titleWeight))
                     .foregroundColor(role == .destructive ? color : .white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
@@ -2735,17 +2768,17 @@ struct RetroMenuView: View {
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     // Subtle color tint in background — differentiates buttons at a glance
-                    .fill(color.opacity(backgroundTint))
+                    .fill(color.opacity(config.backgroundTint))
                     .background(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.black.opacity(0.6))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(color, lineWidth: borderWidth)
+                            .strokeBorder(color, lineWidth: config.borderWidth)
                     )
             )
-            .shadow(color: color.opacity(outerGlowOpacity), radius: outerGlowRadius, x: 0, y: 0)
+            .shadow(color: color.opacity(config.outerGlowOpacity), radius: config.outerGlowRadius, x: 0, y: 0)
         }
         .retroFocusButtonStyle(
             focusScale: 1.06,
