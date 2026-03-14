@@ -378,18 +378,29 @@ public class AppState: ObservableObject {
             return
         }
         Task {
+            // Phase 1: Realm database init — hard 60 s cap.
+            // Library init is intentionally NOT included here; it has its own
+            // per-phase timeouts in initializeLibrary() and can legitimately
+            // take longer than 60 s on first launch (e.g. libretro core probing).
             do {
                 try await withTimeout(seconds: 60) {
                     await self.initializeDatabase()
                 }
             } catch {
-                ELOG("AppState: Bootup sequence timed out or failed: \(error)")
+                ELOG("AppState: Database initialization timed out or failed: \(error)")
                 bootupStateManager.transition(to: .error(error))
+                return
             }
+            guard !bootupStateManager.currentState.isErrorState else { return }
+            // Phase 2: Library init — each sub-phase has its own timeout.
+            await initializeLibrary()
         }
     }
 
-    /// Method to initialize the database
+    /// Method to initialize the database (Realm only).
+    ///
+    /// Does NOT call `initializeLibrary()` — that is the caller's responsibility
+    /// so the 60 s timeout applied here does not inadvertently cap library init.
     @MainActor
     private func initializeDatabase() async {
         ILOG("AppState: Starting database initialization")
@@ -399,7 +410,6 @@ public class AppState: ObservableObject {
             try await bootWorker.initializeDatabase()
             ILOG("AppState: Database initialization completed successfully")
             bootupStateManager.transition(to: .databaseInitialized)
-            await initializeLibrary()
         } catch {
             ELOG("AppState: Error initializing database: \(error.localizedDescription)")
             bootupStateManager.transition(to: .error(error))
@@ -417,15 +427,19 @@ public class AppState: ObservableObject {
         // lighter initSystems() remainder (dir creation + Realm observer setup).
         ILOG("AppState: Loading system/core plists via GameImporter.shared.initCorePlists()")
         bootupStateManager.updateTaskProgress("Loading system definitions…", fraction: 0.06)
+        bootupStateManager.updateSubTask("Reading core plists…")
         do {
             try await withTimeout(seconds: 45) {
                 try await GameImporter.shared.initCorePlists()
             }
             ILOG("AppState: initCorePlists() completed")
+            bootupStateManager.updateSubTask("")
         } catch let error as TimeoutError {
             ELOG("AppState: initCorePlists() timed out after \(error.seconds)s — continuing anyway")
+            bootupStateManager.updateSubTask("Core plist scan timed out — continuing…")
         } catch {
             ELOG("AppState: initCorePlists() failed: \(error.localizedDescription) — continuing anyway")
+            bootupStateManager.updateSubTask("")
         }
 
         // Phase B: Finish importer init (directory creation + Realm observer).

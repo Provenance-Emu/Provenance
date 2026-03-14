@@ -99,6 +99,17 @@ public class AppBootupState: ObservableObject {
     /// Call ``updateTaskProgress(_:fraction:)`` for sub-step granularity within a stage.
     @Published public private(set) var stateProgress: Double = 0.0
 
+    /// Optional secondary detail line shown below `currentTaskName` during slow sub-steps.
+    ///
+    /// Set via ``updateSubTask(_:progress:)``. Cleared automatically on each state transition.
+    @Published public private(set) var subTaskMessage: String = ""
+
+    /// Fine-grained progress 0.0–1.0 within the current sub-task.
+    ///
+    /// `nil` hides the secondary progress bar in the boot UI.
+    /// Set via ``updateSubTask(_:progress:)``. Cleared automatically on each state transition.
+    @Published public private(set) var subTaskProgress: Double? = nil
+
     /// The current state of the bootup process
     @Published public private(set) var currentState: State = .notStarted {
         willSet {
@@ -121,6 +132,20 @@ public class AppBootupState: ObservableObject {
         willSet {
             objectWillChange.send()
         }
+    }
+
+    /// Update the secondary detail line shown below the main task name.
+    ///
+    /// Call this for long-running sub-phases (e.g., libretro core probing) to surface
+    /// progress to the user. Cleared automatically when ``transition(to:)`` is called.
+    ///
+    /// - Parameters:
+    ///   - message: Human-readable description (e.g., `"Probing snes9x_libretro… 3/24"`).
+    ///   - progress: Optional fine-grained progress 0.0–1.0, or `nil` to hide the bar.
+    public func updateSubTask(_ message: String, progress: Double? = nil) {
+        subTaskMessage = message
+        subTaskProgress = progress
+        objectWillChange.send()
     }
 
     /// Update the displayed task name and optional sub-step progress within the current stage.
@@ -165,6 +190,10 @@ public class AppBootupState: ObservableObject {
             // Advance progress to the new state's base value
             stateProgress = state.baseProgress
             currentTaskName = state.localizedDescription
+
+            // Clear sub-task detail when entering a new stage
+            subTaskMessage = ""
+            subTaskProgress = nil
 
             // Update the state
             currentState = state

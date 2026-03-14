@@ -162,11 +162,18 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     /// On subsequent launches, cached entries skip `dlopen` entirely — startup
     /// cost drops from O(n × 1 s) to O(1) after the first run.
     ///
-    /// - Parameter knownIdentifiers: Core identifiers already registered via
-    ///   static plists. Matching cores are skipped.
+    /// - Parameters:
+    ///   - knownIdentifiers: Core identifiers already registered via static plists.
+    ///     Matching cores are skipped.
+    ///   - onProgress: Optional progress callback invoked during the probe phase.
+    ///     Called from a background thread; dispatch to MainActor if updating UI.
+    ///     Parameters: (completedCount, totalCount, currentCoreName).
     /// - Returns: Newly discovered cores (may be empty if cache is warm).
     @discardableResult
-    public func scan(knownIdentifiers: Set<String> = []) -> [DiscoveredLibretroCore] {
+    public func scan(
+        knownIdentifiers: Set<String> = [],
+        onProgress: (@Sendable (_ completed: Int, _ total: Int, _ currentName: String) -> Void)? = nil
+    ) -> [DiscoveredLibretroCore] {
         ILOG("DynamicLibretroScanner: starting scan (knownIdentifiers: \(knownIdentifiers.count))")
 
         let candidates = collectCandidateExecutables()
@@ -210,10 +217,25 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         let probedResults = OSAllocatedUnfairLock<[(URL, DiscoveredLibretroCore)]>(initialState: [])
 
         if !cacheMisses.isEmpty {
+            let total = candidates.count
+            let completedCount = OSAllocatedUnfairLock<Int>(initialState: cacheHits.count)
+
+            // Report initial progress for cache hits
+            if let onProgress, !cacheHits.isEmpty {
+                onProgress(cacheHits.count, total, "")
+            }
+
             DispatchQueue.concurrentPerform(iterations: cacheMisses.count) { i in
                 let url = cacheMisses[i]
-                guard let core = self.probe(executableURL: url) else { return }
+                let coreName = url.deletingLastPathComponent().lastPathComponent
+                guard let core = self.probe(executableURL: url) else {
+                    let n = completedCount.withLock { count -> Int in count += 1; return count }
+                    onProgress?(n, total, coreName)
+                    return
+                }
                 probedResults.withLock { $0.append((url, core)) }
+                let n = completedCount.withLock { count -> Int in count += 1; return count }
+                onProgress?(n, total, core.libraryName)
             }
 
             // Update disk cache with newly probed results

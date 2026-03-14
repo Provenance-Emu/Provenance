@@ -195,24 +195,52 @@ public struct BootupViewRetroWave: View {
                     .padding(.top, 10)
                     .opacity(showText ? 1.0 : 0.5)
 
-                // Custom progress indicator — driven by real boot progress
-                ZStack {
-                    // Progress bar background
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.black.opacity(0.3))
-                        .frame(width: 200, height: 8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ), lineWidth: 1)
-                        )
+                // Sub-task detail (e.g. "Probing snes9x_libretro… 12/24")
+                let subMsg = appState.bootupStateManager.subTaskMessage
+                if !subMsg.isEmpty {
+                    Text(subMsg)
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.65))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .transition(.opacity)
+                }
 
-                    // Real progress bar
-                    RetroProgressBar(progress: appState.bootupStateManager.stateProgress)
-                        .frame(width: 200, height: 8)
+                // Custom progress indicator — driven by real boot progress
+                VStack(spacing: 4) {
+                    ZStack {
+                        // Progress bar background
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.black.opacity(0.3))
+                            .frame(width: 200, height: 8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ), lineWidth: 1)
+                            )
+
+                        // Real progress bar
+                        RetroProgressBar(progress: appState.bootupStateManager.stateProgress)
+                            .frame(width: 200, height: 8)
+                    }
+
+                    // Secondary thin bar for sub-task progress
+                    if let subProgress = appState.bootupStateManager.subTaskProgress {
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.white.opacity(0.1))
+                                .frame(width: 200, height: 3)
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.retroBlue.opacity(0.7))
+                                .frame(width: max(0, 200 * CGFloat(subProgress)), height: 3)
+                        }
+                        .transition(.opacity)
+                    }
                 }
                 .padding(.top, 20)
                 
