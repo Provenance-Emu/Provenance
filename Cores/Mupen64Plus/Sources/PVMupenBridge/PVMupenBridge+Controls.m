@@ -140,42 +140,57 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
         case RD_READKEYS:
         break;
         case RD_READPAK: {
-//        if (controller[Control].control->Plugin == PLUGIN_RAW)
-//        {
+            // This handler is called only in PLUGIN_RAW mode (virtual combo pak).
+            // For PLUGIN_MEMPAK the core's native mempak.c handles I/O directly.
             unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
 
-            if(( dwAddress >= 0x8000 ) && ( dwAddress < 0x9000 ) )
-            memset( Data, 0x80, 32 );
-            else
-            memset( Data, 0x00, 32 );
+            if (dwAddress >= 0x8000 && dwAddress < 0x9000) {
+                // Pak-present probe: return 0x80 (any pak type responds here)
+                memset(Data, 0x80, 32);
+            } else if (dwAddress < 0x8000 && Control >= 0 && Control < 4) {
+                // Memory pak data read: serve from in-memory buffer
+                memcpy(Data, &current->mempakBuffer[Control][dwAddress], 32);
+            } else {
+                memset(Data, 0x00, 32);
+            }
 
-            Data[32] = DataCRC( Data, 32 );
-//        }
-        break;
+            Data[32] = DataCRC(Data, 32);
+            break;
         }
         case RD_WRITEPAK: {
-//        if (controller[Control].control->Plugin == PLUGIN_RAW)
-//        {
+            // This handler is called in two situations:
+            //   1. PLUGIN_RAW mode: all pak bus writes come here directly.
+            //   2. PLUGIN_RUMBLE_PAK mode: rumblepak.c constructs a synthetic
+            //      0xC000 command and calls input.controllerCommand() to trigger
+            //      haptics — see input_plugin_compat.c:input_plugin_rumble_exec().
             unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
-//            Data[32] = DataCRC( Data, 32 );
-//
-            if (dwAddress == PAK_IO_RUMBLE)
-            {
+
+            if (dwAddress == PAK_IO_RUMBLE) {
+                // Rumble register: 0x01 = start, 0x00 = stop
 #if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
                 if (@available(iOS 14.0, *)) {
                     if (*Data) {
-                        // Rumble on - trigger haptic feedback
                         [current rumbleForPlayer:Control];
                     } else {
-                        // Rumble off - stop haptics
                         [current stopRumbleForPlayer:Control];
                     }
                 }
+#else
+                if (*Data) {
+                    [current rumbleForPlayer:Control];
+                } else {
+                    [current stopRumbleForPlayer:Control];
+                }
 #endif
+            } else if (dwAddress < 0x8000 && Control >= 0 && Control < 4) {
+                // Memory pak data write: store in buffer and mark dirty for flush
+                memcpy(&current->mempakBuffer[Control][dwAddress], Data, 32);
+                current->mempakDirty[Control] = YES;
+                // Flush to disk after each write so saves survive crashes/force-quit
+                [current saveMempakForPort:Control];
             }
-//        }
 
-        break;
+            break;
         }
         case RD_RESETCONTROLLER:
         break;

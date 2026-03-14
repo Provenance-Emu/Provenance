@@ -20,6 +20,9 @@ import Foundation
 import GameController
 import CoreHaptics
 import PVLogging
+#if canImport(UIKit) && !os(watchOS)
+import UIKit
+#endif
 
 /// Manages haptic engines for external game controllers via GCDeviceHaptics.
 /// One shared instance routes rumble from emulator cores to controller motors.
@@ -159,7 +162,28 @@ public final class GCControllerHapticsManager {
     ///   - params: Intensity and duration parameters.
     public func rumble(player: Int, params: RumbleParams = .init()) {
         guard let controller = playerControllers[player] else {
-            VLOG("[GCHaptics] No controller registered for player \(player + 1)")
+            VLOG("[GCHaptics] No controller registered for player \(player + 1) — falling back to Taptic Engine")
+            #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
+            let baseIntensity = max(0, min(1, _cachedIntensityMultiplier))
+            let paramsMax = max(params.lowFrequency, params.highFrequency)
+            let paramsScale = max(0, min(1, paramsMax))
+            let intensity = baseIntensity * paramsScale
+            guard intensity > 0 else { return }
+
+            let feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle
+            switch params.duration {
+            case ..<0.05:
+                feedbackStyle = .light
+            case ..<0.25:
+                feedbackStyle = .medium
+            default:
+                feedbackStyle = .heavy
+            }
+
+            let generator = UIImpactFeedbackGenerator(style: feedbackStyle)
+            generator.prepare()
+            generator.impactOccurred(intensity: CGFloat(intensity))
+            #endif
             return
         }
 

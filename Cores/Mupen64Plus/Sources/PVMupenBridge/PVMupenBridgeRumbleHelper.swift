@@ -61,7 +61,8 @@ public final class PVMupenBridgeRumbleHelper: NSObject {
                     highFrequency: highFrequency,
                     duration: duration
                 )
-                GCControllerHapticsManager.shared.register(controller: controller(for: player, bridge: bridge), forPlayer: player)
+                // Do NOT call register() here — PVEmulatorCore already registers controllers
+                // when assigned to players. Calling register(nil) would clear that registration.
                 GCControllerHapticsManager.shared.rumble(player: player, params: params)
                 return
             }
@@ -88,33 +89,12 @@ public final class PVMupenBridgeRumbleHelper: NSObject {
         Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
             if #available(iOS 14.0, tvOS 14.0, *) {
-                GCControllerHapticsManager.shared.register(controller: nil, forPlayer: player)
+                GCControllerHapticsManager.shared.stopRumble(player: player)
                 return
             }
 #endif
 
             _ = bridge
         }
-    }
-
-    @MainActor
-    private static func controller(for player: Int, bridge: any MupenBridgeRumbleRouting) -> GCController? {
-#if canImport(GameController)
-        switch player + 1 {
-        case 1: return bridge.controller1
-        case 2: return bridge.controller2
-        case 3: return bridge.controller3
-        case 4: return bridge.controller4
-        case 5: return bridge.controller5
-        case 6: return bridge.controller6
-        case 7: return bridge.controller7
-        case 8: return bridge.controller8
-        default:
-            WLOG("No Mupen controller registered for player \(player + 1)")
-            return nil
-        }
-#else
-        return nil
-#endif
     }
 }

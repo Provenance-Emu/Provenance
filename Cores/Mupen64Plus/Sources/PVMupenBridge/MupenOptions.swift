@@ -33,16 +33,18 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
          #define PLUGIN_TRANSFER_PAK         4 /* not implemented for non raw data */
          #define PLUGIN_RAW                  5 /* the controller plugin is passed in raw data */
          */
+        // Default: P1+P2 use Memory Pak (backwards-compatible with existing saves).
+        // Set to "Smart Pak (Memory + Rumble)" (value 5) for rumble + saves on same port.
         let defaultValue = index <= 1 ? 2 : 5
         return .enumeration(.init(title: "Controller Pak \(index)",
                                   description: nil,
                                   requiresRestart: true),
                             values:[
                                 .init(title: "None", description: "", value: 1),
-                                .init(title: "Memory Pak", description: "", value: 2),
-                                .init(title: "Rumble Pak", description: "Vibration feedback (requires compatible controller)", value: 3),
+                                .init(title: "Memory Pak", description: "Persistent save storage only — no rumble", value: 2),
+                                .init(title: "Rumble Pak", description: "Vibration feedback only — no memory saves (requires compatible controller)", value: 3),
                                 .init(title: "Transfer Pak", description: "Connect a GB/GBC cartridge to this N64 controller port", value: 4),
-                                .init(title: "Raw Data", description: "Pass raw pak data to the plugin", value: 5),
+                                .init(title: "Smart Pak (Memory + Rumble)", description: "Virtual combo pak: persistent saves AND rumble in the same slot. Best choice for most games.", value: 5),
                             ],
                             defaultValue: defaultValue)
     }
