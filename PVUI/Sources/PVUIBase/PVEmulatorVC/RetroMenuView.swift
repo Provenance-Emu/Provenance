@@ -2742,7 +2742,9 @@ struct RetroMenuView: View {
             )
         }
 
-        return Button(action: action) {
+        let buttonRole: ButtonRole? = role == .destructive ? .destructive : nil
+
+        return Button(role: buttonRole, action: action) {
             HStack {
                 Image(systemName: icon)
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
