@@ -68,9 +68,13 @@ public struct AllSaveStatesBrowserView: View {
         return grouped.sorted { lhs, rhs in
             switch sortOrder {
             case .dateDescending:
-                return (lhs.value.first?.date ?? .distantPast) > (rhs.value.first?.date ?? .distantPast)
+                let lhsDate = lhs.value.map(\.date).max() ?? .distantPast
+                let rhsDate = rhs.value.map(\.date).max() ?? .distantPast
+                return lhsDate > rhsDate
             case .dateAscending:
-                return (lhs.value.first?.date ?? .distantFuture) < (rhs.value.first?.date ?? .distantFuture)
+                let lhsDate = lhs.value.map(\.date).min() ?? .distantFuture
+                let rhsDate = rhs.value.map(\.date).min() ?? .distantFuture
+                return lhsDate < rhsDate
             case .gameName:
                 let a = lhs.value.first?.gameTitle ?? ""
                 let b = rhs.value.first?.gameTitle ?? ""
