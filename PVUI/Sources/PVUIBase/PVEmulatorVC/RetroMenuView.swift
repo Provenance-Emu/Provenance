@@ -1198,7 +1198,7 @@ struct RetroMenuView: View {
                                     onSelect: {
                                         showingSkinPicker = false
                                         // Apply immediately using the scope already chosen in the SKINS tab
-                                        Task {
+                                        Task { @MainActor in
                                             await applySkinSelection(skinName: "Default", identifier: "", orientation: currentOrientation, scope: selectedSkinScope)
                                             await applySkinAndFilterChanges()
                                         }
@@ -1215,7 +1215,7 @@ struct RetroMenuView: View {
                                         onSelect: {
                                             showingSkinPicker = false
                                             // Apply immediately using the scope already chosen in the SKINS tab
-                                            Task {
+                                            Task { @MainActor in
                                                 await applySkinSelection(skinName: skin.name, identifier: skin.identifier, orientation: currentOrientation, scope: selectedSkinScope)
                                                 await applySkinAndFilterChanges()
                                             }
