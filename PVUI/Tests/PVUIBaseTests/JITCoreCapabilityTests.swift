@@ -65,6 +65,8 @@ struct JITCoreCapabilityTests {
         #expect(JITCoreCapability.isJITRelevant("citra") == true)
         #expect(JITCoreCapability.isJITRelevant("3ds") == true)
         #expect(JITCoreCapability.isJITRelevant("com.provenance.azahar") == true)
+        #expect(JITCoreCapability.isJITRelevant("emuthree") == true)
+        #expect(JITCoreCapability.isJITRelevant("com.provenance.core.emuThree") == true)
     }
 
     @Test("pcsx2 / ps2 / Play identifiers are JIT-relevant")
@@ -72,6 +74,8 @@ struct JITCoreCapabilityTests {
         #expect(JITCoreCapability.isJITRelevant("pcsx2") == true)
         #expect(JITCoreCapability.isJITRelevant("ps2") == true)
         #expect(JITCoreCapability.isJITRelevant("com.provenance.pcsx2") == true)
+        #expect(JITCoreCapability.isJITRelevant("play") == true)
+        #expect(JITCoreCapability.isJITRelevant("com.provenance.core.play") == true)
     }
 
     @Test("flycast / dreamcast identifiers are JIT-relevant")
