@@ -65,13 +65,16 @@ public class MockSaveStateDriver: SaveStateDriver {
         self.systemIdentifier = systemIdentifier
 
         if mockData {
-            let mockCoreIdentifiers: [String?] = ["com.provenance.gambatte", "com.provenance.mgba", nil]
-            let mockCoreVersions: [String?] = ["2.1.0", "0.10.3", nil]
+            let mockCoreInfo: [(identifier: String?, version: String?)] = [
+                (identifier: "com.provenance.gambatte", version: "2.1.0"),
+                (identifier: "com.provenance.mgba", version: "0.10.3"),
+                (identifier: nil, version: nil)
+            ]
             let mockStates = (0..<10).map { index -> SaveStateRowViewModel in
                 let id = UUID().uuidString
                 // Generate random size between 1MB and 10MB
                 let randomSize = UInt64.random(in: 1_000_000...10_000_000)
-                let coreIdx = index % 3
+                let coreIdx = index % mockCoreInfo.count
                 return SaveStateRowViewModel(
                     id: id,
                     gameID: "1",
@@ -83,8 +86,8 @@ public class MockSaveStateDriver: SaveStateDriver {
                     isPinned: index < 2,
                     isFavorite: index % 2 == 0,
                     size: randomSize,
-                    createdWithCoreVersion: mockCoreVersions[coreIdx],
-                    coreIdentifier: mockCoreIdentifiers[coreIdx]
+                    createdWithCoreVersion: mockCoreInfo[coreIdx].version,
+                    coreIdentifier: mockCoreInfo[coreIdx].identifier
                 )
             }
             allSaveStates = mockStates
