@@ -20,6 +20,6 @@
 	<key>PVAppStoreDisabled</key>
 	<false/>
 	<key>PVJITRequirement</key>
-	<string>required</string>
+	<string>optional</string>
 </dict>
 </plist>
