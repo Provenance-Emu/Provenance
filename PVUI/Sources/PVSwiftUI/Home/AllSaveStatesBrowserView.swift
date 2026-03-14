@@ -441,6 +441,9 @@ public struct AllSaveStatesBrowserView: View {
             // Load everything; sort is applied client-side by recomputeGroupedItems().
             hasMorePages = false
             items = await store.loadAll()
+            if sortOrder == .dateAscending {
+                items.sort { $0.date < $1.date }
+            }
         }
 
         isLoading = false
