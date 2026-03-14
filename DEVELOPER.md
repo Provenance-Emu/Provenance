@@ -38,8 +38,8 @@ Provenance uses **two complementary JIT classification types**:
 | PPSSPP (PSP) | `.optional(fallback: "Interpreter")` | JIT for full-speed PSP; interpreter available |
 | Flycast (Dreamcast) | `.optional(fallback: "Interpreter")` | JIT recompiler available; interpreter fallback |
 | Play! (PS2) | `.requiredOrCrash` | Crashes or produces garbage output without JIT |
-| Azahar / Citra (3DS) | `.requiredOrCrash` | Hard crash without JIT when `enableJIT=true` |
-| emuThree (3DS) | `.requiredOrCrash` | Same Citra codebase; same JIT requirement |
+| Azahar / Citra (3DS) | `.automaticWithFallback` | Auto-detects JIT; falls back to interpreter. `enableJIT` defaults to `true` for best performance. |
+| emuThree (3DS) | `.automaticWithFallback` | Same Citra codebase; same automatic fallback behaviour. |
 
 ### Usage
 

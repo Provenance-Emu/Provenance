@@ -89,7 +89,7 @@ public final class CoreLoader: Sendable {
             if plist.jitDisabledWithoutJIT {
                 registry.registerJITDisabled(forCoreIdentifier: plist.identifier)
             }
-            /// Also handle sub-cores (e.g. libretro cores embedded in RetroArch's plist)
+            // Also handle sub-cores (e.g. libretro cores embedded in RetroArch's plist)
             for subCore in plist.subCores ?? [] {
                 if let raw = subCore.jitRequirementRawValue {
                     registry.register(rawValue: raw, forCoreIdentifier: subCore.identifier)
