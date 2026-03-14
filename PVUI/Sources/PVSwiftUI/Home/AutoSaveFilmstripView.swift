@@ -221,7 +221,7 @@ struct AutoSaveFilmstripView: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor?.opacity(0.3) ?? RetroTheme.retroPink.opacity(0.3),
+                                themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3) ?? RetroTheme.retroPink.opacity(0.3),
                                 RetroTheme.retroBlue.opacity(0.3)
                             ],
                             startPoint: .top,
