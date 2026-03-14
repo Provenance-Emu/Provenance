@@ -179,4 +179,72 @@ struct PVControllerPlayerSlotPreferencesTests {
         #expect(bridge.deserialize("bogus") == nil)
         #expect(bridge.deserialize("unknown:3") == nil)
     }
+
+    // MARK: - assign(_:) / reapplyPreferences() behavior
+
+    @Test("assign - .preferred(n) claims a free slot and auto fills remaining")
+    @MainActor
+    func assignPreferredClaimsFreeSlot() async throws {
+        let manager = PVControllerManager.shared
+        let controller1 = freshController()
+        let controller2 = freshController()
+
+        manager.setSlotMode(.preferred(1), for: controller1)
+        manager.setSlotMode(.auto, for: controller2)
+
+        manager.assign([controller1, controller2])
+
+        let player1Controller = manager.controller(forPlayer: 1)
+        let player2Controller = manager.controller(forPlayer: 2)
+
+        #expect(player1Controller === controller1)
+        #expect(player2Controller === controller2)
+    }
+
+    @Test("assign - .preferred(n) falls back to auto when slot already occupied")
+    @MainActor
+    func assignPreferredFallsBackWhenOccupied() async throws {
+        let manager = PVControllerManager.shared
+        let controller1 = freshController()
+        let controller2 = freshController()
+
+        // First controller uses auto and should occupy player 1.
+        manager.setSlotMode(.auto, for: controller1)
+        // Second controller prefers player 1, but that slot is already taken.
+        manager.setSlotMode(.preferred(1), for: controller2)
+
+        manager.assign([controller1, controller2])
+
+        let player1Controller = manager.controller(forPlayer: 1)
+        let player2Controller = manager.controller(forPlayer: 2)
+
+        // Auto-assigned controller stays on player 1, preferred controller falls back to next free slot.
+        #expect(player1Controller === controller1)
+        #expect(player2Controller === controller2)
+    }
+
+    @Test("assign/reapplyPreferences - .always(n) evicts occupant to next free slot")
+    @MainActor
+    func alwaysEvictsOccupantToNextFreeSlot() async throws {
+        let manager = PVControllerManager.shared
+        let controller1 = freshController()
+        let controller2 = freshController()
+
+        // Start with a single auto-assigned controller on player 1.
+        manager.setSlotMode(.auto, for: controller1)
+        manager.assign([controller1])
+
+        // Connect a second controller that must always occupy player 1.
+        manager.setSlotMode(.always(1), for: controller2)
+        manager.assign([controller1, controller2])
+        manager.reapplyPreferences()
+
+        let player1Controller = manager.controller(forPlayer: 1)
+        let player2Controller = manager.controller(forPlayer: 2)
+
+        // The .always(1) controller should occupy player 1 and evict the previous
+        // occupant to the next available slot.
+        #expect(player1Controller === controller2)
+        #expect(player2Controller === controller1)
+    }
 }
