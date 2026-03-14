@@ -68,7 +68,9 @@ public final class JITStatusViewModel: ObservableObject {
     @Published public var status: JITStatus = .notApplicable
     @Published public var isExpanded: Bool = false
     /// The detected JIT acquisition source (e.g. AltStore, StikDebug, TrollStore).
+    #if canImport(JITManager)
     @Published public var jitSource: JITSource = .none
+    #endif
 
     #if canImport(JITManager)
     private var jitManager: DOLJitManager { DOLJitManager.shared }
@@ -83,11 +85,13 @@ public final class JITStatusViewModel: ObservableObject {
         status = fixedStatus
     }
 
+    #if canImport(JITManager)
     /// Creates a view model with a fixed status and source, useful for previews and testing
     public init(fixedStatus: JITStatus, fixedSource: JITSource) {
         status = fixedStatus
         jitSource = fixedSource
     }
+    #endif
 
     /// Updates the JIT status based on the current JIT manager state
     public func updateStatus() {
@@ -110,7 +114,6 @@ public final class JITStatusViewModel: ObservableObject {
         }
         #else
         status = .notApplicable
-        jitSource = .none
         #endif
     }
 
