@@ -6,7 +6,7 @@
 //  Part of issue #2796.
 //
 
-import PVCoreBridge
+import PVEmulatorCore
 import PVSettings
 import SwiftUI
 import Combine
