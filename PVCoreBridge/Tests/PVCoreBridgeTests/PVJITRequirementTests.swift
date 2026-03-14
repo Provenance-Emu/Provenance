@@ -2,7 +2,7 @@
 //  PVJITRequirementTests.swift
 //  PVCoreBridgeTests
 //
-//  Tests for the JIT Capability Matrix (PVJITRequirement + PVJITRequirementRegistry).
+//  Tests for the JIT Capability Matrix (PVJITPlistRequirement + PVJITRequirementRegistry).
 //  Part of issue #2793.
 //
 //  JIT requirements are now driven by `Core.plist` — each core declares its own
@@ -29,10 +29,12 @@ final class PVJITRequirementTests: XCTestCase {
     override func setUp() {
         super.setUp()
         registry._resetForTesting()
-        // Simulate what CoreLoader does at startup when it reads Core.plist files
+        // Simulate what CoreLoader does at startup when it reads Core.plist files.
+        // Dolphin uses .optional (not .required) because PVDolphinCore.jitRequirement
+        // = .automaticWithFallback — it self-detects and never crashes without JIT.
         registry.register(.required, forCoreIdentifier: azaharID)
         registry.register(.required, forCoreIdentifier: emuThreeID)
-        registry.register(.required, forCoreIdentifier: dolphinID)
+        registry.register(.optional, forCoreIdentifier: dolphinID)
         registry.register(.required, forCoreIdentifier: playID)
         registry.register(.optional, forCoreIdentifier: mupen64PlusID)
         registry.register(.optional, forCoreIdentifier: mupen64PlusNXID)
@@ -47,60 +49,62 @@ final class PVJITRequirementTests: XCTestCase {
     // MARK: - Required cores
 
     func testAzaharRequiresJIT() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: azaharID), .required)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: azaharID), .required)
     }
 
     func testEmuThreeRequiresJIT() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: emuThreeID), .required)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: emuThreeID), .required)
     }
 
-    func testDolphinRequiresJIT() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: dolphinID), .required)
+    func testDolphinIsOptional() {
+        // Dolphin auto-detects JIT at startup (PVDolphinCore.jitRequirement = .automaticWithFallback),
+        // so it is classified as .optional at the plist registry level — not .required.
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: dolphinID), .optional)
     }
 
     func testPlayRequiresJIT() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: playID), .required)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: playID), .required)
     }
 
     // MARK: - Optional cores
 
     func testMupen64PlusIsOptional() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: mupen64PlusID), .optional)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: mupen64PlusID), .optional)
     }
 
     func testMupen64PlusNXIsOptional() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: mupen64PlusNXID), .optional)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: mupen64PlusNXID), .optional)
     }
 
     func testFlycastIsOptional() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: flycastID), .optional)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: flycastID), .optional)
     }
 
     // MARK: - notRequired (default)
 
     func testUnknownCoreIsNotRequired() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: "com.provenance.core.unknown"), .notRequired)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: "com.provenance.core.unknown"), .notRequired)
     }
 
     func testNESCoreIsNotRequired() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: "com.provenance.core.fceu"), .notRequired)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: "com.provenance.core.fceu"), .notRequired)
     }
 
     func testEmptyStringIsNotRequired() {
-        XCTAssertEqual(jitRequirement(forCoreIdentifier: ""), .notRequired)
+        XCTAssertEqual(jitPlistRequirement(forCoreIdentifier: ""), .notRequired)
     }
 
     // MARK: - String extension
 
     func testStringExtensionMatchesFreeFunction() {
-        XCTAssertEqual(azaharID.jitRequirement, jitRequirement(forCoreIdentifier: azaharID))
+        XCTAssertEqual(azaharID.jitPlistRequirement, jitPlistRequirement(forCoreIdentifier: azaharID))
     }
 
     // MARK: - Case-insensitive lookup
 
     func testLookupIsCaseInsensitive() {
         XCTAssertEqual(
-            jitRequirement(forCoreIdentifier: azaharID.uppercased()),
+            jitPlistRequirement(forCoreIdentifier: azaharID.uppercased()),
             .required
         )
     }
@@ -108,27 +112,27 @@ final class PVJITRequirementTests: XCTestCase {
     // MARK: - Plist value parsing
 
     func testPlistValueRequired() {
-        XCTAssertEqual(PVJITRequirement(plistValue: "required"), .required)
+        XCTAssertEqual(PVJITPlistRequirement(plistValue: "required"), .required)
     }
 
     func testPlistValueOptional() {
-        XCTAssertEqual(PVJITRequirement(plistValue: "optional"), .optional)
+        XCTAssertEqual(PVJITPlistRequirement(plistValue: "optional"), .optional)
     }
 
     func testPlistValueNotRequired() {
-        XCTAssertEqual(PVJITRequirement(plistValue: "notRequired"), .notRequired)
-        XCTAssertEqual(PVJITRequirement(plistValue: "not_required"), .notRequired)
-        XCTAssertEqual(PVJITRequirement(plistValue: "none"), .notRequired)
+        XCTAssertEqual(PVJITPlistRequirement(plistValue: "notRequired"), .notRequired)
+        XCTAssertEqual(PVJITPlistRequirement(plistValue: "not_required"), .notRequired)
+        XCTAssertEqual(PVJITPlistRequirement(plistValue: "none"), .notRequired)
     }
 
     func testPlistValueCaseInsensitive() {
-        XCTAssertEqual(PVJITRequirement(plistValue: "REQUIRED"), .required)
-        XCTAssertEqual(PVJITRequirement(plistValue: "Optional"), .optional)
+        XCTAssertEqual(PVJITPlistRequirement(plistValue: "REQUIRED"), .required)
+        XCTAssertEqual(PVJITPlistRequirement(plistValue: "Optional"), .optional)
     }
 
     func testPlistValueUnknownReturnsNil() {
-        XCTAssertNil(PVJITRequirement(plistValue: "unknown"))
-        XCTAssertNil(PVJITRequirement(plistValue: ""))
+        XCTAssertNil(PVJITPlistRequirement(plistValue: "unknown"))
+        XCTAssertNil(PVJITPlistRequirement(plistValue: ""))
     }
 
     // MARK: - Registry raw-value registration

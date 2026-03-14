@@ -139,14 +139,16 @@ public extension PVEmulatorViewController {
 
     /// Determines if the current core requires or benefits from JIT.
     /// Returns `false` for cores that do not use JIT to avoid showing the indicator on every core.
-    /// Delegates to the JIT Capability Matrix (`PVJITRequirement`) from PVCoreBridge (#2793).
+    /// Uses `PVEmulatorCore.jitRequirement` (the `PVPrimitives.PVJITRequirement` 4-case enum)
+    /// for an authoritative, per-core answer without string lookups (#2793).
     private func coreRequiresJIT() -> Bool {
         // Quick-exit: if the JIT manager has no JIT type configured, JIT is not in play at all
         guard DOLJitManager.shared.getJitType() != .none else { return false }
 
-        guard let coreId = core.coreIdentifier else { return false }
-        let requirement = jitRequirement(forCoreIdentifier: coreId)
-        return requirement == .required || requirement == .optional
+        // Use the core's own jitRequirement property — set as a Swift override on each
+        // PVEmulatorCore subclass. hasJIT is true for .optional, .requiredOrCrash, and
+        // .automaticWithFallback; false only for .notSupported.
+        return core.jitRequirement.hasJIT
     }
     #endif
 }

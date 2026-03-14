@@ -296,8 +296,11 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// JIT must override this property.  The app layer uses this value to decide
     /// whether to attempt JIT acquisition before launching a game.
     ///
-    /// See `PVJITRequirement` for available cases.
-    open var jitRequirement: PVJITRequirement { .notSupported }
+    /// See `PVPrimitives.PVJITRequirement` for available cases.
+    /// The return type is fully qualified to avoid ambiguity: both `PVCoreBridge`
+    /// (which defines `PVJITPlistRequirement`) and `PVPrimitives` are `@_exported import`-ed
+    /// from this module, so unqualified `PVJITRequirement` could be misread.
+    open var jitRequirement: PVPrimitives.PVJITRequirement { .notSupported }
 
     @objc dynamic open var supportsAudioVisualizer: Bool { true }
 }

@@ -6,9 +6,18 @@ __Developers should start here first for breif instructions for building and wor
 
 ## JIT Capability Matrix
 
-Provenance classifies every emulator core by its JIT (Just-In-Time compilation) behaviour using `PVJITRequirement` (defined in `PVPrimitives`).
+Provenance uses **two complementary JIT classification types**:
 
-### Enum Cases
+| Type | Module | Purpose |
+|------|--------|---------|
+| `PVPrimitives.PVJITRequirement` | `PVPrimitives` | Rich 4-case Swift enum; override in each `PVEmulatorCore` subclass |
+| `PVCoreBridge.PVJITPlistRequirement` | `PVCoreBridge` | Simple 3-case plist-parsed type; populated at runtime by `CoreLoader` |
+
+> **Note:** The two types have different names on purpose — both `PVEmulatorCore` and
+> `PVCoreBridge` are `@_exported import`-ed by downstream modules, so using the same
+> name in both would cause ambiguous-type compiler errors.
+
+### `PVPrimitives.PVJITRequirement` — per-core Swift property
 
 | Case | Meaning | Safe without JIT? |
 |------|---------|-------------------|
@@ -19,17 +28,17 @@ Provenance classifies every emulator core by its JIT (Just-In-Time compilation) 
 
 ### Known JIT-Capable Cores
 
-| Core | Classification | Notes |
-|------|---------------|-------|
-| Dolphin (Wii/GC) | `.automaticWithFallback` | Selects JIT or Cached Interpreter at startup |
+| Core | `PVJITRequirement` (Swift) | Notes |
+|------|---------------------------|-------|
+| Dolphin (Wii/GC) | `.automaticWithFallback` | Selects JIT or Cached Interpreter at startup; never crashes without JIT |
 | melonDS (DS) | `.optional(fallback: "Interpreter")` | JIT recompiler boosts DS performance |
 | DeSmuME 2015 (DS) | `.optional(fallback: "Interpreter")` | Older DS core, optional JIT |
 | PCSX Rearmed (PSX) | `.optional(fallback: "Interpreter")` | ARM dynarec; interpreter always available |
 | Mupen64Plus (N64) | `.optional(fallback: "Interpreter")` | JIT recompiler; interpreter fallback |
 | PPSSPP (PSP) | `.optional(fallback: "Interpreter")` | JIT for full-speed PSP; interpreter available |
+| Flycast (Dreamcast) | `.optional(fallback: "Interpreter")` | JIT recompiler available; interpreter fallback |
 | Azahar / Citra (3DS) | `.requiredOrCrash` | Hard crash without JIT when `enableJIT=true` |
 | emuThree (3DS) | `.requiredOrCrash` | Same Citra codebase; same JIT requirement |
-| Flycast (Dreamcast) | `.notSupported` (default) | No JIT path yet |
 
 ### Usage
 

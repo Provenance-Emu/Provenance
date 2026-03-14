@@ -10,16 +10,26 @@
 //  at app startup by `CoreLoader` after it reads those plists; no static
 //  identifier list needs to be maintained here.
 //
+//  ## Type naming note
+//  This module defines `PVJITPlistRequirement` — the simple 3-case plist-level
+//  classification used for dynamic lookup. The richer 4-case `PVJITRequirement`
+//  enum lives in `PVPrimitives` and is used as a per-core Swift property override
+//  on `PVEmulatorCore` subclasses.  The different names prevent the ambiguity
+//  that would arise if both modules were imported in the same translation unit
+//  (which occurs via `PVEmulatorCore`'s `@_exported import` of both modules).
+//
 
 import Foundation
 import os
 
-// MARK: - PVJITRequirement
+// MARK: - PVJITPlistRequirement
 
-/// Describes how much a given emulator core relies on Just-In-Time compilation.
+/// Plist-level JIT classification for a core, parsed from `Core.plist`.
 ///
-/// Use `String.jitRequirement` on a core identifier string, or call
-/// `jitRequirement(forCoreIdentifier:)` directly to look up the level for any core.
+/// `CoreLoader` reads the `PVJITRequirement` plist key and registers the parsed
+/// value in `PVJITRequirementRegistry`.  The richer per-core Swift property
+/// (`PVEmulatorCore.jitRequirement`) uses the `PVPrimitives.PVJITRequirement`
+/// enum and is the preferred API for runtime launch decisions.
 ///
 /// ## Authoring new cores
 /// Add a `PVJITRequirement` key to the core's `Core.plist`:
@@ -29,7 +39,7 @@ import os
 /// ```
 /// No Swift code changes are needed. `CoreLoader` automatically registers the
 /// value into `PVJITRequirementRegistry` when the plist is loaded.
-public enum PVJITRequirement: String, Sendable, Equatable, Hashable, CaseIterable {
+public enum PVJITPlistRequirement: String, Sendable, Equatable, Hashable, CaseIterable {
     /// The core does not use JIT at all (or the JIT path is unused on this platform).
     /// Examples: NES, SNES, GB, GBA, Genesis, …
     case notRequired
@@ -40,7 +50,9 @@ public enum PVJITRequirement: String, Sendable, Equatable, Hashable, CaseIterabl
     case optional
 
     /// The core will crash or refuse to boot without JIT.
-    /// Examples: Azahar (3DS), emuThreeDS (3DS), Dolphin (GameCube/Wii), Play! (PS2)
+    /// Examples: Azahar (3DS), emuThreeDS (3DS), Play! (PS2)
+    /// Note: Dolphin auto-detects JIT and uses a fallback — classify it as `.optional`
+    /// in the plist (or rely on `PVDolphinCore.jitRequirement = .automaticWithFallback`).
     case required
 
     // MARK: Parsing
@@ -60,7 +72,7 @@ public enum PVJITRequirement: String, Sendable, Equatable, Hashable, CaseIterabl
 
 // MARK: - PVJITRequirementRegistry
 
-/// Thread-safe registry that maps core identifiers to their `PVJITRequirement`.
+/// Thread-safe registry that maps core identifiers to their `PVJITPlistRequirement`.
 ///
 /// `CoreLoader` populates this registry at startup by reading each core's
 /// `Core.plist`. Queries fall back to `.notRequired` for any identifier that
@@ -73,7 +85,7 @@ public final class PVJITRequirementRegistry: Sendable {
     public static let shared = PVJITRequirementRegistry()
     private init() {}
 
-    private let storage = OSAllocatedUnfairLock<[String: PVJITRequirement]>(initialState: [:])
+    private let storage = OSAllocatedUnfairLock<[String: PVJITPlistRequirement]>(initialState: [:])
 
     // MARK: Registration
 
@@ -82,22 +94,22 @@ public final class PVJITRequirementRegistry: Sendable {
     /// Called by `CoreLoader` for each loaded `Core.plist` that contains a
     /// `PVJITRequirement` key. Identifiers are stored lower-cased to make
     /// lookups case-insensitive.
-    public func register(_ requirement: PVJITRequirement, forCoreIdentifier identifier: String) {
+    public func register(_ requirement: PVJITPlistRequirement, forCoreIdentifier identifier: String) {
         storage.withLock { $0[identifier.lowercased()] = requirement }
     }
 
     /// Convenience overload that parses a raw `Core.plist` string value.
     /// Does nothing if the string cannot be mapped to a known requirement.
     public func register(rawValue: String, forCoreIdentifier identifier: String) {
-        guard let requirement = PVJITRequirement(plistValue: rawValue) else { return }
+        guard let requirement = PVJITPlistRequirement(plistValue: rawValue) else { return }
         register(requirement, forCoreIdentifier: identifier)
     }
 
     // MARK: Lookup
 
-    /// Returns the registered `PVJITRequirement` for `identifier`, or `.notRequired`
+    /// Returns the registered `PVJITPlistRequirement` for `identifier`, or `.notRequired`
     /// if no entry was registered (e.g. the core's plist omits the key).
-    public func requirement(forCoreIdentifier identifier: String) -> PVJITRequirement {
+    public func requirement(forCoreIdentifier identifier: String) -> PVJITPlistRequirement {
         storage.withLock { $0[identifier.lowercased()] ?? .notRequired }
     }
 
@@ -112,20 +124,24 @@ public final class PVJITRequirementRegistry: Sendable {
 // MARK: - String extension
 
 public extension String {
-    /// Returns the `PVJITRequirement` for this core-identifier string.
+    /// Returns the `PVJITPlistRequirement` for this core-identifier string.
     ///
     /// Delegates to `PVJITRequirementRegistry.shared`, which is populated by
     /// `CoreLoader` at startup from each core's `Core.plist`.
-    var jitRequirement: PVJITRequirement {
-        jitRequirement(forCoreIdentifier: self)
+    ///
+    /// For runtime launch decisions, prefer querying `PVEmulatorCore.jitRequirement`
+    /// (the richer `PVPrimitives.PVJITRequirement` 4-case enum).
+    var jitPlistRequirement: PVJITPlistRequirement {
+        jitPlistRequirement(forCoreIdentifier: self)
     }
 }
 
 // MARK: - Free function
 
-/// Returns the `PVJITRequirement` for the given core identifier.
+/// Returns the `PVJITPlistRequirement` for the given core identifier.
 ///
-/// This is the canonical look-up function; the `String` extension delegates here.
-public func jitRequirement(forCoreIdentifier coreIdentifier: String) -> PVJITRequirement {
+/// This is the canonical plist-registry look-up; the `String` extension delegates here.
+/// For runtime launch decisions prefer `PVEmulatorCore.jitRequirement` instead.
+public func jitPlistRequirement(forCoreIdentifier coreIdentifier: String) -> PVJITPlistRequirement {
     PVJITRequirementRegistry.shared.requirement(forCoreIdentifier: coreIdentifier)
 }
