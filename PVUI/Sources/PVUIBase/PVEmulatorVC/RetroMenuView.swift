@@ -1041,7 +1041,7 @@ struct RetroMenuView: View {
     private func skinOrientationRow(orientation: SkinOrientation) -> some View {
         let isPortrait = orientation == .portrait
         let skinName   = isPortrait ? selectedPortraitSkin : selectedLandscapeSkin
-        let icon       = isPortrait ? "rectangle.portrait" : "rectangle"
+        let icon       = isPortrait ? "rectangle.portrait" : "rectangle.landscape"
         let color: Color = isPortrait ? .retroBlue : .retroPurple
         let label      = isPortrait ? "PORTRAIT" : "LANDSCAPE"
 
