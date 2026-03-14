@@ -57,6 +57,16 @@ public struct AllSaveStatesBrowserView: View {
         self.rootDelegate = rootDelegate
     }
 
+    /// Preview-only initialiser — injects items directly so previews don't
+    /// need a running Realm database.
+    #if DEBUG
+    init(previewItems: [RetroSaveStateItem], isLoading: Bool = false) {
+        self.rootDelegate = nil
+        self._items = State(initialValue: previewItems)
+        self._isLoading = State(initialValue: isLoading)
+    }
+    #endif
+
     // MARK: - Derived data
 
     private var filteredItems: [RetroSaveStateItem] {
@@ -92,7 +102,13 @@ public struct AllSaveStatesBrowserView: View {
             .navigationBarTitleDisplayMode(.large)
             #endif
             .toolbar { toolbarItems }
-            .task { await loadItems() }
+            .task {
+                #if DEBUG
+                // Skip live load when items were injected by the preview initialiser
+                guard items.isEmpty else { return }
+                #endif
+                await loadItems()
+            }
     }
 
     @ViewBuilder
@@ -336,4 +352,71 @@ public struct AllSaveStatesBrowserView: View {
         isLoading = false
     }
 }
+
+// MARK: - Previews
+
+#if DEBUG
+private extension RetroSaveStateItem {
+    /// Builds a fake save-state item for SwiftUI canvas previews.
+    static func mock(
+        id: String = UUID().uuidString,
+        gameId: String,
+        gameTitle: String,
+        systemId: String = "com.provenance.nes",
+        systemName: String = "NES",
+        date: Date = Date(),
+        isFavorite: Bool = false
+    ) -> RetroSaveStateItem {
+        RetroSaveStateItem(
+            id: id,
+            gameId: gameId,
+            gameTitle: gameTitle,
+            systemId: systemId,
+            systemName: systemName,
+            date: date,
+            isAutosave: false,
+            isFavorite: isFavorite,
+            fileSize: 32_768,
+            imageURL: nil,
+            coreName: "FCEUmm",
+            createdWithCoreVersion: "1.0",
+            coreIdentifier: "com.provenance.fceumm"
+        )
+    }
+}
+
+#Preview("Populated — grouped by game") {
+    let now = Date()
+    let items: [RetroSaveStateItem] = [
+        .mock(gameId: "g1", gameTitle: "Super Mario Bros.", systemName: "NES",
+              date: now.addingTimeInterval(-60)),
+        .mock(gameId: "g1", gameTitle: "Super Mario Bros.", systemName: "NES",
+              date: now.addingTimeInterval(-3600), isFavorite: true),
+        .mock(gameId: "g1", gameTitle: "Super Mario Bros.", systemName: "NES",
+              date: now.addingTimeInterval(-7200)),
+        .mock(gameId: "g2", gameTitle: "Zelda II: The Adventure of Link", systemName: "NES",
+              date: now.addingTimeInterval(-120)),
+        .mock(gameId: "g2", gameTitle: "Zelda II: The Adventure of Link", systemName: "NES",
+              date: now.addingTimeInterval(-900)),
+        .mock(gameId: "g3", gameTitle: "Mega Man 2",
+              systemId: "com.provenance.snes", systemName: "SNES",
+              date: now.addingTimeInterval(-300), isFavorite: true),
+    ]
+    NavigationView {
+        AllSaveStatesBrowserView(previewItems: items, isLoading: false)
+    }
+}
+
+#Preview("Empty state") {
+    NavigationView {
+        AllSaveStatesBrowserView(previewItems: [], isLoading: false)
+    }
+}
+
+#Preview("Loading state") {
+    NavigationView {
+        AllSaveStatesBrowserView(previewItems: [], isLoading: true)
+    }
+}
+#endif
 #endif
