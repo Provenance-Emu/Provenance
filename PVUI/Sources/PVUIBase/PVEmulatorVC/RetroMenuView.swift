@@ -2690,7 +2690,7 @@ struct RetroMenuView: View {
     //   .destructive — red tinted fill + intense glow (e.g. Quit, Reset)
     //   .secondary  — subtle tint, standard weight (all other actions)
     // (modelled after AudioVisualizerButton's accent-color glow reference style)
-    enum MenuButtonRole {
+    private enum MenuButtonRole {
         case primary, secondary, destructive
     }
 
