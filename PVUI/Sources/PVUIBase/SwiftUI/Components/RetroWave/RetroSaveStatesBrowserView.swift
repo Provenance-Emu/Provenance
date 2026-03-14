@@ -45,7 +45,12 @@ public final class RetroSaveStatesStore: ObservableObject {
         }
     }
 
-    /// Loads the most recent save states for a system
+    /// Loads the most recent save states for a system.
+    ///
+    /// Note: This is used by RetroWave/tvOS shelves and always deduplicates
+    /// auto-saves (`deduplicateAutosaves: true`). The user setting
+    /// `showAutoSavesInRecents` only affects the Home continue strip and is
+    /// not consulted here.
     @discardableResult
     public func loadRecent(forSystemID systemID: String, limit: Int = 8) async -> [RetroSaveStateItem] {
         if let cached = await MainActor.run(body: { recentBySystem[systemID] }), !cached.isEmpty {
@@ -55,7 +60,7 @@ public final class RetroSaveStatesStore: ObservableObject {
         let items = await fetchSaveStates(
             predicate: NSPredicate(format: "game.systemIdentifier == %@", systemID),
             limit: limit,
-            deduplicateAutosaves: true
+            deduplicateAutosaves: true // Always deduplicate autosaves for RetroWave shelves
         )
 
         await MainActor.run {
