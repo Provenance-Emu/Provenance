@@ -26,15 +26,24 @@ import PVLogging
 /// the controller overlay and game view underneath.
 ///
 /// Uses explicit subview iteration so the container itself can never claim a touch.
-/// Only touches that land on a true descendant (not the subview itself) are captured.
+/// It only captures touches that land on an interactive direct subview (e.g. control,
+/// hosting view) or one of their descendants.
 private final class PassThroughView: UIView {
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
         guard point(inside: point, with: event) else { return nil }
         for subview in subviews.reversed() {
             let convertedPoint = convert(point, to: subview)
-            if let hit = subview.hitTest(convertedPoint, with: event), hit !== subview {
-                return hit
+            if let hit = subview.hitTest(convertedPoint, with: event) {
+                // Prefer descendants of the subview.
+                if hit !== subview {
+                    return hit
+                }
+
+                // Allow the subview itself to handle the touch if it is interactive.
+                if subview is UIControl || (subview.gestureRecognizers?.isEmpty == false) {
+                    return subview
+                }
             }
         }
         return nil
