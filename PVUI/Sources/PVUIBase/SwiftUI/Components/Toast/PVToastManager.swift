@@ -16,9 +16,15 @@ import UIKit
 // MARK: - Toast Handle
 
 /// An opaque handle returned by `showPersistent` that can be used to dismiss a specific toast.
-public final class PVToastHandle: @unchecked Sendable {
+///
+/// `PVToastHandle` is `Sendable` and its `dismiss()` is `nonisolated`, so it can
+/// be called from any concurrency context (background actors, ObjC bridges, etc.)
+/// without `await`.
+public final class PVToastHandle: Sendable {
     public let id: String
-    private weak var manager: PVToastManager?
+    // `nonisolated(unsafe)` (SE-0414): the weak reference is only ever read inside
+    // `Task { @MainActor in }`, which serialises access correctly.
+    nonisolated(unsafe) private weak var manager: PVToastManager?
 
     init(id: String, manager: PVToastManager) {
         self.id = id
@@ -26,7 +32,8 @@ public final class PVToastHandle: @unchecked Sendable {
     }
 
     /// Dismiss the associated persistent toast.
-    public func dismiss() {
+    /// Safe to call from any actor or thread — internally hops to `@MainActor`.
+    public nonisolated func dismiss() {
         Task { @MainActor [weak manager, id] in
             manager?.dismiss(id: id)
         }
@@ -37,7 +44,23 @@ public final class PVToastHandle: @unchecked Sendable {
 
 /// Singleton responsible for queuing and auto-dismissing in-game toast notifications.
 ///
-/// Usage:
+/// ## Why `@MainActor`?
+/// `PVToastManager` is `@MainActor` because its state drives SwiftUI via
+/// `ObservableObject`/`@Published`, all mutations use `withAnimation`, and
+/// `UIAccessibility.post` is main-thread-only.  The annotation is **correct**
+/// — it is not a concession.
+///
+/// ## Calling from non-`@MainActor` contexts
+/// Use the `nonisolated` fire-and-forget helpers (no `await` required):
+/// ```swift
+/// // From any thread, actor, or Obj-C bridge:
+/// PVToastManager.post("Save state created", type: .success)
+/// PVToastManager.postPersistent("JIT active", id: "jit", type: .jit)
+/// PVToastManager.shared.dismissAsync(id: "jit")
+/// ```
+///
+/// ## Calling from `@MainActor` or SwiftUI contexts
+/// The synchronous API is available directly:
 /// ```swift
 /// PVToastManager.shared.show("Save state created", type: .success)
 /// let handle = PVToastManager.shared.showPersistent("JIT active", id: "jit", type: .jit)
@@ -57,7 +80,7 @@ public final class PVToastManager: ObservableObject {
 
     private init() {}
 
-    // MARK: - Public API
+    // MARK: - Synchronous API (requires @MainActor)
 
     /// Show a transient toast that auto-dismisses after `duration` seconds.
     public func show(
@@ -144,5 +167,59 @@ public final class PVToastManager: ObservableObject {
         #if os(iOS) || os(tvOS)
         UIAccessibility.post(notification: .announcement, argument: announcement)
         #endif
+    }
+}
+
+// MARK: - nonisolated fire-and-forget API (callable from any context)
+
+public extension PVToastManager {
+    /// Post a transient toast from **any** concurrency context — no `await` needed.
+    ///
+    /// Internally dispatches to `@MainActor` via an unstructured `Task`.
+    /// This is the preferred call site for emulator core bridges, audio callbacks,
+    /// and other non-`@MainActor` code.
+    ///
+    /// ```swift
+    /// // In ObjC bridge or background actor — no await, no Task boilerplate:
+    /// PVToastManager.post("Cheat applied", type: .success)
+    /// ```
+    nonisolated static func post(
+        _ message: String,
+        type: PVToastType = .info,
+        duration: TimeInterval = 3.0,
+        icon: String? = nil
+    ) {
+        Task { @MainActor in
+            PVToastManager.shared.show(message, type: type, duration: duration, icon: icon)
+        }
+    }
+
+    /// Post a persistent toast from **any** concurrency context — no `await` needed.
+    ///
+    /// Returns `Void` (fire-and-forget). If you need the dismiss handle, call
+    /// `showPersistent` from a `@MainActor` context instead.
+    nonisolated static func postPersistent(
+        _ message: String,
+        id: String,
+        type: PVToastType = .info,
+        icon: String? = nil
+    ) {
+        Task { @MainActor in
+            PVToastManager.shared.showPersistent(message, id: id, type: type, icon: icon)
+        }
+    }
+
+    /// Dismiss a toast by id from **any** concurrency context — no `await` needed.
+    nonisolated func dismissAsync(id: String) {
+        Task { @MainActor [weak self] in
+            self?.dismiss(id: id)
+        }
+    }
+
+    /// Dismiss all toasts from **any** concurrency context — no `await` needed.
+    nonisolated func dismissAllAsync() {
+        Task { @MainActor [weak self] in
+            self?.dismissAll()
+        }
     }
 }

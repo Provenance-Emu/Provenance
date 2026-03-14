@@ -257,4 +257,39 @@ struct PVToastManagerTests {
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
         #expect(PVToastManager.shared.toasts.isEmpty)
     }
+
+    // MARK: - nonisolated fire-and-forget API
+
+    @Test("PVToastManager.post() shows toast from non-MainActor context", .timeLimit(.minutes(1)))
+    func staticPostShowsToast() async throws {
+        reset()
+        // post() is nonisolated — callable without await from any context
+        PVToastManager.post("Background toast", type: .info, duration: 60)
+        // Yield to let the Task { @MainActor } execute
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
+        #expect(PVToastManager.shared.toasts.count == 1)
+        #expect(PVToastManager.shared.toasts[0].message == "Background toast")
+    }
+
+    @Test("PVToastManager.postPersistent() shows persistent toast from non-MainActor context", .timeLimit(.minutes(1)))
+    func staticPostPersistentShowsToast() async throws {
+        reset()
+        PVToastManager.postPersistent("JIT active", id: "jit-bg", type: .jit)
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
+        #expect(PVToastManager.shared.toasts.count == 1)
+        #expect(PVToastManager.shared.toasts[0].isPersistent == true)
+        #expect(PVToastManager.shared.toasts[0].id == "jit-bg")
+        reset()
+    }
+
+    @Test("dismissAsync(id:) removes toast from non-MainActor context", .timeLimit(.minutes(1)))
+    func dismissAsyncRemovesToast() async throws {
+        reset()
+        _ = PVToastManager.shared.showPersistent("To remove", id: "async-dismiss", type: .info)
+        #expect(PVToastManager.shared.toasts.count == 1)
+        // dismissAsync is nonisolated — callable from any context
+        PVToastManager.shared.dismissAsync(id: "async-dismiss")
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
+        #expect(PVToastManager.shared.toasts.isEmpty)
+    }
 }
