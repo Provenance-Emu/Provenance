@@ -120,16 +120,15 @@ static CGSize parseHWResolution(NSString *resStr) {
 /// Override aspectSize for hardware rendering mode.
 ///
 /// The Vectrex has a native 33:41 aspect ratio (~0.805). All HW resolution presets
-/// maintain this ratio, so we can derive it from the parsed HW dimensions rather than
-/// relying on the hardcoded av_info aspect_ratio (also 33.0/41.0, but we want
-/// consistency with the overridden screenRect).
+/// maintain this ratio, but returning the full HW resolution here (e.g. 824×1024)
+/// causes DeltaSkins to treat aspectSize as "screen dimensions" and force a default
+/// 4:3 ratio. Instead, we return a small logical ratio pair (33×41) while
+/// screenRect reports the actual HW texture size.
 - (CGSize)aspectSize {
     if (self.rendersToOpenGL) {
-        CGSize hwSize = parseHWResolution(VecxOptions.resolutionHW);
-        if (!CGSizeEqualToSize(hwSize, CGSizeZero)) {
-            return CGSizeMake(hwSize.width, hwSize.height);
-        }
-        return CGSizeMake(33, 41);
+        // Keep values small so callers (e.g. DeltaSkins) interpret this as a pure
+        // aspect ratio rather than absolute screen dimensions.
+        return CGSizeMake(33.0, 41.0);
     }
     return [super aspectSize];
 }
