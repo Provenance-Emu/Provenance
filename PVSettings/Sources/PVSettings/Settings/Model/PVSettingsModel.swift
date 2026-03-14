@@ -133,11 +133,12 @@ public extension Defaults.Keys {
     /// provided by the GameController framework.
     static let analogDeadzone = Key<Float>("analogDeadzone", default: 0.0)
 
-    /// Controls when the universal deadzone is applied versus deferred to the
-    /// core's own per-core deadzone setting.
+    /// Controls when the universal analog-stick deadzone is applied versus
+    /// when responsibility is deferred to a core-managed deadzone setting.
     ///
     /// Raw Int maps to `CoreDeadzoneMode` in PVCoreBridge:
-    ///   0 = auto (skip universal if core declares its own deadzone option)
+    ///   0 = auto (skip universal only when the active core/bridge conforms
+    ///       to `CoreDeadzoneCapable`)
     ///   1 = universal (always apply)
     ///   2 = coreManaged (never apply universal; trust each core)
     static let coreDeadzoneMode = Key<Int>("coreDeadzoneMode", default: 0)
