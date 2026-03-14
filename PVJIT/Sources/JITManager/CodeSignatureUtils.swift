@@ -67,16 +67,31 @@ struct CSCodedirectory {
     var execSegmentFlags: UInt64
 }
 
+private struct ParsedCodeSignature {
+    let verifiedDirectory: Bool
+    let entitlements: [String: Any]
+}
+
+/// Returns boolean entitlement values parsed from the main executable's code signature.
 @available(iOS 13.4, tvOS 13.4, *)
-func HasValidCodeSignature() -> Bool {
+func HasBooleanEntitlement(_ entitlementKey: String) -> Bool {
+    guard let entitlements = parsedCodeSignature()?.entitlements else {
+        return false
+    }
+
+    return entitlements[entitlementKey] as? Bool == true
+}
+
+@available(iOS 13.4, tvOS 13.4, *)
+private func parsedCodeSignature() -> ParsedCodeSignature? {
     var info = Dl_info()
     guard dladdr(#function, &info) != 0, let base = info.dli_fbase else {
-        return false
+        return nil
     }
 
     let header = base.assumingMemoryBound(to: mach_header_64.self)
     guard header.pointee.magic == MH_MAGIC_64 else {
-        return false
+        return nil
     }
 
     var csLc: UnsafeMutablePointer<linkedit_data_command>?
@@ -90,14 +105,14 @@ func HasValidCodeSignature() -> Bool {
         lc += Int(loadCommand.pointee.cmdsize)
     }
     guard let linkeditDataCommand = csLc else {
-        return false
+        return nil
     }
 
     guard let executableURL = Bundle.main.executableURL else {
-        return false
+        return nil
     }
     guard let fileHandle = try? FileHandle(forReadingFrom: executableURL) else {
-        return false
+        return nil
     }
     defer {
         fileHandle.closeFile()
@@ -106,12 +121,12 @@ func HasValidCodeSignature() -> Bool {
     fileHandle.seek(toFileOffset: UInt64(linkeditDataCommand.pointee.dataoff))
 
     guard let csData = try? fileHandle.read(upToCount: Int(linkeditDataCommand.pointee.datasize)) else {
-        return false
+        return nil
     }
 
     let cs = csData.withUnsafeBytes { $0.load(as: CSSuperblob.self) }
     guard UInt32(bigEndian: cs.magic) == 0xfade0cc0 else {
-        return false
+        return nil
     }
 
     var verifiedDirectory = false
@@ -158,18 +173,27 @@ func HasValidCodeSignature() -> Bool {
 
     guard let entitlements = entitlementsData else {
         DOLJitManager.shared.setAuxiliaryError("Could not find entitlements data within the code signature.")
-        return false
+        return nil
     }
 
     guard let entitlementsDict = try? PropertyListSerialization.propertyList(from: entitlements, options: [], format: nil) as? [String: Any] else {
         DOLJitManager.shared.setAuxiliaryError("Entitlement data parsing failed.")
+        return nil
+    }
+
+    return ParsedCodeSignature(verifiedDirectory: verifiedDirectory, entitlements: entitlementsDict)
+}
+
+@available(iOS 13.4, tvOS 13.4, *)
+func HasValidCodeSignature() -> Bool {
+    guard let signature = parsedCodeSignature() else {
         return false
     }
 
-    guard let getTaskAllow = entitlementsDict["get-task-allow"] as? Bool, getTaskAllow else {
+    guard signature.entitlements["get-task-allow"] as? Bool == true else {
         DOLJitManager.shared.setAuxiliaryError("get-task-allow entitlement is not set to true.")
         return false
     }
 
-    return verifiedDirectory
+    return signature.verifiedDirectory
 }

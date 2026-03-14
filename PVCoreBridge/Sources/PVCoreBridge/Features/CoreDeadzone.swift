@@ -116,10 +116,10 @@ private extension Comparable {
 /// This catalog is the authoritative record of adoption progress. As new cores gain
 /// support, add an entry here so users and reviewers can see the rolling coverage.
 /// The Settings UI surfaces this automatically — no changelog digging required.
-public struct CoreDeadzoneCompatibilityCatalog {
+public struct CoreDeadzoneCompatibilityCatalog: Sendable {
 
     /// How well a core integrates with the shared deadzone system.
-    public enum SupportLevel: Int, Comparable, CaseIterable {
+    public enum SupportLevel: Int, Comparable, CaseIterable, Sendable {
         /// Core uses `PVApplyAnalogDeadzone()` on true-analog axes — full coordination.
         case native = 3
         /// Core uses `PVAnalogDigitalThreshold()` max-wins logic — no double-processing.
@@ -154,7 +154,7 @@ public struct CoreDeadzoneCompatibilityCatalog {
     }
 
     /// A single core's deadzone support record.
-    public struct Entry: Identifiable {
+    public struct Entry: Identifiable, Sendable {
         public let id: String            // pvCoreIdentifier
         public let displayName: String
         public let systems: [String]     // human-readable system names

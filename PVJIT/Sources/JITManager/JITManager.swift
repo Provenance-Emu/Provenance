@@ -12,7 +12,6 @@
 import Foundation
 import PVLogging
 import DebuggerUtils
-import Security
 
 #if _USE_ALTKIT
 import SideKit
@@ -37,21 +36,11 @@ public final class DOLJitManager {
     private var jitSource: JITSource = .none
 
     private func hasNativeJitEntitlement() -> Bool {
-        let entitlementKey = "com.apple.developer.kernel.allow-jit" as CFString
-
-        guard let task = SecTaskCreateFromSelf(nil) else {
+        if #available(iOS 13.4, tvOS 13.4, *) {
+            return HasBooleanEntitlement("com.apple.developer.kernel.allow-jit")
+        } else {
             return false
         }
-
-        guard let value = SecTaskCopyValueForEntitlement(task, entitlementKey, nil) else {
-            return false
-        }
-
-        if CFGetTypeID(value) == CFBooleanGetTypeID() {
-            return CFBooleanGetValue((value as! CFBoolean))
-        }
-
-        return false
     }
 
     private init() {}
@@ -402,14 +391,11 @@ public final class DOLJitManager {
 
         // 2. Verify this binary carries `get-task-allow` (injected by TrollStore at
         //    install time; not present in App Store or AltStore release builds).
-        guard let task = SecTaskCreateFromSelf(nil) else { return false }
-        guard let value = SecTaskCopyValueForEntitlement(task, "get-task-allow" as CFString, nil) else {
+        if #available(iOS 13.4, tvOS 13.4, *) {
+            return HasBooleanEntitlement("get-task-allow")
+        } else {
             return false
         }
-        if CFGetTypeID(value) == CFBooleanGetTypeID() {
-            return CFBooleanGetValue((value as! CFBoolean))
-        }
-        return false
     }
 
     private func getCpuArchitecture() -> String? {

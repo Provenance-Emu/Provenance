@@ -218,6 +218,19 @@ public final class GCControllerHapticsManager {
         }
     }
 
+    /// Stops any active rumble playback for the registered controller engines of `player`.
+    ///
+    /// The controller registration is preserved so future rumble events can restart
+    /// the same engines without requiring the emulator core to re-register them.
+    public func stopRumble(player: Int) {
+        guard let engines = engineMap[player], !engines.isEmpty else { return }
+
+        for (_, engine) in engines {
+            engine.stop(completionHandler: nil)
+        }
+        VLOG("[GCHaptics] Stopped rumble for player \(player + 1)")
+    }
+
     /// Configure DualSense adaptive triggers for a specific game-system profile.
     @available(iOS 14.5, tvOS 14.5, *)
     public func configureDualSenseAdaptiveTriggers(controller: GCController, profile: AdaptiveTriggerProfile) {
@@ -418,6 +431,8 @@ public final class GCControllerHapticsManager {
         guard intensity > 0 else { return }
 
         do {
+            try engine.start()
+
             let clampedIntensity = max(0.01, min(1.0, intensity))
             let clampedSharpness = max(0.0, min(1.0, sharpness))
             let clampedDuration = max(0.05, duration)

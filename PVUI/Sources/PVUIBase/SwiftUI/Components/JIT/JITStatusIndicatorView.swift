@@ -252,19 +252,7 @@ public struct JITStatusIndicatorView: View {
                 .accessibilityHint("Tap to show details about the current emulation mode")
                 #if !os(tvOS)
                 .popover(isPresented: $showExplanation, arrowEdge: .top) {
-                    #if canImport(JITManager)
-                    JITExplanationPopoverView(
-                        status: viewModel.status,
-                        jitSource: viewModel.jitSource,
-                        explanation: viewModel.explanation
-                    )
-                    #else
-                    JITExplanationPopoverView(
-                        status: viewModel.status,
-                        explanation: viewModel.explanation
-                    )
-                    #endif
-                    .presentationCompactAdaptation(.popover)
+                    explanationPopoverContent
                 }
                 #else
                 // TODO: A tvOS version of the JIT popover?
@@ -275,6 +263,36 @@ public struct JITStatusIndicatorView: View {
         .onReceive(NotificationCenter.default.publisher(for: .DOLJitAcquired)) { _ in
             viewModel.updateStatus()
         }
+        #endif
+    }
+
+    @ViewBuilder
+    private var explanationPopoverContent: some View {
+        #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
+        if #available(iOS 16.4, macCatalyst 16.4, visionOS 1.0, *) {
+            baseExplanationPopoverContent
+                .presentationCompactAdaptation(.popover)
+        } else {
+            baseExplanationPopoverContent
+        }
+        #else
+        baseExplanationPopoverContent
+        #endif
+    }
+
+    @ViewBuilder
+    private var baseExplanationPopoverContent: some View {
+        #if canImport(JITManager)
+        JITExplanationPopoverView(
+            status: viewModel.status,
+            jitSource: viewModel.jitSource,
+            explanation: viewModel.explanation
+        )
+        #else
+        JITExplanationPopoverView(
+            status: viewModel.status,
+            explanation: viewModel.explanation
+        )
         #endif
     }
 }
