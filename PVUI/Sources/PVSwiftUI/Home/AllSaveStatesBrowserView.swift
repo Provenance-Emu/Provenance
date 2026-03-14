@@ -138,7 +138,7 @@ public struct AllSaveStatesBrowserView: View {
 
             if isLoading {
                 loadingView
-            } else if groupedItems.isEmpty {
+            } else if groupedItems.isEmpty && !hasMorePages {
                 emptyView
             } else {
                 browserList
