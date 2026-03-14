@@ -52,7 +52,9 @@ public final class PVToastHostingController: UIHostingController<PVToastStackVie
 
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        view.frame = parent?.view.bounds ?? view.frame
+        if view.translatesAutoresizingMaskIntoConstraints {
+            view.frame = parent?.view.bounds ?? view.frame
+        }
     }
 }
 
