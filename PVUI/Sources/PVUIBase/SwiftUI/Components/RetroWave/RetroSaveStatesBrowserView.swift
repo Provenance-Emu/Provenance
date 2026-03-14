@@ -250,6 +250,7 @@ public final class RetroSaveStatesStore: ObservableObject {
                     let count = realm.objects(PVSaveState.self).count
                     continuation.resume(returning: count)
                 } catch {
+                    ELOG("RetroSaveStatesStore: Failed to count save states: \(error)")
                     continuation.resume(returning: 0)
                 }
             }
@@ -281,6 +282,13 @@ public final class RetroSaveStatesStore: ObservableObject {
                     let results = realm.objects(PVSaveState.self)
                         .filter(predicate)
                         .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: ascending)
+
+                    // Fast-path: no offset and no limit — materialise the whole set cheaply.
+                    if validatedOffset == 0 && limit == nil && !deduplicateAutosaves {
+                        let items = Array(results).compactMap { self.mapSaveState($0) }
+                        continuation.resume(returning: items)
+                        return
+                    }
 
                     // Use direct index access for efficient Realm lazy-loading with offset/limit.
                     // When deduplicating, fetch a larger window so that after removing duplicate
