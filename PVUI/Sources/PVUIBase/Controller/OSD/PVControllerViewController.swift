@@ -524,7 +524,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         /// button directly, and touches in the gaps fall through naturally.
         toggleButton?.isHidden = !shouldShowToggleButton
         for btn in quickActionButtons {
-            view.bringSubviewToFront(btn)
+            if btn.superview === view {
+                view.bringSubviewToFront(btn)
+            }
         }
         if let toggleButton = toggleButton {
             view.bringSubviewToFront(toggleButton)
