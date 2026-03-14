@@ -12,6 +12,7 @@
 import Foundation
 import PVLogging
 import DebuggerUtils
+import Security
 
 #if _USE_ALTKIT
 import SideKit
@@ -35,6 +36,24 @@ public final class DOLJitManager {
     /// and refined by UIKit-capable detection (see `JITSourceDetector`).
     private var jitSource: JITSource = .none
 
+    private func hasNativeJitEntitlement() -> Bool {
+        let entitlementKey = "com.apple.developer.kernel.allow-jit" as CFString
+
+        guard let task = SecTaskCreateFromSelf(nil) else {
+            return false
+        }
+
+        guard let value = SecTaskCopyValueForEntitlement(task, entitlementKey, nil) else {
+            return false
+        }
+
+        if CFGetTypeID(value) == CFBooleanGetTypeID() {
+            return CFBooleanGetValue((value as! CFBoolean))
+        }
+
+        return false
+    }
+
     private init() {}
 
     public
@@ -46,7 +65,7 @@ public final class DOLJitManager {
         // JITAuthorizer is a private/SPI class introduced in iOS 26 that authorizes
         // JIT when the app has `com.apple.developer.kernel.allow-jit` entitlement.
         // TODO: Replace NSClassFromString lookup with a direct import when public API.
-        if NSClassFromString("JITAuthorizer") != nil {
+        if NSClassFromString("JITAuthorizer") != nil, hasNativeJitEntitlement() {
             jitType = .nativeEntitlement
         }
         // TrollStore installs apps with unrestricted `get-task-allow` entitlement.
