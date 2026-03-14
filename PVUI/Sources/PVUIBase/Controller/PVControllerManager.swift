@@ -1025,8 +1025,8 @@ public extension PVControllerManager {
     /// Stores the preferred player slot for a controller so it is honoured on the next connect/reconnect.
     /// Pass `nil` (or a value outside 1–8) to clear the preference.
     ///
-    /// This sets the slot mode to `.preferred(n)` (or `.auto` to clear), preserving any `.always` override
-    /// only if the slot number changes.  Use ``setSlotMode(_:for:)`` to set `.always` mode explicitly.
+    /// This sets the slot mode to `.preferred(n)` (or `.auto` to clear), preserving any existing `.always(n)` override
+    /// only when the requested slot number matches `n`.  Use ``setSlotMode(_:for:)`` to set `.always` mode explicitly.
     func setPreferredPlayer(_ player: Int?, for controller: GCController) {
         guard let player = player, player >= 1, player <= 8 else {
             clearSlotMode(for: controller)
