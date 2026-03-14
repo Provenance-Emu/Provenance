@@ -25,14 +25,15 @@ import PVLogging
 /// interactive subview.  Any tap in the empty space between indicators falls through to
 /// the controller overlay and game view underneath.
 ///
-/// Uses explicit subview iteration so the container itself can never claim a touch,
-/// matching the pattern used by `QuickActionsContainerView` in PVControllerViewController.
+/// Uses explicit subview iteration so the container itself can never claim a touch.
+/// Only touches that land on a true descendant (not the subview itself) are captured.
 private final class PassThroughView: UIView {
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
+        guard point(inside: point, with: event) else { return nil }
         for subview in subviews.reversed() {
             let convertedPoint = convert(point, to: subview)
-            if let hit = subview.hitTest(convertedPoint, with: event) {
+            if let hit = subview.hitTest(convertedPoint, with: event), hit !== subview {
                 return hit
             }
         }

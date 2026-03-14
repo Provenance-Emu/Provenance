@@ -1787,39 +1787,4 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     #endif // !os(tvOS)
 }
 
-// MARK: - QuickActionsContainerView
-
-/// A transparent full-screen container for HUD quick-action buttons.
-///
-/// Overrides `hitTest` with explicit subview iteration so the container itself
-/// **never** claims a touch.  Only touches that land on a direct button subview
-/// are intercepted; every other touch returns `nil`, allowing UIKit to continue
-/// searching sibling views (the game buttons beneath this overlay).
-///
-/// The previous implementation called `super.hitTest` and returned `nil` when
-/// the result was `self`.  That approach is logically equivalent but relies on
-/// `super.hitTest` returning exactly `self` — a subtlety that can break when
-/// Auto Layout hasn't resolved button frames yet or when UIKit's ObjC hitTest
-/// dispatch behaves unexpectedly.  Iterating subviews directly is more robust.
-private final class QuickActionsContainerView: UIView {
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        // Standard UIKit guards — honour the same conditions that UIView.hitTest uses.
-        guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
-
-        // Walk only our direct button subviews (front → back).
-        // If a button claims the hit, return it so the button receives the touch.
-        // Otherwise return nil so the touch falls through to the game-control views
-        // (JSDPad, JSButton, etc.) that are siblings below this container.
-        for subview in subviews.reversed() {
-            let convertedPoint = convert(point, to: subview)
-            if let hit = subview.hitTest(convertedPoint, with: event) {
-                return hit
-            }
-        }
-
-        // No button was hit — pass the touch through entirely.
-        return nil
-    }
-}
-
 #endif // UIKit
