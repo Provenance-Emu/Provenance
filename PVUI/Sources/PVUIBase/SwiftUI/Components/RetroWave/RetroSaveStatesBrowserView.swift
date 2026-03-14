@@ -228,6 +228,37 @@ public final class RetroSaveStatesStore: ObservableObject {
         }
     }
 
+    /// Loads a page of save states using cursor-based (offset) pagination.
+    ///
+    /// Results are sorted by date descending — the same ordering used by all
+    /// other fetch methods — so callers can append successive pages to build
+    /// a complete, incrementally-displayed list.
+    ///
+    /// - Parameters:
+    ///   - offset: Number of items to skip (0 for the first page).
+    ///   - pageSize: Maximum number of items to return.
+    /// - Returns: Items for the requested page.  An empty array means the caller
+    ///            has reached the end of the data set.
+    @discardableResult
+    public func loadPage(offset: Int, pageSize: Int) async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: NSPredicate(value: true), offset: offset, limit: pageSize)
+    }
+
+    /// Returns the total number of save states (used to detect end-of-data).
+    public func totalSaveStateCount() async -> Int {
+        await withCheckedContinuation { continuation in
+            workQueue.async {
+                do {
+                    let realm = try Realm()
+                    let count = realm.objects(PVSaveState.self).count
+                    continuation.resume(returning: count)
+                } catch {
+                    continuation.resume(returning: 0)
+                }
+            }
+        }
+    }
+
     /// Fetches save states matching `predicate`, sorted newest-first.
     /// - Parameters:
     ///   - predicate: Realm filter predicate.
@@ -236,6 +267,10 @@ public final class RetroSaveStatesStore: ObservableObject {
     ///     all manual saves are always included. Defaults to `false` so the full save management
     ///     UI remains unfiltered.
     private func fetchSaveStates(predicate: NSPredicate, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: predicate, offset: 0, limit: limit, deduplicateAutosaves: deduplicateAutosaves)
+    }
+
+    private func fetchSaveStates(predicate: NSPredicate, offset: Int, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
         await withCheckedContinuation { continuation in
             workQueue.async {
                 do {
@@ -244,18 +279,22 @@ public final class RetroSaveStatesStore: ObservableObject {
                         .filter(predicate)
                         .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
 
+                    // Use direct index access for efficient Realm lazy-loading with offset/limit.
                     // When deduplicating, fetch a larger window so that after removing duplicate
-                    // autosaves we still have enough items to fill `limit`. Without this, a batch
-                    // that is mostly autosaves from the same game could yield far fewer than `limit`
-                    // results after the dedup pass.
-                    let fetchLimit: Int? = (deduplicateAutosaves && limit != nil) ? limit.map { $0 * 4 } : limit
-                    let collection: [PVSaveState] = {
-                        if let fetchLimit {
-                            return Array(results.prefix(fetchLimit))
-                        } else {
-                            return Array(results)
-                        }
-                    }()
+                    // autosaves we still have enough items to fill `limit`.
+                    let totalCount = results.count
+                    let startIndex = min(offset, totalCount)
+                    let rawLimit: Int? = (deduplicateAutosaves && limit != nil) ? limit.map { $0 * 4 } : limit
+                    let endIndex: Int
+                    if let rawLimit {
+                        endIndex = min(startIndex + rawLimit, totalCount)
+                    } else {
+                        endIndex = totalCount
+                    }
+
+                    let collection: [PVSaveState] = startIndex < endIndex
+                        ? (startIndex..<endIndex).map { results[$0] }
+                        : []
 
                     let items: [RetroSaveStateItem]
                     if deduplicateAutosaves {

@@ -44,8 +44,14 @@ public struct AllSaveStatesBrowserView: View {
 
     weak var rootDelegate: PVRootDelegate?
 
+    // MARK: - Pagination
+    private static let pageSize = 100
+
     @State private var items: [RetroSaveStateItem] = []
     @State private var isLoading = true
+    @State private var isLoadingMore = false
+    @State private var hasMorePages = true
+    @State private var currentOffset = 0
     @State private var sortOrder: SaveStatesBrowserSort = .dateDescending
     @State private var showFavoritesOnly = false
 
@@ -177,6 +183,23 @@ public struct AllSaveStatesBrowserView: View {
             LazyVStack(alignment: .leading, spacing: 24) {
                 ForEach(groupedItems, id: \.key) { group in
                     gameGroupSection(group: group)
+                }
+
+                // Pagination sentinel — loads the next page when this row
+                // scrolls into view, providing seamless infinite scroll.
+                if hasMorePages {
+                    HStack {
+                        Spacer()
+                        if isLoadingMore {
+                            ProgressView()
+                                .padding(.vertical, 12)
+                        }
+                        Spacer()
+                    }
+                    .onAppear {
+                        guard !isLoadingMore else { return }
+                        Task { await loadNextPage() }
+                    }
                 }
             }
             .padding(.vertical, 16)
@@ -359,10 +382,27 @@ public struct AllSaveStatesBrowserView: View {
         }
     }
 
+    /// Loads the first page and resets pagination state.
     private func loadItems() async {
         isLoading = true
-        items = await store.loadAllRecent(limit: 500)
+        currentOffset = 0
+        hasMorePages = true
+        let page = await store.loadPage(offset: 0, pageSize: Self.pageSize)
+        items = page
+        hasMorePages = page.count == Self.pageSize
+        currentOffset = page.count
         isLoading = false
+    }
+
+    /// Appends the next page of results (called when the scroll sentinel appears).
+    private func loadNextPage() async {
+        guard hasMorePages, !isLoadingMore else { return }
+        isLoadingMore = true
+        let page = await store.loadPage(offset: currentOffset, pageSize: Self.pageSize)
+        items.append(contentsOf: page)
+        currentOffset += page.count
+        hasMorePages = page.count == Self.pageSize
+        isLoadingMore = false
     }
 }
 

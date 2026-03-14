@@ -526,5 +526,29 @@
         "subtitle": "Save states, achievements, JIT status, and controller events now appear as unobtrusive toast overlays with retrowave styling — no more missed notifications."
       }
     ]
+  },
+  {
+    "version": "3.4.1",
+    "title": "Precision Controls",
+    "features": [
+      {
+        "symbolName": "circle.dashed",
+        "symbolColor": "blue",
+        "title": "Analog Deadzone Control",
+        "subtitle": "Set a universal analog-stick deadzone (0–50%) that coordinates cleanly with each core's own deadzone — no double-processing, no compound dead zones."
+      },
+      {
+        "symbolName": "checkmark.seal.fill",
+        "symbolColor": "green",
+        "title": "Core Compatibility Transparency",
+        "subtitle": "See exactly which cores support native deadzone coordination in Settings → Controllers → Core Compatibility. The list grows automatically as more cores are updated."
+      },
+      {
+        "symbolName": "gearshape.2.fill",
+        "symbolColor": "orange",
+        "title": "Deadzone Mode Picker",
+        "subtitle": "Choose Auto (smart per-core detection), Universal (always apply), or Core-Managed (hands-off) to match your playstyle."
+      }
+    ]
   }
 ]
