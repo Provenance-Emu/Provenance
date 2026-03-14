@@ -527,7 +527,20 @@ public final class PVControllerManager: NSObject, ObservableObject {
         ILOG("Assign controller \(controller.vendorName ?? "nil")")
 
         let id = controllerIdentifier(for: controller)
-        let mode = slotMode(for: controller)
+        var mode = slotMode(for: controller)
+
+        // Guard against invalid persisted slot values. Treat out-of-range slots as `.auto`
+        // to avoid crashing in `setController(_:toPlayer:)` when constructing GCControllerPlayerIndex.
+        switch mode {
+        case .preferred(let slot), .always(let slot):
+            let validRange = 1...8
+            if !validRange.contains(slot) {
+                WLOG("Invalid controller slot \(slot) for controller [\(id)]; treating as .auto")
+                mode = .auto
+            }
+        case .auto:
+            break
+        }
 
         switch mode {
         case .auto:
