@@ -16,7 +16,7 @@ import PVThemes
 ///
 /// Each save appears as a thumbnail "frame". Vertical time-gap dividers between frames
 /// show how much time passed between consecutive saves. A session-boundary indicator
-/// (large gap > 1 h) makes long breaks visually prominent.
+/// (large gap > 2 h) makes long breaks visually prominent.
 ///
 /// The view is designed to be presented as a `.sheet` from `HomeContinueItemView`.
 @available(iOS 15, tvOS 15, *)
@@ -195,10 +195,13 @@ struct AutoSaveFilmstripView: View {
 
     // MARK: - Time Gap Indicator
 
+    /// Threshold after which a time gap is treated as a "session break" in the UI.
+    private static let sessionBreakInterval: TimeInterval = 2 * 60 * 60
+
     /// Vertical divider between two saves annotated with the time elapsed between them.
     private func timeGapIndicator(between newer: Date, and older: Date) -> some View {
         let gap = newer.timeIntervalSince(older)
-        let isLargeGap = gap > 3600  // > 1 hour = "session break" style
+        let isLargeGap = gap > AutoSaveFilmstripView.sessionBreakInterval
 
         return VStack(spacing: 4) {
             if isLargeGap {
