@@ -131,7 +131,7 @@ public final class PVJITRequirementRegistry: Sendable {
     ///
     /// Use this after JIT is acquired to auto-enable relevant cores.
     public func jitDisabledCoreIdentifiers() -> [String] {
-        jitDisabledStorage.withLock { Array($0) }
+        jitDisabledStorage.withLock { Array($0).sorted() }
     }
 
     // MARK: Reset
