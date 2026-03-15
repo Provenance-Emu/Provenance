@@ -36,6 +36,8 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Turbo/autofire manager. Publicly accessible so views can read turbo state.
     /// Must be accessed from the main thread only.
     public let turboManager = TurboManager()
+    /// Manages sticky (toggle-hold) button state.
+    public let stickyManager = StickyButtonManager()
 
     /// Initialize with an emulator core and optional controller view controller
     public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: (any ControllerVC)? = nil, emulatorController: (any PVEmualatorControllerProtocol)? = nil) {
