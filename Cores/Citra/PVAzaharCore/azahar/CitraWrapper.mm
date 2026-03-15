@@ -115,6 +115,10 @@ void Keyboard::ShowError(const std::string& error) {
     printf("error = %s\n", error.c_str());
     if (!error.empty()) {
         NSString *message = [NSString stringWithUTF8String:error.c_str()];
+        if (message == nil) {
+            // Fallback in case of invalid UTF-8 in the error string
+            message = @"An unknown error occurred.";
+        }
         [PVOSDNotification postMessage:message type:PVOSDTypeError duration:4.0];
     }
 }
