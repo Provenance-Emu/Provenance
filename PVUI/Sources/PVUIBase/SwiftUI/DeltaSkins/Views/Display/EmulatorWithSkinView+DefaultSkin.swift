@@ -401,14 +401,24 @@ struct DefaultControllerSkinView: View {
             VStack {
                 Spacer()
                 HStack(spacing: 30) {
-                    VStack(spacing: 25) {
-                        circleButton(label: "Y", color: .yellow)
-                        circleButton(label: "X", color: .blue)
-                    }
-
-                    VStack(spacing: 25) {
-                        circleButton(label: "B", color: .red)
-                        circleButton(label: "A", color: .green)
+                    if let fps = fpsButtonConfig {
+                        VStack(spacing: 25) {
+                            circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
+                            circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
+                        }
+                        VStack(spacing: 25) {
+                            circleButton(label: fps.tr.0, color: fps.tr.2, inputId: fps.tr.1)
+                            circleButton(label: fps.br.0, color: fps.br.2, inputId: fps.br.1)
+                        }
+                    } else {
+                        VStack(spacing: 25) {
+                            circleButton(label: "Y", color: .yellow)
+                            circleButton(label: "X", color: .blue)
+                        }
+                        VStack(spacing: 25) {
+                            circleButton(label: "B", color: .red)
+                            circleButton(label: "A", color: .green)
+                        }
                     }
                 }
                 Spacer()
@@ -813,15 +823,25 @@ struct DefaultControllerSkinView: View {
 
                 // Right side - Action buttons (constrained to prevent off-screen)
                 VStack(spacing: 20) {
-                    HStack(spacing: 20) { // Reduced spacing to fit better
-                        VStack(spacing: 20) { // Reduced vertical spacing
-                            circleButton(label: "Y", color: .yellow)
-                            circleButton(label: "X", color: .blue)
-                        }
-
-                        VStack(spacing: 20) { // Reduced vertical spacing
-                            circleButton(label: "B", color: .red)
-                            circleButton(label: "A", color: .green)
+                    HStack(spacing: 20) {
+                        if let fps = fpsButtonConfig {
+                            VStack(spacing: 20) {
+                                circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
+                                circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
+                            }
+                            VStack(spacing: 20) {
+                                circleButton(label: fps.tr.0, color: fps.tr.2, inputId: fps.tr.1)
+                                circleButton(label: fps.br.0, color: fps.br.2, inputId: fps.br.1)
+                            }
+                        } else {
+                            VStack(spacing: 20) {
+                                circleButton(label: "Y", color: .yellow)
+                                circleButton(label: "X", color: .blue)
+                            }
+                            VStack(spacing: 20) {
+                                circleButton(label: "B", color: .red)
+                                circleButton(label: "A", color: .green)
+                            }
                         }
                     }
                 }
@@ -1155,6 +1175,25 @@ struct DefaultControllerSkinView: View {
         }
     }
 
+    /// Returns FPS-specific button labels/IDs for Doom/Wolf3D/Quake, or nil for other systems.
+    /// Layout: (topLeft, bottomLeft, topRight, bottomRight) matching the diamond pattern.
+    private var fpsButtonConfig: (tl: (String, String, Color), bl: (String, String, Color),
+                                  tr: (String, String, Color), br: (String, String, Color))? {
+        switch systemId {
+        case .DOOM:
+            return (tl: ("MAP", "map", .yellow), bl: ("RUN", "run", .blue),
+                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green))
+        case .Wolf3D:
+            return (tl: ("STRAFE", "strafe", .yellow), bl: ("RUN", "run", .blue),
+                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green))
+        case .Quake, .Quake2:
+            return (tl: ("JUMP", "jump", .yellow), bl: ("RUN", "run", .blue),
+                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green))
+        default:
+            return nil
+        }
+    }
+
     /// Joystick view with touch tracking
     private func joystickView() -> some View {
         DeltaJoystickView(inputHandler: inputHandler)
@@ -1162,9 +1201,14 @@ struct DefaultControllerSkinView: View {
     }
 
     /// Circle button view with retrowave styling
-    private func circleButton(label: String, color: Color) -> some View {
+    /// - Parameters:
+    ///   - label: Display text shown on the button
+    ///   - color: Button color
+    ///   - inputId: Optional override for the input ID sent to the handler (defaults to label.lowercased())
+    private func circleButton(label: String, color: Color, inputId: String? = nil) -> some View {
         // Use theme's tint color if no specific color is provided
         let buttonColor = color == .gray ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? color) : color
+        let effectiveInputId = inputId ?? label.lowercased()
 
         return Button(action: {}) {
             ZStack {
@@ -1188,9 +1232,9 @@ struct DefaultControllerSkinView: View {
             .frame(width: 60, height: 60)
         }
         .buttonStyle(GameButtonStyle(pressAction: {
-            inputHandler.buttonPressed(label.lowercased())
+            inputHandler.buttonPressed(effectiveInputId)
         }, releaseAction: {
-            inputHandler.buttonReleased(label.lowercased())
+            inputHandler.buttonReleased(effectiveInputId)
         }))
     }
 
