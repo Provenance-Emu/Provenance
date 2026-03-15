@@ -259,7 +259,7 @@ struct HomeView: SwiftUI.View {
                 .overlay(
                     Group {
                         if !searchText.isEmpty {
-                            VStack {
+                            ScrollView {
                                 searchResultsView()
                             }
                             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
