@@ -342,7 +342,8 @@ public final class PVControllerManager: NSObject, ObservableObject {
         PVControllerManager.shared.disconnectController(controller)
     }
 
-    @objc func disconnectController(_ controller:GCController) {
+    @MainActor
+    @objc func disconnectController(_ controller: GCController) {
         ILOG("Controller disconnected: \(controller.vendorName ?? "No Vendor")")
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
