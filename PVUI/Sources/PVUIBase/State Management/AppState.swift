@@ -471,8 +471,12 @@ public class AppState: ObservableObject {
         self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: self.gameImporter!)
         ILOG("AppState: LibraryUpdatesController initialized")
 
-        // Guard against a hung ROM cache reload — 30 s is ample for cache warm-up.
-        ILOG("AppState: Reloading RomDatabase cache")
+        // Warm up ROM database caches.
+        // updateCores(fromPlists:) already performed a forced cache reload when
+        // it registered cores, so a second forced reload is unnecessary.  We use
+        // the non-forced variant which short-circuits when the in-memory caches
+        // already have the correct number of entries.
+        ILOG("AppState: Reloading RomDatabase cache (non-forced, skips if already warm)")
         bootupStateManager.updateTaskProgress("Reloading ROM database cache…", fraction: 0.7)
         do {
             try await withTimeout(seconds: 30) {

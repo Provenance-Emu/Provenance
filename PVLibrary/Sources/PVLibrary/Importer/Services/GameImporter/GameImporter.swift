@@ -586,12 +586,16 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
 
-    /// Creates default directories
-    private func createDefaultDirectories(fm: FileManager) {
+    /// Creates default directories.
+    ///
+    /// Accepts pre-fetched system identifiers so this method can run off the
+    /// main actor without touching Realm (Realm objects are thread-confined).
+    /// Static so `Task.detached` callers avoid capturing `self` (a non-Sendable class).
+    private static func createDefaultDirectories(fm: FileManager, systemIdentifiers: [String]) {
         // Core roots
-        createDefaultDirectory(fm, url: romsPath)
-        createDefaultDirectory(fm, url: romsImportPath)
-        createDefaultDirectory(fm, url: biosPath)
+        createDefaultDirectory(fm, url: Paths.romsPath)
+        createDefaultDirectory(fm, url: Paths.romsImportPath)
+        createDefaultDirectory(fm, url: Paths.biosesPath)
 
         // Additional roots
         createDefaultDirectory(fm, url: Paths.saveSavesPath)
@@ -603,14 +607,14 @@ public final class GameImporter: GameImporting, ObservableObject {
         createDefaultDirectory(fm, url: deltaSkinsURL)
 
         // Per-system ROM subfolders
-        for system in PVSystem.all {
-            let systemDir = Paths.romsPath(forSystemIdentifier: system.identifier)
+        for identifier in systemIdentifiers {
+            let systemDir = Paths.romsPath(forSystemIdentifier: identifier)
             createDefaultDirectory(fm, url: systemDir)
         }
     }
 
     /// Creates a default directory at the given URL
-    fileprivate func createDefaultDirectory(_ fm: FileManager, url: URL) {
+    fileprivate static func createDefaultDirectory(_ fm: FileManager, url: URL) {
         if !FileManager.default.fileExists(atPath: url.path, isDirectory: nil) {
             ILOG("Path <\(url)> doesn't exist. Creating.")
             do {
@@ -642,34 +646,28 @@ public final class GameImporter: GameImporting, ObservableObject {
             initialized.leave()
             return
         }
-        let fm = FileManager.default
-        createDefaultDirectories(fm: fm)
 
-        /// Updates the system to path map
-        @MainActor
-        @Sendable func updateSystemToPathMap() async -> [String: URL] {
-            let systems = PVSystem.all.toArray()
-            return await systems.async.reduce(into: [String: URL]()) {partialResult, system in
-                partialResult[system.identifier] = system.romsDirectory
-            }
+        // Create default directories in the background — not required before the
+        // UI appears, so we avoid blocking the boot path with synchronous I/O.
+        // Gather system identifiers on the main actor (Realm is thread-confined),
+        // then do the actual filesystem work off the main thread.
+        let systemIDs = PVSystem.all.map { $0.identifier }
+        Task.detached(priority: .utility) {
+            GameImporter.createDefaultDirectories(fm: FileManager.default, systemIdentifiers: systemIDs)
         }
 
-        /// Updates the ROM extension to systems map
+        /// Builds a [systemIdentifier: romsDirectoryURL] map from Realm.
+        /// Uses a simple synchronous iteration instead of the heavier
+        /// async-reduce that was creating unnecessary actor hops.
         @MainActor
-        @Sendable func updateromExtensionToSystemsMap() -> [String: [String]] {
-            return PVSystem.all.reduce([String: [String]](), { (dict, system) -> [String: [String]] in
-                let extensionsForSystem = system.supportedExtensions
-                // Make a new dict of [ext : systemID] for each ext in extions for that ID, then merge that dictionary with the current one,
-                // if the dictionary already has that key, the arrays are joined so you end up with a ext mapping to multpiple systemIDs
-                let extsToCurrentSystemID = extensionsForSystem.reduce([String: [String]](), { (dict, ext) -> [String: [String]] in
-                    var dict = dict
-                    dict[ext] = [system.identifier]
-                    return dict
-                })
-
-                return dict.merging(extsToCurrentSystemID, uniquingKeysWith: { var newArray = $0; newArray.append(contentsOf: $1); return newArray })
-
-            })
+        @Sendable func updateSystemToPathMap() -> [String: URL] {
+            let systems = PVSystem.all.toArray()
+            var map = [String: URL]()
+            map.reserveCapacity(systems.count)
+            for system in systems {
+                map[system.identifier] = system.romsDirectory
+            }
+            return map
         }
 
         let systems = PVSystem.all
@@ -679,7 +677,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             case .initial:
                 Task { @MainActor in
                     ILOG("RealmCollection changed state to .initial")
-                    self.systemToPathMap = await updateSystemToPathMap()
+                    self.systemToPathMap = updateSystemToPathMap()
                     self.initialized.leave()
 
                     // Set up the queue subscription after all members are initialized
@@ -688,7 +686,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             case .update:
                 Task { @MainActor in
                     ILOG("RealmCollection changed state to .update")
-                    self.systemToPathMap = await updateSystemToPathMap()
+                    self.systemToPathMap = updateSystemToPathMap()
                 }
             case let .error(error):
                 ELOG("RealmCollection changed state to .error")
@@ -728,36 +726,73 @@ public final class GameImporter: GameImporting, ObservableObject {
         case systemsPlistNotFound(bundle: Bundle)
     }
 
+    /// Caches the in-flight or already-completed initialization task.
+    /// Accessed only from the `@MainActor`-isolated `initCorePlists()` so the
+    /// nil-check and task assignment form a single atomic step — preventing
+    /// duplicate scans from concurrent callers.
+    private var corePlistsInitializationTask: Task<Void, Error>?
+
+    @MainActor
     public func initCorePlists() async throws {
+        // If a task is already running or has completed, await it rather than
+        // launching a duplicate scan. Because this function is @MainActor, the
+        // check and assignment below are guaranteed to be an atomic step with no
+        // race window between them.
+        if let existing = corePlistsInitializationTask {
+            ILOG("GameImporter: initCorePlists — awaiting in-flight/completed initialization")
+            do {
+                try await existing.value
+            } catch {
+                // Clear the cached task so a future call can retry initialization.
+                corePlistsInitializationTask = nil
+                throw error
+            }
+            return
+        }
+
         let bundle = ThisBundle
         guard let systemsPlistURL = bundle.url(forResource: "systems", withExtension: "plist") else {
             let error = CorePlistInitializationError.systemsPlistNotFound(bundle: bundle)
             ELOG("GameImporter: Failed to locate systems.plist in bundle \(bundle): \(error)")
             throw error
         }
-        await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
 
-        // Run filesystem I/O and the dynamic libretro scan on a background thread.
-        // Neither operation is MainActor-safe — calling either on the main thread
-        // blocks the UI and causes the watchdog-visible "app hang" symptoms.
-        //
-        // Full-result disk cache: on subsequent launches where nothing has changed
-        // (same app version + build + Frameworks directory mtime) the entire scan
-        // is skipped and the cached [EmulatorCoreInfoPlist] array is used directly.
-        // The cache is invalidated automatically on app update or when a core
-        // dylib/bundle is added or removed (Frameworks dir mtime changes).
-        let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
-            if let cached = CorePlistResultCache.load() {
-                ILOG("GameImporter: initCorePlists — cache hit, skipping scan (\(cached.count) cores)")
-                return cached
-            }
-            ILOG("GameImporter: initCorePlists — cache miss, running full scan")
-            let plists = CoreLoader.getCorePlists()
-            let merged = CoreLoader.mergeDiscoveredLibretroCores(into: plists)
-            CorePlistResultCache.save(merged)
-            return merged
-        }.value
-        await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+        // Create and store the task BEFORE the first `await` so any concurrent
+        // caller that arrives after this suspension point will see the in-flight
+        // task and await it instead of starting a second scan.
+        let task = Task<Void, Error> {
+            await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
+
+            // Run filesystem I/O and the dynamic libretro scan on a background thread.
+            // Neither operation is MainActor-safe — calling either on the main thread
+            // blocks the UI and causes the watchdog-visible "app hang" symptoms.
+            //
+            // Full-result disk cache: on subsequent launches where nothing has changed
+            // (same app version + build + Frameworks directory mtime) the entire scan
+            // is skipped and the cached [EmulatorCoreInfoPlist] array is used directly.
+            // The cache is invalidated automatically on app update or when a core
+            // dylib/bundle is added or removed (Frameworks dir mtime changes).
+            let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
+                if let cached = CorePlistResultCache.load() {
+                    ILOG("GameImporter: initCorePlists — cache hit, skipping scan (\(cached.count) cores)")
+                    return cached
+                }
+                ILOG("GameImporter: initCorePlists — cache miss, running full scan")
+                let plists = CoreLoader.getCorePlists()
+                let merged = CoreLoader.mergeDiscoveredLibretroCores(into: plists)
+                CorePlistResultCache.save(merged)
+                return merged
+            }.value
+            await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+        }
+        corePlistsInitializationTask = task
+        do {
+            try await task.value
+        } catch {
+            // Clear the cached task so a future call can retry initialization.
+            corePlistsInitializationTask = nil
+            throw error
+        }
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {
