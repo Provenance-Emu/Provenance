@@ -1012,6 +1012,36 @@ public extension PVControllerManager {
         setSlotMode(.auto, for: controller)
     }
 
+    // MARK: ID-based slot mode API (for disconnected / previously-seen controllers)
+
+    /// All controller identifiers that have a non-auto stored slot-mode preference.
+    var storedControllerIds: [String] {
+        Defaults[.controllerSlotModes].keys.sorted()
+    }
+
+    /// Returns the saved ``ControllerSlotMode`` for a controller identified by its string ID, or `.auto` when none is stored.
+    func slotMode(forId id: String) -> ControllerSlotMode {
+        Defaults[.controllerSlotModes][id] ?? .auto
+    }
+
+    /// Persists the ``ControllerSlotMode`` for a controller identified by its string ID.
+    /// Setting `.auto` removes any stored preference.
+    func setSlotMode(_ mode: ControllerSlotMode, forId id: String) {
+        var modes = Defaults[.controllerSlotModes]
+        if case .auto = mode {
+            modes.removeValue(forKey: id)
+        } else {
+            modes[id] = mode
+        }
+        Defaults[.controllerSlotModes] = modes
+        ILOG("Saved slot mode \(mode) for controller [\(id)]")
+    }
+
+    /// Removes any saved slot mode for the given controller ID, reverting to `.auto`.
+    func clearSlotMode(forId id: String) {
+        setSlotMode(.auto, forId: id)
+    }
+
     // MARK: Convenience Int-based API (kept for backward compatibility)
 
     /// Returns the stored preferred player slot (1–8) for a controller, or `nil` if none has been saved.

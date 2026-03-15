@@ -180,6 +180,45 @@ struct PVControllerPlayerSlotPreferencesTests {
         #expect(bridge.deserialize("unknown:3") == nil)
     }
 
+    // MARK: - ID-based slot mode API
+
+    @Test("slotMode(forId:) returns .auto for unknown ID")
+    @MainActor
+    func slotModeForIdDefaultsToAuto() async throws {
+        let mode = PVControllerManager.shared.slotMode(forId: "NonExistentController-\(UUID().uuidString)")
+        #expect(mode == .auto)
+    }
+
+    @Test("setSlotMode(_:forId:) round-trips via slotMode(forId:)")
+    @MainActor
+    func slotModeForIdRoundtrip() async throws {
+        let manager = PVControllerManager.shared
+        let fakeId = "TestController-\(UUID().uuidString)"
+
+        manager.setSlotMode(.preferred(3), forId: fakeId)
+        #expect(manager.slotMode(forId: fakeId) == .preferred(3))
+        #expect(manager.storedControllerIds.contains(fakeId))
+
+        manager.clearSlotMode(forId: fakeId)
+        #expect(manager.slotMode(forId: fakeId) == .auto)
+        #expect(!manager.storedControllerIds.contains(fakeId))
+    }
+
+    @Test("storedControllerIds only contains IDs with non-auto modes")
+    @MainActor
+    func storedControllerIdsExcludesAuto() async throws {
+        let manager = PVControllerManager.shared
+        let fakeId = "TestController-\(UUID().uuidString)"
+
+        manager.setSlotMode(.auto, forId: fakeId)
+        #expect(!manager.storedControllerIds.contains(fakeId))
+
+        manager.setSlotMode(.always(2), forId: fakeId)
+        #expect(manager.storedControllerIds.contains(fakeId))
+
+        manager.clearSlotMode(forId: fakeId)
+    }
+
     // MARK: - assign(_:) / reapplyPreferences() behavior
 
     @Test("assign - .preferred(n) claims a free slot and auto fills remaining")
