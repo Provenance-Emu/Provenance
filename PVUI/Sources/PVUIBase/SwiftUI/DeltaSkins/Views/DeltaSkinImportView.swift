@@ -137,7 +137,7 @@ public struct DeltaSkinImportView: View {
 
             isImporting = true
 
-            Task {
+            Task { @MainActor in
                 // Run ZIP-based validation off the main thread so large skins don't block UI
                 let validation = await Task.detached(priority: .userInitiated) {
                     DeltaSkinValidator.validate(url: url)
