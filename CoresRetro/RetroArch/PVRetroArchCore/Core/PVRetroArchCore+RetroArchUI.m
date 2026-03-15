@@ -778,7 +778,7 @@ void extract_bundles();
                             uint32_t correctedAddr = 0;
                             if (tosAddr == 0x0000FC00) correctedAddr = 0x00FC0000; // TOS 1.x swapped
                             if (tosAddr == 0x0000E000) correctedAddr = 0x00E00000; // TOS 2.x swapped
-                            if (tosAddr == 0x000E8000) correctedAddr = 0x00E80000; // TOS 4.x swapped
+                            if (tosAddr == 0x0000E800) correctedAddr = 0x00E80000; // TOS 4.x swapped
 
                             if (correctedAddr != 0) {
                                 unsigned char *fixedBytes = (unsigned char *)tosToWrite.mutableBytes;
