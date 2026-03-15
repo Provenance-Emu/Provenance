@@ -3,6 +3,9 @@ import AudioToolbox
 import AVFoundation  // Add this for audio buffer types
 import PVLogging
 import PVEmulatorCore
+#if canImport(UIKit)
+import PVSettings
+#endif
 
 // MARK: - Identifiable wrapper types for stable ForEach IDs
 
@@ -1687,7 +1690,9 @@ public struct DeltaSkinView: View {
             }
 
             #if !os(tvOS)
-            buttonGenerator.impactOccurred(intensity: 0.6)
+            if Defaults[.buttonVibration] {
+                buttonGenerator.impactOccurred(intensity: 0.6)
+            }
             #endif
 
             // Play sound with current position (only once)
@@ -2108,7 +2113,7 @@ public struct DeltaSkinView: View {
             if !ProcessInfo.processInfo.isiOSAppOnMac {
                 if let haptic = button.haptic {
                     haptic.play()
-                } else {
+                } else if Defaults[.buttonVibration] {
                     impactGenerator.impactOccurred()
                 }
             }

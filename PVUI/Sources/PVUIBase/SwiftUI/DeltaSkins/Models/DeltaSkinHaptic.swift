@@ -16,6 +16,17 @@ public struct DeltaSkinHaptic: Codable, Equatable {
         self.intensity = intensity
     }
 
+    // Custom decoding so that skins omitting `style` or `intensity` still decode correctly.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        style     = try container.decodeIfPresent(String.self, forKey: .style)     ?? "medium"
+        intensity = try container.decodeIfPresent(Double.self,  forKey: .intensity) ?? 1.0
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case style, intensity
+    }
+
     #if canImport(UIKit)
     /// Map style string to UIImpactFeedbackGenerator.FeedbackStyle
     public var feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle {
