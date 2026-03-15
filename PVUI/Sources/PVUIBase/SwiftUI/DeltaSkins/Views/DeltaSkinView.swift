@@ -930,7 +930,11 @@ public struct DeltaSkinView: View {
                         let normal = try await skin.loadThumbstickImage(named: normalName)
                         var pressedImage: UIImage? = nil
                         if let pressedName = states.pressed?.image {
-                            pressedImage = try? await skin.loadThumbstickImage(named: pressedName)
+                            do {
+                                pressedImage = try await skin.loadThumbstickImage(named: pressedName)
+                            } catch {
+                                ELOG("Failed to load pressed state image '\(pressedName)' for button \(button.id): \(error)")
+                            }
                         }
                         cache[button.id] = (normal: normal, pressed: pressedImage)
                         continue // Successfully loaded from typed states; skip legacy path
@@ -948,7 +952,11 @@ public struct DeltaSkinView: View {
                 let normal = try await skin.loadThumbstickImage(named: normalName)
                 var pressedImage: UIImage? = nil
                 if let pn = pressedName {
-                    pressedImage = try? await skin.loadThumbstickImage(named: pn)
+                    do {
+                        pressedImage = try await skin.loadThumbstickImage(named: pn)
+                    } catch {
+                        ELOG("Failed to load pressed asset image '\(pn)' for button \(button.id): \(error)")
+                    }
                 }
                 cache[button.id] = (normal: normal, pressed: pressedImage)
             } catch {
