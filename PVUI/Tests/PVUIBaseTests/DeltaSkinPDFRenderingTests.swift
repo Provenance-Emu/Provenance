@@ -49,10 +49,36 @@ struct DeltaSkinPDFRenderingTests {
         #expect(hasAlphaChannel(image), "Expected alpha channel when preserveTransparency is true")
     }
 
-    @Test("preserveTransparency: false produces an opaque image (no alpha channel)")
+    @Test("preserveTransparency: false produces an opaque image (corner pixel fully opaque)")
     func preserveTransparencyFalseIsOpaque() throws {
         let image = try #require(UIImage(pdfData: pdfData, preserveTransparency: false))
-        #expect(!hasAlphaChannel(image), "Expected no alpha channel when preserveTransparency is false")
+        guard let cgImage = image.cgImage else {
+            Issue.record("No cgImage")
+            return
+        }
+        // Sample corner pixel using a known RGBA layout (premultipliedLast + byteOrder32Big)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
+        guard let ctx = CGContext(
+            data: nil,
+            width: cgImage.width,
+            height: cgImage.height,
+            bitsPerComponent: 8,
+            bytesPerRow: cgImage.width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: bitmapInfo.rawValue
+        ) else {
+            Issue.record("Could not create CGContext")
+            return
+        }
+        ctx.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+        guard let data = ctx.data else {
+            Issue.record("No pixel data")
+            return
+        }
+        // Corner pixel (0,0) — index 3 is alpha in RGBA byte order
+        let bytes = data.bindMemory(to: UInt8.self, capacity: cgImage.width * cgImage.height * 4)
+        let alpha = bytes[3]
+        #expect(alpha == 255, "Corner pixel should be fully opaque when preserveTransparency is false, got alpha=\(alpha)")
     }
 
     @Test("Default parameter preserves transparency (regression: was false, now true)")
@@ -68,12 +94,11 @@ struct DeltaSkinPDFRenderingTests {
         #expect(image == nil)
     }
 
-    @Test("Rendered image has non-zero size")
+    @Test("Rendered image matches requested size")
     func renderedImageHasSize() throws {
         let requestedSize = CGSize(width: 64, height: 64)
         let image = try #require(UIImage(pdfData: pdfData, preserveTransparency: true, size: requestedSize))
-        #expect(image.size.width > 0)
-        #expect(image.size.height > 0)
+        #expect(image.size == requestedSize, "Expected rendered size \(requestedSize), got \(image.size)")
     }
 
     @Test("Transparent pixels are actually clear when preserveTransparency is true")
