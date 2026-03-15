@@ -88,7 +88,12 @@ public final class PVCoreFactory: NSObject {
             fatalError("No controller layout config defined for system \(system.name)")
         }
         var skipError = false;
-        if let core = core as? PVRetroArchCoreResponderClient {
+        if core is PVRetroArchCoreResponderClient {
+            skipError = true;
+        }
+        // PVThinLibretroCore doesn't conform to system-specific responder protocols
+        // (it delegates to PVThinLibretroFrontend). Skip fatalError for it too.
+        if NSStringFromClass(type(of: core)).contains("ThinLibretro") {
             skipError = true;
         }
         switch system.enumValue {
