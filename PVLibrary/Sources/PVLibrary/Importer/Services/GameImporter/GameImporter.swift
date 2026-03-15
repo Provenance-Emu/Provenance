@@ -647,14 +647,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        // Create default directories in the background — not required before the
-        // UI appears, so we avoid blocking the boot path with synchronous I/O.
-        // Gather system identifiers on the main actor (Realm is thread-confined),
-        // then do the actual filesystem work off the main thread.
+        // Create default directories synchronously — must complete before UI
+        // renders to avoid race conditions with Realm access timing.
         let systemIDs = Array(PVSystem.all.map { $0.identifier })
-        Task.detached(priority: .utility) {
-            GameImporter.createDefaultDirectories(fm: FileManager.default, systemIdentifiers: systemIDs)
-        }
+        GameImporter.createDefaultDirectories(fm: FileManager.default, systemIdentifiers: systemIDs)
 
         /// Builds a [systemIdentifier: romsDirectoryURL] map from Realm.
         /// Uses a simple synchronous iteration instead of the heavier
