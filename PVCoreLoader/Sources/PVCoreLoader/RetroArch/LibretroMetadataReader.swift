@@ -13,9 +13,69 @@ struct LibretroMetadata {
 }
 
 enum LibretroMetadataReader {
-    /// Thread-safe cache storage using `OSAllocatedUnfairLock` to wrap the dictionary directly.
-    /// This eliminates bare lock/unlock pairs and the associated unlock-on-early-return risks.
+    /// In-memory cache: identifier → metadata (cleared each launch)
     private static let cacheStorage = OSAllocatedUnfairLock<[String: LibretroMetadata]>(initialState: [:])
+
+    // -------------------------------------------------------------------------
+    // MARK: - Disk cache
+    // -------------------------------------------------------------------------
+
+    private struct DiskCacheEntry: Codable {
+        let path: String
+        let modificationDate: Date
+        let version: String
+        let validExtensions: [String]
+    }
+
+    private struct DiskCache: Codable {
+        static let currentVersion = 2
+        var version: Int = DiskCache.currentVersion
+        /// keyed by core identifier
+        var entries: [String: DiskCacheEntry] = [:]
+    }
+
+    /// Lazily loaded disk cache — loaded once, updated as misses are resolved.
+    private static let diskCacheStorage = OSAllocatedUnfairLock<DiskCache?>(initialState: nil)
+
+    private static var diskCacheURL: URL? {
+        FileManager.default
+            .urls(for: .cachesDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("com.provenance.libretro-metadata-cache.json")
+    }
+
+    private static func loadedDiskCache() -> DiskCache {
+        diskCacheStorage.withLock { stored -> DiskCache in
+            if let existing = stored { return existing }
+            let loaded: DiskCache
+            if let url = diskCacheURL,
+               let data = try? Data(contentsOf: url),
+               let decoded = try? JSONDecoder().decode(DiskCache.self, from: data),
+               decoded.version == DiskCache.currentVersion {
+                loaded = decoded
+                DLOG("RetroArch metadata: loaded disk cache (\(decoded.entries.count) entries)")
+            } else {
+                loaded = DiskCache()
+            }
+            stored = loaded
+            return loaded
+        }
+    }
+
+    private static func persistDiskCache() {
+        guard let url = diskCacheURL else { return }
+        let snapshot = diskCacheStorage.withLock { $0 ?? DiskCache() }
+        do {
+            let data = try JSONEncoder().encode(snapshot)
+            try data.write(to: url, options: .atomic)
+            DLOG("RetroArch metadata: saved disk cache (\(snapshot.entries.count) entries)")
+        } catch {
+            WLOG("RetroArch metadata: failed to save disk cache: \(error)")
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // MARK: - Public API
+    // -------------------------------------------------------------------------
 
     static func metadata(forIdentifier identifier: String) -> LibretroMetadata? {
         #if !canImport(Darwin)
@@ -23,84 +83,193 @@ enum LibretroMetadataReader {
         #else
         let forceMetadata = ProcessInfo.processInfo.environment["PV_FORCE_RETRO_METADATA"] == "1"
         if DebuggerDetector.isAttached && !forceMetadata {
-            DLOG("RetroArch metadata: Skipping metadata load for \(identifier) because debugger is attached")
-            return nil
-        }
-        ILOG("RetroArch metadata: Loading metadata for core \(identifier)")
-
-        /// Fast path: return cached entry without doing I/O
-        if let cached = cacheStorage.withLock({ $0[identifier] }) {
-            ILOG("RetroArch metadata: Cache hit for \(identifier) - version: \(cached.version), extensions: \(cached.validExtensions.joined(separator: ", "))")
-            return cached
-        }
-
-        /// Load outside the lock so we don't block other threads during dlopen/symbol lookup
-        ILOG("RetroArch metadata: Cache miss for \(identifier), loading from framework...")
-        guard let metadata = loadMetadata(forIdentifier: identifier) else {
-            ILOG("RetroArch metadata: Failed to load metadata for \(identifier)")
+            DLOG("RetroArch metadata: skipping \(identifier) — debugger attached")
             return nil
         }
 
-        /// Store result — concurrent first-load races are benign (last writer wins)
-        cacheStorage.withLock { $0[identifier] = metadata }
+        // 1. In-memory cache (fastest path)
+        if let hit = cacheStorage.withLock({ $0[identifier] }) {
+            return hit
+        }
 
-        ILOG("RetroArch metadata: Successfully loaded and cached metadata for \(identifier) - version: \(metadata.version), extensions: \(metadata.validExtensions.joined(separator: ", "))")
-        return metadata
+        // 2. Resolve framework executable URL
+        guard let executableURL = frameworkExecutableURL(forIdentifier: identifier) else {
+            DLOG("RetroArch metadata: framework not found for \(identifier)")
+            return nil
+        }
+
+        let execPath = executableURL.path
+        let mtime = (try? FileManager.default.attributesOfItem(atPath: execPath))?[.modificationDate] as? Date
+
+        // 3. Disk cache — avoids dlopen on subsequent launches
+        let disk = loadedDiskCache()
+        if let entry = disk.entries[identifier],
+           let mtime,
+           abs(entry.modificationDate.timeIntervalSince(mtime)) < 2 {
+            DLOG("RetroArch metadata: disk cache hit for \(identifier)")
+            let meta = LibretroMetadata(version: entry.version, validExtensions: entry.validExtensions)
+            cacheStorage.withLock { $0[identifier] = meta }
+            return meta
+        }
+
+        // 4. Fast-path: Mach-O string extraction (no dlopen, no code-signing penalty)
+        ILOG("RetroArch metadata: probing \(identifier) via Mach-O")
+        var meta = probeMachO(executableURL: executableURL)
+
+        // 5. Slow-path: dlopen (first launch or Mach-O parse failed)
+        if meta == nil {
+            ILOG("RetroArch metadata: Mach-O probe failed, falling back to dlopen for \(identifier)")
+            meta = probeViadlopen(executableURL: executableURL, identifier: identifier)
+        }
+
+        guard let meta else { return nil }
+
+        // 6. Populate both caches
+        cacheStorage.withLock { $0[identifier] = meta }
+        diskCacheStorage.withLock { stored in
+            if stored == nil { stored = DiskCache() }
+            stored?.entries[identifier] = DiskCacheEntry(
+                path: execPath,
+                modificationDate: mtime ?? Date(),
+                version: meta.version,
+                validExtensions: meta.validExtensions
+            )
+        }
+        persistDiskCache()
+
+        ILOG("RetroArch metadata: cached '\(identifier)' v\(meta.version)")
+        return meta
         #endif
     }
 
+    // -------------------------------------------------------------------------
+    // MARK: - Private helpers
+    // -------------------------------------------------------------------------
+
     #if canImport(Darwin)
-    private static func loadMetadata(forIdentifier identifier: String) -> LibretroMetadata? {
-        guard let executableURL = frameworkExecutableURL(forIdentifier: identifier) else {
-            DLOG("RetroArch metadata: missing framework for \(identifier)")
-            return nil
+
+    /// Parse `__TEXT,__cstring` to extract version and extensions without dlopen.
+    private static func probeMachO(executableURL: URL) -> LibretroMetadata? {
+        guard let fileData = try? Data(contentsOf: executableURL, options: .mappedIfSafe) else { return nil }
+
+        return fileData.withUnsafeBytes { (raw: UnsafeRawBufferPointer) -> LibretroMetadata? in
+            guard let base = raw.baseAddress,
+                  raw.count > MemoryLayout<mach_header_64>.size else { return nil }
+
+            // Locate native-arch slice (handles fat binaries)
+            var hdrOffset = 0
+            let magic = base.load(as: UInt32.self)
+            if magic == 0xcafebabe || magic == 0xbebafeca {
+                let swap = (magic == 0xbebafeca)
+                let nfat = Int(machoU32(base.advanced(by: 4), swap: swap))
+                for i in 0..<nfat {
+                    let aBase = base.advanced(by: 8 + i * 20)
+                    guard 8 + (i + 1) * 20 <= raw.count else { break }
+                    if machoU32(aBase, swap: swap) == 0x0100000c { // CPU_TYPE_ARM64
+                        hdrOffset = Int(machoU32(aBase.advanced(by: 8), swap: swap))
+                        break
+                    }
+                }
+            }
+            guard hdrOffset + MemoryLayout<mach_header_64>.size <= raw.count else { return nil }
+            let hdr = base.advanced(by: hdrOffset).assumingMemoryBound(to: mach_header_64.self).pointee
+            guard hdr.magic == MH_MAGIC_64 else { return nil }
+
+            // Walk load commands to find __TEXT,__cstring
+            var cstringStart = 0, cstringLen = 0
+            var lcOff = hdrOffset + MemoryLayout<mach_header_64>.size
+            outerLoop: for _ in 0..<Int(hdr.ncmds) {
+                guard lcOff + MemoryLayout<load_command>.size <= raw.count else { break }
+                let lc = base.advanced(by: lcOff).assumingMemoryBound(to: load_command.self).pointee
+                let cmdSize = Int(lc.cmdsize)
+                guard cmdSize > 0, lcOff + cmdSize <= raw.count else { break }
+                if lc.cmd == UInt32(LC_SEGMENT_64),
+                   cmdSize >= MemoryLayout<segment_command_64>.size {
+                    let seg = base.advanced(by: lcOff).assumingMemoryBound(to: segment_command_64.self).pointee
+                    if machoSegName(seg.segname) == "__TEXT" {
+                        let sectBase = lcOff + MemoryLayout<segment_command_64>.size
+                        for s in 0..<Int(seg.nsects) {
+                            let sOff = sectBase + s * MemoryLayout<section_64>.size
+                            guard sOff + MemoryLayout<section_64>.size <= raw.count else { break }
+                            let sect = base.advanced(by: sOff).assumingMemoryBound(to: section_64.self).pointee
+                            if machoSegName(sect.sectname) == "__cstring" {
+                                cstringStart = Int(sect.offset)
+                                cstringLen   = Int(sect.size)
+                                break outerLoop
+                            }
+                        }
+                        break outerLoop
+                    }
+                }
+                lcOff += cmdSize
+            }
+            guard cstringLen > 0, cstringStart > 0,
+                  cstringStart + cstringLen <= raw.count else { return nil }
+
+            // Collect all C strings from __cstring
+            var strings: [String] = []
+            var pos = cstringStart
+            let end = cstringStart + cstringLen
+            while pos < end {
+                let cptr = base.advanced(by: pos).assumingMemoryBound(to: CChar.self)
+                var len = 0
+                while pos + len < end && cptr[len] != 0 { len += 1 }
+                if len > 0,
+                   let s = String(bytes: UnsafeRawBufferPointer(start: UnsafeRawPointer(cptr), count: len), encoding: .utf8) {
+                    strings.append(s)
+                }
+                pos += len + 1
+            }
+
+            // Find valid_extensions: pipe-separated short tokens like "gb|gbc|dmg"
+            let extRegex = try? NSRegularExpression(pattern: #"^[a-zA-Z0-9]{1,8}(\|[a-zA-Z0-9]{1,8})+$"#)
+            guard let extIdx = strings.firstIndex(where: { s in
+                let r = NSRange(s.startIndex..., in: s)
+                return extRegex?.firstMatch(in: s, range: r) != nil
+            }) else { return nil }
+
+            let extStr = strings[extIdx]
+            let exts   = extStr.split(separator: "|").map(String.init)
+
+            // Find library_name and library_version near the extensions string
+            let lo     = max(0, extIdx - 6)
+            let hi     = min(strings.count - 1, extIdx + 6)
+            let window = strings[lo...hi].filter { $0 != extStr }
+
+            let libraryName = window.first(where: { s in
+                !s.contains("|") && s.count >= 2 && s.count <= 60 &&
+                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
+            })
+            guard libraryName != nil else { return nil }
+
+            let libVersion = window.first(where: { $0 != libraryName && $0.count >= 1 && $0.count <= 30 }) ?? ""
+
+            return LibretroMetadata(version: libVersion, validExtensions: exts)
         }
+    }
 
-        ILOG("RetroArch metadata: Found framework executable at \(executableURL.path) for \(identifier)")
-
+    private static func probeViadlopen(executableURL: URL, identifier: String) -> LibretroMetadata? {
         guard let handle = dlopen(executableURL.path, RTLD_LOCAL | RTLD_LAZY) else {
-            ELOG("RetroArch metadata: failed to dlopen \(executableURL.path)")
+            ELOG("RetroArch metadata: dlopen failed for \(identifier): \(String(cString: dlerror()))")
             return nil
         }
         defer { dlclose(handle) }
-        ILOG("RetroArch metadata: Successfully dlopened framework for \(identifier)")
 
-        typealias RetroGetSystemInfoFn = @convention(c) (UnsafeMutableRawPointer?) -> Void
-        guard let symbol = dlsym(handle, "retro_get_system_info") else {
+        typealias GetSystemInfoFn = @convention(c) (UnsafeMutableRawPointer?) -> Void
+        guard let sym = dlsym(handle, "retro_get_system_info") else {
             ELOG("RetroArch metadata: retro_get_system_info missing for \(identifier)")
             return nil
         }
-        ILOG("RetroArch metadata: Found retro_get_system_info symbol for \(identifier)")
 
-        let getSystemInfo = unsafeBitCast(symbol, to: RetroGetSystemInfoFn.self)
-        var info = LibretroSystemInfo(
-            library_name: nil,
-            library_version: nil,
-            valid_extensions: nil,
-            need_fullpath: false,
-            block_extract: false
-        )
-        withUnsafeMutablePointer(to: &info) { pointer in
-            getSystemInfo(UnsafeMutableRawPointer(pointer))
-        }
-        ILOG("RetroArch metadata: Called retro_get_system_info for \(identifier)")
+        let getInfo = unsafeBitCast(sym, to: GetSystemInfoFn.self)
+        var info = LibretroSystemInfo()
+        withUnsafeMutablePointer(to: &info) { getInfo(UnsafeMutableRawPointer($0)) }
 
-        guard let versionPtr = info.library_version else {
-            DLOG("RetroArch metadata: library_version nil for \(identifier)")
-            return nil
-        }
-
+        guard let versionPtr = info.library_version else { return nil }
         let version = String(cString: versionPtr).trimmingCharacters(in: .whitespacesAndNewlines)
-        let extensions: [String]
-        if let validPtr = info.valid_extensions {
-            extensions = String(cString: validPtr)
-                .split(separator: "|")
-                .map { String($0) }
-        } else {
-            extensions = []
-        }
-
-        ILOG("RetroArch metadata: Parsed metadata for \(identifier) - library_name: \(info.library_name.map { String(cString: $0) } ?? "nil"), version: \(version), extensions: \(extensions.isEmpty ? "none" : extensions.joined(separator: ", "))")
+        let extensions: [String] = info.valid_extensions.map {
+            String(cString: $0).split(separator: "|").map(String.init)
+        } ?? []
 
         return LibretroMetadata(version: version, validExtensions: extensions)
     }
@@ -108,129 +277,85 @@ enum LibretroMetadataReader {
     private static func frameworkExecutableURL(forIdentifier identifier: String) -> URL? {
         let fileManager = FileManager.default
 
-        /// Extract the core name from identifier
-        /// Identifier format: "corename.libretro.framework" (e.g., "2048.libretro.framework", "mgba.libretro.framework")
-        /// Framework folder: "corename.libretro.framework" (e.g., "2048.libretro.framework")
-        /// Executable name: "corename.libretro" (e.g., "2048.libretro")
-
-        let coreName: String
         let frameworkFolder: String
         let executableName: String
+        let coreName: String
 
         if identifier.hasSuffix(".libretro.framework") {
-            /// Identifier is already in correct format: "2048.libretro.framework"
-            frameworkFolder = identifier
-            executableName = String(identifier.dropLast(".framework".count)) // "2048.libretro"
-            if let range = identifier.range(of: ".libretro.framework") {
-                coreName = String(identifier[..<range.lowerBound]) // "2048"
-            } else {
-                coreName = identifier
-            }
+            frameworkFolder  = identifier
+            executableName   = String(identifier.dropLast(".framework".count))
+            coreName         = String(identifier[..<(identifier.range(of: ".libretro.framework")!.lowerBound)])
         } else if identifier.hasSuffix(".libretro") {
-            /// Identifier is "2048.libretro"
-            frameworkFolder = "\(identifier).framework"
-            executableName = identifier
-            if let range = identifier.range(of: ".libretro") {
-                coreName = String(identifier[..<range.lowerBound])
-            } else {
-                coreName = identifier
-            }
+            frameworkFolder  = "\(identifier).framework"
+            executableName   = identifier
+            coreName         = String(identifier[..<(identifier.range(of: ".libretro")!.lowerBound)])
         } else {
-            /// Identifier is just "2048" - construct full names
-            coreName = identifier
-            executableName = "\(identifier).libretro"
-            frameworkFolder = "\(identifier).libretro.framework"
+            coreName         = identifier
+            executableName   = "\(identifier).libretro"
+            frameworkFolder  = "\(identifier).libretro.framework"
         }
 
-        ILOG("RetroArch metadata: Identifier '\(identifier)' -> coreName: '\(coreName)', frameworkFolder: '\(frameworkFolder)', executableName: '\(executableName)'")
-
-        let searchBases: [URL?] = [
+        let searchBases: [URL] = [
             Bundle.main.privateFrameworksURL,
             Bundle.main.bundleURL.appendingPathComponent("Frameworks", isDirectory: true),
-            Bundle.main.bundleURL
-        ]
+        ].compactMap { $0 }
 
-        /// First try direct lookup by framework folder name
-        for base in searchBases.compactMap({ $0 }) {
+        for base in searchBases {
             let frameworkURL = base.appendingPathComponent(frameworkFolder, isDirectory: true)
-            ILOG("RetroArch metadata: Checking path: \(frameworkURL.path)")
+            guard fileManager.fileExists(atPath: frameworkURL.path) else { continue }
 
-            guard fileManager.fileExists(atPath: frameworkURL.path) else {
-                continue
-            }
-
-            /// Try using Bundle to get executable
             if let bundle = Bundle(url: frameworkURL),
-               let executableURL = bundle.executableURL,
-               fileManager.fileExists(atPath: executableURL.path) {
-                ILOG("RetroArch metadata: Found framework via Bundle at \(frameworkURL.path), executable at \(executableURL.path)")
-                return executableURL
+               let exec = bundle.executableURL,
+               fileManager.fileExists(atPath: exec.path) {
+                return exec
             }
-
-            /// Fallback: construct executable path directly
-            let directExecutableURL = frameworkURL.appendingPathComponent(executableName)
-            if fileManager.fileExists(atPath: directExecutableURL.path) {
-                ILOG("RetroArch metadata: Found framework via direct path at \(frameworkURL.path), executable at \(directExecutableURL.path)")
-                return directExecutableURL
-            }
+            let direct = frameworkURL.appendingPathComponent(executableName)
+            if fileManager.fileExists(atPath: direct.path) { return direct }
         }
 
-        /// Fallback: scan Frameworks directory for matching .libretro.framework
-        ILOG("RetroArch metadata: Direct lookup failed, scanning Frameworks directory for '\(coreName).libretro.framework'")
+        // Fallback: scan Frameworks dir
         let frameworksDir = Bundle.main.bundleURL.appendingPathComponent("Frameworks", isDirectory: true)
+        guard let contents = try? fileManager.contentsOfDirectory(
+            at: frameworksDir,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: .skipsHiddenFiles
+        ) else { return nil }
 
-        guard fileManager.fileExists(atPath: frameworksDir.path) else {
-            ILOG("RetroArch metadata: Frameworks directory does not exist at \(frameworksDir.path)")
-            return nil
+        let expectedName = "\(coreName).libretro"
+        for url in contents where url.pathExtension == "framework" {
+            guard url.deletingPathExtension().lastPathComponent == expectedName else { continue }
+            if let bundle = Bundle(url: url),
+               let exec = bundle.executableURL,
+               fileManager.fileExists(atPath: exec.path) { return exec }
+            let direct = url.appendingPathComponent(expectedName)
+            if fileManager.fileExists(atPath: direct.path) { return direct }
         }
-
-        do {
-            let contents = try fileManager.contentsOfDirectory(
-                at: frameworksDir,
-                includingPropertiesForKeys: [.isDirectoryKey],
-                options: .skipsHiddenFiles
-            )
-
-            ILOG("RetroArch metadata: Found \(contents.filter { $0.pathExtension == "framework" }.count) frameworks in Frameworks directory")
-
-            for frameworkURL in contents where frameworkURL.pathExtension == "framework" {
-                let frameworkName = frameworkURL.deletingPathExtension().lastPathComponent
-
-                /// Match if framework name equals "corename.libretro"
-                let expectedFrameworkName = "\(coreName).libretro"
-                if frameworkName == expectedFrameworkName {
-                    ILOG("RetroArch metadata: Found matching framework: \(frameworkName).framework")
-
-                    /// Try using Bundle
-                    if let bundle = Bundle(url: frameworkURL),
-                       let executableURL = bundle.executableURL,
-                       fileManager.fileExists(atPath: executableURL.path) {
-                        ILOG("RetroArch metadata: Found executable via Bundle at \(executableURL.path)")
-                        return executableURL
-                    }
-
-                    /// Fallback: construct executable path directly
-                    let directExecutableURL = frameworkURL.appendingPathComponent(expectedFrameworkName)
-                    if fileManager.fileExists(atPath: directExecutableURL.path) {
-                        ILOG("RetroArch metadata: Found executable via direct path at \(directExecutableURL.path)")
-                        return directExecutableURL
-                    }
-                }
-            }
-        } catch {
-            ELOG("RetroArch metadata: Error scanning Frameworks directory: \(error)")
-        }
-
-        ILOG("RetroArch metadata: Framework not found for identifier '\(identifier)'")
         return nil
     }
+
     #endif
 }
 
+// ---------------------------------------------------------------------------
+// MARK: - Mach-O helpers
+// ---------------------------------------------------------------------------
+
+private func machoU32(_ ptr: UnsafeRawPointer, swap: Bool) -> UInt32 {
+    let v = ptr.load(as: UInt32.self)
+    return swap ? v.byteSwapped : v
+}
+
+private func machoSegName<T>(_ tuple: T) -> String {
+    withUnsafeBytes(of: tuple) { bytes in
+        String(bytes: bytes.prefix(while: { $0 != 0 }), encoding: .utf8) ?? ""
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - libretro_system_info mirror
+// ---------------------------------------------------------------------------
+
 #if canImport(Darwin)
-/// Must mirror the layout of `struct retro_system_info` from libretro.h exactly.
-/// Internal so it can be shared with `PVDynamicLibretroCoreScanner` without
-/// duplicating the struct definition (avoids layout drift between the two readers).
 @_alignment(8)
 internal struct LibretroSystemInfo {
     var library_name: UnsafePointer<CChar>? = nil
