@@ -117,9 +117,12 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Release notes live in `PVUI/Sources/PVSwiftUI/Resources/whats-new.json`.
 - `WhatsNewLoader.loadAll(...)` in `PVSwiftUI` converts JSON → `[WhatsNew]` for WhatsNewKit.
 - `ProvenanceApp` conformance calls `WhatsNewLoader.loadAll(...)` — no hardcoded entries.
-- **Agents**: NEVER add a new version entry to `whats-new.json` unless a maintainer has explicitly
-  confirmed the target version number. Do NOT invent upcoming version numbers (e.g., 3.5.0, 3.5.1).
-  If the feature is significant but the version is unconfirmed, skip the `whats-new.json` change entirely.
+- **Agents**: If the exact release version is confirmed, use it. If unconfirmed, derive the next
+  logical version from the current top entry in `whats-new.json` (e.g., bump patch: `3.4.1` → `3.4.2`).
+  Do **NOT** skip significant whats-new entries just because the exact version isn't pinned yet —
+  merged features will be in the next release. Only skip trivial/internal changes.
+- **Note**: A separate automation bot may eventually auto-generate `whats-new.json` from changelog
+  fragments. Until that workflow exists, agents should write entries directly.
 - Entries must be in **descending** version order (newest at top).
 
 ### Virtual Keyboard / Mouse
