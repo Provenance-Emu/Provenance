@@ -77,6 +77,15 @@ public struct DeltaSkin: DeltaSkinProtocol {
     /// Returns `nil` for skins that do not declare a keyboard overlay.
     public var keyboardOverlay: KeyboardOverlayConfig? { info.keyboardOverlay }
 
+    /// All theme variants bundled in this skin. Empty for legacy skins without themes.
+    public var availableThemes: [DeltaSkin.Theme] { info.themes ?? [] }
+
+    /// The currently selected theme ID, persisted per skin in UserDefaults.
+    public var selectedThemeId: String? {
+        get { DeltaSkinPreferences.shared.selectedThemeId(for: identifier) }
+        set { DeltaSkinPreferences.shared.setSelectedThemeId(newValue, for: identifier) }
+    }
+
     public func supports(_ traits: DeltaSkinTraits) -> Bool {
         let result = representation(for: traits) != nil
         ILOG("skins: supports() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(result)")
@@ -154,7 +163,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 id: "\(identifier)-button-\(index)",
                 input: input,
                 frame: item.frame,
-                extendedEdges: item.extendedEdges
+                extendedEdges: item.extendedEdges,
+                states: item.states
             )
         }
     }
@@ -184,6 +194,34 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 gameScreenFrame: rep.gameScreenFrame
             )
         ]
+    }
+
+    /// Returns the `OrientationRepresentations` for the given traits (without converting to RepresentationInfo).
+    private func orientationRepresentations(for traits: DeltaSkinTraits) -> OrientationRepresentations? {
+        guard let deviceReps = info.representations[traits.device] else { return nil }
+        var result: OrientationRepresentations?
+        switch traits.displayType {
+        case .standard:
+            result = deviceReps.standard?[traits.orientation.rawValue]
+        case .edgeToEdge:
+            result = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+            if result == nil { result = deviceReps.standard?[traits.orientation.rawValue] }
+        case .splitView:
+            result = deviceReps.splitView?[traits.orientation.rawValue]
+        case .stageManager:
+            result = deviceReps.stageManager?[traits.orientation.rawValue]
+        case .externalDisplay:
+            result = deviceReps.externalDisplay?[traits.orientation.rawValue]
+        }
+        if result == nil && traits.displayType == .standard {
+            result = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+        }
+        return result
+    }
+
+    /// Returns the animated background configuration for the given traits, if any.
+    public func backgroundAnimation(for traits: DeltaSkinTraits) -> DeltaSkinBackgroundAnimation? {
+        return orientationRepresentations(for: traits)?.backgroundAnimation
     }
 
     /// Cached last representation lookup to avoid repeated work/log spam
@@ -278,8 +316,17 @@ public struct DeltaSkin: DeltaSkinProtocol {
         }
         ILOG("skins: Got representation, attempting to load image")
 
-        // Try all candidate filenames in order until one loads
-        let candidates = rep.assets.candidates()
+        // Check if a theme overrides the asset for this device/displayType/orientation
+        var candidates: [String]
+        if let themeId = selectedThemeId,
+           let theme = availableThemes.first(where: { $0.id == themeId }),
+           let themeAsset = theme.assets?[traits.device.rawValue]?[traits.displayType.rawValue]?[traits.orientation.rawValue] {
+            // Prepend theme candidates so they are tried first, falling back to base skin
+            candidates = themeAsset.candidates() + rep.assets.candidates()
+            ILOG("skins: Theme '\(themeId)' override candidates: \(themeAsset.candidates())")
+        } else {
+            candidates = rep.assets.candidates()
+        }
         ILOG("skins: Image candidates: \(candidates)")
         var lastError: Error?
         for name in candidates {
@@ -430,6 +477,17 @@ public struct DeltaSkin: DeltaSkinProtocol {
         throw DeltaSkinError.invalidPNG
     }
 
+    /// A named visual theme variant within a skin file
+    public struct Theme: Codable, Identifiable {
+        /// Unique identifier for the theme (e.g. "dark", "neon")
+        public let id: String
+        /// Display name shown in the theme picker
+        public let name: String
+        /// Per-device asset overrides. Keyed by device rawValue → displayType → orientation → AssetRepresentation.
+        /// assets["iphone"]["standard"]["portrait"] = AssetRepresentation
+        public let assets: [String: [String: [String: AssetRepresentation]]]?
+    }
+
     /// JSON structure for DeltaSkin info.json
     public struct Info: Codable {
         /// Name displayed in Delta's skin selection menu
@@ -452,8 +510,12 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// fall back gracefully with no keyboard shown.
         let keyboardOverlay: KeyboardOverlayConfig?
 
+        /// Optional list of named visual theme variants bundled in this skin.
+        /// Legacy skins that omit this key have no themes (empty array).
+        let themes: [Theme]?
+
         private enum CodingKeys: String, CodingKey {
-            case name, identifier, gameTypeIdentifier, debug, representations, keyboardOverlay
+            case name, identifier, gameTypeIdentifier, debug, representations, keyboardOverlay, themes
         }
 
         public init(from decoder: Decoder) throws {
@@ -477,6 +539,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
             representations = reps
             keyboardOverlay = try container.decodeIfPresent(KeyboardOverlayConfig.self, forKey: .keyboardOverlay)
+            themes = try container.decodeIfPresent([Theme].self, forKey: .themes)
         }
     }
 
@@ -535,8 +598,11 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Frame for the game screen
         let gameScreenFrame: CGRect?
 
+        /// Optional animated background configuration
+        let backgroundAnimation: DeltaSkinBackgroundAnimation?
+
         private enum CodingKeys: String, CodingKey {
-            case assets, items, screens, mappingSize, extendedEdges, translucent, gameScreenFrame
+            case assets, items, screens, mappingSize, extendedEdges, translucent, gameScreenFrame, backgroundAnimation
         }
 
         public init(from decoder: Decoder) throws {
@@ -571,6 +637,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
             } else {
                 gameScreenFrame = nil
             }
+
+            backgroundAnimation = try container.decodeIfPresent(DeltaSkinBackgroundAnimation.self, forKey: .backgroundAnimation)
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -585,6 +653,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
             if let frame = gameScreenFrame {
                 try frame.encodeDeltaSkin(to: container.superEncoder(forKey: .gameScreenFrame))
             }
+
+            try container.encodeIfPresent(backgroundAnimation, forKey: .backgroundAnimation)
         }
 
         /// Convert to RepresentationInfo

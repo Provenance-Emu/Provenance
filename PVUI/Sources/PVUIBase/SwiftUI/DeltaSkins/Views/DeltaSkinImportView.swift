@@ -10,6 +10,7 @@ public struct DeltaSkinImportView: View {
     @State private var isImporting = false
     @State private var importError: String?
     @State private var importSuccess = false
+    @State private var validationResult: DeltaSkinValidationResult?
 
     public init() {}
 
@@ -107,17 +108,37 @@ public struct DeltaSkinImportView: View {
                 handleFileImport(result)
             }
             #endif
+            .sheet(item: $validationResult) { result in
+                NavigationStack {
+                    DeltaSkinValidationResultView(result: result)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("Dismiss") {
+                                    validationResult = nil
+                                }
+                            }
+                        }
+                }
+            }
         }
     }
 
     private func handleFileImport(_ result: Result<[URL], Error>) {
         importError = nil
         importSuccess = false
+        validationResult = nil
 
         switch result {
         case .success(let urls):
             guard let url = urls.first else {
                 importError = "No file was selected"
+                return
+            }
+
+            // Validate the skin before importing
+            let validation = DeltaSkinValidator.validate(url: url)
+            if !validation.isValid {
+                validationResult = validation
                 return
             }
 
@@ -134,6 +155,10 @@ public struct DeltaSkinImportView: View {
                         isImporting = false
                         importSuccess = true
                         importError = nil
+                        // Show warnings (non-blocking) if any
+                        if !validation.warnings.isEmpty {
+                            validationResult = validation
+                        }
                     }
 
                     // Reload skins

@@ -41,11 +41,20 @@ public protocol DeltaSkinProtocol: Identifiable, Equatable {
     /// Optional keyboard overlay configuration embedded in the skin.
     /// Returns `nil` for skins that do not declare a keyboard overlay.
     var keyboardOverlay: KeyboardOverlayConfig? { get }
+
+    /// All named theme variants bundled in this skin. Empty for legacy skins.
+    var availableThemes: [DeltaSkin.Theme] { get }
+
+    /// The currently selected theme ID for this skin, or nil for the default appearance.
+    var selectedThemeId: String? { get set }
 }
 
 public extension DeltaSkinProtocol {
     /// Default implementation — skins that do not override this return `nil`.
     var keyboardOverlay: KeyboardOverlayConfig? { nil }
+
+    /// Default implementation — skins without themes return an empty array.
+    var availableThemes: [DeltaSkin.Theme] { [] }
 }
 
 public extension Identifiable where  Self: DeltaSkinProtocol  {
