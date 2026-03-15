@@ -199,7 +199,15 @@ public struct iOSCheatsView: View {
     }
 
     private func loadCheats() {
-        let valid = cheats.filter { !$0.isInvalidated }
+        // Re-query Realm when gameMD5 is available so newly added/imported cheats
+        // (written after this view was presented) are reflected on reload.
+        let source: [PVCheats]
+        if let md5 = gameMD5, let realm = try? Realm() {
+            source = Array(realm.objects(PVCheats.self).filter("game.md5Hash == %@", md5))
+        } else {
+            source = cheats
+        }
+        let valid = source.filter { !$0.isInvalidated }
         let filtered: [PVCheats]
         if let coreID = coreID {
             filtered = valid.filter { $0.core?.identifier == coreID }
