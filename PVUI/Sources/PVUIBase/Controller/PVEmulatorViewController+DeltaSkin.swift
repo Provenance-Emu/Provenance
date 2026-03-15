@@ -258,6 +258,9 @@ extension PVEmulatorViewController {
                     // Don't force layout here - applyViewportFromCurrentSkin handles layout naturally
                     self.applyViewportFromCurrentSkin()
 
+                    // Wire up any CIFilters declared in the skin's screen definitions
+                    self.applyScreenFiltersFromCurrentSkin()
+
                     // Pause emulation for 1 second after skin is loaded to ensure smooth startup
                     self.pauseEmulationTemporarily()
                 }
@@ -988,6 +991,57 @@ extension PVEmulatorViewController {
         for (index, subview) in view.subviews.enumerated() {
             output += "\(indent)  🔹 Subview [\(index)]:\n"
             buildViewHierarchyString(for: subview, level: level + 1, output: &output)
+        }
+    }
+
+    // MARK: - Screen Filter Wiring
+
+    /// Reads the current skin's first-screen CIFilters and applies the first one to the Metal
+    /// rendering pipeline.  When the skin defines no filters the existing filter (if any) is
+    /// cleared so we don't bleed a previous skin's effect into the new one.
+    internal func applyScreenFiltersFromCurrentSkin() {
+        guard let skin = currentSkin else {
+            // No skin active — clear any lingering filter
+            applyScreenFilter(nil)
+            return
+        }
+
+        #if !os(tvOS)
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #else
+        let device: DeltaSkinDevice = .tv
+        #endif
+        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+        let traits = DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: orientation)
+
+        // Collect all CIFilters from every screen in the current representation and
+        // wrap the first one so it can be applied via the existing Metal CIFilter path.
+        let allFilters: [CIFilter] = (skin.screens(for: traits) ?? skin.screenGroups(for: traits)?.flatMap(\.screens) ?? [])
+            .compactMap { $0.filters }
+            .flatMap { $0 }
+
+        guard let firstFilter = allFilters.first else {
+            ILOG("skins: Skin '\(skin.name)' has no screen filters — clearing any previous filter")
+            applyScreenFilter(nil)
+            return
+        }
+
+        // Build a lightweight FilterInfo so we can construct a DeltaSkinScreenFilter.
+        // We only need the CIFilter name; parameters are already baked into the CIFilter object.
+        let filterInfo = DeltaSkin.FilterInfo(name: firstFilter.name)
+        if let screenFilter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
+            // Copy the parameter values from the already-configured filter onto the wrapper's filter.
+            // DeltaSkinScreenFilter creates a fresh CIFilter, so we need to transfer the values.
+            for key in (firstFilter.inputKeys as? [String] ?? []) where key != "inputImage" {
+                if let value = firstFilter.value(forKey: key) {
+                    screenFilter.filter.setValue(value, forKey: key)
+                }
+            }
+            ILOG("skins: Applying skin screen filter '\(firstFilter.name)' from skin '\(skin.name)'")
+            applyScreenFilter(screenFilter)
+        } else {
+            ELOG("skins: Failed to create DeltaSkinScreenFilter for '\(firstFilter.name)'")
+            applyScreenFilter(nil)
         }
     }
 }

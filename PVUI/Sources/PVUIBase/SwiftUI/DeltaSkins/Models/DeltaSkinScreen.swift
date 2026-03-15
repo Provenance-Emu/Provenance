@@ -1,4 +1,5 @@
 import CoreGraphics
+import CoreImage
 
 /// Represents a screen area in a DeltaSkin
 public struct DeltaSkinScreen: Identifiable, Codable {
@@ -16,21 +17,27 @@ public struct DeltaSkinScreen: Identifiable, Codable {
     /// Screen placement type (controller or game)
     public let placement: DeltaSkinScreenPlacement
 
-    /// Optional CoreImage filters to apply
+    /// Optional CoreImage filters to apply at render time.
+    /// Constructed from the `filters` array in the skin's `info.json` during decoding.
     public let filters: [CIFilter]?
+
+    /// Original filter specs decoded from JSON, preserved for round-trip encoding.
+    public let filterInfos: [DeltaSkin.FilterInfo]?
 
     public init(
         id: String,
         inputFrame: CGRect?,
         outputFrame: CGRect?,
         placement: DeltaSkinScreenPlacement,
-        filters: [CIFilter]?
+        filters: [CIFilter]?,
+        filterInfos: [DeltaSkin.FilterInfo]? = nil
     ) {
         self.id = id
         self.inputFrame = inputFrame
         self.outputFrame = outputFrame
         self.placement = placement
         self.filters = filters
+        self.filterInfos = filterInfos
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -47,8 +54,16 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         inputFrame = try container.decodeIfPresent(CGRect.self, forKey: .inputFrame)
         outputFrame = try container.decodeIfPresent(CGRect.self, forKey: .outputFrame)
         placement = try container.decode(DeltaSkinScreenPlacement.self, forKey: .placement)
-        // Handle CIFilter decoding separately since it's not Codable
-        filters = nil // We'll need special handling for filters
+
+        // Decode the `filters` array as [DeltaSkin.FilterInfo] and construct CIFilter instances.
+        // DeltaSkinScreenFilter handles parameter mapping (numbers, vectors, colors, etc.).
+        if let infos = try container.decodeIfPresent([DeltaSkin.FilterInfo].self, forKey: .filters) {
+            filterInfos = infos
+            filters = infos.compactMap { DeltaSkinScreenFilter(filterInfo: $0)?.filter }
+        } else {
+            filterInfos = nil
+            filters = nil
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -57,7 +72,8 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         try container.encodeIfPresent(inputFrame, forKey: .inputFrame)
         try container.encodeIfPresent(outputFrame, forKey: .outputFrame)
         try container.encode(placement, forKey: .placement)
-        // Handle CIFilter encoding separately
+        // Re-encode the original FilterInfo specs so round-tripped skins remain valid.
+        try container.encodeIfPresent(filterInfos, forKey: .filters)
     }
 }
 

@@ -86,6 +86,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                     currentSkin = skin
                     DLOG("🎮 SKIN: Set currentSkin from notification: \(skin.name)")
                     applyViewportFromCurrentSkin()
+                    applyScreenFiltersFromCurrentSkin()
                 } else {
                     DLOG("🎮 SKIN: Skin \(skin.name) from notification doesn't support current device, skipping")
                 }
