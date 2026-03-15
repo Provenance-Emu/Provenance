@@ -1,5 +1,6 @@
 import CoreGraphics
 import CoreImage
+import PVLogging
 
 // MARK: - System native resolutions
 
@@ -27,8 +28,7 @@ public enum DeltaSkinNativeResolution {
             let data = try? Data(contentsOf: url),
             let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else {
-            assertionFailure("DeltaSkinNativeResolution: failed to load or parse system-native-resolutions.json — aspect-ratio enforcement will degrade to 4:3 fallback")
-            print("DeltaSkinNativeResolution: failed to load or parse system-native-resolutions.json")
+            ELOG("DeltaSkinNativeResolution: failed to load or parse system-native-resolutions.json — aspect-ratio enforcement will degrade to 4:3 fallback")
             return [:]
         }
         var result: [String: CGSize] = [:]
