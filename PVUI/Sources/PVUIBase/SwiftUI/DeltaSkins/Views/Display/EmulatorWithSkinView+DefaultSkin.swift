@@ -340,10 +340,10 @@ struct DefaultControllerSkinView: View {
                 // Top row with shoulder buttons, menu and turbo buttons
                 VStack {
                     HStack {
-                        // Left shoulder buttons
+                        // Left shoulder buttons (L2 on outer/left edge)
                         HStack(spacing: 15) {
-                            shoulderButton(label: "L", color: .gray)
                             shoulderButton(label: "L2", color: .gray)
+                            shoulderButton(label: "L", color: .gray)
                             shoulderButton(label: "L3", color: .gray)
                         }
                         .padding(.leading, 20)
@@ -358,11 +358,11 @@ struct DefaultControllerSkinView: View {
 
                         Spacer()
 
-                        // Right shoulder buttons
+                        // Right shoulder buttons (R2 on outer/right edge)
                         HStack(spacing: 15) {
                             shoulderButton(label: "R3", color: .gray)
-                            shoulderButton(label: "R2", color: .gray)
                             shoulderButton(label: "R", color: .gray)
+                            shoulderButton(label: "R2", color: .gray)
                         }
                         .padding(.trailing, 20)
                     }
@@ -770,11 +770,11 @@ struct DefaultControllerSkinView: View {
         VStack(spacing: 15) {
             // Top row - L/R buttons and menu/turbo
             HStack(spacing: 15) {
-                // L buttons
+                // L buttons (L2 on outer/left edge)
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
-                        shoulderButton(label: "L", color: .gray)
                         shoulderButton(label: "L2", color: .gray)
+                        shoulderButton(label: "L", color: .gray)
                     }
                     shoulderButton(label: "L3", color: .gray)
                 }
@@ -789,7 +789,7 @@ struct DefaultControllerSkinView: View {
 
                 Spacer()
 
-                // R buttons
+                // R buttons (R2 on outer/right edge)
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
                         shoulderButton(label: "R", color: .gray)
@@ -1378,13 +1378,13 @@ struct DefaultControllerSkinView: View {
                     Spacer().frame(height: 5)
 
                     HStack {
-                        // Left shoulder buttons
+                        // Left shoulder buttons (L2 on outer/left edge)
                         HStack(spacing: 15) {
-                            if hasControl(type: "PVLeftShoulderButton", title: "L", in: layout) {
-                                shoulderButton(label: "L", color: .gray)
-                            }
                             if hasControl(type: "PVLeftShoulderButton", title: "L2", in: layout) {
                                 shoulderButton(label: "L2", color: .gray)
+                            }
+                            if hasControl(type: "PVLeftShoulderButton", title: "L", in: layout) {
+                                shoulderButton(label: "L", color: .gray)
                             }
                             if hasControl(type: "PVLeftAnalogButton", title: "L3", in: layout) {
                                 shoulderButton(label: "L3", color: .gray)
@@ -1402,16 +1402,16 @@ struct DefaultControllerSkinView: View {
 
                         Spacer()
 
-                        // Right shoulder buttons
+                        // Right shoulder buttons (R2 on outer/right edge)
                         HStack(spacing: 15) {
                             if hasControl(type: "PVRightAnalogButton", title: "R3", in: layout) {
                                 shoulderButton(label: "R3", color: .gray)
                             }
-                            if hasControl(type: "PVRightShoulderButton", title: "R2", in: layout) {
-                                shoulderButton(label: "R2", color: .gray)
-                            }
                             if hasControl(type: "PVRightShoulderButton", title: "R", in: layout) {
                                 shoulderButton(label: "R", color: .gray)
+                            }
+                            if hasControl(type: "PVRightShoulderButton", title: "R2", in: layout) {
+                                shoulderButton(label: "R2", color: .gray)
                             }
                         }
                         .padding(.trailing, 20)
@@ -1596,17 +1596,17 @@ struct DefaultControllerSkinView: View {
         VStack(spacing: 8) {
             // Top row - utility buttons and system-specific shoulder buttons
             HStack(spacing: 10) {
-                // L buttons
+                // L buttons (L2 on outer/left edge)
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
+                        // Check if L2 buttons are in the layout (outer edge first)
+                        if hasControl(type: "PVLeftShoulderButton", title: "L2", in: layout) {
+                            shoulderButton(label: "L2", color: .gray)
+                        }
                         // Check if L1/L buttons are in the layout
                         if hasControl(type: "PVLeftShoulderButton", title: "L1", in: layout) ||
                             hasControl(type: "PVLeftShoulderButton", title: "L", in: layout) {
                             shoulderButton(label: "L", color: .gray)
-                        }
-                        // Check if L2 buttons are in the layout
-                        if hasControl(type: "PVLeftShoulderButton", title: "L2", in: layout) {
-                            shoulderButton(label: "L2", color: .gray)
                         }
                     }
                     // Check if L3 buttons are in the layout
@@ -1625,7 +1625,7 @@ struct DefaultControllerSkinView: View {
 
                 Spacer()
 
-                // R buttons
+                // R buttons (R2 on outer/right edge)
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
                         // Check if R1/R buttons are in the layout
@@ -1633,7 +1633,7 @@ struct DefaultControllerSkinView: View {
                             hasControl(type: "PVRightShoulderButton", title: "R", in: layout) {
                             shoulderButton(label: "R", color: .gray)
                         }
-                        // Check if R2 buttons are in the layout
+                        // Check if R2 buttons are in the layout (outer edge last)
                         if hasControl(type: "PVRightShoulderButton", title: "R2", in: layout) {
                             shoulderButton(label: "R2", color: .gray)
                         }
