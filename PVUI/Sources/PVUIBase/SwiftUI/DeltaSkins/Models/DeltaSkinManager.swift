@@ -18,7 +18,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Callers that read `loadedSkins` directly should gate on this property rather
     /// than `hasScanned`, which is queue-confined and becomes true before the
     /// MainActor update of `loadedSkins` has executed.
-    @MainActor @Published public private(set) var skinsAreLoaded: Bool = false
+    @Published public private(set) var skinsAreLoaded: Bool = false
 
     /// Flag to track if skins have been scanned at least once (queue-confined).
     /// Controls the caching fast-path in `availableSkins(forceRescan:)`.
