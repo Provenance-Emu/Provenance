@@ -1,0 +1,34 @@
+{
+  "_comment": "Maps DeltaSkinGameType case names to hardware framebuffer dimensions (width x height in pixels). Used when maintainAspectRatio is true and the emulator core does not supply an aspect ratio at runtime. Systems not listed here fall back to 4:3.",
+
+  "gb":              { "width": 160, "height": 144 },
+  "gbc":             { "width": 160, "height": 144 },
+  "gba":             { "width": 240, "height": 160 },
+  "pokemonMini":     { "width":  96, "height":  64 },
+
+  "genesis":         { "width": 320, "height": 224 },
+  "gamegear":        { "width": 160, "height": 144 },
+  "masterSystem":    { "width": 256, "height": 192 },
+  "segaCD":          { "width": 320, "height": 224 },
+  "sega32X":         { "width": 320, "height": 224 },
+  "sg1000":          { "width": 256, "height": 192 },
+
+  "psx":             { "width": 320, "height": 240 },
+  "psp":             { "width": 480, "height": 272 },
+
+  "threeDS":         { "width": 400, "height": 240 },
+
+  "atari2600":       { "width": 160, "height": 192 },
+  "atari7800":       { "width": 320, "height": 240 },
+  "lynx":            { "width": 160, "height": 102 },
+
+  "ngp":             { "width": 160, "height": 152 },
+  "ngpc":            { "width": 160, "height": 152 },
+
+  "wonderswan":      { "width": 224, "height": 144 },
+  "wonderswancolor": { "width": 224, "height": 144 },
+
+  "vectrex":         { "width": 256, "height": 256 },
+  "supervision":     { "width": 160, "height": 160 },
+  "megaduck":        { "width": 160, "height": 144 }
+}

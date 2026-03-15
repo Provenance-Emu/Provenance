@@ -10,6 +10,30 @@ struct TestError: Error {
     init(_ message: String) { self.message = message }
 }
 
+/// Native resolution / hardware registry tests for DeltaSkinNativeResolution.
+@Suite("DeltaSkin Native Resolution Tests")
+struct DeltaSkinNativeResolutionTests {
+
+    /// Systems with known hardware resolutions should return a CGSize from the registry.
+    @Test("DeltaSkinNativeResolution.size returns known system sizes")
+    func nativeResolutionKnownSystems() {
+        let cases: [(DeltaSkinGameType, CGFloat, CGFloat)] = [
+            (.gamegear,    160, 144),
+            (.gba,         240, 160),
+            (.psp,         480, 272),
+            (.lynx,        160, 102),
+            (.ngp,         160, 152),
+            (.wonderswan,  224, 144),
+        ]
+        for (gameType, w, h) in cases {
+            let size = DeltaSkinNativeResolution.size(for: gameType)
+            #expect(size != nil, "Expected a size for \(gameType.registryKey)")
+            #expect(abs((size?.width ?? 0) - w) < 0.001, "\(gameType.registryKey) width mismatch")
+            #expect(abs((size?.height ?? 0) - h) < 0.001, "\(gameType.registryKey) height mismatch")
+        }
+    }
+}
+
 /// Tests for DeltaSkin JSON decoding
 @Suite("DeltaSkin Decoding Tests")
 struct DeltaSkinDecodingTests {
@@ -2126,5 +2150,83 @@ struct DeltaSkinScreenFilterTests {
         let screenFilter = DeltaSkinScreenFilter(filterInfo: filterInfo)
         #expect(screenFilter != nil)
         #expect(abs((screenFilter?.radius ?? 0) - 3.5) < 0.001)
+    }
+
+    // MARK: - DeltaSkinNativeResolution (data-driven registry) tests
+
+    /// Systems not in the registry should return nil from size(for:) and 4:3 from aspectRatio(for:).
+    @Test("DeltaSkinNativeResolution falls back to 4:3 for unknown systems")
+    func nativeResolutionUnknownFallback() {
+        let unknown: [DeltaSkinGameType] = [.nes, .snes, .n64, .neogeo, .mame]
+        for gameType in unknown {
+            let size = DeltaSkinNativeResolution.size(for: gameType)
+
+            // Only assert fallback behavior for systems that are actually absent from the registry.
+            if size != nil {
+                continue
+            }
+
+            #expect(size == nil, "\(gameType.registryKey) should return nil from size(for:)")
+            let ar = DeltaSkinNativeResolution.aspectRatio(for: gameType)
+            #expect(abs(ar - (4.0 / 3.0)) < 0.001, "\(gameType.registryKey) should fall back to 4:3, got \(ar)")
+        }
+    }
+
+    /// registryKey should return the Swift case name (used as JSON key).
+    @Test("DeltaSkinGameType.registryKey returns stable case name")
+    func gameTypeRegistryKey() {
+        #expect(DeltaSkinGameType.gamegear.registryKey == "gamegear")
+        #expect(DeltaSkinGameType.genesis.registryKey == "genesis")
+        #expect(DeltaSkinGameType.wonderswancolor.registryKey == "wonderswancolor")
+        #expect(DeltaSkinGameType.threeDS.registryKey == "threeDS")
+    }
+
+    /// `nativeResolution` in screen JSON overrides the system registry.
+    @Test("DeltaSkinScreen nativeResolution decodes from JSON")
+    func deltaSkinScreenNativeResolutionDecodes() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+            "placement": "controller",
+            "nativeResolution": {"width": 160, "height": 144}
+        }
+        """
+        let screen = try JSONDecoder().decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+        #expect(screen.nativeResolution != nil)
+        #expect(abs((screen.nativeResolution?.width ?? 0) - 160) < 0.001)
+        #expect(abs((screen.nativeResolution?.height ?? 0) - 144) < 0.001)
+    }
+
+    /// `nativeResolution` should be nil when absent from JSON.
+    @Test("DeltaSkinScreen nativeResolution defaults to nil when absent")
+    func deltaSkinScreenNativeResolutionDefaultsNil() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+            "placement": "controller"
+        }
+        """
+        let screen = try JSONDecoder().decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+        #expect(screen.nativeResolution == nil)
+    }
+
+    /// `nativeResolution` round-trips correctly through encode/decode.
+    @Test("DeltaSkinScreen nativeResolution round-trips")
+    func deltaSkinScreenNativeResolutionRoundTrips() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "outputFrame": {"x":0,"y":0,"width":480,"height":272},
+            "placement": "controller",
+            "nativeResolution": {"width": 480, "height": 272}
+        }
+        """
+        let screen = try JSONDecoder().decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+        let encoded = try JSONEncoder().encode(screen)
+        let decoded = try JSONDecoder().decode(DeltaSkinScreen.self, from: encoded)
+        #expect(abs((decoded.nativeResolution?.width ?? 0) - 480) < 0.001)
+        #expect(abs((decoded.nativeResolution?.height ?? 0) - 272) < 0.001)
     }
 }

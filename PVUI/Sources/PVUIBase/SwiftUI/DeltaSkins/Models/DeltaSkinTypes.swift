@@ -692,6 +692,11 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
 
     // MARK: - Identifier Strings
 
+    /// Stable string key used to look up this system in `system-native-resolutions.json`.
+    /// Returns the Swift case name (e.g. `"gamegear"`, `"genesis"`), which is also the
+    /// key used as the JSON dictionary key.
+    public var registryKey: String { String(describing: self) }
+
     /// Delta-style identifier (when known)
     public var deltaIdentifierString: String? {
         switch self {
