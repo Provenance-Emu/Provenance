@@ -34,11 +34,16 @@ public enum SaveStateVersionChecker {
     /// Normalizes a version string by trimming whitespace and returning `nil` for empty
     /// strings or known sentinel values such as `"Unknown"` (case-insensitive) that
     /// indicate the version was never recorded (e.g. CloudKit-synced save states).
+    /// Sentinel values that indicate the version is unreliable and should not trigger
+    /// a mismatch warning. "nightly" builds change constantly but the string stays the
+    /// same, and "Unknown" means the version was never recorded.
+    private static let ignoredVersions: Set<String> = ["unknown", "nightly", "n/a", "dev", "git"]
+
     private static func normalizedVersion(_ version: String?) -> String? {
         guard let v = version?.trimmingCharacters(in: .whitespacesAndNewlines), !v.isEmpty else {
             return nil
         }
-        return v.caseInsensitiveCompare("unknown") == .orderedSame ? nil : v
+        return ignoredVersions.contains(v.lowercased()) ? nil : v
     }
 
     /// Returns a `SaveStateVersionMismatch` if the save state was created with a different

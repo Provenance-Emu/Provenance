@@ -593,13 +593,13 @@ struct RetroMenuView: View {
             // SAVE STATE — creates a new save
             menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroCyan) {
                 let screenshot = emulatorVC.captureScreenshot()
-                dismissAction(true)
                 Task { @MainActor in
                     do {
                         try await emulatorVC.createNewSaveState(auto: false, screenshot: screenshot)
                     } catch {
                         ELOG("Failed to save state: \(error.localizedDescription)")
                     }
+                    dismissAction(true)
                 }
             }
             .opacity(supportsSaveStates ? 1.0 : 0.4)
