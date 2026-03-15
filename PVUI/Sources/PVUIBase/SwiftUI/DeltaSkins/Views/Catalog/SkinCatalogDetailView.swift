@@ -27,6 +27,9 @@ public struct SkinCatalogDetailView: View {
     @State private var glowIntensity: CGFloat = 0.5
     @State private var downloadTask: Task<Void, Never>?
 
+    /// Observe the skin manager so we can detect already-installed skins.
+    @StateObject private var skinManager = DeltaSkinManager.shared
+
     // MARK: - Types
 
     private enum DownloadState: Equatable {
@@ -69,6 +72,14 @@ public struct SkinCatalogDetailView: View {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
             }
+            // Check if this skin is already installed locally so the
+            // action section shows "INSTALLED" instead of "DOWNLOAD".
+            checkIfAlreadyInstalled()
+        }
+        .onChange(of: skinManager.skinsAreLoaded) { _, loaded in
+            // Re-check once skins finish loading (scan may complete after
+            // onAppear if it was triggered lazily).
+            if loaded { checkIfAlreadyInstalled() }
         }
         .onDisappear {
             downloadTask?.cancel()
@@ -590,6 +601,41 @@ public struct SkinCatalogDetailView: View {
         return entry.systems.lazy.compactMap {
             DeltaSkinGameType.fromAnyString($0)?.systemIdentifier
         }.first
+    }
+
+    // MARK: - Installed Check
+
+    /// Sets `downloadState` to `.installed` when the catalog entry matches a
+    /// locally installed skin. Uses the same multi-strategy matching as the
+    /// browser grid (identifier, filename, name).
+    private func checkIfAlreadyInstalled() {
+        // Only override when we haven't already started a download/install.
+        guard downloadState == .idle else { return }
+
+        let skins = skinManager.loadedSkins
+        guard !skins.isEmpty else { return }
+
+        let isInstalled: Bool = {
+            // 1. Identifier match
+            if skins.contains(where: { $0.identifier == entry.id }) { return true }
+
+            // 2. Filename match
+            let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
+            if !catalogStem.isEmpty,
+               skins.contains(where: { $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem }) {
+                return true
+            }
+
+            // 3. Name match (case-insensitive)
+            let nameLower = entry.name.lowercased()
+            if skins.contains(where: { $0.name.lowercased() == nameLower }) { return true }
+
+            return false
+        }()
+
+        if isInstalled {
+            downloadState = .installed
+        }
     }
 
     // MARK: - Download & Install Logic

@@ -131,6 +131,13 @@ public struct SkinCatalogBrowserView: View {
                 glowIntensity = 0.8
             }
             Task { await loadCatalog() }
+            // Ensure local skins are scanned so we can show installed badges.
+            // The scan is deferred by default, so loadedSkins may be empty.
+            if !skinManager.skinsAreLoaded {
+                Task {
+                    _ = try? await skinManager.availableSkins(forceRescan: false)
+                }
+            }
         }
         .onChange(of: searchText) { _, _ in
             scheduleFilterUpdate()
@@ -296,7 +303,7 @@ public struct SkinCatalogBrowserView: View {
                 spacing: 20
             ) {
                 ForEach(entries) { entry in
-                    let isInstalled = skinManager.loadedSkins.contains { $0.identifier == entry.id }
+                    let isInstalled = isSkinInstalled(entry)
                     NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
                         CatalogSkinCard(entry: entry, glowIntensity: glowIntensity, isInstalled: isInstalled)
                     }
@@ -434,6 +441,40 @@ public struct SkinCatalogBrowserView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
+    }
+
+    // MARK: - Installed Check
+
+    /// Checks whether a catalog entry matches any locally installed skin.
+    ///
+    /// Matching is done in priority order:
+    /// 1. Catalog `id` matches the skin's internal `identifier` (exact match).
+    /// 2. The download URL filename (without extension) matches the skin's file on disk.
+    /// 3. The catalog `name` matches the skin's `name` (case-insensitive).
+    private func isSkinInstalled(_ entry: SkinCatalogEntry) -> Bool {
+        let skins = skinManager.loadedSkins
+        guard !skins.isEmpty else { return false }
+
+        // 1. Identifier match (most reliable when catalog id == info.json identifier)
+        if skins.contains(where: { $0.identifier == entry.id }) {
+            return true
+        }
+
+        // 2. Filename match: compare the download URL stem to the local file stem
+        let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
+        if !catalogStem.isEmpty, skins.contains(where: {
+            $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem
+        }) {
+            return true
+        }
+
+        // 3. Name match (case-insensitive fallback)
+        let entryNameLower = entry.name.lowercased()
+        if skins.contains(where: { $0.name.lowercased() == entryNameLower }) {
+            return true
+        }
+
+        return false
     }
 
     // MARK: - Data Loading
