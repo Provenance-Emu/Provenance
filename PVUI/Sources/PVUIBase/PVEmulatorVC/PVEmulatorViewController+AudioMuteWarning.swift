@@ -27,11 +27,10 @@ extension PVEmulatorViewController {
     /// Call shortly after emulation starts to warn if the device audio
     /// is muted or volume is at zero. Only fires once per app session.
     func checkAudioMuteWarningAfterDelay() {
-        guard !Self.hasShownAudioMuteWarning else { return }
-
         // Delay so the game has time to load and the user sees the emulator first.
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-            self?.showAudioMuteWarningIfNeeded()
+            guard let self = self, !Self.hasShownAudioMuteWarning else { return }
+            self.showAudioMuteWarningIfNeeded()
         }
     }
 
