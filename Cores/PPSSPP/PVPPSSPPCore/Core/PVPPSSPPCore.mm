@@ -537,6 +537,10 @@ void System_SendMessage(const char *command, const char *parameter) {
 void System_Toast(const char *text) {
     if (text && *text) {
         NSString *message = [NSString stringWithUTF8String:text];
+        if (!message) {
+            // Text was not valid UTF-8; avoid posting a toast with a nil message.
+            return;
+        }
         [PVOSDNotification postMessage:message type:PVOSDTypeInfo duration:3.0];
     }
 }
