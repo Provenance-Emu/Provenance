@@ -2155,7 +2155,6 @@ private struct DeltaSkinsSection: View {
             }
             .frame(maxWidth: .infinity)
 
-
             // Button to select skins
             NavigationLink {
                 SystemSkinBrowserView()
