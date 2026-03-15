@@ -68,6 +68,20 @@ public struct DeltaSkinValidator {
             return DeltaSkinValidationResult(findings: findings)
         }
 
+        // Directory-based (.deltaskin package) skins are supported by DeltaSkinManager
+        // but cannot be validated as ZIP archives — skip ZIP validation for them.
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
+            return DeltaSkinValidationResult(findings: [
+                DeltaSkinValidationFinding(
+                    severity: .info,
+                    title: "Directory skin",
+                    detail: "This skin uses the directory/package format. Archive validation skipped.",
+                    suggestion: nil
+                )
+            ])
+        }
+
         // Try to open ZIP archive
         guard let archive = Archive(url: url, accessMode: .read) else {
             return DeltaSkinValidationResult(findings: findings + [
