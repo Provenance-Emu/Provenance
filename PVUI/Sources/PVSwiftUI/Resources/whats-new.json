@@ -504,48 +504,6 @@
     ]
   },
   {
-    "version": "3.5.1",
-    "title": "Skins: Manic EMU Feature Parity",
-    "features": [
-      {
-        "symbolName": "paintpalette.fill",
-        "symbolColor": "purple",
-        "title": "Animated Skin Backgrounds",
-        "subtitle": "Skins can now specify frame-sequence, APNG, or GIF animated backgrounds that play behind the game screen."
-      },
-      {
-        "symbolName": "hand.tap.fill",
-        "symbolColor": "orange",
-        "title": "Per-Button Haptic Patterns",
-        "subtitle": "Each button in a skin can declare its own haptic style (light/medium/heavy/soft/rigid) and intensity — defined right in the skin's info.json."
-      },
-      {
-        "symbolName": "keyboard.fill",
-        "symbolColor": "blue",
-        "title": "Keyboard Overlay in Skins",
-        "subtitle": "Computer-era skins can now show a full virtual keyboard overlay during gameplay, with support for C64, ZX Spectrum, Amstrad CPC, and Atari ST layouts."
-      },
-      {
-        "symbolName": "circle.grid.2x2.fill",
-        "symbolColor": "green",
-        "title": "Multi-Theme Skin Variants",
-        "subtitle": "A single skin file can bundle multiple named themes (e.g., light/dark/neon). Pick your favourite theme per skin from the skin picker."
-      },
-      {
-        "symbolName": "doc.badge.gearshape",
-        "symbolColor": "red",
-        "title": "Skin Validator",
-        "subtitle": "Importing a broken skin now shows a validation report with severity-tagged findings and actionable fix suggestions instead of a silent failure."
-      },
-      {
-        "symbolName": "aspectratio.fill",
-        "symbolColor": "yellow",
-        "title": "GameGear & Legacy Handheld Fixes",
-        "subtitle": "Fixed screen-fill and aspect-ratio issues for Game Gear, Atari Lynx, and WonderSwan skins that used legacy pixel-coordinate layouts."
-      }
-    ]
-  },
-  {
     "version": "3.5.0",
     "title": "Save State Browser",
     "features": [
