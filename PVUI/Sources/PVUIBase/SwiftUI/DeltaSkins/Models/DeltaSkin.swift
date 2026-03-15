@@ -296,7 +296,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 let lower = name.lowercased()
                 let decodedImage: UIImage?
                 if lower.hasSuffix(".pdf") {
-                    decodedImage = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false)
+                    let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+                    decodedImage = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false, size: renderSize)
                     if decodedImage == nil {
                         lastError = DeltaSkinError.invalidPDF
                         continue
@@ -344,7 +345,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
             let lower = fallbackName.lowercased()
             let decodedImage: UIImage?
             if lower.hasSuffix(".pdf") {
-                decodedImage = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false)
+                let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+                decodedImage = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false, size: renderSize)
                 guard decodedImage != nil else {
                     throw DeltaSkinError.invalidPDF
                 }
@@ -727,8 +729,11 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Optional thumbstick configuration
         let thumbstick: ThumbstickConfig?
 
+        /// Optional per-button visual states (normal/pressed images, animated frames)
+        let states: DeltaSkinButtonStates?
+
         private enum CodingKeys: String, CodingKey {
-            case inputs, frame, extendedEdges, thumbstick
+            case inputs, frame, extendedEdges, thumbstick, states
         }
 
         public init(from decoder: Decoder) throws {
@@ -750,6 +755,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             thumbstick = try container.decodeIfPresent(ThumbstickConfig.self, forKey: .thumbstick)
+            states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -763,6 +769,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             try container.encodeIfPresent(thumbstick, forKey: .thumbstick)
+            try container.encodeIfPresent(states, forKey: .states)
         }
     }
 
@@ -973,7 +980,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 id: id,
                 input: input,
                 frame: item.frame,
-                extendedEdges: item.extendedEdges
+                extendedEdges: item.extendedEdges,
+                states: item.states
             )
         } ?? []
 
@@ -1088,7 +1096,15 @@ private func sanitizeJSON(_ data: Data) throws -> Data {
 
 // Fix the UIImage PDF initialization
 extension UIImage {
-    convenience init?(pdfData: Data, preserveTransparency: Bool = false) {
+    /// Render a PDF data blob into a UIImage.
+    ///
+    /// - Parameters:
+    ///   - pdfData: Raw PDF file data.
+    ///   - preserveTransparency: When `true` the canvas is always cleared to transparent before drawing.
+    ///   - size: Optional target logical size (points).  When provided the PDF is rendered at exactly
+    ///     that size using the current screen's retina scale.  When `nil` the native PDF page size is
+    ///     used, capped at 4096 px to stay within safe GPU texture limits.
+    convenience init?(pdfData: Data, preserveTransparency: Bool = false, size: CGSize? = nil) {
         guard let provider = CGDataProvider(data: pdfData as CFData),
               let pdf = CGPDFDocument(provider),
               let page = pdf.page(at: 1) else {
@@ -1097,18 +1113,29 @@ extension UIImage {
 
         let pageRect = page.getBoxRect(.mediaBox)
 
-        // Add size validation and scaling
-        let maxDimension: CGFloat = 4096 // Maximum safe texture size
-        let scale = min(
-            maxDimension / pageRect.width,
-            maxDimension / pageRect.height,
-            1.0 // Don't scale up, only down
-        )
+        let finalSize: CGSize
+        let scale: CGFloat
 
-        let finalSize = CGSize(
-            width: pageRect.width * scale,
-            height: pageRect.height * scale
-        )
+        if let requestedSize = size {
+            // Caller supplied an explicit target size – render at that exact size.
+            // Use the screen retina scale so the rasterised bitmap is crisp on HiDPI displays.
+            finalSize = requestedSize
+            scale = min(requestedSize.width / pageRect.width,
+                        requestedSize.height / pageRect.height)
+        } else {
+            // No explicit size – use native PDF dimensions, capped at 4096 px.
+            let maxDimension: CGFloat = 4096
+            let capScale = min(
+                maxDimension / pageRect.width,
+                maxDimension / pageRect.height,
+                1.0 // Don't scale up, only down
+            )
+            scale = capScale
+            finalSize = CGSize(
+                width: pageRect.width * scale,
+                height: pageRect.height * scale
+            )
+        }
 
         let renderer = UIGraphicsImageRenderer(
             size: finalSize,
