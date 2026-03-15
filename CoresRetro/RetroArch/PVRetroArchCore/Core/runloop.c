@@ -5335,6 +5335,8 @@ void runloop_msg_queue_push(
    access_state_t *access_st      = access_state_get_ptr();
 #endif
    runloop_state_t *runloop_st    = &runloop_state;
+   /* Capture before duration is potentially mutated by the widgets path. */
+   unsigned pv_duration           = duration;
 
    RUNLOOP_MSG_QUEUE_LOCK(runloop_st);
 #ifdef HAVE_ACCESSIBILITY
@@ -5384,10 +5386,11 @@ void runloop_msg_queue_push(
    ui_companion_driver_msg_queue_push(
          msg, prio, duration, flush);
 
-   /* Bridge OSD message to PVToast via PVOSDMessageNotification */
-   pv_retroarch_post_osd(msg, prio, duration);
-
    RUNLOOP_MSG_QUEUE_UNLOCK(runloop_st);
+
+   /* Bridge OSD message to PVToast — called outside the runloop message-queue
+    * lock to avoid holding the mutex across ObjC allocations/notifications. */
+   pv_retroarch_post_osd(msg, prio, (unsigned)category, pv_duration);
 }
 
 #ifdef HAVE_MENU
