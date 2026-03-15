@@ -305,7 +305,11 @@ public extension PVEmualatorControllerProtocol {
             throw SaveStateError.saveStatesUnsupportedByCore
         }
 
-        let game = self.game.freeze()
+        guard let rawGame = self.game, !rawGame.isInvalidated else {
+            ELOG("createNewSaveState: game is nil or invalidated")
+            return false
+        }
+        let game = rawGame.isFrozen ? rawGame : rawGame.freeze()
 
         /// Create temporary unmanaged copies of core and game for thread safety
         let coreIdentifier = self.core.coreIdentifier ?? ""
