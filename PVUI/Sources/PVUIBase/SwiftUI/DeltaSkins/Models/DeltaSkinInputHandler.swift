@@ -33,6 +33,10 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Track previous joystick state for D-pad conversion
     private var previousJoystickState: (x: Float, y: Float)? = nil
 
+    /// Turbo/autofire manager. Publicly accessible so views can read turbo state.
+    /// Must be accessed from the main thread only.
+    public let turboManager = TurboManager()
+
     /// Initialize with an emulator core and optional controller view controller
     public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: (any ControllerVC)? = nil, emulatorController: (any PVEmualatorControllerProtocol)? = nil) {
         self.emulatorCore = emulatorCore
@@ -44,6 +48,10 @@ public class DeltaSkinInputHandler: ObservableObject {
 
         // Set up notification observers
         setupNotificationObservers()
+
+        // Wire turbo manager's button action to forward presses/releases through this handler.
+        // This runs on the main actor since TurboManager is @MainActor.
+        setupTurboCallback()
     }
 
     deinit {
@@ -64,6 +72,15 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Set the emulator controller
     func setEmulatorController(_ controller: (any PVEmualatorControllerProtocol)?) {
         self.emulatorController = controller
+    }
+
+    /// Wires TurboManager's buttonAction callback so turbo-driven presses/releases
+    /// are forwarded through the normal input path.
+    private func setupTurboCallback() {
+        turboManager.buttonAction = { [weak self] buttonId, isPressed in
+            guard let self else { return }
+            self.forwardButtonPress(buttonId, isPressed: isPressed)
+        }
     }
 
     /// Handle button press
@@ -120,6 +137,12 @@ public class DeltaSkinInputHandler: ObservableObject {
         let normalizedId = buttonId.lowercased()
         DLOG("Normalized button ID: \(normalizedId)")
 
+        // If this button has turbo enabled, let TurboManager drive the press/release cycle
+        if turboManager.isTurboActive(for: normalizedId) {
+            turboManager.buttonDown(normalizedId)
+            return
+        }
+
         // Prefer core/system-specific mapping; it will fall back to controllerVC or generic if needed
         if emulatorCore != nil {
             forwardButtonPress(normalizedId, isPressed: true)
@@ -162,6 +185,12 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
         DLOG("Normalized button ID for release: \(normalizedId)")
+
+        // If turbo is active for this button, let TurboManager handle the release
+        if turboManager.isTurboActive(for: normalizedId) {
+            turboManager.buttonUp(normalizedId)
+            return
+        }
 
         // Prefer core/system-specific mapping; it will fall back to controllerVC or generic if needed
         if emulatorCore != nil {

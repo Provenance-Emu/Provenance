@@ -66,6 +66,9 @@ public struct DeltaSkinView: View {
     let inputHandler: DeltaSkinInputHandler
     let core: PVEmulatorCore?  // Core for protocol-based viewport updates
 
+    /// Observed so the view re-renders when turbo buttons change.
+    @ObservedObject var turboManager: TurboManager
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// State for touch and button interactions
@@ -145,6 +148,13 @@ public struct DeltaSkinView: View {
     @State private var buttonMappings: [DeltaSkinButtonMapping]?
 
     @State private var pressedButtons: Set<String> = []
+
+    // MARK: - Turbo long-press state
+    /// Timer used to detect a long-press for turbo toggle (fires after 0.6s)
+    @State private var turboLongPressTimers: [ObjectIdentifier: Timer] = [:]
+    /// Tracks buttons whose turbo was just toggled in this touch so we skip the normal release
+    @State private var turboToggledThisTouch: Set<ObjectIdentifier> = []
+
     // Cache of per-button asset images (normal/pressed) keyed by button id
     @State private var buttonAssetImages: [String: (normal: UIImage, pressed: UIImage?)] = [:]
 
@@ -281,6 +291,7 @@ public struct DeltaSkinView: View {
         self.core = core
         self.isInEmulator = isInEmulator
         self.inputHandler = inputHandler
+        self._turboManager = ObservedObject(wrappedValue: inputHandler.turboManager)
 
         ILOG("skins: DeltaSkinView init - skin: \(skin.name), device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue), iPadModel: \(traits.iPadModel?.rawValue ?? "nil")")
     }
@@ -637,6 +648,38 @@ public struct DeltaSkinView: View {
                             .allowsHitTesting(false)
                         }
 
+                        // Turbo badges for buttons with turbo enabled
+                        if Defaults[.turboEnabled] {
+                            let turboButtons = turboManager.turboButtons
+                            if !turboButtons.isEmpty,
+                               let buttons = skin.buttons(for: traits),
+                               let mappingSize = skin.mappingSize(for: traits) {
+                                let scale = min(
+                                    geometry.size.width / mappingSize.width,
+                                    geometry.size.height / mappingSize.height
+                                )
+                                let scaledSkinWidth = mappingSize.width * scale
+                                let scaledSkinHeight = mappingSize.height * scale
+                                let xOff = (geometry.size.width - scaledSkinWidth) / 2
+                                let yOff = (geometry.size.height - scaledSkinHeight) / 2
+
+                                ForEach(buttons.filter { turboButtons.contains($0.id) }) { button in
+                                    let scaledFrame = CGRect(
+                                        x: button.frame.minX * scaledSkinWidth + xOff,
+                                        y: button.frame.minY * scaledSkinHeight + yOff,
+                                        width: button.frame.width * scaledSkinWidth,
+                                        height: button.frame.height * scaledSkinHeight
+                                    )
+                                    DeltaSkinTurboBadge(
+                                        buttonFrame: scaledFrame,
+                                        mappingSize: mappingSize
+                                    )
+                                    .zIndex(6)
+                                    .allowsHitTesting(false)
+                                }
+                            }
+                        }
+
                         // Thumbstick layer - should be on top
                         ForEach(activeThumbsticks) { thumbstick in
                             DeltaSkinThumbstick(
@@ -766,6 +809,28 @@ public struct DeltaSkinView: View {
 
                                 // Handle this touch location
                                 handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
+
+                                // Start a long-press timer for turbo toggle (0.6s hold)
+                                if Defaults[.turboEnabled] {
+                                    let touchId = touch.id
+                                    let timer = Timer.scheduledTimer(withTimeInterval: 0.6, repeats: false) { _ in
+                                        Task { @MainActor in
+                                            // Determine which button this touch is on
+                                            if let buttonId = touchToButtonMap[touchId] {
+                                                let wasEnabled = inputHandler.turboManager.toggleTurbo(for: buttonId)
+                                                turboToggledThisTouch.insert(touchId)
+                                                DLOG("Turbo toggled via long-press for \(buttonId): \(wasEnabled ? "ON" : "OFF")")
+                                                #if canImport(UIKit) && !os(tvOS)
+                                                if !ProcessInfo.processInfo.isiOSAppOnMac {
+                                                    let generator = UINotificationFeedbackGenerator()
+                                                    generator.notificationOccurred(wasEnabled ? .success : .warning)
+                                                }
+                                                #endif
+                                            }
+                                        }
+                                    }
+                                    turboLongPressTimers[touchId] = timer
+                                }
                             }
                             DLOG("Current touch points: \(touchLocations.count)")
 
@@ -794,6 +859,12 @@ public struct DeltaSkinView: View {
 
                                 // Process if: D-pad touch (always needs updates) OR has moved significantly
                                 if isDPadTouch || hasMoved {
+                                    // Cancel turbo long-press timer if touch moved
+                                    if hasMoved {
+                                        turboLongPressTimers[touch.id]?.invalidate()
+                                        turboLongPressTimers.removeValue(forKey: touch.id)
+                                    }
+
                                     if isDPadTouch {
                                         DLOG("Processing D-PAD touch: \(touch.id) at \(location)")
                                     } else {
@@ -815,6 +886,11 @@ public struct DeltaSkinView: View {
                             // Process ended touches
                             for touch in touches {
                                 DLOG("Ending touch: \(touch.id)")
+
+                                // Cancel any pending turbo long-press timer
+                                turboLongPressTimers[touch.id]?.invalidate()
+                                turboLongPressTimers.removeValue(forKey: touch.id)
+                                turboToggledThisTouch.remove(touch.id)
 
                                 // Remove this touch point from visualization
                                 touchLocations.remove(touch.location)
