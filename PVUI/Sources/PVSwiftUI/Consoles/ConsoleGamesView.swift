@@ -1382,7 +1382,7 @@ extension ConsoleGamesView {
     private func recentlyPlayedSection() -> some View {
         Group {
             if showRecentGames && !recentlyPlayedModels.isEmpty {
-                HomeSection(title: "Recently Played") {
+                HomeSection(title: String(localized: "Recently Played")) {
                     ForEach(recentlyPlayedModels, id: \.id) { game in
                         gameItem(game, section: .recentlyPlayedGames)
                     }

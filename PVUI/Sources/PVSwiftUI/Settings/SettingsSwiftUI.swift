@@ -262,7 +262,7 @@ struct TVOSSettingsHeader: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("SETTINGS")
+                    Text(String(localized: "SETTINGS"))
                         .font(.system(size: 42, weight: .bold, design: .default))
                         .tracking(4)
                         .foregroundStyle(
@@ -274,7 +274,7 @@ struct TVOSSettingsHeader: View {
                         )
                         .shadow(color: Color.retroPink.opacity(0.5), radius: 15, x: 0, y: 0)
 
-                    Text("CONFIGURE YOUR EXPERIENCE")
+                    Text(String(localized: "CONFIGURE YOUR EXPERIENCE"))
                         .font(.system(size: 14, weight: .medium, design: .default))
                         .tracking(3)
                         .foregroundStyle(Color.retroPink.opacity(0.7))
@@ -531,7 +531,7 @@ public struct PVSettingsView: View {
                         HStack {
                             if showsDoneButton {
                                 Button(action: { dismissAction() }) {
-                                    Text("DONE")
+                                    Text(String(localized: "DONE"))
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                                         .padding(.horizontal, 16)
@@ -556,7 +556,7 @@ public struct PVSettingsView: View {
                                 Spacer()
 
                                 Button(action: { showWiki = true }) {
-                                    Text("HELP")
+                                    Text(String(localized: "HELP"))
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                                         .padding(.horizontal, 16)
@@ -605,56 +605,56 @@ public struct PVSettingsView: View {
                             #endif
 
                             // Settings sections with premium styling
-                            TVOSSettingsSection(title: "App", icon: "gearshape.fill") {
+                            TVOSSettingsSection(title: String(localized: "App"), icon: "gearshape.fill") {
                                 AppSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            TVOSSettingsSection(title: "Core Options", icon: "cpu") {
+                            TVOSSettingsSection(title: String(localized: "Core Options"), icon: "cpu") {
                                 CoreOptionsSection()
                             }
 
-                            TVOSSettingsSection(title: "Saves", icon: "square.and.arrow.down.fill") {
+                            TVOSSettingsSection(title: String(localized: "Saves"), icon: "square.and.arrow.down.fill") {
                                 SavesSection()
                             }
 
-                            TVOSSettingsSection(title: "Audio", icon: "speaker.wave.3.fill") {
+                            TVOSSettingsSection(title: String(localized: "Audio"), icon: "speaker.wave.3.fill") {
                                 AudioSection()
                             }
 
-                            TVOSSettingsSection(title: "Video", icon: "tv.fill") {
+                            TVOSSettingsSection(title: String(localized: "Video"), icon: "tv.fill") {
                                 VideoSection()
                             }
 
-                            TVOSSettingsSection(title: "Controller", icon: "gamecontroller.fill") {
+                            TVOSSettingsSection(title: String(localized: "Controller"), icon: "gamecontroller.fill") {
                                 ControllerSection()
                             }
 
-                            TVOSSettingsSection(title: "RetroAchievements", icon: "trophy.fill") {
+                            TVOSSettingsSection(title: String(localized: "RetroAchievements"), icon: "trophy.fill") {
                                 RetroAchievementsSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            TVOSSettingsSection(title: "Library", icon: "books.vertical.fill") {
+                            TVOSSettingsSection(title: String(localized: "Library"), icon: "books.vertical.fill") {
                                 LibrarySection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            TVOSSettingsSection(title: "Library Management", icon: "folder.badge.gearshape") {
+                            TVOSSettingsSection(title: String(localized: "Library Management"), icon: "folder.badge.gearshape") {
                                 LibrarySection2(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            TVOSSettingsSection(title: "Advanced", icon: "wrench.and.screwdriver.fill") {
+                            TVOSSettingsSection(title: String(localized: "Advanced"), icon: "wrench.and.screwdriver.fill") {
                                 AdvancedSection()
                             }
 
-                            TVOSSettingsSection(title: "Build", icon: "hammer.fill") {
+                            TVOSSettingsSection(title: String(localized: "Build"), icon: "hammer.fill") {
                                 BuildSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            TVOSSettingsSection(title: "About", icon: "info.circle.fill") {
+                            TVOSSettingsSection(title: String(localized: "About"), icon: "info.circle.fill") {
                                 ExtraInfoSection()
                             }
                         }
@@ -698,11 +698,11 @@ public struct PVSettingsView: View {
     #if !os(tvOS)
     private var tabItems: [RetroTabItem] {
         [
-            RetroTabItem(title: "General", systemImage: "gearshape.fill"),
-            RetroTabItem(title: "Emulation", systemImage: "gamecontroller.fill"),
-            RetroTabItem(title: "Controller", systemImage: "hand.raised.fill"),
-            RetroTabItem(title: "Advanced", systemImage: "gearshape.2.fill"),
-            RetroTabItem(title: "About", systemImage: "info.circle.fill")
+            RetroTabItem(title: String(localized: "General"), systemImage: "gearshape.fill"),
+            RetroTabItem(title: String(localized: "Emulation"), systemImage: "gamecontroller.fill"),
+            RetroTabItem(title: String(localized: "Controller"), systemImage: "hand.raised.fill"),
+            RetroTabItem(title: String(localized: "Advanced"), systemImage: "gearshape.2.fill"),
+            RetroTabItem(title: String(localized: "About"), systemImage: "info.circle.fill")
         ]
     }
 
@@ -732,7 +732,7 @@ public struct PVSettingsView: View {
     private var generalTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("GENERAL")
+                Text(String(localized: "GENERAL"))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -752,15 +752,15 @@ public struct PVSettingsView: View {
                 #endif
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "App") {
+                    CollapsibleSection(title: String(localized: "App")) {
                         AppSection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
-                    CollapsibleSection(title: "Library") {
+                    CollapsibleSection(title: String(localized: "Library")) {
                         LibrarySection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
-                    CollapsibleSection(title: "Library Management") {
+                    CollapsibleSection(title: String(localized: "Library Management")) {
                         LibrarySection2(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
@@ -774,7 +774,7 @@ public struct PVSettingsView: View {
     private var emulationTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("EMULATION")
+                Text(String(localized: "EMULATION"))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -788,19 +788,19 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Core Options") {
+                    CollapsibleSection(title: String(localized: "Core Options")) {
                         CoreOptionsSection()
                     }
-                    CollapsibleSection(title: "Saves") {
+                    CollapsibleSection(title: String(localized: "Saves")) {
                         SavesSection()
                     }
-                    CollapsibleSection(title: "Audio") {
+                    CollapsibleSection(title: String(localized: "Audio")) {
                         AudioSection()
                     }
-                    CollapsibleSection(title: "Video") {
+                    CollapsibleSection(title: String(localized: "Video")) {
                         VideoSection()
                     }
-                    CollapsibleSection(title: "RetroAchievements") {
+                    CollapsibleSection(title: String(localized: "RetroAchievements")) {
                         RetroAchievementsSection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
@@ -814,7 +814,7 @@ public struct PVSettingsView: View {
     private var controllerTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("CONTROLLER")
+                Text(String(localized: "CONTROLLER"))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -828,11 +828,11 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Controller") {
+                    CollapsibleSection(title: String(localized: "Controller")) {
                         ControllerSection()
                     }
                     #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
-                    CollapsibleSection(title: "Delta Skins") {
+                    CollapsibleSection(title: String(localized: "Delta Skins")) {
                         DeltaSkinsSection()
                     }
                     #endif
@@ -846,7 +846,7 @@ public struct PVSettingsView: View {
     private var aboutTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("ABOUT")
+                Text(String(localized: "ABOUT"))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -860,24 +860,24 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Social Links") {
+                    CollapsibleSection(title: String(localized: "Social Links")) {
                         SocialLinksSection()
                     }
-                    CollapsibleSection(title: "Documentation") {
+                    CollapsibleSection(title: String(localized: "Documentation")) {
                         DocumentationSection()
                     }
-                    CollapsibleSection(title: "Roadmap") {
+                    CollapsibleSection(title: String(localized: "Roadmap")) {
                         RoadmapSummarySection()
-                        NavigationLink("View Full Roadmap →") {
+                        NavigationLink(String(localized: "View Full Roadmap →")) {
                             RoadmapView()
                         }
                         .padding(.top, 4)
                     }
-                    CollapsibleSection(title: "Build") {
+                    CollapsibleSection(title: String(localized: "Build")) {
                         BuildSection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
-                    CollapsibleSection(title: "Extra Info") {
+                    CollapsibleSection(title: String(localized: "Extra Info")) {
                         ExtraInfoSection()
                     }
                 }
@@ -890,7 +890,7 @@ public struct PVSettingsView: View {
     private var advancedTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("ADVANCED")
+                Text(String(localized: "ADVANCED"))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -904,7 +904,7 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Advanced") {
+                    CollapsibleSection(title: String(localized: "Advanced")) {
                         AdvancedSection()
                     }
                 }
@@ -1153,20 +1153,20 @@ private struct AppSection: View {
 
             /// Information about PVSystems
             NavigationLink(destination: SystemSettingsView()) {
-                SettingsRow(title: "Systems",
-                            subtitle: "Information on system cores, their bioses, links and stats.",
+                SettingsRow(title: String(localized: "Systems"),
+                            subtitle: String(localized: "Information on system cores, their bioses, links and stats."),
                             icon: .sfSymbol("square.stack.3d.down.forward"))
             }
 
             /// Links to projects
             NavigationLink(destination: CoreProjectsView()) {
-                SettingsRow(title: "Cores",
-                            subtitle: "Emulator cores provided by these projects.",
+                SettingsRow(title: String(localized: "Cores"),
+                            subtitle: String(localized: "Emulator cores provided by these projects."),
                             icon: .sfSymbol("square.3.layers.3d.middle.filled"))
             }
 
             NavigationLink(destination: ThemeSelectionView()) {
-                SettingsRow(title: "Theme",
+                SettingsRow(title: String(localized: "Theme"),
                             value: themeManager.currentPalette.description,
                             icon: .sfSymbol("paintpalette"))
             }
@@ -1180,7 +1180,7 @@ private struct AppSection: View {
                     .scaledToFit()
                     .frame(width: 22, height: 22)
                     .foregroundColor(.accentColor)
-                    Text("Change App Icon")
+                    Text(String(localized: "Change App Icon"))
                     Spacer()
                     IconImage(
                         iconName: iconManager.currentIconName ?? "AppIcon",
@@ -1202,8 +1202,8 @@ private struct CoreOptionsSection: View {
     var body: some View {
         Section(header: Text("Core Options")) {
             NavigationLink(destination: CoreOptionsView()) {
-                SettingsRow(title: "Core Options",
-                            subtitle: "Configure emulator core settings.",
+                SettingsRow(title: String(localized: "Core Options"),
+                            subtitle: String(localized: "Configure emulator core settings."),
                             icon: .sfSymbol("gearshape.2"))
             }
 
@@ -1211,7 +1211,7 @@ private struct CoreOptionsSection: View {
                 NavigationLink(destination: RetroArchConfigEditorWrapper()) {
                     SettingsRow(
                         title: "Edit RetroArch Config",
-                        subtitle: "Modify advanced RetroArch settings.",
+                        subtitle: String(localized: "Modify advanced RetroArch settings."),
                         icon: .sfSymbol("gearshape.2.fill")
                     )
                 }
@@ -1219,8 +1219,8 @@ private struct CoreOptionsSection: View {
 
             if shouldShowResetButton {
                 Button(action: { showResetConfirmation = true }) {
-                    SettingsRow(title: "Reset RetroArch Config",
-                                subtitle: "Restore default RetroArch configuration.",
+                    SettingsRow(title: String(localized: "Reset RetroArch Config"),
+                                subtitle: String(localized: "Restore default RetroArch configuration."),
                                 icon: .sfSymbol("arrow.uturn.backward.circle"))
                 }
                 .uiKitAlert(
@@ -1301,23 +1301,23 @@ private struct SavesSection: View {
     @ViewBuilder
     private var savesToggles: some View {
         ThemedToggle(isOn: $autoSave) {
-            SettingsRow(title: "Auto Save",
-                        subtitle: "Auto-save game state on close. Must be playing for 30 seconds more.",
+            SettingsRow(title: String(localized: "Auto Save"),
+                        subtitle: String(localized: "Auto-save game state on close. Must be playing for 30 seconds more."),
                         icon: .sfSymbol("autostartstop"))
         }
         ThemedToggle(isOn: $timedAutoSaves) {
-            SettingsRow(title: "Timed Auto Saves",
-                        subtitle: "Periodically create save states while you play.",
+            SettingsRow(title: String(localized: "Timed Auto Saves"),
+                        subtitle: String(localized: "Periodically create save states while you play."),
                         icon: .sfSymbol("clock.badge"))
         }
         ThemedToggle(isOn: $autoLoadSaves) {
-            SettingsRow(title: "Auto Load Saves",
-                        subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.",
+            SettingsRow(title: String(localized: "Auto Load Saves"),
+                        subtitle: String(localized: "Automatically load the last save of a game if one exists. Disables the load prompt."),
                         icon: .sfSymbol("autostartstop"))
         }
         ThemedToggle(isOn: $askToAutoLoad) {
-            SettingsRow(title: "Ask to Load Saves",
-                        subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.",
+            SettingsRow(title: String(localized: "Ask to Load Saves"),
+                        subtitle: String(localized: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active."),
                         icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
         }
     }
@@ -1326,12 +1326,12 @@ private struct SavesSection: View {
     @ViewBuilder
     private var timedAutosaveSlider: some View {
         HStack {
-            Text("Auto-save Time")
+            Text(String(localized: "Auto-save Time"))
             RetroWaveSlider(value: $timedAutoSaveInterval,
                            in: Self.oneMinute...Self.thirtyMinutes,
                            step: Self.oneMinute,
                            onEditingChanged: { _ in },
-                           label: { Text("Auto-save Time") },
+                           label: { Text(String(localized: "Auto-save Time")) },
                            minimumValueLabel: { Text("1m") },
                            maximumValueLabel: { Text("30m") },
                            leadingIcon: {
@@ -1360,31 +1360,31 @@ private struct SocialLinksSection: View {
         Section(header: Text("Social")) {
             if !isAppStore {
                 Link(destination: URL(string: "https://www.patreon.com/provenance")!) {
-                    SettingsRow(title: "Patreon",
-                                subtitle: "Support us on Patreon.",
+                    SettingsRow(title: String(localized: "Patreon"),
+                                subtitle: String(localized: "Support us on Patreon."),
                                 icon: .named("patreon", PVUIBase.BundleLoader.myBundle))
                 }
             }
             Link(destination: URL(string: "https://discord.gg/4TK7PU5")!) {
-                SettingsRow(title: "Discord",
-                            subtitle: "Join our Discord server for help and community chat.",
+                SettingsRow(title: String(localized: "Discord"),
+                            subtitle: String(localized: "Join our Discord server for help and community chat."),
                             icon: .named("discord", PVUIBase.BundleLoader.myBundle))
             }
             Link(destination: URL(string: "https://twitter.com/provenanceapp")!) {
-                SettingsRow(title: "X",
-                            subtitle: "Follow us on X for release and other announcements.",
+                SettingsRow(title: String(localized: "X"),
+                            subtitle: String(localized: "Follow us on X for release and other announcements."),
                             icon: .named("x", PVUIBase.BundleLoader.myBundle))
             }
             if !isAppStore {
                 Link(destination: URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w")!) {
-                    SettingsRow(title: "YouTube",
-                                subtitle: "Help tutorial videos and new feature previews.",
+                    SettingsRow(title: String(localized: "YouTube"),
+                                subtitle: String(localized: "Help tutorial videos and new feature previews."),
                                 icon: .named("youtube", PVUIBase.BundleLoader.myBundle))
                 }
             }
             Link(destination: URL(string: "https://github.com/Provenance-Emu/Provenance")!) {
-                SettingsRow(title: "GitHub",
-                            subtitle: "Check out GitHub for code, reporting bugs and contributing.",
+                SettingsRow(title: String(localized: "GitHub"),
+                            subtitle: String(localized: "Check out GitHub for code, reporting bugs and contributing."),
                             icon: .named("github", PVUIBase.BundleLoader.myBundle))
             }
         }
@@ -1395,13 +1395,13 @@ private struct DocumentationSection: View {
     var body: some View {
         Section(header: Text("Documentation")) {
             NavigationLink(destination: WikiHelpView()) {
-                SettingsRow(title: "Help & Wiki",
-                            subtitle: "Browse the Provenance wiki for guides, FAQs, and tips.",
+                SettingsRow(title: String(localized: "Help & Wiki"),
+                            subtitle: String(localized: "Browse the Provenance wiki for guides, FAQs, and tips."),
                             icon: .sfSymbol("books.vertical.fill"))
             }
             Link(destination: URL(string: "https://provenance-emu.com/blog/")!) {
-                SettingsRow(title: "Blog",
-                            subtitle: "Release announcements and full changelogs and screenshots posted to our blog.",
+                SettingsRow(title: String(localized: "Blog"),
+                            subtitle: String(localized: "Release announcements and full changelogs and screenshots posted to our blog."),
                             icon: .sfSymbol("square.and.pencil"))
             }
         }
@@ -1413,24 +1413,24 @@ private struct BuildSection: View {
 
     var body: some View {
         Section(header: Text("Build Information")) {
-            SettingsRow(title: "Version",
-                        subtitle: "Current app version.",
+            SettingsRow(title: String(localized: "Version"),
+                        subtitle: String(localized: "Current app version."),
                         value: viewModel.versionText,
                         icon: .sfSymbol("info.circle"))
-            SettingsRow(title: "Build",
-                        subtitle: "Internal build number.",
+            SettingsRow(title: String(localized: "Build"),
+                        subtitle: String(localized: "Internal build number."),
                         value: viewModel.buildVersion,
                         icon: .sfSymbol("hammer"))
-            SettingsRow(title: "Git Revision",
-                        subtitle: "Source code version.",
+            SettingsRow(title: String(localized: "Git Revision"),
+                        subtitle: String(localized: "Source code version."),
                         value: viewModel.gitRevision,
                         icon: .sfSymbol("chevron.left.forwardslash.chevron.right"))
-            SettingsRow(title: "Built By",
-                        subtitle: "Developer who built this version.",
+            SettingsRow(title: String(localized: "Built By"),
+                        subtitle: String(localized: "Developer who built this version."),
                         value: viewModel.buildUser,
                         icon: .sfSymbol("person"))
-            SettingsRow(title: "Build Date",
-                        subtitle: "When this version was compiled.",
+            SettingsRow(title: String(localized: "Build Date"),
+                        subtitle: String(localized: "When this version was compiled."),
                         value: viewModel.buildDate,
                         icon: .sfSymbol("calendar"))
         }
@@ -1447,8 +1447,8 @@ private struct ExtraInfoSection: View {
             #if os(tvOS)
             /// Open source licenses - Show alert on tvOS
             Button(action: { showLicensesAlert = true }) {
-                SettingsRow(title: "Licenses",
-                            subtitle: "Open-source libraries Provenance uses and their respective licenses.",
+                SettingsRow(title: String(localized: "Licenses"),
+                            subtitle: String(localized: "Open-source libraries Provenance uses and their respective licenses."),
                             icon: .sfSymbol("doc.text"))
             }
             .tvOSDisableFocusEffect()
@@ -1463,8 +1463,8 @@ private struct ExtraInfoSection: View {
 
             /// Privacy Policy - Show URL on tvOS
             Button(action: { showPrivacyAlert = true }) {
-                SettingsRow(title: "Privacy Policy",
-                            subtitle: "View our privacy policy",
+                SettingsRow(title: String(localized: "Privacy Policy"),
+                            subtitle: String(localized: "View our privacy policy"),
                             icon: .sfSymbol("hand.raised"))
             }
             .tvOSDisableFocusEffect()
@@ -1479,8 +1479,8 @@ private struct ExtraInfoSection: View {
 
             /// End User License Agreement - Show URL on tvOS
             Button(action: { showEULAAlert = true }) {
-                SettingsRow(title: "End User License Agreement (EULA)",
-                            subtitle: "Apple's standard EULA",
+                SettingsRow(title: String(localized: "End User License Agreement (EULA)"),
+                            subtitle: String(localized: "Apple's standard EULA"),
                             icon: .sfSymbol("signature"))
             }
             .tvOSDisableFocusEffect()
@@ -1495,19 +1495,19 @@ private struct ExtraInfoSection: View {
             #else
             /// Open source licenses
             NavigationLink(destination: LicensesView()) {
-                SettingsRow(title: "Licenses",
-                            subtitle: "Open-source libraries Provenance uses and their respective licenses.",
+                SettingsRow(title: String(localized: "Licenses"),
+                            subtitle: String(localized: "Open-source libraries Provenance uses and their respective licenses."),
                             icon: .sfSymbol("doc.text"))
             }
             /// Privacy Policy
             Link(destination: URL(string: "https://provenance-emu.com/privacy/")!) {
-                SettingsRow(title: "Privacy Policy",
+                SettingsRow(title: String(localized: "Privacy Policy"),
                             subtitle: nil,
                             icon: .sfSymbol("hand.raised"))
             }
             /// End User License Agreement
             Link(destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!) {
-                SettingsRow(title: "End User License Agreement (EULA)",
+                SettingsRow(title: String(localized: "End User License Agreement (EULA)"),
                             subtitle: nil,
                             icon: .sfSymbol("signature"))
             }
@@ -1526,28 +1526,28 @@ private struct AudioSection: View {
     var body: some View {
         Section(header: Text("Audio")) {
             ThemedToggle(isOn: $pauseOnHeadphonesDisconnect) {
-                SettingsRow(title: "Pause on Headphones Disconnect",
-                            subtitle: "Auto-pause emulation when AirPods or Bluetooth headphones disconnect.",
+                SettingsRow(title: String(localized: "Pause on Headphones Disconnect"),
+                            subtitle: String(localized: "Auto-pause emulation when AirPods or Bluetooth headphones disconnect."),
                             icon: .sfSymbol("headphones"))
             }
             #if !os(tvOS)
             ThemedToggle(isOn: $respectMuteSwitch) {
-                SettingsRow(title: "Respect Silent Mode",
+                SettingsRow(title: String(localized: "Respect Silent Mode"),
                             subtitle: respectMuteSwitch ? "Disable game audio when system ringer is muted. Does not apply to headphones or external audio destinations." : "Play game audio when system ringer is muted. Does not apply to headphones or external audio destinations.",
                             icon: respectMuteSwitch ? .sfSymbol("speaker.slash.fill") : .sfSymbol("speaker.slash"))
             }
 //            ThemedToggle(isOn: $volumeHUD) {
-//                SettingsRow(title: "Volume HUD",
-//                            subtitle: "Show volume indicator when changing volume.",
+//                SettingsRow(title: String(localized: "Volume HUD"),
+//                            subtitle: String(localized: "Show volume indicator when changing volume."),
 //                            icon: .sfSymbol("speaker.wave.2"))
 //            }
             HStack {
-                Text("Volume")
+                Text(String(localized: "Volume"))
                 RetroWaveSlider<Float>(value: $volume,
                                      in: 0...1,
                                      step: 0.1,
                                      onEditingChanged: { _ in },
-                                     label: { Text("Volume Level") },
+                                     label: { Text(String(localized: "Volume Level")) },
                                      minimumValueLabel: { Text("") },
                                      maximumValueLabel: { Text("") },
                                      leadingIcon: {
@@ -1559,20 +1559,20 @@ private struct AudioSection: View {
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
             }
-            Text("System-wide volume level for games.")
+            Text(String(localized: "System-wide volume level for games."))
                 .font(.caption)
                 .foregroundColor(.secondary)
             #endif
             // Add the new navigation link wrapped in PaidFeatureView
             PaidFeatureView {
                 NavigationLink(destination: AudioEngineSettingsView()) {
-                    SettingsRow(title: "Audio Engine",
-                                subtitle: "Configure audio engine, buffer and latency settings.",
+                    SettingsRow(title: String(localized: "Audio Engine"),
+                                subtitle: String(localized: "Configure audio engine, buffer and latency settings."),
                                 icon: .sfSymbol("waveform.circle"))
                 }
             } lockedView: {
-                SettingsRow(title: "Audio Engine",
-                            subtitle: "Unlock to configure advanced audio settings.",
+                SettingsRow(title: String(localized: "Audio Engine"),
+                            subtitle: String(localized: "Unlock to configure advanced audio settings."),
                             icon: .sfSymbol("lock.fill"))
             }
             .freemiumKitColorReset()
@@ -1592,43 +1592,43 @@ private struct VideoSection: View {
     var body: some View {
         Section(header: Text("Video")) {
             ThemedToggle(isOn: $vsyncEnabled) {
-                SettingsRow(title: "V-Sync",
-                            subtitle: "Synchronizes the rendering frame rate with the monitor refresh rate.",
+                SettingsRow(title: String(localized: "V-Sync"),
+                            subtitle: String(localized: "Synchronizes the rendering frame rate with the monitor refresh rate."),
                             icon: vsyncEnabled ? .sfSymbol("tv.fill") : .sfSymbol("tv"))
             }
             ThemedToggle(isOn: $multiThreadedGL) {
-                SettingsRow(title: "Multi-threaded Rendering",
-                            subtitle: "Improves performance but may cause graphical glitches.",
+                SettingsRow(title: String(localized: "Multi-threaded Rendering"),
+                            subtitle: String(localized: "Improves performance but may cause graphical glitches."),
                             icon: .sfSymbol("cpu"))
             }
             ThemedToggle(isOn: $multiSampling) {
-                SettingsRow(title: "4X Multisampling GL",
-                            subtitle: "Smoother graphics at the cost of performance.",
+                SettingsRow(title: String(localized: "4X Multisampling GL"),
+                            subtitle: String(localized: "Smoother graphics at the cost of performance."),
                             icon: .sfSymbol("square.stack.3d.up"))
             }
             ThemedToggle(isOn: $nativeScaleEnabled) {
-                SettingsRow(title: "Native Resolution",
+                SettingsRow(title: String(localized: "Native Resolution"),
                             subtitle: nativeScaleEnabled ? "Use the original console's resolution." : "Scale to fit the window.",
                             icon: .sfSymbol("arrow.up.left.and.arrow.down.right"))
             }
             ThemedToggle(isOn: $integerScaleEnabled) {
-                SettingsRow(title: "Integer Scaling",
-                            subtitle: "Scale by whole numbers only for pixel-perfect display.",
+                SettingsRow(title: String(localized: "Integer Scaling"),
+                            subtitle: String(localized: "Scale by whole numbers only for pixel-perfect display."),
                             icon: .sfSymbol("square.grid.4x3.fill"))
             }
             ThemedToggle(isOn: $imageSmoothing) {
-                SettingsRow(title: "Image Smoothing",
-                            subtitle: "Smooth scaled graphics. Off for sharp pixels.",
+                SettingsRow(title: String(localized: "Image Smoothing"),
+                            subtitle: String(localized: "Smooth scaled graphics. Off for sharp pixels."),
                             icon: .sfSymbol("paintbrush.pointed"))
             }
             ThemedToggle(isOn: $showFPSCount) {
-                SettingsRow(title: "FPS Counter",
-                            subtitle: "Show frames per second counter.",
+                SettingsRow(title: String(localized: "FPS Counter"),
+                            subtitle: String(localized: "Show frames per second counter."),
                             icon: .sfSymbol("speedometer"))
             }
             NavigationLink(destination: FilterSettingsView()) {
-                SettingsRow(title: "Display Filters",
-                            subtitle: "Configure CRT and LCD filter effects.",
+                SettingsRow(title: String(localized: "Display Filters"),
+                            subtitle: String(localized: "Configure CRT and LCD filter effects."),
                             icon: .sfSymbol("tv.fill"))
             }
         }
@@ -1647,36 +1647,36 @@ private struct ControllerSection: View {
         Group {
             Section(header: Text("Controllers")) {
                 NavigationLink(destination: ControllerGuideView()) {
-                    SettingsRow(title: "Controller Guide",
-                                subtitle: "Supported controllers, pairing steps, and platform notes.",
+                    SettingsRow(title: String(localized: "Controller Guide"),
+                                subtitle: String(localized: "Supported controllers, pairing steps, and platform notes."),
                                 icon: .sfSymbol("books.vertical.fill"))
                 }
                 NavigationLink(destination: ControllerSettingsView()) {
-                    SettingsRow(title: "Controller Selection",
-                                subtitle: "Configure external controller mappings.",
+                    SettingsRow(title: String(localized: "Controller Selection"),
+                                subtitle: String(localized: "Configure external controller mappings."),
                                 icon: .sfSymbol("gamecontroller"))
                 }
                 NavigationLink(destination: ICadeControllerView()) {
-                    SettingsRow(title: "iCade / 8Bitdo",
-                                subtitle: "Configure iCade and 8Bitdo controller settings.",
+                    SettingsRow(title: String(localized: "iCade / 8Bitdo"),
+                                subtitle: String(localized: "Configure iCade and 8Bitdo controller settings."),
                                 icon: .sfSymbol("keyboard"))
                 }
                 ThemedToggle(isOn: $use8BitdoM30) {
-                    SettingsRow(title: "Use 8BitDo M30 Mapping",
-                                subtitle: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine",
+                    SettingsRow(title: String(localized: "Use 8BitDo M30 Mapping"),
+                                subtitle: String(localized: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine"),
                                 icon: .sfSymbol("arrow.triangle.swap"))
                 }
                 ThemedToggle(isOn: $pauseButtonIsMenuButton) {
-                    SettingsRow(title: "Pause/Menu button opens pause menu",
-                                subtitle: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game",
+                    SettingsRow(title: String(localized: "Pause/Menu button opens pause menu"),
+                                subtitle: String(localized: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game"),
                                 icon: .sfSymbol("pause.rectangle"))
                 }
             }
 
             #if !os(tvOS)
             ThemedToggle(isOn: $hapticFeedback) {
-                SettingsRow(title: "Haptic Feedback",
-                           subtitle: "Vibrate when pressing buttons.",
+                SettingsRow(title: String(localized: "Haptic Feedback"),
+                           subtitle: String(localized: "Vibrate when pressing buttons."),
                            icon: .sfSymbol("iphone.radiowaves.left.and.right"))
             }
             #endif
@@ -1719,11 +1719,11 @@ private struct AnalogDeadzoneSection: View {
                 .foregroundColor(.secondary)
         ) {
             VStack(alignment: .leading, spacing: 4) {
-                SettingsRow(title: "Universal Deadzone",
-                            subtitle: "Dead region at center of analog sticks (0 = off). Applied on top of hardware deadzoning.",
+                SettingsRow(title: String(localized: "Universal Deadzone"),
+                            subtitle: String(localized: "Dead region at center of analog sticks (0 = off). Applied on top of hardware deadzoning."),
                             icon: .sfSymbol("circle.dashed"))
                 RetroWaveSlider(value: $analogDeadzone, in: 0.0...0.5, step: 0.01) {
-                    Text("Deadzone")
+                    Text(String(localized: "Deadzone"))
                 } minimumValueLabel: {
                     Image(systemName: "circle")
                 } maximumValueLabel: {
@@ -1748,7 +1748,7 @@ private struct AnalogDeadzoneSection: View {
                 HStack {
                     Image(systemName: "list.bullet.clipboard")
                         .foregroundColor(.accentColor)
-                    Text("Core Compatibility")
+                    Text(String(localized: "Core Compatibility"))
                     Spacer()
                     let done = CoreDeadzoneCompatibilityCatalog.supportedEntries.count
                     let total = CoreDeadzoneCompatibilityCatalog.entries.count
@@ -1855,11 +1855,11 @@ private struct ControllerRumbleSlider: View {
     var body: some View {
         Section(header: Text("Controller Rumble")) {
             VStack(alignment: .leading, spacing: 4) {
-                SettingsRow(title: "Controller Rumble Intensity",
-                            subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
+                SettingsRow(title: String(localized: "Controller Rumble Intensity"),
+                            subtitle: String(localized: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers."),
                             icon: .sfSymbol("waveform.path"))
                 RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
-                    Text("Intensity")
+                    Text(String(localized: "Intensity"))
                 } minimumValueLabel: {
                     Image(systemName: "speaker")
                 } maximumValueLabel: {
@@ -1889,7 +1889,7 @@ private struct OnScreenControllerSection: View {
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
-                Text("Controller Opacity")
+                Text(String(localized: "Controller Opacity"))
                 RetroWaveSlider<Double>(value: $controllerOpacity,
                                      in: 0...1.0,
                                      step: 0.05,
@@ -1907,39 +1907,39 @@ private struct OnScreenControllerSection: View {
                                      })
             }
             ThemedToggle(isOn: $buttonTints) {
-                SettingsRow(title: "Button Colors",
-                            subtitle: "Show colored buttons matching original hardware.",
+                SettingsRow(title: String(localized: "Button Colors"),
+                            subtitle: String(localized: "Show colored buttons matching original hardware."),
                             icon: .sfSymbol("paintpalette"))
             }
             ThemedToggle(isOn: $allRightShoulders) {
-                SettingsRow(title: "All Right Shoulder Buttons",
-                            subtitle: "Show all shoulder buttons on the right side.",
+                SettingsRow(title: String(localized: "All Right Shoulder Buttons"),
+                            subtitle: String(localized: "Show all shoulder buttons on the right side."),
                             icon: .sfSymbol("l.joystick.tilt.right"))
             }
             ThemedToggle(isOn: $buttonVibration) {
-                SettingsRow(title: "Haptic Feedback",
-                            subtitle: "Vibrate when pressing on-screen buttons.",
+                SettingsRow(title: String(localized: "Haptic Feedback"),
+                            subtitle: String(localized: "Vibrate when pressing on-screen buttons."),
                             icon: .sfSymbol("hand.point.up.braille"))
             }
             ThemedToggle(isOn: $missingButtonsAlwaysOn) {
-                SettingsRow(title: "Missing Buttons Always On",
-                            subtitle: "Always show buttons not present on original hardware.",
+                SettingsRow(title: String(localized: "Missing Buttons Always On"),
+                            subtitle: String(localized: "Always show buttons not present on original hardware."),
                             icon: .sfSymbol("l.rectangle.roundedbottom"))
             }
 
             ThemedToggle(isOn: $onscreenJoypad) {
-                SettingsRow(title: "On-Screen Joystick",
-                            subtitle: "Show a touch Joystick pad on supported systems.",
+                SettingsRow(title: String(localized: "On-Screen Joystick"),
+                            subtitle: String(localized: "Show a touch Joystick pad on supported systems."),
                             icon: .sfSymbol("l.joystick.tilt.left.fill"))
             }
             ThemedToggle(isOn: $onscreenJoypadWithKeyboard) {
-                SettingsRow(title: "On-Screen Joypad with keyboard",
-                            subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
+                SettingsRow(title: String(localized: "On-Screen Joypad with keyboard"),
+                            subtitle: String(localized: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
             ThemedToggle(isOn: $movableButtons) {
-                SettingsRow(title: "Movable Buttons",
-                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
+                SettingsRow(title: String(localized: "Movable Buttons"),
+                            subtitle: String(localized: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle."),
                             icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
 
@@ -1959,14 +1959,14 @@ private struct LibrarySection: View {
         Section(header: Text("Library")) {
             //#if canImport(PVWebServer)
             //            Button(action: viewModel.launchWebServer) {
-            //                SettingsRow(title: "Launch Web Server",
-            //                            subtitle: "Transfer ROMs and saves over WiFi.",
+            //                SettingsRow(title: String(localized: "Launch Web Server"),
+            //                            subtitle: String(localized: "Transfer ROMs and saves over WiFi."),
             //                            icon: .sfSymbol("xserve"))
             //            }
             //#endif
             NavigationLink(destination: AppearanceView()) {
-                SettingsRow(title: "Appearance",
-                            subtitle: "Visual options for Game Library",
+                SettingsRow(title: String(localized: "Appearance"),
+                            subtitle: String(localized: "Visual options for Game Library"),
                             icon: .sfSymbol("eye"))
             }
         }
@@ -1982,13 +1982,13 @@ private struct LibrarySection2: View {
             #if os(tvOS)
                 // Cloud Sync Settings
                 NavigationLink(destination: CloudSyncSettingsView()) {
-                    SettingsRow(title: "Cloud Sync Settings",
-                                 subtitle: "Manage CloudKit and iCloud Drive sync settings",
+                    SettingsRow(title: String(localized: "Cloud Sync Settings"),
+                                 subtitle: String(localized: "Manage CloudKit and iCloud Drive sync settings"),
                                  icon: .sfSymbol("icloud"))
                 }
                 NavigationLink(destination: BackupRestoreView()) {
-                    SettingsRow(title: "Backup & Restore",
-                                subtitle: "Manually back up and restore saves, database, and artwork.",
+                    SettingsRow(title: String(localized: "Backup & Restore"),
+                                subtitle: String(localized: "Manually back up and restore saves, database, and artwork."),
                                 icon: .sfSymbol("archivebox"))
                 }
             #else
@@ -1996,13 +1996,13 @@ private struct LibrarySection2: View {
                 PaidFeatureView {
                     // Cloud Sync Settings
                     NavigationLink(destination: CloudSyncSettingsView()) {
-                        SettingsRow(title: "Cloud Sync Settings",
-                                     subtitle: "Manage CloudKit and iCloud Drive sync settings.",
+                        SettingsRow(title: String(localized: "Cloud Sync Settings"),
+                                     subtitle: String(localized: "Manage CloudKit and iCloud Drive sync settings."),
                                      icon: .sfSymbol("icloud"))
                     }
                 }  lockedView: {
-                    SettingsRow(title: "Cloud Sync Settings",
-                              subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
+                    SettingsRow(title: String(localized: "Cloud Sync Settings"),
+                              subtitle: String(localized: "Unlock to access CloudKit and iCloud Drive sync settings."),
                               icon: .sfSymbol("lock.fill"))
                 }
                 .freemiumKitColorReset()
@@ -2011,39 +2011,39 @@ private struct LibrarySection2: View {
 
             #if !os(tvOS)
             NavigationLink(destination: BackupRestoreView()) {
-                SettingsRow(title: "Backup & Restore",
-                            subtitle: "Manually back up and restore saves, database, and artwork.",
+                SettingsRow(title: String(localized: "Backup & Restore"),
+                            subtitle: String(localized: "Manually back up and restore saves, database, and artwork."),
                             icon: .sfSymbol("archivebox"))
             }
             #endif
 
             NavigationLink(destination: BatchArtworkMatchingView()) {
-                SettingsRow(title: "Batch Artwork Matcher",
-                            subtitle: "Find and apply artwork for multiple games at once.",
+                SettingsRow(title: String(localized: "Batch Artwork Matcher"),
+                            subtitle: String(localized: "Find and apply artwork for multiple games at once."),
                             icon: .sfSymbol("photo.on.rectangle.angled"))
             }
 
             Button(action: viewModel.reimportROMs) {
-                SettingsRow(title: "Scan ROM Directories",
-                            subtitle: "Import new ROMs and update metadata without changing custom artwork or names.",
+                SettingsRow(title: String(localized: "Scan ROM Directories"),
+                            subtitle: String(localized: "Import new ROMs and update metadata without changing custom artwork or names."),
                             icon: .sfSymbol("magnifyingglass.circle"))
             }
 
             Button(action: viewModel.refreshGameLibrary) {
-                SettingsRow(title: "Update Game Metadata",
-                            subtitle: "Re-fetch artwork and info from the database. Custom artwork and names are preserved.",
+                SettingsRow(title: String(localized: "Update Game Metadata"),
+                            subtitle: String(localized: "Re-fetch artwork and info from the database. Custom artwork and names are preserved."),
                             icon: .sfSymbol("arrow.triangle.2.circlepath"))
             }
 
             Button(action: viewModel.emptyImageCache) {
-                SettingsRow(title: "Clear Artwork Cache",
-                            subtitle: "Delete cached artwork to free up space. Images re-download automatically.",
+                SettingsRow(title: String(localized: "Clear Artwork Cache"),
+                            subtitle: String(localized: "Delete cached artwork to free up space. Images re-download automatically."),
                             icon: .sfSymbol("photo.trianglebadge.exclamationmark"))
             }
 
             Button(role: .destructive, action: viewModel.resetData) {
-                SettingsRow(title: "Reset Library",
-                            subtitle: "Delete all game data, settings, and custom artwork, then re-import from scratch.",
+                SettingsRow(title: String(localized: "Reset Library"),
+                            subtitle: String(localized: "Delete all game data, settings, and custom artwork, then re-import from scratch."),
                             icon: .sfSymbol("trash.slash"))
             }
         }
@@ -2073,16 +2073,16 @@ private struct AdvancedSection: View {
 
                 // App Group File Browser for debugging
                 NavigationLink(destination: AppGroupFileBrowserView()) {
-                    SettingsRow(title: "App Group File Browser",
-                                subtitle: "Browse files in the app group container for debugging.",
+                    SettingsRow(title: String(localized: "App Group File Browser"),
+                                subtitle: String(localized: "Browse files in the app group container for debugging."),
                                 icon: .sfSymbol("folder.badge.gear"))
                 }
 
                 #if os(tvOS)
                 // TopShelf Log Viewer
                 NavigationLink(destination: TopShelfLogView()) {
-                    SettingsRow(title: "TopShelf Log",
-                                subtitle: "View logs from the TopShelf extension.",
+                    SettingsRow(title: String(localized: "TopShelf Log"),
+                                subtitle: String(localized: "View logs from the TopShelf extension."),
 
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
@@ -2091,16 +2091,16 @@ private struct AdvancedSection: View {
                 #if !os(tvOS)
                 // Spotlight Debug View
                 NavigationLink(destination: SpotlightDebugView()) {
-                    SettingsRow(title: "Spotlight Debug",
-                                subtitle: "View and manage Spotlight indexing for games and save states.",
+                    SettingsRow(title: String(localized: "Spotlight Debug"),
+                                subtitle: String(localized: "View and manage Spotlight indexing for games and save states."),
                                 icon: .sfSymbol("magnifyingglass.circle"))
                 }
                 #endif
 
                 // Log view
                 NavigationLink(destination: RetroLogView()) {
-                    SettingsRow(title: "Logs",
-                                subtitle: "View logs for debugging.",
+                    SettingsRow(title: String(localized: "Logs"),
+                                subtitle: String(localized: "View logs for debugging."),
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
 
@@ -2118,7 +2118,7 @@ private struct DeltaSkinsSection: View {
     var body: some View {
         Section {
             VStack {
-                Text("SKIN MODE")
+                Text(String(localized: "SKIN MODE"))
                     .font(.system(.headline, design: .monospaced))
                     .foregroundColor(.retroBlue)
                     .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
@@ -2160,8 +2160,8 @@ private struct DeltaSkinsSection: View {
             NavigationLink {
                 SystemSkinBrowserView()
             } label: {
-                SettingsRow(title: "Select Controller Skins",
-                            subtitle: "Choose controller skins for each system and orientation.",
+                SettingsRow(title: String(localized: "Select Controller Skins"),
+                            subtitle: String(localized: "Choose controller skins for each system and orientation."),
                             icon: .sfSymbol("gamecontroller.fill"))
             }
 
@@ -2169,8 +2169,8 @@ private struct DeltaSkinsSection: View {
             NavigationLink {
                 DeltaSkinListView(manager: DeltaSkinManager.shared)
             } label: {
-                SettingsRow(title: "Manage Controller Skins",
-                            subtitle: "View, import, and delete controller skins.",
+                SettingsRow(title: String(localized: "Manage Controller Skins"),
+                            subtitle: String(localized: "View, import, and delete controller skins."),
                             icon: .sfSymbol("folder.badge.gearshape"))
             }
 
@@ -2178,17 +2178,17 @@ private struct DeltaSkinsSection: View {
             NavigationLink {
                 SkinCatalogBrowserView()
             } label: {
-                SettingsRow(title: "Skin Browser",
-                            subtitle: "Browse and download skins from the community catalog.",
+                SettingsRow(title: String(localized: "Skin Browser"),
+                            subtitle: String(localized: "Browse and download skins from the community catalog."),
                             icon: .sfSymbol("square.grid.2x2"))
             }
 
             // Button to open skin documentation in the built-in wiki
             NavigationLink {
-                WikiPageView(path: "info/skins-guide.md", title: "Skin Documentation")
+                WikiPageView(path: "info/skins-guide.md", title: String(localized: "Skin Documentation"))
             } label: {
-                SettingsRow(title: "Skin Documentation",
-                            subtitle: "Learn how to create and install controller skins.",
+                SettingsRow(title: String(localized: "Skin Documentation"),
+                            subtitle: String(localized: "Learn how to create and install controller skins."),
                             icon: .sfSymbol("book.pages"))
             }
 
@@ -2205,7 +2205,7 @@ private struct DeltaSkinsSection: View {
         NavigationLink {
             ButtonEffectPickerView(buttonPressEffect: $buttonPressEffect)
         } label: {
-            SettingsRow(title: "Button Effect Style",
+            SettingsRow(title: String(localized: "Button Effect Style"),
                        subtitle: buttonPressEffect.description,
                        icon: .sfSymbol("circle.circle"))
         }
@@ -2216,7 +2216,7 @@ private struct DeltaSkinsSection: View {
         NavigationLink {
             ButtonSoundPickerView(buttonSound: $buttonSound, playSound: playButtonSound)
         } label: {
-            SettingsRow(title: "Button Sound Effect",
+            SettingsRow(title: String(localized: "Button Sound Effect"),
                         subtitle: buttonSound.description,
                         icon: .sfSymbol("speaker.wave.2"))
         }
@@ -2248,7 +2248,7 @@ private struct DeltaStylesLinkView: View {
                         )
                     )
 
-                Text("Download more skins from DeltaStyles")
+                Text(String(localized: "Download more skins from DeltaStyles"))
                     .font(.subheadline)
                     .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
 
@@ -2271,7 +2271,7 @@ private struct DeltaStylesLinkView: View {
                             )
                         )
 
-                    Text("Visit DeltaStyles.com")
+                    Text(String(localized: "Visit DeltaStyles.com"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
@@ -2325,7 +2325,7 @@ private struct DeltaStylesLinkView: View {
                             )
                         )
 
-                    Text("Visit DeltaStyles.com")
+                    Text(String(localized: "Visit DeltaStyles.com"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
@@ -2377,8 +2377,8 @@ private struct RetroAchievementsSection: View {
     var body: some View {
         Section(header: Text("RetroAchievements")) {
             NavigationLink(destination: RetroAchievementsView()) {
-                SettingsRow(title: "RetroAchievements",
-                            subtitle: "Login and view your achievement progress",
+                SettingsRow(title: String(localized: "RetroAchievements"),
+                            subtitle: String(localized: "Login and view your achievement progress"),
                             icon: .sfSymbol("trophy.fill"))
             }
         }
@@ -2405,7 +2405,7 @@ struct PlusStatusBanner: View {
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("PROVENANCE PLUS ACTIVE")
+                    Text(String(localized: "PROVENANCE PLUS ACTIVE"))
                         .font(.system(size: 14, weight: .heavy, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
@@ -2414,7 +2414,7 @@ struct PlusStatusBanner: View {
                                 endPoint: .trailing
                             )
                         )
-                    Text("Thank you for your support!")
+                    Text(String(localized: "Thank you for your support!"))
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
@@ -2460,7 +2460,7 @@ struct PlusStatusBanner: View {
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("UPGRADE TO PROVENANCE PLUS")
+                    Text(String(localized: "UPGRADE TO PROVENANCE PLUS"))
                         .font(.system(size: 13, weight: .heavy, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
@@ -2469,7 +2469,7 @@ struct PlusStatusBanner: View {
                                 endPoint: .trailing
                             )
                         )
-                    Text("Unlock cloud sync, premium themes & more")
+                    Text(String(localized: "Unlock cloud sync, premium themes & more"))
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }

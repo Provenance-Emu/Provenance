@@ -1168,7 +1168,7 @@ struct HomeView: SwiftUI.View {
 
     @ViewBuilder
     private func mostPlayedSection() -> some View {
-        HomeSection(title: "Most Played") {
+        HomeSection(title: String(localized: "Most Played")) {
             ForEach(mostPlayed, id: \.self) { playedGame in
                 GameItemView(
                     game: playedGame,

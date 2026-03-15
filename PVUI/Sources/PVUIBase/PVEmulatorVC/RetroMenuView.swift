@@ -680,7 +680,7 @@ struct RetroMenuView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 10, weight: .semibold))
-                        Text("PLUS")
+                        Text(String(localized: "PLUS"))
                             .font(.system(size: 9, weight: .heavy))
                     }
                     .foregroundStyle(
@@ -1714,7 +1714,7 @@ struct RetroMenuView: View {
         let shadowColor = (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(0.5)
 
         Button(action: { showingFilterPicker = false }) {
-            Text("DONE")
+            Text(String(localized: "DONE"))
                 #if os(tvOS)
                 .font(.system(size: 28, weight: .bold))
                 .padding(.vertical, 24)
