@@ -946,11 +946,13 @@ public struct RetroGameLibraryView: View {
     private func refreshGameDataAsync() async {
         DLOG("RetroGameLibraryView: Refreshing game data (async)")
 
-        // Run the expensive Realm materialisation on a background thread.
+        // Fetch and freeze Realm objects so they're safe to access from any thread.
+        // Without freeze(), SwiftUI may evaluate ForEach on a background thread
+        // and crash with "Realm accessed from incorrect thread".
         let (games, systems) = await Task.detached(priority: .userInitiated) {
             let db = RomDatabase.sharedInstance
-            let g = Array(db.all(PVGame.self,   sortedByKeyPath: "title"))
-            let s = Array(db.all(PVSystem.self, sortedByKeyPath: "name"))
+            let g = Array(db.all(PVGame.self,   sortedByKeyPath: "title")).map { $0.freeze() }
+            let s = Array(db.all(PVSystem.self, sortedByKeyPath: "name")).map { $0.freeze() }
             return (g, s)
         }.value
 
