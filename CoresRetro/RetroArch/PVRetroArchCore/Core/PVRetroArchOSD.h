@@ -18,9 +18,9 @@ extern "C" {
  * @param msg      The message string (UTF-8).
  * @param category RetroArch MESSAGE_QUEUE_CATEGORY_* value cast to unsigned
  *                 (0=INFO, 1=ERROR, 2=WARNING, 3=SUCCESS). Maps to PVOSDType.
- * @param duration_ms Pre-computed display duration in milliseconds, derived
- *                    from the original frame-count duration and the core's
- *                    actual FPS (caller performs the conversion).
+ * @param duration_ms Pre-computed display duration in milliseconds, typically
+ *                    derived from RetroArch's frame-count duration using its
+ *                    fixed 60 FPS timebase.
  */
 void pv_retroarch_post_osd(const char *msg, unsigned category, unsigned duration_ms);
 
