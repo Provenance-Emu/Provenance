@@ -340,9 +340,13 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
 ///
 /// - Removes the file if it is a ZIP archive (magic bytes PK).
 /// - Detects byte-swapped load addresses written by old Provenance bug Spike 2823
-///   and corrects bytes 8-11 in-place.  Only the three known-correctable patterns
-///   are touched; any other address is logged and left unchanged.
-/// - Returns YES if the file is usable after the call (exists and not a ZIP).
+///   and corrects bytes 8-11 in-place.  Only the three known-correctable byte-swap
+///   patterns are repaired (0x0000FC00→0x00FC0000, 0x0000E000→0x00E00000,
+///   0x0000E800→0x00E80000); any other unrecognised address is logged and left
+///   unchanged — the file is still considered present but may not boot.
+/// - Returns YES if the file exists and is not a ZIP after the call.
+///   A YES return for an unrecognised load address means the file is present but
+///   its usability for Hatari is unknown; use validateTOSReadyOrLog: to confirm.
 - (BOOL)repairTOSImageAtPath:(NSString *)tosPath {
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:tosPath]) return NO;
@@ -518,11 +522,14 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
             }
         }
 
-        // Final validation: ensure the TOS file that hatari.cfg points to actually exists
-        // and passes basic header checks.  If not, log a clear error so users can diagnose.
-        NSString *tosImagePath = [systemDir stringByAppendingPathComponent:@"tos.img"];
+        // Final validation: ensure the TOS file that Hatari will actually use exists and
+        // passes basic header checks.  Hatari uses <system>/hatari/ as its working directory,
+        // so validate that path first (it is the one hatari.cfg's szTosImageFileName points
+        // to).  Fall back to <system>/tos.img only for legacy setups where the hatari subdir
+        // was not populated.
         NSString *hatariTosPath = [hatariSubDir stringByAppendingPathComponent:@"tos.img"];
-        [self validateTOSReadyOrLog:tosImagePath fallback:hatariTosPath];
+        NSString *tosImagePath  = [systemDir    stringByAppendingPathComponent:@"tos.img"];
+        [self validateTOSReadyOrLog:hatariTosPath fallback:tosImagePath];
     }
 }
 
