@@ -18,14 +18,13 @@ void pv_retroarch_post_osd(const char *msg, unsigned category, unsigned duration
         if (nsMsg.length == 0)
             return;
 
-        /* Convert pre-computed millisecond duration to seconds.
-         * The caller (runloop.c) already applied the core FPS conversion. */
+        /* Convert pre-computed RetroArch millisecond duration to seconds.
+         * The caller (runloop.c) has already applied any core FPS / timing conversion,
+         * so we use the provided value directly, falling back to 3s if unset. */
         NSTimeInterval seconds = (duration_ms > 0) ? ((double)duration_ms / 1000.0) : 3.0;
-        /* Clamp to reasonable range */
-        if (seconds < 1.0) seconds = 1.0;
-        if (seconds > 10.0) seconds = 10.0;
 
         /* Map MESSAGE_QUEUE_CATEGORY_* to PVOSDType.
+         * Actual RetroArch enum (libretro-common/include/queues/message_queue.h):
          * Actual RetroArch enum (libretro-common/include/queues/message_queue.h):
          *   0 (INFO)    -> PVOSDTypeInfo    (0)
          *   1 (ERROR)   -> PVOSDTypeError   (3)
