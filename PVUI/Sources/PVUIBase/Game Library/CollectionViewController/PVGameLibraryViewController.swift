@@ -1240,7 +1240,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                 }
 
                 if let saveStatesViewController = saveStatesNavController.viewControllers.first as? PVSaveStatesViewController {
-                    saveStatesViewController.saveStates = game.saveStates
+                    saveStatesViewController.saveStates = AnyRealmCollection(game.saveStates)
                     saveStatesViewController.delegate = self
                 }
 

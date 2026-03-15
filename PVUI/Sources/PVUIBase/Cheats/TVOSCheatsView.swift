@@ -101,7 +101,7 @@ public struct TVOSCheatsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    let cheats: LinkingObjects<PVCheats>
+    let cheats: [PVCheats]
     let coreID: String?
     let cheatTypes: [String]
     let gameMD5: String?
@@ -134,7 +134,7 @@ public struct TVOSCheatsView: View {
     }
 
     public init(
-        cheats: LinkingObjects<PVCheats>,
+        cheats: [PVCheats],
         coreID: String?,
         cheatTypes: [String],
         gameMD5: String? = nil,
@@ -373,18 +373,22 @@ public struct TVOSCheatsView: View {
     }
 
     private func loadCheats() {
-        if let coreID = coreID {
-            let predicate = NSPredicate(format: "core.identifier == %@", coreID)
-            allCheats = cheats.filter(predicate)
-                .sorted(byKeyPath: "date", ascending: true)
-                .filter { !$0.isInvalidated }
-                .map { $0 }
+        // Re-query Realm when gameMD5 is available so newly added/imported cheats
+        // (written after this view was presented) are reflected on reload.
+        let source: [PVCheats]
+        if let md5 = gameMD5, !md5.isEmpty, let realm = try? Realm() {
+            source = Array(realm.objects(PVCheats.self).filter("game.md5Hash == %@", md5))
         } else {
-            allCheats = cheats
-                .sorted(byKeyPath: "date", ascending: true)
-                .filter { !$0.isInvalidated }
-                .map { $0 }
+            source = cheats
         }
+        let valid = source.filter { !$0.isInvalidated }
+        let filtered: [PVCheats]
+        if let coreID = coreID {
+            filtered = valid.filter { $0.core?.identifier == coreID }
+        } else {
+            filtered = valid
+        }
+        allCheats = filtered.sorted { $0.date < $1.date }
     }
 
     private func toggleCheat(_ cheat: PVCheats, at index: Int) {
@@ -989,7 +993,7 @@ struct TVOSEditCheatView: View {
 
 public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
     public init(
-        cheats: LinkingObjects<PVCheats>,
+        cheats: [PVCheats],
         coreID: String?,
         cheatTypes: [String],
         gameMD5: String? = nil,

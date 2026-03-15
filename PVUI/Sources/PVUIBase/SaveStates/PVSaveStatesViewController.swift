@@ -35,7 +35,7 @@ public final class PVSaveStatesViewController: UICollectionViewController {
 
     weak var delegate: PVSaveStatesViewControllerDelegate?
 
-    var saveStates: LinkingObjects<PVSaveState>!
+    var saveStates: AnyRealmCollection<PVSaveState>!
     var screenshot: UIImage?
 
     var coreID: String?

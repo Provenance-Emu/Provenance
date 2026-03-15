@@ -230,7 +230,9 @@ public extension PVEmulatorViewController {
         let image = captureScreenshot()
 
         if let saveStatesViewController = saveStatesNavController.viewControllers.first as? PVSaveStatesViewController {
-            saveStatesViewController.saveStates = game.saveStates
+            // Wrap in AnyRealmCollection to decouple from the @ThreadSafe game's
+            // LinkingObjects, preventing Realm thread-safety crashes.
+            saveStatesViewController.saveStates = AnyRealmCollection(game.saveStates)
             saveStatesViewController.delegate = self
             saveStatesViewController.screenshot = image
             saveStatesViewController.coreID = core.coreIdentifier
