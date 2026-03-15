@@ -1206,6 +1206,15 @@ void Host_YieldToUI()
 
 void Host_UpdateProgressDialog(const char* caption, int position, int total)
 {
+    if (!caption || !*caption) { return; }
+    // Only show at start (position==0) and completion (position==total) to avoid toast spam.
+    if (position == 0 && total > 0) {
+        NSString *message = [NSString stringWithFormat:@"%s…", caption];
+        [PVOSDNotification postMessage:message type:PVOSDTypeInfo duration:4.0];
+    } else if (position == total && total > 0) {
+        NSString *message = [NSString stringWithFormat:@"%s — done", caption];
+        [PVOSDNotification postMessage:message type:PVOSDTypeSuccess duration:3.0];
+    }
 }
 
 void Host_TitleChanged()
@@ -1225,6 +1234,13 @@ bool Host_RendererHasFullFocus()
 bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style)
 {
     NSLog(@"Message %s %s\n", caption, text);
+    if (text && *text) {
+        NSString *message = caption && *caption
+            ? [NSString stringWithFormat:@"%s: %s", caption, text]
+            : [NSString stringWithUTF8String:text];
+        PVOSDType osdType = (style == Common::MsgType::Warning) ? PVOSDTypeWarning : PVOSDTypeError;
+        [PVOSDNotification postMessage:message type:osdType duration:5.0];
+    }
 	return true;
 }
 

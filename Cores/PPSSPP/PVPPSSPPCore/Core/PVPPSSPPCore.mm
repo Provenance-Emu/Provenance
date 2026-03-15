@@ -534,7 +534,12 @@ void System_SendMessage(const char *command, const char *parameter) {
 	NSLog(@"Command %s Received\n",command);
 }
 
-void System_Toast(const char *text) {}
+void System_Toast(const char *text) {
+    if (text && *text) {
+        NSString *message = [NSString stringWithUTF8String:text];
+        [PVOSDNotification postMessage:message type:PVOSDTypeInfo duration:3.0];
+    }
+}
 void System_AskForPermission(SystemPermission permission) {}
 
 PermissionStatus System_GetPermissionStatus(SystemPermission permission) { return PERMISSION_STATUS_GRANTED; }
