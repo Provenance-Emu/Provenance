@@ -135,44 +135,6 @@ public final class DeltaSkinPreferences: ObservableObject {
         setSelectedSkin(skinIdentifier, for: system, orientation: .portrait)
     }
     
-    // MARK: - Per-skin theme selection
-
-    /// UserDefaults key for per-skin selected theme IDs
-    private let themePreferencesKey = "com.provenance.deltaskin.theme.preferences.v1"
-
-    /// Get the selected theme ID for a specific skin identifier.
-    /// - Parameter skinIdentifier: The skin's unique identifier.
-    /// - Returns: The selected theme ID, or `nil` if the default theme is in use.
-    public func selectedThemeId(for skinIdentifier: String) -> String? {
-        guard let data = UserDefaults.standard.data(forKey: themePreferencesKey),
-              let prefs = try? JSONDecoder().decode([String: String].self, from: data) else {
-            return nil
-        }
-        return prefs[skinIdentifier]
-    }
-
-    /// Persist the selected theme ID for a specific skin identifier.
-    /// - Parameters:
-    ///   - themeId: The theme ID to select, or `nil` to revert to the default.
-    ///   - skinIdentifier: The skin's unique identifier.
-    public func setSelectedThemeId(_ themeId: String?, for skinIdentifier: String) {
-        var prefs: [String: String]
-        if let data = UserDefaults.standard.data(forKey: themePreferencesKey),
-           let existing = try? JSONDecoder().decode([String: String].self, from: data) {
-            prefs = existing
-        } else {
-            prefs = [:]
-        }
-        if let themeId = themeId {
-            prefs[skinIdentifier] = themeId
-        } else {
-            prefs.removeValue(forKey: skinIdentifier)
-        }
-        if let data = try? JSONEncoder().encode(prefs) {
-            UserDefaults.standard.set(data, forKey: themePreferencesKey)
-        }
-    }
-
     /// Set the selected skin for a specific game
     /// - Parameters:
     ///   - skinIdentifier: The skin identifier to select
