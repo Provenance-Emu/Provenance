@@ -27,6 +27,9 @@ import PVSettings
 import PVThemes
 import SwiftUI
 import ZipArchive
+#if canImport(PVJIT)
+import JITManager
+#endif
 
 private weak var staticSelf: PVEmualatorControllerProtocol?
 
@@ -816,6 +819,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         /// Pause all background services during gameplay via the central registry
         BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
+
+        // Present JIT onboarding if JIT has not been acquired this session
+        #if canImport(PVJIT) && os(iOS)
+        func presentJITOnboardingWhenReady() {
+            // Ensure the view controller is in the window hierarchy before presenting
+            guard view.window != nil else {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    presentJITOnboardingWhenReady()
+                }
+                return
+            }
+            JITOnboardingManager.shared.presentOnboardingIfNeeded(from: self)
+        }
+        presentJITOnboardingWhenReady()
+        #endif
 
         core.startEmulation()
 
