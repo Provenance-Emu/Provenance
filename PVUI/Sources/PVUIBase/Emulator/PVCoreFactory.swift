@@ -31,7 +31,7 @@ public extension PVCore {
         // bridge classes for PVThinLibretroCore so we can test the thin wrapper
         // with existing ROM/core associations without removing the RA backend.
         ILOG("createInstance: principleClass=\(className) for \(identifier)")
-        if className == "PVRetroArchCoreBridge" || className == "PVLibRetroGLESCore" || className == "PVLibRetroCore" {
+        if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
             let directFlag = UserDefaults.standard.bool(forKey: "dynamicLibretroScanner")
             let overrideDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides")
             let overrideFlag = overrideDict?["dynamicLibretroScanner"] as? Bool
