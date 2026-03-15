@@ -24,6 +24,10 @@ import Perception
 import SwiftUI
 import PVLookupTypes
 
+#if canImport(CoreSpotlight)
+import CoreSpotlight
+#endif
+
 public protocol GameImporterDatabaseServicing {
     typealias GameType = PVGame
 
@@ -415,6 +419,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                         return finalGame.isFrozen ? finalGame : finalGame.freeze()
                     }
                     await GameImporterSwiftDataBridge.shared?.saveGame(frozenForSwiftData)
+
+                    // Re-index in Spotlight with updated metadata/artwork (#2980)
+                    #if canImport(CoreSpotlight) && !os(tvOS)
+                    await tempService.indexGameInSpotlight(frozenForSwiftData)
+                    #endif
                     DLOG("finishUpdateOrImport: Completed deferred getUpdatedGameInfo for: \(finalGame.romPath)")
                 } catch {
                     WLOG("finishUpdateOrImport: Failed deferred metadata update: \(error.localizedDescription)")
@@ -459,6 +468,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                         return updatedGame.isFrozen ? updatedGame : updatedGame.freeze()
                     }
                     await GameImporterSwiftDataBridge.shared?.saveGame(frozenArtwork)
+
+                    // Re-index in Spotlight with new artwork thumbnail (#2980)
+                    #if canImport(CoreSpotlight) && !os(tvOS)
+                    await tempService.indexGameInSpotlight(frozenArtwork)
+                    #endif
                     DLOG("finishUpdateOrImport: Completed async artwork download for: \(updatedGame.romPath)")
                 } catch {
                     WLOG("finishUpdateOrImport: Failed async artwork download: \(error.localizedDescription)")
@@ -845,7 +859,39 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         // Dual-write: mirror into SwiftData after Realm context exits (epic #2510).
         await GameImporterSwiftDataBridge.shared?.saveGame(frozenGame)
+
+        // Index the newly-imported game in Spotlight so it surfaces immediately
+        // in Siri / Spotlight search without waiting for the next full reindex.
+        #if canImport(CoreSpotlight) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))
+        await indexGameInSpotlight(frozenGame)
+        #endif
     }
+
+    #if canImport(CoreSpotlight) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))
+    /// Index a single game in CoreSpotlight so it appears in Siri / Spotlight search.
+    private func indexGameInSpotlight(_ game: PVGame) async {
+        guard !game.md5Hash.isEmpty else {
+            WLOG("Spotlight: Skipping game with empty md5Hash: \(game.title)")
+            return
+        }
+
+        let attributeSet = game.spotlightContentSet
+        let uniqueIdentifier = game.spotlightUniqueIdentifier
+
+        let item = CSSearchableItem(
+            uniqueIdentifier: uniqueIdentifier,
+            domainIdentifier: SpotlightHelper.domainIdentifier,
+            attributeSet: attributeSet
+        )
+
+        do {
+            try await CSSearchableIndex.default().indexSearchableItems([item])
+            DLOG("Spotlight: Indexed game '\(game.title)' (\(uniqueIdentifier))")
+        } catch {
+            ELOG("Spotlight: Error indexing game '\(game.title)': \(error)")
+        }
+    }
+    #endif
 
     /// Calculates the MD5 hash for a given game
     ///

@@ -503,11 +503,13 @@ public class AppState: ObservableObject {
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
         ILOG("AppState: Starting detached task to add imported games to CSSearchableIndex")
-        Task.detached { [weak self] in
+        Task.detached(priority: .utility) { [weak self] in
             guard let self = self else { return }
             do {
-                /// Increased timeout and added progress logging
-                try await withTimeout(seconds: 30) {
+                /// Use a generous timeout — large libraries (1000+ games) need time
+                /// to build thumbnails and index. Per-game indexing on import (#2980)
+                /// ensures newly imported games surface immediately regardless.
+                try await withTimeout(seconds: 120) {
                     await self.libraryUpdatesController?.addImportedGames(
                         to: CSSearchableIndex.default(),
                         database: RomDatabase.sharedInstance

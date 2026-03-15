@@ -471,8 +471,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     }
 
     #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-    /// Spotlight indexing support
-    @MainActor
+    /// Spotlight indexing support — runs off the main actor to avoid blocking UI during boot (#2980)
     public func addImportedGames(to spotlightIndex: CSSearchableIndex = CSSearchableIndex.default(), database: RomDatabase = RomDatabase.sharedInstance) async {
         ILOG("Starting Spotlight indexing for all games")
 
