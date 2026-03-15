@@ -288,14 +288,24 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Bring all virtual input overlays (keyboard → trackpad → mouse cursor) to the front
+    /// Bring all virtual input overlays (keyboard → trackpad → controller HUD → mouse cursor) to the front
     /// of the view hierarchy in the correct stacking order.
+    ///
+    /// Order (back to front):
+    ///   keyboard → trackpad → controller overlay (HUD buttons) → cursor (non-interactive)
+    ///
+    /// The controller overlay must be above the trackpad so quick-action buttons
+    /// (save, load, fast-forward) remain tappable when the virtual mouse is active.
     public func bringVirtualInputOverlaysToFront() {
         if let keyboardView = virtualKeyboardHostingVC?.view {
             view.bringSubviewToFront(keyboardView)
         }
         if let trackpadView = touchTrackpadView {
             view.bringSubviewToFront(trackpadView)
+        }
+        // HUD quick-action buttons live in the controller overlay — must be above the trackpad
+        if let controllerView = controllerViewController?.view {
+            view.bringSubviewToFront(controllerView)
         }
         if let cursorView = cursorHostingController?.view {
             view.bringSubviewToFront(cursorView)

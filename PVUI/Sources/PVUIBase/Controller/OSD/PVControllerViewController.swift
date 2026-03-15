@@ -181,7 +181,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 #endif
 
     private var toggleButton: UIButton?
-    private var buttonsVisible = true
+    private var buttonsVisible = false
 
     // MARK: - Quick Action Buttons
     private var quickSaveButton: UIButton?
@@ -377,6 +377,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
         // Add quick action buttons (quick save/load and fast forward)
         setupQuickActionButtons()
+        // Apply initial hidden state — buttons are collapsed by default so they
+        // don't overlap the game video. The toggle chevron remains visible.
+        quickActionButtons.forEach { $0.isHidden = !buttonsVisible }
     }
 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
