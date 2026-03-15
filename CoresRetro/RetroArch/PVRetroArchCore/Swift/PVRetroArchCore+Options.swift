@@ -712,7 +712,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValuesFile = "MAME/MAME.opt"
                 optionOverwrite = true
             }
-            if coreIdentifier.contains("hatari") || systemIdentifier.contains("atarist") {
+            if coreIdentifier.contains("hatari") || self.systemIdentifier?.lowercased().contains("atarist") == true {
                 /// hatari_boot_hd must be "false" (not "disabled") to prevent the core from
                 /// passing --acsi "" to the Hatari binary when no HD image is configured.
                 /// This file is written to the per-core options path that RetroArch reads for
