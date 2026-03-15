@@ -530,6 +530,10 @@ private struct ControllerSlotModeRow: View {
     let accentColor: Color
     let controllerIcon: String
 
+    private var currentPlayerNumber: Int? {
+        controllerManager.allLiveControllers.first(where: { $0.value == controller })?.key
+    }
+
     private var currentMode: ControllerSlotMode {
         controllerManager.slotMode(for: controller)
     }
@@ -589,6 +593,16 @@ private struct ControllerSlotModeRow: View {
                     .font(.headline)
 
                 Spacer()
+
+                if let playerNumber = currentPlayerNumber {
+                    Text("P\(playerNumber)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.2))
+                        .clipShape(Capsule())
+                }
 
                 if currentMode != .auto {
                     Button("Reset", role: .destructive) {
