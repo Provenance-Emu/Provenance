@@ -128,6 +128,14 @@ public extension Defaults.Keys {
     static let buttonPressEffect = Key<ButtonPressEffect>("buttonPressEffect", default: .glow)
     static let buttonSound = Key<ButtonSound>("buttonSound", default: .none)
 
+    /// Global scale factor for controller overlay / skin views.
+    /// Range 0.5 (half size) – 1.5 (150%). Default 1.0.
+    static let controllerOverlayScale = Key<Float>("controllerOverlayScale", default: 1.0)
+
+    /// Global opacity for controller overlay / skin views.
+    /// Range 0.1 (nearly invisible) – 1.0 (fully opaque). Default 1.0.
+    static let controllerOverlayOpacity = Key<Float>("controllerOverlayOpacity", default: 1.0)
+
 #if os(tvOS)
     /// Multiplier applied to Siri Remote touch-surface pan deltas when driving mouse input.
     /// Range 0.1 – 5.0; default is 1.0 (1:1 pixel mapping).

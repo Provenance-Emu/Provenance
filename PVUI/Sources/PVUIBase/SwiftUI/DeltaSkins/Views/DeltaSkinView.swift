@@ -68,6 +68,10 @@ public struct DeltaSkinView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    // Global overlay appearance settings
+    @Default(.controllerOverlayScale) private var overlayScale
+    @Default(.controllerOverlayOpacity) private var overlayOpacity
+
     /// State for touch and button interactions
     @State private var touchLocations: Set<CGPoint> = []
     @State private var activeButton: (frame: CGRect, mappingSize: CGSize, buttonId: String)?
@@ -531,6 +535,7 @@ public struct DeltaSkinView: View {
                                 .scaledToFit()
                                 .frame(width: layout.width, height: layout.height)
                                 .clipped()
+                                .opacity(Double(overlayOpacity))
                             // Draw per-button asset layers (if provided by the skin)
                             if let buttons = skin.buttons(for: traits),
                                let mappingSize = skin.mappingSize(for: traits) {
@@ -563,6 +568,7 @@ public struct DeltaSkinView: View {
                                                 y: button.frame.midY * scaleY
                                             )
                                             .allowsHitTesting(false)
+                                            .opacity(Double(overlayOpacity))
                                     }
                                 }
                             }

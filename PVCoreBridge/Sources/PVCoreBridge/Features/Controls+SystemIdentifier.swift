@@ -66,7 +66,7 @@ public extension SystemIdentifier {
         case .Sega32X: return PVSega32XButton.self
         case .SegaCD: return PVGenesisButton.self
         case .SG1000: return PVSG1000Button.self
-        case .SGFX: return PVPCFXButton.self    // TODO: Add me
+        case .SGFX: return PVPCEButton.self
         case .SNES: return PVSNESButton.self
         case .Supervision: return PVSupervisionButton.self
         case .TIC80: return PVDOSButton.self // TODO: Add me

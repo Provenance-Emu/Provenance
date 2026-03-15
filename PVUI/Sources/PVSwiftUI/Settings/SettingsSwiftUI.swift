@@ -2114,6 +2114,8 @@ private struct DeltaSkinsSection: View {
     @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.buttonSound) var buttonSound
     @Default(.skinMode) var skinMode
+    @Default(.controllerOverlayScale) var controllerOverlayScale
+    @Default(.controllerOverlayOpacity) var controllerOverlayOpacity
 
     var body: some View {
         Section {
@@ -2155,6 +2157,44 @@ private struct DeltaSkinsSection: View {
             }
             .frame(maxWidth: .infinity)
 
+
+            HStack {
+                Text("Overlay Scale")
+                RetroWaveSlider<Float>(value: $controllerOverlayScale,
+                                     in: 0.5...1.5,
+                                     step: 0.05,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Scale factor for controller skin overlay.") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: {
+                                         Image(systemName: "minus.magnifyingglass")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: {
+                                         Image(systemName: "plus.magnifyingglass")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
+            }
+
+            HStack {
+                Text("Overlay Opacity")
+                RetroWaveSlider<Float>(value: $controllerOverlayOpacity,
+                                     in: 0.1...1.0,
+                                     step: 0.05,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Opacity of controller skin overlay.") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: {
+                                         Image(systemName: "sun.min")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: {
+                                         Image(systemName: "sun.max")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
+            }
 
             // Button to select skins
             NavigationLink {
