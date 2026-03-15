@@ -1,320 +1,294 @@
-<p align="center" style="text-align: center; align: center">
-<h1 align="center"><a href="http://www.provenance-emu.com" style="text-decoration:none;color:inherit;">Provenance</a></h1>
-<h4 align="center" style="text-align: center; align: center">An iOS & tvOS Frontend for Multiple Emulators</h4>
-</p>
+<div align="center">
+  <a href="https://provenance-emu.com">
+    <img src="https://provenance-emu.com/images/icons/icon.512x512.png" width="120" height="120" alt="Provenance">
+  </a>
 
-<p align="center">
-  <img width="100%" height="auto" src="https://user-images.githubusercontent.com/399864/140426554-fb786580-b36b-492d-b5f9-d806ca377508.jpeg" />
-</p>
+  <h1><a href="https://provenance-emu.com" style="text-decoration:none;color:inherit;">Provenance</a></h1>
 
-<div style="align:center" align="center">
-<a href="https://github.com/provenance-emu/Provenance/network"><img src="https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square"/></a>
-<a href="https://github.com/provenance-emu/Provenance/stargazers"><img src="https://img.shields.io/github/stars/provenance-emu/Provenance.svg?style=flat-square"/></a>
-<a href="https://github.com/Provenance-Emu/Provenance/graphs/contributors"><img src="https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square"/></a>
-<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/provenance-emu/provenance/total?logo=github&style=flat-square">
-</br>
-<img src="https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square"/>
-<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/provenance-emu/provenance?style=flat-square">
-<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/provenance-emu/provenance?style=flat-square">
-<img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/provenance-emu/provenance">
-<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Provenance-EMU/Provenance">
-<br/>
-<a href="https://github.com/orgs/Provenance-Emu/projects/1"><img src="https://img.shields.io/badge/Roadmap-GitHub%20Projects-blue?style=flat-square&logo=github"/></a>
+  <p><strong>The best free, open-source iOS game emulator for iPhone, iPad, and Apple TV.</strong><br>
+  Play retro games from 50+ classic consoles — SNES, N64, PlayStation, GBA, Dreamcast, GameCube, and more.</p>
+
+  <a href="https://apps.apple.com/us/app/provenance-app/id1596862805">
+    <img src="https://provenance-emu.com/images/badges/app-store-badge.svg" height="48" alt="Download on the App Store">
+  </a>
+  &nbsp;
+  <a href="https://github.com/Provenance-Emu/Provenance/releases/latest">
+    <img src="https://provenance-emu.com/images/badges/github-badge.svg" height="48" alt="Download IPA">
+  </a>
 </div>
 
-</br>
+---
+
+<div align="center">
+
+<!-- Community stats -->
+[![Stars](https://img.shields.io/github/stars/provenance-emu/provenance?style=flat-square&logo=github&label=Stars)](https://github.com/provenance-emu/Provenance/stargazers)
+[![Forks](https://img.shields.io/github/forks/provenance-emu/provenance?style=flat-square&logo=github&label=Forks)](https://github.com/provenance-emu/Provenance/network)
+[![Contributors](https://img.shields.io/github/contributors/provenance-emu/provenance?style=flat-square&logo=github&label=Contributors)](https://github.com/Provenance-Emu/Provenance/graphs/contributors)
+[![Total Downloads](https://img.shields.io/github/downloads/provenance-emu/provenance/total?style=flat-square&logo=github&label=IPA+Downloads)](https://github.com/Provenance-Emu/Provenance/releases)
+
+<!-- Release -->
+[![Latest Release](https://img.shields.io/github/v/release/provenance-emu/provenance?style=flat-square&label=Latest&color=2ea44f)](https://github.com/Provenance-Emu/Provenance/releases/latest)
+[![Release Date](https://img.shields.io/github/release-date/provenance-emu/provenance?style=flat-square&label=Released)](https://github.com/Provenance-Emu/Provenance/releases/latest)
+[![Commits Since Release](https://img.shields.io/github/commits-since/provenance-emu/provenance/latest?style=flat-square)](https://github.com/Provenance-Emu/Provenance/commits)
+[![Roadmap](https://img.shields.io/badge/Roadmap-GitHub%20Projects-blue?style=flat-square&logo=github)](https://github.com/orgs/Provenance-Emu/projects/1)
+
+<!-- Build & CI -->
+[![Build](https://img.shields.io/github/actions/workflow/status/provenance-emu/provenance/build.yml?style=flat-square&logo=github-actions&logoColor=white&label=Build)](https://github.com/Provenance-Emu/Provenance/actions/workflows/build.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/provenance-emu/provenance?style=flat-square&label=Last+Commit)](https://github.com/Provenance-Emu/Provenance/commits)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/provenance-emu/provenance?style=flat-square&label=Commits%2FMonth)](https://github.com/Provenance-Emu/Provenance/commits)
+
+<!-- Platform & Tech -->
+[![iOS 16+](https://img.shields.io/badge/iOS-16%2B-blue?style=flat-square&logo=apple)](https://apps.apple.com/us/app/provenance-app/id1596862805)
+[![tvOS](https://img.shields.io/badge/tvOS-16%2B-black?style=flat-square&logo=apple)](https://provenance-emu.com)
+[![macOS](https://img.shields.io/badge/macOS-13%2B-silver?style=flat-square&logo=apple)](https://provenance-emu.com)
+[![Swift](https://img.shields.io/badge/Swift-5.9-FA7343?style=flat-square&logo=swift&logoColor=white)](https://swift.org)
+[![Code Size](https://img.shields.io/github/languages/code-size/provenance-emu/provenance?style=flat-square)](https://github.com/Provenance-Emu/Provenance)
+[![Top Language](https://img.shields.io/github/languages/top/provenance-emu/provenance?style=flat-square)](https://github.com/Provenance-Emu/Provenance)
+
+<!-- Issues & PRs -->
+[![Open Issues](https://img.shields.io/github/issues/provenance-emu/provenance?style=flat-square&label=Open+Issues)](https://github.com/provenance-emu/Provenance/issues)
+[![Closed Issues](https://img.shields.io/github/issues-closed-raw/provenance-emu/provenance?style=flat-square&label=Closed+Issues&color=green)](https://github.com/provenance-emu/Provenance/issues?q=is%3Aclosed)
+[![Open PRs](https://img.shields.io/github/issues-pr-raw/provenance-emu/provenance?style=flat-square&label=Open+PRs)](https://github.com/provenance-emu/Provenance/pulls)
+[![Closed PRs](https://img.shields.io/github/issues-pr-closed-raw/provenance-emu/provenance?style=flat-square&label=Closed+PRs&color=green)](https://github.com/provenance-emu/Provenance/pulls?q=is%3Aclosed)
+
+<!-- Community & Support -->
+[![Discord](https://img.shields.io/discord/421819941835243520?style=flat-square&logo=discord&logoColor=white&label=Discord&color=5865F2)](https://discord.gg/4TK7PU5)
+[![Follow on X](https://img.shields.io/twitter/follow/provenanceapp?style=flat-square&logo=x&logoColor=white&label=Follow&color=000000)](https://x.com/provenanceapp)
+[![Open Collective](https://img.shields.io/opencollective/all/provenanceemu?style=flat-square&logo=opencollective&logoColor=white&label=Supporters)](https://opencollective.com/provenanceemu)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/provenance-emu?style=flat-square&logo=github-sponsors&label=Sponsors)](https://github.com/sponsors/Provenance-EMU)
+
+</div>
+
+---
 
 <p align="center">
+  <img src="https://provenance-emu.com/images/mobile.webp" width="65%" alt="Provenance iOS game emulator on iPhone">
+</p>
 
-  <a href="https://www.patreon.com/bePatron?u=8537745"><img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" /></a>
-<a href="https://www.amazon.com/hz/wishlist/ls/1VXOGWHIOFVMR?ref_=wl_share"><img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" /></a>
- </p>
- <div style="align:center" align="center">
- <img alt="Open Collective backers and sponsors" src="https://img.shields.io/opencollective/all/provenanceemu?logo=OpenCollective">
-<img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/Provenance-EMU?logo=GitHub&style=flat-square">
-  </div>
-</br>
+---
 
-![Alt](https://repobeats.axiom.co/api/embed/19c0dec78befc395b346c14006c62ff964912fa9.svg "Repobeats analytics image")
+## ✨ Features
 
-### Release Roadmap
+- **50+ Classic Systems** — NES, SNES, N64, GameCube, Game Boy, GBA, DS, 3DS, PlayStation, PSP, Saturn, Dreamcast, Atari, Neo Geo, and [many more](#-systems-supported)
+- **☁️ iCloud Sync** *(Provenance Plus)* — Sync ROMs, save states, BIOS files, and artwork across all devices
+- **🎨 Custom Controller Skins** — Hundreds of free skins at [provenance-emu.com/skins](https://provenance-emu.com/skins/)
+- **🏆 RetroAchievements** — Earn achievements in hundreds of classic games
+- **📺 Native Apple TV App** — Full tvOS UI with TopShelf v2, Side Menu, iCloud sync included free
+- **🎬 Metal Video Filters** — Simple CRT, Complex CRT, Mega Tron, ulTron, LCD, Game Boy, VHS
+- **🎮 Full Controller Support** — MFi, PlayStation DualSense/DualShock, Xbox, 8BitDo, and more
+- **🔒 Cheat Codes** — Game Genie, Action Replay, GameShark on 12+ native cores + all RetroArch cores
+- **💾 Save States** — Save and restore progress anywhere, with visual previews
+- **⏩ Fast Forward** — Speed through slow sections with a toggle or controller shortcut
+- **🖼️ ROM Metadata & Artwork** — Automatic box art, descriptions, and genres via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
+- **📥 Flexible Importing** — WebDAV, AirDrop, Files app, web browser downloads
+- **🔓 100% Free & Open Source** — No ads, no tracking, no required account
 
-![GitHub Release](https://img.shields.io/github/release/provenance-emu/provenance.svg?style=flat-square)
-![GitHub Release Date](https://img.shields.io/github/release-date/provenance-emu/provenance.svg?style=flat-square)
-![Github commits (since latest release)](https://img.shields.io/github/commits-since/provenance-emu/provenance/latest.svg?style=flat-square)
-![GitHub milestone](https://img.shields.io/github/milestones/progress/provenance-emu/provenance/10?style=flat-square)
-![GitHub last commit](https://img.shields.io/github/last-commit/provenance-emu/provenance?style=flat-square)
+---
 
-We track upcoming releases in our GitHub [Milestones](https://github.com/Provenance-Emu/Provenance/milestones?direction=asc&sort=title&state=open). Keep in mind they are subject to change.
+## 🎮 Systems Supported
 
-### Issues
+<details>
+<summary><strong>Nintendo (12 systems)</strong></summary>
 
-<span>
-<img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/provenance-emu/provenance">
-<img alt="GitHub closed pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/provenance-emu/provenance?style=flat-square">
-<img alt="GitHub issues" src="https://img.shields.io/github/issues/provenance-emu/provenance?style=flat-square">
-<img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/provenance-emu/provenance?style=flat-square">
-</span>
+| System | Core |
+|--------|------|
+| NES / Famicom | FCEUX, Nestopia, Mednafen |
+| Famicom Disk System | FCEUX |
+| SNES / Super Famicom | SNES9x, bsnes |
+| Nintendo 64 | Mupen64Plus-NX, ParaLLEl |
+| GameCube / Wii | Dolphin |
+| Game Boy / Game Boy Color | Gambatte, Mednafen |
+| Game Boy Advance | VBA-M, mGBA |
+| Nintendo DS | DeSmuME, melonDS |
+| Nintendo 3DS | emuThreeDS (Citra/Azahar) |
+| Virtual Boy | Mednafen |
+| Pokémon mini | PokeMini |
 
-### Community
+</details>
 
-[![Discord Widget](https://img.shields.io/discord/421819941835243520.svg?style=flat-square)](https://discord.gg/4TK7PU5)
-<a href="https://www.twitch.tv/joe__codes"><img alt="Twitch Status" src="https://img.shields.io/twitch/status/joe__codes?style=flat-square"></a>
-![Twitter Follow](https://img.shields.io/twitter/follow/provenanceapp.svg?style=social&logo=twitter&label=Follow)
-<img alt="YouTube Channel Subscribers" src="https://img.shields.io/youtube/channel/subscribers/UCKeN6unYKdayfgLWulXgB1w?style=social">
+<details>
+<summary><strong>Sega (8 systems)</strong></summary>
 
-💬 Join us and the rest of the community on the [Provenence-Emu Discord](https://discord.gg/4TK7PU5).<br><br>
+| System | Core |
+|--------|------|
+| Master System / SG-1000 | Genesis Plus GX |
+| Genesis / Mega Drive | Genesis Plus GX, PicoDrive |
+| Sega CD / Mega CD | Genesis Plus GX |
+| Sega 32X | PicoDrive |
+| Game Gear | Genesis Plus GX |
+| Saturn | Mednafen |
+| Dreamcast | Flycast |
 
-## Installation
+</details>
 
-To get started, please follow the [Installation](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance) instructions on the wiki.
+<details>
+<summary><strong>Sony (2 systems)</strong></summary>
 
-<sup>If you run into trouble, check the [Frequently Asked Questions](https://wiki.provenance-emu.com/faqs) and please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting any new issues.</sup>
+| System | Core |
+|--------|------|
+| PlayStation (PSX/PS1) | DuckStation, PCSX-ReARMed, Mednafen |
+| PSP | PPSSPP |
 
-### Why 'Provenance'?
+</details>
 
-_Provenance_ is our origin story. The word has a similar meaning to _Genesis_, which is actually where the project started: Sega Genesis—our early beginnings as humble emulator on iOS.
+<details>
+<summary><strong>Atari (6 systems)</strong></summary>
+
+| System | Core |
+|--------|------|
+| Atari 2600 | Stella |
+| Atari 5200 | Atari800 |
+| Atari 7800 | ProSystem |
+| Atari Lynx | Mednafen |
+| Atari Jaguar | Virtual Jaguar |
+| Atari ST | Hatari |
+
+</details>
+
+<details>
+<summary><strong>NEC, SNK, Bandai, and More (15+ systems)</strong></summary>
+
+| System | Core |
+|--------|------|
+| PC Engine / TurboGrafx-16 | Mednafen |
+| TurboGrafx-CD / Super CD-ROM² | Mednafen |
+| PC Engine SuperGrafx | Mednafen |
+| PC-FX | Mednafen |
+| Neo Geo Pocket / Color | Mednafen |
+| WonderSwan / Color | Mednafen |
+| 3DO | Opera |
+| ColecoVision | Gearcoleco |
+| Vectrex | VecX |
+| Intellivision | FreeIntv |
+| Magnavox Odyssey² | O2EM |
+| ZX Spectrum | Fuse |
+| MSX / MSX2 | blueMSX / fMSX |
+| Apple II | Atari800 |
+| Watara Supervision | Potator |
+| Mega Duck | SameDuck |
+
+</details>
+
+> Full compatibility details, BIOS requirements, and ROM formatting guides: [wiki.provenance-emu.com](https://wiki.provenance-emu.com)
+
+---
+
+## 🚀 Installation
+
+The easiest way to get Provenance is the **App Store**:
+
+[![Download on the App Store](https://img.shields.io/badge/App_Store-Free_Download-0D96F6?style=for-the-badge&logo=apple&logoColor=white)](https://apps.apple.com/us/app/provenance-app/id1596862805)
+
+For advanced installation options (AltStore, SideStore, building from source), see the [Installation Guide](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance).
+
+After installing, see [Importing ROMs](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) to add your games.
+
+> Having trouble? Check the [FAQ](https://wiki.provenance-emu.com/faqs) or join [Discord](https://discord.gg/4TK7PU5).
+
+---
+
+### Why "Provenance"?
+
+_Provenance_ is our origin story. The word has a similar meaning to _Genesis_, which is actually where the project started: Sega Genesis — our early beginnings as a humble emulator on iOS.
 
 <sup> prov·e·nance &nbsp; _/ˈprävənəns/_ &nbsp; n. </sup><br>
 <sup> ¹ place of origin &nbsp; ² the beginning of something's existence </sup>
 
-## Systems Supported:
+---
 
-- Apple
-  - II
-  - Macintosh
-- Atari
-  - 2600
-  - 5200
-  - 7800
-  - Lynx
-  - Jaguar
-  - ST
-- Bandai
-  - WonderSwan / WonderSwan Color
-- GCE
-  - Vectrex
-- IBM
-  - PC DOS
-- Magnavox
-  - Odyssey²
-- Microsoft
-  - MSX
-  - MSX2
-- NEC
-  - PC Engine / TurboGrafx-16 (PCE/TG16)
-  - PC Engine Super CD-ROM² System / TurboGrafx-CD
-  - PC Engine SuperGrafx
-  - PC-FX
-- Nintendo
-  - DS
-  - Famicom Disk System
-  - Game Boy / Game Boy Color (GB/GBC)
-  - Game Boy Advance (GBA)
-  - Nintendo 64 (N64)
-  - Nintendo Entertainment System / Famicom (NES/FC)
-  - Pokémon mini
-  - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
-  - Virtual Boy
-- Panasonic
-  - 3DO
-- Sega
-  - 32X
-  - CD / MegaCD
-  - Game Gear
-  - Genesis / Mega Drive
-  - Master System
-  - Saturn (mednafen)
-  - SG-1000
-- Sinclair Research
-  - ZX Spectrum
-- SNK
-  - Neo Geo Pocket / Neo Geo Pocket Color
-- Sony
-  - PlayStation (PSX/PS1)
-  - PSP (ppsspp)
+## ⌨️ Keyboard Controls
 
-- Watara
-  - Supervision
-## Systems in Development:
- - Nintendo
-   - GameCube (Dolphin)
- - Sega
-   - Dreamcast (Flycast)
- - Sony
-   - PS2 (Play!)
+<details>
+<summary>Show keyboard mapping</summary>
 
-## Upstream projects
+| Key | Action |
+|-----|--------|
+| `WASD` | D-Pad / Left Stick |
+| `Arrow Keys` | D-Pad / Right Stick |
+| `Space` / `Return` | A Button |
+| `F` / `Escape` | B Button |
+| `Q` | X Button |
+| `E` | Y Button |
+| `Tab` / `Caps Lock` | L1 |
+| `Left Shift` | L2 |
+| `R` | R1 |
+| `V` | R2 |
+| `~` | Menu |
+| `1` / `U` | Options |
+| `/` | Select |
+| `Right Shift` | Start |
 
-Provenance would be nothing without these projects.
-Please consider supporting those you love or want to see improved!
+</details>
 
-### Cores
+---
 
-- 4DO : https://fourdo.com/
-- Atari800 : https://atari800.github.io
-- BeetlePSX : https://github.com/libretro/beetle-psx-libretro
-- Bliss :
-- blueMSX : http://bluemsx.msxblue.com/download.html
-- CrabEMU : http://crabemu.sourceforge.net
-- Desmume20215 : https://desmume.org/download/
-- Desume2015 : https://github.com/flyinghead/desmume2015
-- Dolphin : https://dolphin-emu.org/
-- DolphiniOS :https://dolphinios.oatmealdome.me/
-- DuckStation : https://www.duckstation.org/
-- emuThree : https://github.com/emuPlace/emuThreeDS
-- EP128Emu : https://sourceforge.net/projects/ep128emu/
-- FCEUX : http://sourceforge.net/projects/fceultra/
-- Flycast/Reicast : https://github.com/flyinghead/flycast
-- fMSX : https://fms.komkon.org/fMSX/
-- FreeIntv : https://github.com/libretro/FreeIntv
-- Fuse : https://fuse-emulator.sourceforge.net/
-- Gambatte : https://github.com/sinamas/gambatte
-- Gearcoleco : https://github.com/drhelius/Gearcoleco
-- GenesisPlusGX : https://github.com/ekeeke/Genesis-Plus-GX
-- GLideN64 : https://github.com/gonetz/GLideN64
-- GME : https://zdoom.org/wiki/Game_Music_Emu
-- Mednafen : https://mednafen.github.io
-- MelonDS : https://melonds.kuribo64.net/
-- Mu :
-- Mupen64Plus : https://github.com/mupen64plus
-- NP2Kai : https://github.com/AZO234/NP2kai
-- O2EM : https://github.com/OpenEmu/O2EM-Core
-- Opera : https://github.com/libretro/opera-libretro
-- PCSXRearmed : https://github.com/notaz/pcsx_rearmed
-- PicoDrive : https://github.com/notaz/picodrive
-- PokeMini: http://sourceforge.net/projects/pokemini/
-- Potator : https://github.com/alekmaul/potator
-- PPSSPP : https://www.ppsspp.org/
-- ProSystem : https://gstanton.github.io/ProSystem1_3/
-- Reicast : https://github.com/reicast/reicast-emulator
-- SNES9X : http://www.snes9x.com
-- Stella : https://stella-emu.github.io
-- TBGDual : http://gigo.retrogames.com/download.html#tgb-dual
-- VecX : https://www.bannister.org/software/vecx.htm
-- VirtualJaguar : https://github.com/libretro/virtualjaguar-libretro
-- VisualBoyAdvance : https://sourceforge.net/projects/vba/
+## 📊 Repository Activity
 
-### Cores in Testing / Development
-- MiniVMac : https://www.gryphel.com/c/minivmac/
-- DosBox : https://www.dosbox.com/
-- Snesticle : https://github.com/iaddis/SNESticle
+![Alt](https://repobeats.axiom.co/api/embed/19c0dec78befc395b346c14006c62ff964912fa9.svg "Repobeats analytics image")
 
-### Additinal Code
+---
 
-- libretro : https://www.libretro.com
-- OpenEMU : https://openemu.org
-## Features
+## 🤝 Contributing
 
-- Very Accurate, Full Speed Emulation
-- Stereo Sound
-- Save States (save anywhere/_game freezing_)
-- Battery Saves (native game saves)
-- Adjustable Controller Overlay Opacity
-- Controller Support:
-  - [MFi Game Controller](https://mfigames.com/compare-mfi-controllers/) Support
-  - iCade Controller Support ([8bitdo](http://www.8bitdo.com/), etc…)
-  - 8BitDo M30 Support
-- Local Multiplayer via External Controllers
-- Portrait and Landscape Orientation
-- Cheat code support! Currently for SNES and PSX only
-- Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
-- ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Customizing-ROMs))
-- Multiple Options for Managing ROMs, Game Saves and Cover Art:
-  - [Import](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) / [Export](https://wiki.provenance-emu.com/info/miscellaneous/restoring-files):
-    - Uploading _(via built-in web server)_
-  - [Import](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms):
-    - Downloading _(from mobile browsers)_
-    - Copying _(from other mobile apps and AirDrop)_
-    - Injecting _(with desktop apps)_
-- Game Library Searching
-- iOS 13+ (iPhone, iPad)
-  - 3D Touch Shortcuts for Recent Games (iPhone 6s and later, except iPhone SE and iPhone Xʀ)
-  - Taptic Engine Button Feedback (iPhone 7 and later)
-  - Spotlight Searching ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
-- macOS
-  - Native Catalyst support with Swift UI
-- tvOS 10+ (Apple TV 4+)
-  - [broken for now] TopShelf Support ([Setup](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source#advanced-features))
+We welcome contributions! To get started:
 
-<sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>
+1. Check [open issues](https://github.com/Provenance-Emu/Provenance/issues) for bugs or features you can help with
+2. Read [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) before posting
+3. Fork the repo, make your changes, and open a PR
 
-----
+💬 For discussion, questions, and community help: [Discord](https://discord.gg/4TK7PU5) · [@provenanceapp](https://x.com/provenanceapp)
 
-### Importing ROMs
+---
 
-Visit our wiki on [Importing ROMs](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) to learn how to load ROMs into Provenance.
+## 🙏 Upstream Projects
 
-## Controls
+Provenance wouldn't exist without these incredible open-source projects. Please consider supporting them!
 
-### Keyboard Controls
+<details>
+<summary>Show all cores & libraries</summary>
 
-The following keyboard controls are available when a keyboard is connected:
+**Emulation Cores**
 
-#### Main Controls
-- **WASD**: D-Pad / Left Stick
-- **Arrow Keys**: D-Pad / Right Stick
-- **Space** or **Return**: A Button
-- **F** or **Escape**: B Button
-- **Q**: X Button
-- **E**: Y Button
+| Core | Project |
+|------|---------|
+| DuckStation | https://www.duckstation.org/ |
+| PPSSPP | https://www.ppsspp.org/ |
+| Dolphin | https://dolphin-emu.org/ |
+| emuThreeDS (Citra/Azahar) | https://github.com/emuPlace/emuThreeDS |
+| Flycast / Reicast | https://github.com/flyinghead/flycast |
+| Mednafen | https://mednafen.github.io |
+| Mupen64Plus | https://github.com/mupen64plus |
+| Genesis Plus GX | https://github.com/ekeeke/Genesis-Plus-GX |
+| SNES9x | http://www.snes9x.com |
+| Gambatte | https://github.com/sinamas/gambatte |
+| mGBA / VBA-M | https://mgba.io / https://vba-m.com |
+| melonDS | https://melonds.kuribo64.net/ |
+| DeSmuME | https://desmume.org/ |
+| FCEUX | http://www.fceux.com |
+| PicoDrive | https://github.com/notaz/picodrive |
+| Stella | https://stella-emu.github.io |
+| PCSX-ReARMed | https://github.com/notaz/pcsx_rearmed |
+| Opera (3DO) | https://github.com/libretro/opera-libretro |
+| GLideN64 | https://github.com/gonetz/GLideN64 |
+| FreeIntv | https://github.com/libretro/FreeIntv |
+| Gearcoleco | https://github.com/drhelius/Gearcoleco |
+| Fuse (ZX Spectrum) | https://fuse-emulator.sourceforge.net/ |
+| Hatari (Atari ST) | https://hatari.tuxfamily.org/ |
+| PokeMini | http://sourceforge.net/projects/pokemini/ |
+| Potator | https://github.com/alekmaul/potator |
+| VecX | https://www.bannister.org/software/vecx.htm |
 
-#### Shoulder Buttons
-- **Tab** or **Caps Lock**: L1 (Left Shoulder)
-- **Left Shift**: L2 (Left Trigger)
-- **R**: R1 (Right Shoulder)
-- **V**: R2 (Right Trigger)
+**Frameworks & Libraries**
 
-#### Special Buttons
-- **Tilde (~)**: Menu Button
-- **1** or **U**: Options Button
-- **X**: L3 (Left Stick Click)
-- **C**: R3 (Right Stick Click)
+- [libretro](https://www.libretro.com) — RetroArch core framework
+- [OpenEmu](https://openemu.org) — macOS emulation framework inspiration
+- [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB) — ROM database and artwork
+- [RetroAchievements](https://retroachievements.org) — achievement system
 
-#### Additional Controls
-- **[=]**: Right Stick Up
-- **-**: Right Stick Down
-- **[**: Right Stick Left
-- **]**: Right Stick Right
+</details>
 
-#### Alternate Controls
-- **;**: Right Stick Left
-- **K**: Right Stick Left
-- **L**: Right Stick Down
-- **O**: Right Stick Up
-
-#### Special Functions
-- **/** (Forward Slash): Select Button
-- **Right Shift**: Start Button
-
-### <a id="contributions-footnote"></a>Contributions
-
-[![GitHub open issues](https://img.shields.io/github/issues-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
-![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/provenance-emu/provenance.svg?style=flat-square)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/provenance-emu/provenance.svg?style=flat-square)
-
-![GitHub last commit](https://img.shields.io/github/last-commit/provenance-emu/provenance.svg?style=flat-square)
-![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/provenance-emu/provenance.svg?style=flat-square)
-
-To contribute to the Provenance project please take look at the [open
-issues](https://github.com/Provenance-Emu/Provenance/issues). If you see
-something you can help with: bug fixing, testing, implementation or relevant
-suggestions, discussion and research.[°](#contributions-footnote)
-
-Before posting new issues, we ask you to please read up on [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage). If you just want to give us a a shout out,  twitter: [@provenanceapp](https://twitter.com/provenanceapp), and of course, new GitHub contributors are always welcome. _Thank you._
-
-<sup>° Please note that Issues _is not_ a discussion board _nor_ a help desk. Please help us keep it focused on improving Provenance. </sup><br>
-
-----
-
-### Attributions
-
-Provenance would not be possible without the great work of those who came before us and the ongoing development of open-source projects that makeup the foundations of our emulation cores.
-
-<sub>Atari 2600: [Stella](http://stella.sourceforge.net/) | Atari 5200: [Atari 800](http://atari800.sourceforge.net) | Atari 7800: [ProSystem](http://gstanton.github.io/ProSystem1_3/) | Atari Jaguar: [Virtual Jaguar](https://icculus.org/virtualjaguar/) | Nintendo Entertainment System/Famicom (NES/FC), Famicom Disk System (FDS): [FCEUX](http://www.fceux.com/web/home.html) | Super Nintendo Entertainment System/Super Famicom (SNES/SFC): [SNES9x](http://www.snes9x.com) | Game Boy / Game Boy Color: [Gambatte](http://gambatte.sourceforge.net/) | Nintendo 64 (N64): [Mupen64Plus](https://github.com/mupen64plus) | Game Boy Advance (GBA): [VisualBoyAdvance](http://sourceforge.net/projects/vba/) | Pokémon mini: [PokiMini](https://sourceforge.net/projects/pokemini/) | Sega Master System, Game Gear, Genesis/MegaDrive, SG-1000: [Genesis Plus GX](https://bitbucket.org/eke/genesis-plus-gx/) | Sega 32X: [PicoDrive](https://github.com/notaz/picodrive) | Atari Lynx, Bandai WonderSwan + WonderSwan Color, NEC TurboGrafx-16/PC Engine / TurboGrafx-CD/Super CD-ROM² System / SuperGrafx / PC-FX, Nintendo Entertainment System/Famicom (NES/FC) / Game Boy / Game Boy Color / Game Boy Advance / Super Nintendo Entertainment System/Super Famicom (SNES/SFC) / VirtualBoy, SNK Neo Geo Pocket / Neo Geo Pocket Color, Sony PlayStation: [Mednafen](https://mednafen.github.io)</sub><br>
-
-<sub>The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).</sub>
+---
 
 ### Collaborators
 
@@ -595,18 +569,20 @@ Provenance would not be possible without the great work of those who came before
 </table>
 <!-- readme: bots -end -->
 
-----
+---
 
-#### Provenance License
+### Attributions
 
-<sub>Copyright © 2024, Joseph Mattiello (MattiMedia). All rights reserved.</sub><br>
+<sub>Atari 2600: [Stella](http://stella.sourceforge.net/) | Atari 5200: [Atari 800](http://atari800.sourceforge.net) | Atari 7800: [ProSystem](http://gstanton.github.io/ProSystem1_3/) | Atari Jaguar: [Virtual Jaguar](https://icculus.org/virtualjaguar/) | NES/FC, FDS: [FCEUX](http://www.fceux.com/web/home.html) | SNES/SFC: [SNES9x](http://www.snes9x.com) | Game Boy / GBC: [Gambatte](http://gambatte.sourceforge.net/) | N64: [Mupen64Plus](https://github.com/mupen64plus) | GBA: [VisualBoyAdvance](http://sourceforge.net/projects/vba/) | Pokémon mini: [PokiMini](https://sourceforge.net/projects/pokemini/) | Sega Master System, Game Gear, Genesis/MegaDrive, SG-1000: [Genesis Plus GX](https://bitbucket.org/eke/genesis-plus-gx/) | Sega 32X: [PicoDrive](https://github.com/notaz/picodrive) | Atari Lynx, WonderSwan, NEC PC Engine/TurboGrafx/SuperGrafx/PC-FX, Neo Geo Pocket, PlayStation, Virtual Boy: [Mednafen](https://mednafen.github.io)</sub>
 
-<sub>**Redistribution and use in source and binary forms, with or without modification, are
-permitted provided that the following conditions are met:**<br> 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer • 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. • 3. Neither the name of the Provenance project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 4. Provenance the name, logo and any other associated trademarks or branding may NOT be used in any commercial redistributions. </sub><br>
+<sub>Based in part on work by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).</sub>
 
-<SUB> THIS SOFTWARE IS PROVIDED BY JOSEPH MATTIELLO (MattiMedia) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JOSEPH MATTIELLO (MattiMedia) OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ONANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. </SUB><BR>
+---
 
-<sub> The views and conclusions contained in the software and documentation are those of the
-authors and should not be interpreted as representing official policies, either expressed
-or implied, of Joseph Mattiello (MattiMedia).</sub>
+#### License
+
+<sub>Copyright © 2024, Joseph Mattiello (MattiMedia). All rights reserved.</sub>
+
+<sub>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer • 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. • 3. Neither the name of the Provenance project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 4. Provenance the name, logo and any other associated trademarks or branding may NOT be used in any commercial redistributions.</sub>
+
+<sub>THIS SOFTWARE IS PROVIDED BY JOSEPH MATTIELLO (MattiMedia) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.</sub>
