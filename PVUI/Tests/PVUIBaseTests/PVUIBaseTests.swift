@@ -10,6 +10,30 @@ struct TestError: Error {
     init(_ message: String) { self.message = message }
 }
 
+/// Native resolution / hardware registry tests for DeltaSkinNativeResolution.
+@Suite("DeltaSkin Native Resolution Tests")
+struct DeltaSkinNativeResolutionTests {
+
+    /// Systems with known hardware resolutions should return a CGSize from the registry.
+    @Test("DeltaSkinNativeResolution.size returns known system sizes")
+    func nativeResolutionKnownSystems() {
+        let cases: [(DeltaSkinGameType, CGFloat, CGFloat)] = [
+            (.gamegear,    160, 144),
+            (.gba,         240, 160),
+            (.psp,         480, 272),
+            (.lynx,        160, 102),
+            (.ngp,         160, 152),
+            (.wonderswan,  224, 144),
+        ]
+        for (gameType, w, h) in cases {
+            let size = DeltaSkinNativeResolution.size(for: gameType)
+            #expect(size != nil, "Expected a size for \(gameType.registryKey)")
+            #expect(abs((size?.width ?? 0) - w) < 0.001, "\(gameType.registryKey) width mismatch")
+            #expect(abs((size?.height ?? 0) - h) < 0.001, "\(gameType.registryKey) height mismatch")
+        }
+    }
+}
+
 /// Tests for DeltaSkin JSON decoding
 @Suite("DeltaSkin Decoding Tests")
 struct DeltaSkinDecodingTests {
@@ -2129,25 +2153,6 @@ struct DeltaSkinScreenFilterTests {
     }
 
     // MARK: - DeltaSkinNativeResolution (data-driven registry) tests
-
-    /// Systems with known hardware resolutions should return a CGSize from the registry.
-    @Test("DeltaSkinNativeResolution.size returns known system sizes")
-    func nativeResolutionKnownSystems() {
-        let cases: [(DeltaSkinGameType, CGFloat, CGFloat)] = [
-            (.gamegear,    160, 144),
-            (.gba,         240, 160),
-            (.psp,         480, 272),
-            (.lynx,        160, 102),
-            (.ngp,         160, 152),
-            (.wonderswan,  224, 144),
-        ]
-        for (gameType, w, h) in cases {
-            let size = DeltaSkinNativeResolution.size(for: gameType)
-            #expect(size != nil, "Expected a size for \(gameType.registryKey)")
-            #expect(abs((size?.width ?? 0) - w) < 0.001, "\(gameType.registryKey) width mismatch")
-            #expect(abs((size?.height ?? 0) - h) < 0.001, "\(gameType.registryKey) height mismatch")
-        }
-    }
 
     /// Systems not in the registry should return nil from size(for:) and 4:3 from aspectRatio(for:).
     @Test("DeltaSkinNativeResolution falls back to 4:3 for unknown systems")
