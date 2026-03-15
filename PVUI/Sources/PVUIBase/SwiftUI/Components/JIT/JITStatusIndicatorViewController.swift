@@ -75,11 +75,12 @@ public final class JITStatusIndicatorViewController: UIViewController {
         view.addSubview(host.view)
         host.view.translatesAutoresizingMaskIntoConstraints = false
 
-        // Position in the top-left corner (opposite to FPS HUD which is top-right)
+        // Top-left corner, respecting the safe area so it clears the notch/Dynamic Island
+        // and lands above the skin controller area (which is at the bottom/sides).
         NSLayoutConstraint.activate([
-            host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            host.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-            host.view.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16)
+            host.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            host.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
+            host.view.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
         ])
 
         host.didMove(toParent: self)
