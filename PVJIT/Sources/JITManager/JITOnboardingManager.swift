@@ -72,10 +72,12 @@ public final class JITOnboardingManager {
 
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: nil))
 
-        alert.addAction(UIAlertAction(title: "Try JITStreamer", style: .default) { _ in
-            ILOG("JITOnboarding: User chose to retry via JITStreamer")
-            jitManager.attemptToAcquireJitByJitStreamer()
-        })
+        if jitType == .debugger {
+            alert.addAction(UIAlertAction(title: "Try JITStreamer", style: .default) { _ in
+                ILOG("JITOnboarding: User chose to retry via JITStreamer")
+                jitManager.attemptToAcquireJitByJitStreamer()
+            })
+        }
 
         alert.addAction(UIAlertAction(title: "Learn More", style: .default) { _ in
             if let url = URL(string: "https://wiki.provenance-emu.com/jit-help") {
