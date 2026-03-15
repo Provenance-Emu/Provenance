@@ -826,7 +826,7 @@ void extract_bundles();
             uint32_t fixAddr = 0;
             if (eAddr == 0x0000FC00) fixAddr = 0x00FC0000;
             if (eAddr == 0x0000E000) fixAddr = 0x00E00000;
-            if (eAddr == 0x000E8000) fixAddr = 0x00E80000;
+            if (eAddr == 0x0000E800) fixAddr = 0x00E80000; // bytes[9] and bytes[10] swapped
             if (fixAddr == 0) {
                 WLOG(@"TOS in-place repair: unrecognised address 0x%08X in %@ — skipping", eAddr, tosPath);
                 continue;
@@ -943,6 +943,39 @@ void extract_bundles();
                                     encoding:NSStringEncodingConversionAllowLossy
                                         error:nil];
             ILOG(@"Core option config written to %@", fileName);
+        } else if ([self.coreIdentifier containsString:@"hatari"] ||
+                   [self.systemIdentifier containsString:@"atarist"]) {
+            /// The Hatari opts file already exists — do a targeted in-place key repair so we
+            /// never wipe user-configured options.  Replace the stale "disabled" value with
+            /// the required "false"; if the key is absent entirely, append it.
+            NSError *hatariReadErr = nil;
+            NSString *existing = [NSString stringWithContentsOfFile:fileName
+                                                           encoding:NSUTF8StringEncoding
+                                                              error:&hatariReadErr];
+            if (!hatariReadErr && existing) {
+                NSString *stale = @"hatari_boot_hd = \"disabled\"";
+                NSString *correct = @"hatari_boot_hd = \"false\"";
+                NSString *updated = nil;
+                if ([existing containsString:stale]) {
+                    updated = [existing stringByReplacingOccurrencesOfString:stale
+                                                                  withString:correct];
+                    ILOG(@"Hatari opts: repaired stale hatari_boot_hd value in %@", fileName);
+                } else if (![existing containsString:@"hatari_boot_hd"]) {
+                    updated = [existing stringByAppendingFormat:@"%@\n", correct];
+                    ILOG(@"Hatari opts: appended missing hatari_boot_hd key to %@", fileName);
+                }
+                if (updated) {
+                    NSError *hatariWriteErr = nil;
+                    [updated writeToFile:fileName
+                              atomically:YES
+                                encoding:NSUTF8StringEncoding
+                                   error:&hatariWriteErr];
+                    if (hatariWriteErr) {
+                        ELOG(@"Hatari opts repair write failed for %@: %@",
+                             fileName, hatariWriteErr.localizedDescription);
+                    }
+                }
+            }
         }
     } else if (self.coreOptionConfig.length > 0) {
         content=[content stringByAppendingString:self.coreOptionConfig];
