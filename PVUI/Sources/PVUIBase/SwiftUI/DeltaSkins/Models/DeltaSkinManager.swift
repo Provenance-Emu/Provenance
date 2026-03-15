@@ -18,7 +18,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Callers that read `loadedSkins` directly should gate on this property rather
     /// than `hasScanned`, which is queue-confined and becomes true before the
     /// MainActor update of `loadedSkins` has executed.
-    @Published public private(set) var skinsAreLoaded: Bool = false
+    @MainActor @Published public private(set) var skinsAreLoaded: Bool = false
 
     /// Flag to track if skins have been scanned at least once (queue-confined).
     /// Controls the caching fast-path in `availableSkins(forceRescan:)`.
@@ -30,11 +30,16 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// queue need immediate access to the scan results.
     private var lastScannedSkins: [DeltaSkinProtocol] = []
 
-    /// Monotonically increasing counter incremented before each scan.
-    /// The MainActor update captures the generation at scan time and is a
-    /// no-op if a newer scan has already applied its results, preventing
-    /// out-of-order overwrites when scans are triggered in quick succession.
+    /// Monotonically increasing counter incremented after each scan completes.
+    /// The captured generation value is passed into the MainActor update task so
+    /// it can be compared against `lastAppliedGeneration` (MainActor-confined) to
+    /// skip stale updates when scans are triggered in quick succession.
     private var scanGeneration: Int = 0
+
+    /// Tracks the generation of the last scan result applied to `loadedSkins`.
+    /// MainActor-confined to avoid cross-thread reads of the queue-confined `scanGeneration`.
+    /// A MainActor task only applies its results when `generation > lastAppliedGeneration`.
+    @MainActor private var lastAppliedGeneration: Int = 0
 
     /// Flag to track if scan is currently in progress (prevents concurrent scans)
     private var isScanning: Bool = false
@@ -75,7 +80,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Get all available skins
     /// - Parameter forceRescan: If true, forces a rescan even if skins are already loaded. Defaults to false.
     public func availableSkins(forceRescan: Bool = false) async throws -> [DeltaSkinProtocol] {
-        ILOG("skins: availableSkins(forceRescan: \(forceRescan)) called - hasScanned: \(self.hasScanned)")
+        ILOG("skins: availableSkins(forceRescan: \(forceRescan)) called")
         let skins = try await queue.asyncResult {
             // Only scan if we haven't scanned yet, or if forceRescan is true
             if !self.hasScanned || forceRescan {
@@ -302,11 +307,14 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         // Batch update the @Published loadedSkins on the main thread for SwiftUI.
         // Guard against stale updates: if another scan completed while this
         // MainActor task was queued, skip applying these (older) results.
+        // Compare against the MainActor-confined `lastAppliedGeneration` to avoid
+        // reading queue-confined `scanGeneration` from a different actor context.
         Task { @MainActor in
-            guard self.scanGeneration == generation else {
-                ILOG("skins: Skipping stale MainActor update (generation \(generation) superseded by \(self.scanGeneration))")
+            guard generation > self.lastAppliedGeneration else {
+                ILOG("skins: Skipping stale MainActor update (generation \(generation) already superseded)")
                 return
             }
+            self.lastAppliedGeneration = generation
             ILOG("skins: Updating loadedSkins with \(scannedSkins.count) skins on main thread")
             self.loadedSkins = scannedSkins
             self.skinsAreLoaded = true
@@ -345,9 +353,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         hasScanned = true
         scanGeneration += 1
         let generation = scanGeneration
-        // Update @Published loadedSkins on MainActor for SwiftUI
+        // Update @Published loadedSkins on MainActor for SwiftUI.
+        // Use MainActor-confined `lastAppliedGeneration` for the stale-update guard
+        // to avoid cross-thread reads of queue-confined `scanGeneration`.
         Task { @MainActor in
-            guard self.scanGeneration == generation else { return }
+            guard generation > self.lastAppliedGeneration else { return }
+            self.lastAppliedGeneration = generation
             if !self.loadedSkins.contains(where: { $0.identifier == skin.identifier }) {
                 self.loadedSkins.append(skin)
                 self.skinsAreLoaded = true
