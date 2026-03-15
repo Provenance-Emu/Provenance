@@ -35,13 +35,18 @@ private final class PassThroughView: UIView {
         for subview in subviews.reversed() {
             let convertedPoint = convert(point, to: subview)
             if let hit = subview.hitTest(convertedPoint, with: event) {
-                // Prefer descendants of the subview.
+                // If a descendant claimed the hit, forward it — this handles SwiftUI
+                // Buttons, which return an internal child view from hitTest, not the
+                // hosting view itself.
                 if hit !== subview {
                     return hit
                 }
 
-                // Allow the subview itself to handle the touch if it is interactive.
-                if subview is UIControl || (subview.gestureRecognizers?.isEmpty == false) {
+                // Only let the subview itself claim a touch when it is a plain UIControl.
+                // UIHostingController.view always has SwiftUI-internal gesture recognizers,
+                // so checking gestureRecognizers here would cause the hosting view to absorb
+                // every touch across the entire screen (even empty space with no indicators).
+                if subview is UIControl {
                     return subview
                 }
             }
