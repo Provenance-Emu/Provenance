@@ -1802,3 +1802,119 @@ struct DeltaSkinComponentTests {
         return sanitizedData
     }
 }
+
+// MARK: - DeltaSkinScreen Filter Tests
+
+/// Tests for DeltaSkinScreen filter decode/encode round-trip
+@Suite("DeltaSkinScreen Filter Tests")
+struct DeltaSkinScreenFilterTests {
+
+    /// Test that a DeltaSkinScreen with a filters array decodes correctly.
+    @Test("Decodes DeltaSkinScreen filters array")
+    func decodesDeltaSkinScreenFilters() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "inputFrame": {"x": 0, "y": 0, "width": 240, "height": 160},
+            "outputFrame": {"x": 0, "y": 50, "width": 414, "height": 276},
+            "placement": "controller",
+            "filters": [
+                {
+                    "name": "CISepiaTone",
+                    "parameters": {
+                        "inputIntensity": 0.8
+                    }
+                }
+            ]
+        }
+        """
+
+        let decoder = JSONDecoder()
+        let screen = try decoder.decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+
+        // filterInfos should be preserved for round-trip encoding
+        #expect(screen.filterInfos?.count == 1)
+        #expect(screen.filterInfos?.first?.name == "CISepiaTone")
+
+        // CIFilter should be constructed from the info
+        #expect(screen.filters?.count == 1)
+        #expect(screen.filters?.first?.name == "CISepiaTone")
+
+        // Verify parameter was applied to the CIFilter
+        if let intensityValue = screen.filters?.first?.value(forKey: "inputIntensity") as? NSNumber {
+            #expect(abs(intensityValue.doubleValue - 0.8) < 0.001)
+        } else {
+            throw TestError("Expected inputIntensity to be set on decoded CIFilter")
+        }
+    }
+
+    /// Test that a DeltaSkinScreen with no filters decodes with nil filters.
+    @Test("Decodes DeltaSkinScreen with no filters")
+    func decodesDeltaSkinScreenNoFilters() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "inputFrame": {"x": 0, "y": 0, "width": 240, "height": 160},
+            "outputFrame": {"x": 0, "y": 50, "width": 414, "height": 276},
+            "placement": "controller"
+        }
+        """
+
+        let decoder = JSONDecoder()
+        let screen = try decoder.decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+
+        #expect(screen.filters == nil)
+        #expect(screen.filterInfos == nil)
+    }
+
+    /// Test that filterInfos round-trips through encode/decode.
+    @Test("Round-trips DeltaSkinScreen filters via encode/decode")
+    func roundTripsDeltaSkinScreenFilters() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "inputFrame": {"x": 0, "y": 0, "width": 240, "height": 160},
+            "outputFrame": {"x": 0, "y": 50, "width": 414, "height": 276},
+            "placement": "controller",
+            "filters": [
+                {
+                    "name": "CIGaussianBlur",
+                    "parameters": {
+                        "inputRadius": 2.5
+                    }
+                }
+            ]
+        }
+        """
+
+        let decoder = JSONDecoder()
+        let original = try decoder.decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+
+        // Re-encode and decode
+        let encoder = JSONEncoder()
+        let reencoded = try encoder.encode(original)
+        let roundTripped = try decoder.decode(DeltaSkinScreen.self, from: reencoded)
+
+        #expect(roundTripped.filterInfos?.count == 1)
+        #expect(roundTripped.filterInfos?.first?.name == "CIGaussianBlur")
+
+        if case let .number(radius) = roundTripped.filterInfos?.first?.parameters["inputRadius"] {
+            #expect(abs(radius - 2.5) < 0.001)
+        } else {
+            throw TestError("Expected inputRadius to be preserved in round-trip")
+        }
+    }
+
+    /// Test that DeltaSkinScreenFilter preserves CIGaussianBlur radius (not lost via KVC copy).
+    @Test("DeltaSkinScreenFilter preserves CIGaussianBlur radius")
+    func gaussianBlurRadiusPreserved() throws {
+        let filterInfo = DeltaSkin.FilterInfo(
+            name: "CIGaussianBlur",
+            parameters: ["inputRadius": .number(3.5)]
+        )
+
+        let screenFilter = DeltaSkinScreenFilter(filterInfo: filterInfo)
+        #expect(screenFilter != nil)
+        #expect(abs((screenFilter?.radius ?? 0) - 3.5) < 0.001)
+    }
+}

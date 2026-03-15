@@ -76,6 +76,11 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     /// Handle skin loaded notification
     @objc private func handleSkinLoaded(_ notification: Notification) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.handleSkinLoaded(notification) }
+            return
+        }
+
         guard let skinId = notification.userInfo?["skinId"] as? String else { return }
 
         if currentSkin == nil || currentSkin?.identifier != skinId {

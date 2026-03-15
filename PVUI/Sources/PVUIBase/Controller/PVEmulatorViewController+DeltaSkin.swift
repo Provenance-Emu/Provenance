@@ -996,10 +996,18 @@ extension PVEmulatorViewController {
 
     // MARK: - Screen Filter Wiring
 
-    /// Reads the current skin's first-screen CIFilters and applies the first one to the Metal
-    /// rendering pipeline.  When the skin defines no filters the existing filter (if any) is
-    /// cleared so we don't bleed a previous skin's effect into the new one.
+    /// Reads the current skin's first-screen filter info and applies it to the Metal rendering
+    /// pipeline.  When the skin defines no filters the existing filter (if any) is cleared so we
+    /// don't bleed a previous skin's effect into the new one.
+    ///
+    /// Must be called on the main thread; dispatches there automatically if invoked from a
+    /// background thread.
     internal func applyScreenFiltersFromCurrentSkin() {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.applyScreenFiltersFromCurrentSkin() }
+            return
+        }
+
         guard let skin = currentSkin else {
             // No skin active — clear any lingering filter
             applyScreenFilter(nil)
@@ -1012,35 +1020,32 @@ extension PVEmulatorViewController {
         let device: DeltaSkinDevice = .tv
         #endif
         let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-        let traits = DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: orientation)
 
-        // Collect all CIFilters from every screen in the current representation and
-        // wrap the first one so it can be applied via the existing Metal CIFilter path.
-        let allFilters: [CIFilter] = (skin.screens(for: traits) ?? skin.screenGroups(for: traits)?.flatMap(\.screens) ?? [])
-            .compactMap { $0.filters }
-            .flatMap { $0 }
+        // Probe display types in preference order to match the skin that was actually loaded,
+        // mirroring the pattern used elsewhere (e.g. applyViewportFromCurrentSkin).
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        var filterInfo: DeltaSkin.FilterInfo?
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
+            if let info = skin.representation(for: traits)?.screens?.first?.filters?.first {
+                filterInfo = info
+                break
+            }
+        }
 
-        guard let firstFilter = allFilters.first else {
+        guard let filterInfo else {
             ILOG("skins: Skin '\(skin.name)' has no screen filters — clearing any previous filter")
             applyScreenFilter(nil)
             return
         }
 
-        // Build a lightweight FilterInfo so we can construct a DeltaSkinScreenFilter.
-        // We only need the CIFilter name; parameters are already baked into the CIFilter object.
-        let filterInfo = DeltaSkin.FilterInfo(name: firstFilter.name)
+        // Construct DeltaSkinScreenFilter directly from FilterInfo so that filter-specific
+        // configuration (e.g. CIGaussianBlur radius stored on the wrapper) is preserved.
         if let screenFilter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
-            // Copy the parameter values from the already-configured filter onto the wrapper's filter.
-            // DeltaSkinScreenFilter creates a fresh CIFilter, so we need to transfer the values.
-            for key in (firstFilter.inputKeys as? [String] ?? []) where key != "inputImage" {
-                if let value = firstFilter.value(forKey: key) {
-                    screenFilter.filter.setValue(value, forKey: key)
-                }
-            }
-            ILOG("skins: Applying skin screen filter '\(firstFilter.name)' from skin '\(skin.name)'")
+            ILOG("skins: Applying skin screen filter '\(filterInfo.name)' from skin '\(skin.name)'")
             applyScreenFilter(screenFilter)
         } else {
-            ELOG("skins: Failed to create DeltaSkinScreenFilter for '\(firstFilter.name)'")
+            ELOG("skins: Failed to create DeltaSkinScreenFilter for '\(filterInfo.name)'")
             applyScreenFilter(nil)
         }
     }
