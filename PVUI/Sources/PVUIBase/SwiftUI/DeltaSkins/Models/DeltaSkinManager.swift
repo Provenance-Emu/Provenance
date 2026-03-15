@@ -353,16 +353,20 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         hasScanned = true
         scanGeneration += 1
         let generation = scanGeneration
+        // Snapshot the full list now so the MainActor task publishes a complete
+        // picture rather than appending only the single new skin.  A previous
+        // scanForSkins() MainActor task may be queued with generation < N; by
+        // using the full lastScannedSkins snapshot here we avoid leaving
+        // loadedSkins in a partial state if that earlier task is skipped as stale.
+        let snapshot = lastScannedSkins
         // Update @Published loadedSkins on MainActor for SwiftUI.
         // Use MainActor-confined `lastAppliedGeneration` for the stale-update guard
         // to avoid cross-thread reads of queue-confined `scanGeneration`.
         Task { @MainActor in
             guard generation > self.lastAppliedGeneration else { return }
             self.lastAppliedGeneration = generation
-            if !self.loadedSkins.contains(where: { $0.identifier == skin.identifier }) {
-                self.loadedSkins.append(skin)
-                self.skinsAreLoaded = true
-            }
+            self.loadedSkins = snapshot
+            self.skinsAreLoaded = true
         }
         return skin
     }
