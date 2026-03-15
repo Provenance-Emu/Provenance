@@ -70,7 +70,7 @@ public struct DeltaSkinKeyboardOverlayView: View {
     // MARK: - Body
 
     public var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             if isVisible {
                 VStack(spacing: 0) {
                     if config.position == .top {
