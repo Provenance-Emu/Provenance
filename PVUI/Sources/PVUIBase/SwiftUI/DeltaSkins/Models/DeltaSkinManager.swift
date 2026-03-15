@@ -22,6 +22,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         hasScanned
     }
 
+    /// The most recent scan results, accessible from the background queue
+    /// without waiting for MainActor.  `loadedSkins` is @Published and can
+    /// only be safely written on MainActor, but callers on the background
+    /// queue need immediate access to the scan results.
+    private var lastScannedSkins: [DeltaSkinProtocol] = []
+
     /// Flag to track if scan is currently in progress (prevents concurrent scans)
     private var isScanning: Bool = false
 
@@ -70,8 +76,11 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             } else {
                 ILOG("skins: Using cached skins, skipping scan")
             }
-            ILOG("skins: Returning \(self.loadedSkins.count) loaded skins")
-            return self.loadedSkins
+            // Return lastScannedSkins which is set synchronously on this queue,
+            // rather than loadedSkins which is @Published and updated on MainActor
+            // asynchronously (could still be empty when we read it here).
+            ILOG("skins: Returning \(self.lastScannedSkins.count) scanned skins")
+            return self.lastScannedSkins
         }
         ILOG("skins: availableSkins() completed with \(skins.count) skins")
         return skins
@@ -83,15 +92,16 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public func skin(withIdentifier identifier: String) async throws -> DeltaSkinProtocol? {
         ILOG("skins: skin(withIdentifier: \(identifier)) called")
         let result: DeltaSkinProtocol? = try await queue.asyncResult {
-            // Find the skin with the matching identifier
-            if let skin = self.loadedSkins.first(where: { $0.identifier == identifier }) {
+            // Find the skin with the matching identifier (use lastScannedSkins for
+            // immediate access; loadedSkins is updated on MainActor asynchronously)
+            if let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) {
                 ILOG("skins: Found skin '\(skin.name)' with identifier '\(identifier)' in cache")
                 return skin as DeltaSkinProtocol?
             } else {
                 ILOG("skins: Skin '\(identifier)' not found in cache, scanning for skins")
                 // Ensure skins are loaded
                 try self.scanForSkins()
-                if let skin = self.loadedSkins.first(where: { $0.identifier == identifier }) {
+                if let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) {
                     ILOG("skins: Found skin '\(skin.name)' with identifier '\(identifier)' after scan")
                     return skin as DeltaSkinProtocol?
                 } else {
@@ -266,12 +276,18 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             }
         }
 
-        // Batch update loadedSkins once at the end (reduces SwiftUI updates)
+        // Store scanned results so queue-based callers can read them
+        // immediately via lastScannedSkins (loadedSkins is @Published and
+        // must be set on MainActor for SwiftUI).
+        lastScannedSkins = scannedSkins
+        hasScanned = true
+        ILOG("skins: Scan complete, hasScanned set to true")
+
+        // Batch update the @Published loadedSkins on the main thread for SwiftUI
         Task { @MainActor in
             ILOG("skins: Updating loadedSkins with \(scannedSkins.count) skins on main thread")
-            loadedSkins = scannedSkins
-            hasScanned = true
-            ILOG("skins: Skin scan complete, hasScanned set to true")
+            self.loadedSkins = scannedSkins
+            ILOG("skins: loadedSkins updated on main thread")
         }
     }
 
@@ -296,10 +312,14 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Load a skin from URL and add to loadedSkins (for manual loading)
     private func loadSkinFromURL(_ url: URL) throws -> DeltaSkinProtocol {
         let skin = try loadSkinFromURLWithoutAdding(url)
-        // Add to loadedSkins if not already present
+        // Update lastScannedSkins synchronously so callers see it immediately
+        if !lastScannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+            lastScannedSkins.append(skin)
+        }
+        // Update @Published loadedSkins on MainActor for SwiftUI
         Task { @MainActor in
-            if !loadedSkins.contains(where: { $0.identifier == skin.identifier }) {
-                loadedSkins.append(skin)
+            if !self.loadedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                self.loadedSkins.append(skin)
             }
         }
         return skin
@@ -411,8 +431,8 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Delete a skin by its identifier
     public func deleteSkin(_ identifier: String) async throws {
         try await queue.asyncResult { [self] in
-            // Find the skin
-            guard let skin = self.loadedSkins.first(where: { $0.identifier == identifier }) else {
+            // Find the skin (use lastScannedSkins for immediate access on this queue)
+            guard let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) else {
                 throw DeltaSkinError.notFound
             }
 
