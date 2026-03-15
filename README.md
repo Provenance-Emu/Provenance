@@ -170,6 +170,7 @@ No ads, no tracking, no required account — free forever when sideloaded or bui
 | System | Core(s) |
 |---|---|
 | PlayStation (PS1 / PSX) | DuckStation · PCSX-ReARMed · Mednafen |
+| PlayStation 2 ⚠️ | Play! *(experimental — requires JIT, graphical glitches)* |
 | PlayStation Portable (PSP) | PPSSPP |
 
 </details>
