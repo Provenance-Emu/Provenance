@@ -554,6 +554,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
             if self.controller(forPlayer: slot) == nil {
                 ILOG("Controller [\(id)] assigned to preferred slot \(slot)")
                 setController(controller, toPlayer: slot)
+                PVToastManager.post("\(id) assigned to Player \(slot)", type: .info, duration: 2.5, icon: "gamecontroller.fill")
                 NotificationCenter.default.post(name: .PVControllerManagerControllerReassigned, object: self)
                 return true
             } else {
@@ -566,16 +567,26 @@ public final class PVControllerManager: NSObject, ObservableObject {
             if let occupant = occupant {
                 let occupantID = controllerIdentifier(for: occupant)
                 if case .always(let occupantSlot) = slotMode(for: occupant), occupantSlot == slot {
-                    WLOG("⚠️ Controller slot conflict: both \"\(id)\" and \"\(occupantID)\" have .always(\(slot)). Last-connected (\"\(id)\") wins.")
+                    WLOG("Controller slot conflict: both \"\(id)\" and \"\(occupantID)\" have .always(\(slot)). Last-connected (\"\(id)\") wins.")
+                    PVToastManager.post("Slot \(slot) conflict: \(id) displaced \(occupantID)", type: .warning, duration: 4.0, icon: "exclamationmark.triangle.fill")
                 }
                 // Evict occupant before claiming the slot.
                 setController(nil, toPlayer: slot)
             }
             ILOG("Controller [\(id)] claimed slot \(slot) (always mode)")
             setController(controller, toPlayer: slot)
+            PVToastManager.post("\(id) assigned to Player \(slot)", type: .info, duration: 2.5, icon: "gamecontroller.fill")
             if let occupant = occupant {
-                ILOG("Bumping evicted controller [\(controllerIdentifier(for: occupant))] from slot \(slot)")
-                _ = assignAuto(occupant)
+                let evictedName = controllerIdentifier(for: occupant)
+                ILOG("Bumping evicted controller [\(evictedName)] from slot \(slot)")
+                let newSlot = assignAuto(occupant)
+                if newSlot {
+                    if let newIndex = index(forController: occupant) {
+                        PVToastManager.post("\(evictedName) moved to Player \(newIndex)", type: .info, duration: 3.0, icon: "arrow.right.circle.fill")
+                    }
+                } else {
+                    PVToastManager.post("\(evictedName) was unassigned (no free slot)", type: .warning, duration: 3.5, icon: "xmark.circle.fill")
+                }
             }
             NotificationCenter.default.post(name: .PVControllerManagerControllerReassigned, object: self)
             return true
@@ -601,10 +612,14 @@ public final class PVControllerManager: NSObject, ObservableObject {
             }
 
             if previouslyAssignedController == nil || (newGamepadNotRemote && !previousGamepadNotRemote) {
+                let controllerName = controllerIdentifier(for: controller)
                 setController(controller, toPlayer: i)
+                PVToastManager.post("\(controllerName) assigned to Player \(i)", type: .info, duration: 2.5, icon: "gamecontroller.fill")
                 // Move the previously assigned controller to another player
                 if let previouslyAssignedController = previouslyAssignedController {
-                    ILOG("Controller #\(i) \(previouslyAssignedController.vendorName ?? "nil") being reassigned")
+                    let displacedName = controllerIdentifier(for: previouslyAssignedController)
+                    ILOG("Controller #\(i) \(displacedName) being reassigned")
+                    PVToastManager.post("\(displacedName) displaced from Player \(i)", type: .info, duration: 3.0, icon: "arrow.right.circle.fill")
                     assign(previouslyAssignedController)
                 }
                 NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)
@@ -1050,6 +1065,15 @@ public extension PVControllerManager {
     /// Removes any saved slot mode for the given controller ID, reverting to `.auto`.
     func clearSlotMode(forId id: String) {
         setSlotMode(.auto, forId: id)
+    }
+
+    /// Removes all saved controller slot preferences, reverting every controller to `.auto`.
+    /// After clearing, re-assigns all connected controllers using auto-assignment.
+    func resetAllSlotPreferences() {
+        Defaults[.controllerSlotModes] = [:]
+        ILOG("All controller slot preferences have been reset")
+        reapplyPreferences()
+        PVToastManager.post("All controller preferences reset", type: .success, duration: 3.0, icon: "arrow.counterclockwise")
     }
 
     // MARK: Convenience Int-based API (kept for backward compatibility)

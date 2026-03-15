@@ -30,6 +30,8 @@ struct ControllerSettingsView: View {
     @State private var selectedPlayer: Int?
     /// State for the action sheet presentation
     @State private var showingActionSheet = false
+    /// Confirmation for resetting all slot preferences
+    @State private var showingResetConfirmation = false
     /// Animation state for controller connection
     @State private var connectionAnimation = false
     /// Current window for iCade setup
@@ -302,6 +304,34 @@ struct ControllerSettingsView: View {
 //            }
 
             Section {
+                Button(action: {
+                    showingResetConfirmation = true
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise")
+                        Text("Reset All Slot Preferences")
+                    }
+                    .foregroundColor(.red)
+                }
+                #if os(tvOS)
+                .buttonStyle(.card)
+                #endif
+            } header: {
+                HStack {
+                    Image(systemName: "gearshape.2")
+                    Text("Preferences")
+                }
+                .font(.headline)
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                #endif
+            } footer: {
+                Text("Clears all saved controller-to-player slot assignments and reverts to automatic assignment.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
+
+            Section {
                 NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls")) {
                     Label("Full Controller Guide", systemImage: "books.vertical.fill")
                 }
@@ -453,6 +483,20 @@ struct ControllerSettingsView: View {
             }
         } message: {
             Text("or press a button on your iCade controller")
+        }
+        .confirmationDialog(
+            "Reset All Slot Preferences?",
+            isPresented: $showingResetConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Reset All", role: .destructive) {
+                withAnimation {
+                    controllerManager.resetAllSlotPreferences()
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will clear all saved controller-to-player assignments and revert to automatic assignment.")
         }
         .onAppear {
             #if canImport(UIKit)
