@@ -1,3 +1,4 @@
+import CoreImage
 import Testing
 import UIKit
 import XCTest
@@ -1898,11 +1899,57 @@ struct DeltaSkinScreenFilterTests {
         #expect(roundTripped.filterInfos?.count == 1)
         #expect(roundTripped.filterInfos?.first?.name == "CIGaussianBlur")
 
-        if let inputRadius = roundTripped.filterInfos?.first?.parameters["inputRadius"],
-           case let .number(radius) = inputRadius {
+        // Use optional pattern to match FilterParameter? directly (avoids two-step if-let + case).
+        if case .number(let radius)? = roundTripped.filterInfos?.first?.parameters["inputRadius"] {
             #expect(abs(radius - 2.5) < 0.001)
         } else {
             throw TestError("Expected inputRadius to be preserved in round-trip")
+        }
+    }
+
+    /// Test that a DeltaSkinScreen with no filters encodes without a filters key.
+    @Test("Encodes DeltaSkinScreen with no filters omits filters key")
+    func encodesDeltaSkinScreenNoFiltersOmitsKey() throws {
+        let screen = DeltaSkinScreen(
+            id: "screen-0",
+            inputFrame: CGRect(x: 0, y: 0, width: 240, height: 160),
+            outputFrame: CGRect(x: 0, y: 50, width: 414, height: 276),
+            placement: .controller,
+            filters: nil,
+            filterInfos: nil
+        )
+        let data = try JSONEncoder().encode(screen)
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        #expect(json?["filters"] == nil, "filters key should be absent when filterInfos is nil")
+    }
+
+    /// Test that CIGaussianBlur radius is correctly applied to the CIFilter during decode.
+    @Test("Decoded CIGaussianBlur CIFilter has inputRadius set")
+    func decodedGaussianBlurCIFilterHasRadius() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "inputFrame": {"x": 0, "y": 0, "width": 240, "height": 160},
+            "outputFrame": {"x": 0, "y": 50, "width": 414, "height": 276},
+            "placement": "controller",
+            "filters": [
+                {
+                    "name": "CIGaussianBlur",
+                    "parameters": {
+                        "inputRadius": 7.0
+                    }
+                }
+            ]
+        }
+        """
+        let decoder = JSONDecoder()
+        let screen = try decoder.decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+
+        // The CIFilter should have the radius set directly (not just the DeltaSkinScreenFilter wrapper).
+        if let radiusValue = screen.filters?.first?.value(forKey: kCIInputRadiusKey) as? NSNumber {
+            #expect(abs(radiusValue.doubleValue - 7.0) < 0.001)
+        } else {
+            throw TestError("Expected inputRadius to be set on the decoded CIFilter for CIGaussianBlur")
         }
     }
 

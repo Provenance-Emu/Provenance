@@ -24,6 +24,12 @@ public struct DeltaSkinScreen: Identifiable, Codable {
     /// Original filter specs decoded from JSON, preserved for round-trip encoding.
     public let filterInfos: [DeltaSkin.FilterInfo]?
 
+    /// Creates a `DeltaSkinScreen` programmatically.
+    ///
+    /// - Important: If `filters` is non-nil, `filterInfos` **must** also be provided.
+    ///   `encode(to:)` serialises `filterInfos`, not `filters`, so passing `filters` without
+    ///   the matching `filterInfos` will silently drop the filter data on re-encode.
+    ///   The `init(from:)` decoder always populates both fields together to maintain this invariant.
     public init(
         id: String,
         inputFrame: CGRect?,
@@ -32,6 +38,8 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         filters: [CIFilter]?,
         filterInfos: [DeltaSkin.FilterInfo]? = nil
     ) {
+        assert(filters == nil || filterInfos != nil,
+               "DeltaSkinScreen: filterInfos must be provided whenever filters is non-nil")
         self.id = id
         self.inputFrame = inputFrame
         self.outputFrame = outputFrame
@@ -56,7 +64,10 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         placement = try container.decode(DeltaSkinScreenPlacement.self, forKey: .placement)
 
         // Decode the `filters` array as [DeltaSkin.FilterInfo] and construct CIFilter instances.
-        // DeltaSkinScreenFilter handles parameter mapping (numbers, vectors, colors, etc.).
+        // DeltaSkinScreenFilter handles parameter mapping (numbers, vectors, colors, etc.) and
+        // sets all parameters on the underlying CIFilter so `filters` has fully configured
+        // CIFilter objects (e.g. CIGaussianBlur with inputRadius already applied).
+        // `filterInfos` is preserved separately for lossless round-trip encoding.
         if let infos = try container.decodeIfPresent([DeltaSkin.FilterInfo].self, forKey: .filters) {
             filterInfos = infos
             filters = infos.compactMap { DeltaSkinScreenFilter(filterInfo: $0)?.filter }
@@ -73,6 +84,9 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         try container.encodeIfPresent(outputFrame, forKey: .outputFrame)
         try container.encode(placement, forKey: .placement)
         // Re-encode the original FilterInfo specs so round-tripped skins remain valid.
+        // Note: `filters` (CIFilter) is intentionally not encoded — `filterInfos` is the
+        // canonical source of truth for serialisation. The public init enforces via assertion
+        // that `filterInfos` is always provided when `filters` is non-nil.
         try container.encodeIfPresent(filterInfos, forKey: .filters)
     }
 }
