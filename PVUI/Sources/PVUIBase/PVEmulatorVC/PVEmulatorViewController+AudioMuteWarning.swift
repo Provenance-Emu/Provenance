@@ -70,7 +70,7 @@ extension PVEmulatorViewController {
                 Self.hasShownAudioMuteWarning = true
                 ILOG("Silent mode detected with built-in speaker — showing silent mode toast")
                 PVToastManager.post(
-                    "If audio is muted, flip the silent switch or disable \u{201C}Respect Silent Mode\u{201D} in Settings \u{2192} Audio",
+                    "If audio is muted, turn off Silent Mode or disable \u{201C}Respect Silent Mode\u{201D} in Settings \u{2192} Audio",
                     type: .warning,
                     duration: 6.0,
                     icon: "bell.slash.fill"
