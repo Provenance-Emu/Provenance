@@ -31,6 +31,12 @@ public enum DeltaSkinNativeResolution {
     public static let gba          = CGSize(width: 240, height: 160) // 3:2
     public static let pokemonMini  = CGSize(width:  96, height:  64) // 3:2
 
+    // Sony
+    public static let psp          = CGSize(width: 480, height: 272) // ~16:9
+
+    // Nintendo 3DS (top screen resolution)
+    public static let threeDS      = CGSize(width: 400, height: 240) // ~5:3
+
     /// Returns the native framebuffer size for the given game type, or `nil` for
     /// systems that aren't in the registry (they default to a standard 4:3 ratio).
     public static func size(for gameType: DeltaSkinGameType) -> CGSize? {
@@ -47,6 +53,8 @@ public enum DeltaSkinNativeResolution {
         case .gb, .gbc:                    return gb
         case .gba:                         return gba
         case .pokemonMini:                 return pokemonMini
+        case .psp:                         return psp
+        case .threeDS:                     return threeDS
         default:                           return nil
         }
     }
