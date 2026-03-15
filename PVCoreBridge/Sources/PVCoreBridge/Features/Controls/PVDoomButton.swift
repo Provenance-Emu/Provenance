@@ -41,6 +41,8 @@
     case weaponNext
     /// Automap / Map — JOYPAD_SELECT → buttonOptions
     case map
+    /// Strafe (toggle) — JOYPAD_X → north/buttonY
+    case strafe
     /// Pause / Menu — JOYPAD_START → buttonMenu
     case pause
     case count
@@ -58,7 +60,8 @@
         case "straferight", "sr", "r", "r1": self = .strafeRight
         case "weaponprev", "wp", "prevweapon", "l2", "prev": self = .weaponPrev
         case "weaponnext", "wn", "nextweapon", "r2", "next": self = .weaponNext
-        case "map", "automap", "select", "x": self = .map
+        case "map", "automap", "select": self = .map
+        case "strafe", "x": self = .strafe
         case "pause", "start", "menu": self = .pause
         case "count": self = .count
         default: self = .up
@@ -79,6 +82,7 @@
         case .weaponPrev: return "weaponprev"
         case .weaponNext: return "weaponnext"
         case .map: return "map"
+        case .strafe: return "strafe"
         case .pause: return "pause"
         case .count: return "count"
         }
@@ -101,6 +105,7 @@ extension PVDoomButton {
         case .weaponPrev: return .weaponPrev
         case .weaponNext: return .weaponNext
         case .map:        return .select
+        case .strafe:     return .run  // approximate; DOS has no strafe toggle
         case .pause:      return .pause
         case .count:      return .count
         }

@@ -7752,6 +7752,16 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{50,170},{80,70}}</string>
+						<key>PVControlTint</key>
+						<string>#f9c963</string>
+						<key>PVControlTitle</key>
+						<string>Strafe</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
 				</array>
 			</dict>
 			<dict>

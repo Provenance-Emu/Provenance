@@ -400,25 +400,30 @@ struct DefaultControllerSkinView: View {
             // Action buttons on the right side
             VStack {
                 Spacer()
-                HStack(spacing: 30) {
-                    if let fps = fpsButtonConfig {
-                        VStack(spacing: 25) {
-                            circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
-                            circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
+                VStack(spacing: 10) {
+                    HStack(spacing: 30) {
+                        if let fps = fpsButtonConfig {
+                            VStack(spacing: 25) {
+                                circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
+                                circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
+                            }
+                            VStack(spacing: 25) {
+                                circleButton(label: fps.tr.0, color: fps.tr.2, inputId: fps.tr.1)
+                                circleButton(label: fps.br.0, color: fps.br.2, inputId: fps.br.1)
+                            }
+                        } else {
+                            VStack(spacing: 25) {
+                                circleButton(label: "Y", color: .yellow)
+                                circleButton(label: "X", color: .blue)
+                            }
+                            VStack(spacing: 25) {
+                                circleButton(label: "B", color: .red)
+                                circleButton(label: "A", color: .green)
+                            }
                         }
-                        VStack(spacing: 25) {
-                            circleButton(label: fps.tr.0, color: fps.tr.2, inputId: fps.tr.1)
-                            circleButton(label: fps.br.0, color: fps.br.2, inputId: fps.br.1)
-                        }
-                    } else {
-                        VStack(spacing: 25) {
-                            circleButton(label: "Y", color: .yellow)
-                            circleButton(label: "X", color: .blue)
-                        }
-                        VStack(spacing: 25) {
-                            circleButton(label: "B", color: .red)
-                            circleButton(label: "A", color: .green)
-                        }
+                    }
+                    if let fps = fpsButtonConfig, let center = fps.center {
+                        circleButton(label: center.0, color: center.2, inputId: center.1)
                     }
                 }
                 Spacer()
@@ -822,7 +827,7 @@ struct DefaultControllerSkinView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 // Right side - Action buttons (constrained to prevent off-screen)
-                VStack(spacing: 20) {
+                VStack(spacing: 10) {
                     HStack(spacing: 20) {
                         if let fps = fpsButtonConfig {
                             VStack(spacing: 20) {
@@ -843,6 +848,9 @@ struct DefaultControllerSkinView: View {
                                 circleButton(label: "A", color: .green)
                             }
                         }
+                    }
+                    if let fps = fpsButtonConfig, let center = fps.center {
+                        circleButton(label: center.0, color: center.2, inputId: center.1)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -1176,20 +1184,25 @@ struct DefaultControllerSkinView: View {
     }
 
     /// Returns FPS-specific button labels/IDs for Doom/Wolf3D/Quake, or nil for other systems.
-    /// Layout: (topLeft, bottomLeft, topRight, bottomRight) matching the diamond pattern.
+    /// Layout: (topLeft, bottomLeft, topRight, bottomRight) matching the diamond pattern,
+    /// with an optional center button displayed between the two columns.
     private var fpsButtonConfig: (tl: (String, String, Color), bl: (String, String, Color),
-                                  tr: (String, String, Color), br: (String, String, Color))? {
+                                  tr: (String, String, Color), br: (String, String, Color),
+                                  center: (String, String, Color)?)? {
         DLOG("fpsButtonConfig: systemId = \(String(describing: systemId))")
         switch systemId {
         case .DOOM:
             return (tl: ("MAP", "map", .yellow), bl: ("RUN", "run", .blue),
-                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green))
+                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green),
+                    center: ("STRAFE", "strafe", .orange))
         case .Wolf3D:
             return (tl: ("STRAFE", "strafe", .yellow), bl: ("RUN", "run", .blue),
-                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green))
+                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green),
+                    center: nil)
         case .Quake, .Quake2:
             return (tl: ("JUMP", "jump", .yellow), bl: ("RUN", "run", .blue),
-                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green))
+                    tr: ("USE", "use", .red), br: ("FIRE", "fire", .green),
+                    center: nil)
         default:
             return nil
         }
