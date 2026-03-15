@@ -9,10 +9,11 @@
 
 /// Button enum for Doom via the PrBoom RetroArch core.
 ///
-/// PrBoom libretro button mapping (RETRO_DEVICE_ID_JOYPAD_*):
-///   JOYPAD_B (south/buttonA)    → Fire / Shoot
-///   JOYPAD_A (east/buttonB)     → Use / Interact / Open door
-///   JOYPAD_X (north/buttonY)    → Run / Speed (JOYPAD_X in libretro = north)
+/// PrBoom libretro Gamepad Classic (default) button mapping (RETRO_DEVICE_ID_JOYPAD_*):
+///   JOYPAD_A (east/buttonB)     → Fire / Shoot
+///   JOYPAD_B (south/buttonA)    → Use / Interact / Open door
+///   JOYPAD_Y (west/buttonX)     → Run / Speed
+///   JOYPAD_X (north/buttonY)    → Strafe (toggle)
 ///   JOYPAD_L (leftShoulder)     → Strafe Left
 ///   JOYPAD_R (rightShoulder)    → Strafe Right
 ///   JOYPAD_L2 (leftTrigger)     → Previous Weapon
@@ -24,11 +25,11 @@
     case down
     case left
     case right
-    /// Fire / Shoot — JOYPAD_B → south/buttonA
+    /// Fire / Shoot — JOYPAD_A → east/buttonB
     case fire
-    /// Use / Interact / Open door — JOYPAD_A → east/buttonB
+    /// Use / Interact / Open door — JOYPAD_B → south/buttonA
     case use
-    /// Run / Speed — JOYPAD_X → north/buttonY
+    /// Run / Speed — JOYPAD_Y → west/buttonX
     case run
     /// Strafe Left — JOYPAD_L → leftShoulder
     case strafeLeft

@@ -10,10 +10,11 @@
 //  button semantics (fire, use, run, strafe, weapon cycling, map, pause)
 //  do not leak into generic DOSBox sessions.
 //
-//  PrBoom RetroArch core default button mapping (RETRO_DEVICE_ID_JOYPAD_*):
-//    B (south)  → Fire / Shoot
-//    A (east)   → Use / Interact
-//    X (north)  → Run / Speed
+//  PrBoom RetroArch Gamepad Classic (default) button mapping:
+//    A (east)   → Fire / Shoot   (JOYPAD_A)
+//    B (south)  → Use / Interact (JOYPAD_B)
+//    Y (west)   → Run / Speed    (JOYPAD_Y)
+//    X (north)  → Strafe toggle  (JOYPAD_X)
 //    L / R      → Strafe Left / Right
 //    L2 / R2    → Previous / Next Weapon
 //    SELECT     → Automap (Map)

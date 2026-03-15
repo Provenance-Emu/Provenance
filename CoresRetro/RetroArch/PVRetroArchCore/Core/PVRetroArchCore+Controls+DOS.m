@@ -329,10 +329,11 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 
 // MARK: - Doom / PrBoom Controls
 //
-// Doom is served by the PrBoom RetroArch core. Its libretro button layout is:
-//   JOYPAD_B (south, buttonA)    → Fire / Shoot
-//   JOYPAD_A (east,  buttonB)    → Use / Interact
-//   JOYPAD_X (north, buttonY)    → Run / Speed
+// Doom is served by the PrBoom RetroArch core. Gamepad Classic (default) layout:
+//   JOYPAD_A (east,  buttonB)    → Fire / Shoot
+//   JOYPAD_B (south, buttonA)    → Use / Interact / Open
+//   JOYPAD_Y (west,  buttonX)    → Run / Speed
+//   JOYPAD_X (north, buttonY)    → Strafe (toggle)
 //   JOYPAD_L (leftShoulder)      → Strafe Left
 //   JOYPAD_R (rightShoulder)     → Strafe Right
 //   JOYPAD_L2 (leftTrigger)      → Previous Weapon
@@ -378,16 +379,16 @@ static void st_ra_update_mouse_rel(CGPoint point) {
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case PVDoomButtonFire:
-            // JOYPAD_B (south) → buttonA
-            [touch_controller.extendedGamepad.buttonA setValue:v];
-            break;
-        case PVDoomButtonUse:
-            // JOYPAD_A (east) → buttonB
+            // PrBoom Gamepad Classic: JOYPAD_A → Fire — buttonB (east)
             [touch_controller.extendedGamepad.buttonB setValue:v];
             break;
+        case PVDoomButtonUse:
+            // PrBoom Gamepad Classic: JOYPAD_B → Use/Open — buttonA (south)
+            [touch_controller.extendedGamepad.buttonA setValue:v];
+            break;
         case PVDoomButtonRun:
-            // JOYPAD_X (north) → buttonY
-            [touch_controller.extendedGamepad.buttonY setValue:v];
+            // PrBoom Gamepad Classic: JOYPAD_Y → Run/Speed — buttonX (west)
+            [touch_controller.extendedGamepad.buttonX setValue:v];
             break;
         case PVDoomButtonStrafeLeft:
             // JOYPAD_L → leftShoulder
