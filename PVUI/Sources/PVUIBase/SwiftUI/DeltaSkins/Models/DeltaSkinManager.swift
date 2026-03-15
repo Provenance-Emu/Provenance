@@ -40,13 +40,10 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     ]
 
     public init() {
-        ILOG("skins: Initializing DeltaSkinManager")
-        Task.detached { [weak self] in
-            ILOG("skins: Starting initial skin scan in background task")
-            try? self?.scanForSkins()
-            ILOG("skins: Initial skin scan completed")
-        }
-
+        // Scan is intentionally deferred — Bundle.allFrameworks enumeration and
+        // .deltaskin discovery are I/O-heavy and compete with the core-plist scanner
+        // during app boot.  availableSkins() triggers the scan lazily on first use.
+        ILOG("skins: Initializing DeltaSkinManager (scan deferred to first use)")
     }
 
     deinit {

@@ -421,26 +421,24 @@ public class AppState: ObservableObject {
         ILOG("AppState: Initializing library")
         bootupStateManager.transition(to: .initializingLibrary)
 
-        // Phase A: Load system/core plist definitions and register cores.
-        // This is the heaviest sub-step (filesystem scan + Realm writes), so we
-        // call it separately to allow fine-grained progress reporting before the
-        // lighter initSystems() remainder (dir creation + Realm observer setup).
-        ILOG("AppState: Loading system/core plists via GameImporter.shared.initCorePlists()")
+        // Phase A: Kick off the core plist + libretro scanner in the background.
+        // This is the heaviest step (filesystem scan, Mach-O probing, Realm writes).
+        // We fire it as a non-blocking detached task so the rest of the boot sequence
+        // (directory creation, ROM cache warm-up, library display) proceeds immediately.
+        // initCorePlists() is idempotent — the inner call inside initSystems() below
+        // returns instantly via its guard flags once this background task completes.
+        ILOG("AppState: Firing initCorePlists() in background (non-blocking)")
         bootupStateManager.updateTaskProgress("Loading system definitions…", fraction: 0.06)
-        bootupStateManager.updateSubTask("Reading core plists…")
-        do {
-            try await withTimeout(seconds: 45) {
+        bootupStateManager.updateSubTask("Scanning cores in background…")
+        Task.detached(priority: .userInitiated) {
+            do {
                 try await GameImporter.shared.initCorePlists()
+                ILOG("AppState: background initCorePlists() completed")
+            } catch {
+                ELOG("AppState: background initCorePlists() failed: \(error.localizedDescription)")
             }
-            ILOG("AppState: initCorePlists() completed")
-            bootupStateManager.updateSubTask("")
-        } catch let error as TimeoutError {
-            ELOG("AppState: initCorePlists() timed out after \(error.seconds)s — continuing anyway")
-            bootupStateManager.updateSubTask("Core plist scan timed out — continuing…")
-        } catch {
-            ELOG("AppState: initCorePlists() failed: \(error.localizedDescription) — continuing anyway")
-            bootupStateManager.updateSubTask("")
         }
+        bootupStateManager.updateSubTask("")
 
         // Phase B: Finish importer init (directory creation + Realm observer).
         // initCorePlists() is now idempotent so the inner call inside initSystems()

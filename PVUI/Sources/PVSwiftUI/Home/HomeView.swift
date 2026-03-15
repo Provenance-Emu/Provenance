@@ -594,8 +594,14 @@ struct HomeView: SwiftUI.View {
             }
         )
         .onReceive(LibraryNavigator.shared.$pendingAction) { _ in
-            // Consume any incoming search action (hot-launch / foreground Siri handoff).
-            consumePendingSearch()
+            // Hot-launch / foreground Siri handoff: ConsolesWrapperView switches the
+            // tab in the SAME render pass.  Delay the search population by one tab-
+            // animation duration (~0.35 s) so the overlay appears after the page
+            // transition settles rather than mid-animation over the wrong tab.
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 350_000_000)
+                consumePendingSearch()
+            }
         }
     }
 

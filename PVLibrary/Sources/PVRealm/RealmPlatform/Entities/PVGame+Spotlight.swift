@@ -163,6 +163,24 @@ public extension PVGame {
         // Make the item displayable in Spotlight
         contentSet.supportsNavigation = true
 
+        // Deep-link URL so tapping opens the game directly in Provenance
+        contentSet.url = URL(string: "provenance://game/\(md5Hash)")
+
+        // Last-played date helps Siri surface recently used games higher in results
+        if let played = lastPlayed {
+            contentSet.lastUsedDate = played
+        }
+
+        // Play count gives Siri a usage-frequency signal
+        if playCount > 0 {
+            contentSet.userCurated = true
+        }
+
+        // Developer / publisher as "artist" so Siri can answer "games by Nintendo"
+        if let developer = developer, !developer.isEmpty {
+            contentSet.artist = developer
+        }
+
         return contentSet
     }
 

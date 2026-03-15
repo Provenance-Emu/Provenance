@@ -1578,13 +1578,14 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
         let buttonSize: CGFloat = 44
         let spacing: CGFloat = 8
-        let topPadding: CGFloat = 8
+        // All quick-action buttons live in a bottom strip (same row as the toggle button)
+        // so they never overlap the game screen. The top of the display is reserved for
+        // the game render area and the JIT/status indicator in the top-right corner.
+        let bottomInset: CGFloat = 4
 
-        // Buttons are added directly to self.view — no full-screen container needed.
-        // Each button covers only its own small frame, so touches in the surrounding
-        // areas naturally reach the game controls beneath without any hitTest trickery.
+        let safeBottom = view.safeAreaLayoutGuide.bottomAnchor
 
-        // Fast Forward — always available
+        // Fast Forward — bottom-right corner, always available
         let ffButton = makeQuickActionButton(
             systemImage: "forward.fill",
             accessibilityLabel: "Fast Forward"
@@ -1595,13 +1596,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         NSLayoutConstraint.activate([
             ffButton.widthAnchor.constraint(equalToConstant: buttonSize),
             ffButton.heightAnchor.constraint(equalToConstant: buttonSize),
-            ffButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            ffButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
+            ffButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
+            ffButton.bottomAnchor.constraint(equalTo: safeBottom, constant: -bottomInset),
         ])
         self.fastForwardButton = ffButton
         quickActionButtons.append(ffButton)
 
-        // Quick Save / Load — only when core supports save states
+        // Quick Save / Load — bottom-right, stacked left of FF
         if coreSupportsStateSaves {
             let qlButton = makeQuickActionButton(
                 systemImage: "arrow.counterclockwise",
@@ -1614,7 +1615,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 qlButton.widthAnchor.constraint(equalToConstant: buttonSize),
                 qlButton.heightAnchor.constraint(equalToConstant: buttonSize),
                 qlButton.trailingAnchor.constraint(equalTo: ffButton.leadingAnchor, constant: -spacing),
-                qlButton.topAnchor.constraint(equalTo: ffButton.topAnchor),
+                qlButton.bottomAnchor.constraint(equalTo: safeBottom, constant: -bottomInset),
             ])
             self.quickLoadButton = qlButton
             quickActionButtons.append(qlButton)
@@ -1630,15 +1631,14 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 qsButton.widthAnchor.constraint(equalToConstant: buttonSize),
                 qsButton.heightAnchor.constraint(equalToConstant: buttonSize),
                 qsButton.trailingAnchor.constraint(equalTo: qlButton.leadingAnchor, constant: -spacing),
-                qsButton.topAnchor.constraint(equalTo: ffButton.topAnchor),
+                qsButton.bottomAnchor.constraint(equalTo: safeBottom, constant: -bottomInset),
             ])
             self.quickSaveButton = qsButton
             quickActionButtons.append(qsButton)
         }
 
-        // Virtual Keyboard/Mouse toggles — iOS only (virtual overlays not supported on tvOS)
+        // Virtual Keyboard/Mouse toggles — bottom-left, right of the toggle button
         #if !os(tvOS)
-        // Virtual Keyboard toggle — only for cores that support keyboard input
         if coreSupportsVirtualKeyboard {
             let kbButton = makeQuickActionButton(
                 systemImage: "keyboard",
@@ -1647,17 +1647,20 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             kbButton.addTarget(self, action: #selector(keyboardToggleTapped), for: .touchUpInside)
             kbButton.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(kbButton)
+            // Anchor left of the toggle button's trailing edge (toggle is at leadingAnchor + 4).
+            // Use the toggle button when available; otherwise fall back to safeArea leading.
+            let kbLeadingAnchor: NSLayoutXAxisAnchor = toggleButton.map { $0.trailingAnchor } ?? view.safeAreaLayoutGuide.leadingAnchor
+            let kbLeadingConstant: CGFloat = toggleButton != nil ? spacing : 8
             NSLayoutConstraint.activate([
                 kbButton.widthAnchor.constraint(equalToConstant: buttonSize),
                 kbButton.heightAnchor.constraint(equalToConstant: buttonSize),
-                kbButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-                kbButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
+                kbButton.leadingAnchor.constraint(equalTo: kbLeadingAnchor, constant: kbLeadingConstant),
+                kbButton.bottomAnchor.constraint(equalTo: safeBottom, constant: -bottomInset),
             ])
             self.keyboardToggleButton = kbButton
             quickActionButtons.append(kbButton)
         }
 
-        // Virtual Mouse toggle — only for cores that support mouse input
         if coreSupportsVirtualMouse {
             let mouseButton = makeQuickActionButton(
                 systemImage: "cursorarrow",
@@ -1666,15 +1669,15 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             mouseButton.addTarget(self, action: #selector(mouseToggleTapped), for: .touchUpInside)
             mouseButton.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(mouseButton)
-            let leftAnchor: NSLayoutXAxisAnchor = keyboardToggleButton.map {
+            let mouseLeadingAnchor: NSLayoutXAxisAnchor = keyboardToggleButton.map {
                 $0.trailingAnchor
-            } ?? view.leadingAnchor
-            let leftConstant: CGFloat = keyboardToggleButton != nil ? spacing : 8
+            } ?? toggleButton.map { $0.trailingAnchor } ?? view.safeAreaLayoutGuide.leadingAnchor
+            let mouseLeadingConstant: CGFloat = (keyboardToggleButton != nil || toggleButton != nil) ? spacing : 8
             NSLayoutConstraint.activate([
                 mouseButton.widthAnchor.constraint(equalToConstant: buttonSize),
                 mouseButton.heightAnchor.constraint(equalToConstant: buttonSize),
-                mouseButton.leadingAnchor.constraint(equalTo: leftAnchor, constant: leftConstant),
-                mouseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
+                mouseButton.leadingAnchor.constraint(equalTo: mouseLeadingAnchor, constant: mouseLeadingConstant),
+                mouseButton.bottomAnchor.constraint(equalTo: safeBottom, constant: -bottomInset),
             ])
             self.mouseToggleButton = mouseButton
             quickActionButtons.append(mouseButton)
