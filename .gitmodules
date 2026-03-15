@@ -33,7 +33,8 @@
 	url = https://github.com/stenzek/duckstation.git
 [submodule "Cores/Desmume2015/desmume2015"]
 	path = Cores/Desmume2015/desmume2015
-	url = https://github.com/libretro/desmume2015.git
+	url = https://github.com/Provenance-Emu/desmume2015-1.git
+	branch = provenance-patches
 [submodule "Cores/O2EM"]
 	path = Cores/O2EM
 	url = https://github.com/Provenance-Emu/O2EM-Core.git
@@ -147,7 +148,8 @@
 	url = https://github.com/schellingb/dosbox-pure.git
 [submodule "Cores/NP2Kai/libretro-np2kai"]
 	path = Cores/NP2Kai/libretro-np2kai
-	url = https://github.com/AZO234/NP2kai.git
+	url = https://github.com/Provenance-Emu/NP2kai-1.git
+	branch = provenance-patches
 [submodule "Cores/snes9x/libretro-snes9x"]
 	path = Cores/snes9x/libretro-snes9x
 	url = https://github.com/libretro/snes9x.git
@@ -186,7 +188,8 @@
 	url = https://github.com/Provenance-Emu/mGBA-Core.git
 [submodule "CoresRetro/RetroArch/ZipArchive"]
 	path = Dependencies/ZipArchive
-	url = https://github.com/ZipArchive/ZipArchive.git
+	url = https://github.com/Provenance-Emu/ZipArchive.git
+	branch = provenance-patches
 [submodule "Dependencies/SwiftSDL2"]
 	path = Dependencies/SwiftSDL2
 	url = https://github.com/ctreffs/SwiftSDL2.git
