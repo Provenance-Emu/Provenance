@@ -41,8 +41,10 @@ class DeltaSkinLoader: ObservableObject {
                     // Try to use already-loaded skins first (fast path)
                     let manager = DeltaSkinManager.shared
 
-                    // Check if skins are already loaded
-                    if manager.skinsAreLoaded {
+                    // Check if skins are already loaded — skinsAreLoaded is @MainActor,
+                    // so hop to MainActor to read it safely.
+                    let skinsAreLoaded = await MainActor.run { manager.skinsAreLoaded }
+                    if skinsAreLoaded {
                         ILOG("skins: Skins already loaded, using fast path lookup")
                         // Fast path: use synchronous lookup from already-loaded skins
                         // Use effectiveSkinIdentifier to get session-aware selection
@@ -51,7 +53,7 @@ class DeltaSkinLoader: ObservableObject {
                             for: systemId,
                             gameId: nil,
                             orientation: orientation
-                        ), let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
+                        ), let skin = await MainActor.run(body: { manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) }) {
                             // Update UI state immediately but don't await - return skin right away
                             Task { @MainActor in
                                 self.selectedSkin = skin
@@ -63,8 +65,10 @@ class DeltaSkinLoader: ObservableObject {
 
                         // Try default skin from cache
                         if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
-                           let skin = manager.loadedSkins.first(where: {
-                               $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                           let skin = await MainActor.run(body: {
+                               manager.loadedSkins.first(where: {
+                                   $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                               })
                            }) {
                             // Update UI state immediately but don't await - return skin right away
                             Task { @MainActor in
