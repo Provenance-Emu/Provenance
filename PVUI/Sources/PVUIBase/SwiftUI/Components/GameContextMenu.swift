@@ -71,7 +71,7 @@ public struct GameContextMenu: View {
                             Button {
                                 Task { @MainActor in
                                     if let thawedGame = game.thaw() {
-                                        rootDelegate?.root_load(thawedGame, sender: self, core: core, saveState: nil)
+                                        await rootDelegate?.root_load(thawedGame, sender: self, core: core, saveState: nil)
                                     }
                                 }
                             } label: {
