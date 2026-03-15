@@ -1235,9 +1235,20 @@ bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgTyp
 {
     NSLog(@"Message %s %s\n", caption, text);
     if (text && *text) {
-        NSString *message = caption && *caption
-            ? [NSString stringWithFormat:@"%s: %s", caption, text]
-            : [NSString stringWithUTF8String:text];
+        NSString *message = nil;
+        if (caption && *caption) {
+            message = [NSString stringWithFormat:@"%s: %s", caption, text];
+        } else {
+            // Try UTF-8 first; this can return nil for invalid UTF-8.
+            message = [NSString stringWithUTF8String:text];
+            if (!message && text) {
+                // Fallback to a different encoding to avoid passing nil to PVOSDNotification.
+                message = [[NSString alloc] initWithCString:text encoding:NSISOLatin1StringEncoding];
+            }
+        }
+        if (!message) {
+            message = @"";
+        }
         PVOSDType osdType = (style == Common::MsgType::Warning) ? PVOSDTypeWarning : PVOSDTypeError;
         [PVOSDNotification postMessage:message type:osdType duration:5.0];
     }
