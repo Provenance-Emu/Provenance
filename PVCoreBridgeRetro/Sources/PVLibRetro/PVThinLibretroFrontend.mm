@@ -494,6 +494,11 @@ static bool thin_environment(unsigned cmd, void *data) {
         _sym.retro_get_system_av_info(&_rawAVInfo);
     }
 
+    // Allocate the software video buffer now that we know the geometry.
+    // Without this, _videoBufferData is NULL and the Metal renderer gets
+    // no frames (videoBuffer returns NULL → "Missing video buffer").
+    [self _allocateVideoBuffer];
+
     ILOG(@"ThinFrontend: core started — %ux%u @ %.2f fps, audio %.0f Hz",
          _rawAVInfo.geometry.base_width,
          _rawAVInfo.geometry.base_height,
