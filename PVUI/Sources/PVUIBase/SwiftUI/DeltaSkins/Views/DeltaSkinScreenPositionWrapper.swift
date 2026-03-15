@@ -193,12 +193,29 @@ struct DeltaSkinScreenPositionWrapper: View {
             if needsFallbackNorm {
                 DLOG("🎮 SKIN: Fallback normalisation applied to screenGroups outputFrame: \(outputFrame), mappingSize: \(mappingSize)")
 
+                // Validate mappingSize and layout before dividing — zero mappingSize produces inf/NaN.
+                guard mappingSize.width > 0 && mappingSize.height > 0 else {
+                    ELOG("🎮 SKIN: ERROR - Invalid mappingSize for screenGroups normalisation: \(mappingSize)")
+                    return nil
+                }
+                guard layout.width > 0 && layout.height > 0 else {
+                    ELOG("🎮 SKIN: ERROR - Invalid layout dimensions for screenGroups: width=\(layout.width), height=\(layout.height)")
+                    return nil
+                }
+
                 let normalizedX = outputFrame.minX / mappingSize.width
                 let normalizedY = outputFrame.minY / mappingSize.height
                 let normalizedWidth = outputFrame.width / mappingSize.width
                 let normalizedHeight = outputFrame.height / mappingSize.height
 
                 DLOG("🎮 SKIN:   Normalized: x=\(normalizedX), y=\(normalizedY), w=\(normalizedWidth), h=\(normalizedHeight)")
+
+                // Validate normalised values — inf/NaN can occur if mappingSize had a zero component.
+                guard normalizedX.isFinite && normalizedY.isFinite &&
+                      normalizedWidth.isFinite && normalizedHeight.isFinite else {
+                    ELOG("🎮 SKIN: ERROR - Invalid normalized values after screenGroups fallback: x=\(normalizedX), y=\(normalizedY), w=\(normalizedWidth), h=\(normalizedHeight)")
+                    return nil
+                }
 
                 var groupFallbackFrame = CGRect(
                     x: normalizedX * layout.width,

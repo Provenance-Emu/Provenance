@@ -1893,6 +1893,55 @@ struct DeltaSkinComponentTests {
         #expect(decoded.outputFrame?.height == 211)
     }
 
+    // MARK: - CGRect.fitting(aspectRatio:) tests
+
+    /// Wider box (4:3) fitted to narrower AR (1:1) should letterbox by reducing width.
+    @Test("CGRect.fitting — wide box fitted to square AR produces centred square")
+    func cgRectFittingWideBoxToSquare() {
+        let box = CGRect(x: 10, y: 20, width: 400, height: 300)
+        let fitted = box.fitting(aspectRatio: 1.0)
+        // Height stays at 300; width should equal 300, centred inside 400
+        #expect(abs(fitted.width - 300) < 0.001)
+        #expect(abs(fitted.height - 300) < 0.001)
+        // xOffset = (400 - 300) / 2 = 50 → origin.x = 10 + 50 = 60
+        #expect(abs(fitted.origin.x - 60) < 0.001)
+        #expect(abs(fitted.origin.y - 20) < 0.001)
+    }
+
+    /// Tall box (3:4) fitted to wider AR (4:3) should pillarbox by reducing height.
+    @Test("CGRect.fitting — tall box fitted to 4:3 AR produces centred rect")
+    func cgRectFittingTallBoxTo4x3() {
+        let box = CGRect(x: 0, y: 0, width: 300, height: 400)
+        let fitted = box.fitting(aspectRatio: 4.0 / 3.0)
+        // Width stays at 300; height = 300 / (4/3) = 225, centred inside 400
+        #expect(abs(fitted.width - 300) < 0.001)
+        #expect(abs(fitted.height - 225) < 0.001)
+        // yOffset = (400 - 225) / 2 = 87.5
+        #expect(abs(fitted.origin.y - 87.5) < 0.001)
+        #expect(abs(fitted.origin.x - 0) < 0.001)
+    }
+
+    /// Box already at the requested AR should be returned unchanged.
+    @Test("CGRect.fitting — already-correct AR returns original rect")
+    func cgRectFittingAlreadyCorrectAR() {
+        let box = CGRect(x: 5, y: 15, width: 160, height: 144) // 10:9 (GameGear native)
+        let ar = 160.0 / 144.0
+        let fitted = box.fitting(aspectRatio: ar)
+        #expect(abs(fitted.origin.x - 5) < 0.001)
+        #expect(abs(fitted.origin.y - 15) < 0.001)
+        #expect(abs(fitted.width - 160) < 0.001)
+        #expect(abs(fitted.height - 144) < 0.001)
+    }
+
+    /// Zero or negative AR guard — should return the original rect unchanged.
+    @Test("CGRect.fitting — zero or NaN AR returns original rect")
+    func cgRectFittingInvalidAR() {
+        let box = CGRect(x: 0, y: 0, width: 100, height: 100)
+        #expect(box.fitting(aspectRatio: 0) == box)
+        #expect(box.fitting(aspectRatio: -1) == box)
+        #expect(box.fitting(aspectRatio: CGFloat.nan) == box)
+    }
+
     private func sanitizeJSON(_ data: Data) throws -> Data {
         guard let jsonString = String(data: data, encoding: .utf8) else {
             throw TestError("Invalid JSON data")
