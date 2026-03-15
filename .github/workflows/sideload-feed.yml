@@ -1,15 +1,17 @@
 name: Update Sideload Feed
 
 # Regenerates AltStore + SideStore JSON source files and commits them
-# to the gh-pages branch whenever a release or alpha build is published.
+# to the docs/ folder whenever a release or alpha build is published.
 #
 # The JSON files are hosted at:
 #   https://provenance-emu.github.io/Provenance/altstore-source.json
 #   https://provenance-emu.github.io/Provenance/sidestore-source.json
-# (or via raw GitHub if gh-pages isn't configured — see below)
 #
-# IPAs are attached as GitHub Release assets — no login required to download.
-# AltStore/SideStore can fetch them directly with curl.
+# Stable releases appear as "Provenance" (com.provenance-emu.provenance).
+# Alpha builds appear as "Provenance Alpha" (com.provenance-emu.provenance.alpha)
+# — a SEPARATE app entry so AltStore/SideStore shows them as two distinct apps.
+#
+# Only the latest 3 alpha versions are kept in the feed.
 
 on:
   release:
@@ -49,25 +51,29 @@ jobs:
           RAW_BASE="https://github.com/${REPO}/releases/download"
 
           # ── Fetch all non-draft releases (stable + pre-release) ───────────
-          ALL_RELEASES=$(gh api "repos/${REPO}/releases?per_page=20" \
+          ALL_RELEASES=$(gh api "repos/${REPO}/releases?per_page=50" \
             --jq '[.[] | select(.draft == false)]' 2>/dev/null || echo "[]")
 
           STABLE_RELEASES=$(echo "$ALL_RELEASES" | \
             jq '[.[] | select(.prerelease == false and (.tag_name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")))]')
 
-          ALPHA_RELEASE=$(echo "$ALL_RELEASES" | \
-            jq 'map(select(.tag_name == "alpha")) | first // empty')
+          # Get all alpha-tagged releases (there is usually only one rolling release,
+          # but we also look for any with alpha in the tag for historical ones)
+          ALPHA_RELEASES=$(echo "$ALL_RELEASES" | \
+            jq '[.[] | select(.tag_name == "alpha" or (.tag_name | test("^alpha-")))]')
 
-          # ── Helper: build an app entry from a release ─────────────────────
-          build_app_entry() {
+          # ── Helper: extract version entries from a release ──────────────
+          # Returns a JSON array of AltStore version objects
+          build_version_entries() {
             local release_json="$1"
             local channel="$2"  # "stable" or "alpha"
 
             TAG=$(echo "$release_json" | jq -r '.tag_name')
-            NAME=$(echo "$release_json" | jq -r '.name // .tag_name')
             BODY=$(echo "$release_json" | jq -r '.body // ""')
             DATE=$(echo "$release_json" | jq -r '.published_at // .created_at')
             DATE_SHORT=$(echo "$DATE" | cut -c1-10)
+            SHA=$(echo "$release_json" | jq -r '.target_commitish // ""')
+            SHORT_SHA="${SHA:0:7}"
 
             # Find iOS and tvOS IPAs in release assets
             IOS_URL=$(echo "$release_json" | \
@@ -80,9 +86,11 @@ jobs:
             # Truncate changelog for JSON (AltStore has a 3000-char limit)
             CHANGELOG=$(echo "$BODY" | sed 's/\r//g' | head -c 2800 || echo "")
 
-            # Version for display (strip 'alpha' prefix if present)
+            # Version string
             if [ "$channel" = "alpha" ]; then
-              DISPLAY_VERSION="alpha-$(echo "$TAG" | cut -c1-7 2>/dev/null || echo "$TAG")"
+              # Use date + short SHA for alpha versioning: e.g. "3.3.1-alpha.20260315.abc1234"
+              MARKETING_VER=$(grep 'MARKETING_VERSION' Build.xcconfig 2>/dev/null | cut -d'=' -f2 | xargs || echo "0.0.0")
+              DISPLAY_VERSION="${MARKETING_VER}-alpha.${DATE_SHORT//-/}.${SHORT_SHA}"
               BUILD=$(date +%Y%m%d)
             else
               DISPLAY_VERSION="$TAG"
@@ -102,7 +110,6 @@ jobs:
                 --arg url "$IOS_URL" \
                 --arg size "$SIZE" \
                 --arg changelog "$CHANGELOG" \
-                --arg platform "iOS" \
                 '{
                   version: $version,
                   date: $date,
@@ -136,80 +143,113 @@ jobs:
             echo "$ENTRIES"
           }
 
-          # ── Build versions array from stable releases ─────────────────────
-          VERSIONS_JSON="[]"
-
+          # ── Build STABLE versions array ─────────────────────────────────
+          STABLE_VERSIONS="[]"
           while IFS= read -r release; do
-            ENTRY=$(build_app_entry "$release" "stable")
+            [ -z "$release" ] && continue
+            ENTRY=$(build_version_entries "$release" "stable")
             if [ "$ENTRY" != "[]" ]; then
-              VERSIONS_JSON=$(echo "$VERSIONS_JSON" | jq ". + $ENTRY")
+              STABLE_VERSIONS=$(echo "$STABLE_VERSIONS" | jq ". + $ENTRY")
             fi
           done < <(echo "$STABLE_RELEASES" | jq -c '.[]')
 
-          # Add alpha if available
-          if [ -n "$ALPHA_RELEASE" ] && [ "$ALPHA_RELEASE" != "null" ]; then
-            ALPHA_ENTRY=$(build_app_entry "$ALPHA_RELEASE" "alpha")
-            if [ "$ALPHA_ENTRY" != "[]" ]; then
-              VERSIONS_JSON=$(echo "$VERSIONS_JSON" | jq ". + $ALPHA_ENTRY")
+          # ── Build ALPHA versions array (limit to latest 3) ──────────────
+          ALPHA_VERSIONS="[]"
+          ALPHA_COUNT=0
+          while IFS= read -r release; do
+            [ -z "$release" ] && continue
+            [ "$ALPHA_COUNT" -ge 3 ] && break
+            ENTRY=$(build_version_entries "$release" "alpha")
+            if [ "$ENTRY" != "[]" ]; then
+              ALPHA_VERSIONS=$(echo "$ALPHA_VERSIONS" | jq ". + $ENTRY")
+              ALPHA_COUNT=$((ALPHA_COUNT + 1))
             fi
-          fi
+          done < <(echo "$ALPHA_RELEASES" | jq -c '.[]')
 
-          LATEST_VERSION=$(echo "$STABLE_RELEASES" | jq -r 'first.tag_name // "3.3.0"')
+          LATEST_STABLE_VERSION=$(echo "$STABLE_RELEASES" | jq -r 'first.tag_name // "3.3.0"')
           TODAY=$(date -u +"%Y-%m-%d")
 
-          # ── AltStore source JSON ──────────────────────────────────────────
-          cat > /tmp/altstore-source.json << JSONEOF
-          {
-            "name": "Provenance Emulator",
-            "identifier": "com.provenance-emu.provenance.altstore",
-            "sourceURL": "https://provenance-emu.github.io/Provenance/altstore-source.json",
-            "apps": [
-              {
-                "name": "Provenance",
-                "bundleIdentifier": "com.provenance-emu.provenance",
-                "developerName": "Provenance-EMU",
-                "subtitle": "Multi-system retro emulator for iOS & tvOS",
-                "localizedDescription": "Provenance supports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more. Features iCloud sync, controller skins, RetroAchievements, and a beautiful native UI.",
-                "iconURL": "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Assets.xcassets/AppIcon.appiconset/appicon-1024.png",
-                "tintColor": "8A2BE2",
-                "screenshotURLs": [],
-                "versions": $VERSIONS_JSON,
-                "appPermissions": {
-                  "entitlements": [
-                    { "name": "com.apple.security.application-groups" },
-                    { "name": "com.apple.developer.icloud-services" },
-                    { "name": "com.apple.developer.icloud-container-identifiers" }
-                  ],
-                  "privacy": [
-                    { "name": "LocalNetwork", "usageDescription": "Used to discover and connect to local network game servers for netplay." },
-                    { "name": "Camera", "usageDescription": "Used to scan QR codes for importing game data." }
-                  ]
+          # ── AltStore source JSON ────────────────────────────────────────
+          # Two separate app entries: stable and alpha
+          jq -n \
+            --arg today "$TODAY" \
+            --argjson stable_versions "$STABLE_VERSIONS" \
+            --argjson alpha_versions "$ALPHA_VERSIONS" \
+            '{
+              name: "Provenance Emulator",
+              identifier: "com.provenance-emu.provenance.altstore",
+              sourceURL: "https://provenance-emu.github.io/Provenance/altstore-source.json",
+              apps: [
+                {
+                  name: "Provenance",
+                  bundleIdentifier: "com.provenance-emu.provenance",
+                  developerName: "Provenance-EMU",
+                  subtitle: "Multi-system retro emulator for iOS & tvOS",
+                  localizedDescription: "Provenance supports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more. Features iCloud sync, controller skins, RetroAchievements, and a beautiful native UI.",
+                  iconURL: "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Assets.xcassets/AppIcon.appiconset/appicon-1024.png",
+                  tintColor: "8A2BE2",
+                  screenshotURLs: [],
+                  versions: $stable_versions,
+                  appPermissions: {
+                    entitlements: [
+                      { name: "com.apple.security.application-groups" },
+                      { name: "com.apple.developer.icloud-services" },
+                      { name: "com.apple.developer.icloud-container-identifiers" }
+                    ],
+                    privacy: [
+                      { name: "LocalNetwork", usageDescription: "Used to discover and connect to local network game servers for netplay." },
+                      { name: "Camera", usageDescription: "Used to scan QR codes for importing game data." }
+                    ]
+                  }
+                },
+                {
+                  name: "Provenance Alpha",
+                  bundleIdentifier: "com.provenance-emu.provenance.alpha",
+                  developerName: "Provenance-EMU",
+                  subtitle: "Latest dev builds - test new features early",
+                  localizedDescription: "Alpha builds of Provenance from the develop branch. These builds include the latest features and fixes but may contain bugs. Install alongside the stable version to test new features without losing your stable install.\n\nSupports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more.",
+                  iconURL: "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Assets.xcassets/AppIcon.appiconset/appicon-1024.png",
+                  tintColor: "FF6B35",
+                  screenshotURLs: [],
+                  versions: $alpha_versions,
+                  appPermissions: {
+                    entitlements: [
+                      { name: "com.apple.security.application-groups" },
+                      { name: "com.apple.developer.icloud-services" },
+                      { name: "com.apple.developer.icloud-container-identifiers" }
+                    ],
+                    privacy: [
+                      { name: "LocalNetwork", usageDescription: "Used to discover and connect to local network game servers for netplay." },
+                      { name: "Camera", usageDescription: "Used to scan QR codes for importing game data." }
+                    ]
+                  }
                 }
-              }
-            ],
-            "news": []
-          }
-          JSONEOF
+              ],
+              news: []
+            }' > /tmp/altstore-source.json
 
-          # Substitute the versions array
-          jq --argjson versions "$VERSIONS_JSON" '.apps[0].versions = $versions' \
-            /tmp/altstore-source.json > /tmp/altstore-source-final.json
-
-          # ── SideStore source JSON (same schema, different sourceURL) ───────
+          # ── SideStore source JSON (same schema, different sourceURL) ────
           jq '.identifier = "com.provenance-emu.provenance.sidestore" |
               .sourceURL = "https://provenance-emu.github.io/Provenance/sidestore-source.json"' \
-            /tmp/altstore-source-final.json > /tmp/sidestore-source-final.json
+            /tmp/altstore-source.json > /tmp/sidestore-source.json
 
-          echo "Generated feed with $(echo "$VERSIONS_JSON" | jq 'length') version entries."
-          echo "versions_count=$(echo "$VERSIONS_JSON" | jq 'length')" >> "$GITHUB_OUTPUT"
+          # Validate JSON
+          jq empty /tmp/altstore-source.json && echo "altstore-source.json is valid JSON"
+          jq empty /tmp/sidestore-source.json && echo "sidestore-source.json is valid JSON"
+
+          STABLE_COUNT=$(echo "$STABLE_VERSIONS" | jq 'length')
+          ALPHA_COUNT=$(echo "$ALPHA_VERSIONS" | jq 'length')
+          echo "Generated feed: ${STABLE_COUNT} stable entries, ${ALPHA_COUNT} alpha entries (max 3)."
+          echo "stable_count=${STABLE_COUNT}" >> "$GITHUB_OUTPUT"
+          echo "alpha_count=${ALPHA_COUNT}" >> "$GITHUB_OUTPUT"
 
       - name: Commit feed to docs/ folder
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p docs
-          cp /tmp/altstore-source-final.json docs/altstore-source.json
-          cp /tmp/sidestore-source-final.json docs/sidestore-source.json
+          cp /tmp/altstore-source.json docs/altstore-source.json
+          cp /tmp/sidestore-source.json docs/sidestore-source.json
 
           # Also write a simple index pointing to the feeds
           cat > docs/sideload.md << 'MDEOF'
@@ -224,8 +264,18 @@ jobs:
 
           IPAs are hosted as GitHub Release assets and are publicly downloadable without a GitHub account.
 
-          > **Alpha / Develop builds** are included in the feed under the `alpha` channel.
-          > These are built from the `develop` branch on every successful CI run.
+          ## Two apps in the feed
+
+          The feed contains **two separate apps**:
+
+          | App | Bundle ID | Description |
+          |-----|-----------|-------------|
+          | **Provenance** | `com.provenance-emu.provenance` | Stable releases from tagged versions |
+          | **Provenance Alpha** | `com.provenance-emu.provenance.alpha` | Latest dev builds from `develop` branch |
+
+          Both can be installed simultaneously on the same device since they use different bundle identifiers.
+
+          > Only the latest 3 alpha builds are kept in the feed to avoid clutter.
           MDEOF
 
           git config user.name "github-actions[bot]"

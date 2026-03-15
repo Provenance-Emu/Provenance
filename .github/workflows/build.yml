@@ -114,6 +114,24 @@ jobs:
           echo "BUILD_NUMBER=${BUILD_NUMBER}" >> $GITHUB_ENV
           echo "MARKETING_VERSION=$(grep 'MARKETING_VERSION' Build.xcconfig | cut -d'=' -f2 | xargs)" >> $GITHUB_ENV
 
+      - name: Set Alpha Build Overrides
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        run: |
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          ALPHA_DATE=$(date -u +"%Y%m%d")
+          echo "IS_ALPHA=true" >> $GITHUB_ENV
+          echo "ALPHA_BUNDLE_SUFFIX=.alpha" >> $GITHUB_ENV
+          echo "ALPHA_DISPLAY_NAME_SUFFIX= Alpha" >> $GITHUB_ENV
+          echo "ALPHA_VERSION_SUFFIX=-alpha.${ALPHA_DATE}.${SHORT_SHA}" >> $GITHUB_ENV
+
+      - name: Set Stable Build Overrides
+        if: github.event_name != 'push' || github.ref != 'refs/heads/develop'
+        run: |
+          echo "IS_ALPHA=false" >> $GITHUB_ENV
+          echo "ALPHA_BUNDLE_SUFFIX=" >> $GITHUB_ENV
+          echo "ALPHA_DISPLAY_NAME_SUFFIX=" >> $GITHUB_ENV
+          echo "ALPHA_VERSION_SUFFIX=" >> $GITHUB_ENV
+
       - uses: actions/cache@v3
         with:
           path: |
@@ -134,12 +152,32 @@ jobs:
           rm -rf ./build
           mkdir -p ./build
 
+      - name: Patch Info.plist for Alpha (bundle ID + display name)
+        if: env.IS_ALPHA == 'true'
+        run: |
+          echo "Patching for alpha build: bundle suffix='${ALPHA_BUNDLE_SUFFIX}', display name suffix='${ALPHA_DISPLAY_NAME_SUFFIX}'"
+          # Patch all Info.plist files to add alpha display name
+          for plist in Provenance/Info.plist ProvenanceTV/Info.plist; do
+            if [ -f "$plist" ]; then
+              # Add CFBundleDisplayName if not present, or it will come from build settings
+              /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string 'Provenance Alpha'" "$plist" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName 'Provenance Alpha'" "$plist" 2>/dev/null || true
+            fi
+          done
+
       - name: Build Provenance
         id: build
         env:
           MARKETING_VERSION: ${{ env.MARKETING_VERSION }}
           BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
         run: |
+          # For alpha builds, override bundle identifier to allow side-by-side install
+          EXTRA_BUILD_SETTINGS=""
+          if [ "$IS_ALPHA" = "true" ]; then
+            EXTRA_BUILD_SETTINGS="PRODUCT_BUNDLE_IDENTIFIER=org.provenance-emu.provenance${ALPHA_BUNDLE_SUFFIX}"
+            echo "Alpha build: overriding bundle ID to org.provenance-emu.provenance${ALPHA_BUNDLE_SUFFIX}"
+          fi
+
           start_time=$(date +%s)
           xcodebuild -configuration Release \
           -workspace Provenance.xcworkspace \
@@ -157,6 +195,7 @@ jobs:
           SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY=${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }} \
           DEVELOPMENT_TEAM=S32Z3HMYVQ \
           ORG_IDENTIFIER=org.provenance-emu \
+          $EXTRA_BUILD_SETTINGS \
           | xcbeautify
           end_time=$(date +%s)
           echo "duration=$((end_time - start_time))" >> $GITHUB_OUTPUT
@@ -253,11 +292,92 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+
+      - name: Build Release Notes
+        id: release_notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          SHA="${{ github.sha }}"
+          SHORT_SHA="${SHA:0:7}"
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Get the previous alpha tag SHA (if it exists)
+          PREV_SHA=$(gh api "repos/${REPO}/git/refs/tags/alpha" --jq '.object.sha' 2>/dev/null || echo "")
+
+          # Build commit log since last alpha
+          COMMIT_LOG=""
+          if [ -n "$PREV_SHA" ] && [ "$PREV_SHA" != "$SHA" ]; then
+            COMMIT_LOG=$(git log --oneline --no-merges "${PREV_SHA}..${SHA}" 2>/dev/null | head -30 || echo "")
+          fi
+          if [ -z "$COMMIT_LOG" ]; then
+            COMMIT_LOG=$(git log --oneline --no-merges -10 2>/dev/null || echo "No commit history available")
+          fi
+
+          # Get merged PRs since last alpha
+          MERGED_PRS=""
+          if [ -n "$PREV_SHA" ]; then
+            # Extract PR numbers from merge commits
+            PR_NUMBERS=$(git log --oneline "${PREV_SHA}..${SHA}" 2>/dev/null | grep -oP '#\d+' | sort -u | head -15 || echo "")
+            for pr in $PR_NUMBERS; do
+              PR_NUM="${pr#\#}"
+              PR_TITLE=$(gh pr view "$PR_NUM" --repo "$REPO" --json title --jq '.title' 2>/dev/null || echo "")
+              if [ -n "$PR_TITLE" ]; then
+                MERGED_PRS="${MERGED_PRS}- ${pr}: ${PR_TITLE}"$'\n'
+              fi
+            done
+          fi
+
+          # Write release notes to file (avoids quoting issues)
+          cat > /tmp/release_notes.md << NOTESEOF
+          ## Alpha Build \`${SHORT_SHA}\`
+
+          **Automated alpha build from \`develop\` branch**
+
+          | | |
+          |---|---|
+          | **Commit** | [\`${SHORT_SHA}\`](https://github.com/${REPO}/commit/${SHA}) |
+          | **Built** | ${DATE} |
+          | **CI Run** | [View build log](${RUN_URL}) |
+          | **Bundle ID** | \`com.provenance-emu.provenance.alpha\` |
+
+          > **Note:** This alpha build uses a separate bundle ID so it can be installed alongside the stable release.
+
+          ### Commits since last alpha
+          \`\`\`
+          ${COMMIT_LOG}
+          \`\`\`
+          NOTESEOF
+
+          if [ -n "$MERGED_PRS" ]; then
+            cat >> /tmp/release_notes.md << PREOF
+
+          ### Merged PRs
+          ${MERGED_PRS}
+          PREOF
+          fi
+
+          cat >> /tmp/release_notes.md << FOOTEREOF
+
+          ---
+          These builds are unsigned and intended for sideloading via AltStore/SideStore.
+          Install the **Provenance Alpha** app (separate from stable) using the [sideload feed](https://provenance-emu.github.io/Provenance/altstore-source.json).
+
+          > This release is automatically updated on every successful develop push.
+          FOOTEREOF
 
       - name: Update alpha release
         env:
@@ -267,7 +387,6 @@ jobs:
           REPO="${{ github.repository }}"
           SHA="${{ github.sha }}"
           SHORT_SHA="${SHA:0:7}"
-          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
 
           # Create or update the alpha tag
           gh api repos/$REPO/git/refs/tags/$TAG \
@@ -284,19 +403,106 @@ jobs:
           # Create new pre-release with IPAs
           gh release create $TAG \
             --repo $REPO \
-            --title "Alpha Build ($SHORT_SHA)" \
-            --notes "$(cat <<EOF
-          **Automated alpha build from \`develop\` branch**
-
-          - Commit: $SHA
-          - Built: $DATE
-          - These builds are unsigned and intended for sideloading via AltStore/SideStore
-
-          > This release is automatically updated on every successful develop push.
-          EOF
-          )" \
+            --title "Provenance Alpha ($SHORT_SHA)" \
+            --notes-file /tmp/release_notes.md \
             --prerelease \
             *.ipa 2>/dev/null || echo "::warning::No IPA files to attach"
+
+      - name: Update Build Status Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          SHORT_SHA="${{ github.sha }}"
+          SHORT_SHA="${SHORT_SHA:0:7}"
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Update issue #3163 with latest build status
+          ISSUE_BODY=$(cat << 'ISSUEEOF'
+          # Alpha & Beta Builds -- Download & Install Guide
+
+          ## Latest Alpha Build
+
+          | | |
+          |---|---|
+          ISSUEEOF
+          )
+
+          ISSUE_BODY="${ISSUE_BODY}
+          | **Status** | :white_check_mark: Build Passing |
+          | **Commit** | [\`${SHORT_SHA}\`](https://github.com/${REPO}/commit/${{ github.sha }}) |
+          | **Built** | ${DATE} |
+          | **CI Run** | [View build log](${RUN_URL}) |
+          | **Download** | [GitHub Release](https://github.com/${REPO}/releases/tag/alpha) |
+          | **Bundle ID** | \`com.provenance-emu.provenance.alpha\` |"
+
+          ISSUE_BODY="${ISSUE_BODY}
+
+          ---
+
+          ## Install via AltStore
+
+          1. Open AltStore on your device
+          2. Go to **Sources** (or **Browse** > **Sources**)
+          3. Tap **Add Source** and enter:
+             \`\`\`
+             https://provenance-emu.github.io/Provenance/altstore-source.json
+             \`\`\`
+          4. You will see **two** apps: **Provenance** (stable) and **Provenance Alpha** (latest dev builds)
+          5. Install either or both -- they use separate bundle IDs so both can be installed simultaneously
+
+          ## Install via SideStore
+
+          1. Open SideStore on your device
+          2. Go to **Sources**
+          3. Add the following source URL:
+             \`\`\`
+             https://provenance-emu.github.io/Provenance/sidestore-source.json
+             \`\`\`
+          4. Browse the source and install **Provenance** or **Provenance Alpha**
+
+          ## Direct IPA Download from GitHub Releases
+
+          - **Latest stable release:** [Releases page](https://github.com/${REPO}/releases/latest)
+          - **Latest alpha build:** [Alpha release](https://github.com/${REPO}/releases/tag/alpha)
+
+          ---
+
+          ## FAQ
+
+          ### What is the difference between stable and alpha builds?
+
+          | | Stable | Alpha |
+          |---|---|---|
+          | **Source** | Tagged releases on \`master\` | Automatic builds from \`develop\` branch |
+          | **Bundle ID** | \`com.provenance-emu.provenance\` | \`com.provenance-emu.provenance.alpha\` |
+          | **App Name** | Provenance | Provenance Alpha |
+          | **Side-by-side** | N/A | Yes -- install both at once |
+          | **Reliability** | Tested and ready for daily use | May contain bugs or incomplete features |
+          | **Updates** | Released periodically | Built on every successful \`develop\` CI run |
+
+          ### Can I install both stable and alpha at the same time?
+
+          **Yes!** Alpha builds use a different bundle ID (\`com.provenance-emu.provenance.alpha\`) so they install as a separate app called **Provenance Alpha**. Your stable install is not affected.
+
+          ### Are alpha builds safe to use?
+
+          Alpha builds pass all CI checks before being published, but they have not gone through the full QA process of a stable release. **Back up your save data** before switching to an alpha build.
+
+          ### How do I report bugs in alpha builds?
+
+          Please [open an issue](https://github.com/${REPO}/issues/new) and include:
+          - The build version (visible in Settings > About)
+          - Steps to reproduce
+          - Device model and iOS/tvOS version
+
+          ---
+
+          > **Note:** This issue is auto-updated by CI on every successful alpha build. Do not edit manually."
+
+          gh issue edit 3163 --repo "$REPO" --body "$ISSUE_BODY" 2>/dev/null || \
+            echo "::warning::Could not update issue #3163"
 
   # Post artifact download links to PR for workflow_dispatch builds (label / /build triggered)
   post-to-pr:
