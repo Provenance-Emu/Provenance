@@ -2161,7 +2161,7 @@ private struct DeltaSkinsSection: View {
             HStack {
                 Text("Overlay Scale")
                 RetroWaveSlider<Float>(value: $controllerOverlayScale,
-                                     in: 0.5...1.5,
+                                     in: Defaults.Keys.controllerOverlayScaleRange,
                                      step: 0.05,
                                      onEditingChanged: { _ in },
                                      label: { Text("Scale factor for controller skin overlay.") },
@@ -2180,7 +2180,7 @@ private struct DeltaSkinsSection: View {
             HStack {
                 Text("Overlay Opacity")
                 RetroWaveSlider<Float>(value: $controllerOverlayOpacity,
-                                     in: 0.1...1.0,
+                                     in: Defaults.Keys.controllerOverlayOpacityRange,
                                      step: 0.05,
                                      onEditingChanged: { _ in },
                                      label: { Text("Opacity of controller skin overlay.") },

@@ -128,6 +128,12 @@ public extension Defaults.Keys {
     static let buttonPressEffect = Key<ButtonPressEffect>("buttonPressEffect", default: .glow)
     static let buttonSound = Key<ButtonSound>("buttonSound", default: .none)
 
+    /// Valid range for `controllerOverlayScale`: half-size to 150%.
+    static let controllerOverlayScaleRange: ClosedRange<Float> = 0.5...1.5
+
+    /// Valid range for `controllerOverlayOpacity`: nearly invisible to fully opaque.
+    static let controllerOverlayOpacityRange: ClosedRange<Float> = 0.1...1.0
+
     /// Global scale factor for controller overlay / skin views.
     /// Range 0.5 (half size) – 1.5 (150%). Default 1.0.
     static let controllerOverlayScale = Key<Float>("controllerOverlayScale", default: 1.0)
