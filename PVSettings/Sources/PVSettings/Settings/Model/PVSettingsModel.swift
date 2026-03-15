@@ -61,6 +61,9 @@ extension Defaults.Keys {
     static let askToAutoLoad = Key<Bool>("askToAutoLoad", default: true)
     static let autoLoadSaves = Key<Bool>("autoLoadSaves", default: false)
 
+    /// Automatically save screenshots to the device Photo Library when capturing in-game.
+    static let saveScreenshotsToPhotoLibrary = Key<Bool>("saveScreenshotsToPhotoLibrary", default: true)
+
 #if os(tvOS)
     static let disableAutoLock = Key<Bool>("disableAutoLock", default: true)
 #else

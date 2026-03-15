@@ -234,7 +234,6 @@ public struct VirtualKeyboardView: View {
             }
             .ignoresSafeArea(.keyboard)
         }
-        .gesture(swipeDownCollapse)
     }
 
     // MARK: - Sheet
@@ -285,6 +284,9 @@ public struct VirtualKeyboardView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        // Swipe-down on the handle bar collapses the keyboard.
+        // Scoped here (not the full view) so key presses are never intercepted.
+        .simultaneousGesture(swipeDownCollapse)
     }
 
     // MARK: - Close button (dismiss entirely)

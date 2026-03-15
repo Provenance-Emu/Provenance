@@ -11,6 +11,7 @@ import PVEmulatorCore
 import PVCoreBridge
 import RealmSwift
 import PVLibrary
+import PVSettings
 #if os(tvOS)
 import PVFileSystem
 import PVHashing
@@ -266,8 +267,10 @@ public extension PVEmualatorControllerProtocol {
     func takeScreenshot() {
         if let screenshot = captureScreenshot() {
 #if os(iOS)
-            Task.detached {
-                UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
+            if Defaults[.saveScreenshotsToPhotoLibrary] {
+                Task.detached {
+                    UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
+                }
             }
 #endif
 

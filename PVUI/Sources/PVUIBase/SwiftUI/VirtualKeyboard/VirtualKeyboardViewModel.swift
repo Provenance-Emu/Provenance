@@ -38,8 +38,8 @@ public final class VirtualKeyboardViewModel: ObservableObject {
 
     /// Whether the keyboard panel is collapsed to just the drag handle.
     ///
-    /// Defaults to `true` so the overlay boots in a minimal footprint.
-    /// The user can expand it by tapping the handle or pressing the chevron button.
+    /// Defaults to `true` so auto-shown overlays boot in a minimal footprint.
+    /// User-triggered toggles (skin button, pause menu) start expanded (`startExpanded: true`).
     @Published public var isCollapsed: Bool = true
 
     /// Keys currently held down (by HID code).
@@ -72,9 +72,10 @@ public final class VirtualKeyboardViewModel: ObservableObject {
 
     // MARK: - Init
 
-    public init(delegate: VirtualKeyboardDelegate? = nil, layout: VirtualKeyboardLayout = .full) {
+    public init(delegate: VirtualKeyboardDelegate? = nil, layout: VirtualKeyboardLayout = .full, startExpanded: Bool = false) {
         self.delegate = delegate
         self.layout = layout
+        self.isCollapsed = !startExpanded
     }
 
     // MARK: - Layout

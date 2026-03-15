@@ -223,7 +223,7 @@ struct RetroMenuView: View {
                                 }
                             })
                             .id("core")
-                            .opacity(hasCoreFeatures && (emulatorVC.core as? CoreActions)?.coreActions?.isEmpty == false ? 1.0 : 0.4)
+                            .opacity(hasCoreFeatures ? 1.0 : 0.4)
                             categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .states
@@ -321,6 +321,25 @@ struct RetroMenuView: View {
             menuContainer
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $showingSaveStateBrowser) {
+            PauseMenuSaveStateBrowserView(emulatorVC: emulatorVC) { stateToLoad in
+                showingSaveStateBrowser = false
+                guard let state = stateToLoad else {
+                    // User dismissed the browser without loading — return to pause menu.
+                    return
+                }
+                // User chose to load a state — close the pause menu, then load.
+                dismissAction(false)
+                Task { @MainActor [weak emulatorVC = emulatorVC] in
+                    await emulatorVC?.loadSaveState(state)
+                }
+            }
+        }
+        .sheet(isPresented: $showingScreenshotBrowser) {
+            PauseMenuScreenshotBrowserView(emulatorVC: emulatorVC) {
+                showingScreenshotBrowser = false
+            }
+        }
         // Listen for orientation changes
 #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -536,14 +555,40 @@ struct RetroMenuView: View {
 
     // Save state related buttons
     private var stateMenuButtons: some View {
-        // Capture support flag once so button positions stay fixed regardless of capability.
         let supportsSaveStates = emulatorVC.core.supportsSaveStates
+        let allSaves = Array(emulatorVC.game.saveStates.sorted(byKeyPath: "date", ascending: false))
+        let saveCount = allSaves.count
+        let lastSaveDate = allSaves.first?.date
+        let hasAnySave = saveCount > 0
+
         return VStack(spacing: menuSpacing) {
-            // Save state button (cyan = write/save)
-            // Always rendered at position 1; dimmed in-place when unsupported so sibling
-            // buttons (screenshot, recording) don't shift.
+            // MARK: - Save States section
+            skinSectionHeader("SAVE STATES", systemImage: "internaldrive")
+
+            // Summary info: N saves · last saved X ago
+            if supportsSaveStates {
+                HStack(spacing: 6) {
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 10))
+                    if saveCount == 0 {
+                        Text("No saves")
+                    } else {
+                        Text("\(saveCount) save\(saveCount == 1 ? "" : "s")")
+                        if let date = lastSaveDate {
+                            Text("·")
+                            (Text(date, style: .relative) + Text(" ago"))
+                                .lineLimit(1)
+                        }
+                    }
+                }
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.55))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 2)
+            }
+
+            // SAVE STATE — creates a new save
             menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroCyan) {
-                // Capture screenshot while emulator is still paused
                 let screenshot = emulatorVC.captureScreenshot()
                 dismissAction(true)
                 Task { @MainActor in
@@ -557,33 +602,38 @@ struct RetroMenuView: View {
             .opacity(supportsSaveStates ? 1.0 : 0.4)
             .disabled(!supportsSaveStates)
 
-            // Load state button (blue = read/load) — always at position 2
-            menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: .retroBlue) {
-                dismissMenuForSubSheetThen {
-                    emulatorVC.showSaveStateMenu()
+            // QUICK LOAD — immediately loads the most recent save state
+            menuButton(title: "QUICK LOAD", icon: "arrowshape.turn.up.left", color: .retroBlue) {
+                guard let mostRecent = emulatorVC.game.saveStates.sorted(byKeyPath: "date", ascending: false).first else { return }
+                dismissAction(false)
+                Task { @MainActor [weak emulatorVC = emulatorVC] in
+                    await emulatorVC?.loadSaveState(mostRecent)
                 }
+            }
+            .opacity(supportsSaveStates && hasAnySave ? 1.0 : 0.4)
+            .disabled(!supportsSaveStates || !hasAnySave)
+
+            // BROWSE SAVES — opens a SwiftUI save state picker within the pause menu flow
+            menuButton(title: "BROWSE SAVES", icon: "list.bullet.rectangle.portrait", color: .retroPurple) {
+                showingSaveStateBrowser = true
             }
             .opacity(supportsSaveStates ? 1.0 : 0.4)
             .disabled(!supportsSaveStates)
 
-            // Save states list button (purple = browse) — always at position 3
-            menuButton(title: "SAVE STATES", icon: "list.bullet", color: .retroPurple) {
-                dismissMenuForSubSheetThen {
-                    emulatorVC.showSaveStateMenu()
-                }
-            }
-            .opacity(supportsSaveStates ? 1.0 : 0.4)
-            .disabled(!supportsSaveStates)
+            // MARK: - Capture section
+            skinSectionHeader("CAPTURE", systemImage: "camera")
 
-            // Screenshot button (yellow = capture)
 #if os(iOS) || targetEnvironment(macCatalyst)
             menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: .retroYellow) {
                 dismissAction(true)
                 emulatorVC.takeScreenshot()
             }
+
+            menuButton(title: "SCREENSHOTS", icon: "photo.on.rectangle.angled", color: .retroOrange) {
+                showingScreenshotBrowser = true
+            }
 #endif
 
-            // Screen recording button — iOS only, gated behind Provenance Plus
 #if os(iOS)
             recordingButton
 #endif
@@ -869,6 +919,8 @@ struct RetroMenuView: View {
     @Default(.buttonSound) var buttonSound
     @State internal var showingButtonEffectPicker = false
     @State internal var showingButtonSoundPicker = false
+    @State private var showingSaveStateBrowser = false
+    @State private var showingScreenshotBrowser = false
 
     // Scope to save skin selection under (set once, applies to all picks in the session)
     @State private var selectedSkinScope: SkinScope = .game
@@ -2623,3 +2675,325 @@ private struct SkinDocumentPicker: UIViewControllerRepresentable {
     }
 }
 #endif
+
+// MARK: - Pause-menu screenshot browser
+
+/// Screenshot gallery presented as a sheet from the pause menu.
+///
+/// Shows all captured screenshots for the current game with share and delete
+/// actions. The auto-add-to-Photo-Library toggle maps to the
+/// `saveScreenshotsToPhotoLibrary` setting.
+@MainActor
+struct PauseMenuScreenshotBrowserView: View {
+    let emulatorVC: PVEmulatorViewController
+    let onDismiss: () -> Void
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @State private var screenshots: [PVImageFile] = []
+    @State private var shareItems: [Any] = []
+    @State private var showingShareSheet = false
+    @Default(.saveScreenshotsToPhotoLibrary) private var saveToPhotos
+
+    private var palette: UXThemePalette { themeManager.currentPalette }
+
+    var body: some View {
+        NavigationView {
+            Group {
+                if screenshots.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "photo.on.rectangle.angled")
+                            .font(.system(size: 48))
+                            .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
+                        Text("No Screenshots")
+                            .font(.system(size: 20, weight: .semibold, design: .monospaced))
+                            .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.6))
+                        Text("Use \"Save Screenshot\" from the pause menu to capture screenshots.")
+                            .font(.caption)
+                            .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.4))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 32)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List {
+                        // Auto-save toggle at the top
+                        Toggle(isOn: $saveToPhotos) {
+                            Label("Auto-Save to Photos", systemImage: "photo.badge.plus")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(palette.gameLibraryText.swiftUIColor)
+                        }
+                        .tint(palette.defaultTintColor.swiftUIColor)
+                        .listRowBackground(
+                            (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(0.8)
+                        )
+
+                        ForEach(screenshots, id: \.partialPath) { shot in
+                            screenshotRow(shot)
+                                .listRowBackground(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(0.8)
+                                )
+                        }
+                        .onDelete { indexSet in
+                            for index in indexSet { deleteScreenshot(screenshots[index]) }
+                        }
+                    }
+                    .listStyle(.plain)
+                }
+            }
+            .background(Color(palette.gameLibraryBackground))
+            .navigationTitle("Screenshots")
+#if !os(tvOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Back") { onDismiss() }.font(.headline)
+                }
+            }
+#endif
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            ActivityViewController(activityItems: shareItems)
+        }
+        .onAppear { reload() }
+        .preferredColorScheme(.dark)
+    }
+
+    // MARK: - Row
+
+    @ViewBuilder
+    private func screenshotRow(_ shot: PVImageFile) -> some View {
+        HStack(spacing: 12) {
+            // Thumbnail
+            Group {
+                if let url = shot.url, let img = UIImage(contentsOfFile: url.path) {
+                    Image(uiImage: img)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    Image(systemName: "photo")
+                        .font(.system(size: 22))
+                        .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
+                }
+            }
+            .frame(width: 96, height: 72)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(palette.defaultTintColor.swiftUIColor.opacity(0.2), lineWidth: 0.5)
+            )
+
+            // Filename / date
+            VStack(alignment: .leading, spacing: 4) {
+                Text(shot.url?.deletingPathExtension().lastPathComponent ?? shot.partialPath)
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundColor(palette.gameLibraryText.swiftUIColor)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.7)
+            }
+
+            Spacer()
+
+            // Share button
+            Button {
+                if let url = shot.url, let img = UIImage(contentsOfFile: url.path) {
+                    shareItems = [img]
+                    showingShareSheet = true
+                }
+            } label: {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 20))
+                    .foregroundColor(palette.defaultTintColor.swiftUIColor)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.vertical, 4)
+    }
+
+    // MARK: - Helpers
+
+    private func reload() {
+        screenshots = Array(emulatorVC.game.screenShots.sorted(byKeyPath: "partialPath", ascending: false))
+    }
+
+    private func deleteScreenshot(_ shot: PVImageFile) {
+        do {
+            if let url = shot.url { try? FileManager.default.removeItem(at: url) }
+            try RomDatabase.sharedInstance.delete(shot)
+            reload()
+        } catch {
+            ELOG("Failed to delete screenshot: \(error)")
+        }
+    }
+}
+
+// MARK: - Pause-menu save state browser
+
+/// Lightweight SwiftUI save-state picker presented as a sheet from the pause menu.
+///
+/// The caller provides an `onAction` closure that receives an optional frozen `PVSaveState`:
+/// - `nil` → user dismissed without loading (sheet can close, pause menu stays open)
+/// - non-nil → load the state (sheet should close AND pause menu should dismiss)
+///
+/// This view intentionally stays within the app's SwiftUI stack so that
+/// dismissing it (without loading) returns the user to the pause menu rather than
+/// abandoning it entirely.
+@MainActor
+struct PauseMenuSaveStateBrowserView: View {
+    let emulatorVC: PVEmulatorViewController
+    /// Called with a frozen `PVSaveState` to load, or `nil` to just close the sheet.
+    let onAction: (PVSaveState?) -> Void
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @State private var saveStates: [PVSaveState] = []
+
+    private var palette: UXThemePalette { themeManager.currentPalette }
+
+    var body: some View {
+        NavigationView {
+            Group {
+                if saveStates.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "internaldrive")
+                            .font(.system(size: 48))
+                            .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
+                        Text("No Save States")
+                            .font(.system(size: 20, weight: .semibold, design: .monospaced))
+                            .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.6))
+                        Text("Use \"Save State\" from the pause menu to create saves.")
+                            .font(.caption)
+                            .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.4))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 32)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List {
+                        ForEach(saveStates, id: \.id) { state in
+                            saveStateRow(state)
+                                .listRowBackground(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                        .opacity(0.8)
+                                )
+                        }
+                        .onDelete { indexSet in
+                            for index in indexSet {
+                                deleteSaveState(saveStates[index])
+                            }
+                        }
+                    }
+                    .listStyle(.plain)
+                }
+            }
+            .background(Color(palette.gameLibraryBackground))
+            .navigationTitle("Save States")
+#if !os(tvOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Back") {
+                        onAction(nil)
+                    }
+                    .font(.headline)
+                }
+            }
+#endif
+        }
+        .onAppear { reload() }
+        .preferredColorScheme(.dark)
+    }
+
+    // MARK: - Row
+
+    @ViewBuilder
+    private func saveStateRow(_ state: PVSaveState) -> some View {
+        HStack(spacing: 12) {
+            // Thumbnail
+            thumbnailView(for: state)
+
+            // Info
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    if state.isAutosave {
+                        Label("Auto", systemImage: "clock.badge.checkmark")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.7))
+                    }
+                    Text(state.date, style: .date)
+                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                        .foregroundColor(palette.gameLibraryText.swiftUIColor)
+                }
+                HStack(spacing: 4) {
+                    Text(state.date, style: .time)
+                        .font(.system(size: 11, design: .monospaced))
+                    Text("·")
+                    (Text(state.date, style: .relative) + Text(" ago"))
+                        .font(.system(size: 11))
+                }
+                .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.55))
+
+                if let coreName = state.core?.projectName {
+                    Text(coreName)
+                        .font(.system(size: 10))
+                        .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                }
+            }
+
+            Spacer()
+
+            // Load button
+            Button {
+                let frozen = state.isFrozen ? state : state.freeze()
+                onAction(frozen)
+            } label: {
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 28))
+                    .foregroundColor(palette.defaultTintColor.swiftUIColor)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.vertical, 4)
+    }
+
+    // MARK: - Thumbnail
+
+    @ViewBuilder
+    private func thumbnailView(for state: PVSaveState) -> some View {
+        Group {
+            if let imageURL = state.image?.url, let uiImage = UIImage(contentsOfFile: imageURL.path) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+                Image(systemName: "gamecontroller.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
+            }
+        }
+        .frame(width: 72, height: 54)
+        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .strokeBorder(palette.defaultTintColor.swiftUIColor.opacity(0.2), lineWidth: 0.5)
+        )
+    }
+
+    // MARK: - Helpers
+
+    private func reload() {
+        saveStates = Array(
+            emulatorVC.game.saveStates
+                .sorted(byKeyPath: "date", ascending: false)
+        )
+    }
+
+    private func deleteSaveState(_ state: PVSaveState) {
+        do {
+            try PVSaveState.delete(state)
+            reload()
+        } catch {
+            ELOG("Failed to delete save state: \(error)")
+        }
+    }
+}

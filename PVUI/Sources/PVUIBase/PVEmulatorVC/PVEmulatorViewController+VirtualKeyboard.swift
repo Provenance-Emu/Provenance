@@ -197,14 +197,18 @@ extension PVEmulatorViewController {
     }
 
     /// Show the virtual keyboard overlay.
-    /// Does nothing if the core does not support keyboard input or if already visible.
-    public func showVirtualKeyboard(animated: Bool = true) {
+    /// - Parameters:
+    ///   - animated: Whether to animate the appearance.
+    ///   - startExpanded: When `true` the keyboard opens fully expanded (for explicit user toggles).
+    ///                    When `false` (default) it opens collapsed to a minimal drag handle
+    ///                    (appropriate for auto-show on core launch).
+    public func showVirtualKeyboard(animated: Bool = true, startExpanded: Bool = false) {
         guard coreSupportsVirtualKeyboard, !isVirtualKeyboardVisible else { return }
 
         let layout = resolvedKeyboardLayout()
         let opacity = effectiveKeyboardOverlayConfig?.opacity ?? 1.0
 
-        let viewModel = VirtualKeyboardViewModel(layout: layout)
+        let viewModel = VirtualKeyboardViewModel(layout: layout, startExpanded: startExpanded)
         viewModel.delegate = self
         viewModel.dismissAction = { [weak self] in
             self?.hideVirtualKeyboard(animated: true)
@@ -275,11 +279,12 @@ extension PVEmulatorViewController {
     }
 
     /// Toggle keyboard visibility.
+    /// User-triggered toggles always open the keyboard expanded.
     public func toggleVirtualKeyboard(animated: Bool = true) {
         if isVirtualKeyboardVisible {
             hideVirtualKeyboard(animated: animated)
         } else {
-            showVirtualKeyboard(animated: animated)
+            showVirtualKeyboard(animated: animated, startExpanded: true)
         }
     }
 
