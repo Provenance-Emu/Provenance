@@ -933,11 +933,13 @@ public struct DeltaSkinView: View {
                             pressedImage = try? await skin.loadThumbstickImage(named: pressedName)
                         }
                         cache[button.id] = (normal: normal, pressed: pressedImage)
+                        continue // Successfully loaded from typed states; skip legacy path
                     } catch {
                         ELOG("Failed to load button state image(s) for \(button.id): \(error)")
+                        // Fall through to legacy asset path
                     }
                 }
-                continue
+                // states.normal was nil or image load failed — fall through to legacy path
             }
 
             // Fall back to legacy `asset` dictionary in raw JSON

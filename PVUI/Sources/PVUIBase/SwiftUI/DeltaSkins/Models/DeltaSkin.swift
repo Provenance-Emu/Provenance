@@ -1100,10 +1100,12 @@ extension UIImage {
     ///
     /// - Parameters:
     ///   - pdfData: Raw PDF file data.
-    ///   - preserveTransparency: When `true` the canvas is always cleared to transparent before drawing.
-    ///   - size: Optional target logical size (points).  When provided the PDF is rendered at exactly
-    ///     that size using the current screen's retina scale.  When `nil` the native PDF page size is
-    ///     used, capped at 4096 px to stay within safe GPU texture limits.
+    ///   - preserveTransparency: When `true` the canvas is pre-filled with a transparent background.
+    ///     When `false` the canvas is pre-filled with an opaque black background.
+    ///   - size: Optional target logical size (points).  When provided the canvas is exactly that size;
+    ///     PDF content is aspect-fitted within the canvas (preserving its aspect ratio) and centred.
+    ///     When `nil` the native PDF page size is used, capped at 4096 physical pixels to stay within
+    ///     safe GPU texture limits.
     convenience init?(pdfData: Data, preserveTransparency: Bool = false, size: CGSize? = nil) {
         guard let provider = CGDataProvider(data: pdfData as CFData),
               let pdf = CGPDFDocument(provider),
@@ -1123,11 +1125,14 @@ extension UIImage {
             scale = min(requestedSize.width / pageRect.width,
                         requestedSize.height / pageRect.height)
         } else {
-            // No explicit size – use native PDF dimensions, capped at 4096 px.
-            let maxDimension: CGFloat = 4096
+            // No explicit size – use native PDF dimensions, capped at 4096 physical pixels.
+            // The cap must be in points (not pixels) since UIGraphicsImageRenderer works in points
+            // and will apply the renderer scale when rasterizing.
+            let rendererScale = UIScreen.main.scale
+            let maxPoints: CGFloat = 4096 / rendererScale
             let capScale = min(
-                maxDimension / pageRect.width,
-                maxDimension / pageRect.height,
+                maxPoints / pageRect.width,
+                maxPoints / pageRect.height,
                 1.0 // Don't scale up, only down
             )
             scale = capScale
@@ -1142,20 +1147,29 @@ extension UIImage {
             format: {
                 let format = UIGraphicsImageRendererFormat()
                 format.scale = UIScreen.main.scale
-                format.opaque = false // Never opaque for joysticks
+                format.opaque = false // Support transparency (alpha channel)
                 return format
             }()
         )
 
         let image = renderer.image { context in
-            // Always fill with clear for joysticks
-            UIColor.clear.setFill()
+            // Fill background based on preserveTransparency flag
+            if preserveTransparency {
+                UIColor.clear.setFill()
+            } else {
+                UIColor.black.setFill()
+            }
             context.fill(CGRect(origin: .zero, size: finalSize))
 
-            // Draw PDF with scaling
-            context.cgContext.scaleBy(x: scale, y: scale)
-            context.cgContext.translateBy(x: 0, y: pageRect.height)
-            context.cgContext.scaleBy(x: 1.0, y: -1.0)
+            // Draw PDF with aspect-fit scaling, centred within the canvas.
+            // When a requested size is given and its aspect ratio differs from the PDF,
+            // centre the scaled PDF so transparent (or opaque) padding is evenly distributed.
+            let scaledWidth = pageRect.width * scale
+            let scaledHeight = pageRect.height * scale
+            let xOffset = (finalSize.width - scaledWidth) / 2
+            let yOffset = (finalSize.height - scaledHeight) / 2
+            context.cgContext.translateBy(x: xOffset, y: yOffset + scaledHeight)
+            context.cgContext.scaleBy(x: scale, y: -scale)
             context.cgContext.drawPDFPage(page)
         }
 
