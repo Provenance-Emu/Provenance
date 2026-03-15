@@ -473,6 +473,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         #if !os(macOS)
         registerAudioRouteChangeObserver()
         #endif
+        registerForOSDNotifications()
     }
 
     private func addControllerOverlay() {

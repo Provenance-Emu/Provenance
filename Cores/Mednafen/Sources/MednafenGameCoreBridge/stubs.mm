@@ -12,13 +12,22 @@
 
 #import <PVLogging/PVLogging.h>
 #import <Foundation/Foundation.h>
+#import <PVCoreObjCBridge/PVOSDNotification.h>
 
 void MDFND_DispMessage(char *str) {
     ILOG(@"Mednafen: %s", str);
+    NSString *msg = [NSString stringWithUTF8String:str ?: ""];
+    if (msg.length > 0) {
+        [PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:3.0];
+    }
 }
 
 void MDFND_PrintError(const char* err) {
     ELOG(@"Mednafen: %s", err);
+    NSString *msg = [NSString stringWithUTF8String:err ?: ""];
+    if (msg.length > 0) {
+        [PVOSDNotification postMessage:msg type:PVOSDTypeError duration:4.0];
+    }
 }
 
 namespace Mednafen {
@@ -48,15 +57,25 @@ void MDFND_OutputInfo(const char *s) noexcept {
     ILOG(@"Mednafen: %s", s);
 }
 void MDFND_OutputNotice(MDFN_NoticeType t, const char* s) noexcept {
+    NSString *msg = [NSString stringWithUTF8String:s ?: ""];
     switch(t) {
         case MDFN_NOTICE_STATUS :
-            DLOG(@"Mednafen: %s" s);
+            DLOG(@"Mednafen: %s", s);
+            if (msg.length > 0) {
+                [PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:3.0];
+            }
             break;
         case MDFN_NOTICE_WARNING :
             WLOG(@"Mednafen: %s", s);
+            if (msg.length > 0) {
+                [PVOSDNotification postMessage:msg type:PVOSDTypeWarning duration:4.0];
+            }
             break;
         case MDFN_NOTICE_ERROR :
             ELOG(@"Mednafen: %s", s);
+            if (msg.length > 0) {
+                [PVOSDNotification postMessage:msg type:PVOSDTypeError duration:5.0];
+            }
             break;
         default:
             VLOG(@"Mednafen: %s", s);

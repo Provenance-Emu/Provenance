@@ -12,6 +12,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
 #import <PVAzahar/CitraWrapper.h>
+#import <PVCoreObjCBridge/PVOSDNotification.h>
 #import "InputFactory.h"
 #import <sys/utsname.h>
 #import "../azahar/Camera/CameraFactory.h"
@@ -112,6 +113,14 @@ void Keyboard::Execute(const Frontend::KeyboardConfig& config) {
 
 void Keyboard::ShowError(const std::string& error) {
     printf("error = %s\n", error.c_str());
+    if (!error.empty()) {
+        NSString *message = [NSString stringWithUTF8String:error.c_str()];
+        if (message == nil) {
+            // Fallback in case of invalid UTF-8 in the error string
+            message = @"An unknown error occurred.";
+        }
+        [PVOSDNotification postMessage:message type:PVOSDTypeError duration:4.0];
+    }
 }
 
 void Keyboard::KeyboardText(std::condition_variable& cv) {
@@ -618,12 +627,14 @@ static void InitializeLogging() {
 -(void) SaveState:(NSString *) savePath {
     std::string path=std::string([savePath UTF8String]);
     Core::SaveState(path, _title_id);
+    [PVOSDNotification postMessage:@"State saved" type:PVOSDTypeSuccess duration:2.0];
 }
 
 -(void) LoadState:(NSString *) savePath {
     Settings::values.isReloading.SetValue(true);
     std::string path=std::string([savePath UTF8String]);
     Core::LoadState(path);
+    [PVOSDNotification postMessage:@"State loaded" type:PVOSDTypeSuccess duration:2.0];
 
     [CitraWrapper.sharedInstance resetController];
 }

@@ -18,3 +18,4 @@ FOUNDATION_EXPORT const unsigned char PVCoreObjCBridgeVersionString[];
 #import <PVCoreObjCBridge/_PVCoreObjCBridge.h>
 #import <PVCoreObjCBridge/NSObject+PVAbstractAdditions.h>
 #import <PVCoreObjCBridge/PVControllerButtonUtils.h>
+#import <PVCoreObjCBridge/PVOSDNotification.h>

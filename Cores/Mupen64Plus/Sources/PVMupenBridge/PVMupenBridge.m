@@ -88,8 +88,10 @@ static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, 
 
 EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 {
-// TODO: This should print on the screen
-	NSLog(@"%s", _pText);
+    NSString *msg = [NSString stringWithUTF8String:_pText ?: ""];
+    if (msg.length > 0) {
+        [PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:3.0];
+    }
 }
 
 static void MupenDebugCallback(void *context, int level, const char *message)

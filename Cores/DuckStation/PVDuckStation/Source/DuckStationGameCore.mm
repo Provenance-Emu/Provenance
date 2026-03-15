@@ -25,6 +25,7 @@
 #import "DuckStationGameCore.h"
 #import "OEPSXSystemResponderClient.h"
 #import <OpenEmuBase/OpenEmuBase.h>
+#import <PVCoreObjCBridge/PVOSDNotification.h>
 #define TickCount DuckTickCount
 #include "core/types.h"
 #include "core/system.h"
@@ -982,16 +983,28 @@ std::string Host::TranslateStdString(const char* context, const char* str, const
 void Host::AddOSDMessage(std::string message, float duration)
 {
 	os_log_info(OE_CORE_LOG, "DuckStation OSD: %{public}s", message.c_str());
+	NSString *msg = @(message.c_str());
+	if (msg.length > 0) {
+		[PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:duration > 0 ? duration : 3.0];
+	}
 }
 
 void Host::AddKeyedOSDMessage(std::string key, std::string message, float duration)
 {
 	os_log_info(OE_CORE_LOG, "DuckStation OSD: %{public}s", message.c_str());
+	NSString *msg = @(message.c_str());
+	if (msg.length > 0) {
+		[PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:duration > 0 ? duration : 3.0];
+	}
 }
 
 void Host::AddIconOSDMessage(std::string key, const char* icon, std::string message, float duration)
 {
 	os_log_info(OE_CORE_LOG, "DuckStation OSD: %{public}s", message.c_str());
+	NSString *msg = @(message.c_str());
+	if (msg.length > 0) {
+		[PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:duration > 0 ? duration : 3.0];
+	}
 }
 
 void Host::AddFormattedOSDMessage(float duration, const char* format, ...)
@@ -1083,6 +1096,12 @@ void Host::ReportErrorAsync(const std::string_view& title, const std::string_vie
 	auto fullStr = std::string(message);
 	auto strTitle = std::string(title);
 	os_log_error(OE_CORE_LOG, "%{public}s: %{public}s", strTitle.c_str(), fullStr.c_str());
+	NSString *msg = strTitle.empty()
+		? @(fullStr.c_str())
+		: [NSString stringWithFormat:@"%s: %s", strTitle.c_str(), fullStr.c_str()];
+	if (msg.length > 0) {
+		[PVOSDNotification postMessage:msg type:PVOSDTypeError duration:5.0];
+	}
 }
 
 void Host::ReportDebuggerMessage(const std::string_view& message)

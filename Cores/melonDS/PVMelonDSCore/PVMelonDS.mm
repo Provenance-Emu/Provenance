@@ -41,6 +41,7 @@
 #include <sys/time.h>
 #include "hw/sh4/dyna/blockmanager.h"
 #include <unistd.h>
+#include <wchar.h>
 
 void move_pthread_to_realtime_scheduling_class(pthread_t pthread)
 {
@@ -79,11 +80,22 @@ int msgboxf(const wchar* text,unsigned int type,...)
 
     wchar temp[2048];
     va_start(args, type);
-    vsprintf(temp, text, args);
+    vswprintf(temp, sizeof(temp) / sizeof(temp[0]), text, args);
     va_end(args);
 
-        //printf(NULL,temp,VER_SHORTNAME,type | MB_TASKMODAL);
-    ILOG(@"%s", temp);
+    char utf8[4096];
+    size_t converted = wcstombs(utf8, temp, sizeof(utf8) - 1);
+    if (converted == (size_t)-1) {
+        utf8[0] = '\0';
+    } else {
+        utf8[converted] = '\0';
+    }
+
+    NSString *msg = [NSString stringWithUTF8String:utf8];
+    if (msg.length > 0) {
+        ILOG(@"%@", msg);
+        [PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:3.0];
+    }
     return 0;
 }
 
@@ -92,10 +104,21 @@ int darw_printf(const wchar* text,...) {
 
     wchar temp[2048];
     va_start(args, text);
-    vsprintf(temp, text, args);
+    vswprintf(temp, sizeof(temp) / sizeof(temp[0]), text, args);
     va_end(args);
 
-    ILOG(@"%s", temp);
+    char utf8[4096];
+    size_t converted = wcstombs(utf8, temp, sizeof(utf8) - 1);
+    if (converted == (size_t)-1) {
+        utf8[0] = '\0';
+    } else {
+        utf8[converted] = '\0';
+    }
+
+    NSString *msg = [NSString stringWithUTF8String:utf8];
+    if (msg.length > 0) {
+        ILOG(@"%@", msg);
+    }
 
     return 0;
 }
