@@ -12,7 +12,6 @@ import GameController
 import PVThemes
 import PVLibrary
 import PVRealm
-import PVSettings
 import MarkdownView
 #if canImport(PVUI_IOS)
 import PVUI_IOS
@@ -487,6 +486,43 @@ struct ControllerSettingsView: View {
     }
 }
 
+// MARK: - Shared slot-mode types
+
+/// The three mode categories available to the user in slot pickers.
+private enum SlotModeCategory: String, CaseIterable, Identifiable {
+    case auto = "Auto"
+    case preferred = "Preferred"
+    case always = "Always"
+    var id: String { rawValue }
+}
+
+/// Shared segmented pickers for mode + player-slot selection.
+/// Used by both `ControllerSlotModeRow` and `DisconnectedControllerSlotModeRow`.
+private struct SlotModePickerSection: View {
+    @Binding var category: SlotModeCategory
+    @Binding var slot: Int
+
+    var body: some View {
+        Picker("Mode", selection: $category) {
+            ForEach(SlotModeCategory.allCases) { cat in
+                Text(cat.rawValue).tag(cat)
+            }
+        }
+        .pickerStyle(.segmented)
+
+        if category != .auto {
+            Picker("Player Slot", selection: $slot) {
+                ForEach(1...8, id: \.self) { s in
+                    Text("P\(s)").tag(s)
+                }
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+}
+
+// MARK: - Row views
+
 /// A row showing the slot mode for a single controller with inline pickers.
 private struct ControllerSlotModeRow: View {
     let controller: GCController
@@ -494,19 +530,11 @@ private struct ControllerSlotModeRow: View {
     let accentColor: Color
     let controllerIcon: String
 
-    /// The three mode categories available to the user.
-    private enum ModeCategory: String, CaseIterable, Identifiable {
-        case auto = "Auto"
-        case preferred = "Preferred"
-        case always = "Always"
-        var id: String { rawValue }
-    }
-
     private var currentMode: ControllerSlotMode {
         controllerManager.slotMode(for: controller)
     }
 
-    private var modeCategory: ModeCategory {
+    private var modeCategory: SlotModeCategory {
         switch currentMode {
         case .auto: return .auto
         case .preferred: return .preferred
@@ -518,9 +546,39 @@ private struct ControllerSlotModeRow: View {
         currentMode.preferredSlot ?? 1
     }
 
+    private var categoryBinding: Binding<SlotModeCategory> {
+        Binding(
+            get: { modeCategory },
+            set: { newCategory in
+                switch newCategory {
+                case .auto:
+                    controllerManager.setSlotMode(.auto, for: controller)
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(selectedSlot), for: controller)
+                case .always:
+                    controllerManager.setSlotMode(.always(selectedSlot), for: controller)
+                }
+            }
+        )
+    }
+
+    private var slotBinding: Binding<Int> {
+        Binding(
+            get: { selectedSlot },
+            set: { newSlot in
+                switch modeCategory {
+                case .auto: break
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(newSlot), for: controller)
+                case .always:
+                    controllerManager.setSlotMode(.always(newSlot), for: controller)
+                }
+            }
+        )
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // Controller name header
             HStack(spacing: 12) {
                 Image(systemName: controllerIcon)
                     .imageScale(.large)
@@ -541,47 +599,7 @@ private struct ControllerSlotModeRow: View {
                 }
             }
 
-            // Mode picker
-            Picker("Mode", selection: Binding(
-                get: { modeCategory },
-                set: { newCategory in
-                    switch newCategory {
-                    case .auto:
-                        controllerManager.setSlotMode(.auto, for: controller)
-                    case .preferred:
-                        controllerManager.setSlotMode(.preferred(selectedSlot), for: controller)
-                    case .always:
-                        controllerManager.setSlotMode(.always(selectedSlot), for: controller)
-                    }
-                }
-            )) {
-                ForEach(ModeCategory.allCases) { category in
-                    Text(category.rawValue).tag(category)
-                }
-            }
-            .pickerStyle(.segmented)
-
-            // Player slot picker (only when not Auto)
-            if modeCategory != .auto {
-                Picker("Player Slot", selection: Binding(
-                    get: { selectedSlot },
-                    set: { newSlot in
-                        switch modeCategory {
-                        case .auto:
-                            break
-                        case .preferred:
-                            controllerManager.setSlotMode(.preferred(newSlot), for: controller)
-                        case .always:
-                            controllerManager.setSlotMode(.always(newSlot), for: controller)
-                        }
-                    }
-                )) {
-                    ForEach(1...8, id: \.self) { slot in
-                        Text("P\(slot)").tag(slot)
-                    }
-                }
-                .pickerStyle(.segmented)
-            }
+            SlotModePickerSection(category: categoryBinding, slot: slotBinding)
         }
         .padding(.vertical, 4)
     }
@@ -592,18 +610,11 @@ private struct DisconnectedControllerSlotModeRow: View {
     let id: String
     @ObservedObject var controllerManager: PVControllerManager
 
-    private enum ModeCategory: String, CaseIterable, Identifiable {
-        case auto = "Auto"
-        case preferred = "Preferred"
-        case always = "Always"
-        var id: String { rawValue }
-    }
-
     private var currentMode: ControllerSlotMode {
         controllerManager.slotMode(forId: id)
     }
 
-    private var modeCategory: ModeCategory {
+    private var modeCategory: SlotModeCategory {
         switch currentMode {
         case .auto: return .auto
         case .preferred: return .preferred
@@ -613,6 +624,37 @@ private struct DisconnectedControllerSlotModeRow: View {
 
     private var selectedSlot: Int {
         currentMode.preferredSlot ?? 1
+    }
+
+    private var categoryBinding: Binding<SlotModeCategory> {
+        Binding(
+            get: { modeCategory },
+            set: { newCategory in
+                switch newCategory {
+                case .auto:
+                    controllerManager.setSlotMode(.auto, forId: id)
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(selectedSlot), forId: id)
+                case .always:
+                    controllerManager.setSlotMode(.always(selectedSlot), forId: id)
+                }
+            }
+        )
+    }
+
+    private var slotBinding: Binding<Int> {
+        Binding(
+            get: { selectedSlot },
+            set: { newSlot in
+                switch modeCategory {
+                case .auto: break
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(newSlot), forId: id)
+                case .always:
+                    controllerManager.setSlotMode(.always(newSlot), forId: id)
+                }
+            }
+        )
     }
 
     var body: some View {
@@ -626,6 +668,8 @@ private struct DisconnectedControllerSlotModeRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(id)
                         .font(.headline)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
                     Text("Disconnected")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -640,45 +684,7 @@ private struct DisconnectedControllerSlotModeRow: View {
                 .buttonStyle(.borderless)
             }
 
-            Picker("Mode", selection: Binding(
-                get: { modeCategory },
-                set: { newCategory in
-                    switch newCategory {
-                    case .auto:
-                        controllerManager.setSlotMode(.auto, forId: id)
-                    case .preferred:
-                        controllerManager.setSlotMode(.preferred(selectedSlot), forId: id)
-                    case .always:
-                        controllerManager.setSlotMode(.always(selectedSlot), forId: id)
-                    }
-                }
-            )) {
-                ForEach(ModeCategory.allCases) { category in
-                    Text(category.rawValue).tag(category)
-                }
-            }
-            .pickerStyle(.segmented)
-
-            if modeCategory != .auto {
-                Picker("Player Slot", selection: Binding(
-                    get: { selectedSlot },
-                    set: { newSlot in
-                        switch modeCategory {
-                        case .auto:
-                            break
-                        case .preferred:
-                            controllerManager.setSlotMode(.preferred(newSlot), forId: id)
-                        case .always:
-                            controllerManager.setSlotMode(.always(newSlot), forId: id)
-                        }
-                    }
-                )) {
-                    ForEach(1...8, id: \.self) { slot in
-                        Text("P\(slot)").tag(slot)
-                    }
-                }
-                .pickerStyle(.segmented)
-            }
+            SlotModePickerSection(category: categoryBinding, slot: slotBinding)
         }
         .padding(.vertical, 4)
     }
