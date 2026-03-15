@@ -583,7 +583,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Present JIT onboarding if JIT has not been acquired this session
         #if canImport(PVJIT) && os(iOS)
-        JITOnboardingManager.shared.presentOnboardingIfNeeded(from: self)
+        func presentJITOnboardingWhenReady() {
+            // Ensure the view controller is in the window hierarchy before presenting
+            guard view.window != nil else {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    presentJITOnboardingWhenReady()
+                }
+                return
+            }
+            JITOnboardingManager.shared.presentOnboardingIfNeeded(from: self)
+        }
+        presentJITOnboardingWhenReady()
         #endif
 
         core.startEmulation()
