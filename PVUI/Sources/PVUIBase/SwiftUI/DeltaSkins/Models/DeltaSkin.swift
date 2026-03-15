@@ -349,7 +349,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 let decodedImage: UIImage?
                 if lower.hasSuffix(".pdf") {
                     let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
-                    decodedImage = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false, size: renderSize)
+                    // Always preserve transparency for PDF skin assets — `translucent` controls
+                    // runtime overlay opacity, not PDF alpha-channel rendering.
+                    decodedImage = UIImage(pdfData: data, preserveTransparency: true, size: renderSize)
                     if decodedImage == nil {
                         lastError = DeltaSkinError.invalidPDF
                         continue
@@ -398,7 +400,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
             let decodedImage: UIImage?
             if lower.hasSuffix(".pdf") {
                 let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
-                decodedImage = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false, size: renderSize)
+                // Always preserve transparency for PDF skin assets — `translucent` controls
+                // runtime overlay opacity, not PDF alpha-channel rendering.
+                decodedImage = UIImage(pdfData: assetData, preserveTransparency: true, size: renderSize)
                 guard decodedImage != nil else {
                     throw DeltaSkinError.invalidPDF
                 }
@@ -1192,7 +1196,7 @@ extension UIImage {
     ///     PDF content is aspect-fitted within the canvas (preserving its aspect ratio) and centred.
     ///     When `nil` the native PDF page size is used, capped at 4096 physical pixels to stay within
     ///     safe GPU texture limits.
-    convenience init?(pdfData: Data, preserveTransparency: Bool = false, size: CGSize? = nil) {
+    convenience init?(pdfData: Data, preserveTransparency: Bool = true, size: CGSize? = nil) {
         guard let provider = CGDataProvider(data: pdfData as CFData),
               let pdf = CGPDFDocument(provider),
               let page = pdf.page(at: 1) else {
@@ -1268,7 +1272,7 @@ extension UIImage {
             context.cgContext.drawPDFPage(page)
         }
 
-        self.init(cgImage: image.cgImage!)
+        self.init(cgImage: image.cgImage!, scale: image.scale, orientation: image.imageOrientation)
     }
 }
 
