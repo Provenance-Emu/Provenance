@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 
@@ -78,3 +79,4 @@ struct DeltaSkinAnimatedBackgroundView: View {
         }
     }
 }
+#endif
