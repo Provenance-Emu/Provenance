@@ -184,34 +184,42 @@ public struct BootupViewRetroWave: View {
                         .scaleEffect(titleScale)
                 }
                 
-                // Status text with blinking effect — shows real current task name
-                Text(appState.bootupStateManager.currentTaskName.isEmpty
-                     ? appState.bootupStateManager.currentState.localizedDescription
-                     : appState.bootupStateManager.currentTaskName)
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-                    .padding(.top, 10)
-                    .opacity(showText ? 1.0 : 0.5)
+                // ── Progress block — fixed height so layout never shifts ──────────────
+                // Always reserve space for task name, sub-message, main bar, and
+                // sub-task bar. Use opacity instead of conditional insertion so the
+                // surrounding VStack never reflows when tasks start/finish.
+                let bootupState = appState.bootupStateManager
+                let subMsg = bootupState.subTaskMessage
+                let subProgress = bootupState.subTaskProgress
+                let taskLabel = bootupState.currentTaskName.isEmpty
+                    ? bootupState.currentState.localizedDescription
+                    : bootupState.currentTaskName
 
-                // Sub-task detail (e.g. "Probing snes9x_libretro… 12/24")
-                let subMsg = appState.bootupStateManager.subTaskMessage
-                if !subMsg.isEmpty {
-                    Text(subMsg)
+                VStack(spacing: 6) {
+                    // Main task name — blinks while active
+                    Text(taskLabel)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                        .opacity(showText ? 1.0 : 0.5)
+                        .frame(minHeight: 22)
+                        .animation(.easeInOut(duration: 0.2), value: taskLabel)
+
+                    // Sub-task label — always occupies its line height; fades in/out
+                    Text(subMsg.isEmpty ? " " : subMsg)
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.65))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                        .transition(.opacity)
-                }
+                        .frame(minHeight: 16)
+                        .opacity(subMsg.isEmpty ? 0 : 1)
+                        .animation(.easeInOut(duration: 0.25), value: subMsg)
 
-                // Custom progress indicator — driven by real boot progress
-                VStack(spacing: 4) {
+                    // Overall progress bar
                     ZStack {
-                        // Progress bar background
                         RoundedRectangle(cornerRadius: 4)
                             .fill(Color.black.opacity(0.3))
                             .frame(width: 200, height: 8)
@@ -223,23 +231,33 @@ public struct BootupViewRetroWave: View {
                                         endPoint: .trailing
                                     ), lineWidth: 1)
                             )
-
-                        // Real progress bar
-                        RetroProgressBar(progress: appState.bootupStateManager.stateProgress)
+                        RetroProgressBar(progress: bootupState.stateProgress)
                             .frame(width: 200, height: 8)
                     }
 
-                    // Secondary thin bar for sub-task progress
-                    if let subProgress = appState.bootupStateManager.subTaskProgress {
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.white.opacity(0.1))
-                                .frame(width: 200, height: 3)
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.retroBlue.opacity(0.7))
-                                .frame(width: max(0, 200 * CGFloat(subProgress)), height: 3)
-                        }
-                        .transition(.opacity)
+                    // Sub-task thin bar — always present, fades & fills when active
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: 200, height: 3)
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.retroBlue.opacity(0.7))
+                            .frame(width: max(0, 200 * CGFloat(subProgress ?? 0)), height: 3)
+                            .animation(.linear(duration: 0.15), value: subProgress)
+                    }
+                    .opacity(subProgress != nil ? 1 : 0)
+                    .animation(.easeInOut(duration: 0.25), value: subProgress != nil)
+                    .frame(height: 3) // always reserves height
+
+                    // Percentage label for sub-task — same reserve-space trick
+                    if let subP = subProgress {
+                        Text(String(format: "%.0f%%", subP * 100))
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.45))
+                            .frame(minHeight: 14)
+                            .transition(.opacity)
+                    } else {
+                        Color.clear.frame(height: 14)
                     }
                 }
                 .padding(.top, 20)

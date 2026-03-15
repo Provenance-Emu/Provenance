@@ -103,6 +103,11 @@ public struct RetroGameLibraryView: View {
     @State private var needsDataRefresh: Bool = true
     @State private var saveBrowserContext: SaveBrowserContext?
 
+    /// Debounce handle for per-game import notifications.
+    /// `PVGameImported` fires once per ROM — without debouncing this triggers
+    /// a blocking main-thread Realm read for every imported file during batch imports.
+    @State private var importDebounceTask: Task<Void, Never>?
+
     // Track expanded sections with AppStorage to persist between app runs
     @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
 
@@ -267,12 +272,13 @@ public struct RetroGameLibraryView: View {
             expandedSectionsData = viewModel.getExpandedSectionsData()
         }
         .onReceive(NotificationCenter.default.publisher(for: .GameImporterDidFinish)) { _ in
-            /// Refresh data when games import finishes
-            refreshGameData()
+            // Import finished — refresh immediately (single event, no debounce needed)
+            scheduleRefresh(debounce: 0)
         }
         .onReceive(NotificationCenter.default.publisher(for: .PVGameImported)) { _ in
-            /// Refresh data when a single game is imported
-            refreshGameData()
+            // Fires once per ROM during batch imports — debounce to avoid N main-thread
+            // Realm reads when importing large collections.
+            scheduleRefresh(debounce: 0.5)
         }
         .sheet(isPresented: $viewModel.showImagePicker) {
 #if !os(tvOS)
@@ -912,30 +918,53 @@ public struct RetroGameLibraryView: View {
 
     // MARK: - Data Refresh
 
-    /// Refresh game and system data from Realm
-    /// Called once on appear and can be triggered manually for refresh
+    /// Debounced entry-point for data refreshes.
+    ///
+    /// - Parameter debounce: Seconds to wait before issuing the actual refresh.
+    ///   Pass `0` for an immediate (but still async) refresh.
+    ///   Pass a positive value (e.g. `0.5`) to coalesce rapid notifications.
+    private func scheduleRefresh(debounce seconds: Double) {
+        importDebounceTask?.cancel()
+        importDebounceTask = Task(priority: .userInitiated) {
+            if seconds > 0 {
+                try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+            }
+            guard !Task.isCancelled else { return }
+            await refreshGameDataAsync()
+        }
+    }
+
+    /// Synchronous wrapper kept for call-sites that already run on the main actor
+    /// (e.g. `.onAppear`). Schedules an immediate async refresh.
     private func refreshGameData() {
-        DLOG("RetroGameLibraryView: Refreshing game data")
+        scheduleRefresh(debounce: 0)
+    }
 
-        /// Fetch games sorted by title
-        let games = RomDatabase.sharedInstance.all(PVGame.self, sortedByKeyPath: "title")
-        cachedGames = Array(games)
-        gamesCount = cachedGames.count
+    /// Fetches games and systems on a background thread, then publishes results
+    /// back to the main actor.  Never blocks the main thread with `Array(Results)`.
+    @MainActor
+    private func refreshGameDataAsync() async {
+        DLOG("RetroGameLibraryView: Refreshing game data (async)")
 
-        /// Fetch systems sorted by name
-        let systems = RomDatabase.sharedInstance.all(PVSystem.self, sortedByKeyPath: "name")
-        cachedSystems = Array(systems)
+        // Run the expensive Realm materialisation on a background thread.
+        let (games, systems) = await Task.detached(priority: .userInitiated) {
+            let db = RomDatabase.sharedInstance
+            let g = Array(db.all(PVGame.self,   sortedByKeyPath: "title"))
+            let s = Array(db.all(PVSystem.self, sortedByKeyPath: "name"))
+            return (g, s)
+        }.value
 
-        /// Invalidate ViewModel cache since data changed
+        cachedGames   = games
+        cachedSystems = systems
+        gamesCount    = games.count
         viewModel.invalidateGamesCache()
 
-        /// Prefetch recent save states for visible systems to avoid UI hitching
         Task(priority: .utility) {
-            await saveStatesStore.prefetchRecent(systemIDs: cachedSystems.map(\.identifier), limit: 6)
+            await saveStatesStore.prefetchRecent(systemIDs: systems.map(\.identifier), limit: 6)
         }
 
         needsDataRefresh = false
-        DLOG("RetroGameLibraryView: Loaded \(gamesCount) games and \(cachedSystems.count) systems")
+        DLOG("RetroGameLibraryView: Loaded \(gamesCount) games and \(systems.count) systems")
     }
 
     /// Scans all local ROM files and updates games marked as iCloud-only
@@ -1050,7 +1079,7 @@ public struct RetroGameLibraryView: View {
             ILOG("[LOCAL FILE FIX] Fixed \(fixedCount) games that had local files but were marked as iCloud-only")
             await MainActor.run {
                 needsDataRefresh = true
-                refreshGameData()
+                scheduleRefresh(debounce: 0)
             }
         }
     }

@@ -214,6 +214,10 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
 
         // ── Probe cache misses concurrently ───────────────────────────────
         // dlopen/dlclose are thread-safe on Darwin.
+        // We use a utility-QoS serial queue as the coordinator but spin probes
+        // off into a background-QoS concurrent pool via DispatchQueue.concurrentPerform.
+        // Using .background QoS keeps the probes from stealing CPU from the main
+        // thread's render loop while bootup animations are running.
         let probedResults = OSAllocatedUnfairLock<[(URL, DiscoveredLibretroCore)]>(initialState: [])
 
         if !cacheMisses.isEmpty {
@@ -225,18 +229,28 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
                 onProgress(cacheHits.count, total, "")
             }
 
-            DispatchQueue.concurrentPerform(iterations: cacheMisses.count) { i in
-                let url = cacheMisses[i]
-                let coreName = url.deletingLastPathComponent().lastPathComponent
-                guard let core = self.probe(executableURL: url) else {
+            // Try Mach-O fast-path first (no code-signing overhead) — falls through to
+            // dlopen only when the fast path cannot extract the info.
+            let probeQueue = DispatchQueue(label: "com.provenance.libretro-probe",
+                                           qos: .background,
+                                           attributes: .concurrent)
+            let group = DispatchGroup()
+            for i in 0..<cacheMisses.count {
+                group.enter()
+                probeQueue.async {
+                    defer { group.leave() }
+                    let url = cacheMisses[i]
+                    let coreName = url.deletingLastPathComponent().lastPathComponent
+                    // Fast-path: try Mach-O string extraction without dlopen
+                    let core = self.probeMachO(executableURL: url) ?? self.probe(executableURL: url)
+                    if let core = core {
+                        probedResults.withLock { $0.append((url, core)) }
+                    }
                     let n = completedCount.withLock { count -> Int in count += 1; return count }
-                    onProgress?(n, total, coreName)
-                    return
+                    onProgress?(n, total, core?.libraryName ?? coreName)
                 }
-                probedResults.withLock { $0.append((url, core)) }
-                let n = completedCount.withLock { count -> Int in count += 1; return count }
-                onProgress?(n, total, core.libraryName)
             }
+            group.wait()
 
             // Update disk cache with newly probed results
             for (url, core) in probedResults.withLock({ $0 }) {
@@ -402,6 +416,133 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         return candidates
     }
 
+    /// Fast-path: parse the Mach-O `__TEXT,__cstring` section to extract
+    /// `retro_get_system_info` metadata without calling `dlopen`.
+    ///
+    /// Saves the ~1 s code-signing overhead on first encounter of a new core.
+    /// Returns `nil` when parsing fails; the caller then falls back to `probe()`.
+    private func probeMachO(executableURL: URL) -> DiscoveredLibretroCore? {
+        #if !canImport(Darwin)
+        return nil
+        #else
+        guard let fileData = try? Data(contentsOf: executableURL, options: .mappedIfSafe) else { return nil }
+
+        return fileData.withUnsafeBytes { (raw: UnsafeRawBufferPointer) -> DiscoveredLibretroCore? in
+            guard let base = raw.baseAddress,
+                  raw.count > MemoryLayout<mach_header_64>.size else { return nil }
+
+            // ── Locate native-arch Mach-O slice (handles fat binaries) ────────────
+            var hdrOffset = 0
+            let magic = base.load(as: UInt32.self)
+            if magic == 0xcafebabe || magic == 0xbebafeca {
+                // Fat binary — scan arch entries for arm64 (CPU_TYPE_ARM64 = 0x0100000c)
+                let swap = magic == 0xbebafeca
+                let nfat = Int(machoU32(base.advanced(by: 4), swap: swap))
+                for i in 0..<nfat {
+                    let aBase = base.advanced(by: 8 + i * 20)
+                    guard 8 + (i + 1) * 20 <= raw.count else { break }
+                    if machoU32(aBase, swap: swap) == 0x0100000c {
+                        hdrOffset = Int(machoU32(aBase.advanced(by: 8), swap: swap))
+                        break
+                    }
+                }
+            }
+            guard hdrOffset + MemoryLayout<mach_header_64>.size <= raw.count else { return nil }
+            let hdr = base.advanced(by: hdrOffset).assumingMemoryBound(to: mach_header_64.self).pointee
+            guard hdr.magic == MH_MAGIC_64 else { return nil }
+
+            // ── Walk load commands to find __TEXT,__cstring ───────────────────────
+            var cstringStart = 0; var cstringLen = 0
+            var lcOff = hdrOffset + MemoryLayout<mach_header_64>.size
+
+            outerLoop: for _ in 0..<Int(hdr.ncmds) {
+                guard lcOff + MemoryLayout<load_command>.size <= raw.count else { break }
+                let lc = base.advanced(by: lcOff).assumingMemoryBound(to: load_command.self).pointee
+                let cmdSize = Int(lc.cmdsize)
+                guard cmdSize > 0, lcOff + cmdSize <= raw.count else { break }
+
+                if lc.cmd == UInt32(LC_SEGMENT_64),
+                   cmdSize >= MemoryLayout<segment_command_64>.size {
+                    let seg = base.advanced(by: lcOff)
+                        .assumingMemoryBound(to: segment_command_64.self).pointee
+                    if machoSegName(seg.segname) == "__TEXT" {
+                        let sectBase = lcOff + MemoryLayout<segment_command_64>.size
+                        for s in 0..<Int(seg.nsects) {
+                            let sOff = sectBase + s * MemoryLayout<section_64>.size
+                            guard sOff + MemoryLayout<section_64>.size <= raw.count else { break }
+                            let sect = base.advanced(by: sOff)
+                                .assumingMemoryBound(to: section_64.self).pointee
+                            if machoSegName(sect.sectname) == "__cstring" {
+                                cstringStart = Int(sect.offset)
+                                cstringLen   = Int(sect.size)
+                                break outerLoop
+                            }
+                        }
+                        break outerLoop
+                    }
+                }
+                lcOff += cmdSize
+            }
+            guard cstringLen > 0, cstringStart > 0,
+                  cstringStart + cstringLen <= raw.count else { return nil }
+
+            // ── Collect all C strings from __cstring ──────────────────────────────
+            var strings: [String] = []
+            var pos = cstringStart
+            let end = cstringStart + cstringLen
+            while pos < end {
+                let cptr = base.advanced(by: pos).assumingMemoryBound(to: CChar.self)
+                var len = 0
+                while pos + len < end && cptr[len] != 0 { len += 1 }
+                if len > 0 {
+                    if let s = String(
+                        bytes: UnsafeRawBufferPointer(start: UnsafeRawPointer(cptr), count: len),
+                        encoding: .utf8
+                    ) { strings.append(s) }
+                }
+                pos += len + 1
+            }
+
+            // ── Identify valid_extensions (pipe-separated short file extensions) ──
+            // Pattern: "gb|gbc|dmg" or "zip|7z|rar" — at least two alternatives
+            let extRegex = try? NSRegularExpression(pattern: #"^[a-zA-Z0-9]{1,8}(\|[a-zA-Z0-9]{1,8})+$"#)
+            guard let extIdx = strings.firstIndex(where: { s in
+                let r = NSRange(s.startIndex..., in: s)
+                return extRegex?.firstMatch(in: s, range: r) != nil
+            }) else { return nil }
+
+            let extStr = strings[extIdx]
+            let exts   = extStr.split(separator: "|").map(String.init)
+
+            // ── Find library_name and library_version near the extensions string ──
+            // In most libretro cores the three strings appear close together
+            // in __cstring because retro_get_system_info is defined near the top.
+            let lo     = max(0, extIdx - 6)
+            let hi     = min(strings.count - 1, extIdx + 6)
+            let window = strings[lo...hi].filter { $0 != extStr }
+
+            // library_name: readable string (has a letter, no pipe, 2–60 chars)
+            let libraryName = window.first(where: { s in
+                !s.contains("|") && s.count >= 2 && s.count <= 60 &&
+                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
+            })
+            guard let libName = libraryName else { return nil }
+
+            // library_version: any other nearby short string
+            let libVersion = window.first(where: { $0 != libName && $0.count >= 1 && $0.count <= 30 }) ?? ""
+
+            DLOG("DynamicLibretroScanner: probeMachO '\(executableURL.lastPathComponent)' → '\(libName)' v\(libVersion)")
+            return DiscoveredLibretroCore(
+                executablePath:  executableURL,
+                libraryName:     libName,
+                libraryVersion:  libVersion,
+                validExtensions: exts,
+                needFullPath:    false   // conservative; probe() corrects if needed
+            )
+        }
+        #endif
+    }
+
     /// Calls `retro_get_system_info` on a candidate dylib to extract metadata.
     /// Returns `nil` if the symbol is missing or dlopen fails.
     private func probe(executableURL: URL) -> DiscoveredLibretroCore? {
@@ -488,5 +629,24 @@ public extension CoreLoader {
 
         ILOG("DynamicLibretroScanner: merging \(syntheticParent.subCores?.count ?? 0) thin-wrapper sub-cores into plist")
         return deduplicated + [syntheticParent]
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Mach-O decoding helpers (file-private)
+// ---------------------------------------------------------------------------
+
+/// Read a `UInt32` from a raw pointer, optionally byte-swapping (for fat binary headers).
+private func machoU32(_ ptr: UnsafeRawPointer, swap: Bool) -> UInt32 {
+    let v = ptr.load(as: UInt32.self)
+    return swap ? v.byteSwapped : v
+}
+
+/// Extract a null-terminated segment/section name from a fixed 16-byte C char tuple.
+/// Uses a generic binding so swiftlint's large_tuple rule isn't triggered.
+private func machoSegName<T>(_ tuple: T) -> String {
+    withUnsafeBytes(of: tuple) { bytes in
+        let chars = bytes.prefix(while: { $0 != 0 })
+        return String(bytes: chars, encoding: .utf8) ?? ""
     }
 }

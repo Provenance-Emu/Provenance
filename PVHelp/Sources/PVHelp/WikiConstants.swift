@@ -24,5 +24,9 @@ public enum WikiConstants {
     public enum Paths {
         public static let saveStateVersionMismatch = "save-states/version-mismatch.md"
         public static let saveStates = "save-states/README.md"
+        public static let skinsGuide = "info/skins-guide.md"
+        public static let controllersGuide = "info/controllers-and-controls/README.md"
+        public static let cheatsGuide = "info/cheats.md"
+        public static let faq = "faqs.md"
     }
 }
