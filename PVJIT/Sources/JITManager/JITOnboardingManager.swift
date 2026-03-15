@@ -57,9 +57,7 @@ public final class JITOnboardingManager {
             return false
         }
 
-        hasShownThisSession = true
-
-        ILOG("JITOnboarding: Presenting JIT onboarding alert")
+        ILOG("JITOnboarding: Preparing JIT onboarding alert")
 
         let alert = UIAlertController(
             title: "JIT Not Enabled",
@@ -85,7 +83,19 @@ public final class JITOnboardingManager {
             }
         })
 
-        viewController.present(alert, animated: true)
+        // Ensure we can actually present before marking the onboarding as shown
+        guard viewController.viewIfLoaded?.window != nil,
+            viewController.presentedViewController == nil else {
+            WLOG("JITOnboarding: Unable to present onboarding alert (VC not in window or already presenting); will allow retry later")
+            return false
+        }
+
+        ILOG("JITOnboarding: Presenting JIT onboarding alert")
+
+        viewController.present(alert, animated: true) { [weak self] in
+            self?.hasShownThisSession = true
+        }
+
         return true
     }
 
