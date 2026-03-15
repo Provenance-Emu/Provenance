@@ -740,7 +740,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         // race window between them.
         if let existing = corePlistsInitializationTask {
             ILOG("GameImporter: initCorePlists — awaiting in-flight/completed initialization")
-            try await existing.value
+            do {
+                try await existing.value
+            } catch {
+                // Clear the cached task so a future call can retry initialization.
+                corePlistsInitializationTask = nil
+                throw error
+            }
             return
         }
 
@@ -780,7 +786,13 @@ public final class GameImporter: GameImporting, ObservableObject {
             await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
         }
         corePlistsInitializationTask = task
-        try await task.value
+        do {
+            try await task.value
+        } catch {
+            // Clear the cached task so a future call can retry initialization.
+            corePlistsInitializationTask = nil
+            throw error
+        }
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {
