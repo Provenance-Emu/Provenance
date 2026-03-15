@@ -1898,7 +1898,8 @@ struct DeltaSkinScreenFilterTests {
         #expect(roundTripped.filterInfos?.count == 1)
         #expect(roundTripped.filterInfos?.first?.name == "CIGaussianBlur")
 
-        if case let .number(radius) = roundTripped.filterInfos?.first?.parameters["inputRadius"] {
+        if let inputRadius = roundTripped.filterInfos?.first?.parameters["inputRadius"],
+           case let .number(radius) = inputRadius {
             #expect(abs(radius - 2.5) < 0.001)
         } else {
             throw TestError("Expected inputRadius to be preserved in round-trip")

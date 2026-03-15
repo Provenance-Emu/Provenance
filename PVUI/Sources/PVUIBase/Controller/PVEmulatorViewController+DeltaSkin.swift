@@ -258,8 +258,9 @@ extension PVEmulatorViewController {
                     // Don't force layout here - applyViewportFromCurrentSkin handles layout naturally
                     self.applyViewportFromCurrentSkin()
 
-                    // Wire up any CIFilters declared in the skin's screen definitions
-                    self.applyScreenFiltersFromCurrentSkin()
+                    // Note: screen filters are applied via the DeltaSkinLoaded notification handler
+                    // (handleSkinLoaded) where currentSkin is set — calling here would apply the
+                    // filter a second time redundantly.
 
                     // Pause emulation for 1 second after skin is loaded to ensure smooth startup
                     self.pauseEmulationTemporarily()
@@ -1036,6 +1037,17 @@ extension PVEmulatorViewController {
         guard let filterInfo else {
             ILOG("skins: Skin '\(skin.name)' has no screen filters — clearing any previous filter")
             applyScreenFilter(nil)
+            return
+        }
+
+        // If the user has explicitly selected a filter (not "None"), it takes precedence over
+        // skin-defined filters so both effects are not stacked on top of each other.
+        let gameKey = "ScreenFilter_Game_\(game.md5Hash ?? game.crc)"
+        let systemKey = game.system?.systemIdentifier.map { "ScreenFilter_System_\($0.rawValue)" }
+        let userFilterName: String? = UserDefaults.standard.string(forKey: gameKey)
+            ?? systemKey.flatMap { UserDefaults.standard.string(forKey: $0) }
+        if let name = userFilterName, name != "None" {
+            ILOG("skins: User filter '\(name)' is active — skipping skin filter '\(filterInfo.name)'")
             return
         }
 
