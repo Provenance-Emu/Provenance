@@ -24,6 +24,7 @@
 @import PVLoggingObjC;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
+@import PVAudio;
 
 #include <dlfcn.h>
 #include <string.h>
@@ -168,16 +169,31 @@ typedef struct PVThinLibretroSymbols {
     uint8_t *_videoBufferData;
     NSUInteger _videoBufferBytesPerRow;
 }
+
+/// Internal callback methods invoked by the static C trampolines.
+- (void)_thinVideoRefresh:(const void *)data width:(unsigned)w height:(unsigned)h pitch:(size_t)pitch;
+- (void)_thinAudioSample:(int16_t)left right:(int16_t)right;
+- (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames;
+- (void)_thinInputPoll;
+- (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid;
+- (BOOL)handleEnvironmentCommand:(unsigned)cmd data:(void *)data;
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+- (uintptr_t)currentEmuFBO;
+#endif
+
 @end
 
 // ---------------------------------------------------------------------------
 // MARK: - Thread-local current-instance pointer (for static C callbacks)
 // ---------------------------------------------------------------------------
 
-/// Thread-local weak reference to the currently-executing ThinFrontend instance.
+/// Thread-local reference to the currently-executing ThinFrontend instance.
 /// Using __thread avoids the need for locks around C callback dispatch since
 /// each emulation thread has exactly one frontend.
-static __thread __weak PVThinLibretroFrontend *_thinCurrentTLS = nil;
+/// Note: __thread TLS cannot use __weak (non-trivial ownership), so we use
+/// __unsafe_unretained. This is safe because the frontend instance outlives
+/// its emulation thread — the instance is retained by the view controller.
+static __thread __unsafe_unretained PVThinLibretroFrontend *_thinCurrentTLS = nil;
 
 // ---------------------------------------------------------------------------
 // MARK: - Static C callbacks (bridge → ObjC instance)
@@ -235,7 +251,7 @@ static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
 static uintptr_t thin_hw_get_current_framebuffer(void) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return 0;
-    return (uintptr_t)self->_emuFBO;
+    return [self currentEmuFBO];
 }
 #endif
 
@@ -267,6 +283,12 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize biosPath = _biosPath;
 @synthesize savePath = _savePath;
 @synthesize frontendDelegate = _frontendDelegate;
+
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+- (uintptr_t)currentEmuFBO {
+    return (uintptr_t)_emuFBO;
+}
+#endif
 
 - (instancetype)init {
     if ((self = [super init])) {
@@ -716,14 +738,14 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
     int16_t buf[2] = {left, right};
-    [[self ringBufferAtIndex:0] write:buf maxLength:4];
+    [[self ringBufferAtIndex:0] write:buf size:4];
 }
 
 - (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames {
     if (self.frontendDelegate) {
         return [self.frontendDelegate libretroFrontend:self didEmitAudioBatch:data frames:frames];
     }
-    [[self ringBufferAtIndex:0] write:data maxLength:frames * 2 * sizeof(int16_t)];
+    [[self ringBufferAtIndex:0] write:data size:frames * 2 * sizeof(int16_t)];
     return frames;
 }
 
@@ -850,7 +872,8 @@ static bool thin_environment(unsigned cmd, void *data) {
             return (_savePath != nil);
         }
         case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:
-        case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY: {
+        /* RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY is the same value (30) */
+        {
             *(const char **)data = _biosPath.UTF8String;
             return (_biosPath != nil);
         }

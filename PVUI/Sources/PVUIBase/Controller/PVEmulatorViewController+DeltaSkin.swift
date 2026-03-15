@@ -1054,7 +1054,7 @@ extension PVEmulatorViewController {
         } else {
             gameId = ""
         }
-        let systemKey = game.system?.systemIdentifier.map { "ScreenFilter_System_\($0.rawValue)" }
+        let systemKey = game.system.map { "ScreenFilter_System_\($0.systemIdentifier.rawValue)" }
         let userFilterName: String?
         if gameId.isEmpty {
             // No game identifier — only consult the system-scoped key.

@@ -119,7 +119,7 @@ public extension PVEmulatorViewController {
         let completion = {
             self.core.setPauseEmulation(false)
             self.isShowingMenu = false
-            self.enableControllerInput(false)
+            self.enableControllerInput(true)  // re-enable input after load
         }
 
         do {

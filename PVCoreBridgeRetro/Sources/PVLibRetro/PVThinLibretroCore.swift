@@ -15,14 +15,19 @@ import Foundation
 import PVEmulatorCore
 import PVCoreBridge
 
+/// Internal to keep `PVEmulatorCore` out of the generated
+/// `PVCoreBridgeRetro-Swift.h` header (which would break every
+/// downstream ObjC core target). `@objc` ensures the class is
+/// registered with the ObjC runtime so `NSClassFromString` /
+/// `principleClass` lookups still work.
 @objc @objcMembers
-public class PVThinLibretroCore: PVEmulatorCore {
+class PVThinLibretroCore: PVEmulatorCore {
 
     // MARK: Lifecycle
 
-    public lazy var _bridge: PVThinLibretroFrontend = .init()
+    lazy var _bridge: PVThinLibretroFrontend = .init()
 
-    public required init() {
+    required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
