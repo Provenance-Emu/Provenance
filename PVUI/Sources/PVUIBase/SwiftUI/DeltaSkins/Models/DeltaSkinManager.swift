@@ -445,14 +445,16 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             DLOG("Deleting skin at: \(skin.fileURL.path)")
             try FileManager.default.removeItem(at: skin.fileURL)
 
-            // Update loadedSkins on main thread (it's @Published)
-            Task { @MainActor in
-                self.loadedSkins.removeAll { $0.identifier == identifier }
-                self.objectWillChange.send()
+            // Synchronously remove from lastScannedSkins on this queue so subsequent
+            // availableSkins()/skin(withIdentifier:) calls see the deletion immediately,
+            // before the full rescan below has completed.
+            self.lastScannedSkins.removeAll { $0.identifier == identifier }
 
-                // Scan to reload all skins
-                try self.scanForSkins()
-            }
+            // Rescan on this queue (not on MainActor) so all mutations to
+            // lastScannedSkins/hasScanned remain queue-confined and race-free.
+            // scanForSkins() dispatches the MainActor loadedSkins update internally.
+            self.hasScanned = false
+            try self.scanForSkins()
         }
     }
 }
