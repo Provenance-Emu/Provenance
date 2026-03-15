@@ -10,6 +10,7 @@ public struct DeltaSkinImportView: View {
     @State private var isImporting = false
     @State private var importError: String?
     @State private var importSuccess = false
+    @State private var validationResult: DeltaSkinValidationResult?
 
     public init() {}
 
@@ -107,12 +108,25 @@ public struct DeltaSkinImportView: View {
                 handleFileImport(result)
             }
             #endif
+            .sheet(item: $validationResult) { result in
+                NavigationStack {
+                    DeltaSkinValidationResultView(result: result)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("Dismiss") {
+                                    validationResult = nil
+                                }
+                            }
+                        }
+                }
+            }
         }
     }
 
     private func handleFileImport(_ result: Result<[URL], Error>) {
         importError = nil
         importSuccess = false
+        validationResult = nil
 
         switch result {
         case .success(let urls):
@@ -121,28 +135,39 @@ public struct DeltaSkinImportView: View {
                 return
             }
 
-            // Start importing
             isImporting = true
 
-            Task {
+            Task { @MainActor in
+                // Start security-scoped access so sandboxed reads succeed on imported URLs
+                let accessed = url.startAccessingSecurityScopedResource()
+                defer {
+                    if accessed { url.stopAccessingSecurityScopedResource() }
+                }
+
+                // Run ZIP-based validation off the main thread so large skins don't block UI
+                let validation = await Task.detached(priority: .userInitiated) {
+                    DeltaSkinValidator.validate(url: url)
+                }.value
+
+                if !validation.isValid {
+                    isImporting = false
+                    validationResult = validation
+                    return
+                }
+
                 do {
-                    // Import the skin
                     try await skinManager.importSkin(from: url)
-
-                    // Update UI on main thread
-                    await MainActor.run {
-                        isImporting = false
-                        importSuccess = true
-                        importError = nil
+                    isImporting = false
+                    importSuccess = true
+                    importError = nil
+                    // Show warnings (non-blocking) if any
+                    if !validation.warnings.isEmpty {
+                        validationResult = validation
                     }
-
-                    // Reload skins
                     await skinManager.reloadSkins()
                 } catch {
-                    await MainActor.run {
-                        isImporting = false
-                        importError = error.localizedDescription
-                    }
+                    isImporting = false
+                    importError = error.localizedDescription
                 }
             }
 

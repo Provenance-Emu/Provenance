@@ -312,6 +312,38 @@ private struct NumericValue: Codable {
     }
 }
 
+// MARK: - Haptic Feedback
+
+/// Per-button haptic feedback configuration embedded in a skin.
+public struct DeltaSkinHaptic: Codable, Equatable {
+    /// Whether haptic feedback is enabled for this button.
+    public let enabled: Bool
+
+    /// Optional intensity in the range 0.0–1.0. Nil means system default.
+    public let intensity: Double?
+
+    public init(enabled: Bool = true, intensity: Double? = nil) {
+        self.enabled = enabled
+        self.intensity = intensity
+    }
+}
+
+// MARK: - Background Animation
+
+/// Animated background configuration embedded in a skin representation.
+public struct DeltaSkinBackgroundAnimation: Codable, Equatable {
+    /// Animation style identifier (e.g. "parallax", "pulse", "scanlines").
+    public let type: String
+
+    /// Playback speed multiplier (1.0 = normal speed).
+    public let speed: Double?
+
+    public init(type: String, speed: Double? = nil) {
+        self.type = type
+        self.speed = speed
+    }
+}
+
 // MARK: - Keyboard Overlay
 
 /// Identifies which virtual keyboard layout to display for keyboard-based systems.

@@ -51,9 +51,12 @@ public final class DeltaSkinPreferences: ObservableObject {
     
     /// UserDefaults key for storing skin preferences
     private let preferencesKey = "com.provenance.deltaskin.preferences.v2"
-    
+
     /// UserDefaults key for storing game-specific skin preferences
     private let gamePreferencesKey = "com.provenance.deltaskin.game.preferences.v1"
+
+    /// UserDefaults key prefix for per-skin theme selection
+    private let themeKeyPrefix = "com.provenance.deltaskin.theme."
 
     private init() {
         loadPreferences()
@@ -153,6 +156,28 @@ public final class DeltaSkinPreferences: ObservableObject {
             }
         }
         saveGamePreferences()
+    }
+
+    // MARK: - Theme Selection
+
+    /// Get the selected theme ID for a skin.
+    /// - Parameter skinIdentifier: The skin's unique identifier.
+    /// - Returns: The selected theme ID, or nil if none selected (uses default).
+    public func selectedThemeId(for skinIdentifier: String) -> String? {
+        return UserDefaults.standard.string(forKey: themeKeyPrefix + skinIdentifier)
+    }
+
+    /// Set the selected theme ID for a skin, persisted in UserDefaults.
+    /// - Parameters:
+    ///   - id: The theme ID to select, or nil to revert to default.
+    ///   - skinIdentifier: The skin's unique identifier.
+    public func setSelectedThemeId(_ id: String?, for skinIdentifier: String) {
+        let key = themeKeyPrefix + skinIdentifier
+        if let id = id {
+            UserDefaults.standard.set(id, forKey: key)
+        } else {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
     }
 
     /// Load preferences from UserDefaults

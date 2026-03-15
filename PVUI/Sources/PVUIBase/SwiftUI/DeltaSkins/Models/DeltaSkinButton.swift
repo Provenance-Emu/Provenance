@@ -4,10 +4,10 @@ import CoreGraphics
 public enum DeltaSkinInput: Codable, Equatable {
     case single(String)
     case directional([String: String])
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        
+
         if let singleInput = try? container.decode(String.self) {
             self = .single(singleInput)
         } else if let directionalMap = try? container.decode([String: String].self) {
@@ -22,7 +22,7 @@ public enum DeltaSkinInput: Codable, Equatable {
             )
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -38,13 +38,13 @@ public enum DeltaSkinInput: Codable, Equatable {
 public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// Unique identifier for this button
     public let id: String
-    
+
     /// Input actions this button triggers
     public let input: DeltaSkinInput
-    
+
     /// Frame for the button (in relative 0-1 coordinates)
     public let frame: CGRect
-    
+
     /// Extended touch areas around the button
     public let extendedEdges: UIEdgeInsets?
 
@@ -122,10 +122,10 @@ public struct DeltaSkinButtonStates: Codable, Equatable {
 public struct DeltaSkinButtonGroup: Codable, Equatable {
     /// All button mappings in this group
     public let buttons: [DeltaSkinButton]
-    
+
     /// Extended touch areas for the entire group
     public let extendedEdges: UIEdgeInsets?
-    
+
     /// Whether buttons should be translucent
     public let translucent: Bool?
 }
@@ -134,16 +134,16 @@ public struct DeltaSkinButtonGroup: Codable, Equatable {
 public struct DeltaSkinButtonMapping: Identifiable {
     /// Unique identifier for the button
     public let id: String
-    
+
     /// Frame of the button in normalized coordinates (0-1)
     public let frame: CGRect?
-    
+
     /// Input identifiers associated with this button
     public let inputs: [String]
-    
+
     /// Extended edges for touch area
     public let extendedEdges: UIEdgeInsets?
-    
+
     /// Creates a button mapping
     public init(id: String, frame: CGRect?, inputs: [String], extendedEdges: UIEdgeInsets? = nil) {
         self.id = id
@@ -170,9 +170,9 @@ extension DeltaSkin {
         guard let representation = representation(for: traits) else {
             return []
         }
-        
+
         var mappings: [DeltaSkinButtonMapping] = []
-        
+
         // Check if the representation has items (newer format)
         if let items = representation.items {
             // Convert ItemRepresentation objects to button mappings
@@ -182,21 +182,21 @@ extension DeltaSkin {
                 }
             }
         }
-        
+
         // If we have no mappings, try to create some from the skin's layout
         if mappings.isEmpty {
             // Create standard button mappings based on the system type
             mappings.append(contentsOf: createStandardButtonMappings(for: traits))
         }
-        
+
         return mappings
     }
-    
+
     /// Create a button mapping from an ItemRepresentation
     private func createButtonMapping(from item: ItemRepresentation, index: Int) -> DeltaSkinButtonMapping? {
         // Get inputs
         var inputStrings: [String] = []
-        
+
         let inputs = item.inputs
         // Handle different input formats
         if let inputsDict = inputs as? [String: String] {
@@ -206,7 +206,7 @@ extension DeltaSkin {
             // Format: "inputs": ["a", "b"]
             inputStrings = inputsArray
         }
-        
+
         // Get frame
         let frame = item.frame
         let buttonFrame = CGRect(
@@ -215,8 +215,8 @@ extension DeltaSkin {
             width: frame.width,
             height: frame.height
         )
-        
-        
+
+
         // Get extended edges
         var extendedEdges: UIEdgeInsets?
         if let edges = item.extendedEdges {
@@ -227,7 +227,7 @@ extension DeltaSkin {
                 right: edges.right
             )
         }
-        
+
         // Create a unique ID for the button
         let buttonId: String
         if inputStrings.count == 1 {
@@ -237,7 +237,7 @@ extension DeltaSkin {
         } else {
             buttonId = "unknown_\(index)"
         }
-        
+
         // Create the button mapping
         return DeltaSkinButtonMapping(
             id: buttonId,
@@ -246,16 +246,16 @@ extension DeltaSkin {
             extendedEdges: extendedEdges
         )
     }
-    
+
     /// Create standard button mappings based on the system type
     private func createStandardButtonMappings(for traits: DeltaSkinTraits) -> [DeltaSkinButtonMapping] {
         var mappings: [DeltaSkinButtonMapping] = []
-        
+
         // Get the screen size
         guard let screenSize = representation(for: traits)?.mappingSize else {
             return []
         }
-        
+
         // Create a D-pad in the bottom left
         let dpadSize = min(screenSize.width, screenSize.height) * 0.25
         let dpadFrame = CGRect(
@@ -264,17 +264,17 @@ extension DeltaSkin {
             width: dpadSize,
             height: dpadSize
         )
-        
+
         mappings.append(DeltaSkinButtonMapping(
             id: "dpad",
             frame: dpadFrame,
             inputs: ["up", "down", "left", "right"]
         ))
-        
+
         // Create A/B buttons in the bottom right
         let buttonSize = dpadSize * 0.4
         let buttonSpacing = buttonSize * 0.3
-        
+
         // A button
         mappings.append(DeltaSkinButtonMapping(
             id: "a",
@@ -286,7 +286,7 @@ extension DeltaSkin {
             ),
             inputs: ["a"]
         ))
-        
+
         // B button
         mappings.append(DeltaSkinButtonMapping(
             id: "b",
@@ -298,7 +298,7 @@ extension DeltaSkin {
             ),
             inputs: ["b"]
         ))
-        
+
         // Start button
         mappings.append(DeltaSkinButtonMapping(
             id: "start",
@@ -310,7 +310,7 @@ extension DeltaSkin {
             ),
             inputs: ["start"]
         ))
-        
+
         // Select button
         mappings.append(DeltaSkinButtonMapping(
             id: "select",
@@ -322,7 +322,7 @@ extension DeltaSkin {
             ),
             inputs: ["select"]
         ))
-        
+
         return mappings
     }
 }
