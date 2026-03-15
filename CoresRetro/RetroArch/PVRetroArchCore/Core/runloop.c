@@ -1422,9 +1422,18 @@ bool runloop_environment_cb(unsigned cmd, void *data)
 
             if (!var->value)
             {
-               RARCH_ERR("[Environ]: GET_VARIABLE: %s - %s.\n",
-                     var->key, "Invalid value");
-               return true;
+               /* Provenance: supply safe defaults for keys that crash when NULL */
+               if (var->key && strcmp(var->key, "hatari_boot_hd") == 0)
+               {
+                  RARCH_WARN("[Environ]: GET_VARIABLE: %s had no valid value, defaulting to \"disabled\"\n", var->key);
+                  var->value = "disabled";
+               }
+               else
+               {
+                  RARCH_ERR("[Environ]: GET_VARIABLE: %s - %s.\n",
+                        var->key, "Invalid value");
+                  return true;
+               }
             }
 
             RARCH_DBG("[Environ]: GET_VARIABLE: %s = \"%s\"\n",
