@@ -143,14 +143,19 @@ struct DeltaSkinScreenPositionWrapper: View {
 
                 // Enforce native aspect ratio for pixel-coordinate skins too (e.g. GameGear).
                 // Priority: emulator-core AR → per-screen JSON override → system JSON registry → 4:3.
-                if smallestScreen.screen.maintainAspectRatio {
-                    let skinScreenAR: CGFloat? = smallestScreen.screen.nativeResolution.flatMap { res in
+                func resolvedNativeAspectRatio(for skinScreen: DeltaSkinScreen) -> CGFloat {
+                    let skinScreenAR: CGFloat? = skinScreen.nativeResolution.flatMap { res in
                         guard res.height > 0, res.width > 0 else { return nil }
                         let ar = res.width / res.height
                         return ar.isFinite ? ar : nil
                     }
                     let candidateAR = screenAspectRatio ?? skinScreenAR ?? DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
                     let nativeAR = candidateAR.isFinite && candidateAR > 0 ? candidateAR : 4.0 / 3.0
+                    return nativeAR
+                }
+
+                if smallestScreen.screen.maintainAspectRatio {
+                    let nativeAR = resolvedNativeAspectRatio(for: smallestScreen.screen)
                     fallbackFrame = fallbackFrame.fitting(aspectRatio: nativeAR)
                     DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) to fallback-normed frame → \(fallbackFrame)")
                 }
