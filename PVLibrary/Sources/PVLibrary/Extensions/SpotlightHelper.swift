@@ -26,8 +26,8 @@ public class SpotlightHelper {
     public static let shared = SpotlightHelper()
     
     /// Domain identifier for all Provenance items
-    private let domainIdentifier = "org.provenance-emu.games"
-    
+    public static let domainIdentifier = "org.provenance-emu.games"
+
     private init() {}
     
     /// Force reindex all Provenance content in Spotlight
@@ -40,7 +40,7 @@ public class SpotlightHelper {
         let searchableIndex = CSSearchableIndex.default()
         
         // Delete all Provenance items from the index first
-        searchableIndex.deleteSearchableItems(withDomainIdentifiers: [domainIdentifier]) { [weak self] error in
+        searchableIndex.deleteSearchableItems(withDomainIdentifiers: [SpotlightHelper.domainIdentifier]) { [weak self] error in
             guard let self = self else { return }
             
             if let error = error {
@@ -122,7 +122,7 @@ public class SpotlightHelper {
             // Create the searchable item
             let item = CSSearchableItem(
                 uniqueIdentifier: "org.provenance-emu.game.\(frozenGame.md5Hash)",
-                domainIdentifier: domainIdentifier,
+                domainIdentifier: SpotlightHelper.domainIdentifier,
                 attributeSet: attributeSet
             )
             
@@ -209,7 +209,7 @@ public class SpotlightHelper {
             // Create searchable item
             let item = CSSearchableItem(
                 uniqueIdentifier: "org.provenance-emu.savestate.\(frozenSaveState.id)",
-                domainIdentifier: domainIdentifier,
+                domainIdentifier: SpotlightHelper.domainIdentifier,
                 attributeSet: attributeSet
             )
             

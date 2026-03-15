@@ -208,7 +208,9 @@ public extension PVGame {
         activity.requiredUserInfoKeys = ["md5"]
         activity.isEligibleForSearch = true
         activity.isEligibleForHandoff = true
+        #if !os(tvOS)
         activity.isEligibleForPrediction = true
+        #endif
 
         #if os(iOS)
         activity.persistentIdentifier = spotlightUniqueIdentifier

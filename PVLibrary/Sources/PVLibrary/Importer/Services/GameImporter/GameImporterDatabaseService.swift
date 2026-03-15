@@ -422,7 +422,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
                     // Re-index in Spotlight with updated metadata/artwork (#2980)
                     #if canImport(CoreSpotlight) && !os(tvOS)
-                    tempService.indexGameInSpotlight(frozenForSwiftData)
+                    await tempService.indexGameInSpotlight(frozenForSwiftData)
                     #endif
                     DLOG("finishUpdateOrImport: Completed deferred getUpdatedGameInfo for: \(finalGame.romPath)")
                 } catch {
@@ -471,7 +471,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
                     // Re-index in Spotlight with new artwork thumbnail (#2980)
                     #if canImport(CoreSpotlight) && !os(tvOS)
-                    tempService.indexGameInSpotlight(frozenArtwork)
+                    await tempService.indexGameInSpotlight(frozenArtwork)
                     #endif
                     DLOG("finishUpdateOrImport: Completed async artwork download for: \(updatedGame.romPath)")
                 } catch {
@@ -863,13 +863,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         // Index the newly-imported game in Spotlight so it surfaces immediately
         // in Siri / Spotlight search without waiting for the next full reindex.
         #if canImport(CoreSpotlight) && !os(tvOS)
-        indexGameInSpotlight(frozenGame)
+        await indexGameInSpotlight(frozenGame)
         #endif
     }
 
     #if canImport(CoreSpotlight) && !os(tvOS)
     /// Index a single game in CoreSpotlight so it appears in Siri / Spotlight search.
-    private func indexGameInSpotlight(_ game: PVGame) {
+    private func indexGameInSpotlight(_ game: PVGame) async {
         guard !game.md5Hash.isEmpty else {
             WLOG("Spotlight: Skipping game with empty md5Hash: \(game.title)")
             return
@@ -877,20 +877,18 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         let attributeSet = game.spotlightContentSet
         let uniqueIdentifier = game.spotlightUniqueIdentifier
-        let domainIdentifier = "org.provenance-emu.games"
 
         let item = CSSearchableItem(
             uniqueIdentifier: uniqueIdentifier,
-            domainIdentifier: domainIdentifier,
+            domainIdentifier: SpotlightHelper.domainIdentifier,
             attributeSet: attributeSet
         )
 
-        CSSearchableIndex.default().indexSearchableItems([item]) { error in
-            if let error = error {
-                ELOG("Spotlight: Error indexing game '\(game.title)': \(error)")
-            } else {
-                DLOG("Spotlight: Indexed game '\(game.title)' (\(uniqueIdentifier))")
-            }
+        do {
+            try await CSSearchableIndex.default().indexSearchableItems([item])
+            DLOG("Spotlight: Indexed game '\(game.title)' (\(uniqueIdentifier))")
+        } catch {
+            ELOG("Spotlight: Error indexing game '\(game.title)': \(error)")
         }
     }
     #endif
