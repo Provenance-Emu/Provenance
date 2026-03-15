@@ -5574,8 +5574,6 @@
 			<dict>
 				<key>Description</key>
 				<string>TOS 1.02 US Boot Image (alternate filename)</string>
-				<key>MD5</key>
-				<string>c1c57ce48e8ee4135885cee9e63a68a2</string>
 				<key>Name</key>
 				<string>tos102.img</string>
 				<key>Optional</key>

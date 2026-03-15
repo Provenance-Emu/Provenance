@@ -261,6 +261,26 @@ int argc =  1;
 @property (nonatomic, assign) BOOL useCustomRenderViewLayout;
 @end
 
+/// All known TOS ROM filenames, in preference order.
+/// The canonical name for Hatari is tos.img; the remaining entries are alternate names
+/// that users may import.  Both the post-sync repair loop and the alternate-name BIOS
+/// lookup derive their lists from this single source of truth.
+static NSArray<NSString *> *TOSAllFilenames(void) {
+    static NSArray<NSString *> *names;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        names = @[
+            @"tos.img",
+            @"tos100.img",  @"tos100de.img",
+            @"tos102.img",  @"tos102us.img", @"tos102uk.img", @"tos102de.img",
+            @"tos104.img",  @"tos104de.img", @"tos104uk.img",
+            @"tos106.img",  @"tos162.img",   @"tos206.img",
+            @"emutos1m.img",
+        ];
+    });
+    return names;
+}
+
 @implementation PVRetroArchCoreBridge (RetroArchUI)
 
 - (void)setShowFPSCounterVisible:(BOOL)visible {
@@ -388,7 +408,8 @@ int argc =  1;
 
 /// Final TOS validation before Hatari launches.
 /// Checks that at least one of the two expected TOS paths exists, is large enough,
-/// and has a valid (or at least non-zero) load address.  Logs a clear error if not.
+/// and has a load address matching one of the three known-good values
+/// (0x00FC0000, 0x00E00000, or 0x00E80000).  Logs a clear error if not.
 - (void)validateTOSReadyOrLog:(NSString *)primaryPath fallback:(NSString *)fallbackPath {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *usablePath = nil;
@@ -400,7 +421,8 @@ int argc =  1;
     }
     if (!usablePath) {
         ELOG(@"HATARI BOOT WILL FAIL: No TOS ROM found at %@ or %@. "
-             @"Import a TOS ROM (tos.img) via the BIOS import screen.", primaryPath, fallbackPath);
+             @"Import a TOS ROM (tos.img, tos102.img, tos100.img, or any other supported "
+             @"TOS variant) via the BIOS import screen.", primaryPath, fallbackPath);
         return;
     }
 
@@ -489,12 +511,7 @@ int argc =  1;
         // Repair ALL known TOS filenames in both directories, not just tos.img.
         // Users may import TOS ROMs with variant filenames (tos102.img, tos100.img, etc.)
         // that syncResources copies without byte-swap correction.
-        NSArray<NSString *> *tosFilenames = @[@"tos.img", @"tos100.img", @"tos100de.img",
-                                               @"tos102.img", @"tos102uk.img",
-                                               @"tos104.img", @"tos104de.img", @"tos104uk.img",
-                                               @"tos106.img", @"tos162.img", @"tos206.img",
-                                               @"emutos1m.img"];
-        for (NSString *tosName in tosFilenames) {
+        for (NSString *tosName in TOSAllFilenames()) {
             for (NSString *dir in @[systemDir, hatariSubDir]) {
                 NSString *tosPath = [dir stringByAppendingPathComponent:tosName];
                 [self repairTOSImageAtPath:tosPath];
@@ -832,14 +849,8 @@ void extract_bundles();
         /// and the BIOS import system may store them under those names.  We accept any of
         /// them and copy as tos.img for Hatari.
         if (![fm fileExistsAtPath:biosTosPath]) {
-            NSArray<NSString *> *alternateTosNames = @[
-                @"tos102.img", @"tos102us.img",
-                @"tos100.img", @"tos100de.img",
-                @"tos102uk.img", @"tos102de.img",
-                @"tos104.img", @"tos104de.img", @"tos104uk.img",
-                @"tos106.img", @"tos162.img", @"tos206.img",
-                @"emutos1m.img",
-            ];
+            // Skip index 0 ("tos.img") — we already know it's absent; check all alternate names.
+            NSArray<NSString *> *alternateTosNames = [TOSAllFilenames() subarrayWithRange:NSMakeRange(1, TOSAllFilenames().count - 1)];
             for (NSString *altName in alternateTosNames) {
                 NSString *altPath = [self.BIOSPath stringByAppendingPathComponent:altName];
                 if ([fm fileExistsAtPath:altPath]) {
