@@ -121,6 +121,10 @@ No ads, no tracking, no required account — free forever when sideloaded or bui
 
 ---
 
+> 💜 **Provenance is and always will be free.** If it's brought you joy, [support development](https://provenance-emu.com/plus/) — Provenance Plus ($3.99/mo) adds iCloud sync across all devices, TestFlight beta access, and priority support. [GitHub Sponsors](https://github.com/sponsors/JoeMatt) · [Patreon](https://patreon.com/provenance) · [Buy Me a Coffee](https://buymeacoffee.com/joemattiello)
+
+---
+
 ## 🎮 Systems Supported
 
 <details>
@@ -290,6 +294,48 @@ We welcome bug fixes, features, documentation, and testing.
 3. Fork → branch → PR against `develop`
 
 💬 For discussion and community help: [Discord](https://discord.gg/4TK7PU5) · [@provenanceapp](https://x.com/provenanceapp) · [r/Provenance](https://www.reddit.com/r/Provenance/)
+
+---
+
+## ❤️ Support Provenance
+
+Provenance has been **free and open-source since 2016**. If it's brought you joy, please consider supporting ongoing development — every contribution keeps the project alive and improving.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 📱 Provenance Plus — In-App
+The best way to support us while unlocking premium features:
+
+| Plan | Price | Perks |
+|------|-------|-------|
+| Monthly | $3.99 / mo | iCloud sync, priority support |
+| Annual | $39.99 / yr | All above + savings |
+| Lifetime | $99.99 one-time | All above, forever |
+| Apple TV | **Free** | CloudKit sync always free on tvOS |
+
+**[Get Provenance Plus →](https://provenance-emu.com/plus/)**
+
+</td>
+<td width="50%" valign="top">
+
+### 💸 One-Time & Recurring Donations
+
+| Platform | Link | Notes |
+|----------|------|-------|
+| ⭐ GitHub Sponsors | [github.com/sponsors/JoeMatt](https://github.com/sponsors/JoeMatt) | Listed in README |
+| 🎨 Patreon | [patreon.com/provenance](https://www.patreon.com/provenance) | TestFlight beta queue |
+| ☕ Buy Me a Coffee | [buymeacoffee.com/joemattiello](https://buymeacoffee.com/joemattiello) | Quick one-time support |
+| 🤝 Open Collective | [opencollective.com/provenanceemu](https://opencollective.com/provenanceemu) | Transparent org funding |
+
+</td>
+</tr>
+</table>
+
+> 🏆 **GitHub Sponsors** are automatically recognized in the [Sponsors](#sponsors) section of this README.<br>
+> 🎮 **Patreon supporters** get a dedicated TestFlight invitation queue — more slots, earlier access.<br>
+> 💜 Every dollar goes directly toward development, infrastructure, and keeping Provenance free.
 
 ---
 
