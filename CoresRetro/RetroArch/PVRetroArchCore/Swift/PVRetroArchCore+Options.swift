@@ -712,6 +712,18 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValuesFile = "MAME/MAME.opt"
                 optionOverwrite = true
             }
+            if coreIdentifier.contains("hatari") || self.systemIdentifier?.lowercased().contains("atarist") == true {
+                /// hatari_boot_hd must be "false" (not "disabled") to prevent the core from
+                /// passing --acsi "" to the Hatari binary when no HD image is configured.
+                /// This file is written to the per-core options path that RetroArch reads for
+                /// GET_VARIABLE calls; the main appendconfig (opt.cfg) is NOT used for core vars.
+                /// optionOverwrite is left false so that existing user-configured options are
+                /// preserved; stale "hatari_boot_hd = disabled" values are repaired in-place by
+                /// the Obj-C write path when the file already exists.
+                optionValues += "hatari_boot_hd = \"false\"\n"
+                optionValuesFile = "Hatari/Hatari.opt"
+                optionOverwrite = false
+            }
             if (coreIdentifier.contains("dosbox")) {
                 optionValues += "dosbox_pure_mouse_input = \"pad\"\n"
                 optionValues += "dosbox_pure_midi = \"enabled\"\n"

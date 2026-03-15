@@ -801,6 +801,49 @@ void extract_bundles();
         } else {
             ELOG(@"TOS image not found in BIOS directory: %@", biosTosPath);
         }
+
+        /// In-place byte repair for stale system TOS files.
+        /// Even when no BIOS tos.img is available (or the write above was skipped),
+        /// existing system files may still carry the broken byte-swapped address from a
+        /// prior install or a manual copy.  Scan both paths and repair on every boot so
+        /// users with a pre-existing broken file are automatically fixed without needing
+        /// to re-copy the BIOS.
+        for (NSString *tosPath in @[tosImagePath, hatariTosPath]) {
+            if (![fm fileExistsAtPath:tosPath]) continue;
+            NSError *inPlaceReadErr = nil;
+            NSData *existingTos = [NSData dataWithContentsOfFile:tosPath
+                                                         options:NSDataReadingMappedIfSafe
+                                                           error:&inPlaceReadErr];
+            if (inPlaceReadErr || !existingTos || existingTos.length < 12) continue;
+            const unsigned char *eb = (const unsigned char *)existingTos.bytes;
+            if (eb[0] == 0x50 && eb[1] == 0x4B) continue; // ZIP — skip
+            uint32_t eAddr = ((uint32_t)eb[11])       |
+                             ((uint32_t)eb[10] <<  8) |
+                             ((uint32_t)eb[9]  << 16) |
+                             ((uint32_t)eb[8]  << 24);
+            BOOL eAddrValid = (eAddr == 0x00FC0000 || eAddr == 0x00E00000 || eAddr == 0x00E80000);
+            if (eAddrValid) continue; // already correct
+            uint32_t fixAddr = 0;
+            if (eAddr == 0x0000FC00) fixAddr = 0x00FC0000;
+            if (eAddr == 0x0000E000) fixAddr = 0x00E00000;
+            if (eAddr == 0x0000E800) fixAddr = 0x00E80000; // bytes[9] and bytes[10] swapped
+            if (fixAddr == 0) {
+                WLOG(@"TOS in-place repair: unrecognised address 0x%08X in %@ — skipping", eAddr, tosPath);
+                continue;
+            }
+            NSMutableData *fixedTos = [existingTos mutableCopy];
+            unsigned char *fb = (unsigned char *)fixedTos.mutableBytes;
+            fb[8]  = (fixAddr >> 24) & 0xFF;
+            fb[9]  = (fixAddr >> 16) & 0xFF;
+            fb[10] = (fixAddr >>  8) & 0xFF;
+            fb[11] = (fixAddr      ) & 0xFF;
+            NSError *fixWriteErr = nil;
+            if ([fixedTos writeToFile:tosPath options:NSDataWritingAtomic error:&fixWriteErr]) {
+                ILOG(@"In-place TOS repair: %@ (0x%08X → 0x%08X)", tosPath, eAddr, fixAddr);
+            } else {
+                ELOG(@"In-place TOS repair failed for %@: %@", tosPath, fixWriteErr.localizedDescription);
+            }
+        }
     }
 
     /// Update hatari.cfg with dynamic paths.
@@ -881,15 +924,9 @@ void extract_bundles();
                [NSString stringWithFormat:@"system_directory = \"%@\"\n", systemDirectory]];
     ILOG(@"System directory set to: %@", systemDirectory);
 
-    /// Hatari/AtariST core option: disable ACSI hard-disk boot so the core does not pass
-    /// "--acsi <empty>" to Hatari when no HD image is configured.  The Hatari libretro core
-    /// queries "hatari_boot_hd" via GET_VARIABLE; if the value is invalid or missing the core
-    /// defaults to passing an empty --acsi argument which causes Hatari to print an error and
-    /// (on some builds) refuse to start.  Setting "disabled" here prevents that code path.
-    if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
-        content = [content stringByAppendingString:@"hatari_boot_hd = \"disabled\"\n"];
-        ILOG(@"Hatari: hatari_boot_hd set to disabled to prevent empty --acsi argument.");
-    }
+    /// NOTE: hatari_boot_hd is NOT set here.  Core variables must be written to the
+    /// per-core options file (Hatari/Hatari.opt), not to the main appendconfig (opt.cfg).
+    /// PVRetroArchCore+Options.swift writes hatari_boot_hd = "false" to Hatari/Hatari.opt.
 
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
@@ -906,6 +943,44 @@ void extract_bundles();
                                     encoding:NSStringEncodingConversionAllowLossy
                                         error:nil];
             ILOG(@"Core option config written to %@", fileName);
+        } else if ([self.coreIdentifier containsString:@"hatari"] ||
+                   [self.systemIdentifier containsString:@"atarist"]) {
+            /// The Hatari opts file already exists — do a targeted in-place key repair so we
+            /// never wipe user-configured options.  Replace the stale "disabled" value with
+            /// the required "false"; if the key is absent entirely, append it.
+            NSError *hatariReadErr = nil;
+            NSString *existing = [NSString stringWithContentsOfFile:fileName
+                                                           encoding:NSUTF8StringEncoding
+                                                              error:&hatariReadErr];
+            if (!hatariReadErr && existing) {
+                NSString *stale = @"hatari_boot_hd = \"disabled\"";
+                NSString *correct = @"hatari_boot_hd = \"false\"";
+                NSString *updated = nil;
+                if ([existing containsString:stale]) {
+                    updated = [existing stringByReplacingOccurrencesOfString:stale
+                                                                  withString:correct];
+                    ILOG(@"Hatari opts: repaired stale hatari_boot_hd value in %@", fileName);
+                } else if (![existing containsString:@"hatari_boot_hd"]) {
+                    BOOL needsNewline = ![existing hasSuffix:@"\n"] && ![existing hasSuffix:@"\r"];
+                    if (needsNewline) {
+                        updated = [existing stringByAppendingFormat:@"\n%@\n", correct];
+                    } else {
+                        updated = [existing stringByAppendingFormat:@"%@\n", correct];
+                    }
+                    ILOG(@"Hatari opts: appended missing hatari_boot_hd key to %@", fileName);
+                }
+                if (updated) {
+                    NSError *hatariWriteErr = nil;
+                    [updated writeToFile:fileName
+                              atomically:YES
+                                encoding:NSUTF8StringEncoding
+                                   error:&hatariWriteErr];
+                    if (hatariWriteErr) {
+                        ELOG(@"Hatari opts repair write failed for %@: %@",
+                             fileName, hatariWriteErr.localizedDescription);
+                    }
+                }
+            }
         }
     } else if (self.coreOptionConfig.length > 0) {
         content=[content stringByAppendingString:self.coreOptionConfig];
