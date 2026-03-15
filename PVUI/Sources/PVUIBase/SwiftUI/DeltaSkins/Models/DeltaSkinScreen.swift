@@ -1,12 +1,6 @@
 import CoreGraphics
 import CoreImage
 
-// MARK: - Legacy coordinate reference size
-// Many legacy skins (GBA, GameGear, etc.) encode outputFrame in pixel coordinates
-// relative to this canonical mapping canvas.
-private let legacyReferenceWidth: CGFloat = 480
-private let legacyReferenceHeight: CGFloat = 320
-
 // MARK: - System native resolutions
 
 /// Maps DeltaSkinGameType values to their hardware framebuffer dimensions.
@@ -77,16 +71,19 @@ public struct DeltaSkinScreen: Identifiable, Codable {
     /// For DS bottom screen: CGRect(x: 0, y: 192, width: 256, height: 192)
     public let inputFrame: CGRect?
 
-    /// Frame to display the screen content, **always in normalised 0–1 coordinates**.
+    /// Frame to display the screen content, as decoded from the skin JSON.
     ///
-    /// Legacy skins (GBA, GameGear, …) encode `outputFrame` as absolute pixel
-    /// coordinates on a 480×320 canvas.  During decoding those values are
-    /// automatically divided by (480, 320) so callers always receive a 0–1 frame.
-    /// The original JSON value is preserved in `rawOutputFrame`.
+    /// Values may be in 0–1 normalised space (modern skins) or absolute pixel
+    /// coordinates relative to the representation's `mappingSize` (most skins).
+    /// Callers that need a normalised frame must divide by `mappingSize` themselves
+    /// (see `DeltaSkinScreenPositionWrapper` and `PVEmulatorViewController`).
+    ///
+    /// The raw JSON value is also preserved in `rawOutputFrame` for round-trip
+    /// encoding fidelity.
     public let outputFrame: CGRect?
 
-    /// The un-normalised value as it appears in the skin JSON.
-    /// May be in 0–1 space (modern skins) or absolute pixels (legacy skins).
+    /// The value as it appears in the skin JSON — identical to `outputFrame`.
+    /// Kept for API compatibility and explicit round-trip encoding.
     public let rawOutputFrame: CGRect?
 
     /// Screen placement type (controller or game)
@@ -121,7 +118,7 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         self.id = id
         self.inputFrame = inputFrame
         self.rawOutputFrame = outputFrame
-        self.outputFrame = DeltaSkinScreen.normaliseOutputFrame(outputFrame)
+        self.outputFrame = outputFrame
         self.placement = placement
         self.filters = filters
         self.filterInfos = filterInfos
@@ -143,7 +140,7 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         inputFrame = try container.decodeIfPresent(CGRect.self, forKey: .inputFrame)
         let decoded = try container.decodeIfPresent(CGRect.self, forKey: .outputFrame)
         rawOutputFrame = decoded
-        outputFrame = DeltaSkinScreen.normaliseOutputFrame(decoded)
+        outputFrame = decoded
         placement = try container.decode(DeltaSkinScreenPlacement.self, forKey: .placement)
         maintainAspectRatio = try container.decodeIfPresent(Bool.self, forKey: .maintainAspectRatio) ?? true
 
@@ -165,8 +162,7 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encodeIfPresent(inputFrame, forKey: .inputFrame)
-        // Encode the raw (pre-normalisation) frame so round-tripped skins remain valid
-        try container.encodeIfPresent(rawOutputFrame ?? outputFrame, forKey: .outputFrame)
+        try container.encodeIfPresent(outputFrame, forKey: .outputFrame)
         try container.encode(placement, forKey: .placement)
         try container.encode(maintainAspectRatio, forKey: .maintainAspectRatio)
         // Re-encode the original FilterInfo specs so round-tripped skins remain valid.
@@ -176,32 +172,6 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         try container.encodeIfPresent(filterInfos, forKey: .filters)
     }
 
-    // MARK: - Private helpers
-
-    /// Detect and normalise legacy pixel-coordinate `outputFrame` values.
-    ///
-    /// A frame is considered to be in legacy pixel space when **any** of its
-    /// four components (x, y, width, height) is greater than 1.0.  Such frames
-    /// are divided by the legacy reference dimensions (480 × 320) so that the
-    /// result lies in the normalised 0–1 space expected by the rest of the UI.
-    ///
-    /// Frames that are already fully in the 0–1 range are returned unchanged.
-    static func normaliseOutputFrame(_ frame: CGRect?) -> CGRect? {
-        guard let frame else { return nil }
-
-        // Already normalised – all four components are within [0, 1]
-        guard frame.origin.x > 1.0 || frame.origin.y > 1.0 ||
-              frame.size.width > 1.0 || frame.size.height > 1.0 else {
-            return frame
-        }
-
-        return CGRect(
-            x: frame.origin.x / legacyReferenceWidth,
-            y: frame.origin.y / legacyReferenceHeight,
-            width: frame.size.width / legacyReferenceWidth,
-            height: frame.size.height / legacyReferenceHeight
-        )
-    }
 }
 
 public enum DeltaSkinScreenPlacement: String, Codable {

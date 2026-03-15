@@ -481,25 +481,21 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         return nil
     }
 
-    /// Normalize frame to 0-1 coordinates
+    /// Normalize frame to 0-1 coordinates using mappingSize.
+    /// Returns the frame unchanged when all four components are already in [0, 1].
     private func normalizeFrame(_ frame: CGRect, mappingSize: CGSize) -> CGRect {
-        // If already normalized (values <= 1.0), return as-is
-        if frame.width <= 1.0 && frame.height <= 1.0 {
+        // Already normalised — all components within [0, 1]
+        guard frame.origin.x > 1.0 || frame.origin.y > 1.0 ||
+              frame.size.width > 1.0 || frame.size.height > 1.0 else {
             return frame
         }
-
-        // If clearly absolute pixels (large values), normalize
-        if frame.width > 10.0 || frame.height > 10.0 {
-            guard mappingSize.width > 0 && mappingSize.height > 0 else { return frame }
-            return CGRect(
-                x: frame.minX / mappingSize.width,
-                y: frame.minY / mappingSize.height,
-                width: frame.width / mappingSize.width,
-                height: frame.height / mappingSize.height
-            )
-        }
-
-        return frame
+        guard mappingSize.width > 0 && mappingSize.height > 0 else { return frame }
+        return CGRect(
+            x: frame.minX / mappingSize.width,
+            y: frame.minY / mappingSize.height,
+            width: frame.width / mappingSize.width,
+            height: frame.height / mappingSize.height
+        )
     }
 
     // MARK: - Frame Application (Simplified)

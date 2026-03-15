@@ -1780,6 +1780,120 @@ struct DeltaSkinComponentTests {
       
     }
 
+    // MARK: - DeltaSkinScreen normalization tests
+
+    /// Legacy pixel-space outputFrame (480×320 reference) is preserved as-is; the
+    /// wrapper normalises it using the representation's mappingSize, not a hard-coded
+    /// 480×320 constant.  This test verifies that decoding does NOT silently change
+    /// the raw frame values.
+    @Test("DeltaSkinScreen stores outputFrame as raw pixel values without normalisation")
+    func deltaSkinScreenPreservesRawOutputFrame() throws {
+        let json = """
+        {
+            "name": "Legacy GG Skin",
+            "identifier": "com.test.gg",
+            "gameTypeIdentifier": "com.rileytestut.delta.game.gg",
+            "debug": false,
+            "representations": {
+                "iphone": {
+                    "standard": {
+                        "portrait": {
+                            "assets": { "resizable": "portrait.pdf" },
+                            "screens": [{
+                                "inputFrame": {"x":0,"y":0,"width":160,"height":144},
+                                "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+                                "placement": "controller"
+                            }],
+                            "mappingSize": {"width":480,"height":320}
+                        }
+                    }
+                }
+            }
+        }
+        """
+        let info = try JSONDecoder().decode(DeltaSkin.Info.self, from: json.data(using: .utf8)!)
+        let screen = info.representations[.iphone]?.standard?["portrait"]?.screens?.first
+
+        // outputFrame must NOT be divided by any legacy reference — raw pixel value expected
+        #expect(screen?.outputFrame?.width == 320)
+        #expect(screen?.outputFrame?.height == 211)
+        // rawOutputFrame must equal outputFrame (both store the JSON value unchanged)
+        #expect(screen?.rawOutputFrame?.width == screen?.outputFrame?.width)
+        #expect(screen?.rawOutputFrame?.height == screen?.outputFrame?.height)
+    }
+
+    /// Skins that encode outputFrame relative to a non-480×320 mappingSize must not
+    /// have their coordinates corrupted by a hard-coded legacy divisor.
+    @Test("DeltaSkinScreen preserves mappingSize-relative pixel outputFrame")
+    func deltaSkinScreenPreservesMappingSizeRelativeFrame() throws {
+        let json = """
+        {
+            "name": "Modern GBA Skin",
+            "identifier": "com.test.gba",
+            "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+            "debug": false,
+            "representations": {
+                "iphone": {
+                    "standard": {
+                        "portrait": {
+                            "assets": { "resizable": "portrait.pdf" },
+                            "screens": [{
+                                "inputFrame": {"x":0,"y":0,"width":240,"height":160},
+                                "outputFrame": {"x":0,"y":50,"width":414,"height":276},
+                                "placement": "controller"
+                            }],
+                            "mappingSize": {"width":414,"height":896}
+                        }
+                    }
+                }
+            }
+        }
+        """
+        let info = try JSONDecoder().decode(DeltaSkin.Info.self, from: json.data(using: .utf8)!)
+        let screen = info.representations[.iphone]?.standard?["portrait"]?.screens?.first
+
+        // outputFrame must be preserved exactly as specified in the JSON
+        #expect(screen?.outputFrame?.width == 414)
+        #expect(screen?.outputFrame?.height == 276)
+        #expect(screen?.outputFrame?.origin.y == 50)
+    }
+
+    /// `maintainAspectRatio` should default to `true` when absent from JSON.
+    @Test("DeltaSkinScreen maintainAspectRatio defaults to true")
+    func deltaSkinScreenMaintainAspectRatioDefaults() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+            "placement": "controller"
+        }
+        """
+        let screen = try JSONDecoder().decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+        #expect(screen.maintainAspectRatio == true)
+    }
+
+    /// `maintainAspectRatio` must round-trip correctly through encode → decode.
+    @Test("DeltaSkinScreen maintainAspectRatio round-trips through encode/decode")
+    func deltaSkinScreenMaintainAspectRatioRoundTrips() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+            "placement": "controller",
+            "maintainAspectRatio": false
+        }
+        """
+        let screen = try JSONDecoder().decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+        #expect(screen.maintainAspectRatio == false)
+
+        // Encode and decode again to verify round-trip
+        let encoded = try JSONEncoder().encode(screen)
+        let decoded = try JSONDecoder().decode(DeltaSkinScreen.self, from: encoded)
+        #expect(decoded.maintainAspectRatio == false)
+        #expect(decoded.outputFrame?.width == 320)
+        #expect(decoded.outputFrame?.height == 211)
+    }
+
     private func sanitizeJSON(_ data: Data) throws -> Data {
         guard let jsonString = String(data: data, encoding: .utf8) else {
             throw TestError("Invalid JSON data")

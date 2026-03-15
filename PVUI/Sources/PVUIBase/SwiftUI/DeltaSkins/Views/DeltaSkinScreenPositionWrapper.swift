@@ -97,13 +97,12 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
-            // outputFrame is now always normalised to 0-1 space by DeltaSkinScreen.normaliseOutputFrame().
-            // Legacy pixel-coord frames (e.g. GameGear skins targeting a 480×320 canvas) are
-            // divided by (480, 320) at decode time, so no further conversion is needed here.
-            // We keep a secondary check against mappingSize as a defensive fallback for any
-            // frames that may have bypassed normalisation.
-            let needsFallbackNorm = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
-                                    (outputFrame.width > 10.0 || outputFrame.height > 10.0)
+            // outputFrame is stored as decoded from the skin JSON — it may be in pixel
+            // coordinates relative to mappingSize (most skins) or in 0–1 normalised space
+            // (modern skins where all components are ≤ 1.0).
+            // We normalise here using mappingSize whenever any component exceeds 1.0.
+            let needsFallbackNorm = outputFrame.origin.x > 1.0 || outputFrame.origin.y > 1.0 ||
+                                    outputFrame.width > 1.0 || outputFrame.height > 1.0
 
             if needsFallbackNorm {
                 DLOG("🎮 SKIN: Fallback normalisation applied to outputFrame: \(outputFrame), mappingSize: \(mappingSize)")
@@ -177,10 +176,9 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
-            // outputFrame is normalised by DeltaSkinScreen.normaliseOutputFrame() at decode time.
-            // Apply a fallback normalisation for frames that may have bypassed that path.
-            let needsFallbackNorm = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
-                                    (outputFrame.width > 10.0 || outputFrame.height > 10.0)
+            // Normalise using mappingSize whenever any component exceeds 1.0.
+            let needsFallbackNorm = outputFrame.origin.x > 1.0 || outputFrame.origin.y > 1.0 ||
+                                    outputFrame.width > 1.0 || outputFrame.height > 1.0
 
             if needsFallbackNorm {
                 DLOG("🎮 SKIN: Fallback normalisation applied to screenGroups outputFrame: \(outputFrame), mappingSize: \(mappingSize)")
