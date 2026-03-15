@@ -1147,7 +1147,7 @@ extension UIImage {
             format: {
                 let format = UIGraphicsImageRendererFormat()
                 format.scale = UIScreen.main.scale
-                format.opaque = false // Support transparency (alpha channel)
+                format.opaque = !preserveTransparency // Opaque when not preserving transparency
                 return format
             }()
         )
