@@ -352,23 +352,59 @@ int argc =  1;
     NSString *systemDir = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
     [self syncResources:self.BIOSPath to:systemDir];
 
-    // For Hatari/Atari ST: if a bad (ZIP) tos.img ended up in the system directory via the
-    // syncResources call above, remove it so Hatari doesn't try to boot with an invalid ROM.
+    // For Hatari/Atari ST: validate tos.img that may have arrived via syncResources.
+    // syncResources runs AFTER writeConfigFile's in-place repair, so a byte-swapped TOS
+    // that wasn't present during writeConfigFile can end up in system/ unfixed.
+    // We run both the ZIP check and the byte-swap repair here to catch that case.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
-        NSString *sysTos = [systemDir stringByAppendingPathComponent:@"tos.img"];
-        NSData *sysTosData = [NSData dataWithContentsOfFile:sysTos options:NSDataReadingMappedIfSafe error:nil];
-        if (sysTosData.length >= 2) {
-            const unsigned char *b = (const unsigned char *)sysTosData.bytes;
+        NSFileManager *tosFm = [NSFileManager defaultManager];
+        NSString *hatariSubDir = [systemDir stringByAppendingPathComponent:@"hatari"];
+        // Check both the flat system/tos.img (used by hatari.cfg absolute path) and
+        // system/hatari/tos.img (used when szTosImageFileName is a relative path).
+        NSArray *tosPaths = @[[systemDir stringByAppendingPathComponent:@"tos.img"],
+                              [hatariSubDir stringByAppendingPathComponent:@"tos.img"]];
+        for (NSString *tosPath in tosPaths) {
+            if (![tosFm fileExistsAtPath:tosPath]) continue;
+            NSData *tosData = [NSData dataWithContentsOfFile:tosPath options:NSDataReadingMappedIfSafe error:nil];
+            if (!tosData || tosData.length < 12) continue;
+            const unsigned char *b = (const unsigned char *)tosData.bytes;
+            // ZIP check: remove ZIP files that syncResources may have copied
             if (b[0] == 0x50 && b[1] == 0x4B) {
-                ELOG(@"Removing invalid (ZIP) tos.img from system dir: %@", sysTos);
-                [[NSFileManager defaultManager] removeItemAtPath:sysTos error:nil];
+                ELOG(@"Removing ZIP tos.img from %@", tosPath);
+                [tosFm removeItemAtPath:tosPath error:nil];
+                continue;
+            }
+            // Byte-swap check: Hatari reads the load address big-endian from bytes 8-11.
+            // Some ROM dumps have the address bytes swapped; detect and repair them here.
+            uint32_t addr = ((uint32_t)b[11])       |
+                            ((uint32_t)b[10] <<  8) |
+                            ((uint32_t)b[9]  << 16) |
+                            ((uint32_t)b[8]  << 24);
+            BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
+            if (addrOK) continue;
+            uint32_t fixAddr = 0;
+            if (addr == 0x0000FC00) fixAddr = 0x00FC0000;
+            else if (addr == 0x0000E000) fixAddr = 0x00E00000;
+            else if (addr == 0x0000E800) fixAddr = 0x00E80000;
+            if (fixAddr == 0) {
+                WLOG(@"Post-sync TOS repair: unrecognised address 0x%08X in %@ — skipping", addr, tosPath);
+                continue;
+            }
+            NSMutableData *fixed = [tosData mutableCopy];
+            unsigned char *fb = (unsigned char *)fixed.mutableBytes;
+            fb[8]  = (fixAddr >> 24) & 0xFF;
+            fb[9]  = (fixAddr >> 16) & 0xFF;
+            fb[10] = (fixAddr >>  8) & 0xFF;
+            fb[11] = (fixAddr      ) & 0xFF;
+            NSError *fixErr = nil;
+            if ([fixed writeToFile:tosPath options:NSDataWritingAtomic error:&fixErr]) {
+                ILOG(@"Post-sync TOS repair: fixed byte-swapped address 0x%08X→0x%08X in %@",
+                     addr, fixAddr, tosPath);
+            } else {
+                ELOG(@"Post-sync TOS repair write failed for %@: %@", tosPath, fixErr.localizedDescription);
             }
         }
     }
-
-    // TOS image is synced clean (no byte-patching) by writeConfigFile — no re-apply needed.
-    // The previous byte-mutation hack (SPIKE 2823) was corrupting the TOS ROM and causing
-    // wrong colors and graphical corruption. Removed as part of fix for #2823.
 }
 
 - (void)startEmulation {
@@ -926,7 +962,7 @@ void extract_bundles();
 
     /// NOTE: hatari_boot_hd is NOT set here.  Core variables must be written to the
     /// per-core options file (Hatari/Hatari.opt), not to the main appendconfig (opt.cfg).
-    /// PVRetroArchCore+Options.swift writes hatari_boot_hd = "false" to Hatari/Hatari.opt.
+    /// PVRetroArchCore+Options.swift writes hatari_boot_hd = "disabled" to Hatari/Hatari.opt.
 
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
@@ -946,27 +982,34 @@ void extract_bundles();
         } else if ([self.coreIdentifier containsString:@"hatari"] ||
                    [self.systemIdentifier containsString:@"atarist"]) {
             /// The Hatari opts file already exists — do a targeted in-place key repair so we
-            /// never wipe user-configured options.  Replace the stale "disabled" value with
-            /// the required "false"; if the key is absent entirely, append it.
+            /// never wipe user-configured options.  The hatari core uses "disabled"/"enabled"
+            /// (not "false"/"true") for hatari_boot_hd.  Replace any wrong value with
+            /// "disabled"; if the key is absent, append it.
             NSError *hatariReadErr = nil;
             NSString *existing = [NSString stringWithContentsOfFile:fileName
                                                            encoding:NSUTF8StringEncoding
                                                               error:&hatariReadErr];
             if (!hatariReadErr && existing) {
-                NSString *stale = @"hatari_boot_hd = \"disabled\"";
-                NSString *correct = @"hatari_boot_hd = \"false\"";
+                NSString *correct = @"hatari_boot_hd = \"disabled\"";
                 NSString *updated = nil;
-                if ([existing containsString:stale]) {
-                    updated = [existing stringByReplacingOccurrencesOfString:stale
-                                                                  withString:correct];
-                    ILOG(@"Hatari opts: repaired stale hatari_boot_hd value in %@", fileName);
-                } else if (![existing containsString:@"hatari_boot_hd"]) {
-                    BOOL needsNewline = ![existing hasSuffix:@"\n"] && ![existing hasSuffix:@"\r"];
-                    if (needsNewline) {
-                        updated = [existing stringByAppendingFormat:@"\n%@\n", correct];
-                    } else {
-                        updated = [existing stringByAppendingFormat:@"%@\n", correct];
+                /// Replace any invalid value variants that may have been written by older code.
+                for (NSString *wrong in @[@"hatari_boot_hd = \"false\"",
+                                          @"hatari_boot_hd = \"true\"",
+                                          @"hatari_boot_hd = \"enabled\""]) {
+                    if ([existing containsString:wrong]) {
+                        existing = [existing stringByReplacingOccurrencesOfString:wrong
+                                                                       withString:correct];
+                        updated = existing;
+                        ILOG(@"Hatari opts: corrected wrong hatari_boot_hd value (%@) in %@",
+                             wrong, fileName);
+                        break;
                     }
+                }
+                if (!updated && ![existing containsString:@"hatari_boot_hd"]) {
+                    BOOL needsNewline = ![existing hasSuffix:@"\n"] && ![existing hasSuffix:@"\r"];
+                    updated = needsNewline
+                        ? [existing stringByAppendingFormat:@"\n%@\n", correct]
+                        : [existing stringByAppendingFormat:@"%@\n", correct];
                     ILOG(@"Hatari opts: appended missing hatari_boot_hd key to %@", fileName);
                 }
                 if (updated) {
