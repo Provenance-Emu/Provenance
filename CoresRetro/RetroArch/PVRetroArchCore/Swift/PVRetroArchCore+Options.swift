@@ -713,16 +713,15 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionOverwrite = true
             }
             if coreIdentifier.contains("hatari") || self.systemIdentifier?.lowercased().contains("atarist") == true {
-                /// hatari_boot_hd default is "disabled" to prevent the core from passing --acsi ""
-                /// when no HD image is configured. Valid values are "enabled"/"disabled" — not
-                /// "true"/"false". This file is written to the per-core options path RetroArch
-                /// reads for GET_VARIABLE calls; opt.cfg is NOT used for core variables.
-                /// optionOverwrite is false so existing user options are preserved; stale
-                /// invalid values ("false", "true" — written by old Provenance bug Spike 2823)
-                /// are corrected in-place by the Obj-C write path. "enabled" is valid and kept.
+                /// hatari_boot_hd MUST be "disabled" to prevent the core from passing --acsi ""
+                /// when no HD image is configured. Using optionOverwrite = true because:
+                /// 1. RetroArch loads the .opt file into memory BEFORE our repair code runs
+                /// 2. A stale invalid value in the file corrupts the in-memory variable store
+                /// 3. The in-memory repair never takes effect for the current session
+                /// By always overwriting, we guarantee a clean state every launch.
                 optionValues += "hatari_boot_hd = \"disabled\"\n"
                 optionValuesFile = "Hatari/Hatari.opt"
-                optionOverwrite = false
+                optionOverwrite = true
             }
             if (coreIdentifier.contains("dosbox")) {
                 optionValues += "dosbox_pure_mouse_input = \"pad\"\n"
