@@ -386,6 +386,64 @@ int argc =  1;
     }
 }
 
+/// Final TOS validation before Hatari launches.
+/// Checks that at least one of the two expected TOS paths exists, is large enough,
+/// and has a valid (or at least non-zero) load address.  Logs a clear error if not.
+- (void)validateTOSReadyOrLog:(NSString *)primaryPath fallback:(NSString *)fallbackPath {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *usablePath = nil;
+    for (NSString *path in @[primaryPath, fallbackPath]) {
+        if ([fm fileExistsAtPath:path]) {
+            usablePath = path;
+            break;
+        }
+    }
+    if (!usablePath) {
+        ELOG(@"HATARI BOOT WILL FAIL: No TOS ROM found at %@ or %@. "
+             @"Import a TOS ROM (tos.img) via the BIOS import screen.", primaryPath, fallbackPath);
+        return;
+    }
+
+    NSError *readErr = nil;
+    NSData *data = [NSData dataWithContentsOfFile:usablePath options:NSDataReadingMappedIfSafe error:&readErr];
+    if (!data || data.length < 12) {
+        ELOG(@"HATARI BOOT WILL FAIL: TOS ROM at %@ is unreadable or too small (%zu bytes). "
+             @"Delete and reimport a valid TOS ROM.",
+             usablePath, data ? (size_t)data.length : 0);
+        return;
+    }
+
+    const unsigned char *b = (const unsigned char *)data.bytes;
+
+    // ZIP check
+    if (b[0] == 0x50 && b[1] == 0x4B) {
+        ELOG(@"HATARI BOOT WILL FAIL: TOS ROM at %@ is a ZIP archive, not a raw ROM image. "
+             @"Extract the archive and reimport the .img file.", usablePath);
+        return;
+    }
+
+    // Size sanity
+    if (data.length < 128 * 1024) {
+        ELOG(@"HATARI BOOT WILL FAIL: TOS ROM at %@ is only %zu bytes (expected >= 128KB). "
+             @"The file may be truncated or corrupt.", usablePath, (size_t)data.length);
+        return;
+    }
+
+    // Load address check
+    uint32_t addr = ((uint32_t)b[8]  << 24) |
+                    ((uint32_t)b[9]  << 16) |
+                    ((uint32_t)b[10] <<  8) |
+                    ((uint32_t)b[11]);
+    BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
+    if (!addrOK) {
+        ELOG(@"HATARI BOOT MAY FAIL: TOS ROM at %@ has unexpected load address 0x%08X "
+             @"(expected 0x00FC0000, 0x00E00000, or 0x00E80000). "
+             @"The ROM may be corrupt or an unsupported version.", usablePath, addr);
+    } else {
+        ILOG(@"TOS ROM validated OK at %@ (addr=0x%08X, size=%zu)", usablePath, addr, (size_t)data.length);
+    }
+}
+
 - (void)setupEmulation {
     self.alwaysUseMetal = true;
     self.skipLayout = true;
@@ -422,18 +480,32 @@ int argc =  1;
     NSString *systemDir = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
     [self syncResources:self.BIOSPath to:systemDir];
 
-    // For Hatari/Atari ST: validate tos.img that may have arrived via syncResources.
+    // For Hatari/Atari ST: validate ALL tos*.img files that may have arrived via syncResources.
     // syncResources runs AFTER writeConfigFile's in-place repair, so a byte-swapped TOS
     // that wasn't present during writeConfigFile can end up in system/ unfixed.
     // repairTOSImageAtPath: handles both ZIP removal and byte-swap correction.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
         NSString *hatariSubDir = [systemDir stringByAppendingPathComponent:@"hatari"];
-        // Check both the flat system/tos.img (absolute path in hatari.cfg) and
-        // system/hatari/tos.img (Hatari's working directory).
-        for (NSString *tosPath in @[[systemDir stringByAppendingPathComponent:@"tos.img"],
-                                    [hatariSubDir stringByAppendingPathComponent:@"tos.img"]]) {
-            [self repairTOSImageAtPath:tosPath];
+        // Repair ALL known TOS filenames in both directories, not just tos.img.
+        // Users may import TOS ROMs with variant filenames (tos102.img, tos100.img, etc.)
+        // that syncResources copies without byte-swap correction.
+        NSArray<NSString *> *tosFilenames = @[@"tos.img", @"tos100.img", @"tos100de.img",
+                                               @"tos102.img", @"tos102uk.img",
+                                               @"tos104.img", @"tos104de.img", @"tos104uk.img",
+                                               @"tos106.img", @"tos162.img", @"tos206.img",
+                                               @"emutos1m.img"];
+        for (NSString *tosName in tosFilenames) {
+            for (NSString *dir in @[systemDir, hatariSubDir]) {
+                NSString *tosPath = [dir stringByAppendingPathComponent:tosName];
+                [self repairTOSImageAtPath:tosPath];
+            }
         }
+
+        // Final validation: ensure the TOS file that hatari.cfg points to actually exists
+        // and passes basic header checks.  If not, log a clear error so users can diagnose.
+        NSString *tosImagePath = [systemDir stringByAppendingPathComponent:@"tos.img"];
+        NSString *hatariTosPath = [hatariSubDir stringByAppendingPathComponent:@"tos.img"];
+        [self validateTOSReadyOrLog:tosImagePath fallback:hatariTosPath];
     }
 }
 
@@ -754,6 +826,29 @@ void extract_bundles();
         NSString *tosImagePath     = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
         NSString *hatariTosPath    = hatariWorkDirUsable ? [hatariWorkDir stringByAppendingPathComponent:@"tos.img"] : tosImagePath;
         NSString *biosTosPath      = [self.BIOSPath    stringByAppendingPathComponent:@"tos.img"];
+
+        /// If tos.img is not in the BIOS directory, search for alternate TOS filenames.
+        /// Users commonly import TOS ROMs with variant names (tos102.img, tos100.img, etc.)
+        /// and the BIOS import system may store them under those names.  We accept any of
+        /// them and copy as tos.img for Hatari.
+        if (![fm fileExistsAtPath:biosTosPath]) {
+            NSArray<NSString *> *alternateTosNames = @[
+                @"tos102.img", @"tos102us.img",
+                @"tos100.img", @"tos100de.img",
+                @"tos102uk.img", @"tos102de.img",
+                @"tos104.img", @"tos104de.img", @"tos104uk.img",
+                @"tos106.img", @"tos162.img", @"tos206.img",
+                @"emutos1m.img",
+            ];
+            for (NSString *altName in alternateTosNames) {
+                NSString *altPath = [self.BIOSPath stringByAppendingPathComponent:altName];
+                if ([fm fileExistsAtPath:altPath]) {
+                    ILOG(@"TOS: tos.img not found in BIOS dir, using alternate: %@", altName);
+                    biosTosPath = altPath;
+                    break;
+                }
+            }
+        }
 
         if ([fm fileExistsAtPath:biosTosPath]) {
             NSError *readError = nil;
