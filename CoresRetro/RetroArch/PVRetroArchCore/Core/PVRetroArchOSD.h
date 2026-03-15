@@ -16,13 +16,12 @@ extern "C" {
  * Post an OSD message to PVToast via PVOSDMessageNotification.
  *
  * @param msg      The message string (UTF-8).
- * @param prio     RetroArch priority (higher = more important).
  * @param category RetroArch MESSAGE_QUEUE_CATEGORY_* value cast to unsigned
  *                 (0=INFO, 1=WARNING, 2=ERROR). Used to derive PVOSDType.
  * @param duration RetroArch original frame-count duration (before any widget
  *                 conversion), converted to seconds at ~60fps.
  */
-void pv_retroarch_post_osd(const char *msg, unsigned prio, unsigned category, unsigned duration);
+void pv_retroarch_post_osd(const char *msg, unsigned category, unsigned duration);
 
 #ifdef __cplusplus
 }

@@ -5389,8 +5389,10 @@ void runloop_msg_queue_push(
    RUNLOOP_MSG_QUEUE_UNLOCK(runloop_st);
 
    /* Bridge OSD message to PVToast — called outside the runloop message-queue
-    * lock to avoid holding the mutex across ObjC allocations/notifications. */
-   pv_retroarch_post_osd(msg, prio, (unsigned)category, pv_duration);
+    * lock to avoid holding the mutex across ObjC allocations/notifications.
+    * Skip per-frame status overlays (duration <= 1 frame) to prevent spam. */
+   if (pv_duration > 1)
+      pv_retroarch_post_osd(msg, (unsigned)category, pv_duration);
 }
 
 #ifdef HAVE_MENU
