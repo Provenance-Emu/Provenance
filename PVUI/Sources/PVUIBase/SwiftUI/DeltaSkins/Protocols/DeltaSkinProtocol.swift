@@ -55,6 +55,12 @@ public extension DeltaSkinProtocol {
 
     /// Default implementation — skins without themes return an empty array.
     var availableThemes: [DeltaSkin.Theme] { [] }
+
+    /// Default implementation — reads/writes from DeltaSkinPreferences using the skin identifier.
+    var selectedThemeId: String? {
+        get { DeltaSkinPreferences.shared.selectedThemeId(for: identifier) }
+        set { DeltaSkinPreferences.shared.setSelectedThemeId(newValue, for: identifier) }
+    }
 }
 
 public extension Identifiable where  Self: DeltaSkinProtocol  {

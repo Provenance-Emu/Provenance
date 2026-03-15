@@ -14,6 +14,7 @@ public struct DeltaSkinValidationResultView: View {
                 Image(systemName: iconName(for: finding.severity))
                     .foregroundColor(color(for: finding.severity))
                     .font(.title3)
+                    .accessibilityLabel(accessibilityLabel(for: finding.severity))
                 VStack(alignment: .leading, spacing: 4) {
                     Text(finding.title)
                         .fontWeight(.semibold)
@@ -29,6 +30,14 @@ public struct DeltaSkinValidationResultView: View {
             }
         }
         .navigationTitle(result.isValid ? "Skin Valid" : "Validation Issues")
+    }
+
+    private func accessibilityLabel(for severity: DeltaSkinValidationSeverity) -> String {
+        switch severity {
+        case .info:    return "Info"
+        case .warning: return "Warning"
+        case .error:   return "Error"
+        }
     }
 
     private func iconName(for severity: DeltaSkinValidationSeverity) -> String {

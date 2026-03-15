@@ -56,7 +56,7 @@ public final class DeltaSkinPreferences: ObservableObject {
     private let gamePreferencesKey = "com.provenance.deltaskin.game.preferences.v1"
 
     /// UserDefaults key prefix for per-skin theme selection
-    private let themeKeyPrefix = "deltaskin.theme."
+    private let themeKeyPrefix = "com.provenance.deltaskin.theme."
 
     private init() {
         loadPreferences()

@@ -135,39 +135,33 @@ public struct DeltaSkinImportView: View {
                 return
             }
 
-            // Validate the skin before importing
-            let validation = DeltaSkinValidator.validate(url: url)
-            if !validation.isValid {
-                validationResult = validation
-                return
-            }
-
-            // Start importing
             isImporting = true
 
             Task {
+                // Run ZIP-based validation off the main thread so large skins don't block UI
+                let validation = await Task.detached(priority: .userInitiated) {
+                    DeltaSkinValidator.validate(url: url)
+                }.value
+
+                if !validation.isValid {
+                    isImporting = false
+                    validationResult = validation
+                    return
+                }
+
                 do {
-                    // Import the skin
                     try await skinManager.importSkin(from: url)
-
-                    // Update UI on main thread
-                    await MainActor.run {
-                        isImporting = false
-                        importSuccess = true
-                        importError = nil
-                        // Show warnings (non-blocking) if any
-                        if !validation.warnings.isEmpty {
-                            validationResult = validation
-                        }
+                    isImporting = false
+                    importSuccess = true
+                    importError = nil
+                    // Show warnings (non-blocking) if any
+                    if !validation.warnings.isEmpty {
+                        validationResult = validation
                     }
-
-                    // Reload skins
                     await skinManager.reloadSkins()
                 } catch {
-                    await MainActor.run {
-                        isImporting = false
-                        importError = error.localizedDescription
-                    }
+                    isImporting = false
+                    importError = error.localizedDescription
                 }
             }
 
