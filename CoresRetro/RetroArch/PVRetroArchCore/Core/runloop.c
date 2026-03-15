@@ -5337,15 +5337,12 @@ void runloop_msg_queue_push(
    runloop_state_t *runloop_st    = &runloop_state;
    unsigned pv_osd_duration_ms    = 0;
 
-   /* Convert frame-count duration to ms using the core's actual FPS before
-    * 'duration' is potentially mutated by the widgets path below.
-    * Fallback to 60 fps when no core is loaded or fps is not yet known. */
-   {
-      video_driver_state_t *pv_vst = video_state_get_ptr();
-      float pv_fps = (pv_vst && pv_vst->av_info.timing.fps > 0.0f)
-                     ? (float)pv_vst->av_info.timing.fps : 60.0f;
-      pv_osd_duration_ms = (unsigned)roundf((float)duration / pv_fps * 1000.0f);
-   }
+   /* Convert frame-count duration to ms using the same fixed 60fps timebase that
+    * RetroArch's own gfx_widgets path uses (roundf(duration / 60.0f * 1000.0f)).
+    * This keeps PVToast display times consistent with built-in OSD semantics.
+    * Per-frame status overlays (duration <= 1) are excluded below to prevent spam. */
+   if (duration > 1)
+      pv_osd_duration_ms = (unsigned)roundf((float)duration / 60.0f * 1000.0f);
 
    RUNLOOP_MSG_QUEUE_LOCK(runloop_st);
 #ifdef HAVE_ACCESSIBILITY
@@ -5399,8 +5396,9 @@ void runloop_msg_queue_push(
 
    /* Bridge OSD message to PVToast — called outside the runloop message-queue
     * lock to avoid holding the mutex across ObjC allocations/notifications.
-    * Skip per-frame status overlays (≤1 frame ≈ ≤17ms) to prevent toast spam. */
-   if (pv_osd_duration_ms > 17)
+    * pv_osd_duration_ms is 0 when duration <= 1 (per-frame status overlays),
+    * so the check here naturally skips those without a separate ms threshold. */
+   if (pv_osd_duration_ms > 0)
       pv_retroarch_post_osd(msg, (unsigned)category, pv_osd_duration_ms);
 }
 
