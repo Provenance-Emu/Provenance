@@ -445,7 +445,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         removeRunningObserverIfNeeded()
 
-        // Clean up the JIT indicator's Combine subscription (#2796)
+        // Tear down the JIT indicator view controller and its Combine subscription(s) (#2796)
         cleanupJITIndicator()
 
         // Virtual keyboard / mouse cursor overlays are cleaned up in viewWillDisappear.
