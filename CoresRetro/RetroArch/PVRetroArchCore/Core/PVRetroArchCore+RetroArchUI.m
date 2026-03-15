@@ -1103,19 +1103,28 @@ void extract_bundles();
             if (!hatariReadErr && existing) {
                 NSString *correct = @"hatari_boot_hd = \"disabled\"";
                 NSString *updated = nil;
-                /// Replace invalid value variants written by older Provenance code.
-                /// "false"/"true" are not valid hatari core option values; they were written
-                /// by old Provenance bug (Spike 2823). "enabled" IS a valid user setting and
-                /// must NOT be overridden here.
-                for (NSString *wrong in @[@"hatari_boot_hd = \"false\"",
-                                          @"hatari_boot_hd = \"true\""]) {
-                    if ([existing containsString:wrong]) {
-                        existing = [existing stringByReplacingOccurrencesOfString:wrong
-                                                                       withString:correct];
+                /// Replace ANY invalid hatari_boot_hd value. The hatari core ONLY accepts
+                /// "enabled" or "disabled". Anything else causes GET_VARIABLE to fail
+                /// and triggers the --acsi empty-string crash.
+                NSRange keyRange = [existing rangeOfString:@"hatari_boot_hd"];
+                if (keyRange.location != NSNotFound) {
+                    // Find the full line containing hatari_boot_hd
+                    NSRange lineStart = [existing rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]
+                                                                 options:NSBackwardsSearch
+                                                                   range:NSMakeRange(0, keyRange.location)];
+                    NSUInteger start = (lineStart.location == NSNotFound) ? 0 : lineStart.location + 1;
+                    NSRange lineEnd = [existing rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]
+                                                               options:0
+                                                                 range:NSMakeRange(keyRange.location, existing.length - keyRange.location)];
+                    NSUInteger end = (lineEnd.location == NSNotFound) ? existing.length : lineEnd.location;
+                    NSString *line = [existing substringWithRange:NSMakeRange(start, end - start)];
+
+                    // Only keep "enabled" — replace everything else with "disabled"
+                    if (![line containsString:@"\"enabled\""] && ![line containsString:@"\"disabled\""]) {
+                        existing = [existing stringByReplacingCharactersInRange:NSMakeRange(start, end - start)
+                                                                    withString:correct];
                         updated = existing;
-                        ILOG(@"Hatari opts: corrected invalid hatari_boot_hd value (%@) → \"disabled\" in %@",
-                             wrong, fileName);
-                        break;
+                        ILOG(@"Hatari opts: corrected invalid hatari_boot_hd line (%@) → \"disabled\"", line);
                     }
                 }
                 if (!updated && ![existing containsString:@"hatari_boot_hd"]) {
