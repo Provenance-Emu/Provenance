@@ -566,6 +566,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
 
     public func pauseAudio() {
         guard isRunning else { return }
+        // Flush ring buffer before pausing to prevent stale audio from looping (#3183)
+        gameCore?.ringBuffer(atIndex: 0)?.reset()
         engine.pause()
         isRunning = false
     }
