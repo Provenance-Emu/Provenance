@@ -1016,10 +1016,13 @@ public extension PVControllerManager {
 
     /// All controller identifiers that have a non-auto stored slot-mode preference.
     var storedControllerIds: [String] {
-        Defaults[.controllerSlotModes].filter { _, mode in
-            if case .auto = mode { return false }
-            return true
-        }.keys.sorted()
+        Defaults[.controllerSlotModes]
+            .filter { _, mode in
+                if case .auto = mode { return false }
+                return true
+            }
+            .map(\.key)
+            .sorted()
     }
 
     /// Returns the saved ``ControllerSlotMode`` for a controller identified by its string ID, or `.auto` when none is stored.
