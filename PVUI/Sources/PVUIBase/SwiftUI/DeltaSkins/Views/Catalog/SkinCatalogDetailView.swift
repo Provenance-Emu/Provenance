@@ -48,6 +48,7 @@ public struct SkinCatalogDetailView: View {
                 VStack(spacing: 0) {
                     screenshotSection
                     metadataSection
+                    descriptionSection
                     statsSection
                     actionSection
                     systemTagsSection
@@ -183,6 +184,23 @@ public struct SkinCatalogDetailView: View {
         }
         .padding(.horizontal, 20)
         .padding(.top, 20)
+    }
+
+    // MARK: - Description Section
+
+    @ViewBuilder
+    private var descriptionSection: some View {
+        if let description = entry.description, !description.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                sectionHeader("DESCRIPTION")
+                Text(description)
+                    .font(.system(size: 14))
+                    .foregroundColor(.white.opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 20)
+            }
+            .padding(.top, 16)
+        }
     }
 
     // MARK: - Stats Section

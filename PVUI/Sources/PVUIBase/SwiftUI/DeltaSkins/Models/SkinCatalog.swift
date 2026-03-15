@@ -19,12 +19,16 @@ public struct SkinCatalog: Codable, Sendable {
     /// When the catalog was last updated on the server
     public let lastUpdated: Date
 
+    /// Total skin count reported by the server (informational)
+    public let totalSkins: Int?
+
     /// All skins listed in the catalog
     public let skins: [SkinCatalogEntry]
 
-    public init(version: Int, lastUpdated: Date, skins: [SkinCatalogEntry]) {
+    public init(version: Int, lastUpdated: Date, totalSkins: Int? = nil, skins: [SkinCatalogEntry]) {
         self.version = version
         self.lastUpdated = lastUpdated
+        self.totalSkins = totalSkins
         self.skins = skins
     }
 }
@@ -83,6 +87,15 @@ public struct SkinCatalogEntry: Codable, Sendable, Identifiable, Hashable {
     /// Source attribution or repository URL string
     public let source: String?
 
+    /// Human-readable description of the skin
+    public let description: String?
+
+    /// Username of whoever submitted this skin to the catalog
+    public let submittedBy: String?
+
+    /// When this skin was submitted to the catalog
+    public let submittedAt: Date?
+
     public init(
         id: String,
         name: String,
@@ -99,7 +112,10 @@ public struct SkinCatalogEntry: Codable, Sendable, Identifiable, Hashable {
         rating: Double? = nil,
         lastUpdated: Date? = nil,
         fileSize: Int? = nil,
-        source: String? = nil
+        source: String? = nil,
+        description: String? = nil,
+        submittedBy: String? = nil,
+        submittedAt: Date? = nil
     ) {
         self.id = id
         self.name = name
@@ -117,6 +133,9 @@ public struct SkinCatalogEntry: Codable, Sendable, Identifiable, Hashable {
         self.lastUpdated = lastUpdated
         self.fileSize = fileSize
         self.source = source
+        self.description = description
+        self.submittedBy = submittedBy
+        self.submittedAt = submittedAt
     }
 }
 

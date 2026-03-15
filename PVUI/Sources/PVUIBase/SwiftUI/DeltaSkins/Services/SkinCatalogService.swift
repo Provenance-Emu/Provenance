@@ -418,10 +418,28 @@ public actor SkinCatalogService {
 
     // MARK: - JSON Coding
 
-    /// Create a JSONDecoder configured with ISO 8601 date strategy.
+    /// Create a JSONDecoder that handles both ISO 8601 timestamps ("2026-03-15T02:40:09Z")
+    /// and date-only strings ("2026-02-16") used in per-skin `lastUpdated` fields.
     private static func makeDecoder() -> JSONDecoder {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        let iso8601 = ISO8601DateFormatter()
+        let dateOnly: DateFormatter = {
+            let f = DateFormatter()
+            f.dateFormat = "yyyy-MM-dd"
+            f.locale = Locale(identifier: "en_US_POSIX")
+            f.timeZone = TimeZone(secondsFromGMT: 0)
+            return f
+        }()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let string = try container.decode(String.self)
+            if let date = iso8601.date(from: string) { return date }
+            if let date = dateOnly.date(from: string) { return date }
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Cannot decode date from '\(string)'"
+            )
+        }
         return decoder
     }
 
