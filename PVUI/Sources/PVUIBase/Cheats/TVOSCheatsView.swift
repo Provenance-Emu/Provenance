@@ -376,7 +376,7 @@ public struct TVOSCheatsView: View {
         // Re-query Realm when gameMD5 is available so newly added/imported cheats
         // (written after this view was presented) are reflected on reload.
         let source: [PVCheats]
-        if let md5 = gameMD5, let realm = try? Realm() {
+        if let md5 = gameMD5, !md5.isEmpty, let realm = try? Realm() {
             source = Array(realm.objects(PVCheats.self).filter("game.md5Hash == %@", md5))
         } else {
             source = cheats
