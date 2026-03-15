@@ -48,6 +48,9 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// Extended touch areas around the button
     public let extendedEdges: UIEdgeInsets?
 
+    /// Optional per-button haptic feedback configuration
+    public let haptic: DeltaSkinHaptic?
+
     /// Optional per-button visual states (normal/pressed images, animated frames)
     public let states: DeltaSkinButtonStates?
 
@@ -57,18 +60,21 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     ///   - input: Input actions this button triggers
     ///   - frame: Frame for the button (in relative 0-1 coordinates)
     ///   - extendedEdges: Optional extended touch areas around the button
+    ///   - haptic: Optional per-button haptic feedback configuration
     ///   - states: Optional per-button visual states
     public init(
         id: String,
         input: DeltaSkinInput,
         frame: CGRect,
         extendedEdges: UIEdgeInsets? = nil,
+        haptic: DeltaSkinHaptic? = nil,
         states: DeltaSkinButtonStates? = nil
     ) {
         self.id = id
         self.input = input
         self.frame = frame
         self.extendedEdges = extendedEdges
+        self.haptic = haptic
         self.states = states
     }
 
@@ -77,6 +83,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         case input
         case frame
         case extendedEdges
+        case haptic
         case states
     }
 
@@ -86,6 +93,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         input = try container.decode(DeltaSkinInput.self, forKey: .input)
         frame = try container.decode(CGRect.self, forKey: .frame)
         extendedEdges = try container.decodeIfPresent(UIEdgeInsets.self, forKey: .extendedEdges)
+        haptic = try container.decodeIfPresent(DeltaSkinHaptic.self, forKey: .haptic)
         states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
     }
 
@@ -95,6 +103,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         try container.encode(input, forKey: .input)
         try container.encode(frame, forKey: .frame)
         try container.encodeIfPresent(extendedEdges, forKey: .extendedEdges)
+        try container.encodeIfPresent(haptic, forKey: .haptic)
         try container.encodeIfPresent(states, forKey: .states)
     }
 }

@@ -164,6 +164,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 input: input,
                 frame: item.frame,
                 extendedEdges: item.extendedEdges,
+                haptic: item.haptic,
                 states: item.states
             )
         }
@@ -799,11 +800,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Optional thumbstick configuration
         let thumbstick: ThumbstickConfig?
 
+        /// Optional per-button haptic feedback configuration
+        let haptic: DeltaSkinHaptic?
+
         /// Optional per-button visual states (normal/pressed images, animated frames)
         let states: DeltaSkinButtonStates?
 
         private enum CodingKeys: String, CodingKey {
-            case inputs, frame, extendedEdges, thumbstick, states
+            case inputs, frame, extendedEdges, thumbstick, haptic, states
         }
 
         public init(from decoder: Decoder) throws {
@@ -825,6 +829,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             thumbstick = try container.decodeIfPresent(ThumbstickConfig.self, forKey: .thumbstick)
+            haptic = try container.decodeIfPresent(DeltaSkinHaptic.self, forKey: .haptic)
             states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
         }
 
@@ -839,6 +844,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             try container.encodeIfPresent(thumbstick, forKey: .thumbstick)
+            try container.encodeIfPresent(haptic, forKey: .haptic)
             try container.encodeIfPresent(states, forKey: .states)
         }
     }
@@ -1051,6 +1057,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 input: input,
                 frame: item.frame,
                 extendedEdges: item.extendedEdges,
+                haptic: item.haptic,
                 states: item.states
             )
         } ?? []
@@ -1188,12 +1195,21 @@ extension UIImage {
         let finalSize: CGSize
         let scale: CGFloat
 
-        if let requestedSize = size {
-            // Caller supplied an explicit target size – render at that exact size.
-            // Use the screen retina scale so the rasterised bitmap is crisp on HiDPI displays.
-            finalSize = requestedSize
-            scale = min(requestedSize.width / pageRect.width,
-                        requestedSize.height / pageRect.height)
+        if let requestedSize = size, requestedSize.width > 0, requestedSize.height > 0 {
+            // Caller supplied an explicit target size – render at that size, capped for safety.
+            let maxDimension: CGFloat = 4096
+            let capScale = min(
+                maxDimension / requestedSize.width,
+                maxDimension / requestedSize.height,
+                1.0
+            )
+            let cappedSize = CGSize(
+                width: requestedSize.width * capScale,
+                height: requestedSize.height * capScale
+            )
+            finalSize = cappedSize
+            scale = min(cappedSize.width / pageRect.width,
+                        cappedSize.height / pageRect.height)
         } else {
             // No explicit size – use native PDF dimensions, capped at 4096 physical pixels.
             // The cap must be in points (not pixels) since UIGraphicsImageRenderer works in points

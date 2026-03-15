@@ -3,6 +3,9 @@ import AudioToolbox
 import AVFoundation  // Add this for audio buffer types
 import PVLogging
 import PVEmulatorCore
+#if canImport(UIKit)
+import PVSettings
+#endif
 
 // MARK: - Identifiable wrapper types for stable ForEach IDs
 
@@ -62,6 +65,8 @@ public struct DeltaSkinView: View {
     let isInEmulator: Bool
     let inputHandler: DeltaSkinInputHandler
     let core: PVEmulatorCore?  // Core for protocol-based viewport updates
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// State for touch and button interactions
     @State private var touchLocations: Set<CGPoint> = []
@@ -495,6 +500,16 @@ public struct DeltaSkinView: View {
             ZStack {
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
+                        // Animated background (shown beneath the game screen and skin image)
+                        // Skipped when the user has enabled Reduce Motion for accessibility/battery reasons.
+                        if !reduceMotion, let bgAnimation = skin.backgroundAnimation(for: traits) {
+                            DeltaSkinAnimatedBackgroundView(animation: bgAnimation, skin: skin)
+                                .frame(width: layout.width, height: layout.height)
+                                .clipped()
+                                .allowsHitTesting(false)
+                                .zIndex(-1)
+                        }
+
                         // Always create a screen position wrapper, even when in emulator
                         // This ensures we can get the correct position whether color bars are visible or not
                         DeltaSkinScreenPositionWrapper(
@@ -1677,8 +1692,14 @@ public struct DeltaSkinView: View {
                 activeButtons.append(newButton)
             }
 
-            #if !os(tvOS)
-            buttonGenerator.impactOccurred(intensity: 0.6)
+            #if canImport(UIKit) && !os(tvOS)
+            if !ProcessInfo.processInfo.isiOSAppOnMac {
+                if let haptic = button.haptic {
+                    haptic.play()
+                } else if Defaults[.buttonVibration] {
+                    buttonGenerator.impactOccurred(intensity: 0.6)
+                }
+            }
             #endif
 
             // Play sound with current position (only once)
@@ -2094,10 +2115,14 @@ public struct DeltaSkinView: View {
 
         // Play button sound
         if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }) {
-            // Haptic feedback
-            #if !os(tvOS) && os(iOS)
+            // Haptic feedback — use per-button config when available, fall back to default
+            #if canImport(UIKit) && !os(tvOS)
             if !ProcessInfo.processInfo.isiOSAppOnMac {
-                impactGenerator.impactOccurred()
+                if let haptic = button.haptic {
+                    haptic.play()
+                } else if Defaults[.buttonVibration] {
+                    impactGenerator.impactOccurred()
+                }
             }
             #endif
 
