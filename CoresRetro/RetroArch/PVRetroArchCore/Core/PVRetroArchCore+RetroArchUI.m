@@ -327,8 +327,16 @@ int argc =  1;
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:tosPath]) return NO;
 
-    NSData *tosData = [NSData dataWithContentsOfFile:tosPath options:NSDataReadingMappedIfSafe error:nil];
-    if (!tosData || tosData.length < 12) return YES; // too short to inspect, leave alone
+    NSError *readErr = nil;
+    NSData *tosData = [NSData dataWithContentsOfFile:tosPath options:NSDataReadingMappedIfSafe error:&readErr];
+    if (!tosData) {
+        ELOG(@"TOS repair: failed to read TOS image at %@: %@", tosPath, readErr.localizedDescription);
+        return NO;
+    }
+    if (tosData.length < 12) {
+        WLOG(@"TOS repair: TOS image at %@ is too short (%zu bytes) to be valid", tosPath, (size_t)tosData.length);
+        return NO;
+    }
 
     const unsigned char *b = (const unsigned char *)tosData.bytes;
 
@@ -371,10 +379,11 @@ int argc =  1;
     if ([fixed writeToFile:tosPath options:NSDataWritingAtomic error:&writeErr]) {
         ILOG(@"TOS repair: corrected byte-swapped load address 0x%08X → 0x%08X in %@",
              addr, fixAddr, tosPath);
+        return YES;
     } else {
         ELOG(@"TOS repair: write failed for %@: %@", tosPath, writeErr.localizedDescription);
+        return NO;
     }
-    return YES;
 }
 
 - (void)setupEmulation {
