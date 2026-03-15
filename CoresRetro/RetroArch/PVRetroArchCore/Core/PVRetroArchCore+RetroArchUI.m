@@ -316,6 +316,76 @@ int argc =  1;
     ILOG(@"RetroArch: Extract %d\n", self.extractArchive);
 }
 
+/// Validate and repair a single TOS ROM file at the given path.
+///
+/// - Removes the file if it is a ZIP archive (magic bytes PK).
+/// - Detects byte-swapped load addresses written by old Provenance bug Spike 2823
+///   and corrects bytes 8-11 in-place.  Only the three known-correctable patterns
+///   are touched; any other address is logged and left unchanged.
+/// - Returns YES if the file is usable after the call (exists and not a ZIP).
+- (BOOL)repairTOSImageAtPath:(NSString *)tosPath {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:tosPath]) return NO;
+
+    NSError *readErr = nil;
+    NSData *tosData = [NSData dataWithContentsOfFile:tosPath options:NSDataReadingMappedIfSafe error:&readErr];
+    if (!tosData) {
+        ELOG(@"TOS repair: failed to read TOS image at %@: %@", tosPath, readErr.localizedDescription);
+        return NO;
+    }
+    if (tosData.length < 12) {
+        WLOG(@"TOS repair: TOS image at %@ is too short (%zu bytes) to be valid", tosPath, (size_t)tosData.length);
+        return NO;
+    }
+
+    const unsigned char *b = (const unsigned char *)tosData.bytes;
+
+    // ZIP check: syncResources may have copied a still-archived BIOS.
+    if (b[0] == 0x50 && b[1] == 0x4B) {
+        ELOG(@"TOS repair: removing ZIP file at %@ — BIOS must be extracted before use", tosPath);
+        NSError *rmErr = nil;
+        if (![fm removeItemAtPath:tosPath error:&rmErr]) {
+            ELOG(@"TOS repair: failed to remove ZIP at %@: %@", tosPath, rmErr.localizedDescription);
+        }
+        return NO;
+    }
+
+    // Byte-swap check: Hatari reads the load address big-endian from bytes 8-11.
+    // Old Provenance code (Spike 2823) wrote those bytes in the wrong order for some ROMs.
+    // Valid big-endian addresses: 0x00FC0000 (TOS 1.x), 0x00E00000 (TOS 2.x), 0x00E80000 (TOS 4.x).
+    uint32_t addr = ((uint32_t)b[8]  << 24) |
+                    ((uint32_t)b[9]  << 16) |
+                    ((uint32_t)b[10] <<  8) |
+                    ((uint32_t)b[11]);
+    BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
+    if (addrOK) return YES;
+
+    uint32_t fixAddr = 0;
+    if (addr == 0x0000FC00) fixAddr = 0x00FC0000; // TOS 1.x bytes-swapped by Spike 2823
+    else if (addr == 0x0000E000) fixAddr = 0x00E00000; // TOS 2.x bytes-swapped
+    else if (addr == 0x0000E800) fixAddr = 0x00E80000; // TOS 4.x bytes-swapped
+    if (fixAddr == 0) {
+        WLOG(@"TOS repair: unrecognised load address 0x%08X in %@ — leaving untouched", addr, tosPath);
+        return YES; // file is present even if address is unexpected
+    }
+
+    NSMutableData *fixed = [tosData mutableCopy];
+    unsigned char *fb = (unsigned char *)fixed.mutableBytes;
+    fb[8]  = (fixAddr >> 24) & 0xFF;
+    fb[9]  = (fixAddr >> 16) & 0xFF;
+    fb[10] = (fixAddr >>  8) & 0xFF;
+    fb[11] = (fixAddr      ) & 0xFF;
+    NSError *writeErr = nil;
+    if ([fixed writeToFile:tosPath options:NSDataWritingAtomic error:&writeErr]) {
+        ILOG(@"TOS repair: corrected byte-swapped load address 0x%08X → 0x%08X in %@",
+             addr, fixAddr, tosPath);
+        return YES;
+    } else {
+        ELOG(@"TOS repair: write failed for %@: %@", tosPath, writeErr.localizedDescription);
+        return NO;
+    }
+}
+
 - (void)setupEmulation {
     self.alwaysUseMetal = true;
     self.skipLayout = true;
@@ -352,23 +422,19 @@ int argc =  1;
     NSString *systemDir = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
     [self syncResources:self.BIOSPath to:systemDir];
 
-    // For Hatari/Atari ST: if a bad (ZIP) tos.img ended up in the system directory via the
-    // syncResources call above, remove it so Hatari doesn't try to boot with an invalid ROM.
+    // For Hatari/Atari ST: validate tos.img that may have arrived via syncResources.
+    // syncResources runs AFTER writeConfigFile's in-place repair, so a byte-swapped TOS
+    // that wasn't present during writeConfigFile can end up in system/ unfixed.
+    // repairTOSImageAtPath: handles both ZIP removal and byte-swap correction.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
-        NSString *sysTos = [systemDir stringByAppendingPathComponent:@"tos.img"];
-        NSData *sysTosData = [NSData dataWithContentsOfFile:sysTos options:NSDataReadingMappedIfSafe error:nil];
-        if (sysTosData.length >= 2) {
-            const unsigned char *b = (const unsigned char *)sysTosData.bytes;
-            if (b[0] == 0x50 && b[1] == 0x4B) {
-                ELOG(@"Removing invalid (ZIP) tos.img from system dir: %@", sysTos);
-                [[NSFileManager defaultManager] removeItemAtPath:sysTos error:nil];
-            }
+        NSString *hatariSubDir = [systemDir stringByAppendingPathComponent:@"hatari"];
+        // Check both the flat system/tos.img (absolute path in hatari.cfg) and
+        // system/hatari/tos.img (Hatari's working directory).
+        for (NSString *tosPath in @[[systemDir stringByAppendingPathComponent:@"tos.img"],
+                                    [hatariSubDir stringByAppendingPathComponent:@"tos.img"]]) {
+            [self repairTOSImageAtPath:tosPath];
         }
     }
-
-    // TOS image is synced clean (no byte-patching) by writeConfigFile — no re-apply needed.
-    // The previous byte-mutation hack (SPIKE 2823) was corrupting the TOS ROM and causing
-    // wrong colors and graphical corruption. Removed as part of fix for #2823.
 }
 
 - (void)startEmulation {
@@ -742,7 +808,7 @@ void extract_bundles();
                             uint32_t correctedAddr = 0;
                             if (tosAddr == 0x0000FC00) correctedAddr = 0x00FC0000; // TOS 1.x swapped
                             if (tosAddr == 0x0000E000) correctedAddr = 0x00E00000; // TOS 2.x swapped
-                            if (tosAddr == 0x000E8000) correctedAddr = 0x00E80000; // TOS 4.x swapped
+                            if (tosAddr == 0x0000E800) correctedAddr = 0x00E80000; // TOS 4.x swapped
 
                             if (correctedAddr != 0) {
                                 unsigned char *fixedBytes = (unsigned char *)tosToWrite.mutableBytes;
@@ -805,44 +871,11 @@ void extract_bundles();
         /// In-place byte repair for stale system TOS files.
         /// Even when no BIOS tos.img is available (or the write above was skipped),
         /// existing system files may still carry the broken byte-swapped address from a
-        /// prior install or a manual copy.  Scan both paths and repair on every boot so
-        /// users with a pre-existing broken file are automatically fixed without needing
-        /// to re-copy the BIOS.
+        /// prior install (old Provenance bug Spike 2823).  Repair on every boot so users
+        /// with a pre-existing bad file are automatically fixed without needing to
+        /// re-download the BIOS.
         for (NSString *tosPath in @[tosImagePath, hatariTosPath]) {
-            if (![fm fileExistsAtPath:tosPath]) continue;
-            NSError *inPlaceReadErr = nil;
-            NSData *existingTos = [NSData dataWithContentsOfFile:tosPath
-                                                         options:NSDataReadingMappedIfSafe
-                                                           error:&inPlaceReadErr];
-            if (inPlaceReadErr || !existingTos || existingTos.length < 12) continue;
-            const unsigned char *eb = (const unsigned char *)existingTos.bytes;
-            if (eb[0] == 0x50 && eb[1] == 0x4B) continue; // ZIP — skip
-            uint32_t eAddr = ((uint32_t)eb[11])       |
-                             ((uint32_t)eb[10] <<  8) |
-                             ((uint32_t)eb[9]  << 16) |
-                             ((uint32_t)eb[8]  << 24);
-            BOOL eAddrValid = (eAddr == 0x00FC0000 || eAddr == 0x00E00000 || eAddr == 0x00E80000);
-            if (eAddrValid) continue; // already correct
-            uint32_t fixAddr = 0;
-            if (eAddr == 0x0000FC00) fixAddr = 0x00FC0000;
-            if (eAddr == 0x0000E000) fixAddr = 0x00E00000;
-            if (eAddr == 0x0000E800) fixAddr = 0x00E80000; // bytes[9] and bytes[10] swapped
-            if (fixAddr == 0) {
-                WLOG(@"TOS in-place repair: unrecognised address 0x%08X in %@ — skipping", eAddr, tosPath);
-                continue;
-            }
-            NSMutableData *fixedTos = [existingTos mutableCopy];
-            unsigned char *fb = (unsigned char *)fixedTos.mutableBytes;
-            fb[8]  = (fixAddr >> 24) & 0xFF;
-            fb[9]  = (fixAddr >> 16) & 0xFF;
-            fb[10] = (fixAddr >>  8) & 0xFF;
-            fb[11] = (fixAddr      ) & 0xFF;
-            NSError *fixWriteErr = nil;
-            if ([fixedTos writeToFile:tosPath options:NSDataWritingAtomic error:&fixWriteErr]) {
-                ILOG(@"In-place TOS repair: %@ (0x%08X → 0x%08X)", tosPath, eAddr, fixAddr);
-            } else {
-                ELOG(@"In-place TOS repair failed for %@: %@", tosPath, fixWriteErr.localizedDescription);
-            }
+            [self repairTOSImageAtPath:tosPath];
         }
     }
 
@@ -926,7 +959,7 @@ void extract_bundles();
 
     /// NOTE: hatari_boot_hd is NOT set here.  Core variables must be written to the
     /// per-core options file (Hatari/Hatari.opt), not to the main appendconfig (opt.cfg).
-    /// PVRetroArchCore+Options.swift writes hatari_boot_hd = "false" to Hatari/Hatari.opt.
+    /// PVRetroArchCore+Options.swift writes hatari_boot_hd = "disabled" to Hatari/Hatari.opt.
 
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
@@ -946,27 +979,36 @@ void extract_bundles();
         } else if ([self.coreIdentifier containsString:@"hatari"] ||
                    [self.systemIdentifier containsString:@"atarist"]) {
             /// The Hatari opts file already exists — do a targeted in-place key repair so we
-            /// never wipe user-configured options.  Replace the stale "disabled" value with
-            /// the required "false"; if the key is absent entirely, append it.
+            /// never wipe user-configured options.  The hatari core uses "disabled"/"enabled"
+            /// (not "false"/"true") for hatari_boot_hd.  Replace any wrong value with
+            /// "disabled"; if the key is absent, append it.
             NSError *hatariReadErr = nil;
             NSString *existing = [NSString stringWithContentsOfFile:fileName
                                                            encoding:NSUTF8StringEncoding
                                                               error:&hatariReadErr];
             if (!hatariReadErr && existing) {
-                NSString *stale = @"hatari_boot_hd = \"disabled\"";
-                NSString *correct = @"hatari_boot_hd = \"false\"";
+                NSString *correct = @"hatari_boot_hd = \"disabled\"";
                 NSString *updated = nil;
-                if ([existing containsString:stale]) {
-                    updated = [existing stringByReplacingOccurrencesOfString:stale
-                                                                  withString:correct];
-                    ILOG(@"Hatari opts: repaired stale hatari_boot_hd value in %@", fileName);
-                } else if (![existing containsString:@"hatari_boot_hd"]) {
-                    BOOL needsNewline = ![existing hasSuffix:@"\n"] && ![existing hasSuffix:@"\r"];
-                    if (needsNewline) {
-                        updated = [existing stringByAppendingFormat:@"\n%@\n", correct];
-                    } else {
-                        updated = [existing stringByAppendingFormat:@"%@\n", correct];
+                /// Replace invalid value variants written by older Provenance code.
+                /// "false"/"true" are not valid hatari core option values; they were written
+                /// by old Provenance bug (Spike 2823). "enabled" IS a valid user setting and
+                /// must NOT be overridden here.
+                for (NSString *wrong in @[@"hatari_boot_hd = \"false\"",
+                                          @"hatari_boot_hd = \"true\""]) {
+                    if ([existing containsString:wrong]) {
+                        existing = [existing stringByReplacingOccurrencesOfString:wrong
+                                                                       withString:correct];
+                        updated = existing;
+                        ILOG(@"Hatari opts: corrected invalid hatari_boot_hd value (%@) → \"disabled\" in %@",
+                             wrong, fileName);
+                        break;
                     }
+                }
+                if (!updated && ![existing containsString:@"hatari_boot_hd"]) {
+                    BOOL needsNewline = ![existing hasSuffix:@"\n"] && ![existing hasSuffix:@"\r"];
+                    updated = needsNewline
+                        ? [existing stringByAppendingFormat:@"\n%@\n", correct]
+                        : [existing stringByAppendingFormat:@"%@\n", correct];
                     ILOG(@"Hatari opts: appended missing hatari_boot_hd key to %@", fileName);
                 }
                 if (updated) {
