@@ -38,7 +38,7 @@ struct ContentlessSetupGuideView: View {
                 // Description
                 Text(guide.description)
                     .font(.system(size: 13))
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor?.opacity(0.9))
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.9))
                     .fixedSize(horizontal: false, vertical: true)
 
                 // Required files
@@ -54,7 +54,7 @@ struct ContentlessSetupGuideView: View {
                             Text(file)
                                 .font(.system(size: 12, design: .monospaced))
                         }
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor?.opacity(0.85))
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.85))
                     }
                 }
 
@@ -65,7 +65,7 @@ struct ContentlessSetupGuideView: View {
                         .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                     Text(guide.placementHint)
                         .font(.system(size: 12))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor?.opacity(0.8))
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.8))
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
