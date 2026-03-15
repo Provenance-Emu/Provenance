@@ -98,7 +98,7 @@ jobs:
           LINT_FAILED=0
           while IFS= read -r file; do
             if [ -f "$file" ]; then
-              swiftlint lint --path "$file" --config .swiftlint.yml --reporter github-actions-logging || LINT_FAILED=1
+              swiftlint lint "$file" --config .swiftlint.yml --reporter github-actions-logging || LINT_FAILED=1
             fi
           done < changed_files.txt
           exit $LINT_FAILED
