@@ -53,12 +53,12 @@
         case "right": self = .right
         case "fire", "fire1", "shoot", "1", "a": self = .fire
         case "use", "fire2", "interact", "open", "2", "b": self = .use
-        case "run", "speed", "shift": self = .run
+        case "run", "speed", "shift", "y": self = .run
         case "strafeleft", "sl", "l", "l1": self = .strafeLeft
         case "straferight", "sr", "r", "r1": self = .strafeRight
         case "weaponprev", "wp", "prevweapon", "l2", "prev": self = .weaponPrev
         case "weaponnext", "wn", "nextweapon", "r2", "next": self = .weaponNext
-        case "map", "automap", "select": self = .map
+        case "map", "automap", "select", "x": self = .map
         case "pause", "start", "menu": self = .pause
         case "count": self = .count
         default: self = .up

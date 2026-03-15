@@ -53,10 +53,10 @@
         case "down": self = .down
         case "left": self = .left
         case "right": self = .right
-        case "fire", "shoot", "1": self = .fire
-        case "open", "use", "2": self = .open
-        case "strafeon", "strafe": self = .strafeOn
-        case "run", "speed": self = .run
+        case "fire", "shoot", "1", "a": self = .fire
+        case "open", "use", "2", "b": self = .open
+        case "strafeon", "strafe", "y": self = .strafeOn
+        case "run", "speed", "x": self = .run
         case "strafeleft", "sl", "l", "l1": self = .strafeLeft
         case "straferight", "sr", "r", "r1": self = .strafeRight
         case "weaponprev", "wp", "prevweapon", "l2", "prev": self = .weaponPrev

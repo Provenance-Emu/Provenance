@@ -35,7 +35,7 @@
             case "right": self = .right
             case "fire1", "fire 1", "1", "i", "a", "fire", "shoot": self = .fire1
             case "fire2", "fire 2", "2", "ii", "b", "use": self = .fire2
-            case "select", "s": self = .select
+            case "select", "s", "map", "automap": self = .select
             case "pause", "p": self = .pause
             case "reset": self = .reset
             case "leftdiff": self = .leftDiff
@@ -43,7 +43,7 @@
             // Doom-specific: shoulder / trigger buttons
             case "strafeleft", "sl", "l", "l1": self = .strafeLeft
             case "straferight", "sr", "r", "r1": self = .strafeRight
-            case "run", "speed", "shift": self = .run
+            case "run", "speed", "shift", "y": self = .run
             case "weaponnext", "wn", "nextweapon", "r2": self = .weaponNext
             case "weaponprev", "wp", "prevweapon", "l2": self = .weaponPrev
             case "count": self = .count
