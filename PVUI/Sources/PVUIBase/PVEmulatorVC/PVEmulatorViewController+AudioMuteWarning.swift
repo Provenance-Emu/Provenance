@@ -8,10 +8,12 @@
 //  iOS silent-mode switch or volume setting.
 //
 
-#if os(iOS)
+// Exclude Mac Catalyst: the silent-switch and volume-button copy is iOS/iPadOS-only.
+#if os(iOS) && !targetEnvironment(macCatalyst)
 import AVFoundation
 import Defaults
 import Foundation
+import PVCoreAudio
 import PVLogging
 import PVSettings
 
@@ -56,17 +58,18 @@ extension PVEmulatorViewController {
 
         // Check if Respect Silent Mode is enabled — if so, the mute switch
         // could be silencing audio without the user realizing.
+        // Use AVAudioSession.isSilentModeEnabled (from PVCoreAudio) which
+        // combines the built-in speaker route check with
+        // secondaryAudioShouldBeSilencedHint for a reliable signal.
         if Defaults[.respectMuteSwitch] {
-            // When the audio session category respects the mute switch and
-            // the current route is only the built-in speaker, the mute switch
-            // may be silencing output. We cannot directly read the switch state,
-            // but we can hint users who have this setting enabled.
             let outputs = session.currentRoute.outputs
-            let isBuiltInSpeakerOnly = outputs.allSatisfy { $0.portType == .builtInSpeaker }
+            // Guard against an empty outputs list (allSatisfy returns true on empty).
+            let isBuiltInSpeakerOnly = !outputs.isEmpty &&
+                outputs.allSatisfy { $0.portType == .builtInSpeaker }
 
-            if isBuiltInSpeakerOnly {
+            if isBuiltInSpeakerOnly && session.isSilentModeEnabled {
                 Self.hasShownAudioMuteWarning = true
-                ILOG("Respect Silent Mode is on and using built-in speaker — showing silent mode toast")
+                ILOG("Silent mode detected with built-in speaker — showing silent mode toast")
                 PVToastManager.post(
                     "If audio is muted, flip the silent switch or disable \u{201C}Respect Silent Mode\u{201D} in Settings \u{2192} Audio",
                     type: .warning,

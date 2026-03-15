@@ -843,8 +843,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         core.startEmulation()
 
-        // Warn if device audio is muted or volume is zero (iOS only, once per session).
-        #if os(iOS)
+        // Warn if device audio is muted or volume is zero (iOS/iPadOS only, once per session).
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         checkAudioMuteWarningAfterDelay()
         #endif
 
