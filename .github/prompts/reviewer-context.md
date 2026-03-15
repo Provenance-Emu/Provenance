@@ -117,7 +117,10 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Release notes live in `PVUI/Sources/PVSwiftUI/Resources/whats-new.json`.
 - `WhatsNewLoader.loadAll(...)` in `PVSwiftUI` converts JSON → `[WhatsNew]` for WhatsNewKit.
 - `ProvenanceApp` conformance calls `WhatsNewLoader.loadAll(...)` — no hardcoded entries.
-- **Agents**: add new version entries to the JSON file; never modify `ProvenanceApp.swift` for this.
+- **Agents**: NEVER add a new version entry to `whats-new.json` unless a maintainer has explicitly
+  confirmed the target version number. Do NOT invent upcoming version numbers (e.g., 3.5.0, 3.5.1).
+  If the feature is significant but the version is unconfirmed, skip the `whats-new.json` change entirely.
+- Entries must be in **descending** version order (newest at top).
 
 ### Virtual Keyboard / Mouse
 - `PVVirtualKeyboardView` — SwiftUI QWERTY overlay; shown via `supportsVirtualKeyboard` on core.
@@ -241,7 +244,9 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:
-- `.changelog/<PR_NUMBER>.md` fragment files — expected, do not flag as noise
+- `.changelog/<PR_NUMBER>.md` fragment files — expected, do not flag as noise.
+  **Agents**: one fragment per PR, named after the CURRENT PR number only. Never create multiple
+  fragments named after other PR numbers in a single PR — consolidate all changes into one file.
 - `whats-new.json` entries with unconfirmed future versions — flag as 🟡 MINOR
 - Project board updates (`https://github.com/orgs/Provenance-Emu/projects/1/views/1`) — check that significant PRs are on the board
 - Epic/sub-task references — PRs for sub-tasks should reference parent epic with "Part of #N"
