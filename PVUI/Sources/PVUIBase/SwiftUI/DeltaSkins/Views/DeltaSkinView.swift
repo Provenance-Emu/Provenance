@@ -1692,7 +1692,7 @@ public struct DeltaSkinView: View {
                 activeButtons.append(newButton)
             }
 
-            #if os(iOS)
+            #if canImport(UIKit) && !os(tvOS)
             if !ProcessInfo.processInfo.isiOSAppOnMac {
                 if let haptic = button.haptic {
                     haptic.play()
@@ -2116,7 +2116,7 @@ public struct DeltaSkinView: View {
         // Play button sound
         if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }) {
             // Haptic feedback — use per-button config when available, fall back to default
-            #if os(iOS)
+            #if canImport(UIKit) && !os(tvOS)
             if !ProcessInfo.processInfo.isiOSAppOnMac {
                 if let haptic = button.haptic {
                     haptic.play()
