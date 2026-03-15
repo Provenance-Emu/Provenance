@@ -156,7 +156,7 @@ extension PVEmulatorViewController {
         #if os(tvOS)
         // Use SwiftUI-based cheats view on tvOS for reliability
         let cheatsVC = TVOSCheatsHostingController(
-            cheats: game.cheats,
+            cheats: Array(game.cheats),
             coreID: core.coreIdentifier,
             cheatTypes: getCheatTypes(),
             gameMD5: game.md5Hash,
@@ -204,7 +204,7 @@ extension PVEmulatorViewController {
 
         #if os(iOS)
         let cheatsVC = iOSCheatsHostingController(
-            cheats: game.cheats,
+            cheats: Array(game.cheats),
             coreID: core.coreIdentifier,
             cheatTypes: getCheatTypes(),
             gameMD5: game.md5Hash,
