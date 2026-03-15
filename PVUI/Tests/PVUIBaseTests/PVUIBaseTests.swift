@@ -1780,6 +1780,168 @@ struct DeltaSkinComponentTests {
       
     }
 
+    // MARK: - DeltaSkinScreen normalization tests
+
+    /// Legacy pixel-space outputFrame (480×320 reference) is preserved as-is; the
+    /// wrapper normalises it using the representation's mappingSize, not a hard-coded
+    /// 480×320 constant.  This test verifies that decoding does NOT silently change
+    /// the raw frame values.
+    @Test("DeltaSkinScreen stores outputFrame as raw pixel values without normalisation")
+    func deltaSkinScreenPreservesRawOutputFrame() throws {
+        let json = """
+        {
+            "name": "Legacy GG Skin",
+            "identifier": "com.test.gg",
+            "gameTypeIdentifier": "com.rileytestut.delta.game.gg",
+            "debug": false,
+            "representations": {
+                "iphone": {
+                    "standard": {
+                        "portrait": {
+                            "assets": { "resizable": "portrait.pdf" },
+                            "screens": [{
+                                "inputFrame": {"x":0,"y":0,"width":160,"height":144},
+                                "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+                                "placement": "controller"
+                            }],
+                            "mappingSize": {"width":480,"height":320}
+                        }
+                    }
+                }
+            }
+        }
+        """
+        let info = try JSONDecoder().decode(DeltaSkin.Info.self, from: json.data(using: .utf8)!)
+        // ScreenInfo is the raw JSON decode type; DeltaSkinScreen (with rawOutputFrame) is
+        // the runtime type produced by DeltaSkin.screens(for:). Test the ScreenInfo level here.
+        let screen = info.representations[.iphone]?.standard?["portrait"]?.screens?.first
+
+        // outputFrame must NOT be divided by any legacy reference — raw pixel value expected
+        #expect(screen?.outputFrame?.width == 320)
+        #expect(screen?.outputFrame?.height == 211)
+    }
+
+    /// Skins that encode outputFrame relative to a non-480×320 mappingSize must not
+    /// have their coordinates corrupted by a hard-coded legacy divisor.
+    @Test("DeltaSkinScreen preserves mappingSize-relative pixel outputFrame")
+    func deltaSkinScreenPreservesMappingSizeRelativeFrame() throws {
+        let json = """
+        {
+            "name": "Modern GBA Skin",
+            "identifier": "com.test.gba",
+            "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+            "debug": false,
+            "representations": {
+                "iphone": {
+                    "standard": {
+                        "portrait": {
+                            "assets": { "resizable": "portrait.pdf" },
+                            "screens": [{
+                                "inputFrame": {"x":0,"y":0,"width":240,"height":160},
+                                "outputFrame": {"x":0,"y":50,"width":414,"height":276},
+                                "placement": "controller"
+                            }],
+                            "mappingSize": {"width":414,"height":896}
+                        }
+                    }
+                }
+            }
+        }
+        """
+        let info = try JSONDecoder().decode(DeltaSkin.Info.self, from: json.data(using: .utf8)!)
+        let screen = info.representations[.iphone]?.standard?["portrait"]?.screens?.first
+
+        // outputFrame must be preserved exactly as specified in the JSON
+        #expect(screen?.outputFrame?.width == 414)
+        #expect(screen?.outputFrame?.height == 276)
+        #expect(screen?.outputFrame?.origin.y == 50)
+    }
+
+    /// `maintainAspectRatio` should default to `true` when absent from JSON.
+    @Test("DeltaSkinScreen maintainAspectRatio defaults to true")
+    func deltaSkinScreenMaintainAspectRatioDefaults() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+            "placement": "controller"
+        }
+        """
+        let screen = try JSONDecoder().decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+        #expect(screen.maintainAspectRatio == true)
+    }
+
+    /// `maintainAspectRatio` must round-trip correctly through encode → decode.
+    @Test("DeltaSkinScreen maintainAspectRatio round-trips through encode/decode")
+    func deltaSkinScreenMaintainAspectRatioRoundTrips() throws {
+        let json = """
+        {
+            "id": "screen-0",
+            "outputFrame": {"x":0,"y":0,"width":320,"height":211},
+            "placement": "controller",
+            "maintainAspectRatio": false
+        }
+        """
+        let screen = try JSONDecoder().decode(DeltaSkinScreen.self, from: json.data(using: .utf8)!)
+        #expect(screen.maintainAspectRatio == false)
+
+        // Encode and decode again to verify round-trip
+        let encoded = try JSONEncoder().encode(screen)
+        let decoded = try JSONDecoder().decode(DeltaSkinScreen.self, from: encoded)
+        #expect(decoded.maintainAspectRatio == false)
+        #expect(decoded.outputFrame?.width == 320)
+        #expect(decoded.outputFrame?.height == 211)
+    }
+
+    // MARK: - CGRect.fitting(aspectRatio:) tests
+
+    /// Wider box (4:3) fitted to narrower AR (1:1) should letterbox by reducing width.
+    @Test("CGRect.fitting — wide box fitted to square AR produces centred square")
+    func cgRectFittingWideBoxToSquare() {
+        let box = CGRect(x: 10, y: 20, width: 400, height: 300)
+        let fitted = box.fitting(aspectRatio: 1.0)
+        // Height stays at 300; width should equal 300, centred inside 400
+        #expect(abs(fitted.width - 300) < 0.001)
+        #expect(abs(fitted.height - 300) < 0.001)
+        // xOffset = (400 - 300) / 2 = 50 → origin.x = 10 + 50 = 60
+        #expect(abs(fitted.origin.x - 60) < 0.001)
+        #expect(abs(fitted.origin.y - 20) < 0.001)
+    }
+
+    /// Tall box (3:4) fitted to wider AR (4:3) should pillarbox by reducing height.
+    @Test("CGRect.fitting — tall box fitted to 4:3 AR produces centred rect")
+    func cgRectFittingTallBoxTo4x3() {
+        let box = CGRect(x: 0, y: 0, width: 300, height: 400)
+        let fitted = box.fitting(aspectRatio: 4.0 / 3.0)
+        // Width stays at 300; height = 300 / (4/3) = 225, centred inside 400
+        #expect(abs(fitted.width - 300) < 0.001)
+        #expect(abs(fitted.height - 225) < 0.001)
+        // yOffset = (400 - 225) / 2 = 87.5
+        #expect(abs(fitted.origin.y - 87.5) < 0.001)
+        #expect(abs(fitted.origin.x - 0) < 0.001)
+    }
+
+    /// Box already at the requested AR should be returned unchanged.
+    @Test("CGRect.fitting — already-correct AR returns original rect")
+    func cgRectFittingAlreadyCorrectAR() {
+        let box = CGRect(x: 5, y: 15, width: 160, height: 144) // 10:9 (GameGear native)
+        let ar = 160.0 / 144.0
+        let fitted = box.fitting(aspectRatio: ar)
+        #expect(abs(fitted.origin.x - 5) < 0.001)
+        #expect(abs(fitted.origin.y - 15) < 0.001)
+        #expect(abs(fitted.width - 160) < 0.001)
+        #expect(abs(fitted.height - 144) < 0.001)
+    }
+
+    /// Zero or negative AR guard — should return the original rect unchanged.
+    @Test("CGRect.fitting — zero or NaN AR returns original rect")
+    func cgRectFittingInvalidAR() {
+        let box = CGRect(x: 0, y: 0, width: 100, height: 100)
+        #expect(box.fitting(aspectRatio: 0) == box)
+        #expect(box.fitting(aspectRatio: -1) == box)
+        #expect(box.fitting(aspectRatio: CGFloat.nan) == box)
+    }
+
     private func sanitizeJSON(_ data: Data) throws -> Data {
         guard let jsonString = String(data: data, encoding: .utf8) else {
             throw TestError("Invalid JSON data")
