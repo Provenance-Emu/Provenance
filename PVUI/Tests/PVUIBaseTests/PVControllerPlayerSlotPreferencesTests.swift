@@ -40,6 +40,8 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func preferredPlayerReturnsNilWhenNotSet() async throws {
         let manager = PVControllerManager.shared
+        let restore = snapshotSlotModes()
+        defer { restore() }
         let controller = freshController()
 
         let result = manager.preferredPlayer(for: controller)
@@ -50,9 +52,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func roundtripPreferredPlayer() async throws {
         let manager = PVControllerManager.shared
-        let controller = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller = freshController()
 
         manager.setPreferredPlayer(2, for: controller)
         let result = manager.preferredPlayer(for: controller)
@@ -63,9 +65,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func clearingPreference() async throws {
         let manager = PVControllerManager.shared
-        let controller = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller = freshController()
 
         manager.setPreferredPlayer(3, for: controller)
         manager.setPreferredPlayer(nil, for: controller)
@@ -77,9 +79,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func outOfRangeValuesAreIgnored() async throws {
         let manager = PVControllerManager.shared
-        let controller = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller = freshController()
 
         manager.setPreferredPlayer(0, for: controller)
         #expect(manager.preferredPlayer(for: controller) == nil, "0 should be rejected")
@@ -104,6 +106,8 @@ struct PVControllerPlayerSlotPreferencesTests {
     @Test("slotMode returns .auto when nothing is stored")
     @MainActor
     func slotModeDefaultsToAuto() async throws {
+        let restore = snapshotSlotModes()
+        defer { restore() }
         let controller = freshController()
         let mode = PVControllerManager.shared.slotMode(for: controller)
         #expect(mode == .auto)
@@ -113,9 +117,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func slotModePreferredRoundtrip() async throws {
         let manager = PVControllerManager.shared
-        let controller = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller = freshController()
 
         manager.setSlotMode(.preferred(4), for: controller)
         #expect(manager.slotMode(for: controller) == .preferred(4))
@@ -126,9 +130,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func slotModeAlwaysRoundtrip() async throws {
         let manager = PVControllerManager.shared
-        let controller = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller = freshController()
 
         manager.setSlotMode(.always(1), for: controller)
         #expect(manager.slotMode(for: controller) == .always(1))
@@ -139,9 +143,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func clearSlotModeResetsToAuto() async throws {
         let manager = PVControllerManager.shared
-        let controller = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller = freshController()
 
         manager.setSlotMode(.always(2), for: controller)
         manager.clearSlotMode(for: controller)
@@ -154,9 +158,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func setSlotModeAutoClears() async throws {
         let manager = PVControllerManager.shared
-        let controller = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller = freshController()
 
         manager.setSlotMode(.preferred(3), for: controller)
         manager.setSlotMode(.auto, for: controller)
@@ -245,10 +249,10 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func assignPreferredClaimsFreeSlot() async throws {
         let manager = PVControllerManager.shared
-        let controller1 = freshController()
-        let controller2 = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller1 = freshController()
+        let controller2 = freshController()
 
         manager.setSlotMode(.preferred(1), for: controller1)
         manager.setSlotMode(.auto, for: controller2)
@@ -266,10 +270,10 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func assignPreferredFallsBackWhenOccupied() async throws {
         let manager = PVControllerManager.shared
-        let controller1 = freshController()
-        let controller2 = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller1 = freshController()
+        let controller2 = freshController()
 
         // First controller uses auto and should occupy player 1.
         manager.setSlotMode(.auto, for: controller1)
@@ -290,10 +294,10 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func alwaysEvictsOccupantToNextFreeSlot() async throws {
         let manager = PVControllerManager.shared
-        let controller1 = freshController()
-        let controller2 = freshController()
         let restore = snapshotSlotModes()
         defer { restore() }
+        let controller1 = freshController()
+        let controller2 = freshController()
 
         // Start with a single auto-assigned controller on player 1.
         manager.setSlotMode(.auto, for: controller1)
