@@ -3,60 +3,51 @@ import CoreImage
 
 // MARK: - System native resolutions
 
-/// Maps DeltaSkinGameType values to their hardware framebuffer dimensions.
+/// Data-driven registry mapping `DeltaSkinGameType` values to their hardware
+/// framebuffer dimensions.
+///
+/// Resolutions are loaded from `system-native-resolutions.json` bundled with
+/// `PVUIBase` so new systems can be added without touching Swift source.
+/// The JSON keys are the Swift case-name strings returned by
+/// `DeltaSkinGameType.registryKey` (e.g. `"gamegear"`, `"genesis"`).
 ///
 /// Used when `maintainAspectRatio` is `true` so the emulator viewport preserves
 /// the correct pixel-aspect ratio for each platform.  Systems that aren't listed
 /// here are assumed to run at a standard 4:3 ratio.
 public enum DeltaSkinNativeResolution {
-    // Sega
-    public static let gamegear     = CGSize(width: 160, height: 144) // 10:9
-    public static let masterSystem = CGSize(width: 256, height: 192) // 4:3
-    public static let genesis      = CGSize(width: 320, height: 224) // 10:7
 
-    // Atari
-    public static let lynx         = CGSize(width: 160, height: 102) // ~1.57:1
-    public static let atari2600    = CGSize(width: 160, height: 192) // approximate (5:6 incl. overscan)
-    public static let atari7800    = CGSize(width: 320, height: 240) // 4:3
+    // MARK: - Registry (data-driven)
 
-    // Bandai
-    public static let wonderswan   = CGSize(width: 224, height: 144) // ~1.56:1
+    /// Thread-safe once-cache of the JSON-decoded registry.
+    private static let registry: [String: CGSize] = loadRegistry()
 
-    // SNK
-    public static let ngp          = CGSize(width: 160, height: 152) // 20:19
-    public static let ngpc         = CGSize(width: 160, height: 152) // 20:19
+    private static func loadRegistry() -> [String: CGSize] {
+        guard
+            let url  = Bundle.module.url(forResource: "system-native-resolutions", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else {
+            return [:]
+        }
+        var result: [String: CGSize] = [:]
+        for (key, value) in json {
+            guard
+                key != "_comment",
+                let dict   = value as? [String: Any],
+                let width  = (dict["width"]  as? NSNumber).map(CGFloat.init),
+                let height = (dict["height"] as? NSNumber).map(CGFloat.init)
+            else { continue }
+            result[key] = CGSize(width: width, height: height)
+        }
+        return result
+    }
 
-    // Nintendo handhelds
-    public static let gb           = CGSize(width: 160, height: 144) // 10:9
-    public static let gba          = CGSize(width: 240, height: 160) // 3:2
-    public static let pokemonMini  = CGSize(width:  96, height:  64) // 3:2
-
-    // Sony
-    public static let psp          = CGSize(width: 480, height: 272) // ~16:9
-
-    // Nintendo 3DS (top screen resolution)
-    public static let threeDS      = CGSize(width: 400, height: 240) // ~5:3
+    // MARK: - Public API
 
     /// Returns the native framebuffer size for the given game type, or `nil` for
-    /// systems that aren't in the registry (they default to a standard 4:3 ratio).
+    /// systems that aren't in the registry (they fall back to 4:3).
     public static func size(for gameType: DeltaSkinGameType) -> CGSize? {
-        switch gameType {
-        case .gamegear:                    return gamegear
-        case .masterSystem:                return masterSystem
-        case .genesis:                     return genesis
-        case .lynx:                        return lynx
-        case .atari2600:                   return atari2600
-        case .atari7800:                   return atari7800
-        case .wonderswan, .wonderswancolor: return wonderswan
-        case .ngp:                         return ngp
-        case .ngpc:                        return ngpc
-        case .gb, .gbc:                    return gb
-        case .gba:                         return gba
-        case .pokemonMini:                 return pokemonMini
-        case .psp:                         return psp
-        case .threeDS:                     return threeDS
-        default:                           return nil
-        }
+        registry[gameType.registryKey]
     }
 
     /// Aspect ratio (width / height) for the given game type.
@@ -108,6 +99,15 @@ public struct DeltaSkinScreen: Identifiable, Codable {
     /// native pixel aspect ratio rather than stretching to fill `outputFrame`.
     public let maintainAspectRatio: Bool
 
+    /// Explicit native framebuffer size for this screen, decoded from the skin's
+    /// `info.json` (`"nativeResolution": {"width": 160, "height": 144}`).
+    ///
+    /// When present this takes precedence over the system-level registry
+    /// (`DeltaSkinNativeResolution`) during aspect-ratio enforcement.
+    /// Skin authors can use this to override the default for a specific layout
+    /// without waiting for a registry update.
+    public let nativeResolution: CGSize?
+
     /// Creates a `DeltaSkinScreen` programmatically.
     ///
     /// - Note: `encode(to:)` serialises `filterInfos`, not `filters`. If you pass `filters`
@@ -121,7 +121,8 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         placement: DeltaSkinScreenPlacement,
         filters: [CIFilter]?,
         filterInfos: [DeltaSkin.FilterInfo]? = nil,
-        maintainAspectRatio: Bool = true
+        maintainAspectRatio: Bool = true,
+        nativeResolution: CGSize? = nil
     ) {
         self.id = id
         self.inputFrame = inputFrame
@@ -131,6 +132,7 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         self.filters = filters
         self.filterInfos = filterInfos
         self.maintainAspectRatio = maintainAspectRatio
+        self.nativeResolution = nativeResolution
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -140,6 +142,7 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         case placement
         case filters
         case maintainAspectRatio
+        case nativeResolution
     }
 
     public init(from decoder: Decoder) throws {
@@ -151,6 +154,7 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         outputFrame = decoded
         placement = try container.decode(DeltaSkinScreenPlacement.self, forKey: .placement)
         maintainAspectRatio = try container.decodeIfPresent(Bool.self, forKey: .maintainAspectRatio) ?? true
+        nativeResolution = try container.decodeIfPresent(CGSize.self, forKey: .nativeResolution)
 
         // Decode the `filters` array as [DeltaSkin.FilterInfo] and construct CIFilter instances.
         // DeltaSkinScreenFilter handles parameter mapping (numbers, vectors, colors, etc.) and
@@ -173,6 +177,7 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         try container.encodeIfPresent(outputFrame, forKey: .outputFrame)
         try container.encode(placement, forKey: .placement)
         try container.encode(maintainAspectRatio, forKey: .maintainAspectRatio)
+        try container.encodeIfPresent(nativeResolution, forKey: .nativeResolution)
         // Re-encode the original FilterInfo specs so round-tripped skins remain valid.
         // Note: `filters` (CIFilter) is intentionally not encoded — `filterInfos` is the
         // canonical source of truth for serialisation. For programmatically-created instances
