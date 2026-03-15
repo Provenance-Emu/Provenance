@@ -41,6 +41,10 @@ public enum DeltaSkinNativeResolution {
             else { continue }
             let width  = CGFloat(widthNum.doubleValue)
             let height = CGFloat(heightNum.doubleValue)
+            guard width > 0, height > 0, width.isFinite, height.isFinite else {
+                assertionFailure("DeltaSkinNativeResolution: invalid native resolution for key \(key) — width and height must be positive, finite numbers")
+                continue
+            }
             result[key] = CGSize(width: width, height: height)
         }
         return result
