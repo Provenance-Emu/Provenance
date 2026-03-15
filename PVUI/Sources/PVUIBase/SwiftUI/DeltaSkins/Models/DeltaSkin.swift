@@ -349,8 +349,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 let decodedImage: UIImage?
                 if lower.hasSuffix(".pdf") {
                     let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
-                    // Always preserve transparency for PDF skin assets; `translucent` controls runtime opacity, not alpha
-                    decodedImage = UIImage(pdfData: data, preserveTransparency: true, size: renderSize)
+                    // Default to preserving transparency; `translucent: false` in skin JSON opts out explicitly
+                    decodedImage = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? true, size: renderSize)
                     if decodedImage == nil {
                         lastError = DeltaSkinError.invalidPDF
                         continue
@@ -399,8 +399,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
             let decodedImage: UIImage?
             if lower.hasSuffix(".pdf") {
                 let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
-                // Always preserve transparency for PDF skin assets; `translucent` controls runtime opacity, not alpha
-                decodedImage = UIImage(pdfData: assetData, preserveTransparency: true, size: renderSize)
+                // Default to preserving transparency; `translucent: false` in skin JSON opts out explicitly
+                decodedImage = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? true, size: renderSize)
                 guard decodedImage != nil else {
                     throw DeltaSkinError.invalidPDF
                 }

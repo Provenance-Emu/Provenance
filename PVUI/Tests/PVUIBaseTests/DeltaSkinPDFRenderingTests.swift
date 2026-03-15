@@ -93,29 +93,34 @@ struct DeltaSkinPDFRenderingTests {
             return
         }
 
+        // Use the cgImage's native pixel dimensions to avoid scale-induced resampling artefacts
+        let pixelWidth = cgImage.width
+        let pixelHeight = cgImage.height
+
         // Sample a corner pixel — should be transparent (alpha == 0)
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
+        // Use premultipliedLast + byteOrder32Big to guarantee RGBA byte layout
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
         guard let ctx = CGContext(
             data: nil,
-            width: Int(solidSize.width),
-            height: Int(solidSize.height),
+            width: pixelWidth,
+            height: pixelHeight,
             bitsPerComponent: 8,
-            bytesPerRow: Int(solidSize.width) * 4,
+            bytesPerRow: pixelWidth * 4,
             space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: bitmapInfo.rawValue
         ) else {
             Issue.record("Could not create CGContext")
             return
         }
-        ctx.draw(cgImage, in: CGRect(origin: .zero, size: solidSize))
+        ctx.draw(cgImage, in: CGRect(x: 0, y: 0, width: pixelWidth, height: pixelHeight))
 
         guard let data = ctx.data else {
             Issue.record("No pixel data")
             return
         }
-        // Corner pixel (0,0) — RGBA bytes
-        let bytes = data.bindMemory(to: UInt8.self, capacity: Int(solidSize.width) * Int(solidSize.height) * 4)
-        let alpha = bytes[3] // alpha channel of first pixel
+        // Corner pixel (0,0) in RGBA byte order — index 3 is alpha
+        let bytes = data.bindMemory(to: UInt8.self, capacity: pixelWidth * pixelHeight * 4)
+        let alpha = bytes[3] // alpha byte (RGBA layout from premultipliedLast + byteOrder32Big)
         #expect(alpha == 0, "Corner pixel should be fully transparent, got alpha=\(alpha)")
     }
 }
