@@ -90,6 +90,11 @@ public struct DeltaSkinKeyboardOverlayView: View {
         .onDisappear {
             keyboardViewModel.releaseAllKeys()
         }
+        .onChange(of: isVisible) { newValue in
+            if !newValue {
+                keyboardViewModel.releaseAllKeys()
+            }
+        }
     }
 
     // MARK: - Keyboard sheet
@@ -108,7 +113,6 @@ public struct DeltaSkinKeyboardOverlayView: View {
         // Allow the X button inside VirtualKeyboardView to hide the overlay.
         keyboardViewModel.dismissAction = {
             isVisible = false
-            keyboardViewModel.releaseAllKeys()
         }
 
         // Expand the keyboard immediately when the overlay first appears.
