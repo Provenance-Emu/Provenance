@@ -671,8 +671,7 @@ public struct DeltaSkinView: View {
                                         height: button.frame.height * scaledSkinHeight
                                     )
                                     DeltaSkinTurboBadge(
-                                        buttonFrame: scaledFrame,
-                                        mappingSize: mappingSize
+                                        buttonFrame: scaledFrame
                                     )
                                     .zIndex(6)
                                     .allowsHitTesting(false)

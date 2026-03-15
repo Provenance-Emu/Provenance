@@ -1,5 +1,4 @@
 import Foundation
-import Combine
 import PVSettings
 import PVLogging
 import Defaults
@@ -127,7 +126,12 @@ public final class TurboManager: ObservableObject, @unchecked Sendable {
     }
 
     private func tick() {
-        guard Defaults[.turboEnabled] else { return }
+        guard Defaults[.turboEnabled] else {
+            // Stop the display link when turbo is globally disabled
+            displayLink?.invalidate()
+            displayLink = nil
+            return
+        }
         let rateHz = max(2.0, min(30.0, Defaults[.turboRateHz]))
         let interval: CFTimeInterval = 1.0 / (rateHz * 2.0) // half-period (press + release = 1 full cycle)
         let now = CACurrentMediaTime()

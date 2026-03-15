@@ -1069,6 +1069,7 @@ public extension PVControllerManager {
 
     /// Removes all saved controller slot preferences, reverting every controller to `.auto`.
     /// After clearing, re-assigns all connected controllers using auto-assignment.
+    @MainActor
     func resetAllSlotPreferences() {
         Defaults[.controllerSlotModes] = [:]
         ILOG("All controller slot preferences have been reset")

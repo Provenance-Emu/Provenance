@@ -4,8 +4,6 @@ import SwiftUI
 struct DeltaSkinTurboBadge: View {
     /// The frame of the button this badge belongs to, in the skin's coordinate space.
     let buttonFrame: CGRect
-    /// The mapping size of the skin (used to scale the badge appropriately).
-    let mappingSize: CGSize
 
     @State private var isPulsing = false
 
