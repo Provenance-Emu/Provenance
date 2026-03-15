@@ -116,6 +116,7 @@
 
 #include "runtime_file.h"
 #include "runloop.h"
+#include "PVRetroArchOSD.h"
 #include "camera/camera_driver.h"
 #include "location_driver.h"
 #include "record/record_driver.h"
@@ -5382,6 +5383,9 @@ void runloop_msg_queue_push(
 
    ui_companion_driver_msg_queue_push(
          msg, prio, duration, flush);
+
+   /* Bridge OSD message to PVToast via PVOSDMessageNotification */
+   pv_retroarch_post_osd(msg, prio, duration);
 
    RUNLOOP_MSG_QUEUE_UNLOCK(runloop_st);
 }
