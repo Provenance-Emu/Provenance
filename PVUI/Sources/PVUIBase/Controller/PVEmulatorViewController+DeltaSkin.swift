@@ -258,6 +258,10 @@ extension PVEmulatorViewController {
                     // Don't force layout here - applyViewportFromCurrentSkin handles layout naturally
                     self.applyViewportFromCurrentSkin()
 
+                    // Note: screen filters are applied via the DeltaSkinLoaded notification handler
+                    // (handleSkinLoaded) where currentSkin is set — calling here would apply the
+                    // filter a second time redundantly.
+
                     // Pause emulation for 1 second after skin is loaded to ensure smooth startup
                     self.pauseEmulationTemporarily()
                 }
@@ -988,6 +992,93 @@ extension PVEmulatorViewController {
         for (index, subview) in view.subviews.enumerated() {
             output += "\(indent)  🔹 Subview [\(index)]:\n"
             buildViewHierarchyString(for: subview, level: level + 1, output: &output)
+        }
+    }
+
+    // MARK: - Screen Filter Wiring
+
+    /// Reads the current skin's first-screen filter info and applies it to the Metal rendering
+    /// pipeline.  When the skin defines no filters the existing filter (if any) is cleared so we
+    /// don't bleed a previous skin's effect into the new one.
+    ///
+    /// Must be called on the main thread; dispatches there automatically if invoked from a
+    /// background thread.
+    internal func applyScreenFiltersFromCurrentSkin() {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.applyScreenFiltersFromCurrentSkin() }
+            return
+        }
+
+        guard let skin = currentSkin else {
+            // No skin active — clear any lingering filter
+            applyScreenFilter(nil)
+            return
+        }
+
+        #if !os(tvOS)
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #else
+        let device: DeltaSkinDevice = .tv
+        #endif
+        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+
+        // Probe display types in preference order to match the skin that was actually loaded,
+        // mirroring the pattern used elsewhere (e.g. applyViewportFromCurrentSkin).
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        var filterInfo: DeltaSkin.FilterInfo?
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
+            if let info = skin.representation(for: traits)?.screens?.first?.filters?.first {
+                filterInfo = info
+                break
+            }
+        }
+
+        guard let filterInfo else {
+            ILOG("skins: Skin '\(skin.name)' has no screen filters — clearing any previous filter")
+            applyScreenFilter(nil)
+            return
+        }
+
+        // If the user has explicitly selected a filter (not "None"), it takes precedence over
+        // skin-defined filters so both effects are not stacked on top of each other.
+        // Mirror the pattern used in RetroMenuView: guard against an empty gameId so we don't
+        // read/write a shared "ScreenFilter_Game_" key when md5Hash and crc are both empty.
+        let md5 = game.md5Hash
+        let crc = game.crc
+        let gameId: String
+        if !md5.isEmpty {
+            gameId = md5
+        } else if !crc.isEmpty {
+            gameId = crc
+        } else {
+            gameId = ""
+        }
+        let systemKey = game.system?.systemIdentifier.map { "ScreenFilter_System_\($0.rawValue)" }
+        let userFilterName: String?
+        if gameId.isEmpty {
+            // No game identifier — only consult the system-scoped key.
+            userFilterName = systemKey.flatMap { UserDefaults.standard.string(forKey: $0) }
+        } else {
+            let gameKey = "ScreenFilter_Game_\(gameId)"
+            userFilterName = UserDefaults.standard.string(forKey: gameKey)
+                ?? systemKey.flatMap { UserDefaults.standard.string(forKey: $0) }
+        }
+        if let name = userFilterName, name != "None" {
+            ILOG("skins: User filter '\(name)' is active — clearing skin filter to prevent stacking")
+            // Clear any previously applied skin filter so the user filter is the only effect.
+            applyScreenFilter(nil)
+            return
+        }
+
+        // Construct DeltaSkinScreenFilter directly from FilterInfo so that filter-specific
+        // configuration (e.g. CIGaussianBlur radius stored on the wrapper) is preserved.
+        if let screenFilter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
+            ILOG("skins: Applying skin screen filter '\(filterInfo.name)' from skin '\(skin.name)'")
+            applyScreenFilter(screenFilter)
+        } else {
+            ELOG("skins: Failed to create DeltaSkinScreenFilter for '\(filterInfo.name)'")
+            applyScreenFilter(nil)
         }
     }
 }

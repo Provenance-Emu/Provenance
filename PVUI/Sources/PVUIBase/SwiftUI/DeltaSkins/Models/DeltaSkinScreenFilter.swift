@@ -19,14 +19,20 @@ public class DeltaSkinScreenFilter {
             guard let filter = CIFilter(name: "CIGaussianBlur") else { return nil }
             self.filter = filter
 
-            // Extract radius and center
+            // Extract radius and center; also set them on the underlying CIFilter so that
+            // callers accessing .filter directly (e.g. DeltaSkinScreen.filters) see the
+            // correct parameter values rather than CoreImage's defaults.
             if case .number(let radius) = filterInfo.parameters["inputRadius"] {
                 self.radius = CGFloat(radius)
+                filter.setValue(CGFloat(radius) as NSNumber, forKey: kCIInputRadiusKey)
             } else {
                 self.radius = 2.0 // Default radius
+                filter.setValue(2.0 as NSNumber, forKey: kCIInputRadiusKey)
             }
 
             if case .vector(let x, let y) = filterInfo.parameters["inputCenter"] {
+                // Store center for higher-level logic (e.g., custom masking/gradients),
+                // but do not set it on CIGaussianBlur, which does not support inputCenter.
                 self.center = CGPoint(x: Double(x), y: Double(y))
             } else {
                 self.center = nil
