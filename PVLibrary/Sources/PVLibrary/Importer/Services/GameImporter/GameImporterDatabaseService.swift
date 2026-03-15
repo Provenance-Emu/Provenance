@@ -862,12 +862,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         // Index the newly-imported game in Spotlight so it surfaces immediately
         // in Siri / Spotlight search without waiting for the next full reindex.
-        #if canImport(CoreSpotlight) && !os(tvOS)
+        #if canImport(CoreSpotlight) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))
         await indexGameInSpotlight(frozenGame)
         #endif
     }
 
-    #if canImport(CoreSpotlight) && !os(tvOS)
+    #if canImport(CoreSpotlight) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))
     /// Index a single game in CoreSpotlight so it appears in Siri / Spotlight search.
     private func indexGameInSpotlight(_ game: PVGame) async {
         guard !game.md5Hash.isEmpty else {
