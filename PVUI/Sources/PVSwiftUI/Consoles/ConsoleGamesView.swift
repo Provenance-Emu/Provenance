@@ -175,6 +175,15 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
 
+    /// Setup guidance banner for contentless cores (Doom, Wolf3D, Quake).
+    /// Only shown when the system has a guide and the user has no imported games yet.
+    @ViewBuilder
+    var contentlessSetupGuide: some View {
+        if allGamesModels.isEmpty || allGamesModels.allSatisfy({ liveGame(for: $0)?.contentless == true }) {
+            ContentlessSetupGuideView(systemIdentifier: console.identifier)
+        }
+    }
+
     @ViewBuilder
     var importProgressView: some View {
         // Defer ImportProgressView creation to avoid synchronous ViewModel initialization blocking main thread
@@ -346,6 +355,8 @@ struct ConsoleGamesView: SwiftUI.View {
                     importProgressView
 
                     unsupportedSystemBanner
+
+                    contentlessSetupGuide
 
                     gamesScrollView
 
