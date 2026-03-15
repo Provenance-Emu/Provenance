@@ -2154,6 +2154,7 @@ struct DeltaSkinScreenFilterTests {
     func nativeResolutionUnknownFallback() {
         let unknown: [DeltaSkinGameType] = [.nes, .snes, .n64, .neogeo, .mame]
         for gameType in unknown {
+            #expect(DeltaSkinNativeResolution.size(for: gameType) == nil, "\(gameType.registryKey) should return nil from size(for:)")
             let ar = DeltaSkinNativeResolution.aspectRatio(for: gameType)
             #expect(abs(ar - (4.0 / 3.0)) < 0.001, "\(gameType.registryKey) should fall back to 4:3, got \(ar)")
         }

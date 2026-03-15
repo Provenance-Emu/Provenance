@@ -27,6 +27,8 @@ public enum DeltaSkinNativeResolution {
             let data = try? Data(contentsOf: url),
             let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else {
+            assertionFailure("DeltaSkinNativeResolution: failed to load or parse system-native-resolutions.json — aspect-ratio enforcement will degrade to 4:3 fallback")
+            print("DeltaSkinNativeResolution: failed to load or parse system-native-resolutions.json")
             return [:]
         }
         var result: [String: CGSize] = [:]
@@ -34,9 +36,11 @@ public enum DeltaSkinNativeResolution {
             guard
                 key != "_comment",
                 let dict   = value as? [String: Any],
-                let width  = (dict["width"]  as? NSNumber).map(CGFloat.init),
-                let height = (dict["height"] as? NSNumber).map(CGFloat.init)
+                let widthNum  = dict["width"]  as? NSNumber,
+                let heightNum = dict["height"] as? NSNumber
             else { continue }
+            let width  = CGFloat(widthNum.doubleValue)
+            let height = CGFloat(heightNum.doubleValue)
             result[key] = CGSize(width: width, height: height)
         }
         return result
