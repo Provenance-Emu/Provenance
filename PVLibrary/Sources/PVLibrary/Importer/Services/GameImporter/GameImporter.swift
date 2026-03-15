@@ -727,8 +727,9 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     /// Caches the in-flight or already-completed initialization task.
-    /// Isolated to `@MainActor` so the nil-check and task assignment form a
-    /// single atomic step — preventing duplicate scans from concurrent callers.
+    /// Accessed only from the `@MainActor`-isolated `initCorePlists()` so the
+    /// nil-check and task assignment form a single atomic step — preventing
+    /// duplicate scans from concurrent callers.
     private var corePlistsInitializationTask: Task<Void, Error>?
 
     @MainActor
