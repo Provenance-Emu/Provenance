@@ -141,7 +141,7 @@ public struct DeltaSkinValidator {
         // Warn about missing optional but recommended field
         if json["debug"] == nil {
             findings.append(DeltaSkinValidationFinding(
-                severity: .warning,
+                severity: .error,
                 title: "Missing 'debug' field",
                 detail: "info.json should include a debug flag.",
                 suggestion: "Add \"debug\": false to info.json."
