@@ -2114,7 +2114,6 @@ private struct DeltaSkinsSection: View {
     @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.buttonSound) var buttonSound
     @Default(.skinMode) var skinMode
-    @Default(.controllerOverlayOpacity) var controllerOverlayOpacity
 
     var body: some View {
         Section {
@@ -2155,26 +2154,6 @@ private struct DeltaSkinsSection: View {
                     .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
             }
             .frame(maxWidth: .infinity)
-
-
-            HStack {
-                Text("Overlay Opacity")
-                RetroWaveSlider<Float>(value: $controllerOverlayOpacity,
-                                     in: Defaults.Keys.controllerOverlayOpacityRange,
-                                     step: 0.05,
-                                     onEditingChanged: { _ in },
-                                     label: { Text("Opacity of controller skin overlay.") },
-                                     minimumValueLabel: { Text("") },
-                                     maximumValueLabel: { Text("") },
-                                     leadingIcon: {
-                                         Image(systemName: "sun.min")
-                                             .foregroundColor(RetroTheme.retroBlue)
-                                     },
-                                     trailingIcon: {
-                                         Image(systemName: "sun.max")
-                                             .foregroundColor(RetroTheme.retroBlue)
-                                     })
-            }
 
             // Button to select skins
             NavigationLink {

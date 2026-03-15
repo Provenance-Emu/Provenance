@@ -63,37 +63,6 @@ struct DefaultsKeysTests {
     }
 }
 
-// MARK: - Controller Overlay Defaults Tests
-
-@Suite("Controller Overlay Defaults")
-struct ControllerOverlayDefaultsTests {
-
-    @Test("controllerOverlayOpacity default is 1.0")
-    func controllerOverlayOpacityDefault() {
-        Defaults.reset(.controllerOverlayOpacity)
-        #expect(Defaults[.controllerOverlayOpacity] == 1.0)
-    }
-
-    @Test("controllerOverlayOpacityRange spans 0.1 to 1.0")
-    func controllerOverlayOpacityRange() {
-        #expect(Defaults.Keys.controllerOverlayOpacityRange == 0.1...1.0)
-    }
-
-    @Test("controllerOverlayOpacity default is within valid range")
-    func controllerOverlayOpacityDefaultInRange() {
-        Defaults.reset(.controllerOverlayOpacity)
-        let value = Defaults[.controllerOverlayOpacity]
-        #expect(Defaults.Keys.controllerOverlayOpacityRange.contains(value))
-    }
-
-    @Test("controllerOverlayOpacity persists written value")
-    func controllerOverlayOpacityPersists() {
-        Defaults[.controllerOverlayOpacity] = 0.5
-        #expect(Defaults[.controllerOverlayOpacity] == 0.5)
-        Defaults.reset(.controllerOverlayOpacity)
-    }
-}
-
 // MARK: - ButtonPressEffect Tests
 
 @Suite("ButtonPressEffect")
