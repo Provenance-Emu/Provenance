@@ -11,7 +11,10 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Singleton instance
     public static let shared = DeltaSkinManager()
 
-    /// Currently loaded skins — @Published so SwiftUI observes changes (MainActor only)
+    /// Currently loaded skins — `@Published` so SwiftUI observes changes.
+    /// Intended for UI/MainActor reads; background callers should prefer
+    /// `availableSkins(forceRescan:)` / `skin(withIdentifier:)` which are
+    /// safe to use off the MainActor.
     @Published public private(set) var loadedSkins: [DeltaSkinProtocol] = []
 
     /// Set to true on MainActor *after* loadedSkins is populated for the first time.
