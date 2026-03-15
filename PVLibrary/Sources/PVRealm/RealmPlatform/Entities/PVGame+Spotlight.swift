@@ -186,11 +186,21 @@ public extension PVGame {
 
     var pathOfCachedImage: URL? {
         let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
-        if artworkKey.isEmpty || !PVMediaCache.fileExists(forKey: artworkKey) {
-            return nil
+        guard !artworkKey.isEmpty else { return nil }
+
+        // Check local cache first
+        if PVMediaCache.fileExists(forKey: artworkKey) {
+            return PVMediaCache.filePath(forKey: artworkKey)
         }
-        let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
-        return artworkURL
+
+        // Fallback: if artworkKey is a remote URL, return it directly so
+        // CoreSpotlight can fetch the thumbnail on its own
+        if artworkKey.hasPrefix("http://") || artworkKey.hasPrefix("https://"),
+           let url = URL(string: artworkKey) {
+            return url
+        }
+
+        return nil
     }
 
     var spotlightUniqueIdentifier: String {
