@@ -651,7 +651,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         // UI appears, so we avoid blocking the boot path with synchronous I/O.
         // Gather system identifiers on the main actor (Realm is thread-confined),
         // then do the actual filesystem work off the main thread.
-        let systemIDs = PVSystem.all.map { $0.identifier }
+        let systemIDs = Array(PVSystem.all.map { $0.identifier })
         Task.detached(priority: .utility) {
             GameImporter.createDefaultDirectories(fm: FileManager.default, systemIdentifiers: systemIDs)
         }
