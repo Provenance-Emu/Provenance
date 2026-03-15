@@ -809,7 +809,16 @@ SoundDriver *systemSoundInit() {
 
 // VBA logging
 void systemMessage(int, const char * str, ...) {
-    DLOG(@"VBA message: %s", str);
+    va_list args;
+    va_start(args, str);
+    char buf[1024];
+    vsnprintf(buf, sizeof(buf), str, args);
+    va_end(args);
+    DLOG(@"VBA message: %s", buf);
+    NSString *msg = [NSString stringWithUTF8String:buf];
+    if (msg.length > 0) {
+        [PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:3.0];
+    }
 }
 
 - (void)didPush:(PVGBAButton)button forPlayer:(NSInteger)player {

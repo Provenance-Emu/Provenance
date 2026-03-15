@@ -82,8 +82,11 @@ int msgboxf(const wchar* text,unsigned int type,...)
     vsprintf(temp, text, args);
     va_end(args);
 
-        //printf(NULL,temp,VER_SHORTNAME,type | MB_TASKMODAL);
     ILOG(@"%s", temp);
+    NSString *msg = [NSString stringWithUTF8String:temp];
+    if (msg.length > 0) {
+        [PVOSDNotification postMessage:msg type:PVOSDTypeInfo duration:3.0];
+    }
     return 0;
 }
 
