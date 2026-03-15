@@ -20,7 +20,8 @@ import PVCoreBridge
 /// downstream ObjC core target). `@objc` ensures the class is
 /// registered with the ObjC runtime so `NSClassFromString` /
 /// `principleClass` lookups still work.
-@objc @objcMembers
+// swiftlint:disable:next attributes
+@objc(PVThinLibretroCore) @objcMembers
 class PVThinLibretroCore: PVEmulatorCore {
 
     // MARK: Lifecycle
