@@ -64,14 +64,28 @@ public struct GameContextMenu: View {
                 }
 
                 if availableCores.count > 1 {
-                    Button {
-                        Task { @MainActor in
-                            // Thaw game for UI operations
-                            if let thawedGame = game.thaw() {
-                                await rootDelegate?.root_presentCoreSelection(forGame: thawedGame, sender: self)
+                    // Use inline Menu to show cores with save state counts
+                    // directly in the context menu — no separate alert needed.
+                    Menu {
+                        ForEach(availableCores, id: \.identifier) { core in
+                            Button {
+                                Task { @MainActor in
+                                    if let thawedGame = game.thaw() {
+                                        rootDelegate?.root_load(thawedGame, sender: self, core: core, saveState: nil)
+                                    }
+                                }
+                            } label: {
+                                let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
+                                if saveCount > 0 {
+                                    Label("\(core.projectName) (\(saveCount) save\(saveCount == 1 ? "" : "s"))", systemImage: "gamecontroller")
+                                } else {
+                                    Label(core.projectName, systemImage: "gamecontroller")
+                                }
                             }
                         }
-                    } label: { Label("Open in...", systemImage: "gamecontroller") }
+                    } label: {
+                        Label("Open in...", systemImage: "gamecontroller")
+                    }
                 }
                 Button {
                     contextMenuDelegate?.gameContextMenu(self, didRequestShowGameInfoFor: game.md5Hash)

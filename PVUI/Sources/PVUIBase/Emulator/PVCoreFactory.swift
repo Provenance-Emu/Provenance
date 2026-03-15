@@ -25,8 +25,22 @@ import PVLogging
 
 public extension PVCore {
     public func createInstance(forSystem system: PVSystem) -> PVEmulatorCore? {
-        guard let coreClass = NSClassFromString(self.principleClass) as? PVEmulatorCore.Type else {
-            ELOG("Couldn't get class for <\(principleClass)>")
+        var className = self.principleClass
+
+        // When the thin libretro wrapper feature flag is enabled, swap RetroArch
+        // bridge classes for PVThinLibretroCore so we can test the thin wrapper
+        // with existing ROM/core associations without removing the RA backend.
+        if className == "PVRetroArchCoreBridge" || className == "PVLibRetroGLESCore" || className == "PVLibRetroCore" {
+            if let thinClass = NSClassFromString("PVThinLibretroCore"),
+               UserDefaults.standard.bool(forKey: "dynamicLibretroScanner") ||
+               (UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides")?["dynamicLibretroScanner"] as? Bool == true) {
+                ILOG("ThinLibretro: swapping \(className) → PVThinLibretroCore for \(identifier)")
+                className = "PVThinLibretroCore"
+            }
+        }
+
+        guard let coreClass = NSClassFromString(className) as? PVEmulatorCore.Type else {
+            ELOG("Couldn't get class for <\(className)> (original: \(principleClass))")
             return nil
         }
 
