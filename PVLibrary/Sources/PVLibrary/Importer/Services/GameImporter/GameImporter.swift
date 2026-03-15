@@ -586,8 +586,11 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
 
-    /// Creates default directories
-    private func createDefaultDirectories(fm: FileManager) {
+    /// Creates default directories.
+    ///
+    /// Accepts pre-fetched system identifiers so this method can run off the
+    /// main actor without touching Realm (Realm objects are thread-confined).
+    private func createDefaultDirectories(fm: FileManager, systemIdentifiers: [String]) {
         // Core roots
         createDefaultDirectory(fm, url: romsPath)
         createDefaultDirectory(fm, url: romsImportPath)
@@ -603,8 +606,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         createDefaultDirectory(fm, url: deltaSkinsURL)
 
         // Per-system ROM subfolders
-        for system in PVSystem.all {
-            let systemDir = Paths.romsPath(forSystemIdentifier: system.identifier)
+        for identifier in systemIdentifiers {
+            let systemDir = Paths.romsPath(forSystemIdentifier: identifier)
             createDefaultDirectory(fm, url: systemDir)
         }
     }
@@ -642,34 +645,28 @@ public final class GameImporter: GameImporting, ObservableObject {
             initialized.leave()
             return
         }
-        let fm = FileManager.default
-        createDefaultDirectories(fm: fm)
 
-        /// Updates the system to path map
-        @MainActor
-        @Sendable func updateSystemToPathMap() async -> [String: URL] {
-            let systems = PVSystem.all.toArray()
-            return await systems.async.reduce(into: [String: URL]()) {partialResult, system in
-                partialResult[system.identifier] = system.romsDirectory
-            }
+        // Create default directories in the background — not required before the
+        // UI appears, so we avoid blocking the boot path with synchronous I/O.
+        // Gather system identifiers on the main actor (Realm is thread-confined),
+        // then do the actual filesystem work off the main thread.
+        let systemIDs = PVSystem.all.map { $0.identifier }
+        Task.detached(priority: .utility) {
+            await self.createDefaultDirectories(fm: FileManager.default, systemIdentifiers: systemIDs)
         }
 
-        /// Updates the ROM extension to systems map
+        /// Builds a [systemIdentifier: romsDirectoryURL] map from Realm.
+        /// Uses a simple synchronous iteration instead of the heavier
+        /// async-reduce that was creating unnecessary actor hops.
         @MainActor
-        @Sendable func updateromExtensionToSystemsMap() -> [String: [String]] {
-            return PVSystem.all.reduce([String: [String]](), { (dict, system) -> [String: [String]] in
-                let extensionsForSystem = system.supportedExtensions
-                // Make a new dict of [ext : systemID] for each ext in extions for that ID, then merge that dictionary with the current one,
-                // if the dictionary already has that key, the arrays are joined so you end up with a ext mapping to multpiple systemIDs
-                let extsToCurrentSystemID = extensionsForSystem.reduce([String: [String]](), { (dict, ext) -> [String: [String]] in
-                    var dict = dict
-                    dict[ext] = [system.identifier]
-                    return dict
-                })
-
-                return dict.merging(extsToCurrentSystemID, uniquingKeysWith: { var newArray = $0; newArray.append(contentsOf: $1); return newArray })
-
-            })
+        @Sendable func updateSystemToPathMap() -> [String: URL] {
+            let systems = PVSystem.all.toArray()
+            var map = [String: URL]()
+            map.reserveCapacity(systems.count)
+            for system in systems {
+                map[system.identifier] = system.romsDirectory
+            }
+            return map
         }
 
         let systems = PVSystem.all
@@ -679,7 +676,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             case .initial:
                 Task { @MainActor in
                     ILOG("RealmCollection changed state to .initial")
-                    self.systemToPathMap = await updateSystemToPathMap()
+                    self.systemToPathMap = updateSystemToPathMap()
                     self.initialized.leave()
 
                     // Set up the queue subscription after all members are initialized
@@ -688,7 +685,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             case .update:
                 Task { @MainActor in
                     ILOG("RealmCollection changed state to .update")
-                    self.systemToPathMap = await updateSystemToPathMap()
+                    self.systemToPathMap = updateSystemToPathMap()
                 }
             case let .error(error):
                 ELOG("RealmCollection changed state to .error")
@@ -728,7 +725,16 @@ public final class GameImporter: GameImporting, ObservableObject {
         case systemsPlistNotFound(bundle: Bundle)
     }
 
+    /// Whether `initCorePlists()` has already completed successfully.
+    private var corePlistsInitialized = false
+
     public func initCorePlists() async throws {
+        // Fast path: if we've already run successfully, skip entirely.
+        guard !corePlistsInitialized else {
+            ILOG("GameImporter: initCorePlists — already initialized, skipping")
+            return
+        }
+
         let bundle = ThisBundle
         guard let systemsPlistURL = bundle.url(forResource: "systems", withExtension: "plist") else {
             let error = CorePlistInitializationError.systemsPlistNotFound(bundle: bundle)
@@ -758,6 +764,8 @@ public final class GameImporter: GameImporting, ObservableObject {
             return merged
         }.value
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+
+        corePlistsInitialized = true
     }
 
     public func getArtwork(forGame game: PVGame) async -> PVGame {
