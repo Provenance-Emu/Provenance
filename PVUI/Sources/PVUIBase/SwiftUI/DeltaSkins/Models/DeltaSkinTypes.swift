@@ -132,6 +132,35 @@ extension DeltaSkinDevice {
     }
 }
 
+// MARK: - CGRect aspect-ratio helper
+
+extension CGRect {
+    /// Returns a new rect that fits `self` while maintaining the given `aspectRatio` (width/height),
+    /// centred within the original rect.  Used by the skin renderer to enforce native pixel AR.
+    public func fitting(aspectRatio: CGFloat) -> CGRect {
+        guard aspectRatio > 0, !aspectRatio.isNaN else { return self }
+        let currentAR = width / height
+        if abs(currentAR - aspectRatio) < 0.001 { return self } // already correct
+
+        let fittedWidth: CGFloat
+        let fittedHeight: CGFloat
+
+        if currentAR > aspectRatio {
+            // Box is wider than desired → constrain by height
+            fittedHeight = height
+            fittedWidth = height * aspectRatio
+        } else {
+            // Box is taller than desired → constrain by width
+            fittedWidth = width
+            fittedHeight = width / aspectRatio
+        }
+
+        let xOffset = (width - fittedWidth) / 2
+        let yOffset = (height - fittedHeight) / 2
+        return CGRect(x: origin.x + xOffset, y: origin.y + yOffset, width: fittedWidth, height: fittedHeight)
+    }
+}
+
 // Add Codable conformance for CGRect
 extension CGRect: Codable {
     private enum CodingKeys: String, CodingKey {

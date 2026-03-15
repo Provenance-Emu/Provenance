@@ -97,20 +97,20 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
-            // Validate outputFrame - check if it's normalized (0-1) or absolute pixels (> 1.0)
-            // Use threshold (> 1.0) to detect - values > 1.0 are likely absolute pixels
-            // But be careful - some normalized values might be > 1.0 if they represent more than 100% of space
-            // So use a more conservative check: if values are > mappingSize, they're definitely absolute
-            let isAbsolutePixels = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
-                                   (outputFrame.width > 1.0 && outputFrame.height > 1.0 &&
-                                    outputFrame.width < mappingSize.width && outputFrame.height < mappingSize.height)
+            // outputFrame is now always normalised to 0-1 space by DeltaSkinScreen.normaliseOutputFrame().
+            // Legacy pixel-coord frames (e.g. GameGear skins targeting a 480×320 canvas) are
+            // divided by (480, 320) at decode time, so no further conversion is needed here.
+            // We keep a secondary check against mappingSize as a defensive fallback for any
+            // frames that may have bypassed normalisation.
+            let needsFallbackNorm = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
+                                    (outputFrame.width > 10.0 || outputFrame.height > 10.0)
 
-            if isAbsolutePixels || (outputFrame.width > 10.0 || outputFrame.height > 10.0) {
-                DLOG("🎮 SKIN: Detected absolute pixels in outputFrame: \(outputFrame), mappingSize: \(mappingSize)")
+            if needsFallbackNorm {
+                DLOG("🎮 SKIN: Fallback normalisation applied to outputFrame: \(outputFrame), mappingSize: \(mappingSize)")
 
                 // Normalize - ensure we don't divide by zero
                 guard mappingSize.width > 0 && mappingSize.height > 0 else {
-                    ELOG("🎮 SKIN: ERROR - Invalid mappingSize for normalization: \(mappingSize)")
+                    ELOG("🎮 SKIN: ERROR - Invalid mappingSize for normalisation: \(mappingSize)")
                     return nil
                 }
 
@@ -131,7 +131,7 @@ struct DeltaSkinScreenPositionWrapper: View {
                 // Check for invalid normalized values (NaN or infinity)
                 guard normalizedX.isFinite && normalizedY.isFinite &&
                       normalizedWidth.isFinite && normalizedHeight.isFinite else {
-                    ELOG("🎮 SKIN: ERROR - Invalid normalized values: x=\(normalizedX), y=\(normalizedY), w=\(normalizedWidth), h=\(normalizedHeight)")
+                    ELOG("🎮 SKIN: ERROR - Invalid normalized values after fallback: x=\(normalizedX), y=\(normalizedY), w=\(normalizedWidth), h=\(normalizedHeight)")
                     return nil
                 }
 
@@ -142,18 +142,30 @@ struct DeltaSkinScreenPositionWrapper: View {
                     height: normalizedHeight * layout.height
                 )
 
-                DLOG("🎮 SKIN:   Calculated screenFrame (screens array): \(screenFrame)")
+                DLOG("🎮 SKIN:   Calculated screenFrame (fallback norm): \(screenFrame)")
                 DLOG("🎮 SKIN:   layout.xOffset: \(layout.xOffset), layout.yOffset: \(layout.yOffset)")
             } else {
-                // outputFrame is normalized (0-1), scale by layout dimensions
-                DLOG("🎮 SKIN: Treating outputFrame as normalized: \(outputFrame)")
-                screenFrame = CGRect(
+                // outputFrame is normalised (0–1); scale directly by layout dimensions.
+                DLOG("🎮 SKIN: Treating outputFrame as normalised: \(outputFrame)")
+                var scaledFrame = CGRect(
                     x: outputFrame.minX * layout.width,
                     y: outputFrame.minY * layout.height,
                     width: outputFrame.width * layout.width,
                     height: outputFrame.height * layout.height
                 )
-                DLOG("🎮 SKIN:   Calculated screenFrame (normalized): \(screenFrame)")
+
+                // Enforce native aspect ratio for systems that require it (e.g. GameGear 10:9).
+                // When maintainAspectRatio is true on the screen definition we fit the frame
+                // within the scaled outputFrame box using the system's native AR.
+                if smallestScreen.screen.maintainAspectRatio,
+                   DeltaSkinNativeResolution.size(for: skin.gameType) != nil {
+                    let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
+                    scaledFrame = scaledFrame.fitting(aspectRatio: nativeAR)
+                    DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) enforcement → \(scaledFrame)")
+                }
+
+                screenFrame = scaledFrame
+                DLOG("🎮 SKIN:   Calculated screenFrame (normalised): \(screenFrame)")
             }
         }
         // Try screen groups
@@ -165,15 +177,14 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
-            // Check if outputFrame is absolute pixels or normalized
-            let isAbsolutePixels = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
-                                   (outputFrame.width > 1.0 && outputFrame.height > 1.0 &&
-                                    outputFrame.width < mappingSize.width && outputFrame.height < mappingSize.height)
+            // outputFrame is normalised by DeltaSkinScreen.normaliseOutputFrame() at decode time.
+            // Apply a fallback normalisation for frames that may have bypassed that path.
+            let needsFallbackNorm = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
+                                    (outputFrame.width > 10.0 || outputFrame.height > 10.0)
 
-            if isAbsolutePixels || (outputFrame.width > 10.0 || outputFrame.height > 10.0) {
-                DLOG("🎮 SKIN: Detected absolute pixels in outputFrame (screenGroups): \(outputFrame), mappingSize: \(mappingSize)")
+            if needsFallbackNorm {
+                DLOG("🎮 SKIN: Fallback normalisation applied to screenGroups outputFrame: \(outputFrame), mappingSize: \(mappingSize)")
 
-                // Normalize first if needed
                 let normalizedX = outputFrame.minX / mappingSize.width
                 let normalizedY = outputFrame.minY / mappingSize.height
                 let normalizedWidth = outputFrame.width / mappingSize.width
@@ -188,14 +199,24 @@ struct DeltaSkinScreenPositionWrapper: View {
                     height: normalizedHeight * layout.height
                 )
 
-                DLOG("🎮 SKIN:   Calculated screenFrame (screen groups): \(screenFrame)")
+                DLOG("🎮 SKIN:   Calculated screenFrame (screen groups fallback): \(screenFrame)")
             } else {
-                screenFrame = CGRect(
+                var scaledFrame = CGRect(
                     x: outputFrame.minX * layout.width,
                     y: outputFrame.minY * layout.height,
                     width: outputFrame.width * layout.width,
                     height: outputFrame.height * layout.height
                 )
+
+                // Enforce native aspect ratio when requested
+                if screen.maintainAspectRatio,
+                   let _ = DeltaSkinNativeResolution.size(for: skin.gameType) {
+                    let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
+                    scaledFrame = scaledFrame.fitting(aspectRatio: nativeAR)
+                    DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) to screen group → \(scaledFrame)")
+                }
+
+                screenFrame = scaledFrame
             }
         }
         // For simple skins, prioritize button-based calculation over gameScreenFrame
