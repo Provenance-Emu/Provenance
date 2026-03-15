@@ -46,9 +46,6 @@ struct EmulatorWithSkinView: View {
     // Live binding to built-in filter selection
     @Default(.metalFilterMode) private var metalFilterMode
 
-    // Global overlay scale from settings
-    @Default(.controllerOverlayScale) private var overlayScale
-
     // User-selected filter from pause menu (takes precedence)
     @State private var selectedFilterName: String?
 
@@ -609,7 +606,6 @@ struct EmulatorWithSkinView: View {
             }
         }
         .environmentObject(inputHandler)
-        .scaleEffect(CGFloat(overlayScale))
         // NOTE: Removed aggressive .id() modifier that was causing AG::precondition_failure crashes
         // when changing filters. The filter is passed as a parameter to DeltaSkinView and updates
         // automatically when state changes. Using .id() to force full view recreation corrupts

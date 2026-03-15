@@ -374,8 +374,13 @@ public struct DeltaSkinView: View {
             )
         }
 
-        let scaledWidth = effectiveImageSize.width * scale
-        let scaledHeight = effectiveImageSize.height * scale
+        // Apply the user-requested overlay scale, clamped to a safe range.
+        // Baking it into the layout ensures the viewport-frame broadcast (DeltaSkinScreenPositionWrapper)
+        // uses the same dimensions as the rendered skin, preventing screen/overlay misalignment.
+        let clampedOverlayScale = CGFloat(overlayScale).clamped(to: 0.5...1.5)
+        let finalScale = scale * clampedOverlayScale
+        let scaledWidth = effectiveImageSize.width * finalScale
+        let scaledHeight = effectiveImageSize.height * finalScale
 
         // Center horizontally accounting for safe areas
         let xOffset = safeInsets.leading + (availableWidth - scaledWidth) / 2
@@ -392,13 +397,13 @@ public struct DeltaSkinView: View {
         }
 
         let layout = SkinLayout(
-            scale: scale,
+            scale: finalScale,
             width: scaledWidth,
             height: scaledHeight,
             xOffset: xOffset,
             yOffset: yOffset
         )
-        ILOG("skins: calculateLayout() - calculated layout: scale=\(scale), width=\(scaledWidth), height=\(scaledHeight), xOffset=\(xOffset), yOffset=\(yOffset)")
+        ILOG("skins: calculateLayout() - calculated layout: scale=\(finalScale), width=\(scaledWidth), height=\(scaledHeight), xOffset=\(xOffset), yOffset=\(yOffset)")
         return layout
     }
 
@@ -535,7 +540,7 @@ public struct DeltaSkinView: View {
                                 .scaledToFit()
                                 .frame(width: layout.width, height: layout.height)
                                 .clipped()
-                                .opacity(Double(overlayOpacity))
+                                .opacity(Double(overlayOpacity).clamped(to: 0.1...1.0))
                             // Draw per-button asset layers (if provided by the skin)
                             if let buttons = skin.buttons(for: traits),
                                let mappingSize = skin.mappingSize(for: traits) {
@@ -568,7 +573,7 @@ public struct DeltaSkinView: View {
                                                 y: button.frame.midY * scaleY
                                             )
                                             .allowsHitTesting(false)
-                                            .opacity(Double(overlayOpacity))
+                                            .opacity(Double(overlayOpacity).clamped(to: 0.1...1.0))
                                     }
                                 }
                             }
