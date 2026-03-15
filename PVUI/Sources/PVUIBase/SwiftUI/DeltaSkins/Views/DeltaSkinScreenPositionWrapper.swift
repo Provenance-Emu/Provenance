@@ -142,8 +142,8 @@ struct DeltaSkinScreenPositionWrapper: View {
                 )
 
                 // Enforce native aspect ratio for pixel-coordinate skins too (e.g. GameGear).
-                if smallestScreen.screen.maintainAspectRatio,
-                   DeltaSkinNativeResolution.size(for: skin.gameType) != nil {
+                // aspectRatio(for:) already provides a 4:3 fallback for unlisted systems.
+                if smallestScreen.screen.maintainAspectRatio {
                     let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
                     fallbackFrame = fallbackFrame.fitting(aspectRatio: nativeAR)
                     DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) to fallback-normed frame → \(fallbackFrame)")
@@ -166,8 +166,8 @@ struct DeltaSkinScreenPositionWrapper: View {
                 // Enforce native aspect ratio for systems that require it (e.g. GameGear 10:9).
                 // When maintainAspectRatio is true on the screen definition we fit the frame
                 // within the scaled outputFrame box using the system's native AR.
-                if smallestScreen.screen.maintainAspectRatio,
-                   DeltaSkinNativeResolution.size(for: skin.gameType) != nil {
+                // aspectRatio(for:) provides a 4:3 fallback for systems not in the registry.
+                if smallestScreen.screen.maintainAspectRatio {
                     let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
                     scaledFrame = scaledFrame.fitting(aspectRatio: nativeAR)
                     DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) enforcement → \(scaledFrame)")
@@ -208,8 +208,8 @@ struct DeltaSkinScreenPositionWrapper: View {
                 )
 
                 // Enforce native aspect ratio for pixel-coordinate screen groups too.
-                if screen.maintainAspectRatio,
-                   DeltaSkinNativeResolution.size(for: skin.gameType) != nil {
+                // aspectRatio(for:) provides a 4:3 fallback for systems not in the registry.
+                if screen.maintainAspectRatio {
                     let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
                     groupFallbackFrame = groupFallbackFrame.fitting(aspectRatio: nativeAR)
                     DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) to screen group fallback → \(groupFallbackFrame)")
@@ -226,9 +226,9 @@ struct DeltaSkinScreenPositionWrapper: View {
                     height: outputFrame.height * layout.height
                 )
 
-                // Enforce native aspect ratio when requested
-                if screen.maintainAspectRatio,
-                   let _ = DeltaSkinNativeResolution.size(for: skin.gameType) {
+                // Enforce native aspect ratio when requested.
+                // aspectRatio(for:) provides a 4:3 fallback for systems not in the registry.
+                if screen.maintainAspectRatio {
                     let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
                     scaledFrame = scaledFrame.fitting(aspectRatio: nativeAR)
                     DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) to screen group → \(scaledFrame)")

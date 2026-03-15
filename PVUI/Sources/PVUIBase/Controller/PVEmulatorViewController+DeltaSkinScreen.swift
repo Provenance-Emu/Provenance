@@ -482,9 +482,11 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     }
 
     /// Normalize frame to 0-1 coordinates using mappingSize.
-    /// Returns the frame unchanged when all four components are already in [0, 1].
+    /// Returns the frame unchanged when no component exceeds 1.0 (i.e. it is already
+    /// in normalised space). Note: negative origin values are not detected as pixel-space
+    /// and will be returned unchanged.
     private func normalizeFrame(_ frame: CGRect, mappingSize: CGSize) -> CGRect {
-        // Already normalised — all components within [0, 1]
+        // Already normalised — no component exceeds 1.0
         guard frame.origin.x > 1.0 || frame.origin.y > 1.0 ||
               frame.size.width > 1.0 || frame.size.height > 1.0 else {
             return frame

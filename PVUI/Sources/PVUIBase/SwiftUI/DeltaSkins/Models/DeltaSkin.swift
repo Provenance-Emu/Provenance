@@ -129,6 +129,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                     }
                     return ciFilter
                 },
+                filterInfos: screen.filters,
                 maintainAspectRatio: screen.maintainAspectRatio
             )
         }
@@ -189,6 +190,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                         filters: screen.filters?.compactMap { filterInfo in
                             createFilter(from: filterInfo)
                         },
+                        filterInfos: screen.filters,
                         maintainAspectRatio: screen.maintainAspectRatio
                     )
                 },
