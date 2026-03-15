@@ -134,6 +134,12 @@ public extension Defaults.Keys {
     static let tvOSSiriRemoteMouseSensitivity = Key<Double>("tvOSSiriRemoteMouseSensitivity", default: 1.0)
 #endif
 
+    /// Enable turbo/autofire: when a button has turbo active, it rapidly toggles press/release.
+    static let turboEnabled = Key<Bool>("turboEnabled", default: true)
+
+    /// Turbo fire rate in Hz (presses per second). Range 2-30, default 10.
+    static let turboRateHz = Key<Double>("turboRateHz", default: 10.0)
+
     /// Universal analog-stick deadzone applied by the shared input path.
     /// Range 0.0 (no deadzone) – 0.5 (50 % of axis range).  Default 0.0.
     /// This value is applied additively on top of any hardware-level deadzoning
