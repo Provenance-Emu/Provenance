@@ -713,13 +713,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionOverwrite = true
             }
             if coreIdentifier.contains("hatari") || self.systemIdentifier?.lowercased().contains("atarist") == true {
-                /// hatari_boot_hd must be "disabled" to prevent the core from passing --acsi ""
+                /// hatari_boot_hd default is "disabled" to prevent the core from passing --acsi ""
                 /// when no HD image is configured. Valid values are "enabled"/"disabled" — not
                 /// "true"/"false". This file is written to the per-core options path RetroArch
                 /// reads for GET_VARIABLE calls; opt.cfg is NOT used for core variables.
-                /// optionOverwrite is false so existing user options are preserved; any stale
-                /// wrong value ("false", "true", "enabled") is corrected in-place by the
-                /// Obj-C write path when the file already exists.
+                /// optionOverwrite is false so existing user options are preserved; stale
+                /// invalid values ("false", "true" — written by old Provenance bug Spike 2823)
+                /// are corrected in-place by the Obj-C write path. "enabled" is valid and kept.
                 optionValues += "hatari_boot_hd = \"disabled\"\n"
                 optionValuesFile = "Hatari/Hatari.opt"
                 optionOverwrite = false
