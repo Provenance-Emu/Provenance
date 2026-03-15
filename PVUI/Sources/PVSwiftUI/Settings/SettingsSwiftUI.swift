@@ -2114,7 +2114,6 @@ private struct DeltaSkinsSection: View {
     @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.buttonSound) var buttonSound
     @Default(.skinMode) var skinMode
-    @Default(.controllerOverlayScale) var controllerOverlayScale
     @Default(.controllerOverlayOpacity) var controllerOverlayOpacity
 
     var body: some View {
@@ -2157,25 +2156,6 @@ private struct DeltaSkinsSection: View {
             }
             .frame(maxWidth: .infinity)
 
-
-            HStack {
-                Text("Overlay Scale")
-                RetroWaveSlider<Float>(value: $controllerOverlayScale,
-                                     in: Defaults.Keys.controllerOverlayScaleRange,
-                                     step: 0.05,
-                                     onEditingChanged: { _ in },
-                                     label: { Text("Scale factor for controller skin overlay.") },
-                                     minimumValueLabel: { Text("") },
-                                     maximumValueLabel: { Text("") },
-                                     leadingIcon: {
-                                         Image(systemName: "minus.magnifyingglass")
-                                             .foregroundColor(RetroTheme.retroBlue)
-                                     },
-                                     trailingIcon: {
-                                         Image(systemName: "plus.magnifyingglass")
-                                             .foregroundColor(RetroTheme.retroBlue)
-                                     })
-            }
 
             HStack {
                 Text("Overlay Opacity")

@@ -68,21 +68,10 @@ struct DefaultsKeysTests {
 @Suite("Controller Overlay Defaults")
 struct ControllerOverlayDefaultsTests {
 
-    @Test("controllerOverlayScale default is 1.0")
-    func controllerOverlayScaleDefault() {
-        Defaults.reset(.controllerOverlayScale)
-        #expect(Defaults[.controllerOverlayScale] == 1.0)
-    }
-
     @Test("controllerOverlayOpacity default is 1.0")
     func controllerOverlayOpacityDefault() {
         Defaults.reset(.controllerOverlayOpacity)
         #expect(Defaults[.controllerOverlayOpacity] == 1.0)
-    }
-
-    @Test("controllerOverlayScaleRange spans 0.5 to 1.5")
-    func controllerOverlayScaleRange() {
-        #expect(Defaults.Keys.controllerOverlayScaleRange == 0.5...1.5)
     }
 
     @Test("controllerOverlayOpacityRange spans 0.1 to 1.0")
@@ -90,25 +79,11 @@ struct ControllerOverlayDefaultsTests {
         #expect(Defaults.Keys.controllerOverlayOpacityRange == 0.1...1.0)
     }
 
-    @Test("controllerOverlayScale default is within valid range")
-    func controllerOverlayScaleDefaultInRange() {
-        Defaults.reset(.controllerOverlayScale)
-        let value = Defaults[.controllerOverlayScale]
-        #expect(Defaults.Keys.controllerOverlayScaleRange.contains(value))
-    }
-
     @Test("controllerOverlayOpacity default is within valid range")
     func controllerOverlayOpacityDefaultInRange() {
         Defaults.reset(.controllerOverlayOpacity)
         let value = Defaults[.controllerOverlayOpacity]
         #expect(Defaults.Keys.controllerOverlayOpacityRange.contains(value))
-    }
-
-    @Test("controllerOverlayScale persists written value")
-    func controllerOverlayScalePersists() {
-        Defaults[.controllerOverlayScale] = 1.25
-        #expect(Defaults[.controllerOverlayScale] == 1.25)
-        Defaults.reset(.controllerOverlayScale)
     }
 
     @Test("controllerOverlayOpacity persists written value")

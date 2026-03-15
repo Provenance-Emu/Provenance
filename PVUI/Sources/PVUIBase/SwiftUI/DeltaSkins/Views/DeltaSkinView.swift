@@ -69,7 +69,6 @@ public struct DeltaSkinView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Global overlay appearance settings
-    @Default(.controllerOverlayScale) private var overlayScale
     @Default(.controllerOverlayOpacity) private var overlayOpacity
 
     private var clampedOverlayOpacity: Double {
@@ -379,12 +378,7 @@ public struct DeltaSkinView: View {
             )
         }
 
-        // Apply the user-requested overlay scale, clamped to a safe range.
-        // Baking it into the layout ensures the viewport-frame broadcast (DeltaSkinScreenPositionWrapper)
-        // uses the same dimensions as the rendered skin, preventing screen/overlay misalignment.
-        let scaleRange = Defaults.Keys.controllerOverlayScaleRange
-        let clampedOverlayScale = CGFloat(max(scaleRange.lowerBound, min(scaleRange.upperBound, overlayScale)))
-        let finalScale = scale * clampedOverlayScale
+        let finalScale = scale
         let scaledWidth = effectiveImageSize.width * finalScale
         let scaledHeight = effectiveImageSize.height * finalScale
 
