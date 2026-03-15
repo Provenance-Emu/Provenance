@@ -301,6 +301,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
             return
         }
 
+        objectWillChange.send()
         let wrapper = getRemappableController(for: controller)
         /// Mappings are loaded in PVRemappableController.init(), no need to load again
 
@@ -341,12 +342,14 @@ public final class PVControllerManager: NSObject, ObservableObject {
         PVControllerManager.shared.disconnectController(controller)
     }
 
-    @objc func disconnectController(_ controller:GCController) {
+    @MainActor
+    @objc func disconnectController(_ controller: GCController) {
         ILOG("Controller disconnected: \(controller.vendorName ?? "No Vendor")")
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
         }
 
+        objectWillChange.send()
         removeRemappableController(for: controller)
 
         if controller == player1 {
@@ -1003,6 +1006,7 @@ public extension PVControllerManager {
         } else {
             modes[id] = mode
         }
+        objectWillChange.send()
         Defaults[.controllerSlotModes] = modes
         ILOG("Saved slot mode \(mode) for controller [\(id)]")
     }
@@ -1010,6 +1014,42 @@ public extension PVControllerManager {
     /// Removes any saved slot mode for a controller, reverting to `.auto`.
     func clearSlotMode(for controller: GCController) {
         setSlotMode(.auto, for: controller)
+    }
+
+    // MARK: ID-based slot mode API (for disconnected / previously-seen controllers)
+
+    /// All controller identifiers that have a non-auto stored slot-mode preference.
+    var storedControllerIds: [String] {
+        Defaults[.controllerSlotModes]
+            .compactMap { key, mode -> String? in
+                if case .auto = mode { return nil }
+                return key
+            }
+            .sorted()
+    }
+
+    /// Returns the saved ``ControllerSlotMode`` for a controller identified by its string ID, or `.auto` when none is stored.
+    func slotMode(forId id: String) -> ControllerSlotMode {
+        Defaults[.controllerSlotModes][id] ?? .auto
+    }
+
+    /// Persists the ``ControllerSlotMode`` for a controller identified by its string ID.
+    /// Setting `.auto` removes any stored preference.
+    func setSlotMode(_ mode: ControllerSlotMode, forId id: String) {
+        var modes = Defaults[.controllerSlotModes]
+        if case .auto = mode {
+            modes.removeValue(forKey: id)
+        } else {
+            modes[id] = mode
+        }
+        objectWillChange.send()
+        Defaults[.controllerSlotModes] = modes
+        ILOG("Saved slot mode \(mode) for controller [\(id)]")
+    }
+
+    /// Removes any saved slot mode for the given controller ID, reverting to `.auto`.
+    func clearSlotMode(forId id: String) {
+        setSlotMode(.auto, forId: id)
     }
 
     // MARK: Convenience Int-based API (kept for backward compatibility)

@@ -364,6 +364,46 @@ struct ControllerSettingsView: View {
                         .foregroundColor(.secondary)
                 }
             }
+
+            // Preferred Player Slot Section
+            let connectedIds = Set(controllerManager.controllers.map { controllerManager.controllerIdentifier(for: $0) })
+            let disconnectedIds = controllerManager.storedControllerIds.filter { !connectedIds.contains($0) }
+            if !controllerManager.controllers.isEmpty || !disconnectedIds.isEmpty {
+                Section {
+                    ForEach(controllerManager.controllers, id: \.self) { controller in
+                        ControllerSlotModeRow(
+                            controller: controller,
+                            controllerManager: controllerManager,
+                            accentColor: accentColor,
+                            controllerIcon: controllerIcon(controller)
+                        )
+                    }
+                    ForEach(disconnectedIds, id: \.self) { id in
+                        DisconnectedControllerSlotModeRow(
+                            id: id,
+                            controllerManager: controllerManager
+                        )
+                    }
+                } header: {
+                    HStack {
+                        Image(systemName: "person.2.fill")
+                        Text("Preferred Player Slots")
+                    }
+                    .font(.headline)
+                    #if os(tvOS)
+                    .foregroundColor(.retroPink)
+                    #endif
+                } footer: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Set which player slot each controller prefers when connected.")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                        Text("Auto: first available slot. Preferred: use chosen slot if free. Always: claim chosen slot, bumping others.")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
         }
         #if os(tvOS)
         .listStyle(.plain)
@@ -443,6 +483,224 @@ struct ControllerSettingsView: View {
         }
 
         return title
+    }
+}
+
+// MARK: - Shared slot-mode types
+
+/// The three mode categories available to the user in slot pickers.
+private enum SlotModeCategory: String, CaseIterable, Identifiable {
+    case auto = "Auto"
+    case preferred = "Preferred"
+    case always = "Always"
+    var id: String { rawValue }
+}
+
+/// Shared segmented pickers for mode + player-slot selection.
+/// Used by both `ControllerSlotModeRow` and `DisconnectedControllerSlotModeRow`.
+private struct SlotModePickerSection: View {
+    @Binding var category: SlotModeCategory
+    @Binding var slot: Int
+
+    var body: some View {
+        Picker("Mode", selection: $category) {
+            ForEach(SlotModeCategory.allCases) { cat in
+                Text(cat.rawValue).tag(cat)
+            }
+        }
+        .pickerStyle(.segmented)
+
+        if category != .auto {
+            Picker("Player Slot", selection: $slot) {
+                ForEach(1...8, id: \.self) { s in
+                    Text("P\(s)").tag(s)
+                }
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+}
+
+// MARK: - Row views
+
+/// A row showing the slot mode for a single controller with inline pickers.
+private struct ControllerSlotModeRow: View {
+    let controller: GCController
+    @ObservedObject var controllerManager: PVControllerManager
+    let accentColor: Color
+    let controllerIcon: String
+
+    private var currentPlayerNumber: Int? {
+        controllerManager.allLiveControllers.first(where: { $0.value == controller })?.key
+    }
+
+    private var currentMode: ControllerSlotMode {
+        controllerManager.slotMode(for: controller)
+    }
+
+    private var modeCategory: SlotModeCategory {
+        switch currentMode {
+        case .auto: return .auto
+        case .preferred: return .preferred
+        case .always: return .always
+        }
+    }
+
+    private var selectedSlot: Int {
+        currentMode.preferredSlot ?? 1
+    }
+
+    private var categoryBinding: Binding<SlotModeCategory> {
+        Binding(
+            get: { modeCategory },
+            set: { newCategory in
+                switch newCategory {
+                case .auto:
+                    controllerManager.setSlotMode(.auto, for: controller)
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(selectedSlot), for: controller)
+                case .always:
+                    controllerManager.setSlotMode(.always(selectedSlot), for: controller)
+                }
+            }
+        )
+    }
+
+    private var slotBinding: Binding<Int> {
+        Binding(
+            get: { selectedSlot },
+            set: { newSlot in
+                switch modeCategory {
+                case .auto: break
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(newSlot), for: controller)
+                case .always:
+                    controllerManager.setSlotMode(.always(newSlot), for: controller)
+                }
+            }
+        )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: controllerIcon)
+                    .imageScale(.large)
+                    .foregroundColor(accentColor)
+                    .frame(width: 30)
+
+                Text(controller.vendorName ?? "Unknown Controller")
+                    .font(.headline)
+
+                Spacer()
+
+                if let playerNumber = currentPlayerNumber {
+                    Text("P\(playerNumber)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.2))
+                        .clipShape(Capsule())
+                }
+
+                if currentMode != .auto {
+                    Button("Reset", role: .destructive) {
+                        controllerManager.clearSlotMode(for: controller)
+                    }
+                    .font(.caption)
+                    .buttonStyle(.borderless)
+                }
+            }
+
+            SlotModePickerSection(category: categoryBinding, slot: slotBinding)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+/// A row showing stored slot-mode for a controller that is no longer connected.
+private struct DisconnectedControllerSlotModeRow: View {
+    let id: String
+    @ObservedObject var controllerManager: PVControllerManager
+
+    private var currentMode: ControllerSlotMode {
+        controllerManager.slotMode(forId: id)
+    }
+
+    private var modeCategory: SlotModeCategory {
+        switch currentMode {
+        case .auto: return .auto
+        case .preferred: return .preferred
+        case .always: return .always
+        }
+    }
+
+    private var selectedSlot: Int {
+        currentMode.preferredSlot ?? 1
+    }
+
+    private var categoryBinding: Binding<SlotModeCategory> {
+        Binding(
+            get: { modeCategory },
+            set: { newCategory in
+                switch newCategory {
+                case .auto:
+                    controllerManager.setSlotMode(.auto, forId: id)
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(selectedSlot), forId: id)
+                case .always:
+                    controllerManager.setSlotMode(.always(selectedSlot), forId: id)
+                }
+            }
+        )
+    }
+
+    private var slotBinding: Binding<Int> {
+        Binding(
+            get: { selectedSlot },
+            set: { newSlot in
+                switch modeCategory {
+                case .auto: break
+                case .preferred:
+                    controllerManager.setSlotMode(.preferred(newSlot), forId: id)
+                case .always:
+                    controllerManager.setSlotMode(.always(newSlot), forId: id)
+                }
+            }
+        )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: "gamecontroller")
+                    .imageScale(.large)
+                    .foregroundColor(.secondary)
+                    .frame(width: 30)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(id)
+                        .font(.headline)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Text("Disconnected")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Button("Reset", role: .destructive) {
+                    controllerManager.clearSlotMode(forId: id)
+                }
+                .font(.caption)
+                .buttonStyle(.borderless)
+            }
+
+            SlotModePickerSection(category: categoryBinding, slot: slotBinding)
+        }
+        .padding(.vertical, 4)
     }
 }
 
