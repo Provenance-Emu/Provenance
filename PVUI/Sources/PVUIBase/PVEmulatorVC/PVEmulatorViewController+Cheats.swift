@@ -37,6 +37,17 @@ extension PVEmulatorViewController {
     @MainActor
     func setCheatState(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool, completion: @escaping CheatsCompletion) async {
         if let gameWithCheat = core as? GameWithCheat {
+            // Capture game/core info upfront before any async work — prevents
+            // crashes from invalidated Realm objects accessed later.
+            let coreIdentifier = self.core.coreIdentifier
+            guard let game = self.game, !game.isInvalidated else {
+                ELOG("setCheatState: game is nil or invalidated")
+                completion(.error(.realmWriteError(NSError(domain: cheatErrorDomain, code: 0,
+                    userInfo: [NSLocalizedDescriptionKey: "Game is not available"]))))
+                return
+            }
+            let gameMD5 = game.md5Hash
+
             // Normalize code: replace non-alphanumeric separators with '+', collapse multiples, strip leading/trailing
             let upper = code.uppercased()
             var range = NSRange(upper.startIndex..., in: upper)
@@ -52,9 +63,6 @@ extension PVEmulatorViewController {
                     ELOG("Realm() failed")
                     return
                 }
-                // Look up coreIdentifier before any await to avoid @ThreadSafe re-resolution issues
-                let coreIdentifier = self.core.coreIdentifier
-                let gameMD5 = self.game.md5Hash
                 guard !gameMD5.isEmpty else {
                     ELOG("Game MD5 hash is empty — cannot save cheat")
                     completion(.error(.realmWriteError(NSError(domain: cheatErrorDomain, code: 0,
@@ -67,8 +75,11 @@ extension PVEmulatorViewController {
                 }
 
                 do {
+                    // Ensure cheats directory exists
+                    let cheatsDir = cheatsPath
+                    try? FileManager.default.createDirectory(at: cheatsDir, withIntermediateDirectories: true)
                     let baseFilename = "\(gameMD5).\(Date().timeIntervalSinceReferenceDate)"
-                    let saveURL = cheatsPath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
+                    let saveURL = cheatsDir.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
                     let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
                     var frozenCheat: PVCheats?
                     try realm.write {
