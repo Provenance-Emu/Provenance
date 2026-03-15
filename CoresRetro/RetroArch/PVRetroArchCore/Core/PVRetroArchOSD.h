@@ -17,11 +17,12 @@ extern "C" {
  *
  * @param msg      The message string (UTF-8).
  * @param category RetroArch MESSAGE_QUEUE_CATEGORY_* value cast to unsigned
- *                 (0=INFO, 1=WARNING, 2=ERROR). Used to derive PVOSDType.
- * @param duration RetroArch original frame-count duration (before any widget
- *                 conversion), converted to seconds at ~60fps.
+ *                 (0=INFO, 1=ERROR, 2=WARNING, 3=SUCCESS). Maps to PVOSDType.
+ * @param duration_ms Pre-computed display duration in milliseconds, derived
+ *                    from the original frame-count duration and the core's
+ *                    actual FPS (caller performs the conversion).
  */
-void pv_retroarch_post_osd(const char *msg, unsigned category, unsigned duration);
+void pv_retroarch_post_osd(const char *msg, unsigned category, unsigned duration_ms);
 
 #ifdef __cplusplus
 }
