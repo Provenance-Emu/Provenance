@@ -164,6 +164,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 input: input,
                 frame: item.frame,
                 extendedEdges: item.extendedEdges,
+                haptic: item.haptic,
                 states: item.states
             )
         }
@@ -799,11 +800,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Optional thumbstick configuration
         let thumbstick: ThumbstickConfig?
 
+        /// Optional per-button haptic feedback configuration
+        let haptic: DeltaSkinHaptic?
+
         /// Optional per-button visual states (normal/pressed images, animated frames)
         let states: DeltaSkinButtonStates?
 
         private enum CodingKeys: String, CodingKey {
-            case inputs, frame, extendedEdges, thumbstick, states
+            case inputs, frame, extendedEdges, thumbstick, haptic, states
         }
 
         public init(from decoder: Decoder) throws {
@@ -825,6 +829,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             thumbstick = try container.decodeIfPresent(ThumbstickConfig.self, forKey: .thumbstick)
+            haptic = try container.decodeIfPresent(DeltaSkinHaptic.self, forKey: .haptic)
             states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
         }
 
@@ -839,6 +844,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             try container.encodeIfPresent(thumbstick, forKey: .thumbstick)
+            try container.encodeIfPresent(haptic, forKey: .haptic)
             try container.encodeIfPresent(states, forKey: .states)
         }
     }
@@ -1051,6 +1057,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 input: input,
                 frame: item.frame,
                 extendedEdges: item.extendedEdges,
+                haptic: item.haptic,
                 states: item.states
             )
         } ?? []

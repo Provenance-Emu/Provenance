@@ -509,6 +509,14 @@ public struct DeltaSkinView: View {
                         )
                         .zIndex(0)
 
+                        // Animated background (shown beneath the static skin image when defined)
+                        if let bgAnimation = skin.backgroundAnimation(for: traits) {
+                            DeltaSkinAnimatedBackgroundView(animation: bgAnimation, skin: skin)
+                                .frame(width: layout.width, height: layout.height)
+                                .clipped()
+                                .allowsHitTesting(false)
+                        }
+
                         // Base skin image
                         if let skinImage = skinImage {
                             Image(uiImage: skinImage)
@@ -2094,10 +2102,14 @@ public struct DeltaSkinView: View {
 
         // Play button sound
         if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }) {
-            // Haptic feedback
+            // Haptic feedback — use per-button config when available, fall back to default
             #if !os(tvOS) && os(iOS)
             if !ProcessInfo.processInfo.isiOSAppOnMac {
-                impactGenerator.impactOccurred()
+                if let haptic = button.haptic {
+                    haptic.play()
+                } else {
+                    impactGenerator.impactOccurred()
+                }
             }
             #endif
 

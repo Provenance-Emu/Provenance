@@ -47,6 +47,10 @@ public protocol DeltaSkinProtocol: Identifiable, Equatable {
 
     /// The currently selected theme ID for this skin, or nil for the default appearance.
     var selectedThemeId: String? { get set }
+
+    /// Optional animated background configuration for this skin representation.
+    /// Returns `nil` for skins that do not declare a background animation.
+    func backgroundAnimation(for traits: DeltaSkinTraits) -> DeltaSkinBackgroundAnimation?
 }
 
 public extension DeltaSkinProtocol {
@@ -61,6 +65,9 @@ public extension DeltaSkinProtocol {
         get { DeltaSkinPreferences.shared.selectedThemeId(for: identifier) }
         set { DeltaSkinPreferences.shared.setSelectedThemeId(newValue, for: identifier) }
     }
+
+    /// Default implementation — skins that do not override this return `nil`.
+    func backgroundAnimation(for traits: DeltaSkinTraits) -> DeltaSkinBackgroundAnimation? { nil }
 }
 
 public extension Identifiable where  Self: DeltaSkinProtocol  {
