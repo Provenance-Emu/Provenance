@@ -575,27 +575,23 @@ __weak static PVAtari800Bridge * _currentCore;
 }
 
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
-    //    if (self.dualJoystickOption && player == 0) {
-    //        player = 1;
-    //    }
-    //    switch (button) {
-    //        case PV5200ButtonAnalogUp:
-    ////            NSLog(@"Up: %f", round(value * N64_ANALOG_MAX));
-    //            yAxis[player] = round(value * N64_ANALOG_MAX);
-    //            break;
-    //        case PV5200ButtonAnalogDown:
-    ////            NSLog(@"Down: %f", value * -N64_ANALOG_MAX);
-    //            yAxis[player] = value * -N64_ANALOG_MAX;
-    //            break;
-    //        case PV5200ButtonAnalogLeft:
-    //            xAxis[player] = value * -N64_ANALOG_MAX;
-    //            break;
-    //        case PV5200ButtonAnalogRight:
-    //            xAxis[player] = value * N64_ANALOG_MAX;
-    //            break;
-    //        default:
-    //            break;
-    //    }
+    static const CGFloat kDeadzone = 0.5;
+    switch (button) {
+        case PV5200ButtonAnalogUp:
+            self.controllerStates[player].up = (value > kDeadzone);
+            break;
+        case PV5200ButtonAnalogDown:
+            self.controllerStates[player].down = (value > kDeadzone);
+            break;
+        case PV5200ButtonAnalogLeft:
+            self.controllerStates[player].left = (value > kDeadzone);
+            break;
+        case PV5200ButtonAnalogRight:
+            self.controllerStates[player].right = (value > kDeadzone);
+            break;
+        default:
+            break;
+    }
 }
 
 
@@ -1082,12 +1078,16 @@ void PLATFORM_SoundUnlock(void){}
     [self didPush5200Button:button forPlayer:player];
 }
 
-- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player { 
-    [self didRelease:button forPlayer:player];
+- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didRelease5200Button:button forPlayer:player];
 }
 
-- (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player { 
-    [self didMoveJoystick:button withXValue:xValue withYValue:yValue forPlayer:player];
+- (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    static const CGFloat kDeadzone = 0.5;
+    self.controllerStates[player].up    = (yValue > kDeadzone);
+    self.controllerStates[player].down  = (yValue < -kDeadzone);
+    self.controllerStates[player].left  = (xValue < -kDeadzone);
+    self.controllerStates[player].right = (xValue > kDeadzone);
 }
 
 @end
