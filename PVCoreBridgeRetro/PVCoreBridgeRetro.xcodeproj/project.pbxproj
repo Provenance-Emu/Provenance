@@ -43,6 +43,9 @@
 		B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */; };
 		B3EA6C91292617F300010224 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
 		B4C5318E2F8A100100A1B2C3 /* libretro_vulkan.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6E82867202D00B60497 /* libretro_vulkan.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B4F1A2B3C4D5E60011223344 /* PVThinLibretroFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = B4F1A2B3C4D5E60011223341 /* PVThinLibretroFrontend.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B4F1A2B3C4D5E60011223345 /* PVThinLibretroFrontend.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4F1A2B3C4D5E60011223342 /* PVThinLibretroFrontend.mm */; };
+		B4F1A2B3C4D5E60011223346 /* PVThinLibretroCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F1A2B3C4D5E60011223343 /* PVThinLibretroCore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -885,6 +888,9 @@
 		B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Saves.m"; sourceTree = "<group>"; };
 		B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroGLESCore.h; sourceTree = "<group>"; };
 		B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibRetroGLESCore.m; sourceTree = "<group>"; };
+		B4F1A2B3C4D5E60011223341 /* PVThinLibretroFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVThinLibretroFrontend.h; sourceTree = "<group>"; };
+		B4F1A2B3C4D5E60011223342 /* PVThinLibretroFrontend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVThinLibretroFrontend.mm; sourceTree = "<group>"; };
+		B4F1A2B3C4D5E60011223343 /* PVThinLibretroCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVThinLibretroCore.swift; sourceTree = "<group>"; };
 		B3F7E5B529775B8000362B92 /* PVLogging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVLogging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F7E5B629775B8000362B92 /* PVLoggingObjC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVLoggingObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FFF02C26E9E65800A33143 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -2817,6 +2823,9 @@
 				B306814D2895D406003E465F /* PVLibRetroCore+Video.m */,
 				B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */,
 				B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */,
+				B4F1A2B3C4D5E60011223341 /* PVThinLibretroFrontend.h */,
+				B4F1A2B3C4D5E60011223342 /* PVThinLibretroFrontend.mm */,
+				B4F1A2B3C4D5E60011223343 /* PVThinLibretroCore.swift */,
 			);
 			path = PVLibRetro;
 			sourceTree = "<group>";
@@ -2861,6 +2870,7 @@
 				B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */,
 				B364D4B42870E5F600B93A4B /* libretro.h in Headers */,
 				B4C5318E2F8A100100A1B2C3 /* libretro_vulkan.h in Headers */,
+				B4F1A2B3C4D5E60011223344 /* PVThinLibretroFrontend.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3030,6 +3040,8 @@
 				B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
 				B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */,
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
+				B4F1A2B3C4D5E60011223345 /* PVThinLibretroFrontend.mm in Sources */,
+				B4F1A2B3C4D5E60011223346 /* PVThinLibretroCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

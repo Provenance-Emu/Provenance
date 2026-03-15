@@ -12,7 +12,16 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
 #import <PVAzahar/CitraWrapper.h>
-#import <PVCoreObjCBridge/PVOSDNotification.h>
+// OSD helper — posts NSNotification that PVEmulatorViewController+OSD observes.
+// Uses raw string constants matching PVOSDNotification.m so we need zero extra headers.
+static void PVPostOSD(NSString *msg, int type, NSTimeInterval duration) {
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:@"PVOSDMessageNotification"
+                      object:nil
+                    userInfo:@{ @"PVOSDMessage": msg,
+                                @"PVOSDType":    @(type),
+                                @"PVOSDDuration": @(duration > 0 ? duration : 3.0) }];
+}
 #import "InputFactory.h"
 #import <sys/utsname.h>
 #import "../azahar/Camera/CameraFactory.h"
@@ -119,7 +128,7 @@ void Keyboard::ShowError(const std::string& error) {
             // Fallback in case of invalid UTF-8 in the error string
             message = @"An unknown error occurred.";
         }
-        [PVOSDNotification postMessage:message type:PVOSDTypeError duration:4.0];
+        PVPostOSD(message, 3, 4.0);
     }
 }
 
@@ -627,14 +636,14 @@ static void InitializeLogging() {
 -(void) SaveState:(NSString *) savePath {
     std::string path=std::string([savePath UTF8String]);
     Core::SaveState(path, _title_id);
-    [PVOSDNotification postMessage:@"State saved" type:PVOSDTypeSuccess duration:2.0];
+    PVPostOSD(@"State saved", 1, 2.0);
 }
 
 -(void) LoadState:(NSString *) savePath {
     Settings::values.isReloading.SetValue(true);
     std::string path=std::string([savePath UTF8String]);
     Core::LoadState(path);
-    [PVOSDNotification postMessage:@"State loaded" type:PVOSDTypeSuccess duration:2.0];
+    PVPostOSD(@"State loaded", 1, 2.0);
 
     [CitraWrapper.sharedInstance resetController];
 }

@@ -25,7 +25,7 @@
 #import "DuckStationGameCore.h"
 #import "OEPSXSystemResponderClient.h"
 #import <OpenEmuBase/OpenEmuBase.h>
-#import <PVCoreObjCBridge/PVOSDNotification.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 #define TickCount DuckTickCount
 #include "core/types.h"
 #include "core/system.h"

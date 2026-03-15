@@ -371,15 +371,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 #endif // !macCatalyst
 #endif // os(iOS)
 
-        // Add toggle button
-        setupToggleButton()
-        updateToggleButtonAppearance()
-
-        // Add quick action buttons (quick save/load and fast forward)
-        setupQuickActionButtons()
-        // Apply initial hidden state — buttons are collapsed by default so they
-        // don't overlap the game video. The toggle chevron remains visible.
-        quickActionButtons.forEach { $0.isHidden = !buttonsVisible }
+        // Quick action HUD strip removed — save/load/FF are accessible via the pause menu.
     }
 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {

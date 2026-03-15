@@ -822,8 +822,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Start RetroAchievements session if the user is logged in and the core supports it.
         startAchievementsIfNeeded()
 
-        // Set up the indicator light overlay for JIT status, etc.
-        setupIndicatorOverlay()
+        // JIT indicator overlay removed — was showing on all cores and overlapping game video.
 
         #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
