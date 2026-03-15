@@ -736,13 +736,26 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw error
         }
         await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
-        // Run both filesystem I/O and the dynamic libretro scan (which calls
-        // DispatchQueue.concurrentPerform / dlopen) on a background thread.
+
+        // Run filesystem I/O and the dynamic libretro scan on a background thread.
         // Neither operation is MainActor-safe — calling either on the main thread
         // blocks the UI and causes the watchdog-visible "app hang" symptoms.
+        //
+        // Full-result disk cache: on subsequent launches where nothing has changed
+        // (same app version + build + Frameworks directory mtime) the entire scan
+        // is skipped and the cached [EmulatorCoreInfoPlist] array is used directly.
+        // The cache is invalidated automatically on app update or when a core
+        // dylib/bundle is added or removed (Frameworks dir mtime changes).
         let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
+            if let cached = CorePlistResultCache.load() {
+                ILOG("GameImporter: initCorePlists — cache hit, skipping scan (\(cached.count) cores)")
+                return cached
+            }
+            ILOG("GameImporter: initCorePlists — cache miss, running full scan")
             let plists = CoreLoader.getCorePlists()
-            return CoreLoader.mergeDiscoveredLibretroCores(into: plists)
+            let merged = CoreLoader.mergeDiscoveredLibretroCores(into: plists)
+            CorePlistResultCache.save(merged)
+            return merged
         }.value
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
@@ -4211,5 +4224,103 @@ fileprivate extension String {
     var deletingPathExtension: String {
         let url = URL(fileURLWithPath: self)
         return url.deletingPathExtension().lastPathComponent
+    }
+}
+
+// MARK: - Core plist result disk cache
+
+/// Persists the fully-merged `[EmulatorCoreInfoPlist]` result between launches so
+/// the expensive filesystem scan + Mach-O probe (PVDynamicLibretroCoreScanner) can
+/// be skipped entirely when nothing has changed.
+///
+/// Cache is invalidated when any of the following change:
+///  - `CFBundleShortVersionString` or `CFBundleVersion` (app update / reinstall)
+///  - The modification date of the main bundle's `Frameworks/` directory
+///    (core dylib added, removed, or replaced)
+///
+/// Call `CorePlistResultCache.invalidate()` from Settings "Rescan Cores" to force
+/// a fresh probe on the next launch.
+internal enum CorePlistResultCache {
+
+    private static let cacheVersion = 1
+
+    private struct Payload: Codable {
+        let version: Int
+        let appVersion: String
+        let buildNumber: String
+        let frameworksMtime: Double    // timeIntervalSince1970 of Frameworks dir
+        let plists: [CorePlistEntry]
+    }
+
+    /// File URL in the app's Caches directory.
+    private static var cacheURL: URL {
+        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return caches.appendingPathComponent("com.provenance.core-plists-v\(cacheVersion).json")
+    }
+
+    /// Fingerprint components derived from the current app binary state.
+    private static func currentFingerprint() -> (appVersion: String, build: String, mtime: Double) {
+        let info = Bundle.main.infoDictionary ?? [:]
+        let appVersion = info["CFBundleShortVersionString"] as? String ?? "0"
+        let build = info["CFBundleVersion"] as? String ?? "0"
+
+        // Use the Frameworks directory mtime as a cheap signal that cores changed.
+        let frameworksURL = Bundle.main.bundleURL.appendingPathComponent("Frameworks")
+        let mtime: Double
+        if let attrs = try? FileManager.default.attributesOfItem(atPath: frameworksURL.path),
+           let date = attrs[.modificationDate] as? Date {
+            mtime = date.timeIntervalSince1970
+        } else {
+            mtime = 0
+        }
+        return (appVersion, build, mtime)
+    }
+
+    /// Attempt to load a valid cached result. Returns `nil` on miss or invalidation.
+    static func load() -> [EmulatorCoreInfoPlist]? {
+        guard let data = try? Data(contentsOf: cacheURL) else { return nil }
+        guard let payload = try? JSONDecoder().decode(Payload.self, from: data) else {
+            WLOG("CorePlistResultCache: failed to decode cache — will rescan")
+            return nil
+        }
+        guard payload.version == cacheVersion else {
+            ILOG("CorePlistResultCache: version mismatch — cache invalid")
+            return nil
+        }
+        let fp = currentFingerprint()
+        guard payload.appVersion == fp.appVersion,
+              payload.buildNumber == fp.build,
+              payload.frameworksMtime == fp.mtime else {
+            ILOG("CorePlistResultCache: fingerprint changed (version/build/frameworks) — cache invalid")
+            return nil
+        }
+        let plists = payload.plists.map { EmulatorCoreInfoPlist($0) }
+        return plists
+    }
+
+    /// Persist the scan results for the current fingerprint.
+    static func save(_ plists: [EmulatorCoreInfoPlist]) {
+        let fp = currentFingerprint()
+        let entries = plists.map { CorePlistEntry($0) }
+        let payload = Payload(
+            version: cacheVersion,
+            appVersion: fp.appVersion,
+            buildNumber: fp.build,
+            frameworksMtime: fp.mtime,
+            plists: entries
+        )
+        do {
+            let data = try JSONEncoder().encode(payload)
+            try data.write(to: cacheURL, options: .atomic)
+            ILOG("CorePlistResultCache: saved \(entries.count) entries to disk")
+        } catch {
+            ELOG("CorePlistResultCache: failed to save — \(error.localizedDescription)")
+        }
+    }
+
+    /// Force-invalidate the cache (e.g. from Settings "Rescan Cores").
+    public static func invalidate() {
+        try? FileManager.default.removeItem(at: cacheURL)
+        ILOG("CorePlistResultCache: invalidated")
     }
 }
