@@ -2515,12 +2515,12 @@ extension DeltaSkinInputHandler: VirtualKeyboardDelegate {
 
     @available(iOS 14.0, *)
     public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyDown keyCode: GCKeyCode) {
-        Task { @MainActor in self.keyDown(keyCode) }
+        keyDown(keyCode)
     }
 
     @available(iOS 14.0, *)
     public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyUp keyCode: GCKeyCode) {
-        Task { @MainActor in self.keyUp(keyCode) }
+        keyUp(keyCode)
     }
 }
 #endif
