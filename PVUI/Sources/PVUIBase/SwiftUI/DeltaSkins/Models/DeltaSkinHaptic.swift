@@ -1,5 +1,5 @@
 import Foundation
-#if canImport(UIKit)
+#if os(iOS)
 import UIKit
 import PVSettings
 #endif
@@ -27,7 +27,7 @@ public struct DeltaSkinHaptic: Codable, Equatable {
         case style, intensity
     }
 
-    #if canImport(UIKit)
+    #if os(iOS)
     /// Map style string to UIImpactFeedbackGenerator.FeedbackStyle
     public var feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle {
         switch style.lowercased() {

@@ -1195,7 +1195,7 @@ extension UIImage {
         let finalSize: CGSize
         let scale: CGFloat
 
-        if let requestedSize = size {
+        if let requestedSize = size, requestedSize.width > 0, requestedSize.height > 0 {
             // Caller supplied an explicit target size – render at that size, capped for safety.
             let maxDimension: CGFloat = 4096
             let capScale = min(
