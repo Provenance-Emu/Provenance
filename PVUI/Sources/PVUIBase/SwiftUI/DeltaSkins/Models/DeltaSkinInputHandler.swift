@@ -806,7 +806,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         case .PCFX:
             if let r = core as? PVPCFXSystemResponderClient {
                 let b = PVPCFXButton(id)
-                DLOG("PVPFXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                DLOG("PVPCFXButton button (via PCFX): original=\(buttonId), normalized=\(id), PVPCFXButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         case .SGFX:
@@ -1575,7 +1575,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         case .PCFX:
             if let r = core as? PVPCFXSystemResponderClient {
                 let b = PVPCFXButton(id)
-                DLOG("PVPFXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                DLOG("PVPCFXButton button (via PCFX): original=\(buttonId), normalized=\(id), PVPCFXButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
