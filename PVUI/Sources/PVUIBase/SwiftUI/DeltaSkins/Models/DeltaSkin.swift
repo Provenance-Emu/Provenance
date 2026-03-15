@@ -128,7 +128,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                         }
                     }
                     return ciFilter
-                }
+                },
+                maintainAspectRatio: screen.maintainAspectRatio
             )
         }
     }
@@ -187,7 +188,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                         placement: screen.placement ?? .controller,
                         filters: screen.filters?.compactMap { filterInfo in
                             createFilter(from: filterInfo)
-                        }
+                        },
+                        maintainAspectRatio: screen.maintainAspectRatio
                     )
                 },
                 extendedEdges: rep.extendedEdges,
@@ -896,9 +898,12 @@ public struct DeltaSkin: DeltaSkinProtocol {
         let outputFrame: CGRect?
         let placement: DeltaSkinScreenPlacement?
         let filters: [FilterInfo]?
+        /// When `true` (default) the emulator viewport should maintain the system's
+        /// native pixel aspect ratio rather than stretching to fill `outputFrame`.
+        let maintainAspectRatio: Bool
 
         private enum CodingKeys: String, CodingKey {
-            case inputFrame, outputFrame, placement, filters
+            case inputFrame, outputFrame, placement, filters, maintainAspectRatio
         }
 
         public init(from decoder: Decoder) throws {
@@ -929,6 +934,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             // Decode optional fields
             placement = try container.decodeIfPresent(DeltaSkinScreenPlacement.self, forKey: .placement)
             filters = try container.decodeIfPresent([FilterInfo].self, forKey: .filters)
+            maintainAspectRatio = try container.decodeIfPresent(Bool.self, forKey: .maintainAspectRatio) ?? true
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -955,6 +961,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             // Encode optional fields
             try container.encodeIfPresent(placement, forKey: .placement)
             try container.encodeIfPresent(filters, forKey: .filters)
+            try container.encode(maintainAspectRatio, forKey: .maintainAspectRatio)
         }
     }
 

@@ -1812,14 +1812,13 @@ struct DeltaSkinComponentTests {
         }
         """
         let info = try JSONDecoder().decode(DeltaSkin.Info.self, from: json.data(using: .utf8)!)
+        // ScreenInfo is the raw JSON decode type; DeltaSkinScreen (with rawOutputFrame) is
+        // the runtime type produced by DeltaSkin.screens(for:). Test the ScreenInfo level here.
         let screen = info.representations[.iphone]?.standard?["portrait"]?.screens?.first
 
         // outputFrame must NOT be divided by any legacy reference — raw pixel value expected
         #expect(screen?.outputFrame?.width == 320)
         #expect(screen?.outputFrame?.height == 211)
-        // rawOutputFrame must equal outputFrame (both store the JSON value unchanged)
-        #expect(screen?.rawOutputFrame?.width == screen?.outputFrame?.width)
-        #expect(screen?.rawOutputFrame?.height == screen?.outputFrame?.height)
     }
 
     /// Skins that encode outputFrame relative to a non-480×320 mappingSize must not

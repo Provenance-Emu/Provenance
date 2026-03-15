@@ -134,12 +134,22 @@ struct DeltaSkinScreenPositionWrapper: View {
                     return nil
                 }
 
-                screenFrame = CGRect(
+                var fallbackFrame = CGRect(
                     x: normalizedX * layout.width,
                     y: normalizedY * layout.height,
                     width: normalizedWidth * layout.width,
                     height: normalizedHeight * layout.height
                 )
+
+                // Enforce native aspect ratio for pixel-coordinate skins too (e.g. GameGear).
+                if smallestScreen.screen.maintainAspectRatio,
+                   DeltaSkinNativeResolution.size(for: skin.gameType) != nil {
+                    let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
+                    fallbackFrame = fallbackFrame.fitting(aspectRatio: nativeAR)
+                    DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) to fallback-normed frame → \(fallbackFrame)")
+                }
+
+                screenFrame = fallbackFrame
 
                 DLOG("🎮 SKIN:   Calculated screenFrame (fallback norm): \(screenFrame)")
                 DLOG("🎮 SKIN:   layout.xOffset: \(layout.xOffset), layout.yOffset: \(layout.yOffset)")
@@ -190,12 +200,22 @@ struct DeltaSkinScreenPositionWrapper: View {
 
                 DLOG("🎮 SKIN:   Normalized: x=\(normalizedX), y=\(normalizedY), w=\(normalizedWidth), h=\(normalizedHeight)")
 
-                screenFrame = CGRect(
+                var groupFallbackFrame = CGRect(
                     x: normalizedX * layout.width,
                     y: normalizedY * layout.height,
                     width: normalizedWidth * layout.width,
                     height: normalizedHeight * layout.height
                 )
+
+                // Enforce native aspect ratio for pixel-coordinate screen groups too.
+                if screen.maintainAspectRatio,
+                   DeltaSkinNativeResolution.size(for: skin.gameType) != nil {
+                    let nativeAR = DeltaSkinNativeResolution.aspectRatio(for: skin.gameType)
+                    groupFallbackFrame = groupFallbackFrame.fitting(aspectRatio: nativeAR)
+                    DLOG("🎮 SKIN: Applied native AR (\(nativeAR)) to screen group fallback → \(groupFallbackFrame)")
+                }
+
+                screenFrame = groupFallbackFrame
 
                 DLOG("🎮 SKIN:   Calculated screenFrame (screen groups fallback): \(screenFrame)")
             } else {
