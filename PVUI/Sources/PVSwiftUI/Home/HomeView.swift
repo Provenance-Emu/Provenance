@@ -547,13 +547,13 @@ struct HomeView: SwiftUI.View {
                         }
                 }
             } else {
-                Text("Error: Could not load save states")
+                Text(String(localized: "Error: Could not load save states"))
             }
         }
 
         .uiKitAlert(
-            "Select Disc",
-            message: "Choose which disc to load",
+            String(localized: "Select Disc"),
+            message: String(localized: "Choose which disc to load"),
             isPresented: Binding(
                 get: { discSelectionAlert != nil },
                 set: { if !$0 { discSelectionAlert = nil } }
@@ -1059,7 +1059,7 @@ struct HomeView: SwiftUI.View {
             VStack(alignment: .leading, spacing: 0) {
                 // Section header with title and "Show All" button
                 HStack {
-                    Text("RECENT SAVES")
+                    Text(String(localized: "RECENT SAVES"))
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         .font(.system(size: 11))
                     Spacer()
@@ -1067,7 +1067,7 @@ struct HomeView: SwiftUI.View {
                         Button {
                             showAllSavesBrowser = true
                         } label: {
-                            Text("Show All")
+                            Text(String(localized: "Show All"))
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                         }
@@ -1097,7 +1097,7 @@ struct HomeView: SwiftUI.View {
     @ViewBuilder
     private func recentlyPlayedSection() -> some View {
         if showRecentGames {
-            HomeSection(title: "Recently Played") {
+            HomeSection(title: String(localized: "Recently Played")) {
                 ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
                     GameItemView(
                         game: game,
@@ -1133,7 +1133,7 @@ struct HomeView: SwiftUI.View {
     @ViewBuilder
     private func favoritesSection() -> some View {
         if showFavorites {
-            HomeSection(title: "Favorites") {
+            HomeSection(title: String(localized: "Favorites")) {
                 ForEach(favorites, id: \.self) { favorite in
                     GameItemView(
                         game: favorite,
@@ -1309,7 +1309,7 @@ struct HomeView: SwiftUI.View {
     @ViewBuilder
     private func searchResultsView() -> some View {
         VStack(alignment: .leading) {
-            Text("Search Results")
+            Text(String(localized: "Search Results"))
                 .font(.title2)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .padding(.horizontal)
@@ -1317,7 +1317,7 @@ struct HomeView: SwiftUI.View {
             LazyVStack(spacing: 0) {
                 let results = filteredSearchResults()
                 if results.isEmpty {
-                    Text("NO GAMES FOUND")
+                    Text(String(localized: "NO GAMES FOUND"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(RetroTheme.retroBlue)
                         .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)

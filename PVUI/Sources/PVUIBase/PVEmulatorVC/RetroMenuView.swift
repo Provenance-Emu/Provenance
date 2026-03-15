@@ -172,7 +172,7 @@ struct RetroMenuView: View {
 
     /// Computed height for title component
     private var title: some View {
-        Text("GAME OPTIONS")
+        Text(String(localized: "GAME OPTIONS"))
             .font(.system(size: 32, weight: .bold, design: .rounded))
             .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
             .padding(.top, 24)
@@ -209,7 +209,7 @@ struct RetroMenuView: View {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
-                            categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: {
+                            categoryButton(title: String(localized: "MAIN"), isSelected: selectedCategory == .main, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .main
                                 }
@@ -217,20 +217,20 @@ struct RetroMenuView: View {
                             .id("main")
                             // Always show CORE tab so sibling tabs stay in a fixed position.
                             // Grey it out in-place when no core features are available.
-                            categoryButton(title: "CORE", isSelected: selectedCategory == .core, action: {
+                            categoryButton(title: String(localized: "CORE"), isSelected: selectedCategory == .core, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .core
                                 }
                             })
                             .id("core")
                             .opacity(hasCoreFeatures ? 1.0 : 0.4)
-                            categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: {
+                            categoryButton(title: String(localized: "STATES"), isSelected: selectedCategory == .states, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .states
                                 }
                             })
                             .id("states")
-                            categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: {
+                            categoryButton(title: String(localized: "OPTIONS"), isSelected: selectedCategory == .options, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .options
                                 }
@@ -238,7 +238,7 @@ struct RetroMenuView: View {
                             .id("options")
                             #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
                             // Always show skins category - display message if not supported
-                            categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: {
+                            categoryButton(title: String(localized: "SKINS"), isSelected: selectedCategory == .skins, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selectedCategory = .skins
                                 }
@@ -422,18 +422,18 @@ struct RetroMenuView: View {
 
         return VStack(spacing: menuSpacing) {
             // Position 1 — Resume game (green = safe/go); primary action
-            menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroGreen, role: .primary) {
+            menuButton(title: String(localized: "RESUME GAME"), icon: "play.fill", color: .retroGreen, role: .primary) {
                 dismissAction(true)
             }
 
             // Position 2 — Reset game (orange = caution); destructive — resets progress
-            menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: .retroOrange, role: .destructive) {
+            menuButton(title: String(localized: "RESET GAME"), icon: "arrow.counterclockwise", color: .retroOrange, role: .destructive) {
                 dismissAction(true)
                 emulatorVC.core.resetEmulation()
             }
 
             // Position 3 — Game info (blue = informational)
-            menuButton(title: "GAME INFO", icon: "info.circle", color: .retroBlue) {
+            menuButton(title: String(localized: "GAME INFO"), icon: "info.circle", color: .retroBlue) {
                 dismissMenuForSubSheetThen {
                     emulatorVC.showMoreInfo()
                 }
@@ -442,7 +442,7 @@ struct RetroMenuView: View {
             // Position 4 — Cheat codes (purple = special/magic)
             // Always rendered at this position so QUIT stays at position 5.
             // Disabled/dimmed when the core does not support cheat codes.
-            menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: supportsCheatCodes ? .retroPurple : .gray) {
+            menuButton(title: String(localized: "CHEAT CODES"), icon: "wand.and.stars", color: supportsCheatCodes ? .retroPurple : .gray) {
                 if supportsCheatCodes {
                     dismissMenuForSubSheetThen {
                         emulatorVC.showCheatsMenu()
@@ -454,7 +454,7 @@ struct RetroMenuView: View {
 
             // Position 5 — Quit (red/pink = destructive action); clearly marks irreversible exit
             // Label changes based on whether a save prompt is offered; position is always 5.
-            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: .retroPink, role: .destructive) {
+            menuButton(title: shouldSave ? String(localized: "QUIT (WITHOUT SAVING)") : String(localized: "QUIT GAME"), icon: "xmark.circle", color: .retroPink, role: .destructive) {
                 dismissAction(false)
                 Task { @MainActor in
                     await emulatorVC.quit(optionallySave: false)
@@ -463,7 +463,7 @@ struct RetroMenuView: View {
 
             // Position 6 — Save & Quit (cyan = safe save action); only shown when applicable
             if shouldSave {
-                menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: .retroCyan) {
+                menuButton(title: String(localized: "SAVE & QUIT"), icon: "square.and.arrow.down", color: .retroCyan) {
                     dismissAction(false)
                     let image = emulatorVC.captureScreenshot()
 
@@ -504,7 +504,7 @@ struct RetroMenuView: View {
 
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {
-                menuButton(title: "CORE OPTIONS", icon: "gearshape", color: .retroPurple) {
+                menuButton(title: String(localized: "CORE OPTIONS"), icon: "gearshape", color: .retroPurple) {
                     dismissMenuForSubSheetThen {
                         emulatorVC.showCoreOptions()
                     }
@@ -514,7 +514,7 @@ struct RetroMenuView: View {
             #if !os(tvOS)
             if emulatorVC.coreSupportsVirtualKeyboard {
                 menuButton(
-                    title: emulatorVC.isVirtualKeyboardVisible ? "HIDE KEYBOARD" : "VIRTUAL KEYBOARD",
+                    title: emulatorVC.isVirtualKeyboardVisible ? String(localized: "HIDE KEYBOARD") : String(localized: "VIRTUAL KEYBOARD"),
                     icon: "keyboard",
                     color: .retroBlue
                 ) {
@@ -528,7 +528,7 @@ struct RetroMenuView: View {
 
             if emulatorVC.coreSupportsVirtualMouse {
                 menuButton(
-                    title: emulatorVC.isVirtualMouseVisible ? "HIDE MOUSE" : "VIRTUAL MOUSE",
+                    title: emulatorVC.isVirtualMouseVisible ? String(localized: "HIDE MOUSE") : String(localized: "VIRTUAL MOUSE"),
                     icon: "computermouse",
                     color: .retroCyan
                 ) {
@@ -543,7 +543,7 @@ struct RetroMenuView: View {
 
             // If no core features available, show message
             if !hasCoreFeatures {
-                Text("No core-specific features available")
+                Text(String(localized: "No core-specific features available"))
                     .foregroundColor(.gray)
                     .padding()
             }
@@ -566,7 +566,7 @@ struct RetroMenuView: View {
 
         return VStack(spacing: menuSpacing) {
             // MARK: - Save States section
-            skinSectionHeader("SAVE STATES", systemImage: "internaldrive")
+            skinSectionHeader(String(localized: "SAVE STATES"), systemImage: "internaldrive")
 
             // Summary info: N saves · last saved X ago
             if supportsSaveStates {
@@ -574,7 +574,7 @@ struct RetroMenuView: View {
                     Image(systemName: "bookmark.fill")
                         .font(.system(size: 10))
                     if saveCount == 0 {
-                        Text("No saves")
+                        Text(String(localized: "No saves"))
                     } else {
                         Text("\(saveCount) save\(saveCount == 1 ? "" : "s")")
                         if let date = lastSaveDate {
@@ -591,7 +591,7 @@ struct RetroMenuView: View {
             }
 
             // SAVE STATE — creates a new save
-            menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroCyan) {
+            menuButton(title: String(localized: "SAVE STATE"), icon: "square.and.arrow.down", color: .retroCyan) {
                 let screenshot = emulatorVC.captureScreenshot()
                 Task { @MainActor in
                     do {
@@ -606,7 +606,7 @@ struct RetroMenuView: View {
             .disabled(!supportsSaveStates)
 
             // QUICK LOAD — immediately loads the most recent save state
-            menuButton(title: "QUICK LOAD", icon: "arrowshape.turn.up.left", color: .retroBlue) {
+            menuButton(title: String(localized: "QUICK LOAD"), icon: "arrowshape.turn.up.left", color: .retroBlue) {
                 guard let game = emulatorVC.game, !game.isInvalidated,
                       let mostRecent = game.saveStates.sorted(byKeyPath: "date", ascending: false).first else { return }
                 dismissAction(false)
@@ -618,22 +618,22 @@ struct RetroMenuView: View {
             .disabled(!supportsSaveStates || !hasAnySave)
 
             // BROWSE SAVES — opens a SwiftUI save state picker within the pause menu flow
-            menuButton(title: "BROWSE SAVES", icon: "list.bullet.rectangle.portrait", color: .retroPurple) {
+            menuButton(title: String(localized: "BROWSE SAVES"), icon: "list.bullet.rectangle.portrait", color: .retroPurple) {
                 showingSaveStateBrowser = true
             }
             .opacity(supportsSaveStates ? 1.0 : 0.4)
             .disabled(!supportsSaveStates)
 
             // MARK: - Capture section
-            skinSectionHeader("CAPTURE", systemImage: "camera")
+            skinSectionHeader(String(localized: "CAPTURE"), systemImage: "camera")
 
 #if os(iOS) || targetEnvironment(macCatalyst)
-            menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: .retroYellow) {
+            menuButton(title: String(localized: "SAVE SCREENSHOT"), icon: "camera", color: .retroYellow) {
                 dismissAction(true)
                 emulatorVC.takeScreenshot()
             }
 
-            menuButton(title: "SCREENSHOTS", icon: "photo.on.rectangle.angled", color: .retroOrange) {
+            menuButton(title: String(localized: "SCREENSHOTS"), icon: "photo.on.rectangle.angled", color: .retroOrange) {
                 showingScreenshotBrowser = true
             }
 #endif
@@ -726,7 +726,7 @@ struct RetroMenuView: View {
     private var optionsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
             // Game speed button (yellow = speed/performance)
-            menuButton(title: "GAME SPEED", icon: "speedometer", color: .retroYellow) {
+            menuButton(title: String(localized: "GAME SPEED"), icon: "speedometer", color: .retroYellow) {
                 dismissMenuForSubSheetThen {
                     emulatorVC.showSpeedMenu()
                 }
@@ -734,12 +734,12 @@ struct RetroMenuView: View {
 
             // Performance overlay toggle
             VStack(alignment: .leading, spacing: 6) {
-                Text("PERFORMANCE")
+                Text(String(localized: "PERFORMANCE"))
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
 
                 menuToggleRow(
-                    title: "SHOW FPS COUNTER",
+                    title: String(localized: "SHOW FPS COUNTER"),
                     icon: "speedometer",
                     color: .retroYellow,
                     isOn: $showFPSCount
@@ -749,7 +749,7 @@ struct RetroMenuView: View {
 
                             // Screen filter selection
             VStack(alignment: .leading, spacing: 4) {
-                Text("SCREEN FILTER")
+                Text(String(localized: "SCREEN FILTER"))
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
 
@@ -812,13 +812,13 @@ struct RetroMenuView: View {
             if let player1 = PVControllerManager.shared.player1 {
 #if os(iOS)
                 if Defaults[.missingButtonsAlwaysOn] || (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
-                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroBlue) {
+                    menuButton(title: String(localized: "P1 CONTROLS"), icon: "gamecontroller", color: .retroBlue) {
                         dismissAction(true)
                     }
                 }
 #else
                 if player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroBlue) {
+                    menuButton(title: String(localized: "P1 CONTROLS"), icon: "gamecontroller", color: .retroBlue) {
                         dismissAction(true)
                     }
                 }
@@ -828,7 +828,7 @@ struct RetroMenuView: View {
             // P2 controls (purple = secondary player)
             if let player2 = PVControllerManager.shared.player2 {
                 if player2.extendedGamepad != nil || wantsStartSelectInMenu {
-                    menuButton(title: "P2 CONTROLS", icon: "gamecontroller", color: .retroPurple) {
+                    menuButton(title: String(localized: "P2 CONTROLS"), icon: "gamecontroller", color: .retroPurple) {
                         dismissAction(true)
                     }
                 }
@@ -939,11 +939,11 @@ struct RetroMenuView: View {
                         .foregroundColor(palette.defaultTintColor.swiftUIColor)
                         .padding(.bottom, 8)
 
-                    Text("SKINS UNDER DEVELOPMENT")
+                    Text(String(localized: "SKINS UNDER DEVELOPMENT"))
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(palette.defaultTintColor.swiftUIColor)
 
-                    Text("Skins are not yet supported for this core, but development is in progress.")
+                    Text(String(localized: "Skins are not yet supported for this core, but development is in progress."))
                         .font(.system(size: 14))
                         .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
                         .multilineTextAlignment(.center)
@@ -967,12 +967,12 @@ struct RetroMenuView: View {
                 Spacer(minLength: 0)
             } else {
                 // ── SKIN SELECTION ──────────────────────────────────────────
-                skinSectionHeader("SKIN SELECTION", systemImage: "paintbrush.pointed")
+                skinSectionHeader(String(localized: "SKIN SELECTION"), systemImage: "paintbrush.pointed")
 
                 // Scope picker — choose where to save the skin BEFORE picking it.
                 // This replaces the post-selection alert with an upfront control.
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("SAVE FOR")
+                    Text(String(localized: "SAVE FOR"))
                         .font(.system(size: 11, weight: .bold, design: .monospaced))
                         .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.6))
                         .tracking(1.5)
@@ -998,9 +998,9 @@ struct RetroMenuView: View {
                 }
 
                 // ── BUTTON CONTROLS ─────────────────────────────────────────
-                skinSectionHeader("BUTTON CONTROLS", systemImage: "hand.tap")
+                skinSectionHeader(String(localized: "BUTTON CONTROLS"), systemImage: "hand.tap")
 
-                menuButton(title: "BUTTON EFFECT", icon: "wand.and.sparkles", color: .retroPurple) {
+                menuButton(title: String(localized: "BUTTON EFFECT"), icon: "wand.and.sparkles", color: .retroPurple) {
                     showingButtonEffectPicker = true
                 }
                 .overlay(alignment: .trailing) {
@@ -1015,7 +1015,7 @@ struct RetroMenuView: View {
                     buttonEffectPickerView
                 }
 
-                menuButton(title: "BUTTON SOUND", icon: "speaker.wave.2", color: .retroBlue) {
+                menuButton(title: String(localized: "BUTTON SOUND"), icon: "speaker.wave.2", color: .retroBlue) {
                     showingButtonSoundPicker = true
                 }
                 .overlay(alignment: .trailing) {
@@ -1031,9 +1031,9 @@ struct RetroMenuView: View {
                 }
 
                 // ── TOOLS ───────────────────────────────────────────────────
-                skinSectionHeader("TOOLS", systemImage: "wrench.and.screwdriver")
+                skinSectionHeader(String(localized: "TOOLS"), systemImage: "wrench.and.screwdriver")
 
-                menuButton(title: "IMPORT SKIN FILE", icon: "square.and.arrow.down", color: .retroCyan) {
+                menuButton(title: String(localized: "IMPORT SKIN FILE"), icon: "square.and.arrow.down", color: .retroCyan) {
                     showingDocumentPicker = true
                 }
 #if !os(tvOS)
@@ -1044,7 +1044,7 @@ struct RetroMenuView: View {
                 }
 #endif
 
-                menuButton(title: "BROWSE SKIN CATALOG", icon: "arrow.down.circle.fill", color: .retroOrange) {
+                menuButton(title: String(localized: "BROWSE SKIN CATALOG"), icon: "arrow.down.circle.fill", color: .retroOrange) {
                     showingSkinCatalog = true
                 }
                 .sheet(isPresented: $showingSkinCatalog, onDismiss: {
@@ -1177,7 +1177,7 @@ struct RetroMenuView: View {
                 VStack {
                     // Header with orientation indicator
                     VStack(spacing: 8) {
-                        Text("SELECT SKIN")
+                        Text(String(localized: "SELECT SKIN"))
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
                             .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 5, x: 0, y: 0)
@@ -1234,7 +1234,7 @@ struct RetroMenuView: View {
                             }
                             .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 5)
 
-                            Text("LOADING SKINS...")
+                            Text(String(localized: "LOADING SKINS..."))
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(palette.defaultTintColor.swiftUIColor)
                                 .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 3)
@@ -1293,7 +1293,7 @@ struct RetroMenuView: View {
                     Button(action: {
                         showingSkinPicker = false
                     }) {
-                        Text("DONE")
+                        Text(String(localized: "DONE"))
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                             .padding(.horizontal, 16)
@@ -1399,12 +1399,12 @@ struct RetroMenuView: View {
                             .lineLimit(1)
 
                         if name != "Default" {
-                            Text("Custom Skin")
+                            Text(String(localized: "Custom Skin"))
                                 .font(.system(size: geometry.size.width < 350 ? 12 : 14))
                                 .foregroundColor((palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor))
                                 .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         } else {
-                            Text("System Default")
+                            Text(String(localized: "System Default"))
                                 .font(.system(size: geometry.size.width < 350 ? 12 : 14))
                                 .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                                 .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
@@ -1547,7 +1547,7 @@ struct RetroMenuView: View {
                                 .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                                 .lineLimit(1)
 
-                            Text("Custom Skin")
+                            Text(String(localized: "Custom Skin"))
                                 .font(.system(size: geometry.size.width < 350 ? 12 : 14))
                                 .foregroundColor((palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor))
                                 .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)

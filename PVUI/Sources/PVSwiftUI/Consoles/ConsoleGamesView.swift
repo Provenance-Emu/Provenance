@@ -399,10 +399,10 @@ struct ConsoleGamesView: SwiftUI.View {
                                     .environmentObject(AppState.shared)
                                     .environmentObject(themeManager)
                             } else {
-                                Text("Unable to initialise driver")
+                                Text(String(localized: "Unable to initialise driver"))
                             }
                         } else {
-                            Text("No game selected")
+                            Text(String(localized: "No game selected"))
                         }
                     }
                     #if !os(tvOS)
@@ -633,7 +633,7 @@ struct ConsoleGamesView: SwiftUI.View {
                                 }
                         }
                     } else {
-                        Text("Error: Could not load save states")
+                        Text(String(localized: "Error: Could not load save states"))
                     }
                 }
                 .uiKitAlert(
@@ -1111,7 +1111,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     private func searchResultsView() -> some View {
         VStack(alignment: .leading) {
-            Text("Search Results")
+            Text(String(localized: "Search Results"))
                 .font(.title2)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .padding(.horizontal)
@@ -1119,7 +1119,7 @@ struct ConsoleGamesView: SwiftUI.View {
             LazyVStack(spacing: 0) {
                 let results = filteredSearchResults()
                 if results.isEmpty {
-                    Text("NO GAMES FOUND")
+                    Text(String(localized: "NO GAMES FOUND"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(RetroTheme.retroBlue)
                         .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
@@ -1367,7 +1367,7 @@ extension ConsoleGamesView {
     private func favoritesSection() -> some View {
         Group {
             if showFavorites && !favoritesModels.isEmpty {
-                HomeSection(title: "Favorites") {
+                HomeSection(title: String(localized: "Favorites")) {
                     ForEach(favoritesModels, id: \.id) { game in
                         gameItem(game, section: .favorites)
                     }

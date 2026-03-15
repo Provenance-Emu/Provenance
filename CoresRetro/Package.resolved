@@ -1,5 +1,5 @@
 {
-  "originHash" : "4aa1ebeec546ed50352401e1c803ecd47dea0d7959a01c9345180c2eacaea941",
+  "originHash" : "e7ba15e557c3c43a7ba5d0b80bcbc0d1b544d3e9e6009ac53a813b41fddf54f0",
   "pins" : [
     {
       "identity" : "checksum",
@@ -15,8 +15,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
+        "version" : "9.0.2"
+      }
+    },
+    {
+      "identity" : "swift-asn1",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-asn1.git",
+      "state" : {
+        "revision" : "810496cf121e525d660cd0ea89a758740476b85f",
+        "version" : "1.5.1"
       }
     },
     {
@@ -26,6 +35,33 @@
       "state" : {
         "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
         "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version" : "3.15.1"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     }
   ],
