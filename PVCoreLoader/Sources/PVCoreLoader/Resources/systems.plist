@@ -5573,16 +5573,6 @@
 			</dict>
 			<dict>
 				<key>Description</key>
-				<string>TOS 1.02 US Boot Image (alternate filename)</string>
-				<key>Name</key>
-				<string>tos102.img</string>
-				<key>Optional</key>
-				<true/>
-				<key>Size</key>
-				<integer>196608</integer>
-			</dict>
-			<dict>
-				<key>Description</key>
 				<string>TOS 1.02 UK Boot Image</string>
 				<key>MD5</key>
 				<string>3b5c6f14bdebb38e9a19db96bddb83ab</string>

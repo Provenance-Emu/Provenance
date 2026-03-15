@@ -281,7 +281,7 @@ public extension PVEmulatorConfiguration {
                     }
                 }
             } else {
-                let newBIOS = PVBIOS(withSystem: pvSystem, descriptionText: entry.Description, optional: entry.Optional ?? false, expectedMD5: entry.MD5 ?? "", expectedSize: entry.Size, expectedFilename: entry.Name)
+                let newBIOS = PVBIOS(withSystem: pvSystem, descriptionText: entry.Description, optional: entry.Optional ?? false, expectedMD5: entry.MD5, expectedSize: entry.Size, expectedFilename: entry.Name)
                 let database = RomDatabase.sharedInstance
                 if database.realm.isInWriteTransaction {
                     database.realm.add(newBIOS)

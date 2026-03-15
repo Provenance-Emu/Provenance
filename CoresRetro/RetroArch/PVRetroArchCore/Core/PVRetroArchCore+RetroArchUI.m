@@ -342,11 +342,11 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
 /// - Detects byte-swapped load addresses written by old Provenance bug Spike 2823
 ///   and corrects bytes 8-11 in-place.  Only the three known-correctable byte-swap
 ///   patterns are repaired (0x0000FC00→0x00FC0000, 0x0000E000→0x00E00000,
-///   0x0000E800→0x00E80000); any other unrecognised address is logged and left
-///   unchanged — the file is still considered present but may not boot.
-/// - Returns YES if the file exists and is not a ZIP after the call.
-///   A YES return for an unrecognised load address means the file is present but
-///   its usability for Hatari is unknown; use validateTOSReadyOrLog: to confirm.
+///   0x0000E800→0x00E80000); a file with any other address is left unchanged and
+///   still counts as present — Hatari will reject it if the address is unsupported.
+/// - Returns YES if the file exists and is not a ZIP after the call (regardless of
+///   whether the load address is one of the three known-valid values).
+///   Use validateTOSReadyOrLog: to confirm the address is actually boot-worthy.
 - (BOOL)repairTOSImageAtPath:(NSString *)tosPath {
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:tosPath]) return NO;
@@ -857,8 +857,9 @@ void extract_bundles();
         /// them and copy as tos.img for Hatari.
         if (![fm fileExistsAtPath:biosTosPath]) {
             // Skip index 0 ("tos.img") — we already know it's absent; check all alternate names.
-            NSArray<NSString *> *alternateTosNames = [TOSAllFilenames() subarrayWithRange:NSMakeRange(1, TOSAllFilenames().count - 1)];
-            for (NSString *altName in alternateTosNames) {
+            NSArray<NSString *> *allTosNames = TOSAllFilenames();
+            for (NSUInteger i = 1; i < allTosNames.count; i++) {
+                NSString *altName = allTosNames[i];
                 NSString *altPath = [self.BIOSPath stringByAppendingPathComponent:altName];
                 if ([fm fileExistsAtPath:altPath]) {
                     ILOG(@"TOS: tos.img not found in BIOS dir, using alternate: %@", altName);
