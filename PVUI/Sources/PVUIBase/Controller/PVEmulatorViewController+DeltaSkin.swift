@@ -1044,7 +1044,16 @@ extension PVEmulatorViewController {
         // skin-defined filters so both effects are not stacked on top of each other.
         // Mirror the pattern used in RetroMenuView: guard against an empty gameId so we don't
         // read/write a shared "ScreenFilter_Game_" key when md5Hash and crc are both empty.
-        let gameId = game.md5Hash ?? game.crc
+        let md5 = game.md5Hash
+        let crc = game.crc
+        let gameId: String
+        if !md5.isEmpty {
+            gameId = md5
+        } else if !crc.isEmpty {
+            gameId = crc
+        } else {
+            gameId = ""
+        }
         let systemKey = game.system?.systemIdentifier.map { "ScreenFilter_System_\($0.rawValue)" }
         let userFilterName: String?
         if gameId.isEmpty {
