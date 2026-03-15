@@ -961,7 +961,12 @@ void extract_bundles();
                                                                   withString:correct];
                     ILOG(@"Hatari opts: repaired stale hatari_boot_hd value in %@", fileName);
                 } else if (![existing containsString:@"hatari_boot_hd"]) {
-                    updated = [existing stringByAppendingFormat:@"%@\n", correct];
+                    BOOL needsNewline = ![existing hasSuffix:@"\n"] && ![existing hasSuffix:@"\r"];
+                    if (needsNewline) {
+                        updated = [existing stringByAppendingFormat:@"\n%@\n", correct];
+                    } else {
+                        updated = [existing stringByAppendingFormat:@"%@\n", correct];
+                    }
                     ILOG(@"Hatari opts: appended missing hatari_boot_hd key to %@", fileName);
                 }
                 if (updated) {
