@@ -52,7 +52,11 @@ extension PVEmulatorViewController {
         else { return }
 
         let rawType  = (userInfo[PVOSDKey.type] as? Int) ?? PVOSDTypeValue.info.rawValue
-        let duration = (userInfo[PVOSDKey.duration] as? Double) ?? 3.0
+        var duration = (userInfo[PVOSDKey.duration] as? Double) ?? 3.0
+        if duration <= 0 {
+            // `PVOSDDuration` semantics: 0 (or negative) = use default duration
+            duration = 3.0
+        }
         let osdType  = PVOSDTypeValue(rawValue: rawType) ?? .info
 
         let toastType: PVToastType = {
