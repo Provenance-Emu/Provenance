@@ -60,12 +60,14 @@ public extension PVEmulatorViewController {
         #endif
     }
 
-    /// Call this when the view controller is being destroyed.
-    func cleanupJITIndicator() {
+    /// Cancels the JIT indicator's Combine subscription.
+    /// Safe to call from `deinit` (nonisolated). UI teardown is handled separately
+    /// by `removeJITIndicator()`, which must be called on the main actor (e.g. in
+    /// `viewWillDisappear`).
+    func cancelJITIndicatorSubscription() {
         #if canImport(PVJIT)
         showJITIndicatorCancellable?.cancel()
         showJITIndicatorCancellable = nil
-        removeJITIndicator()
         #endif
     }
 
@@ -149,7 +151,7 @@ public extension PVEmulatorViewController {
     }
 
     @MainActor
-    private func removeJITIndicator() {
+    func removeJITIndicator() {
         guard let indicator = jitIndicatorViewController else { return }
         indicator.willMove(toParent: nil)
         indicator.view.removeFromSuperview()

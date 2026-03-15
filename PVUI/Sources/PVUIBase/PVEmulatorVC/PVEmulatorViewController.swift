@@ -445,6 +445,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         removeRunningObserverIfNeeded()
 
+        // Cancel the JIT indicator's Combine subscription (#2796).
+        // UI teardown (removeJITIndicator) runs on the main actor in viewWillDisappear.
+        cancelJITIndicatorSubscription()
+
         // Virtual keyboard / mouse cursor overlays are cleaned up in viewWillDisappear.
         // Associated objects are automatically released during dealloc.
 
@@ -844,6 +848,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Set up the indicator light overlay (JIT status, etc.) — positioned in controller margin.
         setupIndicatorOverlay()
 
+        // Wire up the JIT-specific status indicator (#2796).
+        // Only shows for cores that actually require or benefit from JIT (gated by coreRequiresJIT()).
+        setupJITIndicatorIfNeeded()
+
         #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
         // Set up gesture recognizers for menu button interactions
@@ -1025,6 +1033,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         #if !os(tvOS)
         removeVirtualInputOverlays()
         #endif
+        // Remove the JIT indicator view controller on the main actor (#2796).
+        // The Combine subscription is cancelled earlier in deinit via cancelJITIndicatorSubscription().
+        removeJITIndicator()
     }
 
     override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
