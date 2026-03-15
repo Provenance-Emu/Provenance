@@ -27,6 +27,9 @@ import PVSettings
 import PVThemes
 import SwiftUI
 import ZipArchive
+#if canImport(PVJIT)
+import JITManager
+#endif
 
 private weak var staticSelf: PVEmualatorControllerProtocol?
 
@@ -577,6 +580,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Pause CloudKit when gameplay starts
         CloudKitDownloadQueue.shared.pauseQueue()
+
+        // Present JIT onboarding if JIT has not been acquired this session
+        #if canImport(PVJIT) && os(iOS)
+        JITOnboardingManager.shared.presentOnboardingIfNeeded(from: self)
+        #endif
 
         core.startEmulation()
 
