@@ -46,36 +46,34 @@ struct DeltaSkinAnimatedBackgroundView: View {
                 }
             }
         }
-        .onAppear { loadFrames() }
+        .task { await loadFrames() }
     }
 
     // MARK: - Frame loading
 
-    private func loadFrames() {
-        Task {
-            var loaded: [UIImage] = []
+    private func loadFrames() async {
+        var loaded: [UIImage] = []
 
-            switch animation.type {
-            case .frames:
-                let names = animation.frames ?? []
-                for name in names {
-                    if let img = try? await skin.loadThumbstickImage(named: name) {
-                        loaded.append(img)
-                    }
-                }
-
-            case .apng, .gif:
-                // Load single file; display first frame (full animation support TBD)
-                if let fileName = animation.file,
-                   let img = try? await skin.loadThumbstickImage(named: fileName) {
+        switch animation.type {
+        case .frames:
+            let names = animation.frames ?? []
+            for name in names {
+                if let img = try? await skin.loadThumbstickImage(named: name) {
                     loaded.append(img)
                 }
             }
 
-            await MainActor.run {
-                frames = loaded
-                startDate = Date()
+        case .apng, .gif:
+            // Load single file; display first frame (full animation support TBD)
+            if let fileName = animation.file,
+               let img = try? await skin.loadThumbstickImage(named: fileName) {
+                loaded.append(img)
             }
+        }
+
+        await MainActor.run {
+            frames = loaded
+            startDate = Date()
         }
     }
 }
