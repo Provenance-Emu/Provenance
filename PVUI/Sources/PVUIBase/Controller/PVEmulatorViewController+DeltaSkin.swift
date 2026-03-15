@@ -1042,12 +1042,23 @@ extension PVEmulatorViewController {
 
         // If the user has explicitly selected a filter (not "None"), it takes precedence over
         // skin-defined filters so both effects are not stacked on top of each other.
-        let gameKey = "ScreenFilter_Game_\(game.md5Hash ?? game.crc)"
+        // Mirror the pattern used in RetroMenuView: guard against an empty gameId so we don't
+        // read/write a shared "ScreenFilter_Game_" key when md5Hash and crc are both empty.
+        let gameId = game.md5Hash ?? game.crc
         let systemKey = game.system?.systemIdentifier.map { "ScreenFilter_System_\($0.rawValue)" }
-        let userFilterName: String? = UserDefaults.standard.string(forKey: gameKey)
-            ?? systemKey.flatMap { UserDefaults.standard.string(forKey: $0) }
+        let userFilterName: String?
+        if gameId.isEmpty {
+            // No game identifier — only consult the system-scoped key.
+            userFilterName = systemKey.flatMap { UserDefaults.standard.string(forKey: $0) }
+        } else {
+            let gameKey = "ScreenFilter_Game_\(gameId)"
+            userFilterName = UserDefaults.standard.string(forKey: gameKey)
+                ?? systemKey.flatMap { UserDefaults.standard.string(forKey: $0) }
+        }
         if let name = userFilterName, name != "None" {
-            ILOG("skins: User filter '\(name)' is active — skipping skin filter '\(filterInfo.name)'")
+            ILOG("skins: User filter '\(name)' is active — clearing skin filter to prevent stacking")
+            // Clear any previously applied skin filter so the user filter is the only effect.
+            applyScreenFilter(nil)
             return
         }
 
