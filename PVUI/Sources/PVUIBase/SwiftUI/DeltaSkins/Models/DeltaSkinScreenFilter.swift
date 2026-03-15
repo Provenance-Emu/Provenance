@@ -31,8 +31,9 @@ public class DeltaSkinScreenFilter {
             }
 
             if case .vector(let x, let y) = filterInfo.parameters["inputCenter"] {
+                // Store center for higher-level logic (e.g., custom masking/gradients),
+                // but do not set it on CIGaussianBlur, which does not support inputCenter.
                 self.center = CGPoint(x: Double(x), y: Double(y))
-                filter.setValue(CIVector(x: CGFloat(x), y: CGFloat(y)), forKey: kCIInputCenterKey)
             } else {
                 self.center = nil
             }
