@@ -408,7 +408,7 @@ struct RetroMenuView: View {
         var result: Bool = Defaults[.autoSave]
         result = result && abs(lastPlayed.timeIntervalSinceNow) > minimumPlayTimeToMakeAutosave
         result = result && (game.lastAutosaveAge ?? twoMinutes) > oneMinute
-        result = result && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? twoMinutes) > oneMinute
+        result = result && abs((!game.isInvalidated ? game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow : nil) ?? twoMinutes) > oneMinute
         result = result && emulatorVC.core.supportsSaveStates
 
         return result
@@ -556,7 +556,10 @@ struct RetroMenuView: View {
     // Save state related buttons
     private var stateMenuButtons: some View {
         let supportsSaveStates = emulatorVC.core.supportsSaveStates
-        let allSaves = Array(emulatorVC.game.saveStates.sorted(byKeyPath: "date", ascending: false))
+        let allSaves: [PVSaveState] = {
+            guard let game = emulatorVC.game, !game.isInvalidated else { return [] }
+            return Array(game.saveStates.sorted(byKeyPath: "date", ascending: false))
+        }()
         let saveCount = allSaves.count
         let lastSaveDate = allSaves.first?.date
         let hasAnySave = saveCount > 0
@@ -604,7 +607,8 @@ struct RetroMenuView: View {
 
             // QUICK LOAD — immediately loads the most recent save state
             menuButton(title: "QUICK LOAD", icon: "arrowshape.turn.up.left", color: .retroBlue) {
-                guard let mostRecent = emulatorVC.game.saveStates.sorted(byKeyPath: "date", ascending: false).first else { return }
+                guard let game = emulatorVC.game, !game.isInvalidated,
+                      let mostRecent = game.saveStates.sorted(byKeyPath: "date", ascending: false).first else { return }
                 dismissAction(false)
                 Task { @MainActor [weak emulatorVC = emulatorVC] in
                     await emulatorVC?.loadSaveState(mostRecent)
@@ -2982,8 +2986,12 @@ struct PauseMenuSaveStateBrowserView: View {
     // MARK: - Helpers
 
     private func reload() {
+        guard let game = emulatorVC.game, !game.isInvalidated else {
+            saveStates = []
+            return
+        }
         saveStates = Array(
-            emulatorVC.game.saveStates
+            game.saveStates
                 .sorted(byKeyPath: "date", ascending: false)
         )
     }

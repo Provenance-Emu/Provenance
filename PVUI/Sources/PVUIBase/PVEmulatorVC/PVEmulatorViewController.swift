@@ -824,20 +824,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// Pause all background services during gameplay via the central registry
         BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
 
-        // Present JIT onboarding if JIT has not been acquired this session
+        // Present JIT onboarding only for cores that actually use JIT
         #if canImport(PVJIT) && os(iOS)
-        func presentJITOnboardingWhenReady() {
-            // Ensure the view controller is in the window hierarchy before presenting
-            guard view.window != nil else {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self else { return }
-                    presentJITOnboardingWhenReady()
+        if core.jitRequirement.hasJIT {
+            func presentJITOnboardingWhenReady() {
+                guard view.window != nil else {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self else { return }
+                        presentJITOnboardingWhenReady()
+                    }
+                    return
                 }
-                return
+                JITOnboardingManager.shared.presentOnboardingIfNeeded(from: self)
             }
-            JITOnboardingManager.shared.presentOnboardingIfNeeded(from: self)
+            presentJITOnboardingWhenReady()
         }
-        presentJITOnboardingWhenReady()
         #endif
 
         core.startEmulation()
