@@ -2,15 +2,15 @@ import SwiftUI
 import UIKit
 
 /// Renders an animated background for a skin using a frame sequence.
-/// Supports `.frames` type animations via `TimelineView`. APNG and GIF
-/// files are rendered with `Image(uiImage:)` using the first frame only
-/// (full animated APNG/GIF support can be added when needed).
+/// Supports `.frames` type animations via `TimelineView`.
+/// `.apng` and `.gif` files are loaded and displayed as a static image (first frame only;
+/// full animated APNG/GIF support can be added when needed).
 struct DeltaSkinAnimatedBackgroundView: View {
     let animation: DeltaSkinBackgroundAnimation
     let skin: any DeltaSkinProtocol
 
     @State private var frames: [UIImage] = []
-    @State private var currentFrame: Int = 0
+    @State private var startDate: Date = Date()
     @Environment(\.scenePhase) private var scenePhase
 
     private var fps: Double { max(1, animation.fps ?? 8) }
@@ -26,26 +26,21 @@ struct DeltaSkinAnimatedBackgroundView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             } else {
-                // Drive animation via TimelineView
-                TimelineView(.animation(minimumInterval: 1.0 / fps, paused: scenePhase != .active)) { _ in
-                    Image(uiImage: frames[currentFrame])
+                // Drive animation via TimelineView date — no separate Timer needed
+                TimelineView(.animation(minimumInterval: 1.0 / fps, paused: scenePhase != .active)) { context in
+                    let elapsed = context.date.timeIntervalSince(startDate)
+                    let rawIndex = Int(elapsed * fps)
+                    let frameIndex = loops
+                        ? rawIndex % frames.count
+                        : min(rawIndex, frames.count - 1)
+                    Image(uiImage: frames[max(0, frameIndex)])
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                 }
                 .onChange(of: scenePhase) { newPhase in
-                    // TimelineView pauses automatically; reset frame on foreground if needed
+                    // Reset start date on foreground for non-looping animations
                     if newPhase == .active && !loops {
-                        currentFrame = 0
-                    }
-                }
-                // Advance frame outside of TimelineView body to avoid rendering cycle issues
-                .onReceive(
-                    Timer.publish(every: 1.0 / fps, on: .main, in: .common).autoconnect()
-                ) { _ in
-                    guard scenePhase == .active else { return }
-                    guard frames.count > 1 else { return }
-                    if loops || currentFrame < frames.count - 1 {
-                        currentFrame = (currentFrame + 1) % frames.count
+                        startDate = Date()
                     }
                 }
             }
@@ -56,19 +51,29 @@ struct DeltaSkinAnimatedBackgroundView: View {
     // MARK: - Frame loading
 
     private func loadFrames() {
-        let names = animation.frames ?? []
-        guard !names.isEmpty else { return }
-
         Task {
             var loaded: [UIImage] = []
-            for name in names {
-                if let img = try? await skin.loadThumbstickImage(named: name) {
+
+            switch animation.type {
+            case .frames:
+                let names = animation.frames ?? []
+                for name in names {
+                    if let img = try? await skin.loadThumbstickImage(named: name) {
+                        loaded.append(img)
+                    }
+                }
+
+            case .apng, .gif:
+                // Load single file; display first frame (full animation support TBD)
+                if let fileName = animation.file,
+                   let img = try? await skin.loadThumbstickImage(named: fileName) {
                     loaded.append(img)
                 }
             }
+
             await MainActor.run {
                 frames = loaded
-                currentFrame = 0
+                startDate = Date()
             }
         }
     }

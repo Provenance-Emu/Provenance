@@ -1196,11 +1196,20 @@ extension UIImage {
         let scale: CGFloat
 
         if let requestedSize = size {
-            // Caller supplied an explicit target size – render at that exact size.
-            // Use the screen retina scale so the rasterised bitmap is crisp on HiDPI displays.
-            finalSize = requestedSize
-            scale = min(requestedSize.width / pageRect.width,
-                        requestedSize.height / pageRect.height)
+            // Caller supplied an explicit target size – render at that size, capped for safety.
+            let maxDimension: CGFloat = 4096
+            let capScale = min(
+                maxDimension / requestedSize.width,
+                maxDimension / requestedSize.height,
+                1.0
+            )
+            let cappedSize = CGSize(
+                width: requestedSize.width * capScale,
+                height: requestedSize.height * capScale
+            )
+            finalSize = cappedSize
+            scale = min(cappedSize.width / pageRect.width,
+                        cappedSize.height / pageRect.height)
         } else {
             // No explicit size – use native PDF dimensions, capped at 4096 physical pixels.
             // The cap must be in points (not pixels) since UIGraphicsImageRenderer works in points

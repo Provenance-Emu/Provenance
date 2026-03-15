@@ -495,6 +495,15 @@ public struct DeltaSkinView: View {
             ZStack {
                 if let layout = calculateLayout(for: geometry) {
                     ZStack {
+                        // Animated background (shown beneath the game screen and skin image)
+                        if let bgAnimation = skin.backgroundAnimation(for: traits) {
+                            DeltaSkinAnimatedBackgroundView(animation: bgAnimation, skin: skin)
+                                .frame(width: layout.width, height: layout.height)
+                                .clipped()
+                                .allowsHitTesting(false)
+                                .zIndex(-1)
+                        }
+
                         // Always create a screen position wrapper, even when in emulator
                         // This ensures we can get the correct position whether color bars are visible or not
                         DeltaSkinScreenPositionWrapper(
@@ -508,14 +517,6 @@ public struct DeltaSkinView: View {
                             layout: layout
                         )
                         .zIndex(0)
-
-                        // Animated background (shown beneath the static skin image when defined)
-                        if let bgAnimation = skin.backgroundAnimation(for: traits) {
-                            DeltaSkinAnimatedBackgroundView(animation: bgAnimation, skin: skin)
-                                .frame(width: layout.width, height: layout.height)
-                                .clipped()
-                                .allowsHitTesting(false)
-                        }
 
                         // Base skin image
                         if let skinImage = skinImage {

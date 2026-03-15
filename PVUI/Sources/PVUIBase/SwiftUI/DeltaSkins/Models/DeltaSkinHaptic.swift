@@ -1,5 +1,8 @@
+import Foundation
+#if !os(tvOS)
 import UIKit
 import PVSettings
+#endif
 
 /// Haptic feedback configuration for a skin button
 public struct DeltaSkinHaptic: Codable, Equatable {
@@ -13,6 +16,7 @@ public struct DeltaSkinHaptic: Codable, Equatable {
         self.intensity = intensity
     }
 
+    #if !os(tvOS)
     /// Map style string to UIImpactFeedbackGenerator.FeedbackStyle
     public var feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle {
         switch style.lowercased() {
@@ -24,12 +28,12 @@ public struct DeltaSkinHaptic: Codable, Equatable {
         }
     }
 
-    #if !os(tvOS)
     /// Play this haptic, respecting user preferences (buttonVibration setting)
     public func play() {
         guard Defaults[.buttonVibration] else { return }
         let generator = UIImpactFeedbackGenerator(style: feedbackStyle)
-        generator.impactOccurred(intensity: intensity)
+        generator.prepare()
+        generator.impactOccurred(intensity: CGFloat(max(0.0, min(1.0, intensity))))
     }
     #endif
 }
