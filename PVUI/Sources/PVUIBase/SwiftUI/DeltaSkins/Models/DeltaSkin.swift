@@ -296,7 +296,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 let lower = name.lowercased()
                 let decodedImage: UIImage?
                 if lower.hasSuffix(".pdf") {
-                    decodedImage = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false)
+                    let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+                    decodedImage = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false, size: renderSize)
                     if decodedImage == nil {
                         lastError = DeltaSkinError.invalidPDF
                         continue
@@ -344,7 +345,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
             let lower = fallbackName.lowercased()
             let decodedImage: UIImage?
             if lower.hasSuffix(".pdf") {
-                decodedImage = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false)
+                let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+                decodedImage = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false, size: renderSize)
                 guard decodedImage != nil else {
                     throw DeltaSkinError.invalidPDF
                 }
@@ -727,8 +729,11 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Optional thumbstick configuration
         let thumbstick: ThumbstickConfig?
 
+        /// Optional per-button visual states (normal/pressed images, animated frames)
+        let states: DeltaSkinButtonStates?
+
         private enum CodingKeys: String, CodingKey {
-            case inputs, frame, extendedEdges, thumbstick
+            case inputs, frame, extendedEdges, thumbstick, states
         }
 
         public init(from decoder: Decoder) throws {
@@ -750,6 +755,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             thumbstick = try container.decodeIfPresent(ThumbstickConfig.self, forKey: .thumbstick)
+            states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -763,6 +769,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             try container.encodeIfPresent(thumbstick, forKey: .thumbstick)
+            try container.encodeIfPresent(states, forKey: .states)
         }
     }
 
@@ -973,7 +980,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 id: id,
                 input: input,
                 frame: item.frame,
-                extendedEdges: item.extendedEdges
+                extendedEdges: item.extendedEdges,
+                states: item.states
             )
         } ?? []
 
@@ -1088,7 +1096,17 @@ private func sanitizeJSON(_ data: Data) throws -> Data {
 
 // Fix the UIImage PDF initialization
 extension UIImage {
-    convenience init?(pdfData: Data, preserveTransparency: Bool = false) {
+    /// Render a PDF data blob into a UIImage.
+    ///
+    /// - Parameters:
+    ///   - pdfData: Raw PDF file data.
+    ///   - preserveTransparency: When `true` the canvas is pre-filled with a transparent background.
+    ///     When `false` the canvas is pre-filled with an opaque black background.
+    ///   - size: Optional target logical size (points).  When provided the canvas is exactly that size;
+    ///     PDF content is aspect-fitted within the canvas (preserving its aspect ratio) and centred.
+    ///     When `nil` the native PDF page size is used, capped at 4096 physical pixels to stay within
+    ///     safe GPU texture limits.
+    convenience init?(pdfData: Data, preserveTransparency: Bool = false, size: CGSize? = nil) {
         guard let provider = CGDataProvider(data: pdfData as CFData),
               let pdf = CGPDFDocument(provider),
               let page = pdf.page(at: 1) else {
@@ -1097,38 +1115,61 @@ extension UIImage {
 
         let pageRect = page.getBoxRect(.mediaBox)
 
-        // Add size validation and scaling
-        let maxDimension: CGFloat = 4096 // Maximum safe texture size
-        let scale = min(
-            maxDimension / pageRect.width,
-            maxDimension / pageRect.height,
-            1.0 // Don't scale up, only down
-        )
+        let finalSize: CGSize
+        let scale: CGFloat
 
-        let finalSize = CGSize(
-            width: pageRect.width * scale,
-            height: pageRect.height * scale
-        )
+        if let requestedSize = size {
+            // Caller supplied an explicit target size – render at that exact size.
+            // Use the screen retina scale so the rasterised bitmap is crisp on HiDPI displays.
+            finalSize = requestedSize
+            scale = min(requestedSize.width / pageRect.width,
+                        requestedSize.height / pageRect.height)
+        } else {
+            // No explicit size – use native PDF dimensions, capped at 4096 physical pixels.
+            // The cap must be in points (not pixels) since UIGraphicsImageRenderer works in points
+            // and will apply the renderer scale when rasterizing.
+            let rendererScale = UIScreen.main.scale
+            let maxPoints: CGFloat = 4096 / rendererScale
+            let capScale = min(
+                maxPoints / pageRect.width,
+                maxPoints / pageRect.height,
+                1.0 // Don't scale up, only down
+            )
+            scale = capScale
+            finalSize = CGSize(
+                width: pageRect.width * scale,
+                height: pageRect.height * scale
+            )
+        }
 
         let renderer = UIGraphicsImageRenderer(
             size: finalSize,
             format: {
                 let format = UIGraphicsImageRendererFormat()
                 format.scale = UIScreen.main.scale
-                format.opaque = false // Never opaque for joysticks
+                format.opaque = !preserveTransparency // Opaque when not preserving transparency
                 return format
             }()
         )
 
         let image = renderer.image { context in
-            // Always fill with clear for joysticks
-            UIColor.clear.setFill()
+            // Fill background based on preserveTransparency flag
+            if preserveTransparency {
+                UIColor.clear.setFill()
+            } else {
+                UIColor.black.setFill()
+            }
             context.fill(CGRect(origin: .zero, size: finalSize))
 
-            // Draw PDF with scaling
-            context.cgContext.scaleBy(x: scale, y: scale)
-            context.cgContext.translateBy(x: 0, y: pageRect.height)
-            context.cgContext.scaleBy(x: 1.0, y: -1.0)
+            // Draw PDF with aspect-fit scaling, centred within the canvas.
+            // When a requested size is given and its aspect ratio differs from the PDF,
+            // centre the scaled PDF so transparent (or opaque) padding is evenly distributed.
+            let scaledWidth = pageRect.width * scale
+            let scaledHeight = pageRect.height * scale
+            let xOffset = (finalSize.width - scaledWidth) / 2
+            let yOffset = (finalSize.height - scaledHeight) / 2
+            context.cgContext.translateBy(x: xOffset, y: yOffset + scaledHeight)
+            context.cgContext.scaleBy(x: scale, y: -scale)
             context.cgContext.drawPDFPage(page)
         }
 

@@ -917,18 +917,46 @@ public struct DeltaSkinView: View {
         }
     }
 
-    /// Load and cache per-button images defined in the skin JSON under each item's `asset` key
+    /// Load and cache per-button images defined in the skin JSON under each item's `asset` or `states` key
     private func loadButtonAssets() async {
         guard let buttons = skin.buttons(for: traits) else { return }
         var cache: [String: (normal: UIImage, pressed: UIImage?)] = [:]
 
         for button in buttons {
+            // Prefer typed `states` from decoded model (Manic EMU format)
+            if let states = button.states {
+                if let normalName = states.normal?.image {
+                    do {
+                        let normal = try await skin.loadThumbstickImage(named: normalName)
+                        var pressedImage: UIImage? = nil
+                        if let pressedName = states.pressed?.image {
+                            do {
+                                pressedImage = try await skin.loadThumbstickImage(named: pressedName)
+                            } catch {
+                                ELOG("Failed to load pressed state image '\(pressedName)' for button \(button.id): \(error)")
+                            }
+                        }
+                        cache[button.id] = (normal: normal, pressed: pressedImage)
+                        continue // Successfully loaded from typed states; skip legacy path
+                    } catch {
+                        ELOG("Failed to load button state image(s) for \(button.id): \(error)")
+                        // Fall through to legacy asset path
+                    }
+                }
+                // states.normal was nil or image load failed — fall through to legacy path
+            }
+
+            // Fall back to legacy `asset` dictionary in raw JSON
             guard let (normalName, pressedName) = parseButtonAssetNames(for: button) else { continue }
             do {
                 let normal = try await skin.loadThumbstickImage(named: normalName)
                 var pressedImage: UIImage? = nil
                 if let pn = pressedName {
-                    pressedImage = try? await skin.loadThumbstickImage(named: pn)
+                    do {
+                        pressedImage = try await skin.loadThumbstickImage(named: pn)
+                    } catch {
+                        ELOG("Failed to load pressed asset image '\(pn)' for button \(button.id): \(error)")
+                    }
                 }
                 cache[button.id] = (normal: normal, pressed: pressedImage)
             } catch {

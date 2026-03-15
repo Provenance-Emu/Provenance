@@ -47,47 +47,75 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     
     /// Extended touch areas around the button
     public let extendedEdges: UIEdgeInsets?
-    
+
+    /// Optional per-button visual states (normal/pressed images, animated frames)
+    public let states: DeltaSkinButtonStates?
+
     /// Initialize a new button mapping
     /// - Parameters:
     ///   - id: Unique identifier for this button
     ///   - input: Input actions this button triggers
     ///   - frame: Frame for the button (in relative 0-1 coordinates)
     ///   - extendedEdges: Optional extended touch areas around the button
+    ///   - states: Optional per-button visual states
     public init(
         id: String,
         input: DeltaSkinInput,
         frame: CGRect,
-        extendedEdges: UIEdgeInsets? = nil
+        extendedEdges: UIEdgeInsets? = nil,
+        states: DeltaSkinButtonStates? = nil
     ) {
         self.id = id
         self.input = input
         self.frame = frame
         self.extendedEdges = extendedEdges
+        self.states = states
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case id
         case input
         case frame
         case extendedEdges
+        case states
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         input = try container.decode(DeltaSkinInput.self, forKey: .input)
         frame = try container.decode(CGRect.self, forKey: .frame)
         extendedEdges = try container.decodeIfPresent(UIEdgeInsets.self, forKey: .extendedEdges)
+        states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(input, forKey: .input)
         try container.encode(frame, forKey: .frame)
         try container.encodeIfPresent(extendedEdges, forKey: .extendedEdges)
+        try container.encodeIfPresent(states, forKey: .states)
     }
+}
+
+/// Per-state image config for a button
+public struct DeltaSkinButtonStateImage: Codable, Equatable {
+    public let image: String
+}
+
+/// Animated frame config (fps + looping frame sequence)
+public struct DeltaSkinButtonAnimated: Codable, Equatable {
+    public let frames: [String]
+    public let fps: Double
+    public let loops: Bool
+}
+
+/// All visual states for a button
+public struct DeltaSkinButtonStates: Codable, Equatable {
+    public let normal: DeltaSkinButtonStateImage?
+    public let pressed: DeltaSkinButtonStateImage?
+    public let animated: DeltaSkinButtonAnimated?
 }
 
 /// Collection of button mappings for a skin
