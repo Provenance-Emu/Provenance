@@ -9,6 +9,7 @@
 #import "PVRetroArchCoreBridge+Saves.h"
 #include "content.h"
 #include "core_info.h"
+#include "core.h"
 
 @import PVCoreBridge;
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
@@ -144,6 +145,20 @@ NSString *autoLoadStatefileName;
 									  userInfo:userInfo];
 		}
 		return NO;
+	}
+
+	// fbalpha2012 (and some other arcade cores) serialize absolute Z80 cpu_readmap
+	// pointer values that become stale on the next run. Calling core_reset() first
+	// reinitializes the memory-bank pointer tables so that retro_unserialize() only
+	// needs to restore data (registers, RAM) without corrupting the maps.
+	// Without this, ZetReadOpArg crashes with EXC_BAD_ACCESS on the first retro_run()
+	// after a state load.
+	BOOL needsPreReset = [self.coreIdentifier containsString:@"fbalpha"] ||
+	                     [self.coreIdentifier containsString:@"fbneo"] ||
+	                     [self.coreIdentifier containsString:@"mame"];
+	if (needsPreReset) {
+		DLOG(@"Saves: calling core_reset() before state load to reinitialize memory maps (%@)", self.coreIdentifier);
+		core_reset();
 	}
 
 	bool queued = NO;
