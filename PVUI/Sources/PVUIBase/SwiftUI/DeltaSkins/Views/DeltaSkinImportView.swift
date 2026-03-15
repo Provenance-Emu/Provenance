@@ -138,6 +138,12 @@ public struct DeltaSkinImportView: View {
             isImporting = true
 
             Task { @MainActor in
+                // Start security-scoped access so sandboxed reads succeed on imported URLs
+                let accessed = url.startAccessingSecurityScopedResource()
+                defer {
+                    if accessed { url.stopAccessingSecurityScopedResource() }
+                }
+
                 // Run ZIP-based validation off the main thread so large skins don't block UI
                 let validation = await Task.detached(priority: .userInitiated) {
                     DeltaSkinValidator.validate(url: url)
