@@ -832,10 +832,16 @@ public class DeltaSkinInputHandler: ObservableObject {
                 DLOG("AtariST button (via DOS): original=\(buttonId), normalized=\(id), PVDOSButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .PCFX, .SGFX:
+        case .PCFX:
             if let r = core as? PVPCFXSystemResponderClient {
                 let b = PVPCFXButton(id)
-                DLOG("PVPFXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                DLOG("PVPCFXButton button (via PCFX): original=\(buttonId), normalized=\(id), PVPCFXButton=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .SGFX:
+            if let r = core as? PVPCESystemResponderClient {
+                let b = PVPCEButton(id)
+                DLOG("PVPCEButton button: original=\(buttonId), normalized=\(id), PVPCEButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         case .MSX, .MSX2:
@@ -1595,10 +1601,17 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .PCFX, .SGFX:
+        case .PCFX:
             if let r = core as? PVPCFXSystemResponderClient {
                 let b = PVPCFXButton(id)
-                DLOG("PVPFXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                DLOG("PVPCFXButton button (via PCFX): original=\(buttonId), normalized=\(id), PVPCFXButton=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .SGFX:
+            if let r = core as? PVPCESystemResponderClient {
+                let b = PVPCEButton(id)
+                DLOG("PVPCEButton button: original=\(buttonId), normalized=\(id), PVPCEButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
