@@ -1179,6 +1179,7 @@ struct DefaultControllerSkinView: View {
     /// Layout: (topLeft, bottomLeft, topRight, bottomRight) matching the diamond pattern.
     private var fpsButtonConfig: (tl: (String, String, Color), bl: (String, String, Color),
                                   tr: (String, String, Color), br: (String, String, Color))? {
+        DLOG("fpsButtonConfig: systemId = \(String(describing: systemId))")
         switch systemId {
         case .DOOM:
             return (tl: ("MAP", "map", .yellow), bl: ("RUN", "run", .blue),

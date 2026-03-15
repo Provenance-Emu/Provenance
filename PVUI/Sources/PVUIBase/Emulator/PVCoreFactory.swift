@@ -30,9 +30,13 @@ public extension PVCore {
         // When the thin libretro wrapper feature flag is enabled, swap RetroArch
         // bridge classes for PVThinLibretroCore so we can test the thin wrapper
         // with existing ROM/core associations without removing the RA backend.
+        ILOG("createInstance: principleClass=\(className) for \(identifier)")
         if className == "PVRetroArchCoreBridge" || className == "PVLibRetroGLESCore" || className == "PVLibRetroCore" {
-            let featureEnabled = UserDefaults.standard.bool(forKey: "dynamicLibretroScanner") ||
-                (UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides")?["dynamicLibretroScanner"] as? Bool == true)
+            let directFlag = UserDefaults.standard.bool(forKey: "dynamicLibretroScanner")
+            let overrideDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides")
+            let overrideFlag = overrideDict?["dynamicLibretroScanner"] as? Bool
+            let featureEnabled = directFlag || (overrideFlag == true)
+            ILOG("ThinLibretro: directFlag=\(directFlag) overrideFlag=\(String(describing: overrideFlag)) featureEnabled=\(featureEnabled)")
             if featureEnabled {
                 // Force-load PVCoreBridgeRetro framework so the ObjC runtime has
                 // PVThinLibretroCore registered. Frameworks are lazily loaded and
