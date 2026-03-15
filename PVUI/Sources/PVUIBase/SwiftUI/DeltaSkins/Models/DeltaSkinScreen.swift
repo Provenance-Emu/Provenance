@@ -26,10 +26,10 @@ public struct DeltaSkinScreen: Identifiable, Codable {
 
     /// Creates a `DeltaSkinScreen` programmatically.
     ///
-    /// - Important: If `filters` is non-nil, `filterInfos` **must** also be provided.
-    ///   `encode(to:)` serialises `filterInfos`, not `filters`, so passing `filters` without
-    ///   the matching `filterInfos` will silently drop the filter data on re-encode.
-    ///   The `init(from:)` decoder always populates both fields together to maintain this invariant.
+    /// - Note: `encode(to:)` serialises `filterInfos`, not `filters`. If you pass `filters`
+    ///   without the matching `filterInfos`, any filter data will be omitted when the skin
+    ///   is re-encoded. The `init(from:)` decoder always populates both fields together for
+    ///   instances loaded from JSON.
     public init(
         id: String,
         inputFrame: CGRect?,
@@ -38,8 +38,6 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         filters: [CIFilter]?,
         filterInfos: [DeltaSkin.FilterInfo]? = nil
     ) {
-        assert(filters == nil || filterInfos != nil,
-               "DeltaSkinScreen: filterInfos must be provided whenever filters is non-nil")
         self.id = id
         self.inputFrame = inputFrame
         self.outputFrame = outputFrame
@@ -85,8 +83,8 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         try container.encode(placement, forKey: .placement)
         // Re-encode the original FilterInfo specs so round-tripped skins remain valid.
         // Note: `filters` (CIFilter) is intentionally not encoded — `filterInfos` is the
-        // canonical source of truth for serialisation. The public init enforces via assertion
-        // that `filterInfos` is always provided when `filters` is non-nil.
+        // canonical source of truth for serialisation. For programmatically-created instances
+        // that omit `filterInfos`, filter data will not be included in the encoded output.
         try container.encodeIfPresent(filterInfos, forKey: .filters)
     }
 }
