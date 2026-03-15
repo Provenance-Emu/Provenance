@@ -445,6 +445,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         removeRunningObserverIfNeeded()
 
+        // Clean up the JIT indicator's Combine subscription (#2796)
+        cleanupJITIndicator()
+
         // Virtual keyboard / mouse cursor overlays are cleaned up in viewWillDisappear.
         // Associated objects are automatically released during dealloc.
 
@@ -843,6 +846,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Set up the indicator light overlay (JIT status, etc.) — positioned in controller margin.
         setupIndicatorOverlay()
+
+        // Wire up the JIT-specific status indicator (#2796).
+        // Only shows for cores that actually require or benefit from JIT (gated by coreRequiresJIT()).
+        setupJITIndicatorIfNeeded()
 
         #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
