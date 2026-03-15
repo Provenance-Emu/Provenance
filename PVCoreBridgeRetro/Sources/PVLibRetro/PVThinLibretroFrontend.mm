@@ -850,7 +850,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Can dupe ----
         case RETRO_ENVIRONMENT_GET_CAN_DUPE:
-            *(bool *)data = true;
+            if (data) *(bool *)data = true;
             return true;
 
         // ---- Logging ----
@@ -862,24 +862,24 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- System / save directories ----
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
-            *(const char **)data = _biosPath.UTF8String;
+            if (data) *(const char **)data = _biosPath.UTF8String;
             DLOG(@"ThinEnv GET_SYSTEM_DIRECTORY: %@", _biosPath);
             return (_biosPath != nil);
         }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: {
-            *(const char **)data = _savePath.UTF8String;
+            if (data) *(const char **)data = _savePath.UTF8String;
             DLOG(@"ThinEnv GET_SAVE_DIRECTORY: %@", _savePath);
             return (_savePath != nil);
         }
         case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:
         /* RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY is the same value (30) */
         {
-            *(const char **)data = _biosPath.UTF8String;
+            if (data) *(const char **)data = _biosPath.UTF8String;
             return (_biosPath != nil);
         }
         case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: {
             // Return empty — the thin frontend doesn't have a fixed "libretro path"
-            *(const char **)data = NULL;
+            if (data) *(const char **)data = NULL;
             return false;
         }
 
@@ -919,7 +919,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             bool dirty = _coreOptionsDirty;
             _coreOptionsDirty = NO;
             os_unfair_lock_unlock(&_optionsLock);
-            *(bool *)data = dirty;
+            if (data) *(bool *)data = dirty;
             return true;
         }
         case RETRO_ENVIRONMENT_SET_VARIABLE: {
@@ -987,19 +987,19 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Capabilities / info queries ----
         case RETRO_ENVIRONMENT_GET_OVERSCAN:
-            *(bool *)data = false;
+            if (data) *(bool *)data = false;
             return true;
         case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS:
-            *(bool *)data = true;
+            if (data) *(bool *)data = true;
             return true;
         case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
-            *(uint64_t *)data = (1ULL << RETRO_DEVICE_JOYPAD)
-                              | (1ULL << RETRO_DEVICE_ANALOG)
-                              | (1ULL << RETRO_DEVICE_MOUSE)
-                              | (1ULL << RETRO_DEVICE_POINTER);
+            if (data) *(uint64_t *)data = (1ULL << RETRO_DEVICE_JOYPAD)
+                                        | (1ULL << RETRO_DEVICE_ANALOG)
+                                        | (1ULL << RETRO_DEVICE_MOUSE)
+                                        | (1ULL << RETRO_DEVICE_POINTER);
             return true;
         case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS:
-            *(unsigned *)data = 8;
+            if (data) *(unsigned *)data = 8;
             return true;
         case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
             return true;
@@ -1021,17 +1021,17 @@ static bool thin_environment(unsigned cmd, void *data) {
             if (!_usernameString) {
                 _usernameString = NSUserName() ?: @"Provenance";
             }
-            *(const char **)data = _usernameString.UTF8String;
+            if (data) *(const char **)data = _usernameString.UTF8String;
             return true;
         }
         case RETRO_ENVIRONMENT_GET_LANGUAGE: {
-            *(unsigned *)data = RETRO_LANGUAGE_ENGLISH;
+            if (data) *(unsigned *)data = RETRO_LANGUAGE_ENGLISH;
             return true;
         }
 
         // ---- Messages ----
         case RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION:
-            *(unsigned *)data = 1;
+            if (data) *(unsigned *)data = 1;
             return true;
         case RETRO_ENVIRONMENT_SET_MESSAGE: {
             const struct retro_message *msg = (const struct retro_message *)data;
@@ -1114,7 +1114,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_GET_DISK_CONTROL_INTERFACE_VERSION:
-            *(unsigned *)data = 1;
+            if (data) *(unsigned *)data = 1;
             return true;
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE: {
             const struct retro_disk_control_ext_callback *dc = (const struct retro_disk_control_ext_callback *)data;
@@ -1135,19 +1135,19 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Fast-forward / throttle ----
         case RETRO_ENVIRONMENT_GET_FASTFORWARDING:
-            *(bool *)data = (_speedMultiplier > 1.5);
+            if (data) *(bool *)data = (_speedMultiplier > 1.5);
             return true;
         case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE:
             return true;
         case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE:
-            *(float *)data = (float)_rawAVInfo.timing.fps;
+            if (data) *(float *)data = (float)_rawAVInfo.timing.fps;
             return true;
         case RETRO_ENVIRONMENT_GET_THROTTLE_STATE:
             return false;
 
         // ---- Audio / video enable bitmask ----
         case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE: {
-            *(int *)data = 0x3; // bit0=video, bit1=audio
+            if (data) *(int *)data = 0x3; // bit0=video, bit1=audio
             return true;
         }
 
@@ -1192,7 +1192,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Preferred HW render ----
         case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
-            *(unsigned *)data = RETRO_HW_CONTEXT_OPENGLES3;
+            if (data) *(unsigned *)data = RETRO_HW_CONTEXT_OPENGLES3;
             return true;
         }
 
