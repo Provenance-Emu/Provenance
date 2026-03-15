@@ -2140,6 +2140,49 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["leftdiff", "l", "l1"].contains(s) { return "leftDiff" }
             if ["rightdiff", "r", "r1"].contains(s) { return "rightDiff" }
             return s
+        case .DOOM:
+            /// Doom button normalization -- pass FPS-specific IDs through to PVDoomButton
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["fire", "shoot", "a"].contains(s) { return "fire" }
+            if ["use", "open", "b"].contains(s) { return "use" }
+            if ["run", "speed", "y"].contains(s) { return "run" }
+            if ["map", "automap", "x"].contains(s) { return "map" }
+            if ["strafeleft", "sl", "l", "l1"].contains(s) { return "strafeleft" }
+            if ["straferight", "sr", "r", "r1"].contains(s) { return "straferight" }
+            if ["weaponprev", "l2"].contains(s) { return "weaponprev" }
+            if ["weaponnext", "r2"].contains(s) { return "weaponnext" }
+            if ["start", "pause"].contains(s) { return "pause" }
+            if ["select"].contains(s) { return "map" }
+            return s
+        case .Wolf3D:
+            /// Wolf3D button normalization -- pass FPS-specific IDs through to PVWolf3DButton
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["fire", "shoot", "a"].contains(s) { return "fire" }
+            if ["use", "open", "b"].contains(s) { return "open" }
+            if ["run", "speed", "x"].contains(s) { return "run" }
+            if ["strafeon", "strafe", "y"].contains(s) { return "strafeon" }
+            if ["map", "automap"].contains(s) { return "map" }
+            if ["strafeleft", "sl", "l", "l1"].contains(s) { return "strafeleft" }
+            if ["straferight", "sr", "r", "r1"].contains(s) { return "straferight" }
+            if ["weaponprev", "l2"].contains(s) { return "weaponprev" }
+            if ["weaponnext", "r2"].contains(s) { return "weaponnext" }
+            if ["start", "menu", "pause"].contains(s) { return "menu" }
+            if ["select"].contains(s) { return "map" }
+            return s
+        case .Quake, .Quake2:
+            /// Quake button normalization -- pass FPS-specific IDs through to PVDOSButton
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["fire", "shoot", "a"].contains(s) { return "fire" }
+            if ["use", "open", "b"].contains(s) { return "use" }
+            if ["run", "speed", "y"].contains(s) { return "run" }
+            if ["map", "automap", "x"].contains(s) { return "map" }
+            if ["strafeleft", "sl", "l", "l1"].contains(s) { return "strafeleft" }
+            if ["straferight", "sr", "r", "r1"].contains(s) { return "straferight" }
+            if ["weaponprev", "l2"].contains(s) { return "weaponprev" }
+            if ["weaponnext", "r2"].contains(s) { return "weaponnext" }
+            if ["start", "pause"].contains(s) { return "pause" }
+            if ["select"].contains(s) { return "select" }
+            return s
         default:
             break
         }

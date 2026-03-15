@@ -400,27 +400,7 @@ struct DefaultControllerSkinView: View {
             // Action buttons on the right side
             VStack {
                 Spacer()
-                HStack(spacing: 30) {
-                    if let fps = fpsButtonConfig {
-                        VStack(spacing: 25) {
-                            circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
-                            circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
-                        }
-                        VStack(spacing: 25) {
-                            circleButton(label: fps.tr.0, color: fps.tr.2, inputId: fps.tr.1)
-                            circleButton(label: fps.br.0, color: fps.br.2, inputId: fps.br.1)
-                        }
-                    } else {
-                        VStack(spacing: 25) {
-                            circleButton(label: "Y", color: .yellow)
-                            circleButton(label: "X", color: .blue)
-                        }
-                        VStack(spacing: 25) {
-                            circleButton(label: "B", color: .red)
-                            circleButton(label: "A", color: .green)
-                        }
-                    }
-                }
+                faceButtonCluster(spacing: 25)
                 Spacer()
             }
             .frame(width: 150)
@@ -823,27 +803,7 @@ struct DefaultControllerSkinView: View {
 
                 // Right side - Action buttons (constrained to prevent off-screen)
                 VStack(spacing: 20) {
-                    HStack(spacing: 20) {
-                        if let fps = fpsButtonConfig {
-                            VStack(spacing: 20) {
-                                circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
-                                circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
-                            }
-                            VStack(spacing: 20) {
-                                circleButton(label: fps.tr.0, color: fps.tr.2, inputId: fps.tr.1)
-                                circleButton(label: fps.br.0, color: fps.br.2, inputId: fps.br.1)
-                            }
-                        } else {
-                            VStack(spacing: 20) {
-                                circleButton(label: "Y", color: .yellow)
-                                circleButton(label: "X", color: .blue)
-                            }
-                            VStack(spacing: 20) {
-                                circleButton(label: "B", color: .red)
-                                circleButton(label: "A", color: .green)
-                            }
-                        }
-                    }
+                    faceButtonCluster(spacing: 20)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
@@ -1200,6 +1160,45 @@ struct DefaultControllerSkinView: View {
             .frame(width: 150, height: 150)
     }
 
+    // MARK: - FPS System Button Labels
+
+    /// Whether the current system is an FPS game (Doom, Wolf3D, Quake, etc.)
+    private var isFPSSystem: Bool {
+        guard let systemId = systemId else { return false }
+        return [.DOOM, .Wolf3D, .Quake, .Quake2].contains(systemId)
+    }
+
+    /// Face button labels for the four ABXY positions, customized for FPS systems.
+    /// Returns (north, west, east, south) matching the 2x2 grid layout positions.
+    private var faceButtonLabels: (north: String, west: String, east: String, south: String) {
+        if isFPSSystem {
+            // FPS-specific labels that also serve as correct input IDs:
+            //   east  (B position) -> "FIRE"  -> PVDoomButton.fire  (JOYPAD_A)
+            //   south (A position) -> "USE"   -> PVDoomButton.use   (JOYPAD_B)
+            //   west  (Y position) -> "RUN"   -> PVDoomButton.run   (JOYPAD_Y)
+            //   north (X position) -> "MAP"   -> PVDoomButton.map   (JOYPAD_X)
+            return (north: "MAP", west: "RUN", east: "FIRE", south: "USE")
+        }
+        return (north: "X", west: "Y", east: "B", south: "A")
+    }
+
+    /// Generates the standard face button cluster (2x2 grid layout),
+    /// using system-appropriate labels for FPS games.
+    @ViewBuilder
+    private func faceButtonCluster(spacing: CGFloat = 20) -> some View {
+        let labels = faceButtonLabels
+        HStack(spacing: spacing) {
+            VStack(spacing: spacing) {
+                circleButton(label: labels.west, color: .yellow)
+                circleButton(label: labels.north, color: .blue)
+            }
+            VStack(spacing: spacing) {
+                circleButton(label: labels.east, color: .red)
+                circleButton(label: labels.south, color: .green)
+            }
+        }
+    }
+
     /// Circle button view with retrowave styling
     /// - Parameters:
     ///   - label: Display text shown on the button
@@ -1552,17 +1551,7 @@ struct DefaultControllerSkinView: View {
                         }
                     } else {
                         // Fallback to generic ABXY layout with reduced spacing
-                        HStack(spacing: 20) {
-                            VStack(spacing: 20) {
-                                circleButton(label: "Y", color: .yellow)
-                                circleButton(label: "X", color: .blue)
-                            }
-
-                            VStack(spacing: 20) {
-                                circleButton(label: "B", color: .red)
-                                circleButton(label: "A", color: .green)
-                            }
-                        }
+                        faceButtonCluster(spacing: 20)
                     }
                     Spacer()
                 }
@@ -1756,17 +1745,7 @@ struct DefaultControllerSkinView: View {
                         }
                     } else {
                         // Fallback to generic ABXY layout with reduced spacing
-                        HStack(spacing: 20) {
-                            VStack(spacing: 20) {
-                                circleButton(label: "Y", color: .yellow)
-                                circleButton(label: "X", color: .blue)
-                            }
-
-                            VStack(spacing: 20) {
-                                circleButton(label: "B", color: .red)
-                                circleButton(label: "A", color: .green)
-                            }
-                        }
+                        faceButtonCluster(spacing: 20)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
