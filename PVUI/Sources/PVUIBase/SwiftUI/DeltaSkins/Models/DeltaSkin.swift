@@ -499,7 +499,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Identifies which system the skin belongs to
         let gameTypeIdentifier: DeltaSkinGameType
 
-        /// Whether to show debug overlay of button mappings
+        /// Whether to show debug overlay of button mappings. Defaults to false when absent.
         let debug: Bool
 
         /// Device-specific skin representations
@@ -524,7 +524,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             name = try container.decode(String.self, forKey: .name)
             identifier = try container.decode(String.self, forKey: .identifier)
             gameTypeIdentifier = try container.decode(DeltaSkinGameType.self, forKey: .gameTypeIdentifier)
-            debug = try container.decode(Bool.self, forKey: .debug)
+            debug = try container.decodeIfPresent(Bool.self, forKey: .debug) ?? false
 
             // Manually decode the dictionary with string keys
             let repContainer = try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .representations)

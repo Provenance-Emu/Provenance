@@ -29,7 +29,17 @@ public struct DeltaSkinValidationResultView: View {
                 }
             }
         }
-        .navigationTitle(result.isValid ? "Skin Valid" : "Validation Issues")
+        .navigationTitle(navigationTitle)
+    }
+
+    private var navigationTitle: String {
+        if !result.isValid {
+            return "Validation Issues"
+        } else if !result.warnings.isEmpty {
+            return "Imported with Warnings"
+        } else {
+            return "Skin Valid"
+        }
     }
 
     private func accessibilityLabel(for severity: DeltaSkinValidationSeverity) -> String {

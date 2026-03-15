@@ -138,13 +138,13 @@ public struct DeltaSkinValidator {
             }
         }
 
-        // Warn about missing optional but recommended field
+        // Warn about missing optional but recommended field (defaults to false during import)
         if json["debug"] == nil {
             findings.append(DeltaSkinValidationFinding(
-                severity: .error,
+                severity: .warning,
                 title: "Missing 'debug' field",
-                detail: "info.json should include a debug flag.",
-                suggestion: "Add \"debug\": false to info.json."
+                detail: "info.json does not include a debug flag. The skin will import with debug disabled.",
+                suggestion: "Add \"debug\": false to info.json to be explicit."
             ))
         }
 
