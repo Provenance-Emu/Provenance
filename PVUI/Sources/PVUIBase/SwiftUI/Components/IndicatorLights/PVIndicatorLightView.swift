@@ -196,11 +196,11 @@ public struct PVIndicatorLightRowView: View {
                 PVIndicatorLightView(state: indicator)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
         .background(
             Capsule()
-                .fill(Color.black.opacity(0.4))
+                .fill(Color.black.opacity(0.25))
         )
     }
 }
@@ -215,8 +215,16 @@ public struct PVIndicatorOverlayView: View {
         self.registry = registry
     }
 
+    /// Controls auto-hide fade for the indicator overlay.
+    @State private var isVisible: Bool = true
+
+    /// Seconds before the overlay auto-hides.
+    private let autoHideDelay: TimeInterval = 5.0
+
     public var body: some View {
         VStack {
+            Spacer()
+
             HStack {
                 Spacer()
 
@@ -225,10 +233,26 @@ public struct PVIndicatorOverlayView: View {
                         .transition(.opacity.combined(with: .scale))
                 }
             }
-            .padding(.top, 8)
+            .padding(.bottom, 4)
             .padding(.trailing, 16)
+        }
+        .opacity(isVisible ? 0.85 : 0.0)
+        .animation(.easeInOut(duration: 0.6), value: isVisible)
+        .onAppear {
+            scheduleAutoHide()
+        }
+        .onChange(of: registry.visibleIndicators) { _ in
+            // Re-show when indicators change state
+            withAnimation { isVisible = true }
+            scheduleAutoHide()
+        }
+    }
 
-            Spacer()
+    private func scheduleAutoHide() {
+        guard autoHideDelay > 0 else { return }
+        isVisible = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay) {
+            withAnimation { isVisible = false }
         }
     }
 }
