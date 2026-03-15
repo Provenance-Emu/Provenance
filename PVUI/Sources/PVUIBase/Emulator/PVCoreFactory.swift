@@ -31,11 +31,19 @@ public extension PVCore {
         // bridge classes for PVThinLibretroCore so we can test the thin wrapper
         // with existing ROM/core associations without removing the RA backend.
         if className == "PVRetroArchCoreBridge" || className == "PVLibRetroGLESCore" || className == "PVLibRetroCore" {
-            if let thinClass = NSClassFromString("PVThinLibretroCore"),
-               UserDefaults.standard.bool(forKey: "dynamicLibretroScanner") ||
-               (UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides")?["dynamicLibretroScanner"] as? Bool == true) {
-                ILOG("ThinLibretro: swapping \(className) → PVThinLibretroCore for \(identifier)")
-                className = "PVThinLibretroCore"
+            let featureEnabled = UserDefaults.standard.bool(forKey: "dynamicLibretroScanner") ||
+                (UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides")?["dynamicLibretroScanner"] as? Bool == true)
+            if featureEnabled {
+                // Force-load PVCoreBridgeRetro framework so the ObjC runtime has
+                // PVThinLibretroCore registered. Frameworks are lazily loaded and
+                // the class won't be visible until the framework is in memory.
+                Self.ensurePVCoreBridgeRetroLoaded()
+                if NSClassFromString("PVThinLibretroCore") != nil {
+                    ILOG("ThinLibretro: swapping \(className) → PVThinLibretroCore for \(identifier)")
+                    className = "PVThinLibretroCore"
+                } else {
+                    WLOG("ThinLibretro: PVThinLibretroCore class not found even after loading framework")
+                }
             }
         }
 
@@ -51,6 +59,22 @@ public extension PVCore {
         emuCore.systemIdentifier = system.identifier
         emuCore.coreIdentifier = identifier
         return emuCore
+    }
+
+    /// Ensures PVCoreBridgeRetro.framework is loaded so its classes are registered
+    /// with the ObjC runtime. Called once lazily before the thin wrapper swap.
+    private static var _bridgeRetroLoaded = false
+    private static func ensurePVCoreBridgeRetroLoaded() {
+        guard !_bridgeRetroLoaded else { return }
+        _bridgeRetroLoaded = true
+        // Find and load PVCoreBridgeRetro.framework from the app's Frameworks dir
+        if let frameworksURL = Bundle.main.privateFrameworksURL {
+            let bundleURL = frameworksURL.appendingPathComponent("PVCoreBridgeRetro.framework")
+            if let bundle = Bundle(url: bundleURL), !bundle.isLoaded {
+                ILOG("ThinLibretro: loading PVCoreBridgeRetro.framework from \(bundleURL.path)")
+                bundle.load()
+            }
+        }
     }
 }
 
