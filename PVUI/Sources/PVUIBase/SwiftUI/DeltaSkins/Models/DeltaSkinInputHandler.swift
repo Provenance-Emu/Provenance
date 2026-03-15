@@ -9,6 +9,9 @@ import Defaults
 #if canImport(UIKit)
 import UIKit
 #endif
+#if !os(tvOS)
+import GameController
+#endif
 
 /// Handles input from Delta Skins and forwards it to the emulator core or controller
 public class DeltaSkinInputHandler: ObservableObject {
@@ -2421,6 +2424,47 @@ public class DeltaSkinInputHandler: ObservableObject {
         ILOG("✅ Reconnection complete")
     }
 
+    // MARK: - Keyboard Input
+
+    /// Forward a virtual keyboard key press to the emulator core via `KeyboardResponder`.
+    ///
+    /// This is the entry point used by `DeltaSkinKeyboardOverlayView`.
+    /// On platforms without `GCKeyCode` (tvOS) this is a no-op.
+    @MainActor
+    func keyDown(_ keyCode: GCKeyCode) {
+        #if !os(tvOS)
+        guard #available(iOS 14.0, *) else { return }
+        guard let core = emulatorCore else {
+            ELOG("DeltaSkinInputHandler: keyDown — no emulatorCore available")
+            return
+        }
+        guard let responder = core as? KeyboardResponder else {
+            DLOG("DeltaSkinInputHandler: keyDown — core does not conform to KeyboardResponder")
+            return
+        }
+        DLOG("DeltaSkinInputHandler: keyDown \(keyCode)")
+        responder.keyDown(keyCode)
+        #endif
+    }
+
+    /// Forward a virtual keyboard key release to the emulator core via `KeyboardResponder`.
+    @MainActor
+    func keyUp(_ keyCode: GCKeyCode) {
+        #if !os(tvOS)
+        guard #available(iOS 14.0, *) else { return }
+        guard let core = emulatorCore else {
+            ELOG("DeltaSkinInputHandler: keyUp — no emulatorCore available")
+            return
+        }
+        guard let responder = core as? KeyboardResponder else {
+            DLOG("DeltaSkinInputHandler: keyUp — core does not conform to KeyboardResponder")
+            return
+        }
+        DLOG("DeltaSkinInputHandler: keyUp \(keyCode)")
+        responder.keyUp(keyCode)
+        #endif
+    }
+
     /// Test button forwarding to verify input handling after reconnection
     private func testButtonForwarding() {
         guard let core = emulatorCore else {
@@ -2463,6 +2507,23 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
     }
 }
+
+// MARK: - VirtualKeyboardDelegate conformance
+
+#if !os(tvOS)
+extension DeltaSkinInputHandler: VirtualKeyboardDelegate {
+
+    @available(iOS 14.0, *)
+    public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyDown keyCode: GCKeyCode) {
+        Task { @MainActor in self.keyDown(keyCode) }
+    }
+
+    @available(iOS 14.0, *)
+    public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyUp keyCode: GCKeyCode) {
+        Task { @MainActor in self.keyUp(keyCode) }
+    }
+}
+#endif
 
 /// Protocol for cores that support CoreActions
 protocol CoreActionsProtocol: AnyObject {
