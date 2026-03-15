@@ -12,6 +12,7 @@ import GameController
 import PVThemes
 import PVLibrary
 import PVRealm
+import PVSettings
 import MarkdownView
 #if canImport(PVUI_IOS)
 import PVUI_IOS
@@ -364,6 +365,38 @@ struct ControllerSettingsView: View {
                         .foregroundColor(.secondary)
                 }
             }
+
+            // Preferred Player Slot Section
+            if !controllerManager.controllers.isEmpty {
+                Section {
+                    ForEach(controllerManager.controllers, id: \.self) { controller in
+                        ControllerSlotModeRow(
+                            controller: controller,
+                            controllerManager: controllerManager,
+                            accentColor: accentColor,
+                            controllerIcon: controllerIcon(controller)
+                        )
+                    }
+                } header: {
+                    HStack {
+                        Image(systemName: "person.2.fill")
+                        Text("Preferred Player Slots")
+                    }
+                    .font(.headline)
+                    #if os(tvOS)
+                    .foregroundColor(.retroPink)
+                    #endif
+                } footer: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Set which player slot each controller prefers when connected.")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                        Text("Auto: first available slot. Preferred: use chosen slot if free. Always: claim chosen slot, bumping others.")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
         }
         #if os(tvOS)
         .listStyle(.plain)
@@ -443,6 +476,109 @@ struct ControllerSettingsView: View {
         }
 
         return title
+    }
+}
+
+/// A row showing the slot mode for a single controller with inline pickers.
+private struct ControllerSlotModeRow: View {
+    let controller: GCController
+    @ObservedObject var controllerManager: PVControllerManager
+    let accentColor: Color
+    let controllerIcon: String
+
+    /// The three mode categories available to the user.
+    private enum ModeCategory: String, CaseIterable, Identifiable {
+        case auto = "Auto"
+        case preferred = "Preferred"
+        case always = "Always"
+        var id: String { rawValue }
+    }
+
+    private var currentMode: ControllerSlotMode {
+        controllerManager.slotMode(for: controller)
+    }
+
+    private var modeCategory: ModeCategory {
+        switch currentMode {
+        case .auto: return .auto
+        case .preferred: return .preferred
+        case .always: return .always
+        }
+    }
+
+    private var selectedSlot: Int {
+        currentMode.preferredSlot ?? 1
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            // Controller name header
+            HStack(spacing: 12) {
+                Image(systemName: controllerIcon)
+                    .imageScale(.large)
+                    .foregroundColor(accentColor)
+                    .frame(width: 30)
+
+                Text(controller.vendorName ?? "Unknown Controller")
+                    .font(.headline)
+
+                Spacer()
+
+                if currentMode != .auto {
+                    Button(action: {
+                        controllerManager.clearSlotMode(for: controller)
+                    }) {
+                        Text("Reset")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                    .buttonStyle(.borderless)
+                }
+            }
+
+            // Mode picker
+            Picker("Mode", selection: Binding(
+                get: { modeCategory },
+                set: { newCategory in
+                    switch newCategory {
+                    case .auto:
+                        controllerManager.setSlotMode(.auto, for: controller)
+                    case .preferred:
+                        controllerManager.setSlotMode(.preferred(selectedSlot), for: controller)
+                    case .always:
+                        controllerManager.setSlotMode(.always(selectedSlot), for: controller)
+                    }
+                }
+            )) {
+                ForEach(ModeCategory.allCases) { category in
+                    Text(category.rawValue).tag(category)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            // Player slot picker (only when not Auto)
+            if modeCategory != .auto {
+                Picker("Player Slot", selection: Binding(
+                    get: { selectedSlot },
+                    set: { newSlot in
+                        switch modeCategory {
+                        case .auto:
+                            break
+                        case .preferred:
+                            controllerManager.setSlotMode(.preferred(newSlot), for: controller)
+                        case .always:
+                            controllerManager.setSlotMode(.always(newSlot), for: controller)
+                        }
+                    }
+                )) {
+                    ForEach(1...4, id: \.self) { slot in
+                        Text("P\(slot)").tag(slot)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+        }
+        .padding(.vertical, 4)
     }
 }
 
