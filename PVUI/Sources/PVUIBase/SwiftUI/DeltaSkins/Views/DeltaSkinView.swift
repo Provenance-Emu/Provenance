@@ -71,14 +71,6 @@ public struct DeltaSkinView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    // Global overlay appearance settings
-    @Default(.controllerOverlayOpacity) private var overlayOpacity
-
-    private var clampedOverlayOpacity: Double {
-        let r = Defaults.Keys.controllerOverlayOpacityRange
-        return Double(max(r.lowerBound, min(r.upperBound, overlayOpacity)))
-    }
-
     /// State for touch and button interactions
     @State private var touchLocations: Set<CGPoint> = []
     @State private var activeButton: (frame: CGRect, mappingSize: CGSize, buttonId: String)?
@@ -389,9 +381,8 @@ public struct DeltaSkinView: View {
             )
         }
 
-        let finalScale = scale
-        let scaledWidth = effectiveImageSize.width * finalScale
-        let scaledHeight = effectiveImageSize.height * finalScale
+        let scaledWidth = effectiveImageSize.width * scale
+        let scaledHeight = effectiveImageSize.height * scale
 
         // Center horizontally accounting for safe areas
         let xOffset = safeInsets.leading + (availableWidth - scaledWidth) / 2
@@ -408,13 +399,13 @@ public struct DeltaSkinView: View {
         }
 
         let layout = SkinLayout(
-            scale: finalScale,
+            scale: scale,
             width: scaledWidth,
             height: scaledHeight,
             xOffset: xOffset,
             yOffset: yOffset
         )
-        ILOG("skins: calculateLayout() - calculated layout: scale=\(finalScale), width=\(scaledWidth), height=\(scaledHeight), xOffset=\(xOffset), yOffset=\(yOffset)")
+        ILOG("skins: calculateLayout() - calculated layout: scale=\(scale), width=\(scaledWidth), height=\(scaledHeight), xOffset=\(xOffset), yOffset=\(yOffset)")
         return layout
     }
 
@@ -551,7 +542,6 @@ public struct DeltaSkinView: View {
                                 .scaledToFit()
                                 .frame(width: layout.width, height: layout.height)
                                 .clipped()
-                                .opacity(clampedOverlayOpacity)
                             // Draw per-button asset layers (if provided by the skin)
                             if let buttons = skin.buttons(for: traits),
                                let mappingSize = skin.mappingSize(for: traits) {
@@ -584,7 +574,6 @@ public struct DeltaSkinView: View {
                                                 y: button.frame.midY * scaleY
                                             )
                                             .allowsHitTesting(false)
-                                            .opacity(clampedOverlayOpacity)
                                     }
                                 }
                             }

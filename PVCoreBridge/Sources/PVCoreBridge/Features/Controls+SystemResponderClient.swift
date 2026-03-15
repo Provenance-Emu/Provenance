@@ -55,9 +55,9 @@ public extension SystemIdentifier {
             return PVPSXSystemResponderClient.self
         case .Saturn:
             return PVSaturnSystemResponderClient.self
-        case .PCE, .PCECD, .SGFX:
+        case .PCE, .PCECD:
             return PVPCESystemResponderClient.self
-        case .PCFX:
+        case .PCFX, .SGFX:
             return PVPCFXSystemResponderClient.self
         case .NGP, .NGPC:
             return PVNeoGeoPocketSystemResponderClient.self
