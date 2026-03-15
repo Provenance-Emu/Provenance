@@ -207,6 +207,8 @@ struct PVControllerPlayerSlotPreferencesTests {
     @Test("slotMode(forId:) returns .auto for unknown ID")
     @MainActor
     func slotModeForIdDefaultsToAuto() async throws {
+        let restore = snapshotSlotModes()
+        defer { restore() }
         let mode = PVControllerManager.shared.slotMode(forId: "NonExistentController-\(UUID().uuidString)")
         #expect(mode == .auto)
     }

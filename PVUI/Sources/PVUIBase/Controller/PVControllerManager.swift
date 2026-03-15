@@ -301,6 +301,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
             return
         }
 
+        objectWillChange.send()
         let wrapper = getRemappableController(for: controller)
         /// Mappings are loaded in PVRemappableController.init(), no need to load again
 
@@ -347,6 +348,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
             return
         }
 
+        objectWillChange.send()
         removeRemappableController(for: controller)
 
         if controller == player1 {
@@ -1003,6 +1005,7 @@ public extension PVControllerManager {
         } else {
             modes[id] = mode
         }
+        objectWillChange.send()
         Defaults[.controllerSlotModes] = modes
         ILOG("Saved slot mode \(mode) for controller [\(id)]")
     }
@@ -1017,11 +1020,10 @@ public extension PVControllerManager {
     /// All controller identifiers that have a non-auto stored slot-mode preference.
     var storedControllerIds: [String] {
         Defaults[.controllerSlotModes]
-            .filter { _, mode in
-                if case .auto = mode { return false }
-                return true
+            .compactMap { key, mode -> String? in
+                if case .auto = mode { return nil }
+                return key
             }
-            .map(\.key)
             .sorted()
     }
 
@@ -1039,6 +1041,7 @@ public extension PVControllerManager {
         } else {
             modes[id] = mode
         }
+        objectWillChange.send()
         Defaults[.controllerSlotModes] = modes
         ILOG("Saved slot mode \(mode) for controller [\(id)]")
     }
