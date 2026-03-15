@@ -28,7 +28,7 @@ enum LibretroMetadataReader {
     }
 
     private struct DiskCache: Codable {
-        static let currentVersion = 2
+        static let currentVersion = 3   // bumped: exclude date strings from version heuristic
         var version: Int = DiskCache.currentVersion
         /// keyed by core identifier
         var entries: [String: DiskCacheEntry] = [:]
@@ -242,7 +242,24 @@ enum LibretroMetadataReader {
             })
             guard libraryName != nil else { return nil }
 
-            let libVersion = window.first(where: { $0 != libraryName && $0.count >= 1 && $0.count <= 30 }) ?? ""
+            // Prefer version strings that contain at least one letter (e.g. "2.8-Vulkan bc43bce").
+            // Exclude pure date strings like "2024.10.29" that appear near valid_extensions in
+            // many buildbot cores — these are build dates, not library versions, and cause false
+            // save-state version mismatch warnings.
+            let datePattern = try? NSRegularExpression(pattern: #"^\d{4}[.\-]\d{2}[.\-]\d{2}$"#)
+            let isDate: (String) -> Bool = { s in
+                let r = NSRange(s.startIndex..., in: s)
+                return datePattern?.firstMatch(in: s, range: r) != nil
+            }
+            // First pass: prefer a string with at least one letter (real version tag)
+            let libVersionWithLetter = window.first(where: { s in
+                s != libraryName && !isDate(s) && s.count >= 1 && s.count <= 30 &&
+                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
+            })
+            // Second pass: any non-date short string
+            let libVersion = libVersionWithLetter
+                ?? window.first(where: { $0 != libraryName && !isDate($0) && $0.count >= 1 && $0.count <= 30 })
+                ?? ""
 
             return LibretroMetadata(version: libVersion, validExtensions: exts)
         }

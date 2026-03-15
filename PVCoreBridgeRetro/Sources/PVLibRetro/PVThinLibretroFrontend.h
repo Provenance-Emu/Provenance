@@ -20,6 +20,8 @@
 @import Foundation;
 @import PVCoreObjCBridge;
 
+@protocol ObjCBridgedCoreBridge;
+
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 #else
@@ -133,8 +135,7 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 ///   from the emulation thread (with the emu EAGLContext current) once the render
 ///   surface dimensions are known. `context_reset` fires at the end of that call.
 ///
-__attribute__((weak_import))
-@interface PVThinLibretroFrontend : PVCoreObjCBridge
+@interface PVThinLibretroFrontend : PVCoreObjCBridge <ObjCBridgedCoreBridge>
 
 // MARK: Properties
 
@@ -156,8 +157,8 @@ __attribute__((weak_import))
 /// System info reported by the core.
 @property (nonatomic, readonly) PVLibretroSystemInfo systemInfo;
 
-/// Pixel format chosen by the core.
-@property (nonatomic, readonly) PVLibretroPixelFormat pixelFormat;
+/// Pixel format chosen by the core (libretro enum).
+@property (nonatomic, readonly) PVLibretroPixelFormat libretroPixelFormat;
 
 /// Hardware render context type, if the core requested HW rendering.
 @property (nonatomic, readonly) PVLibretroHWContextType hwContextType;

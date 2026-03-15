@@ -163,6 +163,10 @@ typedef struct PVThinLibretroSymbols {
     // Stable C-string pointer for RETRO_ENVIRONMENT_GET_USERNAME; retained for
     // the core's lifetime so the pointer remains valid after the callback returns.
     NSString *_usernameString;
+
+    // Software video buffer (used in ObjCBridgedCoreBridge / PVEmulatorCore mode)
+    uint8_t *_videoBufferData;
+    NSUInteger _videoBufferBytesPerRow;
 }
 @end
 
@@ -182,42 +186,31 @@ static __thread __weak PVThinLibretroFrontend *_thinCurrentTLS = nil;
 static void thin_video_refresh(const void *data, unsigned width, unsigned height, size_t pitch) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return;
-    [self.frontendDelegate libretroFrontend:self
-                            didRenderBuffer:data
-                                      width:width
-                                     height:height
-                                      pitch:pitch];
+    [self _thinVideoRefresh:data width:width height:height pitch:pitch];
 }
 
 static void thin_audio_sample(int16_t left, int16_t right) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return;
-    [self.frontendDelegate libretroFrontend:self didEmitAudioLeft:left right:right];
+    [self _thinAudioSample:left right:right];
 }
 
 static size_t thin_audio_sample_batch(const int16_t *data, size_t frames) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
-    // Return 0 (not `frames`) when there is no active instance: telling the core
-    // that zero frames were consumed is accurate and avoids advancing its audio
-    // timing clock when callbacks fire on a thread with no frontend attached.
     if (!self) return 0;
-    return [self.frontendDelegate libretroFrontend:self didEmitAudioBatch:data frames:frames];
+    return [self _thinAudioSampleBatch:data frames:frames];
 }
 
 static void thin_input_poll(void) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return;
-    [self.frontendDelegate libretroFrontendPollInput:self];
+    [self _thinInputPoll];
 }
 
 static int16_t thin_input_state(unsigned port, unsigned device, unsigned index, unsigned id) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return 0;
-    return [self.frontendDelegate libretroFrontend:self
-                                 inputStateForPort:port
-                                            device:device
-                                             index:index
-                                                id:id];
+    return [self _thinInputStatePort:port device:device index:index id:id];
 }
 
 /// libretro logging bridge.
@@ -294,6 +287,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         _hasAudioCallback = NO;
         _keyboardEventCb = NULL;
         _speedMultiplier = 1.0;
+        _videoBufferData = NULL;
+        _videoBufferBytesPerRow = 0;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         _glContext = nil;
         _glShareContext = nil;
@@ -309,6 +304,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (void)dealloc {
     [self stopEmulation];
     [self unloadCore];
+    if (_videoBufferData) { free(_videoBufferData); _videoBufferData = NULL; }
 }
 
 // ---------------------------------------------------------------------------
@@ -486,6 +482,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)stopEmulation {
+    [super stopEmulation]; // stops emulation loop thread before retro teardown
     if (_sym.retro_unload_game) {
         _sym.retro_unload_game();
     }
@@ -589,13 +586,209 @@ static bool thin_environment(unsigned cmd, void *data) {
     return info;
 }
 
-- (PVLibretroPixelFormat)pixelFormat {
+- (PVLibretroPixelFormat)libretroPixelFormat {
     switch (_retroPixelFormat) {
         case RETRO_PIXEL_FORMAT_0RGB1555: return PVLibretroPixelFormatRGB1555;
         case RETRO_PIXEL_FORMAT_XRGB8888: return PVLibretroPixelFormatXRGB8888;
         case RETRO_PIXEL_FORMAT_RGB565:   return PVLibretroPixelFormatRGB565;
         default: return PVLibretroPixelFormatRGB1555;
     }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - ObjCBridgedCoreBridge / EmulatorCoreVideoDelegate overrides
+// ---------------------------------------------------------------------------
+
+#if !TARGET_OS_WATCH
+- (GLenum)pixelFormat {
+    switch (_retroPixelFormat) {
+        case RETRO_PIXEL_FORMAT_XRGB8888: return GL_BGRA_EXT;
+        case RETRO_PIXEL_FORMAT_RGB565:   return GL_RGB;
+        default:                          return GL_RGBA;    // 0RGB1555 — upsampled
+    }
+}
+
+- (GLenum)pixelType {
+    switch (_retroPixelFormat) {
+        case RETRO_PIXEL_FORMAT_XRGB8888: return GL_UNSIGNED_BYTE;
+        case RETRO_PIXEL_FORMAT_RGB565:   return GL_UNSIGNED_SHORT_5_6_5;
+        default:                          return GL_UNSIGNED_SHORT_5_5_5_1;
+    }
+}
+
+- (GLenum)internalPixelFormat {
+    switch (_retroPixelFormat) {
+        case RETRO_PIXEL_FORMAT_XRGB8888: return GL_RGBA8_OES;
+        default:                          return GL_RGB;
+    }
+}
+#endif
+
+- (NSTimeInterval)frameInterval {
+    return (_rawAVInfo.timing.fps > 0.0) ? _rawAVInfo.timing.fps : 60.0;
+}
+
+- (const void *)videoBuffer { return _videoBufferData; }
+
+- (CGRect)screenRect {
+    unsigned w = _rawAVInfo.geometry.base_width  ?: 256;
+    unsigned h = _rawAVInfo.geometry.base_height ?: 240;
+    return CGRectMake(0, 0, w, h);
+}
+
+- (CGSize)aspectSize {
+    unsigned w = _rawAVInfo.geometry.base_width  ?: 256;
+    unsigned h = _rawAVInfo.geometry.base_height ?: 240;
+    float    ar = _rawAVInfo.geometry.aspect_ratio;
+    if (ar > 0.01f) { return CGSizeMake((CGFloat)(h * ar), (CGFloat)h); }
+    return CGSizeMake((CGFloat)w, (CGFloat)h);
+}
+
+- (CGSize)bufferSize {
+    unsigned w = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 256);
+    unsigned h = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 240);
+    return CGSizeMake((CGFloat)w, (CGFloat)h);
+}
+
+- (double)audioSampleRate {
+    return (_rawAVInfo.timing.sample_rate > 0.0) ? _rawAVInfo.timing.sample_rate : 44100.0;
+}
+
+- (NSUInteger)channelCount { return 2; }
+
+- (void)executeFrame { [self runFrame]; }
+
+// ---------------------------------------------------------------------------
+// MARK: - loadFileAtPath / startEmulation overrides for PVEmulatorCore flow
+// ---------------------------------------------------------------------------
+
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
+    self.romPath = path;
+    NSString *corePath = [self _resolvedCoreDylibPath];
+    if (!corePath) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
+                                         code:10
+                                     userInfo:@{NSLocalizedDescriptionKey:
+                                         [NSString stringWithFormat:@"Could not locate dylib for coreIdentifier '%@'", self.coreIdentifier ?: @"(nil)"]}];
+        }
+        return NO;
+    }
+    return [self loadCoreAtPath:corePath error:error];
+}
+
+- (void)startEmulation {
+    NSError *error = nil;
+    if (![self startWithROMPath:self.romPath error:&error]) {
+        ELOG(@"ThinFrontend: startWithROMPath failed: %@", error);
+        return;
+    }
+    [self _allocateVideoBuffer];
+    // _frameInterval ivar read by PVCoreObjCBridge emulation loop timing
+    _frameInterval = (_rawAVInfo.timing.fps > 0.0) ? _rawAVInfo.timing.fps : 60.0;
+    [super startEmulation];
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Callback routing (delegate or direct-to-buffer)
+// ---------------------------------------------------------------------------
+
+- (void)_thinVideoRefresh:(const void *)data width:(unsigned)w height:(unsigned)h pitch:(size_t)pitch {
+    if (self.frontendDelegate) {
+        [self.frontendDelegate libretroFrontend:self didRenderBuffer:data width:w height:h pitch:pitch];
+        return;
+    }
+    if (!data || !_videoBufferData) return;
+    NSUInteger maxW = (_rawAVInfo.geometry.max_width  ?: w);
+    NSUInteger bpp  = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
+    NSUInteger dstStride  = maxW * bpp;
+    NSUInteger copyBytes  = MIN(w, maxW) * bpp;
+    for (unsigned y = 0; y < h; y++) {
+        memcpy(_videoBufferData + (NSUInteger)y * dstStride,
+               (const uint8_t *)data + (NSUInteger)y * pitch,
+               copyBytes);
+    }
+}
+
+- (void)_thinAudioSample:(int16_t)left right:(int16_t)right {
+    if (self.frontendDelegate) {
+        [self.frontendDelegate libretroFrontend:self didEmitAudioLeft:left right:right];
+        return;
+    }
+    int16_t buf[2] = {left, right};
+    [[self ringBufferAtIndex:0] write:buf maxLength:4];
+}
+
+- (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames {
+    if (self.frontendDelegate) {
+        return [self.frontendDelegate libretroFrontend:self didEmitAudioBatch:data frames:frames];
+    }
+    [[self ringBufferAtIndex:0] write:data maxLength:frames * 2 * sizeof(int16_t)];
+    return frames;
+}
+
+- (void)_thinInputPoll {
+    if (self.frontendDelegate) {
+        [self.frontendDelegate libretroFrontendPollInput:self];
+    }
+    // In PVEmulatorCore mode input is driven by GCController callbacks.
+}
+
+- (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid {
+    if (self.frontendDelegate) {
+        return [self.frontendDelegate libretroFrontend:self inputStateForPort:port device:dev index:idx id:bid];
+    }
+    return 0; // TODO: forward GCController state
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Private helpers
+// ---------------------------------------------------------------------------
+
+- (nullable NSString *)_resolvedCoreDylibPath {
+    NSString *identifier = self.coreIdentifier;
+    if (!identifier) { ELOG(@"ThinFrontend: coreIdentifier not set"); return nil; }
+
+    NSString *frameworkFolder, *executableName;
+    if ([identifier hasSuffix:@".libretro.framework"]) {
+        frameworkFolder = identifier;
+        executableName  = [identifier stringByDeletingPathExtension]; // drops .framework
+    } else if ([identifier hasSuffix:@".libretro"]) {
+        frameworkFolder = [identifier stringByAppendingPathExtension:@"framework"];
+        executableName  = identifier;
+    } else {
+        executableName  = [NSString stringWithFormat:@"%@.libretro", identifier];
+        frameworkFolder = [NSString stringWithFormat:@"%@.libretro.framework", identifier];
+    }
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSArray<NSString *> *bases = @[
+        [NSBundle mainBundle].privateFrameworksPath ?: @"",
+        [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:@"Frameworks"],
+    ];
+    for (NSString *base in bases) {
+        if (!base.length) continue;
+        NSString *frameworkPath = [base stringByAppendingPathComponent:frameworkFolder];
+        if (![fm fileExistsAtPath:frameworkPath]) continue;
+        NSBundle *bundle = [NSBundle bundleWithPath:frameworkPath];
+        if (bundle.executablePath && [fm fileExistsAtPath:bundle.executablePath]) {
+            return bundle.executablePath;
+        }
+        NSString *direct = [frameworkPath stringByAppendingPathComponent:executableName];
+        if ([fm fileExistsAtPath:direct]) return direct;
+    }
+    ELOG(@"ThinFrontend: dylib not found for identifier '%@'", identifier);
+    return nil;
+}
+
+- (void)_allocateVideoBuffer {
+    if (_videoBufferData) { free(_videoBufferData); _videoBufferData = NULL; }
+    unsigned maxW = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 1024);
+    unsigned maxH = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 1024);
+    NSUInteger bpp = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
+    _videoBufferBytesPerRow = (NSUInteger)maxW * bpp;
+    _videoBufferData = (uint8_t *)calloc(1, _videoBufferBytesPerRow * (NSUInteger)maxH);
+    ILOG(@"ThinFrontend: video buffer %ux%u (%lu bytes/row)", maxW, maxH, (unsigned long)_videoBufferBytesPerRow);
 }
 
 - (PVLibretroHWContextType)hwContextType {

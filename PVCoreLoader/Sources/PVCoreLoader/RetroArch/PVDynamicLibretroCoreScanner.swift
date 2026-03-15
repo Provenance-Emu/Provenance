@@ -97,7 +97,7 @@ private struct ScanCacheEntry: Codable {
 }
 
 private struct ScanCache: Codable {
-    static let currentVersion = 1
+    static let currentVersion = 2   // bumped: exclude date strings from version heuristic
     var version: Int = ScanCache.currentVersion
     var entries: [String: ScanCacheEntry] = [:]   // keyed by path
 }
@@ -323,7 +323,7 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
 
             return EmulatorCoreInfoPlist(
                 identifier:        core.syntheticIdentifier,
-                principleClass:    "PVThinLibretroFrontend",
+                principleClass:    "PVThinLibretroCore",
                 supportedSystems:  uniqueSystems,
                 projectName:       core.libraryName,
                 projectURL:        "",
@@ -334,7 +334,7 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
 
         return EmulatorCoreInfoPlist(
             identifier:       "com.provenance.thinlibretro",
-            principleClass:   "PVThinLibretroFrontend",
+            principleClass:   "PVThinLibretroCore",
             supportedSystems: [],
             projectName:      "Thin Libretro",
             projectURL:       "",
@@ -528,8 +528,17 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
             })
             guard let libName = libraryName else { return nil }
 
-            // library_version: any other nearby short string
-            let libVersion = window.first(where: { $0 != libName && $0.count >= 1 && $0.count <= 30 }) ?? ""
+            // library_version: prefer strings with at least one letter; skip pure date strings
+            // (e.g. "2024.10.29" is a build date in many buildbot cores, not the real version tag).
+            let dateRegex = try? NSRegularExpression(pattern: #"^\d{4}[.\-]\d{2}[.\-]\d{2}$"#)
+            let isDate: (String) -> Bool = { s in
+                let r = NSRange(s.startIndex..., in: s)
+                return dateRegex?.firstMatch(in: s, range: r) != nil
+            }
+            let libVersion = window.first(where: { s in
+                s != libName && !isDate(s) && s.count >= 1 && s.count <= 30 &&
+                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
+            }) ?? window.first(where: { $0 != libName && !isDate($0) && $0.count >= 1 && $0.count <= 30 }) ?? ""
 
             DLOG("DynamicLibretroScanner: probeMachO '\(executableURL.lastPathComponent)' → '\(libName)' v\(libVersion)")
             return DiscoveredLibretroCore(
