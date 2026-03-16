@@ -297,12 +297,12 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
 
     /// Audio control methods
     @objc public func pauseAudio() {
-        // Flush ring buffers before stopping to prevent stale audio from looping (#3183)
+        stopAudio()
+        running = false
+        // Flush ring buffers after stopping to prevent race with render callback (#3183)
         for context in _contexts {
             context.buffer?.reset()
         }
-        stopAudio()
-        running = false
     }
 
     @objc public func startAudio() throws {
