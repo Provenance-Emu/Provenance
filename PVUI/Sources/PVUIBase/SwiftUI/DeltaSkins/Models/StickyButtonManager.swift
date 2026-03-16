@@ -10,7 +10,6 @@ import PVLogging
 /// - Call `handleRelease(_:)` when a button touch ends.
 /// - The returned ``Action`` tells the caller whether to forward a real
 ///   press/release to the emulator core, or to suppress it.
-@MainActor
 public final class StickyButtonManager: ObservableObject {
 
     // MARK: - Types
