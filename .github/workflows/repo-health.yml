@@ -34,14 +34,7 @@ jobs:
 
           # Portable ISO-8601 → epoch helper (avoids GNU vs BSD date differences)
           iso_to_epoch() {
-            python3 -c "
-import sys, datetime
-try:
-    ts = datetime.datetime.fromisoformat(sys.argv[1].replace('Z', '+00:00'))
-    print(int(ts.timestamp()))
-except Exception:
-    print(0)
-" "$1" 2>/dev/null || echo "0"
+            python3 -c "import sys, datetime; ts = datetime.datetime.fromisoformat(sys.argv[1].replace('Z', '+00:00')); print(int(ts.timestamp()))" "$1" 2>/dev/null || echo "0"
           }
 
           # ── Check 1: Stuck AI reviews ─────────────────────────────────────────
@@ -276,21 +269,21 @@ except Exception:
           CHECK5_DETAIL: ${{ steps.health.outputs.check5_detail }}
         run: |
           # Build report body
-          cat > /tmp/health_report.md << REPORTEOF
-          <!-- automation-health-report -->
-          ## Automation Health Report — ${TIMESTAMP}
-
-          | Check | Status | Details |
-          |-------|--------|---------|
-          | Stuck AI reviews | ${CHECK1_STATUS} | ${CHECK1_DETAIL} |
-          | Stuck fixers | ${CHECK2_STATUS} | ${CHECK2_DETAIL} |
-          | Rebase conflicts | ${CHECK3_STATUS} | ${CHECK3_DETAIL} |
-          | Orphaned agent-work | ${CHECK4_STATUS} | ${CHECK4_DETAIL} |
-          | Workflow failures (24h) | ${CHECK5_STATUS} | ${CHECK5_DETAIL} |
-
-          ---
-          *Auto-generated every 4h by [repo-health.yml](../actions/workflows/repo-health.yml). Trigger manually via [Actions tab](../actions/workflows/repo-health.yml).*
-          REPORTEOF
+          {
+            echo '<!-- automation-health-report -->'
+            echo "## Automation Health Report — ${TIMESTAMP}"
+            echo ''
+            echo '| Check | Status | Details |'
+            echo '|-------|--------|---------|'
+            echo "| Stuck AI reviews | ${CHECK1_STATUS} | ${CHECK1_DETAIL} |"
+            echo "| Stuck fixers | ${CHECK2_STATUS} | ${CHECK2_DETAIL} |"
+            echo "| Rebase conflicts | ${CHECK3_STATUS} | ${CHECK3_DETAIL} |"
+            echo "| Orphaned agent-work | ${CHECK4_STATUS} | ${CHECK4_DETAIL} |"
+            echo "| Workflow failures (24h) | ${CHECK5_STATUS} | ${CHECK5_DETAIL} |"
+            echo ''
+            echo '---'
+            echo '*Auto-generated every 4h by [repo-health.yml](../actions/workflows/repo-health.yml). Trigger manually via [Actions tab](../actions/workflows/repo-health.yml).*'
+          } > /tmp/health_report.md
 
           # Find or create the pinned Automation Health issue
           HEALTH_ISSUE=$(gh issue list --repo "$REPO" \
