@@ -91,6 +91,7 @@
 
 extension PVDoomButton {
     /// Maps a Doom button to its equivalent PVDOSButton for forwarding through the DOS bridge.
+    /// Note: Doom now uses direct bridge routing, so this mapping is only a legacy fallback.
     public var asDOSButton: PVDOSButton {
         switch self {
         case .up:         return .up
@@ -105,7 +106,7 @@ extension PVDoomButton {
         case .weaponPrev: return .weaponPrev
         case .weaponNext: return .weaponNext
         case .map:        return .select
-        case .strafe:     return .run  // approximate; DOS has no strafe toggle
+        case .strafe:     return .fire1  // No DOS equivalent; Doom now uses direct bridge (unused codepath)
         case .pause:      return .pause
         case .count:      return .count
         }

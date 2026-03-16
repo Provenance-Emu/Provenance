@@ -7717,7 +7717,7 @@
 			</dict>
 			<dict>
 				<key>PVControlSize</key>
-				<string>{180,180}</string>
+				<string>{180,250}</string>
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVGroupedButtons</key>
