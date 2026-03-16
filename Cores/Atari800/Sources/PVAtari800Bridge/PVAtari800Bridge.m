@@ -499,6 +499,7 @@ __weak static PVAtari800Bridge * _currentCore;
 
 - (void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
+    if (player >= (NSUInteger)kMaxPlayers) return;
     switch (button)
     {
         case PV5200ButtonFire1:
@@ -602,6 +603,7 @@ static const NSInteger kMaxPlayers = 4;
 
 - (void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
+    if (player >= (NSUInteger)kMaxPlayers) return;
     switch (button)
     {
         case PV5200ButtonFire1:
@@ -799,7 +801,7 @@ static const NSInteger kMaxPlayers = 4;
 
 - (ATR5200ControllerState)controllerStateForPlayer:(NSUInteger)playerNum {
     ATR5200ControllerState state = {0,0,0,0,0,0,0,0};
-    if(playerNum < 4) {
+    if(playerNum < (NSUInteger)kMaxPlayers) {
         state = self.controllerStates[playerNum];
     }
     return state;
@@ -1079,8 +1081,9 @@ void PLATFORM_SoundUnlock(void){}
 //    free(newBuffer);
 //}
 
-- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player { 
-    [self didPush5200Button:button forPlayer:player];
+- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
+    if (player < 0 || player >= kMaxPlayers) return;
+    [self didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
