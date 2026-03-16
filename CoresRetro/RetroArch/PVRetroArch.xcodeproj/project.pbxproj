@@ -57,6 +57,7 @@
 		93AA1253296DCEE8007C9808 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA1252296DCEE8007C9808 /* VideoToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93AC9F672A48952800D3F4D6 /* runloop.c in Sources */ = {isa = PBXBuildFile; fileRef = 93AC9F662A48952700D3F4D6 /* runloop.c */; };
 		93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */; };
+		A1000001000000000000BIOS /* PVRetroArchCore+BIOS+AtariST.m in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000BIO2 /* PVRetroArchCore+BIOS+AtariST.m */; };
 		93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */; };
 		93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */; };
 		93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B992967C64300A621DD /* menu_pipeline.metal */; };
@@ -348,6 +349,7 @@
 		93AC9F662A48952700D3F4D6 /* runloop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = runloop.c; sourceTree = "<group>"; };
 		93B3B1942A8CAB0E00B60325 /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = usr/lib/liblzma.tbd; sourceTree = SDKROOT; };
 		93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive+PC98.m"; sourceTree = "<group>"; };
+		A1000001000000000000BIO2 /* PVRetroArchCore+BIOS+AtariST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+BIOS+AtariST.m"; sourceTree = "<group>"; };
 		93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Archive.h"; sourceTree = "<group>"; };
 		93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive.m"; sourceTree = "<group>"; };
 		93B66B982967C64300A621DD /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
@@ -877,6 +879,7 @@
 				93814F8B2AAA9E9800DEB9B9 /* PVRetroArchCore+Archive+AppleII.m */,
 				93814F912AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m */,
 				93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */,
+				A1000001000000000000BIO2 /* PVRetroArchCore+BIOS+AtariST.m */,
 				B3447EB2218BC69700557ACE /* PVRetroArchCore+Audio.mm */,
 				9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */,
 				B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */,
@@ -1404,6 +1407,7 @@
 				B318FF372EC0130B00CF6FBC /* PVRetroArchCore+Controls+Vectrex.m in Sources */,
 				93814F922AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m in Sources */,
 				93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */,
+				A1000001000000000000BIOS /* PVRetroArchCore+BIOS+AtariST.m in Sources */,
 				93C3726A2A8B68000007671D /* PVRetroArchCore+Controls+N64.m in Sources */,
 				B3DD7A752ECE6D5E0022FF70 /* PVRetroArchCore+Controls+PCECD.m in Sources */,
 				B3EEFBB42D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m in Sources */,
