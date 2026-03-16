@@ -50,11 +50,7 @@ struct ShaderParameterSlider: View {
                 Slider(value: $value, in: range)
             }
             #else
-            if let step = step {
-                RetroWaveSlider(value: $value, in: range, step: Float.Stride(step))
-            } else {
-                RetroWaveSlider(value: $value, in: range)
-            }
+            RetroWaveSlider(value: $value, in: range, step: Float.Stride(step ?? 0))
             #endif
         }
         .padding(.vertical, 2)
