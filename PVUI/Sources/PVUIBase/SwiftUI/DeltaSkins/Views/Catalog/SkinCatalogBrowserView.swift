@@ -690,7 +690,7 @@ private struct CatalogSkinCard: View {
 
 // MARK: - Shared Helpers
 
-/// Checks whether a catalog entry matches any locally installed skin.
+/// Finds the first locally installed skin that matches a catalog entry.
 ///
 /// Matching is done in priority order:
 /// 1. Catalog `id` matches the skin's internal `identifier` (exact match).
@@ -699,29 +699,32 @@ private struct CatalogSkinCard: View {
 ///
 /// Used by both `SkinCatalogBrowserView` and `SkinCatalogDetailView` to keep
 /// installed-matching logic in a single place.
-func isCatalogSkinInstalled(_ entry: SkinCatalogEntry, in skins: [DeltaSkinProtocol]) -> Bool {
-    guard !skins.isEmpty else { return false }
+func matchingInstalledSkin(for entry: SkinCatalogEntry, in skins: [DeltaSkinProtocol]) -> DeltaSkinProtocol? {
+    guard !skins.isEmpty else { return nil }
 
     // 1. Identifier match (most reliable when catalog id == info.json identifier)
-    if skins.contains(where: { $0.identifier == entry.id }) {
-        return true
+    if let match = skins.first(where: { $0.identifier == entry.id }) {
+        return match
     }
 
     // 2. Filename match: compare the download URL stem to the local file stem
     let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
-    if !catalogStem.isEmpty, skins.contains(where: {
+    if !catalogStem.isEmpty, let match = skins.first(where: {
         $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem
     }) {
-        return true
+        return match
     }
 
     // 3. Name match (case-insensitive fallback)
     let entryNameLower = entry.name.lowercased()
-    if skins.contains(where: { $0.name.lowercased() == entryNameLower }) {
-        return true
-    }
+    return skins.first(where: { $0.name.lowercased() == entryNameLower })
+}
 
-    return false
+/// Checks whether a catalog entry matches any locally installed skin.
+///
+/// Delegates to `matchingInstalledSkin(for:in:)` for consistent matching logic.
+func isCatalogSkinInstalled(_ entry: SkinCatalogEntry, in skins: [DeltaSkinProtocol]) -> Bool {
+    matchingInstalledSkin(for: entry, in: skins) != nil
 }
 
 /// Formats a download/play count into a compact string (e.g. 1200 → "1.2k").
