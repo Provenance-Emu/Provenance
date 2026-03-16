@@ -75,6 +75,19 @@
 - **PrBoom button mapping** — Corrected Doom button mapping and shoulder button order (#fe0e0d6)
 - **tvOS launch crash** — Added missing `BGTaskSchedulerPermittedIdentifiers` to tvOS Info.plist (#2489)
 - **CrabEMU resolution** — Fixed bad resolution when nil at boot (#6f2f3f4)
+- **Save state Realm crash** — Fixed freeze() inside uncommitted write transaction; moved serialization after commit (#3181, #3193)
+- **Audio loop on pause** — Flush ring buffer when pausing to prevent stale audio looping (#3183, #3195)
+- **HomeView flickering** — Replaced 5 `@ObservedResults` with background ViewModel to stop cascading re-renders (#3184, #3196)
+- **Atari800 joystick crash** — Fixed infinite recursion in `didRelease:` and `didMoveJoystick:` (#3182, #3194)
+- **Shoulder button order** — L2/R2 now on outer edge matching real controller layout (#3180, #3192)
+- **JIT indicator** — Moved to bottom edge with auto-hide; only shows for cores that need JIT (#3186, #3198)
+- **Skin catalog install status** — Downloaded skins now show as installed in catalog browser (#3188)
+- **Skin activation** — "Set as Active Skin" now activates directly instead of navigating to browser (#3189, #3200)
+- **Shader parameters in pause menu** — CRT shader parameters adjustable from the filter picker (#3185, #3197)
+- **Save & Quit crash** — Prevented `setPauseEmulation` during core teardown (#3200)
+- **Save state browser** — Added Realm refresh so newly created states appear immediately
+- **CI submodule fixes** — Fixed ZipArchive, desmume2015, NP2kai submodule checkout failures
+- **Companion Controller framework** — iOS companion device overlay infrastructure (#2697, #3190)
 
 ## Core Updates
 

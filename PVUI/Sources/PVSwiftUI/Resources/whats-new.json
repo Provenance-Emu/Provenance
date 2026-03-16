@@ -421,37 +421,49 @@
   },
   {
     "version": "3.4.0",
-    "title": "Cheat Codes, Achievements & More",
+    "title": "Skins, Cheats & Stability",
     "features": [
       {
         "symbolName": "list.bullet.clipboard.fill",
         "symbolColor": "orange",
         "title": "Cheat Code Library",
-        "subtitle": "Search over 1.2 million cheat codes from the libretro database covering 44 systems. Online lookup enabled with smart title matching."
+        "subtitle": "Search over 1.2 million cheat codes from the libretro database covering 44 systems. Online lookup from GameHacking.org and GeckoCodes."
       },
       {
-        "symbolName": "trophy.fill",
-        "symbolColor": "yellow",
-        "title": "RetroAchievements",
-        "subtitle": "Foundation for RetroAchievements integration — earn trophies and track progress across supported games."
+        "symbolName": "paintpalette.fill",
+        "symbolColor": "pink",
+        "title": "Advanced Skin Features",
+        "subtitle": "Animated backgrounds, per-button haptics, multi-theme variants, animated button sprites, PDF rendering, and a skin validator for quality checking."
       },
       {
-        "symbolName": "keyboard.fill",
-        "symbolColor": "blue",
-        "title": "Virtual Keyboard & Mouse",
-        "subtitle": "Full QWERTY on-screen keyboard and mouse cursor overlay for computer emulation. Platform-specific layouts for C64, ZX Spectrum, and Amstrad CPC."
-      },
-      {
-        "symbolName": "rectangle.split.2x1.fill",
+        "symbolName": "slider.horizontal.3",
         "symbolColor": "purple",
-        "title": "DS Dual-Screen Skins",
-        "subtitle": "Nintendo DS dual-screen skin support with independent screen sizing and touch controls."
+        "title": "CRT Shader Controls",
+        "subtitle": "Adjust CRT shader parameters directly from the pause menu — curvature, scanlines, bloom, and more."
       },
       {
         "symbolName": "wave.3.right",
-        "symbolColor": "pink",
-        "title": "Haptic Feedback",
-        "subtitle": "New haptics system with PVRumbleProtocol — feel the game through your controller and device."
+        "symbolColor": "cyan",
+        "title": "Haptic Feedback & Rumble",
+        "subtitle": "Controller rumble support with configurable intensity. On-screen buttons now have haptic feedback."
+      },
+      {
+        "symbolName": "bell.badge.fill",
+        "symbolColor": "blue",
+        "title": "In-Game Toast Notifications",
+        "subtitle": "Save states, JIT status, and controller events now appear as unobtrusive toast overlays. Core OSD messages bridged for 60+ RetroArch cores."
+      },
+      {
+        "symbolName": "bolt.fill",
+        "symbolColor": "green",
+        "title": "JIT Detection & Status",
+        "subtitle": "Smart JIT indicator shows active source (AltStore, TrollStore, etc.) for cores that need it. Auto-hides after 5 seconds."
+      },
+      {
+        "symbolName": "forward.fill",
+        "symbolColor": "orange",
+        "title": "Turbo & Quick Controls",
+        "subtitle": "Autofire/turbo button support, Quick Save, Quick Load, and Fast Forward buttons on the controller overlay."
       },
       {
         "symbolName": "headphones",
@@ -460,76 +472,10 @@
         "subtitle": "Game pauses automatically when AirPods or Bluetooth headphones disconnect."
       },
       {
-        "symbolName": "forward.fill",
-        "symbolColor": "cyan",
-        "title": "Quick OSD Controls",
-        "subtitle": "New Quick Save, Quick Load, and Fast Forward buttons accessible directly from the on-screen controller overlay."
-      },
-      {
-        "symbolName": "n64.gamecontroller.fill",
-        "symbolColor": "gray",
-        "title": "N64 Transfer Pak",
-        "subtitle": "Transfer Pak protocol support — enabling Pokémon Stadium and other games that use the Transfer Pak accessory."
-      },
-      {
-        "symbolName": "bell.badge.fill",
-        "symbolColor": "purple",
-        "title": "In-Game Toast Notifications",
-        "subtitle": "Save states, achievements, JIT status, and controller events now appear as unobtrusive toast overlays with retrowave styling — no more missed notifications."
-      }
-    ]
-  },
-  {
-    "version": "3.4.1",
-    "title": "Precision Controls",
-    "features": [
-      {
-        "symbolName": "circle.dashed",
-        "symbolColor": "blue",
-        "title": "Analog Deadzone Control",
-        "subtitle": "Set a universal analog-stick deadzone (0–50%) that coordinates cleanly with each core's own deadzone — no double-processing, no compound dead zones."
-      },
-      {
-        "symbolName": "checkmark.seal.fill",
-        "symbolColor": "green",
-        "title": "Core Compatibility Transparency",
-        "subtitle": "See exactly which cores support native deadzone coordination in Settings → Controllers → Core Compatibility. The list grows automatically as more cores are updated."
-      },
-      {
-        "symbolName": "gearshape.2.fill",
-        "symbolColor": "orange",
-        "title": "Deadzone Mode Picker",
-        "subtitle": "Choose Auto (smart per-core detection), Universal (always apply), or Core-Managed (hands-off) to match your playstyle."
-      }
-    ]
-  },
-  {
-    "version": "3.5.0",
-    "title": "Save State Browser",
-    "features": [
-      {
-        "symbolName": "rectangle.stack.fill",
-        "symbolColor": "purple",
-        "title": "Browse All Save States",
-        "subtitle": "A new full-page browser shows every save state across your entire library, grouped by game, with sort and favourites filter."
-      },
-      {
-        "symbolName": "arrow.up.arrow.down",
-        "symbolColor": "blue",
-        "title": "Sort & Filter",
-        "subtitle": "Sort saves by Most Recent, Oldest First, or Game Name. Filter to favourited saves instantly with one tap."
-      },
-      {
-        "symbolName": "infinity",
-        "symbolColor": "green",
-        "title": "Infinite Scroll Paging",
-        "subtitle": "Save states load progressively as you scroll — no waiting for the full library to load at once."
-      },
-      {
-        "symbolName": "trash",
-        "symbolColor": "red",
-        "title": "Quick Delete",
-        "subtitle": "Delete individual save states with a swipe or context menu. Changes are reflected instantly across the UI."
+        "symbolName": "magnifyingglass",
+        "symbolColor": "yellow",
+        "title": "Spotlight & Siri",
+        "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
       }
     ]
   }
