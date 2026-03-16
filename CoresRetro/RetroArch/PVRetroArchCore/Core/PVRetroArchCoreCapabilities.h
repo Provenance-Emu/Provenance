@@ -9,7 +9,7 @@
 // that already include retroarch.h.
 //
 // Availability: populated only AFTER core init (retro_init / retro_load_game).
-// Return values are undefined before the core has been loaded.
+// Functions return false until the core has reported controller/input descriptors.
 
 #pragma once
 #include <stdbool.h>
