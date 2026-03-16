@@ -26,6 +26,7 @@ public struct SkinCatalogDetailView: View {
     @State private var screenshotIndex = 0
     @State private var glowIntensity: CGFloat = 0.5
     @State private var downloadTask: Task<Void, Never>?
+    @State private var activationTask: Task<Void, Never>?
     @State private var activationState: ActivationState = .idle
 
     /// Observe the skin manager so we can detect already-installed skins.
@@ -97,6 +98,7 @@ public struct SkinCatalogDetailView: View {
         }
         .onDisappear {
             downloadTask?.cancel()
+            activationTask?.cancel()
         }
     }
 
@@ -622,7 +624,8 @@ public struct SkinCatalogDetailView: View {
         switch activationState {
         case .idle:
             Button {
-                Task { await activateSkin(for: system) }
+                activationState = .activating
+                activationTask = Task { await activateSkin(for: system) }
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.seal.fill")
@@ -683,6 +686,8 @@ public struct SkinCatalogDetailView: View {
                 Text(message)
                     .font(.system(size: 12))
                     .foregroundColor(.orange.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
                 Button {
                     Task { await activateSkin(for: system) }
                 } label: {
