@@ -302,6 +302,7 @@ public struct JITStatusIndicatorView: View {
                         Text(viewModel.indicatorLabel)
                             .font(.system(size: 9, weight: .medium, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
+                            .lineLimit(1)
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -321,6 +322,7 @@ public struct JITStatusIndicatorView: View {
                 }
                 .onDisappear {
                     pendingHideWorkItem?.cancel()
+                    pendingHideWorkItem = nil
                 }
             }
         }

@@ -244,6 +244,7 @@ public struct PVIndicatorOverlayView: View {
         }
         .onDisappear {
             pendingHideWorkItem?.cancel()
+            pendingHideWorkItem = nil
         }
         .onChange(of: registry.visibleIndicators) { _ in
             // Re-show when indicators change state
