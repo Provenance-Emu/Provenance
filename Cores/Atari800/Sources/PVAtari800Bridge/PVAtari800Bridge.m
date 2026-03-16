@@ -574,21 +574,23 @@ __weak static PVAtari800Bridge * _currentCore;
     }
 }
 
+/// Shared deadzone threshold for analog-to-digital joystick conversion.
+static const CGFloat kJoystickJoystickDeadzone = 0.5;
+
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
     if (player >= 4) return;
-    static const CGFloat kDeadzone = 0.5;
     switch (button) {
         case PV5200ButtonUp:
-            self.controllerStates[player].up = (value > kDeadzone);
+            self.controllerStates[player].up = (value > kJoystickDeadzone);
             break;
         case PV5200ButtonDown:
-            self.controllerStates[player].down = (value > kDeadzone);
+            self.controllerStates[player].down = (value > kJoystickDeadzone);
             break;
         case PV5200ButtonLeft:
-            self.controllerStates[player].left = (value > kDeadzone);
+            self.controllerStates[player].left = (value > kJoystickDeadzone);
             break;
         case PV5200ButtonRight:
-            self.controllerStates[player].right = (value > kDeadzone);
+            self.controllerStates[player].right = (value > kJoystickDeadzone);
             break;
         default:
             break;
@@ -1085,12 +1087,12 @@ void PLATFORM_SoundUnlock(void){}
 }
 
 - (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    (void)button; // unused — joystick maps all axes regardless of button ID
     if (player < 0 || player >= 4) return;
-    static const CGFloat kDeadzone = 0.5;
-    self.controllerStates[player].up    = (yValue > kDeadzone);
-    self.controllerStates[player].down  = (yValue < -kDeadzone);
-    self.controllerStates[player].left  = (xValue < -kDeadzone);
-    self.controllerStates[player].right = (xValue > kDeadzone);
+    self.controllerStates[player].up    = (yValue > kJoystickDeadzone);
+    self.controllerStates[player].down  = (yValue < -kJoystickDeadzone);
+    self.controllerStates[player].left  = (xValue < -kJoystickDeadzone);
+    self.controllerStates[player].right = (xValue > kJoystickDeadzone);
 }
 
 @end
