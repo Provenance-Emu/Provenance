@@ -214,6 +214,14 @@ public final class PVRingBuffer: NSObject, RingBufferProtocol, @unchecked Sendab
         _bytesInBuffer.store(0, ordering: .releasing)
     }
 
+    /// Drain without reallocating — equivalent to `reset` for this implementation
+    /// since all state is held in atomics (no memory is freed or reallocated).
+    public func clear() {
+        _readPosition.store(0, ordering: .releasing)
+        _writePosition.store(0, ordering: .releasing)
+        _bytesInBuffer.store(0, ordering: .releasing)
+    }
+
     /// Fast power of 2 check
     private func isPowerOf2(_ value: Int) -> Bool {
         return value > 0 && (value & (value - 1)) == 0

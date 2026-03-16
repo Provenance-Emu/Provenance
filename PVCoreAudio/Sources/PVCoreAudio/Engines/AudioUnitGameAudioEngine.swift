@@ -299,6 +299,18 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     @objc public func pauseAudio() {
         stopAudio()
         running = false
+        // Drain stale audio data after stopping the consumer (#3183).
+        // Use clear() instead of reset() to avoid deallocating/reinitialising
+        // the backing buffer while the emulator core may still be writing.
+        // Deduplicate by buffer identity so each ring buffer is cleared once,
+        // even if _contexts has grown across multiple setupAudioGraph calls.
+        var seen = Set<ObjectIdentifier>()
+        for context in _contexts {
+            guard let buf = context.buffer else { continue }
+            let id = ObjectIdentifier(buf as AnyObject)
+            guard seen.insert(id).inserted else { continue }
+            buf.clear()
+        }
     }
 
     @objc public func startAudio() throws {

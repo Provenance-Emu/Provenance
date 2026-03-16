@@ -24,5 +24,22 @@ public protocol RingBufferProtocol {
 
     func reset()
 
+    /// Drains all pending bytes without reallocating the backing buffer.
+    /// Safe to call while a consumer is paused; prefer this over `reset()` when
+    /// the producer (emulator core) may still be running.
+    func clear()
+
     var availableBytes: RingBufferSize { get }
+}
+
+public extension RingBufferProtocol {
+    /// Default implementation: drain by consuming all available bytes via `read`.
+    /// Concrete types should override with a more efficient implementation.
+    func clear() {
+        let bytes = availableBytesForReading
+        guard bytes > 0 else { return }
+        let scratch = UnsafeMutableRawPointer.allocate(byteCount: bytes, alignment: 1)
+        defer { scratch.deallocate() }
+        read(scratch, preferredSize: bytes)
+    }
 }
