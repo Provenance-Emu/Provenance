@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "PVRetroArchCoreBridge+BIOSAtariST.h"
 #import <PVLogging/PVLoggingObjC.h>
+#import <PVCoreObjCBridge/PVOSDNotification.h>
 
 // Forward declaration for syncResource:to: which is implemented in
 // PVRetroArchCore+RetroArchUI.m. Declaring it here suppresses the
@@ -196,6 +197,9 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         ELOG(@"HATARI BOOT WILL FAIL: No TOS ROM found at %@ or %@. "
              @"Import a TOS ROM (tos.img, tos102.img, etc.) via the BIOS import screen.",
              primaryPath, fallbackPath);
+        [PVOSDNotification postMessage:@"Atari ST: No TOS ROM found — import a TOS ROM (tos.img) via the BIOS import screen"
+                                  type:PVOSDTypeError
+                              duration:8.0];
         return;
     }
 
@@ -215,11 +219,17 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     if (b[0] == 0x50 && b[1] == 0x4B) {
         ELOG(@"HATARI BOOT WILL FAIL: TOS ROM at %@ is a ZIP. Extract and reimport the .img file.",
              usablePath);
+        [PVOSDNotification postMessage:@"Atari ST: TOS ROM is a ZIP — extract the .img file and reimport"
+                                  type:PVOSDTypeError
+                              duration:8.0];
         return;
     }
     if (data.length < 128 * 1024) {
         ELOG(@"HATARI BOOT WILL FAIL: TOS ROM at %@ is only %zu bytes (expected ≥128 KB). "
              @"File may be truncated or corrupt.", usablePath, (size_t)data.length);
+        [PVOSDNotification postMessage:@"Atari ST: TOS ROM is too small — file may be corrupt, reimport a valid TOS ROM"
+                                  type:PVOSDTypeError
+                              duration:8.0];
         return;
     }
 
@@ -238,10 +248,18 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
              @"(expected 0x00FC0000, 0x00E00000, or 0x00E80000). "
              @"Hatari will reject this ROM and crash. Delete and reimport a valid TOS ROM.",
              usablePath, addr);
+        [PVOSDNotification postMessage:[NSString stringWithFormat:
+             @"Atari ST: TOS ROM header invalid (addr 0x%08X) — delete and reimport a valid TOS ROM", addr]
+                                  type:PVOSDTypeError
+                              duration:8.0];
     } else if (!versionOK) {
         WLOG(@"HATARI BOOT MAY FAIL: TOS ROM at %@ has unexpected version 0x%04X (addr=0x%08X). "
              @"Version bytes may still be byte-swapped. Try reimporting the TOS ROM.",
              usablePath, version, addr);
+        [PVOSDNotification postMessage:[NSString stringWithFormat:
+             @"Atari ST: TOS ROM version unexpected (0x%04X) — try reimporting the TOS ROM", version]
+                                  type:PVOSDTypeWarning
+                              duration:6.0];
     } else {
         ILOG(@"TOS ROM validated OK: %@ (version=0x%04X, addr=0x%08X, size=%zu bytes)",
              usablePath, version, addr, (size_t)data.length);
@@ -524,6 +542,9 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         ELOG(@"Hatari: no valid TOS ROM found in BIOS directory %@. "
              @"Import a TOS ROM (tos.img, tos102.img, etc.) via the BIOS import screen.",
              self.BIOSPath);
+        [PVOSDNotification postMessage:@"Atari ST: No valid TOS ROM found — import tos.img via the BIOS import screen"
+                                  type:PVOSDTypeError
+                              duration:8.0];
         // Log a full inventory to help diagnose where the missing/invalid TOS files are.
         [self logTOSInventoryForSystemDir:systemDir biosDir:self.BIOSPath];
     }
