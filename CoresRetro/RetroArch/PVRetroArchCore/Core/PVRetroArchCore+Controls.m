@@ -27,6 +27,10 @@
 #include "../../retroarch.h"
 #include "../../verbosity.h"
 #include "../ui_companion_driver.h"
+#include "PVRetroArchCoreCapabilities.h"
+
+/* Extern from RetroArch runloop: tracks RETRO_CORE_FLAG_HAS_SET_INPUT_DESCRIPTORS. */
+extern bool core_has_set_input_descriptor(void);
 
 #ifdef HAVE_COREMOTION && !TARGET_OS_TV
 #import <CoreMotion/CoreMotion.h>
@@ -101,34 +105,54 @@ static bool controller_has_dedicated_start_select(GCController *controller) {
     return false;
 }
 
-/// Check if the current system natively uses L2/R2 triggers
-/// Systems like PS1, PS2, Saturn, Dreamcast, GameCube, N64 need all 4 shoulder buttons
-/// Systems like NES, SNES, Genesis, Game Boy don't use L2/R2 natively
+/// Check if the current system natively uses L2/R2 triggers.
+/// Systems like PS1, PS2, Saturn, Dreamcast, GameCube, N64 need all 4 shoulder buttons.
+/// Systems like NES, SNES, Genesis, Game Boy don't use L2/R2 natively.
+///
+/// Detection order:
+///  1. Dynamic: query RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS data the core reported.
+///     If the core declared L2 or R2 with a non-empty label on port 0, return true.
+///  2. Fallback: if the core never called SET_INPUT_DESCRIPTORS, fall back to a static
+///     list of system-identifier substrings known to require L2/R2.
 static bool system_needs_l2r2_triggers(void) {
+    // Dynamic check: trust what the core declared in its input descriptor list.
+    // This is populated by RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS during core load.
+    if (pv_core_declares_l2r2_triggers()) {
+        return true;
+    }
+
+    // If the core has set any input descriptors, trust that data and do not
+    // fall back to the static system list. The intent is to only use the
+    // static heuristic when SET_INPUT_DESCRIPTORS was never called.
+    if (core_has_set_input_descriptor()) {
+        return false;
+    }
+
+    // Fallback static list for cores that don't call SET_INPUT_DESCRIPTORS.
+    // Add new systems here — no logic changes required elsewhere.
     if (!_current || !_current.systemIdentifier) {
         return false;
     }
     NSString *sysId = _current.systemIdentifier;
 
-    /// Systems that natively use L2/R2 triggers - don't remap shoulders
     static NSArray *systemsWithL2R2 = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         systemsWithL2R2 = @[
-            /// Sony systems with L2/R2
+            // Sony systems with L2/R2
             @"psx", @"ps1", @"playstation",
             @"ps2", @"playstation2",
             @"psp",
-            /// Sega systems with analog triggers
+            // Sega systems with analog triggers
             @"saturn",
             @"dreamcast", @"dc",
-            /// Nintendo systems with analog triggers
+            // Nintendo systems with analog triggers
             @"gc", @"gamecube", @"ngc",
             @"n64", @"nintendo64",
             @"wii",
             @"wiiu",
             @"switch",
-            /// Other systems with L2/R2
+            // Other systems with L2/R2
             @"3do",
             @"jaguar"
         ];

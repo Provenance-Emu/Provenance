@@ -45,6 +45,8 @@
 		93835811296CFAA700A23231 /* cocoa_common.m in Sources */ = {isa = PBXBuildFile; fileRef = 93835810296CFAA600A23231 /* cocoa_common.m */; };
 		2E434850122D7261A75CF7FE /* PVRetroArchOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E408A962408758D92289AF /* PVRetroArchOSD.m */; };
 		039F981B1E6C203CC74BC408 /* PVRetroArchOSD.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */; };
+		CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */; };
+		CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */; };
 		9383581B296D362C00A23231 /* retroarch.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 9383581A296D362C00A23231 /* retroarch.cfg */; };
 		93835825296D58B900A23231 /* assets.zip in Resources */ = {isa = PBXBuildFile; fileRef = 93835824296D58B900A23231 /* assets.zip */; };
 		9389A8F9297AA46000B27656 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 9389A8F8297AA46000B27656 /* arrow.png */; };
@@ -331,6 +333,8 @@
 		93835810296CFAA600A23231 /* cocoa_common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoa_common.m; sourceTree = "<group>"; };
 		29E408A962408758D92289AF /* PVRetroArchOSD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchOSD.m; sourceTree = "<group>"; };
 		A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchOSD.h; sourceTree = "<group>"; };
+		CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCoreCapabilities.h; sourceTree = "<group>"; };
+		CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchCoreCapabilities.m; sourceTree = "<group>"; };
 		9383581A296D362C00A23231 /* retroarch.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = retroarch.cfg; sourceTree = "<group>"; };
 		93835824296D58B900A23231 /* assets.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = assets.zip; sourceTree = "<group>"; };
 		9389A8F8297AA46000B27656 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
@@ -875,6 +879,8 @@
 				938E5BB4298B31D400F8596C /* PVDebug.c */,
 				A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */,
 				29E408A962408758D92289AF /* PVRetroArchOSD.m */,
+				CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */,
+				CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */,
 				B3447EA0218B881000557ACE /* PVRetroArch.mm */,
 				B3C76224207833DE009950E4 /* PVRetroArchCoreBridge.mm */,
 				93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */,
@@ -1108,6 +1114,7 @@
 				93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */,
 				039F981B1E6C203CC74BC408 /* PVRetroArchOSD.h in Headers */,
+				CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */,
 				AF3BC001029A000000000004 /* PVRetroArchCoreBridge+BIOSAtariST.h in Headers */,
 				93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */,
 			);
@@ -1399,6 +1406,7 @@
 				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
 				2E434850122D7261A75CF7FE /* PVRetroArchOSD.m in Sources */,
+				CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */,
 				B33CFF0A2ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
