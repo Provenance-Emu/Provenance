@@ -274,6 +274,8 @@ public struct JITStatusIndicatorView: View {
     @State private var isVisible: Bool = true
     /// Tracks whether the user has tapped to temporarily reveal the indicator.
     @State private var userRevealed: Bool = false
+    /// Pending auto-hide work item, cancelled when a new hide is scheduled.
+    @State private var pendingHideWorkItem: DispatchWorkItem?
 
     /// Seconds before the indicator auto-hides (0 = never hide).
     private let autoHideDelay: TimeInterval = 5.0
@@ -327,25 +329,33 @@ public struct JITStatusIndicatorView: View {
     }
 
     /// Schedules the indicator to fade out after `autoHideDelay` seconds.
+    /// Cancels any previously scheduled hide to avoid premature dismissal.
     private func scheduleAutoHide() {
         guard autoHideDelay > 0 else { return }
+        pendingHideWorkItem?.cancel()
         isVisible = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay) {
+        let workItem = DispatchWorkItem { [self] in
             // Only auto-hide if the user hasn't tapped to reveal
             if !userRevealed {
                 withAnimation { isVisible = false }
             }
         }
+        pendingHideWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay, execute: workItem)
     }
 
     /// Temporarily reveals the indicator for another cycle, then fades it out again.
+    /// Cancels any previously scheduled hide to avoid premature dismissal.
     private func revealTemporarily() {
+        pendingHideWorkItem?.cancel()
         userRevealed = true
         withAnimation { isVisible = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay) {
+        let workItem = DispatchWorkItem { [self] in
             userRevealed = false
             withAnimation { isVisible = false }
         }
+        pendingHideWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay, execute: workItem)
     }
 }
 
