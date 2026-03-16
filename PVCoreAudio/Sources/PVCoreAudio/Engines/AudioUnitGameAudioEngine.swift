@@ -299,7 +299,9 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     @objc public func pauseAudio() {
         stopAudio()
         running = false
-        // Flush ring buffers after stopping to prevent race with render callback (#3183)
+        // Flush ring buffers after stopping engine and before emulator resumes (#3183).
+        // Safe because the emulator core's frame loop is also paused when the pause menu opens,
+        // so neither the producer (core) nor consumer (render callback) should be active.
         for context in _contexts {
             context.buffer?.reset()
         }
