@@ -330,10 +330,18 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 // MARK: - Doom / PrBoom Controls
 //
 // Doom is served by the PrBoom RetroArch core. Gamepad Classic (default) layout:
-//   JOYPAD_A (east,  buttonB)    → Fire / Shoot
+//
+// GCController → RETRO_DEVICE_ID_JOYPAD mapping (from PVRetroArchCore+Controls.m):
+//   buttonA (south)  → JOYPAD_B
+//   buttonB (east)   → JOYPAD_A
+//   buttonX (west)   → JOYPAD_Y
+//   buttonY (north)  → JOYPAD_X
+//
+// PrBoom Gamepad Classic action → JOYPAD button:
+//   JOYPAD_X (north, buttonY)    → Fire / Shoot
+//   JOYPAD_A (east,  buttonB)    → Strafe On (toggle)
 //   JOYPAD_B (south, buttonA)    → Use / Interact / Open
 //   JOYPAD_Y (west,  buttonX)    → Run / Speed
-//   JOYPAD_X (north, buttonY)    → Strafe (toggle)
 //   JOYPAD_L (leftShoulder)      → Strafe Left
 //   JOYPAD_R (rightShoulder)     → Strafe Right
 //   JOYPAD_L2 (leftTrigger)      → Previous Weapon
@@ -379,15 +387,15 @@ static void st_ra_update_mouse_rel(CGPoint point) {
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case PVDoomButtonFire:
-            // PrBoom Gamepad Classic: JOYPAD_A → Fire — buttonB (east)
-            [touch_controller.extendedGamepad.buttonB setValue:v];
+            // PrBoom Gamepad Classic: Fire → JOYPAD_X → buttonY (north)
+            [touch_controller.extendedGamepad.buttonY setValue:v];
             break;
         case PVDoomButtonUse:
-            // PrBoom Gamepad Classic: JOYPAD_B → Use/Open — buttonA (south)
+            // PrBoom Gamepad Classic: Use/Open → JOYPAD_B → buttonA (south)
             [touch_controller.extendedGamepad.buttonA setValue:v];
             break;
         case PVDoomButtonRun:
-            // PrBoom Gamepad Classic: JOYPAD_Y → Run/Speed — buttonX (west)
+            // PrBoom Gamepad Classic: Run/Speed → JOYPAD_Y → buttonX (west)
             [touch_controller.extendedGamepad.buttonX setValue:v];
             break;
         case PVDoomButtonStrafeLeft:
@@ -412,8 +420,8 @@ static void st_ra_update_mouse_rel(CGPoint point) {
             [touch_controller.extendedGamepad.buttonOptions setValue:v];
             break;
         case PVDoomButtonStrafe:
-            // PrBoom Gamepad Classic: JOYPAD_X → Strafe (toggle) — buttonY (north)
-            [touch_controller.extendedGamepad.buttonY setValue:v];
+            // PrBoom Gamepad Classic: Strafe On (toggle) → JOYPAD_A → buttonB (east)
+            [touch_controller.extendedGamepad.buttonB setValue:v];
             break;
         case PVDoomButtonPause:
             // JOYPAD_START → buttonMenu
