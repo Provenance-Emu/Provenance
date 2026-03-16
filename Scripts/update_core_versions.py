@@ -237,7 +237,7 @@ def scan_source_tree(core_dir: Path) -> list[tuple[str, str, str]]:
             # embedded sublibraries.
             is_build_script = bool(re.search(r"(CMakeLists\.txt|configure\.ac|Makefile)", fname, re.IGNORECASE))
             if is_build_script and depth > MAX_BUILD_SCRIPT_DEPTH:
-                break
+                continue
             try:
                 text = fpath.read_text(encoding="utf-8", errors="ignore")
             except OSError:
