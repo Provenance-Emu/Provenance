@@ -494,7 +494,11 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     // Ensure hatari working directory exists
     BOOL isDir = NO;
     if (![fm fileExistsAtPath:hatariDir isDirectory:&isDir] || !isDir) {
-        [fm createDirectoryAtPath:hatariDir withIntermediateDirectories:YES attributes:nil error:nil];
+        NSError *mkErr = nil;
+        if (![fm createDirectoryAtPath:hatariDir withIntermediateDirectories:YES attributes:nil error:&mkErr]) {
+            ELOG(@"Hatari: failed to create working dir %@ for config: %@",
+                 hatariDir, mkErr.localizedDescription);
+        }
     }
 
     NSError *workWriteErr = nil;

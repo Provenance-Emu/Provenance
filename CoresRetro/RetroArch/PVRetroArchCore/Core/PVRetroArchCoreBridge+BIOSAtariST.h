@@ -21,7 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)pv_isHatariSystem;
 
 /// Validate and repair a TOS ROM file in-place.
-/// Returns YES if the file exists and is valid (or was successfully repaired).
+/// Returns YES if the file exists and is not a ZIP archive.
+/// Note: also returns YES when the load address is unrecognised and left
+/// untouched — the file is present but Hatari may still reject it if the
+/// address is unsupported. Returns NO if the file is missing, unreadable,
+/// too short, a ZIP archive, or the byte-swap repair write failed.
 - (BOOL)repairTOSImageAtPath:(NSString *)tosPath;
 
 /// Final TOS validation before Hatari launches.
