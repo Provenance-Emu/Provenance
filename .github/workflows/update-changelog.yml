@@ -82,58 +82,7 @@ jobs:
 
       - name: Generate [Unreleased] entries
         id: generate
-        run: |
-          # Build structured entries from conventional commits
-          python3 << 'PYEOF'
-          import re, sys
-
-          with open('/tmp/raw_commits.txt') as f:
-              lines = [l.strip() for l in f if l.strip()]
-
-          added = []
-          fixed = []
-          changed = []
-          ci = []
-
-          for line in lines:
-              m = re.match(r'^(feat|fix|refactor|perf|docs|chore|build|ci)(?:\(([^)]+)\))?:\s*(.*)', line)
-              if not m:
-                  continue
-              kind, scope, desc = m.group(1), m.group(2) or '', m.group(3)
-
-              # Extract PR number if present like (#2750)
-              pr_m = re.search(r'\(#(\d+)\)', desc)
-              pr_ref = f' (#{pr_m.group(1)})' if pr_m else ''
-              clean_desc = re.sub(r'\s*\(#\d+\)', '', desc).strip()
-
-              scope_prefix = f'**{scope.title()}** — ' if scope else ''
-              entry = f'- {scope_prefix}{clean_desc}{pr_ref}'
-
-              if kind in ('build', 'ci'):
-                  ci.append(entry)
-              elif kind in ('fix',):
-                  fixed.append(entry)
-              elif kind in ('feat', 'perf'):
-                  added.append(entry)
-              else:
-                  changed.append(entry)
-
-          sections = []
-          if added:
-              sections.append('### Added\n' + '\n'.join(added))
-          if fixed:
-              sections.append('### Fixed\n' + '\n'.join(fixed))
-          if changed:
-              sections.append('### Changed\n' + '\n'.join(changed))
-          if ci:
-              sections.append('### CI / Infrastructure\n' + '\n'.join(ci))
-
-          output = '\n\n'.join(sections)
-          with open('/tmp/unreleased_entries.txt', 'w') as f:
-              f.write(output)
-
-          print(f"Generated {len(added)} added, {len(fixed)} fixed, {len(changed)} changed, {len(ci)} CI entries")
-          PYEOF
+        run: python3 Scripts/changelog_generate_entries.py
 
       - name: Update CHANGELOG.md
         run: |
@@ -142,67 +91,7 @@ jobs:
             echo "No new entries to add — skipping."
             exit 0
           fi
-
-          NEW_ENTRIES=$(cat /tmp/unreleased_entries.txt)
-
-          python3 << 'PYEOF'
-          import re
-
-          with open('CHANGELOG.md', 'r') as f:
-              content = f.read()
-
-          with open('/tmp/unreleased_entries.txt') as f:
-              new_entries = f.read().strip()
-
-          if not new_entries:
-              print("Nothing to add.")
-              exit(0)
-
-          # Find [Unreleased] section
-          unreleased_match = re.search(r'## \[Unreleased\][^\n]*\n', content)
-          if not unreleased_match:
-              # No [Unreleased] section — create one before first release
-              first_release = re.search(r'\n## \[', content)
-              if first_release:
-                  insert_pos = first_release.start()
-                  content = content[:insert_pos] + f'\n\n## [Unreleased]\n\n{new_entries}\n' + content[insert_pos:]
-              else:
-                  content += f'\n\n## [Unreleased]\n\n{new_entries}\n'
-          else:
-              # Find end of [Unreleased] section (next ## heading or EOF)
-              start = unreleased_match.end()
-              next_section = re.search(r'\n## \[', content[start:])
-              if next_section:
-                  end = start + next_section.start()
-              else:
-                  end = len(content)
-
-              existing_section = content[start:end]
-
-              # Dedup: only add entries (by PR number) not already present
-              existing_prs = set(re.findall(r'#(\d+)', existing_section))
-              filtered_lines = []
-              for line in new_entries.split('\n'):
-                  if line.startswith('###'):
-                      filtered_lines.append(line)
-                      continue
-                  prs_in_line = set(re.findall(r'#(\d+)', line))
-                  if not prs_in_line or not prs_in_line.issubset(existing_prs):
-                      filtered_lines.append(line)
-
-              filtered = '\n'.join(filtered_lines).strip()
-              if not filtered or filtered == '\n'.join(l for l in new_entries.split('\n') if l.startswith('###')).strip():
-                  print("All entries already present — skipping.")
-                  exit(0)
-
-              # Append at the end of the [Unreleased] section
-              content = content[:end] + '\n' + filtered + '\n' + content[end:]
-
-          with open('CHANGELOG.md', 'w') as f:
-              f.write(content)
-
-          print("CHANGELOG.md updated.")
-          PYEOF
+          python3 Scripts/changelog_update_file.py
 
       - name: Commit changelog update
         run: |

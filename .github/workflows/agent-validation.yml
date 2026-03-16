@@ -207,9 +207,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/Library/Developer/Xcode/DerivedData
-          # Include source file hashes so any Swift/ObjC change busts the cache.
-          # No restore-keys fallback — only exact cache hits to prevent stale artifacts.
-          key: ${{ runner.os }}-ci-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift', 'Provenance/**/*.swift', 'PV*/**/*.swift', 'PV*/**/*.m', 'PV*/**/*.mm', 'PV*/**/*.h') }}
+          # Hash project/package files for cache key — avoid broad source globs that
+          # exceed hashFiles limits.
+          key: ${{ runner.os }}-ci-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift', '**/Package.resolved') }}
 
       - name: Build Provenance-CI (iOS Simulator)
         run: |
