@@ -90,18 +90,54 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
 
     // Byte-swap check: Hatari reads the load address big-endian from bytes 8-11.
     // Valid:   0x00FC0000 (TOS 1.x), 0x00E00000 (TOS 2.x), 0x00E80000 (TOS 4.x).
-    // Buggy:   0x0000FC00, 0x0000E000, 0x0000E800  (old Provenance Spike 2823 patterns)
+    // Buggy LE-write (old Provenance Spike 2823): header fields written as native LE ints.
+    //   addr 0x00FC0000 written as LE uint32 → bytes 00 00 FC 00 → reads as 0x0000FC00
+    //   version 0x0102 written as LE uint16 → bytes 02 01 → reads as 0x0201
+    // Buggy word-swap (interleaved ROM dump): every 16-bit word has bytes swapped.
+    //   addr bytes 00 FC 00 00 → each word swapped → FC 00 00 00 → reads as 0xFC000000
     uint32_t addr = ((uint32_t)b[8]  << 24) |
                     ((uint32_t)b[9]  << 16) |
                     ((uint32_t)b[10] <<  8) |
                     ((uint32_t)b[11]);
     BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
-    if (addrOK) return YES;
+    if (addrOK) {
+        // Address is valid — but also check whether version bytes look byte-swapped.
+        // This catches a partially-repaired ROM (addr fixed by old code but version untouched).
+        // The TOS major version byte MUST be at b[2] (big-endian):
+        //   TOS 1.x (addr 0x00FC0000): expected b[2]=0x01
+        //   TOS 2.x (addr 0x00E00000): expected b[2]=0x02
+        //   TOS 4.x (addr 0x00E80000): expected b[2]=0x04
+        // If b[3] holds the major version byte instead, version bytes are swapped.
+        if (tosData.length >= 4) {
+            unsigned char v0 = b[2], v1 = b[3];
+            unsigned char expectedMajor = (addr == 0x00FC0000) ? 0x01 :
+                                          (addr == 0x00E00000) ? 0x02 : 0x04;
+            // Swapped: major is at b[3] instead of b[2], and b[2] != expected major
+            BOOL versionSwapped = (v1 == expectedMajor && v0 != expectedMajor);
+            if (versionSwapped) {
+                NSMutableData *fixed = [tosData mutableCopy];
+                unsigned char *fb = (unsigned char *)fixed.mutableBytes;
+                fb[2] = v1; fb[3] = v0; // swap version bytes back to big-endian
+                NSError *writeErr = nil;
+                if ([fixed writeToFile:tosPath options:NSDataWritingAtomic error:&writeErr]) {
+                    ILOG(@"TOS repair: corrected byte-swapped version bytes (0x%02X%02X → 0x%02X%02X) in %@",
+                         v0, v1, v1, v0, tosPath);
+                } else {
+                    ELOG(@"TOS repair: version byte write failed for %@: %@", tosPath, writeErr.localizedDescription);
+                }
+            }
+        }
+        return YES;
+    }
 
     uint32_t fixAddr = 0;
-    if      (addr == 0x0000FC00) fixAddr = 0x00FC0000;
-    else if (addr == 0x0000E000) fixAddr = 0x00E00000;
-    else if (addr == 0x0000E800) fixAddr = 0x00E80000;
+    BOOL isWordSwap = NO; // full word-swap (interleaved ROM dump)
+    if      (addr == 0x0000FC00) fixAddr = 0x00FC0000; // old Provenance LE-write bug (TOS 1.x)
+    else if (addr == 0x0000E000) fixAddr = 0x00E00000; // old Provenance LE-write bug (TOS 2.x)
+    else if (addr == 0x0000E800) fixAddr = 0x00E80000; // old Provenance LE-write bug (TOS 4.x)
+    else if (addr == 0xFC000000) { fixAddr = 0x00FC0000; isWordSwap = YES; } // word-swapped dump (TOS 1.x)
+    else if (addr == 0xE0000000) { fixAddr = 0x00E00000; isWordSwap = YES; } // word-swapped dump (TOS 2.x)
+    else if (addr == 0xE8000000) { fixAddr = 0x00E80000; isWordSwap = YES; } // word-swapped dump (TOS 4.x)
 
     if (fixAddr == 0) {
         WLOG(@"TOS repair: unrecognised load address 0x%08X in %@ — leaving untouched", addr, tosPath);
@@ -110,13 +146,35 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
 
     NSMutableData *fixed = [tosData mutableCopy];
     unsigned char *fb = (unsigned char *)fixed.mutableBytes;
-    fb[8]  = (fixAddr >> 24) & 0xFF;
-    fb[9]  = (fixAddr >> 16) & 0xFF;
-    fb[10] = (fixAddr >>  8) & 0xFF;
-    fb[11] = (fixAddr      ) & 0xFF;
+
+    if (isWordSwap) {
+        // Word-swapped dump: swap EVERY pair of bytes throughout the entire ROM.
+        // This fixes both the header and the code so the 68000 can execute it.
+        size_t len = fixed.length & ~(size_t)1; // round down to even
+        for (size_t i = 0; i < len; i += 2) {
+            unsigned char tmp = fb[i];
+            fb[i] = fb[i + 1];
+            fb[i + 1] = tmp;
+        }
+        ILOG(@"TOS repair: full word-swap applied to %@ (%zu bytes)", tosPath, fixed.length);
+    } else {
+        // Old Provenance LE-write bug: only header fields were written in wrong byte order.
+        // Fix load address (bytes 8-11): was written as native LE uint32, needs to be BE.
+        fb[8]  = (fixAddr >> 24) & 0xFF;
+        fb[9]  = (fixAddr >> 16) & 0xFF;
+        fb[10] = (fixAddr >>  8) & 0xFF;
+        fb[11] = (fixAddr      ) & 0xFF;
+        // Fix version (bytes 2-3): was written as native LE uint16, needs to be BE.
+        // Swap bytes 2 and 3 so Hatari reads the correct version number.
+        unsigned char tmp = fb[2];
+        fb[2] = fb[3];
+        fb[3] = tmp;
+        ILOG(@"TOS repair: corrected LE-written header (addr 0x%08X → 0x%08X, version swapped) in %@",
+             addr, fixAddr, tosPath);
+    }
+
     NSError *writeErr = nil;
     if ([fixed writeToFile:tosPath options:NSDataWritingAtomic error:&writeErr]) {
-        ILOG(@"TOS repair: corrected load address 0x%08X → 0x%08X in %@", addr, fixAddr, tosPath);
         return YES;
     } else {
         ELOG(@"TOS repair: write failed for %@: %@", tosPath, writeErr.localizedDescription);
@@ -169,14 +227,24 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                     ((uint32_t)b[9]  << 16) |
                     ((uint32_t)b[10] <<  8) |
                     ((uint32_t)b[11]);
+    uint16_t version = ((uint16_t)b[2] << 8) | b[3];
     BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
+    // Valid TOS versions: 1.00, 1.02, 1.04, 1.06, 1.62, 2.06, 4.04, etc.
+    // Major byte should be 0x01, 0x02, or 0x04. Minor byte should be sane.
+    BOOL versionOK = (version >= 0x0100 && version <= 0x0406) &&
+                     ((version >> 8) == 0x01 || (version >> 8) == 0x02 || (version >> 8) == 0x04);
     if (!addrOK) {
-        ELOG(@"HATARI BOOT MAY FAIL: TOS ROM at %@ has unexpected load address 0x%08X "
-             @"(expected 0x00FC0000, 0x00E00000, or 0x00E80000). ROM may be corrupt.",
+        ELOG(@"HATARI BOOT WILL FAIL: TOS ROM at %@ has invalid load address 0x%08X "
+             @"(expected 0x00FC0000, 0x00E00000, or 0x00E80000). "
+             @"Hatari will reject this ROM and crash. Delete and reimport a valid TOS ROM.",
              usablePath, addr);
+    } else if (!versionOK) {
+        WLOG(@"HATARI BOOT MAY FAIL: TOS ROM at %@ has unexpected version 0x%04X (addr=0x%08X). "
+             @"Version bytes may still be byte-swapped. Try reimporting the TOS ROM.",
+             usablePath, version, addr);
     } else {
-        ILOG(@"TOS ROM validated OK: %@ (addr=0x%08X, size=%zu bytes)",
-             usablePath, addr, (size_t)data.length);
+        ILOG(@"TOS ROM validated OK: %@ (version=0x%04X, addr=0x%08X, size=%zu bytes)",
+             usablePath, version, addr, (size_t)data.length);
     }
 }
 
@@ -210,8 +278,9 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                         ((uint32_t)b[11]);
         BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
         if (!addrOK) {
-            // Check if it's a known byte-swap pattern we can repair
-            BOOL repairable = (addr == 0x0000FC00 || addr == 0x0000E000 || addr == 0x0000E800);
+            // Check if it's a known byte-swap pattern we can repair (LE-write bug or word-swap dump)
+            BOOL repairable = (addr == 0x0000FC00 || addr == 0x0000E000 || addr == 0x0000E800 ||
+                               addr == 0xFC000000 || addr == 0xE0000000 || addr == 0xE8000000);
             if (!repairable) {
                 WLOG(@"TOS search: skipping %@ (unrecognised address 0x%08X)", candidate, addr);
                 continue;
@@ -247,6 +316,9 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                  candidate, addr, fixedAddr, (size_t)fixedData.length);
             return candidate;
         }
+        // Address is valid. Run repair anyway to fix any byte-swapped version bytes
+        // (handles partially-repaired ROMs where old code fixed addr but not version).
+        [self repairTOSImageAtPath:candidate];
         ILOG(@"TOS search: selected %@ (addr=0x%08X, size=%zu bytes)",
              candidate, addr, (size_t)data.length);
         return candidate;
@@ -300,11 +372,12 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                             ((uint32_t)b[11]);
             BOOL isZip = (b[0] == 0x50 && b[1] == 0x4B);
             BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
+            uint16_t version = ((uint16_t)b[2] << 8) | b[3];
             NSString *status = isZip ? @"ZIP!" :
                                (!addrOK ? [NSString stringWithFormat:@"BAD addr 0x%08X", addr] :
                                @"OK");
-            ILOG(@"  [%@] %@ — %llu bytes, addr=0x%08X [%@]  hdr: %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X",
-                 label, name, size, addr, status,
+            ILOG(@"  [%@] %@ — %llu bytes, ver=0x%04X addr=0x%08X [%@]  hdr: %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X %02X%02X",
+                 label, name, size, version, addr, status,
                  b[0],b[1],b[2],b[3],b[4],b[5],b[6],b[7],
                  b[8],b[9],b[10],b[11],b[12],b[13],b[14],b[15]);
         }
@@ -374,16 +447,45 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                                 ((uint32_t)fb[10] <<  8) |
                                 ((uint32_t)fb[11]);
                 uint32_t fixAddr = 0;
+                BOOL isWordSwap = NO;
                 if      (addr == 0x0000FC00) fixAddr = 0x00FC0000;
                 else if (addr == 0x0000E000) fixAddr = 0x00E00000;
                 else if (addr == 0x0000E800) fixAddr = 0x00E80000;
+                else if (addr == 0xFC000000) { fixAddr = 0x00FC0000; isWordSwap = YES; }
+                else if (addr == 0xE0000000) { fixAddr = 0x00E00000; isWordSwap = YES; }
+                else if (addr == 0xE8000000) { fixAddr = 0x00E80000; isWordSwap = YES; }
                 if (fixAddr) {
-                    fb[8]  = (fixAddr >> 24) & 0xFF;
-                    fb[9]  = (fixAddr >> 16) & 0xFF;
-                    fb[10] = (fixAddr >>  8) & 0xFF;
-                    fb[11] = (fixAddr      ) & 0xFF;
-                    ILOG(@"Hatari: corrected TOS address 0x%08X → 0x%08X (from %@)",
-                         addr, fixAddr, biosTosSource);
+                    if (isWordSwap) {
+                        size_t len = tosToWrite.length & ~(size_t)1;
+                        for (size_t i = 0; i < len; i += 2) {
+                            unsigned char tmp = fb[i]; fb[i] = fb[i+1]; fb[i+1] = tmp;
+                        }
+                        ILOG(@"Hatari: full word-swap applied in-memory to TOS from %@", biosTosSource);
+                    } else {
+                        fb[8]  = (fixAddr >> 24) & 0xFF;
+                        fb[9]  = (fixAddr >> 16) & 0xFF;
+                        fb[10] = (fixAddr >>  8) & 0xFF;
+                        fb[11] = (fixAddr      ) & 0xFF;
+                        // Also fix version bytes (2-3) which were written in LE order by old Provenance code
+                        unsigned char tmp = fb[2]; fb[2] = fb[3]; fb[3] = tmp;
+                        ILOG(@"Hatari: corrected LE-written TOS header in-memory from %@", biosTosSource);
+                    }
+                } else {
+                    // Address looks valid — but check for byte-swapped version bytes
+                    // (handles partially-repaired ROMs where old Provenance code fixed addr but not version)
+                    if (tosToWrite.length >= 4) {
+                        uint32_t validAddr = ((uint32_t)fb[8]  << 24) |
+                                             ((uint32_t)fb[9]  << 16) |
+                                             ((uint32_t)fb[10] <<  8) |
+                                             ((uint32_t)fb[11]);
+                        unsigned char expectedMajor = (validAddr == 0x00FC0000) ? 0x01 :
+                                                      (validAddr == 0x00E00000) ? 0x02 : 0x04;
+                        unsigned char v0 = fb[2], v1 = fb[3];
+                        if (v1 == expectedMajor && v0 != expectedMajor) {
+                            fb[2] = v1; fb[3] = v0;
+                            ILOG(@"Hatari: corrected byte-swapped TOS version in-memory from %@", biosTosSource);
+                        }
+                    }
                 }
             }
 
