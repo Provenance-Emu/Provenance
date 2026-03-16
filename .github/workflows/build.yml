@@ -194,11 +194,26 @@ jobs:
           CODE_SIGNING_REQUIRED=NO \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGNING_ALLOWED=NO \
+          SKIP_INSTALL=NO \
           SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY=${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }} \
           DEVELOPMENT_TEAM=S32Z3HMYVQ \
           ORG_IDENTIFIER=org.provenance-emu \
           $EXTRA_BUILD_SETTINGS \
           | xcbeautify
+
+          # Verify archive was created properly
+          if [ ! -d "archive.xcarchive/Products/Applications" ]; then
+            echo "::warning::Archive Products/Applications not found, checking alternative paths..."
+            # Some Xcode versions put the app in a different location when signing is disabled
+            find archive.xcarchive -name "*.app" -maxdepth 4 2>/dev/null || true
+            # Try to find and move the app to the expected location
+            APP_PATH=$(find archive.xcarchive -name "${{ matrix.APP_NAME }}.app" -maxdepth 4 2>/dev/null | head -1)
+            if [ -n "$APP_PATH" ]; then
+              mkdir -p archive.xcarchive/Products/Applications
+              cp -pR "$APP_PATH" "archive.xcarchive/Products/Applications/"
+              echo "Moved app from $APP_PATH to archive.xcarchive/Products/Applications/"
+            fi
+          fi
           end_time=$(date +%s)
           echo "duration=$((end_time - start_time))" >> $GITHUB_OUTPUT
 
