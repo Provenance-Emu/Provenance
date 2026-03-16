@@ -710,7 +710,12 @@ public struct SkinCatalogDetailView: View {
 
         do {
             let skins = try await DeltaSkinManager.shared.skins(for: system)
-            guard let skin = skins.first(where: { $0.name == entry.name }) else {
+            // Multi-strategy match: identifier, download URL filename, then name
+            let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
+            let entryNameLower = entry.name.lowercased()
+            guard let skin = skins.first(where: { $0.identifier == entry.id })
+                    ?? (!catalogStem.isEmpty ? skins.first(where: { $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem }) : nil)
+                    ?? skins.first(where: { $0.name.lowercased() == entryNameLower }) else {
                 throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install"])
             }
 
