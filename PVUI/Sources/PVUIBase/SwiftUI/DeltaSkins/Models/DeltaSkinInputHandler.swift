@@ -88,7 +88,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Handle button press
     @MainActor
     func buttonPressed(_ buttonId: String) {
-        DLOG("Delta Skin button pressed: \(buttonId)")
+        ILOG("🔘 buttonPressed: \(buttonId) core=\(emulatorCore != nil ? String(describing: type(of: emulatorCore!)) : "nil") sysId=\(emulatorCore?.systemIdentifier ?? "nil")")
 
         // Check for special commands first (do not auto-unpause here)
         let lowercasedId = buttonId.lowercased()
