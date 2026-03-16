@@ -667,7 +667,6 @@ public class DeltaSkinInputHandler: ObservableObject {
             if let r = core as? PVCDiSystemResponderClient {
                 let b = PVCDiButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
-                return true
             }
         case .ColecoVision:
             if let r = core as? PVColecoVisionSystemResponderClient {
@@ -908,7 +907,6 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             } else if let r = core as? PVDOSSystemResponderClient {
-                // Fallback for cores that only implement PVDOSSystemResponderClient
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
