@@ -33,6 +33,7 @@
 #include "../../retroarch.h"
 #include "../../verbosity.h"
 #include "../ui_companion_driver.h"
+#include "PVRetroArchCoreCapabilities.h"
 
 extern GCController *touch_controller;
 
@@ -67,23 +68,63 @@ static struct {
 // Used by both Hatari/Atari ST and PrBoom/Doom (both 320×200 RETRO_DEVICE_MOUSE cores).
 #define ST_MOUSE_SCALE (300.0f)
 
-static BOOL dos_is_atarist(PVRetroArchCoreBridge *bridge) {
-    return ([bridge.systemIdentifier containsString:@"atarist"] ||
-            [bridge.coreIdentifier   containsString:@"hatari"]);
+// ---------------------------------------------------------------------------
+// Mouse device-type detection
+// ---------------------------------------------------------------------------
+// Strategy: prefer the dynamic libretro query (pv_core_declares_mouse_device)
+// which reads data the core itself reported via RETRO_ENVIRONMENT_SET_CONTROLLER_INFO.
+// If the core did not call SET_CONTROLLER_INFO (ports.size == 0), fall back to
+// a static list of known system/core identifier substrings.  The static fallback
+// is intentionally kept in one place here so future additions only require
+// updating the arrays below — no logic changes needed.
+
+/// Fallback system-id substrings known to use RETRO_DEVICE_MOUSE.
+static NSArray<NSString *> *dos_relative_mouse_system_ids(void) {
+    static NSArray *ids;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        ids = @[ @"atarist", @"doom" ];
+    });
+    return ids;
 }
 
-// PrBoom (Doom) uses RETRO_DEVICE_MOUSE which reads mouse_rel_x/y (relative deltas),
-// exactly like Hatari/Atari ST.  The generic DOS path (DOSBox-Pure) uses
-// RETRO_DEVICE_POINTER / RARCH_DEVICE_MOUSE_SCREEN which reads window_pos_x/y (absolute).
-static BOOL dos_is_doom(PVRetroArchCoreBridge *bridge) {
-    return ([bridge.systemIdentifier containsString:@"doom"] ||
-            [bridge.coreIdentifier   containsString:@"prboom"]);
+/// Fallback core-id substrings known to use RETRO_DEVICE_MOUSE.
+static NSArray<NSString *> *dos_relative_mouse_core_ids(void) {
+    static NSArray *ids;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        ids = @[ @"hatari", @"prboom" ];
+    });
+    return ids;
+}
+
+/// String-match fallback: check static lists when libretro port info is absent.
+static BOOL dos_uses_relative_mouse_fallback(PVRetroArchCoreBridge *bridge) {
+    NSString *sysId  = [bridge.systemIdentifier lowercaseString] ?: @"";
+    NSString *coreId = [bridge.coreIdentifier   lowercaseString] ?: @"";
+    for (NSString *s in dos_relative_mouse_system_ids()) {
+        if ([sysId containsString:s]) return YES;
+    }
+    for (NSString *s in dos_relative_mouse_core_ids()) {
+        if ([coreId containsString:s]) return YES;
+    }
+    return NO;
 }
 
 /// Returns YES for cores that consume mouse_rel_x/y (relative deltas) rather than
 /// window_pos_x/y (absolute screen coordinates).
+///
+/// Detection order:
+///  1. Dynamic: query RETRO_ENVIRONMENT_SET_CONTROLLER_INFO data the core reported.
+///     If the core declared RETRO_DEVICE_MOUSE for any port, return YES.
+///  2. Fallback: if the core never called SET_CONTROLLER_INFO (ports.size == 0),
+///     fall back to static system/core identifier substring matching.
 static BOOL dos_uses_relative_mouse(PVRetroArchCoreBridge *bridge) {
-    return dos_is_atarist(bridge) || dos_is_doom(bridge);
+    // Try dynamic detection first (available after core init).
+    if (pv_core_declares_mouse_device()) return YES;
+
+    // Fall back to string matching for cores that don't call SET_CONTROLLER_INFO.
+    return dos_uses_relative_mouse_fallback(bridge);
 }
 
 @interface PVRetroArchCoreBridge (DOSControls) <PVDOSSystemResponderClient>
