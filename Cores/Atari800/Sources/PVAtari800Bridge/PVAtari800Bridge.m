@@ -577,16 +577,16 @@ __weak static PVAtari800Bridge * _currentCore;
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
     static const CGFloat kDeadzone = 0.5;
     switch (button) {
-        case PV5200ButtonAnalogUp:
+        case PV5200ButtonUp:
             self.controllerStates[player].up = (value > kDeadzone);
             break;
-        case PV5200ButtonAnalogDown:
+        case PV5200ButtonDown:
             self.controllerStates[player].down = (value > kDeadzone);
             break;
-        case PV5200ButtonAnalogLeft:
+        case PV5200ButtonLeft:
             self.controllerStates[player].left = (value > kDeadzone);
             break;
-        case PV5200ButtonAnalogRight:
+        case PV5200ButtonRight:
             self.controllerStates[player].right = (value > kDeadzone);
             break;
         default:
