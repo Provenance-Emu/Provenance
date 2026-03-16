@@ -80,6 +80,8 @@ public final class CompanionControllerSession: ObservableObject {
     // MARK: - Private
 
     private var connectionTask: Task<Void, Never>?
+    private var lastHost: String?
+    private var lastPort: UInt16?
 
     // MARK: - Init
 
@@ -93,6 +95,8 @@ public final class CompanionControllerSession: ObservableObject {
     public func connect(host: String, port: UInt16 = 26760) {
         guard !connectionState.isConnecting, !connectionState.isConnected else { return }
 
+        lastHost = host
+        lastPort = port
         connectionState = .connecting(host: host, port: port)
 
         connectionTask = Task { [weak self] in
@@ -108,9 +112,10 @@ public final class CompanionControllerSession: ObservableObject {
         inputRouter = CompanionInputRouter()
     }
 
-    /// Retry after an error.
+    /// Retry connection after an error using the last known host/port.
     public func retry() {
-        if case .connecting(let host, let port) = connectionState {
+        if case .error = connectionState, let host = lastHost, let port = lastPort {
+            connectionState = .disconnected
             connect(host: host, port: port)
         } else if case .error = connectionState {
             connectionState = .disconnected

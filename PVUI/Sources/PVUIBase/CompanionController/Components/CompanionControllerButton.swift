@@ -8,6 +8,9 @@
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 import SwiftUI
+#if canImport(UIKit) && !os(tvOS)
+import UIKit
+#endif
 
 // MARK: - CompanionControllerButton
 
@@ -25,8 +28,11 @@ public struct CompanionControllerButton<Label: View>: View {
 
     private let button: CompanionButton
     private let router: CompanionInputRouter
-    private let hapticStyle: UIImpactFeedbackGenerator.FeedbackStyle
     private let label: Label
+
+    #if canImport(UIKit) && !os(tvOS)
+    private let hapticGenerator: UIImpactFeedbackGenerator
+    #endif
 
     // MARK: - State
 
@@ -37,13 +43,14 @@ public struct CompanionControllerButton<Label: View>: View {
     public init(
         button: CompanionButton,
         router: CompanionInputRouter,
-        hapticStyle: UIImpactFeedbackGenerator.FeedbackStyle = .medium,
         @ViewBuilder label: () -> Label
     ) {
         self.button      = button
         self.router      = router
-        self.hapticStyle = hapticStyle
         self.label       = label()
+        #if canImport(UIKit) && !os(tvOS)
+        self.hapticGenerator = UIImpactFeedbackGenerator(style: .medium)
+        #endif
     }
 
     // MARK: - Body
@@ -73,8 +80,9 @@ public struct CompanionControllerButton<Label: View>: View {
     // MARK: - Haptics
 
     private func triggerHaptic() {
-        let generator = UIImpactFeedbackGenerator(style: hapticStyle)
-        generator.impactOccurred()
+        #if canImport(UIKit) && !os(tvOS)
+        hapticGenerator.impactOccurred()
+        #endif
     }
 }
 
@@ -85,10 +93,9 @@ extension CompanionControllerButton where Label == Text {
     public init(
         _ title: String,
         button: CompanionButton,
-        router: CompanionInputRouter,
-        hapticStyle: UIImpactFeedbackGenerator.FeedbackStyle = .medium
+        router: CompanionInputRouter
     ) {
-        self.init(button: button, router: router, hapticStyle: hapticStyle) {
+        self.init(button: button, router: router) {
             Text(title)
         }
     }

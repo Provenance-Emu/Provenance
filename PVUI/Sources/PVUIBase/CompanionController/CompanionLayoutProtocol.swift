@@ -45,6 +45,7 @@ public protocol CompanionLayout: View {
 /// Returns the appropriate `CompanionLayout` for a given system identifier.
 ///
 /// Register new system layouts here. Falls back to `GenericCompanionLayout` for unknown systems.
+#if !os(tvOS)
 @MainActor
 public enum CompanionLayoutFactory {
     public static func makeLayout(
@@ -57,3 +58,4 @@ public enum CompanionLayoutFactory {
         }
     }
 }
+#endif
