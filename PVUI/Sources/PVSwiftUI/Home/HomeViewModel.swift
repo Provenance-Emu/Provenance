@@ -183,11 +183,10 @@ final class HomeViewModel: ObservableObject {
             // Re-derive recently played from existing order with updated models.
             let recents = self.recentMD5Order.compactMap { byMD5[$0] }
 
-            let asc = self.sortAscending
-            let sorted = self.sorted(all, ascending: asc)
             Task { @MainActor [weak self] in
-                self?.allGamesModels = sorted
-                self?.recentlyPlayedModels = recents
+                guard let self else { return }
+                self.allGamesModels = self.sorted(all, ascending: self.sortAscending)
+                self.recentlyPlayedModels = recents
             }
         }
     }
@@ -199,10 +198,9 @@ final class HomeViewModel: ObservableObject {
             for game in games where !game.isInvalidated {
                 favs.append(GameCellModel(game: game))
             }
-            let asc = self.sortAscending
-            let sorted = self.sorted(favs, ascending: asc)
             Task { @MainActor [weak self] in
-                self?.favoritesModels = sorted
+                guard let self else { return }
+                self.favoritesModels = self.sorted(favs, ascending: self.sortAscending)
             }
         }
     }
