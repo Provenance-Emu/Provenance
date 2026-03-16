@@ -63,6 +63,11 @@ __weak static PVAtari800Bridge * _currentCore;
 @end
 
 
+/// Shared deadzone threshold for analog-to-digital joystick conversion.
+static const CGFloat kJoystickDeadzone = 0.5;
+/// Maximum number of supported controller slots.
+static const NSUInteger kMaxPlayers = 4;
+
 @implementation PVAtari800Bridge
 
 - (uint8_t *)atariVideoBuffer {
@@ -499,7 +504,7 @@ __weak static PVAtari800Bridge * _currentCore;
 
 - (void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
-    if (player >= (NSUInteger)kMaxPlayers) return;
+    if (player >= kMaxPlayers) return;
     switch (button)
     {
         case PV5200ButtonFire1:
@@ -575,11 +580,6 @@ __weak static PVAtari800Bridge * _currentCore;
     }
 }
 
-/// Shared deadzone threshold for analog-to-digital joystick conversion.
-static const CGFloat kJoystickDeadzone = 0.5;
-/// Maximum number of supported controller slots.
-static const NSInteger kMaxPlayers = 4;
-
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
     if (player >= kMaxPlayers) return;
     switch (button) {
@@ -603,7 +603,7 @@ static const NSInteger kMaxPlayers = 4;
 
 - (void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
-    if (player >= (NSUInteger)kMaxPlayers) return;
+    if (player >= kMaxPlayers) return;
     switch (button)
     {
         case PV5200ButtonFire1:
@@ -801,7 +801,7 @@ static const NSInteger kMaxPlayers = 4;
 
 - (ATR5200ControllerState)controllerStateForPlayer:(NSUInteger)playerNum {
     ATR5200ControllerState state = {0,0,0,0,0,0,0,0};
-    if(playerNum < (NSUInteger)kMaxPlayers) {
+    if(playerNum < kMaxPlayers) {
         state = self.controllerStates[playerNum];
     }
     return state;
