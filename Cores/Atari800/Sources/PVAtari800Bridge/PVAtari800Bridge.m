@@ -66,7 +66,7 @@ __weak static PVAtari800Bridge * _currentCore;
 /// Shared deadzone threshold for analog-to-digital joystick conversion.
 static const CGFloat kJoystickDeadzone = 0.5;
 /// Maximum number of supported controller slots.
-static const NSUInteger kMaxPlayers = 4;
+static const NSInteger kMaxPlayers = 4;
 
 @implementation PVAtari800Bridge
 
