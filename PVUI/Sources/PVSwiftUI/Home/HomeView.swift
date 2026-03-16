@@ -682,7 +682,7 @@ struct HomeView: SwiftUI.View {
         } else {
             count = min(max(0, roundedScale), allGames.count)
         }
-        return count
+        return max(1, count)
     }
 
 
