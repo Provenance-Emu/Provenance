@@ -716,12 +716,7 @@ public struct SkinCatalogDetailView: View {
 
         do {
             let skins = try await DeltaSkinManager.shared.skins(for: system)
-            // Multi-strategy match: identifier, download URL filename, then name
-            let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
-            let entryNameLower = entry.name.lowercased()
-            guard let skin = skins.first(where: { $0.identifier == entry.id })
-                    ?? (!catalogStem.isEmpty ? skins.first(where: { $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem }) : nil)
-                    ?? skins.first(where: { $0.name.lowercased() == entryNameLower }) else {
+            guard let skin = findMatchingInstalledSkin(for: entry, in: skins) else {
                 throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install"])
             }
 
@@ -744,6 +739,18 @@ public struct SkinCatalogDetailView: View {
                 activationState = .failed(error.localizedDescription)
             }
         }
+    }
+
+    // MARK: - Skin Matching
+
+    /// Multi-strategy match to find the installed skin corresponding to a catalog entry.
+    /// Uses the same priority as `isCatalogSkinInstalled`: identifier → filename stem → name.
+    private func findMatchingInstalledSkin(for entry: SkinCatalogEntry, in skins: [DeltaSkinProtocol]) -> DeltaSkinProtocol? {
+        if let match = skins.first(where: { $0.identifier == entry.id }) { return match }
+        let stem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
+        if !stem.isEmpty, let match = skins.first(where: { $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == stem }) { return match }
+        let name = entry.name.lowercased()
+        return skins.first(where: { $0.name.lowercased() == name })
     }
 
     // MARK: - Download & Install Logic
