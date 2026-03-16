@@ -154,12 +154,32 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 - **project.pbxproj** — avoid when possible; prefer SPM Package.swift changes
 - **Upstream RetroArch** — `CoresRetro/RetroArch/RetroArch/` is a submodule
 
+### Pre-PR Validation (MANDATORY)
+Agents MUST run these checks before creating a PR. Do NOT skip any step.
+
+1. **Compile check** — Every changed file must compile. For Tier 0-2 modules: `cd PV<Module> && swift build`. For higher tiers or ObjC files: verify syntax is correct (no undefined symbols, no mismatched types, no missing imports).
+
+2. **Lint** — Run `swiftlint lint --path <file>` on every changed Swift file.
+
+3. **Unit tests** — If the module has tests, run them: `cd PV<Module> && swift test`. If adding new logic, add test coverage.
+
+4. **No dead code** — Don't add unused properties, unused imports, or commented-out code blocks. If Copilot flags dead code, that means you should have caught it.
+
+5. **No magic numbers** — Extract constants. Don't hardcode values that are used in multiple places.
+
+6. **Type safety** — Check that optional unwrapping is correct (no double-optionals from `?.` chains). Check that enum cases exist before referencing them. Check that function signatures match call sites.
+
+7. **Thread safety** — If reading a property from a background queue that's written from main, snapshot it into a local `let` first. Don't use `@Published` properties across threads without synchronization.
+
+8. **Platform guards** — If using UIKit-only APIs (haptics, UIDevice, etc.), wrap in `#if canImport(UIKit) && !os(tvOS)` or appropriate guards. **tvOS is a first-class platform** — all new code must support tvOS unless there is a specific technical reason it cannot (e.g., API not available on tvOS). Do not skip tvOS support by default.
+
 ### PR Requirements
 - Target the `develop` branch
-- Include test coverage for new logic (where testable)
+- **Include unit tests for new logic** — this is not optional. If you add a new class, manager, or utility, add tests. Use `swift test` for SPM modules.
 - Keep scope focused — one logical change per PR
 - Run `swiftlint` on changed files before submitting
 - Agent PRs should use the `[Agent]` prefix in title
+- **All Pre-PR Validation steps above must pass before creating the PR**
 
 ### Branch Naming & Commit Messages
 - Branches: `agent/issue-<N>` for agent work, `feature/<description>` for features
