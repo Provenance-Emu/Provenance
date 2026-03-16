@@ -568,8 +568,10 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         guard isRunning else { return }
         engine.pause()
         isRunning = false
-        // Flush stale audio data after stopping the consumer (#3183).
-        gameCore?.ringBuffer(atIndex: 0)?.reset()
+        // Drain stale audio data after stopping the consumer (#3183).
+        // Use clear() instead of reset() to avoid deallocating/reinitialising
+        // the backing buffer while the emulator core may still be writing.
+        gameCore?.ringBuffer(atIndex: 0)?.clear()
     }
 
     /// Enhanced error handling

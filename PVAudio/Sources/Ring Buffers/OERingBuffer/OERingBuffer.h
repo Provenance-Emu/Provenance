@@ -68,4 +68,8 @@
 /// Resets the RingBuffer to empty size
 /// Note: Does not erase any memory
 - (void)reset;
+
+/// Drains all pending bytes without deallocating or reinitialising the backing
+/// buffer. Safer than `reset` when the producer thread may still be running.
+- (void)clear;
 @end

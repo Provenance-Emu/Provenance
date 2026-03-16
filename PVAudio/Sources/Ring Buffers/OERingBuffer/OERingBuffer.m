@@ -147,6 +147,15 @@ __attribute__((objc_direct_members))
     atomic_thread_fence(memory_order_release);
 }
 
+- (void)clear {
+    /// Drain without reallocating the backing buffer.
+    /// TPCircularBufferClear advances the tail pointer, making the buffer appear
+    /// empty to the consumer without freeing any memory — safe when the consumer
+    /// is paused but the producer may still be active.
+    TPCircularBufferClear(&buffer);
+    atomic_thread_fence(memory_order_release);
+}
+
 - (BufferSize)availableBytes {
     return [self availableBytesForReading];
 }
