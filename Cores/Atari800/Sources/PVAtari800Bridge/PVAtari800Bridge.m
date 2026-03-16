@@ -981,7 +981,7 @@ int PLATFORM_Exit(int run_monitor)
 
 int PLATFORM_PORT(int num)
 {
-    if(num < kMaxPlayers && num >= 0) {
+    if (num >= 0 && num < (int)kMaxPlayers) {
         ATR5200ControllerState state = [_currentCore controllerStateForPlayer:num];
         if(state.up == 1 && state.left == 1) {
             return INPUT_STICK_UL;
