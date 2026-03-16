@@ -184,7 +184,8 @@ final class HomeViewModel: ObservableObject {
             // Re-derive recently played from existing order with updated models.
             let recents = self.recentMD5Order.compactMap { byMD5[$0] }
 
-            let sorted = self.sorted(all)
+            let asc = self.sortAscending
+            let sorted = self.sorted(all, ascending: asc)
             Task { @MainActor [weak self] in
                 self?.allGamesModels = sorted
                 self?.recentlyPlayedModels = recents
@@ -199,7 +200,8 @@ final class HomeViewModel: ObservableObject {
             for game in games where !game.isInvalidated {
                 favs.append(GameCellModel(game: game))
             }
-            let sorted = self.sorted(favs)
+            let asc = self.sortAscending
+            let sorted = self.sorted(favs, ascending: asc)
             Task { @MainActor [weak self] in
                 self?.favoritesModels = sorted
             }
@@ -242,16 +244,19 @@ final class HomeViewModel: ObservableObject {
 
     @MainActor
     private func resortModelsOnMain() {
-        allGamesModels = sorted(allGamesModels)
-        favoritesModels = sorted(favoritesModels)
+        let asc = sortAscending
+        allGamesModels = sorted(allGamesModels, ascending: asc)
+        favoritesModels = sorted(favoritesModels, ascending: asc)
         // recentlyPlayedModels keeps play-order, do not resort.
         // mostPlayedModels keeps play-count order, do not resort.
     }
 
-    private func sorted(_ models: [GameCellModel]) -> [GameCellModel] {
-        let ascending = sortAscending
+    /// Sort models by title. Pass `ascending` explicitly from background queues
+    /// to avoid cross-thread reads of `sortAscending`.
+    private func sorted(_ models: [GameCellModel], ascending: Bool) -> [GameCellModel] {
+        let asc = ascending
         return models.sorted { lhs, rhs in
-            if ascending {
+            if asc {
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
             } else {
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedDescending
