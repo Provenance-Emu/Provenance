@@ -121,7 +121,7 @@ final class HomeViewModel: ObservableObject {
                 let mostPlayed = realm.objects(PVGame.self)
                     .filter("playCount > 0")
                 self.mostPlayedToken = mostPlayed.observe(
-                    keyPaths: ["playCount", "title", "isFavorite", "customArtworkURL", "originalArtworkURL"],
+                    keyPaths: GameCellModel.observedKeyPaths,
                     on: self.modelsQueue
                 ) { [weak self] change in
                     autoreleasepool {

@@ -54,7 +54,7 @@ struct HomeView: SwiftUI.View {
     /// Manages game-related Realm observations on a background queue,
     /// publishing immutable snapshots to avoid excessive SwiftUI invalidation.
     /// Fixes #3184: HomeView flickering/reloading caused by multiple @ObservedResults.
-    @StateObject private var homeViewModel = HomeViewModel()
+    @StateObject private var homeViewModel: HomeViewModel
 
     // Convenience accessors matching old @ObservedResults names for minimal diff.
     private var recentlyPlayedGames: [GameCellModel] { homeViewModel.recentlyPlayedModels }
@@ -105,6 +105,7 @@ struct HomeView: SwiftUI.View {
         self.rootDelegate = delegate
         self.viewModel = viewModel
         self.showGameInfo = showGameInfo
+        self._homeViewModel = StateObject(wrappedValue: HomeViewModel(sortAscending: viewModel.sortGamesAscending))
 
     }
 
@@ -765,7 +766,6 @@ struct HomeView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                .id(model.id)
                 .contextMenu {
                     if let live = liveGame(for: model) {
                         GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
@@ -801,7 +801,6 @@ struct HomeView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                .id(model.id)
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1154,7 +1153,6 @@ struct HomeView: SwiftUI.View {
         ) {
             launchGame(md5: model.md5)
         }
-        .id(model.id)
         .focusableIfAvailable()
         .contextMenu {
             if let live = liveGame(for: model) {
@@ -1307,7 +1305,6 @@ struct HomeView: SwiftUI.View {
                         ) {
                             launchGame(md5: model.md5)
                         }
-                        .id(model.id)
                         .focusableIfAvailable()
                         .contextMenu {
                             if let live = liveGame(for: model) {
