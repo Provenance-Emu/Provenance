@@ -283,10 +283,13 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     for (NSUInteger di = 0; di < scanDirs.count; di++) {
         NSString *dir = scanDirs[di];
         NSString *label = scanLabels[di];
-        BOOL dirExists = NO;
-        [fm fileExistsAtPath:dir isDirectory:&dirExists];
-        if (!dirExists) {
+        BOOL isDir = NO;
+        BOOL exists = [fm fileExistsAtPath:dir isDirectory:&isDir];
+        if (!exists) {
             ILOG(@"  [%@] directory not found: %@", label, dir);
+            continue;
+        } else if (!isDir) {
+            ILOG(@"  [%@] path exists but is not a directory: %@", label, dir);
             continue;
         }
         BOOL foundAny = NO;
