@@ -423,7 +423,7 @@ struct DefaultControllerSkinView: View {
                             }
                         }
                     }
-                    if let center = cachedFps?.center {
+                    if let fps = cachedFps, let center = fps.center {
                         circleButton(label: center.0, color: center.2, inputId: center.1)
                     }
                 }
@@ -851,7 +851,7 @@ struct DefaultControllerSkinView: View {
                             }
                         }
                     }
-                    if let center = cachedFps?.center {
+                    if let fps = cachedFps, let center = fps.center {
                         circleButton(label: center.0, color: center.2, inputId: center.1)
                     }
                 }
@@ -1192,6 +1192,7 @@ struct DefaultControllerSkinView: View {
                                   tr: (String, String, Color), br: (String, String, Color),
                                   center: (String, String, Color)?)? {
         DLOG("fpsButtonConfig: systemId = \(String(describing: systemId))")
+        guard let systemId else { return nil }
         switch systemId {
         case .DOOM:
             return (tl: ("MAP", "map", .yellow), bl: ("RUN", "run", .blue),
