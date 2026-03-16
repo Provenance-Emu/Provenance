@@ -201,6 +201,7 @@ jobs:
           echo "duration=$((end_time - start_time))" >> $GITHUB_OUTPUT
 
       - name: Fakesign app
+        continue-on-error: true
         run: |
           echo "Contents of Provenance directory:"
           ls -la "Provenance/"
