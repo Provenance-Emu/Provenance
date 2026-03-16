@@ -829,7 +829,7 @@ struct HomeView: SwiftUI.View {
 
     /// Launch a game by MD5, resolving the Realm object on the main thread.
     func launchGame(md5: String) {
-        Task.detached { @MainActor in
+        Task { @MainActor in
             let realm = RomDatabase.sharedInstance.realm
             let candidates = [md5, md5.uppercased(), md5.lowercased()]
             var seen = Set<String>()
@@ -850,7 +850,7 @@ struct HomeView: SwiftUI.View {
         switch section {
         case .recentSaveStates:
             if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
-                Task.detached { @MainActor in
+                Task { @MainActor in
                     SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                 }
             }
