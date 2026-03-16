@@ -1678,15 +1678,19 @@ public class DeltaSkinInputHandler: ObservableObject {
                 return true
             }
         case .DOOM:
+            ILOG("🎮 DOOM trySystemResponderCall: id=\(id) isPressed=\(isPressed) coreType=\(type(of: core))")
             if let r = core as? PVDoomSystemResponderClient {
                 let b = PVDoomButton(id)
+                ILOG("🎮 DOOM → PVDoomSystemResponderClient.didPush(\(b)) via Doom bridge")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             } else if let r = core as? PVDOSSystemResponderClient {
-                // Fallback for cores that only implement PVDOSSystemResponderClient
                 let b = PVDOSButton(id)
+                ILOG("🎮 DOOM → fallback to PVDOSSystemResponderClient.didPush(\(b))")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
+            } else {
+                ELOG("🎮 DOOM → core does NOT conform to PVDoomSystemResponderClient or PVDOSSystemResponderClient!")
             }
         case .DOS, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
             if let r = core as? PVDOSSystemResponderClient {
@@ -2469,11 +2473,12 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("DeltaSkinInputHandler: keyDown — no emulatorCore available")
             return
         }
+        ILOG("⌨️ DeltaSkinInputHandler: keyDown \(keyCode) coreType=\(type(of: core)) conforms=\(core is KeyboardResponder)")
         guard let responder = core as? KeyboardResponder else {
-            DLOG("DeltaSkinInputHandler: keyDown — core does not conform to KeyboardResponder")
+            ELOG("⌨️ DeltaSkinInputHandler: keyDown — core \(type(of: core)) does NOT conform to KeyboardResponder")
             return
         }
-        DLOG("DeltaSkinInputHandler: keyDown \(keyCode)")
+        ILOG("⌨️ DeltaSkinInputHandler: forwarding keyDown \(keyCode) to \(type(of: responder))")
         responder.keyDown(keyCode)
         #endif
     }
