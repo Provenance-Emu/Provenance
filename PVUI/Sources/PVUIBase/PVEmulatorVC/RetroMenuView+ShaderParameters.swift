@@ -17,7 +17,7 @@ struct ShaderParameterSlider: View {
     let label: String
     @Binding var value: Float
     let range: ClosedRange<Float>
-    var step: Float?
+    var step: Float? = nil
     let palette: UXThemePalette
 
     private var formattedValue: String {
