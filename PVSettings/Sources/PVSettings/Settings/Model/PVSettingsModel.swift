@@ -128,6 +128,10 @@ public extension Defaults.Keys {
     static let buttonPressEffect = Key<ButtonPressEffect>("buttonPressEffect", default: .glow)
     static let buttonSound = Key<ButtonSound>("buttonSound", default: .none)
 
+    /// When enabled, double-tapping a button toggles "sticky" mode: the button stays
+    /// held down until tapped again. Useful for auto-run in platformers.
+    static let stickyButtonsEnabled = Key<Bool>("stickyButtonsEnabled", default: false)
+
 #if os(tvOS)
     /// Multiplier applied to Siri Remote touch-surface pan deltas when driving mouse input.
     /// Range 0.1 – 5.0; default is 1.0 (1:1 pixel mapping).

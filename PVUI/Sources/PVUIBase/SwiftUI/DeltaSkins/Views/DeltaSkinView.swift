@@ -77,6 +77,9 @@ public struct DeltaSkinView: View {
     @State private var lastButtonPressed: String?
     @State private var isButtonHapticEnabled = true  // Add this state
 
+    /// Buttons currently in "sticky" (toggle-held) mode — mirrors the sticky manager for SwiftUI updates.
+    @State private var stickyButtonIds: Set<String> = []
+
     /// State for skin loading
     @State private var skinImage: UIImage?
     @State private var thumbstickImage: UIImage?
@@ -676,6 +679,22 @@ public struct DeltaSkinView: View {
                                     .zIndex(6)
                                     .allowsHitTesting(false)
                                 }
+                            }
+                        }
+
+                        // Sticky button indicators
+                        if !stickyButtonIds.isEmpty,
+                           let buttons = skin.buttons(for: traits),
+                           let mappingSize = skin.mappingSize(for: traits) {
+                            ForEach(buttons.filter { stickyButtonIds.contains($0.id) }, id: \.id) { button in
+                                DeltaSkinStickyIndicator(
+                                    frame: button.frame,
+                                    mappingSize: mappingSize
+                                )
+                                .zIndex(3.5)
+                                .allowsHitTesting(false)
+                                .transition(.opacity)
+                                .animation(.easeInOut(duration: 0.2), value: stickyButtonIds)
                             }
                         }
 
@@ -2177,6 +2196,26 @@ public struct DeltaSkinView: View {
 
     private func handleButtonPress(_ buttonId: String) {
         DLOG("🔴 handleButtonPress called with buttonId: \(buttonId)")
+
+        // --- Sticky button logic ---
+        #if canImport(UIKit)
+        if Defaults[.stickyButtonsEnabled] {
+            let action = inputHandler.stickyManager.handlePress(buttonId)
+            stickyButtonIds = inputHandler.stickyManager.stickyButtons
+            switch action {
+            case .press:
+                break // continue with normal press below
+            case .release:
+                // Double-tap on a sticky button: release it
+                pressedButtons.remove(buttonId)
+                inputHandler.buttonReleased(buttonId)
+                return
+            case .ignore:
+                return
+            }
+        }
+        #endif
+
         // Safety check for duplicate press events
         if pressedButtons.contains(buttonId) {
             DLOG("⚠️ Button \(buttonId) already pressed, skipping press event")
@@ -2212,6 +2251,18 @@ public struct DeltaSkinView: View {
 
     private func handleButtonRelease(_ buttonId: String) {
         DLOG("🔵 handleButtonRelease called with buttonId: \(buttonId)")
+
+        // --- Sticky button logic ---
+        #if canImport(UIKit)
+        if Defaults[.stickyButtonsEnabled] {
+            let action = inputHandler.stickyManager.handleRelease(buttonId)
+            if action == .ignore {
+                DLOG("Sticky: suppressing release for \(buttonId)")
+                return
+            }
+        }
+        #endif
+
         // Safety check to prevent releasing buttons that weren't pressed
         if !pressedButtons.contains(buttonId) {
             DLOG("⚠️ Button \(buttonId) not pressed, skipping release event")
@@ -2401,6 +2452,16 @@ public struct DeltaSkinView: View {
     /// Release all pressed buttons
     private func releaseAllButtons() {
         DLOG("Releasing all pressed buttons in DeltaSkinView: \(pressedButtons)")
+
+        // Release any sticky buttons first so their releases are not suppressed
+        let releasedSticky = inputHandler.stickyManager.releaseAll()
+        stickyButtonIds.removeAll()
+        for buttonId in releasedSticky {
+            if !pressedButtons.contains(buttonId) {
+                // Sticky button that was not physically pressed — send release to core
+                inputHandler.buttonReleased(buttonId)
+            }
+        }
 
         // Ensure all D-pad buttons are released
         for direction in ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"] {
