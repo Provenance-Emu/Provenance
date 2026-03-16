@@ -575,7 +575,7 @@ __weak static PVAtari800Bridge * _currentCore;
 }
 
 /// Shared deadzone threshold for analog-to-digital joystick conversion.
-static const CGFloat kJoystickJoystickDeadzone = 0.5;
+static const CGFloat kJoystickDeadzone = 0.5;
 
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
     if (player >= 4) return;
