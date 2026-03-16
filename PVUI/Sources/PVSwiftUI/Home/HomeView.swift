@@ -51,29 +51,16 @@ struct HomeView: SwiftUI.View {
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
 
-    @ObservedResults(
-        PVRecentGame.self,
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-    ) var recentlyPlayedGames
+    /// Manages game-related Realm observations on a background queue,
+    /// publishing immutable snapshots to avoid excessive SwiftUI invalidation.
+    /// Fixes #3184: HomeView flickering/reloading caused by multiple @ObservedResults.
+    @StateObject private var homeViewModel: HomeViewModel
 
-    @ObservedResults(
-        PVGame.self,
-        filter: NSPredicate(format: "\(#keyPath(PVGame.isFavorite)) == %@", NSNumber(value: true)),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
-    ) var favorites
-
-    @ObservedResults(
-        PVGame.self,
-        filter: NSPredicate(format: "playCount > 0"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
-    ) var mostPlayed
-
-    /// Sorted by systemIdentifier, then title
-    @ObservedResults(
-        PVGame.self,
-        sortDescriptor: .init(keyPath: \PVGame.title, ascending: false)
-    ) var allGames
-    // RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle
+    // Convenience accessors matching old @ObservedResults names for minimal diff.
+    private var recentlyPlayedGames: [GameCellModel] { homeViewModel.recentlyPlayedModels }
+    private var favorites: [GameCellModel] { homeViewModel.favoritesModels }
+    private var mostPlayed: [GameCellModel] { homeViewModel.mostPlayedModels }
+    private var allGames: [GameCellModel] { homeViewModel.allGamesModels }
 
     @State private var gamepadCancellable: AnyCancellable?
 
@@ -118,11 +105,8 @@ struct HomeView: SwiftUI.View {
         self.rootDelegate = delegate
         self.viewModel = viewModel
         self.showGameInfo = showGameInfo
+        self._homeViewModel = StateObject(wrappedValue: HomeViewModel(sortAscending: viewModel.sortGamesAscending))
 
-        _allGames = ObservedResults(
-            PVGame.self,
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
-        )
     }
 
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -274,6 +258,7 @@ struct HomeView: SwiftUI.View {
         .onAppear {
             adjustZoomLevel(for: gameLibraryScale)
             setupGamepadHandling()
+            homeViewModel.sortAscending = viewModel.sortGamesAscending
 
             // Check initial controller connection state
             isControllerConnected = GamepadManager.shared.isControllerConnected
@@ -284,6 +269,9 @@ struct HomeView: SwiftUI.View {
 
             // Consume any pending search action from LibraryNavigator (covers cold-launch).
             consumePendingSearch()
+        }
+        .onChange(of: viewModel.sortGamesAscending) { newValue in
+            homeViewModel.sortAscending = newValue
         }
         .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
             isControllerConnected = isConnected
@@ -697,7 +685,7 @@ struct HomeView: SwiftUI.View {
         } else {
             count = min(max(0, roundedScale), allGames.count)
         }
-        return count
+        return max(1, count)
     }
 
 
@@ -729,7 +717,10 @@ struct HomeView: SwiftUI.View {
             },
             settingsContext: .home,
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
-            toggleSortAction: { viewModel.sortGamesAscending.toggle() },
+            toggleSortAction: {
+                viewModel.sortGamesAscending.toggle()
+                homeViewModel.sortAscending = viewModel.sortGamesAscending
+            },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
         .padding(.vertical, 12)
@@ -755,84 +746,105 @@ struct HomeView: SwiftUI.View {
     }
 
     @ViewBuilder
-    private func showGamesList(_ games: Results<PVGame>) -> some View {
+    private func showGamesList(_ games: [GameCellModel]) -> some View {
         LazyVStack(spacing: 8) {
-            ForEach(games, id: \.self) { game in
-                if !game.isInvalidated {
-                    GameItemView(
-                        game: game,
-                        constrainHeight: true,
-                        viewType: .row,
-                        sectionContext: .allGames,
-                        isFocused: Binding(
-                            get: {
-                                !game.isInvalidated &&
-                                focusedSection == .allGames &&
-                                focusedItemInSection == game.id
-                            },
-                            set: {
-                                if $0 {
-                                    focusedSection = .allGames
-                                    focusedItemInSection = game.id
-                                }
+            ForEach(games, id: \.id) { model in
+                GameItemPresentableView(
+                    game: model,
+                    constrainHeight: true,
+                    viewType: .row,
+                    sectionContext: .allGames,
+                    isFocused: Binding(
+                        get: {
+                            focusedSection == .allGames &&
+                            focusedItemInSection == model.id
+                        },
+                        set: {
+                            if $0 {
+                                focusedSection = .allGames
+                                focusedItemInSection = model.id
                             }
-                        )
-                    ) {
-                        Task.detached { @MainActor in
-                            SceneCoordinator.shared.launchGame(game.freeze())
                         }
+                    )
+                ) {
+                    launchGame(md5: model.md5)
+                }
+                .contextMenu {
+                    if let live = liveGame(for: model) {
+                        GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
                     }
-                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func showGamesGrid(_ games: Results<PVGame>) -> some View {
-        var gameLibraryItemsPerRow: Int {
-            let gamesPerRow = min(8, games.count)
-            return gamesPerRow.isMultiple(of: 2) ? gamesPerRow : gamesPerRow + 1
-        }
-
+    private func showGamesGrid(_ games: [GameCellModel]) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
 
-        return LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(games, id: \.self) { game in
-                gameGridItem(game)
+        LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(games, id: \.id) { model in
+                GameItemPresentableView(
+                    game: model,
+                    constrainHeight: true,
+                    viewType: .cell,
+                    sectionContext: .allGames,
+                    isFocused: Binding(
+                        get: {
+                            focusedSection == .allGames &&
+                            focusedItemInSection == model.id
+                        },
+                        set: {
+                            if $0 {
+                                focusedSection = .allGames
+                                focusedItemInSection = model.id
+                            }
+                        }
+                    )
+                ) {
+                    launchGame(md5: model.md5)
+                }
+                .focusableIfAvailable()
+                .contextMenu {
+                    if let live = liveGame(for: model) {
+                        GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
+                    }
+                }
             }
         }
         .padding(.horizontal, 10)
     }
 
-    /// Creates a grid item view for a game with focus and context menu
-    @ViewBuilder
-    private func gameGridItem(_ game: PVGame) -> some View {
-        GameItemView(
-            game: game,
-            constrainHeight: true,
-            viewType: .cell,
-            sectionContext: .allGames,
-            isFocused: Binding(
-                get: {
-                    !game.isInvalidated &&
-                    focusedSection == .allGames &&
-                    focusedItemInSection == game.id
-                },
-                set: {
-                    if $0 {
-                        focusedSection = .allGames
-                        focusedItemInSection = game.id
-                    }
-                }
-            )
-        ) {
-            Task.detached { @MainActor in
-                SceneCoordinator.shared.launchGame(game.freeze())
+    // MARK: - Realm resolution helpers
+
+    /// Resolve a live `PVGame` from the main-thread Realm by MD5.
+    /// Tries the raw casing first, then uppercase and lowercase variants.
+    @MainActor
+    private func resolveGame(md5: String) -> PVGame? {
+        let realm = RomDatabase.sharedInstance.realm
+        var seen = Set<String>()
+        for key in [md5, md5.uppercased(), md5.lowercased()] where seen.insert(key).inserted {
+            if let game = realm.object(ofType: PVGame.self, forPrimaryKey: key) {
+                return game
             }
         }
-        .focusableIfAvailable()
-        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+        return nil
+    }
+
+    /// Resolve a live `PVGame` from the main-thread Realm for a snapshot model.
+    private func liveGame(for model: GameCellModel) -> PVGame? {
+        resolveGame(md5: model.md5)
+    }
+
+    /// Launch a game by MD5, resolving the Realm object on the main thread.
+    func launchGame(md5: String) {
+        Task { @MainActor in
+            guard let game = resolveGame(md5: md5) else {
+                WLOG("HomeView: could not resolve PVGame for md5 '\(md5)' — object may have been deleted")
+                return
+            }
+            SceneCoordinator.shared.launchGame(game.freeze())
+        }
     }
 
     // MARK: - GamepadNavigationDelegate
@@ -844,21 +856,17 @@ struct HomeView: SwiftUI.View {
         switch section {
         case .recentSaveStates:
             if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
-                Task.detached { @MainActor in
+                Task { @MainActor in
                     SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                 }
             }
         case .recentlyPlayedGames:
-            if let game = recentlyPlayedGames.first(where: { $0.game?.id == itemId })?.game {
-                Task.detached { @MainActor in
-                    SceneCoordinator.shared.launchGame(game.freeze())
-                }
+            if let model = recentlyPlayedGames.first(where: { $0.id == itemId }) {
+                launchGame(md5: model.md5)
             }
         case .favorites, .mostPlayed, .allGames:
-            if let game = allGames.first(where: { $0.id == itemId }) {
-                Task.detached { @MainActor in
-                    SceneCoordinator.shared.launchGame(game.freeze())
-                }
+            if let model = allGames.first(where: { $0.id == itemId }) {
+                launchGame(md5: model.md5)
             }
         }
     }
@@ -1008,7 +1016,7 @@ struct HomeView: SwiftUI.View {
         case .recentSaveStates:
             return recentSaveStateIDs.last
         case .recentlyPlayedGames:
-            return recentlyPlayedGames.last?.game?.id
+            return recentlyPlayedGames.last?.id
         case .favorites:
             return favorites.last?.id
         case .mostPlayed:
@@ -1023,7 +1031,7 @@ struct HomeView: SwiftUI.View {
         case .recentSaveStates:
             return recentSaveStateIDs
         case .recentlyPlayedGames:
-            return recentlyPlayedGames.compactMap { $0.game?.id }
+            return recentlyPlayedGames.map { $0.id }
         case .favorites:
             return favorites.map { $0.id }
         case .mostPlayed:
@@ -1038,7 +1046,7 @@ struct HomeView: SwiftUI.View {
         case .recentSaveStates:
             return recentSaveStateIDs.first
         case .recentlyPlayedGames:
-            return recentlyPlayedGames.first?.game?.id
+            return recentlyPlayedGames.first?.id
         case .favorites:
             return favorites.first?.id
         case .mostPlayed:
@@ -1098,32 +1106,8 @@ struct HomeView: SwiftUI.View {
     private func recentlyPlayedSection() -> some View {
         if showRecentGames {
             HomeSection(title: String(localized: "Recently Played")) {
-                ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
-                    GameItemView(
-                        game: game,
-                        constrainHeight: true,
-                        viewType: .cell,
-                        sectionContext: .recentlyPlayedGames,
-                        isFocused: Binding(
-                            get: {
-                                !game.isInvalidated &&
-                                focusedSection == .recentlyPlayedGames &&
-                                focusedItemInSection == game.id
-                            },
-                            set: {
-                                if $0 {
-                                    focusedSection = .recentlyPlayedGames
-                                    focusedItemInSection = game.id
-                                }
-                            }
-                        )
-                    ) {
-                        Task.detached { @MainActor in
-                            SceneCoordinator.shared.launchGame(game.freeze())
-                        }
-                    }
-                    .focusableIfAvailable()
-                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                ForEach(recentlyPlayedGames, id: \.id) { model in
+                    gameItem(model, section: .recentlyPlayedGames)
                 }
             }
             HomeDividerView()
@@ -1134,32 +1118,8 @@ struct HomeView: SwiftUI.View {
     private func favoritesSection() -> some View {
         if showFavorites {
             HomeSection(title: String(localized: "Favorites")) {
-                ForEach(favorites, id: \.self) { favorite in
-                    GameItemView(
-                        game: favorite,
-                        constrainHeight: true,
-                        viewType: .cell,
-                        sectionContext: .favorites,
-                        isFocused: Binding(
-                            get: {
-                                !favorite.isInvalidated &&
-                                focusedSection == .favorites &&
-                                focusedItemInSection == favorite.id
-                            },
-                            set: {
-                                if $0 {
-                                    focusedSection = .favorites
-                                    focusedItemInSection = favorite.id
-                                }
-                            }
-                        )
-                    ) {
-                        Task.detached { @MainActor in
-                            SceneCoordinator.shared.launchGame(favorite.freeze())
-                        }
-                    }
-                    .focusableIfAvailable()
-                    .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                ForEach(favorites, id: \.id) { model in
+                    gameItem(model, section: .favorites)
                 }
             }
             HomeDividerView()
@@ -1169,35 +1129,42 @@ struct HomeView: SwiftUI.View {
     @ViewBuilder
     private func mostPlayedSection() -> some View {
         HomeSection(title: "Most Played") {
-            ForEach(mostPlayed, id: \.self) { playedGame in
-                GameItemView(
-                    game: playedGame,
-                    constrainHeight: true,
-                    viewType: .cell,
-                    sectionContext: .mostPlayed,
-                    isFocused: Binding(
-                        get: {
-                            !playedGame.isInvalidated &&
-                            focusedSection == .mostPlayed &&
-                            focusedItemInSection == playedGame.id
-                        },
-                        set: {
-                            if $0 {
-                                focusedSection = .mostPlayed
-                                focusedItemInSection = playedGame.id
-                            }
-                        }
-                    )
-                ) {
-                    Task.detached { @MainActor in
-                        SceneCoordinator.shared.launchGame(playedGame.freeze())
-                    }
-                }
-                .focusableIfAvailable()
-                .contextMenu { GameContextMenu(game: playedGame, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+            ForEach(mostPlayed, id: \.id) { model in
+                gameItem(model, section: .mostPlayed)
             }
         }
         HomeDividerView()
+    }
+
+    /// Shared game item builder used by all horizontal carousel sections.
+    @ViewBuilder
+    private func gameItem(_ model: GameCellModel, section: HomeSectionType) -> some View {
+        GameItemPresentableView(
+            game: model,
+            constrainHeight: true,
+            viewType: .cell,
+            sectionContext: section,
+            isFocused: Binding(
+                get: {
+                    focusedSection == section &&
+                    focusedItemInSection == model.id
+                },
+                set: {
+                    if $0 {
+                        focusedSection = section
+                        focusedItemInSection = model.id
+                    }
+                }
+            )
+        ) {
+            launchGame(md5: model.md5)
+        }
+        .focusableIfAvailable()
+        .contextMenu {
+            if let live = liveGame(for: model) {
+                GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
+            }
+        }
     }
 
     private func setInitialFocus() {
@@ -1297,13 +1264,13 @@ struct HomeView: SwiftUI.View {
     }
 
     /// Function to filter games based on search text
-    private func filteredSearchResults() -> [PVGame] {
+    private func filteredSearchResults() -> [GameCellModel] {
         guard !searchText.isEmpty else { return [] }
 
         let searchTextLowercased = searchText.lowercased()
-        return Array(allGames.filter { game in
-            game.title.lowercased().contains(searchTextLowercased)
-        })
+        return allGames.filter { model in
+            model.title.lowercased().contains(searchTextLowercased)
+        }
     }
 
     @ViewBuilder
@@ -1323,32 +1290,33 @@ struct HomeView: SwiftUI.View {
                         .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
                         .padding()
                 } else {
-                    ForEach(results, id: \.self) { game in
-                        GameItemView(
-                            game: game,
+                    ForEach(results, id: \.id) { model in
+                        GameItemPresentableView(
+                            game: model,
                             constrainHeight: true,
                             viewType: .row,
                             sectionContext: .allGames,
                             isFocused: Binding(
                                 get: {
-                                    !game.isInvalidated &&
                                     focusedSection == .allGames &&
-                                    focusedItemInSection == game.id
+                                    focusedItemInSection == model.id
                                 },
                                 set: {
                                     if $0 {
                                         focusedSection = .allGames
-                                        focusedItemInSection = game.id
+                                        focusedItemInSection = model.id
                                     }
                                 }
                             )
                         ) {
-                            Task.detached { @MainActor in
-                                SceneCoordinator.shared.launchGame(game.freeze())
-                            }
+                            launchGame(md5: model.md5)
                         }
                         .focusableIfAvailable()
-                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                        .contextMenu {
+                            if let live = liveGame(for: model) {
+                                GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
+                            }
+                        }
                         GamesDividerView()
                     }
                 }
