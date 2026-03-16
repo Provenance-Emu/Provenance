@@ -321,10 +321,12 @@ public struct JITStatusIndicatorView: View {
                 }
             }
         }
+        .onChange(of: viewModel.status) { _ in
+            revealTemporarily()
+        }
         #if canImport(JITManager)
         .onReceive(NotificationCenter.default.publisher(for: .DOLJitAcquired)) { _ in
             viewModel.updateStatus()
-            revealTemporarily()
         }
         #endif
     }

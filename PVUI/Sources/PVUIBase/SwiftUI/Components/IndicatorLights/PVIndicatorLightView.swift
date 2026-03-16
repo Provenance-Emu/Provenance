@@ -237,6 +237,7 @@ public struct PVIndicatorOverlayView: View {
             .padding(.trailing, 16)
         }
         .opacity(isVisible ? 0.85 : 0.0)
+        .allowsHitTesting(isVisible)
         .animation(.easeInOut(duration: 0.6), value: isVisible)
         .onAppear {
             scheduleAutoHide()
