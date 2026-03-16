@@ -27,6 +27,9 @@ public struct SkinCatalogDetailView: View {
     @State private var glowIntensity: CGFloat = 0.5
     @State private var downloadTask: Task<Void, Never>?
 
+    /// Observe the skin manager so we can detect already-installed skins.
+    @StateObject private var skinManager = DeltaSkinManager.shared
+
     // MARK: - Types
 
     private enum DownloadState: Equatable {
@@ -69,6 +72,20 @@ public struct SkinCatalogDetailView: View {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
             }
+            // Check if this skin is already installed locally so the
+            // action section shows "INSTALLED" instead of "DOWNLOAD".
+            checkIfAlreadyInstalled()
+        }
+        .onChange(of: skinManager.skinsAreLoaded) { _, loaded in
+            // Re-check once skins finish loading (scan may complete after
+            // onAppear if it was triggered lazily).
+            if loaded { checkIfAlreadyInstalled() }
+        }
+        .onChange(of: skinManager.loadedSkins.count) { _, _ in
+            // Re-check after subsequent imports or rescans so the
+            // installed state stays accurate even when skinsAreLoaded
+            // was already true.
+            checkIfAlreadyInstalled()
         }
         .onDisappear {
             downloadTask?.cancel()
@@ -590,6 +607,22 @@ public struct SkinCatalogDetailView: View {
         return entry.systems.lazy.compactMap {
             DeltaSkinGameType.fromAnyString($0)?.systemIdentifier
         }.first
+    }
+
+    // MARK: - Installed Check
+
+    /// Sets `downloadState` to `.installed` when the catalog entry matches a
+    /// locally installed skin. Uses the same multi-strategy matching as the
+    /// browser grid (identifier, filename, name).
+    /// Delegates to the shared `isCatalogSkinInstalled` helper so the
+    /// matching logic is defined in one place.
+    private func checkIfAlreadyInstalled() {
+        // Only override when we haven't already started a download/install.
+        guard downloadState == .idle else { return }
+
+        if isCatalogSkinInstalled(entry, in: skinManager.loadedSkins) {
+            downloadState = .installed
+        }
     }
 
     // MARK: - Download & Install Logic
