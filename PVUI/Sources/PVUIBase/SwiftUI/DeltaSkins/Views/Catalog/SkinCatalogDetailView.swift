@@ -726,8 +726,13 @@ public struct SkinCatalogDetailView: View {
             }
 
             let manager = DeltaSkinSelectionManager.shared
-            await manager.setSkin(skin.identifier, for: system, orientation: .portrait, scope: .system)
-            await manager.setSkin(skin.identifier, for: system, orientation: .landscape, scope: .system)
+            #if os(iOS)
+            let currentOrientation: SkinOrientation = await UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+            #else
+            let currentOrientation: SkinOrientation = .landscape
+            #endif
+            // Set for current orientation; user can change the other via skin picker
+            await manager.setSkin(skin.identifier, for: system, orientation: currentOrientation, scope: .system)
 
             await MainActor.run {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
