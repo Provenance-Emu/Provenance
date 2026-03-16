@@ -720,12 +720,17 @@ public struct SkinCatalogDetailView: View {
         }
 
         do {
+            // Force a rescan so the just-installed skin is found
+            await DeltaSkinManager.shared.reloadSkins()
+
             let skins = try await DeltaSkinManager.shared.skins(for: system)
 
             guard !Task.isCancelled else { return }
 
             guard let skin = findMatchingInstalledSkin(for: entry, in: skins) else {
-                throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install"])
+                // Log what we have vs what we're looking for
+                ELOG("activateSkin: skin '\(entry.name)' (id: \(entry.id)) not found. Available: \(skins.map { "\($0.name) (\($0.identifier))" })")
+                throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install. Try going back and re-entering."])
             }
 
             let manager = DeltaSkinSelectionManager.shared
