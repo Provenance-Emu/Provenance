@@ -233,10 +233,11 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
         guard isRunning else { return }
         engine.pause()
         isRunning = false
-        // Flush ring buffer after pausing engine and before emulator resumes (#3183).
-        // Safe because the emulator core's frame loop is also paused when the pause menu opens,
-        // so neither the producer (core) nor consumer (render callback) should be active.
-        gameCore?.ringBuffer(atIndex: 0)?.reset()
+        // Flush ring buffer after pausing engine (#3183).
+        // Only reset when core is paused to avoid racing the producer thread.
+        if let core = gameCore, core.isEmulationPaused {
+            core.ringBuffer(atIndex: 0)?.reset()
+        }
     }
 
     private func configureAudioSession() {
