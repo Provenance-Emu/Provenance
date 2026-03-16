@@ -299,12 +299,9 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     @objc public func pauseAudio() {
         stopAudio()
         running = false
-        // Flush ring buffers after stopping engine (#3183).
-        // Only reset when core is paused to avoid racing the producer thread.
-        if let core = gameCore, core.isEmulationPaused {
-            for context in _contexts {
-                context.buffer?.reset()
-            }
+        // Flush stale audio data after stopping the consumer (#3183).
+        for context in _contexts {
+            context.buffer?.reset()
         }
     }
 
