@@ -105,19 +105,23 @@ jobs:
                 echo "  -> Dispatching: fix_copilot_review"
                 ;;
               COMMENTED)
-                # COMMENTED reviews from Copilot often have inline suggestions — treat as fix needed
-                inline_count=$(gh api "repos/${{ github.repository }}/pulls/$pr_number/comments" \
-                  --jq '[.[] | select(
-                    .user.login == "copilot-pull-request-reviewer[bot]" or
-                    .user.login == "copilot-pull-request-reviewer" or
-                    .user.login == "copilot[bot]"
-                  )] | length' 2>/dev/null || echo "0")
+                # Check the REVIEW-ATTACHED comments (not top-level PR comments)
+                # This is the correct endpoint for inline review suggestions
+                inline_count=$(gh api "repos/${{ github.repository }}/pulls/$pr_number/reviews/$review_id/comments" \
+                  --jq 'length' 2>/dev/null || echo "0")
                 if [ "$inline_count" -gt 0 ]; then
                   action="fix_copilot_review"
-                  echo "  -> COMMENTED with $inline_count inline comments. Dispatching: fix_copilot_review"
+                  echo "  -> COMMENTED with $inline_count review comments. Dispatching: fix_copilot_review"
                 else
-                  echo "  COMMENTED with no inline comments — nothing to fix."
-                  continue
+                  # Also check review body for "generated N comments"
+                  generated=$(echo "$latest_copilot_review" | jq -r '.body' | grep -oP 'generated \K\d+' || echo "0")
+                  if [ "$generated" -gt 0 ]; then
+                    action="fix_copilot_review"
+                    echo "  -> Review body says $generated comments generated. Dispatching: fix_copilot_review"
+                  else
+                    echo "  COMMENTED with no inline comments — clean review."
+                    continue
+                  fi
                 fi
                 ;;
               APPROVED)
