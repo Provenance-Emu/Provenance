@@ -63,6 +63,11 @@ __weak static PVAtari800Bridge * _currentCore;
 @end
 
 
+/// Shared deadzone threshold for analog-to-digital joystick conversion.
+static const CGFloat kJoystickDeadzone = 0.5;
+/// Maximum number of supported controller slots.
+static const NSInteger kMaxPlayers = 4;
+
 @implementation PVAtari800Bridge
 
 - (uint8_t *)atariVideoBuffer {
@@ -499,6 +504,7 @@ __weak static PVAtari800Bridge * _currentCore;
 
 - (void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
+    if (player >= kMaxPlayers) return;
     switch (button)
     {
         case PV5200ButtonFire1:
@@ -575,32 +581,29 @@ __weak static PVAtari800Bridge * _currentCore;
 }
 
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
-    //    if (self.dualJoystickOption && player == 0) {
-    //        player = 1;
-    //    }
-    //    switch (button) {
-    //        case PV5200ButtonAnalogUp:
-    ////            NSLog(@"Up: %f", round(value * N64_ANALOG_MAX));
-    //            yAxis[player] = round(value * N64_ANALOG_MAX);
-    //            break;
-    //        case PV5200ButtonAnalogDown:
-    ////            NSLog(@"Down: %f", value * -N64_ANALOG_MAX);
-    //            yAxis[player] = value * -N64_ANALOG_MAX;
-    //            break;
-    //        case PV5200ButtonAnalogLeft:
-    //            xAxis[player] = value * -N64_ANALOG_MAX;
-    //            break;
-    //        case PV5200ButtonAnalogRight:
-    //            xAxis[player] = value * N64_ANALOG_MAX;
-    //            break;
-    //        default:
-    //            break;
-    //    }
+    if (player >= kMaxPlayers) return;
+    switch (button) {
+        case PV5200ButtonUp:
+            self.controllerStates[player].up = (value > kJoystickDeadzone);
+            break;
+        case PV5200ButtonDown:
+            self.controllerStates[player].down = (value > kJoystickDeadzone);
+            break;
+        case PV5200ButtonLeft:
+            self.controllerStates[player].left = (value > kJoystickDeadzone);
+            break;
+        case PV5200ButtonRight:
+            self.controllerStates[player].right = (value > kJoystickDeadzone);
+            break;
+        default:
+            break;
+    }
 }
 
 
 - (void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
+    if (player >= kMaxPlayers) return;
     switch (button)
     {
         case PV5200ButtonFire1:
@@ -756,10 +759,10 @@ __weak static PVAtari800Bridge * _currentCore;
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
             // DPAD
-            self.controllerStates[playerIndex].up    = dpad.up.value > 0.5;
-            self.controllerStates[playerIndex].down  = dpad.down.value > 0.5;
-            self.controllerStates[playerIndex].left  = dpad.left.value > 0.5;
-            self.controllerStates[playerIndex].right = dpad.right.value > 0.5;
+            self.controllerStates[playerIndex].up    = dpad.up.value > kJoystickDeadzone;
+            self.controllerStates[playerIndex].down  = dpad.down.value > kJoystickDeadzone;
+            self.controllerStates[playerIndex].left  = dpad.left.value > kJoystickDeadzone;
+            self.controllerStates[playerIndex].right = dpad.right.value > kJoystickDeadzone;
             
             //Fire
             self.controllerStates[playerIndex].fire = gamepad.buttonA.isPressed;
@@ -798,7 +801,7 @@ __weak static PVAtari800Bridge * _currentCore;
 
 - (ATR5200ControllerState)controllerStateForPlayer:(NSUInteger)playerNum {
     ATR5200ControllerState state = {0,0,0,0,0,0,0,0};
-    if(playerNum < 4) {
+    if(playerNum < kMaxPlayers) {
         state = self.controllerStates[playerNum];
     }
     return state;
@@ -978,7 +981,7 @@ int PLATFORM_Exit(int run_monitor)
 
 int PLATFORM_PORT(int num)
 {
-    if(num < 4 && num >= 0) {
+    if (num >= 0 && num < (int)kMaxPlayers) {
         ATR5200ControllerState state = [_currentCore controllerStateForPlayer:num];
         if(state.up == 1 && state.left == 1) {
             return INPUT_STICK_UL;
@@ -1078,16 +1081,23 @@ void PLATFORM_SoundUnlock(void){}
 //    free(newBuffer);
 //}
 
-- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player { 
-    [self didPush5200Button:button forPlayer:player];
+- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
+    if (player < 0 || player >= kMaxPlayers) return;
+    [self didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player];
 }
 
-- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player { 
-    [self didRelease:button forPlayer:player];
+- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
+    if (player < 0 || player >= kMaxPlayers) return;
+    [self didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player];
 }
 
-- (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player { 
-    [self didMoveJoystick:button withXValue:xValue withYValue:yValue forPlayer:player];
+- (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    (void)button; // unused — joystick maps all axes regardless of button ID
+    if (player < 0 || player >= kMaxPlayers) return;
+    self.controllerStates[player].up    = (yValue > kJoystickDeadzone);
+    self.controllerStates[player].down  = (yValue < -kJoystickDeadzone);
+    self.controllerStates[player].left  = (xValue < -kJoystickDeadzone);
+    self.controllerStates[player].right = (xValue > kJoystickDeadzone);
 }
 
 @end
