@@ -576,9 +576,11 @@ __weak static PVAtari800Bridge * _currentCore;
 
 /// Shared deadzone threshold for analog-to-digital joystick conversion.
 static const CGFloat kJoystickDeadzone = 0.5;
+/// Maximum number of supported controller slots.
+static const NSInteger kMaxPlayers = 4;
 
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
-    if (player >= 4) return;
+    if (player >= kMaxPlayers) return;
     switch (button) {
         case PV5200ButtonUp:
             self.controllerStates[player].up = (value > kJoystickDeadzone);
@@ -755,10 +757,10 @@ static const CGFloat kJoystickDeadzone = 0.5;
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
             // DPAD
-            self.controllerStates[playerIndex].up    = dpad.up.value > 0.5;
-            self.controllerStates[playerIndex].down  = dpad.down.value > 0.5;
-            self.controllerStates[playerIndex].left  = dpad.left.value > 0.5;
-            self.controllerStates[playerIndex].right = dpad.right.value > 0.5;
+            self.controllerStates[playerIndex].up    = dpad.up.value > kJoystickDeadzone;
+            self.controllerStates[playerIndex].down  = dpad.down.value > kJoystickDeadzone;
+            self.controllerStates[playerIndex].left  = dpad.left.value > kJoystickDeadzone;
+            self.controllerStates[playerIndex].right = dpad.right.value > kJoystickDeadzone;
             
             //Fire
             self.controllerStates[playerIndex].fire = gamepad.buttonA.isPressed;
@@ -1082,13 +1084,13 @@ void PLATFORM_SoundUnlock(void){}
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    if (player < 0 || player >= 4) return;
+    if (player < 0 || player >= kMaxPlayers) return;
     [self didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player];
 }
 
 - (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
     (void)button; // unused — joystick maps all axes regardless of button ID
-    if (player < 0 || player >= 4) return;
+    if (player < 0 || player >= kMaxPlayers) return;
     self.controllerStates[player].up    = (yValue > kJoystickDeadzone);
     self.controllerStates[player].down  = (yValue < -kJoystickDeadzone);
     self.controllerStates[player].left  = (xValue < -kJoystickDeadzone);
