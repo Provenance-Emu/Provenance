@@ -51,8 +51,9 @@ bool pv_core_declares_l2r2_triggers(void);
 // ---------------------------------------------------------------------------
 // Convenience: RETRO_DEVICE_KEYBOARD support
 // ---------------------------------------------------------------------------
-// Returns true if port 0 of the loaded core declared RETRO_DEVICE_KEYBOARD as
-// a supported device type.
+// Returns true if the loaded core declared RETRO_DEVICE_KEYBOARD as a
+// supported device type on ANY controller port via
+// RETRO_ENVIRONMENT_SET_CONTROLLER_INFO.
 bool pv_core_declares_keyboard_device(void);
 
 #ifdef __cplusplus
