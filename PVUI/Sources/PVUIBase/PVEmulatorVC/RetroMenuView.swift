@@ -1835,8 +1835,9 @@ struct RetroMenuView: View {
 
                         // Show CRT shader parameters when a CRT filter is selected
                         if selectedMetalFilter.hasCRTParameters {
-                            Divider()
-                                .background(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                            Rectangle()
+                                .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                                .frame(height: 1)
                                 .padding(.vertical, 8)
 
                             if selectedMetalFilter == .simpleCRT {
@@ -1882,8 +1883,9 @@ struct RetroMenuView: View {
 
                     // Show CRT shader parameters when a CRT filter is selected
                     if selectedMetalFilter.hasCRTParameters {
-                        Divider()
-                            .background(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                        Rectangle()
+                            .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                            .frame(height: 1)
                             .padding(.vertical, 8)
 
                         if selectedMetalFilter == .simpleCRT {
