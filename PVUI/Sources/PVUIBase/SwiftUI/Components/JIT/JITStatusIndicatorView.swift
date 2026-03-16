@@ -315,6 +315,7 @@ public struct JITStatusIndicatorView: View {
                 .animation(.easeInOut(duration: 0.6), value: isVisible)
                 .accessibilityLabel(viewModel.indicatorAccessibilityLabel)
                 .accessibilityHint("Tap to see details about the current emulation mode")
+                .accessibilityHidden(!isVisible)
                 .onAppear {
                     scheduleAutoHide()
                 }
