@@ -125,6 +125,7 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                          v0, v1, v1, v0, tosPath);
                 } else {
                     ELOG(@"TOS repair: version byte write failed for %@: %@", tosPath, writeErr.localizedDescription);
+                    return NO; // file remains in bad state; callers should skip it
                 }
             }
         }
@@ -239,10 +240,14 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                     ((uint32_t)b[11]);
     uint16_t version = ((uint16_t)b[2] << 8) | b[3];
     BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
-    // Valid TOS versions: 1.00, 1.02, 1.04, 1.06, 1.62, 2.06, 4.04, etc.
-    // Major byte should be 0x01, 0x02, or 0x04. Minor byte should be sane.
-    BOOL versionOK = (version >= 0x0100 && version <= 0x0406) &&
-                     ((version >> 8) == 0x01 || (version >> 8) == 0x02 || (version >> 8) == 0x04);
+    // Valid TOS versions: 1.00–1.62, 2.06, 4.04, EmuTOS (e.g. 4.92), etc.
+    // Only check that the major byte is 0x01/0x02/0x04 and the minor byte
+    // is not 0xFF (obviously invalid). Avoid a hard upper bound — legitimate
+    // builds like EmuTOS 4.92 would otherwise be flagged as "unexpected".
+    uint8_t majorVer = (uint8_t)(version >> 8);
+    uint8_t minorVer = (uint8_t)(version & 0xFF);
+    BOOL versionOK = (majorVer == 0x01 || majorVer == 0x02 || majorVer == 0x04) &&
+                     minorVer != 0xFF;
     if (!addrOK) {
         ELOG(@"HATARI BOOT WILL FAIL: TOS ROM at %@ has invalid load address 0x%08X "
              @"(expected 0x00FC0000, 0x00E00000, or 0x00E80000). "
@@ -336,7 +341,11 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         }
         // Address is valid. Run repair anyway to fix any byte-swapped version bytes
         // (handles partially-repaired ROMs where old code fixed addr but not version).
-        [self repairTOSImageAtPath:candidate];
+        BOOL repairOK = [self repairTOSImageAtPath:candidate];
+        if (!repairOK) {
+            WLOG(@"TOS search: repair attempt failed for %@ — skipping", candidate);
+            continue;
+        }
         ILOG(@"TOS search: selected %@ (addr=0x%08X, size=%zu bytes)",
              candidate, addr, (size_t)data.length);
         return candidate;
