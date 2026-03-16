@@ -568,13 +568,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         guard isRunning else { return }
         engine.pause()
         isRunning = false
-        // Flush ring buffer after pausing engine (#3183).
-        // Precondition: emulator core frame loop must also be paused so the producer
-        // is not writing concurrently. OERingBuffer.reset() reinitializes the backing
-        // TPCircularBuffer and is not thread-safe against concurrent writes.
-        if let core = gameCore, core.isEmulationPaused {
-            core.ringBuffer(atIndex: 0)?.reset()
-        }
+        // Flush stale audio data after stopping the consumer (#3183).
+        gameCore?.ringBuffer(atIndex: 0)?.reset()
     }
 
     /// Enhanced error handling
