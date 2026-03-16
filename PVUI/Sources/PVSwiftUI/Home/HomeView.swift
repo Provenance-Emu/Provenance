@@ -270,6 +270,9 @@ struct HomeView: SwiftUI.View {
             // Consume any pending search action from LibraryNavigator (covers cold-launch).
             consumePendingSearch()
         }
+        .onChange(of: viewModel.sortGamesAscending) { newValue in
+            homeViewModel.sortAscending = newValue
+        }
         .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
             isControllerConnected = isConnected
             if isConnected {
@@ -814,12 +817,13 @@ struct HomeView: SwiftUI.View {
 
     // MARK: - Realm resolution helpers
 
-    /// Resolve a live `PVGame` from the main-thread Realm for a snapshot model.
-    private func liveGame(for model: GameCellModel) -> PVGame? {
+    /// Resolve a live `PVGame` from the main-thread Realm by MD5.
+    /// Tries the raw casing first, then uppercase and lowercase variants.
+    @MainActor
+    private func resolveGame(md5: String) -> PVGame? {
         let realm = RomDatabase.sharedInstance.realm
-        let candidates = [model.md5, model.md5.uppercased(), model.md5.lowercased()]
         var seen = Set<String>()
-        for key in candidates where seen.insert(key).inserted {
+        for key in [md5, md5.uppercased(), md5.lowercased()] where seen.insert(key).inserted {
             if let game = realm.object(ofType: PVGame.self, forPrimaryKey: key) {
                 return game
             }
@@ -827,16 +831,18 @@ struct HomeView: SwiftUI.View {
         return nil
     }
 
+    /// Resolve a live `PVGame` from the main-thread Realm for a snapshot model.
+    private func liveGame(for model: GameCellModel) -> PVGame? {
+        resolveGame(md5: model.md5)
+    }
+
     /// Launch a game by MD5, resolving the Realm object on the main thread.
     func launchGame(md5: String) {
         Task { @MainActor in
-            let realm = RomDatabase.sharedInstance.realm
-            let candidates = [md5, md5.uppercased(), md5.lowercased()]
-            var seen = Set<String>()
-            guard let game = candidates.lazy.compactMap({ key -> PVGame? in
-                guard seen.insert(key).inserted else { return nil }
-                return realm.object(ofType: PVGame.self, forPrimaryKey: key)
-            }).first else { return }
+            guard let game = resolveGame(md5: md5) else {
+                WLOG("HomeView: could not resolve PVGame for md5 '\(md5)' — object may have been deleted")
+                return
+            }
             SceneCoordinator.shared.launchGame(game.freeze())
         }
     }
