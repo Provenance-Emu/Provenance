@@ -512,11 +512,13 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     // repairTOSImageAtPath: handles both ZIP removal and byte-swap correction.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
         NSString *hatariSubDir = [systemDir stringByAppendingPathComponent:@"hatari"];
-        // Repair ALL known TOS filenames in both directories, not just tos.img.
+        NSString *hatariTosSubDir = [hatariSubDir stringByAppendingPathComponent:@"tos"];
+        // Repair ALL known TOS filenames in all directories, not just tos.img.
         // Users may import TOS ROMs with variant filenames (tos102.img, tos100.img, etc.)
         // that syncResources copies without byte-swap correction.
+        // Include hatari/tos/ because prebuilt hatari_libretro dylibs may look there.
         for (NSString *tosName in TOSAllFilenames()) {
-            for (NSString *dir in @[systemDir, hatariSubDir]) {
+            for (NSString *dir in @[systemDir, hatariSubDir, hatariTosSubDir]) {
                 NSString *tosPath = [dir stringByAppendingPathComponent:tosName];
                 [self repairTOSImageAtPath:tosPath];
             }
@@ -816,9 +818,12 @@ void extract_bundles();
     /// Hatari picks up the correct TOS ROM and config.  We also write to system_dir/ for
     /// compatibility with any code that reads from the parent directory.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
-        /// Ensure the hatari working subdirectory exists.
+        /// Ensure the hatari working subdirectory and tos subdirectory exist.
+        /// The prebuilt hatari_libretro dylib may look for TOS images in
+        /// system/hatari/tos/ so we must also populate that path.
         BOOL hatariWorkDirUsable = YES;
         NSString *hatariWorkDir = [systemDirectory stringByAppendingPathComponent:@"hatari"];
+        NSString *hatariTosDirPath = [hatariWorkDir stringByAppendingPathComponent:@"tos"];
         BOOL isDir = NO;
         if ([fm fileExistsAtPath:hatariWorkDir isDirectory:&isDir]) {
             if (!isDir) {
@@ -843,13 +848,31 @@ void extract_bundles();
             }
         }
 
+        /// Also ensure system/hatari/tos/ exists — prebuilt hatari_libretro dylibs
+        /// may search for TOS images there.
+        if (hatariWorkDirUsable) {
+            isDir = NO;
+            if (![fm fileExistsAtPath:hatariTosDirPath isDirectory:&isDir] || !isDir) {
+                NSError *tosDirError = nil;
+                if (![fm createDirectoryAtPath:hatariTosDirPath
+                   withIntermediateDirectories:YES
+                                    attributes:nil
+                                         error:&tosDirError]) {
+                    ELOG(@"Failed to create hatari/tos dir %@: %@", hatariTosDirPath, tosDirError.localizedDescription);
+                } else {
+                    ILOG(@"Created hatari/tos directory: %@", hatariTosDirPath);
+                }
+            }
+        }
+
         if (!hatariWorkDirUsable) {
             WLOG(@"Hatari working directory unavailable; falling back to system directory: %@", systemDirectory);
         }
 
-        NSString *tosImagePath     = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
-        NSString *hatariTosPath    = hatariWorkDirUsable ? [hatariWorkDir stringByAppendingPathComponent:@"tos.img"] : tosImagePath;
-        NSString *biosTosPath      = [self.BIOSPath    stringByAppendingPathComponent:@"tos.img"];
+        NSString *tosImagePath        = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
+        NSString *hatariTosPath       = hatariWorkDirUsable ? [hatariWorkDir stringByAppendingPathComponent:@"tos.img"] : tosImagePath;
+        NSString *hatariTosDirTosPath = hatariWorkDirUsable ? [hatariTosDirPath stringByAppendingPathComponent:@"tos.img"] : tosImagePath;
+        NSString *biosTosPath         = [self.BIOSPath    stringByAppendingPathComponent:@"tos.img"];
 
         /// If tos.img is not in the BIOS directory, search for alternate TOS filenames.
         /// Users commonly import TOS ROMs with variant names (tos102.img, tos100.img, etc.)
@@ -972,6 +995,15 @@ void extract_bundles();
                             ILOG(@"TOS image written to hatari working dir: %@", hatariTosPath);
                         }
 
+                        /// Also write to system/hatari/tos/tos.img — the prebuilt
+                        /// hatari_libretro dylib may look for TOS images in this subdirectory.
+                        writeError = nil;
+                        if (![tosToWrite writeToFile:hatariTosDirTosPath options:NSDataWritingAtomic error:&writeError]) {
+                            ELOG(@"Failed to write TOS image to hatari/tos dir %@: %@", hatariTosDirTosPath, writeError.localizedDescription);
+                        } else {
+                            ILOG(@"TOS image written to hatari/tos dir: %@", hatariTosDirTosPath);
+                        }
+
                         if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
                             WLOG(@"TOS image size %llu bytes is not a typical TOS size (192KB, 256KB, or 512KB)", sizeBytes);
                         }
@@ -988,7 +1020,7 @@ void extract_bundles();
         /// prior install (old Provenance bug Spike 2823).  Repair on every boot so users
         /// with a pre-existing bad file are automatically fixed without needing to
         /// re-download the BIOS.
-        for (NSString *tosPath in @[tosImagePath, hatariTosPath]) {
+        for (NSString *tosPath in @[tosImagePath, hatariTosPath, hatariTosDirTosPath]) {
             [self repairTOSImageAtPath:tosPath];
         }
     }

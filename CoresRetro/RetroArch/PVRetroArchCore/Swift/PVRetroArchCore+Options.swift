@@ -720,6 +720,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 /// 3. The in-memory repair never takes effect for the current session
                 /// By always overwriting, we guarantee a clean state every launch.
                 optionValues += "hatari_boot_hd = \"disabled\"\n"
+                optionValues += "hatari_tosimage = \"tos.img\"\n"
                 optionValuesFile = "Hatari/Hatari.opt"
                 optionOverwrite = true
             }
