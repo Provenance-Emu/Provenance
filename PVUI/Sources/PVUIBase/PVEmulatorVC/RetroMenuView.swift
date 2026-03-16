@@ -3030,6 +3030,9 @@ struct PauseMenuSaveStateBrowserView: View {
             saveStates = []
             return
         }
+        // Refresh the Realm to pick up writes from other threads/contexts
+        // (e.g., registerSaveState which opens its own Realm instance)
+        game.realm?.refresh()
         saveStates = Array(
             game.saveStates
                 .sorted(byKeyPath: "date", ascending: false)
