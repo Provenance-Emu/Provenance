@@ -26,6 +26,7 @@ public struct SkinCatalogDetailView: View {
     @State private var screenshotIndex = 0
     @State private var glowIntensity: CGFloat = 0.5
     @State private var downloadTask: Task<Void, Never>?
+    @State private var activationState: ActivationState = .idle
 
     /// Observe the skin manager so we can detect already-installed skins.
     @StateObject private var skinManager = DeltaSkinManager.shared
@@ -37,6 +38,13 @@ public struct SkinCatalogDetailView: View {
         case downloading(progress: Double)
         case installing
         case installed
+        case failed(String)
+    }
+
+    private enum ActivationState: Equatable {
+        case idle
+        case activating
+        case activated
         case failed(String)
     }
 
@@ -335,25 +343,7 @@ public struct SkinCatalogDetailView: View {
                     .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 6)
 
                     if let system = primarySystemIdentifier {
-                        NavigationLink(destination: SystemSkinSelectionView(system: system)) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "checkmark.seal.fill")
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                                Text("SET AS ACTIVE SKIN")
-                                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                                    .tracking(1)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.black.opacity(0.4))
-                                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
-                            )
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                        activateSkinButton(system: system)
                     }
                 }
 
@@ -622,6 +612,123 @@ public struct SkinCatalogDetailView: View {
 
         if isCatalogSkinInstalled(entry, in: skinManager.loadedSkins) {
             downloadState = .installed
+        }
+    }
+
+    // MARK: - Activate Skin
+
+    @ViewBuilder
+    private func activateSkinButton(system: SystemIdentifier) -> some View {
+        switch activationState {
+        case .idle:
+            Button {
+                Task { await activateSkin(for: system) }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .font(.system(size: 16))
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    Text("SET AS ACTIVE SKIN")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .tracking(1)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.black.opacity(0.4))
+                        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+
+        case .activating:
+            HStack(spacing: 12) {
+                ProgressView()
+                    .tint(RetroTheme.retroPink)
+                Text("ACTIVATING...")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    .tracking(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.black.opacity(0.4))
+                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
+            )
+
+        case .activated:
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(.green)
+                Text("SKIN ACTIVATED")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundColor(.green)
+                    .tracking(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.black.opacity(0.4))
+                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.green.opacity(0.5), lineWidth: 1.5))
+            )
+
+        case .failed(let message):
+            VStack(spacing: 8) {
+                Text(message)
+                    .font(.system(size: 12))
+                    .foregroundColor(.orange.opacity(0.8))
+                Button {
+                    Task { await activateSkin(for: system) }
+                } label: {
+                    Text("RETRY")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .tracking(1)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.black.opacity(0.4))
+                                .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+
+    private func activateSkin(for system: SystemIdentifier) async {
+        await MainActor.run {
+            activationState = .activating
+        }
+
+        do {
+            let skins = DeltaSkinManager.shared.skins(for: system)
+            guard let skin = skins.first(where: { $0.name == entry.name }) ?? skins.last else {
+                throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin not found after install"])
+            }
+
+            let manager = DeltaSkinSelectionManager.shared
+            manager.setSkin(skin, for: system, orientation: .portrait, scope: .system)
+            manager.setSkin(skin, for: system, orientation: .landscape, scope: .system)
+
+            await MainActor.run {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    activationState = .activated
+                }
+            }
+            ILOG("SkinCatalogDetailView: Activated skin '\(skin.name)' for \(system)")
+        } catch {
+            ELOG("SkinCatalogDetailView: Failed to activate skin: \(error)")
+            await MainActor.run {
+                activationState = .failed(error.localizedDescription)
+            }
         }
     }
 
