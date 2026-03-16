@@ -575,6 +575,7 @@ __weak static PVAtari800Bridge * _currentCore;
 }
 
 - (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
+    if (player >= 4) return;
     static const CGFloat kDeadzone = 0.5;
     switch (button) {
         case PV5200ButtonUp:
@@ -1079,10 +1080,12 @@ void PLATFORM_SoundUnlock(void){}
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didRelease5200Button:button forPlayer:player];
+    if (player < 0 || player >= 4) return;
+    [self didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player];
 }
 
 - (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    if (player < 0 || player >= 4) return;
     static const CGFloat kDeadzone = 0.5;
     self.controllerStates[player].up    = (yValue > kDeadzone);
     self.controllerStates[player].down  = (yValue < -kDeadzone);
