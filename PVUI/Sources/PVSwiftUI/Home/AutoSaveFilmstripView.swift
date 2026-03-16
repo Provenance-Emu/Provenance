@@ -333,10 +333,17 @@ struct AutoSaveFilmstripView: View {
     @ViewBuilder
     private var panelBackground: some View {
         ZStack {
+            #if os(tvOS)
+            Color(themeManager.currentPalette.dark
+                ? UIColor.black.withAlphaComponent(0.95)
+                : UIColor.gray.withAlphaComponent(0.97)
+            )
+            #else
             Color(themeManager.currentPalette.dark
                 ? UIColor.black.withAlphaComponent(0.95)
                 : UIColor.systemBackground.withAlphaComponent(0.97)
             )
+            #endif
             RetroTheme.RetroGridView()
                 .opacity(themeManager.currentPalette.dark ? 0.08 : 0.04)
         }

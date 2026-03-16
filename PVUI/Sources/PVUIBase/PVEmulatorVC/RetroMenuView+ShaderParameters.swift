@@ -20,6 +20,36 @@ struct ShaderParameterSlider: View {
     var step: Float? = nil
     let palette: UXThemePalette
 
+    private var tvStep: Float {
+        if let step = step {
+            return step
+        }
+
+        let span = range.upperBound - range.lowerBound
+        switch span {
+        case ..<1.0:
+            return 0.01
+        case ..<10.0:
+            return 0.1
+        case ..<100.0:
+            return 1.0
+        default:
+            return 10.0
+        }
+    }
+
+    private var canDecrease: Bool {
+        value > range.lowerBound
+    }
+
+    private var canIncrease: Bool {
+        value < range.upperBound
+    }
+
+    private func adjustValue(by delta: Float) {
+        value = min(max(value + delta, range.lowerBound), range.upperBound)
+    }
+
     private var formattedValue: String {
         if let step = step, step >= 1.0 {
             return String(format: "%.0f", value)
@@ -44,10 +74,37 @@ struct ShaderParameterSlider: View {
                     .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
             }
             #if os(tvOS)
-            if let step = step {
-                Slider(value: $value, in: range, step: Float.Stride(step))
-            } else {
-                Slider(value: $value, in: range)
+            HStack(spacing: 16) {
+                Button(action: {
+                    adjustValue(by: -tvStep)
+                }) {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.system(size: 22, weight: .semibold))
+                }
+                .buttonStyle(.bordered)
+                .tint(palette.defaultTintColor.swiftUIColor)
+                .disabled(!canDecrease)
+
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.black.opacity(0.45))
+                        Capsule()
+                            .fill(palette.defaultTintColor.swiftUIColor)
+                            .frame(width: geometry.size.width * CGFloat((value - range.lowerBound) / max(range.upperBound - range.lowerBound, 0.0001)))
+                    }
+                }
+                .frame(height: 10)
+
+                Button(action: {
+                    adjustValue(by: tvStep)
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 22, weight: .semibold))
+                }
+                .buttonStyle(.bordered)
+                .tint(palette.defaultTintColor.swiftUIColor)
+                .disabled(!canIncrease)
             }
             #else
             RetroWaveSlider(value: $value, in: range, step: Float.Stride(step ?? 0))

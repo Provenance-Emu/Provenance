@@ -13,7 +13,7 @@
 import Foundation
 import PVLogging
 
-#if canImport(MetricKit)
+#if canImport(MetricKit) && !os(tvOS)
 import MetricKit
 
 extension PVAppDelegate: MXMetricManagerSubscriber {

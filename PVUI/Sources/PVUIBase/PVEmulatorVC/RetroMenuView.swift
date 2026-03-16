@@ -2793,9 +2793,11 @@ struct PauseMenuScreenshotBrowserView: View {
             }
 #endif
         }
+#if !os(tvOS)
         .sheet(isPresented: $showingShareSheet) {
             ActivityViewController(activityItems: shareItems)
         }
+#endif
         .onAppear { reload() }
         .preferredColorScheme(.dark)
     }

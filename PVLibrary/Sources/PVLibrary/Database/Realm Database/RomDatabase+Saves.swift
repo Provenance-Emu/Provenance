@@ -38,7 +38,7 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
     ) async throws -> String {
         let realm: Realm
         do {
-            realm = try Realm(configuration: RealmConfiguration.realmConfig)
+            realm = try await Realm(configuration: RealmConfiguration.realmConfig)
         } catch {
             ELOG("registerSaveState: cannot obtain Realm — \(error.localizedDescription)")
             throw SaveStateError.realmWriteError(error)

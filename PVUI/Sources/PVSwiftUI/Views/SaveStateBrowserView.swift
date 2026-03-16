@@ -355,6 +355,7 @@ private struct SaveStateBrowserItemRow: View {
             .buttonStyle(.plain)
         }
         .padding(.vertical, 4)
+        #if !os(tvOS)
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
                 showDeleteAlert = true
@@ -362,6 +363,7 @@ private struct SaveStateBrowserItemRow: View {
                 Label("Delete", systemImage: "trash")
             }
         }
+        #endif
         .uiKitAlert(
             "Delete Save State",
             message: "Delete this save state for \(gameTitle)?",

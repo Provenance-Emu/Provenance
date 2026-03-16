@@ -72,6 +72,7 @@ jobs:
             scheme: "Provenance (AppStore) (Release)"
             APP_NAME: "Provenance"
             IPA_NAME: "Provenance-tvOS"
+            optional: true
 
           # Lite targets — uncomment if needed for fast-fail validation
           # - target: "Provenance-Lite-iOS"
@@ -86,6 +87,7 @@ jobs:
           #   IPA_NAME: "Provenance-Lite-tvOS"
 
     runs-on: 'macos-latest'
+    continue-on-error: ${{ matrix.optional || false }}
     timeout-minutes: 300
     steps:
       - name: Cache Git checkout
@@ -286,6 +288,7 @@ jobs:
           rm -rf .build
 
   # Update rolling alpha release on successful develop pushes
+  # tvOS is continue-on-error so this runs even if only iOS succeeds
   alpha-release:
     name: Update Alpha Release
     needs: build

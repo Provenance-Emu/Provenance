@@ -1790,9 +1790,11 @@ private struct CoreDeadzoneCompatibilityView: View {
                     EmptyView()
                 }
             }
+            #if !os(tvOS)
             .listStyle(.insetGrouped)
-            .navigationTitle("Deadzone Support")
             .navigationBarTitleDisplayMode(.large)
+            #endif
+            .navigationTitle("Deadzone Support")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

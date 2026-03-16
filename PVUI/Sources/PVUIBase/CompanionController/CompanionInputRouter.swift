@@ -82,7 +82,6 @@ public enum CompanionInputEvent: Sendable {
 /// Layout components call `send(_:)` on this object whenever a touch begins
 /// or ends. The router maintains the current bitmask / axis state and pushes
 /// updates to DSU via the `DSUSlotDelegate` protocol.
-@MainActor
 public final class CompanionInputRouter: ObservableObject {
 
     // MARK: - Published state (for debug overlays)
@@ -108,7 +107,7 @@ public final class CompanionInputRouter: ObservableObject {
     // MARK: - Event ingestion
 
     /// Send an input event from a layout component.
-    public func send(_ event: CompanionInputEvent) {
+    @MainActor public func send(_ event: CompanionInputEvent) {
         switch event {
         case .buttonDown(let btn):
             heldButtons |= btn.rawValue

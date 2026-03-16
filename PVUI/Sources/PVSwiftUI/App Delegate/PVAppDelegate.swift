@@ -363,9 +363,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         RealmConfiguration.setDefaultRealmConfig()
 
         // Register MetricKit subscriber to capture hang / crash diagnostics passively
-        if #available(iOS 14.0, tvOS 14.0, *) {
+        #if !os(tvOS)
+        if #available(iOS 14.0, *) {
             registerMetricKitSubscriber()
         }
+        #endif
 
         Task { @MainActor in
             await initializeAppComponents()
@@ -626,9 +628,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     // TODO: Move to ProvenanceApp
     public func applicationWillTerminate(_ application: UIApplication) {
         stopCore()
+#if !os(tvOS)
         if #available(iOS 14.0, tvOS 14.0, *) {
             unregisterMetricKitSubscriber()
         }
+#endif
     }
 
     @MainActor
