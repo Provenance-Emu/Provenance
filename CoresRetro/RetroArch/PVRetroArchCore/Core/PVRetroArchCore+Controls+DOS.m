@@ -411,6 +411,10 @@ static void st_ra_update_mouse_rel(CGPoint point) {
             // so the automap button doesn't accidentally open the RetroArch menu.
             [touch_controller.extendedGamepad.buttonOptions setValue:v];
             break;
+        case PVDoomButtonStrafe:
+            // PrBoom Gamepad Classic: JOYPAD_X → Strafe (toggle) — buttonY (north)
+            [touch_controller.extendedGamepad.buttonY setValue:v];
+            break;
         case PVDoomButtonPause:
             // JOYPAD_START → buttonMenu
             [touch_controller.extendedGamepad.buttonMenu setValue:v];

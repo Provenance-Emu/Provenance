@@ -8670,7 +8670,7 @@
 			</dict>
 			<dict>
 				<key>PVControlSize</key>
-				<string>{180,180}</string>
+				<string>{180,250}</string>
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVGroupedButtons</key>
@@ -8702,6 +8702,16 @@
 						<string>#f9a263</string>
 						<key>PVControlTitle</key>
 						<string>Run</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{50,170},{80,70}}</string>
+						<key>PVControlTint</key>
+						<string>#f9c963</string>
+						<key>PVControlTitle</key>
+						<string>Strafe</string>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>

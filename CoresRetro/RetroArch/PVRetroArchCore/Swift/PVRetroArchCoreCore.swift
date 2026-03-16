@@ -505,15 +505,15 @@ extension PVRetroArchCoreCore: PVSupervisionSystemResponderClient {
 }
 
 // MARK: Doom (PrBoom)
-// PVDoomSystemResponderClient maps Doom-specific button events through the DOS bridge.
-// This conformance allows PVDoomControllerViewController to be routed correctly via
-// PVCoreFactory for the .DOOM system identifier.
+// PVDoomSystemResponderClient forwards directly to the ObjC Doom bridge
+// (PVRetroArchCoreBridge (DoomControls)) which has correct PrBoom button mappings.
+// Previously this converted through asDOSButton → DOS bridge, causing wrong mappings.
 extension PVRetroArchCoreCore: PVDoomSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVDoomButton, forPlayer player: Int) {
-        (_bridge as? PVDOSSystemResponderClient)?.didPush(button.asDOSButton, forPlayer: player)
+        (_bridge as? PVDoomSystemResponderClient)?.didPush(button, forPlayer: player)
     }
     public func didRelease(_ button: PVCoreBridge.PVDoomButton, forPlayer player: Int) {
-        (_bridge as? PVDOSSystemResponderClient)?.didRelease(button.asDOSButton, forPlayer: player)
+        (_bridge as? PVDoomSystemResponderClient)?.didRelease(button, forPlayer: player)
     }
 }
 
