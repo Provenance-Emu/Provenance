@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "ee2a73c7148264cb7e0a0819d3063225541e57162353d97707d9fab830d27ba6"
     },
+    "swiftdata-pro": {
+      "source": "twostraws/swiftdata-agent-skill",
+      "sourceType": "github",
+      "computedHash": "2f979bad98ea3a6744084c5f93e27897f02e8d0ffe15dd03042e88aaae4da14c"
+    },
     "swiftui-expert-skill": {
       "source": "avdlee/swiftui-agent-skill",
       "sourceType": "github",
