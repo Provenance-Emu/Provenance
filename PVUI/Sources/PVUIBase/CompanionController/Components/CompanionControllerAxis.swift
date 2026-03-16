@@ -7,6 +7,7 @@
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
+#if !os(tvOS)
 import SwiftUI
 
 // MARK: - CompanionControllerAxis
@@ -188,3 +189,4 @@ public struct CompanionControllerDpad: View {
         activeDirection = []
     }
 }
+#endif

@@ -7,8 +7,9 @@
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
+#if !os(tvOS)
 import SwiftUI
-#if canImport(UIKit) && !os(tvOS)
+#if canImport(UIKit)
 import UIKit
 #endif
 
@@ -100,3 +101,4 @@ extension CompanionControllerButton where Label == Text {
         }
     }
 }
+#endif
