@@ -323,6 +323,7 @@ public struct JITStatusIndicatorView: View {
                 .onDisappear {
                     pendingHideWorkItem?.cancel()
                     pendingHideWorkItem = nil
+                    userRevealed = false
                 }
             }
         }
@@ -355,6 +356,7 @@ public struct JITStatusIndicatorView: View {
     /// Temporarily reveals the indicator for another cycle, then fades it out again.
     /// Cancels any previously scheduled hide to avoid premature dismissal.
     private func revealTemporarily() {
+        guard autoHideDelay > 0 else { return }
         pendingHideWorkItem?.cancel()
         userRevealed = true
         withAnimation { isVisible = true }
