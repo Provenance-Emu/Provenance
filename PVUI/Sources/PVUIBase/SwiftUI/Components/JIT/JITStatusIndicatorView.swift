@@ -316,7 +316,7 @@ public struct JITStatusIndicatorView: View {
                 .animation(.easeInOut(duration: 0.6), value: isVisible)
                 .accessibilityLabel(viewModel.indicatorAccessibilityLabel)
                 .accessibilityHint("Tap to see details about the current emulation mode")
-                .accessibilityHidden(!isVisible)
+                .accessibilityElement(children: .combine)
                 .onAppear {
                     scheduleAutoHide()
                 }
@@ -327,8 +327,10 @@ public struct JITStatusIndicatorView: View {
                 }
             }
         }
-        .onChange(of: viewModel.status) { _ in
-            revealTemporarily()
+        .onChange(of: viewModel.status) { newStatus in
+            if newStatus.isVisible {
+                revealTemporarily()
+            }
         }
         #if canImport(JITManager)
         .onReceive(NotificationCenter.default.publisher(for: .DOLJitAcquired)) { _ in
