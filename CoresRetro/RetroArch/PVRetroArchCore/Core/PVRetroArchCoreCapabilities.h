@@ -41,11 +41,17 @@ bool pv_core_declares_mouse_device(void);
 // RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS on port 0.
 //
 // Cores for controllers with physical L2/R2 buttons (PS1, Saturn, N64,
-// GameCube, etc.) always declare these labels.  Cores for simpler controllers
-// (NES, SNES 2-button, Game Boy) typically leave them NULL.
+// GameCube, etc.) are expected to declare these labels.  Cores for simpler
+// controllers (NES, SNES 2‑button, Game Boy) typically leave them NULL.
 //
-// Returns false if the core never called SET_INPUT_DESCRIPTORS (in which case
-// the caller should fall back to the static system-ID list).
+// Returns false in both of the following cases:
+//   - The core never called SET_INPUT_DESCRIPTORS at all; or
+//   - The core did call SET_INPUT_DESCRIPTORS, but did not provide L2/R2
+//     labels for port 0.
+//
+// Callers that need to distinguish "no descriptors declared" from "descriptors
+// declared but no L2/R2 buttons" must use additional context or a separate
+// helper; this function only answers whether L2/R2 triggers are available.
 bool pv_core_declares_l2r2_triggers(void);
 
 // ---------------------------------------------------------------------------
