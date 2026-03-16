@@ -5841,6 +5841,102 @@
 			</dict>
 			<dict>
 				<key>Description</key>
+				<string>TOS 1.00 US Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos100us.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>131072</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.02 US Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos102us.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.04 US Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos104us.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.04 SE Swedish Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos104se.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.06 US Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos106us.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 2.05 US Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos205us.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>262144</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 2.06 UK Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos206uk.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>262144</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 2.06 US Boot Image (.rom)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>tos206us.rom</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>262144</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
 				<string>EmuTOS 1024k (open-source free alternative)</string>
 				<key>MD5</key>
 				<string></string>
