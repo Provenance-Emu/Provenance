@@ -689,7 +689,8 @@ public struct SkinCatalogDetailView: View {
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
                 Button {
-                    Task { await activateSkin(for: system) }
+                    activationState = .activating
+                    activationTask = Task { await activateSkin(for: system) }
                 } label: {
                     Text("RETRY")
                         .font(.system(size: 14, weight: .bold, design: .rounded))
@@ -734,6 +735,9 @@ public struct SkinCatalogDetailView: View {
                 }
             }
             ILOG("SkinCatalogDetailView: Activated skin '\(skin.name)' for \(system)")
+        } catch is CancellationError {
+            // Task was cancelled (e.g. view dismissed) — don't update state
+            return
         } catch {
             ELOG("SkinCatalogDetailView: Failed to activate skin: \(error)")
             await MainActor.run {
