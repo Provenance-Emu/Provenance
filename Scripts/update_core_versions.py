@@ -364,19 +364,13 @@ def main() -> int:
         help="Limit to a single core (matched case-insensitively against core directory name).",
     )
     parser.add_argument(
-        "--skip-disabled",
-        action="store_true",
-        default=True,
-        help="Skip cores that have PVDisabled=true (default: enabled).",
-    )
-    parser.add_argument(
         "--include-disabled",
         action="store_true",
-        help="Include disabled cores in the report.",
+        help="Include cores that have PVDisabled=true in the report (skipped by default).",
     )
     args = parser.parse_args()
 
-    skip_disabled = args.skip_disabled and not args.include_disabled
+    skip_disabled = not args.include_disabled
 
     plists = find_all_core_plists()
     if not plists:
