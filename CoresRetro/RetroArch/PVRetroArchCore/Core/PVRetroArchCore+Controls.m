@@ -29,6 +29,9 @@
 #include "../ui_companion_driver.h"
 #include "PVRetroArchCoreCapabilities.h"
 
+/* Extern from RetroArch runloop: tracks RETRO_CORE_FLAG_HAS_SET_INPUT_DESCRIPTORS. */
+extern bool core_has_set_input_descriptor(void);
+
 #ifdef HAVE_COREMOTION && !TARGET_OS_TV
 #import <CoreMotion/CoreMotion.h>
 static CMMotionManager *motionManager;
@@ -116,6 +119,13 @@ static bool system_needs_l2r2_triggers(void) {
     // This is populated by RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS during core load.
     if (pv_core_declares_l2r2_triggers()) {
         return true;
+    }
+
+    // If the core has set any input descriptors, trust that data and do not
+    // fall back to the static system list. The intent is to only use the
+    // static heuristic when SET_INPUT_DESCRIPTORS was never called.
+    if (core_has_set_input_descriptor()) {
+        return false;
     }
 
     // Fallback static list for cores that don't call SET_INPUT_DESCRIPTORS.
