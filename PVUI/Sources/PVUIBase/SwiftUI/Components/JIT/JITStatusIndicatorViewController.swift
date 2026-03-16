@@ -36,8 +36,8 @@ private final class PassthroughView: UIView {
 ///
 /// ## PVToast notifications
 /// Status transitions automatically post in-game toasts via `PVToastManager`:
-///  - JIT acquired → `.jit` success toast (auto-dismissed after 4 s)
-///  - JIT unavailable for a required core → persistent `.error` toast until status changes
+///  - JIT acquired -> `.jit` success toast (auto-dismissed after 4 s)
+///  - JIT unavailable for a required core -> persistent `.error` toast until status changes
 @MainActor
 public final class JITStatusIndicatorViewController: UIViewController {
 
@@ -75,11 +75,12 @@ public final class JITStatusIndicatorViewController: UIViewController {
         view.addSubview(host.view)
         host.view.translatesAutoresizingMaskIntoConstraints = false
 
-        // Top-left corner, respecting the safe area so it clears the notch/Dynamic Island
-        // and lands above the skin controller area (which is at the bottom/sides).
+        // Bottom-center, hugging the bottom edge as a subtle LED-style indicator.
+        // Stays out of the way of game content at the top of the screen.
         NSLayoutConstraint.activate([
-            host.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
-            host.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
+            host.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            host.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -2),
+            host.view.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             host.view.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
         ])
 
@@ -126,11 +127,11 @@ public final class JITStatusIndicatorViewController: UIViewController {
             message: """
             JIT compilation can be enabled using one of the following tools:
 
-            • AltStore / AltServer — free, requires a Mac or PC to refresh periodically
-            • SideStore — wireless alternative to AltStore
-            • SideJITServer — lightweight local server for over-the-air JIT
-            • StikDebug — on-device JIT enabler (requires compatible setup)
-            • TrollStore — permanent JIT for supported iOS/iPadOS versions
+            \u{2022} AltStore / AltServer \u{2014} free, requires a Mac or PC to refresh periodically
+            \u{2022} SideStore \u{2014} wireless alternative to AltStore
+            \u{2022} SideJITServer \u{2014} lightweight local server for over-the-air JIT
+            \u{2022} StikDebug \u{2014} on-device JIT enabler (requires compatible setup)
+            \u{2022} TrollStore \u{2014} permanent JIT for supported iOS/iPadOS versions
 
             After enabling JIT, return to the game and the indicator will update automatically.
             """,
@@ -176,12 +177,12 @@ public final class JITStatusIndicatorViewController: UIViewController {
             // Dismiss any lingering "unavailable" toast
             PVToastManager.shared.dismiss(id: jitUnavailableToastID)
             let label = viewModel.indicatorLabel
-            PVToastManager.shared.show("JIT active — \(label)", type: .jit, duration: 4.0)
+            PVToastManager.shared.show("JIT active \u{2014} \(label)", type: .jit, duration: 4.0)
 
         case .unavailable:
             // Persistent toast so the user always sees the guidance
             PVToastManager.shared.showPersistent(
-                "JIT required — enable via AltStore, SideJITServer, or StikDebug",
+                "JIT required \u{2014} enable via AltStore, SideJITServer, or StikDebug",
                 id: jitUnavailableToastID,
                 type: .error,
                 icon: "bolt.slash.fill"
@@ -191,7 +192,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
             PVToastManager.shared.dismiss(id: jitUnavailableToastID)
             if previousStatus == .active {
                 PVToastManager.shared.show(
-                    "JIT lost — running in compatibility mode",
+                    "JIT lost \u{2014} running in compatibility mode",
                     type: .warning,
                     duration: 5.0
                 )
