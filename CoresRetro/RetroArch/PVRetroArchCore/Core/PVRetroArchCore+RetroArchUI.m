@@ -10,6 +10,7 @@
 #import "PVRetroArchCoreBridge+Audio.h"
 #import "PVRetroArchCoreBridge+Video.h"
 #import "PVRetroArchCoreBridge+Archive.h"
+#import "PVRetroArchCoreBridge+BIOSAtariST.h"
 #import <PVRetroArch/PVRetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>

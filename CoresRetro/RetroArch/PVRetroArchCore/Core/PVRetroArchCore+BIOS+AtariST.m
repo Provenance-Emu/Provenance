@@ -10,8 +10,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCoreBridge.h"
+#import "PVRetroArchCoreBridge+BIOSAtariST.h"
 #import <PVLogging/PVLoggingObjC.h>
+
+// Forward declaration for syncResource:to: which is implemented in
+// PVRetroArchCore+RetroArchUI.m. Declaring it here suppresses the
+// "may not respond to selector" warning in this compilation unit.
+@interface PVRetroArchCoreBridge (RetroArchUIForward)
+- (void)syncResource:(NSString *)from to:(NSString *)to;
+@end
 
 // ---------------------------------------------------------------------------
 // MARK: - TOS filename registry
@@ -36,54 +43,6 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     });
     return names;
 }
-
-// ---------------------------------------------------------------------------
-// MARK: - BIOSAtariST category interface
-// ---------------------------------------------------------------------------
-
-@interface PVRetroArchCoreBridge (BIOSAtariST)
-
-/// YES when the current system/core is Atari ST / Hatari.
-- (BOOL)pv_isHatariSystem;
-
-/// Validate and repair a TOS ROM file in-place.
-///
-/// - Removes the file if it is a ZIP archive (magic bytes PK).
-/// - Corrects the three byte-swapped load-address patterns introduced by
-///   Provenance bug Spike 2823 (old patching code wrote addresses in wrong byte order).
-/// - Returns YES if the file exists and is not a ZIP after the call.
-- (BOOL)repairTOSImageAtPath:(NSString *)tosPath;
-
-/// Final TOS validation before Hatari launches.
-/// Logs a clear diagnostic if neither path contains a bootable TOS.
-- (void)validateTOSReadyOrLog:(NSString *)primaryPath fallback:(NSString *)fallbackPath;
-
-/// Search *directory* for the best usable TOS ROM.
-/// Checks every name in TOSAllFilenames() and returns the full path of the
-/// first file that is ≥128 KB, not a ZIP, and has a known-valid load address.
-/// Returns nil if no usable TOS is found.
-- (nullable NSString *)findBestTOSInDirectory:(NSString *)directory;
-
-/// Log a diagnostic inventory of every TOS file found in biosDir and systemDir.
-/// Call this when debugging boot failures.
-- (void)logTOSInventoryForSystemDir:(NSString *)systemDir biosDir:(NSString *)biosDir;
-
-/// Full Hatari TOS setup: find the best TOS from biosDir, repair it, and
-/// write it to systemDir/tos.img and systemDir/hatari/tos.img.
-/// Also repairs any stale TOS files already present in those destinations
-/// (e.g. files that arrived via CloudKit sync or a previous buggy install).
-- (void)setupHatariTOSForSystemDir:(NSString *)systemDir;
-
-/// Write hatari.cfg to systemDir/hatari/hatari.cfg (primary) and
-/// systemDir/hatari.cfg (legacy), patching the TOS image path and
-/// disk-image directory to absolute runtime paths.
-- (void)writeHatariConfigForSystemDir:(NSString *)systemDir;
-
-/// Post-sync repair: called after syncResources to repair any byte-swapped
-/// TOS files that may have been copied from the BIOS directory.
-- (void)repairHatariTOSInSystemDir:(NSString *)systemDir;
-
-@end
 
 // ---------------------------------------------------------------------------
 // MARK: - BIOSAtariST implementation
@@ -257,9 +216,36 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                 WLOG(@"TOS search: skipping %@ (unrecognised address 0x%08X)", candidate, addr);
                 continue;
             }
-            // Repairable — repair in place, then accept
+            // Repairable — repair in place, then re-read to confirm the fix took effect
             ILOG(@"TOS search: found repairable TOS at %@ (addr 0x%08X)", candidate, addr);
-            [self repairTOSImageAtPath:candidate];
+            BOOL repaired = [self repairTOSImageAtPath:candidate];
+            if (!repaired) {
+                WLOG(@"TOS search: repair failed for %@ — skipping", candidate);
+                continue;
+            }
+            // Re-read the header to get the corrected address for the log message
+            NSError *verifyErr = nil;
+            NSData *fixedData = [NSData dataWithContentsOfFile:candidate
+                                                       options:NSDataReadingMappedIfSafe
+                                                         error:&verifyErr];
+            if (!fixedData || fixedData.length < 12) {
+                WLOG(@"TOS search: could not re-read repaired TOS at %@ — skipping", candidate);
+                continue;
+            }
+            const unsigned char *fb = (const unsigned char *)fixedData.bytes;
+            uint32_t fixedAddr = ((uint32_t)fb[8]  << 24) |
+                                 ((uint32_t)fb[9]  << 16) |
+                                 ((uint32_t)fb[10] <<  8) |
+                                 ((uint32_t)fb[11]);
+            BOOL fixedAddrOK = (fixedAddr == 0x00FC0000 || fixedAddr == 0x00E00000 || fixedAddr == 0x00E80000);
+            if (!fixedAddrOK) {
+                WLOG(@"TOS search: repaired TOS at %@ still has invalid address 0x%08X — skipping",
+                     candidate, fixedAddr);
+                continue;
+            }
+            ILOG(@"TOS search: selected (after repair) %@ (addr=0x%08X→0x%08X, size=%zu bytes)",
+                 candidate, addr, fixedAddr, (size_t)fixedData.length);
+            return candidate;
         }
         ILOG(@"TOS search: selected %@ (addr=0x%08X, size=%zu bytes)",
              candidate, addr, (size_t)data.length);
@@ -364,9 +350,6 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                                 ? [hatariDir stringByAppendingPathComponent:@"tos.img"]
                                 : sysTosPath;
 
-    // --- Log inventory before doing anything, useful for diagnosing stuck-BIOS issues ---
-    [self logTOSInventoryForSystemDir:systemDir biosDir:self.BIOSPath];
-
     // --- Find the best TOS in the BIOS directory ---
     // Unlike the old code, we validate each candidate before accepting it.
     // This means a stale/corrupt tos.img in BIOS won't block a valid tos102.img
@@ -439,6 +422,8 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         ELOG(@"Hatari: no valid TOS ROM found in BIOS directory %@. "
              @"Import a TOS ROM (tos.img, tos102.img, etc.) via the BIOS import screen.",
              self.BIOSPath);
+        // Log a full inventory to help diagnose where the missing/invalid TOS files are.
+        [self logTOSInventoryForSystemDir:systemDir biosDir:self.BIOSPath];
     }
 
     // In-place repair of any stale TOS files that may already exist in system dirs
