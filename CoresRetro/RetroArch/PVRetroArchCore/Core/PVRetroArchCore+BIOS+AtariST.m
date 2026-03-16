@@ -78,6 +78,36 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
 
     const unsigned char *b = (const unsigned char *)tosData.bytes;
 
+    // Full word-swap check — detect if the entire ROM is byte-swapped (every 16-bit
+    // word has its bytes reversed).  A genuine Atari ST TOS image starts with a 68000
+    // BRA instruction encoded big-endian as 0x60, 0x1A.  If the first two bytes are
+    // 0x1A, 0x60 the ROM has been dumped in word-swapped order and must be corrected
+    // before Hatari can use it.  (Hatari standalone auto-detects this, but the
+    // Hatari libretro core v1.8.0 shipped with Provenance does not.)
+    if (b[0] == 0x1A && b[1] == 0x60) {
+        ILOG(@"TOS repair: word-swapped ROM detected at %@ — applying full word-swap", tosPath);
+        NSMutableData *swapped = [tosData mutableCopy];
+        unsigned char *sb = (unsigned char *)swapped.mutableBytes;
+        for (NSUInteger i = 0; i + 1 < swapped.length; i += 2) {
+            unsigned char tmp = sb[i];
+            sb[i] = sb[i + 1];
+            sb[i + 1] = tmp;
+        }
+        NSError *writeErr = nil;
+        if ([swapped writeToFile:tosPath options:NSDataWritingAtomic error:&writeErr]) {
+            const unsigned char *fb = (const unsigned char *)swapped.bytes;
+            uint32_t newAddr = ((uint32_t)fb[8]  << 24) | ((uint32_t)fb[9]  << 16) |
+                               ((uint32_t)fb[10] <<  8) | ((uint32_t)fb[11]);
+            ILOG(@"TOS repair: word-swap applied to %@ (%zu bytes, corrected addr=0x%08X)",
+                 tosPath, (size_t)swapped.length, newAddr);
+            return YES;
+        } else {
+            ELOG(@"TOS repair: failed to write word-swapped ROM to %@: %@",
+                 tosPath, writeErr.localizedDescription);
+            return NO;
+        }
+    }
+
     // ZIP check — syncResources may have copied a still-archived BIOS.
     if (b[0] == 0x50 && b[1] == 0x4B) {
         ELOG(@"TOS repair: removing ZIP at %@ — BIOS must be extracted before use", tosPath);
@@ -210,14 +240,24 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                         ((uint32_t)b[11]);
         BOOL addrOK = (addr == 0x00FC0000 || addr == 0x00E00000 || addr == 0x00E80000);
         if (!addrOK) {
-            // Check if it's a known byte-swap pattern we can repair
-            BOOL repairable = (addr == 0x0000FC00 || addr == 0x0000E000 || addr == 0x0000E800);
+            // Check if it's a known byte-swap pattern we can repair:
+            // - Classic address-only swap (old Provenance Spike 2823 bug)
+            // - Full ROM word-swap (every 16-bit pair byte-reversed) — detected by
+            //   the byte-swapped BRA instruction 0x1A60 at offset 0.  Any fully
+            //   word-swapped TOS also has word-swapped address bytes (0xFC000000 for
+            //   TOS 1.x etc.), so we check the first-word signature rather than
+            //   enumerating all possible swapped address values.
+            BOOL isWordSwapped = (b[0] == 0x1A && b[1] == 0x60);
+            BOOL repairable = isWordSwapped ||
+                              (addr == 0x0000FC00 || addr == 0x0000E000 || addr == 0x0000E800);
             if (!repairable) {
-                WLOG(@"TOS search: skipping %@ (unrecognised address 0x%08X)", candidate, addr);
+                WLOG(@"TOS search: skipping %@ (unrecognised address 0x%08X, first bytes 0x%02X%02X)",
+                     candidate, addr, b[0], b[1]);
                 continue;
             }
             // Repairable — repair in place, then re-read to confirm the fix took effect
-            ILOG(@"TOS search: found repairable TOS at %@ (addr 0x%08X)", candidate, addr);
+            ILOG(@"TOS search: found repairable TOS at %@ (addr 0x%08X, firstBytes 0x%02X%02X, wordSwapped=%d)",
+                 candidate, addr, b[0], b[1], (int)isWordSwapped);
             BOOL repaired = [self repairTOSImageAtPath:candidate];
             if (!repaired) {
                 WLOG(@"TOS search: repair failed for %@ — skipping", candidate);
