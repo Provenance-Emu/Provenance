@@ -293,9 +293,7 @@ jobs:
 
           msg="chore(changelog): absorb fragments${absorbed:+ ($absorbed)}"
 
-          git commit -m "$msg
-
-Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          git commit -m "$(printf '%s\n\nCo-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>' "$msg")"
 
           # Push with retry in case of a race with auto-rebase
           for attempt in 1 2 3; do
