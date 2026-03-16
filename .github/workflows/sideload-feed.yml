@@ -4,8 +4,8 @@ name: Update Sideload Feed
 # to the docs/ folder whenever a release or alpha build is published.
 #
 # The JSON files are hosted at:
-#   https://provenance-emu.github.io/Provenance/altstore-source.json
-#   https://provenance-emu.github.io/Provenance/sidestore-source.json
+#   https://provenance-emu.com/altstore-source.json
+#   https://provenance-emu.com/sidestore-source.json
 #
 # Stable releases appear as "Provenance" (com.provenance-emu.provenance).
 # Alpha builds appear as "Provenance Alpha" (com.provenance-emu.provenance.alpha)
@@ -178,7 +178,7 @@ jobs:
             '{
               name: "Provenance Emulator",
               identifier: "com.provenance-emu.provenance.altstore",
-              sourceURL: "https://provenance-emu.github.io/Provenance/altstore-source.json",
+              sourceURL: "https://provenance-emu.com/altstore-source.json",
               apps: [
                 {
                   name: "Provenance",
@@ -230,7 +230,7 @@ jobs:
 
           # ── SideStore source JSON (same schema, different sourceURL) ────
           jq '.identifier = "com.provenance-emu.provenance.sidestore" |
-              .sourceURL = "https://provenance-emu.github.io/Provenance/sidestore-source.json"' \
+              .sourceURL = "https://provenance-emu.com/sidestore-source.json"' \
             /tmp/altstore-source.json > /tmp/sidestore-source.json
 
           # Validate JSON
@@ -243,49 +243,39 @@ jobs:
           echo "stable_count=${STABLE_COUNT}" >> "$GITHUB_OUTPUT"
           echo "alpha_count=${ALPHA_COUNT}" >> "$GITHUB_OUTPUT"
 
-      - name: Commit feed to docs/ folder
+      - name: Push feed to provenance-emu.github.io
         env:
-          GH_TOKEN: ${{ github.token }}
+          DEPLOY_KEY: ${{ secrets.PAGES_DEPLOY_KEY }}
         run: |
-          mkdir -p docs
-          cp /tmp/altstore-source.json docs/altstore-source.json
-          cp /tmp/sidestore-source.json docs/sidestore-source.json
+          # Set up SSH with deploy key
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
 
-          # Also write a simple index pointing to the feeds
-          cat > docs/sideload.md << 'MDEOF'
-          # Provenance Sideload Feeds
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no"
 
-          Add one of these URLs to your sideloading app:
+          # Clone the pages repo
+          git clone git@github.com:Provenance-Emu/provenance-emu.github.io.git /tmp/pages-repo
 
-          | App | Feed URL |
-          |-----|----------|
-          | AltStore / AltStore PAL | `https://provenance-emu.github.io/Provenance/altstore-source.json` |
-          | SideStore | `https://provenance-emu.github.io/Provenance/sidestore-source.json` |
+          # Copy generated feeds
+          cp /tmp/altstore-source.json /tmp/pages-repo/altstore-source.json
+          cp /tmp/sidestore-source.json /tmp/pages-repo/sidestore-source.json
 
-          IPAs are hosted as GitHub Release assets and are publicly downloadable without a GitHub account.
-
-          ## Two apps in the feed
-
-          The feed contains **two separate apps**:
-
-          | App | Bundle ID | Description |
-          |-----|-----------|-------------|
-          | **Provenance** | `com.provenance-emu.provenance` | Stable releases from tagged versions |
-          | **Provenance Alpha** | `com.provenance-emu.provenance.alpha` | Latest dev builds from `develop` branch |
-
-          Both can be installed simultaneously on the same device since they use different bundle identifiers.
-
-          > Only the latest 3 alpha builds are kept in the feed to avoid clutter.
-          MDEOF
+          cd /tmp/pages-repo
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add docs/altstore-source.json docs/sidestore-source.json docs/sideload.md
+          git add altstore-source.json sidestore-source.json
 
           if git diff --cached --quiet; then
             echo "No changes to feed — skipping commit."
           else
-            git commit -m "chore(sideload): update AltStore/SideStore JSON feed [skip ci]"
+            git commit -m "chore: update AltStore/SideStore JSON feed [skip ci]"
             git push origin HEAD
+            echo "Feed updated and pushed to provenance-emu.github.io"
           fi
+
+          # Cleanup
+          rm -f ~/.ssh/deploy_key
