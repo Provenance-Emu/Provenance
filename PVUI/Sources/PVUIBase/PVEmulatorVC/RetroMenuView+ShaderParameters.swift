@@ -43,11 +43,19 @@ struct ShaderParameterSlider: View {
                     .font(.system(size: 13, weight: .regular).monospacedDigit())
                     .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
             }
+            #if os(tvOS)
+            if let step = step {
+                Slider(value: $value, in: range, step: Float.Stride(step))
+            } else {
+                Slider(value: $value, in: range)
+            }
+            #else
             if let step = step {
                 RetroWaveSlider(value: $value, in: range, step: Float.Stride(step))
             } else {
                 RetroWaveSlider(value: $value, in: range)
             }
+            #endif
         }
         .padding(.vertical, 2)
     }
