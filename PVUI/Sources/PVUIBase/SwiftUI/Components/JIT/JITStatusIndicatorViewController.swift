@@ -79,7 +79,9 @@ public final class JITStatusIndicatorViewController: UIViewController {
         // Stays out of the way of game content at the top of the screen.
         NSLayoutConstraint.activate([
             host.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            host.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -2)
+            host.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -2),
+            host.view.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            host.view.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
         ])
 
         host.didMove(toParent: self)

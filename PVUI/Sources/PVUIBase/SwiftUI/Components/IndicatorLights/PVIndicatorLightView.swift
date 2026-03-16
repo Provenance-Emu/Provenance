@@ -248,12 +248,17 @@ public struct PVIndicatorOverlayView: View {
         }
     }
 
+    @State private var pendingHideWorkItem: DispatchWorkItem?
+
     private func scheduleAutoHide() {
         guard autoHideDelay > 0 else { return }
+        pendingHideWorkItem?.cancel()
         isVisible = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay) {
+        let workItem = DispatchWorkItem {
             withAnimation { isVisible = false }
         }
+        pendingHideWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay, execute: workItem)
     }
 }
 

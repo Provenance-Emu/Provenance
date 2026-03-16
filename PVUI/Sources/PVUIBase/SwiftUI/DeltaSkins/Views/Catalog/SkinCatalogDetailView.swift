@@ -26,10 +26,6 @@ public struct SkinCatalogDetailView: View {
     @State private var screenshotIndex = 0
     @State private var glowIntensity: CGFloat = 0.5
     @State private var downloadTask: Task<Void, Never>?
-    @State private var skinActivationState: SkinActivationState = .idle
-
-    /// Observe the skin manager so we can detect already-installed skins.
-    @StateObject private var skinManager = DeltaSkinManager.shared
 
     // MARK: - Types
 
@@ -38,13 +34,6 @@ public struct SkinCatalogDetailView: View {
         case downloading(progress: Double)
         case installing
         case installed
-        case failed(String)
-    }
-
-    private enum SkinActivationState: Equatable {
-        case idle
-        case activating
-        case activated
         case failed(String)
     }
 
@@ -80,14 +69,6 @@ public struct SkinCatalogDetailView: View {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
             }
-            // Check if this skin is already installed locally so the
-            // action section shows "INSTALLED" instead of "DOWNLOAD".
-            checkIfAlreadyInstalled()
-        }
-        .onChange(of: skinManager.skinsAreLoaded) { _, loaded in
-            // Re-check once skins finish loading (scan may complete after
-            // onAppear if it was triggered lazily).
-            if loaded { checkIfAlreadyInstalled() }
         }
         .onDisappear {
             downloadTask?.cancel()
@@ -337,7 +318,25 @@ public struct SkinCatalogDetailView: View {
                     .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 6)
 
                     if let system = primarySystemIdentifier {
-                        activateSkinButton(for: system)
+                        NavigationLink(destination: SystemSkinSelectionView(system: system)) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                                Text("SET AS ACTIVE SKIN")
+                                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                                    .tracking(1)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.black.opacity(0.4))
+                                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
 
@@ -591,198 +590,6 @@ public struct SkinCatalogDetailView: View {
         return entry.systems.lazy.compactMap {
             DeltaSkinGameType.fromAnyString($0)?.systemIdentifier
         }.first
-    }
-
-    // MARK: - Activate Skin Button
-
-    @ViewBuilder
-    private func activateSkinButton(for system: SystemIdentifier) -> some View {
-        switch skinActivationState {
-        case .idle:
-            Button {
-                Task { await activateSkin(for: system) }
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 16))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                    Text("SET AS ACTIVE SKIN")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        .tracking(1)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.black.opacity(0.4))
-                        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
-                )
-            }
-            .buttonStyle(PlainButtonStyle())
-
-        case .activating:
-            HStack(spacing: 10) {
-                ProgressView()
-                    .tint(RetroTheme.retroPink)
-                Text("ACTIVATING...")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                    .tracking(1)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.black.opacity(0.4))
-                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
-            )
-
-        case .activated:
-            HStack(spacing: 8) {
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(.green)
-                Text("ACTIVE SKIN SET")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundColor(.green)
-                    .tracking(1)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.black.opacity(0.4))
-                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.green.opacity(0.6), lineWidth: 1.5))
-            )
-
-        case .failed(let message):
-            VStack(spacing: 6) {
-                HStack(spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 14))
-                        .foregroundColor(.orange)
-                    Text("ACTIVATION FAILED")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundColor(.orange)
-                        .tracking(1)
-                }
-                Text(message)
-                    .font(.system(size: 11))
-                    .foregroundColor(.white.opacity(0.6))
-                    .multilineTextAlignment(.center)
-                Button {
-                    Task { await activateSkin(for: system) }
-                } label: {
-                    Text("RETRY")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        .tracking(1)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.black.opacity(0.4))
-                                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(RetroTheme.retroGradient, lineWidth: 1))
-                        )
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.black.opacity(0.4))
-                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.orange.opacity(0.4), lineWidth: 1))
-            )
-        }
-    }
-
-    // MARK: - Activate Skin Logic
-
-    /// Activates the just-installed skin by finding it in the skin manager
-    /// and setting it as the system default for all supported orientations.
-    private func activateSkin(for system: SystemIdentifier) async {
-        await MainActor.run {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                skinActivationState = .activating
-            }
-        }
-
-        do {
-            // Find the installed skin by matching name
-            let skins = try await DeltaSkinManager.shared.skins(for: system)
-            guard let installedSkin = skins.first(where: { $0.name == entry.name }) else {
-                throw NSError(
-                    domain: "SkinCatalog",
-                    code: 1,
-                    userInfo: [NSLocalizedDescriptionKey: "Could not find installed skin '\(entry.name)' for this system."]
-                )
-            }
-
-            let selectionManager = DeltaSkinSelectionManager.shared
-            let identifier = installedSkin.identifier
-
-            // Set the skin as active for both orientations at system scope
-            for orientation in SkinOrientation.allCases {
-                await selectionManager.setSkin(
-                    identifier,
-                    for: system,
-                    orientation: orientation,
-                    scope: .system
-                )
-            }
-
-            ILOG("SkinCatalogDetailView: Activated skin '\(entry.name)' (\(identifier ?? "no id")) for system \(system.rawValue)")
-
-            await MainActor.run {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                    skinActivationState = .activated
-                }
-            }
-        } catch {
-            ELOG("SkinCatalogDetailView: Failed to activate skin '\(entry.name)': \(error)")
-            await MainActor.run {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    skinActivationState = .failed(error.localizedDescription)
-                }
-            }
-        }
-    }
-
-    // MARK: - Installed Check
-
-    /// Sets `downloadState` to `.installed` when the catalog entry matches a
-    /// locally installed skin. Uses the same multi-strategy matching as the
-    /// browser grid (identifier, filename, name).
-    private func checkIfAlreadyInstalled() {
-        // Only override when we haven't already started a download/install.
-        guard downloadState == .idle else { return }
-
-        let skins = skinManager.loadedSkins
-        guard !skins.isEmpty else { return }
-
-        let isInstalled: Bool = {
-            // 1. Identifier match
-            if skins.contains(where: { $0.identifier == entry.id }) { return true }
-
-            // 2. Filename match
-            let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
-            if !catalogStem.isEmpty,
-               skins.contains(where: { $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem }) {
-                return true
-            }
-
-            // 3. Name match (case-insensitive)
-            let nameLower = entry.name.lowercased()
-            if skins.contains(where: { $0.name.lowercased() == nameLower }) { return true }
-
-            return false
-        }()
-
-        if isInstalled {
-            downloadState = .installed
-        }
     }
 
     // MARK: - Download & Install Logic
