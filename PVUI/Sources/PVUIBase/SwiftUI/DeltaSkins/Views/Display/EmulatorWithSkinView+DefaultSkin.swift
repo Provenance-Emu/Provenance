@@ -401,8 +401,9 @@ struct DefaultControllerSkinView: View {
             VStack {
                 Spacer()
                 VStack(spacing: 10) {
+                    let cachedFps = fpsButtonConfig
                     HStack(spacing: 30) {
-                        if let fps = fpsButtonConfig {
+                        if let fps = cachedFps {
                             VStack(spacing: 25) {
                                 circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
                                 circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
@@ -422,7 +423,7 @@ struct DefaultControllerSkinView: View {
                             }
                         }
                     }
-                    if let fps = fpsButtonConfig, let center = fps.center {
+                    if let center = cachedFps?.center {
                         circleButton(label: center.0, color: center.2, inputId: center.1)
                     }
                 }
@@ -828,8 +829,9 @@ struct DefaultControllerSkinView: View {
 
                 // Right side - Action buttons (constrained to prevent off-screen)
                 VStack(spacing: 10) {
+                    let cachedFps = fpsButtonConfig
                     HStack(spacing: 20) {
-                        if let fps = fpsButtonConfig {
+                        if let fps = cachedFps {
                             VStack(spacing: 20) {
                                 circleButton(label: fps.tl.0, color: fps.tl.2, inputId: fps.tl.1)
                                 circleButton(label: fps.bl.0, color: fps.bl.2, inputId: fps.bl.1)
@@ -849,7 +851,7 @@ struct DefaultControllerSkinView: View {
                             }
                         }
                     }
-                    if let fps = fpsButtonConfig, let center = fps.center {
+                    if let center = cachedFps?.center {
                         circleButton(label: center.0, color: center.2, inputId: center.1)
                     }
                 }
