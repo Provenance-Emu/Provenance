@@ -32,6 +32,7 @@ final class HomeViewModel: ObservableObject {
     /// Sort direction - toggling re-sorts the cached models without a Realm re-query.
     @Published var sortAscending: Bool = true {
         didSet {
+            guard oldValue != sortAscending else { return }
             Task { @MainActor in
                 resortModelsOnMain()
             }
