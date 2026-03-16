@@ -517,8 +517,8 @@ extension PVRetroArchCoreCore: PVDoomSystemResponderClient {
     }
 }
 
-// PVDOSSystemResponderClient
-extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
+// PVDOSSystemResponderClient + KeyboardResponder + MouseResponder
+extension PVRetroArchCoreCore: PVDOSSystemResponderClient, KeyboardResponder, MouseResponder {
     /// Resolves the effective virtual-input capability for the current RetroArch session.
     private var virtualInputSupport: RetroArchVirtualInputSupport {
         RetroArchVirtualInputSupport.resolve(systemIdentifier: systemIdentifier, coreIdentifier: coreIdentifier)

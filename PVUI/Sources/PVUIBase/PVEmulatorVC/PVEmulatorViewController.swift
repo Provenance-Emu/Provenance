@@ -255,10 +255,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     public var isShowingMenu: Bool = false {
         didSet {
             // Single authoritative pause toggle to avoid conflicting calls
-            guard core.isOn else { return }
+            guard core.isOn, !isQuitting else { return }
             core.setPauseEmulation(isShowingMenu)
         }
     }
+
+    /// Set to true when quit is in progress to prevent pause/unpause calls
+    /// that can crash RetroArch's runloop during teardown.
+    private var isQuitting: Bool = false
 
     /// Tracks the currently presented pause-menu container so we can dismiss it reliably,
     /// even if additional controllers are presented on top during the menu flow.
@@ -1427,6 +1431,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     @MainActor
     public func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
+        isQuitting = true
         NotificationCenter.default.removeObserver(self)
         NSSetUncaughtExceptionHandler(nil)
         enableControllerInput(false)
