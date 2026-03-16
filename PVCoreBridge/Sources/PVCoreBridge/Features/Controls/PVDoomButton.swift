@@ -29,7 +29,7 @@
     case down
     case left
     case right
-    /// Fire / Shoot — JOYPAD_A → east/buttonB
+    /// Fire / Shoot — JOYPAD_X → north/buttonY
     case fire
     /// Use / Interact / Open door — JOYPAD_B → south/buttonA
     case use
