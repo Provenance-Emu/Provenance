@@ -31,9 +31,6 @@ public final class StickyButtonManager: ObservableObject {
     /// Views can observe this to display a visual indicator (e.g. lock icon).
     @Published public private(set) var stickyButtons: Set<String> = []
 
-    /// The set of button IDs that are candidates for sticky toggle (double-tap detected).
-    @Published public private(set) var stickyTogglePending: Set<String> = []
-
     // MARK: - Private state
 
     /// Buttons currently physically held down by the user.
@@ -68,14 +65,13 @@ public final class StickyButtonManager: ObservableObject {
                 physicallyPressed.insert(buttonId)
                 return .release
             } else {
-                // Button was not sticky: make it sticky
+                // Button was not sticky: make it sticky.
+                // The first tap already sent press+release to the core, so we must
+                // send a new press now to actually hold the button down in the emulator.
                 DLOG("Sticky: toggling ON sticky for \(buttonId)")
                 stickyButtons.insert(buttonId)
                 physicallyPressed.insert(buttonId)
-                // The button is already pressed from the first tap;
-                // the emulator core already has a press event.
-                // We just mark it sticky so the release is suppressed.
-                return .ignore
+                return .press
             }
         }
 

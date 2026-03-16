@@ -2118,7 +2118,6 @@ private struct AdvancedSection: View {
 
 private struct DeltaSkinsSection: View {
     @Default(.buttonPressEffect) var buttonPressEffect
-    @Default(.stickyButtonsEnabled) var stickyButtonsEnabled
     @Default(.buttonSound) var buttonSound
     @Default(.skinMode) var skinMode
 
