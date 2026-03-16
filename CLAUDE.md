@@ -171,7 +171,23 @@ Agents MUST run these checks before creating a PR. Do NOT skip any step.
 
 7. **Thread safety** — If reading a property from a background queue that's written from main, snapshot it into a local `let` first. Don't use `@Published` properties across threads without synchronization.
 
-8. **Platform guards** — If using UIKit-only APIs (haptics, UIDevice, etc.), wrap in `#if canImport(UIKit) && !os(tvOS)` or appropriate guards. **tvOS is a first-class platform** — all new code must support tvOS unless there is a specific technical reason it cannot (e.g., API not available on tvOS). Do not skip tvOS support by default.
+8. **Multi-platform compilation** — Provenance builds for **iOS, tvOS, macOS (Catalyst), and visionOS**. All new code MUST compile on all platforms. Agents must mentally verify every changed file compiles for at least iOS AND tvOS before creating a PR.
+
+   **Platform guard patterns:**
+   - `#if os(iOS)` / `#if os(tvOS)` — OS-specific code
+   - `#if !os(tvOS)` — iOS/macOS features unavailable on tvOS (e.g., `DragGesture`, `UIImpactFeedbackGenerator`, `UIDevice.current.orientation`)
+   - `#if canImport(UIKit)` — UIKit vs AppKit
+   - `#if targetEnvironment(simulator)` — simulator-only code
+   - `#if targetEnvironment(macCatalyst)` — Mac Catalyst specifics
+
+   **Common tvOS pitfalls** (these WILL fail to compile on tvOS):
+   - `DragGesture` — unavailable on tvOS
+   - `UIImpactFeedbackGenerator` / haptics — iOS only
+   - `UIDevice.current.orientation` — no orientation on tvOS
+   - `.onHover` — not available on tvOS
+   - `NavigationSplitView` details differ on tvOS
+
+   **Linux support** — Non-UI SPM modules (Tier 0-2: PVHashing, PVLookup, PVPlists, etc.) should compile and test on Linux. Use `#if canImport(Foundation)` not `#if canImport(UIKit)` for cross-platform code. CI runs `swift test` on Debian runners for these modules.
 
 ### PR Requirements
 - Target the `develop` branch
