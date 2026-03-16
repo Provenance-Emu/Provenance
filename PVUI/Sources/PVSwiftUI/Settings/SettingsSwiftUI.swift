@@ -1879,6 +1879,7 @@ private struct OnScreenControllerSection: View {
     @Default(.buttonVibration) var buttonVibration
     @Default(.buttonSound) var buttonSound
     @Default(.buttonPressEffect) var buttonPressEffect
+    @Default(.stickyButtonsEnabled) var stickyButtonsEnabled
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
@@ -1941,6 +1942,11 @@ private struct OnScreenControllerSection: View {
                 SettingsRow(title: "Movable Buttons",
                             subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
                             icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
+            }
+            ThemedToggle(isOn: $stickyButtonsEnabled) {
+                SettingsRow(title: "Sticky Buttons",
+                            subtitle: "Double-tap a button to lock it held down. Double-tap again to release. Useful for auto-run in platformers.",
+                            icon: .sfSymbol("lock.rectangle"))
             }
 
         }
