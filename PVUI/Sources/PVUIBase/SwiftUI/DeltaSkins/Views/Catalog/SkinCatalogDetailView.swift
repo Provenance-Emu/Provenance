@@ -709,14 +709,14 @@ public struct SkinCatalogDetailView: View {
         }
 
         do {
-            let skins = DeltaSkinManager.shared.skins(for: system)
-            guard let skin = skins.first(where: { $0.name == entry.name }) ?? skins.last else {
-                throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin not found after install"])
+            let skins = try await DeltaSkinManager.shared.skins(for: system)
+            guard let skin = skins.first(where: { $0.name == entry.name }) else {
+                throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install"])
             }
 
             let manager = DeltaSkinSelectionManager.shared
-            manager.setSkin(skin, for: system, orientation: .portrait, scope: .system)
-            manager.setSkin(skin, for: system, orientation: .landscape, scope: .system)
+            await manager.setSkin(skin.identifier, for: system, orientation: .portrait, scope: .system)
+            await manager.setSkin(skin.identifier, for: system, orientation: .landscape, scope: .system)
 
             await MainActor.run {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
