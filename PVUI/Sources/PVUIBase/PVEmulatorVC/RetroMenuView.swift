@@ -1638,7 +1638,10 @@ struct RetroMenuView: View {
         Button(action: {
             selectedMetalFilter = option
             applyFilterImmediately(option)
-            showingFilterPicker = false
+            // Keep the picker open when selecting a CRT filter so users can adjust parameters
+            if !option.hasCRTParameters {
+                showingFilterPicker = false
+            }
         }) {
             filterOptionContent(label: label, isSelected: isSelected, textColor: textColor, isCompact: isCompact)
                 .background(filterOptionBackground(bgOpacity: bgOpacity, borderColor: borderColor, borderWidth: borderWidth))
@@ -1759,6 +1762,13 @@ struct RetroMenuView: View {
                     }
                 }
                 .pickerStyle(.navigationLink)
+
+                // Show CRT shader parameters when a CRT filter is selected
+                if selectedMetalFilter == .simpleCRT {
+                    SimpleCRTParametersView(palette: palette)
+                } else if selectedMetalFilter == .complexCRT {
+                    ComplexCRTParametersView(palette: palette)
+                }
             }
             .navigationTitle("Screen Filters")
             .toolbar {
@@ -1822,6 +1832,20 @@ struct RetroMenuView: View {
                         ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
                             filterOptionRow(for: option, isCompact: false)
                         }
+
+                        // Show CRT shader parameters when a CRT filter is selected
+                        if selectedMetalFilter.hasCRTParameters {
+                            Rectangle()
+                                .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                                .frame(height: 1)
+                                .padding(.vertical, 8)
+
+                            if selectedMetalFilter == .simpleCRT {
+                                SimpleCRTParametersView(palette: palette)
+                            } else if selectedMetalFilter == .complexCRT {
+                                ComplexCRTParametersView(palette: palette)
+                            }
+                        }
                     }
                     .padding(.horizontal, 60)
                 }
@@ -1850,11 +1874,25 @@ struct RetroMenuView: View {
                 .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
                 .shadow(color: headerShadow, radius: 10, x: 0, y: 0)
 
-            // Filter options
+            // Filter options and shader parameters
             ScrollView {
                 VStack(spacing: 16) {
                     ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
                         filterOptionRow(for: option, isCompact: isCompact)
+                    }
+
+                    // Show CRT shader parameters when a CRT filter is selected
+                    if selectedMetalFilter.hasCRTParameters {
+                        Rectangle()
+                            .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                            .frame(height: 1)
+                            .padding(.vertical, 8)
+
+                        if selectedMetalFilter == .simpleCRT {
+                            SimpleCRTParametersView(palette: palette)
+                        } else if selectedMetalFilter == .complexCRT {
+                            ComplexCRTParametersView(palette: palette)
+                        }
                     }
                 }
             }
@@ -1867,7 +1905,7 @@ struct RetroMenuView: View {
         }
         .frame(
             width: isLandscape ? min(400, geometry.size.width * 0.8) : min(500, geometry.size.width * 0.9),
-            height: isLandscape ? geometry.size.height * 0.9 : min(600, geometry.size.height * 0.8)
+            height: isLandscape ? geometry.size.height * 0.9 : min(700, geometry.size.height * 0.85)
         )
         .background(containerBg)
         .cornerRadius(20)
