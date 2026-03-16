@@ -905,11 +905,9 @@ public class DeltaSkinInputHandler: ObservableObject {
             if let r = core as? PVDoomSystemResponderClient {
                 let b = PVDoomButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
-                return true
             } else if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
-                return true
             }
         case .DOS, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
             if let r = core as? PVDOSSystemResponderClient {
