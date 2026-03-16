@@ -45,8 +45,8 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 #define COCOA_MOUSE_BTN_LEFT  (1u)
 #define COCOA_MOUSE_BTN_RIGHT (2u)
 
-// Atari ST / Hatari relative-mouse tracking.
-// Hatari libretro uses RETRO_DEVICE_MOUSE which expects *relative* delta (mouse_rel_x/y)
+// Relative-mouse tracking for Atari ST (Hatari) and Doom (PrBoom).
+// Both cores use RETRO_DEVICE_MOUSE which expects *relative* delta (mouse_rel_x/y)
 // rather than the absolute window position (window_pos_x/y) used by RETRO_DEVICE_POINTER
 // cores such as DOSBox-Pure.  The TouchTrackpadView sends accumulated normalised 0–1
 // cursor positions; we compute the frame-to-frame delta here and scale it to useful units.
@@ -64,11 +64,26 @@ static struct {
 
 // Scale factor: a 1 % (0.01) normalised delta → this many mouse_rel units.
 // Tuned so normal trackpad movement produces comfortable cursor speed on a 320×200 display.
+// Used by both Hatari/Atari ST and PrBoom/Doom (both 320×200 RETRO_DEVICE_MOUSE cores).
 #define ST_MOUSE_SCALE (300.0f)
 
 static BOOL dos_is_atarist(PVRetroArchCoreBridge *bridge) {
     return ([bridge.systemIdentifier containsString:@"atarist"] ||
             [bridge.coreIdentifier   containsString:@"hatari"]);
+}
+
+// PrBoom (Doom) uses RETRO_DEVICE_MOUSE which reads mouse_rel_x/y (relative deltas),
+// exactly like Hatari/Atari ST.  The generic DOS path (DOSBox-Pure) uses
+// RETRO_DEVICE_POINTER / RARCH_DEVICE_MOUSE_SCREEN which reads window_pos_x/y (absolute).
+static BOOL dos_is_doom(PVRetroArchCoreBridge *bridge) {
+    return ([bridge.systemIdentifier containsString:@"doom"] ||
+            [bridge.coreIdentifier   containsString:@"prboom"]);
+}
+
+/// Returns YES for cores that consume mouse_rel_x/y (relative deltas) rather than
+/// window_pos_x/y (absolute screen coordinates).
+static BOOL dos_uses_relative_mouse(PVRetroArchCoreBridge *bridge) {
+    return dos_is_atarist(bridge) || dos_is_doom(bridge);
 }
 
 @interface PVRetroArchCoreBridge (DOSControls) <PVDOSSystemResponderClient>
@@ -216,7 +231,7 @@ static int16_t st_clamp_mouse_delta(CGFloat value) {
     return (int16_t)value;
 }
 
-// Drive relative mouse movement for Hatari / Atari ST.
+// Drive relative mouse movement for Hatari / Atari ST and PrBoom / Doom.
 // The TouchTrackpadView sends normalised 0–1 cursor positions accumulated from touchpad
 // deltas.  We recover the per-event delta, scale it, and write it to mouse_rel_x/y which
 // is what RETRO_DEVICE_MOUSE cores (Hatari) read each frame.
@@ -276,7 +291,7 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 }
 
 - (void)mouseMovedAt:(CGPoint)point {
-    if (dos_is_atarist(self)) {
+    if (dos_uses_relative_mouse(self)) {
         st_ra_update_mouse_rel(point);
     } else {
         dos_ra_update_mouse_pos(point);
@@ -287,7 +302,7 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 - (void)leftMouseDownAt:(CGPoint)point {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
-    if (dos_is_atarist(self)) {
+    if (dos_uses_relative_mouse(self)) {
         // Relative-mouse path: update position then set button.
         st_ra_update_mouse_rel(point);
     } else {
@@ -300,7 +315,7 @@ static void st_ra_update_mouse_rel(CGPoint point) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_LEFT;
     // Reset delta tracking so finger re-placement doesn't produce a phantom jump.
-    if (dos_is_atarist(self)) {
+    if (dos_uses_relative_mouse(self)) {
         st_mouse_prev.valid = NO;
     }
 }
@@ -308,7 +323,7 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 - (void)rightMouseDownAtPoint:(CGPoint)point {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
-    if (dos_is_atarist(self)) {
+    if (dos_uses_relative_mouse(self)) {
         st_ra_update_mouse_rel(point);
     } else {
         dos_ra_update_mouse_pos(point);
@@ -320,7 +335,7 @@ static void st_ra_update_mouse_rel(CGPoint point) {
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_RIGHT;
     // Mirror leftMouseUp: reset delta tracking on right-button release so a subsequent
     // touch doesn't produce a phantom jump from the stale previous position.
-    if (dos_is_atarist(self)) {
+    if (dos_uses_relative_mouse(self)) {
         st_mouse_prev.valid = NO;
     }
 }
@@ -330,10 +345,18 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 // MARK: - Doom / PrBoom Controls
 //
 // Doom is served by the PrBoom RetroArch core. Gamepad Classic (default) layout:
-//   JOYPAD_A (east,  buttonB)    → Fire / Shoot
+//
+// GCController → RETRO_DEVICE_ID_JOYPAD mapping (from PVRetroArchCore+Controls.m):
+//   buttonA (south)  → JOYPAD_B
+//   buttonB (east)   → JOYPAD_A
+//   buttonX (west)   → JOYPAD_Y
+//   buttonY (north)  → JOYPAD_X
+//
+// PrBoom Gamepad Classic action → JOYPAD button:
+//   JOYPAD_X (north, buttonY)    → Fire / Shoot
+//   JOYPAD_A (east,  buttonB)    → Strafe On (toggle)
 //   JOYPAD_B (south, buttonA)    → Use / Interact / Open
 //   JOYPAD_Y (west,  buttonX)    → Run / Speed
-//   JOYPAD_X (north, buttonY)    → Strafe (toggle)
 //   JOYPAD_L (leftShoulder)      → Strafe Left
 //   JOYPAD_R (rightShoulder)     → Strafe Right
 //   JOYPAD_L2 (leftTrigger)      → Previous Weapon
@@ -379,15 +402,15 @@ static void st_ra_update_mouse_rel(CGPoint point) {
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case PVDoomButtonFire:
-            // PrBoom Gamepad Classic: JOYPAD_A → Fire — buttonB (east)
-            [touch_controller.extendedGamepad.buttonB setValue:v];
+            // PrBoom Gamepad Classic: Fire → JOYPAD_X → buttonY (north)
+            [touch_controller.extendedGamepad.buttonY setValue:v];
             break;
         case PVDoomButtonUse:
-            // PrBoom Gamepad Classic: JOYPAD_B → Use/Open — buttonA (south)
+            // PrBoom Gamepad Classic: Use/Open → JOYPAD_B → buttonA (south)
             [touch_controller.extendedGamepad.buttonA setValue:v];
             break;
         case PVDoomButtonRun:
-            // PrBoom Gamepad Classic: JOYPAD_Y → Run/Speed — buttonX (west)
+            // PrBoom Gamepad Classic: Run/Speed → JOYPAD_Y → buttonX (west)
             [touch_controller.extendedGamepad.buttonX setValue:v];
             break;
         case PVDoomButtonStrafeLeft:
@@ -412,8 +435,8 @@ static void st_ra_update_mouse_rel(CGPoint point) {
             [touch_controller.extendedGamepad.buttonOptions setValue:v];
             break;
         case PVDoomButtonStrafe:
-            // PrBoom Gamepad Classic: JOYPAD_X → Strafe (toggle) — buttonY (north)
-            [touch_controller.extendedGamepad.buttonY setValue:v];
+            // PrBoom Gamepad Classic: Strafe On (toggle) → JOYPAD_A → buttonB (east)
+            [touch_controller.extendedGamepad.buttonB setValue:v];
             break;
         case PVDoomButtonPause:
             // JOYPAD_START → buttonMenu
