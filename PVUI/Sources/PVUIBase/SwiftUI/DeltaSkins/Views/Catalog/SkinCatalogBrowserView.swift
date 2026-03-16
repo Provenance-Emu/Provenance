@@ -445,36 +445,10 @@ public struct SkinCatalogBrowserView: View {
 
     // MARK: - Installed Check
 
-    /// Checks whether a catalog entry matches any locally installed skin.
-    ///
-    /// Matching is done in priority order:
-    /// 1. Catalog `id` matches the skin's internal `identifier` (exact match).
-    /// 2. The download URL filename (without extension) matches the skin's file on disk.
-    /// 3. The catalog `name` matches the skin's `name` (case-insensitive).
+    /// Delegates to the shared `isCatalogSkinInstalled` helper so the
+    /// matching logic is defined in one place.
     private func isSkinInstalled(_ entry: SkinCatalogEntry) -> Bool {
-        let skins = skinManager.loadedSkins
-        guard !skins.isEmpty else { return false }
-
-        // 1. Identifier match (most reliable when catalog id == info.json identifier)
-        if skins.contains(where: { $0.identifier == entry.id }) {
-            return true
-        }
-
-        // 2. Filename match: compare the download URL stem to the local file stem
-        let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
-        if !catalogStem.isEmpty, skins.contains(where: {
-            $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem
-        }) {
-            return true
-        }
-
-        // 3. Name match (case-insensitive fallback)
-        let entryNameLower = entry.name.lowercased()
-        if skins.contains(where: { $0.name.lowercased() == entryNameLower }) {
-            return true
-        }
-
-        return false
+        isCatalogSkinInstalled(entry, in: skinManager.loadedSkins)
     }
 
     // MARK: - Data Loading
@@ -715,6 +689,40 @@ private struct CatalogSkinCard: View {
 #endif // !os(tvOS)
 
 // MARK: - Shared Helpers
+
+/// Checks whether a catalog entry matches any locally installed skin.
+///
+/// Matching is done in priority order:
+/// 1. Catalog `id` matches the skin's internal `identifier` (exact match).
+/// 2. The download URL filename (without extension) matches the skin's file on disk.
+/// 3. The catalog `name` matches the skin's `name` (case-insensitive).
+///
+/// Used by both `SkinCatalogBrowserView` and `SkinCatalogDetailView` to keep
+/// installed-matching logic in a single place.
+func isCatalogSkinInstalled(_ entry: SkinCatalogEntry, in skins: [DeltaSkinProtocol]) -> Bool {
+    guard !skins.isEmpty else { return false }
+
+    // 1. Identifier match (most reliable when catalog id == info.json identifier)
+    if skins.contains(where: { $0.identifier == entry.id }) {
+        return true
+    }
+
+    // 2. Filename match: compare the download URL stem to the local file stem
+    let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
+    if !catalogStem.isEmpty, skins.contains(where: {
+        $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem
+    }) {
+        return true
+    }
+
+    // 3. Name match (case-insensitive fallback)
+    let entryNameLower = entry.name.lowercased()
+    if skins.contains(where: { $0.name.lowercased() == entryNameLower }) {
+        return true
+    }
+
+    return false
+}
 
 /// Formats a download/play count into a compact string (e.g. 1200 → "1.2k").
 func formatSkinDownloadCount(_ count: Int) -> String {
