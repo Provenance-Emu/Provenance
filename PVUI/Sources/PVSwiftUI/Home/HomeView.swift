@@ -765,7 +765,7 @@ struct HomeView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                .id(model.hashValue)
+                .id(model.id)
                 .contextMenu {
                     if let live = liveGame(for: model) {
                         GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
@@ -801,7 +801,7 @@ struct HomeView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                .id(model.hashValue)
+                .id(model.id)
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1154,7 +1154,7 @@ struct HomeView: SwiftUI.View {
         ) {
             launchGame(md5: model.md5)
         }
-        .id(model.hashValue)
+        .id(model.id)
         .focusableIfAvailable()
         .contextMenu {
             if let live = liveGame(for: model) {
@@ -1307,7 +1307,7 @@ struct HomeView: SwiftUI.View {
                         ) {
                             launchGame(md5: model.md5)
                         }
-                        .id(model.hashValue)
+                        .id(model.id)
                         .focusableIfAvailable()
                         .contextMenu {
                             if let live = liveGame(for: model) {

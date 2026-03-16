@@ -121,7 +121,7 @@ final class HomeViewModel: ObservableObject {
                 let mostPlayed = realm.objects(PVGame.self)
                     .filter("playCount > 0")
                 self.mostPlayedToken = mostPlayed.observe(
-                    keyPaths: ["playCount", "title"],
+                    keyPaths: ["playCount", "title", "isFavorite", "customArtworkURL", "originalArtworkURL"],
                     on: self.modelsQueue
                 ) { [weak self] change in
                     autoreleasepool {
@@ -226,7 +226,7 @@ final class HomeViewModel: ObservableObject {
                 guard !recent.isInvalidated,
                       let game = recent.game,
                       !game.isInvalidated else { return nil }
-                return game.md5Hash.uppercased()
+                return game.md5Hash
             }
 
             let models = recentMD5Order.compactMap { modelsByMD5[$0] }
@@ -248,8 +248,9 @@ final class HomeViewModel: ObservableObject {
     }
 
     private func sorted(_ models: [GameCellModel]) -> [GameCellModel] {
-        models.sorted { lhs, rhs in
-            if sortAscending {
+        let ascending = sortAscending
+        return models.sorted { lhs, rhs in
+            if ascending {
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
             } else {
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedDescending
