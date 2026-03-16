@@ -242,6 +242,9 @@ public struct PVIndicatorOverlayView: View {
         .onAppear {
             scheduleAutoHide()
         }
+        .onDisappear {
+            pendingHideWorkItem?.cancel()
+        }
         .onChange(of: registry.visibleIndicators) { _ in
             // Re-show when indicators change state
             withAnimation { isVisible = true }

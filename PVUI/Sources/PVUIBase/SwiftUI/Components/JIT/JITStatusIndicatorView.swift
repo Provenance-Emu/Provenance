@@ -319,6 +319,9 @@ public struct JITStatusIndicatorView: View {
                 .onAppear {
                     scheduleAutoHide()
                 }
+                .onDisappear {
+                    pendingHideWorkItem?.cancel()
+                }
             }
         }
         .onChange(of: viewModel.status) { _ in
