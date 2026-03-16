@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 import PVLogging
 import PVPrimitives
 import PVSystems
@@ -625,6 +628,7 @@ public struct SkinCatalogDetailView: View {
         case .idle:
             Button {
                 activationState = .activating
+                activationTask?.cancel()
                 activationTask = Task { await activateSkin(for: system) }
             } label: {
                 HStack(spacing: 8) {
@@ -690,6 +694,7 @@ public struct SkinCatalogDetailView: View {
                     .lineLimit(3)
                 Button {
                     activationState = .activating
+                    activationTask?.cancel()
                     activationTask = Task { await activateSkin(for: system) }
                 } label: {
                     Text("RETRY")
@@ -716,13 +721,23 @@ public struct SkinCatalogDetailView: View {
 
         do {
             let skins = try await DeltaSkinManager.shared.skins(for: system)
+
+            guard !Task.isCancelled else { return }
+
             guard let skin = findMatchingInstalledSkin(for: entry, in: skins) else {
                 throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install"])
             }
 
             let manager = DeltaSkinSelectionManager.shared
-            await manager.setSkin(skin.identifier, for: system, orientation: .portrait, scope: .system)
-            await manager.setSkin(skin.identifier, for: system, orientation: .landscape, scope: .system)
+            // Only activate for orientations the skin actually supports on this device.
+            for orientation in SkinOrientation.allCases {
+                guard !Task.isCancelled else { return }
+                if skinSupportsOrientation(skin, orientation: orientation) {
+                    await manager.setSkin(skin.identifier, for: system, orientation: orientation, scope: .system)
+                }
+            }
+
+            guard !Task.isCancelled else { return }
 
             await MainActor.run {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
@@ -741,16 +756,28 @@ public struct SkinCatalogDetailView: View {
         }
     }
 
+    /// Checks whether a skin supports the given orientation on the current device.
+    /// Mirrors the same logic used in `SystemSkinSelectionView.skinSupportsOrientation`.
+    private func skinSupportsOrientation(_ skin: DeltaSkinProtocol, orientation: SkinOrientation) -> Bool {
+        let device: DeltaSkinDevice
+        #if os(tvOS)
+        device = .ipad
+        #else
+        device = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+        for display in [DeltaSkinDisplayType.standard, .edgeToEdge] {
+            let traits = DeltaSkinTraits(device: device, displayType: display, orientation: orientation.deltaSkinOrientation)
+            if skin.supports(traits) { return true }
+        }
+        return false
+    }
+
     // MARK: - Skin Matching
 
-    /// Multi-strategy match to find the installed skin corresponding to a catalog entry.
-    /// Uses the same priority as `isCatalogSkinInstalled`: identifier → filename stem → name.
+    /// Delegates to the shared `matchingInstalledSkin(for:in:)` helper so the
+    /// matching logic is defined in a single place.
     private func findMatchingInstalledSkin(for entry: SkinCatalogEntry, in skins: [DeltaSkinProtocol]) -> DeltaSkinProtocol? {
-        if let match = skins.first(where: { $0.identifier == entry.id }) { return match }
-        let stem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
-        if !stem.isEmpty, let match = skins.first(where: { $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == stem }) { return match }
-        let name = entry.name.lowercased()
-        return skins.first(where: { $0.name.lowercased() == name })
+        matchingInstalledSkin(for: entry, in: skins)
     }
 
     // MARK: - Download & Install Logic
