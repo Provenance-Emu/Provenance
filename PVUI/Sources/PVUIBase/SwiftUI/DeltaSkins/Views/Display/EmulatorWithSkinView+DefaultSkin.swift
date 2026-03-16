@@ -1383,8 +1383,9 @@ struct DefaultControllerSkinView: View {
                             if hasControl(type: "PVLeftShoulderButton", title: "L2", in: layout) {
                                 shoulderButton(label: "L2", color: .gray)
                             }
-                            if hasControl(type: "PVLeftShoulderButton", title: "L", in: layout) {
-                                shoulderButton(label: "L", color: .gray)
+                            if hasControl(type: "PVLeftShoulderButton", title: "L1", in: layout) ||
+                                hasControl(type: "PVLeftShoulderButton", title: "L", in: layout) {
+                                shoulderButton(label: hasControl(type: "PVLeftShoulderButton", title: "L1", in: layout) ? "L1" : "L", color: .gray)
                             }
                             if hasControl(type: "PVLeftAnalogButton", title: "L3", in: layout) {
                                 shoulderButton(label: "L3", color: .gray)
@@ -1407,8 +1408,9 @@ struct DefaultControllerSkinView: View {
                             if hasControl(type: "PVRightAnalogButton", title: "R3", in: layout) {
                                 shoulderButton(label: "R3", color: .gray)
                             }
-                            if hasControl(type: "PVRightShoulderButton", title: "R", in: layout) {
-                                shoulderButton(label: "R", color: .gray)
+                            if hasControl(type: "PVRightShoulderButton", title: "R1", in: layout) ||
+                                hasControl(type: "PVRightShoulderButton", title: "R", in: layout) {
+                                shoulderButton(label: hasControl(type: "PVRightShoulderButton", title: "R1", in: layout) ? "R1" : "R", color: .gray)
                             }
                             if hasControl(type: "PVRightShoulderButton", title: "R2", in: layout) {
                                 shoulderButton(label: "R2", color: .gray)
