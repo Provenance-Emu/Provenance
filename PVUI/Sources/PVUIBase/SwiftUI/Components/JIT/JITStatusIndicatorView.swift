@@ -158,8 +158,10 @@ public final class JITStatusViewModel: ObservableObject {
             status = .unavailable
             jitSource = .none
         } else {
-            // JIT subsystem present but not acquired; core only benefits from JIT
-            status = .interpreterFallback
+            // JIT subsystem present but not acquired; core only benefits from JIT.
+            // Don't show the indicator for optional cores — it's noise for most users.
+            // Only show .interpreterFallback if JIT was previously active (lost mid-session).
+            status = .notApplicable
             jitSource = .none
         }
         #else

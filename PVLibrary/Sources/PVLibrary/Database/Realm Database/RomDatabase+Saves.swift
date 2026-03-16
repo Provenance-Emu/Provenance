@@ -56,8 +56,17 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
             realm.add(saveState)
             saveStateID = saveState.id
 
-            // Serialise metadata sidecar JSON — freeze so it is safe to pass off-thread
-            let frozenState = saveState.freeze()
+            // Purge old auto-saves beyond the keep limit
+            if isAutosave {
+                self.cleanupOldAutoSaves(for: game, realm: realm)
+            }
+        }
+
+        // Serialise metadata sidecar JSON AFTER the write transaction commits.
+        // freeze() requires the object to be persisted — calling it inside
+        // realm.write {} crashes because the transaction hasn't committed yet.
+        if let savedState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) {
+            let frozenState = savedState.freeze()
             LibrarySerializer.storeMetadata(frozenState) { result in
                 switch result {
                 case .success(let url):
@@ -65,11 +74,6 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
                 case .error(let error):
                     ELOG("registerSaveState: failed to serialise metadata — \(error)")
                 }
-            }
-
-            // Purge old auto-saves beyond the keep limit
-            if isAutosave {
-                self.cleanupOldAutoSaves(for: game, realm: realm)
             }
         }
 

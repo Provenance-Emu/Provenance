@@ -729,13 +729,8 @@ public struct SkinCatalogDetailView: View {
             }
 
             let manager = DeltaSkinSelectionManager.shared
-            // Only activate for orientations the skin actually supports on this device.
-            for orientation in SkinOrientation.allCases {
-                guard !Task.isCancelled else { return }
-                if skinSupportsOrientation(skin, orientation: orientation) {
-                    await manager.setSkin(skin.identifier, for: system, orientation: orientation, scope: .system)
-                }
-            }
+            await manager.setSkin(skin.identifier, for: system, orientation: .portrait, scope: .system)
+            await manager.setSkin(skin.identifier, for: system, orientation: .landscape, scope: .system)
 
             guard !Task.isCancelled else { return }
 
