@@ -8,6 +8,7 @@
 
 import PVSupport
 import PVEmulatorCore
+import SwiftUI
 
 private extension JSButton {
     var buttonTag: PV2600Button {
@@ -21,6 +22,75 @@ private extension JSButton {
 }
 
 final class PVAtari2600ControllerViewController: PVControllerViewController<PV2600SystemResponderClient> {
+
+    private var hardwareSwitchHostingVC: UIViewController?
+
+    // MARK: - Lifecycle
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        addHardwareSwitchOverlay()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        positionHardwareSwitchOverlay()
+    }
+
+    // MARK: - Hardware switch overlay
+
+    private func addHardwareSwitchOverlay() {
+        let switches = [
+            HardwareSwitchDescriptor(
+                id: "left_diff",
+                title: "LEFT DIFF",
+                offPosition: HardwareSwitchPosition(label: "B", buttonId: "leftdiffb"),
+                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "leftdiffa"),
+                defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "right_diff",
+                title: "RIGHT DIFF",
+                offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiffb"),
+                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "rightdiffa"),
+                defaultState: false
+            )
+        ]
+
+        let switchRow = HardwareSwitchRowView(switches: switches) { [weak self] buttonId, _ in
+            self?.handleHardwareSwitchToggle(buttonId: buttonId)
+        }
+
+        let hostingVC = UIHostingController(rootView: switchRow)
+        hostingVC.view.backgroundColor = .clear
+        hostingVC.view.isOpaque = false
+
+        addChild(hostingVC)
+        view.addSubview(hostingVC.view)
+        hostingVC.didMove(toParent: self)
+        hardwareSwitchHostingVC = hostingVC
+        positionHardwareSwitchOverlay()
+    }
+
+    private func positionHardwareSwitchOverlay() {
+        guard let hostingVC = hardwareSwitchHostingVC else { return }
+        let preferredSize = CGSize(width: 160, height: 50)
+        let x = view.bounds.width - preferredSize.width - 12
+        let y: CGFloat = 8
+        hostingVC.view.frame = CGRect(origin: CGPoint(x: x, y: y), size: preferredSize)
+        view.bringSubviewToFront(hostingVC.view)
+    }
+
+    private func handleHardwareSwitchToggle(buttonId: String) {
+        // Route the button press through the core responder
+        emulatorCore.didPush(PV2600Button(buttonId), forPlayer: 0)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            self?.emulatorCore.didRelease(PV2600Button(buttonId), forPlayer: 0)
+        }
+    }
+
+    // MARK: - Control layout
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {

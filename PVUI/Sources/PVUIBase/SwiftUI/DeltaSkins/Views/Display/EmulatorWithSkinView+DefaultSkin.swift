@@ -263,6 +263,29 @@ struct DefaultControllerSkinView: View {
                         .frame(width: 1, height: 1)
                 }
 
+                // Hardware switches overlay (Atari difficulty / TV-type switches etc.)
+                // Positioned at the top-trailing corner so they sit above the controller area
+                // and don't block the game screen.
+                if validSize, let sysId = systemId,
+                   let switches = hardwareSwitches(for: sysId.rawValue) {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            HardwareSwitchRowView(switches: switches) { buttonId, _ in
+                                // Send a momentary press+release so the core registers the edge.
+                                inputHandler.buttonPressed(buttonId)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                    inputHandler.buttonReleased(buttonId)
+                                }
+                            }
+                            .padding(.top, geometry.safeAreaInsets.top + 8)
+                            .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
+                        }
+                        Spacer()
+                    }
+                    .allowsHitTesting(true)
+                }
+
                 // Virtual input quick-toggle buttons (keyboard / mouse) — top-leading corner.
                 // Only visible when the active core supports keyboard or mouse input.
                 // Not available on tvOS (virtual keyboard/mouse overlays are iOS-only).

@@ -655,31 +655,27 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
         buttons.append(contentsOf: [startButton, selectButton])
 
         // Add menu and turbo buttons horizontally at the top center
-        let menuButtonX = 0.5 - menuButtonWidth - 0.02
-        let turboButtonX = 0.5 + 0.02
-        let utilityButtonY = isLandscape ? 0.05 : 0.05
+        let utilityButtonY: CGFloat = 0.05
 
-        // Menu button (previously vertical, now horizontal)
         // Menu button with retrowave styling - positioned at top left
         let menuButton = DeltaSkinButton(
             id: "button_menu",
             input: .single("menu"),
             frame: CGRect(
                 x: 0.05,
-                y: 0.05,
+                y: utilityButtonY,
                 width: menuButtonWidth,
                 height: menuButtonHeight
             )
         )
 
-        // Turbo button (renamed from Fast Forward)
-        // Turbo button (renamed from Fast Forward) with retrowave styling - positioned at top right
+        // Turbo button with retrowave styling - positioned at top right
         let turboButton = DeltaSkinButton(
             id: "button_fast_forward",
             input: .single("fast_forward"),
             frame: CGRect(
                 x: 0.95 - menuButtonWidth,
-                y: 0.05,
+                y: utilityButtonY,
                 width: menuButtonWidth,
                 height: menuButtonHeight
             )
@@ -687,7 +683,81 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
 
         buttons.append(contentsOf: [menuButton, turboButton])
 
+        // Hardware toggle switches — shown only for systems that have them.
+        // Placed at top-trailing corner (just inside the turbo button) so they
+        // don't overlap the game screen and are reachable with the right thumb.
+        let hardwareSwitchButtons = systemHardwareSwitchButtons(isLandscape: isLandscape)
+        buttons.append(contentsOf: hardwareSwitchButtons)
+
         return buttons
+    }
+
+    // MARK: - Hardware switch button layout
+
+    /// Returns hardware-switch `DeltaSkinButton` entries for systems that have them
+    /// (Atari 2600: left/right difficulty A/B; Atari 7800: left/right difficulty).
+    private func systemHardwareSwitchButtons(isLandscape: Bool) -> [DeltaSkinButton] {
+        switch systemIdentifier {
+        case .Atari2600:
+            return atari2600SwitchButtons(isLandscape: isLandscape)
+        case .Atari7800:
+            return atari7800SwitchButtons(isLandscape: isLandscape)
+        default:
+            return []
+        }
+    }
+
+    private func atari2600SwitchButtons(isLandscape: Bool) -> [DeltaSkinButton] {
+        // Two difficulty switches side-by-side at top-right.
+        // Each switch slot is a single DeltaSkinButton with buttonKind = .hardwareSwitch;
+        // HardwareSwitchView tracks the A/B state and sends the correct buttonId on each toggle.
+        let switchWidth: CGFloat  = isLandscape ? 0.08 : 0.10
+        let switchHeight: CGFloat = isLandscape ? 0.07 : 0.06
+        let topY: CGFloat         = isLandscape ? 0.03 : 0.04
+        let rightEdge: CGFloat    = isLandscape ? 0.80 : 0.78
+        let gap: CGFloat          = 0.02
+
+        // Left difficulty switch — input ID is a placeholder; actual press is routed by HardwareSwitchView.
+        let leftDiff = DeltaSkinButton(
+            id: "switch_left_diff",
+            input: .single("leftdiffa"),
+            frame: CGRect(x: rightEdge - switchWidth * 2 - gap, y: topY, width: switchWidth, height: switchHeight),
+            selfRetracting: false,
+            buttonKind: .hardwareSwitch
+        )
+        // Right difficulty switch
+        let rightDiff = DeltaSkinButton(
+            id: "switch_right_diff",
+            input: .single("rightdiffa"),
+            frame: CGRect(x: rightEdge - switchWidth, y: topY, width: switchWidth, height: switchHeight),
+            selfRetracting: false,
+            buttonKind: .hardwareSwitch
+        )
+        return [leftDiff, rightDiff]
+    }
+
+    private func atari7800SwitchButtons(isLandscape: Bool) -> [DeltaSkinButton] {
+        let switchWidth: CGFloat  = isLandscape ? 0.08 : 0.10
+        let switchHeight: CGFloat = isLandscape ? 0.07 : 0.06
+        let topY: CGFloat         = isLandscape ? 0.03 : 0.04
+        let rightEdge: CGFloat    = isLandscape ? 0.80 : 0.78
+        let gap: CGFloat          = 0.02
+
+        let leftDiff = DeltaSkinButton(
+            id: "switch_left_diff",
+            input: .single("leftdiff"),
+            frame: CGRect(x: rightEdge - switchWidth * 2 - gap, y: topY, width: switchWidth, height: switchHeight),
+            selfRetracting: false,
+            buttonKind: .hardwareSwitch
+        )
+        let rightDiff = DeltaSkinButton(
+            id: "switch_right_diff",
+            input: .single("rightdiff"),
+            frame: CGRect(x: rightEdge - switchWidth, y: topY, width: switchWidth, height: switchHeight),
+            selfRetracting: false,
+            buttonKind: .hardwareSwitch
+        )
+        return [leftDiff, rightDiff]
     }
 
     public func screenGroups(for traits: DeltaSkinTraits) -> [DeltaSkinScreenGroup]? {
