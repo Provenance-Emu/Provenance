@@ -20,10 +20,10 @@ public final class PVLogPublisher: @unchecked Sendable {
 
     // MARK: - Private Properties
 
-    /// Serial queue for thread-safe access to logs
-    private let logsQueue = DispatchQueue(label: "com.provenance.logging.storage", qos: .utility)
+    /// Lock for thread-safe access to logs (faster than dispatch queue for hot path)
+    private let logsLock = NSLock()
 
-    /// In-memory cache of recent logs
+    /// In-memory cache of recent logs — always access under logsLock
     private var recentLogs: [LogEntry] = []
 
     /// Maximum number of logs to keep in memory
@@ -85,13 +85,12 @@ public final class PVLogPublisher: @unchecked Sendable {
         logSubject.send(entry)
         #endif
 
-        logsQueue.async { [weak self, entry] in
-            guard let self = self else { return }
-            self.recentLogs.append(entry)
-            if self.recentLogs.count > self.maxLogCount {
-                self.recentLogs = Array(self.recentLogs.suffix(self.maxLogCount))
-            }
+        logsLock.lock()
+        recentLogs.append(entry)
+        if recentLogs.count > maxLogCount {
+            recentLogs = Array(recentLogs.suffix(maxLogCount))
         }
+        logsLock.unlock()
 
         #if canImport(OSLog)
         let osLogType: OSLogType
@@ -115,20 +114,20 @@ public final class PVLogPublisher: @unchecked Sendable {
     /// - Parameter level: Optional minimum log level to filter by
     /// - Returns: Array of log entries
     public func getRecentLogs(minLevel: LogLevel? = nil) -> [LogEntry] {
-        return logsQueue.sync { [self] in
-            if let minLevel = minLevel {
-                return recentLogs.filter { $0.level.rawValue >= minLevel.rawValue }
-            } else {
-                return recentLogs
-            }
+        logsLock.lock()
+        let snapshot = recentLogs
+        logsLock.unlock()
+        if let minLevel = minLevel {
+            return snapshot.filter { $0.level.rawValue >= minLevel.rawValue }
         }
+        return snapshot
     }
 
     /// Clear all cached logs
     public func clearLogs() {
-        logsQueue.async { [weak self] in
-            self?.recentLogs.removeAll()
-        }
+        logsLock.lock()
+        recentLogs.removeAll()
+        logsLock.unlock()
     }
 
     /// Extract category name from PVLogCategory
