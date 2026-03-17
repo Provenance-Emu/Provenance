@@ -753,7 +753,8 @@ struct EmulatorWithSkinView: View {
             displayType: displayType,
             orientation: isLandscape ? .landscape : .portrait,
             iPadModel: iPadModel,
-            externalDisplay: .none
+            externalDisplay: .none,
+            gameIdentifier: gameTitle
         )
     }
 

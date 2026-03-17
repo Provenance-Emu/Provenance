@@ -51,7 +51,8 @@ extension PVEmulatorViewController {
         let traits = DeltaSkinTraits(
             device: device,
             displayType: .standard,
-            orientation: orientation
+            orientation: orientation,
+            gameIdentifier: game?.title
         )
 
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
@@ -271,7 +272,8 @@ extension PVEmulatorViewController {
         let traits = DeltaSkinTraits(
             device: device,
             displayType: .standard,
-            orientation: orientation
+            orientation: orientation,
+            gameIdentifier: game?.title
         )
 
         guard let screenGroups = skin.screenGroups(for: traits),

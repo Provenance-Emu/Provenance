@@ -236,7 +236,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Calculate traits for checking screen area definitions
         let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
         let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
+        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation, gameIdentifier: game?.title)
 
         // Check if skin has defined screen areas (screens, screenGroups, or gameScreenFrame)
         // For these skins, wait for protocol delegate callback instead of using fallback calculation

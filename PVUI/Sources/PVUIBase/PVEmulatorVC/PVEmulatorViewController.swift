@@ -1815,11 +1815,12 @@ extension PVEmulatorViewController {
             }
         }()
 
-        // Create the traits object for the skin
+        // Create the traits object for the skin, including game context for per-game overrides
         let traits = DeltaSkinTraits(
             device: currentDevice,
             displayType: displayType,
-            orientation: currentOrientation == .landscape ? .landscape : .portrait
+            orientation: currentOrientation == .landscape ? .landscape : .portrait,
+            gameIdentifier: game?.title
         )
 
         DLOG("Creating skin view with traits: \(traits)")

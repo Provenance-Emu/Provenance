@@ -202,26 +202,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
     }
 
     /// Returns the `OrientationRepresentations` for the given traits (without converting to RepresentationInfo).
+    /// Checks per-game overrides first, then falls back to the default representations.
     private func orientationRepresentations(for traits: DeltaSkinTraits) -> OrientationRepresentations? {
+        // Check per-game overrides first
+        if let gameOverride = gameOverrideRepresentation(for: traits) {
+            return gameOverride
+        }
         guard let deviceReps = info.representations[traits.device] else { return nil }
-        var result: OrientationRepresentations?
-        switch traits.displayType {
-        case .standard:
-            result = deviceReps.standard?[traits.orientation.rawValue]
-        case .edgeToEdge:
-            result = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-            if result == nil { result = deviceReps.standard?[traits.orientation.rawValue] }
-        case .splitView:
-            result = deviceReps.splitView?[traits.orientation.rawValue]
-        case .stageManager:
-            result = deviceReps.stageManager?[traits.orientation.rawValue]
-        case .externalDisplay:
-            result = deviceReps.externalDisplay?[traits.orientation.rawValue]
-        }
-        if result == nil && traits.displayType == .standard {
-            result = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-        }
-        return result
+        return resolveOrientationReps(from: deviceReps, traits: traits)
     }
 
     /// Returns the animated background configuration for the given traits, if any.
@@ -233,15 +221,84 @@ public struct DeltaSkin: DeltaSkinProtocol {
     private static var lastRepCacheKey: String?
     private static var lastRepCacheValue: DeltaSkin.RepresentationInfo?
 
+    /// Look up an `OrientationRepresentations` from a `DeviceRepresentations` for the given traits,
+    /// including standard/edgeToEdge fallback logic.
+    private func resolveOrientationReps(from deviceReps: DeviceRepresentations, traits: DeltaSkinTraits) -> OrientationRepresentations? {
+        var orientationReps: OrientationRepresentations?
+        switch traits.displayType {
+        case .standard:
+            orientationReps = deviceReps.standard?[traits.orientation.rawValue]
+        case .edgeToEdge:
+            orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+        case .splitView:
+            orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
+        case .stageManager:
+            orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
+        case .externalDisplay:
+            orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
+        }
+
+        // edgeToEdge <-> standard fallback
+        if orientationReps == nil && traits.displayType == .edgeToEdge {
+            orientationReps = deviceReps.standard?[traits.orientation.rawValue]
+        }
+        if orientationReps == nil && traits.displayType == .standard {
+            orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+        }
+        return orientationReps
+    }
+
+    /// Try to find a game-specific override representation for the given traits.
+    /// Matches against game title, ROM filename (without extension), and MD5 hash
+    /// stored in `traits.gameIdentifier`.
+    private func gameOverrideRepresentation(for traits: DeltaSkinTraits) -> OrientationRepresentations? {
+        guard let gameId = traits.gameIdentifier,
+              let overrides = info.gameOverrides else {
+            return nil
+        }
+
+        // Try exact match first (game title, filename, or MD5)
+        if let deviceMap = overrides[gameId],
+           let deviceReps = deviceMap[traits.device.rawValue] {
+            if let reps = resolveOrientationReps(from: deviceReps, traits: traits) {
+                DLOG("skins: Found game override for '\(gameId)' (exact match)")
+                return reps
+            }
+        }
+
+        // Try case-insensitive match
+        let lowerId = gameId.lowercased()
+        for (key, deviceMap) in overrides {
+            if key.lowercased() == lowerId,
+               let deviceReps = deviceMap[traits.device.rawValue],
+               let reps = resolveOrientationReps(from: deviceReps, traits: traits) {
+                DLOG("skins: Found game override for '\(gameId)' (case-insensitive match on '\(key)')")
+                return reps
+            }
+        }
+
+        return nil
+    }
+
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
-        // Fast-path cache: same traits → return cached value without logging
-        let cacheKey = "\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
+        // Fast-path cache: same traits + game → return cached value without logging
+        let gameKey = traits.gameIdentifier ?? ""
+        let cacheKey = "\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(gameKey)"
         if Self.lastRepCacheKey == cacheKey, let cached = Self.lastRepCacheValue {
             return cached
         }
 
-        VLOG("skins: representation(for:) device=\(traits.device.rawValue) displayType=\(traits.displayType.rawValue) orientation=\(traits.orientation.rawValue)")
+        let gameName = traits.gameIdentifier ?? "none"
+        VLOG("skins: representation(for:) device=\(traits.device.rawValue) display=\(traits.displayType.rawValue) orient=\(traits.orientation.rawValue) game=\(gameName)")
         VLOG("skins: Available device reps: \(info.representations.keys.map { $0.rawValue })")
+
+        // Check per-game overrides first
+        if let gameOverride = gameOverrideRepresentation(for: traits) {
+            let result = gameOverride.toRepresentationInfo()
+            Self.lastRepCacheKey = cacheKey
+            Self.lastRepCacheValue = result
+            return result
+        }
 
         guard let deviceReps = info.representations[traits.device] else {
             ELOG("skins: ERROR - No representation found for device: \(traits.device.rawValue)")
@@ -259,43 +316,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         if deviceReps.externalDisplay != nil { availableDisplayTypes.append("externalDisplay") }
         VLOG("skins: Available display types for \(traits.device.rawValue): \(availableDisplayTypes.joined(separator: ", "))")
 
-        // Try the requested display type first
-        var orientationReps: OrientationRepresentations?
-        switch traits.displayType {
-        case .standard:
-            orientationReps = deviceReps.standard?[traits.orientation.rawValue]
-            VLOG("skins: Looking for standard/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
-        case .edgeToEdge:
-            orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-            VLOG("skins: Looking for edgeToEdge/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
-        case .splitView:
-            orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
-            VLOG("skins: Looking for splitView/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
-        case .stageManager:
-            orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
-            VLOG("skins: Looking for stageManager/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
-        case .externalDisplay:
-            orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
-            VLOG("skins: Looking for externalDisplay/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
-        }
-
-        // If not found and requested display type is edgeToEdge, try standard as fallback
-        if orientationReps == nil && traits.displayType == .edgeToEdge {
-            VLOG("skins: edgeToEdge not found, trying standard as fallback")
-            orientationReps = deviceReps.standard?[traits.orientation.rawValue]
-            if orientationReps != nil {
-                VLOG("skins: Found standard/\(traits.orientation.rawValue) as fallback")
-            }
-        }
-
-        // If still not found and requested display type is standard, try edgeToEdge as fallback
-        if orientationReps == nil && traits.displayType == .standard {
-            VLOG("skins: standard not found, trying edgeToEdge as fallback")
-            orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-            if orientationReps != nil {
-                VLOG("skins: Found edgeToEdge/\(traits.orientation.rawValue) as fallback")
-            }
-        }
+        let orientationReps = resolveOrientationReps(from: deviceReps, traits: traits)
 
         if orientationReps == nil {
             ELOG("skins: ERROR - No orientation representation found for displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue), and fallbacks failed")
@@ -523,8 +544,22 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Legacy skins that omit this key have no themes (empty array).
         let themes: [Theme]?
 
+        /// Per-game layout overrides. Keys are game identifiers (title, ROM filename without
+        /// extension, or MD5 hash). Values map device rawValue to orientation representations,
+        /// mirroring the structure of `DeviceRepresentations`.
+        ///
+        /// Example JSON:
+        /// ```json
+        /// "gameOverrides": {
+        ///   "Alien vs Predator": {
+        ///     "iphone": { "standard": { "portrait": { ... } } }
+        ///   }
+        /// }
+        /// ```
+        let gameOverrides: [String: [String: DeviceRepresentations]]?
+
         private enum CodingKeys: String, CodingKey {
-            case name, identifier, gameTypeIdentifier, debug, representations, keyboardOverlay, themes
+            case name, identifier, gameTypeIdentifier, debug, representations, keyboardOverlay, themes, gameOverrides
         }
 
         public init(from decoder: Decoder) throws {
@@ -549,6 +584,25 @@ public struct DeltaSkin: DeltaSkinProtocol {
             representations = reps
             keyboardOverlay = try container.decodeIfPresent(KeyboardOverlayConfig.self, forKey: .keyboardOverlay)
             themes = try container.decodeIfPresent([Theme].self, forKey: .themes)
+
+            // Decode per-game overrides
+            if container.contains(.gameOverrides) {
+                let overridesContainer = try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .gameOverrides)
+                var overrides: [String: [String: DeviceRepresentations]] = [:]
+
+                for gameKey in overridesContainer.allKeys {
+                    let deviceContainer = try overridesContainer.nestedContainer(keyedBy: StringCodingKey.self, forKey: gameKey)
+                    var deviceReps: [String: DeviceRepresentations] = [:]
+                    for deviceKey in deviceContainer.allKeys {
+                        let value = try deviceContainer.decode(DeviceRepresentations.self, forKey: deviceKey)
+                        deviceReps[deviceKey.stringValue] = value
+                    }
+                    overrides[gameKey.stringValue] = deviceReps
+                }
+                gameOverrides = overrides
+            } else {
+                gameOverrides = nil
+            }
         }
     }
 

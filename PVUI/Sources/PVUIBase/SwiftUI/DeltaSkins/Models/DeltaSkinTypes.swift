@@ -61,16 +61,22 @@ public struct DeltaSkinTraits: Codable, Hashable, Equatable {
     public let iPadModel: DeltaSkinIPadModel?
     public let externalDisplay: DeltaSkinExternalDisplay
 
+    /// Optional game identifier used for per-game skin layout overrides.
+    /// Can be a game title, ROM filename (without extension), or MD5 hash.
+    public var gameIdentifier: String?
+
     public init(device: DeltaSkinDevice = .iphone,
                 displayType: DeltaSkinDisplayType = .standard,
                 orientation: DeltaSkinOrientation = .portrait,
                 iPadModel: DeltaSkinIPadModel? = nil,
-                externalDisplay: DeltaSkinExternalDisplay = .none) {
+                externalDisplay: DeltaSkinExternalDisplay = .none,
+                gameIdentifier: String? = nil) {
         self.device = device
         self.displayType = displayType
         self.orientation = orientation
         self.iPadModel = iPadModel
         self.externalDisplay = externalDisplay
+        self.gameIdentifier = gameIdentifier
     }
 
     public var description: String {
@@ -80,6 +86,9 @@ public struct DeltaSkinTraits: Codable, Hashable, Equatable {
         }
         if externalDisplay != .none {
             desc += "-\(externalDisplay.rawValue)"
+        }
+        if let game = gameIdentifier {
+            desc += "-game:\(game)"
         }
         return desc
     }
