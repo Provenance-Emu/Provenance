@@ -130,6 +130,11 @@ typedef struct PVThinLibretroSymbols {
     BOOL _coreOptionsDirty;
     os_unfair_lock _optionsLock;
 
+    // Structured option metadata (for CoreOptional UI support)
+    NSMutableArray<NSDictionary<NSString *, id> *> *_coreOptionDefinitions;
+    NSMutableArray<NSDictionary<NSString *, id> *> *_coreOptionCategories;
+    NSMutableDictionary<NSString *, NSNumber *> *_coreOptionVisibility;
+
     // Frame-time callback (RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK)
     struct retro_frame_time_callback _frameTimeCallback;
     BOOL _hasFrameTimeCallback;
@@ -193,6 +198,8 @@ typedef struct PVThinLibretroSymbols {
 - (void)_thinInputPoll;
 - (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid;
 - (BOOL)handleEnvironmentCommand:(unsigned)cmd data:(void *)data;
+- (void)_parseV1OptionDefinition:(const struct retro_core_option_definition *)def;
+- (void)_parseCoreOptionsV2:(const struct retro_core_options_v2 *)opts;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (uintptr_t)currentEmuFBO;
 #endif
@@ -316,6 +323,9 @@ static bool thin_environment(unsigned cmd, void *data) {
         _coreOptions = [NSMutableDictionary dictionary];
         _coreOptionsDirty = NO;
         _optionsLock = OS_UNFAIR_LOCK_INIT;
+        _coreOptionDefinitions = [NSMutableArray array];
+        _coreOptionCategories = [NSMutableArray array];
+        _coreOptionVisibility = [NSMutableDictionary dictionary];
         _serializationQuirks = 0;
         _hasDiskControl = NO;
         _hasDiskControlExt = NO;
@@ -602,6 +612,27 @@ static bool thin_environment(unsigned cmd, void *data) {
     os_unfair_lock_unlock(&_optionsLock);
 }
 
+- (NSArray<NSDictionary<NSString *, id> *> *)coreOptionDefinitions {
+    os_unfair_lock_lock(&_optionsLock);
+    NSArray *copy = [_coreOptionDefinitions copy];
+    os_unfair_lock_unlock(&_optionsLock);
+    return copy;
+}
+
+- (NSArray<NSDictionary<NSString *, id> *> *)coreOptionCategories {
+    os_unfair_lock_lock(&_optionsLock);
+    NSArray *copy = [_coreOptionCategories copy];
+    os_unfair_lock_unlock(&_optionsLock);
+    return copy;
+}
+
+- (NSDictionary<NSString *, NSNumber *> *)coreOptionVisibility {
+    os_unfair_lock_lock(&_optionsLock);
+    NSDictionary *copy = [_coreOptionVisibility copy];
+    os_unfair_lock_unlock(&_optionsLock);
+    return copy;
+}
+
 // ---------------------------------------------------------------------------
 // MARK: - Property synthesized accessors
 // ---------------------------------------------------------------------------
@@ -848,6 +879,104 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 // ---------------------------------------------------------------------------
+// MARK: - Core option parsing helpers
+// ---------------------------------------------------------------------------
+
+/// Parse a v1 retro_core_option_definition into our NSDictionary metadata format.
+/// MUST be called with _optionsLock held.
+- (void)_parseV1OptionDefinition:(const struct retro_core_option_definition *)def {
+    NSString *key = [NSString stringWithUTF8String:def->key];
+    NSString *desc = def->desc ? [NSString stringWithUTF8String:def->desc] : key;
+    id info = def->info ? (id)[NSString stringWithUTF8String:def->info] : [NSNull null];
+
+    NSMutableArray *valuesArray = [NSMutableArray array];
+    for (int i = 0; i < RETRO_NUM_CORE_OPTION_VALUES_MAX && def->values[i].value; i++) {
+        NSString *val = [NSString stringWithUTF8String:def->values[i].value];
+        NSString *label = def->values[i].label
+            ? [NSString stringWithUTF8String:def->values[i].label]
+            : val;
+        [valuesArray addObject:@{@"value": val, @"label": label}];
+    }
+
+    NSString *defaultVal = def->default_value
+        ? [NSString stringWithUTF8String:def->default_value]
+        : ((valuesArray.count > 0) ? valuesArray[0][@"value"] : @"");
+
+    if (!_coreOptions[key]) {
+        _coreOptions[key] = defaultVal;
+    }
+
+    [_coreOptionDefinitions addObject:@{
+        @"key": key,
+        @"desc": desc,
+        @"info": info,
+        @"category": [NSNull null],
+        @"values": valuesArray,
+        @"default": defaultVal
+    }];
+}
+
+/// Parse a retro_core_options_v2 struct (categories + definitions).
+/// MUST be called with _optionsLock held.
+- (void)_parseCoreOptionsV2:(const struct retro_core_options_v2 *)opts {
+    [_coreOptionDefinitions removeAllObjects];
+    [_coreOptionCategories removeAllObjects];
+    [_coreOptionVisibility removeAllObjects];
+
+    // Parse categories
+    if (opts->categories) {
+        for (const struct retro_core_option_v2_category *cat = opts->categories; cat->key; cat++) {
+            NSString *catKey = [NSString stringWithUTF8String:cat->key];
+            NSString *catDesc = cat->desc ? [NSString stringWithUTF8String:cat->desc] : catKey;
+            id catInfo = cat->info ? (id)[NSString stringWithUTF8String:cat->info] : [NSNull null];
+            [_coreOptionCategories addObject:@{
+                @"key": catKey,
+                @"desc": catDesc,
+                @"info": catInfo
+            }];
+        }
+    }
+
+    // Parse definitions
+    if (opts->definitions) {
+        for (const struct retro_core_option_v2_definition *def = opts->definitions; def->key; def++) {
+            NSString *key = [NSString stringWithUTF8String:def->key];
+            NSString *desc = def->desc ? [NSString stringWithUTF8String:def->desc] : key;
+            id info = def->info ? (id)[NSString stringWithUTF8String:def->info] : [NSNull null];
+            id category = def->category_key && strlen(def->category_key) > 0
+                ? (id)[NSString stringWithUTF8String:def->category_key]
+                : [NSNull null];
+
+            NSMutableArray *valuesArray = [NSMutableArray array];
+            for (int i = 0; i < RETRO_NUM_CORE_OPTION_VALUES_MAX && def->values[i].value; i++) {
+                NSString *val = [NSString stringWithUTF8String:def->values[i].value];
+                NSString *label = def->values[i].label
+                    ? [NSString stringWithUTF8String:def->values[i].label]
+                    : val;
+                [valuesArray addObject:@{@"value": val, @"label": label}];
+            }
+
+            NSString *defaultVal = def->default_value
+                ? [NSString stringWithUTF8String:def->default_value]
+                : ((valuesArray.count > 0) ? valuesArray[0][@"value"] : @"");
+
+            if (!_coreOptions[key]) {
+                _coreOptions[key] = defaultVal;
+            }
+
+            [_coreOptionDefinitions addObject:@{
+                @"key": key,
+                @"desc": desc,
+                @"info": info,
+                @"category": category,
+                @"values": valuesArray,
+                @"default": defaultVal
+            }];
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MARK: - Environment callback handler
 // ---------------------------------------------------------------------------
 
@@ -882,21 +1011,26 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
 
         // ---- System / save directories ----
+        // Use inherited BIOSPath/saveStatePath from PVCoreObjCBridge (set by PVEmulatorCore)
+        // rather than the local _biosPath/_savePath which may not be set.
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
-            if (data) *(const char **)data = _biosPath.UTF8String;
-            DLOG(@"ThinEnv GET_SYSTEM_DIRECTORY: %@", _biosPath);
-            return (_biosPath != nil);
+            NSString *sysDir = self.BIOSPath ?: _biosPath;
+            if (data) *(const char **)data = sysDir.UTF8String;
+            DLOG(@"ThinEnv GET_SYSTEM_DIRECTORY: %@", sysDir);
+            return (sysDir != nil);
         }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: {
-            if (data) *(const char **)data = _savePath.UTF8String;
-            DLOG(@"ThinEnv GET_SAVE_DIRECTORY: %@", _savePath);
-            return (_savePath != nil);
+            NSString *saveDir = self.batterySavesPath ?: _savePath;
+            if (data) *(const char **)data = saveDir.UTF8String;
+            DLOG(@"ThinEnv GET_SAVE_DIRECTORY: %@", saveDir);
+            return (saveDir != nil);
         }
         case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:
         /* RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY is the same value (30) */
         {
-            if (data) *(const char **)data = _biosPath.UTF8String;
-            return (_biosPath != nil);
+            NSString *assetsDir = self.BIOSPath ?: _biosPath;
+            if (data) *(const char **)data = assetsDir.UTF8String;
+            return (assetsDir != nil);
         }
         case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: {
             // Return empty — the thin frontend doesn't have a fixed "libretro path"
@@ -909,19 +1043,43 @@ static bool thin_environment(unsigned cmd, void *data) {
             const struct retro_variable *vars = (const struct retro_variable *)data;
             if (!vars) return false;
             os_unfair_lock_lock(&_optionsLock);
+            [_coreOptionDefinitions removeAllObjects];
+            [_coreOptionVisibility removeAllObjects];
             for (const struct retro_variable *v = vars; v->key; v++) {
                 NSString *key = [NSString stringWithUTF8String:v->key];
-                if (!_coreOptions[key] && v->value) {
-                    // Parse default value from "description; default|opt1|opt2" format
+                if (v->value) {
                     NSString *valStr = [NSString stringWithUTF8String:v->value];
                     NSRange semi = [valStr rangeOfString:@"; "];
-                    NSString *defaultVal = semi.location != NSNotFound
-                        ? [[valStr substringFromIndex:NSMaxRange(semi)] componentsSeparatedByString:@"|"].firstObject
+                    NSString *desc = (semi.location != NSNotFound)
+                        ? [valStr substringToIndex:semi.location]
+                        : key;
+                    NSString *valuesStr = (semi.location != NSNotFound)
+                        ? [valStr substringFromIndex:NSMaxRange(semi)]
                         : valStr;
-                    _coreOptions[key] = [defaultVal stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                    NSArray<NSString *> *valueTokens = [valuesStr componentsSeparatedByString:@"|"];
+                    NSMutableArray *valuesArray = [NSMutableArray arrayWithCapacity:valueTokens.count];
+                    for (NSString *token in valueTokens) {
+                        NSString *trimmed = [token stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                        if (trimmed.length > 0) {
+                            [valuesArray addObject:@{@"value": trimmed, @"label": trimmed}];
+                        }
+                    }
+                    NSString *defaultVal = (valuesArray.count > 0) ? valuesArray[0][@"value"] : @"";
+                    if (!_coreOptions[key]) {
+                        _coreOptions[key] = defaultVal;
+                    }
+                    [_coreOptionDefinitions addObject:@{
+                        @"key": key,
+                        @"desc": desc,
+                        @"info": [NSNull null],
+                        @"category": [NSNull null],
+                        @"values": valuesArray,
+                        @"default": defaultVal
+                    }];
                 }
             }
             os_unfair_lock_unlock(&_optionsLock);
+            DLOG(@"ThinEnv SET_VARIABLES: parsed %lu option definitions", (unsigned long)_coreOptionDefinitions.count);
             return true;
         }
         case RETRO_ENVIRONMENT_GET_VARIABLE: {
@@ -956,18 +1114,69 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
 
-        // ---- Core options v2 ----
-        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS:
-        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL:
-        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2:
-        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL: {
-            // Full options v2 parsing is complex; for now we note that options are set
-            // and let cores fall back to GET_VARIABLE which we handle above.
-            DLOG(@"ThinEnv SET_CORE_OPTIONS_V2 (cmd=%u) — stored as dirty", cmd);
-            _coreOptionsDirty = YES;
+        // ---- Core options v1 (array of retro_core_option_definition) ----
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS: {
+            const struct retro_core_option_definition *defs = (const struct retro_core_option_definition *)data;
+            if (!defs) return false;
+            os_unfair_lock_lock(&_optionsLock);
+            [_coreOptionDefinitions removeAllObjects];
+            [_coreOptionCategories removeAllObjects];
+            [_coreOptionVisibility removeAllObjects];
+            for (const struct retro_core_option_definition *d = defs; d->key; d++) {
+                [self _parseV1OptionDefinition:d];
+            }
+            os_unfair_lock_unlock(&_optionsLock);
+            DLOG(@"ThinEnv SET_CORE_OPTIONS: parsed %lu definitions", (unsigned long)_coreOptionDefinitions.count);
             return true;
         }
-        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY:
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL: {
+            const struct retro_core_options_intl *intl = (const struct retro_core_options_intl *)data;
+            if (!intl || !intl->us) return false;
+            const struct retro_core_option_definition *defs = intl->us;
+            os_unfair_lock_lock(&_optionsLock);
+            [_coreOptionDefinitions removeAllObjects];
+            [_coreOptionCategories removeAllObjects];
+            [_coreOptionVisibility removeAllObjects];
+            for (const struct retro_core_option_definition *d = defs; d->key; d++) {
+                [self _parseV1OptionDefinition:d];
+            }
+            os_unfair_lock_unlock(&_optionsLock);
+            DLOG(@"ThinEnv SET_CORE_OPTIONS_INTL: parsed %lu definitions", (unsigned long)_coreOptionDefinitions.count);
+            return true;
+        }
+
+        // ---- Core options v2 ----
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2: {
+            const struct retro_core_options_v2 *opts = (const struct retro_core_options_v2 *)data;
+            if (!opts) return false;
+            os_unfair_lock_lock(&_optionsLock);
+            [self _parseCoreOptionsV2:opts];
+            os_unfair_lock_unlock(&_optionsLock);
+            DLOG(@"ThinEnv SET_CORE_OPTIONS_V2: %lu categories, %lu definitions",
+                 (unsigned long)_coreOptionCategories.count, (unsigned long)_coreOptionDefinitions.count);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL: {
+            const struct retro_core_options_v2_intl *intl = (const struct retro_core_options_v2_intl *)data;
+            if (!intl || !intl->us) return false;
+            os_unfair_lock_lock(&_optionsLock);
+            [self _parseCoreOptionsV2:intl->us];
+            os_unfair_lock_unlock(&_optionsLock);
+            DLOG(@"ThinEnv SET_CORE_OPTIONS_V2_INTL: %lu categories, %lu definitions",
+                 (unsigned long)_coreOptionCategories.count, (unsigned long)_coreOptionDefinitions.count);
+            return true;
+        }
+
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY: {
+            const struct retro_core_option_display *disp = (const struct retro_core_option_display *)data;
+            if (!disp || !disp->key) return true;
+            NSString *key = [NSString stringWithUTF8String:disp->key];
+            os_unfair_lock_lock(&_optionsLock);
+            _coreOptionVisibility[key] = @(disp->visible);
+            os_unfair_lock_unlock(&_optionsLock);
+            DLOG(@"ThinEnv SET_CORE_OPTIONS_DISPLAY: %@ visible=%d", key, disp->visible);
+            return true;
+        }
         case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK:
             return true;
         case RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION: {
