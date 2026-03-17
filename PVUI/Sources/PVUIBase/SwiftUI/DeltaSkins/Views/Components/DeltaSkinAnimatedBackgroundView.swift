@@ -13,6 +13,8 @@ struct DeltaSkinAnimatedBackgroundView: View {
 
     /// Decoded frames together with their individual display durations (seconds).
     @State private var frames: [(image: UIImage, duration: Double)] = []
+    @State private var totalDuration: Double = 0
+    @State private var cumulativeDurations: [Double] = []
     @State private var startDate: Date = Date()
     @Environment(\.scenePhase) private var scenePhase
 
@@ -55,20 +57,45 @@ struct DeltaSkinAnimatedBackgroundView: View {
 
     /// Returns the frame that should be displayed at `date`, honouring per-frame durations.
     private func frame(at date: Date) -> (image: UIImage, duration: Double) {
+        // We only ever call this when frames is non-empty, but guard defensively.
+        guard !frames.isEmpty else {
+            return (UIImage(), 0)
+        }
+
         let elapsed = date.timeIntervalSince(startDate)
-        let totalDuration = frames.map(\.duration).reduce(0, +)
-        guard totalDuration > 0 else { return frames[0] }
+        let duration = totalDuration
+        guard duration > 0 else { return frames[0] }
 
         let t: Double = loops
-            ? elapsed.truncatingRemainder(dividingBy: totalDuration)
-            : min(elapsed, totalDuration)
+            ? elapsed.truncatingRemainder(dividingBy: duration)
+            : min(elapsed, duration)
 
-        var accumulated = 0.0
-        for f in frames {
-            accumulated += f.duration
-            if t < accumulated { return f }
+        // Fast path: binary search over precomputed cumulative durations when in sync.
+        if cumulativeDurations.count == frames.count, !cumulativeDurations.isEmpty {
+            var low = 0
+            var high = cumulativeDurations.count - 1
+            while low < high {
+                let mid = (low + high) / 2
+                if t < cumulativeDurations[mid] {
+                    high = mid
+                } else {
+                    low = mid + 1
+                }
+            }
+            return frames[low]
         }
-        return frames[frames.count - 1]
+
+        // Fallback: linear scan (maintains previous behavior if cumulativeDurations is unavailable).
+        var accumulated = 0.0
+        var index = frames.count - 1
+        for (i, f) in frames.enumerated() {
+            accumulated += f.duration
+            if t < accumulated {
+                index = i
+                break
+            }
+        }
+        return frames[index]
     }
 
     // MARK: - Frame loading
@@ -111,6 +138,17 @@ struct DeltaSkinAnimatedBackgroundView: View {
 
         await MainActor.run {
             frames = loaded
+
+            var cumulative: [Double] = []
+            cumulative.reserveCapacity(loaded.count)
+            var runningTotal = 0.0
+            for frame in loaded {
+                runningTotal += frame.1
+                cumulative.append(runningTotal)
+            }
+
+            cumulativeDurations = cumulative
+            totalDuration = runningTotal
             startDate = Date()
         }
     }
