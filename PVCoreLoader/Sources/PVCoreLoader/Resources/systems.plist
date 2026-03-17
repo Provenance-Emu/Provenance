@@ -5671,7 +5671,7 @@
 				<key>Description</key>
 				<string>TOS 1.00 US Boot ROM</string>
 				<key>MD5</key>
-				<string></string>
+				<string>1a586c64dc73b7a11f07781ef3acc82b</string>
 				<key>Name</key>
 				<string>tos100us.rom</string>
 				<key>Optional</key>
@@ -5683,7 +5683,7 @@
 				<key>Description</key>
 				<string>TOS 1.02 US Boot ROM</string>
 				<key>MD5</key>
-				<string></string>
+				<string>c1c57ce48e8ee4135885cee9e63a68a2</string>
 				<key>Name</key>
 				<string>tos102us.rom</string>
 				<key>Optional</key>
@@ -5695,7 +5695,7 @@
 				<key>Description</key>
 				<string>TOS 1.04 US Boot ROM</string>
 				<key>MD5</key>
-				<string></string>
+				<string>036c5ae4f885cbf58baea72fdb4b42f8</string>
 				<key>Name</key>
 				<string>tos104us.rom</string>
 				<key>Optional</key>
@@ -5719,7 +5719,7 @@
 				<key>Description</key>
 				<string>TOS 1.06 US Boot ROM</string>
 				<key>MD5</key>
-				<string></string>
+				<string>a2cf56fdada3c93d61306e44e994a80c</string>
 				<key>Name</key>
 				<string>tos106us.rom</string>
 				<key>Optional</key>
@@ -5755,7 +5755,7 @@
 				<key>Description</key>
 				<string>TOS 2.06 US Boot ROM</string>
 				<key>MD5</key>
-				<string></string>
+				<string>0b1f9ac65c1cc9a9b5e99b7f3d225a10</string>
 				<key>Name</key>
 				<string>tos206us.rom</string>
 				<key>Optional</key>
