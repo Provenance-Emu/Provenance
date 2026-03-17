@@ -48,7 +48,7 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
         
         let ssGroup:CoreOption = .group(.init(title: "Sega Saturn",
                                                      description: ""),
-                                          subOptions: [ss_region_default_option, ss_cart_autodefault_option, ss_h_overscan_option])
+                                          subOptions: [ss_region_default_option, ss_cart_autodefault_option, ss_h_overscan_option, ss_multitap_option])
         /*
          ss.input.port1,2,3,4 gamepad default
          none
@@ -362,6 +362,14 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
                      defaultValue: 0)
     }
     
+    // ss.input.sport1.multitap / ss.input.sport2.multitap
+    static var ss_multitap_option: CoreOption {
+        .bool(.init(
+            title: "TeamTap (Multitap)",
+            description: "Enable the Saturn TeamTap adapter on port 1 for 3–6 player games. Automatically enabled for known multiplayer games or when 3+ controllers are connected. Enable manually for unlisted games.",
+            requiresRestart: true), defaultValue: false)
+    }
+
     // MARK: VB
     static var vb_instant_display_hack_option: CoreOption {
         .bool(.init(
@@ -401,6 +409,7 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
     @objc(ss_region_default) static var ss_region_default: Int { valueForOption(ss_region_default_option).asInt ?? 0 }
     @objc(ss_h_overscan) static var ss_h_overscan: Bool { valueForOption(ss_h_overscan_option).asBool }
     @objc(ss_cart_autodefault) static var ss_cart_autodefault: Int { valueForOption(ss_cart_autodefault_option).asInt ?? 1}
+    @objc(ss_multitap) static var ss_multitap: Bool { valueForOption(ss_multitap_option).asBool }
     
     // VB
     @objc(vb_instant_display_hack) static var vb_instant_display_hack: Bool { valueForOption(vb_instant_display_hack_option).asBool }

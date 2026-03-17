@@ -65,6 +65,8 @@
 @interface MednafenGameCoreBridge (MultiTap)
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapPSXGames;
 + (NSArray<NSString*>*_Nonnull)multiTap5PlayerPort2;
++ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapSaturnGames;
++ (NSArray<NSString*>*_Nonnull)multiTapSaturnPort2Games;
 @end
 
 static Mednafen::MDFNGI *game;
@@ -898,8 +900,66 @@ static void emulation_run(BOOL skipFrame) {
             ILOG(@"Mednafen: Saturn M3U detected, discs=%ld", (long)self.maxDiscs);
         }
 
-        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+        // Saturn: Set multitap (TeamTap) configuration.
+        // Priority 1: game-ID database lookup (most reliable).
+        // Priority 2: user preference override (explicit force-enable).
+        // Priority 3: connected controller count (fallback — enables multitap when
+        //             3+ controllers are plugged in even for unknown games).
+        NSString *ssSerial = self.romSerial;
+        NSNumber *ssMultitapCount = ssSerial ? [MednafenGameCoreOptions multiTapSaturnGames][ssSerial] : nil;
+        BOOL userForcedMultitap = MednafenGameCoreOptions.ss_multitap;
+
+        // Count active controllers.
+        int connectedControllers = 0;
+        if (self.controller1) connectedControllers++;
+        if (self.controller2) connectedControllers++;
+        if (self.controller3) connectedControllers++;
+        if (self.controller4) connectedControllers++;
+        if (self.controller5) connectedControllers++;
+        if (self.controller6) connectedControllers++;
+
+        BOOL enableMultitap = NO;
+        int ssMaxPlayers = 2;
+
+        if (ssMultitapCount != nil) {
+            // Known multitap game — use the database player count.
+            ssMaxPlayers = MAX(2, [ssMultitapCount intValue]);
+            enableMultitap = (ssMaxPlayers > 2);
+            ILOG(@"Mednafen Saturn: multitap serial=%@ players=%d", ssSerial, ssMaxPlayers);
+        } else if (userForcedMultitap) {
+            // User explicitly enabled multitap — use up to 6 players.
+            ssMaxPlayers = (connectedControllers > 2) ? MIN(connectedControllers, 6) : 6;
+            enableMultitap = YES;
+            ILOG(@"Mednafen Saturn: multitap force-enabled by user setting, players=%d", ssMaxPlayers);
+        } else if (connectedControllers > 2) {
+            // Unknown game but 3+ controllers connected — enable as a convenience.
+            ssMaxPlayers = MIN(connectedControllers, 6);
+            enableMultitap = YES;
+            ILOG(@"Mednafen Saturn: multitap enabled by controller count (%d connected)", connectedControllers);
+        }
+
+        if (enableMultitap) {
+            BOOL usePort2 = ssSerial && [[MednafenGameCoreOptions multiTapSaturnPort2Games] containsObject:ssSerial];
+            if (usePort2) {
+                Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
+                Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", true);
+            } else {
+                Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", true);
+                Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
+            }
+            self->multiTapPlayerCount = ssMaxPlayers;
+            // Virtual ports 0-(n-1) are the TeamTap sub-slots on the active physical port.
+            for (int i = 0; i < ssMaxPlayers; i++) {
+                game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            }
+        } else {
+            // Standard 2-player setup — explicitly disable multitap to prevent bleed from prior loads.
+            Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
+            Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
+            self->multiTapPlayerCount = 2;
+            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+        }
     }
     else if (self.systemType == MednaSystemPSX)
     {
@@ -1117,6 +1177,7 @@ static void emulation_run(BOOL skipFrame) {
     NSUInteger maxPlayers = 2;
     switch (self.systemType) {
         case MednaSystemPSX:
+        case MednaSystemSS:
             maxPlayers = self->multiTapPlayerCount;
             break;
         case MednaSystemPCE:
@@ -1126,7 +1187,6 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemSMS:
         case MednaSystemNES:
         case MednaSystemSNES:
-        case MednaSystemSS:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
