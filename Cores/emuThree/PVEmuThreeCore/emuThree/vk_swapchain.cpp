@@ -10,7 +10,6 @@
 #include "common/microprofile.h"
 #include "common/settings.h"
 #include "video_core/renderer_vulkan/vk_instance.h"
-#include "video_core/renderer_vulkan/vk_scheduler.h"
 #include "video_core/renderer_vulkan/vk_swapchain.h"
 
 // Turn on PRESENT_WAIT_IDLE to wait for all operations to complete before presenting.
@@ -24,9 +23,8 @@ MICROPROFILE_DEFINE(Vulkan_Present, "Vulkan", "Swapchain Present", MP_RGB(66, 18
 
 namespace Vulkan {
 
-Swapchain::Swapchain(const Instance& instance_, Scheduler& scheduler, u32 width, u32 height,
-                     vk::SurfaceKHR surface_)
-    : instance{instance_}, scheduler{scheduler}, surface{surface_} {
+Swapchain::Swapchain(const Instance& instance_, u32 width, u32 height, vk::SurfaceKHR surface_)
+    : instance{instance_}, surface{surface_} {
     FindPresentFormat();
     SetPresentMode();
     Create(width, height, surface);
