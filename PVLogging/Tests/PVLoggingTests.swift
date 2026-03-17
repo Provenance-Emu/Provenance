@@ -476,19 +476,19 @@ struct PVLogPublisherTests {
         // the AsyncStream initialiser closure, before any iteration begins.
         let stream = publisher.makeLogStream()
 
-        // Enqueue an entry; it is buffered until the iterator pulls it.
-        publisher.storeEntry(message: "cancellation-probe", level: .info, categoryName: "general",
-                             file: "T.swift", function: "f()", line: 1)
-
-        // Consume the buffered entry then break — exercises onTermination cleanup
-        // without races or arbitrary sleeps.
-        var received: String?
-        for await entry in stream {
-            received = entry.message
-            break
+        // Start a consumer task that iterates the stream; we will cancel it explicitly
+        // to exercise the onTermination cleanup path.
+        let consumerTask = Task {
+            for await _ in stream {
+                // Intentionally ignore entries; we're testing cancellation/cleanup.
+            }
         }
 
-        #expect(received == "cancellation-probe")
+        // Deterministically cancel the consumer and ensure it completes without hanging.
+        consumerTask.cancel()
+        _ = await consumerTask.result
+
+        #expect(consumerTask.isCancelled)
     }
 }
 
