@@ -1335,8 +1335,8 @@ static retro_microphone_t *thin_open_mic(const retro_microphone_params_t *params
     unsigned rate = (params && params->rate) ? params->rate : 44100;
     mic->sampleRate = rate;
 
-#if TARGET_OS_IPHONE
-    // Configure audio session for simultaneous playback + recording
+#if TARGET_OS_IOS
+    // Configure audio session for simultaneous playback + recording (iOS only, not tvOS)
     AVAudioSession *session = [AVAudioSession sharedInstance];
     NSError *error = nil;
     [session setCategory:AVAudioSessionCategoryPlayAndRecord
@@ -1485,8 +1485,8 @@ static bool thin_get_mic_params(const retro_microphone_t *microphone, retro_micr
 static bool thin_set_mic_state(retro_microphone_t *microphone, bool state) {
     if (!microphone) return false;
     if (state && !microphone->isRunning) {
-#if TARGET_OS_IPHONE
-        // Request microphone permission (if not already granted)
+#if TARGET_OS_IOS
+        // Request microphone permission (if not already granted) — iOS only, not tvOS
         AVAudioSession *session = [AVAudioSession sharedInstance];
         if ([session recordPermission] != AVAudioSessionRecordPermissionGranted) {
             dispatch_semaphore_t sema = dispatch_semaphore_create(0);
