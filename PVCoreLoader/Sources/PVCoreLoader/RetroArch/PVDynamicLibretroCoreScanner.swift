@@ -97,7 +97,7 @@ private struct ScanCacheEntry: Codable {
 }
 
 private struct ScanCache: Codable {
-    static let currentVersion = 2   // bumped: exclude date strings from version heuristic
+    static let currentVersion = 3   // bumped: tighter name/version heuristic rejects format strings
     var version: Int = ScanCache.currentVersion
     var entries: [String: ScanCacheEntry] = [:]   // keyed by path
 }
@@ -521,10 +521,24 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
             let hi     = min(strings.count - 1, extIdx + 6)
             let window = strings[lo...hi].filter { $0 != extStr }
 
-            // library_name: readable string (has a letter, no pipe, 2–60 chars)
+            // Reject strings that look like C format specifiers, file extensions,
+            // file paths, or other non-name metadata that can appear in __cstring.
+            let looksLikeJunk: (String) -> Bool = { s in
+                s.contains("%") ||                       // printf format string ("%d.mcr", "%*lld")
+                s.hasPrefix(".") ||                      // file extension (".mv", ".srm")
+                s.hasPrefix("/") ||                      // file path
+                s.hasPrefix("\\") ||                     // Windows path
+                s.contains("\t") ||                      // tab-separated data
+                s.unicodeScalars.contains(where: { $0.value < 0x20 }) // control chars
+            }
+
+            // library_name: readable human name (starts with a letter, has >= 2 letters,
+            // no pipe, 2–60 chars, no format specifiers or file-extension patterns)
             let libraryName = window.first(where: { s in
                 !s.contains("|") && s.count >= 2 && s.count <= 60 &&
-                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
+                !looksLikeJunk(s) &&
+                s.first?.isLetter == true &&
+                s.filter({ $0.isLetter }).count >= 2
             })
             guard let libName = libraryName else { return nil }
 
@@ -536,9 +550,13 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
                 return dateRegex?.firstMatch(in: s, range: r) != nil
             }
             let libVersion = window.first(where: { s in
-                s != libName && !isDate(s) && s.count >= 1 && s.count <= 30 &&
+                s != libName && !isDate(s) && !looksLikeJunk(s) &&
+                s.count >= 1 && s.count <= 30 &&
                 s.range(of: "[A-Za-z]", options: .regularExpression) != nil
-            }) ?? window.first(where: { $0 != libName && !isDate($0) && $0.count >= 1 && $0.count <= 30 }) ?? ""
+            }) ?? window.first(where: { s in
+                s != libName && !isDate(s) && !looksLikeJunk(s) &&
+                s.count >= 1 && s.count <= 30
+            }) ?? ""
 
             DLOG("DynamicLibretroScanner: probeMachO '\(executableURL.lastPathComponent)' → '\(libName)' v\(libVersion)")
             return DiscoveredLibretroCore(

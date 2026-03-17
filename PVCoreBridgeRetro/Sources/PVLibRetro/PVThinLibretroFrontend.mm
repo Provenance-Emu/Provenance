@@ -190,6 +190,15 @@ typedef struct PVThinLibretroSymbols {
     // the core's lifetime so the pointer remains valid after the callback returns.
     NSString *_usernameString;
 
+    // Stable C-string storage for directory paths returned via environment callbacks.
+    // Cores may cache the returned pointer, so we must keep the backing char* alive
+    // for the entire core lifetime. Using strdup + free rather than NSString.UTF8String
+    // which is tied to an autorelease pool.
+    char *_systemDirCString;
+    char *_saveDirCString;
+    char *_coreAssetsDirCString;
+    char *_libretroPathCString;
+
     // Software video buffer (used in ObjCBridgedCoreBridge / PVEmulatorCore mode)
     uint8_t *_videoBufferData;
     NSUInteger _videoBufferBytesPerRow;
@@ -391,6 +400,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     [self stopEmulation];
     [self unloadCore];
     if (_videoBufferData) { free(_videoBufferData); _videoBufferData = NULL; }
+    if (_systemDirCString)    { free(_systemDirCString);    _systemDirCString = NULL; }
+    if (_saveDirCString)      { free(_saveDirCString);      _saveDirCString = NULL; }
+    if (_coreAssetsDirCString){ free(_coreAssetsDirCString);_coreAssetsDirCString = NULL; }
+    if (_libretroPathCString) { free(_libretroPathCString); _libretroPathCString = NULL; }
 }
 
 // ---------------------------------------------------------------------------
@@ -514,10 +527,11 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     _sym.retro_init();
 
-    // Populate AV info
-    if (_sym.retro_get_system_av_info) {
-        _sym.retro_get_system_av_info(&_rawAVInfo);
-    }
+    // NOTE: Do NOT call retro_get_system_av_info before retro_load_game.
+    // The libretro API requires content to be loaded first; many cores
+    // (e.g. mGBA) store per-game state in globals that are NULL until
+    // retro_load_game, so calling retro_get_system_av_info early causes
+    // a NULL-pointer dereference crash.
 
     // Load content
     struct retro_game_info gameInfo = {0};
@@ -1329,22 +1343,32 @@ static bool thin_environment(unsigned cmd, void *data) {
         // rather than the local _biosPath/_savePath which may not be set.
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
             NSString *sysDir = self.BIOSPath ?: _biosPath;
-            if (data) *(const char **)data = sysDir.UTF8String;
+            if (!sysDir) return false;
+            // Cache the C string so the pointer stays valid for the core's lifetime.
+            if (_systemDirCString) free(_systemDirCString);
+            _systemDirCString = strdup(sysDir.UTF8String);
+            if (data) *(const char **)data = _systemDirCString;
             DLOG(@"ThinEnv GET_SYSTEM_DIRECTORY: %@", sysDir);
-            return (sysDir != nil);
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: {
             NSString *saveDir = self.batterySavesPath ?: _savePath;
-            if (data) *(const char **)data = saveDir.UTF8String;
+            if (!saveDir) return false;
+            if (_saveDirCString) free(_saveDirCString);
+            _saveDirCString = strdup(saveDir.UTF8String);
+            if (data) *(const char **)data = _saveDirCString;
             DLOG(@"ThinEnv GET_SAVE_DIRECTORY: %@", saveDir);
-            return (saveDir != nil);
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:
         /* RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY is the same value (30) */
         {
             NSString *assetsDir = self.BIOSPath ?: _biosPath;
-            if (data) *(const char **)data = assetsDir.UTF8String;
-            return (assetsDir != nil);
+            if (!assetsDir) return false;
+            if (_coreAssetsDirCString) free(_coreAssetsDirCString);
+            _coreAssetsDirCString = strdup(assetsDir.UTF8String);
+            if (data) *(const char **)data = _coreAssetsDirCString;
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: {
             // Return empty — the thin frontend doesn't have a fixed "libretro path"
