@@ -121,6 +121,7 @@ public final class PVLogPublisher: @unchecked Sendable {
         // are suppressed globally, not just in the in-memory viewer/streams.
         guard shouldLog(level: level, forCategory: categoryName) else { return }
 
+
         #if canImport(OSLog)
         let osLogType: OSLogType
         switch level {
