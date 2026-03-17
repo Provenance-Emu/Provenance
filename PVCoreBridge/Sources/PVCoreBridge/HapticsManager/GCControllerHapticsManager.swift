@@ -78,6 +78,9 @@ public final class GCControllerHapticsManager {
     /// Stores the last classified burst pattern per player (used for fallback haptic style).
     private var lastBurstPattern: [Int: RumblePattern] = [:]
 
+    /// Stores the intensity used in the most recent rumble call per player (used for fallback haptic on stop).
+    private var playerLastFallbackIntensity: [Int: CGFloat] = [:]
+
     /// Cached haptic intensity multiplier, updated when UserDefaults changes.
     /// Avoids reading UserDefaults on every rumble call.
     private var _cachedIntensityMultiplier: Float = 1.0
@@ -187,21 +190,31 @@ public final class GCControllerHapticsManager {
     ///   - player: 0-based player index.
     ///   - params: Intensity and duration parameters.
     public func rumble(player: Int, params: RumbleParams = .init()) {
-        // Track burst timing: record start time and update pulse count.
+        // Track burst timing: record start time on the leading edge of a new burst.
         let now = Date()
-        if rumbleStartTimes[player] == nil {
+        let isNewBurst = rumbleStartTimes[player] == nil
+        if isNewBurst {
             rumbleStartTimes[player] = now
         }
 
-        // Update pulse counting window.
-        let windowStart = playerPulseWindowStart[player] ?? now
-        let windowElapsed = now.timeIntervalSince(windowStart)
-        if windowElapsed > 0.5 {
-            // Reset window
-            playerPulseCounts[player] = 1
-            playerPulseWindowStart[player] = now
-        } else {
-            playerPulseCounts[player] = (playerPulseCounts[player] ?? 0) + 1
+        // Update pulse counting window: only count on/off transitions (new bursts),
+        // not on every continuous frame-driven rumble call, to avoid every burst
+        // being classified as .rapidPulse.
+        if isNewBurst {
+            if let windowStart = playerPulseWindowStart[player] {
+                let windowElapsed = now.timeIntervalSince(windowStart)
+                if windowElapsed > 0.5 {
+                    // More than 500 ms since first pulse — start a fresh window.
+                    playerPulseCounts[player] = 1
+                    playerPulseWindowStart[player] = now
+                } else {
+                    playerPulseCounts[player] = (playerPulseCounts[player] ?? 0) + 1
+                }
+            } else {
+                // First burst ever for this player — initialise the window.
+                playerPulseCounts[player] = 1
+                playerPulseWindowStart[player] = now
+            }
         }
 
         // Apply system profile scaling to params.
@@ -213,15 +226,14 @@ public final class GCControllerHapticsManager {
         guard let controller = playerControllers[player] else {
             VLOG("[GCHaptics] No controller registered for player \(player + 1) — falling back to Taptic Engine")
             #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
+            // Store the intensity so stopRumble can fire a single, correctly-styled haptic.
             let baseIntensity = max(0, min(1, _cachedIntensityMultiplier))
             let paramsMax = max(scaledLow, scaledHigh)
             let paramsScale = max(0, min(1, paramsMax))
-            let intensity = baseIntensity * paramsScale
-            guard intensity > 0 else { return }
-
-            let generator = UIImpactFeedbackGenerator(style: .medium)
-            generator.prepare()
-            generator.impactOccurred(intensity: CGFloat(intensity))
+            let intensity = CGFloat(baseIntensity * paramsScale)
+            if intensity > 0 {
+                playerLastFallbackIntensity[player] = intensity
+            }
             #endif
             return
         }
@@ -291,12 +303,15 @@ public final class GCControllerHapticsManager {
         rumbleStartTimes.removeValue(forKey: player)
 
         guard let engines = engineMap[player], !engines.isEmpty else {
-            // No controller engines — fire a device fallback haptic based on the classified pattern.
+            // No controller engines — fire a single device fallback haptic whose style is
+            // derived from the classified pattern and whose intensity came from rumble().
             #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
             let style = hapticStyleForPattern(pattern)
+            let intensity = playerLastFallbackIntensity.removeValue(forKey: player) ?? 1.0
+            guard intensity > 0 else { return }
             let generator = UIImpactFeedbackGenerator(style: style)
             generator.prepare()
-            generator.impactOccurred()
+            generator.impactOccurred(intensity: intensity)
             #endif
             return
         }

@@ -67,7 +67,7 @@ public extension RumbleSystemProfile {
 
     /// N64 Rumble Pak — single eccentric rotating mass (ERM), ~120 Hz, binary on/off.
     /// Heavy, low-frequency, dull thump.
-    static let n64RumblePak = RumbleSystemProfile(
+    public static let n64RumblePak = RumbleSystemProfile(
         rumbleType: .rumblePak,
         lowFrequencyScale: 1.0,
         highFrequencyScale: 0.2,
@@ -77,7 +77,7 @@ public extension RumbleSystemProfile {
     // MARK: PlayStation
 
     /// PSX / PS2 DualShock — large (low-freq) + small (high-freq) ERM motors.
-    static let psxDualShock = RumbleSystemProfile(
+    public static let psxDualShock = RumbleSystemProfile(
         rumbleType: .dualMotor,
         lowFrequencyScale: 1.0,
         highFrequencyScale: 0.8,
@@ -85,7 +85,7 @@ public extension RumbleSystemProfile {
     )
 
     /// PS3 DualShock 3 / Sixaxis — similar to PSX but slightly softer.
-    static let ps3DualShock3 = RumbleSystemProfile(
+    public static let ps3DualShock3 = RumbleSystemProfile(
         rumbleType: .dualMotor,
         lowFrequencyScale: 0.9,
         highFrequencyScale: 0.75,
@@ -96,7 +96,7 @@ public extension RumbleSystemProfile {
 
     /// GBA cartridge motor — Drill Dozer, Pokémon Pinball R/S, Wario Land 4.
     /// Tiny pager motor: very sharp, high-frequency buzz.
-    static let gbaCartridgeMotor = RumbleSystemProfile(
+    public static let gbaCartridgeMotor = RumbleSystemProfile(
         rumbleType: .singleMotor,
         lowFrequencyScale: 0.5,
         highFrequencyScale: 0.95,
@@ -107,7 +107,7 @@ public extension RumbleSystemProfile {
     // MARK: SNES
 
     /// SNES cartridge motor (extremely rare, prototype hardware only).
-    static let snesCartridgeMotor = RumbleSystemProfile(
+    public static let snesCartridgeMotor = RumbleSystemProfile(
         rumbleType: .singleMotor,
         lowFrequencyScale: 0.5,
         highFrequencyScale: 0.9,
@@ -118,7 +118,7 @@ public extension RumbleSystemProfile {
     // MARK: GameCube / Wii
 
     /// GameCube controller — single ERM, moderate frequency.
-    static let gamecubeSingle = RumbleSystemProfile(
+    public static let gamecubeSingle = RumbleSystemProfile(
         rumbleType: .singleMotor,
         lowFrequencyScale: 0.8,
         highFrequencyScale: 0.4,
@@ -128,7 +128,7 @@ public extension RumbleSystemProfile {
     // MARK: Switch
 
     /// Nintendo Switch HD Rumble — linear resonant actuator (LRA), frequency + amplitude.
-    static let switchHDRumble = RumbleSystemProfile(
+    public static let switchHDRumble = RumbleSystemProfile(
         rumbleType: .hdRumble,
         lowFrequencyScale: 0.7,
         highFrequencyScale: 0.7,
@@ -138,7 +138,7 @@ public extension RumbleSystemProfile {
     // MARK: Xbox / Generic Dual-Motor
 
     /// Xbox 360 / Xbox One / Xbox Series — dual ERM motors.
-    static let xboxDualMotor = RumbleSystemProfile(
+    public static let xboxDualMotor = RumbleSystemProfile(
         rumbleType: .dualMotor,
         lowFrequencyScale: 0.9,
         highFrequencyScale: 0.7,
@@ -146,7 +146,7 @@ public extension RumbleSystemProfile {
     )
 
     /// Generic dual-motor fallback.
-    static let genericDualMotor = RumbleSystemProfile(
+    public static let genericDualMotor = RumbleSystemProfile(
         rumbleType: .dualMotor,
         lowFrequencyScale: 0.85,
         highFrequencyScale: 0.65,
@@ -154,7 +154,7 @@ public extension RumbleSystemProfile {
     )
 
     /// Fully generic fallback for unknown systems.
-    static let generic = RumbleSystemProfile(
+    public static let generic = RumbleSystemProfile(
         rumbleType: .singleMotor,
         lowFrequencyScale: 0.8,
         highFrequencyScale: 0.6,
@@ -166,7 +166,7 @@ public extension RumbleSystemProfile {
     /// Return the best-matching haptic profile for a Provenance system identifier.
     ///
     /// - Parameter systemId: Provenance system identifier string (e.g. `"com.provenance.n64"`).
-    static func profile(forSystemIdentifier systemId: String) -> RumbleSystemProfile {
+    public static func profile(forSystemIdentifier systemId: String) -> RumbleSystemProfile {
         let id = systemId.lowercased()
 
         // Nintendo 64

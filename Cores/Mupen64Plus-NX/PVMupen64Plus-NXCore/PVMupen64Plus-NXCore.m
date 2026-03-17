@@ -30,6 +30,12 @@
 //#import "MupenGameNXCore.h"
 #import <PVMupen64Plus-NX/PVMupen64Plus-NX-Swift.h>
 
+// Forward-declare the Swift @objc category method so the ObjC compiler sees the
+// selector without relying solely on the lazily-generated Swift header.
+@interface PVMupen64PlusNXCore (Rumble)
+- (void)setupRumbleProfile;
+@end
+
 #import "MupenGameNXCore+Controls.h"
 #import "MupenGameNXCore+Cheats.h"
 #import "MupenGameNXCore+Mupen.h"
