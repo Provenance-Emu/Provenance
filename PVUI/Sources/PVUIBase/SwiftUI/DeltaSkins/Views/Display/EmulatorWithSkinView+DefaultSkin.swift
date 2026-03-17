@@ -268,6 +268,9 @@ struct DefaultControllerSkinView: View {
                 // and don't block the game screen.
                 if validSize, let sysId = systemId,
                    let switches = hardwareSwitches(for: sysId.rawValue) {
+                    // Position the switch row at the top-trailing corner.
+                    // Spacers have no content so they pass touches through naturally;
+                    // only the switch row itself needs hit-testing enabled.
                     VStack {
                         HStack {
                             Spacer()
@@ -283,7 +286,6 @@ struct DefaultControllerSkinView: View {
                         }
                         Spacer()
                     }
-                    .allowsHitTesting(true)
                 }
 
                 // Virtual input quick-toggle buttons (keyboard / mouse) — top-leading corner.

@@ -3,45 +3,6 @@ import SwiftUI
 import UIKit
 #endif
 
-// MARK: - Hardware Switch Model
-
-/// Describes one position of a two-state hardware toggle switch.
-public struct HardwareSwitchPosition {
-    /// Short label shown beside the switch thumb (e.g. "A", "B", "★", "◻")
-    public let label: String
-    /// Button ID forwarded to the input handler when this position is selected
-    public let buttonId: String
-
-    public init(label: String, buttonId: String) {
-        self.label = label
-        self.buttonId = buttonId
-    }
-}
-
-/// A descriptor for a pair of hardware toggle switches (e.g. Left Diff / Right Diff).
-public struct HardwareSwitchDescriptor: Identifiable {
-    public let id: String
-    /// Human-readable name shown under the switch (e.g. "LEFT DIFF")
-    public let title: String
-    /// The two positions, index 0 = default/off, index 1 = toggled/on
-    public let positions: (off: HardwareSwitchPosition, on: HardwareSwitchPosition)
-    /// Starting position index (false = off, true = on)
-    public let defaultState: Bool
-
-    public init(
-        id: String,
-        title: String,
-        offPosition: HardwareSwitchPosition,
-        onPosition: HardwareSwitchPosition,
-        defaultState: Bool = false
-    ) {
-        self.id = id
-        self.title = title
-        self.positions = (off: offPosition, on: onPosition)
-        self.defaultState = defaultState
-    }
-}
-
 // MARK: - Hardware Switch View
 
 /// Renders a physical-looking toggle switch for Atari-style difficulty / TV-type switches.
@@ -49,7 +10,7 @@ public struct HardwareSwitchDescriptor: Identifiable {
 /// - Tapping the switch toggles its state and fires the appropriate button ID
 ///   through the provided `onToggle` callback.
 /// - Designed to work on both iOS and tvOS (no DragGesture dependency).
-public struct HardwareSwitchView: View {
+struct HardwareSwitchView: View {
     let descriptor: HardwareSwitchDescriptor
     let onToggle: (_ buttonId: String, _ isOn: Bool) -> Void
 
@@ -59,7 +20,7 @@ public struct HardwareSwitchView: View {
     private let accentColor = Color(red: 0.0, green: 0.8, blue: 0.9)
     private let activeColor = Color(red: 0.99, green: 0.11, blue: 0.55)
 
-    public init(
+    init(
         descriptor: HardwareSwitchDescriptor,
         onToggle: @escaping (_ buttonId: String, _ isOn: Bool) -> Void
     ) {
@@ -68,7 +29,7 @@ public struct HardwareSwitchView: View {
         self._isOn = State(initialValue: descriptor.defaultState)
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(spacing: 4) {
             // Switch body
             switchBody
@@ -166,11 +127,11 @@ public struct HardwareSwitchView: View {
 // MARK: - Hardware Switch Row
 
 /// Lays out a horizontal row of hardware switches with consistent spacing.
-public struct HardwareSwitchRowView: View {
+struct HardwareSwitchRowView: View {
     let switches: [HardwareSwitchDescriptor]
     let onToggle: (_ buttonId: String, _ isOn: Bool) -> Void
 
-    public init(
+    init(
         switches: [HardwareSwitchDescriptor],
         onToggle: @escaping (_ buttonId: String, _ isOn: Bool) -> Void
     ) {
@@ -178,7 +139,7 @@ public struct HardwareSwitchRowView: View {
         self.onToggle = onToggle
     }
 
-    public var body: some View {
+    var body: some View {
         HStack(spacing: 16) {
             ForEach(switches) { descriptor in
                 HardwareSwitchView(descriptor: descriptor, onToggle: onToggle)
@@ -195,59 +156,6 @@ public struct HardwareSwitchRowView: View {
                 )
         )
     }
-}
-
-// MARK: - System-specific switch descriptors
-
-/// Returns the hardware switches appropriate for the given system identifier string,
-/// or `nil` if the system has no hardware switches.
-func hardwareSwitches(for systemId: String) -> [HardwareSwitchDescriptor]? {
-    switch systemId {
-    case "com.provenance.2600":
-        return atari2600Switches()
-    case "com.provenance.7800":
-        return atari7800Switches()
-    default:
-        return nil
-    }
-}
-
-private func atari2600Switches() -> [HardwareSwitchDescriptor] {
-    [
-        HardwareSwitchDescriptor(
-            id: "left_diff",
-            title: "LEFT DIFF",
-            offPosition: HardwareSwitchPosition(label: "B", buttonId: "leftdiffb"),
-            onPosition:  HardwareSwitchPosition(label: "A", buttonId: "leftdiffa"),
-            defaultState: false   // default: B (advanced/expert)
-        ),
-        HardwareSwitchDescriptor(
-            id: "right_diff",
-            title: "RIGHT DIFF",
-            offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiffb"),
-            onPosition:  HardwareSwitchPosition(label: "A", buttonId: "rightdiffa"),
-            defaultState: false
-        )
-    ]
-}
-
-private func atari7800Switches() -> [HardwareSwitchDescriptor] {
-    [
-        HardwareSwitchDescriptor(
-            id: "left_diff",
-            title: "LEFT DIFF",
-            offPosition: HardwareSwitchPosition(label: "B", buttonId: "leftdiff"),
-            onPosition:  HardwareSwitchPosition(label: "A", buttonId: "leftdiff"),
-            defaultState: false
-        ),
-        HardwareSwitchDescriptor(
-            id: "right_diff",
-            title: "RIGHT DIFF",
-            offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiff"),
-            onPosition:  HardwareSwitchPosition(label: "A", buttonId: "rightdiff"),
-            defaultState: false
-        )
-    ]
 }
 
 // MARK: - Preview

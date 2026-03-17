@@ -59,12 +59,13 @@ final class PVAtari2600ControllerViewController: PVControllerViewController<PV26
 
     private func positionHardwareSwitchOverlay() {
         guard let hostingVC = hardwareSwitchHostingVC else { return }
-        let preferredSize = CGSize(width: 160, height: 50)
+        // Let SwiftUI measure the natural size of the switch row instead of hard-coding it.
+        let fittingSize = hostingVC.sizeThatFits(in: CGSize(width: 220, height: .greatestFiniteMagnitude))
         let safeTop = view.safeAreaInsets.top
         let safeTrailing = view.safeAreaInsets.right
-        let x = view.bounds.width - preferredSize.width - 12 - safeTrailing
+        let x = view.bounds.width - fittingSize.width - 12 - safeTrailing
         let y = safeTop + 8
-        hostingVC.view.frame = CGRect(origin: CGPoint(x: x, y: y), size: preferredSize)
+        hostingVC.view.frame = CGRect(origin: CGPoint(x: x, y: y), size: fittingSize)
         view.bringSubviewToFront(hostingVC.view)
     }
 
