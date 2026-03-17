@@ -13,7 +13,7 @@ import PVPrimitives
 @objcMembers
 public final class PVBIOS: Object, Identifiable, BIOSFileProvider {
 //    public var status: BIOSStatus
-    public var id: String { expectedMD5 }
+    public var id: String { expectedFilename }
 
     @Persisted public var system: PVSystem!
 

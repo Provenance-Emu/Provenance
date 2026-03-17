@@ -120,15 +120,21 @@ public struct BIOSStatus: Codable, Sendable, Equatable {
 
         public init(expectations: BIOSExpectationsInfoProvider, file: FileInfoProvider) {
             if file.online {
-                let md5Match = file.md5?.uppercased() == expectations.expectedMD5.uppercased()
-                let sizeMatch = file.size == UInt64(expectations.expectedSize)
+                // Skip MD5 check when expected MD5 is unknown (empty string)
+                let expectedMD5 = expectations.expectedMD5.uppercased()
+                let md5Known = !expectedMD5.isEmpty
+                let md5Match = md5Known && file.md5?.uppercased() == expectedMD5
+
+                // Skip size check when expected size is unknown (zero) or a known MD5 already matched
+                let sizeKnown = expectations.expectedSize > 0
+                let sizeMatch = !sizeKnown || (md5Known && md5Match) || file.size == UInt64(expectations.expectedSize)
                 let filenameMatch = file.fileName == expectations.expectedFilename
 
                 var misses = [Mismatch]()
-                if !md5Match {
-                    misses.append(.md5(expected: expectations.expectedMD5.uppercased(), actual: file.md5?.uppercased() ?? "0"))
+                if md5Known && !md5Match {
+                    misses.append(.md5(expected: expectedMD5, actual: file.md5?.uppercased() ?? "0"))
                 }
-                if !sizeMatch {
+                if sizeKnown && !md5Match && !sizeMatch {
                     misses.append(.size(expected: UInt(expectations.expectedSize), actual: UInt(file.size)))
                 }
                 if !filenameMatch {
@@ -151,18 +157,22 @@ public extension BIOSStatus {
     init<T: BIOSFileProvider>(withBios bios: T) {
         available = bios.fileInfo != nil
         if available {
-            let md5Match = bios.fileInfo?.md5?.uppercased() == bios.expectedMD5.uppercased()
+            // Skip MD5 check when expected MD5 is unknown (empty string)
+            let expectedMD5 = bios.expectedMD5.uppercased()
+            let md5Known = !expectedMD5.isEmpty
+            let md5Match = md5Known && bios.fileInfo?.md5?.uppercased() == expectedMD5
 
-            // If MD5 matches, assume size is correct
-            let sizeMatch = md5Match ? true : bios.fileInfo?.size == UInt64(bios.expectedSize)
+            // Skip size check when expected size is unknown (zero) or a known MD5 already matched
+            let sizeKnown = bios.expectedSize > 0
+            let sizeMatch = !sizeKnown || (md5Known && md5Match) || bios.fileInfo?.size == UInt64(bios.expectedSize)
             let filenameMatch = bios.fileInfo?.fileName == bios.expectedFilename
 
             var misses = [Mismatch]()
-            if !md5Match {
-                misses.append(.md5(expected: bios.expectedMD5.uppercased(), actual: bios.fileInfo?.md5?.uppercased() ?? "0"))
+            if md5Known && !md5Match {
+                misses.append(.md5(expected: expectedMD5, actual: bios.fileInfo?.md5?.uppercased() ?? "0"))
             }
-            // Only check size if MD5 doesn't match
-            if !md5Match && !sizeMatch {
+            // Only report size mismatch when size is known and MD5 doesn't validate it
+            if sizeKnown && !md5Match && !sizeMatch {
                 misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.fileInfo?.size ?? 0)))
             }
             if !filenameMatch {
