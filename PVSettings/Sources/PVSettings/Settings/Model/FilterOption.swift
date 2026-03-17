@@ -147,12 +147,15 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
         }
     }
 
-    /// Whether this filter exposes user-adjustable CRT shader parameters.
-    /// Only `simpleCRT` and `complexCRT` have dedicated parameter UIs.
-    public var hasCRTParameters: Bool {
+    /// Whether this filter exposes user-adjustable shader parameters.
+    /// `simpleCRT` and `complexCRT` are legacy names kept for source compatibility.
+    public var hasCRTParameters: Bool { hasEditableParameters }
+
+    /// Whether this filter exposes user-adjustable shader parameters.
+    public var hasEditableParameters: Bool {
         switch self {
-        case .simpleCRT, .complexCRT: return true
-        default: return false
+        case .none: return false
+        default: return true
         }
     }
 }
@@ -222,4 +225,94 @@ public extension Defaults.Keys {
     static let complexCRTUseShadowMask = Key<Bool>("complexCRTUseShadowMask", default: true)
     /// Enable screen curvature warp
     static let complexCRTUseWarp = Key<Bool>("complexCRTUseWarp", default: true)
+
+    // MARK: - LCD Filter Parameters
+    /// Pixel grid density — controls how visible the LCD grid is (0.5–2.0, default: 0.8)
+    static let lcdGridDensity = Key<Float>("lcdGridDensity", default: 0.8)
+    /// Grid line brightness/darkness (0.0–1.0, default: 0.2)
+    static let lcdGridBrightness = Key<Float>("lcdGridBrightness", default: 0.2)
+    /// Contrast enhancement (1.0–2.0, default: 1.1)
+    static let lcdContrast = Key<Float>("lcdContrast", default: 1.1)
+    /// Color saturation (0.0–2.0, default: 1.0)
+    static let lcdSaturation = Key<Float>("lcdSaturation", default: 1.0)
+    /// LCD ghosting / response-time blur (0.0–1.0, default: 0.05)
+    static let lcdGhosting = Key<Float>("lcdGhosting", default: 0.05)
+    /// Scanline depth / inter-row darkness (0.0–1.0, default: 0.15)
+    static let lcdScanlineDepth = Key<Float>("lcdScanlineDepth", default: 0.15)
+    /// Bloom / glow bleed (0.0–1.0, default: 0.2)
+    static let lcdBloomAmount = Key<Float>("lcdBloomAmount", default: 0.2)
+    /// Subpixel low-channel multiplier (0.0–1.0, default: 0.6)
+    static let lcdColorLow = Key<Float>("lcdColorLow", default: 0.6)
+    /// Subpixel high-channel multiplier (0.0–1.0, default: 0.95)
+    static let lcdColorHigh = Key<Float>("lcdColorHigh", default: 0.95)
+
+    // MARK: - Mega Tron Parameters
+    /// Shadow mask type — 0=none, 1=RGB, 2=RGB(2), 3=RGB(3) (default: 1)
+    static let megaTronMask = Key<Float>("megaTronMask", default: 1.0)
+    /// Shadow mask intensity (0.0–1.0, default: 0.2)
+    static let megaTronMaskIntensity = Key<Float>("megaTronMaskIntensity", default: 0.2)
+    /// Scanline thinness (0.0–1.0, default: 0.3)
+    static let megaTronScanlineThinness = Key<Float>("megaTronScanlineThinness", default: 0.3)
+    /// Scanline blur amount (-2.0–0.0, default: -0.5)
+    static let megaTronScanBlur = Key<Float>("megaTronScanBlur", default: -0.5)
+    /// Screen curvature (0.0–0.3, default: 0.06)
+    static let megaTronCurvature = Key<Float>("megaTronCurvature", default: 0.06)
+    /// Trinitron-style curve (0.0–1.0, default: 0.1)
+    static let megaTronTrinitronCurve = Key<Float>("megaTronTrinitronCurve", default: 0.1)
+    /// Corner rounding size (0.0–0.05, default: 0.01)
+    static let megaTronCorner = Key<Float>("megaTronCorner", default: 0.01)
+    /// CRT gamma (1.8–2.6, default: 2.2)
+    static let megaTronCRTGamma = Key<Float>("megaTronCRTGamma", default: 2.2)
+
+    // MARK: - ulTron Parameters
+    /// Scanline hardness (-8.0–0.0, default: -3.0)
+    static let ulTronHardScan = Key<Float>("ulTronHardScan", default: -3.0)
+    /// Pixel hardness (-3.0–0.0, default: -1.5)
+    static let ulTronHardPix = Key<Float>("ulTronHardPix", default: -1.5)
+    /// Horizontal warp (0.0–0.05, default: 0.006)
+    static let ulTronWarpX = Key<Float>("ulTronWarpX", default: 0.006)
+    /// Vertical warp (0.0–0.05, default: 0.01)
+    static let ulTronWarpY = Key<Float>("ulTronWarpY", default: 0.01)
+    /// Shadow mask dark value (0.0–1.0, default: 0.65)
+    static let ulTronMaskDark = Key<Float>("ulTronMaskDark", default: 0.65)
+    /// Shadow mask light value (0.0–2.0, default: 1.1)
+    static let ulTronMaskLight = Key<Float>("ulTronMaskLight", default: 1.1)
+    /// Shadow mask type (0.0–4.0, default: 2.0)
+    static let ulTronShadowMask = Key<Float>("ulTronShadowMask", default: 2.0)
+    /// Brightness boost (0.5–1.5, default: 0.95)
+    static let ulTronBrightBoost = Key<Float>("ulTronBrightBoost", default: 0.95)
+    /// Bloom scanline hardness (-4.0–0.0, default: -0.8)
+    static let ulTronHardBloomScan = Key<Float>("ulTronHardBloomScan", default: -0.8)
+    /// Bloom pixel hardness (-2.0–0.0, default: -0.7)
+    static let ulTronHardBloomPix = Key<Float>("ulTronHardBloomPix", default: -0.7)
+    /// Bloom bleed amount (0.0–0.3, default: 0.08)
+    static let ulTronBloomAmount = Key<Float>("ulTronBloomAmount", default: 0.08)
+    /// Pixel shape (1.0–2.0, default: 1.5)
+    static let ulTronShape = Key<Float>("ulTronShape", default: 1.5)
+
+    // MARK: - Game Boy Parameters
+    /// Dot matrix intensity (0.0–1.0, default: 0.7)
+    static let gameBoyDotMatrix = Key<Float>("gameBoyDotMatrix", default: 0.7)
+    /// Screen contrast (0.5–2.0, default: 1.2)
+    static let gameBoyContrast = Key<Float>("gameBoyContrast", default: 1.2)
+    /// Horizontal ghosting (0.0–1.0, default: 0.35)
+    static let gameBoyGhost = Key<Float>("gameBoyGhost", default: 0.35)
+    /// Scanline depth (0.0–1.0, default: 0.2)
+    static let gameBoyScanlineDepth = Key<Float>("gameBoyScanlineDepth", default: 0.2)
+
+    // MARK: - VHS Parameters
+    /// Static noise intensity (0.0–0.3, default: 0.05)
+    static let vhsNoiseAmount = Key<Float>("vhsNoiseAmount", default: 0.05)
+    /// Horizontal scanline jitter (0.0–0.02, default: 0.002)
+    static let vhsScanlineJitter = Key<Float>("vhsScanlineJitter", default: 0.002)
+    /// Vertical color bleed (0.5–3.0, default: 1.2)
+    static let vhsColorBleed = Key<Float>("vhsColorBleed", default: 1.2)
+    /// Tracking noise bands (0.0–0.5, default: 0.15)
+    static let vhsTrackingNoise = Key<Float>("vhsTrackingNoise", default: 0.15)
+    /// Tape wobble / horizontal waver (0.0–0.01, default: 0.003)
+    static let vhsTapeWobble = Key<Float>("vhsTapeWobble", default: 0.003)
+    /// Double-image ghosting (0.0–1.0, default: 0.3)
+    static let vhsGhosting = Key<Float>("vhsGhosting", default: 0.3)
+    /// Edge vignette (0.0–1.0, default: 0.4)
+    static let vhsVignette = Key<Float>("vhsVignette", default: 0.4)
 }

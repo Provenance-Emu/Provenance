@@ -227,15 +227,15 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = LCDFilterUniforms(
                 screenRect: SIMD4<Float>(0, 0, sourceWidth, sourceHeight),
                 textureSize: SIMD2<Float>(textureWidth, textureHeight),
-                gridDensity: 1.0,
-                gridBrightness: 0.35,
-                contrast: 1.2,
-                saturation: 1.1,
-                ghosting: 0.1,
-                scanlineDepth: 0.25,
-                bloomAmount: 0.15,
-                colorLow: 0.45,
-                colorHigh: 1.0
+                gridDensity: Defaults[.lcdGridDensity],
+                gridBrightness: Defaults[.lcdGridBrightness],
+                contrast: Defaults[.lcdContrast],
+                saturation: Defaults[.lcdSaturation],
+                ghosting: Defaults[.lcdGhosting],
+                scanlineDepth: Defaults[.lcdScanlineDepth],
+                bloomAmount: Defaults[.lcdBloomAmount],
+                colorLow: Defaults[.lcdColorLow],
+                colorHigh: Defaults[.lcdColorHigh]
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
 
@@ -243,14 +243,14 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = MegaTronUniforms(
                 sourceSize: sourceVector,
                 outputSize: outputVector,
-                mask: 1.0,
-                maskIntensity: 0.25,
-                scanlineThinness: 0.35,
-                scanBlur: -0.45,
-                curvature: 0.08,
-                trinitronCurve: 0.12,
-                corner: 0.012,
-                crtGamma: 2.15
+                mask: Defaults[.megaTronMask],
+                maskIntensity: Defaults[.megaTronMaskIntensity],
+                scanlineThinness: Defaults[.megaTronScanlineThinness],
+                scanBlur: Defaults[.megaTronScanBlur],
+                curvature: Defaults[.megaTronCurvature],
+                trinitronCurve: Defaults[.megaTronTrinitronCurve],
+                corner: Defaults[.megaTronCorner],
+                crtGamma: Defaults[.megaTronCRTGamma]
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
 
@@ -258,18 +258,18 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = UltronUniforms(
                 sourceSize: sourceVector,
                 outputSize: outputVector,
-                hardScan: 3.2,
-                hardPix: 1.6,
-                warpX: 0.008,
-                warpY: 0.012,
-                maskDark: 0.7,
-                maskLight: 1.05,
-                shadowMask: 2.0,
-                brightBoost: 0.95,
-                hardBloomScan: 0.8,
-                hardBloomPix: 0.7,
-                bloomAmount: 0.08,
-                shape: 1.35
+                hardScan: Defaults[.ulTronHardScan],
+                hardPix: Defaults[.ulTronHardPix],
+                warpX: Defaults[.ulTronWarpX],
+                warpY: Defaults[.ulTronWarpY],
+                maskDark: Defaults[.ulTronMaskDark],
+                maskLight: Defaults[.ulTronMaskLight],
+                shadowMask: Defaults[.ulTronShadowMask],
+                brightBoost: Defaults[.ulTronBrightBoost],
+                hardBloomScan: Defaults[.ulTronHardBloomScan],
+                hardBloomPix: Defaults[.ulTronHardBloomPix],
+                bloomAmount: Defaults[.ulTronBloomAmount],
+                shape: Defaults[.ulTronShape]
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UltronUniforms>.stride, index: 0)
 
@@ -278,13 +278,13 @@ public final class PVMetalFilterRenderer: NSObject {
                 sourceSize: sourceVector,
                 outputSize: outputVector,
                 time: elapsedTime,
-                noiseAmount: 0.06,
-                scanlineJitter: 0.0025,
-                colorBleed: 1.5,
-                trackingNoise: 0.2,
-                tapeWobble: 0.0035,
-                ghosting: 0.35,
-                vignette: 0.45
+                noiseAmount: Defaults[.vhsNoiseAmount],
+                scanlineJitter: Defaults[.vhsScanlineJitter],
+                colorBleed: Defaults[.vhsColorBleed],
+                trackingNoise: Defaults[.vhsTrackingNoise],
+                tapeWobble: Defaults[.vhsTapeWobble],
+                ghosting: Defaults[.vhsGhosting],
+                vignette: Defaults[.vhsVignette]
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<VHSUniforms>.stride, index: 0)
 
@@ -293,10 +293,10 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = GameBoyUniforms(
                 sourceSize: sourceVector,
                 outputSize: outputVector,
-                dotMatrix: 0.75,
-                contrast: 1.25,
-                ghost: 0.4,
-                scanlineDepth: 0.25,
+                dotMatrix: Defaults[.gameBoyDotMatrix],
+                contrast: Defaults[.gameBoyContrast],
+                ghost: Defaults[.gameBoyGhost],
+                scanlineDepth: Defaults[.gameBoyScanlineDepth],
                 padding: 0,
                 palette0: palette[0],
                 palette1: palette[1],
