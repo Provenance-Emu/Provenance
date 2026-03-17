@@ -133,7 +133,10 @@ import PVLogging
         }
 
         previewVC.previewControllerDelegate = previewDelegate
-        previewVC.modalPresentationStyle = .fullScreen
+        // Use pageSheet so the preview has a visible dismiss affordance (drag down)
+        // and doesn't cover the status bar. .fullScreen caused the navigation bar
+        // to render offscreen, making the preview un-dismissable.
+        previewVC.modalPresentationStyle = .pageSheet
         // Transfer the callback to the delegate; clear it so it isn't re-used
         previewDelegate.onFinished = onPreviewDismissed
         onPreviewDismissed = nil
