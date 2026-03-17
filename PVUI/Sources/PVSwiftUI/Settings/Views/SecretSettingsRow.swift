@@ -13,18 +13,29 @@ internal struct SecretSettingsRow: View {
     @State private var showSecretView = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
+    /// Show feature flags unconditionally in debug builds, simulator, or after konami code unlock
+    private var shouldShowFeatureFlags: Bool {
+        #if DEBUG
+        return true
+        #elseif targetEnvironment(simulator)
+        return true
+        #else
+        return showFeatureFlagsDebug
+        #endif
+    }
+
     var body: some View {
         Group {
-#if DEBUG
-            NavigationLink(destination: FeatureFlagsDebugView()) {
-                SettingsRow(title: "Feature Flags Debug",
-                            subtitle: "Override feature flags for testing",
-                            icon: .sfSymbol("flag.fill"))
-
+            if shouldShowFeatureFlags {
+                NavigationLink(destination: FeatureFlagsDebugView()) {
+                    SettingsRow(title: "Feature Flags Debug",
+                                subtitle: "Override feature flags for testing",
+                                icon: .sfSymbol("flag.fill"))
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
             }
-            #if os(tvOS)
-            .retroFocusButtonStyle(showBorder: false)
-            #endif
 
             Button {
                 showSecretView = true
@@ -38,31 +49,6 @@ internal struct SecretSettingsRow: View {
             #else
             .buttonStyle(.plain)
             #endif
-#else
-            if showFeatureFlagsDebug {
-                NavigationLink(destination: FeatureFlagsDebugView()) {
-                    SettingsRow(title: "Feature Flags Debug",
-                                subtitle: "Override feature flags for testing",
-                                icon: .sfSymbol("flag.fill"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-            } else {
-                Button {
-                    showSecretView = true
-                } label: {
-                    SettingsRow(title: "About",
-                                subtitle: "Version information",
-                                icon: .sfSymbol("info.circle"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #else
-                .buttonStyle(.plain)
-                #endif
-            }
-#endif
         }
         .sheet(isPresented: $showSecretView) {
             SecretDPadView {
