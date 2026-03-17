@@ -55,6 +55,9 @@ final class HomeViewModel: ObservableObject {
     /// Ordered list of MD5 hashes from PVRecentGame, newest first.
     private var recentMD5Order: [String] = []
 
+    /// Set to true in deinit to prevent pending Tasks from writing to @Published properties.
+    private var isShuttingDown = false
+
     // MARK: - Init / Deinit
 
     init(sortAscending: Bool = true) {
@@ -63,6 +66,7 @@ final class HomeViewModel: ObservableObject {
     }
 
     deinit {
+        isShuttingDown = true
         allGamesToken?.invalidate()
         favoritesToken?.invalidate()
         recentToken?.invalidate()
@@ -183,9 +187,13 @@ final class HomeViewModel: ObservableObject {
             // Re-derive recently played from existing order with updated models.
             let recents = self.recentMD5Order.compactMap { byMD5[$0] }
 
+            // Snapshot sort direction before dispatching to avoid reading self on main
+            let ascending = self.sortAscending
+            let sortedAll = self.sorted(all, ascending: ascending)
+
             Task { @MainActor [weak self] in
-                guard let self else { return }
-                self.allGamesModels = self.sorted(all, ascending: self.sortAscending)
+                guard let self, !self.isShuttingDown else { return }
+                self.allGamesModels = sortedAll
                 self.recentlyPlayedModels = recents
             }
         }
@@ -198,9 +206,10 @@ final class HomeViewModel: ObservableObject {
             for game in games where !game.isInvalidated {
                 favs.append(GameCellModel(game: game))
             }
+            let sortedFavs = self.sorted(favs, ascending: self.sortAscending)
             Task { @MainActor [weak self] in
-                guard let self else { return }
-                self.favoritesModels = self.sorted(favs, ascending: self.sortAscending)
+                guard let self, !self.isShuttingDown else { return }
+                self.favoritesModels = sortedFavs
             }
         }
     }
@@ -215,7 +224,8 @@ final class HomeViewModel: ObservableObject {
             // Sort by play count descending.
             models.sort { $0.playCount > $1.playCount }
             Task { @MainActor [weak self] in
-                self?.mostPlayedModels = models
+                guard let self, !self.isShuttingDown else { return }
+                self.mostPlayedModels = models
             }
         }
     }
@@ -232,7 +242,8 @@ final class HomeViewModel: ObservableObject {
             let models = recentMD5Order.compactMap { modelsByMD5[$0] }
 
             Task { @MainActor [weak self] in
-                self?.recentlyPlayedModels = models
+                guard let self, !self.isShuttingDown else { return }
+                self.recentlyPlayedModels = models
             }
         }
     }
