@@ -21,7 +21,6 @@ import RealmSwift
 import Perception
 import PVFeatureFlags
 import Defaults
-import PVLibrary
 import AudioToolbox
 
 struct FeatureFlagsDebugView: View {
@@ -32,7 +31,6 @@ struct FeatureFlagsDebugView: View {
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
-    @State private var scanlineOffset: CGFloat = 0
 
     #if os(tvOS)
     @FocusState private var focusedButton: ButtonID?
@@ -47,41 +45,40 @@ struct FeatureFlagsDebugView: View {
     #endif
 
     private func refreshFlagsList() {
-        flags = featureFlags.getAllFeatureFlags() // Ensure this is called after overrides
+        flags = featureFlags.getAllFeatureFlags()
     }
 
     var body: some View {
         ZStack {
-            // RetroWave background
             RetroTheme.retroBackground
 
-            // Main content
             ScrollView {
-                VStack(spacing: 16) {
-                    // Title with retrowave styling
+                VStack(spacing: 10) {
+                    // Title
                     Text("FEATURE FLAGS")
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(RetroTheme.retroPink)
-                        .padding(.top, 20)
-                        .padding(.bottom, 10)
+                        .padding(.top, 12)
+                        .padding(.bottom, 4)
                         .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
 
-                    // Content sections
-                    LoadingSection(isLoading: isLoading, flags: flags)
-                        .modifier(RetroTheme.RetroSectionStyle())
-                        .padding(.horizontal)
+                    if isLoading {
+                        LoadingSection()
+                            .modifier(RetroTheme.RetroSectionStyle())
+                            .padding(.horizontal, 10)
+                    }
 
-                    FeatureFlagsSection(flags: flags, featureFlags: featureFlags, refreshAction: refreshFlagsList) // Pass refresh action
+                    FeatureFlagsSection(flags: flags, featureFlags: featureFlags, refreshAction: refreshFlagsList)
                         .modifier(RetroTheme.RetroSectionStyle())
-                        .padding(.horizontal)
+                        .padding(.horizontal, 10)
 
                     UserDefaultsSection()
                         .modifier(RetroTheme.RetroSectionStyle())
-                        .padding(.horizontal)
+                        .padding(.horizontal, 10)
 
                     ConfigurationSection()
                         .modifier(RetroTheme.RetroSectionStyle())
-                        .padding(.horizontal)
+                        .padding(.horizontal, 10)
 
                     DebugControlsSection(
                         featureFlags: featureFlags,
@@ -90,8 +87,8 @@ struct FeatureFlagsDebugView: View {
                         errorMessage: $errorMessage
                     )
                     .modifier(RetroTheme.RetroSectionStyle())
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, 10)
+                    .padding(.bottom, 12)
                 }
             }
         }
@@ -102,7 +99,6 @@ struct FeatureFlagsDebugView: View {
         .task {
             await loadInitialConfiguration()
 
-            // Start animation for glow effect
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 0.9
             }
@@ -114,7 +110,6 @@ struct FeatureFlagsDebugView: View {
             preferredContentSize: CGSize(width: 500, height: 300)
         ) {
             UIAlertAction(title: "OK", style: .default) { _ in
-                print("OK tapped")
                 errorMessage = nil
             }
         }
@@ -125,16 +120,11 @@ struct FeatureFlagsDebugView: View {
         isLoading = true
 
         do {
-            // First try to refresh from remote
             try await loadDefaultConfiguration()
-            flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
-            print("Initial flags loaded: \(flags)")
+            flags = featureFlags.getAllFeatureFlags()
         } catch {
             errorMessage = "Failed to load remote configuration: \(error.localizedDescription)"
-            print("Error loading remote configuration: \(error)")
-
-            // If remote fails, try to refresh from current state
-            flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
+            flags = featureFlags.getAllFeatureFlags()
         }
 
         isLoading = false
@@ -148,64 +138,56 @@ struct FeatureFlagsDebugView: View {
     }
 }
 
+// MARK: - Loading Section
+
 private struct LoadingSection: View {
-    let isLoading: Bool
-    let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
-
     var body: some View {
-        if isLoading {
-            VStack(spacing: 12) {
-                Text("LOADING CONFIGURATION")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(RetroTheme.retroBlue)
-                    .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
+        HStack(spacing: 10) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
+                .scaleEffect(1.2)
 
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
-                    .scaleEffect(1.5)
-                    .padding()
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
+            Text("LOADING CONFIGURATION")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(RetroTheme.retroBlue)
+                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
     }
 }
+
+// MARK: - Feature Flags Section
 
 private struct FeatureFlagsSection: View {
     let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
     @ObservedObject var featureFlags: PVFeatureFlagsManager
-    let refreshAction: () -> Void // Add refresh action closure
+    let refreshAction: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Section header with retrowave styling
-            Text("FEATURE FLAGS STATUS")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(RetroTheme.retroPurple)
-                .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
-                .padding(.bottom, 4)
-                .padding(.horizontal)
+        VStack(alignment: .leading, spacing: 6) {
+            SectionHeader(title: "FEATURE FLAGS STATUS")
 
             if flags.isEmpty {
                 Text("NO FEATURE FLAGS FOUND")
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
+                    .padding(.vertical, 8)
             } else {
-                VStack(spacing: 8) {
+                VStack(spacing: 4) {
                     ForEach(flags, id: \.key) { flag in
-                        FeatureFlagRow(flag: flag, featureFlags: featureFlags, refreshAction: refreshAction) // Pass refresh action
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 8)
+                        FeatureFlagRow(flag: flag, featureFlags: featureFlags, refreshAction: refreshAction)
+                            .padding(.vertical, 3)
+                            .padding(.horizontal, 6)
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.black.opacity(0.4))
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(RetroTheme.retroBlack.opacity(0.4))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
+                                        RoundedRectangle(cornerRadius: 6)
                                             .strokeBorder(
                                                 LinearGradient(
-                                                    gradient: Gradient(colors: [RetroTheme.retroPink.opacity(0.6), RetroTheme.retroBlue.opacity(0.6)]),
+                                                    gradient: Gradient(colors: [RetroTheme.retroPink.opacity(0.5), RetroTheme.retroBlue.opacity(0.5)]),
                                                     startPoint: .leading,
                                                     endPoint: .trailing
                                                 ),
@@ -215,221 +197,213 @@ private struct FeatureFlagsSection: View {
                             )
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 4)
             }
         }
-        .padding(.vertical)
+        .padding(.vertical, 8)
     }
 }
+
+// MARK: - Feature Flag Row (Compact, Unified)
 
 private struct FeatureFlagRow: View {
     let flag: (key: String, flag: FeatureFlag, enabled: Bool)
     @ObservedObject var featureFlags: PVFeatureFlagsManager
     let refreshAction: () -> Void
     @State private var isEnabled: Bool
-    // Store the specific PVFeature enum case for convenience
+
     private var featureEnum: PVFeature? { PVFeature(rawValue: flag.key) }
 
     init(flag: (key: String, flag: FeatureFlag, enabled: Bool), featureFlags: PVFeatureFlagsManager, refreshAction: @escaping () -> Void) {
         self.flag = flag
         self.featureFlags = featureFlags
         self.refreshAction = refreshAction
-        self._isEnabled = State(initialValue: flag.enabled) // Initialize from effective state
+        self._isEnabled = State(initialValue: flag.enabled)
     }
 
-    private var overrideStatusText: String {
-        guard let feature = featureEnum else { return "Invalid Feature" }
+    private var overrideBadge: (text: String, color: Color)? {
+        guard let feature = featureEnum else { return nil }
         let currentOverrides = featureFlags.getCurrentDebugOverrides()
         if let overrideValue = currentOverrides[feature] {
-            return overrideValue == true ? "Override: ON" : "Override: OFF"
+            return overrideValue ? ("OVR:ON", RetroTheme.retroBlue) : ("OVR:OFF", RetroTheme.retroPink)
         }
-        return "Override: Default"
+        return nil
     }
 
-    var body: some View {
-#if os(tvOS)
-        // tvOS: Keep the current button-based approach that works
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(flag.key)
-                    .font(.headline)
-                    .foregroundColor(RetroTheme.retroPink)
-                Text(flag.flag.description ?? "Feature not defined in configuration")
-                    .font(.caption)
-                    .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
-                Text("Effective: \(flag.enabled ? "ON" : "OFF")")
-                    .font(.caption)
-                    .foregroundColor(flag.enabled ? .green : .red)
-                Text(overrideStatusText)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+    @ViewBuilder
+    private var rowContent: some View {
+        HStack(spacing: 8) {
+            // Left: key + description, compact
+            VStack(alignment: .leading, spacing: 1) {
+                HStack(spacing: 6) {
+                    Text(flag.key)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(RetroTheme.retroPink)
+                        .lineLimit(1)
+
+                    // Status badge
+                    Text(flag.enabled ? "ON" : "OFF")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(flag.enabled ? RetroTheme.retroGreen : RetroTheme.retroPink)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(
+                            Capsule().fill((flag.enabled ? RetroTheme.retroGreen : RetroTheme.retroPink).opacity(0.2))
+                        )
+
+                    // Override badge (only if overridden)
+                    if let badge = overrideBadge {
+                        Text(badge.text)
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(badge.color)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(
+                                Capsule().fill(badge.color.opacity(0.2))
+                            )
+                    }
+                }
+
+                if let desc = flag.flag.description, !desc.isEmpty {
+                    Text(desc)
+                        .font(.system(size: 11))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
+                        .lineLimit(1)
+                }
+
+                // Restrictions only if present
                 let restrictions = featureFlags.getFeatureRestrictions(flag.key)
                 if !restrictions.isEmpty {
-                    Text("Restrictions: \(restrictions.joined(separator: ", "))")
-                        .font(.caption)
+                    Text(restrictions.joined(separator: ", "))
+                        .font(.system(size: 10))
                         .foregroundColor(.orange)
+                        .lineLimit(1)
                 }
             }
-            Spacer()
+
+            Spacer(minLength: 4)
+
+            // Right: toggle
             Toggle("", isOn: $isEnabled)
                 .labelsHidden()
                 .tint(RetroTheme.retroPurple)
         }
-        .onChange(of: isEnabled) { newValue in // React to local toggle changes
-            guard let feature = featureEnum else { return }
-            featureFlags.setDebugOverride(for: feature, enabled: newValue)
-            refreshAction() // Refresh the main list to reflect changes
-        }
+    }
+
+    var body: some View {
+#if os(tvOS)
+        rowContent
+            .onChange(of: isEnabled) { newValue in
+                guard let feature = featureEnum else { return }
+                featureFlags.setDebugOverride(for: feature, enabled: newValue)
+                refreshAction()
+            }
 #else
-        // iOS: Use RetroWaveToggle for proper touch interaction
-        VStack(alignment: .leading, spacing: 8) {
-            // Feature info section
-            VStack(alignment: .leading, spacing: 4) {
-                Text(flag.key)
-                    .font(.headline)
-                    .foregroundColor(RetroTheme.retroPink)
-                Text(flag.flag.description ?? "Feature not defined in configuration")
-                    .font(.caption)
-                    .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
-                Text("Effective: \(flag.enabled ? "ON" : "OFF")")
-                    .font(.caption)
-                    .foregroundColor(flag.enabled ? .green : .red)
-                Text(overrideStatusText)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 1) {
+                HStack(spacing: 6) {
+                    Text(flag.key)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(RetroTheme.retroPink)
+                        .lineLimit(1)
+
+                    Text(flag.enabled ? "ON" : "OFF")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(flag.enabled ? RetroTheme.retroGreen : RetroTheme.retroPink)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(
+                            Capsule().fill((flag.enabled ? RetroTheme.retroGreen : RetroTheme.retroPink).opacity(0.2))
+                        )
+
+                    if let badge = overrideBadge {
+                        Text(badge.text)
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(badge.color)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(
+                                Capsule().fill(badge.color.opacity(0.2))
+                            )
+                    }
+                }
+
+                if let desc = flag.flag.description, !desc.isEmpty {
+                    Text(desc)
+                        .font(.system(size: 11))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
+                        .lineLimit(1)
+                }
+
                 let restrictions = featureFlags.getFeatureRestrictions(flag.key)
                 if !restrictions.isEmpty {
-                    Text("Restrictions: \(restrictions.joined(separator: ", "))")
-                        .font(.caption)
+                    Text(restrictions.joined(separator: ", "))
+                        .font(.system(size: 10))
                         .foregroundColor(.orange)
+                        .lineLimit(1)
                 }
             }
 
-            // RetroWave toggle
-            RetroWaveToggle(isOn: $isEnabled, label: "Override")
-                .padding(.top, 4)
+            Spacer(minLength: 4)
+
+            RetroWaveToggle(isOn: $isEnabled, label: "")
         }
-        .padding(.vertical, 8)
-        .onChange(of: isEnabled) { newValue in // React to local toggle changes
+        .padding(.vertical, 2)
+        .onChange(of: isEnabled) { newValue in
             guard let feature = featureEnum else { return }
             featureFlags.setDebugOverride(for: feature, enabled: newValue)
-            refreshAction() // Refresh the main list to reflect changes
+            refreshAction()
         }
 #endif
     }
 }
 
-private struct FeatureFlagStatus: View {
-    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
-    @ObservedObject var featureFlags: PVFeatureFlagsManager
-    // This isEnabled is the effective enabled state passed in.
-    // If this view needs to show override state, it should use getCurrentDebugOverrides as well.
-
-    private var featureEnum: PVFeature? { PVFeature(rawValue: flag.key) }
-
-    private var overrideDetailText: String {
-        guard let feature = featureEnum else { return "Invalid Feature Key" }
-        let currentOverrides = featureFlags.getCurrentDebugOverrides() // Corrected access
-        if let specificOverride = currentOverrides[feature] {
-            return specificOverride == true ? "Forced ON" : "Forced OFF"
-        }
-        return "Following Configuration"
-    }
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("Config Value: \(flag.flag.enabled ? "ON" : "OFF")")
-            Text("Override: \(overrideDetailText)")
-            Text("Effective Status: \(flag.enabled ? "ENABLED" : "DISABLED")")
-                .foregroundColor(flag.enabled ? .green : .red)
-        }
-        .font(.footnote)
-        .padding(.leading, 20)
-    }
-}
+// MARK: - Configuration Section (Compact)
 
 private struct ConfigurationSection: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Section header with retrowave styling
-            Text("CURRENT CONFIGURATION")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(RetroTheme.retroPurple)
-                .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
-                .padding(.bottom, 4)
-                .padding(.horizontal)
+        VStack(alignment: .leading, spacing: 6) {
+            SectionHeader(title: "CURRENT CONFIGURATION")
 
-            VStack(alignment: .leading, spacing: 8) {
-                // App type with icon
-                HStack(spacing: 8) {
-                    Image(systemName: "app.fill")
-                        .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-
-                    Text("APP TYPE:")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white.opacity(0.8))
-
-                    Text(PVFeatureFlags.getCurrentAppType().rawValue.uppercased())
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2, x: 0, y: 0)
-                }
-
-                // App version with icon
-                HStack(spacing: 8) {
-                    Image(systemName: "tag.fill")
-                        .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-
-                    Text("APP VERSION:")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white.opacity(0.8))
-
-                    Text(PVFeatureFlags.getCurrentAppVersion())
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2, x: 0, y: 0)
-                }
-
-                // Build number with icon (if available)
+            VStack(alignment: .leading, spacing: 4) {
+                ConfigRow(icon: "app.fill", label: "APP TYPE", value: PVFeatureFlags.getCurrentAppType().rawValue.uppercased())
+                ConfigRow(icon: "tag.fill", label: "VERSION", value: PVFeatureFlags.getCurrentAppVersion())
                 if let buildNumber = PVFeatureFlags.getCurrentBuildNumber() {
-                    HStack(spacing: 8) {
-                        Image(systemName: "number.circle.fill")
-                            .foregroundColor(RetroTheme.retroPink)
-                            .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-
-                        Text("BUILD NUMBER:")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white.opacity(0.8))
-
-                        Text("\(buildNumber)")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(RetroTheme.retroBlue)
-                            .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2, x: 0, y: 0)
-                    }
+                    ConfigRow(icon: "number.circle.fill", label: "BUILD", value: "\(buildNumber)")
                 }
-
-                // Remote URL with icon
-                HStack(spacing: 8) {
-                    Image(systemName: "link")
-                        .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-
-                    Text("REMOTE URL:")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.white.opacity(0.8))
-
-                    Text("data.provenance-emu.com")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
-                }
+                ConfigRow(icon: "link", label: "REMOTE", value: "data.provenance-emu.com")
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 4)
         }
-        .padding(.vertical)
+        .padding(.vertical, 8)
     }
 }
+
+private struct ConfigRow: View {
+    let icon: String
+    let label: String
+    let value: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 12))
+                .foregroundColor(RetroTheme.retroPink)
+                .frame(width: 16)
+
+            Text(label + ":")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor(.white.opacity(0.8))
+
+            Text(value)
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor(RetroTheme.retroBlue)
+                .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 2, x: 0, y: 0)
+        }
+    }
+}
+
+// MARK: - Debug Controls Section (Grid Layout)
 
 private struct DebugControlsSection: View {
     let featureFlags: PVFeatureFlagsManager
@@ -441,302 +415,123 @@ private struct DebugControlsSection: View {
     @FocusState private var focusedButton: FeatureFlagsDebugView.ButtonID?
     #endif
 
-    // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isReindexingSpotlight = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
-    /// Helper function to get the border gradient based on focus state
-    #if os(tvOS)
-    private func focusedBorderGradient(for buttonID: FeatureFlagsDebugView.ButtonID) -> LinearGradient {
-        let colors = getButtonColors(for: buttonID)
-        if focusedButton == buttonID {
-            return LinearGradient(
-                gradient: Gradient(colors: [colors.0, colors.1, colors.0]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        } else {
-            return LinearGradient(
-                gradient: Gradient(colors: [colors.0, colors.1]),
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-        }
-    }
-    #endif
-
-    /// Helper function to get colors for each button type
-    #if os(tvOS)
-    private func getButtonColors(for buttonID: FeatureFlagsDebugView.ButtonID) -> (Color, Color) {
-        switch buttonID {
-        case .clearOverrides:
-            return (RetroTheme.retroBlue, RetroTheme.retroPurple)
-        case .reindexSpotlight:
-            return (RetroTheme.retroPink, RetroTheme.retroPurple)
-        case .refreshFlags:
-            return (RetroTheme.retroPurple, RetroTheme.retroBlue)
-        case .loadTest:
-            return (RetroTheme.retroBlue, RetroTheme.retroPink)
-        case .resetDefault:
-            return (RetroTheme.retroPink, RetroTheme.retroPink.opacity(0.5))
-        }
-    }
-    #endif
-
-    /// Helper function to get the border width based on focus state
-    #if os(tvOS)
-    private func focusedBorderWidth(for buttonID: FeatureFlagsDebugView.ButtonID) -> CGFloat {
-        return focusedButton == buttonID ? 3 : 2
-    }
-    #endif
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Section header with retrowave styling
-            Text("DEBUG CONTROLS")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(RetroTheme.retroPurple)
-                .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
-                .padding(.bottom, 4)
-                .padding(.horizontal)
+        VStack(alignment: .leading, spacing: 8) {
+            SectionHeader(title: "DEBUG CONTROLS")
 
-            VStack(spacing: 12) {
-                // Clear All Overrides button
-                Button(action: {
+            // Two-column grid for buttons
+            let columns = [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)]
+            LazyVGrid(columns: columns, spacing: 6) {
+                RetroDebugButton(
+                    icon: "xmark.circle.fill",
+                    title: "CLEAR OVERRIDES",
+                    color: RetroTheme.retroBlue,
+                    glowOpacity: glowOpacity
+                ) {
                     featureFlags.clearDebugOverrides()
-                    flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
-                }) {
-                    HStack {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 16))
-                        Text("CLEAR ALL OVERRIDES")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .foregroundColor(RetroTheme.retroBlue)
-                    .background(
-                        Color.black.opacity(0.6)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    #if os(tvOS)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                focusedBorderGradient(for: .clearOverrides),
-                                lineWidth: focusedBorderWidth(for: .clearOverrides)
-                            )
-                    )
-                    .scaleEffect(focusedButton == .clearOverrides ? 1.08 : 1.0)
-                    .shadow(color: focusedButton == .clearOverrides ? RetroTheme.retroBlue.opacity(0.9) : RetroTheme.retroBlue.opacity(glowOpacity), radius: focusedButton == .clearOverrides ? 15 : 3, x: 0, y: 0)
-                    #else
-                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                    #endif
+                    flags = featureFlags.getAllFeatureFlags()
                 }
                 #if os(tvOS)
                 .focused($focusedButton, equals: .clearOverrides)
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
-                .animation(.easeInOut(duration: 0.15), value: focusedButton)
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
 
-                // Spotlight Re-indexing button
-                Button(action: {
+                RetroDebugButton(
+                    icon: isReindexingSpotlight ? nil : "magnifyingglass",
+                    title: isReindexingSpotlight ? "REINDEXING..." : "REINDEX SPOTLIGHT",
+                    color: RetroTheme.retroPink,
+                    glowOpacity: glowOpacity,
+                    showSpinner: isReindexingSpotlight
+                ) {
                     isReindexingSpotlight = true
                     SpotlightHelper.shared.forceReindexAll {
                         isReindexingSpotlight = false
                     }
-                }) {
-                    HStack {
-                        if isReindexingSpotlight {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle())
-                                .scaleEffect(0.8)
-                                .frame(width: 16, height: 16)
-                        } else {
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 16))
-                        }
-                        Text(isReindexingSpotlight ? "REINDEXING SPOTLIGHT..." : "REINDEX SPOTLIGHT")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .foregroundColor(RetroTheme.retroPink)
-                    .background(
-                        Color.black.opacity(0.6)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    #if os(tvOS)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                focusedBorderGradient(for: .reindexSpotlight),
-                                lineWidth: focusedBorderWidth(for: .reindexSpotlight)
-                            )
-                    )
-                    .scaleEffect(focusedButton == .reindexSpotlight ? 1.08 : 1.0)
-                    .shadow(color: focusedButton == .reindexSpotlight ? RetroTheme.retroPink.opacity(0.9) : RetroTheme.retroPink.opacity(glowOpacity), radius: focusedButton == .reindexSpotlight ? 15 : 3, x: 0, y: 0)
-                    #else
-                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                    #endif
                 }
+                .disabled(isReindexingSpotlight)
                 #if os(tvOS)
                 .focused($focusedButton, equals: .reindexSpotlight)
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
-                .animation(.easeInOut(duration: 0.15), value: focusedButton)
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
-                .disabled(isReindexingSpotlight)
 
-                // Refresh Flags button
-                Button(action: {
-                    flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 16))
-                        Text("REFRESH FLAGS")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .foregroundColor(RetroTheme.retroPurple)
-                    .background(
-                        Color.black.opacity(0.6)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    #if os(tvOS)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                focusedBorderGradient(for: .refreshFlags),
-                                lineWidth: focusedBorderWidth(for: .refreshFlags)
-                            )
-                    )
-                    .scaleEffect(focusedButton == .refreshFlags ? 1.08 : 1.0)
-                    .shadow(color: focusedButton == .refreshFlags ? RetroTheme.retroPurple.opacity(0.9) : RetroTheme.retroPurple.opacity(glowOpacity), radius: focusedButton == .refreshFlags ? 15 : 3, x: 0, y: 0)
-                    #else
-                    .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                    #endif
+                RetroDebugButton(
+                    icon: "arrow.clockwise",
+                    title: "REFRESH FLAGS",
+                    color: RetroTheme.retroPurple,
+                    glowOpacity: glowOpacity
+                ) {
+                    flags = featureFlags.getAllFeatureFlags()
                 }
                 #if os(tvOS)
                 .focused($focusedButton, equals: .refreshFlags)
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
-                .animation(.easeInOut(duration: 0.15), value: focusedButton)
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
 
-                // Load Test Configuration button
-                Button(action: {
+                RetroDebugButton(
+                    icon: "testtube.2",
+                    title: "LOAD TEST",
+                    color: RetroTheme.retroBlue,
+                    glowOpacity: glowOpacity
+                ) {
                     loadTestConfiguration()
-                    flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
-                }) {
-                    HStack {
-                        Image(systemName: "testtube.2")
-                            .font(.system(size: 16))
-                        Text("LOAD TEST CONFIG")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .foregroundColor(RetroTheme.retroBlue)
-                    .background(
-                        Color.black.opacity(0.6)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    #if os(tvOS)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                focusedBorderGradient(for: .loadTest),
-                                lineWidth: focusedBorderWidth(for: .loadTest)
-                            )
-                    )
-                    .scaleEffect(focusedButton == .loadTest ? 1.08 : 1.0)
-                    .shadow(color: focusedButton == .loadTest ? RetroTheme.retroBlue.opacity(0.9) : RetroTheme.retroBlue.opacity(glowOpacity), radius: focusedButton == .loadTest ? 15 : 3, x: 0, y: 0)
-                    #else
-                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                    #endif
+                    flags = featureFlags.getAllFeatureFlags()
                 }
                 #if os(tvOS)
                 .focused($focusedButton, equals: .loadTest)
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
-                .animation(.easeInOut(duration: 0.15), value: focusedButton)
-                #else
-                .buttonStyle(PlainButtonStyle())
-                #endif
-
-                // Reset to Default button (destructive action)
-                Button(action: {
-                    Task {
-                        do {
-                            // Reset feature flags to default
-                            try await loadDefaultConfiguration()
-                            flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
-
-                            // Reset unlock status
-                            showFeatureFlagsDebug = false
-
-                            // Reset all user defaults to their default values
-                            Defaults.Keys.useAppGroups.reset()
-                            Defaults.Keys.unsupportedCores.reset()
-                            Defaults.Keys.iCloudSync.reset()
-                        } catch {
-                            errorMessage = "Failed to load default configuration: \(error.localizedDescription)"
-                        }
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "trash.fill")
-                            .font(.system(size: 16))
-                        Text("RESET TO DEFAULT")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .foregroundColor(RetroTheme.retroPink)
-                    .background(
-                        Color.black.opacity(0.6)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    #if os(tvOS)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                focusedBorderGradient(for: .resetDefault),
-                                lineWidth: focusedBorderWidth(for: .resetDefault)
-                            )
-                    )
-                    .scaleEffect(focusedButton == .resetDefault ? 1.08 : 1.0)
-                    .shadow(color: focusedButton == .resetDefault ? RetroTheme.retroPink.opacity(0.9) : RetroTheme.retroPink.opacity(glowOpacity), radius: focusedButton == .resetDefault ? 15 : 3, x: 0, y: 0)
-                    #else
-                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                    #endif
-                }
-                #if os(tvOS)
-                .focused($focusedButton, equals: .resetDefault)
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-                .animation(.easeInOut(duration: 0.15), value: focusedButton)
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
             }
-            .padding(.horizontal)
-            .onAppear {
-                // Start animation for glow effect
-                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.9
+            .padding(.horizontal, 4)
+
+            // Reset button full-width (destructive)
+            RetroDebugButton(
+                icon: "trash.fill",
+                title: "RESET TO DEFAULT",
+                color: RetroTheme.retroPink,
+                glowOpacity: glowOpacity
+            ) {
+                Task {
+                    do {
+                        try await loadDefaultConfiguration()
+                        flags = featureFlags.getAllFeatureFlags()
+                        showFeatureFlagsDebug = false
+                        Defaults.Keys.useAppGroups.reset()
+                        Defaults.Keys.unsupportedCores.reset()
+                        Defaults.Keys.iCloudSync.reset()
+                    } catch {
+                        errorMessage = "Failed to load default configuration: \(error.localizedDescription)"
+                    }
                 }
+            }
+            .padding(.horizontal, 4)
+            #if os(tvOS)
+            .focused($focusedButton, equals: .resetDefault)
+            .buttonStyle(TVMediaCardButtonStyle())
+            .tvOSDisableFocusEffect()
+            #else
+            .buttonStyle(PlainButtonStyle())
+            #endif
+        }
+        .padding(.vertical, 8)
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowOpacity = 0.9
             }
         }
     }
@@ -760,10 +555,7 @@ private struct DebugControlsSection: View {
             )
         ]
 
-        featureFlags.setDebugConfiguration(features: testFeatures) // Correct: is a method call
-        // The flags binding should update automatically if FeatureFlagsManager correctly publishes changes
-        // or call refreshFlagsList() from parent if direct update is needed.
-        // For now, assuming the call to getAllFeatureFlags in the Button action is sufficient for this debug view.
+        featureFlags.setDebugConfiguration(features: testFeatures)
     }
 
     @MainActor
@@ -774,151 +566,115 @@ private struct DebugControlsSection: View {
     }
 }
 
+// MARK: - Reusable Debug Button
+
+private struct RetroDebugButton: View {
+    let icon: String?
+    let title: String
+    let color: Color
+    let glowOpacity: Double
+    var showSpinner: Bool = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                if showSpinner {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(0.7)
+                        .frame(width: 14, height: 14)
+                } else if let icon = icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 12))
+                }
+                Text(title)
+                    .font(.system(size: 12, weight: .bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .foregroundColor(color)
+            .background(RetroTheme.retroBlack.opacity(0.6))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .shadow(color: color.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+        }
+    }
+}
+
+// MARK: - User Defaults Section (Unified)
+
 private struct UserDefaultsSection: View {
     @Default(.useAppGroups) var useAppGroups
     @Default(.unsupportedCores) var unsupportedCores
     @Default(.iCloudSync) var iCloudSync
-    /// Blur game artwork for App Store screenshots.
     @Default(.obfuscateArtwork) var obfuscateArtwork
 
-    #if os(tvOS)
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("User Defaults")
-                .font(.headline)
-                .foregroundColor(RetroTheme.retroPink)
-                .padding(.bottom, 5)
+        VStack(alignment: .leading, spacing: 6) {
+            SectionHeader(title: "USER DEFAULTS")
 
-            // User App Groups toggle
-            UserDefaultRow(
-                title: "useAppGroups",
-                subtitle: "Use App Groups for shared storage",
-                isOn: $useAppGroups
-            )
-
-            // Unsupported Cores toggle
-            UserDefaultRow(
-                title: "unsupportedCores",
-                subtitle: "Enable experimental and unsupported cores",
-                isOn: $unsupportedCores
-            )
-
-            // iCloud Sync toggle
-            UserDefaultRow(
-                title: "iCloudSync",
-                subtitle: "Sync save states and settings with iCloud",
-                isOn: $iCloudSync
-            )
-
-            // Obfuscate artwork toggle
-            UserDefaultRow(
-                title: "obfuscateArtwork",
-                subtitle: "Blur game artwork for screenshots",
-                isOn: $obfuscateArtwork
-            )
-        }
-        .padding()
-        .background(RetroTheme.retroDarkBlue.opacity(0.3))
-        .cornerRadius(8)
-    }
-    #else
-    var body: some View {
-        Section(header: Text("User Defaults")) {
-            UserDefaultToggle(
-                title: "useAppGroups",
-                subtitle: "Use App Groups for shared storage",
-                isOn: $useAppGroups
-            )
-            .focusableIfAvailable()
-
-            UserDefaultToggle(
-                title: "unsupportedCores",
-                subtitle: "Enable experimental and unsupported cores",
-                isOn: $unsupportedCores
-            )
-            .focusableIfAvailable()
-
-            UserDefaultToggle(
-                title: "iCloudSync",
-                subtitle: "Sync save states and settings with iCloud",
-                isOn: $iCloudSync
-            )
-            .focusableIfAvailable()
-
-            UserDefaultToggle(
-                title: "obfuscateArtwork",
-                subtitle: "Blur game artwork for screenshots",
-                isOn: $obfuscateArtwork
-            )
-            .focusableIfAvailable()
-        }
-    }
-    #endif
-}
-
-// Standard toggle for iOS/macOS
-private struct UserDefaultToggle: View {
-    let title: String
-    let subtitle: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .font(.headline)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-                Toggle("", isOn: $isOn)
-                    .toggleStyle(RetroTheme.RetroToggleStyle())
-                    .focusableIfAvailable()
+            VStack(spacing: 4) {
+                UserDefaultRow(title: "useAppGroups", subtitle: "Shared storage via App Groups", isOn: $useAppGroups)
+                UserDefaultRow(title: "unsupportedCores", subtitle: "Experimental cores", isOn: $unsupportedCores)
+                UserDefaultRow(title: "iCloudSync", subtitle: "Sync saves with iCloud", isOn: $iCloudSync)
+                UserDefaultRow(title: "obfuscateArtwork", subtitle: "Blur artwork for screenshots", isOn: $obfuscateArtwork)
             }
+            .padding(.horizontal, 4)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
     }
 }
 
-// User Default row for tvOS that matches the style of FeatureFlagRow
 private struct UserDefaultRow: View {
     let title: String
     let subtitle: String
     @Binding var isOn: Bool
-    @State private var glowOpacity: Double = 0.6
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                // Left side - title and description
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-
-                Spacer()
-
-                // Right side - ON/OFF button
-                Button(action: {
-                    isOn.toggle()
-                    AudioServicesPlaySystemSound(1519)
-                }) {
-                    Text(isOn ? "ON" : "OFF")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(isOn ? RetroTheme.retroBlue : RetroTheme.retroPink)
-                        .shadow(color: isOn ? RetroTheme.retroBlue.opacity(glowOpacity) : RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                }
-                .buttonStyle(PlainButtonStyle())
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                Text(subtitle)
+                    .font(.system(size: 11))
+                    .foregroundColor(RetroTheme.retroBlue.opacity(0.6))
+                    .lineLimit(1)
             }
-            .padding(10)
-            .background(Color.black.opacity(0.3))
-            .cornerRadius(8)
+            Spacer(minLength: 4)
+#if os(tvOS)
+            Toggle("", isOn: $isOn)
+                .labelsHidden()
+                .tint(RetroTheme.retroPurple)
+#else
+            Toggle("", isOn: $isOn)
+                .toggleStyle(RetroTheme.RetroToggleStyle())
+                .focusableIfAvailable()
+#endif
         }
+        .padding(.vertical, 3)
+        .padding(.horizontal, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(RetroTheme.retroBlack.opacity(0.3))
+        )
+    }
+}
+
+// MARK: - Shared Section Header
+
+private struct SectionHeader: View {
+    let title: String
+
+    var body: some View {
+        Text(title)
+            .font(.system(size: 16, weight: .bold))
+            .foregroundColor(RetroTheme.retroPurple)
+            .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
+            .padding(.horizontal, 4)
+            .padding(.bottom, 2)
     }
 }
