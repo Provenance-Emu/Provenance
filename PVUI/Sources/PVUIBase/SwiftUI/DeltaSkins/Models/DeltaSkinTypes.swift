@@ -697,6 +697,52 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
     /// key used as the JSON dictionary key.
     public var registryKey: String { String(describing: self) }
 
+    // MARK: - Platform Controller Grouping (Manic skin parity)
+
+    /// Canonical skin-layout group identifier.
+    ///
+    /// Systems that share the same controller layout should share a group so that a
+    /// single skin file can cover all of them.  Currently defined groups:
+    ///
+    /// | Group               | Members                        |
+    /// |---------------------|-------------------------------|
+    /// | `"sega-md-family"`  | Genesis, Sega CD, 32X         |
+    /// | `"sega-ms-family"`  | Master System, Game Gear, SG-1000 |
+    /// | `"gb-family"`       | Game Boy, Game Boy Color      |
+    /// | `"pce-family"`      | PC Engine, PC Engine CD       |
+    ///
+    /// All other systems use their ``registryKey`` as the group (i.e. they stand alone).
+    /// - Note: Consumed by the skin-loader when selecting compatible skins across a platform family.
+    public var skinLayoutGroup: String {
+        switch self {
+        // Mega Drive family: Genesis / Mega CD / 32X share the same 3-button/6-button layout
+        case .genesis, .segaCD, .sega32X:
+            return "sega-md-family"
+
+        // Master System family: MS / Game Gear / SG-1000 share a 2-button layout
+        case .masterSystem, .gamegear, .sg1000:
+            return "sega-ms-family"
+
+        // Nintendo Game Boy family: GB and GBC are hardware-compatible
+        case .gb, .gbc:
+            return "gb-family"
+
+        // NEC PC Engine family: PCE and PCECD share the same controller
+        case .pce, .pcecd:
+            return "pce-family"
+
+        default:
+            return registryKey
+        }
+    }
+
+    /// Returns true when this system belongs to a multi-member layout group
+    /// (i.e. a skin designed for one member may apply to all others in the group).
+    /// - Note: Consumed by the skin-loader when filtering compatible skins for a given system.
+    public var isInSharedLayoutGroup: Bool {
+        skinLayoutGroup != registryKey
+    }
+
     /// Delta-style identifier (when known)
     public var deltaIdentifierString: String? {
         switch self {

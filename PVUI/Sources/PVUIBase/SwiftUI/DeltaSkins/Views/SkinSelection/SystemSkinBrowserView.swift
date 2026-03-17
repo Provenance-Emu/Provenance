@@ -551,18 +551,21 @@ public struct SystemSkinBrowserView: View {
 
     private func updateUI(with allSkins: [any DeltaSkinProtocol]) async {
 
-        // Group by system
-        var counts: [SystemIdentifier: Int] = [:]
-
+        // Tally skins by their skinLayoutGroup (handles families like sega-md, gb, pce, psx…)
+        var groupCounts: [String: Int] = [:]
         for skin in allSkins {
-            if let system = skin.gameType.systemIdentifier {
-                counts[system, default: 0] += 1
+            let group = skin.gameType.skinLayoutGroup
+            groupCounts[group, default: 0] += 1
+        }
 
-                // PSX skins can also be used for PS2 and PS3 (same controls)
-                if system == .PSX {
-                    counts[.PS2, default: 0] += 1
-                    counts[.PS3, default: 0] += 1
-                }
+        // Map each SystemIdentifier to its layout-group count so that family members
+        // (e.g. Genesis / Sega CD / 32X) all show the combined skin count.
+        var counts: [SystemIdentifier: Int] = [:]
+        for system in SystemIdentifier.allCases {
+            guard let gameType = DeltaSkinGameType(systemIdentifier: system) else { continue }
+            let group = gameType.skinLayoutGroup
+            if let count = groupCounts[group], count > 0 {
+                counts[system] = count
             }
         }
 

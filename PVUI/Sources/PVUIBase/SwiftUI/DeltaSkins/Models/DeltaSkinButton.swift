@@ -54,6 +54,12 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// Optional per-button visual states (normal/pressed images, animated frames)
     public let states: DeltaSkinButtonStates?
 
+    /// When true, this is a momentary toggle: it fires on press and auto-retracts on release.
+    /// When false (default), it is a latching toggle that changes state each press.
+    /// Manic skin parity: `selfRetracting` property.
+    /// - Note: Consumed by the button-rendering layer when toggle/switch behaviour is implemented.
+    public let selfRetracting: Bool
+
     /// Initialize a new button mapping
     /// - Parameters:
     ///   - id: Unique identifier for this button
@@ -62,13 +68,15 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     ///   - extendedEdges: Optional extended touch areas around the button
     ///   - haptic: Optional per-button haptic feedback configuration
     ///   - states: Optional per-button visual states
+    ///   - selfRetracting: When true, the button auto-retracts on release (momentary toggle)
     public init(
         id: String,
         input: DeltaSkinInput,
         frame: CGRect,
         extendedEdges: UIEdgeInsets? = nil,
         haptic: DeltaSkinHaptic? = nil,
-        states: DeltaSkinButtonStates? = nil
+        states: DeltaSkinButtonStates? = nil,
+        selfRetracting: Bool = false
     ) {
         self.id = id
         self.input = input
@@ -76,6 +84,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         self.extendedEdges = extendedEdges
         self.haptic = haptic
         self.states = states
+        self.selfRetracting = selfRetracting
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -85,6 +94,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         case extendedEdges
         case haptic
         case states
+        case selfRetracting
     }
 
     public init(from decoder: Decoder) throws {
@@ -95,6 +105,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         extendedEdges = try container.decodeIfPresent(UIEdgeInsets.self, forKey: .extendedEdges)
         haptic = try container.decodeIfPresent(DeltaSkinHaptic.self, forKey: .haptic)
         states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
+        selfRetracting = (try container.decodeIfPresent(Bool.self, forKey: .selfRetracting)) ?? false
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -105,6 +116,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         try container.encodeIfPresent(extendedEdges, forKey: .extendedEdges)
         try container.encodeIfPresent(haptic, forKey: .haptic)
         try container.encodeIfPresent(states, forKey: .states)
+        if selfRetracting { try container.encode(selfRetracting, forKey: .selfRetracting) }
     }
 }
 
@@ -120,11 +132,64 @@ public struct DeltaSkinButtonAnimated: Codable, Equatable {
     public let loops: Bool
 }
 
+/// Animation curve for switch button transitions (Manic-style spring animations)
+public enum DeltaSkinSwitchAnimationCurve: String, Codable, Equatable {
+    case linear
+    case easeIn
+    case easeOut
+    case easeInOut
+    case spring
+}
+
+/// Spring animation config for animated switch buttons (Manic skin parity)
+public struct DeltaSkinButtonSwitchAnimation: Codable, Equatable {
+    /// Animation curve to use
+    public let curve: DeltaSkinSwitchAnimationCurve
+    /// Duration in seconds (ignored for spring; uses natural frequency)
+    public let duration: Double?
+    /// Spring damping (0-1); lower = more bounce. Only used when curve == .spring
+    public let damping: Double?
+    /// Spring initial velocity. Only used when curve == .spring
+    public let initialVelocity: Double?
+
+    public init(
+        curve: DeltaSkinSwitchAnimationCurve = .spring,
+        duration: Double? = nil,
+        damping: Double? = 0.6,
+        initialVelocity: Double? = 0
+    ) {
+        self.curve = curve
+        self.duration = duration
+        self.damping = damping
+        self.initialVelocity = initialVelocity
+    }
+}
+
 /// All visual states for a button
 public struct DeltaSkinButtonStates: Codable, Equatable {
     public let normal: DeltaSkinButtonStateImage?
     public let pressed: DeltaSkinButtonStateImage?
+    /// Selected/toggled-on state image (for toggle/switch buttons).
+    /// - Note: Consumed by the button-rendering layer when toggle state display is implemented.
+    public let selected: DeltaSkinButtonStateImage?
     public let animated: DeltaSkinButtonAnimated?
+    /// Optional spring-curve animation for transitions between states.
+    /// - Note: Consumed by the button-rendering layer when animated toggle transitions are implemented.
+    public let switchAnimation: DeltaSkinButtonSwitchAnimation?
+
+    public init(
+        normal: DeltaSkinButtonStateImage? = nil,
+        pressed: DeltaSkinButtonStateImage? = nil,
+        selected: DeltaSkinButtonStateImage? = nil,
+        animated: DeltaSkinButtonAnimated? = nil,
+        switchAnimation: DeltaSkinButtonSwitchAnimation? = nil
+    ) {
+        self.normal = normal
+        self.pressed = pressed
+        self.selected = selected
+        self.animated = animated
+        self.switchAnimation = switchAnimation
+    }
 }
 
 /// Collection of button mappings for a skin
