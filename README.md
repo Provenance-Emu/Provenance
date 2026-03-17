@@ -669,7 +669,9 @@ Provenance wouldn't exist without these incredible open-source projects. Please 
 
 ## License Attribution
 
-Provenance bundles 60+ open-source emulator cores and libraries under a variety of licenses (GPL, LGPL, MIT/Expat, BSD, and others). Each core's license and copyright holder are recorded in its `Core.plist` and displayed in the app's **About > Licenses** screen. For the full list of bundled projects and their licenses, see the in-app Licenses viewer or review the individual `Core.plist` files under `Cores/` and `CoresRetro/`.
+Provenance bundles 60+ open-source emulator cores and libraries under a variety of licenses (GPL, LGPL, MIT/Expat, BSD, and others). Each core's license and copyright holder are recorded in its `Core.plist` and displayed in the app's **About > Licenses** screen.
+
+For the full machine-readable table of all bundled projects and their licenses, see **[LICENSES.md](LICENSES.md)** (auto-generated from `Core.plist` files by `Scripts/generate_licenses.py`).
 
 See [LICENSE.md](LICENSE.md) for Provenance's own license terms.
 
