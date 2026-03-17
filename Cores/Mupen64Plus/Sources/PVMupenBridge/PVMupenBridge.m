@@ -419,6 +419,10 @@ static void *dlopen_myself()
         return NO;
     }
 
+    // ROM is now open and mupen64plus.ini has been parsed into ROM_SETTINGS.
+    // Resolve any Auto (0) controller pak slots using the database flags.
+    [self applyRomDatabasePakSettings];
+
 	core_handle = dlopen_myself();
 
 //	m64p_error callbackStatus = CoreDoCommand(M64CMD_SET_FRAME_CALLBACK, 0, (void *)MupenFrameCallback);
@@ -794,8 +798,9 @@ static void *dlopen_myself()
 #pragma mark - Options
 
 - (void)parseOptions {
-    // Parse controller pak options and set controller modes
-    // Values: 1=None, 2=Memory Pak, 3=Rumble Pak, 4=Transfer Pak, 5=Raw/Smart Pak
+    // Parse controller pak options and set controller modes.
+    // Values: 0=Auto (resolved after ROM load), 1=None, 2=Memory Pak,
+    //         3=Rumble Pak, 4=Transfer Pak, 5=Raw/Smart Pak
     int pak1 = [MupenGameCoreOptions controllerPak1Option];
     int pak2 = [MupenGameCoreOptions controllerPak2Option];
     int pak3 = [MupenGameCoreOptions controllerPak3Option];
@@ -808,12 +813,70 @@ static void *dlopen_myself()
 
     ILOG(@"Controller paks configured: P1=%d, P2=%d, P3=%d, P4=%d", pak1, pak2, pak3, pak4);
 
-    // Load virtual mempak data for any controller in PLUGIN_RAW (Smart Pak) mode.
-    // PLUGIN_RAW = 5; only those ports use our in-memory mempak buffer.
+    // Load virtual mempak data for any controller already in PLUGIN_RAW (Smart Pak=5) mode.
+    // Auto (0) controllers will be resolved and loaded in -applyRomDatabasePakSettings
+    // after M64CMD_ROM_OPEN populates ROM_SETTINGS from mupen64plus.ini.
     int paks[4] = {pak1, pak2, pak3, pak4};
     for (int i = 0; i < 4; i++) {
         if (paks[i] == 5) {
             [self loadMempakForPort:i];
+        }
+    }
+}
+
+/// Query mupen64plus.ini ROM database (via M64CMD_ROM_GET_SETTINGS) after ROM_OPEN
+/// and resolve any Auto (0) controller pak slots to the database-recommended type.
+///
+/// Database fields used:
+///   ROM_SETTINGS.mempak  — game uses/needs a memory pak
+///   ROM_SETTINGS.rumble  — game supports rumble
+///
+/// Resolution logic (mirrors RetroArch mupen64plus-next behaviour):
+///   mempak=1 && rumble=1  → Smart Pak (5) — handles both in one virtual slot
+///   mempak=1              → Smart Pak (5) — safe, also handles any undocumented rumble
+///   rumble=1              → Rumble Pak (3)
+///   neither               → Smart Pak (5) — safe default with persistent saves
+- (void)applyRomDatabasePakSettings {
+    m64p_rom_settings romSettings;
+    memset(&romSettings, 0, sizeof(romSettings));
+    m64p_error err = CoreDoCommand(M64CMD_ROM_GET_SETTINGS, sizeof(romSettings), &romSettings);
+    if (err != M64ERR_SUCCESS) {
+        WLOG(@"[Pak] M64CMD_ROM_GET_SETTINGS failed (err %d) — Auto controllers will use Smart Pak fallback", err);
+        // Resolve any remaining Auto (0) slots to Smart Pak so the game still works.
+        for (int i = 0; i < 4; i++) {
+            if (controllerMode[i] == 0) {
+                controllerMode[i] = 5; // Smart Pak fallback
+                [self loadMempakForPort:i];
+            }
+        }
+        return;
+    }
+
+    ILOG(@"[Pak] ROM database: '%s'  mempak=%d  rumble=%d  transferpak=%d  MD5=%s",
+         romSettings.goodname, romSettings.mempak, romSettings.rumble,
+         romSettings.transferpak, romSettings.MD5);
+
+    // Choose the best pak type for Auto slots based on database flags.
+    int autoPak;
+    if (romSettings.mempak) {
+        // Smart Pak handles both saves and rumble — always safe when mempak is needed.
+        autoPak = 5;
+    } else if (romSettings.rumble) {
+        // Rumble-only game: no save data needed, use Rumble Pak.
+        autoPak = 3;
+    } else {
+        // Unknown ROM or neither flag set: default to Smart Pak (saves + rumble ready).
+        autoPak = 5;
+    }
+
+    for (int i = 0; i < 4; i++) {
+        if (controllerMode[i] == 0) { // 0 = Auto
+            controllerMode[i] = autoPak;
+            ILOG(@"[Pak] Controller %d: Auto → pak type %d (%@)", i + 1, autoPak,
+                 autoPak == 5 ? @"Smart Pak" : autoPak == 3 ? @"Rumble Pak" : @"None");
+            if (autoPak == 5) {
+                [self loadMempakForPort:i];
+            }
         }
     }
 }
