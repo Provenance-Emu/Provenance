@@ -46,6 +46,10 @@
         "pauseTileMenu": {
             "enabled": false,
             "description": "Experimental tile/grid based pause menu that floats over the game screen instead of the classic tab/list panel. Enable in Settings > Advanced > Feature Flags."
+        },
+        "tapToRemapUI": {
+            "enabled": false,
+            "description": "Tap-to-remap UX in button remapping settings: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development — enable in Settings > Advanced > Feature Flags."
         }
     }
 }

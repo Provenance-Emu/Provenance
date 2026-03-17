@@ -489,6 +489,11 @@ public final class PVRemappableController: NSObject {
     }
 
     /// Get identifier for a button input
+    /// Public wrapper — used by TapToRemapView to identify which physical button was pressed.
+    public func buttonIdentifier(for element: GCControllerElement) -> ButtonIdentifier? {
+        identifier(for: element)
+    }
+
     private func identifier(for element: GCControllerElement) -> ButtonIdentifier? {
         guard let gamepad = wrappedController.extendedGamepad else { return nil }
 

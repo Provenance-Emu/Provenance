@@ -41,6 +41,7 @@ struct PauseTileMenuView: View {
 
     @State private var showingSaveStateBrowser = false
     @State private var showingScreenshotBrowser = false
+    @State private var showingControllerProfiles = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Incremented after every core-option toggle to force a re-render of the tile grid.
@@ -133,6 +134,23 @@ struct PauseTileMenuView: View {
             icon: "info.circle",
             label: String(localized: "Game Info"),
             colorKey: .blue
+        ))
+
+        let hasControllerProfiles: Bool = {
+            let controllers = PVControllerManager.shared.controllers
+            let db = RomDatabase.sharedInstance
+            return controllers.contains { c in
+                guard let name = c.vendorName else { return false }
+                return !db.controllerProfiles(forVendor: name).isEmpty
+            }
+        }()
+        tiles.append(PauseMenuTile(
+            id: "controllerProfile",
+            icon: "gamecontroller",
+            label: String(localized: "Controller\nProfile"),
+            isEnabled: hasControllerProfiles,
+            colorKey: .purple,
+            dismissOnTap: false
         ))
 
         #if os(iOS) || targetEnvironment(macCatalyst)
@@ -230,6 +248,8 @@ struct PauseTileMenuView: View {
             dismissForSubSheetThen { self.emulatorVC.showCheatsMenu() }
         case "gameInfo":
             dismissForSubSheetThen { self.emulatorVC.showMoreInfo() }
+        case "controllerProfile":
+            showingControllerProfiles = true
         case "screenshot":
             dismissAction(true)
             emulatorVC.takeScreenshot()
@@ -491,6 +511,11 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingScreenshotBrowser) {
             PauseMenuScreenshotBrowserView(emulatorVC: emulatorVC) {
                 showingScreenshotBrowser = false
+            }
+        }
+        .sheet(isPresented: $showingControllerProfiles) {
+            InSessionProfilePickerView(emulatorVC: emulatorVC) {
+                showingControllerProfiles = false
             }
         }
         // Core action option picker — shown when a CoreAction exposes multiple options.

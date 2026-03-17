@@ -12,6 +12,7 @@ import GameController
 import PVThemes
 import PVLibrary
 import PVRealm
+import PVFeatureFlags
 import MarkdownView
 #if canImport(PVUI_IOS)
 import PVUI_IOS
@@ -743,6 +744,11 @@ struct ButtonRemappingView: View {
     @State private var showSaveProfileError = false
     @State private var saveProfileErrorMessage = ""
 
+    // Tap-to-remap (feature-flagged)
+    @Environment(\.featureFlags) private var featureFlags
+    @State private var tapToRemapMode = false
+    @State private var showingTapToRemap = false
+
     private var remappableController: PVRemappableController {
         getRemappableControllerWrapper(for: controller)
     }
@@ -794,7 +800,11 @@ struct ButtonRemappingView: View {
                 ForEach(standardButtons, id: \.self) { button in
                     Button(action: {
                         selectedButton = button
-                        showingDestinationPicker = true
+                        if tapToRemapMode {
+                            showingTapToRemap = true
+                        } else {
+                            showingDestinationPicker = true
+                        }
                     }) {
                         HStack {
                             Text(buttonDisplayName(button))
@@ -809,16 +819,32 @@ struct ButtonRemappingView: View {
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
-                            Image(systemName: "chevron.right")
+                            Image(systemName: tapToRemapMode ? "gamecontroller" : "chevron.right")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(tapToRemapMode ? accentColor : .secondary)
                         }
                     }
                 }
             } header: {
-                Text("Button Mappings")
+                HStack {
+                    Text("Button Mappings")
+                    Spacer()
+                    if featureFlags.tapToRemapUI {
+                        Button(action: { tapToRemapMode.toggle() }) {
+                            Label(tapToRemapMode ? "Press Mode" : "List Mode",
+                                  systemImage: tapToRemapMode ? "gamecontroller.fill" : "list.bullet")
+                                .font(.caption)
+                                .foregroundColor(tapToRemapMode ? accentColor : .secondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             } footer: {
-                Text("Tap a button to remap it. Select the button you want it to trigger.")
+                if tapToRemapMode {
+                    Text("Tap a button row, then press the physical button on your controller to assign it.")
+                } else {
+                    Text("Tap a button to remap it. Select the button you want it to trigger.")
+                }
             }
 
             Section {
@@ -884,6 +910,20 @@ struct ButtonRemappingView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(saveProfileErrorMessage)
+        }
+        .sheet(isPresented: $showingTapToRemap) {
+            if let source = selectedButton {
+                TapToRemapView(
+                    controller: controller,
+                    targetButton: source
+                ) { detected in
+                    showingTapToRemap = false
+                    remapButton(source, to: detected)
+                } onCancel: {
+                    showingTapToRemap = false
+                    selectedButton = nil
+                }
+            }
         }
         .confirmationDialog(
             "Map \(selectedButton.map { buttonDisplayName($0) } ?? "button") to:",
