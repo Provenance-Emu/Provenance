@@ -68,6 +68,9 @@ import UIKit
 
 	func rightMouseDown(atPoint point: CGPoint)
 	func rightMouseUp()
+
+	@objc optional func middleMouseDown(atPoint point: CGPoint)
+	@objc optional func middleMouseUp(atPoint point: CGPoint)
 }
 
 @objc public enum Touchpad: Int {

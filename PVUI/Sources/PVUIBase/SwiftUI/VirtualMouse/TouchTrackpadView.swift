@@ -84,6 +84,18 @@ public final class TouchTrackpadView: UIView {
     /// The active touch we are tracking (ignores multi-touch).
     private var trackedTouch: UITouch?
 
+    /// Location where the tracked touch began — for drag-vs-tap discrimination.
+    private var touchBeganLocation: CGPoint?
+    /// Timestamp of touchesBegan — for tap duration check.
+    private var touchBeganTime: TimeInterval = 0
+    /// Becomes true once the finger moves beyond `tapMovementThreshold`.
+    private var touchHasDragged = false
+
+    /// Minimum movement (points) that classifies a touch as a drag, suppressing the tap click.
+    private let tapMovementThreshold: CGFloat = 10
+    /// Maximum touch duration (seconds) that still counts as a tap.
+    private let tapMaxDuration: TimeInterval = 0.45
+
     // MARK: - Init
 
     public override init(frame: CGRect) {
@@ -98,21 +110,31 @@ public final class TouchTrackpadView: UIView {
 
     private func commonInit() {
         backgroundColor = .clear
-        #if !os(tvOS)
-        isMultipleTouchEnabled = false
-        #endif
         isUserInteractionEnabled = true
+        #if !os(tvOS)
+        // Multi-touch required for 2/3-finger gestures.
+        isMultipleTouchEnabled = true
+        #endif
 
-        // Tap: left click
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        tap.numberOfTapsRequired = 1
-        addGestureRecognizer(tap)
+        // 2-finger tap → right click
+        let twoFingerTap = UITapGestureRecognizer(target: self, action: #selector(handleTwoFingerTap(_:)))
+        twoFingerTap.numberOfTapsRequired = 1
+        twoFingerTap.numberOfTouchesRequired = 2
+        addGestureRecognizer(twoFingerTap)
 
-        // Long-press: right click
+        // 3-finger tap → middle click
+        let threeFingerTap = UITapGestureRecognizer(target: self, action: #selector(handleThreeFingerTap(_:)))
+        threeFingerTap.numberOfTapsRequired = 1
+        threeFingerTap.numberOfTouchesRequired = 3
+        addGestureRecognizer(threeFingerTap)
+
+        // Long-press → right click (single-finger fallback)
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPress.minimumPressDuration = 0.5
-        longPress.require(toFail: tap)
         addGestureRecognizer(longPress)
+
+        // NOTE: single-finger tap (left click) is handled manually in touchesEnded
+        // using drag-distance + duration checks so drags never fire a spurious click.
     }
 
     // MARK: - Hit-testing: only capture inside the game viewport
@@ -171,8 +193,12 @@ public final class TouchTrackpadView: UIView {
     // MARK: - Touch tracking (movement)
 
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard trackedTouch == nil, let touch = touches.first else { return }
+        // Only track single-finger touches; multi-finger combos go to gesture recognizers.
+        guard trackedTouch == nil, touches.count == 1, let touch = touches.first else { return }
         trackedTouch = touch
+        touchBeganLocation = touch.location(in: self)
+        touchBeganTime = touch.timestamp
+        touchHasDragged = false
 
         if mode == .direct {
             let normalised = normalisedPoint(for: touch.location(in: self))
@@ -184,6 +210,15 @@ public final class TouchTrackpadView: UIView {
 
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = trackedTouch, touches.contains(touch) else { return }
+
+        // Mark as dragged once the finger travels beyond the tap threshold.
+        if !touchHasDragged, let began = touchBeganLocation {
+            let loc = touch.location(in: self)
+            let dx = loc.x - began.x, dy = loc.y - began.y
+            if (dx * dx + dy * dy) > (tapMovementThreshold * tapMovementThreshold) {
+                touchHasDragged = true
+            }
+        }
 
         switch mode {
         case .direct:
@@ -206,30 +241,55 @@ public final class TouchTrackpadView: UIView {
 
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = trackedTouch, touches.contains(touch) else { return }
-        trackedTouch = nil
-        previousTouchLocation = nil
+        defer {
+            trackedTouch = nil
+            previousTouchLocation = nil
+            touchBeganLocation = nil
+            touchHasDragged = false
+        }
+
+        // Fire a left click only when the finger didn't drag and the touch was short.
+        let duration = touch.timestamp - touchBeganTime
+        if !touchHasDragged && duration < tapMaxDuration {
+            if mode == .direct {
+                let pt = touch.location(in: self)
+                updateCursor(to: normalisedPoint(for: pt), notify: true)
+            }
+            NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
+            mouseResponder?.leftMouseDown(atPoint: cursorPosition)
+            mouseResponder?.leftMouseUp()
+        }
     }
 
     public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         trackedTouch = nil
         previousTouchLocation = nil
+        touchBeganLocation = nil
+        touchHasDragged = false
     }
 
     // MARK: - Gesture handlers
 
-    @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
+    /// 2-finger tap → right click.
+    @objc private func handleTwoFingerTap(_ gesture: UITapGestureRecognizer) {
         guard gesture.state == .ended else { return }
-        if mode == .direct {
-            let pt = gesture.location(in: self)
-            updateCursor(to: normalisedPoint(for: pt), notify: true)
-        }
         NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
-        mouseResponder?.leftMouseDown(atPoint: cursorPosition)
-        mouseResponder?.leftMouseUp()
+        mouseResponder?.rightMouseDown(atPoint: cursorPosition)
+        mouseResponder?.rightMouseUp()
     }
 
+    /// 3-finger tap → middle click.
+    @objc private func handleThreeFingerTap(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended else { return }
+        mouseResponder?.middleMouseDown?(atPoint: cursorPosition)
+        mouseResponder?.middleMouseUp?(atPoint: cursorPosition)
+    }
+
+    /// Long-press (single finger) → right click fallback for users who prefer it.
     @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
         guard gesture.state == .began else { return }
+        // Suppress the tap that would otherwise fire on finger-up.
+        touchHasDragged = true
         NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
         mouseResponder?.rightMouseDown(atPoint: cursorPosition)
         mouseResponder?.rightMouseUp()
