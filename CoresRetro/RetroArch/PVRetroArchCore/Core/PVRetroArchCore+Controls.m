@@ -404,6 +404,16 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
 @implementation PVRetroArchCoreBridge (Controls)
 - (void)initControllBuffers {}
 #pragma mark - Control
+
+/// Check if a controller is one of our virtual touch_controllers
+static bool is_virtual_touch_controller(GCController *controller) {
+    for (int i = 0; i < MAX_USERS; i++) {
+        if (controller == touch_controllers[i])
+            return true;
+    }
+    return false;
+}
+
 -(void)controllerConnected:(NSNotification *)notification {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         /// In Provenance mode, don't connect hardware controllers to RetroArch's internal system
@@ -1189,15 +1199,6 @@ static void mfi_joypad_autodetect_add(unsigned autoconf_pad)
 {
     auto_incr_id+=1;
 	input_autoconfigure_connect("mFi Controller", NULL, mfi_joypad.ident, autoconf_pad, auto_incr_id, 0);
-}
-
-/// Check if a controller is one of our virtual touch_controllers
-static bool is_virtual_touch_controller(GCController *controller) {
-	for (int i = 0; i < MAX_USERS; i++) {
-		if (controller == touch_controllers[i])
-			return true;
-	}
-	return false;
 }
 
 void apple_gamecontroller_joypad_connect(GCController *controller)
