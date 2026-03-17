@@ -41,6 +41,10 @@ struct PauseTileMenuView: View {
 
     @State private var showingSaveStateBrowser = false
     @State private var showingScreenshotBrowser = false
+    /// Core action awaiting option picker confirmation.
+    @State private var pendingCoreAction: CoreAction?
+    /// Incremented after every core-option toggle to force a re-render of the tile grid.
+    @State private var coreOptionRefreshToken = 0
 
     // MARK: tvOS Focus
 
@@ -165,6 +169,28 @@ struct PauseTileMenuView: View {
         return tiles
     }
 
+    /// Dynamic tiles sourced from the active core's `CoreActions` and `CoreOptions`.
+    /// `coreOptionRefreshToken` is referenced so SwiftUI re-evaluates this property after a toggle.
+    private var coreTiles: [PauseMenuTile] {
+        _ = coreOptionRefreshToken
+        var tiles: [PauseMenuTile] = []
+
+        // Core action tiles
+        if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
+            tiles += CoreActionTileProvider.tiles(from: actions)
+        }
+
+        // Boolean option toggle tiles + "Core Settings" gateway
+        if let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type {
+            tiles += CoreOptionTileProvider.tiles(from: coreClass.options, coreClass: coreClass)
+        }
+
+        return tiles
+    }
+
+    /// All tiles: standard primary tiles followed by dynamic core tiles.
+    private var allTiles: [PauseMenuTile] { primaryTiles + coreTiles }
+
     // MARK: - Tile action dispatcher
 
     private func handle(_ tile: PauseMenuTile) {
@@ -228,6 +254,39 @@ struct PauseTileMenuView: View {
             Task { @MainActor in
                 await emulatorVC.quit(optionallySave: false)
             }
+
+        // MARK: Core action tiles
+        case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
+            guard let actionTitle = CoreActionTileProvider.actionTitle(fromTileID: id),
+                  let coreWithActions = emulatorVC.core as? CoreActions,
+                  let action = coreWithActions.coreActions?.first(where: { $0.title == actionTitle }) else { return }
+            if action.options != nil {
+                // Store for the confirmationDialog; the dialog calls handleCoreAction with the selected option.
+                pendingCoreAction = action
+            } else {
+                // Dismiss with resumeEmulation: true so dismissNav's completion handler
+                // calls setPauseEmulation(false) — the single source of truth for
+                // resuming emulation.  handleCoreAction must NOT call setPauseEmulation
+                // itself to avoid a race with the dismiss animation.
+                let emulatorVC = self.emulatorVC
+                emulatorVC.dismissNav(resumeEmulation: true) {
+                    emulatorVC.handleCoreAction(action)
+                }
+            }
+
+        // MARK: Core option toggle tiles
+        case let id where id.hasPrefix(CoreOptionTileProvider.idPrefix):
+            guard let key = CoreOptionTileProvider.optionKey(fromTileID: id),
+                  let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
+                  let option = CoreOptionTileProvider.findOption(key: key, in: coreClass.options) else { return }
+            let currentValue: Bool = coreClass.valueForOption(option)
+            coreClass.setValue(!currentValue, forOption: option, andMD5: coreClass.currentGameMD5)
+            coreOptionRefreshToken += 1
+
+        // MARK: Core settings gateway
+        case CoreOptionTileProvider.coreSettingsTileID:
+            dismissForSubSheetThen { self.emulatorVC.showCoreOptions() }
+
         default:
             break
         }
@@ -400,9 +459,9 @@ struct PauseTileMenuView: View {
                             .tracking(tvOSAdjusted(2, tvOS: 4))
                             .padding(.top, tvOSAdjusted(4, tvOS: 8))
 
-                        // Tile grid
+                        // Tile grid (primary + dynamic core tiles)
                         LazyVGrid(columns: columns, spacing: tvOSAdjusted(10, tvOS: 16)) {
-                            ForEach(primaryTiles) { tile in
+                            ForEach(allTiles) { tile in
                                 tileView(for: tile)
                             }
                         }
@@ -434,6 +493,40 @@ struct PauseTileMenuView: View {
                 showingScreenshotBrowser = false
             }
         }
+        // Core action option picker — shown when a CoreAction exposes multiple options.
+        .confirmationDialog(
+            pendingCoreAction?.title ?? "",
+            isPresented: Binding(
+                get: { pendingCoreAction != nil },
+                set: { if !$0 { pendingCoreAction = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            if let action = pendingCoreAction,
+               let options = action.options {
+                ForEach(options, id: \.title) { opt in
+                    Button(opt.title) {
+                        pendingCoreAction = nil
+                        // Build a new CoreAction with the chosen option marked selected
+                        // so cores can distinguish which option the user picked.
+                        let selectedAction = CoreAction(
+                            title: action.title,
+                            requiresReset: action.requiresReset,
+                            options: options.map { CoreActionOption(title: $0.title, selected: $0 == opt) },
+                            style: action.style
+                        )
+                        // Dismiss with resumeEmulation: true and run the core action from
+                        // dismissNav's completion so it cannot race with pause/resume state.
+                        self.emulatorVC.dismissNav(resumeEmulation: true) {
+                            self.emulatorVC.handleCoreAction(selectedAction)
+                        }
+                    }
+                }
+                Button(String(localized: "Cancel"), role: .cancel) {
+                    pendingCoreAction = nil
+                }
+            }
+        }
         #if os(iOS)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
@@ -444,7 +537,7 @@ struct PauseTileMenuView: View {
         #elseif os(tvOS)
         .onAppear {
             // Set initial focus to the first enabled tile
-            if let firstEnabled = primaryTiles.first(where: { $0.isEnabled }) {
+            if let firstEnabled = allTiles.first(where: { $0.isEnabled }) {
                 focusedTileID = firstEnabled.id
             }
         }
