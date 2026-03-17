@@ -159,6 +159,63 @@ struct ControllerSettingsView: View {
 
     var body: some View {
         List {
+            // MARK: - Button Remapping (promoted to top — most important action)
+            if !controllerManager.controllers.isEmpty {
+                Section {
+                    ForEach(controllerManager.controllers, id: \.self) { controller in
+                        NavigationLink(destination: ButtonRemappingView(controller: controller)) {
+                            HStack(spacing: 16) {
+                                Image(systemName: controllerIcon(controller))
+                                    .imageScale(.large)
+                                    .foregroundColor(accentColor)
+                                    .frame(width: 30)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(controller.vendorName ?? "Unknown Controller")
+                                        .font(.headline)
+                                        #if os(tvOS)
+                                        .foregroundColor(.white)
+                                        #endif
+                                    Text("Remap buttons")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                if let playerIndex = playerNumber(for: controller) {
+                                    Text("P\(playerIndex)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.secondary.opacity(0.2))
+                                        .clipShape(Capsule())
+                                }
+                            }
+                        }
+                        #if os(tvOS)
+                        .buttonStyle(.card)
+                        .retroThemedFocus(cornerRadius: 12)
+                        #endif
+                    }
+                } header: {
+                    HStack {
+                        Image(systemName: "slider.horizontal.3")
+                        Text("Button Remapping")
+                    }
+                    .font(.headline)
+                    #if os(tvOS)
+                    .foregroundColor(.retroPink)
+                    #endif
+                } footer: {
+                    Text("Customize button mappings for each connected controller.")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            // MARK: - Controller Assignments
             Section {
                 ForEach(1...8, id: \.self) { player in
                     Button(action: {
@@ -267,135 +324,7 @@ struct ControllerSettingsView: View {
                 }
             }
 
-            // Update the markdown view styling
-//            if controllerManager.isKeyboardConnected {
-                Section {
-                    #if os(tvOS)
-                    Button(action: {}) {
-                        MarkdownView(text: keyboardMappingDocs)
-                            .font(.custom("Menlo", size: 14), for: .body)
-                            .font(.custom("Menlo", size: 24), for: .h1)
-                            .font(.custom("Menlo", size: 20), for: .h2)
-                            .font(.custom("Menlo", size: 16), for: .h3)
-                            .font(.custom("Menlo", size: 14), for: .codeBlock)
-                            .tint(accentColor)
-                    }
-                    .buttonStyle(.card)
-                    .focusable()
-                    #else
-                    MarkdownView(text: keyboardMappingDocs)
-                        .font(.custom("Menlo", size: 14), for: .body)
-                        .font(.custom("Menlo", size: 24), for: .h1)
-                        .font(.custom("Menlo", size: 20), for: .h2)
-                        .font(.custom("Menlo", size: 16), for: .h3)
-                        .font(.custom("Menlo", size: 14), for: .codeBlock)
-                        .tint(accentColor)
-                    #endif
-            } header: {
-                HStack {
-                    Image(systemName: "keyboard")
-                    Text("⌨️ Keyboard Controls")
-                }
-                .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                #endif
-            }
-//            }
-
-            Section {
-                Button(action: {
-                    showingResetConfirmation = true
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.counterclockwise")
-                        Text("Reset All Slot Preferences")
-                    }
-                    .foregroundColor(.red)
-                }
-                #if os(tvOS)
-                .buttonStyle(.card)
-                #endif
-            } header: {
-                HStack {
-                    Image(systemName: "gearshape.2")
-                    Text("Preferences")
-                }
-                .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                #endif
-            } footer: {
-                Text("Clears all saved controller-to-player slot assignments and reverts to automatic assignment.")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-            }
-
-            Section {
-                NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls")) {
-                    Label("Full Controller Guide", systemImage: "books.vertical.fill")
-                }
-            } header: {
-                HStack {
-                    Image(systemName: "questionmark.circle")
-                    Text("Help")
-                }
-                .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                #endif
-            }
-
-            // Button Remapping Section
-            if !controllerManager.controllers.isEmpty {
-                Section {
-                    ForEach(controllerManager.controllers, id: \.self) { controller in
-                        NavigationLink(destination: ButtonRemappingView(controller: controller)) {
-                            HStack(spacing: 16) {
-                                Image(systemName: controllerIcon(controller))
-                                    .imageScale(.large)
-                                    .foregroundColor(accentColor)
-                                    .frame(width: 30)
-
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(controller.vendorName ?? "Unknown Controller")
-                                        .font(.headline)
-                                    Text("Remap buttons")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-
-                                Spacer()
-
-                                if let playerIndex = playerNumber(for: controller) {
-                                    Text("P\(playerIndex)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(Color.secondary.opacity(0.2))
-                                        .clipShape(Capsule())
-                                }
-                            }
-                        }
-                    }
-                } header: {
-                    HStack {
-                        Image(systemName: "slider.horizontal.3")
-                        Text("Button Remapping")
-                    }
-                    .font(.headline)
-                    #if os(tvOS)
-                    .foregroundColor(.retroPink)
-                    #endif
-                } footer: {
-                    Text("Customize button mappings for each controller. Joy-Con controllers are automatically fixed.")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                }
-            }
-
-            // Preferred Player Slot Section
+            // MARK: - Preferred Player Slots
             let connectedIds = Set(controllerManager.controllers.map { controllerManager.controllerIdentifier(for: $0) })
             let disconnectedIds = controllerManager.storedControllerIds.filter { !connectedIds.contains($0) }
             if !controllerManager.controllers.isEmpty || !disconnectedIds.isEmpty {
@@ -433,6 +362,57 @@ struct ControllerSettingsView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+            }
+
+            // MARK: - Preferences
+            Section {
+                Button(action: {
+                    showingResetConfirmation = true
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise")
+                        Text("Reset All Slot Preferences")
+                    }
+                    .foregroundColor(.red)
+                }
+                #if os(tvOS)
+                .buttonStyle(.card)
+                #endif
+            } header: {
+                HStack {
+                    Image(systemName: "gearshape.2")
+                    Text("Preferences")
+                }
+                .font(.headline)
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                #endif
+            } footer: {
+                Text("Clears all saved controller-to-player slot assignments and reverts to automatic assignment.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
+
+            // MARK: - Help & Guides (keyboard info collapsed into sub-navigation)
+            Section {
+                NavigationLink(destination: KeyboardControlsGuideView(keyboardMappingDocs: keyboardMappingDocs, accentColor: accentColor)) {
+                    Label("Keyboard Controls", systemImage: "keyboard")
+                }
+                NavigationLink(destination: ControllerGuideView()) {
+                    Label("Controller Guide", systemImage: "gamecontroller.fill")
+                }
+                NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls")) {
+                    Label("Full Controller Wiki", systemImage: "books.vertical.fill")
+                }
+            } header: {
+                HStack {
+                    Image(systemName: "questionmark.circle")
+                    Text("Help & Guides")
+                }
+                .font(.headline)
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                #endif
             }
         }
         #if os(tvOS)
@@ -993,6 +973,47 @@ struct ButtonRemappingView: View {
         case .options: return "Options"
         default: return button.rawValue
         }
+    }
+}
+
+// MARK: - KeyboardControlsGuideView
+
+/// A dedicated sub-page showing the keyboard mapping guide.
+/// Moved out of the main list so it doesn't dominate the controller settings screen.
+struct KeyboardControlsGuideView: View {
+    let keyboardMappingDocs: String
+    let accentColor: Color
+
+    var body: some View {
+        ScrollView {
+            #if os(tvOS)
+            Button(action: {}) {
+                MarkdownView(text: keyboardMappingDocs)
+                    .font(.custom("Menlo", size: 14), for: .body)
+                    .font(.custom("Menlo", size: 24), for: .h1)
+                    .font(.custom("Menlo", size: 20), for: .h2)
+                    .font(.custom("Menlo", size: 16), for: .h3)
+                    .font(.custom("Menlo", size: 14), for: .codeBlock)
+                    .tint(accentColor)
+                    .padding()
+            }
+            .buttonStyle(.card)
+            .focusable()
+            #else
+            MarkdownView(text: keyboardMappingDocs)
+                .font(.custom("Menlo", size: 14), for: .body)
+                .font(.custom("Menlo", size: 24), for: .h1)
+                .font(.custom("Menlo", size: 20), for: .h2)
+                .font(.custom("Menlo", size: 16), for: .h3)
+                .font(.custom("Menlo", size: 14), for: .codeBlock)
+                .tint(accentColor)
+                .padding()
+            #endif
+        }
+        .navigationTitle("Keyboard Controls")
+        #if !os(tvOS)
+        .navigationBarTitleDisplayMode(.large)
+        #endif
     }
 }
 
