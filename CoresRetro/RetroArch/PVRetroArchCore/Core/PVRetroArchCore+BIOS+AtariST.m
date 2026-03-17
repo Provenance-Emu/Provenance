@@ -34,12 +34,24 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         names = @[
+            // Canonical Hatari name (tos.img) first; then .img variants; then .rom variants.
+            // Many TOS dumps distributed by the community use the .rom extension.
             @"tos.img",
-            @"tos100.img",  @"tos100de.img",
+            @"tos100.img",  @"tos100de.img", @"tos100us.img",
             @"tos102.img",  @"tos102us.img", @"tos102uk.img", @"tos102de.img",
-            @"tos104.img",  @"tos104de.img", @"tos104uk.img",
-            @"tos106.img",  @"tos162.img",   @"tos206.img",
+            @"tos104.img",  @"tos104de.img", @"tos104uk.img", @"tos104se.img",
+            @"tos106.img",  @"tos106us.img",
+            @"tos162.img",
+            @"tos205.img",  @"tos205us.img",
+            @"tos206.img",  @"tos206uk.img", @"tos206us.img",
             @"emutos1m.img",
+            // .rom variants — same content, alternate extension used by many TOS dump sites
+            @"tos100us.rom",
+            @"tos102us.rom",
+            @"tos104us.rom", @"tos104se.rom",
+            @"tos106us.rom",
+            @"tos205us.rom",
+            @"tos206uk.rom", @"tos206us.rom",
         ];
     });
     return names;
