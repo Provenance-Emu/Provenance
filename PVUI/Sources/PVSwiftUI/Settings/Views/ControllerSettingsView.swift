@@ -987,18 +987,23 @@ struct KeyboardControlsGuideView: View {
     var body: some View {
         ScrollView {
             #if os(tvOS)
-            Button(action: {}) {
-                MarkdownView(text: keyboardMappingDocs)
-                    .font(.custom("Menlo", size: 14), for: .body)
-                    .font(.custom("Menlo", size: 24), for: .h1)
-                    .font(.custom("Menlo", size: 20), for: .h2)
-                    .font(.custom("Menlo", size: 16), for: .h3)
-                    .font(.custom("Menlo", size: 14), for: .codeBlock)
-                    .tint(accentColor)
-                    .padding()
-            }
-            .buttonStyle(.card)
-            .focusable()
+            MarkdownView(text: keyboardMappingDocs)
+                .font(.custom("Menlo", size: 14), for: .body)
+                .font(.custom("Menlo", size: 24), for: .h1)
+                .font(.custom("Menlo", size: 20), for: .h2)
+                .font(.custom("Menlo", size: 16), for: .h3)
+                .font(.custom("Menlo", size: 14), for: .codeBlock)
+                .tint(accentColor)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color.gray.opacity(0.15))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+                .focusable()
             #else
             MarkdownView(text: keyboardMappingDocs)
                 .font(.custom("Menlo", size: 14), for: .body)
