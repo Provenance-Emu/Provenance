@@ -220,17 +220,29 @@ extension PVEmulatorViewController {
         hostingVC.view.backgroundColor = .clear
         hostingVC.view.isOpaque = false
 
+        // Wrap in a passthrough container so touches on empty areas
+        // (especially when collapsed) fall through to the game/skin below
+        let container = KeyboardPassthroughView(frame: .zero)
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.backgroundColor = .clear
+        container.isOpaque = false
+
         addChild(hostingVC)
-        view.addSubview(hostingVC.view)
-        view.bringSubviewToFront(hostingVC.view)
+        container.addSubview(hostingVC.view)
+        view.addSubview(container)
+        view.bringSubviewToFront(container)
         hostingVC.didMove(toParent: self)
 
         hostingVC.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            hostingVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            hostingVC.view.topAnchor.constraint(equalTo: view.topAnchor),
-            hostingVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            container.topAnchor.constraint(equalTo: view.topAnchor),
+            container.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hostingVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            hostingVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            hostingVC.view.topAnchor.constraint(equalTo: container.topAnchor),
+            hostingVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
         ])
 
         let targetAlpha = CGFloat(max(0, min(1, opacity)))
@@ -377,6 +389,20 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
     ) {
         guard let keyboardResponder = core as? KeyboardResponder else { return }
         keyboardResponder.keyUp(keyCode)
+    }
+}
+
+// MARK: - Passthrough container
+
+/// A UIView that passes through touches on its background (empty areas)
+/// to views below, while still allowing touches on its subviews (the keyboard).
+/// This lets the collapsed keyboard handle sit atop the game without blocking
+/// touch input to the emulator or skin buttons.
+private final class KeyboardPassthroughView: UIView {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let hit = super.hitTest(point, with: event)
+        // If the hit is this container itself (not a subview), pass through
+        return hit === self ? nil : hit
     }
 }
 

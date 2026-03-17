@@ -151,7 +151,7 @@ public class PVThinLibretroCore: PVEmulatorCore {
 
 extension PVThinLibretroCore: @preconcurrency CoreOptional {
 
-    static var options: [CoreOption] {
+    public static var options: [CoreOption] {
         guard let instance = PVThinLibretroCore.current else {
             return []
         }
