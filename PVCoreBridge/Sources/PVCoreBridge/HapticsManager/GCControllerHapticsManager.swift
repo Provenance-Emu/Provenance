@@ -307,8 +307,9 @@ public final class GCControllerHapticsManager {
             // derived from the classified pattern and whose intensity came from rumble().
             #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
             let style = hapticStyleForPattern(pattern)
-            let intensity = playerLastFallbackIntensity.removeValue(forKey: player) ?? 1.0
-            guard intensity > 0 else { return }
+            // Only fire if a positive intensity was stored by rumble() — if haptics were disabled,
+            // no value was stored and we must not fire here.
+            guard let intensity = playerLastFallbackIntensity.removeValue(forKey: player), intensity > 0 else { return }
             let generator = UIImpactFeedbackGenerator(style: style)
             generator.prepare()
             generator.impactOccurred(intensity: intensity)
