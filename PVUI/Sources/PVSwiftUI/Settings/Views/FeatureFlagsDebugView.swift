@@ -225,7 +225,7 @@ private struct FeatureFlagRow: View {
         guard let feature = featureEnum else { return nil }
         let currentOverrides = featureFlags.getCurrentDebugOverrides()
         if let overrideValue = currentOverrides[feature] {
-            return overrideValue ? ("OVR:ON", RetroTheme.retroBlue) : ("OVR:OFF", RetroTheme.retroPink)
+            return (overrideValue == true) ? ("OVR:ON", RetroTheme.retroBlue) : ("OVR:OFF", RetroTheme.retroPink)
         }
         return nil
     }
