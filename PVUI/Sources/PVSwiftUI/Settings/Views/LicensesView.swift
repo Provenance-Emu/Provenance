@@ -17,15 +17,13 @@ import SafariServices
 
 // MARK: - License Group
 
-/// License grouping by SPDX family.
-/// When PVCore gains a `license` field (#3236), these can be derived from it.
-/// For now every core is placed in the "Other / TBD" bucket.
+/// License grouping by SPDX family, derived from `PVCore.licenseName`.
 private enum LicenseGroup: String, CaseIterable, Identifiable {
     case gpl   = "GPL"
     case lgpl  = "LGPL"
     case mit   = "MIT"
     case bsd   = "BSD"
-    case other = "Other / TBD"
+    case other = "Other"
 
     var id: String { rawValue }
 
@@ -82,7 +80,9 @@ struct LicensesView: View {
         guard !searchText.isEmpty else { return cores }
         return cores.filter {
             $0.projectName.localizedCaseInsensitiveContains(searchText) ||
-            $0.projectURL.localizedCaseInsensitiveContains(searchText)
+            $0.projectURL.localizedCaseInsensitiveContains(searchText) ||
+            ($0.licenseName ?? "").localizedCaseInsensitiveContains(searchText) ||
+            ($0.copyright ?? "").localizedCaseInsensitiveContains(searchText)
         }
     }
 
@@ -174,13 +174,26 @@ struct LicensesView: View {
 
     private var coreList: some View {
         List {
-            // TODO(#3236): When PVCore gains a `license` field, group by LicenseGroup here.
-            ForEach(sorted, id: \.identifier) { core in
-                LicenseRowView(
-                    core: core,
-                    group: .other,
-                    onOpenURL: openURL(_:)
-                )
+            ForEach(LicenseGroup.allCases) { group in
+                let groupCores = sorted.filter { LicenseGroup.classify($0.licenseName ?? "") == group }
+                if !groupCores.isEmpty {
+                    Section(header: Text(group.rawValue)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(LinearGradient(
+                            gradient: Gradient(colors: group.badgeColorArray),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                    ) {
+                        ForEach(groupCores, id: \.identifier) { core in
+                            LicenseRowView(
+                                core: core,
+                                group: group,
+                                onOpenURL: openURL(_:)
+                            )
+                        }
+                    }
+                }
             }
         }
         .listStyle(.plain)
@@ -234,6 +247,11 @@ private struct LicenseRowView: View {
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.retroBlue)
                     }
+                    if let copyright = core.copyright, !copyright.isEmpty {
+                        Text(copyright)
+                            .font(.system(size: 11))
+                            .foregroundColor(.gray)
+                    }
                 }
 
                 Spacer()
@@ -241,9 +259,14 @@ private struct LicenseRowView: View {
                 licenseBadge
             }
 
-            // Project URL
-            if !core.projectURL.isEmpty, let url = URL(string: core.projectURL) {
-                projectLinkButton(url: url)
+            // Links row
+            HStack(spacing: 8) {
+                if !core.projectURL.isEmpty, let url = URL(string: core.projectURL) {
+                    projectLinkButton(url: url, label: "Project", icon: "link")
+                }
+                if let licenseURL = core.licenseURL, !licenseURL.isEmpty, let url = URL(string: licenseURL) {
+                    projectLinkButton(url: url, label: "License", icon: "doc.text")
+                }
             }
         }
         .padding(14)
@@ -273,8 +296,7 @@ private struct LicenseRowView: View {
     }
 
     private var licenseBadge: some View {
-        // TODO(#3236): replace "TBD" with core.license when available
-        let label = "TBD"
+        let label = core.licenseName ?? "Unknown"
         return Text(label)
             .font(.system(size: 11, weight: .bold))
             .padding(.horizontal, 8)
@@ -303,12 +325,12 @@ private struct LicenseRowView: View {
             )
     }
 
-    private func projectLinkButton(url: URL) -> some View {
+    private func projectLinkButton(url: URL, label: String, icon: String) -> some View {
         Button {
             onOpenURL(url)
         } label: {
             HStack(spacing: 6) {
-                Image(systemName: "link")
+                Image(systemName: icon)
                     .foregroundStyle(
                         LinearGradient(
                             gradient: Gradient(colors: [.retroBlue, .retroPurple]),
@@ -316,7 +338,7 @@ private struct LicenseRowView: View {
                             endPoint: .trailing
                         )
                     )
-                Text("Project Website")
+                Text(label)
                     .foregroundColor(.white)
                     .font(.system(size: 13, weight: .medium))
             }
