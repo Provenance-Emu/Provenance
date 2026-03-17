@@ -32,6 +32,13 @@ public final class PVCore: RealmSwift.Object, Identifiable {
         supportedCheatTypeNames.compactMap { CheatCodeTypes(string: $0) }
     }
 
+    /// SPDX license identifier (e.g. `"GPL-2.0-only"`, `"MIT"`). `nil` if not specified.
+    @Persisted public var licenseName: String?
+    /// URL pointing to the full license text. `nil` if not specified.
+    @Persisted public var licenseURL: String?
+    /// Copyright statement(s) for this core. `nil` if not specified.
+    @Persisted public var copyright: String?
+
     public var hasCoreClass: Bool {
         let _class: AnyClass? = NSClassFromString(principleClass)
         DLOG("Class: \(String(describing: _class)) for \(principleClass)")
@@ -41,7 +48,21 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     // Reverse links
     @Persisted(originProperty: "core") public var saveStates: LinkingObjects<PVSaveState>
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool = false, appStoreDisabled: Bool = false, contentless: Bool = false, supportedCheatTypes: [CheatCodeTypes] = []) {
+    public convenience init(
+        withIdentifier identifier: String,
+        principleClass: String,
+        supportedSystems: [PVSystem],
+        name: String,
+        url: String,
+        version: String,
+        disabled: Bool = false,
+        appStoreDisabled: Bool = false,
+        contentless: Bool = false,
+        supportedCheatTypes: [CheatCodeTypes] = [],
+        licenseName: String? = nil,
+        licenseURL: String? = nil,
+        copyright: String? = nil
+    ) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass
@@ -55,6 +76,9 @@ public final class PVCore: RealmSwift.Object, Identifiable {
         self.contentless = contentless
         self.supportedCheatTypeNames.removeAll()
         self.supportedCheatTypeNames.append(objectsIn: supportedCheatTypes.map { $0.stringValue })
+        self.licenseName = licenseName
+        self.licenseURL = licenseURL
+        self.copyright = copyright
     }
 
     public override class func ignoredProperties() -> [String] {

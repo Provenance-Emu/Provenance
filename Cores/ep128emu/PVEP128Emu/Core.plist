@@ -17,5 +17,11 @@
 	<string>http://ep128emu.sourceforge.net/about.html</string>
 	<key>PVProjectVersion</key>
 	<string>2.0.11</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>http://ep128emu.sourceforge.net/about.html</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2003-2024 István Varga</string>
 </dict>
 </plist>

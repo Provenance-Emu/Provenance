@@ -16,5 +16,11 @@
 	<string>http://fuse-emulator.sourceforge.net</string>
 	<key>PVProjectVersion</key>
 	<string>0</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>http://fuse-emulator.sourceforge.net</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 1999-2024 Philip Kendall and Fuse Contributors</string>
 </dict>
 </plist>

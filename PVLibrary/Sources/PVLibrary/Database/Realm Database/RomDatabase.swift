@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 24
+public let schemaVersion: UInt64 = 25
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -300,6 +300,11 @@ public final class RealmConfiguration {
                     newObject?["codeType"] = split.codeType
                 }
                 ILOG("Migration to version 24 complete. (Split PVCheats.type into type + codeType)")
+            }
+            if oldSchemaVersion < 25 {
+                // PVCore gained three new optional String fields: licenseName, licenseURL, copyright.
+                // Optional String properties default to nil automatically; no data migration needed.
+                ILOG("Migration to version 25 complete. (Added PVCore.licenseName/licenseURL/copyright)")
             }
         }
 

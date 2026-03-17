@@ -18,5 +18,11 @@
 	<string>1.0.6</string>
 	<key>PVJITRequirement</key>
 	<string>optional</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/emuPlace/emuThreeDS/blob/main/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2013-2024 Citra Emulator Project</string>
 </dict>
 </plist>

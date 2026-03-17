@@ -16,5 +16,11 @@
 	<string>https://github.com/iaddis/SNESticle</string>
 	<key>PVProjectVersion</key>
 	<string>1.0</string>
+	<key>PVLicenseName</key>
+	<string>LicenseRef-SNESticle</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/iaddis/SNESticle</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 1997-2024 icer</string>
 </dict>
 </plist>

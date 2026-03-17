@@ -48,7 +48,10 @@ public extension PVEmulatorConfiguration {
                                  disabled: core.disabled,
                                  appStoreDisabled: core.appStoreDisabled,
                                  contentless: core.contentless,
-                                 supportedCheatTypes: core.supportedCheatTypes)
+                                 supportedCheatTypes: core.supportedCheatTypes,
+                                 licenseName: core.licenseName,
+                                 licenseURL: core.licenseURL,
+                                 copyright: core.copyright)
             //            database.refresh()
             try newCore.add(update: true)
         }
@@ -66,7 +69,10 @@ public extension PVEmulatorConfiguration {
                                         disabled: subCore.disabled,
                                         appStoreDisabled: subCore.appStoreDisabled,
                                         contentless: subCore.contentless,
-                                        supportedCheatTypes: subCore.supportedCheatTypes
+                                        supportedCheatTypes: subCore.supportedCheatTypes,
+                                        licenseName: subCore.licenseName,
+                                        licenseURL: subCore.licenseURL,
+                                        copyright: subCore.copyright
                 )
                 //                database.refresh()
                 try newSubCore.add(update: true)

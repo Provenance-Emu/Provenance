@@ -16,5 +16,11 @@
 	<string>https://gstanton.github.io/ProSystem1_3/</string>
 	<key>PVProjectVersion</key>
 	<string>1.3</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://gstanton.github.io/ProSystem1_3/</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2002-2004 Greg Stanton</string>
 </dict>
 </plist>

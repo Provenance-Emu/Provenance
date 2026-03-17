@@ -16,5 +16,11 @@
 	<string>http://fms.komkon.org/TIC80/</string>
 	<key>PVProjectVersion</key>
 	<string>24</string>
+	<key>PVLicenseName</key>
+	<string>MIT</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/nesbox/TIC-80/blob/dev/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2017-2024 Vadim Grigoruk (Nesbox)</string>
 </dict>
 </plist>

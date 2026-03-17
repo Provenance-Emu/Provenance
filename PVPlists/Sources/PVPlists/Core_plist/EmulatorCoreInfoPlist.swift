@@ -36,13 +36,23 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     /// core when JIT is successfully acquired.
     /// Maps to the `PVJITDisabledWithoutJIT` key in `Core.plist`.
     public let jitDisabledWithoutJIT: Bool
+    /// SPDX license identifier for this core (e.g. `"GPL-2.0-only"`, `"MIT"`).
+    /// Maps to the `PVLicenseName` key in `Core.plist`. `nil` if absent.
+    public let licenseName: String?
+    /// URL pointing to the full license text for this core.
+    /// Maps to the `PVLicenseURL` key in `Core.plist`. `nil` if absent.
+    public let licenseURL: String?
+    /// Copyright statement(s) for this core.
+    /// Maps to the `PVCopyright` key in `Core.plist`. `nil` if absent.
+    public let copyright: String?
 
     public init(identifier: String, principleClass: String, supportedSystems: [String],
                 projectName: String, projectURL: String, projectVersion: String,
                 disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false,
                 supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil,
                 jitRequirementRawValue: String? = nil,
-                jitDisabledWithoutJIT: Bool = false) {
+                jitDisabledWithoutJIT: Bool = false,
+                licenseName: String? = nil, licenseURL: String? = nil, copyright: String? = nil) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -56,6 +66,9 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.subCores = subCores
         self.jitRequirementRawValue = jitRequirementRawValue
         self.jitDisabledWithoutJIT = jitDisabledWithoutJIT
+        self.licenseName = licenseName
+        self.licenseURL = licenseURL
+        self.copyright = copyright
     }
 
     public init?(fromInfoDictionary dict: [String: Any]) {
@@ -137,6 +150,11 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
 
         // JIT-disabled flag — core disabled specifically because JIT is unavailable
         self.jitDisabledWithoutJIT = dict["PVJITDisabledWithoutJIT"] as? Bool ?? false
+
+        // License metadata — all optional
+        self.licenseName = dict["PVLicenseName"] as? String
+        self.licenseURL = dict["PVLicenseURL"] as? String
+        self.copyright = dict["PVCopyright"] as? String
     }
 
     public convenience init?(fromURL plistPath: URL) throws {
@@ -175,7 +193,10 @@ public extension EmulatorCoreInfoPlist {
             supportedCheatTypes: cheatTypes,
             subCores: subCores,
             jitRequirementRawValue: e.PVJITRequirement,
-            jitDisabledWithoutJIT: e.PVJITDisabledWithoutJIT ?? false
+            jitDisabledWithoutJIT: e.PVJITDisabledWithoutJIT ?? false,
+            licenseName: e.PVLicenseName,
+            licenseURL: e.PVLicenseURL,
+            copyright: e.PVCopyright
         )
     }
 }
@@ -198,4 +219,7 @@ func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     && lhs.subCores == subCores
     && lhs.jitRequirementRawValue == rhs.PVJITRequirement
     && lhs.jitDisabledWithoutJIT == (rhs.PVJITDisabledWithoutJIT ?? false)
+    && lhs.licenseName == rhs.PVLicenseName
+    && lhs.licenseURL == rhs.PVLicenseURL
+    && lhs.copyright == rhs.PVCopyright
 }

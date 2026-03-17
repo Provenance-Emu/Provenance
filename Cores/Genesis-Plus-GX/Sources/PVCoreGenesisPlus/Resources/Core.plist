@@ -25,5 +25,11 @@
 		<string>Game Genie</string>
 		<string>Pro Action Replay</string>
 	</array>
+	<key>PVLicenseName</key>
+	<string>LicenseRef-Genesis-Plus-GX</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/ekeeke/Genesis-Plus-GX/blob/master/LICENSE.txt</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 1998-2022 Charles MacDonald, 2007-2024 Eke-Eke</string>
 </dict>
 </plist>

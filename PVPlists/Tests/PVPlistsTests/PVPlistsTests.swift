@@ -131,6 +131,82 @@ import PVPrimitives
     #expect(CheatCodeTypes(string: "") == nil)
 }
 
+@Test func testLicenseFields_ParsedFromDict() throws {
+    let dict: [String: Any] = [
+        "PVCoreIdentifier": "com.provenance.test",
+        "PVPrincipleClass": "TestCore",
+        "PVSupportedSystems": ["com.provenance.nes"],
+        "PVProjectName": "Test Core",
+        "PVProjectURL": "https://example.com",
+        "PVProjectVersion": "1.0",
+        "PVLicenseName": "GPL-2.0-only",
+        "PVLicenseURL": "https://example.com/LICENSE",
+        "PVCopyright": "Copyright © 2024 Author"
+    ]
+    let plist = try #require(EmulatorCoreInfoPlist(fromInfoDictionary: dict))
+    #expect(plist.licenseName == "GPL-2.0-only")
+    #expect(plist.licenseURL == "https://example.com/LICENSE")
+    #expect(plist.copyright == "Copyright © 2024 Author")
+}
+
+@Test func testLicenseFields_AbsentFromDict_DefaultsToNil() throws {
+    let dict: [String: Any] = [
+        "PVCoreIdentifier": "com.provenance.test",
+        "PVPrincipleClass": "TestCore",
+        "PVSupportedSystems": ["com.provenance.nes"],
+        "PVProjectName": "Test Core",
+        "PVProjectURL": "https://example.com",
+        "PVProjectVersion": "1.0"
+    ]
+    let plist = try #require(EmulatorCoreInfoPlist(fromInfoDictionary: dict))
+    #expect(plist.licenseName == nil)
+    #expect(plist.licenseURL == nil)
+    #expect(plist.copyright == nil)
+}
+
+@Test func testLicenseFields_RoundTrip_PlistToCoreEntry() {
+    let plist = EmulatorCoreInfoPlist(
+        identifier: "com.provenance.test",
+        principleClass: "TestCore",
+        supportedSystems: ["com.provenance.gbc"],
+        projectName: "Test",
+        projectURL: "https://example.com",
+        projectVersion: "1.0",
+        licenseName: "MIT",
+        licenseURL: "https://opensource.org/licenses/MIT",
+        copyright: "Copyright © 2024"
+    )
+    let entry = CorePlistEntry(plist)
+    #expect(entry.PVLicenseName == "MIT")
+    #expect(entry.PVLicenseURL == "https://opensource.org/licenses/MIT")
+    #expect(entry.PVCopyright == "Copyright © 2024")
+
+    let backToPlist = EmulatorCoreInfoPlist(entry)
+    #expect(backToPlist.licenseName == "MIT")
+    #expect(backToPlist.licenseURL == "https://opensource.org/licenses/MIT")
+    #expect(backToPlist.copyright == "Copyright © 2024")
+}
+
+@Test func testLicenseFields_NilRoundTrip() {
+    let plist = EmulatorCoreInfoPlist(
+        identifier: "com.provenance.test",
+        principleClass: "TestCore",
+        supportedSystems: ["com.provenance.gbc"],
+        projectName: "Test",
+        projectURL: "https://example.com",
+        projectVersion: "1.0"
+    )
+    let entry = CorePlistEntry(plist)
+    #expect(entry.PVLicenseName == nil)
+    #expect(entry.PVLicenseURL == nil)
+    #expect(entry.PVCopyright == nil)
+
+    let backToPlist = EmulatorCoreInfoPlist(entry)
+    #expect(backToPlist.licenseName == nil)
+    #expect(backToPlist.licenseURL == nil)
+    #expect(backToPlist.copyright == nil)
+}
+
 @Test func testCheatCodeTypes_CoreAliases() {
     // "Gateway" is emitted by 3DS cores (Azahar, emuThree)
     #expect(CheatCodeTypes(string: "Gateway") == .gateway,

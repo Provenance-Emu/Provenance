@@ -21,5 +21,11 @@
 	<array>
 		<string>Game Genie</string>
 	</array>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/TASEmulators/fceux/blob/master/COPYING</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2000-2024 FCEUX Team</string>
 </dict>
 </plist>

@@ -19,5 +19,11 @@
 	<string></string>
 	<key>PVProjectVersion</key>
 	<string></string>
+	<key>PVLicenseName</key>
+	<string>LicenseRef-FBNeo</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/finalburnneo/FBNeo/blob/master/src/license.txt</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2004-2024 FinalBurn Neo Team</string>
 </dict>
 </plist>

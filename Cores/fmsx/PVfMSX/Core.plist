@@ -19,5 +19,11 @@
 	<string>0</string>
 	<key>PVDisabled</key>
 	<true/>
+	<key>PVLicenseName</key>
+	<string>LicenseRef-fMSX</string>
+	<key>PVLicenseURL</key>
+	<string>http://fms.komkon.org/fMSX/</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 1993-2024 Marat Fayzullin</string>
 </dict>
 </plist>
