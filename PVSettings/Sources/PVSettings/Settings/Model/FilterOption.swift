@@ -147,7 +147,8 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
         }
     }
 
-    /// Whether this filter is a CRT-type filter with CRT-specific shader parameters.
+    /// Legacy flag indicating whether this filter uses the old CRT parameter UI.
+    /// Only `.simpleCRT` and `.complexCRT` return `true`.
     /// - Note: Deprecated. Use `hasEditableParameters` to test for any editable parameters.
     @available(*, deprecated, renamed: "hasEditableParameters")
     public var hasCRTParameters: Bool {
