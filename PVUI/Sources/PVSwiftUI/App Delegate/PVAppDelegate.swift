@@ -429,6 +429,9 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         await orchestrator.run()
 
+        // Apply any pending RetroArch config migrations (partial key updates)
+        await RetroArchConfigMigrator.applyPendingMigrations()
+
         _initThemeListener()
 
         // Register intent handler for Siri shortcuts

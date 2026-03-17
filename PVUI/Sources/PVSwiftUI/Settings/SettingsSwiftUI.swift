@@ -1207,14 +1207,12 @@ private struct CoreOptionsSection: View {
                             icon: .sfSymbol("gearshape.2"))
             }
 
-            if PVFeatureFlagsManager.shared.featureStates[.retroarchBuiltinEditor] ?? false {
-                NavigationLink(destination: RetroArchConfigEditorWrapper()) {
-                    SettingsRow(
-                        title: "Edit RetroArch Config",
-                        subtitle: "Modify advanced RetroArch settings.",
-                        icon: .sfSymbol("gearshape.2.fill")
-                    )
-                }
+            NavigationLink(destination: RetroArchQuickSettingsView()) {
+                SettingsRow(
+                    title: "RetroArch Settings",
+                    subtitle: "Video, audio, notifications, performance, and more.",
+                    icon: .sfSymbol("gearshape.2.fill")
+                )
             }
 
             if shouldShowResetButton {

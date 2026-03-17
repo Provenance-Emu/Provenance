@@ -46,10 +46,15 @@ public final class PVRetroArchCoreManager {
         return configDict
     }
 
-    /// Gets the MD5 hash of a file at a given URL
+    /// Gets the MD5 hash of a file at a given URL.
+    /// The underlying hash is computed on a detached background task to avoid
+    /// blocking the cooperative thread pool (the synchronous Combine-based
+    /// implementation uses a DispatchSemaphore which is unsafe on @MainActor).
     public func md5Hash(for url: URL, fromOffset offset: UInt = 0) async -> String? {
         guard FileManager.default.fileExists(atPath: url.path) else { return nil }
-        return FileManager.default.md5ForFile(at: url, fromOffset: offset)
+        return await Task.detached(priority: .utility) {
+            FileManager.default.md5ForFile(at: url, fromOffset: offset)
+        }.value
     }
 
     /// Returns the active config file URL in Documents directory

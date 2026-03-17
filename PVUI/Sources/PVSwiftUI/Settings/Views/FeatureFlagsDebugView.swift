@@ -48,6 +48,19 @@ struct FeatureFlagsDebugView: View {
         flags = featureFlags.getAllFeatureFlags()
     }
 
+    /// Writable binding so UIKit alert presentation can clear error state
+    /// without getting stuck in a constant-true presentation loop.
+    private var isErrorAlertPresented: Binding<Bool> {
+        Binding(
+            get: { errorMessage != nil },
+            set: { newValue in
+                if !newValue {
+                    errorMessage = nil
+                }
+            }
+        )
+    }
+
     var body: some View {
         ZStack {
             RetroTheme.retroBackground
@@ -98,15 +111,16 @@ struct FeatureFlagsDebugView: View {
 #endif
         .task {
             await loadInitialConfiguration()
-
+#if !os(tvOS)
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 0.9
             }
+#endif
         }
         .uiKitAlert(
             "Error",
             message: errorMessage ?? "",
-            isPresented: .constant(errorMessage != nil),
+            isPresented: isErrorAlertPresented,
             preferredContentSize: CGSize(width: 500, height: 300)
         ) {
             UIAlertAction(title: "OK", style: .default) { _ in
@@ -530,9 +544,11 @@ private struct DebugControlsSection: View {
         }
         .padding(.vertical, 8)
         .onAppear {
+#if !os(tvOS)
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 0.9
             }
+#endif
         }
     }
 
