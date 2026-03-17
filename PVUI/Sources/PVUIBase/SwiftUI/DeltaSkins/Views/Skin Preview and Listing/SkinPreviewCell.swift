@@ -6,8 +6,12 @@
 //
 
 import SwiftUI
+import PVLogging
 
-/// Preview cell for a skin with rubber-like design
+/// Preview cell for a skin with rubber-like design.
+///
+/// Loads the skin image asynchronously on a background thread and renders a
+/// lightweight static thumbnail rather than a full ``DeltaSkinView``.
 struct SkinPreviewCell: View {
     let skin: any DeltaSkinProtocol
     let manager: DeltaSkinManager
@@ -16,6 +20,9 @@ struct SkinPreviewCell: View {
     @State private var showingDeleteAlert = false
     @State private var deleteError: Error?
     @State private var showingErrorAlert = false
+    @State private var thumbnailImage: UIImage?
+    @State private var isLoadingThumbnail = true
+    @State private var thumbnailFailed = false
     #if !os(tvOS)
     @State private var showingShareSheet = false
     #endif
@@ -35,57 +42,52 @@ struct SkinPreviewCell: View {
         colorScheme == .dark ? Color(white: 0.25) : Color.white
     }
 
+    /// Resolve the best supported traits for preview, trying progressively
+    /// wider fallbacks so skins that only support one device/orientation
+    /// still render a thumbnail.
     private var previewTraits: DeltaSkinTraits {
-        // Try current device first with specified orientation
         let device: DeltaSkinDevice = horizontalSizeClass == .regular ? .ipad : .iphone
-        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
-
-        // Return first supported configuration
-        if skin.supports(traits) {
-            return traits
-        }
-
-        // Try with edge to edge display type
-        let edgeToEdgeTraits = DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: orientation)
-        if skin.supports(edgeToEdgeTraits) {
-            return edgeToEdgeTraits
-        }
-
-        // Try alternate device
         let altDevice: DeltaSkinDevice = device == .ipad ? .iphone : .ipad
-        let altTraits = DeltaSkinTraits(device: altDevice, displayType: .standard, orientation: orientation)
-
-        if skin.supports(altTraits) {
-            return altTraits
-        }
-
-        // Try alternate device with edge to edge
-        let altEdgeToEdgeTraits = DeltaSkinTraits(device: altDevice, displayType: .edgeToEdge, orientation: orientation)
-        if skin.supports(altEdgeToEdgeTraits) {
-            return altEdgeToEdgeTraits
-        }
-
-        // If the requested orientation isn't supported, try the opposite orientation
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
         let oppositeOrientation: DeltaSkinOrientation = orientation == .portrait ? .landscape : .portrait
-        let oppositeTraits = DeltaSkinTraits(device: device, displayType: .standard, orientation: oppositeOrientation)
 
-        if skin.supports(oppositeTraits) {
-            return oppositeTraits
+        // 1. Current device, requested orientation
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
+            if skin.supports(traits) { return traits }
         }
 
-        // Fallback to edge to edge with default orientation
-        return DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: .portrait)
+        // 2. Current device, opposite orientation
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: oppositeOrientation)
+            if skin.supports(traits) { return traits }
+        }
+
+        // 3. Alternate device, requested orientation
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: altDevice, displayType: displayType, orientation: orientation)
+            if skin.supports(traits) { return traits }
+        }
+
+        // 4. Alternate device, opposite orientation
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: altDevice, displayType: displayType, orientation: oppositeOrientation)
+            if skin.supports(traits) { return traits }
+        }
+
+        // Final fallback (should rarely be reached)
+        return DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
     }
 
     var body: some View {
         ZStack {
             // Preview content with disabled interaction
             content
-                .allowsHitTesting(false)  // Disable interaction on the preview content
+                .allowsHitTesting(false)
 
             // Transparent overlay to capture context menu
             Color.clear
-                .contentShape(Rectangle())  // Make entire area tappable
+                .contentShape(Rectangle())
         }
         .contextMenu {
             #if !os(tvOS)
@@ -129,15 +131,75 @@ struct SkinPreviewCell: View {
             ShareSheet(activityItems: [skin.fileURL])
         }
         #endif
+        .onAppear {
+            loadThumbnail()
+        }
+    }
+
+    // MARK: - Thumbnail preview
+
+    @ViewBuilder
+    private var thumbnailPreview: some View {
+        if isLoadingThumbnail {
+            ProgressView()
+                .frame(maxWidth: .infinity)
+                .aspectRatio(orientation == .portrait ? 0.5 : 2.0, contentMode: .fit)
+        } else if let thumbnailImage {
+            Image(uiImage: thumbnailImage)
+                .resizable()
+                .scaledToFit()
+                .aspectRatio(orientation == .portrait ? 0.5 : 2.0, contentMode: .fit)
+        } else {
+            // Fallback for skins where image loading failed
+            VStack(spacing: 4) {
+                Image(systemName: "photo.badge.exclamationmark")
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+                Text(skin.name)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .aspectRatio(orientation == .portrait ? 0.5 : 2.0, contentMode: .fit)
+            .background(Color.gray.opacity(0.15))
+        }
+    }
+
+    private func loadThumbnail() {
+        let traits = previewTraits
+        let cacheKey = "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
+
+        // Fast path: use SkinSelectionPreviewCell's shared cache
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: cacheKey) {
+            thumbnailImage = cached
+            isLoadingThumbnail = false
+            return
+        }
+
+        Task.detached(priority: .utility) {
+            do {
+                let image = try await skin.image(for: traits)
+                SkinPreviewThumbnailCache.shared.store(image, forKey: cacheKey)
+                await MainActor.run {
+                    self.thumbnailImage = image
+                    self.isLoadingThumbnail = false
+                }
+            } catch {
+                ELOG("skins: SkinPreviewCell failed to load thumbnail for '\(skin.name)' traits=\(traits.description): \(error)")
+                await MainActor.run {
+                    self.thumbnailFailed = true
+                    self.isLoadingThumbnail = false
+                }
+            }
+        }
     }
 
     private var content: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Preview
+            // Preview — lightweight async thumbnail instead of full DeltaSkinView
             PreviewContainer {
-                DeltaSkinView(skin: skin, traits: previewTraits, filters: [], showDebugOverlay: false, showHitTestOverlay: false, screenAspectRatio: nil, isInEmulator: false, inputHandler: .init(emulatorCore: nil), core: nil)
-                    .allowsHitTesting(false)
-                    .aspectRatio(orientation == .portrait ? 0.5 : 2.0, contentMode: .fit)
+                thumbnailPreview
             }
             .overlay {
                 // Rubber-like gradient overlay
@@ -206,5 +268,28 @@ struct SkinPreviewCell: View {
         }
         .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
         .padding(2)
+    }
+}
+
+/// Process-wide thumbnail cache shared between ``SkinPreviewCell`` and
+/// ``SkinSelectionPreviewCell`` so the same skin image is never decoded twice.
+final class SkinPreviewThumbnailCache: @unchecked Sendable {
+    static let shared = SkinPreviewThumbnailCache()
+
+    private var cache: [String: UIImage] = [:]
+    private let queue = DispatchQueue(label: "com.provenance.skinpreview.cache", attributes: .concurrent)
+
+    func thumbnail(forKey key: String) -> UIImage? {
+        queue.sync { cache[key] }
+    }
+
+    func store(_ image: UIImage, forKey key: String) {
+        queue.async(flags: .barrier) { [self] in
+            cache[key] = image
+            if cache.count > 100 {
+                let keysToRemove = Array(cache.keys.prefix(20))
+                for k in keysToRemove { cache.removeValue(forKey: k) }
+            }
+        }
     }
 }

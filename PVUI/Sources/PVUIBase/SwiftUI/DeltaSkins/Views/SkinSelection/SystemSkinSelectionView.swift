@@ -1,6 +1,7 @@
 import SwiftUI
 import PVPrimitives
 import PVLibrary
+import PVLogging
 import UniformTypeIdentifiers
 #if canImport(SafariServices)
 import SafariServices
@@ -1085,99 +1086,129 @@ private struct DeltaStylesLinkView: View {
     }
 }
 
-/// Helper view to display a skin preview image
+/// Helper view to display a skin preview image.
+///
+/// Loads the skin image on a background task and displays it as a static
+/// thumbnail, avoiding the heavyweight ``DeltaSkinView`` in list contexts.
+/// Uses an in-memory cache keyed by skin identifier + traits so scrolling
+/// through many skins stays smooth.
 struct SkinSelectionPreviewCell: View {
     let skin: DeltaSkinProtocol
     let manager: DeltaSkinManager
     var orientation: DeltaSkinOrientation = .portrait
 
-    @State private var image: UIImage?
+    @State private var thumbnailImage: UIImage?
     @State private var isLoading = true
-    @State private var error: Error?
+    @State private var loadFailed = false
 
     /// Get the current device type (matches SystemSkinSelectionView logic)
     private var currentDevice: DeltaSkinDevice {
         #if os(tvOS)
-        // No real .deltaskin files use "tv" — iPad landscape skins work best at TV scale
         return .ipad
         #else
         return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
         #endif
     }
 
+    /// Resolve the best supported traits for preview, trying progressively
+    /// wider fallbacks: current device -> alternate device, requested
+    /// orientation -> opposite orientation, standard -> edgeToEdge.
     private var previewTraits: DeltaSkinTraits {
-        // Use current device with specified orientation
-        // Since skins are already filtered to support the current device and orientation,
-        // we should only try the current device, not fall back to alternate devices
         let device = currentDevice
+        let altDevice: DeltaSkinDevice = device == .ipad ? .iphone : .ipad
         let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        let oppositeOrientation: DeltaSkinOrientation = orientation == .portrait ? .landscape : .portrait
 
-        // Try standard display type first, then edge to edge
+        // 1. Current device, requested orientation
         for displayType in displayTypes {
             let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
-            if skin.supports(traits) {
-                return traits
-            }
+            if skin.supports(traits) { return traits }
         }
 
-        // If the requested orientation isn't supported for current device, try opposite orientation
-        // (This should rarely happen since we filter skins, but provides a fallback)
-        let oppositeOrientation: DeltaSkinOrientation = orientation == .portrait ? .landscape : .portrait
+        // 2. Current device, opposite orientation
         for displayType in displayTypes {
             let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: oppositeOrientation)
-            if skin.supports(traits) {
-                return traits
-            }
+            if skin.supports(traits) { return traits }
         }
 
-        // Final fallback - should never reach here if filtering works correctly
-        return DeltaSkinTraits(device: device, displayType: .standard, orientation: .portrait)
+        // 3. Alternate device, requested orientation
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: altDevice, displayType: displayType, orientation: orientation)
+            if skin.supports(traits) { return traits }
+        }
+
+        // 4. Alternate device, opposite orientation
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: altDevice, displayType: displayType, orientation: oppositeOrientation)
+            if skin.supports(traits) { return traits }
+        }
+
+        // Final fallback (should rarely be reached)
+        return DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
     }
 
     var body: some View {
         Group {
             if isLoading {
                 ProgressView()
-            } else {
-                DeltaSkinView(
-                    skin: skin,
-                    traits: previewTraits,
-                    filters: [],
-                    showDebugOverlay: false,
-                    showHitTestOverlay: false,
-                    screenAspectRatio: nil,
-                    isInEmulator: false,
-                    inputHandler: .init(emulatorCore: nil),
-                    core: nil
-                )
-                .allowsHitTesting(false)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let thumbnailImage {
+                Image(uiImage: thumbnailImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+            } else if loadFailed {
+                // Lightweight fallback instead of "No Image"
+                VStack(spacing: 4) {
+                    Image(systemName: "photo.badge.exclamationmark")
+                        .font(.title3)
+                        .foregroundColor(.secondary)
+                    Text(skin.name)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.gray.opacity(0.15))
             }
         }
         .onAppear {
-            loadSkinImage()
+            loadThumbnail()
         }
         .onChange(of: orientation) { _ in
             isLoading = true
-            loadSkinImage()
+            loadFailed = false
+            thumbnailImage = nil
+            loadThumbnail()
         }
     }
 
-    private func loadSkinImage() {
-        Task {
+    // MARK: - Loading
+
+    private func loadThumbnail() {
+        let traits = previewTraits
+        let cacheKey = "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
+
+        // Fast path: use shared cache
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: cacheKey) {
+            thumbnailImage = cached
+            isLoading = false
+            return
+        }
+
+        Task.detached(priority: .utility) {
             do {
-                // Wait a brief moment to allow for animation
-                try? await Task.sleep(nanoseconds: 100_000_000)
-
-                // Simulate loading the skin image
-                try? await Task.sleep(nanoseconds: 200_000_000)
-
+                let image = try await skin.image(for: traits)
+                SkinPreviewThumbnailCache.shared.store(image, forKey: cacheKey)
                 await MainActor.run {
+                    self.thumbnailImage = image
                     self.isLoading = false
                 }
             } catch {
+                ELOG("skins: SkinSelectionPreviewCell failed to load thumbnail for '\(skin.name)' traits=\(traits.description): \(error)")
                 await MainActor.run {
-                    self.error = error
+                    self.loadFailed = true
                     self.isLoading = false
                 }
             }
