@@ -196,6 +196,23 @@ typedef struct PVThinLibretroSymbols {
     // Analog axis state per player: [player][index*2 + axis]
     // index 0 = left stick, 1 = right stick; axis 0 = X, 1 = Y
     int16_t _analogState[THIN_MAX_PLAYERS][THIN_MAX_ANALOG_AXES];
+
+    // Keyboard state — indexed by retro_key enum (RETROK_*), max 512 keys
+    bool _keyState[512];
+
+    // Mouse state — relative deltas (cleared after read) and button bitmask
+    int16_t _mouseRelX;
+    int16_t _mouseRelY;
+    uint32_t _mouseButtons; // bit N = RETRO_DEVICE_ID_MOUSE_* button N
+
+    // Pointer (touch) state — normalized coordinates and pressed flag
+    int16_t _pointerX;
+    int16_t _pointerY;
+    bool _pointerPressed;
+
+    // Pause flag — when YES, audio callbacks discard samples to prevent
+    // stale audio from leaking through during the pause/resume transition.
+    BOOL _audioPaused;
 }
 
 /// Internal callback methods invoked by the static C trampolines.
@@ -346,6 +363,14 @@ static bool thin_environment(unsigned cmd, void *data) {
         _videoBufferBytesPerRow = 0;
         memset(_joypadState, 0, sizeof(_joypadState));
         memset(_analogState, 0, sizeof(_analogState));
+        memset(_keyState, 0, sizeof(_keyState));
+        _mouseRelX = 0;
+        _mouseRelY = 0;
+        _mouseButtons = 0;
+        _pointerX = 0;
+        _pointerY = 0;
+        _pointerPressed = false;
+        _audioPaused = NO;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         _glContext = nil;
         _glShareContext = nil;
@@ -544,6 +569,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)stopEmulation {
+    _audioPaused = YES;
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
     if (_sym.retro_unload_game) {
@@ -554,6 +580,11 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
     [self teardownHardwareContext];
     _thinCurrentTLS = nil;
+}
+
+- (void)setPauseEmulation:(BOOL)flag {
+    _audioPaused = flag;
+    [super setPauseEmulation:flag];
 }
 
 - (void)runFrame {
@@ -795,6 +826,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)_thinAudioSample:(int16_t)left right:(int16_t)right {
+    if (_audioPaused) return; // Discard audio while paused
     if (self.frontendDelegate) {
         [self.frontendDelegate libretroFrontend:self didEmitAudioLeft:left right:right];
         return;
@@ -804,6 +836,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames {
+    if (_audioPaused) return frames; // Discard audio while paused (consume to avoid backpressure)
     if (self.frontendDelegate) {
         return [self.frontendDelegate libretroFrontend:self didEmitAudioBatch:data frames:frames];
     }
@@ -848,6 +881,63 @@ static bool thin_environment(unsigned cmd, void *data) {
         return 0;
     }
 
+    if (deviceType == RETRO_DEVICE_KEYBOARD) {
+        if (bid < 512) {
+            return _keyState[bid] ? 1 : 0;
+        }
+        return 0;
+    }
+
+    if (deviceType == RETRO_DEVICE_MOUSE) {
+        switch (bid) {
+            case RETRO_DEVICE_ID_MOUSE_X: {
+                int16_t dx = _mouseRelX;
+                _mouseRelX = 0; // consume delta after read
+                return dx;
+            }
+            case RETRO_DEVICE_ID_MOUSE_Y: {
+                int16_t dy = _mouseRelY;
+                _mouseRelY = 0; // consume delta after read
+                return dy;
+            }
+            case RETRO_DEVICE_ID_MOUSE_LEFT:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_LEFT)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_RIGHT:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_RIGHT)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_MIDDLE:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_MIDDLE)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_WHEELUP:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_WHEELUP)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_WHEELDOWN:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_WHEELDOWN)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_BUTTON_4:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_BUTTON_4)) ? 1 : 0;
+            case RETRO_DEVICE_ID_MOUSE_BUTTON_5:
+                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_BUTTON_5)) ? 1 : 0;
+            default:
+                return 0;
+        }
+    }
+
+    if (deviceType == RETRO_DEVICE_POINTER) {
+        switch (bid) {
+            case RETRO_DEVICE_ID_POINTER_X:
+                return _pointerX;
+            case RETRO_DEVICE_ID_POINTER_Y:
+                return _pointerY;
+            case RETRO_DEVICE_ID_POINTER_PRESSED:
+                return _pointerPressed ? 1 : 0;
+            case RETRO_DEVICE_ID_POINTER_COUNT:
+                return _pointerPressed ? 1 : 0;
+            default:
+                return 0;
+        }
+    }
+
     return 0;
 }
 
@@ -872,6 +962,49 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (void)clearAllInput {
     memset(_joypadState, 0, sizeof(_joypadState));
     memset(_analogState, 0, sizeof(_analogState));
+    memset(_keyState, 0, sizeof(_keyState));
+    _mouseRelX = 0;
+    _mouseRelY = 0;
+    _mouseButtons = 0;
+    _pointerX = 0;
+    _pointerY = 0;
+    _pointerPressed = false;
+}
+
+// MARK: Keyboard input
+
+- (void)setKeyState:(unsigned)keycode pressed:(BOOL)pressed {
+    if (keycode < 512) {
+        _keyState[keycode] = pressed ? true : false;
+    }
+    // Also forward to the core's keyboard callback if registered
+    if (_keyboardEventCb) {
+        _keyboardEventCb(pressed, (enum retro_key)keycode, 0, RETROKMOD_NONE);
+    }
+}
+
+// MARK: Mouse input
+
+- (void)setMouseDeltaX:(int16_t)dx deltaY:(int16_t)dy {
+    _mouseRelX += dx;
+    _mouseRelY += dy;
+}
+
+- (void)setMouseButton:(unsigned)button pressed:(BOOL)pressed {
+    if (button > 31) return;
+    if (pressed) {
+        _mouseButtons |= (1 << button);
+    } else {
+        _mouseButtons &= ~(1 << button);
+    }
+}
+
+// MARK: Pointer (touch) input
+
+- (void)setPointerX:(int16_t)x y:(int16_t)y pressed:(BOOL)pressed {
+    _pointerX = x;
+    _pointerY = y;
+    _pointerPressed = pressed ? true : false;
 }
 
 // ---------------------------------------------------------------------------
