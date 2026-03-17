@@ -15,6 +15,9 @@ Options:
                         Scripts/ for licenses.json)
     --check             Exit non-zero if any core is missing PVLicense or PVCopyrightHolder
     --repo-root DIR     Root of the repository (default: parent of this script's directory)
+
+Requires: Python 3.9+ (uses `from __future__ import annotations` for PEP 604 union
+          syntax compatibility on Python 3.9; Python 3.10+ is not required).
 """
 
 from __future__ import annotations
@@ -151,6 +154,14 @@ def scan_native_cores(
 
         # Skip duplicates (e.g. PPSSPP has Core.plist in two places)
         if identifier and identifier in seen_identifiers:
+            try:
+                rel = path.relative_to(repo_root)
+            except ValueError:
+                rel = path
+            print(
+                f"  WARNING: duplicate PVCoreIdentifier {identifier!r} found at {rel}; skipping.",
+                file=sys.stderr,
+            )
             continue
         if identifier:
             seen_identifiers.add(identifier)
@@ -374,16 +385,21 @@ def write_licenses_md(
 
 def check_completeness(entries: list[dict[str, Any]]) -> int:
     """
-    Return the number of entries missing required license fields.
+    Return the number of emulator-core entries missing required license fields.
+    SPM entries are excluded because Package.resolved does not carry license data.
     Prints a summary.
     """
-    incomplete = [
+    core_entries = [
         e for e in entries
+        if not str(e.get("identifier", "")).startswith("spm.")
+    ]
+    incomplete = [
+        e for e in core_entries
         if not e.get("license") or not e.get("copyrightHolder")
     ]
     if incomplete:
         print(
-            f"\nCHECK: {len(incomplete)} / {len(entries)} entries missing "
+            f"\nCHECK: {len(incomplete)} / {len(core_entries)} core entries missing "
             "PVLicense or PVCopyrightHolder:",
             file=sys.stderr,
         )
@@ -398,7 +414,7 @@ def check_completeness(entries: list[dict[str, Any]]) -> int:
                 file=sys.stderr,
             )
     else:
-        print(f"\nCHECK: All {len(entries)} entries have required license fields.")
+        print(f"\nCHECK: All {len(core_entries)} core entries have required license fields.")
     return len(incomplete)
 
 
