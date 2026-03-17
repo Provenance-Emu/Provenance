@@ -115,7 +115,7 @@ class PVThinLibretroCore: PVEmulatorCore {
 
         // SNES: set mouse on port 2 for Mario Paint and similar games
         if sysId.contains("snes") {
-            let romName = (_bridge.romPath as? NSString)?.lastPathComponent?.lowercased() ?? ""
+            let romName = (_bridge.romPath as? NSString)?.lastPathComponent.lowercased() ?? ""
             if romName.contains("mario paint") || romName.contains("mariopaint") {
                 _bridge.setControllerPortDevice(2, forPort: 1) // RETRO_DEVICE_MOUSE on port 2
                 ILOG("ThinLibretroCore: set SNES port 2 to RETRO_DEVICE_MOUSE for Mario Paint")
@@ -126,7 +126,7 @@ class PVThinLibretroCore: PVEmulatorCore {
         if coreId.contains("hatari") || sysId.contains("atarist") {
             setDefaultOption("hatari_boot_hd", value: "disabled")
             copyBundledConfigIfNeeded(resourceName: "hatari", extension: "cfg",
-                                      toDirectory: _bridge.biosPath, fileName: "hatari.cfg")
+                                      toDirectory: self.BIOSPath, fileName: "hatari.cfg")
         }
 
         // VecX: hardware mode + visual settings

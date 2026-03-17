@@ -439,6 +439,9 @@ typedef struct PVThinLibretroSymbols {
 #endif
     @private
 
+    // Controller port info (from SET_CONTROLLER_INFO)
+    NSArray<NSArray<NSDictionary *> *> *_controllerPortInfo;
+
     // Microphone (AudioUnit-backed)
     struct retro_microphone_interface _microphoneInterface;
     BOOL _hasMicrophoneInterface;
@@ -1570,6 +1573,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize biosPath = _biosPath;
 @synthesize savePath = _savePath;
 @synthesize frontendDelegate = _frontendDelegate;
+@synthesize controllerPortInfo = _controllerPortInfo;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (uintptr_t)currentEmuFBO {
@@ -3110,8 +3114,28 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
             return true;
-        case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
+        case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO: {
+            const struct retro_controller_info *info = (const struct retro_controller_info *)data;
+            if (!info) return true;
+
+            NSMutableArray *portsArray = [NSMutableArray array];
+            for (unsigned p = 0; info[p].types; p++) {
+                NSMutableArray *portTypes = [NSMutableArray array];
+                for (unsigned t = 0; t < info[p].num_types; t++) {
+                    NSString *desc = info[p].types[t].desc
+                        ? [NSString stringWithUTF8String:info[p].types[t].desc]
+                        : [NSString stringWithFormat:@"Device %u", info[p].types[t].id];
+                    [portTypes addObject:@{
+                        @"id": @(info[p].types[t].id),
+                        @"desc": desc
+                    }];
+                }
+                [portsArray addObject:portTypes];
+            }
+            _controllerPortInfo = [portsArray copy];
+            ILOG(@"ThinEnv SET_CONTROLLER_INFO: %lu ports", (unsigned long)portsArray.count);
             return true;
+        }
         case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
             return true;
         case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE:

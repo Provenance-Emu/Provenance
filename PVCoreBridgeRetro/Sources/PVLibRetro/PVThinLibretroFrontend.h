@@ -274,6 +274,11 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param port    Port number (0-based).
 - (void)setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
 
+/// Controller port device type info reported by the core via SET_CONTROLLER_INFO.
+/// Array of ports, each containing an array of {id: NSNumber, desc: NSString} dicts.
+/// Returns nil if the core didn't report controller info.
+@property (nonatomic, readonly, nullable) NSArray<NSArray<NSDictionary<NSString *, id> *> *> *controllerPortInfo;
+
 /// Clear all button and analog state for all players.
 - (void)clearAllInput;
 
