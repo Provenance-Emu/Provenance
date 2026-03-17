@@ -268,9 +268,9 @@ struct PauseTileMenuView: View {
                 // calls setPauseEmulation(false) — the single source of truth for
                 // resuming emulation.  handleCoreAction must NOT call setPauseEmulation
                 // itself to avoid a race with the dismiss animation.
-                dismissAction(true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    self.emulatorVC.handleCoreAction(action)
+                let emulatorVC = self.emulatorVC
+                emulatorVC.dismissNav(resumeEmulation: true) {
+                    emulatorVC.handleCoreAction(action)
                 }
             }
 
