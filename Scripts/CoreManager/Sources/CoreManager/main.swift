@@ -388,6 +388,14 @@ struct BootstrapCommand: ParsableCommand {
         print("# Bootstrap output — cores derived from existing txt files")
         print("# Review and merge into cores.yml as needed")
         print()
+        // Emit a minimal buildbot section so the bootstrap output is a more complete starter manifest.
+        // Adjust these values to match the actual buildbot configuration used by your environment.
+        print("buildbot:")
+        print("  # TODO: Replace this placeholder with your actual buildbot configuration.")
+        print("  # The structure should match the Buildbot configuration expected by CoreManager's manifest.")
+        print("  ios: {}")
+        print("  tvos: {}")
+        print()
 
         let iosURL      = scriptsDir.appendingPathComponent("urls.txt")
         let iosAsURL    = scriptsDir.appendingPathComponent("urls-appstore.txt")
