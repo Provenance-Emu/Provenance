@@ -17,9 +17,9 @@ Options:
     --repo-root DIR     Root of the repository (default: parent of this script's directory)
     --skip-spm          Skip scanning Package.resolved for SPM dependencies
 
-Requires: Python 3.9+ (`from __future__ import annotations` makes PEP 604 `|` union
-          annotations lazy strings so they parse on 3.9; `get_type_hints()` is not
-          used at runtime).
+Requires: Python 3.9+ (uses standard collection generics like ``dict[str, Any]``;
+          ``from __future__ import annotations`` is used to postpone evaluation of
+          type annotations, but they are never introspected at runtime).
 """
 
 from __future__ import annotations
@@ -30,14 +30,14 @@ import plistlib
 import sys
 import warnings
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _load_plist(path: Path) -> dict[str, Any] | None:
+def _load_plist(path: Path) -> Optional[dict[str, Any]]:
     """Load a plist file (XML or binary), return None on failure."""
     try:
         with open(path, "rb") as fh:
@@ -47,7 +47,7 @@ def _load_plist(path: Path) -> dict[str, Any] | None:
         return None
 
 
-def _normalise_string_or_list(value: Any) -> list[str] | None:
+def _normalise_string_or_list(value: Any) -> Optional[list[str]]:
     """Return a list given either a str or a list of str."""
     if value is None:
         return None
@@ -56,7 +56,7 @@ def _normalise_string_or_list(value: Any) -> list[str] | None:
     return [str(value)]
 
 
-def _bool_or_none(value: Any) -> bool | None:
+def _bool_or_none(value: Any) -> Optional[bool]:
     if value is None:
         return None
     return bool(value)
@@ -72,7 +72,7 @@ def _build_core_entry(
     is_retro: bool,
     source_path: Path,
     check_mode: bool = False,
-    repo_root: Path | None = None,
+    repo_root: Optional[Path] = None,
 ) -> dict[str, Any]:
     """Convert a single Core.plist dict into a normalised entry."""
     name = (data.get("PVProjectName") or data.get("PVCoreIdentifier", "Unknown") or "").strip()
