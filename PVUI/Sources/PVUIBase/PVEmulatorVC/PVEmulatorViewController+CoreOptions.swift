@@ -46,13 +46,17 @@ extension PVEmulatorViewController {
 
     /// Triggers the given ``CoreAction`` on the active core.
     ///
-    /// Called from ``PauseTileMenuView`` when a core-action tile is tapped.
-    /// The menu is responsible for dismissing itself; this method only
-    /// forwards the action and handles the reset side-effect.
+    /// Called from ``PauseTileMenuView`` after the menu has been dismissed.
+    /// The caller is responsible for resuming emulation via `dismissAction(true)` /
+    /// `dismissNav(resumeEmulation: true)` **before** invoking this method — that
+    /// ensures `dismissNav`'s completion handler runs `setPauseEmulation(false)`,
+    /// which is the single source of truth for the post-action emulation state.
+    ///
+    /// This method only forwards the action to the core and, when `requiresReset`
+    /// is true, triggers a reset.
     public func handleCoreAction(_ action: CoreAction) {
         guard let coreWithActions = core as? CoreActions else { return }
         coreWithActions.selected(action: action)
-        core.setPauseEmulation(false)
         if action.requiresReset {
             core.resetEmulation()
         }

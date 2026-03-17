@@ -264,7 +264,11 @@ struct PauseTileMenuView: View {
                 // Store for the confirmationDialog; the dialog calls handleCoreAction with the selected option.
                 pendingCoreAction = action
             } else {
-                dismissAction(false)
+                // Dismiss with resumeEmulation: true so dismissNav's completion handler
+                // calls setPauseEmulation(false) — the single source of truth for
+                // resuming emulation.  handleCoreAction must NOT call setPauseEmulation
+                // itself to avoid a race with the dismiss animation.
+                dismissAction(true)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     self.emulatorVC.handleCoreAction(action)
                 }
@@ -511,7 +515,11 @@ struct PauseTileMenuView: View {
                             options: options.map { CoreActionOption(title: $0.title, selected: $0 == opt) },
                             style: action.style
                         )
-                        dismissAction(false)
+                        // Dismiss with resumeEmulation: true so dismissNav's completion
+                        // handler is the single owner of setPauseEmulation — avoids the
+                        // race where a dismissAction(false) completion re-pauses after
+                        // handleCoreAction already unpaused.
+                        dismissAction(true)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                             self.emulatorVC.handleCoreAction(selectedAction)
                         }
