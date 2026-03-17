@@ -72,6 +72,7 @@ extension SystemIdentifier {
 
         // SNK
         case .NeoGeo:        return "neogeo"
+        case .NeoGeoCD:      return "neogeocd"
         case .NGP:           return "ngp"
         case .NGPC:          return "ngpc"
 

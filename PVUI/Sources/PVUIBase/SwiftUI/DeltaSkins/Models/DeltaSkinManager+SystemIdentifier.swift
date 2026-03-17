@@ -306,7 +306,7 @@ public extension DeltaSkinManager {
             return "atarist"
 
         // SNK
-        case .NeoGeo:
+        case .NeoGeo, .NeoGeoCD:
             return "neogeo"
         case .NGP:
             return "ngp"
