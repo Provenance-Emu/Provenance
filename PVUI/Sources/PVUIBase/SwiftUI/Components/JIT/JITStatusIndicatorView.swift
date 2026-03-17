@@ -158,10 +158,8 @@ public final class JITStatusViewModel: ObservableObject {
             status = .unavailable
             jitSource = .none
         } else {
-            // JIT subsystem present but not acquired; core only benefits from JIT.
-            // Don't show the indicator for optional cores — it's noise for most users.
-            // Only show .interpreterFallback if JIT was previously active (lost mid-session).
-            status = .notApplicable
+            // JIT subsystem present but not acquired; core only benefits from JIT
+            status = .interpreterFallback
             jitSource = .none
         }
         #else
@@ -257,8 +255,7 @@ public final class JITStatusViewModel: ObservableObject {
 
 // MARK: - JIT Status Indicator View
 
-/// A subtle, bottom-edge LED-style JIT status indicator for the emulator HUD.
-/// Auto-hides after 5 seconds to avoid covering game content.
+/// A small, unobtrusive JIT status indicator for the emulator HUD.
 /// Tap the indicator to trigger `onTap`, which the hosting UIViewController
 /// uses to present a compact `UIAlertController` — no full-screen sheet.
 public struct JITStatusIndicatorView: View {
@@ -272,66 +269,38 @@ public struct JITStatusIndicatorView: View {
         self.onTap = onTap
     }
 
-    /// Controls the fade-out after auto-hide delay.
-    @State private var isVisible: Bool = true
-    /// Tracks whether the user has tapped to temporarily reveal the indicator.
-    @State private var userRevealed: Bool = false
-    /// Pending auto-hide work item, cancelled when a new hide is scheduled.
-    @State private var pendingHideWorkItem: DispatchWorkItem?
-
-    /// Seconds before the indicator auto-hides (0 = never hide).
-    private let autoHideDelay: TimeInterval = 5.0
-
     public var body: some View {
         ZStack {
             if viewModel.status.isVisible {
                 Button(action: {
-                    if !isVisible {
-                        // Tap to reveal again temporarily
-                        revealTemporarily()
-                    } else {
-                        onTap?()
-                    }
+                    onTap?()
                 }) {
-                    HStack(spacing: 4) {
-                        // LED dot — small, subtle
+                    HStack(spacing: 8) {
+                        // Status dot
                         Circle()
                             .fill(viewModel.status.iconColor)
-                            .frame(width: 6, height: 6)
-                            .shadow(color: viewModel.status.iconColor.opacity(0.7), radius: 3, x: 0, y: 0)
+                            .frame(width: 10, height: 10)
+                            .shadow(color: viewModel.status.iconColor.opacity(0.6), radius: 4, x: 0, y: 0)
 
-                        // Short label
+                        // Label — shows source name (e.g. "JIT · AltStore") when active and source is known
                         Text(viewModel.indicatorLabel)
-                            .font(.system(size: 9, weight: .medium, design: .rounded))
-                            .foregroundColor(.white.opacity(0.8))
-                            .lineLimit(1)
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                     .background(
-                        Capsule()
-                            .fill(Color.black.opacity(0.35))
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.black.opacity(0.75))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .strokeBorder(viewModel.status.iconColor.opacity(0.5), lineWidth: 1)
+                            )
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
-                .opacity(isVisible ? 0.85 : 0.0)
-                .animation(.easeInOut(duration: 0.6), value: isVisible)
                 .accessibilityLabel(viewModel.indicatorAccessibilityLabel)
                 .accessibilityHint("Tap to see details about the current emulation mode")
-                .accessibilityElement(children: .combine)
-                .onAppear {
-                    scheduleAutoHide()
-                }
-                .onDisappear {
-                    pendingHideWorkItem?.cancel()
-                    pendingHideWorkItem = nil
-                    userRevealed = false
-                }
-            }
-        }
-        .onChange(of: viewModel.status) { newStatus in
-            if newStatus.isVisible {
-                revealTemporarily()
             }
         }
         #if canImport(JITManager)
@@ -339,37 +308,6 @@ public struct JITStatusIndicatorView: View {
             viewModel.updateStatus()
         }
         #endif
-    }
-
-    /// Schedules the indicator to fade out after `autoHideDelay` seconds.
-    /// Cancels any previously scheduled hide to avoid premature dismissal.
-    private func scheduleAutoHide() {
-        guard autoHideDelay > 0 else { return }
-        pendingHideWorkItem?.cancel()
-        isVisible = true
-        let workItem = DispatchWorkItem { [self] in
-            // Only auto-hide if the user hasn't tapped to reveal
-            if !userRevealed {
-                withAnimation { isVisible = false }
-            }
-        }
-        pendingHideWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay, execute: workItem)
-    }
-
-    /// Temporarily reveals the indicator for another cycle, then fades it out again.
-    /// Cancels any previously scheduled hide to avoid premature dismissal.
-    private func revealTemporarily() {
-        guard autoHideDelay > 0 else { return }
-        pendingHideWorkItem?.cancel()
-        userRevealed = true
-        withAnimation { isVisible = true }
-        let workItem = DispatchWorkItem { [self] in
-            userRevealed = false
-            withAnimation { isVisible = false }
-        }
-        pendingHideWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay, execute: workItem)
     }
 }
 
@@ -398,21 +336,24 @@ struct JITStatusIndicatorPreview: View {
     let status: JITStatus
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 8) {
             Circle()
                 .fill(status.iconColor)
-                .frame(width: 6, height: 6)
-                .shadow(color: status.iconColor.opacity(0.7), radius: 3, x: 0, y: 0)
+                .frame(width: 10, height: 10)
 
             Text(status.label)
-                .font(.system(size: 9, weight: .medium, design: .rounded))
-                .foregroundColor(.white.opacity(0.8))
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .background(
-            Capsule()
-                .fill(Color.black.opacity(0.35))
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.black.opacity(0.75))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(status.iconColor.opacity(0.5), lineWidth: 1)
+                )
         )
     }
 }

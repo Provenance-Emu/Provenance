@@ -196,11 +196,11 @@ public struct PVIndicatorLightRowView: View {
                 PVIndicatorLightView(state: indicator)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
         .background(
             Capsule()
-                .fill(Color.black.opacity(0.25))
+                .fill(Color.black.opacity(0.4))
         )
     }
 }
@@ -215,16 +215,8 @@ public struct PVIndicatorOverlayView: View {
         self.registry = registry
     }
 
-    /// Controls auto-hide fade for the indicator overlay.
-    @State private var isVisible: Bool = true
-
-    /// Seconds before the overlay auto-hides.
-    private let autoHideDelay: TimeInterval = 5.0
-
     public var body: some View {
         VStack {
-            Spacer()
-
             HStack {
                 Spacer()
 
@@ -233,37 +225,11 @@ public struct PVIndicatorOverlayView: View {
                         .transition(.opacity.combined(with: .scale))
                 }
             }
-            .padding(.bottom, 4)
+            .padding(.top, 8)
             .padding(.trailing, 16)
-        }
-        .opacity(isVisible ? 0.85 : 0.0)
-        .allowsHitTesting(isVisible)
-        .animation(.easeInOut(duration: 0.6), value: isVisible)
-        .onAppear {
-            scheduleAutoHide()
-        }
-        .onDisappear {
-            pendingHideWorkItem?.cancel()
-            pendingHideWorkItem = nil
-        }
-        .onChange(of: registry.visibleIndicators) { _ in
-            // Re-show when indicators change state
-            withAnimation { isVisible = true }
-            scheduleAutoHide()
-        }
-    }
 
-    @State private var pendingHideWorkItem: DispatchWorkItem?
-
-    private func scheduleAutoHide() {
-        guard autoHideDelay > 0 else { return }
-        pendingHideWorkItem?.cancel()
-        isVisible = true
-        let workItem = DispatchWorkItem {
-            withAnimation { isVisible = false }
+            Spacer()
         }
-        pendingHideWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + autoHideDelay, execute: workItem)
     }
 }
 
