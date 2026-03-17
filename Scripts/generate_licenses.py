@@ -90,9 +90,14 @@ def _build_core_entry(
     supported_systems = data.get("PVSupportedSystems") or []
 
     # New fields from issue #3236 (may not exist yet — use None as default)
-    license_spdx = _norm(data.get("PVLicense"))
+    # Prefer new schema keys, but fall back to existing ones until all Core.plist
+    # files are migrated.
+    license_spdx = _norm(data.get("PVLicense") or data.get("PVLicenseName"))
     license_url = _norm(data.get("PVLicenseURL"))
-    copyright_holder = _normalise_string_or_list(data.get("PVCopyrightHolder"))
+    copyright_raw = data.get("PVCopyrightHolder")
+    if copyright_raw is None:
+        copyright_raw = data.get("PVCopyright")
+    copyright_holder = _normalise_string_or_list(copyright_raw)
     upstream_url = _norm(data.get("PVUpstreamProjectURL"))
     fork_notes = _norm(data.get("PVForkNotes"))
     app_store_compat = _bool_or_none(data.get("PVLicenseAppStoreCompatible"))
@@ -101,9 +106,11 @@ def _build_core_entry(
     if check_mode:
         missing = []
         if not license_spdx:
-            missing.append("PVLicense")
+            # Accept either PVLicense (new) or PVLicenseName (legacy)
+            missing.append("PVLicense/PVLicenseName")
         if not copyright_holder:
-            missing.append("PVCopyrightHolder")
+            # Accept either PVCopyrightHolder (new) or PVCopyright (legacy)
+            missing.append("PVCopyrightHolder/PVCopyright")
         if missing:
             try:
                 rel = source_path.relative_to(repo_root) if repo_root else source_path
