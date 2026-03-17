@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "lastUpdated": "2026-03-15T02:40:09Z",
-  "totalSkins": 279,
+  "lastUpdated": "2026-03-17T00:00:00Z",
+  "totalSkins": 296,
   "skins": [
     {
       "id": "3957312ad9e7c59e",
@@ -6756,6 +6756,496 @@
       "downloadCount": 635,
       "rating": null,
       "lastUpdated": "2025-09-30",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "cdcf6f50e768a684",
+      "name": "Modern Skins for 3DS",
+      "author": "stars33k",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=505",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/cdcf6f50e768a684.png",
+      "screenshotURLs": [],
+      "description": "A 3DS skin with four styles (Normal, Swap, Centered, FS) and multiple color options including Aqua Blue, Flame Red, and Midnight Purple.",
+      "tags": [
+        "edge-to-edge",
+        "fullscreen",
+        "big-buttons",
+        "quick-save-load",
+        "dark-mode",
+        "light-mode",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "3.0.4",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 79044,
+      "rating": null,
+      "lastUpdated": "2026-03-05",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "04cef87f704fc02c",
+      "name": "HZN - NINTENDO 3DS (SCREENSWAP)",
+      "author": "HoriZon",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=546",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/04cef87f704fc02c.png",
+      "screenshotURLs": [],
+      "description": "Console-style 3DS skin with screen swap, D-Pad, C-Stick, thumbstick, quick save/load, and multiple theme variations including SNES, Famicom, and GameCube.",
+      "tags": [
+        "edge-to-edge",
+        "big-buttons",
+        "quick-save-load",
+        "dark-mode",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.6.1",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 27320,
+      "rating": null,
+      "lastUpdated": "2025-11-25",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "845be697bd5d9eb3",
+      "name": "Ultimate 3DS for Manic",
+      "author": "pinedant",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=600",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/845be697bd5d9eb3.png",
+      "screenshotURLs": [],
+      "description": "Nintendo 3DS-inspired touch layouts with textured surfaces, colored button accents, and circle-pad recreation. Includes New 2DS XL and New 3DS design options.",
+      "tags": [
+        "edge-to-edge",
+        "quick-save-load"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.2.1",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 14470,
+      "rating": null,
+      "lastUpdated": "2026-03-03",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "11900d4ee5fa453a",
+      "name": "New Atomic 3DS XL",
+      "author": "starvingartist",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=615",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/11900d4ee5fa453a.png",
+      "screenshotURLs": [],
+      "description": "3DS skin with larger screen and easy screen swapping in landscape, compact controls, and iPad-compatible layouts including Joy-Con grip and clamshell styles.",
+      "tags": [
+        "edge-to-edge",
+        "ipad",
+        "quick-save-load",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 11050,
+      "rating": null,
+      "lastUpdated": "2026-01-05",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "b09f010271527af8",
+      "name": "My Melody 3DS",
+      "author": "MawMawSinew",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=574",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/b09f010271527af8.png",
+      "screenshotURLs": [],
+      "description": "Sanrio My Melody themed 3DS skin with portrait and landscape support.",
+      "tags": [
+        "edge-to-edge",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 8433,
+      "rating": null,
+      "lastUpdated": "2025-10-07",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "10c2f8aff59bedca",
+      "name": "Manic 3DS",
+      "author": "Daiuno",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=508",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/10c2f8aff59bedca.png",
+      "screenshotURLs": [],
+      "description": "The official Manic EMU 3DS skin with extended deltaskin compression effects support.",
+      "tags": [
+        "edge-to-edge",
+        "ipad",
+        "fast-forward",
+        "quick-save-load",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 8298,
+      "rating": null,
+      "lastUpdated": "2025-07-01",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "544b7c184062976a",
+      "name": "Gamecube 3DS",
+      "author": "Systemroseheart",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=550",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/544b7c184062976a.png",
+      "screenshotURLs": [],
+      "description": "GameCube-themed 3DS skin with characteristic button shapes and the iconic yellow C-stick.",
+      "tags": [
+        "edge-to-edge",
+        "quick-save-load",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 7423,
+      "rating": null,
+      "lastUpdated": "2025-08-17",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "10049665e236f61b",
+      "name": "Atomic 3DS",
+      "author": "Daiuno",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=506",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/10049665e236f61b.png",
+      "screenshotURLs": [],
+      "description": "Fan-made adaptation of starvingartist's Atomic NDS for the 3DS platform with press animations and full 3DS button support.",
+      "tags": [
+        "edge-to-edge",
+        "portrait"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 5704,
+      "rating": null,
+      "lastUpdated": "2025-07-01",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "be427d03a89718e0",
+      "name": "Flower 3DS Manic",
+      "author": "mavetchi",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=527",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/be427d03a89718e0.png",
+      "screenshotURLs": [],
+      "description": "Floral-themed 3DS skin with light mode portrait layout.",
+      "tags": [
+        "edge-to-edge",
+        "light-mode",
+        "portrait"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 4861,
+      "rating": null,
+      "lastUpdated": "2025-07-14",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "db4d20036319b577",
+      "name": "3DS Controller",
+      "author": "JanZa",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=538",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/db4d20036319b577.png",
+      "screenshotURLs": [],
+      "description": "Minimalistic controller skin with larger game screens, hidden Dynamic Island, and no on-screen buttons for gamepad users.",
+      "tags": [
+        "edge-to-edge",
+        "for-controllers",
+        "fast-forward",
+        "quick-save-load",
+        "minimal",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 4510,
+      "rating": null,
+      "lastUpdated": "2025-07-31",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "4909045d157c291e",
+      "name": "Atomic XL Colors",
+      "author": "matthias88",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=630",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/4909045d157c291e.png",
+      "screenshotURLs": [],
+      "description": "Eight color variants (Black, White, Gold, Lime Green, Green, Blue, Red, Pink) based on starvingartist's Atomic 3DS XL design.",
+      "tags": [
+        "edge-to-edge",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 3223,
+      "rating": null,
+      "lastUpdated": "2026-01-26",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "45114c544d0c2229",
+      "name": "HZN - NINTENDO 3DS - ZELDA LBW (SCREENSWAP)",
+      "author": "HoriZon",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=604",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/45114c544d0c2229.png",
+      "screenshotURLs": [],
+      "description": "Zelda: Link Between Worlds themed 3DS skin with screen swap, custom shortcut buttons for items, sword, shield, map, and Pegasus boots.",
+      "tags": [
+        "edge-to-edge",
+        "big-buttons",
+        "quick-save-load",
+        "characters",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 2288,
+      "rating": null,
+      "lastUpdated": "2025-11-13",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "3f860c074b26cf9e",
+      "name": "SNES 3DS Skin",
+      "author": "Systemroseheart",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=547",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/3f860c074b26cf9e.png",
+      "screenshotURLs": [],
+      "description": "SNES-themed 3DS skin with dynamic buttons and screen-swap support in portrait and landscape.",
+      "tags": [
+        "edge-to-edge",
+        "fullscreen",
+        "quick-save-load",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.2.1",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 2255,
+      "rating": null,
+      "lastUpdated": "2025-08-14",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "7051c304a6f4d96b",
+      "name": "HZN - NINTENDO 3DS - ZELDA TRI FORCE HEROES (SCREENSWAP)",
+      "author": "HoriZon",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=602",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/7051c304a6f4d96b.png",
+      "screenshotURLs": [],
+      "description": "Zelda: Tri Force Heroes themed 3DS skin with screen swap, custom shortcut buttons for sword, Pegasus boots, and photo mode.",
+      "tags": [
+        "edge-to-edge",
+        "big-buttons",
+        "quick-save-load",
+        "characters",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 987,
+      "rating": null,
+      "lastUpdated": "2025-11-12",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "050fec615d939a32",
+      "name": "M-Gage Nintendo 3DS Gamepad",
+      "author": "JanZa",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=573",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/050fec615d939a32.png",
+      "screenshotURLs": [],
+      "description": "Nokia N-Gage inspired 3DS controller skin with animated buttons, quick save/load, volume, fast forward, and no on-screen touch controls.",
+      "tags": [
+        "edge-to-edge",
+        "for-controllers",
+        "fullscreen",
+        "fast-forward",
+        "quick-save-load",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 928,
+      "rating": null,
+      "lastUpdated": "2025-10-01",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "9e66ea6cf57d06b4",
+      "name": "HZN - NINTENDO 3DS PINBALL JOY (SCREENSWAP)",
+      "author": "HoriZon",
+      "systems": [
+        "3ds"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=558",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/9e66ea6cf57d06b4.png",
+      "screenshotURLs": [],
+      "description": "Specialized pinball skin for 3DS with oversized flipper buttons, tilt bumper controls, and screen swap in portrait and landscape.",
+      "tags": [
+        "edge-to-edge",
+        "big-buttons",
+        "quick-save-load",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 815,
+      "rating": null,
+      "lastUpdated": "2025-08-25",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "a1a1ca4a1b6529cd",
+      "name": "HZN - SEGA 32X DOOMPAD",
+      "author": "HoriZon",
+      "systems": [
+        "32x"
+      ],
+      "downloadURL": "https://deltastyles.com/download.php?id=552",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/a1a1ca4a1b6529cd.png",
+      "screenshotURLs": [],
+      "description": "Sega 32X controller skin with thumbstick, strafe, automap, weapon selection, fast forward, and quick save/load in portrait and landscape.",
+      "tags": [
+        "edge-to-edge",
+        "big-buttons",
+        "fast-forward",
+        "quick-save-load",
+        "characters",
+        "portrait",
+        "landscape"
+      ],
+      "source": "deltastyles.com",
+      "version": "1.0",
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 446,
+      "rating": null,
+      "lastUpdated": "2025-08-19",
       "fileSize": null,
       "submittedBy": null,
       "submittedAt": null
