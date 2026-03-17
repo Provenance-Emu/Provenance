@@ -28,6 +28,8 @@
 
 #include <dlfcn.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
 #import <objc/message.h>
 
 // Peripheral interfaces: sensor (CoreMotion), location (CoreLocation), LED (GameController)
@@ -261,6 +263,10 @@ typedef struct PVThinLibretroSymbols {
     struct retro_camera_callback _cameraCallback;
     BOOL _hasCameraCallback;
 
+    // Microphone (stub — stores core's interface struct)
+    struct retro_microphone_interface _microphoneInterface;
+    BOOL _hasMicrophoneInterface;
+
     // Location (CoreLocation)
 #if PV_HAS_CORELOCATION
     CLLocationManager *_locationManager;
@@ -451,6 +457,228 @@ static void thin_led_set_state(int led, int state) {
         }
     }
 }
+
+// ---------------------------------------------------------------------------
+// MARK: - VFS interface (v3, POSIX/stdio)
+// ---------------------------------------------------------------------------
+
+/// Opaque file handle wrapping stdio FILE*.
+struct retro_vfs_file_handle {
+    FILE *fp;
+    char *path;
+};
+
+/// Opaque directory handle wrapping POSIX DIR*.
+struct retro_vfs_dir_handle {
+    DIR *dirp;
+    struct dirent *entry;  // last entry read by readdir
+    char *dir_path;
+    bool include_hidden;
+};
+
+static const char *thin_vfs_get_path(struct retro_vfs_file_handle *stream) {
+    return stream ? stream->path : NULL;
+}
+
+static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mode, unsigned hints) {
+    (void)hints;
+    if (!path) return NULL;
+    const char *fmode;
+    bool update = (mode & RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING) != 0;
+    if ((mode & RETRO_VFS_FILE_ACCESS_READ_WRITE) == RETRO_VFS_FILE_ACCESS_READ_WRITE) {
+        fmode = update ? "r+b" : "w+b";
+    } else if (mode & RETRO_VFS_FILE_ACCESS_WRITE) {
+        fmode = update ? "r+b" : "wb";
+    } else {
+        fmode = "rb";
+    }
+    FILE *fp = fopen(path, fmode);
+    if (!fp) return NULL;
+    struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
+    handle->fp = fp;
+    handle->path = strdup(path);
+    return handle;
+}
+
+static int thin_vfs_close(struct retro_vfs_file_handle *stream) {
+    if (!stream) return -1;
+    int ret = fclose(stream->fp) == 0 ? 0 : -1;
+    free(stream->path);
+    free(stream);
+    return ret;
+}
+
+static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
+    if (!stream) return -1;
+    long cur = ftell(stream->fp);
+    if (fseek(stream->fp, 0, SEEK_END) != 0) return -1;
+    long sz = ftell(stream->fp);
+    fseek(stream->fp, cur, SEEK_SET);
+    return (int64_t)sz;
+}
+
+static int64_t thin_vfs_tell(struct retro_vfs_file_handle *stream) {
+    if (!stream) return -1;
+    return (int64_t)ftell(stream->fp);
+}
+
+static int64_t thin_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offset, int seek_position) {
+    if (!stream) return -1;
+    int whence;
+    switch (seek_position) {
+        case RETRO_VFS_SEEK_POSITION_START:   whence = SEEK_SET; break;
+        case RETRO_VFS_SEEK_POSITION_CURRENT: whence = SEEK_CUR; break;
+        case RETRO_VFS_SEEK_POSITION_END:     whence = SEEK_END; break;
+        default: return -1;
+    }
+    if (fseek(stream->fp, (long)offset, whence) != 0) return -1;
+    return (int64_t)ftell(stream->fp);
+}
+
+static int64_t thin_vfs_read(struct retro_vfs_file_handle *stream, void *s, uint64_t len) {
+    if (!stream || !s) return -1;
+    return (int64_t)fread(s, 1, (size_t)len, stream->fp);
+}
+
+static int64_t thin_vfs_write(struct retro_vfs_file_handle *stream, const void *s, uint64_t len) {
+    if (!stream || !s) return -1;
+    return (int64_t)fwrite(s, 1, (size_t)len, stream->fp);
+}
+
+static int thin_vfs_flush(struct retro_vfs_file_handle *stream) {
+    if (!stream) return -1;
+    return fflush(stream->fp) == 0 ? 0 : -1;
+}
+
+static int thin_vfs_remove(const char *path) {
+    if (!path) return -1;
+    return ::remove(path) == 0 ? 0 : -1;
+}
+
+static int thin_vfs_rename(const char *old_path, const char *new_path) {
+    if (!old_path || !new_path) return -1;
+    return ::rename(old_path, new_path) == 0 ? 0 : -1;
+}
+
+static int64_t thin_vfs_truncate(struct retro_vfs_file_handle *stream, int64_t length) {
+    if (!stream) return -1;
+    fflush(stream->fp);
+    int fd = fileno(stream->fp);
+    return ftruncate(fd, (off_t)length) == 0 ? 0 : -1;
+}
+
+static int thin_vfs_stat(const char *path, int32_t *size) {
+    if (!path) return 0;
+    struct stat st;
+    if (stat(path, &st) != 0) return 0;
+    int flags = RETRO_VFS_STAT_IS_VALID;
+    if (S_ISDIR(st.st_mode)) flags |= RETRO_VFS_STAT_IS_DIRECTORY;
+    if (S_ISCHR(st.st_mode)) flags |= RETRO_VFS_STAT_IS_CHARACTER_SPECIAL;
+    if (size) *size = (int32_t)st.st_size;
+    return flags;
+}
+
+static int thin_vfs_mkdir(const char *dir) {
+    if (!dir) return -1;
+    if (mkdir(dir, 0755) == 0) return 0;
+    if (errno == EEXIST) return -2;
+    return -1;
+}
+
+static struct retro_vfs_dir_handle *thin_vfs_opendir(const char *dir, bool include_hidden) {
+    if (!dir) return NULL;
+    DIR *dirp = opendir(dir);
+    if (!dirp) return NULL;
+    struct retro_vfs_dir_handle *handle = (struct retro_vfs_dir_handle *)calloc(1, sizeof(*handle));
+    handle->dirp = dirp;
+    handle->entry = NULL;
+    handle->dir_path = strdup(dir);
+    handle->include_hidden = include_hidden;
+    return handle;
+}
+
+static bool thin_vfs_readdir(struct retro_vfs_dir_handle *dirstream) {
+    if (!dirstream) return false;
+    while (true) {
+        dirstream->entry = readdir(dirstream->dirp);
+        if (!dirstream->entry) return false;
+        // Skip hidden entries (dot-prefixed) unless include_hidden is set
+        if (!dirstream->include_hidden && dirstream->entry->d_name[0] == '.') continue;
+        return true;
+    }
+}
+
+static const char *thin_vfs_dirent_get_name(struct retro_vfs_dir_handle *dirstream) {
+    if (!dirstream || !dirstream->entry) return NULL;
+    return dirstream->entry->d_name;
+}
+
+static bool thin_vfs_dirent_is_dir(struct retro_vfs_dir_handle *dirstream) {
+    if (!dirstream || !dirstream->entry) return false;
+    // d_type is available on macOS/iOS; use it for efficiency
+    if (dirstream->entry->d_type == DT_DIR) return true;
+    if (dirstream->entry->d_type != DT_UNKNOWN) return false;
+    // Fallback to stat for DT_UNKNOWN
+    char fullpath[PATH_MAX];
+    snprintf(fullpath, sizeof(fullpath), "%s/%s", dirstream->dir_path, dirstream->entry->d_name);
+    struct stat st;
+    if (stat(fullpath, &st) != 0) return false;
+    return S_ISDIR(st.st_mode);
+}
+
+static int thin_vfs_closedir(struct retro_vfs_dir_handle *dirstream) {
+    if (!dirstream) return -1;
+    int ret = closedir(dirstream->dirp) == 0 ? 0 : -1;
+    free(dirstream->dir_path);
+    free(dirstream);
+    return ret;
+}
+
+/// Static VFS interface struct — returned to cores via GET_VFS_INTERFACE.
+static struct retro_vfs_interface s_thinVFSInterface = {
+    /* v1 */
+    thin_vfs_get_path,
+    thin_vfs_open,
+    thin_vfs_close,
+    thin_vfs_size,
+    thin_vfs_tell,
+    thin_vfs_seek,
+    thin_vfs_read,
+    thin_vfs_write,
+    thin_vfs_flush,
+    thin_vfs_remove,
+    thin_vfs_rename,
+    /* v2 */
+    thin_vfs_truncate,
+    /* v3 */
+    thin_vfs_stat,
+    thin_vfs_mkdir,
+    thin_vfs_opendir,
+    thin_vfs_readdir,
+    thin_vfs_dirent_get_name,
+    thin_vfs_dirent_is_dir,
+    thin_vfs_closedir,
+};
+
+#define PV_THIN_VFS_INTERFACE_VERSION 3
+
+// ---------------------------------------------------------------------------
+// MARK: - MIDI interface (stubs — no hardware connected)
+// ---------------------------------------------------------------------------
+
+static bool thin_midi_input_enabled(void) { return false; }
+static bool thin_midi_output_enabled(void) { return false; }
+static bool thin_midi_read(uint8_t *byte) { (void)byte; return false; }
+static bool thin_midi_write(uint8_t byte, uint32_t delta_time) { (void)byte; (void)delta_time; return false; }
+static bool thin_midi_flush(void) { return false; }
+
+static struct retro_midi_interface s_thinMIDIInterface = {
+    thin_midi_input_enabled,
+    thin_midi_output_enabled,
+    thin_midi_read,
+    thin_midi_write,
+    thin_midi_flush,
+};
 
 // ---------------------------------------------------------------------------
 // MARK: - Environment callback (large switch, libretro.h only)
@@ -2082,6 +2310,25 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
 
+        // ---- Microphone interface (stub for DS mic, etc.) ----
+        case RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE: {
+            struct retro_microphone_interface *mic = (struct retro_microphone_interface *)data;
+            if (!mic) return false;
+            // Store the core's requested interface version
+            _microphoneInterface = *mic;
+            _hasMicrophoneInterface = YES;
+            // Set interface version to indicate we acknowledge the interface
+            mic->interface_version = RETRO_MICROPHONE_INTERFACE_VERSION;
+            // Leave function pointers NULL — cores should handle NULL gracefully
+            // by operating without microphone input (substituting silence).
+            // TODO: Implement actual microphone capture using AVAudioEngine.
+            // When implemented, open_mic should create an audio input tap,
+            // set_mic_state should enable/disable capture, and read_mic should
+            // return captured samples from a ring buffer.
+            ILOG(@"ThinEnv GET_MICROPHONE_INTERFACE: provided stub (actual capture not yet implemented)");
+            return true;
+        }
+
         // ---- Location interface (CoreLocation) ----
         case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE: {
             struct retro_location_callback *loc = (struct retro_location_callback *)data;
@@ -2104,11 +2351,46 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
 
-        // ---- MIDI / VFS (not supported) ----
-        case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE:
-        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE:
-        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER:
-            return false;
+        // ---- VFS interface (v3) ----
+        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE: {
+            struct retro_vfs_interface_info *vfsInfo = (struct retro_vfs_interface_info *)data;
+            if (!vfsInfo) return false;
+            if (vfsInfo->required_interface_version > PV_THIN_VFS_INTERFACE_VERSION) {
+                WLOG(@"ThinEnv GET_VFS_INTERFACE: core requires v%u, we support v%d",
+                     vfsInfo->required_interface_version, PV_THIN_VFS_INTERFACE_VERSION);
+                return false;
+            }
+            vfsInfo->required_interface_version = PV_THIN_VFS_INTERFACE_VERSION;
+            vfsInfo->iface = &s_thinVFSInterface;
+            ILOG(@"ThinEnv GET_VFS_INTERFACE: provided v%d", PV_THIN_VFS_INTERFACE_VERSION);
+            return true;
+        }
+
+        // ---- Software framebuffer (zero-copy optimization) ----
+        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER: {
+            struct retro_framebuffer *fb = (struct retro_framebuffer *)data;
+            if (!fb || !_videoBufferData) return false;
+            unsigned maxW = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 256);
+            NSUInteger bpp = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
+            NSUInteger pitch = (NSUInteger)maxW * bpp;
+            // Only provide the buffer if the requested dimensions fit
+            unsigned maxH = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 256);
+            if (fb->width > maxW || fb->height > maxH) return false;
+            fb->data = _videoBufferData;
+            fb->pitch = pitch;
+            fb->format = _retroPixelFormat;
+            fb->memory_flags = RETRO_MEMORY_TYPE_CACHED;
+            return true;
+        }
+
+        // ---- MIDI interface (stubs) ----
+        case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
+            struct retro_midi_interface **midiPtr = (struct retro_midi_interface **)data;
+            if (!midiPtr) return false;
+            *midiPtr = &s_thinMIDIInterface;
+            DLOG(@"ThinEnv GET_MIDI_INTERFACE: provided stub interface");
+            return true;
+        }
 
         // ---- Disk control ----
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE: {
@@ -2145,8 +2427,22 @@ static bool thin_environment(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE:
             if (data) *(float *)data = (float)_rawAVInfo.timing.fps;
             return true;
-        case RETRO_ENVIRONMENT_GET_THROTTLE_STATE:
-            return false;
+        case RETRO_ENVIRONMENT_GET_THROTTLE_STATE: {
+            struct retro_throttle_state *throttle = (struct retro_throttle_state *)data;
+            if (!throttle) return false;
+            float fps = (_rawAVInfo.timing.fps > 0.0) ? (float)_rawAVInfo.timing.fps : 60.0f;
+            if (_speedMultiplier > 1.5) {
+                throttle->mode = RETRO_THROTTLE_FAST_FORWARD;
+                throttle->rate = fps * (float)_speedMultiplier;
+            } else if (_speedMultiplier < 0.5) {
+                throttle->mode = RETRO_THROTTLE_SLOW_MOTION;
+                throttle->rate = fps * (float)_speedMultiplier;
+            } else {
+                throttle->mode = RETRO_THROTTLE_UNBLOCKED;
+                throttle->rate = fps;
+            }
+            return true;
+        }
 
         // ---- Audio / video enable bitmask ----
         case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE: {
