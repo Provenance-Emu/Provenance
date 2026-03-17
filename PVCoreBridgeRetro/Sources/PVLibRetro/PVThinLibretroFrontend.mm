@@ -421,6 +421,8 @@ typedef struct PVThinLibretroSymbols {
     float _sensorIlluminance;
 
     // Camera (AVCaptureSession-backed)
+    // @package visibility so static C callback functions can access via ->
+    @package
     struct retro_camera_callback _cameraCallback;
     BOOL _hasCameraCallback;
 #if PV_HAS_AVFOUNDATION
@@ -432,6 +434,7 @@ typedef struct PVThinLibretroSymbols {
     BOOL _cameraSessionRunning;
     dispatch_queue_t _cameraQueue;
 #endif
+    @private
 
     // Microphone (AudioUnit-backed)
     struct retro_microphone_interface _microphoneInterface;
