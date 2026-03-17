@@ -45,32 +45,36 @@ public extension RomDatabase {
 
         // 1. Game + Core-specific match
         if let gameID, let coreIdentifier {
-            let predicate: String
-            var args: [Any] = [gameID, coreIdentifier]
+            let profile: PVControllerProfile?
             if let systemIdentifier {
-                predicate = "gameID == %@ AND coreIdentifier == %@ AND (systemIdentifier == nil OR systemIdentifier == %@)"
-                args.append(systemIdentifier)
+                profile = allProfiles.filter(
+                    "gameID == %@ AND coreIdentifier == %@ AND (systemIdentifier == nil OR systemIdentifier == %@)",
+                    gameID, coreIdentifier, systemIdentifier
+                ).first
             } else {
-                predicate = "gameID == %@ AND coreIdentifier == %@ AND systemIdentifier == nil"
+                profile = allProfiles.filter(
+                    "gameID == %@ AND coreIdentifier == %@ AND systemIdentifier == nil",
+                    gameID, coreIdentifier
+                ).first
             }
-            if let profile = allProfiles.filter(predicate, args).first {
-                return profile
-            }
+            if let profile { return profile }
         }
 
         // 2. Game-specific match (any core)
         if let gameID {
-            let predicate: String
-            var args: [Any] = [gameID]
+            let profile: PVControllerProfile?
             if let systemIdentifier {
-                predicate = "gameID == %@ AND coreIdentifier == nil AND (systemIdentifier == nil OR systemIdentifier == %@)"
-                args.append(systemIdentifier)
+                profile = allProfiles.filter(
+                    "gameID == %@ AND coreIdentifier == nil AND (systemIdentifier == nil OR systemIdentifier == %@)",
+                    gameID, systemIdentifier
+                ).first
             } else {
-                predicate = "gameID == %@ AND coreIdentifier == nil AND systemIdentifier == nil"
+                profile = allProfiles.filter(
+                    "gameID == %@ AND coreIdentifier == nil AND systemIdentifier == nil",
+                    gameID
+                ).first
             }
-            if let profile = allProfiles.filter(predicate, args).first {
-                return profile
-            }
+            if let profile { return profile }
         }
 
         // 3. System + Core-specific match

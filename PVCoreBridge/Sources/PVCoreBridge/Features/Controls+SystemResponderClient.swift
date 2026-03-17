@@ -79,7 +79,7 @@ public extension SystemIdentifier {
             return PVColecoVisionSystemResponderClient.self
         case .Intellivision:
             return PVIntellivisionSystemResponderClient.self
-        case .NeoGeo:
+        case .NeoGeo, .NeoGeoCD:
             return PVNeoGeoSystemResponderClient.self
         case .Odyssey2:
             return PVOdyssey2SystemResponderClient.self

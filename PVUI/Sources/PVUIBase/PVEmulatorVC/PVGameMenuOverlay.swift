@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import PVCoreBridge
+import PVFeatureFlags
 import PVLogging
 import PVSettings
 import GameController
@@ -26,7 +27,7 @@ enum MenuCategory {
 }
 
 /// A custom menu overlay to replace UIAlertController for game menu options
-class PVGameMenuOverlay: UIView {
+@MainActor class PVGameMenuOverlay: UIView {
 
     // MARK: - Properties
 
@@ -54,19 +55,38 @@ class PVGameMenuOverlay: UIView {
 
         guard let emulatorVC = emulatorViewController else { return }
 
-        // Create the SwiftUI menu view
-        var menuView: some View {
-            RetroMenuView(emulatorVC: emulatorVC, dismissAction: { [weak self] resumeEmulation in
-                self?.dismiss(resumeEmulation: resumeEmulation)
-            })
+        let useTileMenu = PVFeatureFlags.shared.isEnabled(.pauseTileMenu)
+
+        // Create the SwiftUI menu view — tile overlay when feature-flagged, classic otherwise
+        let hostingVC: UIViewController
+        if useTileMenu {
+            let tileView = PauseTileMenuView(
+                emulatorVC: emulatorVC,
+                dismissAction: { [weak self] resumeEmulation in
+                    self?.dismiss(resumeEmulation: resumeEmulation)
+                }
+            )
             #if canImport(FreemiumKit)
-            .environmentObject(FreemiumKit.shared)
+            let wrappedTileView = tileView.environmentObject(FreemiumKit.shared)
+            hostingVC = UIHostingController(rootView: wrappedTileView)
+            #else
+            hostingVC = UIHostingController(rootView: tileView)
             #endif
+        } else {
+            var menuView: some View {
+                RetroMenuView(emulatorVC: emulatorVC, dismissAction: { [weak self] resumeEmulation in
+                    self?.dismiss(resumeEmulation: resumeEmulation)
+                })
+                #if canImport(FreemiumKit)
+                .environmentObject(FreemiumKit.shared)
+                #endif
+            }
+            hostingVC = UIHostingController(rootView: menuView)
         }
 
-        // Create and configure the hosting controller
-        hostingController = UIHostingController(rootView: menuView)
+        hostingController = hostingVC
         hostingController?.view.backgroundColor = .clear
+        hostingController?.view.isOpaque = false
 
         // Add the hosting view to our view hierarchy
         if let hostingView = hostingController?.view {

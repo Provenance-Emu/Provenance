@@ -275,7 +275,7 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVNeoGeoPocketSystemResponderClient")
             }
             break;
-        case .NeoGeo:
+        case .NeoGeo, .NeoGeoCD:
             if let core = core as? PVNeoGeoSystemResponderClient {
                 return PVNeoGeoControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {

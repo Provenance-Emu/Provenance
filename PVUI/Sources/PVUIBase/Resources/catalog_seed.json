@@ -1,7 +1,7 @@
 {
   "version": 2,
   "lastUpdated": "2026-03-15T02:40:09Z",
-  "totalSkins": 273,
+  "totalSkins": 279,
   "skins": [
     {
       "id": "3957312ad9e7c59e",
@@ -6579,6 +6579,183 @@
       "downloadCount": 29,
       "rating": null,
       "lastUpdated": "2025-12-07",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "375527a2dd85a96e",
+      "name": "DualShocked",
+      "author": "starvingartist",
+      "systems": [
+        "psx"
+      ],
+      "downloadURL": "https://deltastyles.com/files/skins/541/dualshocked-gray.manicskin",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/375527a2dd85a96e.png",
+      "screenshotURLs": [],
+      "description": "DualShock-inspired gray PlayStation skin with portrait and landscape layouts, quick save/load, and fast-forward.",
+      "tags": [
+        "portrait",
+        "landscape",
+        "edge-to-edge",
+        "quick-save-load",
+        "fast-forward"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 4211,
+      "rating": null,
+      "lastUpdated": "2025-12-24",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "f6149cbd324f7d04",
+      "name": "HZN - PS1 Nostromo Console Style",
+      "author": "HoriZon",
+      "systems": [
+        "psx"
+      ],
+      "downloadURL": "https://deltastyles.com/files/skins/542/HZN-ps1-nostromo.manicskin",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/f6149cbd324f7d04.png",
+      "screenshotURLs": [],
+      "description": "Console-style PS1 skin with D-pad, joystick, big buttons, fast forward, and quick save/load.",
+      "tags": [
+        "portrait",
+        "landscape",
+        "big-buttons",
+        "edge-to-edge",
+        "quick-save-load",
+        "fast-forward"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 2215,
+      "rating": null,
+      "lastUpdated": "2025-08-08",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "2c283c7bd1d4b25c",
+      "name": "PS1 Dark Controller SCE",
+      "author": "JanZa",
+      "systems": [
+        "psx"
+      ],
+      "downloadURL": "https://deltastyles.com/files/skins/555/ps1_dark_controller_sce.manicskin",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/2c283c7bd1d4b25c.png",
+      "screenshotURLs": [],
+      "description": "Dark minimalist controller-only PS1 skin with maximized display and hidden Dynamic Island.",
+      "tags": [
+        "landscape",
+        "for-controllers",
+        "dark-mode",
+        "edge-to-edge",
+        "quick-save-load",
+        "fast-forward"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 939,
+      "rating": null,
+      "lastUpdated": "2025-08-25",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "fc520d9205a63e50",
+      "name": "PS1 Controller",
+      "author": "JanZa",
+      "systems": [
+        "psx"
+      ],
+      "downloadURL": "https://deltastyles.com/files/skins/544/ps1controller.manicskin",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/fc520d9205a63e50.png",
+      "screenshotURLs": [],
+      "description": "Minimalistic controller-only PS1 skin with edge-to-edge display and no on-screen buttons.",
+      "tags": [
+        "landscape",
+        "for-controllers",
+        "minimal",
+        "edge-to-edge",
+        "quick-save-load"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 717,
+      "rating": null,
+      "lastUpdated": "2025-08-08",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "a7014ab4ee42638f",
+      "name": "HZN - PS1 Console Style - Pinball Joy",
+      "author": "HoriZon",
+      "systems": [
+        "psx"
+      ],
+      "downloadURL": "https://deltastyles.com/files/skins/543/HZN-ps1-pinball-joy.manicskin",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/a7014ab4ee42638f.png",
+      "screenshotURLs": [],
+      "description": "PS1 pinball-optimized skin with large flipper and tilt buttons, tested with 10+ PS1 pinball titles.",
+      "tags": [
+        "portrait",
+        "landscape",
+        "big-buttons",
+        "edge-to-edge",
+        "quick-save-load",
+        "fast-forward"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 640,
+      "rating": null,
+      "lastUpdated": "2025-08-08",
+      "fileSize": null,
+      "submittedBy": null,
+      "submittedAt": null
+    },
+    {
+      "id": "98d0b05ccaf4412d",
+      "name": "M-Gage PlayStation Gamepad",
+      "author": "JanZa",
+      "systems": [
+        "psx"
+      ],
+      "downloadURL": "https://deltastyles.com/files/skins/572/PS1_M-Gage_Gamepad.manicskin",
+      "thumbnailURL": "https://github.com/Provenance-Emu/skins/releases/download/thumbnails/98d0b05ccaf4412d.png",
+      "screenshotURLs": [],
+      "description": "Nokia N-Gage inspired PS1 controller skin with animated buttons and no on-screen touch controls.",
+      "tags": [
+        "landscape",
+        "for-controllers",
+        "edge-to-edge",
+        "quick-save-load",
+        "fast-forward"
+      ],
+      "source": "deltastyles.com",
+      "version": null,
+      "gameTypeIdentifier": null,
+      "deviceSupport": [],
+      "downloadCount": 635,
+      "rating": null,
+      "lastUpdated": "2025-09-30",
       "fileSize": null,
       "submittedBy": null,
       "submittedAt": null

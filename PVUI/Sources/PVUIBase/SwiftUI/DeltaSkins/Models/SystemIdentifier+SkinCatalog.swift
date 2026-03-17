@@ -161,6 +161,7 @@ extension SystemIdentifier {
 
         // SNK
         case .NeoGeo:        return "Neo Geo"
+        case .NeoGeoCD:      return "Neo Geo CD"
         case .NGP:           return "NGP"
         case .NGPC:          return "NGP Color"
 
