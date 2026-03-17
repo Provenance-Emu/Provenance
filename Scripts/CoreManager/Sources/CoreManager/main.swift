@@ -194,7 +194,7 @@ struct GenerateCommand: ParsableCommand {
         for (key, content) in outputs {
             guard let url = files[key] else { continue }
             if dryRun {
-                let lineCount = content.components(separatedBy: .newlines).count
+                let lineCount = content.split(whereSeparator: \.isNewline).count
                 print("[dry-run] Would write \(lineCount) lines to \(url.lastPathComponent)")
                 if verbose {
                     print(content)
@@ -231,6 +231,7 @@ struct ValidateCommand: ParsableCommand {
     mutating func run() throws {
         let manifestURL = try manifestOptions.resolvedManifestURL()
         let manifest = try CoreManifest.load(from: manifestURL)
+        let isVerbose = verbose
 
         var urls: [(String, URL)] = []
         var seen = Set<String>()
@@ -284,7 +285,11 @@ struct ValidateCommand: ParsableCommand {
                 lock.unlock()
 
                 let marker = ok ? "OK  " : "FAIL"
-                print("  [\(marker)] \(status.padding(toLength: 3, withPad: " ", startingAt: 0))  \(url)")
+                if isVerbose {
+                    print("  [\(marker)] \(status.padding(toLength: 3, withPad: " ", startingAt: 0))  \(name)  \(url)")
+                } else {
+                    print("  [\(marker)] \(status.padding(toLength: 3, withPad: " ", startingAt: 0))  \(url)")
+                }
             }.resume()
         }
 
@@ -401,7 +406,7 @@ struct BootstrapCommand: ParsableCommand {
 
         var all: [String: [String: Any]] = [:]
 
-        func register(filename: String, platform: String, enabled: Bool) {
+        func register(filename: String, platform: String) {
             let (name, custom) = coreNameFrom(filename: filename)
             if all[name] == nil {
                 all[name] = [
@@ -432,14 +437,14 @@ struct BootstrapCommand: ParsableCommand {
         }
 
         for entry in iosEntries {
-            register(filename: entry.filename, platform: "ios", enabled: entry.enabled)
+            register(filename: entry.filename, platform: "ios")
             if entry.enabled && !iosAsEnabled.contains(entry.filename) {
                 all[coreNameFrom(filename: entry.filename).0]!["appstore"] = false
             }
         }
 
         for entry in tvosEntries {
-            register(filename: entry.filename, platform: "tvos", enabled: entry.enabled)
+            register(filename: entry.filename, platform: "tvos")
             if entry.enabled && !tvosAsEnabled.contains(entry.filename) {
                 all[coreNameFrom(filename: entry.filename).0]!["appstore"] = false
             }

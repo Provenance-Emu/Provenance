@@ -341,7 +341,6 @@ def generate_url_file(
     buildbot: BuildbotConfig,
     platform: str,          # 'ios' | 'tvos'
     appstore: bool,
-    verbose: bool = False,
 ) -> str:
     """Generate the content of a urls*.txt file."""
     # No header — URL files are consumed directly by `xargs curl -O` and
@@ -406,10 +405,10 @@ def cmd_generate(manifest: CoreManifest, dry_run: bool, verbose: bool) -> None:
     # For appstore variants, we still include the same set of cores from the
     # per-platform list — the appstore flag marks them commented/omitted
     outputs: Dict[str, str] = {
-        "urls_ios":           generate_url_file(all_ios,  manifest.buildbot, "ios",  appstore=False, verbose=verbose),
-        "urls_appstore_ios":  generate_url_file(all_ios,  manifest.buildbot, "ios",  appstore=True,  verbose=verbose),
-        "urls_tvos":          generate_url_file(all_tvos, manifest.buildbot, "tvos", appstore=False, verbose=verbose),
-        "urls_appstore_tvos": generate_url_file(all_tvos, manifest.buildbot, "tvos", appstore=True,  verbose=verbose),
+        "urls_ios":           generate_url_file(all_ios,  manifest.buildbot, "ios",  appstore=False),
+        "urls_appstore_ios":  generate_url_file(all_ios,  manifest.buildbot, "ios",  appstore=True),
+        "urls_tvos":          generate_url_file(all_tvos, manifest.buildbot, "tvos", appstore=False),
+        "urls_appstore_tvos": generate_url_file(all_tvos, manifest.buildbot, "tvos", appstore=True),
         "xcf_ios":            generate_xcfilelist(all_ios,  "ios",  appstore=False),
         "xcf_appstore_ios":   generate_xcfilelist(all_ios,  "ios",  appstore=True),
         "xcf_tvos":           generate_xcfilelist(all_tvos, "tvos", appstore=False),
@@ -450,6 +449,8 @@ def cmd_validate(manifest: CoreManifest, verbose: bool) -> None:
 
     for core in all_ios:
         if not core.enabled:
+            if verbose:
+                print(f"  [SKIP] disabled  {core.name}")
             continue
         url = core.ios_url(manifest.buildbot)
         if url not in seen:
@@ -458,6 +459,8 @@ def cmd_validate(manifest: CoreManifest, verbose: bool) -> None:
 
     for core in all_tvos:
         if not core.enabled:
+            if verbose:
+                print(f"  [SKIP] disabled  {core.name}")
             continue
         url = core.tvos_url(manifest.buildbot)
         if url not in seen:
@@ -530,6 +533,10 @@ def cmd_diff(manifest: CoreManifest, verbose: bool) -> None:
             sys.stdout.writelines(diff)
             print()
 
+    if verbose:
+        for key in outputs:
+            path = OUTPUT_FILES[key]
+            print(f"  [OK] {os.path.basename(path)}")
     if not any_diff:
         print("No differences — generated output matches existing files.")
 

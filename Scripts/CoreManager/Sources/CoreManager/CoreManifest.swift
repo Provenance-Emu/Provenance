@@ -39,12 +39,12 @@ struct CoreEntry: Codable {
 
     /// Whether this core is allowed in App Store builds.
     /// When false, the core is commented out in appstore url lists and
-    /// omitted from appstore xcfilelists.
+    /// commented out in appstore xcfilelists.
     let appstore: Bool
 
     /// Whether this core is currently enabled.
     /// When false, the core appears as a commented line in ALL generated files
-    /// and is omitted from all xcfilelists.
+    /// (both url lists and xcfilelists use the same commented-line convention).
     let enabled: Bool
 
     /// Optional custom filename for platform-neutral builds (no _ios/_tvos suffix).
