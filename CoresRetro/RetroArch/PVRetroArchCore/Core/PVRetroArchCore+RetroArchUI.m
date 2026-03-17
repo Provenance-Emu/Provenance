@@ -430,6 +430,15 @@ int argc =  1;
 //        WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
 //        return;
 //    }
+    if (!_isInitialized) {
+        WLOG(@"RetroArchCoreBridge setPauseEmulation ignored because RetroArch is not initialized: %i", flag);
+        return;
+    }
+    runloop_state_t *runloop_st = runloop_state_get_ptr();
+    if (!runloop_st) {
+        WLOG(@"RetroArchCoreBridge setPauseEmulation ignored because runloop state is unavailable: %i", flag);
+        return;
+    }
     command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);
     // I don't know what this code was suppoed to do, but it breaks the retroarch menu
     // after pausing, seems fine to remove this. @JoeMatt

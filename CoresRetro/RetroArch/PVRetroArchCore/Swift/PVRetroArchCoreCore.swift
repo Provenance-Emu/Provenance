@@ -60,7 +60,12 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
                 && !unsupportedCores.contains(sysName))
     }
     public override var supportsAudioVisualizer: Bool { true }
+    /// Ignores late pause/unpause requests after core teardown starts.
     public override func setPauseEmulation(_ flag: Bool) {
+        guard isOn else {
+            DLOG("PVRetroArchCoreCore setPauseEmulation ignored because core is off (\(flag ? "pause" : "resume"))")
+            return
+        }
         ILOG("PVRetroArchCoreCore  setPauseEmulation: \(flag ? "paused" : "resumed")")
         _bridge.setPauseEmulation(flag)
         super.setPauseEmulation(flag)
