@@ -16,6 +16,10 @@
 
 #include "libretro.h"
 #include "libretro_vulkan.h"
+
+/// C-callable rumble callback implemented in PVLibRetroRumbleHelper.swift via @_cdecl.
+/// Matches retro_set_rumble_state_t: (unsigned port, enum retro_rumble_effect, uint16_t strength) -> bool
+extern bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength);
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -1560,17 +1564,11 @@ static bool environment_callback(unsigned cmd, void *data) {
             }
         }
         case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: {
-                                           /* struct retro_rumble_interface * --
-                                            * Gets an interface which is used by a libretro core to set
-                                            * state of rumble motors in controllers.
-                                            * A strong and weak motor is supported, and they can be
-                                            * controlled indepedently.
-                                            * Should be called from either retro_init() or retro_load_game().
-                                            * Should not be called from retro_set_environment().
-                                            * Returns false if rumble functionality is unavailable.
-                                            */
-            // TODO: Rumble
-            return false;
+            struct retro_rumble_interface *rumble = (struct retro_rumble_interface *)data;
+            if (!rumble) return false;
+            rumble->set_rumble_state = pv_retro_rumble_callback;
+            DLOG(@"Environ GET_RUMBLE_INTERFACE: provided rumble callback");
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES: {
                                            /* uint64_t * --

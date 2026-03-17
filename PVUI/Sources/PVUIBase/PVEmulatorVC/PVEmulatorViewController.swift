@@ -542,13 +542,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Set up the GPU view
         setupGPUView()
 
-        // Install toast overlay above the GPU view so OSD messages are visible during emulation
+        // Set up Delta Skin
+        setupDeltaSkinDirectly()
+
+        // Install toast overlay AFTER skin setup so it renders above all emulator views
         #if canImport(UIKit)
         PVToastHostingController.install(in: self)
         #endif
-
-        // Set up Delta Skin
-        setupDeltaSkinDirectly()
 
         initNotificationObservers()
 

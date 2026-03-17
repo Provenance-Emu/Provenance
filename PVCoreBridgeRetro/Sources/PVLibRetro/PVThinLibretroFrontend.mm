@@ -28,6 +28,9 @@
 
 #include <dlfcn.h>
 #include <string.h>
+
+/// C-callable rumble callback implemented in PVLibRetroRumbleHelper.swift via @_cdecl.
+extern "C" bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength);
 #include <stdarg.h>
 #include <os/lock.h>
 #include <pthread.h>
@@ -1094,9 +1097,9 @@ static bool thin_environment(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: {
             struct retro_rumble_interface *rumble = (struct retro_rumble_interface *)data;
             if (!rumble) return false;
-            // No-op set_rumble_state for now
-            rumble->set_rumble_state = NULL;
-            return false; // Return false = not supported
+            rumble->set_rumble_state = pv_retro_rumble_callback;
+            DLOG(@"ThinEnv GET_RUMBLE_INTERFACE: provided rumble callback");
+            return true;
         }
 
         // ---- Sensor / Camera / Location (not supported) ----
