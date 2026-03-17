@@ -30,6 +30,23 @@
 #include <string.h>
 #import <objc/message.h>
 
+// Peripheral interfaces: sensor (CoreMotion), location (CoreLocation), LED (GameController)
+#if __has_include(<CoreMotion/CoreMotion.h>) && !TARGET_OS_TV && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+#import <CoreMotion/CoreMotion.h>
+#define PV_HAS_COREMOTION 1
+#else
+#define PV_HAS_COREMOTION 0
+#endif
+
+#if __has_include(<CoreLocation/CoreLocation.h>) && !TARGET_OS_TV
+#import <CoreLocation/CoreLocation.h>
+#define PV_HAS_CORELOCATION 1
+#else
+#define PV_HAS_CORELOCATION 0
+#endif
+
+@import GameController;
+
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
@@ -226,6 +243,35 @@ typedef struct PVThinLibretroSymbols {
     // Pause flag — when YES, audio callbacks discard samples to prevent
     // stale audio from leaking through during the pause/resume transition.
     BOOL _audioPaused;
+
+    // ---- Peripheral interfaces ----
+
+    // Sensor (CoreMotion — accelerometer, gyroscope)
+#if PV_HAS_COREMOTION
+    CMMotionManager *_motionManager;
+    BOOL _accelerometerActive;
+    BOOL _gyroscopeActive;
+#endif
+    // Cached sensor readings (always present so get_sensor_input returns 0 on unsupported platforms)
+    float _sensorAccelX, _sensorAccelY, _sensorAccelZ;
+    float _sensorGyroX, _sensorGyroY, _sensorGyroZ;
+    float _sensorIlluminance;
+
+    // Camera (stub — stores core's callback struct)
+    struct retro_camera_callback _cameraCallback;
+    BOOL _hasCameraCallback;
+
+    // Location (CoreLocation)
+#if PV_HAS_CORELOCATION
+    CLLocationManager *_locationManager;
+    BOOL _locationActive;
+    double _lastLatitude, _lastLongitude;
+    double _lastHorizAccuracy, _lastVertAccuracy;
+    BOOL _locationUpdatedSinceLastRead;
+#endif
+
+    // LED (GameController light bar)
+    // No persistent state needed — set_led_state maps directly to GCController.current
 }
 
 /// Internal callback methods invoked by the static C trampolines.
@@ -240,6 +286,13 @@ typedef struct PVThinLibretroSymbols {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (uintptr_t)currentEmuFBO;
 #endif
+
+// Peripheral interface helpers
+- (BOOL)_sensorSetState:(enum retro_sensor_action)action rate:(unsigned)rate port:(unsigned)port;
+- (float)_sensorGetInput:(unsigned)sensorId port:(unsigned)port;
+- (BOOL)_locationStart;
+- (void)_locationStop;
+- (BOOL)_locationGetPositionLat:(double *)lat lon:(double *)lon horizAccuracy:(double *)ha vertAccuracy:(double *)va;
 
 @end
 
@@ -321,6 +374,85 @@ static retro_proc_address_t thin_hw_get_proc_address(const char *sym) {
 }
 
 // ---------------------------------------------------------------------------
+// MARK: - Peripheral interface C callbacks (sensor, camera, location, LED)
+// ---------------------------------------------------------------------------
+
+#pragma mark Sensor interface
+
+static bool thin_sensor_set_state(unsigned port, enum retro_sensor_action action, unsigned rate) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self) return false;
+    return [self _sensorSetState:action rate:rate port:port];
+}
+
+static float thin_sensor_get_input(unsigned port, unsigned sensor_id) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self) return 0.0f;
+    return [self _sensorGetInput:sensor_id port:port];
+}
+
+#pragma mark Camera interface (stub)
+
+static bool thin_camera_start(void) {
+    // TODO: Implement actual camera capture with AVCaptureSession.
+    // For now, return false — the core will function without camera input.
+    DLOG(@"ThinFrontend: camera start requested (stub)");
+    return false;
+}
+
+static void thin_camera_stop(void) {
+    DLOG(@"ThinFrontend: camera stop requested (stub)");
+}
+
+#pragma mark Location interface
+
+static bool thin_location_start(void) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self) return false;
+    return [self _locationStart];
+}
+
+static void thin_location_stop(void) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self) return;
+    [self _locationStop];
+}
+
+static bool thin_location_get_position(double *lat, double *lon,
+                                        double *horiz_accuracy, double *vert_accuracy) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self) return false;
+    return [self _locationGetPositionLat:lat lon:lon horizAccuracy:horiz_accuracy vertAccuracy:vert_accuracy];
+}
+
+static void thin_location_set_interval(unsigned interval_ms, unsigned interval_distance) {
+    DLOG(@"ThinFrontend: location set_interval ms=%u dist=%u (noted)", interval_ms, interval_distance);
+    // The CLLocationManager uses its own accuracy/distance filter;
+    // we could map interval_distance to distanceFilter here if needed.
+}
+
+#pragma mark LED interface
+
+static void thin_led_set_state(int led, int state) {
+    // Map LED state to DualSense/DualShock4 light bar via GameController framework.
+    // led index 0 = primary light. state: 0 = off, 1 = on.
+    // We use a simple color mapping: off = dim, on = bright green (activity indicator).
+    if (@available(iOS 14.0, tvOS 14.0, macOS 11.0, *)) {
+        GCController *controller = [GCController current];
+        if (!controller) return;
+        GCDeviceLight *light = controller.light;
+        if (!light) return;
+        if (state) {
+            // LED on — bright green to indicate activity (e.g. disk access)
+            light.color = [[GCColor alloc] initWithRed:0.0 green:1.0 blue:0.0];
+        } else {
+            // LED off — dim blue (default DualShock color)
+            light.color = [[GCColor alloc] initWithRed:0.0 green:0.0 blue:0.25];
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MARK: - Environment callback (large switch, libretro.h only)
 // ---------------------------------------------------------------------------
 
@@ -384,6 +516,23 @@ static bool thin_environment(unsigned cmd, void *data) {
         _pointerY = 0;
         _pointerPressed = false;
         _audioPaused = NO;
+        // Peripheral interfaces
+#if PV_HAS_COREMOTION
+        _motionManager = nil;
+        _accelerometerActive = NO;
+        _gyroscopeActive = NO;
+#endif
+        _sensorAccelX = _sensorAccelY = _sensorAccelZ = 0.0f;
+        _sensorGyroX = _sensorGyroY = _sensorGyroZ = 0.0f;
+        _sensorIlluminance = 0.0f;
+        _hasCameraCallback = NO;
+#if PV_HAS_CORELOCATION
+        _locationManager = nil;
+        _locationActive = NO;
+        _lastLatitude = _lastLongitude = 0.0;
+        _lastHorizAccuracy = _lastVertAccuracy = 0.0;
+        _locationUpdatedSinceLastRead = NO;
+#endif
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         _glContext = nil;
         _glShareContext = nil;
@@ -404,6 +553,20 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_saveDirCString)      { free(_saveDirCString);      _saveDirCString = NULL; }
     if (_coreAssetsDirCString){ free(_coreAssetsDirCString);_coreAssetsDirCString = NULL; }
     if (_libretroPathCString) { free(_libretroPathCString); _libretroPathCString = NULL; }
+    // Peripheral cleanup
+#if PV_HAS_COREMOTION
+    if (_motionManager) {
+        [_motionManager stopAccelerometerUpdates];
+        [_motionManager stopGyroUpdates];
+        _motionManager = nil;
+    }
+#endif
+#if PV_HAS_CORELOCATION
+    if (_locationManager) {
+        [_locationManager stopUpdatingLocation];
+        _locationManager = nil;
+    }
+#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -597,6 +760,18 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (void)stopEmulation {
     _audioPaused = YES;
+    // Stop peripheral interfaces
+#if PV_HAS_COREMOTION
+    if (_motionManager) {
+        [_motionManager stopAccelerometerUpdates];
+        [_motionManager stopGyroUpdates];
+        _accelerometerActive = NO;
+        _gyroscopeActive = NO;
+    }
+#endif
+#if PV_HAS_CORELOCATION
+    [self _locationStop];
+#endif
     // Flush battery save (SRAM) before tearing down the core
     [self saveBatterySaveData];
     [super stopEmulation]; // stops emulation loop thread before retro teardown
@@ -1141,6 +1316,175 @@ static bool thin_environment(unsigned cmd, void *data) {
     _pointerX = x;
     _pointerY = y;
     _pointerPressed = pressed ? true : false;
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Sensor interface implementation (CoreMotion)
+// ---------------------------------------------------------------------------
+
+- (BOOL)_sensorSetState:(enum retro_sensor_action)action rate:(unsigned)rate port:(unsigned)port {
+#if PV_HAS_COREMOTION
+    if (!_motionManager) {
+        _motionManager = [[CMMotionManager alloc] init];
+    }
+    NSTimeInterval interval = (rate > 0) ? (1.0 / (NSTimeInterval)rate) : (1.0 / 60.0);
+
+    switch (action) {
+        case RETRO_SENSOR_ACCELEROMETER_ENABLE:
+            if (_motionManager.isAccelerometerAvailable && !_accelerometerActive) {
+                _motionManager.accelerometerUpdateInterval = interval;
+                [_motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue]
+                    withHandler:^(CMAccelerometerData *data, NSError *error) {
+                        if (data) {
+                            self->_sensorAccelX = (float)data.acceleration.x;
+                            self->_sensorAccelY = (float)data.acceleration.y;
+                            self->_sensorAccelZ = (float)data.acceleration.z;
+                        }
+                    }];
+                _accelerometerActive = YES;
+                ILOG(@"ThinFrontend: accelerometer enabled (rate=%u Hz)", rate);
+            }
+            return true;
+
+        case RETRO_SENSOR_ACCELEROMETER_DISABLE:
+            if (_accelerometerActive) {
+                [_motionManager stopAccelerometerUpdates];
+                _accelerometerActive = NO;
+                _sensorAccelX = _sensorAccelY = _sensorAccelZ = 0.0f;
+                ILOG(@"ThinFrontend: accelerometer disabled");
+            }
+            return true;
+
+        case RETRO_SENSOR_GYROSCOPE_ENABLE:
+            if (_motionManager.isGyroAvailable && !_gyroscopeActive) {
+                _motionManager.gyroUpdateInterval = interval;
+                [_motionManager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
+                    withHandler:^(CMGyroData *data, NSError *error) {
+                        if (data) {
+                            self->_sensorGyroX = (float)data.rotationRate.x;
+                            self->_sensorGyroY = (float)data.rotationRate.y;
+                            self->_sensorGyroZ = (float)data.rotationRate.z;
+                        }
+                    }];
+                _gyroscopeActive = YES;
+                ILOG(@"ThinFrontend: gyroscope enabled (rate=%u Hz)", rate);
+            }
+            return true;
+
+        case RETRO_SENSOR_GYROSCOPE_DISABLE:
+            if (_gyroscopeActive) {
+                [_motionManager stopGyroUpdates];
+                _gyroscopeActive = NO;
+                _sensorGyroX = _sensorGyroY = _sensorGyroZ = 0.0f;
+                ILOG(@"ThinFrontend: gyroscope disabled");
+            }
+            return true;
+
+        case RETRO_SENSOR_ILLUMINANCE_ENABLE:
+            // Ambient light sensor is not directly accessible on iOS via CoreMotion.
+            // Would need a private API or screen brightness heuristic.
+            DLOG(@"ThinFrontend: illuminance sensor not available");
+            return false;
+
+        case RETRO_SENSOR_ILLUMINANCE_DISABLE:
+            _sensorIlluminance = 0.0f;
+            return true;
+
+        default:
+            return false;
+    }
+#else
+    // No CoreMotion on this platform (tvOS, macOS, etc.)
+    DLOG(@"ThinFrontend: sensor interface not available on this platform");
+    return false;
+#endif
+}
+
+- (float)_sensorGetInput:(unsigned)sensorId port:(unsigned)port {
+    switch (sensorId) {
+        case RETRO_SENSOR_ACCELEROMETER_X: return _sensorAccelX;
+        case RETRO_SENSOR_ACCELEROMETER_Y: return _sensorAccelY;
+        case RETRO_SENSOR_ACCELEROMETER_Z: return _sensorAccelZ;
+        case RETRO_SENSOR_GYROSCOPE_X:     return _sensorGyroX;
+        case RETRO_SENSOR_GYROSCOPE_Y:     return _sensorGyroY;
+        case RETRO_SENSOR_GYROSCOPE_Z:     return _sensorGyroZ;
+        case RETRO_SENSOR_ILLUMINANCE:     return _sensorIlluminance;
+        default: return 0.0f;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Location interface implementation (CoreLocation)
+// ---------------------------------------------------------------------------
+
+- (BOOL)_locationStart {
+#if PV_HAS_CORELOCATION
+    if (_locationActive) return true;
+    if (!_locationManager) {
+        _locationManager = [[CLLocationManager alloc] init];
+        _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        _locationManager.distanceFilter = kCLDistanceFilterNone;
+        // Note: NSLocationWhenInUseUsageDescription must be in Info.plist.
+        // On iOS 13.4+ authorization is requested lazily by the system.
+        if ([_locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [_locationManager requestWhenInUseAuthorization];
+        }
+    }
+    [_locationManager startUpdatingLocation];
+    _locationActive = YES;
+    _locationUpdatedSinceLastRead = NO;
+    ILOG(@"ThinFrontend: location services started");
+    return true;
+#else
+    DLOG(@"ThinFrontend: location interface not available on this platform");
+    return false;
+#endif
+}
+
+- (void)_locationStop {
+#if PV_HAS_CORELOCATION
+    if (!_locationActive) return;
+    [_locationManager stopUpdatingLocation];
+    _locationActive = NO;
+    ILOG(@"ThinFrontend: location services stopped");
+#endif
+}
+
+- (BOOL)_locationGetPositionLat:(double *)lat lon:(double *)lon
+                  horizAccuracy:(double *)ha vertAccuracy:(double *)va {
+#if PV_HAS_CORELOCATION
+    // Read the latest location from CLLocationManager
+    CLLocation *loc = _locationManager.location;
+    if (loc) {
+        _lastLatitude = loc.coordinate.latitude;
+        _lastLongitude = loc.coordinate.longitude;
+        _lastHorizAccuracy = loc.horizontalAccuracy;
+        _lastVertAccuracy = loc.verticalAccuracy;
+        _locationUpdatedSinceLastRead = YES;
+    }
+
+    if (!_locationUpdatedSinceLastRead) {
+        // No update since last read — return zeros per libretro spec
+        if (lat) *lat = 0.0;
+        if (lon) *lon = 0.0;
+        if (ha)  *ha  = 0.0;
+        if (va)  *va  = 0.0;
+        return false;
+    }
+
+    if (lat) *lat = _lastLatitude;
+    if (lon) *lon = _lastLongitude;
+    if (ha)  *ha  = _lastHorizAccuracy;
+    if (va)  *va  = _lastVertAccuracy;
+    _locationUpdatedSinceLastRead = NO;
+    return true;
+#else
+    if (lat) *lat = 0.0;
+    if (lon) *lon = 0.0;
+    if (ha)  *ha  = 0.0;
+    if (va)  *va  = 0.0;
+    return false;
+#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -1707,14 +2051,60 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
 
-        // ---- Sensor / Camera / Location (not supported) ----
-        case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
-        case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-        case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
-            return false;
+        // ---- Sensor interface (CoreMotion) ----
+        case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE: {
+            struct retro_sensor_interface *sensor = (struct retro_sensor_interface *)data;
+            if (!sensor) return false;
+            sensor->set_sensor_state = thin_sensor_set_state;
+            sensor->get_sensor_input = thin_sensor_get_input;
+            ILOG(@"ThinEnv GET_SENSOR_INTERFACE: provided sensor callbacks");
+            return true;
+        }
 
-        // ---- LED / MIDI / VFS (not supported) ----
-        case RETRO_ENVIRONMENT_GET_LED_INTERFACE:
+        // ---- Camera interface (stub for Game Boy Camera etc.) ----
+        case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE: {
+            struct retro_camera_callback *cam = (struct retro_camera_callback *)data;
+            if (!cam) return false;
+            // Store the core's callbacks (frame_raw_framebuffer, frame_opengl_texture, etc.)
+            _cameraCallback = *cam;
+            _hasCameraCallback = YES;
+            // Provide our start/stop stubs
+            cam->start = thin_camera_start;
+            cam->stop  = thin_camera_stop;
+            // Announce raw framebuffer capability (no GL texture support yet)
+            cam->caps = (1 << RETRO_CAMERA_BUFFER_RAW_FRAMEBUFFER);
+            // TODO: Implement actual camera capture using AVCaptureSession.
+            // When implemented, thin_camera_start should create an AVCaptureSession
+            // with the front camera, convert frames to XRGB8888, and call
+            // _cameraCallback.frame_raw_framebuffer(buffer, width, height, pitch)
+            // from the capture output delegate during retro_run.
+            ILOG(@"ThinEnv GET_CAMERA_INTERFACE: provided stub (actual capture not yet implemented)");
+            return true;
+        }
+
+        // ---- Location interface (CoreLocation) ----
+        case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE: {
+            struct retro_location_callback *loc = (struct retro_location_callback *)data;
+            if (!loc) return false;
+            loc->start        = thin_location_start;
+            loc->stop         = thin_location_stop;
+            loc->get_position = thin_location_get_position;
+            loc->set_interval = thin_location_set_interval;
+            // initialized/deinitialized are set by the core, not by us
+            ILOG(@"ThinEnv GET_LOCATION_INTERFACE: provided location callbacks");
+            return true;
+        }
+
+        // ---- LED interface (GameController light bar) ----
+        case RETRO_ENVIRONMENT_GET_LED_INTERFACE: {
+            struct retro_led_interface *led = (struct retro_led_interface *)data;
+            if (!led) return false;
+            led->set_led_state = thin_led_set_state;
+            ILOG(@"ThinEnv GET_LED_INTERFACE: provided LED callback");
+            return true;
+        }
+
+        // ---- MIDI / VFS (not supported) ----
         case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE:
         case RETRO_ENVIRONMENT_GET_VFS_INTERFACE:
         case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER:
