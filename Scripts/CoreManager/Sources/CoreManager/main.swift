@@ -400,10 +400,11 @@ struct BootstrapCommand: ParsableCommand {
         // Emit a minimal buildbot section so the bootstrap output is a more complete starter manifest.
         // Adjust these values to match the actual buildbot configuration used by your environment.
         print("buildbot:")
-        print("  # TODO: Replace this placeholder with your actual buildbot configuration.")
-        print("  # The structure should match the Buildbot configuration expected by CoreManager's manifest.")
-        print("  ios: {}")
-        print("  tvos: {}")
+        print("  # TODO: Replace these placeholders with your actual buildbot configuration.")
+        print("  # The structure must match the CoreManifest schema: base_url, ios_path, tvos_path.")
+        print("  base_url: \"https://example.com/buildbot\"")
+        print("  ios_path: \"/ios\"")
+        print("  tvos_path: \"/tvos\"")
         print()
 
         let iosURL      = scriptsDir.appendingPathComponent("urls.txt")
