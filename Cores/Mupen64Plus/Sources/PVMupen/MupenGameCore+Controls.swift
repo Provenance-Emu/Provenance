@@ -20,7 +20,8 @@ public extension MupenGameCore { // Controls
          #define PLUGIN_RAW                  5 /* the controller plugin is passed in raw data */
          */
         /// Auto-detect pak type from mupen64plus.ini ROM database at load time.
-        /// Resolved to none/mempak/rumblePak/raw after M64CMD_ROM_OPEN.
+        /// Resolved to rumblePak (3) when the ROM database sets Rumble=Yes,
+        /// otherwise resolved to raw/Smart Pak (5) as a safe fallback, after M64CMD_ROM_OPEN.
         case auto = 0
         case none = 1
         case mempak = 2
