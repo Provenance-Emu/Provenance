@@ -89,10 +89,18 @@ struct DeltaSkinAnimatedBackgroundView: View {
 
         case .apng, .gif:
             // Prefer raw bytes so CGImageSource can read embedded per-frame timing metadata.
-            if let fileName = animation.file,
-               let rawData = try? skin.loadAssetData(fileName) {
-                loaded = extractFrames(from: rawData, fallbackFPS: fallbackFPS)
+            let decodedFrames: [(UIImage, Double)] = await withCheckedContinuation { continuation in
+                DispatchQueue.global(qos: .userInitiated).async {
+                    var result: [(UIImage, Double)] = []
+                    if let fileName = animation.file,
+                       let rawData = try? skin.loadAssetData(fileName) {
+                        result = extractFrames(from: rawData, fallbackFPS: fallbackFPS)
+                    }
+                    continuation.resume(returning: result)
+                }
             }
+            loaded = decodedFrames
+
             // Fall back to single-frame display if extraction failed.
             if loaded.isEmpty,
                let fileName = animation.file,
