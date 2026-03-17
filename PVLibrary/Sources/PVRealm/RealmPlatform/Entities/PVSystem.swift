@@ -270,6 +270,7 @@ public extension PVSystem {
             case .Quake:  return .poster
             case .Quake2: return .poster
             case .Wolf3D: return .poster
+            case .NeoGeoCD: return .poster
             }
         }
     #endif
