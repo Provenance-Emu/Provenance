@@ -47,6 +47,7 @@ public extension SystemIdentifier {
         case .Music: return PVNESButton.self
         case .N64: return PVN64Button.self
         case .NeoGeo: return PVNeoGeoButton.self
+        case .NeoGeoCD: return PVNeoGeoButton.self
         case .NES: return PVNESButton.self
         case .NGP: return PVNGPButton.self
         case .NGPC: return PVNGPButton.self

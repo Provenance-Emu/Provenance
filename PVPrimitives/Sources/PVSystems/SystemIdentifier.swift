@@ -47,6 +47,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case Music = "com.provenance.music"
     case N64 = "com.provenance.n64"
     case NeoGeo = "com.provenance.neogeo"
+    case NeoGeoCD = "com.provenance.neogeocd"
     case NES = "com.provenance.nes"
     case NGP = "com.provenance.ngp"
     case NGPC = "com.provenance.ngpc"
@@ -122,6 +123,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .Music: true
         case .N64: false
         case .NeoGeo: false
+        case .NeoGeoCD: false
         case .NES: false
         case .NGP: false
         case .NGPC: false
@@ -220,7 +222,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
             return "Sony"
         case .PCE, .PCFX, .PCECD, .SGFX:
             return "NEC"
-        case .NeoGeo, .NGP, .NGPC:
+        case .NeoGeo, .NeoGeoCD, .NGP, .NGPC:
             return "SNK"
         case .WonderSwan, .WonderSwanColor:
             return "Bandai"
@@ -303,6 +305,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .PCECD:         return "PC Engine CD - TurboGrafx-CD"
         case .SGFX:          return "PC Engine SuperGrafx"
         case .NeoGeo:        return "Neo Geo"
+        case .NeoGeoCD:      return "Neo Geo CD"
         case .NGP:           return "Neo Geo Pocket"
         case .NGPC:          return "Neo Geo Pocket Color"
         case .WonderSwan:    return "WonderSwan"
