@@ -1,5 +1,5 @@
 {
-  "cores": [
+  "entries": [
     {
       "name": "Atari 800",
       "identifier": "com.provenance.core.atari800",
@@ -2154,6 +2154,510 @@
         "com.provenance.gb",
         "com.provenance.gbc",
         "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "EightyOne (ZX81) (RetroArch)",
+      "identifier": "81.libretro.framework",
+      "projectURL": "https://github.com/libretro/81-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "BSNES Mercury (Performance) (RetroArch)",
+      "identifier": "bsnes.mercury.performance.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/bsnes/",
+      "version": "nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "FBAlpha 2012 (RetroArch)",
+      "identifier": "fbalpha2012.libretro.framework",
+      "projectURL": "https://github.com/libretro/fbalpha",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.mame",
+        "com.provenance.neogeo"
+      ]
+    },
+    {
+      "name": "FBAlpha 2012 NeoGeo (RetroArch)",
+      "identifier": "fbalpha2012.neogeo.libretro.framework",
+      "projectURL": "https://github.com/libretro/fbalpha",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.neogeo"
+      ]
+    },
+    {
+      "name": "fMSX (RetroArch)",
+      "identifier": "fmsx.libretro.framework",
+      "projectURL": "https://github.com/libretro/fmsx-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.msx",
+        "com.provenance.msx2"
+      ]
+    },
+    {
+      "name": "Fairchild ChannelF (FreeChaf) (RetroArch)",
+      "identifier": "freechaf.libretro.framework",
+      "projectURL": "https://github.com/libretro/freechaf",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "FreeINTV (RetroArch)",
+      "identifier": "freeintv.libretro.framework",
+      "projectURL": "https://github.com/libretro/FreeIntv",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.intellivision"
+      ]
+    },
+    {
+      "name": "Gambatte (RetroArch)",
+      "identifier": "gambatte.libretro.framework",
+      "projectURL": "https://github.com/libretro/gambatte-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.gb",
+        "com.provenance.gbc"
+      ]
+    },
+    {
+      "name": "Gearcoleco (RetroArch)",
+      "identifier": "gearcoleco.libretro.framework",
+      "projectURL": "https://github.com/drhelius/Gearcoleco",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.colecovision"
+      ]
+    },
+    {
+      "name": "gpSP (RetroArch)",
+      "identifier": "gpsp.libretro.framework",
+      "projectURL": "https://github.com/libretro/gpsp",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.gba"
+      ]
+    },
+    {
+      "name": "Handy (Atari Lynx) (RetroArch)",
+      "identifier": "handy.libretro.framework",
+      "projectURL": "https://github.com/libretro/libretro-handy",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.lynx"
+      ]
+    },
+    {
+      "name": "Beetle PC Engine (RetroArch)",
+      "identifier": "mednafen.pce.libretro.framework",
+      "projectURL": "https://github.com/libretro/beetle-pce-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.pce",
+        "com.provenance.pcecd",
+        "com.provenance.sgfx"
+      ]
+    },
+    {
+      "name": "Beetle PC Engine Fast (RetroArch)",
+      "identifier": "mednafen.pce.fast.libretro.framework",
+      "projectURL": "https://github.com/libretro/beetle-pce-fast-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.pce",
+        "com.provenance.pcecd"
+      ]
+    },
+    {
+      "name": "Beetle PC-FX (RetroArch)",
+      "identifier": "mednafen.pcfx.libretro.framework",
+      "projectURL": "https://github.com/libretro/beetle-pcfx-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.pcfx"
+      ]
+    },
+    {
+      "name": "Beetle SNES (RetroArch)",
+      "identifier": "mednafen.snes.libretro.framework",
+      "projectURL": "https://github.com/libretro/beetle-bsnes-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "Beetle WonderSwan (RetroArch)",
+      "identifier": "mednafen.wswan.libretro.framework",
+      "projectURL": "https://github.com/libretro/beetle-wswan-libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.ws",
+        "com.provenance.wsc"
+      ]
+    },
+    {
+      "name": "NeoCD (RetroArch)",
+      "identifier": "neocd.libretro.framework",
+      "projectURL": "https://github.com/libretro/neocd_libretro",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.neogeocd"
+      ]
+    },
+    {
+      "name": "O2EM (Odyssey 2) (RetroArch)",
+      "identifier": "o2em.libretro.framework",
+      "projectURL": "https://github.com/libretro/libretro-o2em",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.odyssey2"
+      ]
+    },
+    {
+      "name": "PUAE (Amiga) (RetroArch)",
+      "identifier": "puae.libretro.framework",
+      "projectURL": "https://github.com/libretro/libretro-uae",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "PUAE 2021 (Amiga) (RetroArch)",
+      "identifier": "puae2021.libretro.framework",
+      "projectURL": "https://github.com/libretro/libretro-uae",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "QuickNES (RetroArch)",
+      "identifier": "quicknes.libretro.framework",
+      "projectURL": "https://github.com/libretro/QuickNES_Core",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.nes"
+      ]
+    },
+    {
+      "name": "SameDuck (RetroArch)",
+      "identifier": "sameduck.libretro.framework",
+      "projectURL": "https://github.com/libretro/libretro-SameDuck",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.megaduck"
+      ]
+    },
+    {
+      "name": "ScummVM (RetroArch)",
+      "identifier": "scummvm.libretro.framework",
+      "projectURL": "https://github.com/libretro/scummvm",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "SMS Plus GX (RetroArch)",
+      "identifier": "smsplus.libretro.framework",
+      "projectURL": "https://github.com/libretro/smsplus-gx",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.mastersystem",
+        "com.provenance.gamegear"
+      ]
+    },
+    {
+      "name": "Snes9x 2002 (RetroArch)",
+      "identifier": "snes9x2002.libretro.framework",
+      "projectURL": "https://github.com/libretro/snes9x2002",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "Snes9x 2005 (RetroArch)",
+      "identifier": "snes9x2005.libretro.framework",
+      "projectURL": "https://github.com/libretro/snes9x2005",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "Snes9x 2005 Plus (RetroArch)",
+      "identifier": "snes9x2005.plus.libretro.framework",
+      "projectURL": "https://github.com/libretro/snes9x2005",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "Snes9x 2010 (RetroArch)",
+      "identifier": "snes9x2010.libretro.framework",
+      "projectURL": "https://github.com/libretro/snes9x2010",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "Stella (Current) (RetroArch)",
+      "identifier": "stella.libretro.framework",
+      "projectURL": "https://stella-emu.github.io",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.2600"
+      ]
+    },
+    {
+      "name": "Stella 2023 (RetroArch)",
+      "identifier": "stella2023.libretro.framework",
+      "projectURL": "https://stella-emu.github.io",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.2600"
+      ]
+    },
+    {
+      "name": "VBA Next (RetroArch)",
+      "identifier": "vba.next.libretro.framework",
+      "projectURL": "https://github.com/libretro/vba-next",
+      "version": "Nightly",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.gba"
       ]
     },
     {

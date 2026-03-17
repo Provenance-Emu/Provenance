@@ -15,9 +15,11 @@ Options:
                         Scripts/ for licenses.json)
     --check             Exit non-zero if any core is missing PVLicense or PVCopyrightHolder
     --repo-root DIR     Root of the repository (default: parent of this script's directory)
+    --skip-spm          Skip scanning Package.resolved for SPM dependencies
 
-Requires: Python 3.9+ (uses `from __future__ import annotations` for PEP 604 union
-          syntax compatibility on Python 3.9; Python 3.10+ is not required).
+Requires: Python 3.9+ (`from __future__ import annotations` makes PEP 604 `|` union
+          annotations lazy strings so they parse on 3.9; `get_type_hints()` is not
+          used at runtime).
 """
 
 from __future__ import annotations
@@ -298,7 +300,7 @@ def write_licenses_json(
         clean_entries.append(clean)
 
     manifest = {
-        "cores": clean_entries,
+        "entries": clean_entries,
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as fh:
