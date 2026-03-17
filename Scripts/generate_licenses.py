@@ -20,13 +20,10 @@ Options:
 from __future__ import annotations
 
 import argparse
-import glob
 import json
-import os
 import plistlib
 import sys
 import warnings
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -64,14 +61,13 @@ def _bool_or_none(value: Any) -> bool | None:
 # Core-entry builder
 # ---------------------------------------------------------------------------
 
-REQUIRED_FIELDS = ("PVLicense", "PVCopyrightHolder")
-
-
 def _build_core_entry(
     data: dict[str, Any],
     *,
     is_retro: bool,
     source_path: Path,
+    check_mode: bool = False,
+    repo_root: Path | None = None,
 ) -> dict[str, Any]:
     """Convert a single Core.plist dict into a normalised entry."""
     name = (data.get("PVProjectName") or data.get("PVCoreIdentifier", "Unknown") or "").strip()
@@ -88,18 +84,22 @@ def _build_core_entry(
     fork_notes = data.get("PVForkNotes")
     app_store_compat = _bool_or_none(data.get("PVLicenseAppStoreCompatible"))
 
-    # Warn about missing fields
-    missing = []
-    if not license_spdx:
-        missing.append("PVLicense")
-    if not copyright_holder:
-        missing.append("PVCopyrightHolder")
-    if missing:
-        rel = source_path.name
-        print(
-            f"  WARNING: {name!r} ({identifier}) in {rel} missing: {', '.join(missing)}",
-            file=sys.stderr,
-        )
+    # Warn about missing fields (only in --check mode to avoid stderr spam)
+    if check_mode:
+        missing = []
+        if not license_spdx:
+            missing.append("PVLicense")
+        if not copyright_holder:
+            missing.append("PVCopyrightHolder")
+        if missing:
+            try:
+                rel = source_path.relative_to(repo_root) if repo_root else source_path
+            except ValueError:
+                rel = source_path
+            print(
+                f"  WARNING: {name!r} ({identifier}) in {rel} missing: {', '.join(missing)}",
+                file=sys.stderr,
+            )
 
     return {
         "name": name,
@@ -122,8 +122,10 @@ def _build_core_entry(
 # Native-core scanner
 # ---------------------------------------------------------------------------
 
-def scan_native_cores(repo_root: Path) -> list[dict[str, Any]]:
-    """Find and parse all native Core.plist files under Cores/."""
+def scan_native_cores(
+    repo_root: Path, *, check_mode: bool = False
+) -> list[dict[str, Any]]:
+    """Find and parse all native Core.plist files under Cores/ (recursive)."""
     entries: list[dict[str, Any]] = []
     seen_identifiers: set[str] = set()
 
@@ -132,19 +134,15 @@ def scan_native_cores(repo_root: Path) -> list[dict[str, Any]]:
         print(f"  INFO: Cores directory not found: {cores_root}", file=sys.stderr)
         return entries
 
-    # Glob both Cores/*/Core.plist and Cores/*/*/Core.plist
-    patterns = [
-        str(cores_root / "*" / "Core.plist"),
-        str(cores_root / "*" / "*" / "Core.plist"),
-        str(cores_root / "*" / "*" / "*" / "Core.plist"),
-    ]
-    found_files: set[str] = set()
-    for pattern in patterns:
-        for path_str in glob.glob(pattern):
-            found_files.add(path_str)
+    # Recursively find all Core.plist files; skip build artifacts and cmake dirs
+    _skip_dirs = {".build", "cmake-build", "cmake_build", "build", "DerivedData"}
+    found_files: list[Path] = []
+    for path in sorted(cores_root.rglob("Core.plist")):
+        if any(part in _skip_dirs for part in path.parts):
+            continue
+        found_files.append(path)
 
-    for path_str in sorted(found_files):
-        path = Path(path_str)
+    for path in found_files:
         data = _load_plist(path)
         if data is None:
             continue
@@ -157,7 +155,10 @@ def scan_native_cores(repo_root: Path) -> list[dict[str, Any]]:
         if identifier:
             seen_identifiers.add(identifier)
 
-        entry = _build_core_entry(data, is_retro=False, source_path=path)
+        entry = _build_core_entry(
+            data, is_retro=False, source_path=path,
+            check_mode=check_mode, repo_root=repo_root,
+        )
         entries.append(entry)
 
     return entries
@@ -167,7 +168,9 @@ def scan_native_cores(repo_root: Path) -> list[dict[str, Any]]:
 # RetroArch core scanner
 # ---------------------------------------------------------------------------
 
-def scan_retroarch_cores(repo_root: Path) -> list[dict[str, Any]]:
+def scan_retroarch_cores(
+    repo_root: Path, *, check_mode: bool = False
+) -> list[dict[str, Any]]:
     """Parse the RetroArch Core.plist which contains a PVCores array."""
     ra_plist_path = (
         repo_root / "CoresRetro" / "RetroArch" / "PVRetroArch" / "Core.plist"
@@ -183,7 +186,10 @@ def scan_retroarch_cores(repo_root: Path) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
 
     # First, add the top-level RetroArch entry itself
-    top_entry = _build_core_entry(data, is_retro=True, source_path=ra_plist_path)
+    top_entry = _build_core_entry(
+        data, is_retro=True, source_path=ra_plist_path,
+        check_mode=check_mode, repo_root=repo_root,
+    )
     entries.append(top_entry)
 
     # Then iterate PVCores sub-entries
@@ -194,7 +200,10 @@ def scan_retroarch_cores(repo_root: Path) -> list[dict[str, Any]]:
     for core_data in pv_cores:
         if not isinstance(core_data, dict):
             continue
-        entry = _build_core_entry(core_data, is_retro=True, source_path=ra_plist_path)
+        entry = _build_core_entry(
+            core_data, is_retro=True, source_path=ra_plist_path,
+            check_mode=check_mode, repo_root=repo_root,
+        )
         entries.append(entry)
 
     return entries
@@ -278,7 +287,6 @@ def write_licenses_json(
         clean_entries.append(clean)
 
     manifest = {
-        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "cores": clean_entries,
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -356,9 +364,7 @@ def write_licenses_md(
     with open(output_path, "w", encoding="utf-8") as fh:
         fh.write(header)
         fh.write("\n".join(rows))
-        fh.write("\n\n---\n_Generated: "
-                 + datetime.now(timezone.utc).strftime("%Y-%m-%d")
-                 + "_\n")
+        fh.write("\n")
     print(f"  Wrote {output_path} ({len(rows)} rows)")
 
 
@@ -448,11 +454,11 @@ def main() -> None:
     output_dir = args.output_dir or repo_root
 
     print("Scanning native cores …")
-    native_entries = scan_native_cores(repo_root)
+    native_entries = scan_native_cores(repo_root, check_mode=args.check)
     print(f"  Found {len(native_entries)} native core entries.")
 
     print("Scanning RetroArch cores …")
-    ra_entries = scan_retroarch_cores(repo_root)
+    ra_entries = scan_retroarch_cores(repo_root, check_mode=args.check)
     print(f"  Found {len(ra_entries)} RetroArch core entries.")
 
     spm_entries: list[dict[str, Any]] = []

@@ -6,6 +6,7 @@
 
 | Core / Library | License | Copyright Holder | Project URL | App Store Safe |
 |---|---|---|---|---|
+| [Atari 800](https://atari800.github.io)<br/><small>`com.provenance.core.atari800`</small> | TBD | TBD | [https://atari800.github.io](https://atari800.github.io) | TBD |
 | [BeetlePSX](https://github.com/libretro/beetle-psx-libretro)<br/><small>`com.provenance.core.beetlepsx`</small> | TBD | TBD | [https://github.com/libretro/beetle-psx-libretro](https://github.com/libretro/beetle-psx-libretro) | TBD |
 | [Azahar (Experimental)](https://azahar-emu.org)<br/><small>`com.provenance.core.azahar`</small> | TBD | TBD | [https://azahar-emu.org](https://azahar-emu.org) | TBD |
 | [Desmume2015](https://github.com/flyinghead/desmume2015)<br/><small>`com.provenance.core.desmume2015`</small> | TBD | TBD | [https://github.com/flyinghead/desmume2015](https://github.com/flyinghead/desmume2015) | TBD |
@@ -17,18 +18,28 @@
 | FBNeo<br/><small>`com.provenance.fbneo`</small> | TBD | TBD | TBD | TBD |
 | [Flycast](https://github.com/flyinghead/flycast)<br/><small>`com.provenance.core.flycast`</small> | TBD | TBD | [https://github.com/flyinghead/flycast](https://github.com/flyinghead/flycast) | TBD |
 | [FreeIntv](https://github.com/libretro/FreeIntv)<br/><small>`com.provenance.core.FreeIntv`</small> | TBD | TBD | [https://github.com/libretro/FreeIntv](https://github.com/libretro/FreeIntv) | TBD |
+| [Gambatte](https://github.com/sinamas/gambatte)<br/><small>`com.provenance.core.gambatte`</small> | TBD | TBD | [https://github.com/sinamas/gambatte](https://github.com/sinamas/gambatte) | TBD |
 | [GME](https://github.com/libretro/libretro-gme)<br/><small>`com.provenance.core.GME`</small> | TBD | TBD | [https://github.com/libretro/libretro-gme](https://github.com/libretro/libretro-gme) | TBD |
 | [Gearcoleco](https://github.com/drhelius/Gearcoleco)<br/><small>`com.provenance.core.gearcoleco`</small> | TBD | TBD | [https://github.com/drhelius/Gearcoleco](https://github.com/drhelius/Gearcoleco) | TBD |
+| [Genesis Plus GX](https://github.com/ekeeke/Genesis-Plus-GX)<br/><small>`com.provenance.core.genplusgx`</small> | TBD | TBD | [https://github.com/ekeeke/Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX) | TBD |
+| [Mednafen](https://mednafen.github.io)<br/><small>`com.provenance.core.mednafen`</small> | TBD | TBD | [https://mednafen.github.io](https://mednafen.github.io) | TBD |
 | [Mini vMac](https://www.gryphel.com/c/minivmac/)<br/><small>`com.provenance.core.minivmac`</small> | TBD | TBD | [https://www.gryphel.com/c/minivmac/](https://www.gryphel.com/c/minivmac/) | TBD |
 | [Mu](https://meepingsnesroms.github.io)<br/><small>`com.provenance.core.Mu`</small> | TBD | TBD | [https://meepingsnesroms.github.io](https://meepingsnesroms.github.io) | TBD |
+| [Mupen64Plus](https://github.com/mupen64plus)<br/><small>`com.provenance.core.mupen64plus`</small> | TBD | TBD | [https://github.com/mupen64plus](https://github.com/mupen64plus) | TBD |
 | [Mupen64Plus-Next](https://github.com/libretro/mupen64plus-libretro-nx)<br/><small>`com.provenance.core.mupen64plusnx`</small> | TBD | TBD | [https://github.com/libretro/mupen64plus-libretro-nx](https://github.com/libretro/mupen64plus-libretro-nx) | TBD |
-| [Genesis Plus GX](https://github.com/ekeeke/Genesis-Plus-GX)<br/><small>`com.provenance.core.genplusgx`</small> | TBD | TBD | [https://github.com/ekeeke/Genesis-Plus-GX](https://github.com/ekeeke/Genesis-Plus-GX) | TBD |
 | [PPSSPP](https://github.com/hrydgard/ppsspp.git)<br/><small>`com.provenance.core.ppsspp`</small> | TBD | TBD | [https://github.com/hrydgard/ppsspp.git](https://github.com/hrydgard/ppsspp.git) | TBD |
+| [PicoDrive](https://github.com/notaz/picodrive)<br/><small>`com.provenance.core.picodrive`</small> | TBD | TBD | [https://github.com/notaz/picodrive](https://github.com/notaz/picodrive) | TBD |
 | [Play!](https://github.com/jpd002/Play-)<br/><small>`com.provenance.core.play`</small> | TBD | TBD | [https://github.com/jpd002/Play-](https://github.com/jpd002/Play-) | TBD |
+| [PokeMini](http://sourceforge.net/projects/pokemini/)<br/><small>`com.provenance.core.pokemini`</small> | TBD | TBD | [http://sourceforge.net/projects/pokemini/](http://sourceforge.net/projects/pokemini/) | TBD |
 | [Potator](https://github.com/alekmaul/potator)<br/><small>`com.provenance.core.potator`</small> | TBD | TBD | [https://github.com/alekmaul/potator](https://github.com/alekmaul/potator) | TBD |
+| [ProSystem](https://gstanton.github.io/ProSystem1_3/)<br/><small>`com.provenance.core.prosystem`</small> | TBD | TBD | [https://gstanton.github.io/ProSystem1_3/](https://gstanton.github.io/ProSystem1_3/) | TBD |
 | [Reicast](https://github.com/reicast/reicast-emulator)<br/><small>`com.provenance.core.reicast`</small> | TBD | TBD | [https://github.com/reicast/reicast-emulator](https://github.com/reicast/reicast-emulator) | TBD |
 | [SameDuck](https://github.com/libretro/libretro-SameDuck)<br/><small>`com.provenance.core.SameDuck`</small> | TBD | TBD | [https://github.com/libretro/libretro-SameDuck](https://github.com/libretro/libretro-SameDuck) | TBD |
+| [Stella](https://stella-emu.github.io)<br/><small>`com.provenance.core.stella`</small> | TBD | TBD | [https://stella-emu.github.io](https://stella-emu.github.io) | TBD |
+| [TGBDual](https://github.com/libretro/tgbdual-libretro)<br/><small>`com.provenance.core.tgbdual`</small> | TBD | TBD | [https://github.com/libretro/tgbdual-libretro](https://github.com/libretro/tgbdual-libretro) | TBD |
 | [TIC80](http://fms.komkon.org/TIC80/)<br/><small>`com.provenance.core.TIC80`</small> | TBD | TBD | [http://fms.komkon.org/TIC80/](http://fms.komkon.org/TIC80/) | TBD |
+| [VecX](https://github.com/libretro/libretro-vecx)<br/><small>`com.provenance.core.VecX`</small> | TBD | TBD | [https://github.com/libretro/libretro-vecx](https://github.com/libretro/libretro-vecx) | TBD |
+| [VisualBoyAdvance](https://sourceforge.net/projects/vba/)<br/><small>`com.provenance.core.visualboyadvance`</small> | TBD | TBD | [https://sourceforge.net/projects/vba/](https://sourceforge.net/projects/vba/) | TBD |
 | [Yabause](https://yabause.org)<br/><small>`com.provenance.core.Yabause`</small> | TBD | TBD | [https://yabause.org](https://yabause.org) | TBD |
 | [blueMSX](http://fms.komkon.org/blueMSX/)<br/><small>`com.provenance.core.blueMSX`</small> | TBD | TBD | [http://fms.komkon.org/blueMSX/](http://fms.komkon.org/blueMSX/) | TBD |
 | [EmuThreeds](https://github.com/emuPlace/emuThreeDS)<br/><small>`com.provenance.core.emuThree`</small> | TBD | TBD | [https://github.com/emuPlace/emuThreeDS](https://github.com/emuPlace/emuThreeDS) | TBD |
@@ -36,10 +47,12 @@
 | [fMSX](http://fms.komkon.org/fMSX/)<br/><small>`com.provenance.core.fMSX`</small> | TBD | TBD | [http://fms.komkon.org/fMSX/](http://fms.komkon.org/fMSX/) | TBD |
 | [Fuse](http://fuse-emulator.sourceforge.net)<br/><small>`com.provenance.core.Fuse`</small> | TBD | TBD | [http://fuse-emulator.sourceforge.net](http://fuse-emulator.sourceforge.net) | TBD |
 | [Hatari](http://hatari.tuxfamily.org/index.html)<br/><small>`com.provenance.core.Hatari`</small> | TBD | TBD | [http://hatari.tuxfamily.org/index.html](http://hatari.tuxfamily.org/index.html) | TBD |
+| [mGBA](https://mgba.io/)<br/><small>`com.provenance.core.mGBA`</small> | TBD | TBD | [https://mgba.io/](https://mgba.io/) | TBD |
 | [MelonDS](https://melonds.kuribo64.net)<br/><small>`com.provenance.core.MelonDS`</small> | TBD | TBD | [https://melonds.kuribo64.net](https://melonds.kuribo64.net) | TBD |
 | [Opera](https://github.com/libretro/opera-libretro)<br/><small>`com.provenance.core.opera`</small> | TBD | TBD | [https://github.com/libretro/opera-libretro](https://github.com/libretro/opera-libretro) | TBD |
 | [PCSX (Rearmed)](https://github.com/notaz/pcsx_rearmed)<br/><small>`com.provenance.core.PCSXRearmed`</small> | TBD | TBD | [https://github.com/notaz/pcsx_rearmed](https://github.com/notaz/pcsx_rearmed) | TBD |
 | [Snes9x](http://www.snes9x.com)<br/><small>`com.provenance.core.snes9x`</small> | TBD | TBD | [http://www.snes9x.com](http://www.snes9x.com) | TBD |
+| [Snesticle](https://github.com/iaddis/SNESticle)<br/><small>`com.provenance.core.snesticle`</small> | TBD | TBD | [https://github.com/iaddis/SNESticle](https://github.com/iaddis/SNESticle) | TBD |
 | [RetroArch](https://github.com/libretro/RetroArch)<br/><small>`com.provenance.core.retroarch`</small> | TBD | TBD | [https://github.com/libretro/RetroArch](https://github.com/libretro/RetroArch) | TBD |
 | [Beetle PSX (HW Renderer) (RetroArch)](https://github.com/libretro/beetle-psx-libretro)<br/><small>`mednafen.psx.hw.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/beetle-psx-libretro](https://github.com/libretro/beetle-psx-libretro) | TBD |
 | [Beetle PSX (SW Renderer) (RetroArch)](https://github.com/libretro/beetle-psx-libretro)<br/><small>`mednafen.psx.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/beetle-psx-libretro](https://github.com/libretro/beetle-psx-libretro) | TBD |
@@ -52,6 +65,7 @@
 | [Flycast JIT-less (Provenance Beta)](https://github.com/flyinghead/flycast)<br/><small>`flycast-jitless.libretro.framework`</small> | TBD | TBD | [https://github.com/flyinghead/flycast](https://github.com/flyinghead/flycast) | TBD |
 | [Parallel N64 (RetroArch)](https://github.com/libretro/parallel-n64)<br/><small>`parallel.n64.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/parallel-n64](https://github.com/libretro/parallel-n64) | TBD |
 | [Mupen64Plus-Next (RetroArch)](https://github.com/libretro/mupen64plus-libretro-nx)<br/><small>`mupen64plus.next.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/mupen64plus-libretro-nx](https://github.com/libretro/mupen64plus-libretro-nx) | TBD |
+| [Dolphin (RetroArch)](https://github.com/libretro/dolphin)<br/><small>`dolphin.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/dolphin](https://github.com/libretro/dolphin) | TBD |
 | [Mini vMac (RetroArch)](https://www.gryphel.com/c/minivmac/)<br/><small>`minivmac.libretro.framework`</small> | TBD | TBD | [https://www.gryphel.com/c/minivmac/](https://www.gryphel.com/c/minivmac/) | TBD |
 | [DosBox-Pure (RetroArch)](https://github.com/schellingb/dosbox-pure)<br/><small>`dosbox.pure.libretro.framework`</small> | TBD | TBD | [https://github.com/schellingb/dosbox-pure](https://github.com/schellingb/dosbox-pure) | TBD |
 | [MelonDS (RetroArch)](https://melonds.kuribo64.net)<br/><small>`melonds.libretro.framework`</small> | TBD | TBD | [https://melonds.kuribo64.net](https://melonds.kuribo64.net) | TBD |
@@ -122,6 +136,3 @@
 | [TI-83 (Numero) (RetroArch)](https://github.com/libretro/numero)<br/><small>`numero.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/numero](https://github.com/libretro/numero) | TBD |
 | [Mesen (RetroArch)](https://github.com/libretro/mesen)<br/><small>`mesen.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/mesen](https://github.com/libretro/mesen) | TBD |
 | [Mesen-S (RetroArch)](https://github.com/libretro/mesen)<br/><small>`mesen-s.libretro.framework`</small> | TBD | TBD | [https://github.com/libretro/mesen](https://github.com/libretro/mesen) | TBD |
-
----
-_Generated: 2026-03-17_

@@ -1,6 +1,22 @@
 {
-  "generated": "2026-03-17T01:37:51Z",
   "cores": [
+    {
+      "name": "Atari 800",
+      "identifier": "com.provenance.core.atari800",
+      "projectURL": "https://atari800.github.io",
+      "version": "3.1.0",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.5200",
+        "com.provenance.8bit"
+      ]
+    },
     {
       "name": "BeetlePSX",
       "identifier": "com.provenance.core.beetlepsx",
@@ -53,7 +69,7 @@
       "name": "Dolphin",
       "identifier": "com.provenance.core.dolphin",
       "projectURL": "https://github.com/Provenance-Emu/dolphin-ios-jitless/tree/brand175/master%2Bpatches",
-      "version": "4.1.0b5",
+      "version": "11",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -159,7 +175,7 @@
       "name": "Flycast",
       "identifier": "com.provenance.core.flycast",
       "projectURL": "https://github.com/flyinghead/flycast",
-      "version": "1.1",
+      "version": "5.0",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -188,10 +204,27 @@
       ]
     },
     {
+      "name": "Gambatte",
+      "identifier": "com.provenance.core.gambatte",
+      "projectURL": "https://github.com/sinamas/gambatte",
+      "version": "0.5.0",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.gb",
+        "com.provenance.gbc"
+      ]
+    },
+    {
       "name": "GME",
       "identifier": "com.provenance.core.GME",
       "projectURL": "https://github.com/libretro/libretro-gme",
-      "version": "635b1e9",
+      "version": "v0.6.1",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -220,10 +253,63 @@
       ]
     },
     {
+      "name": "Genesis Plus GX",
+      "identifier": "com.provenance.core.genplusgx",
+      "projectURL": "https://github.com/ekeeke/Genesis-Plus-GX",
+      "version": "v1.7.4",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.genesis",
+        "com.provenance.gamegear",
+        "com.provenance.mastersystem",
+        "com.provenance.sg1000",
+        "com.provenance.segacd"
+      ]
+    },
+    {
+      "name": "Mednafen",
+      "identifier": "com.provenance.core.mednafen",
+      "projectURL": "https://mednafen.github.io",
+      "version": "1.32.1",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.saturn",
+        "com.provenance.psx",
+        "com.provenance.lynx",
+        "com.provenance.ngp",
+        "com.provenance.ngpc",
+        "com.provenance.pce",
+        "com.provenance.pcecd",
+        "com.provenance.pcfx",
+        "com.provenance.sgfx",
+        "com.provenance.vb",
+        "com.provenance.ws",
+        "com.provenance.wsc",
+        "com.provenance.nes",
+        "com.provenance.fds",
+        "com.provenance.snes",
+        "com.provenance.gb",
+        "com.provenance.gbc",
+        "com.provenance.gba"
+      ]
+    },
+    {
       "name": "Mini vMac",
       "identifier": "com.provenance.core.minivmac",
       "projectURL": "https://www.gryphel.com/c/minivmac/",
-      "version": "36.04",
+      "version": "b36",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -239,7 +325,7 @@
       "name": "Mu",
       "identifier": "com.provenance.core.Mu",
       "projectURL": "https://meepingsnesroms.github.io",
-      "version": "0",
+      "version": "v1.3.0",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -252,10 +338,10 @@
       ]
     },
     {
-      "name": "Mupen64Plus-Next",
-      "identifier": "com.provenance.core.mupen64plusnx",
-      "projectURL": "https://github.com/libretro/mupen64plus-libretro-nx",
-      "version": "0",
+      "name": "Mupen64Plus",
+      "identifier": "com.provenance.core.mupen64plus",
+      "projectURL": "https://github.com/mupen64plus",
+      "version": "2.5",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -268,10 +354,10 @@
       ]
     },
     {
-      "name": "Genesis Plus GX",
-      "identifier": "com.provenance.core.genplusgx",
-      "projectURL": "https://github.com/ekeeke/Genesis-Plus-GX",
-      "version": "1.7.4 12.13.2020",
+      "name": "Mupen64Plus-Next",
+      "identifier": "com.provenance.core.mupen64plusnx",
+      "projectURL": "https://github.com/libretro/mupen64plus-libretro-nx",
+      "version": "2.4",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -280,11 +366,7 @@
       "appStoreCompatible": null,
       "isRetroArch": false,
       "supportedSystems": [
-        "com.provenance.genesis",
-        "com.provenance.gamegear",
-        "com.provenance.mastersystem",
-        "com.provenance.sg1000",
-        "com.provenance.segacd"
+        "com.provenance.n64"
       ]
     },
     {
@@ -304,6 +386,22 @@
       ]
     },
     {
+      "name": "PicoDrive",
+      "identifier": "com.provenance.core.picodrive",
+      "projectURL": "https://github.com/notaz/picodrive",
+      "version": "2.03",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.32X"
+      ]
+    },
+    {
       "name": "Play!",
       "identifier": "com.provenance.core.play",
       "projectURL": "https://github.com/jpd002/Play-",
@@ -320,6 +418,22 @@
       ]
     },
     {
+      "name": "PokeMini",
+      "identifier": "com.provenance.core.pokemini",
+      "projectURL": "http://sourceforge.net/projects/pokemini/",
+      "version": "v0.60",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.pokemonmini"
+      ]
+    },
+    {
       "name": "Potator",
       "identifier": "com.provenance.core.potator",
       "projectURL": "https://github.com/alekmaul/potator",
@@ -333,6 +447,22 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.supervision"
+      ]
+    },
+    {
+      "name": "ProSystem",
+      "identifier": "com.provenance.core.prosystem",
+      "projectURL": "https://gstanton.github.io/ProSystem1_3/",
+      "version": "1.3",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.7800"
       ]
     },
     {
@@ -355,7 +485,7 @@
       "name": "SameDuck",
       "identifier": "com.provenance.core.SameDuck",
       "projectURL": "https://github.com/libretro/libretro-SameDuck",
-      "version": "a4ae282",
+      "version": "0.13.6",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -368,10 +498,43 @@
       ]
     },
     {
+      "name": "Stella",
+      "identifier": "com.provenance.core.stella",
+      "projectURL": "https://stella-emu.github.io",
+      "version": "3.4.1",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.2600"
+      ]
+    },
+    {
+      "name": "TGBDual",
+      "identifier": "com.provenance.core.tgbdual",
+      "projectURL": "https://github.com/libretro/tgbdual-libretro",
+      "version": "v0.8.3",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.gb",
+        "com.provenance.gbc"
+      ]
+    },
+    {
       "name": "TIC80",
       "identifier": "com.provenance.core.TIC80",
       "projectURL": "http://fms.komkon.org/TIC80/",
-      "version": "0",
+      "version": "24",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -384,10 +547,42 @@
       ]
     },
     {
+      "name": "VecX",
+      "identifier": "com.provenance.core.VecX",
+      "projectURL": "https://github.com/libretro/libretro-vecx",
+      "version": "a4ae282",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.vectrex"
+      ]
+    },
+    {
+      "name": "VisualBoyAdvance",
+      "identifier": "com.provenance.core.visualboyadvance",
+      "projectURL": "https://sourceforge.net/projects/vba/",
+      "version": "1.8.0",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.gba"
+      ]
+    },
+    {
       "name": "Yabause",
       "identifier": "com.provenance.core.Yabause",
       "projectURL": "https://yabause.org",
-      "version": "0",
+      "version": "v0.9.15",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -403,7 +598,7 @@
       "name": "blueMSX",
       "identifier": "com.provenance.core.blueMSX",
       "projectURL": "http://fms.komkon.org/blueMSX/",
-      "version": "0",
+      "version": "svn",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -486,7 +681,7 @@
       "name": "Hatari",
       "identifier": "com.provenance.core.Hatari",
       "projectURL": "http://hatari.tuxfamily.org/index.html",
-      "version": "0",
+      "version": "1.8",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -496,6 +691,22 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.atarist"
+      ]
+    },
+    {
+      "name": "mGBA",
+      "identifier": "com.provenance.core.mGBA",
+      "projectURL": "https://mgba.io/",
+      "version": "0.10.3",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.gba"
       ]
     },
     {
@@ -518,7 +729,7 @@
       "name": "Opera",
       "identifier": "com.provenance.core.opera",
       "projectURL": "https://github.com/libretro/opera-libretro",
-      "version": "0",
+      "version": "1.0.0",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -534,7 +745,7 @@
       "name": "PCSX (Rearmed)",
       "identifier": "com.provenance.core.PCSXRearmed",
       "projectURL": "https://github.com/notaz/pcsx_rearmed",
-      "version": "1",
+      "version": "r23l",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -551,6 +762,22 @@
       "identifier": "com.provenance.core.snes9x",
       "projectURL": "http://www.snes9x.com",
       "version": "1.60",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.snes"
+      ]
+    },
+    {
+      "name": "Snesticle",
+      "identifier": "com.provenance.core.snesticle",
+      "projectURL": "https://github.com/iaddis/SNESticle",
+      "version": "1.0",
       "license": null,
       "licenseURL": null,
       "copyrightHolder": null,
@@ -752,6 +979,23 @@
       "isRetroArch": true,
       "supportedSystems": [
         "com.provenance.n64"
+      ]
+    },
+    {
+      "name": "Dolphin (RetroArch)",
+      "identifier": "dolphin.libretro.framework",
+      "projectURL": "https://github.com/libretro/dolphin",
+      "version": "2025.11.13",
+      "license": null,
+      "licenseURL": null,
+      "copyrightHolder": null,
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.gamecube",
+        "com.provenance.wii"
       ]
     },
     {
@@ -1006,7 +1250,8 @@
         "com.provenance.segacd",
         "com.provenance.genesis",
         "com.provenance.sg1000",
-        "com.provenance.mastersystem"
+        "com.provenance.mastersystem",
+        "com.provenance.gamegear"
       ]
     },
     {
