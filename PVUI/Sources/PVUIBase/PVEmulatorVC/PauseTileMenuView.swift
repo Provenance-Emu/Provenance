@@ -189,6 +189,9 @@ struct PauseTileMenuView: View {
                 await emulatorVC?.loadSaveState(mostRecent)
             }
         case "browseSaves":
+            if tile.dismissOnTap {
+                dismissAction(true)
+            }
             showingSaveStateBrowser = true
         case "reset":
             dismissAction(true)
@@ -201,6 +204,9 @@ struct PauseTileMenuView: View {
             dismissAction(true)
             emulatorVC.takeScreenshot()
         case "screenshots":
+            if tile.dismissOnTap {
+                dismissAction(true)
+            }
             showingScreenshotBrowser = true
         case "saveQuit":
             dismissAction(false)
