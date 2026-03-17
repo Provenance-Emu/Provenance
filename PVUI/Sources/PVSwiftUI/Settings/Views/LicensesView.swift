@@ -173,10 +173,13 @@ struct LicensesView: View {
     }
 
     private var coreList: some View {
-        List {
+        let groupedCores = Dictionary(grouping: sorted) { core in
+            LicenseGroup.classify(core.licenseName ?? "")
+        }
+
+        return List {
             ForEach(LicenseGroup.allCases) { group in
-                let groupCores = sorted.filter { LicenseGroup.classify($0.licenseName ?? "") == group }
-                if !groupCores.isEmpty {
+                if let groupCores = groupedCores[group], !groupCores.isEmpty {
                     Section(header: Text(group.rawValue)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(LinearGradient(
