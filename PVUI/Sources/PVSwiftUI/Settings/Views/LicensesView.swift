@@ -267,6 +267,29 @@ private struct LicenseRowView: View {
     let group: LicenseGroup
     let onOpenURL: (URL) -> Void
 
+    /// Colors used for the card border and shadow.
+    /// Always returns at least two colors to avoid out-of-bounds access.
+    private var borderGradientColors: [Color] {
+        let colors = group.badgeColors
+
+        // Fallback to a default gradient if no colors are defined.
+        guard !colors.isEmpty else {
+            return [.retroPink, .retroPurple]
+        }
+
+        // If only one color is defined, duplicate it.
+        if colors.count == 1, let only = colors.first {
+            return [only, only]
+        }
+
+        // Use the first and last colors when multiple are available.
+        guard let first = colors.first, let last = colors.last else {
+            return [.retroPink, .retroPurple]
+        }
+
+        return [first, last]
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Title row
@@ -306,10 +329,9 @@ private struct LicenseRowView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(
                             LinearGradient(
-                                gradient: Gradient(colors: [
-                                    group.badgeColors[0].opacity(0.5),
-                                    group.badgeColors.last!.opacity(0.5)
-                                ]),
+                                gradient: Gradient(
+                                    colors: borderGradientColors.map { $0.opacity(0.5) }
+                                ),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
@@ -317,7 +339,12 @@ private struct LicenseRowView: View {
                         )
                 )
         )
-        .shadow(color: group.badgeColors[0].opacity(0.15), radius: 6, x: 0, y: 3)
+        .shadow(
+            color: borderGradientColors.first?.opacity(0.15) ?? .black.opacity(0.15),
+            radius: 6,
+            x: 0,
+            y: 3
+        )
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
     }
