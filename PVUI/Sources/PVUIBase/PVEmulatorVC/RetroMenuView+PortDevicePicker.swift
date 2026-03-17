@@ -71,7 +71,6 @@ extension RetroMenuView {
 private struct PortDeviceRow: View {
     let portIndex: Int
     let descriptors: [PortDeviceDescriptor]
-    let initialDeviceType: UInt
     let palette: UXThemePalette
     let onSelect: (UInt) -> Void
 
@@ -82,7 +81,6 @@ private struct PortDeviceRow: View {
          palette: UXThemePalette, onSelect: @escaping (UInt) -> Void) {
         self.portIndex = portIndex
         self.descriptors = descriptors
-        self.initialDeviceType = currentDeviceType
         self.palette = palette
         self.onSelect = onSelect
         _selectedDeviceType = State(initialValue: currentDeviceType)
@@ -93,7 +91,7 @@ private struct PortDeviceRow: View {
     }
 
     private var portLabel: String {
-        String(localized: "PORT \(portIndex + 1)")
+        String(format: NSLocalizedString("Port %d", comment: "Controller port label (e.g. Port 1)"), portIndex + 1).uppercased()
     }
 
     var body: some View {
@@ -191,16 +189,7 @@ private struct PortDeviceRow: View {
     }
 
     private func deviceSymbol(for deviceType: UInt) -> String {
-        switch LibretroDeviceType(rawValue: deviceType) {
-        case .joypad:   return "gamecontroller"
-        case .mouse:    return "computermouse"
-        case .keyboard: return "keyboard"
-        case .lightgun: return "scope"
-        case .analog:   return "gamecontroller.fill"
-        case .pointer:  return "hand.point.up"
-        case .none:     return "nosign"
-        default:        return "gamecontroller"
-        }
+        LibretroDeviceType(rawValue: deviceType)?.symbolName ?? "gamecontroller"
     }
 
     private func deviceFallbackName(_ deviceType: UInt) -> String {

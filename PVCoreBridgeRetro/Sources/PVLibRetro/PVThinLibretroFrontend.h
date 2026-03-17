@@ -264,6 +264,13 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param corePath  Absolute path to the dylib or framework executable.
 + (nullable NSDictionary<NSString *, id> *)probeCoreDylibAtPath:(NSString *)corePath;
 
+// MARK: Startup hooks
+
+/// Optional block invoked after the ROM is loaded successfully but before the emulation loop
+/// thread starts. Assign this block to perform post-load setup in a thread-safe window
+/// (e.g. restoring per-port controller device type selections before the core starts running).
+@property (nonatomic, copy, nullable) dispatch_block_t afterROMLoadBlock;
+
 // MARK: Controller port info
 
 /// Per-port list of device types reported by the core via

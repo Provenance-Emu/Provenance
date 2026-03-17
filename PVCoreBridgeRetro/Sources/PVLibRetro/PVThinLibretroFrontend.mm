@@ -374,7 +374,7 @@ typedef struct PVThinLibretroSymbols {
     NSString *_usernameString;
 
     // Controller port info from RETRO_ENVIRONMENT_SET_CONTROLLER_INFO
-    NSMutableArray<NSMutableArray<NSDictionary<NSString *, id> *> *> *_controllerPortInfo;
+    NSArray<NSArray<NSDictionary<NSString *, id> *> *> *_controllerPortInfo;
     // Current device type selected per port (default RETRO_DEVICE_JOYPAD = 1)
     unsigned _portDeviceTypes[THIN_MAX_PLAYERS];
 
@@ -2449,6 +2449,11 @@ static bool thin_environment(unsigned cmd, void *data) {
     [self _allocateVideoBuffer];
     // _frameInterval ivar read by PVCoreObjCBridge emulation loop timing
     _frameInterval = (_rawAVInfo.timing.fps > 0.0) ? _rawAVInfo.timing.fps : 60.0;
+    // Call post-load hook before starting the emulation loop thread so subclasses
+    // can apply per-port device types in a thread-safe window.
+    if (self.afterROMLoadBlock) {
+        self.afterROMLoadBlock();
+    }
     [super startEmulation];
 }
 
@@ -3277,7 +3282,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             if (!info) return true;
 
             NSMutableArray *portsArray = [NSMutableArray array];
-            for (unsigned p = 0; info[p].types; p++) {
+            for (unsigned p = 0; info[p].types && p < THIN_MAX_PLAYERS; p++) {
                 NSMutableArray *portTypes = [NSMutableArray array];
                 for (unsigned t = 0; t < info[p].num_types; t++) {
                     NSString *desc = info[p].types[t].desc
@@ -3291,7 +3296,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                 [portsArray addObject:portTypes];
             }
             _controllerPortInfo = [portsArray copy];
-            ILOG(@"ThinEnv SET_CONTROLLER_INFO: %lu ports", (unsigned long)portsArray.count);
+            ILOG(@"ThinEnv SET_CONTROLLER_INFO: %lu ports (clamped to THIN_MAX_PLAYERS=%u)", (unsigned long)portsArray.count, THIN_MAX_PLAYERS);
             return true;
         }
         case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:

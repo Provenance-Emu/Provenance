@@ -71,11 +71,13 @@ class PVThinLibretroCore: PVEmulatorCore {
         // Apply per-core iOS-specific option defaults before the emulation loop starts.
         // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
         applyPlatformDefaults()
+        // Register a post-load hook so port device types are restored AFTER retro_load_game
+        // (which triggers SET_CONTROLLER_INFO) but BEFORE the emulation loop thread starts,
+        // avoiding a potential race condition with retro_set_controller_port_device.
+        _bridge.afterROMLoadBlock = { [weak self] in
+            self?.restorePortDeviceTypes()
+        }
         super.startEmulation()
-        // Restore any previously-saved per-port device type selections.
-        // Must run after super.startEmulation() so the core has called retro_load_game
-        // and reported SET_CONTROLLER_INFO.
-        restorePortDeviceTypes()
     }
 
     // MARK: - Per-core platform defaults
@@ -338,10 +340,16 @@ extension PVThinLibretroCore: @preconcurrency CoreOptional {
 
 // MARK: - PortDeviceConfigurable
 
+/// Mirrors THIN_MAX_PLAYERS from PVThinLibretroFrontend.h.
+/// Only the first 4 ports are tracked by the thin frontend's _portDeviceTypes[].
+private let thinMaxPlayers = 4
+
 extension PVThinLibretroCore: PortDeviceConfigurable {
 
     public var controllerPortDescriptors: [[PortDeviceDescriptor]] {
-        return _bridge.controllerPortInfo.map { portTypes in
+        // Clamp to thinMaxPlayers — ports beyond this cannot be tracked or restored.
+        let portInfo = _bridge.controllerPortInfo.prefix(thinMaxPlayers)
+        return portInfo.map { portTypes in
             portTypes.compactMap { dict -> PortDeviceDescriptor? in
                 guard let name = dict["desc"] as? String,
                       let typeNum = dict["id"] as? NSNumber else { return nil }
@@ -363,7 +371,8 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
 
     /// Restore saved device type selections (called after core loads).
     func restorePortDeviceTypes() {
-        let portCount = _bridge.controllerPortInfo.count
+        // Clamp to thinMaxPlayers — _portDeviceTypes[] only has 4 entries.
+        let portCount = min(_bridge.controllerPortInfo.count, thinMaxPlayers)
         for port in 0..<portCount {
             let key = portDevicePersistenceKey(port: port)
             if UserDefaults.standard.object(forKey: key) != nil {
