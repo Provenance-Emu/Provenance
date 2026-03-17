@@ -478,23 +478,5 @@
         "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
       }
     ]
-  },
-  {
-    "version": "3.4.1",
-    "title": "Cleaner Library Titles",
-    "features": [
-      {
-        "symbolName": "textformat.abc",
-        "symbolColor": "blue",
-        "title": "Auto-Normalize ROM Titles",
-        "subtitle": "ROM annotation tags like (USA), [!], and disc numbers are automatically stripped from filenames on import, giving your library clean, readable names."
-      },
-      {
-        "symbolName": "text.badge.checkmark",
-        "symbolColor": "green",
-        "title": "Bulk Library Cleaner",
-        "subtitle": "Preview and apply title cleanup to your whole existing library in one tap via Library Management settings."
-      }
-    ]
   }
 ]

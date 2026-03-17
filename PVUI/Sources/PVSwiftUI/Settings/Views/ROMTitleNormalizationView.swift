@@ -139,6 +139,7 @@ public struct ROMTitleNormalizationView: View {
 
     // MARK: Actions
 
+    @MainActor
     private func load() async {
         isLoading = true
         proposals = await service.buildProposals()
@@ -146,23 +147,27 @@ public struct ROMTitleNormalizationView: View {
         isLoading = false
     }
 
+    @MainActor
     private func applySelected() async {
         let toApply = proposals.filter { selected.contains($0.id) }
         await apply(toApply)
     }
 
+    @MainActor
     private func applyAll() async {
         await apply(proposals)
     }
 
+    @MainActor
     private func apply(_ toApply: [ROMTitleRenameProposal]) async {
         guard !toApply.isEmpty else { return }
         isApplying = true
+        let appliedIDs = Set(toApply.map(\.id))
         do {
             try await service.applyProposals(toApply)
             resultMessage = "Applied \(toApply.count) title rename(s) successfully."
-            proposals.removeAll { selected.contains($0.id) }
-            selected = []
+            proposals.removeAll { appliedIDs.contains($0.id) }
+            selected.subtract(appliedIDs)
         } catch {
             ELOG("ROMTitleNormalizationView: apply failed: \(error)")
             resultMessage = "Failed to apply renames: \(error.localizedDescription)"

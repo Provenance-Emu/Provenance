@@ -40,20 +40,25 @@ public final class ROMTitleNormalizationService: Sendable {
     /// Returns proposals for every game whose title would change after normalization.
     /// Only entries with a meaningful diff are included.
     public func buildProposals() async -> [ROMTitleRenameProposal] {
-        (try? await RealmContext.withBackgroundRealm { realm -> [ROMTitleRenameProposal] in
-            let games = realm.objects(PVGame.self)
-            var proposals: [ROMTitleRenameProposal] = []
-            for game in games {
-                let proposed = game.title.normalizedROMTitle()
-                guard proposed != game.title else { continue }
-                proposals.append(ROMTitleRenameProposal(
-                    id: game.id,
-                    currentTitle: game.title,
-                    proposedTitle: proposed
-                ))
+        do {
+            return try await RealmContext.withBackgroundRealm { realm -> [ROMTitleRenameProposal] in
+                let games = realm.objects(PVGame.self)
+                var proposals: [ROMTitleRenameProposal] = []
+                for game in games {
+                    let proposed = game.title.normalizedROMTitle()
+                    guard proposed != game.title else { continue }
+                    proposals.append(ROMTitleRenameProposal(
+                        id: game.md5Hash,
+                        currentTitle: game.title,
+                        proposedTitle: proposed
+                    ))
+                }
+                return proposals
             }
-            return proposals
-        }) ?? []
+        } catch {
+            ELOG("ROMTitleNormalizationService: failed to build proposals: \(error)")
+            return []
+        }
     }
 
     // MARK: - Apply
@@ -67,7 +72,8 @@ public final class ROMTitleNormalizationService: Sendable {
         guard !proposals.isEmpty else { return }
 
         let idToTitle: [String: String] = Dictionary(
-            uniqueKeysWithValues: proposals.map { ($0.id, $0.proposedTitle) }
+            proposals.map { ($0.id, $0.proposedTitle) },
+            uniquingKeysWith: { _, last in last }
         )
 
         try await RealmContext.withBackgroundRealm { realm in
