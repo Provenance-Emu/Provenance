@@ -78,9 +78,6 @@ public extension SystemIdentifier {
         case 4942: self = .AppleII
         case 37:  self = .Macintosh
 
-        // SNK Systems (duplicate block)
-        case 4956: self = .NeoGeoCD   // Neo Geo CD
-
         // Watara Systems
         case 32: self = .Intellivision // Watara Intellivision
 
