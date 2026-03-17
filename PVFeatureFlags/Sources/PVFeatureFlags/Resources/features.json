@@ -42,6 +42,10 @@
             "minVersion": "3.3.0",
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Scans Frameworks/ at startup for bare .libretro.framework dylibs and registers them as thin-wrapper cores (no RetroArch binary required). Off by default — enable in Settings > Advanced > Feature Flags to test."
+        },
+        "pauseTileMenu": {
+            "enabled": false,
+            "description": "Experimental tile/grid based pause menu that floats over the game screen instead of the classic tab/list panel. Enable in Settings > Advanced > Feature Flags."
         }
     }
 }

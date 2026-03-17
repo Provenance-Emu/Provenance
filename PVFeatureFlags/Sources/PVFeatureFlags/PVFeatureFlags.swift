@@ -28,6 +28,9 @@ public enum PVFeature: String, CaseIterable {
     /// enable via the PVFeatureFlags debug-override UI (accessible on all build types;
     /// hidden behind a cheat code on App Store builds).
     case dynamicLibretroScanner = "dynamicLibretroScanner"
+    /// Enables the experimental tile/grid based pause menu overlay that floats over the
+    /// game screen instead of the classic full-panel tab/list menu. Disabled by default.
+    case pauseTileMenu = "pauseTileMenu"
 }
 
 /// Represents the type of app installation
@@ -102,6 +105,11 @@ public struct FeatureFlag: Codable, Sendable {
         enabled: false,
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. Disabled by default; enable via debug override UI (hidden behind cheat code on App Store builds)."
+    )
+
+    public static let pauseTileMenu = FeatureFlag(
+        enabled: false,
+        description: "Experimental tile/grid based pause menu overlay that floats over the game screen. Default is the classic tab/list menu."
     )
 }
 
@@ -385,6 +393,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
     public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? false }
     public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
+    public var pauseTileMenu: Bool { featureStates[.pauseTileMenu] ?? false }
 
     // MARK: - Feature Queries
 
