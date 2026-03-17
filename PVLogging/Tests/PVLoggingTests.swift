@@ -479,16 +479,40 @@ struct PVLogPublisherTests {
     func asyncStreamCancellation() async throws {
         let publisher = PVLogPublisher.shared
 
-        let task = Task {
-            let stream = publisher.makeLogStream()
-            for await _ in stream { break }
+        actor StreamObserver {
+            var didReceiveEntry = false
+
+            func markReceived() {
+                didReceiveEntry = true
+            }
         }
 
+        let observer = StreamObserver()
+
+        let task = Task {
+            let stream = publisher.makeLogStream()
+            for await _ in stream {
+                await observer.markReceived()
+            }
+        }
+
+        // Emit an entry to ensure the stream produces at least one value
+        let uniqueMessage = "asyncstream-cancel-\(UUID().uuidString)"
+        publisher.storeEntry(message: uniqueMessage,
+                             level: .info,
+                             categoryName: "general",
+                             file: "T.swift",
+                             function: "f()",
+                             line: 1)
+
+        // Request cancellation and wait for the consumer task to finish.
+        // If the stream does not respect cancellation, this await will hang.
         task.cancel()
-        // Allow cancellation to propagate
-        try await Task.sleep(nanoseconds: 20_000_000)
-        // If we reach here without deadlock the test passes
-        #expect(Bool(true))
+        await task.value
+
+        let didReceiveEntry = await observer.didReceiveEntry
+        #expect(didReceiveEntry, "Stream should receive at least one entry before cancellation")
+        #expect(task.isCancelled, "Task should report as cancelled after completion")
     }
 }
 
