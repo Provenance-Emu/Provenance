@@ -72,8 +72,6 @@ def _build_core_entry(
     *,
     is_retro: bool,
     source_path: Path,
-    check_mode: bool = False,
-    repo_root: Optional[Path] = None,
 ) -> dict[str, Any]:
     """Convert a single Core.plist dict into a normalised entry."""
     def _norm(v: Any) -> Optional[str]:
@@ -102,24 +100,8 @@ def _build_core_entry(
     fork_notes = _norm(data.get("PVForkNotes"))
     app_store_compat = _bool_or_none(data.get("PVLicenseAppStoreCompatible"))
 
-    # Warn about missing fields (only in --check mode to avoid stderr spam)
-    if check_mode:
-        missing = []
-        if not license_spdx:
-            # Accept either PVLicense (new) or PVLicenseName (legacy)
-            missing.append("PVLicense/PVLicenseName")
-        if not copyright_holder:
-            # Accept either PVCopyrightHolder (new) or PVCopyright (legacy)
-            missing.append("PVCopyrightHolder/PVCopyright")
-        if missing:
-            try:
-                rel = source_path.relative_to(repo_root) if repo_root else source_path
-            except ValueError:
-                rel = source_path
-            print(
-                f"  WARNING: {name!r} ({identifier}) in {rel} missing: {', '.join(missing)}",
-                file=sys.stderr,
-            )
+    # Missing-field diagnostics are deferred to check_completeness() to avoid
+    # double-printing and to ensure all output appears in one consolidated block.
 
     return {
         "name": name,
@@ -143,7 +125,7 @@ def _build_core_entry(
 # ---------------------------------------------------------------------------
 
 def scan_native_cores(
-    repo_root: Path, *, check_mode: bool = False
+    repo_root: Path,
 ) -> list[dict[str, Any]]:
     """Find and parse all native Core.plist files under Cores/ (recursive)."""
     entries: list[dict[str, Any]] = []
@@ -185,7 +167,6 @@ def scan_native_cores(
 
         entry = _build_core_entry(
             data, is_retro=False, source_path=path,
-            check_mode=check_mode, repo_root=repo_root,
         )
         entries.append(entry)
 
@@ -193,46 +174,86 @@ def scan_native_cores(
 
 
 # ---------------------------------------------------------------------------
-# RetroArch core scanner
+# RetroArch / CoresRetro scanner
 # ---------------------------------------------------------------------------
 
 def scan_retroarch_cores(
-    repo_root: Path, *, check_mode: bool = False
+    repo_root: Path,
 ) -> list[dict[str, Any]]:
-    """Parse the RetroArch Core.plist which contains a PVCores array."""
-    ra_plist_path = (
-        repo_root / "CoresRetro" / "RetroArch" / "PVRetroArch" / "Core.plist"
-    )
-    if not ra_plist_path.is_file():
-        print(f"  INFO: RA Core.plist not found: {ra_plist_path}", file=sys.stderr)
+    """Find and parse all Core.plist files under CoresRetro/ (recursive).
+
+    Each plist is processed as a RetroArch-style manifest: the top-level dict
+    becomes one entry, and any ``PVCores`` array within it adds further
+    sub-entries (the aggregated RetroArch plist bundles many cores this way).
+    Build artifact directories are skipped.
+    """
+    cores_retro_root = repo_root / "CoresRetro"
+    if not cores_retro_root.is_dir():
+        print(f"  INFO: CoresRetro directory not found: {cores_retro_root}", file=sys.stderr)
         return []
 
-    data = _load_plist(ra_plist_path)
-    if data is None:
+    _skip_dirs = {".build", "cmake-build", "cmake_build", "build", "DerivedData"}
+    found_files: list[Path] = []
+    for path in sorted(cores_retro_root.rglob("Core.plist")):
+        if any(part in _skip_dirs for part in path.parts):
+            continue
+        found_files.append(path)
+
+    if not found_files:
+        print(f"  INFO: No Core.plist files found under {cores_retro_root}", file=sys.stderr)
         return []
 
     entries: list[dict[str, Any]] = []
+    seen_identifiers: set[str] = set()
 
-    # First, add the top-level RetroArch entry itself
-    top_entry = _build_core_entry(
-        data, is_retro=True, source_path=ra_plist_path,
-        check_mode=check_mode, repo_root=repo_root,
-    )
-    entries.append(top_entry)
-
-    # Then iterate PVCores sub-entries
-    pv_cores = data.get("PVCores", [])
-    if not isinstance(pv_cores, list):
-        return entries
-
-    for core_data in pv_cores:
-        if not isinstance(core_data, dict):
+    for plist_path in found_files:
+        data = _load_plist(plist_path)
+        if data is None:
             continue
-        entry = _build_core_entry(
-            core_data, is_retro=True, source_path=ra_plist_path,
-            check_mode=check_mode, repo_root=repo_root,
-        )
-        entries.append(entry)
+
+        # Top-level entry (represents the core package / bridge itself)
+        identifier = data.get("PVCoreIdentifier", "")
+        if identifier and identifier in seen_identifiers:
+            try:
+                rel = plist_path.relative_to(repo_root)
+            except ValueError:
+                rel = plist_path
+            print(
+                f"  WARNING: duplicate PVCoreIdentifier {identifier!r} at {rel}; skipping.",
+                file=sys.stderr,
+            )
+        else:
+            if identifier:
+                seen_identifiers.add(identifier)
+            top_entry = _build_core_entry(
+                data, is_retro=True, source_path=plist_path,
+            )
+            entries.append(top_entry)
+
+        # Sub-entries from PVCores array (aggregated RetroArch plist pattern)
+        pv_cores = data.get("PVCores", [])
+        if not isinstance(pv_cores, list):
+            continue
+        for core_data in pv_cores:
+            if not isinstance(core_data, dict):
+                continue
+            sub_id = core_data.get("PVCoreIdentifier", "")
+            if sub_id and sub_id in seen_identifiers:
+                try:
+                    rel = plist_path.relative_to(repo_root)
+                except ValueError:
+                    rel = plist_path
+                print(
+                    f"  WARNING: duplicate PVCoreIdentifier {sub_id!r} in {rel}; skipping.",
+                    file=sys.stderr,
+                )
+                continue
+            if sub_id:
+                seen_identifiers.add(sub_id)
+            entry = _build_core_entry(
+                core_data, is_retro=True, source_path=plist_path,
+            )
+            entries.append(entry)
 
     return entries
 
@@ -365,7 +386,8 @@ def write_licenses_md(
         upstream_url = e.get("upstreamProjectURL")
         app_compat = e.get("appStoreCompatible")
 
-        # Format the license cell: link to licenseURL if available
+        # Format the license cell: always link to licenseURL when available,
+        # even when the SPDX identifier is missing (shows "TBD" as the link text).
         if license_url:
             link_text = e.get("license") or license_spdx
             license_cell = f"[{link_text}]({license_url})"
@@ -429,8 +451,10 @@ def check_completeness(entries: list[dict[str, Any]]) -> int:
                 missing.append("license")
             if not e.get("copyrightHolder"):
                 missing.append("copyrightHolder")
+            source = e.get("_sourceFile", "")
+            source_note = f" ({source})" if source else ""
             print(
-                f"  - {e.get('name', e.get('identifier'))} [{', '.join(missing)}]",
+                f"  - {e.get('name', e.get('identifier'))} [{', '.join(missing)}]{source_note}",
                 file=sys.stderr,
             )
     else:
@@ -490,11 +514,11 @@ def main() -> None:
     output_dir = args.output_dir or repo_root
 
     print("Scanning native cores …")
-    native_entries = scan_native_cores(repo_root, check_mode=args.check)
+    native_entries = scan_native_cores(repo_root)
     print(f"  Found {len(native_entries)} native core entries.")
 
     print("Scanning RetroArch cores …")
-    ra_entries = scan_retroarch_cores(repo_root, check_mode=args.check)
+    ra_entries = scan_retroarch_cores(repo_root)
     print(f"  Found {len(ra_entries)} RetroArch core entries.")
 
     spm_entries: list[dict[str, Any]] = []
