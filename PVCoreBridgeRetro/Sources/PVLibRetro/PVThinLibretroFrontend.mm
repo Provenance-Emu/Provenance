@@ -523,11 +523,37 @@ static int16_t thin_input_state(unsigned port, unsigned device, unsigned index, 
 
 /// libretro logging bridge.
 static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
+    // Throttle repeated error messages (e.g. Z_Malloc failure loops)
+    static char s_lastErrorMsg[256] = {0};
+    static int  s_lastErrorRepeat = 0;
+    static uint64_t s_lastErrorTime = 0;
+
     va_list args;
     va_start(args, fmt);
     char buf[2048];
     vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
+
+    if (level == RETRO_LOG_ERROR) {
+        uint64_t now = (uint64_t)(CACurrentMediaTime() * 1000); // ms
+        if (strncmp(buf, s_lastErrorMsg, sizeof(s_lastErrorMsg) - 1) == 0
+            && (now - s_lastErrorTime) < 2000) {
+            s_lastErrorRepeat++;
+            if (s_lastErrorRepeat == 5) {
+                ELOG(@"[Core] (repeated %d times, suppressing further)", s_lastErrorRepeat);
+            }
+            s_lastErrorTime = now;
+            return; // Suppress repeated identical errors within 2s
+        }
+        // New error or enough time passed — reset counter
+        if (s_lastErrorRepeat > 5) {
+            ELOG(@"[Core] (previous error repeated %d total times)", s_lastErrorRepeat);
+        }
+        strncpy(s_lastErrorMsg, buf, sizeof(s_lastErrorMsg) - 1);
+        s_lastErrorRepeat = 1;
+        s_lastErrorTime = now;
+    }
+
     NSString *msg = [NSString stringWithUTF8String:buf];
     switch (level) {
         case RETRO_LOG_DEBUG: DLOG(@"[Core] %@", msg); break;
@@ -1937,8 +1963,25 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (BOOL)loadState:(NSData *)stateData {
-    if (!_sym.retro_unserialize || !stateData) return NO;
-    return _sym.retro_unserialize(stateData.bytes, stateData.length);
+    if (!_sym.retro_unserialize || !stateData || stateData.length == 0) return NO;
+
+    // Validate size against what the core expects. A size mismatch usually means
+    // the save state came from a different core version or a different wrapper
+    // (e.g. full RetroArch vs thin). Allow loading if sizes differ (some cores
+    // handle version differences gracefully) but warn about it.
+    if (_sym.retro_serialize_size) {
+        size_t expectedSize = _sym.retro_serialize_size();
+        if (expectedSize > 0 && stateData.length != expectedSize) {
+            WLOG(@"ThinFrontend: save state size mismatch — file: %zu, core expects: %zu",
+                 (size_t)stateData.length, expectedSize);
+        }
+    }
+
+    BOOL success = _sym.retro_unserialize(stateData.bytes, stateData.length);
+    if (!success) {
+        ELOG(@"ThinFrontend: retro_unserialize failed — save state may be from incompatible core version");
+    }
+    return success;
 }
 
 // MARK: - File-based save states (compatible with PVRetroArch save files)
