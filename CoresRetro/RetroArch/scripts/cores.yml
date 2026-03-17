@@ -1,0 +1,844 @@
+# cores.yml — Single source of truth for libretro core management
+#
+# This file replaces 4 manually-maintained url list files:
+#   urls.txt, urls-appstore.txt, urls-tv.txt, urls-appstore-tv.txt
+# and their corresponding xcfilelist files.
+#
+# Run `python3 Scripts/generate_core_lists.py generate` to regenerate all files.
+#
+# Fields per core entry:
+#   name      - core name (used to derive filenames)
+#   ios       - included in iOS builds
+#   tvos      - included in tvOS builds
+#   appstore  - allowed in App Store builds (false = excluded from appstore variants)
+#   enabled   - if false, written as a commented line (#url or #path) in ALL generated
+#               files — both url lists and xcfilelists use the same convention
+#   filename  - ONLY set for platform-neutral filenames (no _ios/_tvos suffix)
+#               e.g., "flycast_libretro.dylib"
+#               Omit for standard platform-suffixed cores.
+#   appstore_excluded_reason - optional human-readable reason for appstore: false
+
+buildbot:
+  base_url: "https://buildbot.libretro.com/nightly/apple"
+  ios_path: "ios-arm64/latest"
+  tvos_path: "tvos-arm64/latest"
+
+cores:
+  # Globally disabled cores (commented out in all files)
+  - name: snes9x
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+
+  # App Store exclusions — present in sideload builds, commented in appstore builds
+  - name: mcsoftserve
+    ios: true
+    tvos: true
+    appstore: false
+    enabled: true
+    appstore_excluded_reason: "Not approved for App Store distribution"
+
+  - name: dolphin
+    ios: true
+    tvos: true
+    appstore: false
+    enabled: true
+    filename: "dolphin_libretro.dylib"
+    appstore_excluded_reason: "Contains JIT/dynamic recompilation not permitted in App Store"
+
+  # tvOS-only cores (not available on iOS)
+  - name: vitaquake2
+    ios: false
+    tvos: true
+    appstore: true
+    enabled: false
+
+  - name: vitaquake2-rogue
+    ios: false
+    tvos: true
+    appstore: true
+    enabled: false
+
+  - name: vitaquake2-xatrix
+    ios: false
+    tvos: true
+    appstore: true
+    enabled: false
+
+  - name: vitaquake2-zaero
+    ios: false
+    tvos: true
+    appstore: true
+    enabled: false
+
+  - name: puau
+    ios: false
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: puau2021
+    ios: false
+    tvos: true
+    appstore: true
+    enabled: true
+
+  # Standard cores (present on both iOS and tvOS, appstore: true)
+  - name: "2048"
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: "81"
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: a5200
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: atari800
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: bluemsx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: bsnes_hd_beta
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: bsnes
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: bsnes_mercury_accuracy
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: bsnes_mercury_balanced
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: bsnes_mercury_performance
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: cap32
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: desmume
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: dice
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: dinothawr
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: dosbox_pure
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fbalpha2012_cps1
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fbalpha2012_cps2
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fbalpha2012_cps3
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fbalpha2012
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fbalpha2012_neogeo
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fbneo
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fceumm
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: flycast
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+    filename: "flycast_libretro.dylib"
+
+  - name: fmsx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+    filename: "fmsx_libretro.dylib"
+
+  - name: freechaf
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: freeintv
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: fuse
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: galaksija
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: gambatte
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: gearcoleco
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: genesis_plus_gx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: genesis_plus_gx_wide
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: geolith
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: gme
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: gpsp
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: gw
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: handy
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: hatari
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: holani
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: m2000
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mame
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mame2000
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mame2003
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mame2003_plus
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mame2010
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_gba
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_lynx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_ngp
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_pce_fast
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_pce
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_pcfx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_psx_hw
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_psx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_saturn
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_snes
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_supergrafx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_vb
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mednafen_wswan
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: melonds
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: melondsds
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+    filename: "melondsds_libretro.dylib"
+
+  - name: mesen
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mesen-s
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mgba
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: minivmac
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mrboom
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mu
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: mupen64plus_next
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: nekop2
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: neocd
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: nestopia
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: noods
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: np2kai
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: numero
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: o2em
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: opera
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: parallel_n64
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: pcsx_rearmed
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: play
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: pocketcdg
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: pokemini
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: potator
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: ppsspp
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+    filename: "ppsspp_libretro.dylib"
+
+  - name: prboom
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: prosystem
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: puae
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: puae2021
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: px68k
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: qemu
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: quicknes
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: race
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: same_cdi
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: sameboy
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: sameduck
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: scummvm
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: smsplus
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: snes9x2002
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: snes9x2005
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: snes9x2005_plus
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: snes9x2010
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: squirreljme
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: stella
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: stella2014
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: stella2023
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: theodore
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: tyrquake
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vba_next
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vbam
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vecx
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vemulator
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vice_x128
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vice_x64
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vice_x64sc
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vice_xcbm2
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vice_xcbm5x0
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vice_xpet
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vice_xplus4
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  # Note: "ibretro" typo (missing 'l') in the original upstream filename is preserved for compatibility.
+  # The actual filenames are vice_xscpu64_ibretro_ios.dylib / vice_xscpu64_ibretro_tvos.dylib
+  - name: vice_xscpu64
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+    ios_filename: "vice_xscpu64_ibretro_ios.dylib"
+    tvos_filename: "vice_xscpu64_ibretro_tvos.dylib"
+
+  - name: vice_xvic
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: vircon32
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: virtualjaguar
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: virtualxt
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: wasm4
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: x1
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: xrick
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+
+  - name: yabause
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
