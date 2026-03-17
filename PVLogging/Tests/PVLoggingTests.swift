@@ -322,7 +322,6 @@ struct PVLogPublisherTests {
     func storeEntryStores() async throws {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.storeEntry(message: "store-test", level: .info, categoryName: "general",
                              file: "T.swift", function: "f()", line: 1)
@@ -335,7 +334,6 @@ struct PVLogPublisherTests {
     func logStoresEntry() async throws {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.log("test entry", level: .info, file: "Test.swift", function: "testFn()", line: 1)
 
