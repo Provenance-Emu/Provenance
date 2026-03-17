@@ -272,16 +272,41 @@ class BuildbotConfig:
 class CoreEntry:
     def __init__(self, data: dict):
         self.name: str = data.get("name", "")
-        self.ios: bool = bool(data.get("ios", True))
-        self.tvos: bool = bool(data.get("tvos", True))
-        self.appstore: bool = bool(data.get("appstore", True))
-        self.enabled: bool = bool(data.get("enabled", True))
+        self.ios: bool = self._parse_flag(data.get("ios"), "ios", default=True)
+        self.tvos: bool = self._parse_flag(data.get("tvos"), "tvos", default=True)
+        self.appstore: bool = self._parse_flag(data.get("appstore"), "appstore", default=True)
+        self.enabled: bool = self._parse_flag(data.get("enabled"), "enabled", default=True)
         # Platform-neutral: same file for both iOS and tvOS
         self.filename: Optional[str] = data.get("filename") or None
         # Per-platform overrides (for cores with non-standard filenames)
         self._ios_filename: Optional[str] = data.get("ios_filename") or None
         self._tvos_filename: Optional[str] = data.get("tvos_filename") or None
         self.appstore_excluded_reason: Optional[str] = data.get("appstore_excluded_reason") or None
+
+    @staticmethod
+    def _parse_flag(value, field_name: str, default: bool = True) -> bool:
+        """
+        Parse a boolean-like flag from the manifest.
+
+        Accepts:
+          - None: returns the provided default
+          - bool: returned as-is
+          - str: 'true' / 'false' (case-insensitive)
+
+        Raises:
+          ValueError for any other type or string value.
+        """
+        if value is None:
+            return default
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            lowered = value.strip().lower()
+            if lowered == "true":
+                return True
+            if lowered == "false":
+                return False
+        raise ValueError(f"Invalid value for '{field_name}' flag: {value!r} (expected boolean or 'true'/'false')")
 
     @property
     def is_platform_neutral(self) -> bool:
