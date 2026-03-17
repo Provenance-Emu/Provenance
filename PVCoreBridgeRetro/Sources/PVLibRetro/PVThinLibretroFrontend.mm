@@ -189,6 +189,13 @@ typedef struct PVThinLibretroSymbols {
     // Software video buffer (used in ObjCBridgedCoreBridge / PVEmulatorCore mode)
     uint8_t *_videoBufferData;
     NSUInteger _videoBufferBytesPerRow;
+
+    // Input state — joypad bitmask per player (bit N = RETRO_DEVICE_ID_JOYPAD_N)
+    uint16_t _joypadState[THIN_MAX_PLAYERS];
+
+    // Analog axis state per player: [player][index*2 + axis]
+    // index 0 = left stick, 1 = right stick; axis 0 = X, 1 = Y
+    int16_t _analogState[THIN_MAX_PLAYERS][THIN_MAX_ANALOG_AXES];
 }
 
 /// Internal callback methods invoked by the static C trampolines.
@@ -337,6 +344,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         _speedMultiplier = 1.0;
         _videoBufferData = NULL;
         _videoBufferBytesPerRow = 0;
+        memset(_joypadState, 0, sizeof(_joypadState));
+        memset(_analogState, 0, sizeof(_analogState));
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         _glContext = nil;
         _glShareContext = nil;
@@ -536,6 +545,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (void)stopEmulation {
     [super stopEmulation]; // stops emulation loop thread before retro teardown
+    [self clearAllInput];
     if (_sym.retro_unload_game) {
         _sym.retro_unload_game();
     }
@@ -812,7 +822,56 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (self.frontendDelegate) {
         return [self.frontendDelegate libretroFrontend:self inputStateForPort:port device:dev index:idx id:bid];
     }
-    return 0; // TODO: forward GCController state
+
+    // Direct bitmask-based input (used by PVThinLibretroCore Swift responder protocols)
+    if (port >= THIN_MAX_PLAYERS) return 0;
+
+    unsigned deviceType = dev & RETRO_DEVICE_MASK;
+
+    if (deviceType == RETRO_DEVICE_JOYPAD) {
+        if (bid == RETRO_DEVICE_ID_JOYPAD_MASK) {
+            // Bitmask query — return all buttons at once
+            return _joypadState[port];
+        }
+        if (bid <= 15) {
+            return (_joypadState[port] >> bid) & 1;
+        }
+        return 0;
+    }
+
+    if (deviceType == RETRO_DEVICE_ANALOG) {
+        // idx: 0 = left stick, 1 = right stick
+        // bid: 0 = X axis, 1 = Y axis
+        if (idx <= 1 && bid <= 1) {
+            return _analogState[port][idx * 2 + bid];
+        }
+        return 0;
+    }
+
+    return 0;
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Input state management
+// ---------------------------------------------------------------------------
+
+- (void)setButton:(unsigned)buttonId pressed:(BOOL)pressed forPlayer:(unsigned)player {
+    if (player >= THIN_MAX_PLAYERS || buttonId > 15) return;
+    if (pressed) {
+        _joypadState[player] |= (1 << buttonId);
+    } else {
+        _joypadState[player] &= ~(1 << buttonId);
+    }
+}
+
+- (void)setAnalogIndex:(unsigned)index axis:(unsigned)axis value:(int16_t)value forPlayer:(unsigned)player {
+    if (player >= THIN_MAX_PLAYERS || index > 1 || axis > 1) return;
+    _analogState[player][index * 2 + axis] = value;
+}
+
+- (void)clearAllInput {
+    memset(_joypadState, 0, sizeof(_joypadState));
+    memset(_analogState, 0, sizeof(_analogState));
 }
 
 // ---------------------------------------------------------------------------

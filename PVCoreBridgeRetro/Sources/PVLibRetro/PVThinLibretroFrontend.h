@@ -31,6 +31,12 @@
 #import <PVCoreBridgeRetro/libretro.h>
 #import <dlfcn.h>
 
+/// Maximum number of players supported for input.
+#define THIN_MAX_PLAYERS 4
+
+/// Maximum number of analog axes tracked (2 sticks x 2 axes = 4 per player).
+#define THIN_MAX_ANALOG_AXES 4
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// Result of calling retro_get_system_info on a loaded core.
@@ -218,6 +224,19 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Keys are option keys, values are current string values.
 @property (nonatomic, readonly) NSDictionary<NSString *, NSString *> *coreOptions;
 
+/// Structured option metadata parsed from SET_VARIABLES or SET_CORE_OPTIONS_V2.
+/// Each dictionary contains: key, desc, info (nullable), category (nullable),
+/// values (array of {value, label}), default (string).
+@property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *coreOptionDefinitions;
+
+/// Category metadata parsed from SET_CORE_OPTIONS_V2.
+/// Each dictionary contains: key (String), desc (String), info (String or NSNull).
+@property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *coreOptionCategories;
+
+/// Visibility map for core options (key → visible bool).
+/// Options not present are assumed visible. Updated via SET_CORE_OPTIONS_DISPLAY.
+@property (nonatomic, readonly) NSDictionary<NSString *, NSNumber *> *coreOptionVisibility;
+
 /// Update a core option at runtime.
 - (void)setCoreOption:(NSString *)key value:(NSString *)value;
 
@@ -227,6 +246,24 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Does not retain the dylib in the caller's process space after return.
 /// @param corePath  Absolute path to the dylib or framework executable.
 + (nullable NSDictionary<NSString *, id> *)probeCoreDylibAtPath:(NSString *)corePath;
+
+// MARK: Input state
+
+/// Set or clear a single joypad button for a given player.
+/// @param buttonId  A RETRO_DEVICE_ID_JOYPAD_* constant (0..15).
+/// @param pressed   YES to press, NO to release.
+/// @param player    Player index (0-based).
+- (void)setButton:(unsigned)buttonId pressed:(BOOL)pressed forPlayer:(unsigned)player;
+
+/// Set an analog axis value for a given player.
+/// @param index  Stick index: 0 = left stick, 1 = right stick.
+/// @param axis   Axis: 0 = X, 1 = Y.
+/// @param value  Axis value in libretro range (-0x7FFF .. +0x7FFF).
+/// @param player Player index (0-based).
+- (void)setAnalogIndex:(unsigned)index axis:(unsigned)axis value:(int16_t)value forPlayer:(unsigned)player;
+
+/// Clear all button and analog state for all players.
+- (void)clearAllInput;
 
 @end
 
