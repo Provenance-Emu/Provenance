@@ -178,7 +178,13 @@ public extension DeltaSkinManager {
         let requestedGroup = DeltaSkinGameType(systemIdentifier: systemIdentifier)?.skinLayoutGroup
 
         // Get all available skins synchronously
-        let allSkins = try! await availableSkins()
+        let allSkins: [any DeltaSkinProtocol]
+        do {
+            allSkins = try await availableSkins()
+        } catch {
+            ELOG("availableSkinsSync: Failed to load skins for system \(systemIdentifier.rawValue): \(error)")
+            return []
+        }
 
         // Filter skins for this system and convert to [DeltaSkin]
         let filteredSkins = allSkins.filter { skin in
