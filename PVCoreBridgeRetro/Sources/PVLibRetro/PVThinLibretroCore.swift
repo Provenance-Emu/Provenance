@@ -15,6 +15,10 @@ import Foundation
 import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
+#if canImport(GameController) && canImport(CoreHaptics)
+import GameController
+import CoreHaptics
+#endif
 
 /// Internal to keep `PVEmulatorCore` out of the generated
 /// `PVCoreBridgeRetro-Swift.h` header (which would break every
@@ -68,6 +72,16 @@ class PVThinLibretroCore: PVEmulatorCore {
     }
 
     public override func startEmulation() {
+        // Wire system profile for better haptic tuning.
+        if let sysId = systemIdentifier {
+            Task { @MainActor in
+#if canImport(GameController) && canImport(CoreHaptics)
+                if #available(iOS 14.0, tvOS 14.0, *) {
+                    GCControllerHapticsManager.shared.setSystemProfile(forSystemIdentifier: sysId)
+                }
+#endif
+            }
+        }
         // Apply per-core iOS-specific option defaults before the emulation loop starts.
         // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
         applyPlatformDefaults()

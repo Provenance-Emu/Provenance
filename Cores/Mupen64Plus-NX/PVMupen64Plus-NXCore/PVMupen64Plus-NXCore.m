@@ -568,6 +568,8 @@ static void *dlopen_myself()
 
 - (void)startEmulation {
     [self parseOptions];
+    // Register N64 haptic profile for better rumble tuning.
+    [self setupRumbleProfile];
 
     if(!self.isRunning) {
         [super startEmulation];
