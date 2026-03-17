@@ -42,6 +42,10 @@ struct PauseTileMenuView: View {
     @State private var showingSaveStateBrowser = false
     @State private var showingScreenshotBrowser = false
 
+    // MARK: tvOS Focus
+
+    @FocusState private var focusedTileID: String?
+
     // MARK: Size class / orientation
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -250,7 +254,7 @@ struct PauseTileMenuView: View {
 
     private var panelMaxWidth: CGFloat {
         #if os(tvOS)
-        return 640
+        return 780
         #else
         return isLandscape ? 520 : 380
         #endif
@@ -261,6 +265,23 @@ struct PauseTileMenuView: View {
     private func tileView(for tile: PauseMenuTile) -> some View {
         let accentColor = color(for: tile.colorKey)
         let opacity: Double = tile.isEnabled ? 1.0 : 0.35
+        let isFocused = focusedTileID == tile.id
+
+        #if os(tvOS)
+        let iconSize: CGFloat = 36
+        let labelSize: CGFloat = 15
+        let badgeSize: CGFloat = 11
+        let iconFrame: CGFloat = 52
+        let verticalPad: CGFloat = 18
+        let cornerRadius: CGFloat = 16
+        #else
+        let iconSize: CGFloat = 24
+        let labelSize: CGFloat = 11
+        let badgeSize: CGFloat = 9
+        let iconFrame: CGFloat = 40
+        let verticalPad: CGFloat = 12
+        let cornerRadius: CGFloat = 12
+        #endif
 
         return Button {
             handle(tile)
@@ -268,14 +289,14 @@ struct PauseTileMenuView: View {
             VStack(spacing: 6) {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: tile.icon)
-                        .font(.system(size: 24, weight: .semibold))
+                        .font(.system(size: iconSize, weight: .semibold))
                         .foregroundColor(accentColor)
-                        .shadow(color: accentColor.opacity(0.8), radius: 6, x: 0, y: 0)
-                        .frame(width: 40, height: 40)
+                        .shadow(color: accentColor.opacity(isFocused ? 1.0 : 0.8), radius: isFocused ? 12 : 6, x: 0, y: 0)
+                        .frame(width: iconFrame, height: iconFrame)
 
                     if let badge = tile.badge {
                         Text(badge)
-                            .font(.system(size: 9, weight: .bold))
+                            .font(.system(size: badgeSize, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 2)
@@ -286,34 +307,38 @@ struct PauseTileMenuView: View {
                 }
 
                 Text(tile.label)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: labelSize, weight: isFocused ? .bold : .semibold))
                     .foregroundColor(.white)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.8)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, verticalPad)
             .padding(.horizontal, 4)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(accentColor.opacity(0.12))
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(accentColor.opacity(isFocused ? 0.25 : 0.12))
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.black.opacity(0.55))
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(Color.black.opacity(isFocused ? 0.7 : 0.55))
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(accentColor.opacity(0.45), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .strokeBorder(
+                                accentColor.opacity(isFocused ? 0.9 : 0.45),
+                                lineWidth: isFocused ? 2.5 : 1
+                            )
                     )
             )
+            .shadow(color: isFocused ? accentColor.opacity(0.6) : .clear, radius: 20, x: 0, y: 4)
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 30, x: 0, y: 8)
         }
-        .buttonStyle(TileButtonStyle())
+        .buttonStyle(TileButtonStyle(isFocused: isFocused))
         .opacity(opacity)
         .disabled(!tile.isEnabled)
-        #if os(tvOS)
-        .focusable()
-        #endif
+        .focused($focusedTileID, equals: tile.id)
+        .animation(.spring(response: 0.28, dampingFraction: 0.7), value: isFocused)
     }
 
     private func color(for key: PauseMenuTileColor) -> Color {
@@ -357,19 +382,26 @@ struct PauseTileMenuView: View {
 
                 // Floating tile panel
                 let cols = columnCount(for: min(geo.size.width, panelMaxWidth) - 32)
-                let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: cols)
+                let gridSpacing: CGFloat = {
+                    #if os(tvOS)
+                    return 16
+                    #else
+                    return 10
+                    #endif
+                }()
+                let columns = Array(repeating: GridItem(.flexible(), spacing: gridSpacing), count: cols)
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 16) {
+                    VStack(spacing: tvOSAdjusted(16, tvOS: 24)) {
                         // Panel title
                         Text(String(localized: "GAME MENU"))
-                            .font(.system(size: 14, weight: .heavy, design: .rounded))
+                            .font(.system(size: tvOSAdjusted(14, tvOS: 22), weight: .heavy, design: .rounded))
                             .foregroundColor(.white.opacity(0.6))
-                            .tracking(2)
-                            .padding(.top, 4)
+                            .tracking(tvOSAdjusted(2, tvOS: 4))
+                            .padding(.top, tvOSAdjusted(4, tvOS: 8))
 
                         // Tile grid
-                        LazyVGrid(columns: columns, spacing: 10) {
+                        LazyVGrid(columns: columns, spacing: tvOSAdjusted(10, tvOS: 16)) {
                             ForEach(primaryTiles) { tile in
                                 tileView(for: tile)
                             }
@@ -377,7 +409,7 @@ struct PauseTileMenuView: View {
                         .padding(.horizontal, 4)
                         .padding(.bottom, 4)
                     }
-                    .padding(16)
+                    .padding(tvOSAdjusted(16, tvOS: 24))
                 }
                 .background(panelBackground)
                 .frame(maxWidth: panelMaxWidth)
@@ -409,13 +441,28 @@ struct PauseTileMenuView: View {
         .onAppear {
             orientation = UIDevice.current.orientation
         }
-        #endif
-        #if os(tvOS)
+        #elseif os(tvOS)
+        .onAppear {
+            // Set initial focus to the first enabled tile
+            if let firstEnabled = primaryTiles.first(where: { $0.isEnabled }) {
+                focusedTileID = firstEnabled.id
+            }
+        }
         .onExitCommand { dismissAction(true) }
+        .onPlayPauseCommand { dismissAction(true) }
         #endif
     }
 
     // MARK: - Helpers
+
+    /// Returns `tvOS` value on tvOS, `standard` on other platforms.
+    private func tvOSAdjusted(_ standard: CGFloat, tvOS tvOSValue: CGFloat) -> CGFloat {
+        #if os(tvOS)
+        return tvOSValue
+        #else
+        return standard
+        #endif
+    }
 
     private var shouldSaveOnQuit: Bool {
         guard let game = emulatorVC.game, !game.isInvalidated else { return false }
@@ -434,9 +481,13 @@ struct PauseTileMenuView: View {
 // MARK: - TileButtonStyle
 
 private struct TileButtonStyle: ButtonStyle {
+    var isFocused: Bool = false
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(isFocused ? 1.08 : 1.0)
             .scaleEffect(configuration.isPressed ? 0.92 : 1.0)
+            .animation(.spring(response: 0.28, dampingFraction: 0.7), value: isFocused)
             .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
