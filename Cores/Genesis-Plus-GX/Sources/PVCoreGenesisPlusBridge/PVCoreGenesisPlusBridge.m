@@ -547,6 +547,9 @@ static bool environment_callback(unsigned cmd, void *data)
             _multiTapPlayerCount = 4;
             DLOG(@"GenesisPlusBridge: TeamPlayer detected for '%s', enabling 4-player mode",
                  rominfo.international);
+            // Re-run IO initialisation so the core picks up the new input.system type;
+            // retro_load_game calls config_default() which resets input.system to SYSTEM_GAMEPAD.
+            io_init();
         } else {
             _multiTapPlayerCount = 2;
         }
