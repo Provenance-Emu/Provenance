@@ -130,6 +130,21 @@ public final class TouchTrackpadView: UIView {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
         guard self.point(inside: point, with: event) else { return nil }
 
+        // Let higher-zPosition overlays (virtual keyboard, toasts) handle
+        // touches first. Walk siblings with higher zPosition and let them
+        // claim the hit before the trackpad does.
+        if let parent = superview {
+            for sibling in parent.subviews where sibling !== self {
+                if sibling.layer.zPosition > self.layer.zPosition &&
+                   !sibling.isHidden && sibling.alpha > 0.01 {
+                    let siblingPoint = sibling.convert(point, from: self)
+                    if let hit = sibling.hitTest(siblingPoint, with: event), hit !== parent {
+                        return hit
+                    }
+                }
+            }
+        }
+
         // Resolve the authoritative game-screen rect in our coordinate space.
         let gameRect: CGRect
         if let explicit = explicitGameViewRect, !explicit.isEmpty {
