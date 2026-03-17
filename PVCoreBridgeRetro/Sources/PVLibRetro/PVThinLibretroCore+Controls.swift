@@ -879,3 +879,183 @@ extension PVThinLibretroCore: PVPCFXSystemResponderClient {
         }
     }
 }
+
+// MARK: - KeyboardResponder
+
+extension PVThinLibretroCore: KeyboardResponder {
+
+    public var gameSupportsKeyboard: Bool { true }
+    public var requiresKeyboard: Bool { false }
+
+#if canImport(GameController)
+    public var keyChangedHandler: GCKeyboardValueChangedHandler? { nil }
+
+    @available(iOS 14.0, tvOS 14.0, *)
+    public func keyDown(_ key: GCKeyCode) {
+        let retroKey = Self.gcKeyCodeToRetroKey(key)
+        guard retroKey != 0 else { return }
+        _bridge.setKeyState(retroKey, pressed: true)
+    }
+
+    @available(iOS 14.0, tvOS 14.0, *)
+    public func keyUp(_ key: GCKeyCode) {
+        let retroKey = Self.gcKeyCodeToRetroKey(key)
+        guard retroKey != 0 else { return }
+        _bridge.setKeyState(retroKey, pressed: false)
+    }
+#endif
+
+    /// Maps a GCKeyCode to a libretro retro_key value.
+    /// Returns 0 (RETROK_UNKNOWN) for unmapped keys.
+    @available(iOS 14.0, tvOS 14.0, *)
+    nonisolated static func gcKeyCodeToRetroKey(_ key: GCKeyCode) -> UInt32 {
+        switch key {
+        // Letters
+        case .keyA: return 97  // RETROK_a
+        case .keyB: return 98
+        case .keyC: return 99
+        case .keyD: return 100
+        case .keyE: return 101
+        case .keyF: return 102
+        case .keyG: return 103
+        case .keyH: return 104
+        case .keyI: return 105
+        case .keyJ: return 106
+        case .keyK: return 107
+        case .keyL: return 108
+        case .keyM: return 109
+        case .keyN: return 110
+        case .keyO: return 111
+        case .keyP: return 112
+        case .keyQ: return 113
+        case .keyR: return 114
+        case .keyS: return 115
+        case .keyT: return 116
+        case .keyU: return 117
+        case .keyV: return 118
+        case .keyW: return 119
+        case .keyX: return 120
+        case .keyY: return 121
+        case .keyZ: return 122
+        // Digits
+        case .one:   return 49  // RETROK_1
+        case .two:   return 50
+        case .three: return 51
+        case .four:  return 52
+        case .five:  return 53
+        case .six:   return 54
+        case .seven: return 55
+        case .eight: return 56
+        case .nine:  return 57
+        case .zero:  return 48  // RETROK_0
+        // Function keys
+        case .F1:  return 282  // RETROK_F1
+        case .F2:  return 283
+        case .F3:  return 284
+        case .F4:  return 285
+        case .F5:  return 286
+        case .F6:  return 287
+        case .F7:  return 288
+        case .F8:  return 289
+        case .F9:  return 290
+        case .F10: return 291
+        case .F11: return 292
+        case .F12: return 293
+        // Special keys
+        case .returnOrEnter:     return 13   // RETROK_RETURN
+        case .escape:            return 27   // RETROK_ESCAPE
+        case .deleteOrBackspace: return 8    // RETROK_BACKSPACE
+        case .tab:               return 9    // RETROK_TAB
+        case .spacebar:          return 32   // RETROK_SPACE
+        case .upArrow:           return 273  // RETROK_UP
+        case .downArrow:         return 274  // RETROK_DOWN
+        case .rightArrow:        return 275  // RETROK_RIGHT
+        case .leftArrow:         return 276  // RETROK_LEFT
+        case .insert:            return 277  // RETROK_INSERT
+        case .home:              return 278  // RETROK_HOME
+        case .end:               return 279  // RETROK_END
+        case .pageUp:            return 280  // RETROK_PAGEUP
+        case .pageDown:          return 281  // RETROK_PAGEDOWN
+        case .deleteForward:     return 127  // RETROK_DELETE
+        // Modifiers
+        case .leftShift:    return 304  // RETROK_LSHIFT
+        case .rightShift:   return 303  // RETROK_RSHIFT
+        case .leftControl:  return 306  // RETROK_LCTRL
+        case .rightControl: return 305  // RETROK_RCTRL
+        case .leftAlt:      return 308  // RETROK_LALT
+        case .rightAlt:     return 307  // RETROK_RALT
+        case .capsLock:     return 301  // RETROK_CAPSLOCK
+        // Punctuation
+        case .hyphen:              return 45   // RETROK_MINUS
+        case .equalSign:           return 61   // RETROK_EQUALS
+        case .openBracket:         return 91   // RETROK_LEFTBRACKET
+        case .closeBracket:        return 93   // RETROK_RIGHTBRACKET
+        case .backslash:           return 92   // RETROK_BACKSLASH
+        case .semicolon:           return 59   // RETROK_SEMICOLON
+        case .quote:               return 39   // RETROK_QUOTE
+        case .graveAccentAndTilde: return 96   // RETROK_BACKQUOTE
+        case .comma:               return 44   // RETROK_COMMA
+        case .period:              return 46   // RETROK_PERIOD
+        case .slash:               return 47   // RETROK_SLASH
+        // Keypad
+        case .keypad0:         return 256  // RETROK_KP0
+        case .keypad1:         return 257
+        case .keypad2:         return 258
+        case .keypad3:         return 259
+        case .keypad4:         return 260
+        case .keypad5:         return 261
+        case .keypad6:         return 262
+        case .keypad7:         return 263
+        case .keypad8:         return 264
+        case .keypad9:         return 265
+        case .keypadPeriod:    return 266  // RETROK_KP_PERIOD
+        case .keypadSlash:     return 267  // RETROK_KP_DIVIDE
+        case .keypadAsterisk:  return 268  // RETROK_KP_MULTIPLY
+        case .keypadHyphen:    return 269  // RETROK_KP_MINUS
+        case .keypadPlus:      return 270  // RETROK_KP_PLUS
+        case .keypadEnter:     return 271  // RETROK_KP_ENTER
+        case .keypadEqualSign: return 272  // RETROK_KP_EQUALS
+        default:
+            return 0 // RETROK_UNKNOWN
+        }
+    }
+}
+
+// MARK: - MouseResponder
+
+extension PVThinLibretroCore: MouseResponder {
+
+    public var gameSupportsMouse: Bool { true }
+    public var requiresMouse: Bool { false }
+
+#if canImport(GameController)
+    @available(iOS 14.0, tvOS 14.0, *)
+    public func didScroll(_ cursor: GCDeviceCursor) {
+        // Scroll events could map to RETRO_DEVICE_ID_MOUSE_WHEELUP/WHEELDOWN
+        // but GCDeviceCursor doesn't provide a simple delta — no-op for now.
+    }
+
+    public var mouseMovedHandler: GCMouseMoved? { nil }
+#endif
+
+    /// Forward mouse movement as relative deltas to the libretro core.
+    public func mouseMoved(atPoint point: CGPoint) {
+        _bridge.setMouseDeltaX(Int16(clamping: Int(point.x)), deltaY: Int16(clamping: Int(point.y)))
+    }
+
+    public func leftMouseDown(atPoint point: CGPoint) {
+        _bridge.setMouseButton(2, pressed: true)  // RETRO_DEVICE_ID_MOUSE_LEFT = 2
+    }
+
+    public func leftMouseUp() {
+        _bridge.setMouseButton(2, pressed: false)
+    }
+
+    public func rightMouseDown(atPoint point: CGPoint) {
+        _bridge.setMouseButton(3, pressed: true)  // RETRO_DEVICE_ID_MOUSE_RIGHT = 3
+    }
+
+    public func rightMouseUp() {
+        _bridge.setMouseButton(3, pressed: false)
+    }
+}
