@@ -11,7 +11,8 @@
 #   ios       - included in iOS builds
 #   tvos      - included in tvOS builds
 #   appstore  - allowed in App Store builds (false = excluded from appstore variants)
-#   enabled   - if false, written as a commented line (#url) in all generated files
+#   enabled   - if false, written as a commented line (#url or #path) in ALL generated
+#               files — both url lists and xcfilelists use the same convention
 #   filename  - ONLY set for platform-neutral filenames (no _ios/_tvos suffix)
 #               e.g., "flycast_libretro.dylib"
 #               Omit for standard platform-suffixed cores.

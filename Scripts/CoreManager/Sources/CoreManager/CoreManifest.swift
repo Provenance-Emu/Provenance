@@ -129,8 +129,7 @@ extension CoreManifest {
 
     /// Minimal YAML-to-JSON converter for the subset of YAML used in cores.yml.
     private static func yamlToJSON(_ yaml: String) throws -> Data {
-        // Delegate to the Python script for heavy lifting in production.
-        // For the Swift tool we use a simple line-by-line parser.
+        // Simple line-by-line parser for the flat structure of cores.yml.
         var lines = yaml.components(separatedBy: .newlines)
 
         // Strip comment-only lines and blank lines for easier processing

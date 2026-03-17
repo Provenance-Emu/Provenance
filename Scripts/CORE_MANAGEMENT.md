@@ -73,7 +73,7 @@ cores:
 | `ios` | bool | Included in iOS builds |
 | `tvos` | bool | Included in tvOS builds |
 | `appstore` | bool | Allowed in App Store builds (false = commented out in appstore files) |
-| `enabled` | bool | If false, commented out in ALL generated files and omitted from xcfilelists |
+| `enabled` | bool | If false, commented out in ALL generated files (url lists and xcfilelists alike) |
 | `filename` | string? | Custom filename for platform-neutral builds (no `_ios`/`_tvos` suffix) |
 | `appstore_excluded_reason` | string? | Human-readable reason for App Store exclusion |
 
@@ -119,10 +119,10 @@ The generator produces these 8 files:
 | `urls-appstore.txt` | iOS App Store — appstore-excluded cores also commented |
 | `urls-tv.txt` | tvOS sideload — all tvOS cores, disabled ones commented |
 | `urls-appstore-tv.txt` | tvOS App Store — appstore-excluded cores also commented |
-| `output_modules.xcfilelist` | iOS sideload xcfilelist (enabled only) |
-| `output_modules_appstore_ios.xcfilelist` | iOS App Store xcfilelist |
-| `output_modules_tv.xcfilelist` | tvOS sideload xcfilelist |
-| `output_modules_appstore_tv.xcfilelist` | tvOS App Store xcfilelist |
+| `output_modules.xcfilelist` | iOS sideload xcfilelist (disabled cores commented) |
+| `output_modules_appstore_ios.xcfilelist` | iOS App Store xcfilelist (excluded cores commented) |
+| `output_modules_tv.xcfilelist` | tvOS sideload xcfilelist (disabled cores commented) |
+| `output_modules_appstore_tv.xcfilelist` | tvOS App Store xcfilelist (excluded cores commented) |
 
 ### Adding a new core
 
