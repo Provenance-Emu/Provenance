@@ -34,10 +34,116 @@ class PVThinLibretroCore: PVEmulatorCore {
 
     lazy var _bridge: PVThinLibretroFrontend = .init()
 
+    // MARK: - Skin support
+
+    /// Systems that don't have adequate skin support — disable skins to show
+    /// the native on-screen controls or core-specific overlays instead.
+    private static let skinUnsupportedSystems: Set<String> = [
+        "com.provenance.ds",
+        "com.provenance.dos",
+        "com.provenance.mame",
+        "com.provenance.arcade",
+        "com.provenance.palmos",
+        "com.provenance.cps1",
+        "com.provenance.cps2",
+        "com.provenance.cps3",
+        "com.provenance.msx",
+        "com.provenance.msx2"
+    ]
+
+    public override var supportsSkins: Bool {
+        guard let sysId = systemIdentifier else { return true }
+        return !Self.skinUnsupportedSystems.contains(sysId)
+    }
+
     required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
         PVThinLibretroCore.current = self
+    }
+
+    public override func startEmulation() {
+        // Apply per-core iOS-specific option defaults before the emulation loop starts.
+        // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
+        applyPlatformDefaults()
+        super.startEmulation()
+    }
+
+    // MARK: - Per-core platform defaults
+
+    /// Set iOS-specific core option defaults that differ from the core's
+    /// built-in defaults. Only writes if the option hasn't been set yet
+    /// (respects user overrides).
+    private func applyPlatformDefaults() {
+        let coreId = (coreIdentifier ?? "").lowercased()
+        let sysId = (systemIdentifier ?? "").lowercased()
+
+        // MelonDS: enable touch mode for DS
+        if coreId.contains("melonds") {
+            setDefaultOption("melonds_touch_mode", value: "Touch")
+        }
+
+        // DeSmuME: enable touch mode for DS
+        if coreId.contains("desmume") {
+            setDefaultOption("desmume_pointer_type", value: "touch")
+        }
+
+        // DOSBox Pure: use mouse pad mode + enable MIDI
+        if coreId.contains("dosbox") {
+            setDefaultOption("dosbox_pure_mouse_input", value: "pad")
+            setDefaultOption("dosbox_pure_midi", value: "enabled")
+        }
+
+        // PPSSPP: interpreter + high res + texture scaling
+        if coreId.contains("ppsspp") {
+            setDefaultOption("ppsspp_cpu_core", value: "Interpreter")
+            setDefaultOption("ppsspp_internal_resolution", value: "1920x1088")
+            setDefaultOption("ppsspp_texture_scaling_level", value: "5x")
+            setDefaultOption("ppsspp_ignore_bad_memory_access", value: "enabled")
+            setDefaultOption("ppsspp_fast_memory", value: "enabled")
+        }
+
+        // Mupen64Plus-Next: use angrylion RDP
+        if coreId.contains("mupen") {
+            setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")
+        }
+
+        // PrBoom: enable rumble
+        if coreId.contains("prboom") {
+            setDefaultOption("prboom-rumble", value: "enabled")
+        }
+
+        // Hatari: disable HD boot
+        if coreId.contains("hatari") || sysId.contains("atarist") {
+            setDefaultOption("hatari_boot_hd", value: "disabled")
+        }
+
+        // VecX: hardware mode + visual settings
+        if coreId.contains("vecx") {
+            setDefaultOption("vecx_use_hw", value: "Hardware")
+            setDefaultOption("vecx_res_hw", value: "824x1024")
+        }
+
+        // MAME: enable config read/write, boot to BIOS, cheats
+        if coreId.contains("mame") {
+            setDefaultOption("mame_read_config", value: "enabled")
+            setDefaultOption("mame_write_config", value: "enabled")
+            setDefaultOption("mame_boot_to_bios", value: "enabled")
+            setDefaultOption("mame_cheats_enable", value: "enabled")
+        }
+
+        // Beetle PSX HW: use Vulkan
+        if coreId.contains("psx_hw") || coreId.contains("beetle_psx") {
+            setDefaultOption("beetle_psx_hw_renderer", value: "hardware_vk")
+        }
+    }
+
+    /// Set a core option only if it hasn't been set yet (preserves user overrides).
+    private func setDefaultOption(_ key: String, value: String) {
+        let current = _bridge.coreOptions[key] as? String
+        if current == nil {
+            _bridge.setCoreOption(key, value: value)
+        }
     }
 }
 
