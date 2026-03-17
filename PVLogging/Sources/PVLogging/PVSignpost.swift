@@ -83,6 +83,18 @@ public extension OSSignpostID {
     static let exclusive: OSSignpostID = 0
 }
 
+/// Stub `PVSignpostLog` for non-OSLog platforms so call sites remain guard-free.
+public enum PVSignpostLog {
+    /// Frame render timing (emulator display loop) – placeholder on non-Apple platforms.
+    public static let frame: Any = ()
+
+    /// Audio callback timing (core audio processing) – placeholder on non-Apple platforms.
+    public static let audio: Any = ()
+
+    /// ROM load / library scan timing – placeholder on non-Apple platforms.
+    public static let library: Any = ()
+}
+
 /// Stub: signpost APIs are no-ops on non-Apple platforms.
 @inlinable public func signpostBegin(_ log: Any, name: StaticString, id: OSSignpostID = .exclusive) {}
 @inlinable public func signpostEnd(_ log: Any, name: StaticString, id: OSSignpostID = .exclusive) {}
