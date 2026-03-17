@@ -23,14 +23,14 @@ import PVLogging
 /// `principleClass` lookups still work.
 // swiftlint:disable:next attributes
 @objc(PVThinLibretroCore) @objcMembers
-public class PVThinLibretroCore: PVEmulatorCore {
+class PVThinLibretroCore: PVEmulatorCore {
 
     // MARK: Lifecycle
 
     /// Weak reference to the currently-active thin core instance.
     /// Used by the static `options` accessor since `CoreOptional` is static.
     /// Only one emulation runs at a time so this is safe.
-    nonisolated(unsafe) public static weak var current: PVThinLibretroCore?
+    nonisolated(unsafe) static weak var current: PVThinLibretroCore?
 
     lazy var _bridge: PVThinLibretroFrontend = .init()
 
@@ -185,7 +185,7 @@ public class PVThinLibretroCore: PVEmulatorCore {
 
 extension PVThinLibretroCore: @preconcurrency CoreOptional {
 
-    public static var options: [CoreOption] {
+    static var options: [CoreOption] {
         guard let instance = PVThinLibretroCore.current else {
             return []
         }
