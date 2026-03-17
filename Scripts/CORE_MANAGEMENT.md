@@ -175,7 +175,9 @@ Scripts/CoreManager/
 ```
 
 The Swift tool is an optional advanced option for developers who prefer it over
-the Python script. Both tools read the same `cores.yml` and produce identical output.
+the Python script. Both tools read the same `cores.yml` and produce equivalent
+content (same URLs and filenames), though the auto-generated file headers differ
+slightly between tools.
 
 ---
 

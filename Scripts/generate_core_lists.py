@@ -577,13 +577,17 @@ def _core_name_from_filename(filename: str) -> Tuple[str, Optional[str]]:
     if base.endswith(".dylib"):
         base = base[:-6]  # strip .dylib
 
-    # Check for platform suffix
+    # Check for platform suffix (including known upstream typo: _ibretro instead of _libretro)
     if base.endswith("_libretro_ios"):
-        name = base[:-13]
-        return name, None
+        return base[:-13], None
     elif base.endswith("_libretro_tvos"):
-        name = base[:-14]
-        return name, None
+        return base[:-14], None
+    elif base.endswith("_ibretro_ios"):
+        # Handle upstream typo: missing 'l' in 'libretro'
+        return base[:-12], None
+    elif base.endswith("_ibretro_tvos"):
+        # Handle upstream typo: missing 'l' in 'libretro'
+        return base[:-13], None
     else:
         # Platform-neutral — return original filename
         return base.replace("_libretro", ""), filename

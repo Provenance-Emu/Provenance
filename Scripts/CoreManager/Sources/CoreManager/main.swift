@@ -1,9 +1,13 @@
 import ArgumentParser
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 // MARK: - Root command
 
-@main
+// Note: @main is not used here because this file is named main.swift (top-level entry point).
+// ParsableCommand.main() is called explicitly at the bottom of this file.
 struct CoreManager: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "CoreManager",
@@ -243,7 +247,6 @@ struct ValidateCommand: ParsableCommand {
 
         print("Validating \(urls.count) URLs...")
 
-        let semaphore = DispatchSemaphore(value: 0)
         var failures = 0
         let group = DispatchGroup()
         let lock = NSLock()
@@ -278,10 +281,7 @@ struct ValidateCommand: ParsableCommand {
             }.resume()
         }
 
-        group.notify(queue: .main) {
-            semaphore.signal()
-        }
-        semaphore.wait()
+        group.wait()
 
         print("\n\(urls.count) checked, \(failures) failures.")
         if failures > 0 {
@@ -349,14 +349,12 @@ struct DiffCommand: ParsableCommand {
     private func printSimpleDiff(from old: String, to new: String) {
         let oldLines = old.components(separatedBy: .newlines)
         let newLines = new.components(separatedBy: .newlines)
-        let oldSet = Set(oldLines)
-        let newSet = Set(newLines)
-
-        for line in oldLines where !newSet.contains(line) {
-            print("- \(line)")
-        }
-        for line in newLines where !oldSet.contains(line) {
-            print("+ \(line)")
+        let diff = newLines.difference(from: oldLines)
+        for change in diff {
+            switch change {
+            case .remove(_, let element, _): print("- \(element)")
+            case .insert(_, let element, _): print("+ \(element)")
+            }
         }
     }
 }
@@ -433,8 +431,10 @@ struct BootstrapCommand: ParsableCommand {
             print("    ios: \(entry["ios"] as? Bool == true ? "true" : "false")")
             print("    tvos: \(entry["tvos"] as? Bool == true ? "true" : "false")")
             print("    appstore: \(entry["appstore"] as? Bool == true ? "true" : "false")")
-            let iosFile = "\(name)_libretro_ios.dylib"
-            let tvosFile = "\(name)_libretro_tvos.dylib"
+            // Use actual filename (custom for platform-neutral cores, or standard derived name)
+            let customFilename = entry["filename"] as? String
+            let iosFile = customFilename ?? "\(name)_libretro_ios.dylib"
+            let tvosFile = customFilename ?? "\(name)_libretro_tvos.dylib"
             let iosDisabled = !iosEnabled.contains(iosFile)
             let tvosDisabled = !tvosEnabled.contains(tvosFile)
             let bothDisabled = (entry["ios"] as? Bool == true) && (entry["tvos"] as? Bool == true)
@@ -470,9 +470,17 @@ struct BootstrapCommand: ParsableCommand {
             return (String(base.dropLast(13)), nil)
         } else if base.hasSuffix("_libretro_tvos") {
             return (String(base.dropLast(14)), nil)
+        } else if base.hasSuffix("_ibretro_ios") {
+            // Handle upstream typo: missing 'l' in 'libretro'
+            return (String(base.dropLast(12)), nil)
+        } else if base.hasSuffix("_ibretro_tvos") {
+            // Handle upstream typo: missing 'l' in 'libretro'
+            return (String(base.dropLast(13)), nil)
         }
         // Platform-neutral
         let name = base.replacingOccurrences(of: "_libretro", with: "")
         return (name, filename)
     }
 }
+
+CoreManager.main()

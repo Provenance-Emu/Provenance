@@ -140,7 +140,7 @@ extension CoreManifest {
         }
 
         // Build a JSON string from the YAML structure
-        var json = try convertYAMLLinesToJSON(lines)
+        let json = try convertYAMLLinesToJSON(lines)
         return json
     }
 
@@ -177,11 +177,9 @@ extension CoreManifest {
                             i = newI
                         }
                     }
-                } else if let colonRange = content.range(of: ": ") {
+                } else if let (key, value) = splitYAMLKeyValue(content) {
                     // Top-level "key: value"
-                    let key = String(content[content.startIndex..<colonRange.lowerBound])
-                    let value = String(content[colonRange.upperBound...])
-                    result[key.trimmingCharacters(in: .whitespaces)] = parseScalar(value)
+                    result[key] = parseScalar(value)
                     i += 1
                 } else {
                     i += 1
@@ -206,14 +204,8 @@ extension CoreManifest {
             let content = stripInlineComment(String(line.dropFirst(indent)))
             if content.hasPrefix("- ") { break }
 
-            if let colonRange = content.range(of: ": ") {
-                let key = String(content[content.startIndex..<colonRange.lowerBound])
-                    .trimmingCharacters(in: .whitespaces)
-                    .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
-                let value = String(content[colonRange.upperBound...])
-                map[key] = parseScalar(value)
-                i += 1
-            } else if content.hasSuffix(":") {
+            if content.hasSuffix(":") {
+                // Bare "key:" — nested block follows
                 let key = String(content.dropLast())
                     .trimmingCharacters(in: .whitespaces)
                     .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
@@ -233,6 +225,10 @@ extension CoreManifest {
                         }
                     }
                 }
+            } else if let (rawKey, value) = splitYAMLKeyValue(content) {
+                let key = rawKey.trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
+                map[key] = parseScalar(value)
+                i += 1
             } else {
                 i += 1
             }
@@ -257,10 +253,8 @@ extension CoreManifest {
             var item: [String: Any] = [:]
 
             // First field on same line as "- "
-            if let colonRange = itemContent.range(of: ": ") {
-                let key = String(itemContent[itemContent.startIndex..<colonRange.lowerBound])
-                    .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
-                let value = String(itemContent[colonRange.upperBound...])
+            if let (rawKey, value) = splitYAMLKeyValue(itemContent) {
+                let key = rawKey.trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
                 item[key] = parseScalar(value)
             }
 
@@ -275,11 +269,8 @@ extension CoreManifest {
                 let fContent = stripInlineComment(String(fLine.dropFirst(fIndent)))
                 if fContent.hasPrefix("- ") { break }
 
-                if let colonRange = fContent.range(of: ": ") {
-                    let key = String(fContent[fContent.startIndex..<colonRange.lowerBound])
-                        .trimmingCharacters(in: .whitespaces)
-                        .trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
-                    let value = String(fContent[colonRange.upperBound...])
+                if let (rawKey, value) = splitYAMLKeyValue(fContent) {
+                    let key = rawKey.trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
                     item[key] = parseScalar(value)
                 }
                 i += 1
@@ -289,6 +280,20 @@ extension CoreManifest {
         }
 
         return (list, i)
+    }
+
+    /// Split a YAML "key: value" line into (key, value), accepting any whitespace after colon.
+    /// Returns nil if the content is not a valid key-value mapping.
+    private static func splitYAMLKeyValue(_ s: String) -> (key: String, value: String)? {
+        guard let colonIdx = s.firstIndex(of: ":") else { return nil }
+        let afterColon = s.index(after: colonIdx)
+        // Colon must be followed by whitespace or be at end of string
+        guard afterColon == s.endIndex || s[afterColon].isWhitespace else { return nil }
+        let key = String(s[s.startIndex..<colonIdx]).trimmingCharacters(in: .whitespaces)
+        let value = afterColon < s.endIndex
+            ? String(s[afterColon...]).trimmingCharacters(in: .whitespaces)
+            : ""
+        return key.isEmpty ? nil : (key, value)
     }
 
     private static func stripInlineComment(_ s: String) -> String {
