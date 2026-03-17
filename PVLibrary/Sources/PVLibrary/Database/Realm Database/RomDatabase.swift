@@ -301,6 +301,11 @@ public final class RealmConfiguration {
                 }
                 ILOG("Migration to version 24 complete. (Split PVCheats.type into type + codeType)")
             }
+            if oldSchemaVersion < 25 {
+                // PVCore gained three new optional String fields: licenseName, licenseURL, copyright.
+                // Optional String properties default to nil automatically; no data migration needed.
+                ILOG("Migration to version 25 complete. (Added PVCore.licenseName/licenseURL/copyright)")
+            }
         }
 
 #if DEBUG
