@@ -59,100 +59,6 @@
 				<string>com.compuserve.gif</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>CFBundleTypeName</key>
-			<string>ZIP Archive</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>public.zip-archive</string>
-				<string>com.pkware.zip-archive</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>CFBundleTypeName</key>
-			<string>7-Zip Archive</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>org.7-zip.7-zip-archive</string>
-				<string>com.provenance.7z-archive</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>CFBundleTypeName</key>
-			<string>RAR Archive</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>com.rarlab.rar-archive</string>
-				<string>com.provenance.rar-archive</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>CFBundleTypeName</key>
-			<string>LZH Archive</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>public.lzh-archive</string>
-				<string>com.provenance.lzh-archive</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>CFBundleTypeName</key>
-			<string>Delta Skin</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>com.provenance.deltaskin</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>CFBundleTypeName</key>
-			<string>Delta Skin (Delta App)</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>com.rileytestut.delta.skin</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>CFBundleTypeName</key>
-			<string>Manic Skin</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>com.provenance.manicskin</string>
-			</array>
-		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
@@ -232,6 +138,8 @@
 		<string>provenance</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsGameMode</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
@@ -316,7 +224,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Provenance uses your device&apos;s accelerometer and gyroscope to emulate the portable consoles&apos; built-in accelerometer and gyroscope.</string>
+	<string>Provenance uses your device's accelerometer and gyroscope to emulate the portable consoles' built-in accelerometer and gyroscope.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -427,6 +335,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>bin</string>
+					<string>bios</string>
 					<string>ccd</string>
 					<string>chd</string>
 					<string>ciso</string>
@@ -449,31 +358,6 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>application/x-provenance-rom</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>com.provenance.rom</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>BIOS file</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.provenance.bios</string>
-			<key>UTTypeReferenceURL</key>
-			<string>https://provenance-emu.com/</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>bios</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-provenance-bios</string>
 				</array>
 			</dict>
 		</dict>
@@ -725,6 +609,7 @@
 					<string>dim</string>
 					<string>ipf</string>
 					<string>mas</string>
+					<string>msa</string>
 					<string>st</string>
 					<string>stx</string>
 				</array>
@@ -2412,70 +2297,9 @@
 				</array>
 			</dict>
 		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.zip-archive</string>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>Provenance Delta Skin</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.provenance.deltaskin</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>deltaskin</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-provenance-deltaskin</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.zip-archive</string>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>Provenance Manic Skin</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.provenance.manicskin</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>manicskin</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-provenance-manicskin</string>
-				</array>
-			</dict>
-		</dict>
 	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.zip-archive</string>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>Delta Skin</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.rileytestut.delta.skin</string>
-		</dict>
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
@@ -2495,156 +2319,6 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>7z</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.zip-archive</string>
-				<string>public.archive</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>ZIP Archive (ROM Pack)</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.pkware.zip-archive</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>zip</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/zip</string>
-					<string>application/x-zip-compressed</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.archive</string>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>LZH Archive</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>public.lzh-archive</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>lzh</string>
-					<string>lha</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-lzh-compressed</string>
-					<string>application/x-lha</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.archive</string>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>XZ Archive</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>org.tukaani.xz-archive</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>xz</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-xz</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>org.7-zip.7-zip-archive</string>
-				<string>public.archive</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>7-Zip Archive</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.provenance.7z-archive</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>7z</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-7z-compressed</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>com.rarlab.rar-archive</string>
-				<string>public.archive</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>RAR Archive</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.provenance.rar-archive</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>rar</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-rar-compressed</string>
-					<string>application/vnd.rar</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.lzh-archive</string>
-				<string>public.archive</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>LZH Archive</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.provenance.lzh-archive</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>lzh</string>
-					<string>lha</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-lzh-compressed</string>
-					<string>application/x-lha</string>
 				</array>
 			</dict>
 		</dict>
@@ -2717,7 +2391,5 @@
 	</array>
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
-	<key>LSSupportsGameMode</key>
-	<true/>
 </dict>
 </plist>

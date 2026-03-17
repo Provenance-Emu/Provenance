@@ -326,6 +326,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>bin</string>
+					<string>bios</string>
 					<string>ccd</string>
 					<string>chd</string>
 					<string>ciso</string>
@@ -348,31 +349,6 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>application/x-provenance-rom</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>com.provenance.rom</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>BIOS file</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>com.provenance.bios</string>
-			<key>UTTypeReferenceURL</key>
-			<string>https://provenance-emu.com/</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>bios</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-provenance-bios</string>
 				</array>
 			</dict>
 		</dict>
@@ -624,6 +600,7 @@
 					<string>dim</string>
 					<string>ipf</string>
 					<string>mas</string>
+					<string>msa</string>
 					<string>st</string>
 					<string>stx</string>
 				</array>
