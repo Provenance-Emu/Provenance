@@ -74,6 +74,14 @@ extension PVThinLibretroCore {
         _bridge.setAnalogIndex(stick, axis: kAnalogAxisX, value: x, forPlayer: UInt32(player))
         _bridge.setAnalogIndex(stick, axis: kAnalogAxisY, value: y, forPlayer: UInt32(player))
     }
+
+    /// Base JoystickResponder conformance (Int-typed button).
+    /// System-specific overloads with typed enums take priority at call sites.
+    @objc public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        // Default: treat button 0 as left stick, button 1 as right stick
+        let stick: UInt32 = button == 1 ? kAnalogRightStick : kAnalogLeftStick
+        setAnalog(stick: stick, axisX: xValue, axisY: yValue, forPlayer: player)
+    }
 }
 
 // MARK: - NES
@@ -1059,4 +1067,836 @@ extension PVThinLibretroCore: MouseResponder {
     public func rightMouseUp() {
         _bridge.setMouseButton(3, pressed: false)
     }
+}
+
+// MARK: - Mouse bridge helpers (at: → atPoint: adapters)
+// Several protocols (Doom, Wolf3D, DOS, A8, MSX, EP128) define
+// mouseMoved(at:) / leftMouseDown(at:) / rightMouseDown(at:) which
+// delegate to the MouseResponder methods already implemented above.
+
+extension PVThinLibretroCore {
+    public func mouseMoved(at point: CGPoint) {
+        mouseMoved(atPoint: point)
+    }
+    public func leftMouseDown(at point: CGPoint) {
+        leftMouseDown(atPoint: point)
+    }
+    public func rightMouseDown(at point: CGPoint) {
+        rightMouseDown(atPoint: point)
+    }
+}
+
+// MARK: - Master System
+
+extension PVThinLibretroCore: PVMasterSystemSystemResponderClient {
+    public func didPush(_ button: PVMasterSystemButton, forPlayer player: Int) {
+        pressButton(masterSystemMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVMasterSystemButton, forPlayer player: Int) {
+        releaseButton(masterSystemMap(button), forPlayer: player)
+    }
+
+    private func masterSystemMap(_ button: PVMasterSystemButton) -> RetroJoypad {
+        switch button {
+        case .up:     return .up
+        case .down:   return .down
+        case .left:   return .left
+        case .right:  return .right
+        case .b:      return .b
+        case .c:      return .a
+        case .start:  return .start
+        case .count:  return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - WonderSwan
+
+extension PVThinLibretroCore: PVWonderSwanSystemResponderClient {
+    public func didPush(_ button: PVWSButton, forPlayer player: Int) {
+        pressButton(wsMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVWSButton, forPlayer player: Int) {
+        releaseButton(wsMap(button), forPlayer: player)
+    }
+
+    private func wsMap(_ button: PVWSButton) -> RetroJoypad {
+        switch button {
+        case .x1:    return .up      // X pad up
+        case .x3:    return .down    // X pad down
+        case .x4:    return .left    // X pad left
+        case .x2:    return .right   // X pad right
+        case .y1:    return .l       // Y pad up
+        case .y3:    return .l2      // Y pad down
+        case .y4:    return .r       // Y pad left
+        case .y2:    return .r2      // Y pad right
+        case .a:     return .a
+        case .b:     return .b
+        case .start: return .start
+        case .sound: return .select
+        case .count: return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - Neo Geo Pocket
+
+extension PVThinLibretroCore: PVNeoGeoPocketSystemResponderClient {
+    public func didPush(_ button: PVNGPButton, forPlayer player: Int) {
+        pressButton(ngpMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVNGPButton, forPlayer player: Int) {
+        releaseButton(ngpMap(button), forPlayer: player)
+    }
+
+    private func ngpMap(_ button: PVNGPButton) -> RetroJoypad {
+        switch button {
+        case .up:     return .up
+        case .down:   return .down
+        case .left:   return .left
+        case .right:  return .right
+        case .a:      return .a
+        case .b:      return .b
+        case .option: return .start
+        case .count:  return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - Atari Jaguar
+
+extension PVThinLibretroCore: PVJaguarSystemResponderClient {
+    public func didPush(jaguarButton button: PVJaguarButton, forPlayer player: Int) {
+        pressButton(jaguarMap(button), forPlayer: player)
+    }
+    public func didRelease(jaguarButton button: PVJaguarButton, forPlayer player: Int) {
+        releaseButton(jaguarMap(button), forPlayer: player)
+    }
+
+    private func jaguarMap(_ button: PVJaguarButton) -> RetroJoypad {
+        switch button {
+        case .up:       return .up
+        case .down:     return .down
+        case .left:     return .left
+        case .right:    return .right
+        case .a:        return .b
+        case .b:        return .a
+        case .c:        return .y
+        case .pause:    return .start
+        case .option:   return .select
+        case .button1:  return .x
+        case .button2:  return .l
+        case .button3:  return .r
+        case .button4:  return .l2
+        case .button5:  return .r2
+        case .button6:  return .l3
+        case .button7:  return .r3
+        case .button8:  return .select
+        case .button9:  return .start
+        case .button0:  return .select
+        case .asterisk: return .select
+        case .pound:    return .start
+        case .count:    return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - Doom
+
+extension PVThinLibretroCore: PVDoomSystemResponderClient {
+    public func didPush(_ button: PVDoomButton, forPlayer player: Int) {
+        pressButton(doomMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVDoomButton, forPlayer player: Int) {
+        releaseButton(doomMap(button), forPlayer: player)
+    }
+    private func doomMap(_ button: PVDoomButton) -> RetroJoypad {
+        switch button {
+        case .up:          return .up
+        case .down:        return .down
+        case .left:        return .left
+        case .right:       return .right
+        case .fire:        return .x       // Fire → JOYPAD_X (north)
+        case .use:         return .b       // Use → JOYPAD_B (south)
+        case .run:         return .y       // Run → JOYPAD_Y (west)
+        case .strafeLeft:  return .l       // Strafe Left → JOYPAD_L
+        case .strafeRight: return .r       // Strafe Right → JOYPAD_R
+        case .weaponPrev:  return .l2      // Prev Weapon → JOYPAD_L2
+        case .weaponNext:  return .r2      // Next Weapon → JOYPAD_R2
+        case .map:         return .select  // Automap → JOYPAD_SELECT
+        case .strafe:      return .a       // Strafe toggle → JOYPAD_A (east)
+        case .pause:       return .start   // Pause → JOYPAD_START
+        case .count:       return .b
+        @unknown default:  return .b
+        }
+    }
+}
+
+// MARK: - Wolf3D
+
+extension PVThinLibretroCore: PVWolf3DSystemResponderClient {
+    public func didPush(_ button: PVWolf3DButton, forPlayer player: Int) {
+        pressButton(wolf3dMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVWolf3DButton, forPlayer player: Int) {
+        releaseButton(wolf3dMap(button), forPlayer: player)
+    }
+
+    private func wolf3dMap(_ button: PVWolf3DButton) -> RetroJoypad {
+        switch button {
+        case .up:          return .up
+        case .down:        return .down
+        case .left:        return .left
+        case .right:       return .right
+        case .fire:        return .b       // Fire → JOYPAD_B (south)
+        case .open:        return .a       // Open → JOYPAD_A (east)
+        case .strafeOn:    return .y       // Strafe On → JOYPAD_Y (west)
+        case .run:         return .x       // Run → JOYPAD_X (north)
+        case .strafeLeft:  return .l       // Strafe Left → JOYPAD_L
+        case .strafeRight: return .r       // Strafe Right → JOYPAD_R
+        case .weaponPrev:  return .l2      // Prev Weapon → JOYPAD_L2
+        case .weaponNext:  return .r2      // Next Weapon → JOYPAD_R2
+        case .map:         return .select  // Automap → JOYPAD_SELECT
+        case .menu:        return .start   // Menu → JOYPAD_START
+        case .count:       return .b
+        @unknown default:  return .b
+        }
+    }
+}
+
+// MARK: - DOS
+
+extension PVThinLibretroCore: PVDOSSystemResponderClient {
+    public func didPush(_ button: PVDOSButton, forPlayer player: Int) {
+        pressButton(dosMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVDOSButton, forPlayer player: Int) {
+        releaseButton(dosMap(button), forPlayer: player)
+    }
+
+    private func dosMap(_ button: PVDOSButton) -> RetroJoypad {
+        switch button {
+        case .up:          return .up
+        case .down:        return .down
+        case .left:        return .left
+        case .right:       return .right
+        case .fire1:       return .b
+        case .fire2:       return .a
+        case .select:      return .select
+        case .pause:       return .start
+        case .reset:       return .l
+        case .leftDiff:    return .l2
+        case .rightDiff:   return .r2
+        case .strafeLeft:  return .l
+        case .strafeRight: return .r
+        case .run:         return .x
+        case .weaponNext:  return .r2
+        case .weaponPrev:  return .l2
+        case .count:       return .b
+        @unknown default:  return .b
+        }
+    }
+}
+
+// MARK: - MAME
+
+extension PVThinLibretroCore: PVMAMESystemResponderClient {
+    public func didPush(_ button: PVMAMEButton, forPlayer player: Int) {
+        guard let mapped = mameMap(button) else { return }
+        pressButton(mapped, forPlayer: player)
+    }
+    public func didRelease(_ button: PVMAMEButton, forPlayer player: Int) {
+        guard let mapped = mameMap(button) else { return }
+        releaseButton(mapped, forPlayer: player)
+    }
+    public func didMoveJoystick(_ button: PVMAMEButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        switch button {
+        case .leftAnalog:
+            setAnalog(stick: kAnalogLeftStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        case .rightAnalog:
+            setAnalog(stick: kAnalogRightStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        default:
+            break
+        }
+    }
+
+    private func mameMap(_ button: PVMAMEButton) -> RetroJoypad? {
+        switch button {
+        case .up:       return .up
+        case .down:     return .down
+        case .left:     return .left
+        case .right:    return .right
+        case .triangle: return .x
+        case .circle:   return .a
+        case .cross:    return .b
+        case .square:   return .y
+        case .l1:       return .l
+        case .l2:       return .l2
+        case .l3:       return .l3
+        case .r1:       return .r
+        case .r2:       return .r2
+        case .r3:       return .r3
+        case .start:    return .start
+        case .select:   return .select
+        case .leftAnalogUp:    return .up
+        case .leftAnalogDown:  return .down
+        case .leftAnalogLeft:  return .left
+        case .leftAnalogRight: return .right
+        case .rightAnalogUp, .rightAnalogDown, .rightAnalogLeft, .rightAnalogRight:
+            return nil
+        case .analogMode, .leftAnalog, .rightAnalog, .count:
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+}
+
+// MARK: - Atari 5200
+
+extension PVThinLibretroCore: PV5200SystemResponderClient {
+    public func didPush(_ button: PV5200Button, forPlayer player: Int) {
+        pressButton(atari5200Map(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PV5200Button, forPlayer player: Int) {
+        releaseButton(atari5200Map(button), forPlayer: player)
+    }
+    public func didMoveJoystick(_ button: PV5200Button, withValue value: CGFloat, forPlayer player: Int) {
+        // 5200 has a single analog joystick; map axis based on direction buttons
+        switch button {
+        case .left, .right:
+            let x = Int16(max(-1.0, min(1.0, value)) * CGFloat(kAnalogMax))
+            _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisX, value: x, forPlayer: UInt32(player))
+        case .up, .down:
+            let y = Int16(max(-1.0, min(1.0, value)) * CGFloat(kAnalogMax))
+            _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisY, value: y, forPlayer: UInt32(player))
+        default:
+            break
+        }
+    }
+
+    private func atari5200Map(_ button: PV5200Button) -> RetroJoypad {
+        switch button {
+        case .up:       return .up
+        case .down:     return .down
+        case .left:     return .left
+        case .right:    return .right
+        case .fire1:    return .b
+        case .fire2:    return .a
+        case .start:    return .start
+        case .pause:    return .select
+        case .reset:    return .l
+        case .number1:  return .x
+        case .number2:  return .y
+        case .number3:  return .l
+        case .number4:  return .r
+        case .number5:  return .l2
+        case .number6:  return .r2
+        case .number7:  return .l3
+        case .number8:  return .r3
+        case .number9:  return .select
+        case .number0:  return .start
+        case .asterisk: return .select
+        case .pound:    return .start
+        case .count:    return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - Atari 8-bit
+
+extension PVThinLibretroCore: PVA8SystemResponderClient {
+    public func didPush(_ button: PVA8Button, forPlayer player: Int) {
+        pressButton(a8Map(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVA8Button, forPlayer player: Int) {
+        releaseButton(a8Map(button), forPlayer: player)
+    }
+    private func a8Map(_ button: PVA8Button) -> RetroJoypad {
+        switch button {
+        case .up:    return .up
+        case .down:  return .down
+        case .left:  return .left
+        case .right: return .right
+        case .fire:  return .b
+        case .count: return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - Pokemon Mini
+
+extension PVThinLibretroCore: PVPokeMiniSystemResponderClient {
+    public func didPush(_ button: PVPMButton, forPlayer player: Int) {
+        pressButton(pmMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVPMButton, forPlayer player: Int) {
+        releaseButton(pmMap(button), forPlayer: player)
+    }
+
+    private func pmMap(_ button: PVPMButton) -> RetroJoypad {
+        switch button {
+        case .up:    return .up
+        case .down:  return .down
+        case .left:  return .left
+        case .right: return .right
+        case .a:     return .a
+        case .b:     return .b
+        case .c:     return .x
+        case .menu:  return .select
+        case .power: return .start
+        case .shake: return .l
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - Vectrex
+
+extension PVThinLibretroCore: PVVectrexSystemResponderClient {
+    public func didPush(_ button: PVVectrexButton, forPlayer player: Int) {
+        pressButton(vectrexMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVVectrexButton, forPlayer player: Int) {
+        releaseButton(vectrexMap(button), forPlayer: player)
+    }
+    public func didMoveJoystick(_ button: PVVectrexButton, withValue value: CGFloat, forPlayer player: Int) {
+        switch button {
+        case .analogLeft, .analogRight:
+            let x = Int16(max(-1.0, min(1.0, value)) * CGFloat(kAnalogMax))
+            _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisX, value: x, forPlayer: UInt32(player))
+        case .analogUp, .analogDown:
+            let y = Int16(max(-1.0, min(1.0, value)) * CGFloat(kAnalogMax))
+            _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisY, value: y, forPlayer: UInt32(player))
+        default:
+            break
+        }
+    }
+
+    private func vectrexMap(_ button: PVVectrexButton) -> RetroJoypad {
+        switch button {
+        case .analogUp:    return .up
+        case .analogDown:  return .down
+        case .analogLeft:  return .left
+        case .analogRight: return .right
+        case .button1:     return .b
+        case .button2:     return .a
+        case .button3:     return .x
+        case .button4:     return .y
+        case .count:       return .b
+        @unknown default:  return .b
+        }
+    }
+}
+
+// MARK: - Odyssey2
+
+extension PVThinLibretroCore: PVOdyssey2SystemResponderClient {
+    public func didPush(_ button: PVOdyssey2Button, forPlayer player: Int) {
+        pressButton(odyssey2Map(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVOdyssey2Button, forPlayer player: Int) {
+        releaseButton(odyssey2Map(button), forPlayer: player)
+    }
+
+    private func odyssey2Map(_ button: PVOdyssey2Button) -> RetroJoypad {
+        switch button {
+        case .up:     return .up
+        case .down:   return .down
+        case .left:   return .left
+        case .right:  return .right
+        case .action: return .b
+        case .key0:   return .select
+        case .key1:   return .x
+        case .key2:   return .y
+        case .key3:   return .l
+        case .key4:   return .r
+        case .key5:   return .l2
+        case .key6:   return .r2
+        case .key7:   return .l3
+        case .key8:   return .r3
+        case .key9:   return .start
+        case .count:  return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - Intellivision
+
+extension PVThinLibretroCore: PVIntellivisionSystemResponderClient {
+    public func didPush(_ button: PVIntellivisionButton, forPlayer player: Int) {
+        pressButton(intellivisionMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVIntellivisionButton, forPlayer player: Int) {
+        releaseButton(intellivisionMap(button), forPlayer: player)
+    }
+
+    private func intellivisionMap(_ button: PVIntellivisionButton) -> RetroJoypad {
+        switch button {
+        case .up:                return .up
+        case .down:              return .down
+        case .left:              return .left
+        case .right:             return .right
+        case .topAction:         return .a
+        case .bottomLeftAction:  return .b
+        case .bottomRightAction: return .y
+        case .button1:           return .x
+        case .button2:           return .l
+        case .button3:           return .r
+        case .button4:           return .l2
+        case .button5:           return .r2
+        case .button6:           return .l3
+        case .button7:           return .r3
+        case .button8:           return .select
+        case .button9:           return .start
+        case .button0:           return .select
+        case .clear:             return .select
+        case .enter:             return .start
+        case .count:             return .b
+        @unknown default:        return .b
+        }
+    }
+}
+
+// MARK: - MSX
+
+extension PVThinLibretroCore: PVMSXSystemResponderClient {
+    public func didPush(_ button: PVMSXButton, forPlayer player: Int) {
+        pressButton(msxMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVMSXButton, forPlayer player: Int) {
+        releaseButton(msxMap(button), forPlayer: player)
+    }
+
+    private func msxMap(_ button: PVMSXButton) -> RetroJoypad {
+        switch button {
+        case .up:        return .up
+        case .down:      return .down
+        case .left:      return .left
+        case .right:     return .right
+        case .fire1:     return .b
+        case .fire2:     return .a
+        case .select:    return .select
+        case .pause:     return .start
+        case .reset:     return .l
+        case .leftDiff:  return .l2
+        case .rightDiff: return .r2
+        case .count:     return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - EP128
+
+extension PVThinLibretroCore: PVEP128SystemResponderClient {
+    public func didPush(_ button: PVEP128Button, forPlayer player: Int) {
+        pressButton(ep128Map(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVEP128Button, forPlayer player: Int) {
+        releaseButton(ep128Map(button), forPlayer: player)
+    }
+
+    private func ep128Map(_ button: PVEP128Button) -> RetroJoypad {
+        switch button {
+        case .up:        return .up
+        case .down:      return .down
+        case .left:      return .left
+        case .right:     return .right
+        case .fire1:     return .b
+        case .fire2:     return .a
+        case .select:    return .select
+        case .pause:     return .start
+        case .reset:     return .l
+        case .leftDiff:  return .l2
+        case .rightDiff: return .r2
+        case .count:     return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - CDi
+
+extension PVThinLibretroCore: PVCDiSystemResponderClient {
+    public func didPush(_ button: PVCDiButton, forPlayer player: Int) {
+        pressButton(cdiMap(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVCDiButton, forPlayer player: Int) {
+        releaseButton(cdiMap(button), forPlayer: player)
+    }
+
+    private func cdiMap(_ button: PVCDiButton) -> RetroJoypad {
+        switch button {
+        case .up:      return .up
+        case .down:    return .down
+        case .left:    return .left
+        case .right:   return .right
+        case .button1: return .b
+        case .button2: return .a
+        case .button3: return .x
+        case .reset:   return .start
+        case .count:   return .b
+        @unknown default: return .b
+        }
+    }
+}
+
+// MARK: - PS2
+
+extension PVThinLibretroCore: PVPS2SystemResponderClient {
+    public func didPush(_ button: PVPS2Button, forPlayer player: Int) {
+        guard let mapped = ps2MapDigital(button) else { return }
+        pressButton(mapped, forPlayer: player)
+    }
+    public func didRelease(_ button: PVPS2Button, forPlayer player: Int) {
+        guard let mapped = ps2MapDigital(button) else { return }
+        releaseButton(mapped, forPlayer: player)
+    }
+    public func didMoveJoystick(_ button: PVPS2Button, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        switch button {
+        case .leftAnalog:
+            setAnalog(stick: kAnalogLeftStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        case .rightAnalog:
+            setAnalog(stick: kAnalogRightStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        default:
+            break
+        }
+    }
+
+    private func ps2MapDigital(_ button: PVPS2Button) -> RetroJoypad? {
+        switch button {
+        case .up:       return .up
+        case .down:     return .down
+        case .left:     return .left
+        case .right:    return .right
+        case .triangle: return .x
+        case .circle:   return .a
+        case .cross:    return .b
+        case .square:   return .y
+        case .l1:       return .l
+        case .l2:       return .l2
+        case .l3:       return .l3
+        case .r1:       return .r
+        case .r2:       return .r2
+        case .r3:       return .r3
+        case .start:    return .start
+        case .select:   return .select
+        case .leftAnalogUp:    return .up
+        case .leftAnalogDown:  return .down
+        case .leftAnalogLeft:  return .left
+        case .leftAnalogRight: return .right
+        case .rightAnalogUp, .rightAnalogDown, .rightAnalogLeft, .rightAnalogRight:
+            return nil
+        case .analogMode, .leftAnalog, .rightAnalog, .count:
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+}
+
+// MARK: - 3DS
+
+extension PVThinLibretroCore: PV3DSSystemResponderClient {
+    public func didPush(_ button: PV3DSButton, forPlayer player: Int) {
+        guard let mapped = _3dsMap(button) else { return }
+        pressButton(mapped, forPlayer: player)
+    }
+    public func didRelease(_ button: PV3DSButton, forPlayer player: Int) {
+        guard let mapped = _3dsMap(button) else { return }
+        releaseButton(mapped, forPlayer: player)
+    }
+    public func didMoveJoystick(_ button: PV3DSButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        switch button {
+        case .leftAnalog:
+            setAnalog(stick: kAnalogLeftStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        case .rightAnalog:
+            setAnalog(stick: kAnalogRightStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        default:
+            break
+        }
+    }
+
+    private func _3dsMap(_ button: PV3DSButton) -> RetroJoypad? {
+        switch button {
+        case .up:         return .up
+        case .down:       return .down
+        case .left:       return .left
+        case .right:      return .right
+        case .a:          return .a
+        case .b:          return .b
+        case .x:          return .x
+        case .y:          return .y
+        case .l:          return .l
+        case .r:          return .r
+        case .zl:         return .l2
+        case .zr:         return .r2
+        case .start:      return .start
+        case .select:     return .select
+        case .swap:       return .l3
+        case .rotate:     return .r3
+        case .home:       return .select
+        case .leftAnalogUp, .leftAnalogDown, .leftAnalogLeft, .leftAnalogRight, .leftAnalog:
+            return nil
+        case .rightAnalogUp, .rightAnalogDown, .rightAnalogLeft, .rightAnalogRight, .rightAnalog:
+            return nil
+        case .analogMode, .count:
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+}
+
+// MARK: - GameCube
+
+extension PVThinLibretroCore: PVGameCubeSystemResponderClient {
+    public func didMoveJoystick(_ button: PVGCButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        switch button {
+        case .leftAnalog:
+            setAnalog(stick: kAnalogLeftStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        case .rightAnalog:
+            setAnalog(stick: kAnalogRightStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        default:
+            break
+        }
+    }
+    public func didPush(_ button: PVGCButton, forPlayer player: Int) {
+        guard let mapped = gcMap(button) else { return }
+        pressButton(mapped, forPlayer: player)
+    }
+    public func didRelease(_ button: PVGCButton, forPlayer player: Int) {
+        guard let mapped = gcMap(button) else { return }
+        releaseButton(mapped, forPlayer: player)
+    }
+
+    private func gcMap(_ button: PVGCButton) -> RetroJoypad? {
+        switch button {
+        case .up:       return .up
+        case .down:     return .down
+        case .left:     return .left
+        case .right:    return .right
+        case .a:        return .a
+        case .b:        return .b
+        case .x:        return .x
+        case .y:        return .y
+        case .l:        return .l
+        case .r:        return .r
+        case .z:        return .l2
+        case .start:    return .start
+        case .digitalL: return .l3
+        case .digitalR: return .r3
+        case .cUp:      return .x
+        case .cDown:    return .y
+        case .cLeft:    return .l2
+        case .cRight:   return .r2
+        case .analogUp, .analogDown, .analogLeft, .analogRight,
+             .analogCUp, .analogCDown, .analogCLeft, .analogCRight,
+             .leftAnalog, .rightAnalog:
+            return nil
+        case .count:
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+}
+
+// MARK: - Wii
+
+extension PVThinLibretroCore: PVWiiSystemResponderClient {
+    public func didMoveJoystick(_ button: PVWiiMoteButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        switch button {
+        case .leftAnalog:
+            setAnalog(stick: kAnalogLeftStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        case .rightAnalog:
+            setAnalog(stick: kAnalogRightStick, axisX: xValue, axisY: yValue, forPlayer: player)
+        default:
+            break
+        }
+    }
+    public func didPush(_ button: PVWiiMoteButton, forPlayer player: Int) {
+        guard let mapped = wiiMap(button) else { return }
+        pressButton(mapped, forPlayer: player)
+    }
+    public func didRelease(_ button: PVWiiMoteButton, forPlayer player: Int) {
+        guard let mapped = wiiMap(button) else { return }
+        releaseButton(mapped, forPlayer: player)
+    }
+
+    private func wiiMap(_ button: PVWiiMoteButton) -> RetroJoypad? {
+        switch button {
+        // Wiimote d-pad
+        case .wiiDPadUp:    return .up
+        case .wiiDPadDown:  return .down
+        case .wiiDPadLeft:  return .left
+        case .wiiDPadRight: return .right
+        // Wiimote buttons
+        case .wiiA:     return .a
+        case .wiiB:     return .b
+        case .wiiMinus: return .select
+        case .wiiPlus:  return .start
+        case .wiiHome:  return .select
+        case .wiiOne:   return .x
+        case .wiiTwo:   return .y
+        // Classic controller
+        case .classicA:      return .a
+        case .classicB:      return .b
+        case .classicX:      return .x
+        case .classicY:      return .y
+        case .classicMinus:  return .select
+        case .classicPlus:   return .start
+        case .classicHome:   return .select
+        case .classicZL:     return .l2
+        case .classicZR:     return .r2
+        case .classicDpadUp:    return .up
+        case .classicDpadDown:  return .down
+        case .classicDpadLeft:  return .left
+        case .classicDpadRight: return .right
+        case .classicTriggerL:  return .l
+        case .classicTriggerR:  return .r
+        // Nunchuk
+        case .nunchukC: return .l
+        case .nunchukZ: return .r
+        // Generic start/select
+        case .start:  return .start
+        case .select: return .select
+        // Motion / IR / analog stick directions — not mappable to digital joypad
+        case .wiiIrUp, .wiiIrDown, .wiiIrLeft, .wiiIrRight,
+             .wiiIrForward, .wiiIrBackward, .wiiIrHide,
+             .wiiSwingUp, .wiiSwingDown, .wiiSwingLeft, .wiiSwingRight,
+             .wiiTiltForward, .wiiTiltBackward, .wiiTiltLeft, .wiiTiltRight, .wiiTiltModifier,
+             .wiiShakeX, .wiiShakeY, .wiiShakeZ,
+             .nunchukStickUp, .nunchukStickDown, .nunchukStickLeft, .nunchukStickRight,
+             .nunchukSwingUp, .nunchukSwingDown, .nunchukSwingLeft, .nunchukSwingRight,
+             .nunchukTiltForward, .nunchukTiltBackward, .nunchukTiltLeft, .nunchukTiltRight, .nunchukTiltModifier,
+             .nunchukShakeX, .nunchukShakeY, .nunchukShakeZ,
+             .classicStickLeftUp, .classicStickLeftDown, .classicStickLeftLeft, .classicStickLeftRight,
+             .classicStickRightUp, .classicStickRightDown, .classicStickRightLeft, .classicStickRightRight,
+             .leftAnalog, .rightAnalog:
+            return nil
+        case .count:
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+}
+
+// MARK: - RetroArch Generic
+
+extension PVThinLibretroCore: PVRetroArchCoreResponderClient {
+    // PVRetroArchCoreResponderClient has no additional button push/release methods
+    // beyond those inherited from ButtonResponder, KeyboardResponder, MouseResponder,
+    // and JoystickResponder — all of which are already implemented above.
+    // This conformance enables systems like AppleII, C64, Macintosh, PalmOS, and
+    // TIC-80 to use the thin libretro wrapper with keyboard/mouse input.
 }

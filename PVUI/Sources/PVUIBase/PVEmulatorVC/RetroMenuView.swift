@@ -683,8 +683,7 @@ struct RetroMenuView: View {
             if hasMouse {
                 menuButton(title: "VIRTUAL MOUSE", icon: "computermouse", color: .retroPurple) {
                     dismissAction(false)
-                    emulatorVC.showVirtualTrackpad(animated: true)
-                }
+                    emulatorVC.showVirtualMouse()                }
             }
 
             // Per-port device type picker (from SET_CONTROLLER_INFO)
