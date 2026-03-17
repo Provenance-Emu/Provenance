@@ -553,10 +553,16 @@ void extract_bundles();
         if (!configFileExists) {
             ILOG(@"Writing config file to %@", fileName);
             [self syncResource:src to:fileName];
+        } else if (!versionFileExists) {
+            // Version update: merge forced defaults into existing user config.
+            // Keys listed here will be overwritten to match the bundled cfg value.
+            // User customizations for all OTHER keys are preserved.
+            ILOG(@"Version update detected — merging forced defaults into existing config at %@", fileName);
+            [self mergeForcedDefaultsFromBundledCfg:src intoUserCfg:fileName];
         }
 
         if (!versionFileExists) {
-            ILOG(@"Writing config file to %@", verFile);
+            ILOG(@"Writing version file to %@", verFile);
             [self syncResource:src to:verFile];
         }
 
@@ -937,6 +943,112 @@ void extract_bundles();
         ELOG(@"Error writing file to %@: %@", to, writeError.localizedDescription);
     } else {
         ILOG(@"Copied %@ -> %@", from, to);
+    }
+}
+
+/// Keys listed here will be force-synced from the bundled retroarch.cfg
+/// into the user's existing config on every app version update.
+/// Add any key here whose bundled default MUST reach existing users.
+static NSArray<NSString *> *forcedDefaultKeys(void) {
+    return @[
+        @"notification_show_autoconfig",
+        @"notification_show_autoconfig_fails",
+    ];
+}
+
+/// Reads the bundled cfg and the user's cfg, then overwrites (or appends)
+/// any key listed in forcedDefaultKeys() so the bundled value wins.
+/// All other keys in the user's cfg are left untouched.
+- (void)mergeForcedDefaultsFromBundledCfg:(NSString *)bundledPath
+                              intoUserCfg:(NSString *)userPath {
+    NSError *err = nil;
+    NSString *bundledContent = [NSString stringWithContentsOfFile:bundledPath
+                                                        encoding:NSUTF8StringEncoding
+                                                           error:&err];
+    if (!bundledContent) {
+        ELOG(@"Failed to read bundled cfg at %@: %@", bundledPath, err.localizedDescription);
+        return;
+    }
+
+    NSString *userContent = [NSString stringWithContentsOfFile:userPath
+                                                     encoding:NSUTF8StringEncoding
+                                                        error:&err];
+    if (!userContent) {
+        ELOG(@"Failed to read user cfg at %@: %@", userPath, err.localizedDescription);
+        return;
+    }
+
+    // Parse forced keys from bundled cfg
+    NSArray<NSString *> *keys = forcedDefaultKeys();
+    NSMutableDictionary<NSString *, NSString *> *forcedValues = [NSMutableDictionary dictionary];
+
+    for (NSString *line in [bundledContent componentsSeparatedByCharactersInSet:
+                            [NSCharacterSet newlineCharacterSet]]) {
+        NSString *trimmed = [line stringByTrimmingCharactersInSet:
+                             [NSCharacterSet whitespaceCharacterSet]];
+        if ([trimmed hasPrefix:@"#"] || trimmed.length == 0) continue;
+
+        for (NSString *key in keys) {
+            if ([trimmed hasPrefix:key]) {
+                // Verify it's actually "key = value" and not a prefix match
+                NSRange eqRange = [trimmed rangeOfString:@"="];
+                if (eqRange.location != NSNotFound) {
+                    NSString *parsedKey = [[trimmed substringToIndex:eqRange.location]
+                                           stringByTrimmingCharactersInSet:
+                                           [NSCharacterSet whitespaceCharacterSet]];
+                    if ([parsedKey isEqualToString:key]) {
+                        forcedValues[key] = trimmed;  // full "key = value" line
+                    }
+                }
+            }
+        }
+    }
+
+    if (forcedValues.count == 0) {
+        ILOG(@"No forced defaults found in bundled cfg — nothing to merge.");
+        return;
+    }
+
+    // Apply each forced value into the user cfg
+    NSMutableString *result = [userContent mutableCopy];
+    for (NSString *key in forcedValues) {
+        NSString *bundledLine = forcedValues[key];
+        // Find existing line for this key in user cfg
+        NSString *pattern = [NSString stringWithFormat:@"(?m)^[ \\t]*%@[ \\t]*=.*$",
+                             [NSRegularExpression escapedPatternForString:key]];
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern
+                                                                              options:0
+                                                                                error:&err];
+        if (!regex) {
+            ELOG(@"Bad regex for key %@: %@", key, err.localizedDescription);
+            continue;
+        }
+        NSTextCheckingResult *match = [regex firstMatchInString:result options:0
+                                                          range:NSMakeRange(0, result.length)];
+        if (match) {
+            NSString *existingLine = [result substringWithRange:match.range];
+            if (![existingLine isEqualToString:bundledLine]) {
+                [result replaceCharactersInRange:match.range withString:bundledLine];
+                ILOG(@"Forced default updated: %@ → %@", existingLine, bundledLine);
+            }
+        } else {
+            // Key not present in user cfg — append it
+            if (![result hasSuffix:@"\n"]) {
+                [result appendString:@"\n"];
+            }
+            [result appendFormat:@"%@\n", bundledLine];
+            ILOG(@"Forced default appended: %@", bundledLine);
+        }
+    }
+
+    // Write back
+    NSError *writeErr = nil;
+    BOOL ok = [result writeToFile:userPath atomically:YES encoding:NSUTF8StringEncoding error:&writeErr];
+    if (!ok || writeErr) {
+        ELOG(@"Failed to write merged cfg to %@: %@", userPath, writeErr.localizedDescription);
+    } else {
+        ILOG(@"Successfully merged %lu forced defaults into user cfg at %@",
+             (unsigned long)forcedValues.count, userPath);
     }
 }
 
