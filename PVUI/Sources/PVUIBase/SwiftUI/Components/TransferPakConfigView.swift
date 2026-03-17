@@ -24,21 +24,34 @@ import RealmSwift
 // MARK: - Transfer Pak persistent store
 
 /// UserDefaults-backed storage for per-game Transfer Pak ROM selections.
-/// Keys follow the pattern: `PVTransferPak.<md5>.port<0..3>` → absolute path string.
+///
+/// Keys follow the pattern: `PVTransferPak.<n64md5>.port<0..3>` → GB game md5Hash string.
+/// Storing the GB game's md5Hash (Realm primary key) rather than an absolute file path
+/// keeps configured slots valid across ROM-directory changes (e.g. iCloud sync toggling).
 public enum TransferPakStore {
     private static let keyPrefix = "PVTransferPak"
 
+    /// Returns the URL of the GB/GBC ROM configured for the given N64 game and port,
+    /// or `nil` if no game is configured or its file is not currently on disk.
     public static func romPath(forGameMD5 md5: String, port: Int) -> URL? {
         let key = udKey(md5: md5, port: port)
-        guard let path = UserDefaults.standard.string(forKey: key) else { return nil }
-        let url = URL(fileURLWithPath: path)
-        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+        guard let storedMD5 = UserDefaults.standard.string(forKey: key) else { return nil }
+        // Resolve the stored GB game md5Hash to its current on-disk URL via Realm.
+        guard let realm = try? Realm(),
+              let gbGame = realm.object(ofType: PVGame.self, forPrimaryKey: storedMD5),
+              !gbGame.isInvalidated,
+              let url = gbGame.file?.url,
+              FileManager.default.fileExists(atPath: url.path)
+        else { return nil }
+        return url
     }
 
-    public static func setRomPath(_ url: URL?, forGameMD5 md5: String, port: Int) {
+    /// Stores the GB/GBC game's md5Hash for the given N64 game and controller port.
+    /// Pass `nil` to clear the slot.
+    public static func setGBGame(_ gbGameMD5: String?, forGameMD5 md5: String, port: Int) {
         let key = udKey(md5: md5, port: port)
-        if let url = url {
-            UserDefaults.standard.set(url.path, forKey: key)
+        if let gbGameMD5 {
+            UserDefaults.standard.set(gbGameMD5, forKey: key)
         } else {
             UserDefaults.standard.removeObject(forKey: key)
         }
@@ -182,7 +195,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     // MARK: - Port Row
 
     @ViewBuilder
-    private func portRow(_ port: Int) -> some View {
+    private func portRow(port: Int) -> some View {
         let selectedPath = selectedPaths[port]
         let romName = selectedPath.map { $0.deletingPathExtension().lastPathComponent } ?? "Not configured"
 
@@ -193,8 +206,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                 Spacer()
                 Menu {
                     Button {
-                        // No ROM
-                        updateSlot(port: port, url: nil)
+                        updateSlot(port: port, gbGame: nil)
                     } label: {
                         if selectedPath == nil {
                             Label("None (selected)", systemImage: "checkmark")
@@ -209,9 +221,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                     } else {
                         ForEach(gbcGames, id: \.md5Hash) { gbGame in
                             Button {
-                                if let url = gbGame.file?.url {
-                                    updateSlot(port: port, url: url)
-                                }
+                                updateSlot(port: port, gbGame: gbGame)
                             } label: {
                                 let isSelected = selectedPath != nil && selectedPath == gbGame.file?.url
                                 if isSelected {
@@ -239,9 +249,10 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
 
     // MARK: - Actions
 
-    private func updateSlot(port: Int, url: URL?) {
+    private func updateSlot(port: Int, gbGame: PVGame?) {
+        let url = gbGame?.file?.url
         selectedPaths[port] = url
-        TransferPakStore.setRomPath(url, forGameMD5: game.md5Hash, port: port)
+        TransferPakStore.setGBGame(gbGame?.md5Hash, forGameMD5: game.md5Hash, port: port)
         if let apply = applyLiveSlotChange {
             let rom = url.map { TransferPakROM(romPath: $0) }
             apply(port, rom)
@@ -251,7 +262,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
 
     private func clearAll() {
         for port in 0..<slotCount {
-            updateSlot(port: port, url: nil)
+            updateSlot(port: port, gbGame: nil)
         }
     }
 
@@ -264,10 +275,13 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     private func loadGBCGames() {
         Task { @MainActor in
             guard let realm = try? await Realm() else { return }
-            // Find all GB and GBC games that have a local file
+            // Find all GB and GBC games that are downloaded and have a local file.
+            // Use `systemIdentifier` (a direct Realm-indexed property) rather than
+            // traversing the optional `system` relationship, which is faster and
+            // avoids predicate failures when `system` is nil.
             let gbSystemIDs = ["com.provenance.gb", "com.provenance.gbc"]
             let games = realm.objects(PVGame.self)
-                .filter("system.identifier IN %@ AND file != nil", gbSystemIDs)
+                .filter("systemIdentifier IN %@ AND file != nil AND isDownloaded == true", gbSystemIDs)
                 .sorted(byKeyPath: "title")
                 .freeze()
             gbcGames = Array(games)
@@ -282,9 +296,10 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
 public enum TransferPakCompatibleGames {
     /// Known Transfer Pak titles keyed by common title substring (case-insensitive).
     /// Values describe the Transfer Pak feature in the game.
+    ///
+    /// More specific (longer) fragments appear before shorter ones so that
+    /// `first(where:)` returns the most accurate match (e.g. "stadium 2" before "stadium").
     public static let knownTitles: [(titleFragment: String, description: String)] = [
-        // More specific (longer) fragments must come before shorter ones so that
-        // `first(where:)` returns the most accurate match (e.g. "stadium 2" before "stadium").
         ("pokémon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
         ("pokemon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
         ("pokémon stadium",    "Transfer Pokémon from your Game Boy game to compete in stadium battles."),
