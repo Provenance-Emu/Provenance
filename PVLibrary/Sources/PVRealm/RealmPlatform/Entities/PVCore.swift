@@ -48,7 +48,21 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     // Reverse links
     @Persisted(originProperty: "core") public var saveStates: LinkingObjects<PVSaveState>
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool = false, appStoreDisabled: Bool = false, contentless: Bool = false, supportedCheatTypes: [CheatCodeTypes] = [], licenseName: String? = nil, licenseURL: String? = nil, copyright: String? = nil) {
+    public convenience init(
+        withIdentifier identifier: String,
+        principleClass: String,
+        supportedSystems: [PVSystem],
+        name: String,
+        url: String,
+        version: String,
+        disabled: Bool = false,
+        appStoreDisabled: Bool = false,
+        contentless: Bool = false,
+        supportedCheatTypes: [CheatCodeTypes] = [],
+        licenseName: String? = nil,
+        licenseURL: String? = nil,
+        copyright: String? = nil
+    ) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass

@@ -16,11 +16,13 @@
 	<string>https://github.com/hrydgard/ppsspp.git</string>
 	<key>PVProjectVersion</key>
 	<string>v1.13.2-2467</string>
+	<key>PVJITRequirement</key>
+	<string>optional</string>
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
 	<string>https://github.com/hrydgard/ppsspp/blob/master/LICENSE.TXT</string>
 	<key>PVCopyright</key>
-	<string>Copyright © 2012- PPSSPP Project</string>
+	<string>Copyright © 2012-2024 Henrik Rydgård and PPSSPP Contributors</string>
 </dict>
 </plist>

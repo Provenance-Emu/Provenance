@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 24
+public let schemaVersion: UInt64 = 25
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
