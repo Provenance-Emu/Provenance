@@ -50,6 +50,10 @@
         "tapToRemapUI": {
             "enabled": false,
             "description": "Tap-to-remap UX in button remapping settings: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development — enable in Settings > Advanced > Feature Flags."
+        },
+        "mupenTransferPak": {
+            "enabled": false,
+            "description": "Enables Transfer Pak configuration UI for Mupen64Plus N64 cores. Allows mounting a GB/GBC ROM into a virtual Transfer Pak for games like Pokémon Stadium. Disabled by default — enable in Settings > Advanced > Feature Flags."
         }
     }
 }

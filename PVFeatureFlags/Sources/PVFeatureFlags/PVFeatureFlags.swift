@@ -35,6 +35,11 @@ public enum PVFeature: String, CaseIterable {
     /// destination button from a list, the user presses a physical button on their controller.
     /// Disabled by default while the feature is being developed.
     case tapToRemapUI = "tapToRemapUI"
+    /// Enables the Transfer Pak configuration UI for Mupen64Plus cores.
+    /// The Transfer Pak lets a GB/GBC cartridge be mounted in an N64 controller port
+    /// so N64 games (e.g. Pokémon Stadium) can read and write the GB save data.
+    /// Disabled by default; enable in Settings > Advanced > Feature Flags.
+    case mupenTransferPak = "mupenTransferPak"
 }
 
 /// Represents the type of app installation
@@ -119,6 +124,11 @@ public struct FeatureFlag: Codable, Sendable {
     public static let tapToRemapUI = FeatureFlag(
         enabled: false,
         description: "Tap-to-remap UX: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development."
+    )
+
+    public static let mupenTransferPak = FeatureFlag(
+        enabled: false,
+        description: "Enables Transfer Pak configuration UI for Mupen64Plus N64 cores. Allows mounting a GB/GBC ROM into a virtual Transfer Pak for games like Pokémon Stadium. Disabled by default."
     )
 }
 
@@ -404,6 +414,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
     public var pauseTileMenu: Bool { featureStates[.pauseTileMenu] ?? false }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
+    public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
 
     // MARK: - Feature Queries
 
