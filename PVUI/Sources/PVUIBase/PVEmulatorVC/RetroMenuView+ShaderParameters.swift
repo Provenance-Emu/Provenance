@@ -173,6 +173,13 @@ struct FilterPreviewBarsView: View {
     let filter: MetalFilterSelectionOption
     let palette: UXThemePalette
 
+    /// Cached noise line positions so VHS preview is stable during slider interaction.
+    @State private var vhsNoiseLines: [(y: CGFloat, dy: CGFloat)] = {
+        (0..<6).map { _ in
+            (y: CGFloat.random(in: 0..<1), dy: CGFloat.random(in: -2...2))
+        }
+    }()
+
     /// NTSC 75% color bar palette
     private let barColors: [Color] = [
         Color(red: 0.75, green: 0.75, blue: 0.75),
@@ -266,14 +273,14 @@ struct FilterPreviewBarsView: View {
             .allowsHitTesting(false)
 
         case .vhs:
-            // Noise / wobble hint
+            // Noise / wobble hint — use cached positions to avoid flicker during slider interaction
             Color.white.opacity(0.08)
             Canvas { context, canvasSize in
-                for _ in 0..<6 {
-                    let y = CGFloat.random(in: 0..<canvasSize.height)
+                for line in vhsNoiseLines {
+                    let y = line.y * canvasSize.height
                     let path = Path { p in
                         p.move(to: CGPoint(x: 0, y: y))
-                        p.addLine(to: CGPoint(x: canvasSize.width, y: y + CGFloat.random(in: -2...2)))
+                        p.addLine(to: CGPoint(x: canvasSize.width, y: y + line.dy))
                     }
                     context.stroke(path, with: .color(.white.opacity(0.3)), lineWidth: 1)
                 }

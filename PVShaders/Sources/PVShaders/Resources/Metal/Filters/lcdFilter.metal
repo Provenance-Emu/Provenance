@@ -29,9 +29,11 @@ struct LCDFilterUniforms {
 #pragma pack(pop)
 
 /// Improved subpixel simulation based on LCD.fsh
+/// gridDensity scales the subpixel grid (default 6.0 at density=1.0).
 float3 applySubpixelLayout(float2 uv, float2 texelSize, texture2d<float> inputTexture,
-                          sampler textureSampler, float colorLow, float colorHigh) {
-    float2 pos = fract(uv * texelSize * 6.0);
+                          sampler textureSampler, float colorLow, float colorHigh, float gridDensity) {
+    float scale = 6.0 * gridDensity;
+    float2 pos = fract(uv * texelSize * scale);
 
     float4 center = inputTexture.sample(textureSampler, uv);
     float4 left = inputTexture.sample(textureSampler, uv - float2(texelSize.x, 0));
@@ -56,8 +58,9 @@ float3 applySubpixelLayout(float2 uv, float2 texelSize, texture2d<float> inputTe
 }
 
 /// Scanline effect from MonoLCD
-float applyScanlines(float2 uv, float2 texelSize, float scanlineDepth) {
-    float2 pos = fract(uv * texelSize * 6.0);
+float applyScanlines(float2 uv, float2 texelSize, float scanlineDepth, float gridDensity) {
+    float scale = 6.0 * gridDensity;
+    float2 pos = fract(uv * texelSize * scale);
     float multiplier = 1.0;
 
     if (pos.y < 1.0 / 6.0) {
@@ -69,6 +72,18 @@ float applyScanlines(float2 uv, float2 texelSize, float scanlineDepth) {
     return multiplier;
 }
 
+/// Draws a grid overlay between subpixels; gridBrightness controls line opacity (0=off).
+float applyGridOverlay(float2 uv, float2 texelSize, float gridDensity, float gridBrightness) {
+    if (gridBrightness <= 0.0) { return 1.0; }
+    float scale = 6.0 * gridDensity;
+    float2 pos = fract(uv * texelSize * scale);
+    // Darken the boundary between subpixels/rows
+    bool onVertBoundary = pos.x < 0.05 || pos.x > 0.95;
+    bool onHorzBoundary = pos.y < 0.05 || pos.y > 0.95;
+    float mask = (onVertBoundary || onHorzBoundary) ? (1.0 - gridBrightness) : 1.0;
+    return mask;
+}
+
 /// Main fragment shader
 fragment float4
 lcdFilter(Outputs in [[stage_in]],
@@ -78,13 +93,17 @@ lcdFilter(Outputs in [[stage_in]],
     constexpr sampler textureSampler(address::clamp_to_edge, filter::linear);
     float2 texelSize = uniforms.textureSize;
 
-    // Apply subpixel layout
+    // Apply subpixel layout (gridDensity scales the subpixel cell size)
     float3 color = applySubpixelLayout(in.fTexCoord, texelSize, inputTexture, textureSampler,
-                                     uniforms.colorLow, uniforms.colorHigh);
+                                     uniforms.colorLow, uniforms.colorHigh, uniforms.gridDensity);
 
-    // Apply scanlines
-    float scanline = applyScanlines(in.fTexCoord, texelSize, uniforms.scanlineDepth);
+    // Apply scanlines (same density scale)
+    float scanline = applyScanlines(in.fTexCoord, texelSize, uniforms.scanlineDepth, uniforms.gridDensity);
     color *= scanline;
+
+    // Apply grid overlay (gridBrightness controls line visibility)
+    float gridMask = applyGridOverlay(in.fTexCoord, texelSize, uniforms.gridDensity, uniforms.gridBrightness);
+    color *= gridMask;
 
     // Apply bloom effect
     float4 bloomColor = inputTexture.sample(textureSampler, in.fTexCoord);

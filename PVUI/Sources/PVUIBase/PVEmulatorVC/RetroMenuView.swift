@@ -1786,6 +1786,12 @@ struct RetroMenuView: View {
                 }
                 .pickerStyle(.navigationLink)
 
+                if selectedMetalFilter != .none {
+                    Section {
+                        FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
+                    }
+                }
+
                 // Show shader parameters for the selected filter
                 shaderParametersSection(for: selectedMetalFilter)
             }

@@ -437,6 +437,16 @@ struct MetalFilterSelectionOptionTests {
         }
     }
 
+    @Test("hasEditableParameters is false only for none")
+    func hasEditableParameters() {
+        #expect(!MetalFilterSelectionOption.none.hasEditableParameters)
+
+        let editableOptions: [MetalFilterSelectionOption] = [.simpleCRT, .complexCRT, .lcd, .megaTron, .ulTron, .gameBoy, .vhs]
+        for option in editableOptions {
+            #expect(option.hasEditableParameters, "Expected hasEditableParameters == true for \(option)")
+        }
+    }
+
     @Test("Descriptions are non-empty")
     func descriptionsNonEmpty() {
         for option in MetalFilterSelectionOption.allCases {

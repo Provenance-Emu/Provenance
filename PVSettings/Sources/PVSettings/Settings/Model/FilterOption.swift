@@ -147,9 +147,15 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
         }
     }
 
-    /// Whether this filter exposes user-adjustable shader parameters.
-    /// `simpleCRT` and `complexCRT` are legacy names kept for source compatibility.
-    public var hasCRTParameters: Bool { hasEditableParameters }
+    /// Whether this filter is a CRT-type filter with CRT-specific shader parameters.
+    /// - Note: Deprecated. Use `hasEditableParameters` to test for any editable parameters.
+    @available(*, deprecated, renamed: "hasEditableParameters")
+    public var hasCRTParameters: Bool {
+        switch self {
+        case .simpleCRT, .complexCRT: return true
+        default: return false
+        }
+    }
 
     /// Whether this filter exposes user-adjustable shader parameters.
     public var hasEditableParameters: Bool {
