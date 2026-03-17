@@ -180,7 +180,6 @@ struct PVLogEntryTests {
     func entryIndexNonNegative() {
         let entry1 = PVLogEntry(message: "first")
         let entry2 = PVLogEntry(message: "second")
-        // entryIndex is a UInt, always >= 0
         #expect(entry1.entryIndex >= 0)
         #expect(entry2.entryIndex >= 0)
     }
@@ -233,7 +232,6 @@ struct LogEntryTests {
     func equalityById() {
         let e1 = makeEntry(message: "hello")
         let e2 = makeEntry(message: "world")
-        // Different instances always have different UUIDs
         #expect(e1 != e2)
     }
 
@@ -255,7 +253,6 @@ struct LogEntryTests {
     @Test("FormattedTimestamp has expected format")
     func formattedTimestamp() {
         let entry = makeEntry()
-        // Format should be HH:mm:ss.SSS — 12 chars including separators
         let ts = entry.formattedTimestamp
         #expect(ts.count >= 12)
         #expect(ts.contains(":"))
@@ -321,17 +318,25 @@ struct PVLogPublisherTests {
         #expect(pub1 === pub2)
     }
 
+    @Test("storeEntry stores entry in recent logs")
+    func storeEntryStores() async throws {
+        let publisher = PVLogPublisher.shared
+        publisher.clearLogs()
+
+        publisher.storeEntry(message: "store-test", level: .info, categoryName: "general",
+                             file: "T.swift", function: "f()", line: 1)
+
+        let logs = publisher.getRecentLogs()
+        #expect(logs.contains(where: { $0.message == "store-test" }))
+    }
+
     @Test("Logging a message stores it in recent logs")
     func logStoresEntry() async throws {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
 
-        // Allow the clear to complete
-        try await Task.sleep(nanoseconds: 10_000_000)
-
         publisher.log("test entry", level: .info, file: "Test.swift", function: "testFn()", line: 1)
 
-        // getRecentLogs is synchronous via logsQueue.sync — waits for async write
         let logs = publisher.getRecentLogs()
         #expect(logs.contains(where: { $0.message == "test entry" }))
     }
@@ -340,14 +345,10 @@ struct PVLogPublisherTests {
     func clearLogsRemovesEntries() async throws {
         let publisher = PVLogPublisher.shared
         publisher.log("entry to clear", level: .debug, file: "T.swift", function: "f()", line: 1)
-
-        // Wait for write to complete
-        try await Task.sleep(nanoseconds: 10_000_000)
+        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.clearLogs()
-
-        // Wait for clear to complete
-        try await Task.sleep(nanoseconds: 10_000_000)
+        try await Task.sleep(nanoseconds: 5_000_000)
 
         let logs = publisher.getRecentLogs()
         #expect(!logs.contains(where: { $0.message == "entry to clear" }))
@@ -357,13 +358,12 @@ struct PVLogPublisherTests {
     func getRecentLogsFiltering() async throws {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 10_000_000)
+        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.log("verbose msg", level: .verbose, file: "T.swift", function: "f()", line: 1)
-        publisher.log("error msg", level: .error, file: "T.swift", function: "f()", line: 2)
+        publisher.log("error msg",   level: .error,   file: "T.swift", function: "f()", line: 2)
 
-        // Sync read after async writes
-        let allLogs = publisher.getRecentLogs()
+        let allLogs   = publisher.getRecentLogs()
         let errorLogs = publisher.getRecentLogs(minLevel: .error)
 
         #expect(errorLogs.allSatisfy { $0.level >= .error })
@@ -374,7 +374,7 @@ struct PVLogPublisherTests {
     func verboseConvenience() async throws {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 10_000_000)
+        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.verbose("verbose convenience", file: "T.swift", function: "f()", line: 1)
 
@@ -386,7 +386,7 @@ struct PVLogPublisherTests {
     func errorConvenience() async throws {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 10_000_000)
+        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.error("error convenience", file: "T.swift", function: "f()", line: 1)
 
@@ -397,8 +397,158 @@ struct PVLogPublisherTests {
     #if canImport(Combine)
     @Test("logPublisher property is accessible")
     func logPublisherAccessible() {
-        // Verify the property is accessible and the type is correct
         _ = PVLogPublisher.shared.logPublisher
     }
     #endif
+
+    // MARK: - Per-Category Level Filtering Tests
+
+    @Test("setMinLevel suppresses entries below threshold")
+    func categoryFilterSuppressesLow() async throws {
+        let publisher = PVLogPublisher.shared
+        publisher.clearLogs()
+        publisher.resetCategoryFilters()
+        publisher.setMinLevel(.error, forCategory: "audio")
+        try await Task.sleep(nanoseconds: 5_000_000)
+
+        publisher.storeEntry(message: "audio-debug", level: .debug, categoryName: "audio",
+                             file: "T.swift", function: "f()", line: 1)
+        publisher.storeEntry(message: "audio-error", level: .error, categoryName: "audio",
+                             file: "T.swift", function: "f()", line: 2)
+
+        let logs = publisher.getRecentLogs()
+        #expect(!logs.contains(where: { $0.message == "audio-debug" }),
+                "debug entry should be filtered out")
+        #expect(logs.contains(where: { $0.message == "audio-error" }),
+                "error entry should pass the filter")
+
+        publisher.resetCategoryFilters()
+    }
+
+    @Test("minLevel returns verbose when no filter set")
+    func minLevelDefault() {
+        let publisher = PVLogPublisher.shared
+        publisher.resetCategoryFilters()
+        #expect(publisher.minLevel(forCategory: "emulator") == .verbose)
+    }
+
+    @Test("setMinLevel and minLevel round-trip")
+    func setAndGetMinLevel() {
+        let publisher = PVLogPublisher.shared
+        publisher.setMinLevel(.warning, forCategory: "video")
+        #expect(publisher.minLevel(forCategory: "video") == .warning)
+        publisher.resetCategoryFilters()
+    }
+
+    @Test("resetCategoryFilters clears all levels")
+    func resetFilters() {
+        let publisher = PVLogPublisher.shared
+        publisher.setMinLevel(.error, forCategory: "ui")
+        publisher.setMinLevel(.warning, forCategory: "network")
+        publisher.resetCategoryFilters()
+        #expect(publisher.minLevel(forCategory: "ui") == .verbose)
+        #expect(publisher.minLevel(forCategory: "network") == .verbose)
+    }
+
+    // MARK: - AsyncStream Tests
+
+    @Test("makeLogStream receives new entries")
+    func asyncStreamReceivesEntries() async throws {
+        let publisher = PVLogPublisher.shared
+        publisher.clearLogs()
+        try await Task.sleep(nanoseconds: 5_000_000)
+
+        let stream = publisher.makeLogStream()
+
+        // Log one entry then cancel the stream
+        let uniqueMessage = "asyncstream-test-\(UUID().uuidString)"
+        publisher.storeEntry(message: uniqueMessage, level: .info, categoryName: "general",
+                             file: "T.swift", function: "f()", line: 1)
+
+        var received: LogEntry?
+        for await entry in stream {
+            received = entry
+            break // consume one entry and exit
+        }
+
+        #expect(received != nil)
+        #expect(received?.message == uniqueMessage)
+    }
+
+    @Test("makeLogStream can be cancelled without leaking")
+    func asyncStreamCancellation() async throws {
+        let publisher = PVLogPublisher.shared
+
+        actor StreamObserver {
+            var didReceiveEntry = false
+
+            func markReceived() {
+                didReceiveEntry = true
+            }
+        }
+
+        let observer = StreamObserver()
+
+        let task = Task {
+            let stream = publisher.makeLogStream()
+            for await _ in stream {
+                await observer.markReceived()
+            }
+        }
+
+        // Emit an entry to ensure the stream produces at least one value
+        let uniqueMessage = "asyncstream-cancel-\(UUID().uuidString)"
+        publisher.storeEntry(message: uniqueMessage,
+                             level: .info,
+                             categoryName: "general",
+                             file: "T.swift",
+                             function: "f()",
+                             line: 1)
+
+        // Request cancellation and wait for the consumer task to finish.
+        // If the stream does not respect cancellation, this await will hang.
+        task.cancel()
+        await task.value
+
+        let didReceiveEntry = await observer.didReceiveEntry
+        #expect(didReceiveEntry, "Stream should receive at least one entry before cancellation")
+        #expect(task.isCancelled, "Task should report as cancelled after completion")
+    }
+}
+
+// MARK: - New Category Tests
+
+@Suite("PVLogCategory")
+struct PVLogCategoryTests {
+
+    @Test("New categories are accessible")
+    func newCategoriesExist() {
+        // Verify the new static categories compile and return non-nil loggers
+        _ = PVLogCategory.emulator
+        _ = PVLogCategory.ui
+        _ = PVLogCategory.controller
+        _ = PVLogCategory.saveState
+        _ = PVLogCategory.library
+        #expect(Bool(true))
+    }
+
+    #if !canImport(OSLog)
+    @Test("Non-OSLog category names are correct")
+    func categoryNamesNonOSLog() {
+        #expect(PVLogCategory.emulator.categoryName == "emulator")
+        #expect(PVLogCategory.ui.categoryName == "ui")
+        #expect(PVLogCategory.controller.categoryName == "controller")
+        #expect(PVLogCategory.saveState.categoryName == "savestate")
+        #expect(PVLogCategory.library.categoryName == "library")
+    }
+    #endif
+
+    @Test("categoryName(from:) returns known names for predefined categories")
+    func categoryNameFromKnown() {
+        #expect(PVLogPublisher.categoryName(from: .audio) == "audio")
+        #expect(PVLogPublisher.categoryName(from: .video) == "video")
+        #expect(PVLogPublisher.categoryName(from: .general) == "general")
+        #expect(PVLogPublisher.categoryName(from: .emulator) == "emulator")
+        #expect(PVLogPublisher.categoryName(from: .library) == "library")
+    }
 }
