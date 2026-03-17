@@ -279,9 +279,27 @@ jobs:
 
       - name: Convert to IPA
         run: |
+          APP_DIR="archive.xcarchive/Products/Applications"
+
+          # If the standard path doesn't exist, search the entire archive
+          if [ ! -d "$APP_DIR" ] || [ -z "$(ls -A "$APP_DIR" 2>/dev/null)" ]; then
+            echo "Standard archive path empty, searching..."
+            find archive.xcarchive -name "*.app" -maxdepth 5 2>/dev/null
+            APP_PATH=$(find archive.xcarchive -name "${{ matrix.APP_NAME }}.app" -maxdepth 5 2>/dev/null | head -1)
+            if [ -z "$APP_PATH" ]; then
+              echo "::error::No .app bundle found in archive"
+              echo "Archive structure:"
+              find archive.xcarchive -type d -maxdepth 4
+              exit 1
+            fi
+            mkdir -p "$APP_DIR"
+            cp -pR "$APP_PATH" "$APP_DIR/"
+            echo "Found app at: $APP_PATH"
+          fi
+
           mkdir Payload
-          ls -la "archive.xcarchive/Products/Applications"
-          cp -pR "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
+          ls -la "$APP_DIR"
+          cp -pR "$APP_DIR/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
           zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
 
       - name: Upload Artifact
