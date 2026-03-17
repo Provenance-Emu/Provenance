@@ -1261,8 +1261,8 @@ struct RetroMenuView: View {
                                     }
                                 )
 
-                                // Custom skins with previews
-                                ForEach(availableSkinObjects, id: \.identifier) { skin in
+                                // Custom skins with previews (filtered by selected orientation)
+                                ForEach(availableSkinObjects.filter { skinSupportsOrientation($0, orientation: currentOrientation) }, id: \.identifier) { skin in
                                     SkinPreviewItemView(
                                         skin: skin,
                                         isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == skin.name,
