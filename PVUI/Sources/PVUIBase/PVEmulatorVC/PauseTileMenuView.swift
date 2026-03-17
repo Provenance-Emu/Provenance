@@ -43,6 +43,8 @@ struct PauseTileMenuView: View {
     @State private var showingScreenshotBrowser = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
+    /// Incremented after every core-option toggle to force a re-render of the tile grid.
+    @State private var coreOptionRefreshToken = 0
 
     // MARK: tvOS Focus
 
@@ -168,7 +170,9 @@ struct PauseTileMenuView: View {
     }
 
     /// Dynamic tiles sourced from the active core's `CoreActions` and `CoreOptions`.
+    /// `coreOptionRefreshToken` is referenced so SwiftUI re-evaluates this property after a toggle.
     private var coreTiles: [PauseMenuTile] {
+        _ = coreOptionRefreshToken
         var tiles: [PauseMenuTile] = []
 
         // Core action tiles
@@ -257,16 +261,12 @@ struct PauseTileMenuView: View {
                   let coreWithActions = emulatorVC.core as? CoreActions,
                   let action = coreWithActions.coreActions?.first(where: { $0.title == actionTitle }) else { return }
             if action.options != nil {
-                // Store for the confirmationDialog; the dialog calls selected(action:)
+                // Store for the confirmationDialog; the dialog calls handleCoreAction with the selected option.
                 pendingCoreAction = action
             } else {
                 dismissAction(false)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    coreWithActions.selected(action: action)
-                    self.emulatorVC.core.setPauseEmulation(false)
-                    if action.requiresReset {
-                        self.emulatorVC.core.resetEmulation()
-                    }
+                    self.emulatorVC.handleCoreAction(action)
                 }
             }
 
@@ -275,8 +275,9 @@ struct PauseTileMenuView: View {
             guard let key = CoreOptionTileProvider.optionKey(fromTileID: id),
                   let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
                   let option = CoreOptionTileProvider.findOption(key: key, in: coreClass.options) else { return }
-            let currentValue = coreClass.storedValueForOption(Bool.self, key) ?? false
-            coreClass.setValue(!currentValue, forOption: option)
+            let currentValue: Bool = coreClass.valueForOption(option)
+            coreClass.setValue(!currentValue, forOption: option, andMD5: coreClass.currentGameMD5)
+            coreOptionRefreshToken += 1
 
         // MARK: Core settings gateway
         case CoreOptionTileProvider.coreSettingsTileID:
@@ -498,18 +499,21 @@ struct PauseTileMenuView: View {
             titleVisibility: .visible
         ) {
             if let action = pendingCoreAction,
-               let options = action.options,
-               let coreWithActions = emulatorVC.core as? CoreActions {
+               let options = action.options {
                 ForEach(options, id: \.title) { opt in
                     Button(opt.title) {
                         pendingCoreAction = nil
+                        // Build a new CoreAction with the chosen option marked selected
+                        // so cores can distinguish which option the user picked.
+                        let selectedAction = CoreAction(
+                            title: action.title,
+                            requiresReset: action.requiresReset,
+                            options: options.map { CoreActionOption(title: $0.title, selected: $0 == opt) },
+                            style: action.style
+                        )
                         dismissAction(false)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                            coreWithActions.selected(action: action)
-                            self.emulatorVC.core.setPauseEmulation(false)
-                            if action.requiresReset {
-                                self.emulatorVC.core.resetEmulation()
-                            }
+                            self.emulatorVC.handleCoreAction(selectedAction)
                         }
                     }
                 }

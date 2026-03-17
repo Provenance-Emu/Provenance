@@ -102,8 +102,8 @@ public struct CoreOptionTileProvider {
         var result: [PauseMenuTile] = []
         for option in options {
             switch option {
-            case let .bool(display, defaultValue, _):
-                let current = coreClass.storedValueForOption(Bool.self, display.title) ?? defaultValue
+            case let .bool(display, _, _):
+                let current: Bool = coreClass.valueForOption(option)
                 result.append(PauseMenuTile(
                     id: tileID(forOptionKey: display.title),
                     icon: current ? "checkmark.square.fill" : "square",
