@@ -76,6 +76,7 @@ public final class ROMTitleNormalizationService: Sendable {
             uniquingKeysWith: { _, last in last }
         )
 
+        var appliedCount = 0
         try await RealmContext.withBackgroundRealm { realm in
             try realm.write {
                 for (id, proposedTitle) in idToTitle {
@@ -85,10 +86,11 @@ public final class ROMTitleNormalizationService: Sendable {
                     }
                     DLOG("Normalized title: '\(game.title)' → '\(proposedTitle)'")
                     game.title = proposedTitle
+                    appliedCount += 1
                 }
             }
         }
-        ILOG("ROMTitleNormalizationService: applied \(proposals.count) title rename(s)")
+        ILOG("ROMTitleNormalizationService: applied \(appliedCount)/\(proposals.count) title rename(s)")
     }
 
     /// Convenience: build proposals and apply all of them in one call.

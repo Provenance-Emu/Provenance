@@ -506,6 +506,11 @@ public extension Defaults.Keys {
     /// Automatically strip ROM annotation tags and normalize titles when importing.
     /// When enabled, filenames like "Bomberman (USA) [!].nes" become "Bomberman"
     /// in the library. When disabled, the raw filename (sans extension) is used.
+    ///
+    /// Defaults to `true` — the intent is that clean titles are the better default
+    /// for new users. Existing users who prefer the annotated filename can turn this
+    /// off in Library Management settings. Previously-imported titles are unaffected
+    /// (use "Normalize Existing Library" to bulk-update them).
     static let autoNormalizeROMTitles = Key<Bool>("autoNormalizeROMTitles", default: true)
 }
 

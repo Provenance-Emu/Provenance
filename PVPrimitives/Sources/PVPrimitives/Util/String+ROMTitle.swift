@@ -8,6 +8,19 @@
 
 import Foundation
 
+// MARK: - Shared ROM Tag Regex Patterns
+
+/// Regex that matches a parenthetical annotation tag — e.g. `(USA)`, `(Rev 1)`.
+private let romParenTagPattern = #"\s*\([^)]*\)"#
+/// Regex that matches a bracketed annotation tag — e.g. `[!]`, `[T-En]`.
+private let romBracketTagPattern = #"\s*\[[^\]]*\]"#
+/// Regex that matches any parenthetical **or** bracketed tag (for `hasROMTags`).
+private let romTagDetectionPattern = #"\([^)]*\)|\[[^\]]*\]"#
+/// Regex that matches a disc/disk/CD/Track number group — e.g. `(Disc 2)`, `(CD1)`.
+private let romDiscTagPattern = #"\s*\((?:Disk|Disc|DISK|DISC|CD|Track|disc|track|cd|disk)\s*\d+\)"#
+/// Regex that matches a trailing version suffix — e.g. `v1.0`, `V2`, `v1.2.3`.
+private let romVersionSuffixPattern = #"\s+[Vv]\d+(?:\.\d+)*$"#
+
 public extension String {
 
     // MARK: - ROM Tag Patterns
@@ -28,8 +41,8 @@ public extension String {
     ///     "(Bad Title)".strippingROMTags()          // "(Bad Title)"
     func strippingROMTags() -> String {
         let cleaned = self
-            .replacingOccurrences(of: #"\s*\([^)]*\)"#, with: "", options: .regularExpression)
-            .replacingOccurrences(of: #"\s*\[[^\]]*\]"#, with: "", options: .regularExpression)
+            .replacingOccurrences(of: romParenTagPattern, with: "", options: .regularExpression)
+            .replacingOccurrences(of: romBracketTagPattern, with: "", options: .regularExpression)
             .trimmingCharacters(in: .whitespaces)
         return cleaned.isEmpty ? self : cleaned
     }
@@ -37,7 +50,7 @@ public extension String {
     /// Returns `true` when the string contains at least one parenthetical or
     /// bracketed ROM annotation tag (e.g. `(USA)`, `[!]`).
     var hasROMTags: Bool {
-        range(of: #"\([^)]*\)|\[[^\]]*\]"#, options: .regularExpression) != nil
+        range(of: romTagDetectionPattern, options: .regularExpression) != nil
     }
 
     // MARK: - Normalized ROM Title
@@ -62,30 +75,18 @@ public extension String {
         var result = self
 
         // 1. Strip disc/disk/CD/Track numbering (e.g. "(Disc 2)", "(CD1)", "(Track 03)")
-        result = result.replacingOccurrences(
-            of: #"\s*\((?:Disk|Disc|DISK|DISC|CD|Track|disc|track|cd|disk)\s*\d+\)"#,
-            with: "",
-            options: .regularExpression
-        )
+        result = result.replacingOccurrences(of: romDiscTagPattern, with: "", options: .regularExpression)
 
-        // 2. Strip all remaining parenthetical and bracketed ROM tags
+        // 2. Strip all remaining parenthetical and bracketed ROM tags (shared patterns)
         result = result
-            .replacingOccurrences(of: #"\s*\([^)]*\)"#, with: "", options: .regularExpression)
-            .replacingOccurrences(of: #"\s*\[[^\]]*\]"#, with: "", options: .regularExpression)
+            .replacingOccurrences(of: romParenTagPattern, with: "", options: .regularExpression)
+            .replacingOccurrences(of: romBracketTagPattern, with: "", options: .regularExpression)
 
         // 3. Strip trailing version strings — v1.0, v1.2.3, V2, etc.
-        result = result.replacingOccurrences(
-            of: #"\s+[Vv]\d+(?:\.\d+)*$"#,
-            with: "",
-            options: .regularExpression
-        )
+        result = result.replacingOccurrences(of: romVersionSuffixPattern, with: "", options: .regularExpression)
 
         // 4. Collapse multiple spaces
-        result = result.replacingOccurrences(
-            of: #"\s{2,}"#,
-            with: " ",
-            options: .regularExpression
-        )
+        result = result.replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
 
         // 5. Trim
         result = result.trimmingCharacters(in: .whitespaces)

@@ -22,6 +22,7 @@ public struct ROMTitleNormalizationView: View {
     @State private var proposals: [ROMTitleRenameProposal] = []
     @State private var selected: Set<String> = []   // ids of proposals to apply
     @State private var resultMessage: String?
+    @State private var resultIsError = false
     @State private var showResult = false
 
     private let service = ROMTitleNormalizationService()
@@ -59,7 +60,7 @@ public struct ROMTitleNormalizationView: View {
         .toolbar { toolbarItems }
 #endif
         .task { await load() }
-        .alert("Done", isPresented: $showResult, actions: {
+        .alert(resultIsError ? "Error" : "Done", isPresented: $showResult, actions: {
             Button("OK") {}
         }, message: {
             Text(resultMessage ?? "")
@@ -165,11 +166,13 @@ public struct ROMTitleNormalizationView: View {
         let appliedIDs = Set(toApply.map(\.id))
         do {
             try await service.applyProposals(toApply)
+            resultIsError = false
             resultMessage = "Applied \(toApply.count) title rename(s) successfully."
             proposals.removeAll { appliedIDs.contains($0.id) }
             selected.subtract(appliedIDs)
         } catch {
             ELOG("ROMTitleNormalizationView: apply failed: \(error)")
+            resultIsError = true
             resultMessage = "Failed to apply renames: \(error.localizedDescription)"
         }
         showResult = true
