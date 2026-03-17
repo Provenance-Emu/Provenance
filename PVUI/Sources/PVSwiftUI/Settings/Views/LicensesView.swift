@@ -201,7 +201,9 @@ struct LicensesView: View {
         }
         .listStyle(.plain)
         .background(Color.clear)
+        #if !os(tvOS)
         .scrollContentBackground(.hidden)
+        #endif
     }
 
     // MARK: Helpers

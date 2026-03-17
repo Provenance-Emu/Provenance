@@ -676,14 +676,23 @@ struct RetroMenuView: View {
             if hasKeyboard {
                 menuButton(title: "VIRTUAL KEYBOARD", icon: "keyboard", color: .retroBlue) {
                     dismissAction(false)
+                    #if os(tvOS)
+                    emulatorVC.toggleSiriRemoteKeyboard()
+                    #else
                     emulatorVC.showVirtualKeyboard(animated: true, startExpanded: true)
+                    #endif
                 }
             }
 
             if hasMouse {
                 menuButton(title: "VIRTUAL MOUSE", icon: "computermouse", color: .retroPurple) {
                     dismissAction(false)
-                    emulatorVC.showVirtualMouse()                }
+                    #if os(tvOS)
+                    emulatorVC.toggleSiriRemoteMouse()
+                    #else
+                    emulatorVC.showVirtualMouse()
+                    #endif
+                }
             }
 
             // Per-port device type picker (from SET_CONTROLLER_INFO)
@@ -1873,24 +1882,9 @@ struct RetroMenuView: View {
     private var filterPickerView: some View {
         #if os(tvOS)
         NavigationStack {
-            Form {
-                Picker("Screen Filter", selection: $selectedMetalFilter) {
-                    ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
-                        Text(option == .none ? "None" : option.description)
-                            .tag(option)
-                    }
-                }
-                .pickerStyle(.navigationLink)
-
-                if selectedMetalFilter != .none {
-                    Section {
-                        FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
-                    }
-                }
-
-                // Show shader parameters for the selected filter
-                shaderParametersSection(for: selectedMetalFilter)
-            }
+            SwiftUI.Form(content: {
+                tvOSFilterPickerContent
+            })
             .navigationTitle("Screen Filters")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -1928,6 +1922,31 @@ struct RetroMenuView: View {
         .edgesIgnoringSafeArea(.all)
         #endif
     }
+
+    #if os(tvOS)
+    @ViewBuilder
+    private var tvOSFilterPickerContent: some View {
+        SwiftUI.Section {
+            SwiftUI.Picker("Screen Filter", selection: $selectedMetalFilter) {
+                ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
+                    Text(option == .none ? "None" : option.description)
+                        .tag(option)
+                }
+            }
+            .pickerStyle(.navigationLink)
+        }
+
+        if selectedMetalFilter != .none {
+            SwiftUI.Section {
+                FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
+            }
+
+            SwiftUI.Section {
+                shaderParametersSection(for: selectedMetalFilter)
+            }
+        }
+    }
+    #endif
 
     @ViewBuilder
     private func filterPickerContent(geometry: GeometryProxy, isCompact: Bool) -> some View {

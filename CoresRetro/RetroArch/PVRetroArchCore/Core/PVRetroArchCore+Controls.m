@@ -428,7 +428,9 @@ static bool is_virtual_touch_controller(GCController *controller) {
             GCController *controller = [notification object];
             if (controller && !is_virtual_touch_controller(controller)) {
                 controller.playerIndex = 0;
+#if TARGET_OS_IOS && !TARGET_OS_TV
                 apple_gamecontroller_joypad_setup_haptics(controller);
+#endif
             }
         }
         [self refresh_gamecontrollers];

@@ -176,6 +176,7 @@ public extension System_Data {
         case .Quake2: return .poster
         case .RetroArch: return .poster
         case .Wolf3D: return .poster
+        case .NeoGeoCD: return .poster
         }
     }
     #endif

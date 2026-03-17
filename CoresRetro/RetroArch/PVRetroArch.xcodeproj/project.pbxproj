@@ -20,6 +20,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		039F981B1E6C203CC74BC408 /* PVRetroArchOSD.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */; };
+		2E434850122D7261A75CF7FE /* PVRetroArchOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E408A962408758D92289AF /* PVRetroArchOSD.m */; };
 		9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */ = {isa = PBXBuildFile; fileRef = 9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */; };
 		931A43F9296A26B400D27F9D /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621020783162009950E4 /* PVRetroArch.framework */; platformFilters = (ios, tvos, ); };
 		931A43FA296A26B400D27F9D /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621020783162009950E4 /* PVRetroArch.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -43,10 +45,6 @@
 		93814F922AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m in Sources */ = {isa = PBXBuildFile; fileRef = 93814F912AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m */; };
 		9383580D296CDBB600A23231 /* metal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9383580C296CDBB600A23231 /* metal.m */; };
 		93835811296CFAA700A23231 /* cocoa_common.m in Sources */ = {isa = PBXBuildFile; fileRef = 93835810296CFAA600A23231 /* cocoa_common.m */; };
-		2E434850122D7261A75CF7FE /* PVRetroArchOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E408A962408758D92289AF /* PVRetroArchOSD.m */; };
-		039F981B1E6C203CC74BC408 /* PVRetroArchOSD.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */; };
-		CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */; };
-		CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */; };
 		9383581B296D362C00A23231 /* retroarch.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 9383581A296D362C00A23231 /* retroarch.cfg */; };
 		93835825296D58B900A23231 /* assets.zip in Resources */ = {isa = PBXBuildFile; fileRef = 93835824296D58B900A23231 /* assets.zip */; };
 		9389A8F9297AA46000B27656 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 9389A8F8297AA46000B27656 /* arrow.png */; };
@@ -59,8 +57,6 @@
 		93AA1253296DCEE8007C9808 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA1252296DCEE8007C9808 /* VideoToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93AC9F672A48952800D3F4D6 /* runloop.c in Sources */ = {isa = PBXBuildFile; fileRef = 93AC9F662A48952700D3F4D6 /* runloop.c */; };
 		93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */; };
-		AF3BC001029A000000000002 /* PVRetroArchCore+BIOS+AtariST.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */; };
-		AF3BC001029A000000000004 /* PVRetroArchCoreBridge+BIOSAtariST.h in Headers */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */; };
 		93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */; };
 		93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */; };
 		93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B992967C64300A621DD /* menu_pipeline.metal */; };
@@ -124,6 +120,8 @@
 		93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */; };
 		93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */; };
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
+		AF3BC001029A000000000002 /* PVRetroArchCore+BIOS+AtariST.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */; };
+		AF3BC001029A000000000004 /* PVRetroArchCoreBridge+BIOSAtariST.h in Headers */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */; };
 		B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */; };
 		B30C8C832BF45AE200C91991 /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7E2BF45AE200C91991 /* griffin.c */; };
 		B30C8C842BF45AE200C91991 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7F2BF45AE200C91991 /* griffin.m */; };
@@ -249,6 +247,8 @@
 		B3FD968E2D613FD600397643 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96812D613FD600397643 /* libavutil.xcframework */; };
 		B3FD96902D613FD600397643 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96822D613FD600397643 /* libswresample.xcframework */; };
 		B3FD96922D613FD700397643 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96832D613FD600397643 /* libswscale.xcframework */; };
+		CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */; };
+		CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -306,6 +306,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		29E408A962408758D92289AF /* PVRetroArchOSD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchOSD.m; sourceTree = "<group>"; };
 		9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+SNES.m"; sourceTree = "<group>"; };
 		9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PSP.m"; sourceTree = "<group>"; };
 		932A5CB6296866A60032C168 /* RetroArch */ = {isa = PBXFileReference; lastKnownFileType = text; path = RetroArch; sourceTree = SOURCE_ROOT; };
@@ -331,10 +332,6 @@
 		93814F912AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive+MAME.m"; sourceTree = "<group>"; };
 		9383580C296CDBB600A23231 /* metal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = metal.m; sourceTree = "<group>"; };
 		93835810296CFAA600A23231 /* cocoa_common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoa_common.m; sourceTree = "<group>"; };
-		29E408A962408758D92289AF /* PVRetroArchOSD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchOSD.m; sourceTree = "<group>"; };
-		A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchOSD.h; sourceTree = "<group>"; };
-		CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCoreCapabilities.h; sourceTree = "<group>"; };
-		CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchCoreCapabilities.m; sourceTree = "<group>"; };
 		9383581A296D362C00A23231 /* retroarch.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = retroarch.cfg; sourceTree = "<group>"; };
 		93835824296D58B900A23231 /* assets.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = assets.zip; sourceTree = "<group>"; };
 		9389A8F8297AA46000B27656 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
@@ -354,8 +351,6 @@
 		93AC9F662A48952700D3F4D6 /* runloop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = runloop.c; sourceTree = "<group>"; };
 		93B3B1942A8CAB0E00B60325 /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = usr/lib/liblzma.tbd; sourceTree = SDKROOT; };
 		93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive+PC98.m"; sourceTree = "<group>"; };
-		AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+BIOS+AtariST.m"; sourceTree = "<group>"; };
-		AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+BIOSAtariST.h"; sourceTree = "<group>"; };
 		93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Archive.h"; sourceTree = "<group>"; };
 		93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive.m"; sourceTree = "<group>"; };
 		93B66B982967C64300A621DD /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
@@ -427,6 +422,9 @@
 		93F66EE229672D9000203EB3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		93FF38392966337100772659 /* cocoa_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa_common.h; sourceTree = "<group>"; };
 		93FF383A2966337100772659 /* apple_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform.h; sourceTree = "<group>"; };
+		A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchOSD.h; sourceTree = "<group>"; };
+		AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+BIOS+AtariST.m"; sourceTree = "<group>"; };
+		AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+BIOSAtariST.h"; sourceTree = "<group>"; };
 		B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
 		B30C8C7E2BF45AE200C91991 /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
 		B30C8C7F2BF45AE200C91991 /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
@@ -549,6 +547,8 @@
 		B3FD96812D613FD600397643 /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libavutil.xcframework; sourceTree = "<group>"; };
 		B3FD96822D613FD600397643 /* libswresample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswresample.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libswresample.xcframework; sourceTree = "<group>"; };
 		B3FD96832D613FD600397643 /* libswscale.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswscale.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libswscale.xcframework; sourceTree = "<group>"; };
+		CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCoreCapabilities.h; sourceTree = "<group>"; };
+		CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchCoreCapabilities.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
