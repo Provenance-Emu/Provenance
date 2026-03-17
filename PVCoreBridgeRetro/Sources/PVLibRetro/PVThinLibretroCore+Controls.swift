@@ -58,6 +58,7 @@ extension PVThinLibretroCore {
 
     /// Press a libretro joypad button.
     func pressButton(_ btn: RetroJoypad, forPlayer player: Int) {
+        DLOG("ThinCore: pressButton \(btn) (id=\(btn.rawValue)) player=\(player)")
         _bridge.setButton(btn.rawValue, pressed: true, forPlayer: UInt32(player))
     }
 
