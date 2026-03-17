@@ -27,20 +27,56 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     public let PVSupportedCheatTypes: [String]?
     public let PVCores: [CorePlistEntry]? // SubCoreEntry
     /// JIT requirement level for this core. Mirrors `PVJITRequirement` key in `Core.plist`.
-    public let PVJITRequirement: String? = nil
+    public let PVJITRequirement: String?
     /// When `true`, this core is currently disabled *only* because JIT is required but
     /// unavailable on the device.  The app layer can auto-enable the core when JIT is
     /// successfully acquired.  Mirrors `PVJITDisabledWithoutJIT` key in `Core.plist`.
-    public let PVJITDisabledWithoutJIT: Bool? = nil
+    public let PVJITDisabledWithoutJIT: Bool?
     /// SPDX license identifier (e.g. `"GPL-2.0-only"`, `"MIT"`).
     /// Mirrors `PVLicenseName` key in `Core.plist`.
-    public let PVLicenseName: String? = nil
+    public let PVLicenseName: String?
     /// URL pointing to the full license text for this core.
     /// Mirrors `PVLicenseURL` key in `Core.plist`.
-    public let PVLicenseURL: String? = nil
+    public let PVLicenseURL: String?
     /// Copyright statement(s) for this core.
     /// Mirrors `PVCopyright` key in `Core.plist`.
-    public let PVCopyright: String? = nil
+    public let PVCopyright: String?
+
+    public init(
+        PVCoreIdentifier: String,
+        PVPrincipleClass: String,
+        PVSupportedSystems: [String],
+        PVProjectName: String,
+        PVProjectURL: String,
+        PVProjectVersion: String,
+        PVDisabled: Bool? = nil,
+        PVContentless: Bool? = nil,
+        PVAppStoreDisabled: Bool? = nil,
+        PVSupportedCheatTypes: [String]? = nil,
+        PVCores: [CorePlistEntry]? = nil,
+        PVJITRequirement: String? = nil,
+        PVJITDisabledWithoutJIT: Bool? = nil,
+        PVLicenseName: String? = nil,
+        PVLicenseURL: String? = nil,
+        PVCopyright: String? = nil
+    ) {
+        self.PVCoreIdentifier = PVCoreIdentifier
+        self.PVPrincipleClass = PVPrincipleClass
+        self.PVSupportedSystems = PVSupportedSystems
+        self.PVProjectName = PVProjectName
+        self.PVProjectURL = PVProjectURL
+        self.PVProjectVersion = PVProjectVersion
+        self.PVDisabled = PVDisabled
+        self.PVContentless = PVContentless
+        self.PVAppStoreDisabled = PVAppStoreDisabled
+        self.PVSupportedCheatTypes = PVSupportedCheatTypes
+        self.PVCores = PVCores
+        self.PVJITRequirement = PVJITRequirement
+        self.PVJITDisabledWithoutJIT = PVJITDisabledWithoutJIT
+        self.PVLicenseName = PVLicenseName
+        self.PVLicenseURL = PVLicenseURL
+        self.PVCopyright = PVCopyright
+    }
 }
 
 public extension CorePlistEntry {
