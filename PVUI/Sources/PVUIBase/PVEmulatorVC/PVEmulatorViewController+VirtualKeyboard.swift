@@ -231,6 +231,8 @@ extension PVEmulatorViewController {
         container.addSubview(hostingVC.view)
         view.addSubview(container)
         view.bringSubviewToFront(container)
+        // Use high zPosition so keyboard stays above skins loaded asynchronously
+        container.layer.zPosition = 9998
         hostingVC.didMove(toParent: self)
 
         hostingVC.view.translatesAutoresizingMaskIntoConstraints = false
