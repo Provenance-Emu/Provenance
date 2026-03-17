@@ -1759,7 +1759,7 @@
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
-				<string>com.provenance.neogeo</string>
+				<string>com.provenance.neogeocd</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>NeoCD (RetroArch)</string>

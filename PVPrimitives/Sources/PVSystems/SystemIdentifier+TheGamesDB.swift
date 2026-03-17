@@ -54,6 +54,7 @@ public extension SystemIdentifier {
 
         // SNK Systems
         case 24:  self = .NeoGeo       // Neo Geo
+        case 4956: self = .NeoGeoCD   // Neo Geo CD
         case 4922: self = .NGP         // Neo Geo Pocket
         case 4923: self = .NGPC        // Neo Geo Pocket Color
 
@@ -77,10 +78,8 @@ public extension SystemIdentifier {
         case 4942: self = .AppleII
         case 37:  self = .Macintosh
 
-        // NEC Systems
-        case 24: self = .NeoGeo
-        case 4922: self = .NGP
-        case 4923: self = .NGPC
+        // SNK Systems (duplicate block)
+        case 4956: self = .NeoGeoCD   // Neo Geo CD
 
         // Watara Systems
         case 32: self = .Intellivision // Watara Intellivision
@@ -148,6 +147,7 @@ public extension SystemIdentifier {
 
         // SNK Systems
         case .NeoGeo: return 24        // Neo Geo
+        case .NeoGeoCD: return 4956    // Neo Geo CD
         case .NGP: return 4922         // Neo Geo Pocket
         case .NGPC: return 4923        // Neo Geo Pocket Color
 

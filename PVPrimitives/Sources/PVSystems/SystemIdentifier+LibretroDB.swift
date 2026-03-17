@@ -58,6 +58,7 @@ public extension SystemIdentifier {
         case ._3DS: return 21  // Nintendo 3DS
         case .TIC80: return 26
         case .NeoGeo: return 1
+        case .NeoGeoCD: return 136  // SNK - Neo Geo CD
 //      case .Amiga: return 89
         case .Quake: return 23
         case .Quake2: return 4
@@ -140,6 +141,7 @@ public extension SystemIdentifier {
         case 92: return .Intellivision
         case 99: return .Dreamcast
         case 9: return .NGP            // Neo Geo Pocket
+        case 136: return .NeoGeoCD    // SNK - Neo Geo CD
         // case 89: return .Amiga
         // Unsupported systems:
         case 4:  return .Quake2
@@ -278,6 +280,7 @@ extension SystemIdentifier {
 
         // SNK Systems
         case .NeoGeo:       return "SNK - Neo Geo"
+        case .NeoGeoCD:     return "SNK - Neo Geo CD"
         case .NGP:          return "SNK - Neo Geo Pocket"
         case .NGPC:         return "SNK - Neo Geo Pocket Color"
 
