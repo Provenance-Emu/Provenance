@@ -211,9 +211,10 @@ public final class PVLogPublisher: @unchecked Sendable {
             continuationsLock.unlock()
 
             continuation.onTermination = { [weak self] _ in
-                self?.continuationsLock.lock()
-                self?.streamContinuations.removeValue(forKey: id)
-                self?.continuationsLock.unlock()
+                guard let self else { return }
+                self.continuationsLock.lock()
+                self.streamContinuations.removeValue(forKey: id)
+                self.continuationsLock.unlock()
             }
         }
     }
