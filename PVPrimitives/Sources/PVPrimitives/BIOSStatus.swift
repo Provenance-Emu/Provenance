@@ -123,11 +123,11 @@ public struct BIOSStatus: Codable, Sendable, Equatable {
                 // Skip MD5 check when expected MD5 is unknown (empty string)
                 let expectedMD5 = expectations.expectedMD5.uppercased()
                 let md5Known = !expectedMD5.isEmpty
-                let md5Match = !md5Known || file.md5?.uppercased() == expectedMD5
+                let md5Match = md5Known && file.md5?.uppercased() == expectedMD5
 
-                // Skip size check when expected size is unknown (zero) or MD5 already matched
+                // Skip size check when expected size is unknown (zero) or a known MD5 already matched
                 let sizeKnown = expectations.expectedSize > 0
-                let sizeMatch = !sizeKnown || md5Match || file.size == UInt64(expectations.expectedSize)
+                let sizeMatch = !sizeKnown || (md5Known && md5Match) || file.size == UInt64(expectations.expectedSize)
                 let filenameMatch = file.fileName == expectations.expectedFilename
 
                 var misses = [Mismatch]()
@@ -160,11 +160,11 @@ public extension BIOSStatus {
             // Skip MD5 check when expected MD5 is unknown (empty string)
             let expectedMD5 = bios.expectedMD5.uppercased()
             let md5Known = !expectedMD5.isEmpty
-            let md5Match = !md5Known || bios.fileInfo?.md5?.uppercased() == expectedMD5
+            let md5Match = md5Known && bios.fileInfo?.md5?.uppercased() == expectedMD5
 
-            // Skip size check when expected size is unknown (zero) or MD5 already matched
+            // Skip size check when expected size is unknown (zero) or a known MD5 already matched
             let sizeKnown = bios.expectedSize > 0
-            let sizeMatch = !sizeKnown || md5Match || bios.fileInfo?.size == UInt64(bios.expectedSize)
+            let sizeMatch = !sizeKnown || (md5Known && md5Match) || bios.fileInfo?.size == UInt64(bios.expectedSize)
             let filenameMatch = bios.fileInfo?.fileName == bios.expectedFilename
 
             var misses = [Mismatch]()
