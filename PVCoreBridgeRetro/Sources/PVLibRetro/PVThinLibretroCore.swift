@@ -343,8 +343,8 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     public var controllerPortDescriptors: [[PortDeviceDescriptor]] {
         return _bridge.controllerPortInfo.map { portTypes in
             portTypes.compactMap { dict -> PortDeviceDescriptor? in
-                guard let name = dict["name"] as? String,
-                      let typeNum = dict["type"] as? NSNumber else { return nil }
+                guard let name = dict["desc"] as? String,
+                      let typeNum = dict["id"] as? NSNumber else { return nil }
                 return PortDeviceDescriptor(name: name, deviceType: typeNum.uintValue)
             }
         }
@@ -363,7 +363,7 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
 
     /// Restore saved device type selections (called after core loads).
     func restorePortDeviceTypes() {
-        let portCount = max(_bridge.controllerPortInfo.count, 4)
+        let portCount = _bridge.controllerPortInfo.count
         for port in 0..<portCount {
             let key = portDevicePersistenceKey(port: port)
             if UserDefaults.standard.object(forKey: key) != nil {

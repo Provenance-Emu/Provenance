@@ -11,7 +11,6 @@
 
 import SwiftUI
 import PVCoreBridge
-import PVLogging
 import PVThemes
 
 // MARK: - RetroMenuView extension
