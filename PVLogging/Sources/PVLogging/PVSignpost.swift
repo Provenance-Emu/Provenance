@@ -6,8 +6,8 @@
 //  Copyright © 2025 Provenance Emu. All rights reserved.
 //
 //  Lightweight wrappers around `os.signpost` for profiling performance-critical
-//  sections such as frame timing and audio processing. Calls compile away to
-//  nothing in release builds when the SIGNPOSTS_ENABLED flag is absent.
+//  sections such as frame timing and audio processing. On non-Apple platforms
+//  all functions are no-ops that compile away entirely.
 //
 
 #if canImport(OSLog)
@@ -17,13 +17,13 @@ import OSLog
 /// Each instance corresponds to a performance domain visible in Instruments.
 public enum PVSignpostLog {
     /// Frame render timing (emulator display loop).
-    public static let frame = OSLog(subsystem: os.Logger.provenanceSubsystem, category: .pointsOfInterest)
+    public static let frame = OSLog(subsystem: os.Logger.provenanceSubsystem, category: "frame")
 
     /// Audio callback timing (core audio processing).
-    public static let audio = OSLog(subsystem: os.Logger.provenanceSubsystem, category: .pointsOfInterest)
+    public static let audio = OSLog(subsystem: os.Logger.provenanceSubsystem, category: "audio")
 
     /// ROM load / library scan timing.
-    public static let library = OSLog(subsystem: os.Logger.provenanceSubsystem, category: .pointsOfInterest)
+    public static let library = OSLog(subsystem: os.Logger.provenanceSubsystem, category: "library")
 }
 
 // MARK: - Signpost Helpers
@@ -75,14 +75,22 @@ public func withSignpost<T>(_ log: OSLog, name: StaticString, id: OSSignpostID =
 #else
 // MARK: - Stub Implementations (Linux / non-OSLog platforms)
 
+/// Cross-platform stand-in for `OSSignpostID` on non-Apple platforms.
+/// Using the same type name keeps call sites free of `#if canImport(OSLog)` guards.
+public typealias OSSignpostID = UInt64
+public extension OSSignpostID {
+    /// Matches the `.exclusive` sentinel used in the OSLog implementation.
+    static let exclusive: OSSignpostID = 0
+}
+
 /// Stub: signpost APIs are no-ops on non-Apple platforms.
-@inlinable public func signpostBegin(_ log: Any, name: String, id: UInt64 = 0) {}
-@inlinable public func signpostEnd(_ log: Any, name: String, id: UInt64 = 0) {}
-@inlinable public func signpostEvent(_ log: Any, name: String) {}
+@inlinable public func signpostBegin(_ log: Any, name: StaticString, id: OSSignpostID = .exclusive) {}
+@inlinable public func signpostEnd(_ log: Any, name: StaticString, id: OSSignpostID = .exclusive) {}
+@inlinable public func signpostEvent(_ log: Any, name: StaticString) {}
 
 @inlinable
 @discardableResult
-public func withSignpost<T>(_ log: Any, name: String, id: UInt64 = 0, execute body: () throws -> T) rethrows -> T {
+public func withSignpost<T>(_ log: Any, name: StaticString, id: OSSignpostID = .exclusive, execute body: () throws -> T) rethrows -> T {
     try body()
 }
 #endif

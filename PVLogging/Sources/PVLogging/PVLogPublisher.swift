@@ -117,6 +117,10 @@ public final class PVLogPublisher: @unchecked Sendable {
         }
         let categoryName = Self.categoryName(from: category)
 
+        // Apply per-category filter before emitting to OSLog so noisy categories
+        // are suppressed globally, not just in the in-memory viewer/streams.
+        guard shouldLog(level: level, forCategory: categoryName) else { return }
+
         #if canImport(OSLog)
         let osLogType: OSLogType
         switch level {
@@ -147,8 +151,6 @@ public final class PVLogPublisher: @unchecked Sendable {
         function: String,
         line: Int
     ) {
-        let categoryName = categoryName
-
         // Apply per-category level filter
         guard shouldLog(level: level, forCategory: categoryName) else { return }
 
