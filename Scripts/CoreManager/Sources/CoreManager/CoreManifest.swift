@@ -38,13 +38,13 @@ struct CoreEntry: Codable {
     let tvos: Bool
 
     /// Whether this core is allowed in App Store builds.
-    /// When false, the core is commented out in appstore url lists and
-    /// commented out in appstore xcfilelists.
+    /// When false, the core is emitted as a commented-out line (`#url` / `#path`)
+    /// in appstore url lists and appstore xcfilelists (not omitted entirely).
     let appstore: Bool
 
     /// Whether this core is currently enabled.
-    /// When false, the core appears as a commented line in ALL generated files
-    /// (both url lists and xcfilelists use the same commented-line convention).
+    /// When false, the core is emitted as a commented-out line (`#url` / `#path`)
+    /// in ALL generated files — both url lists and xcfilelists.
     let enabled: Bool
 
     /// Optional custom filename for platform-neutral builds (no _ios/_tvos suffix).
@@ -101,12 +101,20 @@ struct CoreManifest: Codable {
     let buildbot: BuildbotConfig
     let cores: [CoreEntry]
 
-    /// Returns cores applicable to iOS builds, optionally filtered for App Store.
+    /// Returns cores applicable to iOS builds.
+    ///
+    /// - Parameter appstore: When `true`, returns only App Store-eligible cores (`appstore: true`).
+    ///   When `false` (default), returns all iOS cores — including excluded ones — so
+    ///   generators can emit them as commented-out lines rather than omitting them.
     func iosCores(appstore: Bool = false) -> [CoreEntry] {
         cores.filter { $0.ios && (!appstore || $0.appstore) }
     }
 
-    /// Returns cores applicable to tvOS builds, optionally filtered for App Store.
+    /// Returns cores applicable to tvOS builds.
+    ///
+    /// - Parameter appstore: When `true`, returns only App Store-eligible cores (`appstore: true`).
+    ///   When `false` (default), returns all tvOS cores — including excluded ones — so
+    ///   generators can emit them as commented-out lines rather than omitting them.
     func tvosCores(appstore: Bool = false) -> [CoreEntry] {
         cores.filter { $0.tvos && (!appstore || $0.appstore) }
     }

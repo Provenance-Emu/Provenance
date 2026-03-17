@@ -315,11 +315,23 @@ class CoreManifest:
         self.cores: List[CoreEntry] = [CoreEntry(c) for c in raw_cores if isinstance(c, dict)]
 
     def ios_cores(self, appstore: bool = False) -> List[CoreEntry]:
-        """Return cores applicable to iOS (optionally filtered for App Store)."""
+        """Return cores applicable to iOS builds.
+
+        Args:
+            appstore: When True, return only App Store-eligible cores (appstore=true).
+                      When False (default), return all iOS cores including excluded ones
+                      so generators can emit them as commented lines.
+        """
         return [c for c in self.cores if c.ios and (not appstore or c.appstore)]
 
     def tvos_cores(self, appstore: bool = False) -> List[CoreEntry]:
-        """Return cores applicable to tvOS (optionally filtered for App Store)."""
+        """Return cores applicable to tvOS builds.
+
+        Args:
+            appstore: When True, return only App Store-eligible cores (appstore=true).
+                      When False (default), return all tvOS cores including excluded ones
+                      so generators can emit them as commented lines.
+        """
         return [c for c in self.cores if c.tvos and (not appstore or c.appstore)]
 
 
@@ -514,6 +526,7 @@ def cmd_diff(manifest: CoreManifest, verbose: bool) -> None:
     }
 
     any_diff = False
+    file_has_diff: Dict[str, bool] = {}
     for key, generated in outputs.items():
         path = OUTPUT_FILES[key]
         if os.path.exists(path):
@@ -524,6 +537,7 @@ def cmd_diff(manifest: CoreManifest, verbose: bool) -> None:
 
         if current != generated:
             any_diff = True
+            file_has_diff[key] = True
             diff = difflib.unified_diff(
                 current.splitlines(keepends=True),
                 generated.splitlines(keepends=True),
@@ -532,11 +546,14 @@ def cmd_diff(manifest: CoreManifest, verbose: bool) -> None:
             )
             sys.stdout.writelines(diff)
             print()
+        else:
+            file_has_diff[key] = False
 
     if verbose:
         for key in outputs:
             path = OUTPUT_FILES[key]
-            print(f"  [OK] {os.path.basename(path)}")
+            status = "DIFF" if file_has_diff.get(key) else "OK  "
+            print(f"  [{status}] {os.path.basename(path)}")
     if not any_diff:
         print("No differences — generated output matches existing files.")
 
@@ -600,10 +617,12 @@ def cmd_bootstrap(manifest_path: str) -> None:
     Read existing urls*.txt files and print a starter YAML to stdout.
     Useful for verifying the manifest matches reality.
     """
-    ios_path = os.path.join(SCRIPTS_DIR, "urls.txt")
-    ios_as_path = os.path.join(SCRIPTS_DIR, "urls-appstore.txt")
-    tvos_path = os.path.join(SCRIPTS_DIR, "urls-tv.txt")
-    tvos_as_path = os.path.join(SCRIPTS_DIR, "urls-appstore-tv.txt")
+    # Derive scripts dir from the manifest path so --manifest works correctly.
+    scripts_dir = os.path.dirname(os.path.abspath(manifest_path))
+    ios_path = os.path.join(scripts_dir, "urls.txt")
+    ios_as_path = os.path.join(scripts_dir, "urls-appstore.txt")
+    tvos_path = os.path.join(scripts_dir, "urls-tv.txt")
+    tvos_as_path = os.path.join(scripts_dir, "urls-appstore-tv.txt")
 
     ios_entries = _parse_url_file(ios_path)
     ios_as_entries = _parse_url_file(ios_as_path)
