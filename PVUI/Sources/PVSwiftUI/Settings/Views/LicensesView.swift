@@ -29,16 +29,20 @@ private enum LicenseGroup: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    /// Gradient colours used for the badge
-    var badgeColors: [Color] {
+    /// Gradient colours used for the badge.
+    /// Always returns exactly two colors (start, end).
+    var badgeColors: (start: Color, end: Color) {
         switch self {
-        case .gpl:   return [.retroPink, .retroPurple]
-        case .lgpl:  return [.retroPurple, .retroBlue]
-        case .mit:   return [Color(red: 0.2, green: 0.8, blue: 0.6), .retroBlue]
-        case .bsd:   return [Color(red: 0.9, green: 0.6, blue: 0.1), Color(red: 0.8, green: 0.3, blue: 0.1)]
-        case .other: return [Color.gray.opacity(0.8), Color.gray.opacity(0.5)]
+        case .gpl:   return (.retroPink, .retroPurple)
+        case .lgpl:  return (.retroPurple, .retroBlue)
+        case .mit:   return (Color(red: 0.2, green: 0.8, blue: 0.6), .retroBlue)
+        case .bsd:   return (Color(red: 0.9, green: 0.6, blue: 0.1), Color(red: 0.8, green: 0.3, blue: 0.1))
+        case .other: return (Color.gray.opacity(0.8), Color.gray.opacity(0.5))
         }
     }
+
+    /// The two badge colors as an array (for use with `Gradient`).
+    var badgeColorArray: [Color] { [badgeColors.start, badgeColors.end] }
 
     /// Classify a raw SPDX string.
     /// Returns `.other` when the string is empty or unrecognised.
@@ -52,15 +56,6 @@ private enum LicenseGroup: String, CaseIterable, Identifiable {
     }
 }
 
-// MARK: - Sort Order
-
-private enum SortOrder: String, CaseIterable, Identifiable {
-    case name    = "Name"
-    case license = "License"
-
-    var id: String { rawValue }
-}
-
 // MARK: - LicensesView
 
 struct LicensesView: View {
@@ -68,21 +63,19 @@ struct LicensesView: View {
     // MARK: State
 
     @State private var searchText  = ""
-    @State private var sortOrder   = SortOrder.name
     @State private var selectedURL: URL?
     @State private var showingSafari = false
-    @ObservedObject private var themeManager = ThemeManager.shared
 
     // MARK: Data
 
-    /// All cores loaded once at init and stored as plain Swift values so the
-    /// view doesn't need to touch Realm on every redraw.
+    /// Frozen Realm objects — safe to pass across threads and outlive view redraws.
     private let cores: [PVCore]
 
     init() {
         self.cores = RomDatabase.sharedInstance
             .all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
             .toArray()
+            .map { $0.freeze() }
     }
 
     // MARK: Derived
@@ -96,28 +89,7 @@ struct LicensesView: View {
     }
 
     private var sorted: [PVCore] {
-        switch sortOrder {
-        case .name:
-            return filtered.sorted { $0.projectName.localizedCompare($1.projectName) == .orderedAscending }
-        case .license:
-            // Once #3236 lands and PVCore has a `license` property, sort by it.
-            // Until then all entries share "TBD", so fall back to name order.
-            return filtered.sorted { $0.projectName.localizedCompare($1.projectName) == .orderedAscending }
-        }
-    }
-
-    /// Grouped and sorted for section display.
-    private var groupedCores: [(group: LicenseGroup, cores: [PVCore])] {
-        var buckets: [LicenseGroup: [PVCore]] = [:]
-        for core in sorted {
-            // TODO(#3236): replace empty string with core.license when available
-            let group = LicenseGroup.classify("")
-            buckets[group, default: []].append(core)
-        }
-        return LicenseGroup.allCases.compactMap { group in
-            guard let members = buckets[group], !members.isEmpty else { return nil }
-            return (group: group, cores: members)
-        }
+        filtered.sorted { $0.projectName.localizedCompare($1.projectName) == .orderedAscending }
     }
 
     // MARK: Body
@@ -138,7 +110,7 @@ struct LicensesView: View {
         }
         .navigationTitle("Licenses")
         .tvOSNavigationSupport(title: "Licenses")
-#if !os(tvOS)
+#if canImport(UIKit) && canImport(SafariServices) && !os(tvOS)
         .sheet(isPresented: $showingSafari) {
             if let url = selectedURL {
                 SafariSheetView(url: url)
@@ -166,16 +138,14 @@ struct LicensesView: View {
     private var controlsBar: some View {
         VStack(spacing: 8) {
 #if !os(tvOS)
-            // Search bar — SearchField not available on tvOS
+            // Search bar — not available on tvOS
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.retroBlue)
                 TextField("Search licenses…", text: $searchText)
                     .foregroundColor(.white)
                     .autocorrectionDisabled()
-#if !os(tvOS)
                     .textInputAutocapitalization(.never)
-#endif
                 if !searchText.isEmpty {
                     Button { searchText = "" } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -194,57 +164,24 @@ struct LicensesView: View {
             )
             .padding(.horizontal, 16)
 #endif
-
-            // Sort picker
-            HStack {
-                Text("Sort:")
-                    .foregroundColor(.white.opacity(0.7))
-                    .font(.system(size: 14))
-                Picker("Sort", selection: $sortOrder) {
-                    ForEach(SortOrder.allCases) { order in
-                        Text(order.rawValue).tag(order)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 220)
-            }
-            .padding(.horizontal, 16)
         }
         .padding(.bottom, 8)
     }
 
     private var coreList: some View {
         List {
-            ForEach(groupedCores, id: \.group.id) { section in
-                Section {
-                    ForEach(section.cores, id: \.identifier) { core in
-                        LicenseRowView(
-                            core: core,
-                            group: section.group,
-                            onOpenURL: openURL(_:)
-                        )
-                    }
-                } header: {
-                    groupHeader(for: section.group)
-                }
+            // TODO(#3236): When PVCore gains a `license` field, group by LicenseGroup here.
+            ForEach(sorted, id: \.identifier) { core in
+                LicenseRowView(
+                    core: core,
+                    group: .other,
+                    onOpenURL: openURL(_:)
+                )
             }
         }
         .listStyle(.plain)
         .background(Color.clear)
         .scrollContentBackground(.hidden)
-    }
-
-    private func groupHeader(for group: LicenseGroup) -> some View {
-        Text(group.rawValue)
-            .font(.system(size: 13, weight: .bold))
-            .foregroundStyle(
-                LinearGradient(
-                    gradient: Gradient(colors: group.badgeColors),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .padding(.vertical, 4)
     }
 
     // MARK: Helpers
@@ -253,7 +190,7 @@ struct LicensesView: View {
 #if os(tvOS)
         // tvOS: open in the system browser
         UIApplication.shared.open(url)
-#else
+#elseif canImport(UIKit) && canImport(SafariServices)
         selectedURL = url
         showingSafari = true
 #endif
@@ -268,27 +205,7 @@ private struct LicenseRowView: View {
     let onOpenURL: (URL) -> Void
 
     /// Colors used for the card border and shadow.
-    /// Always returns at least two colors to avoid out-of-bounds access.
-    private var borderGradientColors: [Color] {
-        let colors = group.badgeColors
-
-        // Fallback to a default gradient if no colors are defined.
-        guard !colors.isEmpty else {
-            return [.retroPink, .retroPurple]
-        }
-
-        // If only one color is defined, duplicate it.
-        if colors.count == 1, let only = colors.first {
-            return [only, only]
-        }
-
-        // Use the first and last colors when multiple are available.
-        guard let first = colors.first, let last = colors.last else {
-            return [.retroPink, .retroPurple]
-        }
-
-        return [first, last]
-    }
+    private var borderColors: (start: Color, end: Color) { group.badgeColors }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -329,9 +246,7 @@ private struct LicenseRowView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(
                             LinearGradient(
-                                gradient: Gradient(
-                                    colors: borderGradientColors.map { $0.opacity(0.5) }
-                                ),
+                                gradient: Gradient(colors: [borderColors.start.opacity(0.5), borderColors.end.opacity(0.5)]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
@@ -340,7 +255,7 @@ private struct LicenseRowView: View {
                 )
         )
         .shadow(
-            color: borderGradientColors.first?.opacity(0.15) ?? .black.opacity(0.15),
+            color: borderColors.start.opacity(0.15),
             radius: 6,
             x: 0,
             y: 3
@@ -363,7 +278,7 @@ private struct LicenseRowView: View {
                         RoundedRectangle(cornerRadius: 4)
                             .strokeBorder(
                                 LinearGradient(
-                                    gradient: Gradient(colors: group.badgeColors),
+                                    gradient: Gradient(colors: group.badgeColorArray),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ),
@@ -373,7 +288,7 @@ private struct LicenseRowView: View {
             )
             .foregroundStyle(
                 LinearGradient(
-                    gradient: Gradient(colors: group.badgeColors),
+                    gradient: Gradient(colors: group.badgeColorArray),
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -423,6 +338,7 @@ private struct LicenseRowView: View {
 
 #if canImport(UIKit) && canImport(SafariServices) && !os(tvOS)
 /// Thin wrapper around `SFSafariViewController` for use as a SwiftUI sheet.
+/// Available on iOS, macOS Catalyst, and visionOS — not tvOS or native macOS.
 private struct SafariSheetView: UIViewControllerRepresentable {
     let url: URL
 
