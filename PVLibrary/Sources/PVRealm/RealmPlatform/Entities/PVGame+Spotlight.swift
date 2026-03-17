@@ -97,6 +97,9 @@ public extension PVGame {
         // When pathOfCachedImage returns a remote URL (fallback for uncached artwork),
         // .path gives the URL path component (e.g. "/art.jpg"), NOT a filesystem path,
         // so UIImage(contentsOfFile:) would fail. Spotlight will use thumbnailURL instead.
+        // scaledImage(withMaxResolution:) and jpegData(compressionQuality:) are UIKit-only;
+        // on macOS (AppKit) we skip inline thumbnail data and rely on thumbnailURL.
+        #if canImport(UIKit)
         if let cachedImageURL = cachedImageURL,
            cachedImageURL.isFileURL,
            let image = UIImage(contentsOfFile: cachedImageURL.path) {
@@ -107,6 +110,7 @@ public extension PVGame {
                 contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
             }
         }
+        #endif
 
         // Comprehensive keywords for better search
         var keywords: [String] = ["rom", "game", "emulator", "provenance"]
