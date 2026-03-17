@@ -257,6 +257,9 @@ typedef struct PVThinLibretroSymbols {
     void     (*retro_set_input_poll)(retro_input_poll_t cb);
     void     (*retro_set_input_state)(retro_input_state_t cb);
 
+    // Controller port device type (e.g. mouse on port 2 for Mario Paint)
+    void     (*retro_set_controller_port_device)(unsigned port, unsigned device);
+
     // State / cheats
     size_t   (*retro_serialize_size)(void);
     bool     (*retro_serialize)(void *data, size_t size);
@@ -1717,6 +1720,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     THIN_RESOLVE(_sym, _dylibHandle, retro_set_audio_sample_batch);
     THIN_RESOLVE(_sym, _dylibHandle, retro_set_input_poll);
     THIN_RESOLVE(_sym, _dylibHandle, retro_set_input_state);
+    THIN_RESOLVE(_sym, _dylibHandle, retro_set_controller_port_device);
     THIN_RESOLVE(_sym, _dylibHandle, retro_serialize_size);
     THIN_RESOLVE(_sym, _dylibHandle, retro_serialize);
     THIN_RESOLVE(_sym, _dylibHandle, retro_unserialize);
@@ -1866,6 +1870,20 @@ static bool thin_environment(unsigned cmd, void *data) {
          self.supportsSaveStates ? @"YES" : @"NO");
 
     return YES;
+}
+
+- (void)setControllerPortDevice:(unsigned)device forPort:(unsigned)port {
+    if (_sym.retro_set_controller_port_device) {
+        ILOG(@"ThinFrontend: set port %u device = %u", port, device);
+        _sym.retro_set_controller_port_device(port, device);
+    }
+}
+
+- (void)resetEmulation {
+    if (_sym.retro_reset) {
+        ILOG(@"ThinFrontend: retro_reset");
+        _sym.retro_reset();
+    }
 }
 
 - (void)stopEmulation {

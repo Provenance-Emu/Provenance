@@ -268,6 +268,12 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param player Player index (0-based).
 - (void)setAnalogIndex:(unsigned)index axis:(unsigned)axis value:(int16_t)value forPlayer:(unsigned)player;
 
+/// Set the controller device type for a specific port.
+/// Use RETRO_DEVICE_MOUSE (2) for mouse games like Mario Paint.
+/// @param device  libretro device type (RETRO_DEVICE_JOYPAD, RETRO_DEVICE_MOUSE, etc.)
+/// @param port    Port number (0-based).
+- (void)setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
+
 /// Clear all button and analog state for all players.
 - (void)clearAllInput;
 
