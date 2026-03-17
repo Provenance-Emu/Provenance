@@ -68,15 +68,13 @@ struct LicensesView: View {
 
     // MARK: Data
 
-    /// Frozen Realm objects — safe to pass across threads and outlive view redraws.
-    private let cores: [PVCore]
+    /// Frozen Realm objects loaded asynchronously on first appear.
+    /// Populated via `.task` to avoid synchronous Realm access during SwiftUI init.
+    @State private var cores: [PVCore] = []
 
-    init() {
-        self.cores = RomDatabase.sharedInstance
-            .all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
-            .toArray()
-            .map { $0.freeze() }
-    }
+    // MARK: Environment
+
+    @Environment(\.openURL) private var openURLAction
 
     // MARK: Derived
 
@@ -110,6 +108,12 @@ struct LicensesView: View {
         }
         .navigationTitle("Licenses")
         .tvOSNavigationSupport(title: "Licenses")
+        .task {
+            cores = RomDatabase.sharedInstance
+                .all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
+                .toArray()
+                .map { $0.freeze() }
+        }
 #if canImport(UIKit) && canImport(SafariServices) && !os(tvOS)
         .sheet(isPresented: $showingSafari) {
             if let url = selectedURL {
@@ -191,8 +195,12 @@ struct LicensesView: View {
         // tvOS: open in the system browser
         UIApplication.shared.open(url)
 #elseif canImport(UIKit) && canImport(SafariServices)
+        // iOS / macOS Catalyst / visionOS: show in-app Safari sheet
         selectedURL = url
         showingSafari = true
+#else
+        // Native macOS: delegate to the system-provided openURL handler
+        openURLAction(url)
 #endif
     }
 }
