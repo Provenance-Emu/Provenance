@@ -215,7 +215,7 @@ struct FilterPreviewBarsView: View {
     }
 
     @ViewBuilder
-    private func filterOverlay(size: CGSize) -> some View {
+    private func filterOverlay(size _: CGSize) -> some View {
         switch filter {
         case .simpleCRT, .complexCRT, .megaTron, .ulTron:
             // Scanline overlay
