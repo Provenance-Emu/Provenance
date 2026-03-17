@@ -113,9 +113,11 @@ public class PVThinLibretroCore: PVEmulatorCore {
             setDefaultOption("prboom-rumble", value: "enabled")
         }
 
-        // Hatari: disable HD boot
+        // Hatari: disable HD boot + copy hatari.cfg if needed
         if coreId.contains("hatari") || sysId.contains("atarist") {
             setDefaultOption("hatari_boot_hd", value: "disabled")
+            copyBundledConfigIfNeeded(resourceName: "hatari", extension: "cfg",
+                                      toDirectory: _bridge.BIOSPath, fileName: "hatari.cfg")
         }
 
         // VecX: hardware mode + visual settings
@@ -135,6 +137,29 @@ public class PVThinLibretroCore: PVEmulatorCore {
         // Beetle PSX HW: use Vulkan
         if coreId.contains("psx_hw") || coreId.contains("beetle_psx") {
             setDefaultOption("beetle_psx_hw_renderer", value: "hardware_vk")
+        }
+    }
+
+    /// Copy a bundled config file to the system/BIOS directory if it doesn't already exist.
+    private func copyBundledConfigIfNeeded(resourceName: String, extension ext: String,
+                                            toDirectory dir: String?, fileName: String) {
+        guard let dir = dir else { return }
+        let destPath = (dir as NSString).appendingPathComponent(fileName)
+        guard !FileManager.default.fileExists(atPath: destPath) else { return }
+
+        // Look in the main bundle and all framework bundles
+        let bundles = [Bundle.main] + Bundle.allFrameworks
+        for bundle in bundles {
+            if let srcURL = bundle.url(forResource: resourceName, withExtension: ext) {
+                do {
+                    try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+                    try FileManager.default.copyItem(at: srcURL, to: URL(fileURLWithPath: destPath))
+                    ILOG("ThinLibretroCore: copied \(fileName) to \(dir)")
+                    return
+                } catch {
+                    WLOG("ThinLibretroCore: failed to copy \(fileName): \(error.localizedDescription)")
+                }
+            }
         }
     }
 
