@@ -980,7 +980,7 @@ struct ButtonRemappingView: View {
 
 /// A dedicated sub-page showing the keyboard mapping guide.
 /// Moved out of the main list so it doesn't dominate the controller settings screen.
-struct KeyboardControlsGuideView: View {
+private struct KeyboardControlsGuideView: View {
     let keyboardMappingDocs: String
     let accentColor: Color
 
