@@ -105,6 +105,10 @@ typedef struct PVThinLibretroSymbols {
     bool     (*retro_unserialize)(const void *data, size_t size);
     void     (*retro_cheat_reset)(void);
     void     (*retro_cheat_set)(unsigned index, bool enabled, const char *code);
+
+    // Memory (SRAM / battery saves)
+    void    *(*retro_get_memory_data)(unsigned id);
+    size_t   (*retro_get_memory_size)(unsigned id);
 } PVThinLibretroSymbols;
 
 #define THIN_RESOLVE(sym, handle, name) \
@@ -432,6 +436,8 @@ static bool thin_environment(unsigned cmd, void *data) {
     THIN_RESOLVE(_sym, _dylibHandle, retro_unserialize);
     THIN_RESOLVE(_sym, _dylibHandle, retro_cheat_reset);
     THIN_RESOLVE(_sym, _dylibHandle, retro_cheat_set);
+    THIN_RESOLVE(_sym, _dylibHandle, retro_get_memory_data);
+    THIN_RESOLVE(_sym, _dylibHandle, retro_get_memory_size);
 
     // All symbols called unconditionally in startWithROMPath: must be present.
     // Checking only retro_init/retro_set_environment/retro_run is insufficient because
@@ -559,17 +565,26 @@ static bool thin_environment(unsigned cmd, void *data) {
     // no frames (videoBuffer returns NULL → "Missing video buffer").
     [self _allocateVideoBuffer];
 
-    ILOG(@"ThinFrontend: core started — %ux%u @ %.2f fps, audio %.0f Hz",
+    // Report save state support based on whether the core implements serialization
+    self.supportsSaveStates = (_sym.retro_serialize_size != NULL && _sym.retro_serialize != NULL && _sym.retro_unserialize != NULL);
+
+    // Load battery save (SRAM) if one exists from a previous session
+    [self loadBatterySaveData];
+
+    ILOG(@"ThinFrontend: core started — %ux%u @ %.2f fps, audio %.0f Hz, saveStates: %@",
          _rawAVInfo.geometry.base_width,
          _rawAVInfo.geometry.base_height,
          _rawAVInfo.timing.fps,
-         _rawAVInfo.timing.sample_rate);
+         _rawAVInfo.timing.sample_rate,
+         self.supportsSaveStates ? @"YES" : @"NO");
 
     return YES;
 }
 
 - (void)stopEmulation {
     _audioPaused = YES;
+    // Flush battery save (SRAM) before tearing down the core
+    [self saveBatterySaveData];
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
     if (_sym.retro_unload_game) {
@@ -622,6 +637,113 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (!_sym.retro_unserialize || !stateData) return NO;
     return _sym.retro_unserialize(stateData.bytes, stateData.length);
 }
+
+// MARK: - File-based save states (compatible with PVRetroArch save files)
+
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
+    NSData *data = [self saveState];
+    if (!data) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                         code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Core serialization failed"}];
+        }
+        return NO;
+    }
+    BOOL written = [data writeToFile:fileName atomically:YES];
+    if (!written && error) {
+        *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                     code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                 userInfo:@{NSLocalizedDescriptionKey: @"Failed to write save state file"}];
+    }
+    return written;
+}
+
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+    NSError *error = nil;
+    BOOL success = [self saveStateToFileAtPath:fileName error:&error];
+    if (block) block(success, error);
+}
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError **)error {
+    NSData *data = [NSData dataWithContentsOfFile:fileName];
+    if (!data) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                         code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                     userInfo:@{NSLocalizedDescriptionKey:
+                                         [NSString stringWithFormat:@"Cannot read save state: %@", fileName]}];
+        }
+        return NO;
+    }
+    BOOL success = [self loadState:data];
+    if (!success && error) {
+        *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                     code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                 userInfo:@{NSLocalizedDescriptionKey: @"Core deserialization failed"}];
+    }
+    return success;
+}
+
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+    NSError *error = nil;
+    BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
+    if (block) block(success, error);
+}
+
+// MARK: - Battery saves (SRAM)
+
+- (BOOL)saveBatterySaveData {
+    if (!_sym.retro_get_memory_data || !_sym.retro_get_memory_size) return NO;
+    void *data = _sym.retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+    size_t size = _sym.retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
+    if (!data || size == 0) return NO;
+
+    NSString *savePath = self.batterySavesPath;
+    if (!savePath) return NO;
+
+    // Use ROM filename as base for the .srm file
+    NSString *romBase = [_romPath.lastPathComponent stringByDeletingPathExtension];
+    NSString *srmPath = [[savePath stringByAppendingPathComponent:romBase]
+                         stringByAppendingPathExtension:@"srm"];
+
+    // Ensure directory exists
+    [[NSFileManager defaultManager] createDirectoryAtPath:savePath
+                              withIntermediateDirectories:YES attributes:nil error:nil];
+
+    NSData *srmData = [NSData dataWithBytes:data length:size];
+    BOOL ok = [srmData writeToFile:srmPath atomically:YES];
+    if (ok) {
+        ILOG(@"ThinFrontend: saved SRAM (%zu bytes) to %@", size, srmPath.lastPathComponent);
+    } else {
+        ELOG(@"ThinFrontend: failed to save SRAM to %@", srmPath);
+    }
+    return ok;
+}
+
+- (BOOL)loadBatterySaveData {
+    if (!_sym.retro_get_memory_data || !_sym.retro_get_memory_size) return NO;
+    void *data = _sym.retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+    size_t size = _sym.retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
+    if (!data || size == 0) return NO;
+
+    NSString *savePath = self.batterySavesPath;
+    if (!savePath) return NO;
+
+    NSString *romBase = [_romPath.lastPathComponent stringByDeletingPathExtension];
+    NSString *srmPath = [[savePath stringByAppendingPathComponent:romBase]
+                         stringByAppendingPathExtension:@"srm"];
+
+    NSData *srmData = [NSData dataWithContentsOfFile:srmPath];
+    if (!srmData) return NO;
+
+    size_t copySize = MIN((size_t)srmData.length, size);
+    memcpy(data, srmData.bytes, copySize);
+    ILOG(@"ThinFrontend: loaded SRAM (%zu bytes) from %@", copySize, srmPath.lastPathComponent);
+    return YES;
+}
+
+// MARK: - Cheats
 
 - (void)setCheatCode:(NSString *)code enabled:(BOOL)enabled index:(unsigned)index {
     if (_sym.retro_cheat_set) {
