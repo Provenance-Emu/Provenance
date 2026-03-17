@@ -27,7 +27,12 @@ public class DeltaSkinInputHandler: ObservableObject {
         "toggleanalog", "toggle_analog", "analogmode",
         "swapdiscs", "swap_discs", "swapdisc", "changedisc",
         "coreoptions", "core_options", "coresettings",
-        "moreinfo", "more_info", "gameinfo", "info"
+        "moreinfo", "more_info", "gameinfo", "info",
+        "reversescreens", "reverse_screens", "swapscreens", "swap_screens",
+        "haptics", "togglehaptics", "toggle_haptics",
+        "controllers", "controllersettings", "controller_settings",
+        "orientation", "orientationlock", "orientation_lock", "toggleorientation",
+        "resolution", "cycleresolution", "cycle_resolution"
     ]
 
     /// The emulator core to send inputs to
@@ -221,6 +226,36 @@ public class DeltaSkinInputHandler: ObservableObject {
         // More info / game info
         if lowercasedId == "moreinfo" || lowercasedId == "more_info" || lowercasedId == "gameinfo" || lowercasedId == "info" {
             moreInfoButtonPressed()
+            return
+        }
+
+        // Reverse / swap screens (DS / 3DS dual-screen systems)
+        if lowercasedId == "reversescreens" || lowercasedId == "reverse_screens" || lowercasedId == "swapscreens" || lowercasedId == "swap_screens" {
+            reverseScreensButtonPressed()
+            return
+        }
+
+        // Toggle haptic feedback
+        if lowercasedId == "haptics" || lowercasedId == "togglehaptics" || lowercasedId == "toggle_haptics" {
+            toggleHapticsButtonPressed()
+            return
+        }
+
+        // Controller settings (not directly supported yet — open menu)
+        if lowercasedId == "controllers" || lowercasedId == "controllersettings" || lowercasedId == "controller_settings" {
+            controllerSettingsButtonPressed()
+            return
+        }
+
+        // Orientation lock toggle (iOS only)
+        if lowercasedId == "orientation" || lowercasedId == "orientationlock" || lowercasedId == "orientation_lock" || lowercasedId == "toggleorientation" {
+            orientationButtonPressed()
+            return
+        }
+
+        // Cycle resolution (not directly supported yet — open core options)
+        if lowercasedId == "resolution" || lowercasedId == "cycleresolution" || lowercasedId == "cycle_resolution" {
+            resolutionButtonPressed()
             return
         }
 
@@ -496,6 +531,81 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
         Task { @MainActor in controller.showMoreInfo() }
+    }
+
+    /// Swap / reverse the DS or 3DS screens.
+    /// For DS cores this forwards a `.screenSwap` button press through the normal input path.
+    /// For 3DS cores that support a swap-screen core option, it posts a notification so the
+    /// emulator view controller can toggle the option.
+    private func reverseScreensButtonPressed() {
+        DLOG("ReverseScreens button pressed")
+        guard let core = emulatorCore else {
+            ELOG("Cannot reverse screens - emulatorCore is nil")
+            return
+        }
+
+        // DS cores understand the screenSwap button natively
+        if let responder = core as? PVDSSystemResponderClient {
+            responder.didPush(.screenSwap, forPlayer: 0)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                responder.didRelease(.screenSwap, forPlayer: 0)
+            }
+            return
+        }
+
+        // For 3DS or other dual-screen cores, try forwarding "screenswap" through the generic path
+        forwardButtonPress("screenswap", isPressed: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.forwardButtonPress("screenswap", isPressed: false)
+        }
+    }
+
+    /// Toggle haptic feedback on or off globally.
+    private func toggleHapticsButtonPressed() {
+        DLOG("ToggleHaptics button pressed")
+        let current = Defaults[.hapticFeedback]
+        Defaults[.hapticFeedback] = !current
+        ILOG("Haptic feedback toggled to \(!current)")
+    }
+
+    /// Open controller settings.
+    /// There is no dedicated controller-settings screen exposed by the emulator controller
+    /// protocol today, so we fall back to opening the main menu which contains relevant options.
+    private func controllerSettingsButtonPressed() {
+        DLOG("ControllerSettings button pressed")
+        guard let controller = emulatorController else {
+            WLOG("Cannot open controller settings - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showMenu(nil) }
+    }
+
+    /// Toggle the orientation lock (iOS only).
+    /// On tvOS, orientation is not applicable, so this is a no-op.
+    private func orientationButtonPressed() {
+        DLOG("Orientation button pressed")
+#if os(iOS) && !targetEnvironment(macCatalyst)
+        // Post a notification that the emulator VC can observe to toggle orientation lock
+        NotificationCenter.default.post(
+            name: NSNotification.Name("DeltaSkinToggleOrientationLock"),
+            object: nil
+        )
+        ILOG("Posted DeltaSkinToggleOrientationLock notification")
+#else
+        WLOG("Orientation lock toggle is only supported on iOS")
+#endif
+    }
+
+    /// Cycle the rendering resolution.
+    /// There is no universal resolution-cycle API, so we open the core options sheet where
+    /// users can adjust resolution settings manually.
+    private func resolutionButtonPressed() {
+        DLOG("Resolution button pressed")
+        guard let controller = emulatorController else {
+            WLOG("Cannot cycle resolution - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showCoreOptions() }
     }
 
     // MARK: - Game Speed Control
