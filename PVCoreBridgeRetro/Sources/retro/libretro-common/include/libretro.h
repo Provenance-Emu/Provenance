@@ -1759,6 +1759,49 @@ enum retro_mod
                                             * the frontend is attempting to call retro_run().
                                             */
 
+#define RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT (72 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* retro_savestate_context * --
+                                            * Returns information about how the frontend will use savestates.
+                                            */
+
+#define RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT (73 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* struct retro_hw_render_context_negotiation_interface * --
+                                            * Before calling SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE,
+                                            * will query which interface is supported.
+                                            */
+
+#define RETRO_ENVIRONMENT_GET_JIT_CAPABLE 74
+                                           /* bool * --
+                                            * Asks the frontend whether JIT compilation can be used.
+                                            * Primarily used by iOS and tvOS.
+                                            */
+
+#define RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE (75 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* struct retro_microphone_interface * --
+                                            * Returns an interface that the core can use to
+                                            * receive microphone input.
+                                            * @see retro_microphone_interface
+                                            */
+
+/* Environment 76 was an obsolete version of RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE.
+ * It was not used by any known core at the time, and was removed from the API. */
+
+#define RETRO_ENVIRONMENT_GET_DEVICE_POWER (77 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* struct retro_device_power * --
+                                            * Returns the device's current power state
+                                            * as reported by the frontend.
+                                            */
+
+#define RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE 78
+                                           /* const struct retro_netpacket_callback * --
+                                            * When set, a core gains control over network packets sent and
+                                            * received during a multiplayer session. This can be used to
+                                            * emulate multiplayer games that were originally played on two
+                                            * or more separate consoles or computers connected together.
+                                            *
+                                            * Should be set in either retro_init or retro_load_game, but not both.
+                                            */
+
 /* VFS functionality */
 
 /* File paths:
@@ -3739,6 +3782,94 @@ struct retro_throttle_state
     * This won't be accurate if the total processing time of the core and
     * the frontend is longer than what is available for one frame. */
    float rate;
+};
+
+/* Savestate context for RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT */
+enum retro_savestate_context
+{
+   RETRO_SAVESTATE_CONTEXT_NORMAL                 = 0,
+   RETRO_SAVESTATE_CONTEXT_RUNAHEAD_SAME_INSTANCE = 1,
+   RETRO_SAVESTATE_CONTEXT_RUNAHEAD_SAME_BINARY   = 2,
+   RETRO_SAVESTATE_CONTEXT_ROLLBACK_NETPLAY       = 3,
+   RETRO_SAVESTATE_CONTEXT_UNKNOWN                = INT_MAX
+};
+
+/* Microphone interface for RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE */
+
+typedef struct retro_microphone retro_microphone_t;
+
+typedef struct retro_microphone_params
+{
+   unsigned rate;
+} retro_microphone_params_t;
+
+typedef retro_microphone_t *(RETRO_CALLCONV *retro_open_mic_t)(const retro_microphone_params_t *params);
+typedef void (RETRO_CALLCONV *retro_close_mic_t)(retro_microphone_t *microphone);
+typedef bool (RETRO_CALLCONV *retro_get_mic_params_t)(const retro_microphone_t *microphone, retro_microphone_params_t *params);
+typedef bool (RETRO_CALLCONV *retro_set_mic_state_t)(retro_microphone_t *microphone, bool state);
+typedef bool (RETRO_CALLCONV *retro_get_mic_state_t)(const retro_microphone_t *microphone);
+typedef int (RETRO_CALLCONV *retro_read_mic_t)(retro_microphone_t *microphone, int16_t* samples, size_t num_samples);
+
+#define RETRO_MICROPHONE_INTERFACE_VERSION 1
+
+struct retro_microphone_interface
+{
+   unsigned interface_version;
+   retro_open_mic_t open_mic;
+   retro_close_mic_t close_mic;
+   retro_get_mic_params_t get_params;
+   retro_set_mic_state_t set_mic_state;
+   retro_get_mic_state_t get_mic_state;
+   retro_read_mic_t read_mic;
+};
+
+/* Device power state for RETRO_ENVIRONMENT_GET_DEVICE_POWER */
+
+enum retro_power_state
+{
+   RETRO_POWERSTATE_UNKNOWN = 0,
+   RETRO_POWERSTATE_DISCHARGING,
+   RETRO_POWERSTATE_CHARGING,
+   RETRO_POWERSTATE_CHARGED,
+   RETRO_POWERSTATE_PLUGGED_IN
+};
+
+#define RETRO_POWERSTATE_NO_ESTIMATE (-1)
+
+struct retro_device_power
+{
+   enum retro_power_state state;
+   int seconds;
+   int8_t percent;
+};
+
+/* Netpacket interface for RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE */
+
+#define RETRO_NETPACKET_UNRELIABLE  0
+#define RETRO_NETPACKET_RELIABLE    (1 << 0)
+#define RETRO_NETPACKET_UNSEQUENCED (1 << 1)
+#define RETRO_NETPACKET_FLUSH_HINT  (1 << 2)
+
+#define RETRO_NETPACKET_BROADCAST 0xFFFF
+
+typedef void (RETRO_CALLCONV *retro_netpacket_send_t)(int flags, const void* buf, size_t len, uint16_t client_id);
+typedef void (RETRO_CALLCONV *retro_netpacket_poll_receive_t)(void);
+typedef void (RETRO_CALLCONV *retro_netpacket_start_t)(uint16_t client_id, retro_netpacket_send_t send_fn, retro_netpacket_poll_receive_t poll_receive_fn);
+typedef void (RETRO_CALLCONV *retro_netpacket_receive_t)(const void* buf, size_t len, uint16_t client_id);
+typedef void (RETRO_CALLCONV *retro_netpacket_stop_t)(void);
+typedef void (RETRO_CALLCONV *retro_netpacket_poll_t)(void);
+typedef bool (RETRO_CALLCONV *retro_netpacket_connected_t)(uint16_t client_id);
+typedef void (RETRO_CALLCONV *retro_netpacket_disconnected_t)(uint16_t client_id);
+
+struct retro_netpacket_callback
+{
+   retro_netpacket_start_t        start;
+   retro_netpacket_receive_t      receive;
+   retro_netpacket_stop_t         stop;         /* Optional - may be NULL */
+   retro_netpacket_poll_t         poll;         /* Optional - may be NULL */
+   retro_netpacket_connected_t    connected;    /* Optional - may be NULL */
+   retro_netpacket_disconnected_t disconnected; /* Optional - may be NULL */
+   const char* protocol_version; /* Optional - if not NULL will be used instead of core version to decide if communication is compatible */
 };
 
 /* Callbacks */
