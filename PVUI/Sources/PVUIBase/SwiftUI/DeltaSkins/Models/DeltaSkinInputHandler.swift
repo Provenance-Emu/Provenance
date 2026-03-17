@@ -15,6 +15,21 @@ import GameController
 
 /// Handles input from Delta Skins and forwards it to the emulator core or controller
 public class DeltaSkinInputHandler: ObservableObject {
+    /// Button IDs that fire only on press — release events are suppressed.
+    /// This Set is `static` so it is allocated once rather than on every release call.
+    private static let extendedFunctionIds: Set<String> = [
+        "screenshot", "restart", "reset", "reboot", "quit", "exit",
+        "savestates", "save_states", "saves",
+        "cheats", "cheatcodes", "cheat_codes",
+        "skins", "skin", "controllerskins",
+        "filters", "filter", "videofilters",
+        "speedmenu", "speed_menu", "gamespeed",
+        "toggleanalog", "toggle_analog", "analogmode",
+        "swapdiscs", "swap_discs", "swapdisc", "changedisc",
+        "coreoptions", "core_options", "coresettings",
+        "moreinfo", "more_info", "gameinfo", "info"
+    ]
+
     /// The emulator core to send inputs to
     private weak var emulatorCore: PVEmulatorCore?
 
@@ -192,7 +207,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
 
         // Swap discs
-        if lowercasedId == "swapdiscs" || lowercasedId == "swap_discs" || lowercasedId == "swapdisc" || lowercasedId == "changeDisc" {
+        if lowercasedId == "swapdiscs" || lowercasedId == "swap_discs" || lowercasedId == "swapdisc" || lowercasedId == "changedisc" {
             swapDiscsButtonPressed()
             return
         }
@@ -263,20 +278,11 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
+        // Screenshot IDs may be partial matches (e.g. "screenshotButton") — suppress release
+        if lowercasedId.contains("screenshot") { return }
+
         // Extended function buttons fire only on press — skip release
-        let extendedFunctionIds: Set<String> = [
-            "screenshot", "restart", "reset", "reboot", "quit", "exit",
-            "savestates", "save_states", "saves",
-            "cheats", "cheatcodes", "cheat_codes",
-            "skins", "skin", "controllerskins",
-            "filters", "filter", "videofilters",
-            "speedmenu", "speed_menu", "gamespeed",
-            "toggleanalog", "toggle_analog", "analogmode",
-            "swapdiscs", "swap_discs", "swapdisc", "changedisc",
-            "coreoptions", "core_options", "coresettings",
-            "moreinfo", "more_info", "gameinfo", "info"
-        ]
-        if extendedFunctionIds.contains(lowercasedId) { return }
+        if Self.extendedFunctionIds.contains(lowercasedId) { return }
 
         // Skip special button releases for toggle-style buttons
         if lowercasedId.contains("menu") ||
@@ -400,7 +406,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
     }
 
-    /// Open the save-states browser.
+    /// Opens the main menu, which contains the save-states section.
     private func saveStatesButtonPressed() {
         DLOG("SaveStates button pressed")
         guard let controller = emulatorController else {
@@ -410,7 +416,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         Task { @MainActor in controller.showMenu(nil) }
     }
 
-    /// Open the cheat-codes sheet.
+    /// Opens the main menu, which contains the cheat-codes section.
     private func cheatCodesButtonPressed() {
         DLOG("CheatCodes button pressed")
         guard let controller = emulatorController else {
@@ -421,7 +427,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         Task { @MainActor in controller.showMenu(nil) }
     }
 
-    /// Open the controller-skins picker.
+    /// Opens the main menu, which contains the controller-skins section.
     private func skinsButtonPressed() {
         DLOG("Skins button pressed")
         guard let controller = emulatorController else {
@@ -431,7 +437,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         Task { @MainActor in controller.showMenu(nil) }
     }
 
-    /// Open the video-filters picker.
+    /// Opens the main menu, which contains the video-filters section.
     private func filtersButtonPressed() {
         DLOG("Filters button pressed")
         guard let controller = emulatorController else {

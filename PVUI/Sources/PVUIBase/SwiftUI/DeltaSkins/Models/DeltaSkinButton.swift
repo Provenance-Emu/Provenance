@@ -57,6 +57,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// When true, this is a momentary toggle: it fires on press and auto-retracts on release.
     /// When false (default), it is a latching toggle that changes state each press.
     /// Manic skin parity: `selfRetracting` property.
+    /// - Note: Consumed by the button-rendering layer when toggle/switch behaviour is implemented.
     public let selfRetracting: Bool
 
     /// Initialize a new button mapping
@@ -168,10 +169,12 @@ public struct DeltaSkinButtonSwitchAnimation: Codable, Equatable {
 public struct DeltaSkinButtonStates: Codable, Equatable {
     public let normal: DeltaSkinButtonStateImage?
     public let pressed: DeltaSkinButtonStateImage?
-    /// Selected/toggled-on state image (for toggle/switch buttons)
+    /// Selected/toggled-on state image (for toggle/switch buttons).
+    /// - Note: Consumed by the button-rendering layer when toggle state display is implemented.
     public let selected: DeltaSkinButtonStateImage?
     public let animated: DeltaSkinButtonAnimated?
-    /// Optional spring-curve animation for transitions between states
+    /// Optional spring-curve animation for transitions between states.
+    /// - Note: Consumed by the button-rendering layer when animated toggle transitions are implemented.
     public let switchAnimation: DeltaSkinButtonSwitchAnimation?
 
     public init(

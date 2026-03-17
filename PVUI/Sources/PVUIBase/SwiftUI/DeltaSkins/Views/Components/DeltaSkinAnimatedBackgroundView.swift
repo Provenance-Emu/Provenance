@@ -108,18 +108,33 @@ struct DeltaSkinAnimatedBackgroundView: View {
     }
 
     /// Decode all frames and their per-frame delays from raw APNG or GIF data.
+    /// Frames are downsampled to avoid large memory spikes for high-resolution source images.
     private func extractFrames(from data: Data, fallbackFPS: Double) -> [(UIImage, Double)] {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return [] }
         let count = CGImageSourceGetCount(source)
         guard count > 0 else { return [] }
 
         let scale = UIScreen.main.scale
+        // Cap decoded frame size to the largest screen dimension to limit memory use.
+        let screenMax = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height) * scale
+        let thumbnailOptions: CFDictionary = [
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+            kCGImageSourceThumbnailMaxPixelSize: Int(screenMax)
+        ] as CFDictionary
+
         var result: [(UIImage, Double)] = []
         result.reserveCapacity(count)
 
         for index in 0..<count {
-            guard let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) else { continue }
-            let image = UIImage(cgImage: cgImage, scale: scale, orientation: .up)
+            let cgImage: CGImage?
+            if let thumb = CGImageSourceCreateThumbnailAtIndex(source, index, thumbnailOptions) {
+                cgImage = thumb
+            } else {
+                cgImage = CGImageSourceCreateImageAtIndex(source, index, nil)
+            }
+            guard let img = cgImage else { continue }
+            let image = UIImage(cgImage: img, scale: scale, orientation: .up)
             let duration = frameDuration(from: source, at: index, fallbackFPS: fallbackFPS)
             result.append((image, duration))
         }

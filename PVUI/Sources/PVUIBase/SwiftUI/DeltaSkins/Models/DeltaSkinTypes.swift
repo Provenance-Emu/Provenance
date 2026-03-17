@@ -712,6 +712,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
     /// | `"pce-family"`      | PC Engine, PC Engine CD       |
     ///
     /// All other systems use their ``registryKey`` as the group (i.e. they stand alone).
+    /// - Note: Consumed by the skin-loader when selecting compatible skins across a platform family.
     public var skinLayoutGroup: String {
         switch self {
         // Mega Drive family: Genesis / Mega CD / 32X share the same 3-button/6-button layout
@@ -737,6 +738,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
 
     /// Returns true when this system belongs to a multi-member layout group
     /// (i.e. a skin designed for one member may apply to all others in the group).
+    /// - Note: Consumed by the skin-loader when filtering compatible skins for a given system.
     public var isInSharedLayoutGroup: Bool {
         skinLayoutGroup != registryKey
     }
