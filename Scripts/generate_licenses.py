@@ -32,6 +32,7 @@ import sys
 import warnings
 from pathlib import Path
 from typing import Any, Optional
+import os
 
 
 # ---------------------------------------------------------------------------
@@ -522,10 +523,21 @@ def main() -> None:
     print(f"  Found {len(ra_entries)} RetroArch core entries.")
 
     spm_entries: list[dict[str, Any]] = []
-    if not args.skip_spm:
+
+    # SPM license attribution is currently opt-in: by default we skip scanning
+    # Package.resolved so that generated artifacts remain stable and consistent
+    # with the committed LICENSES.md / Scripts/licenses.json. To include SPM
+    # packages, set INCLUDE_SPM_LICENSES=1 (or true/yes/on) and do not pass
+    # --skip-spm.
+    include_spm_env = os.environ.get("INCLUDE_SPM_LICENSES", "").lower()
+    include_spm = include_spm_env in ("1", "true", "yes", "on")
+
+    if include_spm and not args.skip_spm:
         print("Scanning SPM packages …")
         spm_entries = scan_spm_packages(repo_root)
         print(f"  Found {len(spm_entries)} SPM package entries.")
+    else:
+        print("Skipping SPM package scan (INCLUDE_SPM_LICENSES not set or --skip-spm used).")
 
     all_entries = native_entries + ra_entries + spm_entries
 
