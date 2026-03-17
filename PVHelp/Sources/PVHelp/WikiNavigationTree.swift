@@ -37,10 +37,13 @@ public struct WikiNavigationTree: Codable, Sendable {
     /// App Store guidelines (sideloading instructions, external payment
     /// references, UDID provisioning, virtualisation for dev-signing, etc.).
     private static let blockedPaths: Set<String> = [
+        // Installing Provenance section (sideloading instructions)
+        "installation-and-usage/installing-provenance/README.md",
         "installation-and-usage/installing-provenance/sideloading.md",
         "installation-and-usage/installing-provenance/building-from-source.md",
         "installation-and-usage/installing-provenance/advanced.md",
         "installation-and-usage/installing-provenance/faqs-advanced.md",
+        // Development/signing
         "info/miscellaneous/virtualizing-macos.md",
         "help/udid.md",
     ]
@@ -48,6 +51,8 @@ public struct WikiNavigationTree: Codable, Sendable {
     /// Keywords in page paths that signal App Store-unsafe content.
     private static let blockedKeywords: [String] = [
         "sideload", "jailbreak", "altstore", "signing-service",
+        "installing-provenance", "ipa", "testflight",
+        "developer-account", "provisioning",
     ]
 
     private static func isBlocked(path: String) -> Bool {
