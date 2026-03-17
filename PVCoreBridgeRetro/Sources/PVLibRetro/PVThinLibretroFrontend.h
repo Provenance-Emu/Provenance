@@ -69,9 +69,10 @@ typedef NS_ENUM(NSInteger, PVLibretroPixelFormat) {
 /// Hardware render context types that the thin frontend supports.
 typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
     PVLibretroHWContextNone       = 0,
-    PVLibretroHWContextOpenGLES2  = 5, ///< RETRO_HW_CONTEXT_OPENGLES2
-    PVLibretroHWContextOpenGLES3  = 6, ///< RETRO_HW_CONTEXT_OPENGLES3
-    PVLibretroHWContextOpenGLESVer = 7, ///< RETRO_HW_CONTEXT_OPENGLES_VERSION
+    PVLibretroHWContextOpenGLES2  = 2, ///< RETRO_HW_CONTEXT_OPENGLES2
+    PVLibretroHWContextOpenGLES3  = 4, ///< RETRO_HW_CONTEXT_OPENGLES3
+    PVLibretroHWContextOpenGLESVer = 5, ///< RETRO_HW_CONTEXT_OPENGLES_VERSION
+    PVLibretroHWContextVulkan     = 6, ///< RETRO_HW_CONTEXT_VULKAN
 };
 
 @protocol PVThinLibretroDelegate <NSObject>
@@ -140,6 +141,11 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 ///   IOSurface-backed FBO. The host must call `-setupHardwareContextFBOWidth:height:`
 ///   from the emulation thread (with the emu EAGLContext current) once the render
 ///   surface dimensions are known. `context_reset` fires at the end of that call.
+///
+///   If the core requests Vulkan (RETRO_HW_CONTEXT_VULKAN), the frontend loads
+///   MoltenVK via dlopen, creates a VkInstance/VkDevice/VkQueue, and provides
+///   the retro_hw_render_interface_vulkan to the core via GET_HW_RENDER_INTERFACE.
+///   `context_reset` fires immediately after Vulkan setup completes.
 ///
 @interface PVThinLibretroFrontend : PVCoreObjCBridge <ObjCBridgedCoreBridge>
 

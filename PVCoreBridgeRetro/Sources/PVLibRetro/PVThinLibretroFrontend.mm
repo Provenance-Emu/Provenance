@@ -13,6 +13,7 @@
 //  - Static C callbacks forward to the ObjC instance via a weak _thinCurrent pointer
 //  - Core options stored in a mutable dictionary; dirty flag drives VARIABLE_UPDATE
 //  - HW-render cores get an EAGLContext + IOSurface-backed FBO (same approach as PVLibRetroGLESCore)
+//  - Vulkan HW-render cores get MoltenVK via dlopen + retro_hw_render_interface_vulkan
 //  - Serialization uses retro_serialize_size / retro_serialize / retro_unserialize directly
 //
 
@@ -25,6 +26,35 @@
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 @import PVAudio;
+
+// Peripheral hardware frameworks
+#if __has_include(<AVFoundation/AVFoundation.h>)
+#import <AVFoundation/AVFoundation.h>
+#define PV_HAS_AVFOUNDATION 1
+#else
+#define PV_HAS_AVFOUNDATION 0
+#endif
+
+#if __has_include(<AudioToolbox/AudioToolbox.h>)
+#import <AudioToolbox/AudioToolbox.h>
+#define PV_HAS_AUDIOTOOLBOX 1
+#else
+#define PV_HAS_AUDIOTOOLBOX 0
+#endif
+
+#if __has_include(<CoreMIDI/CoreMIDI.h>) && !TARGET_OS_TV
+#import <CoreMIDI/CoreMIDI.h>
+#define PV_HAS_COREMIDI 1
+#else
+#define PV_HAS_COREMIDI 0
+#endif
+
+#if __has_include(<Accelerate/Accelerate.h>)
+#import <Accelerate/Accelerate.h>
+#define PV_HAS_ACCELERATE 1
+#else
+#define PV_HAS_ACCELERATE 0
+#endif
 
 #include <dlfcn.h>
 #include <string.h>
@@ -66,6 +96,115 @@ static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect eff
 #include <stdarg.h>
 #include <os/lock.h>
 #include <pthread.h>
+#include <stdatomic.h>
+
+// Vulkan support via MoltenVK (loaded at runtime via dlopen)
+#if HAVE_VULKAN
+#include "libretro_vulkan.h"
+#endif
+
+// ---------------------------------------------------------------------------
+// MARK: - Microphone ring buffer
+// ---------------------------------------------------------------------------
+
+/// Simple lock-free single-producer/single-consumer ring buffer for mic PCM data.
+/// AudioUnit callback writes, libretro read_mic reads.
+#define PV_MIC_RING_BUFFER_SIZE (16384) // 16 KB — ~170 ms at 48kHz mono 16-bit
+
+typedef struct pv_mic_ring_buffer {
+    int16_t *data;
+    size_t capacity;    // in samples (int16_t count)
+    _Atomic size_t writePos;
+    _Atomic size_t readPos;
+} pv_mic_ring_buffer_t;
+
+static pv_mic_ring_buffer_t *pv_mic_ring_create(size_t capacity_samples) {
+    pv_mic_ring_buffer_t *rb = (pv_mic_ring_buffer_t *)calloc(1, sizeof(*rb));
+    if (!rb) return NULL;
+    rb->data = (int16_t *)calloc(capacity_samples, sizeof(int16_t));
+    if (!rb->data) { free(rb); return NULL; }
+    rb->capacity = capacity_samples;
+    atomic_store(&rb->writePos, 0);
+    atomic_store(&rb->readPos, 0);
+    return rb;
+}
+
+static void pv_mic_ring_free(pv_mic_ring_buffer_t *rb) {
+    if (!rb) return;
+    free(rb->data);
+    free(rb);
+}
+
+static size_t pv_mic_ring_available(pv_mic_ring_buffer_t *rb) {
+    size_t w = atomic_load(&rb->writePos);
+    size_t r = atomic_load(&rb->readPos);
+    return (w >= r) ? (w - r) : (rb->capacity - r + w);
+}
+
+static size_t pv_mic_ring_write(pv_mic_ring_buffer_t *rb, const int16_t *samples, size_t count) {
+    size_t written = 0;
+    size_t w = atomic_load(&rb->writePos);
+    size_t r = atomic_load(&rb->readPos);
+    for (size_t i = 0; i < count; i++) {
+        size_t next = (w + 1) % rb->capacity;
+        if (next == r) break; // full
+        rb->data[w] = samples[i];
+        w = next;
+        written++;
+    }
+    atomic_store(&rb->writePos, w);
+    return written;
+}
+
+static size_t pv_mic_ring_read(pv_mic_ring_buffer_t *rb, int16_t *samples, size_t count) {
+    size_t readCount = 0;
+    size_t r = atomic_load(&rb->readPos);
+    size_t w = atomic_load(&rb->writePos);
+    for (size_t i = 0; i < count; i++) {
+        if (r == w) break; // empty
+        samples[i] = rb->data[r];
+        r = (r + 1) % rb->capacity;
+        readCount++;
+    }
+    atomic_store(&rb->readPos, r);
+    return readCount;
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Microphone handle (opaque retro_microphone_t)
+// ---------------------------------------------------------------------------
+
+#if PV_HAS_AUDIOTOOLBOX
+struct retro_microphone {
+    AudioUnit audioUnit;
+    AudioStreamBasicDescription format;
+    pv_mic_ring_buffer_t *ringBuffer;
+    bool isRunning;
+    unsigned sampleRate;
+};
+#endif
+
+// ---------------------------------------------------------------------------
+// MARK: - MIDI state
+// ---------------------------------------------------------------------------
+
+#if PV_HAS_COREMIDI
+#define PV_MIDI_READ_BUFFER_SIZE 4096
+
+typedef struct pv_midi_state {
+    MIDIClientRef client;
+    MIDIPortRef inputPort;
+    MIDIPortRef outputPort;
+    MIDIEndpointRef inputEndpoint;
+    MIDIEndpointRef outputEndpoint;
+    uint8_t readBuffer[PV_MIDI_READ_BUFFER_SIZE];
+    _Atomic size_t readWritePos;
+    _Atomic size_t readReadPos;
+    bool initialized;
+} pv_midi_state_t;
+
+static pv_midi_state_t s_midiState = {0};
+#endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 @import OpenGLES.ES3;
@@ -183,6 +322,28 @@ typedef struct PVThinLibretroSymbols {
     GLuint _emuDepthRB;
 #endif
 
+    // Vulkan state (when using MoltenVK via dlopen)
+#if HAVE_VULKAN
+    void *_vulkanLibrary;
+    VkInstance _vulkanInstance;
+    VkDevice _vulkanDevice;
+    VkQueue _vulkanQueue;
+    VkPhysicalDevice _vulkanPhysicalDevice;
+    struct retro_hw_render_interface_vulkan _vulkanRenderInterface;
+    os_unfair_lock _vulkanQueueLock;
+    BOOL _hwSharedContext;
+
+    // Vulkan function pointers loaded from MoltenVK
+    PFN_vkVoidFunction (*_vkGetInstanceProcAddr)(VkInstance instance, const char *pName);
+    PFN_vkVoidFunction (*_vkGetDeviceProcAddr)(VkDevice device, const char *pName);
+    VkResult (*_vkCreateInstance)(const void *pCreateInfo, const void *pAllocator, VkInstance *pInstance);
+    void (*_vkDestroyInstance)(VkInstance instance, const void *pAllocator);
+    VkResult (*_vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t *pPhysicalDeviceCount, VkPhysicalDevice *pPhysicalDevices);
+    VkResult (*_vkCreateDevice)(VkPhysicalDevice physicalDevice, const void *pCreateInfo, const void *pAllocator, VkDevice *pDevice);
+    void (*_vkDestroyDevice)(VkDevice device, const void *pAllocator);
+    void (*_vkGetDeviceQueue)(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue *pQueue);
+#endif
+
     // Serialization quirks bitmask
     uint64_t _serializationQuirks;
 
@@ -259,11 +420,20 @@ typedef struct PVThinLibretroSymbols {
     float _sensorGyroX, _sensorGyroY, _sensorGyroZ;
     float _sensorIlluminance;
 
-    // Camera (stub — stores core's callback struct)
+    // Camera (AVCaptureSession-backed)
     struct retro_camera_callback _cameraCallback;
     BOOL _hasCameraCallback;
+#if PV_HAS_AVFOUNDATION
+    AVCaptureSession *_cameraCaptureSession;
+    AVCaptureVideoDataOutput *_cameraVideoOutput;
+    uint32_t *_cameraFrameBuffer;   // XRGB8888 frame buffer for the core
+    size_t _cameraBufferWidth;
+    size_t _cameraBufferHeight;
+    BOOL _cameraSessionRunning;
+    dispatch_queue_t _cameraQueue;
+#endif
 
-    // Microphone (stub — stores core's interface struct)
+    // Microphone (AudioUnit-backed)
     struct retro_microphone_interface _microphoneInterface;
     BOOL _hasMicrophoneInterface;
 
@@ -374,10 +544,199 @@ static uintptr_t thin_hw_get_current_framebuffer(void) {
 }
 #endif
 
-/// hw_get_proc_address — called from the core to resolve GL symbols.
+/// hw_get_proc_address — called from the core to resolve GL/Vulkan symbols.
 static retro_proc_address_t thin_hw_get_proc_address(const char *sym) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+#if HAVE_VULKAN
+    if (self && self->_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
+        // For Vulkan cores, resolve through the Vulkan function pointers
+        if (self->_vkGetDeviceProcAddr && self->_vulkanDevice) {
+            PFN_vkVoidFunction fn = self->_vkGetDeviceProcAddr(self->_vulkanDevice, sym);
+            if (fn) return (retro_proc_address_t)fn;
+        }
+        if (self->_vkGetInstanceProcAddr && self->_vulkanInstance) {
+            PFN_vkVoidFunction fn = self->_vkGetInstanceProcAddr(self->_vulkanInstance, sym);
+            if (fn) return (retro_proc_address_t)fn;
+        }
+        if (self->_vkGetInstanceProcAddr) {
+            PFN_vkVoidFunction fn = self->_vkGetInstanceProcAddr(NULL, sym);
+            if (fn) return (retro_proc_address_t)fn;
+        }
+        DLOG(@"ThinFrontend: Vulkan symbol not found: %s", sym);
+        return NULL;
+    }
+#endif
+    (void)self;
     return (retro_proc_address_t)dlsym(RTLD_DEFAULT, sym);
 }
+
+// ---------------------------------------------------------------------------
+// MARK: - Vulkan callback stubs (thin frontend)
+// ---------------------------------------------------------------------------
+
+#if HAVE_VULKAN
+
+static PVThinLibretroFrontend *thin_vulkan_bridge(void *handle) {
+    return (__bridge PVThinLibretroFrontend *)handle;
+}
+
+static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image *image,
+                                  uint32_t num_semaphores, const VkSemaphore *semaphores,
+                                  uint32_t src_queue_family) {
+    (void)image; (void)num_semaphores; (void)semaphores; (void)src_queue_family;
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return;
+    // Placeholder — image handoff is future work when Metal interop is added.
+}
+
+static uint32_t thin_vulkan_get_sync_index(void *handle) {
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return 0;
+    return 0; // Single-buffer placeholder
+}
+
+static uint32_t thin_vulkan_get_sync_index_mask(void *handle) {
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return 0;
+    return 1; // Single-queue placeholder
+}
+
+static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
+                                            const VkCommandBuffer *cmd) {
+    (void)num_cmd; (void)cmd;
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return;
+    // Placeholder — command buffer submission is future work.
+}
+
+static void thin_vulkan_wait_sync_index(void *handle) {
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return;
+    // Placeholder — single-buffer, nothing to wait for.
+}
+
+static void thin_vulkan_lock_queue(void *handle) {
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return;
+    os_unfair_lock_lock(&bridge->_vulkanQueueLock);
+}
+
+static void thin_vulkan_unlock_queue(void *handle) {
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return;
+    os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
+}
+
+static void thin_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) {
+    (void)semaphore;
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    if (!bridge) return;
+    // Placeholder — semaphore signalling is future work.
+}
+
+#endif // HAVE_VULKAN
+
+// ---------------------------------------------------------------------------
+// MARK: - Camera capture delegate (AVCaptureVideoDataOutputSampleBufferDelegate)
+// ---------------------------------------------------------------------------
+
+#if PV_HAS_AVFOUNDATION
+@interface PVThinCameraDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
+@property (assign) uint32_t *frameBuffer;
+@property (assign) size_t targetWidth;
+@property (assign) size_t targetHeight;
+@end
+
+@implementation PVThinCameraDelegate
+
+- (void)captureOutput:(AVCaptureOutput *)output
+didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+       fromConnection:(AVCaptureConnection *)connection {
+    @autoreleasepool {
+        if (!self.frameBuffer || self.targetWidth == 0 || self.targetHeight == 0)
+            return;
+
+        CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+        if (!imageBuffer) return;
+
+        CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+
+        size_t sourceWidth = CVPixelBufferGetWidth(imageBuffer);
+        size_t sourceHeight = CVPixelBufferGetHeight(imageBuffer);
+        void *baseAddr = CVPixelBufferGetBaseAddress(imageBuffer);
+        size_t srcBytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+
+        if (!baseAddr || sourceWidth == 0 || sourceHeight == 0) {
+            CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+            return;
+        }
+
+#if PV_HAS_ACCELERATE
+        // Source is BGRA, convert to XRGB8888 (ARGB) and scale to target size
+        vImage_Buffer srcBuf = {
+            .data = baseAddr,
+            .width = sourceWidth,
+            .height = sourceHeight,
+            .rowBytes = srcBytesPerRow
+        };
+
+        // Allocate a temporary buffer for BGRA->ARGB permuted full-size image
+        size_t intermediateRowBytes = sourceWidth * 4;
+        void *intermediateData = malloc(intermediateRowBytes * sourceHeight);
+        if (!intermediateData) {
+            CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+            return;
+        }
+
+        vImage_Buffer intermediateBuf = {
+            .data = intermediateData,
+            .width = sourceWidth,
+            .height = sourceHeight,
+            .rowBytes = intermediateRowBytes
+        };
+
+        // BGRA -> ARGB (which is XRGB8888 in libretro convention: xx RR GG BB)
+        uint8_t permuteMap[4] = {3, 2, 1, 0}; // BGRA -> ARGB
+        vImage_Error err = vImagePermuteChannels_ARGB8888(&srcBuf, &intermediateBuf, permuteMap, kvImageNoFlags);
+        if (err != kvImageNoError) {
+            free(intermediateData);
+            CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+            return;
+        }
+
+        // Scale to target dimensions
+        vImage_Buffer dstBuf = {
+            .data = self.frameBuffer,
+            .width = self.targetWidth,
+            .height = self.targetHeight,
+            .rowBytes = self.targetWidth * 4
+        };
+
+        err = vImageScale_ARGB8888(&intermediateBuf, &dstBuf, NULL, kvImageHighQualityResampling);
+        free(intermediateData);
+#else
+        // Without Accelerate, do a simple nearest-neighbor copy with BGRA->XRGB conversion
+        uint8_t *src = (uint8_t *)baseAddr;
+        uint32_t *dst = self.frameBuffer;
+        for (size_t y = 0; y < self.targetHeight && y < sourceHeight; y++) {
+            uint8_t *srcRow = src + y * srcBytesPerRow;
+            for (size_t x = 0; x < self.targetWidth && x < sourceWidth; x++) {
+                uint8_t b = srcRow[x * 4 + 0];
+                uint8_t g = srcRow[x * 4 + 1];
+                uint8_t r = srcRow[x * 4 + 2];
+                dst[y * self.targetWidth + x] = (0xFF << 24) | (r << 16) | (g << 8) | b;
+            }
+        }
+#endif
+
+        CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+    }
+}
+
+@end
+
+static PVThinCameraDelegate *s_cameraDelegate = nil;
+#endif
 
 // ---------------------------------------------------------------------------
 // MARK: - Peripheral interface C callbacks (sensor, camera, location, LED)
@@ -397,17 +756,117 @@ static float thin_sensor_get_input(unsigned port, unsigned sensor_id) {
     return [self _sensorGetInput:sensor_id port:port];
 }
 
-#pragma mark Camera interface (stub)
+#pragma mark Camera interface (AVFoundation)
 
 static bool thin_camera_start(void) {
-    // TODO: Implement actual camera capture with AVCaptureSession.
-    // For now, return false — the core will function without camera input.
-    DLOG(@"ThinFrontend: camera start requested (stub)");
+#if PV_HAS_AVFOUNDATION
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self) return false;
+
+    if (self->_cameraSessionRunning) return true;
+
+    if (!self->_cameraCaptureSession) {
+        // Set up AVCaptureSession
+        self->_cameraCaptureSession = [[AVCaptureSession alloc] init];
+        self->_cameraQueue = dispatch_queue_create("com.provenance.thinCamera", DISPATCH_QUEUE_SERIAL);
+
+        // Select camera device (prefer front camera for Game Boy Camera etc.)
+        AVCaptureDevice *device = nil;
+#if TARGET_OS_IOS
+        AVCaptureDeviceDiscoverySession *discovery = [AVCaptureDeviceDiscoverySession
+            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+            mediaType:AVMediaTypeVideo
+            position:AVCaptureDevicePositionFront];
+        device = discovery.devices.firstObject;
+        if (!device) {
+            // Fallback to rear camera
+            discovery = [AVCaptureDeviceDiscoverySession
+                discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+                mediaType:AVMediaTypeVideo
+                position:AVCaptureDevicePositionBack];
+            device = discovery.devices.firstObject;
+        }
+#else
+        // macOS / other: use default video device
+        device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+#endif
+        if (!device) {
+            ELOG(@"ThinFrontend: no camera device found");
+            self->_cameraCaptureSession = nil;
+            return false;
+        }
+
+        NSError *error = nil;
+        AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
+        if (!input || error) {
+            ELOG(@"ThinFrontend: camera input error: %@", error.localizedDescription);
+            self->_cameraCaptureSession = nil;
+            return false;
+        }
+
+        if ([self->_cameraCaptureSession canAddInput:input]) {
+            [self->_cameraCaptureSession addInput:input];
+        }
+
+        self->_cameraVideoOutput = [[AVCaptureVideoDataOutput alloc] init];
+        self->_cameraVideoOutput.videoSettings = @{
+            (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)
+        };
+        self->_cameraVideoOutput.alwaysDiscardsLateVideoFrames = YES;
+
+        if (!s_cameraDelegate) {
+            s_cameraDelegate = [[PVThinCameraDelegate alloc] init];
+        }
+        [self->_cameraVideoOutput setSampleBufferDelegate:s_cameraDelegate queue:self->_cameraQueue];
+
+        if ([self->_cameraCaptureSession canAddOutput:self->_cameraVideoOutput]) {
+            [self->_cameraCaptureSession addOutput:self->_cameraVideoOutput];
+        }
+
+        // Allocate frame buffer at the resolution the core requested
+        unsigned w = self->_cameraCallback.width ?: 160;
+        unsigned h = self->_cameraCallback.height ?: 120;
+        self->_cameraBufferWidth = w;
+        self->_cameraBufferHeight = h;
+        self->_cameraFrameBuffer = (uint32_t *)calloc(w * h, sizeof(uint32_t));
+        if (!self->_cameraFrameBuffer) {
+            ELOG(@"ThinFrontend: failed to allocate camera frame buffer");
+            self->_cameraCaptureSession = nil;
+            return false;
+        }
+
+        s_cameraDelegate.frameBuffer = self->_cameraFrameBuffer;
+        s_cameraDelegate.targetWidth = w;
+        s_cameraDelegate.targetHeight = h;
+    }
+
+    // Start the capture session on a background queue
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self->_cameraCaptureSession startRunning];
+    });
+    self->_cameraSessionRunning = YES;
+    ILOG(@"ThinFrontend: camera started (%zux%zu)", self->_cameraBufferWidth, self->_cameraBufferHeight);
+    return true;
+#else
+    DLOG(@"ThinFrontend: camera start requested but AVFoundation unavailable");
     return false;
+#endif
 }
 
 static void thin_camera_stop(void) {
-    DLOG(@"ThinFrontend: camera stop requested (stub)");
+#if PV_HAS_AVFOUNDATION
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self) return;
+    if (self->_cameraCaptureSession && self->_cameraSessionRunning) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self->_cameraCaptureSession stopRunning];
+        });
+        self->_cameraSessionRunning = NO;
+        ILOG(@"ThinFrontend: camera stopped");
+    }
+#else
+    DLOG(@"ThinFrontend: camera stop requested (no AVFoundation)");
+#endif
 }
 
 #pragma mark Location interface
@@ -663,14 +1122,134 @@ static struct retro_vfs_interface s_thinVFSInterface = {
 #define PV_THIN_VFS_INTERFACE_VERSION 3
 
 // ---------------------------------------------------------------------------
-// MARK: - MIDI interface (stubs — no hardware connected)
+// MARK: - MIDI interface (CoreMIDI)
 // ---------------------------------------------------------------------------
+
+#if PV_HAS_COREMIDI
+
+/// CoreMIDI read callback -- pushes incoming bytes into our ring buffer.
+static void thin_midi_read_callback(const MIDIPacketList *pktlist, void *readProcRefCon, void *srcConnRefCon) {
+    (void)readProcRefCon;
+    (void)srcConnRefCon;
+    const MIDIPacket *packet = &pktlist->packet[0];
+    for (UInt32 i = 0; i < pktlist->numPackets; i++) {
+        for (UInt16 j = 0; j < packet->length; j++) {
+            size_t next = (atomic_load(&s_midiState.readWritePos) + 1) % PV_MIDI_READ_BUFFER_SIZE;
+            if (next != atomic_load(&s_midiState.readReadPos)) {
+                s_midiState.readBuffer[atomic_load(&s_midiState.readWritePos)] = packet->data[j];
+                atomic_store(&s_midiState.readWritePos, next);
+            }
+        }
+        packet = MIDIPacketNext(packet);
+    }
+}
+
+/// Lazily initialize CoreMIDI client and connect to first available source/destination.
+static bool thin_midi_ensure_initialized(void) {
+    if (s_midiState.initialized) return true;
+
+    OSStatus err = MIDIClientCreate(CFSTR("Provenance MIDI"), NULL, NULL, &s_midiState.client);
+    if (err != noErr) {
+        ELOG(@"ThinFrontend MIDI: MIDIClientCreate failed: %d", (int)err);
+        return false;
+    }
+
+    // Create input port and connect to first available source
+    if (MIDIGetNumberOfSources() > 0) {
+        err = MIDIInputPortCreate(s_midiState.client, CFSTR("Provenance MIDI In"),
+                                  thin_midi_read_callback, NULL, &s_midiState.inputPort);
+        if (err == noErr) {
+            MIDIEndpointRef src = MIDIGetSource(0);
+            err = MIDIPortConnectSource(s_midiState.inputPort, src, NULL);
+            if (err == noErr) {
+                s_midiState.inputEndpoint = src;
+                ILOG(@"ThinFrontend MIDI: connected to input source");
+            }
+        }
+    }
+
+    // Create output port and find first available destination
+    if (MIDIGetNumberOfDestinations() > 0) {
+        err = MIDIOutputPortCreate(s_midiState.client, CFSTR("Provenance MIDI Out"),
+                                   &s_midiState.outputPort);
+        if (err == noErr) {
+            s_midiState.outputEndpoint = MIDIGetDestination(0);
+            ILOG(@"ThinFrontend MIDI: connected to output destination");
+        }
+    }
+
+    s_midiState.initialized = true;
+    atomic_store(&s_midiState.readWritePos, 0);
+    atomic_store(&s_midiState.readReadPos, 0);
+    ILOG(@"ThinFrontend MIDI: initialized (inputs=%lu, outputs=%lu)",
+         (unsigned long)MIDIGetNumberOfSources(),
+         (unsigned long)MIDIGetNumberOfDestinations());
+    return true;
+}
+
+static void thin_midi_shutdown(void) {
+    if (!s_midiState.initialized) return;
+    if (s_midiState.inputPort) {
+        if (s_midiState.inputEndpoint)
+            MIDIPortDisconnectSource(s_midiState.inputPort, s_midiState.inputEndpoint);
+        MIDIPortDispose(s_midiState.inputPort);
+    }
+    if (s_midiState.outputPort)
+        MIDIPortDispose(s_midiState.outputPort);
+    if (s_midiState.client)
+        MIDIClientDispose(s_midiState.client);
+    memset(&s_midiState, 0, sizeof(s_midiState));
+}
+
+static bool thin_midi_input_enabled(void) {
+    thin_midi_ensure_initialized();
+    return s_midiState.inputPort != 0 && s_midiState.inputEndpoint != 0;
+}
+
+static bool thin_midi_output_enabled(void) {
+    thin_midi_ensure_initialized();
+    return s_midiState.outputPort != 0 && s_midiState.outputEndpoint != 0;
+}
+
+static bool thin_midi_read(uint8_t *byte) {
+    if (!byte) return false;
+    size_t rp = atomic_load(&s_midiState.readReadPos);
+    size_t wp = atomic_load(&s_midiState.readWritePos);
+    if (rp == wp) return false; // empty
+    *byte = s_midiState.readBuffer[rp];
+    atomic_store(&s_midiState.readReadPos, (rp + 1) % PV_MIDI_READ_BUFFER_SIZE);
+    return true;
+}
+
+static bool thin_midi_write(uint8_t byte, uint32_t delta_time) {
+    (void)delta_time;
+    if (!s_midiState.outputPort || !s_midiState.outputEndpoint) return false;
+
+    // Build a single-byte MIDIPacketList
+    char buf[sizeof(MIDIPacketList) + sizeof(MIDIPacket)];
+    MIDIPacketList *pktList = (MIDIPacketList *)buf;
+    MIDIPacket *pkt = MIDIPacketListInit(pktList);
+    pkt = MIDIPacketListAdd(pktList, sizeof(buf), pkt, 0, 1, &byte);
+    if (!pkt) return false;
+
+    OSStatus err = MIDISend(s_midiState.outputPort, s_midiState.outputEndpoint, pktList);
+    return err == noErr;
+}
+
+static bool thin_midi_flush(void) {
+    // CoreMIDI sends immediately; nothing to flush
+    return true;
+}
+
+#else // !PV_HAS_COREMIDI
 
 static bool thin_midi_input_enabled(void) { return false; }
 static bool thin_midi_output_enabled(void) { return false; }
 static bool thin_midi_read(uint8_t *byte) { (void)byte; return false; }
 static bool thin_midi_write(uint8_t byte, uint32_t delta_time) { (void)byte; (void)delta_time; return false; }
 static bool thin_midi_flush(void) { return false; }
+
+#endif // PV_HAS_COREMIDI
 
 static struct retro_midi_interface s_thinMIDIInterface = {
     thin_midi_input_enabled,
@@ -679,6 +1258,262 @@ static struct retro_midi_interface s_thinMIDIInterface = {
     thin_midi_write,
     thin_midi_flush,
 };
+
+// ---------------------------------------------------------------------------
+// MARK: - Microphone interface (AudioUnit)
+// ---------------------------------------------------------------------------
+
+#if PV_HAS_AUDIOTOOLBOX
+
+/// AudioUnit input callback -- captures PCM samples into the ring buffer.
+static OSStatus thin_mic_input_callback(
+    void *inRefCon,
+    AudioUnitRenderActionFlags *ioActionFlags,
+    const AudioTimeStamp *inTimeStamp,
+    UInt32 inBusNumber,
+    UInt32 inNumberFrames,
+    AudioBufferList *ioData)
+{
+    struct retro_microphone *mic = (struct retro_microphone *)inRefCon;
+    if (!mic || !mic->ringBuffer) return kAudio_ParamError;
+
+    size_t bufferSize = inNumberFrames * mic->format.mBytesPerFrame;
+    void *tempBuffer = malloc(bufferSize);
+    if (!tempBuffer) return kAudio_MemFullError;
+
+    AudioBufferList bufferList;
+    bufferList.mNumberBuffers = 1;
+    bufferList.mBuffers[0].mDataByteSize = (UInt32)bufferSize;
+    bufferList.mBuffers[0].mData = tempBuffer;
+
+    OSStatus status = AudioUnitRender(mic->audioUnit, ioActionFlags,
+                                       inTimeStamp, inBusNumber,
+                                       inNumberFrames, &bufferList);
+    if (status == noErr) {
+        pv_mic_ring_write(mic->ringBuffer,
+                          (const int16_t *)bufferList.mBuffers[0].mData,
+                          bufferList.mBuffers[0].mDataByteSize / sizeof(int16_t));
+    }
+
+    free(tempBuffer);
+    return status;
+}
+
+static retro_microphone_t *thin_open_mic(const retro_microphone_params_t *params) {
+    struct retro_microphone *mic = (struct retro_microphone *)calloc(1, sizeof(*mic));
+    if (!mic) return NULL;
+
+    unsigned rate = (params && params->rate) ? params->rate : 44100;
+    mic->sampleRate = rate;
+
+#if TARGET_OS_IPHONE
+    // Configure audio session for simultaneous playback + recording
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    NSError *error = nil;
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord
+             withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker |
+                         AVAudioSessionCategoryOptionAllowBluetooth
+                   error:&error];
+    if (error) {
+        ELOG(@"ThinFrontend mic: failed to set audio session category: %@", error.localizedDescription);
+    }
+    [session setPreferredSampleRate:rate error:nil];
+    [session setActive:YES error:nil];
+    rate = (unsigned)[session sampleRate];
+    mic->sampleRate = rate;
+#endif
+
+    // Configure audio format: mono 16-bit PCM
+    mic->format.mSampleRate = rate;
+    mic->format.mFormatID = kAudioFormatLinearPCM;
+    mic->format.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
+    mic->format.mFramesPerPacket = 1;
+    mic->format.mChannelsPerFrame = 1;
+    mic->format.mBitsPerChannel = 16;
+    mic->format.mBytesPerFrame = 2;
+    mic->format.mBytesPerPacket = 2;
+
+    // Create ring buffer (~250ms of audio at the given rate)
+    size_t ringCapacity = (rate / 4);
+    mic->ringBuffer = pv_mic_ring_create(ringCapacity);
+    if (!mic->ringBuffer) {
+        free(mic);
+        return NULL;
+    }
+
+    // Set up AudioUnit (RemoteIO on iOS, HALOutput on macOS)
+    AudioComponentDescription desc = {
+        .componentType = kAudioUnitType_Output,
+#if TARGET_OS_IPHONE
+        .componentSubType = kAudioUnitSubType_RemoteIO,
+#else
+        .componentSubType = kAudioUnitSubType_HALOutput,
+#endif
+        .componentManufacturer = kAudioUnitManufacturer_Apple,
+        .componentFlags = 0,
+        .componentFlagsMask = 0
+    };
+
+    AudioComponent comp = AudioComponentFindNext(NULL, &desc);
+    if (!comp) {
+        ELOG(@"ThinFrontend mic: no audio component found");
+        pv_mic_ring_free(mic->ringBuffer);
+        free(mic);
+        return NULL;
+    }
+
+    OSStatus status = AudioComponentInstanceNew(comp, &mic->audioUnit);
+    if (status != noErr) {
+        ELOG(@"ThinFrontend mic: AudioComponentInstanceNew failed: %d", (int)status);
+        pv_mic_ring_free(mic->ringBuffer);
+        free(mic);
+        return NULL;
+    }
+
+    // Enable input on bus 1
+    UInt32 enableInput = 1;
+    status = AudioUnitSetProperty(mic->audioUnit,
+                                   kAudioOutputUnitProperty_EnableIO,
+                                   kAudioUnitScope_Input,
+                                   1, &enableInput, sizeof(enableInput));
+    if (status != noErr) {
+        ELOG(@"ThinFrontend mic: failed to enable input: %d", (int)status);
+        AudioComponentInstanceDispose(mic->audioUnit);
+        pv_mic_ring_free(mic->ringBuffer);
+        free(mic);
+        return NULL;
+    }
+
+#if !TARGET_OS_IPHONE
+    // On macOS, disable output on bus 0 (we only want input)
+    UInt32 disableOutput = 0;
+    AudioUnitSetProperty(mic->audioUnit,
+                         kAudioOutputUnitProperty_EnableIO,
+                         kAudioUnitScope_Output,
+                         0, &disableOutput, sizeof(disableOutput));
+#endif
+
+    // Set stream format on the output scope of the input bus
+    status = AudioUnitSetProperty(mic->audioUnit,
+                                   kAudioUnitProperty_StreamFormat,
+                                   kAudioUnitScope_Output,
+                                   1, &mic->format, sizeof(mic->format));
+    if (status != noErr) {
+        ELOG(@"ThinFrontend mic: failed to set stream format: %d", (int)status);
+        AudioComponentInstanceDispose(mic->audioUnit);
+        pv_mic_ring_free(mic->ringBuffer);
+        free(mic);
+        return NULL;
+    }
+
+    // Set input callback
+    AURenderCallbackStruct callbackStruct = { thin_mic_input_callback, mic };
+    status = AudioUnitSetProperty(mic->audioUnit,
+                                   kAudioOutputUnitProperty_SetInputCallback,
+                                   kAudioUnitScope_Global,
+                                   1, &callbackStruct, sizeof(callbackStruct));
+    if (status != noErr) {
+        ELOG(@"ThinFrontend mic: failed to set input callback: %d", (int)status);
+        AudioComponentInstanceDispose(mic->audioUnit);
+        pv_mic_ring_free(mic->ringBuffer);
+        free(mic);
+        return NULL;
+    }
+
+    // Initialize the audio unit
+    status = AudioUnitInitialize(mic->audioUnit);
+    if (status != noErr) {
+        ELOG(@"ThinFrontend mic: AudioUnitInitialize failed: %d", (int)status);
+        AudioComponentInstanceDispose(mic->audioUnit);
+        pv_mic_ring_free(mic->ringBuffer);
+        free(mic);
+        return NULL;
+    }
+
+    ILOG(@"ThinFrontend mic: opened at %u Hz (mono 16-bit)", mic->sampleRate);
+    return mic;
+}
+
+static void thin_close_mic(retro_microphone_t *microphone) {
+    if (!microphone) return;
+    if (microphone->isRunning) {
+        AudioOutputUnitStop(microphone->audioUnit);
+        microphone->isRunning = false;
+    }
+    AudioUnitUninitialize(microphone->audioUnit);
+    AudioComponentInstanceDispose(microphone->audioUnit);
+    pv_mic_ring_free(microphone->ringBuffer);
+    ILOG(@"ThinFrontend mic: closed");
+    free(microphone);
+}
+
+static bool thin_get_mic_params(const retro_microphone_t *microphone, retro_microphone_params_t *params) {
+    if (!microphone || !params) return false;
+    params->rate = microphone->sampleRate;
+    return true;
+}
+
+static bool thin_set_mic_state(retro_microphone_t *microphone, bool state) {
+    if (!microphone) return false;
+    if (state && !microphone->isRunning) {
+#if TARGET_OS_IPHONE
+        // Request microphone permission (if not already granted)
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        if ([session recordPermission] != AVAudioSessionRecordPermissionGranted) {
+            dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+            [session requestRecordPermission:^(BOOL granted) {
+                dispatch_semaphore_signal(sema);
+            }];
+            dispatch_semaphore_wait(sema, dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC));
+            if ([session recordPermission] != AVAudioSessionRecordPermissionGranted) {
+                ELOG(@"ThinFrontend mic: microphone permission denied");
+                return false;
+            }
+        }
+#endif
+        OSStatus status = AudioOutputUnitStart(microphone->audioUnit);
+        if (status != noErr) {
+            ELOG(@"ThinFrontend mic: start failed: %d", (int)status);
+            return false;
+        }
+        microphone->isRunning = true;
+        ILOG(@"ThinFrontend mic: started capture");
+    } else if (!state && microphone->isRunning) {
+        AudioOutputUnitStop(microphone->audioUnit);
+        microphone->isRunning = false;
+        ILOG(@"ThinFrontend mic: stopped capture");
+    }
+    return true;
+}
+
+static bool thin_get_mic_state(const retro_microphone_t *microphone) {
+    return microphone && microphone->isRunning;
+}
+
+static int thin_read_mic(retro_microphone_t *microphone, int16_t *samples, size_t num_samples) {
+    if (!microphone || !samples || !microphone->ringBuffer) return -1;
+    size_t readCount = pv_mic_ring_read(microphone->ringBuffer, samples, num_samples);
+    return (int)readCount;
+}
+
+#else // !PV_HAS_AUDIOTOOLBOX
+
+static retro_microphone_t *thin_open_mic(const retro_microphone_params_t *params) {
+    (void)params;
+    DLOG(@"ThinFrontend: microphone requested but AudioToolbox unavailable");
+    return NULL;
+}
+static void thin_close_mic(retro_microphone_t *mic) { (void)mic; }
+static bool thin_get_mic_params(const retro_microphone_t *mic, retro_microphone_params_t *params) {
+    (void)mic; (void)params; return false;
+}
+static bool thin_set_mic_state(retro_microphone_t *mic, bool state) { (void)mic; (void)state; return false; }
+static bool thin_get_mic_state(const retro_microphone_t *mic) { (void)mic; return false; }
+static int thin_read_mic(retro_microphone_t *mic, int16_t *samples, size_t num_samples) {
+    (void)mic; (void)samples; (void)num_samples; return -1;
+}
+
+#endif // PV_HAS_AUDIOTOOLBOX
 
 // ---------------------------------------------------------------------------
 // MARK: - Environment callback (large switch, libretro.h only)
@@ -768,6 +1603,24 @@ static bool thin_environment(unsigned cmd, void *data) {
         _emuFBO = 0;
         _emuColorTex = 0;
         _emuDepthRB = 0;
+#endif
+#if HAVE_VULKAN
+        _vulkanLibrary = NULL;
+        _vulkanInstance = NULL;
+        _vulkanDevice = NULL;
+        _vulkanQueue = NULL;
+        _vulkanPhysicalDevice = NULL;
+        memset(&_vulkanRenderInterface, 0, sizeof(_vulkanRenderInterface));
+        _vulkanQueueLock = OS_UNFAIR_LOCK_INIT;
+        _hwSharedContext = NO;
+        _vkGetInstanceProcAddr = NULL;
+        _vkGetDeviceProcAddr = NULL;
+        _vkCreateInstance = NULL;
+        _vkDestroyInstance = NULL;
+        _vkEnumeratePhysicalDevices = NULL;
+        _vkCreateDevice = NULL;
+        _vkDestroyDevice = NULL;
+        _vkGetDeviceQueue = NULL;
 #endif
     }
     return self;
@@ -1000,6 +1853,23 @@ static bool thin_environment(unsigned cmd, void *data) {
 #if PV_HAS_CORELOCATION
     [self _locationStop];
 #endif
+#if PV_HAS_AVFOUNDATION
+    // Stop camera capture
+    if (_cameraCaptureSession) {
+        [_cameraCaptureSession stopRunning];
+        _cameraCaptureSession = nil;
+        _cameraVideoOutput = nil;
+        _cameraSessionRunning = NO;
+    }
+    if (_cameraFrameBuffer) {
+        free(_cameraFrameBuffer);
+        _cameraFrameBuffer = NULL;
+    }
+    s_cameraDelegate = nil;
+#endif
+#if PV_HAS_COREMIDI
+    thin_midi_shutdown();
+#endif
     // Flush battery save (SRAM) before tearing down the core
     [self saveBatterySaveData];
     [super stopEmulation]; // stops emulation loop thread before retro teardown
@@ -1031,6 +1901,19 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 
     _thinCurrentTLS = self;
+
+#if PV_HAS_AVFOUNDATION
+    // Deliver camera frame to core if capture is active
+    if (_hasCameraCallback && _cameraSessionRunning && _cameraFrameBuffer
+        && _cameraCallback.frame_raw_framebuffer) {
+        _cameraCallback.frame_raw_framebuffer(
+            _cameraFrameBuffer,
+            (unsigned)_cameraBufferWidth,
+            (unsigned)_cameraBufferHeight,
+            _cameraBufferWidth * sizeof(uint32_t));
+    }
+#endif
+
     _sym.retro_run();
 }
 
@@ -2289,43 +3172,38 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
 
-        // ---- Camera interface (stub for Game Boy Camera etc.) ----
+        // ---- Camera interface (AVFoundation-backed) ----
         case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE: {
             struct retro_camera_callback *cam = (struct retro_camera_callback *)data;
             if (!cam) return false;
             // Store the core's callbacks (frame_raw_framebuffer, frame_opengl_texture, etc.)
             _cameraCallback = *cam;
             _hasCameraCallback = YES;
-            // Provide our start/stop stubs
+            // Provide our start/stop implementations
             cam->start = thin_camera_start;
             cam->stop  = thin_camera_stop;
             // Announce raw framebuffer capability (no GL texture support yet)
             cam->caps = (1 << RETRO_CAMERA_BUFFER_RAW_FRAMEBUFFER);
-            // TODO: Implement actual camera capture using AVCaptureSession.
-            // When implemented, thin_camera_start should create an AVCaptureSession
-            // with the front camera, convert frames to XRGB8888, and call
-            // _cameraCallback.frame_raw_framebuffer(buffer, width, height, pitch)
-            // from the capture output delegate during retro_run.
-            ILOG(@"ThinEnv GET_CAMERA_INTERFACE: provided stub (actual capture not yet implemented)");
+            ILOG(@"ThinEnv GET_CAMERA_INTERFACE: provided AVFoundation-backed camera (%ux%u)", cam->width, cam->height);
             return true;
         }
 
-        // ---- Microphone interface (stub for DS mic, etc.) ----
+        // ---- Microphone interface (AudioUnit-backed) ----
         case RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE: {
             struct retro_microphone_interface *mic = (struct retro_microphone_interface *)data;
             if (!mic) return false;
             // Store the core's requested interface version
             _microphoneInterface = *mic;
             _hasMicrophoneInterface = YES;
-            // Set interface version to indicate we acknowledge the interface
+            // Provide our implementation
             mic->interface_version = RETRO_MICROPHONE_INTERFACE_VERSION;
-            // Leave function pointers NULL — cores should handle NULL gracefully
-            // by operating without microphone input (substituting silence).
-            // TODO: Implement actual microphone capture using AVAudioEngine.
-            // When implemented, open_mic should create an audio input tap,
-            // set_mic_state should enable/disable capture, and read_mic should
-            // return captured samples from a ring buffer.
-            ILOG(@"ThinEnv GET_MICROPHONE_INTERFACE: provided stub (actual capture not yet implemented)");
+            mic->open_mic = thin_open_mic;
+            mic->close_mic = thin_close_mic;
+            mic->get_params = thin_get_mic_params;
+            mic->set_mic_state = thin_set_mic_state;
+            mic->get_mic_state = thin_get_mic_state;
+            mic->read_mic = thin_read_mic;
+            ILOG(@"ThinEnv GET_MICROPHONE_INTERFACE: provided AudioUnit-backed implementation");
             return true;
         }
 
@@ -2383,12 +3261,12 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
 
-        // ---- MIDI interface (stubs) ----
+        // ---- MIDI interface (CoreMIDI) ----
         case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
             struct retro_midi_interface **midiPtr = (struct retro_midi_interface **)data;
             if (!midiPtr) return false;
             *midiPtr = &s_thinMIDIInterface;
-            DLOG(@"ThinEnv GET_MIDI_INTERFACE: provided stub interface");
+            ILOG(@"ThinEnv GET_MIDI_INTERFACE: provided CoreMIDI-backed interface");
             return true;
         }
 
@@ -2472,9 +3350,24 @@ static bool thin_environment(unsigned cmd, void *data) {
             return [self setupHardwareRenderCallback:hwCb];
         }
         case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE: {
-            // Vulkan cores call this after context_reset.
-            // The GL path doesn't need it; Vulkan support is future work.
-            DLOG(@"ThinEnv GET_HW_RENDER_INTERFACE — not implemented");
+            // Vulkan cores call this after context_reset to get the Vulkan interface.
+#if HAVE_VULKAN
+            if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN && data) {
+                const struct retro_hw_render_interface **iface =
+                    (const struct retro_hw_render_interface **)data;
+                [self refreshVulkanRenderInterface];
+                if (_vulkanRenderInterface.interface_version != RETRO_HW_RENDER_INTERFACE_VULKAN_VERSION) {
+                    ELOG(@"ThinEnv GET_HW_RENDER_INTERFACE — Vulkan interface not ready");
+                    *iface = NULL;
+                    return false;
+                }
+                *iface = (const struct retro_hw_render_interface *)&_vulkanRenderInterface;
+                ILOG(@"ThinEnv GET_HW_RENDER_INTERFACE — returning Vulkan interface");
+                return true;
+            }
+#endif
+            DLOG(@"ThinEnv GET_HW_RENDER_INTERFACE — not available for context type %d",
+                 (int)_hwRenderCallback.context_type);
             return false;
         }
         case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: {
@@ -2487,7 +3380,12 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
         case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT:
             DLOG(@"ThinEnv SET_HW_SHARED_CONTEXT");
+#if HAVE_VULKAN
+            _hwSharedContext = YES;
+            return true;
+#else
             return false;
+#endif
 
         // ---- Preferred HW render ----
         case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
@@ -2506,6 +3404,36 @@ static bool thin_environment(unsigned cmd, void *data) {
 // ---------------------------------------------------------------------------
 
 - (BOOL)setupHardwareRenderCallback:(struct retro_hw_render_callback *)hwCb {
+#if HAVE_VULKAN
+    if (hwCb->context_type == RETRO_HW_CONTEXT_VULKAN) {
+        ILOG(@"ThinFrontend: core requesting Vulkan HW context");
+
+        _hwRenderCallback = *hwCb;
+        _hwRenderRequested = YES;
+
+        // Install our proc address resolver (framebuffer is N/A for Vulkan)
+        _hwRenderCallback.get_current_framebuffer = NULL;
+        _hwRenderCallback.get_proc_address = thin_hw_get_proc_address;
+        *hwCb = _hwRenderCallback;
+
+        // Set up Vulkan context via MoltenVK
+        if (![self setupVulkanContext]) {
+            ELOG(@"ThinFrontend: Vulkan context setup failed");
+            _hwRenderRequested = NO;
+            memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
+            return false;
+        }
+
+        // Fire context_reset immediately for Vulkan (no FBO setup needed)
+        if (_hwRenderCallback.context_reset) {
+            ILOG(@"ThinFrontend: firing Vulkan context_reset");
+            _hwRenderCallback.context_reset();
+        }
+
+        return YES;
+    }
+#endif
+
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     switch (hwCb->context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
@@ -2628,11 +3556,346 @@ static bool thin_environment(unsigned cmd, void *data) {
 #endif
 }
 
+// ---------------------------------------------------------------------------
+// MARK: - Vulkan / MoltenVK support
+// ---------------------------------------------------------------------------
+
+#if HAVE_VULKAN
+
+- (BOOL)setupVulkanContext {
+    ILOG(@"ThinFrontend: setting up Vulkan context via MoltenVK");
+
+    if (![self loadMoltenVKLibrary]) {
+        ELOG(@"ThinFrontend: failed to load MoltenVK library");
+        return NO;
+    }
+
+    if (![self loadVulkanFunctions]) {
+        ELOG(@"ThinFrontend: failed to load Vulkan functions");
+        [self unloadMoltenVKLibrary];
+        return NO;
+    }
+
+    if (![self createVulkanInstance]) {
+        ELOG(@"ThinFrontend: failed to create Vulkan instance");
+        [self unloadMoltenVKLibrary];
+        return NO;
+    }
+
+    if (![self selectVulkanPhysicalDevice]) {
+        ELOG(@"ThinFrontend: failed to select Vulkan physical device");
+        [self destroyVulkanInstance];
+        [self unloadMoltenVKLibrary];
+        return NO;
+    }
+
+    if (![self createVulkanDevice]) {
+        ELOG(@"ThinFrontend: failed to create Vulkan device");
+        [self destroyVulkanInstance];
+        [self unloadMoltenVKLibrary];
+        return NO;
+    }
+
+    [self getVulkanDeviceQueue];
+    [self refreshVulkanRenderInterface];
+
+    ILOG(@"ThinFrontend: Vulkan hardware context created successfully via MoltenVK");
+    return YES;
+}
+
+- (void)destroyVulkanContext {
+    [self destroyVulkanDevice];
+    [self destroyVulkanInstance];
+    [self unloadMoltenVKLibrary];
+    [self resetVulkanRenderInterface];
+}
+
+- (BOOL)loadMoltenVKLibrary {
+    const char *moltenVKPaths[] = {
+        "MoltenVK",
+        "MoltenVK.framework",
+        "MoltenVK.framework/MoltenVK",
+        "../Contents/MoltenVK.framework/MoltenVK",
+        "/System/Library/Frameworks/MoltenVK.framework/MoltenVK",
+        "/usr/local/lib/libMoltenVK.dylib",
+        NULL
+    };
+
+    for (int i = 0; moltenVKPaths[i] != NULL; i++) {
+        _vulkanLibrary = dlopen(moltenVKPaths[i], RTLD_LOCAL | RTLD_LAZY);
+        if (_vulkanLibrary) {
+            ILOG(@"ThinFrontend: MoltenVK loaded from: %s", moltenVKPaths[i]);
+            return YES;
+        }
+        DLOG(@"ThinFrontend: failed to load MoltenVK from: %s (%s)", moltenVKPaths[i], dlerror());
+    }
+
+    ELOG(@"ThinFrontend: failed to load MoltenVK from any known path");
+    return NO;
+}
+
+- (void)unloadMoltenVKLibrary {
+    if (_vulkanLibrary) {
+        dlclose(_vulkanLibrary);
+        _vulkanLibrary = NULL;
+        ILOG(@"ThinFrontend: MoltenVK library unloaded");
+    }
+}
+
+- (BOOL)loadVulkanFunctions {
+    if (!_vulkanLibrary) {
+        ELOG(@"ThinFrontend: cannot load Vulkan functions — MoltenVK not loaded");
+        return NO;
+    }
+
+    _vkGetInstanceProcAddr = (PFN_vkVoidFunction (*)(VkInstance, const char *))dlsym(_vulkanLibrary, "vkGetInstanceProcAddr");
+    if (!_vkGetInstanceProcAddr) {
+        ELOG(@"ThinFrontend: failed to load vkGetInstanceProcAddr");
+        return NO;
+    }
+
+    _vkCreateInstance = (VkResult (*)(const void *, const void *, VkInstance *))
+        _vkGetInstanceProcAddr(NULL, "vkCreateInstance");
+    if (!_vkCreateInstance) {
+        ELOG(@"ThinFrontend: failed to load vkCreateInstance");
+        return NO;
+    }
+
+    ILOG(@"ThinFrontend: essential Vulkan functions loaded");
+    return YES;
+}
+
+- (BOOL)createVulkanInstance {
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_APPLICATION_INFO = 0
+        const void *pNext;
+        const char *pApplicationName;
+        uint32_t applicationVersion;
+        const char *pEngineName;
+        uint32_t engineVersion;
+        uint32_t apiVersion;
+    } appInfo = {
+        .sType = 0,
+        .pNext = NULL,
+        .pApplicationName = "PVThinFrontend",
+        .applicationVersion = 1,
+        .pEngineName = "PVThinFrontend",
+        .engineVersion = 1,
+        .apiVersion = 0x00400000 // VK_API_VERSION_1_0
+    };
+
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO = 1
+        const void *pNext;
+        uint32_t flags;
+        const void *pApplicationInfo;
+        uint32_t enabledLayerCount;
+        const char *const *ppEnabledLayerNames;
+        uint32_t enabledExtensionCount;
+        const char *const *ppEnabledExtensionNames;
+    } createInfo = {
+        .sType = 1,
+        .pNext = NULL,
+        .flags = 0,
+        .pApplicationInfo = &appInfo,
+        .enabledLayerCount = 0,
+        .ppEnabledLayerNames = NULL,
+        .enabledExtensionCount = 0,
+        .ppEnabledExtensionNames = NULL
+    };
+
+    VkResult result = _vkCreateInstance(&createInfo, NULL, &_vulkanInstance);
+    if (result != 0) { // VK_SUCCESS = 0
+        ELOG(@"ThinFrontend: vkCreateInstance failed (result=%d)", result);
+        return NO;
+    }
+
+    // Load instance-specific functions
+    _vkDestroyInstance = (void (*)(VkInstance, const void *))
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkDestroyInstance");
+    _vkEnumeratePhysicalDevices = (VkResult (*)(VkInstance, uint32_t *, VkPhysicalDevice *))
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkEnumeratePhysicalDevices");
+    _vkCreateDevice = (VkResult (*)(VkPhysicalDevice, const void *, const void *, VkDevice *))
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkCreateDevice");
+
+    if (!_vkDestroyInstance || !_vkEnumeratePhysicalDevices || !_vkCreateDevice) {
+        ELOG(@"ThinFrontend: failed to load instance-level Vulkan functions");
+        return NO;
+    }
+
+    ILOG(@"ThinFrontend: Vulkan instance created");
+    return YES;
+}
+
+- (void)destroyVulkanInstance {
+    if (_vulkanInstance && _vkDestroyInstance) {
+        _vkDestroyInstance(_vulkanInstance, NULL);
+        _vulkanInstance = NULL;
+        ILOG(@"ThinFrontend: Vulkan instance destroyed");
+    }
+}
+
+- (BOOL)selectVulkanPhysicalDevice {
+    if (!_vulkanInstance || !_vkEnumeratePhysicalDevices) {
+        ELOG(@"ThinFrontend: cannot select physical device — no instance");
+        return NO;
+    }
+
+    uint32_t deviceCount = 0;
+    VkResult result = _vkEnumeratePhysicalDevices(_vulkanInstance, &deviceCount, NULL);
+    if (result != 0 || deviceCount == 0) {
+        ELOG(@"ThinFrontend: no Vulkan physical devices (result=%d, count=%u)", result, deviceCount);
+        return NO;
+    }
+
+    VkPhysicalDevice devices[1];
+    uint32_t requestCount = 1;
+    result = _vkEnumeratePhysicalDevices(_vulkanInstance, &requestCount, devices);
+    if (result != 0 || requestCount == 0) {
+        ELOG(@"ThinFrontend: failed to get physical device (result=%d)", result);
+        return NO;
+    }
+
+    _vulkanPhysicalDevice = devices[0];
+    ILOG(@"ThinFrontend: Vulkan physical device selected");
+    return YES;
+}
+
+- (BOOL)createVulkanDevice {
+    if (!_vulkanPhysicalDevice || !_vkCreateDevice) {
+        ELOG(@"ThinFrontend: cannot create device — no physical device");
+        return NO;
+    }
+
+    float queuePriority = 1.0f;
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO = 2
+        const void *pNext;
+        uint32_t flags;
+        uint32_t queueFamilyIndex;
+        uint32_t queueCount;
+        const float *pQueuePriorities;
+    } queueCreateInfo = {
+        .sType = 2,
+        .pNext = NULL,
+        .flags = 0,
+        .queueFamilyIndex = 0,
+        .queueCount = 1,
+        .pQueuePriorities = &queuePriority
+    };
+
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO = 3
+        const void *pNext;
+        uint32_t flags;
+        uint32_t queueCreateInfoCount;
+        const void *pQueueCreateInfos;
+        uint32_t enabledLayerCount;
+        const char *const *ppEnabledLayerNames;
+        uint32_t enabledExtensionCount;
+        const char *const *ppEnabledExtensionNames;
+        const void *pEnabledFeatures;
+    } createInfo = {
+        .sType = 3,
+        .pNext = NULL,
+        .flags = 0,
+        .queueCreateInfoCount = 1,
+        .pQueueCreateInfos = &queueCreateInfo,
+        .enabledLayerCount = 0,
+        .ppEnabledLayerNames = NULL,
+        .enabledExtensionCount = 0,
+        .ppEnabledExtensionNames = NULL,
+        .pEnabledFeatures = NULL
+    };
+
+    VkResult result = _vkCreateDevice(_vulkanPhysicalDevice, &createInfo, NULL, &_vulkanDevice);
+    if (result != 0) {
+        ELOG(@"ThinFrontend: vkCreateDevice failed (result=%d)", result);
+        return NO;
+    }
+
+    // Load device-specific functions
+    _vkGetDeviceProcAddr = (PFN_vkVoidFunction (*)(VkDevice, const char *))
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkGetDeviceProcAddr");
+    _vkDestroyDevice = (void (*)(VkDevice, const void *))
+        _vkGetDeviceProcAddr(_vulkanDevice, "vkDestroyDevice");
+    _vkGetDeviceQueue = (void (*)(VkDevice, uint32_t, uint32_t, VkQueue *))
+        _vkGetDeviceProcAddr(_vulkanDevice, "vkGetDeviceQueue");
+
+    if (!_vkGetDeviceProcAddr || !_vkDestroyDevice || !_vkGetDeviceQueue) {
+        ELOG(@"ThinFrontend: failed to load device-level Vulkan functions");
+        return NO;
+    }
+
+    ILOG(@"ThinFrontend: Vulkan device created");
+    return YES;
+}
+
+- (void)destroyVulkanDevice {
+    if (_vulkanDevice && _vkDestroyDevice) {
+        _vkDestroyDevice(_vulkanDevice, NULL);
+        _vulkanDevice = NULL;
+        _vulkanQueue = NULL;
+        ILOG(@"ThinFrontend: Vulkan device destroyed");
+    }
+}
+
+- (void)getVulkanDeviceQueue {
+    if (_vulkanDevice && _vkGetDeviceQueue) {
+        _vkGetDeviceQueue(_vulkanDevice, 0, 0, &_vulkanQueue);
+        ILOG(@"ThinFrontend: Vulkan device queue obtained");
+    }
+}
+
+- (void)resetVulkanRenderInterface {
+    memset(&_vulkanRenderInterface, 0, sizeof(_vulkanRenderInterface));
+}
+
+- (void)refreshVulkanRenderInterface {
+    [self resetVulkanRenderInterface];
+
+    if (!_vulkanInstance || !_vulkanDevice || !_vulkanQueue ||
+        !_vkGetInstanceProcAddr || !_vkGetDeviceProcAddr) {
+        return;
+    }
+
+    _vulkanRenderInterface.interface_type = RETRO_HW_RENDER_INTERFACE_VULKAN;
+    _vulkanRenderInterface.interface_version = RETRO_HW_RENDER_INTERFACE_VULKAN_VERSION;
+    _vulkanRenderInterface.handle = (__bridge void *)self;
+    _vulkanRenderInterface.instance = _vulkanInstance;
+    _vulkanRenderInterface.gpu = _vulkanPhysicalDevice;
+    _vulkanRenderInterface.device = _vulkanDevice;
+    _vulkanRenderInterface.get_device_proc_addr = (PFN_vkGetDeviceProcAddr)_vkGetDeviceProcAddr;
+    _vulkanRenderInterface.get_instance_proc_addr = (PFN_vkGetInstanceProcAddr)_vkGetInstanceProcAddr;
+    _vulkanRenderInterface.queue = _vulkanQueue;
+    _vulkanRenderInterface.queue_index = 0;
+    _vulkanRenderInterface.set_image = thin_vulkan_set_image;
+    _vulkanRenderInterface.get_sync_index = thin_vulkan_get_sync_index;
+    _vulkanRenderInterface.get_sync_index_mask = thin_vulkan_get_sync_index_mask;
+    _vulkanRenderInterface.set_command_buffers = thin_vulkan_set_command_buffers;
+    _vulkanRenderInterface.wait_sync_index = thin_vulkan_wait_sync_index;
+    _vulkanRenderInterface.lock_queue = thin_vulkan_lock_queue;
+    _vulkanRenderInterface.unlock_queue = thin_vulkan_unlock_queue;
+    _vulkanRenderInterface.set_signal_semaphore = thin_vulkan_set_signal_semaphore;
+}
+
+#endif // HAVE_VULKAN
+
 - (void)teardownHardwareContext {
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     if (_hwRenderCallback.context_destroy) {
         _hwRenderCallback.context_destroy();
     }
+
+#if HAVE_VULKAN
+    if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
+        [self destroyVulkanContext];
+        _hwRenderRequested = NO;
+        memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
+        return;
+    }
+#endif
+
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     if (_glContext) {
         [EAGLContext setCurrentContext:_glContext];
         if (_emuFBO)      { glDeleteFramebuffers(1, &_emuFBO);   _emuFBO = 0; }
@@ -2643,9 +3906,9 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_ioSurface) { CFRelease(_ioSurface); _ioSurface = NULL; }
     _glContext      = nil;
     _glShareContext = nil;
+#endif
     _hwRenderRequested = NO;
     memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
-#endif
 }
 
 // ---------------------------------------------------------------------------
