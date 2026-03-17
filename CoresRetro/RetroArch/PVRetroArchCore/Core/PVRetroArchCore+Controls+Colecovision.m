@@ -66,18 +66,54 @@ extern GCController *touch_controller;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVColecoVisionButtonLeftAction):
-            [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
+            // Fire 1 → buttonA (south) → JOYPAD_B
+            [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
             break;
         case(PVColecoVisionButtonRightAction):
+            // Fire 2 → buttonB (east) → JOYPAD_A
+            [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
+            break;
+        // ColecoVision keypad buttons mapped to RetroPad
+        // Gearcoleco libretro mapping: 1=Y, 2=X, 3=L, 4=R, 5=L2, 6=R2, 7=L3, 8=R3, 9=SELECT, 0=START
+        case(PVColecoVisionButton1):
+            [touch_controller.extendedGamepad.buttonY setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton2):
             [touch_controller.extendedGamepad.buttonX setValue:pressed?1:0];
             break;
-//        case(PVColecoVisionButtonAsterisk):
-//            [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
-//            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
-//            break;
-//        case(PVColecoVisionButtonPound):
-//            [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
-//            break;
+        case(PVColecoVisionButton3):
+            [touch_controller.extendedGamepad.leftShoulder setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton4):
+            [touch_controller.extendedGamepad.rightShoulder setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton5):
+            [touch_controller.extendedGamepad.leftTrigger setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton6):
+            [touch_controller.extendedGamepad.rightTrigger setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton7):
+            [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton8):
+            [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton9):
+            [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButton0):
+            [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButtonAsterisk):
+            // * → buttonHome (no standard RetroPad mapping, use buttonHome)
+            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
+            break;
+        case(PVColecoVisionButtonPound):
+            // # → no standard mapping available — skip
+            break;
+        default:
+            break;
     }
 }
 
