@@ -159,13 +159,13 @@ public func log(_ message: @autoclosure () -> String,
     #if canImport(OSLog)
     switch level {
     case .debug, .verbose:
-        category.debug("\(logMessage, privacy: .public)")
+        category.debug("\(emoji) \(fileName, privacy: .public):\(line, privacy: .public) - \(function, privacy: .public): \(msg)")
     case .info:
-        category.info("\(logMessage, privacy: .public)")
+        category.info("\(emoji) \(fileName, privacy: .public):\(line, privacy: .public) - \(function, privacy: .public): \(msg)")
     case .warning:
-        category.log(level: .default, "\(logMessage, privacy: .public)")
+        category.log(level: .default, "\(emoji) \(fileName, privacy: .public):\(line, privacy: .public) - \(function, privacy: .public): \(msg)")
     case .error:
-        category.error("\(logMessage, privacy: .public)")
+        category.error("\(emoji) \(fileName, privacy: .public):\(line, privacy: .public) - \(function, privacy: .public): \(msg)")
     }
     #else
     let swiftLogLevel: Logging.Logger.Level
