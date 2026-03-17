@@ -50,6 +50,10 @@ struct TapToRemapView: View {
 
     @State private var detectedButton: ButtonIdentifier?
     @State private var isListening = true
+    /// The handler that was installed on the gamepad before this view took over.
+    /// Restored in `stopListening()` so other app subsystems (remapping, navigation)
+    /// continue to function normally after the sheet is dismissed.
+    @State private var previousValueChangedHandler: GCExtendedGamepadValueChangedHandler?
 
     // MARK: Body
 
@@ -120,8 +124,10 @@ struct TapToRemapView: View {
         isListening = true
         let wrapper = getRemappableControllerWrapper(for: controller)
 
-        gamepad.valueChangedHandler = { [weak gamepad] _, element in
-            guard let gamepad else { return }
+        // Save the existing handler so it can be restored when this view is done.
+        previousValueChangedHandler = gamepad.valueChangedHandler
+
+        gamepad.valueChangedHandler = { _, element in
             // Only respond to button presses (not releases or axis movement).
             guard let button = element as? GCControllerButtonInput, button.isPressed else { return }
             guard let identifier = wrapper.buttonIdentifier(for: element) else { return }
@@ -131,9 +137,6 @@ struct TapToRemapView: View {
             Task { @MainActor in
                 guard isListening else { return }
                 stopListening()
-                // Restore a neutral empty handler so the gamepad doesn't
-                // become unresponsive while the confirmation UI is visible.
-                gamepad.valueChangedHandler = nil
                 detectedButton = identifier
                 isListening = false
             }
@@ -141,7 +144,9 @@ struct TapToRemapView: View {
     }
 
     private func stopListening() {
-        controller.extendedGamepad?.valueChangedHandler = nil
+        // Restore the handler that was active before this view installed its own.
+        controller.extendedGamepad?.valueChangedHandler = previousValueChangedHandler
+        previousValueChangedHandler = nil
     }
 }
 

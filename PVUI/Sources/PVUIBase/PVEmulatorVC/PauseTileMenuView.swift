@@ -46,6 +46,8 @@ struct PauseTileMenuView: View {
     @State private var pendingCoreAction: CoreAction?
     /// Incremented after every core-option toggle to force a re-render of the tile grid.
     @State private var coreOptionRefreshToken = 0
+    /// Cached result of the Realm query — refreshed on appear, not on every render.
+    @State private var hasControllerProfiles = false
 
     // MARK: tvOS Focus
 
@@ -136,14 +138,6 @@ struct PauseTileMenuView: View {
             colorKey: .blue
         ))
 
-        let hasControllerProfiles: Bool = {
-            let controllers = PVControllerManager.shared.controllers
-            let db = RomDatabase.sharedInstance
-            return controllers.contains { c in
-                guard let name = c.vendorName else { return false }
-                return !db.controllerProfiles(forVendor: name).isEmpty
-            }
-        }()
         tiles.append(PauseMenuTile(
             id: "controllerProfile",
             icon: "gamecontroller",
@@ -558,9 +552,11 @@ struct PauseTileMenuView: View {
         }
         .onAppear {
             orientation = UIDevice.current.orientation
+            refreshControllerProfileState()
         }
         #elseif os(tvOS)
         .onAppear {
+            refreshControllerProfileState()
             // Set initial focus to the first enabled tile
             if let firstEnabled = allTiles.first(where: { $0.isEnabled }) {
                 focusedTileID = firstEnabled.id
@@ -572,6 +568,18 @@ struct PauseTileMenuView: View {
     }
 
     // MARK: - Helpers
+
+    /// Queries Realm once to determine if any connected controller has saved profiles.
+    /// Call from `.onAppear` rather than inside computed tile arrays to avoid
+    /// hitting the database on every SwiftUI re-render.
+    private func refreshControllerProfileState() {
+        let controllers = PVControllerManager.shared.controllers
+        let db = RomDatabase.sharedInstance
+        hasControllerProfiles = controllers.contains { c in
+            guard let name = c.vendorName else { return false }
+            return !db.controllerProfiles(forVendor: name).isEmpty
+        }
+    }
 
     /// Returns `tvOS` value on tvOS, `standard` on other platforms.
     private func tvOSAdjusted(_ standard: CGFloat, tvOS tvOSValue: CGFloat) -> CGFloat {

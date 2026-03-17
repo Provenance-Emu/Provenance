@@ -478,23 +478,5 @@
         "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
       }
     ]
-  },
-  {
-    "version": "3.5.0",
-    "title": "Controller Profiles & Remapping",
-    "features": [
-      {
-        "symbolName": "gamecontroller.fill",
-        "symbolColor": "purple",
-        "title": "In-Game Profile Swap",
-        "subtitle": "Switch saved controller button-mapping profiles directly from the pause menu — no need to leave your game."
-      },
-      {
-        "symbolName": "slider.horizontal.3",
-        "symbolColor": "blue",
-        "title": "Smarter Profile Matching",
-        "subtitle": "Controller profiles now scope to the active emulator core, so N64 mappings no longer bleed into SNES sessions."
-      }
-    ]
   }
 ]

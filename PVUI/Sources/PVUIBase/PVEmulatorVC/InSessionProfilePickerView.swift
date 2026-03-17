@@ -14,6 +14,21 @@ import PVLogging
 
 // MARK: - InSessionProfilePickerView
 
+/// A row of profiles grouped by controller, with a stable `Identifiable` ID
+/// derived from the controller's `ObjectIdentifier` so ForEach diffing is reliable
+/// even when `vendorName` is nil or shared across multiple controllers.
+private struct ControllerEntry: Identifiable {
+    let id: ObjectIdentifier
+    let controller: GCController
+    let profiles: [PVControllerProfile]
+
+    init(controller: GCController, profiles: [PVControllerProfile]) {
+        self.id = ObjectIdentifier(controller)
+        self.controller = controller
+        self.profiles = profiles
+    }
+}
+
 /// Compact sheet shown from the tile-based pause menu that lets players switch
 /// saved controller profiles without leaving the game.  Activating a profile
 /// applies its button remappings immediately to the live in-memory controller.
@@ -26,8 +41,8 @@ struct InSessionProfilePickerView: View {
 
     // MARK: State
 
-    /// Per-controller profile lists.  Each entry is (controller, frozenProfiles[]).
-    @State private var entries: [(controller: GCController, profiles: [PVControllerProfile])] = []
+    /// Per-controller profile lists with stable identifiers.
+    @State private var entries: [ControllerEntry] = []
     @State private var errorMessage: String?
     @State private var showError = false
 
@@ -44,7 +59,7 @@ struct InSessionProfilePickerView: View {
                     )
                 } else {
                     List {
-                        ForEach(entries, id: \.controller.vendorName) { entry in
+                        ForEach(entries) { entry in
                             Section(header: Text(entry.controller.vendorName ?? "Controller")) {
                                 if entry.profiles.isEmpty {
                                     Text("No saved profiles.")
@@ -118,10 +133,11 @@ struct InSessionProfilePickerView: View {
             guard let vendorName = controller.vendorName else { return nil }
             let profiles = Array(db.controllerProfiles(forVendor: vendorName))
                 .map { $0.isFrozen ? $0 : $0.freeze() }
-            return (controller: controller, profiles: profiles)
+            return ControllerEntry(controller: controller, profiles: profiles)
         }
     }
 
+    @MainActor
     private func apply(_ profile: PVControllerProfile, to controller: GCController) {
         let db = RomDatabase.sharedInstance
         guard let live = db.controllerProfile(withID: profile.id) else {
