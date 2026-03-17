@@ -426,6 +426,7 @@ struct MetalFilterSelectionOptionTests {
         }
     }
 
+    @available(*, deprecated, message: "Tests deprecated MetalFilterSelectionOption.hasCRTParameters")
     @Test("hasCRTParameters is true only for simpleCRT and complexCRT")
     func hasCRTParameters() {
         #expect(MetalFilterSelectionOption.simpleCRT.hasCRTParameters)
@@ -434,6 +435,16 @@ struct MetalFilterSelectionOptionTests {
         let others: [MetalFilterSelectionOption] = [.none, .lcd, .megaTron, .ulTron, .gameBoy, .vhs]
         for option in others {
             #expect(!option.hasCRTParameters, "Expected hasCRTParameters == false for \(option)")
+        }
+    }
+
+    @Test("hasEditableParameters is false only for none")
+    func hasEditableParameters() {
+        #expect(!MetalFilterSelectionOption.none.hasEditableParameters)
+
+        let editableOptions: [MetalFilterSelectionOption] = [.simpleCRT, .complexCRT, .lcd, .megaTron, .ulTron, .gameBoy, .vhs]
+        for option in editableOptions {
+            #expect(option.hasEditableParameters, "Expected hasEditableParameters == true for \(option)")
         }
     }
 

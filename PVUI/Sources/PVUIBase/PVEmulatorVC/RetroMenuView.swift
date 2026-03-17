@@ -1638,8 +1638,8 @@ struct RetroMenuView: View {
         Button(action: {
             selectedMetalFilter = option
             applyFilterImmediately(option)
-            // Keep the picker open when selecting a CRT filter so users can adjust parameters
-            if !option.hasCRTParameters {
+            // Keep the picker open when selecting a filter with editable parameters
+            if !option.hasEditableParameters {
                 showingFilterPicker = false
             }
         }) {
@@ -1700,6 +1700,29 @@ struct RetroMenuView: View {
                 RoundedRectangle(cornerRadius: 12)
                     .strokeBorder(borderColor, lineWidth: borderWidth)
             )
+    }
+
+    /// Returns the parameter editor view for the given Metal filter.
+    @ViewBuilder
+    private func shaderParametersSection(for filter: MetalFilterSelectionOption) -> some View {
+        switch filter {
+        case .simpleCRT:
+            SimpleCRTParametersView(palette: palette)
+        case .complexCRT:
+            ComplexCRTParametersView(palette: palette)
+        case .lcd:
+            LCDParametersView(palette: palette)
+        case .megaTron:
+            MegaTronParametersView(palette: palette)
+        case .ulTron:
+            UlTronParametersView(palette: palette)
+        case .gameBoy:
+            GameBoyParametersView(palette: palette)
+        case .vhs:
+            VHSParametersView(palette: palette)
+        case .none:
+            EmptyView()
+        }
     }
 
     /// Done button for filter picker
@@ -1763,12 +1786,14 @@ struct RetroMenuView: View {
                 }
                 .pickerStyle(.navigationLink)
 
-                // Show CRT shader parameters when a CRT filter is selected
-                if selectedMetalFilter == .simpleCRT {
-                    SimpleCRTParametersView(palette: palette)
-                } else if selectedMetalFilter == .complexCRT {
-                    ComplexCRTParametersView(palette: palette)
+                if selectedMetalFilter != .none {
+                    Section {
+                        FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
+                    }
                 }
+
+                // Show shader parameters for the selected filter
+                shaderParametersSection(for: selectedMetalFilter)
             }
             .navigationTitle("Screen Filters")
             .toolbar {
@@ -1833,18 +1858,17 @@ struct RetroMenuView: View {
                             filterOptionRow(for: option, isCompact: false)
                         }
 
-                        // Show CRT shader parameters when a CRT filter is selected
-                        if selectedMetalFilter.hasCRTParameters {
+                        // Show shader parameters for the selected filter
+                        if selectedMetalFilter.hasEditableParameters {
                             Rectangle()
                                 .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
                                 .frame(height: 1)
                                 .padding(.vertical, 8)
 
-                            if selectedMetalFilter == .simpleCRT {
-                                SimpleCRTParametersView(palette: palette)
-                            } else if selectedMetalFilter == .complexCRT {
-                                ComplexCRTParametersView(palette: palette)
-                            }
+                            FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
+                                .padding(.bottom, 4)
+
+                            shaderParametersSection(for: selectedMetalFilter)
                         }
                     }
                     .padding(.horizontal, 60)
@@ -1881,18 +1905,17 @@ struct RetroMenuView: View {
                         filterOptionRow(for: option, isCompact: isCompact)
                     }
 
-                    // Show CRT shader parameters when a CRT filter is selected
-                    if selectedMetalFilter.hasCRTParameters {
+                    // Show shader parameters for the selected filter
+                    if selectedMetalFilter.hasEditableParameters {
                         Rectangle()
                             .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
                             .frame(height: 1)
                             .padding(.vertical, 8)
 
-                        if selectedMetalFilter == .simpleCRT {
-                            SimpleCRTParametersView(palette: palette)
-                        } else if selectedMetalFilter == .complexCRT {
-                            ComplexCRTParametersView(palette: palette)
-                        }
+                        FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
+                            .padding(.bottom, 4)
+
+                        shaderParametersSection(for: selectedMetalFilter)
                     }
                 }
             }
