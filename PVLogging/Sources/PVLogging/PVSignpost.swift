@@ -83,16 +83,12 @@ public extension OSSignpostID {
     static let exclusive: OSSignpostID = 0
 }
 
-/// Stub `PVSignpostLog` for non-OSLog platforms so call sites remain guard-free.
+/// Stub log handles matching the `PVSignpostLog` API on Apple platforms.
+/// Using the same type name keeps call sites free of `#if canImport(OSLog)` guards.
 public enum PVSignpostLog {
-    /// Frame render timing (emulator display loop) – placeholder on non-Apple platforms.
-    public static let frame: Any = ()
-
-    /// Audio callback timing (core audio processing) – placeholder on non-Apple platforms.
-    public static let audio: Any = ()
-
-    /// ROM load / library scan timing – placeholder on non-Apple platforms.
-    public static let library: Any = ()
+    nonisolated(unsafe) public static let frame: Any = ()
+    nonisolated(unsafe) public static let audio: Any = ()
+    nonisolated(unsafe) public static let library: Any = ()
 }
 
 /// Stub: signpost APIs are no-ops on non-Apple platforms.
