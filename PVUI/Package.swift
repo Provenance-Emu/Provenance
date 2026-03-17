@@ -165,6 +165,7 @@ let package = Package(
             name: "PVUIBaseTests",
             dependencies: [
                 "PVUIBase",
+                "PVCoreBridge",
             ]
         ),
 
