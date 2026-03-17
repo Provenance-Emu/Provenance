@@ -95,7 +95,7 @@ public struct RetroMessageRow: View {
             }
             
             // Message text with retrowave styling
-            Text(message.message)
+            Text(message.displayMessage)
                 .font(.system(size: 12, weight: .medium, design: .monospaced))
                 .foregroundColor(isCloudKitMessage ? RetroTheme.retroBlue.opacity(0.9) : Color.white.opacity(0.9))
                 .shadow(color: (isCloudKitMessage ? RetroTheme.retroBlue : messageTypeColor(message.type)).opacity(0.5), radius: 1, x: 0, y: 0)

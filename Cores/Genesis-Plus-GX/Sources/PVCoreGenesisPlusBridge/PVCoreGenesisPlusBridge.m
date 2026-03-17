@@ -832,6 +832,19 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - Input
 
+// Mapping from PVSG1000Button enum values to libretro RETRO_DEVICE_ID_JOYPAD_* constants.
+// PVSG1000Button: b=0, c=1, start=2, up=3, down=4, left=5, right=6
+// Libretro:       B=0, Y=1, SELECT=2, START=3, UP=4, DOWN=5, LEFT=6, RIGHT=7, A=8
+static const int SG1000Map[] = {
+    RETRO_DEVICE_ID_JOYPAD_B,     // PVSG1000Button.b (0)     → RETRO_DEVICE_ID_JOYPAD_B (0)
+    RETRO_DEVICE_ID_JOYPAD_A,     // PVSG1000Button.c (1)     → RETRO_DEVICE_ID_JOYPAD_A (8)
+    RETRO_DEVICE_ID_JOYPAD_START, // PVSG1000Button.start (2) → RETRO_DEVICE_ID_JOYPAD_START (3)
+    RETRO_DEVICE_ID_JOYPAD_UP,    // PVSG1000Button.up (3)    → RETRO_DEVICE_ID_JOYPAD_UP (4)
+    RETRO_DEVICE_ID_JOYPAD_DOWN,  // PVSG1000Button.down (4)  → RETRO_DEVICE_ID_JOYPAD_DOWN (5)
+    RETRO_DEVICE_ID_JOYPAD_LEFT,  // PVSG1000Button.left (5)  → RETRO_DEVICE_ID_JOYPAD_LEFT (6)
+    RETRO_DEVICE_ID_JOYPAD_RIGHT, // PVSG1000Button.right (6) → RETRO_DEVICE_ID_JOYPAD_RIGHT (7)
+};
+
 - (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player {
 	_pad[player][button] = 1;
 }
@@ -841,11 +854,11 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (void)didPushSG1000Button:(PVSG1000Button)button forPlayer:(NSInteger)player {
-    _pad[player][button] = 1;
+    _pad[player][SG1000Map[button]] = 1;
 }
 
 - (void)didReleaseSG1000Button:(PVSG1000Button)button forPlayer:(NSInteger)player {
-    _pad[player][button] = 0;
+    _pad[player][SG1000Map[button]] = 0;
 }
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player {

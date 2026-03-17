@@ -66,12 +66,38 @@ public final class PVToastManager: ObservableObject {
     // MARK: Singleton
     public static let shared = PVToastManager()
 
+    // MARK: - Configuration
+
+    /// Maximum number of toasts visible at once. Older toasts are auto-dismissed when exceeded.
+    public static var maxVisibleToasts: Int = 4
+
+    /// Maximum number of messages allowed within `rateLimitWindow`. Excess messages are queued.
+    public static var rateLimitMaxMessages: Int = 3
+
+    /// Sliding window duration (in seconds) for rate limiting.
+    public static var rateLimitWindow: TimeInterval = 2.0
+
+    /// Window (in seconds) during which a duplicate message text is collapsed with a count badge.
+    public static var deduplicationWindow: TimeInterval = 5.0
+
+    /// When `true`, messages with the same `category` are collapsed into a single grouped toast.
+    public static var enableGrouping: Bool = true
+
     // MARK: Published state
     /// Current toast queue, oldest first (newest at the end).
     @Published public private(set) var toasts: [PVToast] = []
 
     // MARK: Private state
     private var dismissTimers: [String: Task<Void, Never>] = [:]
+
+    /// Sliding window of recent message timestamps for rate limiting.
+    private var recentTimestamps: [Date] = []
+
+    /// Queue of messages waiting to be shown when the rate limit window clears.
+    private var pendingQueue: [PVToast] = []
+
+    /// Task that drains the pending queue after the rate window clears.
+    private var drainTask: Task<Void, Never>?
 
     private init() {}
 
@@ -82,12 +108,11 @@ public final class PVToastManager: ObservableObject {
         _ message: String,
         type: PVToastType = .info,
         duration: TimeInterval = 3.0,
-        icon: String? = nil
+        icon: String? = nil,
+        category: String? = nil
     ) {
-        let toast = PVToast(message: message, type: type, icon: icon, duration: duration, isPersistent: false)
-        enqueue(toast)
-        scheduleAutoDismiss(id: toast.id, after: duration)
-        postAccessibilityAnnouncement(toast)
+        let toast = PVToast(message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category)
+        processToast(toast)
     }
 
     /// Show a persistent toast that remains until explicitly dismissed.
@@ -118,7 +143,157 @@ public final class PVToastManager: ObservableObject {
     public func dismissAll() {
         dismissTimers.values.forEach { $0.cancel() }
         dismissTimers.removeAll()
+        pendingQueue.removeAll()
+        drainTask?.cancel()
+        drainTask = nil
         withAnimation { toasts.removeAll() }
+    }
+
+    // MARK: - Core processing pipeline
+
+    /// Processes a transient toast through deduplication, grouping, rate limiting, and max-visible enforcement.
+    private func processToast(_ toast: PVToast) {
+        // 1. Deduplication: check for an existing toast with the same message text within the window
+        if tryDeduplicate(toast) {
+            return
+        }
+
+        // 2. Grouping: if enabled and category is set, collapse into an existing group toast
+        if Self.enableGrouping, let category = toast.category, tryGroup(toast, category: category) {
+            return
+        }
+
+        // 3. Rate limiting: check sliding window
+        if isRateLimited() {
+            pendingQueue.append(toast)
+            scheduleDrainIfNeeded()
+            return
+        }
+
+        // 4. Enqueue the toast
+        recordTimestamp()
+        enqueue(toast)
+        scheduleAutoDismiss(id: toast.id, after: toast.duration)
+        postAccessibilityAnnouncement(toast)
+        enforceMaxVisible()
+    }
+
+    // MARK: - Deduplication
+
+    /// Looks for an existing visible toast with the same message text posted within `deduplicationWindow`.
+    /// If found, increments its repeat count and resets its dismiss timer. Returns `true` if deduplicated.
+    private func tryDeduplicate(_ toast: PVToast) -> Bool {
+        guard let index = toasts.lastIndex(where: { existing in
+            existing.message == toast.message && !existing.isPersistent
+        }) else {
+            return false
+        }
+
+        // If the existing toast is still visible (in the array and not yet dismissed),
+        // it falls within the deduplication window.
+        var existing = toasts[index]
+        existing.repeatCount += 1
+        withAnimation { toasts[index] = existing }
+
+        // Reset the dismiss timer to give the updated toast fresh duration
+        dismissTimers[existing.id]?.cancel()
+        scheduleAutoDismiss(id: existing.id, after: toast.duration)
+        return true
+    }
+
+    // MARK: - Grouping
+
+    /// Looks for an existing toast with the same category and type to collapse into a group.
+    /// Returns `true` if the toast was grouped into an existing one.
+    private func tryGroup(_ toast: PVToast, category: String) -> Bool {
+        guard let index = toasts.lastIndex(where: { existing in
+            existing.category == category && existing.type == toast.type && !existing.isPersistent
+        }) else {
+            return false
+        }
+
+        var existing = toasts[index]
+        existing.repeatCount += 1
+        withAnimation { toasts[index] = existing }
+
+        // Reset the dismiss timer
+        dismissTimers[existing.id]?.cancel()
+        scheduleAutoDismiss(id: existing.id, after: toast.duration)
+        return true
+    }
+
+    // MARK: - Rate Limiting
+
+    /// Prunes old timestamps and checks whether we've exceeded the rate limit.
+    private func isRateLimited() -> Bool {
+        let now = Date()
+        let windowStart = now.addingTimeInterval(-Self.rateLimitWindow)
+        recentTimestamps.removeAll { $0 < windowStart }
+        return recentTimestamps.count >= Self.rateLimitMaxMessages
+    }
+
+    /// Records the current timestamp in the sliding window.
+    private func recordTimestamp() {
+        recentTimestamps.append(Date())
+    }
+
+    /// Schedules a task to drain the pending queue once the rate window has capacity.
+    private func scheduleDrainIfNeeded() {
+        guard drainTask == nil, !pendingQueue.isEmpty else { return }
+
+        drainTask = Task { [weak self] in
+            // Wait for the rate window to pass
+            let delayNs = UInt64(Self.rateLimitWindow * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: delayNs)
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                self?.drainPendingQueue()
+            }
+        }
+    }
+
+    /// Processes queued messages that were rate-limited, up to the rate limit per window.
+    private func drainPendingQueue() {
+        drainTask = nil
+        guard !pendingQueue.isEmpty else { return }
+
+        var processed = 0
+        while !pendingQueue.isEmpty && processed < Self.rateLimitMaxMessages {
+            let toast = pendingQueue.removeFirst()
+            // Run through dedup/grouping again since the queue may contain duplicates
+            if tryDeduplicate(toast) {
+                // Deduplicated into an existing toast, doesn't count against rate limit
+                continue
+            }
+            if Self.enableGrouping, let category = toast.category, tryGroup(toast, category: category) {
+                continue
+            }
+            recordTimestamp()
+            enqueue(toast)
+            scheduleAutoDismiss(id: toast.id, after: toast.duration)
+            postAccessibilityAnnouncement(toast)
+            processed += 1
+        }
+        enforceMaxVisible()
+
+        // If there are still pending messages, schedule another drain
+        if !pendingQueue.isEmpty {
+            scheduleDrainIfNeeded()
+        }
+    }
+
+    // MARK: - Max Visible Enforcement
+
+    /// Dismisses the oldest non-persistent toasts when the visible count exceeds the limit.
+    private func enforceMaxVisible() {
+        while toasts.count > Self.maxVisibleToasts {
+            // Find the oldest non-persistent toast to dismiss
+            guard let oldestIndex = toasts.firstIndex(where: { !$0.isPersistent }) else {
+                break // All remaining are persistent, don't dismiss
+            }
+            let oldestID = toasts[oldestIndex].id
+            removeToast(withID: oldestID)
+        }
     }
 
     // MARK: - Private helpers
@@ -159,7 +334,7 @@ public final class PVToastManager: ObservableObject {
     }
 
     private func postAccessibilityAnnouncement(_ toast: PVToast) {
-        let announcement = "\(toast.type.accessibilityLabel): \(toast.message)"
+        let announcement = "\(toast.type.accessibilityLabel): \(toast.displayMessage)"
         #if os(iOS) || os(tvOS)
         UIAccessibility.post(notification: .announcement, argument: announcement)
         #endif
@@ -183,10 +358,11 @@ public extension PVToastManager {
         _ message: String,
         type: PVToastType = .info,
         duration: TimeInterval = 3.0,
-        icon: String? = nil
+        icon: String? = nil,
+        category: String? = nil
     ) {
         Task { @MainActor in
-            PVToastManager.shared.show(message, type: type, duration: duration, icon: icon)
+            PVToastManager.shared.show(message, type: type, duration: duration, icon: icon, category: category)
         }
     }
 

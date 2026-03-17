@@ -723,6 +723,11 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValuesFile = "Hatari/Hatari.opt"
                 optionOverwrite = true
             }
+            if (coreIdentifier.contains("prboom")) {
+                optionValues += "prboom-rumble = \"enabled\"\n"
+                optionValuesFile = "PrBoom/PrBoom.opt"
+                optionOverwrite = false
+            }
             if (coreIdentifier.contains("dosbox")) {
                 optionValues += "dosbox_pure_mouse_input = \"pad\"\n"
                 optionValues += "dosbox_pure_midi = \"enabled\"\n"

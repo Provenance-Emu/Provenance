@@ -19,6 +19,10 @@ public struct PVToast: Identifiable, Sendable {
     public let icon: String
     public let duration: TimeInterval
     public let isPersistent: Bool
+    /// Number of deduplicated occurrences (1 = single occurrence, >1 = repeated)
+    public internal(set) var repeatCount: Int
+    /// Optional grouping category for collapsing similar messages
+    public let category: String?
 
     init(
         id: String = UUID().uuidString,
@@ -26,7 +30,9 @@ public struct PVToast: Identifiable, Sendable {
         type: PVToastType = .info,
         icon: String? = nil,
         duration: TimeInterval = 3.0,
-        isPersistent: Bool = false
+        isPersistent: Bool = false,
+        repeatCount: Int = 1,
+        category: String? = nil
     ) {
         self.id = id
         self.message = message
@@ -34,6 +40,16 @@ public struct PVToast: Identifiable, Sendable {
         self.icon = icon ?? type.defaultIcon
         self.duration = duration
         self.isPersistent = isPersistent
+        self.repeatCount = repeatCount
+        self.category = category
+    }
+
+    /// The display message including repeat count badge if applicable
+    public var displayMessage: String {
+        if repeatCount > 1 {
+            return "\(message) (\u{00D7}\(repeatCount))"
+        }
+        return message
     }
 }
 
@@ -54,13 +70,13 @@ struct PVToastItemView: View {
                 .shadow(color: toast.type.color.opacity(glowOpacity), radius: 4)
                 .accessibilityHidden(true)
 
-            Text(toast.message)
+            Text(toast.displayMessage)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.leading)
                 .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel("\(toast.type.accessibilityLabel): \(toast.message)")
+                .accessibilityLabel("\(toast.type.accessibilityLabel): \(toast.displayMessage)")
 
             Spacer(minLength: 4)
 
@@ -145,13 +161,22 @@ public struct PVToastStackView: View {
         self.position = position
     }
 
+    /// Only the most recent toasts are shown, up to `PVToastManager.maxVisibleToasts`.
+    private var visibleToasts: [PVToast] {
+        let max = PVToastManager.maxVisibleToasts
+        if manager.toasts.count <= max {
+            return manager.toasts
+        }
+        return Array(manager.toasts.suffix(max))
+    }
+
     public var body: some View {
         GeometryReader { geo in
             ZStack(alignment: position.alignment) {
                 Color.clear
                     .allowsHitTesting(false)
                 VStack(spacing: 8) {
-                    ForEach(manager.toasts) { toast in
+                    ForEach(visibleToasts) { toast in
                         PVToastItemView(toast: toast) {
                             manager.dismiss(id: toast.id)
                         }

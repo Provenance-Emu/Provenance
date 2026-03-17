@@ -20,14 +20,18 @@ extension StatusMessageManager {
         public let type: MessageType
         public let timestamp = Date()
         public let duration: TimeInterval
-        
+        /// Number of deduplicated occurrences (1 = single, >1 = repeated)
+        public internal(set) var repeatCount: Int = 1
+        /// Optional grouping category for collapsing similar messages
+        public let category: String?
+
         public enum MessageType {
             case info
             case success
             case warning
             case error
             case progress
-            
+
             var color: Color {
                 switch self {
                 case .info: return .blue
@@ -38,13 +42,22 @@ extension StatusMessageManager {
                 }
             }
         }
-        
-        public init(message: String, type: MessageType = .info, duration: TimeInterval = 5.0) {
+
+        public init(message: String, type: MessageType = .info, duration: TimeInterval = 5.0, category: String? = nil) {
             self.message = message
             self.type = type
             self.duration = duration
+            self.category = category
         }
-        
+
+        /// The display message including repeat count badge if applicable
+        public var displayMessage: String {
+            if repeatCount > 1 {
+                return "\(message) (\u{00D7}\(repeatCount))"
+            }
+            return message
+        }
+
         public static func == (lhs: StatusMessage, rhs: StatusMessage) -> Bool {
             lhs.id == rhs.id
         }
@@ -54,6 +67,23 @@ extension StatusMessageManager {
 /// Manages status messages for the app
 public class StatusMessageManager: ObservableObject {
     public static let shared = StatusMessageManager()
+
+    // MARK: - Configuration
+
+    /// Maximum number of visible status messages at once. Older messages are dismissed when exceeded.
+    public static var maxVisibleMessages: Int = 4
+
+    /// Maximum number of messages allowed within `rateLimitWindow`. Excess messages are queued.
+    public static var rateLimitMaxMessages: Int = 3
+
+    /// Sliding window duration (in seconds) for rate limiting.
+    public static var rateLimitWindow: TimeInterval = 2.0
+
+    /// Window (in seconds) during which a duplicate message text is collapsed with a count badge.
+    public static var deduplicationWindow: TimeInterval = 5.0
+
+    /// When `true`, messages with the same `category` and `type` are collapsed into a grouped message.
+    public static var enableGrouping: Bool = true
 
     @Published public private(set) var messages: [StatusMessage] = []
     @Published public private(set) var fileRecoveryProgress: (current: Int, total: Int)? = nil
@@ -68,6 +98,15 @@ public class StatusMessageManager: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
     private var messageTimers: [UUID: Timer] = [:]
+
+    /// Sliding window of recent message timestamps for rate limiting.
+    private var recentTimestamps: [Date] = []
+
+    /// Queue of messages waiting to be shown when the rate limit window clears.
+    private var pendingQueue: [StatusMessage] = []
+
+    /// Timer that drains the pending queue after the rate window clears.
+    private var drainTimer: Timer?
 
     /// ViewModel to handle actor isolation
     @MainActor
@@ -181,7 +220,7 @@ public class StatusMessageManager: ObservableObject {
                     if queueLength > 0 {
                         message += " - \(queueLength) in queue"
                     }
-                    self?.addMessage(StatusMessage(message: message, type: .progress, duration: 3.0))
+                    self?.addMessage(StatusMessage(message: message, type: .progress, duration: 3.0, category: "web-upload"))
                 }
             }
             .store(in: &cancellables)
@@ -236,7 +275,7 @@ public class StatusMessageManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 let name = notification.userInfo?["name"] as? String ?? "Controller"
-                self?.addMessage(StatusMessage(message: "\(name) connected.", type: .success, duration: 4.0))
+                self?.addMessage(StatusMessage(message: "\(name) connected.", type: .success, duration: 4.0, category: "controller"))
             }
             .store(in: &cancellables)
 
@@ -244,7 +283,7 @@ public class StatusMessageManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 let name = notification.userInfo?["name"] as? String ?? "Controller"
-                self?.addMessage(StatusMessage(message: "\(name) disconnected.", type: .warning, duration: 4.0))
+                self?.addMessage(StatusMessage(message: "\(name) disconnected.", type: .warning, duration: 4.0, category: "controller"))
             }
             .store(in: &cancellables)
 
@@ -290,12 +329,12 @@ public class StatusMessageManager: ObservableObject {
                     let message = "\(direction) \(recordType) to/from iCloud... (\(current)/\(total))"
                     // This message might be too frequent. Consider if a dedicated progress bar is better handled by StatusMessageViewModel directly.
                     // For now, keeping it simple. A more sophisticated approach might use the message ID to update, not just add.
-                    self?.addMessage(StatusMessage(message: message, type: .info, duration: 3.0))
+                    self?.addMessage(StatusMessage(message: message, type: .info, duration: 3.0, category: "cloudkit-transfer"))
                 } else if let userInfo = notification.userInfo, // Simpler version if no progress numbers
                           let recordType = userInfo["recordType"] as? String,
                           let isUpload = userInfo["isUpload"] as? Bool {
                     let direction = isUpload ? "Uploading" : "Downloading"
-                    self?.addMessage(StatusMessage(message: "\(direction) \(recordType) to/from iCloud...", type: .info, duration: 3.0))
+                    self?.addMessage(StatusMessage(message: "\(direction) \(recordType) to/from iCloud...", type: .info, duration: 3.0, category: "cloudkit-transfer"))
                 }
             }
             .store(in: &cancellables)
@@ -339,7 +378,7 @@ public class StatusMessageManager: ObservableObject {
                     let percent = Int((Double(current) / Double(total)) * 100)
                     // This message might be too frequent. Consider if a dedicated progress bar is better handled by StatusMessageViewModel directly.
                     // For now, adding a textual update.
-                    self?.addMessage(StatusMessage(message: "ROM Scan: \(percent)% (\(current)/\(total))", type: .info, duration: 2.0))
+                    self?.addMessage(StatusMessage(message: "ROM Scan: \(percent)% (\(current)/\(total))", type: .info, duration: 2.0, category: "rom-scan"))
                 }
             }
             .store(in: &cancellables)
@@ -364,7 +403,7 @@ public class StatusMessageManager: ObservableObject {
         
         let displayName = URL(fileURLWithPath: fileName).lastPathComponent
         let successMessage = "Successfully imported \(displayName)."
-        addMessage(StatusMessage(message: successMessage, type: .success, duration: 5.0))
+        addMessage(StatusMessage(message: successMessage, type: .success, duration: 5.0, category: "game-import"))
         ILOG("Game import success message added: \(successMessage)")
     }
 
@@ -390,39 +429,168 @@ public class StatusMessageManager: ObservableObject {
         ILOG("Game importer did finish message added: \(message)")
     }
 
-    /// Add a new status message
+    /// Add a new status message, applying deduplication, grouping, and rate limiting.
     /// - Parameter message: The message to add
     public func addMessage(_ message: StatusMessage) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-
-            // Add the message
-            self.messages.append(message)
-
-            // Set a timer to remove the message after its duration
-            let timer = Timer.scheduledTimer(withTimeInterval: message.duration, repeats: false) { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.removeMessage(withID: message.id)
-                }
-            }
-
-            self.messageTimers[message.id] = timer
+            self.processMessage(message)
         }
+    }
+
+    // MARK: - Core Processing Pipeline
+
+    private func processMessage(_ message: StatusMessage) {
+        // 1. Deduplication: collapse duplicate message text within the dedup window
+        if tryDeduplicate(message) {
+            return
+        }
+
+        // 2. Grouping: collapse messages with the same category + type
+        if Self.enableGrouping, let category = message.category, tryGroup(message, category: category) {
+            return
+        }
+
+        // 3. Rate limiting: check sliding window
+        if isRateLimited() {
+            pendingQueue.append(message)
+            scheduleDrainIfNeeded()
+            return
+        }
+
+        // 4. Enqueue the message
+        recordTimestamp()
+        enqueueMessage(message)
+        enforceMaxVisible()
+    }
+
+    // MARK: - Deduplication
+
+    /// Looks for an existing message with the same text still visible. If found, increments its
+    /// repeat count and resets the dismiss timer. Returns `true` if deduplicated.
+    private func tryDeduplicate(_ message: StatusMessage) -> Bool {
+        let now = Date()
+        guard let index = messages.lastIndex(where: { existing in
+            existing.message == message.message
+                && now.timeIntervalSince(existing.timestamp) < Self.deduplicationWindow
+        }) else {
+            return false
+        }
+
+        messages[index].repeatCount += 1
+
+        // Reset the dismiss timer so the updated message stays visible longer
+        let existingID = messages[index].id
+        messageTimers[existingID]?.invalidate()
+        let timer = Timer.scheduledTimer(withTimeInterval: message.duration, repeats: false) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.removeMessage(withID: existingID)
+            }
+        }
+        messageTimers[existingID] = timer
+        return true
+    }
+
+    // MARK: - Grouping
+
+    /// Looks for an existing message with the same category and type. If found, increments its
+    /// repeat count and resets the dismiss timer. Returns `true` if grouped.
+    private func tryGroup(_ message: StatusMessage, category: String) -> Bool {
+        guard let index = messages.lastIndex(where: { existing in
+            existing.category == category && existing.type == message.type
+        }) else {
+            return false
+        }
+
+        messages[index].repeatCount += 1
+
+        // Reset the dismiss timer
+        let existingID = messages[index].id
+        messageTimers[existingID]?.invalidate()
+        let timer = Timer.scheduledTimer(withTimeInterval: message.duration, repeats: false) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.removeMessage(withID: existingID)
+            }
+        }
+        messageTimers[existingID] = timer
+        return true
+    }
+
+    // MARK: - Rate Limiting
+
+    /// Prunes old timestamps and checks whether we've exceeded the rate limit.
+    private func isRateLimited() -> Bool {
+        let now = Date()
+        let windowStart = now.addingTimeInterval(-Self.rateLimitWindow)
+        recentTimestamps.removeAll { $0 < windowStart }
+        return recentTimestamps.count >= Self.rateLimitMaxMessages
+    }
+
+    /// Records the current timestamp in the sliding window.
+    private func recordTimestamp() {
+        recentTimestamps.append(Date())
+    }
+
+    /// Schedules a timer to drain the pending queue once the rate window has capacity.
+    private func scheduleDrainIfNeeded() {
+        guard drainTimer == nil, !pendingQueue.isEmpty else { return }
+        drainTimer = Timer.scheduledTimer(withTimeInterval: Self.rateLimitWindow, repeats: false) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.drainPendingQueue()
+            }
+        }
+    }
+
+    /// Processes queued messages that were rate-limited.
+    private func drainPendingQueue() {
+        drainTimer = nil
+        guard !pendingQueue.isEmpty else { return }
+
+        var processed = 0
+        while !pendingQueue.isEmpty && processed < Self.rateLimitMaxMessages {
+            let message = pendingQueue.removeFirst()
+            if tryDeduplicate(message) { continue }
+            if Self.enableGrouping, let category = message.category, tryGroup(message, category: category) { continue }
+            recordTimestamp()
+            enqueueMessage(message)
+            processed += 1
+        }
+        enforceMaxVisible()
+
+        if !pendingQueue.isEmpty {
+            scheduleDrainIfNeeded()
+        }
+    }
+
+    // MARK: - Max Visible Enforcement
+
+    /// Dismisses the oldest messages when the count exceeds `maxVisibleMessages`.
+    private func enforceMaxVisible() {
+        while messages.count > Self.maxVisibleMessages {
+            let oldestID = messages[0].id
+            removeMessage(withID: oldestID)
+        }
+    }
+
+    // MARK: - Internal Helpers
+
+    private func enqueueMessage(_ message: StatusMessage) {
+        messages.append(message)
+
+        let timer = Timer.scheduledTimer(withTimeInterval: message.duration, repeats: false) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.removeMessage(withID: message.id)
+            }
+        }
+        messageTimers[message.id] = timer
     }
 
     /// Remove a message by its ID
     /// - Parameter id: The ID of the message to remove
     public func removeMessage(withID id: UUID) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-
-            // Remove the message
-            self.messages.removeAll { $0.id == id }
-
-            // Invalidate and remove the timer
-            self.messageTimers[id]?.invalidate()
-            self.messageTimers.removeValue(forKey: id)
-        }
+        messages.removeAll { $0.id == id }
+        messageTimers[id]?.invalidate()
+        messageTimers.removeValue(forKey: id)
     }
 
     /// Clear all messages
@@ -435,9 +603,12 @@ public class StatusMessageManager: ObservableObject {
                 timer.invalidate()
             }
 
-            // Clear messages and timers
+            // Clear messages, timers, and pending queue
             self.messages.removeAll()
             self.messageTimers.removeAll()
+            self.pendingQueue.removeAll()
+            self.drainTimer?.invalidate()
+            self.drainTimer = nil
         }
     }
 

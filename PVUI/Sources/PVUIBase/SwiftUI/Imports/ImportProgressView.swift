@@ -243,7 +243,7 @@ public struct ImportProgressView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 2) {
                         ForEach(viewModel.statusLogMessages) { message in
-                            Text(message.message)
+                            Text(message.displayMessage)
                                 .font(.caption2)
                                 .foregroundColor(messageColor(for: message.type))
                                 .lineLimit(2) // Optionally limit lines per message

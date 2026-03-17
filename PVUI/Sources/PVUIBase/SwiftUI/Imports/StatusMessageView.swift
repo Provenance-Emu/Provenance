@@ -83,7 +83,7 @@ public struct StatusMessageView: View {
                 .frame(width: 10, height: 10)
                 .shadow(color: messageTypeColor(message.type).opacity(glowOpacity), radius: 3, x: 0, y: 0)
             
-            Text(message.message)
+            Text(message.displayMessage)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.white)
             
