@@ -129,7 +129,10 @@ public final class PVLogPublisher: @unchecked Sendable {
         case .warning: osLogType = .default
         case .error: osLogType = .fault
         }
-        category.log(level: osLogType, "\(fileName):\(function):\(line) - \(message, privacy: .public)")
+        category.log(
+            level: osLogType,
+            "\(fileName, privacy: .public):\(function, privacy: .public):\(line, privacy: .public) - \(message, privacy: .public)"
+        )
         #endif
 
         storeEntry(message: message, level: level, categoryName: categoryName,
