@@ -927,15 +927,17 @@ static void emulation_run(BOOL skipFrame) {
             enableMultitap = (ssMaxPlayers > 2);
             ILOG(@"Mednafen Saturn: multitap serial=%@ players=%d", ssSerial, ssMaxPlayers);
         } else if (userForcedMultitap) {
-            // User explicitly enabled multitap — use up to 6 players.
-            ssMaxPlayers = (connectedControllers > 2) ? MIN(connectedControllers, 6) : 6;
+            // User explicitly enabled multitap — always configure all 6 TeamTap ports so
+            // additional controllers can be recognized without requiring a game reload.
+            ssMaxPlayers = 6;
             enableMultitap = YES;
             ILOG(@"Mednafen Saturn: multitap force-enabled by user setting, players=%d", ssMaxPlayers);
         } else if (connectedControllers > 2) {
             // Unknown game but 3+ controllers connected — enable as a convenience.
-            ssMaxPlayers = MIN(connectedControllers, 6);
+            // Always configure all 6 ports so additional controllers can join without reload.
+            ssMaxPlayers = 6;
             enableMultitap = YES;
-            ILOG(@"Mednafen Saturn: multitap enabled by controller count (%d connected)", connectedControllers);
+            ILOG(@"Mednafen Saturn: multitap enabled by controller count (%d connected), configuring all 6 ports", connectedControllers);
         }
 
         if (enableMultitap) {
@@ -948,6 +950,11 @@ static void emulation_run(BOOL skipFrame) {
                 Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
             }
             self->multiTapPlayerCount = ssMaxPlayers;
+            // Clear all TeamTap port buffers at load time to prevent stale input state
+            // (phantom button holds) from leaking across sessions.
+            for (int i = 0; i < ssMaxPlayers; i++) {
+                memset(inputBuffer[i], 0, 9 * sizeof(uint32_t));
+            }
             // Virtual ports 0-(n-1) are the TeamTap sub-slots on the active physical port.
             for (int i = 0; i < ssMaxPlayers; i++) {
                 game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
@@ -1304,6 +1311,10 @@ static void emulation_run(BOOL skipFrame) {
                                             forPlayer:playerIndex];
                 }
             }
+        } else {
+            // No controller present — clear the input buffer to prevent phantom button
+            // holds from leaking into the emulator (e.g. when a controller is disconnected).
+            memset(inputBuffer[playerIndex], 0, 9 * sizeof(uint32_t));
         }
     }
 }
