@@ -132,7 +132,6 @@ public func log(_ message: @autoclosure () -> String,
                 file: String = #fileID,
                 function: String = #function,
                 line: Int = #line) {
-    let msg = message()
     // Extract just the filename from "Module/Filename.swift" (#fileID format) or full path
     let fileName: String
     if let slash = file.lastIndex(of: "/") {
@@ -145,6 +144,8 @@ public func log(_ message: @autoclosure () -> String,
     // This keeps noisy categories suppressed globally, not just in stored entries.
     let categoryName = PVLogPublisher.categoryName(from: category)
     guard PVLogPublisher.shared.minLevel(forCategory: categoryName) <= level else { return }
+
+    let msg = message()
 
     let emoji: String
     switch level {
