@@ -59,6 +59,7 @@ struct PauseTileMenuView: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.featureFlags) private var featureFlags
 
     #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
@@ -191,7 +192,7 @@ struct PauseTileMenuView: View {
 
         // Transfer Pak tile — shown when the core implements TransferPakSupport
         if let transferCore = emulatorVC.core as? TransferPakSupport,
-           PVFeatureFlags.shared.isEnabled(.mupenTransferPak) {
+           featureFlags.mupenTransferPak {
             let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
                 transferCore.transferPakROM(forPort: $0) != nil
             }.count

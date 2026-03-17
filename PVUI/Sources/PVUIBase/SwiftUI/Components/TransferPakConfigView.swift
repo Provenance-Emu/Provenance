@@ -164,7 +164,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
         } header: {
             Text("Controller Ports")
         } footer: {
-            Text("To enable Transfer Pak on a port, open Core Settings and set that port's Controller Pak to "Transfer Pak".")
+            Text("To enable Transfer Pak on a port, open Core Settings and set that port\u{2019}s Controller Pak to \u{201C}Transfer Pak\u{201D}.")
                 .font(.footnote)
         }
     }
@@ -213,7 +213,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                                     updateSlot(port: port, url: url)
                                 }
                             } label: {
-                                let isSelected = selectedPath?.lastPathComponent == gbGame.file?.url?.lastPathComponent
+                                let isSelected = selectedPath != nil && selectedPath == gbGame.file?.url
                                 if isSelected {
                                     Label(gbGame.title, systemImage: "checkmark")
                                 } else {
@@ -283,10 +283,12 @@ public enum TransferPakCompatibleGames {
     /// Known Transfer Pak titles keyed by common title substring (case-insensitive).
     /// Values describe the Transfer Pak feature in the game.
     public static let knownTitles: [(titleFragment: String, description: String)] = [
-        ("pokémon stadium",    "Transfer Pokémon from your Game Boy game to compete in stadium battles."),
-        ("pokemon stadium",    "Transfer Pokémon from your Game Boy game to compete in stadium battles."),
+        // More specific (longer) fragments must come before shorter ones so that
+        // `first(where:)` returns the most accurate match (e.g. "stadium 2" before "stadium").
         ("pokémon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
         ("pokemon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
+        ("pokémon stadium",    "Transfer Pokémon from your Game Boy game to compete in stadium battles."),
+        ("pokemon stadium",    "Transfer Pokémon from your Game Boy game to compete in stadium battles."),
         ("mario tennis",       "Transfer your character from the Game Boy Color Mario Tennis game."),
         ("mario golf",         "Transfer your character from the Game Boy Color Mario Golf game."),
         ("pokémon snap",       "Unlock GB Pokémon Printer functionality."),

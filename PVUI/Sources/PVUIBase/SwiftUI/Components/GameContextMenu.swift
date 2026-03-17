@@ -35,6 +35,7 @@ public struct GameContextMenu: View {
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
     @State private var showTransferPakConfig = false
+    @Environment(\.featureFlags) private var featureFlags
 
     public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
         // Ensure we're working with a frozen copy
@@ -66,7 +67,7 @@ public struct GameContextMenu: View {
                 }
 
                 // Transfer Pak configuration for N64 games (feature-flagged)
-                if PVFeatureFlags.shared.isEnabled(.mupenTransferPak),
+                if featureFlags.mupenTransferPak,
                    game.system?.identifier == "com.provenance.n64" {
                     Button {
                         showTransferPakConfig = true
