@@ -91,7 +91,8 @@ jobs:
     timeout-minutes: 300
     steps:
       - name: Cache Git checkout
-        uses: actions/cache@v3
+        id: cache-git
+        uses: actions/cache@v4
         with:
           path: .
           key: git-checkout-${{ github.sha }}
@@ -99,7 +100,7 @@ jobs:
             git-checkout-
 
       - name: Checkout code
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache-git.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -134,7 +135,53 @@ jobs:
           echo "ALPHA_DISPLAY_NAME_SUFFIX=" >> $GITHUB_ENV
           echo "ALPHA_VERSION_SUFFIX=" >> $GITHUB_ENV
 
-      - uses: actions/cache@v3
+      # Cache RetroArch prebuilt libretro dylibs (~1.4 GB uncompressed).
+      # These are downloaded from the libretro buildbot during the Xcode build
+      # phase (get-modules.sh). Caching them avoids re-downloading ~120 dylibs
+      # on every CI run. The cache key is based on the URL list files that define
+      # which cores to fetch — when those change, the cache is invalidated.
+      - name: Cache RetroArch libretro dylibs
+        id: cache-retroarch-modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            CoresRetro/RetroArch/modules
+            CoresRetro/RetroArch/modules_compressed
+          key: ${{ runner.os }}-retroarch-modules-${{ matrix.sdk }}-${{ hashFiles('CoresRetro/RetroArch/scripts/urls*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-retroarch-modules-${{ matrix.sdk }}-
+
+      # Pre-populate RetroArch modules from compressed zips if cache was restored
+      # but dylibs directory is empty (e.g., partial cache hit from restore-keys).
+      # Also set the timestamp so get-modules.sh skips re-downloading.
+      - name: Restore RetroArch modules from cache
+        if: steps.cache-retroarch-modules.outputs.cache-hit == 'true'
+        run: |
+          CORES_DIR="CoresRetro/RetroArch/modules"
+          if [ "${{ matrix.sdk }}" = "appletvos" ]; then
+            ARCHIVE_DIR="CoresRetro/RetroArch/modules_compressed/tvOS"
+          else
+            ARCHIVE_DIR="CoresRetro/RetroArch/modules_compressed/iOS"
+          fi
+
+          # Count existing dylibs
+          DYLIB_COUNT=$(find "$CORES_DIR" -name "*.dylib" 2>/dev/null | wc -l | tr -d ' ')
+          echo "Cached dylibs found: $DYLIB_COUNT"
+
+          # If we have compressed zips but no dylibs, unzip them
+          if [ "$DYLIB_COUNT" -eq 0 ] && [ -d "$ARCHIVE_DIR" ]; then
+            ZIP_COUNT=$(find "$ARCHIVE_DIR" -name "*.zip" 2>/dev/null | wc -l | tr -d ' ')
+            echo "Unzipping $ZIP_COUNT compressed modules..."
+            find "$ARCHIVE_DIR" -name "*.zip" -exec unzip -n {} -d "$CORES_DIR/" \; 2>/dev/null || true
+          fi
+
+          # Refresh timestamp so get-modules.sh thinks cores are recent
+          mkdir -p "$ARCHIVE_DIR"
+          date +%s > "$ARCHIVE_DIR/timestamp.txt"
+          echo "RetroArch modules restored from cache"
+
+      - name: Cache SPM and Xcode DerivedData
+        uses: actions/cache@v4
         with:
           path: |
             .build

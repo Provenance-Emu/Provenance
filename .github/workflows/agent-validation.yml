@@ -210,6 +210,8 @@ jobs:
           # Hash project/package files for cache key — avoid broad source globs that
           # exceed hashFiles limits.
           key: ${{ runner.os }}-ci-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift', '**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-ci-deriveddata-
 
       - name: Build Provenance-CI (iOS Simulator)
         run: |
