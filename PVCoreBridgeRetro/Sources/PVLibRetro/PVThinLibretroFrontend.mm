@@ -1596,7 +1596,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize biosPath = _biosPath;
 @synthesize savePath = _savePath;
 @synthesize frontendDelegate = _frontendDelegate;
-@synthesize controllerPortInfo = _controllerPortInfo;
+// Note: controllerPortInfo is a readonly property with an explicit getter below; no @synthesize needed.
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (uintptr_t)currentEmuFBO {

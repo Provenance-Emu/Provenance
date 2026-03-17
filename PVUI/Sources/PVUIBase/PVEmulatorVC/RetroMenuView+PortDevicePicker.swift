@@ -71,6 +71,9 @@ extension RetroMenuView {
 private struct PortDeviceRow: View {
     let portIndex: Int
     let descriptors: [PortDeviceDescriptor]
+    /// External source of truth — used to re-sync `selectedDeviceType` if the core
+    /// changes the device type independently while the menu is open.
+    let currentDeviceType: UInt
     let palette: UXThemePalette
     let onSelect: (UInt) -> Void
 
@@ -81,6 +84,7 @@ private struct PortDeviceRow: View {
          palette: UXThemePalette, onSelect: @escaping (UInt) -> Void) {
         self.portIndex = portIndex
         self.descriptors = descriptors
+        self.currentDeviceType = currentDeviceType
         self.palette = palette
         self.onSelect = onSelect
         _selectedDeviceType = State(initialValue: currentDeviceType)
@@ -186,13 +190,19 @@ private struct PortDeviceRow: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .onChange(of: currentDeviceType) { newValue in
+            selectedDeviceType = newValue
+        }
     }
 
     private func deviceSymbol(for deviceType: UInt) -> String {
-        LibretroDeviceType(rawValue: deviceType)?.symbolName ?? "gamecontroller"
+        // Mask off subclass bits (RETRO_DEVICE_SUBCLASS encodes extra info above bit 7).
+        let baseType = deviceType & 0xFF
+        return LibretroDeviceType(rawValue: baseType)?.symbolName ?? "gamecontroller"
     }
 
     private func deviceFallbackName(_ deviceType: UInt) -> String {
-        LibretroDeviceType(rawValue: deviceType)?.localizedName ?? "Device \(deviceType)"
+        let baseType = deviceType & 0xFF
+        return LibretroDeviceType(rawValue: baseType)?.localizedName ?? "Device \(deviceType)"
     }
 }

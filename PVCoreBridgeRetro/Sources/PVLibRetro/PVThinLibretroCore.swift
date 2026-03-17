@@ -359,10 +359,12 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     }
 
     public func currentDeviceType(forPort port: Int) -> UInt {
+        guard port >= 0, port < thinMaxPlayers else { return LibretroDeviceType.joypad.rawValue }
         return UInt(_bridge.currentDeviceType(forPort: UInt32(port)))
     }
 
     public func setDeviceType(_ deviceType: UInt, forPort port: Int) {
+        guard port >= 0, port < thinMaxPlayers else { return }
         _bridge.setControllerPortDevice(UInt32(deviceType), forPort: UInt32(port))
         // Persist selection per core + game combo
         let key = portDevicePersistenceKey(port: port)
