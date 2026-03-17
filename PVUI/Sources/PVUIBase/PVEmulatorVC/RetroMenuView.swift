@@ -389,10 +389,12 @@ struct RetroMenuView: View {
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
         emulatorVC.coreSupportsVirtualKeyboard ||
-        emulatorVC.coreSupportsVirtualMouse
+        emulatorVC.coreSupportsVirtualMouse ||
+        hasPortDeviceOptions
         #else
         return emulatorVC.core is CoreOptional ||
-        (emulatorVC.core as? CoreActions)?.coreActions != nil
+        (emulatorVC.core as? CoreActions)?.coreActions != nil ||
+        hasPortDeviceOptions
         #endif
     }
 
@@ -540,6 +542,9 @@ struct RetroMenuView: View {
                 }
             }
             #endif
+
+            // Per-port device type picker (e.g. Joypad → Mouse for Mario Paint)
+            portDevicePickerSection
 
             // If no core features available, show message
             if !hasCoreFeatures {

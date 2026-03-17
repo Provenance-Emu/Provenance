@@ -72,6 +72,10 @@ class PVThinLibretroCore: PVEmulatorCore {
         // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
         applyPlatformDefaults()
         super.startEmulation()
+        // Restore any previously-saved per-port device type selections.
+        // Must run after super.startEmulation() so the core has called retro_load_game
+        // and reported SET_CONTROLLER_INFO.
+        restorePortDeviceTypes()
     }
 
     // MARK: - Per-core platform defaults
@@ -329,5 +333,49 @@ extension PVThinLibretroCore: @preconcurrency CoreOptional {
                 bridgeRef.setCoreOption(key, value: strVal)
             }
         }
+    }
+}
+
+// MARK: - PortDeviceConfigurable
+
+extension PVThinLibretroCore: PortDeviceConfigurable {
+
+    public var controllerPortDescriptors: [[PortDeviceDescriptor]] {
+        return _bridge.controllerPortInfo.map { portTypes in
+            portTypes.compactMap { dict -> PortDeviceDescriptor? in
+                guard let name = dict["name"] as? String,
+                      let typeNum = dict["type"] as? NSNumber else { return nil }
+                return PortDeviceDescriptor(name: name, deviceType: typeNum.uintValue)
+            }
+        }
+    }
+
+    public func currentDeviceType(forPort port: Int) -> UInt {
+        return UInt(_bridge.currentDeviceType(forPort: UInt32(port)))
+    }
+
+    public func setDeviceType(_ deviceType: UInt, forPort port: Int) {
+        _bridge.setControllerPortDevice(UInt32(deviceType), forPort: UInt32(port))
+        // Persist selection per core + game combo
+        let key = portDevicePersistenceKey(port: port)
+        UserDefaults.standard.set(Int(deviceType), forKey: key)
+    }
+
+    /// Restore saved device type selections (called after core loads).
+    func restorePortDeviceTypes() {
+        let portCount = max(_bridge.controllerPortInfo.count, 4)
+        for port in 0..<portCount {
+            let key = portDevicePersistenceKey(port: port)
+            if UserDefaults.standard.object(forKey: key) != nil {
+                let saved = UInt(UserDefaults.standard.integer(forKey: key))
+                _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
+            }
+        }
+    }
+
+    private func portDevicePersistenceKey(port: Int) -> String {
+        let coreId = coreIdentifier ?? "unknown"
+        let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
+        return "PVPortDevice.\(coreId).\(md5).port\(port)"
     }
 }

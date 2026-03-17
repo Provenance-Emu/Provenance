@@ -264,6 +264,21 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param corePath  Absolute path to the dylib or framework executable.
 + (nullable NSDictionary<NSString *, id> *)probeCoreDylibAtPath:(NSString *)corePath;
 
+// MARK: Controller port info
+
+/// Per-port list of device types reported by the core via
+/// RETRO_ENVIRONMENT_SET_CONTROLLER_INFO.
+/// Outer array is indexed by port (0-based).
+/// Each inner array contains dictionaries with keys:
+///   @"name" : NSString — human-readable device description
+///   @"type" : NSNumber (unsigned) — RETRO_DEVICE_* constant
+/// Returns an empty array if the core did not call SET_CONTROLLER_INFO.
+@property (nonatomic, readonly) NSArray<NSArray<NSDictionary<NSString *, id> *> *> *controllerPortInfo;
+
+/// Returns the currently-selected device type for the given port (0-based).
+/// Defaults to RETRO_DEVICE_JOYPAD (1) unless changed via setControllerPortDevice:forPort:.
+- (unsigned)currentDeviceTypeForPort:(unsigned)port;
+
 // MARK: Input state
 
 /// Set or clear a single joypad button for a given player.

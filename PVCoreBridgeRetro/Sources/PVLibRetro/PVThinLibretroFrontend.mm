@@ -373,6 +373,11 @@ typedef struct PVThinLibretroSymbols {
     // the core's lifetime so the pointer remains valid after the callback returns.
     NSString *_usernameString;
 
+    // Controller port info from RETRO_ENVIRONMENT_SET_CONTROLLER_INFO
+    NSMutableArray<NSMutableArray<NSDictionary<NSString *, id> *> *> *_controllerPortInfo;
+    // Current device type selected per port (default RETRO_DEVICE_JOYPAD = 1)
+    unsigned _portDeviceTypes[THIN_MAX_PLAYERS];
+
     // Stable C-string storage for directory paths returned via environment callbacks.
     // Cores may cache the returned pointer, so we must keep the backing char* alive
     // for the entire core lifetime. Using strdup + free rather than NSString.UTF8String
@@ -1615,6 +1620,10 @@ static bool thin_environment(unsigned cmd, void *data) {
         _coreOptionDefinitions = [NSMutableArray array];
         _coreOptionCategories = [NSMutableArray array];
         _coreOptionVisibility = [NSMutableDictionary dictionary];
+        _controllerPortInfo = [NSMutableArray array];
+        for (unsigned p = 0; p < THIN_MAX_PLAYERS; p++) {
+            _portDeviceTypes[p] = RETRO_DEVICE_JOYPAD; // default
+        }
         _serializationQuirks = 0;
         _hasDiskControl = NO;
         _hasDiskControlExt = NO;
@@ -1949,7 +1958,19 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_sym.retro_set_controller_port_device) {
         ILOG(@"ThinFrontend: set port %u device = %u", port, device);
         _sym.retro_set_controller_port_device(port, device);
+        if (port < THIN_MAX_PLAYERS) {
+            _portDeviceTypes[port] = device;
+        }
     }
+}
+
+- (NSArray<NSArray<NSDictionary<NSString *, id> *> *> *)controllerPortInfo {
+    return _controllerPortInfo ?: @[];
+}
+
+- (unsigned)currentDeviceTypeForPort:(unsigned)port {
+    if (port >= THIN_MAX_PLAYERS) return RETRO_DEVICE_JOYPAD;
+    return _portDeviceTypes[port];
 }
 
 - (void)resetEmulation {
