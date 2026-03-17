@@ -340,11 +340,11 @@ extension PVThinLibretroCore: @preconcurrency CoreOptional {
 
 // MARK: - PortDeviceConfigurable
 
-/// Mirrors THIN_MAX_PLAYERS from PVThinLibretroFrontend.h.
-/// Only the first 4 ports are tracked by the thin frontend's _portDeviceTypes[].
-private let thinMaxPlayers = 4
-
 extension PVThinLibretroCore: PortDeviceConfigurable {
+
+    /// Authoritative per-platform max from the ObjC frontend.
+    /// Avoids duplicating the THIN_MAX_PLAYERS preprocessor constant in Swift.
+    private var thinMaxPlayers: Int { Int(PVThinLibretroFrontend.maxPlayers) }
 
     public var controllerPortDescriptors: [[PortDeviceDescriptor]] {
         // Clamp to thinMaxPlayers — ports beyond this cannot be tracked or restored.
@@ -385,8 +385,8 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     }
 
     private func portDevicePersistenceKey(port: Int) -> String {
-        let coreId = coreIdentifier ?? "unknown"
+        // Key format matches CoreOptions+Serialization convention: <ClassName>.<md5>.<key>
         let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
-        return "PVPortDevice.\(coreId).\(md5).port\(port)"
+        return "PVThinLibretroCore.\(md5).portDeviceType.port\(port)"
     }
 }

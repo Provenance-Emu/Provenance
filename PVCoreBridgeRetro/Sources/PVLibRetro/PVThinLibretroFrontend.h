@@ -273,6 +273,11 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 
 // MARK: Controller port info
 
+/// Maximum number of controller ports the thin frontend tracks (matches THIN_MAX_PLAYERS).
+/// Exposed as a class property so Swift callers can reference the authoritative limit
+/// without duplicating the ObjC preprocessor constant.
+@property (class, readonly) NSUInteger maxPlayers;
+
 /// Per-port list of device types reported by the core via
 /// RETRO_ENVIRONMENT_SET_CONTROLLER_INFO.
 /// Outer array is indexed by port (0-based).

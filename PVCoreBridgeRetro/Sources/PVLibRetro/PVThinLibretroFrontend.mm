@@ -1961,6 +1961,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 }
 
++ (NSUInteger)maxPlayers {
+    return THIN_MAX_PLAYERS;
+}
+
 - (NSArray<NSArray<NSDictionary<NSString *, id> *> *> *)controllerPortInfo {
     return _controllerPortInfo ?: @[];
 }

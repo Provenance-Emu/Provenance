@@ -197,12 +197,12 @@ private struct PortDeviceRow: View {
 
     private func deviceSymbol(for deviceType: UInt) -> String {
         // Mask off subclass bits (RETRO_DEVICE_SUBCLASS encodes extra info above bit 7).
-        let baseType = deviceType & 0xFF
+        let baseType = deviceType & LibretroDeviceType.deviceMask
         return LibretroDeviceType(rawValue: baseType)?.symbolName ?? "gamecontroller"
     }
 
     private func deviceFallbackName(_ deviceType: UInt) -> String {
-        let baseType = deviceType & 0xFF
+        let baseType = deviceType & LibretroDeviceType.deviceMask
         return LibretroDeviceType(rawValue: baseType)?.localizedName ?? "Device \(deviceType)"
     }
 }

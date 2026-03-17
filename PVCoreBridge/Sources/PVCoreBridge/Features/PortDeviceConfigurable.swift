@@ -26,6 +26,10 @@ public struct PortDeviceDescriptor: Sendable, Equatable {
 
 /// Standard libretro device type constants mirrored in Swift for convenience.
 public enum LibretroDeviceType: UInt {
+    /// Mask for stripping subclass bits from a libretro device ID (RETRO_DEVICE_MASK = 0xFF).
+    /// Use this when looking up an icon/name for a device type that may be a subclass ID.
+    public static let deviceMask: UInt = 0xFF
+
     case none     = 0
     case joypad   = 1
     case mouse    = 2
