@@ -26,7 +26,7 @@ public enum PVToastType: String, CaseIterable, Sendable {
         case .info:        return RetroTheme.retroBlue
         case .success:     return RetroTheme.retroGreen
         case .warning:     return .orange
-        case .error:       return RetroTheme.retroPink
+        case .error:       return Color(red: 0.95, green: 0.22, blue: 0.22)
         case .jit:         return RetroTheme.retroPurple
         case .achievement: return Color(red: 1.0, green: 0.84, blue: 0.0) // gold
         }

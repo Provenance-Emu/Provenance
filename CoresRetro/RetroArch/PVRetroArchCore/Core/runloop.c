@@ -1740,9 +1740,18 @@ bool runloop_environment_cb(unsigned cmd, void *data)
          dispgfx_widget_t *p_dispwidget  = dispwidget_get_ptr();
 
          if (p_dispwidget->active)
+         {
             gfx_widget_set_libretro_message(
                   msg->msg,
                   roundf((float)msg->frames / 60.0f * 1000.0f));
+            /* Widget path bypasses runloop_msg_queue_push, so bridge
+             * directly to PVToast for native OSD display */
+            {
+               unsigned duration_ms = (unsigned)roundf((float)msg->frames / 60.0f * 1000.0f);
+               if (duration_ms > 0)
+                  pv_retroarch_post_osd(msg->msg, (unsigned)MESSAGE_QUEUE_CATEGORY_INFO, duration_ms);
+            }
+         }
          else
 #endif
             runloop_msg_queue_push(msg->msg, strlen(msg->msg), 3, msg->frames,
@@ -1834,8 +1843,23 @@ bool runloop_environment_cb(unsigned cmd, void *data)
                      dispgfx_widget_t *p_dispwidget = dispwidget_get_ptr();
 
                      if (p_dispwidget->active)
+                     {
                         gfx_widget_set_libretro_message(
                               msg->msg, msg->duration);
+                        /* Widget path bypasses runloop_msg_queue_push —
+                         * bridge directly to PVToast */
+                        {
+                           unsigned pv_cat;
+                           switch (msg->level)
+                           {
+                              case RETRO_LOG_WARN:  pv_cat = (unsigned)MESSAGE_QUEUE_CATEGORY_WARNING; break;
+                              case RETRO_LOG_ERROR: pv_cat = (unsigned)MESSAGE_QUEUE_CATEGORY_ERROR;   break;
+                              default:              pv_cat = (unsigned)MESSAGE_QUEUE_CATEGORY_INFO;    break;
+                           }
+                           if (msg->duration > 0)
+                              pv_retroarch_post_osd(msg->msg, pv_cat, msg->duration);
+                        }
+                     }
                      else
                         runloop_core_msg_queue_push(
                               &video_st->av_info, msg);
@@ -1851,9 +1875,24 @@ bool runloop_environment_cb(unsigned cmd, void *data)
                      dispgfx_widget_t *p_dispwidget = dispwidget_get_ptr();
 
                      if (p_dispwidget->active)
+                     {
                         gfx_widget_set_progress_message(
                               msg->msg, msg->duration,
                               msg->priority, msg->progress);
+                        /* Widget path bypasses runloop_msg_queue_push —
+                         * bridge directly to PVToast */
+                        {
+                           unsigned pv_cat;
+                           switch (msg->level)
+                           {
+                              case RETRO_LOG_WARN:  pv_cat = (unsigned)MESSAGE_QUEUE_CATEGORY_WARNING; break;
+                              case RETRO_LOG_ERROR: pv_cat = (unsigned)MESSAGE_QUEUE_CATEGORY_ERROR;   break;
+                              default:              pv_cat = (unsigned)MESSAGE_QUEUE_CATEGORY_INFO;    break;
+                           }
+                           if (msg->duration > 0)
+                              pv_retroarch_post_osd(msg->msg, pv_cat, msg->duration);
+                        }
+                     }
                      else
                         runloop_core_msg_queue_push(
                               &video_st->av_info, msg);

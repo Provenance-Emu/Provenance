@@ -410,6 +410,16 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
         /// Provenance manages controller assignments, and inputs are forwarded via bindControls
         if (!provenance_controller_mode) {
             apple_gamecontroller_joypad_connect([notification object]);
+        } else {
+            /// Even in provenance_controller_mode, set up haptics so controller rumble
+            /// motors fire when cores call set_rumble_state (e.g. Flycast, PrBoom).
+            /// We map the real controller's haptics to pad slot 0 since Provenance
+            /// forwards all input through touch_controller[0].
+            GCController *controller = [notification object];
+            if (controller && !is_virtual_touch_controller(controller)) {
+                controller.playerIndex = 0;
+                apple_gamecontroller_joypad_setup_haptics(controller);
+            }
         }
         [self refresh_gamecontrollers];
         [self useRetroArchController:self.retroArchControls];
