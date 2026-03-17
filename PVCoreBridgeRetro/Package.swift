@@ -89,7 +89,11 @@ let package = Package(
             linkerSettings: [
                 .linkedFramework("OpenGL", .when(platforms: [.macOS, .macCatalyst])),
                 .linkedFramework("OpenGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .linkedFramework("Metal")
+                .linkedFramework("Metal"),
+                .linkedFramework("AVFoundation"),
+                .linkedFramework("AudioToolbox"),
+                .linkedFramework("Accelerate"),
+                .linkedFramework("CoreMIDI", .when(platforms: [.iOS, .macOS, .macCatalyst, .visionOS]))
             ]
         ),
         // ------------------- libretro -------------------
