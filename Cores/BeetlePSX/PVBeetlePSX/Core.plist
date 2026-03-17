@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-only</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/libretro/beetle-psx-libretro/blob/master/COPYING</string>
+	<string>https://github.com/libretro/beetle-psx-libretro/blob/HEAD/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 1998-2014 Mednafen Team</string>
 </dict>

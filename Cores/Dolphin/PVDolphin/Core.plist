@@ -24,7 +24,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/dolphin-emu/dolphin/blob/master/COPYING</string>
+	<string>https://github.com/dolphin-emu/dolphin/blob/HEAD/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2003-2024 Dolphin Emulator Project</string>
 </dict>

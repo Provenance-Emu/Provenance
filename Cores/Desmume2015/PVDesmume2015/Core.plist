@@ -21,7 +21,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/TASEmulators/desmume/blob/master/desmume/COPYING</string>
+	<string>https://github.com/TASEmulators/desmume/blob/HEAD/desmume/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2005-2015 The DeSmuME Team</string>
 </dict>

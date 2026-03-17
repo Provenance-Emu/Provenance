@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>MIT</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/nesbox/TIC-80/blob/dev/LICENSE</string>
+	<string>https://github.com/nesbox/TIC-80/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2017-2024 Vadim Grigoruk (Nesbox)</string>
 </dict>

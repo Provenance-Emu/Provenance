@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>MIT</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/meepingsnesroms/Mu/blob/master/LICENSE</string>
+	<string>https://github.com/meepingsnesroms/Mu/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2019-2023 Adin Scannell</string>
 </dict>

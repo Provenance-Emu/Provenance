@@ -21,7 +21,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/hrydgard/ppsspp/blob/master/LICENSE.TXT</string>
+	<string>https://github.com/hrydgard/ppsspp/blob/HEAD/LICENSE.TXT</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2012-2024 Henrik Rydgård and PPSSPP Contributors</string>
 </dict>

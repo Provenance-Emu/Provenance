@@ -21,7 +21,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/schellingb/dosbox-pure/blob/main/LICENSE</string>
+	<string>https://github.com/schellingb/dosbox-pure/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2002-2021 The DOSBox Team, 2020-2024 Bernhard Schelling</string>
 </dict>

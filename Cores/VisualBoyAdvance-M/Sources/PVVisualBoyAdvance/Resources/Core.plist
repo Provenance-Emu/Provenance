@@ -26,7 +26,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/visualboyadvance-m/visualboyadvance-m/blob/master/COPYING</string>
+	<string>https://github.com/visualboyadvance-m/visualboyadvance-m/blob/HEAD/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2004-2024 VBA-M Team</string>
 </dict>

@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-3.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/libretro/FreeIntv/blob/master/LICENSE</string>
+	<string>https://github.com/libretro/FreeIntv/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2018 David Richardson</string>
 </dict>

@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>MIT</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/drhelius/Gearcoleco/blob/master/LICENSE</string>
+	<string>https://github.com/drhelius/Gearcoleco/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2021 Ignacio Sanchez Gines</string>
 </dict>

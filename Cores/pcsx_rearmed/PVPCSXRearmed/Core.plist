@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>LGPL-2.1-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/notaz/pcsx_rearmed/blob/master/COPYING</string>
+	<string>https://github.com/notaz/pcsx_rearmed/blob/HEAD/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 1999-2024 PCSX-R Contributors</string>
 </dict>

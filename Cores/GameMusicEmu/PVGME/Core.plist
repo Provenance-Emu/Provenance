@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>LGPL-2.1-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/libretro/libretro-gme/blob/master/LICENSE</string>
+	<string>https://github.com/libretro/libretro-gme/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2003-2009 Shay Green</string>
 </dict>

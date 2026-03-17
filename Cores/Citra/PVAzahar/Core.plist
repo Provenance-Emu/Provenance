@@ -21,7 +21,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/azahar-emu/azahar/blob/master/LICENSE</string>
+	<string>https://github.com/azahar-emu/azahar/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2013-2024 Citra Emulator Project, Azahar Emulator Contributors</string>
 </dict>

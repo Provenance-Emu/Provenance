@@ -25,7 +25,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-3.0-only</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/stenzek/duckstation/blob/master/LICENSE</string>
+	<string>https://github.com/stenzek/duckstation/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2019-2024 Connor McLaughlin</string>
 </dict>

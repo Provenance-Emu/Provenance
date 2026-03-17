@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/Yabause/yabause/blob/master/yabause/COPYING</string>
+	<string>https://github.com/Yabause/yabause/blob/HEAD/yabause/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2002-2024 Yabause Team</string>
 </dict>

@@ -25,7 +25,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/sinamas/gambatte/blob/master/COPYING</string>
+	<string>https://github.com/sinamas/gambatte/blob/HEAD/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2007-2014 Sindre Aaen</string>
 </dict>

@@ -24,7 +24,7 @@
 	<key>PVLicenseName</key>
 	<string>LicenseRef-PicoDrive</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/notaz/picodrive/blob/master/COPYING</string>
+	<string>https://github.com/notaz/picodrive/blob/HEAD/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2007-2024 notaz</string>
 </dict>

@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>MIT</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/libretro/libretro-SameDuck/blob/master/LICENSE</string>
+	<string>https://github.com/libretro/libretro-SameDuck/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2015-2024 Lior Halphon</string>
 </dict>

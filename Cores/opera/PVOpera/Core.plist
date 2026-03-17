@@ -19,7 +19,7 @@
 	<key>PVLicenseName</key>
 	<string>LGPL-2.1-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/libretro/opera-libretro/blob/master/LICENSES</string>
+	<string>https://github.com/libretro/opera-libretro/blob/HEAD/LICENSES</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2012-2024 Opera Libretro Contributors</string>
 </dict>

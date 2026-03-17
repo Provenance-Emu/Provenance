@@ -25,7 +25,7 @@
 	<key>PVLicenseName</key>
 	<string>MPL-2.0</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/mgba-emu/mgba/blob/master/LICENSE</string>
+	<string>https://github.com/mgba-emu/mgba/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2013-2024 Jeffrey Pfau</string>
 </dict>

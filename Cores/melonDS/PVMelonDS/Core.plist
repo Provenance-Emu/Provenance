@@ -25,7 +25,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-3.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/melonDS-emu/melonDS/blob/master/LICENSE</string>
+	<string>https://github.com/melonDS-emu/melonDS/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2016-2024 melonDS Team</string>
 </dict>

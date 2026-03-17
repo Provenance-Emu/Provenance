@@ -27,7 +27,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/libretro/mupen64plus-libretro-nx/blob/develop/LICENSE</string>
+	<string>https://github.com/libretro/mupen64plus-libretro-nx/blob/HEAD/LICENSE</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2008-2024 Mupen64Plus Team</string>
 </dict>

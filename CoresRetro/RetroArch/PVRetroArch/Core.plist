@@ -21,7 +21,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-3.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/libretro/RetroArch/blob/master/COPYING</string>
+	<string>https://github.com/libretro/RetroArch/blob/HEAD/COPYING</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2011-2024 RetroArch Contributors</string>
 	<key>PVCores</key>
@@ -44,7 +44,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-only</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/beetle-psx-libretro/blob/master/COPYING</string>
+			<string>https://github.com/libretro/beetle-psx-libretro/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2014 Mednafen Team</string>
 		</dict>
@@ -66,7 +66,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-only</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/beetle-psx-libretro/blob/master/COPYING</string>
+			<string>https://github.com/libretro/beetle-psx-libretro/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2014 Mednafen Team</string>
 		</dict>
@@ -88,7 +88,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-Snes9x</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/snes9xgit/snes9x/blob/master/LICENSE</string>
+			<string>https://github.com/snes9xgit/snes9x/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1996-2024 Snes9x Contributors</string>
 		</dict>
@@ -110,7 +110,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/bsnes-emu/bsnes/blob/master/LICENSE</string>
+			<string>https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 Near</string>
 		</dict>
@@ -132,7 +132,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/DerKoun/bsnes-hd/blob/master/LICENSE</string>
+			<string>https://github.com/DerKoun/bsnes-hd/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 Near, 2020-2024 DerKoun</string>
 		</dict>
@@ -154,7 +154,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/bsnes-emu/bsnes/blob/master/LICENSE</string>
+			<string>https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 Near</string>
 		</dict>
@@ -176,7 +176,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/bsnes-emu/bsnes/blob/master/LICENSE</string>
+			<string>https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 Near</string>
 		</dict>
@@ -200,7 +200,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-only</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/flyinghead/flycast/blob/master/LICENSE</string>
+			<string>https://github.com/flyinghead/flycast/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2018-2024 Flycast Contributors</string>
 		</dict>
@@ -224,7 +224,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-only</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/flyinghead/flycast/blob/master/LICENSE</string>
+			<string>https://github.com/flyinghead/flycast/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2018-2024 Flycast Contributors</string>
 		</dict>
@@ -248,7 +248,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/parallel-n64/blob/master/LICENSE</string>
+			<string>https://github.com/libretro/parallel-n64/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2008-2024 Mupen64Plus Team</string>
 		</dict>
@@ -272,7 +272,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mupen64plus-libretro-nx/blob/develop/LICENSE</string>
+			<string>https://github.com/libretro/mupen64plus-libretro-nx/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2008-2024 Mupen64Plus Team</string>
 		</dict>
@@ -297,7 +297,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/dolphin-emu/dolphin/blob/master/COPYING</string>
+			<string>https://github.com/dolphin-emu/dolphin/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2003-2024 Dolphin Emulator Project</string>
 		</dict>
@@ -346,7 +346,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/schellingb/dosbox-pure/blob/main/LICENSE</string>
+			<string>https://github.com/schellingb/dosbox-pure/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2002-2021 The DOSBox Team, 2020-2024 Bernhard Schelling</string>
 		</dict>
@@ -368,7 +368,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/melonDS-emu/melonDS/blob/master/LICENSE</string>
+			<string>https://github.com/melonDS-emu/melonDS/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2016-2024 melonDS Team</string>
 		</dict>
@@ -393,7 +393,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/JesseTG/melonds-ds/blob/main/LICENSE</string>
+			<string>https://github.com/JesseTG/melonds-ds/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2016-2024 melonDS Team</string>
 		</dict>
@@ -440,7 +440,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/TASEmulators/desmume/blob/master/desmume/COPYING</string>
+			<string>https://github.com/TASEmulators/desmume/blob/HEAD/desmume/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2005-2024 The DeSmuME Team</string>
 		</dict>
@@ -465,7 +465,7 @@
 			<key>PVLicenseName</key>
 			<string>LGPL-2.1-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/opera-libretro/blob/master/LICENSES</string>
+			<string>https://github.com/libretro/opera-libretro/blob/HEAD/LICENSES</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2012-2024 Opera Libretro Contributors</string>
 		</dict>
@@ -534,7 +534,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/nestopia/blob/master/COPYING</string>
+			<string>https://github.com/libretro/nestopia/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2003-2008 Martin Freij</string>
 		</dict>
@@ -557,7 +557,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-fceumm/blob/master/COPYING</string>
+			<string>https://github.com/libretro/libretro-fceumm/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2000-2024 FCEU Team</string>
 		</dict>
@@ -601,7 +601,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/Yabause/yabause/blob/master/yabause/COPYING</string>
+			<string>https://github.com/Yabause/yabause/blob/HEAD/yabause/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2002-2024 Yabause Team</string>
 		</dict>
@@ -627,7 +627,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-Genesis-Plus-GX</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/ekeeke/Genesis-Plus-GX/blob/master/LICENSE.txt</string>
+			<string>https://github.com/ekeeke/Genesis-Plus-GX/blob/HEAD/LICENSE.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2022 Charles MacDonald, 2007-2024 Eke-Eke</string>
 		</dict>
@@ -653,7 +653,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-Genesis-Plus-GX</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/ekeeke/Genesis-Plus-GX/blob/master/LICENSE.txt</string>
+			<string>https://github.com/ekeeke/Genesis-Plus-GX/blob/HEAD/LICENSE.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2022 Charles MacDonald, 2007-2024 Eke-Eke</string>
 		</dict>
@@ -677,7 +677,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-FBNeo</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/finalburnneo/FBNeo/blob/master/src/license.txt</string>
+			<string>https://github.com/finalburnneo/FBNeo/blob/HEAD/src/license.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 FinalBurn Neo Team</string>
 		</dict>
@@ -701,7 +701,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-FBNeo</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/finalburnneo/FBNeo/blob/master/src/license.txt</string>
+			<string>https://github.com/finalburnneo/FBNeo/blob/HEAD/src/license.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 FinalBurn Neo Team</string>
 		</dict>
@@ -725,7 +725,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-FBNeo</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/finalburnneo/FBNeo/blob/master/src/license.txt</string>
+			<string>https://github.com/finalburnneo/FBNeo/blob/HEAD/src/license.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 FinalBurn Neo Team</string>
 		</dict>
@@ -748,7 +748,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-FBNeo</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/finalburnneo/FBNeo/blob/master/src/license.txt</string>
+			<string>https://github.com/finalburnneo/FBNeo/blob/HEAD/src/license.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 FinalBurn Neo Team</string>
 		</dict>
@@ -838,7 +838,7 @@
 			<key>PVLicenseName</key>
 			<string>MPL-2.0</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/mgba-emu/mgba/blob/master/LICENSE</string>
+			<string>https://github.com/mgba-emu/mgba/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2013-2024 Jeffrey Pfau</string>
 		</dict>
@@ -862,7 +862,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/visualboyadvance-m/visualboyadvance-m/blob/master/COPYING</string>
+			<string>https://github.com/visualboyadvance-m/visualboyadvance-m/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2004-2024 VBA-M Team</string>
 		</dict>
@@ -885,7 +885,7 @@
 			<key>PVLicenseName</key>
 			<string>MIT</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/LIJI32/SameBoy/blob/master/LICENSE</string>
+			<string>https://github.com/LIJI32/SameBoy/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2015-2024 Lior Halphon</string>
 		</dict>
@@ -907,7 +907,7 @@
 			<key>PVLicenseName</key>
 			<string>BSD-3-Clause</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame/blob/master/LICENSE.md</string>
+			<string>https://github.com/libretro/mame/blob/HEAD/LICENSE.md</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 MAME Project</string>
 		</dict>
@@ -929,7 +929,7 @@
 			<key>PVLicenseName</key>
 			<string>BSD-3-Clause</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame/blob/master/LICENSE.md</string>
+			<string>https://github.com/libretro/mame/blob/HEAD/LICENSE.md</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 MAME Project</string>
 		</dict>
@@ -951,7 +951,7 @@
 			<key>PVLicenseName</key>
 			<string>BSD-3-Clause</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame/blob/master/LICENSE.md</string>
+			<string>https://github.com/libretro/mame/blob/HEAD/LICENSE.md</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 MAME Project</string>
 		</dict>
@@ -973,7 +973,7 @@
 			<key>PVLicenseName</key>
 			<string>BSD-3-Clause</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame/blob/master/LICENSE.md</string>
+			<string>https://github.com/libretro/mame/blob/HEAD/LICENSE.md</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 MAME Project</string>
 		</dict>
@@ -1000,7 +1000,7 @@
 			<key>PVLicenseName</key>
 			<string>BSD-3-Clause</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame/blob/master/LICENSE.md</string>
+			<string>https://github.com/libretro/mame/blob/HEAD/LICENSE.md</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 MAME Project</string>
 		</dict>
@@ -1022,7 +1022,7 @@
 			<key>PVLicenseName</key>
 			<string>LGPL-2.1-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/notaz/pcsx_rearmed/blob/master/COPYING</string>
+			<string>https://github.com/notaz/pcsx_rearmed/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1999-2024 PCSX-R Contributors</string>
 		</dict>
@@ -1046,7 +1046,7 @@
 			<key>PVLicenseName</key>
 			<string>MIT</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/jpd002/Play-/blob/master/LICENSE.md</string>
+			<string>https://github.com/jpd002/Play-/blob/HEAD/LICENSE.md</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2012-2024 Jean-Philip Desjardins</string>
 		</dict>
@@ -1068,7 +1068,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/hrydgard/ppsspp/blob/master/LICENSE.TXT</string>
+			<string>https://github.com/hrydgard/ppsspp/blob/HEAD/LICENSE.TXT</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2012-2024 Henrik Rydgård and PPSSPP Contributors</string>
 		</dict>
@@ -1093,7 +1093,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/atari800/atari800/blob/master/COPYING</string>
+			<string>https://github.com/atari800/atari800/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1995-2014 The Atari800 Development Team</string>
 		</dict>
@@ -1115,7 +1115,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/atari800/atari800/blob/master/COPYING</string>
+			<string>https://github.com/atari800/atari800/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1995-2014 The Atari800 Development Team</string>
 		</dict>
@@ -1137,7 +1137,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/stella-emu/stella/blob/master/License.txt</string>
+			<string>https://github.com/stella-emu/stella/blob/HEAD/License.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1995-2024 Bradford W. Mott, Stephen Anthony, The Stella Team</string>
 		</dict>
@@ -1225,7 +1225,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/virtualjaguar-libretro/blob/master/COPYING</string>
+			<string>https://github.com/libretro/virtualjaguar-libretro/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2010-2024 ADB Contributors</string>
 		</dict>
@@ -1293,7 +1293,7 @@
 			<key>PVLicenseName</key>
 			<string>LGPL-2.1-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-gme/blob/master/LICENSE</string>
+			<string>https://github.com/libretro/libretro-gme/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2003-2009 Shay Green</string>
 		</dict>
@@ -1339,7 +1339,7 @@
 			<key>PVLicenseName</key>
 			<string>BSD-3-Clause</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame/blob/master/LICENSE.md</string>
+			<string>https://github.com/libretro/mame/blob/HEAD/LICENSE.md</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 MAME Project</string>
 		</dict>
@@ -1410,7 +1410,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-vecx/blob/master/LICENSE</string>
+			<string>https://github.com/libretro/libretro-vecx/blob/HEAD/LICENSE</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 2002 Valavan Manohararajah</string>
 		</dict>
@@ -1434,7 +1434,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-prboom/blob/master/COPYING</string>
+			<string>https://github.com/libretro/libretro-prboom/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1993-1996 id Software, 1999-2000 Colin Phipps, Florian Schulze</string>
 		</dict>
@@ -1482,7 +1482,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/tyrquake/blob/master/GNU.txt</string>
+			<string>https://github.com/libretro/tyrquake/blob/HEAD/GNU.txt</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1996-1997 id Software, 2007-2024 Kevin Shanahan</string>
 		</dict>
@@ -1506,7 +1506,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/master/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
 		</dict>
@@ -1530,7 +1530,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/master/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
 		</dict>
@@ -1554,7 +1554,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/master/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
 		</dict>
@@ -1578,7 +1578,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/master/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
 		</dict>
@@ -1735,7 +1735,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vice-libretro/blob/master/vice/COPYING</string>
+			<string>https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2024 VICE Team</string>
 		</dict>
@@ -1761,7 +1761,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vice-libretro/blob/master/vice/COPYING</string>
+			<string>https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2024 VICE Team</string>
 		</dict>
@@ -1787,7 +1787,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vice-libretro/blob/master/vice/COPYING</string>
+			<string>https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2024 VICE Team</string>
 		</dict>
@@ -1813,7 +1813,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vice-libretro/blob/master/vice/COPYING</string>
+			<string>https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING</string>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2024 VICE Team</string>
 		</dict>
