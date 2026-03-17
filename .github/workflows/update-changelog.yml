@@ -104,8 +104,7 @@ jobs:
           fi
 
           git add CHANGELOG.md
-          git commit -m "chore(changelog): update [Unreleased] from recent commits
-
-Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          git commit -m "chore(changelog): update [Unreleased] from recent commits" \
+            -m "Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           git push origin develop
           echo "CHANGELOG.md pushed to develop."
