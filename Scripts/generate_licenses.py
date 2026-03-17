@@ -542,6 +542,15 @@ def main() -> None:
     all_entries = native_entries + ra_entries + spm_entries
 
     print(f"\nTotal entries: {len(all_entries)}")
+
+    if args.check:
+        # Validation-only mode: do not write outputs, just check completeness.
+        missing_count = check_completeness(all_entries)
+        if missing_count:
+            sys.exit(1)
+        # All good; exit without touching generated artifacts.
+        return
+
     print("\nWriting outputs …")
 
     json_path = output_dir / "Scripts" / "licenses.json"
@@ -549,11 +558,6 @@ def main() -> None:
 
     write_licenses_json(all_entries, json_path)
     write_licenses_md(all_entries, md_path)
-
-    if args.check:
-        missing_count = check_completeness(all_entries)
-        if missing_count:
-            sys.exit(1)
 
 
 if __name__ == "__main__":
