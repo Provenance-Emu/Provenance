@@ -117,7 +117,7 @@ public class PVThinLibretroCore: PVEmulatorCore {
         if coreId.contains("hatari") || sysId.contains("atarist") {
             setDefaultOption("hatari_boot_hd", value: "disabled")
             copyBundledConfigIfNeeded(resourceName: "hatari", extension: "cfg",
-                                      toDirectory: _bridge.BIOSPath, fileName: "hatari.cfg")
+                                      toDirectory: _bridge.biosPath, fileName: "hatari.cfg")
         }
 
         // VecX: hardware mode + visual settings
