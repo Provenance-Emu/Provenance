@@ -40,22 +40,7 @@ final class PVAtari2600ControllerViewController: PVControllerViewController<PV26
     // MARK: - Hardware switch overlay
 
     private func addHardwareSwitchOverlay() {
-        let switches = [
-            HardwareSwitchDescriptor(
-                id: "left_diff",
-                title: "LEFT DIFF",
-                offPosition: HardwareSwitchPosition(label: "B", buttonId: "leftdiffb"),
-                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "leftdiffa"),
-                defaultState: false
-            ),
-            HardwareSwitchDescriptor(
-                id: "right_diff",
-                title: "RIGHT DIFF",
-                offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiffb"),
-                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "rightdiffa"),
-                defaultState: false
-            )
-        ]
+        let switches = hardwareSwitches(for: "com.provenance.2600") ?? []
 
         let switchRow = HardwareSwitchRowView(switches: switches) { [weak self] buttonId, _ in
             self?.handleHardwareSwitchToggle(buttonId: buttonId)
@@ -75,8 +60,10 @@ final class PVAtari2600ControllerViewController: PVControllerViewController<PV26
     private func positionHardwareSwitchOverlay() {
         guard let hostingVC = hardwareSwitchHostingVC else { return }
         let preferredSize = CGSize(width: 160, height: 50)
-        let x = view.bounds.width - preferredSize.width - 12
-        let y: CGFloat = 8
+        let safeTop = view.safeAreaInsets.top
+        let safeTrailing = view.safeAreaInsets.right
+        let x = view.bounds.width - preferredSize.width - 12 - safeTrailing
+        let y = safeTop + 8
         hostingVC.view.frame = CGRect(origin: CGPoint(x: x, y: y), size: preferredSize)
         view.bringSubviewToFront(hostingVC.view)
     }

@@ -201,7 +201,7 @@ public struct HardwareSwitchRowView: View {
 
 /// Returns the hardware switches appropriate for the given system identifier string,
 /// or `nil` if the system has no hardware switches.
-public func hardwareSwitches(for systemId: String) -> [HardwareSwitchDescriptor]? {
+func hardwareSwitches(for systemId: String) -> [HardwareSwitchDescriptor]? {
     switch systemId {
     case "com.provenance.2600":
         return atari2600Switches()
