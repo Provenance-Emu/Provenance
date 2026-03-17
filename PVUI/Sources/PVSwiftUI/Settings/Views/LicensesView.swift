@@ -11,7 +11,7 @@ import PVLibrary
 import PVThemes
 import RealmSwift
 import PVUIBase
-#if canImport(SafariServices)
+#if canImport(UIKit) && canImport(SafariServices)
 import SafariServices
 #endif
 
@@ -394,7 +394,7 @@ private struct LicenseRowView: View {
 
 // MARK: - SafariSheetView
 
-#if !os(tvOS)
+#if canImport(UIKit) && canImport(SafariServices) && !os(tvOS)
 /// Thin wrapper around `SFSafariViewController` for use as a SwiftUI sheet.
 private struct SafariSheetView: UIViewControllerRepresentable {
     let url: URL
