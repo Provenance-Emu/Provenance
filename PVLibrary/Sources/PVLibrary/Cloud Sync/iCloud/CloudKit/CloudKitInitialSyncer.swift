@@ -515,10 +515,12 @@ public actor CloudKitInitialSyncer {
             }
         }
 
-        // Remove completed retries (in reverse order to maintain indices)
-        for index in completedRetries.sorted(by: >) {
-            retryQueue.remove(at: index)
-        }
+        // Remove completed retries using a Set for safe lookup
+        // (index-based removal can crash if queue was mutated during async processing)
+        let completedSet = Set(completedRetries)
+        retryQueue = retryQueue.enumerated()
+            .filter { !completedSet.contains($0.offset) }
+            .map { $0.element }
 
         if !retryQueue.isEmpty {
             WLOG("\(retryQueue.count) uploads remain in retry queue")
