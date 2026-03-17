@@ -642,9 +642,106 @@ struct RetroMenuView: View {
             recordingButton
 #endif
 
+            // MARK: - Peripherals section
+            peripheralsSection
+
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
+    }
+
+    /// Peripherals section — shows available device interfaces (mic, camera, MIDI, sensors)
+    /// and per-port device type pickers when the core reports controller info.
+    @ViewBuilder
+    private var peripheralsSection: some View {
+        let core = emulatorVC.core
+
+        // Check if any peripherals are relevant
+        let hasMic = (core as? KeyboardResponder)?.gameSupportsKeyboard == true || true // TODO: proper mic check
+        let hasMouse = (core as? MouseResponder)?.gameSupportsMouse == true
+        let hasKeyboard = (core as? KeyboardResponder)?.gameSupportsKeyboard == true
+
+        // Check for thin wrapper port info
+        let portInfo: [[NSDictionary]]? = {
+            guard let bridge = (core as? NSObject)?.value(forKey: "_bridge") as? NSObject,
+                  bridge.responds(to: Selector(("controllerPortInfo"))) else { return nil }
+            return bridge.value(forKey: "controllerPortInfo") as? [[NSDictionary]]
+        }()
+
+        let showSection = hasMouse || hasKeyboard || (portInfo != nil && !(portInfo?.isEmpty ?? true))
+
+        if showSection {
+            skinSectionHeader(String(localized: "PERIPHERALS"), systemImage: "cable.connector")
+
+            if hasKeyboard {
+                menuButton(title: "VIRTUAL KEYBOARD", icon: "keyboard", color: .retroBlue) {
+                    dismissAction(false)
+                    emulatorVC.showVirtualKeyboard(animated: true, startExpanded: true)
+                }
+            }
+
+            if hasMouse {
+                menuButton(title: "VIRTUAL MOUSE", icon: "computermouse", color: .retroPurple) {
+                    dismissAction(false)
+                    emulatorVC.showVirtualTrackpad(animated: true)
+                }
+            }
+
+            // Per-port device type picker (from SET_CONTROLLER_INFO)
+            if let portInfo = portInfo, !portInfo.isEmpty {
+                ForEach(Array(portInfo.enumerated()), id: \.offset) { portIndex, devices in
+                    if devices.count > 1 { // Only show if there are multiple options
+                        let deviceNames = devices.compactMap { $0["desc"] as? String }
+                        Menu {
+                            ForEach(Array(devices.enumerated()), id: \.offset) { idx, device in
+                                if let desc = device["desc"] as? String,
+                                   let deviceId = device["id"] as? UInt32 {
+                                    Button(desc) {
+                                        if let bridge = (core as? NSObject)?.value(forKey: "_bridge") as? NSObject,
+                                           bridge.responds(to: Selector(("setControllerPortDevice:forPort:"))) {
+                                            bridge.perform(
+                                                Selector(("setControllerPortDevice:forPort:")),
+                                                with: NSNumber(value: deviceId),
+                                                with: NSNumber(value: UInt32(portIndex))
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "gamecontroller")
+                                    .foregroundColor(.retroBlue)
+                                    .frame(width: 30)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("PORT \(portIndex + 1)")
+                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                        .foregroundColor(.retroBlue.opacity(0.8))
+                                    Text(deviceNames.joined(separator: " / "))
+                                        .font(.system(size: isLandscape ? 13 : 15, weight: .semibold))
+                                        .foregroundColor(.white)
+                                        .lineLimit(1)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.retroBlue.opacity(0.5))
+                            }
+                            .padding(.vertical, isLandscape ? 8 : 10)
+                            .padding(.horizontal, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.black.opacity(0.55))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .strokeBorder(Color.retroBlue.opacity(0.4), lineWidth: 1)
+                                    )
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Screen recording button with Plus gating
