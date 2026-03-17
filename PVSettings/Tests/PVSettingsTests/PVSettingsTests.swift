@@ -426,6 +426,7 @@ struct MetalFilterSelectionOptionTests {
         }
     }
 
+    @available(*, deprecated, message: "Tests deprecated MetalFilterSelectionOption.hasCRTParameters")
     @Test("hasCRTParameters is true only for simpleCRT and complexCRT")
     func hasCRTParameters() {
         #expect(MetalFilterSelectionOption.simpleCRT.hasCRTParameters)
