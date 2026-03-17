@@ -37,10 +37,6 @@ struct ControllerSettingsView: View {
     @State private var connectionAnimation = false
     /// Current window for iCade setup
     @State private var window: UIWindow?
-    /// Controller selected for button remapping
-    @State private var controllerForRemapping: GCController?
-    /// Show button remapping view
-    @State private var showRemappingView = false
 
     /// Keyboard mapping documentation
     private let keyboardMappingDocs = """

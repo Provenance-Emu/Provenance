@@ -54,6 +54,10 @@ struct TapToRemapView: View {
     /// Restored in `stopListening()` so other app subsystems (remapping, navigation)
     /// continue to function normally after the sheet is dismissed.
     @State private var previousValueChangedHandler: GCExtendedGamepadValueChangedHandler?
+    /// Guards against `stopListening()` being called twice (e.g. from the Cancel
+    /// button action AND subsequently from `.onDisappear`).  Reset by `startListening()`
+    /// so "Try Again" can re-arm the capture flow.
+    @State private var hasStopped = false
 
     // MARK: Body
 
@@ -121,6 +125,7 @@ struct TapToRemapView: View {
             return
         }
 
+        hasStopped = false
         isListening = true
         let wrapper = getRemappableControllerWrapper(for: controller)
 
@@ -144,6 +149,10 @@ struct TapToRemapView: View {
     }
 
     private func stopListening() {
+        // Guard against double-calls (e.g. Cancel button + .onDisappear both firing).
+        // Without this, the second call would write nil over the just-restored handler.
+        guard !hasStopped else { return }
+        hasStopped = true
         // Restore the handler that was active before this view installed its own.
         controller.extendedGamepad?.valueChangedHandler = previousValueChangedHandler
         previousValueChangedHandler = nil

@@ -151,21 +151,6 @@ public final class PVRemappableController: NSObject {
             }
         }
 
-        // Motion
-//        if #available(iOS 14.5, tvOS 14.5, *) {
-//            dualSense.controller?.physicalInputProfile.motionInput?.valueChangedHandler = { [weak self] (motion: GCMotion) in
-//                self?.gyroHandler?(
-//                    Float(motion.gravity.x),
-//                    Float(motion.gravity.y),
-//                    Float(motion.gravity.z)
-//                )
-//                self?.accelerometerHandler?(
-//                    Float(motion.userAcceleration.x),
-//                    Float(motion.userAcceleration.y),
-//                    Float(motion.userAcceleration.z)
-//                )
-//            }
-//        }
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
@@ -515,6 +500,8 @@ public final class PVRemappableController: NSObject {
         case gamepad.rightThumbstickButton: return .rightThumbstickButton
         default:
             if #available(iOS 14.5, tvOS 14.5, *) {
+                // Platform-specific mappings take precedence over the generic options button.
+                // DualSense: buttonOptions is the "Share" button.
                 if let dualSense = gamepad as? GCDualSenseGamepad {
                     switch element {
                     case dualSense.buttonOptions: return .share
@@ -522,12 +509,18 @@ public final class PVRemappableController: NSObject {
                     default: break
                     }
                 }
+                // Xbox: buttonOptions is the "Share" button on Elite/Series X.
                 if let xbox = gamepad as? GCXboxGamepad {
                     switch element {
                     case xbox.buttonOptions: return .shareButton
                     default: break
                     }
                 }
+            }
+            // Generic GCExtendedGamepad options button (e.g. PS4 Options, Switch Pro Capture).
+            if #available(iOS 14.0, tvOS 14.0, *),
+               let optionsButton = gamepad.buttonOptions, optionsButton === element {
+                return .options
             }
             return nil
         }

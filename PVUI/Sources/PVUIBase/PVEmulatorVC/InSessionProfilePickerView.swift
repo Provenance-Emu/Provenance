@@ -16,7 +16,8 @@ import PVLogging
 
 /// A row of profiles grouped by controller, with a stable `Identifiable` ID
 /// derived from the controller's `ObjectIdentifier` so ForEach diffing is reliable
-/// even when `vendorName` is nil or shared across multiple controllers.
+/// even when multiple controllers share the same `vendorName`.
+/// Note: controllers whose `vendorName` is nil are excluded by `loadEntries()`.
 private struct ControllerEntry: Identifiable {
     let id: ObjectIdentifier
     let controller: GCController
