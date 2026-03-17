@@ -515,12 +515,9 @@ struct PauseTileMenuView: View {
                             options: options.map { CoreActionOption(title: $0.title, selected: $0 == opt) },
                             style: action.style
                         )
-                        // Dismiss with resumeEmulation: true so dismissNav's completion
-                        // handler is the single owner of setPauseEmulation — avoids the
-                        // race where a dismissAction(false) completion re-pauses after
-                        // handleCoreAction already unpaused.
-                        dismissAction(true)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        // Dismiss with resumeEmulation: true and run the core action from
+                        // dismissNav's completion so it cannot race with pause/resume state.
+                        self.emulatorVC.dismissNav(resumeEmulation: true) {
                             self.emulatorVC.handleCoreAction(selectedAction)
                         }
                     }
