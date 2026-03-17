@@ -38,8 +38,8 @@ struct PauseMenuTileTests {
         #expect(tile.isEnabled == false)
     }
 
-    @Test("Tiles with same ID are equal via Identifiable")
-    func tileIdentifiableUniqueness() {
+    @Test("Tiles with different IDs have distinct identifiers")
+    func tileIdentifiableDistinctIDs() {
         let tileA = PauseMenuTile(id: "resume", icon: "play.fill", label: "Resume")
         let tileB = PauseMenuTile(id: "quit", icon: "xmark", label: "Quit")
         #expect(tileA.id != tileB.id)
