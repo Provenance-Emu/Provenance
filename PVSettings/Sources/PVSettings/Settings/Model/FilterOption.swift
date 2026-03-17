@@ -233,7 +233,7 @@ public extension Defaults.Keys {
     static let complexCRTUseWarp = Key<Bool>("complexCRTUseWarp", default: true)
 
     // MARK: - LCD Filter Parameters
-    /// Pixel grid density — controls how visible the LCD grid is (0.5–2.0, default: 0.8)
+    /// Pixel grid density — controls how visible the LCD grid is (0.25–2.0, default: 0.8)
     static let lcdGridDensity = Key<Float>("lcdGridDensity", default: 0.8)
     /// Grid line brightness/darkness (0.0–1.0, default: 0.2)
     static let lcdGridBrightness = Key<Float>("lcdGridBrightness", default: 0.2)
