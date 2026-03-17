@@ -128,9 +128,28 @@ def plist_bool(content: str, key: str) -> Optional[bool]:
 def read_plist_info(plist_path: Path) -> dict:
     """Parse the fields we care about from a Core.plist."""
     try:
-        content = plist_path.read_text(encoding="utf-8", errors="replace")
+        raw = plist_path.read_bytes()
     except OSError:
         return {}
+
+    # Binary plist — use plistlib
+    if raw[:6] == b"bplist":
+        import plistlib
+        try:
+            data = plistlib.loads(raw)
+        except Exception:
+            return {}
+        return {
+            "identifier":  data.get("PVCoreIdentifier", ""),
+            "name":        data.get("PVProjectName", plist_path.parent.name),
+            "url":         data.get("PVProjectURL", ""),
+            "version":     data.get("PVProjectVersion", ""),
+            "disabled":    data.get("PVDisabled", False) is True,
+            "raw_content": str(data),
+        }
+
+    # XML plist
+    content = raw.decode("utf-8", errors="replace")
     return {
         "identifier":      plist_field(content, "PVCoreIdentifier") or "",
         "name":            plist_field(content, "PVProjectName") or plist_path.parent.name,
@@ -144,8 +163,27 @@ def read_plist_info(plist_path: Path) -> dict:
 def update_plist_version(plist_path: Path, new_version: str) -> bool:
     """Overwrite PVProjectVersion in the plist.  Returns True if changed."""
     try:
-        content = plist_path.read_text(encoding="utf-8")
+        raw = plist_path.read_bytes()
     except OSError:
+        return False
+
+    # Binary plist — use plistlib
+    if raw[:6] == b"bplist":
+        import plistlib
+        try:
+            data = plistlib.loads(raw)
+        except Exception:
+            return False
+        if data.get("PVProjectVersion") == new_version:
+            return False
+        data["PVProjectVersion"] = new_version
+        plist_path.write_bytes(plistlib.dumps(data, fmt=plistlib.FMT_BINARY))
+        return True
+
+    # XML plist — regex replace
+    try:
+        content = raw.decode("utf-8")
+    except UnicodeDecodeError:
         return False
 
     updated = re.sub(

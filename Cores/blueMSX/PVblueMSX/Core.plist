@@ -16,6 +16,6 @@
 	<key>PVProjectURL</key>
 	<string>http://fms.komkon.org/blueMSX/</string>
 	<key>PVProjectVersion</key>
-	<string>0</string>
+	<string>svn</string>
 </dict>
 </plist>
