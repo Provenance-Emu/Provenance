@@ -1527,8 +1527,12 @@ static bool thin_environment(unsigned cmd, void *data) {
             const struct retro_system_av_info *info = (const struct retro_system_av_info *)data;
             if (!info) return false;
             _rawAVInfo = *info;
-            ILOG(@"ThinEnv SET_SYSTEM_AV_INFO %ux%u @ %.2f fps",
-                 info->geometry.base_width, info->geometry.base_height, info->timing.fps);
+            ILOG(@"ThinEnv SET_SYSTEM_AV_INFO %ux%u (max %ux%u) @ %.2f fps, sample_rate=%.1f",
+                 info->geometry.base_width, info->geometry.base_height,
+                 info->geometry.max_width, info->geometry.max_height,
+                 info->timing.fps, info->timing.sample_rate);
+            // Reallocate video buffer since geometry may have changed
+            [self _allocateVideoBuffer];
             if ([_frontendDelegate respondsToSelector:@selector(libretroFrontend:didUpdateAVInfo:)]) {
                 [_frontendDelegate libretroFrontend:self didUpdateAVInfo:self.avInfo];
             }
@@ -1537,8 +1541,20 @@ static bool thin_environment(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_SET_GEOMETRY: {
             const struct retro_game_geometry *geo = (const struct retro_game_geometry *)data;
             if (!geo) return false;
+            // Reallocate video buffer if max dimensions grew
+            BOOL needsRealloc = (geo->max_width  > _rawAVInfo.geometry.max_width ||
+                                 geo->max_height > _rawAVInfo.geometry.max_height);
             _rawAVInfo.geometry = *geo;
-            ILOG(@"ThinEnv SET_GEOMETRY %ux%u aspect=%.3f", geo->base_width, geo->base_height, geo->aspect_ratio);
+            ILOG(@"ThinEnv SET_GEOMETRY %ux%u (max %ux%u) aspect=%.3f",
+                 geo->base_width, geo->base_height,
+                 geo->max_width, geo->max_height, geo->aspect_ratio);
+            if (needsRealloc) {
+                [self _allocateVideoBuffer];
+            }
+            // Notify delegate so the rendering layer can resize
+            if ([_frontendDelegate respondsToSelector:@selector(libretroFrontend:didUpdateAVInfo:)]) {
+                [_frontendDelegate libretroFrontend:self didUpdateAVInfo:self.avInfo];
+            }
             return true;
         }
 
@@ -1609,11 +1625,40 @@ static bool thin_environment(unsigned cmd, void *data) {
             if ([_frontendDelegate respondsToSelector:@selector(libretroFrontend:didSetMessage:frames:)]) {
                 [_frontendDelegate libretroFrontend:self didSetMessage:msgStr frames:msg->frames];
             }
+            // Forward to OSD toast system — assume ~60fps, convert frames to seconds
+            NSTimeInterval duration = (msg->frames > 0) ? (NSTimeInterval)msg->frames / 60.0 : 3.0;
+            [PVOSDNotification postMessage:msgStr type:PVOSDTypeInfo duration:duration];
             return true;
         }
-        case RETRO_ENVIRONMENT_SET_MESSAGE_EXT:
-            DLOG(@"ThinEnv SET_MESSAGE_EXT");
+        case RETRO_ENVIRONMENT_SET_MESSAGE_EXT: {
+            const struct retro_message_ext *msg = (const struct retro_message_ext *)data;
+            if (!msg || !msg->msg) return false;
+            NSString *msgStr = [NSString stringWithUTF8String:msg->msg];
+
+            // Log regardless of target
+            switch (msg->level) {
+                case RETRO_LOG_DEBUG: DLOG(@"[Core] %@", msgStr); break;
+                case RETRO_LOG_INFO:  ILOG(@"[Core] %@", msgStr); break;
+                case RETRO_LOG_WARN:  WLOG(@"[Core] %@", msgStr); break;
+                case RETRO_LOG_ERROR: ELOG(@"[Core] %@", msgStr); break;
+                default: ILOG(@"[Core] %@", msgStr); break;
+            }
+
+            // Forward to OSD unless target is log-only
+            if (msg->target != RETRO_MESSAGE_TARGET_LOG) {
+                // Map retro_log_level to PVOSDType
+                PVOSDType osdType;
+                switch (msg->level) {
+                    case RETRO_LOG_ERROR: osdType = PVOSDTypeError;   break;
+                    case RETRO_LOG_WARN:  osdType = PVOSDTypeWarning; break;
+                    default:              osdType = PVOSDTypeInfo;    break;
+                }
+                // duration is in ms, convert to seconds
+                NSTimeInterval duration = (msg->duration > 0) ? (NSTimeInterval)msg->duration / 1000.0 : 3.0;
+                [PVOSDNotification postMessage:msgStr type:osdType duration:duration];
+            }
             return true;
+        }
 
         // ---- Frame time callback ----
         case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: {
