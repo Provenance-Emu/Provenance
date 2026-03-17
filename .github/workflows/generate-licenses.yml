@@ -62,12 +62,32 @@ jobs:
           Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           git push
 
+      - name: Dispatch website sync
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          curl -fsSL -X POST \
+            -H "Authorization: Bearer ${{ secrets.WEBSITE_DISPATCH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/Provenance-EMU/provenance-emu.github.io/dispatches \
+            -d "{\"event_type\":\"licenses-updated\",\"client_payload\":{\"ref\":\"${{ github.ref_name }}\"}}"
+          echo "Dispatched licenses-updated to provenance-emu.github.io"
+
+      - name: Dispatch wiki sync
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          curl -fsSL -X POST \
+            -H "Authorization: Bearer ${{ secrets.WEBSITE_DISPATCH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/Provenance-Emu/wiki/dispatches \
+            -d "{\"event_type\":\"licenses-updated\",\"client_payload\":{\"ref\":\"${{ github.ref_name }}\"}}"
+          echo "Dispatched licenses-updated to wiki"
+
       - name: Post summary
         if: always()
         run: |
           echo "## License Manifest" >> "$GITHUB_STEP_SUMMARY"
           if [ -f Scripts/licenses.json ]; then
-            TOTAL=$(python3 -c "import json; print(len(json.load(open('Scripts/licenses.json'))['cores']))")
+            TOTAL=$(python3 -c "import json; print(len(json.load(open('Scripts/licenses.json'))['entries']))")
             MISSING=$(python3 Scripts/generate_licenses.py --check 2>&1 | grep -c "missing" || echo "0")
             echo "- **Total entries**: $TOTAL" >> "$GITHUB_STEP_SUMMARY"
             echo "- **Missing license data**: $MISSING" >> "$GITHUB_STEP_SUMMARY"
