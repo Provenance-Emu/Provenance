@@ -268,12 +268,12 @@ struct DefaultControllerSkinView: View {
                 // and don't block the game screen.
                 if validSize, let sysId = systemId,
                    let switches = hardwareSwitches(for: sysId.rawValue) {
-                    // Position the switch row at the top-trailing corner.
-                    // Spacers have no content so they pass touches through naturally;
-                    // only the switch row itself needs hit-testing enabled.
-                    VStack {
-                        HStack {
-                            Spacer()
+                    // Use a transparent non-interactive base so only the switch row
+                    // itself receives gestures — not the surrounding empty space.
+                    Color.clear
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .allowsHitTesting(false)
+                        .overlay(alignment: .topTrailing) {
                             HardwareSwitchRowView(switches: switches) { buttonId, _ in
                                 // Send a momentary press+release so the core registers the edge.
                                 inputHandler.buttonPressed(buttonId)
@@ -284,8 +284,6 @@ struct DefaultControllerSkinView: View {
                             .padding(.top, geometry.safeAreaInsets.top + 8)
                             .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
                         }
-                        Spacer()
-                    }
                 }
 
                 // Virtual input quick-toggle buttons (keyboard / mouse) — top-leading corner.
