@@ -265,6 +265,35 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Clear all button and analog state for all players.
 - (void)clearAllInput;
 
+// MARK: Keyboard input
+
+/// Set the press/release state of a libretro keyboard key.
+/// @param keycode  A `retro_key` enum value (e.g. RETROK_a, RETROK_RETURN).
+/// @param pressed  YES when the key is pressed, NO when released.
+- (void)setKeyState:(unsigned)keycode pressed:(BOOL)pressed;
+
+// MARK: Mouse input
+
+/// Set the relative mouse movement delta for the current frame.
+/// Deltas are cleared (consumed) after `thin_input_state` reads them.
+/// @param dx  Horizontal delta (positive = right).
+/// @param dy  Vertical delta (positive = down).
+- (void)setMouseDeltaX:(int16_t)dx deltaY:(int16_t)dy;
+
+/// Set or clear a mouse button.
+/// @param button  A RETRO_DEVICE_ID_MOUSE_* button constant (LEFT=2, RIGHT=3, MIDDLE=6).
+/// @param pressed YES to press, NO to release.
+- (void)setMouseButton:(unsigned)button pressed:(BOOL)pressed;
+
+// MARK: Pointer (touch) input
+
+/// Set the pointer (touch) position and pressed state.
+/// Coordinates are in libretro normalized range: -0x7FFF .. +0x7FFF.
+/// @param x        Horizontal position.
+/// @param y        Vertical position.
+/// @param pressed  YES if the pointer/touch is active.
+- (void)setPointerX:(int16_t)x y:(int16_t)y pressed:(BOOL)pressed;
+
 @end
 
 NS_ASSUME_NONNULL_END
