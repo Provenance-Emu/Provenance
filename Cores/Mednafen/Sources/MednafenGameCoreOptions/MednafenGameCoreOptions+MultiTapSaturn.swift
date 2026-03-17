@@ -26,7 +26,6 @@ import Foundation
                 "T-36101G"   : 4,  // Baku Baku Animal (Japan)
                 "GS-9126"    : 4,  // Baku Baku Animal (Japan, alt)
                 "T-8128G"    : 4,  // BioHazard (Japan) / Resident Evil (Saturn)
-                "T-3101G"    : 4,  // Bomberman (Japan) — base, not TeamTap
                 "T-4518G"    : 4,  // Bust-A-Move 2 / Puzzle Bobble 2 (Japan)
                 "T-18503G"   : 4,  // Capcom vs. SNK (Japan, later entry)
                 "GS-9142"    : 4,  // Daytona USA (Japan, standard)

@@ -1312,9 +1312,21 @@ static void emulation_run(BOOL skipFrame) {
                 }
             }
         } else {
-            // No controller present — clear the input buffer to prevent phantom button
-            // holds from leaking into the emulator (e.g. when a controller is disconnected).
-            memset(inputBuffer[playerIndex], 0, 9 * sizeof(uint32_t));
+            // No controller present — reset the input buffer to a safe neutral state
+            // to prevent phantom button holds from leaking when a controller disconnects.
+            if (self.systemType == MednaSystemPSX) {
+                // PSX DualShock buffer: clear buttons then re-center analog axes.
+                // Zeroing the whole buffer would pin analog axes to 0 instead of center.
+                memset(inputBuffer[playerIndex], 0, 9 * sizeof(uint32_t));
+                uint8 *buf = (uint8 *)inputBuffer[playerIndex];
+                Mednafen::MDFN_en16lsb(&buf[3],   (uint16)32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16)32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16)32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16)32767);
+            } else {
+                // Non-PSX: the relevant state is just the button bitfield in word 0.
+                inputBuffer[playerIndex][0] = 0;
+            }
         }
     }
 }

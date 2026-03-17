@@ -365,8 +365,8 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
     // ss.input.sport1.multitap / ss.input.sport2.multitap
     static var ss_multitap_option: CoreOption {
         .bool(.init(
-            title: "TeamTap (Multitap)",
-            description: "Enable the Saturn TeamTap adapter on port 1 for 3–6 player games. Automatically enabled for known multiplayer games or when 3+ controllers are connected. Enable manually for unlisted games.",
+            title: "Force TeamTap (Multitap)",
+            description: "Force-enable the Saturn TeamTap adapter regardless of game. TeamTap is already auto-enabled for known multiplayer games and when 3+ controllers are connected; use this only to override for unlisted games.",
             requiresRestart: true), defaultValue: false)
     }
 
