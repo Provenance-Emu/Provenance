@@ -92,6 +92,14 @@ public extension PVEmulatorConfiguration {
             coresInitialized = true
         }
         
+        // Collect all valid core identifiers (top-level + subcores) so we can
+        // prune stale Realm entries afterwards.
+        var validIdentifiers: Set<String> = []
+        for plist in plists {
+            validIdentifiers.insert(plist.identifier)
+            plist.subCores?.forEach { validIdentifiers.insert($0.identifier) }
+        }
+
         await plists.concurrentForEach { corePlist in
             do {
                 try await registerCore(corePlist)
@@ -99,6 +107,27 @@ public extension PVEmulatorConfiguration {
                 ELOG("Failed to register core \(corePlist.identifier)")
             }
         }
+
+        // Remove stale PVCore entries that no longer correspond to any known
+        // plist.  This cleans up phantom cores left by earlier dynamic-scanner
+        // runs that extracted garbage metadata from Mach-O __cstring sections
+        // (e.g. "%d.mcr", ".mv" appearing as core names).
+        let database = RomDatabase.sharedInstance
+        let allCores = database.all(PVCore.self).toArray()
+        let staleCores = allCores.filter { !validIdentifiers.contains($0.identifier) }
+        if !staleCores.isEmpty {
+            ILOG("Pruning \(staleCores.count) stale PVCore entries: \(staleCores.map(\.identifier).joined(separator: ", "))")
+            do {
+                try database.writeTransaction {
+                    for core in staleCores where !core.isInvalidated {
+                        database.realm.delete(core)
+                    }
+                }
+            } catch {
+                ELOG("Failed to prune stale cores: \(error)")
+            }
+        }
+
         // Reload RomDatabase caches to ensure in-memory state matches the
         // newly-registered cores for non-boot call paths (e.g. reset library).
         // Boot-time initialization may still trigger an additional reload later,

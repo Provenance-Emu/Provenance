@@ -28,7 +28,7 @@ enum LibretroMetadataReader {
     }
 
     private struct DiskCache: Codable {
-        static let currentVersion = 3   // bumped: exclude date strings from version heuristic
+        static let currentVersion = 4   // bumped: tighter name/version heuristic rejects format strings
         var version: Int = DiskCache.currentVersion
         /// keyed by core identifier
         var entries: [String: DiskCacheEntry] = [:]
@@ -236,9 +236,22 @@ enum LibretroMetadataReader {
             let hi     = min(strings.count - 1, extIdx + 6)
             let window = strings[lo...hi].filter { $0 != extStr }
 
+            // Reject strings that look like C format specifiers, file extensions,
+            // file paths, or other non-name metadata that can appear in __cstring.
+            let looksLikeJunk: (String) -> Bool = { s in
+                s.contains("%") ||                       // printf format string ("%d.mcr", "%*lld")
+                s.hasPrefix(".") ||                      // file extension (".mv", ".srm")
+                s.hasPrefix("/") ||                      // file path
+                s.hasPrefix("\\") ||                     // Windows path
+                s.contains("\t") ||                      // tab-separated data
+                s.unicodeScalars.contains(where: { $0.value < 0x20 }) // control chars
+            }
+
             let libraryName = window.first(where: { s in
                 !s.contains("|") && s.count >= 2 && s.count <= 60 &&
-                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
+                !looksLikeJunk(s) &&
+                s.first?.isLetter == true &&
+                s.filter({ $0.isLetter }).count >= 2
             })
             guard libraryName != nil else { return nil }
 
@@ -253,12 +266,13 @@ enum LibretroMetadataReader {
             }
             // First pass: prefer a string with at least one letter (real version tag)
             let libVersionWithLetter = window.first(where: { s in
-                s != libraryName && !isDate(s) && s.count >= 1 && s.count <= 30 &&
+                s != libraryName && !isDate(s) && !looksLikeJunk(s) &&
+                s.count >= 1 && s.count <= 30 &&
                 s.range(of: "[A-Za-z]", options: .regularExpression) != nil
             })
-            // Second pass: any non-date short string
+            // Second pass: any non-date, non-junk short string
             let libVersion = libVersionWithLetter
-                ?? window.first(where: { $0 != libraryName && !isDate($0) && $0.count >= 1 && $0.count <= 30 })
+                ?? window.first(where: { $0 != libraryName && !isDate($0) && !looksLikeJunk($0) && $0.count >= 1 && $0.count <= 30 })
                 ?? ""
 
             return LibretroMetadata(version: libVersion, validExtensions: exts)

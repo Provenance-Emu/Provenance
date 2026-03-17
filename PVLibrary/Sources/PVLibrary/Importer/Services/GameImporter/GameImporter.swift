@@ -4273,7 +4273,7 @@ fileprivate extension String {
 /// a fresh probe on the next launch.
 internal enum CorePlistResultCache {
 
-    private static let cacheVersion = 1
+    private static let cacheVersion = 2  // bumped: invalidate stale entries from loose Mach-O heuristic
 
     private struct Payload: Codable {
         let version: Int
