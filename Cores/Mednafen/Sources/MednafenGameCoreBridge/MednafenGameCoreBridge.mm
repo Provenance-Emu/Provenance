@@ -27,6 +27,7 @@
 
 
 #import "MednafenGameCoreBridge.h"
+#include <zlib.h>
 
 @import MednafenGameCoreC;
 @import MednafenGameCoreOptions;
@@ -69,6 +70,20 @@
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapSaturnGames;
 + (NSArray<NSString*>*_Nonnull)multiTapSaturnPort2Games;
 @end
+
+/// Compute CRC32 of a ROM file, stripping any 512-byte SMC header if present.
+static uint32_t computeROMCRC32(NSString *filePath) {
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    if (!data) return 0;
+    const uint8_t *bytes = (const uint8_t *)data.bytes;
+    NSUInteger length = data.length;
+    // Strip 512-byte header when file size mod 1024 == 512 (SMC format)
+    if (length > 512 && (length % 1024) == 512) {
+        bytes += 512;
+        length -= 512;
+    }
+    return (uint32_t)crc32(0, bytes, (uInt)length);
+}
 
 static Mednafen::MDFNGI *game;
 static Mednafen::MDFN_Surface *backBufferSurf;
@@ -875,10 +890,55 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
     }
-    else if (self.systemType == MednaSystemVirtualBoy || self.systemType == MednaSystemSNES)
+    else if (self.systemType == MednaSystemVirtualBoy)
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+    }
+    else if (self.systemType == MednaSystemSNES)
+    {
+        // Detect multitap via ROM CRC32 (matches snes9x game list)
+        uint32_t romCRC = computeROMCRC32(path);
+        NSString *crcStr = [NSString stringWithFormat:@"%08x", romCRC];
+        BOOL is8Player = [[MednafenGameCoreOptions multiTapSNES8PlayerGames] containsObject:crcStr];
+        BOOL is5Player = is8Player || [[MednafenGameCoreOptions multiTapSNESGames] containsObject:crcStr];
+        NSString *prefix = [self->mednafenCoreModule isEqualToString:@"snes_faust"] ? @"snes_faust" : @"snes";
+
+        if (is8Player) {
+            // 8-player homebrew: multitap on both physical ports
+            NSString *key1 = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
+                              [prefix isEqualToString:@"snes_faust"] ? @"sport1" : @"port1"];
+            NSString *key2 = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
+                              [prefix isEqualToString:@"snes_faust"] ? @"sport2" : @"port2"];
+            Mednafen::MDFNI_SetSettingB([key1 UTF8String], true);
+            Mednafen::MDFNI_SetSettingB([key2 UTF8String], true);
+            self->multiTapPlayerCount = 8;
+            ILOG(@"Mednafen SNES: 8-player multitap crc=%@ module=%@", crcStr, self->mednafenCoreModule);
+            for (int i = 0; i < 8; i++) {
+                game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            }
+        } else if (is5Player) {
+            // 5-player: controller in port 1, multitap in port 2
+            NSString *key = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
+                             [prefix isEqualToString:@"snes_faust"] ? @"sport2" : @"port2"];
+            Mednafen::MDFNI_SetSettingB([key UTF8String], true);
+            self->multiTapPlayerCount = 5;
+            ILOG(@"Mednafen SNES: 5-player multitap crc=%@ module=%@", crcStr, self->mednafenCoreModule);
+            for (int i = 0; i < 5; i++) {
+                game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            }
+        } else {
+            // Standard 2-player — explicitly disable multitap to avoid bleed from prior loads
+            NSString *key1 = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
+                              [prefix isEqualToString:@"snes_faust"] ? @"sport1" : @"port1"];
+            NSString *key2 = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
+                              [prefix isEqualToString:@"snes_faust"] ? @"sport2" : @"port2"];
+            Mednafen::MDFNI_SetSettingB([key1 UTF8String], false);
+            Mednafen::MDFNI_SetSettingB([key2 UTF8String], false);
+            self->multiTapPlayerCount = 2;
+            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+        }
     }
     else if (self.systemType == MednaSystemNES)
     {
@@ -895,7 +955,6 @@ static void emulation_run(BOOL skipFrame) {
         BOOL hasM3u = [path.pathExtension.lowercaseString isEqualToString:@"m3u"];
         if (hasM3u) {
             multiDiscGame = YES;
-            // Determine disc count from M3U entries.
             NSInteger discCount = PVCountM3UEntriesAtPath(path);
             self.maxDiscs = (int)MAX((NSInteger)1, discCount);
             ILOG(@"Mednafen: Saturn M3U detected, discs=%ld", (long)self.maxDiscs);
@@ -972,7 +1031,6 @@ static void emulation_run(BOOL skipFrame) {
             for (int port = 0; port < portsToClear; port++) {
                 memset(inputBuffer[port], 0, sizeof(inputBuffer[port]));
             }
-
             Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
             Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
             self->multiTapPlayerCount = 2;
@@ -1197,6 +1255,7 @@ static void emulation_run(BOOL skipFrame) {
     switch (self.systemType) {
         case MednaSystemPSX:
         case MednaSystemSS:
+        case MednaSystemSNES:
             maxPlayers = self->multiTapPlayerCount;
             break;
         case MednaSystemPCE:
@@ -1205,7 +1264,6 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemMD:
         case MednaSystemSMS:
         case MednaSystemNES:
-        case MednaSystemSNES:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
