@@ -33,21 +33,21 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
          #define PLUGIN_TRANSFER_PAK         4 /* not implemented for non raw data */
          #define PLUGIN_RAW                  5 /* the controller plugin is passed in raw data */
          */
-        // Default all controllers to Smart Pak (PLUGIN_RAW = 5).
-        // Smart Pak handles both memory saves (0x0000–0x7FFF) and rumble (0xC000)
-        // in the same slot, so saves are not lost and rumble-enabled games like
-        // GoldenEye 007 and Starfox 64 work without user configuration.
-        // Existing mempak save data is preserved — Smart Pak uses identical storage.
-        let defaultValue = 5
+        // Default to Auto (0): reads Mempak/Rumble flags from the bundled
+        // mupen64plus.ini ROM database after M64CMD_ROM_OPEN, then selects
+        // the best pak type automatically.  Falls back to Smart Pak (5) for
+        // unknown ROMs so saves and rumble always work out of the box.
+        let defaultValue = 0
         return .enumeration(.init(title: "Controller Pak \(index)",
                                   description: nil,
                                   requiresRestart: true),
                             values:[
+                                .init(title: "Auto (ROM Database)", description: "Automatically choose the best pak type from the bundled ROM database. Recommended for most games.", value: 0),
                                 .init(title: "None", description: "", value: 1),
                                 .init(title: "Memory Pak", description: "Persistent save storage only — no rumble", value: 2),
                                 .init(title: "Rumble Pak", description: "Vibration feedback only — no memory saves (requires compatible controller)", value: 3),
                                 .init(title: "Transfer Pak", description: "Connect a GB/GBC cartridge to this N64 controller port", value: 4),
-                                .init(title: "Smart Pak (Memory + Rumble)", description: "Virtual combo pak: persistent saves AND rumble in the same slot. Best choice for most games.", value: 5),
+                                .init(title: "Smart Pak (Memory + Rumble)", description: "Virtual combo pak: persistent saves AND rumble in the same slot.", value: 5),
                             ],
                             defaultValue: defaultValue)
     }
@@ -375,10 +375,10 @@ extension MupenGameCoreOptions {
 @objc public extension MupenGameCoreOptions {
     @objc static var dualJoystickOption: Bool { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.dualJoystick).asBool }
     
-    @objc static var controllerPak1Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak1).asInt ?? 1 }
-    @objc static var controllerPak2Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak2).asInt ?? 1 }
-    @objc static var controllerPak3Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak3).asInt ?? 1 }
-    @objc static var controllerPak4Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak4).asInt ?? 1 }
+    @objc static var controllerPak1Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak1).asInt ?? 0 }
+    @objc static var controllerPak2Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak2).asInt ?? 0 }
+    @objc static var controllerPak3Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak3).asInt ?? 0 }
+    @objc static var controllerPak4Option: Int { MupenGameCoreOptions.valueForOption(MupenGameCoreOptions.controllerPak4).asInt ?? 0 }
     
     
     //    func parseOptions() {
