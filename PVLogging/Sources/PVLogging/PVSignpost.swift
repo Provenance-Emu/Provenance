@@ -86,9 +86,9 @@ public extension OSSignpostID {
 /// Stub log handles matching the `PVSignpostLog` API on Apple platforms.
 /// Using the same type name keeps call sites free of `#if canImport(OSLog)` guards.
 public enum PVSignpostLog {
-    nonisolated(unsafe) public static let frame: Any = ()
-    nonisolated(unsafe) public static let audio: Any = ()
-    nonisolated(unsafe) public static let library: Any = ()
+    public static let frame: Void = ()
+    public static let audio: Void = ()
+    public static let library: Void = ()
 }
 
 /// Stub: signpost APIs are no-ops on non-Apple platforms.
