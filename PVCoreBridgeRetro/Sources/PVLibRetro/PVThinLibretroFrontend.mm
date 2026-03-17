@@ -440,7 +440,7 @@ typedef struct PVThinLibretroSymbols {
     @private
 
     // Controller port info (from SET_CONTROLLER_INFO)
-    NSArray<NSArray<NSDictionary *> *> *_controllerPortInfo;
+    NSArray<NSArray<NSDictionary<NSString *, id> *> *> *_controllerPortInfo;
 
     // Microphone (AudioUnit-backed)
     struct retro_microphone_interface _microphoneInterface;
