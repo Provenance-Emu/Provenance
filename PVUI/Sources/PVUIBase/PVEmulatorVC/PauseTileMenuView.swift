@@ -19,6 +19,9 @@ import PVLogging
 import PVLibrary
 import PVSettings
 import PVThemes
+#if canImport(UIKit)
+import UIKit
+#endif
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -90,7 +93,6 @@ struct PauseTileMenuView: View {
             id: "loadState",
             icon: "arrowshape.turn.up.left",
             label: String(localized: "Quick Load"),
-            badge: hasSave ? nil : nil,
             isEnabled: supportsSaveStates && hasSave,
             colorKey: .blue
         ))
@@ -132,6 +134,12 @@ struct PauseTileMenuView: View {
             label: String(localized: "Screenshot"),
             colorKey: .yellow
         ))
+        tiles.append(PauseMenuTile(
+            id: "screenshots",
+            icon: "photo.on.rectangle",
+            label: String(localized: "Screenshots"),
+            colorKey: .yellow
+        ))
         #endif
 
         if shouldSave {
@@ -146,7 +154,7 @@ struct PauseTileMenuView: View {
         tiles.append(PauseMenuTile(
             id: "quit",
             icon: "xmark.circle",
-            label: shouldSave ? String(localized: "Quit") : String(localized: "Quit"),
+            label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit Game"),
             colorKey: .pink
         ))
 
@@ -192,6 +200,8 @@ struct PauseTileMenuView: View {
         case "screenshot":
             dismissAction(true)
             emulatorVC.takeScreenshot()
+        case "screenshots":
+            showingScreenshotBrowser = true
         case "saveQuit":
             dismissAction(false)
             let image = emulatorVC.captureScreenshot()
@@ -228,7 +238,7 @@ struct PauseTileMenuView: View {
         #else
         if width >= 600 { return 4 }
         if width >= 400 { return 3 }
-        return 3
+        return 2
         #endif
     }
 

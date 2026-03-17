@@ -27,7 +27,7 @@ enum MenuCategory {
 }
 
 /// A custom menu overlay to replace UIAlertController for game menu options
-class PVGameMenuOverlay: UIView {
+@MainActor class PVGameMenuOverlay: UIView {
 
     // MARK: - Properties
 
