@@ -16,5 +16,11 @@
 	<string>https://stella-emu.github.io</string>
 	<key>PVProjectVersion</key>
 	<string>3.4.1</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/stella-emu/stella/blob/master/License.txt</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 1995-2024 Bradford W. Mott, Stephen Anthony, The Stella Team</string>
 </dict>
 </plist>

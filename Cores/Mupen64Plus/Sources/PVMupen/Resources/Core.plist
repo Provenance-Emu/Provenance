@@ -22,5 +22,11 @@
 	</array>
 	<key>PVJITRequirement</key>
 	<string>optional</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/mupen64plus/mupen64plus-core/blob/master/COPYING</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2007-2024 Mupen64Plus Team</string>
 </dict>
 </plist>

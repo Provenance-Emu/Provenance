@@ -16,5 +16,11 @@
 	<string>https://github.com/libretro/libretro-gme</string>
 	<key>PVProjectVersion</key>
 	<string>v0.6.1</string>
+	<key>PVLicenseName</key>
+	<string>LGPL-2.1-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/libretro/libretro-gme/blob/master/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2003-2009 Shay Green</string>
 </dict>
 </plist>

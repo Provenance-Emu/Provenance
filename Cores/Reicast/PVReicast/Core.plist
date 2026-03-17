@@ -16,5 +16,11 @@
 	<string>https://github.com/reicast/reicast-emulator</string>
 	<key>PVProjectVersion</key>
 	<string>18.04</string>
+	<key>PVLicenseName</key>
+	<string>BSD-2-Clause</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/reicast/reicast-emulator/blob/master/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2013-2019 Reicast Contributors</string>
 </dict>
 </plist>

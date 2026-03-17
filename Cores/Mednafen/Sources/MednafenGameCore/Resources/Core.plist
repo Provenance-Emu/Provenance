@@ -33,5 +33,11 @@
 	<string>https://mednafen.github.io</string>
 	<key>PVProjectVersion</key>
 	<string>1.32.1</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://mednafen.github.io/documentation/</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2005-2024 Mednafen Team</string>
 </dict>
 </plist>

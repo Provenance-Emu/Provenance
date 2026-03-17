@@ -16,5 +16,11 @@
 	<string>https://github.com/alekmaul/potator</string>
 	<key>PVProjectVersion</key>
 	<string>1.1</string>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/alekmaul/potator/blob/master/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2000 Norbert Kehrer, 2011-2024 alekmaul</string>
 </dict>
 </plist>

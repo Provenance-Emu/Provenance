@@ -32,6 +32,15 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     /// unavailable on the device.  The app layer can auto-enable the core when JIT is
     /// successfully acquired.  Mirrors `PVJITDisabledWithoutJIT` key in `Core.plist`.
     public let PVJITDisabledWithoutJIT: Bool?
+    /// SPDX license identifier (e.g. `"GPL-2.0-only"`, `"MIT"`).
+    /// Mirrors `PVLicenseName` key in `Core.plist`.
+    public let PVLicenseName: String?
+    /// URL pointing to the full license text for this core.
+    /// Mirrors `PVLicenseURL` key in `Core.plist`.
+    public let PVLicenseURL: String?
+    /// Copyright statement(s) for this core.
+    /// Mirrors `PVCopyright` key in `Core.plist`.
+    public let PVCopyright: String?
 }
 
 public extension CorePlistEntry {
@@ -54,7 +63,10 @@ public extension CorePlistEntry {
             PVSupportedCheatTypes: cheatTypeStrings,
             PVCores: subCores,
             PVJITRequirement: plist.jitRequirementRawValue,
-            PVJITDisabledWithoutJIT: plist.jitDisabledWithoutJIT ? true : nil
+            PVJITDisabledWithoutJIT: plist.jitDisabledWithoutJIT ? true : nil,
+            PVLicenseName: plist.licenseName,
+            PVLicenseURL: plist.licenseURL,
+            PVCopyright: plist.copyright
         )
     }
 }
@@ -76,5 +88,8 @@ func ==(lhs: CorePlistEntry, rhs: EmulatorCoreInfoPlist) -> Bool {
     rhs.supportedCheatTypes == lhsCheatTypes &&
     subCores == lhs.PVCores &&
     rhs.jitRequirementRawValue == lhs.PVJITRequirement &&
-    rhs.jitDisabledWithoutJIT == (lhs.PVJITDisabledWithoutJIT ?? false)
+    rhs.jitDisabledWithoutJIT == (lhs.PVJITDisabledWithoutJIT ?? false) &&
+    rhs.licenseName == lhs.PVLicenseName &&
+    rhs.licenseURL == lhs.PVLicenseURL &&
+    rhs.copyright == lhs.PVCopyright
 }

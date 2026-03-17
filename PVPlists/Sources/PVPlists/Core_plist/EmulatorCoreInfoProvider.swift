@@ -23,10 +23,19 @@ public protocol EmulatorCoreInfoProvider {
     /// The cheat code formats declared as supported by this core.
     var supportedCheatTypes: [CheatCodeTypes] { get }
     var subCores: [Self]? { get }
+    /// SPDX license identifier (e.g. `"GPL-2.0-only"`, `"MIT"`). `nil` if not specified.
+    var licenseName: String? { get }
+    /// URL to the full license text. `nil` if not specified.
+    var licenseURL: String? { get }
+    /// Copyright statement(s) for this core. `nil` if not specified.
+    var copyright: String? { get }
 }
 
 public extension EmulatorCoreInfoProvider {
     var supportedCheatTypes: [CheatCodeTypes] { [] }
+    var licenseName: String? { nil }
+    var licenseURL: String? { nil }
+    var copyright: String? { nil }
 }
 extension EmulatorCoreInfoPlist: EmulatorCoreInfoProvider { }
 
@@ -46,4 +55,7 @@ extension CorePlistEntry: EmulatorCoreInfoProvider {
         (PVSupportedCheatTypes ?? []).compactMap { CheatCodeTypes(string: $0) }
     }
     public var subCores: [CorePlistEntry]? { PVCores }
+    public var licenseName: String? { PVLicenseName }
+    public var licenseURL: String? { PVLicenseURL }
+    public var copyright: String? { PVCopyright }
 }

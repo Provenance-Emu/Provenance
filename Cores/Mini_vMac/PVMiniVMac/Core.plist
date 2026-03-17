@@ -16,5 +16,11 @@
 	<string>https://www.gryphel.com/c/minivmac/</string>
 	<key>PVProjectVersion</key>
 	<string>b36</string>
+	<key>PVLicenseName</key>
+	<string>MIT</string>
+	<key>PVLicenseURL</key>
+	<string>https://www.gryphel.com/c/minivmac/license.html</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2001-2020 Paul C. Pratt</string>
 </dict>
 </plist>

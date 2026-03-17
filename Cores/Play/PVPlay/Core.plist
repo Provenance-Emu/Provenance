@@ -18,5 +18,11 @@
 	<string>0.58</string>
 	<key>PVJITRequirement</key>
 	<string>required</string>
+	<key>PVLicenseName</key>
+	<string>MIT</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/jpd002/Play-/blob/master/LICENSE.md</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2012-2024 Jean-Philip Desjardins</string>
 </dict>
 </plist>

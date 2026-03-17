@@ -16,5 +16,11 @@
 	<string>https://github.com/libretro/FreeIntv</string>
 	<key>PVProjectVersion</key>
 	<string>2018.1.5</string>
+	<key>PVLicenseName</key>
+	<string>GPL-3.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/libretro/FreeIntv/blob/master/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2018 David Richardson</string>
 </dict>
 </plist>

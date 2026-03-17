@@ -16,5 +16,11 @@
 	<string>https://meepingsnesroms.github.io</string>
 	<key>PVProjectVersion</key>
 	<string>v1.3.0</string>
+	<key>PVLicenseName</key>
+	<string>MIT</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/meepingsnesroms/Mu/blob/master/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2019-2023 Adin Scannell</string>
 </dict>
 </plist>

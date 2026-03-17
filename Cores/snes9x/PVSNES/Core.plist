@@ -16,5 +16,11 @@
 	<string>http://www.snes9x.com</string>
 	<key>PVProjectVersion</key>
 	<string>1.60</string>
+	<key>PVLicenseName</key>
+	<string>LicenseRef-Snes9x</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/snes9xgit/snes9x/blob/master/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 1996-2024 Snes9x Contributors</string>
 </dict>
 </plist>

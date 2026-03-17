@@ -22,5 +22,11 @@
 		<string>Code Breaker</string>
 		<string>Pro Action Replay</string>
 	</array>
+	<key>PVLicenseName</key>
+	<string>MPL-2.0</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/mgba-emu/mgba/blob/master/LICENSE</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2013-2024 Jeffrey Pfau</string>
 </dict>
 </plist>

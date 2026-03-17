@@ -23,5 +23,11 @@
 		<string>Action Replay v3</string>
 		<string>Action Replay v1/v2</string>
 	</array>
+	<key>PVLicenseName</key>
+	<string>GPL-2.0-or-later</string>
+	<key>PVLicenseURL</key>
+	<string>https://github.com/visualboyadvance-m/visualboyadvance-m/blob/master/COPYING</string>
+	<key>PVCopyright</key>
+	<string>Copyright © 2004-2024 VBA-M Team</string>
 </dict>
 </plist>

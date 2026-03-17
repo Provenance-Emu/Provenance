@@ -18,6 +18,9 @@ public class Core_Data {
     public var projectURL: String = ""
     public var projectVersion: String = ""
     public var disabled: Bool = false
+    public var licenseName: String? = nil
+    public var licenseURL: String? = nil
+    public var copyright: String? = nil
 
     // Many-to-many: cores support multiple systems (inverse declared on System_Data.cores)
     public var supportedSystems: [System_Data] = []
@@ -28,6 +31,7 @@ public class Core_Data {
 
     public init(identifier: String, principleClass: String, projectName: String = "",
                 projectURL: String = "", projectVersion: String = "", disabled: Bool = false,
+                licenseName: String? = nil, licenseURL: String? = nil, copyright: String? = nil,
                 supportedSystems: [System_Data] = [], saveStates: [SaveState_Data] = []) {
         self.identifier = identifier
         self.principleClass = principleClass
@@ -35,6 +39,9 @@ public class Core_Data {
         self.projectURL = projectURL
         self.projectVersion = projectVersion
         self.disabled = disabled
+        self.licenseName = licenseName
+        self.licenseURL = licenseURL
+        self.copyright = copyright
         self.supportedSystems = supportedSystems
         self.saveStates = saveStates
     }
