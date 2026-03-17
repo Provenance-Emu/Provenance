@@ -1021,7 +1021,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 let b = PVJaguarButton(id)
                 isPressed ? r.didPush(jaguarButton: b, forPlayer: 0) : r.didRelease(jaguarButton: b, forPlayer: 0)
             }
-        case .NeoGeo:
+        case .NeoGeo, .NeoGeoCD:
             if let r = core as? PVNeoGeoSystemResponderClient {
                 let b = PVNeoGeoButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -1771,7 +1771,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(jaguarButton: b, forPlayer: 0) : r.didRelease(jaguarButton: b, forPlayer: 0)
                 return true
             }
-        case .NeoGeo:
+        case .NeoGeo, .NeoGeoCD:
             if let r = core as? PVNeoGeoSystemResponderClient {
                 let b = PVNeoGeoButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -2236,7 +2236,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["asterisk", "*"].contains(s) { return "asterisk" }
             if ["pound", "#"].contains(s) { return "pound" }
             return s
-        case .NeoGeo:
+        case .NeoGeo, .NeoGeoCD:
             /// NeoGeo button normalization - uses PS-style buttons (triangle, circle, cross, square) and L/R
             if ["up", "down", "left", "right"].contains(s) { return s }
             if ["triangle", "a", "▵"].contains(s) { return "triangle" }

@@ -830,7 +830,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .Lynx: self = .lynx
         case .Atari8bit: self = .atari8bit
         case .AtariST: self = .atarist
-        case .NeoGeo: self = .neogeo
+        case .NeoGeo, .NeoGeoCD: self = .neogeo
         case .NGP: self = .ngp
         case .NGPC: self = .ngpc
         case .WonderSwan: self = .wonderswan
