@@ -152,13 +152,18 @@ public final class TouchTrackpadView: UIView {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
         guard self.point(inside: point, with: event) else { return nil }
 
-        // Let higher-zPosition overlays (virtual keyboard, toasts) handle
-        // touches first. Walk siblings with higher zPosition and let them
-        // claim the hit before the trackpad does.
+        // Let overlays that are visually above this view handle touches first.
+        // UIKit normally processes subviews in reverse order (last-added = topmost),
+        // so we yield to any sibling that has a higher zPosition OR appears later
+        // in the subview array at the same zPosition (skin containers, toasts, etc.).
         if let parent = superview {
+            let ownIndex = parent.subviews.firstIndex(of: self) ?? 0
             for sibling in parent.subviews where sibling !== self {
-                if sibling.layer.zPosition > self.layer.zPosition &&
-                   !sibling.isHidden && sibling.alpha > 0.01 {
+                guard !sibling.isHidden, sibling.alpha > 0.01 else { continue }
+                let siblingIndex = parent.subviews.firstIndex(of: sibling) ?? 0
+                let isAbove = sibling.layer.zPosition > self.layer.zPosition ||
+                    (sibling.layer.zPosition == self.layer.zPosition && siblingIndex > ownIndex)
+                if isAbove {
                     let siblingPoint = sibling.convert(point, from: self)
                     if let hit = sibling.hitTest(siblingPoint, with: event), hit !== parent {
                         return hit

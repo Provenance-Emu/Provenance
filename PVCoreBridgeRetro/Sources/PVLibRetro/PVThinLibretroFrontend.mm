@@ -470,7 +470,8 @@ typedef struct PVThinLibretroSymbols {
     dispatch_semaphore_t _blockingCoreTick;    // frontend → core: run next tick
     @private
     struct retro_game_info _blockingGameInfo;  // persisted for core thread lifetime
-    NSData *_blockingROMData;                  // keeps ROM bytes alive on heap
+    NSData *_blockingROMData;                  // keeps ROM data bytes alive on heap
+    NSString *_blockingROMPath;                // keeps romPath NSString alive so .path ptr is valid
 }
 
 /// Internal callback methods invoked by the static C trampolines.
@@ -1875,7 +1876,10 @@ static bool thin_environment(unsigned cmd, void *data) {
         _blockingFrameReady = dispatch_semaphore_create(0);
         _blockingCoreTick   = dispatch_semaphore_create(0);
         // Keep data/path alive for the core thread's entire lifetime.
+        // _blockingROMPath retains the NSString so the UTF8String pointer in
+        // _blockingGameInfo.path remains valid after startWithROMPath: returns.
         _blockingROMData = romData;
+        _blockingROMPath = romPath;
         _blockingGameInfo = gameInfo;
 
         [NSThread detachNewThreadSelector:@selector(_blockingCoreThread)
