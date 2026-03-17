@@ -115,6 +115,9 @@ public extension PVToastHostingController {
         ])
         toastVC.didMove(toParent: parentViewController)
         parentViewController.view.bringSubviewToFront(containerView)
+        // Use a high zPosition so toasts always render above skins, GPU views,
+        // and other overlays that may be added asynchronously after install.
+        containerView.layer.zPosition = 9999
 
         return toastVC
     }
