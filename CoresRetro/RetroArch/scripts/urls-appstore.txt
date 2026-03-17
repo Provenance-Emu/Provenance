@@ -1,7 +1,6 @@
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mcsoftserve_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mrboom_libretro_ios.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/snes9x_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/tyrquake_libretro_ios.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mcsoftserve_libretro_ios.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dolphin_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/2048_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/81_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/a5200_libretro_ios.dylib.zip
@@ -16,7 +15,6 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/cap32_libretro_ios.
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/desmume_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dice_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dinothawr_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dolphin_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dosbox_pure_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbalpha2012_cps1_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbalpha2012_cps2_libretro_ios.dylib.zip
@@ -25,9 +23,9 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbalpha2012_libretr
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbalpha2012_neogeo_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbneo_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fceumm_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/freechaf_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/flycast_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fmsx_libretro.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/freechaf_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/freeintv_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fuse_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/galaksija_libretro_ios.dylib.zip
@@ -37,8 +35,8 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/genesis_plus_gx_lib
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/genesis_plus_gx_wide_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/geolith_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gme_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gw_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gpsp_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/gw_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/handy_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/hatari_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/holani_libretro_ios.dylib.zip
@@ -67,6 +65,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mesen_libretro_ios.
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mesen-s_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mgba_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/minivmac_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mrboom_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mu_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mupen64plus_next_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/nekop2_libretro_ios.dylib.zip
@@ -106,6 +105,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella_libretro_ios
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella2014_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/stella2023_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/theodore_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/tyrquake_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vba_next_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vbam_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vecx_libretro_ios.dylib.zip
@@ -122,10 +122,6 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vice_xvic_libretro_
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vircon32_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/virtualjaguar_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/virtualxt_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vitaquake2_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vitaquake2-rogue_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vitaquake2-xatrix_libretro_ios.dylib.zip
-#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vitaquake2-zaero_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/wasm4_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/x1_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/xrick_libretro_ios.dylib.zip

@@ -732,6 +732,13 @@ def cmd_bootstrap(manifest_path: str) -> None:
     print("# Bootstrap output — cores derived from existing txt files")
     print("# Review and merge into cores.yml as needed")
     print()
+    # Emit a buildbot placeholder so the output is a complete, usable cores.yml starter.
+    print("buildbot:")
+    print("  # Replace with your actual buildbot configuration:")
+    print("  base_url: \"https://buildbot.libretro.com/nightly/apple\"")
+    print("  ios_path: \"ios-arm64/latest\"")
+    print("  tvos_path: \"tvos-arm64/latest\"")
+    print()
     print("cores:")
     for name, entry in sorted(all_filenames.items()):
         print(f"  - name: {entry['name']}")

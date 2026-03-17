@@ -258,14 +258,22 @@ struct ValidateCommand: ParsableCommand {
         var failures = 0
         let group = DispatchGroup()
         let lock = NSLock()
+        // Limit concurrent connections to avoid overwhelming the buildbot server.
+        let throttle = DispatchSemaphore(value: 8)
+        // Use a session with a per-host connection cap as an additional safeguard.
+        let sessionConfig = URLSessionConfiguration.default
+        sessionConfig.httpMaximumConnectionsPerHost = 4
+        let session = URLSession(configuration: sessionConfig)
 
         for (name, url) in urls {
+            throttle.wait()
             group.enter()
             var request = URLRequest(url: url)
             request.httpMethod = "HEAD"
             request.timeoutInterval = 15
 
-            URLSession.shared.dataTask(with: request) { _, response, error in
+            session.dataTask(with: request) { _, response, error in
+                defer { throttle.signal() }
                 defer { group.leave() }
                 let status: String
                 let ok: Bool
@@ -291,6 +299,7 @@ struct ValidateCommand: ParsableCommand {
                     print("  [\(marker)] \(status.padding(toLength: 3, withPad: " ", startingAt: 0))  \(url)")
                 }
             }.resume()
+
         }
 
         group.wait()
