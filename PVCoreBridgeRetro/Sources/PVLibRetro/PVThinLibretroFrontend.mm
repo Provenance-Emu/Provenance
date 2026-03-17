@@ -28,9 +28,22 @@
 
 #include <dlfcn.h>
 #include <string.h>
+#import <objc/message.h>
 
-/// C-callable rumble callback implemented in PVLibRetroRumbleHelper.swift via @_cdecl.
-extern "C" bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength);
+/// Rumble callback matching retro_set_rumble_state_t.
+/// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
+static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
+    Class helper = NSClassFromString(@"PVLibRetro.PVLibRetroRumbleHelper");
+    if (!helper) helper = NSClassFromString(@"PVLibRetroRumbleHelper");
+    if (!helper) return false;
+    BOOL isStrong = (effect == RETRO_RUMBLE_STRONG);
+    SEL sel = @selector(rumbleWithPort:isStrong:strength:);
+    if ([helper respondsToSelector:sel]) {
+        ((void(*)(id, SEL, uint32_t, BOOL, uint16_t))objc_msgSend)(helper, sel, (uint32_t)port, isStrong, strength);
+        return true;
+    }
+    return false;
+}
 #include <stdarg.h>
 #include <os/lock.h>
 #include <pthread.h>

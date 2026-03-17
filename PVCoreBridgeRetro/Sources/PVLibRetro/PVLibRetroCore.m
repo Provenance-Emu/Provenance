@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <objc/message.h>
 #import "PVCoreBridgeRetro.h"
 
 @import PVLoggingObjC;
@@ -17,9 +18,20 @@
 #include "libretro.h"
 #include "libretro_vulkan.h"
 
-/// C-callable rumble callback implemented in PVLibRetroRumbleHelper.swift via @_cdecl.
-/// Matches retro_set_rumble_state_t: (unsigned port, enum retro_rumble_effect, uint16_t strength) -> bool
-extern bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength);
+/// Rumble callback matching retro_set_rumble_state_t.
+/// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
+static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
+    Class helper = NSClassFromString(@"PVLibRetro.PVLibRetroRumbleHelper");
+    if (!helper) helper = NSClassFromString(@"PVLibRetroRumbleHelper");
+    if (!helper) return false;
+    BOOL isStrong = (effect == RETRO_RUMBLE_STRONG);
+    SEL sel = @selector(rumbleWithPort:isStrong:strength:);
+    if ([helper respondsToSelector:sel]) {
+        ((void(*)(id, SEL, uint32_t, BOOL, uint16_t))objc_msgSend)(helper, sel, (uint32_t)port, isStrong, strength);
+        return true;
+    }
+    return false;
+}
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
