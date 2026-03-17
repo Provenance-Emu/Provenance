@@ -11,6 +11,7 @@
 
 import SwiftUI
 import PVLibrary
+import PVMediaCache
 import PVRealm
 import PVThemes
 import PVUIBase
@@ -115,10 +116,24 @@ public struct SaveStateBrowserView: View {
                 dict[item.gameId]!.items.append(item)
             } else {
                 order.append(item.gameId)
-                // Look up artwork via RomDatabase (the DB manager layer, not raw Realm)
-                let artworkURL = RomDatabase.sharedInstance
-                    .object(ofType: PVGame.self, wherePrimaryKeyEquals: item.gameId)?
-                    .originalArtworkFile?.url
+                // Resolve artwork URL for this game.
+                // 1. Prefer originalArtworkFile.url — the local cached copy when set.
+                // 2. Fall back to PVMediaCache lookup via trueArtworkURL for legacy games
+                //    that have only originalArtworkURL (openvgdb URL) and no file entry.
+                let artworkURL: URL? = {
+                    guard let game = RomDatabase.sharedInstance
+                        .object(ofType: PVGame.self, wherePrimaryKeyEquals: item.gameId)
+                    else { return nil }
+                    if let fileURL = game.originalArtworkFile?.url {
+                        return fileURL
+                    }
+                    let key = game.trueArtworkURL
+                    guard !key.isEmpty,
+                          PVMediaCache.fileExists(forKey: key),
+                          let localURL = PVMediaCache.filePath(forKey: key)
+                    else { return nil }
+                    return localURL
+                }()
                 dict[item.gameId] = SaveStateGameGroup(
                     id: item.gameId,
                     gameTitle: item.gameTitle,

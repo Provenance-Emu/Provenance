@@ -597,13 +597,19 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             attributeSet.contentCreationDate = saveState.date
             attributeSet.contentModificationDate = saveState.date
 
-            // Add screenshot thumbnail if available, fallback to game artwork
+            // Add screenshot thumbnail if available, fallback to game artwork.
+            // Only read inline thumbnailData from local files — Data(contentsOf:) on
+            // a remote URL would block the thread with a synchronous network request.
             if let imageURL = saveState.image?.url {
                 attributeSet.thumbnailURL = imageURL
-                attributeSet.thumbnailData = try? Data(contentsOf: imageURL)
+                if imageURL.isFileURL {
+                    attributeSet.thumbnailData = try? Data(contentsOf: imageURL)
+                }
             } else if let gameArtworkURL = game.pathOfCachedImage {
                 attributeSet.thumbnailURL = gameArtworkURL
-                attributeSet.thumbnailData = try? Data(contentsOf: gameArtworkURL)
+                if gameArtworkURL.isFileURL {
+                    attributeSet.thumbnailData = try? Data(contentsOf: gameArtworkURL)
+                }
             }
 
             // Add keywords

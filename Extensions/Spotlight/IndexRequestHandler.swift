@@ -257,11 +257,16 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 let realm = try Realm()
                 let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
                 
-                if let game = game, let artworkURL = game.pathOfCachedImage {
-                    ILOG("Spotlight: Found artwork for game with md5: \(md5)")
+                // Only return a local file URL — remote URLs would trigger a
+                // synchronous network request inside the extension which is
+                // disallowed and causes timeouts.
+                if let game = game,
+                   let artworkURL = game.pathOfCachedImage,
+                   artworkURL.isFileURL {
+                    ILOG("Spotlight: Found local artwork for game with md5: \(md5)")
                     return artworkURL
                 } else {
-                    WLOG("Spotlight: No artwork found for game with md5: \(md5)")
+                    WLOG("Spotlight: No local artwork found for game with md5: \(md5)")
                     throw SpotlightError.notFound
                 }
             }
