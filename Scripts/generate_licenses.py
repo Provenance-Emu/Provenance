@@ -366,8 +366,9 @@ def write_licenses_md(
         app_compat = e.get("appStoreCompatible")
 
         # Format the license cell: link to licenseURL if available
-        if e.get("license") and license_url:
-            license_cell = f"[{e['license']}]({license_url})"
+        if license_url:
+            link_text = e.get("license") or license_spdx
+            license_cell = f"[{link_text}]({license_url})"
         else:
             license_cell = license_spdx
 
