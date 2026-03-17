@@ -457,6 +457,17 @@ typedef struct PVThinLibretroSymbols {
 
     // LED (GameController light bar)
     // No persistent state needed — set_led_state maps directly to GCController.current
+
+    // ---- Blocking-core thread support ----
+    // Some cores (e.g. prboom) run their own game loop inside retro_load_game and
+    // never return. We run them on a dedicated thread and use two semaphores to
+    // hand-shake with runFrame: the core signals _blockingFrameReady after each
+    // video_refresh call, then waits on _blockingCoreTick before advancing.
+    BOOL _isBlockingCore;
+    dispatch_semaphore_t _blockingFrameReady;  // core → frontend: frame available
+    dispatch_semaphore_t _blockingCoreTick;    // frontend → core: run next tick
+    struct retro_game_info _blockingGameInfo;  // persisted for core thread lifetime
+    NSData *_blockingROMData;                  // keeps ROM bytes alive on heap
 }
 
 /// Internal callback methods invoked by the static C trampolines.
@@ -501,6 +512,12 @@ static void thin_video_refresh(const void *data, unsigned width, unsigned height
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return;
     [self _thinVideoRefresh:data width:width height:height pitch:pitch];
+    // Blocking-core hand-shake: signal frame ready, then stall until frontend
+    // says to advance. This yields the core thread back to runFrame.
+    if (self->_isBlockingCore) {
+        dispatch_semaphore_signal(self->_blockingFrameReady);
+        dispatch_semaphore_wait(self->_blockingCoreTick, DISPATCH_TIME_FOREVER);
+    }
 }
 
 static void thin_audio_sample(int16_t left, int16_t right) {
@@ -1837,7 +1854,52 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     gameInfo.path = romPath.UTF8String;
 
-    bool loaded = _sym.retro_load_game(&gameInfo);
+    // Detect blocking cores (those that run their own loop inside retro_load_game).
+    // These cores never return from retro_load_game; instead they call video_refresh
+    // internally. We run them on a background thread and use semaphores to sync.
+    static NSSet<NSString *> *blockingCoreLibNames = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        blockingCoreLibNames = [NSSet setWithObjects:@"prboom", nil];
+    });
+    NSString *dylibLastComponent = [[self.coreIdentifier componentsSeparatedByString:@"."] firstObject] ?: @"";
+    _isBlockingCore = [blockingCoreLibNames containsObject:dylibLastComponent] ||
+                      [[self _resolvedCoreDylibPath].lastPathComponent.lowercaseString containsString:@"prboom"];
+
+    bool loaded = NO;
+    if (_isBlockingCore) {
+        ILOG(@"ThinFrontend: blocking core detected (%@) — running on background thread", self.coreIdentifier);
+        _blockingFrameReady = dispatch_semaphore_create(0);
+        _blockingCoreTick   = dispatch_semaphore_create(0);
+        // Keep data/path alive for the core thread's entire lifetime.
+        _blockingROMData = romData;
+        _blockingGameInfo = gameInfo;
+
+        [NSThread detachNewThreadSelector:@selector(_blockingCoreThread)
+                                 toTarget:self
+                               withObject:nil];
+
+        // Wait for the first video_refresh call (= first frame produced) with a
+        // generous timeout. If the core fails to init it won't signal at all.
+        const long timeoutNs = (long)(10.0 * NSEC_PER_SEC);
+        long waitResult = dispatch_semaphore_wait(_blockingFrameReady,
+                                                   dispatch_time(DISPATCH_TIME_NOW, timeoutNs));
+        if (waitResult != 0) {
+            ELOG(@"ThinFrontend: blocking core timed out during retro_load_game");
+            if (error) {
+                *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
+                                             code:5
+                                         userInfo:@{NSLocalizedDescriptionKey: @"retro_load_game timed out (blocking core)"}];
+            }
+            _sym.retro_deinit();
+            _thinCurrentTLS = nil;
+            return NO;
+        }
+        loaded = YES;  // if we got a frame, load succeeded
+    } else {
+        loaded = _sym.retro_load_game(&gameInfo);
+    }
+
     if (!loaded) {
         ELOG(@"ThinFrontend: retro_load_game returned false");
         if (error) {
@@ -1923,6 +1985,10 @@ static bool thin_environment(unsigned cmd, void *data) {
 #endif
     // Flush battery save (SRAM) before tearing down the core
     [self saveBatterySaveData];
+    // Unblock a blocking core thread so it doesn't deadlock waiting on _blockingCoreTick.
+    if (_isBlockingCore && _blockingCoreTick) {
+        dispatch_semaphore_signal(_blockingCoreTick);
+    }
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
     if (_sym.retro_unload_game) {
@@ -1940,8 +2006,27 @@ static bool thin_environment(unsigned cmd, void *data) {
     [super setPauseEmulation:flag];
 }
 
+- (void)_blockingCoreThread {
+    _thinCurrentTLS = self;
+    // retro_load_game never returns for blocking cores; it runs the game loop
+    // internally and calls video_refresh each frame. thin_video_refresh will
+    // signal _blockingFrameReady and then stall on _blockingCoreTick, giving
+    // the frontend thread a chance to present each frame via runFrame.
+    _sym.retro_load_game(&_blockingGameInfo);
+    // If we get here the core exited its loop (e.g. user quit from menu).
+    ILOG(@"ThinFrontend: blocking core thread exited");
+    _thinCurrentTLS = nil;
+}
+
 - (void)runFrame {
-    if (!_sym.retro_run) return;
+    if (!_sym.retro_run && !_isBlockingCore) return;
+
+    if (_isBlockingCore) {
+        // Signal core to advance one tick, then wait for the next frame.
+        dispatch_semaphore_signal(_blockingCoreTick);
+        dispatch_semaphore_wait(_blockingFrameReady, DISPATCH_TIME_FOREVER);
+        return;
+    }
 
     // Drive the frame-time callback if the core registered one
     if (_hasFrameTimeCallback && _frameTimeCallback.callback) {
