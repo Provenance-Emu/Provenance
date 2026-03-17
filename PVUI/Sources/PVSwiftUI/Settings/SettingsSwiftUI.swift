@@ -1981,6 +1981,7 @@ private struct LibrarySection: View {
 
 private struct LibrarySection2: View {
     @ObservedObject var viewModel: PVSettingsViewModel
+    @Default(.autoNormalizeROMTitles) var autoNormalizeROMTitles
 
     var body: some View {
         Section(header: Text("Library Management")) {
@@ -2027,6 +2028,18 @@ private struct LibrarySection2: View {
                 SettingsRow(title: "Batch Artwork Matcher",
                             subtitle: "Find and apply artwork for multiple games at once.",
                             icon: .sfSymbol("photo.on.rectangle.angled"))
+            }
+
+            ThemedToggle(isOn: $autoNormalizeROMTitles) {
+                SettingsRow(title: "Auto-Normalize Titles on Import",
+                            subtitle: "Strip region/revision tags from ROM filenames (e.g. '(USA)', '[!]') when importing.",
+                            icon: .sfSymbol("textformat.abc"))
+            }
+
+            NavigationLink(destination: ROMTitleNormalizationView()) {
+                SettingsRow(title: "Normalize Existing Library",
+                            subtitle: "Preview and clean up ROM annotation tags from current library titles.",
+                            icon: .sfSymbol("text.badge.checkmark"))
             }
 
             Button(action: viewModel.reimportROMs) {

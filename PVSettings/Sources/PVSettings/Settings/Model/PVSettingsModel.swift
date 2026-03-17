@@ -501,6 +501,14 @@ public extension Defaults.Keys {
     static let useAppGroups = Key<Bool>("useAppGroups", default: false)
 }
 
+// MARK: ROM Import Options
+public extension Defaults.Keys {
+    /// Automatically strip ROM annotation tags and normalize titles when importing.
+    /// When enabled, filenames like "Bomberman (USA) [!].nes" become "Bomberman"
+    /// in the library. When disabled, the raw filename (sans extension) is used.
+    static let autoNormalizeROMTitles = Key<Bool>("autoNormalizeROMTitles", default: true)
+}
+
 // MARK: Audio Options
 public extension Defaults.Keys {
 
