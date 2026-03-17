@@ -17,9 +17,10 @@ Options:
     --repo-root DIR     Root of the repository (default: parent of this script's directory)
     --skip-spm          Skip scanning Package.resolved for SPM dependencies
 
-Requires: Python 3.9+ (uses standard collection generics like ``dict[str, Any]``;
-          ``from __future__ import annotations`` is used to postpone evaluation of
-          type annotations, but they are never introspected at runtime).
+Requires: Python 3.9+ (uses standard collection generics like ``dict[str, Any]``
+          and ``Optional`` from ``typing``; ``from __future__ import annotations``
+          is used to postpone evaluation of type annotations so they are never
+          introspected at runtime).
 """
 
 from __future__ import annotations
@@ -75,18 +76,25 @@ def _build_core_entry(
     repo_root: Optional[Path] = None,
 ) -> dict[str, Any]:
     """Convert a single Core.plist dict into a normalised entry."""
+    def _norm(v: Any) -> Optional[str]:
+        """Return None for None or blank strings, otherwise strip whitespace."""
+        if v is None:
+            return None
+        s = str(v).strip()
+        return s if s else None
+
     name = (data.get("PVProjectName") or data.get("PVCoreIdentifier", "Unknown") or "").strip()
     identifier = data.get("PVCoreIdentifier", "")
-    project_url = data.get("PVProjectURL")
-    version = data.get("PVProjectVersion")
+    project_url = _norm(data.get("PVProjectURL"))
+    version = _norm(data.get("PVProjectVersion"))
     supported_systems = data.get("PVSupportedSystems") or []
 
     # New fields from issue #3236 (may not exist yet — use None as default)
-    license_spdx = data.get("PVLicense")
-    license_url = data.get("PVLicenseURL")
+    license_spdx = _norm(data.get("PVLicense"))
+    license_url = _norm(data.get("PVLicenseURL"))
     copyright_holder = _normalise_string_or_list(data.get("PVCopyrightHolder"))
-    upstream_url = data.get("PVUpstreamProjectURL")
-    fork_notes = data.get("PVForkNotes")
+    upstream_url = _norm(data.get("PVUpstreamProjectURL"))
+    fork_notes = _norm(data.get("PVForkNotes"))
     app_store_compat = _bool_or_none(data.get("PVLicenseAppStoreCompatible"))
 
     # Warn about missing fields (only in --check mode to avoid stderr spam)
@@ -281,6 +289,8 @@ def scan_spm_packages(repo_root: Path) -> list[dict[str, Any]]:
             }
         )
 
+    # Sort by identifier for deterministic output
+    entries.sort(key=lambda e: e.get("identifier", ""))
     return entries
 
 
@@ -318,7 +328,7 @@ def _tbd(value: Any) -> str:
     return str(value)
 
 
-def _md_link(url: str | None, text: str) -> str:
+def _md_link(url: Optional[str], text: str) -> str:
     if url:
         return f"[{text}]({url})"
     return text
