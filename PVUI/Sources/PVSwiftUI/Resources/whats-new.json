@@ -478,5 +478,35 @@
         "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
       }
     ]
+  },
+  {
+    "version": "3.5.0",
+    "title": "Manic Skin Parity",
+    "features": [
+      {
+        "symbolName": "switch.2",
+        "symbolColor": "blue",
+        "title": "Animated Switch Buttons",
+        "subtitle": "Toggle buttons now support spring-curve animations, a selected/on state image, and self-retracting momentary behaviour — matching Manic EMU skin capabilities."
+      },
+      {
+        "symbolName": "filemenu.and.selection",
+        "symbolColor": "purple",
+        "title": "Extended Shortcut Buttons",
+        "subtitle": "Skin buttons can now trigger Screenshot, Restart, Quit, Save States, Cheat Codes, Skins, Filters, Speed Menu, Analog Toggle, Swap Discs, and more."
+      },
+      {
+        "symbolName": "photo.stack.fill",
+        "symbolColor": "pink",
+        "title": "Full APNG & GIF Animation",
+        "subtitle": "Animated skin backgrounds now play all frames from APNG and GIF files, not just the first frame."
+      },
+      {
+        "symbolName": "square.stack.3d.up.fill",
+        "symbolColor": "green",
+        "title": "Shared Controller Layouts",
+        "subtitle": "Skins designed for Genesis also work on Sega CD and 32X. Master System skins apply to Game Gear and SG-1000. GB skins cover GBC. PCE skins cover PCECD."
+      }
+    ]
   }
 ]

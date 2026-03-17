@@ -129,6 +129,88 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
+        // Handle hold-style slow motion button
+        if lowercasedId.contains("slowmotion") && !lowercasedId.contains("toggle") {
+            slowMotionPressed()
+            return
+        }
+
+        // ── Extended function buttons (Manic skin parity) ──────────────────────
+
+        // Screenshot
+        if lowercasedId.contains("screenshot") {
+            screenshotButtonPressed()
+            return
+        }
+
+        // Restart / Reset
+        if lowercasedId == "restart" || lowercasedId == "reset" || lowercasedId == "reboot" {
+            restartButtonPressed()
+            return
+        }
+
+        // Quit
+        if lowercasedId == "quit" || lowercasedId == "exit" {
+            quitButtonPressed()
+            return
+        }
+
+        // Save states screen
+        if lowercasedId == "savestates" || lowercasedId == "save_states" || lowercasedId == "saves" {
+            saveStatesButtonPressed()
+            return
+        }
+
+        // Cheat codes screen
+        if lowercasedId == "cheats" || lowercasedId == "cheatcodes" || lowercasedId == "cheat_codes" {
+            cheatCodesButtonPressed()
+            return
+        }
+
+        // Skin / controller skins picker
+        if lowercasedId == "skins" || lowercasedId == "skin" || lowercasedId == "controllerskins" {
+            skinsButtonPressed()
+            return
+        }
+
+        // Filters
+        if lowercasedId == "filters" || lowercasedId == "filter" || lowercasedId == "videofilters" {
+            filtersButtonPressed()
+            return
+        }
+
+        // Speed menu
+        if lowercasedId == "speedmenu" || lowercasedId == "speed_menu" || lowercasedId == "gamespeed" {
+            speedMenuButtonPressed()
+            return
+        }
+
+        // Toggle analog mode
+        if lowercasedId == "toggleanalog" || lowercasedId == "toggle_analog" || lowercasedId == "analogmode" {
+            toggleAnalogButtonPressed()
+            return
+        }
+
+        // Swap discs
+        if lowercasedId == "swapdiscs" || lowercasedId == "swap_discs" || lowercasedId == "swapdisc" || lowercasedId == "changeDisc" {
+            swapDiscsButtonPressed()
+            return
+        }
+
+        // Core options / settings
+        if lowercasedId == "coreoptions" || lowercasedId == "core_options" || lowercasedId == "coresettings" {
+            coreOptionsButtonPressed()
+            return
+        }
+
+        // More info / game info
+        if lowercasedId == "moreinfo" || lowercasedId == "more_info" || lowercasedId == "gameinfo" || lowercasedId == "info" {
+            moreInfoButtonPressed()
+            return
+        }
+
+        // ────────────────────────────────────────────────────────────────────────
+
         // For gameplay inputs: unpause if paused before forwarding
         if let core = emulatorCore, (!core.isRunning || core.isEmulationPaused) {
             DLOG("Auto-unpausing core for gameplay input: \(lowercasedId)")
@@ -174,6 +256,27 @@ public class DeltaSkinInputHandler: ObservableObject {
             fastForwardReleased()
             return
         }
+
+        // Check for hold-style slow motion button release
+        if lowercasedId.contains("slowmotion") && !lowercasedId.contains("toggle") {
+            slowMotionReleased()
+            return
+        }
+
+        // Extended function buttons fire only on press — skip release
+        let extendedFunctionIds: Set<String> = [
+            "screenshot", "restart", "reset", "reboot", "quit", "exit",
+            "savestates", "save_states", "saves",
+            "cheats", "cheatcodes", "cheat_codes",
+            "skins", "skin", "controllerskins",
+            "filters", "filter", "videofilters",
+            "speedmenu", "speed_menu", "gamespeed",
+            "toggleanalog", "toggle_analog", "analogmode",
+            "swapdiscs", "swap_discs", "swapdisc", "changedisc",
+            "coreoptions", "core_options", "coresettings",
+            "moreinfo", "more_info", "gameinfo", "info"
+        ]
+        if extendedFunctionIds.contains(lowercasedId) { return }
 
         // Skip special button releases for toggle-style buttons
         if lowercasedId.contains("menu") ||
@@ -257,6 +360,136 @@ public class DeltaSkinInputHandler: ObservableObject {
                 ELOG("Error during quickload: \(error)")
             }
         }
+    }
+
+    // MARK: - Extended Function Buttons (Manic skin parity)
+
+    /// Take a screenshot of the current game frame.
+    private func screenshotButtonPressed() {
+        DLOG("Screenshot button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot take screenshot - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in
+            controller.takeScreenshot()
+        }
+    }
+
+    /// Restart / reset the current game.
+    private func restartButtonPressed() {
+        DLOG("Restart button pressed")
+        guard let core = emulatorCore else {
+            ELOG("Cannot restart - emulatorCore is nil")
+            return
+        }
+        Task { @MainActor in
+            core.resetEmulation()
+        }
+    }
+
+    /// Quit the current game (saving first).
+    private func quitButtonPressed() {
+        DLOG("Quit button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot quit - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in
+            await controller.quit(optionallySave: true, completion: nil)
+        }
+    }
+
+    /// Open the save-states browser.
+    private func saveStatesButtonPressed() {
+        DLOG("SaveStates button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot open save states - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showMenu(nil) }
+    }
+
+    /// Open the cheat-codes sheet.
+    private func cheatCodesButtonPressed() {
+        DLOG("CheatCodes button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot open cheat codes - emulatorController is nil")
+            return
+        }
+        // Delegate to menu which contains cheat codes section
+        Task { @MainActor in controller.showMenu(nil) }
+    }
+
+    /// Open the controller-skins picker.
+    private func skinsButtonPressed() {
+        DLOG("Skins button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot open skins - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showMenu(nil) }
+    }
+
+    /// Open the video-filters picker.
+    private func filtersButtonPressed() {
+        DLOG("Filters button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot open filters - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showMenu(nil) }
+    }
+
+    /// Open the game-speed sheet.
+    private func speedMenuButtonPressed() {
+        DLOG("SpeedMenu button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot open speed menu - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showSpeedMenu() }
+    }
+
+    /// Toggle analog / digital input mode on the core.
+    /// Forwarded as an "analogMode" button press so core-specific normalization tables handle it.
+    private func toggleAnalogButtonPressed() {
+        DLOG("ToggleAnalog button pressed")
+        forwardButtonPress("analogMode", isPressed: true)
+        // Momentary press — release immediately so the core registers the toggle edge
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.forwardButtonPress("analogMode", isPressed: false)
+        }
+    }
+
+    /// Open the swap-discs sheet.
+    private func swapDiscsButtonPressed() {
+        DLOG("SwapDiscs button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot swap discs - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showSwapDiscsMenu() }
+    }
+
+    /// Open core options / settings.
+    private func coreOptionsButtonPressed() {
+        DLOG("CoreOptions button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot open core options - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showCoreOptions() }
+    }
+
+    /// Show more info about the current game.
+    private func moreInfoButtonPressed() {
+        DLOG("MoreInfo button pressed")
+        guard let controller = emulatorController else {
+            ELOG("Cannot show more info - emulatorController is nil")
+            return
+        }
+        Task { @MainActor in controller.showMoreInfo() }
     }
 
     // MARK: - Game Speed Control
@@ -366,6 +599,30 @@ public class DeltaSkinInputHandler: ObservableObject {
                 core.gameSpeed = .verySlow
             }
         }
+    }
+
+    /// Handle hold-style slow motion button press (not toggle).
+    private func slowMotionPressed() {
+        DLOG("Slow motion button pressed (hold style)")
+        guard let core = emulatorCore else {
+            ELOG("Cannot slow motion - emulatorCore is nil")
+            return
+        }
+        if core.gameSpeed != .slow && core.gameSpeed != .verySlow {
+            previousGameSpeed = core.gameSpeed
+            core.gameSpeed = .slow
+        }
+    }
+
+    /// Handle hold-style slow motion button release.
+    private func slowMotionReleased() {
+        DLOG("Slow motion button released (hold style)")
+        guard let core = emulatorCore else {
+            ELOG("Cannot reset game speed - emulatorCore is nil")
+            return
+        }
+        core.gameSpeed = previousGameSpeed ?? .normal
+        previousGameSpeed = nil
     }
 
     // MARK: - DS Touchscreen

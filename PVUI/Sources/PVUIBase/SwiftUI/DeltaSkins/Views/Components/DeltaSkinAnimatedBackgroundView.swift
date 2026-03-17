@@ -1,11 +1,11 @@
 #if canImport(UIKit)
 import SwiftUI
 import UIKit
+import ImageIO
 
 /// Renders an animated background for a skin using a frame sequence.
-/// Supports `.frames` type animations via `TimelineView`.
-/// `.apng` and `.gif` files are loaded and displayed as a static image (first frame only;
-/// full animated APNG/GIF support can be added when needed).
+/// Supports `.frames`, `.apng`, and `.gif` animations via `TimelineView`.
+/// APNG and GIF files are fully decoded — all frames are extracted using `CGImageSource`.
 struct DeltaSkinAnimatedBackgroundView: View {
     let animation: DeltaSkinBackgroundAnimation
     let skin: any DeltaSkinProtocol
@@ -64,8 +64,14 @@ struct DeltaSkinAnimatedBackgroundView: View {
             }
 
         case .apng, .gif:
-            // Load single file; display first frame (full animation support TBD)
+            // Extract all frames from the animated image using CGImageSource
             if let fileName = animation.file,
+               let rawData = try? skin.loadAssetData(fileName) {
+                loaded = extractFrames(from: rawData)
+            }
+            // Fall back to single-frame display if extraction failed
+            if loaded.isEmpty,
+               let fileName = animation.file,
                let img = try? await skin.loadThumbstickImage(named: fileName) {
                 loaded.append(img)
             }
@@ -75,6 +81,28 @@ struct DeltaSkinAnimatedBackgroundView: View {
             frames = loaded
             startDate = Date()
         }
+    }
+
+    /// Decode all frames from raw APNG or GIF data using CGImageSource.
+    /// Falls back to a single frame when the source contains only one image.
+    private func extractFrames(from data: Data) -> [UIImage] {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+            return []
+        }
+        let count = CGImageSourceGetCount(source)
+        guard count > 0 else { return [] }
+
+        let scale = UIScreen.main.scale
+        var result: [UIImage] = []
+        result.reserveCapacity(count)
+
+        for index in 0 ..< count {
+            guard let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) else {
+                continue
+            }
+            result.append(UIImage(cgImage: cgImage, scale: scale, orientation: .up))
+        }
+        return result
     }
 }
 #endif
