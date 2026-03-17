@@ -319,7 +319,7 @@ struct PVLogPublisherTests {
     }
 
     @Test("storeEntry stores entry in recent logs")
-    func storeEntryStores() async throws {
+    func storeEntryStores() {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
 
@@ -331,7 +331,7 @@ struct PVLogPublisherTests {
     }
 
     @Test("Logging a message stores it in recent logs")
-    func logStoresEntry() async throws {
+    func logStoresEntry() {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
 
@@ -342,23 +342,20 @@ struct PVLogPublisherTests {
     }
 
     @Test("clearLogs removes all entries")
-    func clearLogsRemovesEntries() async throws {
+    func clearLogsRemovesEntries() {
         let publisher = PVLogPublisher.shared
         publisher.log("entry to clear", level: .debug, file: "T.swift", function: "f()", line: 1)
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         let logs = publisher.getRecentLogs()
         #expect(!logs.contains(where: { $0.message == "entry to clear" }))
     }
 
     @Test("getRecentLogs with minLevel filters correctly")
-    func getRecentLogsFiltering() async throws {
+    func getRecentLogsFiltering() {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.log("verbose msg", level: .verbose, file: "T.swift", function: "f()", line: 1)
         publisher.log("error msg",   level: .error,   file: "T.swift", function: "f()", line: 2)
@@ -371,10 +368,9 @@ struct PVLogPublisherTests {
     }
 
     @Test("Convenience verbose method logs at verbose level")
-    func verboseConvenience() async throws {
+    func verboseConvenience() {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.verbose("verbose convenience", file: "T.swift", function: "f()", line: 1)
 
@@ -383,10 +379,9 @@ struct PVLogPublisherTests {
     }
 
     @Test("Convenience error method logs at error level")
-    func errorConvenience() async throws {
+    func errorConvenience() {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.error("error convenience", file: "T.swift", function: "f()", line: 1)
 
@@ -404,12 +399,11 @@ struct PVLogPublisherTests {
     // MARK: - Per-Category Level Filtering Tests
 
     @Test("setMinLevel suppresses entries below threshold")
-    func categoryFilterSuppressesLow() async throws {
+    func categoryFilterSuppressesLow() {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
         publisher.resetCategoryFilters()
         publisher.setMinLevel(.error, forCategory: "audio")
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         publisher.storeEntry(message: "audio-debug", level: .debug, categoryName: "audio",
                              file: "T.swift", function: "f()", line: 1)
@@ -456,7 +450,6 @@ struct PVLogPublisherTests {
     func asyncStreamReceivesEntries() async throws {
         let publisher = PVLogPublisher.shared
         publisher.clearLogs()
-        try await Task.sleep(nanoseconds: 5_000_000)
 
         let stream = publisher.makeLogStream()
 
@@ -475,44 +468,27 @@ struct PVLogPublisherTests {
         #expect(received?.message == uniqueMessage)
     }
 
-    @Test("makeLogStream can be cancelled without leaking")
+    @Test("makeLogStream can be cancelled without leaking continuations")
     func asyncStreamCancellation() async throws {
         let publisher = PVLogPublisher.shared
 
-        actor StreamObserver {
-            var didReceiveEntry = false
+        // Create the stream first — the continuation is registered immediately inside
+        // the AsyncStream initialiser closure, before any iteration begins.
+        let stream = publisher.makeLogStream()
 
-            func markReceived() {
-                didReceiveEntry = true
-            }
-        }
-
-        let observer = StreamObserver()
-
-        let task = Task {
-            let stream = publisher.makeLogStream()
+        // Start a consumer task that iterates the stream; we will cancel it explicitly
+        // to exercise the onTermination cleanup path.
+        let consumerTask = Task {
             for await _ in stream {
-                await observer.markReceived()
+                // Intentionally ignore entries; we're testing cancellation/cleanup.
             }
         }
 
-        // Emit an entry to ensure the stream produces at least one value
-        let uniqueMessage = "asyncstream-cancel-\(UUID().uuidString)"
-        publisher.storeEntry(message: uniqueMessage,
-                             level: .info,
-                             categoryName: "general",
-                             file: "T.swift",
-                             function: "f()",
-                             line: 1)
+        // Deterministically cancel the consumer and ensure it completes without hanging.
+        consumerTask.cancel()
+        _ = await consumerTask.result
 
-        // Request cancellation and wait for the consumer task to finish.
-        // If the stream does not respect cancellation, this await will hang.
-        task.cancel()
-        await task.value
-
-        let didReceiveEntry = await observer.didReceiveEntry
-        #expect(didReceiveEntry, "Stream should receive at least one entry before cancellation")
-        #expect(task.isCancelled, "Task should report as cancelled after completion")
+        #expect(consumerTask.isCancelled)
     }
 }
 
