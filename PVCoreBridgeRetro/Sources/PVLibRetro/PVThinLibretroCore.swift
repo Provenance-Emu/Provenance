@@ -123,12 +123,11 @@ extension PVThinLibretroCore: @preconcurrency CoreOptional {
         let defaultValue = dict["default"] as? String ?? ""
         let valuesArray = dict["values"] as? [[String: String]] ?? []
 
-        let descriptionText: String = {
-            if let info = info, !info.isEmpty {
-                return desc + ". " + info
-            }
-            return desc
-        }()
+        // desc = human-readable label (e.g. "Video Resolution")
+        // info = longer help text (e.g. "Set the internal rendering resolution")
+        // key = machine identifier (e.g. "flycast_video_resolution")
+        let displayTitle = desc
+        let descriptionText = info
 
         // Detect boolean options (exactly two values: enabled/disabled or on/off etc.)
         if valuesArray.count == 2 {
@@ -145,7 +144,7 @@ extension PVThinLibretroCore: @preconcurrency CoreOptional {
                 let enabledValues: Set<String> = ["enabled", "on", "true", "yes", "1"]
                 let defaultBool = enabledValues.contains(defaultValue.lowercased())
                 let display = CoreOptionValueDisplay(
-                    title: key,
+                    title: displayTitle,
                     description: descriptionText,
                     requiresRestart: false
                 )
@@ -165,7 +164,8 @@ extension PVThinLibretroCore: @preconcurrency CoreOptional {
             let val = entry["value"] ?? ""
             let label = entry["label"] ?? val
             let isDefault = (val == defaultValue)
-            return CoreOptionMultiValue(title: val, description: label, isDefault: isDefault)
+            // Show human label as title, raw value as description (for debugging)
+            return CoreOptionMultiValue(title: label, description: val, isDefault: isDefault)
         }
 
         let display = CoreOptionValueDisplay(
