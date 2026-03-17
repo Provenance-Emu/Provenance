@@ -109,8 +109,21 @@ public final class PVToastManager: ObservableObject {
         type: PVToastType = .info,
         duration: TimeInterval = 3.0,
         icon: String? = nil,
-        category: String? = nil
+        category: String? = nil,
+        replaceKey: String? = nil
     ) {
+        // If a replaceKey is provided, update the existing toast in-place
+        // instead of creating a new one (for progress messages, etc.)
+        if let replaceKey {
+            if let idx = toasts.firstIndex(where: { $0.id == replaceKey }) {
+                toasts[idx] = PVToast(id: replaceKey, message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category)
+                return
+            }
+            // No existing toast with this key — create one with the key as ID
+            let toast = PVToast(id: replaceKey, message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category)
+            processToast(toast)
+            return
+        }
         let toast = PVToast(message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category)
         processToast(toast)
     }
@@ -359,10 +372,11 @@ public extension PVToastManager {
         type: PVToastType = .info,
         duration: TimeInterval = 3.0,
         icon: String? = nil,
-        category: String? = nil
+        category: String? = nil,
+        replaceKey: String? = nil
     ) {
         Task { @MainActor in
-            PVToastManager.shared.show(message, type: type, duration: duration, icon: icon, category: category)
+            PVToastManager.shared.show(message, type: type, duration: duration, icon: icon, category: category, replaceKey: replaceKey)
         }
     }
 

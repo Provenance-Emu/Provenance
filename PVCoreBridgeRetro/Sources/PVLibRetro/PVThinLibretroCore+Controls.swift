@@ -24,6 +24,51 @@ import PVLogging
 import GameController
 #endif
 
+// MARK: - Virtual input support (keyboard/mouse) per system
+// Mirrors RetroArchVirtualInputSupport from PVRetroArchCoreCore.swift
+
+private struct ThinVirtualInputSupport {
+    let supportsKeyboard: Bool
+    let requiresKeyboard: Bool
+    let supportsMouse: Bool
+    let requiresMouse: Bool
+
+    static func resolve(systemIdentifier: String?) -> Self {
+        guard let sysId = systemIdentifier else { return .none }
+        return supportBySystem[sysId] ?? .none
+    }
+
+    static let none = Self(supportsKeyboard: false, requiresKeyboard: false, supportsMouse: false, requiresMouse: false)
+
+    private static let supportBySystem: [String: Self] = [
+        "com.provenance.3DO":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.appleII":      .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.atari8bit":    .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
+        "com.provenance.atarist":      .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.c64":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.cdi":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.colecovision": .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.doom":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.dos":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.dreamcast":    .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.ep128":        .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
+        "com.provenance.macintosh":    .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.mame":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.msx":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.msx2":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.n64":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.palmos":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.pc98":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.psx":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.quake":        .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.quake2":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.saturn":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.snes":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.wolf3d":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
+        "com.provenance.zxspectrum":   .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
+    ]
+}
+
 // MARK: - libretro joypad button IDs (mirrors libretro.h defines)
 // These must match RETRO_DEVICE_ID_JOYPAD_* exactly.
 private enum RetroJoypad: UInt32 {
@@ -893,8 +938,12 @@ extension PVThinLibretroCore: PVPCFXSystemResponderClient {
 
 extension PVThinLibretroCore: KeyboardResponder {
 
-    public var gameSupportsKeyboard: Bool { true }
-    public var requiresKeyboard: Bool { false }
+    public var gameSupportsKeyboard: Bool {
+        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).supportsKeyboard
+    }
+    public var requiresKeyboard: Bool {
+        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).requiresKeyboard
+    }
 
 #if canImport(GameController)
     public var keyChangedHandler: GCKeyboardValueChangedHandler? { nil }
@@ -1034,8 +1083,12 @@ extension PVThinLibretroCore: KeyboardResponder {
 
 extension PVThinLibretroCore: MouseResponder {
 
-    public var gameSupportsMouse: Bool { true }
-    public var requiresMouse: Bool { false }
+    public var gameSupportsMouse: Bool {
+        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).supportsMouse
+    }
+    public var requiresMouse: Bool {
+        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).requiresMouse
+    }
 
 #if canImport(GameController)
     @available(iOS 14.0, tvOS 14.0, *)

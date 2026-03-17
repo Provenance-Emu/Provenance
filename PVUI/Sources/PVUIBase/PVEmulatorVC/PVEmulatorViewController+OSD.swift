@@ -69,6 +69,23 @@ extension PVEmulatorViewController {
         }()
 
         DLOG("OSD message [\(osdType)] \(duration)s — \(message)")
-        PVToastManager.post(message, type: toastType, duration: duration)
+
+        // Detect progress-like messages (contain %) and use replaceKey so
+        // they update in-place instead of stacking dozens of toasts.
+        // Also use replaceKey for common RA sequential messages like
+        // "Controller connected", achievement notifications, etc.
+        let replaceKey: String?
+        if message.contains("%") {
+            // Progress messages: "Loading... 5%", "Compiling shaders: 42%", etc.
+            // Use a stable key based on the message prefix (before any numbers)
+            let prefix = message.replacingOccurrences(of: "\\d+", with: "#", options: .regularExpression)
+            replaceKey = "progress:\(prefix)"
+        } else if message.lowercased().contains("controller") || message.lowercased().contains("connected") || message.lowercased().contains("disconnected") {
+            replaceKey = "controller-status"
+        } else {
+            replaceKey = nil
+        }
+
+        PVToastManager.post(message, type: toastType, duration: duration, category: "osd", replaceKey: replaceKey)
     }
 }
