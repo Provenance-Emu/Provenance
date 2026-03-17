@@ -1,0 +1,564 @@
+#!/usr/bin/env python3
+"""
+generate_licenses.py — Auto-generate license manifest from Core.plist files + SPM.
+
+Scans all Core.plist files under Cores/ and CoresRetro/, reads
+Package.resolved for SPM dependencies, then outputs:
+  - Scripts/licenses.json   (structured JSON)
+  - LICENSES.md             (markdown table, at repo root)
+
+Usage:
+    python3 Scripts/generate_licenses.py [--output-dir <dir>] [--check] [--repo-root <dir>]
+
+Options:
+    --output-dir DIR    Directory for output files (default: repo root for LICENSES.md,
+                        Scripts/ for licenses.json)
+    --check             Exit non-zero if any core is missing PVLicense or PVCopyrightHolder
+    --repo-root DIR     Root of the repository (default: parent of this script's directory)
+    --skip-spm          Skip scanning Package.resolved for SPM dependencies
+
+Requires: Python 3.9+ (uses standard collection generics like ``dict[str, Any]``
+          and ``Optional`` from ``typing``; ``from __future__ import annotations``
+          is used to postpone evaluation of type annotations so they are never
+          introspected at runtime).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import plistlib
+import sys
+import warnings
+from pathlib import Path
+from typing import Any, Optional
+import os
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _load_plist(path: Path) -> Optional[dict[str, Any]]:
+    """Load a plist file (XML or binary), return None on failure."""
+    try:
+        with open(path, "rb") as fh:
+            return plistlib.load(fh)
+    except Exception as exc:  # noqa: BLE001
+        warnings.warn(f"Could not parse plist {path}: {exc}", stacklevel=2)
+        return None
+
+
+def _normalise_string_or_list(value: Any) -> Optional[list[str]]:
+    """Return a list given either a str or a list of str."""
+    if value is None:
+        return None
+    if isinstance(value, list):
+        return [str(v) for v in value]
+    return [str(value)]
+
+
+def _bool_or_none(value: Any) -> Optional[bool]:
+    if value is None:
+        return None
+    return bool(value)
+
+
+# ---------------------------------------------------------------------------
+# Core-entry builder
+# ---------------------------------------------------------------------------
+
+def _build_core_entry(
+    data: dict[str, Any],
+    *,
+    is_retro: bool,
+    source_path: Path,
+) -> dict[str, Any]:
+    """Convert a single Core.plist dict into a normalised entry."""
+    def _norm(v: Any) -> Optional[str]:
+        """Return None for None or blank strings, otherwise strip whitespace."""
+        if v is None:
+            return None
+        s = str(v).strip()
+        return s if s else None
+
+    name = (data.get("PVProjectName") or data.get("PVCoreIdentifier", "Unknown") or "").strip()
+    identifier = data.get("PVCoreIdentifier", "")
+    project_url = _norm(data.get("PVProjectURL"))
+    version = _norm(data.get("PVProjectVersion"))
+    supported_systems = data.get("PVSupportedSystems") or []
+
+    # New fields from issue #3236 (may not exist yet — use None as default)
+    # Prefer new schema keys, but fall back to existing ones until all Core.plist
+    # files are migrated.
+    license_spdx = _norm(data.get("PVLicense") or data.get("PVLicenseName"))
+    license_url = _norm(data.get("PVLicenseURL"))
+    copyright_raw = data.get("PVCopyrightHolder")
+    if copyright_raw is None:
+        copyright_raw = data.get("PVCopyright")
+    copyright_holder = _normalise_string_or_list(copyright_raw)
+    upstream_url = _norm(data.get("PVUpstreamProjectURL"))
+    fork_notes = _norm(data.get("PVForkNotes"))
+    app_store_compat = _bool_or_none(data.get("PVLicenseAppStoreCompatible"))
+
+    # Missing-field diagnostics are deferred to check_completeness() to avoid
+    # double-printing and to ensure all output appears in one consolidated block.
+
+    return {
+        "name": name,
+        "identifier": identifier,
+        "projectURL": project_url,
+        "version": version,
+        "license": license_spdx,
+        "licenseURL": license_url,
+        "copyrightHolder": copyright_holder,
+        "upstreamProjectURL": upstream_url,
+        "forkNotes": fork_notes,
+        "appStoreCompatible": app_store_compat,
+        "isRetroArch": is_retro,
+        "supportedSystems": list(supported_systems),
+        "_sourceFile": str(source_path),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Native-core scanner
+# ---------------------------------------------------------------------------
+
+def scan_native_cores(
+    repo_root: Path,
+) -> list[dict[str, Any]]:
+    """Find and parse all native Core.plist files under Cores/ (recursive)."""
+    entries: list[dict[str, Any]] = []
+    seen_identifiers: set[str] = set()
+
+    cores_root = repo_root / "Cores"
+    if not cores_root.is_dir():
+        print(f"  INFO: Cores directory not found: {cores_root}", file=sys.stderr)
+        return entries
+
+    # Recursively find all Core.plist files; skip build artifacts and cmake dirs
+    _skip_dirs = {".build", "cmake-build", "cmake_build", "build", "DerivedData"}
+    found_files: list[Path] = []
+    for path in sorted(cores_root.rglob("Core.plist")):
+        if any(part in _skip_dirs for part in path.parts):
+            continue
+        found_files.append(path)
+
+    for path in found_files:
+        data = _load_plist(path)
+        if data is None:
+            continue
+
+        identifier = data.get("PVCoreIdentifier", "")
+
+        # Skip duplicates (e.g. PPSSPP has Core.plist in two places)
+        if identifier and identifier in seen_identifiers:
+            try:
+                rel = path.relative_to(repo_root)
+            except ValueError:
+                rel = path
+            print(
+                f"  WARNING: duplicate PVCoreIdentifier {identifier!r} found at {rel}; skipping.",
+                file=sys.stderr,
+            )
+            continue
+        if identifier:
+            seen_identifiers.add(identifier)
+
+        entry = _build_core_entry(
+            data, is_retro=False, source_path=path,
+        )
+        entries.append(entry)
+
+    return entries
+
+
+# ---------------------------------------------------------------------------
+# RetroArch / CoresRetro scanner
+# ---------------------------------------------------------------------------
+
+def scan_retroarch_cores(
+    repo_root: Path,
+) -> list[dict[str, Any]]:
+    """Find and parse all Core.plist files under CoresRetro/ (recursive).
+
+    Each plist is processed as a RetroArch-style manifest: the top-level dict
+    becomes one entry, and any ``PVCores`` array within it adds further
+    sub-entries (the aggregated RetroArch plist bundles many cores this way).
+    Build artifact directories are skipped.
+    """
+    cores_retro_root = repo_root / "CoresRetro"
+    if not cores_retro_root.is_dir():
+        print(f"  INFO: CoresRetro directory not found: {cores_retro_root}", file=sys.stderr)
+        return []
+
+    _skip_dirs = {".build", "cmake-build", "cmake_build", "build", "DerivedData"}
+    found_files: list[Path] = []
+    for path in sorted(cores_retro_root.rglob("Core.plist")):
+        if any(part in _skip_dirs for part in path.parts):
+            continue
+        found_files.append(path)
+
+    if not found_files:
+        print(f"  INFO: No Core.plist files found under {cores_retro_root}", file=sys.stderr)
+        return []
+
+    entries: list[dict[str, Any]] = []
+    seen_identifiers: set[str] = set()
+
+    for plist_path in found_files:
+        data = _load_plist(plist_path)
+        if data is None:
+            continue
+
+        # Top-level entry (represents the core package / bridge itself)
+        identifier = data.get("PVCoreIdentifier", "")
+        if identifier and identifier in seen_identifiers:
+            try:
+                rel = plist_path.relative_to(repo_root)
+            except ValueError:
+                rel = plist_path
+            print(
+                f"  WARNING: duplicate PVCoreIdentifier {identifier!r} at {rel}; skipping.",
+                file=sys.stderr,
+            )
+        else:
+            if identifier:
+                seen_identifiers.add(identifier)
+            top_entry = _build_core_entry(
+                data, is_retro=True, source_path=plist_path,
+            )
+            entries.append(top_entry)
+
+        # Sub-entries from PVCores array (aggregated RetroArch plist pattern)
+        pv_cores = data.get("PVCores", [])
+        if not isinstance(pv_cores, list):
+            continue
+        for core_data in pv_cores:
+            if not isinstance(core_data, dict):
+                continue
+            sub_id = core_data.get("PVCoreIdentifier", "")
+            if sub_id and sub_id in seen_identifiers:
+                try:
+                    rel = plist_path.relative_to(repo_root)
+                except ValueError:
+                    rel = plist_path
+                print(
+                    f"  WARNING: duplicate PVCoreIdentifier {sub_id!r} in {rel}; skipping.",
+                    file=sys.stderr,
+                )
+                continue
+            if sub_id:
+                seen_identifiers.add(sub_id)
+            entry = _build_core_entry(
+                core_data, is_retro=True, source_path=plist_path,
+            )
+            entries.append(entry)
+
+    return entries
+
+
+# ---------------------------------------------------------------------------
+# SPM Package.resolved scanner
+# ---------------------------------------------------------------------------
+
+def scan_spm_packages(repo_root: Path) -> list[dict[str, Any]]:
+    """
+    Read the workspace-level Package.resolved and return lightweight
+    dependency records.  License data is NOT available in Package.resolved,
+    so fields default to None.
+    """
+    resolved_path = (
+        repo_root
+        / "Provenance.xcworkspace"
+        / "xcshareddata"
+        / "swiftpm"
+        / "Package.resolved"
+    )
+    if not resolved_path.is_file():
+        print(
+            f"  INFO: Package.resolved not found at {resolved_path}; skipping SPM scan.",
+            file=sys.stderr,
+        )
+        return []
+
+    try:
+        with open(resolved_path) as fh:
+            resolved = json.load(fh)
+    except Exception as exc:  # noqa: BLE001
+        print(f"  WARNING: Could not parse Package.resolved: {exc}", file=sys.stderr)
+        return []
+
+    # Support both v1 (object.pins[]) and v2 (pins[]) formats
+    pins = resolved.get("pins") or resolved.get("object", {}).get("pins") or []
+
+    entries: list[dict[str, Any]] = []
+    for pin in pins:
+        name = pin.get("package") or pin.get("identity", "")
+        repo_url = pin.get("repositoryURL") or pin.get("location", "")
+        state = pin.get("state", {})
+        version = state.get("version") or state.get("branch") or state.get("revision", "")[:8]
+
+        entries.append(
+            {
+                "name": name,
+                "identifier": f"spm.{name.lower()}",
+                "projectURL": repo_url,
+                "version": version,
+                "license": None,
+                "licenseURL": None,
+                "copyrightHolder": None,
+                "upstreamProjectURL": None,
+                "forkNotes": None,
+                "appStoreCompatible": None,
+                "isRetroArch": False,
+                "supportedSystems": [],
+                "_sourceFile": str(resolved_path),
+            }
+        )
+
+    # Sort by identifier for deterministic output
+    entries.sort(key=lambda e: e.get("identifier", ""))
+    return entries
+
+
+# ---------------------------------------------------------------------------
+# Output generators
+# ---------------------------------------------------------------------------
+
+def write_licenses_json(
+    entries: list[dict[str, Any]],
+    output_path: Path,
+) -> None:
+    """Write structured JSON manifest."""
+    # Strip internal _sourceFile field from output
+    clean_entries = []
+    for e in entries:
+        clean = {k: v for k, v in e.items() if not k.startswith("_")}
+        clean_entries.append(clean)
+
+    manifest = {
+        "entries": clean_entries,
+    }
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as fh:
+        json.dump(manifest, fh, indent=2, ensure_ascii=False)
+        fh.write("\n")
+    print(f"  Wrote {output_path} ({len(clean_entries)} entries)")
+
+
+def _tbd(value: Any) -> str:
+    """Return a human-readable cell value for the markdown table."""
+    if value is None or value == "" or value == []:
+        return "TBD"
+    if isinstance(value, list):
+        return ", ".join(str(v) for v in value)
+    return str(value)
+
+
+def _md_link(url: Optional[str], text: str) -> str:
+    if url:
+        return f"[{text}]({url})"
+    return text
+
+
+def write_licenses_md(
+    entries: list[dict[str, Any]],
+    output_path: Path,
+) -> None:
+    """Write a markdown attribution table."""
+    header = (
+        "# Provenance Emulator — License Attribution\n\n"
+        "> Auto-generated by `Scripts/generate_licenses.py` — do not edit manually.\n\n"
+        "## Emulator Cores & Libraries\n\n"
+        "| Core / Library | License | Copyright Holder | Project URL | App Store Safe |\n"
+        "|---|---|---|---|---|\n"
+    )
+
+    rows: list[str] = []
+    for e in entries:
+        name = e.get("name") or e.get("identifier") or "Unknown"
+        identifier = e.get("identifier", "")
+        project_url = e.get("projectURL")
+        license_spdx = _tbd(e.get("license"))
+        license_url = e.get("licenseURL")
+        copyright_val = _tbd(e.get("copyrightHolder"))
+        upstream_url = e.get("upstreamProjectURL")
+        app_compat = e.get("appStoreCompatible")
+
+        # Format the license cell: always link to licenseURL when available,
+        # even when the SPDX identifier is missing (shows "TBD" as the link text).
+        if license_url:
+            link_text = e.get("license") or license_spdx
+            license_cell = f"[{link_text}]({license_url})"
+        else:
+            license_cell = license_spdx
+
+        # Format the name cell: link to projectURL or upstreamProjectURL
+        link_url = upstream_url or project_url
+        name_cell = _md_link(link_url, name)
+        if identifier:
+            name_cell += f"<br/><small>`{identifier}`</small>"
+
+        # App Store safe column
+        if app_compat is True:
+            app_safe_cell = "Yes"
+        elif app_compat is False:
+            app_safe_cell = "No"
+        else:
+            app_safe_cell = "TBD"
+
+        rows.append(
+            f"| {name_cell} | {license_cell} | {copyright_val} | "
+            f"{_md_link(project_url, project_url or 'TBD')} | {app_safe_cell} |"
+        )
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as fh:
+        fh.write(header)
+        fh.write("\n".join(rows))
+        fh.write("\n")
+    print(f"  Wrote {output_path} ({len(rows)} rows)")
+
+
+# ---------------------------------------------------------------------------
+# Check mode
+# ---------------------------------------------------------------------------
+
+def check_completeness(entries: list[dict[str, Any]]) -> int:
+    """
+    Return the number of emulator-core entries missing required license fields.
+    SPM entries are excluded because Package.resolved does not carry license data.
+    Prints a summary.
+    """
+    core_entries = [
+        e for e in entries
+        if not str(e.get("identifier", "")).startswith("spm.")
+    ]
+    incomplete = [
+        e for e in core_entries
+        if not e.get("license") or not e.get("copyrightHolder")
+    ]
+    if incomplete:
+        print(
+            f"\nCHECK: {len(incomplete)} / {len(core_entries)} core entries missing "
+            "PVLicense or PVCopyrightHolder:",
+            file=sys.stderr,
+        )
+        for e in incomplete:
+            missing = []
+            if not e.get("license"):
+                missing.append("license")
+            if not e.get("copyrightHolder"):
+                missing.append("copyrightHolder")
+            source = e.get("_sourceFile", "")
+            source_note = f" ({source})" if source else ""
+            print(
+                f"  - {e.get('name', e.get('identifier'))} [{', '.join(missing)}]{source_note}",
+                file=sys.stderr,
+            )
+    else:
+        print(f"\nCHECK: All {len(core_entries)} core entries have required license fields.")
+    return len(incomplete)
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate license manifest from Core.plist files and Package.resolved.",
+    )
+    parser.add_argument(
+        "--repo-root",
+        type=Path,
+        default=None,
+        help="Path to repository root (default: parent of this script's directory)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Directory for output files. LICENSES.md goes here; "
+            "licenses.json goes into <output-dir>/Scripts/. "
+            "Defaults to repo root."
+        ),
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Exit non-zero if any core is missing required license fields.",
+    )
+    parser.add_argument(
+        "--skip-spm",
+        action="store_true",
+        help="Skip scanning Package.resolved for SPM dependencies.",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+
+    # Resolve repo root
+    script_dir = Path(__file__).resolve().parent
+    repo_root = args.repo_root or script_dir.parent
+    if not (repo_root / "Cores").is_dir() and not (repo_root / "CoresRetro").is_dir():
+        sys.exit(
+            f"ERROR: {repo_root} does not look like the Provenance repo root "
+            "(no Cores/ or CoresRetro/ directory found)."
+        )
+
+    output_dir = args.output_dir or repo_root
+
+    print("Scanning native cores …")
+    native_entries = scan_native_cores(repo_root)
+    print(f"  Found {len(native_entries)} native core entries.")
+
+    print("Scanning RetroArch cores …")
+    ra_entries = scan_retroarch_cores(repo_root)
+    print(f"  Found {len(ra_entries)} RetroArch core entries.")
+
+    spm_entries: list[dict[str, Any]] = []
+
+    # SPM license attribution is currently opt-in: by default we skip scanning
+    # Package.resolved so that generated artifacts remain stable and consistent
+    # with the committed LICENSES.md / Scripts/licenses.json. To include SPM
+    # packages, set INCLUDE_SPM_LICENSES=1 (or true/yes/on) and do not pass
+    # --skip-spm.
+    include_spm_env = os.environ.get("INCLUDE_SPM_LICENSES", "").lower()
+    include_spm = include_spm_env in ("1", "true", "yes", "on")
+
+    if include_spm and not args.skip_spm:
+        print("Scanning SPM packages …")
+        spm_entries = scan_spm_packages(repo_root)
+        print(f"  Found {len(spm_entries)} SPM package entries.")
+    else:
+        print("Skipping SPM package scan (INCLUDE_SPM_LICENSES not set or --skip-spm used).")
+
+    all_entries = native_entries + ra_entries + spm_entries
+
+    print(f"\nTotal entries: {len(all_entries)}")
+
+    if args.check:
+        # Validation-only mode: do not write outputs, just check completeness.
+        missing_count = check_completeness(all_entries)
+        if missing_count:
+            sys.exit(1)
+        # All good; exit without touching generated artifacts.
+        return
+
+    print("\nWriting outputs …")
+
+    json_path = output_dir / "Scripts" / "licenses.json"
+    md_path = output_dir / "LICENSES.md"
+
+    write_licenses_json(all_entries, json_path)
+    write_licenses_md(all_entries, md_path)
+
+
+if __name__ == "__main__":
+    main()
