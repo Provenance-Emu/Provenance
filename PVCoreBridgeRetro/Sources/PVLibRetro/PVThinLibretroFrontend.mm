@@ -463,9 +463,12 @@ typedef struct PVThinLibretroSymbols {
     // never return. We run them on a dedicated thread and use two semaphores to
     // hand-shake with runFrame: the core signals _blockingFrameReady after each
     // video_refresh call, then waits on _blockingCoreTick before advancing.
+    // @package visibility so the static thin_video_refresh callback can access via ->
+    @package
     BOOL _isBlockingCore;
     dispatch_semaphore_t _blockingFrameReady;  // core → frontend: frame available
     dispatch_semaphore_t _blockingCoreTick;    // frontend → core: run next tick
+    @private
     struct retro_game_info _blockingGameInfo;  // persisted for core thread lifetime
     NSData *_blockingROMData;                  // keeps ROM bytes alive on heap
 }
