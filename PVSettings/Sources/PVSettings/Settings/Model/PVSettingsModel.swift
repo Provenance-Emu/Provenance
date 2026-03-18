@@ -134,8 +134,9 @@ public extension Defaults.Keys {
     static let rumbleSystemOverrides = Key<[String: String]>("rumbleSystemOverrides", default: [:])
 
     /// Per-controller-type rumble profile overrides.
-    /// Key = controller type key (see `RumbleControllerTypeKey`), e.g. "dualSense", "xbox", "switchPro".
-    /// Value = UUID string of the custom preset to apply for that controller type.
+    /// Key = controller type identifier string, e.g. "dualSense", "xbox", "switchPro".
+    /// Value = UUID string of the custom preset to apply for that controller type, or
+    ///         the special string "builtin:<presetName>" for a named built-in.
     static let rumbleControllerOverrides = Key<[String: String]>("rumbleControllerOverrides", default: [:])
 
     /// User-created custom rumble presets, stored as JSON-encoded `RumblePreset` blobs.
