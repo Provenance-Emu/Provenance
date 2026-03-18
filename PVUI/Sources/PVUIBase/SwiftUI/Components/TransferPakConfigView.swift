@@ -149,9 +149,11 @@ public struct TransferPakConfigView: View {
                 slotsSection
                 clearSection
             }
+            #if !os(tvOS)
             .listStyle(.insetGrouped)
-            .navigationTitle("Transfer Pak")
             .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .navigationTitle("Transfer Pak")
             .toolbar {
                 if let launchAction {
                     // Pre-launch mode: "Skip & Launch" on leading, "Launch Game" on trailing.
