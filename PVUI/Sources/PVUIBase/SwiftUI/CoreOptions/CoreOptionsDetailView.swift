@@ -378,54 +378,52 @@ public struct CoreOptionsDetailView: View {
                     .padding(.horizontal)
                 }
 
-                // Reset all global options — hidden when viewing per-game scope to prevent
-                // accidentally wiping global defaults while per-game overrides are active.
-                // Users in per-game scope should use "RESET GAME OVERRIDES" above instead.
-                if !(gameMD5 != nil && perGameScope) {
-                Button(action: {
-                    state.showResetConfirmation = true
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        Text("RESET ALL OPTIONS")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                // Reset all global options — hidden in per-game scope (use "Reset Game Overrides" instead)
+                if effectiveMD5 == nil {
+                    Button(action: {
+                        state.showResetConfirmation = true
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise")
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            Text("RESET ALL OPTIONS")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        }
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 30)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(
+                                    (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                                        .opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [
+                                                    Color.red.opacity(themeManager.currentPalette.dark ? 0.7 : 0.5),
+                                                    themeManager.currentPalette.defaultTintColor.swiftUIColor
+                                                ]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ),
+                                            lineWidth: 2
+                                        )
+                                )
+                        )
+                        .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 5)
                     }
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 30)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
-                                    .opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [
-                                                Color.red.opacity(themeManager.currentPalette.dark ? 0.7 : 0.5),
-                                                themeManager.currentPalette.defaultTintColor.swiftUIColor
-                                            ]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 2
-                                    )
-                            )
-                    )
-                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 5)
+                    .retroSettingsRowFocus(cornerRadius: 8)
+                    #if os(tvOS)
+                    .tvOSDisableFocusEffect()
+                    .buttonStyle(TVMediaPlainButtonStyle())
+                    #endif
+                    .padding(.vertical, 20)
+                    .padding(.horizontal)
                 }
-                .retroSettingsRowFocus(cornerRadius: 8)
-                #if os(tvOS)
-                .tvOSDisableFocusEffect()
-                .buttonStyle(TVMediaPlainButtonStyle())
-                #endif
-                .padding(.vertical, 20)
-                .padding(.horizontal)
-                } // end if !(gameMD5 != nil && perGameScope)
             }
             .padding(.bottom, 30)
         }
@@ -460,7 +458,7 @@ public struct CoreOptionsDetailView: View {
         }
         .uiKitAlert(
             "Reset Game Overrides",
-            message: "Remove all per-game option overrides for this title? Core defaults will be used instead.",
+            message: "Remove all per-game option overrides for this title? Core-global settings will be used instead.",
             isPresented: $state.showResetGameOverridesConfirmation
         ) {
             UIAlertAction(title: "Reset", style: .destructive) { _ in
