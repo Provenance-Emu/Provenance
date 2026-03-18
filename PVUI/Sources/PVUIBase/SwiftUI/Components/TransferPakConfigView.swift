@@ -1,6 +1,6 @@
 //
 //  TransferPakConfigView.swift
-//  PVUI
+//  PVUIBase
 //
 //  Part of #3027 — Transfer Pak UI for Mupen64Plus N64 cores
 //
