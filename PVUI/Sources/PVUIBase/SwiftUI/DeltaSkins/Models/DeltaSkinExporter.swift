@@ -180,7 +180,8 @@ struct DeltaSkinExporter {
         let infoURL = tempSkinDir.appendingPathComponent("info.json")
         try jsonData.write(to: infoURL)
 
-        try fm.zipItem(at: tempSkinDir, to: outputURL)
+        // shouldKeepParent: false so info.json is at the archive root (not under the temp folder name)
+        try fm.zipItem(at: tempSkinDir, to: outputURL, shouldKeepParent: false)
     }
 
     /// Export a zip-archive-based .deltaskin file.
@@ -206,9 +207,9 @@ struct DeltaSkinExporter {
         let infoURL = tempExtractDir.appendingPathComponent("info.json")
         try jsonData.write(to: infoURL)
 
-        // Rezip
+        // Rezip — shouldKeepParent: false so info.json is at the archive root
         do {
-            try fm.zipItem(at: tempExtractDir, to: outputURL)
+            try fm.zipItem(at: tempExtractDir, to: outputURL, shouldKeepParent: false)
         } catch {
             ELOG("DeltaSkinExporter: failed to zip to \(outputURL.lastPathComponent): \(error)")
             throw DeltaSkinExportError.archiveCreationFailed

@@ -12,6 +12,8 @@ struct DeltaSkinFullscreenPreview: View {
     @State private var showInfoSheet = false
     @State private var showHitTestOverlay = false
     @State private var isEditMode = false
+    /// Pending display type when a switch was requested while unsaved edits exist.
+    @State private var pendingDisplayType: DeltaSkinDisplayType? = nil
     @StateObject private var editorViewModel: DeltaSkinEditorViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -37,9 +39,12 @@ struct DeltaSkinFullscreenPreview: View {
         guard let currentIndex = supportedDisplayTypes.firstIndex(of: currentDisplayType),
               supportedDisplayTypes.count > 1 else { return }
 
-        let nextIndex = (currentIndex + 1) % supportedDisplayTypes.count
-        withAnimation {
-            currentDisplayType = supportedDisplayTypes[nextIndex]
+        let next = supportedDisplayTypes[(currentIndex + 1) % supportedDisplayTypes.count]
+        if isEditMode && editorViewModel.hasChanges {
+            // Ask user before discarding unsaved button position edits
+            pendingDisplayType = next
+        } else {
+            withAnimation { currentDisplayType = next }
         }
     }
 
@@ -220,10 +225,6 @@ struct DeltaSkinFullscreenPreview: View {
                     }
                 }
 
-                // Hit test overlay (non-edit mode only)
-                if showHitTestOverlay && !isEditMode {
-                    DeltaSkinHitTestOverlay(skin: skin, traits: currentTraits)
-                }
             }
         }
         .sheet(isPresented: $showInfoSheet) {
@@ -248,6 +249,20 @@ struct DeltaSkinFullscreenPreview: View {
         }
         .statusBar(hidden: true)
         #endif
+        .alert("Discard Edits?", isPresented: Binding(
+            get: { pendingDisplayType != nil },
+            set: { if !$0 { pendingDisplayType = nil } }
+        )) {
+            Button("Discard", role: .destructive) {
+                if let next = pendingDisplayType {
+                    pendingDisplayType = nil
+                    withAnimation { currentDisplayType = next }
+                }
+            }
+            Button("Cancel", role: .cancel) { pendingDisplayType = nil }
+        } message: {
+            Text("Switching display type will discard your unsaved button position edits.")
+        }
         .onChange(of: currentDisplayType) { _ in
             editorViewModel.updateTraits(currentTraits)
         }
@@ -262,53 +277,6 @@ struct DeltaSkinFullscreenPreview: View {
         let id: String
         let url: URL
         init(_ url: URL) { self.url = url; self.id = url.absoluteString }
-    }
-}
-
-/// Overlay showing hit test areas for buttons
-private struct DeltaSkinHitTestOverlay: View {
-    let skin: any DeltaSkinProtocol
-    let traits: DeltaSkinTraits
-
-    var body: some View {
-        GeometryReader { geometry in
-            if let buttons = skin.buttons(for: traits),
-               let mappingSize = skin.mappingSize(for: traits) {
-                let scale = min(
-                    geometry.size.width / mappingSize.width,
-                    geometry.size.height / mappingSize.height
-                )
-
-                let scaledSkinWidth = mappingSize.width * scale
-                let scaledSkinHeight = mappingSize.height * scale
-                let xOffset = (geometry.size.width - scaledSkinWidth) / 2
-
-                // Check if skin has fixed screen position
-                let hasScreenPosition = skin.screens(for: traits) != nil
-
-                // Calculate Y offset based on skin type
-                let yOffset: CGFloat = hasScreenPosition ?
-                ((geometry.size.height - scaledSkinHeight) / 2) :
-                (geometry.size.height - scaledSkinHeight)
-
-                ForEach(buttons, id: \.id) { button in
-                    let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
-
-                    let scaledFrame = CGRect(
-                        x: button.frame.minX * scale + xOffset,
-                        y: yOffset + (button.frame.minY * scale),  // Use direct mapping for Y
-                        width: button.frame.width * scale,
-                        height: button.frame.height * scale
-                    )
-
-                    Rectangle()
-                        .stroke(.red.opacity(0.5), lineWidth: 1)
-                        .frame(width: scaledFrame.width, height: scaledFrame.height)
-                        .position(x: scaledFrame.midX, y: scaledFrame.midY)
-                }
-            }
-        }
-        .allowsHitTesting(false)
     }
 }
 

@@ -120,7 +120,11 @@ final class DeltaSkinEditorViewModel: ObservableObject {
     func exportSkin() {
         isExporting = true
         exportError = nil
-        Task {
+        // Snapshot values to avoid capturing self in a background task
+        let skin = self.skin
+        let traits = self.traits
+        let modifiedFrames = self.modifiedFrames
+        Task.detached {
             do {
                 let url = try await DeltaSkinExporter.export(
                     skin: skin,
@@ -128,14 +132,14 @@ final class DeltaSkinEditorViewModel: ObservableObject {
                     modifiedFrames: modifiedFrames
                 )
                 await MainActor.run {
-                    exportedURL = url
-                    isExporting = false
+                    self.exportedURL = url
+                    self.isExporting = false
                 }
             } catch {
                 ELOG("DeltaSkinEditor: export failed — \(error)")
                 await MainActor.run {
-                    exportError = error
-                    isExporting = false
+                    self.exportError = error
+                    self.isExporting = false
                 }
             }
         }
