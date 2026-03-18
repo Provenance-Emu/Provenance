@@ -125,6 +125,24 @@ public extension Defaults.Keys {
     /// Range 0.0 (silent) – 1.0 (full intensity). Default 1.0.
     static let controllerHapticIntensity = Key<Double>("controllerHapticIntensity", default: 1.0)
 
+    // MARK: Rumble Profile Customization
+
+    /// Per-system rumble profile overrides.
+    /// Key = Provenance system identifier (e.g. "com.provenance.n64").
+    /// Value = UUID string of the custom preset that overrides the system default, or
+    ///         the special string "builtin:<presetName>" for a named built-in.
+    static let rumbleSystemOverrides = Key<[String: String]>("rumbleSystemOverrides", default: [:])
+
+    /// Per-controller-type rumble profile overrides.
+    /// Key = controller type key (see `RumbleControllerTypeKey`), e.g. "dualSense", "xbox", "switchPro".
+    /// Value = UUID string of the custom preset to apply for that controller type.
+    static let rumbleControllerOverrides = Key<[String: String]>("rumbleControllerOverrides", default: [:])
+
+    /// User-created custom rumble presets, stored as JSON-encoded `RumblePreset` blobs.
+    /// Each element is the result of `JSONEncoder().encode(preset)`.
+    /// Using `[Data]` keeps PVSettings free of a PVPrimitives dependency.
+    static let rumbleCustomPresets = Key<[Data]>("rumbleCustomPresets", default: [])
+
     static let buttonPressEffect = Key<ButtonPressEffect>("buttonPressEffect", default: .glow)
     static let buttonSound = Key<ButtonSound>("buttonSound", default: .none)
 

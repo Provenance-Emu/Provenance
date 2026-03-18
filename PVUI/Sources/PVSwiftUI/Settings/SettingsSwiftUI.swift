@@ -1689,6 +1689,24 @@ private struct ControllerSection: View {
                 ControllerRumbleSlider(controllerHapticIntensity: $controllerHapticIntensity)
             }
             #endif
+
+            // Rumble profile customisation (always available so users can pre-configure
+            // profiles before a session, even when phone haptics are off on iOS).
+            #if os(tvOS)
+            NavigationLink(destination: RumbleProfilesView()) {
+                SettingsRow(title: "Rumble Profiles",
+                            subtitle: "Customize per-system and per-controller haptic profiles.",
+                            icon: .sfSymbol("waveform.path"))
+            }
+            #else
+            if hapticFeedback {
+                NavigationLink(destination: RumbleProfilesView()) {
+                    SettingsRow(title: "Rumble Profiles",
+                                subtitle: "Customize per-system and per-controller haptic profiles.",
+                                icon: .sfSymbol("waveform.path"))
+                }
+            }
+            #endif
             #if !os(tvOS)
             OnScreenControllerSection()
             #endif

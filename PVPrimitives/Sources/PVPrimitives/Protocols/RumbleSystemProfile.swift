@@ -21,7 +21,7 @@ import Foundation
 ///
 /// These profiles tune CoreHaptics parameters to approximate the
 /// original motor characteristics on modern haptic actuators.
-public struct RumbleSystemProfile: Sendable {
+public struct RumbleSystemProfile: Codable, Sendable {
 
     // MARK: Properties
 

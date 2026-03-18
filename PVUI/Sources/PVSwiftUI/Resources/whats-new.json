@@ -445,7 +445,7 @@
         "symbolName": "wave.3.right",
         "symbolColor": "cyan",
         "title": "Haptic Feedback & Rumble",
-        "subtitle": "Controller rumble support with configurable intensity. On-screen buttons now have haptic feedback."
+        "subtitle": "Controller rumble support with configurable intensity. On-screen buttons now have haptic feedback. Custom per-system and per-controller rumble profiles."
       },
       {
         "symbolName": "bell.badge.fill",
