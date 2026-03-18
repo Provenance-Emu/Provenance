@@ -22,6 +22,9 @@
 @import Foundation;
 @import QuartzCore;   // CACurrentMediaTime
 @import CoreVideo;    // kCVPixelFormatType_32BGRA
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+@import UIKit;        // UIDevice battery API
+#endif
 @import PVLoggingObjC;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
@@ -3660,6 +3663,60 @@ static bool thin_environment(unsigned cmd, void *data) {
             if (data) *(unsigned *)data = RETRO_HW_CONTEXT_OPENGLES3;
             return true;
         }
+
+        // ---- Savestate context (env 72 | EXPERIMENTAL) ----
+        case RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT: {
+            // Tell the core we're doing normal (non-runahead, non-rollback) saves.
+            enum retro_savestate_context *ctx = (enum retro_savestate_context *)data;
+            if (ctx) *ctx = RETRO_SAVESTATE_CONTEXT_NORMAL;
+            return true;
+        }
+
+        // ---- JIT capability (env 74) ----
+        case RETRO_ENVIRONMENT_GET_JIT_CAPABLE: {
+            // Provenance supports JIT on iOS/tvOS via entitlements (TrollStore,
+            // debugger attach, or the iOS 26+ JITAuthorizer API). Report true
+            // so cores that benefit from JIT (e.g. Dolphin, PPSSPP) attempt it.
+            if (data) *(bool *)data = true;
+            DLOG(@"ThinEnv GET_JIT_CAPABLE: true");
+            return true;
+        }
+
+        // ---- Device power state (env 77 | EXPERIMENTAL) ----
+        case RETRO_ENVIRONMENT_GET_DEVICE_POWER: {
+            struct retro_device_power *pwr = (struct retro_device_power *)data;
+            if (!pwr) return false;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+            UIDevice *dev = UIDevice.currentDevice;
+            dev.batteryMonitoringEnabled = YES;
+            float level = dev.batteryLevel; // 0..1, or -1 if unknown
+            UIDeviceBatteryState state = dev.batteryState;
+            pwr->percent = (level >= 0.0f) ? (int8_t)(level * 100.0f) : -1;
+            pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
+            switch (state) {
+                case UIDeviceBatteryStateCharging:
+                    pwr->state = RETRO_POWERSTATE_CHARGING; break;
+                case UIDeviceBatteryStateFull:
+                    pwr->state = RETRO_POWERSTATE_CHARGED; break;
+                case UIDeviceBatteryStateUnplugged:
+                    pwr->state = RETRO_POWERSTATE_DISCHARGING; break;
+                default:
+                    pwr->state = RETRO_POWERSTATE_UNKNOWN; break;
+            }
+#else
+            // tvOS has no battery API — report plugged-in at full
+            pwr->state   = RETRO_POWERSTATE_PLUGGED_IN;
+            pwr->percent = 100;
+            pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
+#endif
+            return true;
+        }
+
+        // ---- Netpacket interface (env 78) ----
+        // Network multiplayer via custom packet routing — not supported.
+        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE:
+            DLOG(@"ThinEnv SET_NETPACKET_INTERFACE: not supported");
+            return false;
 
         default:
             DLOG(@"ThinEnv UNSUPPORTED cmd=%u", cmd);

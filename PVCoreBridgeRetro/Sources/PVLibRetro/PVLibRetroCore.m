@@ -14,6 +14,9 @@
 @import PVSettings;
 @import PVAudio;
 @import PVCoreBridge;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+@import UIKit; // UIDevice battery API for RETRO_ENVIRONMENT_GET_DEVICE_POWER
+#endif
 
 #include "libretro.h"
 #include "libretro_vulkan.h"
@@ -2076,6 +2079,60 @@ static bool environment_callback(unsigned cmd, void *data) {
             DLOG(@"Environ GET_MIDI_INTERFACE — not supported on this platform");
             return false;
         }
+
+        // MARK: - Microphone Interface — env 75 | EXPERIMENTAL
+        case RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE: {
+            // Microphone support not wired in legacy libretro frontend.
+            DLOG(@"Environ GET_MICROPHONE_INTERFACE — not supported");
+            return false;
+        }
+
+        // MARK: - Savestate context — env 72 | EXPERIMENTAL
+        case RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT: {
+            // Report normal savestate context (no runahead / netplay rollback).
+            enum retro_savestate_context *ctx = (enum retro_savestate_context *)data;
+            if (ctx) *ctx = RETRO_SAVESTATE_CONTEXT_NORMAL;
+            return true;
+        }
+
+        // MARK: - JIT capable — env 74
+        case RETRO_ENVIRONMENT_GET_JIT_CAPABLE: {
+            // Provenance supports JIT on iOS/tvOS — report true.
+            if (data) *(bool *)data = true;
+            return true;
+        }
+
+        // MARK: - Device power — env 77 | EXPERIMENTAL
+        case RETRO_ENVIRONMENT_GET_DEVICE_POWER: {
+            struct retro_device_power *pwr = (struct retro_device_power *)data;
+            if (!pwr) return false;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+            UIDevice *dev = UIDevice.currentDevice;
+            dev.batteryMonitoringEnabled = YES;
+            float level = dev.batteryLevel;
+            UIDeviceBatteryState state = dev.batteryState;
+            pwr->percent = (level >= 0.0f) ? (int8_t)(level * 100.0f) : -1;
+            pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
+            switch (state) {
+                case UIDeviceBatteryStateCharging:  pwr->state = RETRO_POWERSTATE_CHARGING;  break;
+                case UIDeviceBatteryStateFull:       pwr->state = RETRO_POWERSTATE_CHARGED;   break;
+                case UIDeviceBatteryStateUnplugged:  pwr->state = RETRO_POWERSTATE_DISCHARGING; break;
+                default:                             pwr->state = RETRO_POWERSTATE_UNKNOWN;   break;
+            }
+#else
+            // tvOS — no battery, always plugged in
+            pwr->state   = RETRO_POWERSTATE_PLUGGED_IN;
+            pwr->percent = 100;
+            pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
+#endif
+            return true;
+        }
+
+        // MARK: - Netpacket interface — env 78
+        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE:
+            // Network multiplayer packet routing — not supported.
+            DLOG(@"Environ SET_NETPACKET_INTERFACE — not supported");
+            return false;
 
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
