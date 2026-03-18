@@ -11,13 +11,19 @@ struct DeltaSkinFullscreenPreview: View {
     @State private var showDebugOverlay = false
     @State private var showInfoSheet = false
     @State private var showHitTestOverlay = false
+    @State private var isEditMode = false
+    /// Pending display type when a switch was requested while unsaved edits exist.
+    @State private var pendingDisplayType: DeltaSkinDisplayType? = nil
+    @StateObject private var editorViewModel: DeltaSkinEditorViewModel
     @Environment(\.dismiss) private var dismiss
 
-    init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, filters: Set<TestPatternEffect>) {
+    init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, filters: Set<TestPatternEffect>, initialEditMode: Bool = false) {
         self.skin = skin
         self.traits = traits
         self.filters = filters
         _currentDisplayType = State(initialValue: traits.displayType)
+        _isEditMode = State(initialValue: initialEditMode)
+        _editorViewModel = StateObject(wrappedValue: DeltaSkinEditorViewModel(skin: skin, traits: traits))
     }
 
     private var supportedDisplayTypes: [DeltaSkinDisplayType] {
@@ -34,9 +40,12 @@ struct DeltaSkinFullscreenPreview: View {
         guard let currentIndex = supportedDisplayTypes.firstIndex(of: currentDisplayType),
               supportedDisplayTypes.count > 1 else { return }
 
-        let nextIndex = (currentIndex + 1) % supportedDisplayTypes.count
-        withAnimation {
-            currentDisplayType = supportedDisplayTypes[nextIndex]
+        let next = supportedDisplayTypes[(currentIndex + 1) % supportedDisplayTypes.count]
+        if editorViewModel.hasChanges {
+            // Ask user before discarding unsaved button position edits
+            pendingDisplayType = next
+        } else {
+            withAnimation { currentDisplayType = next }
         }
     }
 
@@ -55,12 +64,12 @@ struct DeltaSkinFullscreenPreview: View {
         Skin: \(skin.name)
         ID: \(skin.identifier)
         Game Type: \(skin.gameType.systemIdentifier?.fullName ?? (skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)))
-        Device: \(traits.device.rawValue)
-        Display: \(traits.displayType.rawValue)
-        Orientation: \(traits.orientation.rawValue)
-        Mapping Size: \(skin.mappingSize(for: traits)?.debugDescription ?? "nil")
-        Buttons: \(skin.buttons(for: traits)?.count ?? 0)
-        Screens: \(skin.screens(for: traits)?.count ?? 0)
+        Device: \(currentTraits.device.rawValue)
+        Display: \(currentTraits.displayType.rawValue)
+        Orientation: \(currentTraits.orientation.rawValue)
+        Mapping Size: \(skin.mappingSize(for: currentTraits)?.debugDescription ?? "nil")
+        Buttons: \(skin.buttons(for: currentTraits)?.count ?? 0)
+        Screens: \(skin.screens(for: currentTraits)?.count ?? 0)
         """
     }
 
@@ -73,154 +82,210 @@ struct DeltaSkinFullscreenPreview: View {
     }
 
     var body: some View {
-        ZStack {
-            DeltaSkinView(
-                skin: skin,
-                traits: currentTraits,
-                filters: filters,
-                showDebugOverlay: showDebugOverlay,
-                showHitTestOverlay: showHitTestOverlay,
-                screenAspectRatio: nil,
-                isInEmulator: false,
-                inputHandler: DeltaSkinInputHandler(),
-                core: nil
-            )
+        GeometryReader { geometry in
+            ZStack {
+                DeltaSkinView(
+                    skin: skin,
+                    traits: currentTraits,
+                    filters: filters,
+                    showDebugOverlay: showDebugOverlay && !isEditMode,
+                    showHitTestOverlay: showHitTestOverlay && !isEditMode,
+                    screenAspectRatio: nil,
+                    isInEmulator: false,
+                    inputHandler: DeltaSkinInputHandler(),
+                    core: nil
+                )
 
-            // Overlay controls
-            VStack {
-                HStack {
-                    // Debug overlay toggle
-                    Button {
-                        showDebugOverlay.toggle()
+                // Edit overlay (replaces debug overlay in edit mode)
+                if isEditMode {
+                    DeltaSkinEditOverlay(
+                        viewModel: editorViewModel,
+                        size: geometry.size,
+                        safeAreaInsets: geometry.safeAreaInsets
+                    )
+                }
 
-                        // Copy debug info to clipboard when enabling
-                        if showDebugOverlay {
-                            #if !os(tvOS)
-                            UIPasteboard.general.string = debugInfo
-                            #endif
-                            DLOG("Debug Info:\n\(debugInfo)")
+                // Overlay controls
+                VStack {
+                    HStack {
+                        if !isEditMode {
+                            // Debug overlay toggle
+                            Button {
+                                showDebugOverlay.toggle()
+                                if showDebugOverlay {
+                                    #if !os(tvOS)
+                                    UIPasteboard.general.string = debugInfo
+                                    #endif
+                                    DLOG("Debug Info:\n\(debugInfo)")
+                                }
+                            } label: {
+                                Image(systemName: showDebugOverlay ? "viewfinder.circle.fill" : "viewfinder.circle")
+                                    .font(.title)
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .background(Circle().fill(.ultraThinMaterial))
+                            }
+
+                            // Hit test overlay toggle
+                            Button {
+                                showHitTestOverlay.toggle()
+                            } label: {
+                                Image(systemName: showHitTestOverlay ? "square.grid.2x2.fill" : "square.grid.2x2")
+                                    .font(.title)
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .background(Circle().fill(.ultraThinMaterial))
+                            }
+
+                            // Display type toggle (only show if multiple types supported)
+                            if supportedDisplayTypes.count > 1 {
+                                Button { nextDisplayType() } label: {
+                                    Image(systemName: displayTypeIcon(currentDisplayType))
+                                        .font(.title)
+                                        .foregroundStyle(.white)
+                                        .padding()
+                                        .background(Circle().fill(.ultraThinMaterial))
+                                }
+                            }
                         }
-                    } label: {
-                        Image(systemName: showDebugOverlay ? "viewfinder.circle.fill" : "viewfinder.circle")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
-                    }
 
-                    // Hit test overlay toggle
-                    Button {
-                        showHitTestOverlay.toggle()
-                    } label: {
-                        Image(systemName: showHitTestOverlay ? "square.grid.2x2.fill" : "square.grid.2x2")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
-                    }
+                        // Edit mode toggle (drag gesture is iOS-only inside the overlay; tvOS can still inspect button coordinates)
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                isEditMode.toggle()
+                                if !isEditMode {
+                                    editorViewModel.clearSelection()
+                                }
+                            }
+                        } label: {
+                            Image(systemName: isEditMode ? "pencil.circle.fill" : "pencil.circle")
+                                .font(.title)
+                                .foregroundStyle(isEditMode ? .yellow : .white)
+                                .padding()
+                                .background(Circle().fill(isEditMode ? AnyShapeStyle(.yellow.opacity(0.2)) : AnyShapeStyle(.ultraThinMaterial)))
+                        }
+                        .accessibilityLabel("Edit Button Positions")
+                        .accessibilityValue(isEditMode ? "Active" : "Inactive")
 
-                    // Display type toggle (only show if multiple types supported)
-                    if supportedDisplayTypes.count > 1 {
-                        Button { nextDisplayType() } label: {
-                            Image(systemName: displayTypeIcon(currentDisplayType))
+                        // Export edited skin (iOS only — no ShareSheet on tvOS)
+                        #if !os(tvOS)
+                        if isEditMode && editorViewModel.hasChanges {
+                            Button {
+                                editorViewModel.exportSkin()
+                            } label: {
+                                HStack(spacing: 4) {
+                                    if editorViewModel.isExporting {
+                                        ProgressView()
+                                            .scaleEffect(0.7)
+                                            .tint(.white)
+                                    } else {
+                                        Image(systemName: "square.and.arrow.up")
+                                    }
+                                    Text("Export")
+                                        .font(.subheadline)
+                                }
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                                .background(Capsule().fill(.green.opacity(0.85)))
+                            }
+                            .disabled(editorViewModel.isExporting)
+                        }
+                        #endif
+
+                        Spacer()
+
+                        // Info button (hidden in edit mode to reduce clutter)
+                        if !isEditMode {
+                            Button {
+                                showInfoSheet = true
+                            } label: {
+                                Image(systemName: "info.circle")
+                                    .font(.title)
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .background(Circle().fill(.ultraThinMaterial))
+                            }
+                        }
+
+                        // Dismiss button
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
                                 .font(.title)
                                 .foregroundStyle(.white)
                                 .padding()
                                 .background(Circle().fill(.ultraThinMaterial))
                         }
                     }
+                    .padding()
 
                     Spacer()
 
-                    // Info button
-                    Button {
-                        showInfoSheet = true
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
-                    }
-
-                    // Dismiss button
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
+                    // Status bar in edit mode
+                    if isEditMode {
+                        DeltaSkinEditorStatusBar(viewModel: editorViewModel)
                     }
                 }
-                .padding()
 
-                Spacer()
-            }
-
-            // Hit test overlay
-            if showHitTestOverlay {
-                DeltaSkinHitTestOverlay(skin: skin, traits: currentTraits)
             }
         }
         .sheet(isPresented: $showInfoSheet) {
             DeltaSkinInfoSheet(skin: skin)
         }
         #if !os(tvOS)
+        .sheet(item: Binding(
+            get: { editorViewModel.exportedURL.map { ExportedSkinURL($0) } },
+            set: { _ in editorViewModel.exportedURL = nil }
+        )) { wrapper in
+            ShareSheet(activityItems: [wrapper.url])
+        }
+        .alert("Export Failed",
+               isPresented: Binding(
+                get: { editorViewModel.exportError != nil },
+                set: { if !$0 { editorViewModel.exportError = nil } }
+               )
+        ) {
+            Button("OK", role: .cancel) { editorViewModel.exportError = nil }
+        } message: {
+            Text(editorViewModel.exportError?.localizedDescription ?? "Unknown error")
+        }
         .statusBar(hidden: true)
         #endif
-        .ignoresSafeArea()
-        .onAppear {
-            DLOG("FullscreenPreview safe areas: \(UIApplication.shared.windows.first?.safeAreaInsets ?? .zero)")
-        }
-    }
-}
-
-/// Overlay showing hit test areas for buttons
-private struct DeltaSkinHitTestOverlay: View {
-    let skin: any DeltaSkinProtocol
-    let traits: DeltaSkinTraits
-
-    var body: some View {
-        GeometryReader { geometry in
-            if let buttons = skin.buttons(for: traits),
-               let mappingSize = skin.mappingSize(for: traits) {
-                let scale = min(
-                    geometry.size.width / mappingSize.width,
-                    geometry.size.height / mappingSize.height
-                )
-
-                let scaledSkinWidth = mappingSize.width * scale
-                let scaledSkinHeight = mappingSize.height * scale
-                let xOffset = (geometry.size.width - scaledSkinWidth) / 2
-
-                // Check if skin has fixed screen position
-                let hasScreenPosition = skin.screens(for: traits) != nil
-
-                // Calculate Y offset based on skin type
-                let yOffset: CGFloat = hasScreenPosition ?
-                ((geometry.size.height - scaledSkinHeight) / 2) :
-                (geometry.size.height - scaledSkinHeight)
-
-                ForEach(buttons, id: \.id) { button in
-                    let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
-
-                    let scaledFrame = CGRect(
-                        x: button.frame.minX * scale + xOffset,
-                        y: yOffset + (button.frame.minY * scale),  // Use direct mapping for Y
-                        width: button.frame.width * scale,
-                        height: button.frame.height * scale
-                    )
-
-                    Rectangle()
-                        .stroke(.red.opacity(0.5), lineWidth: 1)
-                        .frame(width: scaledFrame.width, height: scaledFrame.height)
-                        .position(x: scaledFrame.midX, y: scaledFrame.midY)
+        .alert("Discard Edits?", isPresented: Binding(
+            get: { pendingDisplayType != nil },
+            set: { if !$0 { pendingDisplayType = nil } }
+        )) {
+            Button("Discard", role: .destructive) {
+                if let next = pendingDisplayType {
+                    pendingDisplayType = nil
+                    withAnimation { currentDisplayType = next }
                 }
             }
+            Button("Cancel", role: .cancel) { pendingDisplayType = nil }
+        } message: {
+            Text("Switching display type will discard your unsaved button position edits.")
         }
-        .allowsHitTesting(false)
+        .onChange(of: currentDisplayType) { _ in
+            editorViewModel.updateTraits(currentTraits)
+        }
+        .ignoresSafeArea()
+        .onAppear {
+            #if !os(tvOS)
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                DLOG("FullscreenPreview safe areas: \(window.safeAreaInsets)")
+            }
+            #endif
+        }
+    }
+
+    /// Thin `Identifiable` wrapper so we can drive a `.sheet(item:)` from a URL.
+    private struct ExportedSkinURL: Identifiable {
+        let id: String
+        let url: URL
+        init(_ url: URL) { self.url = url; self.id = url.absoluteString }
     }
 }
 

@@ -25,6 +25,7 @@ struct SkinPreviewCell: View {
     @State private var thumbnailFailed = false
     #if !os(tvOS)
     @State private var showingShareSheet = false
+    @State private var showingEditSheet = false
     #endif
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.colorScheme) private var colorScheme
@@ -96,6 +97,12 @@ struct SkinPreviewCell: View {
             } label: {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
+
+            Button {
+                showingEditSheet = true
+            } label: {
+                Label("Edit Button Positions…", systemImage: "pencil.and.ruler")
+            }
             #endif
 
             if manager.isDeletable(skin) {
@@ -129,6 +136,14 @@ struct SkinPreviewCell: View {
         #if !os(tvOS)
         .sheet(isPresented: $showingShareSheet) {
             ShareSheet(activityItems: [skin.fileURL])
+        }
+        .sheet(isPresented: $showingEditSheet) {
+            DeltaSkinFullscreenPreview(
+                skin: skin,
+                traits: previewTraits,
+                filters: [],
+                initialEditMode: true
+            )
         }
         #endif
         .onAppear {
