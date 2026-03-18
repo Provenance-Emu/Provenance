@@ -13,6 +13,7 @@
 //
 
 import PVCoreBridge
+import PVFeatureFlags
 import PVLogging
 
 extension PVEmulatorViewController {
@@ -20,7 +21,10 @@ extension PVEmulatorViewController {
     /// slot selections to the core if it conforms to `TransferPakSupport`.
     ///
     /// Call this immediately before `core.startEmulation()`.
+    /// No-ops when the `mupenTransferPak` feature flag is disabled so that
+    /// disabling the flag suppresses both the UI and the behavior.
     func applyPersistedTransferPakIfNeeded() {
+        guard PVFeatureFlags.shared.isEnabled(.mupenTransferPak) else { return }
         guard let transferCore = core as? TransferPakSupport else { return }
         guard let md5 = game?.md5Hash, !md5.isEmpty else { return }
 
