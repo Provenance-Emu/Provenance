@@ -115,6 +115,11 @@ public struct TransferPakConfigView: View {
     private let slotCount: Int
 
     @State private var selectedPaths: [URL?]
+    /// MD5 hashes buffered per port in pre-launch mode (nil = clear the slot).
+    /// Only ports where `slotIsStaged[port] == true` are committed on "Launch Game".
+    @State private var stagedMD5s: [String?]
+    /// Tracks which ports the user has explicitly modified during this pre-launch session.
+    @State private var slotIsStaged: [Bool]
     @State private var gbAndGbcGames: [PVGame] = []
 
     public init(game: PVGame,
@@ -131,6 +136,8 @@ public struct TransferPakConfigView: View {
         // Start with empty slots; real Realm resolution happens in onAppear to
         // avoid synchronous Realm access during view construction (often on main thread).
         _selectedPaths = State(initialValue: Array(repeating: nil, count: self.slotCount))
+        _stagedMD5s = State(initialValue: Array(repeating: nil, count: self.slotCount))
+        _slotIsStaged = State(initialValue: Array(repeating: false, count: self.slotCount))
     }
 
     // MARK: - Body
@@ -147,7 +154,9 @@ public struct TransferPakConfigView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if let launchAction {
-                    // Pre-launch mode: "Skip & Launch" on leading, "Launch Game" on trailing
+                    // Pre-launch mode: "Skip & Launch" on leading, "Launch Game" on trailing.
+                    // Slot edits are buffered until "Launch Game" is tapped; tapping
+                    // "Skip & Launch" discards any in-progress changes without persisting them.
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Skip & Launch") {
                             onDismiss?()
@@ -156,6 +165,7 @@ public struct TransferPakConfigView: View {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Launch Game") {
+                            commitStagedSlots()
                             onDismiss?()
                             launchAction()
                         }
@@ -286,11 +296,26 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     private func updateSlot(port: Int, gbGame: PVGame?) {
         let url = gbGame?.file?.url
         selectedPaths[port] = url
-        TransferPakStore.setGBGame(gbGame?.md5Hash, forGameMD5: game.md5Hash, port: port)
-        if let apply = applyLiveSlotChange {
-            let rom = url.map { TransferPakROM(romPath: $0) }
-            apply(port, rom)
-            DLOG("TransferPak: live-applied port \(port) → \(url?.lastPathComponent ?? "nil")")
+        if launchAction != nil {
+            // Pre-launch mode: buffer the change without persisting to UserDefaults.
+            // Changes are committed only when the user taps "Launch Game".
+            stagedMD5s[port] = gbGame?.md5Hash
+            slotIsStaged[port] = true
+        } else {
+            TransferPakStore.setGBGame(gbGame?.md5Hash, forGameMD5: game.md5Hash, port: port)
+            if let apply = applyLiveSlotChange {
+                let rom = url.map { TransferPakROM(romPath: $0) }
+                apply(port, rom)
+                DLOG("TransferPak: live-applied port \(port) → \(url?.lastPathComponent ?? "nil")")
+            }
+        }
+    }
+
+    /// Persists staged slot changes to UserDefaults. Called when user taps "Launch Game".
+    /// Only ports the user explicitly modified (`slotIsStaged`) are written.
+    private func commitStagedSlots() {
+        for port in 0..<slotCount where slotIsStaged[port] {
+            TransferPakStore.setGBGame(stagedMD5s[port], forGameMD5: game.md5Hash, port: port)
         }
     }
 

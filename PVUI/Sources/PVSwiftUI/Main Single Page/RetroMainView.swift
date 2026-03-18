@@ -36,8 +36,6 @@ public struct RetroMainView: View {
 
     /// Observe the sync status manager directly for proper SwiftUI updates
     @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
-    /// Observe coordinator for pre-launch Transfer Pak sheet
-    @ObservedObject private var coordinator = SceneCoordinator.shared
 
     @State private var selectedTab: Int = 0
     @State private var showDynamicIslandEffects: Bool = true
@@ -165,24 +163,6 @@ public struct RetroMainView: View {
 
             // RetroWave styled alert overlay
             RetroAlertStateView(alertState: SceneCoordinator.shared.alertState)
-        }
-        // Pre-launch Transfer Pak setup sheet — shown when launching a known N64 Transfer Pak title
-        // with no slots configured. Dismissed by "Skip & Launch", "Launch Game", or swipe.
-        .sheet(isPresented: $coordinator.showPreLaunchTransferPak, onDismiss: {
-            // Handles swipe-to-dismiss; button-tap paths already call dismissPreLaunchTransferPak().
-            SceneCoordinator.shared.dismissPreLaunchTransferPak()
-        }) {
-            if let game = coordinator.preLaunchTransferPakGame {
-                TransferPakConfigView(
-                    game: game,
-                    launchAction: {
-                        SceneCoordinator.shared.dismissPreLaunchTransferPak()
-                    },
-                    onDismiss: {
-                        SceneCoordinator.shared.dismissPreLaunchTransferPak()
-                    }
-                )
-            }
         }
         .onAppear {
             ILOG("MainView: Appeared with RetroTabView")

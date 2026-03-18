@@ -85,8 +85,6 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     /// Observe the sync status manager for download progress overlay
     @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
-    /// Observe coordinator for pre-launch Transfer Pak sheet
-    @ObservedObject private var coordinator = SceneCoordinator.shared
 
     /// Track if view is currently visible
     @State private var isVisible: Bool = false
@@ -212,24 +210,6 @@ struct ConsolesWrapperView: SwiftUI.View {
 
             // RetroWave styled alert overlay
             RetroAlertStateView(alertState: SceneCoordinator.shared.alertState)
-        }
-        // Pre-launch Transfer Pak setup sheet — shown when launching a known N64 Transfer Pak title
-        // with no slots configured. Dismissed by "Skip & Launch", "Launch Game", or swipe.
-        .sheet(isPresented: $coordinator.showPreLaunchTransferPak, onDismiss: {
-            // Handles swipe-to-dismiss; button-tap paths already call dismissPreLaunchTransferPak().
-            SceneCoordinator.shared.dismissPreLaunchTransferPak()
-        }) {
-            if let game = coordinator.preLaunchTransferPakGame {
-                TransferPakConfigView(
-                    game: game,
-                    launchAction: {
-                        SceneCoordinator.shared.dismissPreLaunchTransferPak()
-                    },
-                    onDismiss: {
-                        SceneCoordinator.shared.dismissPreLaunchTransferPak()
-                    }
-                )
-            }
         }
         .environment(\.rootDelegate, rootDelegate)
         .onAppear {

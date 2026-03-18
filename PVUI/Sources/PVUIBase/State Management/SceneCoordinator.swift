@@ -53,9 +53,7 @@ public class SceneCoordinator: ObservableObject {
     @Published public var alertNavigationStack = RetroAlertNavigationStack()
 
     // Pre-launch Transfer Pak setup sheet.
-    // showPreLaunchTransferPak drives the sheet isPresented binding.
-    // preLaunchTransferPakGame holds the game to configure (non-nil while sheet is shown).
-    @Published public var showPreLaunchTransferPak: Bool = false
+    // preLaunchTransferPakGame is the single source of truth: non-nil shows the sheet, nil hides it.
     @Published public var preLaunchTransferPakGame: PVGame? = nil
     private var _preLaunchContinuation: CheckedContinuation<Void, Never>? = nil
 
@@ -994,14 +992,12 @@ public class SceneCoordinator: ObservableObject {
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
             _preLaunchContinuation = continuation
             preLaunchTransferPakGame = game
-            showPreLaunchTransferPak = true
         }
     }
 
     /// Called when the pre-launch Transfer Pak sheet is dismissed (button tap or swipe).
     /// Safe to call multiple times — second call is a no-op.
     public func dismissPreLaunchTransferPak() {
-        showPreLaunchTransferPak = false
         preLaunchTransferPakGame = nil
         let cont = _preLaunchContinuation
         _preLaunchContinuation = nil
