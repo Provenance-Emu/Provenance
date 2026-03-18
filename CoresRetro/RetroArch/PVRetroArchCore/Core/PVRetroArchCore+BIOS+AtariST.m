@@ -639,7 +639,21 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     BOOL hasHardDiskSection = [cfgContent containsString:@"[HardDisk]"];
     BOOL hasAcsiSection     = [cfgContent containsString:@"[ACSI]"];
     BOOL hasBootFromHD      = [cfgContent containsString:@"bBootFromHardDisk"];
-    BOOL hasHDImageDisabled = [cfgContent containsString:@"bUseHardDiskImage = FALSE"];
+
+    // Allow for harmless whitespace/formatting changes around the assignment.
+    BOOL hasHDImageDisabled = NO;
+    NSError *hdRegexError = nil;
+    NSRegularExpression *hdRegex = [NSRegularExpression
+        regularExpressionWithPattern:@"bUseHardDiskImage\\s*=\\s*FALSE"
+                             options:NSRegularExpressionCaseInsensitive
+                               error:&hdRegexError];
+    if (hdRegex != nil) {
+        NSRange fullRange = NSMakeRange(0, (NSUInteger)cfgContent.length);
+        hasHDImageDisabled = [hdRegex firstMatchInString:cfgContent
+                                                 options:0
+                                                   range:fullRange] != nil;
+    }
+
     DLOG(@"Hatari: template validation — [HardDisk]=%d [ACSI]=%d bBootFromHardDisk=%d bUseHardDiskImage=FALSE: %d",
          hasHardDiskSection, hasAcsiSection, hasBootFromHD, hasHDImageDisabled);
     if (!hasHardDiskSection || !hasAcsiSection || !hasBootFromHD || !hasHDImageDisabled) {
