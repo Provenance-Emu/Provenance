@@ -63,12 +63,14 @@ jobs:
         include:
           - target: "Provenance-iOS"
             sdk: iphoneos
+            destination: "generic/platform=iOS"
             scheme: "Provenance (AppStore) (Release)"
             APP_NAME: "Provenance"
             IPA_NAME: "Provenance-iOS"
 
           - target: "Provenance-tvOS"
             sdk: appletvos
+            destination: "generic/platform=tvOS"
             scheme: "Provenance (AppStore) (Release)"
             APP_NAME: "Provenance"
             IPA_NAME: "Provenance-tvOS"
@@ -110,6 +112,12 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Install tvOS platform
+        if: matrix.sdk == 'appletvos'
+        run: |
+          xcodebuild -downloadPlatform tvOS || true
+          xcrun simctl list runtimes
 
       - name: Set Build Number
         run: |
@@ -220,6 +228,8 @@ jobs:
           MARKETING_VERSION: ${{ env.MARKETING_VERSION }}
           BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
         run: |
+          set -o pipefail
+
           # For alpha builds, override bundle identifier to allow side-by-side install
           EXTRA_BUILD_SETTINGS=""
           if [ "$IS_ALPHA" = "true" ]; then
@@ -232,6 +242,7 @@ jobs:
           -workspace Provenance.xcworkspace \
           -scheme "${{ matrix.scheme }}" \
           -sdk ${{ matrix.sdk }} \
+          -destination "${{ matrix.destination }}" \
           -skipPackagePluginValidation \
           -skipMacroValidation \
           MARKETING_VERSION="${MARKETING_VERSION}" \
@@ -246,7 +257,7 @@ jobs:
           DEVELOPMENT_TEAM=S32Z3HMYVQ \
           ORG_IDENTIFIER=org.provenance-emu \
           $EXTRA_BUILD_SETTINGS \
-          | xcbeautify
+          2>&1 | tee /tmp/xcodebuild.log | xcbeautify
 
           # Verify archive was created properly
           if [ ! -d "archive.xcarchive/Products/Applications" ]; then
@@ -263,6 +274,18 @@ jobs:
           fi
           end_time=$(date +%s)
           echo "duration=$((end_time - start_time))" >> $GITHUB_OUTPUT
+
+      - name: Print build errors on failure
+        if: failure()
+        run: |
+          if [ -f /tmp/xcodebuild.log ]; then
+            echo "::group::Build errors"
+            grep -A2 "error:" /tmp/xcodebuild.log | tail -200
+            echo "::endgroup::"
+            echo "::group::Build warnings (last 50)"
+            grep "warning:" /tmp/xcodebuild.log | tail -50
+            echo "::endgroup::"
+          fi
 
       - name: Fakesign app
         continue-on-error: true
