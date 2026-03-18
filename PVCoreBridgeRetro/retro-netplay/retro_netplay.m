@@ -18,15 +18,28 @@
 #import <PVRetroArch/runloop.h>
 #import <PVRetroArch/string/stdstring.h>
 #else
-// Forward-declare what we need when building outside PVRetroArch
-extern bool command_event(enum menu_action cmd, void *data);
-typedef struct { } global_t;
-extern global_t *global_get_ptr(void);
+// Forward-declare what we need when building outside PVRetroArch.
+// These symbols are only used inside #ifdef HAVE_NETPLAY blocks,
+// so they will never be called unless the full RetroArch headers are present.
+typedef int menu_action;
+typedef bool (*command_event_fn)(int cmd, void *data);
+static command_event_fn command_event = NULL;
+typedef struct {
+    struct {
+        bool enable;
+        bool is_client;
+        bool is_spectate;
+        uint16_t port;
+        unsigned sync_frames;
+        char server[256];
+    } netplay;
+} global_t;
+static global_t *global_get_ptr(void) { return NULL; }
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.netplay";
+NSErrorDomain const PVRetroArchNetplayErrorDomain __attribute__((weak)) = @"com.provenance.retroarch.netplay";
 
 @interface PVRetroArchNetplayBridge ()
 @property (nonatomic) PVRetroArchNetplayStatus status;

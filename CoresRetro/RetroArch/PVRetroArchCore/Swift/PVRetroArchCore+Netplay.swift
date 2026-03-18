@@ -11,6 +11,9 @@
 
 import Foundation
 import Combine
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Netplay convenience methods on PVRetroArchCoreBridge.
 public extension PVRetroArchCoreBridge {

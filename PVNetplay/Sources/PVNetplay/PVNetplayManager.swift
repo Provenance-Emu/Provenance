@@ -35,9 +35,11 @@ public actor PVNetplayManager {
     #if canImport(Combine)
     private let stateSubject = PassthroughSubject<NetplayState, Never>()
 
-    /// Publisher for state changes — subscribe from the main thread.
+    /// Publisher for state changes — always delivered on the main queue.
     public nonisolated var statePublisher: AnyPublisher<NetplayState, Never> {
-        stateSubject.eraseToAnyPublisher()
+        stateSubject
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     #endif
 
@@ -62,7 +64,25 @@ public actor PVNetplayManager {
         guard bridge.supportsNetplay else { throw NetplayError.unsupported }
 
         let role = NetplayRole.host(port: settings.port)
-        try await bridge.startNetplay(role: role, settings: settings)
+        let placeholder = NetplayRoom(
+            hostName: "Local Host",
+            gameName: "Unknown",
+            gameHash: "",
+            coreIdentifier: "",
+            maxPlayers: settings.maxPlayers,
+            currentPlayers: 1,
+            isLAN: true,
+            hostAddress: "0.0.0.0",
+            port: settings.port
+        )
+        state = .connecting(to: placeholder)
+        do {
+            try await bridge.startNetplay(role: role, settings: settings)
+            state = .hosting(room: placeholder)
+        } catch {
+            state = .idle
+            throw error
+        }
     }
 
     // MARK: - Join
@@ -76,7 +96,21 @@ public actor PVNetplayManager {
         var joinSettings = settings
         joinSettings.playerIndex = 1
         let role = NetplayRole.client(host: room.hostAddress, port: room.port)
-        try await bridge.startNetplay(role: role, settings: joinSettings)
+        state = .connecting(to: room)
+        do {
+            try await bridge.startNetplay(role: role, settings: joinSettings)
+            let session = NetplaySession(
+                room: room,
+                role: role,
+                peers: [],
+                frameDelay: joinSettings.frameDelay,
+                isRollbackEnabled: false
+            )
+            state = .connected(session: session)
+        } catch {
+            state = .idle
+            throw error
+        }
     }
 
     // MARK: - Spectate
@@ -89,7 +123,21 @@ public actor PVNetplayManager {
 
         let role = NetplayRole.spectator(host: room.hostAddress, port: room.port)
         let settings = NetplaySettings.defaultLAN
-        try await bridge.startNetplay(role: role, settings: settings)
+        state = .connecting(to: room)
+        do {
+            try await bridge.startNetplay(role: role, settings: settings)
+            let session = NetplaySession(
+                room: room,
+                role: role,
+                peers: [],
+                frameDelay: settings.frameDelay,
+                isRollbackEnabled: false
+            )
+            state = .connected(session: session)
+        } catch {
+            state = .idle
+            throw error
+        }
     }
 
     // MARK: - Disconnect
@@ -119,7 +167,6 @@ public final class ObservableNetplayManager: ObservableObject {
 
     private init() {
         manager.statePublisher
-            .receive(on: DispatchQueue.main)
             .assign(to: \.state, on: self)
             .store(in: &cancellables)
 

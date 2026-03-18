@@ -120,52 +120,53 @@ public struct NetplayRoomBrowserView: View {
     }
 
     private func roomRow(_ room: NetplayRoom) -> some View {
-        Button {
-            join(room: room, spectate: false)
-        } label: {
-            HStack(spacing: 12) {
-                // Status dot
-                Circle()
-                    .fill(room.hasOpenSlots ? Color.green : Color.orange)
-                    .frame(width: 8, height: 8)
+        HStack(spacing: 12) {
+            // Status dot
+            Circle()
+                .fill(room.hasOpenSlots ? Color.green : Color.orange)
+                .frame(width: 8, height: 8)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(room.hostName)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                    Text(room.gameName)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-
-                    HStack(spacing: 8) {
-                        Label(room.playerCountDisplay, systemImage: "person.2")
-                        if let ms = room.pingMS {
-                            Label("\(ms)ms", systemImage: "waveform.path.ecg")
-                        }
-                        if room.isPasswordProtected {
-                            Image(systemName: "lock.fill")
-                        }
-                    }
-                    .font(.caption)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(room.hostName)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                Text(room.gameName)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
-                }
+                    .lineLimit(1)
 
-                Spacer()
-
-                if room.isFull && room.allowsSpectators {
-                    Button {
-                        join(room: room, spectate: true)
-                    } label: {
-                        Text("Spectate")
-                            .font(.caption)
+                HStack(spacing: 8) {
+                    Label(room.playerCountDisplay, systemImage: "person.2")
+                    if let ms = room.pingMS {
+                        Label("\(ms)ms", systemImage: "waveform.path.ecg")
                     }
-                    .buttonStyle(.bordered)
+                    if room.isPasswordProtected {
+                        Image(systemName: "lock.fill")
+                    }
                 }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            if room.isFull && room.allowsSpectators {
+                Button {
+                    join(room: room, spectate: true)
+                } label: {
+                    Text("Spectate")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+                .disabled(isJoining)
             }
         }
-        .buttonStyle(.plain)
-        .disabled(isJoining)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if !isJoining {
+                join(room: room, spectate: false)
+            }
+        }
     }
 
     // MARK: - Actions

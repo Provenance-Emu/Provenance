@@ -48,11 +48,13 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
         b.searchForServices(ofType: Self.retroArchServiceType, inDomain: "local.")
     }
 
-    /// Stop scanning.
+    /// Stop scanning and clear discovered rooms.
     public func stopDiscovery() {
         browser?.stop()
         browser = nil
         pendingServices.removeAll()
+        resolvedServices.removeAll()
+        rooms.removeAll()
         isSearching = false
     }
 
@@ -86,8 +88,24 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
         let hasPassword = txtString("password") == "1"
         let allowSpectators = txtString("allowSpectators") != "0"
 
+        // Derive a stable UUID from the service name when no sessionId TXT record is present.
+        // This prevents SwiftUI list identity churn on every TXT update.
+        let sessionUUID: UUID
+        if let sid = txtString("sessionId"), let parsed = UUID(uuidString: sid) {
+            sessionUUID = parsed
+        } else {
+            // Use a name-based UUID (v5-style) derived from service name for stability
+            var hasher = Hasher()
+            hasher.combine(service.name)
+            let hash = abs(hasher.finalize())
+            var uuidBytes = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) as (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+            withUnsafeMutableBytes(of: &uuidBytes) { ptr in
+                withUnsafeBytes(of: hash) { src in ptr.copyBytes(from: src.prefix(ptr.count)) }
+            }
+            sessionUUID = UUID(uuid: uuidBytes)
+        }
         let room = NetplayRoom(
-            id: UUID(uuidString: txtString("sessionId") ?? "") ?? UUID(),
+            id: sessionUUID,
             hostName: hostNickname,
             gameName: gameName,
             gameHash: gameHash,
@@ -112,7 +130,10 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
     }
 
     private func removeRoom(forService service: NetService) {
-        guard let hostName = service.hostName else { return }
+        // Prefer the previously resolved hostName since the service passed to
+        // netServiceBrowser(_:didRemove:) may be unresolved (hostName == nil).
+        let resolved = resolvedServices[service.name]
+        guard let hostName = resolved?.hostName ?? service.hostName else { return }
         let port = UInt16(service.port > 0 ? service.port : 55435)
         rooms.removeAll { $0.hostAddress == hostName && $0.port == port }
     }
@@ -166,6 +187,7 @@ extension PVNetplayBonjourDiscovery: NetServiceBrowserDelegate {
 extension PVNetplayBonjourDiscovery: NetServiceDelegate {
     public nonisolated func netServiceDidResolveAddress(_ sender: NetService) {
         Task { @MainActor in
+            self.pendingServices.removeAll { $0 === sender }
             self.resolvedServices[sender.name] = sender
             self.updateRoom(from: sender)
         }

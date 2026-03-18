@@ -11,6 +11,7 @@
 //
 
 #import "PVRetroArchCoreBridge+Netplay.h"
+#import <objc/runtime.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything"
@@ -24,8 +25,6 @@
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
-
-NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.netplay";
 
 // Internal storage key for associated status
 static const void *kNetplayStatusKey = &kNetplayStatusKey;

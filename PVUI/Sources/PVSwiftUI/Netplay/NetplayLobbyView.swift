@@ -101,6 +101,9 @@ public struct NetplayLobbyView: View {
             .sheet(isPresented: $showCreateRoom) {
                 NetplayCreateRoomView(gameName: gameName, coreIdentifier: coreIdentifier)
             }
+            .sheet(isPresented: $showSettings) {
+                NetplaySettingsPlaceholderView()
+            }
             .alert("Netplay Error", isPresented: $showError, presenting: errorMessage) { _ in
                 Button("OK", role: .cancel) {}
             } message: { msg in
@@ -175,5 +178,26 @@ public struct NetplayLobbyView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Placeholder (replaced when Settings UI is implemented)
+@MainActor
+private struct NetplaySettingsPlaceholderView: View {
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            Text("Netplay settings coming soon.")
+                .foregroundStyle(.secondary)
+                .navigationTitle("Netplay Settings")
+                #if !os(tvOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+        }
     }
 }

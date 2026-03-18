@@ -8,6 +8,9 @@
 
 import SwiftUI
 import PVNetplay
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Form for configuring and starting a new netplay room.
 ///
