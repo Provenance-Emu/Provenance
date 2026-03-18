@@ -220,8 +220,8 @@ enum DeltaSkinDefaults {
             return KeyboardOverlayConfig(variant: .compact, autoShow: false, position: .bottom, opacity: 0.85)
         case .atarist:
             return KeyboardOverlayConfig(variant: .atariST, autoShow: false, position: .bottom, opacity: 0.85)
-        case .amstradCPC:
-            return KeyboardOverlayConfig(variant: .amstradCPC, autoShow: false, position: .bottom, opacity: 0.85)
+//        case .amstradCPC:
+//            return KeyboardOverlayConfig(variant: .amstradCPC, autoShow: false, position: .bottom, opacity: 0.85)
         case .tic80:
             return KeyboardOverlayConfig(variant: .compact, autoShow: true, position: .bottom, opacity: 0.85)
         default:
