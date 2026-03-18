@@ -145,11 +145,11 @@ class PVThinLibretroCore: PVEmulatorCore {
         if coreId.contains("mupen") {
             setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")
             // Re-apply Transfer Pak slots populated by TransferPakStore before this call.
-            // Each slot writes the pak type + ROM path options so the core loads them on init.
-            for port in 0..<4 where _transferPakSlots[port] != nil {
-                if let rom = _transferPakSlots[port] {
-                    setTransferPakROM(rom, forPort: port)
-                }
+            // reapplyTransferPakSlots() sets pak types for all configured ports and writes
+            // the global mupen64plus-transfer-pak-path exactly once (lowest port wins),
+            // avoiding the iteration-order ambiguity of calling setTransferPakROM per port.
+            if !_transferPakSlots.isEmpty {
+                reapplyTransferPakSlots()
             }
         }
 

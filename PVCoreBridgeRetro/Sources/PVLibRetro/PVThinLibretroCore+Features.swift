@@ -191,47 +191,60 @@ extension PVThinLibretroCore: TransferPakSupport {
 
         if let rom = rom {
             _transferPakSlots[port] = rom
-
-            // Tell the core to use a Transfer Pak on this port.
             _bridge.setCoreOption(pakTypeKey, value: PakType.transfer.rawValue)
-
-            // Supply the GB/GBC ROM path.
-            // mupen64plus-next reads this from the core option when pak type is "transfer".
-            // If the key is absent in this build, the core falls back to its own config dir.
-            // NOTE: mupen64plus-transfer-pak-path / save-path are global options (not per-port).
-            // We write them from the first configured slot so at least one ROM is always active.
-            // For multi-pak scenarios, callers should configure port 0 as the primary slot.
-            _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: rom.romPath.path)
-            // Always set save-path — clear any stale value when savePath is nil.
-            _bridge.setCoreOption("mupen64plus-transfer-pak-save-path",
-                                  value: rom.savePath?.path ?? "")
-
             ILOG("ThinLibretroCore: Transfer Pak port \(port) → \(rom.romPath.lastPathComponent)")
         } else {
             _transferPakSlots.removeValue(forKey: port)
-
-            // Revert this port to memory pak (mempak).
             _bridge.setCoreOption(pakTypeKey, value: PakType.memory.rawValue)
-
-            // Only clear the global path options when no other slots remain configured.
-            // mupen64plus-transfer-pak-path / save-path are global (not per-port), so
-            // blanking them while another port is still active would break that port.
-            let remainingSlot = _transferPakSlots.first(where: { $0.key != port })?.value
-            if let active = remainingSlot {
-                // Keep the global path pointed at another active slot's ROM.
-                _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: active.romPath.path)
-                _bridge.setCoreOption("mupen64plus-transfer-pak-save-path",
-                                      value: active.savePath?.path ?? "")
-                ILOG("ThinLibretroCore: Transfer Pak port \(port) cleared; global path kept for another slot")
-            } else {
-                _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: "")
-                _bridge.setCoreOption("mupen64plus-transfer-pak-save-path", value: "")
-                ILOG("ThinLibretroCore: Transfer Pak port \(port) cleared → memory pak (all slots empty)")
-            }
+            ILOG("ThinLibretroCore: Transfer Pak port \(port) cleared → memory pak")
         }
+
+        // mupen64plus-transfer-pak-path / -save-path are global (not per-port) options.
+        // Always recompute from the lowest configured port so one call can never clobber
+        // another port's previously-written global path.
+        applyGlobalTransferPakPath()
     }
 
     public func transferPakROM(forPort port: Int) -> TransferPakROM? {
         return _transferPakSlots[port]
+    }
+
+    // MARK: - Internal helpers
+
+    /// Re-apply all persisted Transfer Pak slots without overwriting the global
+    /// mupen64plus-transfer-pak-path on each iteration.
+    ///
+    /// Used during `applyPlatformDefaults` — calling `setTransferPakROM` in a loop
+    /// would overwrite the global path O(n) times; this method writes it exactly once.
+    func reapplyTransferPakSlots() {
+        for port in 0..<4 {
+            let pakTypeKey = "\(Self.pakTypeKeyBase)\(port + 1)"
+            if _transferPakSlots[port] != nil {
+                _bridge.setCoreOption(pakTypeKey, value: PakType.transfer.rawValue)
+            }
+        }
+        applyGlobalTransferPakPath()
+    }
+
+    // MARK: - Private helpers
+
+    /// Write the global mupen64plus-transfer-pak-path / -save-path options exactly
+    /// once, using the lowest configured port as the canonical primary slot.
+    ///
+    /// The core option is global (not per-port) so only one ROM can be active at a
+    /// time. Deterministically choosing the lowest port avoids ordering surprises when
+    /// multiple ports are configured.
+    private func applyGlobalTransferPakPath() {
+        if let primaryPort = _transferPakSlots.keys.sorted().first,
+           let rom = _transferPakSlots[primaryPort] {
+            _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: rom.romPath.path)
+            _bridge.setCoreOption("mupen64plus-transfer-pak-save-path",
+                                  value: rom.savePath?.path ?? "")
+            ILOG("ThinLibretroCore: global Transfer Pak path → port \(primaryPort) (\(rom.romPath.lastPathComponent))")
+        } else {
+            _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: "")
+            _bridge.setCoreOption("mupen64plus-transfer-pak-save-path", value: "")
+            ILOG("ThinLibretroCore: global Transfer Pak path cleared (no active slots)")
+        }
     }
 }
