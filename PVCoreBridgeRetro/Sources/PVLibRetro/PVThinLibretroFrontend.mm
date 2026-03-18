@@ -1659,7 +1659,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         _sensorGyroX = _sensorGyroY = _sensorGyroZ = 0.0f;
         _sensorIlluminance = 0.0f;
         _hasCameraCallback = NO;
-#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+#if (TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
         // Enable battery monitoring once so env 77 (GET_DEVICE_POWER) can read
         // the current level without setting the flag on every callback invocation.
         UIDevice.currentDevice.batteryMonitoringEnabled = YES;
@@ -3697,7 +3697,9 @@ static bool thin_environment(unsigned cmd, void *data) {
             // Return true even for NULL data — cores use a NULL probe to check support.
             struct retro_device_power *pwr = (struct retro_device_power *)data;
             if (!pwr) return true;
-#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+            // Exclude tvOS explicitly: TARGET_OS_IOS is 0 on tvOS in modern SDKs,
+            // but the extra guard makes platform intent unambiguous.
+#if (TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
             UIDevice *dev = UIDevice.currentDevice;
             // batteryMonitoringEnabled is enabled once at init; no need to re-enable here.
             float level = dev.batteryLevel; // 0..1, or -1 if unknown

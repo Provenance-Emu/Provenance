@@ -27,17 +27,23 @@ public final class DOLJitManager {
 
     @MainActor public static let shared = DOLJitManager()
 
+    /// Lock protecting `_acquired` for cross-thread access.
+    private static let _acquiredLock = NSLock()
+    private static var _acquired: Bool = false
+
     /// Thread-safe snapshot of JIT acquisition state.
-    /// Written from the main actor at startup; safe to read from any thread
-    /// after initial acquisition (written once, never reset to false).
-    nonisolated(unsafe) public private(set) static var acquired: Bool = false
+    /// Written from the main actor at startup via `hasAcquiredJit`; safe to read
+    /// from any thread (libretro callbacks, background queues, etc.) via NSLock.
+    public static var acquired: Bool {
+        _acquiredLock.withLock { _acquired }
+    }
 
     private var jitType: DOLJitType = .none
     private var auxError: String?
     private var hasAcquiredJit = false {
         didSet {
             if hasAcquiredJit {
-                DOLJitManager.acquired = true
+                DOLJitManager._acquiredLock.withLock { DOLJitManager._acquired = true }
             }
         }
     }
