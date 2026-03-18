@@ -176,7 +176,7 @@ struct CoreOptionTileProviderTests {
     @Test("tileID round-trips through optionKey")
     func tileIDRoundTrips() {
         let key = "Enable Feature"
-        let id = CoreOptionTileProvider.tileID(forOptionKey: key)
+        let id = CoreOptionTileProvider.tileID(forOptionKey: key, index: 3)
         let recovered = CoreOptionTileProvider.optionKey(fromTileID: id)
         #expect(recovered == key)
     }
@@ -211,7 +211,8 @@ struct CoreOptionTileProviderTests {
     @Test("Grouped bool options are recursively extracted")
     func groupedOptionsAreExtracted() {
         let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self)
-        let debugTile = tiles.first(where: { $0.id == CoreOptionTileProvider.tileID(forOptionKey: "Debug Mode") })
+        // Find by label since tile IDs now include a positional index disambiguator.
+        let debugTile = tiles.first(where: { $0.label == "Debug Mode" })
         #expect(debugTile != nil)
     }
 
