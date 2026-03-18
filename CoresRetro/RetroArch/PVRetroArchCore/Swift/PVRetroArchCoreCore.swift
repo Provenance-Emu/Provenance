@@ -121,26 +121,22 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     /// rumble to the loaded system's motor characteristics.
     public override func startEmulation() {
         if let sysId = systemIdentifier {
-            Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
-                if #available(iOS 14.0, tvOS 14.0, *) {
-                    GCControllerHapticsManager.shared.setSystemProfile(forSystemIdentifier: sysId)
-                }
-#endif
+            if #available(iOS 14.0, tvOS 14.0, *) {
+                GCControllerHapticsManager.shared.setSystemProfile(forSystemIdentifier: sysId)
             }
+#endif
         }
         super.startEmulation()
     }
 
     /// Reset the haptic profile so the next core starts with neutral tuning.
     public override func stopEmulation() {
-        Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
-            if #available(iOS 14.0, tvOS 14.0, *) {
-                GCControllerHapticsManager.shared.resetSystemProfile()
-            }
-#endif
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            GCControllerHapticsManager.shared.resetSystemProfile()
         }
+#endif
         super.stopEmulation()
     }
 }
