@@ -44,8 +44,10 @@ public extension PVRetroArchCoreBridge {
     ) throws {
         #if os(tvOS)
         let name = nickname ?? "Provenance TV"
-        #else
+        #elseif canImport(UIKit)
         let name = nickname ?? UIDevice.current.name
+        #else
+        let name = nickname ?? "Provenance"
         #endif
         // ObjC method with NSError** parameter is bridged as a throwing Swift function
         try netplayStartHosting(
@@ -72,8 +74,10 @@ public extension PVRetroArchCoreBridge {
     ) throws {
         #if os(tvOS)
         let name = nickname ?? "Provenance TV"
-        #else
+        #elseif canImport(UIKit)
         let name = nickname ?? UIDevice.current.name
+        #else
+        let name = nickname ?? "Provenance"
         #endif
         try netplayConnect(
             toHost: host,

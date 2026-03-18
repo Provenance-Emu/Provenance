@@ -120,8 +120,10 @@ public struct NetplayCreateRoomView: View {
                 if settings.roomName.isEmpty {
                     #if os(tvOS)
                     settings.roomName = "Provenance Room"
-                    #else
+                    #elseif canImport(UIKit)
                     settings.roomName = "\(UIDevice.current.name)'s Room"
+                    #else
+                    settings.roomName = "Provenance Room"
                     #endif
                 }
             }

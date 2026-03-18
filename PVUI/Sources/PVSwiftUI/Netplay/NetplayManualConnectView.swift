@@ -48,9 +48,9 @@ public struct NetplayManualConnectView: View {
             Form {
                 Section("Host Details") {
                     TextField("IP Address or Hostname", text: $hostAddress)
-                        .keyboardType(.numbersAndPunctuation)
+                        .keyboardType(.URL)
                         .autocorrectionDisabled()
-                        .autocapitalization(.none)
+                        .textInputAutocapitalization(.never)
 
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("Port", text: $portString)
