@@ -590,3 +590,37 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 @end
+
+// MARK: - Difficulty switch accessors
+
+@implementation PVProSystemGameCore (DifficultySwitch)
+
+static const int _kLeftDiffSwitch  = 15;
+static const int _kRightDiffSwitch = 16;
+// inputState 0 = A (Advanced), 1 = B (Beginner)
+
+- (BOOL)leftDifficultyIsAdvanced {
+    return _inputState[_kLeftDiffSwitch] == 0;
+}
+
+- (void)setLeftDifficultyIsAdvanced:(BOOL)advanced {
+    _inputState[_kLeftDiffSwitch] = advanced ? 0 : 1;
+}
+
+- (BOOL)rightDifficultyIsAdvanced {
+    return _inputState[_kRightDiffSwitch] == 0;
+}
+
+- (void)setRightDifficultyIsAdvanced:(BOOL)advanced {
+    _inputState[_kRightDiffSwitch] = advanced ? 0 : 1;
+}
+
+- (void)toggleLeftDifficulty {
+    _inputState[_kLeftDiffSwitch] ^= 1;
+}
+
+- (void)toggleRightDifficulty {
+    _inputState[_kRightDiffSwitch] ^= 1;
+}
+
+@end

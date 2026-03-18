@@ -41,6 +41,20 @@ __attribute__((visibility("default")))
 @interface PVProSystemGameCore : PVCoreObjCBridge<ObjCBridgedCoreBridge, PV7800SystemResponderClient>
 #pragma clang diagnostic pop
 
+/// Whether the left difficulty switch is in the A (Advanced) position.
+/// false = B (Beginner, inputState = 1), true = A (Advanced, inputState = 0).
+@property (nonatomic, assign) BOOL leftDifficultyIsAdvanced;
+
+/// Whether the right difficulty switch is in the A (Advanced) position.
+/// false = B (Beginner, inputState = 1), true = A (Advanced, inputState = 0).
+@property (nonatomic, assign) BOOL rightDifficultyIsAdvanced;
+
+/// Toggle the left difficulty switch between A and B.
+- (void)toggleLeftDifficulty;
+
+/// Toggle the right difficulty switch between A and B.
+- (void)toggleRightDifficulty;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

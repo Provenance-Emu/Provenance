@@ -27,12 +27,55 @@ open class PVProSystemCore: PVEmulatorCore, @unchecked Sendable {
 
     // MARK: Lifecycle
     lazy var _bridge: PVProSystemGameCore = .init()
-    
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
+
+    public override func startEmulation() {
+        applyDifficultyOptions()
+        super.startEmulation()
+    }
+
+    /// Apply the user's difficulty-switch preferences to the bridge input state.
+    private func applyDifficultyOptions() {
+        _bridge.leftDifficultyIsAdvanced  = PVProSystemCore.valueForOption(PVProSystemCoreOptions.leftDifficultyOption).asBool
+        _bridge.rightDifficultyIsAdvanced = PVProSystemCore.valueForOption(PVProSystemCoreOptions.rightDifficultyOption).asBool
+    }
 }
+
+// MARK: - CoreActions
+
+extension PVProSystemCore: CoreActions {
+
+    public var coreActions: [CoreAction]? {
+        [
+            CoreAction(
+                title: "Toggle Left Difficulty (\(_bridge.leftDifficultyIsAdvanced ? "A" : "B"))",
+                requiresReset: false,
+                options: nil,
+                style: .default
+            ),
+            CoreAction(
+                title: "Toggle Right Difficulty (\(_bridge.rightDifficultyIsAdvanced ? "A" : "B"))",
+                requiresReset: false,
+                options: nil,
+                style: .default
+            )
+        ]
+    }
+
+    public func selected(action: CoreAction) {
+        if action.title.hasPrefix("Toggle Left Difficulty") {
+            _bridge.toggleLeftDifficulty()
+        } else if action.title.hasPrefix("Toggle Right Difficulty") {
+            _bridge.toggleRightDifficulty()
+        }
+    }
+}
+
+// MARK: - PV7800SystemResponderClient
 
 extension PVProSystemCore: PV7800SystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PV7800Button, forPlayer player: Int) {
