@@ -22,7 +22,8 @@ extension PVEmulatorViewController {
 
         let coreOptionsView = CoreOptionsDetailView(
             coreClass: coreClass,
-            title: "Core Options"
+            title: "Core Options",
+            gameMD5: game.md5Hash.isEmpty ? nil : game.md5Hash
         )
 
         let hostingController = UIHostingController(rootView: coreOptionsView)

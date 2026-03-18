@@ -9,6 +9,7 @@ private class CoreOptionsState: ObservableObject {
     @Published var selectedValues: [String: Any] = [:]
     @Published var optionValues: [String: Any] = [:]
     @Published var showResetConfirmation: Bool = false
+    @Published var showResetGameOverridesConfirmation: Bool = false
 
     func updateValue(_ value: Any, forKey key: String) {
         selectedValues[key] = value
@@ -182,17 +183,29 @@ private struct CoreOptionStepper: View {
 public struct CoreOptionsDetailView: View {
     let coreClass: CoreOptional.Type
     let title: String
-    @StateObject private var viewModel = CoreOptionsViewModel()
+    /// MD5 hash of the current game. When non-nil a scope picker is shown and
+    /// writes/reads default to the per-game key.
+    let gameMD5: String?
     @StateObject private var state = CoreOptionsState()
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    /// Whether the user has chosen per-game scope (true) or core-global scope (false).
+    /// Only meaningful when `gameMD5` is non-nil.
+    @State private var perGameScope: Bool = true
     @State private var isAnimating = false
     @State private var glowOpacity = 0.0
     @State private var scrollOffset: CGFloat = 0
 
-    public init(coreClass: CoreOptional.Type, title: String) {
+    public init(coreClass: CoreOptional.Type, title: String, gameMD5: String? = nil) {
         self.coreClass = coreClass
         self.title = title
+        self.gameMD5 = gameMD5
+    }
+
+    /// The effective MD5 to use for reads/writes given the current scope selection.
+    private var effectiveMD5: String? {
+        guard let md5 = gameMD5, perGameScope else { return nil }
+        return md5
     }
 
     private struct IdentifiableOption: Identifiable {
@@ -273,6 +286,10 @@ public struct CoreOptionsDetailView: View {
             VStack(spacing: 32) {
                 titleView
 
+                if gameMD5 != nil {
+                    scopePickerView
+                }
+
                 ForEach(groupedOptions) { group in
                     VStack(alignment: .leading, spacing: 16) {
                         Text(group.title)
@@ -329,7 +346,42 @@ public struct CoreOptionsDetailView: View {
                     .padding(.horizontal, 16)
                 }
 
-                // Reset button
+                // Reset all game overrides button (only shown in per-game scope)
+                if gameMD5 != nil && perGameScope {
+                    Button(action: {
+                        state.showResetGameOverridesConfirmation = true
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise.circle")
+                                .foregroundColor(.orange)
+                            Text("RESET GAME OVERRIDES")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.orange)
+                        }
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 30)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.orange.opacity(0.1))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(Color.orange.opacity(0.5), lineWidth: 2)
+                                )
+                        )
+                    }
+                    .retroSettingsRowFocus(cornerRadius: 8)
+                    #if os(tvOS)
+                    .tvOSDisableFocusEffect()
+                    .buttonStyle(TVMediaPlainButtonStyle())
+                    #endif
+                    .padding(.horizontal)
+                }
+
+                // Reset all global options — hidden when viewing per-game scope to prevent
+                // accidentally wiping global defaults while per-game overrides are active.
+                // Users in per-game scope should use "RESET GAME OVERRIDES" above instead.
+                if !(gameMD5 != nil && perGameScope) {
                 Button(action: {
                     state.showResetConfirmation = true
                 }) {
@@ -373,6 +425,7 @@ public struct CoreOptionsDetailView: View {
                 #endif
                 .padding(.vertical, 20)
                 .padding(.horizontal)
+                } // end if !(gameMD5 != nil && perGameScope)
             }
             .padding(.bottom, 30)
         }
@@ -390,8 +443,10 @@ public struct CoreOptionsDetailView: View {
             loadOptionValues()
         }
         .uiKitAlert(
-            "Reset Options",
-            message: "Are you sure you want to reset all options for \(title) to their default values?",
+            "Reset All Options",
+            message: gameMD5 != nil
+                ? "Reset all \(title) global defaults to factory values? This affects core-wide defaults; per-game overrides will remain unchanged."
+                : "Are you sure you want to reset all options for \(title) to their default values?",
             isPresented: $state.showResetConfirmation
         ) {
             UIAlertAction(title: "Reset", style: .destructive) { _ in
@@ -402,6 +457,39 @@ public struct CoreOptionsDetailView: View {
             UIAlertAction(title: "Cancel", style: .cancel) { _ in
                 state.showResetConfirmation = false
             }
+        }
+        .uiKitAlert(
+            "Reset Game Overrides",
+            message: "Remove all per-game option overrides for this title? Core defaults will be used instead.",
+            isPresented: $state.showResetGameOverridesConfirmation
+        ) {
+            UIAlertAction(title: "Reset", style: .destructive) { _ in
+                if let md5 = gameMD5 {
+                    coreClass.resetAllOptions(forMD5: md5)
+                    state.resetAllValues()
+                    loadOptionValues()
+                }
+                state.showResetGameOverridesConfirmation = false
+            }
+
+            UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                state.showResetGameOverridesConfirmation = false
+            }
+        }
+    }
+
+    // MARK: - Scope Picker
+
+    private var scopePickerView: some View {
+        Picker("Scope", selection: $perGameScope) {
+            Text("This Game").tag(true)
+            Text("All Games").tag(false)
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 16)
+        .onChange(of: perGameScope) { _ in
+            state.resetAllValues()
+            loadOptionValues()
         }
     }
 
@@ -425,19 +513,20 @@ public struct CoreOptionsDetailView: View {
     }
 
     private func getCurrentValue(for option: CoreOption) -> Any? {
+        let md5 = effectiveMD5
         switch option {
         case .bool(_, let defaultValue, _):
-            return coreClass.storedValueForOption(Bool.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Bool.self, option.key, andMD5: md5) ?? defaultValue
         case .string(_, let defaultValue, _):
-            return coreClass.storedValueForOption(String.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(String.self, option.key, andMD5: md5) ?? defaultValue
         case .enumeration(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Int.self, option.key, andMD5: md5) ?? defaultValue
         case .range(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Int.self, option.key, andMD5: md5) ?? defaultValue
         case .rangef(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Float.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Float.self, option.key, andMD5: md5) ?? defaultValue
         case .multi(_, let values, _):
-            return coreClass.storedValueForOption(String.self, option.key) ?? values.first?.title
+            return coreClass.storedValueForOption(String.self, option.key, andMD5: md5) ?? values.first?.title
         case .group(_, _):
             return nil
         @unknown default:
@@ -447,16 +536,17 @@ public struct CoreOptionsDetailView: View {
 
     private func setValue(_ value: Any, for option: CoreOption) {
         state.optionValues[option.key] = value
+        let md5 = effectiveMD5
 
         switch value {
         case let boolValue as Bool:
-            coreClass.setValue(boolValue, forOption: option)
+            coreClass.setValue(boolValue, forOption: option, andMD5: md5)
         case let stringValue as String:
-            coreClass.setValue(stringValue, forOption: option)
+            coreClass.setValue(stringValue, forOption: option, andMD5: md5)
         case let intValue as Int:
-            coreClass.setValue(intValue, forOption: option)
+            coreClass.setValue(intValue, forOption: option, andMD5: md5)
         case let floatValue as Float:
-            coreClass.setValue(floatValue, forOption: option)
+            coreClass.setValue(floatValue, forOption: option, andMD5: md5)
         default:
             WLOG("📱 Warning: Unhandled value type: \(type(of: value))")
             break
@@ -464,38 +554,65 @@ public struct CoreOptionsDetailView: View {
     }
 
     private func resetOption(_ option: CoreOption) {
-        if let defaultValue = option.defaultValue {
+        if let md5 = effectiveMD5 {
+            coreClass.resetOption(option, forMD5: md5)
+            let value = getCurrentValue(for: option)
+            state.optionValues[option.key] = value
+            state.selectedValues[option.key] = value
+        } else if let defaultValue = option.defaultValue {
             setValue(defaultValue, for: option)
             state.optionValues[option.key] = defaultValue
             state.selectedValues[option.key] = defaultValue
         }
     }
 
+    /// Returns true if the option has a per-game override for the current `gameMD5`.
+    private func hasPerGameOverride(for option: CoreOption) -> Bool {
+        guard let md5 = gameMD5 else { return false }
+        return coreClass.hasPerGameOverride(for: option, md5: md5)
+    }
+
     // MARK: - Option Row Builders
 
     @ViewBuilder
     private func optionView(for option: CoreOption) -> some View {
-        switch option {
-        case let .bool(display, defaultValue, _):
-            boolOptionView(display: display, defaultValue: defaultValue, option: option)
+        VStack(spacing: 2) {
+            switch option {
+            case let .bool(display, defaultValue, _):
+                boolOptionView(display: display, defaultValue: defaultValue, option: option)
 
-        case let .enumeration(display, values, defaultValue, _):
-            enumOptionView(display: display, values: values, defaultValue: defaultValue, option: option)
+            case let .enumeration(display, values, defaultValue, _):
+                enumOptionView(display: display, values: values, defaultValue: defaultValue, option: option)
 
-        case let .range(display, range, defaultValue, _):
-            rangeOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
+            case let .range(display, range, defaultValue, _):
+                rangeOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
 
-        case let .rangef(display, range, defaultValue, _):
-            rangefOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
+            case let .rangef(display, range, defaultValue, _):
+                rangefOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
 
-        case let .multi(display, values, _):
-            multiOptionView(display: display, values: values, option: option)
+            case let .multi(display, values, _):
+                multiOptionView(display: display, values: values, option: option)
 
-        case let .string(display, defaultValue, _):
-            stringOptionView(display: display, defaultValue: defaultValue, option: option)
+            case let .string(display, defaultValue, _):
+                stringOptionView(display: display, defaultValue: defaultValue, option: option)
 
-        case .group(_, _):
-            EmptyView()
+            case .group(_, _):
+                EmptyView()
+            }
+
+            // Per-game override badge (only shown in per-game scope)
+            if perGameScope && hasPerGameOverride(for: option) {
+                HStack {
+                    Image(systemName: "tag.fill")
+                        .font(.system(size: 9))
+                    Text("Game Override")
+                        .font(.system(size: 10, weight: .medium))
+                    Spacer()
+                }
+                .foregroundColor(.orange)
+                .padding(.horizontal, 4)
+                .padding(.bottom, 2)
+            }
         }
     }
 
