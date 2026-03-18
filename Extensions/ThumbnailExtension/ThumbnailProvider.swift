@@ -49,8 +49,8 @@ class ThumbnailProvider: QLThumbnailProvider {
     /// Returns `true` when `fileURL` represents a save state file.
     private func isSaveState(_ fileURL: URL) -> Bool {
         let ext = fileURL.pathExtension.lowercased()
-        // Provenance save states use .pvs or live under a "Save States" directory.
-        return ext == "pvs" || fileURL.path.contains("Save States")
+        // Provenance save states use .pvsav (see SpotlightImportExtension for canonical extension).
+        return ext == "pvsav" || fileURL.path.contains("Save States")
     }
 
     /// Resolves a PVMediaCache key to a local file URL, checking the App Group

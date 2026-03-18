@@ -8,6 +8,9 @@
 
 import QuickLook
 import UniformTypeIdentifiers
+import PVLibrary
+import PVHashing
+import RealmSwift
 
 // NOTE: This file is ready for use once the QuickLookPreview Xcode build target is created (#3310).
 // To enable: set QLIsDataBasedPreview = true and NSExtensionPrincipalClass = PreviewProvider in Info.plist,
@@ -116,20 +119,128 @@ struct ROMPreviewInfo {
     let artworkBase64: String
 
     /// Looks up metadata from the shared Realm database by ROM filename.
+    ///
+    /// Opens the App Group Realm (same store as the main app) and queries
+    /// `PVGame` by matching the ROM filename suffix.  All Realm objects are
+    /// read synchronously on the calling thread and no Realm objects escape
+    /// this initializer — only plain value types are stored.
     init(forROMAt fileURL: URL) {
-        // NOTE: Import PVLibrary when build target is wired up.
-        // Placeholder — real implementation uses RealmConfiguration + RomDatabase per ThumbnailProvider pattern.
-        self.title = fileURL.deletingPathExtension().lastPathComponent
+        let romFilename = fileURL.lastPathComponent
+
+        // Derive a human-readable title from the filename as a fallback.
+        let fallbackTitle = fileURL.deletingPathExtension().lastPathComponent
             .replacingOccurrences(of: "_", with: " ")
             .replacingOccurrences(of: "-", with: " ")
-        self.systemName = nil
-        self.developer = nil
-        self.year = nil
-        self.genre = nil
-        self.gameDescription = nil
-        self.playCount = 0
-        self.isFavorite = false
-        self.artworkBase64 = ""
+
+        guard RealmConfiguration.supportsAppGroups else {
+            WLOG("App Groups not available — QuickLookPreview falling back to filename metadata")
+            self.title = fallbackTitle
+            self.systemName = nil
+            self.developer = nil
+            self.year = nil
+            self.genre = nil
+            self.gameDescription = nil
+            self.playCount = 0
+            self.isFavorite = false
+            self.artworkBase64 = ""
+            return
+        }
+
+        do {
+            RealmConfiguration.setDefaultRealmConfig()
+            let realm = try Realm()
+
+            // romPath is stored as "{systemID}/{filename}" or just "{filename}".
+            // Match the suffix to avoid requiring the full path.
+            let bySuffix = realm.objects(PVGame.self)
+                .filter("romPath ENDSWITH %@", "/" + romFilename)
+            let game = bySuffix.first
+                ?? realm.objects(PVGame.self).filter("romPath == %@", romFilename).first
+
+            guard let game = game else {
+                DLOG("No game found in Realm for filename: \(romFilename)")
+                self.title = fallbackTitle
+                self.systemName = nil
+                self.developer = nil
+                self.year = nil
+                self.genre = nil
+                self.gameDescription = nil
+                self.playCount = 0
+                self.isFavorite = false
+                self.artworkBase64 = ""
+                return
+            }
+
+            // Copy all values out of the Realm object before it goes out of scope.
+            let resolvedTitle = game.title.isEmpty ? fallbackTitle : game.title
+            let systemName = game.system?.name ?? game.systemShortName
+            let developer: String? = game.developer.flatMap { $0.isEmpty ? nil : $0 }
+            let year: String? = game.publishDate.flatMap { $0.isEmpty ? nil : $0 }
+            let genre: String? = game.genres.flatMap { $0.isEmpty ? nil : $0 }
+            let description = game.gameDescription
+            let playCount = game.playCount
+            let isFavorite = game.isFavorite
+            let artworkKey = game.artworkURL
+
+            // Resolve the artwork key to a base64-encoded JPEG string.
+            var artworkBase64 = ""
+            if !artworkKey.isEmpty,
+               let artworkURL = ROMPreviewInfo.resolveMediaCacheURL(forKey: artworkKey),
+               let imageData = try? Data(contentsOf: artworkURL) {
+                artworkBase64 = imageData.base64EncodedString()
+            }
+
+            self.title = resolvedTitle
+            self.systemName = systemName
+            self.developer = developer
+            self.year = year
+            self.genre = genre
+            self.gameDescription = description
+            self.playCount = playCount
+            self.isFavorite = isFavorite
+            self.artworkBase64 = artworkBase64
+
+        } catch {
+            ELOG("Realm lookup failed in QuickLookPreview: \(error.localizedDescription)")
+            self.title = fallbackTitle
+            self.systemName = nil
+            self.developer = nil
+            self.year = nil
+            self.genre = nil
+            self.gameDescription = nil
+            self.playCount = 0
+            self.isFavorite = false
+            self.artworkBase64 = ""
+        }
+    }
+
+    // MARK: - Private Helpers
+
+    /// Resolves a PVMediaCache key to a local file URL via the App Group container.
+    ///
+    /// Mirrors the lookup in `ThumbnailProvider.resolveMediaCacheURL(forKey:)`.
+    private static func resolveMediaCacheURL(forKey key: String) -> URL? {
+        guard !key.isEmpty else { return nil }
+        let keyHash = key.md5Hash
+
+        // App Group container — reliable from extension processes.
+        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) {
+            let candidate = groupURL
+                .appendingPathComponent("Documents", isDirectory: true)
+                .appendingPathComponent("PVCache", isDirectory: true)
+                .appendingPathComponent(keyHash, isDirectory: false)
+            if FileManager.default.fileExists(atPath: candidate.path) {
+                return candidate
+            }
+        }
+
+        // Local documents fallback via PVMediaCache.
+        if let localURL = PVMediaCache.filePath(forKey: key),
+           FileManager.default.fileExists(atPath: localURL.path) {
+            return localURL
+        }
+
+        return nil
     }
 }
 
