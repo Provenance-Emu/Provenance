@@ -31,6 +31,16 @@ if [ -f "${CORES_YML}" ]; then
 	PINNED_DATE=$(grep -v '^[[:space:]]*#' "${CORES_YML}" | grep -E '^[[:space:]]*pinned_date:' | sed 's/.*pinned_date:[[:space:]]*//' | tr -d '"' | tr -d "'" | tr -d '[:space:]')
 fi
 
+# Validate that PINNED_DATE is a well-formed YYYY-MM-DD date.
+# Reject malformed values (inline comments, extra text) to avoid silently
+# generating broken buildbot URLs.
+if [ -n "${PINNED_DATE}" ]; then
+	if ! echo "${PINNED_DATE}" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
+		echo "GetModule: ERROR — pinned_date '${PINNED_DATE}' is not a valid YYYY-MM-DD date; ignoring pin and falling back to latest" >&2
+		PINNED_DATE=""
+	fi
+fi
+
 if [ -n "${PINNED_DATE}" ]; then
 	echo "GetModule: using pinned buildbot date ${PINNED_DATE} (update via update-dylib-pins.sh)"
 	EFFECTIVE_MODULE_LIST="${CORES_ARCHIVE_DIR}/urls_pinned.txt"
@@ -54,7 +64,7 @@ if [ -f "${CORES_ARCHIVE_DIR}/pinned_date.txt" ]; then
 	STORED_PIN=$(cat "${CORES_ARCHIVE_DIR}/pinned_date.txt")
 fi
 if [ "${PINNED_DATE}" != "${STORED_PIN}" ] && { [ -n "${PINNED_DATE}" ] || [ -n "${STORED_PIN}" ]; }; then
-	echo "GetModule: pin changed (${STORED_PIN:-none} -> ${PINNED_DATE:-latest}), clearing cached archives and dylibs"
+	echo "GetModule: pin changed (${STORED_PIN:-none} -> ${PINNED_DATE:-latest}), forcing re-download on next run"
 	PIN_CHANGED=1
 	rm -f "${CORES_ARCHIVE_DIR}/timestamp.txt"
 fi
@@ -69,7 +79,7 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 	echo "GetModule: ${TIMESTAMP} > ${LAST_TIMESTAMP} Starting Download... ${EFFECTIVE_MODULE_LIST}"
 	rm -f "${CORES_ARCHIVE_DIR}/"*.zip
 	cd "${CORES_ARCHIVE_DIR}"
-	echo $(xargs -n 1 curl -O < "${EFFECTIVE_MODULE_LIST}")
+	xargs -n 1 curl -O < "${EFFECTIVE_MODULE_LIST}"
 	echo ${TIMESTAMP} > "${CORES_ARCHIVE_DIR}/timestamp.txt"
 	echo "${PINNED_DATE}" > "${CORES_ARCHIVE_DIR}/pinned_date.txt"
 fi
@@ -79,9 +89,9 @@ fi
 # new snapshot are not left behind (unzip -o only overwrites, never deletes).
 if [ "${PIN_CHANGED}" = "1" ]; then
 	rm -f "${CORES_DIR}/"*.dylib
-	echo $(find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';')
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
 else
-	echo $(find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';')
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';'
 fi
 echo "GetModule: Successfully Completed"
 exit 0
