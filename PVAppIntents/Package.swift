@@ -35,6 +35,6 @@ let package = Package(
         )
     ],
     swiftLanguageModes: [.v5, .v6],
-    cLanguageStandard: .gnu18,
+    cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
 )

@@ -13,10 +13,10 @@ import Foundation
 /// Marks or unmarks a game as a favourite.
 ///
 /// The actual Realm write is delegated to the host app via the shared App
-/// Group UserDefaults (`group.org.provenance-emu.provenance`). Writing the
-/// pending favorite key wakes the host app (via background tasks / polling)
-/// so it can apply the change to Realm without the extension needing write
-/// access to the database.
+/// Group UserDefaults suite (configured via `APP_GROUP_IDENTIFIER` in
+/// `Info.plist`). Writing the pending favourite key signals the host app to
+/// apply the change to Realm on next foreground, without requiring the
+/// extension to have direct Realm write access.
 ///
 /// Usage: "Hey Siri, add Donkey Kong Country to my Provenance favourites"
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
