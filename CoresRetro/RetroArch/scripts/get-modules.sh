@@ -48,7 +48,10 @@ if [ -n "${PINNED_DATE}" ]; then
 	if [ -n "${PIN_EPOCH}" ] && [ "${PIN_EPOCH}" -gt 0 ] 2>/dev/null; then
 		NOW_EPOCH=$(date +%s)
 		PIN_AGE_DAYS=$(( (NOW_EPOCH - PIN_EPOCH) / 86400 ))
-		if [ "${PIN_AGE_DAYS}" -gt 30 ]; then
+		if [ "${PIN_AGE_DAYS}" -lt 0 ]; then
+			echo "GetModule: WARNING — pinned_date ${PINNED_DATE} appears to be in the future (${PIN_AGE_DAYS} days ahead of system time)." >&2
+			echo "GetModule: WARNING — this may indicate clock skew or a misconfigured pin; please verify cores.yml pinned_date." >&2
+		elif [ "${PIN_AGE_DAYS}" -gt 30 ]; then
 			echo "GetModule: ⚠️  WARNING — pinned_date ${PINNED_DATE} is ${PIN_AGE_DAYS} days old." >&2
 			echo "GetModule: ⚠️  Run 'CoresRetro/RetroArch/scripts/check-dylib-updates.sh --update' to pull the latest snapshot." >&2
 		fi
