@@ -85,11 +85,13 @@ public struct ROMTitleNormalizationView: View {
                     selected = Set(proposals.map(\.id))
                 }
                 .buttonStyle(.bordered)
+                .disabled(isApplying)
 
                 Button("Select None") {
                     selected = []
                 }
                 .buttonStyle(.bordered)
+                .disabled(isApplying)
 
                 Spacer()
 
@@ -120,6 +122,7 @@ public struct ROMTitleNormalizationView: View {
                         selected.insert(proposal.id)
                     }
                 }
+                .disabled(isApplying)
             }
         }
     }

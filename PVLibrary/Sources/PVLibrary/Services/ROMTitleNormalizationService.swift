@@ -65,16 +65,21 @@ public final class ROMTitleNormalizationService: Sendable {
     /// - Parameter proposals: Proposals to apply.  Each `id` is used to look up
     ///   the live Realm object.  Proposals for games no longer in the database are
     ///   silently skipped.
-    public func applyProposals(_ proposals: [ROMTitleRenameProposal]) async throws {
-        guard !proposals.isEmpty else { return }
+    /// - Returns: The number of titles actually updated (may be less than `proposals.count`
+    ///   if some games were deleted between preview and apply).
+    @discardableResult
+    public func applyProposals(_ proposals: [ROMTitleRenameProposal]) async throws -> Int {
+        guard !proposals.isEmpty else { return 0 }
 
         let idToTitle: [String: String] = Dictionary(
             proposals.map { ($0.id, $0.proposedTitle) },
             uniquingKeysWith: { _, last in last }
         )
 
-        var appliedCount = 0
-        try await RealmContext.withBackgroundRealm { realm in
+        // Return the count from inside the background task to avoid capturing and
+        // mutating a var across a Task.detached boundary (Swift 6 concurrency).
+        let appliedCount = try await RealmContext.withBackgroundRealm { realm -> Int in
+            var count = 0
             try realm.write {
                 for (id, proposedTitle) in idToTitle {
                     guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) else {
@@ -83,18 +88,19 @@ public final class ROMTitleNormalizationService: Sendable {
                     }
                     DLOG("Normalized title: '\(game.title)' → '\(proposedTitle)'")
                     game.title = proposedTitle
-                    appliedCount += 1
+                    count += 1
                 }
             }
+            return count
         }
         ILOG("ROMTitleNormalizationService: applied \(appliedCount)/\(idToTitle.count) title rename(s)")
+        return appliedCount
     }
 
     /// Convenience: build proposals and apply all of them in one call.
     @discardableResult
     public func normalizeAll() async throws -> Int {
         let proposals = try await buildProposals()
-        try await applyProposals(proposals)
-        return proposals.count
+        return try await applyProposals(proposals)
     }
 }

@@ -98,8 +98,19 @@ final class ROMTitleNormalizationServiceTests: XCTestCase {
     func testApplyProposals_skipsUnknownID() async throws {
         let proposal = ROMTitleRenameProposal(id: "nonexistent", currentTitle: "Foo (Bar)", proposedTitle: "Foo")
 
-        // Should not throw even if the game is missing
-        XCTAssertNoThrow(try await service.applyProposals([proposal]))
+        // Should not throw even if the game is missing; returns 0 since nothing was updated
+        let count = try await service.applyProposals([proposal])
+        XCTAssertEqual(count, 0)
+    }
+
+    func testApplyProposals_returnsAccurateCount() async throws {
+        try insertGame(md5Hash: "real001", title: "Sonic (USA)")
+        let p1 = ROMTitleRenameProposal(id: "real001", currentTitle: "Sonic (USA)", proposedTitle: "Sonic")
+        let p2 = ROMTitleRenameProposal(id: "ghost999", currentTitle: "Ghost (USA)", proposedTitle: "Ghost")
+
+        let count = try await service.applyProposals([p1, p2])
+        // Only the game with a real ID should be counted
+        XCTAssertEqual(count, 1)
     }
 
     func testApplyProposals_handlesDuplicateIDsWithLastWriteWins() async throws {

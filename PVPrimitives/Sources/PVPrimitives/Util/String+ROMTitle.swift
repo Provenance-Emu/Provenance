@@ -20,6 +20,27 @@ private let romTagDetectionPattern = #"\([^)]*\)|\[[^\]]*\]"#
 private let romDiscTagPattern = #"\s*\((?:Disk|Disc|DISK|DISC|CD|Track|disc|track|cd|disk)\s*\d+\)"#
 /// Regex that matches a trailing version suffix — e.g. `v1.0`, `V2`, `v1.2.3`.
 private let romVersionSuffixPattern = #"\s+[Vv]\d+(?:\.\d+)*$"#
+/// Regex that matches two or more consecutive whitespace characters.
+private let romMultipleSpacesPattern = #"\s{2,}"#
+
+// MARK: - Precompiled Regex Instances
+// Compiled once at module load time to avoid repeated compilation overhead,
+// which matters when normalizing large libraries during bulk import.
+
+private let _romParenTagRegex = try! NSRegularExpression(pattern: romParenTagPattern)         // swiftlint:disable:this force_try
+private let _romBracketTagRegex = try! NSRegularExpression(pattern: romBracketTagPattern)     // swiftlint:disable:this force_try
+private let _romTagDetectionRegex = try! NSRegularExpression(pattern: romTagDetectionPattern) // swiftlint:disable:this force_try
+private let _romDiscTagRegex = try! NSRegularExpression(pattern: romDiscTagPattern)           // swiftlint:disable:this force_try
+private let _romVersionSuffixRegex = try! NSRegularExpression(pattern: romVersionSuffixPattern) // swiftlint:disable:this force_try
+private let _romMultipleSpacesRegex = try! NSRegularExpression(pattern: romMultipleSpacesPattern) // swiftlint:disable:this force_try
+
+private extension NSRegularExpression {
+    /// Replaces all matches in `string` with `template`, returning the result.
+    func replacingAllMatches(in string: String, with template: String) -> String {
+        let range = NSRange(string.startIndex..., in: string)
+        return replacingMatches(in: string, range: range, withTemplate: template)
+    }
+}
 
 public extension String {
 
@@ -29,9 +50,10 @@ public extension String {
     /// or empty-string safety. Used internally by both `strippingROMTags()` and
     /// `normalizedROMTitle()` to avoid duplicating the shared patterns.
     private func removingROMTagPatterns() -> String {
-        self
-            .replacingOccurrences(of: romParenTagPattern, with: "", options: .regularExpression)
-            .replacingOccurrences(of: romBracketTagPattern, with: "", options: .regularExpression)
+        _romBracketTagRegex.replacingAllMatches(
+            in: _romParenTagRegex.replacingAllMatches(in: self, with: ""),
+            with: ""
+        )
     }
 
     /// Strips common ROM annotation patterns from a game title, returning a
@@ -57,7 +79,8 @@ public extension String {
     /// Returns `true` when the string contains at least one parenthetical or
     /// bracketed ROM annotation tag (e.g. `(USA)`, `[!]`).
     var hasROMTags: Bool {
-        range(of: romTagDetectionPattern, options: .regularExpression) != nil
+        let range = NSRange(startIndex..., in: self)
+        return _romTagDetectionRegex.firstMatch(in: self, range: range) != nil
     }
 
     // MARK: - Normalized ROM Title
@@ -79,19 +102,17 @@ public extension String {
     ///     "Sonic the Hedgehog v1.0".normalizedROMTitle()          // "Sonic the Hedgehog"
     ///     "Game (Beta)".normalizedROMTitle()                      // "Game"
     func normalizedROMTitle() -> String {
-        var result = self
-
         // 1. Strip disc/disk/CD/Track numbering (e.g. "(Disc 2)", "(CD1)", "(Track 03)")
-        result = result.replacingOccurrences(of: romDiscTagPattern, with: "", options: .regularExpression)
+        var result = _romDiscTagRegex.replacingAllMatches(in: self, with: "")
 
         // 2. Strip all remaining parenthetical and bracketed ROM tags (shared patterns)
         result = result.removingROMTagPatterns()
 
         // 3. Strip trailing version strings — v1.0, v1.2.3, V2, etc.
-        result = result.replacingOccurrences(of: romVersionSuffixPattern, with: "", options: .regularExpression)
+        result = _romVersionSuffixRegex.replacingAllMatches(in: result, with: "")
 
         // 4. Collapse multiple spaces
-        result = result.replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
+        result = _romMultipleSpacesRegex.replacingAllMatches(in: result, with: " ")
 
         // 5. Trim
         result = result.trimmingCharacters(in: .whitespaces)
