@@ -12,18 +12,24 @@
 
 #import "retro_netplay.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
+#import <PVLogging/PVLoggingObjC.h>
+#pragma clang diagnostic pop
+
 // RetroArch C headers — included via module map / bridging header in PVRetroArch
 #if __has_include(<PVRetroArch/command.h>)
 #import <PVRetroArch/command.h>
 #import <PVRetroArch/runloop.h>
 #import <PVRetroArch/string/stdstring.h>
 #else
-// Forward-declare what we need when building outside PVRetroArch.
-// These symbols are only used inside #ifdef HAVE_NETPLAY blocks,
-// so they will never be called unless the full RetroArch headers are present.
+// Fallback stubs compiled only when building outside the RetroArch target.
+// HAVE_NETPLAY is always undefined in this context, so command_event() and
+// global_get_ptr() are never actually called — all call sites are inside
+// #ifdef HAVE_NETPLAY blocks which are not compiled without these headers.
 typedef int menu_action;
 typedef bool (*command_event_fn)(int cmd, void *data);
-static command_event_fn command_event = NULL;
+static command_event_fn command_event = NULL;  // never called; see note above
 typedef struct {
     struct {
         bool enable;
@@ -94,7 +100,7 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
     // Configure as host: empty server string = hosting.
     // nickname and maxPlayers are forwarded to the Bonjour TXT-record
     // advertiser in Phase 2; log them here for diagnostics.
-    NSLog(@"[Netplay] Host requested — nickname: %@, maxPlayers: %d", nickname, maxPlayers);
+    ILOG(@"[Netplay] Host requested — nickname: %@, maxPlayers: %d", nickname, maxPlayers);
     gl->netplay.enable     = true;
     gl->netplay.is_client  = false;
     gl->netplay.is_spectate = false;
@@ -164,7 +170,7 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
     }
 
     // nickname is forwarded to Bonjour TXT-record advertising in Phase 2.
-    NSLog(@"[Netplay] Client connecting — nickname: %@, spectate: %d", nickname, spectate);
+    ILOG(@"[Netplay] Client connecting — nickname: %@, spectate: %d", nickname, spectate);
     gl->netplay.enable      = true;
     gl->netplay.is_client   = !spectate;
     gl->netplay.is_spectate = spectate;

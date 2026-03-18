@@ -27,24 +27,24 @@ public actor PVNetplayManager {
     private(set) public var state: NetplayState = .idle {
         didSet {
             #if canImport(Combine)
-            stateSubject.send(state)
+            // Always send on the main queue so Combine subscribers (which may
+            // subscribe/receive on main) never race with actor-background sends.
+            let subject = stateSubject
+            let newState = state
+            DispatchQueue.main.async { subject.send(newState) }
             #endif
         }
     }
 
     #if canImport(Combine)
-    // `nonisolated(unsafe)` is correct here: PassthroughSubject is internally
-    // thread-safe for send() / subscribe(), and we only ever call send() from
-    // within actor-isolated code (the `state` didSet). The nonisolated keyword
-    // allows the computed `statePublisher` property below to read this subject
-    // without needing actor isolation, satisfying Swift 6 strict concurrency.
+    // `nonisolated(unsafe)` allows the computed `statePublisher` below to read
+    // this subject without actor-hopping. Send is always dispatched to main (see
+    // didSet above), so concurrent access between send and subscribe is avoided.
     nonisolated(unsafe) private let stateSubject = PassthroughSubject<NetplayState, Never>()
 
     /// Publisher for state changes — always delivered on the main queue.
     public nonisolated var statePublisher: AnyPublisher<NetplayState, Never> {
-        stateSubject
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        stateSubject.eraseToAnyPublisher()
     }
     #endif
 

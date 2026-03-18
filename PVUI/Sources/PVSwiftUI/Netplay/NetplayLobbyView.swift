@@ -32,6 +32,10 @@ public struct NetplayLobbyView: View {
     @State private var errorMessage: String?
     @State private var showError = false
 
+    private var isNetplayEnabled: Bool {
+        PVFeatureFlagsManager.shared.netplayEnabled
+    }
+
     @Environment(\.dismiss) private var dismiss
 
     public init(gameName: String, coreIdentifier: String) {
@@ -48,6 +52,14 @@ public struct NetplayLobbyView: View {
                 // Action tiles
                 ScrollView {
                     VStack(spacing: 16) {
+                        if !isNetplayEnabled {
+                            Label("Netplay is disabled. Enable it in Settings > Advanced > Feature Flags.", systemImage: "exclamationmark.triangle")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal)
+                                .multilineTextAlignment(.center)
+                        }
+
                         actionTile(
                             icon: "antenna.radiowaves.left.and.right",
                             title: "Host a Room",
@@ -56,6 +68,7 @@ public struct NetplayLobbyView: View {
                         ) {
                             showCreateRoom = true
                         }
+                        .disabled(!isNetplayEnabled)
 
                         actionTile(
                             icon: "list.bullet.rectangle",
@@ -65,6 +78,7 @@ public struct NetplayLobbyView: View {
                         ) {
                             showRoomBrowser = true
                         }
+                        .disabled(!isNetplayEnabled)
 
                         actionTile(
                             icon: "eye",
@@ -74,6 +88,7 @@ public struct NetplayLobbyView: View {
                         ) {
                             showSpectate = true
                         }
+                        .disabled(!isNetplayEnabled)
                     }
                     .padding()
                 }

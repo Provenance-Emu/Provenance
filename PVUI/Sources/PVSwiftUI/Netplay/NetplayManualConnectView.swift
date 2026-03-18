@@ -122,7 +122,8 @@ public struct NetplayManualConnectView: View {
                     currentPlayers: 1,
                     isLAN: true,
                     hostAddress: hostAddress,
-                    port: port
+                    port: port,
+                    discoverySource: .manual
                 )
                 var settings = NetplaySettings.defaultLAN
                 settings.frameDelay = frameDelay

@@ -95,9 +95,9 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
             sessionUUID = parsed
         } else {
             // Derive a stable 16-byte identifier from the service name using
-            // FNV-1a byte-distribution. This is deterministic across launches
-            // (unlike Hasher, which is randomised per-process) and safe (no
-            // buffer-size mismatch between an Int and a 16-byte UUID field).
+            // an XOR-fold over the UTF-8 bytes. This is deterministic across
+            // launches (unlike Hasher, which is randomised per-process) and
+            // safe (no buffer-size mismatch between an Int and a 16-byte UUID field).
             let nameBytes = Array(service.name.utf8)
             var bytes = [UInt8](repeating: 0, count: 16)
             for (i, byte) in nameBytes.enumerated() {
