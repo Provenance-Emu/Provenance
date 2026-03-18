@@ -162,11 +162,13 @@ public struct CoreOptionTileProvider {
                 // multi options are persisted as a String title (see CoreOptionsViewController).
                 // Fall back to Int index for legacy reads, then use the first isDefault or index 0.
                 let defaultIdx = values.firstIndex(where: { $0.isDefault }) ?? 0
+                let storedTitle: String = coreClass.valueForOption(option)
                 let currentIndex: Int
-                if let storedTitle = coreClass.valueForOption(option) as? String {
+                if !storedTitle.isEmpty {
                     currentIndex = values.firstIndex(where: { $0.title == storedTitle }) ?? defaultIdx
                 } else {
-                    currentIndex = (coreClass.valueForOption(option) as Int?) ?? defaultIdx
+                    let storedInt: Int? = coreClass.valueForOption(option)
+                    currentIndex = storedInt ?? defaultIdx
                 }
                 let currentLabel = currentIndex < values.count ? values[currentIndex].title : (values.first?.title ?? "–")
                 let lpOptions = values.enumerated().map { idx, v in
@@ -292,11 +294,13 @@ public struct CoreOptionTileProvider {
 
         case let .multi(_, values, _):
             let defaultIdx = values.firstIndex(where: { $0.isDefault }) ?? 0
+            let storedTitle: String = coreClass.valueForOption(option)
             let current: Int
-            if let storedTitle = coreClass.valueForOption(option) as? String {
+            if !storedTitle.isEmpty {
                 current = values.firstIndex(where: { $0.title == storedTitle }) ?? defaultIdx
             } else {
-                current = (coreClass.valueForOption(option) as Int?) ?? defaultIdx
+                let storedInt: Int? = coreClass.valueForOption(option)
+                current = storedInt ?? defaultIdx
             }
             let nextIndex = (current + 1) % values.count
             // Store as String title to match CoreOptionsViewController's persistence format.

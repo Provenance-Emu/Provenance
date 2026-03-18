@@ -334,7 +334,7 @@ extension MednafenGameCore: PaletteProviding {
         switch _bridge.systemType {
         case .virtualBoy:
             guard let palette = VBDisplayPalette.from(paletteID: id) else { return }
-            _bridge.selectVBDisplayModeAtIndex(NSInteger(palette.rawValue))
+            _bridge.selectVBDisplayMode(at: NSInteger(palette.rawValue))
         default:
             break
         }

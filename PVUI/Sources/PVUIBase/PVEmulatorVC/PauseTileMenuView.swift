@@ -261,8 +261,8 @@ struct PauseTileMenuView: View {
             icon: isActive ? "bolt.fill" : "bolt.slash",
             label: "JIT",
             badge: isActive ? "ON" : "OFF",
-            colorKey: isActive ? .green : .orange,
-            isEnabled: false, // read-only status tile
+            isEnabled: false,
+            colorKey: isActive ? .green : .orange, // read-only status tile
             dismissOnTap: false
         )
     }
