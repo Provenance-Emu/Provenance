@@ -378,10 +378,8 @@ public struct CoreOptionsDetailView: View {
                     .padding(.horizontal)
                 }
 
-                // Reset all global options — hidden when viewing per-game scope to prevent
-                // accidentally wiping global defaults while per-game overrides are active.
-                // Users in per-game scope should use "RESET GAME OVERRIDES" above instead.
-                if !(gameMD5 != nil && perGameScope) {
+                // Reset all global options — hidden in per-game scope (use "Reset Game Overrides" instead)
+                if effectiveMD5 == nil {
                 Button(action: {
                     state.showResetConfirmation = true
                 }) {
@@ -425,7 +423,7 @@ public struct CoreOptionsDetailView: View {
                 #endif
                 .padding(.vertical, 20)
                 .padding(.horizontal)
-                } // end if !(gameMD5 != nil && perGameScope)
+                } // end if effectiveMD5 == nil
             }
             .padding(.bottom, 30)
         }
