@@ -264,6 +264,33 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param corePath  Absolute path to the dylib or framework executable.
 + (nullable NSDictionary<NSString *, id> *)probeCoreDylibAtPath:(NSString *)corePath;
 
+// MARK: Startup hooks
+
+/// Optional block invoked after the ROM is loaded successfully but before the emulation loop
+/// thread starts. Assign this block to perform post-load setup in a thread-safe window
+/// (e.g. restoring per-port controller device type selections before the core starts running).
+@property (nonatomic, copy, nullable) dispatch_block_t afterROMLoadBlock;
+
+// MARK: Controller port info
+
+/// Maximum number of controller ports the thin frontend tracks (matches THIN_MAX_PLAYERS).
+/// Exposed as a class property so Swift callers can reference the authoritative limit
+/// without duplicating the ObjC preprocessor constant.
+@property (class, readonly) NSUInteger maxPlayers;
+
+/// Per-port list of device types reported by the core via
+/// RETRO_ENVIRONMENT_SET_CONTROLLER_INFO.
+/// Outer array is indexed by port (0-based).
+/// Each inner array contains dictionaries with keys:
+///   @"id"   : NSNumber (unsigned) — RETRO_DEVICE_* constant
+///   @"desc" : NSString — human-readable device description
+/// Returns an empty array if the core did not call SET_CONTROLLER_INFO.
+@property (nonatomic, readonly) NSArray<NSArray<NSDictionary<NSString *, id> *> *> *controllerPortInfo;
+
+/// Returns the currently-selected device type for the given port (0-based).
+/// Defaults to RETRO_DEVICE_JOYPAD (1) unless changed via setControllerPortDevice:forPort:.
+- (unsigned)currentDeviceTypeForPort:(unsigned)port NS_SWIFT_NAME(currentDeviceType(forPort:));
+
 // MARK: Input state
 
 /// Set or clear a single joypad button for a given player.
@@ -284,11 +311,6 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param device  libretro device type (RETRO_DEVICE_JOYPAD, RETRO_DEVICE_MOUSE, etc.)
 /// @param port    Port number (0-based).
 - (void)setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
-
-/// Controller port device type info reported by the core via SET_CONTROLLER_INFO.
-/// Array of ports, each containing an array of {id: NSNumber, desc: NSString} dicts.
-/// Returns nil if the core didn't report controller info.
-@property (nonatomic, readonly, nullable) NSArray<NSArray<NSDictionary<NSString *, id> *> *> *controllerPortInfo;
 
 /// Clear all button and analog state for all players.
 - (void)clearAllInput;

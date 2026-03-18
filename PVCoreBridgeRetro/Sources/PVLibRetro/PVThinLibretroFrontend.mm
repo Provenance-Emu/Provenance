@@ -373,6 +373,11 @@ typedef struct PVThinLibretroSymbols {
     // the core's lifetime so the pointer remains valid after the callback returns.
     NSString *_usernameString;
 
+    // Controller port info from RETRO_ENVIRONMENT_SET_CONTROLLER_INFO
+    NSArray<NSArray<NSDictionary<NSString *, id> *> *> *_controllerPortInfo;
+    // Current device type selected per port (default RETRO_DEVICE_JOYPAD = 1)
+    unsigned _portDeviceTypes[THIN_MAX_PLAYERS];
+
     // Stable C-string storage for directory paths returned via environment callbacks.
     // Cores may cache the returned pointer, so we must keep the backing char* alive
     // for the entire core lifetime. Using strdup + free rather than NSString.UTF8String
@@ -438,9 +443,6 @@ typedef struct PVThinLibretroSymbols {
     dispatch_queue_t _cameraQueue;
 #endif
     @private
-
-    // Controller port info (from SET_CONTROLLER_INFO)
-    NSArray<NSArray<NSDictionary<NSString *, id> *> *> *_controllerPortInfo;
 
     // Microphone (AudioUnit-backed)
     struct retro_microphone_interface _microphoneInterface;
@@ -1594,7 +1596,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize biosPath = _biosPath;
 @synthesize savePath = _savePath;
 @synthesize frontendDelegate = _frontendDelegate;
-@synthesize controllerPortInfo = _controllerPortInfo;
+// Note: controllerPortInfo is a readonly property with an explicit getter below; no @synthesize needed.
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (uintptr_t)currentEmuFBO {
@@ -1615,6 +1617,10 @@ static bool thin_environment(unsigned cmd, void *data) {
         _coreOptionDefinitions = [NSMutableArray array];
         _coreOptionCategories = [NSMutableArray array];
         _coreOptionVisibility = [NSMutableDictionary dictionary];
+        _controllerPortInfo = [NSMutableArray array];
+        for (unsigned p = 0; p < THIN_MAX_PLAYERS; p++) {
+            _portDeviceTypes[p] = RETRO_DEVICE_JOYPAD; // default
+        }
         _serializationQuirks = 0;
         _hasDiskControl = NO;
         _hasDiskControlExt = NO;
@@ -1949,7 +1955,31 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_sym.retro_set_controller_port_device) {
         ILOG(@"ThinFrontend: set port %u device = %u", port, device);
         _sym.retro_set_controller_port_device(port, device);
+        if (port < THIN_MAX_PLAYERS) {
+            _portDeviceTypes[port] = device;
+        }
+    } else {
+        // Core does not export retro_set_controller_port_device; ignore the request.
+        ILOG(@"ThinFrontend: core does not support setting controller port devices; "
+             "ignoring request for port %u device = %u", port, device);
     }
+}
+
+- (BOOL)supportsControllerPortDevice {
+    return _sym.retro_set_controller_port_device != NULL;
+}
+
++ (NSUInteger)maxPlayers {
+    return THIN_MAX_PLAYERS;
+}
+
+- (NSArray<NSArray<NSDictionary<NSString *, id> *> *> *)controllerPortInfo {
+    return _controllerPortInfo ?: @[];
+}
+
+- (unsigned)currentDeviceTypeForPort:(unsigned)port {
+    if (port >= THIN_MAX_PLAYERS) return RETRO_DEVICE_JOYPAD;
+    return _portDeviceTypes[port];
 }
 
 - (void)resetEmulation {
@@ -2431,6 +2461,11 @@ static bool thin_environment(unsigned cmd, void *data) {
     [self _allocateVideoBuffer];
     // _frameInterval ivar read by PVCoreObjCBridge emulation loop timing
     _frameInterval = (_rawAVInfo.timing.fps > 0.0) ? _rawAVInfo.timing.fps : 60.0;
+    // Call post-load hook before starting the emulation loop thread so subclasses
+    // can apply per-port device types in a thread-safe window.
+    if (self.afterROMLoadBlock) {
+        self.afterROMLoadBlock();
+    }
     [super startEmulation];
 }
 
@@ -3259,7 +3294,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             if (!info) return true;
 
             NSMutableArray *portsArray = [NSMutableArray array];
-            for (unsigned p = 0; info[p].types; p++) {
+            for (unsigned p = 0; info[p].types && p < THIN_MAX_PLAYERS; p++) {
                 NSMutableArray *portTypes = [NSMutableArray array];
                 for (unsigned t = 0; t < info[p].num_types; t++) {
                     NSString *desc = info[p].types[t].desc
@@ -3273,7 +3308,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                 [portsArray addObject:portTypes];
             }
             _controllerPortInfo = [portsArray copy];
-            ILOG(@"ThinEnv SET_CONTROLLER_INFO: %lu ports", (unsigned long)portsArray.count);
+            ILOG(@"ThinEnv SET_CONTROLLER_INFO: %lu ports (clamped to THIN_MAX_PLAYERS=%u)", (unsigned long)portsArray.count, THIN_MAX_PLAYERS);
             return true;
         }
         case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:

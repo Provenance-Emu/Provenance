@@ -71,6 +71,12 @@ class PVThinLibretroCore: PVEmulatorCore {
         // Apply per-core iOS-specific option defaults before the emulation loop starts.
         // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
         applyPlatformDefaults()
+        // Register a post-load hook so port device types are restored AFTER retro_load_game
+        // (which triggers SET_CONTROLLER_INFO) but BEFORE the emulation loop thread starts,
+        // avoiding a potential race condition with retro_set_controller_port_device.
+        _bridge.afterROMLoadBlock = { [weak self] in
+            self?.restorePortDeviceTypes()
+        }
         super.startEmulation()
     }
 
@@ -329,5 +335,82 @@ extension PVThinLibretroCore: @preconcurrency CoreOptional {
                 bridgeRef.setCoreOption(key, value: strVal)
             }
         }
+    }
+}
+
+// MARK: - PortDeviceConfigurable
+
+extension PVThinLibretroCore: PortDeviceConfigurable {
+
+    /// Authoritative per-platform max from the ObjC frontend.
+    /// Avoids duplicating the THIN_MAX_PLAYERS preprocessor constant in Swift.
+    private var thinMaxPlayers: Int { Int(PVThinLibretroFrontend.maxPlayers) }
+
+    public var controllerPortDescriptors: [[PortDeviceDescriptor]] {
+        // Clamp to thinMaxPlayers — ports beyond this cannot be tracked or restored.
+        let portInfo = _bridge.controllerPortInfo.prefix(thinMaxPlayers)
+        return portInfo.map { portTypes in
+            portTypes.compactMap { dict -> PortDeviceDescriptor? in
+                guard let name = dict["desc"] as? String,
+                      let typeNum = dict["id"] as? NSNumber else { return nil }
+                return PortDeviceDescriptor(name: name, deviceType: typeNum.uintValue)
+            }
+        }
+    }
+
+    public func currentDeviceType(forPort port: Int) -> UInt {
+        guard port >= 0, port < thinMaxPlayers else { return LibretroDeviceType.joypad.rawValue }
+        return UInt(_bridge.currentDeviceType(forPort: UInt32(port)))
+    }
+
+    public func setDeviceType(_ deviceType: UInt, forPort port: Int) {
+        guard port >= 0, port < thinMaxPlayers else { return }
+        _bridge.setControllerPortDevice(UInt32(deviceType), forPort: UInt32(port))
+        // Persist selection per core + game combo
+        let key = portDevicePersistenceKey(port: port)
+        UserDefaults.standard.set(Int(deviceType), forKey: key)
+    }
+
+    /// Restore saved device type selections (called after core loads).
+    func restorePortDeviceTypes() {
+        // Clamp to thinMaxPlayers — _portDeviceTypes[] only has 4 entries.
+        let portCount = min(_bridge.controllerPortInfo.count, thinMaxPlayers)
+        for port in 0..<portCount {
+            let key = portDevicePersistenceKey(port: port)
+            if UserDefaults.standard.object(forKey: key) != nil {
+                let saved = UInt(UserDefaults.standard.integer(forKey: key))
+                _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
+            } else {
+                // Migration path: fall back to legacy per-game key (no core identifier)
+                let legacyKey = legacyPortDevicePersistenceKey(port: port)
+                if UserDefaults.standard.object(forKey: legacyKey) != nil {
+                    let saved = UInt(UserDefaults.standard.integer(forKey: legacyKey))
+                    _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
+                    // Re-save under the new per-core/per-game key so future lookups hit the new namespace.
+                    UserDefaults.standard.set(Int(saved), forKey: key)
+                }
+            }
+        }
+    }
+
+    /// New-style per-port key: <ClassName>.<md5>.<coreIdentifier>.portDeviceType.port<port>
+    private func portDevicePersistenceKey(port: Int) -> String {
+        // Key format matches CoreOptions+Serialization convention: <ClassName>.<md5>.<key>
+        let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
+        // Prefer the coreIdentifier from PVEmulatorCore if available; fall back to the dynamic type name.
+        let coreIdentifierComponent: String
+        if let identifier = (self as PVEmulatorCore).coreIdentifier, !identifier.isEmpty {
+            coreIdentifierComponent = identifier
+        } else {
+            coreIdentifierComponent = String(describing: type(of: self))
+        }
+        return "PVThinLibretroCore.\(md5).\(coreIdentifierComponent).portDeviceType.port\(port)"
+    }
+
+    /// Legacy per-port key used before core identifiers were included (per-game only).
+    /// Format: <ClassName>.<md5>.portDeviceType.port<port>
+    private func legacyPortDevicePersistenceKey(port: Int) -> String {
+        let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
+        return "PVThinLibretroCore.\(md5).portDeviceType.port\(port)"
     }
 }

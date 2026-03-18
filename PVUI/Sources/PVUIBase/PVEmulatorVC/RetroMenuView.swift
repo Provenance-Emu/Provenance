@@ -389,10 +389,12 @@ struct RetroMenuView: View {
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
         emulatorVC.coreSupportsVirtualKeyboard ||
-        emulatorVC.coreSupportsVirtualMouse
+        emulatorVC.coreSupportsVirtualMouse ||
+        hasPortDeviceOptions
         #else
         return emulatorVC.core is CoreOptional ||
-        (emulatorVC.core as? CoreActions)?.coreActions != nil
+        (emulatorVC.core as? CoreActions)?.coreActions != nil ||
+        hasPortDeviceOptions
         #endif
     }
 
@@ -541,6 +543,9 @@ struct RetroMenuView: View {
             }
             #endif
 
+            // Per-port device type picker (e.g. Joypad → Mouse for Mario Paint)
+            portDevicePickerSection
+
             // If no core features available, show message
             if !hasCoreFeatures {
                 Text(String(localized: "No core-specific features available"))
@@ -668,7 +673,7 @@ struct RetroMenuView: View {
             return bridge.value(forKey: "controllerPortInfo") as? [[NSDictionary]]
         }()
 
-        let showSection = hasMouse || hasKeyboard || (portInfo != nil && !(portInfo?.isEmpty ?? true))
+        let showSection = hasMouse || hasKeyboard || (!hasPortDeviceOptions && portInfo != nil && !(portInfo?.isEmpty ?? true))
 
         if showSection {
             skinSectionHeader(String(localized: "PERIPHERALS"), systemImage: "cable.connector")
@@ -695,8 +700,10 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Per-port device type picker (from SET_CONTROLLER_INFO)
-            if let portInfo = portInfo, !portInfo.isEmpty {
+            // Per-port device type picker (from SET_CONTROLLER_INFO) — only shown when the
+            // core does NOT conform to PortDeviceConfigurable (which gets its own richer UI
+            // in the CORE tab via portDevicePickerSection, preventing duplicate controls).
+            if !hasPortDeviceOptions, let portInfo = portInfo, !portInfo.isEmpty {
                 ForEach(Array(portInfo.enumerated()), id: \.offset) { portIndex, devices in
                     if devices.count > 1 { // Only show if there are multiple options
                         let deviceNames = devices.compactMap { $0["desc"] as? String }
