@@ -25,7 +25,9 @@ buildbot:
   # pinned_date: pins all dylib downloads to a specific buildbot nightly date (YYYY-MM-DD).
   # When set, the fetch script replaces "latest" in URLs with this date for reproducible builds.
   # Update via: CoresRetro/RetroArch/scripts/update-dylib-pins.sh [YYYY-MM-DD]
-  pinned_date: "2026-03-18"
+  # pinned_date: disabled — libretro buildbot doesn't archive dated snapshots
+  # for apple/ios-arm64 or tvos-arm64; only "latest" has actual files.
+  # pinned_date: "2026-03-18"
 
 cores:
   # Globally disabled cores (commented out in all files)
