@@ -33,5 +33,8 @@ let package = Package(
             name: "PVAppIntentsTests",
             dependencies: ["PVAppIntents"]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v5, .v6],
+    cLanguageStandard: .gnu18,
+    cxxLanguageStandard: .gnucxx20
 )

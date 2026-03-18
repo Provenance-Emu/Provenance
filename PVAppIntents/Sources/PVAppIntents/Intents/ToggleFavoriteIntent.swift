@@ -51,7 +51,9 @@ public struct ToggleFavoriteIntent: AppIntent {
     public func perform() async throws -> some IntentResult & ProvidesDialog {
         // Notify the host app via App Group UserDefaults so it can write to Realm
         // without needing write access from this extension process.
-        let defaults = UserDefaults(suiteName: "group.org.provenance-emu.provenance")
+        let appGroupID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+            ?? "group.org.provenance-emu.provenance"
+        let defaults = UserDefaults(suiteName: appGroupID)
         defaults?.set(isFavorite, forKey: "pendingFavorite_\(game.id)")
 
         let verb = isFavorite ? "Added" : "Removed"

@@ -57,6 +57,14 @@ public struct PlayRandomGameIntent: AppIntent {
             )
         }
 
+        // Hand off the selected game to the host app via App Group UserDefaults.
+        // The host app observes `pendingLaunchGameID` after becoming active
+        // (triggered by `openAppWhenRun = true`) and routes to the deep-link handler.
+        let appGroupID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+            ?? "group.org.provenance-emu.provenance"
+        let defaults = UserDefaults(suiteName: appGroupID)
+        defaults?.set(picked.id, forKey: "pendingLaunchGameID")
+
         return .result(
             value: picked,
             dialog: "Launching \(picked.title) on \(picked.systemName)."

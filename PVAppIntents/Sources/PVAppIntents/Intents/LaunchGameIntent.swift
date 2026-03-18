@@ -44,9 +44,14 @@ public struct LaunchGameIntent: AppIntent, CustomIntentMigratedAppIntent {
     // MARK: - Perform
 
     public func perform() async throws -> some IntentResult & ProvidesDialog {
-        // Write the game ID to the shared app group so the host app
-        // can launch it when it comes to the foreground.
-        let defaults = UserDefaults(suiteName: "group.org.provenance-emu.provenance")
+        // Write the selected game's MD5 to the shared App Group so the host
+        // app can launch it when it comes to the foreground via
+        // `openAppWhenRun`. The host app observes `pendingLaunchGameID` in
+        // its `applicationDidBecomeActive` / SceneDelegate and routes to the
+        // `provenance://open?md5=<id>` handler after clearing the key.
+        let appGroupID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+            ?? "group.org.provenance-emu.provenance"
+        let defaults = UserDefaults(suiteName: appGroupID)
         defaults?.set(game.id, forKey: "pendingLaunchGameID")
         return .result(dialog: "Launching \(game.title).")
     }
