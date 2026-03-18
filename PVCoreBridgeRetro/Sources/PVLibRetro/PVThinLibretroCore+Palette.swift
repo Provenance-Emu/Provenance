@@ -5,7 +5,7 @@
 //  Part of #2649 — Custom Palette System
 //  Sub-task: PaletteProviding for RetroArch / thin-libretro GB and GBC cores.
 //
-//  Supported cores (detected by coreIdentifier prefix):
+//  Supported cores (detected by coreIdentifier substring match):
 //   • gambatte   — gambatte_gb_colorization + gambatte_gb_internal_palette
 //   • mgba       — mgba_gb_colors
 //   • sameboy    — (no discrete palette option; excluded)
