@@ -355,6 +355,10 @@ typedef struct PVThinLibretroSymbols {
     VkPipelineStageFlags _vulkanWaitDstStageMask[8];
     uint32_t _vulkanWaitSemaphoreCount;
     BOOL _vulkanExtMetalObjectsEnabled;        // YES if VK_EXT_metal_objects was enabled at device creation
+    // Pending command buffers from thin_vulkan_set_command_buffers, submitted during video_refresh
+    // per libretro_vulkan.h: buffers must not be submitted until retro_video_refresh_t is called.
+    VkCommandBuffer _vulkanPendingCmdBufs[64];
+    uint32_t _vulkanPendingCmdBufCount;
 
     // Vulkan function pointers loaded from MoltenVK
     PFN_vkVoidFunction (*_vkGetInstanceProcAddr)(VkInstance instance, const char *pName);
@@ -722,7 +726,11 @@ static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
                                             const VkCommandBuffer *cmd) {
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge || !cmd || num_cmd == 0) return;
-    [bridge submitVulkanCommandBuffers:cmd count:num_cmd];
+    // Per libretro_vulkan.h, command buffers must not be submitted until
+    // retro_video_refresh_t is called. Store them for deferred submission.
+    uint32_t count = (num_cmd < 64) ? num_cmd : 64;
+    memcpy(bridge->_vulkanPendingCmdBufs, cmd, count * sizeof(VkCommandBuffer));
+    bridge->_vulkanPendingCmdBufCount = count;
 }
 
 static void thin_vulkan_wait_sync_index(void *handle) {
@@ -752,7 +760,11 @@ static void thin_vulkan_unlock_queue(void *handle) {
 static void thin_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) {
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge) return;
+    // Serialize with submitVulkanCommandBuffers which reads/clears _vulkanSignalSemaphore
+    // under _vulkanQueueLock.
+    os_unfair_lock_lock(&bridge->_vulkanQueueLock);
     bridge->_vulkanSignalSemaphore = semaphore;
+    os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
 }
 
 #endif // HAVE_VULKAN
@@ -1757,6 +1769,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         _vkGetMTLTextureMVK = NULL;
         _vkExportMetalObjectsEXT = NULL;
         _vulkanSignalSemaphore = VK_NULL_HANDLE;
+        _vulkanPendingCmdBufCount = 0;
         _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanHasCurrentImage = NO;
         _vulkanWaitSemaphoreCount = 0;
@@ -2589,33 +2602,40 @@ static bool thin_environment(unsigned cmd, void *data) {
     // flush here to avoid a redundant double-flush per frame.
     if (data == RETRO_HW_FRAME_BUFFER_VALID) {
 #if HAVE_VULKAN
-        // Async-compute cores (e.g. libretro-test-vulkan-async-compute) call set_image
-        // but never call set_command_buffers. Present the pending VkImage here so their
-        // frames aren't silently dropped.
-        if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN && _vulkanHasCurrentImage) {
-            _vulkanHasCurrentImage = NO;
-            // If the core provided wait semaphores but no command buffers, submit a
-            // wait-only queue operation to consume them before exporting the texture.
-            if (_vulkanWaitSemaphoreCount > 0 && _vkQueueSubmit && _vulkanQueue) {
-                os_unfair_lock_lock(&_vulkanQueueLock);
-                uint32_t waitCount = _vulkanWaitSemaphoreCount;
-                VkSemaphore waitSems[8];
-                VkPipelineStageFlags waitMasks[8];
-                memcpy(waitSems,  _vulkanWaitSemaphores,    waitCount * sizeof(VkSemaphore));
-                memcpy(waitMasks, _vulkanWaitDstStageMask,  waitCount * sizeof(VkPipelineStageFlags));
-                _vulkanWaitSemaphoreCount = 0;
-                VkSubmitInfo waitSubmit = {
-                    .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-                    .waitSemaphoreCount = waitCount,
-                    .pWaitSemaphores = waitSems,
-                    .pWaitDstStageMask = waitMasks,
-                    .commandBufferCount = 0,
-                };
-                _vkQueueSubmit(_vulkanQueue, 1, &waitSubmit, VK_NULL_HANDLE);
-                if (_vkQueueWaitIdle) { _vkQueueWaitIdle(_vulkanQueue); }
-                os_unfair_lock_unlock(&_vulkanQueueLock);
+        if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
+            if (_vulkanPendingCmdBufCount > 0) {
+                // Normal Vulkan path: submit the deferred command buffers now that
+                // retro_video_refresh_t has been called (per libretro_vulkan.h spec).
+                uint32_t count = _vulkanPendingCmdBufCount;
+                _vulkanPendingCmdBufCount = 0;
+                [self submitVulkanCommandBuffers:_vulkanPendingCmdBufs count:count];
+                // submitVulkanCommandBuffers notifies the delegate if _vulkanHasCurrentImage.
+            } else if (_vulkanHasCurrentImage) {
+                // Async-compute path: core called set_image but no set_command_buffers.
+                // Consume wait semaphores (if any) via a wait-only queue submission,
+                // then export and present the VkImage.
+                _vulkanHasCurrentImage = NO;
+                if (_vulkanWaitSemaphoreCount > 0 && _vkQueueSubmit && _vulkanQueue) {
+                    os_unfair_lock_lock(&_vulkanQueueLock);
+                    uint32_t waitCount = _vulkanWaitSemaphoreCount;
+                    VkSemaphore waitSems[8];
+                    VkPipelineStageFlags waitMasks[8];
+                    memcpy(waitSems,  _vulkanWaitSemaphores,    waitCount * sizeof(VkSemaphore));
+                    memcpy(waitMasks, _vulkanWaitDstStageMask,  waitCount * sizeof(VkPipelineStageFlags));
+                    _vulkanWaitSemaphoreCount = 0;
+                    VkSubmitInfo waitSubmit = {
+                        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                        .waitSemaphoreCount = waitCount,
+                        .pWaitSemaphores = waitSems,
+                        .pWaitDstStageMask = waitMasks,
+                        .commandBufferCount = 0,
+                    };
+                    _vkQueueSubmit(_vulkanQueue, 1, &waitSubmit, VK_NULL_HANDLE);
+                    if (_vkQueueWaitIdle) { _vkQueueWaitIdle(_vulkanQueue); }
+                    os_unfair_lock_unlock(&_vulkanQueueLock);
+                }
+                [self notifyRenderDelegateOfVulkanFrame:nil];
             }
-            [self notifyRenderDelegateOfVulkanFrame:nil];
             return;
         }
 #endif // HAVE_VULKAN
@@ -4719,8 +4739,9 @@ static bool thin_environment(unsigned cmd, void *data) {
     return nil;
 }
 
-/// Called from thin_vulkan_set_image. Extracts the MTLTexture from the VkImage
-/// and notifies the render delegate so it can blit the frame to the display.
+/// Called from submitVulkanCommandBuffers (normal Vulkan path) and _thinVideoRefresh
+/// (async-compute path). Extracts the MTLTexture from the VkImage and notifies the
+/// render delegate so it can blit the frame to the display.
 - (void)notifyRenderDelegateOfVulkanFrame:(const struct retro_vulkan_image *)image {
     (void)image; // VkImage is already stored in _vulkanCurrentVkImage
     id<MTLTexture> mtlTexture = [self getMTLTextureForVkImage:_vulkanCurrentVkImage];
@@ -4758,8 +4779,9 @@ static bool thin_environment(unsigned cmd, void *data) {
         [self destroyVulkanContext];
         _hwRenderRequested = NO;
         _vulkanSignalSemaphore = VK_NULL_HANDLE;
-        _vulkanCurrentVkImage = VK_NULL_HANDLE;
+        _vulkanPendingCmdBufCount = 0;
         _vulkanHasCurrentImage = NO;
+        _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanWaitSemaphoreCount = 0;
         _vulkanExtMetalObjectsEnabled = NO;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX

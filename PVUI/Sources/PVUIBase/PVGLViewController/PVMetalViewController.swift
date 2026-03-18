@@ -3415,6 +3415,11 @@ extension PVMetalViewController: PVRenderDelegateMetal {
         // GPU rendering is already complete (vkQueueWaitIdle was called before this).
         backingMTLTexture = texture
 
+        // Acquire the lock before reading/modifying inputTexture to match the
+        // thread-safety contract used by the OpenGL HW-render path.
+        emulatorCore?.frontBufferLock.lock()
+        previousCommandBuffer?.waitUntilScheduled()
+
         // Ensure the input texture exists and matches the source dimensions.
         if inputTexture == nil
             || inputTexture?.width  != texture.width
@@ -3422,20 +3427,21 @@ extension PVMetalViewController: PVRenderDelegateMetal {
             do {
                 try updateInputTexture()
             } catch {
+                emulatorCore?.frontBufferLock.unlock()
                 ELOG("PVMetalViewController: updateInputTexture failed for Vulkan frame: \(error)")
                 recoverFromGPUError()
                 return
             }
         }
 
-        // Mirror the OpenGL path's synchronization so the blit and render don't race.
-        emulatorCore?.frontBufferLock.lock()
-        previousCommandBuffer?.waitUntilScheduled()
-
         guard let destTexture = inputTexture,
               let commandBuffer = commandQueue?.makeCommandBuffer(),
               let encoder = commandBuffer.makeBlitCommandEncoder() else {
             emulatorCore?.frontBufferLock.unlock()
+            // Signal so callers waiting on frontBufferCondition don't stall forever.
+            emulatorCore?.frontBufferCondition.lock()
+            emulatorCore?.frontBufferCondition.signal()
+            emulatorCore?.frontBufferCondition.unlock()
             return
         }
 
