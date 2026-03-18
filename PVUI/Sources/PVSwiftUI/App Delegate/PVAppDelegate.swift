@@ -432,6 +432,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         // Apply any pending RetroArch config migrations (partial key updates)
         await RetroArchConfigMigrator.applyPendingMigrations()
 
+        // Register the RetroArch quick-settings view so the pause menu can show it
+        // (PVUIBase can't import PVSwiftUI directly, so we use a static registry)
+        PauseMenuViewRegistry.registerRetroArchSettingsView {
+            AnyView(NavigationStack { RetroArchQuickSettingsView() })
+        }
+
         _initThemeListener()
 
         // Register intent handler for Siri shortcuts

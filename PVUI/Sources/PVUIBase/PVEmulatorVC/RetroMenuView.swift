@@ -918,6 +918,17 @@ struct RetroMenuView: View {
             }
             #endif
 
+            // RetroArch settings button (only for libretro cores)
+            if emulatorVC.core.coreIdentifier?.contains("libretro") == true,
+               PauseMenuViewRegistry.retroArchSettingsView() != nil {
+                menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
+                    showingRetroArchSettings = true
+                }
+                .sheet(isPresented: $showingRetroArchSettings) {
+                    PauseMenuViewRegistry.retroArchSettingsView()
+                }
+            }
+
             let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(emulatorVC.game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
 
             // P1 controls (blue = primary player)
@@ -1012,6 +1023,7 @@ struct RetroMenuView: View {
     @State private var availableSkinObjects: [DeltaSkinProtocol] = []
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
+    @State private var showingRetroArchSettings = false
     @State private var showingDocumentPicker = false
     @State private var showingSkinCatalog = false
     #if os(iOS)
