@@ -34,6 +34,7 @@ public enum TransferPakStore {
     /// Returns the URL of the GB/GBC ROM configured for the given N64 game and port,
     /// or `nil` if no game is configured or its file is not currently on disk.
     public static func romPath(forGameMD5 md5: String, port: Int) -> URL? {
+        guard (0..<4).contains(port) else { return nil }
         let key = udKey(md5: md5, port: port)
         guard let storedMD5 = UserDefaults.standard.string(forKey: key) else { return nil }
         // Resolve the stored GB game md5Hash to its current on-disk URL via Realm.
@@ -49,6 +50,7 @@ public enum TransferPakStore {
     /// Stores the GB/GBC game's md5Hash for the given N64 game and controller port.
     /// Pass `nil` to clear the slot.
     public static func setGBGame(_ gbGameMD5: String?, forGameMD5 md5: String, port: Int) {
+        guard (0..<4).contains(port) else { return }
         let key = udKey(md5: md5, port: port)
         if let gbGameMD5 {
             UserDefaults.standard.set(gbGameMD5, forKey: key)
@@ -111,18 +113,15 @@ public struct TransferPakConfigView: View {
         let slots = 4
         self.slotCount = slots
 
-        let md5 = game.md5Hash
-        var paths: [URL?] = []
-        for port in 0..<slots {
-            paths.append(TransferPakStore.romPath(forGameMD5: md5, port: port))
-        }
-        _selectedPaths = State(initialValue: paths)
+        // Start with empty slots; real Realm resolution happens in onAppear to
+        // avoid synchronous Realm access during view construction (often on main thread).
+        _selectedPaths = State(initialValue: Array(repeating: nil, count: slots))
     }
 
     // MARK: - Body
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 infoSection
                 slotsSection
@@ -138,9 +137,11 @@ public struct TransferPakConfigView: View {
                     }
                 }
             }
-            .onAppear(perform: loadGBCGames)
+            .onAppear {
+                loadSelectedPaths()
+                loadGBCGames()
+            }
         }
-        .navigationViewStyle(.stack)
     }
 
     // MARK: - Sections
@@ -272,10 +273,26 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
 
     // MARK: - Data Loading
 
+    /// Resolve persisted md5 hashes → on-disk URLs. Uses a detached task so
+    /// the synchronous Realm lookup in `TransferPakStore.romPath` never blocks
+    /// the main thread (avoids holding the main run loop during view appear).
+    private func loadSelectedPaths() {
+        let md5 = game.md5Hash
+        let slots = slotCount
+        Task.detached(priority: .userInitiated) {
+            var paths: [URL?] = []
+            for port in 0..<slots {
+                paths.append(TransferPakStore.romPath(forGameMD5: md5, port: port))
+            }
+            await MainActor.run { selectedPaths = paths }
+        }
+    }
+
+    /// Fetches GB/GBC games on a detached background task, then publishes the
+    /// frozen results to the main actor so the List can render without stalling.
     private func loadGBCGames() {
-        Task { @MainActor in
+        Task.detached(priority: .userInitiated) {
             guard let realm = try? await Realm() else { return }
-            // Find all GB and GBC games that are downloaded and have a local file.
             // Use `systemIdentifier` (a direct Realm-indexed property) rather than
             // traversing the optional `system` relationship, which is faster and
             // avoids predicate failures when `system` is nil.
@@ -284,7 +301,8 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                 .filter("systemIdentifier IN %@ AND file != nil AND isDownloaded == true", gbSystemIDs)
                 .sorted(byKeyPath: "title")
                 .freeze()
-            gbcGames = Array(games)
+            let frozen = Array(games)
+            await MainActor.run { gbcGames = frozen }
         }
     }
 }

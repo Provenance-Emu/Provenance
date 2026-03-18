@@ -68,7 +68,7 @@ public struct GameContextMenu: View {
 
                 // Transfer Pak configuration for N64 games (feature-flagged)
                 if featureFlags.mupenTransferPak,
-                   game.system?.identifier == "com.provenance.n64" {
+                   game.systemIdentifier == "com.provenance.n64" {
                     Button {
                         showTransferPakConfig = true
                     } label: {
