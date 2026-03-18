@@ -20,6 +20,7 @@
 import Foundation
 import PVCoreBridge
 import PVLogging
+import PVSystems
 #if canImport(GameController)
 import GameController
 #endif
@@ -42,7 +43,7 @@ private extension SystemIdentifier {
     private static let keyboardSystems: Set<SystemIdentifier> = [
         ._3DO, .AppleII, .Atari8bit, .AtariST, .C64, .CDi, .ColecoVision,
         .DOOM, .DOS, .Dreamcast, .EP128, .Macintosh, .MAME, .MSX, .MSX2,
-        .N64, .PalmOS, .PSX, .Quake, .Quake2, .Saturn, .SNES, .TIC80, .Wolf3D, .ZXSpectrum,
+        .N64, .PalmOS, .PC98, .PSX, .Quake, .Quake2, .Saturn, .SNES, .TIC80, .Wolf3D, .ZXSpectrum,
     ]
 
     private static let requiresKeyboardSystems: Set<SystemIdentifier> = [
@@ -59,7 +60,7 @@ private extension SystemIdentifier {
 
     private static let mouseSystems: Set<SystemIdentifier> = [
         .Atari8bit, .AtariST, .DOOM, .DOS, .Dreamcast, .EP128,
-        .Macintosh, .MSX, .MSX2, .Quake, .Quake2, .Wolf3D, .ZXSpectrum,
+        .Macintosh, .MSX, .MSX2, .PC98, .Quake, .Quake2, .Wolf3D, .ZXSpectrum,
     ]
 
 }

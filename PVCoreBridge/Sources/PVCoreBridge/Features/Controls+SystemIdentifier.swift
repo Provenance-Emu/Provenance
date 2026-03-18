@@ -82,6 +82,7 @@ public extension SystemIdentifier {
         case .NGPC: return PVNGPButton.self
         case .Odyssey2: return PVOdyssey2Button.self
         case .PalmOS: return PVDOSButton.self
+        case .PC98: return PVDOSButton.self  // TODO: Add PC98-specific buttons
         case .PCE: return PVPCEButton.self
         case .PCECD: return PVPCECDButton.self
         case .PCFX: return PVPCFXButton.self

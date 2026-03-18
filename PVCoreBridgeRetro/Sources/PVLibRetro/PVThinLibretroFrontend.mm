@@ -2679,6 +2679,16 @@ static bool thin_environment(unsigned cmd, void *data) {
     _pointerX = 0;
     _pointerY = 0;
     _pointerPressed = false;
+    // Reset light-gun state to prevent stale values across resets/pause/resume
+    _lightgunX           = 0;
+    _lightgunY           = 0;
+    _lightgunIsOffscreen = false;
+    _lightgunTrigger     = false;
+    _lightgunReload      = false;
+    _lightgunAuxA        = false;
+    _lightgunAuxB        = false;
+    _lightgunStart       = false;
+    _lightgunSelect      = false;
 }
 
 // MARK: Keyboard input

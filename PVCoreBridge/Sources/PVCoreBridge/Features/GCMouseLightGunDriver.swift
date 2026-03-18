@@ -87,14 +87,22 @@ import UIKit
         responder = core
         cursorX = 0.5
         cursorY = 0.5
+        reloadDown = false
         _registerMouseObservers()
         _hookConnectedMice()
     }
 
     /// Stop delivering input and release the core reference.
+    /// Sends synthetic release events for any buttons currently held before detaching,
+    /// so the core is not left in a permanently pressed state.
     @objc public func detach() {
         _unhookConnectedMice()
         _unregisterMouseObservers()
+        // Release held buttons before dropping the responder reference
+        if reloadDown {
+            reloadDown = false
+            responder?.lightGunReloadUp?()
+        }
         responder = nil
     }
 
