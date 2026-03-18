@@ -33,7 +33,12 @@ public actor PVNetplayManager {
     }
 
     #if canImport(Combine)
-    private let stateSubject = PassthroughSubject<NetplayState, Never>()
+    // `nonisolated(unsafe)` is correct here: PassthroughSubject is internally
+    // thread-safe for send() / subscribe(), and we only ever call send() from
+    // within actor-isolated code (the `state` didSet). The nonisolated keyword
+    // allows the computed `statePublisher` property below to read this subject
+    // without needing actor isolation, satisfying Swift 6 strict concurrency.
+    nonisolated(unsafe) private let stateSubject = PassthroughSubject<NetplayState, Never>()
 
     /// Publisher for state changes — always delivered on the main queue.
     public nonisolated var statePublisher: AnyPublisher<NetplayState, Never> {

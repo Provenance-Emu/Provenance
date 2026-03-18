@@ -39,7 +39,7 @@ static global_t *global_get_ptr(void) { return NULL; }
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSErrorDomain const PVRetroArchNetplayErrorDomain __attribute__((weak)) = @"com.provenance.retroarch.netplay";
+NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.netplay";
 
 @interface PVRetroArchNetplayBridge ()
 @property (nonatomic) PVRetroArchNetplayStatus status;
@@ -91,7 +91,10 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain __attribute__((weak)) = @"com.
         return NO;
     }
 
-    // Configure as host: empty server string = hosting
+    // Configure as host: empty server string = hosting.
+    // nickname and maxPlayers are forwarded to the Bonjour TXT-record
+    // advertiser in Phase 2; log them here for diagnostics.
+    NSLog(@"[Netplay] Host requested — nickname: %@, maxPlayers: %d", nickname, maxPlayers);
     gl->netplay.enable     = true;
     gl->netplay.is_client  = false;
     gl->netplay.is_spectate = false;
@@ -160,6 +163,8 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain __attribute__((weak)) = @"com.
         return NO;
     }
 
+    // nickname is forwarded to Bonjour TXT-record advertising in Phase 2.
+    NSLog(@"[Netplay] Client connecting — nickname: %@, spectate: %d", nickname, spectate);
     gl->netplay.enable      = true;
     gl->netplay.is_client   = !spectate;
     gl->netplay.is_spectate = spectate;

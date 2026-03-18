@@ -6,6 +6,7 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
+#if !os(watchOS)
 import SwiftUI
 import PVNetplay
 
@@ -13,15 +14,16 @@ import PVNetplay
 ///
 /// Automatically starts/stops Bonjour discovery when presented.
 /// Rooms are polled from `PVNetplayBonjourDiscovery` and displayed in a list.
-/// Tapping a room attempts to join it.
+/// Tapping a room attempts to join it; when `spectateMode` is true, room
+/// taps default to spectating instead of joining as a player.
 @MainActor
 public struct NetplayRoomBrowserView: View {
     let gameName: String
     let coreIdentifier: String
+    /// When `true`, row taps spectate rather than join as a player.
+    let spectateMode: Bool
 
     @StateObject private var netplay = ObservableNetplayManager.shared
-    @State private var selectedRoom: NetplayRoom?
-    @State private var joinAsSpectator = false
     @State private var isJoining = false
     @State private var errorMessage: String?
     @State private var showError = false
@@ -29,9 +31,10 @@ public struct NetplayRoomBrowserView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(gameName: String, coreIdentifier: String) {
+    public init(gameName: String, coreIdentifier: String, spectateMode: Bool = false) {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
+        self.spectateMode = spectateMode
     }
 
     public var body: some View {
@@ -43,7 +46,7 @@ public struct NetplayRoomBrowserView: View {
                     roomList
                 }
             }
-            .navigationTitle("Browse Rooms")
+            .navigationTitle(spectateMode ? "Find Room to Spectate" : "Browse Rooms")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -66,7 +69,7 @@ public struct NetplayRoomBrowserView: View {
                 }
             }
             .sheet(isPresented: $showManualConnect) {
-                NetplayManualConnectView(gameName: gameName, coreIdentifier: coreIdentifier)
+                NetplayManualConnectView(gameName: gameName, coreIdentifier: coreIdentifier, defaultSpectate: spectateMode)
             }
             .alert("Connection Error", isPresented: $showError, presenting: errorMessage) { _ in
                 Button("OK", role: .cancel) {}
@@ -150,7 +153,9 @@ public struct NetplayRoomBrowserView: View {
 
             Spacer()
 
-            if room.isFull && room.allowsSpectators {
+            // Show a spectate button for full rooms that allow spectators,
+            // unless we're already in spectate mode (the tap itself will spectate).
+            if !spectateMode && room.isFull && room.allowsSpectators {
                 Button {
                     join(room: room, spectate: true)
                 } label: {
@@ -164,7 +169,7 @@ public struct NetplayRoomBrowserView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             if !isJoining {
-                join(room: room, spectate: false)
+                join(room: room, spectate: spectateMode)
             }
         }
     }
@@ -190,3 +195,4 @@ public struct NetplayRoomBrowserView: View {
         }
     }
 }
+#endif

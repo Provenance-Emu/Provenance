@@ -243,7 +243,7 @@ let package = Package(
                 "FloatingButton",
                 "ActivityIndicatorView",
                 "PVFeatureFlags",
-                "PVNetplay",
+                .product(name: "PVNetplay", package: "PVNetplay", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
                 "PVCheevos",
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),

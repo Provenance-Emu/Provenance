@@ -94,15 +94,25 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
         if let sid = txtString("sessionId"), let parsed = UUID(uuidString: sid) {
             sessionUUID = parsed
         } else {
-            // Use a name-based UUID (v5-style) derived from service name for stability
-            var hasher = Hasher()
-            hasher.combine(service.name)
-            let hash = abs(hasher.finalize())
-            var uuidBytes = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) as (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
-            withUnsafeMutableBytes(of: &uuidBytes) { ptr in
-                withUnsafeBytes(of: hash) { src in ptr.copyBytes(from: src.prefix(ptr.count)) }
+            // Derive a stable 16-byte identifier from the service name using
+            // FNV-1a byte-distribution. This is deterministic across launches
+            // (unlike Hasher, which is randomised per-process) and safe (no
+            // buffer-size mismatch between an Int and a 16-byte UUID field).
+            let nameBytes = Array(service.name.utf8)
+            var bytes = [UInt8](repeating: 0, count: 16)
+            for (i, byte) in nameBytes.enumerated() {
+                bytes[i % 16] ^= byte
             }
-            sessionUUID = UUID(uuid: uuidBytes)
+            // Tag as UUID version 4 / variant 1 so the value is well-formed.
+            bytes[6] = (bytes[6] & 0x0f) | 0x40
+            bytes[8] = (bytes[8] & 0x3f) | 0x80
+            let uuidTuple = (
+                bytes[0], bytes[1], bytes[2], bytes[3],
+                bytes[4], bytes[5], bytes[6], bytes[7],
+                bytes[8], bytes[9], bytes[10], bytes[11],
+                bytes[12], bytes[13], bytes[14], bytes[15]
+            )
+            sessionUUID = UUID(uuid: uuidTuple)
         }
         let room = NetplayRoom(
             id: sessionUUID,

@@ -6,6 +6,7 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
+#if !os(watchOS)
 import SwiftUI
 import PVNetplay
 
@@ -20,19 +21,27 @@ public struct NetplayManualConnectView: View {
     @State private var hostAddress = ""
     @State private var portString = "55435"
     @State private var frameDelay = 0
-    @State private var spectate = false
+    @State private var spectate: Bool
     @State private var isConnecting = false
     @State private var errorMessage: String?
     @State private var showError = false
+    @State private var portError: String?
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(gameName: String, coreIdentifier: String) {
+    public init(gameName: String, coreIdentifier: String, defaultSpectate: Bool = false) {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
+        self._spectate = State(initialValue: defaultSpectate)
     }
 
-    private var port: UInt16 { UInt16(portString) ?? 55435 }
+    /// Validates portString and returns the parsed port, or nil if invalid.
+    private var validatedPort: UInt16? {
+        guard let value = UInt16(portString), value >= 1 else { return nil }
+        return value
+    }
+
+    private var portIsValid: Bool { validatedPort != nil }
 
     public var body: some View {
         NavigationStack {
@@ -43,8 +52,18 @@ public struct NetplayManualConnectView: View {
                         .autocorrectionDisabled()
                         .autocapitalization(.none)
 
-                    TextField("Port", text: $portString)
-                        .keyboardType(.numberPad)
+                    VStack(alignment: .leading, spacing: 4) {
+                        TextField("Port", text: $portString)
+                            .keyboardType(.numberPad)
+                            .onChange(of: portString) { _, _ in
+                                portError = portIsValid ? nil : "Port must be a number between 1 and 65535."
+                            }
+                        if let portError {
+                            Text(portError)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
                 }
 
                 Section("Options") {
@@ -66,7 +85,7 @@ public struct NetplayManualConnectView: View {
                             Spacer()
                         }
                     }
-                    .disabled(isConnecting || hostAddress.isEmpty)
+                    .disabled(isConnecting || hostAddress.isEmpty || !portIsValid)
                 }
             }
             .navigationTitle("Manual Connect")
@@ -87,6 +106,10 @@ public struct NetplayManualConnectView: View {
     }
 
     private func connect() {
+        guard let port = validatedPort else {
+            portError = "Port must be a number between 1 and 65535."
+            return
+        }
         isConnecting = true
         Task {
             do {
@@ -117,3 +140,4 @@ public struct NetplayManualConnectView: View {
         }
     }
 }
+#endif

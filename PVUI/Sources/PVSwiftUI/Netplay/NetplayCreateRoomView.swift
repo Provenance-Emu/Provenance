@@ -6,6 +6,7 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
+#if !os(watchOS)
 import SwiftUI
 import PVNetplay
 #if canImport(UIKit)
@@ -143,3 +144,4 @@ public struct NetplayCreateRoomView: View {
         }
     }
 }
+#endif

@@ -6,8 +6,10 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
+#if !os(watchOS)
 import SwiftUI
 import PVNetplay
+import PVFeatureFlags
 
 /// The top-level netplay entry view shown from the pause menu or game library.
 ///
@@ -24,6 +26,7 @@ public struct NetplayLobbyView: View {
 
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var showRoomBrowser = false
+    @State private var showSpectate = false
     @State private var showCreateRoom = false
     @State private var showSettings = false
     @State private var errorMessage: String?
@@ -66,10 +69,10 @@ public struct NetplayLobbyView: View {
                         actionTile(
                             icon: "eye",
                             title: "Spectate",
-                            subtitle: "Watch without playing",
+                            subtitle: "Watch a room without playing",
                             color: .orange
                         ) {
-                            showRoomBrowser = true
+                            showSpectate = true
                         }
                     }
                     .padding()
@@ -96,7 +99,10 @@ public struct NetplayLobbyView: View {
                 }
             }
             .sheet(isPresented: $showRoomBrowser) {
-                NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier)
+                NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, spectateMode: false)
+            }
+            .sheet(isPresented: $showSpectate) {
+                NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, spectateMode: true)
             }
             .sheet(isPresented: $showCreateRoom) {
                 NetplayCreateRoomView(gameName: gameName, coreIdentifier: coreIdentifier)
@@ -134,11 +140,16 @@ public struct NetplayLobbyView: View {
         .background(Color(.systemGroupedBackground))
     }
 
+    /// Badge reflecting the netplay feature-flag state.
+    /// Shows "Disabled" when the feature flag is off, "Available" when on.
+    /// Core-specific capability detection is deferred to a later phase.
     private var coreNetplaySupportBadge: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-            Text("Netplay: Full support")
+        let featureManager = PVFeatureFlagsManager.shared
+        let isEnabled = featureManager.netplayEnabled
+        return HStack(spacing: 6) {
+            Image(systemName: isEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .foregroundStyle(isEnabled ? .green : .secondary)
+            Text(isEnabled ? "Netplay: Available" : "Netplay: Disabled")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -201,3 +212,4 @@ private struct NetplaySettingsPlaceholderView: View {
         }
     }
 }
+#endif
