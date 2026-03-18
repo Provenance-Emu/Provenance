@@ -38,6 +38,7 @@
 @import PVCoreObjCBridge;
 
 #import "PVAtari800Bridge.h"
+#include <stdatomic.h>
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -52,11 +53,23 @@
 __weak static PVAtari800Bridge * _currentCore;
 
 /// Pending key code for PLATFORM_Keyboard() — set by keyDown:/keyUp: methods.
-/// AKEY_NONE (-1) means no key currently held.
-static int s_pendingKeyCode = AKEY_NONE;
-/// Whether the Ctrl modifier key is currently held.
-static BOOL s_ctrlDown = NO;
+/// AKEY_NONE (-1) means no key currently held. Written from main thread, read
+/// from emulation thread — use atomic operations for all accesses.
+static _Atomic int s_pendingKeyCode;
+/// Press counts for Shift and Ctrl keys so holding both left+right simultaneously
+/// doesn't clear the modifier when one key is released.
+static _Atomic int s_shiftPressCount;
+static _Atomic int s_ctrlPressCount;
+/// Accumulated mouse deltas — written (added) from main thread, consumed (swapped)
+/// from emulation thread. Use atomic_fetch_add / atomic_exchange for all accesses.
+static _Atomic int s_pendingMouseDeltaX;
+static _Atomic int s_pendingMouseDeltaY;
+/// Whether s_lastMousePoint has been set from a real event. Avoids a phantom
+/// delta jump on the very first mouse event when s_lastMousePoint is still (0,0).
+/// Accessed only from the main/UI thread — no atomic needed.
+static BOOL s_lastMousePointValid = NO;
 /// Last known mouse position in screen coordinates (for computing deltas).
+/// Accessed only from the main/UI thread.
 static CGPoint s_lastMousePoint = {0, 0};
 
 
@@ -108,6 +121,14 @@ static const NSInteger kMaxPlayers = 4;
 - (instancetype)init {
     if((self = [super init])) {
         _currentCore = self;
+        // Reset input state so stale values from a previous core instance don't
+        // cause stuck modifiers, pending keys, or incorrect initial mouse deltas.
+        atomic_store(&s_pendingKeyCode, AKEY_NONE);
+        atomic_store(&s_shiftPressCount, 0);
+        atomic_store(&s_ctrlPressCount, 0);
+        atomic_store(&s_pendingMouseDeltaX, 0);
+        atomic_store(&s_pendingMouseDeltaY, 0);
+        s_lastMousePointValid = NO;
     }
 
     return self;
@@ -121,11 +142,6 @@ static const NSInteger kMaxPlayers = 4;
 }
 
 #pragma mark - Execution
-
-// TODO: Make me real
--(NSString*)systemIdentifier {
-    return @"com.provenance.5200";
-}
 
 -(NSString*)biosDirectoryPath {
     return self.BIOSPath;
@@ -274,11 +290,20 @@ static const NSInteger kMaxPlayers = 4;
         [self pollControllers];
     }
 
-    Atari800_Frame();
+    // Feed pending keyboard input into the atari800 INPUT layer each frame.
+    // For 8-bit mode this overrides whatever pollControllers set for the 5200
+    // key bus when a physical key is being held.
+    int pendingKey = atomic_load(&s_pendingKeyCode);
+    if (pendingKey != AKEY_NONE) {
+        INPUT_key_code = pendingKey;
+    }
 
-    // Mouse deltas are consumed per-frame by the atari800 INPUT layer.
-    INPUT_mouse_delta_x = 0;
-    INPUT_mouse_delta_y = 0;
+    // Atomically consume accumulated mouse deltas so the emulation thread
+    // and the main (input) thread don't race on the same counters.
+    INPUT_mouse_delta_x = atomic_exchange(&s_pendingMouseDeltaX, 0);
+    INPUT_mouse_delta_y = atomic_exchange(&s_pendingMouseDeltaY, 0);
+
+    Atari800_Frame();
 
     unsigned int size = 44100 / (Atari800_tv_mode == Atari800_TV_NTSC ? 59.9 : 50) * 2;
 // TODO: In theory, we don't need the intimediary buffer
@@ -298,6 +323,12 @@ static const NSInteger kMaxPlayers = 4;
 
 - (void)stopEmulation {
     Atari800_Exit(false);
+    atomic_store(&s_pendingKeyCode, AKEY_NONE);
+    atomic_store(&s_shiftPressCount, 0);
+    atomic_store(&s_ctrlPressCount, 0);
+    atomic_store(&s_pendingMouseDeltaX, 0);
+    atomic_store(&s_pendingMouseDeltaY, 0);
+    s_lastMousePointValid = NO;
     [super stopEmulation];
 }
 
@@ -412,22 +443,31 @@ static const NSInteger kMaxPlayers = 4;
 }
 
 - (void)leftMouseDownAt:(CGPoint)point {
-    INPUT_mouse_delta_x += (int)(point.x - s_lastMousePoint.x);
-    INPUT_mouse_delta_y += (int)(point.y - s_lastMousePoint.y);
+    if (s_lastMousePointValid) {
+        atomic_fetch_add(&s_pendingMouseDeltaX, (int)(point.x - s_lastMousePoint.x));
+        atomic_fetch_add(&s_pendingMouseDeltaY, (int)(point.y - s_lastMousePoint.y));
+    }
     s_lastMousePoint = point;
+    s_lastMousePointValid = YES;
     INPUT_mouse_buttons |= 1;
 }
 
 - (void)mouseMovedAt:(CGPoint)point {
-    INPUT_mouse_delta_x += (int)(point.x - s_lastMousePoint.x);
-    INPUT_mouse_delta_y += (int)(point.y - s_lastMousePoint.y);
+    if (s_lastMousePointValid) {
+        atomic_fetch_add(&s_pendingMouseDeltaX, (int)(point.x - s_lastMousePoint.x));
+        atomic_fetch_add(&s_pendingMouseDeltaY, (int)(point.y - s_lastMousePoint.y));
+    }
     s_lastMousePoint = point;
+    s_lastMousePointValid = YES;
 }
 
 - (void)rightMouseDownAt:(CGPoint)point {
-    INPUT_mouse_delta_x += (int)(point.x - s_lastMousePoint.x);
-    INPUT_mouse_delta_y += (int)(point.y - s_lastMousePoint.y);
+    if (s_lastMousePointValid) {
+        atomic_fetch_add(&s_pendingMouseDeltaX, (int)(point.x - s_lastMousePoint.x));
+        atomic_fetch_add(&s_pendingMouseDeltaY, (int)(point.y - s_lastMousePoint.y));
+    }
     s_lastMousePoint = point;
+    s_lastMousePointValid = YES;
     INPUT_mouse_buttons |= 2;
 }
 
@@ -537,39 +577,53 @@ static int atari8bitKeyCodeForHIDCode(NSInteger hidCode) {
 }
 
 - (void)keyDown:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
-    // Track modifier keys separately; they do not produce AKEY codes.
+    // Track modifier keys via press counts so releasing one of two held Shift
+    // (or Ctrl) keys doesn't prematurely clear the modifier.
     if (key == 0xE1 || key == 0xE5) { // Left Shift / Right Shift
+        atomic_fetch_add(&s_shiftPressCount, 1);
         INPUT_key_shift = 1;
         return;
     }
     if (key == 0xE0 || key == 0xE4) { // Left Ctrl / Right Ctrl
-        s_ctrlDown = YES;
+        atomic_fetch_add(&s_ctrlPressCount, 1);
         return;
     }
 
     int akey = atari8bitKeyCodeForHIDCode((NSInteger)key);
     if (akey == AKEY_NONE) return;
 
-    if (s_ctrlDown) {
+    if (atomic_load(&s_ctrlPressCount) > 0) {
         akey |= AKEY_CTRL;
     }
-    s_pendingKeyCode = akey;
+    atomic_store(&s_pendingKeyCode, akey);
 }
 
 - (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
     if (key == 0xE1 || key == 0xE5) { // Left Shift / Right Shift
-        INPUT_key_shift = 0;
+        int prev = atomic_fetch_sub(&s_shiftPressCount, 1);
+        if (prev <= 1) {
+            atomic_store(&s_shiftPressCount, 0); // clamp to zero
+            INPUT_key_shift = 0;
+        }
         return;
     }
     if (key == 0xE0 || key == 0xE4) { // Left Ctrl / Right Ctrl
-        s_ctrlDown = NO;
+        int prev = atomic_fetch_sub(&s_ctrlPressCount, 1);
+        if (prev <= 1) {
+            atomic_store(&s_ctrlPressCount, 0); // clamp to zero
+        }
         return;
     }
-    // Only clear if this key was the one that set the pending code.
+    // Only clear pending code if it was set by this specific key (including any
+    // Ctrl modifier that was active when the key was pressed).
     int akey = atari8bitKeyCodeForHIDCode((NSInteger)key);
-    if (akey != AKEY_NONE) {
-        s_pendingKeyCode = AKEY_NONE;
+    if (akey == AKEY_NONE) return;
+    if (atomic_load(&s_ctrlPressCount) > 0) {
+        akey |= AKEY_CTRL;
     }
+    // Atomically clear only if the stored value matches the released key.
+    int expected = akey;
+    atomic_compare_exchange_strong(&s_pendingKeyCode, &expected, AKEY_NONE);
 }
 
 - (void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player {
@@ -1128,7 +1182,7 @@ int PLATFORM_Keyboard(void)
 {
     // Return the key code set by keyDown:/keyUp: methods.
     // AKEY_NONE (-1) means no key held, which the atari800 INPUT layer interprets as no input.
-    return s_pendingKeyCode;
+    return atomic_load(&s_pendingKeyCode);
 }
 
 void PLATFORM_DisplayScreen(void)
