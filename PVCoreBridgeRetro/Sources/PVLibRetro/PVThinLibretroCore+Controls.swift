@@ -64,6 +64,7 @@ private struct ThinVirtualInputSupport {
         "com.provenance.quake2":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
         "com.provenance.saturn":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
         "com.provenance.snes":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
+        "com.provenance.tic80":        .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: false, requiresMouse: false),
         "com.provenance.wolf3d":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
         "com.provenance.zxspectrum":   .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
     ]
