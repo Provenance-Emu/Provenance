@@ -77,8 +77,8 @@ static uint32_t computeROMCRC32(NSString *filePath) {
     if (!data) return 0;
     const uint8_t *bytes = (const uint8_t *)data.bytes;
     NSUInteger length = data.length;
-    // Strip 512-byte header when file size mod 1024 == 512 (SMC format)
-    if (length > 512 && (length % 1024) == 512) {
+    // Strip 512-byte header when (file size & 0x7FFF) == 512 (SMC format, matches Mednafen)
+    if (length > 512 && (length & 0x7FFF) == 512) {
         bytes += 512;
         length -= 512;
     }
@@ -815,6 +815,10 @@ static void emulation_run(BOOL skipFrame) {
     mednafen_init(_current);
     Mednafen::NativeVFS fs = Mednafen::NativeVFS();
 
+    // Cached SNES multitap flags — computed once before load and reused in the SetInput block.
+    BOOL snesIs5Player = NO;
+    BOOL snesIs8Player = NO;
+
     // Apply multitap settings BEFORE MDFNI_LoadGame so the core initialises with the
     // correct port configuration. Both snes/snes_faust and ss read/cache multitap settings
     // during their load/init paths — setting them afterwards is too late.
@@ -823,6 +827,8 @@ static void emulation_run(BOOL skipFrame) {
         NSString *crcStr = [NSString stringWithFormat:@"%08x", romCRC];
         BOOL is8Player = [[MednafenGameCoreOptions multiTapSNES8PlayerGames] containsObject:crcStr];
         BOOL is5Player = is8Player || [[MednafenGameCoreOptions multiTapSNESGames] containsObject:crcStr];
+        snesIs8Player = is8Player;
+        snesIs5Player = is5Player;
         NSString *prefix = [self->mednafenCoreModule isEqualToString:@"snes_faust"] ? @"snes_faust" : @"snes";
         NSString *p1Key = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
                            [prefix isEqualToString:@"snes_faust"] ? @"sport1" : @"port1"];
@@ -836,11 +842,11 @@ static void emulation_run(BOOL skipFrame) {
         NSString *serial = self.romSerial;
         NSNumber *tapCount = serial ? [MednafenGameCoreOptions multiTapSaturnGames][serial] : nil;
         BOOL sport1 = (tapCount != nil);
-        BOOL sport2 = (tapCount != nil && [tapCount intValue] > 6);
         Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", sport1);
-        Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", sport2);
-        ILOG(@"Mednafen Saturn pre-load: serial=%@ tapCount=%@ sport1=%d sport2=%d",
-             serial, tapCount, sport1, sport2);
+        // sport2 multitap supports players 7-12; no known Saturn game requires it
+        Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
+        ILOG(@"Mednafen Saturn pre-load: serial=%@ tapCount=%@ sport1=%d sport2=0",
+             serial, tapCount, sport1);
     }
 
     // Detailed diagnostics around game load to pinpoint failures (e.g., CHD load issues)
@@ -925,11 +931,9 @@ static void emulation_run(BOOL skipFrame) {
     }
     else if (self.systemType == MednaSystemSNES)
     {
-        // Multitap settings were applied before MDFNI_LoadGame; just configure SetInput here.
-        uint32_t romCRC = computeROMCRC32(path);
-        NSString *crcStr = [NSString stringWithFormat:@"%08x", romCRC];
-        BOOL is8Player = [[MednafenGameCoreOptions multiTapSNES8PlayerGames] containsObject:crcStr];
-        BOOL is5Player = is8Player || [[MednafenGameCoreOptions multiTapSNESGames] containsObject:crcStr];
+        // Multitap settings were applied before MDFNI_LoadGame; reuse cached flags here.
+        BOOL is8Player = snesIs8Player;
+        BOOL is5Player = snesIs5Player;
 
         if (is8Player) {
             self->multiTapPlayerCount = 8;
