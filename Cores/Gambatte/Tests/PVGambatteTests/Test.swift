@@ -15,8 +15,12 @@ import PVCoreBridge
 struct PVGambatteTests {
 
     @Test func coreInitializes() async throws {
+        // Verify the core can be instantiated without crashing.
+        // systemIdentifier is populated when a ROM is loaded, not at init time.
         let core = PVGBEmulatorCore()
-        #expect(core.systemIdentifier != nil, "Core should have a system identifier after init")
+        // The core should expose at least one palette immediately after init (DMG mode).
+        let palettes = core.availablePalettes
+        #expect(!palettes.isEmpty, "Core should expose available palettes after init")
     }
 }
 

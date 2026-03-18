@@ -78,8 +78,13 @@ struct PalettePickerView: View {
                 }
             }
         }
+        #if os(tvOS)
+        // On tvOS the hardware Menu button is the standard way to dismiss sheets.
+        .onExitCommand { onDismiss() }
+        #else
         .presentationDetents([.medium, .large])
         .presentationBackground(Color.black.opacity(0.95))
+        #endif
     }
 }
 

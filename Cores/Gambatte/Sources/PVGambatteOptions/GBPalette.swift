@@ -33,7 +33,27 @@ extension GBPalette: CaseIterable { }
 
 extension GBPalette {
     /// Stable string identifier for this palette (used by `PaletteProviding`).
-    public var paletteID: String { "\(rawValue)" }
+    /// Uses the case name rather than the raw integer value so reordering cases
+    /// cannot silently break saved palette preferences or external references.
+    public var paletteID: String {
+        switch self {
+        case .peaSoupGreen: return "peaSoupGreen"
+        case .pocket:       return "pocket"
+        case .blue:         return "blue"
+        case .darkBlue:     return "darkBlue"
+        case .green:        return "green"
+        case .darkGreen:    return "darkGreen"
+        case .brown:        return "brown"
+        case .darkBrown:    return "darkBrown"
+        case .red:          return "red"
+        case .yellow:       return "yellow"
+        case .orange:       return "orange"
+        case .pastelMix:    return "pastelMix"
+        case .inverted:     return "inverted"
+        case .romTitle:     return "romTitle"
+        case .grayscale:    return "grayscale"
+        }
+    }
 
     /// Human-readable name shown in the palette picker UI.
     public var displayName: String {
