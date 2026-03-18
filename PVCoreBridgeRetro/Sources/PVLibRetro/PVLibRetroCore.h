@@ -53,7 +53,7 @@ __attribute__((weak_import))
     uint32_t *videoBufferA;
     uint32_t *videoBufferB;
 
-    int16_t _pad[2][12];
+    int16_t _pad[2][16]; // full RetroPad range: RETRO_DEVICE_ID_JOYPAD_B(0)..RETRO_DEVICE_ID_JOYPAD_R3(15)
 
     retro_core_t* core;
 
