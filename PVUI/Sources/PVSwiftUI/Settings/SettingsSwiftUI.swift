@@ -1699,12 +1699,10 @@ private struct ControllerSection: View {
                             icon: .sfSymbol("waveform.path"))
             }
             #else
-            if hapticFeedback {
-                NavigationLink(destination: RumbleProfilesView()) {
-                    SettingsRow(title: "Rumble Profiles",
-                                subtitle: "Customize per-system and per-controller haptic profiles.",
-                                icon: .sfSymbol("waveform.path"))
-                }
+            NavigationLink(destination: RumbleProfilesView()) {
+                SettingsRow(title: "Rumble Profiles",
+                            subtitle: "Customize per-system and per-controller haptic profiles.",
+                            icon: .sfSymbol("waveform.path"))
             }
             #endif
             #if !os(tvOS)
