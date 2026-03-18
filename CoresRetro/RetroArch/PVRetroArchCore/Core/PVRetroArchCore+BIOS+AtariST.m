@@ -687,6 +687,32 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         ELOG(@"Hatari: regex for szDiskImageDirectory failed: %@", regexErr);
     }
 
+    // Verify that the [HardDisk] and [ACSI] sections survived templating.
+    BOOL hasHardDisk = [cfgContent containsString:@"[HardDisk]"];
+    BOOL hasACSI     = [cfgContent containsString:@"[ACSI]"];
+    if (!hasHardDisk || !hasACSI) {
+        WLOG(@"Hatari: hatari.cfg template is missing [HardDisk]=%d / [ACSI]=%d sections — appending defaults to prevent --acsi crash",
+             hasHardDisk, hasACSI);
+        if (!hasHardDisk) {
+            cfgContent = [cfgContent stringByAppendingString:
+                @"\n[HardDisk]\n"
+                 "bBootFromHardDisk = FALSE\n"
+                 "bUseHardDiskDirectories = FALSE\n"
+                 "bUseHardDiskImage = FALSE\n"
+                 "szHardDiskDirectory =\n"
+                 "szHardDiskImage =\n"];
+        }
+        if (!hasACSI) {
+            cfgContent = [cfgContent stringByAppendingString:
+                @"\n[ACSI]\n"
+                 "nDeviceType_0 = 0\n"
+                 "sDeviceFile_0 =\n"];
+        }
+    }
+    DLOG(@"Hatari: hatari.cfg has [HardDisk]=%d [ACSI]=%d after patching",
+         [cfgContent containsString:@"[HardDisk]"],
+         [cfgContent containsString:@"[ACSI]"]);
+
     // Ensure hatari working directory exists
     BOOL isDir = NO;
     if (![fm fileExistsAtPath:hatariDir isDirectory:&isDir] || !isDir) {

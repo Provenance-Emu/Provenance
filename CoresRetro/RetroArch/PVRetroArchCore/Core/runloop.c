@@ -1443,6 +1443,13 @@ bool runloop_environment_cb(unsigned cmd, void *data)
                }
             }
 
+            /* Provenance: extra Hatari debug — log every hatari_* variable fetch */
+            if (var->key && strncmp(var->key, "hatari_", 7) == 0)
+            {
+               RARCH_LOG("[Environ]: GET_VARIABLE (hatari): %s = \"%s\"\n",
+                     var->key, var->value ? var->value : "(null)");
+            }
+
             RARCH_DBG("[Environ]: GET_VARIABLE: %s = \"%s\"\n",
                   var->key, var->value);
          }
