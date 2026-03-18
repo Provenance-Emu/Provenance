@@ -108,7 +108,7 @@ struct DeltaSkinEditOverlay: View {
             }
         }
         .position(x: screenX + screenW / 2, y: screenY + screenH / 2)
-        .contentShape(Rectangle().size(CGSize(width: screenW + 40, height: screenH + 40)))
+        .contentShape(Rectangle())
         #if !os(tvOS)
         .gesture(
             DragGesture(minimumDistance: 2)

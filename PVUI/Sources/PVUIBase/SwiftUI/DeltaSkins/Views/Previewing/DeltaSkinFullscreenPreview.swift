@@ -58,12 +58,12 @@ struct DeltaSkinFullscreenPreview: View {
         Skin: \(skin.name)
         ID: \(skin.identifier)
         Game Type: \(skin.gameType.systemIdentifier?.fullName ?? (skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)))
-        Device: \(traits.device.rawValue)
-        Display: \(traits.displayType.rawValue)
-        Orientation: \(traits.orientation.rawValue)
-        Mapping Size: \(skin.mappingSize(for: traits)?.debugDescription ?? "nil")
-        Buttons: \(skin.buttons(for: traits)?.count ?? 0)
-        Screens: \(skin.screens(for: traits)?.count ?? 0)
+        Device: \(currentTraits.device.rawValue)
+        Display: \(currentTraits.displayType.rawValue)
+        Orientation: \(currentTraits.orientation.rawValue)
+        Mapping Size: \(skin.mappingSize(for: currentTraits)?.debugDescription ?? "nil")
+        Buttons: \(skin.buttons(for: currentTraits)?.count ?? 0)
+        Screens: \(skin.screens(for: currentTraits)?.count ?? 0)
         """
     }
 
@@ -142,8 +142,7 @@ struct DeltaSkinFullscreenPreview: View {
                             }
                         }
 
-                        // Edit mode toggle (iOS only — no drag gesture on tvOS)
-                        #if !os(tvOS)
+                        // Edit mode toggle (drag gesture is iOS-only inside the overlay; tvOS can still inspect button coordinates)
                         Button {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 isEditMode.toggle()
@@ -159,7 +158,8 @@ struct DeltaSkinFullscreenPreview: View {
                                 .background(Circle().fill(isEditMode ? AnyShapeStyle(.yellow.opacity(0.2)) : AnyShapeStyle(.ultraThinMaterial)))
                         }
 
-                        // Export edited skin (only shown in edit mode with changes)
+                        // Export edited skin (iOS only — no ShareSheet on tvOS)
+                        #if !os(tvOS)
                         if isEditMode && editorViewModel.hasChanges {
                             Button {
                                 editorViewModel.exportSkin()
@@ -248,6 +248,9 @@ struct DeltaSkinFullscreenPreview: View {
         }
         .statusBar(hidden: true)
         #endif
+        .onChange(of: currentDisplayType) { _ in
+            editorViewModel.updateTraits(currentTraits)
+        }
         .ignoresSafeArea()
         .onAppear {
             DLOG("FullscreenPreview safe areas: \(UIApplication.shared.windows.first?.safeAreaInsets ?? .zero)")
@@ -256,9 +259,9 @@ struct DeltaSkinFullscreenPreview: View {
 
     /// Thin `Identifiable` wrapper so we can drive a `.sheet(item:)` from a URL.
     private struct ExportedSkinURL: Identifiable {
-        let id = UUID()
+        let id: String
         let url: URL
-        init(_ url: URL) { self.url = url }
+        init(_ url: URL) { self.url = url; self.id = url.absoluteString }
     }
 }
 

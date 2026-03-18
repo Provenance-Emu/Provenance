@@ -9,7 +9,7 @@ final class DeltaSkinEditorViewModel: ObservableObject {
     // MARK: - State
 
     let skin: any DeltaSkinProtocol
-    let traits: DeltaSkinTraits
+    private(set) var traits: DeltaSkinTraits
 
     /// Modified frames keyed by button index (mappingSize-unit coordinates).
     @Published var modifiedFrames: [Int: CGRect] = [:]
@@ -59,20 +59,30 @@ final class DeltaSkinEditorViewModel: ObservableObject {
     /// scale factor from mappingSize → view coordinates.
     func moveButton(at index: Int, screenDelta: CGSize, scale: CGFloat) {
         guard scale > 0 else { return }
-        let original = frameForButton(at: index)
+        let current = frameForButton(at: index)
         let mappingDX = screenDelta.width / scale
         let mappingDY = screenDelta.height / scale
-        modifiedFrames[index] = CGRect(
-            x: original.minX + mappingDX,
-            y: original.minY + mappingDY,
-            width: original.width,
-            height: original.height
+        let newFrame = CGRect(
+            x: current.minX + mappingDX,
+            y: current.minY + mappingDY,
+            width: current.width,
+            height: current.height
         )
+        applyFrame(newFrame, for: index)
     }
 
     /// Directly set the frame for a button (in mappingSize units).
     func setFrame(_ frame: CGRect, for index: Int) {
-        modifiedFrames[index] = frame
+        applyFrame(frame, for: index)
+    }
+
+    private func applyFrame(_ frame: CGRect, for index: Int) {
+        let originalFrame = buttons[safe: index]?.frame ?? .zero
+        if frame == originalFrame {
+            modifiedFrames.removeValue(forKey: index)
+        } else {
+            modifiedFrames[index] = frame
+        }
     }
 
     /// Revert a single button to its original skin-defined frame.
@@ -82,6 +92,15 @@ final class DeltaSkinEditorViewModel: ObservableObject {
 
     /// Revert all modifications and deselect.
     func resetAll() {
+        modifiedFrames.removeAll()
+        selectedButtonIndex = nil
+    }
+
+    /// Update the active traits (e.g. when display type changes in the preview).
+    /// Clears any pending modifications since they are specific to the previous traits.
+    func updateTraits(_ newTraits: DeltaSkinTraits) {
+        guard newTraits != traits else { return }
+        traits = newTraits
         modifiedFrames.removeAll()
         selectedButtonIndex = nil
     }
