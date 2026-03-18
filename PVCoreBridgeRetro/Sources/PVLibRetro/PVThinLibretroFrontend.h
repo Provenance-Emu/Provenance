@@ -209,6 +209,17 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Should be called at the core's reported FPS from a dedicated thread.
 - (void)runFrame;
 
+// MARK: Disc control
+
+/// Whether the loaded content supports multiple disc images.
+@property (readonly) BOOL currentGameSupportsMultipleDiscs;
+
+/// Number of disc images available (0 if disc control is unsupported).
+@property (readonly) NSUInteger numberOfDiscs;
+
+/// Swap to a specific disc image (1-based index).
+- (void)swapDiscWithNumber:(NSUInteger)number;
+
 // MARK: State / Cheats
 
 /// Serialize current state into an NSData.

@@ -2035,6 +2035,19 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
 
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    // First frame: if OpenGL ES HW render was requested, set up the FBO now.
+    // This MUST run on the emulation thread (this thread) so the EAGLContext
+    // and context_reset fire in the same GL context as subsequent retro_run calls.
+    // context_reset is fired inside setupHardwareContextFBOWidth:height:.
+    if (_hwRenderRequested && _glContext && !_emuFBO) {
+        uint32_t w = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 640);
+        uint32_t h = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 480);
+        ILOG(@"ThinFrontend: first frame — setting up HW render FBO %ux%u", w, h);
+        [self setupHardwareContextFBOWidth:w height:h];
+    }
+#endif
+
     // Drive the frame-time callback if the core registered one
     if (_hasFrameTimeCallback && _frameTimeCallback.callback) {
         int64_t nowUs = (int64_t)(CACurrentMediaTime() * 1000000.0);
@@ -2201,6 +2214,41 @@ static bool thin_environment(unsigned cmd, void *data) {
     memcpy(data, srmData.bytes, copySize);
     ILOG(@"ThinFrontend: loaded SRAM (%zu bytes) from %@", copySize, srmPath.lastPathComponent);
     return YES;
+}
+
+// MARK: - Disc control
+
+- (BOOL)currentGameSupportsMultipleDiscs {
+    if (_hasDiskControlExt && _diskControlExt.get_num_images) {
+        return _diskControlExt.get_num_images() > 1;
+    }
+    if (_hasDiskControl && _diskControl.get_num_images) {
+        return _diskControl.get_num_images() > 1;
+    }
+    return NO;
+}
+
+- (NSUInteger)numberOfDiscs {
+    if (_hasDiskControlExt && _diskControlExt.get_num_images) {
+        return (NSUInteger)_diskControlExt.get_num_images();
+    }
+    if (_hasDiskControl && _diskControl.get_num_images) {
+        return (NSUInteger)_diskControl.get_num_images();
+    }
+    return 0;
+}
+
+- (void)swapDiscWithNumber:(NSUInteger)number {
+    // libretro disc swap: eject → set_image_index → insert
+    if (_hasDiskControlExt) {
+        if (_diskControlExt.set_eject_state) _diskControlExt.set_eject_state(true);
+        if (_diskControlExt.set_image_index) _diskControlExt.set_image_index((unsigned)(number > 0 ? number - 1 : 0));
+        if (_diskControlExt.set_eject_state) _diskControlExt.set_eject_state(false);
+    } else if (_hasDiskControl) {
+        if (_diskControl.set_eject_state) _diskControl.set_eject_state(true);
+        if (_diskControl.set_image_index) _diskControl.set_image_index((unsigned)(number > 0 ? number - 1 : 0));
+        if (_diskControl.set_eject_state) _diskControl.set_eject_state(false);
+    }
 }
 
 // MARK: - Cheats
@@ -3279,8 +3327,13 @@ static bool thin_environment(unsigned cmd, void *data) {
                 default: ILOG(@"[Core] %@", msgStr); break;
             }
 
-            // Forward to OSD unless target is log-only
-            if (msg->target != RETRO_MESSAGE_TARGET_LOG) {
+            // Forward to OSD only for user-facing notification types.
+            // STATUS (2) and PROGRESS (3) are in-place status overlays sent every frame
+            // (e.g. melonDS "Layout 1/2") — they must NOT become individual toasts.
+            // NOTIFICATION (0) and NOTIFICATION_ALT (1) are genuine one-shot messages.
+            BOOL isStatusOverlay = (msg->type == RETRO_MESSAGE_TYPE_STATUS ||
+                                    msg->type == RETRO_MESSAGE_TYPE_PROGRESS);
+            if (msg->target != RETRO_MESSAGE_TARGET_LOG && !isStatusOverlay) {
                 // Map retro_log_level to PVOSDType
                 PVOSDType osdType;
                 switch (msg->level) {

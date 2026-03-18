@@ -34,11 +34,16 @@ class PVThinLibretroCore: PVEmulatorCore {
 
     lazy var _bridge: PVThinLibretroFrontend = .init()
 
+    // MARK: - RetroAchievements backing storage
+    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
+    var _hardcoreMode: Bool = false
+
     // MARK: - Skin support
 
     /// Systems that don't have adequate skin support — disable skins to show
     /// the native on-screen controls or core-specific overlays instead.
     private static let skinUnsupportedSystems: Set<String> = [
+        "com.provenance.3ds",
         "com.provenance.ds",
         "com.provenance.dos",
         "com.provenance.mame",
@@ -129,10 +134,11 @@ class PVThinLibretroCore: PVEmulatorCore {
                                       toDirectory: self.BIOSPath, fileName: "hatari.cfg")
         }
 
-        // VecX: hardware mode + visual settings
+        // VecX: use software renderer — hardware mode requires a full GL context
+        // that PVThinLibretroFrontend doesn't negotiate properly, causing the
+        // "starting emulator..." HUD to hang indefinitely (video_refresh never fires).
         if coreId.contains("vecx") {
-            setDefaultOption("vecx_use_hw", value: "Hardware")
-            setDefaultOption("vecx_res_hw", value: "824x1024")
+            setDefaultOption("vecx_use_hw", value: "Software")
         }
 
         // MAME: enable config read/write, boot to BIOS, cheats
