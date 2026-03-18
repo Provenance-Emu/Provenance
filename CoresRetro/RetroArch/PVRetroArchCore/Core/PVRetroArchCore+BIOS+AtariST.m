@@ -697,6 +697,7 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
             cfgContent = [cfgContent stringByAppendingString:
                 @"\n[HardDisk]\n"
                  "bBootFromHardDisk = FALSE\n"
+                 "bUseHardDiskDirectory = FALSE\n"
                  "bUseHardDiskDirectories = FALSE\n"
                  "bUseHardDiskImage = FALSE\n"
                  "szHardDiskDirectory =\n"
@@ -705,6 +706,22 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         if (!hasACSI) {
             cfgContent = [cfgContent stringByAppendingString:
                 @"\n[ACSI]\n"
+                 "bUseDevice0 = FALSE\n"
+                 "bUseDevice1 = FALSE\n"
+                 "bUseDevice2 = FALSE\n"
+                 "bUseDevice3 = FALSE\n"
+                 "bUseDevice4 = FALSE\n"
+                 "bUseDevice5 = FALSE\n"
+                 "bUseDevice6 = FALSE\n"
+                 "bUseDevice7 = FALSE\n"
+                 "sDeviceFile0 =\n"
+                 "sDeviceFile1 =\n"
+                 "sDeviceFile2 =\n"
+                 "sDeviceFile3 =\n"
+                 "sDeviceFile4 =\n"
+                 "sDeviceFile5 =\n"
+                 "sDeviceFile6 =\n"
+                 "sDeviceFile7 =\n"
                  "nDeviceType_0 = 0\n"
                  "sDeviceFile_0 =\n"];
         }
