@@ -59,17 +59,11 @@
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-@interface MednafenGameCoreBridge (MultiDisc)
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiDiscPSXGames;
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)sbiRequiredGames;
-@end
+// MultiDisc game databases are on MednafenGameCoreOptions (Swift @objc methods).
+// Accessed as [MednafenGameCoreOptions multiDiscPSXGames] etc.
 
-@interface MednafenGameCoreBridge (MultiTap)
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapPSXGames;
-+ (NSArray<NSString*>*_Nonnull)multiTap5PlayerPort2;
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapSaturnGames;
-+ (NSArray<NSString*>*_Nonnull)multiTapSaturnPort2Games;
-@end
+// MultiTap/MultiDisc game databases are now on MednafenGameCoreOptions (Swift @objc methods).
+// They are accessed as [MednafenGameCoreOptions multiTapPSXGames] etc. — no bridge category needed.
 
 /// Compute CRC32 of a ROM file, stripping any 512-byte SMC header if present.
 static uint32_t computeROMCRC32(NSString *filePath) {
