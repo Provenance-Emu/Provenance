@@ -30,10 +30,10 @@ final class CoreOptionsViewModel: ObservableObject {
     @Published var selectedCore: (core: PVCore, coreClass: CoreOptional.Type)?
 
     /// MD5 hash of the currently scoped game, or `nil` for core-global scope.
-    private(set) var gameMD5: String?
+    @Published private(set) var gameMD5: String?
 
     /// Human-readable display name for the currently scoped game.
-    private(set) var gameDisplayName: String?
+    @Published private(set) var gameDisplayName: String?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -51,7 +51,7 @@ final class CoreOptionsViewModel: ObservableObject {
     /// - Parameter game: When non-nil, reads and writes are scoped to this
     ///   game's MD5 hash so per-game overrides are applied.
     init(game: PVGame? = nil) {
-        if let game = game {
+        if let game = game, !game.md5Hash.isEmpty {
             self.gameMD5 = game.md5Hash
             self.gameDisplayName = game.title
         }
@@ -60,9 +60,10 @@ final class CoreOptionsViewModel: ObservableObject {
 
     /// Configure the view model for a specific game context.
     ///
-    /// Pass `nil` to revert to core-global scope.
+    /// Pass `nil` to revert to core-global scope. A game with an empty
+    /// `md5Hash` is treated the same as `nil` (per-core scope).
     func setGame(_ game: PVGame?) {
-        guard let game = game else {
+        guard let game = game, !game.md5Hash.isEmpty else {
             gameMD5 = nil
             gameDisplayName = nil
             return
