@@ -134,7 +134,7 @@ fi
 if [ "${PINNED_DATE}" = "${LATEST_DATE}" ]; then
     echo "✅ Pin is up-to-date."
     exit 0
-elif [ "${PINNED_DATE}" > "${LATEST_DATE}" ]; then
+elif [[ "${PINNED_DATE}" > "${LATEST_DATE}" ]]; then
     # This shouldn't happen in practice but handle gracefully.
     warn "Pinned date (${PINNED_DATE}) is newer than buildbot latest (${LATEST_DATE}) — unusual."
     exit 0
