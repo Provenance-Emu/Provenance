@@ -2111,11 +2111,12 @@ static bool environment_callback(unsigned cmd, void *data) {
 
         // MARK: - Device power — env 77 | EXPERIMENTAL
         case RETRO_ENVIRONMENT_GET_DEVICE_POWER: {
+            // Return true even for NULL data — cores use a NULL probe to check support.
             struct retro_device_power *pwr = (struct retro_device_power *)data;
-            if (!pwr) return false;
+            if (!pwr) return true;
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
             UIDevice *dev = UIDevice.currentDevice;
-            dev.batteryMonitoringEnabled = YES;
+            // batteryMonitoringEnabled is enabled once at init; no need to re-enable here.
             float level = dev.batteryLevel;
             UIDeviceBatteryState state = dev.batteryState;
             pwr->percent = (level >= 0.0f) ? (int8_t)(level * 100.0f) : -1;
@@ -2127,9 +2128,9 @@ static bool environment_callback(unsigned cmd, void *data) {
                 default:                             pwr->state = RETRO_POWERSTATE_UNKNOWN;   break;
             }
 #else
-            // tvOS — no battery, always plugged in
+            // tvOS — no battery, always plugged in with unknown percentage.
             pwr->state   = RETRO_POWERSTATE_PLUGGED_IN;
-            pwr->percent = 100;
+            pwr->percent = -1;
             pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
 #endif
             return true;
@@ -2595,6 +2596,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         pitch_shift = PITCH_SHIFT;
         _current = self;
         _touchpadEnabled = YES;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+        // Enable battery monitoring once so env 77 (GET_DEVICE_POWER) can read
+        // the current level without toggling the flag on every callback invocation.
+        UIDevice.currentDevice.batteryMonitoringEnabled = YES;
+#endif
         NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
         NSAssert(myBundle, @"myBundle was nil");
         const char* path = [myBundle.bundlePath fileSystemRepresentation];
