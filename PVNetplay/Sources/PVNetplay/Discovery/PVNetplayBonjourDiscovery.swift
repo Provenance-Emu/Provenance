@@ -6,7 +6,7 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
-import Foundation
+@preconcurrency import Foundation
 #if canImport(Combine)
 import Combine
 #endif
@@ -152,71 +152,63 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
 // MARK: - NetServiceBrowserDelegate
 
 extension PVNetplayBonjourDiscovery: NetServiceBrowserDelegate {
-    public nonisolated func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
-        Task { @MainActor in self.isSearching = true }
+    public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
+        isSearching = true
     }
 
-    public nonisolated func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
-        Task { @MainActor in self.isSearching = false }
+    public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
+        isSearching = false
     }
 
-    public nonisolated func netServiceBrowser(
+    public func netServiceBrowser(
         _ browser: NetServiceBrowser,
         didFind service: NetService,
         moreComing: Bool
     ) {
         service.delegate = self
-        Task { @MainActor in
-            self.pendingServices.append(service)
-            service.resolve(withTimeout: 5.0)
-        }
+        pendingServices.append(service)
+        service.resolve(withTimeout: 5.0)
     }
 
-    public nonisolated func netServiceBrowser(
+    public func netServiceBrowser(
         _ browser: NetServiceBrowser,
         didRemove service: NetService,
         moreComing: Bool
     ) {
-        Task { @MainActor in
-            self.removeRoom(forService: service)
-            self.pendingServices.removeAll { $0 === service }
-            self.resolvedServices.removeValue(forKey: service.name)
-        }
+        removeRoom(forService: service)
+        pendingServices.removeAll { $0 === service }
+        resolvedServices.removeValue(forKey: service.name)
     }
 
-    public nonisolated func netServiceBrowser(
+    public func netServiceBrowser(
         _ browser: NetServiceBrowser,
         didNotSearch errorDict: [String: NSNumber]
     ) {
-        Task { @MainActor in self.isSearching = false }
+        isSearching = false
     }
 }
 
 // MARK: - NetServiceDelegate
 
 extension PVNetplayBonjourDiscovery: NetServiceDelegate {
-    public nonisolated func netServiceDidResolveAddress(_ sender: NetService) {
-        Task { @MainActor in
-            self.pendingServices.removeAll { $0 === sender }
-            self.resolvedServices[sender.name] = sender
-            self.updateRoom(from: sender)
-        }
+    public func netServiceDidResolveAddress(_ sender: NetService) {
+        pendingServices.removeAll { $0 === sender }
+        resolvedServices[sender.name] = sender
+        updateRoom(from: sender)
     }
 
-    public nonisolated func netService(
+    public func netService(
         _ sender: NetService,
         didNotResolve errorDict: [String: NSNumber]
     ) {
-        Task { @MainActor in
-            self.pendingServices.removeAll { $0 === sender }
-        }
+        pendingServices.removeAll { $0 === sender }
     }
 
-    public nonisolated func netService(
+    public func netService(
         _ sender: NetService,
         didUpdateTXTRecord data: Data
     ) {
-        Task { @MainActor in self.updateRoom(from: sender) }
+        updateRoom(from: sender)
     }
 }
 #endif
