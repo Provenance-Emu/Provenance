@@ -106,22 +106,28 @@ internal final class HapticsManager: @unchecked Sendable {
     }
 
     /// Trigger a rumble event on the device Taptic Engine and any connected controller for `player`.
+    /// Respects `rumbleEnabled`, `rumbleDeviceEnabled`, and `rumbleControllerEnabled` UserDefaults keys.
     /// - Parameters:
     ///   - lowFrequency:  0.0–1.0 intensity for low-frequency (heavy) motor.
     ///   - highFrequency: 0.0–1.0 intensity for high-frequency (light) motor.
     ///   - duration:      Duration in seconds.
     ///   - player:        0-based player index.
     func rumble(lowFrequency: Float, highFrequency: Float, duration: TimeInterval, player: Int = 0) {
+        let rumbleEnabled = UserDefaults.standard.object(forKey: "rumbleEnabled") as? Bool ?? true
+        guard rumbleEnabled else { return }
+
         let clampedLow  = min(max(lowFrequency, 0), 1)
         let clampedHigh = min(max(highFrequency, 0), 1)
         let clampedDuration = max(duration, 0.05)
 
-        if let engine = deviceEngines[player] ?? HapticsManager.buildDeviceEngine() {
+        let deviceEnabled = UserDefaults.standard.object(forKey: "rumbleDeviceEnabled") as? Bool ?? true
+        if deviceEnabled, let engine = deviceEngines[player] ?? HapticsManager.buildDeviceEngine() {
             deviceEngines[player] = engine
             playPattern(on: engine, intensity: max(clampedLow, clampedHigh), sharpness: clampedHigh, duration: clampedDuration)
         }
 
-        if let engine = controllerEngines[player] {
+        let controllerEnabled = UserDefaults.standard.object(forKey: "rumbleControllerEnabled") as? Bool ?? true
+        if controllerEnabled, let engine = controllerEngines[player] {
             playPattern(on: engine, intensity: max(clampedLow, clampedHigh), sharpness: clampedHigh, duration: clampedDuration)
         }
     }

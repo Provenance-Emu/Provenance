@@ -1636,8 +1636,6 @@ private struct VideoSection: View {
 private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
-    @Default(.hapticFeedback) var hapticFeedback
-    @Default(.controllerHapticIntensity) var controllerHapticIntensity
     @Default(.analogDeadzone) var analogDeadzone
     @Default(.coreDeadzoneMode) var coreDeadzoneMode
 
@@ -1671,40 +1669,8 @@ private struct ControllerSection: View {
                 }
             }
 
-            #if !os(tvOS)
-            ThemedToggle(isOn: $hapticFeedback) {
-                SettingsRow(title: "Haptic Feedback",
-                           subtitle: "Vibrate when pressing buttons.",
-                           icon: .sfSymbol("iphone.radiowaves.left.and.right"))
-            }
-            #endif
+            HapticsRumbleSection()
 
-            // On tvOS, always show Controller Rumble Intensity since external controllers
-            // (DualSense, Xbox) are the primary input and phone haptic toggle is absent.
-            // On iOS/iPadOS, gate it behind the Haptic Feedback toggle.
-            #if os(tvOS)
-            ControllerRumbleSlider(controllerHapticIntensity: $controllerHapticIntensity)
-            #else
-            if hapticFeedback {
-                ControllerRumbleSlider(controllerHapticIntensity: $controllerHapticIntensity)
-            }
-            #endif
-
-            // Rumble profile customisation (always available so users can pre-configure
-            // profiles before a session, even when phone haptics are off on iOS).
-            #if os(tvOS)
-            NavigationLink(destination: RumbleProfilesView()) {
-                SettingsRow(title: "Rumble Profiles",
-                            subtitle: "Customize per-system and per-controller haptic profiles.",
-                            icon: .sfSymbol("waveform.path"))
-            }
-            #else
-            NavigationLink(destination: RumbleProfilesView()) {
-                SettingsRow(title: "Rumble Profiles",
-                            subtitle: "Customize per-system and per-controller haptic profiles.",
-                            icon: .sfSymbol("waveform.path"))
-            }
-            #endif
             #if !os(tvOS)
             OnScreenControllerSection()
             #endif
@@ -1863,26 +1829,148 @@ private struct CoreDeadzoneEntryRow: View {
     }
 }
 
-/// Slider for adjusting external controller rumble motor intensity.
-/// Used by both tvOS (always visible) and iOS (gated behind haptic feedback toggle).
-private struct ControllerRumbleSlider: View {
-    @Binding var controllerHapticIntensity: Double
+/// Comprehensive "Haptics & Rumble" settings section.
+/// Consolidates the master toggle, per-source granular toggles, intensity slider,
+/// DualSense adaptive-trigger toggle, "Test Rumble" button, and a link to Rumble Profiles.
+private struct HapticsRumbleSection: View {
+    @Default(.hapticFeedback) var hapticFeedback
+    @Default(.rumbleEnabled) var rumbleEnabled
+    @Default(.rumbleDeviceEnabled) var rumbleDeviceEnabled
+    @Default(.rumbleControllerEnabled) var rumbleControllerEnabled
+    @Default(.dualSenseAdaptiveTriggersEnabled) var dualSenseAdaptiveTriggersEnabled
+    @Default(.controllerHapticIntensity) var controllerHapticIntensity
 
     var body: some View {
-        Section(header: Text("Controller Rumble")) {
-            VStack(alignment: .leading, spacing: 4) {
-                SettingsRow(title: "Controller Rumble Intensity",
-                            subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
-                            icon: .sfSymbol("waveform.path"))
-                RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
-                    Text("Intensity")
-                } minimumValueLabel: {
-                    Image(systemName: "speaker")
-                } maximumValueLabel: {
-                    Image(systemName: "speaker.wave.3")
-                }
-                .padding(.horizontal)
+        #if !os(tvOS)
+        Section(header: Text("Haptics & Rumble")) {
+            ThemedToggle(isOn: $hapticFeedback) {
+                SettingsRow(title: "Haptic Feedback",
+                            subtitle: "Vibrate when pressing on-screen buttons.",
+                            icon: .sfSymbol("iphone.radiowaves.left.and.right"))
             }
+            ThemedToggle(isOn: $rumbleEnabled) {
+                SettingsRow(title: "Game Rumble",
+                            subtitle: "Master on/off for all in-game rumble events from emulator cores.",
+                            icon: .sfSymbol("gamecontroller.fill"))
+            }
+            if rumbleEnabled {
+                ThemedToggle(isOn: $rumbleDeviceEnabled) {
+                    SettingsRow(title: "Device Taptic Engine",
+                                subtitle: "Use the iPhone/iPad Taptic Engine for in-game rumble when no controller is connected.",
+                                icon: .sfSymbol("iphone"))
+                }
+                ThemedToggle(isOn: $rumbleControllerEnabled) {
+                    SettingsRow(title: "Controller Motors",
+                                subtitle: "Fire rumble motors on DualSense, Xbox, Switch Pro, and DualShock 4 controllers.",
+                                icon: .sfSymbol("dot.radiowaves.right"))
+                }
+                ThemedToggle(isOn: $dualSenseAdaptiveTriggersEnabled) {
+                    SettingsRow(title: "DualSense Adaptive Triggers",
+                                subtitle: "Apply per-system trigger resistance profiles on PS5 DualSense controllers.",
+                                icon: .sfSymbol("l2.button.roundedtop.horizontal.fill"))
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    SettingsRow(title: "Controller Rumble Intensity",
+                                subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
+                                icon: .sfSymbol("waveform.path"))
+                    RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
+                        Text("Intensity")
+                    } minimumValueLabel: {
+                        Image(systemName: "speaker")
+                    } maximumValueLabel: {
+                        Image(systemName: "speaker.wave.3")
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            NavigationLink(destination: RumbleProfilesView()) {
+                SettingsRow(title: "Rumble Profiles",
+                            subtitle: "Customize per-system and per-controller haptic profiles.",
+                            icon: .sfSymbol("slider.horizontal.3"))
+            }
+            TestRumbleButton()
+        }
+        #else
+        // tvOS: always show rumble controls since external controllers are the primary input.
+        Section(header: Text("Haptics & Rumble")) {
+            ThemedToggle(isOn: $rumbleEnabled) {
+                SettingsRow(title: "Game Rumble",
+                            subtitle: "Master on/off for all in-game rumble events from emulator cores.",
+                            icon: .sfSymbol("gamecontroller.fill"))
+            }
+            if rumbleEnabled {
+                ThemedToggle(isOn: $rumbleControllerEnabled) {
+                    SettingsRow(title: "Controller Motors",
+                                subtitle: "Fire rumble motors on connected controllers.",
+                                icon: .sfSymbol("dot.radiowaves.right"))
+                }
+                ThemedToggle(isOn: $dualSenseAdaptiveTriggersEnabled) {
+                    SettingsRow(title: "DualSense Adaptive Triggers",
+                                subtitle: "Apply per-system trigger resistance profiles on PS5 DualSense controllers.",
+                                icon: .sfSymbol("l2.button.roundedtop.horizontal.fill"))
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    SettingsRow(title: "Controller Rumble Intensity",
+                                subtitle: "Motor strength for connected controllers.",
+                                icon: .sfSymbol("waveform.path"))
+                    RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
+                        Text("Intensity")
+                    } minimumValueLabel: {
+                        Image(systemName: "speaker")
+                    } maximumValueLabel: {
+                        Image(systemName: "speaker.wave.3")
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            NavigationLink(destination: RumbleProfilesView()) {
+                SettingsRow(title: "Rumble Profiles",
+                            subtitle: "Customize per-system and per-controller haptic profiles.",
+                            icon: .sfSymbol("slider.horizontal.3"))
+            }
+            TestRumbleButton()
+        }
+        #endif
+    }
+}
+
+/// Button that fires a short test rumble on all registered controllers and device Taptic Engine.
+private struct TestRumbleButton: View {
+    @State private var isTesting = false
+
+    var body: some View {
+        Button {
+            fireTestRumble()
+        } label: {
+            HStack {
+                Image(systemName: isTesting ? "waveform" : "waveform.path")
+                    .foregroundStyle(isTesting ? .green : .accentColor)
+                    .animation(.easeInOut(duration: 0.2), value: isTesting)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Test Rumble")
+                        .font(.body)
+                    Text("Fire a short rumble on connected controllers and/or device.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .disabled(isTesting)
+    }
+
+    @MainActor
+    private func fireTestRumble() {
+        isTesting = true
+        // Fire on all registered player slots (0–3) so any connected controller vibrates.
+        for player in 0..<4 {
+            GCControllerHapticsManager.shared.rumble(
+                player: player,
+                params: .init(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4)
+            )
+        }
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 600_000_000)
+            isTesting = false
         }
     }
 }

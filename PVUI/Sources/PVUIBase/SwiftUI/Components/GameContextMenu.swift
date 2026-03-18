@@ -36,6 +36,7 @@ public struct GameContextMenu: View {
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
     @State private var showTransferPakConfig = false
+    @State private var showN64PakConfig = false
     @Environment(\.featureFlags) private var featureFlags
 
     public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
@@ -74,6 +75,15 @@ public struct GameContextMenu: View {
                         showTransferPakConfig = true
                     } label: {
                         Label("Configure Transfer Pak", systemImage: "memorychip")
+                    }
+                }
+
+                // N64 Controller Pak slot picker (Memory Pak, Rumble Pak, Transfer Pak, etc.)
+                if game.systemIdentifier == SystemIdentifier.N64.rawValue {
+                    Button {
+                        showN64PakConfig = true
+                    } label: {
+                        Label("Controller Pak Slots", systemImage: "gamecontroller.fill")
                     }
                 }
 
@@ -212,6 +222,15 @@ public struct GameContextMenu: View {
                 TransferPakConfigView(game: game, onDismiss: {
                     showTransferPakConfig = false
                 })
+            }
+        }
+        .sheet(isPresented: $showN64PakConfig) {
+            if !game.isInvalidated {
+                N64ControllerPakView(
+                    gameMD5: game.md5Hash,
+                    gameTitle: game.title,
+                    onDismiss: { showN64PakConfig = false }
+                )
             }
         }
     }

@@ -206,9 +206,13 @@ public final class GCControllerHapticsManager {
     }
 
     private func refreshIntensityCache() {
-        // Default to enabled (true) when the key is absent so first-run behavior is on.
-        let enabled = UserDefaults.standard.object(forKey: "hapticFeedback") as? Bool ?? true
-        guard enabled else {
+        // Master rumble gate: respect both the legacy `hapticFeedback` key and the
+        // dedicated `rumbleEnabled` + `rumbleControllerEnabled` keys added in Tier 4.
+        // Any of these being false silences controller rumble output.
+        let hapticFeedback = UserDefaults.standard.object(forKey: "hapticFeedback") as? Bool ?? true
+        let rumbleEnabled = UserDefaults.standard.object(forKey: "rumbleEnabled") as? Bool ?? true
+        let controllerEnabled = UserDefaults.standard.object(forKey: "rumbleControllerEnabled") as? Bool ?? true
+        guard hapticFeedback && rumbleEnabled && controllerEnabled else {
             _cachedIntensityMultiplier = 0
             return
         }

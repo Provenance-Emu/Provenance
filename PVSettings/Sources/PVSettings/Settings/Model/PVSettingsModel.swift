@@ -121,6 +121,25 @@ public extension Defaults.Keys {
     static let pauseButtonIsMenuButton = Key<Bool>("pauseButtonIsMenuButton", default: false)
     static let hapticFeedback = Key<Bool>("hapticFeedback", default: true)
 
+    /// Master on/off for all game rumble output from emulator cores.
+    /// When `false`, neither controller motors nor the device Taptic Engine will fire
+    /// in response to in-game rumble events. UI tap feedback (`hapticFeedback`) is unaffected.
+    static let rumbleEnabled = Key<Bool>("rumbleEnabled", default: true)
+
+    /// Controls whether the device Taptic Engine fires for in-game rumble events.
+    /// Independent of `rumbleControllerEnabled`. Requires `rumbleEnabled` to be `true`.
+    static let rumbleDeviceEnabled = Key<Bool>("rumbleDeviceEnabled", default: true)
+
+    /// Controls whether external controller motors (DualSense, Xbox, Switch Pro, etc.)
+    /// fire for in-game rumble events. Independent of `rumbleDeviceEnabled`.
+    /// Requires `rumbleEnabled` to be `true`.
+    static let rumbleControllerEnabled = Key<Bool>("rumbleControllerEnabled", default: true)
+
+    /// Enable DualSense adaptive trigger resistance profiles.
+    /// When `true`, CoreHaptics adaptive trigger effects are applied based on the
+    /// current system's rumble profile (e.g. heavier resistance for N64 Rumble Pak).
+    static let dualSenseAdaptiveTriggersEnabled = Key<Bool>("dualSenseAdaptiveTriggersEnabled", default: true)
+
     /// Intensity multiplier for external controller rumble motors via GCDeviceHaptics.
     /// Range 0.0 (silent) – 1.0 (full intensity). Default 1.0.
     static let controllerHapticIntensity = Key<Double>("controllerHapticIntensity", default: 1.0)
