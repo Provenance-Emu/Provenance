@@ -29,12 +29,9 @@ struct DeltaSkinEditOverlay: View {
             let scaledHeight = mappingSize.height * scale
             let xOffset = safeAreaInsets.leading + (availableWidth - scaledWidth) / 2
             // Mirror DeltaSkinView layout: iPhone portrait is bottom-aligned; all others are centred
-            let yOffset: CGFloat
-            if viewModel.traits.device == .iphone && viewModel.traits.orientation == .portrait {
-                yOffset = size.height - scaledHeight - safeAreaInsets.bottom
-            } else {
-                yOffset = safeAreaInsets.top + (availableHeight - scaledHeight) / 2
-            }
+            let yOffset: CGFloat = (viewModel.traits.device == .iphone && viewModel.traits.orientation == .portrait)
+                ? size.height - scaledHeight - safeAreaInsets.bottom
+                : safeAreaInsets.top + (availableHeight - scaledHeight) / 2
             let origin = CGPoint(x: xOffset, y: yOffset)
 
             ZStack(alignment: .bottom) {
@@ -58,6 +55,8 @@ struct DeltaSkinEditOverlay: View {
                 }
             }
             .frame(width: size.width, height: size.height)
+        } else {
+            EmptyView()
         }
     }
 
