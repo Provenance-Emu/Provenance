@@ -92,8 +92,110 @@ public final class GCControllerHapticsManager {
     }
 
     /// Convenience: look up the best-matching profile for a Provenance system identifier and apply it.
+    ///
+    /// Checks `UserDefaults` for a user override first (written by `RumbleProfilesView`):
+    /// - `rumbleSystemOverrides[sysId]` — UUID string of a custom preset, or `"builtin:<name>"`
+    /// - If the stored value is a UUID, look up the matching blob in `rumbleCustomPresets`
+    /// Falls back to the default `RumbleSystemProfile.profile(forSystemIdentifier:)` if no
+    /// override is set or the stored data cannot be decoded.
     public func setSystemProfile(forSystemIdentifier sysId: String) {
-        systemProfile = RumbleSystemProfile.profile(forSystemIdentifier: sysId)
+        systemProfile = effectiveProfile(forSystemIdentifier: sysId)
+    }
+
+    /// Resolve the effective `RumbleSystemProfile` for a system identifier,
+    /// honouring any user override stored in `UserDefaults`.
+    ///
+    /// Resolution order:
+    /// 1. Controller-type override from `rumbleControllerOverrides` (based on connected controller type)
+    /// 2. Per-system override from `rumbleSystemOverrides`
+    /// 3. Built-in default from `RumbleSystemProfile.profile(forSystemIdentifier:)`
+    public func effectiveProfile(forSystemIdentifier sysId: String) -> RumbleSystemProfile {
+        // 1) Controller-type override (per connected game controller)
+        if let controllerTypeKey = currentControllerTypeKey() {
+            let controllerOverrides = UserDefaults.standard.dictionary(forKey: "rumbleControllerOverrides") as? [String: String] ?? [:]
+            if let overrideValue = controllerOverrides[controllerTypeKey],
+               let profile = resolveStoredProfileValue(overrideValue) {
+                return profile
+            }
+        }
+
+        // 2) Per-system override
+        let systemOverrides = UserDefaults.standard.dictionary(forKey: "rumbleSystemOverrides") as? [String: String] ?? [:]
+        if let overrideValue = systemOverrides[sysId],
+           let profile = resolveStoredProfileValue(overrideValue) {
+            return profile
+        }
+
+        // 3) Fallback to the built-in default profile
+        return RumbleSystemProfile.profile(forSystemIdentifier: sysId)
+    }
+
+    /// Derive the current controller-type key used for controller-specific overrides.
+    /// Prefers the controller mapped to player index 0, then any mapped controller,
+    /// and finally falls back to `GCController.controllers.first` if needed.
+    private func currentControllerTypeKey() -> String? {
+        if let controller = playerControllers[0],
+           let key = controllerTypeKey(for: controller) {
+            return key
+        }
+
+        if let anyController = playerControllers.values.first,
+           let key = controllerTypeKey(for: anyController) {
+            return key
+        }
+
+        if let globalController = GCController.controllers().first,
+           let key = controllerTypeKey(for: globalController) {
+            return key
+        }
+
+        return nil
+    }
+
+    /// Compute a stable string key for a given `GCController` to use with
+    /// `rumbleControllerOverrides`. Uses `productCategory` when available,
+    /// falling back to `vendorName` if necessary.
+    private func controllerTypeKey(for controller: GCController) -> String? {
+        if let category = controller.productCategory, !category.isEmpty {
+            return category
+        }
+        if let vendor = controller.vendorName, !vendor.isEmpty {
+            return vendor
+        }
+        return nil
+    }
+
+    /// Resolve a stored override value (UUID string or "builtin:<name>") to a `RumbleSystemProfile`.
+    private func resolveStoredProfileValue(_ value: String) -> RumbleSystemProfile? {
+        if value.hasPrefix("builtin:") {
+            let name = String(value.dropFirst("builtin:".count))
+            return builtInProfile(forName: name)
+        }
+        // Try UUID lookup in rumbleCustomPresets (stored as [Data] JSON blobs in PVSettings)
+        guard let presetBlobs = UserDefaults.standard.array(forKey: "rumbleCustomPresets") as? [Data] else {
+            return nil
+        }
+        for data in presetBlobs {
+            guard let preset = try? JSONDecoder().decode(RumblePreset.self, from: data),
+                  preset.id.uuidString == value else { continue }
+            return preset.toSystemProfile()
+        }
+        return nil
+    }
+
+    /// Match a built-in preset name to the corresponding `RumbleSystemProfile`.
+    private func builtInProfile(forName name: String) -> RumbleSystemProfile? {
+        switch name {
+        case "Generic":              return .generic
+        case "N64 Rumble Pak":       return .n64RumblePak
+        case "PSX DualShock":        return .psxDualShock
+        case "PS3 DualShock 3":      return .ps3DualShock3
+        case "GBA Cartridge Motor":  return .gbaCartridgeMotor
+        case "GameCube":             return .gamecubeSingle
+        case "Switch HD Rumble":     return .switchHDRumble
+        case "Xbox Dual Motor":      return .xboxDualMotor
+        default:                     return nil
+        }
     }
 
     /// Reset the system profile back to `.generic`.
