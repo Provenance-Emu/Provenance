@@ -21,18 +21,24 @@ final class LightGunSystemRegistryTests: XCTestCase {
     // MARK: - Baseline
 
     func testBaselineContainsExpectedSystems() {
-        // Re-create a fresh registry by resetting and adding the known baseline.
-        // The real baseline is seeded in init(); seed it here manually so the
-        // test doesn't depend on singleton state from a previous test.
-        let baseline: Set<SystemIdentifier> = [.NES, .SNES, .Genesis, .PSX, .Saturn, .MAME, .Atari2600]
-        LightGunSystemRegistry.shared.register(systems: baseline)
+        // Reset to the actual baseline seeded by init() to verify the registry
+        // correctly includes all known lightgun-capable systems.
+        LightGunSystemRegistry.shared._reset(to: LightGunSystemRegistry.baseline)
 
-        for system in baseline {
+        for system in LightGunSystemRegistry.baseline {
             XCTAssertTrue(
                 LightGunSystemRegistry.shared.supportsLightGun(system),
                 "\(system) should be in the baseline"
             )
         }
+    }
+
+    func testInitBaselineIsNonEmpty() {
+        // The static baseline constant must contain at least the well-known systems.
+        XCTAssertFalse(LightGunSystemRegistry.baseline.isEmpty)
+        XCTAssertTrue(LightGunSystemRegistry.baseline.contains(.NES))
+        XCTAssertTrue(LightGunSystemRegistry.baseline.contains(.SNES))
+        XCTAssertTrue(LightGunSystemRegistry.baseline.contains(.PSX))
     }
 
     func testUnknownSystemReturnsFalse() {

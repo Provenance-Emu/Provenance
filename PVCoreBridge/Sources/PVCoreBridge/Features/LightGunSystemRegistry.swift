@@ -42,9 +42,11 @@ import PVSystems
 
 /// Implement this protocol on a **core class** (not an instance) to declare at
 /// compile time which system identifiers the core can drive with a light gun.
-/// The app calls `LightGunSystemRegistry.shared.registerProvider(MyCore.self)`
-/// during startup so that `SystemIdentifier.supportsLightGun` is accurate even
-/// before a game is loaded.
+/// Optionally, the app may call `LightGunSystemRegistry.shared.registerProvider(MyCore.self)`
+/// early in its lifecycle so that `SystemIdentifier.supportsLightGun` returns
+/// accurate results before any game is loaded. This is not required — the
+/// registry is also populated dynamically when a core runs and declares
+/// `RETRO_DEVICE_LIGHTGUN` via `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO`.
 ///
 /// Example:
 /// ```swift
@@ -86,20 +88,24 @@ public final class LightGunSystemRegistry {
 
     // MARK: Init
 
+    /// Built-in baseline — systems historically known to have lightgun
+    /// peripherals. Exposed internally so tests can verify the seed without
+    /// duplicating the constant.
+    static let baseline: Set<SystemIdentifier> = [
+        .NES,       // Zapper
+        .SNES,      // Super Scope, Justifier
+        .Genesis,   // Menacer, Justifier
+        .PSX,       // Guncon, Konami Justifier
+        .Saturn,    // Stunner
+        .MAME,      // Arcade lightgun games
+        .Atari2600, // Crossbow, other gun games
+    ]
+
     private init() {
-        // Built-in baseline — systems historically known to have lightgun
-        // peripherals.  Cores that register themselves at runtime will extend
-        // this set; they will NOT shrink it (registry is append-only so that
-        // discovery persists for the session even after a core is unloaded).
-        _systems = [
-            .NES,       // Zapper
-            .SNES,      // Super Scope, Justifier
-            .Genesis,   // Menacer, Justifier
-            .PSX,       // Guncon, Konami Justifier
-            .Saturn,    // Stunner
-            .MAME,      // Arcade lightgun games
-            .Atari2600, // Crossbow, other gun games
-        ]
+        // Cores that register themselves at runtime extend this set; they will
+        // NOT shrink it (registry is append-only so discoveries persist for the
+        // session even after a core is unloaded).
+        _systems = LightGunSystemRegistry.baseline
     }
 
     // MARK: Registration
@@ -147,7 +153,7 @@ public final class LightGunSystemRegistry {
     // MARK: Testing
 
     /// Replaces the entire registry with the given set.  **For unit tests only.**
-    public func _reset(to systems: Set<SystemIdentifier> = []) {
+    func _reset(to systems: Set<SystemIdentifier> = []) {
         lock.lock(); defer { lock.unlock() }
         _systems = systems
     }

@@ -2062,17 +2062,18 @@ extension PVThinLibretroCore: LightGunResponder {
         let detectedViaControllerInfo = controllerPortDescriptors.contains { port in
             port.contains { ($0.deviceType & LibretroDeviceType.deviceMask) == LibretroDeviceType.lightgun.rawValue }
         }
+        let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "")
         if detectedViaControllerInfo {
-            // Persist the discovery so the registry (and therefore
-            // SystemIdentifier.supportsLightGun) returns true for this system
-            // even when no core is loaded.
-            if let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") {
-                LightGunSystemRegistry.shared.register(system: sysID)
+            // Cache the discovery in the session registry so that
+            // SystemIdentifier.supportsLightGun returns true for this system
+            // even when no core is loaded (in-memory, current session only).
+            if let id = sysID {
+                LightGunSystemRegistry.shared.register(system: id)
             }
             return true
         }
         // Fallback: consult the registry (built-in baseline + previous dynamic discoveries).
-        return SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsLightGun ?? false
+        return sysID?.supportsLightGun ?? false
     }
 
     public var requiresLightGun: Bool {
