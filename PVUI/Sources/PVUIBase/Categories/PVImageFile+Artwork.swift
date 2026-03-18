@@ -12,11 +12,16 @@ public extension PVImageFile {
     /// PVImageFile stores the actual file path (screenshots, cached artwork),
     /// so we read directly — do not go through PVMediaCache which uses a
     /// different keying scheme (MD5 of the original remote URL).
+    ///
+    /// Disk I/O and image decoding are performed on a background thread via
+    /// `Task.detached` so this is safe to await from the MainActor.
     public func fetchArtworkFromCache() async -> UIImage? {
         guard let url = url else { return nil }
         let path = url.path
-        guard FileManager.default.fileExists(atPath: path) else { return nil }
-        return UIImage(contentsOfFile: path)
+        return await Task.detached(priority: .userInitiated) {
+            guard FileManager.default.fileExists(atPath: path) else { return nil }
+            return UIImage(contentsOfFile: path)
+        }.value
     }
 
     /// Returns the URL of the image file if it exists on disk.

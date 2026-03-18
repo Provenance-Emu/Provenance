@@ -51,6 +51,12 @@ public struct SaveStateBrowserView: View {
     @State private var computedGroups: [SaveStateGameGroup] = []
     /// Raw items fetched from the store — filtering/grouping is applied client-side.
     @State private var allItems: [RetroSaveStateItem] = []
+    /// Memoized artwork URLs per game ID to avoid repeated filesystem hits on every
+    /// filter pass (e.g. while the user types in the search field).
+    /// A present key means the lookup was already performed; nil value = no artwork found.
+    @State private var resolvedArtworkURLs: [String: URL] = [:]
+    /// Game IDs for which the artwork lookup has already been performed (including misses).
+    @State private var artworkResolvedGameIds: Set<String> = []
 
     public init() {}
 
@@ -120,20 +126,32 @@ public struct SaveStateBrowserView: View {
                 // 1. Prefer originalArtworkFile.url — the local cached copy when set.
                 // 2. Fall back to PVMediaCache lookup via trueArtworkURL for legacy games
                 //    that have only originalArtworkURL (openvgdb URL) and no file entry.
-                let artworkURL: URL? = {
-                    guard let game = RomDatabase.sharedInstance
-                        .object(ofType: PVGame.self, wherePrimaryKeyEquals: item.gameId)
-                    else { return nil }
-                    if let fileURL = game.originalArtworkFile?.url {
-                        return fileURL
+                // Results are memoized so repeated filter passes (e.g. while typing) do
+                // not re-hit the filesystem on every keystroke.
+                let artworkURL: URL?
+                if artworkResolvedGameIds.contains(item.gameId) {
+                    artworkURL = resolvedArtworkURLs[item.gameId]
+                } else {
+                    let resolved: URL? = {
+                        guard let game = RomDatabase.sharedInstance
+                            .object(ofType: PVGame.self, wherePrimaryKeyEquals: item.gameId)
+                        else { return nil }
+                        if let fileURL = game.originalArtworkFile?.url {
+                            return fileURL
+                        }
+                        let key = game.trueArtworkURL
+                        guard !key.isEmpty,
+                              PVMediaCache.fileExists(forKey: key),
+                              let localURL = PVMediaCache.filePath(forKey: key)
+                        else { return nil }
+                        return localURL
+                    }()
+                    artworkResolvedGameIds.insert(item.gameId)
+                    if let resolved {
+                        resolvedArtworkURLs[item.gameId] = resolved
                     }
-                    let key = game.trueArtworkURL
-                    guard !key.isEmpty,
-                          PVMediaCache.fileExists(forKey: key),
-                          let localURL = PVMediaCache.filePath(forKey: key)
-                    else { return nil }
-                    return localURL
-                }()
+                    artworkURL = resolved
+                }
                 dict[item.gameId] = SaveStateGameGroup(
                     id: item.gameId,
                     gameTitle: item.gameTitle,
