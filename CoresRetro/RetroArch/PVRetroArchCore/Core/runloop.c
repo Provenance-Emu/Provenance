@@ -1422,10 +1422,17 @@ bool runloop_environment_cb(unsigned cmd, void *data)
 
             if (!var->value)
             {
-               /* Provenance: supply safe defaults for keys that crash when NULL */
+               /* Provenance: supply safe defaults for keys that crash when NULL.
+                * hatari_boot_hd: if this is NULL the Hatari core unconditionally
+                * appends "--acsi <sDeviceFile>" with an empty string, causing a
+                * fatal "Error: --acsi parameter MUST be a file name or '0'" abort.
+                * Forcing "disabled" here is the last-resort fallback; the primary
+                * fix is the [HardDisk]/[ACSI] sections in the bundled hatari.cfg. */
                if (var->key && strcmp(var->key, "hatari_boot_hd") == 0)
                {
-                  RARCH_WARN("[Environ]: GET_VARIABLE: %s had no valid value, defaulting to \"disabled\"\n", var->key);
+                  RARCH_WARN("[Environ]: GET_VARIABLE: %s had no valid value — "
+                             "ACSI crash guard: forcing \"disabled\" to prevent "
+                             "--acsi \"\" fatal error\n", var->key);
                   var->value = "disabled";
                }
                else

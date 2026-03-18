@@ -592,11 +592,36 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     NSString *cfgSource = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]]
                            pathForResource:@"hatari.cfg" ofType:nil];
 
+    DLOG(@"Hatari: writeHatariConfigForSystemDir — systemDir: %@", systemDir);
+    DLOG(@"Hatari: config destinations: hatari/hatari.cfg=%@, hatari.cfg=%@", hatariWorkCfgPath, hatariCfgPath);
+
+    // Log any pre-existing on-disk hatari.cfg so we can compare before vs after.
+    NSString *existingWorkCfg = [NSString stringWithContentsOfFile:hatariWorkCfgPath
+                                                          encoding:NSUTF8StringEncoding
+                                                             error:nil];
+    if (existingWorkCfg) {
+        // Extract relevant HD/ACSI lines for the debug log (avoids dumping the whole file).
+        NSMutableArray<NSString *> *hdLines = [NSMutableArray array];
+        for (NSString *line in [existingWorkCfg componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+            NSString *lower = line.lowercaseString;
+            if ([lower containsString:@"harddisk"] || [lower containsString:@"bootfrom"] ||
+                [lower containsString:@"acsi"] || [lower containsString:@"devicefile"] ||
+                [lower containsString:@"devicetype"]) {
+                [hdLines addObject:line];
+            }
+        }
+        DLOG(@"Hatari: BEFORE write — HD/ACSI lines in hatari/hatari.cfg:\n%@",
+             hdLines.count ? [hdLines componentsJoinedByString:@"\n"] : @"(none found)");
+    } else {
+        DLOG(@"Hatari: BEFORE write — hatari/hatari.cfg does not exist yet at %@", hatariWorkCfgPath);
+    }
+
     if (!cfgSource) {
         ELOG(@"Hatari: bundled hatari.cfg not found — cannot write config");
         return;
     }
 
+    DLOG(@"Hatari: reading bundled hatari.cfg template from %@", cfgSource);
     NSError *readErr = nil;
     NSString *cfgContent = [NSString stringWithContentsOfFile:cfgSource
                                                       encoding:NSUTF8StringEncoding
@@ -608,6 +633,19 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         [self syncResource:cfgSource to:hatariCfgPath];
         [self syncResource:cfgSource to:hatariWorkCfgPath];
         return;
+    }
+
+    // Verify the template contains HD/ACSI sections (regression guard).
+    BOOL hasHardDiskSection = [cfgContent containsString:@"[HardDisk]"];
+    BOOL hasAcsiSection     = [cfgContent containsString:@"[ACSI]"];
+    BOOL hasBootFromHD      = [cfgContent containsString:@"bBootFromHardDisk"];
+    BOOL hasHDImageDisabled = [cfgContent containsString:@"bUseHardDiskImage = FALSE"];
+    DLOG(@"Hatari: template validation — [HardDisk]=%d [ACSI]=%d bBootFromHardDisk=%d bUseHardDiskImage=FALSE: %d",
+         hasHardDiskSection, hasAcsiSection, hasBootFromHD, hasHDImageDisabled);
+    if (!hasHardDiskSection || !hasAcsiSection || !hasBootFromHD || !hasHDImageDisabled) {
+        ELOG(@"Hatari: bundled hatari.cfg template is MISSING required HD/ACSI disable keys! "
+             @"--acsi \"\" crash may still occur. [HardDisk]=%d [ACSI]=%d bBootFromHardDisk=%d bUseHardDiskImage=FALSE:%d",
+             hasHardDiskSection, hasAcsiSection, hasBootFromHD, hasHDImageDisabled);
     }
 
     // Embed absolute TOS path so Hatari finds the ROM regardless of cwd.
@@ -657,6 +695,18 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                                       error:&legacyWriteErr];
     if (workOK && legacyOK) {
         ILOG(@"Hatari: hatari.cfg written — TOS: %@, ROMs: %@", sysTosPath, romsDirectory);
+        // Log the AFTER state so we can confirm HD/ACSI sections were written.
+        NSMutableArray<NSString *> *afterLines = [NSMutableArray array];
+        for (NSString *line in [cfgContent componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+            NSString *lower = line.lowercaseString;
+            if ([lower containsString:@"harddisk"] || [lower containsString:@"bootfrom"] ||
+                [lower containsString:@"acsi"] || [lower containsString:@"devicefile"] ||
+                [lower containsString:@"devicetype"]) {
+                [afterLines addObject:line];
+            }
+        }
+        DLOG(@"Hatari: AFTER write — HD/ACSI lines in hatari/hatari.cfg:\n%@",
+             afterLines.count ? [afterLines componentsJoinedByString:@"\n"] : @"(none found — template missing sections!)");
     } else {
         if (!workOK) ELOG(@"Hatari: failed to write hatari.cfg to %@: %@", hatariWorkCfgPath, workWriteErr);
         if (!legacyOK) ELOG(@"Hatari: failed to write hatari.cfg to %@: %@", hatariCfgPath, legacyWriteErr);
