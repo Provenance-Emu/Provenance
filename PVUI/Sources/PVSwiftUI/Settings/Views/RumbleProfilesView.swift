@@ -227,6 +227,7 @@ struct RumbleProfilesView: View {
                         #endif
                     }
                 }
+                #if !os(tvOS)
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(role: .destructive) {
                         presetToDelete = preset
@@ -235,6 +236,7 @@ struct RumbleProfilesView: View {
                         Label("Delete", systemImage: "trash")
                     }
                 }
+                #endif
                 #if os(tvOS)
                 .buttonStyle(.card)
                 .retroThemedFocus(cornerRadius: 12)
@@ -660,8 +662,23 @@ struct RumblePresetEditorView: View {
                     .foregroundColor(accentColor)
                     .frame(minWidth: 55, alignment: .trailing)
             }
+            #if os(tvOS)
+            HStack {
+                Button(action: {
+                    let s = range.upperBound > 1 ? 5.0 : 0.01
+                    value.wrappedValue = max(range.lowerBound, value.wrappedValue - s)
+                }) { Image(systemName: "minus.circle") }
+                ProgressView(value: (value.wrappedValue - range.lowerBound) / (range.upperBound - range.lowerBound))
+                    .tint(accentColor)
+                Button(action: {
+                    let s = range.upperBound > 1 ? 5.0 : 0.01
+                    value.wrappedValue = min(range.upperBound, value.wrappedValue + s)
+                }) { Image(systemName: "plus.circle") }
+            }
+            #else
             Slider(value: value, in: range, step: range.upperBound > 1 ? 5 : 0.01)
                 .tint(accentColor)
+            #endif
             Text(subtitle)
                 .font(.caption)
                 .foregroundColor(.secondary)
