@@ -29,9 +29,10 @@ public actor PVNetplayManager {
             #if canImport(Combine)
             // Always send on the main queue so Combine subscribers (which may
             // subscribe/receive on main) never race with actor-background sends.
-            let subject = stateSubject
             let newState = state
-            DispatchQueue.main.async { subject.send(newState) }
+            Task { @MainActor in
+                self.stateSubject.send(newState)
+            }
             #endif
         }
     }
