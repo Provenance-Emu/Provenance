@@ -74,12 +74,15 @@ import UIKit
 }
 
 /// Protocol for cores that support light gun peripherals (Zapper, Super Scope, Guncon, etc.).
-/// Coordinates are in emulator screen space (0.0–1.0 normalized, or absolute depending on core).
+/// All coordinates are normalized to the emulator screen space (0.0–1.0 in both axes),
+/// where (0,0) is top-left and (1,1) is bottom-right.
 /// The driver (GCMouse delta accumulation, UIPointerInteraction, or touch) calls these methods
 /// when the user aims and fires.
 @objc public protocol LightGunResponder: AnyObject {
     /// Whether this core/system supports a light gun device.
     var gameSupportsLightGun: Bool { get }
+    /// Whether this core/system requires a light gun to be playable.
+    var requiresLightGun: Bool { get }
 
     /// Update the current aim position in normalized screen coordinates (0.0–1.0).
     /// - Parameters:

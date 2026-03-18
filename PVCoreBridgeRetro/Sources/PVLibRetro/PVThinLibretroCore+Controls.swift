@@ -25,9 +25,9 @@ import GameController
 #endif
 
 // MARK: - Per-system input capability flags (announced via core protocols)
-// Support is declared on SystemIdentifier so the protocol computed properties
-// (gameSupportsKeyboard, requiresKeyboard, gameSupportsMouse, requiresMouse,
-// gameSupportsLightGun) remain the single source of truth — no string comparisons.
+// Keyboard and mouse support tables are private to this file (thin-libretro only).
+// Light gun support is declared publicly on SystemIdentifier in PVCoreBridge so any
+// core module can query it — see Controls+SystemIdentifier.swift.
 
 private extension SystemIdentifier {
 
@@ -62,17 +62,9 @@ private extension SystemIdentifier {
         .Macintosh, .MSX, .MSX2, .Quake, .Quake2, .Wolf3D, .ZXSpectrum,
     ]
 
-    // MARK: Light Gun
-
-    /// Systems whose libretro cores support a light-gun peripheral.
-    var supportsLightGun: Bool { Self.lightGunSystems.contains(self) }
-
-    // NES Zapper, SNES Super Scope / Justifier, Genesis Menacer / Justifier,
-    // PSX Guncon / Konami Justifier, Saturn Stunner, MAME arcade guns, Atari 2600.
-    private static let lightGunSystems: Set<SystemIdentifier> = [
-        .NES, .SNES, .Genesis, .PSX, .Saturn, .MAME, .Atari2600,
-    ]
 }
+// Note: supportsLightGun / requiresLightGun are public properties on SystemIdentifier
+// defined in PVCoreBridge/Controls+SystemIdentifier.swift — no local override needed.
 
 // MARK: - libretro joypad button IDs (mirrors libretro.h defines)
 // These must match RETRO_DEVICE_ID_JOYPAD_* exactly.
@@ -1983,6 +1975,10 @@ extension PVThinLibretroCore: LightGunResponder {
 
     public var gameSupportsLightGun: Bool {
         SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsLightGun ?? false
+    }
+
+    public var requiresLightGun: Bool {
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresLightGun ?? false
     }
 
     /// Convert normalized screen coordinates (0.0–1.0) to libretro light gun range

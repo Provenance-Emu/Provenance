@@ -62,8 +62,7 @@ import UIKit
     private var cursorX: CGFloat = 0.5
     private var cursorY: CGFloat = 0.5
 
-    private var triggerDown = false
-    private var reloadDown  = false
+    private var reloadDown = false
 
     // MARK: - Observation tokens
 
@@ -178,10 +177,8 @@ import UIKit
         input?.leftButton.pressedChangedHandler = { [weak self] _, _, pressed in
             guard let self = self, self.isEnabled else { return }
             if pressed {
-                self.triggerDown = true
                 self.responder?.lightGunTriggerDown()
             } else {
-                self.triggerDown = false
                 self.responder?.lightGunTriggerUp()
             }
         }

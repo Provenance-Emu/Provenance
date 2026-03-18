@@ -411,7 +411,7 @@ typedef struct PVThinLibretroSymbols {
     int16_t _pointerY;
     bool _pointerPressed;
 
-    // Light gun state — libretro screen-space coordinates and button bitmask
+    // Light gun state — libretro screen-space coordinates and button flags (separate bools)
     // Coordinate range: -0x7FFF (top/left) .. +0x7FFF (bottom/right)
     int16_t _lightgunX;
     int16_t _lightgunY;
