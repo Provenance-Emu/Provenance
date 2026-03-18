@@ -267,7 +267,7 @@ struct DefaultControllerSkinView: View {
                 // Positioned at the top-trailing corner so they sit above the controller area
                 // and don't block the game screen.
                 if validSize, let sysId = systemId,
-                   let switches = sysId.hardwareSwitches {
+                   let switches = sysId.hardwareSwitches, !switches.isEmpty {
                     // ZStack approach: the transparent backdrop is non-interactive, but the
                     // switch row itself sits as a separate ZStack child so it receives gestures.
                     ZStack(alignment: .topTrailing) {
@@ -290,8 +290,8 @@ struct DefaultControllerSkinView: View {
                 // Stacks below the toggle-switch row when both are present; otherwise sits
                 // at the standard top-trailing position.
                 if validSize, let sysId = systemId,
-                   let momentaryButtons = sysId.hardwareMomentaryButtons {
-                    let hasSwitches = sysId.hardwareSwitches != nil
+                   let momentaryButtons = sysId.hardwareMomentaryButtons, !momentaryButtons.isEmpty {
+                    let hasSwitches = sysId.hardwareSwitches?.isEmpty == false
                     ZStack(alignment: .topTrailing) {
                         Color.clear
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
