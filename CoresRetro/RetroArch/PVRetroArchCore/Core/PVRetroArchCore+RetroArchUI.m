@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCoreBridge.m
+//  PVRetroArchCore+RetroArchUI.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 4/6/18.
@@ -688,11 +688,61 @@ void extract_bundles();
         fileName = [NSString stringWithFormat:@"%@/RetroArch/config/%@", self.documentsDirectory, self.coreOptionConfigPath];
         if (![fm fileExistsAtPath: fileName] || self.coreOptionOverwrite) {
             [fm createDirectoryAtPath:[fileName stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
-            [self.coreOptionConfig writeToFile:fileName
+            // Log BEFORE state for Hatari to confirm what was on disk previously.
+            if ([self pv_isHatariSystem]) {
+                NSString *prevContent = [NSString stringWithContentsOfFile:fileName
+                                                                  encoding:NSUTF8StringEncoding
+                                                                     error:nil];
+                if (prevContent) {
+                    NSRange bootHdRange = [prevContent rangeOfString:@"hatari_boot_hd"];
+                    NSString *prevBootHd = nil;
+                    if (bootHdRange.location != NSNotFound) {
+                        NSUInteger lineStart = bootHdRange.location;
+                        NSRange beforeNewlineRange = [prevContent rangeOfString:@"\n"
+                                                                         options:NSBackwardsSearch
+                                                                           range:NSMakeRange(0, bootHdRange.location)];
+                        if (beforeNewlineRange.location != NSNotFound) {
+                            lineStart = beforeNewlineRange.location + beforeNewlineRange.length;
+                        }
+                        NSRange afterNewlineRange = [prevContent rangeOfString:@"\n"
+                                                                        options:0
+                                                                          range:NSMakeRange(bootHdRange.location,
+                                                                                            prevContent.length - bootHdRange.location)];
+                        NSUInteger lineEnd = (afterNewlineRange.location != NSNotFound)
+                            ? afterNewlineRange.location
+                            : prevContent.length;
+                        prevBootHd = [prevContent substringWithRange:NSMakeRange(lineStart, lineEnd - lineStart)];
+                    } else {
+                        prevBootHd = @"(key absent)";
+                    }
+                    DLOG(@"Hatari opts BEFORE overwrite — hatari_boot_hd: %@, file: %@", prevBootHd, fileName);
+                } else {
+                    DLOG(@"Hatari opts BEFORE overwrite — file did not exist at %@", fileName);
+                }
+            }
+            NSError *optWriteErr = nil;
+            BOOL optWriteOK = [self.coreOptionConfig writeToFile:fileName
                                     atomically:NO
                                     encoding:NSStringEncodingConversionAllowLossy
-                                        error:nil];
-            ILOG(@"Core option config written to %@", fileName);
+                                        error:&optWriteErr];
+            if (optWriteOK) {
+                ILOG(@"Core option config written to %@", fileName);
+                if ([self pv_isHatariSystem]) {
+                    // Log AFTER state so we can confirm hatari_boot_hd was written correctly.
+                    NSString *afterContent = [NSString stringWithContentsOfFile:fileName
+                                                                       encoding:NSUTF8StringEncoding
+                                                                          error:nil] ?: @"(read failed)";
+                    NSRange afterRange = [afterContent rangeOfString:@"hatari_boot_hd"];
+                    NSString *afterBootHd = (afterRange.location != NSNotFound)
+                        ? [afterContent substringWithRange:NSMakeRange(afterRange.location,
+                            MIN(40u, afterContent.length - afterRange.location))]
+                        : @"(key absent — write may have failed)";
+                    ILOG(@"Hatari opts AFTER overwrite — hatari_boot_hd: %@, file: %@", afterBootHd, fileName);
+                }
+            } else {
+                ELOG(@"Core option config write failed for %@: %@",
+                     fileName, optWriteErr.localizedDescription);
+            }
         } else if ([self pv_isHatariSystem]) {
             /// The Hatari opts file already exists — do a targeted in-place key repair so we
             /// never wipe user-configured options.  The hatari core uses "disabled"/"enabled"
@@ -703,6 +753,7 @@ void extract_bundles();
                                                            encoding:NSUTF8StringEncoding
                                                               error:&hatariReadErr];
             if (!hatariReadErr && existing) {
+                DLOG(@"Hatari opts BEFORE in-place repair — full content of %@:\n%@", fileName, existing);
                 NSString *correct = @"hatari_boot_hd = \"disabled\"";
                 NSString *updated = nil;
                 /// Replace ANY invalid hatari_boot_hd value. The hatari core ONLY accepts
@@ -727,6 +778,8 @@ void extract_bundles();
                                                                     withString:correct];
                         updated = existing;
                         ILOG(@"Hatari opts: corrected invalid hatari_boot_hd line (%@) → \"disabled\"", line);
+                    } else {
+                        DLOG(@"Hatari opts: hatari_boot_hd line already valid (%@) — no repair needed", line);
                     }
                 }
                 if (!updated && ![existing containsString:@"hatari_boot_hd"]) {
@@ -745,8 +798,15 @@ void extract_bundles();
                     if (hatariWriteErr) {
                         ELOG(@"Hatari opts repair write failed for %@: %@",
                              fileName, hatariWriteErr.localizedDescription);
+                    } else {
+                        ILOG(@"Hatari opts AFTER in-place repair — successfully wrote updated hatari_boot_hd to %@", fileName);
                     }
+                } else {
+                    DLOG(@"Hatari opts: no repair was needed for %@ — hatari_boot_hd is already correct", fileName);
                 }
+            } else if (hatariReadErr) {
+                ELOG(@"Hatari opts: failed to read %@ for in-place repair: %@",
+                     fileName, hatariReadErr.localizedDescription);
             }
         }
     } else if (self.coreOptionConfig.length > 0) {

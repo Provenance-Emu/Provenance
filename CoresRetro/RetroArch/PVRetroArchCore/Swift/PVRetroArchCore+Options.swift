@@ -719,9 +719,19 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 /// 2. A stale invalid value in the file corrupts the in-memory variable store
                 /// 3. The in-memory repair never takes effect for the current session
                 /// By always overwriting, we guarantee a clean state every launch.
+                ///
+                /// NOTE: The primary fix for --acsi "" is in the bundled hatari.cfg template
+                /// (Resources/hatari.cfg) which now includes [HardDisk] and [ACSI] sections
+                /// with all HD/ACSI emulation disabled.  This .opt file write is a secondary
+                /// defence that ensures the core option variable also reads "disabled".
+                let hatariOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Hatari/Hatari.opt"
+                let optBefore = (try? String(contentsOfFile: hatariOptPath, encoding: .utf8)) ?? "(not found)"
+                DLOG("Hatari: hatari_boot_hd BEFORE fix in \(hatariOptPath):\n\(optBefore)")
                 optionValues += "hatari_boot_hd = \"disabled\"\n"
                 optionValuesFile = "Hatari/Hatari.opt"
                 optionOverwrite = true
+                ILOG("Hatari: queued hatari_boot_hd = \"disabled\" → will overwrite \(hatariOptPath)")
+                DLOG("Hatari: hatari_boot_hd AFTER scheduled write — new content will be:\n\(optionValues)")
             }
             if (coreIdentifier.contains("prboom")) {
                 optionValues += "prboom-rumble = \"enabled\"\n"
