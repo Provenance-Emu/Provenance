@@ -141,7 +141,7 @@ struct PauseTileMenuView: View {
         tiles.append(PauseMenuTile(
             id: "controllerProfile",
             icon: "gamecontroller",
-            label: String(localized: "Controller\nProfile"),
+            label: String(localized: "Controller Profile"),
             isEnabled: hasControllerProfiles,
             colorKey: .purple,
             dismissOnTap: false
