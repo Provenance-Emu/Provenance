@@ -14,6 +14,7 @@ import PVUIBase
 import PVRealm
 import PVLogging
 import PVFeatureFlags
+import PVPrimitives
 
 /// A SwiftUI context menu for game-related actions
 public struct GameContextMenu: View {
@@ -68,7 +69,7 @@ public struct GameContextMenu: View {
 
                 // Transfer Pak configuration for N64 games (feature-flagged)
                 if featureFlags.mupenTransferPak,
-                   game.systemIdentifier == "com.provenance.n64" {
+                   game.systemIdentifier == SystemIdentifier.N64.rawValue {
                     Button {
                         showTransferPakConfig = true
                     } label: {
