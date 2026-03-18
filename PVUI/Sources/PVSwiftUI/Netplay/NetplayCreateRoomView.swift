@@ -49,18 +49,18 @@ public struct NetplayCreateRoomView: View {
                     TextField("Room Name", text: $settings.roomName)
                         .autocorrectionDisabled()
 
-                    Stepper("Max Players: \(settings.maxPlayers)", value: $settings.maxPlayers, in: 2...4)
+                    tvOSCompatibleStepper("Max Players", value: $settings.maxPlayers, in: 2...4)
 
                     Toggle("Allow Spectators", isOn: $settings.allowSpectators)
 
                     if settings.allowSpectators {
-                        Stepper("Max Spectators: \(settings.maxSpectators)", value: $settings.maxSpectators, in: 0...11)
+                        tvOSCompatibleStepper("Max Spectators", value: $settings.maxSpectators, in: 0...11)
                     }
                 }
 
                 // Network settings
                 Section("Network") {
-                    Stepper("Frame Delay: \(settings.frameDelay)", value: $settings.frameDelay, in: 0...10)
+                    tvOSCompatibleStepper("Frame Delay", value: $settings.frameDelay, in: 0...10)
                     HStack {
                         Text("Port")
                         Spacer()
@@ -131,6 +131,24 @@ public struct NetplayCreateRoomView: View {
     }
 
     // MARK: - Actions
+
+    @ViewBuilder
+    private func tvOSCompatibleStepper(_ label: String, value: Binding<Int>, in range: ClosedRange<Int>) -> some View {
+        #if os(tvOS)
+        HStack {
+            Text("\(label): \(value.wrappedValue)")
+            Spacer()
+            Button { value.wrappedValue = max(range.lowerBound, value.wrappedValue - 1) } label: {
+                Image(systemName: "minus.circle")
+            }
+            Button { value.wrappedValue = min(range.upperBound, value.wrappedValue + 1) } label: {
+                Image(systemName: "plus.circle")
+            }
+        }
+        #else
+        Stepper("\(label): \(value.wrappedValue)", value: value, in: range)
+        #endif
+    }
 
     private func startHosting() {
         isStarting = true

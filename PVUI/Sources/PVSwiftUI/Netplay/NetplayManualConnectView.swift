@@ -67,7 +67,16 @@ public struct NetplayManualConnectView: View {
                 }
 
                 Section("Options") {
+                    #if os(tvOS)
+                    HStack {
+                        Text("Frame Delay: \(frameDelay)")
+                        Spacer()
+                        Button { frameDelay = max(0, frameDelay - 1) } label: { Image(systemName: "minus.circle") }
+                        Button { frameDelay = min(10, frameDelay + 1) } label: { Image(systemName: "plus.circle") }
+                    }
+                    #else
                     Stepper("Frame Delay: \(frameDelay)", value: $frameDelay, in: 0...10)
+                    #endif
                     Toggle("Connect as Spectator", isOn: $spectate)
                 }
 

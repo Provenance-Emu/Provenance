@@ -152,7 +152,11 @@ public struct NetplayLobbyView: View {
             Spacer()
         }
         .padding()
+        #if os(tvOS)
+        .background(Color.black.opacity(0.3))
+        #else
         .background(Color(.systemGroupedBackground))
+        #endif
     }
 
     /// Badge reflecting the netplay feature-flag state.
@@ -200,7 +204,11 @@ public struct NetplayLobbyView: View {
                     .foregroundStyle(.tertiary)
             }
             .padding()
+            #if os(tvOS)
+            .background(Color.white.opacity(0.1))
+            #else
             .background(Color(.secondarySystemGroupedBackground))
+            #endif
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
