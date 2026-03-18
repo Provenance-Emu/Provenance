@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "./cocoa_common.h"
+#import <objc/message.h>
 
 /* RetroArch Includes */
 #include <stdint.h>
@@ -1492,6 +1493,37 @@ static const char *apple_gamecontroller_joypad_name(unsigned pad)
 	return "mFi Controller";
 }
 
+/// Route a rumble event through PVLibRetroRumbleHelper → GCControllerHapticsManager.
+/// Returns YES if the helper class was found and the call dispatched.
+/// Falls back to the legacy PVMFIRumbleController path when it returns NO.
+static BOOL pv_retroarch_rumble_via_helper(unsigned pad,
+                                            enum retro_rumble_effect type,
+                                            uint16_t strength)
+{
+    Class helper = NSClassFromString(@"PVLibRetro.PVLibRetroRumbleHelper");
+    if (!helper) helper = NSClassFromString(@"PVLibRetroRumbleHelper");
+    if (!helper) return NO;
+
+    if (strength == 0) {
+        SEL stopSel = @selector(stopRumbleWithPort:);
+        if ([helper respondsToSelector:stopSel]) {
+            ((void (*)(id, SEL, uint32_t))objc_msgSend)(helper, stopSel, (uint32_t)pad);
+            return YES;
+        }
+    } else {
+        BOOL isStrong = (type == RETRO_RUMBLE_STRONG);
+        SEL rumbleSel = @selector(rumbleWithPort:isStrong:strength:);
+        if ([helper respondsToSelector:rumbleSel]) {
+            ((void (*)(id, SEL, uint32_t, BOOL, uint16_t))objc_msgSend)(helper, rumbleSel,
+                                                                         (uint32_t)pad,
+                                                                         isStrong,
+                                                                         strength);
+            return YES;
+        }
+    }
+    return NO;
+}
+
 static bool apple_gamecontroller_joypad_set_rumble(unsigned pad,
       enum retro_rumble_effect type, uint16_t strength)
 {
@@ -1526,6 +1558,13 @@ static bool apple_gamecontroller_joypad_set_rumble(unsigned pad,
                 }
             }
         }
+
+        // Prefer the unified GCControllerHapticsManager pipeline (timing-based
+        // burst classification, per-system profiles, tvOS support).
+        // Fall back to the legacy PVMFIRumbleController path only if the helper
+        // class is not available (e.g., stripped in a custom build).
+        if (pv_retroarch_rumble_via_helper(pad, type, strength))
+            return true;
 
         if (pad < MAX_MFI_CONTROLLERS)
         {
