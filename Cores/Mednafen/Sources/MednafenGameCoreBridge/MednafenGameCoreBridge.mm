@@ -857,6 +857,8 @@ static void emulation_run(BOOL skipFrame) {
         if (self.controller4) connectedControllers++;
         if (self.controller5) connectedControllers++;
         if (self.controller6) connectedControllers++;
+        if (self.controller7) connectedControllers++;
+        if (self.controller8) connectedControllers++;
 
         if (tapCount != nil) {
             ssMaxPlayers = MAX(2, [tapCount intValue]);
