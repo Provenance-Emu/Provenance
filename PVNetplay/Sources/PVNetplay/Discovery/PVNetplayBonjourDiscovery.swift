@@ -151,7 +151,7 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
 
 // MARK: - NetServiceBrowserDelegate
 
-extension PVNetplayBonjourDiscovery: NetServiceBrowserDelegate {
+extension PVNetplayBonjourDiscovery: @preconcurrency NetServiceBrowserDelegate {
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
         isSearching = true
     }
@@ -190,7 +190,7 @@ extension PVNetplayBonjourDiscovery: NetServiceBrowserDelegate {
 
 // MARK: - NetServiceDelegate
 
-extension PVNetplayBonjourDiscovery: NetServiceDelegate {
+extension PVNetplayBonjourDiscovery: @preconcurrency NetServiceDelegate {
     public func netServiceDidResolveAddress(_ sender: NetService) {
         pendingServices.removeAll { $0 === sender }
         resolvedServices[sender.name] = sender
