@@ -23,6 +23,7 @@ import PVSettings
 
 private enum AssociatedKeys {
     static var keyboardHostingVC: UInt8 = 0
+    static var keyboardContainer: UInt8 = 0
     static var keyboardViewModel: UInt8 = 0
     static var keyboardHiddenByHW: UInt8 = 0
     static var hwKeyboardObservers: UInt8 = 0
@@ -47,6 +48,13 @@ extension PVEmulatorViewController {
                 newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
             )
         }
+    }
+
+    /// The passthrough container view that wraps the keyboard hosting controller.
+    /// Stored so `bringVirtualInputOverlaysToFront` can re-stack it correctly.
+    private var virtualKeyboardContainer: KeyboardPassthroughView? {
+        get { objc_getAssociatedObject(self, &AssociatedKeys.keyboardContainer) as? KeyboardPassthroughView }
+        set { objc_setAssociatedObject(self, &AssociatedKeys.keyboardContainer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     /// The view model backing the keyboard overlay.
@@ -256,6 +264,7 @@ extension PVEmulatorViewController {
         }
 
         virtualKeyboardHostingVC = hostingVC
+        virtualKeyboardContainer = container
         keyboardHiddenByHardware = false
         ILOG("[VirtualKeyboard] Keyboard overlay shown (layout: \(layout), opacity: \(opacity), animated: \(animated))")
 
@@ -270,10 +279,12 @@ extension PVEmulatorViewController {
         // Release all held/modifier keys so the emulator doesn't see stuck keys
         virtualKeyboardViewModel?.releaseAllKeys()
 
+        let containerToRemove = virtualKeyboardContainer
         let cleanup = {
             hostingVC.willMove(toParent: nil)
             hostingVC.view.removeFromSuperview()
             hostingVC.removeFromParent()
+            containerToRemove?.removeFromSuperview()
         }
 
         if animated {
@@ -285,6 +296,7 @@ extension PVEmulatorViewController {
         }
 
         virtualKeyboardHostingVC = nil
+        virtualKeyboardContainer = nil
         virtualKeyboardViewModel = nil
         ILOG("[VirtualKeyboard] Keyboard overlay hidden (animated: \(animated))")
 
@@ -302,20 +314,24 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Bring all virtual input overlays (keyboard → trackpad → controller HUD → mouse cursor) to the front
-    /// of the view hierarchy in the correct stacking order.
+    /// Bring all virtual input overlays to the front of the view hierarchy in the correct stacking order.
     ///
     /// Order (back to front):
-    ///   keyboard → trackpad → controller overlay (HUD buttons) → cursor (non-interactive)
+    ///   trackpad → keyboard container → controller overlay (HUD buttons) → cursor (non-interactive)
     ///
-    /// The controller overlay must be above the trackpad so quick-action buttons
-    /// (save, load, fast-forward) remain tappable when the virtual mouse is active.
+    /// The keyboard container must be ABOVE the trackpad so UIKit checks it first during hit-testing.
+    /// KeyboardPassthroughView returns nil for non-interactive areas (the spacer above the keyboard
+    /// panel), so trackpad still receives game-viewport touches via UIKit's normal cascade.
+    /// The controller overlay is above both so HUD quick-action buttons are always tappable.
     public func bringVirtualInputOverlaysToFront() {
-        if let keyboardView = virtualKeyboardHostingVC?.view {
-            view.bringSubviewToFront(keyboardView)
-        }
         if let trackpadView = touchTrackpadView {
             view.bringSubviewToFront(trackpadView)
+        }
+        // Bring the passthrough *container*, not hostingVC.view — the container is the
+        // direct subview of `view`; hostingVC.view is a subview of the container and
+        // calling bringSubviewToFront on it would have no effect.
+        if let keyboardContainer = virtualKeyboardContainer {
+            view.bringSubviewToFront(keyboardContainer)
         }
         // HUD quick-action buttons live in the controller overlay — must be above the trackpad
         if let controllerView = controllerViewController?.view {
