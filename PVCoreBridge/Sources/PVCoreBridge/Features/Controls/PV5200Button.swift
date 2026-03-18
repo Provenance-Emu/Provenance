@@ -30,6 +30,7 @@
     case number0
     case asterisk
     case pound
+    case colorBW
     case count
 
     public init(_ value: String) {
@@ -55,6 +56,7 @@
             case "number0", "0": self = .number0
             case "asterisk", "*": self = .asterisk
             case "pound", "#": self = .pound
+            case "colorbw", "color", "bw", "tvtype": self = .colorBW
             case "count": self = .count
             default: self = .up
         }
@@ -104,9 +106,27 @@
                 return "*"
             case .pound:
                 return "#"
+            case .colorBW:
+                return "colorbw"
             case .count:
                 return "count"
         }
+    }
+}
+
+// MARK: - Hardware switches
+
+extension PV5200Button: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? {
+        [
+            HardwareSwitchDescriptor(
+                id: "color_bw",
+                title: "TV TYPE",
+                offPosition: HardwareSwitchPosition(label: "BW", buttonId: "colorbw"),
+                onPosition:  HardwareSwitchPosition(label: "CLR", buttonId: "colorbw"),
+                defaultState: true
+            )
+        ]
     }
 }
 

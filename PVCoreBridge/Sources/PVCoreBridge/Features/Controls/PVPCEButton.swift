@@ -22,6 +22,8 @@
     case run
     case select
     case mode
+    case turboI
+    case turboII
     case count
 
     public init(_ value: String) {
@@ -54,6 +56,8 @@
             case "run", "start": self = .run
             case "select": self = .select
             case "mode": self = .mode
+            case "turboi", "turbo1", "turbo_i": self = .turboI
+            case "turboii", "turbo2", "turbo_ii": self = .turboII
             case "count": self = .count
             default: self = .up
         }
@@ -87,9 +91,36 @@
                 return "select"
             case .mode:
                 return "mode"
+            case .turboI:
+                return "turboi"
+            case .turboII:
+                return "turboii"
             case .count:
                 return "count"
         }
+    }
+}
+
+// MARK: - Hardware switches
+
+extension PVPCEButton: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? {
+        [
+            HardwareSwitchDescriptor(
+                id: "turbo_i",
+                title: "TURBO I",
+                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "turboi"),
+                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "turboi"),
+                defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "turbo_ii",
+                title: "TURBO II",
+                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "turboii"),
+                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "turboii"),
+                defaultState: false
+            )
+        ]
     }
 }
 

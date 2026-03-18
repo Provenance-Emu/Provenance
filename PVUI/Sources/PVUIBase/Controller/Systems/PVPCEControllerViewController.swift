@@ -22,6 +22,19 @@ private extension JSButton {
 }
 
 final class PVPCEControllerViewController: PVControllerViewController<PVPCESystemResponderClient> {
+
+    // MARK: - Hardware Switch Input
+
+    override func didReceiveHardwareSwitchInput(buttonId: String, player: Int) {
+        let button = PVPCEButton(buttonId)
+        emulatorCore.didPush(button, forPlayer: player)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            self?.emulatorCore.didRelease(button, forPlayer: player)
+        }
+    }
+
+    // MARK: - Control layout
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {

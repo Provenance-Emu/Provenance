@@ -19,6 +19,7 @@
     case reset
     case leftDiff
     case rightDiff
+    case colorBW
     case count
 
     public init(_ value: String) {
@@ -33,7 +34,8 @@
             case "pause", "p", "start": self = .pause
             case "reset", "r": self = .reset
             case "leftdiff", "l", "l1": self = .leftDiff
-            case "rightdiff", "r", "r1": self = .rightDiff
+            case "rightdiff": self = .rightDiff
+            case "colorbw", "color", "bw", "tvtype": self = .colorBW
             case "count": self = .count
             default: self = .up
         }
@@ -63,6 +65,8 @@
                 return "leftDiff"
             case .rightDiff:
                 return "rightDiff"
+            case .colorBW:
+                return "colorbw"
             case .count:
                 return "count"
         }
@@ -87,6 +91,13 @@ extension PV7800Button: HardwareSwitchProvider {
                 offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiff"),
                 onPosition:  HardwareSwitchPosition(label: "A", buttonId: "rightdiff"),
                 defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "color_bw",
+                title: "TV TYPE",
+                offPosition: HardwareSwitchPosition(label: "BW", buttonId: "colorbw"),
+                onPosition:  HardwareSwitchPosition(label: "CLR", buttonId: "colorbw"),
+                defaultState: true
             )
         ]
     }

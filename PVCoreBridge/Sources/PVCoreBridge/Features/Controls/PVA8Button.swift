@@ -12,6 +12,9 @@
     case left
     case right
     case fire
+    case optionKey
+    case selectKey
+    case startKey
     case count
 
     public init(_ value: String) {
@@ -21,6 +24,9 @@
             case "left": self = .left
             case "right": self = .right
             case "fire", "a", "b", "x", "y": self = .fire
+            case "option", "optionkey": self = .optionKey
+            case "select", "selectkey": self = .selectKey
+            case "start", "startkey": self = .startKey
             case "count": self = .count
             default: self = .up
         }
@@ -38,9 +44,38 @@
                 return "right"
             case .fire:
                 return "fire"
+            case .optionKey:
+                return "option"
+            case .selectKey:
+                return "select"
+            case .startKey:
+                return "start"
             case .count:
                 return "count"
         }
+    }
+}
+
+// MARK: - Hardware switches
+
+extension PVA8Button: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? {
+        [
+            HardwareSwitchDescriptor(
+                id: "option_key",
+                title: "OPTION",
+                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "option"),
+                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "option"),
+                defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "select_key",
+                title: "SELECT",
+                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "select"),
+                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "select"),
+                defaultState: false
+            )
+        ]
     }
 }
 
