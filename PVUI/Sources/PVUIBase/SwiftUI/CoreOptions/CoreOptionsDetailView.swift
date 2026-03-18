@@ -379,7 +379,10 @@ public struct CoreOptionsDetailView: View {
                     .padding(.horizontal)
                 }
 
-                // Reset button
+                // Reset all global options — hidden when viewing per-game scope to prevent
+                // accidentally wiping global defaults while per-game overrides are active.
+                // Users in per-game scope should use "RESET GAME OVERRIDES" above instead.
+                if !(gameMD5 != nil && perGameScope) {
                 Button(action: {
                     state.showResetConfirmation = true
                 }) {
@@ -423,6 +426,7 @@ public struct CoreOptionsDetailView: View {
                 #endif
                 .padding(.vertical, 20)
                 .padding(.horizontal)
+                } // end if !(gameMD5 != nil && perGameScope)
             }
             .padding(.bottom, 30)
         }
@@ -440,8 +444,10 @@ public struct CoreOptionsDetailView: View {
             loadOptionValues()
         }
         .uiKitAlert(
-            "Reset Options",
-            message: "Are you sure you want to reset all options for \(title) to their default values?",
+            "Reset All Options",
+            message: gameMD5 != nil
+                ? "Reset all \(title) global defaults to factory values? This affects all games."
+                : "Are you sure you want to reset all options for \(title) to their default values?",
             isPresented: $state.showResetConfirmation
         ) {
             UIAlertAction(title: "Reset", style: .destructive) { _ in
