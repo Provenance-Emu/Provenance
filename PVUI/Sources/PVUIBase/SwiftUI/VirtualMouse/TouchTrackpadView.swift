@@ -111,10 +111,9 @@ public final class TouchTrackpadView: UIView {
     private func commonInit() {
         backgroundColor = .clear
         isUserInteractionEnabled = true
-        #if !os(tvOS)
+#if !os(tvOS)
         // Multi-touch required for 2/3-finger gestures.
         isMultipleTouchEnabled = true
-        #endif
 
         // 2-finger tap → right click
         let twoFingerTap = UITapGestureRecognizer(target: self, action: #selector(handleTwoFingerTap(_:)))
@@ -127,6 +126,7 @@ public final class TouchTrackpadView: UIView {
         threeFingerTap.numberOfTapsRequired = 1
         threeFingerTap.numberOfTouchesRequired = 3
         addGestureRecognizer(threeFingerTap)
+#endif
 
         // Long-press → right click (single-finger fallback)
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
@@ -168,12 +168,18 @@ public final class TouchTrackpadView: UIView {
                     (sibling.layer.zPosition == self.layer.zPosition && siblingIndex > ownIndex)
                 if isAbove {
                     let siblingPoint = sibling.convert(point, from: self)
-                    // Only yield if a *descendant* of the sibling (not the sibling itself)
-                    // claims the touch. When a container has no interactive element at this
-                    // point UIKit's hitTest returns the container itself — that's an empty
-                    // area we should not yield to (it would swallow the touch silently).
-                    if let hit = sibling.hitTest(siblingPoint, with: event),
-                       hit !== parent, hit !== sibling {
+                    if let hit = sibling.hitTest(siblingPoint, with: event), hit !== parent {
+                        // When hitTest returns the sibling itself, distinguish between:
+                        //   A) A transparent container (e.g. UIHostingController root view
+                        //      over an empty skin region) — swallows touches silently → skip.
+                        //   B) A genuine interactive leaf (UIButton, UIControl, or a view
+                        //      with gesture recognizers, e.g. the SwiftUI keyboard overlay
+                        //      close button) — yield to it.
+                        if hit === sibling {
+                            let isInteractiveLeaf = sibling is UIControl ||
+                                !(sibling.gestureRecognizers?.isEmpty ?? true)
+                            guard isInteractiveLeaf else { continue }
+                        }
                         return hit
                     }
                 }
