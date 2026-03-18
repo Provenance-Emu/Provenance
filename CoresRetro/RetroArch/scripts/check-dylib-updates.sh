@@ -55,8 +55,14 @@ done
 # --------------------------------------------------------------------------
 [ -f "${CORES_YML}" ] || die "${CORES_YML} not found"
 
-PINNED_DATE=$(grep -v '^[[:space:]]*#' "${CORES_YML}" \
-    | grep -E '^[[:space:]]*pinned_date:' \
+_PINNED_LINES=$(grep -v '^[[:space:]]*#' "${CORES_YML}" \
+    | grep -E '^[[:space:]]*pinned_date:')
+_PINNED_COUNT=$(printf '%s' "${_PINNED_LINES}" | grep -c . 2>/dev/null || echo 0)
+if [ "${_PINNED_COUNT}" -gt 1 ] 2>/dev/null; then
+    die "Multiple 'pinned_date:' entries found in ${CORES_YML}; ensure exactly one is set."
+fi
+PINNED_DATE=$(printf '%s\n' "${_PINNED_LINES}" \
+    | head -1 \
     | sed 's/.*pinned_date:[[:space:]]*//' \
     | tr -d '"' | tr -d "'" | tr -d '[:space:]')
 
@@ -104,7 +110,26 @@ fi
 echo "Latest on buildbot: ${LATEST_DATE}"
 
 # --------------------------------------------------------------------------
-# Compare dates (lexicographic comparison works for YYYY-MM-DD)
+# If a forced date was given, apply it directly — skip the latest comparison.
+# This ensures --update YYYY-MM-DD works even when pinned_date == latest.
+# --------------------------------------------------------------------------
+if [ "${DO_UPDATE}" = "1" ] && [ -n "${FORCED_DATE}" ]; then
+    TARGET_DATE="${FORCED_DATE}"
+    if [ "${PINNED_DATE}" = "${TARGET_DATE}" ]; then
+        echo "✅ Pin is already at ${TARGET_DATE}; nothing to do."
+        exit 0
+    fi
+    echo "Bumping pin from ${PINNED_DATE} to ${TARGET_DATE}..."
+    "${SCRIPTS_DIR}/update-dylib-pins.sh" "${TARGET_DATE}"
+    echo ""
+    echo "Next steps:"
+    echo "  git add CoresRetro/RetroArch/scripts/cores.yml"
+    echo "  git commit -m 'build: pin RetroArch dylibs to ${TARGET_DATE}'"
+    exit 0
+fi
+
+# --------------------------------------------------------------------------
+# Compare dates against latest buildbot snapshot (lexicographic for YYYY-MM-DD)
 # --------------------------------------------------------------------------
 if [ "${PINNED_DATE}" = "${LATEST_DATE}" ]; then
     echo "✅ Pin is up-to-date."
@@ -114,7 +139,7 @@ elif [ "${PINNED_DATE}" > "${LATEST_DATE}" ]; then
     warn "Pinned date (${PINNED_DATE}) is newer than buildbot latest (${LATEST_DATE}) — unusual."
     exit 0
 else
-    # Pin is behind.
+    # Pin is behind latest.
     echo "⚠️  Newer snapshot available: ${LATEST_DATE}  (currently pinned: ${PINNED_DATE})"
     if [ "${DO_UPDATE}" = "0" ]; then
         echo "   Run:  ./check-dylib-updates.sh --update"
@@ -122,13 +147,12 @@ else
         exit 1
     fi
 
-    # --update was passed: bump to FORCED_DATE or LATEST_DATE.
-    TARGET_DATE="${FORCED_DATE:-${LATEST_DATE}}"
-    echo "Bumping pin to ${TARGET_DATE}..."
-    "${SCRIPTS_DIR}/update-dylib-pins.sh" "${TARGET_DATE}"
+    # --update was passed (no forced date): bump to latest.
+    echo "Bumping pin to ${LATEST_DATE}..."
+    "${SCRIPTS_DIR}/update-dylib-pins.sh" "${LATEST_DATE}"
     echo ""
     echo "Next steps:"
     echo "  git add CoresRetro/RetroArch/scripts/cores.yml"
-    echo "  git commit -m 'build: pin RetroArch dylibs to ${TARGET_DATE}'"
+    echo "  git commit -m 'build: pin RetroArch dylibs to ${LATEST_DATE}'"
     exit 0
 fi
