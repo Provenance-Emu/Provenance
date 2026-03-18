@@ -11,6 +11,7 @@
 //  - GameWithCheat       (cheat code support via retro_cheat_set / retro_cheat_reset)
 //  - CoreRetroAchievements (RetroAchievements – rcheevos runs inside the core itself)
 //  - SubCoreOptional     (per-subcore option overrides, extends existing CoreOptional)
+//  - TransferPakSupport  (N64 Transfer Pak – Mupen64Plus-Next libretro core only)
 //
 
 import Foundation
@@ -138,5 +139,84 @@ extension PVThinLibretroCore: @preconcurrency SubCoreOptional {
         // Thin wrapper surfaces the core's own options via CoreOptional.
         // Return nil so callers fall through to the dynamic CoreOptional options.
         return nil
+    }
+}
+
+// MARK: - TransferPakSupport
+//
+// Mupen64Plus-Next (the libretro port) exposes pak configuration via core options:
+//   mupen64plus-pak1 … mupen64plus-pak4  — values: "none" | "memory" | "rumble" | "transfer"
+//
+// When a GB/GBC ROM is assigned, the pak type is set to "transfer" and the ROM
+// path is written to the `mupen64plus-transfer-pak-path` core option. If that
+// option is not present in a given core build, the assignment will still enable
+// the Transfer Pak device type so that the core's internal config file or BIOS
+// directory lookup will handle the ROM.
+//
+// NOTE: option key names verified against mupen64plus-next libretro source
+// (libretro/mupen64plus-next, `libretro-options.h`). If a core build uses
+// different keys, update the constants below and re-test with Pokémon Stadium 2.
+
+extension PVThinLibretroCore: TransferPakSupport {
+
+    // MARK: - Constants
+
+    /// Libretro option key suffix for pak type (append "1"–"4").
+    private static let pakTypeKeyBase = "mupen64plus-pak"
+
+    /// Pak type value strings understood by mupen64plus-next libretro.
+    private enum PakType: String {
+        case none     = "none"
+        case memory   = "memory"
+        case rumble   = "rumble"
+        case transfer = "transfer"
+    }
+
+    // MARK: - TransferPakSupport
+
+    /// Returns 4 (one per N64 controller port) for Mupen64Plus-based libretro cores,
+    /// 0 for all other cores so the Transfer Pak UI is hidden.
+    public var transferPakSlotCount: Int {
+        let coreId = (coreIdentifier ?? "").lowercased()
+        return (coreId.contains("mupen64plus") || coreId.contains("mupen_64")) ? 4 : 0
+    }
+
+    public func setTransferPakROM(_ rom: TransferPakROM?, forPort port: Int) {
+        guard transferPakSlotCount > 0 else { return }
+        guard port >= 0 && port < 4 else { return }
+
+        // Port options are 1-based ("mupen64plus-pak1" … "mupen64plus-pak4").
+        let optionPort = port + 1
+        let pakTypeKey = "\(Self.pakTypeKeyBase)\(optionPort)"
+
+        if let rom = rom {
+            _transferPakSlots[port] = rom
+
+            // Tell the core to use a Transfer Pak on this port.
+            _bridge.setCoreOption(pakTypeKey, value: PakType.transfer.rawValue)
+
+            // Supply the GB/GBC ROM path.
+            // mupen64plus-next reads this from the core option when pak type is "transfer".
+            // If the key is absent in this build, the core falls back to its own config dir.
+            _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: rom.romPath.path)
+            if let savePath = rom.savePath {
+                _bridge.setCoreOption("mupen64plus-transfer-pak-save-path", value: savePath.path)
+            }
+
+            ILOG("ThinLibretroCore: Transfer Pak port \(port) → \(rom.romPath.lastPathComponent)")
+        } else {
+            _transferPakSlots.removeValue(forKey: port)
+
+            // Revert to memory pak (mempak) when the Transfer Pak is removed.
+            _bridge.setCoreOption(pakTypeKey, value: PakType.memory.rawValue)
+            _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: "")
+            _bridge.setCoreOption("mupen64plus-transfer-pak-save-path", value: "")
+
+            ILOG("ThinLibretroCore: Transfer Pak port \(port) cleared → memory pak")
+        }
+    }
+
+    public func transferPakROM(forPort port: Int) -> TransferPakROM? {
+        return _transferPakSlots[port]
     }
 }
