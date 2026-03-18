@@ -7,7 +7,9 @@
 //  the real runtime JIT state instead of a hardcoded `true`.
 //
 
+#if !os(tvOS)
 import JITManager
+#endif
 
 /// Returns `true` if Provenance has successfully acquired JIT at runtime.
 ///
@@ -17,7 +19,13 @@ import JITManager
 ///
 /// Exposed as a C symbol so the ObjC/ObjC++ env-callback implementations
 /// can call it without bridging through a Swift object.
+///
+/// On tvOS, JIT is never available so this always returns `false`.
 @_cdecl("pvjit_acquired")
 func pvjitAcquired() -> Bool {
+    #if os(tvOS)
+    return false
+    #else
     return DOLJitManager.acquired
+    #endif
 }
