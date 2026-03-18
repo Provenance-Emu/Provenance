@@ -4,6 +4,23 @@ import PVCoreBridge
 import PVLibrary
 import Combine
 
+// MARK: - CoreOptionsScope
+
+/// Describes the scope at which core options are read and written.
+///
+/// When a game context is provided, reads and writes use the per-game
+/// override key (`<ClassName>.<md5>.<optionKey>`), falling back to the
+/// per-core global key automatically. When no game context is set,
+/// only the per-core global key is used.
+enum CoreOptionsScope: Equatable {
+    /// Options apply to all games played with this core.
+    case perCore
+    /// Options are scoped to a specific game, identified by its MD5 hash.
+    case perGame(md5: String, displayName: String)
+}
+
+// MARK: - CoreOptionsViewModel
+
 @MainActor
 final class CoreOptionsViewModel: ObservableObject {
     /// Published list of available cores that implement CoreOptional
@@ -12,15 +29,70 @@ final class CoreOptionsViewModel: ObservableObject {
     /// The currently selected core for options display
     @Published var selectedCore: (core: PVCore, coreClass: CoreOptional.Type)?
 
-    /// Optional game MD5 for per-game scoped reads/writes.
-    /// When set, option reads and writes use the per-game key prefix.
-    var gameMD5: String?
+    /// MD5 hash of the currently scoped game, or `nil` for core-global scope.
+    @Published private(set) var gameMD5: String?
+
+    /// Human-readable display name for the currently scoped game.
+    @Published private(set) var gameDisplayName: String?
 
     private var cancellables = Set<AnyCancellable>()
 
-    init(gameMD5: String? = nil) {
-        self.gameMD5 = gameMD5
+    /// The current read/write scope — `.perGame` when a game context is set,
+    /// `.perCore` otherwise.
+    var scope: CoreOptionsScope {
+        if let md5 = gameMD5, let name = gameDisplayName {
+            return .perGame(md5: md5, displayName: name)
+        }
+        return .perCore
+    }
+
+    /// Create a view model scoped to a specific game.
+    ///
+    /// - Parameters:
+    ///   - md5: MD5 hash of the game. An empty string is treated as `nil`
+    ///     (per-core scope).
+    ///   - displayName: Human-readable name shown in scope-related UI.
+    init(md5: String? = nil, displayName: String? = nil) {
+        if let md5 = md5, !md5.isEmpty {
+            self.gameMD5 = md5
+            self.gameDisplayName = displayName
+        }
         loadAvailableCores()
+    }
+
+    /// Convenience initialiser that extracts the MD5 and title from a
+    /// `PVGame`. The game's fields are read immediately on the caller's
+    /// thread so the `PVGame` reference is not retained by the view model.
+    ///
+    /// - Parameter game: When non-nil, reads and writes are scoped to this
+    ///   game's MD5 hash so per-game overrides are applied.
+    convenience init(game: PVGame?) {
+        if let game = game, !game.md5Hash.isEmpty {
+            self.init(md5: game.md5Hash, displayName: game.title)
+        } else {
+            self.init()
+        }
+    }
+
+    /// Configure the view model for a specific game context using sendable values.
+    ///
+    /// Pass `nil` for `md5` (or an empty string) to revert to core-global scope.
+    func setGame(md5: String?, displayName: String?) {
+        guard let md5 = md5, !md5.isEmpty else {
+            gameMD5 = nil
+            gameDisplayName = nil
+            return
+        }
+        gameMD5 = md5
+        gameDisplayName = displayName
+    }
+
+    /// Convenience setter that extracts the MD5 and title from a `PVGame`.
+    /// The game's fields are read immediately so the `PVGame` reference is
+    /// not retained by the view model.
+    func setGame(_ game: PVGame?) {
+        setGame(md5: game.flatMap { $0.md5Hash.isEmpty ? nil : $0.md5Hash },
+                displayName: game?.title)
     }
 
     /// Load all cores that implement CoreOptional
@@ -28,20 +100,20 @@ final class CoreOptionsViewModel: ObservableObject {
         let unsupportedCores = Defaults[.unsupportedCores]
         let isAppStore = AppState.shared.isAppStore
         let realm = try! Realm()
-        
+
         availableCores = realm.objects(PVCore.self)
             .sorted(byKeyPath: "projectName")
             .filter { pvcore in
                 guard let _ = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
                     return false
                 }
-                
+
                 // Keep the core if:
                 // 1. It's not disabled, OR it's disabled but unsupportedCores is true
                 // 2. AND (It's not app store disabled, OR we're not in the app store) — always hard-hidden in App Store builds
                 let keepDueToDisabled = !pvcore.disabled || unsupportedCores
                 let keepDueToAppStoreDisabled = !pvcore.appStoreDisabled || !isAppStore
-                
+
                 return keepDueToDisabled && keepDueToAppStoreDisabled
             }
     }
@@ -55,7 +127,10 @@ final class CoreOptionsViewModel: ObservableObject {
         selectedCore = (core: core, coreClass: coreClass)
     }
 
-    /// Get the current value for an option, respecting the per-game scope when `gameMD5` is set.
+    /// Get the current value for an option, respecting the active scope.
+    ///
+    /// When `scope == .perGame`, the per-game key is checked first and falls
+    /// back to the per-core global key automatically via `storedValueForOption`.
     func currentValue(for option: CoreOption) -> Any? {
         guard let coreClass = selectedCore?.coreClass else { return nil }
         let md5 = gameMD5
@@ -80,7 +155,10 @@ final class CoreOptionsViewModel: ObservableObject {
         }
     }
 
-    /// Set a new value for an option, respecting the per-game scope when `gameMD5` is set.
+    /// Set a new value for an option, respecting the active scope.
+    ///
+    /// When `scope == .perGame`, the value is written to the per-game key so
+    /// it does not affect other games using the same core.
     func setValue(_ value: Any, for option: CoreOption) {
         guard let coreClass = selectedCore?.coreClass else { return }
         let md5 = gameMD5
@@ -99,21 +177,42 @@ final class CoreOptionsViewModel: ObservableObject {
         }
     }
 
-    /// Returns true if a per-game override exists for the option and the current `gameMD5`.
+    /// Returns `true` if the active game has a per-game override stored for
+    /// the given option. Always returns `false` in `.perCore` scope.
+    ///
+    /// Use this to show an "overridden" badge in the option row UI.
     func hasPerGameOverride(for option: CoreOption) -> Bool {
-        guard let coreClass = selectedCore?.coreClass, let md5 = gameMD5 else { return false }
+        guard let coreClass = selectedCore?.coreClass,
+              let md5 = gameMD5 else { return false }
         return coreClass.hasPerGameOverride(for: option, md5: md5)
     }
 
-    /// Resets the per-game override for a single option (no-op when `gameMD5` is nil).
-    func resetOption(_ option: CoreOption) {
-        guard let coreClass = selectedCore?.coreClass, let md5 = gameMD5 else { return }
-        coreClass.resetOption(option, forMD5: md5)
-    }
+    /// Reset a single option to its effective default for the current scope.
+    ///
+    /// - In `.perGame` scope: removes the per-game override key so the option
+    ///   reverts to the per-core global value on the next read.
+    /// - In `.perCore` scope: writes the option's declared default value to
+    ///   the per-core global key.
+    func resetToDefault(option: CoreOption) {
+        guard let coreClass = selectedCore?.coreClass else { return }
 
-    /// Resets all per-game overrides for the current game (no-op when `gameMD5` is nil).
-    func resetAllPerGameOptions() {
-        guard let coreClass = selectedCore?.coreClass, let md5 = gameMD5 else { return }
-        coreClass.resetAllOptions(forMD5: md5)
+        switch scope {
+        case .perGame(let md5, _):
+            coreClass.resetOption(option, forMD5: md5)
+        case .perCore:
+            // `.multi` options require special handling: `defaultValue` returns
+            // `[String]` (all isDefault titles), but the persistence layer stores
+            // a single `String` selection. Extract the first default title instead.
+            switch option {
+            case .multi(_, let values, _):
+                if let title = values.first(where: { $0.isDefault })?.title ?? values.first?.title {
+                    coreClass.setValue(title, forOption: option)
+                }
+            default:
+                if let defaultValue = option.defaultValue {
+                    coreClass.setValue(defaultValue, forOption: option)
+                }
+            }
+        }
     }
 }
