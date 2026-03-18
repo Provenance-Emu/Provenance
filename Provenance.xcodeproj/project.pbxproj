@@ -683,7 +683,6 @@
 		B39FAC472D6014010065B66B /* SDL2.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC452D6014000065B66B /* SDL2.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A186672CBCA4C000BB1FFE /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3THUMB0126520001BBBBBBBB /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3THUMB0226520001BBBBBBBB /* PVLibrary */; };
-		B3THUMB0326520001BBBBBBBB /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3THUMB0426520001BBBBBBBB /* PVLogging */; };
 		B3A186682CBCA4C500BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186712CBCA50B00BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A1867D2CBCB78C00BB1FFE /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3A1867C2CBCB78C00BB1FFE /* PVLibrary */; };
@@ -17522,11 +17521,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
 			productName = PVLibrary;
-		};
-		B3THUMB0426520001BBBBBBBB /* PVLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */;
-			productName = PVLogging;
 		};
 		B3A60FFE2CB880BE001D99C2 /* PVUI */ = {
 			isa = XCSwiftPackageProductDependency;

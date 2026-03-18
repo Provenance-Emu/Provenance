@@ -14,7 +14,6 @@
 import Foundation
 import PVLibrary
 import RealmSwift
-import os.log
 
 /// Realm-backed `ThumbnailArtworkDriver`.
 ///
@@ -22,16 +21,12 @@ import os.log
 /// extension worker thread).  No Realm objects escape this class — only
 /// plain `String` / `URL` values are returned.
 final class RealmThumbnailArtworkDriver: ThumbnailArtworkDriver {
-    private let logger = OSLog(
-        subsystem: "org.provenance-emu.provenance.thumbnail",
-        category: "RealmArtworkDriver"
-    )
 
     // MARK: - ThumbnailArtworkDriver
 
     func artworkURLKey(forROMFilename romFilename: String) -> String? {
         guard RealmConfiguration.supportsAppGroups else {
-            os_log("App Groups not supported — skipping Realm artwork lookup", log: logger, type: .error)
+            ELOG("App Groups not supported — skipping Realm artwork lookup")
             return nil
         }
         do {
@@ -46,21 +41,21 @@ final class RealmThumbnailArtworkDriver: ThumbnailArtworkDriver {
                 ?? realm.objects(PVGame.self).filter("romPath == %@", romFilename).first
 
             guard let game = match else {
-                os_log("No game found for ROM filename: %{public}@", log: logger, type: .debug, romFilename)
+                DLOG("No game found for ROM filename: \(romFilename)")
                 return nil
             }
 
             let url = game.artworkURL
             return url.isEmpty ? nil : url
         } catch {
-            os_log("Realm lookup failed: %{public}@", log: logger, type: .error, error.localizedDescription)
+            ELOG("Realm lookup failed: \(error.localizedDescription)")
             return nil
         }
     }
 
     func saveStateImageFileURL(forSaveStatePath saveStatePath: String) -> URL? {
         guard RealmConfiguration.supportsAppGroups else {
-            os_log("App Groups not supported — skipping Realm save state lookup", log: logger, type: .error)
+            ELOG("App Groups not supported — skipping Realm save state lookup")
             return nil
         }
         do {
@@ -79,7 +74,7 @@ final class RealmThumbnailArtworkDriver: ThumbnailArtworkDriver {
             }
             return imageURL
         } catch {
-            os_log("Realm save state lookup failed: %{public}@", log: logger, type: .error, error.localizedDescription)
+            ELOG("Realm save state lookup failed: \(error.localizedDescription)")
             return nil
         }
     }

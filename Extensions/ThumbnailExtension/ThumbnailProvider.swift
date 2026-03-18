@@ -14,13 +14,10 @@ import UIKit
 import QuickLookThumbnailing
 import PVLibrary
 import PVHashing
-import os.log
 
 // https://developer.apple.com/documentation/quicklookthumbnailing/providing_thumbnails_of_your_custom_file_types
 
 class ThumbnailProvider: QLThumbnailProvider {
-
-    private let logger = OSLog(subsystem: "org.provenance-emu.provenance.thumbnail", category: "ThumbnailProvider")
 
     /// CPDI driver — swap this property to change the persistence backend.
     private lazy var artworkDriver: ThumbnailArtworkDriver = RealmThumbnailArtworkDriver()
@@ -75,7 +72,7 @@ class ThumbnailProvider: QLThumbnailProvider {
                 .appendingPathComponent("PVCache", isDirectory: true)
                 .appendingPathComponent(keyHash, isDirectory: false)
             if FileManager.default.fileExists(atPath: appGroupCacheURL.path) {
-                os_log("Artwork resolved via App Group cache", log: logger, type: .debug)
+                DLOG("Artwork resolved via App Group cache")
                 return appGroupCacheURL
             }
         }
@@ -83,11 +80,11 @@ class ThumbnailProvider: QLThumbnailProvider {
         // 2. Local documents fallback via PVMediaCache.
         if let localURL = PVMediaCache.filePath(forKey: key),
            FileManager.default.fileExists(atPath: localURL.path) {
-            os_log("Artwork resolved via local cache", log: logger, type: .debug)
+            DLOG("Artwork resolved via local cache")
             return localURL
         }
 
-        os_log("Artwork file not found for key hash: %{public}@", log: logger, type: .debug, keyHash)
+        DLOG("Artwork file not found for key hash: \(keyHash)")
         return nil
     }
 
