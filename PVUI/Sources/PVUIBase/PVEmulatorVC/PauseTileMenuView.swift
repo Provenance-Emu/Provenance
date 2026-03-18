@@ -41,10 +41,13 @@ struct PauseTileMenuView: View {
 
     @State private var showingSaveStateBrowser = false
     @State private var showingScreenshotBrowser = false
+    @State private var showingControllerProfiles = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Incremented after every core-option toggle to force a re-render of the tile grid.
     @State private var coreOptionRefreshToken = 0
+    /// Cached result of the Realm query — refreshed on appear, not on every render.
+    @State private var hasControllerProfiles = false
 
     // MARK: tvOS Focus
 
@@ -133,6 +136,15 @@ struct PauseTileMenuView: View {
             icon: "info.circle",
             label: String(localized: "Game Info"),
             colorKey: .blue
+        ))
+
+        tiles.append(PauseMenuTile(
+            id: "controllerProfile",
+            icon: "gamecontroller",
+            label: String(localized: "Controller Profile"),
+            isEnabled: hasControllerProfiles,
+            colorKey: .purple,
+            dismissOnTap: false
         ))
 
         #if os(iOS) || targetEnvironment(macCatalyst)
@@ -230,6 +242,8 @@ struct PauseTileMenuView: View {
             dismissForSubSheetThen { self.emulatorVC.showCheatsMenu() }
         case "gameInfo":
             dismissForSubSheetThen { self.emulatorVC.showMoreInfo() }
+        case "controllerProfile":
+            showingControllerProfiles = true
         case "screenshot":
             dismissAction(true)
             emulatorVC.takeScreenshot()
@@ -493,6 +507,11 @@ struct PauseTileMenuView: View {
                 showingScreenshotBrowser = false
             }
         }
+        .sheet(isPresented: $showingControllerProfiles) {
+            InSessionProfilePickerView(emulatorVC: emulatorVC) {
+                showingControllerProfiles = false
+            }
+        }
         // Core action option picker — shown when a CoreAction exposes multiple options.
         .confirmationDialog(
             pendingCoreAction?.title ?? "",
@@ -533,9 +552,11 @@ struct PauseTileMenuView: View {
         }
         .onAppear {
             orientation = UIDevice.current.orientation
+            refreshControllerProfileState()
         }
         #elseif os(tvOS)
         .onAppear {
+            refreshControllerProfileState()
             // Set initial focus to the first enabled tile
             if let firstEnabled = allTiles.first(where: { $0.isEnabled }) {
                 focusedTileID = firstEnabled.id
@@ -547,6 +568,18 @@ struct PauseTileMenuView: View {
     }
 
     // MARK: - Helpers
+
+    /// Queries Realm once to determine if any connected controller has saved profiles.
+    /// Call from `.onAppear` rather than inside computed tile arrays to avoid
+    /// hitting the database on every SwiftUI re-render.
+    private func refreshControllerProfileState() {
+        let controllers = PVControllerManager.shared.controllers
+        let db = RomDatabase.sharedInstance
+        hasControllerProfiles = controllers.contains { c in
+            guard let name = c.vendorName else { return false }
+            return !db.controllerProfiles(forVendor: name).isEmpty
+        }
+    }
 
     /// Returns `tvOS` value on tvOS, `standard` on other platforms.
     private func tvOSAdjusted(_ standard: CGFloat, tvOS tvOSValue: CGFloat) -> CGFloat {

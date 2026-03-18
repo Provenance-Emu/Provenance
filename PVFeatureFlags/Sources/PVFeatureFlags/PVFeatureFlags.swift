@@ -31,6 +31,10 @@ public enum PVFeature: String, CaseIterable {
     /// Enables the experimental tile/grid based pause menu overlay that floats over the
     /// game screen instead of the classic full-panel tab/list menu. Disabled by default.
     case pauseTileMenu = "pauseTileMenu"
+    /// Enables tap-to-remap UX in the button remapping settings: instead of selecting a
+    /// destination button from a list, the user presses a physical button on their controller.
+    /// Disabled by default while the feature is being developed.
+    case tapToRemapUI = "tapToRemapUI"
 }
 
 /// Represents the type of app installation
@@ -110,6 +114,11 @@ public struct FeatureFlag: Codable, Sendable {
     public static let pauseTileMenu = FeatureFlag(
         enabled: false,
         description: "Experimental tile/grid based pause menu overlay that floats over the game screen. Default is the classic tab/list menu."
+    )
+
+    public static let tapToRemapUI = FeatureFlag(
+        enabled: false,
+        description: "Tap-to-remap UX: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development."
     )
 }
 
@@ -394,6 +403,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? false }
     public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
     public var pauseTileMenu: Bool { featureStates[.pauseTileMenu] ?? false }
+    public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
 
     // MARK: - Feature Queries
 

@@ -151,21 +151,6 @@ public final class PVRemappableController: NSObject {
             }
         }
 
-        // Motion
-//        if #available(iOS 14.5, tvOS 14.5, *) {
-//            dualSense.controller?.physicalInputProfile.motionInput?.valueChangedHandler = { [weak self] (motion: GCMotion) in
-//                self?.gyroHandler?(
-//                    Float(motion.gravity.x),
-//                    Float(motion.gravity.y),
-//                    Float(motion.gravity.z)
-//                )
-//                self?.accelerometerHandler?(
-//                    Float(motion.userAcceleration.x),
-//                    Float(motion.userAcceleration.y),
-//                    Float(motion.userAcceleration.z)
-//                )
-//            }
-//        }
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
@@ -489,6 +474,11 @@ public final class PVRemappableController: NSObject {
     }
 
     /// Get identifier for a button input
+    /// Public wrapper — used by TapToRemapView to identify which physical button was pressed.
+    public func buttonIdentifier(for element: GCControllerElement) -> ButtonIdentifier? {
+        identifier(for: element)
+    }
+
     private func identifier(for element: GCControllerElement) -> ButtonIdentifier? {
         guard let gamepad = wrappedController.extendedGamepad else { return nil }
 
@@ -510,6 +500,8 @@ public final class PVRemappableController: NSObject {
         case gamepad.rightThumbstickButton: return .rightThumbstickButton
         default:
             if #available(iOS 14.5, tvOS 14.5, *) {
+                // Platform-specific mappings take precedence over the generic options button.
+                // DualSense: buttonOptions is the "Share" button.
                 if let dualSense = gamepad as? GCDualSenseGamepad {
                     switch element {
                     case dualSense.buttonOptions: return .share
@@ -517,12 +509,18 @@ public final class PVRemappableController: NSObject {
                     default: break
                     }
                 }
+                // Xbox: buttonOptions is the "Share" button on Elite/Series X.
                 if let xbox = gamepad as? GCXboxGamepad {
                     switch element {
                     case xbox.buttonOptions: return .shareButton
                     default: break
                     }
                 }
+            }
+            // Generic GCExtendedGamepad options button (e.g. PS4 Options, Switch Pro Capture).
+            if #available(iOS 14.0, tvOS 14.0, *),
+               let optionsButton = gamepad.buttonOptions, optionsButton === element {
+                return .options
             }
             return nil
         }
@@ -604,6 +602,50 @@ extension PVRemappableController {
     /// Get the destination button for a mapped button
     public func mappedButton(for button: ButtonIdentifier) -> ButtonIdentifier? {
         buttonMappings[button]?.destinationId
+    }
+}
+
+// MARK: - ButtonIdentifier display name
+
+extension ButtonIdentifier {
+    /// Human-readable display name for use in UI labels.
+    public var displayName: String {
+        switch self {
+        case .buttonA: return "A"
+        case .buttonB: return "B"
+        case .buttonX: return "X"
+        case .buttonY: return "Y"
+        case .leftShoulder: return "L1"
+        case .rightShoulder: return "R1"
+        case .leftTrigger: return "L2"
+        case .rightTrigger: return "R2"
+        case .dpadUp: return "D-Pad Up"
+        case .dpadDown: return "D-Pad Down"
+        case .dpadLeft: return "D-Pad Left"
+        case .dpadRight: return "D-Pad Right"
+        case .menu: return "Menu"
+        case .options: return "Options"
+        case .home: return "Home"
+        case .leftThumbstickButton: return "L3"
+        case .rightThumbstickButton: return "R3"
+        case .share: return "Share"
+        case .touchpad: return "Touchpad"
+        case .touchpadButton: return "Touchpad Button"
+        case .micButton: return "Mic"
+        case .createButton: return "Create"
+        case .paddleOne: return "Paddle 1"
+        case .paddleTwo: return "Paddle 2"
+        case .paddleThree: return "Paddle 3"
+        case .paddleFour: return "Paddle 4"
+        case .shareButton: return "Share"
+        case .capture: return "Capture"
+        case .plusButton: return "+"
+        case .minusButton: return "−"
+        case .leftSL: return "Left SL"
+        case .leftSR: return "Left SR"
+        case .rightSL: return "Right SL"
+        case .rightSR: return "Right SR"
+        }
     }
 }
 
