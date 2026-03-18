@@ -1,5 +1,5 @@
 //
-//  PVblueMSXCore.m
+//  PVblueMSXCore.mm
 //  PVblueMSX
 //
 //  Created by Joseph Mattiello on 6/15/22.
@@ -8,24 +8,19 @@
 
 #import "PVblueMSXCore.h"
 #include <stdatomic.h>
-//#import "PVblueMSXCore+Controls.h"
-//#import "PVblueMSXCore+Audio.h"
-//#import "PVblueMSXCore+Video.h"
-//
-//#import "PVblueMSXCore+Audio.h"
+#include <PVCoreBridgeRetro/libretro.h>
 
 #import <Foundation/Foundation.h>
+@import GameController;
 @import PVCoreBridge;
+@import PVLoggingObjC;
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
-#define OpenEmu 1
 
 #pragma mark - Private
 @interface PVblueMSXCore() {
-
 }
-
 @end
 
 #pragma mark - PVblueMSXCore Begin
@@ -47,211 +42,209 @@
 }
 
 #pragma mark - PVEmulatorCore
-//- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
-//	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
-//	const char *dataPath;
-//
-//    [self initControllBuffers];
-//
-//	// TODO: Proper path
-//	NSString *configPath = self.saveStatesPath;
-//	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
-//
-//	[[NSFileManager defaultManager] createDirectoryAtPath:configPath
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:nil];
-//
-//	NSString *batterySavesDirectory = self.batterySavesPath;
-//	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:NULL];
-//
-//    return YES;
-//}
 
-#pragma mark - Running
-//- (void)startEmulation {
-//	if (!_isInitialized)
-//	{
-//		[self.renderDelegate willRenderFrameOnAlternateThread];
-//        _isInitialized = true;
-//		_frameInterval = dol_host->GetFrameInterval();
-//	}
-//	[super startEmulation];
-//
-	//Disable the OE framelimiting
-//	[self.renderDelegate suspendFPSLimiting];
-//	if(!self.isRunning) {
-//		[super startEmulation];
-////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
-//	}
-//}
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
+	// Get paths
+	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
+    NSString *biosPath = self.BIOSPath;
 
-//- (void)setPauseEmulation:(BOOL)flag {
-//	[super setPauseEmulation:flag];
-//}
-//
-//- (void)stopEmulation {
-//	_isInitialized = false;
-//
-//	self->shouldStop = YES;
-////	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-////    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
-//
-//	[super stopEmulation];
-//}
-//
-//- (void)resetEmulation {
-//	//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
-//}
+	// Create BIOS directory if it doesn't exist
+	[[NSFileManager defaultManager] createDirectoryAtPath:biosPath
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:nil];
 
-//# pragma mark - Cheats
-//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
-//}
-//
-//- (BOOL)supportsRumble { return NO; }
-//- (BOOL)supportsCheatCode { return NO; }
+	// BIOS files required by blueMSX
+	NSArray *biosFiles = @[
+		@"CARTS.SHA", @"CYRILLIC.FNT", @"DEFAULT.FNT", @"DISK.ROM",
+		@"FMPAC.ROM", @"FMPAC16.ROM", @"INTERNAT.FNT", @"ITALIC.FNT",
+		@"JAPANESE.FNT", @"KANJI.ROM", @"KOREAN.FNT", @"MSX.ROM",
+		@"MSX2.ROM", @"MSX2EXT.ROM", @"MSX2P.ROM", @"MSX2PEXT.ROM",
+		@"MSXDOS2.ROM", @"PAINTER.ROM", @"RS232.ROM"
+	];
 
-- (NSTimeInterval)frameInterval {
-    return 60;
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+
+	for (NSString *filename in biosFiles) {
+		NSString *sourcePath = [coreBundle pathForResource:[filename stringByDeletingPathExtension]
+                                                   ofType:[filename pathExtension]];
+		NSString *destPath = [biosPath stringByAppendingPathComponent:filename];
+
+		if (sourcePath && ![fileManager fileExistsAtPath:destPath]) {
+			ILOG(@"Copying BIOS file: %@", filename);
+			NSError *copyError = nil;
+			[fileManager copyItemAtPath:sourcePath toPath:destPath error:&copyError];
+			if (copyError) {
+				ELOG(@"Failed to copy BIOS file %@: %@", filename, copyError);
+			}
+		}
+	}
+
+	return [super loadFileAtPath:path error:error];
 }
+
+#pragma mark - Video
 
 - (CGSize)aspectSize {
     return CGSizeMake(4, 3);
 }
 
-- (CGSize)bufferSize {
-    return CGSizeMake(1024, 768);
+- (NSTimeInterval)frameInterval {
+    return 60;
 }
 
-- (GLenum)pixelFormat {
-    return GL_RGB;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_5_6_5;
-}
-
-- (GLenum)internalPixelFormat {
-    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
-    return GL_RGB565;
-}
-
-
-//- (GLenum)pixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
-# pragma mark - Audio
+#pragma mark - Audio
 
 - (double)audioSampleRate {
-    return 48000;
+    return SAMPLERATE;
 }
 
-#if 0
-const struct retro_variable vars[] = {
-   { "blueMSX_mode", "MSX Mode; MSX2+|MSX1|MSX2" },
-   { "blueMSX_video_mode", "MSX Video Mode; NTSC|PAL|Dynamic" },
-   { "blueMSX_hires", "Support high resolution; Off|Interlaced|Progressive" },
-   { "blueMSX_overscan", "Support overscan; No|Yes" },
-   { "blueMSX_mapper_type_mode", "MSX Mapper Type Mode; "
-         "Guess|"
-         "Generic 8kB|"
-         "Generic 16kB|"
-         "Konami5 8kB|"
-         "Konami4 8kB|"
-         "ASCII 8kB|"
-         "ASCII 16kB|"
-         "GameMaster2|"
-         "FMPAC"
-   },
-   { "blueMSX_ram_pages", "MSX Main Memory; Auto|64KB|128KB|256KB|512KB|4MB" },
-   { "blueMSX_vram_pages", "MSX Video Memory; Auto|32KB|64KB|128KB|192KB" },
-   { "blueMSX_log_level", "blueMSX logging; Off|Info|Debug|Spam" },
-   { "blueMSX_game_master", "Support Game Master; No|Yes" },
-   { "blueMSX_simbdos", "Simulate DiskROM disk access calls; No|Yes" },
-   { "blueMSX_autospace", "Use autofire on SPACE; No|Yes" },
-   { "blueMSX_allsprites", "Show all sprites; No|Yes" },
-   { "blueMSX_font", "Text font; standard|DEFAULT.FNT|ITALIC.FNT|INTERNAT.FNT|CYRILLIC.FNT|KOREAN.FNT|JAPANESE.FNT" },
-   { "blueMSX_flush_disk", "Save disk changes; Never|Immediate|On close|To/From SRAM" },
-   { "blueMSX_phantom_disk", "Create empty disk when none loaded; No|Yes" },
-   { "blueMSX_custom_keyboard_up", up_value},
-   { "blueMSX_custom_keyboard_down", down_value},
-   { "blueMSX_custom_keyboard_left", left_value},
-   { "blueMSX_custom_keyboard_right", right_value},
-   { "blueMSX_custom_keyboard_a", a_value},
-   { "blueMSX_custom_keyboard_b", b_value},
-   { "blueMSX_custom_keyboard_y", y_value},
-   { "blueMSX_custom_keyboard_x", x_value},
-   { "blueMSX_custom_keyboard_start", start_value},
-   { "blueMSX_custom_keyboard_select", select_value},
-   { "blueMSX_custom_keyboard_l", l_value},
-   { "blueMSX_custom_keyboard_r", r_value},
-   { "blueMSX_custom_keyboard_l2", l2_value},
-   { "blueMSX_custom_keyboard_r2", r2_value},
-   { "blueMSX_custom_keyboard_l3", l3_value},
-   { "blueMSX_custom_keyboard_r3", r3_value},
-   { NULL, NULL },
-};
-#endif
-
 #pragma mark - Options
+
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
-    
-    
+
     #define V(x) strcmp(variable, x) == 0
     if (V("blueMSX_video_mode")) {
-        // NTSC|PAL|Dynamic
-        char *value = strdup("Dynamic");
-        return value;
+        return strdup("Dynamic");
     } else if (V("blueMSX_mode")) {
-            // MSX2+|MSX1|MSX2
-            char * value = strdup("MSX2+");
-            return value;
+        return strdup("MSX2+");
     } else if (V("blueMSX_hires")) {
-            // Off|Interlaced|Progressive
-            char *value = strdup("Progressive");
-            return value;
+        return strdup("Progressive");
     } else if (V("blueMSX_overscan")) {
-            // No|Yes
-            char *value = strdup("Yes");
-            return value;
+        return strdup("Yes");
     } else if (V("blueMSX_mapper_type_mode")) {
-//        { "blueMSX_mapper_type_mode", "MSX Mapper Type Mode; "
-//              "Guess|"
-//              "Generic 8kB|"
-//              "Generic 16kB|"
-//              "Konami5 8kB|"
-//              "Konami4 8kB|"
-//              "ASCII 8kB|"
-//              "ASCII 16kB|"
-//              "GameMaster2|"
-//              "FMPAC"
-//        },
-            char *value = strdup("FMPAC");
-            return value;
+        return strdup("Guess");
+    } else if (V("blueMSX_game_master")) {
+        return strdup("Yes");
+    } else if (V("blueMSX_simbdos")) {
+        return strdup("No");
+    } else if (V("blueMSX_autospace")) {
+        return strdup("No");
+    } else if (V("blueMSX_allsprites")) {
+        return strdup("No");
+    } else if (V("blueMSX_flush_disk")) {
+        return strdup("Immediate");
+    } else if (V("blueMSX_phantom_disk")) {
+        return strdup("No");
     } else {
         ELOG(@"Unprocessed var: %s", variable);
         return nil;
     }
-    
-#undef V
+    #undef V
     return NULL;
 }
+
+#pragma mark - Controls
+
+static int blueMSXButtonToRetroID(PVMSXButton button) {
+    switch (button) {
+        case PVMSXButtonUp:        return RETRO_DEVICE_ID_JOYPAD_UP;
+        case PVMSXButtonDown:      return RETRO_DEVICE_ID_JOYPAD_DOWN;
+        case PVMSXButtonLeft:      return RETRO_DEVICE_ID_JOYPAD_LEFT;
+        case PVMSXButtonRight:     return RETRO_DEVICE_ID_JOYPAD_RIGHT;
+        case PVMSXButtonFire1:     return RETRO_DEVICE_ID_JOYPAD_B;
+        case PVMSXButtonFire2:     return RETRO_DEVICE_ID_JOYPAD_A;
+        case PVMSXButtonSelect:    return RETRO_DEVICE_ID_JOYPAD_SELECT;
+        case PVMSXButtonPause:     return RETRO_DEVICE_ID_JOYPAD_START;
+        case PVMSXButtonLeftDiff:  return RETRO_DEVICE_ID_JOYPAD_L;
+        case PVMSXButtonRightDiff: return RETRO_DEVICE_ID_JOYPAD_R;
+        default:                   return -1;
+    }
+}
+
+- (void)didPushMSXButton:(PVMSXButton)button forPlayer:(NSInteger)player {
+    if (player >= 2) return;
+    int retroID = blueMSXButtonToRetroID(button);
+    if (retroID >= 0) {
+        _pad[player][retroID] = 1;
+    }
+}
+
+- (void)didReleaseMSXButton:(enum PVMSXButton)button forPlayer:(NSInteger)player {
+    if (player >= 2) return;
+    int retroID = blueMSXButtonToRetroID(button);
+    if (retroID >= 0) {
+        _pad[player][retroID] = 0;
+    }
+}
+
+- (void)didMoveMSXJoystickDirection:(enum PVMSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    if (player >= 2) return;
+    const float threshold = 0.5f;
+    int retroID = blueMSXButtonToRetroID(button);
+    if (retroID >= 0) {
+        _pad[player][retroID] = (value > threshold) ? 1 : 0;
+    }
+}
+
+- (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    [self didMoveMSXJoystickDirection:(enum PVMSXButton)button withValue:value forPlayer:player];
+}
+
+- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didPushMSXButton:(PVMSXButton)button forPlayer:player];
+}
+
+- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didReleaseMSXButton:(enum PVMSXButton)button forPlayer:player];
+}
+
+#pragma mark - Keyboard Support
+
+// Keyboard pipeline: keyDown/keyUp → PVLibRetroCoreBridge -sendKeyboardEvent:hidCode:character:
+// → input_keymaps_translate_keysym_to_rk → runloop_key_event (libretro callback).
+// GCKeyCode.rawValue == HID USB key code; key-up events prevent stuck keys.
+
+- (BOOL)gameSupportsKeyboard { return YES; }
+- (BOOL)requiresKeyboard { return NO; }
+
+- (void)keyDown:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    [self sendKeyboardEvent:YES hidCode:(unsigned)key character:0];
+}
+
+- (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    [self sendKeyboardEvent:NO hidCode:(unsigned)key character:0];
+}
+
+#pragma mark - Mouse Support
+
+- (BOOL)gameSupportsMouse { return YES; }
+- (BOOL)requiresMouse { return NO; }
+
+- (GCMouseMoved)mouseMovedHandler { return nil; }
+
+- (void)didScroll:(GCDeviceCursor *)cursor API_AVAILABLE(ios(14.0), tvos(14.0)) {
+}
+
+- (void)mouseMovedAt:(CGPoint)point {
+    [self setMousePosition:point];
+}
+
+- (void)mouseMovedAtPoint:(CGPoint)point {
+    [self mouseMovedAt:point];
+}
+
+- (void)leftMouseDownAt:(CGPoint)point {
+    [self setMousePosition:point];
+    [self setLeftMouseButtonPressed:YES];
+}
+
+- (void)leftMouseDownAtPoint:(CGPoint)point {
+    [self leftMouseDownAt:point];
+}
+
+- (void)leftMouseUp {
+    [self setLeftMouseButtonPressed:NO];
+}
+
+- (void)rightMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
+    [self setRightMouseButtonPressed:YES];
+}
+
+- (void)rightMouseUp {
+    [self setRightMouseButtonPressed:NO];
+}
+
 @end

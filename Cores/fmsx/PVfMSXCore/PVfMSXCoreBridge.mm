@@ -251,24 +251,45 @@ const struct retro_variable vars[] = {
     return NULL;
 }
 
+static int msxButtonToRetroID(PVMSXButton button) {
+    switch (button) {
+        case PVMSXButtonUp:        return RETRO_DEVICE_ID_JOYPAD_UP;
+        case PVMSXButtonDown:      return RETRO_DEVICE_ID_JOYPAD_DOWN;
+        case PVMSXButtonLeft:      return RETRO_DEVICE_ID_JOYPAD_LEFT;
+        case PVMSXButtonRight:     return RETRO_DEVICE_ID_JOYPAD_RIGHT;
+        case PVMSXButtonFire1:     return RETRO_DEVICE_ID_JOYPAD_B;
+        case PVMSXButtonFire2:     return RETRO_DEVICE_ID_JOYPAD_A;
+        case PVMSXButtonSelect:    return RETRO_DEVICE_ID_JOYPAD_SELECT;
+        case PVMSXButtonPause:     return RETRO_DEVICE_ID_JOYPAD_START;
+        case PVMSXButtonLeftDiff:  return RETRO_DEVICE_ID_JOYPAD_L;
+        case PVMSXButtonRightDiff: return RETRO_DEVICE_ID_JOYPAD_R;
+        default:                   return -1;
+    }
+}
+
 - (void)didPushMSXButton:(PVMSXButton)button forPlayer:(NSInteger)player {
-    _pad[player][button] = 1;
+    if (player >= 2) return;
+    int retroID = msxButtonToRetroID(button);
+    if (retroID >= 0) {
+        _pad[player][retroID] = 1;
+    }
 }
 
 -(void)didReleaseMSXButton:(enum PVMSXButton)button forPlayer:(NSInteger)player {
-    _pad[player][button] = 0;
+    if (player >= 2) return;
+    int retroID = msxButtonToRetroID(button);
+    if (retroID >= 0) {
+        _pad[player][retroID] = 0;
+    }
 }
 
 - (void)didMoveMSXJoystickDirection:(enum PVMSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    /*
-     float xvalue = gamepad.leftThumbstick.xAxis.value;
-     s8 x=(s8)(xvalue*127);
-     joyx[0] = x;
-
-     float yvalue = gamepad.leftThumbstick.yAxis.value;
-     s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-     joyy[0] = y;
-     */
+    if (player >= 2) return;
+    const float threshold = 0.5f;
+    int retroID = msxButtonToRetroID(button);
+    if (retroID >= 0) {
+        _pad[player][retroID] = (value > threshold) ? 1 : 0;
+    }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
