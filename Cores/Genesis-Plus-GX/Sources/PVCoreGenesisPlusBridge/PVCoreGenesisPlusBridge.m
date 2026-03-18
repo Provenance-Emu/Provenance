@@ -259,8 +259,8 @@ static void bram_save(void)
     uint32_t *videoBufferB;
 
 	int _videoWidth, _videoHeight;
-	int16_t _pad[MAX_DEVICES][12];
-    int _multiTapPlayerCount; // 2 normally, 4 for TeamPlayer / 4-Way Play
+	int16_t _pad[MAX_DEVICES][RETRO_DEVICE_ID_JOYPAD_R3 + 1];
+    int _multiTapPlayerCount; // 2 normally, 4 for TeamPlayer
 }
 @property (nonatomic, assign) GenesisCoreType subCoreType;
 @end
@@ -326,7 +326,7 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 
     if (device == RETRO_DEVICE_JOYPAD && port < (unsigned)MAX_DEVICES) {
         value = [strongCurrent controllerValueForButtonID:_id forPlayer:(NSInteger)port];
-        if (value == 0 && port < MAX_DEVICES && _id < 12) {
+        if (value == 0 && _id <= RETRO_DEVICE_ID_JOYPAD_R3) {
             value = strongCurrent->_pad[port][_id];
         }
     }
@@ -536,22 +536,22 @@ static bool environment_callback(unsigned cmd, void *data)
 
     if (retro_load_game(&info)) {
 
-        // Detect Team Player / 4-Way Play via ROM peripheral header bit
-        // Peripheral index 7 ('4') = Team Player in the Genesis ROM header
+        // Detect Sega TeamPlayer via ROM peripheral header bit.
+        // Bit 7 ('4') in rominfo.peripherals indicates TeamPlayer multi-tap support.
+        // Note: EA 4-Way Play uses SYSTEM_WAYPLAY (both ports) and requires a separate
+        // title database to distinguish — header bit detection alone cannot differentiate.
+        // This code enables SYSTEM_TEAMPLAYER only; EA 4-Way Play is not yet supported.
         static const uint16_t kTeamPlayerBit = (1 << 7);
-        // EA 4-Way Play games also declare TeamPlayer peripheral in header
         if (rominfo.peripherals & kTeamPlayerBit) {
-            // Enable TeamPlayer on port 1 (covers players 1-4, virtual ports 0-3)
+            // Enable TeamPlayer on port A (virtual ports 0-3).
+            // rominfo is only populated inside retro_load_game, so we set input.system[]
+            // after load and call io_init() again to re-initialise port handlers.
+            // io_init() is idempotent and safe to call multiple times.
             input.system[0] = SYSTEM_TEAMPLAYER;
             input.system[1] = SYSTEM_GAMEPAD;
             _multiTapPlayerCount = 4;
             DLOG(@"GenesisPlusBridge: TeamPlayer detected for '%s', enabling 4-player mode",
                  rominfo.international);
-            // `retro_load_game` calls `config_default()` which resets `input.system[]` to
-            // SYSTEM_GAMEPAD, then calls `system_init()` → `io_init()`.  We set the TeamPlayer
-            // type AFTER load (because rominfo is only populated during load), then call
-            // `io_init()` again to reinitialise the port handlers with the correct type.
-            // `io_init()` is idempotent and safe to call multiple times.
             io_init();
         } else {
             _multiTapPlayerCount = 2;
