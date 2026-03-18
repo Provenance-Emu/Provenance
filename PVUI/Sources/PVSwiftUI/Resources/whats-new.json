@@ -478,5 +478,17 @@
         "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
       }
     ]
+  },
+  {
+    "version": "3.5.0",
+    "title": "Skin Button Editor",
+    "features": [
+      {
+        "symbolName": "pencil.and.ruler",
+        "symbolColor": "orange",
+        "title": "WYSIWYG Button Position Editor",
+        "subtitle": "Fix misaligned controller buttons without leaving the app. Drag buttons to reposition them in the skin preview, then export the patched skin to share or reimport."
+      }
+    ]
   }
 ]

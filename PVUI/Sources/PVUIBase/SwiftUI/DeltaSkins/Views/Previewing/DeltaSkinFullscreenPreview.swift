@@ -11,6 +11,8 @@ struct DeltaSkinFullscreenPreview: View {
     @State private var showDebugOverlay = false
     @State private var showInfoSheet = false
     @State private var showHitTestOverlay = false
+    @State private var isEditMode = false
+    @StateObject private var editorViewModel: DeltaSkinEditorViewModel
     @Environment(\.dismiss) private var dismiss
 
     init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, filters: Set<TestPatternEffect>) {
@@ -18,6 +20,7 @@ struct DeltaSkinFullscreenPreview: View {
         self.traits = traits
         self.filters = filters
         _currentDisplayType = State(initialValue: traits.displayType)
+        _editorViewModel = StateObject(wrappedValue: DeltaSkinEditorViewModel(skin: skin, traits: traits))
     }
 
     private var supportedDisplayTypes: [DeltaSkinDisplayType] {
@@ -73,107 +76,189 @@ struct DeltaSkinFullscreenPreview: View {
     }
 
     var body: some View {
-        ZStack {
-            DeltaSkinView(
-                skin: skin,
-                traits: currentTraits,
-                filters: filters,
-                showDebugOverlay: showDebugOverlay,
-                showHitTestOverlay: showHitTestOverlay,
-                screenAspectRatio: nil,
-                isInEmulator: false,
-                inputHandler: DeltaSkinInputHandler(),
-                core: nil
-            )
+        GeometryReader { geometry in
+            ZStack {
+                DeltaSkinView(
+                    skin: skin,
+                    traits: currentTraits,
+                    filters: filters,
+                    showDebugOverlay: showDebugOverlay && !isEditMode,
+                    showHitTestOverlay: showHitTestOverlay && !isEditMode,
+                    screenAspectRatio: nil,
+                    isInEmulator: false,
+                    inputHandler: DeltaSkinInputHandler(),
+                    core: nil
+                )
 
-            // Overlay controls
-            VStack {
-                HStack {
-                    // Debug overlay toggle
-                    Button {
-                        showDebugOverlay.toggle()
+                // Edit overlay (replaces debug overlay in edit mode)
+                if isEditMode {
+                    DeltaSkinEditOverlay(
+                        viewModel: editorViewModel,
+                        size: geometry.size
+                    )
+                }
 
-                        // Copy debug info to clipboard when enabling
-                        if showDebugOverlay {
-                            #if !os(tvOS)
-                            UIPasteboard.general.string = debugInfo
-                            #endif
-                            DLOG("Debug Info:\n\(debugInfo)")
+                // Overlay controls
+                VStack {
+                    HStack {
+                        if !isEditMode {
+                            // Debug overlay toggle
+                            Button {
+                                showDebugOverlay.toggle()
+                                if showDebugOverlay {
+                                    #if !os(tvOS)
+                                    UIPasteboard.general.string = debugInfo
+                                    #endif
+                                    DLOG("Debug Info:\n\(debugInfo)")
+                                }
+                            } label: {
+                                Image(systemName: showDebugOverlay ? "viewfinder.circle.fill" : "viewfinder.circle")
+                                    .font(.title)
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .background(Circle().fill(.ultraThinMaterial))
+                            }
+
+                            // Hit test overlay toggle
+                            Button {
+                                showHitTestOverlay.toggle()
+                            } label: {
+                                Image(systemName: showHitTestOverlay ? "square.grid.2x2.fill" : "square.grid.2x2")
+                                    .font(.title)
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .background(Circle().fill(.ultraThinMaterial))
+                            }
+
+                            // Display type toggle (only show if multiple types supported)
+                            if supportedDisplayTypes.count > 1 {
+                                Button { nextDisplayType() } label: {
+                                    Image(systemName: displayTypeIcon(currentDisplayType))
+                                        .font(.title)
+                                        .foregroundStyle(.white)
+                                        .padding()
+                                        .background(Circle().fill(.ultraThinMaterial))
+                                }
+                            }
                         }
-                    } label: {
-                        Image(systemName: showDebugOverlay ? "viewfinder.circle.fill" : "viewfinder.circle")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
-                    }
 
-                    // Hit test overlay toggle
-                    Button {
-                        showHitTestOverlay.toggle()
-                    } label: {
-                        Image(systemName: showHitTestOverlay ? "square.grid.2x2.fill" : "square.grid.2x2")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
-                    }
+                        // Edit mode toggle (iOS only — no drag gesture on tvOS)
+                        #if !os(tvOS)
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                isEditMode.toggle()
+                                if !isEditMode {
+                                    editorViewModel.clearSelection()
+                                }
+                            }
+                        } label: {
+                            Image(systemName: isEditMode ? "pencil.circle.fill" : "pencil.circle")
+                                .font(.title)
+                                .foregroundStyle(isEditMode ? .yellow : .white)
+                                .padding()
+                                .background(Circle().fill(isEditMode ? AnyShapeStyle(.yellow.opacity(0.2)) : AnyShapeStyle(.ultraThinMaterial)))
+                        }
 
-                    // Display type toggle (only show if multiple types supported)
-                    if supportedDisplayTypes.count > 1 {
-                        Button { nextDisplayType() } label: {
-                            Image(systemName: displayTypeIcon(currentDisplayType))
+                        // Export edited skin (only shown in edit mode with changes)
+                        if isEditMode && editorViewModel.hasChanges {
+                            Button {
+                                editorViewModel.exportSkin()
+                            } label: {
+                                HStack(spacing: 4) {
+                                    if editorViewModel.isExporting {
+                                        ProgressView()
+                                            .scaleEffect(0.7)
+                                            .tint(.white)
+                                    } else {
+                                        Image(systemName: "square.and.arrow.up")
+                                    }
+                                    Text("Export")
+                                        .font(.subheadline)
+                                }
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                                .background(Capsule().fill(.green.opacity(0.85)))
+                            }
+                            .disabled(editorViewModel.isExporting)
+                        }
+                        #endif
+
+                        Spacer()
+
+                        // Info button (hidden in edit mode to reduce clutter)
+                        if !isEditMode {
+                            Button {
+                                showInfoSheet = true
+                            } label: {
+                                Image(systemName: "info.circle")
+                                    .font(.title)
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .background(Circle().fill(.ultraThinMaterial))
+                            }
+                        }
+
+                        // Dismiss button
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
                                 .font(.title)
                                 .foregroundStyle(.white)
                                 .padding()
                                 .background(Circle().fill(.ultraThinMaterial))
                         }
                     }
+                    .padding()
 
                     Spacer()
 
-                    // Info button
-                    Button {
-                        showInfoSheet = true
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
-                    }
-
-                    // Dismiss button
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .padding()
-                            .background(Circle().fill(.ultraThinMaterial))
+                    // Status bar in edit mode
+                    if isEditMode {
+                        DeltaSkinEditorStatusBar(viewModel: editorViewModel)
                     }
                 }
-                .padding()
 
-                Spacer()
-            }
-
-            // Hit test overlay
-            if showHitTestOverlay {
-                DeltaSkinHitTestOverlay(skin: skin, traits: currentTraits)
+                // Hit test overlay (non-edit mode only)
+                if showHitTestOverlay && !isEditMode {
+                    DeltaSkinHitTestOverlay(skin: skin, traits: currentTraits)
+                }
             }
         }
         .sheet(isPresented: $showInfoSheet) {
             DeltaSkinInfoSheet(skin: skin)
         }
         #if !os(tvOS)
+        .sheet(item: Binding(
+            get: { editorViewModel.exportedURL.map { ExportedSkinURL($0) } },
+            set: { _ in editorViewModel.exportedURL = nil }
+        )) { wrapper in
+            ShareSheet(activityItems: [wrapper.url])
+        }
+        .alert("Export Failed",
+               isPresented: Binding(
+                get: { editorViewModel.exportError != nil },
+                set: { if !$0 { editorViewModel.exportError = nil } }
+               )
+        ) {
+            Button("OK", role: .cancel) { editorViewModel.exportError = nil }
+        } message: {
+            Text(editorViewModel.exportError?.localizedDescription ?? "Unknown error")
+        }
         .statusBar(hidden: true)
         #endif
         .ignoresSafeArea()
         .onAppear {
             DLOG("FullscreenPreview safe areas: \(UIApplication.shared.windows.first?.safeAreaInsets ?? .zero)")
         }
+    }
+
+    /// Thin `Identifiable` wrapper so we can drive a `.sheet(item:)` from a URL.
+    private struct ExportedSkinURL: Identifiable {
+        let id = UUID()
+        let url: URL
+        init(_ url: URL) { self.url = url }
     }
 }
 
