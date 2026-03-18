@@ -15,7 +15,8 @@ import PVCoreBridge
 ///
 /// Each action becomes an orange bolt-icon tile. Actions where `requiresReset` is `true`
 /// display a ⚠︎ warning badge so users know emulation will reset.
-/// Actions whose `options` array is non-nil will trigger an inline picker (handled by the menu view).
+/// Actions whose `options` array is non-nil support a long-press context menu AND a
+/// tap-to-cycle behaviour mirroring Delta/Manic's grid UX.
 public struct CoreActionTileProvider {
 
     private init() {}
@@ -29,13 +30,28 @@ public struct CoreActionTileProvider {
     /// - Returns: One ``PauseMenuTile`` per action.
     public static func tiles(from actions: [CoreAction]) -> [PauseMenuTile] {
         actions.map { action in
-            PauseMenuTile(
+            // Build long-press options from the action's option list.
+            let lpOptions: [PauseMenuTileLongPressOption]? = action.options.map { opts in
+                opts.map { opt in
+                    PauseMenuTileLongPressOption(
+                        id: "\(action.title)_\(opt.title)",
+                        title: opt.title,
+                        isSelected: opt.selected
+                    )
+                }
+            }
+            // Show the currently-selected option (if any) as a badge.
+            let currentOpt = action.options?.first(where: { $0.selected })
+            let badge: String? = action.requiresReset ? "⚠︎" : currentOpt?.title
+
+            return PauseMenuTile(
                 id: tileID(for: action),
                 icon: "bolt.fill",
                 label: action.title,
-                badge: action.requiresReset ? "⚠︎" : nil,
+                badge: badge,
                 colorKey: .orange,
-                dismissOnTap: false
+                dismissOnTap: false,
+                longPressOptions: lpOptions
             )
         }
     }
@@ -55,14 +71,13 @@ public struct CoreActionTileProvider {
 
 // MARK: - CoreOptionTileProvider
 
-/// Maps boolean ``CoreOption``s from a ``CoreOptional`` class to quick-toggle ``PauseMenuTile``s.
+/// Maps ``CoreOption``s from a ``CoreOptional`` class to quick-action ``PauseMenuTile``s.
 ///
-/// Only `bool` options are surfaced as inline toggle tiles — the full range of option types
-/// (range, enumeration, etc.) is reachable via the appended **Core Settings** tile that opens
-/// ``CoreOptionsDetailView``.
-///
-/// If the core exposes no options at all, an empty array is returned and the
-/// `"coreSettings"` tile is **not** added.
+/// - **Boolean** options → tap toggles ON/OFF; current state shown as badge.
+/// - **Enumeration / multi** options → tap cycles to the next value; long-press shows
+///   a full picker via context menu. Badge shows the current value's label.
+/// - A **Core Settings** gateway tile is always appended when any options exist, giving
+///   access to range/string and nested options via ``CoreOptionsDetailView``.
 public struct CoreOptionTileProvider {
 
     private init() {}
@@ -73,19 +88,20 @@ public struct CoreOptionTileProvider {
     /// Option tile ID prefix.
     static let idPrefix = "coreOption_"
 
-    /// Builds toggle tiles for every boolean option, plus a **Core Settings** tile.
+    /// Builds interactive tiles for boolean, enumeration, and multi-select options,
+    /// plus a **Core Settings** tile.
     ///
     /// - Parameters:
     ///   - options: The flat or grouped `[CoreOption]` from the active core class.
-    ///   - coreClass: Used to read each boolean option's current stored value.
-    /// - Returns: Toggle tiles followed by a single "Core Settings" tile, or an empty
+    ///   - coreClass: Used to read each option's current stored value.
+    /// - Returns: Toggle/cycle tiles followed by a single "Core Settings" tile, or an empty
     ///   array when `options` is empty.
     public static func tiles(from options: [CoreOption], coreClass: CoreOptional.Type) -> [PauseMenuTile] {
         guard !options.isEmpty else { return [] }
 
-        var result = booleanTiles(from: options, coreClass: coreClass)
+        var result = interactiveTiles(from: options, coreClass: coreClass)
 
-        // Always include a "Core Settings" gateway so users can reach non-boolean options.
+        // Always include a "Core Settings" gateway so users can reach range/string options.
         result.append(PauseMenuTile(
             id: coreSettingsTileID,
             icon: "gearshape.fill",
@@ -97,8 +113,8 @@ public struct CoreOptionTileProvider {
         return result
     }
 
-    /// Recursively extracts `bool` options and maps each to a toggle tile.
-    private static func booleanTiles(from options: [CoreOption], coreClass: CoreOptional.Type) -> [PauseMenuTile] {
+    /// Recursively extracts boolean and enumeration options and creates interactive tiles.
+    private static func interactiveTiles(from options: [CoreOption], coreClass: CoreOptional.Type) -> [PauseMenuTile] {
         var result: [PauseMenuTile] = []
         for option in options {
             switch option {
@@ -112,8 +128,55 @@ public struct CoreOptionTileProvider {
                     colorKey: current ? .green : .gray,
                     dismissOnTap: false
                 ))
+
+            case let .enumeration(display, values, defaultValue, _):
+                // valueForOption -> Int? is safe for enumeration; non-optional crashes if defaultValue isn't Int.
+                let currentIndex: Int = (coreClass.valueForOption(option) as Int?) ?? defaultValue
+                let matchedEnum = values.first(where: { $0.value == currentIndex })
+                let currentLabel = matchedEnum?.description ?? matchedEnum?.title ?? values.first?.title ?? "–"
+                // Long-press shows all choices; tap cycles to next.
+                let lpOptions = values.map { v in
+                    PauseMenuTileLongPressOption(
+                        id: "\(display.title)_\(v.value)",
+                        title: v.description ?? v.title,
+                        isSelected: v.value == currentIndex
+                    )
+                }
+                result.append(PauseMenuTile(
+                    id: tileID(forOptionKey: display.title),
+                    icon: "arrow.trianglehead.2.clockwise",
+                    label: display.title,
+                    badge: currentLabel,
+                    colorKey: .cyan,
+                    dismissOnTap: false,
+                    longPressOptions: lpOptions
+                ))
+
+            case let .multi(display, values, _):
+                // multi stores an Int index; fall back to the first isDefault value's index or 0.
+                let defaultIdx = values.firstIndex(where: { $0.isDefault }) ?? 0
+                let currentIndex: Int = (coreClass.valueForOption(option) as Int?) ?? defaultIdx
+                let currentLabel = currentIndex < values.count ? values[currentIndex].title : (values.first?.title ?? "–")
+                let lpOptions = values.enumerated().map { idx, v in
+                    PauseMenuTileLongPressOption(
+                        id: "\(display.title)_\(idx)",
+                        title: v.title,
+                        isSelected: idx == currentIndex
+                    )
+                }
+                result.append(PauseMenuTile(
+                    id: tileID(forOptionKey: display.title),
+                    icon: "list.bullet.clipboard",
+                    label: display.title,
+                    badge: currentLabel,
+                    colorKey: .purple,
+                    dismissOnTap: false,
+                    longPressOptions: lpOptions
+                ))
+
             case let .group(_, subOptions):
-                result += booleanTiles(from: subOptions, coreClass: coreClass)
+                result += interactiveTiles(from: subOptions, coreClass: coreClass)
+
             default:
                 break
             }
@@ -121,7 +184,7 @@ public struct CoreOptionTileProvider {
         return result
     }
 
-    /// The stable tile ID for a boolean option identified by `key`.
+    /// The stable tile ID for an option identified by `key`.
     public static func tileID(forOptionKey key: String) -> String {
         "\(idPrefix)\(key)"
     }
@@ -133,14 +196,15 @@ public struct CoreOptionTileProvider {
         return String(id.dropFirst(idPrefix.count))
     }
 
-    /// Finds a ``CoreOption`` in a (possibly grouped) option tree by its key.
-    ///
-    /// Visible to PVUIBase for toggling boolean options without re-exposing
-    /// `CoreOptional.findOption` (which is internal to PVCoreBridge).
+    /// Finds a ``CoreOption`` in a (possibly grouped) option tree by its display title / key.
     public static func findOption(key: String, in options: [CoreOption]) -> CoreOption? {
         for option in options {
             switch option {
             case let .bool(display, _, _) where display.title == key:
+                return option
+            case let .enumeration(display, _, _, _) where display.title == key:
+                return option
+            case let .multi(display, _, _, _) where display.title == key:
                 return option
             case let .group(_, subOptions):
                 if let found = findOption(key: key, in: subOptions) { return found }
@@ -150,4 +214,50 @@ public struct CoreOptionTileProvider {
         }
         return nil
     }
+
+    /// Cycles an enumeration or multi-select option to its next value (wraps around).
+    ///
+    /// - Parameters:
+    ///   - option: The current `CoreOption` to advance.
+    ///   - coreClass: The conforming `CoreOptional` class used for persistence.
+    public static func cycleNextValue(for option: CoreOption, coreClass: CoreOptional.Type) {
+        switch option {
+        case let .enumeration(_, values, defaultValue, _):
+            let current: Int = (coreClass.valueForOption(option) as Int?) ?? defaultValue
+            let sorted = values.sorted(by: { $0.value < $1.value })
+            let idx = sorted.firstIndex(where: { $0.value == current }) ?? 0
+            let nextValue = sorted[(idx + 1) % sorted.count].value
+            coreClass.setValue(nextValue, forOption: option, andMD5: coreClass.currentGameMD5)
+
+        case let .multi(_, values, _):
+            let defaultIdx = values.firstIndex(where: { $0.isDefault }) ?? 0
+            let current: Int = (coreClass.valueForOption(option) as Int?) ?? defaultIdx
+            let nextIndex = (current + 1) % values.count
+            coreClass.setValue(nextIndex, forOption: option, andMD5: coreClass.currentGameMD5)
+
+        default:
+            break
+        }
+    }
+
+    /// Sets an enumeration or multi-select option to a specific value by option title.
+    public static func selectValue(
+        titled title: String,
+        for option: CoreOption,
+        coreClass: CoreOptional.Type
+    ) {
+        switch option {
+        case let .enumeration(_, values, _, _):
+            if let match = values.first(where: { ($0.description ?? $0.title) == title }) {
+                coreClass.setValue(match.value, forOption: option, andMD5: coreClass.currentGameMD5)
+            }
+        case let .multi(_, values, _):
+            if let idx = values.firstIndex(where: { $0.title == title }) {
+                coreClass.setValue(idx, forOption: option, andMD5: coreClass.currentGameMD5)
+            }
+        default:
+            break
+        }
+    }
 }
+

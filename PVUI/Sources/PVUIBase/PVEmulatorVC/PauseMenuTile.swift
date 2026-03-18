@@ -17,7 +17,7 @@ public struct PauseMenuTile: Identifiable, Sendable {
     public let icon: String
     /// Short label displayed below the icon.
     public let label: String
-    /// Optional badge text (e.g. save slot number, recording indicator).
+    /// Optional badge text (e.g. save slot number, recording indicator, current value).
     public var badge: String?
     /// Whether the tile is interactive; disabled tiles are dimmed.
     public var isEnabled: Bool
@@ -25,6 +25,8 @@ public struct PauseMenuTile: Identifiable, Sendable {
     public let colorKey: PauseMenuTileColor
     /// Whether tapping this tile should close the overlay first (vs. immediate inline action).
     public let dismissOnTap: Bool
+    /// Optional list of choices for long-press context menu (e.g. enum option values).
+    public var longPressOptions: [PauseMenuTileLongPressOption]?
 
     public init(
         id: String,
@@ -33,7 +35,8 @@ public struct PauseMenuTile: Identifiable, Sendable {
         badge: String? = nil,
         isEnabled: Bool = true,
         colorKey: PauseMenuTileColor = .blue,
-        dismissOnTap: Bool = true
+        dismissOnTap: Bool = true,
+        longPressOptions: [PauseMenuTileLongPressOption]? = nil
     ) {
         self.id = id
         self.icon = icon
@@ -42,6 +45,23 @@ public struct PauseMenuTile: Identifiable, Sendable {
         self.isEnabled = isEnabled
         self.colorKey = colorKey
         self.dismissOnTap = dismissOnTap
+        self.longPressOptions = longPressOptions
+    }
+}
+
+// MARK: - Long-Press Option
+
+/// A named option surfaced by a long-press context menu on a tile.
+public struct PauseMenuTileLongPressOption: Identifiable, Sendable {
+    public let id: String
+    public let title: String
+    /// Whether this option is the currently-active value.
+    public let isSelected: Bool
+
+    public init(id: String, title: String, isSelected: Bool = false) {
+        self.id = id
+        self.title = title
+        self.isSelected = isSelected
     }
 }
 
@@ -49,7 +69,7 @@ public struct PauseMenuTile: Identifiable, Sendable {
 
 /// Semantic color keys for tile accents, matching the retrowave palette.
 public enum PauseMenuTileColor: String, Sendable {
-    case green, orange, blue, purple, pink, cyan, yellow, gray
+    case green, orange, blue, purple, pink, cyan, yellow, gray, teal, red
 }
 
 // MARK: - Tile Section
@@ -57,10 +77,13 @@ public enum PauseMenuTileColor: String, Sendable {
 /// A named group of tiles displayed together in the grid.
 public struct PauseMenuTileSection: Identifiable, Sendable {
     public let id: String
+    /// Human-readable section header (nil = no visible header).
+    public let title: String?
     public let tiles: [PauseMenuTile]
 
-    public init(id: String, tiles: [PauseMenuTile]) {
+    public init(id: String, title: String? = nil, tiles: [PauseMenuTile]) {
         self.id = id
+        self.title = title
         self.tiles = tiles
     }
 }
