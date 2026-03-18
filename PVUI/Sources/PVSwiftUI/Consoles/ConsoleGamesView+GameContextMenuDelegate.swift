@@ -8,6 +8,7 @@
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVCoreBridge
 import protocol PVUIBase.GameContextMenuDelegate
 import struct PVUIBase.GameContextMenu
 import class PVUIBase.SceneCoordinator
@@ -313,6 +314,26 @@ extension ConsoleGamesView: GameContextMenuDelegate {
             object: nil,
             userInfo: ["game": game.freeze()]
         )
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestCoreOptionsFor game: PVGame, coreClassName: String, coreName: String) {
+        DLOG("ConsoleGamesView: Received request to show core options for \(coreName)")
+        gamesViewModel.coreOptionsClassName = coreClassName
+        gamesViewModel.coreOptionsCoreName = coreName
+        gamesViewModel.coreOptionsGameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+        gamesViewModel.showCoreOptionsSheet = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestTransferPakConfigFor game: PVGame) {
+        DLOG("ConsoleGamesView: Received request to show Transfer Pak config")
+        gamesViewModel.transferPakGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.showTransferPakConfig = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestControllerPakSlotsFor game: PVGame) {
+        DLOG("ConsoleGamesView: Received request to show Controller Pak slots")
+        gamesViewModel.controllerPakGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.showControllerPakSlots = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestResetSkinFor game: PVGame) {

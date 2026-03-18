@@ -57,6 +57,18 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var systemMoveState: SystemMoveState? = nil
     @Published var continuesManagementState: ContinuesManagementState? = nil
 
+    /// Core Options sheet state
+    @Published var showCoreOptionsSheet = false
+    @Published var coreOptionsClassName: String?
+    @Published var coreOptionsCoreName: String?
+    @Published var coreOptionsGameMD5: String?
+
+    /// Transfer Pak / Controller Pak sheet state
+    @Published var showTransferPakConfig = false
+    @Published var transferPakGame: PVGame?
+    @Published var showControllerPakSlots = false
+    @Published var controllerPakGame: PVGame?
+
     // Properties that were @State in the View, now @Published in ViewModel
     @Published var searchText: String = "" {
         didSet {

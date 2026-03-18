@@ -19,6 +19,7 @@ import PVPrimitives
 
 private struct CoreOptionEntry {
     let coreClass: CoreOptional.Type
+    let principleClassName: String
     let name: String
 }
 
@@ -41,10 +42,6 @@ public struct GameContextMenu: View {
     @State private var showImagePicker = false
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
-    @State private var showTransferPakConfig = false
-    @State private var showN64PakConfig = false
-    @State private var showCoreOptionsSheet = false
-    @State private var selectedCoreForOptions: CoreOptionEntry?
     @Environment(\.featureFlags) private var featureFlags
 
     public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
@@ -80,7 +77,7 @@ public struct GameContextMenu: View {
                 if featureFlags.mupenTransferPak,
                    game.systemIdentifier == SystemIdentifier.N64.rawValue {
                     Button {
-                        showTransferPakConfig = true
+                        contextMenuDelegate?.gameContextMenu(self, didRequestTransferPakConfigFor: game)
                     } label: {
                         Label("Configure Transfer Pak", systemImage: "memorychip")
                     }
@@ -89,7 +86,7 @@ public struct GameContextMenu: View {
                 // N64 Controller Pak slot picker (Memory Pak, Rumble Pak, Transfer Pak, etc.)
                 if game.systemIdentifier == SystemIdentifier.N64.rawValue {
                     Button {
-                        showN64PakConfig = true
+                        contextMenuDelegate?.gameContextMenu(self, didRequestControllerPakSlotsFor: game)
                     } label: {
                         Label("Controller Pak Slots", systemImage: "gamecontroller.fill")
                     }
@@ -122,13 +119,12 @@ public struct GameContextMenu: View {
                 // Core Options for this game — only shown when at least one core supports CoreOptional
                 let coreEntries: [CoreOptionEntry] = availableCores.compactMap { core in
                     guard let cls = NSClassFromString(core.principleClass) as? CoreOptional.Type else { return nil }
-                    return CoreOptionEntry(coreClass: cls, name: core.projectName)
+                    return CoreOptionEntry(coreClass: cls, principleClassName: core.principleClass, name: core.projectName)
                 }
                 if coreEntries.count == 1 {
                     let entry = coreEntries[0]
                     Button {
-                        selectedCoreForOptions = entry
-                        showCoreOptionsSheet = true
+                        contextMenuDelegate?.gameContextMenu(self, didRequestCoreOptionsFor: game, coreClassName: entry.principleClassName, coreName: entry.name)
                     } label: {
                         Label("Core Options for This Game", systemImage: "slider.horizontal.3")
                     }
@@ -137,8 +133,7 @@ public struct GameContextMenu: View {
                         ForEach(coreEntries.indices, id: \.self) { i in
                             let entry = coreEntries[i]
                             Button {
-                                selectedCoreForOptions = entry
-                                showCoreOptionsSheet = true
+                                contextMenuDelegate?.gameContextMenu(self, didRequestCoreOptionsFor: game, coreClassName: entry.principleClassName, coreName: entry.name)
                             } label: {
                                 Label(entry.name, systemImage: "slider.horizontal.3")
                             }
@@ -253,30 +248,6 @@ public struct GameContextMenu: View {
                 UIAlertAction(title: "Cancel", style: .cancel)
             }
         )
-        .sheet(isPresented: $showTransferPakConfig) {
-            if !game.isInvalidated {
-                TransferPakConfigView(game: game, onDismiss: {
-                    showTransferPakConfig = false
-                })
-            }
-        }
-        .sheet(isPresented: $showN64PakConfig) {
-            if !game.isInvalidated {
-                N64ControllerPakView(
-                    gameMD5: game.md5Hash,
-                    gameTitle: game.title,
-                    onDismiss: { showN64PakConfig = false }
-                )
-            }
-        }
-        .sheet(isPresented: $showCoreOptionsSheet) {
-            if let entry = selectedCoreForOptions {
-                let gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
-                NavigationView {
-                    CoreOptionsDetailView(coreClass: entry.coreClass, title: entry.name, gameMD5: gameMD5)
-                }
-            }
-        }
     }
 
     // Move heavy operations to background tasks

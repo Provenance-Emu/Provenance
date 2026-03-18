@@ -27,6 +27,9 @@ public protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestSkinSelectionFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestResetSkinFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestCoreOptionsFor game: PVGame, coreClassName: String, coreName: String)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestTransferPakConfigFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestControllerPakSlotsFor game: PVGame)
 }
 
 /// Default implementations for GameContextMenuDelegate
@@ -78,5 +81,17 @@ public extension GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestResetSkinFor game: PVGame) {
         DLOG("Default implementation: didRequestResetSkinFor not implemented")
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestCoreOptionsFor game: PVGame, coreClassName: String, coreName: String) {
+        DLOG("Default implementation: didRequestCoreOptionsFor not implemented")
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestTransferPakConfigFor game: PVGame) {
+        DLOG("Default implementation: didRequestTransferPakConfigFor not implemented")
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestControllerPakSlotsFor game: PVGame) {
+        DLOG("Default implementation: didRequestControllerPakSlotsFor not implemented")
     }
 }

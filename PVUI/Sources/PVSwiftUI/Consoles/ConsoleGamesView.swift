@@ -14,6 +14,7 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import PVUIBase
+import PVCoreBridge
 import PVRealm
 import PVSettings
 import Combine
@@ -730,6 +731,34 @@ struct ConsoleGamesView: SwiftUI.View {
                         }
                     }
                 )
+                .sheet(isPresented: $gamesViewModel.showCoreOptionsSheet) {
+                    if let className = gamesViewModel.coreOptionsClassName,
+                       let coreClass = NSClassFromString(className) as? CoreOptional.Type {
+                        NavigationView {
+                            CoreOptionsDetailView(
+                                coreClass: coreClass,
+                                title: gamesViewModel.coreOptionsCoreName ?? "Core Options",
+                                gameMD5: gamesViewModel.coreOptionsGameMD5
+                            )
+                        }
+                    }
+                }
+                .sheet(isPresented: $gamesViewModel.showTransferPakConfig) {
+                    if let game = gamesViewModel.transferPakGame, !game.isInvalidated {
+                        TransferPakConfigView(game: game, onDismiss: {
+                            gamesViewModel.showTransferPakConfig = false
+                        })
+                    }
+                }
+                .sheet(isPresented: $gamesViewModel.showControllerPakSlots) {
+                    if let game = gamesViewModel.controllerPakGame, !game.isInvalidated {
+                        N64ControllerPakView(
+                            gameMD5: game.md5Hash,
+                            gameTitle: game.title,
+                            onDismiss: { gamesViewModel.showControllerPakSlots = false }
+                        )
+                    }
+                }
 
                 .task(priority: .background) {
                     // Defer BIOS rescan significantly to avoid blocking tab switches
