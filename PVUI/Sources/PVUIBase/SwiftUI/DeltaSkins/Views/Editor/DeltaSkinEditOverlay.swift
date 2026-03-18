@@ -12,18 +12,29 @@ import SwiftUI
 struct DeltaSkinEditOverlay: View {
     @ObservedObject var viewModel: DeltaSkinEditorViewModel
     let size: CGSize
+    var safeAreaInsets: EdgeInsets = EdgeInsets()
 
     // Per-button drag tracking (screen-space accumulated offset)
     @State private var dragOffsets: [Int: CGSize] = [:]
 
     var body: some View {
         if let mappingSize = viewModel.skin.mappingSize(for: viewModel.traits) {
+            let availableWidth = size.width - safeAreaInsets.leading - safeAreaInsets.trailing
+            let availableHeight = size.height - safeAreaInsets.top - safeAreaInsets.bottom
             let scale = min(
-                size.width / mappingSize.width,
-                size.height / mappingSize.height
+                availableWidth / mappingSize.width,
+                availableHeight / mappingSize.height
             )
-            let xOffset = (size.width - mappingSize.width * scale) / 2
-            let yOffset = (size.height - mappingSize.height * scale) / 2
+            let scaledWidth = mappingSize.width * scale
+            let scaledHeight = mappingSize.height * scale
+            let xOffset = safeAreaInsets.leading + (availableWidth - scaledWidth) / 2
+            // Mirror DeltaSkinView layout: iPhone portrait is bottom-aligned; all others are centred
+            let yOffset: CGFloat
+            if viewModel.traits.device == .iphone && viewModel.traits.orientation == .portrait {
+                yOffset = size.height - scaledHeight - safeAreaInsets.bottom
+            } else {
+                yOffset = safeAreaInsets.top + (availableHeight - scaledHeight) / 2
+            }
             let origin = CGPoint(x: xOffset, y: yOffset)
 
             ZStack(alignment: .bottom) {
@@ -227,7 +238,9 @@ struct DeltaSkinEditOverlay: View {
 
             HStack(spacing: 2) {
                 Button {
-                    onChange(value - 1)
+                    // Snap to nearest integer baseline before stepping to avoid
+                    // fractional drift when drag produces sub-pixel mapping values.
+                    onChange(round(value) - 1)
                 } label: {
                     Image(systemName: "minus")
                         .font(.system(size: 10))
@@ -242,7 +255,7 @@ struct DeltaSkinEditOverlay: View {
                     .multilineTextAlignment(.center)
 
                 Button {
-                    onChange(value + 1)
+                    onChange(round(value) + 1)
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 10))

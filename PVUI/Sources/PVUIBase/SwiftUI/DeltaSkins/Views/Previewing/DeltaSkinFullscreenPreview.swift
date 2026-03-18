@@ -99,7 +99,8 @@ struct DeltaSkinFullscreenPreview: View {
                 if isEditMode {
                     DeltaSkinEditOverlay(
                         viewModel: editorViewModel,
-                        size: geometry.size
+                        size: geometry.size,
+                        safeAreaInsets: geometry.safeAreaInsets
                     )
                 }
 
