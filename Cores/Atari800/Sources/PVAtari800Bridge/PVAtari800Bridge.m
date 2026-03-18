@@ -296,13 +296,20 @@ static const NSInteger kMaxPlayers = 4;
     }
 
     // Feed pending keyboard input into the atari800 INPUT layer each frame.
-    // Always assign INPUT_key_code (including AKEY_NONE on key release) so
-    // the atari800 input layer never sees a stuck key between frames.
-    INPUT_key_code = atomic_load(&s_pendingKeyCode);
+    // Only override INPUT_key_code when a real key is pending so we don't
+    // clobber values set by the controller path (e.g. 5200 Start/Reset).
+    int pendingKeyCode = atomic_load(&s_pendingKeyCode);
+    if (pendingKeyCode != AKEY_NONE) {
+        INPUT_key_code = pendingKeyCode;
+    }
 
     // Apply shift state from the atomic press count on the emulation thread
     // to avoid a data race with the main/UI thread that calls keyDown:/keyUp:.
-    INPUT_key_shift = (atomic_load(&s_shiftPressCount) > 0) ? 1 : 0;
+    // Do not touch INPUT_key_shift on 5200, where the controller path uses it
+    // for additional buttons (e.g. the 2nd fire button).
+    if (Atari800_machine_type != Atari800_MACHINE_5200) {
+        INPUT_key_shift = (atomic_load(&s_shiftPressCount) > 0) ? 1 : 0;
+    }
 
     // Atomically consume accumulated mouse deltas so the emulation thread
     // and the main (input) thread don't race on the same counters.
