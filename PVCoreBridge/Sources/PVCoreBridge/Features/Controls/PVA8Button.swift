@@ -27,8 +27,7 @@
             case "option", "optionkey": self = .optionKey
             case "select", "selectkey": self = .selectKey
             case "start", "startkey": self = .startKey
-            case "count": self = .count
-            default: self = .up
+            default: self = .count
         }
     }
 
@@ -73,6 +72,13 @@ extension PVA8Button: HardwareSwitchProvider {
                 title: "SELECT",
                 offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "select"),
                 onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "select"),
+                defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "start_key",
+                title: "START",
+                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "start"),
+                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "start"),
                 defaultState: false
             )
         ]
