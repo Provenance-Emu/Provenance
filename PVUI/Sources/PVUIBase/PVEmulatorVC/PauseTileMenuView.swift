@@ -3,14 +3,15 @@
 //  PVUI
 //
 //  Created by Claude on 3/17/26.
-//  Part of #3248 — tile-based pause menu (feature-flagged, default OFF)
+//  Part of #3248/#3249 — tile-based pause menu (feature-flagged, default OFF)
 //
 //  Design goals:
 //  - Compact floating grid overlay; does NOT cover the full screen
+//  - Square tiles in a tight # grid with section headers for grouping
 //  - Dynamic column count based on available width
 //  - Works in skins / legacy UIKit controller layout
 //  - Retrowave neon aesthetic consistent with RetroMenuView
-//  - iOS and tvOS compatible
+//  - iOS and tvOS compatible; controller/keyboard focus via FocusState
 //
 
 import SwiftUI
@@ -37,6 +38,7 @@ struct PauseTileMenuView: View {
     let dismissAction: (Bool) -> Void
 
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var indicatorRegistry = PVIndicatorRegistry.shared
 
     // MARK: Sheet state
 
@@ -63,6 +65,12 @@ struct PauseTileMenuView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.featureFlags) private var featureFlags
 
+    // Metal filter state — read/write directly to react to changes.
+    @Default(.metalFilterMode) private var metalFilterMode
+
+    // Haptic feedback toggle
+    @Default(.hapticFeedback) private var hapticFeedbackEnabled
+
     #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     #endif
@@ -78,10 +86,14 @@ struct PauseTileMenuView: View {
 
     private var palette: UXThemePalette { themeManager.currentPalette }
 
-    // MARK: - Tile sections
+    // MARK: - Grouped tile sections
 
-    private var primaryTiles: [PauseMenuTile] {
-        var tiles: [PauseMenuTile] = []
+    /// Standard game-control tiles grouped into named sections.
+    private var gameSections: [PauseMenuTileSection] {
+        _ = coreOptionRefreshToken
+        var sections: [PauseMenuTileSection] = []
+
+        // ── GAME section ──────────────────────────────────────────────────────
         let supportsSaveStates = emulatorVC.core.supportsSaveStates
         let hasSave: Bool = {
             guard let game = emulatorVC.game, !game.isInvalidated else { return false }
@@ -90,115 +102,55 @@ struct PauseTileMenuView: View {
         let supportsCheatCodes = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
         let shouldSave = shouldSaveOnQuit
 
-        tiles.append(PauseMenuTile(
-            id: "resume",
-            icon: "play.fill",
-            label: String(localized: "Resume"),
-            colorKey: .green
-        ))
-
-        tiles.append(PauseMenuTile(
-            id: "saveState",
-            icon: "square.and.arrow.down",
-            label: String(localized: "Save State"),
-            isEnabled: supportsSaveStates,
-            colorKey: .cyan
-        ))
-
-        tiles.append(PauseMenuTile(
-            id: "loadState",
-            icon: "arrowshape.turn.up.left",
-            label: String(localized: "Quick Load"),
-            isEnabled: supportsSaveStates && hasSave,
-            colorKey: .blue
-        ))
-
-        tiles.append(PauseMenuTile(
-            id: "browseSaves",
-            icon: "list.bullet.rectangle.portrait",
-            label: String(localized: "Browse Saves"),
-            isEnabled: supportsSaveStates,
-            colorKey: .purple
-        ))
-
-        tiles.append(PauseMenuTile(
-            id: "reset",
-            icon: "arrow.counterclockwise",
-            label: String(localized: "Reset"),
-            colorKey: .orange
-        ))
-
-        tiles.append(PauseMenuTile(
-            id: "cheats",
-            icon: "wand.and.stars",
-            label: String(localized: "Cheats"),
-            isEnabled: supportsCheatCodes,
-            colorKey: .purple
-        ))
-
-        tiles.append(PauseMenuTile(
-            id: "gameInfo",
-            icon: "info.circle",
-            label: String(localized: "Game Info"),
-            colorKey: .blue
-        ))
-
-        tiles.append(PauseMenuTile(
-            id: "controllerProfile",
-            icon: "gamecontroller",
-            label: String(localized: "Controller Profile"),
-            isEnabled: hasControllerProfiles,
-            colorKey: .purple,
-            dismissOnTap: false
-        ))
-
-        #if os(iOS) || targetEnvironment(macCatalyst)
-        tiles.append(PauseMenuTile(
-            id: "screenshot",
-            icon: "camera",
-            label: String(localized: "Screenshot"),
-            colorKey: .yellow
-        ))
-        tiles.append(PauseMenuTile(
-            id: "screenshots",
-            icon: "photo.on.rectangle",
-            label: String(localized: "Screenshots"),
-            colorKey: .yellow
-        ))
-        #endif
-
-        if shouldSave {
-            tiles.append(PauseMenuTile(
-                id: "saveQuit",
-                icon: "square.and.arrow.down.on.square",
-                label: String(localized: "Save & Quit"),
-                colorKey: .cyan
-            ))
+        var gameTiles: [PauseMenuTile] = [
+            PauseMenuTile(id: "resume",     icon: "play.fill",                 label: String(localized: "Resume"),      colorKey: .green),
+            PauseMenuTile(id: "saveState",  icon: "square.and.arrow.down",     label: String(localized: "Save State"),  isEnabled: supportsSaveStates,           colorKey: .cyan),
+            PauseMenuTile(id: "loadState",  icon: "arrowshape.turn.up.left",   label: String(localized: "Quick Load"),  isEnabled: supportsSaveStates && hasSave, colorKey: .blue),
+            PauseMenuTile(id: "browseSaves",icon: "list.bullet.rectangle.portrait", label: String(localized: "Saves"),  isEnabled: supportsSaveStates,           colorKey: .purple, dismissOnTap: false),
+            PauseMenuTile(id: "reset",      icon: "arrow.counterclockwise",    label: String(localized: "Reset"),       colorKey: .orange),
+        ]
+        if supportsCheatCodes {
+            gameTiles.append(PauseMenuTile(id: "cheats", icon: "wand.and.stars", label: String(localized: "Cheats"), colorKey: .purple))
         }
 
-        tiles.append(PauseMenuTile(
-            id: "quit",
-            icon: "xmark.circle",
-            label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit Game"),
-            colorKey: .pink
-        ))
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        gameTiles.append(PauseMenuTile(id: "screenshot",  icon: "camera",                label: String(localized: "Screenshot"),  colorKey: .yellow))
+        gameTiles.append(PauseMenuTile(id: "screenshots", icon: "photo.on.rectangle",     label: String(localized: "Screenshots"), colorKey: .yellow, dismissOnTap: false))
+        #endif
 
-        return tiles
-    }
+        gameTiles.append(PauseMenuTile(id: "gameInfo",         icon: "info.circle",   label: String(localized: "Game Info"),          colorKey: .blue))
+        gameTiles.append(PauseMenuTile(id: "controllerProfile",icon: "gamecontroller",label: String(localized: "Controller"),          isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
 
-    /// Dynamic tiles sourced from the active core's `CoreActions` and `CoreOptions`.
-    /// `coreOptionRefreshToken` is referenced so SwiftUI re-evaluates this property after a toggle.
-    private var coreTiles: [PauseMenuTile] {
-        _ = coreOptionRefreshToken
-        var tiles: [PauseMenuTile] = []
+        if shouldSave {
+            gameTiles.append(PauseMenuTile(id: "saveQuit", icon: "square.and.arrow.down.on.square", label: String(localized: "Save & Quit"), colorKey: .cyan))
+        }
+        gameTiles.append(PauseMenuTile(id: "quit", icon: "xmark.circle", label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit"), colorKey: .pink))
 
-        // Transfer Pak tile — shown when the core implements TransferPakSupport
+        sections.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
+
+        // ── DISPLAY section ───────────────────────────────────────────────────
+        var displayTiles: [PauseMenuTile] = []
+        displayTiles.append(filterCycleTile)
+        if let rumbleTile = rumbleToggleTile {
+            displayTiles.append(rumbleTile)
+        }
+        if let jitTile = jitStatusTile {
+            displayTiles.append(jitTile)
+        }
+        if !displayTiles.isEmpty {
+            sections.append(PauseMenuTileSection(id: "display", title: String(localized: "QUICK SETTINGS"), tiles: displayTiles))
+        }
+
+        // ── CORE section (dynamic, per-core) ──────────────────────────────────
+        var coreTiles: [PauseMenuTile] = []
+
+        // Transfer Pak tile
         if let transferCore = emulatorVC.core as? TransferPakSupport,
            featureFlags.mupenTransferPak {
             let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
                 transferCore.transferPakROM(forPort: $0) != nil
             }.count
-            tiles.append(PauseMenuTile(
+            coreTiles.append(PauseMenuTile(
                 id: "transferPak",
                 icon: "memorychip",
                 label: String(localized: "Transfer Pak"),
@@ -212,7 +164,7 @@ struct PauseTileMenuView: View {
         let n64ID = SystemIdentifier.N64.rawValue
         let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core?.systemIdentifier ?? ""
         if gameSystemID == n64ID {
-            tiles.append(PauseMenuTile(
+            coreTiles.append(PauseMenuTile(
                 id: "n64PakSlots",
                 icon: "gamecontroller.fill",
                 label: String(localized: "Pak Slots"),
@@ -225,7 +177,7 @@ struct PauseTileMenuView: View {
         if let paletteCore = emulatorVC.core as? PaletteProviding,
            !paletteCore.availablePalettes.isEmpty {
             let currentName = paletteCore.currentPalette?.displayName ?? "–"
-            tiles.append(PauseMenuTile(
+            coreTiles.append(PauseMenuTile(
                 id: "palette",
                 icon: "paintpalette.fill",
                 label: String(localized: "Palette"),
@@ -242,20 +194,78 @@ struct PauseTileMenuView: View {
                 ? actions.filter { $0.title != changePaletteLegacyActionTitle }
                 : actions
             if !filteredActions.isEmpty {
-                tiles += CoreActionTileProvider.tiles(from: filteredActions)
+                coreTiles += CoreActionTileProvider.tiles(from: filteredActions)
             }
         }
 
-        // Boolean option toggle tiles + "Core Settings" gateway
+        // Boolean + enum + multi core option tiles
         if let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type {
-            tiles += CoreOptionTileProvider.tiles(from: coreClass.options, coreClass: coreClass)
+            coreTiles += CoreOptionTileProvider.tiles(from: coreClass.options, coreClass: coreClass)
         }
 
-        return tiles
+        if !coreTiles.isEmpty {
+            sections.append(PauseMenuTileSection(id: "core", title: String(localized: "CORE"), tiles: coreTiles))
+        }
+
+        return sections
     }
 
-    /// All tiles: standard primary tiles followed by dynamic core tiles.
-    private var allTiles: [PauseMenuTile] { primaryTiles + coreTiles }
+    // MARK: - Quick-settings tiles
+
+    private var filterCycleTile: PauseMenuTile {
+        let currentFilter = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
+        let allFilters = MetalFilterSelectionOption.allCases
+        let badge: String = {
+            switch currentFilter {
+            case .none: return "None"
+            default: return currentFilter.description
+            }
+        }()
+        let lpOptions = allFilters.map { f in
+            PauseMenuTileLongPressOption(
+                id: "filter_\(f.rawValue)",
+                title: f == .none ? "None" : f.description,
+                isSelected: f == currentFilter
+            )
+        }
+        return PauseMenuTile(
+            id: "filterCycle",
+            icon: "camera.filters",
+            label: String(localized: "Screen Filter"),
+            badge: badge,
+            colorKey: .teal,
+            dismissOnTap: false,
+            longPressOptions: lpOptions
+        )
+    }
+
+    private var rumbleToggleTile: PauseMenuTile? {
+        guard let rumbleCore = emulatorVC.core as? EmulatorCoreRumbleDataSource,
+              rumbleCore.supportsRumble else { return nil }
+        return PauseMenuTile(
+            id: "rumbleToggle",
+            icon: hapticFeedbackEnabled ? "waveform.path" : "waveform.path.badge.minus",
+            label: String(localized: "Rumble"),
+            badge: hapticFeedbackEnabled ? "ON" : "OFF",
+            colorKey: hapticFeedbackEnabled ? .green : .gray,
+            dismissOnTap: false
+        )
+    }
+
+    private var jitStatusTile: PauseMenuTile? {
+        guard emulatorVC.core.jitRequirement.hasJIT else { return nil }
+        let jitState = indicatorRegistry.state(for: .jitStatus)
+        let isActive = jitState?.color == .green
+        return PauseMenuTile(
+            id: "jitStatus",
+            icon: isActive ? "bolt.fill" : "bolt.slash",
+            label: "JIT",
+            badge: isActive ? "ON" : "OFF",
+            colorKey: isActive ? .green : .orange,
+            isEnabled: false, // read-only status tile
+            dismissOnTap: false
+        )
+    }
 
     // MARK: - Tile action dispatcher
 
@@ -285,9 +295,6 @@ struct PauseTileMenuView: View {
                 await emulatorVC?.loadSaveState(mostRecent)
             }
         case "browseSaves":
-            if tile.dismissOnTap {
-                dismissAction(true)
-            }
             showingSaveStateBrowser = true
         case "reset":
             dismissAction(true)
@@ -302,9 +309,6 @@ struct PauseTileMenuView: View {
             dismissAction(true)
             emulatorVC.takeScreenshot()
         case "screenshots":
-            if tile.dismissOnTap {
-                dismissAction(true)
-            }
             showingScreenshotBrowser = true
         case "saveQuit":
             dismissAction(false)
@@ -335,32 +339,43 @@ struct PauseTileMenuView: View {
         case "palette":
             showingPalettePicker = true
 
+        // MARK: Quick-settings tiles
+        case "filterCycle":
+            cycleFilter()
+        case "rumbleToggle":
+            hapticFeedbackEnabled.toggle()
+            coreOptionRefreshToken += 1
+        case "jitStatus":
+            break // read-only
+
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
             guard let actionTitle = CoreActionTileProvider.actionTitle(fromTileID: id),
                   let coreWithActions = emulatorVC.core as? CoreActions,
                   let action = coreWithActions.coreActions?.first(where: { $0.title == actionTitle }) else { return }
             if action.options != nil {
-                // Store for the confirmationDialog; the dialog calls handleCoreAction with the selected option.
                 pendingCoreAction = action
             } else {
-                // Dismiss with resumeEmulation: true so dismissNav's completion handler
-                // calls setPauseEmulation(false) — the single source of truth for
-                // resuming emulation.  handleCoreAction must NOT call setPauseEmulation
-                // itself to avoid a race with the dismiss animation.
                 let emulatorVC = self.emulatorVC
                 emulatorVC.dismissNav(resumeEmulation: true) {
                     emulatorVC.handleCoreAction(action)
                 }
             }
 
-        // MARK: Core option toggle tiles
+        // MARK: Core option toggle/cycle tiles
         case let id where id.hasPrefix(CoreOptionTileProvider.idPrefix):
-            guard let key = CoreOptionTileProvider.optionKey(fromTileID: id),
+            guard let (optIndex, key) = CoreOptionTileProvider.optionIndexAndKey(fromTileID: id),
                   let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
-                  let option = CoreOptionTileProvider.findOption(key: key, in: coreClass.options) else { return }
-            let currentValue: Bool = coreClass.valueForOption(option)
-            coreClass.setValue(!currentValue, forOption: option, andMD5: coreClass.currentGameMD5)
+                  let option = CoreOptionTileProvider.findOption(atIndex: optIndex, key: key, in: coreClass.options) else { return }
+            switch option {
+            case .bool:
+                let currentValue: Bool = coreClass.valueForOption(option)
+                coreClass.setValue(!currentValue, forOption: option, andMD5: coreClass.currentGameMD5)
+            case .enumeration, .multi:
+                CoreOptionTileProvider.cycleNextValue(for: option, coreClass: coreClass)
+            default:
+                break
+            }
             coreOptionRefreshToken += 1
 
         // MARK: Core settings gateway
@@ -372,10 +387,65 @@ struct PauseTileMenuView: View {
         }
     }
 
+    /// Handle a long-press option selection (e.g. pick a specific filter or enum value).
+    private func handleLongPressOption(_ lpOption: PauseMenuTileLongPressOption, for tile: PauseMenuTile) {
+        #if !os(tvOS)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        #endif
+
+        if tile.id == "filterCycle" {
+            // Match by stable ID (filter_<rawValue>) to avoid brittle title/description comparisons.
+            let selected = MetalFilterSelectionOption.allCases.first { f in
+                "filter_\(f.rawValue)" == lpOption.id
+            }
+            if let filter = selected {
+                metalFilterMode = .always(filter: filter)
+            }
+            coreOptionRefreshToken += 1
+            return
+        }
+
+        if tile.id.hasPrefix(CoreActionTileProvider.idPrefix) {
+            guard let actionTitle = CoreActionTileProvider.actionTitle(fromTileID: tile.id),
+                  let coreWithActions = emulatorVC.core as? CoreActions,
+                  let action = coreWithActions.coreActions?.first(where: { $0.title == actionTitle }),
+                  let opts = action.options else { return }
+            let selectedAction = CoreAction(
+                title: action.title,
+                requiresReset: action.requiresReset,
+                options: opts.map { CoreActionOption(title: $0.title, selected: $0.title == lpOption.title) },
+                style: action.style
+            )
+            emulatorVC.dismissNav(resumeEmulation: true) {
+                self.emulatorVC.handleCoreAction(selectedAction)
+            }
+            return
+        }
+
+        if tile.id.hasPrefix(CoreOptionTileProvider.idPrefix) {
+            guard let (optIndex, key) = CoreOptionTileProvider.optionIndexAndKey(fromTileID: tile.id),
+                  let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
+                  let option = CoreOptionTileProvider.findOption(atIndex: optIndex, key: key, in: coreClass.options) else { return }
+            CoreOptionTileProvider.selectValue(titled: lpOption.title, for: option, coreClass: coreClass)
+            coreOptionRefreshToken += 1
+        }
+    }
+
     private func dismissForSubSheetThen(_ action: @escaping () -> Void) {
         emulatorVC.dismissNav(resumeEmulation: false, completion: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { action() }
         })
+    }
+
+    // MARK: - Filter cycling helper
+
+    private func cycleFilter() {
+        let all = MetalFilterSelectionOption.allCases
+        let current = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
+        let idx = all.firstIndex(of: current) ?? 0
+        let next = all[(idx + 1) % all.count]
+        metalFilterMode = next == .none ? .none : .always(filter: next)
+        coreOptionRefreshToken += 1
     }
 
     // MARK: - Layout helpers
@@ -383,124 +453,137 @@ struct PauseTileMenuView: View {
     /// Column count driven by available horizontal space.
     private func columnCount(for width: CGFloat) -> Int {
         #if os(tvOS)
-        return 5
+        return 6
         #else
-        if width >= 600 { return 4 }
-        if width >= 400 { return 3 }
+        if width >= 500 { return 5 }
+        if width >= 400 { return 4 }
+        if width >= 280 { return 3 }
         return 2
         #endif
     }
 
     private var panelMaxWidth: CGFloat {
         #if os(tvOS)
-        return 780
+        return 860
         #else
-        return isLandscape ? 520 : 380
+        return isLandscape ? 560 : 420
         #endif
     }
 
-    // MARK: - Subviews
+    // MARK: - Tile view
 
     private func tileView(for tile: PauseMenuTile) -> some View {
         let accentColor = color(for: tile.colorKey)
-        let opacity: Double = tile.isEnabled ? 1.0 : 0.35
+        let opacity: Double = tile.isEnabled ? 1.0 : 0.4
         let isFocused = focusedTileID == tile.id
 
         #if os(tvOS)
-        let iconSize: CGFloat = 36
-        let labelSize: CGFloat = 15
-        let badgeSize: CGFloat = 11
-        let iconFrame: CGFloat = 52
-        let verticalPad: CGFloat = 18
-        let cornerRadius: CGFloat = 16
+        let iconSize: CGFloat = 30
+        let labelSize: CGFloat = 13
+        let badgeSize: CGFloat = 10
+        let cornerRadius: CGFloat = 14
         #else
-        let iconSize: CGFloat = 24
-        let labelSize: CGFloat = 11
-        let badgeSize: CGFloat = 9
-        let iconFrame: CGFloat = 40
-        let verticalPad: CGFloat = 12
-        let cornerRadius: CGFloat = 12
+        let iconSize: CGFloat = 20
+        let labelSize: CGFloat = 10
+        let badgeSize: CGFloat = 8
+        let cornerRadius: CGFloat = 10
         #endif
 
-        return Button {
+        let button = Button {
             handle(tile)
         } label: {
-            VStack(spacing: 6) {
+            GeometryReader { geo in
+                let side = geo.size.width
                 ZStack(alignment: .topTrailing) {
-                    Image(systemName: tile.icon)
-                        .font(.system(size: iconSize, weight: .semibold))
-                        .foregroundColor(accentColor)
-                        .shadow(color: accentColor.opacity(isFocused ? 1.0 : 0.8), radius: isFocused ? 12 : 6, x: 0, y: 0)
-                        .frame(width: iconFrame, height: iconFrame)
+                    VStack(spacing: 4) {
+                        Spacer(minLength: 0)
+                        Image(systemName: tile.icon)
+                            .font(.system(size: iconSize, weight: .semibold))
+                            .foregroundColor(accentColor)
+                            .shadow(color: accentColor.opacity(isFocused ? 1.0 : 0.7), radius: isFocused ? 10 : 5)
+
+                        Text(tile.label)
+                            .font(.system(size: labelSize, weight: isFocused ? .bold : .semibold))
+                            .foregroundColor(.white)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                            .minimumScaleFactor(0.75)
+                            .padding(.horizontal, 4)
+                        Spacer(minLength: 0)
+                    }
+                    .frame(width: side, height: side)
 
                     if let badge = tile.badge {
                         Text(badge)
                             .font(.system(size: badgeSize, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 2)
                             .background(accentColor)
                             .clipShape(Capsule())
-                            .offset(x: 8, y: -6)
+                            .offset(x: 4, y: -4)
                     }
                 }
-
-                Text(tile.label)
-                    .font(.system(size: labelSize, weight: isFocused ? .bold : .semibold))
-                    .foregroundColor(.white)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.8)
+                .frame(width: side, height: side)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, verticalPad)
-            .padding(.horizontal, 4)
+            .aspectRatio(1, contentMode: .fit)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(accentColor.opacity(isFocused ? 0.25 : 0.12))
-                    .background(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(Color.black.opacity(isFocused ? 0.7 : 0.55))
-                    )
+                    .fill(accentColor.opacity(isFocused ? 0.22 : 0.10))
                     .overlay(
                         RoundedRectangle(cornerRadius: cornerRadius)
-                            .strokeBorder(
-                                accentColor.opacity(isFocused ? 0.9 : 0.45),
-                                lineWidth: isFocused ? 2.5 : 1
-                            )
+                            .strokeBorder(accentColor.opacity(isFocused ? 0.85 : 0.35), lineWidth: isFocused ? 2 : 1)
                     )
             )
-            .shadow(color: isFocused ? accentColor.opacity(0.6) : .clear, radius: 20, x: 0, y: 4)
-            .shadow(color: isFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 30, x: 0, y: 8)
+            .shadow(color: isFocused ? accentColor.opacity(0.5) : .clear, radius: 14, x: 0, y: 3)
         }
         .buttonStyle(TileButtonStyle(isFocused: isFocused))
         .opacity(opacity)
         .disabled(!tile.isEnabled)
         .focused($focusedTileID, equals: tile.id)
-        .animation(.spring(response: 0.28, dampingFraction: 0.7), value: isFocused)
+        .animation(.spring(response: 0.25, dampingFraction: 0.72), value: isFocused)
+
+        if let lpOptions = tile.longPressOptions, !lpOptions.isEmpty {
+            return AnyView(button.contextMenu {
+                ForEach(lpOptions) { opt in
+                    Button {
+                        handleLongPressOption(opt, for: tile)
+                    } label: {
+                        if opt.isSelected {
+                            Label(opt.title, systemImage: "checkmark")
+                        } else {
+                            Text(opt.title)
+                        }
+                    }
+                }
+            })
+        }
+        return AnyView(button)
     }
 
     private func color(for key: PauseMenuTileColor) -> Color {
         switch key {
-        case .green: return .retroGreen
+        case .green:  return .retroGreen
         case .orange: return .retroOrange
-        case .blue: return .retroBlue
+        case .blue:   return .retroBlue
         case .purple: return .retroPurple
-        case .pink: return .retroPink
-        case .cyan: return .retroCyan
+        case .pink:   return .retroPink
+        case .cyan:   return .retroCyan
         case .yellow: return .retroYellow
-        case .gray: return .gray
+        case .gray:   return .gray
+        case .teal:   return Color(red: 0.0, green: 0.8, blue: 0.75)
+        case .red:    return Color(red: 0.95, green: 0.2, blue: 0.25)
         }
     }
 
     private var panelBackground: some View {
-        RoundedRectangle(cornerRadius: 20)
-            .fill(Color.black.opacity(0.82))
+        RoundedRectangle(cornerRadius: 18)
+            .fill(Color.black.opacity(0.88))
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 18)
                     .strokeBorder(
                         LinearGradient(
-                            colors: [.retroPurple.opacity(0.7), .retroPink.opacity(0.7)],
+                            colors: [.retroPurple.opacity(0.65), .retroPink.opacity(0.65)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -509,52 +592,71 @@ struct PauseTileMenuView: View {
             )
     }
 
+    // MARK: - Section view
+
+    private func sectionView(section: PauseMenuTileSection, cols: Int, spacing: CGFloat) -> some View {
+        let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: cols)
+        return VStack(alignment: .leading, spacing: 6) {
+            if let title = section.title {
+                Text(title)
+                    .font(.system(size: tvOSAdjusted(9, tvOS: 13), weight: .heavy))
+                    .foregroundColor(.white.opacity(0.45))
+                    .tracking(tvOSAdjusted(1.5, tvOS: 2.5))
+                    .padding(.horizontal, 2)
+            }
+            LazyVGrid(columns: columns, spacing: spacing) {
+                ForEach(section.tiles) { tile in
+                    tileView(for: tile)
+                }
+            }
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
         GeometryReader { geo in
             ZStack {
                 // Dimmed game background — tapping it resumes
-                Color.black.opacity(0.55)
+                Color.black.opacity(0.5)
                     .ignoresSafeArea()
                     .onTapGesture { dismissAction(true) }
 
                 // Floating tile panel
-                let cols = columnCount(for: min(geo.size.width, panelMaxWidth) - 32)
-                let gridSpacing: CGFloat = {
-                    #if os(tvOS)
-                    return 16
-                    #else
-                    return 10
-                    #endif
-                }()
-                let columns = Array(repeating: GridItem(.flexible(), spacing: gridSpacing), count: cols)
+                let panelWidth = min(geo.size.width - 32, panelMaxWidth)
+                let cols = columnCount(for: panelWidth)
+                let spacing: CGFloat = tvOSAdjusted(6, tvOS: 12)
+                let sections = gameSections
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: tvOSAdjusted(16, tvOS: 24)) {
+                    VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
                         // Panel title
-                        Text(String(localized: "GAME MENU"))
-                            .font(.system(size: tvOSAdjusted(14, tvOS: 22), weight: .heavy, design: .rounded))
-                            .foregroundColor(.white.opacity(0.6))
-                            .tracking(tvOSAdjusted(2, tvOS: 4))
-                            .padding(.top, tvOSAdjusted(4, tvOS: 8))
+                        HStack {
+                            Spacer()
+                            Text(String(localized: "GAME MENU"))
+                                .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .heavy, design: .rounded))
+                                .foregroundColor(.white.opacity(0.55))
+                                .tracking(tvOSAdjusted(2, tvOS: 3.5))
+                            Spacer()
+                        }
+                        .padding(.top, tvOSAdjusted(2, tvOS: 6))
 
-                        // Tile grid (primary + dynamic core tiles)
-                        LazyVGrid(columns: columns, spacing: tvOSAdjusted(10, tvOS: 16)) {
-                            ForEach(allTiles) { tile in
-                                tileView(for: tile)
+                        // Grouped sections
+                        ForEach(sections) { section in
+                            sectionView(section: section, cols: cols, spacing: spacing)
+                            if section.id != sections.last?.id {
+                                Divider()
+                                    .background(Color.white.opacity(0.12))
                             }
                         }
-                        .padding(.horizontal, 4)
-                        .padding(.bottom, 4)
                     }
-                    .padding(tvOSAdjusted(16, tvOS: 24))
+                    .padding(tvOSAdjusted(12, tvOS: 20))
                 }
                 .background(panelBackground)
-                .frame(maxWidth: panelMaxWidth)
-                .frame(maxHeight: geo.size.height * 0.75)
+                .frame(width: panelWidth)
+                .frame(maxHeight: geo.size.height * 0.82)
                 .fixedSize(horizontal: false, vertical: true)
-                .shadow(color: .retroPurple.opacity(0.3), radius: 20, x: 0, y: 0)
+                .shadow(color: .retroPurple.opacity(0.25), radius: 18, x: 0, y: 0)
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
             }
         }
@@ -620,18 +722,15 @@ struct PauseTileMenuView: View {
                 ForEach(options, id: \.title) { opt in
                     Button(opt.title) {
                         pendingCoreAction = nil
-                        // Build a new CoreAction with the chosen option marked selected
-                        // so cores can distinguish which option the user picked.
                         let selectedAction = CoreAction(
                             title: action.title,
                             requiresReset: action.requiresReset,
                             options: options.map { CoreActionOption(title: $0.title, selected: $0 == opt) },
                             style: action.style
                         )
-                        // Dismiss with resumeEmulation: true and run the core action from
-                        // dismissNav's completion so it cannot race with pause/resume state.
-                        self.emulatorVC.dismissNav(resumeEmulation: true) {
-                            self.emulatorVC.handleCoreAction(selectedAction)
+                        let emulatorVC = self.emulatorVC
+                        emulatorVC.dismissNav(resumeEmulation: true) {
+                            emulatorVC.handleCoreAction(selectedAction)
                         }
                     }
                 }
@@ -651,8 +750,8 @@ struct PauseTileMenuView: View {
         #elseif os(tvOS)
         .onAppear {
             refreshControllerProfileState()
-            // Set initial focus to the first enabled tile
-            if let firstEnabled = allTiles.first(where: { $0.isEnabled }) {
+            // Set initial focus to the first enabled tile in the first section
+            if let firstEnabled = gameSections.first?.tiles.first(where: { $0.isEnabled }) {
                 focusedTileID = firstEnabled.id
             }
         }
@@ -663,9 +762,6 @@ struct PauseTileMenuView: View {
 
     // MARK: - Helpers
 
-    /// Queries Realm once to determine if any connected controller has saved profiles.
-    /// Call from `.onAppear` rather than inside computed tile arrays to avoid
-    /// hitting the database on every SwiftUI re-render.
     private func refreshControllerProfileState() {
         let controllers = PVControllerManager.shared.controllers
         let db = RomDatabase.sharedInstance
@@ -675,7 +771,6 @@ struct PauseTileMenuView: View {
         }
     }
 
-    /// Returns `tvOS` value on tvOS, `standard` on other platforms.
     private func tvOSAdjusted(_ standard: CGFloat, tvOS tvOSValue: CGFloat) -> CGFloat {
         #if os(tvOS)
         return tvOSValue
@@ -705,9 +800,26 @@ private struct TileButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(isFocused ? 1.08 : 1.0)
-            .scaleEffect(configuration.isPressed ? 0.92 : 1.0)
-            .animation(.spring(response: 0.28, dampingFraction: 0.7), value: isFocused)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+            .scaleEffect(isFocused ? 1.06 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.90 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.72), value: isFocused)
+            .animation(.easeInOut(duration: 0.09), value: configuration.isPressed)
+    }
+}
+
+// MARK: - MetalFilterModeOption extension
+
+private extension MetalFilterModeOption {
+    /// Extracts the currently-active `MetalFilterSelectionOption` from a mode option.
+    static func parseCurrentFilter(from mode: MetalFilterModeOption) -> MetalFilterSelectionOption {
+        switch mode {
+        case .none:
+            return .none
+        case let .always(filter: f):
+            return f
+        case let .auto(crt: crt, lcd: lcd):
+            // Prefer CRT when non-none; fall back to LCD filter.
+            return crt != .none ? crt : lcd
+        }
     }
 }
