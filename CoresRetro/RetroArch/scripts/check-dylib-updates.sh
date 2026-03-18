@@ -56,7 +56,7 @@ done
 [ -f "${CORES_YML}" ] || die "${CORES_YML} not found"
 
 _PINNED_LINES=$(grep -v '^[[:space:]]*#' "${CORES_YML}" \
-    | grep -E '^[[:space:]]*pinned_date:')
+    | grep -E '^[[:space:]]*pinned_date:' || true)
 _PINNED_COUNT=$(printf '%s' "${_PINNED_LINES}" | grep -c . 2>/dev/null || echo 0)
 if [ "${_PINNED_COUNT}" -gt 1 ] 2>/dev/null; then
     die "Multiple 'pinned_date:' entries found in ${CORES_YML}; ensure exactly one is set."
