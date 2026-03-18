@@ -403,7 +403,12 @@ struct ConsolesWrapperView: SwiftUI.View {
                     }
                 }
 
-                if !loadedConsoleIDs.contains(console.identifier) || liveConsole(for: console.identifier) == nil {
+                // Only show the placeholder until the tab has been visited for the
+                // first time. Once loadedConsoleIDs contains the identifier we trust
+                // the content is there — liveConsole() can return nil transiently
+                // when Realm fires a change notification mid-switch, which would
+                // cause the placeholder to flash on top of already-loaded content.
+                if !loadedConsoleIDs.contains(console.identifier) {
                     ConsolePlaceholderView(systemName: console.name)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }

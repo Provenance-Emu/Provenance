@@ -168,11 +168,46 @@ Agents MUST run these checks before creating a PR. Do NOT skip any step.
 
 5. **No magic numbers** — Extract constants. Don't hardcode values that are used in multiple places.
 
-6. **Type safety** — Check that optional unwrapping is correct (no double-optionals from `?.` chains). Check that enum cases exist before referencing them. Check that function signatures match call sites.
+6. **Use `SystemIdentifier` enum, not raw strings** — Never compare system identifiers using raw string literals like `"com.provenance.n64"`. Use the `SystemIdentifier` enum from `PVPrimitives`:
 
-7. **Thread safety** — If reading a property from a background queue that's written from main, snapshot it into a local `let` first. Don't use `@Published` properties across threads without synchronization.
+   ```swift
+   // ❌ WRONG — fragile, typo-prone, no compile-time safety
+   if self.systemIdentifier == "com.provenance.n64" { ... }
+   if self.systemIdentifier?.contains("atarist") == true { ... }
 
-8. **Multi-platform compilation** — Provenance builds for **iOS, tvOS, macOS (Catalyst), and visionOS**. All new code MUST compile on all platforms. Agents must mentally verify every changed file compiles for at least iOS AND tvOS before creating a PR.
+   // ✅ CORRECT — type-safe, refactor-safe
+   if SystemIdentifier(rawValue: self.systemIdentifier ?? "") == .N64 { ... }
+
+   // ✅ CORRECT — check multiple systems
+   let sysID = SystemIdentifier(rawValue: self.systemIdentifier ?? "")
+   if sysID == .SNES || sysID == .NES { ... }
+
+   // ✅ CORRECT — switch
+   switch SystemIdentifier(rawValue: self.systemIdentifier ?? "") {
+   case .AtariST: setupHatari()
+   case .DOS, .DOOM: setupDOSBox()
+   default: break
+   }
+   ```
+
+   In **Objective-C** there is no enum, so use the `SystemIdentifier` raw string constants directly via `PVSystem` or define a local `NSString * const` — do NOT embed the `com.provenance.*` string inline more than once:
+
+   ```objc
+   // ❌ WRONG
+   if ([self.systemIdentifier containsString:@"com.provenance.atarist"]) { ... }
+
+   // ✅ CORRECT — define a constant or use the existing PVSystem identifier
+   static NSString * const PVAtariSTSystemIdentifier = @"com.provenance.atarist";
+   if ([self.systemIdentifier isEqualToString:PVAtariSTSystemIdentifier]) { ... }
+   ```
+
+   The `SystemIdentifier` enum is in `PVPrimitives/Sources/PVSystems/SystemIdentifier.swift`. Import `PVPrimitives` to use it. `systemIdentifier` on the core (`PVEmulatorCore`) is a `String?`.
+
+7. **Type safety** — Check that optional unwrapping is correct (no double-optionals from `?.` chains). Check that enum cases exist before referencing them. Check that function signatures match call sites.
+
+8. **Thread safety** — If reading a property from a background queue that's written from main, snapshot it into a local `let` first. Don't use `@Published` properties across threads without synchronization.
+
+9. **Multi-platform compilation** — Provenance builds for **iOS, tvOS, macOS (Catalyst), and visionOS**. All new code MUST compile on all platforms. Agents must mentally verify every changed file compiles for at least iOS AND tvOS before creating a PR.
 
    **Platform guard patterns:**
    - `#if os(iOS)` / `#if os(tvOS)` — OS-specific code
