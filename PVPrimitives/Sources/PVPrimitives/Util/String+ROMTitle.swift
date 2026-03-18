@@ -38,7 +38,7 @@ private extension NSRegularExpression {
     /// Replaces all matches in `string` with `template`, returning the result.
     func replacingAllMatches(in string: String, with template: String) -> String {
         let range = NSRange(string.startIndex..., in: string)
-        return replacingMatches(in: string, range: range, withTemplate: template)
+        return replacingMatches(in: string, options: [], range: range, withTemplate: template)
     }
 }
 
