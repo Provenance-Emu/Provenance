@@ -49,41 +49,44 @@ struct InSessionProfilePickerView: View {
 
     // MARK: Body
 
-    var body: some View {
-        NavigationStack {
-            Group {
-                if entries.isEmpty {
-                    ContentUnavailableView(
-                        "No Profiles",
-                        systemImage: "gamecontroller",
-                        description: Text("Save a profile in Settings › Controllers › Button Remapping to see it here.")
-                    )
-                } else {
-                    List {
-                        ForEach(entries) { entry in
-                            Section(header: Text(entry.controller.vendorName ?? "Controller")) {
-                                if entry.profiles.isEmpty {
-                                    Text("No saved profiles.")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                } else {
-                                    ForEach(entry.profiles, id: \.id) { profile in
-                                        profileRow(profile, controller: entry.controller)
-                                    }
-                                }
+    @ViewBuilder
+    private var contentView: some View {
+        if entries.isEmpty {
+            ContentUnavailableView(
+                "No Profiles",
+                systemImage: "gamecontroller",
+                description: Text("Save a profile in Settings › Controllers › Button Remapping to see it here.")
+            )
+        } else {
+            List {
+                ForEach(entries) { entry in
+                    SwiftUI.Section(entry.controller.vendorName ?? "Controller") {
+                        if entry.profiles.isEmpty {
+                            Text("No saved profiles.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        } else {
+                            ForEach(entry.profiles, id: \.id) { profile in
+                                profileRow(profile, controller: entry.controller)
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Switch Profile")
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            contentView
+                .navigationTitle("Switch Profile")
             #if !os(tvOS)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { onDismiss() }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") { onDismiss() }
+                    }
                 }
-            }
             #endif
         }
         .onAppear(perform: loadEntries)

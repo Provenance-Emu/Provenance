@@ -204,18 +204,9 @@ public class ArtworkLoader: ObservableObject {
     @MainActor
     public func clearLocalURLCache(forGameId gameId: String) {
         localURLResolvedIds.remove(gameId)
-        // Prefer the direct-path PVImageFile entry (avoids a second hash lookup),
-        // but ensure the underlying file actually exists on disk.
-        if let artworkFile = game.originalArtworkFile {
-            if let cachedPath = artworkFile.pathOfCachedImage,
-               FileManager.default.fileExists(atPath: cachedPath) {
-                return URL(fileURLWithPath: cachedPath)
-            }
+        localURLCache[gameId] = nil
+    }
 
-            let fileURL = artworkFile.url
-            if FileManager.default.fileExists(atPath: fileURL.path) {
-                return fileURL
-            }
     @MainActor
     private func _resolveLocalURLFromDatabase(gameId: String) -> URL? {
         guard let game = RomDatabase.sharedInstance
