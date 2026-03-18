@@ -99,19 +99,45 @@ public final class HomeScreenShortcutService {
         var result: [UIApplicationShortcutItem] = []
         var seen = Set<String>()
 
+        // Filter out contentless (ROM-less RetroArch core launchers) from recents/backfill.
+        // Favorited contentless entries are kept since the user explicitly added them.
+        let contentlessMD5s: Set<String> = {
+            let contentless = library.database
+                .all(PVGame.self)
+                .filter(NSPredicate(format: "contentless == true AND isFavorite == false"))
+            return Set(contentless.map(\.md5Hash))
+        }()
+
         for item in favorites + recents {
             guard result.count < maxTotal,
                   let md5 = item.userInfo?["PVGameHash"] as? String,
-                  !seen.contains(md5) else { continue }
+                  !seen.contains(md5),
+                  !contentlessMD5s.contains(md5) else { continue }
             result.append(item)
             seen.insert(md5)
         }
 
-        // Backfill with recently imported games if we still have open slots.
+        // Backfill with recently played games if we still have open slots.
         if result.count < maxTotal {
-            // Scan a small window — scanning the entire library would be wasteful.
             let candidates = Array(library.database
                 .all(PVGame.self)
+                .filter(NSPredicate(format: "contentless == false"))
+                .sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
+                .prefix(maxTotal * 4))
+            for game in candidates where result.count < maxTotal {
+                guard !game.isInvalidated,
+                      !seen.contains(game.md5Hash),
+                      game.lastPlayed != nil else { continue }
+                result.append(game.asShortcut(isFavorite: false))
+                seen.insert(game.md5Hash)
+            }
+        }
+
+        // If still not full (no play history), backfill with recently imported non-contentless games.
+        if result.count < maxTotal {
+            let candidates = Array(library.database
+                .all(PVGame.self)
+                .filter(NSPredicate(format: "contentless == false"))
                 .sorted(byKeyPath: #keyPath(PVGame.importDate), ascending: false)
                 .prefix(maxTotal * 4))
             for game in candidates where result.count < maxTotal {
