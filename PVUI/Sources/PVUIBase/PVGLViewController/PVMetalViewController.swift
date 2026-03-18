@@ -3420,15 +3420,30 @@ extension PVMetalViewController: PVRenderDelegateMetal {
         emulatorCore?.frontBufferLock.lock()
         previousCommandBuffer?.waitUntilScheduled()
 
-        // Ensure the input texture exists and matches the source dimensions.
+        // Ensure inputTexture matches the Vulkan texture's exact dimensions and pixel
+        // format. updateInputTexture() uses emulatorCore geometry which may differ from
+        // the actual VkImage size/format, so create the destination texture directly
+        // from the Vulkan texture's properties.
         if inputTexture == nil
-            || inputTexture?.width  != texture.width
-            || inputTexture?.height != texture.height {
-            do {
-                try updateInputTexture()
-            } catch {
+            || inputTexture?.width       != texture.width
+            || inputTexture?.height      != texture.height
+            || inputTexture?.pixelFormat != texture.pixelFormat {
+            guard let dev = device else {
                 emulatorCore?.frontBufferLock.unlock()
-                ELOG("PVMetalViewController: updateInputTexture failed for Vulkan frame: \(error)")
+                ELOG("PVMetalViewController: no Metal device for Vulkan frame")
+                recoverFromGPUError()
+                return
+            }
+            let desc = MTLTextureDescriptor.texture2DDescriptor(
+                pixelFormat: texture.pixelFormat,
+                width: texture.width,
+                height: texture.height,
+                mipmapped: false)
+            desc.usage = [.shaderRead, .renderTarget]
+            inputTexture = dev.makeTexture(descriptor: desc)
+            if inputTexture == nil {
+                emulatorCore?.frontBufferLock.unlock()
+                ELOG("PVMetalViewController: failed to create inputTexture for Vulkan frame")
                 recoverFromGPUError()
                 return
             }

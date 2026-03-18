@@ -734,9 +734,13 @@ static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
     if (!bridge || !cmd || num_cmd == 0) return;
     // Per libretro_vulkan.h, command buffers must not be submitted until
     // retro_video_refresh_t is called. Store them for deferred submission.
+    // Protect with _vulkanQueueLock: the Vulkan interface allows callbacks from
+    // any thread, and _thinVideoRefresh reads these fields on the emu thread.
     uint32_t count = (num_cmd < 64) ? num_cmd : 64;
+    os_unfair_lock_lock(&bridge->_vulkanQueueLock);
     memcpy(bridge->_vulkanPendingCmdBufs, cmd, count * sizeof(VkCommandBuffer));
     bridge->_vulkanPendingCmdBufCount = count;
+    os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
 }
 
 static void thin_vulkan_wait_sync_index(void *handle) {
@@ -2609,12 +2613,22 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (data == RETRO_HW_FRAME_BUFFER_VALID) {
 #if HAVE_VULKAN
         if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
-            if (_vulkanPendingCmdBufCount > 0) {
+            // Snapshot and clear pending command buffers under the lock so we don't
+            // race with thin_vulkan_set_command_buffers (which may be called from
+            // any thread per the libretro Vulkan interface spec).
+            os_unfair_lock_lock(&_vulkanQueueLock);
+            uint32_t pendingCount = _vulkanPendingCmdBufCount;
+            VkCommandBuffer pendingCmds[64];
+            if (pendingCount > 0) {
+                memcpy(pendingCmds, _vulkanPendingCmdBufs, pendingCount * sizeof(VkCommandBuffer));
+                _vulkanPendingCmdBufCount = 0;
+            }
+            os_unfair_lock_unlock(&_vulkanQueueLock);
+
+            if (pendingCount > 0) {
                 // Normal Vulkan path: submit the deferred command buffers now that
                 // retro_video_refresh_t has been called (per libretro_vulkan.h spec).
-                uint32_t count = _vulkanPendingCmdBufCount;
-                _vulkanPendingCmdBufCount = 0;
-                [self submitVulkanCommandBuffers:_vulkanPendingCmdBufs count:count];
+                [self submitVulkanCommandBuffers:pendingCmds count:pendingCount];
                 // submitVulkanCommandBuffers notifies the delegate if _vulkanHasCurrentImage.
             } else if (_vulkanHasCurrentImage) {
                 // Async-compute path: core called set_image but no set_command_buffers.
@@ -2636,9 +2650,14 @@ static bool thin_environment(unsigned cmd, void *data) {
                         .pWaitDstStageMask = waitMasks,
                         .commandBufferCount = 0,
                     };
-                    _vkQueueSubmit(_vulkanQueue, 1, &waitSubmit, VK_NULL_HANDLE);
-                    if (_vkQueueWaitIdle) { _vkQueueWaitIdle(_vulkanQueue); }
+                    VkResult waitResult = _vkQueueSubmit(_vulkanQueue, 1, &waitSubmit, VK_NULL_HANDLE);
+                    if (waitResult == VK_SUCCESS && _vkQueueWaitIdle) {
+                        _vkQueueWaitIdle(_vulkanQueue);
+                    } else if (waitResult != VK_SUCCESS) {
+                        ELOG(@"ThinFrontend: async-compute vkQueueSubmit failed (result=%d)", waitResult);
+                    }
                     os_unfair_lock_unlock(&_vulkanQueueLock);
+                    if (waitResult != VK_SUCCESS) { return; }
                 }
                 [self notifyRenderDelegateOfVulkanFrame:nil];
             }
@@ -4764,12 +4783,15 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
 
-    // Fallback: try IOSurface path if the texture has IOSurface backing
-    IOSurfaceRef surface = (__bridge IOSurfaceRef)[mtlTexture iosurface];
+    // Fallback: try IOSurface path if the texture has IOSurface backing.
+    // iosurface returns an IOSurfaceRef (a CF type), not an ObjC object — no bridge cast.
+#if __has_include(<IOSurface/IOSurface.h>)
+    IOSurfaceRef surface = [mtlTexture iosurface];
     if (surface && [renderDelegate conformsToProtocol:@protocol(PVRenderDelegateIOSurface)]) {
         DLOG(@"ThinFrontend: Vulkan frame via IOSurface fallback path");
         // Nothing to do — the IOSurface is shared; the Metal presenter reads it on next draw.
     }
+#endif // __has_include(<IOSurface/IOSurface.h>)
 }
 
 #endif // HAVE_VULKAN
