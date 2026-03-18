@@ -376,7 +376,18 @@ public final class PVCoreFactory: NSObject {
         case .DS:
             if let core = core as? PVDSSystemResponderClient {
                 return PVDSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
-            } else if (!skipError) {
+            } else if skipError {
+                // Thin libretro wrapper: the cross-module @objc conformance to
+                // PVDSSystemResponderClient may not be visible to `as?` at this call site.
+                // Verify via responds(to:) and force-cast if the methods are present.
+                let anyCore = core as AnyObject
+                if anyCore.responds(to: NSSelectorFromString("didPushDSButton:forPlayer:")) {
+                    // swiftlint:disable:next force_cast
+                    let dsCore = anyCore as! PVDSSystemResponderClient
+                    return PVDSControllerViewController(controlLayout: controllerLayout, system: system, responder: dsCore)
+                }
+                WLOG("DS thin wrapper: PVDSSystemResponderClient methods not found — no controller overlay")
+            } else {
                 fatalError("Core doesn't implement PVDSSystemResponderClient")
             }
             break;

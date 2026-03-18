@@ -494,11 +494,26 @@ extension PVThinLibretroCore: PVN64SystemResponderClient {
 // MARK: - DS
 
 extension PVThinLibretroCore: PVDSSystemResponderClient {
+    @objc(didPushDSButton:forPlayer:)
     public func didPush(_ button: PVDSButton, forPlayer player: Int) {
         pressButton(dsMap(button), forPlayer: player)
     }
+    @objc(didReleaseDSButton:forPlayer:)
     public func didRelease(_ button: PVDSButton, forPlayer player: Int) {
         releaseButton(dsMap(button), forPlayer: player)
+    }
+
+    /// Forward DS touchscreen tap to the libretro pointer device.
+    @objc public func touchScreenAtPoint(_ point: CGPoint) {
+        // DS touchscreen is 256×192; normalize to libretro pointer range (-0x7fff…0x7fff)
+        let nx = Int16(clamping: Int(((point.x / 256.0) * 2.0 - 1.0) * 0x7fff))
+        let ny = Int16(clamping: Int(((point.y / 192.0) * 2.0 - 1.0) * 0x7fff))
+        _bridge.setPointerX(nx, y: ny, pressed: true)
+    }
+
+    /// Release DS touchscreen.
+    @objc public func releaseScreenTouch() {
+        _bridge.setPointerX(0, y: 0, pressed: false)
     }
 
     private func dsMap(_ button: PVDSButton) -> RetroJoypad {
