@@ -21,6 +21,10 @@
 #include "libretro.h"
 #include "libretro_vulkan.h"
 
+/// Returns true if Provenance has acquired JIT at runtime (bridged from DOLJitManager).
+/// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
+extern bool pvjit_acquired(void);
+
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
@@ -2097,8 +2101,11 @@ static bool environment_callback(unsigned cmd, void *data) {
 
         // MARK: - JIT capable — env 74
         case RETRO_ENVIRONMENT_GET_JIT_CAPABLE: {
-            // Provenance supports JIT on iOS/tvOS — report true.
-            if (data) *(bool *)data = true;
+            // Query the JIT manager for the real runtime acquisition state.
+            // Falls back to false if JIT has not been acquired (e.g. no debugger,
+            // no TrollStore, no iOS-26+ entitlement).
+            bool capable = pvjit_acquired();
+            if (data) *(bool *)data = capable;
             return true;
         }
 

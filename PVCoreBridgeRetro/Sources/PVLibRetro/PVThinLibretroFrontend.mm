@@ -65,6 +65,10 @@
 #include <sys/stat.h>
 #import <objc/message.h>
 
+/// Returns true if Provenance has acquired JIT at runtime (bridged from DOLJitManager).
+/// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
+extern "C" bool pvjit_acquired(void);
+
 // Peripheral interfaces: sensor (CoreMotion), location (CoreLocation), LED (GameController)
 #if __has_include(<CoreMotion/CoreMotion.h>) && !TARGET_OS_TV && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <CoreMotion/CoreMotion.h>
@@ -3674,11 +3678,12 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- JIT capability (env 74) ----
         case RETRO_ENVIRONMENT_GET_JIT_CAPABLE: {
-            // Provenance supports JIT on iOS/tvOS via entitlements (TrollStore,
-            // debugger attach, or the iOS 26+ JITAuthorizer API). Report true
-            // so cores that benefit from JIT (e.g. Dolphin, PPSSPP) attempt it.
-            if (data) *(bool *)data = true;
-            DLOG(@"ThinEnv GET_JIT_CAPABLE: true");
+            // Query the JIT manager for the real runtime acquisition state.
+            // Falls back to false if JIT has not been acquired (e.g. no debugger,
+            // no TrollStore, no iOS-26+ entitlement).
+            bool capable = pvjit_acquired();
+            if (data) *(bool *)data = capable;
+            DLOG(@"ThinEnv GET_JIT_CAPABLE: %@", capable ? @"true" : @"false");
             return true;
         }
 

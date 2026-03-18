@@ -27,9 +27,20 @@ public final class DOLJitManager {
 
     @MainActor public static let shared = DOLJitManager()
 
+    /// Thread-safe snapshot of JIT acquisition state.
+    /// Written from the main actor at startup; safe to read from any thread
+    /// after initial acquisition (written once, never reset to false).
+    nonisolated(unsafe) public private(set) static var acquired: Bool = false
+
     private var jitType: DOLJitType = .none
     private var auxError: String?
-    private var hasAcquiredJit = false
+    private var hasAcquiredJit = false {
+        didSet {
+            if hasAcquiredJit {
+                DOLJitManager.acquired = true
+            }
+        }
+    }
     private var isDiscoveringAltserver = false
     /// The detected JIT source. Starts as `.none`; updated after acquisition
     /// and refined by UIKit-capable detection (see `JITSourceDetector`).
