@@ -39,25 +39,22 @@ public final class ROMTitleNormalizationService: Sendable {
 
     /// Returns proposals for every game whose title would change after normalization.
     /// Only entries with a meaningful diff are included.
-    public func buildProposals() async -> [ROMTitleRenameProposal] {
-        do {
-            return try await RealmContext.withBackgroundRealm { realm -> [ROMTitleRenameProposal] in
-                let games = realm.objects(PVGame.self)
-                var proposals: [ROMTitleRenameProposal] = []
-                for game in games {
-                    let proposed = game.title.normalizedROMTitle()
-                    guard proposed != game.title else { continue }
-                    proposals.append(ROMTitleRenameProposal(
-                        id: game.md5Hash,
-                        currentTitle: game.title,
-                        proposedTitle: proposed
-                    ))
-                }
-                return proposals
+    /// - Throws: Any Realm error encountered during the scan, so callers can
+    ///   display an explicit failure state rather than treating it as "no proposals".
+    public func buildProposals() async throws -> [ROMTitleRenameProposal] {
+        try await RealmContext.withBackgroundRealm { realm -> [ROMTitleRenameProposal] in
+            let games = realm.objects(PVGame.self)
+            var proposals: [ROMTitleRenameProposal] = []
+            for game in games {
+                let proposed = game.title.normalizedROMTitle()
+                guard proposed != game.title else { continue }
+                proposals.append(ROMTitleRenameProposal(
+                    id: game.md5Hash,
+                    currentTitle: game.title,
+                    proposedTitle: proposed
+                ))
             }
-        } catch {
-            ELOG("ROMTitleNormalizationService: failed to build proposals: \(error)")
-            return []
+            return proposals
         }
     }
 
@@ -90,13 +87,13 @@ public final class ROMTitleNormalizationService: Sendable {
                 }
             }
         }
-        ILOG("ROMTitleNormalizationService: applied \(appliedCount)/\(proposals.count) title rename(s)")
+        ILOG("ROMTitleNormalizationService: applied \(appliedCount)/\(idToTitle.count) title rename(s)")
     }
 
     /// Convenience: build proposals and apply all of them in one call.
     @discardableResult
     public func normalizeAll() async throws -> Int {
-        let proposals = await buildProposals()
+        let proposals = try await buildProposals()
         try await applyProposals(proposals)
         return proposals.count
     }

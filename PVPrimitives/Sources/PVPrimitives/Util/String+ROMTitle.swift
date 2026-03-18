@@ -25,6 +25,15 @@ public extension String {
 
     // MARK: - ROM Tag Patterns
 
+    /// Applies parenthetical and bracketed ROM tag removal regexes without trimming
+    /// or empty-string safety. Used internally by both `strippingROMTags()` and
+    /// `normalizedROMTitle()` to avoid duplicating the shared patterns.
+    private func removingROMTagPatterns() -> String {
+        self
+            .replacingOccurrences(of: romParenTagPattern, with: "", options: .regularExpression)
+            .replacingOccurrences(of: romBracketTagPattern, with: "", options: .regularExpression)
+    }
+
     /// Strips common ROM annotation patterns from a game title, returning a
     /// clean title suitable for database lookups.
     ///
@@ -40,9 +49,7 @@ public extension String {
     ///     "Tetris (Japan) [!]".strippingROMTags()  // "Tetris"
     ///     "(Bad Title)".strippingROMTags()          // "(Bad Title)"
     func strippingROMTags() -> String {
-        let cleaned = self
-            .replacingOccurrences(of: romParenTagPattern, with: "", options: .regularExpression)
-            .replacingOccurrences(of: romBracketTagPattern, with: "", options: .regularExpression)
+        let cleaned = removingROMTagPatterns()
             .trimmingCharacters(in: .whitespaces)
         return cleaned.isEmpty ? self : cleaned
     }
@@ -78,9 +85,7 @@ public extension String {
         result = result.replacingOccurrences(of: romDiscTagPattern, with: "", options: .regularExpression)
 
         // 2. Strip all remaining parenthetical and bracketed ROM tags (shared patterns)
-        result = result
-            .replacingOccurrences(of: romParenTagPattern, with: "", options: .regularExpression)
-            .replacingOccurrences(of: romBracketTagPattern, with: "", options: .regularExpression)
+        result = result.removingROMTagPatterns()
 
         // 3. Strip trailing version strings — v1.0, v1.2.3, V2, etc.
         result = result.replacingOccurrences(of: romVersionSuffixPattern, with: "", options: .regularExpression)

@@ -143,8 +143,15 @@ public struct ROMTitleNormalizationView: View {
     @MainActor
     private func load() async {
         isLoading = true
-        proposals = await service.buildProposals()
-        selected = Set(proposals.map(\.id))  // default: all selected
+        do {
+            proposals = try await service.buildProposals()
+            selected = Set(proposals.map(\.id))  // default: all selected
+        } catch {
+            ELOG("ROMTitleNormalizationView: load failed: \(error)")
+            resultIsError = true
+            resultMessage = "Failed to scan library: \(error.localizedDescription)"
+            showResult = true
+        }
         isLoading = false
     }
 
