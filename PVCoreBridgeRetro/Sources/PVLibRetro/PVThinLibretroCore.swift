@@ -74,13 +74,11 @@ class PVThinLibretroCore: PVEmulatorCore {
     public override func startEmulation() {
         // Wire system profile for better haptic tuning.
         if let sysId = systemIdentifier {
-            Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
-                if #available(iOS 14.0, tvOS 14.0, *) {
-                    GCControllerHapticsManager.shared.setSystemProfile(forSystemIdentifier: sysId)
-                }
-#endif
+            if #available(iOS 14.0, tvOS 14.0, *) {
+                GCControllerHapticsManager.shared.setSystemProfile(forSystemIdentifier: sysId)
             }
+#endif
         }
         // Apply per-core iOS-specific option defaults before the emulation loop starts.
         // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
@@ -96,11 +94,10 @@ class PVThinLibretroCore: PVEmulatorCore {
 
     public override func stopEmulation() {
         // Reset haptic profile to generic so the next core doesn't inherit this system's tuning.
-        Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
-            if #available(iOS 14.0, tvOS 14.0, *) {
-                GCControllerHapticsManager.shared.resetSystemProfile()
-            }
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            GCControllerHapticsManager.shared.resetSystemProfile()
+        }
 #endif
         }
         super.stopEmulation()
