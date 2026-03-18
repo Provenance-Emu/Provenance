@@ -285,26 +285,58 @@ extension MednafenGameCore: DiscSwappable {
 }
 
 extension MednafenGameCore: CoreActions {
-    
-    enum Actions {
-        static var changePalette: CoreAction { CoreAction(title: "Change Palette", options: nil) }
-    }
-    
+
     public var coreActions: [CoreAction]? {
         switch _bridge.systemType {
         case .virtualBoy:
-            return [Actions.changePalette]
+            // PaletteProviding covers VB display modes via the tile picker.
+            // Keep the legacy cycling action for the retro menu, filtered out
+            // when PaletteProviding is active (same pattern as Gambatte).
+            return [CoreAction(title: changePaletteLegacyActionTitle, options: nil)]
         default:
             return nil
         }
     }
 
     public func selected(action: CoreAction) {
-        switch action {
-        case Actions.changePalette:
-            _bridge.changeDisplayMode()
+        switch action.title {
+        case changePaletteLegacyActionTitle:
+            cycleToNextPalette()
         default:
             WLOG("Unknown action: " + action.title)
+        }
+    }
+}
+
+// MARK: - PaletteProviding
+
+extension MednafenGameCore: PaletteProviding {
+    public var availablePalettes: [CorePalette] {
+        switch _bridge.systemType {
+        case .virtualBoy:
+            return VBDisplayPalette.allCases.map(\.asCorePalette)
+        default:
+            return []
+        }
+    }
+
+    public var currentPaletteID: String {
+        switch _bridge.systemType {
+        case .virtualBoy:
+            let idx = Int(_bridge.currentVBDisplayModeIndex)
+            return VBDisplayPalette(rawValue: idx)?.paletteID ?? VBDisplayPalette.redBlack.paletteID
+        default:
+            return ""
+        }
+    }
+
+    public func selectPalette(id: String) {
+        switch _bridge.systemType {
+        case .virtualBoy:
+            guard let palette = VBDisplayPalette.from(paletteID: id) else { return }
+            _bridge.selectVBDisplayModeAtIndex(NSInteger(palette.rawValue))
+        default:
+            break
         }
     }
 }

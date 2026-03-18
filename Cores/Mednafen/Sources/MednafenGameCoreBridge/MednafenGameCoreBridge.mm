@@ -1727,6 +1727,71 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         }
     }
 }
+
+- (NSInteger)currentVBDisplayModeIndex {
+    if (self.systemType == MednaSystemVirtualBoy) {
+        return (NSInteger)MDFN_IEN_VB::mednafenCurrentDisplayMode;
+    }
+    return 0;
+}
+
+/// Apply a VB display mode directly by index.
+/// Mode table (matches changeDisplayMode's cycle order):
+///  0 – (2D) red / black
+///  1 – (2D) white / black
+///  2 – (2D) purple / black
+///  3 – (3D) red / blue
+///  4 – (3D) red / cyan
+///  5 – (3D) red / electric cyan
+///  6 – (3D) red / green
+///  7 – (3D) green / red
+///  8 – (3D) yellow / blue
+- (void)selectVBDisplayModeAtIndex:(NSInteger)index {
+    if (self.systemType != MednaSystemVirtualBoy) { return; }
+    if (index < 0 || index > 8) { return; }
+
+    switch (index) {
+        case 0:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFF0000, 0x000000);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(true);
+            break;
+        case 1:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFFFFFF, 0x000000);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(true);
+            break;
+        case 2:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFF00FF, 0x000000);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(true);
+            break;
+        case 3:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFF0000, 0x0000FF);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(false);
+            break;
+        case 4:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFF0000, 0x00B7EB);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(false);
+            break;
+        case 5:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFF0000, 0x00FFFF);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(false);
+            break;
+        case 6:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFF0000, 0x00FF00);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(false);
+            break;
+        case 7:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0x00FF00, 0xFF0000);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(false);
+            break;
+        case 8:
+            MDFN_IEN_VB::VIP_SetAnaglyphColors(0xFFFF00, 0x0000FF);
+            MDFN_IEN_VB::VIP_SetParallaxDisable(false);
+            break;
+        default:
+            return;
+    }
+    MDFN_IEN_VB::mednafenCurrentDisplayMode = (int)index;
+}
 #endif
 @end
 
