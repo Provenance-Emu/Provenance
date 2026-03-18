@@ -38,9 +38,9 @@ extension PVMupen64PlusNXCore: CoreOptional {
                                           values:[
                                             .init(title: "None", description: "", value: 1),
                                             .init(title: "Memory Pak", description: "", value: 2),
-//                                            .init(title: "Rumble Pak, description: "", value: 3),
-//                                            .init(title: "Transer Pak", description: "", value: 4),
-                                            .init(title: "Raw Data", description: "Used for Rumble or Transer Pak", value: 5),
+//                                            .init(title: "Rumble Pak", description: "", value: 3),
+                                            .init(title: "Transfer Pak", description: "Use TransferPakSupport to assign a GB/GBC ROM", value: 4),
+                                            .init(title: "Raw Data", description: "Used for Rumble Pak (haptics) or advanced Transfer Pak", value: 5),
                                           ],
                      defaultValue: defaultValue)
     }

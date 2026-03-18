@@ -351,6 +351,19 @@ static void *dlopen_myself()
 	// open core here
 	CoreStartup(FRONTEND_API_VERSION, configPath.fileSystemRepresentation, dataPath.fileSystemRepresentation, (__bridge void *)self, MupenDebugCallback, (__bridge void *)self, MupenStateCallback);
 
+    // Register Transfer Pak media loader so the core can request GB cart ROM/RAM paths.
+    // The callbacks query gbCartROMPath/gbCartSavePath set via TransferPakSupport at launch.
+    m64p_media_loader mediaLoader;
+    mediaLoader.cb_data         = (__bridge void *)self;
+    mediaLoader.get_gb_cart_rom = MupenNXGetGBCartROM;
+    mediaLoader.get_gb_cart_ram = MupenNXGetGBCartRAM;
+    m64p_error mediaLoaderStatus = CoreDoCommand(M64CMD_SET_MEDIA_LOADER, sizeof(m64p_media_loader), &mediaLoader);
+    if (mediaLoaderStatus != M64ERR_SUCCESS) {
+        NSLog(@"[TransferPak-NX] Warning: failed to register media loader (error %d) — Transfer Pak will be unavailable", mediaLoaderStatus);
+    } else {
+        NSLog(@"[TransferPak-NX] Media loader registered successfully");
+    }
+
 	// Setup configs
 	ConfigureAll(romFolder);
 

@@ -166,11 +166,89 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 
 #define N64_ANALOG_MAX 80
 
+// ---------------------------------------------------------------------------
+// MARK: - Transfer Pak media loader callbacks
+// ---------------------------------------------------------------------------
+
+/// Called by the Mupen64Plus core to ask which GB ROM file should be inserted
+/// into controller port `controller_num` (0-based).  Returns a C string owned
+/// by the core instance (valid for the lifetime of the session) or NULL to
+/// leave the slot empty.
+char * __nullable MupenNXGetGBCartROM(void * __nullable cb_data, int controller_num) {
+    if (controller_num < 0 || controller_num >= 4) return NULL;
+    MupenGameNXCore *core = (__bridge MupenGameNXCore *)cb_data;
+    if (!core) return NULL;
+    @synchronized (core) {
+        return core->_gbCartROMCStr[controller_num];
+    }
+}
+
+/// Called by the Mupen64Plus core to ask where GB cart RAM (save) data should
+/// be persisted.  Returns a C string owned by the core instance, or NULL to
+/// let the core auto-generate a default save location.
+char * __nullable MupenNXGetGBCartRAM(void * __nullable cb_data, int controller_num) {
+    if (controller_num < 0 || controller_num >= 4) return NULL;
+    MupenGameNXCore *core = (__bridge MupenGameNXCore *)cb_data;
+    if (!core) return NULL;
+    @synchronized (core) {
+        return core->_gbCartSaveCStr[controller_num];
+    }
+}
+
 @implementation MupenGameNXCore (Controls)
 
 -(void)setMode:(NSInteger)mode forController:(NSInteger)controller {
     NSAssert(controller < 4, @"Out of index");
     self->controllerMode[controller] = mode;
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Transfer Pak GB cart path management
+// ---------------------------------------------------------------------------
+
+- (void)setGBCartROMPath:(nullable NSString *)romPath
+               savePath:(nullable NSString *)savePath
+                forPort:(NSInteger)port {
+    NSAssert(port >= 0 && port < 4, @"Transfer Pak port index out of range (0–3)");
+    if (port < 0 || port >= 4) return;
+
+    @synchronized (self) {
+        // Release previous C-string copies.
+        if (self->_gbCartROMCStr[port]) {
+            free(self->_gbCartROMCStr[port]);
+            self->_gbCartROMCStr[port] = NULL;
+        }
+        if (self->_gbCartSaveCStr[port]) {
+            free(self->_gbCartSaveCStr[port]);
+            self->_gbCartSaveCStr[port] = NULL;
+        }
+
+        self->gbCartROMPath[port]  = romPath;
+        self->gbCartSavePath[port] = savePath;
+
+        if (romPath.length > 0) {
+            self->_gbCartROMCStr[port] = strdup(romPath.fileSystemRepresentation);
+        }
+        if (savePath.length > 0) {
+            self->_gbCartSaveCStr[port] = strdup(savePath.fileSystemRepresentation);
+        }
+    }
+
+    NSLog(@"[TransferPak-NX] port %ld: ROM=%@  save=%@", (long)port, romPath ?: @"<none>", savePath ?: @"<auto>");
+}
+
+- (nullable NSString *)gbCartROMPathForPort:(NSInteger)port {
+    if (port < 0 || port >= 4) return nil;
+    @synchronized (self) {
+        return self->gbCartROMPath[port];
+    }
+}
+
+- (nullable NSString *)gbCartSavePathForPort:(NSInteger)port {
+    if (port < 0 || port >= 4) return nil;
+    @synchronized (self) {
+        return self->gbCartSavePath[port];
+    }
 }
 
 - (void)pollController:(GCController* _Nullable)controller forIndex:(NSInteger)playerIndex {
