@@ -156,6 +156,9 @@ public final class TouchTrackpadView: UIView {
         // UIKit normally processes subviews in reverse order (last-added = topmost),
         // so we yield to any sibling that has a higher zPosition OR appears later
         // in the subview array at the same zPosition (skin containers, toasts, etc.).
+        // We only yield if a *descendant* of the sibling claims the touch — if the
+        // sibling itself is returned it is an empty/transparent container and we
+        // should NOT yield (that would silently swallow the touch).
         if let parent = superview {
             let ownIndex = parent.subviews.firstIndex(of: self) ?? 0
             for sibling in parent.subviews where sibling !== self {
@@ -165,7 +168,12 @@ public final class TouchTrackpadView: UIView {
                     (sibling.layer.zPosition == self.layer.zPosition && siblingIndex > ownIndex)
                 if isAbove {
                     let siblingPoint = sibling.convert(point, from: self)
-                    if let hit = sibling.hitTest(siblingPoint, with: event), hit !== parent {
+                    // Only yield if a *descendant* of the sibling (not the sibling itself)
+                    // claims the touch. When a container has no interactive element at this
+                    // point UIKit's hitTest returns the container itself — that's an empty
+                    // area we should not yield to (it would swallow the touch silently).
+                    if let hit = sibling.hitTest(siblingPoint, with: event),
+                       hit !== parent, hit !== sibling {
                         return hit
                     }
                 }
