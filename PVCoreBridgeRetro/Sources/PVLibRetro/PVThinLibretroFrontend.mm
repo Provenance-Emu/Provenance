@@ -350,6 +350,11 @@ typedef struct PVThinLibretroSymbols {
     VkSemaphore _vulkanSignalSemaphore;        // set by thin_vulkan_set_signal_semaphore
     VkImage _vulkanCurrentVkImage;             // set by thin_vulkan_set_image (VkImage only; no pNext copy)
     BOOL _vulkanHasCurrentImage;
+    // Wait semaphores stored from thin_vulkan_set_image, consumed in the next vkQueueSubmit
+    VkSemaphore _vulkanWaitSemaphores[8];
+    VkPipelineStageFlags _vulkanWaitDstStageMask[8];
+    uint32_t _vulkanWaitSemaphoreCount;
+    BOOL _vulkanExtMetalObjectsEnabled;        // YES if VK_EXT_metal_objects was enabled at device creation
 
     // Vulkan function pointers loaded from MoltenVK
     PFN_vkVoidFunction (*_vkGetInstanceProcAddr)(VkInstance instance, const char *pName);
@@ -364,6 +369,7 @@ typedef struct PVThinLibretroSymbols {
     // Additional Vulkan functions for command submission and Metal interop
     PFN_vkQueueSubmit _vkQueueSubmit;
     VkResult (*_vkQueueWaitIdle)(VkQueue queue);
+    PFN_vkEnumerateDeviceExtensionProperties _vkEnumerateDeviceExtensionProperties;
     // MoltenVK Metal interop: vkGetMTLTextureMVK(image, &mtlTexture) — deprecated but universally available
     void (*_vkGetMTLTextureMVK)(VkImage image, void **pMTLTexture);
     // VK_EXT_metal_objects: vkExportMetalObjectsEXT(device, &info) — preferred in MoltenVK >= 1.2
@@ -680,7 +686,7 @@ static PVThinLibretroFrontend *thin_vulkan_bridge(void *handle) {
 static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image *image,
                                   uint32_t num_semaphores, const VkSemaphore *semaphores,
                                   uint32_t src_queue_family) {
-    (void)semaphores; (void)src_queue_family;
+    (void)src_queue_family;
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge || !image) return;
     // Store only the VkImage handle — copying retro_vulkan_image by value is unsafe
@@ -688,14 +694,15 @@ static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image 
     // until retro_video_refresh_t returns.
     bridge->_vulkanCurrentVkImage = image->create_info.image;
     bridge->_vulkanHasCurrentImage = YES;
-    // The libretro Vulkan interface requires the frontend to wait on the provided
-    // semaphores before reading the image. We use vkQueueWaitIdle as a safe fallback.
-    // Hold _vulkanQueueLock to serialize with any concurrent vkQueueSubmit calls.
-    if (num_semaphores > 0 && bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
-        os_unfair_lock_lock(&bridge->_vulkanQueueLock);
-        bridge->_vkQueueWaitIdle(bridge->_vulkanQueue);
-        os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
+    // Store wait semaphores for use as pWaitSemaphores in the next vkQueueSubmit.
+    // Cap at 8; the libretro Vulkan interface rarely provides more than 1.
+    bridge->_vulkanWaitSemaphoreCount = 0;
+    uint32_t storableCount = (num_semaphores < 8) ? num_semaphores : 8;
+    for (uint32_t i = 0; i < storableCount; i++) {
+        bridge->_vulkanWaitSemaphores[i]    = semaphores[i];
+        bridge->_vulkanWaitDstStageMask[i]  = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
     }
+    bridge->_vulkanWaitSemaphoreCount = storableCount;
     // Do NOT notify the render delegate here — some cores call set_image before
     // set_command_buffers, so the VkImage may not yet have been rendered into.
     // Notification is deferred to submitVulkanCommandBuffers (after vkQueueSubmit).
@@ -1752,6 +1759,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         _vulkanSignalSemaphore = VK_NULL_HANDLE;
         _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanHasCurrentImage = NO;
+        _vulkanWaitSemaphoreCount = 0;
+        _vulkanExtMetalObjectsEnabled = NO;
 #endif
     }
     return self;
@@ -2579,6 +2588,37 @@ static bool thin_environment(unsigned cmd, void *data) {
     // didRenderFrameOnAlternateThread already calls glFlush(), so we do not
     // flush here to avoid a redundant double-flush per frame.
     if (data == RETRO_HW_FRAME_BUFFER_VALID) {
+#if HAVE_VULKAN
+        // Async-compute cores (e.g. libretro-test-vulkan-async-compute) call set_image
+        // but never call set_command_buffers. Present the pending VkImage here so their
+        // frames aren't silently dropped.
+        if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN && _vulkanHasCurrentImage) {
+            _vulkanHasCurrentImage = NO;
+            // If the core provided wait semaphores but no command buffers, submit a
+            // wait-only queue operation to consume them before exporting the texture.
+            if (_vulkanWaitSemaphoreCount > 0 && _vkQueueSubmit && _vulkanQueue) {
+                os_unfair_lock_lock(&_vulkanQueueLock);
+                uint32_t waitCount = _vulkanWaitSemaphoreCount;
+                VkSemaphore waitSems[8];
+                VkPipelineStageFlags waitMasks[8];
+                memcpy(waitSems,  _vulkanWaitSemaphores,    waitCount * sizeof(VkSemaphore));
+                memcpy(waitMasks, _vulkanWaitDstStageMask,  waitCount * sizeof(VkPipelineStageFlags));
+                _vulkanWaitSemaphoreCount = 0;
+                VkSubmitInfo waitSubmit = {
+                    .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                    .waitSemaphoreCount = waitCount,
+                    .pWaitSemaphores = waitSems,
+                    .pWaitDstStageMask = waitMasks,
+                    .commandBufferCount = 0,
+                };
+                _vkQueueSubmit(_vulkanQueue, 1, &waitSubmit, VK_NULL_HANDLE);
+                if (_vkQueueWaitIdle) { _vkQueueWaitIdle(_vulkanQueue); }
+                os_unfair_lock_unlock(&_vulkanQueueLock);
+            }
+            [self notifyRenderDelegateOfVulkanFrame:nil];
+            return;
+        }
+#endif // HAVE_VULKAN
         id renderDelegate = self.renderDelegate;
         if ([renderDelegate respondsToSelector:@selector(didRenderFrameOnAlternateThread)]) {
             [renderDelegate didRenderFrameOnAlternateThread];
@@ -4385,6 +4425,37 @@ static bool thin_environment(unsigned cmd, void *data) {
         .pQueuePriorities = &queuePriority
     };
 
+    // Check for VK_EXT_metal_objects support before creating the device.
+    static const char *kExtMetalObjects = "VK_EXT_metal_objects";
+    BOOL extMetalObjectsAvailable = NO;
+    // Load vkEnumerateDeviceExtensionProperties via the instance proc addr (device not yet created)
+    PFN_vkEnumerateDeviceExtensionProperties vkEnumDevExts =
+        (PFN_vkEnumerateDeviceExtensionProperties)
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkEnumerateDeviceExtensionProperties");
+    if (vkEnumDevExts) {
+        uint32_t extCount = 0;
+        if (vkEnumDevExts(_vulkanPhysicalDevice, NULL, &extCount, NULL) == VK_SUCCESS && extCount > 0) {
+            VkExtensionProperties *exts = (VkExtensionProperties *)malloc(extCount * sizeof(VkExtensionProperties));
+            if (exts) {
+                if (vkEnumDevExts(_vulkanPhysicalDevice, NULL, &extCount, exts) == VK_SUCCESS) {
+                    for (uint32_t i = 0; i < extCount; i++) {
+                        if (strcmp(exts[i].extensionName, kExtMetalObjects) == 0) {
+                            extMetalObjectsAvailable = YES;
+                            break;
+                        }
+                    }
+                }
+                free(exts);
+            }
+        }
+    }
+
+    const char *enabledExtensions[1];
+    uint32_t enabledExtensionCount = 0;
+    if (extMetalObjectsAvailable) {
+        enabledExtensions[enabledExtensionCount++] = kExtMetalObjects;
+    }
+
     struct {
         int sType;           // VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO = 3
         const void *pNext;
@@ -4404,8 +4475,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         .pQueueCreateInfos = &queueCreateInfo,
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = NULL,
-        .enabledExtensionCount = 0,
-        .ppEnabledExtensionNames = NULL,
+        .enabledExtensionCount = enabledExtensionCount,
+        .ppEnabledExtensionNames = enabledExtensionCount > 0 ? enabledExtensions : NULL,
         .pEnabledFeatures = NULL
     };
 
@@ -4413,6 +4484,11 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (result != 0) {
         ELOG(@"ThinFrontend: vkCreateDevice failed (result=%d)", result);
         return NO;
+    }
+
+    _vulkanExtMetalObjectsEnabled = extMetalObjectsAvailable;
+    if (extMetalObjectsAvailable) {
+        ILOG(@"ThinFrontend: VK_EXT_metal_objects enabled at device creation");
     }
 
     // Load device-specific functions
@@ -4433,6 +4509,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         _vkGetDeviceProcAddr(_vulkanDevice, "vkQueueSubmit");
     _vkQueueWaitIdle = (VkResult (*)(VkQueue))
         _vkGetDeviceProcAddr(_vulkanDevice, "vkQueueWaitIdle");
+    _vkEnumerateDeviceExtensionProperties = (PFN_vkEnumerateDeviceExtensionProperties)
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkEnumerateDeviceExtensionProperties");
 
     if (!_vkQueueSubmit || !_vkQueueWaitIdle) {
         ELOG(@"ThinFrontend: failed to load vkQueueSubmit / vkQueueWaitIdle");
@@ -4523,19 +4601,26 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (void)submitVulkanCommandBuffers:(const VkCommandBuffer *)cmdBufs count:(uint32_t)count {
     if (!_vkQueueSubmit || !_vulkanQueue || !cmdBufs || count == 0) return;
 
-    // Snapshot and clear the signal semaphore inside the queue lock so that
-    // concurrent writes from thin_vulkan_set_signal_semaphore are serialized.
-    // "Per-frame" semantics: cleared after every submit so stale handles don't leak.
+    // Snapshot and clear the per-frame semaphore state inside the queue lock so that
+    // concurrent writes from thin_vulkan_set_image / thin_vulkan_set_signal_semaphore
+    // are serialized. Both signal and wait semaphores are per-frame: cleared after every
+    // submit so stale handles don't leak into the next frame.
     os_unfair_lock_lock(&_vulkanQueueLock);
     VkSemaphore signalSem = _vulkanSignalSemaphore;
     _vulkanSignalSemaphore = VK_NULL_HANDLE;
+    uint32_t waitCount = _vulkanWaitSemaphoreCount;
+    VkSemaphore waitSems[8];
+    VkPipelineStageFlags waitMasks[8];
+    memcpy(waitSems,  _vulkanWaitSemaphores,    waitCount * sizeof(VkSemaphore));
+    memcpy(waitMasks, _vulkanWaitDstStageMask,  waitCount * sizeof(VkPipelineStageFlags));
+    _vulkanWaitSemaphoreCount = 0;
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
-        .waitSemaphoreCount = 0,
-        .pWaitSemaphores = NULL,
-        .pWaitDstStageMask = NULL,
+        .waitSemaphoreCount = waitCount,
+        .pWaitSemaphores = (waitCount > 0) ? waitSems  : NULL,
+        .pWaitDstStageMask = (waitCount > 0) ? waitMasks : NULL,
         .commandBufferCount = count,
         .pCommandBuffers = cmdBufs,
         .signalSemaphoreCount = (signalSem != VK_NULL_HANDLE) ? 1u : 0u,
@@ -4547,11 +4632,21 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     if (result != VK_SUCCESS) {
         ELOG(@"ThinFrontend: vkQueueSubmit failed (result=%d)", result);
+        return;
     }
 
-    // Notify the render delegate after submission so the VkImage has been rendered into.
-    // Some cores (e.g. libretro-test-vulkan) call set_image before set_command_buffers,
-    // so we defer the handoff until we know the queue submit has completed.
+    // Wait for the GPU to finish rendering into the VkImage before exporting the
+    // MTLTexture. vkQueueSubmit only enqueues work; the GPU may still be writing
+    // when it returns. Serialized with _vulkanQueueLock to prevent concurrent submits.
+    if (_vkQueueWaitIdle) {
+        os_unfair_lock_lock(&_vulkanQueueLock);
+        _vkQueueWaitIdle(_vulkanQueue);
+        os_unfair_lock_unlock(&_vulkanQueueLock);
+    }
+
+    // Notify the render delegate now that the GPU has finished and the VkImage is safe
+    // to export. Some cores (e.g. libretro-test-vulkan) call set_image before
+    // set_command_buffers, so notification is deferred until after queue submission.
     if (_vulkanHasCurrentImage) {
         _vulkanHasCurrentImage = NO;
         [self notifyRenderDelegateOfVulkanFrame:nil];
@@ -4585,8 +4680,9 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 
     // --- Path 2: vkExportMetalObjectsEXT (VK_EXT_metal_objects, MoltenVK >= 1.2) ---
+    // Only valid when the extension was explicitly enabled at device creation time.
     // Uses raw structs because our bundled vulkan.h (v17) predates this extension.
-    if (_vkExportMetalObjectsEXT && _vulkanDevice) {
+    if (_vkExportMetalObjectsEXT && _vulkanDevice && _vulkanExtMetalObjectsEnabled) {
         // VkExportMetalTextureInfoEXT chained in pNext of VkExportMetalObjectsInfoEXT
         struct {
             VkStructureType  sType;
@@ -4664,6 +4760,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         _vulkanSignalSemaphore = VK_NULL_HANDLE;
         _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanHasCurrentImage = NO;
+        _vulkanWaitSemaphoreCount = 0;
+        _vulkanExtMetalObjectsEnabled = NO;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         _renderDelegateStarted = NO;
 #endif

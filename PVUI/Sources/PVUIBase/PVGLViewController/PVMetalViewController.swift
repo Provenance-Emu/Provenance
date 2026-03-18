@@ -3406,13 +3406,13 @@ extension PVMetalViewController: PVRenderDelegateIOSurface {
 /// PVRenderDelegateMetal conformance: receives per-frame MTLTextures from
 /// Vulkan cores running via PVThinLibretroFrontend + MoltenVK.
 ///
-/// Flow: Vulkan core renders → set_image + set_command_buffers →
-///       vkQueueSubmit → vkGetMTLTextureMVK → didRenderFrameWithMTLTexture → blit → display.
-/// Note: set_image may be called before or after set_command_buffers depending on the core.
+/// Frame delivery: called after vkQueueSubmit + vkQueueWaitIdle, so the GPU has
+/// finished writing the VkImage before this method is invoked. set_image may arrive
+/// before or after set_command_buffers depending on the core.
 extension PVMetalViewController: PVRenderDelegateMetal {
     func didRenderFrameWithMTLTexture(_ texture: MTLTexture) {
         // Replace the backing texture with the Vulkan frame's MTLTexture.
-        // No glFlush() needed — the Vulkan queue was already submitted before this call.
+        // GPU rendering is already complete (vkQueueWaitIdle was called before this).
         backingMTLTexture = texture
 
         // Ensure the input texture exists and matches the source dimensions.
