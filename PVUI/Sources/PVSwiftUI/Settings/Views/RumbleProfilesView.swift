@@ -315,6 +315,7 @@ struct RumbleProfilesView: View {
             SystemRow(id: "com.provenance.ps3",         displayName: "PlayStation 3",     icon: "gamecontroller.fill"),
             SystemRow(id: "com.provenance.gba",         displayName: "Game Boy Advance",  icon: "gamecontroller"),
             SystemRow(id: "com.provenance.gamecube",    displayName: "GameCube",          icon: "gamecontroller.fill"),
+            SystemRow(id: "com.provenance.xbox",        displayName: "Xbox",              icon: "gamecontroller.fill"),
             SystemRow(id: "com.provenance.switch",      displayName: "Nintendo Switch",   icon: "gamecontroller.fill"),
         ]
     }
