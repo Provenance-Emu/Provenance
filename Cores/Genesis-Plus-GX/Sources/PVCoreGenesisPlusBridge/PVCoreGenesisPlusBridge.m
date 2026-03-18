@@ -326,7 +326,7 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 
     if (device == RETRO_DEVICE_JOYPAD && port < (unsigned)MAX_DEVICES) {
         value = [strongCurrent controllerValueForButtonID:_id forPlayer:(NSInteger)port];
-        if (value == 0 && port < MAX_DEVICES) {
+        if (value == 0 && port < MAX_DEVICES && _id < 12) {
             value = strongCurrent->_pad[port][_id];
         }
     }
