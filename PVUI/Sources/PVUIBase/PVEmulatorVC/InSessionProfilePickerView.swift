@@ -149,6 +149,8 @@ struct InSessionProfilePickerView: View {
         let db = RomDatabase.sharedInstance
         guard let live = db.controllerProfile(withID: profile.id) else {
             ELOG("InSessionProfilePicker: profile \(profile.id) not found in Realm")
+            errorMessage = "The selected controller profile could not be found. It may have been removed."
+            showError = true
             return
         }
         do {
