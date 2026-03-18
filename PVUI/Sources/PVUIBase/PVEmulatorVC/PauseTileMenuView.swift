@@ -15,6 +15,7 @@
 
 import SwiftUI
 import PVCoreBridge
+import PVFeatureFlags
 import PVLogging
 import PVLibrary
 import PVSettings
@@ -42,6 +43,7 @@ struct PauseTileMenuView: View {
     @State private var showingSaveStateBrowser = false
     @State private var showingScreenshotBrowser = false
     @State private var showingControllerProfiles = false
+    @State private var showingTransferPakConfig = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Incremented after every core-option toggle to force a re-render of the tile grid.
@@ -57,6 +59,7 @@ struct PauseTileMenuView: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.featureFlags) private var featureFlags
 
     #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
@@ -187,6 +190,22 @@ struct PauseTileMenuView: View {
         _ = coreOptionRefreshToken
         var tiles: [PauseMenuTile] = []
 
+        // Transfer Pak tile — shown when the core implements TransferPakSupport
+        if let transferCore = emulatorVC.core as? TransferPakSupport,
+           featureFlags.mupenTransferPak {
+            let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
+                transferCore.transferPakROM(forPort: $0) != nil
+            }.count
+            tiles.append(PauseMenuTile(
+                id: "transferPak",
+                icon: "memorychip",
+                label: String(localized: "Transfer Pak"),
+                badge: configuredCount > 0 ? "\(configuredCount)" : nil,
+                colorKey: .green,
+                dismissOnTap: false
+            ))
+        }
+
         // Core action tiles
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
             tiles += CoreActionTileProvider.tiles(from: actions)
@@ -268,6 +287,10 @@ struct PauseTileMenuView: View {
             Task { @MainActor in
                 await emulatorVC.quit(optionallySave: false)
             }
+
+        // MARK: Transfer Pak config sheet
+        case "transferPak":
+            showingTransferPakConfig = true
 
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
@@ -510,6 +533,19 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingControllerProfiles) {
             InSessionProfilePickerView(emulatorVC: emulatorVC) {
                 showingControllerProfiles = false
+            }
+        }
+        .sheet(isPresented: $showingTransferPakConfig) {
+            if let game = emulatorVC.game, !game.isInvalidated {
+                let transferCore = emulatorVC.core as? TransferPakSupport
+                TransferPakConfigView(
+                    game: game,
+                    slotCount: transferCore?.transferPakSlotCount ?? 4,
+                    applyLiveSlotChange: transferCore.map { core in
+                        { port, rom in core.setTransferPakROM(rom, forPort: port) }
+                    },
+                    onDismiss: { showingTransferPakConfig = false }
+                )
             }
         }
         // Core action option picker — shown when a CoreAction exposes multiple options.

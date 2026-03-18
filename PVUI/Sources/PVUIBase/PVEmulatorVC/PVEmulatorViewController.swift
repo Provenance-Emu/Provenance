@@ -848,6 +848,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         #endif
 
+        // Apply any persisted Transfer Pak slot selections for this game before the core starts.
+        await applyPersistedTransferPakIfNeeded()
+
         core.startEmulation()
 
         // Warn if device audio is muted or volume is zero (iOS/iPadOS only, once per session).

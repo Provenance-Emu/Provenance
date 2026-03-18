@@ -13,6 +13,8 @@ import RealmSwift
 import PVUIBase
 import PVRealm
 import PVLogging
+import PVFeatureFlags
+import PVPrimitives
 
 /// A SwiftUI context menu for game-related actions
 public struct GameContextMenu: View {
@@ -33,6 +35,8 @@ public struct GameContextMenu: View {
     @State private var showImagePicker = false
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
+    @State private var showTransferPakConfig = false
+    @Environment(\.featureFlags) private var featureFlags
 
     public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
         // Ensure we're working with a frozen copy
@@ -60,6 +64,16 @@ public struct GameContextMenu: View {
                         contextMenuDelegate?.gameContextMenu(self, didRequestDiscSelectionFor: game)
                     } label: {
                         Label("Select Disc", systemImage: "opticaldisc")
+                    }
+                }
+
+                // Transfer Pak configuration for N64 games (feature-flagged)
+                if featureFlags.mupenTransferPak,
+                   game.systemIdentifier == SystemIdentifier.N64.rawValue {
+                    Button {
+                        showTransferPakConfig = true
+                    } label: {
+                        Label("Configure Transfer Pak", systemImage: "memorychip")
                     }
                 }
 
@@ -193,6 +207,13 @@ public struct GameContextMenu: View {
                 UIAlertAction(title: "Cancel", style: .cancel)
             }
         )
+        .sheet(isPresented: $showTransferPakConfig) {
+            if !game.isInvalidated {
+                TransferPakConfigView(game: game, onDismiss: {
+                    showTransferPakConfig = false
+                })
+            }
+        }
     }
 
     // Move heavy operations to background tasks
