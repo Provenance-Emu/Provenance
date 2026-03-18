@@ -1,64 +1,58 @@
 //
-//  retro_netplay.m
-//  retro-netplay
+//  PVRetroArchCoreBridge+Netplay.mm
+//  PVRetroArch
 //
-//  Created by Joseph Mattiello on 8/1/22.
-//  Copyright © 2022 Provenance Emu. All rights reserved.
+//  Created by Joseph Mattiello on 3/18/26.
+//  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 //  Bridges Provenance Swift netplay calls to RetroArch's C-level netplay
-//  engine (HAVE_NETPLAY). Calls command_event() with CMD_EVENT_NETPLAY_*
-//  constants from command.h, and writes to global_t->netplay before firing.
+//  engine (HAVE_NETPLAY). Configures global_t->netplay fields then fires
+//  CMD_EVENT_NETPLAY_INIT / CMD_EVENT_NETPLAY_DEINIT via command_event().
 //
 
-#import "retro_netplay.h"
+#import "PVRetroArchCoreBridge+Netplay.h"
 
-// RetroArch C headers — included via module map / bridging header in PVRetroArch
-#if __has_include(<PVRetroArch/command.h>)
-#import <PVRetroArch/command.h>
-#import <PVRetroArch/runloop.h>
-#import <PVRetroArch/string/stdstring.h>
-#else
-// Forward-declare what we need when building outside PVRetroArch
-extern bool command_event(enum menu_action cmd, void *data);
-typedef struct { } global_t;
-extern global_t *global_get_ptr(void);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
+#import <PVLogging/PVLoggingObjC.h>
+#pragma clang diagnostic pop
+
+#ifdef HAVE_NETPLAY
+#import "command.h"
+#import "runloop.h"
+#import "libretro-common/include/string/stdstring.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.netplay";
 
-@interface PVRetroArchNetplayBridge ()
-@property (nonatomic) PVRetroArchNetplayStatus status;
-@end
+// Internal storage key for associated status
+static const void *kNetplayStatusKey = &kNetplayStatusKey;
 
-@implementation PVRetroArchNetplayBridge
+@implementation PVRetroArchCoreBridge (Netplay)
 
-+ (instancetype)shared {
-    static PVRetroArchNetplayBridge *instance;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[PVRetroArchNetplayBridge alloc] init];
-    });
-    return instance;
+// MARK: - Status property (stored via objc_associated_object)
+
+- (PVRetroArchNetplayStatus)netplayStatus {
+    NSNumber *num = objc_getAssociatedObject(self, kNetplayStatusKey);
+    return num ? (PVRetroArchNetplayStatus)num.integerValue : PVRetroArchNetplayStatusIdle;
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _status = PVRetroArchNetplayStatusIdle;
-    }
-    return self;
+- (void)setNetplayStatus:(PVRetroArchNetplayStatus)status {
+    objc_setAssociatedObject(self,
+                             kNetplayStatusKey,
+                             @(status),
+                             OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 // MARK: - Host
 
-- (BOOL)startHostingWithNickname:(NSString *)nickname
-                            port:(uint16_t)port
-                      frameDelay:(int)frameDelay
-                      maxPlayers:(int)maxPlayers
-                           error:(NSError *__autoreleasing _Nullable *)error {
-    if (_status != PVRetroArchNetplayStatusIdle) {
+- (BOOL)netplayStartHostingWithNickname:(NSString *)nickname
+                                   port:(uint16_t)port
+                             frameDelay:(int)frameDelay
+                                  error:(NSError *__autoreleasing _Nullable *)error {
+    if (self.netplayStatus != PVRetroArchNetplayStatusIdle) {
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorAlreadyActive
@@ -73,23 +67,24 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorNotRunning
-                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch is not running."}];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch runtime is not initialized."}];
         }
         return NO;
     }
 
-    // Configure as host: empty server string = hosting
-    gl->netplay.enable     = true;
-    gl->netplay.is_client  = false;
+    gl->netplay.enable      = true;
+    gl->netplay.is_client   = false;
     gl->netplay.is_spectate = false;
-    gl->netplay.port       = port > 0 ? port : 55435;
+    gl->netplay.port        = (port > 0) ? port : 55435;
     gl->netplay.sync_frames = (unsigned)MAX(0, frameDelay);
-    *gl->netplay.server    = '\0';   // empty = host mode
+    gl->netplay.server[0]   = '\0';  // empty server string = host mode
+
+    ILOG(@"[Netplay] Starting host on port %u, frameDelay=%d", gl->netplay.port, frameDelay);
 
     bool ok = command_event(CMD_EVENT_NETPLAY_INIT, NULL);
     if (!ok) {
-        // Reset state on failure
         gl->netplay.enable = false;
+        ELOG(@"[Netplay] CMD_EVENT_NETPLAY_INIT failed");
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorCommandFailed
@@ -98,7 +93,8 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
         return NO;
     }
 
-    _status = PVRetroArchNetplayStatusHosting;
+    [self setNetplayStatus:PVRetroArchNetplayStatusHosting];
+    ILOG(@"[Netplay] Hosting started");
     return YES;
 #else
     if (error) {
@@ -110,15 +106,15 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
 #endif
 }
 
-// MARK: - Join
+// MARK: - Join / Spectate
 
-- (BOOL)connectToHost:(NSString *)hostname
-                 port:(uint16_t)port
-             nickname:(NSString *)nickname
-           frameDelay:(int)frameDelay
-             spectate:(BOOL)spectate
-                error:(NSError *__autoreleasing _Nullable *)error {
-    if (_status != PVRetroArchNetplayStatusIdle) {
+- (BOOL)netplayConnectToHost:(NSString *)hostname
+                        port:(uint16_t)port
+                    nickname:(NSString *)nickname
+                  frameDelay:(int)frameDelay
+                    spectate:(BOOL)spectate
+                       error:(NSError *__autoreleasing _Nullable *)error {
+    if (self.netplayStatus != PVRetroArchNetplayStatusIdle) {
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorAlreadyActive
@@ -142,7 +138,7 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorNotRunning
-                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch is not running."}];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch runtime is not initialized."}];
         }
         return NO;
     }
@@ -150,15 +146,18 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
     gl->netplay.enable      = true;
     gl->netplay.is_client   = !spectate;
     gl->netplay.is_spectate = spectate;
-    gl->netplay.port        = port > 0 ? port : 55435;
+    gl->netplay.port        = (port > 0) ? port : 55435;
     gl->netplay.sync_frames = (unsigned)MAX(0, frameDelay);
     strlcpy(gl->netplay.server,
             hostname.UTF8String,
             sizeof(gl->netplay.server));
 
+    ILOG(@"[Netplay] Connecting to %@:%u spectate=%d", hostname, gl->netplay.port, spectate);
+
     bool ok = command_event(CMD_EVENT_NETPLAY_INIT, NULL);
     if (!ok) {
         gl->netplay.enable = false;
+        ELOG(@"[Netplay] CMD_EVENT_NETPLAY_INIT failed for client connect");
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorCommandFailed
@@ -167,7 +166,9 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
         return NO;
     }
 
-    _status = spectate ? PVRetroArchNetplayStatusSpectating : PVRetroArchNetplayStatusConnected;
+    [self setNetplayStatus:spectate ? PVRetroArchNetplayStatusSpectating
+                                    : PVRetroArchNetplayStatusConnected];
+    ILOG(@"[Netplay] Connected to %@", hostname);
     return YES;
 #else
     if (error) {
@@ -179,10 +180,11 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
 #endif
 }
 
-// MARK: - Disconnect
+// MARK: - Stop
 
-- (void)stopNetplay {
+- (void)netplayStop {
 #ifdef HAVE_NETPLAY
+    ILOG(@"[Netplay] Stopping session");
     command_event(CMD_EVENT_NETPLAY_DEINIT, NULL);
 
     global_t *gl = global_get_ptr();
@@ -190,16 +192,12 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
         gl->netplay.enable = false;
     }
 #endif
-    _status = PVRetroArchNetplayStatusIdle;
+    [self setNetplayStatus:PVRetroArchNetplayStatusIdle];
 }
 
-// MARK: - Status
+// MARK: - Flip Players
 
-- (PVRetroArchNetplayStatus)currentStatus {
-    return _status;
-}
-
-- (void)flipPlayers {
+- (void)netplayFlipPlayers {
 #ifdef HAVE_NETPLAY
     command_event(CMD_EVENT_NETPLAY_FLIP_PLAYERS, NULL);
 #endif

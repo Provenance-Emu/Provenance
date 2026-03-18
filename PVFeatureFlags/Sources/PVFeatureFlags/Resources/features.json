@@ -54,6 +54,12 @@
         "mupenTransferPak": {
             "enabled": false,
             "description": "Enables Transfer Pak configuration UI for Mupen64Plus N64 cores. Allows mounting a GB/GBC ROM into a virtual Transfer Pak for games like Pokémon Stadium. Disabled by default — enable in Settings > Advanced > Feature Flags."
+        },
+        "netplayEnabled": {
+            "enabled": false,
+            "minVersion": "3.1.0",
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Enables native SwiftUI netplay UI for RetroArch cores (LAN room browser, host/join, in-game HUD). RetroArch already has HAVE_NETPLAY compiled in — this gates the native Provenance UI on top. Disabled by default during Phase 1-3 development."
         }
     }
 }

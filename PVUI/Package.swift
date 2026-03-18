@@ -25,6 +25,7 @@ let package = Package(
     dependencies: [
         .package(path: "../PVAudio"),
         .package(path: "../PVFeatureFlags"),
+        .package(path: "../PVNetplay"),
         .package(path: "../PVHelp"),
         .package(path: "../PVCoreAudio"),
         .package(path: "../PVCoreBridge"),
@@ -242,6 +243,7 @@ let package = Package(
                 "FloatingButton",
                 "ActivityIndicatorView",
                 "PVFeatureFlags",
+                "PVNetplay",
                 "PVCheevos",
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
