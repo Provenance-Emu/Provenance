@@ -380,12 +380,36 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
             if UserDefaults.standard.object(forKey: key) != nil {
                 let saved = UInt(UserDefaults.standard.integer(forKey: key))
                 _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
+            } else {
+                // Migration path: fall back to legacy per-game key (no core identifier)
+                let legacyKey = legacyPortDevicePersistenceKey(port: port)
+                if UserDefaults.standard.object(forKey: legacyKey) != nil {
+                    let saved = UInt(UserDefaults.standard.integer(forKey: legacyKey))
+                    _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
+                    // Re-save under the new per-core/per-game key so future lookups hit the new namespace.
+                    UserDefaults.standard.set(Int(saved), forKey: key)
+                }
             }
         }
     }
 
+    /// New-style per-port key: <ClassName>.<md5>.<coreIdentifier>.portDeviceType.port<port>
     private func portDevicePersistenceKey(port: Int) -> String {
         // Key format matches CoreOptions+Serialization convention: <ClassName>.<md5>.<key>
+        let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
+        // Prefer the coreIdentifier from PVEmulatorCore if available; fall back to the dynamic type name.
+        let coreIdentifierComponent: String
+        if let identifier = (self as PVEmulatorCore).coreIdentifier, !identifier.isEmpty {
+            coreIdentifierComponent = identifier
+        } else {
+            coreIdentifierComponent = String(describing: type(of: self))
+        }
+        return "PVThinLibretroCore.\(md5).\(coreIdentifierComponent).portDeviceType.port\(port)"
+    }
+
+    /// Legacy per-port key used before core identifiers were included (per-game only).
+    /// Format: <ClassName>.<md5>.portDeviceType.port<port>
+    private func legacyPortDevicePersistenceKey(port: Int) -> String {
         let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
         return "PVThinLibretroCore.\(md5).portDeviceType.port\(port)"
     }
