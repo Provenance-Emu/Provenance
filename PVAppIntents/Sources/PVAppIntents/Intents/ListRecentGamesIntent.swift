@@ -34,10 +34,17 @@ public struct ListRecentGamesIntent: AppIntent {
 
     // MARK: - Perform
 
-    public func perform() async throws -> some IntentResult & ReturnsValue<[GameEntity]> {
+    public func perform() async throws -> some IntentResult & ProvidesDialog & ReturnsValue<[GameEntity]> {
         let clampedLimit = max(1, min(20, limit))
         let recents = GameEntityStore.shared.recentEntities(limit: clampedLimit)
-        return .result(value: recents)
+        if recents.isEmpty {
+            return .result(value: recents, dialog: "You haven't played any games recently.")
+        }
+        let count = recents.count
+        return .result(
+            value: recents,
+            dialog: "Here are your \(count) most recent game\(count == 1 ? "" : "s")."
+        )
     }
 
     public static var parameterSummary: some ParameterSummary {

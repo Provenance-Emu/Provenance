@@ -33,16 +33,18 @@ public struct GetLibraryStatsIntent: AppIntent {
     // MARK: - Perform
 
     public func perform() async throws -> some IntentResult & ProvidesDialog & ReturnsValue<String> {
-        let totalGames = GameEntityStore.shared.allEntities().count
+        let allGames = GameEntityStore.shared.allEntities()
+        let totalGames = allGames.count
         let totalSystems = SystemEntityStore.shared.allEntities().count
-        let summary = "\(totalGames) game\(totalGames == 1 ? "" : "s") across \(totalSystems) system\(totalSystems == 1 ? "" : "s")."
+        let favoriteCount = allGames.filter { $0.isFavorite }.count
+        let summary = "\(totalGames) game\(totalGames == 1 ? "" : "s") across \(totalSystems) system\(totalSystems == 1 ? "" : "s"), \(favoriteCount) favourite\(favoriteCount == 1 ? "" : "s")."
         return .result(value: summary, dialog: "You have \(summary)")
     }
 }
 
 // MARK: - LibraryStatsResult
 
-/// Structured result type for widget timeline consumption.
+/// Structured result type for Shortcuts automations and widget timeline consumption.
 public struct LibraryStatsResult: Codable, Sendable {
     public let totalGames: Int
     public let totalSystems: Int

@@ -113,6 +113,28 @@ final class GameEntityTests: XCTestCase {
         let url = entity.deepLinkURL
         XCTAssertTrue(url.absoluteString.contains("abc123"))
         XCTAssertTrue(url.absoluteString.contains("state-uuid-001"))
+        XCTAssertTrue(url.absoluteString.contains("saveStateId"))
+    }
+
+    // MARK: - GameEntity favourite count
+
+    func testFavoriteCountInGameEntityStore() {
+        let store = GameEntityStore.shared
+        let entities = [
+            GameEntity(id: "fav1", title: "Fave Game", systemName: "SNES", systemIdentifier: "com.provenance.snes", isFavorite: true),
+            GameEntity(id: "fav2", title: "Not Fave", systemName: "SNES", systemIdentifier: "com.provenance.snes", isFavorite: false),
+            GameEntity(id: "fav3", title: "Also Fave", systemName: "NES", systemIdentifier: "com.provenance.nes", isFavorite: true)
+        ]
+        store.update(all: entities, recents: [])
+        let favoriteCount = store.allEntities().filter { $0.isFavorite }.count
+        XCTAssertEqual(favoriteCount, 2)
+    }
+
+    // MARK: - AppIntentError
+
+    func testAppIntentErrorDescription() {
+        let error = AppIntentError.noGamesFound(in: "Super Nintendo")
+        XCTAssertEqual(error.errorDescription, "No games found in Super Nintendo.")
     }
 }
 #endif

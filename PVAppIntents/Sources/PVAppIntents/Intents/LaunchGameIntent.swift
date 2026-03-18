@@ -43,7 +43,7 @@ public struct LaunchGameIntent: AppIntent, CustomIntentMigratedAppIntent {
 
     // MARK: - Perform
 
-    public func perform() async throws -> some IntentResult & ProvidesDialog {
+    public func perform() async throws -> some IntentResult & ProvidesDialog & ReturnsValue<URL> {
         // Write the selected game's MD5 to the shared App Group so the host
         // app can launch it when it comes to the foreground via
         // `openAppWhenRun`. The host app MUST observe `pendingLaunchGameID` in
@@ -55,7 +55,8 @@ public struct LaunchGameIntent: AppIntent, CustomIntentMigratedAppIntent {
             ?? "group.org.provenance-emu.provenance"
         let defaults = UserDefaults(suiteName: appGroupID)
         defaults?.set(game.id, forKey: "pendingLaunchGameID")
-        return .result(dialog: "Launching \(game.title).")
+        // Also return the deep link URL so Shortcuts automations can chain further actions.
+        return .result(value: game.deepLinkURL, dialog: "Launching \(game.title).")
     }
 
     // MARK: - AppIntent URL handling

@@ -50,11 +50,7 @@ public struct PlayRandomGameIntent: AppIntent {
 
         guard let picked = candidates.randomElement() else {
             let systemName = system?.name ?? "your library"
-            throw NSError(
-                domain: "PVAppIntents",
-                code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "No games found in \(systemName)."]
-            )
+            throw AppIntentError.noGamesFound(in: systemName)
         }
 
         // Hand off the selected game to the host app via App Group UserDefaults.
@@ -78,6 +74,20 @@ public struct PlayRandomGameIntent: AppIntent {
             Summary("Play a random \(\.$system) game")
         } otherwise: {
             Summary("Play a random game")
+        }
+    }
+}
+
+// MARK: - AppIntentError
+
+/// Typed errors thrown by PVAppIntents intents.
+public enum AppIntentError: LocalizedError {
+    case noGamesFound(in: String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .noGamesFound(let source):
+            return "No games found in \(source)."
         }
     }
 }
