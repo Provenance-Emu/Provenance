@@ -69,6 +69,29 @@
     }
 }
 
+// MARK: - Hardware switches
+
+extension PV7800Button: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? {
+        [
+            HardwareSwitchDescriptor(
+                id: "left_diff",
+                title: "LEFT DIFF",
+                offPosition: HardwareSwitchPosition(label: "B", buttonId: "leftdiff"),
+                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "leftdiff"),
+                defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "right_diff",
+                title: "RIGHT DIFF",
+                offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiff"),
+                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "rightdiff"),
+                defaultState: false
+            )
+        ]
+    }
+}
+
 @objc public protocol PV7800SystemResponderClient: ResponderClient, ButtonResponder {
     @objc(didPush7800Button:forPlayer:)
     func didPush(_ button: PV7800Button, forPlayer player: Int)

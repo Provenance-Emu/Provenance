@@ -267,7 +267,7 @@ struct DefaultControllerSkinView: View {
                 // Positioned at the top-trailing corner so they sit above the controller area
                 // and don't block the game screen.
                 if validSize, let sysId = systemId,
-                   let switches = hardwareSwitches(for: sysId.rawValue) {
+                   let switches = sysId.hardwareSwitches {
                     // Use a transparent non-interactive base so only the switch row
                     // itself receives gestures — not the surrounding empty space.
                     Color.clear
