@@ -47,6 +47,9 @@ extension PVEmulatorViewController {
                 return
             }
             let gameMD5 = game.md5Hash
+            // Capture cheatsPath now (before any await) so we don't access
+            // the IUO `game` property after a suspension point.
+            let cheatsDir = cheatsPath
 
             // Normalize code: replace non-alphanumeric separators with '+', collapse multiples, strip leading/trailing
             let upper = code.uppercased()
@@ -75,8 +78,7 @@ extension PVEmulatorViewController {
                 }
 
                 do {
-                    // Ensure cheats directory exists
-                    let cheatsDir = cheatsPath
+                    // Ensure cheats directory exists (cheatsDir captured before await)
                     try? FileManager.default.createDirectory(at: cheatsDir, withIntermediateDirectories: true)
                     let baseFilename = "\(gameMD5).\(Date().timeIntervalSinceReferenceDate)"
                     let saveURL = cheatsDir.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
@@ -157,12 +159,13 @@ extension PVEmulatorViewController {
             return
         }
 
+        // Reset first, then recover — avoids race between the two operations.
+        self.core.resetCheatCodes()
+
         Task { @MainActor [weak self] in
             guard let self = self else { return }
             await self.recoverCheatCodes()
         }
-
-        self.core.resetCheatCodes()
 
         #if os(tvOS)
         // Use SwiftUI-based cheats view on tvOS for reliability
@@ -302,15 +305,24 @@ extension PVEmulatorViewController {
                 return date0.compare(date1) == .orderedAscending
             })
 
+            // Capture gameMD5 before await to avoid accessing IUO after suspension
+            guard let currentGame = self.game, !currentGame.isInvalidated else {
+                ELOG("recoverCheatCodes: game is nil or invalidated")
+                return
+            }
+            let gameMD5 = currentGame.md5Hash
+
             let realm = try await Realm()
 
+            // Use the realm-local game to read cheats — avoids cross-Realm access
             var cheats: [String: Bool] = [:]
-            game.realm?.refresh()
-            for code in game.cheats {
-                if let fileURL = code.file?.url {
-                    cheats[fileURL.lastPathComponent.lowercased()] = true
+            if let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) {
+                for code in realmGame.cheats {
+                    if let fileURL = code.file?.url {
+                        cheats[fileURL.lastPathComponent.lowercased()] = true
+                    }
+                    cheats[code.id] = true
                 }
-                cheats[code.id] = true
             }
             for url in directoryContents {
                 let file = url.lastPathComponent.lowercased()
