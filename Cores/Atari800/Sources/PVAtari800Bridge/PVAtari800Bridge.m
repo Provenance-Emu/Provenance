@@ -51,6 +51,14 @@
 
 __weak static PVAtari800Bridge * _currentCore;
 
+/// Pending key code for PLATFORM_Keyboard() — set by keyDown:/keyUp: methods.
+/// AKEY_NONE (-1) means no key currently held.
+static int s_pendingKeyCode = AKEY_NONE;
+/// Whether the Ctrl modifier key is currently held.
+static BOOL s_ctrlDown = NO;
+/// Last known mouse position in screen coordinates (for computing deltas).
+static CGPoint s_lastMousePoint = {0, 0};
+
 
 @interface PVAtari800Bridge ()
 
@@ -265,8 +273,12 @@ static const NSInteger kMaxPlayers = 4;
     if (self.controller1 || self.controller2) {
         [self pollControllers];
     }
-    
+
     Atari800_Frame();
+
+    // Mouse deltas are consumed per-frame by the atari800 INPUT layer.
+    INPUT_mouse_delta_x = 0;
+    INPUT_mouse_delta_y = 0;
 
     unsigned int size = 44100 / (Atari800_tv_mode == Atari800_TV_NTSC ? 59.9 : 50) * 2;
 // TODO: In theory, we don't need the intimediary buffer
@@ -380,71 +392,185 @@ static const NSInteger kMaxPlayers = 4;
 #pragma mark - Input
 
 - (void)leftMouseUp {
-    // TODO: leftMouseUp
-
+    INPUT_mouse_buttons &= ~1;
 }
 
 - (void)rightMouseUp {
-    // TODO: rightMouseUp
+    INPUT_mouse_buttons &= ~2;
 }
 
-- (void)leftMouseDownAtPoint:(CGPoint)point { 
+- (void)leftMouseDownAtPoint:(CGPoint)point {
     [self leftMouseDownAt:point];
 }
 
-
-- (void)mouseMovedAtPoint:(CGPoint)point { 
+- (void)mouseMovedAtPoint:(CGPoint)point {
     [self mouseMovedAt:point];
 }
 
-
-- (void)rightMouseDownAtPoint:(CGPoint)point { 
+- (void)rightMouseDownAtPoint:(CGPoint)point {
     [self rightMouseDownAt:point];
 }
 
 - (void)leftMouseDownAt:(CGPoint)point {
-    // TODO: leftMouseDownAt
+    INPUT_mouse_delta_x += (int)(point.x - s_lastMousePoint.x);
+    INPUT_mouse_delta_y += (int)(point.y - s_lastMousePoint.y);
+    s_lastMousePoint = point;
+    INPUT_mouse_buttons |= 1;
 }
-
 
 - (void)mouseMovedAt:(CGPoint)point {
-    // TODO: mouseMovedAt
+    INPUT_mouse_delta_x += (int)(point.x - s_lastMousePoint.x);
+    INPUT_mouse_delta_y += (int)(point.y - s_lastMousePoint.y);
+    s_lastMousePoint = point;
 }
-
 
 - (void)rightMouseDownAt:(CGPoint)point {
-    // TODO: rightMouseDownAt
+    INPUT_mouse_delta_x += (int)(point.x - s_lastMousePoint.x);
+    INPUT_mouse_delta_y += (int)(point.y - s_lastMousePoint.y);
+    s_lastMousePoint = point;
+    INPUT_mouse_buttons |= 2;
 }
 
+/// Mouse support is enabled for the 8-bit computer (trackball games like Star Raiders).
 - (BOOL)gameSupportsMouse {
-    // TODO: gameSupportsMouse
-    return false;
+    return [[self systemIdentifier] isEqualToString:@"com.provenance.atari8bit"];
 }
 
+/// All Atari 8-bit computer programs benefit from keyboard access.
 - (BOOL)gameSupportsKeyboard {
-    // TODO: gameSupportsKeyboard
-    return false;
+    return [[self systemIdentifier] isEqualToString:@"com.provenance.atari8bit"];
 }
 
 - (BOOL)requiresMouse {
-    // TODO: requiresMouse
-    return false;
+    return NO;
 }
 
+/// The XL/XE keyboard is required for many programs (BASIC, productivity software).
 - (BOOL)requiresKeyboard {
-    // TODO: requiresKeyboard
-    return false;
+    return [[self systemIdentifier] isEqualToString:@"com.provenance.atari8bit"];
 }
 
-//- (void)keyDown:(unsigned short)keyHIDCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)modifierFlags
-//{
+/// Maps a HID USB key code (GCKeyCode) to an Atari 8-bit AKEY_* code.
+/// Returns AKEY_NONE if no mapping is defined for the given code.
+static int atari8bitKeyCodeForHIDCode(NSInteger hidCode) {
+    switch (hidCode) {
+        // Letters (lowercase — shift state handled via INPUT_key_shift)
+        case 0x04: return AKEY_a;
+        case 0x05: return AKEY_b;
+        case 0x06: return AKEY_c;
+        case 0x07: return AKEY_d;
+        case 0x08: return AKEY_e;
+        case 0x09: return AKEY_f;
+        case 0x0A: return AKEY_g;
+        case 0x0B: return AKEY_h;
+        case 0x0C: return AKEY_i;
+        case 0x0D: return AKEY_j;
+        case 0x0E: return AKEY_k;
+        case 0x0F: return AKEY_l;
+        case 0x10: return AKEY_m;
+        case 0x11: return AKEY_n;
+        case 0x12: return AKEY_o;
+        case 0x13: return AKEY_p;
+        case 0x14: return AKEY_q;
+        case 0x15: return AKEY_r;
+        case 0x16: return AKEY_s;
+        case 0x17: return AKEY_t;
+        case 0x18: return AKEY_u;
+        case 0x19: return AKEY_v;
+        case 0x1A: return AKEY_w;
+        case 0x1B: return AKEY_x;
+        case 0x1C: return AKEY_y;
+        case 0x1D: return AKEY_z;
+        // Digits
+        case 0x1E: return AKEY_1;
+        case 0x1F: return AKEY_2;
+        case 0x20: return AKEY_3;
+        case 0x21: return AKEY_4;
+        case 0x22: return AKEY_5;
+        case 0x23: return AKEY_6;
+        case 0x24: return AKEY_7;
+        case 0x25: return AKEY_8;
+        case 0x26: return AKEY_9;
+        case 0x27: return AKEY_0;
+        // Editing / whitespace
+        case 0x28: return AKEY_RETURN;
+        case 0x29: return AKEY_ESCAPE;
+        case 0x2A: return AKEY_BACKSPACE;
+        case 0x2B: return AKEY_TAB;
+        case 0x2C: return AKEY_SPACE;
+        // Punctuation
+        case 0x2D: return AKEY_MINUS;
+        case 0x2E: return AKEY_EQUAL;
+        case 0x2F: return AKEY_BRACKETLEFT;
+        case 0x30: return AKEY_BRACKETRIGHT;
+        case 0x31: return AKEY_BACKSLASH;
+        case 0x33: return AKEY_SEMICOLON;
+        case 0x34: return AKEY_QUOTE;
+        case 0x35: return AKEY_ATARI;      // ` → Atari logo key (ATARI)
+        case 0x36: return AKEY_COMMA;
+        case 0x37: return AKEY_FULLSTOP;
+        case 0x38: return AKEY_SLASH;
+        // Caps Lock
+        case 0x39: return AKEY_CAPSLOCK;
+        // F-keys → Atari F1-F4; F5-F8 → system keys
+        case 0x3A: return AKEY_F1;
+        case 0x3B: return AKEY_F2;
+        case 0x3C: return AKEY_F3;
+        case 0x3D: return AKEY_F4;
+        case 0x3E: return AKEY_START;      // F5
+        case 0x3F: return AKEY_SELECT;     // F6
+        case 0x40: return AKEY_OPTION;     // F7
+        case 0x41: return AKEY_HELP;       // F8
+        case 0x42: return AKEY_BREAK;      // F9 → Break
+        case 0x43: return AKEY_WARMSTART;  // F10 → Warm reset
+        case 0x44: return AKEY_COLDSTART;  // F11 → Cold reset
+        // Delete / Insert
+        case 0x4C: return AKEY_DELETE_CHAR;
+        case 0x49: return AKEY_INSERT_CHAR;
+        // Arrow keys
+        case 0x4F: return AKEY_RIGHT;
+        case 0x50: return AKEY_LEFT;
+        case 0x51: return AKEY_DOWN;
+        case 0x52: return AKEY_UP;
+        default:   return AKEY_NONE;
+    }
+}
 
-//}
+- (void)keyDown:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // Track modifier keys separately; they do not produce AKEY codes.
+    if (key == 0xE1 || key == 0xE5) { // Left Shift / Right Shift
+        INPUT_key_shift = 1;
+        return;
+    }
+    if (key == 0xE0 || key == 0xE4) { // Left Ctrl / Right Ctrl
+        s_ctrlDown = YES;
+        return;
+    }
 
-//- (void)keyUp:(unsigned short)keyHIDCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)modifierFlags
-//{
+    int akey = atari8bitKeyCodeForHIDCode((NSInteger)key);
+    if (akey == AKEY_NONE) return;
 
-//}
+    if (s_ctrlDown) {
+        akey |= AKEY_CTRL;
+    }
+    s_pendingKeyCode = akey;
+}
+
+- (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    if (key == 0xE1 || key == 0xE5) { // Left Shift / Right Shift
+        INPUT_key_shift = 0;
+        return;
+    }
+    if (key == 0xE0 || key == 0xE4) { // Left Ctrl / Right Ctrl
+        s_ctrlDown = NO;
+        return;
+    }
+    // Only clear if this key was the one that set the pending code.
+    int akey = atari8bitKeyCodeForHIDCode((NSInteger)key);
+    if (akey != AKEY_NONE) {
+        s_pendingKeyCode = AKEY_NONE;
+    }
+}
 
 - (void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player {
     player--;
@@ -832,28 +958,7 @@ int UI_SelectCartType(int k) {
                 return CARTRIDGE_NONE;
         }
     }
-    
-    if([[_currentCore systemIdentifier] isEqualToString:@"com.provenance.atari8bit"])
-    {
-        // TODO: improve detection using MD5 lookup
-        switch (k)
-        {
-            case 2:    return CARTRIDGE_STD_2;
-            case 4:    return CARTRIDGE_STD_4;
-            case 8:    return CARTRIDGE_STD_8;
-            case 16:   return CARTRIDGE_STD_16;
-            case 32:   return CARTRIDGE_XEGS_32;
-            case 40:   return CARTRIDGE_BBSB_40;
-            case 64:   return CARTRIDGE_XEGS_07_64;
-            case 128:  return CARTRIDGE_XEGS_128;
-            case 256:  return CARTRIDGE_XEGS_256;
-            case 512:  return CARTRIDGE_XEGS_512;
-            case 1024: return CARTRIDGE_ATMAX_1024;
-            default:
-                return CARTRIDGE_NONE;
-        }
-    }
-    
+
     if([[_currentCore systemIdentifier] isEqualToString:@"com.provenance.5200"])
     {
         NSArray *One_Chip_16KB = @[@"a47fcb4eedab9418ea098bb431a407aa", // A.E. (Proto)
@@ -1021,7 +1126,9 @@ int PLATFORM_TRIG(int num)
 
 int PLATFORM_Keyboard(void)
 {
-    return 0;
+    // Return the key code set by keyDown:/keyUp: methods.
+    // AKEY_NONE (-1) means no key held, which the atari800 INPUT layer interprets as no input.
+    return s_pendingKeyCode;
 }
 
 void PLATFORM_DisplayScreen(void)
