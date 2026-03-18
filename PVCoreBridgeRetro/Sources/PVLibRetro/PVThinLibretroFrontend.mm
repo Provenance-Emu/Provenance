@@ -2482,14 +2482,12 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
 
-    // RETRO_HW_FRAME_BUFFER_VALID == (void*)-1 means the core has rendered
-    // into our FBO (_emuFBO / _ioSurface). Flush GL and notify the Metal
-    // presenter so it can blit the IOSurface-backed texture to the display.
-    if (data == (const void *)(uintptr_t)-1) {
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-        // Flush so the GPU writes are visible to the Metal consumer.
-        glFlush();
-#endif
+    // RETRO_HW_FRAME_BUFFER_VALID means the core has rendered into our FBO
+    // (_emuFBO / _ioSurface). Notify the Metal presenter so it can blit the
+    // IOSurface-backed texture to the display. The render delegate's
+    // didRenderFrameOnAlternateThread already calls glFlush(), so we do not
+    // flush here to avoid a redundant double-flush per frame.
+    if (data == RETRO_HW_FRAME_BUFFER_VALID) {
         id renderDelegate = self.renderDelegate;
         if ([renderDelegate respondsToSelector:@selector(didRenderFrameOnAlternateThread)]) {
             [renderDelegate didRenderFrameOnAlternateThread];
@@ -3809,7 +3807,6 @@ static bool thin_environment(unsigned cmd, void *data) {
         EAGLContext *savedContext = [EAGLContext currentContext];
         [renderDelegate startRenderingOnAlternateThread];
         [EAGLContext setCurrentContext:savedContext];
-        _renderDelegateStarted = YES;
         ILOG(@"ThinFrontend: called startRenderingOnAlternateThread on render delegate");
     }
 
@@ -3818,6 +3815,13 @@ static bool thin_environment(unsigned cmd, void *data) {
         if ([ioDelegate respondsToSelector:@selector(renderIOSurface)]) {
             delegateSurface = [ioDelegate renderIOSurface];
         }
+    }
+
+    // Only mark the delegate as started once we have confirmed it produced a
+    // usable IOSurface. This allows a retry on the next context_reset if the
+    // delegate's GL context was not ready yet (renderIOSurface == NULL).
+    if (!_renderDelegateStarted && delegateSurface) {
+        _renderDelegateStarted = YES;
     }
 
     // --- Step 2: set up the emu-thread GL context ---
@@ -3832,21 +3836,34 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     // --- Step 3: get (or create) the IOSurface ---
     if (delegateSurface) {
-        // Zero-copy path: reuse the render delegate's IOSurface so the
-        // Metal presenter can display our rendered frames without a copy.
-        _ioSurface = delegateSurface;
-        CFRetain(_ioSurface);
-        ILOG(@"ThinFrontend: using render delegate IOSurface (%zux%zu)",
-             IOSurfaceGetWidth(_ioSurface), IOSurfaceGetHeight(_ioSurface));
-    } else {
+        // Validate that the delegate's IOSurface matches the requested dimensions
+        // before binding it. A size mismatch would cause undefined behaviour in
+        // texImageIOSurface (the GL driver reads w×h pixels from an IOSurface of
+        // a different size).
+        size_t dsW = IOSurfaceGetWidth(delegateSurface);
+        size_t dsH = IOSurfaceGetHeight(delegateSurface);
+        if (dsW == w && dsH == h) {
+            // Zero-copy path: reuse the render delegate's IOSurface so the
+            // Metal presenter can display our rendered frames without a copy.
+            _ioSurface = delegateSurface;
+            CFRetain(_ioSurface);
+            ILOG(@"ThinFrontend: using render delegate IOSurface (%zux%zu)", dsW, dsH);
+        } else {
+            WLOG(@"ThinFrontend: delegate IOSurface size %zux%zu != requested %ux%u — falling back to private surface",
+                 dsW, dsH, w, h);
+        }
+    }
+    if (!_ioSurface) {
         // Fallback: create a private IOSurface.
+        // Omit kIOSurfacePixelFormat to match the approach used by
+        // PVMetalViewController and PVLibRetroGLESCore (bound as GL_RGBA),
+        // avoiding channel-swapped output from a format mismatch.
         // Frames will render correctly but won't reach the display until
         // the render delegate is updated to expose an IOSurface.
         NSDictionary *props = @{
             (id)kIOSurfaceWidth:             @(w),
             (id)kIOSurfaceHeight:            @(h),
             (id)kIOSurfaceBytesPerElement:   @4,
-            (id)kIOSurfacePixelFormat:       @(kCVPixelFormatType_32BGRA),
         };
         _ioSurface = IOSurfaceCreate((CFDictionaryRef)props);
         WLOG(@"ThinFrontend: render delegate has no IOSurface — created private surface (frames won't display)");
