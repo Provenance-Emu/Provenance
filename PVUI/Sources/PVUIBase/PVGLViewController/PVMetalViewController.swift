@@ -3403,6 +3403,50 @@ extension PVMetalViewController: PVRenderDelegateIOSurface {
 }
 #endif
 
+/// PVRenderDelegateMetal conformance: receives per-frame MTLTextures from
+/// Vulkan cores running via PVThinLibretroFrontend + MoltenVK.
+///
+/// Flow: Vulkan core renders → vkQueueSubmit → thin_vulkan_set_image →
+///       vkGetMTLTextureMVK → didRenderFrameWithMTLTexture → blit → display.
+extension PVMetalViewController: PVRenderDelegateMetal {
+    func didRenderFrameWithMTLTexture(_ texture: MTLTexture) {
+        // Replace the backing texture with the Vulkan frame's MTLTexture.
+        // No glFlush() needed — the Vulkan queue was already submitted before this call.
+        backingMTLTexture = texture
+
+        // Ensure the input texture exists and matches the source dimensions.
+        if inputTexture == nil
+            || inputTexture?.width  != texture.width
+            || inputTexture?.height != texture.height {
+            try? updateInputTexture()
+        }
+
+        guard let destTexture = inputTexture,
+              let commandBuffer = commandQueue?.makeCommandBuffer(),
+              let encoder = commandBuffer.makeBlitCommandEncoder() else {
+            return
+        }
+
+        let w = min(texture.width,  destTexture.width)
+        let h = min(texture.height, destTexture.height)
+        encoder.copy(from: texture,
+                     sourceSlice: 0, sourceLevel: 0,
+                     sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                     sourceSize:   MTLSize(width: w, height: h, depth: 1),
+                     to: destTexture,
+                     destinationSlice: 0, destinationLevel: 0,
+                     destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        encoder.endEncoding()
+        commandBuffer.commit()
+        previousCommandBuffer = commandBuffer
+
+        emulatorCore?.frontBufferCondition.lock()
+        emulatorCore?.isFrontBufferReady = true
+        emulatorCore?.frontBufferCondition.signal()
+        emulatorCore?.frontBufferCondition.unlock()
+    }
+}
+
 /// Error types for Metal view controller operations
 enum MetalViewControllerError: Error {
     case emulatorCoreIsNil

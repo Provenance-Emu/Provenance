@@ -53,6 +53,21 @@ import MetalKit
 }
 #endif
 
+/// Metal-texture render delegate for Vulkan→Metal bridge.
+/// Implemented by the Metal view controller to receive per-frame MTLTextures
+/// from Vulkan cores running via MoltenVK (PVThinLibretroFrontend).
+///
+/// Flow:
+///   1. Core calls set_command_buffers → frontend submits to VkQueue
+///   2. Core calls set_image → frontend extracts MTLTexture via vkGetMTLTextureMVK
+///   3. Frontend calls didRenderFrameWithMTLTexture(_:) → presenter blits to display
+@objc public protocol PVRenderDelegateMetal: NSObjectProtocol {
+    /// Called from the emulation thread when a Vulkan core has finished rendering
+    /// a frame. The texture is backed by MoltenVK's internal Metal resources.
+    /// The receiver should blit or display this texture on the next draw call.
+    @objc optional func didRenderFrameWithMTLTexture(_ texture: MTLTexture)
+}
+
 //public extension PVRenderDelegate {
 //
 //    // Optional method
