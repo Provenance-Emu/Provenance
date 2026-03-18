@@ -725,7 +725,7 @@ void extract_bundles();
             NSError *optWriteErr = nil;
             BOOL optWriteOK = [self.coreOptionConfig writeToFile:fileName
                                     atomically:NO
-                                    encoding:NSStringEncodingConversionAllowLossy
+                                    encoding:NSUTF8StringEncoding
                                         error:&optWriteErr];
             if (optWriteOK) {
                 ILOG(@"Core option config written to %@", fileName);
