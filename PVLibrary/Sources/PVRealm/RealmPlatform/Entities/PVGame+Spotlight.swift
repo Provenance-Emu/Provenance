@@ -104,11 +104,16 @@ public extension PVGame {
            cachedImageURL.isFileURL,
            let image = UIImage(contentsOfFile: cachedImageURL.path) {
             // Try to get a high-quality thumbnail
+#if canImport(UIKit)
             if let scaledImage = image.scaledImage(withMaxResolution: 300) {
                 contentSet.thumbnailData = scaledImage.jpegData(compressionQuality: 0.9)
             } else {
                 contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
             }
+#else
+            // On non-UIKit platforms, use the original image without scaling
+            contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
+#endif
         }
         #endif
 
