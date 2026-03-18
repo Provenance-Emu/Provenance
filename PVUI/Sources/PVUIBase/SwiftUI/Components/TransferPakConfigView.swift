@@ -3,6 +3,7 @@
 //  PVUIBase
 //
 //  Part of #3027 — Transfer Pak UI for Mupen64Plus N64 cores
+//  Closes #2739 — Transfer Pak slot assignment UI (pre-launch prompt)
 //
 //  The Transfer Pak is an N64 controller accessory that lets you slot in a
 //  Game Boy or Game Boy Color cartridge. N64 games such as Pokémon Stadium,
@@ -13,6 +14,11 @@
 //  This view lets the user pick which GB/GBC ROM to mount in each of the four
 //  virtual controller-port Transfer Pak slots before (or during) emulation.
 //  Selections are persisted in UserDefaults keyed by the N64 game's MD5 hash.
+//
+//  Usage:
+//   • Pre-launch (auto-prompt):  Set `launchAction` — shows "Skip & Launch" / "Launch Game"
+//   • Context menu (pre-launch): Leave `launchAction` nil — shows "Done"
+//   • Pause menu (in-session):   Set `applyLiveSlotChange` — hot-swaps ROMs live
 //
 
 import SwiftUI
@@ -85,10 +91,14 @@ public enum TransferPakStore {
 
 /// Configuration sheet for mounting GB/GBC ROMs into virtual Transfer Pak slots.
 ///
-/// Show this view from the game context menu (before launch) or from the pause menu
-/// (during emulation). When `applyLiveSlotChange` is provided, changes are applied
-/// immediately via `TransferPakSupport` on the running core; otherwise they are stored
-/// in `TransferPakStore` and applied the next time the game is loaded via
+/// Three presentation modes:
+///  1. **Pre-launch auto-prompt** — set `launchAction`; toolbar shows "Skip & Launch" and "Launch Game"
+///  2. **Context menu (pre-launch)** — leave `launchAction` nil; toolbar shows "Done"
+///  3. **Pause menu (in-session)** — set `applyLiveSlotChange`; changes are applied live
+///
+/// When `applyLiveSlotChange` is provided, changes are applied immediately via
+/// `TransferPakSupport` on the running core; otherwise they are stored in `TransferPakStore`
+/// and applied the next time the game is loaded via
 /// `PVEmulatorViewController.applyPersistedTransferPakIfNeeded()`.
 public struct TransferPakConfigView: View {
     /// The N64 game being configured.
@@ -96,6 +106,9 @@ public struct TransferPakConfigView: View {
     /// Called to apply a slot change on the running core (optional hot-swap during play).
     /// Signature: `(port: Int, rom: TransferPakROM?) -> Void`
     var applyLiveSlotChange: ((Int, TransferPakROM?) -> Void)?
+    /// When non-nil, the toolbar shows "Skip & Launch" / "Launch Game" buttons instead of "Done".
+    /// Called when user taps "Skip & Launch" (no configuration) or "Launch Game" (after configuring).
+    var launchAction: (() -> Void)?
     /// Called when the view should dismiss (e.g. "Done" tapped).
     var onDismiss: (() -> Void)?
 
@@ -107,9 +120,11 @@ public struct TransferPakConfigView: View {
     public init(game: PVGame,
                 slotCount: Int = 4,
                 applyLiveSlotChange: ((Int, TransferPakROM?) -> Void)? = nil,
+                launchAction: (() -> Void)? = nil,
                 onDismiss: (() -> Void)? = nil) {
         self.game = game.isFrozen ? game : game.freeze()
         self.applyLiveSlotChange = applyLiveSlotChange
+        self.launchAction = launchAction
         self.onDismiss = onDismiss
         self.slotCount = min(4, max(1, slotCount))
 
@@ -131,9 +146,26 @@ public struct TransferPakConfigView: View {
             .navigationTitle("Transfer Pak")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        applyAndDismiss()
+                if let launchAction {
+                    // Pre-launch mode: "Skip & Launch" on leading, "Launch Game" on trailing
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Skip & Launch") {
+                            onDismiss?()
+                            launchAction()
+                        }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Launch Game") {
+                            onDismiss?()
+                            launchAction()
+                        }
+                        .bold()
+                    }
+                } else {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            applyAndDismiss()
+                        }
                     }
                 }
             }
@@ -147,7 +179,7 @@ public struct TransferPakConfigView: View {
     // MARK: - Sections
 
     private var infoSection: some View {
-        SwiftUI.Section {
+        Section {
             VStack(alignment: .leading, spacing: 10) {
                 Label("What is the Transfer Pak?", systemImage: "info.circle.fill")
                     .font(.headline)
@@ -171,7 +203,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     }
 
     private var slotsSection: some View {
-        SwiftUI.Section {
+        Section {
             ForEach(0..<slotCount, id: \.self) { port in
                 portRow(port: port)
             }
@@ -184,7 +216,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     }
 
     private var clearSection: some View {
-        SwiftUI.Section {
+        Section {
             Button(role: .destructive) {
                 clearAll()
             } label: {
