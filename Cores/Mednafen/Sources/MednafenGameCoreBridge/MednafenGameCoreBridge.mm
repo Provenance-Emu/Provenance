@@ -1345,8 +1345,7 @@ static void emulation_run(BOOL skipFrame) {
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
     // Should we be using controller callbacks instead?
-    if (!skip && (self.controller1 || self.controller2 || self.controller3 || self.controller4 ||
-                  self.controller5 || self.controller6 || self.controller7 || self.controller8)) {
+    if (!skip) {
         [self pollControllers];
     }
 
