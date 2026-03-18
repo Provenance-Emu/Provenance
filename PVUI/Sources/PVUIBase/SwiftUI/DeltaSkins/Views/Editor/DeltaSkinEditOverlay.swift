@@ -284,9 +284,15 @@ struct DeltaSkinEditorStatusBar: View {
                 Text("\(viewModel.modifiedFrames.count) button\(viewModel.modifiedFrames.count == 1 ? "" : "s") repositioned")
                     .font(.caption)
             } else {
+                #if os(tvOS)
+                Text("Select a button to inspect")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                #else
                 Text("Drag buttons to reposition")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                #endif
             }
 
             Spacer()

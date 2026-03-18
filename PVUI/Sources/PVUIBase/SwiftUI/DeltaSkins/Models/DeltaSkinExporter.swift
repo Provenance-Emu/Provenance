@@ -58,10 +58,8 @@ struct DeltaSkinExporter {
         let fm = FileManager.default
         let tempDir = fm.temporaryDirectory
         let baseName = skin.fileURL.deletingPathExtension().lastPathComponent
-        let outputURL = tempDir.appendingPathComponent("\(baseName)-edited.deltaskin")
-
-        // Remove stale output if present
-        try? fm.removeItem(at: outputURL)
+        let uniqueID = UUID().uuidString.prefix(8)
+        let outputURL = tempDir.appendingPathComponent("\(baseName)-edited-\(uniqueID).deltaskin")
 
         let isDirectory = (try? skin.fileURL.resourceValues(
             forKeys: [.isDirectoryKey])

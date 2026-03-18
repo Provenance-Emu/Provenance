@@ -40,7 +40,7 @@ struct DeltaSkinFullscreenPreview: View {
               supportedDisplayTypes.count > 1 else { return }
 
         let next = supportedDisplayTypes[(currentIndex + 1) % supportedDisplayTypes.count]
-        if isEditMode && editorViewModel.hasChanges {
+        if editorViewModel.hasChanges {
             // Ask user before discarding unsaved button position edits
             pendingDisplayType = next
         } else {
@@ -162,6 +162,8 @@ struct DeltaSkinFullscreenPreview: View {
                                 .padding()
                                 .background(Circle().fill(isEditMode ? AnyShapeStyle(.yellow.opacity(0.2)) : AnyShapeStyle(.ultraThinMaterial)))
                         }
+                        .accessibilityLabel("Edit Button Positions")
+                        .accessibilityValue(isEditMode ? "Active" : "Inactive")
 
                         // Export edited skin (iOS only — no ShareSheet on tvOS)
                         #if !os(tvOS)
