@@ -849,7 +849,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         #endif
 
         // Apply any persisted Transfer Pak slot selections for this game before the core starts.
-        applyPersistedTransferPakIfNeeded()
+        await applyPersistedTransferPakIfNeeded()
 
         core.startEmulation()
 
