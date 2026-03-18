@@ -12,6 +12,7 @@
 //  - CoreRetroAchievements (RetroAchievements – rcheevos runs inside the core itself)
 //  - SubCoreOptional     (per-subcore option overrides, extends existing CoreOptional)
 //  - TransferPakSupport  (N64 Transfer Pak – Mupen64Plus-Next libretro core only)
+//  - PaletteProviding    (see PVThinLibretroCore+Palette.swift — GB/GBC cores only)
 //
 
 import Foundation
