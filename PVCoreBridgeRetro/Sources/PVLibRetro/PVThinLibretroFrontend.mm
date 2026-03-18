@@ -1958,7 +1958,15 @@ static bool thin_environment(unsigned cmd, void *data) {
         if (port < THIN_MAX_PLAYERS) {
             _portDeviceTypes[port] = device;
         }
+    } else {
+        // Core does not export retro_set_controller_port_device; ignore the request.
+        ILOG(@"ThinFrontend: core does not support setting controller port devices; "
+             "ignoring request for port %u device = %u", port, device);
     }
+}
+
+- (BOOL)supportsControllerPortDevice {
+    return _sym.retro_set_controller_port_device != NULL;
 }
 
 + (NSUInteger)maxPlayers {
