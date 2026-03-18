@@ -20,55 +20,52 @@
 import Foundation
 import PVCoreBridge
 import PVLogging
+import PVSystems
 #if canImport(GameController)
 import GameController
 #endif
 
-// MARK: - Virtual input support (keyboard/mouse) per system
-// Mirrors RetroArchVirtualInputSupport from PVRetroArchCoreCore.swift
+// MARK: - Per-system input capability flags (announced via core protocols)
+// Keyboard and mouse support tables are private to this file (thin-libretro only).
+// Light gun support is declared publicly on SystemIdentifier in PVCoreBridge so any
+// core module can query it — see Controls+SystemIdentifier.swift.
 
-private struct ThinVirtualInputSupport {
-    let supportsKeyboard: Bool
-    let requiresKeyboard: Bool
-    let supportsMouse: Bool
-    let requiresMouse: Bool
+private extension SystemIdentifier {
 
-    static func resolve(systemIdentifier: String?) -> Self {
-        guard let sysId = systemIdentifier else { return .none }
-        return supportBySystem[sysId] ?? .none
-    }
+    // MARK: Keyboard
 
-    static let none = Self(supportsKeyboard: false, requiresKeyboard: false, supportsMouse: false, requiresMouse: false)
+    /// Systems whose libretro cores accept keyboard input.
+    var supportsKeyboard: Bool { Self.keyboardSystems.contains(self) }
 
-    private static let supportBySystem: [String: Self] = [
-        "com.provenance.3DO":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.appleII":      .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.atari8bit":    .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
-        "com.provenance.atarist":      .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.c64":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.cdi":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.colecovision": .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.doom":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.dos":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.dreamcast":    .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.ep128":        .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
-        "com.provenance.macintosh":    .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.mame":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.msx":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.msx2":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.n64":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.palmos":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.pc98":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.psx":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.quake":        .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.quake2":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.saturn":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.snes":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.tic80":        .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: false, requiresMouse: false),
-        "com.provenance.wolf3d":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.zxspectrum":   .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
+    /// Systems that require a keyboard to be usable.
+    var requiresKeyboard: Bool { Self.requiresKeyboardSystems.contains(self) }
+
+    private static let keyboardSystems: Set<SystemIdentifier> = [
+        ._3DO, .AppleII, .Atari8bit, .AtariST, .C64, .CDi, .ColecoVision,
+        .DOOM, .DOS, .Dreamcast, .EP128, .Macintosh, .MAME, .MSX, .MSX2,
+        .N64, .PalmOS, .PC98, .PSX, .Quake, .Quake2, .Saturn, .SNES, .TIC80, .Wolf3D, .ZXSpectrum,
     ]
+
+    private static let requiresKeyboardSystems: Set<SystemIdentifier> = [
+        .Atari8bit, .EP128, .TIC80, .ZXSpectrum,
+    ]
+
+    // MARK: Mouse
+
+    /// Systems whose libretro cores accept mouse / pointer input.
+    var supportsMouse: Bool { Self.mouseSystems.contains(self) }
+
+    /// Systems that require a mouse to be usable.
+    var requiresMouse: Bool { false }   // no thin-libretro system requires a mouse
+
+    private static let mouseSystems: Set<SystemIdentifier> = [
+        .Atari8bit, .AtariST, .DOOM, .DOS, .Dreamcast, .EP128,
+        .Macintosh, .MSX, .MSX2, .PC98, .Quake, .Quake2, .Wolf3D, .ZXSpectrum,
+    ]
+
 }
+// Note: supportsLightGun / requiresLightGun are public properties on SystemIdentifier
+// defined in PVCoreBridge/Controls+SystemIdentifier.swift — no local override needed.
 
 // MARK: - libretro joypad button IDs (mirrors libretro.h defines)
 // These must match RETRO_DEVICE_ID_JOYPAD_* exactly.
@@ -963,10 +960,10 @@ extension PVThinLibretroCore: PVPCFXSystemResponderClient {
 extension PVThinLibretroCore: KeyboardResponder {
 
     public var gameSupportsKeyboard: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).supportsKeyboard
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsKeyboard ?? false
     }
     public var requiresKeyboard: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).requiresKeyboard
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresKeyboard ?? false
     }
 
 #if canImport(GameController)
@@ -1108,10 +1105,10 @@ extension PVThinLibretroCore: KeyboardResponder {
 extension PVThinLibretroCore: MouseResponder {
 
     public var gameSupportsMouse: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).supportsMouse
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsMouse ?? false
     }
     public var requiresMouse: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).requiresMouse
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresMouse ?? false
     }
 
 #if canImport(GameController)
@@ -1970,6 +1967,232 @@ extension PVThinLibretroCore: PVWiiSystemResponderClient {
         @unknown default:
             return nil
         }
+    }
+}
+
+// MARK: - LightGunResponder
+
+extension PVThinLibretroCore: LightGunResponder {
+
+    public var gameSupportsLightGun: Bool {
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsLightGun ?? false
+    }
+
+    public var requiresLightGun: Bool {
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresLightGun ?? false
+    }
+
+    /// Convert normalized screen coordinates (0.0–1.0) to libretro light gun range
+    /// (-0x7FFF .. +0x7FFF) and forward to the bridge.
+    public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
+        let x = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
+        let y = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
+        _lightgunLastX = x
+        _lightgunLastY = y
+        _lightgunAimOffscreen = isOffscreen
+        _bridge.setLightgunX(x, y: y,
+                             trigger: _lightgunTriggerHeld,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: isOffscreen || _lightgunReloadHeld,
+                             reload: _lightgunReloadHeld)
+    }
+
+    public func lightGunTriggerDown() {
+        _lightgunTriggerHeld = true
+        _bridge.setLightgunX(_lightgunLastX, y: _lightgunLastY,
+                             trigger: true,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: _lightgunAimOffscreen || _lightgunReloadHeld,
+                             reload: _lightgunReloadHeld)
+    }
+
+    public func lightGunTriggerUp() {
+        _lightgunTriggerHeld = false
+        _bridge.setLightgunX(_lightgunLastX, y: _lightgunLastY,
+                             trigger: false,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: _lightgunAimOffscreen || _lightgunReloadHeld,
+                             reload: _lightgunReloadHeld)
+    }
+
+    public func lightGunAuxADown() {
+        _lightgunAuxAHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunAuxAUp() {
+        _lightgunAuxAHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunAuxBDown() {
+        _lightgunAuxBHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunAuxBUp() {
+        _lightgunAuxBHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunStartDown() {
+        _lightgunStartHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunStartUp() {
+        _lightgunStartHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunSelectDown() {
+        _lightgunSelectHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunSelectUp() {
+        _lightgunSelectHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunReloadDown() {
+        _lightgunReloadHeld = true
+        // offscreen is computed as _lightgunAimOffscreen || _lightgunReloadHeld in _sendCurrentLightgunState
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunReloadUp() {
+        _lightgunReloadHeld = false
+        // restore aim-based offscreen state; do not force false if aim is still offscreen
+        _sendCurrentLightgunState()
+    }
+
+    // MARK: Private helpers
+
+    private func _sendCurrentLightgunState() {
+        _bridge.setLightgunX(_lightgunLastX, y: _lightgunLastY,
+                             trigger: _lightgunTriggerHeld,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: _lightgunAimOffscreen || _lightgunReloadHeld,
+                             reload: _lightgunReloadHeld)
+    }
+}
+
+// MARK: - LightGunResponder stored state (via associated objects)
+// PVThinLibretroCore is an ObjC class; we use a small state holder to avoid
+// adding Swift stored properties to an extension.
+
+private var _lgTriggerKey  = 0
+private var _lgAuxAKey     = 0
+private var _lgAuxBKey     = 0
+private var _lgStartKey    = 0
+private var _lgSelectKey   = 0
+private var _lgReloadKey   = 0
+private var _lgOffscreenKey = 0
+private var _lgLastXKey    = 0
+private var _lgLastYKey    = 0
+
+// Swift Bool bridged through ObjC associated objects becomes NSNumber at runtime;
+// using `as? Bool` always returns nil. Use `as? NSNumber` + `.boolValue` instead.
+extension PVThinLibretroCore {
+    fileprivate var _lightgunTriggerHeld: Bool {
+        get {
+            (objc_getAssociatedObject(self, &_lgTriggerKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgTriggerKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    fileprivate var _lightgunAuxAHeld: Bool {
+        get {
+            (objc_getAssociatedObject(self, &_lgAuxAKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgAuxAKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    fileprivate var _lightgunAuxBHeld: Bool {
+        get {
+            (objc_getAssociatedObject(self, &_lgAuxBKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgAuxBKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    fileprivate var _lightgunStartHeld: Bool {
+        get {
+            (objc_getAssociatedObject(self, &_lgStartKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgStartKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    fileprivate var _lightgunSelectHeld: Bool {
+        get {
+            (objc_getAssociatedObject(self, &_lgSelectKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgSelectKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    fileprivate var _lightgunReloadHeld: Bool {
+        get {
+            (objc_getAssociatedObject(self, &_lgReloadKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgReloadKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    /// Tracks whether the aim direction (from `lightGunMovedToPoint`) is offscreen.
+    /// The effective offscreen state delivered to the bridge is `_lightgunAimOffscreen || _lightgunReloadHeld`.
+    fileprivate var _lightgunAimOffscreen: Bool {
+        get {
+            (objc_getAssociatedObject(self, &_lgOffscreenKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgOffscreenKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    fileprivate var _lightgunLastX: Int16 {
+        get { (objc_getAssociatedObject(self, &_lgLastXKey) as? NSNumber).map { Int16($0.int32Value) } ?? 0 }
+        set { objc_setAssociatedObject(self, &_lgLastXKey, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunLastY: Int16 {
+        get { (objc_getAssociatedObject(self, &_lgLastYKey) as? NSNumber).map { Int16($0.int32Value) } ?? 0 }
+        set { objc_setAssociatedObject(self, &_lgLastYKey, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 }
 

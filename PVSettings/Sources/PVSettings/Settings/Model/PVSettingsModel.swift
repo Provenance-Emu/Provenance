@@ -195,6 +195,11 @@ public extension Defaults.Keys {
     static let tvOSSiriRemoteMouseSensitivity = Key<Double>("tvOSSiriRemoteMouseSensitivity", default: 1.0)
 #endif
 
+    /// Sensitivity multiplier for physical USB/Bluetooth mice used as light gun input.
+    /// Applied by GCMouseLightGunDriver when accumulating HID delta events.
+    /// Range 0.1 – 5.0; default 1.0 (calibrated for a ~800 DPI mouse).
+    static let lightGunMouseSensitivity = Key<Double>("lightGunMouseSensitivity", default: 1.0)
+
     /// Enable turbo/autofire: when a button has turbo active, it rapidly toggles press/release.
     static let turboEnabled = Key<Bool>("turboEnabled", default: true)
 

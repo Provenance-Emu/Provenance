@@ -73,6 +73,45 @@ import UIKit
 	@objc optional func middleMouseUp(atPoint point: CGPoint)
 }
 
+/// Protocol for cores that support light gun peripherals (Zapper, Super Scope, Guncon, etc.).
+/// All coordinates are normalized to the emulator screen space (0.0–1.0 in both axes),
+/// where (0,0) is top-left and (1,1) is bottom-right.
+/// The driver (GCMouse delta accumulation, UIPointerInteraction, or touch) calls these methods
+/// when the user aims and fires.
+@objc public protocol LightGunResponder: AnyObject {
+    /// Whether this core/system supports a light gun device.
+    var gameSupportsLightGun: Bool { get }
+    /// Whether this core/system requires a light gun to be playable.
+    var requiresLightGun: Bool { get }
+
+    /// Update the current aim position in normalized screen coordinates (0.0–1.0).
+    /// - Parameters:
+    ///   - point: Normalized screen point. (0,0) = top-left, (1,1) = bottom-right.
+    ///   - isOffscreen: `true` when the gun is pointed off-screen (reload gesture or cursor out of bounds).
+    func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool)
+
+    /// The primary trigger was pressed.
+    func lightGunTriggerDown()
+    /// The primary trigger was released.
+    func lightGunTriggerUp()
+
+    /// Auxiliary button A pressed (e.g. Super Scope pause, Guncon B).
+    @objc optional func lightGunAuxADown()
+    @objc optional func lightGunAuxAUp()
+    /// Auxiliary button B pressed (e.g. Super Scope fire toggle, Guncon C).
+    @objc optional func lightGunAuxBDown()
+    @objc optional func lightGunAuxBUp()
+    /// Start button (Guncon A / Super Scope start).
+    @objc optional func lightGunStartDown()
+    @objc optional func lightGunStartUp()
+    /// Select / cursor button.
+    @objc optional func lightGunSelectDown()
+    @objc optional func lightGunSelectUp()
+    /// Forced off-screen reload (right-click / long-press gesture).
+    @objc optional func lightGunReloadDown()
+    @objc optional func lightGunReloadUp()
+}
+
 @objc public enum Touchpad: Int {
 	case primary
 	case secondary

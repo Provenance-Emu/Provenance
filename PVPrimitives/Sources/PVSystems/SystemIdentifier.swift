@@ -53,6 +53,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case NGPC = "com.provenance.ngpc"
     case Odyssey2 = "com.provenance.odyssey2"
     case PalmOS = "com.provenance.palmos"
+    case PC98 = "com.provenance.pc98"
     case PCE = "com.provenance.pce"
     case PCECD = "com.provenance.pcecd"
     case PCFX = "com.provenance.pcfx"
@@ -129,6 +130,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .NGPC: false
         case .Odyssey2: false
         case .PalmOS: true
+        case .PC98: true
         case .PCE: false
         case .PCECD: false
         case .PCFX: false
@@ -220,7 +222,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
             return "Sega"
         case .PSX, .PSP, .PS2, .PS3:
             return "Sony"
-        case .PCE, .PCFX, .PCECD, .SGFX:
+        case .PC98, .PCE, .PCFX, .PCECD, .SGFX:
             return "NEC"
         case .NeoGeo, .NeoGeoCD, .NGP, .NGPC:
             return "SNK"
@@ -300,6 +302,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .PSP:           return "PlayStation Portable"
         case .PS2:           return "PlayStation 2"
         case .PS3:           return "PlayStation 3"
+        case .PC98:          return "PC-98"
         case .PCE:           return "PC Engine - TurboGrafx 16"
         case .PCFX:          return "PC-FX"
         case .PCECD:         return "PC Engine CD - TurboGrafx-CD"
