@@ -446,7 +446,7 @@ public struct CoreOptionsDetailView: View {
         .uiKitAlert(
             "Reset All Options",
             message: gameMD5 != nil
-                ? "Reset all \(title) global defaults to factory values? This affects all games."
+                ? "Reset all \(title) global defaults to factory values? This affects core-wide defaults; per-game overrides will remain unchanged."
                 : "Are you sure you want to reset all options for \(title) to their default values?",
             isPresented: $state.showResetConfirmation
         ) {
