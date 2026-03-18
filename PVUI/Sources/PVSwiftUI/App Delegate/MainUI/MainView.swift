@@ -57,16 +57,14 @@ struct MainView: View {
             // Pre-launch Transfer Pak setup sheet — covers all UI modes (RetroMainView,
             // TVMediaMainView, UIKit) so the launch continuation is never left pending.
             // Presentation is derived from preLaunchTransferPakGame (single source of truth).
+            // launchAction is the single callback for button taps; the sheet's own onDismiss
+            // handles swipe-to-dismiss so no duplicate closures are needed.
             .sheet(item: $sceneCoordinator.preLaunchTransferPakGame, onDismiss: {
-                // Handles swipe-to-dismiss; button-tap paths already call dismissPreLaunchTransferPak().
                 SceneCoordinator.shared.dismissPreLaunchTransferPak()
             }) { game in
                 TransferPakConfigView(
                     game: game,
                     launchAction: {
-                        SceneCoordinator.shared.dismissPreLaunchTransferPak()
-                    },
-                    onDismiss: {
                         SceneCoordinator.shared.dismissPreLaunchTransferPak()
                     }
                 )

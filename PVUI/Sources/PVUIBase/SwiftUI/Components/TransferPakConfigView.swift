@@ -157,16 +157,17 @@ public struct TransferPakConfigView: View {
                     // Pre-launch mode: "Skip & Launch" on leading, "Launch Game" on trailing.
                     // Slot edits are buffered until "Launch Game" is tapped; tapping
                     // "Skip & Launch" discards any in-progress changes without persisting them.
+                    // launchAction is the single callback — it dismisses the sheet and resumes
+                    // the launch continuation. onDismiss is not called here to avoid redundant
+                    // invocations (the enclosing .sheet(onDismiss:) handles swipe-to-dismiss).
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Skip & Launch") {
-                            onDismiss?()
                             launchAction()
                         }
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Launch Game") {
                             commitStagedSlots()
-                            onDismiss?()
                             launchAction()
                         }
                         .bold()
