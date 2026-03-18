@@ -42,7 +42,7 @@ final class LightGunSystemRegistryTests: XCTestCase {
     }
 
     func testUnknownSystemReturnsFalse() {
-        XCTAssertFalse(LightGunSystemRegistry.shared.supportsLightGun(.GameBoy))
+        XCTAssertFalse(LightGunSystemRegistry.shared.supportsLightGun(.GB))
     }
 
     // MARK: - register(system:)
@@ -74,7 +74,7 @@ final class LightGunSystemRegistryTests: XCTestCase {
         LightGunSystemRegistry.shared.registerProvider(MockLightGunProvider.self)
         XCTAssertTrue(LightGunSystemRegistry.shared.supportsLightGun(.PSX))
         XCTAssertTrue(LightGunSystemRegistry.shared.supportsLightGun(.NES))
-        XCTAssertFalse(LightGunSystemRegistry.shared.supportsLightGun(.GameBoy))
+        XCTAssertFalse(LightGunSystemRegistry.shared.supportsLightGun(.GB))
     }
 
     // MARK: - registeredSystems snapshot
