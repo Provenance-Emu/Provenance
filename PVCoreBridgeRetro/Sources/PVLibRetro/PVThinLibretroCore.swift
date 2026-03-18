@@ -99,7 +99,6 @@ class PVThinLibretroCore: PVEmulatorCore {
             GCControllerHapticsManager.shared.resetSystemProfile()
         }
 #endif
-        }
         super.stopEmulation()
     }
 
