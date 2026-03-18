@@ -30,8 +30,10 @@ if ! echo "${NEW_DATE}" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
     exit 1
 fi
 
-# Replace the pinned_date value in cores.yml
-sed -i.bak "s|pinned_date:.*|pinned_date: \"${NEW_DATE}\"|" "${CORES_YML}"
+# Replace the pinned_date value in cores.yml.
+# The address pattern ^[[:space:]]*pinned_date: anchors to line-start whitespace
+# so comment lines (# pinned_date: ...) are never touched.
+sed -i.bak "s|^\([[:space:]]*\)pinned_date:.*|\1pinned_date: \"${NEW_DATE}\"|" "${CORES_YML}"
 rm -f "${CORES_YML}.bak"
 
 echo "Updated pinned_date to ${NEW_DATE} in cores.yml"

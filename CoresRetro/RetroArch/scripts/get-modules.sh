@@ -23,10 +23,12 @@ fi
 
 # Read pinned date from cores.yml for reproducible builds.
 # If pinned_date is set, substitute it for "latest" in every URL.
+# grep -v '^[[:space:]]*#' strips comment lines before matching the key,
+# and [[:space:]] is used instead of \s for POSIX/macOS-BSD compatibility.
 PINNED_DATE=""
 CORES_YML="${SCRIPTS_DIR}/cores.yml"
 if [ -f "${CORES_YML}" ]; then
-	PINNED_DATE=$(grep -E '^\s*pinned_date:' "${CORES_YML}" | sed 's/.*pinned_date:[[:space:]]*//' | tr -d '"' | tr -d "'" | tr -d '[:space:]')
+	PINNED_DATE=$(grep -v '^[[:space:]]*#' "${CORES_YML}" | grep -E '^[[:space:]]*pinned_date:' | sed 's/.*pinned_date:[[:space:]]*//' | tr -d '"' | tr -d "'" | tr -d '[:space:]')
 fi
 
 if [ -n "${PINNED_DATE}" ]; then
@@ -42,6 +44,21 @@ fi
 if [ ! -d "${CORES_ARCHIVE_DIR}" ]; then
 	mkdir "${CORES_ARCHIVE_DIR}"
 fi
+
+# Detect pin changes: if the stored pin differs from the current one, force a
+# re-download regardless of the time interval, and clear the existing dylibs so
+# the new snapshot is fully extracted (unzip -n would otherwise keep stale files).
+PIN_CHANGED=0
+STORED_PIN=""
+if [ -f "${CORES_ARCHIVE_DIR}/pinned_date.txt" ]; then
+	STORED_PIN=$(cat "${CORES_ARCHIVE_DIR}/pinned_date.txt")
+fi
+if [ -n "${PINNED_DATE}" ] && [ "${PINNED_DATE}" != "${STORED_PIN}" ]; then
+	echo "GetModule: pin changed (${STORED_PIN:-none} -> ${PINNED_DATE}), clearing cached archives and dylibs"
+	PIN_CHANGED=1
+	rm -f "${CORES_ARCHIVE_DIR}/timestamp.txt"
+fi
+
 if [ -f "${CORES_ARCHIVE_DIR}/timestamp.txt" ] ; then
 	LAST_TIMESTAMP=$(cat "${CORES_ARCHIVE_DIR}/timestamp.txt")
 fi
@@ -50,11 +67,18 @@ LAST_TIMESTAMP=$(( LAST_TIMESTAMP + INTERVAL  ))
 echo "GetModule: ${TIMESTAMP} ${LAST_TIMESTAMP}"
 if (( TIMESTAMP > LAST_TIMESTAMP )); then
 	echo "GetModule: ${TIMESTAMP} > ${LAST_TIMESTAMP} Starting Download... ${EFFECTIVE_MODULE_LIST}"
-	rm "${CORES_ARCHIVE_DIR}/"*.zip
+	rm -f "${CORES_ARCHIVE_DIR}/"*.zip
 	cd "${CORES_ARCHIVE_DIR}"
 	echo $(xargs -n 1 curl -O < "${EFFECTIVE_MODULE_LIST}")
 	echo ${TIMESTAMP} > "${CORES_ARCHIVE_DIR}/timestamp.txt"
+	echo "${PINNED_DATE}" > "${CORES_ARCHIVE_DIR}/pinned_date.txt"
 fi
-echo $(find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';')
+# Use -o (overwrite) when the pin just changed so stale dylibs are replaced;
+# use -n (never overwrite) otherwise for faster incremental builds.
+if [ "${PIN_CHANGED}" = "1" ]; then
+	echo $(find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';')
+else
+	echo $(find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';')
+fi
 echo "GetModule: Successfully Completed"
 exit 0
