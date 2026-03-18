@@ -15,6 +15,7 @@
     case circle
     case cross
     case square
+    case service
     case l1
     case l2
     case l3
