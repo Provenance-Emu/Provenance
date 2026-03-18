@@ -46,30 +46,53 @@ final class CoreOptionsViewModel: ObservableObject {
         return .perCore
     }
 
-    /// Create a view model with an optional game context.
+    /// Create a view model scoped to a specific game.
     ///
-    /// - Parameter game: When non-nil, reads and writes are scoped to this
-    ///   game's MD5 hash so per-game overrides are applied.
-    init(game: PVGame? = nil) {
-        if let game = game, !game.md5Hash.isEmpty {
-            self.gameMD5 = game.md5Hash
-            self.gameDisplayName = game.title
+    /// - Parameters:
+    ///   - md5: MD5 hash of the game. An empty string is treated as `nil`
+    ///     (per-core scope).
+    ///   - displayName: Human-readable name shown in scope-related UI.
+    init(md5: String? = nil, displayName: String? = nil) {
+        if let md5 = md5, !md5.isEmpty {
+            self.gameMD5 = md5
+            self.gameDisplayName = displayName
         }
         loadAvailableCores()
     }
 
-    /// Configure the view model for a specific game context.
+    /// Convenience initialiser that extracts the MD5 and title from a
+    /// `PVGame`. The game's fields are read immediately on the caller's
+    /// thread so the `PVGame` reference is not retained by the view model.
     ///
-    /// Pass `nil` to revert to core-global scope. A game with an empty
-    /// `md5Hash` is treated the same as `nil` (per-core scope).
-    func setGame(_ game: PVGame?) {
-        guard let game = game, !game.md5Hash.isEmpty else {
+    /// - Parameter game: When non-nil, reads and writes are scoped to this
+    ///   game's MD5 hash so per-game overrides are applied.
+    convenience init(game: PVGame?) {
+        if let game = game, !game.md5Hash.isEmpty {
+            self.init(md5: game.md5Hash, displayName: game.title)
+        } else {
+            self.init()
+        }
+    }
+
+    /// Configure the view model for a specific game context using sendable values.
+    ///
+    /// Pass `nil` for `md5` (or an empty string) to revert to core-global scope.
+    func setGame(md5: String?, displayName: String?) {
+        guard let md5 = md5, !md5.isEmpty else {
             gameMD5 = nil
             gameDisplayName = nil
             return
         }
-        gameMD5 = game.md5Hash
-        gameDisplayName = game.title
+        gameMD5 = md5
+        gameDisplayName = displayName
+    }
+
+    /// Convenience setter that extracts the MD5 and title from a `PVGame`.
+    /// The game's fields are read immediately so the `PVGame` reference is
+    /// not retained by the view model.
+    func setGame(_ game: PVGame?) {
+        setGame(md5: game.flatMap { $0.md5Hash.isEmpty ? nil : $0.md5Hash },
+                displayName: game?.title)
     }
 
     /// Load all cores that implement CoreOptional
@@ -177,8 +200,18 @@ final class CoreOptionsViewModel: ObservableObject {
         case .perGame(let md5, _):
             coreClass.resetOption(option, forMD5: md5)
         case .perCore:
-            if let defaultValue = option.defaultValue {
-                coreClass.setValue(defaultValue, forOption: option)
+            // `.multi` options require special handling: `defaultValue` returns
+            // `[String]` (all isDefault titles), but the persistence layer stores
+            // a single `String` selection. Extract the first default title instead.
+            switch option {
+            case .multi(_, let values, _):
+                if let title = values.first(where: { $0.isDefault })?.title ?? values.first?.title {
+                    coreClass.setValue(title, forOption: option)
+                }
+            default:
+                if let defaultValue = option.defaultValue {
+                    coreClass.setValue(defaultValue, forOption: option)
+                }
             }
         }
     }
