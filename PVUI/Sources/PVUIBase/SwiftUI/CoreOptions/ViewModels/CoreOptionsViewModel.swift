@@ -12,9 +12,14 @@ final class CoreOptionsViewModel: ObservableObject {
     /// The currently selected core for options display
     @Published var selectedCore: (core: PVCore, coreClass: CoreOptional.Type)?
 
+    /// Optional game MD5 for per-game scoped reads/writes.
+    /// When set, option reads and writes use the per-game key prefix.
+    var gameMD5: String?
+
     private var cancellables = Set<AnyCancellable>()
 
-    init() {
+    init(gameMD5: String? = nil) {
+        self.gameMD5 = gameMD5
         loadAvailableCores()
     }
 
@@ -50,23 +55,24 @@ final class CoreOptionsViewModel: ObservableObject {
         selectedCore = (core: core, coreClass: coreClass)
     }
 
-    /// Get the current value for an option
+    /// Get the current value for an option, respecting the per-game scope when `gameMD5` is set.
     func currentValue(for option: CoreOption) -> Any? {
         guard let coreClass = selectedCore?.coreClass else { return nil }
+        let md5 = gameMD5
 
         switch option {
         case .bool(_, let defaultValue, _):
-            return coreClass.storedValueForOption(Bool.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Bool.self, option.key, andMD5: md5) ?? defaultValue
         case .string(_, let defaultValue, _):
-            return coreClass.storedValueForOption(String.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(String.self, option.key, andMD5: md5) ?? defaultValue
         case .enumeration(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Int.self, option.key, andMD5: md5) ?? defaultValue
         case .range(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Int.self, option.key, andMD5: md5) ?? defaultValue
         case .rangef(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Float.self, option.key) ?? defaultValue
+            return coreClass.storedValueForOption(Float.self, option.key, andMD5: md5) ?? defaultValue
         case .multi(_, let values, _):
-            return coreClass.storedValueForOption(String.self, option.key) ?? values.first?.title
+            return coreClass.storedValueForOption(String.self, option.key, andMD5: md5) ?? values.first?.title
         case .group(_, _):
             return nil
         @unknown default:
@@ -74,21 +80,40 @@ final class CoreOptionsViewModel: ObservableObject {
         }
     }
 
-    /// Set a new value for an option
+    /// Set a new value for an option, respecting the per-game scope when `gameMD5` is set.
     func setValue(_ value: Any, for option: CoreOption) {
         guard let coreClass = selectedCore?.coreClass else { return }
+        let md5 = gameMD5
 
         switch value {
         case let boolValue as Bool:
-            coreClass.setValue(boolValue, forOption: option)
+            coreClass.setValue(boolValue, forOption: option, andMD5: md5)
         case let stringValue as String:
-            coreClass.setValue(stringValue, forOption: option)
+            coreClass.setValue(stringValue, forOption: option, andMD5: md5)
         case let intValue as Int:
-            coreClass.setValue(intValue, forOption: option)
+            coreClass.setValue(intValue, forOption: option, andMD5: md5)
         case let floatValue as Float:
-            coreClass.setValue(floatValue, forOption: option)
+            coreClass.setValue(floatValue, forOption: option, andMD5: md5)
         default:
             break
         }
+    }
+
+    /// Returns true if a per-game override exists for the option and the current `gameMD5`.
+    func hasPerGameOverride(for option: CoreOption) -> Bool {
+        guard let coreClass = selectedCore?.coreClass, let md5 = gameMD5 else { return false }
+        return coreClass.hasPerGameOverride(for: option, md5: md5)
+    }
+
+    /// Resets the per-game override for a single option (no-op when `gameMD5` is nil).
+    func resetOption(_ option: CoreOption) {
+        guard let coreClass = selectedCore?.coreClass, let md5 = gameMD5 else { return }
+        coreClass.resetOption(option, forMD5: md5)
+    }
+
+    /// Resets all per-game overrides for the current game (no-op when `gameMD5` is nil).
+    func resetAllPerGameOptions() {
+        guard let coreClass = selectedCore?.coreClass, let md5 = gameMD5 else { return }
+        coreClass.resetAllOptions(forMD5: md5)
     }
 }
