@@ -23,6 +23,7 @@ import CommonCrypto
 import Perception
 import SwiftUI
 import PVLookupTypes
+import PVSettings
 
 #if canImport(CoreSpotlight)
 import CoreSpotlight
@@ -177,7 +178,10 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("Starting database ROM import for: \(queueItem.url.lastPathComponent)")
         let filename = queueItem.url.lastPathComponent
         let filenameSansExtension = queueItem.url.deletingPathExtension().lastPathComponent
-        let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
+        let titleFromFilename = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
+        let title: String = Defaults[.autoNormalizeROMTitles]
+            ? titleFromFilename.normalizedROMTitle()
+            : titleFromFilename
         let destinationDir = (systemID.rawValue as NSString)
         let partialPath: String = (systemID.rawValue as NSString).appendingPathComponent(filename)
 
