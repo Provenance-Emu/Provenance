@@ -1989,14 +1989,14 @@ extension PVThinLibretroCore: LightGunResponder {
         let y = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
         _lightgunLastX = x
         _lightgunLastY = y
-        _lightgunOffscreen = isOffscreen
+        _lightgunAimOffscreen = isOffscreen
         _bridge.setLightgunX(x, y: y,
                              trigger: _lightgunTriggerHeld,
                              auxA: _lightgunAuxAHeld,
                              auxB: _lightgunAuxBHeld,
                              start: _lightgunStartHeld,
                              select: _lightgunSelectHeld,
-                             isOffscreen: isOffscreen,
+                             isOffscreen: isOffscreen || _lightgunReloadHeld,
                              reload: _lightgunReloadHeld)
     }
 
@@ -2008,7 +2008,7 @@ extension PVThinLibretroCore: LightGunResponder {
                              auxB: _lightgunAuxBHeld,
                              start: _lightgunStartHeld,
                              select: _lightgunSelectHeld,
-                             isOffscreen: _lightgunOffscreen,
+                             isOffscreen: _lightgunAimOffscreen || _lightgunReloadHeld,
                              reload: _lightgunReloadHeld)
     }
 
@@ -2020,7 +2020,7 @@ extension PVThinLibretroCore: LightGunResponder {
                              auxB: _lightgunAuxBHeld,
                              start: _lightgunStartHeld,
                              select: _lightgunSelectHeld,
-                             isOffscreen: _lightgunOffscreen,
+                             isOffscreen: _lightgunAimOffscreen || _lightgunReloadHeld,
                              reload: _lightgunReloadHeld)
     }
 
@@ -2066,13 +2066,13 @@ extension PVThinLibretroCore: LightGunResponder {
 
     public func lightGunReloadDown() {
         _lightgunReloadHeld = true
-        _lightgunOffscreen = true
+        // offscreen is computed as _lightgunAimOffscreen || _lightgunReloadHeld in _sendCurrentLightgunState
         _sendCurrentLightgunState()
     }
 
     public func lightGunReloadUp() {
         _lightgunReloadHeld = false
-        _lightgunOffscreen = false
+        // restore aim-based offscreen state; do not force false if aim is still offscreen
         _sendCurrentLightgunState()
     }
 
@@ -2085,7 +2085,7 @@ extension PVThinLibretroCore: LightGunResponder {
                              auxB: _lightgunAuxBHeld,
                              start: _lightgunStartHeld,
                              select: _lightgunSelectHeld,
-                             isOffscreen: _lightgunOffscreen,
+                             isOffscreen: _lightgunAimOffscreen || _lightgunReloadHeld,
                              reload: _lightgunReloadHeld)
     }
 }
@@ -2104,6 +2104,8 @@ private var _lgOffscreenKey = 0
 private var _lgLastXKey    = 0
 private var _lgLastYKey    = 0
 
+// Swift Bool bridged through ObjC associated objects becomes NSNumber at runtime;
+// using `as? Bool` always returns nil. Use `as? NSNumber` + `.boolValue` instead.
 extension PVThinLibretroCore {
     fileprivate var _lightgunTriggerHeld: Bool {
         get {
@@ -2171,7 +2173,9 @@ extension PVThinLibretroCore {
                                      .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    fileprivate var _lightgunOffscreen: Bool {
+    /// Tracks whether the aim direction (from `lightGunMovedToPoint`) is offscreen.
+    /// The effective offscreen state delivered to the bridge is `_lightgunAimOffscreen || _lightgunReloadHeld`.
+    fileprivate var _lightgunAimOffscreen: Bool {
         get {
             (objc_getAssociatedObject(self, &_lgOffscreenKey) as? NSNumber)?.boolValue ?? false
         }

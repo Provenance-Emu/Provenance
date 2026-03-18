@@ -62,7 +62,9 @@ import UIKit
     private var cursorX: CGFloat = 0.5
     private var cursorY: CGFloat = 0.5
 
+    private var triggerDown = false
     private var reloadDown = false
+    private var auxADown = false
 
     // MARK: - Observation tokens
 
@@ -87,21 +89,31 @@ import UIKit
         responder = core
         cursorX = 0.5
         cursorY = 0.5
+        triggerDown = false
         reloadDown = false
+        auxADown = false
         _registerMouseObservers()
         _hookConnectedMice()
     }
 
     /// Stop delivering input and release the core reference.
-    /// Sends synthetic release events for any buttons currently held before detaching,
+    /// Sends synthetic release events for trigger, reload, and auxA if currently held,
     /// so the core is not left in a permanently pressed state.
     @objc public func detach() {
         _unhookConnectedMice()
         _unregisterMouseObservers()
         // Release held buttons before dropping the responder reference
+        if triggerDown {
+            triggerDown = false
+            responder?.lightGunTriggerUp()
+        }
         if reloadDown {
             reloadDown = false
             responder?.lightGunReloadUp?()
+        }
+        if auxADown {
+            auxADown = false
+            responder?.lightGunAuxAUp?()
         }
         responder = nil
     }
@@ -184,6 +196,7 @@ import UIKit
         // Left button → trigger
         input?.leftButton.pressedChangedHandler = { [weak self] _, _, pressed in
             guard let self = self, self.isEnabled else { return }
+            self.triggerDown = pressed
             if pressed {
                 self.responder?.lightGunTriggerDown()
             } else {
@@ -206,6 +219,7 @@ import UIKit
         // Middle button → aux A
         input?.middleButton?.pressedChangedHandler = { [weak self] _, _, pressed in
             guard let self = self, self.isEnabled else { return }
+            self.auxADown = pressed
             if pressed {
                 self.responder?.lightGunAuxADown?()
             } else {
