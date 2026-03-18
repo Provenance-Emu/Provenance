@@ -113,11 +113,17 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
-      - name: Install tvOS platform
-        if: matrix.sdk == 'appletvos'
+      - name: Install platform SDK
         run: |
-          xcodebuild -downloadPlatform tvOS || true
-          xcrun simctl list runtimes
+          # macOS-latest runners may not have iOS/tvOS SDKs pre-installed with Xcode 16.2
+          if [ "${{ matrix.sdk }}" = "appletvos" ]; then
+            echo "Installing tvOS platform..."
+            xcodebuild -downloadPlatform tvOS
+          else
+            echo "Installing iOS platform..."
+            xcodebuild -downloadPlatform iOS
+          fi
+          xcodebuild -showsdks
 
       - name: Set Build Number
         run: |
