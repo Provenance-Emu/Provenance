@@ -104,14 +104,65 @@ public final class GCControllerHapticsManager {
 
     /// Resolve the effective `RumbleSystemProfile` for a system identifier,
     /// honouring any user override stored in `UserDefaults`.
+    ///
+    /// Resolution order:
+    /// 1. Controller-type override from `rumbleControllerOverrides` (based on connected controller type)
+    /// 2. Per-system override from `rumbleSystemOverrides`
+    /// 3. Built-in default from `RumbleSystemProfile.profile(forSystemIdentifier:)`
     public func effectiveProfile(forSystemIdentifier sysId: String) -> RumbleSystemProfile {
-        let overrides = UserDefaults.standard.dictionary(forKey: "rumbleSystemOverrides") as? [String: String] ?? [:]
-        if let overrideValue = overrides[sysId] {
-            if let profile = resolveStoredProfileValue(overrideValue) {
+        // 1) Controller-type override (per connected game controller)
+        if let controllerTypeKey = currentControllerTypeKey() {
+            let controllerOverrides = UserDefaults.standard.dictionary(forKey: "rumbleControllerOverrides") as? [String: String] ?? [:]
+            if let overrideValue = controllerOverrides[controllerTypeKey],
+               let profile = resolveStoredProfileValue(overrideValue) {
                 return profile
             }
         }
+
+        // 2) Per-system override
+        let systemOverrides = UserDefaults.standard.dictionary(forKey: "rumbleSystemOverrides") as? [String: String] ?? [:]
+        if let overrideValue = systemOverrides[sysId],
+           let profile = resolveStoredProfileValue(overrideValue) {
+            return profile
+        }
+
+        // 3) Fallback to the built-in default profile
         return RumbleSystemProfile.profile(forSystemIdentifier: sysId)
+    }
+
+    /// Derive the current controller-type key used for controller-specific overrides.
+    /// Prefers the controller mapped to player index 0, then any mapped controller,
+    /// and finally falls back to `GCController.controllers.first` if needed.
+    private func currentControllerTypeKey() -> String? {
+        if let controller = playerControllers[0],
+           let key = controllerTypeKey(for: controller) {
+            return key
+        }
+
+        if let anyController = playerControllers.values.first,
+           let key = controllerTypeKey(for: anyController) {
+            return key
+        }
+
+        if let globalController = GCController.controllers().first,
+           let key = controllerTypeKey(for: globalController) {
+            return key
+        }
+
+        return nil
+    }
+
+    /// Compute a stable string key for a given `GCController` to use with
+    /// `rumbleControllerOverrides`. Uses `productCategory` when available,
+    /// falling back to `vendorName` if necessary.
+    private func controllerTypeKey(for controller: GCController) -> String? {
+        if let category = controller.productCategory, !category.isEmpty {
+            return category
+        }
+        if let vendor = controller.vendorName, !vendor.isEmpty {
+            return vendor
+        }
+        return nil
     }
 
     /// Resolve a stored override value (UUID string or "builtin:<name>") to a `RumbleSystemProfile`.
