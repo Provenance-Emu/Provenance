@@ -309,14 +309,14 @@ struct RumbleProfilesView: View {
 
     private var systemRows: [SystemRow] {
         [
-            SystemRow(id: "com.provenance.n64",         displayName: "Nintendo 64",      icon: "gamecontroller.fill"),
-            SystemRow(id: "com.provenance.psx",         displayName: "PlayStation",       icon: "gamecontroller.fill"),
-            SystemRow(id: "com.provenance.ps2",         displayName: "PlayStation 2",     icon: "gamecontroller.fill"),
-            SystemRow(id: "com.provenance.ps3",         displayName: "PlayStation 3",     icon: "gamecontroller.fill"),
-            SystemRow(id: "com.provenance.gba",         displayName: "Game Boy Advance",  icon: "gamecontroller"),
-            SystemRow(id: "com.provenance.gamecube",    displayName: "GameCube",          icon: "gamecontroller.fill"),
-            SystemRow(id: "com.provenance.xbox",        displayName: "Xbox",              icon: "gamecontroller.fill"),
-            SystemRow(id: "com.provenance.switch",      displayName: "Nintendo Switch",   icon: "gamecontroller.fill"),
+            SystemRow(id: SystemIdentifier.N64.rawValue,       displayName: "Nintendo 64",      icon: "gamecontroller.fill"),
+            SystemRow(id: SystemIdentifier.PSX.rawValue,       displayName: "PlayStation",       icon: "gamecontroller.fill"),
+            SystemRow(id: SystemIdentifier.PS2.rawValue,       displayName: "PlayStation 2",     icon: "gamecontroller.fill"),
+            SystemRow(id: SystemIdentifier.PS3.rawValue,       displayName: "PlayStation 3",     icon: "gamecontroller.fill"),
+            SystemRow(id: SystemIdentifier.GBA.rawValue,       displayName: "Game Boy Advance",  icon: "gamecontroller"),
+            SystemRow(id: SystemIdentifier.GameCube.rawValue,  displayName: "GameCube",          icon: "gamecontroller.fill"),
+            SystemRow(id: SystemIdentifier.Xbox.rawValue,      displayName: "Xbox",              icon: "gamecontroller.fill"),
+            SystemRow(id: SystemIdentifier.Switch.rawValue,    displayName: "Nintendo Switch",   icon: "gamecontroller.fill"),
         ]
     }
 
