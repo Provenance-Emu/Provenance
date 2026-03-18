@@ -7,8 +7,8 @@ import PVLogging
 enum DeltaSkinExportError: LocalizedError {
     case invalidJSON
     case noItemsFound(device: String, displayType: String, orientation: String)
-    case archiveCreationFailed
-    case unzipFailed
+    case archiveCreationFailed(underlying: Error)
+    case unzipFailed(underlying: Error)
 
     var errorDescription: String? {
         switch self {
@@ -16,10 +16,10 @@ enum DeltaSkinExportError: LocalizedError {
             return "Failed to serialize modified skin JSON."
         case .noItemsFound(let d, let dt, let o):
             return "No button items found for \(d)/\(dt)/\(o). The skin may not support this configuration."
-        case .archiveCreationFailed:
-            return "Failed to create the .deltaskin archive."
-        case .unzipFailed:
-            return "Failed to extract the original skin archive."
+        case .archiveCreationFailed(let underlying):
+            return "Failed to create the .deltaskin archive: \(underlying.localizedDescription)"
+        case .unzipFailed(let underlying):
+            return "Failed to extract the original skin archive: \(underlying.localizedDescription)"
         }
     }
 }
@@ -179,7 +179,12 @@ struct DeltaSkinExporter {
         try jsonData.write(to: infoURL)
 
         // shouldKeepParent: false so info.json is at the archive root (not under the temp folder name)
-        try fm.zipItem(at: tempSkinDir, to: outputURL, shouldKeepParent: false)
+        do {
+            try fm.zipItem(at: tempSkinDir, to: outputURL, shouldKeepParent: false)
+        } catch {
+            ELOG("DeltaSkinExporter: failed to zip directory to \(outputURL.lastPathComponent): \(error)")
+            throw DeltaSkinExportError.archiveCreationFailed(underlying: error)
+        }
     }
 
     /// Export a zip-archive-based .deltaskin file.
@@ -198,7 +203,7 @@ struct DeltaSkinExporter {
             try fm.unzipItem(at: archiveURL, to: tempExtractDir)
         } catch {
             ELOG("DeltaSkinExporter: failed to unzip \(archiveURL.lastPathComponent): \(error)")
-            throw DeltaSkinExportError.unzipFailed
+            throw DeltaSkinExportError.unzipFailed(underlying: error)
         }
 
         // Overwrite info.json with patched version
@@ -210,7 +215,7 @@ struct DeltaSkinExporter {
             try fm.zipItem(at: tempExtractDir, to: outputURL, shouldKeepParent: false)
         } catch {
             ELOG("DeltaSkinExporter: failed to zip to \(outputURL.lastPathComponent): \(error)")
-            throw DeltaSkinExportError.archiveCreationFailed
+            throw DeltaSkinExportError.archiveCreationFailed(underlying: error)
         }
     }
 }

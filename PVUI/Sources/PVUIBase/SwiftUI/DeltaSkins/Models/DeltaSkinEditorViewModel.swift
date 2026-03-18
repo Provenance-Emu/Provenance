@@ -1,10 +1,25 @@
 import SwiftUI
 import PVLogging
 
+// MARK: - CGRect near-equality
+
+private extension CGRect {
+    /// Returns true when all four components are within `epsilon` of each other.
+    /// Prevents drag-induced sub-pixel fractional values from keeping buttons
+    /// stuck in the "modified" state when the user moves them back to the origin.
+    func isNearlyEqual(to other: CGRect, epsilon: CGFloat = 0.5) -> Bool {
+        abs(origin.x - other.origin.x) < epsilon &&
+        abs(origin.y - other.origin.y) < epsilon &&
+        abs(size.width - other.size.width) < epsilon &&
+        abs(size.height - other.size.height) < epsilon
+    }
+}
+
 /// View model managing the state of the skin button position editor.
 ///
 /// Tracks per-button frame overrides (in mappingSize units) and
 /// coordinates export of a patched .deltaskin archive.
+@MainActor
 final class DeltaSkinEditorViewModel: ObservableObject {
     // MARK: - State
 
@@ -78,7 +93,7 @@ final class DeltaSkinEditorViewModel: ObservableObject {
 
     private func applyFrame(_ frame: CGRect, for index: Int) {
         let originalFrame = buttons[safe: index]?.frame ?? .zero
-        if frame == originalFrame {
+        if frame.isNearlyEqual(to: originalFrame) {
             modifiedFrames.removeValue(forKey: index)
         } else {
             modifiedFrames[index] = frame
@@ -120,26 +135,26 @@ final class DeltaSkinEditorViewModel: ObservableObject {
     func exportSkin() {
         isExporting = true
         exportError = nil
-        // Snapshot values to avoid capturing self in a background task
+        // Snapshot values before hopping off the main actor
         let skin = self.skin
         let traits = self.traits
         let modifiedFrames = self.modifiedFrames
-        Task.detached {
+        Task.detached(priority: .userInitiated) {
             do {
                 let url = try await DeltaSkinExporter.export(
                     skin: skin,
                     traits: traits,
                     modifiedFrames: modifiedFrames
                 )
-                await MainActor.run {
-                    self.exportedURL = url
-                    self.isExporting = false
+                await MainActor.run { [weak self] in
+                    self?.exportedURL = url
+                    self?.isExporting = false
                 }
             } catch {
                 ELOG("DeltaSkinEditor: export failed — \(error)")
-                await MainActor.run {
-                    self.exportError = error
-                    self.isExporting = false
+                await MainActor.run { [weak self] in
+                    self?.exportError = error
+                    self?.isExporting = false
                 }
             }
         }
