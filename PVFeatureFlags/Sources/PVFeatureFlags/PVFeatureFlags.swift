@@ -40,6 +40,12 @@ public enum PVFeature: String, CaseIterable {
     /// so N64 games (e.g. Pokémon Stadium) can read and write the GB save data.
     /// Disabled by default; enable in Settings > Advanced > Feature Flags.
     case mupenTransferPak = "mupenTransferPak"
+    /// Enables native SwiftUI netplay lobby, room browser, and in-game HUD for
+    /// RetroArch-backed cores and (in future phases) native cores like Dolphin and PPSSPP.
+    /// RetroArch is compiled with HAVE_NETPLAY so sessions are technically possible
+    /// via the RA menu; this flag gates the native Provenance UI on top.
+    /// Disabled by default while Phase 1-3 UI stabilises.
+    case netplayEnabled = "netplayEnabled"
 }
 
 /// Represents the type of app installation
@@ -129,6 +135,13 @@ public struct FeatureFlag: Codable, Sendable {
     public static let mupenTransferPak = FeatureFlag(
         enabled: false,
         description: "Enables Transfer Pak configuration UI for Mupen64Plus N64 cores. Allows mounting a GB/GBC ROM into a virtual Transfer Pak for games like Pokémon Stadium. Disabled by default."
+    )
+
+    public static let netplayEnabled = FeatureFlag(
+        enabled: false,
+        minVersion: "3.1.0",
+        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+        description: "Enables native SwiftUI netplay UI for RetroArch cores. LAN room discovery via Bonjour, host/join controls, and in-game HUD. Disabled by default during Phase 1-3 development."
     )
 }
 
@@ -415,6 +428,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var pauseTileMenu: Bool { featureStates[.pauseTileMenu] ?? false }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
     public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
+    public var netplayEnabled: Bool { featureStates[.netplayEnabled] ?? false }
 
     // MARK: - Feature Queries
 

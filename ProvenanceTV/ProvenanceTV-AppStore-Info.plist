@@ -215,6 +215,7 @@
 	<array>
 		<string>_altserver._tcp</string>
 		<string>_http._tcp</string>
+		<string>_retroarch._tcp</string>
 		<string>_webdav._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>

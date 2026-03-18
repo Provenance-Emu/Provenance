@@ -196,6 +196,7 @@
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_altserver._tcp</string>
+		<string>_retroarch._tcp</string>
 	</array>
 	<key>NSHighResolutionCapable</key>
 	<true/>
