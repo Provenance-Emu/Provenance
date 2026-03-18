@@ -24,49 +24,53 @@ import PVLogging
 import GameController
 #endif
 
-// MARK: - Virtual input support (keyboard/mouse) per system
-// Mirrors RetroArchVirtualInputSupport from PVRetroArchCoreCore.swift
+// MARK: - Per-system input capability flags (announced via core protocols)
+// Support is declared on SystemIdentifier so the protocol computed properties
+// (gameSupportsKeyboard, requiresKeyboard, gameSupportsMouse, requiresMouse,
+// gameSupportsLightGun) remain the single source of truth — no string comparisons.
 
-private struct ThinVirtualInputSupport {
-    let supportsKeyboard: Bool
-    let requiresKeyboard: Bool
-    let supportsMouse: Bool
-    let requiresMouse: Bool
+private extension SystemIdentifier {
 
-    static func resolve(systemIdentifier: String?) -> Self {
-        guard let sysId = systemIdentifier else { return .none }
-        return supportBySystem[sysId] ?? .none
-    }
+    // MARK: Keyboard
 
-    static let none = Self(supportsKeyboard: false, requiresKeyboard: false, supportsMouse: false, requiresMouse: false)
+    /// Systems whose libretro cores accept keyboard input.
+    var supportsKeyboard: Bool { Self.keyboardSystems.contains(self) }
 
-    private static let supportBySystem: [String: Self] = [
-        "com.provenance.3DO":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.appleII":      .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.atari8bit":    .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
-        "com.provenance.atarist":      .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.c64":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.cdi":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.colecovision": .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.doom":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.dos":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.dreamcast":    .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.ep128":        .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
-        "com.provenance.macintosh":    .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.mame":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.msx":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.msx2":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.n64":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.palmos":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.pc98":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.psx":          .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.quake":        .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.quake2":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.saturn":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.snes":         .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: false, requiresMouse: false),
-        "com.provenance.tic80":        .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: false, requiresMouse: false),
-        "com.provenance.wolf3d":       .init(supportsKeyboard: true,  requiresKeyboard: false, supportsMouse: true,  requiresMouse: false),
-        "com.provenance.zxspectrum":   .init(supportsKeyboard: true,  requiresKeyboard: true,  supportsMouse: true,  requiresMouse: false),
+    /// Systems that require a keyboard to be usable.
+    var requiresKeyboard: Bool { Self.requiresKeyboardSystems.contains(self) }
+
+    private static let keyboardSystems: Set<SystemIdentifier> = [
+        ._3DO, .AppleII, .Atari8bit, .AtariST, .C64, .CDi, .ColecoVision,
+        .DOOM, .DOS, .Dreamcast, .EP128, .Macintosh, .MAME, .MSX, .MSX2,
+        .N64, .PalmOS, .PSX, .Quake, .Quake2, .Saturn, .SNES, .TIC80, .Wolf3D, .ZXSpectrum,
+    ]
+
+    private static let requiresKeyboardSystems: Set<SystemIdentifier> = [
+        .Atari8bit, .EP128, .TIC80, .ZXSpectrum,
+    ]
+
+    // MARK: Mouse
+
+    /// Systems whose libretro cores accept mouse / pointer input.
+    var supportsMouse: Bool { Self.mouseSystems.contains(self) }
+
+    /// Systems that require a mouse to be usable.
+    var requiresMouse: Bool { false }   // no thin-libretro system requires a mouse
+
+    private static let mouseSystems: Set<SystemIdentifier> = [
+        .Atari8bit, .AtariST, .DOOM, .DOS, .Dreamcast, .EP128,
+        .Macintosh, .MSX, .MSX2, .Quake, .Quake2, .Wolf3D, .ZXSpectrum,
+    ]
+
+    // MARK: Light Gun
+
+    /// Systems whose libretro cores support a light-gun peripheral.
+    var supportsLightGun: Bool { Self.lightGunSystems.contains(self) }
+
+    // NES Zapper, SNES Super Scope / Justifier, Genesis Menacer / Justifier,
+    // PSX Guncon / Konami Justifier, Saturn Stunner, MAME arcade guns, Atari 2600.
+    private static let lightGunSystems: Set<SystemIdentifier> = [
+        .NES, .SNES, .Genesis, .PSX, .Saturn, .MAME, .Atari2600,
     ]
 }
 
@@ -963,10 +967,10 @@ extension PVThinLibretroCore: PVPCFXSystemResponderClient {
 extension PVThinLibretroCore: KeyboardResponder {
 
     public var gameSupportsKeyboard: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).supportsKeyboard
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsKeyboard ?? false
     }
     public var requiresKeyboard: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).requiresKeyboard
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresKeyboard ?? false
     }
 
 #if canImport(GameController)
@@ -1108,10 +1112,10 @@ extension PVThinLibretroCore: KeyboardResponder {
 extension PVThinLibretroCore: MouseResponder {
 
     public var gameSupportsMouse: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).supportsMouse
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsMouse ?? false
     }
     public var requiresMouse: Bool {
-        ThinVirtualInputSupport.resolve(systemIdentifier: systemIdentifier).requiresMouse
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresMouse ?? false
     }
 
 #if canImport(GameController)
@@ -1973,41 +1977,12 @@ extension PVThinLibretroCore: PVWiiSystemResponderClient {
     }
 }
 
-// MARK: - Light Gun Support Table
-
-/// Per-system light gun capabilities for the thin libretro wrapper.
-private struct ThinLightGunSupport {
-    let supportsLightGun: Bool
-
-    static func resolve(systemIdentifier: String?) -> Self {
-        guard let sysId = systemIdentifier else { return .none }
-        return supportBySystem[sysId] ?? .none
-    }
-
-    static let none = Self(supportsLightGun: false)
-
-    // Systems with light gun peripherals supported by their libretro cores.
-    // NES Zapper, SNES Super Scope / Justifier, Genesis Menacer / Justifier,
-    // PSX Guncon / Konami Justifier, Saturn Stunner.
-    private static let supportBySystem: [String: Self] = [
-        "com.provenance.nes":      .init(supportsLightGun: true),  // Zapper
-        "com.provenance.snes":     .init(supportsLightGun: true),  // Super Scope, Justifier
-        "com.provenance.genesis":  .init(supportsLightGun: true),  // Menacer, Konami Justifier
-        "com.provenance.md":       .init(supportsLightGun: true),  // Genesis alias
-        "com.provenance.psx":      .init(supportsLightGun: true),  // Guncon, Konami Justifier
-        "com.provenance.saturn":   .init(supportsLightGun: true),  // Stunner / Virtua Gun
-        "com.provenance.mame":     .init(supportsLightGun: true),  // Arcade light guns
-        "com.provenance.arcade":   .init(supportsLightGun: true),
-        "com.provenance.atari2600":.init(supportsLightGun: true),  // Atari lightgun games
-    ]
-}
-
 // MARK: - LightGunResponder
 
 extension PVThinLibretroCore: LightGunResponder {
 
     public var gameSupportsLightGun: Bool {
-        ThinLightGunSupport.resolve(systemIdentifier: systemIdentifier).supportsLightGun
+        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsLightGun ?? false
     }
 
     /// Convert normalized screen coordinates (0.0–1.0) to libretro light gun range
