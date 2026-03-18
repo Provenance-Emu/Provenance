@@ -39,6 +39,7 @@ __attribute__((visibility("default")))
     NSString * __nullable gbCartSavePath[4];
     /// C-string copies owned by this object, valid for the core session lifetime.
     /// The m64p_media_loader callbacks return char* that must stay valid between calls.
+    /// Freed in -dealloc after pluginsUnload/detachCoreLib to prevent use-after-free.
     char * __nullable _gbCartROMCStr[4];
     char * __nullable _gbCartSaveCStr[4];
 }

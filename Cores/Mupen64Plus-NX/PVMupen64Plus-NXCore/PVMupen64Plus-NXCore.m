@@ -81,7 +81,7 @@ static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, 
 EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 {
 // TODO: This should print on the screen
-	NSLog(@"%s", _pText);
+	ILOG(@"%s", _pText);
 }
 
 static void MupenDebugCallback(void *context, int level, const char *message)
@@ -170,14 +170,18 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
     [_inputQueue cancelAllOperations];
 
-    // Free Transfer Pak C-string caches allocated via strdup.
-    for (int i = 0; i < 4; i++) {
-        if (_gbCartROMCStr[i])  { free(_gbCartROMCStr[i]);  _gbCartROMCStr[i]  = NULL; }
-        if (_gbCartSaveCStr[i]) { free(_gbCartSaveCStr[i]); _gbCartSaveCStr[i] = NULL; }
-    }
-
     [self pluginsUnload];
     [self detachCoreLib];
+
+    // Free Transfer Pak C-string caches AFTER the core/plugins have been fully
+    // torn down so that no in-flight m64p_media_loader callbacks can race with
+    // the free (use-after-free prevention).
+    @synchronized (self) {
+        for (int i = 0; i < 4; i++) {
+            if (_gbCartROMCStr[i])  { free(_gbCartROMCStr[i]);  _gbCartROMCStr[i]  = NULL; }
+            if (_gbCartSaveCStr[i]) { free(_gbCartSaveCStr[i]); _gbCartSaveCStr[i] = NULL; }
+        }
+    }
     
 #if !__has_feature(objc_arc)
     dispatch_release(mupenWaitToBeginFrameSemaphore);
