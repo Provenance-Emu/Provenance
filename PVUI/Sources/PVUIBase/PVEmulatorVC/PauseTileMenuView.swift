@@ -540,6 +540,7 @@ struct PauseTileMenuView: View {
                 let transferCore = emulatorVC.core as? TransferPakSupport
                 TransferPakConfigView(
                     game: game,
+                    slotCount: transferCore?.transferPakSlotCount ?? 4,
                     applyLiveSlotChange: transferCore.map { core in
                         { port, rom in core.setTransferPakROM(rom, forPort: port) }
                     },

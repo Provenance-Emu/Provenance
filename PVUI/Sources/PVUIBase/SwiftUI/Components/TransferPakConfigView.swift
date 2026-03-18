@@ -86,9 +86,10 @@ public enum TransferPakStore {
 /// Configuration sheet for mounting GB/GBC ROMs into virtual Transfer Pak slots.
 ///
 /// Show this view from the game context menu (before launch) or from the pause menu
-/// (during emulation). When `liveCore` is provided, changes are applied immediately
-/// via `TransferPakSupport` on the running core; otherwise they are stored in
-/// `TransferPakStore` and applied the next time the game is loaded.
+/// (during emulation). When `applyLiveSlotChange` is provided, changes are applied
+/// immediately via `TransferPakSupport` on the running core; otherwise they are stored
+/// in `TransferPakStore` and applied the next time the game is loaded via
+/// `PVEmulatorViewController.applyPersistedTransferPakIfNeeded()`.
 public struct TransferPakConfigView: View {
     /// The N64 game being configured.
     let game: PVGame
@@ -101,21 +102,20 @@ public struct TransferPakConfigView: View {
     private let slotCount: Int
 
     @State private var selectedPaths: [URL?]
-    @State private var gbcGames: [PVGame] = []
+    @State private var gbAndGbcGames: [PVGame] = []
 
     public init(game: PVGame,
+                slotCount: Int = 4,
                 applyLiveSlotChange: ((Int, TransferPakROM?) -> Void)? = nil,
                 onDismiss: (() -> Void)? = nil) {
         self.game = game.isFrozen ? game : game.freeze()
         self.applyLiveSlotChange = applyLiveSlotChange
         self.onDismiss = onDismiss
-
-        let slots = 4
-        self.slotCount = slots
+        self.slotCount = max(1, slotCount)
 
         // Start with empty slots; real Realm resolution happens in onAppear to
         // avoid synchronous Realm access during view construction (often on main thread).
-        _selectedPaths = State(initialValue: Array(repeating: nil, count: slots))
+        _selectedPaths = State(initialValue: Array(repeating: nil, count: self.slotCount))
     }
 
     // MARK: - Body
@@ -139,7 +139,7 @@ public struct TransferPakConfigView: View {
             }
             .onAppear {
                 loadSelectedPaths()
-                loadGBCGames()
+                loadGBAndGbcGames()
             }
         }
     }
@@ -216,11 +216,11 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                         }
                     }
                     Divider()
-                    if gbcGames.isEmpty {
+                    if gbAndGbcGames.isEmpty {
                         Text("No GB/GBC games found in library")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(gbcGames, id: \.md5Hash) { gbGame in
+                        ForEach(gbAndGbcGames, id: \.md5Hash) { gbGame in
                             Button {
                                 updateSlot(port: port, gbGame: gbGame)
                             } label: {
@@ -237,6 +237,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                     Image(systemName: "chevron.up.chevron.down")
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityLabel("Select Transfer Pak cartridge for port \(port + 1)")
             }
 
             Text(romName)
@@ -288,9 +289,9 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
         }
     }
 
-    /// Fetches GB/GBC games on a detached background task, then publishes the
+    /// Fetches GB and GBC games on a detached background task, then publishes the
     /// frozen results to the main actor so the List can render without stalling.
-    private func loadGBCGames() {
+    private func loadGBAndGbcGames() {
         Task.detached(priority: .userInitiated) {
             guard let realm = try? await Realm() else { return }
             // Use `systemIdentifier` (a direct Realm-indexed property) rather than
@@ -302,7 +303,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                 .sorted(byKeyPath: "title")
                 .freeze()
             let frozen = Array(games)
-            await MainActor.run { gbcGames = frozen }
+            await MainActor.run { gbAndGbcGames = frozen }
         }
     }
 }
@@ -315,8 +316,9 @@ public enum TransferPakCompatibleGames {
     /// Known Transfer Pak titles keyed by common title substring (case-insensitive).
     /// Values describe the Transfer Pak feature in the game.
     ///
-    /// More specific (longer) fragments appear before shorter ones so that
-    /// `first(where:)` returns the most accurate match (e.g. "stadium 2" before "stadium").
+    /// `transferPakDescription(forTitle:)` collects all matching fragments with `filter`,
+    /// then returns the one with the longest fragment (via `max(by:)`) so that more specific
+    /// titles like "stadium 2" beat shorter "stadium" entries.
     public static let knownTitles: [(titleFragment: String, description: String)] = [
         ("pokémon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
         ("pokemon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
