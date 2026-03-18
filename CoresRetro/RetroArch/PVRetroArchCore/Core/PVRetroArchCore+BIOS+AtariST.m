@@ -691,8 +691,8 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     BOOL hasHardDisk = [cfgContent containsString:@"[HardDisk]"];
     BOOL hasACSI     = [cfgContent containsString:@"[ACSI]"];
     if (!hasHardDisk || !hasACSI) {
-        WLOG(@"Hatari: hatari.cfg template is missing [HardDisk]=%d / [ACSI]=%d sections — appending defaults to prevent --acsi crash",
-             hasHardDisk, hasACSI);
+        WLOG(@"Hatari: hatari.cfg template is missing [HardDisk]=%@ / [ACSI]=%@ sections — appending defaults to prevent --acsi crash",
+             hasHardDisk ? @"YES" : @"NO", hasACSI ? @"YES" : @"NO");
         if (!hasHardDisk) {
             cfgContent = [cfgContent stringByAppendingString:
                 @"\n[HardDisk]\n"
@@ -709,9 +709,9 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
                  "sDeviceFile_0 =\n"];
         }
     }
-    DLOG(@"Hatari: hatari.cfg has [HardDisk]=%d [ACSI]=%d after patching",
-         [cfgContent containsString:@"[HardDisk]"],
-         [cfgContent containsString:@"[ACSI]"]);
+    DLOG(@"Hatari: hatari.cfg has [HardDisk]=%@ [ACSI]=%@ after patching",
+         [cfgContent containsString:@"[HardDisk]"] ? @"YES" : @"NO",
+         [cfgContent containsString:@"[ACSI]"] ? @"YES" : @"NO");
 
     // Ensure hatari working directory exists
     BOOL isDir = NO;
