@@ -958,9 +958,12 @@ static void emulation_run(BOOL skipFrame) {
             for (int i = 0; i < ssMaxPlayers; i++) {
                 memset(inputBuffer[i], 0, 9 * sizeof(uint32_t));
             }
-            // Virtual ports 0-(n-1) are the TeamTap sub-slots on the active physical port.
+            // When the multitap is on sport1, virtual ports 0-(n-1) are the TeamTap sub-slots.
+            // When the multitap is on sport2, Mednafen maps sport1's single pad to virtual port 0
+            // and the TeamTap sub-slots start at virtual port 1.
+            const int basePortIndex = usePort2 ? 1 : 0;
             for (int i = 0; i < ssMaxPlayers; i++) {
-                game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+                game->SetInput(basePortIndex + i, "gamepad", (uint8_t *)inputBuffer[i]);
             }
         } else {
             // Standard 2-player setup — explicitly disable multitap to prevent bleed from prior loads.
