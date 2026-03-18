@@ -27,9 +27,26 @@ public final class DOLJitManager {
 
     @MainActor public static let shared = DOLJitManager()
 
+    /// Lock protecting `_acquired` for cross-thread access.
+    private static let _acquiredLock = NSLock()
+    private static var _acquired: Bool = false
+
+    /// Thread-safe snapshot of JIT acquisition state.
+    /// Written from the main actor at startup via `hasAcquiredJit`; safe to read
+    /// from any thread (libretro callbacks, background queues, etc.) via NSLock.
+    public static var acquired: Bool {
+        _acquiredLock.withLock { _acquired }
+    }
+
     private var jitType: DOLJitType = .none
     private var auxError: String?
-    private var hasAcquiredJit = false
+    private var hasAcquiredJit = false {
+        didSet {
+            if hasAcquiredJit {
+                DOLJitManager._acquiredLock.withLock { DOLJitManager._acquired = true }
+            }
+        }
+    }
     private var isDiscoveringAltserver = false
     /// The detected JIT source. Starts as `.none`; updated after acquisition
     /// and refined by UIKit-capable detection (see `JITSourceDetector`).

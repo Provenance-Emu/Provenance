@@ -14,9 +14,16 @@
 @import PVSettings;
 @import PVAudio;
 @import PVCoreBridge;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+@import UIKit; // UIDevice battery API for RETRO_ENVIRONMENT_GET_DEVICE_POWER
+#endif
 
 #include "libretro.h"
 #include "libretro_vulkan.h"
+
+/// Returns true if Provenance has acquired JIT at runtime (bridged from DOLJitManager).
+/// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
+extern bool pvjit_acquired(void);
 
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
@@ -2077,6 +2084,66 @@ static bool environment_callback(unsigned cmd, void *data) {
             return false;
         }
 
+        // MARK: - Microphone Interface — env 75 | EXPERIMENTAL
+        case RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE: {
+            // Microphone support not wired in legacy libretro frontend.
+            DLOG(@"Environ GET_MICROPHONE_INTERFACE — not supported");
+            return false;
+        }
+
+        // MARK: - Savestate context — env 72 | EXPERIMENTAL
+        case RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT: {
+            // Report normal savestate context (no runahead / netplay rollback).
+            enum retro_savestate_context *ctx = (enum retro_savestate_context *)data;
+            if (ctx) *ctx = RETRO_SAVESTATE_CONTEXT_NORMAL;
+            return true;
+        }
+
+        // MARK: - JIT capable — env 74
+        case RETRO_ENVIRONMENT_GET_JIT_CAPABLE: {
+            // Query the JIT manager for the real runtime acquisition state.
+            // Falls back to false if JIT has not been acquired (e.g. no debugger,
+            // no TrollStore, no iOS-26+ entitlement).
+            bool capable = pvjit_acquired();
+            if (data) *(bool *)data = capable;
+            return true;
+        }
+
+        // MARK: - Device power — env 77 | EXPERIMENTAL
+        case RETRO_ENVIRONMENT_GET_DEVICE_POWER: {
+            // Return true even for NULL data — cores use a NULL probe to check support.
+            struct retro_device_power *pwr = (struct retro_device_power *)data;
+            if (!pwr) return true;
+            // Exclude tvOS explicitly: TARGET_OS_IOS is 0 on tvOS in modern SDKs,
+            // but the extra guard makes platform intent unambiguous.
+#if (TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
+            UIDevice *dev = UIDevice.currentDevice;
+            // batteryMonitoringEnabled is enabled once at init; no need to re-enable here.
+            float level = dev.batteryLevel;
+            UIDeviceBatteryState state = dev.batteryState;
+            pwr->percent = (level >= 0.0f) ? (int8_t)(level * 100.0f) : -1;
+            pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
+            switch (state) {
+                case UIDeviceBatteryStateCharging:  pwr->state = RETRO_POWERSTATE_CHARGING;  break;
+                case UIDeviceBatteryStateFull:       pwr->state = RETRO_POWERSTATE_CHARGED;   break;
+                case UIDeviceBatteryStateUnplugged:  pwr->state = RETRO_POWERSTATE_DISCHARGING; break;
+                default:                             pwr->state = RETRO_POWERSTATE_UNKNOWN;   break;
+            }
+#else
+            // tvOS — no battery, always plugged in with unknown percentage.
+            pwr->state   = RETRO_POWERSTATE_PLUGGED_IN;
+            pwr->percent = -1;
+            pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
+#endif
+            return true;
+        }
+
+        // MARK: - Netpacket interface — env 78
+        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE:
+            // Network multiplayer packet routing — not supported.
+            DLOG(@"Environ SET_NETPACKET_INTERFACE — not supported");
+            return false;
+
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
@@ -2531,6 +2598,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         pitch_shift = PITCH_SHIFT;
         _current = self;
         _touchpadEnabled = YES;
+#if (TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
+        // Enable battery monitoring once so env 77 (GET_DEVICE_POWER) can read
+        // the current level without toggling the flag on every callback invocation.
+        UIDevice.currentDevice.batteryMonitoringEnabled = YES;
+#endif
         NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
         NSAssert(myBundle, @"myBundle was nil");
         const char* path = [myBundle.bundlePath fileSystemRepresentation];
