@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import PVCoreBridge
 import PVLibrary
 import RealmSwift
 import PVUIBase
@@ -15,6 +16,11 @@ import PVRealm
 import PVLogging
 import PVFeatureFlags
 import PVPrimitives
+
+private struct CoreOptionEntry {
+    let coreClass: CoreOptional.Type
+    let name: String
+}
 
 /// A SwiftUI context menu for game-related actions
 public struct GameContextMenu: View {
@@ -37,6 +43,8 @@ public struct GameContextMenu: View {
     @State private var gameToUpdateCover: PVGame?
     @State private var showTransferPakConfig = false
     @State private var showN64PakConfig = false
+    @State private var showCoreOptionsSheet = false
+    @State private var selectedCoreForOptions: CoreOptionEntry?
     @Environment(\.featureFlags) private var featureFlags
 
     public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
@@ -109,6 +117,34 @@ public struct GameContextMenu: View {
                         }
                     } label: {
                         Label("Open in...", systemImage: "gamecontroller")
+                    }
+                }
+                // Core Options for this game — only shown when at least one core supports CoreOptional
+                let coreEntries: [CoreOptionEntry] = availableCores.compactMap { core in
+                    guard let cls = NSClassFromString(core.principleClass) as? CoreOptional.Type else { return nil }
+                    return CoreOptionEntry(coreClass: cls, name: core.projectName)
+                }
+                if coreEntries.count == 1 {
+                    let entry = coreEntries[0]
+                    Button {
+                        selectedCoreForOptions = entry
+                        showCoreOptionsSheet = true
+                    } label: {
+                        Label("Core Options for This Game", systemImage: "slider.horizontal.3")
+                    }
+                } else if coreEntries.count > 1 {
+                    Menu {
+                        ForEach(coreEntries.indices, id: \.self) { i in
+                            let entry = coreEntries[i]
+                            Button {
+                                selectedCoreForOptions = entry
+                                showCoreOptionsSheet = true
+                            } label: {
+                                Label(entry.name, systemImage: "slider.horizontal.3")
+                            }
+                        }
+                    } label: {
+                        Label("Core Options for This Game", systemImage: "slider.horizontal.3")
                     }
                 }
                 Button {
@@ -231,6 +267,14 @@ public struct GameContextMenu: View {
                     gameTitle: game.title,
                     onDismiss: { showN64PakConfig = false }
                 )
+            }
+        }
+        .sheet(isPresented: $showCoreOptionsSheet) {
+            if let entry = selectedCoreForOptions {
+                let gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+                NavigationView {
+                    CoreOptionsDetailView(coreClass: entry.coreClass, title: entry.name, gameMD5: gameMD5)
+                }
             }
         }
     }
