@@ -86,6 +86,10 @@ public final class ROMTitleNormalizationService: Sendable {
                         WLOG("ROMTitleNormalizationService: game id '\(id)' not found, skipping")
                         continue
                     }
+                    guard game.title != proposedTitle else {
+                        // Already normalized or otherwise up to date; no-op for this game.
+                        continue
+                    }
                     DLOG("Normalized title: '\(game.title)' → '\(proposedTitle)'")
                     game.title = proposedTitle
                     count += 1
