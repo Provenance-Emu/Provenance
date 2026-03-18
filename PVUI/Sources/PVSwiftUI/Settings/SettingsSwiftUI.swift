@@ -1961,13 +1961,16 @@ private struct TestRumbleButton: View {
     @MainActor
     private func fireTestRumble() {
         isTesting = true
-        // Fire on all registered player slots (0–3) so any connected controller vibrates.
+        // Fire on all registered player slots (0–3) so any connected controller vibrates,
+        // and also trigger the device Taptic Engine via HapticsManager (respects rumbleDeviceEnabled).
         for player in 0..<4 {
             GCControllerHapticsManager.shared.rumble(
                 player: player,
                 params: .init(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4)
             )
         }
+        // Device Taptic Engine — player 0 is sufficient for a settings test.
+        HapticsManager.shared.rumble(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4, player: 0)
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 600_000_000)
             isTesting = false

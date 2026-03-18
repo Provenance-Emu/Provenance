@@ -225,13 +225,11 @@ public final class GCControllerHapticsManager {
     }
 
     private func refreshIntensityCache() {
-        // Master rumble gate: respect both the legacy `hapticFeedback` key and the
-        // dedicated `rumbleEnabled` + `rumbleControllerEnabled` keys added in Tier 4.
-        // Any of these being false silences controller rumble output.
-        let hapticFeedback = UserDefaults.standard.object(forKey: "hapticFeedback") as? Bool ?? true
+        // Gate controller rumble on the dedicated Tier 4 toggles only.
+        // `hapticFeedback` controls on-screen button feedback and must not silence game rumble.
         let rumbleEnabled = UserDefaults.standard.object(forKey: "rumbleEnabled") as? Bool ?? true
         let controllerEnabled = UserDefaults.standard.object(forKey: "rumbleControllerEnabled") as? Bool ?? true
-        guard hapticFeedback && rumbleEnabled && controllerEnabled else {
+        guard rumbleEnabled && controllerEnabled else {
             _cachedIntensityMultiplier = 0
             return
         }
