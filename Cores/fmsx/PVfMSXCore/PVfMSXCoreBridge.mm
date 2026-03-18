@@ -261,8 +261,9 @@ static int msxButtonToRetroID(PVMSXButton button) {
         case PVMSXButtonFire2:     return RETRO_DEVICE_ID_JOYPAD_A;
         case PVMSXButtonSelect:    return RETRO_DEVICE_ID_JOYPAD_SELECT;
         case PVMSXButtonPause:     return RETRO_DEVICE_ID_JOYPAD_START;
-        case PVMSXButtonLeftDiff:  return RETRO_DEVICE_ID_JOYPAD_L;
-        case PVMSXButtonRightDiff: return RETRO_DEVICE_ID_JOYPAD_R;
+        case PVMSXButtonReset:     return RETRO_DEVICE_ID_JOYPAD_L;
+        case PVMSXButtonLeftDiff:  return RETRO_DEVICE_ID_JOYPAD_L2;
+        case PVMSXButtonRightDiff: return RETRO_DEVICE_ID_JOYPAD_R2;
         default:                   return -1;
     }
 }
