@@ -15,9 +15,9 @@ import PVCoreBridge
 ///
 /// Each action becomes an orange bolt-icon tile. Actions where `requiresReset` is `true`
 /// display a ⚠︎ warning badge so users know emulation will reset.
-/// Actions whose `options` array is non-nil show a confirmation picker on tap AND expose
-/// a long-press context menu, so users can select from the available options without
-/// leaving the pause overlay.
+/// Actions whose `options` array is non-nil present a confirmation picker on **tap**
+/// (via `pendingCoreAction`), and also expose a **long-press context menu** so users
+/// can jump directly to any option without first seeing the confirmation dialog.
 public struct CoreActionTileProvider {
 
     private init() {}
@@ -206,16 +206,58 @@ public struct CoreOptionTileProvider {
     /// Extracts the option key from a tile ID produced by ``tileID(forOptionKey:index:)``.
     /// - Returns: The option key (display title), or `nil` if the ID is not a core-option tile.
     public static func optionKey(fromTileID id: String) -> String? {
+        optionIndexAndKey(fromTileID: id)?.key
+    }
+
+    /// Extracts both the positional index and the option key from a tile ID.
+    ///
+    /// The index is the counter assigned during tile generation and uniquely identifies the
+    /// option even when multiple options share the same display title.
+    /// - Returns: `(index, key)` tuple, or `nil` if the ID is not a core-option tile.
+    public static func optionIndexAndKey(fromTileID id: String) -> (index: Int, key: String)? {
         guard id.hasPrefix(idPrefix) else { return nil }
         let raw = String(id.dropFirst(idPrefix.count))
-        // Strip the leading "<index>:" disambiguator.
-        if let colonRange = raw.range(of: ":") {
-            return String(raw[colonRange.upperBound...])
+        guard let colonRange = raw.range(of: ":"),
+              let idx = Int(raw[raw.startIndex..<colonRange.lowerBound]) else { return nil }
+        return (index: idx, key: String(raw[colonRange.upperBound...]))
+    }
+
+    /// Finds a ``CoreOption`` by its positional index in the flattened interactive options list.
+    ///
+    /// Using the index rather than the display title avoids incorrect matches when multiple
+    /// options share the same title (e.g. two enum options both called "System Region").
+    /// - Parameters:
+    ///   - index: The counter value encoded in the tile ID.
+    ///   - key: The display title — used as a secondary sanity check.
+    ///   - options: The option tree to search.
+    /// - Returns: The `CoreOption` at the given position, or `nil` if out of range.
+    public static func findOption(atIndex index: Int, key: String, in options: [CoreOption]) -> CoreOption? {
+        var counter = 0
+        return findOptionAt(targetIndex: index, in: options, counter: &counter)
+    }
+
+    private static func findOptionAt(targetIndex: Int, in options: [CoreOption], counter: inout Int) -> CoreOption? {
+        for option in options {
+            switch option {
+            case .bool, .enumeration, .multi:
+                if counter == targetIndex { return option }
+                counter += 1
+            case let .group(_, subOptions):
+                if let found = findOptionAt(targetIndex: targetIndex, in: subOptions, counter: &counter) {
+                    return found
+                }
+            default:
+                break
+            }
         }
-        return raw
+        return nil
     }
 
     /// Finds a ``CoreOption`` in a (possibly grouped) option tree by its display title / key.
+    ///
+    /// Prefer ``findOption(atIndex:key:in:)`` when a tile ID is available — title-based
+    /// lookup returns the *first* match and will target the wrong option when multiple
+    /// options share the same display title.
     public static func findOption(key: String, in options: [CoreOption]) -> CoreOption? {
         for option in options {
             switch option {

@@ -364,9 +364,9 @@ struct PauseTileMenuView: View {
 
         // MARK: Core option toggle/cycle tiles
         case let id where id.hasPrefix(CoreOptionTileProvider.idPrefix):
-            guard let key = CoreOptionTileProvider.optionKey(fromTileID: id),
+            guard let (optIndex, key) = CoreOptionTileProvider.optionIndexAndKey(fromTileID: id),
                   let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
-                  let option = CoreOptionTileProvider.findOption(key: key, in: coreClass.options) else { return }
+                  let option = CoreOptionTileProvider.findOption(atIndex: optIndex, key: key, in: coreClass.options) else { return }
             switch option {
             case .bool:
                 let currentValue: Bool = coreClass.valueForOption(option)
@@ -423,9 +423,9 @@ struct PauseTileMenuView: View {
         }
 
         if tile.id.hasPrefix(CoreOptionTileProvider.idPrefix) {
-            guard let key = CoreOptionTileProvider.optionKey(fromTileID: tile.id),
+            guard let (optIndex, key) = CoreOptionTileProvider.optionIndexAndKey(fromTileID: tile.id),
                   let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
-                  let option = CoreOptionTileProvider.findOption(key: key, in: coreClass.options) else { return }
+                  let option = CoreOptionTileProvider.findOption(atIndex: optIndex, key: key, in: coreClass.options) else { return }
             CoreOptionTileProvider.selectValue(titled: lpOption.title, for: option, coreClass: coreClass)
             coreOptionRefreshToken += 1
         }
