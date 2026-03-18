@@ -276,6 +276,20 @@ public final class GCControllerHapticsManager {
                               duration: continuousDuration,
                               sharpness: systemProfile.sharpness)
         }
+
+        // For finite one-shot rumbles that don't call stopRumble(), the CHHapticEngine
+        // stops automatically after `duration` seconds — but rumbleStartTimes[player]
+        // would remain set indefinitely, causing the next burst to be misclassified.
+        // Schedule a cleanup task so stale tracking state is cleared after the haptic expires.
+        // Continuous-until-stop callers (duration ≥ 5.0) rely on stopRumble() to clean up.
+        if continuousDuration < 5.0 && isNewBurst {
+            let capturedPlayer = player
+            let clearAfter = continuousDuration + 0.1
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: UInt64(clearAfter * 1_000_000_000))
+                self?.rumbleStartTimes.removeValue(forKey: capturedPlayer)
+            }
+        }
     }
 
     /// Stops any active rumble playback for the registered controller engines of `player`.
@@ -307,6 +321,16 @@ public final class GCControllerHapticsManager {
         // Clear tracking state for this player.
         rumbleStartTimes.removeValue(forKey: player)
 
+        // Drain the stored fallback intensity unconditionally — regardless of whether a
+        // controller is now connected. If a controller connected *between* rumble() and
+        // stopRumble(), the stored intensity must be discarded so it can't fire spuriously
+        // in a future fallback-path call.
+        #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
+        let fallbackIntensity = playerLastFallbackIntensity.removeValue(forKey: player)
+        #else
+        playerLastFallbackIntensity.removeValue(forKey: player)
+        #endif
+
         guard let engines = engineMap[player], !engines.isEmpty else {
             // No controller engines — fire a single device fallback haptic whose style is
             // derived from the classified pattern and whose intensity came from rumble().
@@ -314,7 +338,7 @@ public final class GCControllerHapticsManager {
             let style = hapticStyleForPattern(pattern)
             // Only fire if a positive intensity was stored by rumble() — if haptics were disabled,
             // no value was stored and we must not fire here.
-            guard let intensity = playerLastFallbackIntensity.removeValue(forKey: player), intensity > 0 else { return }
+            guard let intensity = fallbackIntensity, intensity > 0 else { return }
             let generator = UIImpactFeedbackGenerator(style: style)
             generator.prepare()
             generator.impactOccurred(intensity: intensity)

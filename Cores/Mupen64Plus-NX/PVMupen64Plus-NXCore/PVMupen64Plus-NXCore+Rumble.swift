@@ -28,6 +28,18 @@ public extension PVMupen64PlusNXCore {
         }
     }
 
+    /// Reset the shared HapticsManager profile back to generic.
+    /// Call this when emulation ends so the next core session starts with neutral tuning.
+    @objc func teardownRumbleProfile() {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            Task { @MainActor in
+#if canImport(GameController) && canImport(CoreHaptics)
+                GCControllerHapticsManager.shared.resetSystemProfile()
+#endif
+            }
+        }
+    }
+
     /// Trigger a player-specific N64 RumblePak haptic pulse.
     /// Called from MupenControllerCommand (emulation thread) when PAK_IO_RUMBLE write is detected.
     @objc func rumbleForPlayer(_ player: Int) {

@@ -23,28 +23,26 @@ import CoreHaptics
 
     /// Set the N64 haptic profile on emulation start so controller motors are tuned
     /// to approximate the original RumblePak characteristics.
+    /// `startEmulation()` is @MainActor — call GCControllerHapticsManager directly.
     public override func startEmulation() {
-        Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
-            if #available(iOS 14.0, tvOS 14.0, *) {
-                GCControllerHapticsManager.shared.setSystemProfile(
-                    forSystemIdentifier: systemIdentifier ?? "com.provenance.n64"
-                )
-            }
-#endif
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            GCControllerHapticsManager.shared.setSystemProfile(
+                forSystemIdentifier: systemIdentifier ?? "com.provenance.n64"
+            )
         }
+#endif
         super.startEmulation()
     }
 
     /// Reset the haptic profile so the next core starts with neutral tuning.
+    /// `stopEmulation()` is @MainActor — call GCControllerHapticsManager directly.
     public override func stopEmulation() {
-        Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)
-            if #available(iOS 14.0, tvOS 14.0, *) {
-                GCControllerHapticsManager.shared.resetSystemProfile()
-            }
-#endif
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            GCControllerHapticsManager.shared.resetSystemProfile()
         }
+#endif
         super.stopEmulation()
     }
 }

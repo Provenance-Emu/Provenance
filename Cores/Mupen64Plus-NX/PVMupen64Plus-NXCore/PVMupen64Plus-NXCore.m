@@ -30,10 +30,11 @@
 //#import "MupenGameNXCore.h"
 #import <PVMupen64Plus-NX/PVMupen64Plus-NX-Swift.h>
 
-// Forward-declare the Swift @objc category method so the ObjC compiler sees the
-// selector without relying solely on the lazily-generated Swift header.
+// Forward-declare the Swift @objc category methods so the ObjC compiler sees the
+// selectors without relying solely on the lazily-generated Swift header.
 @interface PVMupen64PlusNXCore (Rumble)
 - (void)setupRumbleProfile;
+- (void)teardownRumbleProfile;
 @end
 
 #import "MupenGameNXCore+Controls.h"
@@ -707,12 +708,15 @@ static void *dlopen_myself()
     [_inputQueue cancelAllOperations];
 
     CoreDoCommand(M64CMD_STOP, 0, NULL);
-    
+
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
-    
+
+    // Reset haptic profile so the next core session starts with neutral generic tuning.
+    [self teardownRumbleProfile];
+
     [super stopEmulation];
 }
 
