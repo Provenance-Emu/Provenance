@@ -2106,32 +2106,81 @@ private var _lgLastYKey    = 0
 
 extension PVThinLibretroCore {
     fileprivate var _lightgunTriggerHeld: Bool {
-        get { (objc_getAssociatedObject(self, &_lgTriggerKey) as? Bool) ?? false }
-        set { objc_setAssociatedObject(self, &_lgTriggerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            (objc_getAssociatedObject(self, &_lgTriggerKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgTriggerKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     fileprivate var _lightgunAuxAHeld: Bool {
-        get { (objc_getAssociatedObject(self, &_lgAuxAKey) as? Bool) ?? false }
-        set { objc_setAssociatedObject(self, &_lgAuxAKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            (objc_getAssociatedObject(self, &_lgAuxAKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgAuxAKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     fileprivate var _lightgunAuxBHeld: Bool {
-        get { (objc_getAssociatedObject(self, &_lgAuxBKey) as? Bool) ?? false }
-        set { objc_setAssociatedObject(self, &_lgAuxBKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            (objc_getAssociatedObject(self, &_lgAuxBKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgAuxBKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     fileprivate var _lightgunStartHeld: Bool {
-        get { (objc_getAssociatedObject(self, &_lgStartKey) as? Bool) ?? false }
-        set { objc_setAssociatedObject(self, &_lgStartKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            (objc_getAssociatedObject(self, &_lgStartKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgStartKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     fileprivate var _lightgunSelectHeld: Bool {
-        get { (objc_getAssociatedObject(self, &_lgSelectKey) as? Bool) ?? false }
-        set { objc_setAssociatedObject(self, &_lgSelectKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            (objc_getAssociatedObject(self, &_lgSelectKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgSelectKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     fileprivate var _lightgunReloadHeld: Bool {
-        get { (objc_getAssociatedObject(self, &_lgReloadKey) as? Bool) ?? false }
-        set { objc_setAssociatedObject(self, &_lgReloadKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            (objc_getAssociatedObject(self, &_lgReloadKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgReloadKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     fileprivate var _lightgunOffscreen: Bool {
-        get { (objc_getAssociatedObject(self, &_lgOffscreenKey) as? Bool) ?? false }
-        set { objc_setAssociatedObject(self, &_lgOffscreenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            (objc_getAssociatedObject(self, &_lgOffscreenKey) as? NSNumber)?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self,
+                                     &_lgOffscreenKey,
+                                     NSNumber(value: newValue),
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     fileprivate var _lightgunLastX: Int16 {
         get { (objc_getAssociatedObject(self, &_lgLastXKey) as? NSNumber).map { Int16($0.int32Value) } ?? 0 }
