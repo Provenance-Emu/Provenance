@@ -1,0 +1,11 @@
+fix: address Copilot review — alert wording, indentation, remove unused ViewModel
+
+- Fix "Reset Game Overrides" alert message to say "core-global settings
+  will be used instead" (not "Core defaults") to accurately reflect that
+  resetting per-game overrides restores core-global values, not defaults
+- Fix indentation of RESET ALL OPTIONS Button inside if effectiveMD5 == nil
+  block for readability and to prevent future brace/logic mistakes
+- Remove CoreOptionsViewModel.swift — unreferenced dead code with a
+  try! Realm() eager-init that added unnecessary crash surface
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
