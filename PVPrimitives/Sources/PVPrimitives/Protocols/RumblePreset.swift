@@ -138,7 +138,7 @@ public extension RumblePreset {
 
 public extension RumblePreset {
 
-    /// Convert a `RumbleSystemProfile` built-in preset to a display preset (no storage, ID is fixed).
+    /// Convert a `RumbleSystemProfile` built-in preset to a display-only preset (no storage; ID is not stable across launches).
     private static func builtIn(name: String, profile: RumbleSystemProfile) -> RumblePreset {
         RumblePreset(name: name, profile: profile)
     }
