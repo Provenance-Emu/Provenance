@@ -2924,6 +2924,10 @@ static bool thin_environment(unsigned cmd, void *data) {
 /// Returns YES when a HW-render core is loaded so PVMetalViewController
 /// uses the OpenGL rendering path (IOSurface + didRenderFrameOnAlternateThread)
 /// instead of the software buffer upload path.
+///
+/// This path is intentionally enabled on both iOS and tvOS — both platforms
+/// support Metal + IOSurface-backed textures. Only macOS/Catalyst is excluded
+/// because the EAGL/IOSurface bridge APIs are unavailable there.
 - (BOOL)rendersToOpenGL {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     return _hwRenderRequested;
@@ -3878,12 +3882,16 @@ static bool thin_environment(unsigned cmd, void *data) {
     glGenTextures(1, &_emuColorTex);
 
     glBindTexture(GL_TEXTURE_2D, _emuColorTex);
+    // Use GL_RGBA for both internalFormat and format to match the IOSurface
+    // created without an explicit kIOSurfacePixelFormat (same as PVMetalViewController
+    // and PVLibRetroGLESCore). Using GL_BGRA_EXT here while omitting the pixel format
+    // from the IOSurface would cause channel-swapped output.
     [_glContext texImageIOSurface:_ioSurface
                            target:GL_TEXTURE_2D
                    internalFormat:GL_RGBA
                             width:w
                            height:h
-                           format:GL_BGRA_EXT
+                           format:GL_RGBA
                              type:GL_UNSIGNED_BYTE
                             plane:0];
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
