@@ -90,6 +90,13 @@ __attribute__((visibility("default")))
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
+@interface MednafenGameCoreBridge (Palette)
+/// Returns the current VB display-mode index (0–8). Only meaningful when systemType == MednaSystemVirtualBoy.
+@property (nonatomic, readonly) NSInteger currentVBDisplayModeIndex;
+/// Applies VB display mode by index (0–8). No-op for non-VB systems or out-of-range indices.
+- (void)selectVBDisplayModeAtIndex:(NSInteger)index;
+@end
+
 @interface MednafenGameCoreBridge (Cheats) <GameWithCheat>
 #pragma clang diagnostic pop
 - (NSArray<NSString*> *)getCheatCodeTypes;
