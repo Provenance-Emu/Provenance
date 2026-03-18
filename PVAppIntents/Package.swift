@@ -27,10 +27,7 @@ let package = Package(
     targets: [
         .target(
             name: "PVAppIntents",
-            dependencies: [],
-            swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
-            ]
+            dependencies: []
         ),
         .testTarget(
             name: "PVAppIntentsTests",

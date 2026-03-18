@@ -49,7 +49,12 @@ public struct PlayRandomGameIntent: AppIntent {
         }
 
         guard let picked = candidates.randomElement() else {
-            throw $game.needsValueError("No games found\(system.map { " for \($0.name)" } ?? "").")
+            let systemName = system?.name ?? "your library"
+            throw NSError(
+                domain: "PVAppIntents",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "No games found in \(systemName)."]
+            )
         }
 
         return .result(

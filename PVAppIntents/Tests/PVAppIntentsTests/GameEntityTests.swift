@@ -9,7 +9,22 @@
 import XCTest
 @testable import PVAppIntents
 
+#if canImport(AppIntents)
 final class GameEntityTests: XCTestCase {
+
+    override func setUp() {
+        super.setUp()
+        GameEntityStore.shared.update(all: [], recents: [])
+        SystemEntityStore.shared.update(all: [])
+        SaveStateEntityStore.shared.update(all: [], recents: [])
+    }
+
+    override func tearDown() {
+        GameEntityStore.shared.update(all: [], recents: [])
+        SystemEntityStore.shared.update(all: [])
+        SaveStateEntityStore.shared.update(all: [], recents: [])
+        super.tearDown()
+    }
 
     // MARK: - EntityStore Tests
 
@@ -100,3 +115,4 @@ final class GameEntityTests: XCTestCase {
         XCTAssertTrue(url.absoluteString.contains("state-uuid-001"))
     }
 }
+#endif

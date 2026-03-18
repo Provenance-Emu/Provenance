@@ -43,10 +43,12 @@ public struct LaunchGameIntent: AppIntent, CustomIntentMigratedAppIntent {
 
     // MARK: - Perform
 
-    public func perform() async throws -> some IntentResult {
-        // The main app handles the deep link on foreground.
-        // We return a URL-based result so the system knows to open the app.
-        return .result()
+    public func perform() async throws -> some IntentResult & ProvidesDialog {
+        // Write the game ID to the shared app group so the host app
+        // can launch it when it comes to the foreground.
+        let defaults = UserDefaults(suiteName: "group.org.provenance-emu.provenance")
+        defaults?.set(game.id, forKey: "pendingLaunchGameID")
+        return .result(dialog: "Launching \(game.title).")
     }
 
     // MARK: - AppIntent URL handling

@@ -5,15 +5,14 @@
 //  Created by Joseph Mattiello on 2026-03-18.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  EntityStore types act as lightweight read-only data sources for AppEntity
-//  queries. The main app populates them by calling update(with:) after any
-//  library change; widget extensions and Siri extensions read from them via
-//  the shared App Group UserDefaults (JSON-encoded snapshots).
-//
-//  This architecture keeps AppIntents queries fast — they never block on
-//  Realm I/O. The main app is responsible for keeping the snapshots fresh.
+//  EntityStore types act as lightweight in-process caches backing AppEntity
+//  queries. The host app populates them via update(all:) after any library
+//  change. Queries read directly from the in-memory dictionaries, keeping
+//  AppIntents lookups fast without blocking on Realm I/O.
 
 import Foundation
+
+#if canImport(AppIntents)
 
 // MARK: - GameEntityStore
 
@@ -115,3 +114,5 @@ public final class SaveStateEntityStore: @unchecked Sendable {
         return Array(recentsOrdered.prefix(limit))
     }
 }
+
+#endif

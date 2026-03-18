@@ -12,9 +12,8 @@ import Foundation
 
 /// An `AppEntity` representing an emulated console / system.
 ///
-/// Used as a filter parameter in `PlayRandomGameIntent` and
-/// `ListGamesForSystemIntent` so users can say
-/// "Play a random Super Nintendo game on Provenance".
+/// Used as a filter parameter in `PlayRandomGameIntent`
+/// so users can say "Play a random Super Nintendo game on Provenance".
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
 public struct SystemEntity: AppEntity {
     public static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "System")

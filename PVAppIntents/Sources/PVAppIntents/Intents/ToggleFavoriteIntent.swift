@@ -12,9 +12,11 @@ import Foundation
 
 /// Marks or unmarks a game as a favourite.
 ///
-/// The actual Realm write is delegated to the host app via a deep link
-/// (`provenance://favorite?md5=<hash>&value=<true|false>`) because
-/// widget and Siri extensions do not have write access to the Realm file.
+/// The actual Realm write is delegated to the host app via the shared App
+/// Group UserDefaults (`group.org.provenance-emu.provenance`). Writing the
+/// pending favorite key wakes the host app (via background tasks / polling)
+/// so it can apply the change to Realm without the extension needing write
+/// access to the database.
 ///
 /// Usage: "Hey Siri, add Donkey Kong Country to my Provenance favourites"
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
@@ -51,7 +53,6 @@ public struct ToggleFavoriteIntent: AppIntent {
         // without needing write access from this extension process.
         let defaults = UserDefaults(suiteName: "group.org.provenance-emu.provenance")
         defaults?.set(isFavorite, forKey: "pendingFavorite_\(game.id)")
-        defaults?.synchronize()
 
         let verb = isFavorite ? "Added" : "Removed"
         return .result(dialog: "\(verb) \(game.title) \(isFavorite ? "to" : "from") favourites.")
