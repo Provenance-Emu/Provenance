@@ -438,6 +438,8 @@
 		B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B35573732CC4843600A4BA16 /* MoltenVK */; };
 		B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */; };
 		B355E0032920AA2600E4C858 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */; };
+		B3AAAAAA00000002BBBBBB01 /* ThumbnailArtworkDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAAA00000001BBBBBB01 /* ThumbnailArtworkDriver.swift */; };
+		B3AAAAAA00000004BBBBBB01 /* RealmThumbnailArtworkDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAAA00000003BBBBBB01 /* RealmThumbnailArtworkDriver.swift */; };
 		B355E0142920AA9D00E4C858 /* ImportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0132920AA9D00E4C858 /* ImportExtension.swift */; };
 		B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0392920AC1A00E4C858 /* WidgetKit.framework */; };
 		B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D54EF42768306200476241 /* SwiftUI.framework */; };
@@ -2175,6 +2177,8 @@
 		B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ThumbnailExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailProvider.swift; sourceTree = "<group>"; };
+		B3AAAAAA00000001BBBBBB01 /* ThumbnailArtworkDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailArtworkDriver.swift; sourceTree = "<group>"; };
+		B3AAAAAA00000003BBBBBB01 /* RealmThumbnailArtworkDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmThumbnailArtworkDriver.swift; sourceTree = "<group>"; };
 		B355E0042920AA2600E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B355E0082920AA3200E4C858 /* ThumbnailExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThumbnailExtension.entitlements; sourceTree = "<group>"; };
 		B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SpotlightImportExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5512,6 +5516,8 @@
 			children = (
 				B355E0082920AA3200E4C858 /* ThumbnailExtension.entitlements */,
 				B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */,
+				B3AAAAAA00000001BBBBBB01 /* ThumbnailArtworkDriver.swift */,
+				B3AAAAAA00000003BBBBBB01 /* RealmThumbnailArtworkDriver.swift */,
 				B355E0042920AA2600E4C858 /* Info.plist */,
 			);
 			path = ThumbnailExtension;
@@ -10732,6 +10738,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B355E0032920AA2600E4C858 /* ThumbnailProvider.swift in Sources */,
+				B3AAAAAA00000002BBBBBB01 /* ThumbnailArtworkDriver.swift in Sources */,
+				B3AAAAAA00000004BBBBBB01 /* RealmThumbnailArtworkDriver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
