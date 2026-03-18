@@ -90,20 +90,32 @@ public extension PVGame {
         contentSet.rating = NSNumber(value: isFavorite ? 5 : 0)
 
         // Images
-        contentSet.thumbnailURL = pathOfCachedImage
+        let cachedImageURL = pathOfCachedImage
+        contentSet.thumbnailURL = cachedImageURL
 
-        // Add a high-quality thumbnail
-        if let imagePath = pathOfCachedImage?.path,
-           let image = UIImage(contentsOfFile: imagePath) {
+        // Embed inline thumbnail data only when we have a local file.
+        // When pathOfCachedImage returns a remote URL (fallback for uncached artwork),
+        // .path gives the URL path component (e.g. "/art.jpg"), NOT a filesystem path,
+        // so UIImage(contentsOfFile:) would fail. Spotlight will use thumbnailURL instead.
+        // scaledImage(withMaxResolution:) and jpegData(compressionQuality:) are UIKit-only;
+        // on macOS (AppKit) we skip inline thumbnail data and rely on thumbnailURL.
+        #if canImport(UIKit)
+        if let cachedImageURL = cachedImageURL,
+           cachedImageURL.isFileURL,
+           let image = UIImage(contentsOfFile: cachedImageURL.path) {
             // Try to get a high-quality thumbnail
-            let size = CGSize(width: 300, height: 300)
+#if canImport(UIKit)
             if let scaledImage = image.scaledImage(withMaxResolution: 300) {
                 contentSet.thumbnailData = scaledImage.jpegData(compressionQuality: 0.9)
             } else {
-                // Fallback to original image data
                 contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
             }
+#else
+            // On non-UIKit platforms, use the original image without scaling
+            contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
+#endif
         }
+        #endif
 
         // Comprehensive keywords for better search
         var keywords: [String] = ["rom", "game", "emulator", "provenance"]

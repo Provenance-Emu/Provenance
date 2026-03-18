@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PVLibrary
 import PVRealm
 import PVMediaCache
 import RealmSwift
@@ -33,6 +34,18 @@ public class ArtworkLoader: ObservableObject {
 
     /// Semaphore to limit concurrent preloading operations
     private let preloadSemaphore = DispatchSemaphore(value: 4)
+
+    // MARK: - Local file URL memo cache (for resolveLocalArtworkFileURL)
+
+    /// Game IDs for which a local file URL lookup has already been performed (hits AND misses).
+    /// A game ID in this set means the lookup is complete; check `localURLCache` to see whether
+    /// a file URL was found. Misses are tracked here rather than as nil entries in the dictionary
+    /// because Swift dictionaries cannot distinguish "key absent" from "key present with nil value"
+    /// when the value type is non-optional.
+    private var localURLResolvedIds: Set<String> = []
+    /// Resolved local filesystem URLs, keyed by game ID. Only hit entries are stored here.
+    /// To test for a miss, check `localURLResolvedIds.contains(gameId)` first.
+    private var localURLCache: [String: URL] = [:]
 
     /// Initialize the loader with default settings
     init() {}
@@ -144,6 +157,83 @@ public class ArtworkLoader: ObservableObject {
     public func cancelLoading(for gameId: String) {
         loadingTasks[gameId]?.cancel()
         loadingTasks[gameId] = nil
+    }
+
+    // MARK: - Local Artwork File URL Resolution
+
+    /// Returns the local filesystem URL for a game's artwork file, or `nil` if none is cached on disk.
+    ///
+    /// Both resolution paths verify that the file exists on disk before returning a URL.
+    ///
+    /// Resolution order:
+    /// 1. `originalArtworkFile.pathOfCachedImage` — the direct-path local copy stored as a
+    ///    `PVImageFile`; returns `nil` if the file has been deleted.
+    /// 2. `PVMediaCache.filePath(forKey:)` via `game.trueArtworkURL` — for legacy games that
+    ///    have only a remote URL string and no `PVImageFile` entry.
+    ///
+    /// Results are memoized so repeated calls (e.g. during list filtering while the user types)
+    /// do not re-hit the Realm database or filesystem on every pass.
+    /// Call `clearLocalURLCache()` after artwork is re-downloaded or updated.
+    ///
+    /// This method works with the Realm-backed `RomDatabase`. When SwiftData support is added,
+    /// replace or augment `_resolveLocalURLFromDatabase(gameId:)` without changing call sites.
+    @MainActor
+    public func resolveLocalArtworkFileURL(forGameId gameId: String) -> URL? {
+        if localURLResolvedIds.contains(gameId) {
+            return localURLCache[gameId]
+        }
+        let url = _resolveLocalURLFromDatabase(gameId: gameId)
+        localURLResolvedIds.insert(gameId)
+        if let url {
+            localURLCache[gameId] = url
+        }
+        return url
+    }
+
+    /// Clears the local URL memo cache.
+    /// Call this after artwork is updated or re-imported so subsequent
+    /// calls to `resolveLocalArtworkFileURL(forGameId:)` re-read from disk.
+    @MainActor
+    public func clearLocalURLCache() {
+        localURLResolvedIds.removeAll()
+        localURLCache.removeAll()
+    }
+
+    /// Clears the local URL memo cache for a single game.
+    /// Useful when only one game's artwork has changed.
+    @MainActor
+    public func clearLocalURLCache(forGameId gameId: String) {
+        localURLResolvedIds.remove(gameId)
+        // Prefer the direct-path PVImageFile entry (avoids a second hash lookup),
+        // but ensure the underlying file actually exists on disk.
+        if let artworkFile = game.originalArtworkFile {
+            if let cachedPath = artworkFile.pathOfCachedImage,
+               FileManager.default.fileExists(atPath: cachedPath) {
+                return URL(fileURLWithPath: cachedPath)
+            }
+
+            let fileURL = artworkFile.url
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                return fileURL
+            }
+    @MainActor
+    private func _resolveLocalURLFromDatabase(gameId: String) -> URL? {
+        guard let game = RomDatabase.sharedInstance
+            .object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId)
+        else { return nil }
+        // Prefer the direct-path PVImageFile entry (avoids a second hash lookup).
+        // Use pathOfCachedImage rather than .url so we only return URLs for files
+        // that actually exist on disk (guards against stale/deleted artwork).
+        if let fileURL = game.originalArtworkFile?.pathOfCachedImage {
+            return fileURL
+        }
+        // Fall back to PVMediaCache keyed by the artwork URL string (legacy path).
+        let key = game.trueArtworkURL
+        guard !key.isEmpty,
+              PVMediaCache.fileExists(forKey: key),
+              let localURL = PVMediaCache.filePath(forKey: key)
+        else { return nil }
+        return localURL
     }
 
     /// Preload artwork for a collection of games

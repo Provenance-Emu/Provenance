@@ -50,6 +50,8 @@ public struct SaveStateBrowserView: View {
     @State private var computedGroups: [SaveStateGameGroup] = []
     /// Raw items fetched from the store — filtering/grouping is applied client-side.
     @State private var allItems: [RetroSaveStateItem] = []
+    // Artwork URL resolution is delegated to ArtworkLoader.shared which provides
+    // a process-wide memo cache via resolveLocalArtworkFileURL(forGameId:).
 
     public init() {}
 
@@ -100,6 +102,13 @@ public struct SaveStateBrowserView: View {
     ///
     /// Runs on the MainActor synchronously so SwiftUI picks up the change
     /// immediately. RomDatabase artwork lookups are main-thread safe.
+    ///
+    /// `ArtworkLoader.resolveLocalArtworkFileURL(forGameId:)` is memoized: the
+    /// first call per game does a Realm + filesystem lookup; every subsequent
+    /// call returns the cached result synchronously from memory, so repeated
+    /// filter passes (e.g. while typing in the search field) do not re-hit the
+    /// filesystem. Call `ArtworkLoader.shared.clearLocalURLCache()` after
+    /// artwork is re-downloaded to invalidate stale entries.
     @MainActor
     private func applyFilters() {
         var dict: [String: SaveStateGameGroup] = [:]
@@ -115,10 +124,7 @@ public struct SaveStateBrowserView: View {
                 dict[item.gameId]!.items.append(item)
             } else {
                 order.append(item.gameId)
-                // Look up artwork via RomDatabase (the DB manager layer, not raw Realm)
-                let artworkURL = RomDatabase.sharedInstance
-                    .object(ofType: PVGame.self, wherePrimaryKeyEquals: item.gameId)?
-                    .originalArtworkFile?.url
+                let artworkURL = ArtworkLoader.shared.resolveLocalArtworkFileURL(forGameId: item.gameId)
                 dict[item.gameId] = SaveStateGameGroup(
                     id: item.gameId,
                     gameTitle: item.gameTitle,
