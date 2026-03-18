@@ -3421,9 +3421,14 @@ extension PVMetalViewController: PVRenderDelegateMetal {
             try? updateInputTexture()
         }
 
+        // Mirror the OpenGL path's synchronization so the blit and render don't race.
+        emulatorCore?.frontBufferLock.lock()
+        previousCommandBuffer?.waitUntilScheduled()
+
         guard let destTexture = inputTexture,
               let commandBuffer = commandQueue?.makeCommandBuffer(),
               let encoder = commandBuffer.makeBlitCommandEncoder() else {
+            emulatorCore?.frontBufferLock.unlock()
             return
         }
 
@@ -3439,6 +3444,8 @@ extension PVMetalViewController: PVRenderDelegateMetal {
         encoder.endEncoding()
         commandBuffer.commit()
         previousCommandBuffer = commandBuffer
+
+        emulatorCore?.frontBufferLock.unlock()
 
         emulatorCore?.frontBufferCondition.lock()
         emulatorCore?.isFrontBufferReady = true

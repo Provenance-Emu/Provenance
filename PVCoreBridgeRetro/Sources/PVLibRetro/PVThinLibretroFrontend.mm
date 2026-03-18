@@ -348,7 +348,7 @@ typedef struct PVThinLibretroSymbols {
 
     // Per-frame Vulkan state set by the core callbacks
     VkSemaphore _vulkanSignalSemaphore;        // set by thin_vulkan_set_signal_semaphore
-    struct retro_vulkan_image _vulkanCurrentImage; // set by thin_vulkan_set_image
+    VkImage _vulkanCurrentVkImage;             // set by thin_vulkan_set_image (VkImage only; no pNext copy)
     BOOL _vulkanHasCurrentImage;
 
     // Vulkan function pointers loaded from MoltenVK
@@ -362,7 +362,7 @@ typedef struct PVThinLibretroSymbols {
     void (*_vkGetDeviceQueue)(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue *pQueue);
 
     // Additional Vulkan functions for command submission and Metal interop
-    VkResult (*_vkQueueSubmit)(VkQueue queue, uint32_t submitCount, const void *pSubmits, VkFence fence);
+    PFN_vkQueueSubmit _vkQueueSubmit;
     VkResult (*_vkQueueWaitIdle)(VkQueue queue);
     // MoltenVK Metal interop: vkGetMTLTextureMVK(image, &mtlTexture) — deprecated but universally available
     void (*_vkGetMTLTextureMVK)(VkImage image, void **pMTLTexture);
@@ -680,11 +680,21 @@ static PVThinLibretroFrontend *thin_vulkan_bridge(void *handle) {
 static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image *image,
                                   uint32_t num_semaphores, const VkSemaphore *semaphores,
                                   uint32_t src_queue_family) {
-    (void)num_semaphores; (void)semaphores; (void)src_queue_family;
+    (void)semaphores; (void)src_queue_family;
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge || !image) return;
-    bridge->_vulkanCurrentImage = *image;
+    // Store only the VkImage handle — copying retro_vulkan_image by value is unsafe
+    // because the pNext chain cannot be deep-copied and the pointer is only valid
+    // until retro_video_refresh_t returns.
+    bridge->_vulkanCurrentVkImage = image->create_info.image;
     bridge->_vulkanHasCurrentImage = YES;
+    // The libretro Vulkan interface requires the frontend to wait on the provided
+    // semaphores before reading the image. We use vkQueueWaitIdle as a safe fallback
+    // since we are in single-buffer mode (wait_sync_index already drains the queue
+    // before the next frame, but we must also drain here when semaphores are present).
+    if (num_semaphores > 0 && bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
+        bridge->_vkQueueWaitIdle(bridge->_vulkanQueue);
+    }
     [bridge notifyRenderDelegateOfVulkanFrame:image];
 }
 
@@ -1734,7 +1744,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         _vkGetMTLTextureMVK = NULL;
         _vkExportMetalObjectsEXT = NULL;
         _vulkanSignalSemaphore = VK_NULL_HANDLE;
-        memset(&_vulkanCurrentImage, 0, sizeof(_vulkanCurrentImage));
+        _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanHasCurrentImage = NO;
 #endif
     }
@@ -4413,7 +4423,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 
     // Load command submission functions
-    _vkQueueSubmit = (VkResult (*)(VkQueue, uint32_t, const void *, VkFence))
+    _vkQueueSubmit = (PFN_vkQueueSubmit)
         _vkGetDeviceProcAddr(_vulkanDevice, "vkQueueSubmit");
     _vkQueueWaitIdle = (VkResult (*)(VkQueue))
         _vkGetDeviceProcAddr(_vulkanDevice, "vkQueueWaitIdle");
@@ -4507,34 +4517,28 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (void)submitVulkanCommandBuffers:(const VkCommandBuffer *)cmdBufs count:(uint32_t)count {
     if (!_vkQueueSubmit || !_vulkanQueue || !cmdBufs || count == 0) return;
 
-    // VkSubmitInfo (sType=4 = VK_STRUCTURE_TYPE_SUBMIT_INFO)
-    struct {
-        int32_t  sType;
-        const void *pNext;
-        uint32_t waitSemaphoreCount;
-        const VkSemaphore *pWaitSemaphores;
-        const uint32_t *pWaitDstStageMask;
-        uint32_t commandBufferCount;
-        const VkCommandBuffer *pCommandBuffers;
-        uint32_t signalSemaphoreCount;
-        const VkSemaphore *pSignalSemaphores;
-    } submitInfo = {
-        .sType = 4, // VK_STRUCTURE_TYPE_SUBMIT_INFO
+    // Snapshot the signal semaphore and clear it immediately so it is truly
+    // "per-frame" — the core may omit set_signal_semaphore on subsequent frames.
+    VkSemaphore signalSem = _vulkanSignalSemaphore;
+    _vulkanSignalSemaphore = VK_NULL_HANDLE;
+
+    VkSubmitInfo submitInfo = {
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
         .waitSemaphoreCount = 0,
         .pWaitSemaphores = NULL,
         .pWaitDstStageMask = NULL,
         .commandBufferCount = count,
         .pCommandBuffers = cmdBufs,
-        .signalSemaphoreCount = (_vulkanSignalSemaphore != VK_NULL_HANDLE) ? 1u : 0u,
-        .pSignalSemaphores = (_vulkanSignalSemaphore != VK_NULL_HANDLE) ? &_vulkanSignalSemaphore : NULL,
+        .signalSemaphoreCount = (signalSem != VK_NULL_HANDLE) ? 1u : 0u,
+        .pSignalSemaphores = (signalSem != VK_NULL_HANDLE) ? &signalSem : NULL,
     };
 
     os_unfair_lock_lock(&_vulkanQueueLock);
     VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, VK_NULL_HANDLE);
     os_unfair_lock_unlock(&_vulkanQueueLock);
 
-    if (result != 0) { // VK_SUCCESS = 0
+    if (result != VK_SUCCESS) {
         ELOG(@"ThinFrontend: vkQueueSubmit failed (result=%d)", result);
     }
 }
@@ -4607,9 +4611,8 @@ static bool thin_environment(unsigned cmd, void *data) {
 /// Called from thin_vulkan_set_image. Extracts the MTLTexture from the VkImage
 /// and notifies the render delegate so it can blit the frame to the display.
 - (void)notifyRenderDelegateOfVulkanFrame:(const struct retro_vulkan_image *)image {
-    // The VkImage lives in image->create_info.image (VkImageViewCreateInfo.image)
-    VkImage vkImage = image->create_info.image;
-    id<MTLTexture> mtlTexture = [self getMTLTextureForVkImage:vkImage];
+    (void)image; // VkImage is already stored in _vulkanCurrentVkImage
+    id<MTLTexture> mtlTexture = [self getMTLTextureForVkImage:_vulkanCurrentVkImage];
     if (!mtlTexture) {
         DLOG(@"ThinFrontend: notifyRenderDelegateOfVulkanFrame — no MTLTexture");
         return;
@@ -4644,7 +4647,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         [self destroyVulkanContext];
         _hwRenderRequested = NO;
         _vulkanSignalSemaphore = VK_NULL_HANDLE;
-        memset(&_vulkanCurrentImage, 0, sizeof(_vulkanCurrentImage));
+        _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanHasCurrentImage = NO;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         _renderDelegateStarted = NO;
