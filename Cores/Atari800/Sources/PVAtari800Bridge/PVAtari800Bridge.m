@@ -71,6 +71,10 @@ static BOOL s_lastMousePointValid = NO;
 /// Last known mouse position in screen coordinates (for computing deltas).
 /// Accessed only from the main/UI thread.
 static CGPoint s_lastMousePoint = {0, 0};
+/// Pending mouse button state — written from the main/UI thread via bitwise-OR/AND,
+/// consumed by the emulation thread each frame. Using atomic OR/AND so button
+/// press and release don't race with each other or with the emulation read.
+static _Atomic int s_pendingMouseButtons;
 
 
 @interface PVAtari800Bridge ()
@@ -128,6 +132,7 @@ static const NSInteger kMaxPlayers = 4;
         atomic_store(&s_ctrlPressCount, 0);
         atomic_store(&s_pendingMouseDeltaX, 0);
         atomic_store(&s_pendingMouseDeltaY, 0);
+        atomic_store(&s_pendingMouseButtons, 0);
         s_lastMousePointValid = NO;
     }
 
@@ -291,17 +296,22 @@ static const NSInteger kMaxPlayers = 4;
     }
 
     // Feed pending keyboard input into the atari800 INPUT layer each frame.
-    // For 8-bit mode this overrides whatever pollControllers set for the 5200
-    // key bus when a physical key is being held.
-    int pendingKey = atomic_load(&s_pendingKeyCode);
-    if (pendingKey != AKEY_NONE) {
-        INPUT_key_code = pendingKey;
-    }
+    // Always assign INPUT_key_code (including AKEY_NONE on key release) so
+    // the atari800 input layer never sees a stuck key between frames.
+    INPUT_key_code = atomic_load(&s_pendingKeyCode);
+
+    // Apply shift state from the atomic press count on the emulation thread
+    // to avoid a data race with the main/UI thread that calls keyDown:/keyUp:.
+    INPUT_key_shift = (atomic_load(&s_shiftPressCount) > 0) ? 1 : 0;
 
     // Atomically consume accumulated mouse deltas so the emulation thread
     // and the main (input) thread don't race on the same counters.
     INPUT_mouse_delta_x = atomic_exchange(&s_pendingMouseDeltaX, 0);
     INPUT_mouse_delta_y = atomic_exchange(&s_pendingMouseDeltaY, 0);
+
+    // Apply pending mouse button state on the emulation thread to avoid
+    // a data race with the main/UI thread that calls the mouse button handlers.
+    INPUT_mouse_buttons = atomic_load(&s_pendingMouseButtons);
 
     Atari800_Frame();
 
@@ -328,6 +338,7 @@ static const NSInteger kMaxPlayers = 4;
     atomic_store(&s_ctrlPressCount, 0);
     atomic_store(&s_pendingMouseDeltaX, 0);
     atomic_store(&s_pendingMouseDeltaY, 0);
+    atomic_store(&s_pendingMouseButtons, 0);
     s_lastMousePointValid = NO;
     [super stopEmulation];
 }
@@ -423,11 +434,17 @@ static const NSInteger kMaxPlayers = 4;
 #pragma mark - Input
 
 - (void)leftMouseUp {
-    INPUT_mouse_buttons &= ~1;
+    // Clear bit 0 atomically (UI thread write, consumed by emulation thread in executeFrame).
+    int old;
+    do { old = atomic_load(&s_pendingMouseButtons); }
+    while (!atomic_compare_exchange_weak(&s_pendingMouseButtons, &old, old & ~1));
 }
 
 - (void)rightMouseUp {
-    INPUT_mouse_buttons &= ~2;
+    // Clear bit 1 atomically (UI thread write, consumed by emulation thread in executeFrame).
+    int old;
+    do { old = atomic_load(&s_pendingMouseButtons); }
+    while (!atomic_compare_exchange_weak(&s_pendingMouseButtons, &old, old & ~2));
 }
 
 - (void)leftMouseDownAtPoint:(CGPoint)point {
@@ -449,7 +466,7 @@ static const NSInteger kMaxPlayers = 4;
     }
     s_lastMousePoint = point;
     s_lastMousePointValid = YES;
-    INPUT_mouse_buttons |= 1;
+    atomic_fetch_or(&s_pendingMouseButtons, 1);
 }
 
 - (void)mouseMovedAt:(CGPoint)point {
@@ -468,7 +485,7 @@ static const NSInteger kMaxPlayers = 4;
     }
     s_lastMousePoint = point;
     s_lastMousePointValid = YES;
-    INPUT_mouse_buttons |= 2;
+    atomic_fetch_or(&s_pendingMouseButtons, 2);
 }
 
 /// Mouse support is enabled for the 8-bit computer (trackball games like Star Raiders).
@@ -581,7 +598,8 @@ static int atari8bitKeyCodeForHIDCode(NSInteger hidCode) {
     // (or Ctrl) keys doesn't prematurely clear the modifier.
     if (key == 0xE1 || key == 0xE5) { // Left Shift / Right Shift
         atomic_fetch_add(&s_shiftPressCount, 1);
-        INPUT_key_shift = 1;
+        // INPUT_key_shift is applied on the emulation thread in executeFrame
+        // from s_shiftPressCount to avoid a cross-thread data race.
         return;
     }
     if (key == 0xE0 || key == 0xE4) { // Left Ctrl / Right Ctrl
@@ -603,8 +621,9 @@ static int atari8bitKeyCodeForHIDCode(NSInteger hidCode) {
         int prev = atomic_fetch_sub(&s_shiftPressCount, 1);
         if (prev <= 1) {
             atomic_store(&s_shiftPressCount, 0); // clamp to zero
-            INPUT_key_shift = 0;
         }
+        // INPUT_key_shift is applied on the emulation thread in executeFrame
+        // from s_shiftPressCount to avoid a cross-thread data race.
         return;
     }
     if (key == 0xE0 || key == 0xE4) { // Left Ctrl / Right Ctrl
@@ -614,16 +633,20 @@ static int atari8bitKeyCodeForHIDCode(NSInteger hidCode) {
         }
         return;
     }
-    // Only clear pending code if it was set by this specific key (including any
-    // Ctrl modifier that was active when the key was pressed).
+    // Clear the pending code if it was set by this specific key.
+    // We must try both the plain variant and the Ctrl-modified variant because
+    // the user may have released Ctrl before releasing this key, so the current
+    // s_ctrlPressCount may no longer reflect the modifier that was active at
+    // keyDown: time.
     int akey = atari8bitKeyCodeForHIDCode((NSInteger)key);
     if (akey == AKEY_NONE) return;
-    if (atomic_load(&s_ctrlPressCount) > 0) {
-        akey |= AKEY_CTRL;
+    int plain = akey;
+    int withCtrl = akey | AKEY_CTRL;
+    int expected = plain;
+    if (!atomic_compare_exchange_strong(&s_pendingKeyCode, &expected, AKEY_NONE)) {
+        expected = withCtrl;
+        atomic_compare_exchange_strong(&s_pendingKeyCode, &expected, AKEY_NONE);
     }
-    // Atomically clear only if the stored value matches the released key.
-    int expected = akey;
-    atomic_compare_exchange_strong(&s_pendingKeyCode, &expected, AKEY_NONE);
 }
 
 - (void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player {
