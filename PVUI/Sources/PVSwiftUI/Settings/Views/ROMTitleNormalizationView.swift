@@ -175,11 +175,22 @@ public struct ROMTitleNormalizationView: View {
         isApplying = true
         let appliedIDs = Set(toApply.map(\.id))
         do {
-            try await service.applyProposals(toApply)
-            resultIsError = false
-            resultMessage = "Applied \(toApply.count) title rename(s) successfully."
-            proposals.removeAll { appliedIDs.contains($0.id) }
-            selected.subtract(appliedIDs)
+            let appliedCount = try await service.applyProposals(toApply)
+            let requestedCount = toApply.count
+
+            if appliedCount == requestedCount {
+                resultIsError = false
+                resultMessage = "Applied \(appliedCount) title rename(s) successfully."
+                proposals.removeAll { appliedIDs.contains($0.id) }
+                selected.subtract(appliedIDs)
+            } else {
+                let skippedCount = requestedCount - appliedCount
+                resultIsError = true
+                resultMessage = """
+                Applied \(appliedCount) of \(requestedCount) title rename(s). \
+                \(skippedCount) item(s) could not be updated, possibly because the games were removed.
+                """
+            }
         } catch {
             ELOG("ROMTitleNormalizationView: apply failed: \(error)")
             resultIsError = true
