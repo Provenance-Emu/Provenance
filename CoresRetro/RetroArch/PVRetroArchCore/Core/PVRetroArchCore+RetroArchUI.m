@@ -695,9 +695,26 @@ void extract_bundles();
                                                                      error:nil];
                 if (prevContent) {
                     NSRange bootHdRange = [prevContent rangeOfString:@"hatari_boot_hd"];
-                    NSString *prevBootHd = (bootHdRange.location != NSNotFound)
-                        ? [prevContent substringWithRange:bootHdRange]
-                        : @"(key absent)";
+                    NSString *prevBootHd = nil;
+                    if (bootHdRange.location != NSNotFound) {
+                        NSUInteger lineStart = bootHdRange.location;
+                        NSRange beforeNewlineRange = [prevContent rangeOfString:@"\n"
+                                                                         options:NSBackwardsSearch
+                                                                           range:NSMakeRange(0, bootHdRange.location)];
+                        if (beforeNewlineRange.location != NSNotFound) {
+                            lineStart = beforeNewlineRange.location + beforeNewlineRange.length;
+                        }
+                        NSRange afterNewlineRange = [prevContent rangeOfString:@"\n"
+                                                                        options:0
+                                                                          range:NSMakeRange(bootHdRange.location,
+                                                                                            prevContent.length - bootHdRange.location)];
+                        NSUInteger lineEnd = (afterNewlineRange.location != NSNotFound)
+                            ? afterNewlineRange.location
+                            : prevContent.length;
+                        prevBootHd = [prevContent substringWithRange:NSMakeRange(lineStart, lineEnd - lineStart)];
+                    } else {
+                        prevBootHd = @"(key absent)";
+                    }
                     DLOG(@"Hatari opts BEFORE overwrite — hatari_boot_hd: %@, file: %@", prevBootHd, fileName);
                 } else {
                     DLOG(@"Hatari opts BEFORE overwrite — file did not exist at %@", fileName);
