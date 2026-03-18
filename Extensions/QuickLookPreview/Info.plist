@@ -7,7 +7,7 @@
 		<key>NSExtensionAttributes</key>
 		<dict>
 			<key>QLIsDataBasedPreview</key>
-			<false/>
+			<true/>
 			<key>QLSupportedContentTypes</key>
 			<array>
 				<string>com.provenance.rom</string>
@@ -20,10 +20,10 @@
 			<key>QLSupportsSearchableItems</key>
 			<false/>
 		</dict>
-		<key>NSExtensionMainStoryboard</key>
-		<string>MainInterface</string>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.quicklook.preview</string>
+		<key>NSExtensionPrincipalClass</key>
+		<string>$(PRODUCT_MODULE_NAME).PreviewProvider</string>
 	</dict>
 </dict>
 </plist>
