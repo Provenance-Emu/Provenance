@@ -687,6 +687,63 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         ELOG(@"Hatari: regex for szDiskImageDirectory failed: %@", regexErr);
     }
 
+    // Verify that the [HardDisk] and [ACSI] sections survived templating.
+    BOOL hasHardDisk = [cfgContent containsString:@"[HardDisk]"];
+    BOOL hasACSI     = [cfgContent containsString:@"[ACSI]"];
+    if (!hasHardDisk || !hasACSI) {
+        WLOG(@"Hatari: hatari.cfg template is missing [HardDisk]=%@ / [ACSI]=%@ sections — appending defaults to prevent --acsi crash",
+             hasHardDisk ? @"YES" : @"NO", hasACSI ? @"YES" : @"NO");
+        if (!hasHardDisk) {
+            cfgContent = [cfgContent stringByAppendingString:
+                @"\n[HardDisk]\n"
+                @"bBootFromHardDisk = FALSE\n"
+                @"bUseHardDiskDirectory = FALSE\n"
+                @"bUseHardDiskDirectories = FALSE\n"
+                @"bUseHardDiskImage = FALSE\n"
+                @"szHardDiskDirectory =\n"
+                @"szHardDiskImage =\n"];
+        }
+        if (!hasACSI) {
+            cfgContent = [cfgContent stringByAppendingString:
+                @"\n[ACSI]\n"
+                @"bUseDevice0 = FALSE\n"
+                @"bUseDevice1 = FALSE\n"
+                @"bUseDevice2 = FALSE\n"
+                @"bUseDevice3 = FALSE\n"
+                @"bUseDevice4 = FALSE\n"
+                @"bUseDevice5 = FALSE\n"
+                @"bUseDevice6 = FALSE\n"
+                @"bUseDevice7 = FALSE\n"
+                @"sDeviceFile0 =\n"
+                @"sDeviceFile1 =\n"
+                @"sDeviceFile2 =\n"
+                @"sDeviceFile3 =\n"
+                @"sDeviceFile4 =\n"
+                @"sDeviceFile5 =\n"
+                @"sDeviceFile6 =\n"
+                @"sDeviceFile7 =\n"
+                @"nDeviceType_0 = 0\n"
+                @"sDeviceFile_0 =\n"
+                @"nDeviceType_1 = 0\n"
+                @"sDeviceFile_1 =\n"
+                @"nDeviceType_2 = 0\n"
+                @"sDeviceFile_2 =\n"
+                @"nDeviceType_3 = 0\n"
+                @"sDeviceFile_3 =\n"
+                @"nDeviceType_4 = 0\n"
+                @"sDeviceFile_4 =\n"
+                @"nDeviceType_5 = 0\n"
+                @"sDeviceFile_5 =\n"
+                @"nDeviceType_6 = 0\n"
+                @"sDeviceFile_6 =\n"
+                @"nDeviceType_7 = 0\n"
+                @"sDeviceFile_7 =\n"];
+        }
+    }
+    DLOG(@"Hatari: hatari.cfg has [HardDisk]=%@ [ACSI]=%@ after patching",
+         [cfgContent containsString:@"[HardDisk]"] ? @"YES" : @"NO",
+         [cfgContent containsString:@"[ACSI]"] ? @"YES" : @"NO");
+
     // Ensure hatari working directory exists
     BOOL isDir = NO;
     if (![fm fileExistsAtPath:hatariDir isDirectory:&isDir] || !isDir) {
@@ -721,6 +778,7 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         }
         DLOG(@"Hatari: AFTER write — HD/ACSI lines in hatari/hatari.cfg:\n%@",
              afterLines.count ? [afterLines componentsJoinedByString:@"\n"] : @"(none found — template missing sections!)");
+        DLOG(@"Hatari: hatari.cfg destinations: %@ and %@", hatariWorkCfgPath, hatariCfgPath);
     } else {
         if (!workOK) ELOG(@"Hatari: failed to write hatari.cfg to %@: %@", hatariWorkCfgPath, workWriteErr);
         if (!legacyOK) ELOG(@"Hatari: failed to write hatari.cfg to %@: %@", hatariCfgPath, legacyWriteErr);

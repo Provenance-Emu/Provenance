@@ -665,8 +665,10 @@ void extract_bundles();
     /// Full logic (including BIOS search across all known locations, repair,
     /// validation, and config writing) lives in PVRetroArchCore+BIOS+AtariST.m.
     if ([self pv_isHatariSystem]) {
+        DLOG(@"Hatari: writeConfigFile — detected Hatari system, running TOS setup + config write");
         [self setupHatariTOSForSystemDir:systemDirectory];
         [self writeHatariConfigForSystemDir:systemDirectory];
+        DLOG(@"Hatari: writeConfigFile — TOS setup + config write complete for systemDir: %@", systemDirectory);
     }
 
     /// Set system directory in RetroArch config (required for Hatari to find TOS image)
@@ -723,7 +725,7 @@ void extract_bundles();
             NSError *optWriteErr = nil;
             BOOL optWriteOK = [self.coreOptionConfig writeToFile:fileName
                                     atomically:NO
-                                    encoding:NSStringEncodingConversionAllowLossy
+                                    encoding:NSUTF8StringEncoding
                                         error:&optWriteErr];
             if (optWriteOK) {
                 ILOG(@"Core option config written to %@", fileName);
@@ -771,6 +773,7 @@ void extract_bundles();
                                                                  range:NSMakeRange(keyRange.location, existing.length - keyRange.location)];
                     NSUInteger end = (lineEnd.location == NSNotFound) ? existing.length : lineEnd.location;
                     NSString *line = [existing substringWithRange:NSMakeRange(start, end - start)];
+                    DLOG(@"Hatari: found hatari_boot_hd line in opts: \"%@\"", line);
 
                     // Only keep "enabled" — replace everything else with "disabled"
                     if (![line containsString:@"\"enabled\""] && ![line containsString:@"\"disabled\""]) {
