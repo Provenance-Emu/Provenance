@@ -11,17 +11,17 @@ public extension SystemIdentifier {
     // MARK: - Light Gun
 
     /// Whether this system supports a light-gun peripheral (Zapper, Super Scope, Guncon, etc.).
-    var supportsLightGun: Bool { Self.lightGunSystems.contains(self) }
+    ///
+    /// The answer comes from `LightGunSystemRegistry.shared`, which is seeded with a
+    /// built-in baseline and extended at runtime by cores that conform to
+    /// `LightGunSystemsProvider` or detect lightgun support via controller-info callbacks.
+    /// This means newly supported systems are picked up automatically as cores register
+    /// themselves — no manual list maintenance required.
+    var supportsLightGun: Bool { LightGunSystemRegistry.shared.supportsLightGun(self) }
 
     /// Whether this system requires a light gun to be playable.
     /// Always `false` — light guns are optional peripherals for all supported systems.
     var requiresLightGun: Bool { false }
-
-    // NES Zapper, SNES Super Scope / Justifier, Genesis Menacer / Justifier,
-    // PSX Guncon / Konami Justifier, Saturn Stunner, MAME arcade guns, Atari 2600 Crossbow.
-    private static let lightGunSystems: Set<SystemIdentifier> = [
-        .NES, .SNES, .Genesis, .PSX, .Saturn, .MAME, .Atari2600,
-    ]
 
     // MARK: - Hardware
 

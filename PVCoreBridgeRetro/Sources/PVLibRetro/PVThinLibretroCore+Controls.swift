@@ -2042,8 +2042,37 @@ extension PVThinLibretroCore: PVWiiSystemResponderClient {
 
 extension PVThinLibretroCore: LightGunResponder {
 
+    /// `true` when the currently-loaded libretro core advertises
+    /// `RETRO_DEVICE_LIGHTGUN` (device type 4) in its controller-port info,
+    /// **or** when the system identifier is present in `LightGunSystemRegistry`
+    /// (the built-in baseline or a prior dynamic discovery this session).
+    ///
+    /// Dynamic path: after `retro_load_game()` the core sends
+    /// `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO`, which populates
+    /// `controllerPortDescriptors`.  If any port lists a lightgun device we
+    /// treat this core+system as lightgun-capable and register the system in
+    /// `LightGunSystemRegistry` so that future queries (pre-load) return `true`
+    /// without needing a manual static list.
+    ///
+    /// Fallback path: if the controller info hasn't been received yet (e.g. the
+    /// property is queried before the game loads) we fall back to the registry
+    /// which is seeded with the built-in baseline.
     public var gameSupportsLightGun: Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsLightGun ?? false
+        // Dynamic: check what the loaded core actually declared.
+        let detectedViaControllerInfo = controllerPortDescriptors.contains { port in
+            port.contains { $0.deviceType == LibretroDeviceType.lightgun.rawValue }
+        }
+        if detectedViaControllerInfo {
+            // Persist the discovery so the registry (and therefore
+            // SystemIdentifier.supportsLightGun) returns true for this system
+            // even when no core is loaded.
+            if let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") {
+                LightGunSystemRegistry.shared.register(system: sysID)
+            }
+            return true
+        }
+        // Fallback: consult the registry (built-in baseline + previous dynamic discoveries).
+        return SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsLightGun ?? false
     }
 
     public var requiresLightGun: Bool {
