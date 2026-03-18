@@ -73,7 +73,7 @@ public protocol LightGunSystemsProvider: AnyObject {
 ///   `registerProvider(_:)`, or
 /// - running cores that detect lightgun support via
 ///   `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO` calling `register(system:)`.
-public final class LightGunSystemRegistry {
+public final class LightGunSystemRegistry: @unchecked Sendable {
 
     // MARK: Singleton
 
