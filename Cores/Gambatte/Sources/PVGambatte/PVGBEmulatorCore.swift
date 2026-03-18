@@ -69,21 +69,39 @@ extension PVGBEmulatorCore: GameWithCheat {
 
 extension PVGBEmulatorCore: CoreActions {
     public var coreActions: [CoreAction]? {
-        if !isGameboyColor {
-            return [CoreAction(title: "Change Palette", options: nil)]
-        } else {
-            return nil
-        }
+        // Provide "Change Palette" for the classic RetroMenuView (cycling).
+        // The tile-based PauseTileMenuView uses PaletteProviding instead and
+        // filters out this action when the picker tile is shown.
+        guard !isGameboyColor else { return nil }
+        return [CoreAction(title: "Change Palette", options: nil)]
     }
 
     public func selected(action: CoreAction) {
         switch action.title {
         case "Change Palette":
-            let nextI = displayMode.rawValue + 1
-            let next = GBPalette(rawValue: nextI) ?? .default
-            displayMode = next
+            cycleToNextPalette()
         default:
-            print("Unknown action: " + action.title)
+            WLOG("Unknown action: \(action.title)")
         }
+    }
+}
+
+// MARK: - PaletteProviding
+
+extension PVGBEmulatorCore: PaletteProviding {
+    public var availablePalettes: [CorePalette] {
+        // GBC games don't use the DMG palette system.
+        guard !isGameboyColor else { return [] }
+        return GBPalette.allCases.map(\.asCorepalette)
+    }
+
+    public var currentPaletteID: String {
+        displayMode.paletteID
+    }
+
+    public func selectPalette(id: String) {
+        guard let rawValue = Int(id),
+              let palette = GBPalette(rawValue: rawValue) else { return }
+        displayMode = palette
     }
 }
