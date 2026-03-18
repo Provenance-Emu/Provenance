@@ -212,7 +212,7 @@ private struct ProposalRow: View {
         Button(action: onTap) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? .accentColor : .secondary)
+                    .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
                     .font(.title3)
                     .padding(.top, 2)
 
