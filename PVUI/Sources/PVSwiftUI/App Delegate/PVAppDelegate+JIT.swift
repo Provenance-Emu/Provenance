@@ -91,39 +91,44 @@ extension PVAppDelegate {
             errorString = "No error message available."
         }
 
-        while is_presenting_alert {
-            // Wait for the alert to be dismissed.
-            sleep(1)
-        }
-
-        DispatchQueue.main.async { [unowned self] in
-            print("Error: Failed to Contact AltJIT\n")
-            let alert = UIAlertController(title: "Failed to Contact AltJIT", message: errorString, preferredStyle: .alert)
-
-            alert.addAction(UIAlertAction(title: "Wait for Other Debugger", style: .default) { _ in
-                self.is_presenting_alert = false
-            })
-
-            alert.addAction(UIAlertAction(title: "Retry AltJIT", style: .default) { _ in
-                self.is_presenting_alert = false
-                DOLJitManager.shared.attemptToAcquireJitByAltJIT()
-            })
-
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                self.is_presenting_alert = false
-                self.cancellation_token.cancel()
-                self.jitScreenDelegate?.didFinishJitScreen(result: false, sender: self)
-            })
-
-            self.is_presenting_alert = true
-
-            guard let vc = self.jitPresentingViewController else {
-                ELOG("JIT: No VC to present from")
-                return
+        // Wait for any existing alert to be dismissed before showing ours.
+        // Using async dispatch instead of blocking sleep to avoid main-thread hang.
+        Task { @MainActor [unowned self] in
+            while self.is_presenting_alert {
+                try? await Task.sleep(nanoseconds: 200_000_000) // 200ms
             }
-
-            vc.present(alert, animated: true)
+            self.showAltJitFailedAlert(errorString: errorString)
         }
+    }
+
+    @MainActor
+    private func showAltJitFailedAlert(errorString: String) {
+        print("Error: Failed to Contact AltJIT\n")
+        let alert = UIAlertController(title: "Failed to Contact AltJIT", message: errorString, preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Wait for Other Debugger", style: .default) { _ in
+            self.is_presenting_alert = false
+        })
+
+        alert.addAction(UIAlertAction(title: "Retry AltJIT", style: .default) { _ in
+            self.is_presenting_alert = false
+            DOLJitManager.shared.attemptToAcquireJitByAltJIT()
+        })
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            self.is_presenting_alert = false
+            self.cancellation_token.cancel()
+            self.jitScreenDelegate?.didFinishJitScreen(result: false, sender: self)
+        })
+
+        self.is_presenting_alert = true
+
+        guard let vc = self.jitPresentingViewController else {
+            ELOG("JIT: No VC to present from")
+            return
+        }
+
+        vc.present(alert, animated: true)
     }
 
     @IBAction func helpPressed(_ sender: Any) {

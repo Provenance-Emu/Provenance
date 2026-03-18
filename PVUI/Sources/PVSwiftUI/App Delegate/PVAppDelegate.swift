@@ -609,7 +609,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         let emulationState = appState?.emulationUIState
         emulationState?.isInBackground = true
         pauseCore()
-        sleep(1)
         Task {
             try await self.saveCoreState()
         }

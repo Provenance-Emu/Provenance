@@ -1,5 +1,5 @@
 //
-//  PVEP128ControllerViewController.swift
+//  PVMSXControllerViewController.swift
 //  Provenance
 //
 //  Created by Joe Mattiello on 2022.06.15
@@ -10,9 +10,9 @@ import PVSupport
 import PVEmulatorCore
 
 private extension JSButton {
-    var buttonTag: PVEP128Button {
+    var buttonTag: PVMSXButton {
         get {
-            return PVEP128Button(rawValue: tag)!
+            return PVMSXButton(rawValue: tag)!
         }
         set {
             tag = newValue.rawValue
@@ -20,7 +20,7 @@ private extension JSButton {
     }
 }
 
-final class PVEP128ControllerViewController: PVControllerViewController<PVEP128SystemResponderClient> {
+final class PVMSXControllerViewController: PVControllerViewController<PVMSXSystemResponderClient> {
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {

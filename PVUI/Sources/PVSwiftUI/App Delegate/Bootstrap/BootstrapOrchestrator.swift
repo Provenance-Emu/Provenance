@@ -51,7 +51,9 @@ public final class BootstrapOrchestrator: Sendable {
     /// Each task is guarded by ``taskTimeout`` seconds. A stalled task is
     /// cancelled and logged as failed; its provisions are not marked satisfied
     /// so dependents are skipped rather than waiting forever.
-    @MainActor
+    /// Tasks that need main-actor isolation (e.g. ThemeBootstrapTask) declare
+    /// `@MainActor` on their own type — the orchestrator no longer forces all
+    /// tasks onto main, avoiding unnecessary main-thread contention at launch.
     public func run() async {
         var satisfied = Set<String>()
         var pending = tasks

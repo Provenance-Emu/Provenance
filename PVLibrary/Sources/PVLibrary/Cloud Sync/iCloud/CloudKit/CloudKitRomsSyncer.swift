@@ -1979,17 +1979,23 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             // Update the local game record with the new customArtworkURL if it changed
             if artworkURLChanged {
-                try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
-                    try RomDatabase.sharedInstance.writeTransaction {
-                    // Re-fetch the game to ensure we have a valid reference
-                    guard let liveGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash) else {
-                        ELOG("Game \(game.md5Hash) was invalidated during artwork URL update.")
+                let gameMD5 = game.md5Hash
+                let gameTitle = game.title
+                try await withRealm { realm in
+                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5?.uppercased() ?? "") else {
+                        ELOG("Game \(gameMD5 ?? "nil") was invalidated during artwork URL update.")
                         return
                     }
-
-                    liveGame.customArtworkURL = cloudCustomArtworkURL
-                    ILOG("Updated local customArtworkURL for game \(game.title): \(cloudCustomArtworkURL)")
+                    try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+                        if realm.isInWriteTransaction {
+                            liveGame.customArtworkURL = cloudCustomArtworkURL
+                        } else {
+                            try realm.write {
+                                liveGame.customArtworkURL = cloudCustomArtworkURL
+                            }
+                        }
                     }
+                    ILOG("Updated local customArtworkURL for game \(gameTitle): \(cloudCustomArtworkURL)")
                 }
             }
 
@@ -1999,31 +2005,36 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
+    /// Holds post-write info extracted from the Realm closure for artwork processing.
+    private struct GamePostWriteInfo: Sendable {
+        let title: String
+        let customArtworkURL: String
+        let hasOriginalArtworkFile: Bool
+        let skipped: Bool
+    }
+
     private func updatePVGame(from record: CKRecord, gameMD5: String) async throws {
-        // Fetch a fresh game instance on this thread
-        guard let localGame = RomDatabase.sharedInstance.game(withMD5: gameMD5) else {
-            throw CloudSyncError.invalidData
-        }
-
-        ILOG("Updating local game \(localGame.md5Hash ?? "nil") from CloudKit record \(record.recordID.recordName).")
-
-        // Modification Date Check (Option B)
-        // Assumes PVGame model has `lastCloudSyncDate: Date?` added.
         let cloudModDate = record.modificationDate ?? .distantPast
-        let localSyncDate = localGame.lastCloudSyncDate ?? .distantPast
+        let normalizedMD5 = gameMD5.uppercased()
 
-        if cloudModDate <= localSyncDate {
-            VLOG("Skipping update for game \(localGame.md5Hash ?? "nil"): CloudKit record modification date (\(cloudModDate)) is not newer than last local sync date (\(localSyncDate)).")
-            return // No update needed
-        }
+        // Perform all Realm work on a background thread via withRealm to avoid
+        // blocking the main thread (previously used RomDatabase.sharedInstance directly).
+        let info = try await withRealm { realm -> GamePostWriteInfo in
+            guard let localGame = realm.object(ofType: PVGame.self, forPrimaryKey: normalizedMD5) else {
+                throw CloudSyncError.invalidData
+            }
 
-        // Perform updates within a Realm write transaction via RomDatabase.shared
-        let recordHasAsset = recordDeclaresAssetPresence(record)
+            ILOG("Updating local game \(localGame.md5Hash ?? "nil") from CloudKit record \(record.recordID.recordName).")
 
-        try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
-            try RomDatabase.sharedInstance.writeTransaction {
-            // Update fields based on CloudKit record (merge totals to avoid clobbering unuploaded local increments)
-            localGame.cloudRecordID = record.recordID.recordName
+            let localSyncDate = localGame.lastCloudSyncDate ?? .distantPast
+            if cloudModDate <= localSyncDate {
+                VLOG("Skipping update for game \(localGame.md5Hash ?? "nil"): CloudKit record modification date (\(cloudModDate)) is not newer than last local sync date (\(localSyncDate)).")
+                return GamePostWriteInfo(title: localGame.title, customArtworkURL: localGame.customArtworkURL, hasOriginalArtworkFile: localGame.originalArtworkFile != nil, skipped: true)
+            }
+
+            try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+                let applyUpdates = {
+                    localGame.cloudRecordID = record.recordID.recordName
             localGame.title = record[CloudKitSchema.ROMFields.title] as? String ?? localGame.title
             localGame.rating = record[CloudKitSchema.ROMFields.rating] as? Int ?? localGame.rating
             if let cloudPlayCount = record[CloudKitSchema.ROMFields.playCount] as? Int, cloudPlayCount > localGame.playCount {
@@ -2095,35 +2106,53 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             }
 
-            /// Update lastCloudSyncDate so we can skip this record next time unless CloudKit has a newer modification date.
-            localGame.lastCloudSyncDate = cloudModDate
-            } // End write transaction
+                    /// Update lastCloudSyncDate so we can skip this record next time unless CloudKit has a newer modification date.
+                    localGame.lastCloudSyncDate = cloudModDate
+                }
+
+                if realm.isInWriteTransaction {
+                    applyUpdates()
+                } else {
+                    try realm.write { applyUpdates() }
+                }
+            }
+
+            VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5Hash ?? "unknown"))")
+            return GamePostWriteInfo(title: localGame.title, customArtworkURL: localGame.customArtworkURL, hasOriginalArtworkFile: localGame.originalArtworkFile != nil, skipped: false)
         }
-        VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5Hash ?? "unknown"))")
+
+        guard !info.skipped else { return }
 
         // Download custom artwork asset if available.
         // Remote-change zone fetches may omit CKAsset payloads, so fall back to an asset-inclusive fetch.
+        // Re-fetch game on background realm for artwork methods that need a PVGame reference.
         do {
             let hasCustomArtworkURL = (record[CloudKitSchema.ROMFields.customArtworkURL] as? String)?.isEmpty == false
             let hasCustomArtworkAsset = (record[CloudKitSchema.ROMFields.customArtworkAsset] as? CKAsset)?.fileURL != nil
 
-            if hasCustomArtworkURL && !hasCustomArtworkAsset {
-                if let full = try await fetchRecord(recordID: record.recordID, includeAssets: true) {
-                    try await downloadCustomArtworkAsset(from: full, for: localGame)
+            let artworkGame = try await withRealm { realm -> PVGame? in
+                realm.object(ofType: PVGame.self, forPrimaryKey: normalizedMD5)?.freeze()
+            }
+
+            if let artworkGame {
+                if hasCustomArtworkURL && !hasCustomArtworkAsset {
+                    if let full = try await fetchRecord(recordID: record.recordID, includeAssets: true) {
+                        try await downloadCustomArtworkAsset(from: full, for: artworkGame)
+                    } else {
+                        try await downloadCustomArtworkAsset(from: record, for: artworkGame)
+                    }
                 } else {
-                    try await downloadCustomArtworkAsset(from: record, for: localGame)
+                    try await downloadCustomArtworkAsset(from: record, for: artworkGame)
                 }
-            } else {
-                try await downloadCustomArtworkAsset(from: record, for: localGame)
             }
         } catch {
-            WLOG("Failed to download custom artwork for game \(localGame.title): \(error.localizedDescription)")
+            WLOG("Failed to download custom artwork for game \(info.title): \(error.localizedDescription)")
             // Continue with other operations even if artwork download fails
         }
 
         // Enhance with artwork if game doesn't already have any
-        if localGame.originalArtworkFile == nil && localGame.customArtworkURL.isEmpty {
-            ILOG("🎨 Game \(localGame.title) has no artwork, attempting lookup...")
+        if !info.hasOriginalArtworkFile && info.customArtworkURL.isEmpty {
+            ILOG("🎨 Game \(info.title) has no artwork, attempting lookup...")
             // Pass MD5 instead of the Realm object to avoid threading issues
             await enhanceGameWithArtworkAndMetadata(md5: gameMD5)
             ILOG("🎨 Artwork enhancement completed for game with MD5: \(gameMD5)")

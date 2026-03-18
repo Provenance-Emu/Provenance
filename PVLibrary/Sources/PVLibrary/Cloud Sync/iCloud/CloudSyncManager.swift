@@ -1680,6 +1680,8 @@ public class CloudSyncManager {
 
         DLOG("Game imported notification received: \(fileName ?? "nil") \(md5 ?? "nil")")
 
+        // Resolve the game on main actor (Realm observation requires it),
+        // then move the heavy upload work off-main to avoid blocking the UI.
         Task { @MainActor [weak self] in
             guard let self = self else { return }
             guard let game = await self.resolveImportedGame(md5: md5, fileName: fileName) else {
@@ -1723,16 +1725,21 @@ public class CloudSyncManager {
                 return
             }
 
+            // Freeze the game while still on main actor (safe Realm snapshot),
+            // then detach to perform the network upload off the main thread.
             let frozenGame = game.freeze()
             ILOG("Uploading newly imported game to CloudKit: \(frozenGame.title) (MD5: \(frozenGame.md5Hash))")
 
-            do {
-                try await self.uploadROM(for: frozenGame)
-                ILOG("Successfully uploaded newly imported game: \(frozenGame.title)")
-            } catch {
-                ELOG("Failed to upload newly imported game \(frozenGame.title): \(error.localizedDescription)")
-                await self.errorHandler.handle(error: error)
-                self.updateSyncStatus(.error(error))
+            Task.detached { [weak self] in
+                guard let self = self else { return }
+                do {
+                    try await self.uploadROM(for: frozenGame)
+                    ILOG("Successfully uploaded newly imported game: \(frozenGame.title)")
+                } catch {
+                    ELOG("Failed to upload newly imported game \(frozenGame.title): \(error.localizedDescription)")
+                    await self.errorHandler.handle(error: error)
+                    self.updateSyncStatus(.error(error))
+                }
             }
         }
     }
