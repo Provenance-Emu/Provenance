@@ -73,12 +73,12 @@ extension PVGBEmulatorCore: CoreActions {
         // The tile-based PauseTileMenuView uses PaletteProviding instead and
         // filters out this action when the picker tile is shown.
         guard !isGameboyColor else { return nil }
-        return [CoreAction(title: "Change Palette", options: nil)]
+        return [CoreAction(title: changePaletteLegacyActionTitle, options: nil)]
     }
 
     public func selected(action: CoreAction) {
         switch action.title {
-        case "Change Palette":
+        case changePaletteLegacyActionTitle:
             cycleToNextPalette()
         default:
             WLOG("Unknown action: \(action.title)")
@@ -92,7 +92,7 @@ extension PVGBEmulatorCore: PaletteProviding {
     public var availablePalettes: [CorePalette] {
         // GBC games don't use the DMG palette system.
         guard !isGameboyColor else { return [] }
-        return GBPalette.allCases.map(\.asCorepalette)
+        return GBPalette.allCases.map(\.asCorePalette)
     }
 
     public var currentPaletteID: String {

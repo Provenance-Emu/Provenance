@@ -7,6 +7,7 @@
 
 import Testing
 @testable import PVGambatte
+import PVGambatteOptions
 import PVCoreBridge
 
 // MARK: - PVGBEmulatorCore basic tests
@@ -15,7 +16,7 @@ struct PVGambatteTests {
 
     @Test func coreInitializes() async throws {
         let core = PVGBEmulatorCore()
-        #expect(core != nil)
+        #expect(core.systemIdentifier != nil, "Core should have a system identifier after init")
     }
 }
 
@@ -43,7 +44,7 @@ struct GBPaletteTests {
 
     @Test func corePaletteConversionPreservesData() {
         for p in GBPalette.allCases {
-            let cp = p.asCorepalette
+            let cp = p.asCorePalette
             #expect(cp.id == p.paletteID)
             #expect(cp.displayName == p.displayName)
             #expect(cp.colors.count == p.previewColors.count)

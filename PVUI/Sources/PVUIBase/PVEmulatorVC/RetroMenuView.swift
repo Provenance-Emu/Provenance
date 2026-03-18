@@ -504,7 +504,7 @@ struct RetroMenuView: View {
                !paletteCore.availablePalettes.isEmpty {
                 let currentName = paletteCore.currentPalette?.displayName ?? "–"
                 menuButton(
-                    title: String(localized: "PALETTE: \(currentName)"),
+                    title: "PALETTE: \(currentName)",
                     icon: "paintpalette",
                     color: .retroPurple
                 ) {
@@ -515,7 +515,7 @@ struct RetroMenuView: View {
             // Core action buttons (if available) - show first for prominence
             if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
                 let paletteActive = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
-                let visibleActions = paletteActive ? actions.filter { $0.title != "Change Palette" } : actions
+                let visibleActions = paletteActive ? actions.filter { $0.title != changePaletteLegacyActionTitle } : actions
                 ForEach(visibleActions) { coreAction in
                     menuButton(title: coreAction.title, icon: "bolt", color: .retroYellow) {
                         dismissAction(true)

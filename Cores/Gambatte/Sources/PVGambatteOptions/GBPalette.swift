@@ -93,7 +93,7 @@ extension GBPalette {
     }
 
     /// Converts this palette case to a ``CorePalette`` for use with ``PaletteProviding``.
-    public var asCorepalette: CorePalette {
+    public var asCorePalette: CorePalette {
         CorePalette(id: paletteID, displayName: displayName, colors: previewColors)
     }
 }

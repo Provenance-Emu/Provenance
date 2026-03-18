@@ -8,6 +8,12 @@
 
 import Foundation
 
+// MARK: - Constants
+
+/// The legacy `CoreAction` title used by cores that cycle palettes without `PaletteProviding`.
+/// UI layers filter out this action when a `PaletteProviding` picker is available.
+public let changePaletteLegacyActionTitle: String = "Change Palette"
+
 // MARK: - CorePalette
 
 /// A named palette with 2–4 preview colors shown as a swatch in the palette picker.
@@ -67,7 +73,7 @@ public struct PaletteColor: Sendable, Hashable {
 /// ## Example
 /// ```swift
 /// extension MyEmulatorCore: PaletteProviding {
-///     public var availablePalettes: [CorePalette] { MyPalette.allCases.map(\.asCorepalette) }
+///     public var availablePalettes: [CorePalette] { MyPalette.allCases.map(\.asCorePalette) }
 ///     public var currentPaletteID: String { displayMode.id }
 ///     public func selectPalette(id: String) {
 ///         guard let p = MyPalette.allCases.first(where: { $0.id == id }) else { return }

@@ -12,6 +12,9 @@
 import SwiftUI
 import PVCoreBridge
 import PVThemes
+#if os(iOS)
+import UIKit
+#endif
 
 // MARK: - PalettePickerView
 
@@ -28,15 +31,11 @@ struct PalettePickerView: View {
     /// Tracks the id of the currently-selected palette so the UI stays reactive.
     @State private var selectedID: String
 
-    @ObservedObject private var themeManager = ThemeManager.shared
-
     init(paletteCore: any PaletteProviding, onDismiss: @escaping () -> Void) {
         self.paletteCore = paletteCore
         self.onDismiss = onDismiss
         self._selectedID = State(initialValue: paletteCore.currentPaletteID)
     }
-
-    private var palette: UXThemePalette { themeManager.currentPalette }
 
     // MARK: - Grid layout
 
@@ -49,17 +48,19 @@ struct PalettePickerView: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(paletteCore.availablePalettes) { pal in
-                        PaletteSwatchView(
-                            palette: pal,
-                            isSelected: pal.id == selectedID
-                        )
-                        .onTapGesture {
+                        Button {
                             selectedID = pal.id
                             paletteCore.selectPalette(id: pal.id)
-                            #if !os(tvOS)
+                            #if os(iOS)
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             #endif
+                        } label: {
+                            PaletteSwatchView(
+                                palette: pal,
+                                isSelected: pal.id == selectedID
+                            )
                         }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(16)
