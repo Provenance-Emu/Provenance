@@ -37,6 +37,27 @@ public struct HardwareSwitchDescriptor: Identifiable, Sendable {
     }
 }
 
+// MARK: - Momentary Button Models
+
+/// A descriptor for a hardware momentary button — sends a press+release signal
+/// (not a latched toggle). Examples: SMS Pause/NMI, arcade Service button.
+public struct HardwareMomentaryDescriptor: Identifiable, Sendable {
+    public let id: String
+    /// Human-readable name shown under the button (e.g. "PAUSE", "SERVICE")
+    public let title: String
+    /// Short label displayed on the button face (e.g. "⏸", "⚙")
+    public let label: String
+    /// Button ID forwarded to the input handler on press
+    public let buttonId: String
+
+    public init(id: String, title: String, label: String, buttonId: String) {
+        self.id = id
+        self.title = title
+        self.label = label
+        self.buttonId = buttonId
+    }
+}
+
 // MARK: - Protocol
 
 /// Conforming button types declare the hardware switches available for their system.
@@ -44,6 +65,10 @@ public struct HardwareSwitchDescriptor: Identifiable, Sendable {
 public protocol HardwareSwitchProvider {
     /// Returns the hardware switch descriptors for this system, or `nil` if none.
     static var hardwareSwitches: [HardwareSwitchDescriptor]? { get }
+    /// Returns momentary hardware button descriptors for this system, or `nil` if none.
+    /// Momentary buttons (e.g. SMS Pause/NMI, arcade Service) send a press+release
+    /// edge rather than latching to an on/off state.
+    static var hardwareMomentaryButtons: [HardwareMomentaryDescriptor]? { get }
 }
 
 // MARK: - Default implementation for EmulatorCoreButton
@@ -51,4 +76,6 @@ public protocol HardwareSwitchProvider {
 public extension EmulatorCoreButton {
     /// By default, button types report no hardware switches.
     static var hardwareSwitches: [HardwareSwitchDescriptor]? { nil }
+    /// By default, button types report no momentary hardware buttons.
+    static var hardwareMomentaryButtons: [HardwareMomentaryDescriptor]? { nil }
 }

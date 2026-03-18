@@ -286,6 +286,31 @@ struct DefaultControllerSkinView: View {
                         }
                 }
 
+                // Hardware momentary buttons overlay (SMS Pause/NMI, arcade Service, etc.)
+                // Stacks below the toggle-switch row when both are present; otherwise sits
+                // at the standard top-trailing position.
+                if validSize, let sysId = systemId,
+                   let momentaryButtons = sysId.hardwareMomentaryButtons {
+                    let hasSwitches = sysId.hardwareSwitches != nil
+                    Color.clear
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .allowsHitTesting(false)
+                        .overlay(alignment: .topTrailing) {
+                            HardwareMomentaryRowView(
+                                buttons: momentaryButtons,
+                                onPress: { buttonId in
+                                    inputHandler.buttonPressed(buttonId)
+                                },
+                                onRelease: { buttonId in
+                                    inputHandler.buttonReleased(buttonId)
+                                }
+                            )
+                            // If toggle switches are also shown, push the row down to avoid overlap.
+                            .padding(.top, geometry.safeAreaInsets.top + (hasSwitches ? 52 : 8))
+                            .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
+                        }
+                }
+
                 // Virtual input quick-toggle buttons (keyboard / mouse) — top-leading corner.
                 // Only visible when the active core supports keyboard or mouse input.
                 // Not available on tvOS (virtual keyboard/mouse overlays are iOS-only).

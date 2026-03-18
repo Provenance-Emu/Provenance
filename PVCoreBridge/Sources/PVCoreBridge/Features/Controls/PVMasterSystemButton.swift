@@ -54,6 +54,26 @@
     }
 }
 
+// MARK: - Hardware momentary buttons
+
+/// The SMS Pause button is a physical button on the console (not the controller).
+/// It generates an NMI (Non-Maskable Interrupt) — a momentary edge signal, not a
+/// toggle. The `start` button ID is the standard mapping used by SMS emulator cores.
+extension PVMasterSystemButton: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? { nil }
+
+    public static var hardwareMomentaryButtons: [HardwareMomentaryDescriptor]? {
+        [
+            HardwareMomentaryDescriptor(
+                id: "sms_pause",
+                title: "PAUSE",
+                label: "⏸",
+                buttonId: "start"
+            )
+        ]
+    }
+}
+
 @objc public protocol PVMasterSystemSystemResponderClient: ResponderClient, ButtonResponder {
     @objc(didPushMasterSystemButton:forPlayer:)
     func didPush(_ button: PVMasterSystemButton, forPlayer player: Int)

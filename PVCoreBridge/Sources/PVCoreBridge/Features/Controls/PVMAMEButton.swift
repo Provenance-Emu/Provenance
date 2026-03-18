@@ -132,6 +132,30 @@
     }
 }
 
+// MARK: - Hardware momentary buttons
+
+/// MAME/FBNeo/CPS arcade systems expose a Service button that enters the in-game
+/// service/test menu. This is a momentary signal (not a toggle). Dip switches are
+/// game-specific and are configured inside the service menu — no system-level
+/// toggle descriptors are needed for arcade systems.
+///
+/// Note: the `service` buttonId is a forward declaration; arcade core bridges must
+/// handle this ID by mapping it to their service/test key (e.g. F2 in MAME).
+extension PVMAMEButton: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? { nil }
+
+    public static var hardwareMomentaryButtons: [HardwareMomentaryDescriptor]? {
+        [
+            HardwareMomentaryDescriptor(
+                id: "arcade_service",
+                title: "SERVICE",
+                label: "⚙",
+                buttonId: "service"
+            )
+        ]
+    }
+}
+
 @objc public protocol PVMAMESystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
     @objc(didPushMAMEButton:forPlayer:)
     func didPush(_ button: PVMAMEButton, forPlayer player: Int)

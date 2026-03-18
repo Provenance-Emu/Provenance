@@ -1,9 +1,10 @@
 // Hardware switch model types and per-system switch data live in PVCoreBridge:
 //   • HardwareSwitchPosition
 //   • HardwareSwitchDescriptor
-//   • HardwareSwitchProvider   (protocol)
+//   • HardwareMomentaryDescriptor
+//   • HardwareSwitchProvider   (protocol — covers both toggle and momentary)
 //
-// Systems with hardware switch support:
+// Systems with hardware TOGGLE switch support:
 //   Atari 2600  — Left Diff (A/B), Right Diff (A/B), TV Type (Color/BW)
 //   Atari 7800  — Left Diff (A/B), Right Diff (A/B), TV Type (Color/BW)
 //   Atari 5200  — TV Type (Color/BW)
@@ -13,7 +14,17 @@
 //   PC Engine CD                — Turbo I, Turbo II
 //   PC-FX / SuperGrafx          — Turbo I, Turbo II
 //
-// The entry point for the UI is SystemIdentifier.hardwareSwitches, which
-// dynamically resolves switches from the system's button type — no hardcoded
-// system-ID strings required.
+// Systems with hardware MOMENTARY button support:
+//   Sega Master System — PAUSE button (generates Z80 NMI, not a controller input)
+//   MAME / FBNeo / CPS — SERVICE button (enters in-game test/dip-switch menu)
+//     Note: Dip switches in arcade systems are game-specific; they live inside
+//     the service menu and do not require system-level toggle descriptors.
+//   NeoGeo / Geolith   — No hardware switches on AES consumer hardware;
+//     MVS dip switches are game-specific and accessed via the service menu.
+//
+// The entry points for the UI are:
+//   SystemIdentifier.hardwareSwitches        → toggle switch row
+//   SystemIdentifier.hardwareMomentaryButtons → momentary button row
+// Both resolve dynamically from the system's button type — no hardcoded system-ID
+// strings required.
 @_exported import PVCoreBridge
