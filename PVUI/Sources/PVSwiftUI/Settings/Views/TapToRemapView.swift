@@ -132,14 +132,20 @@ struct TapToRemapView: View {
         // Save the existing handler so it can be restored when this view is done.
         previousValueChangedHandler = gamepad.valueChangedHandler
 
-        gamepad.valueChangedHandler = { _, element in
+        // GCExtendedGamepad.valueChangedHandler fires on a background thread.
+        // Capture wrapper weakly to avoid retaining it beyond its useful lifetime.
+        // All @MainActor-isolated state mutations (isListening, stopListening, detectedButton)
+        // are dispatched to the main actor via Task { @MainActor in }.
+        gamepad.valueChangedHandler = { [weak wrapper] _, element in
             // Only respond to button presses (not releases or axis movement).
             guard let button = element as? GCControllerButtonInput, button.isPressed else { return }
-            guard let identifier = wrapper.buttonIdentifier(for: element) else { return }
-            // Ignore the menu button — it's reserved for system navigation.
-            guard identifier != .menu else { return }
 
             Task { @MainActor in
+                // Resolve the identifier on the main actor to keep all wrapper access
+                // and @State mutations on the same actor.
+                guard let identifier = wrapper?.buttonIdentifier(for: element) else { return }
+                // Ignore the menu button — it's reserved for system navigation.
+                guard identifier != .menu else { return }
                 guard isListening else { return }
                 stopListening()
                 detectedButton = identifier
@@ -159,46 +165,3 @@ struct TapToRemapView: View {
     }
 }
 
-// MARK: - ButtonIdentifier display name
-
-extension ButtonIdentifier {
-    /// Human-readable display name for use in UI labels.
-    public var displayName: String {
-        switch self {
-        case .buttonA: return "A"
-        case .buttonB: return "B"
-        case .buttonX: return "X"
-        case .buttonY: return "Y"
-        case .leftShoulder: return "L1"
-        case .rightShoulder: return "R1"
-        case .leftTrigger: return "L2"
-        case .rightTrigger: return "R2"
-        case .dpadUp: return "D-Pad Up"
-        case .dpadDown: return "D-Pad Down"
-        case .dpadLeft: return "D-Pad Left"
-        case .dpadRight: return "D-Pad Right"
-        case .menu: return "Menu"
-        case .options: return "Options"
-        case .home: return "Home"
-        case .leftThumbstickButton: return "L3"
-        case .rightThumbstickButton: return "R3"
-        case .share: return "Share"
-        case .touchpad: return "Touchpad"
-        case .touchpadButton: return "Touchpad Button"
-        case .micButton: return "Mic"
-        case .createButton: return "Create"
-        case .paddleOne: return "Paddle 1"
-        case .paddleTwo: return "Paddle 2"
-        case .paddleThree: return "Paddle 3"
-        case .paddleFour: return "Paddle 4"
-        case .shareButton: return "Share"
-        case .capture: return "Capture"
-        case .plusButton: return "+"
-        case .minusButton: return "−"
-        case .leftSL: return "Left SL"
-        case .leftSR: return "Left SR"
-        case .rightSL: return "Right SL"
-        case .rightSR: return "Right SR"
-        }
-    }
-}

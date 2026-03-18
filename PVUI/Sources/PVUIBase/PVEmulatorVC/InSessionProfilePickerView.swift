@@ -87,6 +87,12 @@ struct InSessionProfilePickerView: View {
             #endif
         }
         .onAppear(perform: loadEntries)
+        #if os(tvOS)
+        // On tvOS there is no navigation-bar Done button.  The Menu button on the
+        // Siri Remote is the standard way to dismiss a sheet; wire it to onDismiss
+        // so pressing Menu exits cleanly instead of potentially doing nothing.
+        .onExitCommand { onDismiss() }
+        #endif
         .alert("Error", isPresented: $showError) {
             Button("OK", role: .cancel) {}
         } message: {
