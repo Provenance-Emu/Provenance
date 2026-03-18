@@ -1982,8 +1982,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 let gameMD5 = game.md5Hash
                 let gameTitle = game.title
                 try await withRealm { realm in
-                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5?.uppercased() ?? "") else {
-                        ELOG("Game \(gameMD5 ?? "nil") was invalidated during artwork URL update.")
+                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5.uppercased()) else {
+                        ELOG("Game \(gameMD5) was invalidated during artwork URL update.")
                         return
                     }
                     try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
