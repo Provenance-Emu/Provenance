@@ -268,22 +268,22 @@ struct DefaultControllerSkinView: View {
                 // and don't block the game screen.
                 if validSize, let sysId = systemId,
                    let switches = sysId.hardwareSwitches {
-                    // Use a transparent non-interactive base so only the switch row
-                    // itself receives gestures — not the surrounding empty space.
-                    Color.clear
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .allowsHitTesting(false)
-                        .overlay(alignment: .topTrailing) {
-                            HardwareSwitchRowView(switches: switches) { buttonId, _ in
-                                // Send a momentary press+release so the core registers the edge.
-                                inputHandler.buttonPressed(buttonId)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                                    inputHandler.buttonReleased(buttonId)
-                                }
+                    // ZStack approach: the transparent backdrop is non-interactive, but the
+                    // switch row itself sits as a separate ZStack child so it receives gestures.
+                    ZStack(alignment: .topTrailing) {
+                        Color.clear
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .allowsHitTesting(false)
+                        HardwareSwitchRowView(switches: switches) { buttonId, _ in
+                            // Send a momentary press+release so the core registers the edge.
+                            inputHandler.buttonPressed(buttonId)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                inputHandler.buttonReleased(buttonId)
                             }
-                            .padding(.top, geometry.safeAreaInsets.top + 8)
-                            .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
                         }
+                        .padding(.top, geometry.safeAreaInsets.top + 8)
+                        .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
+                    }
                 }
 
                 // Hardware momentary buttons overlay (SMS Pause/NMI, arcade Service, etc.)
@@ -292,23 +292,23 @@ struct DefaultControllerSkinView: View {
                 if validSize, let sysId = systemId,
                    let momentaryButtons = sysId.hardwareMomentaryButtons {
                     let hasSwitches = sysId.hardwareSwitches != nil
-                    Color.clear
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .allowsHitTesting(false)
-                        .overlay(alignment: .topTrailing) {
-                            HardwareMomentaryRowView(
-                                buttons: momentaryButtons,
-                                onPress: { buttonId in
-                                    inputHandler.buttonPressed(buttonId)
-                                },
-                                onRelease: { buttonId in
-                                    inputHandler.buttonReleased(buttonId)
-                                }
-                            )
-                            // If toggle switches are also shown, push the row down to avoid overlap.
-                            .padding(.top, geometry.safeAreaInsets.top + (hasSwitches ? 52 : 8))
-                            .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
-                        }
+                    ZStack(alignment: .topTrailing) {
+                        Color.clear
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .allowsHitTesting(false)
+                        HardwareMomentaryRowView(
+                            buttons: momentaryButtons,
+                            onPress: { buttonId in
+                                inputHandler.buttonPressed(buttonId)
+                            },
+                            onRelease: { buttonId in
+                                inputHandler.buttonReleased(buttonId)
+                            }
+                        )
+                        // If toggle switches are also shown, push the row down to avoid overlap.
+                        .padding(.top, geometry.safeAreaInsets.top + (hasSwitches ? 52 : 8))
+                        .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
+                    }
                 }
 
                 // Virtual input quick-toggle buttons (keyboard / mouse) — top-leading corner.

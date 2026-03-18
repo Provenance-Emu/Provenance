@@ -185,7 +185,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var buttonsVisible = false
 
     // MARK: - Hardware Switch Overlay
-    private var hardwareSwitchHostingVC: UIViewController?
+    private var hardwareSwitchHostingVC: UIHostingController<HardwareSwitchRowView>?
 
     // MARK: - Quick Action Buttons
     private var quickSaveButton: UIButton?
@@ -544,7 +544,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     /// (e.g. Atari difficulty / TV-type switches).  The overlay is positioned
     /// at the top-trailing corner so it doesn't obstruct the controller buttons.
     private func addHardwareSwitchOverlayIfNeeded() {
-        guard let switches = hardwareSwitches(for: system.identifier), !switches.isEmpty else { return }
+        guard let switches = system.systemIdentifier.hardwareSwitches, !switches.isEmpty else { return }
 
         let switchRow = HardwareSwitchRowView(switches: switches) { [weak self] buttonId, _ in
             self?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)

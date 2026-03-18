@@ -162,13 +162,32 @@ struct HardwareSwitchRowView: View {
 
 #if DEBUG
 #Preview("Hardware Switches") {
-    VStack(spacing: 20) {
-        HardwareSwitchRowView(
-            switches: atari2600Switches(),
-            onToggle: { id, on in print("Toggle: \(id) -> \(on)") }
+    let switches: [HardwareSwitchDescriptor] = [
+        HardwareSwitchDescriptor(
+            id: "leftDiff",
+            title: "Left Diff",
+            offPosition: HardwareSwitchPosition(label: "B", buttonId: "leftdiff_b"),
+            onPosition: HardwareSwitchPosition(label: "A", buttonId: "leftdiff_a"),
+            defaultState: false
+        ),
+        HardwareSwitchDescriptor(
+            id: "rightDiff",
+            title: "Right Diff",
+            offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiff_b"),
+            onPosition: HardwareSwitchPosition(label: "A", buttonId: "rightdiff_a"),
+            defaultState: false
+        ),
+        HardwareSwitchDescriptor(
+            id: "colorBW",
+            title: "TV Type",
+            offPosition: HardwareSwitchPosition(label: "BW", buttonId: "colorbw_bw"),
+            onPosition: HardwareSwitchPosition(label: "Color", buttonId: "colorbw_color"),
+            defaultState: true
         )
+    ]
+    return VStack(spacing: 20) {
         HardwareSwitchRowView(
-            switches: atari7800Switches(),
+            switches: switches,
             onToggle: { id, on in print("Toggle: \(id) -> \(on)") }
         )
     }
