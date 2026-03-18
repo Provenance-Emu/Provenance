@@ -10,8 +10,11 @@ import Foundation
 import UIKit
 import SwiftUI
 import GameController
+import PVCoreBridge
+import PVFeatureFlags
 import PVLogging
 import PVLibrary
+import PVPrimitives
 import PVFileSystem
 import PVRealm
 import PVSettings
@@ -48,6 +51,11 @@ public class SceneCoordinator: ObservableObject {
 
     // Navigation stack for multi-step alert flows (core selection, save selection, etc.)
     @Published public var alertNavigationStack = RetroAlertNavigationStack()
+
+    // Pre-launch Transfer Pak setup sheet.
+    // preLaunchTransferPakGame is the single source of truth: non-nil shows the sheet, nil hides it.
+    @Published public var preLaunchTransferPakGame: PVGame? = nil
+    private var _preLaunchContinuation: CheckedContinuation<Void, Never>? = nil
 
     public enum Scenes {
         case main
@@ -376,6 +384,10 @@ public class SceneCoordinator: ObservableObject {
 
             // Load per-game / per-system controller profiles for all connected controllers.
             loadControllerProfiles(for: currentGame, core: core)
+
+            // Show pre-launch Transfer Pak setup sheet for known N64 Transfer Pak titles
+            // when the feature is enabled and no slots have been configured yet.
+            await maybePromptTransferPakSetup(for: currentGame)
 
             // Open the emulator scene - errors will be handled by PVEmulatorViewController
             openEmulatorScene()
@@ -953,6 +965,43 @@ public class SceneCoordinator: ObservableObject {
                 message: "Could not prepare the game for launch. This may be due to:\n\n• Missing or corrupted game file\n• Core not available or failed to load\n• Insufficient memory\n\nTry restarting the app, or remove and re-import the game if the problem persists."
             )
         }
+    }
+
+    // MARK: - Transfer Pak Pre-Launch Setup
+
+    /// Shows the Transfer Pak configuration sheet before launching an N64 game if:
+    ///   - The `mupenTransferPak` feature flag is enabled
+    ///   - The game is an N64 title known to use the Transfer Pak
+    ///   - No Transfer Pak slots are currently configured for this game
+    ///
+    /// Awaits until the user taps "Skip & Launch", "Launch Game", or swipes to dismiss.
+    private func maybePromptTransferPakSetup(for game: PVGame) async {
+        guard PVFeatureFlagsManager.shared.isEnabled(.mupenTransferPak),
+              SystemIdentifier(rawValue: game.systemIdentifier) == .N64,
+              TransferPakCompatibleGames.isKnownTransferPakGame(game.title)
+        else { return }
+
+        // Don't re-prompt once the user has configured at least one slot.
+        let md5 = game.md5Hash
+        let alreadyConfigured = await Task.detached(priority: .userInitiated) {
+            (0..<4).contains { TransferPakStore.romPath(forGameMD5: md5, port: $0) != nil }
+        }.value
+        guard !alreadyConfigured else { return }
+
+        ILOG("SceneCoordinator: Showing pre-launch Transfer Pak setup for \(game.title)")
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            _preLaunchContinuation = continuation
+            preLaunchTransferPakGame = game
+        }
+    }
+
+    /// Called when the pre-launch Transfer Pak sheet is dismissed (button tap or swipe).
+    /// Safe to call multiple times — second call is a no-op.
+    public func dismissPreLaunchTransferPak() {
+        preLaunchTransferPakGame = nil
+        let cont = _preLaunchContinuation
+        _preLaunchContinuation = nil
+        cont?.resume()
     }
 
     /// Show error alert for game launch failures and return to main scene
