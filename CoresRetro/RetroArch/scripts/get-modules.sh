@@ -53,8 +53,8 @@ STORED_PIN=""
 if [ -f "${CORES_ARCHIVE_DIR}/pinned_date.txt" ]; then
 	STORED_PIN=$(cat "${CORES_ARCHIVE_DIR}/pinned_date.txt")
 fi
-if [ -n "${PINNED_DATE}" ] && [ "${PINNED_DATE}" != "${STORED_PIN}" ]; then
-	echo "GetModule: pin changed (${STORED_PIN:-none} -> ${PINNED_DATE}), clearing cached archives and dylibs"
+if [ "${PINNED_DATE}" != "${STORED_PIN}" ] && { [ -n "${PINNED_DATE}" ] || [ -n "${STORED_PIN}" ]; }; then
+	echo "GetModule: pin changed (${STORED_PIN:-none} -> ${PINNED_DATE:-latest}), clearing cached archives and dylibs"
 	PIN_CHANGED=1
 	rm -f "${CORES_ARCHIVE_DIR}/timestamp.txt"
 fi
@@ -75,7 +75,10 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 fi
 # Use -o (overwrite) when the pin just changed so stale dylibs are replaced;
 # use -n (never overwrite) otherwise for faster incremental builds.
+# When the pin changed, also purge existing dylibs so cores dropped from the
+# new snapshot are not left behind (unzip -o only overwrites, never deletes).
 if [ "${PIN_CHANGED}" = "1" ]; then
+	rm -f "${CORES_DIR}/"*.dylib
 	echo $(find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';')
 else
 	echo $(find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';')

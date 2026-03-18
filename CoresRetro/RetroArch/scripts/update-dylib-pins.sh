@@ -30,6 +30,13 @@ if ! echo "${NEW_DATE}" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
     exit 1
 fi
 
+# Verify an uncommented pinned_date: key exists before attempting substitution.
+if ! grep -v '^[[:space:]]*#' "${CORES_YML}" | grep -qE '^[[:space:]]*pinned_date:'; then
+    echo "Error: no uncommented 'pinned_date:' key found in ${CORES_YML}." >&2
+    echo "  Add 'pinned_date: \"\"' under the 'buildbot:' section first." >&2
+    exit 1
+fi
+
 # Replace the pinned_date value in cores.yml.
 # The address pattern ^[[:space:]]*pinned_date: anchors to line-start whitespace
 # so comment lines (# pinned_date: ...) are never touched.
