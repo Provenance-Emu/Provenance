@@ -323,6 +323,9 @@ typedef struct PVThinLibretroSymbols {
     GLuint _emuFBO;
     GLuint _emuColorTex;
     GLuint _emuDepthRB;
+    /// YES after startRenderingOnAlternateThread has been called on the render delegate.
+    /// Used to avoid calling it more than once per session.
+    BOOL _renderDelegateStarted;
 #endif
 
     // Vulkan state (when using MoltenVK via dlopen)
@@ -2478,6 +2481,22 @@ static bool thin_environment(unsigned cmd, void *data) {
         [self.frontendDelegate libretroFrontend:self didRenderBuffer:data width:w height:h pitch:pitch];
         return;
     }
+
+    // RETRO_HW_FRAME_BUFFER_VALID == (void*)-1 means the core has rendered
+    // into our FBO (_emuFBO / _ioSurface). Flush GL and notify the Metal
+    // presenter so it can blit the IOSurface-backed texture to the display.
+    if (data == (const void *)(uintptr_t)-1) {
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+        // Flush so the GPU writes are visible to the Metal consumer.
+        glFlush();
+#endif
+        id renderDelegate = self.renderDelegate;
+        if ([renderDelegate respondsToSelector:@selector(didRenderFrameOnAlternateThread)]) {
+            [renderDelegate didRenderFrameOnAlternateThread];
+        }
+        return;
+    }
+
     if (!data || !_videoBufferData) return;
     NSUInteger maxW = (_rawAVInfo.geometry.max_width  ?: w);
     NSUInteger bpp  = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
@@ -2902,6 +2921,17 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (BOOL)usesHardwareRendering {
     return _hwRenderRequested;
+}
+
+/// Returns YES when a HW-render core is loaded so PVMetalViewController
+/// uses the OpenGL rendering path (IOSurface + didRenderFrameOnAlternateThread)
+/// instead of the software buffer upload path.
+- (BOOL)rendersToOpenGL {
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    return _hwRenderRequested;
+#else
+    return NO;
+#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -3759,6 +3789,38 @@ static bool thin_environment(unsigned cmd, void *data) {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     if (!_glContext || !_hwRenderRequested) return;
 
+    // --- Step 1: obtain (or create) the shared IOSurface ---
+    //
+    // Preferred path: ask the render delegate (PVMetalViewController) to create
+    // the IOSurface-backed Metal texture via startRenderingOnAlternateThread.
+    // That gives us a zero-copy path: the core renders into the IOSurface via GL,
+    // and the Metal presenter reads the same IOSurface without any CPU blit.
+    //
+    // If the render delegate doesn't support this protocol we fall back to
+    // creating a private IOSurface (display won't work until the delegate is
+    // upgraded, but at least context_reset fires and the core runs).
+    IOSurfaceRef delegateSurface = NULL;
+
+    id renderDelegate = self.renderDelegate;
+    if (!_renderDelegateStarted
+        && [renderDelegate respondsToSelector:@selector(startRenderingOnAlternateThread)]) {
+        // startRenderingOnAlternateThread may set a different GL context current.
+        // Save/restore so we keep _glContext active on the emulation thread.
+        EAGLContext *savedContext = [EAGLContext currentContext];
+        [renderDelegate startRenderingOnAlternateThread];
+        [EAGLContext setCurrentContext:savedContext];
+        _renderDelegateStarted = YES;
+        ILOG(@"ThinFrontend: called startRenderingOnAlternateThread on render delegate");
+    }
+
+    if ([renderDelegate conformsToProtocol:@protocol(PVRenderDelegateIOSurface)]) {
+        id<PVRenderDelegateIOSurface> ioDelegate = (id<PVRenderDelegateIOSurface>)renderDelegate;
+        if ([ioDelegate respondsToSelector:@selector(renderIOSurface)]) {
+            delegateSurface = [ioDelegate renderIOSurface];
+        }
+    }
+
+    // --- Step 2: set up the emu-thread GL context ---
     [EAGLContext setCurrentContext:_glContext];
 
     // Release any previously-allocated GL objects and IOSurface before recreating
@@ -3768,17 +3830,29 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_emuDepthRB) { glDeleteRenderbuffers(1, &_emuDepthRB); _emuDepthRB = 0; }
     if (_ioSurface) { CFRelease(_ioSurface); _ioSurface = NULL; }
 
-    // Create an IOSurface-backed texture so the render delegate can read the
-    // frame without a GPU readback.
-    NSDictionary *props = @{
-        (id)kIOSurfaceWidth:             @(w),
-        (id)kIOSurfaceHeight:            @(h),
-        (id)kIOSurfaceBytesPerElement:   @4,
-        (id)kIOSurfacePixelFormat:       @(kCVPixelFormatType_32BGRA),
-    };
-    _ioSurface = IOSurfaceCreate((CFDictionaryRef)props);
+    // --- Step 3: get (or create) the IOSurface ---
+    if (delegateSurface) {
+        // Zero-copy path: reuse the render delegate's IOSurface so the
+        // Metal presenter can display our rendered frames without a copy.
+        _ioSurface = delegateSurface;
+        CFRetain(_ioSurface);
+        ILOG(@"ThinFrontend: using render delegate IOSurface (%zux%zu)",
+             IOSurfaceGetWidth(_ioSurface), IOSurfaceGetHeight(_ioSurface));
+    } else {
+        // Fallback: create a private IOSurface.
+        // Frames will render correctly but won't reach the display until
+        // the render delegate is updated to expose an IOSurface.
+        NSDictionary *props = @{
+            (id)kIOSurfaceWidth:             @(w),
+            (id)kIOSurfaceHeight:            @(h),
+            (id)kIOSurfaceBytesPerElement:   @4,
+            (id)kIOSurfacePixelFormat:       @(kCVPixelFormatType_32BGRA),
+        };
+        _ioSurface = IOSurfaceCreate((CFDictionaryRef)props);
+        WLOG(@"ThinFrontend: render delegate has no IOSurface — created private surface (frames won't display)");
+    }
     if (!_ioSurface) {
-        ELOG(@"ThinFrontend: IOSurfaceCreate failed");
+        ELOG(@"ThinFrontend: IOSurface unavailable — aborting FBO setup");
         return;
     }
 
@@ -4158,6 +4232,9 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
         [self destroyVulkanContext];
         _hwRenderRequested = NO;
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+        _renderDelegateStarted = NO;
+#endif
         memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
         return;
     }
@@ -4174,6 +4251,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_ioSurface) { CFRelease(_ioSurface); _ioSurface = NULL; }
     _glContext      = nil;
     _glShareContext = nil;
+    _renderDelegateStarted = NO;
 #endif
     _hwRenderRequested = NO;
     memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
