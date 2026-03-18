@@ -186,7 +186,6 @@ public struct CoreOptionsDetailView: View {
     /// MD5 hash of the current game. When non-nil a scope picker is shown and
     /// writes/reads default to the per-game key.
     let gameMD5: String?
-    @StateObject private var viewModel = CoreOptionsViewModel()
     @StateObject private var state = CoreOptionsState()
     @ObservedObject private var themeManager = ThemeManager.shared
 
