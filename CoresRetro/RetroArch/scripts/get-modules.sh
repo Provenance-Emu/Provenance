@@ -42,6 +42,15 @@ if [ -n "${PINNED_DATE}" ]; then
 fi
 
 if [ -n "${PINNED_DATE}" ]; then
+	# Warn when the pin is more than 30 days old so developers know to bump it.
+	# Uses only POSIX date math — seconds since epoch — for macOS/BSD compatibility.
+	PIN_EPOCH=$(date -j -f '%Y-%m-%d' "${PINNED_DATE}" '+%s' 2>/dev/null || date -d "${PINNED_DATE}" '+%s' 2>/dev/null || echo 0)
+	NOW_EPOCH=$(date +%s)
+	PIN_AGE_DAYS=$(( (NOW_EPOCH - PIN_EPOCH) / 86400 ))
+	if [ "${PIN_AGE_DAYS}" -gt 30 ] 2>/dev/null; then
+		echo "GetModule: ⚠️  WARNING — pinned_date ${PINNED_DATE} is ${PIN_AGE_DAYS} days old." >&2
+		echo "GetModule: ⚠️  Run 'CoresRetro/RetroArch/scripts/check-dylib-updates.sh --update' to pull the latest snapshot." >&2
+	fi
 	echo "GetModule: using pinned buildbot date ${PINNED_DATE} (update via update-dylib-pins.sh)"
 	EFFECTIVE_MODULE_LIST="${CORES_ARCHIVE_DIR}/urls_pinned.txt"
 	mkdir -p "${CORES_ARCHIVE_DIR}"
