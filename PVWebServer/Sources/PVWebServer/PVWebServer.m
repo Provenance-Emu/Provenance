@@ -83,15 +83,30 @@ NSUInteger webDavPort = 81;
         _currentUploadFileSize = 0;
         _currentUploadBytesTransferred = 0;
 #if TARGET_OS_TV
-        NSString* importsFolder = self.documentsDirectory;
+        NSString* documentsFolder = self.documentsDirectory;
 #else
-        NSString* importsFolder = /*self.appGroupDocumentsDirectory ?:*/ self.documentsDirectory;
+        NSString* documentsFolder = /*self.appGroupDocumentsDirectory ?:*/ self.documentsDirectory;
 #endif
-        self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory:importsFolder ];
+
+        // Ensure the Imports directory exists so the web UI can open it by default
+        NSString* importsFolder = [documentsFolder stringByAppendingPathComponent:@"Imports"];
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:importsFolder]) {
+            NSError* error = nil;
+            [fileManager createDirectoryAtPath:importsFolder
+                   withIntermediateDirectories:YES
+                                    attributes:nil
+                                         error:&error];
+            if (error) {
+                NSLog(@"Error creating Imports directory: %@", error.localizedDescription);
+            }
+        }
+
+        self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory:documentsFolder];
         self.webServer.delegate = self;
         self.webServer.allowHiddenItems = NO;
 
-        self.webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:importsFolder];
+        self.webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:documentsFolder];
         self.webDavServer.delegate = self;
         self.webDavServer.allowHiddenItems = NO;
     }

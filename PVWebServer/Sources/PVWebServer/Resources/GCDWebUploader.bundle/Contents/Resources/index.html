@@ -1,7 +1,7 @@
 <!--
  Copyright (c) 2012-2015, Pierre-Olivier Latour
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  * The name of Pierre-Olivier Latour may not be used to endorse
  or promote products derived from this software without specific
  prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -53,48 +53,82 @@
     <script type="text/javascript" src="js/index.js"></script>
   </head>
   <body>
-    
+
     <div class="container">
-      
-      <div class="page-header">
-        <h1>%header%</h1>
+
+      <div class="pv-header">
+        <div class="pv-logo">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="8" fill="#4A90D9"/>
+            <path d="M10 12h12c3.3 0 6 2.7 6 6s-2.7 6-6 6h-6v6h-6V12z" fill="white"/>
+            <path d="M16 17v4h6c1.1 0 2-.9 2-2s-.9-2-2-2h-6z" fill="#4A90D9"/>
+          </svg>
+        </div>
+        <div class="pv-title-group">
+          <h1>%header%</h1>
+          <p class="pv-subtitle">File Manager &mdash; %device%</p>
+        </div>
       </div>
-      
+
       %prologue%
-      
+
       <div id="alerts"></div>
-      
+
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-zone-content">
+          <svg class="drop-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <p class="drop-text">Drag & drop files here to upload</p>
+          <p class="drop-subtext">or use the Upload button below</p>
+        </div>
+      </div>
+
       <div class="btn-toolbar">
         <button type="button" class="btn btn-primary fileinput-button" id="upload-file">
-          <span class="glyphicon glyphicon-upload"></span> Upload Files&hellip;
+          <span class="glyphicon glyphicon-upload"></span> Upload Files
           <input id="fileupload" type="file" name="files[]" multiple>
         </button>
         <button type="button" class="btn btn-success" id="create-folder">
-          <span class="glyphicon glyphicon-folder-close"></span> Create Folder&hellip;
+          <span class="glyphicon glyphicon-folder-close"></span> New Folder
         </button>
         <button type="button" class="btn btn-default" id="reload">
-          <span class="glyphicon glyphicon-refresh"></span><!-- Refresh-->
+          <span class="glyphicon glyphicon-refresh"></span>
         </button>
       </div>
-      
+
       <div class="panel panel-default uploading">
         <div class="panel-heading">File Uploads in Progress</div>
         <table class="table table-striped"><tbody id="uploads"></tbody></table>
       </div>
-      
+
+      <div id="quick-nav" class="quick-nav">
+        <span class="quick-nav-label">Quick Access:</span>
+        <button type="button" class="btn btn-sm btn-quick-nav" data-path="/Imports/">Imports</button>
+        <button type="button" class="btn btn-sm btn-quick-nav" data-path="/ROMs/">ROMs</button>
+        <button type="button" class="btn btn-sm btn-quick-nav" data-path="/BIOS/">BIOS</button>
+        <button type="button" class="btn btn-sm btn-quick-nav" data-path="/Save States/">Save States</button>
+        <button type="button" class="btn btn-sm btn-quick-nav" data-path="/">All Files</button>
+      </div>
+
       <div class="panel panel-default">
         <div class="panel-heading">
           <ol class="breadcrumb" id="path"></ol>
         </div>
         <table class="table table-striped"><tbody id="listing"></tbody></table>
+        <div id="empty-listing" class="empty-listing" style="display:none;">
+          <p>This folder is empty. Upload files using the button above or drag & drop.</p>
+        </div>
       </div>
-      
+
       %epilogue%
-      
+
       <p class="footer">%footer%</p>
-      
+
     </div>
-    
+
     <div class="modal fade" id="create-modal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -115,7 +149,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="modal fade" id="move-modal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -136,16 +170,16 @@
         </div>
       </div>
     </div>
-    
+
     <script type="text/x-tmpl" id="template-listing">
       <tr class="row-file">
         <td class="column-icon">
           {% if (o.size != null) { %}
-            <button type="button" class="btn btn-default btn-xs button-download">
+            <button type="button" class="btn btn-default btn-xs button-download" title="Download">
               <span class="glyphicon glyphicon-download-alt"></span>
             </button>
           {% } else { %}
-            <button type="button" class="btn btn-default btn-xs button-open">
+            <button type="button" class="btn btn-default btn-xs button-open" title="Open folder">
               <span class="glyphicon glyphicon-folder-open"></span>
             </button>
           {% } %}
@@ -157,22 +191,22 @@
           {% } %}
         </td>
         <td class="column-move">
-          <button type="button" class="btn btn-default btn-xs button-move">
+          <button type="button" class="btn btn-default btn-xs button-move" title="Move">
             <span class="glyphicon glyphicon glyphicon-share-alt"></span>
           </button>
         </td>
         <td class="column-delete">
-          <button type="button" class="btn btn-danger btn-xs button-delete">
+          <button type="button" class="btn btn-danger btn-xs button-delete" title="Delete">
             <span class="glyphicon glyphicon-trash"></span>
           </button>
         </td>
       </tr>
     </script>
-    
+
     <script type="text/x-tmpl" id="template-uploads">
       <tr class="row-file">
         <td class="column-icon">
-          <button type="button" class="btn btn-warning btn-xs button-cancel">
+          <button type="button" class="btn btn-warning btn-xs button-cancel" title="Cancel upload">
             <span class="glyphicon glyphicon-ban-circle"></span>
           </button>
         </td>
@@ -181,16 +215,16 @@
           <div class="progress">
             <div class="progress-bar" id="progress-bar"></div>
           </div>
-        </ts>
+        </td>
       </tr>
     </script>
-    
+
     <script type="text/x-tmpl" id="template-alert">
       <div class="alert alert-{%=o.level%} alert-dismissable">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         <strong>{%=o.title%}</strong>{%=o.description%}
       </div>
     </script>
-    
+
   </body>
 </html>
