@@ -45,7 +45,11 @@ public struct GameEntity: AppEntity {
 
     /// Deep-link URL that opens this game in the main app.
     public var deepLinkURL: URL {
-        URL(string: "provenance://open?md5=\(id)") ?? URL(string: "provenance://")!
+        var components = URLComponents()
+        components.scheme = "provenance"
+        components.host = "open"
+        components.queryItems = [URLQueryItem(name: "md5", value: id)]
+        return components.url ?? URL(string: "provenance://")!
     }
 
     // MARK: - AppEntity Display Representation

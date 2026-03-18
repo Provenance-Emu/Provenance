@@ -43,7 +43,14 @@ public struct SaveStateEntity: AppEntity {
     /// Deep-link URL that opens the game and loads this save state.
     /// The main app handles `loadSaveState` by looking up via the save state `id`.
     public var deepLinkURL: URL {
-        URL(string: "provenance://open?md5=\(gameMD5)&saveStateId=\(id)") ?? URL(string: "provenance://")!
+        var components = URLComponents()
+        components.scheme = "provenance"
+        components.host = "open"
+        components.queryItems = [
+            URLQueryItem(name: "md5", value: gameMD5),
+            URLQueryItem(name: "saveStateId", value: id)
+        ]
+        return components.url ?? URL(string: "provenance://")!
     }
 
     // MARK: - AppEntity Display Representation
