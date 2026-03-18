@@ -15,8 +15,9 @@ import PVCoreBridge
 ///
 /// Each action becomes an orange bolt-icon tile. Actions where `requiresReset` is `true`
 /// display a ⚠︎ warning badge so users know emulation will reset.
-/// Actions whose `options` array is non-nil expose a long-press context menu so users
-/// can select from the available options without leaving the pause overlay.
+/// Actions whose `options` array is non-nil show a confirmation picker on tap AND expose
+/// a long-press context menu, so users can select from the available options without
+/// leaving the pause overlay.
 public struct CoreActionTileProvider {
 
     private init() {}
@@ -137,12 +138,12 @@ public struct CoreOptionTileProvider {
                 // valueForOption -> Int? is safe for enumeration; non-optional crashes if defaultValue isn't Int.
                 let currentIndex: Int = (coreClass.valueForOption(option) as Int?) ?? defaultValue
                 let matchedEnum = values.first(where: { $0.value == currentIndex })
-                let currentLabel = matchedEnum?.description ?? matchedEnum?.title ?? values.first?.title ?? "–"
+                let currentLabel = matchedEnum?.title ?? values.first?.title ?? "–"
                 // Long-press shows all choices; tap cycles to next.
                 let lpOptions = values.map { v in
                     PauseMenuTileLongPressOption(
                         id: "\(display.title)_\(v.value)",
-                        title: v.description ?? v.title,
+                        title: v.title,
                         isSelected: v.value == currentIndex
                     )
                 }
@@ -272,7 +273,7 @@ public struct CoreOptionTileProvider {
     ) {
         switch option {
         case let .enumeration(_, values, _, _):
-            if let match = values.first(where: { ($0.description ?? $0.title) == title }) {
+            if let match = values.first(where: { $0.title == title }) {
                 coreClass.setValue(match.value, forOption: option, andMD5: coreClass.currentGameMD5)
             }
         case let .multi(_, values, _):

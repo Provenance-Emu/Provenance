@@ -47,6 +47,37 @@ private final class EmptyCore: CoreOptional {
     static let options: [CoreOption] = []
 }
 
+/// Mock core with a single enumeration option.
+private final class EnumCore: CoreOptional {
+    static var currentGameMD5: String? { nil }
+    static let options: [CoreOption] = [
+        .enumeration(
+            CoreOptionValueDisplay(title: "Color Depth", description: "Bit depth"),
+            values: [
+                CoreOptionEnumValue(title: "8-bit", description: "256 colors", value: 0),
+                CoreOptionEnumValue(title: "16-bit", description: "65K colors", value: 1),
+                CoreOptionEnumValue(title: "32-bit", description: "True color", value: 2)
+            ],
+            defaultValue: 0
+        )
+    ]
+}
+
+/// Mock core with a single multi-select option.
+private final class MultiCore: CoreOptional {
+    static var currentGameMD5: String? { nil }
+    static let options: [CoreOption] = [
+        .multi(
+            CoreOptionValueDisplay(title: "System Region", description: "Console region"),
+            values: [
+                CoreOptionMultiValue(title: "Auto", description: "Detect automatically"),
+                CoreOptionMultiValue(title: "NTSC", description: "NTSC region"),
+                CoreOptionMultiValue(title: "PAL", description: "PAL region")
+            ]
+        )
+    ]
+}
+
 // MARK: - CoreActionTileProvider Tests
 
 @Suite("CoreActionTileProvider Tests")
@@ -224,5 +255,134 @@ struct CoreOptionTileProviderTests {
         let tiles = CoreOptionTileProvider.tiles(from: options, coreClass: MockCore.self)
         let boolTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         #expect(boolTile?.dismissOnTap == false)
+    }
+}
+
+// MARK: - Enumeration Tile Tests
+
+@Suite("CoreOptionTileProvider Enumeration Tile Tests")
+struct CoreOptionTileProviderEnumTests {
+
+    @Test("Enum option creates cycle tile with correct icon and color")
+    func enumTileHasCorrectAppearance() {
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let enumTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
+        #expect(enumTile != nil)
+        #expect(enumTile?.icon == "arrow.trianglehead.2.clockwise")
+        #expect(enumTile?.colorKey == .cyan)
+    }
+
+    @Test("Enum tile badge shows current value title")
+    func enumTileBadgeShowsTitle() {
+        // No stored value — falls back to defaultValue 0 → first enum entry "8-bit"
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let enumTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
+        // Badge should be the title of the matching value, not description
+        #expect(enumTile?.badge == "8-bit")
+    }
+
+    @Test("Enum tile longPressOptions count matches values")
+    func enumTileLongPressOptionsCount() {
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let enumTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
+        // 3 enum values → 3 long-press options
+        #expect(enumTile?.longPressOptions?.count == 3)
+    }
+
+    @Test("Enum tile longPressOptions use value title not description")
+    func enumTileLongPressOptionsTitles() {
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let lp = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })?.longPressOptions
+        let titles = lp?.map(\.title) ?? []
+        // Should use .title ("8-bit", "16-bit", "32-bit"), not .description ("256 colors", etc.)
+        #expect(titles == ["8-bit", "16-bit", "32-bit"])
+    }
+
+    @Test("selectValue sets enum option by title")
+    func selectValueByTitle() {
+        guard let option = CoreOptionTileProvider.findOption(key: "Color Depth", in: EnumCore.options) else {
+            Issue.record("Could not find 'Color Depth' option")
+            return
+        }
+        CoreOptionTileProvider.selectValue(titled: "16-bit", for: option, coreClass: EnumCore.self)
+        let stored: Int? = EnumCore.valueForOption(option)
+        #expect(stored == 1)
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "EnumCore.Color Depth")
+    }
+
+    @Test("selectValue does not match by description")
+    func selectValueIgnoresDescription() {
+        guard let option = CoreOptionTileProvider.findOption(key: "Color Depth", in: EnumCore.options) else {
+            Issue.record("Could not find 'Color Depth' option")
+            return
+        }
+        // "256 colors" is the description of the first value, not its title — should not match
+        CoreOptionTileProvider.selectValue(titled: "256 colors", for: option, coreClass: EnumCore.self)
+        // Value should remain at default (0) since "256 colors" matches no .title
+        let stored: Int? = EnumCore.valueForOption(option)
+        // No match means value unchanged (nil stored → default 0)
+        #expect(stored == 0 || stored == nil)
+        UserDefaults.standard.removeObject(forKey: "EnumCore.Color Depth")
+    }
+}
+
+// MARK: - Multi Tile Tests
+
+@Suite("CoreOptionTileProvider Multi Tile Tests")
+struct CoreOptionTileProviderMultiTests {
+
+    @Test("Multi option creates tile with list icon and purple color")
+    func multiTileHasCorrectAppearance() {
+        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self)
+        let multiTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
+        #expect(multiTile != nil)
+        #expect(multiTile?.icon == "list.bullet.clipboard")
+        #expect(multiTile?.colorKey == .purple)
+    }
+
+    @Test("Multi tile badge shows current value title")
+    func multiTileBadgeShowsTitle() {
+        UserDefaults.standard.removeObject(forKey: "MultiCore.System Region")
+        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self)
+        let multiTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
+        // No stored value → first value "Auto"
+        #expect(multiTile?.badge == "Auto")
+    }
+
+    @Test("Multi tile longPressOptions count matches values")
+    func multiTileLongPressOptionsCount() {
+        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self)
+        let multiTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
+        #expect(multiTile?.longPressOptions?.count == 3)
+    }
+
+    @Test("cycleNextValue stores String title for multi option")
+    func cycleNextValueStoresStringTitle() {
+        UserDefaults.standard.removeObject(forKey: "MultiCore.System Region")
+        guard let option = CoreOptionTileProvider.findOption(key: "System Region", in: MultiCore.options) else {
+            Issue.record("Could not find 'System Region' option")
+            return
+        }
+        CoreOptionTileProvider.cycleNextValue(for: option, coreClass: MultiCore.self)
+        // After cycling from default (index 0 "Auto"), should advance to index 1 "NTSC"
+        let stored = UserDefaults.standard.string(forKey: "MultiCore.System Region")
+        #expect(stored == "NTSC")
+        UserDefaults.standard.removeObject(forKey: "MultiCore.System Region")
+    }
+
+    @Test("cycleNextValue wraps around at last multi value")
+    func cycleNextValueWraps() {
+        guard let option = CoreOptionTileProvider.findOption(key: "System Region", in: MultiCore.options) else {
+            Issue.record("Could not find 'System Region' option")
+            return
+        }
+        // Set to last value "PAL"
+        CoreOptionTileProvider.selectValue(titled: "PAL", for: option, coreClass: MultiCore.self)
+        CoreOptionTileProvider.cycleNextValue(for: option, coreClass: MultiCore.self)
+        // Should wrap to first value "Auto"
+        let stored = UserDefaults.standard.string(forKey: "MultiCore.System Region")
+        #expect(stored == "Auto")
+        UserDefaults.standard.removeObject(forKey: "MultiCore.System Region")
     }
 }

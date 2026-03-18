@@ -394,9 +394,9 @@ struct PauseTileMenuView: View {
         #endif
 
         if tile.id == "filterCycle" {
-            // Match to the filter by description
+            // Match by stable ID (filter_<rawValue>) to avoid brittle title/description comparisons.
             let selected = MetalFilterSelectionOption.allCases.first { f in
-                (f == .none ? "None" : f.description) == lpOption.title
+                "filter_\(f.rawValue)" == lpOption.id
             }
             if let filter = selected {
                 metalFilterMode = .always(filter: filter)
@@ -817,9 +817,9 @@ private extension MetalFilterModeOption {
             return .none
         case let .always(filter: f):
             return f
-        case let .auto(crt: crt, lcd: _):
-            // Use CRT as the representative filter for display purposes
-            return crt
+        case let .auto(crt: crt, lcd: lcd):
+            // Prefer CRT when non-none; fall back to LCD filter.
+            return crt != .none ? crt : lcd
         }
     }
 }
