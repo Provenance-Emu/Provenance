@@ -34,6 +34,18 @@ public enum DeltaSkinInput: Codable, Equatable {
     }
 }
 
+// MARK: - Button Kind
+
+/// Classifies the visual and interaction style of a skin button.
+/// Internal until renderer support for non-normal kinds is implemented.
+enum DeltaSkinButtonKind: String, Equatable {
+    /// Standard push/action button (default).
+    case normal
+    /// A physical two-position hardware toggle switch (e.g. Atari difficulty switch).
+    /// Rendered via `HardwareSwitchRowView` overlay — not yet handled in the Delta skin renderer.
+    case hardwareSwitch
+}
+
 /// Represents a button mapping in a DeltaSkin
 public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// Unique identifier for this button
@@ -60,6 +72,9 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// - Note: Consumed by the button-rendering layer when toggle/switch behaviour is implemented.
     public let selfRetracting: Bool
 
+    /// Visual and interaction style of this button (internal; not serialized to JSON).
+    let buttonKind: DeltaSkinButtonKind
+
     /// Initialize a new button mapping
     /// - Parameters:
     ///   - id: Unique identifier for this button
@@ -85,6 +100,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         self.haptic = haptic
         self.states = states
         self.selfRetracting = selfRetracting
+        self.buttonKind = .normal
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -106,6 +122,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         haptic = try container.decodeIfPresent(DeltaSkinHaptic.self, forKey: .haptic)
         states = try container.decodeIfPresent(DeltaSkinButtonStates.self, forKey: .states)
         selfRetracting = (try container.decodeIfPresent(Bool.self, forKey: .selfRetracting)) ?? false
+        buttonKind = .normal
     }
 
     public func encode(to encoder: Encoder) throws {

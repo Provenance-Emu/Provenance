@@ -15,6 +15,7 @@
     case circle
     case cross
     case square
+    case service
     case l1
     case l2
     case l3
@@ -52,6 +53,7 @@
             case "r1", "r": self = .r1
             case "r2", "rt": self = .r2
             case "r3": self = .r3
+            case "service": self = .service
             case "start", "mode": self = .start
             case "select", "back", "cbdc": self = .select
             case "analogMode": self = .analogMode
@@ -88,6 +90,8 @@
                 return "✕"
             case .square:
                 return "□"
+            case .service:
+                return "service"
             case .l1:
                 return "l1"
             case .l2:
@@ -129,6 +133,30 @@
             case .count:
                 return "count"
         }
+    }
+}
+
+// MARK: - Hardware momentary buttons
+
+/// MAME/FBNeo/CPS arcade systems expose a Service button that enters the in-game
+/// service/test menu. This is a momentary signal (not a toggle). Dip switches are
+/// game-specific and are configured inside the service menu — no system-level
+/// toggle descriptors are needed for arcade systems.
+///
+/// Note: the `service` buttonId is a forward declaration; arcade core bridges must
+/// handle this ID by mapping it to their service/test key (e.g. F2 in MAME).
+extension PVMAMEButton: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? { nil }
+
+    public static var hardwareMomentaryButtons: [HardwareMomentaryDescriptor]? {
+        [
+            HardwareMomentaryDescriptor(
+                id: "arcade_service",
+                title: "SERVICE",
+                label: "⚙",
+                buttonId: "service"
+            )
+        ]
     }
 }
 

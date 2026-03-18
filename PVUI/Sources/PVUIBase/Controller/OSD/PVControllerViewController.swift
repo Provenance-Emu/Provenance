@@ -18,6 +18,7 @@ import GameController
 import PVLibrary
 import PVSupport
 import QuartzCore
+import SwiftUI
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -182,6 +183,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private var toggleButton: UIButton?
     private var buttonsVisible = false
+
+    // MARK: - Hardware Switch Overlay
+    private var hardwareSwitchHostingVC: UIHostingController<HardwareSwitchRowView>?
 
     // MARK: - Quick Action Buttons
     private var quickSaveButton: UIButton?
@@ -372,6 +376,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 #endif // os(iOS)
 
         // Quick action HUD strip removed — save/load/FF are accessible via the pause menu.
+
+        // Hardware switch overlay (e.g. Atari difficulty / TV-type switches)
+        addHardwareSwitchOverlayIfNeeded()
     }
 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
@@ -526,9 +533,61 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if let toggleButton = toggleButton {
             view.bringSubviewToFront(toggleButton)
         }
+        positionHardwareSwitchOverlay()
     }
 
     func prelayoutSettings() {}
+
+    // MARK: - Hardware Switch Overlay
+
+    /// Adds a hardware-switch overlay if the current system has any switches
+    /// (e.g. Atari difficulty / TV-type switches).  The overlay is positioned
+    /// at the top-trailing corner so it doesn't obstruct the controller buttons.
+    private func addHardwareSwitchOverlayIfNeeded() {
+        guard let switches = system.systemIdentifier.hardwareSwitches, !switches.isEmpty else { return }
+
+        let switchRow = HardwareSwitchRowView(switches: switches) { [weak self] buttonId, _ in
+            self?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)
+        }
+
+        let hostingVC = UIHostingController(rootView: switchRow)
+        hostingVC.view.backgroundColor = .clear
+        hostingVC.view.isOpaque = false
+
+        addChild(hostingVC)
+        view.addSubview(hostingVC.view)
+        hostingVC.didMove(toParent: self)
+        hardwareSwitchHostingVC = hostingVC
+    }
+
+    private func positionHardwareSwitchOverlay() {
+        guard let hostingVC = hardwareSwitchHostingVC else { return }
+
+        let safeFrame = view.safeAreaLayoutGuide.layoutFrame
+        let horizontalMargin: CGFloat = 12
+        let verticalMargin: CGFloat = 8
+
+        let availableWidth = max(0, safeFrame.width - (horizontalMargin * 2))
+        let fittingSize = hostingVC.sizeThatFits(in: CGSize(width: availableWidth, height: .greatestFiniteMagnitude))
+
+        let layoutDirection = view.effectiveUserInterfaceLayoutDirection
+        let x: CGFloat
+        switch layoutDirection {
+        case .rightToLeft:
+            x = safeFrame.minX + horizontalMargin
+        default:
+            x = safeFrame.maxX - horizontalMargin - fittingSize.width
+        }
+
+        let y = safeFrame.minY + verticalMargin
+
+        hostingVC.view.frame = CGRect(origin: CGPoint(x: x, y: y), size: fittingSize)
+        view.bringSubviewToFront(hostingVC.view)
+    }
+
+    /// Override in subclasses to route a hardware-switch button press to the
+    /// system-specific responder.  The base implementation is a no-op.
+    open func didReceiveHardwareSwitchInput(buttonId: String, player: Int) {}
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
 

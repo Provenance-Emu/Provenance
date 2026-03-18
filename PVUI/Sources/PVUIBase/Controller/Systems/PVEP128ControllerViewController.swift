@@ -1,5 +1,5 @@
 //
-//  PVMSXControllerViewController.swift
+//  PVEP128ControllerViewController.swift
 //  Provenance
 //
 //  Created by Joe Mattiello on 2022.06.15
@@ -10,9 +10,9 @@ import PVSupport
 import PVEmulatorCore
 
 private extension JSButton {
-    var buttonTag: PVMSXButton {
+    var buttonTag: PVEP128Button {
         get {
-            return PVMSXButton(rawValue: tag)!
+            return PVEP128Button(rawValue: tag)!
         }
         set {
             tag = newValue.rawValue
@@ -20,7 +20,20 @@ private extension JSButton {
     }
 }
 
-final class PVMSXControllerViewController: PVControllerViewController<PVMSXSystemResponderClient> {
+final class PVEP128ControllerViewController: PVControllerViewController<PVEP128SystemResponderClient> {
+
+    // MARK: - Hardware Switch Input
+
+    override func didReceiveHardwareSwitchInput(buttonId: String, player: Int) {
+        let button = PVEP128Button(buttonId)
+        emulatorCore.didPush(button, forPlayer: player)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            self?.emulatorCore.didRelease(button, forPlayer: player)
+        }
+    }
+
+    // MARK: - Control layout
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {

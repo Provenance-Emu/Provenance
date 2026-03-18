@@ -20,6 +20,7 @@
     case rightDiffB
     case reset
     case select
+    case colorBW
     case count
 
     public init(_ value: String) {
@@ -35,6 +36,7 @@
             case "rightdiffb": self = .rightDiffB
             case "reset", "start": self = .reset
             case "select": self = .select
+            case "colorbw", "color", "bw", "tvtype": self = .colorBW
             case "count": self = .count
             default: self = .fire1
         }
@@ -64,9 +66,41 @@
                 return "reset"
             case .select:
                 return "select"
+            case .colorBW:
+                return "colorbw"
             case .count:
                 return "count"
         }
+    }
+}
+
+// MARK: - Hardware switches
+
+extension PV2600Button: HardwareSwitchProvider {
+    public static var hardwareSwitches: [HardwareSwitchDescriptor]? {
+        [
+            HardwareSwitchDescriptor(
+                id: "left_diff",
+                title: "LEFT DIFF",
+                offPosition: HardwareSwitchPosition(label: "B", buttonId: "leftdiffb"),
+                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "leftdiffa"),
+                defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "right_diff",
+                title: "RIGHT DIFF",
+                offPosition: HardwareSwitchPosition(label: "B", buttonId: "rightdiffb"),
+                onPosition:  HardwareSwitchPosition(label: "A", buttonId: "rightdiffa"),
+                defaultState: false
+            ),
+            HardwareSwitchDescriptor(
+                id: "color_bw",
+                title: "TV TYPE",
+                offPosition: HardwareSwitchPosition(label: "BW", buttonId: "colorbw"),
+                onPosition:  HardwareSwitchPosition(label: "CLR", buttonId: "colorbw"),
+                defaultState: true
+            )
+        ]
     }
 }
 

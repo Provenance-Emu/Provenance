@@ -263,6 +263,53 @@ struct DefaultControllerSkinView: View {
                         .frame(width: 1, height: 1)
                 }
 
+                // Hardware switches overlay (Atari difficulty / TV-type switches etc.)
+                // Positioned at the top-trailing corner so they sit above the controller area
+                // and don't block the game screen.
+                if validSize, let sysId = systemId {
+                    let switches = sysId.hardwareSwitches ?? []
+                    let momentaryButtons = sysId.hardwareMomentaryButtons ?? []
+
+                    // Hardware toggle switches and momentary buttons overlay (SMS Pause/NMI, arcade Service, etc.).
+                    // When both are present, stack them vertically so they don't overlap; otherwise sit at the
+                    // standard top-trailing position.
+                    if !switches.isEmpty || !momentaryButtons.isEmpty {
+                        // ZStack approach: the transparent backdrop is non-interactive, but the
+                        // control rows themselves sit as ZStack children so they receive gestures.
+                        ZStack(alignment: .topTrailing) {
+                            Color.clear
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .allowsHitTesting(false)
+
+                            VStack(alignment: .trailing, spacing: 8) {
+                                if !switches.isEmpty {
+                                    HardwareSwitchRowView(switches: switches) { buttonId, _ in
+                                        // Send a momentary press+release so the core registers the edge.
+                                        inputHandler.buttonPressed(buttonId)
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                            inputHandler.buttonReleased(buttonId)
+                                        }
+                                    }
+                                }
+
+                                if !momentaryButtons.isEmpty {
+                                    HardwareMomentaryRowView(
+                                        buttons: momentaryButtons,
+                                        onPress: { buttonId in
+                                            inputHandler.buttonPressed(buttonId)
+                                        },
+                                        onRelease: { buttonId in
+                                            inputHandler.buttonReleased(buttonId)
+                                        }
+                                    )
+                                }
+                            }
+                            .padding(.top, geometry.safeAreaInsets.top + 8)
+                            .padding(.trailing, geometry.safeAreaInsets.trailing + 12)
+                        }
+                    }
+                }
+
                 // Virtual input quick-toggle buttons (keyboard / mouse) — top-leading corner.
                 // Only visible when the active core supports keyboard or mouse input.
                 // Not available on tvOS (virtual keyboard/mouse overlays are iOS-only).

@@ -655,31 +655,27 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
         buttons.append(contentsOf: [startButton, selectButton])
 
         // Add menu and turbo buttons horizontally at the top center
-        let menuButtonX = 0.5 - menuButtonWidth - 0.02
-        let turboButtonX = 0.5 + 0.02
-        let utilityButtonY = isLandscape ? 0.05 : 0.05
+        let utilityButtonY: CGFloat = 0.05
 
-        // Menu button (previously vertical, now horizontal)
         // Menu button with retrowave styling - positioned at top left
         let menuButton = DeltaSkinButton(
             id: "button_menu",
             input: .single("menu"),
             frame: CGRect(
                 x: 0.05,
-                y: 0.05,
+                y: utilityButtonY,
                 width: menuButtonWidth,
                 height: menuButtonHeight
             )
         )
 
-        // Turbo button (renamed from Fast Forward)
-        // Turbo button (renamed from Fast Forward) with retrowave styling - positioned at top right
+        // Turbo button with retrowave styling - positioned at top right
         let turboButton = DeltaSkinButton(
             id: "button_fast_forward",
             input: .single("fast_forward"),
             frame: CGRect(
                 x: 0.95 - menuButtonWidth,
-                y: 0.05,
+                y: utilityButtonY,
                 width: menuButtonWidth,
                 height: menuButtonHeight
             )

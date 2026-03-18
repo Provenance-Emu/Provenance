@@ -8,6 +8,18 @@
 import PVSystems
 
 public extension SystemIdentifier {
+    /// Returns hardware switch descriptors for this system by querying its
+    /// controller button type. Returns `nil` when the system has no switches.
+    var hardwareSwitches: [HardwareSwitchDescriptor]? {
+        (controllerType as? any HardwareSwitchProvider.Type)?.hardwareSwitches
+    }
+
+    /// Returns momentary hardware button descriptors (e.g. SMS Pause/NMI, arcade
+    /// Service) for this system. Returns `nil` when the system has none.
+    var hardwareMomentaryButtons: [HardwareMomentaryDescriptor]? {
+        (controllerType as? any HardwareSwitchProvider.Type)?.hardwareMomentaryButtons
+    }
+
     var controllerType: any EmulatorCoreButton.Type {
         switch self {
         case ._3DO: return PV3DOButton.self
