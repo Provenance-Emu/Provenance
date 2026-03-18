@@ -42,6 +42,11 @@ class PVThinLibretroCore: PVEmulatorCore {
     weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
     var _hardcoreMode: Bool = false
 
+    // MARK: - Transfer Pak backing storage (for TransferPakSupport conformance)
+    /// In-memory Transfer Pak slot map: controller port (0-based) → mounted GB/GBC ROM.
+    /// Only populated when the core is a Mupen64Plus-based core.
+    var _transferPakSlots: [Int: TransferPakROM] = [:]
+
     // MARK: - Skin support
 
     /// Systems that don't have adequate skin support — disable skins to show
@@ -136,9 +141,16 @@ class PVThinLibretroCore: PVEmulatorCore {
             setDefaultOption("ppsspp_fast_memory", value: "enabled")
         }
 
-        // Mupen64Plus-Next: use angrylion RDP
+        // Mupen64Plus-Next: use angrylion RDP + apply any persisted Transfer Pak slots.
         if coreId.contains("mupen") {
             setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")
+            // Re-apply Transfer Pak slots populated by TransferPakStore before this call.
+            // reapplyTransferPakSlots() sets pak types for all configured ports and writes
+            // the global mupen64plus-transfer-pak-path exactly once (lowest port wins),
+            // avoiding the iteration-order ambiguity of calling setTransferPakROM per port.
+            if !_transferPakSlots.isEmpty {
+                reapplyTransferPakSlots()
+            }
         }
 
         // PrBoom: enable rumble
