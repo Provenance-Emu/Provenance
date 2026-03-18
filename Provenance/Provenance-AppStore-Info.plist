@@ -286,6 +286,7 @@
 	<array>
 		<string>_altserver._tcp</string>
 		<string>_http._tcp</string>
+		<string>_retroarch._tcp</string>
 		<string>_webdav._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
@@ -295,7 +296,7 @@
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>RetroArch needs access to Wi-Fi networks for enhanced emulated Wi-Fi network features.</string>
+	<string>Provenance uses the local network for RetroArch Wi-Fi emulation, web server access, AltServer, and discovering netplay rooms.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Some games may use location data to enhance emulated location gameplay features</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

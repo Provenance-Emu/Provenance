@@ -197,11 +197,12 @@
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_altserver._tcp</string>
+		<string>_retroarch._tcp</string>
 	</array>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<string>Provenance uses the local network to find game controllers, communicate with AltServer, and discover netplay rooms.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.org.provenance-emu.provenance</key>

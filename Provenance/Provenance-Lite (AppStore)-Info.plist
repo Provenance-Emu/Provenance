@@ -215,6 +215,7 @@
 	<array>
 		<string>_altserver._tcp</string>
 		<string>_http._tcp</string>
+		<string>_retroarch._tcp</string>
 		<string>_webdav._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
@@ -222,7 +223,7 @@
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>RetroArch needs access to Wi-Fi networks for network features.</string>
+	<string>Provenance uses the local network for web server access, AltServer, and discovering netplay rooms.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
 	<key>NSMotionUsageDescription</key>
