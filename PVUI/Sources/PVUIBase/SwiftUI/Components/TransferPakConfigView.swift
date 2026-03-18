@@ -334,7 +334,9 @@ public enum TransferPakCompatibleGames {
     /// Returns the Transfer Pak description if the game title is a known Transfer Pak title.
     public static func transferPakDescription(forTitle title: String) -> String? {
         let lower = title.lowercased()
-        return knownTitles.first { lower.contains($0.titleFragment) }?.description
+        let matches = knownTitles.filter { lower.contains($0.titleFragment) }
+        guard !matches.isEmpty else { return nil }
+        return matches.max(by: { $0.titleFragment.count < $1.titleFragment.count })?.description
     }
 
     /// Returns `true` when the game is a known Transfer Pak title.
