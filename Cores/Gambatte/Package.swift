@@ -171,10 +171,11 @@ let package = Package(
         ),
         // MARK: ------- Tests -------
         .testTarget(
-            name: "PVGambaTests",
+            name: "PVGambatteTests",
             dependencies: [
                 "PVGambatte",
                 "PVGambatteBridge",
+                "PVGambatteOptions",
                 "PVCoreBridge",
                 "PVEmulatorCore",
                 "libgambatte",

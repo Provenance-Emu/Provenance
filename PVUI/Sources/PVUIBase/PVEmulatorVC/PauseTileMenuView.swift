@@ -45,6 +45,7 @@ struct PauseTileMenuView: View {
     @State private var showingControllerProfiles = false
     @State private var showingTransferPakConfig = false
     @State private var showingN64PakConfig = false
+    @State private var showingPalettePicker = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Incremented after every core-option toggle to force a re-render of the tile grid.
@@ -220,9 +221,29 @@ struct PauseTileMenuView: View {
             ))
         }
 
-        // Core action tiles
+        // Palette picker tile — shown when the core implements PaletteProviding
+        if let paletteCore = emulatorVC.core as? PaletteProviding,
+           !paletteCore.availablePalettes.isEmpty {
+            let currentName = paletteCore.currentPalette?.displayName ?? "–"
+            tiles.append(PauseMenuTile(
+                id: "palette",
+                icon: "paintpalette.fill",
+                label: String(localized: "Palette"),
+                badge: currentName,
+                colorKey: .purple,
+                dismissOnTap: false
+            ))
+        }
+
+        // Core action tiles — filter out "Change Palette" if PaletteProviding is active
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
-            tiles += CoreActionTileProvider.tiles(from: actions)
+            let isPaletteProviding = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
+            let filteredActions = isPaletteProviding
+                ? actions.filter { $0.title != changePaletteLegacyActionTitle }
+                : actions
+            if !filteredActions.isEmpty {
+                tiles += CoreActionTileProvider.tiles(from: filteredActions)
+            }
         }
 
         // Boolean option toggle tiles + "Core Settings" gateway
@@ -309,6 +330,10 @@ struct PauseTileMenuView: View {
         // MARK: N64 Controller Pak slot picker
         case "n64PakSlots":
             showingN64PakConfig = true
+
+        // MARK: Palette picker sheet
+        case "palette":
+            showingPalettePicker = true
 
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
@@ -572,6 +597,14 @@ struct PauseTileMenuView: View {
                 gameTitle: emulatorVC.game?.title,
                 onDismiss: { showingN64PakConfig = false }
             )
+        }
+        .sheet(isPresented: $showingPalettePicker) {
+            if let paletteCore = emulatorVC.core as? PaletteProviding {
+                PalettePickerView(paletteCore: paletteCore) {
+                    showingPalettePicker = false
+                    coreOptionRefreshToken += 1  // refresh badge after selection
+                }
+            }
         }
         // Core action option picker — shown when a CoreAction exposes multiple options.
         .confirmationDialog(

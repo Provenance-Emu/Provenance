@@ -340,6 +340,13 @@ struct RetroMenuView: View {
                 showingScreenshotBrowser = false
             }
         }
+        .sheet(isPresented: $showingPalettePicker) {
+            if let paletteCore = emulatorVC.core as? PaletteProviding {
+                PalettePickerView(paletteCore: paletteCore) {
+                    showingPalettePicker = false
+                }
+            }
+        }
         // Listen for orientation changes
 #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -385,15 +392,18 @@ struct RetroMenuView: View {
 
     /// Check if core has features that warrant a CORE tab
     private var hasCoreFeatures: Bool {
+        let hasPaletteSupport = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
         #if !os(tvOS)
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
+        hasPaletteSupport ||
         emulatorVC.coreSupportsVirtualKeyboard ||
         emulatorVC.coreSupportsVirtualMouse ||
         hasPortDeviceOptions
         #else
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
+        hasPaletteSupport ||
         hasPortDeviceOptions
         #endif
     }
@@ -488,9 +498,25 @@ struct RetroMenuView: View {
     // Core-specific menu buttons - core actions and options
     private var coreMenuButtons: some View {
         VStack(spacing: menuSpacing) {
+            // Palette picker button — shown when the core implements PaletteProviding.
+            // This replaces the "Change Palette" cycling action with a full picker sheet.
+            if let paletteCore = emulatorVC.core as? PaletteProviding,
+               !paletteCore.availablePalettes.isEmpty {
+                let currentName = paletteCore.currentPalette?.displayName ?? "–"
+                menuButton(
+                    title: "PALETTE: \(currentName)",
+                    icon: "paintpalette",
+                    color: .retroPurple
+                ) {
+                    showingPalettePicker = true
+                }
+            }
+
             // Core action buttons (if available) - show first for prominence
             if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
-                ForEach(actions) { coreAction in
+                let paletteActive = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
+                let visibleActions = paletteActive ? actions.filter { $0.title != changePaletteLegacyActionTitle } : actions
+                ForEach(visibleActions) { coreAction in
                     menuButton(title: coreAction.title, icon: "bolt", color: .retroYellow) {
                         dismissAction(true)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -1049,6 +1075,7 @@ struct RetroMenuView: View {
     @State internal var showingButtonSoundPicker = false
     @State private var showingSaveStateBrowser = false
     @State private var showingScreenshotBrowser = false
+    @State internal var showingPalettePicker = false
 
     // Scope to save skin selection under (set once, applies to all picks in the session)
     @State private var selectedSkinScope: SkinScope = .game
