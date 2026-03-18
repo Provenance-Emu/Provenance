@@ -562,11 +562,25 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private func positionHardwareSwitchOverlay() {
         guard let hostingVC = hardwareSwitchHostingVC else { return }
-        let fittingSize = hostingVC.sizeThatFits(in: CGSize(width: 220, height: .greatestFiniteMagnitude))
-        let safeTop = view.safeAreaInsets.top
-        let safeTrailing = view.safeAreaInsets.right
-        let x = view.bounds.width - fittingSize.width - 12 - safeTrailing
-        let y = safeTop + 8
+
+        let safeFrame = view.safeAreaLayoutGuide.layoutFrame
+        let horizontalMargin: CGFloat = 12
+        let verticalMargin: CGFloat = 8
+
+        let availableWidth = max(0, safeFrame.width - (horizontalMargin * 2))
+        let fittingSize = hostingVC.sizeThatFits(in: CGSize(width: availableWidth, height: .greatestFiniteMagnitude))
+
+        let layoutDirection = view.effectiveUserInterfaceLayoutDirection
+        let x: CGFloat
+        switch layoutDirection {
+        case .rightToLeft:
+            x = safeFrame.minX + horizontalMargin
+        default:
+            x = safeFrame.maxX - horizontalMargin - fittingSize.width
+        }
+
+        let y = safeFrame.minY + verticalMargin
+
         hostingVC.view.frame = CGRect(origin: CGPoint(x: x, y: y), size: fittingSize)
         view.bringSubviewToFront(hostingVC.view)
     }
