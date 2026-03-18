@@ -136,8 +136,8 @@ public extension Defaults.Keys {
     static let rumbleControllerEnabled = Key<Bool>("rumbleControllerEnabled", default: true)
 
     /// Enable DualSense adaptive trigger resistance profiles.
-    /// When `true`, CoreHaptics adaptive trigger effects are applied based on the
-    /// current system's rumble profile (e.g. heavier resistance for N64 Rumble Pak).
+    /// When `true`, CoreHaptics adaptive trigger effects are enabled for supported
+    /// PlayStation-family systems; other systems currently use no adaptive trigger resistance.
     static let dualSenseAdaptiveTriggersEnabled = Key<Bool>("dualSenseAdaptiveTriggersEnabled", default: true)
 
     /// Intensity multiplier for external controller rumble motors via GCDeviceHaptics.
