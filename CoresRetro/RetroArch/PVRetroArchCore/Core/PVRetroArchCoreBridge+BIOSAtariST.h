@@ -11,7 +11,7 @@
 //  Copyright © 2024 Provenance. All rights reserved.
 //
 
-#import "PVRetroArchCoreBridge.h"
+#import <PVRetroArch/PVRetroArchCoreBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
