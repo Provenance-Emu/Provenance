@@ -53,6 +53,7 @@
             case "r1", "r": self = .r1
             case "r2", "rt": self = .r2
             case "r3": self = .r3
+            case "service": self = .service
             case "start", "mode": self = .start
             case "select", "back", "cbdc": self = .select
             case "analogMode": self = .analogMode
@@ -89,6 +90,8 @@
                 return "✕"
             case .square:
                 return "□"
+            case .service:
+                return "service"
             case .l1:
                 return "l1"
             case .l2:

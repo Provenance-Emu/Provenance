@@ -293,6 +293,7 @@ extension PVThinLibretroCore: PV2600SystemResponderClient {
         case .rightDiffB: return .r2
         case .reset:      return .start
         case .select:     return .select
+        case .colorBW:    return .r3
         case .count:      return .b
         @unknown default: return .b
         }
@@ -322,6 +323,7 @@ extension PVThinLibretroCore: PV7800SystemResponderClient {
         case .reset:    return .l
         case .leftDiff: return .l2
         case .rightDiff: return .r2
+        case .colorBW:  return .r3
         case .count:    return .b
         @unknown default: return .b
         }
@@ -353,6 +355,8 @@ extension PVThinLibretroCore: PVPCESystemResponderClient {
         case .run:     return .start
         case .select:  return .select
         case .mode:    return .l2
+        case .turboI:  return .l3
+        case .turboII: return .r3
         case .count:   return .b
         @unknown default: return .b
         }
@@ -384,6 +388,8 @@ extension PVThinLibretroCore: PVPCECDSystemResponderClient {
         case .run:     return .start
         case .select:  return .select
         case .mode:    return .l2
+        case .turboI:  return .l3
+        case .turboII: return .r3
         case .count:   return .b
         @unknown default: return .b
         }
@@ -943,6 +949,8 @@ extension PVThinLibretroCore: PVPCFXSystemResponderClient {
         case .run:     return .start
         case .select:  return .select
         case .mode:    return .l2
+        case .turboI:  return .l3
+        case .turboII: return .r3
         case .count:   return .b
         @unknown default: return .b
         }
@@ -1470,6 +1478,7 @@ extension PVThinLibretroCore: PV5200SystemResponderClient {
         case .number0:  return .start
         case .asterisk: return .select
         case .pound:    return .start
+        case .colorBW:  return .r3
         case .count:    return .b
         @unknown default: return .b
         }
