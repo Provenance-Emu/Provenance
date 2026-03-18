@@ -1424,6 +1424,10 @@ extension PVThinLibretroCore: PVMAMESystemResponderClient {
         case .leftAnalogRight: return .right
         case .rightAnalogUp, .rightAnalogDown, .rightAnalogLeft, .rightAnalogRight:
             return nil
+        case .service:
+            // Service/test button is a hardware momentary input, not a standard joypad button.
+            // Arcade cores handle it via a dedicated service-input path; no joypad mapping needed.
+            return nil
         case .analogMode, .leftAnalog, .rightAnalog, .count:
             return nil
         @unknown default:
