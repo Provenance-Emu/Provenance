@@ -689,13 +689,16 @@ static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image 
     bridge->_vulkanCurrentVkImage = image->create_info.image;
     bridge->_vulkanHasCurrentImage = YES;
     // The libretro Vulkan interface requires the frontend to wait on the provided
-    // semaphores before reading the image. We use vkQueueWaitIdle as a safe fallback
-    // since we are in single-buffer mode (wait_sync_index already drains the queue
-    // before the next frame, but we must also drain here when semaphores are present).
+    // semaphores before reading the image. We use vkQueueWaitIdle as a safe fallback.
+    // Hold _vulkanQueueLock to serialize with any concurrent vkQueueSubmit calls.
     if (num_semaphores > 0 && bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
+        os_unfair_lock_lock(&bridge->_vulkanQueueLock);
         bridge->_vkQueueWaitIdle(bridge->_vulkanQueue);
+        os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
     }
-    [bridge notifyRenderDelegateOfVulkanFrame:image];
+    // Do NOT notify the render delegate here — some cores call set_image before
+    // set_command_buffers, so the VkImage may not yet have been rendered into.
+    // Notification is deferred to submitVulkanCommandBuffers (after vkQueueSubmit).
 }
 
 static uint32_t thin_vulkan_get_sync_index(void *handle) {
@@ -719,8 +722,11 @@ static void thin_vulkan_wait_sync_index(void *handle) {
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge) return;
     // Wait for the queue to drain so the core can safely reuse its resources.
+    // Hold _vulkanQueueLock to serialize with any concurrent vkQueueSubmit calls.
     if (bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
+        os_unfair_lock_lock(&bridge->_vulkanQueueLock);
         bridge->_vkQueueWaitIdle(bridge->_vulkanQueue);
+        os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
     }
 }
 
@@ -4517,8 +4523,10 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (void)submitVulkanCommandBuffers:(const VkCommandBuffer *)cmdBufs count:(uint32_t)count {
     if (!_vkQueueSubmit || !_vulkanQueue || !cmdBufs || count == 0) return;
 
-    // Snapshot the signal semaphore and clear it immediately so it is truly
-    // "per-frame" — the core may omit set_signal_semaphore on subsequent frames.
+    // Snapshot and clear the signal semaphore inside the queue lock so that
+    // concurrent writes from thin_vulkan_set_signal_semaphore are serialized.
+    // "Per-frame" semantics: cleared after every submit so stale handles don't leak.
+    os_unfair_lock_lock(&_vulkanQueueLock);
     VkSemaphore signalSem = _vulkanSignalSemaphore;
     _vulkanSignalSemaphore = VK_NULL_HANDLE;
 
@@ -4534,12 +4542,19 @@ static bool thin_environment(unsigned cmd, void *data) {
         .pSignalSemaphores = (signalSem != VK_NULL_HANDLE) ? &signalSem : NULL,
     };
 
-    os_unfair_lock_lock(&_vulkanQueueLock);
     VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, VK_NULL_HANDLE);
     os_unfair_lock_unlock(&_vulkanQueueLock);
 
     if (result != VK_SUCCESS) {
         ELOG(@"ThinFrontend: vkQueueSubmit failed (result=%d)", result);
+    }
+
+    // Notify the render delegate after submission so the VkImage has been rendered into.
+    // Some cores (e.g. libretro-test-vulkan) call set_image before set_command_buffers,
+    // so we defer the handoff until we know the queue submit has completed.
+    if (_vulkanHasCurrentImage) {
+        _vulkanHasCurrentImage = NO;
+        [self notifyRenderDelegateOfVulkanFrame:nil];
     }
 }
 

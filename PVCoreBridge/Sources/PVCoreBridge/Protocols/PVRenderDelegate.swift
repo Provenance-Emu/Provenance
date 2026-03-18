@@ -58,9 +58,11 @@ import MetalKit
 /// from Vulkan cores running via MoltenVK (PVThinLibretroFrontend).
 ///
 /// Flow:
-///   1. Core calls set_command_buffers → frontend submits to VkQueue
-///   2. Core calls set_image → frontend extracts MTLTexture via vkGetMTLTextureMVK
-///   3. Frontend calls didRenderFrameWithMTLTexture(_:) → presenter blits to display
+///   1. Core calls set_image and/or set_command_buffers (order varies per core)
+///   2. Frontend submits command buffers to VkQueue via vkQueueSubmit
+///   3. Frontend extracts MTLTexture via vkGetMTLTextureMVK / vkExportMetalObjectsEXT
+///   4. Frontend calls didRenderFrameWithMTLTexture(_:) → presenter blits to display
+/// Note: set_image may be called before or after set_command_buffers depending on the core.
 @objc public protocol PVRenderDelegateMetal: NSObjectProtocol {
     /// Called from the emulation thread when a Vulkan core has finished rendering
     /// a frame. The texture is backed by MoltenVK's internal Metal resources.

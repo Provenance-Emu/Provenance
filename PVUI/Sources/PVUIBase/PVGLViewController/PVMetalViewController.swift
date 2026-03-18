@@ -3406,8 +3406,9 @@ extension PVMetalViewController: PVRenderDelegateIOSurface {
 /// PVRenderDelegateMetal conformance: receives per-frame MTLTextures from
 /// Vulkan cores running via PVThinLibretroFrontend + MoltenVK.
 ///
-/// Flow: Vulkan core renders → vkQueueSubmit → thin_vulkan_set_image →
-///       vkGetMTLTextureMVK → didRenderFrameWithMTLTexture → blit → display.
+/// Flow: Vulkan core renders → set_image + set_command_buffers →
+///       vkQueueSubmit → vkGetMTLTextureMVK → didRenderFrameWithMTLTexture → blit → display.
+/// Note: set_image may be called before or after set_command_buffers depending on the core.
 extension PVMetalViewController: PVRenderDelegateMetal {
     func didRenderFrameWithMTLTexture(_ texture: MTLTexture) {
         // Replace the backing texture with the Vulkan frame's MTLTexture.
@@ -3418,7 +3419,13 @@ extension PVMetalViewController: PVRenderDelegateMetal {
         if inputTexture == nil
             || inputTexture?.width  != texture.width
             || inputTexture?.height != texture.height {
-            try? updateInputTexture()
+            do {
+                try updateInputTexture()
+            } catch {
+                ELOG("PVMetalViewController: updateInputTexture failed for Vulkan frame: \(error)")
+                recoverFromGPUError()
+                return
+            }
         }
 
         // Mirror the OpenGL path's synchronization so the blit and render don't race.
