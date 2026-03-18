@@ -44,6 +44,7 @@
 
 
 #import <Foundation/Foundation.h>
+#import <string.h>
 @import PVSupport;
 @import PVCoreBridge;
 @import PVEmulatorCore;
@@ -65,6 +66,8 @@
 @interface MednafenGameCoreBridge (MultiTap)
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapPSXGames;
 + (NSArray<NSString*>*_Nonnull)multiTap5PlayerPort2;
++ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapSaturnGames;
++ (NSArray<NSString*>*_Nonnull)multiTapSaturnPort2Games;
 @end
 
 static Mednafen::MDFNGI *game;
@@ -898,8 +901,84 @@ static void emulation_run(BOOL skipFrame) {
             ILOG(@"Mednafen: Saturn M3U detected, discs=%ld", (long)self.maxDiscs);
         }
 
-        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+        // Saturn: Set multitap (TeamTap) configuration.
+        // Priority 1: game-ID database lookup (most reliable).
+        // Priority 2: user preference override (explicit force-enable).
+        // Priority 3: connected controller count (fallback — enables multitap when
+        //             3+ controllers are plugged in even for unknown games).
+        NSString *ssSerial = self.romSerial;
+        NSNumber *ssMultitapCount = ssSerial ? [MednafenGameCoreOptions multiTapSaturnGames][ssSerial] : nil;
+        BOOL userForcedMultitap = MednafenGameCoreOptions.ss_multitap;
+
+        // Count active controllers.
+        int connectedControllers = 0;
+        if (self.controller1) connectedControllers++;
+        if (self.controller2) connectedControllers++;
+        if (self.controller3) connectedControllers++;
+        if (self.controller4) connectedControllers++;
+        if (self.controller5) connectedControllers++;
+        if (self.controller6) connectedControllers++;
+        if (self.controller7) connectedControllers++;
+        if (self.controller8) connectedControllers++;
+
+        BOOL enableMultitap = NO;
+        int ssMaxPlayers = 2;
+
+        if (ssMultitapCount != nil) {
+            // Known multitap game — use the database player count.
+            ssMaxPlayers = MAX(2, [ssMultitapCount intValue]);
+            enableMultitap = (ssMaxPlayers > 2);
+            ILOG(@"Mednafen Saturn: multitap serial=%@ players=%d", ssSerial, ssMaxPlayers);
+        } else if (userForcedMultitap) {
+            // User explicitly enabled multitap — always configure all 6 TeamTap ports so
+            // additional controllers can be recognized without requiring a game reload.
+            ssMaxPlayers = 6;
+            enableMultitap = YES;
+            ILOG(@"Mednafen Saturn: multitap force-enabled by user setting, players=%d", ssMaxPlayers);
+        } else if (connectedControllers > 2) {
+            // Unknown game but 3+ controllers connected — enable as a convenience.
+            // Always configure all 6 ports so additional controllers can join without reload.
+            ssMaxPlayers = 6;
+            enableMultitap = YES;
+            ILOG(@"Mednafen Saturn: multitap enabled by controller count (%d connected), configuring all 6 ports", connectedControllers);
+        }
+
+        if (enableMultitap) {
+            BOOL usePort2 = ssSerial && [[MednafenGameCoreOptions multiTapSaturnPort2Games] containsObject:ssSerial];
+            if (usePort2) {
+                Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
+                Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", true);
+            } else {
+                Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", true);
+                Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
+            }
+            self->multiTapPlayerCount = ssMaxPlayers;
+            // Clear all TeamTap port buffers at load time to prevent stale input state
+            // (phantom button holds) from leaking across sessions.
+            for (int i = 0; i < ssMaxPlayers; i++) {
+                memset(inputBuffer[i], 0, 9 * sizeof(uint32_t));
+            }
+            // When the multitap is on sport1, virtual ports 0-(n-1) are the TeamTap sub-slots.
+            // When the multitap is on sport2, Mednafen maps sport1's single pad to virtual port 0
+            // and the TeamTap sub-slots start at virtual port 1.
+            const int basePortIndex = usePort2 ? 1 : 0;
+            for (int i = 0; i < ssMaxPlayers; i++) {
+                game->SetInput(basePortIndex + i, "gamepad", (uint8_t *)inputBuffer[i]);
+            }
+        } else {
+            // Standard 2-player setup — explicitly disable multitap to prevent bleed from prior loads.
+            // Clear Saturn input buffers to avoid leaking state from a prior multitap configuration.
+            int portsToClear = (self->multiTapPlayerCount > 2) ? 6 : 2;
+            for (int port = 0; port < portsToClear; port++) {
+                memset(inputBuffer[port], 0, sizeof(inputBuffer[port]));
+            }
+
+            Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
+            Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
+            self->multiTapPlayerCount = 2;
+            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+        }
     }
     else if (self.systemType == MednaSystemPSX)
     {
@@ -1117,6 +1196,7 @@ static void emulation_run(BOOL skipFrame) {
     NSUInteger maxPlayers = 2;
     switch (self.systemType) {
         case MednaSystemPSX:
+        case MednaSystemSS:
             maxPlayers = self->multiTapPlayerCount;
             break;
         case MednaSystemPCE:
@@ -1126,7 +1206,6 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemSMS:
         case MednaSystemNES:
         case MednaSystemSNES:
-        case MednaSystemSS:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
@@ -1244,14 +1323,29 @@ static void emulation_run(BOOL skipFrame) {
                                             forPlayer:playerIndex];
                 }
             }
+        } else {
+            // No controller present — reset the input buffer to a safe neutral state
+            // to prevent phantom button holds from leaking when a controller disconnects.
+            if (self.systemType == MednaSystemPSX) {
+                // PSX DualShock buffer: clear buttons then re-center analog axes.
+                // Zeroing the whole buffer would pin analog axes to 0 instead of center.
+                memset(inputBuffer[playerIndex], 0, 9 * sizeof(uint32_t));
+                uint8 *buf = (uint8 *)inputBuffer[playerIndex];
+                Mednafen::MDFN_en16lsb(&buf[3],   (uint16)32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16)32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16)32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16)32767);
+            } else {
+                // Non-PSX: the relevant state is just the button bitfield in word 0.
+                inputBuffer[playerIndex][0] = 0;
+            }
         }
     }
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
     // Should we be using controller callbacks instead?
-    if (!skip && (self.controller1 || self.controller2 || self.controller3 || self.controller4 ||
-                  self.controller5 || self.controller6 || self.controller7 || self.controller8)) {
+    if (!skip) {
         [self pollControllers];
     }
 
