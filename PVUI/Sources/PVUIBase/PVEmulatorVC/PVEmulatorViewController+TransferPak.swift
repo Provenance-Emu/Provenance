@@ -25,7 +25,7 @@ extension PVEmulatorViewController {
     /// disabling the flag suppresses both the UI and the behavior.
     /// Realm resolution runs on a background thread to avoid blocking the main run loop.
     func applyPersistedTransferPakIfNeeded() async {
-        guard PVFeatureFlagsManager.shared.isEnabled(FeatureFlagKey.mupenTransferPak.rawValue) else { return }
+        guard PVFeatureFlagsManager.shared.mupenTransferPak else { return }
         guard let transferCore = core as? TransferPakSupport else { return }
         guard let md5 = game?.md5Hash, !md5.isEmpty else { return }
 
