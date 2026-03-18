@@ -147,6 +147,13 @@ struct DeltaSkinEditOverlay: View {
                 }
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(buttonLabel(index: index))
+        .accessibilityValue({
+            let f = viewModel.frameForButton(at: index)
+            return String(format: "X: %.0f Y: %.0f W: %.0f H: %.0f", f.minX, f.minY, f.width, f.height)
+        }())
+        .accessibilityHint(isSelected ? "Double-tap to deselect" : "Double-tap to select")
         .animation(.interactiveSpring(response: 0.2, dampingFraction: 0.8), value: dragOffsets[index])
     }
 

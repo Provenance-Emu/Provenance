@@ -17,11 +17,12 @@ struct DeltaSkinFullscreenPreview: View {
     @StateObject private var editorViewModel: DeltaSkinEditorViewModel
     @Environment(\.dismiss) private var dismiss
 
-    init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, filters: Set<TestPatternEffect>) {
+    init(skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, filters: Set<TestPatternEffect>, initialEditMode: Bool = false) {
         self.skin = skin
         self.traits = traits
         self.filters = filters
         _currentDisplayType = State(initialValue: traits.displayType)
+        _isEditMode = State(initialValue: initialEditMode)
         _editorViewModel = StateObject(wrappedValue: DeltaSkinEditorViewModel(skin: skin, traits: traits))
     }
 
@@ -271,7 +272,12 @@ struct DeltaSkinFullscreenPreview: View {
         }
         .ignoresSafeArea()
         .onAppear {
-            DLOG("FullscreenPreview safe areas: \(UIApplication.shared.windows.first?.safeAreaInsets ?? .zero)")
+            #if !os(tvOS)
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                DLOG("FullscreenPreview safe areas: \(window.safeAreaInsets)")
+            }
+            #endif
         }
     }
 

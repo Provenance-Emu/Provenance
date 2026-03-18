@@ -141,7 +141,8 @@ struct SkinPreviewCell: View {
             DeltaSkinFullscreenPreview(
                 skin: skin,
                 traits: previewTraits,
-                filters: []
+                filters: [],
+                initialEditMode: true
             )
         }
         #endif
