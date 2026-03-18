@@ -42,15 +42,6 @@ public enum PVFeature: String, CaseIterable {
     case mupenTransferPak = "mupenTransferPak"
 }
 
-public extension PVFeatureFlagsManager {
-    /// Convenience accessor for the Mupen64Plus Transfer Pak feature flag.
-    /// Mirrors `PVFeature.mupenTransferPak` and keeps the environment-based API
-    /// in sync with `PVFeature.allCases`.
-    var mupenTransferPak: Bool {
-        isEnabled(.mupenTransferPak)
-    }
-}
-
 /// Represents the type of app installation
 public enum PVAppType: String, CaseIterable {
     /// Standard non-App Store version
