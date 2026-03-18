@@ -97,7 +97,8 @@ class PVThinLibretroCore: PVEmulatorCore {
         }
         // Wire physical GCController polling into the emulation thread's input poll
         _bridge.inputPollBlock = { [weak self] in
-            self?.pollControllers()
+            guard let strongSelf = self else { return }
+            strongSelf.pollControllers()
         }
         ILOG("ThinCore: startEmulation — inputPollBlock wired, sysId=\(systemIdentifier ?? "nil")")
         super.startEmulation()

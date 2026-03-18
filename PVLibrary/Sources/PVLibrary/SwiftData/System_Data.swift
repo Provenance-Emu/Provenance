@@ -159,7 +159,7 @@ public extension System_Data {
              .AtariJaguarCD, .Lynx, .WonderSwan, .WonderSwanColor, .PS2, .PS3, .PSP,
              .Intellivision, .ColecoVision, ._3DO, .Odyssey2, .Atari8bit, .Vectrex,
              .DOS, .AtariST, .EP128, .Macintosh, .MSX, .MSX2, .Supervision, .ZXSpectrum,
-             .C64, .Wii, .PalmOS, .TIC80, .AppleII, .MAME:
+             .C64, .Wii, .PalmOS, .TIC80, .AppleII, .MAME, .PC98:
             return .poster
         case .GameGear, .GB, .GBC, .GBA, .NeoGeo, .NGP, .NGPC, .PSX, .VirtualBoy,
              .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .DS, .Unknown, .Music,

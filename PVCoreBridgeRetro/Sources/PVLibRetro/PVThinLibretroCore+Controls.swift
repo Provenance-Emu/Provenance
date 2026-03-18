@@ -139,9 +139,9 @@ extension PVThinLibretroCore {
                 _bridge.setButton(RetroJoypad.r3.rawValue, pressed: r3.isPressed, forPlayer: player)
             }
             // Start / Select
-            if let menu = pad.buttonMenu {
-                _bridge.setButton(RetroJoypad.start.rawValue, pressed: menu.isPressed, forPlayer: player)
-            }
+            let menu = pad.buttonMenu
+            _bridge.setButton(RetroJoypad.start.rawValue, pressed: menu.isPressed, forPlayer: player)
+            
             if let options = pad.buttonOptions {
                 _bridge.setButton(RetroJoypad.select.rawValue, pressed: options.isPressed, forPlayer: player)
             }
@@ -163,13 +163,13 @@ extension PVThinLibretroCore {
 extension PVThinLibretroCore {
 
     /// Press a libretro joypad button.
-    func pressButton(_ btn: RetroJoypad, forPlayer player: Int) {
+    fileprivate func pressButton(_ btn: RetroJoypad, forPlayer player: Int) {
         ILOG("ThinCore INPUT: pressButton \(btn) (id=\(btn.rawValue)) player=\(player) bridge=\(_bridge)")
         _bridge.setButton(btn.rawValue, pressed: true, forPlayer: UInt32(player))
     }
 
     /// Release a libretro joypad button.
-    func releaseButton(_ btn: RetroJoypad, forPlayer player: Int) {
+    fileprivate func releaseButton(_ btn: RetroJoypad, forPlayer player: Int) {
         DLOG("ThinCore INPUT: releaseButton \(btn) (id=\(btn.rawValue)) player=\(player)")
         _bridge.setButton(btn.rawValue, pressed: false, forPlayer: UInt32(player))
     }

@@ -197,34 +197,34 @@ public final class DOLJitManager {
 
         isDiscoveringAltserver = true
 
-        ALTServerManager.shared.startDiscovering()
+        ServerManager.shared.startDiscovering()
 
-        ALTServerManager.shared.autoconnect { connection, error in
-            ALTServerManager.shared.stopDiscovering()
+        ServerManager.shared.autoconnect { result in
+            ServerManager.shared.stopDiscovering()
 
-            if let error = error {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: DOLJitAltJitFailureNotification), object: self, userInfo: [
+            switch result {
+            case .failure(let error):
+                NotificationCenter.default.post(name: .DOLJitAltJitFailure, object: self, userInfo: [
                     "nserror": error
                 ])
-
                 self.isDiscoveringAltserver = false
 
-                return
-            }
+            case .success(let connection):
+                connection.enableUnsignedCodeExecution { execResult in
+                    switch execResult {
+                    case .success:
+                        // Don't post a notification here, since attemptToAcquireJitByWaitingForDebugger
+                        // will do it for us.
+                        break
+                    case .failure(let error):
+                        NotificationCenter.default.post(name: .DOLJitAltJitFailure, object: self, userInfo: [
+                            "nserror": error
+                        ])
+                    }
 
-            connection?.enableUnsignedCodeExecution { success, error in
-                if success {
-                    // Don't post a notification here, since attemptToAcquireJitByWaitingForDebugger
-                    // will do it for us.
-                } else if let error = error {
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: DOLJitAltJitFailureNotification), object: self, userInfo: [
-                        "nserror": error
-                    ])
+                    connection.disconnect()
+                    self.isDiscoveringAltserver = false
                 }
-
-                connection?.disconnect()
-
-                self.isDiscoveringAltserver = false
             }
         }
 #endif

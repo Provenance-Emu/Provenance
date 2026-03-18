@@ -68,6 +68,8 @@ public extension SystemIdentifier {
         case .CPS2: return 41 // Arcade
         case .CPS3: return 41 // Arcade
 
+        case .PC98: return 85  // NEC - PC-98
+
         // Systems we don't map (yet)
         case
                 .AppleII,
@@ -193,7 +195,7 @@ public extension SystemIdentifier {
         // case 81: MAME 2010
         case 81: return .MAME
         // case 84: X68000
-        // case 85: PC-98
+        case 85: return .PC98  // NEC - PC-98
         // case 87: GX4000
         // case 88: Cave Story
         // case 91: PICO
@@ -327,6 +329,7 @@ extension SystemIdentifier {
         case .Supervision:  return "Watara - Supervision"
         case .TIC80:        return "TIC-80"
         case .Unknown:      return "Unknown"
+        case .PC98:         return "NEC - PC-98"
         case .Wii:          return "Nintendo - Wii"
         case .ZXSpectrum:   return "Sinclair - ZX Spectrum"
         case ._3DS:         return "Nintendo - Nintendo 3DS"

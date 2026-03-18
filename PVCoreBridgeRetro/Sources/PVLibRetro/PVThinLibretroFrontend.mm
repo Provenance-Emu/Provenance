@@ -3990,7 +3990,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     if ([renderDelegate conformsToProtocol:@protocol(PVRenderDelegateIOSurface)]) {
         id<PVRenderDelegateIOSurface> ioDelegate = (id<PVRenderDelegateIOSurface>)renderDelegate;
-        if ([ioDelegate respondsToSelector:@selector(renderIOSurface)]) {
+        if ([(NSObject *)ioDelegate respondsToSelector:@selector(renderIOSurface)]) {
             delegateSurface = [ioDelegate renderIOSurface];
         }
     }

@@ -141,6 +141,8 @@ public extension SystemIdentifier {
             return PVMSXSystemResponderClient.self
         case .Music:
             return PVNESSystemResponderClient.self
+        case .PC98:
+            return PVRetroArchCoreResponderClient.self
         case .PalmOS:
             return PVRetroArchCoreResponderClient.self
         case .Quake:

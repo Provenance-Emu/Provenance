@@ -372,6 +372,8 @@ public extension DeltaSkinManager {
             return "tic80"
         case .Wolf3D:
             return "wolf3d"
+        case .PC98:
+            return "pc98"
         case .ZXSpectrum:
             return "zxspectrum"
         case .Unknown:

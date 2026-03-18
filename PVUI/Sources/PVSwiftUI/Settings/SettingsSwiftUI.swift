@@ -1969,8 +1969,13 @@ private struct TestRumbleButton: View {
                 params: .init(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4)
             )
         }
-        // Device Taptic Engine — player 0 is sufficient for a settings test.
-        HapticsManager.rumble(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4, player: 0)
+        // Device Taptic Engine fallback — the GCControllerHapticsManager loop above
+        // already rumbles all connected external controllers. This just gives on-device
+        // feedback so the user feels something even without an external controller.
+        #if !os(tvOS)
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred(intensity: 0.8)
+        #endif
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 600_000_000)
             isTesting = false

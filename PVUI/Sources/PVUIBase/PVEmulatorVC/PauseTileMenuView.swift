@@ -162,7 +162,7 @@ struct PauseTileMenuView: View {
 
         // N64 Controller Pak slots tile — shown for N64 games
         let n64ID = SystemIdentifier.N64.rawValue
-        let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core?.systemIdentifier ?? ""
+        let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier
         if gameSystemID == n64ID {
             coreTiles.append(PauseMenuTile(
                 id: "n64PakSlots",

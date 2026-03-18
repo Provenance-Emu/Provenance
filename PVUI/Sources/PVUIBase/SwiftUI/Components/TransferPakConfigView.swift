@@ -190,7 +190,7 @@ public struct TransferPakConfigView: View {
     // MARK: - Sections
 
     private var infoSection: some View {
-        Section {
+        SwiftUI.Section {
             VStack(alignment: .leading, spacing: 10) {
                 Label("What is the Transfer Pak?", systemImage: "info.circle.fill")
                     .font(.headline)
@@ -214,7 +214,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     }
 
     private var slotsSection: some View {
-        Section {
+        SwiftUI.Section {
             ForEach(0..<slotCount, id: \.self) { port in
                 portRow(port: port)
             }
@@ -227,7 +227,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     }
 
     private var clearSection: some View {
-        Section {
+        SwiftUI.Section {
             Button(role: .destructive) {
                 clearAll()
             } label: {

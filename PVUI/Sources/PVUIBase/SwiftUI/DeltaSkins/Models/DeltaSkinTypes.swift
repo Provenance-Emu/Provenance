@@ -512,6 +512,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
     case retroarch
     case supervision
     case tic80
+    case pc98
     case wolf3d
     case zxspectrum
 
@@ -536,7 +537,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
             .neogeo, .ngp, .ngpc,   // SNK
             .wonderswan, .wonderswancolor, // Bandai
             .gamecube, .wii,        // Nintendo
-            ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum // Other
+            ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .pc98, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum // Other
         ]
 
         guard let lhsIndex = order.firstIndex(of: lhs),
@@ -649,6 +650,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case "music": return .music
         case "odyssey2", "odyssey": return .odyssey2
         case "palmos", "palm": return .palmos
+        case "pc98", "pc9801", "pc9821": return .pc98
         case "quake": return .quake
         case "quake2": return .quake2
         case "retroarch": return .retroarch
@@ -767,7 +769,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .masterSystem: return "com.rileytestut.delta.game.ms"
         case .psx: return "com.rileytestut.delta.game.psx"
         // Not present in Delta's identifiers
-        case .dreamcast, .segaCD, .sega32X, .sg1000, .saturn, .virtualBoy, .psp, .threeDS, .pokemonMini, .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, .gamecube, .wii, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
+        case .dreamcast, .segaCD, .sega32X, .sg1000, .saturn, .virtualBoy, .psp, .threeDS, .pokemonMini, .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, .gamecube, .wii, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .pc98, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
             return nil
         }
     }
@@ -797,7 +799,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .pokemonMini: return prefix + "pm"
         case .dreamcast: return prefix + "dc"
         // Not present in Manic's identifiers
-        case .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, .gamecube, .wii, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
+        case .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, .gamecube, .wii, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .pc98, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
             return nil
         }
     }
@@ -866,6 +868,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .Music: self = .music
         case .Odyssey2: self = .odyssey2
         case .PalmOS: self = .palmos
+        case .PC98: self = .pc98
         case .Quake: self = .quake
         case .Quake2: self = .quake2
         case .RetroArch: self = .retroarch
@@ -939,6 +942,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .music: return .Music
         case .odyssey2: return .Odyssey2
         case .palmos: return .PalmOS
+        case .pc98: return .PC98
         case .quake: return .Quake
         case .quake2: return .Quake2
         case .retroarch: return .RetroArch
@@ -1017,6 +1021,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
              (.music, "music"),
              (.odyssey2, "odyssey2"), (.odyssey2, "odyssey"),
              (.palmos, "palmos"), (.palmos, "palm"),
+             (.pc98, "pc98"), (.pc98, "pc9801"), (.pc98, "pc9821"),
              (.quake, "quake"),
              (.quake2, "quake2"),
              (.retroarch, "retroarch"),

@@ -449,7 +449,7 @@ public final class PVCoreFactory: NSObject {
                 assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
             }
             break;
-        case .C64, .Macintosh:
+        case .C64, .Macintosh, .PC98:
             if let core = core as? PVRetroArchCoreResponderClient {
                 return PVRetroArchControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {

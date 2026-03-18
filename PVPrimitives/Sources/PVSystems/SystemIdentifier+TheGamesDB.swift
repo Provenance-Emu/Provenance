@@ -93,6 +93,9 @@ public extension SystemIdentifier {
         case 4948:  self = .MegaDuck       // Mega Duck
         case 4959:  self = .Supervision    // Supervision
 
+        // NEC Systems (continued)
+        case 4934: self = .PC98           // NEC PC-98
+
         // Arcade Systems
         case 23: self = .MAME
 
@@ -194,6 +197,7 @@ public extension SystemIdentifier {
 //        case .PalmOS:
 //        case .RetroArch:
 //        case .SGFX:
+        case .PC98: return 4934
         case .Supervision: return 4959
 //        case .TIC80:
         case .Vectrex: return 4939

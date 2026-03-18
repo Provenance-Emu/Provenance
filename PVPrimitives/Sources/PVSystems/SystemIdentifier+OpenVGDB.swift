@@ -52,6 +52,7 @@ public extension SystemIdentifier {
         case .MSX2: return 43
         case .RetroArch: return 45
         case ._3DS: return 46
+        case .PC98: return 44
         case .AppleII: return 47
         default: return -1
         }
@@ -102,6 +103,7 @@ public extension SystemIdentifier {
         case ._3DS: return "openemu.system.3ds"
         case .AppleII: return "openemu.system.appleii"
         case .CDi: return "openemu.system.cdi"
+        case .PC98: return "openemu.system.pc98"
         default: return "unknown"
         }
     }
@@ -201,7 +203,7 @@ public extension SystemIdentifier {
         case 41: return .C64
         case 42: return .MSX
         case 43: return .MSX2
-//        case 44: return .pc98
+        case 44: return .PC98
         case 45: return .RetroArch
         case 46: return ._3DS
         case 47: return .AppleII

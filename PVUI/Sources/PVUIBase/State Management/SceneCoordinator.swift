@@ -976,7 +976,7 @@ public class SceneCoordinator: ObservableObject {
     ///
     /// Awaits until the user taps "Skip & Launch", "Launch Game", or swipes to dismiss.
     private func maybePromptTransferPakSetup(for game: PVGame) async {
-        guard PVFeatureFlagsManager.shared.isEnabled(.mupenTransferPak),
+        guard PVFeatureFlagsManager.shared.mupenTransferPak,
               SystemIdentifier(rawValue: game.systemIdentifier) == .N64,
               TransferPakCompatibleGames.isKnownTransferPakGame(game.title)
         else { return }

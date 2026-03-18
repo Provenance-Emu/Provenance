@@ -74,7 +74,14 @@ let package = Package(
 
         .target(
             name: "JITManager",
-            dependencies: ["PVLogging" ,"DebuggerUtils"]
+            dependencies: [
+                "PVLogging",
+                "DebuggerUtils",
+                .product(name: "SideKit", package: "SideKit", condition: .when(platforms: [.iOS])),
+            ],
+            swiftSettings: [
+                .define("_USE_ALTKIT", .when(platforms: [.iOS])),
+            ]
         ),
 
         .target(

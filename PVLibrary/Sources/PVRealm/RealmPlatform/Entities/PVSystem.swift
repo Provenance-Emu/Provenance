@@ -236,7 +236,8 @@ public extension PVSystem {
                     .PalmOS,
                     .TIC80,
                     .AppleII,
-                    .MAME:
+                    .MAME,
+                    .PC98:
                 return .poster
             case .GameGear,
                     .GB,

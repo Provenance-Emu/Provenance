@@ -171,7 +171,7 @@ public struct N64ControllerPakView: View {
     // MARK: - Sections
 
     private var infoSection: some View {
-        Section {
+        SwiftUI.Section(header: Text("Info")) {
             VStack(alignment: .leading, spacing: 8) {
                 Label("N64 Controller Paks", systemImage: "gamecontroller.fill")
                     .font(.headline)
@@ -193,7 +193,7 @@ Changes take effect the next time the game is loaded.
     }
 
     private var portsSection: some View {
-        Section(header: Text("Controller Ports")) {
+        SwiftUI.Section(header: Text("Controller Ports")) {
             ForEach(0..<4, id: \.self) { index in
                 portRow(index: index)
             }

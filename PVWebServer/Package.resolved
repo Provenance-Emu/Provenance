@@ -1,13 +1,31 @@
 {
-  "originHash" : "4317c6f17f78b15e3394543e7cdd0fdae7d7d7142c5d1145714274c33c0e74df",
+  "originHash" : "c2987b643db63f179b951a2140e5164b2795fad8b301600ecb13b88c9cd8fdd4",
   "pins" : [
     {
-      "identity" : "swiftgenplugin",
+      "identity" : "defaults",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftGen/SwiftGenPlugin",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
-        "revision" : "879b85a470cacd70c19e22eb7e11a3aed66f4068",
-        "version" : "6.6.2"
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
+        "version" : "9.0.2"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     }
   ],

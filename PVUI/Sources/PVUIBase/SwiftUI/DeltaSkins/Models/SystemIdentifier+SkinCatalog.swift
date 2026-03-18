@@ -98,6 +98,8 @@ extension SystemIdentifier {
              .RetroArch, .Supervision, .TIC80, .Wolf3D, .ZXSpectrum,
              .Unknown:
             return nil
+        case .PC98:
+            return nil
         }
     }
 
