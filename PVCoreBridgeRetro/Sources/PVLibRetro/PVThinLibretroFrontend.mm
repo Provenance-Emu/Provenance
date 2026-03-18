@@ -2551,13 +2551,28 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)_thinInputPoll {
+    static bool s_loggedPoll = false;
+    if (!s_loggedPoll) {
+        ILOG(@"ThinFrontend: _thinInputPoll called (delegate=%@, joypad[0]=0x%04X, inputPollBlock=%@)", self.frontendDelegate, _joypadState[0], self.inputPollBlock ? @"YES" : @"NO");
+        s_loggedPoll = true;
+    }
     if (self.frontendDelegate) {
         [self.frontendDelegate libretroFrontendPollInput:self];
     }
-    // In PVEmulatorCore mode input is driven by GCController callbacks.
+    // Poll physical GCControllers if the Swift core registered a poll block
+    if (self.inputPollBlock) {
+        self.inputPollBlock();
+    }
 }
 
 - (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid {
+    // One-shot diagnostic: confirm core is actually polling input
+    static bool s_loggedInputPoll = false;
+    if (!s_loggedInputPoll) {
+        ILOG(@"ThinFrontend: ✅ Core is polling input (port=%u dev=%u idx=%u id=%u) delegate=%@", port, dev, idx, bid, self.frontendDelegate);
+        s_loggedInputPoll = true;
+    }
+
     if (self.frontendDelegate) {
         return [self.frontendDelegate libretroFrontend:self inputStateForPort:port device:dev index:idx id:bid];
     }
@@ -2570,6 +2585,15 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (deviceType == RETRO_DEVICE_JOYPAD) {
         if (bid == RETRO_DEVICE_ID_JOYPAD_MASK) {
             // Bitmask query — return all buttons at once
+            // Log when state is non-zero (throttled)
+            static uint64_t s_lastNonZeroLog = 0;
+            if (_joypadState[port] != 0) {
+                uint64_t now = (uint64_t)(CACurrentMediaTime() * 1000);
+                if (now - s_lastNonZeroLog > 500) { // Max once per 500ms
+                    ILOG(@"ThinFrontend: input_state BITMASK port=%u → 0x%04X", port, _joypadState[port]);
+                    s_lastNonZeroLog = now;
+                }
+            }
             return _joypadState[port];
         }
         if (bid <= 15) {
@@ -2688,6 +2712,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (player >= THIN_MAX_PLAYERS || buttonId > 15) return;
     if (pressed) {
         _joypadState[player] |= (1 << buttonId);
+        ILOG(@"ThinFrontend: setButton %u pressed for player %u → joypadState=0x%04X", buttonId, player, _joypadState[player]);
     } else {
         _joypadState[player] &= ~(1 << buttonId);
     }

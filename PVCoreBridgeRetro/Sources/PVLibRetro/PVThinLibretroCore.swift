@@ -74,6 +74,7 @@ class PVThinLibretroCore: PVEmulatorCore {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
         PVThinLibretroCore.current = self
+        ILOG("ThinCore: initialized PVThinLibretroCore (bridge=\(_bridge), self=\(self))")
     }
 
     public override func startEmulation() {
@@ -94,6 +95,11 @@ class PVThinLibretroCore: PVEmulatorCore {
         _bridge.afterROMLoadBlock = { [weak self] in
             self?.restorePortDeviceTypes()
         }
+        // Wire physical GCController polling into the emulation thread's input poll
+        _bridge.inputPollBlock = { [weak self] in
+            self?.pollControllers()
+        }
+        ILOG("ThinCore: startEmulation — inputPollBlock wired, sysId=\(systemIdentifier ?? "nil")")
         super.startEmulation()
     }
 

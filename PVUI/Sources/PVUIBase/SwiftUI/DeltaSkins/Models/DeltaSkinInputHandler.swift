@@ -1768,8 +1768,11 @@ public class DeltaSkinInputHandler: ObservableObject {
         case .PSX:
             if let r = core as? PVPSXSystemResponderClient {
                 let b = PVPSXButton(id)
+                ILOG("PSX responder: \(isPressed ? "push" : "release") button=\(b) id=\(id) coreType=\(type(of: core))")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
+            } else {
+                ELOG("PSX responder cast FAILED — core type=\(type(of: core)) does NOT conform to PVPSXSystemResponderClient")
             }
         case .Genesis, .SegaCD:
             if let r = core as? PVGenesisSystemResponderClient {

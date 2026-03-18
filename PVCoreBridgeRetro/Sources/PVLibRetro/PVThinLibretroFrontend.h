@@ -315,6 +315,10 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Clear all button and analog state for all players.
 - (void)clearAllInput;
 
+/// Optional block called each frame from the input poll callback (emulation thread).
+/// The thin Swift core sets this to call `pollControllers()` for GCController support.
+@property (nonatomic, copy, nullable) dispatch_block_t inputPollBlock;
+
 // MARK: Keyboard input
 
 /// Set the press/release state of a libretro keyboard key.

@@ -95,18 +95,82 @@ private let kAnalogAxisX: UInt32      = 0
 private let kAnalogAxisY: UInt32      = 1
 private let kAnalogMax: Int16         = 0x7FFF
 
+// MARK: - GCController polling for physical controllers
+
+extension PVThinLibretroCore {
+
+    /// Poll physical GCController state each frame and update the joypad bitmask.
+    /// Called from the emulation thread via `thin_input_poll`.
+    /// Without this, physical controllers have no effect in the thin wrapper
+    /// (only DeltaSkin on-screen buttons would work via the responder protocols).
+    @objc public func pollControllers() {
+        for playerIndex in 0..<4 {
+            let controller: GCController?
+            switch playerIndex {
+            case 0: controller = controller1
+            case 1: controller = controller2
+            case 2: controller = controller3
+            case 3: controller = controller4
+            default: controller = nil
+            }
+            guard let pad = controller?.extendedGamepad else { continue }
+
+            let player = UInt32(playerIndex)
+            // D-pad
+            _bridge.setButton(RetroJoypad.up.rawValue, pressed: pad.dpad.up.isPressed || pad.leftThumbstick.up.value > 0.5, forPlayer: player)
+            _bridge.setButton(RetroJoypad.down.rawValue, pressed: pad.dpad.down.isPressed || pad.leftThumbstick.down.value > 0.5, forPlayer: player)
+            _bridge.setButton(RetroJoypad.left.rawValue, pressed: pad.dpad.left.isPressed || pad.leftThumbstick.left.value > 0.5, forPlayer: player)
+            _bridge.setButton(RetroJoypad.right.rawValue, pressed: pad.dpad.right.isPressed || pad.leftThumbstick.right.value > 0.5, forPlayer: player)
+            // Face buttons
+            _bridge.setButton(RetroJoypad.b.rawValue, pressed: pad.buttonA.isPressed, forPlayer: player)
+            _bridge.setButton(RetroJoypad.a.rawValue, pressed: pad.buttonB.isPressed, forPlayer: player)
+            _bridge.setButton(RetroJoypad.y.rawValue, pressed: pad.buttonX.isPressed, forPlayer: player)
+            _bridge.setButton(RetroJoypad.x.rawValue, pressed: pad.buttonY.isPressed, forPlayer: player)
+            // Shoulders & triggers
+            _bridge.setButton(RetroJoypad.l.rawValue, pressed: pad.leftShoulder.isPressed, forPlayer: player)
+            _bridge.setButton(RetroJoypad.r.rawValue, pressed: pad.rightShoulder.isPressed, forPlayer: player)
+            _bridge.setButton(RetroJoypad.l2.rawValue, pressed: pad.leftTrigger.isPressed, forPlayer: player)
+            _bridge.setButton(RetroJoypad.r2.rawValue, pressed: pad.rightTrigger.isPressed, forPlayer: player)
+            // Thumbstick clicks
+            if let l3 = pad.leftThumbstickButton {
+                _bridge.setButton(RetroJoypad.l3.rawValue, pressed: l3.isPressed, forPlayer: player)
+            }
+            if let r3 = pad.rightThumbstickButton {
+                _bridge.setButton(RetroJoypad.r3.rawValue, pressed: r3.isPressed, forPlayer: player)
+            }
+            // Start / Select
+            if let menu = pad.buttonMenu {
+                _bridge.setButton(RetroJoypad.start.rawValue, pressed: menu.isPressed, forPlayer: player)
+            }
+            if let options = pad.buttonOptions {
+                _bridge.setButton(RetroJoypad.select.rawValue, pressed: options.isPressed, forPlayer: player)
+            }
+            // Analog sticks
+            let lx = Int16(pad.leftThumbstick.xAxis.value * Float(kAnalogMax))
+            let ly = Int16(-pad.leftThumbstick.yAxis.value * Float(kAnalogMax)) // Y inverted for libretro
+            _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisX, value: lx, forPlayer: player)
+            _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisY, value: ly, forPlayer: player)
+            let rx = Int16(pad.rightThumbstick.xAxis.value * Float(kAnalogMax))
+            let ry = Int16(-pad.rightThumbstick.yAxis.value * Float(kAnalogMax))
+            _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisX, value: rx, forPlayer: player)
+            _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisY, value: ry, forPlayer: player)
+        }
+    }
+}
+
 // MARK: - Helper extension on PVThinLibretroCore
 
 extension PVThinLibretroCore {
 
     /// Press a libretro joypad button.
     func pressButton(_ btn: RetroJoypad, forPlayer player: Int) {
-        DLOG("ThinCore: pressButton \(btn) (id=\(btn.rawValue)) player=\(player)")
+        ILOG("ThinCore INPUT: pressButton \(btn) (id=\(btn.rawValue)) player=\(player) bridge=\(_bridge)")
         _bridge.setButton(btn.rawValue, pressed: true, forPlayer: UInt32(player))
     }
 
     /// Release a libretro joypad button.
     func releaseButton(_ btn: RetroJoypad, forPlayer player: Int) {
+        DLOG("ThinCore INPUT: releaseButton \(btn) (id=\(btn.rawValue)) player=\(player)")
         _bridge.setButton(btn.rawValue, pressed: false, forPlayer: UInt32(player))
     }
 
@@ -398,7 +462,11 @@ extension PVThinLibretroCore: PVPCECDSystemResponderClient {
 
 extension PVThinLibretroCore: PVPSXSystemResponderClient {
     public func didPush(_ button: PVPSXButton, forPlayer player: Int) {
-        guard let mapped = psxMapDigital(button) else { return }
+        guard let mapped = psxMapDigital(button) else {
+            WLOG("ThinCore PSX: unmapped button \(button) for push")
+            return
+        }
+        ILOG("ThinCore PSX: didPush \(button) → \(mapped) player=\(player)")
         pressButton(mapped, forPlayer: player)
     }
     public func didRelease(_ button: PVPSXButton, forPlayer player: Int) {
