@@ -16,7 +16,6 @@
 
 import PVSupport
 import PVEmulatorCore
-import SwiftUI
 
 private extension JSButton {
     var buttonTag: PV7800Button {
@@ -31,56 +30,13 @@ private extension JSButton {
 
 final class PVAtari7800ControllerViewController: PVControllerViewController<PV7800SystemResponderClient> {
 
-    private var hardwareSwitchHostingVC: UIViewController?
+    // MARK: - Hardware Switch Input
 
-    // MARK: - Lifecycle
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        addHardwareSwitchOverlay()
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        positionHardwareSwitchOverlay()
-    }
-
-    // MARK: - Hardware switch overlay
-
-    private func addHardwareSwitchOverlay() {
-        let switches = hardwareSwitches(for: "com.provenance.7800") ?? []
-
-        let switchRow = HardwareSwitchRowView(switches: switches) { [weak self] buttonId, _ in
-            self?.handleHardwareSwitchToggle(buttonId: buttonId)
-        }
-
-        let hostingVC = UIHostingController(rootView: switchRow)
-        hostingVC.view.backgroundColor = .clear
-        hostingVC.view.isOpaque = false
-
-        addChild(hostingVC)
-        view.addSubview(hostingVC.view)
-        hostingVC.didMove(toParent: self)
-        hardwareSwitchHostingVC = hostingVC
-        positionHardwareSwitchOverlay()
-    }
-
-    private func positionHardwareSwitchOverlay() {
-        guard let hostingVC = hardwareSwitchHostingVC else { return }
-        // Let SwiftUI measure the natural size of the switch row instead of hard-coding it.
-        let fittingSize = hostingVC.sizeThatFits(in: CGSize(width: 220, height: .greatestFiniteMagnitude))
-        let safeTop = view.safeAreaInsets.top
-        let safeTrailing = view.safeAreaInsets.right
-        let x = view.bounds.width - fittingSize.width - 12 - safeTrailing
-        let y = safeTop + 8
-        hostingVC.view.frame = CGRect(origin: CGPoint(x: x, y: y), size: fittingSize)
-        view.bringSubviewToFront(hostingVC.view)
-    }
-
-    private func handleHardwareSwitchToggle(buttonId: String) {
-        emulatorCore.didPush(PV7800Button(buttonId), forPlayer: 0)
+    override func didReceiveHardwareSwitchInput(buttonId: String, player: Int) {
+        let button = PV7800Button(buttonId)
+        emulatorCore.didPush(button, forPlayer: player)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
-            self?.emulatorCore.didRelease(PV7800Button(buttonId), forPlayer: 0)
+            self?.emulatorCore.didRelease(button, forPlayer: player)
         }
     }
 
