@@ -57,7 +57,7 @@ extension PVEmulatorViewController {
         }
 #endif
         DispatchQueue.main.async { [weak self] in
-            self?.updateLastPlayedTime()
+            self?.playTimeTracker?.updateLastPlayedTime()
         }
         if core.isOn {
             core.setPauseEmulation(false)

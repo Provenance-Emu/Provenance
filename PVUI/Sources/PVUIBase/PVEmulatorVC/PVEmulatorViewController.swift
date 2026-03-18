@@ -67,9 +67,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     @ThreadSafe
     public var game: PVGame!
     public internal(set) var autosaveTimer: Timer?
-    public internal(set) var gameStartTime: Date?
-    /// Tracks KVO registration for core.isRunning to avoid double-removal crashes
-    private var isObservingRunning = false
+    /// Tracks emulation session play time. Replaces the old KVO + gameStartTime approach.
+    var playTimeTracker: PlayTimeTracker?
+    /// Combine subscription that observes core.isRunning with duplicate-filtering.
+    private var runningCancellable: AnyCancellable?
     // Store a reference to the skin container view
     var skinContainerView: UIView?
 
@@ -306,37 +307,31 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             NSSetUncaughtExceptionHandler(nil)
         }
 
-        // Add KVO watcher for isRunning state so we can update play time
-        core.addObserver(self, forKeyPath: "isRunning", options: .new, context: nil)
-        isObservingRunning = true
+        // Initialize play time tracker and start observing core running state via Combine.
+        playTimeTracker = PlayTimeTracker(game: game)
+        observeRunningState()
     }
 
-    override public func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
-        if keyPath == "isRunning" {
-            #if os(tvOS) && canImport(SteamController)
-            PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
-            #endif
-            if core.isRunning {
-                DispatchQueue.main.async { [weak self] in
-                    self?.hideBootHUDIfNeeded()
+    /// Observes `core.isRunning` via Combine instead of raw KVO.
+    ///
+    /// `.removeDuplicates()` prevents back-to-back `true→true` fires (which happened
+    /// when `setPauseEmulation(false)` was called twice) from double-starting the timer.
+    private func observeRunningState() {
+        runningCancellable = core.publisher(for: \.isRunning, options: [.new])
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isRunning in
+                guard let self else { return }
+                if isRunning {
+                    self.hideBootHUDIfNeeded()
+                    self.playTimeTracker?.didResume()
+                } else {
+                    self.playTimeTracker?.didPause()
                 }
-                if gameStartTime != nil {
-                    ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
-                }
-                gameStartTime = Date()
-            } else {
-                DispatchQueue.main.async { [weak self] in
-                    self?.updatePlayedDuration()
-                }
+                #if os(tvOS) && canImport(SteamController)
+                PVControllerManager.shared.setSteamControllersMode(isRunning ? .gameController : .keyboardAndMouse)
+                #endif
             }
-        }
-    }
-
-    /// Safely removes the KVO observer for core.isRunning, guarded by `isObservingRunning`
-    private func removeRunningObserverIfNeeded() {
-        guard isObservingRunning else { return }
-        core.removeObserver(self, forKeyPath: "isRunning")
-        isObservingRunning = false
     }
 
     @MainActor
@@ -420,9 +415,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             PVControllerManager.shared.controllers.forEach { $0.clearPauseHandler() }
         }
         #endif
-        // Safety net: only flush duration if quit() hasn't already done it
-        if gameStartTime != nil {
-            updatePlayedDuration()
+        // Safety net: cancel observer and flush any remaining play time.
+        // UIViewController deinit is always on the main thread; assumeIsolated
+        // is required because deinit is nonisolated even for @MainActor classes.
+        MainActor.assumeIsolated {
+            runningCancellable = nil
+            playTimeTracker?.didPause()
         }
         destroyAutosaveTimer()
         // Remove all menu-related gesture recognizers
@@ -447,7 +445,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             emulationUIState.core = nil
             emulationUIState.emulator = nil
         }
-        removeRunningObserverIfNeeded()
+        runningCancellable = nil
 
         // Cancel the JIT indicator's Combine subscription (#2796).
         // UI teardown (removeJITIndicator) runs on the main actor in viewWillDisappear.
@@ -1453,8 +1451,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// Resume all background services after gameplay via the central registry
         BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
 
-        // Remove KVO before stopping so the observer doesn't enqueue a redundant async updatePlayedDuration()
-        removeRunningObserverIfNeeded()
+        // Cancel the Combine observer before stopping the core so the sink doesn't
+        // deliver a redundant didPause() after we explicitly flush below.
+        runningCancellable = nil
 
         // Tear down RetroAchievements session before stopping the core.
         stopAchievements()
@@ -1477,7 +1476,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         #endif
-        updatePlayedDuration()
+        playTimeTracker?.didPause()
         destroyAutosaveTimer()
         // Remove all menu-related gesture recognizers
         #if os(tvOS)
@@ -1593,7 +1592,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 }
 
-extension PVEmulatorViewController: GameplayDurationTrackerUtil {}
 
 // MARK: - Skin Management
 
@@ -2727,7 +2725,7 @@ extension PVEmulatorViewController {
             return
         }
         Task.detached { @MainActor in
-            self.updateLastPlayedTime()
+            self.playTimeTracker?.updateLastPlayedTime()
         }
     }
 
