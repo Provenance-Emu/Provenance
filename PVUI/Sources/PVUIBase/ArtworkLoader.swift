@@ -37,9 +37,14 @@ public class ArtworkLoader: ObservableObject {
 
     // MARK: - Local file URL memo cache (for resolveLocalArtworkFileURL)
 
-    /// Game IDs for which a local file URL lookup has already been performed (including misses).
+    /// Game IDs for which a local file URL lookup has already been performed (hits AND misses).
+    /// A game ID in this set means the lookup is complete; check `localURLCache` to see whether
+    /// a file URL was found. Misses are tracked here rather than as nil entries in the dictionary
+    /// because Swift dictionaries cannot distinguish "key absent" from "key present with nil value"
+    /// when the value type is non-optional.
     private var localURLResolvedIds: Set<String> = []
-    /// Resolved local filesystem URLs, keyed by game ID. Absent = not yet looked up; present = resolved (nil = no file found).
+    /// Resolved local filesystem URLs, keyed by game ID. Only hit entries are stored here.
+    /// To test for a miss, check `localURLResolvedIds.contains(gameId)` first.
     private var localURLCache: [String: URL] = [:]
 
     /// Initialize the loader with default settings
@@ -158,8 +163,11 @@ public class ArtworkLoader: ObservableObject {
 
     /// Returns the local filesystem URL for a game's artwork file, or `nil` if none is cached on disk.
     ///
+    /// Both resolution paths verify that the file exists on disk before returning a URL.
+    ///
     /// Resolution order:
-    /// 1. `originalArtworkFile.url` — the direct-path local copy stored as a `PVImageFile`.
+    /// 1. `originalArtworkFile.pathOfCachedImage` — the direct-path local copy stored as a
+    ///    `PVImageFile`; returns `nil` if the file has been deleted.
     /// 2. `PVMediaCache.filePath(forKey:)` via `game.trueArtworkURL` — for legacy games that
     ///    have only a remote URL string and no `PVImageFile` entry.
     ///
@@ -205,7 +213,9 @@ public class ArtworkLoader: ObservableObject {
             .object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId)
         else { return nil }
         // Prefer the direct-path PVImageFile entry (avoids a second hash lookup).
-        if let fileURL = game.originalArtworkFile?.url {
+        // Use pathOfCachedImage rather than .url so we only return URLs for files
+        // that actually exist on disk (guards against stale/deleted artwork).
+        if let fileURL = game.originalArtworkFile?.pathOfCachedImage {
             return fileURL
         }
         // Fall back to PVMediaCache keyed by the artwork URL string (legacy path).
