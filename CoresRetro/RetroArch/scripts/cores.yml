@@ -22,6 +22,10 @@ buildbot:
   base_url: "https://buildbot.libretro.com/nightly/apple"
   ios_path: "ios-arm64/latest"
   tvos_path: "tvos-arm64/latest"
+  # pinned_date: pins all dylib downloads to a specific buildbot nightly date (YYYY-MM-DD).
+  # When set, the fetch script replaces "latest" in URLs with this date for reproducible builds.
+  # Update via: CoresRetro/RetroArch/scripts/update-dylib-pins.sh [YYYY-MM-DD]
+  pinned_date: "2026-03-18"
 
 cores:
   # Globally disabled cores (commented out in all files)
