@@ -747,6 +747,7 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
         }
         DLOG(@"Hatari: AFTER write — HD/ACSI lines in hatari/hatari.cfg:\n%@",
              afterLines.count ? [afterLines componentsJoinedByString:@"\n"] : @"(none found — template missing sections!)");
+        DLOG(@"Hatari: hatari.cfg destinations: %@ and %@", hatariWorkCfgPath, hatariCfgPath);
     } else {
         if (!workOK) ELOG(@"Hatari: failed to write hatari.cfg to %@: %@", hatariWorkCfgPath, workWriteErr);
         if (!legacyOK) ELOG(@"Hatari: failed to write hatari.cfg to %@: %@", hatariCfgPath, legacyWriteErr);
