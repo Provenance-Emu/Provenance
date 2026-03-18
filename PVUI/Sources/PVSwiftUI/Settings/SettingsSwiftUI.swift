@@ -1970,7 +1970,7 @@ private struct TestRumbleButton: View {
             )
         }
         // Device Taptic Engine — player 0 is sufficient for a settings test.
-        HapticsManager.shared.rumble(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4, player: 0)
+        HapticsManager.rumble(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4, player: 0)
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 600_000_000)
             isTesting = false
