@@ -44,6 +44,7 @@
 
 
 #import <Foundation/Foundation.h>
+#import <string.h>
 @import PVSupport;
 @import PVCoreBridge;
 @import PVEmulatorCore;
@@ -963,6 +964,12 @@ static void emulation_run(BOOL skipFrame) {
             }
         } else {
             // Standard 2-player setup — explicitly disable multitap to prevent bleed from prior loads.
+            // Clear Saturn input buffers to avoid leaking state from a prior multitap configuration.
+            int portsToClear = (self->multiTapPlayerCount > 2) ? 6 : 2;
+            for (int port = 0; port < portsToClear; port++) {
+                memset(inputBuffer[port], 0, sizeof(inputBuffer[port]));
+            }
+
             Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
             Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
             self->multiTapPlayerCount = 2;
