@@ -2060,7 +2060,7 @@ extension PVThinLibretroCore: LightGunResponder {
     public var gameSupportsLightGun: Bool {
         // Dynamic: check what the loaded core actually declared.
         let detectedViaControllerInfo = controllerPortDescriptors.contains { port in
-            port.contains { $0.deviceType == LibretroDeviceType.lightgun.rawValue }
+            port.contains { ($0.deviceType & LibretroDeviceType.deviceMask) == LibretroDeviceType.lightgun.rawValue }
         }
         if detectedViaControllerInfo {
             // Persist the discovery so the registry (and therefore

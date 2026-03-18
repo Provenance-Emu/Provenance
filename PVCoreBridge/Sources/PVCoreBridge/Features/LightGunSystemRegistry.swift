@@ -19,8 +19,8 @@
 //     the *currently loaded core* support a light gun right now?"  Queried on
 //     a running core instance.  A core may dynamically update this (e.g. after
 //     `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO` is received) and call
-//     `LightGunSystemRegistry.shared.register(system:)` to persist the
-//     discovery across future launches.
+//     `LightGunSystemRegistry.shared.register(system:)` to record the
+//     discovery for the current session (registry is in-memory only).
 //
 //  Usage from a core:
 //  ```swift
@@ -36,7 +36,7 @@
 //  ```
 
 import Foundation
-import PVPrimitives
+import PVSystems
 
 // MARK: - LightGunSystemsProvider
 
