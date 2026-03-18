@@ -94,6 +94,18 @@ class PVThinLibretroCore: PVEmulatorCore {
         super.startEmulation()
     }
 
+    public override func stopEmulation() {
+        // Reset haptic profile to generic so the next core doesn't inherit this system's tuning.
+        Task { @MainActor in
+#if canImport(GameController) && canImport(CoreHaptics)
+            if #available(iOS 14.0, tvOS 14.0, *) {
+                GCControllerHapticsManager.shared.resetSystemProfile()
+            }
+#endif
+        }
+        super.stopEmulation()
+    }
+
     // MARK: - Per-core platform defaults
 
     /// Set iOS-specific core option defaults that differ from the core's

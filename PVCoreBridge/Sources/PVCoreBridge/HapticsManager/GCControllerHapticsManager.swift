@@ -66,17 +66,14 @@ public final class GCControllerHapticsManager {
     /// Per-system haptic tuning profile. Defaults to `.generic` until a core sets it.
     private var systemProfile: RumbleSystemProfile = .generic
 
-    /// Tracks when each player's rumble burst started (for duration measurement).
-    private var rumbleStartTimes: [Int: Date] = [:]
+    /// Tracks when each player's rumble burst started (monotonic uptime, for duration measurement).
+    private var rumbleStartTimes: [Int: TimeInterval] = [:]
 
     /// Tracks how many on/off pulse cycles each player has had in the current window.
     private var playerPulseCounts: [Int: Int] = [:]
 
-    /// Tracks the start of each player's pulse counting window.
-    private var playerPulseWindowStart: [Int: Date] = [:]
-
-    /// Stores the last classified burst pattern per player (used for fallback haptic style).
-    private var lastBurstPattern: [Int: RumblePattern] = [:]
+    /// Tracks the start of each player's pulse counting window (monotonic uptime).
+    private var playerPulseWindowStart: [Int: TimeInterval] = [:]
 
     /// Stores the intensity used in the most recent rumble call per player (used for fallback haptic on stop).
     private var playerLastFallbackIntensity: [Int: CGFloat] = [:]
@@ -97,6 +94,12 @@ public final class GCControllerHapticsManager {
     /// Convenience: look up the best-matching profile for a Provenance system identifier and apply it.
     public func setSystemProfile(forSystemIdentifier sysId: String) {
         systemProfile = RumbleSystemProfile.profile(forSystemIdentifier: sysId)
+    }
+
+    /// Reset the system profile back to `.generic`.
+    /// Call this when an emulation session ends so the next core starts with neutral tuning.
+    public func resetSystemProfile() {
+        systemProfile = .generic
     }
 
     private func refreshIntensityCache() {
@@ -191,7 +194,8 @@ public final class GCControllerHapticsManager {
     ///   - params: Intensity and duration parameters.
     public func rumble(player: Int, params: RumbleParams = .init()) {
         // Track burst timing: record start time on the leading edge of a new burst.
-        let now = Date()
+        // Use monotonic uptime so classification isn't affected by wall-clock adjustments (NTP, DST).
+        let now = ProcessInfo.processInfo.systemUptime
         let isNewBurst = rumbleStartTimes[player] == nil
         if isNewBurst {
             rumbleStartTimes[player] = now
@@ -202,7 +206,7 @@ public final class GCControllerHapticsManager {
         // being classified as .rapidPulse.
         if isNewBurst {
             if let windowStart = playerPulseWindowStart[player] {
-                let windowElapsed = now.timeIntervalSince(windowStart)
+                let windowElapsed = now - windowStart
                 if windowElapsed > 0.5 {
                     // More than 500 ms since first pulse — start a fresh window.
                     playerPulseCounts[player] = 1
@@ -220,8 +224,9 @@ public final class GCControllerHapticsManager {
         // Apply system profile scaling to params.
         let scaledLow = params.lowFrequency * systemProfile.lowFrequencyScale
         let scaledHigh = params.highFrequency * systemProfile.highFrequencyScale
-        // Use a long duration so the haptic runs until stopRumble() is called.
-        let continuousDuration = max(params.duration, 0.5)
+        // Use the caller-provided duration; callers that want continuous-until-stop
+        // (e.g. libretro rumble helper) pass a large value such as 10.0 seconds.
+        let continuousDuration = params.duration
 
         guard let controller = playerControllers[player] else {
             VLOG("[GCHaptics] No controller registered for player \(player + 1) — falling back to Taptic Engine")
@@ -279,24 +284,24 @@ public final class GCControllerHapticsManager {
     /// the same engines without requiring the emulator core to re-register them.
     public func stopRumble(player: Int) {
         // Measure burst duration and classify the pattern.
-        let now = Date()
+        // Use monotonic uptime to match the timestamps recorded in rumble().
+        let now = ProcessInfo.processInfo.systemUptime
         let burstDuration: TimeInterval
         if let startTime = rumbleStartTimes[player] {
-            burstDuration = now.timeIntervalSince(startTime)
+            burstDuration = now - startTime
         } else {
             burstDuration = 0
         }
 
         let pulseCount = playerPulseCounts[player] ?? 1
         let windowStart = playerPulseWindowStart[player] ?? now
-        let windowDuration = now.timeIntervalSince(windowStart)
+        let windowDuration = now - windowStart
 
         let pattern = RumbleBurstClassifier.classify(
             duration: burstDuration,
             pulseCount: pulseCount,
             windowDuration: windowDuration
         )
-        lastBurstPattern[player] = pattern
         VLOG("[GCHaptics] Burst classified as .\(pattern) for player \(player + 1) (duration: \(String(format: "%.3f", burstDuration))s, pulses: \(pulseCount))")
 
         // Clear tracking state for this player.
