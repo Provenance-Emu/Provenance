@@ -111,7 +111,7 @@ public struct TransferPakConfigView: View {
         self.game = game.isFrozen ? game : game.freeze()
         self.applyLiveSlotChange = applyLiveSlotChange
         self.onDismiss = onDismiss
-        self.slotCount = max(1, slotCount)
+        self.slotCount = min(4, max(1, slotCount))
 
         // Start with empty slots; real Realm resolution happens in onAppear to
         // avoid synchronous Realm access during view construction (often on main thread).
