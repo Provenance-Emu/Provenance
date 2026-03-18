@@ -15,10 +15,27 @@ void MupenInitiateControllers (CONTROL_INFO ControlInfo);
 void MupenGetKeys(int Control, BUTTONS *Keys);
 void MupenControllerCommand(int Control, unsigned char *Command);
 
+/// Static C callbacks used by m64p_media_loader to query GB cart ROM/RAM paths.
+char * __nullable MupenNXGetGBCartROM(void * __nullable cb_data, int controller_num);
+char * __nullable MupenNXGetGBCartRAM(void * __nullable cb_data, int controller_num);
+
 @interface MupenGameNXCore (Controls) <PVN64SystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;
+- (void)setMode:(NSInteger)mode forController:(NSInteger)controller;
+
+/// Sets (or clears) the GB/GBC cartridge in a Transfer Pak slot (port 0–3).
+/// Pass nil romPath to remove the cartridge from the slot.
+- (void)setGBCartROMPath:(nullable NSString *)romPath
+               savePath:(nullable NSString *)savePath
+                forPort:(NSInteger)port;
+
+/// Returns the GB ROM path currently mounted in the given Transfer Pak port, or nil.
+- (nullable NSString *)gbCartROMPathForPort:(NSInteger)port;
+
+/// Returns the GB save path currently mounted in the given Transfer Pak port, or nil.
+- (nullable NSString *)gbCartSavePathForPort:(NSInteger)port;
 
 #pragma mark - Control
 
