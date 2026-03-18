@@ -27,6 +27,7 @@
 
 
 #import "MednafenGameCoreBridge.h"
+#include <zlib.h>
 
 @import MednafenGameCoreC;
 @import MednafenGameCoreOptions;
@@ -58,17 +59,25 @@
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-@interface MednafenGameCoreBridge (MultiDisc)
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiDiscPSXGames;
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)sbiRequiredGames;
-@end
+// MultiDisc game databases are on MednafenGameCoreOptions (Swift @objc methods).
+// Accessed as [MednafenGameCoreOptions multiDiscPSXGames] etc.
 
-@interface MednafenGameCoreBridge (MultiTap)
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapPSXGames;
-+ (NSArray<NSString*>*_Nonnull)multiTap5PlayerPort2;
-+ (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapSaturnGames;
-+ (NSArray<NSString*>*_Nonnull)multiTapSaturnPort2Games;
-@end
+// MultiTap/MultiDisc game databases are now on MednafenGameCoreOptions (Swift @objc methods).
+// They are accessed as [MednafenGameCoreOptions multiTapPSXGames] etc. — no bridge category needed.
+
+/// Compute CRC32 of a ROM file, stripping any 512-byte SMC header if present.
+static uint32_t computeROMCRC32(NSString *filePath) {
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    if (!data) return 0;
+    const uint8_t *bytes = (const uint8_t *)data.bytes;
+    NSUInteger length = data.length;
+    // Strip 512-byte header when (file size & 0x7FFF) == 512 (SMC format, matches Mednafen)
+    if (length > 512 && (length & 0x7FFF) == 512) {
+        bytes += 512;
+        length -= 512;
+    }
+    return (uint32_t)crc32(0, bytes, (uInt)length);
+}
 
 static Mednafen::MDFNGI *game;
 static Mednafen::MDFN_Surface *backBufferSurf;
@@ -800,6 +809,84 @@ static void emulation_run(BOOL skipFrame) {
     mednafen_init(_current);
     Mednafen::NativeVFS fs = Mednafen::NativeVFS();
 
+    // Cached SNES multitap flags — computed once before load and reused in the SetInput block.
+    BOOL snesIs5Player = NO;
+    BOOL snesIs8Player = NO;
+
+    // Cached Saturn multitap decision — computed before MDFNI_LoadGame and reused post-load.
+    // Saturn reads ss.input.sport*.multitap during its init path so post-load changes have no effect.
+    BOOL ssEnableMultitap = NO;
+    BOOL ssUsePort2 = NO;
+    int ssMaxPlayers = 2;
+
+    // Apply multitap settings BEFORE MDFNI_LoadGame so the core initialises with the
+    // correct port configuration. Both snes/snes_faust and ss read/cache multitap settings
+    // during their load/init paths — setting them afterwards is too late.
+    if (self.systemType == MednaSystemSNES) {
+        uint32_t romCRC = computeROMCRC32(path);
+        if (romCRC != 0) {
+            NSString *crcStr = [NSString stringWithFormat:@"%08x", romCRC];
+            BOOL is8Player = [[MednafenGameCoreOptions multiTapSNES8PlayerGames] containsObject:crcStr];
+            BOOL is5Player = is8Player || [[MednafenGameCoreOptions multiTapSNESGames] containsObject:crcStr];
+            snesIs8Player = is8Player;
+            snesIs5Player = is5Player;
+            ILOG(@"Mednafen SNES pre-load: multitap crc=%@ 5p=%d 8p=%d module=%@",
+                 crcStr, is5Player, is8Player, self->mednafenCoreModule);
+        } else {
+            WLOG(@"Mednafen SNES pre-load: CRC computation failed for '%@' — skipping multitap detection", path);
+        }
+        NSString *prefix = [self->mednafenCoreModule isEqualToString:@"snes_faust"] ? @"snes_faust" : @"snes";
+        NSString *p1Key = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
+                           [prefix isEqualToString:@"snes_faust"] ? @"sport1" : @"port1"];
+        NSString *p2Key = [NSString stringWithFormat:@"%@.input.%@.multitap", prefix,
+                           [prefix isEqualToString:@"snes_faust"] ? @"sport2" : @"port2"];
+        Mednafen::MDFNI_SetSettingB([p1Key UTF8String], snesIs8Player);
+        Mednafen::MDFNI_SetSettingB([p2Key UTF8String], snesIs5Player);
+    } else if (self.systemType == MednaSystemSS) {
+        // Full multitap decision: database → user override → controller count fallback.
+        // All MDFNI_SetSettingB calls must happen here (before MDFNI_LoadGame) because
+        // Saturn's ss.cpp reads and latches these settings during SMPC_SetMultitap().
+        NSString *serial = self.romSerial;
+        NSNumber *tapCount = serial ? [MednafenGameCoreOptions multiTapSaturnGames][serial] : nil;
+        BOOL userForcedMultitap = MednafenGameCoreOptions.ss_multitap;
+
+        int connectedControllers = 0;
+        if (self.controller1) connectedControllers++;
+        if (self.controller2) connectedControllers++;
+        if (self.controller3) connectedControllers++;
+        if (self.controller4) connectedControllers++;
+        if (self.controller5) connectedControllers++;
+        if (self.controller6) connectedControllers++;
+        if (self.controller7) connectedControllers++;
+        if (self.controller8) connectedControllers++;
+
+        if (tapCount != nil) {
+            ssMaxPlayers = MAX(2, [tapCount intValue]);
+            ssEnableMultitap = (ssMaxPlayers > 2);
+            ILOG(@"Mednafen Saturn pre-load: serial=%@ players=%d (database)", serial, ssMaxPlayers);
+        } else if (userForcedMultitap) {
+            ssMaxPlayers = 6;
+            ssEnableMultitap = YES;
+            ILOG(@"Mednafen Saturn pre-load: multitap force-enabled by user setting, players=%d", ssMaxPlayers);
+        } else if (connectedControllers > 2) {
+            ssMaxPlayers = 6;
+            ssEnableMultitap = YES;
+            ILOG(@"Mednafen Saturn pre-load: multitap enabled by controller count (%d), players=%d",
+                 connectedControllers, ssMaxPlayers);
+        }
+
+        if (ssEnableMultitap) {
+            ssUsePort2 = serial != nil && [[MednafenGameCoreOptions multiTapSaturnPort2Games] containsObject:serial];
+            Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", !ssUsePort2);
+            Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", ssUsePort2);
+        } else {
+            Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
+            Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
+        }
+        ILOG(@"Mednafen Saturn pre-load: enableMultitap=%d usePort2=%d maxPlayers=%d",
+             ssEnableMultitap, ssUsePort2, ssMaxPlayers);
+    }
+
     // Detailed diagnostics around game load to pinpoint failures (e.g., CHD load issues)
     const char* module_cstr = [self->mednafenCoreModule UTF8String];
     const char* path_cstr = [path cStringUsingEncoding:NSUTF8StringEncoding];
@@ -875,10 +962,32 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
     }
-    else if (self.systemType == MednaSystemVirtualBoy || self.systemType == MednaSystemSNES)
+    else if (self.systemType == MednaSystemVirtualBoy)
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+    }
+    else if (self.systemType == MednaSystemSNES)
+    {
+        // Multitap settings were applied before MDFNI_LoadGame; reuse cached flags here.
+        BOOL is8Player = snesIs8Player;
+        BOOL is5Player = snesIs5Player;
+
+        if (is8Player) {
+            self->multiTapPlayerCount = 8;
+            for (int i = 0; i < 8; i++) {
+                game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            }
+        } else if (is5Player) {
+            self->multiTapPlayerCount = 5;
+            for (int i = 0; i < 5; i++) {
+                game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
+            }
+        } else {
+            self->multiTapPlayerCount = 2;
+            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+        }
     }
     else if (self.systemType == MednaSystemNES)
     {
@@ -895,63 +1004,16 @@ static void emulation_run(BOOL skipFrame) {
         BOOL hasM3u = [path.pathExtension.lowercaseString isEqualToString:@"m3u"];
         if (hasM3u) {
             multiDiscGame = YES;
-            // Determine disc count from M3U entries.
             NSInteger discCount = PVCountM3UEntriesAtPath(path);
             self.maxDiscs = (int)MAX((NSInteger)1, discCount);
             ILOG(@"Mednafen: Saturn M3U detected, discs=%ld", (long)self.maxDiscs);
         }
 
-        // Saturn: Set multitap (TeamTap) configuration.
-        // Priority 1: game-ID database lookup (most reliable).
-        // Priority 2: user preference override (explicit force-enable).
-        // Priority 3: connected controller count (fallback — enables multitap when
-        //             3+ controllers are plugged in even for unknown games).
-        NSString *ssSerial = self.romSerial;
-        NSNumber *ssMultitapCount = ssSerial ? [MednafenGameCoreOptions multiTapSaturnGames][ssSerial] : nil;
-        BOOL userForcedMultitap = MednafenGameCoreOptions.ss_multitap;
-
-        // Count active controllers.
-        int connectedControllers = 0;
-        if (self.controller1) connectedControllers++;
-        if (self.controller2) connectedControllers++;
-        if (self.controller3) connectedControllers++;
-        if (self.controller4) connectedControllers++;
-        if (self.controller5) connectedControllers++;
-        if (self.controller6) connectedControllers++;
-        if (self.controller7) connectedControllers++;
-        if (self.controller8) connectedControllers++;
-
-        BOOL enableMultitap = NO;
-        int ssMaxPlayers = 2;
-
-        if (ssMultitapCount != nil) {
-            // Known multitap game — use the database player count.
-            ssMaxPlayers = MAX(2, [ssMultitapCount intValue]);
-            enableMultitap = (ssMaxPlayers > 2);
-            ILOG(@"Mednafen Saturn: multitap serial=%@ players=%d", ssSerial, ssMaxPlayers);
-        } else if (userForcedMultitap) {
-            // User explicitly enabled multitap — always configure all 6 TeamTap ports so
-            // additional controllers can be recognized without requiring a game reload.
-            ssMaxPlayers = 6;
-            enableMultitap = YES;
-            ILOG(@"Mednafen Saturn: multitap force-enabled by user setting, players=%d", ssMaxPlayers);
-        } else if (connectedControllers > 2) {
-            // Unknown game but 3+ controllers connected — enable as a convenience.
-            // Always configure all 6 ports so additional controllers can join without reload.
-            ssMaxPlayers = 6;
-            enableMultitap = YES;
-            ILOG(@"Mednafen Saturn: multitap enabled by controller count (%d connected), configuring all 6 ports", connectedControllers);
-        }
-
-        if (enableMultitap) {
-            BOOL usePort2 = ssSerial && [[MednafenGameCoreOptions multiTapSaturnPort2Games] containsObject:ssSerial];
-            if (usePort2) {
-                Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
-                Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", true);
-            } else {
-                Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", true);
-                Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
-            }
+        // Saturn multitap was fully configured (MDFNI_SetSettingB + decision) in the pre-load
+        // block above. Use the cached ssEnableMultitap/ssUsePort2/ssMaxPlayers here only to
+        // call SetInput — do NOT call MDFNI_SetSettingB here (too late; Saturn latches the
+        // setting during MDFNI_LoadGame → SMPC_SetMultitap).
+        if (ssEnableMultitap) {
             self->multiTapPlayerCount = ssMaxPlayers;
             // Clear all TeamTap port buffers at load time to prevent stale input state
             // (phantom button holds) from leaking across sessions.
@@ -961,20 +1023,17 @@ static void emulation_run(BOOL skipFrame) {
             // When the multitap is on sport1, virtual ports 0-(n-1) are the TeamTap sub-slots.
             // When the multitap is on sport2, Mednafen maps sport1's single pad to virtual port 0
             // and the TeamTap sub-slots start at virtual port 1.
-            const int basePortIndex = usePort2 ? 1 : 0;
+            const int basePortIndex = ssUsePort2 ? 1 : 0;
             for (int i = 0; i < ssMaxPlayers; i++) {
                 game->SetInput(basePortIndex + i, "gamepad", (uint8_t *)inputBuffer[i]);
             }
         } else {
-            // Standard 2-player setup — explicitly disable multitap to prevent bleed from prior loads.
+            // Standard 2-player setup.
             // Clear Saturn input buffers to avoid leaking state from a prior multitap configuration.
             int portsToClear = (self->multiTapPlayerCount > 2) ? 6 : 2;
             for (int port = 0; port < portsToClear; port++) {
                 memset(inputBuffer[port], 0, sizeof(inputBuffer[port]));
             }
-
-            Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", false);
-            Mednafen::MDFNI_SetSettingB("ss.input.sport2.multitap", false);
             self->multiTapPlayerCount = 2;
             game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
             game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
@@ -1197,6 +1256,7 @@ static void emulation_run(BOOL skipFrame) {
     switch (self.systemType) {
         case MednaSystemPSX:
         case MednaSystemSS:
+        case MednaSystemSNES:
             maxPlayers = self->multiTapPlayerCount;
             break;
         case MednaSystemPCE:
@@ -1205,7 +1265,6 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemMD:
         case MednaSystemSMS:
         case MednaSystemNES:
-        case MednaSystemSNES:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;

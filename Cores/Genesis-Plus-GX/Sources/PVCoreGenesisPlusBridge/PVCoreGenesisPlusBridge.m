@@ -259,7 +259,8 @@ static void bram_save(void)
     uint32_t *videoBufferB;
 
 	int _videoWidth, _videoHeight;
-	int16_t _pad[2][12];
+	int16_t _pad[MAX_DEVICES][RETRO_DEVICE_ID_JOYPAD_R3 + 1];
+    int _multiTapPlayerCount; // 2 normally, 4 for TeamPlayer
 }
 @property (nonatomic, assign) GenesisCoreType subCoreType;
 @end
@@ -320,38 +321,17 @@ static void input_poll_callback(void)
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
-	//DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
-	
 	__strong PVCoreGenesisPlusBridge *strongCurrent = _current;
     int16_t value = 0;
 
-    if (port == 0 & device == RETRO_DEVICE_JOYPAD)
-	{
-        if (strongCurrent.controller1)
-        {
-            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+    if (device == RETRO_DEVICE_JOYPAD && port < (unsigned)MAX_DEVICES) {
+        value = [strongCurrent controllerValueForButtonID:_id forPlayer:(NSInteger)port];
+        if (value == 0 && _id <= RETRO_DEVICE_ID_JOYPAD_R3) {
+            value = strongCurrent->_pad[port][_id];
         }
+    }
 
-        if (value == 0)
-        {
-            value = strongCurrent->_pad[0][_id];
-        }
-	}
-	else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
-	{
-        if (strongCurrent.controller2)
-        {
-            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
-        }
-
-        if (value == 0)
-        {
-            value = strongCurrent->_pad[1][_id];
-        }
-	}
-	
 	strongCurrent = nil;
-	
 	return value;
 }
 
@@ -387,10 +367,11 @@ static bool environment_callback(unsigned cmd, void *data)
 	if ((self = [super init])) {
         videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
+        _multiTapPlayerCount = 2;
 	}
-	
+
 	_current = self;
-	
+
 	return self;
 }
 - (void)initialize {
@@ -479,7 +460,7 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (BOOL)loadFileAtPath:(NSString*)path error:(NSError**)error {
-	memset(_pad, 0, sizeof(int16_t) * 10);
+	memset(_pad, 0, sizeof(_pad));
     
     const void *data;
     size_t size;
@@ -543,17 +524,38 @@ static bool environment_callback(unsigned cmd, void *data)
     info.size = size;
     info.meta = meta;
 
-	  /* input options */
+	  /* input options — start with standard 2-player; multitap set after ROM load */
 	  input.system[0] = SYSTEM_GAMEPAD;
 	  input.system[1] = SYSTEM_GAMEPAD;
 	  for (int i=0; i<MAX_INPUTS; i++) {
 		config.input[i].padtype = DEVICE_PAD2B | DEVICE_PAD3B | DEVICE_PAD6B;
 	  }
+    _multiTapPlayerCount = 2;
 
-    
     [self readOptions];
 
     if (retro_load_game(&info)) {
+
+        // Detect Sega TeamPlayer via ROM peripheral header bit.
+        // Bit 7 ('4') in rominfo.peripherals indicates TeamPlayer multi-tap support.
+        // Note: EA 4-Way Play uses SYSTEM_WAYPLAY (both ports) and requires a separate
+        // title database to distinguish — header bit detection alone cannot differentiate.
+        // This code enables SYSTEM_TEAMPLAYER only; EA 4-Way Play is not yet supported.
+        static const uint16_t kTeamPlayerBit = (1 << 7);
+        if (rominfo.peripherals & kTeamPlayerBit) {
+            // Enable TeamPlayer on port A (virtual ports 0-3).
+            // rominfo is only populated inside retro_load_game, so we set input.system[]
+            // after load and call io_init() again to re-initialise port handlers.
+            // io_init() is idempotent and safe to call multiple times.
+            input.system[0] = SYSTEM_TEAMPLAYER;
+            input.system[1] = SYSTEM_GAMEPAD;
+            _multiTapPlayerCount = 4;
+            DLOG(@"GenesisPlusBridge: TeamPlayer detected for '%s', enabling 4-player mode",
+                 rominfo.international);
+            io_init();
+        } else {
+            _multiTapPlayerCount = 2;
+        }
 
         if ([self.batterySavesPath length]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
@@ -830,6 +832,10 @@ static bool environment_callback(unsigned cmd, void *data)
     return channelCount;
 }
 
+- (NSUInteger)maxNumberPlayers {
+    return (NSUInteger)_multiTapPlayerCount;
+}
+
 #pragma mark - Input
 
 // Mapping from PVSG1000Button enum values to libretro RETRO_DEVICE_ID_JOYPAD_* constants.
@@ -864,10 +870,12 @@ static const int SG1000Map[] = {
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player {
     GCController *controller = nil;
 
-    if (player == 0) {
-        controller = self.controller1;
-    } else {
-        controller = self.controller2 ?: self.controller3 ?: self.controller4;
+    switch (player) {
+        case 0:  controller = self.controller1; break;
+        case 1:  controller = self.controller2; break;
+        case 2:  controller = self.controller3; break;
+        case 3:  controller = self.controller4; break;
+        default: break;
     }
 
     // Sega SG-1000…
