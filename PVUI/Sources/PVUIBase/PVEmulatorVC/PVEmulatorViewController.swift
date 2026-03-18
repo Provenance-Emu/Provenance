@@ -2119,9 +2119,43 @@ extension PVEmulatorViewController {
         // 1. Save reference to essential views we need to keep
         let gpuView = gpuViewController.view
 
+        // Collect views that must survive cleanup — virtual input overlays
+        // (trackpad, cursor, keyboard) are installed once and referenced via
+        // associated objects; removing them without clearing those references
+        // leaves orphaned views that can never be re-created.
+        var preservedViews: Set<ObjectIdentifier> = []
+        if let gpuView { preservedViews.insert(ObjectIdentifier(gpuView)) }
+        #if !os(tvOS)
+        if let trackpad = touchTrackpadView {
+            preservedViews.insert(ObjectIdentifier(trackpad))
+        }
+        if let cursorView = cursorHostingController?.view {
+            preservedViews.insert(ObjectIdentifier(cursorView))
+        }
+        if let keyboardContainer = virtualKeyboardContainer {
+            preservedViews.insert(ObjectIdentifier(keyboardContainer))
+        }
+        #endif
+        if let mb = menuButton {
+            preservedViews.insert(ObjectIdentifier(mb))
+        }
+
         // 2. Remove ALL child view controllers except the GPU controller
+        // and virtual-input hosting controllers (cursor overlay, keyboard).
+        let preservedControllers: Set<ObjectIdentifier> = {
+            var set: Set<ObjectIdentifier> = [ObjectIdentifier(gpuViewController)]
+            #if !os(tvOS)
+            if let cursorHost = cursorHostingController {
+                set.insert(ObjectIdentifier(cursorHost))
+            }
+            if let kbHost = virtualKeyboardHostingVC {
+                set.insert(ObjectIdentifier(kbHost))
+            }
+            #endif
+            return set
+        }()
         for child in children {
-            if child !== gpuViewController {
+            if !preservedControllers.contains(ObjectIdentifier(child)) {
                 DLOG("Removing controller: \(child)")
                 child.willMove(toParent: nil)
                 child.view.removeFromSuperview()
@@ -2132,18 +2166,11 @@ extension PVEmulatorViewController {
         // 3. Clear all tracked hosting controllers
         skinHostingControllers.removeAll()
 
-        // 4. Remove ALL subviews from the main view except the GPU view
-        // Also remove any skin containers (tagged with 9876) and DeltaSkinContainerView instances
+        // 4. Remove ALL subviews from the main view except preserved views
         for subview in view.subviews {
-            if subview !== gpuView {
-                // Remove skin containers (tagged with 9876) and any DeltaSkinContainerView instances
-                if subview.tag == 9876 || type(of: subview).description().contains("DeltaSkinContainerView") {
-                    DLOG("Removing skin container view: \(subview)")
-                    subview.removeFromSuperview()
-                } else {
-                    DLOG("Removing view: \(subview)")
-                    subview.removeFromSuperview()
-                }
+            if !preservedViews.contains(ObjectIdentifier(subview)) {
+                DLOG("Removing view: \(subview)")
+                subview.removeFromSuperview()
             }
         }
 

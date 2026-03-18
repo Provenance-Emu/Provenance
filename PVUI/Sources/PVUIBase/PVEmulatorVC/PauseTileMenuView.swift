@@ -144,9 +144,10 @@ struct PauseTileMenuView: View {
         // ── CORE section (dynamic, per-core) ──────────────────────────────────
         var coreTiles: [PauseMenuTile] = []
 
-        // Transfer Pak tile
+        // Transfer Pak tile — only shown for Mupen64Plus N64 cores (slotCount > 0)
         if let transferCore = emulatorVC.core as? TransferPakSupport,
-           featureFlags.mupenTransferPak {
+           featureFlags.mupenTransferPak,
+           transferCore.transferPakSlotCount > 0 {
             let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
                 transferCore.transferPakROM(forPort: $0) != nil
             }.count

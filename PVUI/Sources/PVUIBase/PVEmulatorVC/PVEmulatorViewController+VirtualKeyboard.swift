@@ -37,7 +37,7 @@ extension PVEmulatorViewController {
     // MARK: - Stored properties via Objective-C associated objects
 
     /// The UIHostingController wrapping the VirtualKeyboardView, if currently presented.
-    private var virtualKeyboardHostingVC: UIHostingController<AnyView>? {
+    var virtualKeyboardHostingVC: UIHostingController<AnyView>? {
         get {
             objc_getAssociatedObject(self, &AssociatedKeys.keyboardHostingVC)
                 as? UIHostingController<AnyView>
@@ -51,8 +51,8 @@ extension PVEmulatorViewController {
     }
 
     /// The passthrough container view that wraps the keyboard hosting controller.
-    /// Stored so `bringVirtualInputOverlaysToFront` can re-stack it correctly.
-    private var virtualKeyboardContainer: KeyboardPassthroughView? {
+    /// Stored so `bringVirtualInputOverlaysToFront` and `radicalCleanup` can access it.
+    var virtualKeyboardContainer: KeyboardPassthroughView? {
         get { objc_getAssociatedObject(self, &AssociatedKeys.keyboardContainer) as? KeyboardPassthroughView }
         set { objc_setAssociatedObject(self, &AssociatedKeys.keyboardContainer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
@@ -416,7 +416,7 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
 /// to views below, while still allowing touches on its subviews (the keyboard).
 /// This lets the collapsed keyboard handle sit atop the game without blocking
 /// touch input to the emulator or skin buttons.
-private final class KeyboardPassthroughView: UIView {
+final class KeyboardPassthroughView: UIView {
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let hit = super.hitTest(point, with: event)
         // If the hit is this container itself (not a subview), pass through
