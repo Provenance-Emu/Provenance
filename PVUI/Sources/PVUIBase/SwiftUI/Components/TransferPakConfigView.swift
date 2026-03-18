@@ -296,7 +296,7 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
             // Use `systemIdentifier` (a direct Realm-indexed property) rather than
             // traversing the optional `system` relationship, which is faster and
             // avoids predicate failures when `system` is nil.
-            let gbSystemIDs = ["com.provenance.gb", "com.provenance.gbc"]
+            let gbSystemIDs = [SystemIdentifier.GB.rawValue, SystemIdentifier.GBC.rawValue]
             let games = realm.objects(PVGame.self)
                 .filter("systemIdentifier IN %@ AND file != nil AND isDownloaded == true", gbSystemIDs)
                 .sorted(byKeyPath: "title")
