@@ -198,21 +198,36 @@ extension PVThinLibretroCore: TransferPakSupport {
             // Supply the GB/GBC ROM path.
             // mupen64plus-next reads this from the core option when pak type is "transfer".
             // If the key is absent in this build, the core falls back to its own config dir.
+            // NOTE: mupen64plus-transfer-pak-path / save-path are global options (not per-port).
+            // We write them from the first configured slot so at least one ROM is always active.
+            // For multi-pak scenarios, callers should configure port 0 as the primary slot.
             _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: rom.romPath.path)
-            if let savePath = rom.savePath {
-                _bridge.setCoreOption("mupen64plus-transfer-pak-save-path", value: savePath.path)
-            }
+            // Always set save-path — clear any stale value when savePath is nil.
+            _bridge.setCoreOption("mupen64plus-transfer-pak-save-path",
+                                  value: rom.savePath?.path ?? "")
 
             ILOG("ThinLibretroCore: Transfer Pak port \(port) → \(rom.romPath.lastPathComponent)")
         } else {
             _transferPakSlots.removeValue(forKey: port)
 
-            // Revert to memory pak (mempak) when the Transfer Pak is removed.
+            // Revert this port to memory pak (mempak).
             _bridge.setCoreOption(pakTypeKey, value: PakType.memory.rawValue)
-            _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: "")
-            _bridge.setCoreOption("mupen64plus-transfer-pak-save-path", value: "")
 
-            ILOG("ThinLibretroCore: Transfer Pak port \(port) cleared → memory pak")
+            // Only clear the global path options when no other slots remain configured.
+            // mupen64plus-transfer-pak-path / save-path are global (not per-port), so
+            // blanking them while another port is still active would break that port.
+            let remainingSlot = _transferPakSlots.first(where: { $0.key != port })?.value
+            if let active = remainingSlot {
+                // Keep the global path pointed at another active slot's ROM.
+                _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: active.romPath.path)
+                _bridge.setCoreOption("mupen64plus-transfer-pak-save-path",
+                                      value: active.savePath?.path ?? "")
+                ILOG("ThinLibretroCore: Transfer Pak port \(port) cleared; global path kept for another slot")
+            } else {
+                _bridge.setCoreOption("mupen64plus-transfer-pak-path", value: "")
+                _bridge.setCoreOption("mupen64plus-transfer-pak-save-path", value: "")
+                ILOG("ThinLibretroCore: Transfer Pak port \(port) cleared → memory pak (all slots empty)")
+            }
         }
     }
 
