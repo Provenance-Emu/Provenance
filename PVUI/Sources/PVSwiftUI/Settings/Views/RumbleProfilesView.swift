@@ -123,7 +123,7 @@ struct RumbleProfilesView: View {
         .sheet(item: $presetToExport) { preset in
             if let data = try? preset.jsonData(),
                let tempURL = writeTempFile(data: data, name: "\(sanitize(preset.name)).rumble.json") {
-                ShareSheet(items: [tempURL])
+                RumbleShareSheet(items: [tempURL])
             }
         }
         #endif
@@ -315,8 +315,8 @@ struct RumbleProfilesView: View {
             SystemRow(id: SystemIdentifier.PS3.rawValue,       displayName: "PlayStation 3",     icon: "gamecontroller.fill"),
             SystemRow(id: SystemIdentifier.GBA.rawValue,       displayName: "Game Boy Advance",  icon: "gamecontroller"),
             SystemRow(id: SystemIdentifier.GameCube.rawValue,  displayName: "GameCube",          icon: "gamecontroller.fill"),
-            SystemRow(id: SystemIdentifier.Xbox.rawValue,      displayName: "Xbox",              icon: "gamecontroller.fill"),
-            SystemRow(id: SystemIdentifier.Switch.rawValue,    displayName: "Nintendo Switch",   icon: "gamecontroller.fill"),
+            SystemRow(id: "xbox",                              displayName: "Xbox",              icon: "gamecontroller.fill"),
+            SystemRow(id: "switch",                            displayName: "Nintendo Switch",   icon: "gamecontroller.fill"),
         ]
     }
 
@@ -708,7 +708,7 @@ struct RumblePresetEditorView: View {
 // MARK: - ShareSheet (iOS only)
 
 #if canImport(UIKit) && !os(tvOS)
-private struct ShareSheet: UIViewControllerRepresentable {
+private struct RumbleShareSheet: UIViewControllerRepresentable {
     let items: [Any]
 
     func makeUIViewController(context: Context) -> UIActivityViewController {

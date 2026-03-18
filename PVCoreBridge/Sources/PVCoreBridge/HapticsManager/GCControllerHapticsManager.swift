@@ -156,7 +156,8 @@ public final class GCControllerHapticsManager {
     /// `rumbleControllerOverrides`. Uses `productCategory` when available,
     /// falling back to `vendorName` if necessary.
     private func controllerTypeKey(for controller: GCController) -> String? {
-        if let category = controller.productCategory, !category.isEmpty {
+        let category = controller.productCategory
+        if !category.isEmpty {
             return category
         }
         if let vendor = controller.vendorName, !vendor.isEmpty {
