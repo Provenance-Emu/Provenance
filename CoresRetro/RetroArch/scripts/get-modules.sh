@@ -42,6 +42,22 @@ if [ -n "${PINNED_DATE}" ]; then
 fi
 
 if [ -n "${PINNED_DATE}" ]; then
+	# Warn when the pin is more than 30 days old so developers know to bump it.
+	# Uses BSD (date -j -f) or GNU (date -d) date for epoch conversion.
+	PIN_EPOCH=$(date -j -f '%Y-%m-%d' "${PINNED_DATE}" '+%s' 2>/dev/null || date -d "${PINNED_DATE}" '+%s' 2>/dev/null || echo "")
+	if [ -n "${PIN_EPOCH}" ] && [ "${PIN_EPOCH}" -gt 0 ] 2>/dev/null; then
+		NOW_EPOCH=$(date +%s)
+		PIN_AGE_DAYS=$(( (NOW_EPOCH - PIN_EPOCH) / 86400 ))
+		if [ "${PIN_AGE_DAYS}" -lt 0 ]; then
+			echo "GetModule: WARNING — pinned_date ${PINNED_DATE} appears to be in the future (${PIN_AGE_DAYS} days ahead of system time)." >&2
+			echo "GetModule: WARNING — this may indicate clock skew or a misconfigured pin; please verify cores.yml pinned_date." >&2
+		elif [ "${PIN_AGE_DAYS}" -gt 30 ]; then
+			echo "GetModule: ⚠️  WARNING — pinned_date ${PINNED_DATE} is ${PIN_AGE_DAYS} days old." >&2
+			echo "GetModule: ⚠️  Run 'CoresRetro/RetroArch/scripts/check-dylib-updates.sh --update' to pull the latest snapshot." >&2
+		fi
+	else
+		echo "GetModule: WARNING — could not parse pinned_date '${PINNED_DATE}' as an epoch; skipping staleness check." >&2
+	fi
 	echo "GetModule: using pinned buildbot date ${PINNED_DATE} (update via update-dylib-pins.sh)"
 	EFFECTIVE_MODULE_LIST="${CORES_ARCHIVE_DIR}/urls_pinned.txt"
 	mkdir -p "${CORES_ARCHIVE_DIR}"
