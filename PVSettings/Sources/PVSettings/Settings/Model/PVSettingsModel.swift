@@ -127,6 +127,25 @@ public extension Defaults.Keys {
 
     // MARK: Rumble Profile Customization
 
+    /// Strongly-typed identifier for controller categories used by
+    /// `Defaults.Keys.rumbleControllerOverrides`.
+    ///
+    /// This is a lightweight `String` wrapper so we can share well-known keys across
+    /// settings and UI code without constraining the stored format in `UserDefaults`.
+    public struct RumbleControllerTypeKey: RawRepresentable, Hashable, Codable, Sendable {
+        public let rawValue: String
+
+        @inlinable
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+
+        // Common controller families used by the UI.
+        public static let dualSense = RumbleControllerTypeKey(rawValue: "dualSense")
+        public static let xbox = RumbleControllerTypeKey(rawValue: "xbox")
+        public static let switchPro = RumbleControllerTypeKey(rawValue: "switchPro")
+    }
+
     /// Per-system rumble profile overrides.
     /// Key = Provenance system identifier (e.g. "com.provenance.n64").
     /// Value = UUID string of the custom preset that overrides the system default, or
@@ -134,7 +153,7 @@ public extension Defaults.Keys {
     static let rumbleSystemOverrides = Key<[String: String]>("rumbleSystemOverrides", default: [:])
 
     /// Per-controller-type rumble profile overrides.
-    /// Key = controller type identifier string, e.g. "dualSense", "xbox", "switchPro".
+    /// Key = `RumbleControllerTypeKey.rawValue`, e.g. "dualSense", "xbox", "switchPro".
     /// Value = UUID string of the custom preset to apply for that controller type, or
     ///         the special string "builtin:<presetName>" for a named built-in.
     static let rumbleControllerOverrides = Key<[String: String]>("rumbleControllerOverrides", default: [:])
