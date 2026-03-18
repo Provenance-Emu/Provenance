@@ -66,6 +66,11 @@ public final class GCControllerHapticsManager {
     /// Per-system haptic tuning profile. Defaults to `.generic` until a core sets it.
     private var systemProfile: RumbleSystemProfile = .generic
 
+    /// The system identifier of the currently active emulation session, used to
+    /// re-apply adaptive trigger profiles when the `dualSenseAdaptiveTriggersEnabled`
+    /// setting changes at runtime.
+    private var currentSystemIdentifier: String?
+
     /// Tracks when each player's rumble burst started (monotonic uptime, for duration measurement).
     private var rumbleStartTimes: [Int: TimeInterval] = [:]
 
@@ -98,8 +103,15 @@ public final class GCControllerHapticsManager {
     /// - If the stored value is a UUID, look up the matching blob in `rumbleCustomPresets`
     /// Falls back to the default `RumbleSystemProfile.profile(forSystemIdentifier:)` if no
     /// override is set or the stored data cannot be decoded.
+    ///
+    /// Also applies the appropriate DualSense adaptive trigger profile for the system
+    /// if `dualSenseAdaptiveTriggersEnabled` is true.
     public func setSystemProfile(forSystemIdentifier sysId: String) {
+        currentSystemIdentifier = sysId
         systemProfile = effectiveProfile(forSystemIdentifier: sysId)
+        if #available(iOS 14.5, tvOS 14.5, *) {
+            applyAdaptiveTriggers()
+        }
     }
 
     /// Resolve the effective `RumbleSystemProfile` for a system identifier,
@@ -201,8 +213,15 @@ public final class GCControllerHapticsManager {
 
     /// Reset the system profile back to `.generic`.
     /// Call this when an emulation session ends so the next core starts with neutral tuning.
+    /// Also turns off adaptive triggers on any connected DualSense controllers.
     public func resetSystemProfile() {
         systemProfile = .generic
+        currentSystemIdentifier = nil
+        if #available(iOS 14.5, tvOS 14.5, *) {
+            for controller in playerControllers.values {
+                configureDualSenseAdaptiveTriggers(controller: controller, profile: .off)
+            }
+        }
     }
 
     private func refreshIntensityCache() {
@@ -218,6 +237,41 @@ public final class GCControllerHapticsManager {
         }
         let stored = UserDefaults.standard.object(forKey: "controllerHapticIntensity") as? Double ?? 1.0
         _cachedIntensityMultiplier = Float(max(0.0, min(1.0, stored)))
+    }
+
+    /// Applies (or removes) DualSense adaptive trigger feedback on all registered controllers
+    /// based on the current `dualSenseAdaptiveTriggersEnabled` UserDefaults setting and the
+    /// active system identifier.
+    ///
+    /// Call whenever the setting changes or a new system profile is loaded.
+    @available(iOS 14.5, tvOS 14.5, *)
+    private func applyAdaptiveTriggers() {
+        let enabled = UserDefaults.standard.object(forKey: "dualSenseAdaptiveTriggersEnabled") as? Bool ?? true
+        let profile: AdaptiveTriggerProfile
+        if enabled, let sysId = currentSystemIdentifier {
+            profile = adaptiveTriggerProfile(forSystemIdentifier: sysId)
+        } else {
+            profile = .off
+        }
+        for controller in playerControllers.values {
+            configureDualSenseAdaptiveTriggers(controller: controller, profile: profile)
+        }
+    }
+
+    /// Map a Provenance system identifier to the best DualSense adaptive trigger profile.
+    ///
+    /// PlayStation systems with analog L2/R2 triggers get a `.soft` feedback profile
+    /// so the physical resistance complements the original controller experience.
+    /// All other systems default to `.off` (standard spring feel).
+    @available(iOS 14.5, tvOS 14.5, *)
+    private func adaptiveTriggerProfile(forSystemIdentifier sysId: String) -> AdaptiveTriggerProfile {
+        let id = sysId.lowercased()
+        // PlayStation systems have analog L2/R2; soft resistance enhances immersion.
+        if id.contains("psx") || id.contains("ps1") || id.contains("ps2")
+            || id.contains("ps3") || id.contains("playstation") {
+            return .soft
+        }
+        return .off
     }
 
     private var notificationObservers: [NSObjectProtocol] = []
@@ -261,9 +315,14 @@ public final class GCControllerHapticsManager {
         notificationObservers.append(fgObs)
         #endif
 
-        // Keep intensity cache in sync with UserDefaults changes from PVSettings.
+        // Keep intensity cache and adaptive trigger state in sync with UserDefaults changes.
         let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            Task { @MainActor in self?.refreshIntensityCache() }
+            Task { @MainActor in
+                self?.refreshIntensityCache()
+                if #available(iOS 14.5, tvOS 14.5, *) {
+                    self?.applyAdaptiveTriggers()
+                }
+            }
         }
         notificationObservers.append(udObs)
 
@@ -289,6 +348,11 @@ public final class GCControllerHapticsManager {
 
         playerControllers[player] = controller
         buildEngines(forPlayer: player, controller: controller)
+
+        // Apply adaptive triggers to a newly registered DualSense if a system is active.
+        if #available(iOS 14.5, tvOS 14.5, *) {
+            applyAdaptiveTriggers()
+        }
     }
 
     // MARK: - Rumble API
