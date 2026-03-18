@@ -5,50 +5,125 @@
 //  Created by Joseph Mattiello on 11/12/22.
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
+//  Uses the CPDI (ThumbnailArtworkDriver) abstraction so the persistence
+//  layer (Realm today, SwiftData in future) can be swapped without touching
+//  QL thumbnail logic.
+//
 
 import UIKit
 import QuickLookThumbnailing
+import PVLibrary
+import PVHashing
 
 // https://developer.apple.com/documentation/quicklookthumbnailing/providing_thumbnails_of_your_custom_file_types
 
 class ThumbnailProvider: QLThumbnailProvider {
-    
+
+    /// CPDI driver — swap this property to change the persistence backend.
+    private lazy var artworkDriver: ThumbnailArtworkDriver = RealmThumbnailArtworkDriver()
+
     override func provideThumbnail(for request: QLFileThumbnailRequest, _ handler: @escaping (QLThumbnailReply?, Error?) -> Void) {
-        
-        // There are three ways to provide a thumbnail through a QLThumbnailReply. Only one of them should be used.
-        
-        let fileToThumbnail = request.fileURL
-        let ext = fileToThumbnail.pathExtension
-        
-        switch ext {
-        case "svs":
-            handler(QLThumbnailReply(imageFileURL: Bundle.main.url(forResource: "fileThumbnail", withExtension: "jpg")!), nil)
-        default:
-            handler(QLThumbnailReply(imageFileURL: Bundle.main.url(forResource: "fileThumbnail", withExtension: "jpg")!), nil)
+        let fileURL = request.fileURL
+
+        // Route to save-state or ROM artwork lookup based on UTI / path conventions.
+        if isSaveState(fileURL) {
+            if let imageURL = artworkDriver.saveStateImageFileURL(forSaveStatePath: fileURL.path) {
+                handler(QLThumbnailReply(imageFileURL: imageURL), nil)
+                return
+            }
+        } else {
+            // ROM file — look up artwork via the driver then resolve the cached file URL.
+            if let artworkKey = artworkDriver.artworkURLKey(forROMFilename: fileURL.lastPathComponent),
+               let artworkFileURL = resolveMediaCacheURL(forKey: artworkKey) {
+                handler(QLThumbnailReply(imageFileURL: artworkFileURL), nil)
+                return
+            }
         }
-        
-        // First way: Draw the thumbnail into the current context, set up with UIKit's coordinate system.
-        handler(QLThumbnailReply(contextSize: request.maximumSize, currentContextDrawing: { () -> Bool in
-            // Draw the thumbnail here.
-            
-            // Return true if the thumbnail was successfully drawn inside this block.
+
+        // Fall back to a simple branded placeholder drawn into the context.
+        handler(drawPlaceholderReply(for: request), nil)
+    }
+
+    // MARK: - Private Helpers
+
+    /// Returns `true` when `fileURL` represents a save state file.
+    private func isSaveState(_ fileURL: URL) -> Bool {
+        let ext = fileURL.pathExtension.lowercased()
+        // Provenance save states use .pvsav (see SpotlightImportExtension for canonical extension).
+        return ext == "pvsav" || fileURL.path.contains("Save States")
+    }
+
+    /// Resolves a PVMediaCache key to a local file URL, checking the App Group
+    /// container first so extensions in the shared group find artwork written by
+    /// the main app even when `useAppGroups` UserDefaults may not be initialised
+    /// in the extension process.
+    ///
+    /// Search order:
+    ///   1. `<AppGroupContainer>/Documents/PVCache/<md5(key)>`
+    ///   2. `PVMediaCache.filePath(forKey:)` — local documents fallback
+    private func resolveMediaCacheURL(forKey key: String) -> URL? {
+        guard !key.isEmpty else { return nil }
+        let keyHash = key.md5Hash
+
+        // 1. App Group container — reliable from extension processes.
+        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) {
+            let appGroupCacheURL = groupURL
+                .appendingPathComponent("Documents", isDirectory: true)
+                .appendingPathComponent("PVCache", isDirectory: true)
+                .appendingPathComponent(keyHash, isDirectory: false)
+            if FileManager.default.fileExists(atPath: appGroupCacheURL.path) {
+                DLOG("Artwork resolved via App Group cache")
+                return appGroupCacheURL
+            }
+        }
+
+        // 2. Local documents fallback via PVMediaCache.
+        if let localURL = PVMediaCache.filePath(forKey: key),
+           FileManager.default.fileExists(atPath: localURL.path) {
+            DLOG("Artwork resolved via local cache")
+            return localURL
+        }
+
+        DLOG("Artwork file not found for key hash: \(keyHash)")
+        return nil
+    }
+
+    /// Draws a simple "Provenance" branded placeholder when no artwork is available.
+    private func drawPlaceholderReply(for request: QLFileThumbnailRequest) -> QLThumbnailReply {
+        let size = request.maximumSize
+        return QLThumbnailReply(contextSize: size, currentContextDrawing: {
+            let rect = CGRect(origin: .zero, size: size)
+
+            // Background gradient
+            let context = UIGraphicsGetCurrentContext()
+            let colors = [UIColor(red: 0.12, green: 0.12, blue: 0.20, alpha: 1).cgColor,
+                          UIColor(red: 0.06, green: 0.06, blue: 0.12, alpha: 1).cgColor]
+            if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                                         colors: colors as CFArray,
+                                         locations: [0, 1]) {
+                context?.drawLinearGradient(gradient,
+                                            start: CGPoint(x: 0, y: 0),
+                                            end: CGPoint(x: 0, y: size.height),
+                                            options: [])
+            }
+
+            // "P" logo placeholder
+            let label = "P"
+            let fontSize = min(size.width, size.height) * 0.5
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.boldSystemFont(ofSize: fontSize),
+                .foregroundColor: UIColor(red: 0.95, green: 0.55, blue: 0.10, alpha: 1)
+            ]
+            let textSize = (label as NSString).size(withAttributes: attributes)
+            let textRect = CGRect(
+                x: (size.width - textSize.width) / 2,
+                y: (size.height - textSize.height) / 2,
+                width: textSize.width,
+                height: textSize.height
+            )
+            (label as NSString).draw(in: textRect, withAttributes: attributes)
+            UIRectFrame(rect)
             return true
-        }), nil)
-        
-        /*
-        
-        // Second way: Draw the thumbnail into a context passed to your block, set up with Core Graphics's coordinate system.
-        handler(QLThumbnailReply(contextSize: request.maximumSize, drawing: { (context) -> Bool in
-            // Draw the thumbnail here.
-         
-            // Return true if the thumbnail was successfully drawn inside this block.
-            return true
-        }), nil)
-         
-         
-        // Third way: Set an image file URL.
-        handler(QLThumbnailReply(imageFileURL: Bundle.main.url(forResource: "fileThumbnail", withExtension: "jpg")!), nil)
-        
-        */
+        })
     }
 }
