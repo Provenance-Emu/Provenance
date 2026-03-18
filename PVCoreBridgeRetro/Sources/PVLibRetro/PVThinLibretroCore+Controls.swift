@@ -1973,6 +1973,204 @@ extension PVThinLibretroCore: PVWiiSystemResponderClient {
     }
 }
 
+// MARK: - Light Gun Support Table
+
+/// Per-system light gun capabilities for the thin libretro wrapper.
+private struct ThinLightGunSupport {
+    let supportsLightGun: Bool
+
+    static func resolve(systemIdentifier: String?) -> Self {
+        guard let sysId = systemIdentifier else { return .none }
+        return supportBySystem[sysId] ?? .none
+    }
+
+    static let none = Self(supportsLightGun: false)
+
+    // Systems with light gun peripherals supported by their libretro cores.
+    // NES Zapper, SNES Super Scope / Justifier, Genesis Menacer / Justifier,
+    // PSX Guncon / Konami Justifier, Saturn Stunner.
+    private static let supportBySystem: [String: Self] = [
+        "com.provenance.nes":      .init(supportsLightGun: true),  // Zapper
+        "com.provenance.snes":     .init(supportsLightGun: true),  // Super Scope, Justifier
+        "com.provenance.genesis":  .init(supportsLightGun: true),  // Menacer, Konami Justifier
+        "com.provenance.md":       .init(supportsLightGun: true),  // Genesis alias
+        "com.provenance.psx":      .init(supportsLightGun: true),  // Guncon, Konami Justifier
+        "com.provenance.saturn":   .init(supportsLightGun: true),  // Stunner / Virtua Gun
+        "com.provenance.mame":     .init(supportsLightGun: true),  // Arcade light guns
+        "com.provenance.arcade":   .init(supportsLightGun: true),
+        "com.provenance.atari2600":.init(supportsLightGun: true),  // Atari lightgun games
+    ]
+}
+
+// MARK: - LightGunResponder
+
+extension PVThinLibretroCore: LightGunResponder {
+
+    public var gameSupportsLightGun: Bool {
+        ThinLightGunSupport.resolve(systemIdentifier: systemIdentifier).supportsLightGun
+    }
+
+    /// Convert normalized screen coordinates (0.0–1.0) to libretro light gun range
+    /// (-0x7FFF .. +0x7FFF) and forward to the bridge.
+    public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
+        let x = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
+        let y = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
+        _lightgunLastX = x
+        _lightgunLastY = y
+        _lightgunOffscreen = isOffscreen
+        _bridge.setLightgunX(x, y: y,
+                             trigger: _lightgunTriggerHeld,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: isOffscreen,
+                             reload: _lightgunReloadHeld)
+    }
+
+    public func lightGunTriggerDown() {
+        _lightgunTriggerHeld = true
+        _bridge.setLightgunX(_lightgunLastX, y: _lightgunLastY,
+                             trigger: true,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: _lightgunOffscreen,
+                             reload: _lightgunReloadHeld)
+    }
+
+    public func lightGunTriggerUp() {
+        _lightgunTriggerHeld = false
+        _bridge.setLightgunX(_lightgunLastX, y: _lightgunLastY,
+                             trigger: false,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: _lightgunOffscreen,
+                             reload: _lightgunReloadHeld)
+    }
+
+    public func lightGunAuxADown() {
+        _lightgunAuxAHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunAuxAUp() {
+        _lightgunAuxAHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunAuxBDown() {
+        _lightgunAuxBHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunAuxBUp() {
+        _lightgunAuxBHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunStartDown() {
+        _lightgunStartHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunStartUp() {
+        _lightgunStartHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunSelectDown() {
+        _lightgunSelectHeld = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunSelectUp() {
+        _lightgunSelectHeld = false
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunReloadDown() {
+        _lightgunReloadHeld = true
+        _lightgunOffscreen = true
+        _sendCurrentLightgunState()
+    }
+
+    public func lightGunReloadUp() {
+        _lightgunReloadHeld = false
+        _lightgunOffscreen = false
+        _sendCurrentLightgunState()
+    }
+
+    // MARK: Private helpers
+
+    private func _sendCurrentLightgunState() {
+        _bridge.setLightgunX(_lightgunLastX, y: _lightgunLastY,
+                             trigger: _lightgunTriggerHeld,
+                             auxA: _lightgunAuxAHeld,
+                             auxB: _lightgunAuxBHeld,
+                             start: _lightgunStartHeld,
+                             select: _lightgunSelectHeld,
+                             isOffscreen: _lightgunOffscreen,
+                             reload: _lightgunReloadHeld)
+    }
+}
+
+// MARK: - LightGunResponder stored state (via associated objects)
+// PVThinLibretroCore is an ObjC class; we use a small state holder to avoid
+// adding Swift stored properties to an extension.
+
+private var _lgTriggerKey  = 0
+private var _lgAuxAKey     = 0
+private var _lgAuxBKey     = 0
+private var _lgStartKey    = 0
+private var _lgSelectKey   = 0
+private var _lgReloadKey   = 0
+private var _lgOffscreenKey = 0
+private var _lgLastXKey    = 0
+private var _lgLastYKey    = 0
+
+extension PVThinLibretroCore {
+    fileprivate var _lightgunTriggerHeld: Bool {
+        get { (objc_getAssociatedObject(self, &_lgTriggerKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &_lgTriggerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunAuxAHeld: Bool {
+        get { (objc_getAssociatedObject(self, &_lgAuxAKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &_lgAuxAKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunAuxBHeld: Bool {
+        get { (objc_getAssociatedObject(self, &_lgAuxBKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &_lgAuxBKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunStartHeld: Bool {
+        get { (objc_getAssociatedObject(self, &_lgStartKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &_lgStartKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunSelectHeld: Bool {
+        get { (objc_getAssociatedObject(self, &_lgSelectKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &_lgSelectKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunReloadHeld: Bool {
+        get { (objc_getAssociatedObject(self, &_lgReloadKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &_lgReloadKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunOffscreen: Bool {
+        get { (objc_getAssociatedObject(self, &_lgOffscreenKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &_lgOffscreenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunLastX: Int16 {
+        get { (objc_getAssociatedObject(self, &_lgLastXKey) as? NSNumber).map { Int16($0.int32Value) } ?? 0 }
+        set { objc_setAssociatedObject(self, &_lgLastXKey, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var _lightgunLastY: Int16 {
+        get { (objc_getAssociatedObject(self, &_lgLastYKey) as? NSNumber).map { Int16($0.int32Value) } ?? 0 }
+        set { objc_setAssociatedObject(self, &_lgLastYKey, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+}
+
 // MARK: - RetroArch Generic
 
 extension PVThinLibretroCore: PVRetroArchCoreResponderClient {

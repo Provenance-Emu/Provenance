@@ -411,6 +411,18 @@ typedef struct PVThinLibretroSymbols {
     int16_t _pointerY;
     bool _pointerPressed;
 
+    // Light gun state — libretro screen-space coordinates and button bitmask
+    // Coordinate range: -0x7FFF (top/left) .. +0x7FFF (bottom/right)
+    int16_t _lightgunX;
+    int16_t _lightgunY;
+    bool _lightgunIsOffscreen;
+    bool _lightgunTrigger;
+    bool _lightgunReload;
+    bool _lightgunAuxA;
+    bool _lightgunAuxB;
+    bool _lightgunStart;
+    bool _lightgunSelect;
+
     // Pause flag — when YES, audio callbacks discard samples to prevent
     // stale audio from leaking through during the pause/resume transition.
     BOOL _audioPaused;
@@ -2603,6 +2615,39 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
     }
 
+    if (deviceType == RETRO_DEVICE_LIGHTGUN) {
+        switch (bid) {
+            case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X:
+                return _lightgunX;
+            case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y:
+                return _lightgunY;
+            case RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN:
+                return _lightgunIsOffscreen ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_TRIGGER:
+                return _lightgunTrigger ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_RELOAD:
+                return _lightgunReload ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_AUX_A:
+                return _lightgunAuxA ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_AUX_B:
+                return _lightgunAuxB ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_START:
+                return _lightgunStart ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_SELECT:
+                return _lightgunSelect ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_UP:
+                return (_joypadState[port] >> RETRO_DEVICE_ID_JOYPAD_UP) & 1;
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_DOWN:
+                return (_joypadState[port] >> RETRO_DEVICE_ID_JOYPAD_DOWN) & 1;
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_LEFT:
+                return (_joypadState[port] >> RETRO_DEVICE_ID_JOYPAD_LEFT) & 1;
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_RIGHT:
+                return (_joypadState[port] >> RETRO_DEVICE_ID_JOYPAD_RIGHT) & 1;
+            default:
+                return 0;
+        }
+    }
+
     return 0;
 }
 
@@ -2670,6 +2715,28 @@ static bool thin_environment(unsigned cmd, void *data) {
     _pointerX = x;
     _pointerY = y;
     _pointerPressed = pressed ? true : false;
+}
+
+// MARK: Light gun input
+
+- (void)setLightgunX:(int16_t)x
+                   y:(int16_t)y
+             trigger:(BOOL)trigger
+                auxA:(BOOL)auxA
+                auxB:(BOOL)auxB
+               start:(BOOL)start
+              select:(BOOL)select
+         isOffscreen:(BOOL)isOffscreen
+              reload:(BOOL)reload {
+    _lightgunX          = x;
+    _lightgunY          = y;
+    _lightgunTrigger    = trigger    ? true : false;
+    _lightgunAuxA       = auxA       ? true : false;
+    _lightgunAuxB       = auxB       ? true : false;
+    _lightgunStart      = start      ? true : false;
+    _lightgunSelect     = select     ? true : false;
+    _lightgunIsOffscreen = isOffscreen ? true : false;
+    _lightgunReload     = reload     ? true : false;
 }
 
 // ---------------------------------------------------------------------------
@@ -3278,7 +3345,9 @@ static bool thin_environment(unsigned cmd, void *data) {
             if (data) *(uint64_t *)data = (1ULL << RETRO_DEVICE_JOYPAD)
                                         | (1ULL << RETRO_DEVICE_ANALOG)
                                         | (1ULL << RETRO_DEVICE_MOUSE)
-                                        | (1ULL << RETRO_DEVICE_POINTER);
+                                        | (1ULL << RETRO_DEVICE_POINTER)
+                                        | (1ULL << RETRO_DEVICE_LIGHTGUN)
+                                        | (1ULL << RETRO_DEVICE_KEYBOARD);
             return true;
         case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS:
             if (data) *(unsigned *)data = 8;

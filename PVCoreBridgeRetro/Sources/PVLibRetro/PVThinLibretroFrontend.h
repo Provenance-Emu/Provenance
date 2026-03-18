@@ -344,6 +344,33 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param pressed  YES if the pointer/touch is active.
 - (void)setPointerX:(int16_t)x y:(int16_t)y pressed:(BOOL)pressed;
 
+// MARK: Light gun input
+
+/// Set the light gun aim position and button states.
+///
+/// Screen coordinates use the libretro light gun range:
+///   X: -0x7FFF (left edge) .. +0x7FFF (right edge)
+///   Y: -0x7FFF (top edge)  .. +0x7FFF (bottom edge)
+///
+/// @param x           Horizontal aim position in libretro screen-space.
+/// @param y           Vertical aim position in libretro screen-space.
+/// @param trigger     YES when the primary trigger is pressed.
+/// @param auxA        YES when auxiliary button A is pressed (Super Scope pause / Guncon B).
+/// @param auxB        YES when auxiliary button B is pressed (Super Scope turbo / Guncon C).
+/// @param start       YES when the start button is pressed (Guncon A).
+/// @param select      YES when the select button is pressed.
+/// @param isOffscreen YES when the gun is aimed off-screen.
+/// @param reload      YES when a forced reload (off-screen fire) is requested.
+- (void)setLightgunX:(int16_t)x
+                   y:(int16_t)y
+             trigger:(BOOL)trigger
+                auxA:(BOOL)auxA
+                auxB:(BOOL)auxB
+               start:(BOOL)start
+              select:(BOOL)select
+         isOffscreen:(BOOL)isOffscreen
+              reload:(BOOL)reload;
+
 @end
 
 NS_ASSUME_NONNULL_END
