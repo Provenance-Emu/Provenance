@@ -693,20 +693,26 @@ static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image 
     (void)src_queue_family;
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge || !image) return;
+    // Serialize writes with submitVulkanCommandBuffers, which reads/clears these
+    // fields under _vulkanQueueLock. Without the lock here, concurrent reads in the
+    // submit path can race against these writes (data race).
+    os_unfair_lock_lock(&bridge->_vulkanQueueLock);
     // Store only the VkImage handle — copying retro_vulkan_image by value is unsafe
     // because the pNext chain cannot be deep-copied and the pointer is only valid
     // until retro_video_refresh_t returns.
     bridge->_vulkanCurrentVkImage = image->create_info.image;
     bridge->_vulkanHasCurrentImage = YES;
-    // Store wait semaphores for use as pWaitSemaphores in the next vkQueueSubmit.
+    // Store wait semaphores for use as pWaitSemaphores in async-compute path.
     // Cap at 8; the libretro Vulkan interface rarely provides more than 1.
+    // Note: these are NOT used in set_command_buffers mode (libretro_vulkan.h spec).
     bridge->_vulkanWaitSemaphoreCount = 0;
     uint32_t storableCount = (num_semaphores < 8) ? num_semaphores : 8;
     for (uint32_t i = 0; i < storableCount; i++) {
-        bridge->_vulkanWaitSemaphores[i]    = semaphores[i];
-        bridge->_vulkanWaitDstStageMask[i]  = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        bridge->_vulkanWaitSemaphores[i]   = semaphores[i];
+        bridge->_vulkanWaitDstStageMask[i] = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
     }
     bridge->_vulkanWaitSemaphoreCount = storableCount;
+    os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
     // Do NOT notify the render delegate here — some cores call set_image before
     // set_command_buffers, so the VkImage may not yet have been rendered into.
     // Notification is deferred to submitVulkanCommandBuffers (after vkQueueSubmit).
@@ -4621,26 +4627,22 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (void)submitVulkanCommandBuffers:(const VkCommandBuffer *)cmdBufs count:(uint32_t)count {
     if (!_vkQueueSubmit || !_vulkanQueue || !cmdBufs || count == 0) return;
 
-    // Snapshot and clear the per-frame semaphore state inside the queue lock so that
-    // concurrent writes from thin_vulkan_set_image / thin_vulkan_set_signal_semaphore
-    // are serialized. Both signal and wait semaphores are per-frame: cleared after every
-    // submit so stale handles don't leak into the next frame.
+    // Per libretro_vulkan.h: when set_command_buffers is used, semaphores provided via
+    // set_image MUST be ignored — the spec explicitly says they are not consumed in this
+    // mode. Using them risks a deadlock if the core never signals them in cmd-buf mode.
+    // Snapshot and clear the signal semaphore (per-frame) and discard any wait semaphores.
     os_unfair_lock_lock(&_vulkanQueueLock);
     VkSemaphore signalSem = _vulkanSignalSemaphore;
     _vulkanSignalSemaphore = VK_NULL_HANDLE;
-    uint32_t waitCount = _vulkanWaitSemaphoreCount;
-    VkSemaphore waitSems[8];
-    VkPipelineStageFlags waitMasks[8];
-    memcpy(waitSems,  _vulkanWaitSemaphores,    waitCount * sizeof(VkSemaphore));
-    memcpy(waitMasks, _vulkanWaitDstStageMask,  waitCount * sizeof(VkPipelineStageFlags));
+    // Discard set_image semaphores — not valid in set_command_buffers mode.
     _vulkanWaitSemaphoreCount = 0;
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
-        .waitSemaphoreCount = waitCount,
-        .pWaitSemaphores = (waitCount > 0) ? waitSems  : NULL,
-        .pWaitDstStageMask = (waitCount > 0) ? waitMasks : NULL,
+        .waitSemaphoreCount = 0,    // set_image semaphores ignored per libretro_vulkan.h
+        .pWaitSemaphores = NULL,
+        .pWaitDstStageMask = NULL,
         .commandBufferCount = count,
         .pCommandBuffers = cmdBufs,
         .signalSemaphoreCount = (signalSem != VK_NULL_HANDLE) ? 1u : 0u,
@@ -4648,20 +4650,18 @@ static bool thin_environment(unsigned cmd, void *data) {
     };
 
     VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, VK_NULL_HANDLE);
+
+    // Wait for GPU completion while still holding _vulkanQueueLock so no concurrent
+    // submissions can interleave between vkQueueSubmit and vkQueueWaitIdle. Releasing
+    // the lock between them would allow another thread's submit to stall on the wait.
+    if (result == VK_SUCCESS && _vkQueueWaitIdle) {
+        _vkQueueWaitIdle(_vulkanQueue);
+    }
     os_unfair_lock_unlock(&_vulkanQueueLock);
 
     if (result != VK_SUCCESS) {
         ELOG(@"ThinFrontend: vkQueueSubmit failed (result=%d)", result);
         return;
-    }
-
-    // Wait for the GPU to finish rendering into the VkImage before exporting the
-    // MTLTexture. vkQueueSubmit only enqueues work; the GPU may still be writing
-    // when it returns. Serialized with _vulkanQueueLock to prevent concurrent submits.
-    if (_vkQueueWaitIdle) {
-        os_unfair_lock_lock(&_vulkanQueueLock);
-        _vkQueueWaitIdle(_vulkanQueue);
-        os_unfair_lock_unlock(&_vulkanQueueLock);
     }
 
     // Notify the render delegate now that the GPU has finished and the VkImage is safe
@@ -4691,11 +4691,13 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     // --- Path 1: vkGetMTLTextureMVK (deprecated MVK extension, works on all MoltenVK versions) ---
     if (_vkGetMTLTextureMVK) {
-        __unsafe_unretained id<MTLTexture> mtlTexture = nil;
-        _vkGetMTLTextureMVK(vkImage, (void **)&mtlTexture);
-        if (mtlTexture) {
+        // Use void* to avoid ARC interference: MoltenVK returns a non-owning reference
+        // retained by the VkImage. Bridge-cast to a __strong local so ARC retains it.
+        void *rawTexture = NULL;
+        _vkGetMTLTextureMVK(vkImage, &rawTexture);
+        if (rawTexture) {
             DLOG(@"ThinFrontend: Vulkan→Metal via vkGetMTLTextureMVK");
-            return mtlTexture;
+            return (__bridge id<MTLTexture>)rawTexture;
         }
     }
 
@@ -4703,7 +4705,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     // Only valid when the extension was explicitly enabled at device creation time.
     // Uses raw structs because our bundled vulkan.h (v17) predates this extension.
     if (_vkExportMetalObjectsEXT && _vulkanDevice && _vulkanExtMetalObjectsEnabled) {
-        // VkExportMetalTextureInfoEXT chained in pNext of VkExportMetalObjectsInfoEXT
+        // VkExportMetalTextureInfoEXT chained in pNext of VkExportMetalObjectsInfoEXT.
+        // Use void* for the mtlTexture field to avoid ARC interference with an ObjC
+        // object embedded inside a C struct — __unsafe_unretained in structs can lead
+        // to use-after-free if the object is autoreleased before we return it.
         struct {
             VkStructureType  sType;
             const void      *pNext;
@@ -4711,15 +4716,15 @@ static bool thin_environment(unsigned cmd, void *data) {
             VkImageView      imageView;
             VkBufferView     bufferView;
             uint32_t         plane;     // VkImageAspectFlagBits
-            __unsafe_unretained id<MTLTexture> mtlTexture;
+            void            *mtlTexturePtr;  // void* to keep ARC out of the struct
         } texInfo = {
-            .sType      = PV_VK_STYPE_EXPORT_METAL_TEXTURE_INFO_EXT,
-            .pNext      = NULL,
-            .image      = vkImage,
-            .imageView  = VK_NULL_HANDLE,
-            .bufferView = VK_NULL_HANDLE,
-            .plane      = PV_VK_IMAGE_ASPECT_COLOR_BIT,
-            .mtlTexture = nil,
+            .sType         = PV_VK_STYPE_EXPORT_METAL_TEXTURE_INFO_EXT,
+            .pNext         = NULL,
+            .image         = vkImage,
+            .imageView     = VK_NULL_HANDLE,
+            .bufferView    = VK_NULL_HANDLE,
+            .plane         = PV_VK_IMAGE_ASPECT_COLOR_BIT,
+            .mtlTexturePtr = NULL,
         };
         struct {
             VkStructureType  sType;
@@ -4729,9 +4734,9 @@ static bool thin_environment(unsigned cmd, void *data) {
             .pNext = &texInfo,
         };
         _vkExportMetalObjectsEXT(_vulkanDevice, &exportInfo);
-        if (texInfo.mtlTexture) {
+        if (texInfo.mtlTexturePtr) {
             DLOG(@"ThinFrontend: Vulkan→Metal via vkExportMetalObjectsEXT");
-            return texInfo.mtlTexture;
+            return (__bridge id<MTLTexture>)texInfo.mtlTexturePtr;
         }
     }
 
