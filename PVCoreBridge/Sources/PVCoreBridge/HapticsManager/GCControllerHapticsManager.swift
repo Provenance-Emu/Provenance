@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import PVPrimitives
 #if canImport(GameController) && canImport(CoreHaptics)
 import GameController
 import CoreHaptics
@@ -62,6 +63,21 @@ public final class GCControllerHapticsManager {
     /// Maps player index → (locality → engine).
     private var engineMap: [Int: [GCHapticsLocality: CHHapticEngine]] = [:]
 
+    /// Per-system haptic tuning profile. Defaults to `.generic` until a core sets it.
+    private var systemProfile: RumbleSystemProfile = .generic
+
+    /// Tracks when each player's rumble burst started (monotonic uptime, for duration measurement).
+    private var rumbleStartTimes: [Int: TimeInterval] = [:]
+
+    /// Tracks how many on/off pulse cycles each player has had in the current window.
+    private var playerPulseCounts: [Int: Int] = [:]
+
+    /// Tracks the start of each player's pulse counting window (monotonic uptime).
+    private var playerPulseWindowStart: [Int: TimeInterval] = [:]
+
+    /// Stores the intensity used in the most recent rumble call per player (used for fallback haptic on stop).
+    private var playerLastFallbackIntensity: [Int: CGFloat] = [:]
+
     /// Cached haptic intensity multiplier, updated when UserDefaults changes.
     /// Avoids reading UserDefaults on every rumble call.
     private var _cachedIntensityMultiplier: Float = 1.0
@@ -69,6 +85,22 @@ public final class GCControllerHapticsManager {
     /// Global haptic intensity multiplier driven by `hapticFeedback` and
     /// `controllerHapticIntensity` UserDefaults keys (written by PVSettings).
     public var intensityMultiplier: Float { _cachedIntensityMultiplier }
+
+    /// Set a per-system haptic profile that tunes motor scaling and sharpness.
+    public func setSystemProfile(_ profile: RumbleSystemProfile) {
+        systemProfile = profile
+    }
+
+    /// Convenience: look up the best-matching profile for a Provenance system identifier and apply it.
+    public func setSystemProfile(forSystemIdentifier sysId: String) {
+        systemProfile = RumbleSystemProfile.profile(forSystemIdentifier: sysId)
+    }
+
+    /// Reset the system profile back to `.generic`.
+    /// Call this when an emulation session ends so the next core starts with neutral tuning.
+    public func resetSystemProfile() {
+        systemProfile = .generic
+    }
 
     private func refreshIntensityCache() {
         // Default to enabled (true) when the key is absent so first-run behavior is on.
@@ -161,28 +193,52 @@ public final class GCControllerHapticsManager {
     ///   - player: 0-based player index.
     ///   - params: Intensity and duration parameters.
     public func rumble(player: Int, params: RumbleParams = .init()) {
+        // Track burst timing: record start time on the leading edge of a new burst.
+        // Use monotonic uptime so classification isn't affected by wall-clock adjustments (NTP, DST).
+        let now = ProcessInfo.processInfo.systemUptime
+        let isNewBurst = rumbleStartTimes[player] == nil
+        if isNewBurst {
+            rumbleStartTimes[player] = now
+        }
+
+        // Update pulse counting window: only count on/off transitions (new bursts),
+        // not on every continuous frame-driven rumble call, to avoid every burst
+        // being classified as .rapidPulse.
+        if isNewBurst {
+            if let windowStart = playerPulseWindowStart[player] {
+                let windowElapsed = now - windowStart
+                if windowElapsed > 0.5 {
+                    // More than 500 ms since first pulse — start a fresh window.
+                    playerPulseCounts[player] = 1
+                    playerPulseWindowStart[player] = now
+                } else {
+                    playerPulseCounts[player] = (playerPulseCounts[player] ?? 0) + 1
+                }
+            } else {
+                // First burst ever for this player — initialise the window.
+                playerPulseCounts[player] = 1
+                playerPulseWindowStart[player] = now
+            }
+        }
+
+        // Apply system profile scaling to params.
+        let scaledLow = params.lowFrequency * systemProfile.lowFrequencyScale
+        let scaledHigh = params.highFrequency * systemProfile.highFrequencyScale
+        // Use the caller-provided duration; callers that want continuous-until-stop
+        // (e.g. libretro rumble helper) pass a large value such as 10.0 seconds.
+        let continuousDuration = params.duration
+
         guard let controller = playerControllers[player] else {
             VLOG("[GCHaptics] No controller registered for player \(player + 1) — falling back to Taptic Engine")
             #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
+            // Store the intensity so stopRumble can fire a single, correctly-styled haptic.
             let baseIntensity = max(0, min(1, _cachedIntensityMultiplier))
-            let paramsMax = max(params.lowFrequency, params.highFrequency)
+            let paramsMax = max(scaledLow, scaledHigh)
             let paramsScale = max(0, min(1, paramsMax))
-            let intensity = baseIntensity * paramsScale
-            guard intensity > 0 else { return }
-
-            let feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle
-            switch params.duration {
-            case ..<0.05:
-                feedbackStyle = .light
-            case ..<0.25:
-                feedbackStyle = .medium
-            default:
-                feedbackStyle = .heavy
+            let intensity = CGFloat(baseIntensity * paramsScale)
+            if intensity > 0 {
+                playerLastFallbackIntensity[player] = intensity
             }
-
-            let generator = UIImpactFeedbackGenerator(style: feedbackStyle)
-            generator.prepare()
-            generator.impactOccurred(intensity: CGFloat(intensity))
             #endif
             return
         }
@@ -199,22 +255,40 @@ public final class GCControllerHapticsManager {
         switch controllerType {
         case .dualSense, .dualShock4:
             playDualMotorRumble(player: player, controller: controller,
-                                leftIntensity: params.lowFrequency * intensity,
-                                rightIntensity: params.highFrequency * intensity,
-                                duration: params.duration)
+                                leftIntensity: scaledLow * intensity,
+                                rightIntensity: scaledHigh * intensity,
+                                duration: continuousDuration,
+                                sharpness: systemProfile.sharpness)
         case .xbox:
             playXboxRumble(player: player, controller: controller,
-                           leftIntensity: params.lowFrequency * intensity,
-                           rightIntensity: params.highFrequency * intensity,
-                           duration: params.duration)
+                           leftIntensity: scaledLow * intensity,
+                           rightIntensity: scaledHigh * intensity,
+                           duration: continuousDuration,
+                           sharpness: systemProfile.sharpness)
         case .switchPro, .joycon:
             playSwitchRumble(player: player, controller: controller,
-                             intensity: max(params.lowFrequency, params.highFrequency) * intensity,
-                             duration: params.duration)
+                             intensity: max(scaledLow, scaledHigh) * intensity,
+                             duration: continuousDuration,
+                             sharpness: systemProfile.sharpness)
         case .unknown:
             playDefaultRumble(player: player, controller: controller,
-                              intensity: max(params.lowFrequency, params.highFrequency) * intensity,
-                              duration: params.duration)
+                              intensity: max(scaledLow, scaledHigh) * intensity,
+                              duration: continuousDuration,
+                              sharpness: systemProfile.sharpness)
+        }
+
+        // For finite one-shot rumbles that don't call stopRumble(), the CHHapticEngine
+        // stops automatically after `duration` seconds — but rumbleStartTimes[player]
+        // would remain set indefinitely, causing the next burst to be misclassified.
+        // Schedule a cleanup task so stale tracking state is cleared after the haptic expires.
+        // Continuous-until-stop callers (duration ≥ 5.0) rely on stopRumble() to clean up.
+        if continuousDuration < 5.0 && isNewBurst {
+            let capturedPlayer = player
+            let clearAfter = continuousDuration + 0.1
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: UInt64(clearAfter * 1_000_000_000))
+                self?.rumbleStartTimes.removeValue(forKey: capturedPlayer)
+            }
         }
     }
 
@@ -223,13 +297,76 @@ public final class GCControllerHapticsManager {
     /// The controller registration is preserved so future rumble events can restart
     /// the same engines without requiring the emulator core to re-register them.
     public func stopRumble(player: Int) {
-        guard let engines = engineMap[player], !engines.isEmpty else { return }
+        // Measure burst duration and classify the pattern.
+        // Use monotonic uptime to match the timestamps recorded in rumble().
+        let now = ProcessInfo.processInfo.systemUptime
+        let burstDuration: TimeInterval
+        if let startTime = rumbleStartTimes[player] {
+            burstDuration = now - startTime
+        } else {
+            burstDuration = 0
+        }
+
+        let pulseCount = playerPulseCounts[player] ?? 1
+        let windowStart = playerPulseWindowStart[player] ?? now
+        let windowDuration = now - windowStart
+
+        let pattern = RumbleBurstClassifier.classify(
+            duration: burstDuration,
+            pulseCount: pulseCount,
+            windowDuration: windowDuration
+        )
+        VLOG("[GCHaptics] Burst classified as .\(pattern) for player \(player + 1) (duration: \(String(format: "%.3f", burstDuration))s, pulses: \(pulseCount))")
+
+        // Clear tracking state for this player.
+        rumbleStartTimes.removeValue(forKey: player)
+
+        // Drain the stored fallback intensity unconditionally — regardless of whether a
+        // controller is now connected. If a controller connected *between* rumble() and
+        // stopRumble(), the stored intensity must be discarded so it can't fire spuriously
+        // in a future fallback-path call.
+        #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
+        let fallbackIntensity = playerLastFallbackIntensity.removeValue(forKey: player)
+        #else
+        playerLastFallbackIntensity.removeValue(forKey: player)
+        #endif
+
+        guard let engines = engineMap[player], !engines.isEmpty else {
+            // No controller engines — fire a single device fallback haptic whose style is
+            // derived from the classified pattern and whose intensity came from rumble().
+            #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
+            let style = hapticStyleForPattern(pattern)
+            // Only fire if a positive intensity was stored by rumble() — if haptics were disabled,
+            // no value was stored and we must not fire here.
+            guard let intensity = fallbackIntensity, intensity > 0 else { return }
+            let generator = UIImpactFeedbackGenerator(style: style)
+            generator.prepare()
+            generator.impactOccurred(intensity: intensity)
+            #endif
+            return
+        }
 
         for (_, engine) in engines {
             engine.stop(completionHandler: nil)
         }
         VLOG("[GCHaptics] Stopped rumble for player \(player + 1)")
     }
+
+    /// Map a classified `RumblePattern` to a `UIImpactFeedbackGenerator.FeedbackStyle`.
+    #if canImport(UIKit) && os(iOS) && !targetEnvironment(macCatalyst)
+    private func hapticStyleForPattern(_ pattern: RumblePattern) -> UIImpactFeedbackGenerator.FeedbackStyle {
+        switch pattern {
+        case .shortTransient:
+            return .light
+        case .mediumBurst:
+            return .medium
+        case .longSustained:
+            return .heavy
+        case .rapidPulse:
+            return .rigid
+        }
+    }
+    #endif
 
     /// Configure DualSense adaptive triggers for a specific game-system profile.
     @available(iOS 14.5, tvOS 14.5, *)
@@ -379,52 +516,55 @@ public final class GCControllerHapticsManager {
 
     private func playDualMotorRumble(player: Int, controller: GCController,
                                      leftIntensity: Float, rightIntensity: Float,
-                                     duration: TimeInterval) {
+                                     duration: TimeInterval, sharpness: Float = 0.4) {
         let engines = engineMap[player] ?? [:]
 
-        // Left handle = low-frequency (grip) motor.
+        // Left handle = low-frequency (grip) motor — use lower sharpness for the heavy motor.
+        let leftSharpness = max(0, sharpness - 0.2)
         if let leftEngine = engines[.leftHandle] ?? engines[.default] {
-            playEvent(engine: leftEngine, intensity: leftIntensity, sharpness: 0.2, duration: duration)
+            playEvent(engine: leftEngine, intensity: leftIntensity, sharpness: leftSharpness, duration: duration)
         }
 
         // Right handle = high-frequency motor, only played when a separate left-handle engine
         // exists — ensures we use per-motor engines rather than falling back to the shared default.
+        // Use slightly higher sharpness for the high-frequency motor.
+        let rightSharpness = min(1, sharpness + 0.2)
         if let rightEngine = engines[.rightHandle], engines[.leftHandle] != nil {
-            playEvent(engine: rightEngine, intensity: rightIntensity, sharpness: 0.6, duration: duration)
+            playEvent(engine: rightEngine, intensity: rightIntensity, sharpness: rightSharpness, duration: duration)
         }
     }
 
     private func playXboxRumble(player: Int, controller: GCController,
                                 leftIntensity: Float, rightIntensity: Float,
-                                duration: TimeInterval) {
+                                duration: TimeInterval, sharpness: Float = 0.4) {
         let engines = engineMap[player] ?? [:]
 
         if let leftEngine = engines[.leftHandle] ?? engines[.default] {
-            playEvent(engine: leftEngine, intensity: leftIntensity, sharpness: 0.1, duration: duration)
+            playEvent(engine: leftEngine, intensity: leftIntensity, sharpness: max(0, sharpness - 0.2), duration: duration)
         }
         if let rightEngine = engines[.rightHandle] {
-            playEvent(engine: rightEngine, intensity: rightIntensity, sharpness: 0.7, duration: duration)
+            playEvent(engine: rightEngine, intensity: rightIntensity, sharpness: min(1, sharpness + 0.2), duration: duration)
         }
         // Trigger motors — proportional to the high-frequency component.
         if let leftTrigger = engines[.leftTrigger] {
-            playEvent(engine: leftTrigger, intensity: rightIntensity * 0.5, sharpness: 0.8, duration: duration)
+            playEvent(engine: leftTrigger, intensity: rightIntensity * 0.5, sharpness: min(1, sharpness + 0.4), duration: duration)
         }
         if let rightTrigger = engines[.rightTrigger] {
-            playEvent(engine: rightTrigger, intensity: rightIntensity * 0.5, sharpness: 0.9, duration: duration)
+            playEvent(engine: rightTrigger, intensity: rightIntensity * 0.5, sharpness: min(1, sharpness + 0.5), duration: duration)
         }
     }
 
     private func playSwitchRumble(player: Int, controller: GCController,
-                                  intensity: Float, duration: TimeInterval) {
+                                  intensity: Float, duration: TimeInterval, sharpness: Float = 0.5) {
         guard let engine = engineMap[player]?[.default] else { return }
-        // Switch HD Rumble LRA responds well to mid sharpness.
-        playEvent(engine: engine, intensity: intensity, sharpness: 0.4, duration: duration)
+        // Switch HD Rumble LRA responds well to profile-derived sharpness.
+        playEvent(engine: engine, intensity: intensity, sharpness: sharpness, duration: duration)
     }
 
     private func playDefaultRumble(player: Int, controller: GCController,
-                                   intensity: Float, duration: TimeInterval) {
+                                   intensity: Float, duration: TimeInterval, sharpness: Float = 0.5) {
         guard let engine = engineMap[player]?[.default] else { return }
-        playEvent(engine: engine, intensity: intensity, sharpness: 0.5, duration: duration)
+        playEvent(engine: engine, intensity: intensity, sharpness: sharpness, duration: duration)
     }
 
     private func playEvent(engine: CHHapticEngine, intensity: Float, sharpness: Float, duration: TimeInterval) {
