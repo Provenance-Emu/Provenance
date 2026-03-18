@@ -44,6 +44,7 @@ struct PauseTileMenuView: View {
     @State private var showingScreenshotBrowser = false
     @State private var showingControllerProfiles = false
     @State private var showingTransferPakConfig = false
+    @State private var showingN64PakConfig = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Incremented after every core-option toggle to force a re-render of the tile grid.
@@ -206,6 +207,19 @@ struct PauseTileMenuView: View {
             ))
         }
 
+        // N64 Controller Pak slots tile — shown for N64 games
+        let n64ID = SystemIdentifier.N64.rawValue
+        let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core?.systemIdentifier ?? ""
+        if gameSystemID == n64ID {
+            tiles.append(PauseMenuTile(
+                id: "n64PakSlots",
+                icon: "gamecontroller.fill",
+                label: String(localized: "Pak Slots"),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
+        }
+
         // Core action tiles
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
             tiles += CoreActionTileProvider.tiles(from: actions)
@@ -291,6 +305,10 @@ struct PauseTileMenuView: View {
         // MARK: Transfer Pak config sheet
         case "transferPak":
             showingTransferPakConfig = true
+
+        // MARK: N64 Controller Pak slot picker
+        case "n64PakSlots":
+            showingN64PakConfig = true
 
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
@@ -547,6 +565,13 @@ struct PauseTileMenuView: View {
                     onDismiss: { showingTransferPakConfig = false }
                 )
             }
+        }
+        .sheet(isPresented: $showingN64PakConfig) {
+            N64ControllerPakView(
+                gameMD5: emulatorVC.game?.md5Hash,
+                gameTitle: emulatorVC.game?.title,
+                onDismiss: { showingN64PakConfig = false }
+            )
         }
         // Core action option picker — shown when a CoreAction exposes multiple options.
         .confirmationDialog(
