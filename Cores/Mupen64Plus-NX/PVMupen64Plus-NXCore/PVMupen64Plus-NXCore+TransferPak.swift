@@ -19,7 +19,7 @@
 //  2. The pak mode is set to `PLUGIN_TRANSFER_PAK` (4) so `MupenInitiateControllers`
 //     reports the correct plugin type to the core's input system.
 //
-//  3. The media loader is registered once in `loadFileAtPath:` (Controls.m),
+//  3. The media loader is registered once in `loadFileAtPath:` (PVMupen64Plus-NXCore.m),
 //     so the core can request GB cart data before and during emulation.
 //
 //  ## Platform notes

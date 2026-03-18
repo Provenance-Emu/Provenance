@@ -234,7 +234,7 @@ char * __nullable MupenNXGetGBCartRAM(void * __nullable cb_data, int controller_
         }
     }
 
-    NSLog(@"[TransferPak-NX] port %ld: ROM=%@  save=%@", (long)port, romPath ?: @"<none>", savePath ?: @"<auto>");
+    ILOG(@"[TransferPak-NX] port %ld: ROM=%@  save=%@", (long)port, romPath ?: @"<none>", savePath ?: @"<auto>");
 }
 
 - (nullable NSString *)gbCartROMPathForPort:(NSInteger)port {

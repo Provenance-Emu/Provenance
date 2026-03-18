@@ -167,9 +167,15 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 - (void)dealloc {
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
-    
+
     [_inputQueue cancelAllOperations];
-    
+
+    // Free Transfer Pak C-string caches allocated via strdup.
+    for (int i = 0; i < 4; i++) {
+        if (_gbCartROMCStr[i])  { free(_gbCartROMCStr[i]);  _gbCartROMCStr[i]  = NULL; }
+        if (_gbCartSaveCStr[i]) { free(_gbCartSaveCStr[i]); _gbCartSaveCStr[i] = NULL; }
+    }
+
     [self pluginsUnload];
     [self detachCoreLib];
     
@@ -359,9 +365,9 @@ static void *dlopen_myself()
     mediaLoader.get_gb_cart_ram = MupenNXGetGBCartRAM;
     m64p_error mediaLoaderStatus = CoreDoCommand(M64CMD_SET_MEDIA_LOADER, sizeof(m64p_media_loader), &mediaLoader);
     if (mediaLoaderStatus != M64ERR_SUCCESS) {
-        NSLog(@"[TransferPak-NX] Warning: failed to register media loader (error %d) — Transfer Pak will be unavailable", mediaLoaderStatus);
+        WLOG(@"[TransferPak-NX] Warning: failed to register media loader (error %d) — Transfer Pak will be unavailable", mediaLoaderStatus);
     } else {
-        NSLog(@"[TransferPak-NX] Media loader registered successfully");
+        ILOG(@"[TransferPak-NX] Media loader registered successfully");
     }
 
 	// Setup configs
