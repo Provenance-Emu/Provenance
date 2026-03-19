@@ -48,12 +48,12 @@ let package = Package(
             dependencies: [
                 "PVSupport",
                 "PVLogging",
-                "SideKit",
+                .product(name: "SideKit", package: "SideKit", condition: .when(platforms: [.iOS])),
                 "JITManager",
                 "FastmemUtil"
             ],
             linkerSettings: [
-				.linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
+                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
             ]),
 
 //        .target(
