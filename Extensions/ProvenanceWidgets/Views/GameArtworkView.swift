@@ -8,6 +8,7 @@
 
 #if os(iOS)
 import SwiftUI
+import UIKit
 
 /// Displays box art for a game from a local file path or falls back to a system-icon placeholder.
 struct GameArtworkView: View {

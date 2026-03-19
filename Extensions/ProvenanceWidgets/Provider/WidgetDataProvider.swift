@@ -89,9 +89,8 @@ final class WidgetDataProvider {
         let totalGames = games.count
         let favoritesCount = games.filter("isFavorite == true").count
 
-        // Collect unique system identifiers
-        let systemIdentifiers = Set(games.compactMap { $0.systemIdentifier })
-        let totalSystems = systemIdentifiers.count
+        // Use Realm's distinct query instead of materialising the full result set
+        let totalSystems = games.distinct(by: ["systemIdentifier"]).count
 
         // Sum total play time
         let totalPlayTimeSeconds = games.sum(ofProperty: "timeSpentInGame") as Int
@@ -149,24 +148,54 @@ final class WidgetDataProvider {
 // errors when opening the Realm in read-only mode.
 
 /// Mirrors PVGame — keep property names in sync with the main app's PVGame schema.
+/// All value-type @Persisted properties are declared here so that opening the existing
+/// Realm in read-only mode does not trigger a schema-mismatch error.
+/// Object/List links that reference types outside objectTypes (e.g. PVFile, PVSystem)
+/// are intentionally omitted — Realm ignores undeclared link columns in read-only mode.
 final class PVGameProxy: Object {
     @Persisted(primaryKey: true) var md5Hash: String = ""
     @Persisted(indexed: true) var id: String = ""
     @Persisted var title: String = ""
-    @Persisted(indexed: true) var systemIdentifier: String = ""
-    @Persisted var systemShortName: String?
+    @Persisted var romPath: String = ""
     @Persisted var customArtworkURL: String = ""
     @Persisted var originalArtworkURL: String = ""
+    @Persisted var requiresSync: Bool = true
     @Persisted(indexed: true) var isFavorite: Bool = false
+    @Persisted var cloudRecordID: String?
+    @Persisted var isDownloaded: Bool = true
+    @Persisted var hasCloudAssets: Bool = false
+    @Persisted var fileSize: Int = 0
+    @Persisted var lastCloudSyncDate: Date?
+    @Persisted var romSerial: String?
+    @Persisted var romHeader: String?
+    @Persisted var importDate: Date = Date()
+    @Persisted(indexed: true) var systemIdentifier: String = ""
+    @Persisted var crc: String = ""
+    @Persisted var userPreferredCoreID: String?
+    @Persisted var contentless: Bool = false
     @Persisted var lastPlayed: Date?
     @Persisted var playCount: Int = 0
     @Persisted var timeSpentInGame: Int = 0
+    @Persisted var rating: Int = -1
+    @Persisted var systemShortName: String?
+    @Persisted var gameDescription: String?
+    @Persisted var boxBackArtworkURL: String?
+    @Persisted var developer: String?
+    @Persisted var publisher: String?
+    @Persisted var publishDate: String?
+    @Persisted var genres: String?
+    @Persisted var referenceURL: String?
+    @Persisted var releaseID: String?
+    @Persisted var regionName: String?
+    @Persisted var regionID: Int?
+    @Persisted var language: String?
 }
 
 /// Mirrors PVRecentGame — keep property names in sync with the main app's PVRecentGame schema.
+/// `core` (PVCore?) is omitted because PVCore is not in objectTypes; Realm ignores it in read-only mode.
 final class PVRecentGameProxy: Object {
-    @Persisted var id: String = ""
+    @Persisted(wrappedValue: UUID().uuidString) var id: String
     @Persisted var game: PVGameProxy?
-    @Persisted(indexed: true) var lastPlayedDate: Date = Date()
+    @Persisted(wrappedValue: Date(), indexed: true) var lastPlayedDate: Date
 }
 #endif
