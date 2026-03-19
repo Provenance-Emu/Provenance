@@ -83,7 +83,10 @@ static NSArray<NSString *> *dos_relative_mouse_system_ids(void) {
     static NSArray *ids;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        ids = @[ @"atarist", @"doom" ];
+        // "snes" covers bsnes / snes9x-next when port 2 is RETRO_DEVICE_MOUSE.
+        // "saturn" covers Beetle-Saturn mouse peripheral.
+        // "psx" covers Beetle-PSX / PCSX-ReARMed mouse peripheral.
+        ids = @[ @"atarist", @"doom", @"snes", @"saturn", @"psx" ];
     });
     return ids;
 }
@@ -93,9 +96,44 @@ static NSArray<NSString *> *dos_relative_mouse_core_ids(void) {
     static NSArray *ids;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        ids = @[ @"hatari", @"prboom" ];
+        ids = @[ @"hatari", @"prboom", @"bsnes", @"snes9x", @"mednafen_snes",
+                 @"mednafen_psx", @"mednafen_saturn", @"pcsx_rearmed" ];
     });
     return ids;
+}
+
+// ---------------------------------------------------------------------------
+// DS RETRO_DEVICE_POINTER support
+// ---------------------------------------------------------------------------
+// The Nintendo DS touchscreen is exposed as RETRO_DEVICE_POINTER which reads
+// from apple->touches[idx].fixed_x/y.  These are set each frame by
+// cocoa_input_poll() which converts apple->touches[idx].screen_x/y using
+// video_driver_translate_coord_viewport_wrap().
+//
+// The TouchTrackpadView sends normalised 0–1 cursor positions.  We map them to
+// UIKit screen points and store them in touches[0].screen_x/y so that the
+// normal cocoa_input_poll conversion produces the correct libretro coordinates.
+
+/// Write a normalised [0,1] touch position into apple->touches[0].screen_x/y
+/// so cocoa_input_poll can convert it to libretro RETRO_DEVICE_POINTER coordinates.
+static void ds_ra_update_pointer_pos(CGPoint normalizedPoint) {
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (!apple) return;
+#if TARGET_OS_IOS
+    CGRect bounds = [UIScreen mainScreen].bounds;
+#else
+    CGRect bounds = CGRectMake(0, 0, 1920, 1080); // tvOS fallback
+#endif
+    apple->touches[0].screen_x = (int16_t)(normalizedPoint.x * bounds.size.width);
+    apple->touches[0].screen_y = (int16_t)(normalizedPoint.y * bounds.size.height);
+}
+
+/// Returns YES when the currently-loaded system uses RETRO_DEVICE_POINTER
+/// (absolute screen coordinates) rather than RETRO_DEVICE_MOUSE (relative deltas).
+static BOOL dos_uses_pointer_device(PVRetroArchCoreBridge *bridge) {
+    NSString *sysId = bridge.systemIdentifier ?: @"";
+    // Use exact match to avoid false positives (e.g. "dos" matching "ds").
+    return [sysId isEqualToString:@"com.provenance.ds"];
 }
 
 /// String-match fallback: check static lists when libretro port info is absent.
@@ -344,7 +382,10 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 }
 
 - (void)mouseMovedAt:(CGPoint)point {
-    if (dos_uses_relative_mouse(self)) {
+    if (dos_uses_pointer_device(self)) {
+        // DS: update absolute pointer position; touch_count remains as-is.
+        ds_ra_update_pointer_pos(point);
+    } else if (dos_uses_relative_mouse(self)) {
         st_ra_update_mouse_rel(point);
     } else {
         dos_ra_update_mouse_pos(point);
@@ -355,35 +396,56 @@ static void st_ra_update_mouse_rel(CGPoint point) {
 - (void)leftMouseDownAt:(CGPoint)point {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
-    if (dos_uses_relative_mouse(self)) {
-        // Relative-mouse path: update position then set button.
+    if (dos_uses_pointer_device(self)) {
+        // DS: register pointer press at the specified normalised position.
+        ds_ra_update_pointer_pos(point);
+        apple->touch_count = 1;
+    } else if (dos_uses_relative_mouse(self)) {
         st_ra_update_mouse_rel(point);
+        apple->mouse_buttons |= COCOA_MOUSE_BTN_LEFT;
     } else {
         dos_ra_update_mouse_pos(point);
+        apple->mouse_buttons |= COCOA_MOUSE_BTN_LEFT;
     }
-    apple->mouse_buttons |= COCOA_MOUSE_BTN_LEFT;
 }
 - (void)leftMouseDownAtPoint:(CGPoint)point { [self leftMouseDownAt:point]; }
 - (void)leftMouseUp {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_LEFT;
-    // Reset delta tracking so finger re-placement doesn't produce a phantom jump.
-    if (dos_uses_relative_mouse(self)) {
-        st_mouse_prev.valid = NO;
+    if (dos_uses_pointer_device(self)) {
+        // DS: release pointer touch.
+        if (apple) {
+            apple->touch_count = 0;
+            apple->touches[0].screen_x = 0;
+            apple->touches[0].screen_y = 0;
+        }
+    } else {
+        if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_LEFT;
+        // Reset delta tracking so finger re-placement doesn't produce a phantom jump.
+        if (dos_uses_relative_mouse(self)) {
+            st_mouse_prev.valid = NO;
+        }
     }
 }
 
 - (void)rightMouseDownAtPoint:(CGPoint)point {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
-    if (dos_uses_relative_mouse(self)) {
+    if (dos_uses_pointer_device(self)) {
+        // DS has no right-click; treat as a touch release.
+        apple->touch_count = 0;
+    } else if (dos_uses_relative_mouse(self)) {
         st_ra_update_mouse_rel(point);
+        apple->mouse_buttons |= COCOA_MOUSE_BTN_RIGHT;
     } else {
         dos_ra_update_mouse_pos(point);
+        apple->mouse_buttons |= COCOA_MOUSE_BTN_RIGHT;
     }
-    apple->mouse_buttons |= COCOA_MOUSE_BTN_RIGHT;
 }
 - (void)rightMouseUp {
+    if (dos_uses_pointer_device(self)) {
+        // no-op for DS
+        return;
+    }
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_RIGHT;
     // Mirror leftMouseUp: reset delta tracking on right-button release so a subsequent

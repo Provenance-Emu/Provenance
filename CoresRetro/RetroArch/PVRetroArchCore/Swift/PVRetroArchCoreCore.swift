@@ -171,6 +171,16 @@ private struct RetroArchVirtualInputSupport {
         )
     }
 
+    /// Mouse/pointer-only support (e.g. DS touchscreen via RETRO_DEVICE_POINTER).
+    static func mouse(required: Bool = false) -> Self {
+        .init(
+            supportsKeyboard: false,
+            requiresKeyboard: false,
+            supportsMouse: true,
+            requiresMouse: required
+        )
+    }
+
     /// Keyboard + mouse support.
     static func keyboardAndMouse(requiredKeyboard: Bool = false, requiredMouse: Bool = false) -> Self {
         .init(
@@ -217,6 +227,7 @@ private struct RetroArchVirtualInputSupport {
         "com.provenance.doom": .keyboardAndMouse(),
         "com.provenance.dos": .keyboardAndMouse(),
         "com.provenance.dreamcast": .keyboardAndMouse(),
+        "com.provenance.ds": .mouse(),       // DS touchscreen via RETRO_DEVICE_POINTER
         "com.provenance.ep128": .keyboardAndMouse(requiredKeyboard: true),
         "com.provenance.macintosh": .keyboardAndMouse(),
         "com.provenance.mame": .keyboard(),
@@ -225,11 +236,11 @@ private struct RetroArchVirtualInputSupport {
         "com.provenance.n64": .keyboard(),
         "com.provenance.palmos": .keyboard(),
         "com.provenance.pc98": .keyboardAndMouse(),
-        "com.provenance.psx": .keyboard(),
+        "com.provenance.psx": .keyboardAndMouse(), // PSX Mouse peripheral
         "com.provenance.quake": .keyboardAndMouse(),
         "com.provenance.quake2": .keyboardAndMouse(),
-        "com.provenance.saturn": .keyboard(),
-        "com.provenance.snes": .keyboard(),
+        "com.provenance.saturn": .keyboardAndMouse(), // Saturn Shuttle Mouse
+        "com.provenance.snes": .keyboardAndMouse(), // SNES Mouse (Mario Paint, etc.)
         "com.provenance.tic80": .keyboard(),
         "com.provenance.wolf3d": .keyboardAndMouse(),
         "com.provenance.zxspectrum": .keyboardAndMouse(requiredKeyboard: true)

@@ -141,6 +141,53 @@ extension PVThinLibretroCore {
             let ry = Int16(-pad.rightThumbstick.yAxis.value * Float(kAnalogMax))
             _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisX, value: rx, forPlayer: player)
             _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisY, value: ry, forPlayer: player)
+
+            // DualSense / DualShock touchpad → mouse input (player 0 only, when mouse is active).
+            // The touchpad reports absolute position in the [-1, 1] range per axis.
+            // We compute frame-to-frame deltas and scale them to libretro mouse_rel units.
+            if playerIndex == 0, gameSupportsMouse {
+#if canImport(GameController)
+                if #available(iOS 14.5, tvOS 14.5, *) {
+                    var touchpadX: Float = 0
+                    var touchpadY: Float = 0
+                    var touchpadActive = false
+
+                    // GCDualSenseGamepad and GCDualShockGamepad both subclass GCExtendedGamepad,
+                    // so we can cast the already-captured `pad` directly.
+                    if let dualSense = pad as? GCDualSenseGamepad {
+                        touchpadX = dualSense.touchpadPrimary.xAxis.value
+                        touchpadY = dualSense.touchpadPrimary.yAxis.value
+                        // Touchpad is "active" when the button is pressed (finger touching)
+                        touchpadActive = dualSense.touchpadButton.isPressed
+                    } else if let dualShock = pad as? GCDualShockGamepad {
+                        touchpadX = dualShock.touchpadPrimary.xAxis.value
+                        touchpadY = dualShock.touchpadPrimary.yAxis.value
+                        touchpadActive = dualShock.touchpadButton.isPressed
+                    }
+
+                    if touchpadActive {
+                        if _padTouchPrevValid {
+                            let dx = touchpadX - _padTouchPrevX
+                            let dy = touchpadY - _padTouchPrevY
+                            // Scale: touchpad full range (-1..1) maps to ~600 rel units;
+                            // a gentle swipe produces comfortable cursor speed.
+                            let scale: Float = 300.0
+                            if dx != 0 || dy != 0 {
+                                _bridge.setMouseDeltaX(
+                                    Int16(clamping: Int(dx * scale)),
+                                    deltaY: Int16(clamping: Int(dy * scale))
+                                )
+                            }
+                        }
+                        _padTouchPrevX = touchpadX
+                        _padTouchPrevY = touchpadY
+                        _padTouchPrevValid = true
+                    } else {
+                        _padTouchPrevValid = false
+                    }
+                }
+#endif
+            }
         }
     }
 }
@@ -1184,17 +1231,66 @@ extension PVThinLibretroCore: MouseResponder {
     public var mouseMovedHandler: GCMouseMoved? { nil }
 #endif
 
-    /// Forward mouse movement as relative deltas to the libretro core.
+    /// Scale factor: 1% (0.01) of screen normalised delta → this many mouse_rel units.
+    /// Matches ST_MOUSE_SCALE in PVRetroArchCore+Controls+DOS.m.
+    private static let mouseScale: Double = 300.0
+
+    /// Forward mouse movement to the libretro core.
+    ///
+    /// - `point` arrives as a normalised [0,1] cursor position from TouchTrackpadView.
+    /// - For `RETRO_DEVICE_POINTER` systems (DS): converts to the libretro [-0x7fff,0x7fff]
+    ///   range and updates the pointer position.
+    /// - For `RETRO_DEVICE_MOUSE` systems: computes the per-event delta from the previous
+    ///   position, scales it, and accumulates it as a relative delta.
     public func mouseMoved(atPoint point: CGPoint) {
-        _bridge.setMouseDeltaX(Int16(clamping: Int(point.x)), deltaY: Int16(clamping: Int(point.y)))
+        let sysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
+        if sysId == .DS {
+            // DS uses RETRO_DEVICE_POINTER — absolute normalised coordinates.
+            let nx = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
+            let ny = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
+            _bridge.setPointerX(nx, y: ny, pressed: _dsPointerPressed)
+            return
+        }
+
+        // RETRO_DEVICE_MOUSE path: accumulate relative delta from previous normalised position.
+        let x = min(1.0, max(0.0, Double(point.x)))
+        let y = min(1.0, max(0.0, Double(point.y)))
+        if _mousePrevValid {
+            let dx = x - Double(_mousePrevNorm.x)
+            let dy = y - Double(_mousePrevNorm.y)
+            if dx != 0 || dy != 0 {
+                _bridge.setMouseDeltaX(
+                    Int16(clamping: Int(dx * Self.mouseScale)),
+                    deltaY: Int16(clamping: Int(dy * Self.mouseScale))
+                )
+            }
+        }
+        _mousePrevNorm = CGPoint(x: x, y: y)
+        _mousePrevValid = true
     }
 
     public func leftMouseDown(atPoint point: CGPoint) {
-        _bridge.setMouseButton(2, pressed: true)  // RETRO_DEVICE_ID_MOUSE_LEFT = 2
+        let sysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
+        if sysId == .DS {
+            _dsPointerPressed = true
+            let nx = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
+            let ny = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
+            _bridge.setPointerX(nx, y: ny, pressed: true)
+        } else {
+            _bridge.setMouseButton(2, pressed: true)  // RETRO_DEVICE_ID_MOUSE_LEFT = 2
+        }
     }
 
     public func leftMouseUp() {
-        _bridge.setMouseButton(2, pressed: false)
+        let sysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
+        if sysId == .DS {
+            _dsPointerPressed = false
+            _bridge.setPointerX(0, y: 0, pressed: false)
+        } else {
+            _bridge.setMouseButton(2, pressed: false)
+            // Reset delta tracking so the next touch doesn't produce a phantom jump.
+            _mousePrevValid = false
+        }
     }
 
     public func rightMouseDown(atPoint point: CGPoint) {
@@ -1203,6 +1299,7 @@ extension PVThinLibretroCore: MouseResponder {
 
     public func rightMouseUp() {
         _bridge.setMouseButton(3, pressed: false)
+        _mousePrevValid = false  // Reset delta tracking on any button release.
     }
 }
 
