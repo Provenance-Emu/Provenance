@@ -50,7 +50,19 @@ public extension PVEmulatorViewController {
             return
         }
         let task = Task {
+            // Guard against cancellation: if stopNetplayBridge() ran before this
+            // task was scheduled, don't re-register a stale bridge.
+            guard !Task.isCancelled else {
+                DLOG("Netplay: start task cancelled before bridge registration — skipping.")
+                return
+            }
             await PVNetplayManager.shared.setActiveBridge(bridge)
+            guard !Task.isCancelled else {
+                // Cancellation raced with setActiveBridge; undo the registration.
+                await PVNetplayManager.shared.setActiveBridge(nil)
+                DLOG("Netplay: start task cancelled after bridge registration — clearing.")
+                return
+            }
             ILOG("Netplay: registered \(bridge.netplayEngineName) bridge with PVNetplayManager.")
         }
         netplayStartTaskBox = TaskBox(task)

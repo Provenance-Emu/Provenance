@@ -14,6 +14,7 @@
 //
 
 import Foundation
+import ObjectiveC
 import Combine
 import PVNetplay
 
@@ -24,6 +25,30 @@ import PVNetplay
 // Sendable is intentional — callers must not mutate netplay state concurrently.
 
 extension PVRetroArchCoreBridge: @unchecked Sendable {}
+
+// MARK: - Session context storage
+
+/// Stores the last requested role and settings so `netplayState` can report
+/// accurate host/port metadata rather than placeholder zeros.
+private final class NetplaySessionContext {
+    let role: NetplayRole
+    let settings: NetplaySettings
+    init(role: NetplayRole, settings: NetplaySettings) {
+        self.role = role
+        self.settings = settings
+    }
+}
+
+private enum NetplayContextKey {
+    static var sessionContext = "netplaySessionContext"
+}
+
+private extension PVRetroArchCoreBridge {
+    var lastSessionContext: NetplaySessionContext? {
+        get { objc_getAssociatedObject(self, &NetplayContextKey.sessionContext) as? NetplaySessionContext }
+        set { objc_setAssociatedObject(self, &NetplayContextKey.sessionContext, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+}
 
 // MARK: - PVNetplayCapable
 
@@ -45,31 +70,40 @@ extension PVRetroArchCoreBridge: PVNetplayCapable {
     /// in PVRetroArchCore).
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
         let nickname: String? = settings.nickname.isEmpty ? nil : settings.nickname
-        try await MainActor.run {
-            switch role {
-            case .host(let port):
-                try startNetplayHosting(
-                    nickname: nickname,
-                    port: port,
-                    frameDelay: settings.frameDelay
-                )
-            case .client(let host, let port):
-                try connectToNetplay(
-                    host: host,
-                    port: port,
-                    nickname: nickname,
-                    frameDelay: settings.frameDelay,
-                    spectate: false
-                )
-            case .spectator(let host, let port):
-                try connectToNetplay(
-                    host: host,
-                    port: port,
-                    nickname: nickname,
-                    frameDelay: settings.frameDelay,
-                    spectate: true
-                )
+        // Store context before starting so netplayState reflects accurate metadata
+        // as soon as the status transitions out of .idle.
+        lastSessionContext = NetplaySessionContext(role: role, settings: settings)
+        do {
+            try await MainActor.run {
+                switch role {
+                case .host(let port):
+                    try startNetplayHosting(
+                        nickname: nickname,
+                        port: port,
+                        frameDelay: settings.frameDelay
+                    )
+                case .client(let host, let port):
+                    try connectToNetplay(
+                        host: host,
+                        port: port,
+                        nickname: nickname,
+                        frameDelay: settings.frameDelay,
+                        spectate: false
+                    )
+                case .spectator(let host, let port):
+                    try connectToNetplay(
+                        host: host,
+                        port: port,
+                        nickname: nickname,
+                        frameDelay: settings.frameDelay,
+                        spectate: true
+                    )
+                }
             }
+        } catch {
+            // Clear context if start failed so state stays consistent.
+            lastSessionContext = nil
+            throw error
         }
     }
 
@@ -79,19 +113,25 @@ extension PVRetroArchCoreBridge: PVNetplayCapable {
     /// the main thread for thread safety.
     public func stopNetplay() async {
         await MainActor.run { stopNetplaySession() }
+        lastSessionContext = nil
     }
 
     // MARK: State
 
     /// Maps `PVRetroArchNetplayStatus` to the protocol-level `NetplayState`.
+    ///
+    /// Uses the stored session context (role + settings) to populate accurate
+    /// host address, port, and frame-delay metadata when available.
     public var netplayState: NetplayState {
-        netplayStatus.asNetplayState
+        netplayStatus.asNetplayState(context: lastSessionContext)
     }
 
     /// Publisher that emits `NetplayState` changes (polled once/second).
     public var netplayStatePublisher: AnyPublisher<NetplayState, Never> {
         retroArchNetplayStatusPublisher
-            .map { $0.asNetplayState }
+            .map { [weak self] status in
+                status.asNetplayState(context: self?.lastSessionContext)
+            }
             .eraseToAnyPublisher()
     }
 }
@@ -101,36 +141,39 @@ extension PVRetroArchCoreBridge: PVNetplayCapable {
 private extension PVRetroArchNetplayStatus {
     /// Converts the raw RetroArch status enum to the protocol-level state.
     ///
-    /// For hosting/connected states a minimal placeholder `NetplayRoom` is
-    /// created because RetroArch does not expose the full room metadata via
-    /// its C API at the status-query level.
-    ///
-    /// TODO: Enrich host address, port, and peer list by reading RetroArch
-    /// config vars (e.g. `netplay_ip_address`, `netplay_ip_port`) once the
-    /// config-reader path is available in PVRetroArchCoreBridge.
-    var asNetplayState: NetplayState {
+    /// When `context` is provided the derived room/session is populated with
+    /// the actual host address, port, and frame delay from the last
+    /// `startNetplay(role:settings:)` call.  Without context a minimal
+    /// placeholder is used (RetroArch does not expose full room metadata via
+    /// its C status-query API at the poll level).
+    func asNetplayState(context: NetplaySessionContext?) -> NetplayState {
         switch self {
         case .idle:
             return .idle
         case .hosting:
-            return .hosting(room: .retroArchPlaceholder(address: "0.0.0.0"))
+            let port: UInt16
+            if case .host(let p) = context?.role { port = p } else { port = 55435 }
+            let room = NetplayRoom.retroArchRoom(address: "0.0.0.0", port: port, context: context)
+            return .hosting(room: room)
         case .connected:
-            let room = NetplayRoom.retroArchPlaceholder(address: "0.0.0.0")
+            let (host, port) = context?.role.clientAddress ?? ("0.0.0.0", 55435)
+            let room = NetplayRoom.retroArchRoom(address: host, port: port, context: context)
             let session = NetplaySession(
                 room: room,
-                role: .client(host: "0.0.0.0", port: 55435),
+                role: .client(host: host, port: port),
                 peers: [],
-                frameDelay: 0,
+                frameDelay: context?.settings.frameDelay ?? 0,
                 isRollbackEnabled: false
             )
             return .connected(session: session)
         case .spectating:
-            let room = NetplayRoom.retroArchPlaceholder(address: "0.0.0.0")
+            let (host, port) = context?.role.clientAddress ?? ("0.0.0.0", 55435)
+            let room = NetplayRoom.retroArchRoom(address: host, port: port, context: context)
             let session = NetplaySession(
                 room: room,
-                role: .spectator(host: "0.0.0.0", port: 55435),
+                role: .spectator(host: host, port: port),
                 peers: [],
-                frameDelay: 0,
+                frameDelay: context?.settings.frameDelay ?? 0,
                 isRollbackEnabled: false
             )
             return .connected(session: session)
@@ -140,18 +183,34 @@ private extension PVRetroArchNetplayStatus {
     }
 }
 
-// MARK: - NetplayRoom placeholder
+// MARK: - NetplayRole helpers
+
+private extension NetplayRole {
+    /// Extracts (host, port) for client/spectator roles; returns nil for host role.
+    var clientAddress: (String, UInt16)? {
+        switch self {
+        case .client(let host, let port): return (host, port)
+        case .spectator(let host, let port): return (host, port)
+        case .host: return nil
+        }
+    }
+}
+
+// MARK: - NetplayRoom factory
 
 private extension NetplayRoom {
-    /// A minimal stand-in room used when RetroArch is active but detailed
-    /// room metadata is unavailable through the C status API.
-    static func retroArchPlaceholder(address: String, port: UInt16 = 55435) -> NetplayRoom {
+    /// Builds a room populated with as much context as is available.
+    static func retroArchRoom(
+        address: String,
+        port: UInt16,
+        context: NetplaySessionContext?
+    ) -> NetplayRoom {
         NetplayRoom(
-            hostName: "RetroArch",
+            hostName: context?.settings.nickname.isEmpty == false ? context!.settings.nickname : "RetroArch",
             gameName: "",
             gameHash: "",
             coreIdentifier: "com.provenance.retroarch",
-            maxPlayers: 2,
+            maxPlayers: context?.settings.maxPlayers ?? 2,
             currentPlayers: 1,
             isLAN: true,
             hostAddress: address,

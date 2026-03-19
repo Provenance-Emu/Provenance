@@ -213,7 +213,8 @@ struct NetplayErrorTests {
 import Combine
 
 /// Minimal mock to verify the PVNetplayCapable protocol surface compiles.
-private final class MockNetplayCapable: PVNetplayCapable {
+/// @unchecked Sendable: mock is only used on a single test thread; no concurrent mutation.
+private final class MockNetplayCapable: PVNetplayCapable, @unchecked Sendable {
     var supportsNetplay: Bool { true }
     var netplayEngineName: String { "MockEngine" }
 
