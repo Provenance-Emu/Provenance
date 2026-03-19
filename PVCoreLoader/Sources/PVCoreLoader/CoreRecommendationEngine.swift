@@ -61,9 +61,9 @@ public struct CoreRecommendation: Sendable {
 ///     saveCounts: savesPerCore
 /// )
 /// ```
-/// `@unchecked Sendable`: `manifest` is written once in `init` via a static helper
-/// and is never mutated after construction, so concurrent reads are safe.
-public final class CoreRecommendationEngine: @unchecked Sendable {
+/// `manifest` is a `let` constant set once in `init` and never mutated.
+/// `CoreCapabilitiesManifest` is `Sendable`, so this type is fully `Sendable`.
+public final class CoreRecommendationEngine: Sendable {
 
     // MARK: Singleton
 
@@ -151,7 +151,10 @@ public final class CoreRecommendationEngine: @unchecked Sendable {
             // 3. Quality rank from manifest
             let lRank = lhs.metadata?.qualityRank ?? 0
             let rRank = rhs.metadata?.qualityRank ?? 0
-            return lRank > rRank
+            if lRank != rRank { return lRank > rRank }
+
+            // 4. Stable tie-breaker: lexicographic by core identifier
+            return lhs.coreIdentifier < rhs.coreIdentifier
         }
 
         // Assign rank labels

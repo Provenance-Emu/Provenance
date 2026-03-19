@@ -537,12 +537,10 @@ public extension GameLaunchingViewController {
 
     /// Persists a core identifier as the system-level default.
     @MainActor
-    private func setDefaultCore(identifier: String, forSystem system: PVSystem) {
-        let systemId = system.identifier
+    private func setDefaultCore(identifier: String, forSystemId systemId: String) {
         do {
-            let realm = try Realm()
-            try realm.write {
-                guard let liveSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemId) else { return }
+            try RomDatabase.sharedInstance.writeTransaction {
+                guard let liveSystem = RomDatabase.sharedInstance.realm.object(ofType: PVSystem.self, forPrimaryKey: systemId) else { return }
                 liveSystem.userPreferredCoreID = identifier
             }
         } catch {
@@ -725,8 +723,9 @@ public extension GameLaunchingViewController {
                             showSetDefault: system != nil,
                             onSelect: handleCoreSelect,
                             onSetDefault: system.map { sys in
-                                { [weak self] selectedId in
-                                    self?.setDefaultCore(identifier: selectedId, forSystem: sys)
+                                let systemId = sys.identifier
+                                return { [weak self] selectedId in
+                                    self?.setDefaultCore(identifier: selectedId, forSystemId: systemId)
                                 }
                             },
                             onCancel: {

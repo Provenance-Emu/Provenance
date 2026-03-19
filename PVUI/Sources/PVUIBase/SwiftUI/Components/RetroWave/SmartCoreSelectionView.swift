@@ -308,7 +308,7 @@ private struct CoreSelectionCard: View {
                 .foregroundColor(.black)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.retroGold)
+                .background(Color.retroYellow)
                 .clipShape(Capsule())
         case .fallback:
             Text("Fallback")
@@ -345,15 +345,15 @@ private struct CoreSelectionCard: View {
         HStack(alignment: .top, spacing: 6) {
             Image(systemName: "lightbulb.fill")
                 .font(.system(size: 11))
-                .foregroundColor(Color.retroGold)
+                .foregroundColor(Color.retroYellow)
             Text(tip)
                 .font(.system(size: 12))
-                .foregroundColor(Color.retroGold.opacity(0.9))
+                .foregroundColor(Color.retroYellow.opacity(0.9))
                 .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(8)
-        .background(Color.retroGold.opacity(0.07))
+        .background(Color.retroYellow.opacity(0.07))
         .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 
@@ -418,12 +418,6 @@ private struct CapabilityChip: View {
     private var chipColor: Color {
         capability.isRequirement ? Color.orange : Color.retroCyan
     }
-}
-
-// MARK: - Color helpers
-
-private extension Color {
-    static let retroGold = Color(red: 1.0, green: 0.84, blue: 0.0)
 }
 
 // MARK: - Hosting wrapper (UIKit integration)
