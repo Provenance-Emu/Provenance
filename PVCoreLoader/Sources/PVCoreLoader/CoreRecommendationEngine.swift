@@ -61,6 +61,8 @@ public struct CoreRecommendation: Sendable {
 ///     saveCounts: savesPerCore
 /// )
 /// ```
+/// `@unchecked Sendable`: `manifest` is written once in `init` via a static helper
+/// and is never mutated after construction, so concurrent reads are safe.
 public final class CoreRecommendationEngine: @unchecked Sendable {
 
     // MARK: Singleton
@@ -70,8 +72,6 @@ public final class CoreRecommendationEngine: @unchecked Sendable {
     // MARK: Private state
 
     private let manifest: CoreCapabilitiesManifest?
-    private let lock = NSLock()
-    private var _cachedManifest: CoreCapabilitiesManifest??
 
     // MARK: Init
 

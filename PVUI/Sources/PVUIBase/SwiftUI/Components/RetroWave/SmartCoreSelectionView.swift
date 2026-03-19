@@ -8,7 +8,6 @@
 ///
 
 import SwiftUI
-import PVThemes
 import PVPrimitives
 import PVCoreLoader
 
@@ -81,7 +80,6 @@ public struct SmartCoreSelectionView: View {
     private let onSetDefault: ((String) -> Void)?
 
     @Binding private var isPresented: Bool
-    @State private var selectedForDefault: String? = nil
     @State private var glowOpacity: Double = 0.7
 
     #if os(tvOS) || os(iOS)
@@ -238,8 +236,6 @@ private struct CoreSelectionCard: View {
     let showSetDefault: Bool
     let onSelect: () -> Void
     let onSetDefault: () -> Void
-
-    @State private var isPressed = false
 
     var body: some View {
         Button(action: onSelect) {
@@ -428,7 +424,6 @@ private struct CapabilityChip: View {
 
 private extension Color {
     static let retroGold = Color(red: 1.0, green: 0.84, blue: 0.0)
-    static let retroGreen = Color(red: 0.1, green: 0.9, blue: 0.4)
 }
 
 // MARK: - Hosting wrapper (UIKit integration)

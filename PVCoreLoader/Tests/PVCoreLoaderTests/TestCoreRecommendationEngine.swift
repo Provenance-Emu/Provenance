@@ -44,7 +44,7 @@ final class TestCoreRecommendationEngine: XCTestCase {
 
     // MARK: - Save state ordering
 
-    func testCorWithMoreSavesIsFirstWhenEqualCapabilities() {
+    func testCoreWithMoreSavesIsFirstWhenEqualCapabilities() {
         let coreA = "com.provenance.core.visualboyadvance"
         let coreB = "com.provenance.core.mGBA"
 
