@@ -496,6 +496,10 @@ typedef struct PVThinLibretroSymbols {
     struct retro_game_info _blockingGameInfo;  // persisted for core thread lifetime
     NSData *_blockingROMData;                  // keeps ROM data bytes alive on heap
     NSString *_blockingROMPath;                // keeps romPath NSString alive so .path ptr is valid
+    NSThread *_blockingCoreThread;             // retained reference to blocking core thread
+
+    // Guard against double retro_deinit (dealloc can re-enter stopEmulation)
+    BOOL _coreDeinited;
 }
 
 /// Internal callback methods invoked by the static C trampolines.
@@ -1861,6 +1865,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     _sym.retro_set_input_state(thin_input_state);
 
     _sym.retro_init();
+    _coreDeinited = NO;
 
     // NOTE: Do NOT call retro_get_system_av_info before retro_load_game.
     // The libretro API requires content to be loaded first; many cores
@@ -1915,9 +1920,11 @@ static bool thin_environment(unsigned cmd, void *data) {
         _blockingROMPath = romPath;
         _blockingGameInfo = gameInfo;
 
-        [NSThread detachNewThreadSelector:@selector(_blockingCoreThread)
-                                 toTarget:self
-                               withObject:nil];
+        _blockingCoreThread = [[NSThread alloc] initWithTarget:self
+                                                     selector:@selector(_blockingCoreThread)
+                                                       object:nil];
+        _blockingCoreThread.name = @"PVThinLibretro-BlockingCore";
+        [_blockingCoreThread start];
 
         // Wait for the first video_refresh call (= first frame produced) with a
         // generous timeout. If the core fails to init it won't signal at all.
@@ -2017,6 +2024,11 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)stopEmulation {
+    // Guard: retro_deinit must only be called once. dealloc also calls stopEmulation,
+    // which can re-enter after the core has already been torn down → crash.
+    if (_coreDeinited) {
+        return;
+    }
     _audioPaused = YES;
     // Stop peripheral interfaces
 #if PV_HAS_COREMOTION
@@ -2052,6 +2064,19 @@ static bool thin_environment(unsigned cmd, void *data) {
     // Unblock a blocking core thread so it doesn't deadlock waiting on _blockingCoreTick.
     if (_isBlockingCore && _blockingCoreTick) {
         dispatch_semaphore_signal(_blockingCoreTick);
+        // Wait for the blocking core thread to finish before tearing down.
+        // The thread sets _thinCurrentTLS = nil on exit; poll with a timeout
+        // so we don't hang forever if the core is stuck.
+        if (_blockingCoreThread && !_blockingCoreThread.isFinished) {
+            NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3.0];
+            while (!_blockingCoreThread.isFinished && [deadline timeIntervalSinceNow] > 0) {
+                [NSThread sleepForTimeInterval:0.01];
+            }
+            if (!_blockingCoreThread.isFinished) {
+                WLOG(@"ThinFrontend: blocking core thread did not exit within 3s, proceeding with teardown");
+            }
+        }
+        _blockingCoreThread = nil;
     }
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
@@ -2061,6 +2086,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_sym.retro_deinit) {
         _sym.retro_deinit();
     }
+    _coreDeinited = YES;
     [self teardownHardwareContext];
     _thinCurrentTLS = nil;
 }
@@ -2189,10 +2215,12 @@ static bool thin_environment(unsigned cmd, void *data) {
     return written;
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    NSError *error = nil;
-    BOOL success = [self saveStateToFileAtPath:fileName error:&error];
-    if (block) block(success, error);
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError * _Nullable))block {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSError *error = nil;
+        [self saveStateToFileAtPath:fileName error:&error];
+        if (block) block(error);
+    });
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError **)error {
@@ -2215,10 +2243,12 @@ static bool thin_environment(unsigned cmd, void *data) {
     return success;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    NSError *error = nil;
-    BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
-    if (block) block(success, error);
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError * _Nullable))block {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSError *error = nil;
+        [self loadStateFromFileAtPath:fileName error:&error];
+        if (block) block(error);
+    });
 }
 
 // MARK: - Battery saves (SRAM)
@@ -2430,7 +2460,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     return (_rawAVInfo.timing.fps > 0.0) ? _rawAVInfo.timing.fps : 60.0;
 }
 
-- (const void *)videoBuffer { return _videoBufferData; }
+- (const void *)videoBuffer { return (const void *)_videoBufferData; }
 
 - (CGRect)screenRect {
     unsigned w = _rawAVInfo.geometry.base_width  ?: 256;
@@ -3660,21 +3690,14 @@ static bool thin_environment(unsigned cmd, void *data) {
             return true;
         }
 
-        // ---- Software framebuffer (zero-copy optimization) ----
+        // ---- Software framebuffer ----
+        // Returning false forces cores to use their own buffer and pass it via
+        // video_refresh, where we memcpy into _videoBufferData. Sharing our
+        // buffer here is unsafe: some cores (Mednafen) cache the pointer in an
+        // internal surface and free() it in retro_deinit, causing a double-free
+        // crash since the pointer was allocated by the frontend, not the core.
         case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER: {
-            struct retro_framebuffer *fb = (struct retro_framebuffer *)data;
-            if (!fb || !_videoBufferData) return false;
-            unsigned maxW = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 256);
-            NSUInteger bpp = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
-            NSUInteger pitch = (NSUInteger)maxW * bpp;
-            // Only provide the buffer if the requested dimensions fit
-            unsigned maxH = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 256);
-            if (fb->width > maxW || fb->height > maxH) return false;
-            fb->data = _videoBufferData;
-            fb->pitch = pitch;
-            fb->format = _retroPixelFormat;
-            fb->memory_flags = RETRO_MEMORY_TYPE_CACHED;
-            return true;
+            return false;
         }
 
         // ---- MIDI interface (CoreMIDI) ----

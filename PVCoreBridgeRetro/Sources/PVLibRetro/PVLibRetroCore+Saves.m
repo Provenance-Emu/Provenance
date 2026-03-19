@@ -246,37 +246,25 @@
     }
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError * _Nullable))block {
     if (!block) {
-        return; // No completion handler provided
+        return;
     }
-    
-    // Dispatch save state operation to background queue to avoid blocking UI
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSError *error = nil;
-        BOOL success = [self saveStateToFileAtPath:fileName error:&error];
-        
-        // Call completion handler on main queue
-        dispatch_async(dispatch_get_main_queue(), ^{
-            block(success, error);
-        });
+        [self saveStateToFileAtPath:fileName error:&error];
+        block(error);
     });
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError * _Nullable))block {
     if (!block) {
-        return; // No completion handler provided
+        return;
     }
-    
-    // Dispatch load state operation to background queue to avoid blocking UI
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSError *error = nil;
-        BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
-        
-        // Call completion handler on main queue
-        dispatch_async(dispatch_get_main_queue(), ^{
-            block(success, error);
-        });
+        [self loadStateFromFileAtPath:fileName error:&error];
+        block(error);
     });
 }
 //

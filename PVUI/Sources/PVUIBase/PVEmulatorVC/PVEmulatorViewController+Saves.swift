@@ -107,12 +107,18 @@ public extension PVEmulatorViewController {
             }
         }
 
-        // Perform the actual load only after user confirmation
-        try! realm.write {
-            state.lastOpened = Date()
+        // Resolve a live object from this Realm instance — the incoming `state` may be
+        // frozen (e.g. from PauseMenuSaveStateBrowserView) or from a different Realm.
+        guard let liveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: state.id) else {
+            ELOG("Save state \(state.id) not found in Realm")
+            return false
         }
 
-        guard let stateURL = state.file?.url, FileManager.default.fileExists(atPath: stateURL.path) else {
+        try! realm.write {
+            liveState.lastOpened = Date()
+        }
+
+        guard let stateURL = liveState.file?.url, FileManager.default.fileExists(atPath: stateURL.path) else {
             return false
         }
 
