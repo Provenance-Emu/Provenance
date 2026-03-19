@@ -129,6 +129,7 @@ public struct CoreOptionTileProvider {
                     icon: current ? "checkmark.square.fill" : "square",
                     label: display.title,
                     badge: current ? "ON" : "OFF",
+                    description: display.description,
                     colorKey: current ? .green : .gray,
                     dismissOnTap: false
                 ))
@@ -152,6 +153,7 @@ public struct CoreOptionTileProvider {
                     icon: "arrow.trianglehead.2.clockwise",
                     label: display.title,
                     badge: currentLabel,
+                    description: display.description,
                     colorKey: .cyan,
                     dismissOnTap: false,
                     longPressOptions: lpOptions
@@ -183,6 +185,7 @@ public struct CoreOptionTileProvider {
                     icon: "list.bullet.clipboard",
                     label: display.title,
                     badge: currentLabel,
+                    description: display.description,
                     colorKey: .purple,
                     dismissOnTap: false,
                     longPressOptions: lpOptions

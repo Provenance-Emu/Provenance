@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Tile Data Model
 
 /// A single action tile in the tile-based pause menu grid.
-public struct PauseMenuTile: Identifiable, Sendable {
+public struct PauseMenuTile: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     /// SF Symbol name for the tile icon.
     public let icon: String
@@ -19,6 +19,9 @@ public struct PauseMenuTile: Identifiable, Sendable {
     public let label: String
     /// Optional badge text (e.g. save slot number, recording indicator, current value).
     public var badge: String?
+    /// Help text from the core option's `CoreOptionValueDisplay.description`.
+    /// Shown in the info shelf when the tile is focused/long-pressed.
+    public var description: String?
     /// Whether the tile is interactive; disabled tiles are dimmed.
     public var isEnabled: Bool
     /// Accent color key — maps to the retrowave palette.
@@ -33,6 +36,7 @@ public struct PauseMenuTile: Identifiable, Sendable {
         icon: String,
         label: String,
         badge: String? = nil,
+        description: String? = nil,
         isEnabled: Bool = true,
         colorKey: PauseMenuTileColor = .blue,
         dismissOnTap: Bool = true,
@@ -42,6 +46,7 @@ public struct PauseMenuTile: Identifiable, Sendable {
         self.icon = icon
         self.label = label
         self.badge = badge
+        self.description = description
         self.isEnabled = isEnabled
         self.colorKey = colorKey
         self.dismissOnTap = dismissOnTap
@@ -52,7 +57,7 @@ public struct PauseMenuTile: Identifiable, Sendable {
 // MARK: - Long-Press Option
 
 /// A named option surfaced by a long-press context menu on a tile.
-public struct PauseMenuTileLongPressOption: Identifiable, Sendable {
+public struct PauseMenuTileLongPressOption: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let title: String
     /// Whether this option is the currently-active value.
@@ -75,7 +80,7 @@ public enum PauseMenuTileColor: String, Sendable {
 // MARK: - Tile Section
 
 /// A named group of tiles displayed together in the grid.
-public struct PauseMenuTileSection: Identifiable, Sendable {
+public struct PauseMenuTileSection: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     /// Human-readable section header (nil = no visible header).
     public let title: String?
