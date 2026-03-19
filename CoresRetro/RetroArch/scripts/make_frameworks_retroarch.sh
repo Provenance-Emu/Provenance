@@ -131,3 +131,5 @@ if [ "${DYLIB_COUNT}" -gt 0 ]; then
         echo "MakeFrameworks: WARNING — only ${FW_COUNT}/${DYLIB_COUNT} frameworks created. Check logs for failures." >&2
     fi
 fi
+
+exit 0
