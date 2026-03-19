@@ -35,15 +35,26 @@ public struct NetplayInGameOverlay: View {
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var isExpanded = false
 
-    public init() {}
+    /// Overrides `ObservableNetplayManager.shared.state` — for previews and tests only.
+    private let overrideState: NetplayState?
+
+    public init() { overrideState = nil }
+
+    /// Preview/test-only initializer that bypasses the live singleton.
+    init(previewState: NetplayState) { overrideState = previewState }
+
+    private var effectiveState: NetplayState { overrideState ?? netplay.state }
 
     public var body: some View {
         Group {
-            if netplay.state.isActive {
+            if effectiveState.isActive {
                 overlay
                     .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .topTrailing)))
-                    .animation(.easeInOut(duration: 0.2), value: netplay.state.isActive)
+                    .animation(.easeInOut(duration: 0.2), value: effectiveState.isActive)
             }
+        }
+        .onChange(of: effectiveState.isActive) { active in
+            if !active { isExpanded = false }
         }
     }
 
@@ -99,7 +110,7 @@ public struct NetplayInGameOverlay: View {
     private var detailPanel: some View {
         VStack(alignment: .leading, spacing: 10) {
             // Per-peer rows
-            if let session = netplay.state.session, !session.peers.isEmpty {
+            if let session = effectiveState.session, !session.peers.isEmpty {
                 ForEach(session.peers) { peer in
                     PeerRowView(peer: peer)
                 }
@@ -108,7 +119,7 @@ public struct NetplayInGameOverlay: View {
             }
 
             // Session stats
-            if let session = netplay.state.session {
+            if let session = effectiveState.session {
                 sessionStatsRow("Frame Delay", value: "\(session.frameDelay)")
                 sessionStatsRow("Rollback", value: session.isRollbackEnabled ? "On" : "Off")
             }
@@ -137,7 +148,7 @@ public struct NetplayInGameOverlay: View {
     // MARK: - Helpers
 
     private var playerCount: Int {
-        switch netplay.state {
+        switch effectiveState {
         case .connected(let session):
             return session.peers.count + 1
         case .hosting(let room):
@@ -152,7 +163,7 @@ public struct NetplayInGameOverlay: View {
     /// Best single ping value to surface in the compact pill.
     /// Uses the maximum peer ping so the indicator reflects the worst link.
     private var representativePingMS: Int? {
-        guard let session = netplay.state.session else { return nil }
+        guard let session = effectiveState.session else { return nil }
         return session.peers.compactMap(\.pingMS).max()
     }
 
@@ -163,7 +174,7 @@ public struct NetplayInGameOverlay: View {
 
     private var pillAccessibilityHint: String {
         #if os(tvOS)
-        return "Press Menu to view details"
+        return "Compact view — detailed stats unavailable on this platform"
         #else
         return isExpanded ? "Tap to collapse" : "Tap to expand connection details"
         #endif
@@ -264,15 +275,64 @@ private struct PeerRowView: View {
 // MARK: - Preview
 
 #if DEBUG
+private extension NetplayRoom {
+    static let preview = NetplayRoom(
+        hostName: "Player 1",
+        gameName: "Street Fighter II",
+        gameHash: "abc123",
+        coreIdentifier: "com.provenance.snes9x",
+        maxPlayers: 2,
+        currentPlayers: 2,
+        isLAN: true,
+        hostAddress: "192.168.1.2",
+        port: 55435
+    )
+}
+
+private extension NetplaySession {
+    static let preview = NetplaySession(
+        room: .preview,
+        role: .client(host: "192.168.1.2", port: 55435),
+        peers: [
+            NetplayPeer(nickname: "Player 1", playerIndex: 0, pingMS: 42),
+            NetplayPeer(nickname: "Spectator", playerIndex: 2, pingMS: 88, isSpectator: true)
+        ],
+        frameDelay: 3,
+        isRollbackEnabled: true
+    )
+}
+
 #Preview("Idle — not shown") {
-    NetplayInGameOverlay()
+    NetplayInGameOverlay(previewState: .idle)
 }
 
 #Preview("Connected — compact") {
-    let view = NetplayInGameOverlay()
-    return ZStack(alignment: .topTrailing) {
+    ZStack(alignment: .topTrailing) {
         Color.black.ignoresSafeArea()
-        view.padding()
+        NetplayInGameOverlay(previewState: .connected(session: .preview))
+            .padding()
+    }
+}
+
+#Preview("Connected — expanded") {
+    ZStack(alignment: .topTrailing) {
+        Color.black.ignoresSafeArea()
+        NetplayInGameOverlay(previewState: .connected(session: .preview))
+            .padding()
+    }
+}
+
+#Preview("High ping — warning state") {
+    ZStack(alignment: .topTrailing) {
+        Color.black.ignoresSafeArea()
+        NetplayInGameOverlay(previewState: .connected(session: NetplaySession(
+            room: .preview,
+            role: .client(host: "192.168.1.2", port: 55435),
+            peers: [NetplayPeer(nickname: "Player 1", playerIndex: 0, pingMS: 145)],
+            frameDelay: 5,
+            isRollbackEnabled: false
+        )))
+        .padding()
     }
 }
 #endif
