@@ -92,7 +92,7 @@ public struct NetplaySettingsView: View {
             portRow
             TextField("Relay Server (empty for LAN only)", text: $relayServer)
                 .autocorrectionDisabled()
-                #if !os(tvOS)
+                #if os(iOS)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 #endif
@@ -116,7 +116,9 @@ public struct NetplaySettingsView: View {
             Spacer()
             TextField("55435", value: validatedPortBinding, format: .number)
                 .multilineTextAlignment(.trailing)
+                #if os(iOS)
                 .keyboardType(.numberPad)
+                #endif
                 .frame(width: 80)
                 .foregroundStyle(.secondary)
         }
@@ -168,10 +170,11 @@ public struct NetplaySettingsView: View {
 
 // MARK: - NetplaySettings integration
 
-public extension NetplaySettings {
+extension NetplaySettings {
     /// Builds a `NetplaySettings` pre-populated from the values the user stored
     /// in `NetplaySettingsView`. Call this when creating a new room or join request
-    /// so that the stored preferences take effect.
+    /// so that the stored preferences take effect. Internal to PVUI — not part of
+    /// the PVNetplay public API.
     static func fromStoredDefaults(roomName: String = "") -> NetplaySettings {
         let defaults     = UserDefaults.standard
         let storedPort   = defaults.integer(forKey: NetplayDefaultsKey.port)

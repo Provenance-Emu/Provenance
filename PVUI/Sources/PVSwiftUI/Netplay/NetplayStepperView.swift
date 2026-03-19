@@ -35,11 +35,17 @@ struct NetplayStepperView: View {
             } label: {
                 Image(systemName: "minus.circle")
             }
+            .accessibilityLabel("Decrease \(label)")
+            .accessibilityHint("Current: \(value), minimum: \(range.lowerBound)")
+            .disabled(value <= range.lowerBound)
             Button {
                 value = min(range.upperBound, value + 1)
             } label: {
                 Image(systemName: "plus.circle")
             }
+            .accessibilityLabel("Increase \(label)")
+            .accessibilityHint("Current: \(value), maximum: \(range.upperBound)")
+            .disabled(value >= range.upperBound)
         }
         #else
         Stepper("\(label): \(value)", value: $value, in: range)
