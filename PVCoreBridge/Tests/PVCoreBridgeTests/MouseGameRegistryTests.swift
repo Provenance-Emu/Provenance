@@ -14,6 +14,12 @@ final class MouseGameRegistryTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        // Clear persisted user overrides so tests don't bleed into each other.
+        let prefix = "MouseGameRegistry.mouseEnabled."
+        let defaults = UserDefaults.standard
+        for key in defaults.dictionaryRepresentation().keys where key.hasPrefix(prefix) {
+            defaults.removeObject(forKey: key)
+        }
         MouseGameRegistry.shared._reset()
     }
 
@@ -97,7 +103,7 @@ final class MouseGameRegistryTests: XCTestCase {
         )
     }
 
-    func testSNESMarioAndWardioDetectedByTitle() {
+    func testSNESMarioAndWarioDetectedByTitle() {
         XCTAssertTrue(
             MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .SNES, md5: nil, title: "Mario & Wario (Japan)")
         )

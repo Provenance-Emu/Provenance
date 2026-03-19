@@ -274,6 +274,17 @@ public final class MouseGameRegistry: @unchecked Sendable {
 
     // MARK: - Query
 
+    /// Returns `true` if the system has any mouse support (always-on or conditional),
+    /// consulting the registry's live state so dynamically registered systems are included.
+    ///
+    /// - Parameter system: The system to check.
+    public func systemHasAnyMouseSupport(_ system: SystemIdentifier) -> Bool {
+        lock.lock()
+        let result = _alwaysSystems.contains(system) || _conditionalSystems.contains(system)
+        lock.unlock()
+        return result
+    }
+
     /// Determine whether the currently loaded game supports a mouse peripheral.
     ///
     /// Decision order:

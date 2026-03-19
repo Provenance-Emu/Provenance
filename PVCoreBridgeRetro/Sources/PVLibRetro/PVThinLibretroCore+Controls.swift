@@ -52,20 +52,13 @@ private extension SystemIdentifier {
 
     // MARK: Mouse
 
-    /// All systems that have *any* mouse support (always-on or game-specific).
-    /// This is the union of `MouseGameRegistry.alwaysMouseSystems` and
-    /// `MouseGameRegistry.conditionalMouseSystems` — a fast pre-check used by
-    /// `gameSupportsMouse` to avoid a registry lookup for systems with no mouse titles at all.
-    private static let mouseSystems: Set<SystemIdentifier> =
-        MouseGameRegistry.alwaysMouseSystems.union(MouseGameRegistry.conditionalMouseSystems)
-
-    /// Systems that require a mouse to be usable.
-    var requiresMouse: Bool { false }   // no thin-libretro system requires a mouse
-
     /// Whether this system has *any* potential mouse support (always-on or game-specific).
+    /// Consults the live registry state so dynamically registered systems are included.
     /// A `true` result does NOT mean the current game uses a mouse — call
     /// `MouseGameRegistry.shared.gameSupportsMouse(...)` for the definitive answer.
-    var hasAnyMouseSupport: Bool { Self.mouseSystems.contains(self) }
+    var hasAnyMouseSupport: Bool {
+        MouseGameRegistry.shared.systemHasAnyMouseSupport(self)
+    }
 
 }
 // Note: supportsLightGun / requiresLightGun are public properties on SystemIdentifier
