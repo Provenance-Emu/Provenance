@@ -25,6 +25,10 @@ public struct NetplayWaitingRoomView: View {
     let coreIdentifier: String
     let settings: NetplaySettings
 
+    /// Bound to NetplayCreateRoomView; set to true before dismissing so the
+    /// parent knows the session should remain active (game is starting).
+    @Binding var gameStarted: Bool
+
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var localIP: String = ""
     @State private var isCancelling = false
@@ -34,10 +38,11 @@ public struct NetplayWaitingRoomView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(gameName: String, coreIdentifier: String, settings: NetplaySettings) {
+    public init(gameName: String, coreIdentifier: String, settings: NetplaySettings, gameStarted: Binding<Bool> = .constant(false)) {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
         self.settings = settings
+        self._gameStarted = gameStarted
     }
 
     // MARK: - Derived State
@@ -349,8 +354,8 @@ public struct NetplayWaitingRoomView: View {
 
     private func startGame() {
         isStarting = true
-        // Dismiss waiting room — the emulation session is already running
-        // and the core bridge handles the game-start signal.
+        // Signal the parent that the session should stay alive, then dismiss.
+        gameStarted = true
         dismiss()
     }
 

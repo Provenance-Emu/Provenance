@@ -28,6 +28,9 @@ public struct NetplayCreateRoomView: View {
     @State private var errorMessage: String?
     @State private var showError = false
     @State private var showWaitingRoom = false
+    /// Set to true by NetplayWaitingRoomView when the host taps Start Game,
+    /// so onDismiss knows NOT to tear down the in-progress session.
+    @State private var gameStarted = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -118,15 +121,17 @@ public struct NetplayCreateRoomView: View {
                 Text(msg)
             }
             // After hosting starts successfully, navigate to the waiting room.
-            // When the waiting room is dismissed (Start Game or Cancel), also dismiss
-            // this sheet so the user returns to the lobby.
+            // When the waiting room is dismissed, also dismiss this sheet so the user
+            // returns to the lobby. Only disconnect if the game was NOT started —
+            // tapping Start Game should leave the session running.
             .sheet(isPresented: $showWaitingRoom, onDismiss: {
-                // Ensure hosting is torn down if the sheet was dismissed interactively
-                // (e.g. swipe-down on iOS) without going through the Cancel button.
-                Task { await netplay.disconnect() }
+                if !gameStarted {
+                    // Interactive dismissal (swipe-down) or Cancel — tear down session.
+                    Task { await netplay.disconnect() }
+                }
                 dismiss()
             }) {
-                NetplayWaitingRoomView(gameName: gameName, coreIdentifier: coreIdentifier, settings: settings)
+                NetplayWaitingRoomView(gameName: gameName, coreIdentifier: coreIdentifier, settings: settings, gameStarted: $gameStarted)
             }
             .onAppear {
                 if settings.roomName.isEmpty {
