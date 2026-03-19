@@ -39,37 +39,46 @@ extension PVRetroArchCoreBridge: PVNetplayCapable {
     ///
     /// Delegates to the Swift convenience wrappers on PVRetroArchCoreBridge
     /// defined in PVRetroArchCore+Netplay.swift.
+    ///
+    /// The underlying ObjC methods mutate RetroArch globals and must be called
+    /// on the main thread (RetroArch's run loop is driven from the main queue
+    /// in PVRetroArchCore).
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
         let nickname: String? = settings.nickname.isEmpty ? nil : settings.nickname
-        switch role {
-        case .host(let port):
-            try startNetplayHosting(
-                nickname: nickname,
-                port: port,
-                frameDelay: settings.frameDelay
-            )
-        case .client(let host, let port):
-            try connectToNetplay(
-                host: host,
-                port: port,
-                nickname: nickname,
-                frameDelay: settings.frameDelay,
-                spectate: false
-            )
-        case .spectator(let host, let port):
-            try connectToNetplay(
-                host: host,
-                port: port,
-                nickname: nickname,
-                frameDelay: settings.frameDelay,
-                spectate: true
-            )
+        try await MainActor.run {
+            switch role {
+            case .host(let port):
+                try startNetplayHosting(
+                    nickname: nickname,
+                    port: port,
+                    frameDelay: settings.frameDelay
+                )
+            case .client(let host, let port):
+                try connectToNetplay(
+                    host: host,
+                    port: port,
+                    nickname: nickname,
+                    frameDelay: settings.frameDelay,
+                    spectate: false
+                )
+            case .spectator(let host, let port):
+                try connectToNetplay(
+                    host: host,
+                    port: port,
+                    nickname: nickname,
+                    frameDelay: settings.frameDelay,
+                    spectate: true
+                )
+            }
         }
     }
 
     /// Stop the current netplay session.
+    ///
+    /// The underlying ObjC method mutates RetroArch globals; dispatched on
+    /// the main thread for thread safety.
     public func stopNetplay() async {
-        stopNetplaySession()
+        await MainActor.run { stopNetplaySession() }
     }
 
     // MARK: State
@@ -95,6 +104,10 @@ private extension PVRetroArchNetplayStatus {
     /// For hosting/connected states a minimal placeholder `NetplayRoom` is
     /// created because RetroArch does not expose the full room metadata via
     /// its C API at the status-query level.
+    ///
+    /// TODO: Enrich host address, port, and peer list by reading RetroArch
+    /// config vars (e.g. `netplay_ip_address`, `netplay_ip_port`) once the
+    /// config-reader path is available in PVRetroArchCoreBridge.
     var asNetplayState: NetplayState {
         switch self {
         case .idle:

@@ -862,7 +862,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         startAchievementsIfNeeded()
 
         // Register the core as the active netplay bridge if it supports PVNetplayCapable.
+        #if canImport(PVNetplay)
         startNetplayBridgeIfNeeded()
+        #endif
 
         // Set up the indicator light overlay (JIT status, etc.) — positioned in controller margin.
         setupIndicatorOverlay()
@@ -1456,7 +1458,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         runningCancellable = nil
 
         // Deregister the netplay bridge before stopping the core.
+        #if canImport(PVNetplay)
         stopNetplayBridge()
+        #endif
 
         // Tear down RetroAchievements session before stopping the core.
         stopAchievements()

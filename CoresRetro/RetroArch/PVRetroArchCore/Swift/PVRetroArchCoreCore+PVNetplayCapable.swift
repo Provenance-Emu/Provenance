@@ -16,6 +16,15 @@ import Foundation
 import Combine
 import PVNetplay
 
+// MARK: - Sendable
+//
+// PVRetroArchCoreCore is a mutable ObjC-derived class whose netplay-state
+// mutation is serialised on RetroArch's internal run loop thread.  Marking it
+// @unchecked Sendable satisfies PVNetplayCapable : Sendable without requiring
+// a full Swift 6 concurrency audit of the underlying C/ObjC core.
+
+extension PVRetroArchCoreCore: @unchecked Sendable {}
+
 // MARK: - PVNetplayCapable forwarding
 
 extension PVRetroArchCoreCore: PVNetplayCapable {

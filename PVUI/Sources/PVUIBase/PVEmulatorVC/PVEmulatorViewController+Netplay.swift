@@ -12,10 +12,31 @@
 //  host/join/stop netplay sessions natively.
 //
 
+#if canImport(PVNetplay)
 import PVNetplay
 import PVLogging
+import ObjectiveC
+
+// MARK: - Associated-object storage
+
+private enum NetplayAssociatedKeys {
+    static var startTask = "netplayStartTask"
+}
+
+/// Box wrapper so a Swift Task value can be stored via objc_setAssociatedObject.
+private final class TaskBox {
+    let task: Task<Void, Never>
+    init(_ task: Task<Void, Never>) { self.task = task }
+}
 
 public extension PVEmulatorViewController {
+
+    // MARK: - Stored start-task handle (via associated object)
+
+    private var netplayStartTaskBox: TaskBox? {
+        get { objc_getAssociatedObject(self, &NetplayAssociatedKeys.startTask) as? TaskBox }
+        set { objc_setAssociatedObject(self, &NetplayAssociatedKeys.startTask, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
 
     // MARK: - Lifecycle hooks
 
@@ -28,17 +49,23 @@ public extension PVEmulatorViewController {
             DLOG("Netplay: core does not conform to PVNetplayCapable — skipping bridge registration.")
             return
         }
-        Task {
+        let task = Task {
             await PVNetplayManager.shared.setActiveBridge(bridge)
             ILOG("Netplay: registered \(bridge.netplayEngineName) bridge with PVNetplayManager.")
         }
+        netplayStartTaskBox = TaskBox(task)
     }
 
     /// Deregister the active netplay bridge when the core stops.
     ///
     /// Call this before `core.stopEmulation()`.
+    /// Cancels any in-flight start task to prevent a stale bridge from being
+    /// registered after the stop completes.
     func stopNetplayBridge() {
         guard core is any PVNetplayCapable else { return }
+        // Cancel any pending start task so it cannot re-register after we clear.
+        netplayStartTaskBox?.task.cancel()
+        netplayStartTaskBox = nil
         Task {
             await PVNetplayManager.shared.disconnect()
             await PVNetplayManager.shared.setActiveBridge(nil)
@@ -46,3 +73,4 @@ public extension PVEmulatorViewController {
         }
     }
 }
+#endif
