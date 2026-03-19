@@ -1,0 +1,88 @@
+//
+//  SystemIconProvider.swift
+//  PVQuickLookSupport
+//
+//  Copyright © 2026 Provenance Emu. All rights reserved.
+//
+//  Returns a system-specific SF Symbol name as a fallback icon when no
+//  box-art is available.  Pure Foundation — no UIKit or AppKit imports.
+//
+
+import Foundation
+
+/// Provides fallback SF Symbol names for emulator system identifiers.
+///
+/// When no artwork is cached for a game the extensions can call
+/// `SystemIconProvider.sfSymbolName(forSystemIdentifier:)` to get an
+/// appropriate symbol to display in the thumbnail or preview card.
+public struct SystemIconProvider {
+
+    // MARK: - Public API
+
+    /// Returns an SF Symbol name appropriate for the given reverse-DNS system
+    /// identifier (e.g. `"com.provenance.snes"`).
+    ///
+    /// The mapping groups systems by hardware category.  Unknown identifiers
+    /// fall back to `"gamecontroller.fill"`.
+    public static func sfSymbolName(forSystemIdentifier identifier: String) -> String {
+        guard !identifier.isEmpty else { return Defaults.generic }
+        let id = identifier.lowercased()
+
+        switch true {
+        // Handhelds — Nintendo
+        case id.contains("gameboy") || id.contains(".gb") || id.contains(".gbc") || id.contains(".gba"):
+            return "handheld.fill"
+        case id.contains("ds") || id.contains("3ds"):
+            return "handheld.fill"
+        // Handhelds — Sony
+        case id.contains("psp") || id.contains("psv") || id.contains("vita"):
+            return "handheld.fill"
+        // Handhelds — Sega
+        case id.contains("gamegear") || id.contains("lynx") || id.contains("wonderswan"):
+            return "handheld.fill"
+        // Handhelds — generic
+        case id.contains("portable") || id.contains("handheld") || id.contains("pocket"):
+            return "handheld.fill"
+
+        // Home consoles — Nintendo
+        case id.contains("nes") && !id.contains("snes"):
+            return "gamecontroller.fill"
+        case id.contains("snes") || id.contains("famicom"):
+            return "gamecontroller.fill"
+        case id.contains("n64") || id.contains("nintendo64"):
+            return "gamecontroller.fill"
+        case id.contains("gamecube") || id.contains("wii") || id.contains("switch"):
+            return "gamecontroller.fill"
+
+        // Home consoles — Sony
+        case id.contains("playstation") || id.contains(".psx") || id.contains(".ps1")
+             || id.contains(".ps2") || id.contains(".ps3"):
+            return "gamecontroller.fill"
+
+        // Home consoles — Sega
+        case id.contains("genesis") || id.contains("megadrive") || id.contains("saturn")
+             || id.contains("dreamcast") || id.contains("mastersystem") || id.contains("32x"):
+            return "gamecontroller.fill"
+
+        // Computers / DOS
+        case id.contains("dos") || id.contains("doom") || id.contains("amiga")
+             || id.contains("atarist") || id.contains("msx") || id.contains("spectrum")
+             || id.contains("c64") || id.contains("coleco") || id.contains("apple2"):
+            return "desktopcomputer"
+
+        // Arcade
+        case id.contains("arcade") || id.contains("mame") || id.contains("neogeo")
+             || id.contains("cps"):
+            return "arcade.stick.console.fill"
+
+        default:
+            return Defaults.generic
+        }
+    }
+
+    // MARK: - Private
+
+    private enum Defaults {
+        static let generic = "gamecontroller.fill"
+    }
+}
