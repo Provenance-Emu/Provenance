@@ -143,8 +143,11 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 
 	# Threshold check: fail the build if fewer than 80% of expected cores downloaded.
 	# This catches network failures, bad pins, and stale buildbot URLs early.
+	# Enforce a minimum threshold of 1 so a single-core list always requires at least
+	# one successful download (integer division would otherwise give threshold=0).
 	if [ "${EXPECTED_COUNT}" -gt 0 ]; then
 		THRESHOLD=$(( EXPECTED_COUNT * 80 / 100 ))
+		[ "${THRESHOLD}" -lt 1 ] && THRESHOLD=1
 		if [ "${DOWNLOAD_OK}" -lt "${THRESHOLD}" ]; then
 			echo "GetModule: ERROR — Only ${DOWNLOAD_OK}/${EXPECTED_COUNT} cores downloaded (threshold: ${THRESHOLD})." >&2
 			echo "GetModule: ERROR — Check network connectivity and buildbot URL validity." >&2

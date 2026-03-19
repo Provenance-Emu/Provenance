@@ -154,6 +154,31 @@ test_threshold_exact_80_percent_passes() {
     fi
 }
 
+test_threshold_minimum_one_for_single_core() {
+    # EXPECTED_COUNT=1 → 1*80/100=0 without the minimum; 0/1 would incorrectly pass.
+    # The script now enforces THRESHOLD >= 1, so 0/1 must fail.
+    local EXPECTED_COUNT=1 DOWNLOAD_OK=0
+    local THRESHOLD=$(( EXPECTED_COUNT * 80 / 100 ))
+    [ "${THRESHOLD}" -lt 1 ] && THRESHOLD=1
+    if [ "${DOWNLOAD_OK}" -lt "${THRESHOLD}" ]; then
+        pass "threshold minimum: 0/1 fails as expected (threshold enforced to ${THRESHOLD})"
+    else
+        fail "threshold minimum: 0/1 should fail (threshold=${THRESHOLD})"
+    fi
+}
+
+test_threshold_minimum_one_passes_with_one_success() {
+    # EXPECTED_COUNT=1 DOWNLOAD_OK=1 → should pass threshold=1
+    local EXPECTED_COUNT=1 DOWNLOAD_OK=1
+    local THRESHOLD=$(( EXPECTED_COUNT * 80 / 100 ))
+    [ "${THRESHOLD}" -lt 1 ] && THRESHOLD=1
+    if [ "${DOWNLOAD_OK}" -ge "${THRESHOLD}" ]; then
+        pass "threshold minimum: 1/1 passes (threshold=${THRESHOLD})"
+    else
+        fail "threshold minimum: 1/1 should pass (threshold=${THRESHOLD})"
+    fi
+}
+
 # ---------------------------------------------------------------------------
 # Test: pinned_date format validation
 # ---------------------------------------------------------------------------
@@ -346,6 +371,8 @@ run_test "Threshold: 90% passes" test_threshold_passes_when_above_80_percent
 run_test "Threshold: 70% fails" test_threshold_fails_when_below_80_percent
 run_test "Threshold: 0% fails" test_threshold_fails_when_zero_downloads
 run_test "Threshold: exactly 80% passes" test_threshold_exact_80_percent_passes
+run_test "Threshold minimum: 0/1 fails (integer-division guard)" test_threshold_minimum_one_for_single_core
+run_test "Threshold minimum: 1/1 passes" test_threshold_minimum_one_passes_with_one_success
 run_test "Invalid date format rejected" test_invalid_date_format_rejected
 run_test "Valid date format accepted" test_valid_date_format_accepted
 run_test "Date with inline comment rejected" test_date_with_inline_comment_rejected

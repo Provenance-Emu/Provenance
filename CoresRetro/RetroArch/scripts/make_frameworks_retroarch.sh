@@ -1,4 +1,8 @@
 #!/bin/bash
+# NOTE: Xcode build phases invoke scripts via /bin/sh, which ignores the shebang.
+# This guard re-execs with bash so bash-specific syntax (pattern replacement, arrays,
+# etc.) works even when the build phase calls: /bin/sh ".../make_frameworks_retroarch.sh"
+[ -z "${BASH_VERSION:-}" ] && exec bash "$0" "$@"
 
 # Function to print usage
 print_usage() {
