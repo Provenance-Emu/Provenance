@@ -10,6 +10,7 @@ import PVSupport
 import RealmSwift
 import PVLibrary
 import PVPrimitives
+import PVCoreLoader
 import RxSwift
 import RxRealm
 import PVPlists
@@ -534,65 +535,151 @@ public extension GameLaunchingViewController {
         }
     }
 
-    /// Presents a core selection alert with save state counts for each core
+    /// Presents a core selection alert with save state counts for each core.
+    ///
+    /// Uses the smart ``SmartCoreSelectionView`` when the
+    /// ``CoreRecommendationEngine`` has metadata for the available cores,
+    /// falling back to the plain ``CoreSelectionAlertHostingView`` otherwise.
+    ///
     /// - Parameters:
     ///   - game: The game to select a core for
     ///   - cores: Available cores for the game's system
     /// - Returns: The selected core, or nil if cancelled
     @MainActor
     func selectCoreWithSaveCounts(game: PVGame, cores: [PVCore]) async -> PVCore? {
-        let items = cores.map { core in
-            let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
-            let subtitle = formatSaveCountSubtitle(saveCount)
-            return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
+        // Build save-count map for the recommendation engine
+        let saveCounts: [String: Int] = Dictionary(uniqueKeysWithValues: cores.map { core in
+            let count = game.saveStates.filter("core.identifier == %@", core.identifier).count
+            return (core.identifier, count)
+        })
+
+        // Ask the recommendation engine for ranked results
+        let engine = CoreRecommendationEngine.shared
+        let coreIDs = cores.map { $0.identifier }
+        let recommendations = engine.recommendations(
+            gameTitle: game.title,
+            systemIdentifier: game.system?.identifier,
+            md5: game.md5Hash.isEmpty ? nil : game.md5Hash,
+            serial: game.romSerial,
+            availableCoreIdentifiers: coreIDs,
+            saveCounts: saveCounts
+        )
+
+        // Build SmartCoreSelectionItems, preserving recommendation order
+        let hasMetadata = recommendations.contains { $0.metadata != nil }
+        let smartItems: [SmartCoreSelectionItem] = recommendations.compactMap { rec in
+            guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
+            return SmartCoreSelectionItem(recommendation: rec, coreName: core.projectName)
         }
 
         var hasResumed = false
 
         return await withCheckedContinuation { continuation in
             Task { @MainActor in
-                // Capture hostingVC so callbacks can dismiss it
-                var hostingVC: UIHostingController<CoreSelectionAlertHostingView>?
+                if hasMetadata {
+                    // Rich smart selection view
+                    var hostingVC: UIHostingController<SmartCoreSelectionHostingView>?
 
-                let selectionView = CoreSelectionAlertHostingView(
-                    title: "Select Core",
-                    message: "Choose a core to run \(game.title)",
-                    items: items,
-                    onSelect: { selectedId in
-                        guard !hasResumed else { return }
-                        hasResumed = true
-                        let selectedCore = cores.first { $0.identifier == selectedId }
-                        // Dismiss first, then resume continuation in completion
-                        hostingVC?.dismiss(animated: true) {
-                            continuation.resume(returning: selectedCore)
+                    let selectionView = SmartCoreSelectionHostingView(
+                        title: "Select Core",
+                        message: "Choose a core to run \(game.title)",
+                        items: smartItems,
+                        showSetDefault: true,
+                        onSelect: { selectedId in
+                            guard !hasResumed else { return }
+                            hasResumed = true
+                            let selectedCore = cores.first { $0.identifier == selectedId }
+                            hostingVC?.dismiss(animated: true) {
+                                continuation.resume(returning: selectedCore)
+                            }
+                        },
+                        onSetDefault: { [weak self] selectedId in
+                            guard let self else { return }
+                            // Persist as the per-system default
+                            if let system = game.system {
+                                self.setDefaultCore(identifier: selectedId, forSystem: system)
+                            }
+                        },
+                        onCancel: {
+                            guard !hasResumed else { return }
+                            hasResumed = true
+                            hostingVC?.dismiss(animated: true) {
+                                continuation.resume(returning: nil)
+                            }
                         }
-                    },
-                    onCancel: {
-                        guard !hasResumed else { return }
-                        hasResumed = true
-                        // Dismiss first, then resume continuation in completion
-                        hostingVC?.dismiss(animated: true) {
-                            continuation.resume(returning: nil)
+                    )
+
+                    hostingVC = UIHostingController(rootView: selectionView)
+                    hostingVC?.modalPresentationStyle = .overFullScreen
+                    hostingVC?.modalTransitionStyle = .crossDissolve
+                    hostingVC?.view.backgroundColor = .clear
+                    presentOverTop(hostingVC)
+                } else {
+                    // Fallback: plain selection view
+                    var hostingVC: UIHostingController<CoreSelectionAlertHostingView>?
+
+                    let fallbackItems = recommendations.compactMap { rec -> RetroSelectionItem? in
+                        guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
+                        let subtitle = formatSaveCountSubtitle(rec.saveCount)
+                        return RetroSelectionItem(id: rec.coreIdentifier, title: core.projectName, subtitle: subtitle)
+                    }
+
+                    let selectionView = CoreSelectionAlertHostingView(
+                        title: "Select Core",
+                        message: "Choose a core to run \(game.title)",
+                        items: fallbackItems,
+                        onSelect: { selectedId in
+                            guard !hasResumed else { return }
+                            hasResumed = true
+                            let selectedCore = cores.first { $0.identifier == selectedId }
+                            hostingVC?.dismiss(animated: true) {
+                                continuation.resume(returning: selectedCore)
+                            }
+                        },
+                        onCancel: {
+                            guard !hasResumed else { return }
+                            hasResumed = true
+                            hostingVC?.dismiss(animated: true) {
+                                continuation.resume(returning: nil)
+                            }
                         }
-                    }
-                )
+                    )
 
-                hostingVC = UIHostingController(rootView: selectionView)
-                hostingVC?.modalPresentationStyle = .overFullScreen
-                hostingVC?.modalTransitionStyle = .crossDissolve
-                hostingVC?.view.backgroundColor = .clear
-
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootVC = windowScene.windows.first?.rootViewController {
-                    var topVC = rootVC
-                    while let presented = topVC.presentedViewController {
-                        topVC = presented
-                    }
-                    if let vc = hostingVC {
-                        topVC.present(vc, animated: true)
-                    }
+                    hostingVC = UIHostingController(rootView: selectionView)
+                    hostingVC?.modalPresentationStyle = .overFullScreen
+                    hostingVC?.modalTransitionStyle = .crossDissolve
+                    hostingVC?.view.backgroundColor = .clear
+                    presentOverTop(hostingVC)
                 }
             }
+        }
+    }
+
+    /// Persists a core identifier as the system-level default.
+    @MainActor
+    private func setDefaultCore(identifier: String, forSystem system: PVSystem) {
+        do {
+            let realm = system.realm ?? (try Realm())
+            try realm.write {
+                let liveSystem = system.isFrozen ? system.thaw() : system
+                liveSystem?.userPreferredCoreID = identifier
+            }
+        } catch {
+            ELOG("Failed to persist default core: \(error)")
+        }
+    }
+
+    /// Presents a view controller over the current top-most presented VC.
+    @MainActor
+    private func presentOverTop(_ vc: UIViewController?) {
+        guard let vc else { return }
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootVC = windowScene.windows.first?.rootViewController {
+            var topVC = rootVC
+            while let presented = topVC.presentedViewController {
+                topVC = presented
+            }
+            topVC.present(vc, animated: true)
         }
     }
 

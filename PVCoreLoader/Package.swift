@@ -25,6 +25,7 @@ let package = Package(
         .package(path: "../PVEmulatorCore/"),
         .package(path: "../PVLogging/"),
         .package(path: "../PVSupport/"),
+        .package(path: "../PVPrimitives/"),
 
         // MARK: Cores
         .package(path: "../Cores/Atari800/"),
@@ -78,6 +79,7 @@ let package = Package(
             dependencies: [
                 "SwiftMacros",
                 "PVCoreBridge",
+                .product(name: "PVPrimitives", package: "PVPrimitives"),
                 "PVEmulatorCore",
                 "PVLogging",
                 "PVSupport",
@@ -91,7 +93,8 @@ let package = Package(
 //                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
             ],
             resources: [
-                .process("Resources/systems.plist")
+                .process("Resources/systems.plist"),
+                .process("Resources/CoreCapabilities.json")
             ],
             plugins: [
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
