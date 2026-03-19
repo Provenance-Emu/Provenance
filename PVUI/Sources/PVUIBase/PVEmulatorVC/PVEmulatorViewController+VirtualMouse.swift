@@ -61,11 +61,10 @@ extension PVEmulatorViewController {
 
         ILOG("[VirtualMouse] Core supports mouse — installing cursor overlay and trackpad")
 
+        /// Frame is managed by `refreshVirtualMouseLayout()` — no autoresizingMask
+        /// so the trackpad stays confined to the game viewport, not the full view.
         let trackpad = TouchTrackpadView(frame: view.bounds)
-        trackpad.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         trackpad.mouseResponder = mouseCore
-        // Limit touch capture to the game viewport so skin buttons and the
-        // virtual keyboard remain interactive outside the display area.
         trackpad.gameViewRef = gpuViewController.view
         view.addSubview(trackpad)
         touchTrackpadView = trackpad
@@ -75,20 +74,19 @@ extension PVEmulatorViewController {
         host.view.backgroundColor = .clear
         host.view.isOpaque = false
         host.view.isUserInteractionEnabled = false
-        // Frame is managed manually (via refreshVirtualMouseLayout) so the cursor
-        // is confined to the game viewport, not the full emulator view.
         host.view.frame = view.bounds
         addChild(host)
         view.addSubview(host.view)
-        view.bringSubviewToFront(host.view)
         host.didMove(toParent: self)
         cursorHostingController = host
 
-        // Apply the game viewport rect immediately so the cursor starts confined.
+        /// Constrain trackpad and cursor overlay to the game viewport immediately.
         refreshVirtualMouseLayout()
 
-        // Update the shared state so SwiftUI overlay buttons and UIKit buttons
-        // both reflect the correct initial visibility.
+        /// Fix z-order so controller buttons, menu, and skin controls remain
+        /// interactive above the trackpad from the very first frame.
+        bringVirtualInputOverlaysToFront()
+
         virtualInputState.setMouseVisible(true)
 
         ILOG("[VirtualMouse] Setup complete")
@@ -134,35 +132,31 @@ extension PVEmulatorViewController {
         virtualInputState.setMouseVisible(false)
     }
 
-    /// Refresh the trackpad's authoritative game-viewport rect.
+    /// Refresh the trackpad and cursor overlay frames to match the game viewport.
     ///
     /// Call this after any layout event that changes where the game screen
     /// appears on screen — e.g. from `viewDidAppear`, `viewDidLayoutSubviews`,
-    /// and `applyFrameToGPUView` — so `TouchTrackpadView.hitTest` always uses
-    /// the correct bounds and never accidentally captures skin-button touches.
+    /// and `applyFrameToGPUView` — so the trackpad only captures touches
+    /// within the game screen and never steals skin-button / menu touches.
     ///
-    /// Also resizes the cursor overlay to match the game viewport so the cursor
-    /// can never escape the rendered game screen area (e.g. when the game is
-    /// letterboxed in a 16:9 container).
+    /// Both the trackpad and cursor overlay are resized to the viewport so
+    /// normalised 0–1 coordinates map to pixels within the game screen.
     func refreshVirtualMouseLayout() {
         guard let trackpad = touchTrackpadView else { return }
+
+        /// Resolve the authoritative viewport rect: prefer the skin-supplied
+        /// target frame, fall back to the GPU view's live frame, then full view.
+        let viewportFrame: CGRect
         if let targetFrame = currentTargetFrame, !targetFrame.isEmpty {
-            // Skin system has determined the authoritative game rect — use it.
-            trackpad.explicitGameViewRect = targetFrame
-            // Confine cursor overlay to the same rect so normalised 0–1 coords
-            // map to pixels within the game screen, not the full emulator view.
-            cursorHostingController?.view.frame = targetFrame
+            viewportFrame = targetFrame
         } else {
-            // No target frame is known — clear any stale explicit rect so hitTest
-            // falls back to the live gameViewRef frame derivation.
-            trackpad.explicitGameViewRect = nil
-            // Confine cursor to GPU view frame when no explicit rect is available,
-            // falling back to full view bounds only if gpuViewController is absent.
-            if let cursorView = cursorHostingController?.view {
-                let gpuFrame = gpuViewController.view.frame
-                cursorView.frame = gpuFrame.isEmpty ? view.bounds : gpuFrame
-            }
+            let gpuFrame = gpuViewController.view.frame
+            viewportFrame = gpuFrame.isEmpty ? view.bounds : gpuFrame
         }
+
+        trackpad.frame = viewportFrame
+        trackpad.explicitGameViewRect = viewportFrame
+        cursorHostingController?.view.frame = viewportFrame
     }
 }
 

@@ -1392,30 +1392,24 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// CRITICAL: Ensure skin container stays visible and on top after layout
         /// This prevents the GPU view from covering the skin container on iPad
         if isDeltaSkinEnabled, let skinContainer = skinContainerView {
-            // Always update frame to match view bounds (important for fullscreen transitions)
             skinContainer.frame = view.bounds
-            // Ensure hosting view also fills the container
             if let hostView = skinContainer.subviews.first {
                 hostView.frame = skinContainer.bounds
             }
-            // Ensure skin container is visible and on top
             skinContainer.isHidden = false
             skinContainer.alpha = 1.0
-            // Ensure correct z-order - skin container must be above GPU view
             if let gpuView = gpuViewController.view, gpuView.superview == view {
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
             view.bringSubviewToFront(skinContainer)
-            #if !os(tvOS)
-            // After re-stacking the skin container, restore virtual input overlays
-            // (keyboard, trackpad, cursor) above it so they remain interactive.
-            bringVirtualInputOverlaysToFront()
-            #endif
         }
 
         #if !os(tvOS)
-        // Keep the virtual-mouse trackpad's game-viewport rect in sync with
-        // the current layout so hitTest never captures skin-button touches.
+        /// Restore correct z-order for virtual input overlays (trackpad, keyboard,
+        /// controller, cursor, menu) on EVERY layout pass — not just for DeltaSkins.
+        /// Without this, the trackpad sits above controller buttons and the menu
+        /// button after initial setup, blocking all touches.
+        bringVirtualInputOverlaysToFront()
         refreshVirtualMouseLayout()
         #endif
         #endif
@@ -2449,34 +2443,32 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Ensure proper z-order of views in the hierarchy
+    /// Ensure proper z-order of views in the hierarchy.
+    ///
+    /// Works for both DeltaSkin mode (with a skin container) and legacy
+    /// PVControllerViewController mode (no skin container).
     private func ensureProperZOrder() {
         guard let gpuView = gpuViewController.view else { return }
-        guard let skinContainer = skinContainerView else { return }
 
-        // First, make sure the GPU view is a direct child of the main view (not the skin container)
         if gpuView.superview !== view {
             gpuView.removeFromSuperview()
             view.addSubview(gpuView)
         }
 
-        // Make sure the skin container is in the view hierarchy
-        if skinContainer.superview !== view {
-            view.addSubview(skinContainer)
+        /// Skin container handling — only when DeltaSkins are active.
+        if let skinContainer = skinContainerView {
+            if skinContainer.superview !== view {
+                view.addSubview(skinContainer)
+            }
+            if gpuView.superview == view && skinContainer.superview == view {
+                view.insertSubview(gpuView, belowSubview: skinContainer)
+            }
+            view.bringSubviewToFront(skinContainer)
         }
 
-        // CRITICAL: Skin container must be ABOVE the GPU view so controls are visible
-        // The GPU view should be below the skin container
-        // Use insertSubview to ensure correct ordering - skin container on top
-        if gpuView.superview == view && skinContainer.superview == view {
-            view.insertSubview(gpuView, belowSubview: skinContainer)
-        }
-        // Ensure skin container is on top
-        view.bringSubviewToFront(skinContainer)
         #if os(iOS)
         if let visualizerView = audioVisualizerHostingController?.view {
             view.bringSubviewToFront(visualizerView)
-            // Ensure visualizer is visible if we're in portrait mode on iPhone
             if UIDevice.current.userInterfaceIdiom == .phone {
                 let orientation = UIDevice.current.orientation
                 let isPortrait = orientation == .portrait || orientation == .portraitUpsideDown || orientation == .unknown
@@ -2491,11 +2483,6 @@ extension PVEmulatorViewController {
         #if !os(tvOS)
         bringVirtualInputOverlaysToFront()
         #endif
-
-        // If we have a menu button, make sure it's on top of everything
-        if let menuButton = menuButton {
-            view.bringSubviewToFront(menuButton)
-        }
     }
 
     /// Debug print the current view hierarchy for troubleshooting

@@ -317,12 +317,13 @@ extension PVEmulatorViewController {
     /// Bring all virtual input overlays to the front of the view hierarchy in the correct stacking order.
     ///
     /// Order (back to front):
-    ///   trackpad → keyboard container → controller overlay (HUD buttons) → cursor (non-interactive)
+    ///   trackpad → keyboard container → controller overlay (HUD buttons) → cursor (non-interactive) → menu button
     ///
     /// The keyboard container must be ABOVE the trackpad so UIKit checks it first during hit-testing.
     /// KeyboardPassthroughView returns nil for non-interactive areas (the spacer above the keyboard
     /// panel), so trackpad still receives game-viewport touches via UIKit's normal cascade.
     /// The controller overlay is above both so HUD quick-action buttons are always tappable.
+    /// The menu button is topmost so it is always reachable regardless of other overlay state.
     public func bringVirtualInputOverlaysToFront() {
         if let trackpadView = touchTrackpadView {
             view.bringSubviewToFront(trackpadView)
@@ -339,6 +340,9 @@ extension PVEmulatorViewController {
         }
         if let cursorView = cursorHostingController?.view {
             view.bringSubviewToFront(cursorView)
+        }
+        if let menuButton = menuButton {
+            view.bringSubviewToFront(menuButton)
         }
     }
 

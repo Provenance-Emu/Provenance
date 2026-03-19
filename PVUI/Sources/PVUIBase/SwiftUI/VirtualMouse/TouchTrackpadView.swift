@@ -140,72 +140,35 @@ public final class TouchTrackpadView: UIView {
     // MARK: - Hit-testing: only capture inside the game viewport
 
     /// Returns `self` only when the touch falls within the game display area.
-    /// Touches outside that region — on controller-skin buttons, the virtual
-    /// keyboard, or the menu bar — pass straight through to the views beneath.
     ///
-    /// The authoritative game rect is resolved in priority order:
-    /// 1. `explicitGameViewRect` — set by the VC after `applyFrameToGPUView`.
-    /// 2. `gameViewRef` — derived at call time via a full-hierarchy conversion.
-    /// 3. If neither is available or the resolved rect is empty, all touches
-    ///    pass through (safe default when the viewport is not yet known).
+    /// The trackpad's frame is set to the game viewport by `refreshVirtualMouseLayout()`,
+    /// so the default bounds check is usually sufficient. The `explicitGameViewRect` /
+    /// `gameViewRef` safety net covers the brief window before the first layout pass
+    /// constrains the frame.
+    ///
+    /// Touch priority for buttons, menus, and skin controls is handled by proper
+    /// z-ordering (see `bringVirtualInputOverlaysToFront()`), not by sibling checks
+    /// in this method.
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
         guard self.point(inside: point, with: event) else { return nil }
 
-        // Let overlays that are visually above this view handle touches first.
-        // UIKit normally processes subviews in reverse order (last-added = topmost),
-        // so we yield to any sibling that has a higher zPosition OR appears later
-        // in the subview array at the same zPosition (skin containers, toasts, etc.).
-        // We only yield if a *descendant* of the sibling claims the touch — if the
-        // sibling itself is returned it is an empty/transparent container and we
-        // should NOT yield (that would silently swallow the touch).
-        if let parent = superview {
-            let ownIndex = parent.subviews.firstIndex(of: self) ?? 0
-            for sibling in parent.subviews where sibling !== self {
-                guard !sibling.isHidden, sibling.alpha > 0.01 else { continue }
-                let siblingIndex = parent.subviews.firstIndex(of: sibling) ?? 0
-                let isAbove = sibling.layer.zPosition > self.layer.zPosition ||
-                    (sibling.layer.zPosition == self.layer.zPosition && siblingIndex > ownIndex)
-                if isAbove {
-                    let siblingPoint = sibling.convert(point, from: self)
-                    if let hit = sibling.hitTest(siblingPoint, with: event), hit !== parent {
-                        // When hitTest returns the sibling itself, distinguish between:
-                        //   A) A transparent container (e.g. UIHostingController root view
-                        //      over an empty skin region) — swallows touches silently → skip.
-                        //   B) A genuine interactive leaf (UIButton, UIControl, or a view
-                        //      with gesture recognizers, e.g. the SwiftUI keyboard overlay
-                        //      close button) — yield to it.
-                        if hit === sibling {
-                            let isInteractiveLeaf = sibling is UIControl ||
-                                !(sibling.gestureRecognizers?.isEmpty ?? true)
-                            guard isInteractiveLeaf else { continue }
-                        }
-                        return hit
-                    }
-                }
-            }
-        }
-
-        // Resolve the authoritative game-screen rect in our coordinate space.
-        let gameRect: CGRect
+        /// Safety net: if the frame hasn't been constrained to the viewport yet,
+        /// use the explicit rect or gameViewRef to gate touches.
         if let explicit = explicitGameViewRect, !explicit.isEmpty {
-            // Caller provided an authoritative rect — use it directly.
-            gameRect = explicit
+            let localRect = CGRect(origin: .zero, size: bounds.size)
+            if localRect != explicit {
+                let pointInSuperview = convert(point, to: superview)
+                guard explicit.contains(pointInSuperview) else { return nil }
+            }
         } else if let gameView = gameViewRef {
-            // Derive from the live game view using a full-hierarchy coordinate
-            // conversion that works regardless of nesting depth.
             let converted = gameView.convert(gameView.bounds, to: self)
-            // If the converted rect is empty/zero the viewport is not laid out
-            // yet — pass through so UI elements remain reachable.
             guard !converted.isEmpty else { return nil }
-            gameRect = converted
+            guard converted.contains(point) else { return nil }
         } else {
-            // No viewport reference at all — pass all touches through so the
-            // views below (skin buttons, pause menu, etc.) remain responsive.
             return nil
         }
 
-        guard gameRect.contains(point) else { return nil }
         return super.hitTest(point, with: event)
     }
 
