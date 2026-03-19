@@ -27,6 +27,7 @@ public struct NetplayCreateRoomView: View {
     @State private var isStarting = false
     @State private var errorMessage: String?
     @State private var showError = false
+    @State private var showWaitingRoom = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -116,6 +117,14 @@ public struct NetplayCreateRoomView: View {
             } message: { msg in
                 Text(msg)
             }
+            // After hosting starts successfully, navigate to the waiting room.
+            // When the waiting room is dismissed (Start Game or Cancel), also dismiss
+            // this sheet so the user returns to the lobby.
+            .sheet(isPresented: $showWaitingRoom, onDismiss: {
+                dismiss()
+            }) {
+                NetplayWaitingRoomView(gameName: gameName, coreIdentifier: coreIdentifier, settings: settings)
+            }
             .onAppear {
                 if settings.roomName.isEmpty {
                     #if os(tvOS)
@@ -155,7 +164,8 @@ public struct NetplayCreateRoomView: View {
         Task {
             do {
                 try await netplay.host(settings: settings)
-                dismiss()
+                // Navigate to waiting room — do not dismiss yet.
+                showWaitingRoom = true
             } catch {
                 errorMessage = error.localizedDescription
                 showError = true
