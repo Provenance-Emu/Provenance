@@ -52,16 +52,20 @@ private extension SystemIdentifier {
 
     // MARK: Mouse
 
-    /// Systems whose libretro cores accept mouse / pointer input.
-    var supportsMouse: Bool { Self.mouseSystems.contains(self) }
+    /// All systems that have *any* mouse support (always-on or game-specific).
+    /// This is the union of `MouseGameRegistry.alwaysMouseSystems` and
+    /// `MouseGameRegistry.conditionalMouseSystems` — a fast pre-check used by
+    /// `gameSupportsMouse` to avoid a registry lookup for systems with no mouse titles at all.
+    private static let mouseSystems: Set<SystemIdentifier> =
+        MouseGameRegistry.alwaysMouseSystems.union(MouseGameRegistry.conditionalMouseSystems)
 
     /// Systems that require a mouse to be usable.
     var requiresMouse: Bool { false }   // no thin-libretro system requires a mouse
 
-    private static let mouseSystems: Set<SystemIdentifier> = [
-        .Atari8bit, .AtariST, .DOOM, .DOS, .Dreamcast, .EP128,
-        .Macintosh, .MSX, .MSX2, .PC98, .Quake, .Quake2, .SNES, .Wolf3D, .ZXSpectrum,
-    ]
+    /// Whether this system has *any* potential mouse support (always-on or game-specific).
+    /// A `true` result does NOT mean the current game uses a mouse — call
+    /// `MouseGameRegistry.shared.gameSupportsMouse(...)` for the definitive answer.
+    var hasAnyMouseSupport: Bool { Self.mouseSystems.contains(self) }
 
 }
 // Note: supportsLightGun / requiresLightGun are public properties on SystemIdentifier
@@ -1173,11 +1177,16 @@ extension PVThinLibretroCore: KeyboardResponder {
 extension PVThinLibretroCore: MouseResponder {
 
     public var gameSupportsMouse: Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsMouse ?? false
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? ""),
+              sysID.hasAnyMouseSupport else { return false }
+        return MouseGameRegistry.shared.gameSupportsMouse(
+            systemIdentifier: sysID,
+            md5: romMD5,
+            title: romName
+        )
     }
-    public var requiresMouse: Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresMouse ?? false
-    }
+
+    public var requiresMouse: Bool { false }
 
 #if canImport(GameController)
     @available(iOS 14.0, tvOS 14.0, *)
