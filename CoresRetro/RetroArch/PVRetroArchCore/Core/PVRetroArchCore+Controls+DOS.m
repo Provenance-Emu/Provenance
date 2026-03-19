@@ -113,6 +113,34 @@ static NSArray<NSString *> *dos_relative_mouse_core_ids(void) {
 // The TouchTrackpadView sends normalised 0–1 cursor positions.  We map them to
 // UIKit screen points and store them in touches[0].screen_x/y so that the
 // normal cocoa_input_poll conversion produces the correct libretro coordinates.
+//
+// Before this virtual-mouse pipeline existed, DS touch worked directly via
+// native UITouch events which wrote to apple->touches[] through the standard
+// cocoa touch handlers — that path still works in parallel.
+//
+// ---------------------------------------------------------------------------
+// DS MOUSE-MODE EXPERIMENT (PV_DS_MOUSE_DEVICE_EXPERIMENTAL)
+// ---------------------------------------------------------------------------
+// When PV_DS_MOUSE_DEVICE_EXPERIMENTAL is set to 1, DS is routed through
+// RETRO_DEVICE_MOUSE (relative deltas, mouse_rel_x/y) rather than
+// RETRO_DEVICE_POINTER (absolute screen coordinates, touches[].screen_x/y).
+//
+// WHY: melonDS declares RETRO_DEVICE_MOUSE on port 0 for stylus control.
+// Physical USB/Bluetooth mice (including Apple Magic Keyboard trackpad) also
+// write to mouse_rel_x/y — so mouse mode enables hardware mouse support for
+// the DS touchscreen at no extra code cost.
+//
+// TRADE-OFFS vs POINTER mode:
+//   POINTER (+): Direct absolute mapping — tap exactly where you want
+//   POINTER (+): Works with existing native UITouch path (no trackpad needed)
+//   MOUSE   (+): Physical mice & trackpads work automatically
+//   MOUSE   (+): melonDS can accumulate position internally (smoother)
+//   MOUSE   (-): Relative movement, not direct tap-to-target
+//
+// Set to 1 to test; 0 (default) keeps the proven POINTER path.
+#ifndef PV_DS_MOUSE_DEVICE_EXPERIMENTAL
+#define PV_DS_MOUSE_DEVICE_EXPERIMENTAL 0
+#endif
 
 /// Write a normalised [0,1] touch position into apple->touches[0].screen_x/y
 /// so cocoa_input_poll can convert it to libretro RETRO_DEVICE_POINTER coordinates.
@@ -130,10 +158,23 @@ static void ds_ra_update_pointer_pos(CGPoint normalizedPoint) {
 
 /// Returns YES when the currently-loaded system uses RETRO_DEVICE_POINTER
 /// (absolute screen coordinates) rather than RETRO_DEVICE_MOUSE (relative deltas).
+///
+/// When PV_DS_MOUSE_DEVICE_EXPERIMENTAL is enabled, DS is NOT treated as a
+/// pointer device — it falls through to dos_uses_relative_mouse() which lets
+/// pv_core_declares_mouse_device() pick up melonDS's RETRO_DEVICE_MOUSE
+/// declaration, enabling physical mouse support as a side effect.
 static BOOL dos_uses_pointer_device(PVRetroArchCoreBridge *bridge) {
+#if PV_DS_MOUSE_DEVICE_EXPERIMENTAL
+    // Experimental: route DS through RETRO_DEVICE_MOUSE instead of POINTER.
+    // Physical mice/trackpads write to the same mouse_rel_x/y path, giving
+    // hardware mouse support for the DS stylus "for free".
+    (void)bridge;
+    return NO;
+#else
     NSString *sysId = bridge.systemIdentifier ?: @"";
     // Use exact match to avoid false positives (e.g. "dos" matching "ds").
     return [sysId isEqualToString:@"com.provenance.ds"];
+#endif
 }
 
 /// String-match fallback: check static lists when libretro port info is absent.
