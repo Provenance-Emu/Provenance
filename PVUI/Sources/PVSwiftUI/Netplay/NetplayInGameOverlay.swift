@@ -33,15 +33,21 @@ import PVNetplay
 @MainActor
 public struct NetplayInGameOverlay: View {
     @StateObject private var netplay = ObservableNetplayManager.shared
-    @State private var isExpanded = false
+    @State private var isExpanded: Bool
 
     /// Overrides `ObservableNetplayManager.shared.state` — for previews and tests only.
     private let overrideState: NetplayState?
 
-    public init() { overrideState = nil }
+    public init() {
+        overrideState = nil
+        _isExpanded = State(initialValue: false)
+    }
 
     /// Preview/test-only initializer that bypasses the live singleton.
-    init(previewState: NetplayState) { overrideState = previewState }
+    init(previewState: NetplayState, initiallyExpanded: Bool = false) {
+        overrideState = previewState
+        _isExpanded = State(initialValue: initiallyExpanded)
+    }
 
     private var effectiveState: NetplayState { overrideState ?? netplay.state }
 
@@ -129,7 +135,9 @@ public struct NetplayInGameOverlay: View {
 
             // Disconnect button
             Button(role: .destructive) {
-                Task { await ObservableNetplayManager.shared.disconnect() }
+                if overrideState == nil {
+                    Task { await netplay.disconnect() }
+                }
                 isExpanded = false
             } label: {
                 Label("Disconnect", systemImage: "wifi.slash")
@@ -317,7 +325,7 @@ private extension NetplaySession {
 #Preview("Connected — expanded") {
     ZStack(alignment: .topTrailing) {
         Color.black.ignoresSafeArea()
-        NetplayInGameOverlay(previewState: .connected(session: .preview))
+        NetplayInGameOverlay(previewState: .connected(session: .preview), initiallyExpanded: true)
             .padding()
     }
 }
