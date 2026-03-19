@@ -3453,6 +3453,7 @@ extension PVMetalViewController: PVRenderDelegateMetal {
               let commandBuffer = commandQueue?.makeCommandBuffer(),
               let encoder = commandBuffer.makeBlitCommandEncoder() else {
             emulatorCore?.frontBufferLock.unlock()
+            ELOG("PVMetalViewController: failed to create blit command encoder for Vulkan frame — dropping frame")
             // Signal so callers waiting on frontBufferCondition don't stall forever.
             emulatorCore?.frontBufferCondition.lock()
             emulatorCore?.frontBufferCondition.signal()

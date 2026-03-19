@@ -377,7 +377,9 @@ typedef struct PVThinLibretroSymbols {
     // MoltenVK Metal interop: vkGetMTLTextureMVK(image, &mtlTexture) — deprecated but universally available
     void (*_vkGetMTLTextureMVK)(VkImage image, void **pMTLTexture);
     // VK_EXT_metal_objects: vkExportMetalObjectsEXT(device, &info) — preferred in MoltenVK >= 1.2
-    void (*_vkExportMetalObjectsEXT)(VkDevice device, void *pMetalObjectsInfo);
+    // Return type is VkResult per spec; pMetalObjectsInfo uses void* to avoid needing
+    // VkExportMetalObjectsInfoEXT from the bundled vulkan.h (v17 predates this extension).
+    VkResult (*_vkExportMetalObjectsEXT)(VkDevice device, void *pMetalObjectsInfo);
 #endif
 
     // Serialization quirks bitmask
@@ -4564,10 +4566,10 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     // Load Metal interop functions (MoltenVK-specific; non-fatal if unavailable)
     // Primary: VK_EXT_metal_objects (MoltenVK >= 1.2)
-    _vkExportMetalObjectsEXT = (void (*)(VkDevice, void *))
+    _vkExportMetalObjectsEXT = (VkResult (*)(VkDevice, void *))
         _vkGetDeviceProcAddr(_vulkanDevice, "vkExportMetalObjectsEXT");
     if (!_vkExportMetalObjectsEXT) {
-        _vkExportMetalObjectsEXT = (void (*)(VkDevice, void *))
+        _vkExportMetalObjectsEXT = (VkResult (*)(VkDevice, void *))
             _vkGetInstanceProcAddr(_vulkanInstance, "vkExportMetalObjectsEXT");
     }
 
@@ -4673,6 +4675,11 @@ static bool thin_environment(unsigned cmd, void *data) {
     // Wait for GPU completion while still holding _vulkanQueueLock so no concurrent
     // submissions can interleave between vkQueueSubmit and vkQueueWaitIdle. Releasing
     // the lock between them would allow another thread's submit to stall on the wait.
+    // NOTE: vkQueueWaitIdle introduces a full CPU/GPU sync every frame. This guarantees
+    // the VkImage is safe to export before vkGetMTLTextureMVK/vkExportMetalObjectsEXT,
+    // but limits throughput. A future improvement would use a VkFence created at setup
+    // time, passed to vkQueueSubmit, and waited with vkWaitForFences — allowing pipelined
+    // rendering without stalling the full queue. Filed as technical debt.
     if (result == VK_SUCCESS && _vkQueueWaitIdle) {
         _vkQueueWaitIdle(_vulkanQueue);
     }
@@ -4752,10 +4759,12 @@ static bool thin_environment(unsigned cmd, void *data) {
             .sType = PV_VK_STYPE_EXPORT_METAL_OBJECTS_INFO_EXT,
             .pNext = &texInfo,
         };
-        _vkExportMetalObjectsEXT(_vulkanDevice, &exportInfo);
-        if (texInfo.mtlTexturePtr) {
+        VkResult exportResult = _vkExportMetalObjectsEXT(_vulkanDevice, &exportInfo);
+        if (exportResult == VK_SUCCESS && texInfo.mtlTexturePtr) {
             DLOG(@"ThinFrontend: Vulkan→Metal via vkExportMetalObjectsEXT");
             return (__bridge id<MTLTexture>)texInfo.mtlTexturePtr;
+        } else if (exportResult != VK_SUCCESS) {
+            WLOG(@"ThinFrontend: vkExportMetalObjectsEXT failed (result=%d)", exportResult);
         }
     }
 
