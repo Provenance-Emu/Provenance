@@ -3403,6 +3403,86 @@ extension PVMetalViewController: PVRenderDelegateIOSurface {
 }
 #endif
 
+/// PVRenderDelegateMetal conformance: receives per-frame MTLTextures from
+/// Vulkan cores running via PVThinLibretroFrontend + MoltenVK.
+///
+/// Frame delivery: called after vkQueueSubmit + vkQueueWaitIdle, so the GPU has
+/// finished writing the VkImage before this method is invoked. set_image may arrive
+/// before or after set_command_buffers depending on the core.
+extension PVMetalViewController: PVRenderDelegateMetal {
+    func didRenderFrameWithMTLTexture(_ texture: MTLTexture) {
+        // Replace the backing texture with the Vulkan frame's MTLTexture.
+        // GPU rendering is already complete (vkQueueWaitIdle was called before this).
+        backingMTLTexture = texture
+
+        // Acquire the lock before reading/modifying inputTexture to match the
+        // thread-safety contract used by the OpenGL HW-render path.
+        emulatorCore?.frontBufferLock.lock()
+        previousCommandBuffer?.waitUntilScheduled()
+
+        // Ensure inputTexture matches the Vulkan texture's exact dimensions and pixel
+        // format. updateInputTexture() uses emulatorCore geometry which may differ from
+        // the actual VkImage size/format, so create the destination texture directly
+        // from the Vulkan texture's properties.
+        if inputTexture == nil
+            || inputTexture?.width       != texture.width
+            || inputTexture?.height      != texture.height
+            || inputTexture?.pixelFormat != texture.pixelFormat {
+            guard let dev = device else {
+                emulatorCore?.frontBufferLock.unlock()
+                ELOG("PVMetalViewController: no Metal device for Vulkan frame")
+                recoverFromGPUError()
+                return
+            }
+            let desc = MTLTextureDescriptor.texture2DDescriptor(
+                pixelFormat: texture.pixelFormat,
+                width: texture.width,
+                height: texture.height,
+                mipmapped: false)
+            desc.usage = [.shaderRead, .renderTarget]
+            inputTexture = dev.makeTexture(descriptor: desc)
+            if inputTexture == nil {
+                emulatorCore?.frontBufferLock.unlock()
+                ELOG("PVMetalViewController: failed to create inputTexture for Vulkan frame")
+                recoverFromGPUError()
+                return
+            }
+        }
+
+        guard let destTexture = inputTexture,
+              let commandBuffer = commandQueue?.makeCommandBuffer(),
+              let encoder = commandBuffer.makeBlitCommandEncoder() else {
+            emulatorCore?.frontBufferLock.unlock()
+            ELOG("PVMetalViewController: failed to create blit command encoder for Vulkan frame — dropping frame")
+            // Signal so callers waiting on frontBufferCondition don't stall forever.
+            emulatorCore?.frontBufferCondition.lock()
+            emulatorCore?.frontBufferCondition.signal()
+            emulatorCore?.frontBufferCondition.unlock()
+            return
+        }
+
+        let w = min(texture.width,  destTexture.width)
+        let h = min(texture.height, destTexture.height)
+        encoder.copy(from: texture,
+                     sourceSlice: 0, sourceLevel: 0,
+                     sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                     sourceSize:   MTLSize(width: w, height: h, depth: 1),
+                     to: destTexture,
+                     destinationSlice: 0, destinationLevel: 0,
+                     destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        encoder.endEncoding()
+        commandBuffer.commit()
+        previousCommandBuffer = commandBuffer
+
+        emulatorCore?.frontBufferLock.unlock()
+
+        emulatorCore?.frontBufferCondition.lock()
+        emulatorCore?.isFrontBufferReady = true
+        emulatorCore?.frontBufferCondition.signal()
+        emulatorCore?.frontBufferCondition.unlock()
+    }
+}
+
 /// Error types for Metal view controller operations
 enum MetalViewControllerError: Error {
     case emulatorCoreIsNil
