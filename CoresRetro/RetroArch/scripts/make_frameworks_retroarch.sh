@@ -47,9 +47,24 @@ else
 fi
 
 # Echo the directory that will be created next
-echo "Creating directory: $OUTDIR"
+echo "MakeFrameworks: Creating directory: $OUTDIR"
 
 mkdir -p "$OUTDIR"
+
+# Count input dylibs
+DYLIB_COUNT=$(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$' 2>/dev/null | wc -l | tr -d ' ')
+echo "MakeFrameworks: Found ${DYLIB_COUNT} input dylibs in $BASE_DIR/modules/"
+
+if [ "${DYLIB_COUNT}" -eq 0 ]; then
+    echo "MakeFrameworks: ERROR — No dylibs found in $BASE_DIR/modules/" >&2
+    echo "MakeFrameworks: ERROR — Run get-modules.sh first, or check that downloads succeeded." >&2
+    echo "MakeFrameworks: ERROR — Cores will NOT load at runtime!" >&2
+    # Exit non-zero to fail the Xcode build phase
+    exit 1
+fi
+
+FW_COUNT=0
+FW_FAIL=0
 
 for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
     intermediate=$(basename "$dylib")
@@ -58,8 +73,20 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
         intermediate="${intermediate/%$SUFFIX/}"
     fi
     fwName="${intermediate//_/.}"
-    echo Making framework $fwName from $dylib
 
+    # Validate the dylib is actually a Mach-O binary, not a corrupt/truncated file
+    FILE_TYPE=$(file -b "$dylib" 2>/dev/null)
+    case "$FILE_TYPE" in
+        *Mach-O*|*"universal binary"*)
+            ;;
+        *)
+            echo "MakeFrameworks: SKIPPING ${fwName} — not a Mach-O binary: ${FILE_TYPE}" >&2
+            FW_FAIL=$((FW_FAIL + 1))
+            continue
+            ;;
+    esac
+
+    echo "MakeFrameworks: Making framework $fwName from $dylib"
 
     fwDir="${OUTDIR}/${fwName}.framework"
     mkdir -p "$fwDir"
@@ -77,29 +104,30 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
         ln -sf Versions/Current/Resources "$fwDir"/Resources
         ln -sf "Versions/Current/$fwName" "$fwDir/$fwName"
     fi
-    echo "signing $fwName"
+
+    # Validate the executable was created inside the framework
+    if [ ! -f "$fwDir/$fwName" ] && [ ! -L "$fwDir/$fwName" ]; then
+        echo "MakeFrameworks: ERROR — framework ${fwName}.framework has no executable!" >&2
+        FW_FAIL=$((FW_FAIL + 1))
+        continue
+    fi
+
+    echo "MakeFrameworks: signing $fwName"
     codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "$fwDir"
+    FW_COUNT=$((FW_COUNT + 1))
 done
 
-# Copy in MoltenVK as an embedded library manually instead of having
-# Xcode do it. This makes it potentially easier to substitute out
-# MoltenVK, have it provided outside the repo, or have different
-# MoltenVK builds for different OS versions.
+echo "MakeFrameworks: Created ${FW_COUNT} frameworks from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
 
-# if [ -z "${MOLTENVK_XCFRAMEWORK}" ] ; then
-#     MOLTENVK_XCFRAMEWORK="${SRCROOT}/Frameworks/MoltenVK.xcframework"
-# fi
-# MVK_PLATFORM_SUBDIR="${SWIFT_PLATFORM_TARGET_PREFIX}-$(echo $ARCHS_STANDARD_64_BIT | sed -e 's/ /_/g')${LLVM_TARGET_TRIPLE_SUFFIX}"
-# if [ -d "${MOLTENVK_XCFRAMEWORK}/${MVK_PLATFORM_SUBDIR}/MoltenVK.framework" ] ; then
-#     echo copying moltenvk from "${MOLTENVK_XCFRAMEWORK}/${MVK_PLATFORM_SUBDIR}/MoltenVK.framework"
-#     cp -R "${MOLTENVK_XCFRAMEWORK}/${MVK_PLATFORM_SUBDIR}/MoltenVK.framework" "${OUTDIR}"
-#     codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "${OUTDIR}/MoltenVK.framework"
-# fi
+if [ "${FW_COUNT}" -eq 0 ] && [ "${DYLIB_COUNT}" -gt 0 ]; then
+    echo "MakeFrameworks: ERROR — 0 frameworks created from ${DYLIB_COUNT} dylibs! All cores broken." >&2
+    exit 1
+fi
 
-# iOS 12 needs an older version of MoltenVK
-# if [ -n "$MOLTENVK_LEGACY_XCFRAMEWORK_PATH" -a -d "${MOLTENVK_LEGACY_XCFRAMEWORK_PATH}/${MVK_PLATFORM_SUBDIR}/MoltenVK-${MOLTENVK_LEGACY_VERSION}.framework" ] ; then
-#     echo copying legacy moltenvk from "${MOLTENVK_LEGACY_XCFRAMEWORK_PATH}/${MVK_PLATFORM_SUBDIR}/MoltenVK-${MOLTENVK_LEGACY_VERSION}.framework"
-#     cp -R "${MOLTENVK_LEGACY_XCFRAMEWORK_PATH}/${MVK_PLATFORM_SUBDIR}/MoltenVK-${MOLTENVK_LEGACY_VERSION}.framework" "${OUTDIR}"
-#     codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "${OUTDIR}/MoltenVK-${MOLTENVK_LEGACY_VERSION}.framework/MoltenVK-${MOLTENVK_LEGACY_VERSION}"
-#     codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "${OUTDIR}/MoltenVK-${MOLTENVK_LEGACY_VERSION}.framework"
-# fi
+# Warn if significantly fewer frameworks than dylibs (> 20% loss)
+if [ "${DYLIB_COUNT}" -gt 0 ]; then
+    THRESHOLD=$((DYLIB_COUNT * 80 / 100))
+    if [ "${FW_COUNT}" -lt "${THRESHOLD}" ]; then
+        echo "MakeFrameworks: WARNING — only ${FW_COUNT}/${DYLIB_COUNT} frameworks created. Check logs for failures." >&2
+    fi
+fi
