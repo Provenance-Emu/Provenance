@@ -19,8 +19,9 @@ import PVHashing
 /// artwork inline (e.g. as a base64 string in an HTML preview card).
 ///
 /// Search order for every lookup:
-///  1. `<AppGroupContainer>/Documents/PVCache/<md5(key)>` — reliable from extension processes.
-///  2. `PVMediaCache.filePath(forKey:)` — local Documents fallback.
+///  1. `<AppGroupContainer>/Documents/PVCache/<md5(key)>` — used on iOS/macOS with App Groups.
+///  2. `<AppGroupContainer>/Caches/PVCache/<md5(key)>` — used on tvOS (documentsPath → Caches).
+///  3. `PVMediaCache.filePath(forKey:)` — local Documents/Caches fallback.
 public struct ArtworkResolver {
 
     // MARK: - Public API
@@ -35,13 +36,25 @@ public struct ArtworkResolver {
         if let groupURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: PVAppGroupId
         ) {
-            let candidate = groupURL
+            // 1a. Documents/PVCache — used on iOS/macOS when App Groups are enabled.
+            let documentsCandidate = groupURL
                 .appendingPathComponent("Documents", isDirectory: true)
                 .appendingPathComponent("PVCache", isDirectory: true)
                 .appendingPathComponent(keyHash, isDirectory: false)
-            if FileManager.default.fileExists(atPath: candidate.path) {
-                DLOG("[PVQuickLookSupport] Artwork resolved via App Group cache")
-                return candidate
+            if FileManager.default.fileExists(atPath: documentsCandidate.path) {
+                DLOG("[PVQuickLookSupport] Artwork resolved via App Group Documents cache")
+                return documentsCandidate
+            }
+
+            // 1b. Caches/PVCache — used on tvOS where documentsPath resolves to the
+            //     Caches directory (see PVMediaCache.cachePath / URL.documentsPath).
+            let cachesCandidate = groupURL
+                .appendingPathComponent("Caches", isDirectory: true)
+                .appendingPathComponent("PVCache", isDirectory: true)
+                .appendingPathComponent(keyHash, isDirectory: false)
+            if FileManager.default.fileExists(atPath: cachesCandidate.path) {
+                DLOG("[PVQuickLookSupport] Artwork resolved via App Group Caches (tvOS path)")
+                return cachesCandidate
             }
         }
 

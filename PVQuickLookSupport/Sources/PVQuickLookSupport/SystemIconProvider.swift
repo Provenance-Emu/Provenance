@@ -67,7 +67,8 @@ public struct SystemIconProvider {
         // Computers / DOS
         case id.contains("dos") || id.contains("doom") || id.contains("amiga")
              || id.contains("atarist") || id.contains("msx") || id.contains("spectrum")
-             || id.contains("c64") || id.contains("coleco") || id.contains("apple2"):
+             || id.contains("c64") || id.contains("coleco") || id.contains("appleii")
+             || id.contains("apple2") || id.contains("macintosh") || id.contains("pc98"):
             return "desktopcomputer"
 
         // Arcade

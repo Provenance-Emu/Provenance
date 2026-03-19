@@ -64,9 +64,8 @@ final class ROMGameLookupTests: XCTestCase {
     }
 
     func testBothEmptyDoNotMatch() {
-        // "" == "" is true for exact match — but empty filename lookup should be
-        // guarded by the caller, so test the raw predicate.
-        XCTAssertTrue(
+        // Empty filename is always rejected; the predicate guards against it explicitly.
+        XCTAssertFalse(
             ROMGameLookup.romPathMatches("", filename: "")
         )
     }

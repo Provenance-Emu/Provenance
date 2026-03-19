@@ -98,7 +98,8 @@ public struct ROMGameLookup {
     /// exposed at the package-internal level so unit tests can exercise the matching
     /// logic without needing a live Realm instance.
     static func romPathMatches(_ romPath: String, filename: String) -> Bool {
-        romPath.hasSuffix("/" + filename) || romPath == filename
+        guard !filename.isEmpty else { return false }
+        return romPath.hasSuffix("/" + filename) || romPath == filename
     }
 
     // MARK: - Private
@@ -115,7 +116,7 @@ public struct ROMGameLookup {
     private static func gameInfo(from game: PVGame) -> GameInfo {
         let artworkKey = game.artworkURL
         return GameInfo(
-            title: game.title,
+            title: game.title.isEmpty ? (game.romPath as NSString).lastPathComponent : game.title,
             systemName: game.system?.name ?? game.systemShortName,
             systemIdentifier: game.systemIdentifier,
             developer: emptyToNil(game.developer),
