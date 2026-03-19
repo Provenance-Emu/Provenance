@@ -193,6 +193,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-xcode-
 
+      # Cache the generated libretro cheat database (~31 MB zip).
+      # Key is the hash of the generator scripts — invalidates when format changes.
+      - name: Cache libretro cheat database
+        id: cache-cheatdb
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database
+        if: steps.cache-cheatdb.outputs.cache-hit != 'true'
+        run: |
+          PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
       - name: Install dependencies
         run: |
           brew install ldid
