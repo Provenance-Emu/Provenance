@@ -430,15 +430,27 @@ public class AppState: ObservableObject {
         ILOG("AppState: Firing initCorePlists() in background (non-blocking)")
         bootupStateManager.updateTaskProgress("Loading system definitions…", fraction: 0.06)
         bootupStateManager.updateSubTask("Scanning cores in background…")
+        let bootState = bootupStateManager
         Task.detached(priority: .userInitiated) {
             do {
-                try await GameImporter.shared.initCorePlists()
+                try await GameImporter.shared.initCorePlists { completed, total, coreName in
+                    Task { @MainActor in
+                        let progress = total > 0 ? Double(completed) / Double(total) : nil
+                        bootState.updateSubTask(
+                            "First-time setup: scanning \(coreName)… (\(completed)/\(total))",
+                            progress: progress
+                        )
+                        bootState.updateTaskProgress("Scanning emulator cores…", fraction: 0.06 + 0.14 * (progress ?? 0))
+                    }
+                }
+                await MainActor.run {
+                    bootState.updateSubTask("")
+                }
                 ILOG("AppState: background initCorePlists() completed")
             } catch {
                 ELOG("AppState: background initCorePlists() failed: \(error.localizedDescription)")
             }
         }
-        bootupStateManager.updateSubTask("")
 
         // Phase B: Finish importer init (directory creation + Realm observer).
         // initCorePlists() is now idempotent so the inner call inside initSystems()

@@ -728,8 +728,13 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// duplicate scans from concurrent callers.
     private var corePlistsInitializationTask: Task<Void, Error>?
 
+    /// - Parameter onScanProgress: Optional callback invoked during the dynamic libretro
+    ///   core scan (first launch only). Called from a background thread with
+    ///   `(completed, total, currentCoreName)`.
     @MainActor
-    public func initCorePlists() async throws {
+    public func initCorePlists(
+        onScanProgress: (@Sendable (_ completed: Int, _ total: Int, _ currentName: String) -> Void)? = nil
+    ) async throws {
         // If a task is already running or has completed, await it rather than
         // launching a duplicate scan. Because this function is @MainActor, the
         // check and assignment below are guaranteed to be an atomic step with no
@@ -775,7 +780,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
                 ILOG("GameImporter: initCorePlists — cache miss, running full scan")
                 let plists = CoreLoader.getCorePlists()
-                let merged = CoreLoader.mergeDiscoveredLibretroCores(into: plists)
+                let merged = CoreLoader.mergeDiscoveredLibretroCores(into: plists, onProgress: onScanProgress)
                 CorePlistResultCache.save(merged)
                 return merged
             }.value

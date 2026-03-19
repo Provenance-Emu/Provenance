@@ -629,7 +629,8 @@ public extension CoreLoader {
     /// UserDefaults.standard.set(true, forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
     /// ```
     public static func mergeDiscoveredLibretroCores(
-        into plists: [EmulatorCoreInfoPlist]
+        into plists: [EmulatorCoreInfoPlist],
+        onProgress: (@Sendable (_ completed: Int, _ total: Int, _ currentName: String) -> Void)? = nil
     ) -> [EmulatorCoreInfoPlist] {
 
         guard PVDynamicLibretroCoreScanner.isFeatureEnabled else {
@@ -644,7 +645,7 @@ public extension CoreLoader {
         }
 
         let scanner = PVDynamicLibretroCoreScanner.shared
-        scanner.scan(knownIdentifiers: knownIds)
+        scanner.scan(knownIdentifiers: knownIds, onProgress: onProgress)
 
         guard let syntheticParent = scanner.synthesisedCoreInfoPlist() else {
             ILOG("DynamicLibretroScanner: no new cores discovered — plist unchanged")
