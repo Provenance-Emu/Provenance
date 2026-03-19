@@ -15,11 +15,12 @@ source "${SCRIPT_DIR}/test_helpers.sh"
 SCRIPTS_DIR="$(dirname "${SCRIPT_DIR}")"
 
 # ---------------------------------------------------------------------------
-# Helper: create a minimal valid zip (PK\x03\x04 end-of-central-directory)
+# Helper: create a minimal valid zip (PK\x03\x04 local file header magic)
+# get-modules.sh validates the first 4 bytes = 50 4b 03 04
 # ---------------------------------------------------------------------------
 make_valid_zip() {
     local path="$1"
-    printf '\x50\x4b\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' > "${path}"
+    printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' > "${path}"
 }
 
 # Create a fake HTML "404" file masquerading as a zip
@@ -295,6 +296,7 @@ test_integration_success() {
         > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
 
     make_mock_curl_success
+    make_mock_xxd_zip_valid   # isolate from real xxd; mock curl writes PK\x03\x04 so zip validation passes
     make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "ios"
 
     local exit_code=0
@@ -318,6 +320,7 @@ test_integration_all_downloads_fail() {
         > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
 
     make_mock_curl_fail
+    make_mock_xxd_invalid   # no .zip files written, but mock is installed for completeness
 
     local exit_code=0
     SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \

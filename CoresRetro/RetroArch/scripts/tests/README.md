@@ -9,20 +9,24 @@ cd CoresRetro/RetroArch/scripts/tests
 bash run_tests.sh
 ```
 
-Tests use a self-contained harness with no external dependencies. They mock `curl`, `xxd`,
-`file`, `codesign`, `vtool`, and `lipo` via PATH overrides so network access is not required.
-
-## Test Approach
-
-The suite contains two complementary layers:
+Tests require no network access. The suite uses two complementary layers:
 
 **Unit tests** (most tests) — exercise isolated validation logic inline (zip magic
 checking, threshold arithmetic, date-format validation) without invoking the real scripts.
-These are fast and dependency-free.
+These tests call the real `xxd` binary directly (must be on `PATH`), since they create
+real files and inspect their bytes without needing a mock.
 
 **Integration tests** (prefixed `test_integration_`) — invoke `get-modules.sh` and
-`make_frameworks_retroarch.sh` directly in a controlled temp directory with mocked system
-tools. These catch regressions where the real scripts diverge from the unit-tested logic.
+`make_frameworks_retroarch.sh` directly in a controlled temp directory. They mock
+`curl`, `xxd`, `file`, `codesign`, `vtool`, and `lipo` via PATH overrides so no
+external tools or network access are required. These catch regressions where the real
+scripts diverge from the unit-tested logic.
+
+## External dependencies
+
+- `xxd` must be available on `PATH` for the unit tests in `test_get_modules.sh`
+  (available by default on macOS; install via `apt-get install xxd` on Linux).
+- Integration tests fully mock all external tools — no other dependencies needed.
 
 ## Test Coverage
 

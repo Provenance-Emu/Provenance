@@ -5,8 +5,21 @@ TESTS_PASSED=0
 TESTS_FAILED=0
 TESTS_SKIPPED=0
 
-# Setup a temporary test root; call at start of each test file
+# Setup a temporary test root; safe to call multiple times within a test file.
+# Each call tears down the previous TEST_ROOT (deletes temp dir, removes its
+# MOCK_BIN entry from PATH) before creating a fresh one, so repeated calls
+# from individual tests do not leak directories or accumulate PATH entries.
 setup_test_root() {
+    # Tear down previous state (if any) to prevent temp-dir leaks and PATH accumulation
+    if [ -n "${TEST_ROOT:-}" ] && [ -d "${TEST_ROOT}" ]; then
+        local old_mock_bin="${MOCK_BIN:-}"
+        rm -rf "${TEST_ROOT}"
+        # Strip the old MOCK_BIN entry from the front of PATH (where we always prepend it)
+        if [ -n "$old_mock_bin" ]; then
+            PATH="${PATH#${old_mock_bin}:}"
+            export PATH
+        fi
+    fi
     TEST_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/pvtest.XXXXXX")
     MOCK_BIN="${TEST_ROOT}/mock_bin"
     mkdir -p "${MOCK_BIN}"
@@ -15,7 +28,7 @@ setup_test_root() {
 }
 
 teardown_test_root() {
-    [ -n "${TEST_ROOT}" ] && rm -rf "${TEST_ROOT}"
+    [ -n "${TEST_ROOT:-}" ] && rm -rf "${TEST_ROOT}"
 }
 
 # --- Assertion helpers ---
@@ -98,12 +111,15 @@ print_summary() {
 # --- Mock builders ---
 
 # Create a mock 'xxd' that returns the PK zip magic for files ending in .zip
-# and random bytes for others
+# and random bytes for others.
+# get-modules.sh calls: xxd -l 4 -p <file>  → file is the last positional arg ($4).
+# We use "${@: -1}" (bash) to robustly grab the last argument regardless of flags.
 make_mock_xxd_zip_valid() {
     cat > "${MOCK_BIN}/xxd" << 'EOF'
 #!/bin/bash
-# Mock xxd: returns PK zip magic for .zip files, garbage otherwise
-file="$3"
+# Mock xxd: returns PK zip magic for .zip files, garbage otherwise.
+# Use the last positional argument as the filename (handles any number of flags).
+file="${@: -1}"
 if [[ "$file" == *.zip ]]; then
     echo "504b0304"
 else
