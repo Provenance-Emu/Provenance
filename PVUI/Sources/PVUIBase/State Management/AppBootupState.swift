@@ -19,6 +19,7 @@ public class AppBootupState: ObservableObject {
         case notStarted
         case initializingDatabase
         case databaseInitialized
+        case scanningCores
         case initializingLibrary
         case completed
         case error(Error)
@@ -29,6 +30,7 @@ public class AppBootupState: ObservableObject {
             case (.notStarted, .notStarted),
                  (.initializingDatabase, .initializingDatabase),
                  (.databaseInitialized, .databaseInitialized),
+                 (.scanningCores, .scanningCores),
                  (.initializingLibrary, .initializingLibrary),
                  (.completed, .completed):
                 return true
@@ -48,6 +50,8 @@ public class AppBootupState: ObservableObject {
                 return "Preparing database..."
             case .databaseInitialized:
                 return "Loading game library..."
+            case .scanningCores:
+                return "Scanning emulator cores..."
             case .initializingLibrary:
                 return "Scanning games..."
             case .completed:
@@ -81,9 +85,10 @@ public class AppBootupState: ObservableObject {
         public var baseProgress: Double {
             switch self {
             case .notStarted:             return 0.0
-            case .initializingDatabase:   return 0.10
-            case .databaseInitialized:    return 0.40
-            case .initializingLibrary:    return 0.60
+            case .initializingDatabase:   return 0.05
+            case .databaseInitialized:    return 0.15
+            case .scanningCores:          return 0.20
+            case .initializingLibrary:    return 0.55
             case .completed:              return 1.0
             case .error:                  return 0.0
             }
@@ -169,7 +174,8 @@ public class AppBootupState: ObservableObject {
         switch state {
         case .notStarted:           return State.initializingDatabase.baseProgress
         case .initializingDatabase: return State.databaseInitialized.baseProgress
-        case .databaseInitialized:  return State.initializingLibrary.baseProgress
+        case .databaseInitialized:  return State.scanningCores.baseProgress
+        case .scanningCores:        return State.initializingLibrary.baseProgress
         case .initializingLibrary:  return State.completed.baseProgress
         case .completed, .error:    return state.baseProgress
         }

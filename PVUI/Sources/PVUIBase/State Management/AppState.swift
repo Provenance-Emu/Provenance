@@ -392,7 +392,10 @@ public class AppState: ObservableObject {
                 return
             }
             guard !bootupStateManager.currentState.isErrorState else { return }
-            // Phase 2: Library init — each sub-phase has its own timeout.
+            // Phase 2: Core scanning — system definitions + dynamic libretro probe.
+            await scanCores()
+            guard !bootupStateManager.currentState.isErrorState else { return }
+            // Phase 3: Library init — importer, game library, ROM cache.
             await initializeLibrary()
         }
     }
@@ -416,47 +419,53 @@ public class AppState: ObservableObject {
         }
     }
 
+    /// Phase 2: Load system definitions and scan for emulator cores.
+    ///
+    /// This is the heaviest first-launch step (filesystem scan, Mach-O probing,
+    /// Realm writes). On subsequent launches the result is cached and completes
+    /// almost instantly. Runs as its own boot phase so users see clear progress.
+    @MainActor
+    private func scanCores() async {
+        ILOG("AppState: Scanning emulator cores")
+        bootupStateManager.transition(to: .scanningCores)
+
+        let bootState = bootupStateManager
+        bootState.updateTaskProgress("Loading system definitions…", fraction: 0.20)
+        bootState.updateSubTask("Scanning cores…")
+
+        do {
+            try await GameImporter.shared.initCorePlists { completed, total, coreName in
+                Task { @MainActor in
+                    let progress = total > 0 ? Double(completed) / Double(total) : nil
+                    bootState.updateSubTask(
+                        "First-time setup: scanning \(coreName)… (\(completed)/\(total))",
+                        progress: progress
+                    )
+                    bootState.updateTaskProgress(
+                        "Scanning emulator cores…",
+                        fraction: 0.20 + 0.35 * (progress ?? 0)
+                    )
+                }
+            }
+            bootState.updateSubTask("")
+            ILOG("AppState: Core scanning completed")
+        } catch {
+            ELOG("AppState: Core scanning failed: \(error.localizedDescription)")
+            // Non-fatal — continue to library init; cores may still be partially loaded
+        }
+    }
+
+    /// Phase 3: Initialize the game importer, library, and ROM cache.
     @MainActor
     private func initializeLibrary() async {
         ILOG("AppState: Initializing library")
         bootupStateManager.transition(to: .initializingLibrary)
 
-        // Phase A: Kick off the core plist + libretro scanner in the background.
-        // This is the heaviest step (filesystem scan, Mach-O probing, Realm writes).
-        // We fire it as a non-blocking detached task so the rest of the boot sequence
-        // (directory creation, ROM cache warm-up, library display) proceeds immediately.
-        // initCorePlists() is idempotent — the inner call inside initSystems() below
-        // returns instantly via its guard flags once this background task completes.
-        ILOG("AppState: Firing initCorePlists() in background (non-blocking)")
-        bootupStateManager.updateTaskProgress("Loading system definitions…", fraction: 0.06)
-        bootupStateManager.updateSubTask("Scanning cores in background…")
-        let bootState = bootupStateManager
-        Task.detached(priority: .userInitiated) {
-            do {
-                try await GameImporter.shared.initCorePlists { completed, total, coreName in
-                    Task { @MainActor in
-                        let progress = total > 0 ? Double(completed) / Double(total) : nil
-                        bootState.updateSubTask(
-                            "First-time setup: scanning \(coreName)… (\(completed)/\(total))",
-                            progress: progress
-                        )
-                        bootState.updateTaskProgress("Scanning emulator cores…", fraction: 0.06 + 0.14 * (progress ?? 0))
-                    }
-                }
-                await MainActor.run {
-                    bootState.updateSubTask("")
-                }
-                ILOG("AppState: background initCorePlists() completed")
-            } catch {
-                ELOG("AppState: background initCorePlists() failed: \(error.localizedDescription)")
-            }
-        }
-
-        // Phase B: Finish importer init (directory creation + Realm observer).
-        // initCorePlists() is now idempotent so the inner call inside initSystems()
-        // returns immediately via its existing guard flags.
+        // Finish importer init (directory creation + Realm observer).
+        // initCorePlists() already completed in scanCores() — the idempotent guard
+        // inside initSystems() skips the redundant call.
         ILOG("AppState: Starting GameImporter.shared.initSystems()")
-        bootupStateManager.updateTaskProgress("Initializing game importer…", fraction: 0.22)
+        bootupStateManager.updateTaskProgress("Initializing game importer…", fraction: 0.57)
         do {
             try await withTimeout(seconds: 20) {
                 await self.bootWorker.initializeImporter()
@@ -469,7 +478,7 @@ public class AppState: ObservableObject {
         }
 
         // Initialize gameLibrary
-        bootupStateManager.updateTaskProgress("Loading game library…", fraction: 0.4)
+        bootupStateManager.updateTaskProgress("Loading game library…", fraction: 0.65)
         self.gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
         ILOG("AppState: GameLibrary initialized")
 
@@ -489,7 +498,7 @@ public class AppState: ObservableObject {
         // the non-forced variant which short-circuits when the in-memory caches
         // already have the correct number of entries.
         ILOG("AppState: Reloading RomDatabase cache (non-forced, skips if already warm)")
-        bootupStateManager.updateTaskProgress("Reloading ROM database cache…", fraction: 0.7)
+        bootupStateManager.updateTaskProgress("Reloading ROM database cache…", fraction: 0.80)
         do {
             try await withTimeout(seconds: 30) {
                 await self.bootWorker.reloadRomCache()
