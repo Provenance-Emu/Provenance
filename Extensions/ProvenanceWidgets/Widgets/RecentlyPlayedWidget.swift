@@ -88,8 +88,8 @@ struct RecentlyPlayedWidgetView: View {
 
     private var smallView: some View {
         Group {
-            if let game = entry.games.first {
-                Link(destination: game.launchURL ?? URL(string: "provenance://")!) {
+            if let game = entry.games.first, let url = game.launchURL {
+                Link(destination: url) {
                     ZStack(alignment: .bottomLeading) {
                         GameArtworkView(entry: game, cornerRadius: 12)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -146,27 +146,36 @@ struct RecentlyPlayedWidgetView: View {
 
     // MARK: Shared row
 
+    @ViewBuilder
     private func gameRow(_ game: WidgetGameEntry) -> some View {
-        Link(destination: game.launchURL ?? URL(string: "provenance://")!) {
-            HStack(spacing: 10) {
-                GameArtworkView(entry: game, cornerRadius: 6)
-                    .frame(width: 48, height: 48)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(game.title)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                    HStack(spacing: 4) {
-                        SystemBadgeView(systemShortName: game.systemShortName)
-                        if let playedDate = game.lastPlayedDate {
-                            Text(playedDate, style: .relative)
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
+        if let url = game.launchURL {
+            Link(destination: url) {
+                gameRowContent(game)
+            }
+        } else {
+            gameRowContent(game)
+        }
+    }
+
+    private func gameRowContent(_ game: WidgetGameEntry) -> some View {
+        HStack(spacing: 10) {
+            GameArtworkView(entry: game, cornerRadius: 6)
+                .frame(width: 48, height: 48)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(game.title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    SystemBadgeView(systemShortName: game.systemShortName)
+                    if let playedDate = game.lastPlayedDate {
+                        Text(playedDate, style: .relative)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                Spacer()
             }
+            Spacer()
         }
     }
 

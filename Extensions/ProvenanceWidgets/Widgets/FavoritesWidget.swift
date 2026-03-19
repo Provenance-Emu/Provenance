@@ -120,8 +120,8 @@ struct FavoritesWidgetView: View {
                 // Padding placeholder tile
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(Color(.systemGray5).opacity(0.5))
-            } else {
-                Link(destination: game.launchURL ?? URL(string: "provenance://")!) {
+            } else if let url = game.launchURL {
+                Link(destination: url) {
                     GameArtworkView(entry: game, cornerRadius: 8)
                         .overlay(alignment: .bottom) {
                             Text(game.title)

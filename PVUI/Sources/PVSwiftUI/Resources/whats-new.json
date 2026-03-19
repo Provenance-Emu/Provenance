@@ -420,30 +420,6 @@
     ]
   },
   {
-    "version": "3.5.0",
-    "title": "Home Screen Widgets",
-    "features": [
-      {
-        "symbolName": "square.grid.2x2.fill",
-        "symbolColor": "blue",
-        "title": "Recently Played Widget",
-        "subtitle": "See your most recently played games on the Home Screen. Small, Medium, and Large sizes — tap any game to jump right in."
-      },
-      {
-        "symbolName": "star.fill",
-        "symbolColor": "yellow",
-        "title": "Favorites Widget",
-        "subtitle": "Quick-launch your favourite games as a beautiful grid of box art tiles directly from the Home Screen."
-      },
-      {
-        "symbolName": "books.vertical.fill",
-        "symbolColor": "orange",
-        "title": "Library Stats Widget",
-        "subtitle": "At-a-glance stats for your entire library: total games, systems, playtime, and favourites count."
-      }
-    ]
-  },
-  {
     "version": "3.4.0",
     "title": "Skins, Cheats & Stability",
     "features": [

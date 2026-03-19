@@ -22,9 +22,11 @@ struct WidgetGameEntry: Identifiable, Codable, Sendable {
     let lastPlayedDate: Date?
     let isFavorite: Bool
 
-    /// Deep link URL for launching the game in the main app
+    /// Deep link URL for launching the game in the main app.
+    /// Returns nil for empty md5Hash (placeholder/padding entries).
     var launchURL: URL? {
-        URL(string: "provenance://open?md5=\(md5Hash)")
+        guard !md5Hash.isEmpty else { return nil }
+        return URL(string: "provenance://open?md5=\(md5Hash)")
     }
 }
 

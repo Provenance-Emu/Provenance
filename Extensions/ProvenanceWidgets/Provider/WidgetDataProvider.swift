@@ -10,9 +10,16 @@
 import Foundation
 import RealmSwift
 
-private let kProvenanceAppGroupId = "group.org.provenance-emu.provenance"
 private let kRealmFilename = "default.realm"
 private let kSchemaVersion: UInt64 = 25
+
+/// Reads the App Group identifier from the extension's Info.plist (APP_GROUP_IDENTIFIER),
+/// falling back to the well-known default so the widget doesn't silently fail when
+/// a custom App Group ID is configured at build time.
+private var kProvenanceAppGroupId: String {
+    Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_IDENTIFIER") as? String
+        ?? "group.org.provenance-emu.provenance"
+}
 
 /// Read-only Realm access for widget timeline providers.
 /// All access is read-only and occurs on the calling thread.
@@ -33,7 +40,7 @@ final class WidgetDataProvider {
         return Realm.Configuration(
             fileURL: realmURL,
             schemaVersion: kSchemaVersion,
-            migrationBlock: { _, _ in },
+            objectTypes: [PVGameProxy.self, PVRecentGameProxy.self],
             readOnly: true
         )
     }
@@ -138,19 +145,19 @@ final class WidgetDataProvider {
 // Lightweight Realm objects that mirror PVGame / PVRecentGame without depending on PVLibrary.
 // Widget extensions cannot link against PVLibrary (it pulls in UIKit and other app-only deps),
 // so we redeclare only the properties we need here with the same Realm persisted key paths.
-
-import RealmSwift
+// IMPORTANT: indexed annotations must match the main schema exactly to avoid schema mismatch
+// errors when opening the Realm in read-only mode.
 
 /// Mirrors PVGame — keep property names in sync with the main app's PVGame schema.
 final class PVGameProxy: Object {
     @Persisted(primaryKey: true) var md5Hash: String = ""
-    @Persisted var id: String = ""
+    @Persisted(indexed: true) var id: String = ""
     @Persisted var title: String = ""
-    @Persisted var systemIdentifier: String = ""
+    @Persisted(indexed: true) var systemIdentifier: String = ""
     @Persisted var systemShortName: String?
     @Persisted var customArtworkURL: String = ""
     @Persisted var originalArtworkURL: String = ""
-    @Persisted var isFavorite: Bool = false
+    @Persisted(indexed: true) var isFavorite: Bool = false
     @Persisted var lastPlayed: Date?
     @Persisted var playCount: Int = 0
     @Persisted var timeSpentInGame: Int = 0
