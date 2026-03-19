@@ -64,6 +64,16 @@ Higher tiers may import lower tiers. **Never the reverse.**
   when another module's migration code genuinely requires read access.
   Flag unnecessary `public` promotions.
 
+### Netplay — `PVNetplayCapable` pattern (added in #3319)
+- Any emulator core that supports netplay MUST conform to `PVNetplayCapable`
+  (defined in `PVNetplay/Sources/PVNetplay/Protocols/PVNetplayCapable.swift`).
+- ObjC-backed cores need `extension MyBridge: @unchecked Sendable {}` BEFORE
+  the `PVNetplayCapable` conformance extension (Sendable is a protocol requirement).
+- `PVEmulatorViewController.quit()` must call `PVNetplayManager.shared.setActiveBridge(nil)`
+  when the core stops. Guard with `#if canImport(PVNetplay)`.
+- New `PVNetplayCapable` conformances placed in Xcode-project targets need
+  `PVNetplay` added to that target's SPM package dependencies in `project.pbxproj`.
+
 ### Module Boundaries
 - Submodule upstream source (`Cores/<name>/<upstream-dir>/`) must **never** be
   modified. Flag immediately as 🔴 CRITICAL.

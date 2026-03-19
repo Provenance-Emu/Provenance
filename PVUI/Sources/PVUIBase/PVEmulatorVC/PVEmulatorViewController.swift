@@ -30,6 +30,9 @@ import ZipArchive
 #if canImport(PVJIT)
 import JITManager
 #endif
+#if canImport(PVNetplay)
+import PVNetplay
+#endif
 
 private weak var staticSelf: PVEmualatorControllerProtocol?
 
@@ -853,6 +856,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         core.startEmulation()
 
+        // Register the core with PVNetplayManager if it supports netplay.
+        #if canImport(PVNetplay)
+        if let netplayCapable = core as? any PVNetplayCapable {
+            await PVNetplayManager.shared.setActiveBridge(netplayCapable)
+        }
+        #endif
+
         // Warn if device audio is muted or volume is zero (iOS/iPadOS only, once per session).
         #if os(iOS) && !targetEnvironment(macCatalyst)
         checkAudioMuteWarningAfterDelay()
@@ -1463,6 +1473,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Remove indicator overlay
         removeIndicatorOverlay()
+
+        // Deregister the netplay bridge so PVNetplayManager doesn't hold a stale reference.
+        #if canImport(PVNetplay)
+        if core is any PVNetplayCapable {
+            await PVNetplayManager.shared.setActiveBridge(nil)
+        }
+        #endif
 
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)

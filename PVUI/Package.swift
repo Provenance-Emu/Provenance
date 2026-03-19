@@ -115,6 +115,7 @@ let package = Package(
                 "PVHelp",
                 "PVLibrary",
                 "PVLogging",
+                .product(name: "PVNetplay", package: "PVNetplay", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
                 "PVSupport",
                 "PVShaders",
                 "PVThemes",

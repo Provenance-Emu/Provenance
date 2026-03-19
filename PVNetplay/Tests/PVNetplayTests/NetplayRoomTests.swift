@@ -160,3 +160,91 @@ struct NetplayRoleTests {
         #expect(!role.isClient)
     }
 }
+
+@Suite("NetplaySettings Tests")
+struct NetplaySettingsTests {
+
+    @Test("defaultLAN has expected port")
+    func defaultLANPort() {
+        #expect(NetplaySettings.defaultLAN.port == 55435)
+    }
+
+    @Test("defaultWAN has relay server")
+    func defaultWANRelay() {
+        #expect(NetplaySettings.defaultWAN.relayServer != nil)
+    }
+
+    @Test("custom settings round-trip")
+    func customSettings() {
+        let s = NetplaySettings(frameDelay: 3, maxPlayers: 4, port: 12345, nickname: "TestPlayer")
+        #expect(s.frameDelay == 3)
+        #expect(s.maxPlayers == 4)
+        #expect(s.port == 12345)
+        #expect(s.nickname == "TestPlayer")
+    }
+}
+
+@Suite("NetplayError Tests")
+struct NetplayErrorTests {
+
+    @Test("unsupported error has description")
+    func unsupportedDescription() {
+        let err = NetplayError.unsupported
+        #expect(err.errorDescription != nil)
+    }
+
+    @Test("connectionFailed error embeds reason")
+    func connectionFailedReason() {
+        let err = NetplayError.connectionFailed("timeout")
+        #expect(err.errorDescription?.contains("timeout") == true)
+    }
+
+    @Test("invalidSettings error embeds reason")
+    func invalidSettingsReason() {
+        let err = NetplayError.invalidSettings("bad port")
+        #expect(err.errorDescription?.contains("bad port") == true)
+    }
+}
+
+// MARK: - PVNetplayCapable mock conformance test
+// Verifies the protocol requirements can be satisfied (compile-time check).
+
+#if canImport(Combine)
+import Combine
+
+/// Minimal mock to verify the PVNetplayCapable protocol surface compiles.
+private final class MockNetplayCapable: PVNetplayCapable {
+    var supportsNetplay: Bool { true }
+    var netplayEngineName: String { "MockEngine" }
+
+    func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {}
+    func stopNetplay() async {}
+
+    var netplayState: NetplayState { .idle }
+    var netplayStatePublisher: AnyPublisher<NetplayState, Never> {
+        Just(.idle).eraseToAnyPublisher()
+    }
+}
+
+@Suite("PVNetplayCapable Protocol Tests")
+struct PVNetplayCapableTests {
+
+    @Test("mock conformance: supportsNetplay is true")
+    func mockSupports() {
+        let mock = MockNetplayCapable()
+        #expect(mock.supportsNetplay)
+    }
+
+    @Test("mock conformance: netplayState is idle")
+    func mockState() {
+        let mock = MockNetplayCapable()
+        #expect(mock.netplayState == .idle)
+    }
+
+    @Test("mock conformance: engineName is non-empty")
+    func mockEngineName() {
+        let mock = MockNetplayCapable()
+        #expect(!mock.netplayEngineName.isEmpty)
+    }
+}
+#endif
