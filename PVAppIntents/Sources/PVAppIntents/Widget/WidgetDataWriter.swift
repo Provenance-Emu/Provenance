@@ -77,7 +77,7 @@ public struct WidgetNowPlayingData: Codable, Sendable {
 
 /// Pushes library and now-playing data to the shared App Group so
 /// the ProvenanceWidgets extension can render without Realm access.
-public final class WidgetDataWriter: @unchecked Sendable {
+public final class WidgetDataWriter: Sendable {
     public static let shared = WidgetDataWriter()
 
     private let appGroupID = "group.org.provenance-emu.provenance"
@@ -147,8 +147,10 @@ public final class WidgetDataWriter: @unchecked Sendable {
     public func writeFromEntityStore(totalCount: Int) {
         let store = GameEntityStore.shared
         let recents = store.recentEntities(limit: 12).map { $0.asWidgetGameData }
-        // Gallery uses all games in random order, capped at 12
-        let gallery = store.allEntities().shuffled().prefix(12).map { $0.asWidgetGameData }
+        // Gallery: sample up to 12 random games without sorting the whole library
+        let all = store.allEntities()
+        let gallerySlice = all.count <= 12 ? Array(all) : (0..<12).map { _ in all[Int.random(in: 0..<all.count)] }
+        let gallery = gallerySlice.map { $0.asWidgetGameData }
         writeGameData(recentGames: recents, galleryGames: Array(gallery), totalCount: totalCount)
     }
 #endif

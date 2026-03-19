@@ -13,6 +13,7 @@
 
 #if os(iOS)
 import SwiftUI
+import UIKit
 import WidgetKit
 
 // MARK: - Timeline Entry
@@ -86,7 +87,7 @@ struct GameArtGalleryView: View {
             titleOverlay
         }
         .containerBackground(.black, for: .widget)
-        .widgetURL(URL(string: "provenance://library"))
+        .widgetURL(URL(string: "provenance://screen/library"))
     }
 
     @ViewBuilder

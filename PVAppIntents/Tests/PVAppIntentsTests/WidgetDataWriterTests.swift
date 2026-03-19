@@ -99,7 +99,7 @@ final class WidgetDataWriterTests: XCTestCase {
         WidgetDataWriter.shared.writeNowPlaying(nil)
     }
 
-    func testWriterCappsGamesToTwelve() {
+    func testWriterCapsGamesToTwelve() {
         // Supplying more than 12 games should not crash;
         // internals enforce the 12-game cap via prefix(12).
         let games = (0..<20).map { i in

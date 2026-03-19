@@ -8,6 +8,7 @@
 
 #if os(iOS)
 import SwiftUI
+import UIKit
 import WidgetKit
 
 // MARK: - Timeline Entry
@@ -149,7 +150,7 @@ struct QuickLaunchEntryView: View {
 
     var deepLinkURL: URL {
         if let game = entry.game {
-            return URL(string: "provenance://launch?id=\(game.id)") ?? URL(string: "provenance://")!
+            return URL(string: "provenance://open?md5=\(game.id)") ?? URL(string: "provenance://")!
         }
         return URL(string: "provenance://")!
     }

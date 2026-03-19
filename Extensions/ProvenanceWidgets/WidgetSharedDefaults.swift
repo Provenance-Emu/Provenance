@@ -86,17 +86,23 @@ public struct WidgetNowPlayingEntry: Codable {
 extension WidgetSharedDefaults {
     static func loadRecentGames() -> [WidgetGameEntry] {
         guard let data = shared.data(forKey: Keys.recentGames) else { return [] }
-        return (try? JSONDecoder().decode([WidgetGameEntry].self, from: data)) ?? []
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
     }
 
     static func loadGalleryGames() -> [WidgetGameEntry] {
         guard let data = shared.data(forKey: Keys.galleryGames) else { return [] }
-        return (try? JSONDecoder().decode([WidgetGameEntry].self, from: data)) ?? []
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
     }
 
     static func loadNowPlaying() -> WidgetNowPlayingEntry? {
         guard let data = shared.data(forKey: Keys.nowPlaying) else { return nil }
-        return try? JSONDecoder().decode(WidgetNowPlayingEntry.self, from: data)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try? decoder.decode(WidgetNowPlayingEntry.self, from: data)
     }
 
     static func loadGameCount() -> Int {

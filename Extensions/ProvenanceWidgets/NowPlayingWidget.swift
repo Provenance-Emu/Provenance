@@ -8,6 +8,7 @@
 
 #if os(iOS)
 import SwiftUI
+import UIKit
 import WidgetKit
 
 // MARK: - Timeline Entry
@@ -147,7 +148,7 @@ struct NowPlayingEntryView: View {
             }
         }
         .containerBackground(.fill.tertiary, for: .widget)
-        .widgetURL(URL(string: "provenance://nowplaying"))
+        .widgetURL(URL(string: "provenance://screen/library"))
     }
 }
 
