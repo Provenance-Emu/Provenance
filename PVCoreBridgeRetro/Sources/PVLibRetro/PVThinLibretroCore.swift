@@ -439,10 +439,10 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
         // Users can always reconfigure via the in-game Port Device picker for any SNES game.
         if sysId.contains("snes") && port == 1 {
             let romName = (_bridge.romPath as? NSString)?.lastPathComponent.lowercased() ?? ""
-            let isMousGame = romName.contains("mario paint") || romName.contains("mariopaint")
+            let isMouseGame = romName.contains("mario paint") || romName.contains("mariopaint")
                           || romName.contains("yoshi's safari") || romName.contains("yoshis safari")
                           || romName.contains("jurassic park")
-            if isMousGame {
+            if isMouseGame {
                 return 2 // RETRO_DEVICE_MOUSE
             }
         }
