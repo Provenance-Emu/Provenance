@@ -122,25 +122,21 @@ EOF
     chmod +x "${MOCK_BIN}/xxd"
 }
 
-# Create a mock 'curl' that always succeeds and writes valid zip magic to the output file
+# Create a mock 'curl' that always succeeds and writes a valid PK\x03\x04 zip to the output file
+# (PK\x03\x04 is the local-file-header magic that get-modules.sh validates)
 make_mock_curl_success() {
-    local target_dir="$1"
-    cat > "${MOCK_BIN}/curl" << EOF
+    cat > "${MOCK_BIN}/curl" << 'EOF'
 #!/bin/bash
 # Parse -o flag to get output filename
 output_file=""
-url=""
-for i in "\$@"; do
-    if [ "\$prev" = "-o" ]; then
-        output_file="\$i"
+for i in "$@"; do
+    if [ "$prev" = "-o" ]; then
+        output_file="$i"
     fi
-    if [[ "\$i" == http* ]]; then
-        url="\$i"
-    fi
-    prev="\$i"
+    prev="$i"
 done
-# Write a minimal valid zip (PK magic + padding)
-printf '\\x50\\x4b\\x05\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00' > "\${output_file}"
+# Write a minimal valid zip with PK\x03\x04 local file header magic
+printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' > "${output_file}"
 exit 0
 EOF
     chmod +x "${MOCK_BIN}/curl"

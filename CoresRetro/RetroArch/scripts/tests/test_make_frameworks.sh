@@ -254,6 +254,71 @@ TMPL
 }
 
 # ---------------------------------------------------------------------------
+# Integration tests: invoke make_frameworks_retroarch.sh with mocked tools
+# ---------------------------------------------------------------------------
+
+# Create a minimal fw.tmpl in the given dir
+_write_fw_tmpl() {
+    local dir="$1"
+    cat > "${dir}/fw.tmpl" << 'TMPL'
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0"><dict>
+<key>CFBundleName</key><string>%CORE%</string>
+<key>CFBundleIdentifier</key><string>org.provenance-emu.%IDENTIFIER%</string>
+<key>MinimumOSVersion</key><string>%OSVER%</string>
+</dict></plist>
+TMPL
+}
+
+test_integration_make_frameworks_success() {
+    # Valid Mach-O dylibs → frameworks created → exit 0
+    setup_test_root
+    make_mock_file_macho
+    make_mock_lipo
+    make_mock_codesign
+    make_mock_vtool
+
+    local workdir="${TEST_ROOT}/int_fw_ok"
+    mkdir -p "${workdir}/modules"
+    _write_fw_tmpl "${workdir}"
+
+    make_fake_dylib "${workdir}/modules/pcsx_rearmed_libretro_ios.dylib"
+    make_fake_dylib "${workdir}/modules/gambatte_libretro_ios.dylib"
+
+    local exit_code=0
+    PLATFORM_FAMILY_NAME="iOS" IPHONEOS_DEPLOYMENT_TARGET="16.0" \
+        bash "${SCRIPTS_DIR}/make_frameworks_retroarch.sh" "${workdir}" \
+        >/dev/null 2>&1 || exit_code=$?
+
+    assert_exit "integration make_frameworks: success exit code" 0 "${exit_code}"
+
+    local fw_count
+    fw_count=$(find "${workdir}/Frameworks" -name "*.framework" -type d 2>/dev/null | wc -l | tr -d ' ')
+    assert_count_ge "integration make_frameworks: frameworks created" "${fw_count}" 2
+}
+
+test_integration_make_frameworks_empty_dir_fails() {
+    # Empty modules dir → exit 1
+    setup_test_root
+    make_mock_file_macho
+
+    local workdir="${TEST_ROOT}/int_fw_empty"
+    mkdir -p "${workdir}/modules"
+    _write_fw_tmpl "${workdir}"
+
+    local exit_code=0
+    PLATFORM_FAMILY_NAME="iOS" IPHONEOS_DEPLOYMENT_TARGET="16.0" \
+        bash "${SCRIPTS_DIR}/make_frameworks_retroarch.sh" "${workdir}" \
+        >/dev/null 2>&1 || exit_code=$?
+
+    if [ "${exit_code}" -ne 0 ]; then
+        pass "integration make_frameworks: empty dir exits non-zero (exit_code=${exit_code})"
+    else
+        fail "integration make_frameworks: empty dir should exit non-zero"
+    fi
+}
+
+# ---------------------------------------------------------------------------
 # Run all tests
 # ---------------------------------------------------------------------------
 setup_test_root
@@ -269,6 +334,9 @@ run_test "Count above 80% threshold: no warning" test_count_above_threshold_no_w
 run_test "0 frameworks from nonzero dylibs: exit 1" test_zero_frameworks_from_nonzero_dylibs_fails
 run_test "0 dylibs: caught at entry check" test_zero_both_counts_already_caught
 run_test "Multiple dylibs: all frameworks created" test_multiple_dylibs_all_frameworks_created
+
+run_test "Integration: valid dylibs → frameworks created, exit 0" test_integration_make_frameworks_success
+run_test "Integration: empty modules dir → exit 1" test_integration_make_frameworks_empty_dir_fails
 
 teardown_test_root
 print_summary

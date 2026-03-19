@@ -1,4 +1,9 @@
 #!/bin/bash
+# NOTE: Xcode build phases invoke scripts via /bin/sh, which ignores the shebang.
+# This guard re-execs with bash so bash-specific syntax ((( )), arrays, etc.) works
+# even when the build phase calls: /bin/sh ".../get-modules.sh"
+[ -z "${BASH_VERSION:-}" ] && exec bash "$0" "$@"
+
 LAST_TIMESTAMP=0
 INTERVAL=3600*168
 CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules"
@@ -85,7 +90,7 @@ else
 fi
 
 if [ ! -d "${CORES_ARCHIVE_DIR}" ]; then
-	mkdir "${CORES_ARCHIVE_DIR}"
+	mkdir -p "${CORES_ARCHIVE_DIR}"
 fi
 
 # Detect pin changes: if the stored pin differs from the current one, force a

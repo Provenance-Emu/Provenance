@@ -272,6 +272,65 @@ test_corrupt_zip_detected() {
 }
 
 # ---------------------------------------------------------------------------
+# Integration tests: invoke get-modules.sh with mocked tools + a real SRCROOT
+# ---------------------------------------------------------------------------
+
+# Build a minimal SRCROOT under TEST_ROOT and return the path.
+# Caller must set SRCROOT and run the script from outside.
+_setup_integration_srcroot() {
+    local tag="$1"
+    local workdir="${TEST_ROOT}/srcroot_${tag}"
+    mkdir -p "${workdir}/CoresRetro/RetroArch/scripts"
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
+    echo "${workdir}"
+}
+
+test_integration_success() {
+    # All downloads succeed → dylibs created → exit 0
+    local workdir
+    workdir=$(_setup_integration_srcroot "int_ok")
+
+    # Minimal URL list (3 cores)
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    make_mock_curl_success
+    make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "ios"
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    assert_exit "integration: success exit code" 0 "${exit_code}"
+
+    local dylib_count
+    dylib_count=$(find "${workdir}/CoresRetro/RetroArch/modules" -name "*.dylib" -type f 2>/dev/null | wc -l | tr -d ' ')
+    assert_count_ge "integration: dylibs created after success" "${dylib_count}" 1
+}
+
+test_integration_all_downloads_fail() {
+    # All downloads fail → below 80% threshold → exit 1
+    local workdir
+    workdir=$(_setup_integration_srcroot "int_fail")
+
+    # Minimal URL list (3 cores)
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    make_mock_curl_fail
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    if [ "${exit_code}" -ne 0 ]; then
+        pass "integration: all-fail exits non-zero (exit_code=${exit_code})"
+    else
+        fail "integration: all-fail should exit non-zero"
+    fi
+}
+
+# ---------------------------------------------------------------------------
 # Run all tests
 # ---------------------------------------------------------------------------
 setup_test_root
@@ -293,6 +352,9 @@ run_test "Nonzero dylibs counted" test_dylib_count_nonzero_after_extraction
 run_test "Pinned date 404 falls back to latest" test_pinned_date_404_falls_back_to_latest
 run_test "Pinned date 200 keeps pin" test_pinned_date_200_keeps_pin
 run_test "Corrupt zip detected and removed" test_corrupt_zip_detected
+
+run_test "Integration: all downloads succeed → exit 0 + dylibs created" test_integration_success
+run_test "Integration: all downloads fail → exit 1" test_integration_all_downloads_fail
 
 teardown_test_root
 print_summary
