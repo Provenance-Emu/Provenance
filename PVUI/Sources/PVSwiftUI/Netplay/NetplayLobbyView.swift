@@ -105,11 +105,13 @@ public struct NetplayLobbyView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
+                if isNetplayEnabled {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                        }
                     }
                 }
             }

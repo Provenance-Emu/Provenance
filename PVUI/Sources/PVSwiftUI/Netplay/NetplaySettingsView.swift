@@ -8,6 +8,8 @@
 
 #if !os(watchOS)
 import SwiftUI
+import PVNetplay
+import PVFeatureFlags
 
 /// Persistent keys for netplay user defaults.
 private enum NetplayDefaultsKey {
@@ -19,10 +21,14 @@ private enum NetplayDefaultsKey {
     static let allowSpectators  = "netplay.allowSpectators"
 }
 
+private let netplayPortRange: ClosedRange<Int> = 1...65535
+
 /// Full netplay settings form backed by `@AppStorage`.
 ///
 /// Persists: nickname, default port, relay server URL, frame delay,
-/// max players, and spectator preference.
+/// max players, and spectator preference. Values are applied to newly
+/// created `NetplaySettings` via `NetplaySettings.fromStoredDefaults()`.
+/// Access is gated behind the `netplayEnabled` feature flag.
 @MainActor
 public struct NetplaySettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -34,24 +40,40 @@ public struct NetplaySettingsView: View {
     @AppStorage(NetplayDefaultsKey.maxPlayers)      private var maxPlayers: Int = 2
     @AppStorage(NetplayDefaultsKey.allowSpectators) private var allowSpectators: Bool = true
 
+    private var isNetplayEnabled: Bool {
+        PVFeatureFlagsManager.shared.netplayEnabled
+    }
+
+    /// Port clamped to valid UInt16 range (1–65535).
+    private var validatedPortBinding: Binding<Int> {
+        Binding(
+            get: { max(netplayPortRange.lowerBound, min(netplayPortRange.upperBound, port)) },
+            set: { port = max(netplayPortRange.lowerBound, min(netplayPortRange.upperBound, $0)) }
+        )
+    }
+
     public init() {}
 
     public var body: some View {
         NavigationStack {
-            Form {
-                playerProfileSection
-                connectionSection
-                performanceSection
-                hostingDefaultsSection
-            }
-            .navigationTitle("Netplay Settings")
-            #if !os(tvOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
+            if isNetplayEnabled {
+                Form {
+                    playerProfileSection
+                    connectionSection
+                    performanceSection
+                    hostingDefaultsSection
                 }
+                .navigationTitle("Netplay Settings")
+                #if !os(tvOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+            } else {
+                featureDisabledView
             }
         }
     }
@@ -66,31 +88,33 @@ public struct NetplaySettingsView: View {
     }
 
     private var connectionSection: some View {
-        Section("Connection") {
-            tvOSCompatiblePortField
+        Section {
+            portRow
             TextField("Relay Server (empty for LAN only)", text: $relayServer)
                 .autocorrectionDisabled()
                 #if !os(tvOS)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 #endif
+        } header: {
+            Text("Connection")
+        } footer: {
+            if port < netplayPortRange.lowerBound || port > netplayPortRange.upperBound {
+                Text("Port must be between 1 and 65535.")
+                    .foregroundStyle(.red)
+            }
         }
     }
 
     @ViewBuilder
-    private var tvOSCompatiblePortField: some View {
+    private var portRow: some View {
         #if os(tvOS)
-        HStack {
-            Text("Default Port")
-            Spacer()
-            Text("\(port)")
-                .foregroundStyle(.secondary)
-        }
+        NetplayStepperView(label: "Default Port", value: validatedPortBinding, in: netplayPortRange)
         #else
         HStack {
             Text("Default Port")
             Spacer()
-            TextField("55435", value: $port, format: .number)
+            TextField("55435", value: validatedPortBinding, format: .number)
                 .multilineTextAlignment(.trailing)
                 .keyboardType(.numberPad)
                 .frame(width: 80)
@@ -101,7 +125,7 @@ public struct NetplaySettingsView: View {
 
     private var performanceSection: some View {
         Section {
-            tvOSCompatibleStepper("Frame Delay", value: $frameDelay, in: 0...10)
+            NetplayStepperView(label: "Frame Delay", value: $frameDelay, in: 0...10)
         } header: {
             Text("Performance")
         } footer: {
@@ -111,33 +135,61 @@ public struct NetplaySettingsView: View {
 
     private var hostingDefaultsSection: some View {
         Section("Hosting Defaults") {
-            tvOSCompatibleStepper("Max Players", value: $maxPlayers, in: 2...4)
+            NetplayStepperView(label: "Max Players", value: $maxPlayers, in: 2...4)
             Toggle("Allow Spectators", isOn: $allowSpectators)
         }
     }
 
-    // MARK: - Helpers
-
-    @ViewBuilder
-    private func tvOSCompatibleStepper(_ label: String, value: Binding<Int>, in range: ClosedRange<Int>) -> some View {
-        #if os(tvOS)
-        HStack {
-            Text("\(label): \(value.wrappedValue)")
-            Spacer()
-            Button {
-                value.wrappedValue = max(range.lowerBound, value.wrappedValue - 1)
-            } label: {
-                Image(systemName: "minus.circle")
-            }
-            Button {
-                value.wrappedValue = min(range.upperBound, value.wrappedValue + 1)
-            } label: {
-                Image(systemName: "plus.circle")
+    private var featureDisabledView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "antenna.radiowaves.left.and.right.slash")
+                .font(.system(size: 48))
+                .foregroundStyle(.secondary)
+            Text("Netplay Unavailable")
+                .font(.headline)
+            Text("Enable Netplay in Settings > Advanced > Feature Flags to access netplay settings.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationTitle("Netplay Settings")
+        #if !os(tvOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Done") { dismiss() }
             }
         }
-        #else
-        Stepper("\(label): \(value.wrappedValue)", value: value, in: range)
-        #endif
+    }
+}
+
+// MARK: - NetplaySettings integration
+
+public extension NetplaySettings {
+    /// Builds a `NetplaySettings` pre-populated from the values the user stored
+    /// in `NetplaySettingsView`. Call this when creating a new room or join request
+    /// so that the stored preferences take effect.
+    static func fromStoredDefaults(roomName: String = "") -> NetplaySettings {
+        let defaults     = UserDefaults.standard
+        let storedPort   = defaults.integer(forKey: NetplayDefaultsKey.port)
+        let clampedPort  = UInt16(clamping: max(1, min(65535, storedPort == 0 ? 55435 : storedPort)))
+        let relayRaw     = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? ""
+        let storedPlayers = defaults.integer(forKey: NetplayDefaultsKey.maxPlayers)
+
+        return NetplaySettings(
+            frameDelay:      max(0, min(10, defaults.integer(forKey: NetplayDefaultsKey.frameDelay))),
+            maxSpectators:   4,
+            allowSpectators: defaults.object(forKey: NetplayDefaultsKey.allowSpectators) as? Bool ?? true,
+            relayServer:     relayRaw.isEmpty ? nil : relayRaw,
+            roomName:        roomName,
+            maxPlayers:      max(2, min(4, storedPlayers == 0 ? 2 : storedPlayers)),
+            playerIndex:     0,
+            port:            clampedPort,
+            nickname:        defaults.string(forKey: NetplayDefaultsKey.nickname) ?? ""
+        )
     }
 }
 
