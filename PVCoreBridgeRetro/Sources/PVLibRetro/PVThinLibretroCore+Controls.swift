@@ -60,7 +60,7 @@ private extension SystemIdentifier {
 
     private static let mouseSystems: Set<SystemIdentifier> = [
         .Atari8bit, .AtariST, .DOOM, .DOS, .Dreamcast, .EP128,
-        .Macintosh, .MSX, .MSX2, .PC98, .Quake, .Quake2, .Wolf3D, .ZXSpectrum,
+        .Macintosh, .MSX, .MSX2, .PC98, .Quake, .Quake2, .SNES, .Wolf3D, .ZXSpectrum,
     ]
 
 }
