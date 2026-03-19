@@ -74,6 +74,15 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
+        if featureFlags.netplayEnabled {
+            gameTiles.append(PauseMenuTile(
+                id: "networkPlay",
+                icon: "antenna.radiowaves.left.and.right",
+                label: String(localized: "Network Play"),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
+        }
 
         if shouldSave {
             gameTiles.append(PauseMenuTile(id: "saveQuit", icon: "square.and.arrow.down.on.square", label: String(localized: "Save & Quit"), colorKey: .cyan))

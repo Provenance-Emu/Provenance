@@ -759,6 +759,16 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
                 }
+                #if !os(watchOS)
+                .sheet(isPresented: $gamesViewModel.showNetworkPlay) {
+                    if let game = gamesViewModel.networkPlayGame, !game.isInvalidated {
+                        NetplayLobbyView(
+                            gameName: game.title,
+                            coreIdentifier: gamesViewModel.networkPlayCoreIdentifier
+                        )
+                    }
+                }
+                #endif
 
                 .task(priority: .background) {
                     // Defer BIOS rescan significantly to avoid blocking tab switches

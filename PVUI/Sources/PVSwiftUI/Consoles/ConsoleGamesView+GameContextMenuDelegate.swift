@@ -336,6 +336,15 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         gamesViewModel.showControllerPakSlots = true
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestNetworkPlayFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        let coreID = game.userPreferredCoreID ?? game.system?.cores.first?.identifier ?? ""
+        gamesViewModel.networkPlayGame = frozenGame
+        gamesViewModel.networkPlayCoreIdentifier = coreID
+        gamesViewModel.showNetworkPlay = true
+    }
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestResetSkinFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to reset skin for game: \(game.title)")
         guard !game.isInvalidated,
