@@ -420,18 +420,6 @@
     ]
   },
   {
-    "version": "3.5.0",
-    "title": "Netplay & Multiplayer",
-    "features": [
-      {
-        "symbolName": "antenna.radiowaves.left.and.right",
-        "symbolColor": "blue",
-        "title": "Netplay Waiting Room",
-        "subtitle": "After creating a room, hosts see a live lobby with connected players, IP address, and a Start Game button."
-      }
-    ]
-  },
-  {
     "version": "3.4.0",
     "title": "Skins, Cheats & Stability",
     "features": [
@@ -488,6 +476,18 @@
         "symbolColor": "yellow",
         "title": "Spotlight & Siri",
         "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
+      }
+    ]
+  },
+  {
+    "version": "3.5.0",
+    "title": "Netplay & Multiplayer",
+    "features": [
+      {
+        "symbolName": "antenna.radiowaves.left.and.right",
+        "symbolColor": "blue",
+        "title": "Netplay Waiting Room",
+        "subtitle": "After creating a room, hosts see a live lobby with connected players, IP address, and a Start Game button."
       }
     ]
   }

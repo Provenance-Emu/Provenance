@@ -121,6 +121,9 @@ public struct NetplayCreateRoomView: View {
             // When the waiting room is dismissed (Start Game or Cancel), also dismiss
             // this sheet so the user returns to the lobby.
             .sheet(isPresented: $showWaitingRoom, onDismiss: {
+                // Ensure hosting is torn down if the sheet was dismissed interactively
+                // (e.g. swipe-down on iOS) without going through the Cancel button.
+                Task { await netplay.disconnect() }
                 dismiss()
             }) {
                 NetplayWaitingRoomView(gameName: gameName, coreIdentifier: coreIdentifier, settings: settings)
