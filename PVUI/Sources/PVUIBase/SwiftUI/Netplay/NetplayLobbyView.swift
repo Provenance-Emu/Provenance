@@ -154,8 +154,10 @@ public struct NetplayLobbyView: View {
         .padding()
         #if os(tvOS)
         .background(Color.black.opacity(0.3))
-        #else
+        #elseif canImport(UIKit)
         .background(Color(.systemGroupedBackground))
+        #else
+        .background(Color(.windowBackground))
         #endif
     }
 
@@ -206,8 +208,10 @@ public struct NetplayLobbyView: View {
             .padding()
             #if os(tvOS)
             .background(Color.white.opacity(0.1))
-            #else
+            #elseif canImport(UIKit)
             .background(Color(.secondarySystemGroupedBackground))
+            #else
+            .background(Color(.controlBackgroundColor))
             #endif
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }

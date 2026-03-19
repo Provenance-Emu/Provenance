@@ -766,6 +766,8 @@ struct ConsoleGamesView: SwiftUI.View {
                             gameName: game.title,
                             coreIdentifier: gamesViewModel.networkPlayCoreIdentifier
                         )
+                    } else {
+                        Color.clear.onAppear { gamesViewModel.showNetworkPlay = false }
                     }
                 }
                 #endif

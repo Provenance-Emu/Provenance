@@ -48,13 +48,17 @@ public struct NetplayManualConnectView: View {
             Form {
                 Section("Host Details") {
                     TextField("IP Address or Hostname", text: $hostAddress)
-                        .keyboardType(.URL)
                         .autocorrectionDisabled()
+                        #if canImport(UIKit)
+                        .keyboardType(.URL)
                         .textInputAutocapitalization(.never)
+                        #endif
 
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("Port", text: $portString)
+                            #if canImport(UIKit)
                             .keyboardType(.numberPad)
+                            #endif
                             .onChange(of: portString) { _, _ in
                                 portError = portIsValid ? nil : "Port must be a number between 1 and 65535."
                             }
