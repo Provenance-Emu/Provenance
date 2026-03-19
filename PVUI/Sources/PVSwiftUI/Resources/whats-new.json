@@ -478,5 +478,23 @@
         "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
       }
     ]
+  },
+  {
+    "version": "3.5.0",
+    "title": "Netplay HUD",
+    "features": [
+      {
+        "symbolName": "wifi",
+        "symbolColor": "blue",
+        "title": "In-Game Netplay HUD",
+        "subtitle": "A compact corner overlay shows ping bars, player count, and connection health during active netplay sessions."
+      },
+      {
+        "symbolName": "person.2.fill",
+        "symbolColor": "green",
+        "title": "Per-Peer Stats",
+        "subtitle": "Tap the HUD to expand detailed per-player latency, frame delay, rollback status, and a quick disconnect button."
+      }
+    ]
   }
 ]
