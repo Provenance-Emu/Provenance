@@ -65,28 +65,11 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
                                                 description: "Override options for \(identifier) Core"),
                                           subOptions: subCoreOptions)
 
-        var coreOptions = self.options
+        guard !subCoreOptions.isEmpty else {
+            return nil
+        }
 
-        coreOptions.append(contentsOf: [subCoreGroup])
-
-        // Load dynamic options from RetroArch core
-//        let frameworkIdentifier: String = identifier.replacingOccurrences(of: ".framework", with: "")
-//        let frameworkPath = Bundle.main.bundlePath + "/Frameworks/" + identifier
-//        let corePath = "\(frameworkPath)/\(frameworkIdentifier)"
-//        ILOG("frameworkIdentifier: \(frameworkIdentifier), frameworkPath: \(frameworkPath), corePath: \(corePath)")
-//        let loader = RetroArchCoreOptionsLoader(corePath: corePath)
-//        if let dynamicOptions = loader.loadCoreOptions() {
-//            let dynamicGroup: CoreOption = .group(
-//                .init(
-//                    title: "Dynamic Options",
-//                    description: "Options loaded from RetroArch core"
-//                ),
-//                subOptions: dynamicOptions
-//            )
-//            coreOptions.append(dynamicGroup)
-//        }
-
-        return coreOptions
+        return [subCoreGroup]
     }
 }
 
