@@ -208,6 +208,61 @@ final class MouseGameRegistryTests: XCTestCase {
         )
     }
 
+    // MARK: - systemHasAnyMouseSupport
+
+    func testSystemHasAnyMouseSupportForAlwaysSystem() {
+        XCTAssertTrue(MouseGameRegistry.shared.systemHasAnyMouseSupport(.DOS))
+        XCTAssertTrue(MouseGameRegistry.shared.systemHasAnyMouseSupport(.Macintosh))
+        XCTAssertTrue(MouseGameRegistry.shared.systemHasAnyMouseSupport(.AtariST))
+    }
+
+    func testSystemHasAnyMouseSupportForConditionalSystem() {
+        XCTAssertTrue(MouseGameRegistry.shared.systemHasAnyMouseSupport(.SNES))
+        XCTAssertTrue(MouseGameRegistry.shared.systemHasAnyMouseSupport(.Dreamcast))
+    }
+
+    func testSystemHasAnyMouseSupportReturnsFalseForNonMouseSystem() {
+        XCTAssertFalse(MouseGameRegistry.shared.systemHasAnyMouseSupport(.NES))
+        XCTAssertFalse(MouseGameRegistry.shared.systemHasAnyMouseSupport(.GB))
+    }
+
+    func testSystemHasAnyMouseSupportReflectsDynamicRegistration() {
+        XCTAssertFalse(MouseGameRegistry.shared.systemHasAnyMouseSupport(.Atari2600))
+        MouseGameRegistry.shared.registerAlwaysMouseSystem(.Atari2600)
+        XCTAssertTrue(MouseGameRegistry.shared.systemHasAnyMouseSupport(.Atari2600))
+    }
+
+    // MARK: - registerProvider
+
+    func testRegisterProviderIngestsAlwaysAndConditionalSystems() {
+        // A mock provider that adds a new always-on system and a new conditional system.
+        final class MockProvider: MouseGamesProvider {
+            static var mouseAlwaysSupportedSystems: Set<SystemIdentifier> { [.Vectrex] }
+            static var mouseConditionalSystems: Set<SystemIdentifier> { [.GameGear] }
+            static var knownMouseGameMD5s: Set<String> { ["aabbccddeeff00112233445566778899"] }
+            static var knownMouseGameTitlePatterns: [SystemIdentifier: [String]] { [.GameGear: ["test mouse game"]] }
+        }
+
+        MouseGameRegistry.shared.registerProvider(MockProvider.self)
+
+        // Always-on system added by provider
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Vectrex, md5: nil, title: nil)
+        )
+        // Known MD5 added by provider
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .GameGear, md5: "aabbccddeeff00112233445566778899", title: nil)
+        )
+        // Title pattern added by provider
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .GameGear, md5: nil, title: "Test Mouse Game - Deluxe")
+        )
+        // Unknown GameGear game should still return false
+        XCTAssertFalse(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .GameGear, md5: nil, title: "Sonic the Hedgehog")
+        )
+    }
+
     // MARK: - Dreamcast / Saturn conditional detection
 
     func testSaturnUnknownGameReturnsFalse() {

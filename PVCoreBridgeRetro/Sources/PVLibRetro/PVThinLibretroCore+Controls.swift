@@ -1170,8 +1170,9 @@ extension PVThinLibretroCore: KeyboardResponder {
 extension PVThinLibretroCore: MouseResponder {
 
     public var gameSupportsMouse: Bool {
-        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? ""),
-              sysID.hasAnyMouseSupport else { return false }
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
+        // Delegate entirely to the registry so user overrides always take precedence,
+        // even for systems not in the static always/conditional sets.
         return MouseGameRegistry.shared.gameSupportsMouse(
             systemIdentifier: sysID,
             md5: romMD5,
