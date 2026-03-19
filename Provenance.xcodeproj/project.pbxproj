@@ -1119,6 +1119,20 @@
 		FA238F54C40F350213B82181 /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
 		FDB4C87A5701DDBE32B4983E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
 		FE3FDA0FAF06ABA5B5CC386E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
+		B3CC22000000000100000002 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9D29209B6700E4C858 /* PreviewProvider.swift */; };
+		B3CC22000000000100000003 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9B29209B6700E4C858 /* PreviewViewController.swift */; };
+		B3CC22000000000100000004 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DF9829209B6300E4C858 /* QuickLook.framework */; };
+		B3CC22000000000100000005 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3CC2200000000010000000F /* PVLibrary */; };
+		B3DD02002F20031900000000 /* ProvenanceWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01002F20031900000000 /* ProvenanceWidgetsBundle.swift */; };
+		B3DD02012F20031900000000 /* QuickLaunchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01012F20031900000000 /* QuickLaunchWidget.swift */; };
+		B3DD02022F20031900000000 /* NowPlayingWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01022F20031900000000 /* NowPlayingWidget.swift */; };
+		B3DD02032F20031900000000 /* GameArtGalleryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */; };
+		B3DD02042F20031900000000 /* NowPlayingStandByWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */; };
+		B3DD02052F20031900000000 /* WidgetSharedDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */; };
+		B3DD03002F20031900000000 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0392920AC1A00E4C858 /* WidgetKit.framework */; };
+		B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3DD04012F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3DD04022F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1317,6 +1331,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3E21D6A203211BE009939D3;
 			remoteInfo = Spotlight;
+		};
+		B3DD06002F20031900000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0372920AC1900E4C858;
+			remoteInfo = WidgetExtension;
+		};
+		B3DD06012F20031900000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0372920AC1900E4C858;
+			remoteInfo = WidgetExtension;
+		};
+		B3DD06022F20031900000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0372920AC1900E4C858;
+			remoteInfo = WidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1642,6 +1677,7 @@
 				B379CA022F00C7BB00C3D7A7 /* TopShelfv2.appex in Embed Foundation Extensions */,
 				B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */,
 				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
+				B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1755,6 +1791,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3DD08002F20031900000000 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B3DD04012F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3F7E5A8297736C200362B92 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
@@ -1764,6 +1811,7 @@
 				B3F7E5A9297736C200362B92 /* Spotlight.appex in Embed Foundation Extensions */,
 				B32111A52CBC428700BE8D6C /* TopShelf.appex in Embed Foundation Extensions */,
 				B32111B12CBC42B500BE8D6C /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
+				B3DD04022F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -2776,6 +2824,12 @@
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC51A109C1C4AE07721D70ED /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DD01002F20031900000000 /* ProvenanceWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvenanceWidgetsBundle.swift; sourceTree = "<group>"; };
+		B3DD01012F20031900000000 /* QuickLaunchWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLaunchWidget.swift; sourceTree = "<group>"; };
+		B3DD01022F20031900000000 /* NowPlayingWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingWidget.swift; sourceTree = "<group>"; };
+		B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameArtGalleryWidget.swift; sourceTree = "<group>"; };
+		B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingStandByWidget.swift; sourceTree = "<group>"; };
+		B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSharedDefaults.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -5568,6 +5622,19 @@
 			path = SpotlightImportExtension;
 			sourceTree = "<group>";
 		};
+		B3DD05002F20031900000000 /* ProvenanceWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				B3DD01002F20031900000000 /* ProvenanceWidgetsBundle.swift */,
+				B3DD01012F20031900000000 /* QuickLaunchWidget.swift */,
+				B3DD01022F20031900000000 /* NowPlayingWidget.swift */,
+				B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */,
+				B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */,
+				B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */,
+			);
+			path = ProvenanceWidgets;
+			sourceTree = "<group>";
+		};
 		B355E0512920AC7600E4C858 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -5583,6 +5650,7 @@
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				B3BE9FA62C7987B1006D989E /* ROM File Provider */,
 				B3BE9FD12C7988BE006D989E /* Provenance Stickers */,
+				B3DD05002F20031900000000 /* ProvenanceWidgets */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -7864,11 +7932,13 @@
 				B35EEFB02C6C6D1A00EBD1A8 /* Frameworks */,
 				B35EEFE22C6C6D1A00EBD1A8 /* Resources */,
 				B35EEFFF2C6C6D1A00EBD1A8 /* Script: Set Build Number */,
+				B3DD08002F20031900000000 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				B35EEF552C6C6D1A00EBD1A8 /* PBXTargetDependency */,
+				B3DD07012F20031900000000 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -7941,6 +8011,7 @@
 				B30D49C92E3809C10073B038 /* PBXTargetDependency */,
 				B379CA042F00C7BB00C3D7A7 /* PBXTargetDependency */,
 				B3E2E83F2F6BBF880010BDDE /* PBXTargetDependency */,
+				B3DD07002F20031900000000 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -8210,6 +8281,7 @@
 				B3F7E427297736C200362B92 /* PBXTargetDependency */,
 				B32111A72CBC428700BE8D6C /* PBXTargetDependency */,
 				B32111B32CBC42B500BE8D6C /* PBXTargetDependency */,
+				B3DD07022F20031900000000 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -10824,6 +10896,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3DD02002F20031900000000 /* ProvenanceWidgetsBundle.swift in Sources */,
+				B3DD02012F20031900000000 /* QuickLaunchWidget.swift in Sources */,
+				B3DD02022F20031900000000 /* NowPlayingWidget.swift in Sources */,
+				B3DD02032F20031900000000 /* GameArtGalleryWidget.swift in Sources */,
+				B3DD02042F20031900000000 /* NowPlayingStandByWidget.swift in Sources */,
+				B3DD02052F20031900000000 /* WidgetSharedDefaults.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11101,6 +11179,21 @@
 			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B3F7E428297736C200362B92 /* PBXContainerItemProxy */;
+		};
+		B3DD07002F20031900000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355E0372920AC1900E4C858 /* WidgetExtension */;
+			targetProxy = B3DD06002F20031900000000 /* PBXContainerItemProxy */;
+		};
+		B3DD07012F20031900000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355E0372920AC1900E4C858 /* WidgetExtension */;
+			targetProxy = B3DD06012F20031900000000 /* PBXContainerItemProxy */;
+		};
+		B3DD07022F20031900000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355E0372920AC1900E4C858 /* WidgetExtension */;
+			targetProxy = B3DD06022F20031900000000 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -13439,7 +13532,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/WidgetExtension/WidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ProvenanceWidgets/ProvenanceWidgets.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -13451,8 +13544,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
+				INFOPLIST_FILE = Extensions/ProvenanceWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Widgets";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -13489,7 +13582,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/WidgetExtension/WidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ProvenanceWidgets/ProvenanceWidgets.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -13503,8 +13596,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
+				INFOPLIST_FILE = Extensions/ProvenanceWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Widgets";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -13540,7 +13633,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/WidgetExtension/WidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ProvenanceWidgets/ProvenanceWidgets.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -13554,8 +13647,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
+				INFOPLIST_FILE = Extensions/ProvenanceWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Widgets";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
