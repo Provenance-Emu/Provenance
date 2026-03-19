@@ -165,15 +165,6 @@ class PVThinLibretroCore: PVEmulatorCore {
             setDefaultOption("prboom-rumble", value: "enabled")
         }
 
-        // SNES: set mouse on port 2 for Mario Paint and similar games
-        if sysId.contains("snes") {
-            let romName = (_bridge.romPath as? NSString)?.lastPathComponent.lowercased() ?? ""
-            if romName.contains("mario paint") || romName.contains("mariopaint") {
-                _bridge.setControllerPortDevice(2, forPort: 1) // RETRO_DEVICE_MOUSE on port 2
-                ILOG("ThinLibretroCore: set SNES port 2 to RETRO_DEVICE_MOUSE for Mario Paint")
-            }
-        }
-
         // Hatari: disable HD boot + copy hatari.cfg if needed
         if coreId.contains("hatari") || sysId.contains("atarist") {
             setDefaultOption("hatari_boot_hd", value: "disabled")
@@ -429,9 +420,33 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                     _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
                     // Re-save under the new per-core/per-game key so future lookups hit the new namespace.
                     UserDefaults.standard.set(Int(saved), forKey: key)
+                } else if let defaultDevice = platformDefaultPortDevice(forPort: port) {
+                    // Apply system-specific device-type defaults when no user preference is saved.
+                    // This runs AFTER retro_load_game so the core's SET_CONTROLLER_INFO has fired.
+                    _bridge.setControllerPortDevice(UInt32(defaultDevice), forPort: UInt32(port))
+                    ILOG("ThinLibretroCore: applied platform default device=\(defaultDevice) on port \(port)")
                 }
             }
         }
+    }
+
+    /// Returns a platform-specific default device type for a port, or nil to use the core's own default.
+    /// Called from `restorePortDeviceTypes()` only when no user preference has been saved for that port.
+    private func platformDefaultPortDevice(forPort port: Int) -> UInt? {
+        let sysId = systemIdentifier ?? ""
+        // SNES: set port 2 (index 1) to RETRO_DEVICE_MOUSE for games that use the SNES Mouse peripheral.
+        // Port 2 defaults to joypad after retro_load_game; override here for known mouse-only titles.
+        // Users can always reconfigure via the in-game Port Device picker for any SNES game.
+        if sysId.contains("snes") && port == 1 {
+            let romName = (_bridge.romPath as? NSString)?.lastPathComponent.lowercased() ?? ""
+            let isMouseGame = romName.contains("mario paint") || romName.contains("mariopaint")
+                          || romName.contains("yoshi's safari") || romName.contains("yoshis safari")
+                          || romName.contains("jurassic park")
+            if isMouseGame {
+                return 2 // RETRO_DEVICE_MOUSE
+            }
+        }
+        return nil
     }
 
     /// New-style per-port key: <ClassName>.<md5>.<coreIdentifier>.portDeviceType.port<port>
