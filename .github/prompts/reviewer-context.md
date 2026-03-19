@@ -228,6 +228,13 @@ Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
 
 ## New Patterns (2026)
 
+### PVNetplayCapable / Netplay Bridge Pattern
+- `PVNetplayCapable` (in `PVNetplay`) — protocol any netplay-capable core conforms to.
+- `PVRetroArchCoreBridge` conforms via `PVRetroArchCoreBridge+PVNetplayCapable.swift`; it is marked `@unchecked Sendable` because netplay-state mutation is serialised on the RetroArch run loop.
+- `PVRetroArchCoreCore` forwards `PVNetplayCapable` calls to its underlying `_bridge`.
+- `PVEmulatorViewController+Netplay.swift` registers/deregisters the bridge with `PVNetplayManager.shared` around `startEmulation`/`stopEmulation`.
+- New cores that support netplay should conform to `PVNetplayCapable`; PVUI will auto-detect via `core as? any PVNetplayCapable`.
+
 ### PVToast In-Game Notification System
 - `PVToastManager.shared` (Tier 6, `PVUIBase`) is `@MainActor` — all calls must be on the main actor.
 - `PVToastHostingController.install(in:position:)` is the canonical way to embed the overlay into any `UIViewController`.
