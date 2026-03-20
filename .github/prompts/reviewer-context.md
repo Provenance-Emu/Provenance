@@ -131,6 +131,15 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Both use `@Environment(\.pvEmulatorCoordinator)` — don't access directly from core bridge.
 - Platform-specific layouts (C64, ZX Spectrum, CPC) in `PVUI/Sources/PVSwiftUI/VirtualKeyboard/`.
 
+### Per-Game Mouse Detection (`MouseGameRegistry`)
+- `MouseGameRegistry.shared` in `PVCoreBridge/Features/` — single source of truth for whether a game uses a mouse.
+- Two-tier approach: **always-on** systems (DOS, Macintosh, AtariST…) always return `true`; **conditional** systems (SNES, Saturn, Dreamcast, PSX) require a game-level MD5 or title match.
+- `gameSupportsMouse` on `PVThinLibretroCore` delegates to `MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier:md5:title:)`.
+- Per-game user override stored in UserDefaults with key `"MouseGameRegistry.mouseEnabled.<md5>"` — overrides ALL automatic detection.
+- When reviewing new mouse game additions, verify the system is in `conditionalMouseSystems` (🔴 CRITICAL if a system that should be conditional is added to `alwaysMouseSystems`).
+- `MouseGamesProvider` protocol — cores declare static mouse game lists; registered at startup via `registerProvider(_:)`.
+- New mouse game databases go in `MouseGameRegistry.knownMouseGameMD5s` or `knownMouseGameTitlePatterns`; never hardcode mouse checks inline.
+
 ### JIT Capability Matrix
 - **`PVPrimitives.PVJITRequirement`** — rich 4-case Swift enum (`.notSupported`,
   `.optional(fallback:)`, `.automaticWithFallback`, `.requiredOrCrash`).

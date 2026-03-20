@@ -50,19 +50,6 @@ private extension SystemIdentifier {
         .Atari8bit, .EP128, .TIC80, .ZXSpectrum,
     ]
 
-    // MARK: Mouse
-
-    /// Systems whose libretro cores accept mouse / pointer input.
-    var supportsMouse: Bool { Self.mouseSystems.contains(self) }
-
-    /// Systems that require a mouse to be usable.
-    var requiresMouse: Bool { false }   // no thin-libretro system requires a mouse
-
-    private static let mouseSystems: Set<SystemIdentifier> = [
-        .Atari8bit, .AtariST, .DOOM, .DOS, .Dreamcast, .EP128,
-        .Macintosh, .MSX, .MSX2, .PC98, .Quake, .Quake2, .SNES, .Wolf3D, .ZXSpectrum,
-    ]
-
 }
 // Note: supportsLightGun / requiresLightGun are public properties on SystemIdentifier
 // defined in PVCoreBridge/Controls+SystemIdentifier.swift — no local override needed.
@@ -1173,11 +1160,19 @@ extension PVThinLibretroCore: KeyboardResponder {
 extension PVThinLibretroCore: MouseResponder {
 
     public var gameSupportsMouse: Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsMouse ?? false
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
+        // Delegate entirely to the registry so user overrides always take precedence,
+        // even for systems not in the static always/conditional sets.
+        // romTitleForLookup derives a title from the ROM path when romName is nil,
+        // so title-pattern matching works for thin-libretro cores.
+        return MouseGameRegistry.shared.gameSupportsMouse(
+            systemIdentifier: sysID,
+            md5: romMD5,
+            title: romTitleForLookup
+        )
     }
-    public var requiresMouse: Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresMouse ?? false
-    }
+
+    public var requiresMouse: Bool { false }
 
 #if canImport(GameController)
     @available(iOS 14.0, tvOS 14.0, *)

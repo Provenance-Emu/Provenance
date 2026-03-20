@@ -12,9 +12,10 @@
 //
 
 import Foundation
-import PVEmulatorCore
 import PVCoreBridge
+import PVEmulatorCore
 import PVLogging
+import PVSystems
 #if canImport(GameController) && canImport(CoreHaptics)
 import GameController
 import CoreHaptics
@@ -433,20 +434,31 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     /// Returns a platform-specific default device type for a port, or nil to use the core's own default.
     /// Called from `restorePortDeviceTypes()` only when no user preference has been saved for that port.
     private func platformDefaultPortDevice(forPort port: Int) -> UInt? {
-        let sysId = systemIdentifier ?? ""
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return nil }
         // SNES: set port 2 (index 1) to RETRO_DEVICE_MOUSE for games that use the SNES Mouse peripheral.
         // Port 2 defaults to joypad after retro_load_game; override here for known mouse-only titles.
+        // Delegates to MouseGameRegistry for consistent detection with gameSupportsMouse.
         // Users can always reconfigure via the in-game Port Device picker for any SNES game.
-        if sysId.contains("snes") && port == 1 {
-            let romName = (_bridge.romPath as? NSString)?.lastPathComponent.lowercased() ?? ""
-            let isMouseGame = romName.contains("mario paint") || romName.contains("mariopaint")
-                          || romName.contains("yoshi's safari") || romName.contains("yoshis safari")
-                          || romName.contains("jurassic park")
-            if isMouseGame {
+        if sysID == .SNES && port == 1 {
+            if MouseGameRegistry.shared.gameSupportsMouse(
+                systemIdentifier: sysID,
+                md5: romMD5,
+                title: romTitleForLookup
+            ) {
                 return 2 // RETRO_DEVICE_MOUSE
             }
         }
         return nil
+    }
+
+    /// Best-effort title string for registry lookups.
+    /// `romName` is not populated for thin-libretro cores, so fall back to
+    /// the ROM filename (without extension) for title-pattern matching.
+    var romTitleForLookup: String? {
+        if let name = romName, !name.isEmpty { return name }
+        guard let path = _bridge.romPath else { return nil }
+        let base = URL(fileURLWithPath: path).deletingPathExtension().lastPathComponent
+        return base.isEmpty ? nil : base
     }
 
     /// New-style per-port key: <ClassName>.<md5>.<coreIdentifier>.portDeviceType.port<port>
