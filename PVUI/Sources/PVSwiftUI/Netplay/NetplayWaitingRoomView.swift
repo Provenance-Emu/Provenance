@@ -31,10 +31,6 @@ public struct NetplayWaitingRoomView: View {
 
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var localIP: String = ""
-    @State private var isCancelling = false
-    @State private var isStarting = false
-    @State private var errorMessage: String?
-    @State private var showError = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -114,13 +110,7 @@ public struct NetplayWaitingRoomView: View {
                     Button("Cancel", role: .destructive) {
                         cancelRoom()
                     }
-                    .disabled(isCancelling)
                 }
-            }
-            .alert("Error", isPresented: $showError, presenting: errorMessage) { _ in
-                Button("OK", role: .cancel) {}
-            } message: { msg in
-                Text(msg)
             }
             .onAppear {
                 localIP = Self.localIPAddress()
@@ -262,16 +252,12 @@ public struct NetplayWaitingRoomView: View {
             } label: {
                 HStack {
                     Spacer()
-                    if isStarting {
-                        ProgressView()
-                            .padding(.trailing, 8)
-                    }
-                    Text(isStarting ? "Starting…" : "Start Game")
+                    Text("Start Game")
                         .fontWeight(.semibold)
                     Spacer()
                 }
             }
-            .disabled(!canStartGame || isStarting)
+            .disabled(!canStartGame)
 
             if !canStartGame {
                 Text("Waiting for at least one player to join before starting.")
@@ -348,14 +334,12 @@ public struct NetplayWaitingRoomView: View {
     // MARK: - Actions
 
     private func startGame() {
-        isStarting = true
         // Signal the parent that the session should stay alive, then dismiss.
         gameStarted = true
         dismiss()
     }
 
     private func cancelRoom() {
-        isCancelling = true
         // Teardown is handled by NetplayCreateRoomView's onDismiss when gameStarted == false,
         // so we just dismiss here to avoid a duplicate disconnect() call.
         dismiss()
