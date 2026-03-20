@@ -115,8 +115,22 @@ public final class CoreRecommendationEngine: Sendable {
             $0.formUnion($1.preferredCapabilities)
         }
 
-        // Collect the best tip message (first non-nil tip)
-        let tipMessage = matchingRequirements.compactMap { $0.tip }.first
+        // Collect the best tip message, preferring more specific matches:
+        // md5 > serial > titleContains > systemIdentifier
+        let tipMessage = matchingRequirements
+            .sorted { lhs, rhs in
+                let score: (GameFeatureRequirement) -> Int = { req in
+                    switch req.matchStrategy {
+                    case .md5:              return 8
+                    case .serial:           return 4
+                    case .titleContains:    return 2
+                    case .systemIdentifier: return 1
+                    }
+                }
+                return score(lhs) > score(rhs)
+            }
+            .compactMap { $0.tip }
+            .first
 
         var recs: [CoreRecommendation] = availableCoreIdentifiers.map { coreID in
             let meta = manifest?.metadata(for: coreID)
@@ -153,8 +167,10 @@ public final class CoreRecommendationEngine: Sendable {
             let rRank = rhs.metadata?.qualityRank ?? 0
             if lRank != rRank { return lRank > rRank }
 
-            // 4. Stable tie-breaker: lexicographic by core identifier
-            return lhs.coreIdentifier < rhs.coreIdentifier
+            // 4. Stable tie-breaker: preserve the original input order for a consistent UI
+            let lhsIdx = availableCoreIdentifiers.firstIndex(of: lhs.coreIdentifier) ?? Int.max
+            let rhsIdx = availableCoreIdentifiers.firstIndex(of: rhs.coreIdentifier) ?? Int.max
+            return lhsIdx < rhsIdx
         }
 
         // Assign rank labels

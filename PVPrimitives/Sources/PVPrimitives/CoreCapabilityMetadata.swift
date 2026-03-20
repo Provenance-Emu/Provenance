@@ -111,14 +111,30 @@ public struct CoreCapabilitiesManifest: Codable, Sendable {
     /// Per-game (or per-system) feature requirements used for smart recommendations.
     public let gameRequirements: [GameFeatureRequirement]
 
+    /// O(1) lookup dictionary built from `cores` on init.
+    private let coresByIdentifier: [String: CoreCapabilityMetadata]
+
+    private enum CodingKeys: String, CodingKey {
+        case version, cores, gameRequirements
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decode(Int.self, forKey: .version)
+        cores = try container.decode([CoreCapabilityMetadata].self, forKey: .cores)
+        gameRequirements = try container.decode([GameFeatureRequirement].self, forKey: .gameRequirements)
+        coresByIdentifier = Dictionary(uniqueKeysWithValues: cores.map { ($0.coreIdentifier, $0) })
+    }
+
     public init(version: Int, cores: [CoreCapabilityMetadata], gameRequirements: [GameFeatureRequirement]) {
         self.version = version
         self.cores = cores
         self.gameRequirements = gameRequirements
+        self.coresByIdentifier = Dictionary(uniqueKeysWithValues: cores.map { ($0.coreIdentifier, $0) })
     }
 
-    /// Looks up the capability metadata for the given core identifier.
+    /// Looks up the capability metadata for the given core identifier in O(1).
     public func metadata(for coreIdentifier: String) -> CoreCapabilityMetadata? {
-        cores.first { $0.coreIdentifier == coreIdentifier }
+        coresByIdentifier[coreIdentifier]
     }
 }
