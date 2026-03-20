@@ -215,18 +215,6 @@
     },
     {
       "matchStrategy": "titleContains",
-      "matchValue": "Pokémon",
-      "preferredCapabilities": ["localWireless"],
-      "tip": "Pokémon DS games support local wireless trading and battles — choose a core with local wireless support."
-    },
-    {
-      "matchStrategy": "titleContains",
-      "matchValue": "Pokemon",
-      "preferredCapabilities": ["localWireless"],
-      "tip": "Pokémon DS games support local wireless trading and battles — choose a core with local wireless support."
-    },
-    {
-      "matchStrategy": "titleContains",
       "matchValue": "Nintendogs",
       "preferredCapabilities": ["realMicrophone"],
       "tip": "Nintendogs uses the DS microphone to respond to your voice — choose a core with real microphone support."

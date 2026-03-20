@@ -110,25 +110,24 @@ public final class CoreRecommendationEngine: Sendable {
             serial: serial
         )
 
-        // Merge all preferred capabilities from requirements
-        let allPreferredCapabilities: Set<CoreCapability> = matchingRequirements.reduce(into: []) {
-            $0.formUnion($1.preferredCapabilities)
+        // Rank requirements by match specificity: md5 > serial > titleContains > systemIdentifier.
+        // Use the single most-specific requirement for capabilities so a broad rule cannot
+        // override a narrower, game-specific rule (e.g. an explicit empty set for Pokémon Snap).
+        let score: (GameFeatureRequirement) -> Int = { req in
+            switch req.matchStrategy {
+            case .md5:              return 8
+            case .serial:           return 4
+            case .titleContains:    return 2
+            case .systemIdentifier: return 1
+            }
         }
 
-        // Collect the best tip message, preferring more specific matches:
-        // md5 > serial > titleContains > systemIdentifier
+        let bestRequirement = matchingRequirements.max { score($0) < score($1) }
+        let allPreferredCapabilities: Set<CoreCapability> = bestRequirement?.preferredCapabilities ?? []
+
+        // Collect the best tip message from the most-specific match that has one.
         let tipMessage = matchingRequirements
-            .sorted { lhs, rhs in
-                let score: (GameFeatureRequirement) -> Int = { req in
-                    switch req.matchStrategy {
-                    case .md5:              return 8
-                    case .serial:           return 4
-                    case .titleContains:    return 2
-                    case .systemIdentifier: return 1
-                    }
-                }
-                return score(lhs) > score(rhs)
-            }
+            .sorted { score($0) > score($1) }
             .compactMap { $0.tip }
             .first
 
