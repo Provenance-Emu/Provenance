@@ -70,19 +70,19 @@ public extension PVEmulatorViewController {
 
     /// Deregister the active netplay bridge when the core stops.
     ///
-    /// Call this before `core.stopEmulation()`.
+    /// Call this before `core.stopEmulation()` and `await` it so that
+    /// `PVNetplayManager.disconnect()` completes before RetroArch globals
+    /// are torn down by `stopEmulation()`.
     /// Cancels any in-flight start task to prevent a stale bridge from being
     /// registered after the stop completes.
-    func stopNetplayBridge() {
+    func stopNetplayBridge() async {
         guard core is any PVNetplayCapable else { return }
         // Cancel any pending start task so it cannot re-register after we clear.
         netplayStartTaskBox?.task.cancel()
         netplayStartTaskBox = nil
-        Task {
-            await PVNetplayManager.shared.disconnect()
-            await PVNetplayManager.shared.setActiveBridge(nil)
-            ILOG("Netplay: deregistered bridge from PVNetplayManager.")
-        }
+        await PVNetplayManager.shared.disconnect()
+        await PVNetplayManager.shared.setActiveBridge(nil)
+        ILOG("Netplay: deregistered bridge from PVNetplayManager.")
     }
 }
 #endif

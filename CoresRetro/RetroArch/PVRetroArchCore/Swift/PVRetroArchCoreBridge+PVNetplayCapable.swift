@@ -70,11 +70,12 @@ extension PVRetroArchCoreBridge: PVNetplayCapable {
     /// in PVRetroArchCore).
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
         let nickname: String? = settings.nickname.isEmpty ? nil : settings.nickname
-        // Store context before starting so netplayState reflects accurate metadata
-        // as soon as the status transitions out of .idle.
-        lastSessionContext = NetplaySessionContext(role: role, settings: settings)
         do {
             try await MainActor.run {
+                // Store context inside MainActor.run so all reads/writes of
+                // lastSessionContext are confined to the main executor — the same
+                // thread that retroArchNetplayStatusPublisher polls on.
+                lastSessionContext = NetplaySessionContext(role: role, settings: settings)
                 switch role {
                 case .host(let port):
                     try startNetplayHosting(
@@ -101,8 +102,8 @@ extension PVRetroArchCoreBridge: PVNetplayCapable {
                 }
             }
         } catch {
-            // Clear context if start failed so state stays consistent.
-            lastSessionContext = nil
+            // Clear context on main executor to keep reads/writes serialised.
+            await MainActor.run { lastSessionContext = nil }
             throw error
         }
     }
@@ -112,8 +113,12 @@ extension PVRetroArchCoreBridge: PVNetplayCapable {
     /// The underlying ObjC method mutates RetroArch globals; dispatched on
     /// the main thread for thread safety.
     public func stopNetplay() async {
-        await MainActor.run { stopNetplaySession() }
-        lastSessionContext = nil
+        // Both stopNetplaySession() and lastSessionContext clear run on the main
+        // executor so they are serialised with the retroArchNetplayStatusPublisher.
+        await MainActor.run {
+            stopNetplaySession()
+            lastSessionContext = nil
+        }
     }
 
     // MARK: State
@@ -205,8 +210,9 @@ private extension NetplayRoom {
         port: UInt16,
         context: NetplaySessionContext?
     ) -> NetplayRoom {
-        NetplayRoom(
-            hostName: context?.settings.nickname.isEmpty == false ? context!.settings.nickname : "RetroArch",
+        let nickname = context.flatMap { $0.settings.nickname.isEmpty ? nil : $0.settings.nickname }
+        return NetplayRoom(
+            hostName: nickname ?? "RetroArch",
             gameName: "",
             gameHash: "",
             coreIdentifier: "com.provenance.retroarch",

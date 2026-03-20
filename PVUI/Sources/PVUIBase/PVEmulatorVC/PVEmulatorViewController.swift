@@ -1458,8 +1458,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         runningCancellable = nil
 
         // Deregister the netplay bridge before stopping the core.
+        // Awaited so disconnect() completes before RetroArch globals are torn down.
         #if canImport(PVNetplay)
-        stopNetplayBridge()
+        await stopNetplayBridge()
         #endif
 
         // Tear down RetroAchievements session before stopping the core.
