@@ -14,7 +14,10 @@ import Foundation
 /// Keys used to share data between the main app and widget extension via App Groups.
 /// The main app writes these values; widgets read them.
 public enum WidgetSharedDefaults {
-    static let appGroupID = "group.org.provenance-emu.provenance"
+    static var appGroupID: String {
+        Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+            ?? "group.org.provenance-emu.provenance"
+    }
 
     public enum Keys {
         /// JSON-encoded array of `WidgetGameEntry` for recent games.
@@ -27,8 +30,11 @@ public enum WidgetSharedDefaults {
         static let galleryGames = "widget.galleryGames"
     }
 
-    static var shared: UserDefaults {
-        UserDefaults(suiteName: appGroupID) ?? .standard
+    /// Returns the App Group `UserDefaults` suite, or `nil` if the suite is unavailable
+    /// (e.g. missing entitlement). Callers show empty state when this is `nil` rather
+    /// than falling back to `.standard`, which could mask configuration issues.
+    static var shared: UserDefaults? {
+        UserDefaults(suiteName: appGroupID)
     }
 }
 
@@ -85,28 +91,28 @@ public struct WidgetNowPlayingEntry: Codable {
 
 extension WidgetSharedDefaults {
     static func loadRecentGames() -> [WidgetGameEntry] {
-        guard let data = shared.data(forKey: Keys.recentGames) else { return [] }
+        guard let data = shared?.data(forKey: Keys.recentGames) else { return [] }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
     }
 
     static func loadGalleryGames() -> [WidgetGameEntry] {
-        guard let data = shared.data(forKey: Keys.galleryGames) else { return [] }
+        guard let data = shared?.data(forKey: Keys.galleryGames) else { return [] }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
     }
 
     static func loadNowPlaying() -> WidgetNowPlayingEntry? {
-        guard let data = shared.data(forKey: Keys.nowPlaying) else { return nil }
+        guard let data = shared?.data(forKey: Keys.nowPlaying) else { return nil }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return try? decoder.decode(WidgetNowPlayingEntry.self, from: data)
     }
 
     static func loadGameCount() -> Int {
-        shared.integer(forKey: Keys.gameCount)
+        shared?.integer(forKey: Keys.gameCount) ?? 0
     }
 
     /// Resolves a relative artwork path to a full URL inside the App Group container.

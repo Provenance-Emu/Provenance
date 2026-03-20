@@ -80,7 +80,10 @@ public struct WidgetNowPlayingData: Codable, Sendable {
 public final class WidgetDataWriter: Sendable {
     public static let shared = WidgetDataWriter()
 
-    private let appGroupID = "group.org.provenance-emu.provenance"
+    private var appGroupID: String {
+        Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+            ?? "group.org.provenance-emu.provenance"
+    }
 
     // Keys must match `WidgetSharedDefaults.Keys` in the widget extension.
     private enum Key {
@@ -181,7 +184,8 @@ private extension GameEntity {
 
     /// Converts an artwork URL to a path relative to the App Group container.
     static func relativePath(for url: URL) -> String? {
-        let groupID = "group.org.provenance-emu.provenance"
+        let groupID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+            ?? "group.org.provenance-emu.provenance"
         guard let containerURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: groupID
         ) else { return nil }
