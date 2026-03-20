@@ -17,6 +17,7 @@ import Foundation
 public struct GameInfo: Sendable {
 
     /// Display title of the game, guaranteed to be non-empty.
+    /// Falls back to the ROM filename (extension stripped, separators normalised) when the database has no title.
     public let title: String
 
     /// Human-readable system name (e.g. "Super Nintendo").  `nil` when unknown.

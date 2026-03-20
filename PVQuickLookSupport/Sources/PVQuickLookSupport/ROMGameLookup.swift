@@ -113,10 +113,18 @@ public struct ROMGameLookup {
             .first
     }
 
+    private static func derivedTitle(from romPath: String) -> String {
+        let base = (romPath as NSString).lastPathComponent
+        let noExt = (base as NSString).deletingPathExtension
+        return noExt
+            .replacingOccurrences(of: "_", with: " ")
+            .replacingOccurrences(of: "-", with: " ")
+    }
+
     private static func gameInfo(from game: PVGame) -> GameInfo {
         let artworkKey = game.artworkURL
         return GameInfo(
-            title: game.title.isEmpty ? (game.romPath as NSString).lastPathComponent : game.title,
+            title: game.title.isEmpty ? derivedTitle(from: game.romPath) : game.title,
             systemName: game.system?.name ?? game.systemShortName,
             systemIdentifier: game.systemIdentifier,
             developer: emptyToNil(game.developer),

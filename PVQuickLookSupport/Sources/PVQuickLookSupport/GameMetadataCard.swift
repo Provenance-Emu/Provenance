@@ -42,7 +42,8 @@ public struct GameMetadataCard {
         filename: String,
         artworkData: Data? = nil
     ) -> String {
-        let title = gameInfo?.title ?? derivedTitle(from: filename)
+        let rawTitle = gameInfo?.title ?? ""
+        let title = rawTitle.isEmpty ? derivedTitle(from: filename) : rawTitle
         let system = gameInfo?.systemName ?? ""
         let developer = gameInfo?.developer ?? ""
         let year = gameInfo?.publishDate ?? ""
