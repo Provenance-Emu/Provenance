@@ -12,13 +12,16 @@ import WidgetKit
 
 /// Lightweight game representation for use in widget timeline entries.
 /// Widgets are stateless — all data must be embedded in the entry at provider time.
+/// Artwork is loaded at provider time (getTimeline/getSnapshot) and embedded as raw
+/// Data so the view never performs synchronous disk I/O during rendering.
 struct WidgetGameEntry: Identifiable, Codable, Sendable {
     let id: String
     let title: String
     let md5Hash: String
     let systemIdentifier: String
     let systemShortName: String
-    let artworkPath: String?
+    /// Raw PNG/JPEG bytes loaded by the provider. Nil when artwork is unavailable.
+    let artworkData: Data?
     let lastPlayedDate: Date?
     let isFavorite: Bool
 

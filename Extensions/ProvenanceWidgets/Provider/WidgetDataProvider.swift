@@ -47,7 +47,14 @@ final class WidgetDataProvider {
 
     private func openRealm() -> Realm? {
         guard let config = makeRealmConfig() else { return nil }
-        return try? Realm(configuration: config)
+        do {
+            return try Realm(configuration: config)
+        } catch {
+            // Log so that widget failures surface in Console.app rather than silently
+            // returning empty state. Callers treat nil as "no data available".
+            print("WidgetDataProvider: failed to open Realm — \(error)")
+            return nil
+        }
     }
 
     // MARK: - Recently Played
@@ -106,8 +113,8 @@ final class WidgetDataProvider {
     // MARK: - Helpers
 
     private func widgetEntry(from game: PVGameProxy, lastPlayedDate: Date?) -> WidgetGameEntry {
-        // Resolve the artwork path from the app group container
-        let artworkPath: String? = resolveArtworkPath(for: game)
+        // Load artwork bytes at provider time so the view never does synchronous disk I/O.
+        let artworkData: Data? = loadArtworkData(for: game)
 
         return WidgetGameEntry(
             id: game.id,
@@ -115,28 +122,32 @@ final class WidgetDataProvider {
             md5Hash: game.md5Hash,
             systemIdentifier: game.systemIdentifier,
             systemShortName: game.systemShortName ?? "",
-            artworkPath: artworkPath,
+            artworkData: artworkData,
             lastPlayedDate: lastPlayedDate,
             isFavorite: game.isFavorite
         )
     }
 
-    private func resolveArtworkPath(for game: PVGameProxy) -> String? {
+    /// Reads artwork bytes from disk once at timeline-generation time.
+    /// Artwork keys in the main app are stored as relative paths within the app group
+    /// container; absolute paths (starting with "/") are also accepted as fallback.
+    private func loadArtworkData(for game: PVGameProxy) -> Data? {
         guard let groupURL = FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier: kProvenanceAppGroupId) else {
             return nil
         }
 
-        let artworkURL = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
-        guard !artworkURL.isEmpty else { return nil }
+        let artworkKey = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
+        guard !artworkKey.isEmpty else { return nil }
 
-        // Artwork URLs may be absolute paths or relative paths within the group container
-        if artworkURL.hasPrefix("/") {
-            return FileManager.default.fileExists(atPath: artworkURL) ? artworkURL : nil
+        let filePath: String
+        if artworkKey.hasPrefix("/") {
+            filePath = artworkKey
         } else {
-            let candidatePath = groupURL.appendingPathComponent(artworkURL).path
-            return FileManager.default.fileExists(atPath: candidatePath) ? candidatePath : nil
+            filePath = groupURL.appendingPathComponent(artworkKey).path
         }
+
+        return FileManager.default.contents(atPath: filePath)
     }
 }
 
@@ -153,6 +164,8 @@ final class WidgetDataProvider {
 /// Object/List links that reference types outside objectTypes (e.g. PVFile, PVSystem)
 /// are intentionally omitted — Realm ignores undeclared link columns in read-only mode.
 final class PVGameProxy: Object {
+    // Must match the on-disk table name created by the main app.
+    override class func className() -> String { "PVGame" }
     @Persisted(primaryKey: true) var md5Hash: String = ""
     @Persisted(indexed: true) var id: String = ""
     @Persisted var title: String = ""
@@ -194,6 +207,8 @@ final class PVGameProxy: Object {
 /// Mirrors PVRecentGame — keep property names in sync with the main app's PVRecentGame schema.
 /// `core` (PVCore?) is omitted because PVCore is not in objectTypes; Realm ignores it in read-only mode.
 final class PVRecentGameProxy: Object {
+    // Must match the on-disk table name created by the main app.
+    override class func className() -> String { "PVRecentGame" }
     @Persisted(wrappedValue: UUID().uuidString) var id: String
     @Persisted var game: PVGameProxy?
     @Persisted(wrappedValue: Date(), indexed: true) var lastPlayedDate: Date

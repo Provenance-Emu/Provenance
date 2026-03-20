@@ -215,7 +215,7 @@ struct RecentlyPlayedWidgetView: View {
         let games = Array(entry.games.prefix(count))
         if games.count == count { return games }
         let padding = (games.count..<count).map {
-            WidgetGameEntry(id: "placeholder-\($0)", title: "—", md5Hash: "", systemIdentifier: "", systemShortName: "", artworkPath: nil, lastPlayedDate: nil, isFavorite: false)
+            WidgetGameEntry(id: "placeholder-\($0)", title: "—", md5Hash: "", systemIdentifier: "", systemShortName: "", artworkData: nil, lastPlayedDate: nil, isFavorite: false)
         }
         return games + padding
     }

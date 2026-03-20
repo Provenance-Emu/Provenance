@@ -22,8 +22,10 @@ struct GameArtworkView: View {
 
     var body: some View {
         Group {
-            if let artworkPath = entry.artworkPath,
-               let uiImage = UIImage(contentsOfFile: artworkPath) {
+            // artworkData is loaded at provider time (getTimeline/getSnapshot), so this
+            // call is cheap — no disk I/O occurs during widget rendering.
+            if let data = entry.artworkData,
+               let uiImage = UIImage(data: data) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
