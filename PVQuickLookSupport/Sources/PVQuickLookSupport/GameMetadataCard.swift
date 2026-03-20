@@ -45,7 +45,7 @@ public struct GameMetadataCard {
         let title = gameInfo?.title ?? derivedTitle(from: filename)
         let system = gameInfo?.systemName ?? ""
         let developer = gameInfo?.developer ?? ""
-        let year = gameInfo?.year ?? ""
+        let year = gameInfo?.publishDate ?? ""
         let genre = gameInfo?.genre ?? ""
         let description = gameInfo?.gameDescription ?? ""
         let playCount = gameInfo?.playCount ?? 0
@@ -53,10 +53,10 @@ public struct GameMetadataCard {
         let systemID = gameInfo?.systemIdentifier ?? ""
 
         // Build artwork tag — either an embedded base64 image or a placeholder icon.
+        // Only embed data when the format is positively identified (JPEG or PNG).
         let artworkTag: String
-        if let data = artworkData, !data.isEmpty {
+        if let data = artworkData, !data.isEmpty, let mime = data.recognizedMIMEType {
             let b64 = data.base64EncodedString()
-            let mime = data.isJPEG ? "image/jpeg" : "image/png"
             artworkTag = "<img class=\"artwork\" src=\"data:\(mime);base64,\(b64)\" alt=\"Box Art\">"
         } else {
             let symbol = SystemIconProvider.sfSymbolName(forSystemIdentifier: systemID)
@@ -146,8 +146,18 @@ extension String {
 // MARK: - Data+ImageType
 
 private extension Data {
-    /// Returns `true` when the first two bytes match the JPEG SOI marker (FF D8).
-    var isJPEG: Bool {
-        count >= 2 && self[0] == 0xFF && self[1] == 0xD8
+    /// Returns the MIME type when the magic bytes identify a known image format, or `nil` for unrecognized data.
+    ///
+    /// Recognized formats:
+    /// - JPEG: SOI marker `FF D8`
+    /// - PNG:  signature `89 50 4E 47`
+    var recognizedMIMEType: String? {
+        if count >= 2 && self[0] == 0xFF && self[1] == 0xD8 {
+            return "image/jpeg"
+        }
+        if count >= 4 && self[0] == 0x89 && self[1] == 0x50 && self[2] == 0x4E && self[3] == 0x47 {
+            return "image/png"
+        }
+        return nil
     }
 }

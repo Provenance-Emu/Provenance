@@ -28,8 +28,8 @@ public struct GameInfo: Sendable {
     /// Developer / publisher name, or `nil` when not in the database.
     public let developer: String?
 
-    /// Publication year string (e.g. `"1996"`), or `nil` when not in the database.
-    public let year: String?
+    /// Publication date string (e.g. `"1996"` or `"Dec 7, 2004"`), or `nil` when not in the database.
+    public let publishDate: String?
 
     /// Comma-separated genres, or `nil` when not in the database.
     public let genre: String?
@@ -54,7 +54,7 @@ public struct GameInfo: Sendable {
         systemName: String?,
         systemIdentifier: String?,
         developer: String?,
-        year: String?,
+        publishDate: String?,
         genre: String?,
         gameDescription: String?,
         playCount: Int,
@@ -65,7 +65,7 @@ public struct GameInfo: Sendable {
         self.systemName = systemName
         self.systemIdentifier = systemIdentifier
         self.developer = developer
-        self.year = year
+        self.publishDate = publishDate
         self.genre = genre
         self.gameDescription = gameDescription
         self.playCount = playCount

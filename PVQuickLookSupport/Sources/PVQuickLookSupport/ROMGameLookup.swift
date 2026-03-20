@@ -120,7 +120,7 @@ public struct ROMGameLookup {
             systemName: game.system?.name ?? game.systemShortName,
             systemIdentifier: game.systemIdentifier,
             developer: emptyToNil(game.developer),
-            year: emptyToNil(game.publishDate),
+            publishDate: emptyToNil(game.publishDate),
             genre: emptyToNil(game.genres),
             gameDescription: game.gameDescription,
             playCount: game.playCount,
