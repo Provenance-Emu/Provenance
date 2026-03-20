@@ -33,9 +33,10 @@
 //  MouseGameRegistry.shared.registerTitlePattern("my game", forSystem: .SNES)
 //  ```
 //
-//  The baseline sets `alwaysMouseSystems`, `conditionalMouseSystems`,
-//  `knownMouseGameMD5s`, and `knownMouseGameTitlePatterns` document the
-//  rationale for each entry.
+//  The baseline data (`alwaysMouseSystems`, `conditionalMouseSystems`,
+//  `knownMouseGameMD5s`, `knownMouseGameTitlePatterns`) is internal;
+//  use `systemHasAnyMouseSupport(_:)` and `gameSupportsMouse(...)` as
+//  the stable public API.
 //
 
 import Foundation
@@ -99,7 +100,7 @@ public final class MouseGameRegistry: @unchecked Sendable {
 
     /// Systems where **every** game supports mouse input.
     /// Cores that are primarily mouse-driven (desktop emulators, FPS) live here.
-    public static let alwaysMouseSystems: Set<SystemIdentifier> = [
+    static let alwaysMouseSystems: Set<SystemIdentifier> = [
         .DOS,        // DOSBox — virtually all DOS software uses a mouse
         .AppleII,    // Apple II emulator with pointer support
         .Macintosh,  // Classic Mac OS — mouse is the primary input
@@ -118,7 +119,7 @@ public final class MouseGameRegistry: @unchecked Sendable {
 
     /// Systems where only **specific titles** use a mouse.
     /// For these systems `gameSupportsMouse` also checks MD5/title.
-    public static let conditionalMouseSystems: Set<SystemIdentifier> = [
+    static let conditionalMouseSystems: Set<SystemIdentifier> = [
         .SNES,      // Mario Paint, Mario & Wario, Undead Line, Dezaemon, Battle Cross
         .Saturn,    // Virtua Fighter Kids, ManX TT Super Bike, Typing of the Dead
         .Dreamcast, // Typing of the Dead, Planet Ring
@@ -130,7 +131,7 @@ public final class MouseGameRegistry: @unchecked Sendable {
     ///
     /// Source: No-Intro / Redump databases.  Add new entries by calling
     /// `registerKnownMouseGameMD5(_:)` at runtime.
-    public static let knownMouseGameMD5s: Set<String> = [
+    static let knownMouseGameMD5s: Set<String> = [
         // ── SNES ──────────────────────────────────────────────────────────────
         // Mario Paint (USA)
         "d6f64fd0642a514a5fba4707fca4f1ed",
@@ -148,7 +149,7 @@ public final class MouseGameRegistry: @unchecked Sendable {
     /// lowercased title **contains** any entry in the list for its system.
     ///
     /// Keep patterns specific enough to avoid false positives.
-    public static let knownMouseGameTitlePatterns: [SystemIdentifier: [String]] = [
+    static let knownMouseGameTitlePatterns: [SystemIdentifier: [String]] = [
         .SNES: [
             "mario paint",
             "mario & wario",
