@@ -124,11 +124,12 @@ public struct NetplayCreateRoomView: View {
             // When the waiting room is dismissed, also dismiss this sheet so the user
             // returns to the lobby. Only disconnect if the game was NOT started —
             // tapping Start Game should leave the session running.
-            // Interactive dismissal is disabled so that teardown is always owned
-            // by the waiting room's Cancel button (which calls onDismiss below).
+            // Interactive dismissal is disabled so teardown is owned by the waiting
+            // room's cancelRoom() action. This onDismiss is a safety net for any
+            // unexpected dismissal (e.g. external state change) that bypasses cancelRoom.
             .sheet(isPresented: $showWaitingRoom, onDismiss: {
                 if !gameStarted {
-                    Task { await netplay.disconnect() }
+                    Task { @MainActor in await netplay.disconnect() }
                 }
                 dismiss()
             }) {
@@ -171,7 +172,7 @@ public struct NetplayCreateRoomView: View {
 
     private func startHosting() {
         isStarting = true
-        Task {
+        Task { @MainActor in
             do {
                 try await netplay.host(settings: settings)
                 // Navigate to waiting room — do not dismiss yet.

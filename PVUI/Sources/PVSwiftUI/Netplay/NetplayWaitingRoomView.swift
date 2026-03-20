@@ -175,7 +175,9 @@ public struct NetplayWaitingRoomView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     Text("\(localIP)")
+                        #if !os(tvOS)
                         .textSelection(.enabled)
+                        #endif
                         .foregroundStyle(.primary)
                 }
             }
@@ -340,8 +342,12 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private func cancelRoom() {
-        // Teardown is handled by NetplayCreateRoomView's onDismiss when gameStarted == false,
-        // so we just dismiss here to avoid a duplicate disconnect() call.
+        // Own the teardown here so this view is self-contained regardless of
+        // how it is presented. The parent's onDismiss guards against any
+        // further disconnect calls via the gameStarted flag.
+        Task { @MainActor in
+            await netplay.disconnect()
+        }
         dismiss()
     }
 
