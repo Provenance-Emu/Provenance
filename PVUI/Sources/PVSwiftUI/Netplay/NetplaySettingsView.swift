@@ -190,7 +190,13 @@ extension NetplaySettings {
     /// Values outside `0...65535` are clamped to the nearest bound.
     internal static func fromStoredDefaults(roomName: String = "") -> NetplaySettings {
         let defaults      = UserDefaults.standard
-        let storedPort    = defaults.integer(forKey: NetplayDefaultsKey.port)
+        let storedPort: Int
+        if defaults.object(forKey: NetplayDefaultsKey.port) == nil {
+            // No stored value: fall back to the documented default port.
+            storedPort = 55435
+        } else {
+            storedPort = defaults.integer(forKey: NetplayDefaultsKey.port)
+        }
         // Clamp to UInt16 range; preserve 0 (OS-assigned).
         let clampedPort   = UInt16(clamping: max(0, min(65535, storedPort)))
         let relayRaw      = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? ""
