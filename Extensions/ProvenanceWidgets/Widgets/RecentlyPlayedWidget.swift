@@ -29,7 +29,7 @@ struct RecentlyPlayedProvider: TimelineProvider {
         let limit = gameLimit(for: context.family)
         let games = dataProvider.recentGames(limit: limit)
         let entry = RecentlyPlayedEntry(date: Date(), games: games, isPlaceholder: false)
-        // Refresh every 15 minutes; the main app also calls WidgetCenter.reloadTimelines on game launch/end
+        // Refresh every 15 minutes
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }

@@ -9,16 +9,23 @@
 #if os(iOS)
 import Foundation
 import RealmSwift
+import OSLog
+import CryptoKit
 
 private let kRealmFilename = "default.realm"
 private let kSchemaVersion: UInt64 = 25
+private let kFallbackAppGroupId = "group.org.provenance-emu.provenance"
+private let logger = Logger(subsystem: "org.provenance-emu.ProvenanceWidgets", category: "WidgetDataProvider")
 
 /// Reads the App Group identifier from the extension's Info.plist (APP_GROUP_IDENTIFIER),
-/// falling back to the well-known default so the widget doesn't silently fail when
-/// a custom App Group ID is configured at build time.
+/// falling back to the well-known default.  Strings containing "$(" are unexpanded
+/// Xcode build-setting placeholders and are treated as missing.
 private var kProvenanceAppGroupId: String {
-    Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_IDENTIFIER") as? String
-        ?? "group.org.provenance-emu.provenance"
+    let rawValue = Bundle.main.object(forInfoDictionaryKey: "APP_GROUP_IDENTIFIER") as? String
+    if let value = rawValue, !value.isEmpty, !value.contains("$(") {
+        return value
+    }
+    return kFallbackAppGroupId
 }
 
 /// Read-only Realm access for widget timeline providers.
@@ -52,7 +59,7 @@ final class WidgetDataProvider {
         } catch {
             // Log so that widget failures surface in Console.app rather than silently
             // returning empty state. Callers treat nil as "no data available".
-            print("WidgetDataProvider: failed to open Realm — \(error)")
+            logger.error("Failed to open Realm: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }
@@ -129,8 +136,8 @@ final class WidgetDataProvider {
     }
 
     /// Reads artwork bytes from disk once at timeline-generation time.
-    /// Artwork keys in the main app are stored as relative paths within the app group
-    /// container; absolute paths (starting with "/") are also accepted as fallback.
+    /// The main app stores artwork via PVMediaCache using the MD5 digest of the URL key
+    /// as the on-disk filename.  This mirrors the lookup used by the TopShelf extension.
     private func loadArtworkData(for game: PVGameProxy) -> Data? {
         guard let groupURL = FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier: kProvenanceAppGroupId) else {
@@ -140,14 +147,41 @@ final class WidgetDataProvider {
         let artworkKey = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
         guard !artworkKey.isEmpty else { return nil }
 
-        let filePath: String
-        if artworkKey.hasPrefix("/") {
-            filePath = artworkKey
-        } else {
-            filePath = groupURL.appendingPathComponent(artworkKey).path
+        let keyHash = artworkKey.md5HexString
+        let fm = FileManager.default
+
+        // Mirror the candidate paths checked by TopShelf / PVMediaCache
+        let candidatePaths: [URL] = [
+            groupURL.appendingPathComponent("Documents/PVCache/\(keyHash)"),
+            groupURL.appendingPathComponent("Caches/PVCache/\(keyHash)"),
+            groupURL.appendingPathComponent("Library/Caches/PVCache/\(keyHash)"),
+            groupURL.appendingPathComponent("PVCache/\(keyHash)")
+        ]
+
+        for url in candidatePaths {
+            if fm.fileExists(atPath: url.path), let data = try? Data(contentsOf: url) {
+                return data
+            }
         }
 
-        return FileManager.default.contents(atPath: filePath)
+        // Fallback: treat the key as an absolute file path
+        if artworkKey.hasPrefix("/"), fm.fileExists(atPath: artworkKey),
+           let data = try? Data(contentsOf: URL(fileURLWithPath: artworkKey)) {
+            return data
+        }
+
+        return nil
+    }
+
+}
+
+// MARK: - String+MD5
+
+private extension String {
+    /// Lowercase hex MD5 digest — mirrors PVMediaCache's cache key derivation.
+    var md5HexString: String {
+        let digest = Insecure.MD5.hash(data: Data(utf8))
+        return digest.map { String(format: "%02x", $0) }.joined()
     }
 }
 
