@@ -155,6 +155,9 @@ public final class CoreRecommendationEngine: Sendable {
             )
         }
 
+        // Precompute input-order index map once for O(1) tie-breaker lookups in the sort.
+        let inputOrder = Dictionary(uniqueKeysWithValues: availableCoreIdentifiers.enumerated().map { ($1, $0) })
+
         // Sort: saves first (never lose progress), then by feature match score, then qualityRank
         recs.sort { lhs, rhs in
             // 1. Existing saves — keep the user on their current core
@@ -171,8 +174,8 @@ public final class CoreRecommendationEngine: Sendable {
             if lRank != rRank { return lRank > rRank }
 
             // 4. Stable tie-breaker: preserve the original input order for a consistent UI
-            let lhsIdx = availableCoreIdentifiers.firstIndex(of: lhs.coreIdentifier) ?? Int.max
-            let rhsIdx = availableCoreIdentifiers.firstIndex(of: rhs.coreIdentifier) ?? Int.max
+            let lhsIdx = inputOrder[lhs.coreIdentifier] ?? Int.max
+            let rhsIdx = inputOrder[rhs.coreIdentifier] ?? Int.max
             return lhsIdx < rhsIdx
         }
 
