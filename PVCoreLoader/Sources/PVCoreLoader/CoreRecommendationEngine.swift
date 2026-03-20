@@ -75,8 +75,12 @@ public final class CoreRecommendationEngine: Sendable {
 
     // MARK: Init
 
-    public init() {
-        manifest = Self.loadManifest()
+    public init(manifest: CoreCapabilitiesManifest? = nil) {
+        if let manifest {
+            self.manifest = manifest
+        } else {
+            self.manifest = Self.loadManifest()
+        }
     }
 
     // MARK: - Public API
