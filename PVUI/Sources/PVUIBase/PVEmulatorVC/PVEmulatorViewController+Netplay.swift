@@ -20,7 +20,7 @@ import ObjectiveC
 // MARK: - Associated-object storage
 
 private enum NetplayAssociatedKeys {
-    static var startTask = "netplayStartTask"
+    static var startTask: UInt8 = 0
 }
 
 /// Box wrapper so a Swift Task value can be stored via objc_setAssociatedObject.
@@ -76,11 +76,13 @@ public extension PVEmulatorViewController {
     /// Cancels any in-flight start task to prevent a stale bridge from being
     /// registered after the stop completes.
     func stopNetplayBridge() async {
-        guard core is any PVNetplayCapable else { return }
+        guard let bridge = core as? any PVNetplayCapable else { return }
         // Cancel any pending start task so it cannot re-register after we clear.
         netplayStartTaskBox?.task.cancel()
         netplayStartTaskBox = nil
-        await PVNetplayManager.shared.disconnect()
+        // Always stop the concrete bridge directly to guarantee shutdown even if
+        // PVNetplayManager was never able to register it as the active bridge.
+        await bridge.stopNetplay()
         await PVNetplayManager.shared.setActiveBridge(nil)
         ILOG("Netplay: deregistered bridge from PVNetplayManager.")
     }

@@ -40,13 +40,15 @@ private final class NetplaySessionContext {
 }
 
 private enum NetplayContextKey {
-    static var sessionContext = "netplaySessionContext"
+    /// Static storage used solely for its address as an associated-object key.
+    static var sessionContextKey: UInt8 = 0
 }
 
 private extension PVRetroArchCoreBridge {
     var lastSessionContext: NetplaySessionContext? {
-        get { objc_getAssociatedObject(self, &NetplayContextKey.sessionContext) as? NetplaySessionContext }
-        set { objc_setAssociatedObject(self, &NetplayContextKey.sessionContext, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get { objc_getAssociatedObject(self, &NetplayContextKey.sessionContextKey) as? NetplaySessionContext }
+        // Use RETAIN (atomic) so cross-thread reads in netplayState are safe.
+        set { objc_setAssociatedObject(self, &NetplayContextKey.sessionContextKey, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
 }
 
