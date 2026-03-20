@@ -145,7 +145,11 @@ extension PVThinLibretroCore {
             // DualSense / DualShock touchpad → mouse input (player 0 only, when mouse is active).
             // The touchpad reports absolute position in the [-1, 1] range per axis.
             // We compute frame-to-frame deltas and scale them to libretro mouse_rel units.
-            if playerIndex == 0, gameSupportsMouse {
+            // DS is excluded: it uses RETRO_DEVICE_POINTER (absolute coordinates via setPointerX),
+            // not RETRO_DEVICE_MOUSE (relative deltas via setMouseDeltaX), so forwarding touchpad
+            // swipes as mouse deltas would conflict with the pointer path.
+            let touchpadSysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
+            if playerIndex == 0, gameSupportsMouse, touchpadSysId != .DS {
 #if canImport(GameController)
                 if #available(iOS 14.5, tvOS 14.5, *) {
                     var touchpadX: Float = 0
@@ -1237,11 +1241,15 @@ extension PVThinLibretroCore: MouseResponder {
 
     /// Forward mouse movement to the libretro core.
     ///
-    /// - `point` arrives as a normalised [0,1] cursor position from TouchTrackpadView.
+    /// Two calling conventions are supported:
+    /// - **Absolute normalised** [0,1] position from `TouchTrackpadView`: the per-event delta
+    ///   is computed from the previous sample, scaled by `mouseScale`, and sent as
+    ///   `setMouseDeltaX`.
+    /// - **Already-relative delta** from the tvOS Siri Remote pan handler: values outside [0,1]
+    ///   are forwarded directly (without differencing) as a raw delta, matching the
+    ///   `st_ra_update_mouse_rel()` logic in `PVRetroArchCore+Controls+DOS.m`.
     /// - For `RETRO_DEVICE_POINTER` systems (DS): converts to the libretro [-0x7fff,0x7fff]
     ///   range and updates the pointer position.
-    /// - For `RETRO_DEVICE_MOUSE` systems: computes the per-event delta from the previous
-    ///   position, scales it, and accumulates it as a relative delta.
     public func mouseMoved(atPoint point: CGPoint) {
         let sysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
         if sysId == .DS {
@@ -1252,21 +1260,39 @@ extension PVThinLibretroCore: MouseResponder {
             return
         }
 
-        // RETRO_DEVICE_MOUSE path: accumulate relative delta from previous normalised position.
-        let x = min(1.0, max(0.0, Double(point.x)))
-        let y = min(1.0, max(0.0, Double(point.y)))
-        if _mousePrevValid {
-            let dx = x - Double(_mousePrevNorm.x)
-            let dy = y - Double(_mousePrevNorm.y)
-            if dx != 0 || dy != 0 {
-                _bridge.setMouseDeltaX(
-                    Int16(clamping: Int(dx * Self.mouseScale)),
-                    deltaY: Int16(clamping: Int(dy * Self.mouseScale))
-                )
+        let px = Double(point.x)
+        let py = Double(point.y)
+
+        // Detect whether the input is an already-relative delta (tvOS Siri Remote pan sends
+        // screen-point deltas that typically exceed [0,1]) or an absolute normalised [0,1]
+        // position (TouchTrackpadView always stays within [0,1]).
+        // Mirrors the isNormalized branch in st_ra_update_mouse_rel() (DOS.m).
+        let isNormalised = px >= 0 && px <= 1 && py >= 0 && py <= 1
+
+        if isNormalised {
+            // Absolute normalised position: compute per-event delta from the previous sample.
+            if _mousePrevValid {
+                let dx = px - Double(_mousePrevNorm.x)
+                let dy = py - Double(_mousePrevNorm.y)
+                if dx != 0 || dy != 0 {
+                    _bridge.setMouseDeltaX(
+                        Int16(clamping: Int(dx * Self.mouseScale)),
+                        deltaY: Int16(clamping: Int(dy * Self.mouseScale))
+                    )
+                }
             }
+            _mousePrevNorm = CGPoint(x: px, y: py)
+            _mousePrevValid = true
+        } else {
+            // Already-relative delta (tvOS Siri Remote): forward directly without differencing.
+            // Reset normalised-position tracking to avoid mixing coordinate systems.
+            let dx = Int16(clamping: Int(px))
+            let dy = Int16(clamping: Int(py))
+            if dx != 0 || dy != 0 {
+                _bridge.setMouseDeltaX(dx, deltaY: dy)
+            }
+            _mousePrevValid = false
         }
-        _mousePrevNorm = CGPoint(x: x, y: y)
-        _mousePrevValid = true
     }
 
     public func leftMouseDown(atPoint point: CGPoint) {
