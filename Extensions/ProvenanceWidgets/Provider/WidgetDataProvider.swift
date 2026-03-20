@@ -47,7 +47,7 @@ final class WidgetDataProvider {
         return Realm.Configuration(
             fileURL: realmURL,
             schemaVersion: kSchemaVersion,
-            objectTypes: [PVGameProxy.self, PVRecentGameProxy.self],
+            objectTypes: [PVGameProxy.self, PVRecentGameProxy.self, PVCoreProxy.self],
             readOnly: true
         )
     }
