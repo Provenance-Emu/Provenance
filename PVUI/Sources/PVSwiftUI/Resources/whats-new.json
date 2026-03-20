@@ -493,7 +493,7 @@
         "symbolName": "person.2.fill",
         "symbolColor": "green",
         "title": "Per-Peer Stats",
-        "subtitle": "Tap the HUD to expand detailed per-player latency, frame delay, rollback status, and a quick disconnect button."
+        "subtitle": "On iPhone, tap the HUD to expand detailed per-player latency, frame delay, rollback status, and a quick disconnect button."
       }
     ]
   }

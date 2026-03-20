@@ -80,7 +80,7 @@ public struct NetplayInGameOverlay: View {
 
     // MARK: - Compact Pill
 
-    private var pill: some View {
+    private var pillContent: some View {
         HStack(spacing: 6) {
             // Player count
             Label {
@@ -101,14 +101,26 @@ public struct NetplayInGameOverlay: View {
         .padding(.vertical, 6)
         .background(.ultraThinMaterial, in: Capsule())
         .foregroundStyle(.white)
-        #if !os(tvOS)
-        .contentShape(Capsule())
-        .onTapGesture {
+    }
+
+    @ViewBuilder
+    private var pill: some View {
+        #if os(iOS)
+        // Use Button so VoiceOver announces the pill as an actionable control.
+        Button {
             isExpanded.toggle()
+        } label: {
+            pillContent
+                .contentShape(Capsule())
         }
-        #endif
+        .buttonStyle(.plain)
         .accessibilityLabel(pillAccessibilityLabel)
         .accessibilityHint(pillAccessibilityHint)
+        #else
+        pillContent
+            .accessibilityLabel(pillAccessibilityLabel)
+            .accessibilityHint(pillAccessibilityHint)
+        #endif
     }
 
     // MARK: - Expanded Detail Panel
