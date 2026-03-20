@@ -253,6 +253,18 @@ Missing `tvOS` in an `@available` guard is a 🟡 MINOR issue. Missing iOS is �
 Tier 0–2 modules that use Darwin-only APIs without `#if canImport(Darwin)` guards
 will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT otherwise.
 
+### WidgetKit Extension (ProvenanceWidgets)
+- `Extensions/ProvenanceWidgets/` — new iOS-only WidgetKit extension (`#if os(iOS)` guards throughout).
+- Widget data access uses `PVGameProxy` / `PVRecentGameProxy` — **local Realm proxy objects** that
+  mirror the schema of `PVGame` / `PVRecentGame`. These exist so the extension does NOT link PVLibrary.
+  When reviewing schema changes to `PVGame` or `PVRecentGame`, check that the proxy classes in
+  `WidgetDataProvider.swift` are kept in sync (property names and `@Persisted` attributes must match).
+- `WidgetDataProvider` opens Realm **read-only** with `readOnly: true` — never change to read-write.
+- All widget views are stateless SwiftUI; data comes from `TimelineEntry` only — no `@StateObject` / `@ObservedObject`.
+- `kSchemaVersion` in `WidgetDataProvider.swift` must stay in sync with `schemaVersion` in `RomDatabase.swift`.
+- The extension target requires the `group.org.provenance-emu.provenance` App Group entitlement.
+- After any game launch/end in the main app, call `WidgetCenter.shared.reloadAllTimelines()`.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:
