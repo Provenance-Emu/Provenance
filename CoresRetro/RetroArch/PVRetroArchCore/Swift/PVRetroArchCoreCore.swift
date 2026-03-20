@@ -227,7 +227,7 @@ private struct RetroArchVirtualInputSupport {
         "com.provenance.doom": .keyboardAndMouse(),
         "com.provenance.dos": .keyboardAndMouse(),
         "com.provenance.dreamcast": .keyboardAndMouse(),
-        "com.provenance.ds": .mouse(),       // DS touchscreen via RETRO_DEVICE_POINTER
+        "com.provenance.ds": .keyboard(),    // DS uses native touchscreen via RETRO_DEVICE_POINTER
         "com.provenance.ep128": .keyboardAndMouse(requiredKeyboard: true),
         "com.provenance.macintosh": .keyboardAndMouse(),
         "com.provenance.mame": .keyboard(),
