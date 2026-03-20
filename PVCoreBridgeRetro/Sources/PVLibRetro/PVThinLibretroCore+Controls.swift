@@ -148,46 +148,54 @@ extension PVThinLibretroCore {
             // DS is excluded: it uses RETRO_DEVICE_POINTER (absolute coordinates via setPointerX),
             // not RETRO_DEVICE_MOUSE (relative deltas via setMouseDeltaX), so forwarding touchpad
             // swipes as mouse deltas would conflict with the pointer path.
-            let touchpadSysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
-            if playerIndex == 0, gameSupportsMouse, touchpadSysId != .DS {
+            if playerIndex == 0, gameSupportsMouse, systemIdentifier != SystemIdentifier.DS.rawValue {
 #if canImport(GameController)
                 if #available(iOS 14.5, tvOS 14.5, *) {
                     var touchpadX: Float = 0
                     var touchpadY: Float = 0
-                    var touchpadActive = false
+                    var hasTouchpad = false
 
                     // GCDualSenseGamepad and GCDualShockGamepad both subclass GCExtendedGamepad,
                     // so we can cast the already-captured `pad` directly.
                     if let dualSense = pad as? GCDualSenseGamepad {
                         touchpadX = dualSense.touchpadPrimary.xAxis.value
                         touchpadY = dualSense.touchpadPrimary.yAxis.value
-                        // Touchpad is "active" when the button is pressed (finger touching)
-                        touchpadActive = dualSense.touchpadButton.isPressed
+                        hasTouchpad = true
                     } else if let dualShock = pad as? GCDualShockGamepad {
                         touchpadX = dualShock.touchpadPrimary.xAxis.value
                         touchpadY = dualShock.touchpadPrimary.yAxis.value
-                        touchpadActive = dualShock.touchpadButton.isPressed
+                        hasTouchpad = true
                     }
 
-                    if touchpadActive {
+                    if hasTouchpad {
+                        // Use a deadzone to detect active touch movement rather than the
+                        // click button (touchpadButton.isPressed represents a physical click,
+                        // not a finger-on-pad touch, so swipes without clicking would be missed).
+                        let deadzone: Float = 0.01
+                        let scale: Float = 300.0
+
                         if _padTouchPrevValid {
                             let dx = touchpadX - _padTouchPrevX
                             let dy = touchpadY - _padTouchPrevY
-                            // Scale: touchpad full range (-1..1) maps to ~600 rel units;
-                            // a gentle swipe produces comfortable cursor speed.
-                            let scale: Float = 300.0
-                            if dx != 0 || dy != 0 {
+                            if abs(dx) > deadzone || abs(dy) > deadzone {
+                                // Scale: touchpad full range (-1..1) maps to ~600 rel units;
+                                // a gentle swipe produces comfortable cursor speed.
                                 _bridge.setMouseDeltaX(
                                     Int16(clamping: Int(dx * scale)),
                                     deltaY: Int16(clamping: Int(dy * scale))
                                 )
+                                _padTouchPrevX = touchpadX
+                                _padTouchPrevY = touchpadY
+                            } else {
+                                // No significant movement — treat as touch-end; reset tracking.
+                                _padTouchPrevValid = false
                             }
+                        } else {
+                            // Start tracking from the current position.
+                            _padTouchPrevX = touchpadX
+                            _padTouchPrevY = touchpadY
+                            _padTouchPrevValid = true
                         }
-                        _padTouchPrevX = touchpadX
-                        _padTouchPrevY = touchpadY
-                        _padTouchPrevValid = true
-                    } else {
-                        _padTouchPrevValid = false
                     }
                 }
 #endif
@@ -1251,8 +1259,7 @@ extension PVThinLibretroCore: MouseResponder {
     /// - For `RETRO_DEVICE_POINTER` systems (DS): converts to the libretro [-0x7fff,0x7fff]
     ///   range and updates the pointer position.
     public func mouseMoved(atPoint point: CGPoint) {
-        let sysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
-        if sysId == .DS {
+        if let sysId = SystemIdentifier(rawValue: systemIdentifier ?? ""), sysId == .DS {
             // DS uses RETRO_DEVICE_POINTER — absolute normalised coordinates.
             let nx = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
             let ny = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
@@ -1266,8 +1273,14 @@ extension PVThinLibretroCore: MouseResponder {
         // Detect whether the input is an already-relative delta (tvOS Siri Remote pan sends
         // screen-point deltas that typically exceed [0,1]) or an absolute normalised [0,1]
         // position (TouchTrackpadView always stays within [0,1]).
-        // Mirrors the isNormalized branch in st_ra_update_mouse_rel() (DOS.m).
-        let isNormalised = px >= 0 && px <= 1 && py >= 0 && py <= 1
+        // Mirrors the isNormalized branch in st_ra_update_mouse_rel() (DOS.m), with an
+        // additional magnitude guard: per-event Siri Remote deltas can be small positive
+        // values inside [0,1], so near-zero-magnitude samples are treated as relative deltas
+        // to avoid misclassifying them as absolute positions near the origin.
+        let isWithinUnitSquare = px >= 0 && px <= 1 && py >= 0 && py <= 1
+        let magnitude = (px * px + py * py).squareRoot()
+        let isNearZeroMagnitude = magnitude < 0.01
+        let isNormalised = isWithinUnitSquare && !isNearZeroMagnitude
 
         if isNormalised {
             // Absolute normalised position: compute per-event delta from the previous sample.
@@ -1296,8 +1309,7 @@ extension PVThinLibretroCore: MouseResponder {
     }
 
     public func leftMouseDown(atPoint point: CGPoint) {
-        let sysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
-        if sysId == .DS {
+        if let sysId = SystemIdentifier(rawValue: systemIdentifier ?? ""), sysId == .DS {
             _dsPointerPressed = true
             let nx = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
             let ny = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
@@ -1308,8 +1320,7 @@ extension PVThinLibretroCore: MouseResponder {
     }
 
     public func leftMouseUp() {
-        let sysId = SystemIdentifier(rawValue: systemIdentifier ?? "")
-        if sysId == .DS {
+        if let sysId = SystemIdentifier(rawValue: systemIdentifier ?? ""), sysId == .DS {
             _dsPointerPressed = false
             _bridge.setPointerX(0, y: 0, pressed: false)
         } else {
