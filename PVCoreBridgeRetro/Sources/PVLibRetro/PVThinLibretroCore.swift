@@ -440,23 +440,25 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
         // Delegates to MouseGameRegistry for consistent detection with gameSupportsMouse.
         // Users can always reconfigure via the in-game Port Device picker for any SNES game.
         if sysID == .SNES && port == 1 {
-            // romName is not set for thin-libretro cores; fall back to the base
-            // filename (without extension) so title-pattern matching still works.
-            let titleForLookup: String? = {
-                if let name = romName, !name.isEmpty { return name }
-                guard let path = _bridge.romPath else { return nil }
-                let base = URL(fileURLWithPath: path).deletingPathExtension().lastPathComponent
-                return base.isEmpty ? nil : base
-            }()
             if MouseGameRegistry.shared.gameSupportsMouse(
                 systemIdentifier: sysID,
                 md5: romMD5,
-                title: titleForLookup
+                title: romTitleForLookup
             ) {
                 return 2 // RETRO_DEVICE_MOUSE
             }
         }
         return nil
+    }
+
+    /// Best-effort title string for registry lookups.
+    /// `romName` is not populated for thin-libretro cores, so fall back to
+    /// the ROM filename (without extension) for title-pattern matching.
+    var romTitleForLookup: String? {
+        if let name = romName, !name.isEmpty { return name }
+        guard let path = _bridge.romPath else { return nil }
+        let base = URL(fileURLWithPath: path).deletingPathExtension().lastPathComponent
+        return base.isEmpty ? nil : base
     }
 
     /// New-style per-port key: <ClassName>.<md5>.<coreIdentifier>.portDeviceType.port<port>

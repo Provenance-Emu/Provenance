@@ -50,16 +50,6 @@ private extension SystemIdentifier {
         .Atari8bit, .EP128, .TIC80, .ZXSpectrum,
     ]
 
-    // MARK: Mouse
-
-    /// Whether this system has *any* potential mouse support (always-on or game-specific).
-    /// Consults the live registry state so dynamically registered systems are included.
-    /// A `true` result does NOT mean the current game uses a mouse — call
-    /// `MouseGameRegistry.shared.gameSupportsMouse(...)` for the definitive answer.
-    var hasAnyMouseSupport: Bool {
-        MouseGameRegistry.shared.systemHasAnyMouseSupport(self)
-    }
-
 }
 // Note: supportsLightGun / requiresLightGun are public properties on SystemIdentifier
 // defined in PVCoreBridge/Controls+SystemIdentifier.swift — no local override needed.
@@ -1171,20 +1161,14 @@ extension PVThinLibretroCore: MouseResponder {
 
     public var gameSupportsMouse: Bool {
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
-        // romName is not populated for thin-libretro cores; derive a title from
-        // the ROM path so title-pattern matching in the registry can still work.
-        let titleForLookup: String? = {
-            if let name = romName, !name.isEmpty { return name }
-            guard let path = _bridge.romPath else { return nil }
-            let base = URL(fileURLWithPath: path).deletingPathExtension().lastPathComponent
-            return base.isEmpty ? nil : base
-        }()
         // Delegate entirely to the registry so user overrides always take precedence,
         // even for systems not in the static always/conditional sets.
+        // romTitleForLookup derives a title from the ROM path when romName is nil,
+        // so title-pattern matching works for thin-libretro cores.
         return MouseGameRegistry.shared.gameSupportsMouse(
             systemIdentifier: sysID,
             md5: romMD5,
-            title: titleForLookup
+            title: romTitleForLookup
         )
     }
 
