@@ -1,4 +1,9 @@
-#!/bin/sh
+#!/bin/bash
+# NOTE: Xcode build phases invoke scripts via /bin/sh, which ignores the shebang.
+# This guard re-execs with bash so bash-specific syntax ((( )), arrays, etc.) works
+# even when the build phase calls: /bin/sh ".../get-modules.sh"
+[ -z "${BASH_VERSION:-}" ] && exec bash "$0" "$@"
+
 LAST_TIMESTAMP=0
 INTERVAL=3600*168
 CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules"
@@ -85,7 +90,7 @@ else
 fi
 
 if [ ! -d "${CORES_ARCHIVE_DIR}" ]; then
-	mkdir "${CORES_ARCHIVE_DIR}"
+	mkdir -p "${CORES_ARCHIVE_DIR}"
 fi
 
 # Detect pin changes: if the stored pin differs from the current one, force a
@@ -136,17 +141,24 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 
 	echo "GetModule: Downloaded ${DOWNLOAD_OK}/${EXPECTED_COUNT} cores (${DOWNLOAD_FAIL} failed)"
 
-	# If ALL downloads failed, something is fundamentally wrong (bad URLs, no network, bad pin).
-	# Don't save timestamp so next build retries.
-	if [ "${DOWNLOAD_OK}" -eq 0 ] && [ "${EXPECTED_COUNT}" -gt 0 ]; then
-		echo "GetModule: ERROR — ALL downloads failed! Not saving timestamp; will retry on next build." >&2
-		echo "GetModule: ERROR — Check network connectivity and buildbot URL validity." >&2
-		# Don't exit 1 here to avoid blocking the entire Xcode build,
-		# but DO skip saving the timestamp so we retry next time.
-	else
-		echo ${TIMESTAMP} > "${CORES_ARCHIVE_DIR}/timestamp.txt"
-		echo "${PINNED_DATE}" > "${CORES_ARCHIVE_DIR}/pinned_date.txt"
+	# Threshold check: fail the build if fewer than 80% of expected cores downloaded.
+	# This catches network failures, bad pins, and stale buildbot URLs early.
+	# Enforce a minimum threshold of 1 so a single-core list always requires at least
+	# one successful download (integer division would otherwise give threshold=0).
+	if [ "${EXPECTED_COUNT}" -gt 0 ]; then
+		THRESHOLD=$(( EXPECTED_COUNT * 80 / 100 ))
+		[ "${THRESHOLD}" -lt 1 ] && THRESHOLD=1
+		if [ "${DOWNLOAD_OK}" -lt "${THRESHOLD}" ]; then
+			echo "GetModule: ERROR — Only ${DOWNLOAD_OK}/${EXPECTED_COUNT} cores downloaded (threshold: ${THRESHOLD})." >&2
+			echo "GetModule: ERROR — Check network connectivity and buildbot URL validity." >&2
+			echo "GetModule: ERROR — Not saving timestamp; will retry on next build." >&2
+			# Do NOT save timestamp so next build retries, then fail the build phase.
+			exit 1
+		fi
 	fi
+
+	echo ${TIMESTAMP} > "${CORES_ARCHIVE_DIR}/timestamp.txt"
+	echo "${PINNED_DATE}" > "${CORES_ARCHIVE_DIR}/pinned_date.txt"
 fi
 
 # Validate downloaded zips before extracting — purge any that are HTML error pages
@@ -189,10 +201,11 @@ echo "GetModule: ${DYLIB_COUNT} dylibs in modules/ (expected ~${EXPECTED_COUNT})
 if [ "${DYLIB_COUNT}" -eq 0 ] && [ "${EXPECTED_COUNT}" -gt 0 ]; then
 	echo "GetModule: ERROR — 0 dylibs after extraction! Cores will not load at runtime." >&2
 	echo "GetModule: ERROR — Check modules_compressed/ for valid zip files." >&2
-	# Clear timestamp to force re-download on next build
+	# Clear timestamp to force re-download on next build, then fail the build phase.
 	rm -f "${CORES_ARCHIVE_DIR}/timestamp.txt"
-elif [ "${EXPECTED_COUNT}" -gt 0 ] && [ "${DYLIB_COUNT}" -lt $((EXPECTED_COUNT / 2)) ]; then
-	echo "GetModule: WARNING — only ${DYLIB_COUNT}/${EXPECTED_COUNT} dylibs present. Some cores may be missing." >&2
+	exit 1
+elif [ "${EXPECTED_COUNT}" -gt 0 ] && [ "${DYLIB_COUNT}" -lt $(( EXPECTED_COUNT * 80 / 100 )) ]; then
+	echo "GetModule: WARNING — only ${DYLIB_COUNT}/${EXPECTED_COUNT} dylibs present (below 80% threshold). Some cores may be missing." >&2
 fi
 
 echo "GetModule: Completed (${VALID_ZIPS} valid zips, ${DYLIB_COUNT} dylibs)"

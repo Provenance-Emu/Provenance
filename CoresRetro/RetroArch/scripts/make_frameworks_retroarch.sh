@@ -1,4 +1,8 @@
 #!/bin/bash
+# NOTE: Xcode build phases invoke scripts via /bin/sh, which ignores the shebang.
+# This guard re-execs with bash so bash-specific syntax (pattern replacement, arrays,
+# etc.) works even when the build phase calls: /bin/sh ".../make_frameworks_retroarch.sh"
+[ -z "${BASH_VERSION:-}" ] && exec bash "$0" "$@"
 
 # Function to print usage
 print_usage() {
@@ -92,10 +96,20 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
     mkdir -p "$fwDir"
     if [ "$PLATFORM_FAMILY_NAME" = "iOS" -o "$PLATFORM_FAMILY_NAME" = "tvOS" ] ; then
         build_sdk=$(vtool -show-build "$dylib" | grep sdk | awk '{print $2}')
-        vtool -set-build-version "${PLATFORM}" "${DEPLOYMENT_TARGET}" "${build_sdk}" -set-build-tool "$PLATFORM" ld 1115.7.3 -set-source-version 0.0 -replace -output "$dylib" "$dylib"
+        if ! vtool -set-build-version "${PLATFORM}" "${DEPLOYMENT_TARGET}" "${build_sdk}" -set-build-tool "$PLATFORM" ld 1115.7.3 -set-source-version 0.0 -replace -output "$dylib" "$dylib"; then
+            echo "MakeFrameworks: WARNING — vtool failed for ${fwName}; build version metadata may be missing" >&2
+        fi
     fi
-    lipo -create "$dylib" -output "$fwDir/$fwName"
-    sed -e "s,%CORE%,$fwName," -e "s,%BUNDLE%,$fwName," -e "s,%IDENTIFIER%,$fwName," -e "s,%OSVER%,$DEPLOYMENT_TARGET," "$BASE_DIR"/fw.tmpl > "$fwDir/Info.plist"
+    if ! lipo -create "$dylib" -output "$fwDir/$fwName"; then
+        echo "MakeFrameworks: ERROR — lipo failed for ${fwName}" >&2
+        FW_FAIL=$((FW_FAIL + 1))
+        continue
+    fi
+    if ! sed -e "s,%CORE%,$fwName," -e "s,%BUNDLE%,$fwName," -e "s,%IDENTIFIER%,$fwName," -e "s,%OSVER%,$DEPLOYMENT_TARGET," "$BASE_DIR"/fw.tmpl > "$fwDir/Info.plist"; then
+        echo "MakeFrameworks: ERROR — Info.plist creation failed for ${fwName}" >&2
+        FW_FAIL=$((FW_FAIL + 1))
+        continue
+    fi
     if [ "$PLATFORM_FAMILY_NAME" = "macOS" ] ; then
         mkdir -p "$fwDir"/Versions/A/Resources
         mv "$fwDir/$fwName" "$fwDir"/Versions/A
@@ -113,7 +127,11 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
     fi
 
     echo "MakeFrameworks: signing $fwName"
-    codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "$fwDir"
+    if ! codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "$fwDir"; then
+        echo "MakeFrameworks: ERROR — codesign failed for ${fwName}" >&2
+        FW_FAIL=$((FW_FAIL + 1))
+        continue
+    fi
     FW_COUNT=$((FW_COUNT + 1))
 done
 
@@ -131,3 +149,5 @@ if [ "${DYLIB_COUNT}" -gt 0 ]; then
         echo "MakeFrameworks: WARNING — only ${FW_COUNT}/${DYLIB_COUNT} frameworks created. Check logs for failures." >&2
     fi
 fi
+
+exit 0
