@@ -168,9 +168,9 @@ extension PVThinLibretroCore {
                     }
 
                     if hasTouchpad {
-                        // Use a deadzone to detect active touch movement rather than the
-                        // click button (touchpadButton.isPressed represents a physical click,
-                        // not a finger-on-pad touch, so swipes without clicking would be missed).
+                        // Use a deadzone to filter noise rather than the click button
+                        // (touchpadButton.isPressed represents a physical click, not a
+                        // finger-on-pad touch, so swipes without clicking would be missed).
                         let deadzone: Float = 0.01
                         let scale: Float = 300.0
 
@@ -184,18 +184,14 @@ extension PVThinLibretroCore {
                                     Int16(clamping: Int(dx * scale)),
                                     deltaY: Int16(clamping: Int(dy * scale))
                                 )
-                                _padTouchPrevX = touchpadX
-                                _padTouchPrevY = touchpadY
-                            } else {
-                                // No significant movement — treat as touch-end; reset tracking.
-                                _padTouchPrevValid = false
                             }
-                        } else {
-                            // Start tracking from the current position.
-                            _padTouchPrevX = touchpadX
-                            _padTouchPrevY = touchpadY
-                            _padTouchPrevValid = true
                         }
+                        // Always refresh the previous sample while a touchpad is present so
+                        // sub-deadzone per-frame movements don't accumulate into a large jump
+                        // the next time the finger moves beyond the deadzone.
+                        _padTouchPrevX = touchpadX
+                        _padTouchPrevY = touchpadY
+                        _padTouchPrevValid = true
                     }
                 }
 #endif
@@ -1249,15 +1245,12 @@ extension PVThinLibretroCore: MouseResponder {
 
     /// Forward mouse movement to the libretro core.
     ///
-    /// Two calling conventions are supported:
-    /// - **Absolute normalised** [0,1] position from `TouchTrackpadView`: the per-event delta
-    ///   is computed from the previous sample, scaled by `mouseScale`, and sent as
-    ///   `setMouseDeltaX`.
-    /// - **Already-relative delta** from the tvOS Siri Remote pan handler: values outside [0,1]
-    ///   are forwarded directly (without differencing) as a raw delta, matching the
-    ///   `st_ra_update_mouse_rel()` logic in `PVRetroArchCore+Controls+DOS.m`.
-    /// - For `RETRO_DEVICE_POINTER` systems (DS): converts to the libretro [-0x7fff,0x7fff]
-    ///   range and updates the pointer position.
+    /// - **iOS**: `TouchTrackpadView` sends absolute normalised [0,1] positions.
+    ///   Per-event delta is computed from the previous sample and scaled by `mouseScale`.
+    /// - **tvOS**: The virtual trackpad is not installed; the only caller is the Siri Remote
+    ///   pan handler which sends per-event relative deltas. Forward them directly.
+    /// - **DS** (both platforms): converts to the libretro [-0x7fff,0x7fff] range via
+    ///   `setPointerX` since DS uses `RETRO_DEVICE_POINTER`, not `RETRO_DEVICE_MOUSE`.
     public func mouseMoved(atPoint point: CGPoint) {
         if let sysId = SystemIdentifier(rawValue: systemIdentifier ?? ""), sysId == .DS {
             // DS uses RETRO_DEVICE_POINTER — absolute normalised coordinates.
@@ -1270,42 +1263,31 @@ extension PVThinLibretroCore: MouseResponder {
         let px = Double(point.x)
         let py = Double(point.y)
 
-        // Detect whether the input is an already-relative delta (tvOS Siri Remote pan sends
-        // screen-point deltas that typically exceed [0,1]) or an absolute normalised [0,1]
-        // position (TouchTrackpadView always stays within [0,1]).
-        // Mirrors the isNormalized branch in st_ra_update_mouse_rel() (DOS.m), with an
-        // additional magnitude guard: per-event Siri Remote deltas can be small positive
-        // values inside [0,1], so near-zero-magnitude samples are treated as relative deltas
-        // to avoid misclassifying them as absolute positions near the origin.
-        let isWithinUnitSquare = px >= 0 && px <= 1 && py >= 0 && py <= 1
-        let magnitude = (px * px + py * py).squareRoot()
-        let isNearZeroMagnitude = magnitude < 0.01
-        let isNormalised = isWithinUnitSquare && !isNearZeroMagnitude
-
-        if isNormalised {
-            // Absolute normalised position: compute per-event delta from the previous sample.
-            if _mousePrevValid {
-                let dx = px - Double(_mousePrevNorm.x)
-                let dy = py - Double(_mousePrevNorm.y)
-                if dx != 0 || dy != 0 {
-                    _bridge.setMouseDeltaX(
-                        Int16(clamping: Int(dx * Self.mouseScale)),
-                        deltaY: Int16(clamping: Int(dy * Self.mouseScale))
-                    )
-                }
-            }
-            _mousePrevNorm = CGPoint(x: px, y: py)
-            _mousePrevValid = true
-        } else {
-            // Already-relative delta (tvOS Siri Remote): forward directly without differencing.
-            // Reset normalised-position tracking to avoid mixing coordinate systems.
-            let dx = Int16(clamping: Int(px))
-            let dy = Int16(clamping: Int(py))
-            if dx != 0 || dy != 0 {
-                _bridge.setMouseDeltaX(dx, deltaY: dy)
-            }
-            _mousePrevValid = false
+#if os(tvOS)
+        // tvOS: the virtual trackpad is never installed, so the only caller is the Siri Remote
+        // pan handler which already sends per-event relative screen-point deltas.
+        // Forward them directly without differencing or normalisation.
+        let dx = Int16(clamping: Int(px))
+        let dy = Int16(clamping: Int(py))
+        if dx != 0 || dy != 0 {
+            _bridge.setMouseDeltaX(dx, deltaY: dy)
         }
+#else
+        // iOS: TouchTrackpadView sends absolute normalised [0,1] positions.
+        // Compute a per-event delta from the previous sample and scale to mouse_rel units.
+        if _mousePrevValid {
+            let dx = px - Double(_mousePrevNorm.x)
+            let dy = py - Double(_mousePrevNorm.y)
+            if dx != 0 || dy != 0 {
+                _bridge.setMouseDeltaX(
+                    Int16(clamping: Int(dx * Self.mouseScale)),
+                    deltaY: Int16(clamping: Int(dy * Self.mouseScale))
+                )
+            }
+        }
+        _mousePrevNorm = CGPoint(x: px, y: py)
+        _mousePrevValid = true
+#endif
     }
 
     public func leftMouseDown(atPoint point: CGPoint) {
@@ -1331,10 +1313,14 @@ extension PVThinLibretroCore: MouseResponder {
     }
 
     public func rightMouseDown(atPoint point: CGPoint) {
+        // DS uses RETRO_DEVICE_POINTER; forwarding a right mouse button is inconsistent — no-op.
+        guard SystemIdentifier(rawValue: systemIdentifier ?? "") != .DS else { return }
         _bridge.setMouseButton(3, pressed: true)  // RETRO_DEVICE_ID_MOUSE_RIGHT = 3
     }
 
     public func rightMouseUp() {
+        // DS uses RETRO_DEVICE_POINTER; forwarding a right mouse button is inconsistent — no-op.
+        guard SystemIdentifier(rawValue: systemIdentifier ?? "") != .DS else { return }
         _bridge.setMouseButton(3, pressed: false)
         _mousePrevValid = false  // Reset delta tracking on any button release.
     }
