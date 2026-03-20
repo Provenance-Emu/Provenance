@@ -32,7 +32,7 @@ public struct SystemIconProvider {
         // Handhelds — Nintendo
         case id.contains("gameboy") || id.contains(".gb") || id.contains(".gbc") || id.contains(".gba"):
             return "handheld.fill"
-        case id.contains("ds") || id.contains("3ds"):
+        case id.hasSuffix(".ds") || id.hasSuffix(".3ds") || id.contains("nintendo3ds") || id.contains("nintendods"):
             return "handheld.fill"
         // Handhelds — Sony
         case id.contains("psp") || id.contains("psv") || id.contains("vita"):
@@ -64,10 +64,14 @@ public struct SystemIconProvider {
              || id.contains("dreamcast") || id.contains("mastersystem") || id.contains("32x"):
             return "gamecontroller.fill"
 
+        // Home consoles — Other
+        case id.contains("coleco") || id.contains("colecovision"):
+            return "gamecontroller.fill"
+
         // Computers / DOS
         case id.contains("dos") || id.contains("doom") || id.contains("amiga")
              || id.contains("atarist") || id.contains("msx") || id.contains("spectrum")
-             || id.contains("c64") || id.contains("coleco") || id.contains("appleii")
+             || id.contains("c64") || id.contains("appleii")
              || id.contains("apple2") || id.contains("macintosh") || id.contains("pc98"):
             return "desktopcomputer"
 

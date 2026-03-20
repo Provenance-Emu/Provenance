@@ -16,7 +16,7 @@ import Foundation
 /// This struct is `Sendable` and safe to pass across threads.
 public struct GameInfo: Sendable {
 
-    /// Display title of the game, never empty (falls back to filename-derived title).
+    /// Display title of the game, guaranteed to be non-empty.
     public let title: String
 
     /// Human-readable system name (e.g. "Super Nintendo").  `nil` when unknown.

@@ -60,4 +60,25 @@ final class SystemIconProviderTests: XCTestCase {
         let upperIcon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.GB")
         XCTAssertEqual(lowerIcon, upperIcon)
     }
+
+    func testNintendoDSReturnsHandheld() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.ds")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
+
+    func testNintendo3DSReturnsHandheld() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.3ds")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
+
+    func testFamicomDiskSystemDoesNotMatchDS() {
+        // com.provenance.fds (Famicom Disk System) must NOT be treated as a handheld
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.fds")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
+
+    func testColecoVisionReturnsGameController() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.colecovision")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
 }
