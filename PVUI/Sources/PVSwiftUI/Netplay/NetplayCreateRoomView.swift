@@ -124,14 +124,16 @@ public struct NetplayCreateRoomView: View {
             // When the waiting room is dismissed, also dismiss this sheet so the user
             // returns to the lobby. Only disconnect if the game was NOT started —
             // tapping Start Game should leave the session running.
+            // Interactive dismissal is disabled so that teardown is always owned
+            // by the waiting room's Cancel button (which calls onDismiss below).
             .sheet(isPresented: $showWaitingRoom, onDismiss: {
                 if !gameStarted {
-                    // Interactive dismissal (swipe-down) or Cancel — tear down session.
                     Task { await netplay.disconnect() }
                 }
                 dismiss()
             }) {
                 NetplayWaitingRoomView(gameName: gameName, coreIdentifier: coreIdentifier, settings: settings, gameStarted: $gameStarted)
+                    .interactiveDismissDisabled()
             }
             .onAppear {
                 if settings.roomName.isEmpty {

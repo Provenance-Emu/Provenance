@@ -47,11 +47,6 @@ public struct NetplayWaitingRoomView: View {
 
     // MARK: - Derived State
 
-    private var hostingRoom: NetplayRoom? {
-        if case .hosting(let room) = netplay.state { return room }
-        return nil
-    }
-
     private var connectedPeers: [NetplayPeer] {
         if case .connected(let session) = netplay.state {
             return session.peers.filter { !$0.isSpectator }
@@ -131,7 +126,7 @@ public struct NetplayWaitingRoomView: View {
                 localIP = Self.localIPAddress()
             }
             // Auto-dismiss if state returns to idle (disconnected externally)
-            .onChange(of: netplay.state) { newState in
+            .onChange(of: netplay.state) { _, newState in
                 if case .idle = newState {
                     dismiss()
                 }
@@ -361,10 +356,9 @@ public struct NetplayWaitingRoomView: View {
 
     private func cancelRoom() {
         isCancelling = true
-        Task {
-            await netplay.disconnect()
-            dismiss()
-        }
+        // Teardown is handled by NetplayCreateRoomView's onDismiss when gameStarted == false,
+        // so we just dismiss here to avoid a duplicate disconnect() call.
+        dismiss()
     }
 
     // MARK: - Helpers
