@@ -156,10 +156,8 @@ public struct NetplayLobbyView: View {
         .background(Color.black.opacity(0.3))
         #elseif canImport(UIKit)
         .background(Color(.systemGroupedBackground))
-        #elseif canImport(AppKit)
-        .background(Color(NSColor.windowBackgroundColor))
         #else
-        .background(Color.secondary.opacity(0.1))
+        .background(Color.primary.opacity(0.05))
         #endif
     }
 
