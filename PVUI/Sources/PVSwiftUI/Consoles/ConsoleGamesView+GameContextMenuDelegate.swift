@@ -339,9 +339,19 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestNetworkPlayFor game: PVGame) {
         guard !game.isInvalidated else { return }
         let frozenGame = game.isFrozen ? game : game.freeze()
-        let coreID = game.userPreferredCoreID ?? game.system?.cores.first?.identifier ?? ""
+        // Prefer a RetroArch core for network play since netplay requires libretro support.
+        // First try the user's preferred core if it is RetroArch-based, otherwise fall back
+        // to the first RetroArch core available for this system.
+        let retroArchCoreID: String? = {
+            guard let cores = game.system?.cores else { return nil }
+            if let preferredID = game.userPreferredCoreID,
+               cores.contains(where: { $0.identifier == preferredID && $0.principleClass.contains("RetroArch") }) {
+                return preferredID
+            }
+            return cores.first(where: { $0.principleClass.contains("RetroArch") })?.identifier
+        }()
         gamesViewModel.networkPlayGame = frozenGame
-        gamesViewModel.networkPlayCoreIdentifier = coreID
+        gamesViewModel.networkPlayCoreIdentifier = retroArchCoreID ?? game.userPreferredCoreID ?? game.system?.cores.first?.identifier ?? ""
         gamesViewModel.showNetworkPlay = true
     }
 

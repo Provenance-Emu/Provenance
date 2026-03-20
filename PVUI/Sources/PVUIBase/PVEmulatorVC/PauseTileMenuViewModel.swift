@@ -79,7 +79,10 @@ final class PauseTileMenuViewModel: ObservableObject {
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if featureFlags.netplayEnabled {
             #if canImport(PVNetplay)
-            let coreSupportsNetplay = emulatorVC.core as? PVNetplayCapable != nil
+            let coreSupportsNetplay: Bool = {
+                guard let bridge = emulatorVC.core as? any PVNetplayCapable else { return false }
+                return bridge.supportsNetplay
+            }()
             #else
             let coreSupportsNetplay = false
             #endif

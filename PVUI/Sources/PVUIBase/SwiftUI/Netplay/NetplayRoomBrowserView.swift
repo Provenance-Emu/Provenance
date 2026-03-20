@@ -65,6 +65,8 @@ public struct NetplayRoomBrowserView: View {
                         } label: {
                             Image(systemName: "plus")
                         }
+                        .accessibilityLabel("Manual Connect")
+                        .accessibilityHint("Open manual host and port form")
                     }
                 }
             }
