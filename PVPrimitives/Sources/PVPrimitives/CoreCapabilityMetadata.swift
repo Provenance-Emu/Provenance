@@ -123,14 +123,14 @@ public struct CoreCapabilitiesManifest: Codable, Sendable {
         version = try container.decode(Int.self, forKey: .version)
         cores = try container.decode([CoreCapabilityMetadata].self, forKey: .cores)
         gameRequirements = try container.decode([GameFeatureRequirement].self, forKey: .gameRequirements)
-        coresByIdentifier = Dictionary(uniqueKeysWithValues: cores.map { ($0.coreIdentifier, $0) })
+        coresByIdentifier = Dictionary(cores.map { ($0.coreIdentifier, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
     public init(version: Int, cores: [CoreCapabilityMetadata], gameRequirements: [GameFeatureRequirement]) {
         self.version = version
         self.cores = cores
         self.gameRequirements = gameRequirements
-        self.coresByIdentifier = Dictionary(uniqueKeysWithValues: cores.map { ($0.coreIdentifier, $0) })
+        self.coresByIdentifier = Dictionary(cores.map { ($0.coreIdentifier, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
     /// Looks up the capability metadata for the given core identifier in O(1).

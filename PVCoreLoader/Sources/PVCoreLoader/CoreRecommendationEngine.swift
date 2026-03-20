@@ -156,7 +156,7 @@ public final class CoreRecommendationEngine: Sendable {
         }
 
         // Precompute input-order index map once for O(1) tie-breaker lookups in the sort.
-        let inputOrder = Dictionary(uniqueKeysWithValues: availableCoreIdentifiers.enumerated().map { ($1, $0) })
+        let inputOrder = Dictionary(availableCoreIdentifiers.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
 
         // Sort: saves first (never lose progress), then by feature match score, then qualityRank
         recs.sort { lhs, rhs in
