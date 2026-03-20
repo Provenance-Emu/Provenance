@@ -147,13 +147,13 @@ static NSArray<NSString *> *dos_relative_mouse_core_ids(void) {
 static void ds_ra_update_pointer_pos(CGPoint normalizedPoint) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
-#if TARGET_OS_IOS
+    // Clamp to [0,1] to guard against out-of-range input (e.g. relative deltas from tvOS Siri Remote).
+    CGFloat nx = fmin(fmax(normalizedPoint.x, 0.0), 1.0);
+    CGFloat ny = fmin(fmax(normalizedPoint.y, 0.0), 1.0);
+    // UIScreen is available on both iOS and tvOS; use it instead of a hardcoded fallback.
     CGRect bounds = [UIScreen mainScreen].bounds;
-#else
-    CGRect bounds = CGRectMake(0, 0, 1920, 1080); // tvOS fallback
-#endif
-    apple->touches[0].screen_x = (int16_t)(normalizedPoint.x * bounds.size.width);
-    apple->touches[0].screen_y = (int16_t)(normalizedPoint.y * bounds.size.height);
+    apple->touches[0].screen_x = (int16_t)(nx * bounds.size.width);
+    apple->touches[0].screen_y = (int16_t)(ny * bounds.size.height);
 }
 
 /// Returns YES when the currently-loaded system uses RETRO_DEVICE_POINTER
