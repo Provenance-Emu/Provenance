@@ -238,13 +238,24 @@ final class PVGameProxy: Object {
     @Persisted var language: String?
 }
 
-/// Mirrors PVRecentGame — keep property names in sync with the main app's PVRecentGame schema.
-/// `core` (PVCore?) is omitted because PVCore is not in objectTypes; Realm ignores it in read-only mode.
+/// Mirrors PVCore — minimal proxy used so PVRecentGame.core (PVCore?) can be represented
+/// without depending on the full PVCore type from PVLibrary. Additional persisted
+/// properties are intentionally omitted; Realm will ignore undeclared columns when
+/// opening the existing Realm file in read-only mode.
+final class PVCoreProxy: Object {
+    // Must match the on-disk table name created by the main app.
+    override class func className() -> String { "PVCore" }
+}
+
+/// Mirrors PVRecentGame — keep property names and optionality in sync with the main app's
+/// PVRecentGame schema so that opening the existing Realm in read-only mode does not
+/// trigger schema-mismatch errors.
 final class PVRecentGameProxy: Object {
     // Must match the on-disk table name created by the main app.
     override class func className() -> String { "PVRecentGame" }
     @Persisted(wrappedValue: UUID().uuidString) var id: String
-    @Persisted var game: PVGameProxy?
+    @Persisted var game: PVGameProxy
+    @Persisted var core: PVCoreProxy?
     @Persisted(wrappedValue: Date(), indexed: true) var lastPlayedDate: Date
 }
 #endif
