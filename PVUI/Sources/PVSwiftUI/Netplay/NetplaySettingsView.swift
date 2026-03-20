@@ -21,7 +21,8 @@ private enum NetplayDefaultsKey {
     static let allowSpectators  = "netplay.allowSpectators"
 }
 
-private let netplayPortRange: ClosedRange<Int> = 1...65535
+/// Valid port range: 0 = OS-assigned, 1–65535 = explicit port.
+private let netplayPortRange: ClosedRange<Int> = 0...65535
 
 /// Full netplay settings form backed by `@AppStorage`.
 ///
@@ -44,12 +45,17 @@ public struct NetplaySettingsView: View {
         PVFeatureFlagsManager.shared.netplayEnabled
     }
 
-    /// Port clamped to valid UInt16 range (1–65535).
+    /// Port clamped to valid range (0 = OS-assigned, 1–65535 = explicit).
     private var validatedPortBinding: Binding<Int> {
         Binding(
             get: { max(netplayPortRange.lowerBound, min(netplayPortRange.upperBound, port)) },
             set: { port = max(netplayPortRange.lowerBound, min(netplayPortRange.upperBound, $0)) }
         )
+    }
+
+    /// Normalizes a stored port that may be out of range (e.g. from an older build).
+    private func normalizeStoredPort() {
+        port = max(netplayPortRange.lowerBound, min(netplayPortRange.upperBound, port))
     }
 
     public init() {}
@@ -67,6 +73,7 @@ public struct NetplaySettingsView: View {
                 #if !os(tvOS)
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
+                .onAppear { normalizeStoredPort() }
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done") { dismiss() }
@@ -92,7 +99,7 @@ public struct NetplaySettingsView: View {
             portRow
             TextField("Relay Server (empty for LAN only)", text: $relayServer)
                 .autocorrectionDisabled()
-                #if os(iOS)
+                #if canImport(UIKit)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 #endif
@@ -100,8 +107,11 @@ public struct NetplaySettingsView: View {
             Text("Connection")
         } footer: {
             if port < netplayPortRange.lowerBound || port > netplayPortRange.upperBound {
-                Text("Port must be between 1 and 65535.")
+                Text("Port must be between 0 and 65535 (0 = OS-assigned).")
                     .foregroundStyle(.red)
+            } else if port == 0 {
+                Text("Port 0: the OS will assign an available port automatically.")
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -116,7 +126,7 @@ public struct NetplaySettingsView: View {
             Spacer()
             TextField("55435", value: validatedPortBinding, format: .number)
                 .multilineTextAlignment(.trailing)
-                #if os(iOS)
+                #if canImport(UIKit)
                 .keyboardType(.numberPad)
                 #endif
                 .frame(width: 80)
@@ -175,11 +185,15 @@ extension NetplaySettings {
     /// in `NetplaySettingsView`. Call this when creating a new room or join request
     /// so that the stored preferences take effect. Internal to PVUI — not part of
     /// the PVNetplay public API.
-    static func fromStoredDefaults(roomName: String = "") -> NetplaySettings {
-        let defaults     = UserDefaults.standard
-        let storedPort   = defaults.integer(forKey: NetplayDefaultsKey.port)
-        let clampedPort  = UInt16(clamping: max(1, min(65535, storedPort == 0 ? 55435 : storedPort)))
-        let relayRaw     = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? ""
+    ///
+    /// Port semantics: a stored value of `0` is preserved as-is (OS-assigned port).
+    /// Values outside `0...65535` are clamped to the nearest bound.
+    internal static func fromStoredDefaults(roomName: String = "") -> NetplaySettings {
+        let defaults      = UserDefaults.standard
+        let storedPort    = defaults.integer(forKey: NetplayDefaultsKey.port)
+        // Clamp to UInt16 range; preserve 0 (OS-assigned).
+        let clampedPort   = UInt16(clamping: max(0, min(65535, storedPort)))
+        let relayRaw      = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? ""
         let storedPlayers = defaults.integer(forKey: NetplayDefaultsKey.maxPlayers)
 
         return NetplaySettings(
