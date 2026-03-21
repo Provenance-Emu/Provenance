@@ -29,7 +29,7 @@
 //__weak PVFlycastCoreBridge *_current = 0;
 
 @interface PVFlycastCoreBridge() {
-
+    uint8_t padData[4][PVDreamcastButtonCount];
 }
 
 @property(nonatomic, strong, nullable) NSString *diskPath;

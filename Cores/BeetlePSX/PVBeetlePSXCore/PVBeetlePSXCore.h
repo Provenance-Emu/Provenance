@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
+@protocol PVPSXSystemResponderClient;
 #import <PVSupport/PVEmulatorCore.h>
 
 #import <PVCoreBridgeRetro/PVCoreBridgeRetro.h>

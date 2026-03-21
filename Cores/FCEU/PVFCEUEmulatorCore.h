@@ -27,7 +27,7 @@
 #import <Foundation/Foundation.h>
 @import CoreGraphics;
 @import PVCoreObjCBridge;
-@import PVCoreBridge; // for LightGunResponder
+@protocol LightGunResponder; // full definition in PVCoreBridge; imported by .mm
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 

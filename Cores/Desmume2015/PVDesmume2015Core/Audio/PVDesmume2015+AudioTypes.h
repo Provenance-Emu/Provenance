@@ -9,7 +9,6 @@
 #import <PVDesmume2015/PVDesmume2015.h>
 
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
 #import <PVSupport/CARingBuffer.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>

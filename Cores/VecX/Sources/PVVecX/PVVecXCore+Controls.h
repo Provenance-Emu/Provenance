@@ -7,7 +7,8 @@
 //
 
 #import <PVVecX/PVVecXCore.h>
-@import PVCoreBridge;
+@protocol PVDOSSystemResponderClient;
+typedef enum PVDOSButton: NSInteger PVDOSButton;
 
 NS_ASSUME_NONNULL_BEGIN
 

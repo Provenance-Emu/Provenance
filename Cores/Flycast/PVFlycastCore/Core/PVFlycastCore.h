@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
+@protocol PVDreamcastSystemResponderClient;
 #import <PVSupport/PVEmulatorCore.h>
 
 #import <PVCoreBridgeRetro/PVCoreBridgeRetro.h>
@@ -17,7 +17,6 @@
 
 PVCORE
 @interface PVFlycastCoreBridge: PVLibRetroGLESCore <PVDreamcastSystemResponderClient> {
-	uint8_t padData[4][PVDreamcastButtonCount];
 	int8_t xAxis[4];
 	int8_t yAxis[4];
 	//    int videoWidth;
