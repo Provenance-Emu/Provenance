@@ -109,10 +109,19 @@ public struct NetplayInviteView: View {
 
                     Button {
                         inviteURL = url
+                        #if os(tvOS)
+                        UIPasteboard.general.string = url.absoluteString
+                        #else
                         showShareSheet = true
+                        #endif
                     } label: {
+                        #if os(tvOS)
+                        Label("Copy Link", systemImage: "doc.on.doc")
+                            .frame(maxWidth: .infinity)
+                        #else
                         Label("Share Link", systemImage: "square.and.arrow.up")
                             .frame(maxWidth: .infinity)
+                        #endif
                     }
                     .buttonStyle(.borderedProminent)
                 }
@@ -131,6 +140,8 @@ public struct NetplayInviteView: View {
 
     private func buildInviteURL() -> URL? {
         guard !hostAddress.isEmpty else { return nil }
+        let portInt = Int(port) ?? -1
+        guard portInt >= 0, portInt <= 65535 else { return nil }
         var components = URLComponents()
         components.scheme = "provenance"
         components.host = "netplay"

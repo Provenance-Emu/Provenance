@@ -76,11 +76,11 @@ public final class RetroArchLobbyService: ObservableObject {
 // MARK: - Lobby API Decodable models
 
 /// Top-level entry in the RetroArch lobby JSON array.
-private struct LobbyEntry: Decodable {
+struct LobbyEntry: Decodable {
     let fields: LobbyFields
 }
 
-private struct LobbyFields: Decodable {
+struct LobbyFields: Decodable {
     let username: String?
     let gameName: String?
     let gameCrc: String?
@@ -114,9 +114,10 @@ private struct LobbyFields: Decodable {
 
 // MARK: - NetplayRoom initialiser from lobby entry
 
-private extension NetplayRoom {
+extension NetplayRoom {
     /// Build a `NetplayRoom` from a lobby API entry.
     /// Returns `nil` if essential fields are missing.
+    /// Internal for testability; not part of the public API.
     init?(lobbyEntry entry: LobbyEntry) {
         let fields = entry.fields
         // Prefer MITM relay address when available (NAT traversal), fall back to direct IP.
@@ -132,8 +133,11 @@ private extension NetplayRoom {
             return nil
         }
 
-        let gameText = fields.gameName?.isEmpty == false ? fields.gameName! : "Unknown Game"
-        let hostText = fields.username?.isEmpty == false ? fields.username! : "Unknown Host"
+        let rawGameName = fields.gameName ?? ""
+        let gameText = rawGameName.isEmpty ? "Unknown Game" : rawGameName
+
+        let rawUsername = fields.username ?? ""
+        let hostText = rawUsername.isEmpty ? "Unknown Host" : rawUsername
         let coreText = fields.coreName ?? ""
         let roomID: UUID
         if let idStr = fields.id, let parsed = UUID(uuidString: idStr) {

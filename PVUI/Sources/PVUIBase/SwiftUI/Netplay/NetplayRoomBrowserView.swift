@@ -126,11 +126,21 @@ public struct NetplayRoomBrowserView: View {
             }
             .onAppear {
                 netplay.startDiscovery()
-                netplay.fetchWANRooms()
+                if selectedTab == .wan {
+                    netplay.fetchWANRooms()
+                }
             }
             .onDisappear {
                 netplay.stopDiscovery()
                 netplay.cancelWANFetch()
+            }
+            .onChange(of: selectedTab) { _, newTab in
+                switch newTab {
+                case .lan:
+                    netplay.cancelWANFetch()
+                case .wan:
+                    netplay.fetchWANRooms()
+                }
             }
         }
     }
