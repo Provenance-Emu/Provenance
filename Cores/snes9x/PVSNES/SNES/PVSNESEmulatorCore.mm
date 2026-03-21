@@ -66,6 +66,13 @@
 
 static __weak PVSNESEmulatorCoreBridge *_current;
 
+// Unique IDs for snes9x pointer/button mappings — outside the joypad range ((1-8)<<16).
+static const uint32_t kSNESMousePointerID  = 0x9000;
+static const uint32_t kSNESMouseLeftBtnID  = 0x9001;
+static const uint32_t kSNESMouseRightBtnID = 0x9002;
+/// Maps one full-screen swipe to this many SNES pixels of movement.
+static const double   kSNESMouseScale      = 256.0;
+
 @interface PVSNESEmulatorCoreBridge () {
 
 @public
@@ -73,8 +80,16 @@ static __weak PVSNESEmulatorCoreBridge *_current;
     unsigned char *videoBuffer;
     unsigned char *videoBufferA;
     unsigned char *videoBufferB;
-    
+
     BOOL isMultitap;
+
+    // Mouse state
+    BOOL    _isMouseGame;
+    int16_t _mouseX;
+    int16_t _mouseY;
+    CGFloat _mousePrevNormX;
+    CGFloat _mousePrevNormY;
+    BOOL    _mousePrevValid;
 }
 
 @end
@@ -91,8 +106,10 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		soundBuffer = (UInt16 *)malloc(SIZESOUNDBUFFER * sizeof(UInt16));
 		memset(soundBuffer, 0, SIZESOUNDBUFFER * sizeof(UInt16));
         _current = self;
+        _isMouseGame  = NO;
+        _mousePrevValid = NO;
     }
-	
+
 	return self;
 }
 
@@ -726,6 +743,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		{
 			S9xSetController(0, CTL_MOUSE,  0, 0, 0, 0); // Mouse Port 1
 			S9xSetController(1, CTL_JOYPAD, 1, 0, 0, 0); // Controller Port 2
+            _isMouseGame = YES;
+            [self setupMouseMappings];
 		}
 		else if([multitapGames containsObject:cartCRC32])
 		{
@@ -765,6 +784,74 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     *error = newError;
 	}
     return NO;
+}
+
+#pragma mark - Mouse Support (MouseResponder bridge helpers)
+
+- (BOOL)isSNESMouseGame {
+    return _isMouseGame;
+}
+
+/// Map pointer/button IDs to snes9x mouse commands after a mouse ROM is loaded.
+- (void)setupMouseMappings {
+    s9xcommand_t ptrCmd = S9xGetCommandT("Pointer Mouse1");
+    if (ptrCmd.type == S9xPointer) {
+        S9xMapPointer(kSNESMousePointerID, ptrCmd, false);
+    }
+    s9xcommand_t btnL = S9xGetCommandT("Mouse1 L");
+    if (btnL.type == S9xButtonMouse) {
+        S9xMapButton(kSNESMouseLeftBtnID, btnL, false);
+    }
+    s9xcommand_t btnR = S9xGetCommandT("Mouse1 R");
+    if (btnR.type == S9xButtonMouse) {
+        S9xMapButton(kSNESMouseRightBtnID, btnR, false);
+    }
+    // Start cursor at the centre of the SNES 256×224 screen.
+    _mouseX = 128;
+    _mouseY = 112;
+    _mousePrevValid = NO;
+    S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
+}
+
+- (void)snesMouseMovedTo:(CGPoint)normalizedPoint {
+    CGFloat nx = normalizedPoint.x;
+    CGFloat ny = normalizedPoint.y;
+    if (_mousePrevValid) {
+        CGFloat dx = nx - _mousePrevNormX;
+        CGFloat dy = ny - _mousePrevNormY;
+        if (dx != 0.0 || dy != 0.0) {
+            int newX = (int)_mouseX + (int)(dx * kSNESMouseScale);
+            int newY = (int)_mouseY + (int)(dy * kSNESMouseScale);
+            _mouseX = (int16_t)(newX < 0 ? 0 : (newX > 255 ? 255 : newX));
+            _mouseY = (int16_t)(newY < 0 ? 0 : (newY > 223 ? 223 : newY));
+            S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
+        }
+    }
+    _mousePrevNormX = nx;
+    _mousePrevNormY = ny;
+    _mousePrevValid = YES;
+}
+
+- (void)snesLeftMouseDown {
+    S9xReportButton(kSNESMouseLeftBtnID, true);
+}
+
+- (void)snesLeftMouseUp {
+    S9xReportButton(kSNESMouseLeftBtnID, false);
+    _mousePrevValid = NO;
+}
+
+- (void)snesRightMouseDown {
+    S9xReportButton(kSNESMouseRightBtnID, true);
+}
+
+- (void)snesRightMouseUp {
+    S9xReportButton(kSNESMouseRightBtnID, false);
+    _mousePrevValid = NO;
+}
+
+- (void)resetSNESMouseTracking {
+    _mousePrevValid = NO;
 }
 
 #pragma mark Video
