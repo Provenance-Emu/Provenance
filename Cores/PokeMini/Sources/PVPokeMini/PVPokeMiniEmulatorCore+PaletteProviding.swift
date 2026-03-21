@@ -30,7 +30,7 @@ extension PVPokeMiniEmulatorCore: PaletteProviding {
             return
         }
         CommandLine.palette = Int32(palette.rawValue)
-        PokeMini_VideoPalette_Index(CommandLine.palette, nil, CommandLine.lcdcontrast, CommandLine.lcdbright)
+        PokeMini_VideoPalette_Index(CommandLine.palette, CommandLine.custompal, CommandLine.lcdcontrast, CommandLine.lcdbright)
         PokeMini_ApplyChanges()
     }
 }

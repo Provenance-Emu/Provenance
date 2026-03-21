@@ -12,8 +12,9 @@ import PVCoreBridge
 
 /// All 14 built-in display palettes supported by the PokéMini emulator.
 ///
-/// Each palette defines two swatch entries corresponding to the emulator's pixel states.
-/// Index 0 maps to the OFF pixel (`p0`) and index 1 maps to the ON pixel (`p1`), matching `Video.c`.
+/// Each palette defines two swatch entries used for the picker UI swatch, ordered lightest→darkest
+/// to match the `CorePalette` convention. For "vector" (inverted) palettes the OFF pixel (`p0`) is
+/// dark and the ON pixel (`p1`) is bright, so their swatch order is reversed relative to `Video.c`.
 @objc public enum PokeMiniPalette: Int, CaseIterable {
     case defaultGreen    = 0   // "Default"
     case old             = 1   // "Old PokeMini"
@@ -77,8 +78,9 @@ extension PokeMiniPalette {
         }
     }
 
-    /// Two preview colours: index 0 = OFF pixel (`p0`), index 1 = ON pixel (`p1`).
-    /// Hex values match `p0`/`p1` in `PokeMini_VideoPalette_Index()` in `Video.c`.
+    /// Two preview colours ordered lightest→darkest, matching the `CorePalette` swatch convention.
+    /// For standard palettes index 0 is `p0` (OFF, light) and index 1 is `p1` (ON, dark).
+    /// For vector (inverted) palettes the order is reversed so the swatch still reads light→dark.
     public var previewColors: [PaletteColor] {
         switch self {
         case .defaultGreen:
@@ -90,11 +92,11 @@ extension PokeMiniPalette {
         case .green:
             return [.init(hex: 0x00FF00), .init(hex: 0x000000)]
         case .greenVector:
-            return [.init(hex: 0x000000), .init(hex: 0x00FF00)]
+            return [.init(hex: 0x00FF00), .init(hex: 0x000000)]
         case .red:
             return [.init(hex: 0xFF0000), .init(hex: 0x000000)]
         case .redVector:
-            return [.init(hex: 0x000000), .init(hex: 0xFF0000)]
+            return [.init(hex: 0xFF0000), .init(hex: 0x000000)]
         case .blueLCD:
             return [.init(hex: 0xC0C0FF), .init(hex: 0x4040FF)]
         case .ledBacklight:
@@ -104,11 +106,11 @@ extension PokeMiniPalette {
         case .blue:
             return [.init(hex: 0x0000FF), .init(hex: 0x000000)]
         case .blueVector:
-            return [.init(hex: 0x000000), .init(hex: 0x0000FF)]
+            return [.init(hex: 0x0000FF), .init(hex: 0x000000)]
         case .sepia:
             return [.init(hex: 0xD4BC8C), .init(hex: 0x704214)]
         case .monochromeVector:
-            return [.init(hex: 0x000000), .init(hex: 0xFFFFFF)]
+            return [.init(hex: 0xFFFFFF), .init(hex: 0x000000)]
         }
     }
 
