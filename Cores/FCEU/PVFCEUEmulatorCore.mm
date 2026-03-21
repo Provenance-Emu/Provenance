@@ -53,6 +53,7 @@
 #include "fceux/src/palette.h"
 #include "fceux/src/state.h"
 #include "fceux/src/emufile.h"
+#include "FCEU-2.2.3/input/zapper.h"
 #include "zlib.h"
 
 #pragma clang diagnostic push
@@ -188,8 +189,19 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 
     //DLOG(@"FPS: %d", FCEUI_GetDesiredFPS() >> 24); // Hz
 
+    // Check whether the ROM requests a Zapper on port 1 (port index 1 is the standard
+    // Zapper port for Duck Hunt, Hogan's Alley, etc.).  FCEUGameInfo->input[] is
+    // populated by the ROM loader from the iNES/UNIF header or a hard-coded table.
+    _zapperEnabled = (FCEUGameInfo->input[1] == SI_ZAPPER);
+
     FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
-    FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
+    if (_zapperEnabled) {
+        memset(_zapperData, 0, sizeof(_zapperData));
+        FCEUI_SetInput(1, SI_ZAPPER, _zapperData, 0);
+        ILOG(@"[FCEU] Zapper detected on port 1 — LightGunResponder active.");
+    } else {
+        FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
+    }
 
     // 4-Player / Fourscore setup.
     // FCEU packs P3 into bits 16-23 of pad[0] and P4 into bits 24-31 of pad[1].
@@ -238,6 +250,25 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
         pad[1][0] |= kFCMicBit;
     } else {
         pad[1][0] &= ~kFCMicBit;
+    }
+
+    // Feed Zapper position/trigger into FCEU's UpdateZapper data buffer.
+    // UpdateZapper(int w, void *data, int arg) expects uint32[3]: x, y, button.
+    // Bit 0 of button = trigger fired; bit 1 = offscreen (forces a miss).
+    if (_zapperEnabled) {
+        // FCEU NES screen is 256×240 (NTSC).
+        static const int kFCEUScreenWidth  = 256;
+        static const int kFCEUScreenHeight = 240;
+        _zapperData[0] = (uint32_t)(_lightGunPosition.x * kFCEUScreenWidth);
+        _zapperData[1] = (uint32_t)(_lightGunPosition.y * kFCEUScreenHeight);
+        if (_lightGunIsOffscreen) {
+            // Bit 1 signals offscreen to UpdateZapper (forces ZD[w].mzb|=2 → miss).
+            _zapperData[2] = 2;
+        } else if (_lightGunTrigger) {
+            _zapperData[2] = 1;
+        } else {
+            _zapperData[2] = 0;
+        }
     }
 
     FCEUI_Emulate(&pXBuf, &soundBuffer, &soundSize, 0);
@@ -388,6 +419,39 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     delete emuFile;
     
     return result;
+}
+
+# pragma mark - LightGunResponder
+
+- (BOOL)gameSupportsLightGun {
+    return _zapperEnabled;
+}
+
+- (BOOL)requiresLightGun {
+    return NO;
+}
+
+- (void)lightGunMovedToPoint:(CGPoint)point isOffscreen:(BOOL)offscreen {
+    _lightGunPosition    = point;
+    _lightGunIsOffscreen = offscreen;
+}
+
+- (void)lightGunTriggerDown {
+    _lightGunTrigger = YES;
+}
+
+- (void)lightGunTriggerUp {
+    _lightGunTrigger = NO;
+}
+
+- (void)lightGunReloadDown {
+    // Reload = shoot offscreen; clear trigger so we don't double-fire.
+    _lightGunIsOffscreen = YES;
+    _lightGunTrigger     = NO;
+}
+
+- (void)lightGunReloadUp {
+    _lightGunIsOffscreen = NO;
 }
 
 #pragma mark - FCEUX internal functions and stubs

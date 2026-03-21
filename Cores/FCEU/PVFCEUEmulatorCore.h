@@ -34,10 +34,17 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface PVFCEUEmulatorCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVNESSystemResponderClient> {
+@interface PVFCEUEmulatorCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVNESSystemResponderClient, LightGunResponder> {
 #pragma clang diagnostic pop
 
     uint32_t pad[2][12];
+
+    // Light gun (Zapper) state — written by LightGunResponder methods, consumed each frame.
+    uint32_t _zapperData[3]; // [0]=x, [1]=y, [2]=button bits (1=trigger, 2=offscreen)
+    CGPoint  _lightGunPosition;
+    BOOL     _lightGunTrigger;
+    BOOL     _lightGunIsOffscreen;
+    BOOL     _zapperEnabled; // YES when the loaded ROM uses a Zapper on port 1
 }
 
 - (void)internalSwapDisc:(NSUInteger)discNumber;
