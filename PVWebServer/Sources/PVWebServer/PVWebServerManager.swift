@@ -69,9 +69,11 @@ public actor PVWebServerManager {
     @discardableResult
     public func start() async throws -> Bool {
         // Stop any existing server first.
+        // Clear activeServer BEFORE awaiting stopServers() to avoid actor re-entrancy
+        // issues where a concurrent call to start() could observe the stale reference.
         if let existing = activeServer {
-            await existing.stopServers()
             activeServer = nil
+            await existing.stopServers()
         }
 
         let server = makeServer()
