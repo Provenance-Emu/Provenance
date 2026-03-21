@@ -180,7 +180,7 @@ public struct NetplayRoomBrowserView: View {
 
     private func join(room: NetplayRoom, spectate: Bool) {
         isJoining = true
-        Task {
+        Task { @MainActor in
             do {
                 let settings = NetplaySettings.fromStoredDefaults()
                 if spectate {
