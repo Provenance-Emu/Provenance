@@ -23,6 +23,9 @@ import PVFeatureFlags
 public struct NetplayLobbyView: View {
     let gameName: String
     let coreIdentifier: String
+    /// MD5 hash of the local ROM — threaded down to the room browser for hash verification.
+    /// Pass an empty string if unknown (verification will show "unknown" state).
+    let localGameHash: String
 
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var showRoomBrowser = false
@@ -36,9 +39,10 @@ public struct NetplayLobbyView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(gameName: String, coreIdentifier: String) {
+    public init(gameName: String, coreIdentifier: String, localGameHash: String = "") {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
+        self.localGameHash = localGameHash
     }
 
     public var body: some View {
@@ -112,10 +116,10 @@ public struct NetplayLobbyView: View {
                 }
             }
             .sheet(isPresented: $showRoomBrowser) {
-                NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, spectateMode: false)
+                NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash, spectateMode: false)
             }
             .sheet(isPresented: $showSpectate) {
-                NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, spectateMode: true)
+                NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash, spectateMode: true)
             }
             .sheet(isPresented: $showCreateRoom) {
                 NetplayCreateRoomView(gameName: gameName, coreIdentifier: coreIdentifier)

@@ -541,7 +541,8 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingNetworkPlay) {
             NetplayLobbyView(
                 gameName: emulatorVC.game?.title ?? "",
-                coreIdentifier: emulatorVC.core.coreIdentifier ?? ""
+                coreIdentifier: emulatorVC.core.coreIdentifier ?? "",
+                localGameHash: emulatorVC.game?.md5Hash ?? ""
             )
         }
         #endif
