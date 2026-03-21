@@ -156,7 +156,7 @@ extension MednafenGameCore: PVNetplayCapable {
                 gameHash: "",
                 coreIdentifier: "com.provenance.mednafen",
                 maxPlayers: ctx?.settings.maxPlayers ?? 2,
-                currentPlayers: ctx?.settings.maxPlayers ?? 2,
+                currentPlayers: 1,
                 isLAN: true,
                 hostAddress: hostAddr,
                 port: port
