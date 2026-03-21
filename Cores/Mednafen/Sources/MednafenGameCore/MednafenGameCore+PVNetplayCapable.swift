@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 3/21/26.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Adapts MednafenGameCoreBridge to the PVNetplayCapable protocol so that
+//  Adapts MednafenGameCore (via its internal bridge) to PVNetplayCapable so that
 //  PVNetplayManager can drive Mednafen netplay sessions natively.
 //
 //  Mednafen netplay model:
@@ -22,70 +22,136 @@ import Foundation
 import Combine
 import PVNetplay
 import MednafenGameCoreBridge
+import ObjectiveC
 
-// MARK: - Sendable
-//
-// MednafenGameCoreBridge is ObjC; its netplay state is mutated by Mednafen's
-// run-loop thread. @unchecked Sendable is intentional here — callers must not
-// mutate netplay state concurrently.
-extension MednafenGameCoreBridge: @unchecked Sendable {}
+// MARK: - Session context
+
+/// Boxes the last-used role and settings so they can be stored via ObjC associated objects.
+private final class MednafenNetplayContext: NSObject {
+    var role: NetplayRole
+    var settings: NetplaySettings
+    init(role: NetplayRole, settings: NetplaySettings) {
+        self.role = role
+        self.settings = settings
+    }
+}
+
+// MARK: - Associated-object keys
+
+private enum AssocKeys {
+    static var context    = "mdn_netplay_ctx"
+    static var queue      = "mdn_netplay_queue"
+    static var subject    = "mdn_netplay_subject"
+    static var cancellable = "mdn_netplay_cancel"
+}
 
 // MARK: - PVNetplayCapable
 
-extension MednafenGameCoreBridge: PVNetplayCapable {
+// MednafenGameCore is ObjC-backed; its netplay state is mutated by Mednafen's
+// run-loop thread.  @unchecked Sendable is intentional — callers must not
+// mutate netplay state concurrently.
+extension MednafenGameCore: PVNetplayCapable {
 
-    public var supportsNetplay: Bool { mednafenNetplaySupported }
+    public var supportsNetplay: Bool { _bridge.mednafenNetplaySupported }
 
     public var netplayEngineName: String { "Mednafen" }
 
-    // MARK: Control
+    // MARK: - Associated-object helpers
+
+    private var _netplayContext: MednafenNetplayContext? {
+        get { objc_getAssociatedObject(self, &AssocKeys.context) as? MednafenNetplayContext }
+        set { objc_setAssociatedObject(self, &AssocKeys.context, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// Serial queue serialising all bridge netplay calls to avoid data races.
+    private var _netplayQueue: DispatchQueue {
+        if let q = objc_getAssociatedObject(self, &AssocKeys.queue) as? DispatchQueue { return q }
+        let q = DispatchQueue(label: "com.provenance.mednafen.netplay", qos: .userInitiated)
+        objc_setAssociatedObject(self, &AssocKeys.queue, q, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return q
+    }
+
+    private var _stateSubject: CurrentValueSubject<NetplayState, Never> {
+        if let existing = objc_getAssociatedObject(self, &AssocKeys.subject)
+            as? CurrentValueSubject<NetplayState, Never> {
+            return existing
+        }
+        let subject = CurrentValueSubject<NetplayState, Never>(.idle)
+        objc_setAssociatedObject(self, &AssocKeys.subject, subject, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return subject
+    }
+
+    private var _pollingCancellable: AnyCancellable? {
+        get { objc_getAssociatedObject(self, &AssocKeys.cancellable) as? AnyCancellable }
+        set { objc_setAssociatedObject(self, &AssocKeys.cancellable, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    // MARK: - Control
 
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
-        guard mednafenNetplaySupported else { throw NetplayError.unsupported }
-        guard mednafenNetplayStatus == .idle else { throw NetplayError.alreadyActive }
+        guard supportsNetplay else { throw NetplayError.unsupported }
+        guard _bridge.mednafenNetplayStatus == .idle else { throw NetplayError.alreadyActive }
 
         let (host, port) = resolvedHostPort(for: role, settings: settings)
         let password = settings.password ?? ""
 
-        var nsError: NSError?
-        let ok = netplayConnectToHost(host,
-                                      port: port,
-                                      nickname: settings.nickname,
-                                      password: password,
-                                      error: &nsError)
-        if !ok {
-            let desc = nsError?.localizedDescription ?? "Mednafen connection failed."
-            throw NetplayError.connectionFailed(desc)
+        // Dispatch bridge calls onto a dedicated serial queue to avoid racing
+        // with the Mednafen run-loop thread that mutates engine globals.
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            _netplayQueue.async { [weak self] in
+                guard let self else { continuation.resume(); return }
+                var nsError: NSError?
+                let ok = self._bridge.netplayConnectToHost(host,
+                                                           port: port,
+                                                           nickname: settings.nickname,
+                                                           password: password,
+                                                           error: &nsError)
+                if ok {
+                    self._netplayContext = MednafenNetplayContext(role: role, settings: settings)
+                    continuation.resume()
+                } else {
+                    let desc = nsError?.localizedDescription ?? "Mednafen connection failed."
+                    continuation.resume(throwing: NetplayError.connectionFailed(desc))
+                }
+            }
         }
     }
 
     public func stopNetplay() async {
-        netplayDisconnect()
+        _netplayQueue.async { [weak self] in
+            guard let self else { return }
+            self._bridge.netplayDisconnect()
+            self._netplayContext = nil
+            self._stateSubject.send(.idle)
+        }
     }
 
-    // MARK: State
+    // MARK: - State
 
     public var netplayState: NetplayState {
-        switch mednafenNetplayStatus {
+        switch _bridge.mednafenNetplayStatus {
         case .idle:
             return .idle
         case .connected:
+            let ctx = _netplayContext
+            let role = ctx?.role ?? .client(host: "0.0.0.0", port: 4046)
+            let (hostAddr, port) = resolvedHostPort(for: role, settings: ctx?.settings ?? .defaultLAN)
             let room = NetplayRoom(
                 hostName: "Mednafen",
                 gameName: "",
                 gameHash: "",
                 coreIdentifier: "com.provenance.mednafen",
-                maxPlayers: 2,
+                maxPlayers: ctx?.settings.maxPlayers ?? 2,
                 currentPlayers: 2,
                 isLAN: true,
-                hostAddress: "0.0.0.0",
-                port: 4046
+                hostAddress: hostAddr,
+                port: port
             )
             let session = NetplaySession(
                 room: room,
-                role: .client(host: "0.0.0.0", port: 4046),
+                role: role,
                 peers: [],
-                frameDelay: 0,
+                frameDelay: ctx?.settings.frameDelay ?? 0,
                 isRollbackEnabled: false
             )
             return .connected(session: session)
@@ -94,31 +160,42 @@ extension MednafenGameCoreBridge: PVNetplayCapable {
         }
     }
 
+    /// A single shared publisher backed by one polling timer.
+    ///
+    /// Creates the timer on first access and caches both the subject and the
+    /// `AnyCancellable` as associated objects so that subsequent accesses to
+    /// this property return the same publisher without spawning extra timers.
     public var netplayStatePublisher: AnyPublisher<NetplayState, Never> {
-        // Poll every second — Mednafen does not expose a Combine-ready status publisher.
-        Timer.publish(every: 1.0, on: .main, in: .common)
-            .autoconnect()
-            .map { [weak self] _ in self?.netplayState ?? .idle }
-            .eraseToAnyPublisher()
+        let subject = _stateSubject
+        if _pollingCancellable == nil {
+            _pollingCancellable = Timer.publish(every: 1.0, on: .main, in: .common)
+                .autoconnect()
+                .sink { [weak self] _ in
+                    guard let self else { return }
+                    subject.send(self.netplayState)
+                }
+        }
+        return subject.eraseToAnyPublisher()
     }
 
     // MARK: - Helpers
 
-    /// Resolves (host, port) from a `NetplayRole`.
+    /// Maps a `NetplayRole` to the `(host, port)` pair Mednafen should connect to.
     ///
-    /// For `.host`: returns `("127.0.0.1", settings.port)` — the caller is expected
-    /// to have already started a local `mednafen-server` on that port.
+    /// A port value of `0` is treated as "use Mednafen's default server port (4046)"
+    /// rather than letting the OS assign an ephemeral port, since Mednafen's server
+    /// always listens on a fixed port.
     private func resolvedHostPort(for role: NetplayRole,
                                   settings: NetplaySettings) -> (String, UInt16) {
         switch role {
         case .host(let port):
-            // "Hosting" = connect to local server.
-            return ("127.0.0.1", port)
+            // "Hosting" = connect to a local mednafen-server instance.
+            return ("127.0.0.1", port == 0 ? 4046 : port)
         case .client(let host, let port):
-            return (host, port)
+            return (host, port == 0 ? 4046 : port)
         case .spectator(let host, let port):
-            // Mednafen has no spectator role — join as client.
-            return (host, port)
+            // Mednafen has no spectator role — join as a regular client.
+            return (host, port == 0 ? 4046 : port)
         }
     }
 }

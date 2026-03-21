@@ -140,7 +140,7 @@ let targets: [Target] = [
       "PVCoreObjCBridge",
       "PVEmulatorCore",
       "PVLogging",
-      "PVNetplay",
+      .target(name: "PVNetplay", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
       "PVPlists",
       "PVSettings",
       "PVPrimitives",

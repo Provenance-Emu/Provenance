@@ -12,15 +12,15 @@
 @import PVLoggingObjC;
 
 // Mednafen netplay C++ API — defined in mednafen/src/netplay.cpp
+// MDFNI_SetSetting / MDFNI_SetSettingUI are declared in mednafen-driver.h
+// (pulled in by @import mednafen above); redeclaring them here with different
+// signatures would cause a conflicting-declaration compile error, so we rely
+// on the module-imported declarations.
 namespace Mednafen {
     // Connect using netplay.host / netplay.port / netplay.nick / netplay.gamekey settings.
     extern void MDFNI_NetplayConnect(void);
     // Disconnect from the current session and free Connection.
     extern void MDFNI_NetplayDisconnect(void);
-    // Set a Mednafen string setting.
-    extern void MDFNI_SetSetting(const char *name, const std::string &value);
-    // Set a Mednafen unsigned-int setting.
-    extern void MDFNI_SetSettingUI(const char *name, unsigned long long value);
     // 0 when idle, non-zero when a session is fully joined.
     extern int MDFNnetplay;
 }
@@ -68,7 +68,8 @@ NSErrorDomain const PVMednafenNetplayErrorDomain = @"com.provenance.mednafen.net
     Mednafen::MDFNI_SetSetting("netplay.nick",    std::string(nickname.UTF8String ?: ""));
     Mednafen::MDFNI_SetSetting("netplay.gamekey", std::string(password.UTF8String ?: ""));
 
-    DLOG(@"[Mednafen Netplay] Connecting → %@:%u nick=%@ key=%@", host, port, nickname, password);
+    NSString *redactedKey = (password.length > 0) ? @"<set>" : @"<empty>";
+    DLOG(@"[Mednafen Netplay] Connecting → %@:%u nick=%@ key=%@", host, port, nickname, redactedKey);
 
     @try {
         // MDFNI_NetplayConnect reads the settings we just set and opens a TCP connection.
