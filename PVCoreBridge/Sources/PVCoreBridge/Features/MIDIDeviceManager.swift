@@ -66,15 +66,45 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Available MIDI output destinations (devices that receive MIDI *from* Provenance).
     @Published public private(set) var destinations: [MIDIEndpointInfo] = []
 
-    /// Currently selected MIDI input source (nil = none).
+    /// Currently selected MIDI input source (`nil` = all sources / auto-detect).
     /// Setting this disconnects all other sources and reconnects only the selected one
-    /// (or all sources when set to nil, enabling auto-detect across every device).
+    /// (or all sources when set to `nil`, enabling auto-detect across every device).
+    /// Changes are persisted to UserDefaults so the choice survives app restarts.
     @Published public var selectedSourceID: MIDIUniqueID? {
-        didSet { if oldValue != selectedSourceID { reconnectSources() } }
+        didSet {
+            if oldValue != selectedSourceID {
+                reconnectSources()
+                if let id = selectedSourceID {
+                    UserDefaults.standard.set(Int(id), forKey: Self.udKeySource)
+                } else if !clearingStaleSelection {
+                    // User explicitly chose "None": remove the persisted key so auto-restore
+                    // doesn't override the choice if the device reappears this session or next launch.
+                    UserDefaults.standard.removeObject(forKey: Self.udKeySource)
+                    sourcePreferenceApplied = true
+                }
+                // clearingStaleSelection == true: nil was set by `refreshEndpoints()` because the
+                // device went away. Preserve UserDefaults so it can be restored when it reappears.
+            }
+        }
     }
 
-    /// Currently selected MIDI output destination (nil = none).
-    @Published public var selectedDestinationID: MIDIUniqueID?
+    /// Currently selected MIDI output destination (`nil` = no active destination).
+    /// Changes are persisted to UserDefaults so the choice survives app restarts.
+    @Published public var selectedDestinationID: MIDIUniqueID? {
+        didSet {
+            if oldValue != selectedDestinationID {
+                if let id = selectedDestinationID {
+                    UserDefaults.standard.set(Int(id), forKey: Self.udKeyDestination)
+                } else if !clearingStaleSelection {
+                    // User explicitly chose "None": remove the persisted key so auto-restore
+                    // doesn't override the choice if the device reappears this session or next launch.
+                    UserDefaults.standard.removeObject(forKey: Self.udKeyDestination)
+                    destinationPreferenceApplied = true
+                }
+                // clearingStaleSelection == true: device went away; preserve UserDefaults for restore.
+            }
+        }
+    }
 
     /// `true` while waiting for any incoming MIDI message to auto-select its source.
     @Published public private(set) var isAutoDetecting: Bool = false
@@ -107,11 +137,58 @@ public final class MIDIDeviceManager: ObservableObject {
     private weak var _responder: (any MIDIResponder)?
     private var activityResetTask: Task<Void, Never>?
 
+    // Per-session flags: track whether the persisted preference has already been auto-applied
+    // this session.  Stored in memory only (not UserDefaults) so each app launch gets a fresh
+    // opportunity to restore the preferred device, while mid-session explicit "None" choices
+    // (e.g. user deselecting a source) are respected for the remainder of the session.
+    private var sourcePreferenceApplied = false
+    private var destinationPreferenceApplied = false
+
+    // Guard flag used by `refreshEndpoints()` to signal that it (not the user) is clearing
+    // a stale selection due to a CoreMIDI topology change.  When true, `didSet` observers
+    // preserve the UserDefaults key and leave preference-applied flags unchanged, so the
+    // device can still be auto-restored when it reappears.
+    private var clearingStaleSelection = false
+
+    // UserDefaults keys — MUST match the `Defaults.Keys` string names defined in PVSettings
+    // (`midiSourceUniqueID` / `midiDestinationUniqueID`).
+    //
+    // These are intentionally duplicated here rather than importing PVSettings into PVCoreBridge,
+    // which would add a cross-tier dependency. If you rename these keys, update BOTH this file
+    // and `PVSettings/Sources/PVSettings/Settings/Model/PVSettingsModel.swift` in lockstep.
+    //
+    // The shared string ensures `Defaults[.midiSourceUniqueID]` (PVSettings) and
+    // `UserDefaults.standard.object(forKey:)` (MIDIDeviceManager) read/write the same slot.
+    private static let udKeySource = "midiSourceUniqueID"
+    private static let udKeyDestination = "midiDestinationUniqueID"
+
     // MARK: Init
 
     private init() {
         setupMIDI()
         refreshEndpoints()
+        restorePersistedSelection()
+    }
+
+    // MARK: Private helpers
+
+    /// Restores the previously-persisted source/destination selection from UserDefaults.
+    /// Called once during init, after `refreshEndpoints()` has populated `sources`/`destinations`.
+    private func restorePersistedSelection() {
+        if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
+            if sources.contains(where: { $0.id == id }) {
+                selectedSourceID = id
+                sourcePreferenceApplied = true
+            }
+        }
+        if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
+            if destinations.contains(where: { $0.id == id }) {
+                selectedDestinationID = id
+                destinationPreferenceApplied = true
+            }
+        }
     }
 
     // MARK: Public API
@@ -132,12 +209,45 @@ public final class MIDIDeviceManager: ObservableObject {
         // Connect input port to all sources (idempotent for already-connected sources)
         connectAllSources()
 
-        // Clear stale selections
+        // Clear stale selections — set clearingStaleSelection so didSet observers know this
+        // is a topology-driven nil (device gone) rather than a user "None" choice, so they
+        // preserve the UserDefaults key and leave preference-applied flags unchanged.
+        clearingStaleSelection = true
         if let id = selectedSourceID, !sources.contains(where: { $0.id == id }) {
             selectedSourceID = nil
         }
         if let id = selectedDestinationID, !destinations.contains(where: { $0.id == id }) {
             selectedDestinationID = nil
+        }
+        clearingStaleSelection = false
+
+        // Re-attempt to restore the persisted selection if it wasn't applied at init
+        // (handles the case where the previously-selected device appears after launch
+        // due to a CoreMIDI topology change / hot-plug event).
+        //
+        // To avoid overriding an explicit "None / all sources" user choice, we only
+        // auto-apply a persisted selection once per session. After a successful restore,
+        // subsequent calls to `refreshEndpoints()` will not re-apply it when the
+        // current selection is `nil`.  The flag is in-memory only so each app launch
+        // gets a fresh opportunity to restore.
+        if selectedSourceID == nil,
+           !sourcePreferenceApplied,
+           let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
+            if sources.contains(where: { $0.id == id }) {
+                selectedSourceID = id
+                sourcePreferenceApplied = true
+            }
+        }
+
+        if selectedDestinationID == nil,
+           !destinationPreferenceApplied,
+           let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
+            if destinations.contains(where: { $0.id == id }) {
+                selectedDestinationID = id
+                destinationPreferenceApplied = true
+            }
         }
     }
 

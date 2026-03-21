@@ -866,6 +866,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         startNetplayBridgeIfNeeded()
         #endif
 
+        // Connect MIDIDeviceManager to this core if it advertises MIDI support.
+        core.attachMIDIResponder()
+
         // Set up the indicator light overlay (JIT status, etc.) — positioned in controller margin.
         setupIndicatorOverlay()
 
@@ -1468,6 +1471,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Remove indicator overlay
         removeIndicatorOverlay()
+
+        // Detach MIDI responder before tearing down the core.
+        #if canImport(CoreMIDI) && !os(tvOS)
+        if #available(iOS 15, tvOS 15, *) {
+            MIDIDeviceManager.shared.setResponder(nil)
+        }
+        #endif
 
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)

@@ -25,6 +25,10 @@
 /// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
 extern bool pvjit_acquired(void);
 
+/// Returns the shared CoreMIDI-backed retro_midi_interface defined in PVThinLibretroFrontend.mm.
+/// Declared here so the ObjC env callback can fill the pointer without C++ headers.
+extern struct retro_midi_interface *pv_libretro_midi_interface(void);
+
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
@@ -2078,10 +2082,25 @@ static bool environment_callback(unsigned cmd, void *data) {
 
         // MARK: - MIDI Interface — env 48
         case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
-            /// MIDI I/O for cores like dosbox or music-focused emulators.
-            /// Not currently supported — return false so the core skips MIDI.
-            DLOG(@"Environ GET_MIDI_INTERFACE — not supported on this platform");
+            /// Wire the CoreMIDI-backed interface defined in PVThinLibretroFrontend.mm.
+            /// Unlocks MIDI for cores like DOSBox-Pure, Hatari, and NP2Kai.
+#if TARGET_OS_TV
+            // CoreMIDI is unavailable on tvOS — return false so cores don't enable MIDI
+            // and then hit stub no-ops at runtime.
+            DLOG(@"Environ GET_MIDI_INTERFACE — CoreMIDI unavailable on tvOS");
             return false;
+#else
+            struct retro_midi_interface **midiPtr = (struct retro_midi_interface **)data;
+            if (!midiPtr) return false;
+            struct retro_midi_interface *iface = pv_libretro_midi_interface();
+            if (!iface) {
+                DLOG(@"Environ GET_MIDI_INTERFACE — CoreMIDI interface unavailable");
+                return false;
+            }
+            *midiPtr = iface;
+            ILOG(@"Environ GET_MIDI_INTERFACE: provided CoreMIDI-backed interface");
+            return true;
+#endif
         }
 
         // MARK: - Microphone Interface — env 75 | EXPERIMENTAL
