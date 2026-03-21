@@ -489,6 +489,16 @@ extension ProvenanceApp {
                 ELOG("Open Query didn't have acceptable values")
                 return false
             }
+
+        case .netplay:
+            NotificationCenter.default.post(
+                name: .netplayJoinRequest,
+                object: nil,
+                userInfo: components.queryItems?.reduce(into: [String: Any]()) { dict, item in
+                    if let value = item.value { dict[item.name] = value }
+                }
+            )
+            return true
         }
     }
 
