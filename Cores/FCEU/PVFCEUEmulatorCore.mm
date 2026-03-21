@@ -45,6 +45,7 @@
 #import <GLUT/GLUT.h>
 #endif
 
+#include <os/lock.h>
 #include "fceux/src/fceu.h"
 #include "fceux/src/driver.h"
 #include "fceux/src/input.h"
@@ -93,6 +94,11 @@ static const float kFCMicThreshold = 0.015f;
     AVAudioEngine *_micEngine;
 #endif
     _Atomic(BOOL) _micAudioActive;  // set by audio tap; applied in executeFrame
+
+    // Protects _lightGunPosition, _lightGunTrigger, _lightGunIsOffscreen.
+    // Written on the main thread by LightGunResponder callbacks;
+    // read on the emulator thread in executeFrameSkippingFrame:.
+    os_unfair_lock _lightGunLock;
 }
 
 #if !TARGET_OS_TV
@@ -113,9 +119,10 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
         soundBuffer = nil;
         pXBuf = nil;
         soundSize = 0;
-        
+
         videoBuffer = (uint32_t *)malloc(WIDTH * HEIGHT * 4);
         currentDisc = 1;
+        _lightGunLock = OS_UNFAIR_LOCK_INIT;
     }
 
 	_current = self;
@@ -188,8 +195,34 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 
     //DLOG(@"FPS: %d", FCEUI_GetDesiredFPS() >> 24); // Hz
 
-    FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
-    FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
+    // Check whether the ROM requests a Zapper on either controller port.
+    // Port 1 = standard NES Zapper (Duck Hunt, Hogan's Alley, Wild Gunman).
+    // Port 0 = VS UniSystem Zapper (set by vsuni.cpp for VS Duck Hunt, etc.).
+    // FCEUGameInfo->input[] is populated by the ROM loader from the iNES/UNIF
+    // header or a hard-coded table.
+    BOOL zapperOnPort0 = (FCEUGameInfo->input[0] == SI_ZAPPER);
+    BOOL zapperOnPort1 = (FCEUGameInfo->input[1] == SI_ZAPPER);
+    _zapperEnabled = zapperOnPort0 || zapperOnPort1;
+
+    if (_zapperEnabled) {
+        memset(_zapperData, 0, sizeof(_zapperData));
+    }
+
+    // Port 0
+    if (zapperOnPort0) {
+        FCEUI_SetInput(0, SI_ZAPPER, _zapperData, 0);
+        ILOG(@"[FCEU] Zapper detected on port 0 (VS UniSystem) — LightGunResponder active.");
+    } else {
+        FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
+    }
+
+    // Port 1
+    if (zapperOnPort1) {
+        FCEUI_SetInput(1, SI_ZAPPER, _zapperData, 0);
+        ILOG(@"[FCEU] Zapper detected on port 1 — LightGunResponder active.");
+    } else {
+        FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
+    }
 
     // 4-Player / Fourscore setup.
     // FCEU packs P3 into bits 16-23 of pad[0] and P4 into bits 24-31 of pad[1].
@@ -240,6 +273,49 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
         pad[1][0] &= ~kFCMicBit;
     }
 
+    // Feed Zapper position/trigger into FCEU's UpdateZapper data buffer.
+    // UpdateZapper(int w, void *data, int arg) expects uint32[3]: x, y, button.
+    // Bit 0 of button = trigger fired; bit 1 = offscreen (forces a miss).
+    if (_zapperEnabled) {
+        // Snapshot light gun state — written on the main thread by LightGunResponder
+        // callbacks, read here on the emulator thread.
+        os_unfair_lock_lock(&_lightGunLock);
+        CGPoint lightGunPos     = _lightGunPosition;
+        BOOL    lightGunTrigger = _lightGunTrigger;
+        BOOL    lightGunOffscreen = _lightGunIsOffscreen;
+        os_unfair_lock_unlock(&_lightGunLock);
+
+        // Convert normalized [0,1] light gun position to pixel coordinates and clamp
+        // to valid NES screen range ([0, WIDTH-1] x [0, HEIGHT-1]) to avoid
+        // out-of-bounds access in FCEU's XBuf (WIDTH and HEIGHT defined at top of file).
+        int32_t zapperX = (int32_t)(lightGunPos.x * WIDTH);
+        int32_t zapperY = (int32_t)(lightGunPos.y * HEIGHT);
+        if (zapperX < 0) {
+            zapperX = 0;
+        } else if (zapperX >= WIDTH) {
+            zapperX = WIDTH - 1;
+        }
+        if (zapperY < 0) {
+            zapperY = 0;
+        } else if (zapperY >= HEIGHT) {
+            zapperY = HEIGHT - 1;
+        }
+        _zapperData[0] = (uint32_t)zapperX;
+        _zapperData[1] = (uint32_t)zapperY;
+
+        // Only set button bits when a shot is actually being fired.
+        // UpdateZapper treats any non-zero (ptr[2] & 3) as a click edge, so the
+        // offscreen/miss bit (2) must not be set during idle off-screen movement.
+        uint32_t button = 0;
+        if (lightGunTrigger) {
+            button |= 1; // bit 0: trigger pressed
+            if (lightGunOffscreen) {
+                button |= 2; // bit 1: offscreen shot → forces ZD[w].mzb|=2 → miss
+            }
+        }
+        _zapperData[2] = button;
+    }
+
     FCEUI_Emulate(&pXBuf, &soundBuffer, &soundSize, 0);
 
     pXBuf = XBuf;
@@ -276,7 +352,7 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     return FCEUI_GetDesiredFPS() / 16777216.0;
 }
 
-# pragma mark - Video
+#pragma mark - Video
 
 - (const void *)videoBuffer
 {
@@ -313,7 +389,7 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     return GL_RGBA;
 }
 
-# pragma mark - Audio
+#pragma mark - Audio
 
 - (double)audioSampleRate
 {
@@ -325,7 +401,7 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     return 2;
 }
 
-# pragma mark - Save States
+#pragma mark - Save States
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error  
 {
@@ -388,6 +464,53 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     delete emuFile;
     
     return result;
+}
+
+#pragma mark - LightGunResponder
+
+- (BOOL)gameSupportsLightGun {
+    return _zapperEnabled;
+}
+
+- (BOOL)requiresLightGun {
+    return NO;
+}
+
+- (void)lightGunMovedToPoint:(CGPoint)point isOffscreen:(BOOL)offscreen {
+    os_unfair_lock_lock(&_lightGunLock);
+    _lightGunPosition    = point;
+    _lightGunIsOffscreen = offscreen;
+    os_unfair_lock_unlock(&_lightGunLock);
+}
+
+- (void)lightGunTriggerDown {
+    os_unfair_lock_lock(&_lightGunLock);
+    _lightGunTrigger = YES;
+    os_unfair_lock_unlock(&_lightGunLock);
+}
+
+- (void)lightGunTriggerUp {
+    os_unfair_lock_lock(&_lightGunLock);
+    _lightGunTrigger = NO;
+    os_unfair_lock_unlock(&_lightGunLock);
+}
+
+- (void)lightGunReloadDown {
+    // Reload = fire an offscreen shot. Both offscreen and trigger must be set
+    // so the button logic in executeFrameSkippingFrame: sets bits 0|1 (offscreen shot).
+    os_unfair_lock_lock(&_lightGunLock);
+    _lightGunIsOffscreen = YES;
+    _lightGunTrigger     = YES;
+    os_unfair_lock_unlock(&_lightGunLock);
+}
+
+- (void)lightGunReloadUp {
+    // Clear the trigger; do NOT reset _lightGunIsOffscreen here — the authoritative
+    // offscreen state comes from lightGunMovedToPoint:isOffscreen: which may still
+    // report that the cursor is offscreen (e.g. if the pointer has not moved).
+    os_unfair_lock_lock(&_lightGunLock);
+    _lightGunTrigger = NO;
+    os_unfair_lock_unlock(&_lightGunLock);
 }
 
 #pragma mark - FCEUX internal functions and stubs
@@ -618,3 +741,5 @@ static NSMutableDictionary *fceu_cheatList = nil;
 }
 
 @end
+
+#pragma clang diagnostic pop
