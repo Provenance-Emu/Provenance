@@ -226,6 +226,8 @@ extension PVEmulatorViewController {
             DispatchQueue.main.async {
                 if success {
                     ILOG("[ClipCapture] Clip saved to Photos")
+                    // Clean up the temporary file now that it's safely in Photos.
+                    try? FileManager.default.removeItem(at: url)
                     self?.showClipAlert(title: "Clip Saved", message: "Your gameplay clip was saved to Photos.")
                 } else {
                     let msg = error?.localizedDescription ?? "Unknown error"
@@ -235,8 +237,9 @@ extension PVEmulatorViewController {
             }
         }
         #elseif os(tvOS)
-        // tvOS has no Photos write API — copy to the app's Documents folder instead
-        // so the user can access it via Finder or iTunes file sharing.
+        // tvOS has no Photos write API — copy to the app's Documents folder instead.
+        // The clip can then be accessed via Finder/iTunes File Sharing or developer
+        // tools such as Xcode's device container download.
         let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let destURL = docsURL.appendingPathComponent(url.lastPathComponent)
         do {
