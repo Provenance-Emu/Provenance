@@ -626,13 +626,6 @@ public struct PVSettingsView: View {
                                 VideoSection()
                             }
 
-                            // Recording & Streaming is iOS-only (ReplayKit not available on tvOS)
-                            #if os(iOS)
-                            TVOSSettingsSection(title: "Recording & Streaming", icon: "record.circle") {
-                                RecordingSection()
-                            }
-                            #endif
-
                             TVOSSettingsSection(title: "Controller", icon: "gamecontroller.fill") {
                                 ControllerSection()
                             }

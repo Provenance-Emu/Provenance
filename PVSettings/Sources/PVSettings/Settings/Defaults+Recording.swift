@@ -20,6 +20,6 @@ public extension Defaults.Keys {
     /// Show the recording button in the in-game HUD overlay.
     static let showRecordingOSD = Key<Bool>("showRecordingOSD", default: true)
 
-    /// Maximum clip duration in seconds for recording sessions.
+    /// Default clip duration in seconds for new recording sessions.
     static let recordingClipDuration = Key<Int>("recordingClipDuration", default: 30)
 }
