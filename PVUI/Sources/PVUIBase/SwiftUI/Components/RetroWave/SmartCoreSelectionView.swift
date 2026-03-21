@@ -133,12 +133,10 @@ public struct SmartCoreSelectionView: View {
                                 item: item,
                                 showSetDefault: showSetDefault && onSetDefault != nil,
                                 onSelect: {
-                                    isPresented = false
                                     onSelect(item.id)
                                 },
                                 onSetDefault: {
                                     onSetDefault?(item.id)
-                                    isPresented = false
                                     onSelect(item.id)
                                 }
                             )
