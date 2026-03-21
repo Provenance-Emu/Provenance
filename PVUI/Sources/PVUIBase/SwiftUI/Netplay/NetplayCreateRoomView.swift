@@ -27,6 +27,10 @@ public struct NetplayCreateRoomView: View {
     @State private var isStarting = false
     @State private var errorMessage: String?
     @State private var showError = false
+    @State private var showWaitingRoom = false
+    /// Set to true by NetplayWaitingRoomView when the host taps Start Game,
+    /// so onDismiss knows NOT to tear down the in-progress session.
+    @State private var gameStarted = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -68,10 +72,12 @@ public struct NetplayCreateRoomView: View {
                             .foregroundStyle(.secondary)
                     }
                     HStack {
-                        Text("Network")
+                        Text("Relay Server")
                         Spacer()
-                        Text("LAN Only")
+                        Text(settings.relayServer ?? "LAN Only")
                             .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
                     }
                 }
 
@@ -115,6 +121,18 @@ public struct NetplayCreateRoomView: View {
                 Button("OK", role: .cancel) {}
             } message: { msg in
                 Text(msg)
+            }
+            // After hosting starts successfully, navigate to the waiting room.
+            // When the waiting room is dismissed, also dismiss this sheet so the user
+            // returns to the lobby. Only disconnect if the game was NOT started.
+            .sheet(isPresented: $showWaitingRoom, onDismiss: {
+                if !gameStarted {
+                    Task { @MainActor in await netplay.disconnect() }
+                }
+                dismiss()
+            }) {
+                NetplayWaitingRoomView(gameName: gameName, coreIdentifier: coreIdentifier, settings: settings, gameStarted: $gameStarted)
+                    .interactiveDismissDisabled()
             }
             .onAppear {
                 if settings.roomName.isEmpty {
@@ -162,10 +180,11 @@ public struct NetplayCreateRoomView: View {
 
     private func startHosting() {
         isStarting = true
-        Task {
+        Task { @MainActor in
             do {
                 try await netplay.host(settings: settings)
-                dismiss()
+                // Navigate to waiting room — do not dismiss yet.
+                showWaitingRoom = true
             } catch {
                 errorMessage = error.localizedDescription
                 showError = true
