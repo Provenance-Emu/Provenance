@@ -270,7 +270,7 @@
 		B32C08F72D053F680024A3E2 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B32C08F62D053F680024A3E2 /* MoltenVK */; };
 		B32C08F92D053FF60024A3E2 /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */; };
 		B32C08FA2D053FF70024A3E2 /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B32C30752F6E6AEE003150F0 /* ThumbnailExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B32C30752F6E6AEE003150F0 /* ThumbnailExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B32C30792F6E6CD8003150F0 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B32C30782F6E6CD8003150F0 /* Defaults */; };
 		B32C307B2F6E6CDE003150F0 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B32C307A2F6E6CDE003150F0 /* PVSettings */; };
 		B32CEE3F2D20D40C0083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE3E2D20D40C0083552D /* PVFeatureFlags */; };
@@ -878,7 +878,7 @@
 		B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA502CB63A6200E2636D /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA542CB63A7B00E2636D /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA532CB63A7B00E2636D /* PVBeetlePSX.framework */; };
 		B3E2AA552CB63A7B00E2636D /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA532CB63A7B00E2636D /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2E83D2F6BBF880010BDDE /* QuickLookPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3CC22000000000100000001 /* QuickLookPreview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3E2E83D2F6BBF880010BDDE /* QuickLookPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3CC22000000000100000001 /* QuickLookPreview.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E2E8412F6BC1ED0010BDDE /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2E8402F6BC1ED0010BDDE /* Defaults */; };
 		B3E46CE92E2C512D00657240 /* PVDosBox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E46CE82E2C512D00657240 /* PVDosBox.framework */; };
 		B3E46CEA2E2C512D00657240 /* PVDosBox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E46CE82E2C512D00657240 /* PVDosBox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -11091,6 +11091,10 @@
 		};
 		B32C30772F6E6AEE003150F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
 			target = B355DFFD2920AA2000E4C858 /* ThumbnailExtension */;
 			targetProxy = B32C30762F6E6AEE003150F0 /* PBXContainerItemProxy */;
 		};
@@ -11197,6 +11201,10 @@
 		};
 		B3E2E83F2F6BBF880010BDDE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
 			target = B3CC2200000000010000000A /* QuickLookPreview */;
 			targetProxy = B3E2E83E2F6BBF880010BDDE /* PBXContainerItemProxy */;
 		};
