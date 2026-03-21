@@ -138,33 +138,32 @@ extension PVPPSSPPCore: PVNetplayCapable {
     /// All mutations of g_Config must occur on the main thread (where the
     /// PPSSPP run loop executes).
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
-        try await MainActor.run {
-            var error: NSError?
-            let ok: Bool
-            let effectiveAddress: String
-            switch role {
-            case .host:
-                if let relay = settings.relayServer {
-                    // WAN mode: connect to external relay server rather than hosting locally.
-                    effectiveAddress = relay
-                    ok = _bridge.connectToAdhocServer(relay, error: &error)
-                } else {
-                    effectiveAddress = "127.0.0.1"
-                    ok = _bridge.startAdhocLANHost(error: &error)
+        do {
+            try await MainActor.run {
+                let effectiveAddress: String
+                switch role {
+                case .host:
+                    if let relay = settings.relayServer {
+                        // WAN mode: connect to external relay server rather than hosting locally.
+                        effectiveAddress = relay
+                        try _bridge.connectToAdhocServer(relay)
+                    } else {
+                        effectiveAddress = "127.0.0.1"
+                        try _bridge.startAdhocLANHost()
+                    }
+                case .client(let host, _):
+                    effectiveAddress = host
+                    try _bridge.connectToAdhocServer(host)
+                case .spectator(let host, _):
+                    // PPSSPP has no spectator concept — join as a regular client.
+                    effectiveAddress = host
+                    try _bridge.connectToAdhocServer(host)
                 }
-            case .client(let host, _):
-                effectiveAddress = host
-                ok = _bridge.connectToAdhocServer(host, error: &error)
-            case .spectator(let host, _):
-                // PPSSPP has no spectator concept — join as a regular client.
-                effectiveAddress = host
-                ok = _bridge.connectToAdhocServer(host, error: &error)
+                lastNetplayContext = PPSSPPNetplayContext(role: role, settings: settings, effectiveServerAddress: effectiveAddress)
             }
-            if !ok {
-                let reason = (error as Error?)?.localizedDescription ?? "Unknown adhoc error"
-                throw NetplayError.connectionFailed(reason)
-            }
-            lastNetplayContext = PPSSPPNetplayContext(role: role, settings: settings, effectiveServerAddress: effectiveAddress)
+        } catch {
+            let reason = (error as NSError).localizedDescription
+            throw NetplayError.connectionFailed(reason)
         }
     }
 
