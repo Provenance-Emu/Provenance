@@ -193,6 +193,11 @@ import UIKit
 
         // Delta movement handler — GCMouse may invoke this off the main thread;
         // capture deltas before the hop to avoid any data races.
+        // A `Task { @MainActor }` is used to hop execution to the main actor.
+        // Mouse deltas can arrive at high frequency (120–1000 Hz), but the Task
+        // overhead (~1–5 µs each) is negligible compared to the event rate.
+        // Deltas are captured as value types (CGFloat) before the hop, ensuring
+        // no shared mutable state is accessed off-actor.
         input?.mouseMovedHandler = { [weak self] _, deltaX, deltaY in
             let dx = CGFloat(deltaX)
             let dy = CGFloat(deltaY)

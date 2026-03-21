@@ -14,8 +14,12 @@ import Foundation
 /// API but does not wire itself into the game-launch or teardown pipeline.
 /// Callers (e.g. the emulator view controller in `PVUIBase`) are responsible
 /// for calling `attach(to:)` after the core starts and `detach()` when the
-/// game ends. If the core does not conform to `LightGunResponder` or reports
-/// `gameSupportsLightGun == false`, all calls are no-ops.
+/// game ends.
+///
+/// `attach(to:)` requires a `LightGunResponder`-conforming core at the call
+/// site (compile-time enforced). If the core reports `gameSupportsLightGun == false`
+/// at runtime, any currently-attached driver is first detached, then the
+/// function returns without creating a new driver.
 ///
 /// Example usage from an emulator view controller:
 /// ```swift
@@ -41,6 +45,10 @@ public final class LightGunLifecycleManager {
 #if canImport(GameController)
     private var driver: GCMouseLightGunDriver?
 #endif
+    /// Weak reference to the attached core. Used by `isAttached` to reflect whether
+    /// a live, light-gun-capable core is currently bound. If the core is deallocated
+    /// without an explicit `detach()` call, this reference becomes nil and `isAttached`
+    /// returns `false`; the underlying driver (if any) safely handles nil responders.
     private weak var core: (AnyObject & LightGunResponder)?
 
     // MARK: - Init
@@ -50,7 +58,9 @@ public final class LightGunLifecycleManager {
     // MARK: - Public API
 
     /// Attach light gun input to the given core if it supports light guns.
-    /// Safe to call even if the core reports `gameSupportsLightGun == false` — it will no-op.
+    ///
+    /// If the core reports `gameSupportsLightGun == false`, any currently-attached driver
+    /// is first detached and then the function returns without creating a new driver.
     /// Calling this while a driver is already attached will detach the previous driver first.
     public func attach(to core: some LightGunResponder & AnyObject) {
         // Always detach first so any previously-attached driver is released and the
@@ -75,7 +85,10 @@ public final class LightGunLifecycleManager {
     }
 
     /// Whether a light gun driver is currently active.
-    /// Returns `true` on all platforms as long as a light-gun-capable core is attached.
+    ///
+    /// Returns `true` as long as a light-gun-capable core is attached AND still alive.
+    /// If the core is deallocated before `detach()` is called, this returns `false`;
+    /// the underlying driver will silently discard events until `detach()` is explicitly called.
     public var isAttached: Bool {
         return core != nil
     }
