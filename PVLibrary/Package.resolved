@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
+        "version" : "1.0.0"
       }
     },
     {
