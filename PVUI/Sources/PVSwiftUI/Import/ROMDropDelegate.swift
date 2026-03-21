@@ -6,10 +6,10 @@
 //  Copyright 2026 Provenance Emu. All rights reserved.
 //
 //  Implements native drag & drop ROM import (issues #2136 / #2659; PR #3406).
-//  Guard with !os(tvOS) && !os(watchOS) — onDrop is unavailable on both platforms.
+//  iOS/iPadOS/macCatalyst only — onDrop is unavailable on tvOS, watchOS, and macOS.
 //
 
-#if !os(tvOS) && !os(watchOS)
+#if os(iOS)
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -134,9 +134,9 @@ public extension View {
     /// Dropped ROMs/zips are enqueued into `PVGameLibraryUpdatesController` and
     /// processed by the existing `PVGameImporter` pipeline.
     ///
-    /// Guard: unavailable on tvOS and watchOS — do not call on those platforms.
+    /// Guard: iOS/iPadOS/macCatalyst only — do not call on tvOS, watchOS, or macOS.
     func romDropTarget() -> some View {
         modifier(ROMDropTargetModifier())
     }
 }
-#endif // !os(tvOS) && !os(watchOS)
+#endif // os(iOS)
