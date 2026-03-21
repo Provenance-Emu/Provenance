@@ -87,6 +87,32 @@ public final class PVIndicatorRegistry: ObservableObject {
         update(.jitStatus, state: jitState.indicatorState)
     }
 
+    /// Updates the analog mode indicator.
+    /// - Parameter state: The analog mode state to display.
+    public func updateAnalogMode(_ state: PVAnalogModeIndicatorState) {
+        update(.analogMode, state: state.indicatorState)
+    }
+
+    /// Updates the MFi+ swap/modifier mode indicator.
+    /// - Parameter state: The swap mode state to display.
+    public func updateSwapMode(_ state: PVSwapModeIndicatorState) {
+        let previousState = indicators[.swapMode]
+        let wasVisible = previousState?.isVisible ?? false
+
+        update(.swapMode, state: state.indicatorState)
+
+        let newState = indicators[.swapMode]
+        let isVisible = newState?.isVisible ?? false
+        let colorChanged = previousState?.color != newState?.color
+
+        // Only trigger an extra pulse when we became visible and the generic
+        // update(_:state:) did not already pulse (no previous state or no color change).
+        if !wasVisible && isVisible && (previousState == nil || !colorChanged) {
+            triggerPulse(for: .swapMode)
+        }
+    }
+
+
     /// Removes an indicator from the registry.
     /// - Parameter id: The indicator identifier to remove.
     public func remove(_ id: PVIndicatorID) {

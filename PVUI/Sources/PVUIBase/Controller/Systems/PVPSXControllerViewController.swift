@@ -162,10 +162,16 @@ final class PVPSXControllerViewController: PVControllerViewController<PVPSXSyste
 
     override func pressAnalogMode(forPlayer player: Int) {
         emulatorCore.didPush(.analogMode, forPlayer: player)
+        // Toggle the HUD analog mode indicator (it's a toggle, so flip the current visible state)
+        Task { @MainActor in
+            let isCurrentlyOn = PVIndicatorRegistry.shared.state(for: .analogMode)?.isVisible == true
+            PVIndicatorRegistry.shared.updateAnalogMode(isCurrentlyOn ? .off : .on)
+        }
         super.pressAnalogMode(forPlayer: player)
     }
 
     override func releaseAnalogMode(forPlayer player: Int) {
+        // Analog mode is a toggle — indicator state persists; do not reset on release.
         emulatorCore.didRelease(.analogMode, forPlayer: player)
     }
 }
