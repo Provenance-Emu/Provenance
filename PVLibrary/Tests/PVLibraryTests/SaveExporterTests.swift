@@ -8,6 +8,7 @@
 import XCTest
 import RealmSwift
 import ZipArchive
+import PVFileSystem
 @testable import PVLibrary
 
 final class SaveExporterTests: XCTestCase {
@@ -111,31 +112,43 @@ final class SaveExporterTests: XCTestCase {
     // MARK: - Staging dir uniqueness
 
     func testConcurrentExportsDoNotShareStagingDir() async throws {
-        // We can't directly observe the staging dir name, but we can verify that
-        // two concurrent exports for games with identical titles produce distinct zips.
-        let romFile = tempDir.appendingPathComponent("game.sfc")
-        let batterySavesDir = tempDir.appendingPathComponent("battery")
-        try FileManager.default.createDirectory(at: batterySavesDir, withIntermediateDirectories: true)
-        try "save data".data(using: .utf8)!.write(to: batterySavesDir.appendingPathComponent("game.srm"))
+        // Create ROM files so Paths resolves to game-specific directories (not the shared NULL dir).
+        let romFile1 = tempDir.appendingPathComponent("gameA.sfc")
+        let romFile2 = tempDir.appendingPathComponent("gameB.sfc")
+        try Data().write(to: romFile1)
+        try Data().write(to: romFile2)
 
-        let game1 = makeGame(title: "SameTitle", md5: "md5aaa", romURL: romFile)
-        let game2 = makeGame(title: "SameTitle", md5: "md5bbb", romURL: romFile)
-
-        // Both should export without error (even if battery dir is shared in test)
-        // We just verify each export path is unique (different UUID suffix)
-        async let url1Result = Result { try await SaveExporter.shared.exportSaves(for: game1) }
-        async let url2Result = Result { try await SaveExporter.shared.exportSaves(for: game2) }
-
-        let (r1, r2) = await (url1Result, url2Result)
-
-        // Both should succeed or throw noSavesFound (depending on Paths resolution);
-        // what matters is they don't interfere — different zip file paths
-        if case .success(let url1) = r1, case .success(let url2) = r2 {
-            XCTAssertNotEqual(url1.lastPathComponent, url2.lastPathComponent, "Concurrent exports must produce unique zip names")
-            SaveExporter.shared.cleanupExport(at: url1)
-            SaveExporter.shared.cleanupExport(at: url2)
+        // Create battery saves at the location SaveExporter actually reads from.
+        let batterySavesDir1 = Paths.batterySavesPath(forROM: romFile1)
+        let batterySavesDir2 = Paths.batterySavesPath(forROM: romFile2)
+        try FileManager.default.createDirectory(at: batterySavesDir1, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: batterySavesDir2, withIntermediateDirectories: true)
+        try "save data A".data(using: .utf8)!.write(to: batterySavesDir1.appendingPathComponent("gameA.srm"))
+        try "save data B".data(using: .utf8)!.write(to: batterySavesDir2.appendingPathComponent("gameB.srm"))
+        defer {
+            try? FileManager.default.removeItem(at: batterySavesDir1)
+            try? FileManager.default.removeItem(at: batterySavesDir2)
         }
-        // If both throw noSavesFound, that's also acceptable — the test verifies no crash/deadlock
+
+        let game1 = makeGame(title: "SameTitle", md5: "md5aaa", romURL: romFile1)
+        let game2 = makeGame(title: "SameTitle", md5: "md5bbb", romURL: romFile2)
+
+        // Both concurrent exports must succeed and produce unique zip names.
+        async let url1 = SaveExporter.shared.exportSaves(for: game1)
+        async let url2 = SaveExporter.shared.exportSaves(for: game2)
+
+        do {
+            let (exportURL1, exportURL2) = try await (url1, url2)
+            XCTAssertNotEqual(
+                exportURL1.lastPathComponent,
+                exportURL2.lastPathComponent,
+                "Concurrent exports must produce unique zip names"
+            )
+            SaveExporter.shared.cleanupExport(at: exportURL1)
+            SaveExporter.shared.cleanupExport(at: exportURL2)
+        } catch {
+            XCTFail("Both concurrent exports expected to succeed but failed: \(error)")
+        }
     }
 
     // MARK: - Helpers

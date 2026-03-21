@@ -250,6 +250,14 @@ public final class SaveExporter: @unchecked Sendable {
             throw SaveExportError.invalidBundle("manifest.json has unexpected format.")
         }
 
+        // Validate schema version for forward/backward compatibility
+        guard let schemaVersion = manifestDict["schemaVersion"], !schemaVersion.isEmpty else {
+            throw SaveExportError.invalidBundle("manifest.json missing 'schemaVersion' field.")
+        }
+        guard schemaVersion == "1" else {
+            throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersion)'.")
+        }
+
         guard let bundleMD5 = manifestDict["game"], !bundleMD5.isEmpty else {
             throw SaveExportError.invalidBundle("manifest.json missing 'game' field.")
         }

@@ -168,7 +168,7 @@ public struct GameContextMenu: View {
                 } label: {
                     Label("Manage Save States", systemImage: "clock.arrow.circlepath")
                 }
-                .disabled(game.saveStates.isEmpty)
+                .disabled(!hasSaveStates)
                 Button {
                     contextMenuDelegate?.gameContextMenu(self, didRequestExportSavesFor: game)
                 } label: {
