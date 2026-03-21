@@ -25,7 +25,7 @@ import PVCoreBridge
     case redVector       = 6   // "Red Vector"
     case blueLCD         = 7   // "Blue LCD"
     case ledBacklight    = 8   // "LED Backlight"
-    case girlPower       = 9   // "Girlish"
+    case girlPower       = 9   // "Girl Power"
     case blue            = 10  // "Blue Palette"
     case blueVector      = 11  // "Blue Vector"
     case sepia           = 12  // "Sepia"
