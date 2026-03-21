@@ -875,7 +875,10 @@ struct RetroMenuView: View {
             let color: Color = isBroadcasting ? .retroPink : .retroCyan
             let role: MenuButtonRole = isBroadcasting ? .destructive : .secondary
             let broadcastAction = {
-                if isBroadcasting {
+                // Read authoritative state at action time, not at view render time,
+                // to avoid acting on a stale snapshot if the broadcast state changed
+                // between view computation and the user's tap.
+                if PVBroadcastManager.shared.isBroadcasting {
                     dismissMenuForSubSheetThen { emulatorVC.stopBroadcast() }
                 } else {
                     dismissMenuForSubSheetThen { emulatorVC.startBroadcast() }

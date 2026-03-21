@@ -96,17 +96,19 @@ import PVLogging
     /// the broadcast session.
     private func showActivityViewController(from presenter: UIViewController) {
         RPBroadcastActivityViewController.load { [weak self] activityVC, error in
-            guard let self else { return }
-            if let error {
-                ELOG("[Broadcast] Failed to load RPBroadcastActivityViewController: \(error.localizedDescription)")
-                return
-            }
-            guard let activityVC else {
-                WLOG("[Broadcast] No RPBroadcastActivityViewController returned")
-                return
-            }
-            activityVC.delegate = self
-            Task { @MainActor in
+            // The load completion can fire on any thread; hop to the main actor
+            // before touching any @MainActor-isolated state (self, activityVC.delegate, present).
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if let error {
+                    ELOG("[Broadcast] Failed to load RPBroadcastActivityViewController: \(error.localizedDescription)")
+                    return
+                }
+                guard let activityVC else {
+                    WLOG("[Broadcast] No RPBroadcastActivityViewController returned")
+                    return
+                }
+                activityVC.delegate = self
                 presenter.present(activityVC, animated: true) {
                     ILOG("[Broadcast] RPBroadcastActivityViewController presented")
                 }
