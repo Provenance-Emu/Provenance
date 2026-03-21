@@ -1413,8 +1413,14 @@ static struct retro_midi_interface s_thinMIDIInterface = {
 
 /// C-linkage accessor so `PVLibRetroCore.m` (ObjC, no C++ headers) can wire
 /// the same CoreMIDI-backed interface without duplicating code.
+/// Returns NULL when CoreMIDI is unavailable (tvOS / no-CoreMIDI builds) so
+/// callers treat a null interface as "not supported" rather than receiving stubs.
 extern "C" struct retro_midi_interface *pv_libretro_midi_interface(void) {
+#if PV_HAS_COREMIDI
     return &s_thinMIDIInterface;
+#else
+    return NULL;
+#endif
 }
 
 // ---------------------------------------------------------------------------

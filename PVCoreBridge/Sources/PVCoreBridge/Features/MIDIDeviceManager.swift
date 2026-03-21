@@ -66,9 +66,9 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Available MIDI output destinations (devices that receive MIDI *from* Provenance).
     @Published public private(set) var destinations: [MIDIEndpointInfo] = []
 
-    /// Currently selected MIDI input source (nil = none).
+    /// Currently selected MIDI input source (`nil` = all sources / auto-detect).
     /// Setting this disconnects all other sources and reconnects only the selected one
-    /// (or all sources when set to nil, enabling auto-detect across every device).
+    /// (or all sources when set to `nil`, enabling auto-detect across every device).
     /// Changes are persisted to UserDefaults so the choice survives app restarts.
     @Published public var selectedSourceID: MIDIUniqueID? {
         didSet {
@@ -176,6 +176,24 @@ public final class MIDIDeviceManager: ObservableObject {
         }
         if let id = selectedDestinationID, !destinations.contains(where: { $0.id == id }) {
             selectedDestinationID = nil
+        }
+
+        // Re-attempt to restore the persisted selection if it wasn't applied at init
+        // (handles the case where the previously-selected device appears after launch
+        // due to a CoreMIDI topology change / hot-plug event).
+        if selectedSourceID == nil,
+           let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int {
+            let id = MIDIUniqueID(raw)
+            if sources.contains(where: { $0.id == id }) {
+                selectedSourceID = id
+            }
+        }
+        if selectedDestinationID == nil,
+           let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int {
+            let id = MIDIUniqueID(raw)
+            if destinations.contains(where: { $0.id == id }) {
+                selectedDestinationID = id
+            }
         }
     }
 
