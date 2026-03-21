@@ -311,7 +311,7 @@
         "package": "RxRealm",
         "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
         "state": {
-          "branch": "main",
+          "branch": null,
           "revision": "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69",
           "version": null
         }
@@ -338,7 +338,7 @@
         "package": "SideKit",
         "repositoryURL": "https://github.com/SideStore/SideKit.git",
         "state": {
-          "branch": "main",
+          "branch": null,
           "revision": "ab959a54fc2217464ffabd09322ec3351e3ca456",
           "version": null
         }
@@ -365,7 +365,7 @@
         "package": "SteamController",
         "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
           "version": null
         }
@@ -500,7 +500,7 @@
         "package": "SwiftGenPlugin",
         "repositoryURL": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
         "state": {
-          "branch": "develop",
+          "branch": null,
           "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
           "version": null
         }
@@ -581,7 +581,7 @@
         "package": "zstd",
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
-          "branch": "dev",
+          "branch": null,
           "revision": "3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f",
           "version": null
         }
