@@ -17,6 +17,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BuildableName = "PVRetroArch.framework"
+               BlueprintName = "PVRetroArch"
+               ReferencedContainer = "container:CoresRetro/RetroArch/PVRetroArch.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B394CC562BDEE53A006B63E8"
                BuildableName = "Provenance.app"
                BlueprintName = "Provenance (AppStore)"
