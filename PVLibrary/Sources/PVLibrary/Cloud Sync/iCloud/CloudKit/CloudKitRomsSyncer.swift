@@ -43,6 +43,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // MARK: - CloudKitRomsSyncer Specific Properties
     private let container: CKContainer
     private let database: CKDatabase // Likely private database
+    /// Read-only fallback databases tried when the primary returns no record.
+    /// Populated from `iCloudConstants.fallbackContainers` (e.g. dev container in prod builds).
+    private let fallbackDatabases: [CKDatabase]
     private let retryOperation: CloudKitRetryOperation<Any> // Specify generic type <Any>
     private let romsDatastore: RomDatabase // Add Datastore reference
     private let fileManager = FileManager.default
@@ -97,6 +100,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public init(container: CKContainer, retryStrategy: @escaping CloudKitRetryOperation<Any>, romsDatastore: RomDatabase = RomDatabase.sharedInstance) {
         self.container = container
         self.database = container.privateCloudDatabase
+        self.fallbackDatabases = iCloudConstants.fallbackContainers.map(\.privateCloudDatabase)
         // Store the passed strategy directly
         self.retryOperation = retryStrategy
         self.romsDatastore = romsDatastore
@@ -519,7 +523,58 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         return false
     }
 
-    /// Fetches a single CKRecord by its ID using the retry strategy.
+    /// Fetches a single CKRecord by its ID from a specific database.
+    /// Returns nil (not throws) when the record simply doesn't exist in that database.
+    private func fetchRecord(recordID: CKRecord.ID, includeAssets: Bool, from db: CKDatabase) async throws -> CKRecord? {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
+            let op = CKFetchRecordsOperation(recordIDs: [recordID])
+            let metadataKeys = [
+                CloudKitSchema.ROMFields.md5,
+                CloudKitSchema.ROMFields.title,
+                CloudKitSchema.ROMFields.systemIdentifier,
+                CloudKitSchema.ROMFields.fileSize,
+                CloudKitSchema.SaveStateFields.directory,
+                CloudKitSchema.SaveStateFields.filename,
+                CloudKitSchema.ROMFields.originalFilename,
+                CloudKitSchema.ROMFields.originalArtworkURL,
+                CloudKitSchema.ROMFields.customArtworkURL,
+                CloudKitSchema.ROMFields.isDeleted
+            ]
+            op.desiredKeys = includeAssets ? metadataKeys + [
+                CloudKitSchema.ROMFields.fileData,
+                CloudKitSchema.ROMFields.isArchive,
+                CloudKitSchema.ROMFields.relatedFilenames,
+                CloudKitSchema.ROMFields.customArtworkAsset
+            ] : metadataKeys
+            var fetched: CKRecord?
+            op.perRecordResultBlock = { _, result in
+                if case let .success(r) = result { fetched = r }
+            }
+            op.fetchRecordsCompletionBlock = { _, error in
+                if let ckError = error as? CKError {
+                    if ckError.code == .unknownItem {
+                        continuation.resume(returning: nil)
+                    } else if ckError.code == .partialFailure,
+                              let partials = ckError.partialErrorsByItemID,
+                              partials.count == 1,
+                              let inner = partials.values.first as? CKError,
+                              inner.code == .unknownItem {
+                        continuation.resume(returning: nil)
+                    } else {
+                        continuation.resume(throwing: ckError)
+                    }
+                } else if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: fetched)
+                }
+            }
+            db.add(op)
+        }
+    }
+
+    /// Fetches a single CKRecord by its ID, trying the primary database first then any
+    /// fallback databases (e.g. dev container in production builds) for reads.
     /// - Parameters:
     ///   - recordID: The CloudKit record identifier.
     ///   - includeAssets: When true, also fetches asset fields required for downloads.
@@ -530,67 +585,22 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         return try await runOnQueue { [self] in
-            do {
-                let record = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
-                    let op = CKFetchRecordsOperation(recordIDs: [recordID])
-                    let metadataKeys = [
-                        CloudKitSchema.ROMFields.md5,
-                        CloudKitSchema.ROMFields.title,
-                        CloudKitSchema.ROMFields.systemIdentifier,
-                        CloudKitSchema.ROMFields.fileSize,
-                        CloudKitSchema.SaveStateFields.directory,
-                        CloudKitSchema.SaveStateFields.filename,
-                        CloudKitSchema.ROMFields.originalFilename,
-                        CloudKitSchema.ROMFields.originalArtworkURL,
-                        CloudKitSchema.ROMFields.customArtworkURL,
-                        CloudKitSchema.ROMFields.isDeleted
-                    ]
-                    if includeAssets {
-                        op.desiredKeys = metadataKeys + [
-                            CloudKitSchema.ROMFields.fileData,
-                            CloudKitSchema.ROMFields.isArchive,
-                            CloudKitSchema.ROMFields.relatedFilenames,
-                            CloudKitSchema.ROMFields.customArtworkAsset
-                        ]
-                    } else {
-                        // Metadata-only: exclude asset fields to avoid auto-downloading CKAsset payloads
-                        op.desiredKeys = metadataKeys
-                    }
-                    var fetched: CKRecord?
-                    op.perRecordResultBlock = { _, result in
-                        if case let .success(r) = result { fetched = r }
-                    }
-                    op.fetchRecordsCompletionBlock = { _, error in
-                        if let error = error { continuation.resume(throwing: error) }
-                        else { continuation.resume(returning: fetched) }
-                    }
-                    self.database.add(op)
-                }
-                if let record { VLOG("Fetched record (metadata-only): \(record.recordID.recordName)") }
+            // Try primary database first
+            if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, from: database) {
+                VLOG("Fetched record from primary container: \(record.recordID.recordName)")
                 return record
-            } catch let error as CKError where error.code == .unknownItem {
-                VLOG("Record not found: \(recordID.recordName)")
-                return nil
-            } catch let ckError as CKError {
-                // Check if this is a partial failure where the only error is "record not found"
-                if ckError.code == .partialFailure,
-                   let partialErrors = ckError.partialErrorsByItemID,
-                   partialErrors.count == 1,
-                   let (partialItemID, partialError) = partialErrors.first,
-                   let partialCKError = partialError as? CKError,
-                   partialCKError.code == .unknownItem {
-                    // Only one partial error and it's "record not found" - treat as record doesn't exist
-                    VLOG("Record not found (via partial failure): \(recordID.recordName)")
-                    return nil
-                }
-
-                let errorDetails = formatCloudKitError(ckError)
-                ELOG("Failed to fetch record \(recordID.recordName): \(errorDetails)")
-                throw CloudSyncError.cloudKitError(ckError)
-            } catch {
-                ELOG("Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
-                throw CloudSyncError.cloudKitError(error)
             }
+
+            // Try fallback databases (read-only, e.g. dev container in production builds)
+            for fallbackDB in fallbackDatabases {
+                if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, from: fallbackDB) {
+                    DLOG("Fetched record from fallback container: \(record.recordID.recordName)")
+                    return record
+                }
+            }
+
+            VLOG("Record not found in any container: \(recordID.recordName)")
+            return nil
         }
     }
 
@@ -1841,8 +1851,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         record[CloudKitSchema.ROMFields.lastModifiedDevice] = deviceIdentifier
 
         // Save the record
+        guard let ckContainer = iCloudConstants.container else {
+            WLOG("CloudKit entitlement not present — cannot save artwork for \(game.title)")
+            return false
+        }
         do {
-            let database = iCloudConstants.container.privateCloudDatabase
+            let database = ckContainer.privateCloudDatabase
             _ = try await database.save(record)
             ILOG("Successfully updated artwork in CloudKit for game: \(game.title)")
             return true

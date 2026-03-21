@@ -73,8 +73,14 @@ extension CloudSyncManager {
 public class CloudSyncManager {
     // MARK: - Properties
 
-    /// Shared instance
-    public static let shared = CloudSyncManager(container: iCloudConstants.container)
+    /// Shared instance. Disabled (no-op) when CloudKit entitlement is absent (e.g. sideloaded builds).
+    public static let shared: CloudSyncManager = {
+        guard let container = iCloudConstants.container else {
+            WLOG("[CloudSyncManager] CloudKit entitlement not present — sync disabled")
+            return CloudSyncManager()
+        }
+        return CloudSyncManager(container: container)
+    }()
 
     /// ROM syncer
     public var romsSyncer: RomsSyncing?
@@ -167,13 +173,18 @@ public class CloudSyncManager {
         return q
     }()
 
-    /// CloudKit Container
-    private let container: CKContainer
+    /// CloudKit Container. Nil when running without CloudKit entitlements (sideloaded builds).
+    private let container: CKContainer?
 
     /// Observes local PVGame changes to forward metadata edits to CloudKit.
     private var localGameSyncMonitor: LocalGameSyncMonitor?
 
     // MARK: - Initialization
+
+    /// No-op initializer used when CloudKit entitlement is not present (e.g. sideloaded builds).
+    private init() {
+        self.container = nil
+    }
 
     /// Private initializer for singleton
     private init(container: CKContainer) {
@@ -1066,10 +1077,14 @@ public class CloudSyncManager {
             WLOG("[SYNC] Cannot run BIOS audit - sync disabled")
             return nil
         }
+        guard let ckContainer = iCloudConstants.container else {
+            WLOG("[SYNC] Cannot run BIOS audit - CloudKit entitlement not present")
+            return nil
+        }
 
         ILOG("[SYNC] Starting BIOS audit...")
         let syncer = CloudKitBIOSSyncer(
-            container: iCloudConstants.container,
+            container: ckContainer,
             directories: ["BIOS"],
             errorHandler: errorHandler
         )
@@ -1085,10 +1100,14 @@ public class CloudSyncManager {
             WLOG("[SYNC] Cannot repair BIOS sync - sync disabled")
             return 0
         }
+        guard let ckContainer = iCloudConstants.container else {
+            WLOG("[SYNC] Cannot repair BIOS sync - CloudKit entitlement not present")
+            return 0
+        }
 
         ILOG("[SYNC] Starting BIOS sync repair...")
         let syncer = CloudKitBIOSSyncer(
-            container: iCloudConstants.container,
+            container: ckContainer,
             directories: ["BIOS"],
             errorHandler: errorHandler
         )
@@ -1103,10 +1122,14 @@ public class CloudSyncManager {
             WLOG("[SYNC] Cannot force BIOS download - sync disabled")
             return
         }
+        guard let ckContainer = iCloudConstants.container else {
+            WLOG("[SYNC] Cannot force BIOS download - CloudKit entitlement not present")
+            return
+        }
 
         ILOG("[SYNC] Starting forced BIOS download...")
         let syncer = CloudKitBIOSSyncer(
-            container: iCloudConstants.container,
+            container: ckContainer,
             directories: ["BIOS"],
             errorHandler: errorHandler
         )
@@ -1131,11 +1154,15 @@ public class CloudSyncManager {
             WLOG("[BIOS FAST] Cannot download - sync disabled")
             return false
         }
+        guard let ckContainer = iCloudConstants.container else {
+            WLOG("[BIOS FAST] Cannot download - CloudKit entitlement not present")
+            return false
+        }
 
         ILOG("[BIOS FAST] Starting targeted download for: \(filename)")
 
         let syncer = CloudKitBIOSSyncer(
-            container: iCloudConstants.container,
+            container: ckContainer,
             directories: ["BIOS"],
             errorHandler: errorHandler
         )
@@ -1327,8 +1354,8 @@ public class CloudSyncManager {
         updateSyncStatus(.initializing)
 
         // Validate CloudKit container configuration
-        guard container.containerIdentifier != nil else {
-            ELOG("CloudKit container identifier is nil. Check Info.plist configuration.")
+        guard let container = container, container.containerIdentifier != nil else {
+            ELOG("CloudKit container unavailable or identifier is nil. Check entitlements and Info.plist configuration.")
             updateSyncStatus(.error(CloudSyncError.missingDependency))
             return
         }
@@ -1580,6 +1607,12 @@ public class CloudSyncManager {
     /// Checks CloudKit account status and initiates setup if needed.
     private func checkAccountStatusAndSetupIfNeeded() async {
         DLOG("Checking CloudKit account status...")
+
+        guard let container = container else {
+            WLOG("[CloudSync] CloudKit container unavailable — skipping account status check")
+            updateSyncStatus(.disabled)
+            return
+        }
 
         do {
             let accountStatus = try await container.accountStatus()
