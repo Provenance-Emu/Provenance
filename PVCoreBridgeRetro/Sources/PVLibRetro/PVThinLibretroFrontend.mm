@@ -3899,7 +3899,12 @@ static bool thin_environment(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
             struct retro_midi_interface **midiPtr = (struct retro_midi_interface **)data;
             if (!midiPtr) return false;
-            *midiPtr = &s_thinMIDIInterface;
+            struct retro_midi_interface *iface = pv_libretro_midi_interface();
+            if (!iface) {
+                DLOG(@"ThinEnv GET_MIDI_INTERFACE — CoreMIDI interface unavailable");
+                return false;
+            }
+            *midiPtr = iface;
             ILOG(@"ThinEnv GET_MIDI_INTERFACE: provided CoreMIDI-backed interface");
             return true;
         }
