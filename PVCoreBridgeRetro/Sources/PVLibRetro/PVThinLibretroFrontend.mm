@@ -333,6 +333,13 @@ typedef struct PVThinLibretroSymbols {
     /// YES after startRenderingOnAlternateThread has been called on the render delegate.
     /// Used to avoid calling it more than once per session.
     BOOL _renderDelegateStarted;
+    /// Current FBO dimensions — used to detect when a resize is needed.
+    uint32_t _fboWidth;
+    uint32_t _fboHeight;
+    /// Set to YES when SET_SYSTEM_AV_INFO / SET_GEOMETRY fires with different dimensions
+    /// while a HW FBO is already live. The FBO is rebuilt on the next runFrame call
+    /// so that context_reset fires on the emulation thread.
+    BOOL _hwFBONeedsRebuild;
 #endif
 
     // Vulkan state (when using MoltenVK via dlopen)
@@ -2190,15 +2197,43 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-    // First frame: if OpenGL ES HW render was requested, set up the FBO now.
-    // This MUST run on the emulation thread (this thread) so the EAGLContext
-    // and context_reset fire in the same GL context as subsequent retro_run calls.
-    // context_reset is fired inside setupHardwareContextFBOWidth:height:.
-    if (_hwRenderRequested && _glContext && !_emuFBO) {
-        uint32_t w = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 640);
-        uint32_t h = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 480);
-        ILOG(@"ThinFrontend: first frame — setting up HW render FBO %ux%u", w, h);
-        [self setupHardwareContextFBOWidth:w height:h];
+    // Initial setup: if OpenGL ES HW render was requested, set up the FBO now.
+    // Resize: if geometry changed at runtime (SET_SYSTEM_AV_INFO / SET_GEOMETRY),
+    //   tear down the old FBO and rebuild it so context_reset re-fires with correct dims.
+    // Both paths MUST run on the emulation thread so EAGLContext and context_reset share
+    // the same GL context as subsequent retro_run calls.
+    if (_hwRenderRequested && _glContext) {
+        if (!_emuFBO) {
+            uint32_t w = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 640);
+            uint32_t h = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 480);
+            ILOG(@"ThinFrontend: first frame — setting up HW render FBO %ux%u", w, h);
+            [self setupHardwareContextFBOWidth:w height:h];
+        } else if (_hwFBONeedsRebuild) {
+            uint32_t w = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 640);
+            uint32_t h = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 480);
+            ILOG(@"ThinFrontend: geometry changed — rebuilding HW render FBO %ux%u", w, h);
+            // Clear the flag immediately so a failed setup does not cause an
+            // infinite teardown loop on every subsequent runFrame call.
+            _hwFBONeedsRebuild = NO;
+            // Make the core's GL context current BEFORE notifying it via context_destroy.
+            // Cores commonly issue GL calls (e.g. glDeleteTextures) in context_destroy,
+            // which require a valid current context; calling it without one can crash or leak.
+            [EAGLContext setCurrentContext:_glContext];
+            // Notify core that the context is being destroyed before teardown
+            if (_hwRenderCallback.context_destroy) {
+                _hwRenderCallback.context_destroy();
+            }
+            // Release GL objects only — keep EAGLContext and _hwRenderRequested intact
+            if (_emuFBO)      { glDeleteFramebuffers(1,  &_emuFBO);    _emuFBO = 0; }
+            if (_emuColorTex) { glDeleteTextures(1,      &_emuColorTex); _emuColorTex = 0; }
+            if (_emuDepthRB)  { glDeleteRenderbuffers(1, &_emuDepthRB); _emuDepthRB = 0; }
+            if (_ioSurface)   { CFRelease(_ioSurface);  _ioSurface = NULL; }
+            // Reset so setupHardwareContextFBOWidth:height: re-calls startRenderingOnAlternateThread
+            // to obtain a new IOSurface sized for the updated geometry. This is intentional:
+            // the delegate must re-create its Metal texture at the new dimensions.
+            _renderDelegateStarted = NO;
+            [self setupHardwareContextFBOWidth:w height:h];
+        }
     }
 #endif
 
@@ -3531,6 +3566,20 @@ static bool thin_environment(unsigned cmd, void *data) {
                  info->timing.fps, info->timing.sample_rate);
             // Reallocate video buffer since geometry may have changed
             [self _allocateVideoBuffer];
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            // If a HW FBO is live and the new dimensions differ, schedule a rebuild.
+            // The rebuild runs on the emulation thread (next runFrame call) so that
+            // context_reset and subsequent retro_run share the same EAGLContext.
+            if (_emuFBO) {
+                uint32_t newW = info->geometry.max_width  ?: info->geometry.base_width;
+                uint32_t newH = info->geometry.max_height ?: info->geometry.base_height;
+                if (newW != _fboWidth || newH != _fboHeight) {
+                    ILOG(@"ThinEnv SET_SYSTEM_AV_INFO: HW FBO resize %ux%u → %ux%u (deferred)",
+                         _fboWidth, _fboHeight, newW, newH);
+                    _hwFBONeedsRebuild = YES;
+                }
+            }
+#endif
             if ([_frontendDelegate respondsToSelector:@selector(libretroFrontend:didUpdateAVInfo:)]) {
                 [_frontendDelegate libretroFrontend:self didUpdateAVInfo:self.avInfo];
             }
@@ -3549,6 +3598,16 @@ static bool thin_environment(unsigned cmd, void *data) {
             if (needsRealloc) {
                 [self _allocateVideoBuffer];
             }
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            // If a HW FBO is live and the max dimensions grew, schedule a rebuild.
+            if (_emuFBO && needsRealloc) {
+                uint32_t newW = geo->max_width  ?: geo->base_width;
+                uint32_t newH = geo->max_height ?: geo->base_height;
+                ILOG(@"ThinEnv SET_GEOMETRY: HW FBO resize %ux%u → %ux%u (deferred)",
+                     _fboWidth, _fboHeight, newW, newH);
+                _hwFBONeedsRebuild = YES;
+            }
+#endif
             // Notify delegate so the rendering layer can resize
             if ([_frontendDelegate respondsToSelector:@selector(libretroFrontend:didUpdateAVInfo:)]) {
                 [_frontendDelegate libretroFrontend:self didUpdateAVInfo:self.avInfo];
@@ -3934,12 +3993,33 @@ static bool thin_environment(unsigned cmd, void *data) {
             return false;
         }
         case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: {
-            DLOG(@"ThinEnv SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE");
-            return false;
+            // Cores use this to pass a context-negotiation interface *before* context_reset.
+            // We accept and log it; the interface is not actively driven because Provenance
+            // creates the context itself (EAGLContext / MoltenVK).  Returning true signals to
+            // the core that the interface was received; returning false would make cores like
+            // Beetle PSX HW fall back to a software path or refuse to run.
+            const struct retro_hw_render_context_negotiation_interface *iface =
+                (const struct retro_hw_render_context_negotiation_interface *)data;
+            if (iface) {
+                ILOG(@"ThinEnv SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE type=%u version=%u",
+                     (unsigned)iface->interface_type, iface->interface_version);
+            } else {
+                DLOG(@"ThinEnv SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE (null — core clearing interface)");
+            }
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT: {
-            DLOG(@"ThinEnv GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT");
-            return false;
+            // Core queries which negotiation interface versions the frontend supports.
+            // We fill in interface_version = 0 (version 0 = "I know of this interface but
+            // don't drive it"; the core must still work with a frontend-created context).
+            struct retro_hw_render_context_negotiation_interface *iface =
+                (struct retro_hw_render_context_negotiation_interface *)data;
+            if (iface) {
+                ILOG(@"ThinEnv GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT type=%u — reporting version 0",
+                     (unsigned)iface->interface_type);
+                iface->interface_version = 0;
+            }
+            return true;
         }
         case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT:
             DLOG(@"ThinEnv SET_HW_SHARED_CONTEXT");
@@ -3952,7 +4032,14 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Preferred HW render ----
         case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
+#if HAVE_VULKAN
+            // Prefer Vulkan when MoltenVK support is compiled in.
+            // Cores that can use either path will pick Vulkan first; cores that only support
+            // GLES will ignore this and call SET_HW_RENDER with a GLES context type instead.
+            if (data) *(unsigned *)data = RETRO_HW_CONTEXT_VULKAN;
+#else
             if (data) *(unsigned *)data = RETRO_HW_CONTEXT_OPENGLES3;
+#endif
             return true;
         }
 
@@ -4236,6 +4323,9 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
     ILOG(@"ThinFrontend: FBO %u ready (%ux%u) — firing context_reset", _emuFBO, w, h);
+    _fboWidth  = w;
+    _fboHeight = h;
+    _hwFBONeedsRebuild = NO;
 
     // Fire context_reset now that the FBO is ready
     if (_hwRenderCallback.context_reset) {
@@ -4840,6 +4930,9 @@ static bool thin_environment(unsigned cmd, void *data) {
     _glContext      = nil;
     _glShareContext = nil;
     _renderDelegateStarted = NO;
+    _fboWidth  = 0;
+    _fboHeight = 0;
+    _hwFBONeedsRebuild = NO;
 #endif
     _hwRenderRequested = NO;
     memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
