@@ -287,6 +287,21 @@
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
+		B336F2EC2F6E85FD004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F2EB2F6E85FD004ABEE6 /* PVCheevos */; };
+		B336F30B2F6E8609004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F30A2F6E8609004ABEE6 /* PVCheevos */; };
+		B336F30C2F6E8609004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F30A2F6E8609004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B336F30E2F6E8612004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F30D2F6E8612004ABEE6 /* PVCheevos */; };
+		B336F30F2F6E8612004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F30D2F6E8612004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B336F3112F6E861B004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F3102F6E861B004ABEE6 /* PVCheevos */; };
+		B336F3122F6E861C004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F3102F6E861B004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B336F3142F6E8624004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F3132F6E8624004ABEE6 /* PVCheevos */; };
+		B336F3152F6E8624004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F3132F6E8624004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B336F3172F6E862E004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F3162F6E862E004ABEE6 /* PVCheevos */; };
+		B336F3182F6E862E004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F3162F6E862E004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B336F31A2F6E8634004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F3192F6E8634004ABEE6 /* PVCheevos */; };
+		B336F31B2F6E8634004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F3192F6E8634004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B336F31D2F6E863D004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F31C2F6E863D004ABEE6 /* PVCheevos */; };
+		B336F31E2F6E863D004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F31C2F6E863D004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B33A09332D2D0B0C00BFB6C9 /* PVJIT */; };
 		B33A763B2CC5168C00FC746F /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B33A763A2CC5168C00FC746F /* SiriusRating */; };
 		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
@@ -1392,6 +1407,7 @@
 				B3FAC98B292B4762005E8B11 /* PVEP128Emu.framework in Embed Frameworks */,
 				B3FAC9B7292B4786005E8B11 /* PVStella.framework in Embed Frameworks */,
 				B3FAC997292B476A005E8B11 /* PVGenesis.framework in Embed Frameworks */,
+				B336F3152F6E8624004ABEE6 /* PVCheevos in Embed Frameworks */,
 				B3FAC9A9292B477B005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3FAC995292B4769005E8B11 /* PVGearcoleco.framework in Embed Frameworks */,
 				B3FAC985292B475E005E8B11 /* PVAtari800.framework in Embed Frameworks */,
@@ -1416,6 +1432,7 @@
 				B35AB4092CB6DBB5003273D4 /* PVPokeMini-Dynamic in Embed Frameworks */,
 				B35AB40F2CB6DBF4003273D4 /* PVBliss-Dynamic in Embed Frameworks */,
 				B3FAC92A292B4505005E8B11 /* PVFCEU.framework in Embed Frameworks */,
+				B336F30C2F6E8609004ABEE6 /* PVCheevos in Embed Frameworks */,
 				B3FC97252CB8B68400C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
 				B35AB4442CB6EDD2003273D4 /* snes9x.framework in Embed Frameworks */,
 				B3D1C1322CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */,
@@ -1495,6 +1512,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B336F3182F6E862E004ABEE6 /* PVCheevos in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1541,6 +1559,7 @@
 				B35197DE2D1A5C6A00D2B413 /* PVPokeMini-Dynamic in Embed Frameworks */,
 				B35197C32D1A5A4E00D2B413 /* PVRetroArch.framework in Embed Frameworks */,
 				B341FD9F2BE61EC100718929 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B336F31E2F6E863D004ABEE6 /* PVCheevos in Embed Frameworks */,
 				B35197F52D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B341FDA22BE61EC100718929 /* PVFreeIntv.framework in Embed Frameworks */,
 				B35197EA2D1A5CC000D2B413 /* PVBliss-Dynamic in Embed Frameworks */,
@@ -1566,6 +1585,7 @@
 				B347B3252BC4CA98006A3B2D /* PVLibrary.framework in Embed Frameworks */,
 				B3A186952CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
 				B3FC973D2CB8B6D100C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
+				B336F31B2F6E8634004ABEE6 /* PVCheevos in Embed Frameworks */,
 				B347B32A2BC4CA98006A3B2D /* PVLogging in Embed Frameworks */,
 				B347B32B2BC4CA98006A3B2D /* (null) in Embed Frameworks */,
 				B347B3962BC4CD4C006A3B2D /* MoltenVK.xcframework in Embed Frameworks */,
@@ -1590,6 +1610,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B336F3122F6E861C004ABEE6 /* PVCheevos in Embed Frameworks */,
 				B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B38436362C9FC2EC00E32EB1 /* snes9x.framework in Embed Frameworks */,
 				B3C65E632CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -1833,6 +1854,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B336F30F2F6E8612004ABEE6 /* PVCheevos in Embed Frameworks */,
 				B3E881972D90C4BA00A80D83 /* PVEmuThree.framework in Embed Frameworks */,
 				B3AD74462D24737B001E5EC3 /* PVfMSX.framework in Embed Frameworks */,
 				B3AD744A2D2474F3001E5EC3 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
@@ -3370,6 +3392,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B336F30B2F6E8609004ABEE6 /* PVCheevos in Frameworks */,
 				B35AB44B2CB6F815003273D4 /* PVMelonDS.framework in Frameworks */,
 				B35AB40E2CB6DBF4003273D4 /* PVBliss-Dynamic in Frameworks */,
 				93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */,
@@ -3505,6 +3528,7 @@
 				B3A1868E2CBCBB1B00BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */,
 				B3FAC984292B475E005E8B11 /* PVAtari800.framework in Frameworks */,
 				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
+				B336F3142F6E8624004ABEE6 /* PVCheevos in Frameworks */,
 				B3FAC9AA292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B346AED2297602210090E014 /* PVYabause.framework in Frameworks */,
 				B3BDD4222D349220005F5AF9 /* (null) in Frameworks */,
@@ -3610,6 +3634,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B336F31D2F6E863D004ABEE6 /* PVCheevos in Frameworks */,
 				B341FDB02BE61EC100718929 /* Photos.framework in Frameworks */,
 				B341FDB12BE61EC100718929 /* GameController.framework in Frameworks */,
 				B32D45C32CB73101006B76C2 /* PVGambatte in Frameworks */,
@@ -3674,6 +3699,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B336F31A2F6E8634004ABEE6 /* PVCheevos in Frameworks */,
 				B347B38F2BC4CCA6006A3B2D /* MetalKit.framework in Frameworks */,
 				B347B3372BC4CA98006A3B2D /* libc++.tbd in Frameworks */,
 				B347B33B2BC4CA98006A3B2D /* libsqlite3.tbd in Frameworks */,
@@ -3801,6 +3827,7 @@
 				B35EEFC12C6C6D1A00EBD1A8 /* ZipArchive in Frameworks */,
 				B35EEFC22C6C6D1A00EBD1A8 /* GameController.framework in Frameworks */,
 				B35EEFC42C6C6D1A00EBD1A8 /* PVLibrary in Frameworks */,
+				B336F3112F6E861B004ABEE6 /* PVCheevos in Frameworks */,
 				B35EEFC62C6C6D1A00EBD1A8 /* MetalKit.framework in Frameworks */,
 				B38436352C9FC2EC00E32EB1 /* snes9x.framework in Frameworks */,
 				B35EEFC72C6C6D1A00EBD1A8 /* CoreServices.framework in Frameworks */,
@@ -3932,6 +3959,7 @@
 				B33BD1BC2C6A6204001E933A /* PVCrabEmu-Dynamic in Frameworks */,
 				B34E4F4A2C11796B001559E8 /* PVLogging in Frameworks */,
 				B394CDAC2BDEE53A006B63E8 /* Foundation.framework in Frameworks */,
+				B336F2EC2F6E85FD004ABEE6 /* PVCheevos in Frameworks */,
 				B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */,
 				B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */,
 				B3D58F4E2E30194000E130BC /* MoltenVK-1.2.8 in Frameworks */,
@@ -4040,6 +4068,7 @@
 				B3F7E393297736BE00362B92 /* CFNetwork.framework in Frameworks */,
 				B36A8D4A2CCD54C7002357DD /* PVUI in Frameworks */,
 				B3F7E399297736BE00362B92 /* Security.framework in Frameworks */,
+				B336F30E2F6E8612004ABEE6 /* PVCheevos in Frameworks */,
 				B3F7E39F297736BE00362B92 /* SystemConfiguration.framework in Frameworks */,
 				B3F7E3A3297736BE00362B92 /* CoreData.framework in Frameworks */,
 				B36A8D462CCD548E002357DD /* MBProgressHUD in Frameworks */,
@@ -4157,6 +4186,7 @@
 				B3A47B2E2F5677C9004A995B /* OpenSSL in Frameworks */,
 				B3A47B2D2F5677C9004A995B /* WhatsNewKit in Frameworks */,
 				B3A47B2C2F5677C9004A995B /* PVFeatureFlags in Frameworks */,
+				B336F3172F6E862E004ABEE6 /* PVCheevos in Frameworks */,
 				B3A47B2B2F5677C9004A995B /* Perception in Frameworks */,
 				B3A47B2A2F5677C9004A995B /* FreemiumKit in Frameworks */,
 				B3A47B292F5677C9004A995B /* SiriusRating in Frameworks */,
@@ -7562,6 +7592,7 @@
 				B32C08E52D0538240024A3E2 /* MoltenVK */,
 				B32C08E72D05382F0024A3E2 /* MoltenVK-Catalyst */,
 				B3E77F872D1F5803004A3AD2 /* PVFeatureFlags */,
+				B336F30A2F6E8609004ABEE6 /* PVCheevos */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -7597,6 +7628,7 @@
 				B32D45C42CB73106006B76C2 /* PVGambatte */,
 				B3FC97352CB8B6C400C6DB31 /* PVVisualBoyAdvance-Dynamic */,
 				B3E77F8F2D1F5825004A3AD2 /* PVFeatureFlags */,
+				B336F3132F6E8624004ABEE6 /* PVCheevos */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -7662,6 +7694,7 @@
 				9C4E9B7E289A972E85DD3226 /* PVFeatureFlags */,
 				7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */,
 				53040F2E23B73F97BE1CAB5D /* OpenSSL */,
+				B336F3162F6E862E004ABEE6 /* PVCheevos */,
 			);
 			productName = "Provenance-CI";
 			productReference = 6DAC5484FE40CAF061362758 /* Provenance CI.app */;
@@ -7849,6 +7882,7 @@
 				B35197F82D1A5ED600D2B413 /* PVCoremGBA-Dynamic */,
 				B35197FE2D1A5F5300D2B413 /* Defaults */,
 				B3E77F912D1F582A004A3AD2 /* PVFeatureFlags */,
+				B336F31C2F6E863D004ABEE6 /* PVCheevos */,
 			);
 			productName = Provenance;
 			productReference = B341FE082BE61EC100718929 /* Provenance.app */;
@@ -7883,6 +7917,7 @@
 				B32D45C02CB730FB006B76C2 /* PVGambatte */,
 				B3FC973B2CB8B6D100C6DB31 /* PVVisualBoyAdvance-Dynamic */,
 				B3E77F932D1F5830004A3AD2 /* PVFeatureFlags */,
+				B336F3192F6E8634004ABEE6 /* PVCheevos */,
 			);
 			productName = ProvenanceTV;
 			productReference = B347B3892BC4CA98006A3B2D /* Provenance.app */;
@@ -8006,6 +8041,7 @@
 				B3E77F8B2D1F5819004A3AD2 /* PVFeatureFlags */,
 				B35F93E22D2F811B0016E633 /* WhatsNewKit */,
 				B36A16032D90D2CC00420484 /* OpenSSL */,
+				B336F3102F6E861B004ABEE6 /* PVCheevos */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -8087,6 +8123,7 @@
 				B306D7E92D3DDC6B00C71EBE /* FirebasePerformance */,
 				B36A16052D90D43900420484 /* OpenSSL */,
 				B3D58F4D2E30194000E130BC /* MoltenVK-1.2.8 */,
+				B336F2EB2F6E85FD004ABEE6 /* PVCheevos */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -8281,6 +8318,7 @@
 				B3250A2E2CCEE29800E6D7CE /* FreemiumKit */,
 				B3E77F852D1F57F3004A3AD2 /* PVFeatureFlags */,
 				B35F93E42D2F8E560016E633 /* WhatsNewKit */,
+				B336F30D2F6E8612004ABEE6 /* PVCheevos */,
 			);
 			productName = Provenance;
 			productReference = B3F7E421297736BE00362B92 /* Provenance-Lite.app */;
@@ -8555,6 +8593,7 @@
 				B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */,
 				3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */,
+				B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -16610,6 +16649,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Gambatte;
 		};
+		B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVCheevos;
+		};
 		B33B4F3B2C198EB8007371C5 /* XCLocalSwiftPackageReference "PVmemcpy" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVmemcpy;
@@ -17328,6 +17371,45 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
 			productName = PVGambatte;
+		};
+		B336F2EB2F6E85FD004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCheevos;
+		};
+		B336F30A2F6E8609004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */;
+			productName = PVCheevos;
+		};
+		B336F30D2F6E8612004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */;
+			productName = PVCheevos;
+		};
+		B336F3102F6E861B004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */;
+			productName = PVCheevos;
+		};
+		B336F3132F6E8624004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */;
+			productName = PVCheevos;
+		};
+		B336F3162F6E862E004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */;
+			productName = PVCheevos;
+		};
+		B336F3192F6E8634004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */;
+			productName = PVCheevos;
+		};
+		B336F31C2F6E863D004ABEE6 /* PVCheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */;
+			productName = PVCheevos;
 		};
 		B33A09332D2D0B0C00BFB6C9 /* PVJIT */ = {
 			isa = XCSwiftPackageProductDependency;
