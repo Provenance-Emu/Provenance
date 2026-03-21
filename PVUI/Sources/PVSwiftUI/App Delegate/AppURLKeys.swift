@@ -55,7 +55,7 @@ public enum AppURLKeys: String, Codable {
     public enum NetplayJoinKeys: String, Codable {
         /// The host IP or hostname to connect to.
         case host
-        /// The port number (0–65535).
+        /// The port number (1–65535). Port 0 is rejected and falls back to the default (55435).
         case port
         /// Optional relay server hostname for NAT traversal.
         case relay

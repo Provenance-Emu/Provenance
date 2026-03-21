@@ -18,7 +18,7 @@ import PVNetplay
 public struct NetplayInviteView: View {
     let gameName: String
 
-    @StateObject private var netplay = ObservableNetplayManager.shared
+    @ObservedObject private var netplay = ObservableNetplayManager.shared
     @Environment(\.dismiss) private var dismiss
 
     @State private var hostAddress: String = ""

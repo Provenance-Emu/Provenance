@@ -216,6 +216,10 @@ extension PVAppDelegate {
 
         switch action {
         case .netplay:
+            guard components.path == "/join" else {
+                ELOG("netplay: unrecognised path '\(components.path)' in \(url.absoluteString)")
+                return false
+            }
             guard let queryItems = components.queryItems,
                   let host = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.host.rawValue })?.value,
                   !host.isEmpty else {

@@ -63,8 +63,12 @@ public final class RetroArchLobbyService: ObservableObject {
                 return
             }
 
-            let entries = try JSONDecoder().decode([LobbyEntry].self, from: data)
-            rooms = entries.compactMap { NetplayRoom(lobbyEntry: $0) }
+            // Decode and map off the main actor to avoid blocking UI updates.
+            let decoded = try await Task.detached(priority: .userInitiated) { () throws -> [NetplayRoom] in
+                let entries = try JSONDecoder().decode([LobbyEntry].self, from: data)
+                return entries.compactMap { NetplayRoom(lobbyEntry: $0) }
+            }.value
+            rooms = decoded
         } catch is CancellationError {
             // Normal cancellation — no error to report.
         } catch {
@@ -76,16 +80,17 @@ public final class RetroArchLobbyService: ObservableObject {
 // MARK: - UUID deterministic helper
 
 private extension UUID {
-    /// Creates a UUID deterministically from a string using its SHA-1-like hash.
-    /// This ensures identical inputs always produce the same UUID (v5 name-based semantics),
+    /// Creates a UUID deterministically from a string using an XOR-fold of its UTF-8 bytes.
+    /// Sets UUID version 5 and RFC 4122 variant bits so the result looks like a name-based UUID,
     /// which keeps SwiftUI List identity stable across fetches.
+    /// Note: this is NOT a true UUIDv5/SHA-1; it is a fast fold suitable for stable list IDs.
     init(deterministicString string: String) {
         var hash = [UInt8](repeating: 0, count: 16)
         let bytes = Array(string.utf8)
         for (index, byte) in bytes.enumerated() {
             hash[index % 16] ^= byte &+ UInt8(truncatingIfNeeded: index)
         }
-        // Set version 5 (name-based SHA-1) and variant bits.
+        // Set version 5 and RFC 4122 variant bits (does not imply SHA-1 hashing).
         hash[6] = (hash[6] & 0x0F) | 0x50
         hash[8] = (hash[8] & 0x3F) | 0x80
         self = UUID(uuid: (
@@ -152,7 +157,8 @@ extension NetplayRoom {
             roomPort = UInt16(clamping: mPort)
         } else if let ip = fields.ip, !ip.isEmpty {
             address = ip
-            roomPort = UInt16(clamping: fields.port ?? 55435)
+            let rawPort = fields.port ?? 55435
+            roomPort = UInt16(clamping: rawPort > 0 ? rawPort : 55435)
         } else {
             return nil
         }

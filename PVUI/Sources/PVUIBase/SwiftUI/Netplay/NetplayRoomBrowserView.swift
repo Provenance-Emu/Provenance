@@ -27,7 +27,7 @@ public struct NetplayRoomBrowserView: View {
     /// Pass an empty string if unknown (verification will show "unknown" state).
     let localGameHash: String
 
-    @StateObject private var netplay = ObservableNetplayManager.shared
+    @ObservedObject private var netplay = ObservableNetplayManager.shared
     @State private var isJoining = false
     @State private var errorMessage: String?
     @State private var showError = false
@@ -138,7 +138,9 @@ public struct NetplayRoomBrowserView: View {
                 switch newTab {
                 case .lan:
                     netplay.cancelWANFetch()
+                    netplay.startDiscovery()
                 case .wan:
+                    netplay.stopDiscovery()
                     netplay.fetchWANRooms()
                 }
             }
@@ -254,6 +256,8 @@ public struct NetplayRoomBrowserView: View {
                         }
                         .buttonStyle(.plain)
                         .foregroundStyle(.secondary)
+                        .accessibilityLabel("Refresh rooms")
+                        .accessibilityHint("Fetch the latest list of internet rooms")
                     }
                 } footer: {
                     VStack(alignment: .leading, spacing: 4) {
