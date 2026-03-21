@@ -1947,8 +1947,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
     #endif // os(iOS)
 
-    #if os(tvOS)
-    // OSDRecordingObserver stub — recording is iOS-only; no-op satisfies the protocol.
+    #if !os(iOS)
+    // OSDRecordingObserver stub — recording is iOS-only; no-op satisfies the protocol on all other platforms.
     public func updateRecordButtonAppearance() {}
     #endif
 }
