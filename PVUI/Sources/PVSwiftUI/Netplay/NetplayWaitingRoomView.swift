@@ -201,7 +201,7 @@ public struct NetplayWaitingRoomView: View {
                 isSpectator: false
             )
 
-            if connectedPeers.isEmpty {
+            if remotePeerCount == 0 {
                 HStack {
                     ProgressView()
                         .scaleEffect(0.75)
@@ -210,12 +210,24 @@ public struct NetplayWaitingRoomView: View {
                         .foregroundStyle(.secondary)
                 }
                 .padding(.vertical, 2)
-            } else {
+            } else if !connectedPeers.isEmpty {
+                // Full peer detail available (connected state)
                 ForEach(connectedPeers) { peer in
                     playerRow(
                         nickname: peer.nickname,
                         playerIndex: peer.playerIndex,
                         pingMS: peer.pingMS,
+                        isHost: false,
+                        isSpectator: false
+                    )
+                }
+            } else {
+                // Hosting state: we know the count but not individual peer details yet
+                ForEach(0..<remotePeerCount, id: \.self) { index in
+                    playerRow(
+                        nickname: "Player \(index + 2)",
+                        playerIndex: index + 1,
+                        pingMS: nil,
                         isHost: false,
                         isSpectator: false
                     )
@@ -342,12 +354,9 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private func cancelRoom() {
-        // Own the teardown here so this view is self-contained regardless of
-        // how it is presented. The parent's onDismiss guards against any
-        // further disconnect calls via the gameStarted flag.
-        Task { @MainActor in
-            await netplay.disconnect()
-        }
+        // Just dismiss — teardown is owned by NetplayCreateRoomView's onDismiss,
+        // which disconnects when gameStarted is false. Calling disconnect here
+        // would result in a double-disconnect since onDismiss fires on every dismiss.
         dismiss()
     }
 
