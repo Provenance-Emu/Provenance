@@ -1796,6 +1796,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         ])
         self.recordButton = recButton
         quickActionButtons.append(recButton)
+        allButtons.append(recButton)
         updateRecordButtonAppearance()
     }
     #endif
