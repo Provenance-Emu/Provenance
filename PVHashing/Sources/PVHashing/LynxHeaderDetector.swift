@@ -41,8 +41,12 @@ public enum LynxHeaderDetector {
         }
         defer { try? fileHandle.close() }
 
-        guard let data = try? fileHandle.read(upToCount: Int(headerSize)),
-              data.count >= magicBytes.count else {
+        let minimumBytes = magicBytes.count
+        guard let data = try? fileHandle.read(upToCount: minimumBytes) else {
+            ELOG("Failed to read Lynx file for header detection: \(fileURL.lastPathComponent)")
+            return nil
+        }
+        guard data.count >= minimumBytes else {
             WLOG("Lynx file too small to contain header: \(fileURL.lastPathComponent)")
             return 0
         }

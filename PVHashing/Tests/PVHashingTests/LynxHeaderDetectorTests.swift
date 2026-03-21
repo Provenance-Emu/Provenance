@@ -106,7 +106,7 @@ struct LynxHeaderDetectorTests {
     @Test("detectOffset for file with valid Lynx header returns 64")
     func testFileWithValidHeader() throws {
         let tempDir = FileManager.default.temporaryDirectory
-        let fileURL = tempDir.appendingPathComponent("test_headered.lnx")
+        let fileURL = tempDir.appendingPathComponent("test_headered_\(UUID().uuidString).lnx")
         let data = makeHeaderedData()
         try data.write(to: fileURL)
         defer { try? FileManager.default.removeItem(at: fileURL) }
@@ -118,7 +118,7 @@ struct LynxHeaderDetectorTests {
     @Test("detectOffset for headerless file returns 0")
     func testFileWithoutHeader() throws {
         let tempDir = FileManager.default.temporaryDirectory
-        let fileURL = tempDir.appendingPathComponent("test_headerless.lnx")
+        let fileURL = tempDir.appendingPathComponent("test_headerless_\(UUID().uuidString).lnx")
         let data = makeHeaderlessData()
         try data.write(to: fileURL)
         defer { try? FileManager.default.removeItem(at: fileURL) }

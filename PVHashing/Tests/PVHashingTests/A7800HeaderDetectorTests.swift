@@ -117,7 +117,7 @@ struct A7800HeaderDetectorTests {
     @Test("detectOffset for file with valid A7800 header returns 128")
     func testFileWithValidHeader() throws {
         let tempDir = FileManager.default.temporaryDirectory
-        let fileURL = tempDir.appendingPathComponent("test_headered.a78")
+        let fileURL = tempDir.appendingPathComponent("test_headered_\(UUID().uuidString).a78")
         let data = makeHeaderedData()
         try data.write(to: fileURL)
         defer { try? FileManager.default.removeItem(at: fileURL) }
@@ -129,7 +129,7 @@ struct A7800HeaderDetectorTests {
     @Test("detectOffset for headerless file returns 0")
     func testFileWithoutHeader() throws {
         let tempDir = FileManager.default.temporaryDirectory
-        let fileURL = tempDir.appendingPathComponent("test_headerless.a78")
+        let fileURL = tempDir.appendingPathComponent("test_headerless_\(UUID().uuidString).a78")
         let data = makeHeaderlessData()
         try data.write(to: fileURL)
         defer { try? FileManager.default.removeItem(at: fileURL) }
