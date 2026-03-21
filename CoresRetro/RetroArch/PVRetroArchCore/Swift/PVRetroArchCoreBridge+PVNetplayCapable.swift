@@ -159,11 +159,11 @@ private extension PVRetroArchNetplayStatus {
             return .idle
         case .hosting:
             let port: UInt16
-            if case .host(let p) = context?.role { port = p } else { port = 55435 }
+            if case .host(let p) = context?.role { port = p } else { port = NetplaySettings.defaultLAN.port }
             let room = NetplayRoom.retroArchRoom(address: "0.0.0.0", port: port, context: context)
             return .hosting(room: room)
         case .connected:
-            let (host, port) = context?.role.clientAddress ?? ("0.0.0.0", 55435)
+            let (host, port) = context?.role.clientAddress ?? ("0.0.0.0", NetplaySettings.defaultLAN.port)
             let room = NetplayRoom.retroArchRoom(address: host, port: port, context: context)
             let session = NetplaySession(
                 room: room,
@@ -174,7 +174,7 @@ private extension PVRetroArchNetplayStatus {
             )
             return .connected(session: session)
         case .spectating:
-            let (host, port) = context?.role.clientAddress ?? ("0.0.0.0", 55435)
+            let (host, port) = context?.role.clientAddress ?? ("0.0.0.0", NetplaySettings.defaultLAN.port)
             let room = NetplayRoom.retroArchRoom(address: host, port: port, context: context)
             let session = NetplaySession(
                 room: room,

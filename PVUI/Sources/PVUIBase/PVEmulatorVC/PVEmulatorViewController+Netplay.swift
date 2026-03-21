@@ -66,12 +66,11 @@ extension PVEmulatorViewController {
                 return
             }
             await PVNetplayManager.shared.setActiveBridge(bridge)
-            guard !Task.isCancelled else {
-                // Cancellation raced with setActiveBridge; undo the registration.
-                await PVNetplayManager.shared.setActiveBridge(nil)
-                DLOG("Netplay: start task cancelled after bridge registration — clearing.")
-                return
-            }
+            // Do NOT call setActiveBridge(nil) on cancellation here: a subsequent
+            // startNetplayBridgeIfNeeded() call may have already registered a newer
+            // bridge, and unconditionally clearing activeBridge would unintentionally
+            // unregister it.  stopNetplayBridge() is responsible for clearing the
+            // bridge on teardown.
             ILOG("Netplay: registered \(bridge.netplayEngineName) bridge with PVNetplayManager.")
         }
         netplayStartTaskBox = TaskBox(task)
@@ -89,10 +88,10 @@ extension PVEmulatorViewController {
         // Cancel any pending start task so it cannot re-register after we clear.
         netplayStartTaskBox?.task.cancel()
         netplayStartTaskBox = nil
-        // disconnect() stops netplay on the registered activeBridge, resets
-        // PVNetplayManager.state to .idle, and clears the bridge reference.
-        // If the start task was cancelled before setActiveBridge ran, netplay
-        // was never started on the bridge, so no direct stop is required.
+        // disconnect() stops netplay on the registered activeBridge and resets
+        // PVNetplayManager.state to .idle, but does NOT clear the bridge reference.
+        // setActiveBridge(nil) below explicitly drops the reference so callers
+        // cannot rely on disconnect() to clear it implicitly.
         await PVNetplayManager.shared.disconnect()
         await PVNetplayManager.shared.setActiveBridge(nil)
         ILOG("Netplay: deregistered bridge from PVNetplayManager.")
