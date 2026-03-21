@@ -24,9 +24,11 @@ extension PVEmulatorViewController {
 
     /// Get swap screen state from emuThreeDS core
     private var isScreenSwapped: Bool {
-        guard let bridge = emuThreeBridge else { return false }
-        // Access swapScreen property via runtime
-        if let value = (bridge as AnyObject).value(forKey: "swapScreen") as? Bool {
+        guard let bridge = emuThreeBridge as? NSObject else { return false }
+        // Guard against NSUndefinedKeyException for bridges that don't expose swapScreen
+        let sel = NSSelectorFromString("swapScreen")
+        guard bridge.responds(to: sel) else { return false }
+        if let value = bridge.value(forKey: "swapScreen") as? Bool {
             return value
         }
         return false

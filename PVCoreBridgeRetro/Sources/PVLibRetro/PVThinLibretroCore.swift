@@ -180,7 +180,7 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// DS (NDS) cores output a combined 256×384 framebuffer (top screen + bottom screen).
     /// The DefaultDeltaSkin NDS layout splits this into two independently positioned viewports.
     public override var supportsDualScreens: Bool {
-        systemIdentifier == "com.provenance.ds"
+        systemIdentifier == SystemIdentifier.DS.rawValue
     }
 
     required init() {
