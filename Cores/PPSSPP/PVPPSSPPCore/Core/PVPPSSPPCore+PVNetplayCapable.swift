@@ -187,18 +187,6 @@ extension PVPPSSPPCore: PVNetplayCapable {
     }
 }
 
-// MARK: - NetplayRole helpers
-
-private extension NetplayRole {
-    var clientAddress: (String, UInt16)? {
-        switch self {
-        case .client(let host, let port): return (host, port)
-        case .spectator(let host, let port): return (host, port)
-        case .host: return nil
-        }
-    }
-}
-
 // MARK: - NetplayRoom factory
 
 private extension NetplayRoom {
