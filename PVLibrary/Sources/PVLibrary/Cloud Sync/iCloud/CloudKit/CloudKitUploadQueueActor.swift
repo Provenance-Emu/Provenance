@@ -323,6 +323,8 @@ public actor CloudKitUploadQueueActor {
                 return "Invalid game data"
             case .missingDependency:
                 return "Missing required dependency"
+            case .cloudKitContainerUnavailable:
+                return "CloudKit is not available (check iCloud / CloudKit entitlements and provisioning)"
             case .alreadyExists:
                 return "Record already exists"
             case .cloudKitError(let underlyingError):

@@ -47,9 +47,9 @@ let package = Package(
         /// https://github.com/DimaRU/BuildEnvironment
         .package(url: "https://github.com/DimaRU/BuildEnvironment.git", from: "1.0.0"),
 //        .package(path: "../PackageBuildInfo")
-        /// https://github.com/DimaRU/PackageBuildInfo
+        /// Upstream DimaRU/PackageBuildInfo — vendored at ../External/PackageBuildInfo (Swift tool; git stderr discarded).
 //        .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master"),
-        .package(url: "https://github.com/DimaRU/PackageBuildInfo.git", from: "1.0.4"),
+        .package(path: "../External/PackageBuildInfo"),
         /// FreemiumKit
         .package(url: "https://github.com/FlineDev/FreemiumKit.git", from: "1.19.0"),
         /// SwiftUIKit

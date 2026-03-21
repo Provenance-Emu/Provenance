@@ -614,7 +614,14 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
     /// Check CloudKit account status and update availability flags
     private func checkCloudKitAccountAvailability() {
         Task {
-            let container = iCloudConstants.container
+            guard let container = iCloudConstants.container else {
+                await MainActor.run {
+                    self.iCloudAvailable = false
+                    self.syncStatus = "CloudKit is not available (missing iCloud / CloudKit entitlements)"
+                }
+                WLOG("[UnifiedCloudSyncViewModel] Cannot check account status — iCloudConstants.container is nil")
+                return
+            }
             do {
                 let status = try await container.accountStatus()
                 await MainActor.run {
@@ -638,8 +645,18 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         isLoadingCloudKitRecords = true
 
         Task {
+            guard let container = iCloudConstants.container else {
+                await MainActor.run {
+                    self.isLoadingCloudKitRecords = false
+                    self.cloudKitRecords = CloudKitRecordCounts(
+                        roms: 0, saveStates: 0, bios: 0, batteryStates: 0, screenshots: 0, deltaSkins: 0
+                    )
+                }
+                WLOG("[UnifiedCloudSyncViewModel] Cannot load CloudKit record counts — iCloudConstants.container is nil")
+                return
+            }
             do {
-                let database = iCloudConstants.container.privateCloudDatabase
+                let database = container.privateCloudDatabase
 
                 async let romCountTask = countRecords(in: database, recordType: CloudKitSchema.RecordType.rom.rawValue)
                 async let saveStateCountTask = countRecords(in: database, recordType: CloudKitSchema.RecordType.saveState.rawValue)

@@ -1427,17 +1427,25 @@ public class CloudSyncManager {
         } else {
             DLOG("CloudKit sync providers initialized successfully.")
 
-            // Configure CloudKitInitialSyncer with the initialized providers
-            CloudKitInitialSyncer.configureShared(
-                romsSyncer: romsSyncer!,
-                saveStatesSyncer: saveStatesSyncer!,
-                nonDatabaseSyncer: nonDatabaseSyncer!
-            )
-            DLOG("CloudKitInitialSyncer configured with dependency injection.")
+            // Configure CloudKitInitialSyncer with the initialized providers (optional: fails if CK container unavailable)
+            do {
+                try CloudKitInitialSyncer.configureShared(
+                    romsSyncer: romsSyncer!,
+                    saveStatesSyncer: saveStatesSyncer!,
+                    nonDatabaseSyncer: nonDatabaseSyncer!
+                )
+                DLOG("CloudKitInitialSyncer configured with dependency injection.")
+            } catch {
+                let syncError = (error as? CloudSyncError) ?? CloudSyncError.cloudKitError(error)
+                ELOG("[CloudSyncManager] CloudKitInitialSyncer could not be configured: \(syncError.localizedDescription). Initial batch sync is disabled; ROM/save-state syncers remain available.")
+                updateSyncStatus(.error(syncError))
+                // Fallback: `CloudKitInitialSyncer.shared` stays nil; callers use optional chaining / guard.
+            }
 
             // Don't immediately set to idle, let startSync manage state
             // updateSyncStatus(.idle)
 
+            // Metadata bootstrap uses ROM/save-state syncers, not CloudKitInitialSyncer; run even if initial batch syncer failed.
             startMetadataBootstrap(reason: "providers-initialized")
         }
     }

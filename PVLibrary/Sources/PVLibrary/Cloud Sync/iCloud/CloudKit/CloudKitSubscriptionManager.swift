@@ -24,11 +24,8 @@ public class CloudKitSubscriptionManager {
     /// Shared instance
     public static let shared = CloudKitSubscriptionManager()
 
-    /// CloudKit container
-    private let container: CKContainer
-
-    /// Private database
-    private let privateDatabase: CKDatabase
+    /// Private CloudKit database; nil when `iCloudConstants.container` is unavailable (no CloudKit entitlements).
+    private let privateDatabase: CKDatabase?
 
     /// Subject for subscription updates
     private let subscriptionSubject = PassthroughSubject<CKSubscription, Error>()
@@ -52,9 +49,7 @@ public class CloudKitSubscriptionManager {
 
     /// Private initializer for singleton
     private init() {
-        // Get CloudKit container
-        container = iCloudConstants.container
-        privateDatabase = container.privateCloudDatabase
+        privateDatabase = iCloudConstants.container?.privateCloudDatabase
 
         // Register for notifications
         registerForNotifications()
@@ -71,6 +66,10 @@ public class CloudKitSubscriptionManager {
 
     /// Set up subscriptions for CloudKit updates
     public func setupSubscriptions() async {
+        guard let privateDatabase = privateDatabase else {
+            WLOG("[CloudKitSubscriptionManager] CloudKit container unavailable — skipping subscription setup")
+            return
+        }
         do {
             // Initialize CloudKit schema
             DLOG("Initializing CloudKit schema before setting up subscriptions...")
@@ -152,6 +151,10 @@ public class CloudKitSubscriptionManager {
 
     /// Create a subscription for file records
     private func createFileSubscription() async throws {
+        guard let privateDatabase = privateDatabase else {
+            WLOG("[CloudKitSubscriptionManager] createFileSubscription: no database")
+            return
+        }
         // Create subscription ID
         let subscriptionID = "file-changes"
 
@@ -190,6 +193,10 @@ public class CloudKitSubscriptionManager {
 
     /// Create a subscription for ROM records
     private func createROMSubscription() async throws {
+        guard let privateDatabase = privateDatabase else {
+            WLOG("[CloudKitSubscriptionManager] createROMSubscription: no database")
+            return
+        }
         // Create subscription ID
         let subscriptionID = "rom-changes"
 
@@ -228,6 +235,10 @@ public class CloudKitSubscriptionManager {
 
     /// Create a subscription for save state records
     private func createSaveStateSubscription() async throws {
+        guard let privateDatabase = privateDatabase else {
+            WLOG("[CloudKitSubscriptionManager] createSaveStateSubscription: no database")
+            return
+        }
         // Create subscription ID
         let subscriptionID = "savestate-changes"
 
@@ -266,6 +277,10 @@ public class CloudKitSubscriptionManager {
 
     /// Create a subscription for BIOS records
     private func createBIOSSubscription() async throws {
+        guard let privateDatabase = privateDatabase else {
+            WLOG("[CloudKitSubscriptionManager] createBIOSSubscription: no database")
+            return
+        }
         // Create subscription ID
         let subscriptionID = "bios-changes"
 
@@ -431,6 +446,10 @@ public class CloudKitSubscriptionManager {
 
             // Fetch the file record
             Task {
+                guard let privateDatabase = privateDatabase else {
+                    WLOG("[CloudKitSubscriptionManager] handleFileNotification(created): no CloudKit database")
+                    return
+                }
                 do {
                     let record = try await privateDatabase.record(for: recordID)
 
@@ -484,6 +503,10 @@ public class CloudKitSubscriptionManager {
 
             // Similar to created, but post different notification
             Task {
+                guard let privateDatabase = privateDatabase else {
+                    WLOG("[CloudKitSubscriptionManager] handleFileNotification(updated): no CloudKit database")
+                    return
+                }
                 do {
                     let record = try await privateDatabase.record(for: recordID)
 

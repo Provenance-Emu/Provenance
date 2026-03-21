@@ -54,11 +54,11 @@ private struct RetryableUpload {
 public actor CloudKitInitialSyncer {
     // MARK: - Properties
 
-    /// Shared instance - will be initialized when CloudSyncManager is set up
-    public static var shared: CloudKitInitialSyncer!
+    /// Shared instance; nil when not configured or when configuration failed (e.g. no CloudKit container).
+    public static var shared: CloudKitInitialSyncer?
 
-    /// CloudKit container
-    private let container = iCloudConstants.container
+    /// CloudKit container (initial sync requires `iCloudConstants.container` to be available).
+    private let container: CKContainer
 
     /// Private database
     private let privateDatabase: CKDatabase
@@ -87,17 +87,23 @@ public actor CloudKitInitialSyncer {
 
         // MARK: - Initialization
 
-    /// Initialize with dependency injection
+    /// Initialize with dependency injection.
     /// - Parameters:
     ///   - romsSyncer: The ROM syncer to use
     ///   - saveStatesSyncer: The save states syncer to use
     ///   - nonDatabaseSyncer: The non-database file syncer to use
+    /// - Throws: `CloudSyncError.cloudKitContainerUnavailable` when `iCloudConstants.container` is nil (no CloudKit entitlement / invalid setup).
     public init(
         romsSyncer: RomsSyncing,
         saveStatesSyncer: SaveStatesSyncing,
         nonDatabaseSyncer: NonDatabaseFileSyncing
-    ) {
-        privateDatabase = container.privateCloudDatabase
+    ) throws {
+        guard let cloudContainer = iCloudConstants.container else {
+            WLOG("[CloudKitInitialSyncer] Cannot initialize — iCloudConstants.container is nil (CloudKit entitlement missing, or bundle / NSUbiquitousContainers misconfigured). Initial batch sync will be unavailable; other sync paths may still work.")
+            throw CloudSyncError.cloudKitContainerUnavailable
+        }
+        self.container = cloudContainer
+        privateDatabase = cloudContainer.privateCloudDatabase
 
         self.romsSyncer = romsSyncer
         self.saveStatesSyncer = saveStatesSyncer
@@ -109,21 +115,24 @@ public actor CloudKitInitialSyncer {
             .assign(to: &$syncProgress)
     }
 
-    /// Static method to configure the shared instance
+    /// Configures the shared instance. Resets `shared` to nil before attempting creation; leaves nil on failure.
     /// - Parameters:
     ///   - romsSyncer: The ROM syncer to use
     ///   - saveStatesSyncer: The save states syncer to use
     ///   - nonDatabaseSyncer: The non-database file syncer to use
+    /// - Throws: Same as ``init(romsSyncer:saveStatesSyncer:nonDatabaseSyncer:)``.
     public static func configureShared(
         romsSyncer: RomsSyncing,
         saveStatesSyncer: SaveStatesSyncing,
         nonDatabaseSyncer: NonDatabaseFileSyncing
-    ) {
-        shared = CloudKitInitialSyncer(
+    ) throws {
+        shared = nil
+        shared = try CloudKitInitialSyncer(
             romsSyncer: romsSyncer,
             saveStatesSyncer: saveStatesSyncer,
             nonDatabaseSyncer: nonDatabaseSyncer
         )
+        DLOG("[CloudKitInitialSyncer] Shared instance configured successfully.")
     }
 
     // MARK: - Public Methods
@@ -816,7 +825,7 @@ public actor CloudKitInitialSyncer {
                     ILOG("[BIOS SYNC] Uploading BIOS file \(index + 1)/\(biosFiles.count): \(biosFilename)")
                     let parentDirectoryName = fileURL.deletingLastPathComponent().lastPathComponent
                     let systemID = SystemIdentifier(rawValue: parentDirectoryName)
-                    let record = try await syncer.uploadFile(fileURL, gameID: nil, systemID: systemID)
+                    let record = try await syncer.uploadFile(fileURL, gameID: nil as String?, systemID: systemID)
 
                     // Verify the upload actually has the asset
                     let hasAsset = record["fileData"] as? CKAsset != nil
@@ -1008,7 +1017,7 @@ public actor CloudKitInitialSyncer {
                             let systemID = SystemIdentifier(rawValue: parentDirectoryName)
                             // Cast to CloudKitNonDatabaseSyncer since we know it implements uploadFile
                             if let cloudKitSyncer = syncer as? CloudKitNonDatabaseSyncer {
-                                _ = try await cloudKitSyncer.uploadFile(fileURL, gameID: nil, systemID: systemID)
+                                _ = try await cloudKitSyncer.uploadFile(fileURL, gameID: nil as String?, systemID: systemID)
                                 return (fileURL, true, nil)
                             } else {
                                 return (fileURL, false, NSError(domain: "SyncError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Syncer does not support uploadFile"]))

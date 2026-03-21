@@ -13,6 +13,8 @@ public enum CloudSyncError: Error {
     case notImplemented
     case invalidData
     case missingDependency
+    /// CloudKit container could not be created (missing entitlements, invalid bundle / Info.plist, etc.).
+    case cloudKitContainerUnavailable
     case alreadyExists // Record/file already exists where it shouldn't
     case cloudKitError(Error)
     case fileSystemError(Error)
@@ -50,6 +52,8 @@ extension CloudSyncError: LocalizedError {
             return "Invalid data"
         case .missingDependency:
             return "Missing required dependency"
+        case .cloudKitContainerUnavailable:
+            return "CloudKit is not available (check iCloud / CloudKit entitlements and provisioning)"
         case .alreadyExists:
             return "Record already exists"
         case .cloudKitError(let underlyingError):

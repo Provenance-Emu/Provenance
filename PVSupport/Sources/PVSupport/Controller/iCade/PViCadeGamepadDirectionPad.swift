@@ -78,4 +78,7 @@ public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
         }
     }
 }
+
+/// iCade direction state is only driven from main-thread input (`PViCadeReader`); treat as sendable for Swift concurrency boundaries.
+extension PViCadeGamepadDirectionPad: @unchecked Sendable {}
 #endif

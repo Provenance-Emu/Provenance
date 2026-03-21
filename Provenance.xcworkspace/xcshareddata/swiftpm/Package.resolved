@@ -254,15 +254,6 @@
         }
       },
       {
-        "package": "PackageBuildInfo",
-        "repositoryURL": "https://github.com/DimaRU/PackageBuildInfo.git",
-        "state": {
-          "branch": null,
-          "revision": "b58288cada24fdaaedaaa329afe52d910794fdb2",
-          "version": "1.0.4"
-        }
-      },
-      {
         "package": "PLCrashReporter",
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
@@ -519,7 +510,7 @@
         "repositoryURL": "https://github.com/JoeMatt/SwiftMacros.git",
         "state": {
           "branch": null,
-          "revision": "d7d0fb3e8a48f0b5d9a5a28424d53cda02019b0a",
+          "revision": "d7d0fb37a560420af824e90db8a645444f727328",
           "version": "1.0.3"
         }
       },
