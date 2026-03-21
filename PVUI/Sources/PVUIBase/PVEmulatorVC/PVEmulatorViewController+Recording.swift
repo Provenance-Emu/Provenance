@@ -31,6 +31,7 @@ extension PVEmulatorViewController {
             do {
                 try await PVRecordingManager.shared.startRecording()
                 AppState.shared.emulationUIState.isRecording = true
+                notifyOSDRecordingStateChanged()
                 ILOG("[Recording] Recording started")
             } catch {
                 ELOG("[Recording] Could not start recording: \(error.localizedDescription)")
@@ -56,11 +57,13 @@ extension PVEmulatorViewController {
             do {
                 try await PVRecordingManager.shared.stopRecording(presenter: self)
                 AppState.shared.emulationUIState.isRecording = false
+                notifyOSDRecordingStateChanged()
                 ILOG("[Recording] Recording stopped and preview presented")
             } catch {
                 // On error clear the resume callback so we don't hang in a paused state
                 PVRecordingManager.shared.onPreviewDismissed = nil
                 AppState.shared.emulationUIState.isRecording = false
+                notifyOSDRecordingStateChanged()
                 ELOG("[Recording] Could not stop recording: \(error.localizedDescription)")
                 // Resume emulation since we won't be showing the preview
                 if core.isOn { core.setPauseEmulation(false) }
@@ -74,7 +77,13 @@ extension PVEmulatorViewController {
     public func discardScreenRecording() {
         PVRecordingManager.shared.discardRecording()
         AppState.shared.emulationUIState.isRecording = false
+        notifyOSDRecordingStateChanged()
         ILOG("[Recording] Recording discarded via VC")
+    }
+
+    /// Notifies the OSD controller to refresh its record button appearance.
+    private func notifyOSDRecordingStateChanged() {
+        (controllerViewController as? OSDRecordingObserver)?.updateRecordButtonAppearance()
     }
 
     /// Toggles recording on/off.

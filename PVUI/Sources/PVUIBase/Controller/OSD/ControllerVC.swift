@@ -66,4 +66,13 @@ public protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDeleg
     func dPad(_: JSDPad, joystick2 _: JoystickValue)
 
 }
+
+/// Optional protocol adopted by OSD controller VCs that display a recording indicator.
+/// `PVEmulatorViewController` casts `controllerViewController` to this type to push
+/// recording-state changes into the OSD button without a hard dependency on the
+/// concrete `PVControllerViewController` class.
+@MainActor public protocol OSDRecordingObserver: AnyObject {
+    func updateRecordButtonAppearance()
+}
+
 #endif

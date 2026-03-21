@@ -37,7 +37,7 @@ let volume = SubtleVolume(style: .roundedLine)
 let volumeHeight: CGFloat = 3
 #endif
 
-open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
+open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver {
 
     public func layoutViews() {}
 
@@ -192,6 +192,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var quickLoadButton: UIButton?
     private var fastForwardButton: UIButton?
     private var isFastForwardActive: Bool = false
+    #if os(iOS)
+    private var recordButton: UIButton?
+    private var recordPulseTimer: Timer?
+    #endif
     #if !os(tvOS)
     private var keyboardToggleButton: UIButton?
     private var mouseToggleButton: UIButton?
@@ -1741,13 +1745,50 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             quickActionButtons.append(mouseButton)
         }
         #endif // !os(tvOS)
+
+        // Record button — iOS only (ReplayKit not available on tvOS in the same way)
+        #if os(iOS)
+        setupRecordButton(buttonSize: buttonSize, spacing: spacing, safeTop: safeTop, topInset: topInset)
+        #endif
     }
+
+    #if os(iOS)
+    private func setupRecordButton(buttonSize: CGFloat, spacing: CGFloat, safeTop: NSLayoutYAxisAnchor, topInset: CGFloat) {
+        guard PVRecordingManager.shared.isAvailable else { return }
+
+        let recButton = makeQuickActionButton(
+            systemImage: "record.circle",
+            accessibilityLabel: "Record"
+        )
+        recButton.addTarget(self, action: #selector(recordTapped), for: .touchUpInside)
+        recButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(recButton)
+
+        // Place left of quick-save (if it exists), else left of quick-load, else left of FF.
+        let recTrailingButton: UIButton? = quickSaveButton ?? quickLoadButton ?? fastForwardButton
+        let recTrailingAnchor: NSLayoutXAxisAnchor = recTrailingButton.map { $0.leadingAnchor } ?? view.safeAreaLayoutGuide.trailingAnchor
+        let recTrailingConstant: CGFloat = recTrailingButton != nil ? -spacing : -8
+
+        NSLayoutConstraint.activate([
+            recButton.widthAnchor.constraint(equalToConstant: buttonSize),
+            recButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            recButton.trailingAnchor.constraint(equalTo: recTrailingAnchor, constant: recTrailingConstant),
+            recButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
+        ])
+        self.recordButton = recButton
+        quickActionButtons.append(recButton)
+        updateRecordButtonAppearance()
+    }
+    #endif
 
     /// Resets the alpha of quick-action buttons to 1.0 after controller opacity has been
     /// applied globally.  Game-controller buttons dim with `controllerOpacity`, but the
     /// quick-action strip should remain fully opaque at all times.
     private func restoreQuickActionButtonAlpha() {
         var buttons: [UIButton?] = [fastForwardButton, quickSaveButton, quickLoadButton]
+        #if os(iOS)
+        buttons.append(recordButton)
+        #endif
         #if !os(tvOS)
         buttons += [keyboardToggleButton, mouseToggleButton]
         #endif
@@ -1846,6 +1887,65 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             : UIColor.black.withAlphaComponent(0.4)
     }
     #endif // !os(tvOS)
+
+    // MARK: - Record Button
+
+    #if os(iOS)
+    @objc private func recordTapped() {
+        vibrate()
+        guard let emulatorVC = parent as? PVEmulatorViewController else {
+            ELOG("Record: parent is not PVEmulatorViewController")
+            return
+        }
+        emulatorVC.toggleScreenRecording()
+        // Appearance update is deferred briefly so the recording state has time to flip.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.updateRecordButtonAppearance()
+        }
+    }
+
+    public func updateRecordButtonAppearance() {
+        let isRecording = AppState.shared.emulationUIState.isRecording
+        let image = isRecording ? "stop.circle.fill" : "record.circle"
+        recordButton?.setImage(UIImage(systemName: image), for: .normal)
+        recordButton?.tintColor = isRecording ? .systemRed : .white
+        recordButton?.backgroundColor = isRecording
+            ? UIColor.systemRed.withAlphaComponent(0.3)
+            : UIColor.black.withAlphaComponent(0.4)
+
+        if isRecording {
+            startRecordPulse()
+        } else {
+            stopRecordPulse()
+        }
+    }
+
+    private func startRecordPulse() {
+        stopRecordPulse()
+        recordPulseTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] _ in
+            guard let btn = self?.recordButton else { return }
+            UIView.animate(withDuration: 0.4, animations: {
+                btn.alpha = 0.4
+            }) { _ in
+                UIView.animate(withDuration: 0.4) {
+                    btn.alpha = 1.0
+                }
+            }
+        }
+    }
+
+    private func stopRecordPulse() {
+        recordPulseTimer?.invalidate()
+        recordPulseTimer = nil
+        recordButton?.alpha = 1.0
+        recordButton?.layer.removeAllAnimations()
+    }
+    #endif // os(iOS)
+
+    #if os(tvOS)
+    // OSDRecordingObserver stub — recording is iOS-only; no-op satisfies the protocol.
+    public func updateRecordButtonAppearance() {}
+    #endif
 }
 
 #endif // UIKit
