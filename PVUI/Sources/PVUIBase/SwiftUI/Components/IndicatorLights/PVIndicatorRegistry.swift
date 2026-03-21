@@ -96,7 +96,12 @@ public final class PVIndicatorRegistry: ObservableObject {
     /// Updates the MFi+ swap/modifier mode indicator.
     /// - Parameter state: The swap mode state to display.
     public func updateSwapMode(_ state: PVSwapModeIndicatorState) {
+        let wasVisible = indicators[.swapMode]?.isVisible ?? false
         update(.swapMode, state: state.indicatorState)
+        let isVisible = indicators[.swapMode]?.isVisible ?? false
+        if !wasVisible && isVisible {
+            triggerPulse(for: .swapMode)
+        }
     }
 
 

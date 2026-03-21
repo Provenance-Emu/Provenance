@@ -209,7 +209,7 @@ public enum PVSwapModeIndicatorState {
                 label: "MFi+ Active",
                 description: "Modifier combo held — extended inputs available.",
                 isVisible: true,
-                isPulsing: true
+                isPulsing: false
             )
         case .inactive:
             return PVIndicatorState(
