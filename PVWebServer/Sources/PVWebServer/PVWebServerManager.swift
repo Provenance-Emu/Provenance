@@ -32,7 +32,7 @@ public actor PVWebServerManager {
     // MARK: State
 
     private var activeServer: (any PVWebServerProtocol)?
-    private var useModernServer: Bool
+    var useModernServer: Bool
 
     // MARK: Init
 
@@ -59,10 +59,10 @@ public actor PVWebServerManager {
     /// Local WebDAV URL, if the server is running.
     public var webDAVURL: URL? { activeServer?.webDAVURL }
 
-    /// Start both the HTTP and WebDAV servers.
+    /// Start both the HTTP and WebDAV servers using the current `useModernServer` value.
     ///
-    /// Reads the `modernWebServer` feature flag from `UserDefaults` debug overrides
-    /// (or the bundled `features.json`) and selects the appropriate backend.
+    /// Call `refreshFeatureFlag()` before `start()` if you need to re-evaluate the
+    /// `modernWebServer` flag from `UserDefaults` debug overrides or `features.json`.
     ///
     /// - Returns: `true` if both servers started successfully.
     /// - Throws: Any error propagated from the active server implementation.
@@ -119,8 +119,9 @@ extension PVWebServerManager {
             return
         }
 
-        // Fall back to the bundled features.json value (false by default).
-        // When PVFeatureFlags is fully integrated, callers can inject the value:
+        // No debug override present — default to the legacy ObjC web server.
+        // NOTE: This does NOT currently read from PVFeatureFlags/features.json.
+        // Callers with a resolved PVFeatureFlagsManager should inject the value explicitly:
         //   await PVWebServerManager.shared.setModernServerEnabled(flags.modernWebServer)
         useModernServer = false
     }

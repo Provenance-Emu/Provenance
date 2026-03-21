@@ -28,11 +28,23 @@ class PVWebServerTests: XCTestCase {
 
     func testManagerRefreshFeatureFlag() async {
         let manager = PVWebServerManager()
-        // Simulate a debug override being set.
-        UserDefaults.standard.set(["modernWebServer": true], forKey: "PVFeatureFlagsDebugOverrides")
+        let defaults = UserDefaults.standard
+        let originalOverrides = defaults.object(forKey: "PVFeatureFlagsDebugOverrides")
+
+        defer {
+            if let originalOverrides {
+                defaults.set(originalOverrides, forKey: "PVFeatureFlagsDebugOverrides")
+            } else {
+                defaults.removeObject(forKey: "PVFeatureFlagsDebugOverrides")
+            }
+        }
+
+        // Simulate a debug override enabling the modern web server.
+        defaults.set(["modernWebServer": true], forKey: "PVFeatureFlagsDebugOverrides")
         await manager.refreshFeatureFlag()
-        // Clean up
-        UserDefaults.standard.removeObject(forKey: "PVFeatureFlagsDebugOverrides")
+
+        let isModern = await manager.useModernServer
+        XCTAssertTrue(isModern, "Manager should enable modern server when debug override is set to true")
     }
 
     // MARK: - PVModernWebServer unit tests
@@ -66,12 +78,16 @@ class PVWebServerTests: XCTestCase {
     func testNotificationNamesMatchLegacyConstants() {
         XCTAssertEqual(Notification.Name.pvWebServerFileUploadStarted.rawValue,
                        "PVWebServerFileUploadStartedNotification")
+        XCTAssertEqual(Notification.Name.pvWebServerFileUploadProgress.rawValue,
+                       "PVWebServerFileUploadProgressNotification")
         XCTAssertEqual(Notification.Name.pvWebServerFileUploadCompleted.rawValue,
                        "PVWebServerFileUploadCompletedNotification")
         XCTAssertEqual(Notification.Name.pvWebServerFileUploadFailed.rawValue,
                        "PVWebServerFileUploadFailedNotification")
         XCTAssertEqual(Notification.Name.pvWebServerUploadProgress.rawValue,
                        "WebServerUploadProgress")
+        XCTAssertEqual(Notification.Name.pvWebServerUploadCompleted.rawValue,
+                       "WebServerUploadCompleted")
         XCTAssertEqual(Notification.Name.pvWebServerStatusChanged.rawValue,
                        "WebServerStatusChanged")
     }

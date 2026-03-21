@@ -49,7 +49,7 @@ public final class PVModernWebServer: @unchecked Sendable {
 
     private var httpServerTask: Task<Void, Error>?
     private var webDAVServerTask: Task<Void, Error>?
-    private var bonjourListener: NWListener?
+    private var netService: NetService?
     private var cachedIPAddress: String?
 
     private var _isHTTPRunning: Bool = false
@@ -113,10 +113,10 @@ extension PVModernWebServer: PVWebServerProtocol {
 
         if results.0 { startBonjourAdvertisement() }
 
-        postStatusNotification(isRunning: true, type: "HTTP",   port: httpPort,   url: serverURL)
+        postStatusNotification(isRunning: true, type: "WebUploader", port: httpPort,   url: serverURL)
         postStatusNotification(isRunning: true, type: "WebDAV", port: webDAVPort, url: webDAVURL)
 
-#if !os(macOS)
+#if canImport(UIKit) && !os(watchOS)
         await MainActor.run {
             UIApplication.shared.isIdleTimerDisabled = true
         }
@@ -129,15 +129,15 @@ extension PVModernWebServer: PVWebServerProtocol {
         webDAVServerTask?.cancel()
         httpServerTask = nil
         webDAVServerTask = nil
-        bonjourListener?.cancel()
-        bonjourListener = nil
+        netService?.stop()
+        netService = nil
         _isHTTPRunning  = false
         _isWebDAVRunning = false
 
-        postStatusNotification(isRunning: false, type: "HTTP",   port: httpPort,   url: nil)
+        postStatusNotification(isRunning: false, type: "WebUploader", port: httpPort,   url: nil)
         postStatusNotification(isRunning: false, type: "WebDAV", port: webDAVPort, url: nil)
 
-#if !os(macOS)
+#if canImport(UIKit) && !os(watchOS)
         await MainActor.run {
             UIApplication.shared.isIdleTimerDisabled = false
         }
@@ -212,14 +212,12 @@ private extension PVModernWebServer {
             guard let name = context.parameters.get("name") else {
                 return Response(status: .badRequest)
             }
-            let target = uploadDirectory.appendingPathComponent(name)
+            guard let self,
+                  let target = self.resolvedPath(name, withinDirectory: uploadDirectory) else {
+                return Response(status: .badRequest)
+            }
             do {
                 try FileManager.default.removeItem(at: target)
-                NotificationCenter.default.post(
-                    name: .pvWebServerFileUploadCompleted,
-                    object: self,
-                    userInfo: ["filePath": target.path, "action": "delete"]
-                )
                 return Response(status: .noContent)
             } catch {
                 return Response(status: .internalServerError)
@@ -256,31 +254,42 @@ private extension PVModernWebServer {
 
         for part in parts {
             guard let filename = part.filename, !filename.isEmpty else { continue }
-            let dest = uploadDirectory.appendingPathComponent(filename)
+            // Sanitize: strip path components to just the filename, block hidden files
+            let sanitizedName = URL(fileURLWithPath: filename).lastPathComponent
+            guard !sanitizedName.isEmpty, !sanitizedName.hasPrefix(".") else { continue }
+            guard let dest = resolvedPath(sanitizedName, withinDirectory: uploadDirectory) else { continue }
 
             let fileData = part.data
-            try fileData.write(to: dest)
-            savedFiles.append(filename)
+            let fileSize = fileData.count
 
-            // Fire upload-started notification
+            // Fire upload-started notification BEFORE writing to disk
             NotificationCenter.default.post(
                 name: .pvWebServerFileUploadStarted,
                 object: self,
-                userInfo: ["path": dest.path]
+                userInfo: ["path": dest.path, "fileSize": fileSize]
             )
 
-            let fileSize = fileData.count
-            // Fire upload-completed notification
-            NotificationCenter.default.post(
-                name: .pvWebServerFileUploadCompleted,
-                object: self,
-                userInfo: ["filePath": dest.path, "fileSize": fileSize]
-            )
-            NotificationCenter.default.post(
-                name: .pvWebServerUploadCompleted,
-                object: self,
-                userInfo: ["fileName": dest.path, "fileSize": fileSize]
-            )
+            do {
+                try fileData.write(to: dest)
+                savedFiles.append(sanitizedName)
+
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileUploadCompleted,
+                    object: self,
+                    userInfo: ["filePath": dest.path, "fileSize": fileSize]
+                )
+                NotificationCenter.default.post(
+                    name: .pvWebServerUploadCompleted,
+                    object: self,
+                    userInfo: ["fileName": dest.path, "fileSize": fileSize]
+                )
+            } catch {
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileUploadFailed,
+                    object: self,
+                    userInfo: ["filePath": dest.path, "error": error]
+                )
+            }
         }
 
         if savedFiles.isEmpty {
@@ -326,7 +335,7 @@ private extension PVModernWebServer {
                 status: .ok,
                 headers: [
                     HTTPField.Name("DAV")!: "1",
-                    HTTPField.Name("Allow")!: "OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL, MOVE, COPY"
+                    HTTPField.Name("Allow")!: "OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL"
                 ]
             )
         }
@@ -338,10 +347,11 @@ private extension PVModernWebServer {
         }
 
         // GET — file download
-        router.get("/**") { _, context -> Response in
+        router.get("/**") { [weak self] _, context -> Response in
             let path = context.parameters.get("**") ?? ""
-            let target = uploadDirectory.appendingPathComponent(path)
-            guard let data = try? Data(contentsOf: target) else {
+            guard let self,
+                  let target = self.resolvedPath(path, withinDirectory: uploadDirectory),
+                  let data = try? Data(contentsOf: target) else {
                 return Response(status: .notFound)
             }
             return Response(
@@ -354,7 +364,10 @@ private extension PVModernWebServer {
         // PUT — file upload
         router.put("/**") { [weak self] request, context -> Response in
             let path = context.parameters.get("**") ?? ""
-            let target = uploadDirectory.appendingPathComponent(path)
+            guard let self,
+                  let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
+                return Response(status: .forbidden)
+            }
             let body = try await request.body.collect(upTo: 1_024 * 1_024 * 1_024)
             let data = body.withUnsafeReadableBytes { ptr in Data(ptr) }
             try data.write(to: target)
@@ -376,14 +389,12 @@ private extension PVModernWebServer {
         // DELETE — remove file
         router.delete("/**") { [weak self] _, context -> Response in
             let path = context.parameters.get("**") ?? ""
-            let target = uploadDirectory.appendingPathComponent(path)
+            guard let self,
+                  let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
+                return Response(status: .forbidden)
+            }
             do {
                 try FileManager.default.removeItem(at: target)
-                NotificationCenter.default.post(
-                    name: .pvWebServerFileUploadCompleted,
-                    object: self,
-                    userInfo: ["filePath": target.path, "action": "delete"]
-                )
                 return Response(status: .noContent)
             } catch {
                 return Response(status: .notFound)
@@ -391,9 +402,12 @@ private extension PVModernWebServer {
         }
 
         // MKCOL — create directory
-        router.on("/**", method: HTTPRequest.Method("MKCOL")!) { _, context -> Response in
+        router.on("/**", method: HTTPRequest.Method("MKCOL")!) { [weak self] _, context -> Response in
             let path = context.parameters.get("**") ?? ""
-            let target = uploadDirectory.appendingPathComponent(path)
+            guard let self,
+                  let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
+                return Response(status: .forbidden)
+            }
             do {
                 try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
                 return Response(status: .created)
@@ -419,7 +433,7 @@ private extension PVModernWebServer {
             let contents = (try? FileManager.default.contentsOfDirectory(at: target,
                 includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey])) ?? []
             responses = ([target] + contents).map { url in
-                propfindResponse(for: url, baseURL: target)
+                propfindResponse(for: url, baseURL: uploadDirectory)
             }
         } else {
             responses = [propfindResponse(for: target, baseURL: uploadDirectory)]
@@ -476,18 +490,29 @@ private extension PVModernWebServer {
 private extension PVModernWebServer {
 
     func startBonjourAdvertisement() {
-        let params = NWParameters.tcp
-        guard let listener = try? NWListener(using: params, on: NWEndpoint.Port(integerLiteral: UInt16(httpPort))) else { return }
-        listener.service = NWListener.Service(name: "Provenance", type: "_http._tcp")
-        listener.newConnectionHandler = { _ in }
-        listener.start(queue: .global(qos: .utility))
-        bonjourListener = listener
+        // NetService advertises an existing port via mDNS without binding a new socket,
+        // so it does not conflict with the Hummingbird listener already bound to httpPort.
+        let service = NetService(domain: "local.", type: "_http._tcp.", name: "Provenance", port: Int32(httpPort))
+        service.publish()
+        netService = service
+        NSLog("[PVModernWebServer] Bonjour advertising 'Provenance' on port \(httpPort)")
     }
 }
 
 // MARK: - Utilities
 
 private extension PVModernWebServer {
+
+    /// Returns the resolved URL only if it remains within `baseDir`.
+    /// Returns `nil` if the path would escape the base directory (path traversal).
+    func resolvedPath(_ rawPath: String, withinDirectory baseDir: URL) -> URL? {
+        let resolved = baseDir.appendingPathComponent(rawPath).standardized
+        let basePath = baseDir.standardized.path
+        guard resolved.path == basePath || resolved.path.hasPrefix(basePath + "/") else {
+            return nil
+        }
+        return resolved
+    }
 
     func currentIPAddress() -> String? {
         if let cached = cachedIPAddress { return cached }
@@ -497,12 +522,16 @@ private extension PVModernWebServer {
         defer { freeifaddrs(ifaddrs) }
         var ptr = ifaddrs
         while let current = ptr {
-            if current.pointee.ifa_addr.pointee.sa_family == UInt8(AF_INET) {
+            guard let ifaAddr = current.pointee.ifa_addr else {
+                ptr = current.pointee.ifa_next
+                continue
+            }
+            if ifaAddr.pointee.sa_family == UInt8(AF_INET) {
                 let name = String(cString: current.pointee.ifa_name)
                 if name == "en0" || name == "en1" {
-                    var addr = current.pointee.ifa_addr.pointee
+                    var addr = ifaAddr.pointee
                     var host = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                    getnameinfo(&addr, socklen_t(current.pointee.ifa_addr.pointee.sa_len), &host, socklen_t(host.count), nil, 0, NI_NUMERICHOST)
+                    getnameinfo(&addr, socklen_t(ifaAddr.pointee.sa_len), &host, socklen_t(host.count), nil, 0, NI_NUMERICHOST)
                     address = String(cString: host)
                 }
             }
@@ -685,7 +714,7 @@ private extension PVModernWebServer {
                     <td>${esc(f.name)}</td>
                     <td>${fmtSize(f.size)}</td>
                     <td>${f.modified ? new Date(f.modified).toLocaleString() : ''}</td>
-                    <td><button class="del-btn" onclick="deleteFile('${esc(f.name)}')">Delete</button></td>
+                    <td><button class="del-btn" data-name="${esc(f.name)}">Delete</button></td>
                   </tr>`).join('');
               } catch(e) { console.error(e); }
             }
@@ -696,7 +725,7 @@ private extension PVModernWebServer {
               loadFiles();
             }
 
-            function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+            function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); }
             function fmtSize(b) {
               if (b < 1024) return b + ' B';
               if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
@@ -736,6 +765,14 @@ private extension PVModernWebServer {
               setTimeout(() => { bar.style.display='none'; fill.style.width='0%'; status.textContent=''; }, 3000);
               loadFiles();
             }
+
+            // Use event delegation for delete buttons (avoids inline JS / XSS)
+            document.getElementById('file-list').addEventListener('click', async (e) => {
+                const btn = e.target.closest('.del-btn');
+                if (!btn) return;
+                const name = btn.dataset.name;
+                if (name) await deleteFile(name);
+            });
 
             loadFiles();
           </script>
