@@ -1,5 +1,5 @@
 {
-  "_comment": "ENRICHMENT LAYER — This file is NOT the primary source of core capabilities. It enriches runtime data derived from each core's Core.plist. Fields in this file are merged on top of auto-derived capabilities. Add or update entries here only to supply: summary, qualityRank, notes, and capability flags that cannot be expressed in Core.plist (e.g. highAccuracy, mouseSupport, lightgunSupport). Capabilities already declared in Core.plist (PVCapabilities key) take effect automatically and do not need to be repeated here. gameRequirements are editorial data and should remain here.",
+  "_comment": "ENRICHMENT LAYER — This file is NOT the primary source of core capabilities. It enriches runtime data derived from each core's Core.plist (PVCapabilities). Fields in this file are merged on top of auto-derived capabilities. Add or update entries here only to supply: summary, qualityRank, notes, gameRequirements, and capability flags for cores that do not yet declare them in Core.plist. Capability flags (including highAccuracy, mouseSupport, lightgunSupport, etc.) should preferably be declared in Core.plist via the PVCapabilities key; values present there take effect automatically and do not need to be repeated here.",
   "version": 2,
   "cores": [
     {
