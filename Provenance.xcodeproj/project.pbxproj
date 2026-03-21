@@ -270,6 +270,9 @@
 		B32C08F72D053F680024A3E2 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B32C08F62D053F680024A3E2 /* MoltenVK */; };
 		B32C08F92D053FF60024A3E2 /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */; };
 		B32C08FA2D053FF70024A3E2 /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B32C30752F6E6AEE003150F0 /* ThumbnailExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B32C30792F6E6CD8003150F0 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B32C30782F6E6CD8003150F0 /* Defaults */; };
+		B32C307B2F6E6CDE003150F0 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B32C307A2F6E6CDE003150F0 /* PVSettings */; };
 		B32CEE3F2D20D40C0083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE3E2D20D40C0083552D /* PVFeatureFlags */; };
 		B32CEE412D20D4530083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE402D20D4530083552D /* PVFeatureFlags */; };
 		B32CEE432D20D45C0083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE422D20D45C0083552D /* PVFeatureFlags */; };
@@ -1213,6 +1216,13 @@
 			remoteGlobalIDString = B355E0102920AA9700E4C858;
 			remoteInfo = SpotlightImportExtension;
 		};
+		B32C30762F6E6AEE003150F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355DFFD2920AA2000E4C858;
+			remoteInfo = ThumbnailExtension;
+		};
 		B341FCB92BE61EC100718929 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1678,6 +1688,7 @@
 				B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */,
 				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 				B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
+				B32C30752F6E6AEE003150F0 /* ThumbnailExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3704,9 +3715,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */,
+				B32C307B2F6E6CDE003150F0 /* PVSettings in Frameworks */,
 				B3BDD4272D349220005F5AF9 /* (null) in Frameworks */,
 				B3THUMB0126520001BBBBBBBB /* PVLibrary in Frameworks */,
 				11D0B4AF90854D59A7612C29 /* PVQuickLookSupport in Frameworks */,
+				B32C30792F6E6CD8003150F0 /* Defaults in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5630,19 +5643,19 @@
 		B355E0512920AC7600E4C858 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */,
-				B3EEED992920B075008E2603 /* macOS */,
 				B3EEED612920AEBA008E2603 /* ActivityMonitorExtension */,
 				B3EEED722920AF1E008E2603 /* ActivityReportExtension */,
 				B3EEEDCE2920B56A008E2603 /* BackgroundDownloadExtension */,
+				B3EEED992920B075008E2603 /* macOS */,
+				B3BE9FD12C7988BE006D989E /* Provenance Stickers */,
+				B3DD05002F20031900000000 /* ProvenanceWidgets */,
 				B355DF9A29209B6700E4C858 /* QuickLookPreview */,
+				B3BE9FA62C7987B1006D989E /* ROM File Provider */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
 				B355E0122920AA9D00E4C858 /* SpotlightImportExtension */,
 				B355E0012920AA2600E4C858 /* ThumbnailExtension */,
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
-				B3BE9FA62C7987B1006D989E /* ROM File Provider */,
-				B3BE9FD12C7988BE006D989E /* Provenance Stickers */,
-				B3DD05002F20031900000000 /* ProvenanceWidgets */,
+				B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -7891,6 +7904,8 @@
 			name = ThumbnailExtension;
 			packageProductDependencies = (
 				1BA3F6932C1D4965AC324A86 /* PVQuickLookSupport */,
+				B32C30782F6E6CD8003150F0 /* Defaults */,
+				B32C307A2F6E6CDE003150F0 /* PVSettings */,
 			);
 			productName = ThumbnailExtension;
 			productReference = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */;
@@ -8020,6 +8035,7 @@
 				B379CA042F00C7BB00C3D7A7 /* PBXTargetDependency */,
 				B3E2E83F2F6BBF880010BDDE /* PBXTargetDependency */,
 				B3DD07002F20031900000000 /* PBXTargetDependency */,
+				B32C30772F6E6AEE003150F0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -9940,6 +9956,7 @@
 				1AD481B31BA350A400FDA50A /* ProvenanceTV */,
 				B341FCB72BE61EC100718929 /* ProvenanceTV (AppStore) */,
 				B347B2352BC4CA98006A3B2D /* ProvennaceTV-Lite */,
+				34564105D5C5A21AF5C65E0A /* Provenance-CI */,
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
@@ -9959,7 +9976,6 @@
 				B3BE9FA32C7987B1006D989E /* ROM File Provider */,
 				B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */,
 				B3BE9FCF2C7988BD006D989E /* Provenance Stickers */,
-				34564105D5C5A21AF5C65E0A /* Provenance-CI */,
 			);
 		};
 /* End PBXProject section */
@@ -11073,6 +11089,11 @@
 			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
 			targetProxy = B32111B22CBC42B500BE8D6C /* PBXContainerItemProxy */;
 		};
+		B32C30772F6E6AEE003150F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355DFFD2920AA2000E4C858 /* ThumbnailExtension */;
+			targetProxy = B32C30762F6E6AEE003150F0 /* PBXContainerItemProxy */;
+		};
 		B341FCB82BE61EC100718929 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
@@ -11334,7 +11355,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -11400,7 +11421,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
@@ -13253,11 +13274,22 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtension/ThumbnailExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -13276,6 +13308,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -13299,13 +13332,24 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtension/ThumbnailExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -13324,6 +13368,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -13346,13 +13391,24 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtension/ThumbnailExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -13371,6 +13427,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -14043,7 +14100,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -17207,6 +17264,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */;
 			productName = MoltenVK;
+		};
+		B32C30782F6E6CD8003150F0 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		B32C307A2F6E6CDE003150F0 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */;
+			productName = PVSettings;
 		};
 		B32CEE3E2D20D40C0083552D /* PVFeatureFlags */ = {
 			isa = XCSwiftPackageProductDependency;
