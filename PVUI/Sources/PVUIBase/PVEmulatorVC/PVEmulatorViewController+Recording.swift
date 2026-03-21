@@ -7,7 +7,9 @@
 
 #if os(iOS) || os(tvOS)
 import UIKit
+#if canImport(Photos)
 import Photos
+#endif
 import PVLogging
 
 // MARK: - Live Broadcast (iOS + tvOS)
