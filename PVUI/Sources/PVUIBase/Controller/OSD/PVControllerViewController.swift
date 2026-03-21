@@ -27,6 +27,9 @@ import PVEmulatorCore
 import PVPlists
 import PVSettings
 import PVUIBase
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 48.0
@@ -382,10 +385,19 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 #endif // !macCatalyst
 #endif // os(iOS)
 
-        // Quick action HUD strip removed — save/load/FF are accessible via the pause menu.
+        // Set up the HUD quick-action strip (toggle button + fast-forward/save/load/record row).
+        setupToggleButton()
+        setupQuickActionButtons()
 
         // Hardware switch overlay (e.g. Atari difficulty / TV-type switches)
         addHardwareSwitchOverlayIfNeeded()
+    }
+
+    override public func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        #if os(iOS)
+        stopRecordPulse()
+        #endif
     }
 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
@@ -1896,6 +1908,20 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     #if os(iOS)
     @objc private func recordTapped() {
         vibrate()
+        #if canImport(FreemiumKit)
+        guard FreemiumKit.shared.purchasedTier != nil else {
+            // Recording is a Plus feature; direct the user to the pause menu where
+            // the paywall is presented via PaidFeatureView.
+            let alert = UIAlertController(
+                title: "Provenance Plus Required",
+                message: "Gameplay recording is a Provenance Plus feature. Open the pause menu to upgrade.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+            return
+        }
+        #endif
         guard let emulatorVC = parent as? PVEmulatorViewController else {
             ELOG("Record: parent is not PVEmulatorViewController")
             return
