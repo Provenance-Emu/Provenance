@@ -40,9 +40,9 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
     // MARK: - Init
 
-    public init(router: CompanionInputRouter) {
+    public init(router: CompanionInputRouter, keyboardDelegate: VirtualKeyboardDelegate? = nil) {
         self.inputRouter = router
-        self._keyboardVM = StateObject(wrappedValue: VirtualKeyboardViewModel(layout: .full, startExpanded: true))
+        self._keyboardVM = StateObject(wrappedValue: VirtualKeyboardViewModel(delegate: keyboardDelegate, layout: .full, startExpanded: true))
     }
 
     // MARK: - Body
@@ -119,10 +119,12 @@ public struct DOSKeyboardLayout: CompanionLayout {
                             height: value.translation.height - mouseOffset.height
                         )
                         mouseOffset = value.translation
-                        // Send normalised relative mouse movement via left axis
+                        // Send normalised relative mouse movement via left axis (clamped to -1…1)
                         let scale: CGFloat = 0.01
-                        inputRouter.send(.axisChanged(.leftX, Float(delta.width  * scale)))
-                        inputRouter.send(.axisChanged(.leftY, Float(delta.height * scale)))
+                        let clampedX = max(-1.0, min(1.0, Float(delta.width  * scale)))
+                        let clampedY = max(-1.0, min(1.0, Float(delta.height * scale)))
+                        inputRouter.send(.axisChanged(.leftX, clampedX))
+                        inputRouter.send(.axisChanged(.leftY, clampedY))
                     }
                     .onEnded { _ in
                         isMouseDragging = false
@@ -141,8 +143,9 @@ public struct DOSKeyboardLayout: CompanionLayout {
             HStack(spacing: 8) {
                 shortcutButton("ESC",   button: .select)
                 shortcutButton("ENTER", button: .start)
-                shortcutButton("SPACE", button: .south)
-                shortcutButton("TAB",   button: .east)
+                // Use .west/.north to avoid collision with mouse L (.south) and mouse R (.east)
+                shortcutButton("SPACE", button: .west)
+                shortcutButton("TAB",   button: .north)
                 shortcutButton("F1",    button: .l1)
                 shortcutButton("F2",    button: .r1)
                 shortcutButton("F5",    button: .l2)
@@ -192,8 +195,12 @@ public struct DOSKeyboardLayout: CompanionLayout {
             )
             .gesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged { _ in onPress() }
-                    .onEnded   { _ in onRelease() }
+                    .onChanged { _ in
+                        if !isDown { onPress() }
+                    }
+                    .onEnded { _ in
+                        if isDown { onRelease() }
+                    }
             )
     }
 }

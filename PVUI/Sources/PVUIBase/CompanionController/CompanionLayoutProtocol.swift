@@ -63,8 +63,8 @@ public enum CompanionLayoutFactory {
             return VectrexLayout(router: router)
         case .DOS, .DOOM:
             return DOSKeyboardLayout(router: router)
-        case .Atari2600:
-            return TrackballLayout(router: router)
+        // Atari 2600 covers many game types; only specific trackball titles need TrackballLayout.
+        // Default to GenericCompanionLayout until a per-title capability flag is available.
         default:
             return GenericCompanionLayout(router: router)
         }

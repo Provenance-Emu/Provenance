@@ -1,11 +1,13 @@
 // NumpadLayout.swift
 // PVUI
 //
-// A generic 4×3 numeric keypad overlay for companion controller sessions.
+// A generic numeric keypad overlay for companion controller sessions.
 // Used by Atari 5200, ColecoVision, Vectrex (overlay), and Odyssey²-style systems.
 //
 // Parameterised by the key definitions so each system can customise labels
-// and the CompanionButton each key sends.
+// and the CompanionButton each key sends. The grid geometry is controlled
+// by the `keysPerRow` parameter (e.g. keysPerRow=3 → 4 rows × 3 columns
+// for a standard 12-key phone/keypad layout).
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
@@ -42,25 +44,27 @@ public struct NumpadKey: Identifiable, Sendable {
 
 // MARK: - NumpadLayout
 
-/// A SwiftUI view that renders a configurable 4×3 numeric keypad.
+/// A SwiftUI view that renders a configurable numeric keypad.
 ///
-/// Pass a 12-element array of ``NumpadKey`` values defining three rows
-/// of four keys (left-to-right, top-to-bottom):
+/// Pass a flat array of ``NumpadKey`` values together with `keysPerRow` to
+/// control the grid geometry. With the default `keysPerRow: 3` and 12 keys
+/// you get **4 rows × 3 columns** (left-to-right, top-to-bottom):
 ///
 /// ```
-/// Row 0:  key[0]  key[1]  key[2]  key[3]
-/// Row 1:  key[4]  key[5]  key[6]  key[7]
-/// Row 2:  key[8]  key[9]  key[10] key[11]
+/// Row 0:  key[0]  key[1]  key[2]
+/// Row 1:  key[3]  key[4]  key[5]
+/// Row 2:  key[6]  key[7]  key[8]
+/// Row 3:  key[9]  key[10] key[11]
 /// ```
 ///
 /// Common arrangements:
-/// - Atari 5200 / ColecoVision: `1 2 3 / 4 5 6 / 7 8 9 / * 0 #`
-/// - Generic numpad: `7 8 9 / 4 5 6 / 1 2 3 / * 0 #`
+/// - Atari 5200 / ColecoVision: `1 2 3 / 4 5 6 / 7 8 9 / * 0 #` (keysPerRow: 3)
+/// - Generic numpad: `7 8 9 / 4 5 6 / 1 2 3 / * 0 #` (keysPerRow: 3)
 public struct NumpadLayout: View {
 
     // MARK: - Configuration
 
-    /// Rows of keys. Provide exactly three arrays (rows), each with any number of keys.
+    /// Rows of keys. Each sub-array is one row; each row may contain any number of keys.
     private let rows: [[NumpadKey]]
     private let router: CompanionInputRouter
     private let keySize: CGFloat
@@ -93,7 +97,7 @@ public struct NumpadLayout: View {
         self.labelFont       = labelFont
     }
 
-    /// Convenience init that slices a flat 12-key array into three rows of four.
+    /// Convenience init that slices a flat key array into rows of `keysPerRow` keys.
     public init(
         keys: [NumpadKey],
         router: CompanionInputRouter,
@@ -165,12 +169,10 @@ private struct NumpadKeyView: View {
     let pressedColor: Color
     let labelFont: Font
 
-    @State private var isPressed = false
-
     var body: some View {
         CompanionControllerButton(button: key.button, router: router) {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(isPressed ? pressedColor : normalColor)
+                .fill(normalColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)

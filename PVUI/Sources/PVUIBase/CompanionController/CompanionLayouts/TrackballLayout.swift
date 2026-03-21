@@ -4,8 +4,8 @@
 // Companion controller overlay for systems that use a trackball controller.
 // Used for Atari 2600 Centipede, Missile Command, and other trackball games.
 //
-// A large circular trackpad simulates trackball rotation. Velocity is computed
-// from drag speed and sent as axis values to the CompanionInputRouter.
+// A large circular trackpad simulates trackball rotation. Per-update delta values
+// are scaled and sent as axis values to the CompanionInputRouter.
 //
 // Input routing:
 //   Trackball movement → CompanionAxisID.leftX / .leftY (velocity-based)
@@ -40,7 +40,6 @@ public struct TrackballLayout: CompanionLayout {
 
     @State private var previousLocation: CGPoint? = nil
     @State private var isDragging = false
-    @State private var velocity: CGSize = .zero
 
     // MARK: - Init
 
