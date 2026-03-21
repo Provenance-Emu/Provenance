@@ -20,13 +20,13 @@ public enum WidgetSharedDefaults {
     }
 
     public enum Keys {
-        /// JSON-encoded array of `WidgetGameEntry` for recent games.
+        /// JSON-encoded array of `WidgetGameData` written by the host app; widgets decode this into `[WidgetGameEntry]` for recent games.
         static let recentGames = "widget.recentGames"
-        /// JSON-encoded `WidgetNowPlayingEntry` for the currently-playing Music track.
+        /// JSON-encoded `WidgetNowPlayingData` written by the host app; widgets decode this into `WidgetNowPlayingEntry` for the currently-playing track.
         static let nowPlaying = "widget.nowPlaying"
         /// Total game count (Int).
         static let gameCount = "widget.gameCount"
-        /// JSON-encoded array of `WidgetGameEntry` for the art gallery rotation.
+        /// JSON-encoded array of `WidgetGameData` written by the host app; widgets decode this into `[WidgetGameEntry]` for the art gallery rotation.
         static let galleryGames = "widget.galleryGames"
     }
 
@@ -120,6 +120,14 @@ extension WidgetSharedDefaults {
         FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier: appGroupID)?
             .appendingPathComponent(path)
+    }
+
+    /// Loads raw image bytes for the given relative artwork path.
+    /// Call this in a timeline provider (not in a view body) to avoid synchronous
+    /// disk I/O during widget rendering.
+    static func artworkData(forRelativePath path: String) -> Data? {
+        guard let url = artworkURL(forRelativePath: path) else { return nil }
+        return try? Data(contentsOf: url)
     }
 }
 #endif

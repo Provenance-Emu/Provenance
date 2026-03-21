@@ -22,29 +22,47 @@ struct NowPlayingStandByEntry: TimelineEntry {
     let date: Date
     let nowPlaying: WidgetNowPlayingEntry?
     let fallbackGame: WidgetGameEntry?
+    /// Pre-loaded album art bytes for the now-playing track. Nil when unavailable.
+    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
+    let albumArtImageData: Data?
+    /// Pre-loaded artwork bytes for the fallback game (shown when nothing is playing).
+    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
+    let fallbackArtworkImageData: Data?
 }
 
 // MARK: - Timeline Provider
 
 struct NowPlayingStandByProvider: TimelineProvider {
     func placeholder(in context: Context) -> NowPlayingStandByEntry {
-        NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil)
+        NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil, albumArtImageData: nil, fallbackArtworkImageData: nil)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NowPlayingStandByEntry) -> Void) {
+        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
+        let fallbackGame = WidgetSharedDefaults.loadRecentGames().first
+        let albumArtData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
+        let fallbackData = fallbackGame?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
         let entry = NowPlayingStandByEntry(
             date: Date(),
-            nowPlaying: WidgetSharedDefaults.loadNowPlaying(),
-            fallbackGame: WidgetSharedDefaults.loadRecentGames().first
+            nowPlaying: nowPlaying,
+            fallbackGame: fallbackGame,
+            albumArtImageData: albumArtData,
+            fallbackArtworkImageData: fallbackData
         )
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NowPlayingStandByEntry>) -> Void) {
+        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
+        let fallbackGame = WidgetSharedDefaults.loadRecentGames().first
+        let albumArtData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
+        let fallbackData = fallbackGame?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
         let entry = NowPlayingStandByEntry(
             date: Date(),
-            nowPlaying: WidgetSharedDefaults.loadNowPlaying(),
-            fallbackGame: WidgetSharedDefaults.loadRecentGames().first
+            nowPlaying: nowPlaying,
+            fallbackGame: fallbackGame,
+            albumArtImageData: albumArtData,
+            fallbackArtworkImageData: fallbackData
         )
         // Poll frequently so track changes show quickly
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 2, to: Date()) ?? Date()
@@ -68,19 +86,13 @@ struct NowPlayingStandByView: View {
 
     @ViewBuilder
     private var artworkBackground: some View {
-        if let track = entry.nowPlaying,
-           let path = track.albumArtPath,
-           let url = WidgetSharedDefaults.artworkURL(forRelativePath: path),
-           let uiImage = UIImage(contentsOfFile: url.path) {
+        if let data = entry.albumArtImageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .clipped()
                 .overlay(.black.opacity(0.45))
-        } else if let game = entry.fallbackGame,
-                  let path = game.artworkPath,
-                  let url = WidgetSharedDefaults.artworkURL(forRelativePath: path),
-                  let uiImage = UIImage(contentsOfFile: url.path) {
+        } else if let data = entry.fallbackArtworkImageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -104,10 +116,7 @@ struct NowPlayingStandByView: View {
 
     @ViewBuilder
     private var albumArtThumbnail: some View {
-        if let track = entry.nowPlaying,
-           let path = track.albumArtPath,
-           let url = WidgetSharedDefaults.artworkURL(forRelativePath: path),
-           let uiImage = UIImage(contentsOfFile: url.path) {
+        if let data = entry.albumArtImageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -180,8 +189,10 @@ struct NowPlayingStandByWidget: Widget {
             artistName: "Mahito Yokota",
             albumTitle: "Super Mario Galaxy"
         ),
-        fallbackGame: nil
+        fallbackGame: nil,
+        albumArtImageData: nil,
+        fallbackArtworkImageData: nil
     )
-    NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil)
+    NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil, albumArtImageData: nil, fallbackArtworkImageData: nil)
 }
 #endif

@@ -22,21 +22,27 @@ struct GameArtGalleryEntry: TimelineEntry {
     let date: Date
     let game: WidgetGameEntry?
     let gameCount: Int
+    /// Pre-loaded artwork bytes; nil when no game is available or artwork is missing.
+    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
+    let artworkImageData: Data?
 }
 
 // MARK: - Timeline Provider
 
 struct GameArtGalleryProvider: TimelineProvider {
     func placeholder(in context: Context) -> GameArtGalleryEntry {
-        GameArtGalleryEntry(date: Date(), game: nil, gameCount: 0)
+        GameArtGalleryEntry(date: Date(), game: nil, gameCount: 0, artworkImageData: nil)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (GameArtGalleryEntry) -> Void) {
         let games = WidgetSharedDefaults.loadGalleryGames()
+        let game = games.first
+        let imageData = game?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
         let entry = GameArtGalleryEntry(
             date: Date(),
-            game: games.first,
-            gameCount: WidgetSharedDefaults.loadGameCount()
+            game: game,
+            gameCount: WidgetSharedDefaults.loadGameCount(),
+            artworkImageData: imageData
         )
         completion(entry)
     }
@@ -47,13 +53,14 @@ struct GameArtGalleryProvider: TimelineProvider {
         let now = Date()
 
         guard !games.isEmpty else {
-            let entry = GameArtGalleryEntry(date: now, game: nil, gameCount: gameCount)
+            let entry = GameArtGalleryEntry(date: now, game: nil, gameCount: gameCount, artworkImageData: nil)
             let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now
             completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
             return
         }
 
-        // Rotate through gallery games, one every 5 minutes
+        // Rotate through gallery games, one every 5 minutes.
+        // Image data is pre-loaded here so view rendering avoids synchronous disk I/O.
         var entries: [GameArtGalleryEntry] = []
         let rotationInterval = 5 // minutes
 
@@ -63,7 +70,8 @@ struct GameArtGalleryProvider: TimelineProvider {
                 value: index * rotationInterval,
                 to: now
             ) ?? now
-            entries.append(GameArtGalleryEntry(date: entryDate, game: game, gameCount: gameCount))
+            let imageData = game.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
+            entries.append(GameArtGalleryEntry(date: entryDate, game: game, gameCount: gameCount, artworkImageData: imageData))
         }
 
         // Loop back: after the last game, start over from the first
@@ -92,9 +100,7 @@ struct GameArtGalleryView: View {
 
     @ViewBuilder
     private var artworkBackground: some View {
-        if let game = entry.game, let path = game.artworkPath,
-           let url = WidgetSharedDefaults.artworkURL(forRelativePath: path),
-           let uiImage = UIImage(contentsOfFile: url.path) {
+        if let data = entry.artworkImageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -165,7 +171,8 @@ struct GameArtGalleryWidget: Widget {
             systemName: "NES",
             artworkPath: nil
         ),
-        gameCount: 42
+        gameCount: 42,
+        artworkImageData: nil
     )
 }
 #endif

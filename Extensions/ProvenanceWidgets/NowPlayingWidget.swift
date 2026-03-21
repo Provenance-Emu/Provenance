@@ -17,29 +17,38 @@ struct NowPlayingEntry: TimelineEntry {
     let date: Date
     let nowPlaying: WidgetNowPlayingEntry?
     let gameCount: Int
+    /// Pre-loaded album art bytes; nil when no track is playing or artwork is unavailable.
+    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
+    let albumArtImageData: Data?
 }
 
 // MARK: - Timeline Provider
 
 struct NowPlayingProvider: TimelineProvider {
     func placeholder(in context: Context) -> NowPlayingEntry {
-        NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 0)
+        NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 0, albumArtImageData: nil)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NowPlayingEntry) -> Void) {
+        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
+        let imageData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
         let entry = NowPlayingEntry(
             date: Date(),
-            nowPlaying: WidgetSharedDefaults.loadNowPlaying(),
-            gameCount: WidgetSharedDefaults.loadGameCount()
+            nowPlaying: nowPlaying,
+            gameCount: WidgetSharedDefaults.loadGameCount(),
+            albumArtImageData: imageData
         )
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NowPlayingEntry>) -> Void) {
+        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
+        let imageData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
         let entry = NowPlayingEntry(
             date: Date(),
-            nowPlaying: WidgetSharedDefaults.loadNowPlaying(),
-            gameCount: WidgetSharedDefaults.loadGameCount()
+            nowPlaying: nowPlaying,
+            gameCount: WidgetSharedDefaults.loadGameCount(),
+            albumArtImageData: imageData
         )
         // Refresh every 5 minutes so track info stays current
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date()) ?? Date()
@@ -115,10 +124,7 @@ struct NowPlayingRectangularView: View {
 
     @ViewBuilder
     private var albumArtView: some View {
-        if let track = entry.nowPlaying,
-           let path = track.albumArtPath,
-           let url = WidgetSharedDefaults.artworkURL(forRelativePath: path),
-           let uiImage = UIImage(contentsOfFile: url.path) {
+        if let data = entry.albumArtImageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -179,8 +185,9 @@ struct NowPlayingWidget: Widget {
             artistName: "Koji Kondo",
             albumTitle: "Super Mario 64"
         ),
-        gameCount: 42
+        gameCount: 42,
+        albumArtImageData: nil
     )
-    NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 42)
+    NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 42, albumArtImageData: nil)
 }
 #endif
