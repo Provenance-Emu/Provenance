@@ -90,13 +90,13 @@ public struct ROMGameLookup {
         }
     }
 
-    // MARK: - Internal Helpers (package-internal for testability)
+    // MARK: - Internal Helpers (internal for testability via @testable import)
 
     /// Returns `true` when `romPath` ends with `"/\(filename)"` or equals `filename`.
     ///
     /// This mirrors the Realm predicate used in `findGame(in:forFilename:)` and is
-    /// exposed at the package-internal level so unit tests can exercise the matching
-    /// logic without needing a live Realm instance.
+    /// exposed at internal access level so unit tests can exercise the matching
+    /// logic (via `@testable import PVQuickLookSupport`) without needing a live Realm instance.
     static func romPathMatches(_ romPath: String, filename: String) -> Bool {
         guard !filename.isEmpty else { return false }
         return romPath.hasSuffix("/" + filename) || romPath == filename

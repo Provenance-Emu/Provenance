@@ -16,8 +16,10 @@ import Foundation
 /// This struct is `Sendable` and safe to pass across threads.
 public struct GameInfo: Sendable {
 
-    /// Display title of the game, guaranteed to be non-empty.
-    /// Falls back to the ROM filename (extension stripped, separators normalised) when the database has no title.
+    /// Display title of the game.
+    /// This value is supplied by the caller and may be empty when no title is available.
+    /// `ROMGameLookup.gameInfo(from:)` normalises empty titles before creating a `GameInfo`,
+    /// but callers constructing `GameInfo` directly are responsible for providing a non-empty value.
     public let title: String
 
     /// Human-readable system name (e.g. "Super Nintendo").  `nil` when unknown.
