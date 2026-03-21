@@ -163,6 +163,11 @@ extension MednafenGameCore: PVNetplayCapable {
                 hostAddress: hostAddr,
                 port: port
             )
+            // Map role to the correct NetplayState — hosts return .hosting so UI
+            // can distinguish server from client connections.
+            if case .host = role {
+                return .hosting(room: room)
+            }
             let session = NetplaySession(
                 room: room,
                 role: role,
