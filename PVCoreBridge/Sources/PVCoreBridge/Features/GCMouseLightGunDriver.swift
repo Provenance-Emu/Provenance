@@ -37,8 +37,11 @@ import GameController
 import UIKit
 #endif
 
-/// Drives a ``LightGunResponder`` from GCMouse delta events and/or an
-/// iPadOS UIPointerInteraction absolute position.
+/// Drives a ``LightGunResponder`` from `GCMouse` delta events and/or an
+/// iPadOS `UIPointerInteraction` absolute position.
+///
+/// All currently-connected `GCMouse` devices are observed on attach, and
+/// newly-connected mice are picked up automatically via `GCMouseDidConnect`.
 ///
 /// Instantiate once and call ``attach(to:)`` when a core starts,
 /// ``detach()`` when it stops.
@@ -188,42 +191,53 @@ import UIKit
         guard #available(iOS 14.0, tvOS 14.0, *) else { return }
         let input = mouse.mouseInput
 
-        // Delta movement handler
+        // Delta movement handler — GCMouse may invoke this off the main thread;
+        // capture deltas before the hop to avoid any data races.
         input?.mouseMovedHandler = { [weak self] _, deltaX, deltaY in
-            self?._applyDelta(dx: CGFloat(deltaX), dy: CGFloat(deltaY))
+            let dx = CGFloat(deltaX)
+            let dy = CGFloat(deltaY)
+            Task { @MainActor [weak self] in
+                self?._applyDelta(dx: dx, dy: dy)
+            }
         }
 
         // Left button → trigger
         input?.leftButton.pressedChangedHandler = { [weak self] _, _, pressed in
-            guard let self = self, self.isEnabled else { return }
-            self.triggerDown = pressed
-            if pressed {
-                self.responder?.lightGunTriggerDown()
-            } else {
-                self.responder?.lightGunTriggerUp()
+            Task { @MainActor [weak self] in
+                guard let self, self.isEnabled else { return }
+                self.triggerDown = pressed
+                if pressed {
+                    self.responder?.lightGunTriggerDown()
+                } else {
+                    self.responder?.lightGunTriggerUp()
+                }
             }
         }
 
         // Right button → reload (off-screen)
         input?.rightButton?.pressedChangedHandler = { [weak self] _, _, pressed in
-            guard let self = self, self.isEnabled else { return }
-            if pressed {
-                self.reloadDown = true
-                self.responder?.lightGunReloadDown?()
-            } else {
-                self.reloadDown = false
-                self.responder?.lightGunReloadUp?()
+            Task { @MainActor [weak self] in
+                guard let self, self.isEnabled else { return }
+                if pressed {
+                    self.reloadDown = true
+                    self.responder?.lightGunReloadDown?()
+                } else {
+                    self.reloadDown = false
+                    self.responder?.lightGunReloadUp?()
+                }
             }
         }
 
         // Middle button → aux A
         input?.middleButton?.pressedChangedHandler = { [weak self] _, _, pressed in
-            guard let self = self, self.isEnabled else { return }
-            self.auxADown = pressed
-            if pressed {
-                self.responder?.lightGunAuxADown?()
-            } else {
-                self.responder?.lightGunAuxAUp?()
+            Task { @MainActor [weak self] in
+                guard let self, self.isEnabled else { return }
+                self.auxADown = pressed
+                if pressed {
+                    self.responder?.lightGunAuxADown?()
+                } else {
+                    self.responder?.lightGunAuxAUp?()
+                }
             }
         }
 #endif

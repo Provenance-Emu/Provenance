@@ -48,7 +48,11 @@ public final class LightGunLifecycleManager {
 
     /// Attach light gun input to the given core if it supports light guns.
     /// Safe to call even if the core reports `gameSupportsLightGun == false` — it will no-op.
+    /// Calling this while a driver is already attached will detach the previous driver first.
     public func attach(to core: some LightGunResponder & AnyObject) {
+        // Always detach first so any previously-attached driver is released and the
+        // core is not left in a permanently-attached state when switching games.
+        detach()
         guard core.gameSupportsLightGun else { return }
 #if canImport(GameController)
         let d = GCMouseLightGunDriver()
