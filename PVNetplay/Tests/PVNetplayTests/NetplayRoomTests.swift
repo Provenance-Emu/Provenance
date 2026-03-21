@@ -7,6 +7,7 @@
 //
 
 import Testing
+import Foundation
 @testable import PVNetplay
 
 @Suite("NetplayRoom Tests")
@@ -184,6 +185,36 @@ struct NetplaySettingsTests {
     }
 }
 
+@Suite("NetplayRoom WAN Tests")
+struct NetplayRoomWANTests {
+
+    @Test("lobbyAPI source is not LAN")
+    func lobbyAPISourceIsWAN() {
+        let room = NetplayRoom(
+            hostName: "OnlinePal",
+            gameName: "Sonic",
+            gameHash: "deadbeef",
+            coreIdentifier: "com.provenance.genesis",
+            maxPlayers: 2,
+            currentPlayers: 1,
+            isLAN: false,
+            hostAddress: "1.2.3.4",
+            port: 55435,
+            discoverySource: .lobbyAPI
+        )
+        #expect(!room.isLAN)
+        #expect(room.discoverySource == .lobbyAPI)
+    }
+
+    @Test("lobbyAPI source roundtrips via Codable")
+    func lobbyAPISourceCodable() throws {
+        let source = DiscoverySource.lobbyAPI
+        let data = try JSONEncoder().encode(source)
+        let decoded = try JSONDecoder().decode(DiscoverySource.self, from: data)
+        #expect(decoded == .lobbyAPI)
+    }
+}
+
 @Suite("NetplayError Tests")
 struct NetplayErrorTests {
 
@@ -205,6 +236,114 @@ struct NetplayErrorTests {
         #expect(err.errorDescription?.contains("bad port") == true)
     }
 }
+
+// MARK: - RetroArch Lobby address selection tests
+
+#if canImport(Combine)
+@Suite("RetroArchLobby Address Selection Tests")
+struct RetroArchLobbyAddressTests {
+
+    @Test("MITM address is preferred when present")
+    func mitmAddressPreferred() throws {
+        let json = """
+        [{"fields":{"username":"HostA","game_name":"Sonic","game_crc":"DEADBEEF",
+          "core_name":"genesis_plus_gx","ip":"203.0.113.1","port":55435,
+          "mitm_ip":"relay.example.com","mitm_port":55436,
+          "has_password":false,"has_spectate_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(room.hostAddress == "relay.example.com")
+        #expect(room.port == 55436)
+    }
+
+    @Test("Direct IP used when MITM fields are absent")
+    func directIPFallback() throws {
+        let json = """
+        [{"fields":{"username":"HostB","game_name":"Mario","game_crc":"CAFEBABE",
+          "core_name":"snes9x","ip":"198.51.100.5","port":12345,
+          "has_password":false,"has_spectate_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(room.hostAddress == "198.51.100.5")
+        #expect(room.port == 12345)
+    }
+
+    @Test("Entry with empty MITM IP falls back to direct IP")
+    func emptyMITMFallsBackToDirect() throws {
+        let json = """
+        [{"fields":{"username":"HostC","game_name":"Zelda","game_crc":"BEEFDEAD",
+          "core_name":"mgba","ip":"192.0.2.9","port":55435,
+          "mitm_ip":"","mitm_port":0,
+          "has_password":false,"has_spectate_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(room.hostAddress == "192.0.2.9")
+    }
+
+    @Test("Entry missing both IP and MITM returns nil")
+    func missingAllAddressesReturnsNil() throws {
+        let json = """
+        [{"fields":{"username":"HostD","game_name":"Pong","game_crc":"00000000",
+          "core_name":"atari800","has_password":false,"has_spectate_password":false}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        #expect(NetplayRoom(lobbyEntry: entries[0]) == nil)
+    }
+
+    @Test("Unknown gameName and username use fallback strings")
+    func fallbackDisplayStrings() throws {
+        let json = """
+        [{"fields":{"ip":"10.0.0.1","port":55435,
+          "has_password":false,"has_spectate_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(room.gameName == "Unknown Game")
+        #expect(room.hostName == "Unknown Host")
+    }
+
+    @Test("Missing has_spectate_password field allows spectators")
+    func missingSpectatePasswordAllowsSpectators() throws {
+        let json = """
+        [{"fields":{"username":"HostE","game_name":"Tetris","game_crc":"12345678",
+          "core_name":"gbcore","ip":"10.0.0.2","port":55435,
+          "has_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        // nil has_spectate_password means no password required → spectators allowed
+        #expect(room.allowsSpectators)
+    }
+
+    @Test("has_spectate_password true disallows spectators")
+    func spectatePasswordTrueDisallowsSpectators() throws {
+        let json = """
+        [{"fields":{"username":"HostF","game_name":"Pong","game_crc":"AAAABBBB",
+          "core_name":"atari","ip":"10.0.0.3","port":55435,
+          "has_password":false,"has_spectate_password":true,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(!room.allowsSpectators)
+    }
+
+    @Test("Rooms with same stable fields produce same deterministic UUID")
+    func deterministicUUIDStability() throws {
+        let json = """
+        [{"fields":{"username":"HostG","game_name":"BreakOut","game_crc":"CCCCDDDD",
+          "core_name":"atari","ip":"10.0.0.4","port":55435,
+          "has_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room1 = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        let room2 = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(room1.id == room2.id)
+    }
+}
+#endif
 
 // MARK: - PVNetplayCapable mock conformance test
 // Verifies the protocol requirements can be satisfied (compile-time check).

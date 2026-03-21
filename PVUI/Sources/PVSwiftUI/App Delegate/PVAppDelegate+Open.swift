@@ -215,6 +215,31 @@ extension PVAppDelegate {
         }
 
         switch action {
+        case .netplay:
+            guard components.path == "/join" else {
+                ELOG("netplay: unrecognised path '\(components.path)' in \(url.absoluteString)")
+                return false
+            }
+            guard let queryItems = components.queryItems,
+                  let host = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.host.rawValue })?.value,
+                  !host.isEmpty else {
+                ELOG("netplay/join: missing required 'host' parameter in \(url.absoluteString)")
+                return false
+            }
+            let portStr = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.port.rawValue })?.value ?? "55435"
+            let defaultPort: UInt16 = 55435
+            let portRaw = UInt16(portStr) ?? defaultPort
+            // Port 0 is not a valid netplay connection target; fall back to the default.
+            let port: UInt16 = portRaw > 0 ? portRaw : defaultPort
+            let relay = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.relay.rawValue })?.value
+            let game = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.game.rawValue })?.value
+            ILOG("netplay/join: host=\(host) port=\(port) relay=\(relay ?? "none")")
+            var userInfo: [String: Any] = ["host": host, "port": port]
+            if let relay { userInfo["relay"] = relay }
+            if let game { userInfo["game"] = game }
+            NotificationCenter.default.post(name: .netplayJoinRequest, object: nil, userInfo: userInfo)
+            return true
+
         case .screen, .debug:
             return ScreenNavigator.shared.handle(url: url)
 

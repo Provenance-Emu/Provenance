@@ -107,4 +107,6 @@ public enum DiscoverySource: String, Sendable, Codable {
     case multipeer = "multipeer"
     /// Entered manually by the user (IP + port)
     case manual = "manual"
+    /// Fetched from the RetroArch public lobby REST API
+    case lobbyAPI = "lobbyAPI"
 }

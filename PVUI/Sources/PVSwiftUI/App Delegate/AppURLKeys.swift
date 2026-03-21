@@ -15,6 +15,9 @@ public extension Notification.Name {
     static let skinInstallDidSucceed = Notification.Name("PVSkinInstallDidSucceed")
     /// Posted after a skin deep-link install fails. userInfo key: "error" (String).
     static let skinInstallDidFail = Notification.Name("PVSkinInstallDidFail")
+    /// Posted when a `provenance://netplay/join` deep link is received.
+    /// userInfo keys: "host" (String), "port" (UInt16), "relay" (String?), "game" (String?).
+    static let netplayJoinRequest = Notification.Name("PVNetplayJoinRequest")
 }
 
 public enum AppURLKeys: String, Codable {
@@ -26,6 +29,8 @@ public enum AppURLKeys: String, Codable {
     case debug
     /// Install a remote skin: provenance://install-skin?url=<encoded-url>
     case installSkin = "install-skin"
+    /// Netplay invite join: provenance://netplay/join?host=…&port=…&relay=…&game=…
+    case netplay
 
     public enum OpenKeys: String, Codable {
         case md5Key = "PVGameMD5Key"
@@ -46,5 +51,15 @@ public enum AppURLKeys: String, Codable {
     public enum InstallSkinKeys: String, Codable {
         /// The URL of the skin file to download and install.
         case url = "url"
+    }
+    public enum NetplayJoinKeys: String, Codable {
+        /// The host IP or hostname to connect to.
+        case host
+        /// The port number (1–65535). Port 0 is rejected and falls back to the default (55435).
+        case port
+        /// Optional relay server hostname for NAT traversal.
+        case relay
+        /// Optional game name for display purposes.
+        case game
     }
 }
