@@ -2212,16 +2212,25 @@ static bool thin_environment(unsigned cmd, void *data) {
             uint32_t w = _rawAVInfo.geometry.max_width  ?: (_rawAVInfo.geometry.base_width  ?: 640);
             uint32_t h = _rawAVInfo.geometry.max_height ?: (_rawAVInfo.geometry.base_height ?: 480);
             ILOG(@"ThinFrontend: geometry changed — rebuilding HW render FBO %ux%u", w, h);
+            // Clear the flag immediately so a failed setup does not cause an
+            // infinite teardown loop on every subsequent runFrame call.
+            _hwFBONeedsRebuild = NO;
+            // Make the core's GL context current BEFORE notifying it via context_destroy.
+            // Cores commonly issue GL calls (e.g. glDeleteTextures) in context_destroy,
+            // which require a valid current context; calling it without one can crash or leak.
+            [EAGLContext setCurrentContext:_glContext];
             // Notify core that the context is being destroyed before teardown
             if (_hwRenderCallback.context_destroy) {
                 _hwRenderCallback.context_destroy();
             }
             // Release GL objects only — keep EAGLContext and _hwRenderRequested intact
-            [EAGLContext setCurrentContext:_glContext];
             if (_emuFBO)      { glDeleteFramebuffers(1,  &_emuFBO);    _emuFBO = 0; }
             if (_emuColorTex) { glDeleteTextures(1,      &_emuColorTex); _emuColorTex = 0; }
             if (_emuDepthRB)  { glDeleteRenderbuffers(1, &_emuDepthRB); _emuDepthRB = 0; }
             if (_ioSurface)   { CFRelease(_ioSurface);  _ioSurface = NULL; }
+            // Reset so setupHardwareContextFBOWidth:height: re-calls startRenderingOnAlternateThread
+            // to obtain a new IOSurface sized for the updated geometry. This is intentional:
+            // the delegate must re-create its Metal texture at the new dimensions.
             _renderDelegateStarted = NO;
             [self setupHardwareContextFBOWidth:w height:h];
         }
