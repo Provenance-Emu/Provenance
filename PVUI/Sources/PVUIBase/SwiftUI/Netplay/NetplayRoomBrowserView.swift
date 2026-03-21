@@ -23,17 +23,23 @@ public struct NetplayRoomBrowserView: View {
     /// When `true`, row taps spectate rather than join as a player.
     let spectateMode: Bool
 
+    /// MD5 hash of the local ROM — used to verify against the host before joining.
+    /// Pass an empty string if unknown (verification will show "unknown" state).
+    let localGameHash: String
+
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var isJoining = false
     @State private var errorMessage: String?
     @State private var showError = false
     @State private var showManualConnect = false
+    @State private var roomToConfirm: NetplayRoom?
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(gameName: String, coreIdentifier: String, spectateMode: Bool = false) {
+    public init(gameName: String, coreIdentifier: String, localGameHash: String = "", spectateMode: Bool = false) {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
+        self.localGameHash = localGameHash
         self.spectateMode = spectateMode
     }
 
@@ -72,6 +78,17 @@ public struct NetplayRoomBrowserView: View {
             }
             .sheet(isPresented: $showManualConnect) {
                 NetplayManualConnectView(gameName: gameName, coreIdentifier: coreIdentifier, defaultSpectate: spectateMode)
+            }
+            .sheet(item: $roomToConfirm) { room in
+                NetplayJoinConfirmView(
+                    room: room,
+                    localGameHash: localGameHash
+                ) {
+                    roomToConfirm = nil
+                    performJoin(room: room, spectate: false)
+                } onCancel: {
+                    roomToConfirm = nil
+                }
             }
             .alert("Connection Error", isPresented: $showError, presenting: errorMessage) { _ in
                 Button("OK", role: .cancel) {}
@@ -179,6 +196,15 @@ public struct NetplayRoomBrowserView: View {
     // MARK: - Actions
 
     private func join(room: NetplayRoom, spectate: Bool) {
+        if spectate {
+            performJoin(room: room, spectate: true)
+        } else {
+            // Show ROM hash confirmation before joining as a player.
+            roomToConfirm = room
+        }
+    }
+
+    private func performJoin(room: NetplayRoom, spectate: Bool) {
         isJoining = true
         Task { @MainActor in
             do {

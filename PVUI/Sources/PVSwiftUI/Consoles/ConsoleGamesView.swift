@@ -764,7 +764,8 @@ struct ConsoleGamesView: SwiftUI.View {
                     if let game = gamesViewModel.networkPlayGame, !game.isInvalidated {
                         NetplayLobbyView(
                             gameName: game.title,
-                            coreIdentifier: gamesViewModel.networkPlayCoreIdentifier
+                            coreIdentifier: gamesViewModel.networkPlayCoreIdentifier,
+                            localGameHash: game.md5Hash
                         )
                     } else {
                         Color.clear.onAppear { gamesViewModel.showNetworkPlay = false }
