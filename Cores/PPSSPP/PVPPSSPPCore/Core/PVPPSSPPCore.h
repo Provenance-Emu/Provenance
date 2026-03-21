@@ -109,3 +109,7 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 static __weak PVPPSSPPCoreBridge *_current;
 
 NS_HEADER_AUDIT_END(nullability, sendability)
+
+// Pull in the Netplay category so Swift within the same module can call
+// adhocStatus / connectToAdhocServer: / stopAdhoc without a separate import.
+#import "PVPPSSPPCore+Netplay.h"
