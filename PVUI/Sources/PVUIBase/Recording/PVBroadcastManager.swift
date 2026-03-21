@@ -38,8 +38,25 @@ import PVLogging
     /// VC fails to load (e.g. no broadcast extensions installed, permission
     /// denied, or system error).  Set this from the presenting view controller
     /// to show an alert or toast so the user knows why "GO LIVE" did nothing.
-    public var onBroadcastLoadError: ((Error?) -> Void)?
+    ///
+    /// The handler is treated as a one-shot callback: after it is invoked once,
+    /// it is automatically cleared to avoid stale handlers lingering on the
+    /// singleton and accidentally handling future errors for a different UI.
+    public var onBroadcastLoadError: ((Error?) -> Void)? {
+        get { _onBroadcastLoadError }
+        set {
+            guard let newValue = newValue else {
+                _onBroadcastLoadError = nil
+                return
+            }
+            _onBroadcastLoadError = { [weak self] error in
+                newValue(error)
+                self?._onBroadcastLoadError = nil
+            }
+        }
+    }
 
+    private var _onBroadcastLoadError: ((Error?) -> Void)?
     private var broadcastController: RPBroadcastController?
 
     private override init() {}
