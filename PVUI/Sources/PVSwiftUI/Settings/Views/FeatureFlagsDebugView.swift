@@ -246,14 +246,14 @@ private struct FeatureFlagRow: View {
 
     @ViewBuilder
     private var rowContent: some View {
-        HStack(spacing: 8) {
-            // Left: key + description, compact
-            VStack(alignment: .leading, spacing: 1) {
+        HStack(alignment: .top, spacing: 8) {
+            // Left: key + description
+            VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(flag.key)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(RetroTheme.retroPink)
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     // Status badge
                     Text(flag.enabled ? "ON" : "OFF")
@@ -282,7 +282,7 @@ private struct FeatureFlagRow: View {
                     Text(desc)
                         .font(.system(size: 11))
                         .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 // Restrictions only if present
@@ -291,7 +291,7 @@ private struct FeatureFlagRow: View {
                     Text(restrictions.joined(separator: ", "))
                         .font(.system(size: 10))
                         .foregroundColor(.orange)
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -313,13 +313,13 @@ private struct FeatureFlagRow: View {
                 refreshAction()
             }
 #else
-        HStack(spacing: 8) {
-            VStack(alignment: .leading, spacing: 1) {
+        HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(flag.key)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(RetroTheme.retroPink)
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(flag.enabled ? "ON" : "OFF")
                         .font(.system(size: 9, weight: .bold))
@@ -346,7 +346,7 @@ private struct FeatureFlagRow: View {
                     Text(desc)
                         .font(.system(size: 11))
                         .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 let restrictions = featureFlags.getFeatureRestrictions(flag.key)
@@ -354,7 +354,7 @@ private struct FeatureFlagRow: View {
                     Text(restrictions.joined(separator: ", "))
                         .font(.system(size: 10))
                         .foregroundColor(.orange)
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -362,7 +362,7 @@ private struct FeatureFlagRow: View {
 
             RetroWaveToggle(isOn: $isEnabled, label: "")
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 5)
         .onChange(of: isEnabled) { newValue in
             guard let feature = featureEnum else { return }
             featureFlags.setDebugOverride(for: feature, enabled: newValue)
@@ -649,16 +649,16 @@ private struct UserDefaultRow: View {
     @Binding var isOn: Bool
 
     var body: some View {
-        HStack(spacing: 8) {
-            VStack(alignment: .leading, spacing: 1) {
+        HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.white)
-                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
                 Text(subtitle)
                     .font(.system(size: 11))
                     .foregroundColor(RetroTheme.retroBlue.opacity(0.6))
-                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 4)
 #if os(tvOS)
@@ -671,7 +671,7 @@ private struct UserDefaultRow: View {
                 .focusableIfAvailable()
 #endif
         }
-        .padding(.vertical, 3)
+        .padding(.vertical, 6)
         .padding(.horizontal, 6)
         .background(
             RoundedRectangle(cornerRadius: 6)
