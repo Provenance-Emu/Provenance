@@ -115,7 +115,7 @@ import PVLogging
         broadcastController = controller
         isBroadcasting = true
         AppState.shared.emulationUIState.isBroadcasting = true
-        ILOG("[Broadcast] Broadcast started: \(controller.broadcastURL?.absoluteString ?? "unknown")")
+        ILOG("[Broadcast] Broadcast started: \(controller.broadcastURL.absoluteString ?? "unknown")")
     }
 
     fileprivate func handleBroadcastFinished() {

@@ -28,7 +28,7 @@ struct RecordingSettingsView: View {
 
     var body: some View {
         List {
-            Section(header: Text("Audio")) {
+            SwiftUI.Section(header: Text("Audio")) {
                 ThemedToggle(isOn: $recordingMicEnabled) {
                     SettingsRow(
                         title: "Microphone",
@@ -39,7 +39,7 @@ struct RecordingSettingsView: View {
             }
 
 #if os(iOS)
-            Section(header: Text("Camera")) {
+            SwiftUI.Section(header: Text("Camera")) {
                 ThemedToggle(isOn: $recordingCameraEnabled) {
                     SettingsRow(
                         title: "Camera",
@@ -50,7 +50,12 @@ struct RecordingSettingsView: View {
             }
 #endif
 
-            Section(header: Text("Storage")) {
+            SwiftUI.Section(
+                header: Text("Storage"),
+                footer: Text("Preference saved; automatic save on recording stop will be applied in a future update.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            ) {
                 ThemedToggle(isOn: $recordingAutoSave) {
                     SettingsRow(
                         title: "Auto-save to Photos",
@@ -58,13 +63,14 @@ struct RecordingSettingsView: View {
                         icon: .sfSymbol("photo.on.rectangle.angled")
                     )
                 }
-            } footer: {
-                Text("Preference saved; automatic save on recording stop will be applied in a future update.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
 
-            Section(header: Text("HUD")) {
+            SwiftUI.Section(
+                header: Text("HUD"),
+                footer: Text("Preference saved; HUD overlay integration will be applied in a future update.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            ) {
                 ThemedToggle(isOn: $showRecordingOSD) {
                     SettingsRow(
                         title: "Show Recording Button in HUD",
@@ -72,26 +78,23 @@ struct RecordingSettingsView: View {
                         icon: .sfSymbol("record.circle")
                     )
                 }
-            } footer: {
-                Text("Preference saved; HUD overlay integration will be applied in a future update.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
 
-            Section(header: Text("Clip Duration")) {
+            SwiftUI.Section(
+                header: Text("Clip Duration"),
+                footer: Text("Default length for each recording clip. Clip buffer enforcement will be applied in a future update.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            ) {
                 Picker("Clip Duration", selection: $recordingClipDuration) {
                     ForEach(Self.clipDurationOptions, id: \.value) { option in
                         Text(option.label).tag(option.value)
                     }
                 }
                 .pickerStyle(.automatic)
-            } footer: {
-                Text("Default length for each recording clip. Clip buffer enforcement will be applied in a future update.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
 
-            Section(header: Text("Live Streaming")) {
+            SwiftUI.Section(header: Text("Live Streaming")) {
                 SettingsRow(
                     title: "About Live Streaming",
                     subtitle: "Live streaming support via ReplayKit is planned for a future release.",

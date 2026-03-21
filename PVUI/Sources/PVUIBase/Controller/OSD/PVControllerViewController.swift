@@ -476,17 +476,21 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 
     private var allButtons: [UIView] {
-        return [
+        var views: [UIView?] = [
             dPad, dPad2, joyPad, joyPad2, buttonGroup,
             leftShoulderButton, rightShoulderButton,
             leftShoulderButton2, rightShoulderButton2,
             zTriggerButton, startButton, selectButton,
             leftAnalogButton, rightAnalogButton,
             quickSaveButton, quickLoadButton, fastForwardButton,
-            // Note: keyboardToggleButton and mouseToggleButton are intentionally excluded —
-            // they are always-on HUD controls like fastForwardButton and must not dim with
-            // the controller opacity setting.
-        ].compactMap { $0 }
+        ]
+        #if os(iOS)
+        views.append(recordButton)
+        #endif
+        // Note: keyboardToggleButton and mouseToggleButton are intentionally excluded —
+        // they are always-on HUD controls like fastForwardButton and must not dim with
+        // the controller opacity setting.
+        return views.compactMap { $0 }
     }
 
     @objc func controllerDidDisconnect(_: Notification?) {
@@ -1796,7 +1800,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         ])
         self.recordButton = recButton
         quickActionButtons.append(recButton)
-        allButtons.append(recButton)
         updateRecordButtonAppearance()
     }
     #endif
