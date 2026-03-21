@@ -71,4 +71,12 @@ PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower).PVLibr
 
 // -- General Settings --
 ENABLE_BITCODE = NO
+
+// -- Explicitly Built Modules (Xcode 16+) --
+// Speeds up ComputeTargetDependencyGraph by making module builds explicit
+// and schedulable by the build system rather than implicitly during compilation.
+// If a clang/ObjC build breaks, try removing CLANG_ENABLE_EXPLICIT_MODULES first
+// (it can conflict with -fmodules/-fcxx-modules in OTHER_CFLAGS).
+SWIFT_ENABLE_EXPLICIT_MODULES = YES
+CLANG_ENABLE_EXPLICIT_MODULES = YES
 //COMBINE_HIDPI_IMAGES = NO

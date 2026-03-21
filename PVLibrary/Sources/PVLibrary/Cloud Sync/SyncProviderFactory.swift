@@ -91,21 +91,20 @@ public class SyncProviderFactory {
     public static func createSaveStatesSyncProvider(
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
-    ) -> SaveStatesSyncing {
+    ) -> (any SaveStatesSyncing)? {
         // Get the current iCloud sync mode and check if sync is enabled
         let syncMode = Defaults[.iCloudSyncMode]
         let iCloudSyncEnabled = Defaults[.iCloudSync]
-        
+
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
 #if os(tvOS)
         if let container = iCloudConstants.container {
             DLOG("Creating CloudKitSaveStatesSyncer for tvOS based on iCloudSyncMode=\(syncMode.description)")
             return CloudKitSaveStatesSyncer(container: container, notificationCenter: notificationCenter, errorHandler: errorHandler)
-        } else {
-            WLOG("CloudKit entitlement not present — falling back to iCloudDriveSaveStatesSyncer on tvOS")
-            return iCloudDriveSaveStatesSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
+        ELOG("No iCloud container available on tvOS — save states sync disabled")
+        return nil
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit, let container = iCloudConstants.container {
@@ -126,21 +125,20 @@ public class SyncProviderFactory {
     public static func createBIOSSyncProvider(
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
-    ) -> BIOSSyncing {
+    ) -> (any BIOSSyncing)? {
         // Get the current iCloud sync mode and check if sync is enabled
         let syncMode = Defaults[.iCloudSyncMode]
         let iCloudSyncEnabled = Defaults[.iCloudSync]
-        
+
         // Log the current sync state
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
 #if os(tvOS)
         if let container = iCloudConstants.container {
             DLOG("Creating CloudKitBIOSSyncer for tvOS based on iCloudSyncMode=\(syncMode.description)")
             return CloudKitBIOSSyncer(container: container, notificationCenter: notificationCenter, errorHandler: errorHandler)
-        } else {
-            WLOG("CloudKit entitlement not present — falling back to iCloudDriveBIOSSyncer on tvOS")
-            return iCloudDriveBIOSSyncer(notificationCenter: notificationCenter, errorHandler: errorHandler)
         }
+        ELOG("No iCloud container available on tvOS — BIOS sync disabled")
+        return nil
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit, let container = iCloudConstants.container {
