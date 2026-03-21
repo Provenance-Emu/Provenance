@@ -874,19 +874,16 @@ struct RetroMenuView: View {
             let icon = isBroadcasting ? "stop.circle" : "dot.radiowaves.left.and.right"
             let color: Color = isBroadcasting ? .retroPink : .retroCyan
             let role: MenuButtonRole = isBroadcasting ? .destructive : .secondary
+            let broadcastAction = {
+                if isBroadcasting {
+                    dismissMenuForSubSheetThen { emulatorVC.stopBroadcast() }
+                } else {
+                    dismissMenuForSubSheetThen { emulatorVC.startBroadcast() }
+                }
+            }
 #if canImport(FreemiumKit)
             PaidFeatureView {
-                menuButton(title: title, icon: icon, color: color, role: role) {
-                    if isBroadcasting {
-                        dismissMenuForSubSheetThen {
-                            emulatorVC.stopBroadcast()
-                        }
-                    } else {
-                        dismissMenuForSubSheetThen {
-                            emulatorVC.startBroadcast()
-                        }
-                    }
-                }
+                menuButton(title: title, icon: icon, color: color, role: role, action: broadcastAction)
             } lockedView: {
                 HStack {
                     menuButton(title: title, icon: icon, color: color, role: role) {}
@@ -920,17 +917,7 @@ struct RetroMenuView: View {
             }
             .freemiumKitColorReset()
 #else
-            menuButton(title: title, icon: icon, color: color, role: role) {
-                if isBroadcasting {
-                    dismissMenuForSubSheetThen {
-                        emulatorVC.stopBroadcast()
-                    }
-                } else {
-                    dismissMenuForSubSheetThen {
-                        emulatorVC.startBroadcast()
-                    }
-                }
-            }
+            menuButton(title: title, icon: icon, color: color, role: role, action: broadcastAction)
 #endif
         }
     }

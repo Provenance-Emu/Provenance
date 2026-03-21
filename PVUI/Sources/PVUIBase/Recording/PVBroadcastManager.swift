@@ -40,12 +40,14 @@ import PVLogging
 
     // MARK: - Public API
 
-    /// Presents the system broadcast-service picker from `presenter`.
+    /// Presents `RPBroadcastActivityViewController` from `presenter` so the user
+    /// can choose a broadcast provider.
     ///
-    /// If a broadcast is already active, calling this method stops it instead.
+    /// If a broadcast is already active, calling this method stops it instead
+    /// of presenting the picker again.
     ///
-    /// - Parameter presenter: The `UIViewController` from which to present the picker.
-    public func showBroadcastPicker(from presenter: UIViewController) {
+    /// - Parameter presenter: The `UIViewController` from which to present the activity VC.
+    public func presentBroadcastActivity(from presenter: UIViewController) {
         if isBroadcasting {
             stopBroadcast()
             return
@@ -58,7 +60,7 @@ import PVLogging
     /// This is a no-op when no broadcast is active.
     public func stopBroadcast() {
         guard let controller = broadcastController else {
-            isBroadcasting = false
+            handleBroadcastFinished()
             return
         }
         controller.finishBroadcast { [weak self] error in
@@ -76,12 +78,14 @@ import PVLogging
     fileprivate func handleBroadcastStarted(controller: RPBroadcastController) {
         broadcastController = controller
         isBroadcasting = true
+        AppState.shared.emulationUIState.isBroadcasting = true
         ILOG("[Broadcast] Broadcast started: \(controller.serviceIdentifier ?? "unknown")")
     }
 
     fileprivate func handleBroadcastFinished() {
         broadcastController = nil
         isBroadcasting = false
+        AppState.shared.emulationUIState.isBroadcasting = false
         ILOG("[Broadcast] Broadcast stopped")
     }
 
@@ -103,8 +107,9 @@ import PVLogging
             }
             activityVC.delegate = self
             Task { @MainActor in
-                await presenter.present(activityVC, animated: true)
-                ILOG("[Broadcast] RPBroadcastActivityViewController presented")
+                presenter.present(activityVC, animated: true) {
+                    ILOG("[Broadcast] RPBroadcastActivityViewController presented")
+                }
             }
         }
     }

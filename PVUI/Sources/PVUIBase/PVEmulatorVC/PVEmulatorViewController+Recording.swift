@@ -19,29 +19,29 @@ extension PVEmulatorViewController {
     }
 
     /// Whether a live broadcast session is currently active.
-    /// Single source of truth: reads from `AppState.shared.emulationUIState.isBroadcasting`.
+    /// Reads from `PVBroadcastManager.shared.isBroadcasting` (the authoritative source).
     public var isBroadcasting: Bool {
-        AppState.shared.emulationUIState.isBroadcasting
+        PVBroadcastManager.shared.isBroadcasting
     }
 
-    /// Presents the system broadcast-service picker so the user can start (or stop)
-    /// a live broadcast.  Updates `AppState.shared.emulationUIState.isBroadcasting`
-    /// to reflect the current broadcast state.
+    /// Presents `RPBroadcastActivityViewController` so the user can choose a
+    /// broadcast provider and start a live stream.  The manager keeps
+    /// `PVBroadcastManager.isBroadcasting` and `AppState.emulationUIState.isBroadcasting`
+    /// in sync via `RPBroadcastControllerDelegate` callbacks.
     ///
     /// - Parameter presenter: The view controller from which to present the picker.
     ///   Defaults to `self`.
     public func startBroadcast(from presenter: UIViewController? = nil) {
         let presentingVC = presenter ?? self
-        PVBroadcastManager.shared.showBroadcastPicker(from: presentingVC)
+        PVBroadcastManager.shared.presentBroadcastActivity(from: presentingVC)
         // isBroadcasting state is updated asynchronously via RPBroadcastControllerDelegate
-        ILOG("[Broadcast] Broadcast picker requested from VC")
+        ILOG("[Broadcast] Broadcast activity VC requested from VC")
     }
 
-    /// Convenience wrapper: stops any active broadcast and clears the UI state flag.
-    /// When no broadcast is active, this is a no-op.
+    /// Convenience wrapper: stops any active broadcast.
+    /// Guards on the manager's own state to avoid false negatives from a stale UI flag.
     public func stopBroadcast() {
-        guard isBroadcasting else { return }
-        // Use the dedicated stop API; state will be cleared via delegate callback
+        guard PVBroadcastManager.shared.isBroadcasting else { return }
         PVBroadcastManager.shared.stopBroadcast()
         ILOG("[Broadcast] Stop broadcast requested from VC")
     }
