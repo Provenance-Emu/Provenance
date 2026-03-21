@@ -5,6 +5,7 @@
 //  Created by Claude on 3/7/26.
 //
 
+#if os(iOS) || os(tvOS)
 import UIKit
 import PVLogging
 
