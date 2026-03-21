@@ -121,11 +121,15 @@ public final class SaveExporter: @unchecked Sendable {
         let manifestData = try JSONSerialization.data(withJSONObject: manifestDict, options: [.prettyPrinted, .sortedKeys])
         try manifestData.write(to: stagingDir.appendingPathComponent("manifest.json"))
 
+        // Track how many save files are actually copied so we can error if nothing ends up in the zip.
+        var filesCopied = 0
+
         // Copy battery saves
         if hasBatterySaves {
             let destBattery = stagingDir.appendingPathComponent("battery", isDirectory: true)
             do {
                 try fm.copyItem(at: batterySavesDir, to: destBattery)
+                filesCopied += 1
             } catch {
                 WLOG("SaveExporter: failed to copy battery saves: \(error.localizedDescription)")
             }
@@ -141,6 +145,7 @@ public final class SaveExporter: @unchecked Sendable {
                     let dest = statesDir.appendingPathComponent(src.lastPathComponent)
                     do {
                         try fm.copyItem(at: src, to: dest)
+                        filesCopied += 1
                     } catch {
                         WLOG("SaveExporter: failed to copy save state \(src.lastPathComponent): \(error.localizedDescription)")
                     }
@@ -154,6 +159,11 @@ public final class SaveExporter: @unchecked Sendable {
                     }
                 }
             }
+        }
+
+        // If every copy failed the zip would contain only manifest.json — treat as no saves
+        guard filesCopied > 0 else {
+            throw SaveExportError.noSavesFound
         }
 
         // Create zip

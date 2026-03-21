@@ -57,9 +57,14 @@ public struct GameContextMenu: View {
         _availableCores = State(initialValue: game.system?.cores.toArray().filter {
             !(AppState.shared.isAppStore && $0.appStoreDisabled)
         } ?? [])
-        _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
-        let batterySavesDir = Paths.batterySavesPath(forROM: game.file?.url)
         let fm = FileManager.default
+        // Check that at least one save-state file actually exists on disk
+        let hasLocalSaveStates = game.saveStates.contains { saveState in
+            guard let fileURL = saveState.file?.url else { return false }
+            return fm.fileExists(atPath: fileURL.path)
+        }
+        _hasSaveStates = State(initialValue: hasLocalSaveStates)
+        let batterySavesDir = Paths.batterySavesPath(forROM: game.file?.url)
         let batteryDirExists = fm.fileExists(atPath: batterySavesDir.path)
         let batteryHasFiles = batteryDirExists && ((try? fm.contentsOfDirectory(atPath: batterySavesDir.path))?.isEmpty == false)
         _hasBatterySaves = State(initialValue: batteryHasFiles)
