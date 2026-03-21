@@ -4,7 +4,7 @@ These scripts extend [StikDebug](https://stikdebug.app) — a VPN-based iOS debu
 
 ## What is StikDebug?
 
-StikDebug attaches a debugger to your sideloaded app over a VPN tunnel, granting the `get-task-allow` entitlement that iOS requires for JIT execution. It does not require a Mac, a jailbreak, or a developer certificate.
+StikDebug attaches a debugger to your debuggable/sideloaded app over a VPN tunnel, which allows JIT execution on iOS (similar to attaching Xcode). Your app must already be signed with the necessary entitlements (for example via AltStore, SideStore, or TrollStore); StikDebug does not modify or add entitlements and does not require a Mac, a jailbreak, or a developer certificate.
 
 ## Scripts
 
