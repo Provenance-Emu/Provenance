@@ -708,7 +708,16 @@ public extension GameLaunchingViewController {
                         }
                     }
 
-                    let hasMetadata = recommendations.contains { $0.metadata != nil }
+                    // Use the smart picker only when there is actually useful enrichment to
+                    // display (summary, quality rank, or per-game capability highlights).
+                    // `metadata` is nearly always non-nil because the engine auto-derives it
+                    // from Core.plist files, so checking non-nil alone would always show the
+                    // smart UI even when no editorial enrichment is present.
+                    let hasMetadata = recommendations.contains { rec in
+                        (rec.metadata?.summary != nil)
+                            || (rec.metadata?.qualityRank ?? 0) > 0
+                            || !rec.highlightedCapabilities.isEmpty
+                    }
                     if hasMetadata {
                         let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in
                             guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }

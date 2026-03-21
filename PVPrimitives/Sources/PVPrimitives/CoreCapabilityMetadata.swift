@@ -48,6 +48,22 @@ public struct CoreCapabilityMetadata: Codable, Sendable, Hashable {
         self.notes = notes
         self.qualityRank = qualityRank
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case coreIdentifier, summary, capabilities, notes, qualityRank
+    }
+
+    /// Decodes resilently: unknown capability strings are silently ignored rather than
+    /// throwing and making the entire manifest decode fail.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        coreIdentifier = try container.decode(String.self, forKey: .coreIdentifier)
+        summary = try container.decodeIfPresent(String.self, forKey: .summary)
+        let capStrings = try container.decodeIfPresent([String].self, forKey: .capabilities) ?? []
+        capabilities = Set(capStrings.compactMap { CoreCapability(rawValue: $0) })
+        notes = try container.decodeIfPresent([String].self, forKey: .notes) ?? []
+        qualityRank = try container.decodeIfPresent(Int.self, forKey: .qualityRank) ?? 0
+    }
 }
 
 // MARK: - GameFeatureRequirement
@@ -94,6 +110,21 @@ public struct GameFeatureRequirement: Codable, Sendable {
         self.matchValue = matchValue
         self.preferredCapabilities = preferredCapabilities
         self.tip = tip
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case matchStrategy, matchValue, preferredCapabilities, tip
+    }
+
+    /// Decodes resilently: unknown capability strings are silently ignored rather than
+    /// throwing and making the entire manifest decode fail.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        matchStrategy = try container.decode(MatchStrategy.self, forKey: .matchStrategy)
+        matchValue = try container.decode(String.self, forKey: .matchValue)
+        let capStrings = try container.decodeIfPresent([String].self, forKey: .preferredCapabilities) ?? []
+        preferredCapabilities = Set(capStrings.compactMap { CoreCapability(rawValue: $0) })
+        tip = try container.decodeIfPresent(String.self, forKey: .tip)
     }
 }
 
