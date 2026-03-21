@@ -30,11 +30,16 @@ private final class PPSSPPNetplayContext {
     /// checks (via UUID comparison) remain stable between timer ticks.
     let roomID: UUID
     let sessionID: UUID
-    init(role: NetplayRole, settings: NetplaySettings) {
+    /// The effective adhoc server address used to start/join this session.
+    /// For LAN hosts this is "127.0.0.1"; for WAN hosts or clients this is
+    /// the relay/host address passed to connectToAdhocServer.
+    let effectiveServerAddress: String
+    init(role: NetplayRole, settings: NetplaySettings, effectiveServerAddress: String) {
         self.role = role
         self.settings = settings
         self.roomID = UUID()
         self.sessionID = UUID()
+        self.effectiveServerAddress = effectiveServerAddress
     }
 }
 
@@ -61,6 +66,8 @@ private extension PVPPSSPPCore {
         if let existing = objc_getAssociatedObject(self, &PPSSPPStatePublisherKey.key) as? AnyPublisher<NetplayState, Never> {
             return existing
         }
+        // .share() ensures a single upstream timer drives all subscribers instead
+        // of each subscriber creating its own 1-second polling loop.
         let pub = Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
             .map { [weak self] _ -> NetplayState in
@@ -68,6 +75,7 @@ private extension PVPPSSPPCore {
                 return self.currentNetplayState
             }
             .removeDuplicates()
+            .share()
             .eraseToAnyPublisher()
         objc_setAssociatedObject(self, &PPSSPPStatePublisherKey.key, pub, .OBJC_ASSOCIATION_RETAIN)
         return pub
@@ -86,7 +94,10 @@ private extension PVPPSSPPCore {
             return .hosting(room: room)
         case .connected:
             let ctx = lastNetplayContext
-            let (host, port) = ctx?.role.clientAddress ?? ("0.0.0.0", NetplaySettings.defaultLAN.port)
+            // Use the stored effective address (relay or peer IP) rather than
+            // role.clientAddress, which is nil for hosts using a relay server.
+            let host = ctx?.effectiveServerAddress ?? "0.0.0.0"
+            let port: UInt16 = ctx?.role.clientAddress?.1 ?? ctx?.settings.port ?? NetplaySettings.defaultLAN.port
             let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: host, port: port, context: ctx)
             let session = NetplaySession(
                 id: ctx?.sessionID ?? UUID(),
@@ -119,28 +130,32 @@ extension PVPPSSPPCore: PVNetplayCapable {
     /// PPSSPP run loop executes).
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
         try await MainActor.run {
-            lastNetplayContext = PPSSPPNetplayContext(role: role, settings: settings)
             var error: NSError?
             let ok: Bool
+            let effectiveAddress: String
             switch role {
             case .host:
                 if let relay = settings.relayServer {
                     // WAN mode: connect to external relay server rather than hosting locally.
+                    effectiveAddress = relay
                     ok = _bridge.connectToAdhocServer(relay, error: &error)
                 } else {
+                    effectiveAddress = "127.0.0.1"
                     ok = _bridge.startAdhocLANHost(error: &error)
                 }
             case .client(let host, _):
+                effectiveAddress = host
                 ok = _bridge.connectToAdhocServer(host, error: &error)
             case .spectator(let host, _):
                 // PPSSPP has no spectator concept — join as a regular client.
+                effectiveAddress = host
                 ok = _bridge.connectToAdhocServer(host, error: &error)
             }
             if !ok {
-                lastNetplayContext = nil
                 let reason = (error as Error?)?.localizedDescription ?? "Unknown adhoc error"
                 throw NetplayError.connectionFailed(reason)
             }
+            lastNetplayContext = PPSSPPNetplayContext(role: role, settings: settings, effectiveServerAddress: effectiveAddress)
         }
     }
 

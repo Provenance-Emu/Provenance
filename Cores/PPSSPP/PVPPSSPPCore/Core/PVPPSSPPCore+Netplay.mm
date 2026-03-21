@@ -117,6 +117,11 @@ static const char kAdhocStatusKey  = 0;
     g_Config.proAdhocServer = std::string([host UTF8String]);
     g_Config.bEnableWlan    = true;
 
+    // NOTE: PVPPSSPPAdhocStatusConnected reflects "wlan enabled and server
+    // configured" — PPSSPP does not expose a socket-level connected callback,
+    // so we cannot confirm the actual TCP/UDP handshake here.  Actual game
+    // connectivity is handled by PPSSPP internals once the game logic triggers
+    // adhoc discovery.
     [self setAdhocStatus:PVPPSSPPAdhocStatusConnected];
     return YES;
 }
