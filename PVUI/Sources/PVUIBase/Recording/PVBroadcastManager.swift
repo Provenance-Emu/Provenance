@@ -150,25 +150,29 @@ extension PVBroadcastManager: RPBroadcastActivityViewControllerDelegate {
     ) {
         // Always dismiss the activity VC first, regardless of success/failure/cancel.
         Task { @MainActor in
-            broadcastActivityViewController.dismiss(animated: true)
-        }
+            broadcastActivityViewController.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
 
-        if let error {
-            ELOG("[Broadcast] Activity VC finished with error: \(error.localizedDescription)")
-            Task { @MainActor in self.handleBroadcastFinished() }
-            return
-        }
-        guard let controller = broadcastController else {
-            WLOG("[Broadcast] Activity VC finished without a controller (user cancelled)")
-            return
-        }
-        controller.delegate = self
-        controller.startBroadcast { [weak controller] error in
-            if let error {
-                ELOG("[Broadcast] Failed to start broadcast: \(error.localizedDescription)")
-                Task { @MainActor in self.handleBroadcastFinished() }
-            } else if let controller {
-                Task { @MainActor in self.handleBroadcastStarted(controller: controller) }
+                if let error {
+                    ELOG("[Broadcast] Activity VC finished with error: \(error.localizedDescription)")
+                    self.handleBroadcastFinished()
+                    return
+                }
+
+                guard let controller = broadcastController else {
+                    WLOG("[Broadcast] Activity VC finished without a controller (user cancelled)")
+                    return
+                }
+
+                controller.delegate = self
+                controller.startBroadcast { [weak controller] startError in
+                    if let startError {
+                        ELOG("[Broadcast] Failed to start broadcast: \(startError.localizedDescription)")
+                        Task { @MainActor in self.handleBroadcastFinished() }
+                    } else if let controller {
+                        Task { @MainActor in self.handleBroadcastStarted(controller: controller) }
+                    }
+                }
             }
         }
     }
