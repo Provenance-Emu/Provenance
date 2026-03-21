@@ -822,6 +822,8 @@
 		B3CC22000000000100000003 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9B29209B6700E4C858 /* PreviewViewController.swift */; };
 		B3CC22000000000100000004 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DF9829209B6300E4C858 /* QuickLook.framework */; };
 		B3CC22000000000100000005 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3CC2200000000010000000F /* PVLibrary */; };
+		F5A172889A9A49699317D6F9 /* PVQuickLookSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3416C07727A438EB2EE9A87 /* PVQuickLookSupport */; };
+		11D0B4AF90854D59A7612C29 /* PVQuickLookSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 1BA3F6932C1D4965AC324A86 /* PVQuickLookSupport */; };
 		B3CE94B7293446AC0053B891 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3CE94B6293446AC0053B891 /* Introspect */; };
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D1C1312CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; };
@@ -3706,6 +3708,7 @@
 				B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */,
 				B3BDD4272D349220005F5AF9 /* (null) in Frameworks */,
 				B3THUMB0126520001BBBBBBBB /* PVLibrary in Frameworks */,
+				11D0B4AF90854D59A7612C29 /* PVQuickLookSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3969,6 +3972,7 @@
 				B3E2E8412F6BC1ED0010BDDE /* Defaults in Frameworks */,
 				B3CC22000000000100000004 /* QuickLook.framework in Frameworks */,
 				B3CC22000000000100000005 /* PVLibrary in Frameworks */,
+				F5A172889A9A49699317D6F9 /* PVQuickLookSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7884,6 +7888,9 @@
 			dependencies = (
 			);
 			name = ThumbnailExtension;
+			packageProductDependencies = (
+				1BA3F6932C1D4965AC324A86 /* PVQuickLookSupport */,
+			);
 			productName = ThumbnailExtension;
 			productReference = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -8172,6 +8179,7 @@
 			packageProductDependencies = (
 				B3CC2200000000010000000F /* PVLibrary */,
 				B3E2E8402F6BC1ED0010BDDE /* Defaults */,
+				B3416C07727A438EB2EE9A87 /* PVQuickLookSupport */,
 			);
 			productName = QuickLookPreview;
 			productReference = B3CC22000000000100000001 /* QuickLookPreview.appex */;
@@ -8529,6 +8537,7 @@
 				F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */,
+				3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -16483,6 +16492,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/mGBA;
 		};
+		3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVQuickLookSupport;
+		};
 		B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVLibrary;
@@ -17966,6 +17979,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
 			productName = PVLibrary;
+		};
+		B3416C07727A438EB2EE9A87 /* PVQuickLookSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */;
+			productName = PVQuickLookSupport;
+		};
+		1BA3F6932C1D4965AC324A86 /* PVQuickLookSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */;
+			productName = PVQuickLookSupport;
 		};
 		B3CE94B6293446AC0053B891 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
