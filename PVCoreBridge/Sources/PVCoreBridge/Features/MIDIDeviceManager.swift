@@ -74,25 +74,34 @@ public final class MIDIDeviceManager: ObservableObject {
         didSet {
             if oldValue != selectedSourceID {
                 reconnectSources()
-                // Only persist an explicit user choice (non-nil). Nil means "device temporarily
-                // unavailable" — clearing UserDefaults would prevent restore when it reappears.
                 if let id = selectedSourceID {
                     UserDefaults.standard.set(Int(id), forKey: Self.udKeySource)
+                } else if !clearingStaleSelection {
+                    // User explicitly chose "None": remove the persisted key so auto-restore
+                    // doesn't override the choice if the device reappears this session or next launch.
+                    UserDefaults.standard.removeObject(forKey: Self.udKeySource)
+                    sourcePreferenceApplied = true
                 }
+                // clearingStaleSelection == true: nil was set by `refreshEndpoints()` because the
+                // device went away. Preserve UserDefaults so it can be restored when it reappears.
             }
         }
     }
 
-    /// Currently selected MIDI output destination (nil = none).
+    /// Currently selected MIDI output destination (`nil` = no active destination).
     /// Changes are persisted to UserDefaults so the choice survives app restarts.
     @Published public var selectedDestinationID: MIDIUniqueID? {
         didSet {
             if oldValue != selectedDestinationID {
-                // Only persist an explicit user choice (non-nil). Nil means "device temporarily
-                // unavailable" — clearing UserDefaults would prevent restore when it reappears.
                 if let id = selectedDestinationID {
                     UserDefaults.standard.set(Int(id), forKey: Self.udKeyDestination)
+                } else if !clearingStaleSelection {
+                    // User explicitly chose "None": remove the persisted key so auto-restore
+                    // doesn't override the choice if the device reappears this session or next launch.
+                    UserDefaults.standard.removeObject(forKey: Self.udKeyDestination)
+                    destinationPreferenceApplied = true
                 }
+                // clearingStaleSelection == true: device went away; preserve UserDefaults for restore.
             }
         }
     }
@@ -134,6 +143,12 @@ public final class MIDIDeviceManager: ObservableObject {
     // (e.g. user deselecting a source) are respected for the remainder of the session.
     private var sourcePreferenceApplied = false
     private var destinationPreferenceApplied = false
+
+    // Guard flag used by `refreshEndpoints()` to signal that it (not the user) is clearing
+    // a stale selection due to a CoreMIDI topology change.  When true, `didSet` observers
+    // preserve the UserDefaults key and leave preference-applied flags unchanged, so the
+    // device can still be auto-restored when it reappears.
+    private var clearingStaleSelection = false
 
     // UserDefaults keys — MUST match the `Defaults.Keys` string names defined in PVSettings
     // (`midiSourceUniqueID` / `midiDestinationUniqueID`).
@@ -194,13 +209,17 @@ public final class MIDIDeviceManager: ObservableObject {
         // Connect input port to all sources (idempotent for already-connected sources)
         connectAllSources()
 
-        // Clear stale selections
+        // Clear stale selections — set clearingStaleSelection so didSet observers know this
+        // is a topology-driven nil (device gone) rather than a user "None" choice, so they
+        // preserve the UserDefaults key and leave preference-applied flags unchanged.
+        clearingStaleSelection = true
         if let id = selectedSourceID, !sources.contains(where: { $0.id == id }) {
             selectedSourceID = nil
         }
         if let id = selectedDestinationID, !destinations.contains(where: { $0.id == id }) {
             selectedDestinationID = nil
         }
+        clearingStaleSelection = false
 
         // Re-attempt to restore the persisted selection if it wasn't applied at init
         // (handles the case where the previously-selected device appears after launch
