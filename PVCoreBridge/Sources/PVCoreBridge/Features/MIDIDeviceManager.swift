@@ -128,8 +128,22 @@ public final class MIDIDeviceManager: ObservableObject {
     private weak var _responder: (any MIDIResponder)?
     private var activityResetTask: Task<Void, Never>?
 
-    // UserDefaults keys — mirrors the PVSettings `midiSourceUniqueID` / `midiDestinationUniqueID` keys
-    // so `Defaults[.midiSourceUniqueID]` and MIDIDeviceManager both read/write the same value.
+    // Per-session flags: track whether the persisted preference has already been auto-applied
+    // this session.  Stored in memory only (not UserDefaults) so each app launch gets a fresh
+    // opportunity to restore the preferred device, while mid-session explicit "None" choices
+    // (e.g. user deselecting a source) are respected for the remainder of the session.
+    private var sourcePreferenceApplied = false
+    private var destinationPreferenceApplied = false
+
+    // UserDefaults keys — MUST match the `Defaults.Keys` string names defined in PVSettings
+    // (`midiSourceUniqueID` / `midiDestinationUniqueID`).
+    //
+    // These are intentionally duplicated here rather than importing PVSettings into PVCoreBridge,
+    // which would add a cross-tier dependency. If you rename these keys, update BOTH this file
+    // and `PVSettings/Sources/PVSettings/Settings/Model/PVSettingsModel.swift` in lockstep.
+    //
+    // The shared string ensures `Defaults[.midiSourceUniqueID]` (PVSettings) and
+    // `UserDefaults.standard.object(forKey:)` (MIDIDeviceManager) read/write the same slot.
     private static let udKeySource = "midiSourceUniqueID"
     private static let udKeyDestination = "midiDestinationUniqueID"
 
@@ -150,12 +164,14 @@ public final class MIDIDeviceManager: ObservableObject {
            let id = MIDIUniqueID(exactly: raw) {
             if sources.contains(where: { $0.id == id }) {
                 selectedSourceID = id
+                sourcePreferenceApplied = true
             }
         }
         if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
            let id = MIDIUniqueID(exactly: raw) {
             if destinations.contains(where: { $0.id == id }) {
                 selectedDestinationID = id
+                destinationPreferenceApplied = true
             }
         }
     }
@@ -191,29 +207,27 @@ public final class MIDIDeviceManager: ObservableObject {
         // due to a CoreMIDI topology change / hot-plug event).
         //
         // To avoid overriding an explicit "None / all sources" user choice, we only
-        // auto-apply a persisted selection once per key. After a successful restore,
+        // auto-apply a persisted selection once per session. After a successful restore,
         // subsequent calls to `refreshEndpoints()` will not re-apply it when the
-        // current selection is `nil`.
-        let sourceAppliedKey = "\(Self.udKeySource).applied"
-        let destinationAppliedKey = "\(Self.udKeyDestination).applied"
-
+        // current selection is `nil`.  The flag is in-memory only so each app launch
+        // gets a fresh opportunity to restore.
         if selectedSourceID == nil,
-           UserDefaults.standard.bool(forKey: sourceAppliedKey) == false,
+           !sourcePreferenceApplied,
            let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
            let id = MIDIUniqueID(exactly: raw) {
             if sources.contains(where: { $0.id == id }) {
                 selectedSourceID = id
-                UserDefaults.standard.set(true, forKey: sourceAppliedKey)
+                sourcePreferenceApplied = true
             }
         }
 
         if selectedDestinationID == nil,
-           UserDefaults.standard.bool(forKey: destinationAppliedKey) == false,
+           !destinationPreferenceApplied,
            let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
            let id = MIDIUniqueID(exactly: raw) {
             if destinations.contains(where: { $0.id == id }) {
                 selectedDestinationID = id
-                UserDefaults.standard.set(true, forKey: destinationAppliedKey)
+                destinationPreferenceApplied = true
             }
         }
     }
