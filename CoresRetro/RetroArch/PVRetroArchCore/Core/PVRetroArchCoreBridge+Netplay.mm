@@ -19,14 +19,18 @@
 #pragma clang diagnostic pop
 
 #ifdef HAVE_NETPLAY
+extern "C" {
 #import "command.h"
 #import "configuration.h"
 #import "network/netplay/netplay.h"
 #import "network/netplay/netplay_defines.h"
 #import "libretro-common/include/string/stdstring.h"
+} // extern "C"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
+
+NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.netplay.error";
 
 @implementation PVRetroArchCoreBridge (Netplay)
 
