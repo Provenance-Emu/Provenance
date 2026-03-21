@@ -136,7 +136,7 @@
 		B322019B2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = B32201992D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h */; };
 		B322019C2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = B322019A2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
-		B33CFF082ED2DEC40029101B /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B33CFF072ED2DEC40029101B /* PVCheevos */; };
+
 		B3F0001A2F91AB2300CAFE01 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3F0001F2F91AB2300CAFE06 /* PVNetplay */; };
 		B3F0001B2F91AB2300CAFE02 /* PVRetroArchCore+Netplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0001D2F91AB2300CAFE04 /* PVRetroArchCore+Netplay.swift */; };
 		B3F0001C2F91AB2300CAFE03 /* PVRetroArchCoreBridge+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0001E2F91AB2300CAFE05 /* PVRetroArchCoreBridge+PVNetplayCapable.swift */; };
@@ -636,7 +636,7 @@
 				939AAF6B2A791E7A007709E5 /* libretroarch.a in Frameworks */,
 				B3FD96862D613FD600397643 /* libavcodec.xcframework in Frameworks */,
 				93BC0FA62A4C063F003D97EC /* libRetroWebServer.a in Frameworks */,
-				B33CFF082ED2DEC40029101B /* PVCheevos in Frameworks */,
+	
 				B3F0001A2F91AB2300CAFE01 /* PVNetplay in Frameworks */,
 				936E9A212A35AC6100B1D0F8 /* CFNetwork.framework in Frameworks */,
 				936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */,
@@ -1230,7 +1230,7 @@
 				B3EEFB622D66BA3F0080CA51 /* Unrar */,
 				B3EEFB672D66C3250080CA51 /* PVCoreBridge */,
 				B3DD7A6C2ECBFA220022FF70 /* PVSettings */,
-				B33CFF072ED2DEC40029101B /* PVCheevos */,
+	
 				B3F0001F2F91AB2300CAFE06 /* PVNetplay */,
 				B39D853B2ED67EC500896E92 /* PVShaders */,
 				B39D855B2ED6801300896E92 /* Defaults */,
@@ -1300,7 +1300,7 @@
 				B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */,
 				B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */,
 				B3DD7A6B2ECBFA220022FF70 /* XCLocalSwiftPackageReference "../../PVSettings" */,
-				B33CFF062ED2DEC40029101B /* XCLocalSwiftPackageReference "../../PVCheevos" */,
+	
 				B3F000202F91AB2300CAFE07 /* XCLocalSwiftPackageReference "../../PVNetplay" */,
 				B39D853A2ED67EC500896E92 /* XCLocalSwiftPackageReference "../../PVShaders" */,
 				B39D855A2ED6801300896E92 /* XCRemoteSwiftPackageReference "Defaults" */,
@@ -2375,10 +2375,7 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
-		B33CFF062ED2DEC40029101B /* XCLocalSwiftPackageReference "../../PVCheevos" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../PVCheevos;
-		};
+
 		B3740A712F580F1D00BCD1E2 /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPrimitives;
@@ -2449,10 +2446,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
 		};
-		B33CFF072ED2DEC40029101B /* PVCheevos */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVCheevos;
-		};
+
 		B3740A722F580F1D00BCD1E2 /* PVPrimitives */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPrimitives;
