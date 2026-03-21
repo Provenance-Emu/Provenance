@@ -399,12 +399,14 @@ struct RetroMenuView: View {
         hasPaletteSupport ||
         emulatorVC.coreSupportsVirtualKeyboard ||
         emulatorVC.coreSupportsVirtualMouse ||
-        hasPortDeviceOptions
+        hasPortDeviceOptions ||
+        coreSupportsMIDI
         #else
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
         hasPaletteSupport ||
-        hasPortDeviceOptions
+        hasPortDeviceOptions ||
+        coreSupportsMIDI
         #endif
     }
 
@@ -565,6 +567,9 @@ struct RetroMenuView: View {
 
             // Per-port device type picker (e.g. Joypad → Mouse for Mario Paint)
             portDevicePickerSection
+
+            // MIDI device picker (source / destination + TX/RX lights)
+            midiPickerSection
 
             // If no core features available, show message
             if !hasCoreFeatures {
