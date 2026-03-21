@@ -6,7 +6,7 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
-#import "MednafenGameCoreBridge+Netplay.h"
+#import <MednafenGameCoreBridge/MednafenGameCoreBridge+Netplay.h>
 
 @import mednafen;
 @import PVLoggingObjC;

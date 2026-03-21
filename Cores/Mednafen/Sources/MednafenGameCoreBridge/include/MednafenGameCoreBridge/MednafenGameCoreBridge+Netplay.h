@@ -8,7 +8,7 @@
 
 #pragma once
 
-#import <MednafenGameCoreBridge/MednafenGameCoreBridge.h>
+#import <MednafenGameCoreBridge/_MednafenGameCoreBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

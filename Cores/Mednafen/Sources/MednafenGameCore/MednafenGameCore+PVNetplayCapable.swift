@@ -40,11 +40,12 @@ private final class MednafenNetplayContext: NSObject {
 
 // MARK: - Associated-object keys
 
+/// Stable addresses for `objc_getAssociatedObject` / `objc_setAssociatedObject`; values are unused.
 private enum AssocKeys {
-    static var context:    UInt8 = 0
-    static var queue:      UInt8 = 0
-    static var subject:    UInt8 = 0
-    static var cancellable: UInt8 = 0
+    nonisolated(unsafe) static var context: UInt8 = 0
+    nonisolated(unsafe) static var queue: UInt8 = 0
+    nonisolated(unsafe) static var subject: UInt8 = 0
+    nonisolated(unsafe) static var cancellable: UInt8 = 0
 }
 
 // MARK: - PVNetplayCapable
@@ -105,18 +106,15 @@ extension MednafenGameCore: PVNetplayCapable {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             _netplayQueue.async { [weak self] in
                 guard let self else { continuation.resume(throwing: NetplayError.bridgeNotReady); return }
-                var nsError: NSError?
-                let ok = self._bridge.netplayConnectToHost(host,
-                                                           port: port,
-                                                           nickname: settings.nickname,
-                                                           password: password,
-                                                           error: &nsError)
-                if ok {
+                do {
+                    try self._bridge.netplayConnect(toHost: host,
+                                                          port: port,
+                                                          nickname: settings.nickname,
+                                                          password: password)
                     self._netplayContext = MednafenNetplayContext(role: role, settings: settings)
                     continuation.resume()
-                } else {
-                    let desc = nsError?.localizedDescription ?? "Mednafen connection failed."
-                    continuation.resume(throwing: NetplayError.connectionFailed(desc))
+                } catch {
+                    continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
                 }
             }
         }

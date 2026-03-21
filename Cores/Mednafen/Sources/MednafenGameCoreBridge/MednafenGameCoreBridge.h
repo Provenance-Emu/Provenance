@@ -29,7 +29,6 @@
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 #import <MednafenGameCoreC/MednafenGameCoreC.h>
-#import <MednafenGameCoreBridge/MednafenGameCoreBridge.h>
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
