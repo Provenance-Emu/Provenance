@@ -626,9 +626,12 @@ public struct PVSettingsView: View {
                                 VideoSection()
                             }
 
+                            // Recording & Streaming is iOS-only (ReplayKit not available on tvOS)
+                            #if os(iOS)
                             TVOSSettingsSection(title: "Recording & Streaming", icon: "record.circle") {
                                 RecordingSection()
                             }
+                            #endif
 
                             TVOSSettingsSection(title: "Controller", icon: "gamecontroller.fill") {
                                 ControllerSection()
@@ -1644,13 +1647,22 @@ private struct RecordingSection: View {
     var body: some View {
         Section(header: Text("Recording & Streaming")) {
 #if os(iOS)
-            NavigationLink(destination: RecordingSettingsView()) {
+            PaidFeatureView {
+                NavigationLink(destination: RecordingSettingsView()) {
+                    SettingsRow(
+                        title: "Recording & Streaming",
+                        subtitle: "Configure microphone, auto-save, HUD button, and clip duration.",
+                        icon: .sfSymbol("record.circle")
+                    )
+                }
+            } lockedView: {
                 SettingsRow(
                     title: "Recording & Streaming",
-                    subtitle: "Configure microphone, auto-save, HUD button, and clip duration.",
-                    icon: .sfSymbol("record.circle")
+                    subtitle: "Unlock to configure recording and streaming settings.",
+                    icon: .sfSymbol("lock.fill")
                 )
             }
+            .freemiumKitColorReset()
 #endif
         }
     }

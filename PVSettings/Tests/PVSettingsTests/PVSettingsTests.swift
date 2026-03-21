@@ -63,6 +63,55 @@ struct DefaultsKeysTests {
     }
 }
 
+// MARK: - Recording & Streaming Defaults Tests
+
+@Suite("Recording & Streaming Defaults")
+struct RecordingDefaultsTests {
+
+    @Test("recordingMicEnabled default is false")
+    func recordingMicEnabledDefault() {
+        Defaults.reset(.recordingMicEnabled)
+        #expect(Defaults[.recordingMicEnabled] == false)
+    }
+
+    @Test("recordingCameraEnabled default is false")
+    func recordingCameraEnabledDefault() {
+        Defaults.reset(.recordingCameraEnabled)
+        #expect(Defaults[.recordingCameraEnabled] == false)
+    }
+
+    @Test("recordingAutoSave default is true")
+    func recordingAutoSaveDefault() {
+        Defaults.reset(.recordingAutoSave)
+        #expect(Defaults[.recordingAutoSave] == true)
+    }
+
+    @Test("showRecordingOSD default is true")
+    func showRecordingOSDDefault() {
+        Defaults.reset(.showRecordingOSD)
+        #expect(Defaults[.showRecordingOSD] == true)
+    }
+
+    @Test("recordingClipDuration default is 30")
+    func recordingClipDurationDefault() {
+        Defaults.reset(.recordingClipDuration)
+        #expect(Defaults[.recordingClipDuration] == 30)
+    }
+
+    @Test("recordingMicEnabled key name is correct")
+    func recordingMicEnabledKeyName() {
+        #expect(Defaults.Keys.recordingMicEnabled.name == "recordingMicEnabled")
+    }
+
+    @Test("recordingClipDuration can be changed")
+    func recordingClipDurationMutable() {
+        Defaults.reset(.recordingClipDuration)
+        defer { Defaults.reset(.recordingClipDuration) }
+        Defaults[.recordingClipDuration] = 60
+        #expect(Defaults[.recordingClipDuration] == 60)
+    }
+}
+
 // MARK: - ButtonPressEffect Tests
 
 @Suite("ButtonPressEffect")

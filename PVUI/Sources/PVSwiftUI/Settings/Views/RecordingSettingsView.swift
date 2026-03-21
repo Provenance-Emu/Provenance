@@ -51,6 +51,7 @@ struct RecordingSettingsView: View {
 #endif
 
             Section(header: Text("Storage")) {
+                // TODO: Wire recordingAutoSave into PVRecordingManager to trigger Photos save on stop
                 ThemedToggle(isOn: $recordingAutoSave) {
                     SettingsRow(
                         title: "Auto-save to Photos",
@@ -61,6 +62,7 @@ struct RecordingSettingsView: View {
             }
 
             Section(header: Text("HUD")) {
+                // TODO: Wire showRecordingOSD into the in-game HUD overlay to show/hide the record button
                 ThemedToggle(isOn: $showRecordingOSD) {
                     SettingsRow(
                         title: "Show Recording Button in HUD",
@@ -71,6 +73,7 @@ struct RecordingSettingsView: View {
             }
 
             Section(header: Text("Clip Duration")) {
+                // TODO: Wire recordingClipDuration into PVRecordingManager to enforce clip buffer length
                 Picker("Clip Duration", selection: $recordingClipDuration) {
                     ForEach(Self.clipDurationOptions, id: \.value) { option in
                         Text(option.label).tag(option.value)
@@ -78,7 +81,7 @@ struct RecordingSettingsView: View {
                 }
                 .pickerStyle(.automatic)
 
-                Text("Maximum length for each recording session.")
+                Text("Default length for each recording clip.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
