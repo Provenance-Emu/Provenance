@@ -76,6 +76,15 @@ import UIKit
     private var disconnectObserver: NSObjectProtocol?
 #endif
 
+    // MARK: - Session tracking
+
+    /// Monotonic counter incremented on every ``attach(to:)`` call.
+    /// Button handler `Task { @MainActor }` closures capture this value; if it
+    /// has changed by the time they execute (because detach / re-attach occurred
+    /// while the task was queued), the stale events are discarded rather than
+    /// routing to the new responder or desyncing button state.
+    private var _session: Int = 0
+
     // MARK: - Lifecycle
 
     public override init() {
@@ -89,6 +98,7 @@ import UIKit
     /// Start delivering mouse input to `core`.
     @objc public func attach(to core: AnyObject & LightGunResponder) {
         detach()
+        _session &+= 1
         responder = core
         cursorX = 0.5
         cursorY = 0.5
@@ -205,9 +215,11 @@ import UIKit
         }
 
         // Left button → trigger
+        // Capture the session at event time; discard if stale (detach/re-attach raced).
         input?.leftButton.pressedChangedHandler = { [weak self] _, _, pressed in
+            let session = self?._session ?? -1
             Task { @MainActor [weak self] in
-                guard let self, self.isEnabled else { return }
+                guard let self, self._session == session, self.isEnabled else { return }
                 self.triggerDown = pressed
                 if pressed {
                     self.responder?.lightGunTriggerDown()
@@ -219,8 +231,9 @@ import UIKit
 
         // Right button → reload (off-screen)
         input?.rightButton?.pressedChangedHandler = { [weak self] _, _, pressed in
+            let session = self?._session ?? -1
             Task { @MainActor [weak self] in
-                guard let self, self.isEnabled else { return }
+                guard let self, self._session == session, self.isEnabled else { return }
                 if pressed {
                     self.reloadDown = true
                     self.responder?.lightGunReloadDown?()
@@ -233,8 +246,9 @@ import UIKit
 
         // Middle button → aux A
         input?.middleButton?.pressedChangedHandler = { [weak self] _, _, pressed in
+            let session = self?._session ?? -1
             Task { @MainActor [weak self] in
-                guard let self, self.isEnabled else { return }
+                guard let self, self._session == session, self.isEnabled else { return }
                 self.auxADown = pressed
                 if pressed {
                     self.responder?.lightGunAuxADown?()
