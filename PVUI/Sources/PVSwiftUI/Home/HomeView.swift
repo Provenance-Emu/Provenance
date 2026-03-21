@@ -591,6 +591,10 @@ struct HomeView: SwiftUI.View {
                 consumePendingSearch()
             }
         }
+        // ROM drag & drop import — iOS/iPadOS/macCatalyst only (#3406)
+#if os(iOS)
+        .romDropTarget()
+#endif
     }
 
     @ViewBuilder
