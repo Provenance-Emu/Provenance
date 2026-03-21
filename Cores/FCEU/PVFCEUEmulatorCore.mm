@@ -119,9 +119,10 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
         soundBuffer = nil;
         pXBuf = nil;
         soundSize = 0;
-        
+
         videoBuffer = (uint32_t *)malloc(WIDTH * HEIGHT * 4);
         currentDisc = 1;
+        _lightGunLock = OS_UNFAIR_LOCK_INIT;
     }
 
 	_current = self;
