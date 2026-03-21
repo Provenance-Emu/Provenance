@@ -53,6 +53,11 @@ extension PVEmulatorViewController {
             DLOG("Netplay: core reports supportsNetplay=false — skipping bridge registration.")
             return
         }
+        // Cancel any prior start task before creating a new one so that a
+        // re-entrant call (e.g. emulator restart) doesn't leave a stale task
+        // that could register an outdated bridge after this call completes.
+        netplayStartTaskBox?.task.cancel()
+        netplayStartTaskBox = nil
         let task = Task {
             // Guard against cancellation: if stopNetplayBridge() ran before this
             // task was scheduled, don't re-register a stale bridge.
