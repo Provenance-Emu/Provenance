@@ -243,6 +243,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         for controller in GCController.controllers() {
             controller.clearPauseHandler()
         }
+        #if os(iOS)
+        stopRecordPulse()
+        #endif
     }
 
     func updateHideTouchControls() {
@@ -1898,10 +1901,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             return
         }
         emulatorVC.toggleScreenRecording()
-        // Appearance update is deferred briefly so the recording state has time to flip.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.updateRecordButtonAppearance()
-        }
+        // Appearance is driven by the async recording-state notifications from the VC;
+        // no local delay needed here.
     }
 
     public func updateRecordButtonAppearance() {
@@ -1912,6 +1913,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         recordButton?.backgroundColor = isRecording
             ? UIColor.systemRed.withAlphaComponent(0.3)
             : UIColor.black.withAlphaComponent(0.4)
+
+        // Update accessibility so VoiceOver reflects current recording state.
+        recordButton?.accessibilityLabel = isRecording ? "Stop Recording" : "Record"
+        recordButton?.accessibilityValue = isRecording ? "Recording" : "Not Recording"
 
         if isRecording {
             startRecordPulse()
