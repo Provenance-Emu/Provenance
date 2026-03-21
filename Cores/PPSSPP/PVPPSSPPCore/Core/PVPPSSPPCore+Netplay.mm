@@ -7,6 +7,7 @@
 //
 
 #import "PVPPSSPPCore+Netplay.h"
+#import <objc/runtime.h>
 
 // PPSSPP config globals.
 #include "Core/Config.h"
