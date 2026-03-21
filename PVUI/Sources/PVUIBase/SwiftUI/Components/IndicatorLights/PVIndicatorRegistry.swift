@@ -87,6 +87,19 @@ public final class PVIndicatorRegistry: ObservableObject {
         update(.jitStatus, state: jitState.indicatorState)
     }
 
+    /// Updates the analog mode indicator.
+    /// - Parameter state: The analog mode state to display.
+    public func updateAnalogMode(_ state: PVAnalogModeIndicatorState) {
+        update(.analogMode, state: state.indicatorState)
+    }
+
+    /// Updates the MFi+ swap/modifier mode indicator.
+    /// - Parameter state: The swap mode state to display.
+    public func updateSwapMode(_ state: PVSwapModeIndicatorState) {
+        update(.swapMode, state: state.indicatorState)
+    }
+
+
     /// Removes an indicator from the registry.
     /// - Parameter id: The indicator identifier to remove.
     public func remove(_ id: PVIndicatorID) {

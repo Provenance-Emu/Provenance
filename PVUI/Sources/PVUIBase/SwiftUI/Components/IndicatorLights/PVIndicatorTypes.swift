@@ -20,6 +20,10 @@ public enum PVIndicatorID: String, CaseIterable {
     case netplayBandwidth = "netplay_bw"
     /// Network multiplayer player count (future)
     case playerCount = "player_count"
+    /// PSX Analog mode toggle indicator
+    case analogMode = "analog_mode"
+    /// MFi+ modifier combo / swap mode active indicator
+    case swapMode = "swap_mode"
 }
 
 // MARK: - Indicator State
@@ -145,6 +149,74 @@ public enum PVJITIndicatorState {
                 color: .gray,
                 label: "Performance Mode Not Available",
                 description: "JIT is not available on this platform.",
+                isVisible: false,
+                isPulsing: false
+            )
+        }
+    }
+}
+
+// MARK: - Analog Mode Indicator States
+
+/// Predefined states for the PSX Analog mode indicator.
+public enum PVAnalogModeIndicatorState {
+    /// Analog mode is on (DualShock analog sticks active)
+    case on
+    /// Digital mode (D-pad only, no analog sticks)
+    case off
+
+    /// The indicator state representation.
+    public var indicatorState: PVIndicatorState {
+        switch self {
+        case .on:
+            return PVIndicatorState(
+                id: .analogMode,
+                color: .green,
+                label: "Analog Mode",
+                description: "PSX Analog mode is ON — left/right sticks active.",
+                isVisible: true,
+                isPulsing: false
+            )
+        case .off:
+            return PVIndicatorState(
+                id: .analogMode,
+                color: .gray,
+                label: "Digital Mode",
+                description: "PSX Analog mode is OFF — D-pad only.",
+                isVisible: false,
+                isPulsing: false
+            )
+        }
+    }
+}
+
+// MARK: - Swap Mode Indicator States
+
+/// Predefined states for the MFi+ modifier / swap mode indicator.
+public enum PVSwapModeIndicatorState {
+    /// Modifier combo is currently held (transient)
+    case active
+    /// No modifier combo held
+    case inactive
+
+    /// The indicator state representation.
+    public var indicatorState: PVIndicatorState {
+        switch self {
+        case .active:
+            return PVIndicatorState(
+                id: .swapMode,
+                color: .blue,
+                label: "MFi+ Active",
+                description: "Modifier combo held — extended inputs available.",
+                isVisible: true,
+                isPulsing: true
+            )
+        case .inactive:
+            return PVIndicatorState(
+                id: .swapMode,
+                color: .gray,
+                label: "MFi+ Inactive",
+                description: "Release modifier combo.",
                 isVisible: false,
                 isPulsing: false
             )
