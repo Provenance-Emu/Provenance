@@ -1411,6 +1411,12 @@ static struct retro_midi_interface s_thinMIDIInterface = {
     thin_midi_flush,
 };
 
+/// C-linkage accessor so `PVLibRetroCore.m` (ObjC, no C++ headers) can wire
+/// the same CoreMIDI-backed interface without duplicating code.
+extern "C" struct retro_midi_interface *pv_libretro_midi_interface(void) {
+    return &s_thinMIDIInterface;
+}
+
 // ---------------------------------------------------------------------------
 // MARK: - Microphone interface (AudioUnit)
 // ---------------------------------------------------------------------------

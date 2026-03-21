@@ -877,3 +877,15 @@ public extension Defaults.Keys {
     /// Set of core category identifiers for which the JIT onboarding has been dismissed ("Don't show again")
     static let jitOnboardingDismissedCategories = Key<Set<String>>("jitOnboardingDismissedCategories", default: [])
 }
+
+// MARK: - MIDI Settings
+public extension Defaults.Keys {
+    /// CoreMIDI unique ID of the last selected MIDI input source.
+    /// Persisted so the device picker restores the user's choice between sessions.
+    /// `nil` means "no preference" (auto-connect to first available source).
+    static let midiSourceUniqueID = Key<Int32?>("midiSourceUniqueID", default: nil)
+
+    /// CoreMIDI unique ID of the last selected MIDI output destination.
+    /// `nil` means "no preference" (no active output connection).
+    static let midiDestinationUniqueID = Key<Int32?>("midiDestinationUniqueID", default: nil)
+}

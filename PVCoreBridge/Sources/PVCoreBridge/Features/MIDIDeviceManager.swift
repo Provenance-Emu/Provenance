@@ -69,12 +69,25 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Currently selected MIDI input source (nil = none).
     /// Setting this disconnects all other sources and reconnects only the selected one
     /// (or all sources when set to nil, enabling auto-detect across every device).
+    /// Changes are persisted to UserDefaults so the choice survives app restarts.
     @Published public var selectedSourceID: MIDIUniqueID? {
-        didSet { if oldValue != selectedSourceID { reconnectSources() } }
+        didSet {
+            if oldValue != selectedSourceID {
+                reconnectSources()
+                UserDefaults.standard.set(selectedSourceID.map { Int($0) }, forKey: Self.udKeySource)
+            }
+        }
     }
 
     /// Currently selected MIDI output destination (nil = none).
-    @Published public var selectedDestinationID: MIDIUniqueID?
+    /// Changes are persisted to UserDefaults so the choice survives app restarts.
+    @Published public var selectedDestinationID: MIDIUniqueID? {
+        didSet {
+            if oldValue != selectedDestinationID {
+                UserDefaults.standard.set(selectedDestinationID.map { Int($0) }, forKey: Self.udKeyDestination)
+            }
+        }
+    }
 
     /// `true` while waiting for any incoming MIDI message to auto-select its source.
     @Published public private(set) var isAutoDetecting: Bool = false
@@ -107,11 +120,36 @@ public final class MIDIDeviceManager: ObservableObject {
     private weak var _responder: (any MIDIResponder)?
     private var activityResetTask: Task<Void, Never>?
 
+    // UserDefaults keys — mirrors the PVSettings `midiSourceUniqueID` / `midiDestinationUniqueID` keys
+    // so PVSettings.Defaults[.midiSourceUniqueID] and MIDIDeviceManager both read/write the same value.
+    private static let udKeySource = "midiSourceUniqueID"
+    private static let udKeyDestination = "midiDestinationUniqueID"
+
     // MARK: Init
 
     private init() {
         setupMIDI()
         refreshEndpoints()
+        restorePersistedSelection()
+    }
+
+    // MARK: Private helpers
+
+    /// Restores the previously-persisted source/destination selection from UserDefaults.
+    /// Called once during init, after `refreshEndpoints()` has populated `sources`/`destinations`.
+    private func restorePersistedSelection() {
+        if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int {
+            let id = MIDIUniqueID(raw)
+            if sources.contains(where: { $0.id == id }) {
+                selectedSourceID = id
+            }
+        }
+        if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int {
+            let id = MIDIUniqueID(raw)
+            if destinations.contains(where: { $0.id == id }) {
+                selectedDestinationID = id
+            }
+        }
     }
 
     // MARK: Public API
