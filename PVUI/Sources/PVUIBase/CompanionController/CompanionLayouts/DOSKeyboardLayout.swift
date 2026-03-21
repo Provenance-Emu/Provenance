@@ -12,6 +12,7 @@
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 #if !os(tvOS)
+import GameController
 import SwiftUI
 import PVPrimitives
 
@@ -138,15 +139,15 @@ public struct DOSKeyboardLayout: CompanionLayout {
     private var quickAccessRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                shortcutButton("ESC",   button: .select)
-                shortcutButton("ENTER", button: .start)
-                // Use .west/.north to avoid collision with mouse L (.south) and mouse R (.east)
-                shortcutButton("SPACE", button: .west)
-                shortcutButton("TAB",   button: .north)
-                shortcutButton("F1",    button: .l1)
-                shortcutButton("F2",    button: .r1)
-                shortcutButton("F5",    button: .l2)
-                shortcutButton("F10",   button: .r2)
+                // Route through keyboardVM so delegate receives proper GCKeyCode events
+                shortcutKey("ESC",   keyCode: .escape)
+                shortcutKey("ENTER", keyCode: .returnOrEnter)
+                shortcutKey("SPACE", keyCode: .spacebar)
+                shortcutKey("TAB",   keyCode: .tab)
+                shortcutKey("F1",    keyCode: .F1)
+                shortcutKey("F2",    keyCode: .F2)
+                shortcutKey("F5",    keyCode: .F5)
+                shortcutKey("F10",   keyCode: .F10)
             }
             .padding(.horizontal, 4)
         }
@@ -154,22 +155,36 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
     // MARK: - Helpers
 
+    /// Renders a quick-access key that routes through `keyboardVM` so the delegate
+    /// receives proper `GCKeyCode` keyDown/keyUp events, matching the path used by
+    /// the full QWERTY keys in `VirtualKeyboardView`.
     @ViewBuilder
-    private func shortcutButton(_ label: String, button: CompanionButton) -> some View {
-        CompanionControllerButton(button: button, router: inputRouter) {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color.white.opacity(0.12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6).stroke(Color.white.opacity(0.25), lineWidth: 1)
-                )
-                .frame(height: 32)
-                .overlay(
-                    Text(label)
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 10)
-                )
-        }
+    private func shortcutKey(_ label: String, keyCode: GCKeyCode) -> some View {
+        let key = VirtualKey(label: label, keyCode: keyCode)
+        RoundedRectangle(cornerRadius: 6)
+            .fill(Color.white.opacity(0.12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6).stroke(Color.white.opacity(0.25), lineWidth: 1)
+            )
+            .frame(height: 32)
+            .overlay(
+                Text(label)
+                    .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+            )
+            .onLongPressGesture(
+                minimumDuration: 0,
+                maximumDistance: 44,
+                pressing: { pressing in
+                    if pressing {
+                        keyboardVM.keyDown(key)
+                    } else {
+                        keyboardVM.keyUp(key)
+                    }
+                },
+                perform: {}
+            )
     }
 
     @ViewBuilder
