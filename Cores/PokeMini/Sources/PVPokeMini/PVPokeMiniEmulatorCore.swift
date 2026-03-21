@@ -43,41 +43,22 @@ extension PVPokeMiniEmulatorCore: CoreOptional {
 }
 
 extension PVPokeMiniEmulatorCore: CoreActions {
-    
+
     enum Actions {
-        static var changePalette: CoreAction { CoreAction(title: "Change Palette", options: nil) }
-        static var changeLCDFilter: CoreAction { CoreAction(title: "Change LCD Filter", options: nil) }
-        static var changeLCDMode: CoreAction { CoreAction(title: "Change LCD Mode", options: nil) }
+        static var changePalette: CoreAction { CoreAction(title: changePaletteLegacyActionTitle, options: nil) }
     }
-    
+
+    /// Expose the legacy cycling action only for the classic `RetroMenuView`.
+    /// `PauseTileMenuView` uses `PaletteProviding` and suppresses this action automatically.
     public var coreActions: [CoreAction]? { [Actions.changePalette] }
 
     public func selected(action: CoreAction) {
-        switch action {
-        case Actions.changePalette:
-            nextPalette()
+        switch action.title {
+        case changePaletteLegacyActionTitle:
+            cycleToNextPalette()
         default:
             WLOG("Unknown action: " + action.title)
         }
-    }
-    func nextLCDFilter() {
-        var lcdFilter = CommandLine.lcdfilter + 1
-        if lcdFilter >= PVPokeMiniOptions.Options.Video.lcdFilterValues.count { lcdFilter = 0 }
-        _bridge.setVideoSpec()
-    }
-    func nextLCDMode() {
-        var lcdMode = CommandLine.lcdmode + 1
-        if lcdMode >= PVPokeMiniOptions.Options.Video.lcdModeValues.count { lcdMode = 0 }
-        _bridge.setVideoSpec()
-    }
-    func nextPalette() {
-        var palette = CommandLine.palette + 1
-        if palette >= PVPokeMiniOptions.Options.Video.paletteValues.count { palette = 0 }
-        PokeMini_VideoPalette_Index(CommandLine.palette, nil, CommandLine.lcdcontrast, CommandLine.lcdbright);
-        applyChanges()
-    }
-    func applyChanges() {
-        PokeMini_ApplyChanges();
     }
 }
 
