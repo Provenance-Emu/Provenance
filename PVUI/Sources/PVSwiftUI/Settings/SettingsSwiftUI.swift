@@ -807,9 +807,11 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Video") {
                         VideoSection()
                     }
+#if os(iOS)
                     CollapsibleSection(title: "Recording & Streaming") {
                         RecordingSection()
                     }
+#endif
                     CollapsibleSection(title: "RetroAchievements") {
                         RetroAchievementsSection(viewModel: viewModel)
                             .environmentObject(viewModel)
@@ -1645,8 +1647,8 @@ private struct VideoSection: View {
 
 private struct RecordingSection: View {
     var body: some View {
-        Section(header: Text("Recording & Streaming")) {
 #if os(iOS)
+        Section(header: Text("Recording & Streaming")) {
             PaidFeatureView {
                 NavigationLink(destination: RecordingSettingsView()) {
                     SettingsRow(
@@ -1663,8 +1665,8 @@ private struct RecordingSection: View {
                 )
             }
             .freemiumKitColorReset()
-#endif
         }
+#endif
     }
 }
 
