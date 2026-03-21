@@ -810,6 +810,10 @@ struct ConsoleGamesView: SwiftUI.View {
                 searchText: $gamesViewModel.searchText
             ))
             .ignoresSafeArea(.all)
+            // ROM drag & drop import — iOS/iPadOS/macCatalyst only (#3406)
+#if !os(tvOS)
+            .romDropTarget()
+#endif
         }
     }
 

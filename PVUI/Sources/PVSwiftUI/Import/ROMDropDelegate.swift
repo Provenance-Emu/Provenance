@@ -1,0 +1,119 @@
+//
+//  ROMDropDelegate.swift
+//  PVUI
+//
+//  Created by Provenance Emu on 2026-03-21.
+//  Copyright 2026 Provenance Emu. All rights reserved.
+//
+//  Implements native drag & drop ROM import (issue #3406, epic #2136).
+//  Guard the entire file with !os(tvOS) — drag & drop is unavailable on tvOS.
+//
+
+#if !os(tvOS)
+import Foundation
+import SwiftUI
+import UniformTypeIdentifiers
+import PVLogging
+import PVUIBase
+
+// MARK: - Accepted drop types
+
+/// UTTypes accepted by the ROM drop target.
+/// Covers file URLs, zip/archive bundles, and any generic binary data file that
+/// the OS may not map to a more specific type.
+private let romAcceptedTypes: [UTType] = [
+    .fileURL,
+    .zip,
+    .archive,
+    .data,
+    .item,
+]
+
+// MARK: - View modifier
+
+/// Applies a ROM drop target to any SwiftUI view.
+/// Dropped files are handed off to `PVGameLibraryUpdatesController.handlePickedDocuments(_:)`,
+/// which copies them to the Imports directory and enqueues them in the importer pipeline.
+public struct ROMDropTargetModifier: ViewModifier {
+    /// Feedback state so the view can highlight while a compatible item is hovering over it.
+    @State private var isTargeted = false
+
+    public init() {}
+
+    public func body(content: Content) -> some View {
+        content
+            .onDrop(of: romAcceptedTypes, isTargeted: $isTargeted) { providers in
+                handleDrop(providers: providers)
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.accentColor, lineWidth: isTargeted ? 3 : 0)
+                    .animation(.easeInOut(duration: 0.2), value: isTargeted)
+                    .allowsHitTesting(false)
+            )
+    }
+
+    // MARK: - Drop handling
+
+    @discardableResult
+    private func handleDrop(providers: [NSItemProvider]) -> Bool {
+        guard !providers.isEmpty else { return false }
+
+        var handled = false
+
+        for provider in providers {
+            // Prefer file URL representation so we get the real on-disk path.
+            if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
+                provider.loadFileRepresentation(forTypeIdentifier: UTType.fileURL.identifier) { url, error in
+                    if let error {
+                        ELOG("ROMDropDelegate: loadFileRepresentation error: \(error)")
+                        return
+                    }
+                    guard let url else { return }
+                    enqueueURL(url)
+                }
+                handled = true
+            } else if provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) {
+                // Fallback: provider exposes generic data — load it so the OS copies it
+                // to a temporary location and we receive a URL.
+                provider.loadFileRepresentation(forTypeIdentifier: UTType.data.identifier) { url, error in
+                    if let error {
+                        ELOG("ROMDropDelegate: loadFileRepresentation (data) error: \(error)")
+                        return
+                    }
+                    guard let url else { return }
+                    enqueueURL(url)
+                }
+                handled = true
+            }
+        }
+
+        return handled
+    }
+
+    /// Forwards a dropped URL to the library update pipeline on the main actor.
+    private func enqueueURL(_ url: URL) {
+        ILOG("ROMDropDelegate: Received drop URL: \(url.lastPathComponent)")
+        Task { @MainActor in
+            guard let updatesController = AppState.shared.libraryUpdatesController else {
+                ELOG("ROMDropDelegate: libraryUpdatesController is nil, cannot enqueue \(url.lastPathComponent)")
+                return
+            }
+            updatesController.handlePickedDocuments([url])
+        }
+    }
+}
+
+// MARK: - View extension
+
+public extension View {
+    /// Attaches the ROM drag & drop import target to this view.
+    /// Dropped ROMs/zips are enqueued into `PVGameLibraryUpdatesController` and
+    /// processed by the existing `PVGameImporter` pipeline.
+    ///
+    /// Guard: iOS/iPadOS/macCatalyst only — do not call on tvOS.
+    func romDropTarget() -> some View {
+        modifier(ROMDropTargetModifier())
+    }
+}
+#endif // !os(tvOS)
