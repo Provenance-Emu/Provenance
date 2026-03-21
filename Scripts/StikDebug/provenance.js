@@ -35,14 +35,30 @@
 // to trigger W×X page preparation.  Value = 0xD4200D20 on AArch64.
 const JIT_BRK_IMMEDIATE = 0x69;
 
+// Memory-protection constants for vm_remap's prot argument.
+// These match the POSIX mmap PROT_* values used by the Darwin VM layer.
+const PROT_NONE  = 0; // no access
+const PROT_READ  = 1; // pages are readable
+const PROT_WRITE = 2; // pages are writable
+const PROT_RW    = PROT_READ | PROT_WRITE; // read+write (no execute) — for the RW alias
+
+// Whether StikDebug provides register values as BigInt (true on current builds).
+// StikDebug ≥ 1.3 returns x0/x1 as BigInt to preserve full 64-bit precision;
+// older builds return Number (which loses precision above 2^53).
+// We normalise to BigInt for all address arithmetic so large JIT heap addresses
+// (which routinely exceed 0x100000000 on 64-bit iOS) are handled correctly.
+function toBigInt(v) {
+    return (typeof v === "bigint") ? v : BigInt(v >>> 0);
+}
+
 /**
  * onBreakpoint — called by StikDebug each time a BRK instruction fires.
  *
- * @param {object} ctx   — CPU register context at the point of the BRK
- *   ctx.x0  (Number)   — base address of the JIT region (RX mapping)
- *   ctx.x1  (Number)   — size of the region in bytes
- *   ctx.pc  (Number)   — program counter (address of the BRK instruction)
- *   ctx.brk (Number)   — immediate encoded in the BRK instruction
+ * @param {object} ctx              — CPU register context at the point of the BRK
+ *   ctx.x0  (BigInt|Number)   — base address of the JIT region (RX mapping)
+ *   ctx.x1  (BigInt|Number)   — size of the region in bytes
+ *   ctx.pc  (BigInt|Number)   — program counter (address of the BRK instruction)
+ *   ctx.brk (Number)          — immediate encoded in the BRK instruction
  * @param {object} mem   — memory helpers { read, write, alloc, free }
  * @param {object} proc  — process helpers { prepare_memory_region, vm_remap,
  *                         pid, name }
@@ -54,8 +70,12 @@ function onBreakpoint(ctx, mem, proc) {
         return true; // Resume — not ours.
     }
 
-    const regionBase = ctx.x0;
-    const regionSize = ctx.x1;
+    // Normalise to BigInt — iOS 26 JIT heap addresses exceed 2^32 and can
+    // exceed 2^53, so JavaScript Number loses integer precision above that
+    // threshold.  Using BigInt ensures vm_remap / prepare_memory_region receive
+    // the exact 64-bit address and size the dynarec reported.
+    const regionBase = toBigInt(ctx.x0);
+    const regionSize = toBigInt(ctx.x1);
 
     if (!regionBase || !regionSize) {
         console.warn("[provenance.js] BRK #0x69 with null base/size — skipping");
@@ -86,11 +106,11 @@ function onBreakpoint(ctx, mem, proc) {
     // Step 2 — Create an RW alias via vm_remap.
     //
     // vm_remap maps the same physical pages that back regionBase (RX) into a
-    // new virtual address with RW (read+write, no execute) protection.
+    // new virtual address with PROT_RW (read+write, no execute) protection.
     // The dynarec writes JIT code through this alias; the CPU executes from
     // the original RX mapping.  This is the dual-mapping (shadow-page) pattern
     // required by the iOS 26 W×X enforcement model.
-    const rwAlias = proc.vm_remap(regionBase, regionSize, /* prot: RW */ 3);
+    const rwAlias = proc.vm_remap(regionBase, regionSize, PROT_RW);
     if (!rwAlias) {
         console.error("[provenance.js] vm_remap failed — JIT write alias not created");
         return true;
@@ -102,7 +122,7 @@ function onBreakpoint(ctx, mem, proc) {
 
     console.log(
         "[provenance.js] W×X ready: RX=0x" + regionBase.toString(16) +
-        " RW alias=0x" + rwAlias.toString(16)
+        " RW alias=0x" + toBigInt(rwAlias).toString(16)
     );
 
     return true; // Resume execution.

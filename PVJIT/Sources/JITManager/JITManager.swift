@@ -383,9 +383,11 @@ public final class DOLJitManager {
         if isSimulator {
             return false
         }
+#if os(iOS) || os(tvOS)
         if #available(iOS 26, tvOS 26, *) {
             return true
         }
+#endif
         return false
     }
 
