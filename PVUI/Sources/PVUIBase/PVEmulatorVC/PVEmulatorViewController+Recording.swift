@@ -33,6 +33,17 @@ extension PVEmulatorViewController {
     ///   Defaults to `self`.
     public func startBroadcast(from presenter: UIViewController? = nil) {
         let presentingVC = presenter ?? self
+        // Surface load failures to the user so "GO LIVE" doesn't silently do nothing.
+        PVBroadcastManager.shared.onBroadcastLoadError = { [weak self] _ in
+            guard let self else { return }
+            let alert = UIAlertController(
+                title: "Live Broadcast Unavailable",
+                message: "No broadcast extensions are installed. Install an app like Twitch or YouTube to enable live streaming.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true)
+        }
         PVBroadcastManager.shared.presentBroadcastActivity(from: presentingVC)
         // isBroadcasting state is updated asynchronously via RPBroadcastControllerDelegate
         ILOG("[Broadcast] Broadcast activity VC requested from VC")

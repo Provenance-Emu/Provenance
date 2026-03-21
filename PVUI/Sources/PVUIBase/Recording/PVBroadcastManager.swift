@@ -34,6 +34,12 @@ import PVLogging
         RPScreenRecorder.shared().isAvailable
     }
 
+    /// Optional callback invoked on the main actor when the broadcast activity
+    /// VC fails to load (e.g. no broadcast extensions installed, permission
+    /// denied, or system error).  Set this from the presenting view controller
+    /// to show an alert or toast so the user knows why "GO LIVE" did nothing.
+    public var onBroadcastLoadError: ((Error?) -> Void)?
+
     private var broadcastController: RPBroadcastController?
 
     private override init() {}
@@ -58,18 +64,31 @@ import PVLogging
     /// Stops any currently active broadcast session.
     ///
     /// This is a no-op when no broadcast is active.
+    ///
+    /// State cleanup (`isBroadcasting = false`, etc.) is deferred to the
+    /// `RPBroadcastControllerDelegate.broadcastController(_:didFinishWithError:)`
+    /// callback, which fires regardless of whether `finishBroadcast` succeeds or
+    /// fails.  This avoids prematurely clearing the controller on a transient
+    /// error — if the stop request fails the broadcast may still be active and
+    /// the user can retry.
     public func stopBroadcast() {
         guard let controller = broadcastController else {
-            handleBroadcastFinished()
+            // No active controller — ensure UI state is consistent.
+            if isBroadcasting { handleBroadcastFinished() }
             return
         }
-        controller.finishBroadcast { [weak self] error in
+        controller.finishBroadcast { error in
             if let error {
-                ELOG("[Broadcast] Error stopping broadcast: \(error.localizedDescription)")
+                // Log only — broadcastController(_:didFinishWithError:) will
+                // call handleBroadcastFinished() if/when the broadcast actually
+                // stops, preserving the ability to retry on transient failures.
+                Task { @MainActor in
+                    ELOG("[Broadcast] Error stopping broadcast: \(error.localizedDescription)")
+                }
             }
-            Task { @MainActor [weak self] in
-                self?.handleBroadcastFinished()
-            }
+            // Do NOT call handleBroadcastFinished() here.
+            // The RPBroadcastControllerDelegate callback is the single source
+            // of truth for broadcast-stopped transitions.
         }
     }
 
@@ -102,10 +121,12 @@ import PVLogging
                 guard let self else { return }
                 if let error {
                     ELOG("[Broadcast] Failed to load RPBroadcastActivityViewController: \(error.localizedDescription)")
+                    self.onBroadcastLoadError?(error)
                     return
                 }
                 guard let activityVC else {
                     WLOG("[Broadcast] No RPBroadcastActivityViewController returned")
+                    self.onBroadcastLoadError?(nil)
                     return
                 }
                 activityVC.delegate = self
