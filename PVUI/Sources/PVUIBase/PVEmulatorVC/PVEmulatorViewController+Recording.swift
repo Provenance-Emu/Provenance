@@ -170,7 +170,7 @@ extension PVEmulatorViewController {
         AppState.shared.emulationUIState.isClipBufferingActive
     }
 
-    /// Starts always-on clip buffering if the user has it enabled in settings.
+    /// Starts always-on clip buffering when the recorder is available.
     /// No-op on iOS < 15 / tvOS < 15.
     public func startClipBufferingIfEnabled() {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
@@ -192,48 +192,55 @@ extension PVEmulatorViewController {
         guard isClipBufferingActive else { return }
         Task { @MainActor in
             await PVRecordingManager.shared.stopClipBuffering()
-            AppState.shared.emulationUIState.isClipBufferingActive = false
-            ILOG("[ClipCapture] Clip buffering stopped")
+            // Sync UI state with the actual recorder state after the stop attempt.
+            AppState.shared.emulationUIState.isClipBufferingActive = PVRecordingManager.shared.isClipBuffering
         }
     }
 
-    /// Exports the last `duration` seconds as a clip and saves to Photos.
+    /// Exports the last `duration` seconds as a clip and saves it to Photos (iOS)
+    /// or the app's Documents folder (tvOS).
     public func saveClip(duration: TimeInterval = 30.0) {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
         Task { @MainActor in
             do {
                 let url = try await PVRecordingManager.shared.exportClip(duration: duration)
-                saveClipToPhotos(url: url)
+                saveClipToStorage(url: url)
             } catch {
                 ELOG("[ClipCapture] Failed to export clip: \(error.localizedDescription)")
-                showClipError(error)
+                showClipAlert(title: "Clip Error", message: error.localizedDescription)
             }
         }
     }
 
-    private func saveClipToPhotos(url: URL) {
+    private func saveClipToStorage(url: URL) {
         #if os(iOS)
+        // Save to Camera Roll on iOS.
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, nil, nil, nil)
-        let alert = UIAlertController(
-            title: "Clip Saved",
-            message: "Your gameplay clip was saved to Photos.",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        showClipAlert(title: "Clip Saved", message: "Your gameplay clip was saved to Photos.")
+        #elseif os(tvOS)
+        // tvOS has no Photos write API — copy to the app's Documents folder instead
+        // so the user can access it via iTunes File Sharing or the Files app.
+        let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let destURL = docsURL.appendingPathComponent(url.lastPathComponent)
+        do {
+            if FileManager.default.fileExists(atPath: destURL.path) {
+                try FileManager.default.removeItem(at: destURL)
+            }
+            try FileManager.default.copyItem(at: url, to: destURL)
+            try FileManager.default.removeItem(at: url)
+            ILOG("[ClipCapture] Clip saved to Documents: \(destURL.lastPathComponent)")
+            showClipAlert(title: "Clip Saved", message: "Your gameplay clip was saved to the app's Documents folder.")
+        } catch {
+            ELOG("[ClipCapture] Failed to move clip to Documents: \(error.localizedDescription)")
+            showClipAlert(title: "Clip Error", message: error.localizedDescription)
+        }
         #endif
     }
 
-    private func showClipError(_ error: Error) {
-        #if os(iOS)
-        let alert = UIAlertController(
-            title: "Clip Error",
-            message: error.localizedDescription,
-            preferredStyle: .alert
-        )
+    private func showClipAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
-        #endif
     }
 }
 #endif // os(iOS) || os(tvOS)

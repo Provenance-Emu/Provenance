@@ -220,15 +220,22 @@ extension PVRecordingManager {
     @available(iOS 15.0, tvOS 15.0, *)
     public func stopClipBuffering() async {
         guard isClipBuffering else { return }
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+        let didStop = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
             DispatchQueue.main.async {
-                RPScreenRecorder.shared().stopClipBuffering { _ in
-                    continuation.resume()
+                RPScreenRecorder.shared().stopClipBuffering { error in
+                    if let error {
+                        ELOG("[ClipCapture] stopClipBuffering error: \(error.localizedDescription)")
+                        continuation.resume(returning: false)
+                    } else {
+                        continuation.resume(returning: true)
+                    }
                 }
             }
         }
-        isClipBuffering = false
-        ILOG("[ClipCapture] Clip buffering stopped")
+        if didStop {
+            isClipBuffering = false
+            ILOG("[ClipCapture] Clip buffering stopped")
+        }
     }
 
     /// Exports the last `duration` seconds from the clip buffer to a temporary file.
@@ -239,7 +246,7 @@ extension PVRecordingManager {
             throw RecordingError.clipBufferingNotActive
         }
         let outputURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("PVClip_\(Int(Date().timeIntervalSince1970)).mp4")
+            .appendingPathComponent("PVClip_\(UUID().uuidString).mp4")
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             DispatchQueue.main.async {
