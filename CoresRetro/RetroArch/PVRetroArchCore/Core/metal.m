@@ -21,6 +21,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <PVRetroArch/PVRetroArch-Swift.h>
 @import PVSettings;
+@import PVPrimitives;
 @import PVShaders;
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
