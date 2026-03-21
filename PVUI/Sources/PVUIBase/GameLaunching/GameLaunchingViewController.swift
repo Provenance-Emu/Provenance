@@ -715,11 +715,10 @@ public extension GameLaunchingViewController {
                             return SmartCoreSelectionItem(recommendation: rec, coreName: core.projectName)
                         }
                         let system = game.system
-                        let coreSelectionView = SmartCoreSelectionView(
+                        let coreSelectionView = SmartCoreSelectionHostingView(
                             title: "Select Core",
                             message: "Choose a core to run \(game.title)",
                             items: smartItems,
-                            isPresented: .constant(true),
                             showSetDefault: system != nil,
                             onSelect: handleCoreSelect,
                             onSetDefault: system.map { sys in
@@ -740,11 +739,10 @@ public extension GameLaunchingViewController {
                             guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
                             return RetroSelectionItem(id: rec.coreIdentifier, title: core.projectName, subtitle: formatSaveCountSubtitle(rec.saveCount))
                         }
-                        let coreSelectionView = RetroSelectionAlertView(
+                        let coreSelectionView = RetroSelectionAlertHostingView(
                             title: "Select Core",
                             message: "Choose a core to run \(game.title)",
                             items: coreItems,
-                            isPresented: .constant(true),
                             onSelect: handleCoreSelect,
                             onCancel: {
                                 Task { @MainActor in

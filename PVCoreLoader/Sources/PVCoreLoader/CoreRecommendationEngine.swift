@@ -314,8 +314,9 @@ public final class CoreRecommendationEngine: Sendable {
                 caps.insert(.cheats)
             }
 
-            // Derive from JIT requirement
-            if plist.jitRequirementRawValue != nil {
+            // Derive from JIT requirement — only mark as required when plist explicitly says "required";
+            // "optional" means the core runs without JIT (just slower) and should not be labelled as requiring it.
+            if let jitRequirement = plist.jitRequirementRawValue, jitRequirement == "required" {
                 caps.insert(.requiresJIT)
             }
 
@@ -380,7 +381,8 @@ public final class CoreRecommendationEngine: Sendable {
         }
 
         let gameRequirements = enrichmentManifest?.gameRequirements ?? []
-        return CoreCapabilitiesManifest(version: 2, cores: mergedCores, gameRequirements: gameRequirements)
+        let manifestVersion = enrichmentManifest?.version ?? 2
+        return CoreCapabilitiesManifest(version: manifestVersion, cores: mergedCores, gameRequirements: gameRequirements)
     }
 
     /// Loads `CoreCapabilities.json` as the enrichment/editorial data layer.
