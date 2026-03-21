@@ -14,7 +14,6 @@ import ZipArchive
 import PVFileSystem
 import PVLogging
 import RealmSwift
-import PVPrimitives
 
 // MARK: - SaveExportError
 
@@ -91,7 +90,10 @@ public final class SaveExporter: @unchecked Sendable {
             (fileURL: state.file?.url, imageURL: state.image?.url)
         }
 
-        let hasAnySave = saveStateSnapshots.contains(where: { $0.fileURL != nil })
+        let hasAnySave = saveStateSnapshots.contains(where: {
+            guard let url = $0.fileURL else { return false }
+            return FileManager.default.fileExists(atPath: url.path)
+        })
         let batterySavesDir = Paths.batterySavesPath(forROM: romURL)
         let hasBatterySaves = fm.fileExists(atPath: batterySavesDir.path)
             && ((try? fm.contentsOfDirectory(atPath: batterySavesDir.path))?.isEmpty == false)
@@ -160,7 +162,9 @@ public final class SaveExporter: @unchecked Sendable {
             .joined()
             .trimmingCharacters(in: .whitespaces)
         let safeTitle = sanitizedTitle.isEmpty ? md5 : sanitizedTitle
-        let zipURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-saves.zip")
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let uuidFragment = UUID().uuidString.prefix(8)
+        let zipURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-saves-\(timestamp)-\(uuidFragment).zip")
 
         // Remove stale zip if present
         try? fm.removeItem(at: zipURL)
@@ -240,7 +244,11 @@ public final class SaveExporter: @unchecked Sendable {
             try restoreDirectory(from: srcBattery, to: destBattery)
         }
 
-        // Restore save state files (files only; Realm auto-observes filesystem changes)
+        // Restore save state files to disk.
+        // NOTE: This does not register PVSaveState objects in Realm. Imported states will
+        // only appear in the UI after a full library re-scan or app relaunch. A future
+        // follow-up should call RomDatabase save-state registration helpers here.
+        // See: https://github.com/Provenance-Emu/Provenance/issues/3409
         let srcStates = tempDir.appendingPathComponent("states", isDirectory: true)
         if fm.fileExists(atPath: srcStates.path) {
             let destStates = Paths.saveStatePath(forROM: romURL)
