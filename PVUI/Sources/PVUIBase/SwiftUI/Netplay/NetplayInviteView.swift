@@ -49,7 +49,7 @@ public struct NetplayInviteView: View {
                 }
             }
             .onAppear { prefillFromActiveSession() }
-            #if !os(tvOS)
+            #if canImport(UIKit) && !os(tvOS)
             .sheet(isPresented: $showShareSheet) {
                 if let url = inviteURL {
                     ActivityView(items: [url, "Join me in \(gameName) on Provenance!"])

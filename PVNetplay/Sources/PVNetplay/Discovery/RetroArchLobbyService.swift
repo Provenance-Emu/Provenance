@@ -80,10 +80,11 @@ public final class RetroArchLobbyService: ObservableObject {
 // MARK: - UUID deterministic helper
 
 private extension UUID {
-    /// Creates a UUID deterministically from a string using an XOR-fold of its UTF-8 bytes.
-    /// Sets UUID version 5 and RFC 4122 variant bits so the result looks like a name-based UUID,
-    /// which keeps SwiftUI List identity stable across fetches.
-    /// Note: this is NOT a true UUIDv5/SHA-1; it is a fast fold suitable for stable list IDs.
+    /// Creates a UUID deterministically from a string using a 16-byte XOR fold of its UTF-8 bytes.
+    /// The version (5) and RFC 4122 variant bits are stamped so the output looks structurally like
+    /// a name-based UUID, keeping SwiftUI List identity stable across fetches.
+    /// This is NOT SHA-1 and does NOT conform to RFC 4122 §4.3 (UUIDv5). It is a fast fold
+    /// suitable only for stable list diffing — do not use for cryptographic purposes.
     init(deterministicString string: String) {
         var hash = [UInt8](repeating: 0, count: 16)
         let bytes = Array(string.utf8)
