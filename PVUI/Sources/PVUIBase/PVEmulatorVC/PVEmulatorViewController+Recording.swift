@@ -184,7 +184,6 @@ extension PVEmulatorViewController {
             do {
                 try await PVRecordingManager.shared.startClipBuffering()
                 AppState.shared.emulationUIState.isClipBufferingActive = true
-                ILOG("[ClipCapture] Clip buffering started")
             } catch {
                 ELOG("[ClipCapture] Could not start clip buffering: \(error.localizedDescription)")
             }
