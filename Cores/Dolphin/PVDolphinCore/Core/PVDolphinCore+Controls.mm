@@ -408,7 +408,13 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:port
 				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_L
 				 action:(pressed?1:0)];
-                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(pressed?1.0:0.0)];
+                    // GC mode: when both triggers held simultaneously, fire BUTTON_Z
+                    bool rightTriggerHeld = controller.extendedGamepad.rightTrigger.isPressed;
+                    bool zCombo = pressed && rightTriggerHeld;
+                    if (!self.isWii) {
+                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zCombo?1:0)];
+                    }
+                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(zCombo?0.0:(pressed?1.0:0.0))];
 			};
 						controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:pressed?1.0:0];
@@ -417,7 +423,13 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:port
 				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_R
 				 action:(pressed?1:0)];
-                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
+                    // GC mode: when both triggers held simultaneously, fire BUTTON_Z
+                    bool leftTriggerHeld = controller.extendedGamepad.leftTrigger.isPressed;
+                    bool zCombo = pressed && leftTriggerHeld;
+                    if (!self.isWii) {
+                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zCombo?1:0)];
+                    }
+                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(zCombo?0.0:(pressed?1.0:0.0))];
 			};
 			controller.extendedGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     if (rotateControls) {

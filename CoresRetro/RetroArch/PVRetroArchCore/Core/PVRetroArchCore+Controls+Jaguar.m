@@ -73,35 +73,29 @@ extern GCController *touch_controller;
         case(PVJaguarButtonC):
             [touch_controller.extendedGamepad.buttonX setValue:pressed?1:0];
             break;
-        case(PVJaguarButton0):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
-            break;
         case(PVJaguarButton1):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
+            // Numpad 1 → L3 (leftThumbstickButton)
+            [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed?1:0];
             break;
         case(PVJaguarButton2):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
+            // Numpad 2 → R3 (rightThumbstickButton)
+            [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
             break;
         case(PVJaguarButton3):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
+            // Numpad 3 → buttonOptions (Select equivalent)
+            [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
             break;
         case(PVJaguarButton4):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
+            // Numpad 4 → buttonHome
+            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
             break;
+        case(PVJaguarButton0):
         case(PVJaguarButton5):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
-            break;
         case(PVJaguarButton6):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
-            break;
         case(PVJaguarButton7):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
-            break;
         case(PVJaguarButton8):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
-            break;
         case(PVJaguarButton9):
-//            [touch_controller.extendedGamepad.button0 setValue:pressed?1:0];
+            // Numpad 0, 5-9: not currently mappable to unique RetroArch inputs
             break;
         case(PVJaguarButtonPound):
             [touch_controller.extendedGamepad.leftTrigger setValue:pressed?1:0];

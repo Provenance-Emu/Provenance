@@ -725,6 +725,38 @@ static void writeSaveFile(const char* path, int type)
             default:
                 break;
         }}
+    } else if ([controller gamepad]) {
+        GCGamepad *gamepad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
+        switch (buttonID) {
+            case PVSega32XButtonUp:
+                return [[dpad up] isPressed];
+            case PVSega32XButtonDown:
+                return [[dpad down] isPressed];
+            case PVSega32XButtonLeft:
+                return [[dpad left] isPressed];
+            case PVSega32XButtonRight:
+                return [[dpad right] isPressed];
+            case PVSega32XButtonA:
+                return [[gamepad buttonX] isPressed] && !modifierPressed;
+            case PVSega32XButtonB:
+                return [[gamepad buttonA] isPressed] && !modifierPressed;
+            case PVSega32XButtonC:
+                return [[gamepad buttonB] isPressed] && !modifierPressed;
+            case PVSega32XButtonX:
+                return [[gamepad buttonY] isPressed];
+            case PVSega32XButtonY:
+                return [[gamepad leftShoulder] isPressed] && !modifierPressed;
+            case PVSega32XButtonZ:
+                return [[gamepad rightShoulder] isPressed] && !modifierPressed;
+            case PVSega32XButtonStart:
+                return modifierPressed && [[gamepad buttonA] isPressed];
+            case PVSega32XButtonMode:
+                return modifierPressed && [[gamepad buttonB] isPressed];
+            default:
+                break;
+        }
     }
 #if TARGET_OS_TV
     else if ([controller microGamepad])
