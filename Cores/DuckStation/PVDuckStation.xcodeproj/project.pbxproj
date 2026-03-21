@@ -1442,6 +1442,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1509,6 +1510,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1575,6 +1577,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1639,6 +1642,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
@@ -1737,6 +1741,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
@@ -1835,6 +1840,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
@@ -1933,6 +1939,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1995,6 +2002,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -2058,6 +2066,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

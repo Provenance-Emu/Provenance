@@ -5537,6 +5537,7 @@
 		93049A722A930B9700BF257F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
@@ -5573,6 +5574,7 @@
 		9337CF65298CCB56007CDDB6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
@@ -5586,6 +5588,7 @@
 		9342932A2973FECF00975F0B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
@@ -5600,6 +5603,7 @@
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
@@ -5625,6 +5629,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -5702,6 +5707,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -5746,6 +5752,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -5823,6 +5830,7 @@
 		B3D0678D2BC4EA3200A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
@@ -5859,6 +5867,7 @@
 		B3D0678E2BC4EA3200A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -5902,6 +5911,7 @@
 		B3D0678F2BC4EA3200A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
@@ -5926,6 +5936,7 @@
 		B3D067902BC4EA3200A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
@@ -5940,6 +5951,7 @@
 		B3D067912BC4EA3200A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;

@@ -3196,6 +3196,7 @@
 		93124974298CEBB7002DE0C2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
@@ -3209,6 +3210,7 @@
 		937EAAF4296C2023003D89EB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
@@ -3221,6 +3223,7 @@
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -3242,6 +3245,7 @@
 		B3344BC12859E088006E6B3A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -3264,6 +3268,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3356,6 +3361,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -3391,6 +3397,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3483,6 +3490,7 @@
 		B3D067A62BC4EF3800A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -3517,6 +3525,7 @@
 		B3D067A72BC4EF3800A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -3538,6 +3547,7 @@
 		B3D067A82BC4EF3800A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -3559,6 +3569,7 @@
 		B3D067A92BC4EF3800A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
@@ -3571,6 +3582,7 @@
 		B3D067AA2BC4EF3800A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
