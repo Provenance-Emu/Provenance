@@ -5,12 +5,62 @@
 //  Created by Claude on 3/7/26.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 import UIKit
 import PVLogging
 
-// MARK: - Screen Recording
+// MARK: - Live Broadcast (iOS + tvOS)
 
+extension PVEmulatorViewController {
+
+    /// Whether the device/session supports ReplayKit broadcasting.
+    public var isBroadcastAvailable: Bool {
+        PVBroadcastManager.shared.isAvailable
+    }
+
+    /// Whether a live broadcast session is currently active.
+    /// Reads from `PVBroadcastManager.shared.isBroadcasting` (the authoritative source).
+    public var isBroadcasting: Bool {
+        PVBroadcastManager.shared.isBroadcasting
+    }
+
+    /// Presents `RPBroadcastActivityViewController` so the user can choose a
+    /// broadcast provider and start a live stream.  The manager keeps
+    /// `PVBroadcastManager.isBroadcasting` and `AppState.emulationUIState.isBroadcasting`
+    /// in sync via `RPBroadcastControllerDelegate` callbacks.
+    ///
+    /// - Parameter presenter: The view controller from which to present the picker.
+    ///   Defaults to `self`.
+    public func startBroadcast(from presenter: UIViewController? = nil) {
+        let presentingVC = presenter ?? self
+        // Surface load failures to the user so "GO LIVE" doesn't silently do nothing.
+        PVBroadcastManager.shared.onBroadcastLoadError = { [weak self] _ in
+            guard let self else { return }
+            let alert = UIAlertController(
+                title: "Live Broadcast Unavailable",
+                message: "No broadcast extensions are installed. Install an app like Twitch or YouTube to enable live streaming.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true)
+        }
+        PVBroadcastManager.shared.presentBroadcastActivity(from: presentingVC)
+        // isBroadcasting state is updated asynchronously via RPBroadcastControllerDelegate
+        ILOG("[Broadcast] Broadcast activity VC requested from VC")
+    }
+
+    /// Convenience wrapper: stops any active broadcast.
+    /// Guards on the manager's own state to avoid false negatives from a stale UI flag.
+    public func stopBroadcast() {
+        guard PVBroadcastManager.shared.isBroadcasting else { return }
+        PVBroadcastManager.shared.stopBroadcast()
+        ILOG("[Broadcast] Stop broadcast requested from VC")
+    }
+}
+
+// MARK: - Screen Recording (iOS only)
+
+#if os(iOS)
 extension PVEmulatorViewController {
 
     /// Whether the device/session supports ReplayKit recording.
@@ -98,4 +148,5 @@ extension PVEmulatorViewController {
         present(alert, animated: true)
     }
 }
-#endif
+#endif // os(iOS)
+#endif // os(iOS) || os(tvOS)

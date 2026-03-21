@@ -672,6 +672,10 @@ struct RetroMenuView: View {
             recordingButton
 #endif
 
+#if os(iOS) || os(tvOS)
+            broadcastButton
+#endif
+
             // MARK: - Peripherals section
             peripheralsSection
 
@@ -854,6 +858,69 @@ struct RetroMenuView: View {
                     emulatorVC.startScreenRecording()
                 }
             }
+#endif
+        }
+    }
+#endif
+
+    // Live-broadcast button (iOS + tvOS) with Plus gating
+#if os(iOS) || os(tvOS)
+    @ViewBuilder
+    private var broadcastButton: some View {
+        let isBroadcasting = AppState.shared.emulationUIState.isBroadcasting
+        let isAvailable = PVBroadcastManager.shared.isAvailable
+        if isAvailable {
+            let title = isBroadcasting ? "STOP LIVE" : "GO LIVE"
+            let icon = isBroadcasting ? "stop.circle" : "dot.radiowaves.left.and.right"
+            let color: Color = isBroadcasting ? .retroPink : .retroCyan
+            let role: MenuButtonRole = isBroadcasting ? .destructive : .secondary
+            let broadcastAction = {
+                // Read authoritative state at action time, not at view render time,
+                // to avoid acting on a stale snapshot if the broadcast state changed
+                // between view computation and the user's tap.
+                if PVBroadcastManager.shared.isBroadcasting {
+                    dismissMenuForSubSheetThen { emulatorVC.stopBroadcast() }
+                } else {
+                    dismissMenuForSubSheetThen { emulatorVC.startBroadcast() }
+                }
+            }
+#if canImport(FreemiumKit)
+            PaidFeatureView {
+                menuButton(title: title, icon: icon, color: color, role: role, action: broadcastAction)
+            } lockedView: {
+                HStack {
+                    menuButton(title: title, icon: icon, color: color, role: role) {}
+                        .disabled(true)
+                        .opacity(0.6)
+                    HStack(spacing: 3) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("PLUS")
+                            .font(.system(size: 9, weight: .heavy))
+                    }
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(Color.retroPink.opacity(0.15))
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                            )
+                    )
+                    .padding(.trailing, 8)
+                }
+            }
+            .freemiumKitColorReset()
+#else
+            menuButton(title: title, icon: icon, color: color, role: role, action: broadcastAction)
 #endif
         }
     }
