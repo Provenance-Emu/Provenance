@@ -31,7 +31,14 @@ extension PVAppDelegate {
 #if canImport(PVWebServer)
         // Check if the user setting is set or the optional ENV variable
         if Defaults[.webDavAlwaysOn] || isWebDavServerEnvironmentVariableSet() {
-            PVWebServer.shared.startWebDavServer()
+            Task {
+                await PVWebServerManager.shared.refreshFeatureFlag()
+                do {
+                    _ = try await PVWebServerManager.shared.start()
+                } catch {
+                    ELOG("startOptionalWebDavServer: \(error.localizedDescription)")
+                }
+            }
         }
 #endif
     }

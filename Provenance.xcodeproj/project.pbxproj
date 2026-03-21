@@ -304,6 +304,7 @@
 		B336F31B2F6E8634004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F3192F6E8634004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B336F31D2F6E863D004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F31C2F6E863D004ABEE6 /* PVCheevos */; };
 		B336F31E2F6E863D004ABEE6 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F31C2F6E863D004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B336F3202F6E8701004ABEE7 /* PVCheevos in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B336F2EB2F6E85FD004ABEE6 /* PVCheevos */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B33A09332D2D0B0C00BFB6C9 /* PVJIT */; };
 		B33A763B2CC5168C00FC746F /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B33A763A2CC5168C00FC746F /* SiriusRating */; };
 		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
@@ -1668,6 +1669,7 @@
 				B318E29B2CAB586800D0E599 /* snes9x.framework in Embed Frameworks */,
 				B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B334F1AB2F6E968900C9D19E /* PVRetroArch.framework in Embed Frameworks */,
+				B336F3202F6E8701004ABEE7 /* PVCheevos in Embed Frameworks */,
 				B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */,
 				B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */,
 				B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */,

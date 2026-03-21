@@ -13,6 +13,12 @@ let package = Package(
         .visionOS(.v1)
     ],
     products: [
+        /// ObjC GCDWebServer + `PVWebServer` singleton only — for swizzles / legacy call sites that
+        /// must reference the class without going through the Swift `PVWebServer` package module name.
+        .library(
+            name: "PVWebServerObjC",
+            targets: ["PVWebServerObjC"]
+        ),
         .library(
             name: "PVWebServer",
             targets: ["PVWebServer"]
@@ -40,6 +46,9 @@ let package = Package(
             url: "https://github.com/hummingbird-project/hummingbird.git",
             from: "2.0.0"
         ),
+        // Used for HTTPField / HTTPFields in PVModernWebServer (Hummingbird uses HTTPTypes internally
+        // but does not re-export it to dependents).
+        .package(url: "https://github.com/apple/swift-http-types.git", from: "1.0.0"),
     ],
 
     // MARK: - Targets
@@ -50,6 +59,7 @@ let package = Package(
             dependencies: [
                 "PVLogging",
                 "PVObjCUtils",
+                "PVSupport",
             ],
             path: "Sources/PVWebServer",
             resources: [
@@ -77,6 +87,7 @@ let package = Package(
                 "PVLogging",
                 "PVSupport",
                 .product(name: "Hummingbird", package: "hummingbird"),
+                .product(name: "HTTPTypes", package: "swift-http-types"),
             ],
             path: "Sources/PVWebServerSwift"
         ),

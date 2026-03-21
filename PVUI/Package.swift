@@ -123,6 +123,7 @@ let package = Package(
                 "PVThemes",
                 "PVUIObjC",
                 "PVWebServer",
+                .product(name: "PVWebServerObjC", package: "PVWebServer"),
                 "PVCheevos",
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
@@ -233,6 +234,7 @@ let package = Package(
             dependencies: [
                 "PVUIBase",
                 "PVUIKit",
+                .product(name: "PVWebServerObjC", package: "PVWebServer"),
                 "PVLogging",
                 "PVCoreBridge",
                 "PVEmulatorCore",

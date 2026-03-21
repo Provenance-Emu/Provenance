@@ -357,10 +357,10 @@ public final class PVSettingsViewController: QuickTableViewController {
             key: .webDavAlwaysOn,
             icon: .sfSymbol("lightswitch.on"),
             customization: { cell, _ in
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     if Defaults[.webDavAlwaysOn] {
-                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
-                        cell.detailTextLabel?.text = subTitleText
+                        let dav = await PVWebServerManager.shared.webDAVURL?.absoluteString ?? ""
+                        cell.detailTextLabel?.text = "WebDAV: \(dav)"
                     } else {
                         cell.detailTextLabel?.text = nil
                     }
@@ -771,22 +771,35 @@ public final class PVSettingsViewController: QuickTableViewController {
 #if canImport(PVWebServer)
     func launchWebServerAction() {
         if reachability.connection == .wifi {
-            // connected via wifi, let's continue
-            // start web transfer service
-            if PVWebServer.shared.startServers() {
-                // show alert view
-                showServerActiveAlert(sender: self.tableView, barButtonItem: nil)
-            } else {
-                // Display error
-                let alert = UIAlertController(title: "Unable to start web server!",
-                                              message: "Check your network connection or settings and free up ports: 80, 81.",
-                                              preferredStyle: .alert)
-                alert.popoverPresentationController?.sourceView = tableView
-                alert.popoverPresentationController?.sourceRect = tableView.bounds
-                alert.preferredContentSize = CGSize(width: 500, height: 150)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-                }))
-                present(alert, animated: true) { () -> Void in }
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                await PVWebServerManager.shared.refreshFeatureFlag()
+                do {
+                    let ok = try await PVWebServerManager.shared.start()
+                    if ok {
+                        self.showServerActiveAlert(sender: self.tableView, barButtonItem: nil)
+                    } else {
+                        let alert = UIAlertController(title: "Unable to start web server!",
+                                                      message: "Check your network connection or settings and free up ports: 80, 81.",
+                                                      preferredStyle: .alert)
+                        alert.popoverPresentationController?.sourceView = self.tableView
+                        alert.popoverPresentationController?.sourceRect = self.tableView.bounds
+                        alert.preferredContentSize = CGSize(width: 500, height: 150)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+                        }))
+                        self.present(alert, animated: true) { () -> Void in }
+                    }
+                } catch {
+                    let alert = UIAlertController(title: "Unable to start web server!",
+                                                  message: "Check your network connection or settings and free up ports: 80, 81.",
+                                                  preferredStyle: .alert)
+                    alert.popoverPresentationController?.sourceView = self.tableView
+                    alert.popoverPresentationController?.sourceRect = self.tableView.bounds
+                    alert.preferredContentSize = CGSize(width: 500, height: 150)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+                    }))
+                    self.present(alert, animated: true) { () -> Void in }
+                }
             }
         } else {
             let alert = UIAlertController(title: "Unable to start web server!",

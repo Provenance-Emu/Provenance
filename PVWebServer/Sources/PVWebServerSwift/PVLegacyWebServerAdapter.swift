@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import PVWebServerObjC
 
 /// Wraps the ObjC `PVWebServer` singleton so it can be used behind the
 /// `PVWebServerProtocol` interface managed by `PVWebServerManager`.

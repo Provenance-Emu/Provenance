@@ -35,9 +35,17 @@ struct WebServerBootstrapTask: BootstrapTask {
 #if canImport(PVWebServer)
         delegate?.setupWebServerNotifications()
 #if os(tvOS)
-        PVWebServer.shared.startWWWUploadServer()
-        PVWebServer.shared.startWebDavServer()
-        ILOG("WebServerBootstrapTask: tvOS servers started")
+        await PVWebServerManager.shared.refreshFeatureFlag()
+        do {
+            let ok = try await PVWebServerManager.shared.start()
+            if ok {
+                ILOG("WebServerBootstrapTask: tvOS servers started (PVWebServerManager)")
+            } else {
+                WLOG("WebServerBootstrapTask: tvOS servers did not start")
+            }
+        } catch {
+            ELOG("WebServerBootstrapTask: failed to start servers: \(error.localizedDescription)")
+        }
 #else
         ILOG("WebServerBootstrapTask: Web server notifications registered")
 #endif

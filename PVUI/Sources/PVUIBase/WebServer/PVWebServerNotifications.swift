@@ -7,16 +7,16 @@
 //
 
 import Foundation
-import PVPrimitives
-import PVWebServer
-
-#if canImport(PVWebServer)
-import PVWebServer
 import ObjectiveC
+import PVPrimitives
+#if canImport(PVWebServerObjC)
+import PVWebServerObjC
 
 // TODO: The swizzles are probably not really needed
 
-/// Extension to PVWebServer to post notifications when server status changes
+/// Extension to the ObjC `PVWebServer` class to post notifications when server status changes.
+/// Uses `import PVWebServerObjC` so the type name resolves (the Swift package module is also
+/// named `PVWebServer`, which breaks `extension PVWebServer` when only `import PVWebServer`).
 public extension PVWebServer {
   
     /// Setup method swizzling to automatically post notifications

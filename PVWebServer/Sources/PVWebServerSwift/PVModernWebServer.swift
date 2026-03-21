@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import HTTPTypes
 import Network
 #if canImport(UIKit)
 import UIKit
@@ -372,9 +373,10 @@ private extension PVModernWebServer {
         }
 
         // PROPFIND — directory/file property listing (WebDAV class 1)
-        // HTTPRequest.Method(String) is non-failable in swift-http-types 1.x;
-        // the explicit construction is kept for clarity on non-standard methods.
-        let propfindMethod = HTTPRequest.Method("PROPFIND")
+        // `HTTPRequest.Method(_:)` is failable for arbitrary strings; PROPFIND is a valid token.
+        guard let propfindMethod = HTTPRequest.Method("PROPFIND") else {
+            preconditionFailure("PROPFIND must be a valid HTTP method token")
+        }
         router.on("/**", method: propfindMethod) { [weak self] request, context -> Response in
             guard let self else { return Response(status: .internalServerError) }
             return self.handlePROPFIND(request: request, context: context, uploadDirectory: uploadDirectory)
@@ -441,7 +443,9 @@ private extension PVModernWebServer {
         }
 
         // MKCOL — create directory
-        let mkcolMethod = HTTPRequest.Method("MKCOL")
+        guard let mkcolMethod = HTTPRequest.Method("MKCOL") else {
+            preconditionFailure("MKCOL must be a valid HTTP method token")
+        }
         router.on("/**", method: mkcolMethod) { [weak self] _, context -> Response in
             let path = context.parameters.get("**") ?? ""
             guard let self,

@@ -828,26 +828,29 @@ public struct RetroGameLibraryView: View {
     /// Starts the web server for importing files
     private func startWebServer() {
         #if canImport(PVWebServer)
-        // Start the web server
         ILOG("RetroGameLibraryView: Starting web server for imports")
-        PVWebServer.shared.startServers()
-
-        // Show the web server URL
-        if let serverURL = PVWebServer.shared.urlString {
-            // Open Safari with the web server URL
-            #if canImport(SafariServices)
-            if let url = URL(string: serverURL) {
-                let safariVC = SFSafariViewController(url: url)
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootViewController = windowScene.windows.first?.rootViewController {
-                    rootViewController.present(safariVC, animated: true)
+        Task { @MainActor in
+            await PVWebServerManager.shared.refreshFeatureFlag()
+            do {
+                let ok = try await PVWebServerManager.shared.start()
+                guard ok, let serverURL = await PVWebServerManager.shared.serverURL?.absoluteString else {
+                    viewModel.importMessage = "Error: Could not start web server"
+                    viewModel.showingImportMessage = true
+                    return
                 }
+                #if canImport(SafariServices)
+                if let url = URL(string: serverURL) {
+                    let safariVC = SFSafariViewController(url: url)
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let rootViewController = windowScene.windows.first?.rootViewController {
+                        rootViewController.present(safariVC, animated: true)
+                    }
+                }
+                #endif
+            } catch {
+                viewModel.importMessage = "Error: Could not start web server"
+                viewModel.showingImportMessage = true
             }
-            #endif
-        } else {
-            // Show error message if server URL is not available
-            viewModel.importMessage = "Error: Could not start web server"
-            viewModel.showingImportMessage = true
         }
         #endif
     }
@@ -1483,24 +1486,17 @@ extension RetroGameLibraryView {
     /// Only fetches IP address when server is running to avoid expensive network interface enumeration
     private func updateWebServerStatus() {
         #if canImport(PVWebServer)
-        DispatchQueue.main.async {
-            let webServer = PVWebServer.shared
-            let newRunningState = webServer.isWWWUploadServerRunning
-
-            // Only update URLs (which trigger IP address lookup) if server is running
-            // and status changed or URLs are not cached
+        Task { @MainActor in
+            let newRunningState = await PVWebServerManager.shared.isRunning
             if newRunningState {
-                // Only fetch URLs if status changed or we don't have them cached
                 if newRunningState != self.isWebServerRunning || self.webServerURL == nil {
-                    self.webServerURL = webServer.urlString
-                    self.webDavURL = webServer.webDavURLString
+                    self.webServerURL = await PVWebServerManager.shared.serverURL?.absoluteString
+                    self.webDavURL = await PVWebServerManager.shared.webDAVURL?.absoluteString
                 }
             } else {
-                // Clear URLs when server stops
                 self.webServerURL = nil
                 self.webDavURL = nil
             }
-
             self.isWebServerRunning = newRunningState
         }
         #endif

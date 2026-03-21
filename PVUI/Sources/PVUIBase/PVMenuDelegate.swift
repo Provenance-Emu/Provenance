@@ -73,49 +73,55 @@ public typealias WebServerDelegateViewController = WebServerActivatorController 
 extension PVMenuDelegate where Self: WebServerDelegateViewController {
     
     public func showServer() {
-        guard let ipURL: String = PVWebServer.shared.urlString else {
-            ELOG("`PVWebServer.shared.urlString` was nil")
-            return
-        }
-        let url = URL(string: ipURL)!
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            guard let ipURL = await PVWebServerManager.shared.serverURL?.absoluteString else {
+                ELOG("`PVWebServerManager.shared.serverURL` was nil")
+                return
+            }
+            let url = URL(string: ipURL)!
 #if targetEnvironment(macCatalyst)
-        UIApplication.shared.open(url, options: [:]) { completed in
-            ILOG("Completed: \(completed ? "Yes":"No")")
-        }
+            UIApplication.shared.open(url, options: [:]) { completed in
+                ILOG("Completed: \(completed ? "Yes":"No")")
+            }
 #elseif canImport(SafariServices) && !os(tvOS)
-        let config = SFSafariViewController.Configuration()
-        config.entersReaderIfAvailable = false
-        let safariVC = SFSafariViewController(url: url, configuration: config)
-        safariVC.delegate = self
-        present(safariVC, animated: true) { () -> Void in }
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = false
+            let safariVC = SFSafariViewController(url: url, configuration: config)
+            safariVC.delegate = self
+            self.present(safariVC, animated: true) { () -> Void in }
 #endif
+        }
     }
     
     public func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
-        let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
-        alert.popoverPresentationController?.barButtonItem = barButtonItem
-        alert.popoverPresentationController?.sourceView = sender
-        alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
-        alert.preferredContentSize = CGSize(width: 300, height: 150)
-        alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
-            PVWebServer.shared.stopServers()
-            // Check for imports in the queue using Task to handle async property
-            Task {
-                let importQueue = await GameImporter.shared.importQueue
-                if importQueue.count > 0 {
-                DLOG("safariViewControllerDidFinish, there are imports in the queue, presenting ImportStatusView")
-                DispatchQueue.main.async { [weak self] in
-                    self?.didTapImports()
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let message = await PVWebServerAlertMessageBuilder.wikiMessageFromManager()
+            let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
+            alert.popoverPresentationController?.barButtonItem = barButtonItem
+            alert.popoverPresentationController?.sourceView = sender
+            alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+                Task { await PVWebServerManager.shared.stop() }
+                Task {
+                    let importQueue = await GameImporter.shared.importQueue
+                    if importQueue.count > 0 {
+                        DLOG("safariViewControllerDidFinish, there are imports in the queue, presenting ImportStatusView")
+                        DispatchQueue.main.async { [weak self] in
+                            self?.didTapImports()
+                        }
+                    }
                 }
-            }
-            }
-        }))
-        let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-            self.showServer()
-        })
-        alert.addAction(viewAction)
-        alert.preferredAction = alert.actions.last
-        present(alert, animated: true) { () -> Void in }
+            }))
+            let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.showServer()
+            })
+            alert.addAction(viewAction)
+            alert.preferredAction = alert.actions.last
+            self.present(alert, animated: true) { () -> Void in }
+        }
     }
 }
 #endif

@@ -2592,13 +2592,13 @@ struct TVMediaHomeView: View {
 
 #if canImport(PVWebServer)
     private func refreshWebServerURL() {
-        let webServer = PVWebServer.shared
-        guard webServer.isWWWUploadServerRunning else {
-            webServerURL = nil
-            return
+        Task { @MainActor in
+            guard await PVWebServerManager.shared.isRunning else {
+                webServerURL = nil
+                return
+            }
+            webServerURL = await PVWebServerManager.shared.serverURL?.absoluteString
         }
-
-        webServerURL = webServer.urlString
     }
 #endif
 }
@@ -5469,12 +5469,13 @@ struct TVMediaROMInstructionsView: View {
 
     #if canImport(PVWebServer)
     private func refreshWebServerURL() {
-        let webServer = PVWebServer.shared
-        guard webServer.isWWWUploadServerRunning else {
-            webServerURL = nil
-            return
+        Task { @MainActor in
+            guard await PVWebServerManager.shared.isRunning else {
+                webServerURL = nil
+                return
+            }
+            webServerURL = await PVWebServerManager.shared.serverURL?.absoluteString
         }
-        webServerURL = webServer.urlString
     }
     #endif
 }

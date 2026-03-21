@@ -230,31 +230,24 @@ final class RetroStatusControlViewModel: ObservableObject {
     public func toggleWebServer() {
         ILOG("Toggling web server from ViewModel...")
         ButtonSoundGenerator.shared.playSound(.tap)
-        Task {
-            let server = PVWebServer.shared
-            if self.isWebServerRunning { // Use the @Published property
-                server.stopServers()
+        Task { @MainActor in
+            if self.isWebServerRunning {
+                await PVWebServerManager.shared.stop()
             } else {
+                await PVWebServerManager.shared.refreshFeatureFlag()
                 do {
-                    let started = try server.startServers()
+                    let started = try await PVWebServerManager.shared.start()
                     if !started {
                         ELOG("Failed to start web server from ViewModel")
-                        // Update state to show error?
-                        await MainActor.run {
-                            self.webServerError = "Failed to start server."
-                            self.isWebServerRunning = false
-                        }
+                        self.webServerError = "Failed to start server."
+                        self.isWebServerRunning = false
                     }
                 } catch {
                     ELOG("Error starting web server: \(error)")
-                    // Update state to show error
-                    await MainActor.run { // Ensure UI updates on main thread
-                        self.webServerError = error.localizedDescription
-                        self.isWebServerRunning = false
-                    }
+                    self.webServerError = error.localizedDescription
+                    self.isWebServerRunning = false
                 }
             }
-            // Status updates are handled by the notification observer
         }
     }
 
@@ -322,28 +315,30 @@ final class RetroStatusControlViewModel: ObservableObject {
         #endif
     }
 
-    /// Updates the view model's web server state properties from the PVWebServer shared instance.
-    /// Only updates IP address when server is running to avoid expensive network interface enumeration.
+    /// Updates the view model's web server state from `PVWebServerManager`.
+    /// Only updates IP when server is running to avoid unnecessary work when idle.
     private func updateWebServerStatus() {
-        let webServer = PVWebServer.shared
-        let wasRunning = self.isWebServerRunning
-        self.isWebServerRunning = webServer.isWWWUploadServerRunning
+        Task { @MainActor in
+            let wasRunning = self.isWebServerRunning
+            let running = await PVWebServerManager.shared.isRunning
+            self.isWebServerRunning = running
 
-        // Only fetch IP address if server is running and we don't already have it cached
-        // This avoids expensive getifaddrs() calls when server is off or IP hasn't changed
-        if self.isWebServerRunning {
-            // Only update IP address if it changed or we don't have one cached
-            if wasRunning != self.isWebServerRunning || self.webServerIPAddress == nil {
-                self.webServerIPAddress = webServer.ipAddress
+            if running {
+                if wasRunning != running || self.webServerIPAddress == nil {
+                    let host = await PVWebServerManager.shared.serverURL?.host
+                    self.webServerIPAddress = host
+                }
+                if let port = await PVWebServerManager.shared.serverURL?.port {
+                    self.webServerPort = Int(port)
+                }
+            } else {
+                self.webServerIPAddress = nil
+                self.webServerPort = nil
             }
-        } else {
-            // Clear IP address when server stops
-            self.webServerIPAddress = nil
-        }
 
-        self.webServerPort = webServer.bonjourSeverURL?.port
-        self.webServerError = nil // Reset error on status change
-        VLOG("ViewModel: Web server running status updated: \(self.isWebServerRunning)")
+            self.webServerError = nil
+            VLOG("ViewModel: Web server running status updated: \(self.isWebServerRunning)")
+        }
     }
 
     /// Helper to parse common file error info
@@ -433,14 +428,11 @@ final class RetroStatusControlViewModel: ObservableObject {
     @objc private func handleWebServerStatusChanged(_ notification: Notification) {
         DLOG("Received web server status change notification")
         Task { @MainActor in
-            // Only update if status actually changed to avoid unnecessary IP address lookups
-            let webServer = PVWebServer.shared
-            let newRunningState = webServer.isWWWUploadServerRunning
+            let newRunningState = await PVWebServerManager.shared.isRunning
             if newRunningState != self.isWebServerRunning {
                 updateWebServerStatus()
-            } else {
-                // Status didn't change, just update port if needed (cheap operation)
-                self.webServerPort = webServer.bonjourSeverURL?.port
+            } else if let port = await PVWebServerManager.shared.serverURL?.port {
+                self.webServerPort = Int(port)
             }
         }
     }

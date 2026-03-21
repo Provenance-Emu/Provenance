@@ -844,21 +844,24 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 #if os(iOS) && canImport(PVWebServer)
     // Show web server (stays on)
     func showServer() {
-        guard let ipURL: String = PVWebServer.shared.urlString else {
-            return
-        }
-        let url = URL(string: ipURL)!
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            guard let ipURL = await PVWebServerManager.shared.serverURL?.absoluteString else {
+                return
+            }
+            let url = URL(string: ipURL)!
 #if targetEnvironment(macCatalyst)
-        UIApplication.shared.open(url, options: [:]) { completed in
-            ILOG("Completed: \(completed ? "Yes":"No")")
-        }
+            UIApplication.shared.open(url, options: [:]) { completed in
+                ILOG("Completed: \(completed ? "Yes":"No")")
+            }
 #else
-        let config = SFSafariViewController.Configuration()
-        config.entersReaderIfAvailable = false
-        let safariVC = SFSafariViewController(url: url, configuration: config)
-        safariVC.delegate = self
-        present(safariVC, animated: true) { () -> Void in }
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = false
+            let safariVC = SFSafariViewController(url: url, configuration: config)
+            safariVC.delegate = self
+            self.present(safariVC, animated: true) { () -> Void in }
 #endif // targetEnvironment(macCatalyst)
+        }
     }
 
 #if !targetEnvironment(macCatalyst)
@@ -870,7 +873,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     public func safariViewControllerDidFinish(_: SFSafariViewController) {
         // Done button pressed
         navigationController?.popViewController(animated: true)
-        PVWebServer.shared.stopServers()
+        Task { await PVWebServerManager.shared.stop() }
     }
 #endif // !targetEnvironment(macCatalyst)
 #endif // os(iOS)
@@ -938,25 +941,37 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
 #if canImport(PVWebServer)
     func startWebServer(sender: UIView?) {
-        // start web transfer service
-        if PVWebServer.shared.startServers() {
-            // show alert view
-            showServerActiveAlert(sender: self.collectionView, barButtonItem: navigationItem.rightBarButtonItem)
-        } else {
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
-            let message = "Check your network connection or settings and free up ports: 8080, 8081."
-#else
-            let message = "Check your network connection or settings and free up ports: 80, 81."
-#endif
-            let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
-            alert.preferredContentSize = CGSize(width: 300, height: 150)
-            alert.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
-            alert.popoverPresentationController?.sourceView = self.collectionView
-            alert.popoverPresentationController?.sourceRect = self.collectionView?.bounds ?? UIScreen.main.bounds
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-            }))
-            present(alert, animated: true) { () -> Void in }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            await PVWebServerManager.shared.refreshFeatureFlag()
+            do {
+                let ok = try await PVWebServerManager.shared.start()
+                if ok {
+                    self.showServerActiveAlert(sender: self.collectionView, barButtonItem: self.navigationItem.rightBarButtonItem)
+                } else {
+                    self.presentWebServerStartFailureAlert()
+                }
+            } catch {
+                self.presentWebServerStartFailureAlert()
+            }
         }
+    }
+
+    /// Presents the standard “unable to start” alert (ports differ by platform).
+    private func presentWebServerStartFailureAlert() {
+#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
+        let message = "Check your network connection or settings and free up ports: 8080, 8081."
+#else
+        let message = "Check your network connection or settings and free up ports: 80, 81."
+#endif
+        let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
+        alert.preferredContentSize = CGSize(width: 300, height: 150)
+        alert.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        alert.popoverPresentationController?.sourceView = self.collectionView
+        alert.popoverPresentationController?.sourceRect = self.collectionView?.bounds ?? UIScreen.main.bounds
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+        }))
+        present(alert, animated: true) { () -> Void in }
     }
 #endif
     // MARK: - Game Library Management

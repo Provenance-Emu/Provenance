@@ -35,10 +35,18 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
         #if canImport(PVWebServer)
         actionSheet.addAction(UIAlertAction(title: "Web Server", style: .default, handler: { _ in
             viewController.dismiss(animated: true)
-            if PVWebServer.shared.startServers() {
-                self.showServerActiveAlert(from: viewController, sourceView: sourceView, barButtonItem: sourceBarButtonItem)
-            } else {
-                self.showWebServerErrorAlert(from: viewController, sourceView: sourceView, barButtonItem: sourceBarButtonItem)
+            Task { @MainActor in
+                await PVWebServerManager.shared.refreshFeatureFlag()
+                do {
+                    let ok = try await PVWebServerManager.shared.start()
+                    if ok {
+                        self.showServerActiveAlert(from: viewController, sourceView: sourceView, barButtonItem: sourceBarButtonItem)
+                    } else {
+                        self.showWebServerErrorAlert(from: viewController, sourceView: sourceView, barButtonItem: sourceBarButtonItem)
+                    }
+                } catch {
+                    self.showWebServerErrorAlert(from: viewController, sourceView: sourceView, barButtonItem: sourceBarButtonItem)
+                }
             }
         }))
         #endif
@@ -118,54 +126,55 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
     }
 
     private func showServerActiveAlert(from viewController: UIViewController, sourceView: UIView?, barButtonItem: UIBarButtonItem?) {
-        // Build the connection details message
-        var message = "Connect to this device using a web browser to transfer files.\n\n"
+        Task { @MainActor in
+            var message = "Connect to this device using a web browser to transfer files.\n\n"
 
-        if let webURL = PVWebServer.shared.urlString,
-           let webDavURL = PVWebServer.shared.webDavURLString {
-            message += "Web Interface:\n"
-            message += "\(webURL)\n\n"
-            message += "WebDAV Access:\n"
-            message += "\(webDavURL)\n\n"
-            message += "Note: Both devices must be on the same network."
-        } else {
-            message += "Unable to determine server URLs. Please check your network connection."
-        }
-
-        let alert = UIAlertController(
-            title: "Web Server Active",
-            message: message,
-            preferredStyle: .alert
-        )
-        alert.popoverPresentationController?.barButtonItem = barButtonItem
-        alert.popoverPresentationController?.sourceView = sourceView
-        alert.popoverPresentationController?.sourceRect = sourceView?.bounds ?? UIScreen.main.bounds
-        alert.preferredContentSize = CGSize(width: 300, height: 150)
-
-        #if os(tvOS)
-        // tvOS specific actions
-        alert.addAction(UIAlertAction(title: "Hide", style: .default))
-
-        alert.addAction(UIAlertAction(title: "Stop", style: .destructive) { _ in
-            PVWebServer.shared.stopServers()
-        })
-        #else
-        // Non-tvOS actions
-        alert.addAction(UIAlertAction(title: "Stop", style: .cancel) { _ in
-            PVWebServer.shared.stopServers()
-        })
-
-        // View action - not available on tvOS
-        let viewAction = UIAlertAction(title: "View", style: .default) { _ in
-            if let url = PVWebServer.shared.url {
-                UIApplication.shared.open(url)
+            let webURL = await PVWebServerManager.shared.serverURL?.absoluteString
+            let webDavURL = await PVWebServerManager.shared.webDAVURL?.absoluteString
+            if let webURL, let webDavURL {
+                message += "Web Interface:\n"
+                message += "\(webURL)\n\n"
+                message += "WebDAV Access:\n"
+                message += "\(webDavURL)\n\n"
+                message += "Note: Both devices must be on the same network."
+            } else {
+                message += "Unable to determine server URLs. Please check your network connection."
             }
-        }
-        alert.addAction(viewAction)
-        alert.preferredAction = viewAction
-        #endif
 
-        viewController.present(alert, animated: true)
+            let alert = UIAlertController(
+                title: "Web Server Active",
+                message: message,
+                preferredStyle: .alert
+            )
+            alert.popoverPresentationController?.barButtonItem = barButtonItem
+            alert.popoverPresentationController?.sourceView = sourceView
+            alert.popoverPresentationController?.sourceRect = sourceView?.bounds ?? UIScreen.main.bounds
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+
+            #if os(tvOS)
+            alert.addAction(UIAlertAction(title: "Hide", style: .default))
+
+            alert.addAction(UIAlertAction(title: "Stop", style: .destructive) { _ in
+                Task { await PVWebServerManager.shared.stop() }
+            })
+            #else
+            alert.addAction(UIAlertAction(title: "Stop", style: .cancel) { _ in
+                Task { await PVWebServerManager.shared.stop() }
+            })
+
+            let viewAction = UIAlertAction(title: "View", style: .default) { _ in
+                Task { @MainActor in
+                    if let url = await PVWebServerManager.shared.serverURL {
+                        await UIApplication.shared.open(url)
+                    }
+                }
+            }
+            alert.addAction(viewAction)
+            alert.preferredAction = viewAction
+            #endif
+
+            viewController.present(alert, animated: true)
+        }
     }
 
     private func showWebServerErrorAlert(from viewController: UIViewController, sourceView: UIView?, barButtonItem: UIBarButtonItem?) {
