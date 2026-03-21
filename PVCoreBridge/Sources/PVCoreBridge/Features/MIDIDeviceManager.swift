@@ -189,18 +189,31 @@ public final class MIDIDeviceManager: ObservableObject {
         // Re-attempt to restore the persisted selection if it wasn't applied at init
         // (handles the case where the previously-selected device appears after launch
         // due to a CoreMIDI topology change / hot-plug event).
+        //
+        // To avoid overriding an explicit "None / all sources" user choice, we only
+        // auto-apply a persisted selection once per key. After a successful restore,
+        // subsequent calls to `refreshEndpoints()` will not re-apply it when the
+        // current selection is `nil`.
+        let sourceAppliedKey = "\(Self.udKeySource).applied"
+        let destinationAppliedKey = "\(Self.udKeyDestination).applied"
+
         if selectedSourceID == nil,
+           UserDefaults.standard.bool(forKey: sourceAppliedKey) == false,
            let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
            let id = MIDIUniqueID(exactly: raw) {
             if sources.contains(where: { $0.id == id }) {
                 selectedSourceID = id
+                UserDefaults.standard.set(true, forKey: sourceAppliedKey)
             }
         }
+
         if selectedDestinationID == nil,
+           UserDefaults.standard.bool(forKey: destinationAppliedKey) == false,
            let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
            let id = MIDIUniqueID(exactly: raw) {
             if destinations.contains(where: { $0.id == id }) {
                 selectedDestinationID = id
+                UserDefaults.standard.set(true, forKey: destinationAppliedKey)
             }
         }
     }
