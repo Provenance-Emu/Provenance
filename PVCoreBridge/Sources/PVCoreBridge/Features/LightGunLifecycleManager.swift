@@ -10,8 +10,11 @@ import Foundation
 
 /// Manages the lifecycle of light gun input for a single game session.
 ///
-/// Call `attach(to:)` after the core starts and `detach()` when the game ends.
-/// If the core does not conform to `LightGunResponder` or reports
+/// This type is a **primitive building block** — it provides the attach/detach
+/// API but does not wire itself into the game-launch or teardown pipeline.
+/// Callers (e.g. the emulator view controller in `PVUIBase`) are responsible
+/// for calling `attach(to:)` after the core starts and `detach()` when the
+/// game ends. If the core does not conform to `LightGunResponder` or reports
 /// `gameSupportsLightGun == false`, all calls are no-ops.
 ///
 /// Example usage from an emulator view controller:
@@ -72,11 +75,8 @@ public final class LightGunLifecycleManager {
     }
 
     /// Whether a light gun driver is currently active.
+    /// Returns `true` on all platforms as long as a light-gun-capable core is attached.
     public var isAttached: Bool {
-#if canImport(GameController)
-        return driver != nil
-#else
-        return false
-#endif
+        return core != nil
     }
 }
