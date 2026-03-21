@@ -18,7 +18,7 @@ struct CompanionLayoutFactoryTests {
     @Test("Atari 5200 maps to Atari5200Layout")
     func atari5200MapsToAtari5200Layout() {
         let router = CompanionInputRouter()
-        let layout = CompanionLayoutFactory.makeLayout(systemID: "com.provenance.atari5200", router: router)
+        let layout = CompanionLayoutFactory.makeLayout(systemID: "com.provenance.5200", router: router)
         #expect(layout is Atari5200Layout)
     }
 
