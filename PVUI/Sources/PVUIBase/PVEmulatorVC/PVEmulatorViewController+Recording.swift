@@ -41,8 +41,8 @@ extension PVEmulatorViewController {
     /// When no broadcast is active, this is a no-op.
     public func stopBroadcast() {
         guard isBroadcasting else { return }
-        // Delegate to manager; state will be cleared via delegate callback
-        PVBroadcastManager.shared.showBroadcastPicker(from: self)
+        // Use the dedicated stop API; state will be cleared via delegate callback
+        PVBroadcastManager.shared.stopBroadcast()
         ILOG("[Broadcast] Stop broadcast requested from VC")
     }
 }

@@ -12,9 +12,10 @@ import PVLogging
 
 /// Manages ReplayKit live-broadcast sessions for Provenance.
 ///
-/// On iOS 12+ this wraps `RPBroadcastPickerView` (the system broadcast-service
-/// sheet).  On tvOS 13+ it falls back to `RPBroadcastActivityViewController`
-/// because `RPBroadcastPickerView` is not available on tvOS.
+/// Uses `RPBroadcastActivityViewController` on both iOS and tvOS so that the
+/// app receives an `RPBroadcastController` and can reliably track and stop the
+/// broadcast in-app.  (The simpler `RPBroadcastPickerView` available on iOS
+/// never returns a controller, so in-app state management is not possible.)
 ///
 /// `@MainActor`-isolated — all properties and methods are safe to access from
 /// SwiftUI views and `UIViewController` call sites without additional dispatching.
@@ -49,15 +50,28 @@ import PVLogging
             stopBroadcast()
             return
         }
-
-#if os(iOS)
-        showPickerViewiOS(from: presenter)
-#else
-        showActivityViewControllerTvOS(from: presenter)
-#endif
+        showActivityViewController(from: presenter)
     }
 
-    // MARK: - Internal (fileprivate for hosting VC)
+    /// Stops any currently active broadcast session.
+    ///
+    /// This is a no-op when no broadcast is active.
+    public func stopBroadcast() {
+        guard let controller = broadcastController else {
+            isBroadcasting = false
+            return
+        }
+        controller.finishBroadcast { [weak self] error in
+            if let error {
+                ELOG("[Broadcast] Error stopping broadcast: \(error.localizedDescription)")
+            }
+            Task { @MainActor [weak self] in
+                self?.handleBroadcastFinished()
+            }
+        }
+    }
+
+    // MARK: - Internal
 
     fileprivate func handleBroadcastStarted(controller: RPBroadcastController) {
         broadcastController = controller
@@ -73,38 +87,10 @@ import PVLogging
 
     // MARK: - Private helpers
 
-    private func stopBroadcast() {
-        guard let controller = broadcastController else {
-            isBroadcasting = false
-            return
-        }
-        controller.finishBroadcast { [weak self] error in
-            if let error {
-                ELOG("[Broadcast] Error stopping broadcast: \(error.localizedDescription)")
-            }
-            Task { @MainActor [weak self] in
-                self?.handleBroadcastFinished()
-            }
-        }
-    }
-
-#if os(iOS)
-    /// iOS: embed `RPBroadcastPickerView` in a transparent hosting VC and simulate a tap.
-    private func showPickerViewiOS(from presenter: UIViewController) {
-        let pickerView = RPBroadcastPickerView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
-        pickerView.preferredExtensionBundleIdentifier = nil // let user choose
-
-        let hostVC = BroadcastPickerHostViewController(pickerView: pickerView, delegate: self)
-        hostVC.modalPresentationStyle = .overCurrentContext
-        hostVC.view.backgroundColor = .clear
-        presenter.present(hostVC, animated: false) {
-            hostVC.triggerPicker()
-        }
-        ILOG("[Broadcast] RPBroadcastPickerView presented (iOS)")
-    }
-#else
-    /// tvOS: use `RPBroadcastActivityViewController` to choose a broadcast provider.
-    private func showActivityViewControllerTvOS(from presenter: UIViewController) {
+    /// Presents `RPBroadcastActivityViewController` on both iOS and tvOS so that
+    /// the app can obtain an `RPBroadcastController` and reliably track/stop
+    /// the broadcast session.
+    private func showActivityViewController(from presenter: UIViewController) {
         RPBroadcastActivityViewController.load { [weak self] activityVC, error in
             guard let self else { return }
             if let error {
@@ -118,11 +104,10 @@ import PVLogging
             activityVC.delegate = self
             Task { @MainActor in
                 await presenter.present(activityVC, animated: true)
-                ILOG("[Broadcast] RPBroadcastActivityViewController presented (tvOS)")
+                ILOG("[Broadcast] RPBroadcastActivityViewController presented")
             }
         }
     }
-#endif
 }
 
 // MARK: - RPBroadcastControllerDelegate
@@ -148,22 +133,26 @@ extension PVBroadcastManager: RPBroadcastControllerDelegate {
     }
 }
 
-// MARK: - RPBroadcastActivityViewControllerDelegate (tvOS)
+// MARK: - RPBroadcastActivityViewControllerDelegate (iOS + tvOS)
 
-#if os(tvOS)
 extension PVBroadcastManager: RPBroadcastActivityViewControllerDelegate {
     public nonisolated func broadcastActivityViewController(
         _ broadcastActivityViewController: RPBroadcastActivityViewController,
         didFinishWith broadcastController: RPBroadcastController?,
         error: Error?
     ) {
+        // Always dismiss the activity VC first, regardless of success/failure/cancel.
+        Task { @MainActor in
+            broadcastActivityViewController.dismiss(animated: true)
+        }
+
         if let error {
             ELOG("[Broadcast] Activity VC finished with error: \(error.localizedDescription)")
             Task { @MainActor in self.handleBroadcastFinished() }
             return
         }
         guard let controller = broadcastController else {
-            WLOG("[Broadcast] Activity VC finished without a controller")
+            WLOG("[Broadcast] Activity VC finished without a controller (user cancelled)")
             return
         }
         controller.delegate = self
@@ -175,57 +164,6 @@ extension PVBroadcastManager: RPBroadcastActivityViewControllerDelegate {
                 Task { @MainActor in self.handleBroadcastStarted(controller: controller) }
             }
         }
-        Task { @MainActor in
-            broadcastActivityViewController.dismiss(animated: true)
-        }
     }
 }
-#endif
-
-// MARK: - Private hosting view controller (iOS only)
-
-#if os(iOS)
-/// Minimal `UIViewController` that hosts an `RPBroadcastPickerView` off-screen
-/// and programmatically triggers its internal button to show the system sheet.
-private final class BroadcastPickerHostViewController: UIViewController {
-    private let pickerView: RPBroadcastPickerView
-    private weak var delegate: PVBroadcastManager?
-
-    init(pickerView: RPBroadcastPickerView, delegate: PVBroadcastManager) {
-        self.pickerView = pickerView
-        self.delegate = delegate
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) { fatalError("not implemented") }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.addSubview(pickerView)
-        pickerView.center = view.center
-    }
-
-    /// Programmatically activates the `RPBroadcastPickerView` button so the
-    /// system sheet appears without requiring a real touch event.
-    func triggerPicker() {
-        // The picker view contains a UIButton subview; simulate a tap on it.
-        for subview in pickerView.subviews {
-            if let button = subview as? UIButton {
-                button.sendActions(for: .touchUpInside)
-                return
-            }
-        }
-        // Fallback: walk one more level deep.
-        for subview in pickerView.subviews {
-            for child in subview.subviews {
-                if let button = child as? UIButton {
-                    button.sendActions(for: .touchUpInside)
-                    return
-                }
-            }
-        }
-        WLOG("[Broadcast] Could not find RPBroadcastPickerView button to trigger")
-    }
-}
-#endif
 #endif // os(iOS) || os(tvOS)
