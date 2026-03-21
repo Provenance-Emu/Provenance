@@ -46,6 +46,13 @@ public enum PVFeature: String, CaseIterable {
     /// via the RA menu; this flag gates the native Provenance UI on top.
     /// Disabled by default while Phase 1-3 UI stabilises.
     case netplayEnabled = "netplayEnabled"
+    /// Enables the new Swift-native Hummingbird-based HTTP/WebDAV web file server
+    /// in place of the vendored 2015 Objective-C GCDWebServer. When enabled, traffic
+    /// is handled by `PVWebServerManager` → `PVModernWebServer`; when disabled the
+    /// legacy `PVWebServer` ObjC singleton is used. Both implementations fire the same
+    /// `PVWebServer*Notification` constants so the rest of the app is unaffected.
+    /// Disabled by default while the new server stabilises (Epic #2758, Task A #2760).
+    case modernWebServer = "modernWebServer"
 }
 
 /// Represents the type of app installation
@@ -142,6 +149,13 @@ public struct FeatureFlag: Codable, Sendable {
         minVersion: "3.1.0",
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         description: "Enables native SwiftUI netplay UI for RetroArch cores. LAN room discovery via Bonjour, host/join controls, and in-game HUD. Disabled by default during Phase 1-3 development."
+    )
+
+    public static let modernWebServer = FeatureFlag(
+        enabled: false,
+        minVersion: "3.1.0",
+        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+        description: "Replaces the vendored 2015 ObjC GCDWebServer with a Swift-native Hummingbird HTTP/WebDAV server. Disabled by default while the new implementation stabilises (Epic #2758)."
     )
 }
 
@@ -429,6 +443,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
     public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
     public var netplayEnabled: Bool { featureStates[.netplayEnabled] ?? false }
+    public var modernWebServer: Bool { featureStates[.modernWebServer] ?? false }
 
     // MARK: - Feature Queries
 
