@@ -34,7 +34,6 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
     @StateObject private var keyboardVM: VirtualKeyboardViewModel
     @State private var mouseOffset: CGSize = .zero
-    @State private var isMouseDragging = false
     @State private var leftButtonDown = false
     @State private var rightButtonDown = false
 
@@ -113,7 +112,6 @@ public struct DOSKeyboardLayout: CompanionLayout {
             .gesture(
                 DragGesture(minimumDistance: 2, coordinateSpace: .local)
                     .onChanged { value in
-                        isMouseDragging = true
                         let delta = CGSize(
                             width:  value.translation.width  - mouseOffset.width,
                             height: value.translation.height - mouseOffset.height
@@ -127,7 +125,6 @@ public struct DOSKeyboardLayout: CompanionLayout {
                         inputRouter.send(.axisChanged(.leftY, clampedY))
                     }
                     .onEnded { _ in
-                        isMouseDragging = false
                         mouseOffset     = .zero
                         inputRouter.send(.axisChanged(.leftX, 0))
                         inputRouter.send(.axisChanged(.leftY, 0))

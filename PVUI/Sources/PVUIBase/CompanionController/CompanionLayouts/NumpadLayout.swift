@@ -109,11 +109,19 @@ public struct NumpadLayout: View {
         pressedColor: Color = Color.white.opacity(0.35),
         labelFont: Font = .system(size: 18, weight: .semibold, design: .rounded)
     ) {
+        let effectiveKeysPerRow: Int
+        if keysPerRow > 0 {
+            effectiveKeysPerRow = keysPerRow
+        } else {
+            assertionFailure("NumpadLayout: keysPerRow must be > 0; falling back to 3.")
+            effectiveKeysPerRow = 3
+        }
+
         var sliced: [[NumpadKey]] = []
         var current: [NumpadKey] = []
         for key in keys {
             current.append(key)
-            if current.count == keysPerRow {
+            if current.count == effectiveKeysPerRow {
                 sliced.append(current)
                 current = []
             }
