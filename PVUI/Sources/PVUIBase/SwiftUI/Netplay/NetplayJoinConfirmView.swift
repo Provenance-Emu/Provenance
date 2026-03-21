@@ -31,8 +31,8 @@ public struct NetplayJoinConfirmView: View {
 
     let room: NetplayRoom
     let localGameHash: String
-    var onConfirm: () -> Void
-    var onCancel: () -> Void
+    let onConfirm: () -> Void
+    let onCancel: () -> Void
 
     /// Three-state ROM verification result.
     private enum HashVerification {
@@ -165,10 +165,8 @@ public struct NetplayJoinConfirmView: View {
                     infoRow(icon: "waveform.path.ecg", label: "Ping",
                             value: "\(ping) ms")
                 }
-                if room.isPasswordProtected {
-                    Divider().padding(.leading, 44)
-                    infoRow(icon: "lock.fill", label: "Password", value: "Required")
-                }
+                // Password-protected room entry is not yet supported; the lock icon
+                // in the room browser already informs users the room requires a password.
             }
             #if os(tvOS)
             .background(Color.white.opacity(0.1))
@@ -261,7 +259,8 @@ public struct NetplayJoinConfirmView: View {
                     .font(.caption.monospaced())
                     .foregroundStyle(.tertiary)
             } else {
-                Text(String(hash.prefix(8)) + "…")
+                let displayedHash = hash.count > 8 ? String(hash.prefix(8)) + "…" : hash
+                Text(displayedHash)
                     .font(.caption.monospaced())
                     .foregroundStyle(.primary)
             }
