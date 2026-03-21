@@ -55,6 +55,8 @@ public enum SaveExportError: LocalizedError {
 /// // share url, then:
 /// SaveExporter.shared.cleanupExport(at: url)
 /// ```
+/// `@unchecked Sendable` is safe here: `SaveExporter` has no mutable stored properties —
+/// it is a stateless singleton whose methods operate only on task-local values and parameters.
 public final class SaveExporter: @unchecked Sendable {
 
     public static let shared = SaveExporter()
@@ -94,9 +96,14 @@ public final class SaveExporter: @unchecked Sendable {
             guard let url = $0.fileURL else { return false }
             return FileManager.default.fileExists(atPath: url.path)
         })
-        let batterySavesDir = Paths.batterySavesPath(forROM: romURL)
-        let hasBatterySaves = fm.fileExists(atPath: batterySavesDir.path)
-            && ((try? fm.contentsOfDirectory(atPath: batterySavesDir.path))?.isEmpty == false)
+        // Guard against nil romURL: Paths.batterySavesPath(forROM: nil) falls back to a shared
+        // ".../Battery States/NULL" directory that could contain unrelated games' saves.
+        let batterySavesDir: URL? = romURL.map { Paths.batterySavesPath(forROM: $0) }
+        let hasBatterySaves: Bool = {
+            guard let dir = batterySavesDir else { return false }
+            return fm.fileExists(atPath: dir.path)
+                && ((try? fm.contentsOfDirectory(atPath: dir.path))?.isEmpty == false)
+        }()
 
         guard hasAnySave || hasBatterySaves else {
             throw SaveExportError.noSavesFound
@@ -124,11 +131,11 @@ public final class SaveExporter: @unchecked Sendable {
         // Track how many save files are actually copied so we can error if nothing ends up in the zip.
         var filesCopied = 0
 
-        // Copy battery saves
-        if hasBatterySaves {
+        // Copy battery saves (batterySavesDir is non-nil only when romURL was valid)
+        if let srcBatteryDir = batterySavesDir, hasBatterySaves {
             let destBattery = stagingDir.appendingPathComponent("battery", isDirectory: true)
             do {
-                try fm.copyItem(at: batterySavesDir, to: destBattery)
+                try fm.copyItem(at: srcBatteryDir, to: destBattery)
                 filesCopied += 1
             } catch {
                 WLOG("SaveExporter: failed to copy battery saves: \(error.localizedDescription)")
@@ -197,10 +204,16 @@ public final class SaveExporter: @unchecked Sendable {
 
     /// Imports saves from a zip bundle previously created by `exportSaves(for:)`.
     ///
+    /// **File-restore only:** This method copies save files to their expected locations on disk
+    /// but does **not** register `PVSaveState` objects in Realm. Imported save states will not
+    /// appear in the UI until a library re-scan or app relaunch. See issue #3409 for follow-up.
+    ///
     /// - Parameters:
     ///   - zipURL: URL of the `.zip` export bundle.
-    ///   - game: The game to restore saves for. The bundle's manifest MD5 must match `game.md5Hash`.
-    /// - Throws: `SaveExportError.gameMismatch` if the MD5 doesn't match.
+    ///   - game: The game to restore saves for. Must have an associated ROM file URL, and the
+    ///     bundle's manifest MD5 must match `game.md5Hash`.
+    /// - Throws: `SaveExportError.gameMismatch` if the MD5 doesn't match,
+    ///   or `SaveExportError.invalidBundle` if the game has no ROM file path.
     public func importSaves(from zipURL: URL, for game: PVGame) async throws {
         let frozenGame = game.isFrozen ? game : game.freeze()
 
@@ -246,7 +259,11 @@ public final class SaveExporter: @unchecked Sendable {
             throw SaveExportError.gameMismatch
         }
 
-        let romURL = frozenGame.file?.url
+        // Guard: Paths.batterySavesPath(forROM: nil) and saveStatePath(forROM: nil) both fall
+        // back to a shared ".../NULL" directory. Importing there would overwrite unrelated saves.
+        guard let romURL = frozenGame.file?.url else {
+            throw SaveExportError.invalidBundle("Cannot import saves — game has no associated ROM file path.")
+        }
 
         // Restore battery saves
         let srcBattery = tempDir.appendingPathComponent("battery", isDirectory: true)

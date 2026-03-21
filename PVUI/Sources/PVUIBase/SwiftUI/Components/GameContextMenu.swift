@@ -64,9 +64,16 @@ public struct GameContextMenu: View {
             return fm.fileExists(atPath: fileURL.path)
         }
         _hasSaveStates = State(initialValue: hasLocalSaveStates)
-        let batterySavesDir = Paths.batterySavesPath(forROM: game.file?.url)
-        let batteryDirExists = fm.fileExists(atPath: batterySavesDir.path)
-        let batteryHasFiles = batteryDirExists && ((try? fm.contentsOfDirectory(atPath: batterySavesDir.path))?.isEmpty == false)
+        // Guard against nil romURL: Paths.batterySavesPath(forROM: nil) resolves to a shared
+        // ".../Battery States/NULL" directory — checking it could enable export for wrong game.
+        let batteryHasFiles: Bool
+        if let romURL = game.file?.url {
+            let batterySavesDir = Paths.batterySavesPath(forROM: romURL)
+            let batteryDirExists = fm.fileExists(atPath: batterySavesDir.path)
+            batteryHasFiles = batteryDirExists && ((try? fm.contentsOfDirectory(atPath: batterySavesDir.path))?.isEmpty == false)
+        } else {
+            batteryHasFiles = false
+        }
         _hasBatterySaves = State(initialValue: batteryHasFiles)
         _hasCloudRecord = State(initialValue: game.cloudRecordID != nil)
         _isDownloaded = State(initialValue: game.isDownloaded)

@@ -83,10 +83,29 @@ final class SaveExporterTests: XCTestCase {
         let zipURL = try makeMinimalExportZip(gameMD5: md5)
         defer { try? FileManager.default.removeItem(at: zipURL) }
 
-        let game = makeGame(title: "MatchGame", md5: md5, romURL: nil)
+        // A valid (but non-existent) ROM URL is required; import guards against nil romURL.
+        let romFile = tempDir.appendingPathComponent("match.sfc")
+        let game = makeGame(title: "MatchGame", md5: md5, romURL: romFile)
 
-        // Should not throw
+        // Should not throw — manifest matches and the zip has no battery/states to restore.
         try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+    }
+
+    // MARK: - nil ROM URL guard
+
+    func testImportThrowsInvalidBundleWhenGameHasNoROMURL() async throws {
+        let md5 = "nilrom123"
+        let zipURL = try makeMinimalExportZip(gameMD5: md5)
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let game = makeGame(title: "NoROM", md5: md5, romURL: nil)
+
+        do {
+            try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+            XCTFail("Expected invalidBundle to be thrown when romURL is nil")
+        } catch SaveExportError.invalidBundle {
+            // expected — prevents importing into the shared NULL directory
+        }
     }
 
     // MARK: - Staging dir uniqueness
