@@ -51,7 +51,16 @@ public enum LynxHeaderDetector {
             return 0
         }
 
-        return detectOffset(data: data)
+        let detectedOffset = detectOffset(data: data)
+        if detectedOffset > 0 {
+            // Verify the file is large enough to contain the full header
+            let fileSize = (try? fileHandle.seekToEndOfFile()) ?? 0
+            guard fileSize >= UInt64(detectedOffset) else {
+                WLOG("Lynx file too small for detected header (\(fileSize) bytes < \(detectedOffset)): \(fileURL.lastPathComponent)")
+                return 0
+            }
+        }
+        return detectedOffset
     }
 
     /// Detects the MD5 offset based on the file data's magic bytes.

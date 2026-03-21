@@ -78,13 +78,27 @@ struct LynxHeaderDetectorTests {
 
     // MARK: - Data Shorter Than Header Size
 
-    @Test("detectOffset returns headerSize for data with valid magic but shorter than header")
+    @Test("detectOffset(data:) returns headerSize (64) for magic-only buffer — data API does not enforce file size")
     func testDetectOffsetShortDataWithMagic() {
-        // Only 4 bytes with magic - shorter than header size
+        // Only 4 bytes with magic - shorter than header size.
+        // detectOffset(data:) only checks magic bytes; file-size validation is the
+        // responsibility of detectOffset(for:), not the data-based API.
         let data = Data([0x4C, 0x59, 0x4E, 0x58])
-        // Magic is present, so detectOffset should return headerSize
         let offset = LynxHeaderDetector.detectOffset(data: data)
         #expect(offset == 64)
+    }
+
+    @Test("detectOffset(for:) returns 0 for file with magic but smaller than header size")
+    func testFileWithMagicButTooSmallReturnsZero() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let fileURL = tempDir.appendingPathComponent("test_truncated_\(UUID().uuidString).lnx")
+        // Write only the magic bytes — far smaller than the 64-byte header
+        let data = Data([0x4C, 0x59, 0x4E, 0x58])
+        try data.write(to: fileURL)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        let offset = LynxHeaderDetector.detectOffset(for: fileURL)
+        #expect(offset == 0, "Truncated file with magic but size < headerSize should return 0 to avoid hashing past EOF")
     }
 
     @Test("detectOffset returns 0 for empty data")

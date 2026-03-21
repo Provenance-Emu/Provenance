@@ -84,18 +84,35 @@ struct A7800HeaderDetectorTests {
 
     // MARK: - Data Shorter Than Header Size
 
-    @Test("detectOffset returns headerSize (128) for data shorter than header size but with valid magic")
+    @Test("detectOffset(data:) returns headerSize (128) for magic-only buffer — data API does not enforce file size")
     func testDetectOffsetShortDataWithMagic() {
-        // Only 10 bytes - has magic but no room for a full header
+        // Only 10 bytes - has magic but no room for a full header.
+        // detectOffset(data:) only checks magic bytes; file-size validation is the
+        // responsibility of detectOffset(for:), not the data-based API.
         var data = Data(repeating: 0x00, count: 10)
         data[0] = 0x01
         let magic: [UInt8] = [0x41, 0x54, 0x41, 0x52, 0x49, 0x37, 0x38, 0x30, 0x30]
         for (i, byte) in magic.enumerated() {
             data[1 + i] = byte
         }
-        // Magic is present, so detectOffset should return headerSize regardless of data length
         let offset = A7800HeaderDetector.detectOffset(data: data)
         #expect(offset == 128)
+    }
+
+    @Test("detectOffset(for:) returns 0 for file with magic but smaller than header size")
+    func testFileWithMagicButTooSmallReturnsZero() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let fileURL = tempDir.appendingPathComponent("test_truncated_\(UUID().uuidString).a78")
+        // Write only the magic bytes — far smaller than the 128-byte header
+        var data = Data(repeating: 0x00, count: 10)
+        data[0] = 0x01
+        let magic: [UInt8] = [0x41, 0x54, 0x41, 0x52, 0x49, 0x37, 0x38, 0x30, 0x30]
+        for (i, byte) in magic.enumerated() { data[1 + i] = byte }
+        try data.write(to: fileURL)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        let offset = A7800HeaderDetector.detectOffset(for: fileURL)
+        #expect(offset == 0, "Truncated file with magic but size < headerSize should return 0 to avoid hashing past EOF")
     }
 
     @Test("detectOffset returns 0 for empty data")
