@@ -63,8 +63,17 @@ NSErrorDomain const PVMednafenNetplayErrorDomain = @"com.provenance.mednafen.net
     }
 
     // Configure Mednafen settings before connecting.
+    const char *hostCStr = host.UTF8String;
+    if (!hostCStr) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVMednafenNetplayErrorDomain
+                                         code:PVMednafenNetplayErrorInvalidSettings
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Host address contains invalid characters."}];
+        }
+        return NO;
+    }
     uint16_t resolvedPort = port > 0 ? port : 4046;
-    Mednafen::MDFNI_SetSetting("netplay.host",    std::string(host.UTF8String));
+    Mednafen::MDFNI_SetSetting("netplay.host",    std::string(hostCStr));
     Mednafen::MDFNI_SetSettingUI("netplay.port",  resolvedPort);
     Mednafen::MDFNI_SetSetting("netplay.nick",    std::string(nickname.UTF8String ?: ""));
     Mednafen::MDFNI_SetSetting("netplay.gamekey", std::string(password.UTF8String ?: ""));

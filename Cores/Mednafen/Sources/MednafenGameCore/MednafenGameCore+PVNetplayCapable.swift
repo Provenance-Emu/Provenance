@@ -97,7 +97,7 @@ extension MednafenGameCore: PVNetplayCapable {
         guard supportsNetplay else { throw NetplayError.unsupported }
         guard _bridge.mednafenNetplayStatus == .idle else { throw NetplayError.alreadyActive }
 
-        let (host, port) = resolvedHostPort(for: role, settings: settings)
+        let (host, port) = resolvedHostPort(for: role)
         let password = settings.password ?? ""
 
         // Dispatch bridge calls onto a dedicated serial queue to avoid racing
@@ -132,6 +132,8 @@ extension MednafenGameCore: PVNetplayCapable {
                 self._bridge.netplayDisconnect()
                 self._netplayContext = nil
                 DispatchQueue.main.async {
+                    self._pollingCancellable?.cancel()
+                    self._pollingCancellable = nil
                     self._stateSubject.send(.idle)
                     continuation.resume()
                 }
@@ -148,7 +150,7 @@ extension MednafenGameCore: PVNetplayCapable {
         case .connected:
             let ctx = _netplayContext
             let role = ctx?.role ?? .client(host: "0.0.0.0", port: 4046)
-            let (hostAddr, port) = resolvedHostPort(for: role, settings: ctx?.settings ?? .defaultLAN)
+            let (hostAddr, port) = resolvedHostPort(for: role)
             let room = NetplayRoom(
                 id: ctx?.sessionID ?? UUID(),
                 hostName: "Mednafen",
@@ -204,8 +206,7 @@ extension MednafenGameCore: PVNetplayCapable {
     /// A port value of `0` is treated as "use Mednafen's default server port (4046)"
     /// rather than letting the OS assign an ephemeral port, since Mednafen's server
     /// always listens on a fixed port.
-    private func resolvedHostPort(for role: NetplayRole,
-                                  settings: NetplaySettings) -> (String, UInt16) {
+    private func resolvedHostPort(for role: NetplayRole) -> (String, UInt16) {
         switch role {
         case .host(let port):
             // "Hosting" = connect to a local mednafen-server instance.
