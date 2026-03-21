@@ -913,44 +913,46 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         var offset: UInt = 0
         let systemID = SystemIdentifier(rawValue: game.systemIdentifier)
 
+        // Resolve and verify the ROM file path early to avoid duplicate error logs from header detectors
+        guard let romPath = game.file?.url else { return nil }
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: romPath.path) else {
+            ELOG("Cannot find file at path: \(romPath)")
+            return nil
+        }
+
         // Apply 16-byte offset for iNES header if the file appears to have one
         // This ensures we hash only the PRG+CHR ROM data, matching No-Intro/OpenVGDB expectations
-        if systemID == .NES {
-            if let romPath = game.file?.url, hasINESHeader(at: romPath) {
-                offset = 16
-                ILOG("Detected iNES/NES 2.0 header for \(romPath.lastPathComponent), applying 16-byte MD5 offset")
-            }
+        if systemID == .NES && hasINESHeader(at: romPath) {
+            offset = 16
+            ILOG("Detected iNES/NES 2.0 header for \(romPath.lastPathComponent), applying 16-byte MD5 offset")
+        }
+
+        // Atari 7800 .a78 files may have a 128-byte header - detect and skip if present
+        if systemID == .Atari7800, let a7800Offset = A7800HeaderDetector.detectOffset(for: romPath) {
+            offset = a7800Offset
+            if a7800Offset > 0 { ILOG("Detected A7800 header, applying \(a7800Offset)-byte MD5 offset") }
+        }
+
+        // Atari Lynx .lnx files may have a 64-byte header - detect and skip if present
+        if systemID == .Lynx, let lynxOffset = LynxHeaderDetector.detectOffset(for: romPath) {
+            offset = lynxOffset
+            if lynxOffset > 0 { ILOG("Detected Lynx header, applying \(lynxOffset)-byte MD5 offset") }
+        }
+
+        // Use N64 ROM normalizer for Nintendo 64 games to handle byte-swapping
+        if systemID == .N64 {
+            return await N64ROMNormalizer.md5ForN64ROMAsync(at: romPath, fromOffset: offset)
         }
 
         // SNES .smc files may have a 512-byte copier header - detect and skip if present
         let isSNES = systemID == .SNES
-        let isSMC = game.file?.url?.pathExtension.lowercased() == "smc"
-
-        let romPath = game.file?.url
-
-        if let romPath = romPath {
-            let fm = FileManager.default
-            if !fm.fileExists(atPath: romPath.path) {
-                ELOG("Cannot find file at path: \(romPath)")
-                return nil
-            }
-
-            // Use N64 ROM normalizer for Nintendo 64 games to handle byte-swapping
-            if systemID == .N64 {
-                return await N64ROMNormalizer.md5ForN64ROMAsync(at: romPath, fromOffset: offset)
-            }
-
-            // For SNES .smc files, detect and skip 512-byte copier header if present
-            if isSNES && isSMC {
-                if let snesOffset = detectSNESCopierHeaderOffset(for: romPath) {
-                    offset = snesOffset
-                }
-            }
-
-            return await calculateMD5Async(at: romPath, fromOffset: offset)
+        let isSMC = romPath.pathExtension.lowercased() == "smc"
+        if isSNES && isSMC, let snesOffset = detectSNESCopierHeaderOffset(for: romPath) {
+            offset = snesOffset
         }
 
-        return nil
+        return await calculateMD5Async(at: romPath, fromOffset: offset)
     }
 
     /// Detects if a SNES .smc file has a 512-byte copier header.
