@@ -8,7 +8,9 @@
 #if os(iOS)
 import ReplayKit
 import UIKit
+import Defaults
 import PVLogging
+import PVSettings
 
 /// Manages ReplayKit screen recording for Provenance.
 ///
@@ -55,7 +57,11 @@ import PVLogging
 
     // MARK: - Public API
 
-    /// Starts a screen recording session with microphone audio enabled.
+    /// Starts a screen recording session.
+    ///
+    /// Microphone audio is enabled or disabled according to the user's
+    /// `recordingMicEnabled` preference in Settings.
+    ///
     /// - Throws: `RecordingError.unavailable` if the recorder is not available,
     ///   or an `RPScreenRecorder` error if recording could not start.
     public func startRecording() async throws {
@@ -70,7 +76,7 @@ import PVLogging
         }
 
         let recorder = RPScreenRecorder.shared()
-        recorder.isMicrophoneEnabled = true
+        recorder.isMicrophoneEnabled = Defaults[.recordingMicEnabled]
 
         // Mark that a recording setup is in-flight *before* calling startRecording.
         // The system may show a permission/indicator UI during startRecording, which

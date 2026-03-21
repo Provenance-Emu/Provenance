@@ -626,6 +626,10 @@ public struct PVSettingsView: View {
                                 VideoSection()
                             }
 
+                            TVOSSettingsSection(title: "Recording & Streaming", icon: "record.circle") {
+                                RecordingSection()
+                            }
+
                             TVOSSettingsSection(title: "Controller", icon: "gamecontroller.fill") {
                                 ControllerSection()
                             }
@@ -799,6 +803,9 @@ public struct PVSettingsView: View {
                     }
                     CollapsibleSection(title: "Video") {
                         VideoSection()
+                    }
+                    CollapsibleSection(title: "Recording & Streaming") {
+                        RecordingSection()
                     }
                     CollapsibleSection(title: "RetroAchievements") {
                         RetroAchievementsSection(viewModel: viewModel)
@@ -1629,6 +1636,22 @@ private struct VideoSection: View {
                             subtitle: "Configure CRT and LCD filter effects.",
                             icon: .sfSymbol("tv.fill"))
             }
+        }
+    }
+}
+
+private struct RecordingSection: View {
+    var body: some View {
+        Section(header: Text("Recording & Streaming")) {
+#if os(iOS)
+            NavigationLink(destination: RecordingSettingsView()) {
+                SettingsRow(
+                    title: "Recording & Streaming",
+                    subtitle: "Configure microphone, auto-save, HUD button, and clip duration.",
+                    icon: .sfSymbol("record.circle")
+                )
+            }
+#endif
         }
     }
 }
