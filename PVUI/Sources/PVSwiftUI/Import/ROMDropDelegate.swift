@@ -5,7 +5,7 @@
 //  Created by Provenance Emu on 2026-03-21.
 //  Copyright 2026 Provenance Emu. All rights reserved.
 //
-//  Implements native drag & drop ROM import (issue #3406, epic #2136).
+//  Implements native drag & drop ROM import (issues #2136 / #2659; PR #3406).
 //  Guard the entire file with !os(tvOS) — drag & drop is unavailable on tvOS.
 //
 
@@ -19,14 +19,11 @@ import PVUIBase
 // MARK: - Accepted drop types
 
 /// UTTypes accepted by the ROM drop target.
-/// Covers file URLs, zip/archive bundles, and any generic binary data file that
-/// the OS may not map to a more specific type.
+/// Covers file URLs and generic binary data files that the OS may not map
+/// to a more specific type.
 private let romAcceptedTypes: [UTType] = [
     .fileURL,
-    .zip,
-    .archive,
     .data,
-    .item,
 ]
 
 // MARK: - View modifier
@@ -70,7 +67,15 @@ public struct ROMDropTargetModifier: ViewModifier {
                         return
                     }
                     guard let url else { return }
-                    enqueueURL(url)
+                    // `loadFileRepresentation` gives a temporary URL that the OS reclaims
+                    // after this handler returns. Copy to a stable location first so the
+                    // async import pipeline always finds the file.
+                    do {
+                        let stableURL = try Self.stableCopy(of: url)
+                        enqueueURL(stableURL)
+                    } catch {
+                        ELOG("ROMDropDelegate: failed to copy drop to stable location: \(error)")
+                    }
                 }
                 handled = true
             } else if provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) {
@@ -82,13 +87,32 @@ public struct ROMDropTargetModifier: ViewModifier {
                         return
                     }
                     guard let url else { return }
-                    enqueueURL(url)
+                    do {
+                        let stableURL = try Self.stableCopy(of: url)
+                        enqueueURL(stableURL)
+                    } catch {
+                        ELOG("ROMDropDelegate: failed to copy drop (data) to stable location: \(error)")
+                    }
                 }
                 handled = true
             }
         }
 
         return handled
+    }
+
+    /// Copies a temporary drop URL into an app-owned directory so it survives past
+    /// the `loadFileRepresentation` completion handler.
+    private static func stableCopy(of temporaryURL: URL) throws -> URL {
+        let importDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PVDropImports", isDirectory: true)
+        try FileManager.default.createDirectory(at: importDir, withIntermediateDirectories: true)
+        let dest = importDir.appendingPathComponent(temporaryURL.lastPathComponent)
+        if FileManager.default.fileExists(atPath: dest.path) {
+            try FileManager.default.removeItem(at: dest)
+        }
+        try FileManager.default.copyItem(at: temporaryURL, to: dest)
+        return dest
     }
 
     /// Forwards a dropped URL to the library update pipeline on the main actor.
