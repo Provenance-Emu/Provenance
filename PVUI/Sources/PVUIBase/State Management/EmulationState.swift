@@ -28,7 +28,7 @@ public final class EmulationUIState : ObservableObject {
     public var isRecording: Bool = false
 
     /// Whether a ReplayKit live-broadcast session is currently active.
-    @Published public var isBroadcasting: Bool = false
+    public var isBroadcasting: Bool = false
 
     /// Whether always-on clip buffering is active (iOS/tvOS 15+).
     ///
