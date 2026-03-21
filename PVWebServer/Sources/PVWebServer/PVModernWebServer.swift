@@ -28,6 +28,7 @@ import Network
 import UIKit
 #endif
 import Hummingbird
+import PVLogging
 
 // MARK: - PVModernWebServer
 
@@ -421,7 +422,9 @@ private extension PVModernWebServer {
 
     func handlePROPFIND(request: Request, context: some RequestContext, uploadDirectory: URL) -> Response {
         let path = context.parameters.get("**") ?? ""
-        let target = uploadDirectory.appendingPathComponent(path)
+        guard let target = resolvedPath(path, withinDirectory: uploadDirectory) else {
+            return Response(status: .forbidden)
+        }
 
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: target.path, isDirectory: &isDirectory) else {
@@ -495,7 +498,7 @@ private extension PVModernWebServer {
         let service = NetService(domain: "local.", type: "_http._tcp.", name: "Provenance", port: Int32(httpPort))
         service.publish()
         netService = service
-        NSLog("[PVModernWebServer] Bonjour advertising 'Provenance' on port \(httpPort)")
+        ILOG("[PVModernWebServer] Bonjour advertising 'Provenance' on port \(httpPort)")
     }
 }
 
@@ -566,8 +569,7 @@ private extension PVModernWebServer {
     }
 
     func parseMultipart(data: Data, boundary: String) -> [MultipartPart] {
-        guard let boundaryData = "--\(boundary)".data(using: .utf8),
-              let endBoundaryData = "--\(boundary)--".data(using: .utf8) else { return [] }
+        guard let boundaryData = "--\(boundary)".data(using: .utf8) else { return [] }
 
         var parts: [MultipartPart] = []
         var searchRange = data.startIndex..<data.endIndex
