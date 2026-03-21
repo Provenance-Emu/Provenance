@@ -219,19 +219,8 @@ NSUInteger webDavPort = 81;
         return nil;
     }];
 
-    // Track upload progress by implementing the GCDWebUploaderDelegate methods
-    // This is done in the webUploader:didUploadFileAtPath: method
-
-    // We'll also periodically check the progress of active uploads
-    // Create a timer to track upload progress
-    NSTimer *progressTimer = [NSTimer timerWithTimeInterval:0.5
-                                                   target:self
-                                                 selector:@selector(updateUploadProgress:)
-                                                 userInfo:nil
-                                                  repeats:YES];
-
-    // Add the timer to the main run loop
-    [[NSRunLoop mainRunLoop] addTimer:progressTimer forMode:NSRunLoopCommonModes];
+    // Progress tracking is handled by `processNextFileInUploadQueue` which starts a
+    // per-file timer calling `updateUploadProgressNotification`.
 }
 
 - (void)updateUploadProgress:(uint64_t)bytesTransferred totalBytes:(uint64_t)totalBytes {
@@ -373,6 +362,61 @@ NSUInteger webDavPort = 81;
     }
 }
 
+- (void)fileUploadCompleted:(NSString *)filePath {
+    if (!filePath) { return; }
+
+    uint64_t fileSize = 0;
+    NSError *error = nil;
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:&error];
+    if (!error) {
+        fileSize = [attributes fileSize];
+    }
+
+    NSDictionary *userInfo = @{
+        @"filePath": filePath,
+        @"fileSize": @(fileSize)
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"fileName": filePath,
+                                                          @"fileSize": @(fileSize)
+                                                      }];
+
+    if ([filePath isEqualToString:self.currentUploadingFilePath]) {
+        if (self.uploadQueue.count > 0) {
+            [self.uploadQueue removeObjectAtIndex:0];
+        }
+        [self processNextFileInUploadQueue];
+    } else {
+        [self.uploadQueue removeObject:filePath];
+    }
+}
+
+- (void)fileUploadFailed:(NSString *)filePath error:(NSError *)error {
+    if (!filePath) { return; }
+
+    NSDictionary *userInfo = @{
+        @"filePath": filePath,
+        @"error": error ?: [NSError errorWithDomain:NSCocoaErrorDomain code:-1 userInfo:nil]
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadFailedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+
+    if ([filePath isEqualToString:self.currentUploadingFilePath]) {
+        if (self.uploadQueue.count > 0) {
+            [self.uploadQueue removeObjectAtIndex:0];
+        }
+        [self processNextFileInUploadQueue];
+    } else {
+        [self.uploadQueue removeObject:filePath];
+    }
+}
+
 - (BOOL)startServers {
     BOOL success;
 
@@ -405,7 +449,7 @@ NSUInteger webDavPort = 81;
     return _webServer.isRunning;
 }
 
-- (BOOL)isIsWebDavServerRunning {
+- (BOOL)isWebDavServerRunning {
     return _webDavServer.isRunning;
 }
 
