@@ -496,5 +496,35 @@
         "subtitle": "On iPhone, tap the HUD to expand detailed per-player latency, frame delay, rollback status, and a quick disconnect button."
       }
     ]
+  },
+  {
+    "version": "3.6.0",
+    "title": "Lock Screen & StandBy Widgets",
+    "features": [
+      {
+        "symbolName": "lock.fill",
+        "symbolColor": "blue",
+        "title": "Lock Screen Widgets",
+        "subtitle": "Quick Launch circular, rectangular, and inline lock screen widgets let you jump straight into your last-played game from the lock screen."
+      },
+      {
+        "symbolName": "music.note",
+        "symbolColor": "pink",
+        "title": "Now Playing Lock Screen Widget",
+        "subtitle": "See the current game music track and artist on your lock screen at a glance."
+      },
+      {
+        "symbolName": "photo.stack",
+        "symbolColor": "purple",
+        "title": "StandBy Game Art Gallery",
+        "subtitle": "A rotating gallery of game box art fills your screen in iOS 17 StandBy mode, cycling every 5 minutes."
+      },
+      {
+        "symbolName": "moon.stars.fill",
+        "symbolColor": "purple",
+        "title": "StandBy Now Playing",
+        "subtitle": "Full-screen album art, track name, and artist shown in StandBy mode while game music plays — perfect for the nightstand."
+      }
+    ]
   }
 ]
