@@ -47,6 +47,15 @@
         }
       },
       {
+        "package": "async-http-client",
+        "repositoryURL": "https://github.com/swift-server/async-http-client.git",
+        "state": {
+          "branch": null,
+          "revision": "c5784ca81535cc6a92d900f84abd070dfb0e9392",
+          "version": "1.32.1"
+        }
+      },
+      {
         "package": "BitByteData",
         "repositoryURL": "https://github.com/tsolomko/BitByteData",
         "state": {
@@ -179,6 +188,15 @@
           "branch": null,
           "revision": "05e7fcc63b33925cd0c1faaa205cdd5681e7bbef",
           "version": "2.3.0"
+        }
+      },
+      {
+        "package": "hummingbird",
+        "repositoryURL": "https://github.com/hummingbird-project/hummingbird.git",
+        "state": {
+          "branch": null,
+          "revision": "282f55d605bf9324d2da7cbebbf30112a0ae575d",
+          "version": "2.21.0"
         }
       },
       {
@@ -380,6 +398,15 @@
         }
       },
       {
+        "package": "swift-algorithms",
+        "repositoryURL": "https://github.com/apple/swift-algorithms.git",
+        "state": {
+          "branch": null,
+          "revision": "87e50f483c54e6efd60e885f7f5aa946cee68023",
+          "version": "1.2.1"
+        }
+      },
+      {
         "package": "swift-asn1",
         "repositoryURL": "https://github.com/apple/swift-asn1.git",
         "state": {
@@ -407,6 +434,15 @@
         }
       },
       {
+        "package": "swift-certificates",
+        "repositoryURL": "https://github.com/apple/swift-certificates.git",
+        "state": {
+          "branch": null,
+          "revision": "24ccdeeeed4dfaae7955fcac9dbf5489ed4f1a25",
+          "version": "1.18.0"
+        }
+      },
+      {
         "package": "cmark-gfm",
         "repositoryURL": "https://github.com/swiftlang/swift-cmark.git",
         "state": {
@@ -425,12 +461,39 @@
         }
       },
       {
+        "package": "swift-configuration",
+        "repositoryURL": "https://github.com/apple/swift-configuration.git",
+        "state": {
+          "branch": null,
+          "revision": "be76c4ad929eb6c4bcaf3351799f2adf9e6848a9",
+          "version": "1.2.0"
+        }
+      },
+      {
         "package": "swift-crypto",
         "repositoryURL": "https://github.com/apple/swift-crypto.git",
         "state": {
           "branch": null,
           "revision": "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
           "version": "3.15.1"
+        }
+      },
+      {
+        "package": "swift-distributed-tracing",
+        "repositoryURL": "https://github.com/apple/swift-distributed-tracing.git",
+        "state": {
+          "branch": null,
+          "revision": "dc4030184203ffafbb2ec614352487235d747fe0",
+          "version": "1.4.1"
+        }
+      },
+      {
+        "package": "swift-http-structured-headers",
+        "repositoryURL": "https://github.com/apple/swift-http-structured-headers.git",
+        "state": {
+          "branch": null,
+          "revision": "76d7627bd88b47bf5a0f8497dd244885960dde0b",
+          "version": "1.6.0"
         }
       },
       {
@@ -461,6 +524,69 @@
         }
       },
       {
+        "package": "swift-metrics",
+        "repositoryURL": "https://github.com/apple/swift-metrics.git",
+        "state": {
+          "branch": null,
+          "revision": "f17c111cec972c2a4922cef38cf64f76f7e87886",
+          "version": "2.8.0"
+        }
+      },
+      {
+        "package": "swift-nio",
+        "repositoryURL": "https://github.com/apple/swift-nio.git",
+        "state": {
+          "branch": null,
+          "revision": "b31565862a8f39866af50bc6676160d8dda7de35",
+          "version": "2.96.0"
+        }
+      },
+      {
+        "package": "swift-nio-extras",
+        "repositoryURL": "https://github.com/apple/swift-nio-extras.git",
+        "state": {
+          "branch": null,
+          "revision": "abcf5312eb8ed2fb11916078aef7c46b06f20813",
+          "version": "1.33.0"
+        }
+      },
+      {
+        "package": "swift-nio-http2",
+        "repositoryURL": "https://github.com/apple/swift-nio-http2.git",
+        "state": {
+          "branch": null,
+          "revision": "9019b76fa858564a27e0aab13c01987d6e2869fa",
+          "version": "1.41.0"
+        }
+      },
+      {
+        "package": "swift-nio-ssl",
+        "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
+        "state": {
+          "branch": null,
+          "revision": "df9c3406028e3297246e6e7081977a167318b692",
+          "version": "2.36.1"
+        }
+      },
+      {
+        "package": "swift-nio-transport-services",
+        "repositoryURL": "https://github.com/apple/swift-nio-transport-services.git",
+        "state": {
+          "branch": null,
+          "revision": "60c3e187154421171721c1a38e800b390680fb5d",
+          "version": "1.26.0"
+        }
+      },
+      {
+        "package": "swift-numerics",
+        "repositoryURL": "https://github.com/apple/swift-numerics.git",
+        "state": {
+          "branch": null,
+          "revision": "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
+          "version": "1.1.1"
+        }
+      },
+      {
         "package": "swift-openapi-runtime",
         "repositoryURL": "https://github.com/apple/swift-openapi-runtime",
         "state": {
@@ -488,12 +614,39 @@
         }
       },
       {
+        "package": "swift-service-context",
+        "repositoryURL": "https://github.com/apple/swift-service-context.git",
+        "state": {
+          "branch": null,
+          "revision": "d0997351b0c7779017f88e7a93bc30a1878d7f29",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "swift-service-lifecycle",
+        "repositoryURL": "https://github.com/swift-server/swift-service-lifecycle.git",
+        "state": {
+          "branch": null,
+          "revision": "89888196dd79c61c50bca9a103d8114f32e1e598",
+          "version": "2.10.1"
+        }
+      },
+      {
         "package": "swift-syntax",
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
           "revision": "4799286537280063c85a32f09884cfbca301b1a1",
           "version": "602.0.0"
+        }
+      },
+      {
+        "package": "swift-system",
+        "repositoryURL": "https://github.com/apple/swift-system",
+        "state": {
+          "branch": null,
+          "revision": "7c6ad0fc39d0763e0b699210e4124afd5041c5df",
+          "version": "1.6.4"
         }
       },
       {
