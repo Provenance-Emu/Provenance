@@ -302,7 +302,6 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/RxSwiftCommunity/RxRealm.git",
       "state" : {
-        "branch" : "main",
         "revision" : "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69"
       }
     },
@@ -329,7 +328,6 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SideStore/SideKit.git",
       "state" : {
-        "branch" : "main",
         "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
       }
     },
@@ -356,7 +354,6 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SteamController.git",
       "state" : {
-        "branch" : "master",
         "revision" : "55d2fe0484f4cc5ed3535033af6b0218621e37b2"
       }
     },
@@ -491,7 +488,6 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "branch" : "develop",
         "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
       }
     },
