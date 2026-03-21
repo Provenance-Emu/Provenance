@@ -99,10 +99,19 @@ private extension PVPPSSPPCore {
             let host = ctx?.effectiveServerAddress ?? "0.0.0.0"
             let port: UInt16 = ctx?.role.clientAddress?.1 ?? ctx?.settings.port ?? NetplaySettings.defaultLAN.port
             let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: host, port: port, context: ctx)
+            // WAN hosts call connectToAdhocServer (sets status = .connected) but
+            // are still the logical host.  Return .hosting so the UI and manager
+            // treat them correctly rather than as a remote client.
+            if case .host = ctx?.role {
+                return .hosting(room: room)
+            }
+            // Preserve the original role: .spectator falls back to .client in
+            // PPSSPP (no spectator concept), so map both non-host cases to client.
+            let sessionRole = NetplayRole.client(host: host, port: port)
             let session = NetplaySession(
                 id: ctx?.sessionID ?? UUID(),
                 room: room,
-                role: .client(host: host, port: port),
+                role: sessionRole,
                 peers: [],
                 frameDelay: ctx?.settings.frameDelay ?? 0,
                 isRollbackEnabled: false
@@ -201,7 +210,10 @@ private extension NetplayRoom {
         let settings = context?.settings
         let nickname = settings.flatMap { $0.nickname.isEmpty ? nil : $0.nickname }
         let isPasswordProtected = !(settings?.password?.isEmpty ?? true)
-        let allowsSpectators = settings?.allowSpectators ?? false
+        // PPSSPP adhoc has no spectator concept — spectator falls back to joining
+        // as a regular client.  Always advertise false so the UI does not offer
+        // spectate flows that would silently connect as a player instead.
+        let allowsSpectators = false
         return NetplayRoom(
             id: id,
             hostName: nickname ?? "PPSSPP",
