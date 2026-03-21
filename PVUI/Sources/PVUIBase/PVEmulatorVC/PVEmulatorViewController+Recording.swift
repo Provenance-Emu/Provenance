@@ -11,6 +11,8 @@ import UIKit
 import Photos
 #endif
 import PVLogging
+import PVSettings
+import Defaults
 
 // MARK: - Live Broadcast (iOS + tvOS)
 
@@ -181,6 +183,7 @@ extension PVEmulatorViewController {
     /// so that when the user does tap "Save Clip", recent footage is available.
     public func startClipBufferingIfAvailable() {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
+        guard Defaults[.clipBufferingEnabled] else { return }
         guard PVRecordingManager.shared.isAvailable else { return }
         Task { @MainActor in
             do {
