@@ -181,10 +181,22 @@ public struct NetplayWaitingRoomView: View {
                         .foregroundStyle(.primary)
                 }
             }
-            LabeledContent("Port", value: "\(settings.port)")
-            if !localIP.isEmpty {
+            LabeledContent("Port") {
+                if settings.port == 0 {
+                    Text("Auto (OS-assigned)")
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("\(settings.port)")
+                }
+            }
+            if !localIP.isEmpty && settings.port != 0 {
                 LabeledContent("Join Code", value: "\(localIP):\(settings.port)")
                     .font(.callout.monospaced())
+            } else if !localIP.isEmpty {
+                LabeledContent("Join Code") {
+                    Text("Available after connecting")
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
