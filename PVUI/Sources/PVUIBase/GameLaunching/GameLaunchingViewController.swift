@@ -1248,6 +1248,9 @@ extension GameLaunchingViewController where Self: UIViewController {
             )
 
             // Any recommendation other than .proceed or .skipJIT requires a modal alert.
+            // Note: .skipJIT suppresses the pre-launch prompt only — JIT acquisition at
+            // the core level is unaffected. The core uses its default fallback if JIT
+            // is unavailable.
             switch jitRecommendation {
             case .proceed, .skipJIT:
                 break // fall through to presentEMU immediately

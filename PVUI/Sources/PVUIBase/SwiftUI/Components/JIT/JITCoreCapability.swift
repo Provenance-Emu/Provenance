@@ -69,6 +69,24 @@ public enum JITCoreCapability: CaseIterable {
         }
     }
 
+    /// Substrings that appear (lowercased) in a **system** identifier string.
+    ///
+    /// System identifiers follow the pattern `"com.provenance.<name>"` (e.g.
+    /// `"com.provenance.psp"`), which differs from core identifiers like
+    /// `"com.provenance.core.ppsspp"`.  Use this list in `systemHasJITCapability(_:)`
+    /// rather than `coreIdentifierKeywords` to avoid false negatives like
+    /// `"com.provenance.psp".contains("ppsspp") == false`.
+    public var systemIdentifierKeywords: [String] {
+        switch self {
+        case .dolphin:  return ["gamecube", "wii"]
+        case .ppsspp:   return ["psp"]
+        case .azahar:   return ["3ds"]
+        case .flycast:  return ["dreamcast"]
+        case .mupen:    return ["n64"]
+        case .pcsx2:    return ["ps2"]
+        }
+    }
+
     /// Whether this core category **requires** JIT to run at all.
     ///
     /// `true` corresponds to `PVJITPlistRequirement.required` / `.requiredOrCrash` in
@@ -161,17 +179,16 @@ public enum JITCoreCapability: CaseIterable {
     /// Returns `true` when any JIT-relevant keyword matches the given system identifier.
     ///
     /// System identifiers follow the pattern `"com.provenance.<name>"` (e.g.
-    /// `"com.provenance.n64"`, `"com.provenance.dreamcast"`).  This method checks
-    /// whether any compile-time keyword substring appears in the lowercased identifier,
-    /// making it suitable for the game info view to decide whether to show the JIT
-    /// preference toggle.
+    /// `"com.provenance.psp"`, `"com.provenance.n64"`, `"com.provenance.dreamcast"`).
+    /// This method uses `systemIdentifierKeywords` (not `coreIdentifierKeywords`) to
+    /// avoid false negatives such as `"com.provenance.psp".contains("ppsspp") == false`.
     ///
     /// - Parameter systemIdentifier: A system identifier string (case-insensitive).
     /// - Returns: `true` if the system is known to have JIT-capable cores.
     public static func systemHasJITCapability(_ systemIdentifier: String) -> Bool {
         let id = systemIdentifier.lowercased()
         return allCases.contains { capability in
-            capability.coreIdentifierKeywords.contains { id.contains($0) }
+            capability.systemIdentifierKeywords.contains { id.contains($0) }
         }
     }
 

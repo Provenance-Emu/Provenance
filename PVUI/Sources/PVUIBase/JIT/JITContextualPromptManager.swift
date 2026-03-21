@@ -33,7 +33,9 @@ public enum JITLaunchRecommendation {
     /// The user can choose to try to enable JIT or continue without it.
     case showRecommendedPrompt(coreName: String)
 
-    /// The per-game preference is `.skipJIT` — launch without attempting JIT.
+    /// The per-game preference is `.skipJIT` — suppress the pre-launch JIT prompt
+    /// and launch immediately. JIT acquisition at the core level is unaffected;
+    /// the core uses its default fallback if JIT is unavailable.
     case skipJIT
 }
 

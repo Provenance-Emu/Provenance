@@ -23,8 +23,12 @@ public enum JITGamePreference: String, Codable, Equatable, Defaults.Serializable
     /// For `.optional(fallback:)` cores this enables the JIT path explicitly.
     case preferJIT
 
-    /// Skip JIT acquisition for this game and use the interpreter/fallback path.
-    /// Only valid for `.optional(fallback:)` cores; ignored for `.requiredOrCrash`.
+    /// Suppress the pre-launch JIT prompt for this game and launch immediately.
+    ///
+    /// This preference controls **UI prompting only** — it does not disable JIT
+    /// acquisition at the core level. If JIT is already acquired the core will still
+    /// use it; if JIT is unavailable the core falls back to its default interpreter
+    /// path (only valid for `.optional(fallback:)` cores; ignored for `.requiredOrCrash`).
     case skipJIT
 
     // MARK: Display
@@ -44,7 +48,7 @@ public enum JITGamePreference: String, Codable, Equatable, Defaults.Serializable
         case .preferJIT:
             return "Try to enable JIT (Performance Mode) before launching"
         case .skipJIT:
-            return "Launch in interpreter mode without JIT"
+            return "Skip the pre-launch JIT prompt and launch immediately"
         }
     }
 
