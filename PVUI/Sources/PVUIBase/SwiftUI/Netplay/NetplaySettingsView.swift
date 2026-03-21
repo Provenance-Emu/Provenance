@@ -12,7 +12,7 @@ import PVNetplay
 import PVFeatureFlags
 
 /// Persistent keys for netplay user defaults.
-enum NetplayDefaultsKey {
+private enum NetplayDefaultsKey {
     static let nickname         = "netplay.nickname"
     static let port             = "netplay.port"
     static let relayServer      = "netplay.relayServer"
@@ -22,7 +22,7 @@ enum NetplayDefaultsKey {
 }
 
 /// Valid port range: 0 = OS-assigned, 1–65535 = explicit port.
-let netplayPortRange: ClosedRange<Int> = 0...65535
+private let netplayPortRange: ClosedRange<Int> = 0...65535
 
 /// Full netplay settings form backed by `@AppStorage`.
 ///
