@@ -183,6 +183,11 @@ public struct GameContextMenu: View {
                         resetCorePreferences(forGame: game)
                     } label: { Label("Reset Core Preferences", systemImage: "arrow.counterclockwise") }
                 }
+                if featureFlags.netplayEnabled && availableCores.contains(where: { $0.principleClass.contains("RetroArch") }) {
+                    Button {
+                        contextMenuDelegate?.gameContextMenu(self, didRequestNetworkPlayFor: game)
+                    } label: { Label("Network Play", systemImage: "antenna.radiowaves.left.and.right") }
+                }
                 Divider()
     #if !os(tvOS)
                 Button {

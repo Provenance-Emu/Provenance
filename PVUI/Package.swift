@@ -124,6 +124,7 @@ let package = Package(
                 "PVCheevos",
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
+                .product(name: "PVNetplay", package: "PVNetplay", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),

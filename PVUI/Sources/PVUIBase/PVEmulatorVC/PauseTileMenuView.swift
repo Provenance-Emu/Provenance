@@ -49,6 +49,7 @@ struct PauseTileMenuView: View {
     @State private var showingTransferPakConfig = false
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
+    @State private var showingNetworkPlay = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
@@ -137,6 +138,8 @@ struct PauseTileMenuView: View {
             dismissForSubSheetThen { self.emulatorVC.showCheatsMenu() }
         case "gameInfo":
             dismissForSubSheetThen { self.emulatorVC.showMoreInfo() }
+        case "networkPlay":
+            showingNetworkPlay = true
         case "controllerProfile":
             showingControllerProfiles = true
         case "screenshot":
@@ -534,6 +537,14 @@ struct PauseTileMenuView: View {
                 }
             }
         }
+        #if !os(watchOS)
+        .sheet(isPresented: $showingNetworkPlay) {
+            NetplayLobbyView(
+                gameName: emulatorVC.game?.title ?? "",
+                coreIdentifier: emulatorVC.core.coreIdentifier ?? ""
+            )
+        }
+        #endif
         // Core action option picker — shown when a CoreAction exposes multiple options.
         .confirmationDialog(
             pendingCoreAction?.title ?? "",

@@ -69,6 +69,11 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var showControllerPakSlots = false
     @Published var controllerPakGame: PVGame?
 
+    /// Network Play sheet state
+    @Published var showNetworkPlay = false
+    @Published var networkPlayGame: PVGame?
+    @Published var networkPlayCoreIdentifier: String = ""
+
     // Properties that were @State in the View, now @Published in ViewModel
     @Published var searchText: String = "" {
         didSet {

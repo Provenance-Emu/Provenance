@@ -74,6 +74,18 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
+        if featureFlags.netplayEnabled {
+            // Show the Network Play tile whenever netplay is enabled.
+            // Core-level capability gating is deferred to a later phase once
+            // PVNetplayCapable conformances are wired to emulator bridges.
+            gameTiles.append(PauseMenuTile(
+                id: "networkPlay",
+                icon: "antenna.radiowaves.left.and.right",
+                label: String(localized: "Network Play"),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
+        }
 
         if shouldSave {
             gameTiles.append(PauseMenuTile(id: "saveQuit", icon: "square.and.arrow.down.on.square", label: String(localized: "Save & Quit"), colorKey: .cyan))
