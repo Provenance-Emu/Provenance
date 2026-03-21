@@ -34,6 +34,10 @@ typedef NS_ENUM(NSInteger, PVRetroArchNetplayStatus) {
 /// `command_event(CMD_EVENT_NETPLAY_*)` to start/stop sessions.
 @interface PVRetroArchCoreBridge (Netplay)
 
+/// Returns YES when this binary was compiled with HAVE_NETPLAY support.
+/// Use this to gate UI and bridge registration rather than assuming netplay is always available.
+@property (nonatomic, readonly) BOOL netplaySupported;
+
 /// Current netplay session status.
 @property (nonatomic, readonly) PVRetroArchNetplayStatus netplayStatus;
 

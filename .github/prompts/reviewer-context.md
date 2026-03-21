@@ -64,6 +64,16 @@ Higher tiers may import lower tiers. **Never the reverse.**
   when another module's migration code genuinely requires read access.
   Flag unnecessary `public` promotions.
 
+### Netplay — `PVNetplayCapable` pattern (added in #3319)
+- Any emulator core that supports netplay MUST conform to `PVNetplayCapable`
+  (defined in `PVNetplay/Sources/PVNetplay/Protocols/PVNetplayCapable.swift`).
+- ObjC-backed cores need `extension MyBridge: @unchecked Sendable {}` BEFORE
+  the `PVNetplayCapable` conformance extension (Sendable is a protocol requirement).
+- `PVEmulatorViewController.quit()` must call `PVNetplayManager.shared.setActiveBridge(nil)`
+  when the core stops. Guard with `#if canImport(PVNetplay)`.
+- New `PVNetplayCapable` conformances placed in Xcode-project targets need
+  `PVNetplay` added to that target's SPM package dependencies in `project.pbxproj`.
+
 ### Module Boundaries
 - Submodule upstream source (`Cores/<name>/<upstream-dir>/`) must **never** be
   modified. Flag immediately as 🔴 CRITICAL.
@@ -227,6 +237,13 @@ Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
 `PVCheevos` is Tier 0 (no dependencies on higher tiers).
 
 ## New Patterns (2026)
+
+### PVNetplayCapable / Netplay Bridge Pattern
+- `PVNetplayCapable` (in `PVNetplay`) — protocol any netplay-capable core conforms to.
+- `PVRetroArchCoreBridge` conforms via `PVRetroArchCoreBridge+PVNetplayCapable.swift`; it is marked `@unchecked Sendable` because netplay-state mutation is serialised on the RetroArch run loop.
+- `PVRetroArchCoreCore` forwards `PVNetplayCapable` calls to its underlying `_bridge`.
+- `PVEmulatorViewController+Netplay.swift` registers/deregisters the bridge with `PVNetplayManager.shared` around `startEmulation`/`stopEmulation`.
+- New cores that support netplay should conform to `PVNetplayCapable`; PVUI will auto-detect via `core as? any PVNetplayCapable`.
 
 ### PVToast In-Game Notification System
 - `PVToastManager.shared` (Tier 6, `PVUIBase`) is `@MainActor` — all calls must be on the main actor.
