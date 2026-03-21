@@ -2092,7 +2092,12 @@ static bool environment_callback(unsigned cmd, void *data) {
 #else
             struct retro_midi_interface **midiPtr = (struct retro_midi_interface **)data;
             if (!midiPtr) return false;
-            *midiPtr = pv_libretro_midi_interface();
+            struct retro_midi_interface *iface = pv_libretro_midi_interface();
+            if (!iface) {
+                DLOG(@"Environ GET_MIDI_INTERFACE — CoreMIDI interface unavailable");
+                return false;
+            }
+            *midiPtr = iface;
             ILOG(@"Environ GET_MIDI_INTERFACE: provided CoreMIDI-backed interface");
             return true;
 #endif

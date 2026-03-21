@@ -74,7 +74,11 @@ public final class MIDIDeviceManager: ObservableObject {
         didSet {
             if oldValue != selectedSourceID {
                 reconnectSources()
-                UserDefaults.standard.set(selectedSourceID.map { Int($0) }, forKey: Self.udKeySource)
+                // Only persist an explicit user choice (non-nil). Nil means "device temporarily
+                // unavailable" — clearing UserDefaults would prevent restore when it reappears.
+                if let id = selectedSourceID {
+                    UserDefaults.standard.set(Int(id), forKey: Self.udKeySource)
+                }
             }
         }
     }
@@ -84,7 +88,11 @@ public final class MIDIDeviceManager: ObservableObject {
     @Published public var selectedDestinationID: MIDIUniqueID? {
         didSet {
             if oldValue != selectedDestinationID {
-                UserDefaults.standard.set(selectedDestinationID.map { Int($0) }, forKey: Self.udKeyDestination)
+                // Only persist an explicit user choice (non-nil). Nil means "device temporarily
+                // unavailable" — clearing UserDefaults would prevent restore when it reappears.
+                if let id = selectedDestinationID {
+                    UserDefaults.standard.set(Int(id), forKey: Self.udKeyDestination)
+                }
             }
         }
     }
@@ -138,14 +146,14 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Restores the previously-persisted source/destination selection from UserDefaults.
     /// Called once during init, after `refreshEndpoints()` has populated `sources`/`destinations`.
     private func restorePersistedSelection() {
-        if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int {
-            let id = MIDIUniqueID(raw)
+        if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
             if sources.contains(where: { $0.id == id }) {
                 selectedSourceID = id
             }
         }
-        if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int {
-            let id = MIDIUniqueID(raw)
+        if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
             if destinations.contains(where: { $0.id == id }) {
                 selectedDestinationID = id
             }
@@ -182,15 +190,15 @@ public final class MIDIDeviceManager: ObservableObject {
         // (handles the case where the previously-selected device appears after launch
         // due to a CoreMIDI topology change / hot-plug event).
         if selectedSourceID == nil,
-           let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int {
-            let id = MIDIUniqueID(raw)
+           let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
             if sources.contains(where: { $0.id == id }) {
                 selectedSourceID = id
             }
         }
         if selectedDestinationID == nil,
-           let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int {
-            let id = MIDIUniqueID(raw)
+           let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
+           let id = MIDIUniqueID(exactly: raw) {
             if destinations.contains(where: { $0.id == id }) {
                 selectedDestinationID = id
             }
