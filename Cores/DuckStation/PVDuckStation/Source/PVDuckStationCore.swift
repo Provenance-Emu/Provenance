@@ -17,13 +17,22 @@ import PVEmulatorCore
 open class PVDuckStationCore: PVEmulatorCore, @unchecked Sendable {
 
     // MARK: Lifecycle
-    
+
     let _bridge: PVDuckStationCoreBridge = .init()
 
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
+
+    // MARK: - RetroAchievements backing storage
+
+    /// Weak reference to the OSD delegate (stored here because Swift extensions
+    /// cannot add stored properties).
+    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
+
+    /// Hardcore mode flag.
+    var _hardcoreMode: Bool = false
 }
 
 extension PVDuckStationCore: PVPSXSystemResponderClient {
