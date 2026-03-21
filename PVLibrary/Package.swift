@@ -227,6 +227,7 @@ let package = Package(
                 "PVLookup",
                 "PVPrimitives",
                 .product(name: "RealmSwift", package: "realm-swift"),
+                .product(name: "ZipArchive", package: "ZipArchive"),
             ]
         ),
     ],

@@ -102,9 +102,9 @@ public final class SaveExporter: @unchecked Sendable {
             throw SaveExportError.noSavesFound
         }
 
-        // Create staging directory
+        // Create staging directory (UUID suffix ensures uniqueness for concurrent exports)
         let stagingDir = fm.temporaryDirectory
-            .appendingPathComponent("PVSaveExport_\(Int(Date().timeIntervalSince1970))", isDirectory: true)
+            .appendingPathComponent("PVSaveExport_\(Int(Date().timeIntervalSince1970))_\(UUID().uuidString)", isDirectory: true)
         defer { try? fm.removeItem(at: stagingDir) }
 
         try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
@@ -205,8 +205,9 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         let fm = FileManager.default
+        // UUID suffix ensures uniqueness for concurrent or rapid-successive imports
         let tempDir = fm.temporaryDirectory
-            .appendingPathComponent("PVSaveImport_\(Int(Date().timeIntervalSince1970))", isDirectory: true)
+            .appendingPathComponent("PVSaveImport_\(Int(Date().timeIntervalSince1970))_\(UUID().uuidString)", isDirectory: true)
         defer { try? fm.removeItem(at: tempDir) }
 
         try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
@@ -252,6 +253,8 @@ public final class SaveExporter: @unchecked Sendable {
         let srcStates = tempDir.appendingPathComponent("states", isDirectory: true)
         if fm.fileExists(atPath: srcStates.path) {
             let destStates = Paths.saveStatePath(forROM: romURL)
+            // Ensure destination directory exists before copying individual files
+            try fm.createDirectory(at: destStates, withIntermediateDirectories: true)
             let stateFiles = (try? fm.contentsOfDirectory(atPath: srcStates.path)) ?? []
             for fileName in stateFiles {
                 let src = srcStates.appendingPathComponent(fileName)

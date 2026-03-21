@@ -368,26 +368,20 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         do {
             let url = try await SaveExporter.shared.exportSaves(for: game)
 #if os(tvOS)
-            // tvOS: copy to Documents/Exports on a background task to avoid blocking the main thread
-            let delegate = rootDelegate
-            Task.detached {
-                let exportsDir = URL.documentsPath.appendingPathComponent("Exports", isDirectory: true)
-                do {
-                    try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
-                    let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
-                    if FileManager.default.fileExists(atPath: destURL.path) {
-                        try FileManager.default.removeItem(at: destURL)
-                    }
-                    try FileManager.default.moveItem(at: url, to: destURL)
-                    await MainActor.run {
-                        delegate?.showMessage("Saves exported to Documents/Exports/\(url.lastPathComponent)", title: "Export Complete")
-                    }
-                } catch {
-                    SaveExporter.shared.cleanupExport(at: url)
-                    await MainActor.run {
-                        delegate?.showMessage("Export failed: \(error.localizedDescription)", title: "Error")
-                    }
+            // tvOS: move zip to Documents/Exports. The heavy zip work already ran off the main
+            // actor inside SaveExporter.exportSaves(), so the remaining file move is minimal.
+            let exportsDir = URL.documentsPath.appendingPathComponent("Exports", isDirectory: true)
+            do {
+                try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
+                let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
+                if FileManager.default.fileExists(atPath: destURL.path) {
+                    try FileManager.default.removeItem(at: destURL)
                 }
+                try FileManager.default.moveItem(at: url, to: destURL)
+                rootDelegate?.showMessage("Saves exported to Documents/Exports/\(url.lastPathComponent)", title: "Export Complete")
+            } catch {
+                SaveExporter.shared.cleanupExport(at: url)
+                rootDelegate?.showMessage("Export failed: \(error.localizedDescription)", title: "Error")
             }
 #else
             await MainActor.run {

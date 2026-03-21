@@ -31,6 +31,7 @@ public struct GameContextMenu: View {
     // Cache computed properties
     @State private var availableCores: [PVCore] = []
     @State private var hasSaveStates: Bool = false
+    @State private var hasBatterySaves: Bool = false
     @State private var hasCloudRecord: Bool = false
     @State private var isDownloaded: Bool = true
     @Default(.iCloudSync) private var iCloudSyncEnabled
@@ -57,6 +58,11 @@ public struct GameContextMenu: View {
             !(AppState.shared.isAppStore && $0.appStoreDisabled)
         } ?? [])
         _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
+        let batterySavesDir = Paths.batterySavesPath(forROM: game.file?.url)
+        let fm = FileManager.default
+        let batteryDirExists = fm.fileExists(atPath: batterySavesDir.path)
+        let batteryHasFiles = batteryDirExists && ((try? fm.contentsOfDirectory(atPath: batterySavesDir.path))?.isEmpty == false)
+        _hasBatterySaves = State(initialValue: batteryHasFiles)
         _hasCloudRecord = State(initialValue: game.cloudRecordID != nil)
         _isDownloaded = State(initialValue: game.isDownloaded)
     }
@@ -156,7 +162,7 @@ public struct GameContextMenu: View {
                 } label: {
                     Label("Export Saves", systemImage: "square.and.arrow.up")
                 }
-                .disabled(game.file == nil && game.saveStates.isEmpty)
+                .disabled(!hasSaveStates && !hasBatterySaves)
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {
