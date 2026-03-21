@@ -27,17 +27,14 @@
 #import <Foundation/Foundation.h>
 @import CoreGraphics;
 @import PVCoreObjCBridge;
+@import PVCoreBridge; // for LightGunResponder
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @protocol ObjCBridgedCoreBridge;
 @protocol PVNESSystemResponderClient;
-@protocol LightGunResponder;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVFCEUEmulatorCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVNESSystemResponderClient, LightGunResponder> {
-#pragma clang diagnostic pop
 
     uint32_t pad[2][12];
 
@@ -46,7 +43,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
     CGPoint  _lightGunPosition;
     BOOL     _lightGunTrigger;
     BOOL     _lightGunIsOffscreen;
-    BOOL     _zapperEnabled; // YES when the loaded ROM uses a Zapper on port 1
+    BOOL     _zapperEnabled; // YES when the loaded ROM uses a Zapper (port 0 or 1)
 }
 
 - (void)internalSwapDisc:(NSUInteger)discNumber;
