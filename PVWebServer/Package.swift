@@ -44,29 +44,41 @@ let package = Package(
 
     // MARK: - Targets
     targets: [
+        // ObjC target: GCDWebServer library + PVWebServer ObjC wrapper
         .target(
-            name: "PVWebServer",
+            name: "PVWebServerObjC",
             dependencies: [
                 "PVLogging",
-                "PVSupport",
                 "PVObjCUtils",
-                .product(name: "Hummingbird", package: "hummingbird"),
             ],
+            path: "Sources/PVWebServer",
             resources: [
                 .copy("Resources/GCDWebUploader.bundle")
             ],
+            publicHeadersPath: "include",
             cSettings: [
+                .headerSearchPath("."),
                 .headerSearchPath("GCDWebServer/Core/"),
                 .headerSearchPath("GCDWebServer/Requests/"),
                 .headerSearchPath("GCDWebServer/Responses/"),
                 .headerSearchPath("GCDWebDAVServer/"),
                 .headerSearchPath("GCDWebUploader/")
-
             ],
             linkerSettings: [
                 .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst, .visionOS])),
                 .linkedFramework("AppKit", .when(platforms: [.macOS])),
             ]
+        ),
+        // Swift target: high-level manager and protocol wrappers
+        .target(
+            name: "PVWebServer",
+            dependencies: [
+                "PVWebServerObjC",
+                "PVLogging",
+                "PVSupport",
+                .product(name: "Hummingbird", package: "hummingbird"),
+            ],
+            path: "Sources/PVWebServerSwift"
         ),
 
         // MARK: SwiftPM tests
