@@ -685,6 +685,18 @@ static void writeSaveFile(const char* path, int type)
             default:
                 break;
         }}
+        // Standard MFi extended gamepad mapping for Sega 32X (non-M30 layout).
+        // All 6 face buttons (A/B/C/X/Y/Z), Mode, and Start are fully accessible:
+        //   D-pad up/down/left/right  → D-pad (with left-thumbstick fallback)
+        //   buttonX                   → Genesis/32X A  (face, top-left position)
+        //   buttonA                   → Genesis/32X B  (face, bottom)
+        //   buttonB                   → Genesis/32X C  (face, bottom-right)
+        //   buttonY                   → Genesis/32X X  (face, top-right)
+        //   leftShoulder  (L1)        → Genesis/32X Y
+        //   rightShoulder (R1)        → Genesis/32X Z
+        //   rightTrigger  (R2)        → Genesis/32X Start
+        //   leftTrigger   (L2)        → Genesis/32X Mode
+        // No modifier combo is required: all 8 Genesis/32X inputs map to distinct physical buttons.
         { switch (buttonID) {
             case PVSega32XButtonUp:
                 return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
@@ -713,6 +725,38 @@ static void writeSaveFile(const char* path, int type)
             default:
                 break;
         }}
+    } else if ([controller gamepad]) {
+        GCGamepad *gamepad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
+        switch (buttonID) {
+            case PVSega32XButtonUp:
+                return [[dpad up] isPressed];
+            case PVSega32XButtonDown:
+                return [[dpad down] isPressed];
+            case PVSega32XButtonLeft:
+                return [[dpad left] isPressed];
+            case PVSega32XButtonRight:
+                return [[dpad right] isPressed];
+            case PVSega32XButtonA:
+                return [[gamepad buttonX] isPressed] && !modifierPressed;
+            case PVSega32XButtonB:
+                return [[gamepad buttonA] isPressed] && !modifierPressed;
+            case PVSega32XButtonC:
+                return [[gamepad buttonB] isPressed] && !modifierPressed;
+            case PVSega32XButtonX:
+                return [[gamepad buttonY] isPressed];
+            case PVSega32XButtonY:
+                return [[gamepad leftShoulder] isPressed] && !modifierPressed;
+            case PVSega32XButtonZ:
+                return [[gamepad rightShoulder] isPressed] && !modifierPressed;
+            case PVSega32XButtonStart:
+                return modifierPressed && [[gamepad buttonA] isPressed];
+            case PVSega32XButtonMode:
+                return modifierPressed && [[gamepad buttonB] isPressed];
+            default:
+                break;
+        }
     }
 #if TARGET_OS_TV
     else if ([controller microGamepad])

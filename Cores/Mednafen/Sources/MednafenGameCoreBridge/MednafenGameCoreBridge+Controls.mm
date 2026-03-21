@@ -511,12 +511,14 @@
                 case PVSaturnButtonB:
                     return [[gamepad buttonB] isPressed];
                 case PVSaturnButtonC:
+                    // C button: left shoulder (L1)
                     return [[gamepad leftShoulder] isPressed];
                 case PVSaturnButtonX:
                     return [[gamepad buttonX] isPressed];
                 case PVSaturnButtonY:
                     return [[gamepad buttonY] isPressed];
                 case PVSaturnButtonZ:
+                    // Z button: right shoulder (R1)
                     return [[gamepad rightShoulder] isPressed];
                 case PVSaturnButtonL:
                     return [[gamepad leftTrigger] isPressed];
@@ -546,27 +548,34 @@
     } else if ([controller gamepad]) {
         GCGamepad *gamepad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+        bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
         switch (buttonID) {
             case PVSaturnButtonUp:
-                return [[dpad up] isPressed];
+                return [[dpad up] isPressed] && !modifierPressed;
             case PVSaturnButtonDown:
-                return [[dpad down] isPressed];
+                return [[dpad down] isPressed] && !modifierPressed;
             case PVSaturnButtonLeft:
                 return [[dpad left] isPressed];
             case PVSaturnButtonRight:
                 return [[dpad right] isPressed];
             case PVSaturnButtonA:
-                return [[gamepad buttonA] isPressed];
+                return [[gamepad buttonA] isPressed] && !modifierPressed;
             case PVSaturnButtonB:
                 return [[gamepad buttonB] isPressed];
             case PVSaturnButtonC:
-                return [[gamepad leftShoulder] isPressed];
+                return [[gamepad leftShoulder] isPressed] && !modifierPressed;
             case PVSaturnButtonX:
                 return [[gamepad buttonX] isPressed];
             case PVSaturnButtonY:
                 return [[gamepad buttonY] isPressed];
             case PVSaturnButtonZ:
-                return [[gamepad rightShoulder] isPressed];
+                return [[gamepad rightShoulder] isPressed] && !modifierPressed;
+            case PVSaturnButtonL:
+                return modifierPressed && [[dpad up] isPressed];
+            case PVSaturnButtonR:
+                return modifierPressed && [[dpad down] isPressed];
+            case PVSaturnButtonStart:
+                return self.isStartPressed || (modifierPressed && [[gamepad buttonA] isPressed]);
             default:
                 break;
         }

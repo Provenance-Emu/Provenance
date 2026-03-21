@@ -408,7 +408,21 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:port
 				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_L
 				 action:(pressed?1:0)];
-                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(pressed?1.0:0.0)];
+                    // GC mode: when both triggers held simultaneously, fire BUTTON_Z.
+                    // Both trigger axes are suppressed during the combo and restored correctly
+                    // regardless of which trigger was pressed first.
+                    // Z is only released if neither the combo nor R3 is holding it.
+                    if (!self.isWii) {
+                        bool rightTriggerHeld = controller.extendedGamepad.rightTrigger.isPressed;
+                        bool zCombo = pressed && rightTriggerHeld;
+                        bool r3HeldZ = controller.extendedGamepad.rightThumbstickButton.isPressed;
+                        bool zActive = zCombo || r3HeldZ;
+                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zActive?1:0)];
+                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(zCombo?0.0:(pressed?1.0:0.0))];
+                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(zCombo?0.0:(rightTriggerHeld?1.0:0.0))];
+                    } else {
+                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(pressed?1.0:0.0)];
+                    }
 			};
 						controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:pressed?1.0:0];
@@ -417,7 +431,21 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:port
 				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_R
 				 action:(pressed?1:0)];
-                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
+                    // GC mode: when both triggers held simultaneously, fire BUTTON_Z.
+                    // Both trigger axes are suppressed during the combo and restored correctly
+                    // regardless of which trigger was pressed first.
+                    // Z is only released if neither the combo nor R3 is holding it.
+                    if (!self.isWii) {
+                        bool leftTriggerHeld = controller.extendedGamepad.leftTrigger.isPressed;
+                        bool zCombo = pressed && leftTriggerHeld;
+                        bool r3HeldZ = controller.extendedGamepad.rightThumbstickButton.isPressed;
+                        bool zActive = zCombo || r3HeldZ;
+                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zActive?1:0)];
+                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(zCombo?0.0:(pressed?1.0:0.0))];
+                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(zCombo?0.0:(leftTriggerHeld?1.0:0.0))];
+                    } else {
+                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
+                    }
 			};
 			controller.extendedGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     if (rotateControls) {
@@ -512,10 +540,20 @@ s8 joyx[4], joyy[4];
                 [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
                     action:(pressed?1:0)];
 //                [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
-                [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START action:(pressed?1:0)];
-                //GC
-                [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START
-                 action:(pressed?1:0)];
+                if (!self.isWii) {
+                    // GameCube mode: R3 (right thumbstick press) → Z button.
+                    // Also account for the L2+R2 trigger combo: don't release Z if the combo
+                    // is still active when R3 is released.
+                    const float triggerThreshold = 0.5f;
+                    BOOL zFromCombo = (controller.extendedGamepad.leftTrigger.value >= triggerThreshold &&
+                                       controller.extendedGamepad.rightTrigger.value >= triggerThreshold);
+                    const int zAction = (pressed || zFromCombo) ? 1 : 0;
+                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:zAction];
+                } else {
+                    // Wii mode: R3 → Start
+                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START
+                     action:(pressed?1:0)];
+                }
             };
             controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 ILOG(@"Rotating (opt) controls %d\n", rotateControls);
