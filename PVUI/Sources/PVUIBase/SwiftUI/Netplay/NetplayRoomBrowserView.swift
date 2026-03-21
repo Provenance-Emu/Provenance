@@ -182,7 +182,7 @@ public struct NetplayRoomBrowserView: View {
         isJoining = true
         Task {
             do {
-                let settings = NetplaySettings.defaultLAN
+                let settings = NetplaySettings.fromStoredDefaults()
                 if spectate {
                     try await netplay.spectate(room: room)
                 } else {
