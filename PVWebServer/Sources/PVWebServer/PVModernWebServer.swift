@@ -297,13 +297,31 @@ private extension PVModernWebServer {
             return Response(status: .badRequest)
         }
 
+        let responseBody: String
+        if let jsonData = try? JSONSerialization.data(withJSONObject: ["uploaded": savedFiles.count]),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            responseBody = jsonString
+        } else {
+            responseBody = "{\"uploaded\":\(savedFiles.count)}"
+        }
+
         return Response(
             status: .ok,
             headers: [.contentType: "application/json"],
-            body: .init(byteBuffer: ByteBuffer(string: "{\"uploaded\":\(savedFiles.count)}"))
+            body: .init(byteBuffer: ByteBuffer(string: responseBody))
         )
     }
 }
+
+// MARK: - WebDAV HTTP field/method constants
+// Pre-validated at compile time — these are known RFC-compliant token strings.
+// Defining them once at module scope avoids per-request force-unwraps and makes
+// any future breakage visible immediately at startup rather than at request time.
+
+/// Custom "DAV" WebDAV capability header. Valid HTTP token — init always succeeds.
+private let kWebDAVFieldNameDAV: HTTPField.Name? = HTTPField.Name("DAV")
+/// Standard "Allow" HTTP header. Valid HTTP token — init always succeeds.
+private let kWebDAVFieldNameAllow: HTTPField.Name? = HTTPField.Name("Allow")
 
 // MARK: - WebDAV Server
 
@@ -331,18 +349,20 @@ private extension PVModernWebServer {
         let router = Router()
 
         // OPTIONS — advertise WebDAV class 1 support
-        router.on("/**", method: .options) { _, _ in
-            Response(
-                status: .ok,
-                headers: [
-                    HTTPField.Name("DAV")!: "1",
-                    HTTPField.Name("Allow")!: "OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL"
-                ]
-            )
+        router.on("/**", method: .options) { _, _ -> Response in
+            var headers = HTTPFields()
+            if let dav = kWebDAVFieldNameDAV   { headers[dav]   = "1" }
+            if let allow = kWebDAVFieldNameAllow {
+                headers[allow] = "OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL"
+            }
+            return Response(status: .ok, headers: headers)
         }
 
         // PROPFIND — directory/file property listing (WebDAV class 1)
-        router.on("/**", method: HTTPRequest.Method("PROPFIND")!) { [weak self] request, context -> Response in
+        // HTTPRequest.Method(String) is non-failable in swift-http-types 1.x;
+        // the explicit construction is kept for clarity on non-standard methods.
+        let propfindMethod = HTTPRequest.Method("PROPFIND")
+        router.on("/**", method: propfindMethod) { [weak self] request, context -> Response in
             guard let self else { return Response(status: .internalServerError) }
             return self.handlePROPFIND(request: request, context: context, uploadDirectory: uploadDirectory)
         }
@@ -403,7 +423,8 @@ private extension PVModernWebServer {
         }
 
         // MKCOL — create directory
-        router.on("/**", method: HTTPRequest.Method("MKCOL")!) { [weak self] _, context -> Response in
+        let mkcolMethod = HTTPRequest.Method("MKCOL")
+        router.on("/**", method: mkcolMethod) { [weak self] _, context -> Response in
             let path = context.parameters.get("**") ?? ""
             guard let self,
                   let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
