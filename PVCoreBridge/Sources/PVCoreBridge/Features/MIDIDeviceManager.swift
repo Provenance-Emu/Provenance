@@ -20,7 +20,7 @@
 
 import Foundation
 
-#if canImport(CoreMIDI)
+#if canImport(CoreMIDI) && !os(tvOS)
 import CoreMIDI
 import Combine
 
@@ -327,7 +327,7 @@ public final class MIDIDeviceManager: ObservableObject {
                     }
                 }
             }
-            current = MIDIEventPacketNext(current)
+            current = UnsafePointer(MIDIEventPacketNext(UnsafeMutablePointer(mutating: current)))
         }
 
         guard !events.isEmpty else { return }
@@ -444,4 +444,4 @@ public final class MIDIDeviceManager: ObservableObject {
     }
 }
 
-#endif // canImport(CoreMIDI)
+#endif // canImport(CoreMIDI) && !os(tvOS)
