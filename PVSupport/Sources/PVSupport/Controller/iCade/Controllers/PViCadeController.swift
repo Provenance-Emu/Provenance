@@ -87,13 +87,11 @@ public class PViCadeController: GCController {
         reader.shared.buttonDownHandler = { [weak self] button in
             guard let `self` = self else { return }
 
-            let dpad = self.iCadeGamepad.dpad
-            
             switch button {
             case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
                 DLOG("Pad Changed: \(button)")
-                Task {
-                    await dpad.padChanged()
+                Task { @MainActor [weak self] in
+                    await self?.iCadeGamepad.dpad.padChanged()
                 }
             default:
                 if let button = self.button(forState: button) {
@@ -113,13 +111,11 @@ public class PViCadeController: GCController {
         reader.shared.buttonUpHandler = { [weak self] button in
             guard let `self` = self else { return }
 
-            let dpad = self.iCadeGamepad.dpad
-
             switch button {
             case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
                 DLOG("Pad Changed: \(button)")
-                Task {
-                    await dpad.padChanged()
+                Task { @MainActor [weak self] in
+                    await self?.iCadeGamepad.dpad.padChanged()
                 }
             default:
                 if let button = self.button(forState: button) {
