@@ -21,20 +21,20 @@ import Combine
 import PVNetplay
 import ObjectiveC
 
-// MARK: - Sendable
-
-// PVPPSSPPCore is an ObjC-backed class. Netplay-state mutation is serialised on
-// the main thread (same thread that drives the emulator run loop).
-extension PVPPSSPPCore: @unchecked Sendable {}
-
 // MARK: - Session context storage
 
 private final class PPSSPPNetplayContext {
     let role: NetplayRole
     let settings: NetplaySettings
+    /// Stable IDs for the lifetime of this session so NetplayState equality
+    /// checks (via UUID comparison) remain stable between timer ticks.
+    let roomID: UUID
+    let sessionID: UUID
     init(role: NetplayRole, settings: NetplaySettings) {
         self.role = role
         self.settings = settings
+        self.roomID = UUID()
+        self.sessionID = UUID()
     }
 }
 
@@ -82,17 +82,18 @@ private extension PVPPSSPPCore {
             let ctx = lastNetplayContext
             let settings = ctx?.settings
             let port: UInt16 = settings?.port ?? NetplaySettings.defaultLAN.port
-            let room = NetplayRoom.ppssppRoom(address: "127.0.0.1", port: port, context: ctx)
+            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: "127.0.0.1", port: port, context: ctx)
             return .hosting(room: room)
         case .connected:
             let ctx = lastNetplayContext
             let (host, port) = ctx?.role.clientAddress ?? ("0.0.0.0", NetplaySettings.defaultLAN.port)
-            let room = NetplayRoom.ppssppRoom(address: host, port: port, context: ctx)
+            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: host, port: port, context: ctx)
             let session = NetplaySession(
+                id: ctx?.sessionID ?? UUID(),
                 room: room,
                 role: .client(host: host, port: port),
                 peers: [],
-                frameDelay: 0,
+                frameDelay: ctx?.settings.frameDelay ?? 0,
                 isRollbackEnabled: false
             )
             return .connected(session: session)
@@ -123,7 +124,12 @@ extension PVPPSSPPCore: PVNetplayCapable {
             let ok: Bool
             switch role {
             case .host:
-                ok = _bridge.startAdhocLANHost(error: &error)
+                if let relay = settings.relayServer {
+                    // WAN mode: connect to external relay server rather than hosting locally.
+                    ok = _bridge.connectToAdhocServer(relay, error: &error)
+                } else {
+                    ok = _bridge.startAdhocLANHost(error: &error)
+                }
             case .client(let host, _):
                 ok = _bridge.connectToAdhocServer(host, error: &error)
             case .spectator(let host, _):
@@ -172,6 +178,7 @@ private extension NetplayRole {
 private extension NetplayRoom {
     /// Builds a room descriptor from available PPSSPP context.
     static func ppssppRoom(
+        id: UUID = UUID(),
         address: String,
         port: UInt16,
         context: PPSSPPNetplayContext?
@@ -181,10 +188,11 @@ private extension NetplayRoom {
         let isPasswordProtected = !(settings?.password?.isEmpty ?? true)
         let allowsSpectators = settings?.allowSpectators ?? false
         return NetplayRoom(
+            id: id,
             hostName: nickname ?? "PPSSPP",
             gameName: "",
             gameHash: "",
-            coreIdentifier: "com.provenance.ppsspp",
+            coreIdentifier: CorePlist.pvCoreIdentifier,
             maxPlayers: settings?.maxPlayers ?? 2,
             currentPlayers: 1,
             isLAN: settings?.relayServer == nil,

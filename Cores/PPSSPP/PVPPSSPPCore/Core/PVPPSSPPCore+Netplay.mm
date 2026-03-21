@@ -18,7 +18,6 @@ NSErrorDomain const PVPPSSPPAdhocErrorDomain = @"org.provenance-emu.ppsspp.adhoc
 // ---------------------------------------------------------------------------
 
 static const char kAdhocStatusKey  = 0;
-static const char kAdhocAddressKey = 0;
 
 @implementation PVPPSSPPCoreBridge (Netplay)
 
@@ -31,7 +30,7 @@ static const char kAdhocAddressKey = 0;
 
 - (void)setAdhocStatus:(PVPPSSPPAdhocStatus)status {
     objc_setAssociatedObject(self, &kAdhocStatusKey,
-                             @(status), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                             @(status), OBJC_ASSOCIATION_RETAIN);
 }
 
 - (nullable NSString *)adhocServerAddress {
@@ -54,6 +53,17 @@ static const char kAdhocAddressKey = 0;
                                          code:PVPPSSPPAdhocErrorAlreadyActive
                                      userInfo:@{
                 NSLocalizedDescriptionKey: @"An adhoc session is already active."
+            }];
+        }
+        return NO;
+    }
+
+    if (!_isInitialized) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVPPSSPPAdhocErrorDomain
+                                         code:PVPPSSPPAdhocErrorNotReady
+                                     userInfo:@{
+                NSLocalizedDescriptionKey: @"The PPSSPP core is not ready to start adhoc networking."
             }];
         }
         return NO;
@@ -88,6 +98,17 @@ static const char kAdhocAddressKey = 0;
                                          code:PVPPSSPPAdhocErrorAlreadyActive
                                      userInfo:@{
                 NSLocalizedDescriptionKey: @"An adhoc session is already active."
+            }];
+        }
+        return NO;
+    }
+
+    if (!_isInitialized) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVPPSSPPAdhocErrorDomain
+                                         code:PVPPSSPPAdhocErrorNotReady
+                                     userInfo:@{
+                NSLocalizedDescriptionKey: @"The core is not ready to use adhoc networking yet."
             }];
         }
         return NO;
