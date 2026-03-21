@@ -34,12 +34,19 @@ public struct NetplayJoinConfirmView: View {
     var onConfirm: () -> Void
     var onCancel: () -> Void
 
-    private var hashesMatch: Bool {
-        !localGameHash.isEmpty &&
-        !room.gameHash.isEmpty &&
-        localGameHash.lowercased() == room.gameHash.lowercased()
+    /// Three-state ROM verification result.
+    private enum HashVerification {
+        case match
+        case mismatch
+        case unknown
     }
 
+    private var hashVerification: HashVerification {
+        guard !localGameHash.isEmpty && !room.gameHash.isEmpty else { return .unknown }
+        return localGameHash.lowercased() == room.gameHash.lowercased() ? .match : .mismatch
+    }
+
+    private var hashesMatch: Bool { hashVerification == .match }
     private var localHashUnknown: Bool { localGameHash.isEmpty }
     private var remoteHashUnknown: Bool { room.gameHash.isEmpty }
 
@@ -81,11 +88,11 @@ public struct NetplayJoinConfirmView: View {
                     Button("Cancel", role: .cancel, action: onCancel)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(hashesMatch ? "Join" : "Join Anyway") {
+                    Button(hashVerification == .mismatch ? "Join Anyway" : "Join") {
                         onConfirm()
                     }
-                    .fontWeight(hashesMatch ? .bold : .regular)
-                    .tint(hashesMatch ? .accentColor : .orange)
+                    .fontWeight(hashVerification == .match ? .bold : .regular)
+                    .tint(hashVerification == .mismatch ? .orange : .accentColor)
                 }
             }
         }
