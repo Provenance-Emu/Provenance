@@ -11,9 +11,6 @@ import SwiftUI
 import PVNetplay
 import PVFeatureFlags
 
-// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
-private typealias Section = SwiftUI.Section
-
 /// Persistent keys for netplay user defaults.
 private enum NetplayDefaultsKey {
     static let nickname         = "netplay.nickname"
@@ -91,14 +88,14 @@ public struct NetplaySettingsView: View {
     // MARK: - Sections
 
     private var playerProfileSection: some View {
-        Section("Player Profile") {
+        SwiftUI.Section("Player Profile") {
             TextField("Nickname", text: $nickname)
                 .autocorrectionDisabled()
         }
     }
 
     private var connectionSection: some View {
-        Section {
+        SwiftUI.Section {
             portRow
             TextField("Relay Server (empty for LAN only)", text: $relayServer)
                 .autocorrectionDisabled()
@@ -139,7 +136,7 @@ public struct NetplaySettingsView: View {
     }
 
     private var performanceSection: some View {
-        Section {
+        SwiftUI.Section {
             NetplayStepperView(label: "Frame Delay", value: $frameDelay, in: 0...10)
         } header: {
             Text("Performance")
@@ -149,7 +146,7 @@ public struct NetplaySettingsView: View {
     }
 
     private var hostingDefaultsSection: some View {
-        Section("Hosting Defaults") {
+        SwiftUI.Section("Hosting Defaults") {
             NetplayStepperView(label: "Max Players", value: $maxPlayers, in: 2...4)
             Toggle("Allow Spectators", isOn: $allowSpectators)
         }

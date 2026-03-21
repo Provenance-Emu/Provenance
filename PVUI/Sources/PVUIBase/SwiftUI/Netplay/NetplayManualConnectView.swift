@@ -10,11 +10,9 @@
 import SwiftUI
 import PVNetplay
 
-// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
-private typealias Section = SwiftUI.Section
-
 /// Manual IP + port connection form for joining a netplay room
 /// when Bonjour discovery doesn't find the host (e.g. different subnet).
+
 @MainActor
 public struct NetplayManualConnectView: View {
     let gameName: String
@@ -49,7 +47,7 @@ public struct NetplayManualConnectView: View {
     public var body: some View {
         NavigationStack {
             Form {
-                Section("Host Details") {
+                SwiftUI.Section("Host Details") {
                     TextField("IP Address or Hostname", text: $hostAddress)
                         .autocorrectionDisabled()
                         #if canImport(UIKit)
@@ -73,7 +71,7 @@ public struct NetplayManualConnectView: View {
                     }
                 }
 
-                Section("Options") {
+                SwiftUI.Section("Options") {
                     #if os(tvOS)
                     HStack {
                         Text("Frame Delay: \(frameDelay)")
@@ -101,7 +99,7 @@ public struct NetplayManualConnectView: View {
                     Toggle("Connect as Spectator", isOn: $spectate)
                 }
 
-                Section {
+                SwiftUI.Section {
                     Button {
                         connect()
                     } label: {

@@ -13,9 +13,6 @@ import PVNetplay
 import Darwin
 #endif
 
-// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
-private typealias Section = SwiftUI.Section
-
 /// Waiting room shown after a host creates a room, while waiting for players to join.
 ///
 /// Displays the room name, game info, connected players, spectator count,
@@ -144,7 +141,7 @@ public struct NetplayWaitingRoomView: View {
     // MARK: - Sections
 
     private var roomHeaderSection: some View {
-        Section {
+        SwiftUI.Section {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
@@ -183,7 +180,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var connectionInfoSection: some View {
-        Section("Connection Info") {
+        SwiftUI.Section("Connection Info") {
             LabeledContent("Room Name", value: settings.roomName)
             LabeledContent("IP Address") {
                 if localIP.isEmpty {
@@ -218,7 +215,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var playersSection: some View {
-        Section {
+        SwiftUI.Section {
             let hostNickname = settings.nickname.isEmpty ? "You" : settings.nickname
             playerRow(
                 nickname: hostNickname,
@@ -264,7 +261,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var spectatorsSection: some View {
-        Section("Spectators (\(spectatorCount))") {
+        SwiftUI.Section("Spectators (\(spectatorCount))") {
             if spectatorPeers.isEmpty {
                 Text("\(spectatorCount) spectator(s) connected")
                     .foregroundStyle(.secondary)
@@ -284,7 +281,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var startGameSection: some View {
-        Section {
+        SwiftUI.Section {
             Button {
                 startGame()
             } label: {

@@ -13,9 +13,6 @@ import PVNetplay
 import UIKit
 #endif
 
-// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
-private typealias Section = SwiftUI.Section
-
 /// Form for configuring and starting a new netplay room.
 ///
 /// Presents room name, player count, frame delay, spectator settings, and
@@ -46,13 +43,13 @@ public struct NetplayCreateRoomView: View {
         NavigationStack {
             Form {
                 // Game info
-                Section("Game") {
+                SwiftUI.Section("Game") {
                     LabeledContent("Title", value: gameName)
                     LabeledContent("Core", value: coreIdentifier)
                 }
 
                 // Room settings
-                Section("Room Settings") {
+                SwiftUI.Section("Room Settings") {
                     TextField("Room Name", text: $settings.roomName)
                         .autocorrectionDisabled()
 
@@ -66,7 +63,7 @@ public struct NetplayCreateRoomView: View {
                 }
 
                 // Network settings
-                Section("Network") {
+                SwiftUI.Section("Network") {
                     NetplayStepperView(label: "Frame Delay", value: $settings.frameDelay, in: 0...10)
                     HStack {
                         Text("Port")
@@ -85,7 +82,7 @@ public struct NetplayCreateRoomView: View {
                 }
 
                 // Optional password
-                Section("Security") {
+                SwiftUI.Section("Security") {
                     SecureField("Password (optional)", text: Binding(
                         get: { settings.password ?? "" },
                         set: { settings.password = $0.isEmpty ? nil : $0 }
@@ -93,7 +90,7 @@ public struct NetplayCreateRoomView: View {
                 }
 
                 // Start button
-                Section {
+                SwiftUI.Section {
                     Button {
                         startHosting()
                     } label: {
