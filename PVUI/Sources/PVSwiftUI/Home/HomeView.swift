@@ -591,8 +591,8 @@ struct HomeView: SwiftUI.View {
                 consumePendingSearch()
             }
         }
-        // ROM drag & drop import — iOS/iPadOS/macCatalyst only (#3406)
-#if !os(tvOS)
+        // ROM drag & drop import — unavailable on tvOS and watchOS (#3406)
+#if !os(tvOS) && !os(watchOS)
         .romDropTarget()
 #endif
     }
