@@ -27,6 +27,9 @@ public final class EmulationUIState : ObservableObject {
     /// Whether a ReplayKit screen recording session is currently active.
     public var isRecording: Bool = false
 
+    /// Whether a ReplayKit live-broadcast session is currently active.
+    public var isBroadcasting: Bool = false
+
     /// The current game that should be loaded in the emulator scene
     public var currentGame: PVGame? = nil
 
@@ -55,6 +58,7 @@ public final class EmulationUIState : ObservableObject {
             currentCore = nil
             confirmedMismatchSaveStateID = nil
             isRecording = false
+            isBroadcasting = false
         }
         return (core, emulator, currentGame)
     }

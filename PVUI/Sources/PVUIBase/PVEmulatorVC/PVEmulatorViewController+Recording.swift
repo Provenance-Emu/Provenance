@@ -5,12 +5,52 @@
 //  Created by Claude on 3/7/26.
 //
 
-#if os(iOS)
 import UIKit
 import PVLogging
 
-// MARK: - Screen Recording
+// MARK: - Live Broadcast (iOS + tvOS)
 
+#if os(iOS) || os(tvOS)
+extension PVEmulatorViewController {
+
+    /// Whether the device/session supports ReplayKit broadcasting.
+    public var isBroadcastAvailable: Bool {
+        PVBroadcastManager.shared.isAvailable
+    }
+
+    /// Whether a live broadcast session is currently active.
+    /// Single source of truth: reads from `AppState.shared.emulationUIState.isBroadcasting`.
+    public var isBroadcasting: Bool {
+        AppState.shared.emulationUIState.isBroadcasting
+    }
+
+    /// Presents the system broadcast-service picker so the user can start (or stop)
+    /// a live broadcast.  Updates `AppState.shared.emulationUIState.isBroadcasting`
+    /// to reflect the current broadcast state.
+    ///
+    /// - Parameter presenter: The view controller from which to present the picker.
+    ///   Defaults to `self`.
+    public func startBroadcast(from presenter: UIViewController? = nil) {
+        let presentingVC = presenter ?? self
+        PVBroadcastManager.shared.showBroadcastPicker(from: presentingVC)
+        // isBroadcasting state is updated asynchronously via RPBroadcastControllerDelegate
+        ILOG("[Broadcast] Broadcast picker requested from VC")
+    }
+
+    /// Convenience wrapper: stops any active broadcast and clears the UI state flag.
+    /// When no broadcast is active, this is a no-op.
+    public func stopBroadcast() {
+        guard isBroadcasting else { return }
+        // Delegate to manager; state will be cleared via delegate callback
+        PVBroadcastManager.shared.showBroadcastPicker(from: self)
+        ILOG("[Broadcast] Stop broadcast requested from VC")
+    }
+}
+#endif
+
+// MARK: - Screen Recording (iOS only)
+
+#if os(iOS)
 extension PVEmulatorViewController {
 
     /// Whether the device/session supports ReplayKit recording.
