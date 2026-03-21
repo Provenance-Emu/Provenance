@@ -200,15 +200,15 @@ extension PVRecordingManager {
         }
         guard !isClipBuffering else { return }
 
+        // PVRecordingManager is @MainActor-isolated, so we are already on the main
+        // thread — RPScreenRecorder can be called directly without dispatching.
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            DispatchQueue.main.async {
-                RPScreenRecorder.shared().startClipBuffering { error in
-                    if let error {
-                        ELOG("[ClipCapture] startClipBuffering error: \(error.localizedDescription)")
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume()
-                    }
+            RPScreenRecorder.shared().startClipBuffering { error in
+                if let error {
+                    ELOG("[ClipCapture] startClipBuffering error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
                 }
             }
         }
@@ -220,15 +220,14 @@ extension PVRecordingManager {
     @available(iOS 15.0, tvOS 15.0, *)
     public func stopClipBuffering() async {
         guard isClipBuffering else { return }
+        // PVRecordingManager is @MainActor-isolated — call RPScreenRecorder directly.
         let didStop = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
-            DispatchQueue.main.async {
-                RPScreenRecorder.shared().stopClipBuffering { error in
-                    if let error {
-                        ELOG("[ClipCapture] stopClipBuffering error: \(error.localizedDescription)")
-                        continuation.resume(returning: false)
-                    } else {
-                        continuation.resume(returning: true)
-                    }
+            RPScreenRecorder.shared().stopClipBuffering { error in
+                if let error {
+                    ELOG("[ClipCapture] stopClipBuffering error: \(error.localizedDescription)")
+                    continuation.resume(returning: false)
+                } else {
+                    continuation.resume(returning: true)
                 }
             }
         }
@@ -239,7 +238,8 @@ extension PVRecordingManager {
     }
 
     /// Exports the last `duration` seconds from the clip buffer to a temporary file.
-    /// - Returns: URL of the exported clip (caller is responsible for moving/sharing).
+    /// - Returns: URL of the exported clip (caller is responsible for moving/sharing
+    ///   and deleting the temporary file when no longer needed).
     @available(iOS 15.0, tvOS 15.0, *)
     public func exportClip(duration: TimeInterval = 30.0) async throws -> URL {
         guard isClipBuffering else {
@@ -248,15 +248,14 @@ extension PVRecordingManager {
         let outputURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("PVClip_\(UUID().uuidString).mp4")
 
+        // PVRecordingManager is @MainActor-isolated — call RPScreenRecorder directly.
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            DispatchQueue.main.async {
-                RPScreenRecorder.shared().exportClip(to: outputURL, duration: duration) { error in
-                    if let error {
-                        ELOG("[ClipCapture] exportClip error: \(error.localizedDescription)")
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume()
-                    }
+            RPScreenRecorder.shared().exportClip(to: outputURL, duration: duration) { error in
+                if let error {
+                    ELOG("[ClipCapture] exportClip error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
                 }
             }
         }
@@ -277,7 +276,7 @@ extension PVRecordingManager {
             case .unavailable:
                 return "Screen recording is not available on this device or in this session."
             case .clipBufferingNotActive:
-                return "Clip buffering is not active. Start the game to enable clip capture."
+                return "Clip buffering is not active. Enable clip capture first, then try again."
             }
         }
     }
