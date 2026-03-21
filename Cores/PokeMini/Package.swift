@@ -201,7 +201,7 @@ let package = Package(
         .testTarget(
             name: "PVPokeMiniTests",
             dependencies: [
-                "PVPokeMini", "libpokemini", "PokeMiniC", "PVPokeMiniBridge"
+                "PVPokeMini", "libpokemini", "PokeMiniC", "PVPokeMiniBridge", "PVPokeMiniOptions"
             ]
         )
     ],
