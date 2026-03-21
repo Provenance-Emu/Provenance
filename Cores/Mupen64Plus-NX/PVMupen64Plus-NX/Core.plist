@@ -24,6 +24,12 @@
 	</array>
 	<key>PVJITRequirement</key>
 	<string>optional</string>
+	<key>PVCapabilities</key>
+	<array>
+		<string>rumble</string>
+		<string>transferPak</string>
+		<string>enhancedResolution</string>
+	</array>
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>

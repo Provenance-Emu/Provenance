@@ -23,6 +23,10 @@
 		<string>Action Replay v3</string>
 		<string>Action Replay v1/v2</string>
 	</array>
+	<key>PVCapabilities</key>
+	<array>
+		<string>highPerformance</string>
+	</array>
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>

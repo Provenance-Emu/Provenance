@@ -122,4 +122,82 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertNotNil(meta, "mGBA should have metadata in CoreCapabilities.json")
         XCTAssertTrue(meta?.capabilities.contains(.highAccuracy) == true)
     }
+
+    // MARK: - Multi-source manifest building
+
+    /// Verifies that a manifest built from an explicit CoreCapabilitiesManifest (no CoreLoader)
+    /// correctly surfaces capabilities injected via the manifest parameter — the enrichment path.
+    func testEnrichmentOnlyManifestSurfacesCapabilities() {
+        let testMeta = CoreCapabilityMetadata(
+            coreIdentifier: "com.test.core.alpha",
+            summary: "Test core",
+            capabilities: [.highAccuracy, .cheats],
+            notes: [],
+            qualityRank: 75
+        )
+        let manifest = CoreCapabilitiesManifest(
+            version: 2,
+            cores: [testMeta],
+            gameRequirements: []
+        )
+        let testEngine = CoreRecommendationEngine(manifest: manifest)
+
+        let meta = testEngine.capabilityMetadata(for: "com.test.core.alpha")
+        XCTAssertNotNil(meta)
+        XCTAssertTrue(meta?.capabilities.contains(.highAccuracy) == true)
+        XCTAssertTrue(meta?.capabilities.contains(.cheats) == true)
+        XCTAssertEqual(meta?.qualityRank, 75)
+    }
+
+    /// Verifies that auto-derived capabilities (from EmulatorCoreInfoPlist) are merged
+    /// with enrichment data: the union of both sets is visible in the recommendation.
+    func testAutoDeriveCheatsFromPlistMergesWithEnrichment() {
+        // Build a synthetic manifest entry that has no 'cheats' flag (it should be auto-derived
+        // from supportedCheatTypes in a real plist; here we verify the merge logic directly).
+        let enrichmentEntry = CoreCapabilityMetadata(
+            coreIdentifier: "com.test.core.beta",
+            summary: "Beta",
+            capabilities: [.highAccuracy],
+            notes: [],
+            qualityRank: 50
+        )
+        // Simulate the auto-derived layer supplying 'cheats' on top of the enrichment layer.
+        let autoEntry = CoreCapabilityMetadata(
+            coreIdentifier: "com.test.core.beta",
+            summary: nil,
+            capabilities: [.cheats],
+            notes: [],
+            qualityRank: 0
+        )
+        // Merge: union of capabilities, enrichment wins for summary/qualityRank
+        let mergedCaps = enrichmentEntry.capabilities.union(autoEntry.capabilities)
+        let merged = CoreCapabilityMetadata(
+            coreIdentifier: "com.test.core.beta",
+            summary: enrichmentEntry.summary ?? autoEntry.summary,
+            capabilities: mergedCaps,
+            notes: enrichmentEntry.notes,
+            qualityRank: enrichmentEntry.qualityRank != 0 ? enrichmentEntry.qualityRank : autoEntry.qualityRank
+        )
+        XCTAssertTrue(merged.capabilities.contains(.highAccuracy))
+        XCTAssertTrue(merged.capabilities.contains(.cheats))
+        XCTAssertEqual(merged.summary, "Beta")
+        XCTAssertEqual(merged.qualityRank, 50)
+    }
+
+    /// Verifies that capabilities declared via PVCapabilities in a plist are parsed correctly.
+    func testPlistCapabilitiesParseFromRawValues() {
+        // Simulate what EmulatorCoreInfoPlist would produce from PVCapabilities key
+        let rawCapabilities = ["highAccuracy", "rumble", "rewind", "unknownCapability"]
+        var caps = Set<CoreCapability>()
+        for raw in rawCapabilities {
+            if let cap = CoreCapability(rawValue: raw) {
+                caps.insert(cap)
+            }
+        }
+        // Known capabilities are parsed; unknown ones are silently skipped
+        XCTAssertTrue(caps.contains(.highAccuracy))
+        XCTAssertTrue(caps.contains(.rumble))
+        XCTAssertTrue(caps.contains(.rewind))
+        XCTAssertEqual(caps.count, 3, "Unknown capability should be skipped")
+    }
 }

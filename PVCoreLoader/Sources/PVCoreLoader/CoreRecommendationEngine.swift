@@ -9,6 +9,7 @@
 import Foundation
 import PVPrimitives
 import PVLogging
+import PVPlists
 
 // MARK: - CoreRecommendation
 
@@ -272,7 +273,118 @@ public final class CoreRecommendationEngine: Sendable {
 
     // MARK: - Manifest loading
 
+    /// Builds the capabilities manifest using a three-layer strategy:
+    ///
+    /// 1. **Auto-derived** — capabilities deduced from each core's `EmulatorCoreInfoPlist`
+    ///    (e.g. `cheats` from `supportedCheatTypes`, `requiresJIT` from `jitRequirementRawValue`,
+    ///    explicit `PVCapabilities` array if present).  This layer is always up-to-date because
+    ///    `CoreLoader` loads it directly from the installed `Core.plist` files at runtime.
+    ///
+    /// 2. **Enrichment** — `CoreCapabilities.json` (bundled in PVCoreLoader) provides editorial
+    ///    data that cannot be auto-derived: `summary`, `qualityRank`, `notes`, and capability
+    ///    flags that require human judgment (e.g. `highAccuracy`, `mouseSupport`).  Enrichment
+    ///    data is merged on top of the auto-derived layer; auto-derived capabilities are never
+    ///    removed by the enrichment layer.
+    ///
+    /// 3. **Fallback** — if `CoreLoader` produces no plists (e.g. in unit tests that don't have
+    ///    a full app bundle), the manifest falls back to `CoreCapabilities.json` alone so that
+    ///    tests and the recommendation engine continue to work.
+    ///
+    /// **Adding a new core:** add a `Core.plist` with `PVSupportedCheatTypes` / `PVCapabilities`
+    /// and the engine will pick it up automatically.  Add a corresponding entry to
+    /// `CoreCapabilities.json` only if you want to supply a `summary`, `qualityRank`, or
+    /// capabilities that can't be expressed in the plist.
     private static func loadManifest() -> CoreCapabilitiesManifest? {
+        // --- Layer 1: auto-derive from Core.plist files loaded at runtime ---
+        let corePlists = CoreLoader.getCorePlists()
+        var allPlists: [EmulatorCoreInfoPlist] = corePlists
+        // Flatten sub-cores (e.g. RetroArch libretro bundles)
+        for plist in corePlists {
+            if let subs = plist.subCores {
+                allPlists.append(contentsOf: subs)
+            }
+        }
+
+        var derivedByID: [String: CoreCapabilityMetadata] = [:]
+        for plist in allPlists {
+            var caps = Set<CoreCapability>()
+
+            // Derive from supportedCheatTypes
+            if !plist.supportedCheatTypes.isEmpty {
+                caps.insert(.cheats)
+            }
+
+            // Derive from JIT requirement
+            if plist.jitRequirementRawValue != nil {
+                caps.insert(.requiresJIT)
+            }
+
+            // Explicit PVCapabilities from Core.plist (authoritative per-core source)
+            for rawValue in plist.capabilities {
+                if let cap = CoreCapability(rawValue: rawValue) {
+                    caps.insert(cap)
+                } else {
+                    WLOG("CoreRecommendationEngine: Unknown PVCapabilities value '\(rawValue)' in Core.plist for \(plist.identifier)")
+                }
+            }
+
+            derivedByID[plist.identifier] = CoreCapabilityMetadata(
+                coreIdentifier: plist.identifier,
+                summary: nil,
+                capabilities: caps,
+                notes: [],
+                qualityRank: 0
+            )
+        }
+
+        // --- Layer 2: enrichment from CoreCapabilities.json ---
+        let enrichmentManifest = loadEnrichmentManifest()
+
+        // Merge: plist-derived as base, JSON as enrichment
+        var mergedCores: [CoreCapabilityMetadata]
+        if !derivedByID.isEmpty {
+            // Start from all identifiers seen across both layers
+            var allIDs = Set(derivedByID.keys)
+            if let enrichment = enrichmentManifest {
+                enrichment.cores.forEach { allIDs.insert($0.coreIdentifier) }
+            }
+
+            mergedCores = allIDs.sorted().compactMap { id in
+                let derived = derivedByID[id]
+                let enriched = enrichmentManifest?.metadata(for: id)
+
+                // If only enrichment knows this core (not yet installed / not in plists),
+                // use it as-is so editorial data is still surfaced.
+                guard let derived else { return enriched }
+
+                // Merge capabilities: union of auto-derived + editorial
+                let mergedCaps = derived.capabilities.union(enriched?.capabilities ?? [])
+
+                return CoreCapabilityMetadata(
+                    coreIdentifier: id,
+                    summary: enriched?.summary ?? derived.summary,
+                    capabilities: mergedCaps,
+                    notes: enriched?.notes ?? derived.notes,
+                    qualityRank: enriched?.qualityRank ?? derived.qualityRank
+                )
+            }
+            ILOG("CoreRecommendationEngine: built manifest from \(derivedByID.count) installed plists + enrichment for \(allIDs.count) total cores")
+        } else {
+            // --- Layer 3: fallback — no plists available (tests / early launch) ---
+            WLOG("CoreRecommendationEngine: no Core.plists available — using CoreCapabilities.json as sole source")
+            guard let enrichment = enrichmentManifest else {
+                ELOG("CoreRecommendationEngine: CoreCapabilities.json also unavailable — no capability data")
+                return nil
+            }
+            return enrichment
+        }
+
+        let gameRequirements = enrichmentManifest?.gameRequirements ?? []
+        return CoreCapabilitiesManifest(version: 2, cores: mergedCores, gameRequirements: gameRequirements)
+    }
+
+    /// Loads `CoreCapabilities.json` as the enrichment/editorial data layer.
+    private static func loadEnrichmentManifest() -> CoreCapabilitiesManifest? {
         guard let url = Bundle.module.url(forResource: "CoreCapabilities", withExtension: "json") else {
             WLOG("CoreCapabilities.json not found in PVCoreLoader bundle")
             return nil
@@ -280,10 +392,10 @@ public final class CoreRecommendationEngine: Sendable {
         do {
             let data = try Data(contentsOf: url)
             let manifest = try JSONDecoder().decode(CoreCapabilitiesManifest.self, from: data)
-            DLOG("Loaded CoreCapabilities.json: \(manifest.cores.count) cores, \(manifest.gameRequirements.count) game requirements")
+            DLOG("CoreRecommendationEngine: loaded CoreCapabilities.json (\(manifest.cores.count) enrichment entries, \(manifest.gameRequirements.count) game requirements)")
             return manifest
         } catch {
-            ELOG("Failed to decode CoreCapabilities.json: \(error)")
+            ELOG("CoreRecommendationEngine: failed to decode CoreCapabilities.json: \(error)")
             return nil
         }
     }
