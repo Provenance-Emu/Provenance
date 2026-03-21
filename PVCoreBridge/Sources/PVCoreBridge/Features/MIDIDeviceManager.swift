@@ -67,7 +67,11 @@ public final class MIDIDeviceManager: ObservableObject {
     @Published public private(set) var destinations: [MIDIEndpointInfo] = []
 
     /// Currently selected MIDI input source (nil = none).
-    @Published public var selectedSourceID: MIDIUniqueID?
+    /// Setting this disconnects all other sources and reconnects only the selected one
+    /// (or all sources when set to nil, enabling auto-detect across every device).
+    @Published public var selectedSourceID: MIDIUniqueID? {
+        didSet { if oldValue != selectedSourceID { reconnectSources() } }
+    }
 
     /// Currently selected MIDI output destination (nil = none).
     @Published public var selectedDestinationID: MIDIUniqueID?
@@ -169,14 +173,17 @@ public final class MIDIDeviceManager: ObservableObject {
         let listPtr = rawPtr.bindMemory(to: MIDIPacketList.self, capacity: 1)
         let packetPtr = MIDIPacketListInit(listPtr)
 
+        var packetAdded = false
         data.withUnsafeBytes { dataBytes in
             guard let baseAddress = dataBytes.baseAddress else { return }
-            _ = MIDIPacketListAdd(
+            let result = MIDIPacketListAdd(
                 listPtr, listSize, packetPtr, 0,
                 dataBytes.count,
                 baseAddress.assumingMemoryBound(to: UInt8.self)
             )
+            packetAdded = (result != nil)
         }
+        guard packetAdded else { return }
 
         let sendStatus = MIDISend(outputPort, destInfo.endpointRef, listPtr)
         if sendStatus == noErr {
@@ -258,6 +265,22 @@ public final class MIDIDeviceManager: ObservableObject {
                 }
             }
         }
+    }
+
+    /// Disconnect all sources from the input port, then reconnect according to the
+    /// current `selectedSourceID`.  Called whenever `selectedSourceID` changes so
+    /// the port only receives events from the user's chosen device (or all devices
+    /// when nil).
+    private func reconnectSources() {
+        let count = MIDIGetNumberOfSources()
+        for i in 0..<count {
+            let src = MIDIGetSource(i)
+            guard src != 0 else { continue }
+            // Ignore errors: kMIDIObjectNotFound is expected for sources that were
+            // never connected (e.g. filtered out on a prior selectedSourceID change).
+            MIDIPortDisconnectSource(inputPort, src)
+        }
+        connectAllSources()
     }
 
     /// Walk an `MIDIEventList` (MIDI 1.0 UMP packets), decode all channel-voice

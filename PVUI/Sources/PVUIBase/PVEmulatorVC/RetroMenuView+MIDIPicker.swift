@@ -26,7 +26,7 @@ extension RetroMenuView {
 
     /// True when the active core reports MIDI peripheral support.
     var coreSupportsMIDI: Bool {
-        (emulatorVC.core as? PVEmulatorCore)?.supportsMIDI ?? false
+        emulatorVC.core.supportsMIDI
     }
 
     /// MIDI section shown inside the CORE tab when the core supports MIDI.
