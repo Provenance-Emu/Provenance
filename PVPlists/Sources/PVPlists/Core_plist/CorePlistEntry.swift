@@ -41,6 +41,23 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     /// Copyright statement(s) for this core.
     /// Mirrors `PVCopyright` key in `Core.plist`.
     public let PVCopyright: String?
+    /// Explicit capability declarations for this core.
+    ///
+    /// Core authors can declare capabilities directly in `Core.plist` using the
+    /// `PVCapabilities` key (a string array of `CoreCapability` raw values).
+    /// This is the authoritative, per-core source.  `CoreCapabilities.json`
+    /// enriches entries that do not declare capabilities here.
+    ///
+    /// Example plist entry:
+    /// ```xml
+    /// <key>PVCapabilities</key>
+    /// <array>
+    ///   <string>highAccuracy</string>
+    ///   <string>cheats</string>
+    ///   <string>rumble</string>
+    /// </array>
+    /// ```
+    public let PVCapabilities: [String]?
 
     public init(
         PVCoreIdentifier: String,
@@ -58,7 +75,8 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
         PVJITDisabledWithoutJIT: Bool? = nil,
         PVLicenseName: String? = nil,
         PVLicenseURL: String? = nil,
-        PVCopyright: String? = nil
+        PVCopyright: String? = nil,
+        PVCapabilities: [String]? = nil
     ) {
         self.PVCoreIdentifier = PVCoreIdentifier
         self.PVPrincipleClass = PVPrincipleClass
@@ -76,6 +94,7 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
         self.PVLicenseName = PVLicenseName
         self.PVLicenseURL = PVLicenseURL
         self.PVCopyright = PVCopyright
+        self.PVCapabilities = PVCapabilities
     }
 }
 
@@ -102,7 +121,8 @@ public extension CorePlistEntry {
             PVJITDisabledWithoutJIT: plist.jitDisabledWithoutJIT ? true : nil,
             PVLicenseName: plist.licenseName,
             PVLicenseURL: plist.licenseURL,
-            PVCopyright: plist.copyright
+            PVCopyright: plist.copyright,
+            PVCapabilities: plist.capabilities.isEmpty ? nil : plist.capabilities
         )
     }
 }
@@ -127,5 +147,6 @@ func ==(lhs: CorePlistEntry, rhs: EmulatorCoreInfoPlist) -> Bool {
     rhs.jitDisabledWithoutJIT == (lhs.PVJITDisabledWithoutJIT ?? false) &&
     rhs.licenseName == lhs.PVLicenseName &&
     rhs.licenseURL == lhs.PVLicenseURL &&
-    rhs.copyright == lhs.PVCopyright
+    rhs.copyright == lhs.PVCopyright &&
+    (rhs.capabilities.isEmpty ? nil : rhs.capabilities) == lhs.PVCapabilities
 }

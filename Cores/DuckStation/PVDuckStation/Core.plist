@@ -22,6 +22,14 @@
 	<array>
 		<string>Game Shark</string>
 	</array>
+	<key>PVCapabilities</key>
+	<array>
+		<string>highAccuracy</string>
+		<string>enhancedResolution</string>
+		<string>rewind</string>
+		<string>runAhead</string>
+		<string>cdAudio</string>
+	</array>
 	<key>PVLicenseName</key>
 	<string>GPL-3.0-only</string>
 	<key>PVLicenseURL</key>

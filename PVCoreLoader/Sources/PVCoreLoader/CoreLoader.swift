@@ -292,7 +292,13 @@ private extension EmulatorCoreInfoPlist {
             contentless: contentless,
             appStoreDisabled: appStoreDisabled,
             supportedCheatTypes: supportedCheatTypes,
-            subCores: subCores ?? self.subCores
+            subCores: subCores ?? self.subCores,
+            jitRequirementRawValue: jitRequirementRawValue,
+            jitDisabledWithoutJIT: jitDisabledWithoutJIT,
+            licenseName: licenseName,
+            licenseURL: licenseURL,
+            copyright: copyright,
+            capabilities: capabilities
         )
     }
 }

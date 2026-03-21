@@ -10,6 +10,7 @@ import PVSupport
 import RealmSwift
 import PVLibrary
 import PVPrimitives
+import PVCoreLoader
 import RxSwift
 import RxRealm
 import PVPlists
@@ -534,65 +535,16 @@ public extension GameLaunchingViewController {
         }
     }
 
-    /// Presents a core selection alert with save state counts for each core
-    /// - Parameters:
-    ///   - game: The game to select a core for
-    ///   - cores: Available cores for the game's system
-    /// - Returns: The selected core, or nil if cancelled
+    /// Persists a core identifier as the system-level default.
     @MainActor
-    func selectCoreWithSaveCounts(game: PVGame, cores: [PVCore]) async -> PVCore? {
-        let items = cores.map { core in
-            let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
-            let subtitle = formatSaveCountSubtitle(saveCount)
-            return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
-        }
-
-        var hasResumed = false
-
-        return await withCheckedContinuation { continuation in
-            Task { @MainActor in
-                // Capture hostingVC so callbacks can dismiss it
-                var hostingVC: UIHostingController<CoreSelectionAlertHostingView>?
-
-                let selectionView = CoreSelectionAlertHostingView(
-                    title: "Select Core",
-                    message: "Choose a core to run \(game.title)",
-                    items: items,
-                    onSelect: { selectedId in
-                        guard !hasResumed else { return }
-                        hasResumed = true
-                        let selectedCore = cores.first { $0.identifier == selectedId }
-                        // Dismiss first, then resume continuation in completion
-                        hostingVC?.dismiss(animated: true) {
-                            continuation.resume(returning: selectedCore)
-                        }
-                    },
-                    onCancel: {
-                        guard !hasResumed else { return }
-                        hasResumed = true
-                        // Dismiss first, then resume continuation in completion
-                        hostingVC?.dismiss(animated: true) {
-                            continuation.resume(returning: nil)
-                        }
-                    }
-                )
-
-                hostingVC = UIHostingController(rootView: selectionView)
-                hostingVC?.modalPresentationStyle = .overFullScreen
-                hostingVC?.modalTransitionStyle = .crossDissolve
-                hostingVC?.view.backgroundColor = .clear
-
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootVC = windowScene.windows.first?.rootViewController {
-                    var topVC = rootVC
-                    while let presented = topVC.presentedViewController {
-                        topVC = presented
-                    }
-                    if let vc = hostingVC {
-                        topVC.present(vc, animated: true)
-                    }
-                }
+    private func setDefaultCore(identifier: String, forSystemId systemId: String) {
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                guard let liveSystem = RomDatabase.sharedInstance.realm.object(ofType: PVSystem.self, forPrimaryKey: systemId) else { return }
+                liveSystem.userPreferredCoreID = identifier
             }
+        } catch {
+            ELOG("Failed to persist default core: \(error)")
         }
     }
 
@@ -728,38 +680,97 @@ public extension GameLaunchingViewController {
                         stack.push(saveView, id: "save-selection-\(selectedCore.identifier)")
                     }
                 } else {
-                    // Show core selection first
-                    let coreItems = cores.map { core in
-                        // Note: saveStates already includes autoSaves
-                        let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
-                        DLOG("[LaunchFlow] Core selection: \(core.projectName) has \(saveCount) saves")
-                        let subtitle = formatSaveCountSubtitle(saveCount)
-                        return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
-                    }
+                    // Show core selection first — smart (with capability chips) or plain
+                    let saveCounts: [String: Int] = Dictionary(uniqueKeysWithValues: cores.map { core in
+                        let count = game.saveStates.filter("core.identifier == %@", core.identifier).count
+                        DLOG("[LaunchFlow] Core selection: \(core.projectName) has \(count) saves")
+                        return (core.identifier, count)
+                    })
 
-                    let coreSelectionView = RetroSelectionAlertView(
-                        title: "Select Core",
-                        message: "Choose a core to run \(game.title)",
-                        items: coreItems,
-                        isPresented: .constant(true),
-                        onSelect: { selectedId in
-                            Task { @MainActor in
-                                if let core = cores.first(where: { $0.identifier == selectedId }) {
-                                    let saveView = createSaveSelectionView(core, true)
-                                    if !flowState.hasResumed {
-                                        stack.push(saveView, id: "save-selection-\(core.identifier)")
-                                    }
+                    // Extract value types from Realm objects before going off the main actor.
+                    let gameTitle = game.title
+                    let systemIdentifier = game.system?.identifier
+                    let md5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+                    let serial = game.romSerial
+                    let coreIdentifiers = cores.map(\.identifier)
+
+                    // Compute recommendations off the main actor to avoid blocking UI during
+                    // first-launch manifest loading (Core.plist scanning + JSON decode).
+                    let recommendations = await Task.detached(priority: .userInitiated) {
+                        CoreRecommendationEngine.shared.recommendations(
+                            gameTitle: gameTitle,
+                            systemIdentifier: systemIdentifier,
+                            md5: md5,
+                            serial: serial,
+                            availableCoreIdentifiers: coreIdentifiers,
+                            saveCounts: saveCounts
+                        )
+                    }.value
+
+                    let handleCoreSelect: (String) -> Void = { selectedId in
+                        Task { @MainActor in
+                            if let core = cores.first(where: { $0.identifier == selectedId }) {
+                                let saveView = createSaveSelectionView(core, true)
+                                if !flowState.hasResumed {
+                                    stack.push(saveView, id: "save-selection-\(core.identifier)")
                                 }
                             }
-                        },
-                        onCancel: {
-                            Task { @MainActor in
-                                dismissAndResume(.cancelled)
-                            }
                         }
-                    )
+                    }
 
-                    stack.push(coreSelectionView, id: "core-selection")
+                    // Use the smart picker only when there is actually useful enrichment to
+                    // display (summary, quality rank, or per-game capability highlights).
+                    // `metadata` is nearly always non-nil because the engine auto-derives it
+                    // from Core.plist files, so checking non-nil alone would always show the
+                    // smart UI even when no editorial enrichment is present.
+                    let hasMetadata = recommendations.contains { rec in
+                        (rec.metadata?.summary != nil)
+                            || (rec.metadata?.qualityRank ?? 0) > 0
+                            || !rec.highlightedCapabilities.isEmpty
+                    }
+                    if hasMetadata {
+                        let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in
+                            guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
+                            return SmartCoreSelectionItem(recommendation: rec, coreName: core.projectName)
+                        }
+                        let system = game.system
+                        let coreSelectionView = SmartCoreSelectionHostingView(
+                            title: "Select Core",
+                            message: "Choose a core to run \(game.title)",
+                            items: smartItems,
+                            showSetDefault: system != nil,
+                            onSelect: handleCoreSelect,
+                            onSetDefault: system.map { sys in
+                                let systemId = sys.identifier
+                                return { [weak self] selectedId in
+                                    self?.setDefaultCore(identifier: selectedId, forSystemId: systemId)
+                                }
+                            },
+                            onCancel: {
+                                Task { @MainActor in
+                                    dismissAndResume(.cancelled)
+                                }
+                            }
+                        )
+                        stack.push(coreSelectionView, id: "core-selection")
+                    } else {
+                        let coreItems = recommendations.compactMap { rec -> RetroSelectionItem? in
+                            guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
+                            return RetroSelectionItem(id: rec.coreIdentifier, title: core.projectName, subtitle: formatSaveCountSubtitle(rec.saveCount))
+                        }
+                        let coreSelectionView = RetroSelectionAlertHostingView(
+                            title: "Select Core",
+                            message: "Choose a core to run \(game.title)",
+                            items: coreItems,
+                            onSelect: handleCoreSelect,
+                            onCancel: {
+                                Task { @MainActor in
+                                    dismissAndResume(.cancelled)
+                                }
+                            }
+                        )
+                        stack.push(coreSelectionView, id: "core-selection")
+                    }
                 }
 
                 /// If the flow already resolved (e.g. no saves => start fresh), do not present the hosting UI.

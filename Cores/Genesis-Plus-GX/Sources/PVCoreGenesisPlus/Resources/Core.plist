@@ -25,6 +25,12 @@
 		<string>Game Genie</string>
 		<string>Pro Action Replay</string>
 	</array>
+	<key>PVCapabilities</key>
+	<array>
+		<string>highAccuracy</string>
+		<string>rumble</string>
+		<string>cdAudio</string>
+	</array>
 	<key>PVLicenseName</key>
 	<string>LicenseRef-Genesis-Plus-GX</string>
 	<key>PVLicenseURL</key>

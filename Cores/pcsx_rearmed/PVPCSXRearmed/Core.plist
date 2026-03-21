@@ -16,6 +16,11 @@
 	<string>https://github.com/notaz/pcsx_rearmed</string>
 	<key>PVProjectVersion</key>
 	<string>r23l</string>
+	<key>PVCapabilities</key>
+	<array>
+		<string>highPerformance</string>
+		<string>cdAudio</string>
+	</array>
 	<key>PVLicenseName</key>
 	<string>LGPL-2.1-or-later</string>
 	<key>PVLicenseURL</key>

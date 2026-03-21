@@ -1,0 +1,254 @@
+{
+  "_comment": "ENRICHMENT LAYER — This file is NOT the primary source of core capabilities. It enriches runtime data derived from each core's Core.plist (PVCapabilities). Fields in this file are merged on top of auto-derived capabilities. Add or update entries here only to supply: summary, qualityRank, notes, gameRequirements, and capability flags for cores that do not yet declare them in Core.plist. Capability flags (including highAccuracy, mouseSupport, lightgunSupport, etc.) should preferably be declared in Core.plist via the PVCapabilities key; values present there take effect automatically and do not need to be repeated here.",
+  "version": 2,
+  "cores": [
+    {
+      "coreIdentifier": "com.provenance.core.mGBA",
+      "summary": "Best GBA emulator: high accuracy, RTC, link cable, and e-Reader support.",
+      "capabilities": ["highAccuracy", "cheats", "rumble", "rewind", "runAhead"],
+      "notes": [],
+      "qualityRank": 100
+    },
+    {
+      "coreIdentifier": "com.provenance.core.visualboyadvance",
+      "summary": "Legacy GBA emulator. Fast, but lower accuracy than mGBA.",
+      "capabilities": ["cheats", "highPerformance"],
+      "notes": ["Legacy core — mGBA is recommended for most games"],
+      "qualityRank": 50
+    },
+    {
+      "coreIdentifier": "com.provenance.core.snes9x",
+      "summary": "Fast SNES emulator. Wide game compatibility with mouse and multitap support.",
+      "capabilities": ["mouseSupport", "multitapSupport", "lightgunSupport", "cheats", "rewind", "highPerformance"],
+      "notes": [],
+      "qualityRank": 90
+    },
+    {
+      "coreIdentifier": "snes9x.libretro.framework",
+      "summary": "RetroArch-wrapped Snes9x. Adds run-ahead and widescreen options.",
+      "capabilities": ["mouseSupport", "multitapSupport", "lightgunSupport", "cheats", "rewind", "runAhead", "widescreenSupport"],
+      "notes": ["RetroArch integration"],
+      "qualityRank": 85
+    },
+    {
+      "coreIdentifier": "bsnes.libretro.framework",
+      "summary": "Cycle-accurate SNES emulation. Highest compatibility but CPU-intensive.",
+      "capabilities": ["mouseSupport", "multitapSupport", "lightgunSupport", "highAccuracy", "testRomAccurate"],
+      "notes": ["Highest accuracy SNES core", "May be slow on older devices"],
+      "qualityRank": 95
+    },
+    {
+      "coreIdentifier": "bsnes.hd.beta.libretro.framework",
+      "summary": "BSNES with HD mode-7 rendering and widescreen support.",
+      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy", "enhancedResolution", "widescreenSupport"],
+      "notes": ["HD Mode-7 rendering", "Widescreen hacks for many games"],
+      "qualityRank": 88
+    },
+    {
+      "coreIdentifier": "bsnes.mercury.accuracy.libretro.framework",
+      "summary": "BSNES Mercury — accuracy profile. Near-perfect emulation.",
+      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy", "testRomAccurate"],
+      "notes": [],
+      "qualityRank": 93
+    },
+    {
+      "coreIdentifier": "bsnes.mercury.balanced.libretro.framework",
+      "summary": "BSNES Mercury — balanced profile. Good accuracy with better performance.",
+      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy"],
+      "notes": [],
+      "qualityRank": 87
+    },
+    {
+      "coreIdentifier": "com.provenance.core.fceu",
+      "summary": "Classic NES emulator. Reliable compatibility for most titles.",
+      "capabilities": ["lightgunSupport", "cheats"],
+      "notes": [],
+      "qualityRank": 80
+    },
+    {
+      "coreIdentifier": "com.provenance.core.MelonDS",
+      "summary": "High-accuracy DS emulator with real microphone, local wireless, and camera support.",
+      "capabilities": ["realMicrophone", "cameraSupport", "localWireless", "highAccuracy", "cheats", "enhancedResolution"],
+      "notes": ["Alpha — may be disabled in some build variants", "Best choice for games using microphone or camera", "Supports local wireless multiplayer"],
+      "qualityRank": 100
+    },
+    {
+      "coreIdentifier": "com.provenance.core.desmume2015",
+      "summary": "Legacy DS emulator. Better compatibility with some older homebrew.",
+      "capabilities": ["cheats"],
+      "notes": ["Alpha — may be disabled in some build variants", "Older engine — melonDS is preferred for most titles", "No real microphone or local wireless"],
+      "qualityRank": 55
+    },
+    {
+      "coreIdentifier": "com.provenance.core.mupen64plus",
+      "summary": "Classic N64 emulator with Transfer Pak and rumble support.",
+      "capabilities": ["rumble", "transferPak", "cheats"],
+      "notes": ["JIT optional for better performance"],
+      "qualityRank": 80
+    },
+    {
+      "coreIdentifier": "com.provenance.core.mupen64plusnx",
+      "summary": "Mupen64Plus-Next. Improved accuracy and GLideN64 graphics plugin.",
+      "capabilities": ["rumble", "transferPak", "cheats", "enhancedResolution"],
+      "notes": ["Better graphics than classic Mupen64Plus"],
+      "qualityRank": 90
+    },
+    {
+      "coreIdentifier": "mupen64plus.next.libretro.framework",
+      "summary": "Mupen64Plus-Next via RetroArch. Run-ahead and widescreen support.",
+      "capabilities": ["rumble", "transferPak", "cheats", "enhancedResolution", "runAhead"],
+      "notes": ["RetroArch integration with extra enhancements"],
+      "qualityRank": 88
+    },
+    {
+      "coreIdentifier": "parallel.n64.libretro.framework",
+      "summary": "ParaLLEl-N64 — LLE GPU and RSP for near-perfect N64 accuracy.",
+      "capabilities": ["highAccuracy", "testRomAccurate", "requiresJIT"],
+      "notes": ["Requires JIT for full speed", "Not available on App Store"],
+      "qualityRank": 85
+    },
+    {
+      "coreIdentifier": "com.provenance.core.duckstation",
+      "summary": "DuckStation PS1 emulator. Hardware-accurate with enhanced resolution.",
+      "capabilities": ["highAccuracy", "enhancedResolution", "cheats", "rewind", "runAhead", "cdAudio"],
+      "notes": ["Alpha — not yet enabled in all build variants"],
+      "qualityRank": 100
+    },
+    {
+      "coreIdentifier": "com.provenance.core.PCSXRearmed",
+      "summary": "Lightweight PS1 emulator. Fastest option for low-end devices.",
+      "capabilities": ["highPerformance", "cdAudio"],
+      "notes": ["Lower accuracy than DuckStation", "Best for devices with limited CPU"],
+      "qualityRank": 65
+    },
+    {
+      "coreIdentifier": "mednafen.psx.hw.libretro.framework",
+      "summary": "Beetle PSX with hardware renderer. Widescreen and enhanced resolution.",
+      "capabilities": ["highAccuracy", "enhancedResolution", "widescreenSupport", "cdAudio", "subChannelAudio"],
+      "notes": ["Hardware (GPU) renderer for smoother visuals"],
+      "qualityRank": 90
+    },
+    {
+      "coreIdentifier": "mednafen.psx.libretro.framework",
+      "summary": "Beetle PSX software renderer. Most accurate PS1 emulation available.",
+      "capabilities": ["highAccuracy", "testRomAccurate", "cdAudio", "subChannelAudio"],
+      "notes": ["Software renderer — highest accuracy", "CD sub-channel audio support"],
+      "qualityRank": 92
+    },
+    {
+      "coreIdentifier": "com.provenance.core.genplusgx",
+      "summary": "Genesis Plus GX. Accurate Mega Drive / Sega CD / Game Gear emulation.",
+      "capabilities": ["highAccuracy", "cheats", "cdAudio", "rumble"],
+      "notes": ["Supports Sega CD / Mega-CD titles"],
+      "qualityRank": 95
+    },
+    {
+      "coreIdentifier": "com.provenance.core.picodrive",
+      "summary": "PicoDrive. Specialises in 32X titles; also supports Genesis.",
+      "capabilities": ["cheats", "highPerformance"],
+      "notes": ["Primary choice for 32X games"],
+      "qualityRank": 90
+    },
+    {
+      "coreIdentifier": "flycast.libretro.framework",
+      "summary": "Flycast JIT — fast Dreamcast emulation with enhanced resolution.",
+      "capabilities": ["highPerformance", "enhancedResolution", "requiresJIT"],
+      "notes": ["JIT required for full speed", "Not available on App Store"],
+      "qualityRank": 90
+    },
+    {
+      "coreIdentifier": "flycast-jitless.libretro.framework",
+      "summary": "Flycast without JIT — available on App Store, slightly slower.",
+      "capabilities": ["enhancedResolution"],
+      "notes": ["App Store compatible", "Some games may run slowly without JIT"],
+      "qualityRank": 75
+    },
+    {
+      "coreIdentifier": "dolphin.libretro.framework",
+      "summary": "Dolphin via RetroArch. GameCube and Wii emulation.",
+      "capabilities": ["highAccuracy", "enhancedResolution", "requiresJIT"],
+      "notes": ["JIT recommended for playable speed"],
+      "qualityRank": 85
+    }
+  ],
+  "gameRequirements": [
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Mario Paint",
+      "preferredCapabilities": ["mouseSupport"],
+      "tip": "Mario Paint uses the SNES Mouse — choose a core with mouse support for the best experience."
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Yoshi's Safari",
+      "preferredCapabilities": ["lightgunSupport"],
+      "tip": "Yoshi's Safari uses the Super Scope light gun — pick a core with light gun support."
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Battle Clash",
+      "preferredCapabilities": ["lightgunSupport"],
+      "tip": "Battle Clash uses the Super Scope — choose a core with light gun support."
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Wario's Woods",
+      "preferredCapabilities": ["mouseSupport"],
+      "tip": "Wario's Woods supports the SNES Mouse for more precise control."
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Bomberman",
+      "preferredCapabilities": ["multitapSupport"],
+      "tip": "Bomberman supports up to 5 players via Multitap — pick a core with multitap support."
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Pokémon Snap",
+      "preferredCapabilities": [],
+      "tip": null
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Pokemon Snap",
+      "preferredCapabilities": [],
+      "tip": null
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Nintendogs",
+      "preferredCapabilities": ["realMicrophone"],
+      "tip": "Nintendogs uses the DS microphone to respond to your voice — choose a core with real microphone support."
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "WarioWare: Touched",
+      "preferredCapabilities": ["realMicrophone"],
+      "tip": "Some WarioWare microgames use the microphone — choose a core with real mic support."
+    },
+    {
+      "matchStrategy": "titleContains",
+      "matchValue": "Electroplankton",
+      "preferredCapabilities": ["realMicrophone"],
+      "tip": "Electroplankton uses the DS microphone for sound input — choose a core with real microphone support."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.ds",
+      "preferredCapabilities": ["realMicrophone", "localWireless"],
+      "tip": "A core with real microphone and local wireless support gives the best DS experience."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.psx",
+      "preferredCapabilities": ["highAccuracy"],
+      "tip": "Choose a high-accuracy PS1 core for the best compatibility and visual quality."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.gba",
+      "preferredCapabilities": ["highAccuracy"],
+      "tip": "mGBA provides the most accurate GBA emulation and is recommended for all GBA titles."
+    }
+  ]
+}

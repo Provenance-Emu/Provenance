@@ -45,6 +45,16 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     /// Copyright statement(s) for this core.
     /// Maps to the `PVCopyright` key in `Core.plist`. `nil` if absent.
     public let copyright: String?
+    /// Explicit capability declarations from `Core.plist` (`PVCapabilities` key).
+    ///
+    /// This is the authoritative per-core source.  `CoreCapabilities.json`
+    /// enriches entries that don't declare capabilities here.  An empty array
+    /// means the plist did not provide capabilities (not that the core has none).
+    ///
+    /// Auto-derived capabilities (from `supportedCheatTypes`, `jitRequirementRawValue`,
+    /// etc.) are available via `CoreRecommendationEngine`'s manifest-building logic
+    /// and are NOT reflected in this property.
+    public let capabilities: [String]
 
     public init(identifier: String, principleClass: String, supportedSystems: [String],
                 projectName: String, projectURL: String, projectVersion: String,
@@ -52,7 +62,8 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
                 supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil,
                 jitRequirementRawValue: String? = nil,
                 jitDisabledWithoutJIT: Bool = false,
-                licenseName: String? = nil, licenseURL: String? = nil, copyright: String? = nil) {
+                licenseName: String? = nil, licenseURL: String? = nil, copyright: String? = nil,
+                capabilities: [String] = []) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -69,6 +80,7 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.licenseName = licenseName
         self.licenseURL = licenseURL
         self.copyright = copyright
+        self.capabilities = capabilities
     }
 
     public init?(fromInfoDictionary dict: [String: Any]) {
@@ -155,6 +167,9 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.licenseName = dict["PVLicenseName"] as? String
         self.licenseURL = dict["PVLicenseURL"] as? String
         self.copyright = dict["PVCopyright"] as? String
+
+        // Explicit capabilities declared in Core.plist — optional key
+        self.capabilities = dict["PVCapabilities"] as? [String] ?? []
     }
 
     public convenience init?(fromURL plistPath: URL) throws {
@@ -196,7 +211,8 @@ public extension EmulatorCoreInfoPlist {
             jitDisabledWithoutJIT: e.PVJITDisabledWithoutJIT ?? false,
             licenseName: e.PVLicenseName,
             licenseURL: e.PVLicenseURL,
-            copyright: e.PVCopyright
+            copyright: e.PVCopyright,
+            capabilities: e.PVCapabilities ?? []
         )
     }
 }
@@ -222,4 +238,5 @@ func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     && lhs.licenseName == rhs.PVLicenseName
     && lhs.licenseURL == rhs.PVLicenseURL
     && lhs.copyright == rhs.PVCopyright
+    && lhs.capabilities == (rhs.PVCapabilities ?? [])
 }

@@ -1423,3 +1423,45 @@ public extension View {
         )
     }
 }
+
+// MARK: - RetroSelectionAlertHostingView
+
+/// Wraps ``RetroSelectionAlertView`` with its own `@State isPresented` so that
+/// callers embedding the view in a `UIHostingController` or navigation stack do
+/// not need to pass a writable binding.
+public struct RetroSelectionAlertHostingView: View {
+    let title: String
+    let message: String
+    let items: [RetroSelectionItem]
+    let onSelect: (String) -> Void
+    let onCancel: () -> Void
+
+    @State private var isPresented = true
+
+    public init(
+        title: String,
+        message: String,
+        items: [RetroSelectionItem],
+        onSelect: @escaping (String) -> Void,
+        onCancel: @escaping () -> Void = {}
+    ) {
+        self.title = title
+        self.message = message
+        self.items = items
+        self.onSelect = onSelect
+        self.onCancel = onCancel
+    }
+
+    public var body: some View {
+        if isPresented {
+            RetroSelectionAlertView(
+                title: title,
+                message: message,
+                items: items,
+                isPresented: $isPresented,
+                onSelect: onSelect,
+                onCancel: onCancel
+            )
+        }
+    }
+}
