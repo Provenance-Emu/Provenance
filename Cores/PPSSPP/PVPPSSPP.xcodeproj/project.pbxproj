@@ -171,7 +171,7 @@
 		B3A53F662C93F04100D36642 /* PVPPSSPPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A53F642C93F04100D36642 /* PVPPSSPPCore.swift */; };
 		B3A53F682C93F0A600D36642 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A53F672C93F0A600D36642 /* CorePlist-Generated.swift */; };
 		B3AFCF9E2977A86400A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF9D2977A86400A01010 /* PVLogging */; };
-		B3FF10032F600000004A9955 /* PVPPSSPPCore+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FF10002F600000004A9955 /* PVPPSSPPCore+Netplay.h */; };
+		B3FF10032F600000004A9955 /* PVPPSSPPCore+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FF10002F600000004A9955 /* PVPPSSPPCore+Netplay.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FF10042F600000004A9955 /* PVPPSSPPCore+Netplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3FF10012F600000004A9955 /* PVPPSSPPCore+Netplay.mm */; };
 		B3FF10052F600000004A9955 /* PVPPSSPPCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FF10022F600000004A9955 /* PVPPSSPPCore+PVNetplayCapable.swift */; };
 		B3FF10082F600000004A9955 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3FF10072F600000004A9955 /* PVNetplay */; };

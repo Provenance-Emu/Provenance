@@ -16,3 +16,4 @@ FOUNDATION_EXPORT const unsigned char PVPPSSPPVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVPPSSPP/PublicHeader.h>
 #import <PVPPSSPP/PVPPSSPPGameCore.h>
+#import <PVPPSSPP/PVPPSSPPCore+Netplay.h>
