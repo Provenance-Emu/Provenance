@@ -21,7 +21,8 @@ import PVHashing
 /// Search order for every lookup:
 ///  1. `<AppGroupContainer>/Documents/PVCache/<md5(key)>` — used on iOS/macOS with App Groups.
 ///  2. `<AppGroupContainer>/Caches/PVCache/<md5(key)>` — used on tvOS (documentsPath → Caches).
-///  3. `PVMediaCache.filePath(forKey:)` — local Documents/Caches fallback.
+///  3. `<AppGroupContainer>/Library/Caches/PVCache/<md5(key)>` — used by TopShelf/CloudKit save-state art.
+///  4. `PVMediaCache.filePath(forKey:)` — local Documents/Caches fallback.
 public struct ArtworkResolver {
 
     // MARK: - Public API
@@ -55,6 +56,18 @@ public struct ArtworkResolver {
             if FileManager.default.fileExists(atPath: cachesCandidate.path) {
                 DLOG("[PVQuickLookSupport] Artwork resolved via App Group Caches (tvOS path)")
                 return cachesCandidate
+            }
+
+            // 1c. Library/Caches/PVCache — written by TopShelf and CloudKit save-state
+            //     artwork caches on some configurations.
+            let libraryCachesCandidate = groupURL
+                .appendingPathComponent("Library", isDirectory: true)
+                .appendingPathComponent("Caches", isDirectory: true)
+                .appendingPathComponent("PVCache", isDirectory: true)
+                .appendingPathComponent(keyHash, isDirectory: false)
+            if FileManager.default.fileExists(atPath: libraryCachesCandidate.path) {
+                DLOG("[PVQuickLookSupport] Artwork resolved via App Group Library/Caches")
+                return libraryCachesCandidate
             }
         }
 
