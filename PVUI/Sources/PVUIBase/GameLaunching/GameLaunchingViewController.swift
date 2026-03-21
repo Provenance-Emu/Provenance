@@ -1239,6 +1239,34 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             let presentingView = self.view
 
+            // Context-sensitive JIT prompt: check per-game preference + core capability
+            // before opening the emulator so the user can take action if needed.
+            let jitRecommendation = JITContextualPromptManager.shared.recommendation(
+                forGameMD5: game.md5Hash,
+                coreIdentifier: selectedCore.identifier,
+                coreName: selectedCore.projectName
+            )
+
+            // Any recommendation other than .proceed or .skipJIT requires a modal alert.
+            switch jitRecommendation {
+            case .proceed, .skipJIT:
+                break // fall through to presentEMU immediately
+            case .showRequiredWarning, .showRecommendedPrompt:
+                let shouldContinue = await withCheckedContinuation { continuation in
+                    JITContextualPromptManager.shared.presentPrompt(
+                        for: jitRecommendation,
+                        gameMD5: game.md5Hash,
+                        from: self,
+                        completion: { continuation.resume(returning: $0) }
+                    )
+                }
+                guard shouldContinue else {
+                    AppState.shared.emulationUIState.reset()
+                    SceneCoordinator.shared.closeEmulator()
+                    return
+                }
+            }
+
             // If we got a save state from unified flow, pass it directly
             // Otherwise let presentEMU handle save state detection
             if selectedSaveState != nil {

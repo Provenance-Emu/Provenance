@@ -156,6 +156,25 @@ public enum JITCoreCapability: CaseIterable {
         return capability(for: coreIdentifier)?.isJITRequired == true
     }
 
+    // MARK: - System Lookup
+
+    /// Returns `true` when any JIT-relevant keyword matches the given system identifier.
+    ///
+    /// System identifiers follow the pattern `"com.provenance.<name>"` (e.g.
+    /// `"com.provenance.n64"`, `"com.provenance.dreamcast"`).  This method checks
+    /// whether any compile-time keyword substring appears in the lowercased identifier,
+    /// making it suitable for the game info view to decide whether to show the JIT
+    /// preference toggle.
+    ///
+    /// - Parameter systemIdentifier: A system identifier string (case-insensitive).
+    /// - Returns: `true` if the system is known to have JIT-capable cores.
+    public static func systemHasJITCapability(_ systemIdentifier: String) -> Bool {
+        let id = systemIdentifier.lowercased()
+        return allCases.contains { capability in
+            capability.coreIdentifierKeywords.contains { id.contains($0) }
+        }
+    }
+
     // MARK: - Deprecated
 
     /// - Deprecated: Renamed to `isJITRelevant(_:)` to better reflect that it includes
