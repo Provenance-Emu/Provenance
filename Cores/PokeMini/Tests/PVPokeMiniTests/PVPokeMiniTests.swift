@@ -10,7 +10,7 @@ import Testing
 @testable import PokeMiniC
 @testable import PVPokeMini
 @testable import PVPokeMiniBridge
-@testable import PVPokeMiniOptions
+import PVPokeMiniOptions
 
 struct CoreTests {
     @Test func testAllocDealloc() async throws {
