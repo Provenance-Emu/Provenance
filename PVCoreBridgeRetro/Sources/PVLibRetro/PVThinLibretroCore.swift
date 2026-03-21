@@ -48,6 +48,20 @@ class PVThinLibretroCore: PVEmulatorCore {
     /// Only populated when the core is a Mupen64Plus-based core.
     var _transferPakSlots: [Int: TransferPakROM] = [:]
 
+    // MARK: - Mouse / pointer input state
+    /// Previous normalized cursor position (0–1 range) used to compute per-event deltas
+    /// for RETRO_DEVICE_MOUSE systems. Updated by `mouseMoved(atPoint:)`.
+    var _mousePrevNorm: CGPoint = .init(x: 0.5, y: 0.5)
+    /// Whether `_mousePrevNorm` has been set at least once since the last button release.
+    var _mousePrevValid: Bool = false
+    /// Whether the DS touchscreen pointer is currently pressed (finger down).
+    /// Used by `mouseMoved(atPoint:)` to maintain pressed state during drag.
+    var _dsPointerPressed: Bool = false
+    /// Previous touchpad position for DualSense touchpad → mouse delta computation.
+    var _padTouchPrevX: Float = 0
+    var _padTouchPrevY: Float = 0
+    var _padTouchPrevValid: Bool = false
+
     // MARK: - Skin support
 
     /// Systems that don't have adequate skin support — disable skins to show
