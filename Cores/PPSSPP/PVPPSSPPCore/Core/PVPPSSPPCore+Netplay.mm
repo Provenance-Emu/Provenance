@@ -17,21 +17,23 @@ NSErrorDomain const PVPPSSPPAdhocErrorDomain = @"org.provenance-emu.ppsspp.adhoc
 // Private ivar storage via associated objects
 // ---------------------------------------------------------------------------
 
-static const char kAdhocStatusKey       = 0;
-static const char kSavedWlanKey         = 0;
-static const char kSavedAdhocServerKey  = 0;
+// Use self-referential pointers so each key has a unique address even if the
+// compiler/linker merges const-zero data (matching the pattern in PVRetroArchCoreBridge+Netplay.mm).
+static const void *kAdhocStatusKey      = &kAdhocStatusKey;
+static const void *kSavedWlanKey        = &kSavedWlanKey;
+static const void *kSavedAdhocServerKey = &kSavedAdhocServerKey;
 
 @implementation PVPPSSPPCoreBridge (Netplay)
 
 // MARK: - Properties
 
 - (PVPPSSPPAdhocStatus)adhocStatus {
-    NSNumber *boxed = objc_getAssociatedObject(self, &kAdhocStatusKey);
+    NSNumber *boxed = objc_getAssociatedObject(self, kAdhocStatusKey);
     return boxed ? (PVPPSSPPAdhocStatus)boxed.integerValue : PVPPSSPPAdhocStatusIdle;
 }
 
 - (void)setAdhocStatus:(PVPPSSPPAdhocStatus)status {
-    objc_setAssociatedObject(self, &kAdhocStatusKey,
+    objc_setAssociatedObject(self, kAdhocStatusKey,
                              @(status), OBJC_ASSOCIATION_RETAIN);
 }
 
@@ -51,11 +53,12 @@ static const char kSavedAdhocServerKey  = 0;
 - (void)_savePriorAdhocConfig {
     // Capture g_Config values before netplay overwrites them so stopAdhoc can restore them.
     NSString *savedServer = [NSString stringWithUTF8String:g_Config.proAdhocServer.c_str()];
-    objc_setAssociatedObject(self, &kSavedAdhocServerKey, savedServer, OBJC_ASSOCIATION_RETAIN);
-    objc_setAssociatedObject(self, &kSavedWlanKey, @(g_Config.bEnableWlan), OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, kSavedAdhocServerKey, savedServer, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, kSavedWlanKey, @(g_Config.bEnableWlan), OBJC_ASSOCIATION_RETAIN);
 }
 
 - (BOOL)startAdhocLANHostWithError:(NSError *__autoreleasing _Nullable *)error {
+    NSAssert([NSThread isMainThread], @"startAdhocLANHostWithError: must be called on the main thread");
     if (self.adhocStatus != PVPPSSPPAdhocStatusIdle) {
         if (error) {
             *error = [NSError errorWithDomain:PVPPSSPPAdhocErrorDomain
@@ -92,6 +95,7 @@ static const char kSavedAdhocServerKey  = 0;
 
 - (BOOL)connectToAdhocServer:(NSString *)host
                        error:(NSError *__autoreleasing _Nullable *)error {
+    NSAssert([NSThread isMainThread], @"connectToAdhocServer:error: must be called on the main thread");
     if (!host || host.length == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PVPPSSPPAdhocErrorDomain
@@ -140,14 +144,15 @@ static const char kSavedAdhocServerKey  = 0;
 }
 
 - (void)stopAdhoc {
+    NSAssert([NSThread isMainThread], @"stopAdhoc must be called on the main thread");
     // Restore the g_Config values that were in effect before netplay started
     // so the user's prior PPSSPP network configuration is not permanently lost.
-    NSNumber *savedWlan   = objc_getAssociatedObject(self, &kSavedWlanKey);
-    NSString *savedServer = objc_getAssociatedObject(self, &kSavedAdhocServerKey);
+    NSNumber *savedWlan   = objc_getAssociatedObject(self, kSavedWlanKey);
+    NSString *savedServer = objc_getAssociatedObject(self, kSavedAdhocServerKey);
     g_Config.bEnableWlan    = savedWlan ? savedWlan.boolValue : false;
     g_Config.proAdhocServer = savedServer ? std::string([savedServer UTF8String]) : "";
-    objc_setAssociatedObject(self, &kSavedWlanKey, nil, OBJC_ASSOCIATION_RETAIN);
-    objc_setAssociatedObject(self, &kSavedAdhocServerKey, nil, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, kSavedWlanKey, nil, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, kSavedAdhocServerKey, nil, OBJC_ASSOCIATION_RETAIN);
     [self setAdhocStatus:PVPPSSPPAdhocStatusIdle];
 }
 

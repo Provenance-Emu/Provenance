@@ -87,9 +87,11 @@ typedef NS_ENUM(NSInteger, PVPPSSPPAdhocStatus) {
 - (BOOL)connectToAdhocServer:(NSString *)host
                        error:(NSError *__autoreleasing _Nullable *)error;
 
-/// Disable adhoc networking.
+/// Stop the current adhoc session and restore previous networking settings.
 ///
-/// Sets `g_Config.bEnableWlan = false` and clears `g_Config.proAdhocServer`.
+/// Restores `g_Config.bEnableWlan` and `g_Config.proAdhocServer` to the
+/// values that were active before adhoc was started. Falls back to disabling
+/// wlan and clearing `proAdhocServer` if no prior values were saved.
 - (void)stopAdhoc;
 
 @end
