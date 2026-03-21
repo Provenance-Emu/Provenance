@@ -31,6 +31,11 @@ public final class EmulationUIState : ObservableObject {
     @Published public var isBroadcasting: Bool = false
 
     /// Whether always-on clip buffering is active (iOS/tvOS 15+).
+    ///
+    /// `@Perceptible` (like `@Observable`) synthesises `willSet`/`didSet`
+    /// accessors that call `objectWillChange.send()`, so SwiftUI views
+    /// observing this class via `@ObservedObject` / `@EnvironmentObject`
+    /// will re-render automatically — no `@Published` wrapper is needed.
     public var isClipBufferingActive: Bool = false
 
     /// The current game that should be loaded in the emulator scene

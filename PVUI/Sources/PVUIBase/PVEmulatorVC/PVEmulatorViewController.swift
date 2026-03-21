@@ -1051,7 +1051,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         #endif
 
         #if os(iOS) || os(tvOS)
-        startClipBufferingIfEnabled()
+        startClipBufferingIfAvailable()
         #endif
     }
 

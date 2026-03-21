@@ -7,6 +7,7 @@
 
 #if os(iOS) || os(tvOS)
 import UIKit
+import Photos
 import PVLogging
 
 // MARK: - Live Broadcast (iOS + tvOS)
@@ -172,7 +173,11 @@ extension PVEmulatorViewController {
 
     /// Starts always-on clip buffering when the recorder is available.
     /// No-op on iOS < 15 / tvOS < 15.
-    public func startClipBufferingIfEnabled() {
+    ///
+    /// Buffering itself starts unconditionally — only the **SAVE CLIP** UI action
+    /// is gated behind Provenance Plus.  This ensures the rolling buffer is warm
+    /// so that when the user does tap "Save Clip", recent footage is available.
+    public func startClipBufferingIfAvailable() {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
         guard PVRecordingManager.shared.isAvailable else { return }
         Task { @MainActor in
@@ -214,12 +219,24 @@ extension PVEmulatorViewController {
 
     private func saveClipToStorage(url: URL) {
         #if os(iOS)
-        // Save to Camera Roll on iOS.
-        UISaveVideoAtPathToSavedPhotosAlbum(url.path, nil, nil, nil)
-        showClipAlert(title: "Clip Saved", message: "Your gameplay clip was saved to Photos.")
+        // Save to Camera Roll on iOS using PHPhotoLibrary for proper success/failure reporting.
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+        }) { [weak self] success, error in
+            DispatchQueue.main.async {
+                if success {
+                    ILOG("[ClipCapture] Clip saved to Photos")
+                    self?.showClipAlert(title: "Clip Saved", message: "Your gameplay clip was saved to Photos.")
+                } else {
+                    let msg = error?.localizedDescription ?? "Unknown error"
+                    ELOG("[ClipCapture] Failed to save clip to Photos: \(msg)")
+                    self?.showClipAlert(title: "Clip Error", message: "Failed to save to Photos: \(msg)")
+                }
+            }
+        }
         #elseif os(tvOS)
         // tvOS has no Photos write API — copy to the app's Documents folder instead
-        // so the user can access it via iTunes File Sharing or the Files app.
+        // so the user can access it via Finder or iTunes file sharing.
         let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let destURL = docsURL.appendingPathComponent(url.lastPathComponent)
         do {
