@@ -60,6 +60,12 @@
             "minVersion": "3.1.0",
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Enables native SwiftUI netplay UI for RetroArch cores (LAN room browser, host/join, in-game HUD). RetroArch already has HAVE_NETPLAY compiled in — this gates the native Provenance UI on top. Disabled by default during Phase 1-3 development."
+        },
+        "modernWebServer": {
+            "enabled": false,
+            "minVersion": "3.1.0",
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Replaces the vendored 2015 ObjC GCDWebServer with a Swift-native Hummingbird HTTP/WebDAV server via PVWebServerManager. Both implementations fire the same PVWebServer*Notification constants. Disabled by default during Epic #2758 stabilisation — enable in Settings > Advanced > Feature Flags."
         }
     }
 }
