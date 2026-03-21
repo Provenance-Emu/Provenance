@@ -63,13 +63,14 @@ NSErrorDomain const PVMednafenNetplayErrorDomain = @"com.provenance.mednafen.net
     }
 
     // Configure Mednafen settings before connecting.
+    uint16_t resolvedPort = port > 0 ? port : 4046;
     Mednafen::MDFNI_SetSetting("netplay.host",    std::string(host.UTF8String));
-    Mednafen::MDFNI_SetSettingUI("netplay.port",  port > 0 ? port : 4046);
+    Mednafen::MDFNI_SetSettingUI("netplay.port",  resolvedPort);
     Mednafen::MDFNI_SetSetting("netplay.nick",    std::string(nickname.UTF8String ?: ""));
     Mednafen::MDFNI_SetSetting("netplay.gamekey", std::string(password.UTF8String ?: ""));
 
     NSString *redactedKey = (password.length > 0) ? @"<set>" : @"<empty>";
-    DLOG(@"[Mednafen Netplay] Connecting → %@:%u nick=%@ key=%@", host, port, nickname, redactedKey);
+    DLOG(@"[Mednafen Netplay] Connecting → %@:%u nick=%@ key=%@", host, resolvedPort, nickname, redactedKey);
 
     @try {
         // MDFNI_NetplayConnect reads the settings we just set and opens a TCP connection.

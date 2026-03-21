@@ -28,9 +28,11 @@ import ObjectiveC
 
 /// Boxes the last-used role and settings so they can be stored via ObjC associated objects.
 private final class MednafenNetplayContext: NSObject {
+    let sessionID: UUID  // stable across netplayState polls — prevents UUID churn in the UI
     var role: NetplayRole
     var settings: NetplaySettings
     init(role: NetplayRole, settings: NetplaySettings) {
+        self.sessionID = UUID()
         self.role = role
         self.settings = settings
     }
@@ -58,16 +60,18 @@ extension MednafenGameCore: PVNetplayCapable {
 
     // MARK: - Associated-object helpers
 
+    // OBJC_ASSOCIATION_RETAIN (atomic) — written from _netplayQueue, read from the
+    // main-thread polling timer, so a non-atomic policy would be a data race.
     private var _netplayContext: MednafenNetplayContext? {
         get { objc_getAssociatedObject(self, &AssocKeys.context) as? MednafenNetplayContext }
-        set { objc_setAssociatedObject(self, &AssocKeys.context, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        set { objc_setAssociatedObject(self, &AssocKeys.context, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
 
     /// Serial queue serialising all bridge netplay calls to avoid data races.
     private var _netplayQueue: DispatchQueue {
         if let q = objc_getAssociatedObject(self, &AssocKeys.queue) as? DispatchQueue { return q }
         let q = DispatchQueue(label: "com.provenance.mednafen.netplay", qos: .userInitiated)
-        objc_setAssociatedObject(self, &AssocKeys.queue, q, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(self, &AssocKeys.queue, q, .OBJC_ASSOCIATION_RETAIN)
         return q
     }
 
@@ -77,13 +81,14 @@ extension MednafenGameCore: PVNetplayCapable {
             return existing
         }
         let subject = CurrentValueSubject<NetplayState, Never>(.idle)
-        objc_setAssociatedObject(self, &AssocKeys.subject, subject, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        // OBJC_ASSOCIATION_RETAIN (atomic) — sent from _netplayQueue, observed on main thread.
+        objc_setAssociatedObject(self, &AssocKeys.subject, subject, .OBJC_ASSOCIATION_RETAIN)
         return subject
     }
 
     private var _pollingCancellable: AnyCancellable? {
         get { objc_getAssociatedObject(self, &AssocKeys.cancellable) as? AnyCancellable }
-        set { objc_setAssociatedObject(self, &AssocKeys.cancellable, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        set { objc_setAssociatedObject(self, &AssocKeys.cancellable, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
 
     // MARK: - Control
@@ -118,11 +123,19 @@ extension MednafenGameCore: PVNetplayCapable {
     }
 
     public func stopNetplay() async {
-        _netplayQueue.async { [weak self] in
-            guard let self else { return }
-            self._bridge.netplayDisconnect()
-            self._netplayContext = nil
-            self._stateSubject.send(.idle)
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            _netplayQueue.async { [weak self] in
+                guard let self else {
+                    continuation.resume()
+                    return
+                }
+                self._bridge.netplayDisconnect()
+                self._netplayContext = nil
+                DispatchQueue.main.async {
+                    self._stateSubject.send(.idle)
+                    continuation.resume()
+                }
+            }
         }
     }
 
@@ -137,12 +150,13 @@ extension MednafenGameCore: PVNetplayCapable {
             let role = ctx?.role ?? .client(host: "0.0.0.0", port: 4046)
             let (hostAddr, port) = resolvedHostPort(for: role, settings: ctx?.settings ?? .defaultLAN)
             let room = NetplayRoom(
+                id: ctx?.sessionID ?? UUID(),
                 hostName: "Mednafen",
                 gameName: "",
                 gameHash: "",
                 coreIdentifier: "com.provenance.mednafen",
                 maxPlayers: ctx?.settings.maxPlayers ?? 2,
-                currentPlayers: 2,
+                currentPlayers: ctx?.settings.maxPlayers ?? 2,
                 isLAN: true,
                 hostAddress: hostAddr,
                 port: port
