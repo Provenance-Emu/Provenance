@@ -14,6 +14,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "PVCheevos",
+            type: .static,
             targets: ["PVCheevos"]),
         .executable(
             name: "ra-cli",
