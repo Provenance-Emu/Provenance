@@ -29,7 +29,7 @@ extern NSErrorDomain const PVPPSSPPAdhocErrorDomain;
 
 /// Error codes for PPSSPP adhoc networking.
 typedef NS_ERROR_ENUM(PVPPSSPPAdhocErrorDomain, PVPPSSPPAdhocError) {
-    /// The emulator core is not initialised (ROM not loaded yet).
+    /// The emulator core is not initialized (ROM not loaded yet).
     PVPPSSPPAdhocErrorNotReady          = 1,
     /// An adhoc session is already active.
     PVPPSSPPAdhocErrorAlreadyActive     = 2,
