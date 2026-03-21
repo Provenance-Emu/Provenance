@@ -827,10 +827,12 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         CGFloat dy = ny - _mousePrevNormY;
         if (dx != 0.0 || dy != 0.0) {
             // Accumulate sub-pixel remainder so small fractional deltas are not dropped.
+            // Use trunc() (truncation toward zero) instead of floor() to avoid directional
+            // bias: floor(-0.2) == -1 but trunc(-0.2) == 0, preventing spurious backwards steps.
             CGFloat rawDX = dx * kSNESMouseScale + _mouseRemX;
             CGFloat rawDY = dy * kSNESMouseScale + _mouseRemY;
-            int intDX = (int)floor(rawDX);
-            int intDY = (int)floor(rawDY);
+            int intDX = (int)trunc(rawDX);
+            int intDY = (int)trunc(rawDY);
             _mouseRemX = rawDX - (CGFloat)intDX;
             _mouseRemY = rawDY - (CGFloat)intDY;
             int newX = (int)_mouseX + intDX;
@@ -839,6 +841,12 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
             _mouseY = (int16_t)(newY < 0 ? 0 : (newY > 223 ? 223 : newY));
             S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
         }
+    } else {
+        // First sample: place the cursor at the absolute touch position in SNES space so the
+        // first movement event is not silently dropped. SNES screen is 256×224 pixels.
+        _mouseX = (int16_t)(nx * 255.0 + 0.5);
+        _mouseY = (int16_t)(ny * 223.0 + 0.5);
+        S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
     }
     _mousePrevNormX = nx;
     _mousePrevNormY = ny;
@@ -851,10 +859,12 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 - (void)snesMouseMovedByDelta:(CGPoint)delta {
     if (delta.x != 0.0 || delta.y != 0.0) {
         // Accumulate sub-pixel remainder so fractional view-point deltas are not dropped.
+        // Use trunc() (truncation toward zero) instead of floor() to avoid directional bias:
+        // floor(-0.2) == -1 but trunc(-0.2) == 0, preventing a spurious backwards pixel step.
         CGFloat rawDX = delta.x + _mouseRemX;
         CGFloat rawDY = delta.y + _mouseRemY;
-        int intDX = (int)floor(rawDX);
-        int intDY = (int)floor(rawDY);
+        int intDX = (int)trunc(rawDX);
+        int intDY = (int)trunc(rawDY);
         _mouseRemX = rawDX - (CGFloat)intDX;
         _mouseRemY = rawDY - (CGFloat)intDY;
         int newX = (int)_mouseX + intDX;
