@@ -155,7 +155,11 @@ struct QuickLaunchEntryView: View {
 
     var deepLinkURL: URL {
         if let game = entry.game {
-            return URL(string: "provenance://open?md5=\(game.id)") ?? URL(string: "provenance://")!
+            var components = URLComponents()
+            components.scheme = "provenance"
+            components.host = "open"
+            components.queryItems = [URLQueryItem(name: "md5", value: game.id)]
+            return components.url ?? URL(string: "provenance://")!
         }
         return URL(string: "provenance://")!
     }

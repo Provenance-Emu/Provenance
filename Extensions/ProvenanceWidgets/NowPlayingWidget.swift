@@ -50,8 +50,9 @@ struct NowPlayingProvider: TimelineProvider {
             gameCount: WidgetSharedDefaults.loadGameCount(),
             albumArtImageData: imageData
         )
-        // Refresh every 5 minutes so track info stays current
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date()) ?? Date()
+        // Use a 60-minute fallback refresh; immediate updates use WidgetCenter.reloadAllTimelines()
+        // via WidgetDataWriter, so frequent polling is unnecessary and wastes background budget.
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 60, to: Date()) ?? Date()
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }

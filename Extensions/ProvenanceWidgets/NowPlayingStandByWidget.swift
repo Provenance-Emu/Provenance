@@ -64,8 +64,9 @@ struct NowPlayingStandByProvider: TimelineProvider {
             albumArtImageData: albumArtData,
             fallbackArtworkImageData: fallbackData
         )
-        // Poll frequently so track changes show quickly
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 2, to: Date()) ?? Date()
+        // Use a 10-minute fallback refresh; immediate updates use WidgetCenter.reloadAllTimelines()
+        // via WidgetDataWriter when now-playing changes.
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 10, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 }
