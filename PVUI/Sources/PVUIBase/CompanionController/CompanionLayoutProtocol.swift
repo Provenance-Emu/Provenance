@@ -46,13 +46,25 @@ public protocol CompanionLayout: View {
 ///
 /// Register new system layouts here. Falls back to `GenericCompanionLayout` for unknown systems.
 #if !os(tvOS)
+import PVPrimitives
+
 @MainActor
 public enum CompanionLayoutFactory {
     public static func makeLayout(
         systemID: String,
         router: CompanionInputRouter
     ) -> any CompanionLayout {
-        switch systemID {
+        switch SystemIdentifier(rawValue: systemID) {
+        case .Atari5200?:
+            return Atari5200Layout(router: router)
+        case .ColecoVision?:
+            return ColecoVisionLayout(router: router)
+        case .Vectrex?:
+            return VectrexLayout(router: router)
+        case .DOS?, .DOOM?:
+            return DOSKeyboardLayout(router: router)
+        // Atari 2600 covers many game types; only specific trackball titles need TrackballLayout.
+        // Default to GenericCompanionLayout until a per-title capability flag is available.
         default:
             return GenericCompanionLayout(router: router)
         }
