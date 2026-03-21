@@ -355,6 +355,44 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         gamesViewModel.showNetworkPlay = true
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestExportSavesFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        Task { @MainActor in
+            await exportSaves(for: frozenGame)
+        }
+    }
+
+    @MainActor
+    private func exportSaves(for game: PVGame) async {
+        do {
+            let url = try await SaveExporter.shared.exportSaves(for: game)
+#if os(tvOS)
+            // tvOS: copy to Documents/Exports instead of presenting a share sheet
+            let exportsDir = URL.documentsPath.appendingPathComponent("Exports", isDirectory: true)
+            do {
+                try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
+                let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
+                if FileManager.default.fileExists(atPath: destURL.path) {
+                    try FileManager.default.removeItem(at: destURL)
+                }
+                try FileManager.default.moveItem(at: url, to: destURL)
+                rootDelegate?.showMessage("Saves exported to Documents/Exports/\(url.lastPathComponent)", title: "Export Complete")
+            } catch {
+                SaveExporter.shared.cleanupExport(at: url)
+                rootDelegate?.showMessage("Export failed: \(error.localizedDescription)", title: "Error")
+            }
+#else
+            await MainActor.run {
+                gamesViewModel.saveExportURL = url
+                gamesViewModel.showSaveExportShareSheet = true
+            }
+#endif
+        } catch {
+            rootDelegate?.showMessage("Export failed: \(error.localizedDescription)", title: "Export Error")
+        }
+    }
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestResetSkinFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to reset skin for game: \(game.title)")
         guard !game.isInvalidated,

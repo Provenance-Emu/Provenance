@@ -151,6 +151,12 @@ public struct GameContextMenu: View {
                     Label("Manage Save States", systemImage: "clock.arrow.circlepath")
                 }
                 .disabled(game.saveStates.isEmpty)
+                Button {
+                    contextMenuDelegate?.gameContextMenu(self, didRequestExportSavesFor: game)
+                } label: {
+                    Label("Export Saves", systemImage: "square.and.arrow.up")
+                }
+                .disabled(game.saveStates.isEmpty)
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {
