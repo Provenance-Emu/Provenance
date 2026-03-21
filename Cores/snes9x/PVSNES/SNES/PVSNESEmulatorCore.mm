@@ -59,6 +59,7 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
+#include <math.h>
 #include <pthread.h>
 
 #define SAMPLERATE      48000
@@ -90,6 +91,8 @@ static const double   kSNESMouseScale      = 256.0;
     CGFloat _mousePrevNormX;
     CGFloat _mousePrevNormY;
     BOOL    _mousePrevValid;
+    CGFloat _mouseRemX;   ///< sub-pixel remainder for X — accumulates fractional SNES-pixel movement.
+    CGFloat _mouseRemY;   ///< sub-pixel remainder for Y — accumulates fractional SNES-pixel movement.
 }
 
 @end
@@ -811,6 +814,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     _mouseX = 128;
     _mouseY = 112;
     _mousePrevValid = NO;
+    _mouseRemX = 0.0;
+    _mouseRemY = 0.0;
     S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
 }
 
@@ -821,8 +826,15 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         CGFloat dx = nx - _mousePrevNormX;
         CGFloat dy = ny - _mousePrevNormY;
         if (dx != 0.0 || dy != 0.0) {
-            int newX = (int)_mouseX + (int)(dx * kSNESMouseScale);
-            int newY = (int)_mouseY + (int)(dy * kSNESMouseScale);
+            // Accumulate sub-pixel remainder so small fractional deltas are not dropped.
+            CGFloat rawDX = dx * kSNESMouseScale + _mouseRemX;
+            CGFloat rawDY = dy * kSNESMouseScale + _mouseRemY;
+            int intDX = (int)floor(rawDX);
+            int intDY = (int)floor(rawDY);
+            _mouseRemX = rawDX - (CGFloat)intDX;
+            _mouseRemY = rawDY - (CGFloat)intDY;
+            int newX = (int)_mouseX + intDX;
+            int newY = (int)_mouseY + intDY;
             _mouseX = (int16_t)(newX < 0 ? 0 : (newX > 255 ? 255 : newX));
             _mouseY = (int16_t)(newY < 0 ? 0 : (newY > 223 ? 223 : newY));
             S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
@@ -838,8 +850,15 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 /// the prev-sample subtraction or normalized scaling applied in `snesMouseMovedTo:`.
 - (void)snesMouseMovedByDelta:(CGPoint)delta {
     if (delta.x != 0.0 || delta.y != 0.0) {
-        int newX = (int)_mouseX + (int)delta.x;
-        int newY = (int)_mouseY + (int)delta.y;
+        // Accumulate sub-pixel remainder so fractional view-point deltas are not dropped.
+        CGFloat rawDX = delta.x + _mouseRemX;
+        CGFloat rawDY = delta.y + _mouseRemY;
+        int intDX = (int)floor(rawDX);
+        int intDY = (int)floor(rawDY);
+        _mouseRemX = rawDX - (CGFloat)intDX;
+        _mouseRemY = rawDY - (CGFloat)intDY;
+        int newX = (int)_mouseX + intDX;
+        int newY = (int)_mouseY + intDY;
         _mouseX = (int16_t)(newX < 0 ? 0 : (newX > 255 ? 255 : newX));
         _mouseY = (int16_t)(newY < 0 ? 0 : (newY > 223 ? 223 : newY));
         S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
@@ -866,6 +885,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)resetSNESMouseTracking {
     _mousePrevValid = NO;
+    _mouseRemX = 0.0;
+    _mouseRemY = 0.0;
 }
 
 #pragma mark Video
