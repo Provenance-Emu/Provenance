@@ -137,15 +137,6 @@
       }
     },
     {
-      "identity" : "packagebuildinfo",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/DimaRU/PackageBuildInfo.git",
-      "state" : {
-        "revision" : "b58288cada24fdaaedaaa329afe52d910794fdb2",
-        "version" : "1.0.4"
-      }
-    },
-    {
       "identity" : "plzmasdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
