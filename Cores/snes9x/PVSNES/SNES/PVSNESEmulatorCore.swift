@@ -79,7 +79,15 @@ extension PVSNES9xEmulatorCore: MouseResponder {
 #endif
 
     public func mouseMoved(atPoint point: CGPoint) {
-        (bridge as! PVSNESEmulatorCoreBridge).snesMouseMoved(to: point)
+        let snesBridge = bridge as! PVSNESEmulatorCoreBridge
+#if os(tvOS)
+        // On tvOS the Siri Remote pan handler delivers per-event *relative* deltas in
+        // view-point units — not normalised [0,1] absolute positions.  Pass them through
+        // the dedicated delta path so we don't double-differentiate or misscale.
+        snesBridge.snesMouseMovedByDelta(point)
+#else
+        snesBridge.snesMouseMoved(to: point)
+#endif
     }
 
     public func leftMouseDown(atPoint point: CGPoint) {

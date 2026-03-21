@@ -728,6 +728,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 									 ];
 
         isMultitap = NO;
+        _isMouseGame = NO; // Reset on every ROM load so stale state is not carried across games.
 		// Automatically enable SNES Mouse, Super Scope, Justifier and Multitap where supported
 		if([snesJustifier containsObject:cartCRC32])
 		{
@@ -830,6 +831,19 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     _mousePrevNormX = nx;
     _mousePrevNormY = ny;
     _mousePrevValid = YES;
+}
+
+/// Used by the tvOS Siri Remote pan handler, which already produces per-event relative deltas
+/// in view-point units. Directly add the delta to the accumulated SNES cursor position without
+/// the prev-sample subtraction or normalized scaling applied in `snesMouseMovedTo:`.
+- (void)snesMouseMovedByDelta:(CGPoint)delta {
+    if (delta.x != 0.0 || delta.y != 0.0) {
+        int newX = (int)_mouseX + (int)delta.x;
+        int newY = (int)_mouseY + (int)delta.y;
+        _mouseX = (int16_t)(newX < 0 ? 0 : (newX > 255 ? 255 : newX));
+        _mouseY = (int16_t)(newY < 0 ? 0 : (newY > 223 ? 223 : newY));
+        S9xReportPointer(kSNESMousePointerID, _mouseX, _mouseY);
+    }
 }
 
 - (void)snesLeftMouseDown {
