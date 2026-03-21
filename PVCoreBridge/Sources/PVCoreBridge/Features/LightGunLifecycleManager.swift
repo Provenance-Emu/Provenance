@@ -16,8 +16,9 @@ import Foundation
 /// for calling `attach(to:)` after the core starts and `detach()` when the
 /// game ends.
 ///
-/// `attach(to:)` accepts any `LightGunResponder`-conforming core (compile-time
-/// enforced). If the core reports `gameSupportsLightGun == false` at runtime,
+/// `attach(to:)` accepts any `LightGunResponder`-conforming core. Callers
+/// typically cast with `core as? any LightGunResponder & AnyObject` before
+/// calling `attach(to:)`. If the core reports `gameSupportsLightGun == false` at runtime,
 /// any currently-attached driver is first detached, then the function returns
 /// without creating a new driver. Callers should check `gameSupportsLightGun`
 /// before calling `attach(to:)` if a silent no-op is undesirable.
@@ -62,7 +63,7 @@ public final class LightGunLifecycleManager {
     /// If the core reports `gameSupportsLightGun == false`, any currently-attached driver
     /// is first detached and then the function returns without creating a new driver.
     /// Calling this while a driver is already attached will detach the previous driver first.
-    public func attach(to core: some LightGunResponder & AnyObject) {
+    public func attach(to core: any LightGunResponder & AnyObject) {
         // Always detach first so any previously-attached driver is released and the
         // core is not left in a permanently-attached state when switching games.
         detach()

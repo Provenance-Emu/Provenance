@@ -191,17 +191,15 @@ import UIKit
         guard #available(iOS 14.0, tvOS 14.0, *) else { return }
         let input = mouse.mouseInput
 
-        // Delta movement handler — GCMouse may invoke this off the main thread;
-        // capture deltas before the hop to avoid any data races.
-        // A `Task { @MainActor }` is used to hop execution to the main actor.
-        // Mouse deltas can arrive at high frequency (120–1000 Hz), but the Task
-        // overhead (~1–5 µs each) is negligible compared to the event rate.
-        // Deltas are captured as value types (CGFloat) before the hop, ensuring
-        // no shared mutable state is accessed off-actor.
+        // Delta movement handler — GCMouse may invoke this off the main thread.
+        // Deltas are captured as value types (CGFloat) before the hop to avoid
+        // shared mutable state being accessed off-actor. `DispatchQueue.main.async`
+        // is used instead of `Task { @MainActor }` to minimise per-event overhead
+        // at high mouse polling rates.
         input?.mouseMovedHandler = { [weak self] _, deltaX, deltaY in
             let dx = CGFloat(deltaX)
             let dy = CGFloat(deltaY)
-            Task { @MainActor [weak self] in
+            DispatchQueue.main.async { [weak self] in
                 self?._applyDelta(dx: dx, dy: dy)
             }
         }
