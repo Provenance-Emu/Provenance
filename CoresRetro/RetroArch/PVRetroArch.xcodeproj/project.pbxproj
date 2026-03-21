@@ -115,6 +115,8 @@
 		93FF38232965FF9C00772659 /* PVRetroArchCoreBridge+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */; };
 		93FF38252965FF9C00772659 /* PVRetroArchCoreBridge+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3F000312F91AB2300CAFE0C /* PVRetroArchCoreBridge+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3F0002C2F91AB2300CAFE0A /* PVRetroArchCoreBridge+Netplay.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3F000322F91AB2300CAFE0D /* PVRetroArchCoreBridge+Netplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3F0002D2F91AB2300CAFE0B /* PVRetroArchCoreBridge+Netplay.mm */; };
 		93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */; };
 		93FF38272965FF9C00772659 /* PVRetroArchCoreBridge+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVRetroArchCoreBridge+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */; };
@@ -447,6 +449,8 @@
 		B3447EA0218B881000557ACE /* PVRetroArch.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArch.mm; sourceTree = "<group>"; };
 		B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Saves.h"; sourceTree = "<group>"; };
 		B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVRetroArchCore+Saves.mm"; sourceTree = "<group>"; };
+		B3F0002C2F91AB2300CAFE0A /* PVRetroArchCoreBridge+Netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Netplay.h"; sourceTree = "<group>"; };
+		B3F0002D2F91AB2300CAFE0B /* PVRetroArchCoreBridge+Netplay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVRetroArchCoreBridge+Netplay.mm"; sourceTree = "<group>"; };
 		B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Video.h"; sourceTree = "<group>"; };
 		B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVRetroArchCore+Video.mm"; sourceTree = "<group>"; };
 		B3447EB1218BC69700557ACE /* PVRetroArchCoreBridge+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Audio.h"; sourceTree = "<group>"; };
@@ -942,6 +946,8 @@
 				B3447EB1218BC69700557ACE /* PVRetroArchCoreBridge+Audio.h */,
 				B3447E96218B809200557ACE /* PVRetroArchCoreBridge+Controls.h */,
 				B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */,
+				B3F0002C2F91AB2300CAFE0A /* PVRetroArchCoreBridge+Netplay.h */,
+				B3F0002D2F91AB2300CAFE0B /* PVRetroArchCoreBridge+Netplay.mm */,
 				B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */,
 				93AC9F662A48952700D3F4D6 /* runloop.c */,
 				93B66B982967C64300A621DD /* Shaders.metal */,
@@ -1104,6 +1110,7 @@
 				B36B5B9D2D796C5900BABCA3 /* disk_index_file.h in Headers */,
 				B36B5B9E2D796C5900BABCA3 /* dynamic.h in Headers */,
 				93FF38252965FF9C00772659 /* PVRetroArchCoreBridge+Saves.h in Headers */,
+				B3F000312F91AB2300CAFE0C /* PVRetroArchCoreBridge+Netplay.h in Headers */,
 				B36B5BBC2D798B2200BABCA3 /* audio_driver.h in Headers */,
 				93FF38212965FF9C00772659 /* PVRetroArchCoreBridge+Audio.h in Headers */,
 				B36B5BA72D7973A100BABCA3 /* content.h in Headers */,
@@ -1466,6 +1473,7 @@
 				B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,
+				B3F000322F91AB2300CAFE0D /* PVRetroArchCoreBridge+Netplay.mm in Sources */,
 				93C372682A8B68000007671D /* PVRetroArchCore+Controls+Dreamcast.m in Sources */,
 				93C3726C2A8B68000007671D /* PVRetroArchCore+Controls+GBA.m in Sources */,
 				93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */,

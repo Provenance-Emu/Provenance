@@ -227,9 +227,9 @@ private extension NetplayRoom {
             isLAN: isLAN,
             hostAddress: address,
             port: port,
-            discoverySource: .manual,
             isPasswordProtected: isPasswordProtected,
-            allowsSpectators: allowsSpectators
+            allowsSpectators: allowsSpectators,
+            discoverySource: .manual
         )
     }
 }
