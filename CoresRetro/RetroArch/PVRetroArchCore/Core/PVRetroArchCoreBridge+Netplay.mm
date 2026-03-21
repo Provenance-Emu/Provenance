@@ -6,12 +6,12 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 //  Bridges Provenance Swift netplay calls to RetroArch's C-level netplay
-//  engine (HAVE_NETPLAY). Configures global_t->netplay fields then fires
-//  CMD_EVENT_NETPLAY_INIT / CMD_EVENT_NETPLAY_DEINIT via command_event().
+//  engine (HAVE_NETPLAY). Configures settings_t netplay fields via
+//  config_get_ptr(), then fires CMD_EVENT_NETPLAY_INIT / DEINIT via
+//  command_event() and netplay_driver_ctl().
 //
 
 #import "PVRetroArchCoreBridge+Netplay.h"
-#import <objc/runtime.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything"
@@ -20,14 +20,13 @@
 
 #ifdef HAVE_NETPLAY
 #import "command.h"
-#import "runloop.h"
+#import "configuration.h"
+#import "network/netplay/netplay.h"
+#import "network/netplay/netplay_defines.h"
 #import "libretro-common/include/string/stdstring.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
-
-// Internal storage key for associated status
-static const void *kNetplayStatusKey = &kNetplayStatusKey;
 
 @implementation PVRetroArchCoreBridge (Netplay)
 
@@ -41,18 +40,22 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
 #endif
 }
 
-// MARK: - Status property (stored via objc_associated_object)
+// MARK: - Status property (derived live from netplay_driver_ctl)
 
 - (PVRetroArchNetplayStatus)netplayStatus {
-    NSNumber *num = objc_getAssociatedObject(self, kNetplayStatusKey);
-    return num ? (PVRetroArchNetplayStatus)num.integerValue : PVRetroArchNetplayStatusIdle;
-}
-
-- (void)setNetplayStatus:(PVRetroArchNetplayStatus)status {
-    objc_setAssociatedObject(self,
-                             kNetplayStatusKey,
-                             @(status),
-                             OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+#ifdef HAVE_NETPLAY
+    if (!netplay_driver_ctl(RARCH_NETPLAY_CTL_IS_ENABLED, NULL))
+        return PVRetroArchNetplayStatusIdle;
+    if (netplay_driver_ctl(RARCH_NETPLAY_CTL_IS_SPECTATING, NULL))
+        return PVRetroArchNetplayStatusSpectating;
+    if (netplay_driver_ctl(RARCH_NETPLAY_CTL_IS_SERVER, NULL))
+        return PVRetroArchNetplayStatusHosting;
+    if (netplay_driver_ctl(RARCH_NETPLAY_CTL_IS_CONNECTED, NULL))
+        return PVRetroArchNetplayStatusConnected;
+    return PVRetroArchNetplayStatusIdle;
+#else
+    return PVRetroArchNetplayStatusIdle;
+#endif
 }
 
 // MARK: - Host
@@ -61,6 +64,7 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
                                    port:(uint16_t)port
                              frameDelay:(int)frameDelay
                                   error:(NSError *__autoreleasing _Nullable *)error {
+#ifdef HAVE_NETPLAY
     if (self.netplayStatus != PVRetroArchNetplayStatusIdle) {
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
@@ -70,29 +74,35 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
         return NO;
     }
 
-#ifdef HAVE_NETPLAY
-    global_t *gl = global_get_ptr();
-    if (!gl) {
+    settings_t *settings = config_get_ptr();
+    if (!settings) {
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorNotRunning
-                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch runtime is not initialized."}];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch settings not initialized."}];
         }
         return NO;
     }
 
-    gl->netplay.enable      = true;
-    gl->netplay.is_client   = false;
-    gl->netplay.is_spectate = false;
-    gl->netplay.port        = (port > 0) ? port : 55435;
-    gl->netplay.sync_frames = (unsigned)MAX(0, frameDelay);
-    gl->netplay.server[0]   = '\0';  // empty server string = host mode
+    // Configure netplay settings
+    settings->uints.netplay_port = (port > 0) ? port : 55435;
+    settings->uints.netplay_input_latency_frames_min = (unsigned)MAX(0, frameDelay);
+    settings->paths.netplay_server[0] = '\0';  // empty = host mode
+    settings->bools.netplay_start_as_spectator = false;
+    settings->bools.netplay_public_announce = false;
 
-    ILOG(@"[Netplay] Starting host on port %u, frameDelay=%d", gl->netplay.port, frameDelay);
+    if (nickname.length) {
+        strlcpy(settings->paths.username,
+                nickname.UTF8String,
+                sizeof(settings->paths.username));
+    }
 
+    ILOG(@"[Netplay] Starting host on port %u, frameDelay=%d", settings->uints.netplay_port, frameDelay);
+
+    netplay_driver_ctl(RARCH_NETPLAY_CTL_ENABLE_SERVER, NULL);
     bool ok = command_event(CMD_EVENT_NETPLAY_INIT, NULL);
     if (!ok) {
-        gl->netplay.enable = false;
+        netplay_driver_ctl(RARCH_NETPLAY_CTL_DISABLE, NULL);
         ELOG(@"[Netplay] CMD_EVENT_NETPLAY_INIT failed");
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
@@ -102,7 +112,6 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
         return NO;
     }
 
-    [self setNetplayStatus:PVRetroArchNetplayStatusHosting];
     ILOG(@"[Netplay] Hosting started");
     return YES;
 #else
@@ -123,6 +132,7 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
                   frameDelay:(int)frameDelay
                     spectate:(BOOL)spectate
                        error:(NSError *__autoreleasing _Nullable *)error {
+#ifdef HAVE_NETPLAY
     if (self.netplayStatus != PVRetroArchNetplayStatusIdle) {
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
@@ -141,31 +151,36 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
         return NO;
     }
 
-#ifdef HAVE_NETPLAY
-    global_t *gl = global_get_ptr();
-    if (!gl) {
+    settings_t *settings = config_get_ptr();
+    if (!settings) {
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
                                          code:PVRetroArchNetplayErrorNotRunning
-                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch runtime is not initialized."}];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"RetroArch settings not initialized."}];
         }
         return NO;
     }
 
-    gl->netplay.enable      = true;
-    gl->netplay.is_client   = !spectate;
-    gl->netplay.is_spectate = spectate;
-    gl->netplay.port        = (port > 0) ? port : 55435;
-    gl->netplay.sync_frames = (unsigned)MAX(0, frameDelay);
-    strlcpy(gl->netplay.server,
+    // Configure netplay settings
+    strlcpy(settings->paths.netplay_server,
             hostname.UTF8String,
-            sizeof(gl->netplay.server));
+            sizeof(settings->paths.netplay_server));
+    settings->uints.netplay_port = (port > 0) ? port : 55435;
+    settings->uints.netplay_input_latency_frames_min = (unsigned)MAX(0, frameDelay);
+    settings->bools.netplay_start_as_spectator = spectate;
 
-    ILOG(@"[Netplay] Connecting to %@:%u spectate=%d", hostname, gl->netplay.port, spectate);
+    if (nickname.length) {
+        strlcpy(settings->paths.username,
+                nickname.UTF8String,
+                sizeof(settings->paths.username));
+    }
 
+    ILOG(@"[Netplay] Connecting to %@:%u spectate=%d", hostname, settings->uints.netplay_port, spectate);
+
+    netplay_driver_ctl(RARCH_NETPLAY_CTL_ENABLE_CLIENT, NULL);
     bool ok = command_event(CMD_EVENT_NETPLAY_INIT, NULL);
     if (!ok) {
-        gl->netplay.enable = false;
+        netplay_driver_ctl(RARCH_NETPLAY_CTL_DISABLE, NULL);
         ELOG(@"[Netplay] CMD_EVENT_NETPLAY_INIT failed for client connect");
         if (error) {
             *error = [NSError errorWithDomain:PVRetroArchNetplayErrorDomain
@@ -175,8 +190,6 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
         return NO;
     }
 
-    [self setNetplayStatus:spectate ? PVRetroArchNetplayStatusSpectating
-                                    : PVRetroArchNetplayStatusConnected];
     ILOG(@"[Netplay] Connected to %@", hostname);
     return YES;
 #else
@@ -195,20 +208,15 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
 #ifdef HAVE_NETPLAY
     ILOG(@"[Netplay] Stopping session");
     command_event(CMD_EVENT_NETPLAY_DEINIT, NULL);
-
-    global_t *gl = global_get_ptr();
-    if (gl) {
-        gl->netplay.enable = false;
-    }
+    netplay_driver_ctl(RARCH_NETPLAY_CTL_DISABLE, NULL);
 #endif
-    [self setNetplayStatus:PVRetroArchNetplayStatusIdle];
 }
 
 // MARK: - Flip Players
 
 - (void)netplayFlipPlayers {
 #ifdef HAVE_NETPLAY
-    command_event(CMD_EVENT_NETPLAY_FLIP_PLAYERS, NULL);
+    netplay_driver_ctl(RARCH_NETPLAY_CTL_GAME_WATCH, NULL);
 #endif
 }
 
