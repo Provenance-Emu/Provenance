@@ -685,6 +685,18 @@ static void writeSaveFile(const char* path, int type)
             default:
                 break;
         }}
+        // Standard MFi extended gamepad mapping for Sega 32X (non-M30 layout).
+        // All 6 face buttons (A/B/C/X/Y/Z), Mode, and Start are fully accessible:
+        //   D-pad up/down/left/right  → D-pad (with left-thumbstick fallback)
+        //   buttonX                   → Saturn A  (face, top-left position)
+        //   buttonA                   → Saturn B  (face, bottom)
+        //   buttonB                   → Saturn C  (face, bottom-right)
+        //   buttonY                   → Saturn X  (face, top-right)
+        //   leftShoulder  (L1)        → Saturn Y
+        //   rightShoulder (R1)        → Saturn Z
+        //   rightTrigger  (R2)        → Start
+        //   leftTrigger   (L2)        → Mode
+        // No modifier combo is required: all 8 inputs map to distinct physical buttons.
         { switch (buttonID) {
             case PVSega32XButtonUp:
                 return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];

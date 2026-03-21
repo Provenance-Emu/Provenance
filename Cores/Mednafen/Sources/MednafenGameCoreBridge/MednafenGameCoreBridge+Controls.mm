@@ -497,27 +497,38 @@
             GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
             GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
 
+            // MFi+ modifier combo: hold L1+R1 simultaneously to redirect D-pad inputs to
+            // Saturn Z (D-pad down) and C (D-pad right), providing alternate physical access
+            // on controllers without shoulder-button availability elsewhere.
+            bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
+
             switch (buttonID) {
                 case PVSaturnButtonUp:
                     return DPAD_PRESSED(up);
                 case PVSaturnButtonDown:
-                    return DPAD_PRESSED(down);
+                    // Suppress D-pad down when modifier is active (used for Z button alternate)
+                    return !modifierPressed && DPAD_PRESSED(down);
                 case PVSaturnButtonLeft:
                     return DPAD_PRESSED(left);
                 case PVSaturnButtonRight:
-                    return DPAD_PRESSED(right);
+                    // Suppress D-pad right when modifier is active (used for C button alternate)
+                    return !modifierPressed && DPAD_PRESSED(right);
                 case PVSaturnButtonA:
                     return [[gamepad buttonA] isPressed];
                 case PVSaturnButtonB:
                     return [[gamepad buttonB] isPressed];
                 case PVSaturnButtonC:
-                    return [[gamepad leftShoulder] isPressed];
+                    // C button: left shoulder normally, OR modifier+D-pad right as alternate access
+                    return ([[gamepad leftShoulder] isPressed] && !modifierPressed) ||
+                           (modifierPressed && [[dpad right] isPressed]);
                 case PVSaturnButtonX:
                     return [[gamepad buttonX] isPressed];
                 case PVSaturnButtonY:
                     return [[gamepad buttonY] isPressed];
                 case PVSaturnButtonZ:
-                    return [[gamepad rightShoulder] isPressed];
+                    // Z button: right shoulder normally, OR modifier+D-pad down as alternate access
+                    return ([[gamepad rightShoulder] isPressed] && !modifierPressed) ||
+                           (modifierPressed && [[dpad down] isPressed]);
                 case PVSaturnButtonL:
                     return [[gamepad leftTrigger] isPressed];
                 case PVSaturnButtonStart:

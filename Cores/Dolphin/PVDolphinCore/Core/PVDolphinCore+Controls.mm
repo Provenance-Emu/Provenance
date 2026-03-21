@@ -512,10 +512,16 @@ s8 joyx[4], joyy[4];
                 [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
                     action:(pressed?1:0)];
 //                [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
-                [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START action:(pressed?1:0)];
-                //GC
-                [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START
-                 action:(pressed?1:0)];
+                if (!self.isWii) {
+                    // GameCube mode: R3 (right thumbstick press) → Z button.
+                    // Z has no other physical mapping on a standard MFi extended gamepad.
+                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z
+                     action:(pressed?1:0)];
+                } else {
+                    // Wii mode: R3 → Start
+                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START
+                     action:(pressed?1:0)];
+                }
             };
             controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 ILOG(@"Rotating (opt) controls %d\n", rotateControls);
