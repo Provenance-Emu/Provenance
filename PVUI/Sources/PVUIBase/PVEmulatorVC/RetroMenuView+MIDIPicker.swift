@@ -33,13 +33,15 @@ extension RetroMenuView {
     /// Only rendered on platforms that ship CoreMIDI.
     @ViewBuilder
     var midiPickerSection: some View {
-        if coreSupportsMIDI {
 #if canImport(CoreMIDI)
+        if coreSupportsMIDI {
             if #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
                 MIDIPickerSectionView(palette: ThemeManager.shared.currentPalette)
             }
-#endif
         }
+#else
+        EmptyView()
+#endif
     }
 }
 
