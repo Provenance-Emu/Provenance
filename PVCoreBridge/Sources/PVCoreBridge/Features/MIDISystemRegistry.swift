@@ -15,7 +15,7 @@
 //     decisions (show/hide MIDI device picker, filter system list).
 //     Backed by this registry.
 //
-//  2. **Core level** (`MIDIResponder.gamesSupportsMIDI`): answers "does the
+//  2. **Core level** (`MIDIResponder.gameSupportsMIDI`): answers "does the
 //     *currently loaded core* support MIDI right now?"  Queried on a running
 //     core instance.  A core may dynamically update this (e.g. after reading
 //     a game-specific config) and call `MIDISystemRegistry.shared.register(system:)`
@@ -23,7 +23,7 @@
 //
 //  Usage from a core:
 //  ```swift
-//  if gamesSupportsMIDI {
+//  if gameSupportsMIDI {
 //      MIDISystemRegistry.shared.register(system: detectedSystemID)
 //  }
 //  ```

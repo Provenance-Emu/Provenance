@@ -166,10 +166,9 @@ private struct MIDIEndpointRow: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 9)
-                .background(rowBackground(empty: endpoints.isEmpty))
+                .background(rowBackground())
             }
             .buttonStyle(.plain)
-            .disabled(endpoints.isEmpty)
 
             // Device list — shown when expanded
             if expanded {
@@ -213,13 +212,13 @@ private struct MIDIEndpointRow: View {
         palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor
     }
 
-    private func rowBackground(empty: Bool) -> some View {
+    private func rowBackground() -> some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(palette.defaultTintColor.swiftUIColor.opacity(empty ? 0.04 : 0.08))
+            .fill(palette.defaultTintColor.swiftUIColor.opacity(0.08))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .strokeBorder(
-                        palette.defaultTintColor.swiftUIColor.opacity(empty ? 0.12 : 0.25),
+                        palette.defaultTintColor.swiftUIColor.opacity(0.25),
                         lineWidth: 1
                     )
             )

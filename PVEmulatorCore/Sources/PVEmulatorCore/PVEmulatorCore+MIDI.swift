@@ -18,10 +18,10 @@ extension PVEmulatorCore {
     // MARK: MIDI capability forwarding
 
     /// Whether the loaded game/core supports MIDI peripherals.
-    /// Forwards to `MIDIResponder.gamesSupportsMIDI` when the bridge conforms;
+    /// Forwards to `MIDIResponder.gameSupportsMIDI` when the bridge conforms;
     /// returns `false` otherwise.
     @objc open var supportsMIDI: Bool {
-        (bridge as? MIDIResponder)?.gamesSupportsMIDI ?? false
+        (bridge as? MIDIResponder)?.gameSupportsMIDI ?? false
     }
 
     /// Whether the loaded game/core *requires* a MIDI device to function.

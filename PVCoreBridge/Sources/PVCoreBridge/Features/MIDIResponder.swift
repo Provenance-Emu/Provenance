@@ -23,7 +23,7 @@
 //
 //  ```swift
 //  extension PVMyCore: MIDIResponder {
-//      var gamesSupportsMIDI: Bool { true }
+//      var gameSupportsMIDI: Bool { true }
 //      var requiresMIDI: Bool { false }
 //
 //      func midiNoteOn(channel: UInt8, note: UInt8, velocity: UInt8) {
@@ -43,9 +43,10 @@ import Foundation
 /// Protocol adopted by emulator core bridges that support MIDI peripheral
 /// input (notes, control changes, clocks) and/or output (synthesiser data).
 ///
-/// All methods are called on the core's run-loop thread.  Implementations
-/// must **not** block; queue any heavy work and process it inside the core's
-/// audio callback.
+/// Threading: `MIDIDeviceManager` dispatches all MIDI callbacks to responders
+/// on the **main actor**. Implementations must **not** block; if processing
+/// needs to happen on the core's run-loop or audio thread, capture the event
+/// and enqueue it onto the core's own queue or callback.
 ///
 /// Implement the `@objc optional` methods only for the messages your core
 /// actually handles — unfulfilled optional messages are silently discarded.
@@ -55,7 +56,7 @@ import Foundation
 
     /// Whether the loaded game/system supports MIDI peripherals.
     /// The UI uses this to show or hide the MIDI device picker.
-    @objc var gamesSupportsMIDI: Bool { get }
+    @objc var gameSupportsMIDI: Bool { get }
 
     /// Whether the game/system *requires* a MIDI device to function correctly
     /// (e.g. a MIDI-only music application running on the emulated system).
@@ -136,9 +137,11 @@ import Foundation
 
     /// Called by the core when it wants to *send* MIDI data to an external
     /// device (e.g. driving a Roland MT-32 from DOS software).
-    /// The host (MIDIDeviceManager) registers a handler via
-    /// `MIDIOutputHandler` and routes the raw bytes to the selected
-    /// MIDI output endpoint.
+    ///
+    /// When implemented, the core should call
+    /// `MIDIDeviceManager.shared.send(_:)` directly (available on iOS 14+,
+    /// tvOS 14+, macOS 11+) to route bytes to the selected output endpoint.
+    /// No separate output-handler registration API is provided.
     ///
     /// Cores that only consume MIDI input do not need to implement this.
     @objc optional func midiOutput(_ data: Data)

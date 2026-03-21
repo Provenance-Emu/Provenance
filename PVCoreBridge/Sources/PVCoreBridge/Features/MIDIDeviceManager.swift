@@ -173,35 +173,65 @@ public final class MIDIDeviceManager: ObservableObject {
         guard status == noErr else { return }
 
         // Input port using the MIDI 1.0 protocol (iOS 14 / macOS 11 API)
-        MIDIInputPortCreateWithProtocol(
+        let inputStatus = MIDIInputPortCreateWithProtocol(
             client, "PVInput" as CFString, ._1_0, &inputPort
-        ) { [weak self] eventList, _ in
+        ) { [weak self] eventList, srcConnRefCon in
             // This closure is called on a CoreMIDI thread — dispatch to main actor
             guard let self else { return }
-            self.handleEventList(eventList)
+            // Decode the source endpoint ref passed as refCon by connectAllSources()
+            let sourceRef: MIDIEndpointRef = srcConnRefCon.map {
+                MIDIEndpointRef(UInt(bitPattern: $0))
+            } ?? 0
+            self.handleEventList(eventList, sourceRef: sourceRef)
+        }
+        guard inputStatus == noErr else {
+            assertionFailure("MIDIInputPortCreateWithProtocol failed: \(inputStatus)")
+            return
         }
 
-        MIDIOutputPortCreate(client, "PVOutput" as CFString, &outputPort)
+        let outputStatus = MIDIOutputPortCreate(client, "PVOutput" as CFString, &outputPort)
+        if outputStatus != noErr {
+            assertionFailure("MIDIOutputPortCreate failed: \(outputStatus)")
+        }
 
         // Connect input port to all current sources; topology changes handled via notification
         connectAllSources()
     }
 
-    /// Connect the input port to every available MIDI source.
+    /// Connect the input port to MIDI sources.
+    ///
+    /// Each source is connected with its `MIDIEndpointRef` encoded as the
+    /// `connRefCon` so the input callback can identify which device sent each
+    /// event (used for auto-detect and per-source filtering).
     private func connectAllSources() {
         let count = MIDIGetNumberOfSources()
         for i in 0..<count {
             let src = MIDIGetSource(i)
             guard src != 0 else { continue }
-            MIDIPortConnectSource(inputPort, src, nil)
+            // Encode the endpoint ref as refCon for later identification
+            MIDIPortConnectSource(inputPort, src, UnsafeMutableRawPointer(bitPattern: UInt(src)))
         }
     }
 
     /// Walk an `MIDIEventList` (MIDI 1.0 UMP packets) and dispatch each message.
     /// Marked `nonisolated` because it is called from a CoreMIDI background thread.
-    nonisolated private func handleEventList(_ eventList: UnsafePointer<MIDIEventList>) {
+    ///
+    /// - Parameters:
+    ///   - eventList: Pointer to the incoming event list.
+    ///   - sourceRef: The `MIDIEndpointRef` of the source that produced the list,
+    ///     decoded from the `srcConnRefCon` registered in `connectAllSources()`.
+    nonisolated private func handleEventList(
+        _ eventList: UnsafePointer<MIDIEventList>,
+        sourceRef: MIDIEndpointRef
+    ) {
         let numPackets = Int(eventList.pointee.numPackets)
         guard numPackets > 0 else { return }
+
+        // Look up the unique ID of the sending source (CoreMIDI property reads are thread-safe)
+        var sourceUniqueID: MIDIUniqueID = 0
+        if sourceRef != 0 {
+            MIDIObjectGetIntegerProperty(sourceRef, kMIDIPropertyUniqueID, &sourceUniqueID)
+        }
 
         // `MIDIEventList.packet` is the first element of a variable-length C array
         // embedded directly in the struct.  We obtain a pointer into the original
@@ -218,7 +248,7 @@ public final class MIDIDeviceManager: ObservableObject {
                 let safeCount = min(wordCount, rawWords.count / 4)
                 for i in 0..<safeCount {
                     let word = rawWords.load(fromByteOffset: i * 4, as: UInt32.self)
-                    parseMIDI1UMPWord(word)
+                    parseMIDI1UMPWord(word, sourceUniqueID: sourceUniqueID)
                 }
             }
             current = MIDIEventPacketNext(current)
@@ -231,11 +261,19 @@ public final class MIDIDeviceManager: ObservableObject {
 
     /// Parse a single 32-bit MIDI 1.0 UMP word and dispatch to the responder.
     ///
-    /// In the MIDI 1.0 UMP format the message type nibble lives in bits 28-31
-    /// of the word.  For type 0x2 (MIDI 1.0 Channel Voice) the MIDI status byte
-    /// is in bits 16-23, data 1 in bits 8-15, data 2 in bits 0-7.
+    /// **Supported UMP message types:**
+    /// - `0x2` — MIDI 1.0 Channel Voice (Note On/Off, CC, Program Change,
+    ///   Aftertouch, Pitch Bend). Decoded and dispatched to `MIDIResponder`.
+    ///
+    /// **Not yet dispatched** (silently dropped):
+    /// - `0x0` — Utility messages (clock, jitter reduction)
+    /// - `0x1` — System Common / Real-time (MIDI Clock 0xF8, Start, Stop, Continue)
+    /// - `0x3` — SysEx (64-bit)
+    /// - `0x4` — MIDI 2.0 Channel Voice
+    /// - `0x5` — Data messages (SysEx 128-bit)
+    ///
     /// Marked `nonisolated` because it is called from the CoreMIDI callback thread.
-    nonisolated private func parseMIDI1UMPWord(_ word: UInt32) {
+    nonisolated private func parseMIDI1UMPWord(_ word: UInt32, sourceUniqueID: MIDIUniqueID) {
         let msgType = (word >> 28) & 0xF
         // Only handle MIDI 1.0 Channel Voice Messages (type 0x2)
         guard msgType == 0x2 else { return }
@@ -248,11 +286,18 @@ public final class MIDIDeviceManager: ObservableObject {
         Task { @MainActor [weak self] in
             guard let self, let responder = self._responder else { return }
 
-            // Auto-detect: first message identifies the active source
+            // Auto-detect: first message identifies and selects its source
             if self.isAutoDetecting {
+                if sourceUniqueID != 0 {
+                    self.selectedSourceID = sourceUniqueID
+                }
                 self.isAutoDetecting = false
-                // Note: the source identification happens in handleEventList;
-                // sourceRef resolution could be added via refCon if needed.
+                // Fall through and forward this first event to the responder
+            } else if let selectedID = self.selectedSourceID,
+                      sourceUniqueID != 0,
+                      sourceUniqueID != selectedID {
+                // Filter: discard events from sources other than the user's selection
+                return
             }
 
             switch status {
@@ -299,12 +344,11 @@ public final class MIDIDeviceManager: ObservableObject {
         if rx { rxActivity = true }
         if tx { txActivity = true }
         activityResetTask?.cancel()
-        activityResetTask = Task {
+        activityResetTask = Task { @MainActor [weak self] in
             try? await Task.sleep(nanoseconds: 80_000_000) // 80 ms
-            if !Task.isCancelled {
-                rxActivity = false
-                txActivity = false
-            }
+            guard !Task.isCancelled, let self else { return }
+            self.rxActivity = false
+            self.txActivity = false
         }
     }
 }
