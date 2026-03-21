@@ -41,10 +41,10 @@ private final class MednafenNetplayContext: NSObject {
 // MARK: - Associated-object keys
 
 private enum AssocKeys {
-    static var context    = "mdn_netplay_ctx"
-    static var queue      = "mdn_netplay_queue"
-    static var subject    = "mdn_netplay_subject"
-    static var cancellable = "mdn_netplay_cancel"
+    static var context:    UInt8 = 0
+    static var queue:      UInt8 = 0
+    static var subject:    UInt8 = 0
+    static var cancellable: UInt8 = 0
 }
 
 // MARK: - PVNetplayCapable
@@ -104,7 +104,7 @@ extension MednafenGameCore: PVNetplayCapable {
         // with the Mednafen run-loop thread that mutates engine globals.
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             _netplayQueue.async { [weak self] in
-                guard let self else { continuation.resume(); return }
+                guard let self else { continuation.resume(throwing: NetplayError.bridgeNotReady); return }
                 var nsError: NSError?
                 let ok = self._bridge.netplayConnectToHost(host,
                                                            port: port,
@@ -186,7 +186,12 @@ extension MednafenGameCore: PVNetplayCapable {
                 .autoconnect()
                 .sink { [weak self] _ in
                     guard let self else { return }
-                    subject.send(self.netplayState)
+                    let state = self.netplayState
+                    subject.send(state)
+                    if case .idle = state {
+                        self._pollingCancellable?.cancel()
+                        self._pollingCancellable = nil
+                    }
                 }
         }
         return subject.eraseToAnyPublisher()

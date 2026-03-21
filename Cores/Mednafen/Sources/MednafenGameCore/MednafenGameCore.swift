@@ -125,7 +125,7 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
 //#warning("This is a stub")
 //    @objc public func getGame() -> UnsafeRawPointer? { return nil }
     
-    var _bridge: MednafenGameCoreBridge = .init()
+    let _bridge: MednafenGameCoreBridge = .init()
     public required init() {
         super.init()
         self.bridge = _bridge as? any ObjCBridgedCoreBridge
