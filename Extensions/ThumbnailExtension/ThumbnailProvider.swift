@@ -12,8 +12,7 @@
 
 import UIKit
 import QuickLookThumbnailing
-import PVLibrary
-import PVHashing
+import PVQuickLookSupport
 
 // https://developer.apple.com/documentation/quicklookthumbnailing/providing_thumbnails_of_your_custom_file_types
 
@@ -34,7 +33,7 @@ class ThumbnailProvider: QLThumbnailProvider {
         } else {
             // ROM file — look up artwork via the driver then resolve the cached file URL.
             if let artworkKey = artworkDriver.artworkURLKey(forROMFilename: fileURL.lastPathComponent),
-               let artworkFileURL = resolveMediaCacheURL(forKey: artworkKey) {
+               let artworkFileURL = ArtworkResolver.fileURL(forKey: artworkKey) {
                 handler(QLThumbnailReply(imageFileURL: artworkFileURL), nil)
                 return
             }
@@ -51,41 +50,6 @@ class ThumbnailProvider: QLThumbnailProvider {
         let ext = fileURL.pathExtension.lowercased()
         // Provenance save states use .pvsav (see SpotlightImportExtension for canonical extension).
         return ext == "pvsav" || fileURL.path.contains("Save States")
-    }
-
-    /// Resolves a PVMediaCache key to a local file URL, checking the App Group
-    /// container first so extensions in the shared group find artwork written by
-    /// the main app even when `useAppGroups` UserDefaults may not be initialised
-    /// in the extension process.
-    ///
-    /// Search order:
-    ///   1. `<AppGroupContainer>/Documents/PVCache/<md5(key)>`
-    ///   2. `PVMediaCache.filePath(forKey:)` — local documents fallback
-    private func resolveMediaCacheURL(forKey key: String) -> URL? {
-        guard !key.isEmpty else { return nil }
-        let keyHash = key.md5Hash
-
-        // 1. App Group container — reliable from extension processes.
-        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) {
-            let appGroupCacheURL = groupURL
-                .appendingPathComponent("Documents", isDirectory: true)
-                .appendingPathComponent("PVCache", isDirectory: true)
-                .appendingPathComponent(keyHash, isDirectory: false)
-            if FileManager.default.fileExists(atPath: appGroupCacheURL.path) {
-                DLOG("Artwork resolved via App Group cache")
-                return appGroupCacheURL
-            }
-        }
-
-        // 2. Local documents fallback via PVMediaCache.
-        if let localURL = PVMediaCache.filePath(forKey: key),
-           FileManager.default.fileExists(atPath: localURL.path) {
-            DLOG("Artwork resolved via local cache")
-            return localURL
-        }
-
-        DLOG("Artwork file not found for key hash: \(keyHash)")
-        return nil
     }
 
     /// Draws a simple "Provenance" branded placeholder when no artwork is available.
