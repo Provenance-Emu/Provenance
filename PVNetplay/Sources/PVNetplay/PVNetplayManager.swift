@@ -165,9 +165,11 @@ public final class ObservableNetplayManager: ObservableObject {
 
     @Published public private(set) var state: NetplayState = .idle
     @Published public private(set) var discoveredRooms: [NetplayRoom] = []
+    @Published public private(set) var wanRooms: [NetplayRoom] = []
 
     private let manager = PVNetplayManager.shared
     public let bonjourDiscovery = PVNetplayBonjourDiscovery()
+    public let lobbyService = RetroArchLobbyService()
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -178,6 +180,10 @@ public final class ObservableNetplayManager: ObservableObject {
 
         bonjourDiscovery.$rooms
             .assign(to: \.discoveredRooms, on: self)
+            .store(in: &cancellables)
+
+        lobbyService.$rooms
+            .assign(to: \.wanRooms, on: self)
             .store(in: &cancellables)
     }
 
@@ -205,6 +211,16 @@ public final class ObservableNetplayManager: ObservableObject {
 
     public func stopDiscovery() {
         bonjourDiscovery.stopDiscovery()
+    }
+
+    /// Fetch WAN rooms from the RetroArch public lobby API.
+    public func fetchWANRooms() {
+        lobbyService.fetchRooms()
+    }
+
+    /// Cancel any in-flight WAN room fetch.
+    public func cancelWANFetch() {
+        lobbyService.cancelFetch()
     }
 }
 #endif

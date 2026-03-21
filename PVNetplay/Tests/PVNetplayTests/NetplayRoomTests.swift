@@ -7,6 +7,7 @@
 //
 
 import Testing
+import Foundation
 @testable import PVNetplay
 
 @Suite("NetplayRoom Tests")
@@ -181,6 +182,36 @@ struct NetplaySettingsTests {
         #expect(s.maxPlayers == 4)
         #expect(s.port == 12345)
         #expect(s.nickname == "TestPlayer")
+    }
+}
+
+@Suite("NetplayRoom WAN Tests")
+struct NetplayRoomWANTests {
+
+    @Test("lobbyAPI source is not LAN")
+    func lobbyAPISourceIsWAN() {
+        let room = NetplayRoom(
+            hostName: "OnlinePal",
+            gameName: "Sonic",
+            gameHash: "deadbeef",
+            coreIdentifier: "com.provenance.genesis",
+            maxPlayers: 2,
+            currentPlayers: 1,
+            isLAN: false,
+            hostAddress: "1.2.3.4",
+            port: 55435,
+            discoverySource: .lobbyAPI
+        )
+        #expect(!room.isLAN)
+        #expect(room.discoverySource == .lobbyAPI)
+    }
+
+    @Test("lobbyAPI source roundtrips via Codable")
+    func lobbyAPISourceCodable() throws {
+        let source = DiscoverySource.lobbyAPI
+        let data = try JSONEncoder().encode(source)
+        let decoded = try JSONDecoder().decode(DiscoverySource.self, from: data)
+        #expect(decoded == .lobbyAPI)
     }
 }
 
