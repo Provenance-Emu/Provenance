@@ -41,7 +41,7 @@ private final class LaunchFlowState: @unchecked Sendable {
 
  */
 
-public protocol GameLaunchingViewController {
+public protocol GameLaunchingViewController: AnyObject {
     func canLoad(_ game: PVGame) async throws
     func load(_ game: PVGame,
               sender: Any?,
