@@ -159,4 +159,81 @@ extension PVEmulatorViewController {
     }
 }
 #endif // os(iOS)
+
+
+// MARK: - Clip Capture (iOS/tvOS 15+)
+
+extension PVEmulatorViewController {
+
+    /// Whether always-on clip buffering is currently active.
+    public var isClipBufferingActive: Bool {
+        AppState.shared.emulationUIState.isClipBufferingActive
+    }
+
+    /// Starts always-on clip buffering if the user has it enabled in settings.
+    /// No-op on iOS < 15 / tvOS < 15.
+    public func startClipBufferingIfEnabled() {
+        guard #available(iOS 15.0, tvOS 15.0, *) else { return }
+        guard PVRecordingManager.shared.isAvailable else { return }
+        Task { @MainActor in
+            do {
+                try await PVRecordingManager.shared.startClipBuffering()
+                AppState.shared.emulationUIState.isClipBufferingActive = true
+                ILOG("[ClipCapture] Clip buffering started")
+            } catch {
+                ELOG("[ClipCapture] Could not start clip buffering: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// Stops always-on clip buffering. Called when the game exits.
+    public func stopClipBuffering() {
+        guard #available(iOS 15.0, tvOS 15.0, *) else { return }
+        guard isClipBufferingActive else { return }
+        Task { @MainActor in
+            await PVRecordingManager.shared.stopClipBuffering()
+            AppState.shared.emulationUIState.isClipBufferingActive = false
+            ILOG("[ClipCapture] Clip buffering stopped")
+        }
+    }
+
+    /// Exports the last `duration` seconds as a clip and saves to Photos.
+    public func saveClip(duration: TimeInterval = 30.0) {
+        guard #available(iOS 15.0, tvOS 15.0, *) else { return }
+        Task { @MainActor in
+            do {
+                let url = try await PVRecordingManager.shared.exportClip(duration: duration)
+                saveClipToPhotos(url: url)
+            } catch {
+                ELOG("[ClipCapture] Failed to export clip: \(error.localizedDescription)")
+                showClipError(error)
+            }
+        }
+    }
+
+    private func saveClipToPhotos(url: URL) {
+        #if os(iOS)
+        UISaveVideoAtPathToSavedPhotosAlbum(url.path, nil, nil, nil)
+        let alert = UIAlertController(
+            title: "Clip Saved",
+            message: "Your gameplay clip was saved to Photos.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+        #endif
+    }
+
+    private func showClipError(_ error: Error) {
+        #if os(iOS)
+        let alert = UIAlertController(
+            title: "Clip Error",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+        #endif
+    }
+}
 #endif // os(iOS) || os(tvOS)

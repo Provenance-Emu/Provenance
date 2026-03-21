@@ -674,6 +674,7 @@ struct RetroMenuView: View {
 
 #if os(iOS) || os(tvOS)
             broadcastButton
+            saveClipButton
 #endif
 
             // MARK: - Peripherals section
@@ -922,6 +923,62 @@ struct RetroMenuView: View {
 #else
             menuButton(title: title, icon: icon, color: color, role: role, action: broadcastAction)
 #endif
+        }
+    }
+#endif
+
+    // Save Clip button — iOS/tvOS 15+, shown only when clip buffering is active
+#if os(iOS) || os(tvOS)
+    @ViewBuilder
+    private var saveClipButton: some View {
+        if #available(iOS 15.0, tvOS 15.0, *) {
+            let isBuffering = AppState.shared.emulationUIState.isClipBufferingActive
+            if isBuffering {
+#if canImport(FreemiumKit)
+                PaidFeatureView {
+                    menuButton(title: String(localized: "SAVE CLIP"), icon: "scissors.badge.ellipsis", color: .retroPurple) {
+                        dismissAction(true)
+                        emulatorVC.saveClip()
+                    }
+                } lockedView: {
+                    HStack {
+                        menuButton(title: String(localized: "SAVE CLIP"), icon: "scissors.badge.ellipsis", color: .retroPurple) {}
+                            .disabled(true)
+                            .opacity(0.6)
+                        HStack(spacing: 3) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("PLUS")
+                                .font(.system(size: 9, weight: .heavy))
+                        }
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color.retroPurple.opacity(0.15))
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(Color.retroPurple.opacity(0.3), lineWidth: 0.5)
+                                )
+                        )
+                        .padding(.trailing, 8)
+                    }
+                }
+                .freemiumKitColorReset()
+#else
+                menuButton(title: String(localized: "SAVE CLIP"), icon: "scissors.badge.ellipsis", color: .retroPurple) {
+                    dismissAction(true)
+                    emulatorVC.saveClip()
+                }
+#endif
+            }
         }
     }
 #endif

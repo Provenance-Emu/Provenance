@@ -5,7 +5,7 @@
 //  Created by Claude on 3/7/26.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 import ReplayKit
 import UIKit
 import Defaults
@@ -20,6 +20,16 @@ import PVSettings
 
     public static let shared = PVRecordingManager()
 
+    /// Whether the recorder is available on this device/session.
+    public var isAvailable: Bool {
+        RPScreenRecorder.shared().isAvailable
+    }
+
+    /// Whether always-on clip buffering is currently active (iOS/tvOS 15+).
+    @available(iOS 15.0, tvOS 15.0, *)
+    public private(set) var isClipBuffering: Bool = false
+
+    #if os(iOS)
     /// Whether a recording session is currently active.
     ///
     /// Access is race-free because this class is `@MainActor`-isolated.
@@ -39,11 +49,6 @@ import PVSettings
     /// ReplayKit's main-thread requirements.
     public private(set) var isPreparingRecording: Bool = false
 
-    /// Whether the recorder is available on this device/session.
-    public var isAvailable: Bool {
-        RPScreenRecorder.shared().isAvailable
-    }
-
     /// Separate `NSObject` subclass used as `RPPreviewViewControllerDelegate`,
     /// keeping `PVRecordingManager` free of Objective-C inheritance.
     private let previewDelegate = PreviewDelegate()
@@ -52,11 +57,13 @@ import PVSettings
     /// Set this before calling `stopRecording` to be notified when the user is done
     /// with the recording preview (saved, discarded, or cancelled).
     public var onPreviewDismissed: (() -> Void)?
+    #endif
 
     private init() {}
 
-    // MARK: - Public API
+    // MARK: - Screen Recording (iOS only)
 
+    #if os(iOS)
     /// Starts a screen recording session.
     ///
     /// Microphone audio is enabled or disabled according to the user's
@@ -158,10 +165,12 @@ import PVSettings
         }
         isRecording = false
     }
+    #endif // os(iOS)
 }
 
 // MARK: - Private Delegate
 
+#if os(iOS)
 extension PVRecordingManager {
     private final class PreviewDelegate: NSObject, RPPreviewViewControllerDelegate {
         /// Called on the main actor after the preview sheet is dismissed.
@@ -177,17 +186,91 @@ extension PVRecordingManager {
         }
     }
 }
+#endif
+
+extension PVRecordingManager {
+    // MARK: - Clip Buffering (iOS/tvOS 15+)
+
+    /// Starts always-on clip buffering so users can retroactively save highlights.
+    @available(iOS 15.0, tvOS 15.0, *)
+    public func startClipBuffering() async throws {
+        guard isAvailable else {
+            WLOG("[ClipCapture] RPScreenRecorder not available")
+            throw RecordingError.unavailable
+        }
+        guard !isClipBuffering else { return }
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            DispatchQueue.main.async {
+                RPScreenRecorder.shared().startClipBuffering { error in
+                    if let error {
+                        ELOG("[ClipCapture] startClipBuffering error: \(error.localizedDescription)")
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+        }
+        isClipBuffering = true
+        ILOG("[ClipCapture] Clip buffering started")
+    }
+
+    /// Stops always-on clip buffering.
+    @available(iOS 15.0, tvOS 15.0, *)
+    public func stopClipBuffering() async {
+        guard isClipBuffering else { return }
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            DispatchQueue.main.async {
+                RPScreenRecorder.shared().stopClipBuffering { _ in
+                    continuation.resume()
+                }
+            }
+        }
+        isClipBuffering = false
+        ILOG("[ClipCapture] Clip buffering stopped")
+    }
+
+    /// Exports the last `duration` seconds from the clip buffer to a temporary file.
+    /// - Returns: URL of the exported clip (caller is responsible for moving/sharing).
+    @available(iOS 15.0, tvOS 15.0, *)
+    public func exportClip(duration: TimeInterval = 30.0) async throws -> URL {
+        guard isClipBuffering else {
+            throw RecordingError.clipBufferingNotActive
+        }
+        let outputURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PVClip_\(Int(Date().timeIntervalSince1970)).mp4")
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            DispatchQueue.main.async {
+                RPScreenRecorder.shared().exportClip(to: outputURL, duration: duration) { error in
+                    if let error {
+                        ELOG("[ClipCapture] exportClip error: \(error.localizedDescription)")
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+        }
+        ILOG("[ClipCapture] Clip exported to \(outputURL.path)")
+        return outputURL
+    }
+}
 
 // MARK: - Errors
 
 extension PVRecordingManager {
     public enum RecordingError: LocalizedError {
         case unavailable
+        case clipBufferingNotActive
 
         public var errorDescription: String? {
             switch self {
             case .unavailable:
                 return "Screen recording is not available on this device or in this session."
+            case .clipBufferingNotActive:
+                return "Clip buffering is not active. Start the game to enable clip capture."
             }
         }
     }

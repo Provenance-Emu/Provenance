@@ -1049,10 +1049,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             ensureVisualizerOnTop()
         }
         #endif
+
+        #if os(iOS) || os(tvOS)
+        startClipBufferingIfEnabled()
+        #endif
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        #if os(iOS) || os(tvOS)
+        stopClipBuffering()
+        #endif
         destroyAutosaveTimer()
         #if !os(tvOS)
         removeVirtualInputOverlays()
