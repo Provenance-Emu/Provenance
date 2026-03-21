@@ -35,6 +35,11 @@ import PVLogging
 /// Swift-native HTTP + WebDAV server using Hummingbird 2 / Swift NIO.
 /// Conforms to `PVWebServerProtocol` so `PVWebServerManager` can swap it
 /// for the legacy adapter without changing any call sites.
+// FIXME: @unchecked Sendable — mutable state (_isHTTPRunning, httpServerTask, cachedIPAddress,
+// netService) can be accessed from multiple concurrent contexts if callers bypass
+// PVWebServerManager. Phase 2 should convert this to an `actor` or confine all
+// mutation behind a single executor. Until then, callers must route all access
+// through the PVWebServerManager actor which serialises calls.
 public final class PVModernWebServer: @unchecked Sendable {
 
     // MARK: Configuration
@@ -160,6 +165,10 @@ private extension PVModernWebServer {
             configuration: .init(address: .hostname("0.0.0.0", port: port))
         )
 
+        // NOTE (Phase 1 limitation): `_isHTTPRunning` is set optimistically before
+        // the NIO event loop confirms the bind. If `app.run()` throws (e.g. port in
+        // use), the flag is never reset to false. Phase 2 should introduce a startup
+        // channel/continuation to observe the actual bind result before advertising.
         httpServerTask = Task {
             try await app.run()
         }
@@ -233,7 +242,9 @@ private extension PVModernWebServer {
         context: some RequestContext,
         uploadDirectory: URL
     ) async throws -> Response {
-        let body = try await request.body.collect(upTo: 1_024 * 1_024 * 1_024) // 1 GB cap
+        // Cap at 256 MB — reduces DoS/OOM risk on device. Large ROM transfers
+        // should use WebDAV PUT (streaming) once that is fully implemented (Phase 2).
+        let body = try await request.body.collect(upTo: 256 * 1_024 * 1_024) // 256 MB cap
         guard let bodyData = body.withUnsafeReadableBytes({ ptr -> Data? in
             guard !ptr.isEmpty else { return nil }
             return Data(ptr)
@@ -337,6 +348,8 @@ private extension PVModernWebServer {
             configuration: .init(address: .hostname("0.0.0.0", port: port))
         )
 
+        // Same Phase 1 limitation as startHTTPServer — bind is not confirmed
+        // before returning true. See the note there for Phase 2 follow-up.
         webDAVServerTask = Task {
             try await app.run()
         }
@@ -389,7 +402,9 @@ private extension PVModernWebServer {
                   let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
                 return Response(status: .forbidden)
             }
-            let body = try await request.body.collect(upTo: 1_024 * 1_024 * 1_024)
+            // Same 256 MB cap as the HTTP uploader — Phase 2 will replace this
+            // with a streaming write to avoid buffering large files in memory.
+            let body = try await request.body.collect(upTo: 256 * 1_024 * 1_024)
             let data = body.withUnsafeReadableBytes { ptr in Data(ptr) }
             try data.write(to: target)
 
