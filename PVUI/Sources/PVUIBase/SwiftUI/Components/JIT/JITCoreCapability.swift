@@ -186,11 +186,37 @@ public enum JITCoreCapability: CaseIterable {
     /// - Parameter systemIdentifier: A system identifier string (case-insensitive).
     /// - Returns: `true` if the system is known to have JIT-capable cores.
     public static func systemHasJITCapability(_ systemIdentifier: String) -> Bool {
+        #if DEBUG
+        debugAssertKnownSystemMappings()
+        #endif
         let id = systemIdentifier.lowercased()
         return allCases.contains { capability in
             capability.systemIdentifierKeywords.contains { id.contains($0) }
         }
     }
+
+    #if DEBUG
+    /// Debug-only self-checks for known system identifier mappings.
+    ///
+    /// These assertions act as a lightweight safeguard against regressions in the
+    /// keyword-based JIT capability lookup used by `systemHasJITCapability(_:)`.
+    private static func debugAssertKnownSystemMappings() {
+        func matchesJITSystem(_ systemIdentifier: String) -> Bool {
+            let id = systemIdentifier.lowercased()
+            return allCases.contains { capability in
+                capability.systemIdentifierKeywords.contains { id.contains($0) }
+            }
+        }
+
+        // Expected JIT-capable systems
+        assert(matchesJITSystem("com.provenance.psp"), "Expected PSP system to be JIT-capable.")
+        assert(matchesJITSystem("com.provenance.n64"), "Expected N64 system to be JIT-capable.")
+        assert(matchesJITSystem("com.provenance.gamecube"), "Expected GameCube system to be JIT-capable.")
+
+        // Expected non-JIT system (acts as a control)
+        assert(!matchesJITSystem("com.provenance.snes"), "Expected SNES system to NOT be JIT-capable.")
+    }
+    #endif
 
     // MARK: - Deprecated
 

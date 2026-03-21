@@ -21,7 +21,7 @@ import JITManager
 // MARK: - Launch Recommendation
 
 /// The action the JIT prompt manager recommends before launching a game.
-public enum JITLaunchRecommendation {
+public enum JITLaunchRecommendation: Equatable {
     /// Proceed with normal launch — no prompt needed.
     case proceed
 
@@ -48,6 +48,7 @@ public enum JITLaunchRecommendation {
 ///
 /// Uses `JITCoreCapability` for compile-time capability lookup and
 /// `Defaults[.jitGamePreferences]` for per-game overrides.
+@MainActor
 public final class JITContextualPromptManager {
 
     public static let shared = JITContextualPromptManager()
@@ -77,20 +78,21 @@ public final class JITContextualPromptManager {
             return .proceed
         }
 
-        // 2. Check per-game preference first.
-        let gamePreference = Defaults.jitPreference(forGameMD5: gameMD5)
-        if gamePreference == .skipJIT {
-            return .skipJIT
-        }
-
-        // 3. If JIT is already acquired, no action needed.
+        // 2. If JIT is already acquired, no action needed.
         #if canImport(JITManager)
         guard !DOLJitManager.acquired else { return .proceed }
         #endif
 
-        // 4. Required-or-crash cores — always show a blocking warning when JIT unavailable.
+        // 3. Required-or-crash cores always show a blocking warning when JIT is unavailable,
+        //    regardless of per-game preference — .skipJIT cannot suppress a crash-risk warning.
         if JITCoreCapability.coreIsJITRequired(coreIdentifier) {
             return .showRequiredWarning(coreName: coreName)
+        }
+
+        // 4. Check per-game preference (only for optional-JIT cores).
+        let gamePreference = Defaults.jitPreference(forGameMD5: gameMD5)
+        if gamePreference == .skipJIT {
+            return .skipJIT
         }
 
         // 5. Optional JIT: show informational prompt based on preference.
