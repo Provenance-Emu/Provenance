@@ -7,7 +7,9 @@
 
 import Foundation
 import CloudKit
+#if os(macOS) || targetEnvironment(macCatalyst)
 import Security
+#endif
 import PVLogging
 
 public enum iCloudConstants {
@@ -33,16 +35,50 @@ public enum iCloudConstants {
     // MARK: - Entitlement check
 
     /// Returns true if the running binary's code signature includes the CloudKit container
-    /// entitlement. Uses SecTask so it reads the actual entitlements without triggering
-    /// CloudKit framework initialization (safe to call before any CKContainer usage).
-    /// Returns false for sideloaded builds signed without CloudKit entitlements.
+    /// entitlement, without triggering CloudKit framework initialization.
+    ///
+    /// - macOS / Catalyst: uses `SecTaskCopyValueForEntitlement` (reads live code signature).
+    /// - iOS / tvOS device: parses `embedded.mobileprovision` when present (sideloaded /
+    ///   AdHoc / TestFlight). App Store builds strip the provisioning profile, so absence
+    ///   of the file is treated as "entitlement present" (App Store validation guarantees it).
+    /// - Simulator: always returns true (simulator entitlements are always present).
     public static let isCloudKitEntitlementPresent: Bool = {
+        #if targetEnvironment(simulator)
+        return true
+        #elseif os(macOS) || targetEnvironment(macCatalyst)
         guard let task = SecTaskCreateFromSelf(nil) else { return false }
         let key = "com.apple.developer.icloud-container-identifiers" as CFString
         guard let value = SecTaskCopyValueForEntitlement(task, key, nil),
               let containers = value as? [String] else { return false }
         return !containers.isEmpty
+        #else
+        // iOS / tvOS device: check embedded.mobileprovision.
+        // If absent (App Store build), assume present — the store validates entitlements.
+        return _cloudKitEntitlementFromProvisioningProfile() ?? true
+        #endif
     }()
+
+    /// Parses the `embedded.mobileprovision` PKCS#7 blob to check for the CloudKit
+    /// container entitlement. Returns `nil` when no provisioning profile is embedded
+    /// (App Store distribution), so the caller can treat absence as "assume present".
+    private static func _cloudKitEntitlementFromProvisioningProfile() -> Bool? {
+        guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision"),
+              let data = try? Data(contentsOf: url) else {
+            return nil // No profile → App Store build → assume entitlements are valid
+        }
+        // The mobileprovision file is a PKCS#7 signed blob with a plist in plain text inside.
+        guard let raw = String(data: data, encoding: .ascii),
+              let plistStart = raw.range(of: "<?xml"),
+              let plistEnd   = raw.range(of: "</plist>") else { return nil }
+        let plistSlice = String(raw[plistStart.lowerBound ..< plistEnd.upperBound]) + "</plist>"
+        guard let plistData = plistSlice.data(using: .utf8),
+              let plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any],
+              let entitlements = plist["Entitlements"] as? [String: Any] else { return nil }
+        if let containers = entitlements["com.apple.developer.icloud-container-identifiers"] as? [String] {
+            return !containers.isEmpty
+        }
+        return false
+    }
 
     // MARK: - Containers
 
