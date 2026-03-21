@@ -351,7 +351,7 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     return FCEUI_GetDesiredFPS() / 16777216.0;
 }
 
-# pragma mark - Video
+#pragma mark - Video
 
 - (const void *)videoBuffer
 {
@@ -388,7 +388,7 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     return GL_RGBA;
 }
 
-# pragma mark - Audio
+#pragma mark - Audio
 
 - (double)audioSampleRate
 {
@@ -400,7 +400,7 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     return 2;
 }
 
-# pragma mark - Save States
+#pragma mark - Save States
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error  
 {
@@ -465,7 +465,7 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     return result;
 }
 
-# pragma mark - LightGunResponder
+#pragma mark - LightGunResponder
 
 - (BOOL)gameSupportsLightGun {
     return _zapperEnabled;
@@ -740,3 +740,5 @@ static NSMutableDictionary *fceu_cheatList = nil;
 }
 
 @end
+
+#pragma clang diagnostic pop

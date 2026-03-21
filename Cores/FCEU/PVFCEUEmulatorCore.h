@@ -33,6 +33,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @protocol ObjCBridgedCoreBridge;
 @protocol PVNESSystemResponderClient;
+@protocol LightGunResponder;
 
 @interface PVFCEUEmulatorCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVNESSystemResponderClient, LightGunResponder> {
 
