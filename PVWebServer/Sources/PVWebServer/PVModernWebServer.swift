@@ -381,6 +381,9 @@ private extension PVModernWebServer {
         }
 
         // GET — file download
+        // FIXME (Phase 2): `Data(contentsOf:)` buffers the entire file before sending.
+        // Large ROMs/ISOs can cause memory pressure or OOM. Replace with a streaming/
+        // sendfile response once Hummingbird's file-serving middleware is integrated.
         router.get("/**") { [weak self] _, context -> Response in
             let path = context.parameters.get("**") ?? ""
             guard let self,
