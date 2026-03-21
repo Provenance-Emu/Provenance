@@ -33,6 +33,15 @@ open class PVSNES9xEmulatorCore: PVEmulatorCore, @unchecked Sendable {
         super.init()
         self.bridge = (PVSNESEmulatorCoreBridge() as! any ObjCBridgedCoreBridge)
     }
+
+    // MARK: - RetroAchievements backing storage
+
+    /// Weak reference to the OSD delegate (stored here because Swift extensions
+    /// cannot add stored properties).
+    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
+
+    /// Hardcore mode flag.
+    var _hardcoreMode: Bool = false
 }
 
 extension PVSNES9xEmulatorCore: PVSNESSystemResponderClient {
