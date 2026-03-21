@@ -138,12 +138,22 @@ public struct NetplayCreateRoomView: View {
         HStack {
             Text("\(label): \(value.wrappedValue)")
             Spacer()
-            Button { value.wrappedValue = max(range.lowerBound, value.wrappedValue - 1) } label: {
+            Button {
+                value.wrappedValue = max(range.lowerBound, value.wrappedValue - 1)
+            } label: {
                 Image(systemName: "minus.circle")
             }
-            Button { value.wrappedValue = min(range.upperBound, value.wrappedValue + 1) } label: {
+            .disabled(value.wrappedValue <= range.lowerBound)
+            .accessibilityLabel("Decrease \(label)")
+            .accessibilityHint("Minimum is \(range.lowerBound)")
+            Button {
+                value.wrappedValue = min(range.upperBound, value.wrappedValue + 1)
+            } label: {
                 Image(systemName: "plus.circle")
             }
+            .disabled(value.wrappedValue >= range.upperBound)
+            .accessibilityLabel("Increase \(label)")
+            .accessibilityHint("Maximum is \(range.upperBound)")
         }
         #else
         Stepper("\(label): \(value.wrappedValue)", value: value, in: range)

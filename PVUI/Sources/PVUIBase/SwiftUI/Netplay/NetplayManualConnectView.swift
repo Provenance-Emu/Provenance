@@ -75,8 +75,22 @@ public struct NetplayManualConnectView: View {
                     HStack {
                         Text("Frame Delay: \(frameDelay)")
                         Spacer()
-                        Button { frameDelay = max(0, frameDelay - 1) } label: { Image(systemName: "minus.circle") }
-                        Button { frameDelay = min(10, frameDelay + 1) } label: { Image(systemName: "plus.circle") }
+                        Button {
+                            frameDelay = max(0, frameDelay - 1)
+                        } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .disabled(frameDelay <= 0)
+                        .accessibilityLabel("Decrease frame delay")
+                        .accessibilityHint("Minimum frame delay is zero frames")
+                        Button {
+                            frameDelay = min(10, frameDelay + 1)
+                        } label: {
+                            Image(systemName: "plus.circle")
+                        }
+                        .disabled(frameDelay >= 10)
+                        .accessibilityLabel("Increase frame delay")
+                        .accessibilityHint("Maximum frame delay is ten frames")
                     }
                     #else
                     Stepper("Frame Delay: \(frameDelay)", value: $frameDelay, in: 0...10)

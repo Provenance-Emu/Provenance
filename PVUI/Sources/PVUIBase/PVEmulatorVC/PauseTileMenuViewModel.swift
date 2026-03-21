@@ -12,9 +12,6 @@ import PVEmulatorCore
 import PVFeatureFlags
 import PVSettings
 import PVLibrary
-#if canImport(PVNetplay)
-import PVNetplay
-#endif
 
 // MARK: - PauseTileMenuViewModel
 
@@ -78,23 +75,16 @@ final class PauseTileMenuViewModel: ObservableObject {
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if featureFlags.netplayEnabled {
-            #if canImport(PVNetplay)
-            let coreSupportsNetplay: Bool = {
-                guard let bridge = emulatorVC.core as? any PVNetplayCapable else { return false }
-                return bridge.supportsNetplay
-            }()
-            #else
-            let coreSupportsNetplay = false
-            #endif
-            if coreSupportsNetplay {
-                gameTiles.append(PauseMenuTile(
-                    id: "networkPlay",
-                    icon: "antenna.radiowaves.left.and.right",
-                    label: String(localized: "Network Play"),
-                    colorKey: .blue,
-                    dismissOnTap: false
-                ))
-            }
+            // Show the Network Play tile whenever netplay is enabled.
+            // Core-level capability gating is deferred to a later phase once
+            // PVNetplayCapable conformances are wired to emulator bridges.
+            gameTiles.append(PauseMenuTile(
+                id: "networkPlay",
+                icon: "antenna.radiowaves.left.and.right",
+                label: String(localized: "Network Play"),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
         }
 
         if shouldSave {
