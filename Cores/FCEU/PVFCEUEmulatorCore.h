@@ -25,12 +25,14 @@
  */
 
 #import <Foundation/Foundation.h>
+@import CoreGraphics;
 @import PVCoreObjCBridge;
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @protocol ObjCBridgedCoreBridge;
 @protocol PVNESSystemResponderClient;
+@protocol LightGunResponder;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.

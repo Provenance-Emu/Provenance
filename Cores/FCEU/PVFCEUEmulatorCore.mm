@@ -259,16 +259,35 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
         // FCEU NES screen is 256×240 (NTSC).
         static const int kFCEUScreenWidth  = 256;
         static const int kFCEUScreenHeight = 240;
-        _zapperData[0] = (uint32_t)(_lightGunPosition.x * kFCEUScreenWidth);
-        _zapperData[1] = (uint32_t)(_lightGunPosition.y * kFCEUScreenHeight);
-        if (_lightGunIsOffscreen) {
-            // Bit 1 signals offscreen to UpdateZapper (forces ZD[w].mzb|=2 → miss).
-            _zapperData[2] = 2;
-        } else if (_lightGunTrigger) {
-            _zapperData[2] = 1;
-        } else {
-            _zapperData[2] = 0;
+
+        // Convert normalized [0,1] light gun position to pixel coordinates and clamp
+        // to valid NES screen range to avoid out-of-bounds access in FCEU's XBuf.
+        int32_t zapperX = (int32_t)(_lightGunPosition.x * kFCEUScreenWidth);
+        int32_t zapperY = (int32_t)(_lightGunPosition.y * kFCEUScreenHeight);
+        if (zapperX < 0) {
+            zapperX = 0;
+        } else if (zapperX >= kFCEUScreenWidth) {
+            zapperX = kFCEUScreenWidth - 1;
         }
+        if (zapperY < 0) {
+            zapperY = 0;
+        } else if (zapperY >= kFCEUScreenHeight) {
+            zapperY = kFCEUScreenHeight - 1;
+        }
+        _zapperData[0] = (uint32_t)zapperX;
+        _zapperData[1] = (uint32_t)zapperY;
+
+        // Only set button bits when a shot is actually being fired.
+        // UpdateZapper treats any non-zero (ptr[2] & 3) as a click edge, so the
+        // offscreen/miss bit (2) must not be set during idle off-screen movement.
+        uint32_t button = 0;
+        if (_lightGunTrigger) {
+            button |= 1; // bit 0: trigger pressed
+            if (_lightGunIsOffscreen) {
+                button |= 2; // bit 1: offscreen shot → forces ZD[w].mzb|=2 → miss
+            }
+        }
+        _zapperData[2] = button;
     }
 
     FCEUI_Emulate(&pXBuf, &soundBuffer, &soundSize, 0);
@@ -445,13 +464,15 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 }
 
 - (void)lightGunReloadDown {
-    // Reload = shoot offscreen; clear trigger so we don't double-fire.
+    // Reload = fire an offscreen shot. Both offscreen and trigger must be set
+    // so the button logic in executeFrameSkippingFrame: sets bits 0|1 (offscreen shot).
     _lightGunIsOffscreen = YES;
-    _lightGunTrigger     = NO;
+    _lightGunTrigger     = YES;
 }
 
 - (void)lightGunReloadUp {
     _lightGunIsOffscreen = NO;
+    _lightGunTrigger     = NO;
 }
 
 #pragma mark - FCEUX internal functions and stubs
