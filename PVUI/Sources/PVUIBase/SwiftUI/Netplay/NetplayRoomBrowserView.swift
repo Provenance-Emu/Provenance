@@ -10,6 +10,9 @@
 import SwiftUI
 import PVNetplay
 
+// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
+private typealias Section = SwiftUI.Section
+
 /// Displays available netplay rooms discovered via Bonjour on the local network.
 ///
 /// Automatically starts/stops Bonjour discovery when presented.

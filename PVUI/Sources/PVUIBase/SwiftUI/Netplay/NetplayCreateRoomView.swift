@@ -13,6 +13,9 @@ import PVNetplay
 import UIKit
 #endif
 
+// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
+private typealias Section = SwiftUI.Section
+
 /// Form for configuring and starting a new netplay room.
 ///
 /// Presents room name, player count, frame delay, spectator settings, and

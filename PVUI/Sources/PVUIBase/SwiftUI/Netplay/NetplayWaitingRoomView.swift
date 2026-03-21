@@ -13,6 +13,9 @@ import PVNetplay
 import Darwin
 #endif
 
+// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
+private typealias Section = SwiftUI.Section
+
 /// Waiting room shown after a host creates a room, while waiting for players to join.
 ///
 /// Displays the room name, game info, connected players, spectator count,

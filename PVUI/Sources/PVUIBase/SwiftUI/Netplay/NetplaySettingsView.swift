@@ -11,6 +11,9 @@ import SwiftUI
 import PVNetplay
 import PVFeatureFlags
 
+// QuickTable's Section shadows SwiftUI.Section within PVUIBase — re-pin it.
+private typealias Section = SwiftUI.Section
+
 /// Persistent keys for netplay user defaults.
 private enum NetplayDefaultsKey {
     static let nickname         = "netplay.nickname"
