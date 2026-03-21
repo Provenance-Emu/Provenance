@@ -136,7 +136,11 @@ extension PVBroadcastManager: RPBroadcastControllerDelegate {
         _ broadcastController: RPBroadcastController,
         didUpdateBroadcast broadcastURL: URL
     ) {
-        ILOG("[Broadcast] Broadcast URL updated: \(broadcastURL)")
+        // Log only scheme+host to avoid leaking provider-specific tokens or
+        // private stream keys that some services embed in the broadcast URL.
+        let scheme = broadcastURL.scheme ?? "unknown"
+        let host = broadcastURL.host ?? "unknown"
+        ILOG("[Broadcast] Broadcast URL updated (redacted): \(scheme)://\(host)")
     }
 }
 

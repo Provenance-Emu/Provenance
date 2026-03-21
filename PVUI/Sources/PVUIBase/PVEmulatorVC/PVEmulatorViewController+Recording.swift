@@ -11,7 +11,6 @@ import PVLogging
 
 // MARK: - Live Broadcast (iOS + tvOS)
 
-#if os(iOS) || os(tvOS)
 extension PVEmulatorViewController {
 
     /// Whether the device/session supports ReplayKit broadcasting.
@@ -47,7 +46,6 @@ extension PVEmulatorViewController {
         ILOG("[Broadcast] Stop broadcast requested from VC")
     }
 }
-#endif
 
 // MARK: - Screen Recording (iOS only)
 
@@ -139,4 +137,5 @@ extension PVEmulatorViewController {
         present(alert, animated: true)
     }
 }
-#endif
+#endif // os(iOS)
+#endif // os(iOS) || os(tvOS)
