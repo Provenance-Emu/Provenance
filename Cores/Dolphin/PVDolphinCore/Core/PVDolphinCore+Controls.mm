@@ -411,10 +411,13 @@ s8 joyx[4], joyy[4];
                     // GC mode: when both triggers held simultaneously, fire BUTTON_Z.
                     // Both trigger axes are suppressed during the combo and restored correctly
                     // regardless of which trigger was pressed first.
+                    // Z is only released if neither the combo nor R3 is holding it.
                     if (!self.isWii) {
                         bool rightTriggerHeld = controller.extendedGamepad.rightTrigger.isPressed;
                         bool zCombo = pressed && rightTriggerHeld;
-                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zCombo?1:0)];
+                        bool r3HeldZ = controller.extendedGamepad.rightThumbstickButton.isPressed;
+                        bool zActive = zCombo || r3HeldZ;
+                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zActive?1:0)];
                         [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(zCombo?0.0:(pressed?1.0:0.0))];
                         [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(zCombo?0.0:(rightTriggerHeld?1.0:0.0))];
                     } else {
@@ -431,10 +434,13 @@ s8 joyx[4], joyy[4];
                     // GC mode: when both triggers held simultaneously, fire BUTTON_Z.
                     // Both trigger axes are suppressed during the combo and restored correctly
                     // regardless of which trigger was pressed first.
+                    // Z is only released if neither the combo nor R3 is holding it.
                     if (!self.isWii) {
                         bool leftTriggerHeld = controller.extendedGamepad.leftTrigger.isPressed;
                         bool zCombo = pressed && leftTriggerHeld;
-                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zCombo?1:0)];
+                        bool r3HeldZ = controller.extendedGamepad.rightThumbstickButton.isPressed;
+                        bool zActive = zCombo || r3HeldZ;
+                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zActive?1:0)];
                         [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(zCombo?0.0:(pressed?1.0:0.0))];
                         [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(zCombo?0.0:(leftTriggerHeld?1.0:0.0))];
                     } else {
