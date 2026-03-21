@@ -60,16 +60,26 @@ public final class JITOnboardingManager {
         ILOG("JITOnboarding: Preparing JIT onboarding alert")
 
         let alert = UIAlertController(
-            title: "JIT Not Enabled",
-            message: "Some emulator cores perform better with Just-In-Time (JIT) compilation enabled. "
-                + "JIT has not been acquired for this session. You can continue playing, but performance "
-                + "may be reduced for cores that rely on JIT.\n\n"
-                + "To enable JIT, connect via AltServer, JITStreamer, or a debugger before launching a game.",
+            title: "Performance Mode Unavailable",
+            message: "This core performs best with Performance Mode (JIT) enabled. "
+                + "Performance Mode has not been acquired for this session — you can continue playing, "
+                + "but emulation speed may be reduced.\n\n"
+                + "To enable Performance Mode, use AltStore, SideStore, StikDebug, JITStreamer, or a "
+                + "developer certificate before launching.",
             preferredStyle: .alert
         )
 
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: nil))
 
+        // Offer StikDebug as the first retry option (VPN-based, no macOS required).
+        if jitType == .debugger || jitType == .stikDebug {
+            alert.addAction(UIAlertAction(title: "Try StikDebug", style: .default) { _ in
+                ILOG("JITOnboarding: User chose to retry via StikDebug")
+                jitManager.attemptToAcquireJitByStikDebug()
+            })
+        }
+
+        // JITStreamer as an alternative for desktop-based attach.
         if jitType == .debugger {
             alert.addAction(UIAlertAction(title: "Try JITStreamer", style: .default) { _ in
                 ILOG("JITOnboarding: User chose to retry via JITStreamer")
