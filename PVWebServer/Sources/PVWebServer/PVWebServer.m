@@ -16,6 +16,10 @@ NSString* const PVWebServerFileUploadProgressNotification = @"PVWebServerFileUpl
 NSString* const PVWebServerFileUploadCompletedNotification = @"PVWebServerFileUploadCompletedNotification";
 NSString* const PVWebServerFileUploadFailedNotification = @"PVWebServerFileUploadFailedNotification";
 
+// File-lifecycle notification names (delete / move)
+NSString* const PVWebServerFileDeletedNotification = @"PVWebServerFileDeletedNotification";
+NSString* const PVWebServerFileMovedNotification   = @"PVWebServerFileMovedNotification";
+
 // Status message notification names
 NSString* const PVWebServerUploadProgressNotification = @"WebServerUploadProgress";
 NSString* const PVWebServerUploadCompletedNotification = @"WebServerUploadCompleted";
@@ -692,7 +696,7 @@ NSUInteger webDavPort = 81;
 {
     ILOG(@"[MOVE] %@ -> %@", fromPath, toPath);
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:@"PVWebServerFileMovedNotification"
+        postNotificationName:PVWebServerFileMovedNotification
                       object:self
                     userInfo:@{@"fromPath": fromPath, @"toPath": toPath}];
 }
@@ -701,7 +705,7 @@ NSUInteger webDavPort = 81;
 {
     ILOG(@"[DELETE] %@", path);
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:@"PVWebServerFileDeletedNotification"
+        postNotificationName:PVWebServerFileDeletedNotification
                       object:self
                     userInfo:@{@"filePath": path}];
 }
@@ -777,7 +781,7 @@ NSUInteger webDavPort = 81;
 - (void)davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
     ILOG(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:@"PVWebServerFileMovedNotification"
+        postNotificationName:PVWebServerFileMovedNotification
                       object:self
                     userInfo:@{@"fromPath": fromPath, @"toPath": toPath}];
 }
@@ -795,7 +799,7 @@ NSUInteger webDavPort = 81;
 - (void)davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
     ILOG(@"[DAV DELETE] %@", path);
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:@"PVWebServerFileDeletedNotification"
+        postNotificationName:PVWebServerFileDeletedNotification
                       object:self
                     userInfo:@{@"filePath": path}];
 }

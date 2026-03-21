@@ -119,10 +119,10 @@ extension PVWebServerManager {
 
     /// Emits the absolute path of every file deleted via the web UI or WebDAV.
     /// Works with both the legacy and the modern server — they both post the same
-    /// `PVWebServerFileDeletedNotification` to `NotificationCenter`.
+    /// `pvWebServerFileDeleted` notification to `NotificationCenter`.
     public nonisolated var fileDeletedPublisher: AnyPublisher<String, Never> {
         NotificationCenter.default
-            .publisher(for: Notification.Name("PVWebServerFileDeletedNotification"))
+            .publisher(for: .pvWebServerFileDeleted)
             .compactMap { $0.userInfo?["filePath"] as? String }
             .eraseToAnyPublisher()
     }
@@ -130,7 +130,7 @@ extension PVWebServerManager {
     /// Emits `(fromPath, toPath)` tuples for every file moved/renamed via WebDAV.
     public nonisolated var fileMovedPublisher: AnyPublisher<(from: String, to: String), Never> {
         NotificationCenter.default
-            .publisher(for: Notification.Name("PVWebServerFileMovedNotification"))
+            .publisher(for: .pvWebServerFileMoved)
             .compactMap { note -> (from: String, to: String)? in
                 guard
                     let from = note.userInfo?["fromPath"] as? String,

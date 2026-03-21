@@ -37,11 +37,23 @@ private extension Notification.Name {
 /// - **ROM files** — soft-offline when a CloudKit record exists; hard-delete otherwise.
 /// - **Save states** — marked `isDownloaded = false` when the backing file disappears.
 /// - **BIOS files** — `isDownloaded` toggled on delete/restore events.
+///
+/// Thread safety: `observations` is guarded by `lock`; `start()`/`stop()` may be
+/// called from any thread.  `romsPathPrefix` / `savesPathPrefix` / `biosPathPrefix`
+/// are snapshotted during `start()` to avoid iCloud-blocking calls on
+/// notification-delivery threads.
 public final class PVWebFileEventObserver: @unchecked Sendable {
 
     public static let shared = PVWebFileEventObserver()
 
+    private let lock = NSLock()
     private var observations: [NSObjectProtocol] = []
+
+    // Snapshotted at start() to avoid potentially iCloud-blocking path lookups
+    // on arbitrary notification-delivery threads.
+    private var romsPathPrefix: String = ""
+    private var savesPathPrefix: String = ""
+    private var biosPathPrefix: String  = ""
 
     private init() {}
 
@@ -49,7 +61,17 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 
     /// Start listening.  Safe to call multiple times — subsequent calls are no-ops.
     public func start() {
+        lock.lock()
+        defer { lock.unlock() }
         guard observations.isEmpty else { return }
+
+        // Snapshot path prefixes once here (called from app launch on the main queue).
+        let romsDir  = Paths.romsPath.path
+        let savesDir = Paths.saveSavesPath.path
+        let biosDir  = Paths.biosesPath.path
+        romsPathPrefix  = romsDir.hasSuffix("/")  ? romsDir  : romsDir  + "/"
+        savesPathPrefix = savesDir.hasSuffix("/") ? savesDir : savesDir + "/"
+        biosPathPrefix  = biosDir.hasSuffix("/")  ? biosDir  : biosDir  + "/"
 
         let center = NotificationCenter.default
 
@@ -75,8 +97,12 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 
     /// Stop listening and release observers.
     public func stop() {
-        observations.forEach { NotificationCenter.default.removeObserver($0) }
+        lock.lock()
+        let toRemove = observations
         observations.removeAll()
+        lock.unlock()
+
+        toRemove.forEach { NotificationCenter.default.removeObserver($0) }
         ILOG("PVWebFileEventObserver: stopped")
     }
 
@@ -88,53 +114,61 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 
         ILOG("PVWebFileEventObserver: file deleted — \(fullPath)")
 
+        let romsPrefix  = romsPathPrefix
+        let savesPrefix = savesPathPrefix
+        let biosPrefix  = biosPathPrefix
+
         DispatchQueue.global(qos: .utility).async {
             do {
                 let realm = try Realm()
 
                 // ── ROM file ──────────────────────────────────────────────────────────
-                let romsDir = Paths.romsPath.path
-                if fullPath.hasPrefix(romsDir) {
-                    // romPath stored as "com.provenance.snes/Mario.sfc" (no leading slash).
-                    let prefix = romsDir.hasSuffix("/") ? romsDir : romsDir + "/"
-                    let relative = fullPath.hasPrefix(prefix)
-                        ? String(fullPath.dropFirst(prefix.count))
-                        : filename  // fallback to filename-only if path structure differs
+                if fullPath.hasPrefix(romsPrefix) {
+                    let relative = String(fullPath.dropFirst(romsPrefix.count))
 
+                    // Only query on the exact stored romPath — don't fall back to
+                    // filename-only matching, which can collide across systems.
                     let game = realm.objects(PVGame.self)
                         .filter("romPath == %@", relative)
                         .first
-                        ?? realm.objects(PVGame.self)
-                        .filter("romPath ENDSWITH %@", "/\(filename)")
-                        .first
-                        ?? realm.objects(PVGame.self)
-                        .filter("romPath == %@", filename)
-                        .first
 
                     if let game {
-                        try realm.write {
-                            if game.cloudRecordID != nil {
-                                // Soft offline: file deleted locally, CloudKit record survives.
+                        if game.cloudRecordID != nil {
+                            // Soft offline: file deleted locally, CloudKit record survives.
+                            try realm.write {
                                 game.isDownloaded = false
-                                ILOG("PVWebFileEventObserver: marked '\(game.title)' offline (CloudKit record retained)")
-                            } else {
-                                // No remote copy — mark linked save states unavailable then remove.
-                                ILOG("PVWebFileEventObserver: hard-deleting '\(game.title)' (no CloudKit record)")
-                                for saveState in game.saveStates {
-                                    saveState.isDownloaded = false
-                                }
+                                game.requiresSync = true
+                                game.lastCloudSyncDate = nil
+                            }
+                            ILOG("PVWebFileEventObserver: marked '\(game.title)' offline (CloudKit record retained)")
+                        } else {
+                            // No remote copy — delete related objects then the game.
+                            ILOG("PVWebFileEventObserver: hard-deleting '\(game.title)' (no CloudKit record)")
+                            let saveStatesToDelete = Array(game.saveStates)
+                            let cheatsToDelete = Array(game.cheats)
+                            let recentPlaysToDelete = Array(game.recentPlays)
+                            let screenShotsToDelete = Array(game.screenShots)
+                            try realm.write {
+                                realm.delete(saveStatesToDelete)
+                                realm.delete(cheatsToDelete)
+                                realm.delete(recentPlaysToDelete)
+                                realm.delete(screenShotsToDelete)
                                 realm.delete(game)
                             }
                         }
                         return
+                    } else {
+                        WLOG("PVWebFileEventObserver: no game matched romPath '\(relative)' — skipping delete")
                     }
                 }
 
                 // ── Save state file ───────────────────────────────────────────────────
-                let savesDir = Paths.saveSavesPath.path
-                if fullPath.hasPrefix(savesDir) {
-                    let allStates = Array(realm.objects(PVSaveState.self))
-                    let matched = allStates.filter { $0.file?.url?.path == fullPath }
+                if fullPath.hasPrefix(savesPrefix) {
+                    // Filter by filename suffix first to reduce the candidate set,
+                    // then confirm the full URL matches in memory.
+                    let candidates = realm.objects(PVSaveState.self)
+                        .filter("file.partialPath ENDSWITH %@", filename)
+                    let matched = candidates.filter { $0.file?.url?.path == fullPath }
                     if !matched.isEmpty {
                         try realm.write {
                             for state in matched {
@@ -147,13 +181,13 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                 }
 
                 // ── BIOS file ─────────────────────────────────────────────────────────
-                let biosDir = Paths.biosesPath.path
-                if fullPath.hasPrefix(biosDir) {
+                if fullPath.hasPrefix(biosPrefix) {
                     if let bios = realm.objects(PVBIOS.self)
                         .filter("expectedFilename == %@", filename)
                         .first {
                         try realm.write {
                             bios.isDownloaded = false
+                            bios.file = nil
                         }
                         ILOG("PVWebFileEventObserver: marked BIOS '\(filename)' unavailable")
                     }
@@ -170,8 +204,7 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     private func handleFileMoved(from fromPath: String, to toPath: String) {
         ILOG("PVWebFileEventObserver: file moved — \(fromPath) → \(toPath)")
 
-        let romsDir = Paths.romsPath.path
-        let prefix = romsDir.hasSuffix("/") ? romsDir : romsDir + "/"
+        let prefix = romsPathPrefix
 
         guard fromPath.hasPrefix(prefix), toPath.hasPrefix(prefix) else {
             // Only ROM moves require a Realm path update; other file types don't
@@ -181,6 +214,7 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 
         let oldRelative = String(fromPath.dropFirst(prefix.count))
         let newRelative = String(toPath.dropFirst(prefix.count))
+        let newFilename = URL(fileURLWithPath: toPath).lastPathComponent
 
         DispatchQueue.global(qos: .utility).async {
             do {
@@ -194,6 +228,11 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 
                 try realm.write {
                     game.romPath = newRelative
+                    // Keep game.file.partialPath in sync so path-resolution via
+                    // PVFile.url returns the correct location.
+                    if let pvFile = game.file {
+                        pvFile.partialPath = newFilename
+                    }
                 }
                 ILOG("PVWebFileEventObserver: updated romPath '\(oldRelative)' → '\(newRelative)' for '\(game.title)'")
 

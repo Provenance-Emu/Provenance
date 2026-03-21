@@ -102,7 +102,12 @@ class PVWebServerTests: XCTestCase {
 
     // MARK: - File-lifecycle notification posting
 
-    func testModernServerPostsDeleteNotification() throws {
+    /// Tests that an observer receives the correct file path when a
+    /// `pvWebServerFileDeleted` notification is posted with the expected payload.
+    /// Note: this test validates notification delivery and payload shape; it does
+    /// not exercise the full `PVModernWebServer` HTTP DELETE route handler — that
+    /// requires an integration test against a running server.
+    func testDeleteNotificationDeliveredToObserver() throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory())
             .appendingPathComponent(UUID().uuidString)
         let testFile = tmp.appendingPathComponent("test.rom")

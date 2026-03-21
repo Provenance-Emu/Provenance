@@ -21,6 +21,10 @@ extern NSString* const PVWebServerFileUploadProgressNotification;
 extern NSString* const PVWebServerFileUploadCompletedNotification;
 extern NSString* const PVWebServerFileUploadFailedNotification;
 
+// Notification names for file delete / move lifecycle events
+extern NSString* const PVWebServerFileDeletedNotification;
+extern NSString* const PVWebServerFileMovedNotification;
+
 NS_ASSUME_NONNULL_BEGIN;
 
 @property (class, nonatomic, strong, readonly, nonnull) PVWebServer * sharedInstance NS_SWIFT_NAME(shared);
