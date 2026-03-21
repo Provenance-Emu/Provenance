@@ -800,6 +800,11 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Video") {
                         VideoSection()
                     }
+#if os(iOS)
+                    CollapsibleSection(title: "Recording & Streaming") {
+                        RecordingSection()
+                    }
+#endif
                     CollapsibleSection(title: "RetroAchievements") {
                         RetroAchievementsSection(viewModel: viewModel)
                             .environmentObject(viewModel)
@@ -1630,6 +1635,31 @@ private struct VideoSection: View {
                             icon: .sfSymbol("tv.fill"))
             }
         }
+    }
+}
+
+private struct RecordingSection: View {
+    var body: some View {
+#if os(iOS)
+        Section(header: Text("Recording & Streaming")) {
+            PaidFeatureView {
+                NavigationLink(destination: RecordingSettingsView()) {
+                    SettingsRow(
+                        title: "Recording & Streaming",
+                        subtitle: "Configure microphone, auto-save, HUD button, and clip duration.",
+                        icon: .sfSymbol("record.circle")
+                    )
+                }
+            } lockedView: {
+                SettingsRow(
+                    title: "Recording & Streaming",
+                    subtitle: "Unlock to configure recording and streaming settings.",
+                    icon: .sfSymbol("lock.fill")
+                )
+            }
+            .freemiumKitColorReset()
+        }
+#endif
     }
 }
 
