@@ -50,7 +50,7 @@ private enum PPSSPPNetplayContextKey {
 private extension PVPPSSPPCore {
     var lastNetplayContext: PPSSPPNetplayContext? {
         get { objc_getAssociatedObject(self, &PPSSPPNetplayContextKey.sessionContextKey) as? PPSSPPNetplayContext }
-        set { objc_setAssociatedObject(self, &PPSSPPNetplayContextKey.sessionContextKey, newValue, .OBJC_ASSOCIATION_RETAIN) }
+        set { objc_setAssociatedObject(self, &PPSSPPNetplayContextKey.sessionContextKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 }
 
@@ -88,17 +88,20 @@ private extension PVPPSSPPCore {
             return .idle
         case .hosting:
             let ctx = lastNetplayContext
-            let settings = ctx?.settings
-            let port: UInt16 = settings?.port ?? NetplaySettings.defaultLAN.port
-            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: "127.0.0.1", port: port, context: ctx)
+            // PPSSPP adhoc uses a fixed UDP port; normalize to 0 so consumers
+            // don't treat NetplaySettings.port as a meaningful connection parameter.
+            let normalizedPort: UInt16 = 0
+            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: "127.0.0.1", port: normalizedPort, context: ctx)
             return .hosting(room: room)
         case .connected:
             let ctx = lastNetplayContext
             // Use the stored effective address (relay or peer IP) rather than
             // role.clientAddress, which is nil for hosts using a relay server.
             let host = ctx?.effectiveServerAddress ?? "0.0.0.0"
-            let port: UInt16 = ctx?.role.clientAddress?.1 ?? ctx?.settings.port ?? NetplaySettings.defaultLAN.port
-            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: host, port: port, context: ctx)
+            // PPSSPP adhoc uses a fixed UDP port; normalize to 0 so consumers
+            // don't treat NetplaySettings.port as a meaningful connection parameter.
+            let normalizedPort: UInt16 = 0
+            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: host, port: normalizedPort, context: ctx)
             // WAN hosts call connectToAdhocServer (sets status = .connected) but
             // are still the logical host.  Return .hosting so the UI and manager
             // treat them correctly rather than as a remote client.
@@ -107,7 +110,7 @@ private extension PVPPSSPPCore {
             }
             // Preserve the original role: .spectator falls back to .client in
             // PPSSPP (no spectator concept), so map both non-host cases to client.
-            let sessionRole = NetplayRole.client(host: host, port: port)
+            let sessionRole = NetplayRole.client(host: host, port: normalizedPort)
             let session = NetplaySession(
                 id: ctx?.sessionID ?? UUID(),
                 room: room,
