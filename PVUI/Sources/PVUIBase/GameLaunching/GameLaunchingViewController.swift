@@ -687,15 +687,25 @@ public extension GameLaunchingViewController {
                         return (core.identifier, count)
                     })
 
-                    let engine = CoreRecommendationEngine.shared
-                    let recommendations = engine.recommendations(
-                        gameTitle: game.title,
-                        systemIdentifier: game.system?.identifier,
-                        md5: game.md5Hash.isEmpty ? nil : game.md5Hash,
-                        serial: game.romSerial,
-                        availableCoreIdentifiers: cores.map(\.identifier),
-                        saveCounts: saveCounts
-                    )
+                    // Extract value types from Realm objects before going off the main actor.
+                    let gameTitle = game.title
+                    let systemIdentifier = game.system?.identifier
+                    let md5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+                    let serial = game.romSerial
+                    let coreIdentifiers = cores.map(\.identifier)
+
+                    // Compute recommendations off the main actor to avoid blocking UI during
+                    // first-launch manifest loading (Core.plist scanning + JSON decode).
+                    let recommendations = await Task.detached(priority: .userInitiated) {
+                        CoreRecommendationEngine.shared.recommendations(
+                            gameTitle: gameTitle,
+                            systemIdentifier: systemIdentifier,
+                            md5: md5,
+                            serial: serial,
+                            availableCoreIdentifiers: coreIdentifiers,
+                            saveCounts: saveCounts
+                        )
+                    }.value
 
                     let handleCoreSelect: (String) -> Void = { selectedId in
                         Task { @MainActor in

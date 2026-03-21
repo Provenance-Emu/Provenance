@@ -149,39 +149,38 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertEqual(meta?.qualityRank, 75)
     }
 
-    /// Verifies that auto-derived capabilities (from EmulatorCoreInfoPlist) are merged
-    /// with enrichment data: the union of both sets is visible in the recommendation.
+    /// Verifies that a manifest with both `highAccuracy` and `cheats` capabilities is correctly
+    /// surfaced through the engine's recommendation output when a game matches both cores.
     func testAutoDeriveCheatsFromPlistMergesWithEnrichment() {
-        // Build a synthetic manifest entry that has no 'cheats' flag (it should be auto-derived
-        // from supportedCheatTypes in a real plist; here we verify the merge logic directly).
-        let enrichmentEntry = CoreCapabilityMetadata(
+        // Build a manifest where a core has both cheats and highAccuracy declared.
+        let mergedMeta = CoreCapabilityMetadata(
             coreIdentifier: "com.test.core.beta",
             summary: "Beta",
-            capabilities: [.highAccuracy],
+            capabilities: [.highAccuracy, .cheats],
             notes: [],
             qualityRank: 50
         )
-        // Simulate the auto-derived layer supplying 'cheats' on top of the enrichment layer.
-        let autoEntry = CoreCapabilityMetadata(
-            coreIdentifier: "com.test.core.beta",
-            summary: nil,
-            capabilities: [.cheats],
-            notes: [],
-            qualityRank: 0
+        let manifest = CoreCapabilitiesManifest(
+            version: 2,
+            cores: [mergedMeta],
+            gameRequirements: []
         )
-        // Merge: union of capabilities, enrichment wins for summary/qualityRank
-        let mergedCaps = enrichmentEntry.capabilities.union(autoEntry.capabilities)
-        let merged = CoreCapabilityMetadata(
-            coreIdentifier: "com.test.core.beta",
-            summary: enrichmentEntry.summary ?? autoEntry.summary,
-            capabilities: mergedCaps,
-            notes: enrichmentEntry.notes,
-            qualityRank: enrichmentEntry.qualityRank != 0 ? enrichmentEntry.qualityRank : autoEntry.qualityRank
+        let testEngine = CoreRecommendationEngine(manifest: manifest)
+
+        // Drive through the engine's public recommendation API.
+        let recs = testEngine.recommendations(
+            gameTitle: "Test Game",
+            systemIdentifier: nil,
+            availableCoreIdentifiers: ["com.test.core.beta"]
         )
-        XCTAssertTrue(merged.capabilities.contains(.highAccuracy))
-        XCTAssertTrue(merged.capabilities.contains(.cheats))
-        XCTAssertEqual(merged.summary, "Beta")
-        XCTAssertEqual(merged.qualityRank, 50)
+
+        XCTAssertEqual(recs.count, 1)
+        let meta = recs.first?.metadata
+        XCTAssertNotNil(meta)
+        XCTAssertTrue(meta?.capabilities.contains(.highAccuracy) == true)
+        XCTAssertTrue(meta?.capabilities.contains(.cheats) == true)
+        XCTAssertEqual(meta?.summary, "Beta")
+        XCTAssertEqual(meta?.qualityRank, 50)
     }
 
     /// Verifies that capabilities declared via PVCapabilities in a plist are parsed correctly.

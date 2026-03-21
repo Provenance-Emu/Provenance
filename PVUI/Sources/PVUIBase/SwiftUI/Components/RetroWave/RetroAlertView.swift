@@ -1453,13 +1453,15 @@ public struct RetroSelectionAlertHostingView: View {
     }
 
     public var body: some View {
-        RetroSelectionAlertView(
-            title: title,
-            message: message,
-            items: items,
-            isPresented: $isPresented,
-            onSelect: onSelect,
-            onCancel: onCancel
-        )
+        if isPresented {
+            RetroSelectionAlertView(
+                title: title,
+                message: message,
+                items: items,
+                isPresented: $isPresented,
+                onSelect: onSelect,
+                onCancel: onCancel
+            )
+        }
     }
 }
