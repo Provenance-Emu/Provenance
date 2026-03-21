@@ -48,7 +48,19 @@ const PROT_RW    = PROT_READ | PROT_WRITE; // read+write (no execute) — for th
 // We normalise to BigInt for all address arithmetic so large JIT heap addresses
 // (which routinely exceed 0x100000000 on 64-bit iOS) are handled correctly.
 function toBigInt(v) {
-    return (typeof v === "bigint") ? v : BigInt(v >>> 0);
+    if (typeof v === "bigint") {
+        return v;
+    }
+    if (typeof v === "number") {
+        if (!Number.isFinite(v)) {
+            throw new TypeError("Unsupported non-finite register value: " + v);
+        }
+        // Use Math.trunc to drop any fractional part, then convert to BigInt.
+        // Do NOT use bitwise ops (e.g. >>> 0) — they coerce to a 32-bit unsigned
+        // integer and silently corrupt 64-bit addresses above 4 GB.
+        return BigInt(Math.trunc(v));
+    }
+    throw new TypeError("Unsupported register value type: " + (typeof v));
 }
 
 /**

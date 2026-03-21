@@ -64,8 +64,8 @@ public final class JITOnboardingManager {
             message: "This core performs best with Performance Mode (JIT) enabled. "
                 + "Performance Mode has not been acquired for this session — you can continue playing, "
                 + "but emulation speed may be reduced.\n\n"
-                + "To enable Performance Mode, use AltStore, SideStore, StikDebug, JITStreamer, or a "
-                + "developer certificate before launching.",
+                + "To enable Performance Mode, use AltStore, SideStore, StikDebug, JITStreamer, or "
+                + "developer tools (for example, the Xcode debugger) before launching.",
             preferredStyle: .alert
         )
 
