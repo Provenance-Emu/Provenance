@@ -51,32 +51,25 @@ public struct GameContextMenu: View {
         self.rootDelegate = rootDelegate
         self.contextMenuDelegate = contextMenuDelegate
 
-        let unsupportedCores = Defaults[.unsupportedCores]
+        // Use self.game (frozen) consistently to avoid Realm thread violations
+        let frozenGame = self.game
 
         // Initialize computed properties
-        _availableCores = State(initialValue: game.system?.cores.toArray().filter {
+        _availableCores = State(initialValue: frozenGame.system?.cores.toArray().filter {
             !(AppState.shared.isAppStore && $0.appStoreDisabled)
         } ?? [])
         let fm = FileManager.default
         // Check that at least one save-state file actually exists on disk
-        let hasLocalSaveStates = game.saveStates.contains { saveState in
+        let hasLocalSaveStates = frozenGame.saveStates.contains { saveState in
             guard let fileURL = saveState.file?.url else { return false }
             return fm.fileExists(atPath: fileURL.path)
         }
         _hasSaveStates = State(initialValue: hasLocalSaveStates)
-        // Guard against nil romURL: Paths.batterySavesPath(forROM: nil) resolves to a shared
-        // ".../Battery States/NULL" directory — checking it could enable export for wrong game.
-        let batteryHasFiles: Bool
-        if let romURL = game.file?.url {
-            let batterySavesDir = Paths.batterySavesPath(forROM: romURL)
-            let batteryDirExists = fm.fileExists(atPath: batterySavesDir.path)
-            batteryHasFiles = batteryDirExists && ((try? fm.contentsOfDirectory(atPath: batterySavesDir.path))?.isEmpty == false)
-        } else {
-            batteryHasFiles = false
-        }
-        _hasBatterySaves = State(initialValue: batteryHasFiles)
-        _hasCloudRecord = State(initialValue: game.cloudRecordID != nil)
-        _isDownloaded = State(initialValue: game.isDownloaded)
+        // hasBatterySaves is computed asynchronously in .task to avoid calling
+        // Paths.batterySavesPath on the main thread (it may block on iCloud-backed storage).
+        _hasBatterySaves = State(initialValue: false)
+        _hasCloudRecord = State(initialValue: frozenGame.cloudRecordID != nil)
+        _isDownloaded = State(initialValue: frozenGame.isDownloaded)
     }
 
     public var body: some View {
@@ -262,6 +255,18 @@ public struct GameContextMenu: View {
                     } label: { Label("Delete", systemImage: "trash") }
                 }
             }
+        }
+        .task {
+            // Compute hasBatterySaves on a background thread — Paths.batterySavesPath may
+            // block on iCloud-backed storage and must not run on the main thread.
+            guard !game.isInvalidated, let romURL = game.file?.url else { return }
+            let result = await Task.detached(priority: .utility) {
+                let dir = Paths.batterySavesPath(forROM: romURL)
+                let fm = FileManager.default
+                return fm.fileExists(atPath: dir.path)
+                    && ((try? fm.contentsOfDirectory(atPath: dir.path))?.isEmpty == false)
+            }.value
+            hasBatterySaves = result
         }
         .uiKitAlert(
             "Choose Artwork Source",
