@@ -29,7 +29,7 @@ private final class TaskBox {
     init(_ task: Task<Void, Never>) { self.task = task }
 }
 
-public extension PVEmulatorViewController {
+extension PVEmulatorViewController {
 
     // MARK: - Stored start-task handle (via associated object)
 
@@ -47,6 +47,10 @@ public extension PVEmulatorViewController {
     func startNetplayBridgeIfNeeded() {
         guard let bridge = core as? any PVNetplayCapable else {
             DLOG("Netplay: core does not conform to PVNetplayCapable — skipping bridge registration.")
+            return
+        }
+        guard bridge.supportsNetplay else {
+            DLOG("Netplay: core reports supportsNetplay=false — skipping bridge registration.")
             return
         }
         let task = Task {
@@ -80,8 +84,12 @@ public extension PVEmulatorViewController {
         // Cancel any pending start task so it cannot re-register after we clear.
         netplayStartTaskBox?.task.cancel()
         netplayStartTaskBox = nil
-        // Always stop the concrete bridge directly to guarantee shutdown even if
-        // PVNetplayManager was never able to register it as the active bridge.
+        // disconnect() stops netplay on the registered activeBridge and resets
+        // PVNetplayManager.state to .idle, preventing the manager from remaining
+        // in a non-idle state after the emulator session ends.
+        await PVNetplayManager.shared.disconnect()
+        // Also stop netplay directly on the core bridge in case the start task was
+        // cancelled before setActiveBridge ran (disconnect() only reaches a registered bridge).
         await bridge.stopNetplay()
         await PVNetplayManager.shared.setActiveBridge(nil)
         ILOG("Netplay: deregistered bridge from PVNetplayManager.")

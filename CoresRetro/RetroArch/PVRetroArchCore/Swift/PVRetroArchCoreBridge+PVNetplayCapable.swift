@@ -56,7 +56,7 @@ private extension PVRetroArchCoreBridge {
 
 extension PVRetroArchCoreBridge: PVNetplayCapable {
 
-    public var supportsNetplay: Bool { true }
+    public var supportsNetplay: Bool { netplaySupported }
 
     public var netplayEngineName: String { "RetroArch" }
 

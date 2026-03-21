@@ -31,6 +31,16 @@ static const void *kNetplayStatusKey = &kNetplayStatusKey;
 
 @implementation PVRetroArchCoreBridge (Netplay)
 
+// MARK: - Compile-time capability flag
+
+- (BOOL)netplaySupported {
+#ifdef HAVE_NETPLAY
+    return YES;
+#else
+    return NO;
+#endif
+}
+
 // MARK: - Status property (stored via objc_associated_object)
 
 - (PVRetroArchNetplayStatus)netplayStatus {
