@@ -147,8 +147,3 @@ import Foundation
     @objc optional func midiOutput(_ data: Data)
 }
 
-// MARK: - MIDIOutputHandler
-
-/// Closure type for MIDI output data flowing *from* the emulated system
-/// *to* an external device (e.g. MT-32, synthesiser).
-public typealias MIDIOutputHandler = @Sendable (Data) -> Void

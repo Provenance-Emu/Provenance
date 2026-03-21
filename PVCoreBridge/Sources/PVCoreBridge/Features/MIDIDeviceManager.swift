@@ -178,8 +178,10 @@ public final class MIDIDeviceManager: ObservableObject {
             )
         }
 
-        MIDISend(outputPort, destInfo.endpointRef, listPtr)
-        pulseActivity(tx: true)
+        let sendStatus = MIDISend(outputPort, destInfo.endpointRef, listPtr)
+        if sendStatus == noErr {
+            pulseActivity(tx: true)
+        }
     }
 
     // MARK: Private — CoreMIDI setup
