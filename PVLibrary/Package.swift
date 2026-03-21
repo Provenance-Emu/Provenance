@@ -110,6 +110,7 @@ let package = Package(
                 "PVEmulatorCore",
                 "PVCoreLoader",
                 .product(name: "Unrar", package: "Unrar.swift"),
+                .product(name: "ZipArchive", package: "ZipArchive"),
                 .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
@@ -226,7 +227,9 @@ let package = Package(
                 "PVRealm",
                 "PVLookup",
                 "PVPrimitives",
+                "PVFileSystem",
                 .product(name: "RealmSwift", package: "realm-swift"),
+                .product(name: "ZipArchive", package: "ZipArchive"),
             ]
         ),
     ],

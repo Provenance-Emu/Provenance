@@ -31,6 +31,7 @@ public struct GameContextMenu: View {
     // Cache computed properties
     @State private var availableCores: [PVCore] = []
     @State private var hasSaveStates: Bool = false
+    @State private var hasBatterySaves: Bool = false
     @State private var hasCloudRecord: Bool = false
     @State private var isDownloaded: Bool = true
     @Default(.iCloudSync) private var iCloudSyncEnabled
@@ -50,15 +51,25 @@ public struct GameContextMenu: View {
         self.rootDelegate = rootDelegate
         self.contextMenuDelegate = contextMenuDelegate
 
-        let unsupportedCores = Defaults[.unsupportedCores]
+        // Use self.game (frozen) consistently to avoid Realm thread violations
+        let frozenGame = self.game
 
         // Initialize computed properties
-        _availableCores = State(initialValue: game.system?.cores.toArray().filter {
+        _availableCores = State(initialValue: frozenGame.system?.cores.toArray().filter {
             !(AppState.shared.isAppStore && $0.appStoreDisabled)
         } ?? [])
-        _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
-        _hasCloudRecord = State(initialValue: game.cloudRecordID != nil)
-        _isDownloaded = State(initialValue: game.isDownloaded)
+        let fm = FileManager.default
+        // Check that at least one save-state file actually exists on disk
+        let hasLocalSaveStates = frozenGame.saveStates.contains { saveState in
+            guard let fileURL = saveState.file?.url else { return false }
+            return fm.fileExists(atPath: fileURL.path)
+        }
+        _hasSaveStates = State(initialValue: hasLocalSaveStates)
+        // hasBatterySaves is computed asynchronously in .task to avoid calling
+        // Paths.batterySavesPath on the main thread (it may block on iCloud-backed storage).
+        _hasBatterySaves = State(initialValue: false)
+        _hasCloudRecord = State(initialValue: frozenGame.cloudRecordID != nil)
+        _isDownloaded = State(initialValue: frozenGame.isDownloaded)
     }
 
     public var body: some View {
@@ -150,7 +161,13 @@ public struct GameContextMenu: View {
                 } label: {
                     Label("Manage Save States", systemImage: "clock.arrow.circlepath")
                 }
-                .disabled(game.saveStates.isEmpty)
+                .disabled(!hasSaveStates)
+                Button {
+                    contextMenuDelegate?.gameContextMenu(self, didRequestExportSavesFor: game)
+                } label: {
+                    Label("Export Saves", systemImage: "square.and.arrow.up")
+                }
+                .disabled(!hasSaveStates && !hasBatterySaves)
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {
@@ -238,6 +255,18 @@ public struct GameContextMenu: View {
                     } label: { Label("Delete", systemImage: "trash") }
                 }
             }
+        }
+        .task {
+            // Compute hasBatterySaves on a background thread — Paths.batterySavesPath may
+            // block on iCloud-backed storage and must not run on the main thread.
+            guard !game.isInvalidated, let romURL = game.file?.url else { return }
+            let result = await Task.detached(priority: .utility) {
+                let dir = Paths.batterySavesPath(forROM: romURL)
+                let fm = FileManager.default
+                return fm.fileExists(atPath: dir.path)
+                    && ((try? fm.contentsOfDirectory(atPath: dir.path))?.isEmpty == false)
+            }.value
+            hasBatterySaves = result
         }
         .uiKitAlert(
             "Choose Artwork Source",

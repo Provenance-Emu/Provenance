@@ -74,6 +74,10 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var networkPlayGame: PVGame?
     @Published var networkPlayCoreIdentifier: String = ""
 
+    /// Save Export share sheet state
+    @Published var showSaveExportShareSheet = false
+    @Published var saveExportURL: URL? = nil
+
     // Properties that were @State in the View, now @Published in ViewModel
     @Published var searchText: String = "" {
         didSet {

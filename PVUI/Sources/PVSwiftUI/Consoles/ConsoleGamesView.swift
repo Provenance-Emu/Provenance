@@ -772,6 +772,20 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 #endif
+                #if !os(tvOS)
+                .sheet(isPresented: $gamesViewModel.showSaveExportShareSheet, onDismiss: {
+                    if let url = gamesViewModel.saveExportURL {
+                        SaveExporter.shared.cleanupExport(at: url)
+                        gamesViewModel.saveExportURL = nil
+                    }
+                }) {
+                    if let url = gamesViewModel.saveExportURL {
+                        ActivityViewController(activityItems: [url])
+                    } else {
+                        Color.clear.onAppear { gamesViewModel.showSaveExportShareSheet = false }
+                    }
+                }
+                #endif
 
                 .task(priority: .background) {
                     // Defer BIOS rescan significantly to avoid blocking tab switches
