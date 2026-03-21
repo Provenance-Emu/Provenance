@@ -65,7 +65,7 @@ let package = Package(
         .package(path: "../../PVObjCUtils"),
         .package(name: "PVPrimitives", path: "../PVPrimitives/"),
 
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
     ],
     targets: [
         // MARK: ============ Core =============

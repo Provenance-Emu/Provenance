@@ -34,7 +34,7 @@ let package = Package(
 
         /// Local fork aligned with swift-syntax 600.x
         .package(path: "../Dependencies/HexColors"),
-        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
+        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", from: "1.0.1"),
         .package(url: "https://github.com/pointfreeco/swift-perception.git",
                  from: "2.0.9")
     ],

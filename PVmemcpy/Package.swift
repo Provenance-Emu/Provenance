@@ -27,7 +27,7 @@ let package = Package(
     ],
 
     dependencies: [
-        .package(url: "https://github.com/JoeMatt/Turbo-Base64.swift.git", branch: "master")
+        .package(url: "https://github.com/JoeMatt/Turbo-Base64.swift.git", from: "1.0.1")
     ],
 
     // MARK: - Targets
