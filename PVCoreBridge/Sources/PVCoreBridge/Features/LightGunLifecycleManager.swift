@@ -22,10 +22,9 @@ import Foundation
 /// without creating a new driver. Callers should check `gameSupportsLightGun`
 /// before calling `attach(to:)` if a silent no-op is undesirable.
 ///
-/// `isAttached` reflects whether a driver is currently active and is independent
-/// of the attached core's liveness. If the core is deallocated without an explicit
-/// `detach()`, `isAttached` remains `true` while the driver silently discards
-/// events. Always call `detach()` at the end of a game session.
+/// `isAttached` reflects whether a `GCMouseLightGunDriver` is currently installed.
+/// It returns `false` on platforms where `GameController` is unavailable.
+/// Always call `detach()` at the end of a game session to release resources.
 ///
 /// Example usage from an emulator view controller:
 /// ```swift
@@ -52,10 +51,6 @@ public final class LightGunLifecycleManager {
     private var driver: GCMouseLightGunDriver?
 #endif
 
-    /// Whether a driver is currently active. Set by `attach(to:)` / `detach()`.
-    /// Independent of the attached core's liveness — see `isAttached` docs.
-    private var _isAttached = false
-
     // MARK: - Init
 
     public init() {}
@@ -77,7 +72,6 @@ public final class LightGunLifecycleManager {
         d.attach(to: core)
         self.driver = d
 #endif
-        _isAttached = true
     }
 
     /// Detach the light gun driver and release all references.
@@ -86,16 +80,18 @@ public final class LightGunLifecycleManager {
         driver?.detach()
         driver = nil
 #endif
-        _isAttached = false
     }
 
     /// Whether a light gun driver is currently active.
     ///
-    /// Returns `true` after a successful `attach(to:)` call and remains `true`
-    /// until `detach()` is explicitly called — even if the core is deallocated
-    /// in the meantime (the driver becomes a no-op in that case).
-    /// Always call `detach()` at the end of a game session to release resources.
+    /// Derived from whether a driver instance exists. Returns `true` only when
+    /// `GameController` is available and a driver has been successfully attached.
+    /// On platforms without `GameController` support this always returns `false`.
     public var isAttached: Bool {
-        return _isAttached
+#if canImport(GameController)
+        return driver != nil
+#else
+        return false
+#endif
     }
 }
