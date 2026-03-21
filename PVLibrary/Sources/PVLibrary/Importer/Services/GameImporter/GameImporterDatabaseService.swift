@@ -922,6 +922,22 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             }
         }
 
+        // Atari 7800 .a78 files may have a 128-byte header - detect and skip if present
+        if systemID == .Atari7800 {
+            if let romPath = game.file?.url, let a7800Offset = A7800HeaderDetector.detectOffset(for: romPath) {
+                offset = a7800Offset
+                if a7800Offset > 0 { ILOG("Detected A7800 header, applying \(a7800Offset)-byte MD5 offset") }
+            }
+        }
+
+        // Atari Lynx .lnx files may have a 64-byte header - detect and skip if present
+        if systemID == .Lynx {
+            if let romPath = game.file?.url, let lynxOffset = LynxHeaderDetector.detectOffset(for: romPath) {
+                offset = lynxOffset
+                if lynxOffset > 0 { ILOG("Detected Lynx header, applying \(lynxOffset)-byte MD5 offset") }
+            }
+        }
+
         // SNES .smc files may have a 512-byte copier header - detect and skip if present
         let isSNES = systemID == .SNES
         let isSMC = game.file?.url?.pathExtension.lowercased() == "smc"
