@@ -112,6 +112,26 @@ import UIKit
     @objc optional func lightGunReloadUp()
 }
 
+/// A protocol adopted by emulator cores that support light gun peripherals.
+/// Cores report screen-space coordinates and trigger/off-screen events.
+@objc public protocol LightGunResponder: AnyObject {
+    /// Whether the currently loaded game can use a light gun.
+    var gameSupportsLightGun: Bool { get }
+
+    /// Called when the light gun aim point moves to a new screen-space position.
+    /// - Parameter point: Normalised position in the range [0,1] × [0,1].
+    func lightGunAimed(atPoint point: CGPoint)
+
+    /// Called when the trigger is pulled.
+    func lightGunFire()
+
+    /// Called when the trigger is released.
+    func lightGunFireRelease()
+
+    /// Called when the gun is pointed off-screen.
+    func lightGunAimedOffscreen()
+}
+
 @objc public enum Touchpad: Int {
 	case primary
 	case secondary
