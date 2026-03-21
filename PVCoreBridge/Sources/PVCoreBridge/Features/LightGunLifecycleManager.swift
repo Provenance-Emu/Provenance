@@ -16,10 +16,16 @@ import Foundation
 /// for calling `attach(to:)` after the core starts and `detach()` when the
 /// game ends.
 ///
-/// `attach(to:)` requires a `LightGunResponder`-conforming core at the call
-/// site (compile-time enforced). If the core reports `gameSupportsLightGun == false`
-/// at runtime, any currently-attached driver is first detached, then the
-/// function returns without creating a new driver.
+/// `attach(to:)` accepts any `LightGunResponder`-conforming core (compile-time
+/// enforced). If the core reports `gameSupportsLightGun == false` at runtime,
+/// any currently-attached driver is first detached, then the function returns
+/// without creating a new driver. Callers should check `gameSupportsLightGun`
+/// before calling `attach(to:)` if a silent no-op is undesirable.
+///
+/// `isAttached` reflects whether a driver is currently active and is independent
+/// of the attached core's liveness. If the core is deallocated without an explicit
+/// `detach()`, `isAttached` remains `true` while the driver silently discards
+/// events. Always call `detach()` at the end of a game session.
 ///
 /// Example usage from an emulator view controller:
 /// ```swift
@@ -45,11 +51,10 @@ public final class LightGunLifecycleManager {
 #if canImport(GameController)
     private var driver: GCMouseLightGunDriver?
 #endif
-    /// Weak reference to the attached core. Used by `isAttached` to reflect whether
-    /// a live, light-gun-capable core is currently bound. If the core is deallocated
-    /// without an explicit `detach()` call, this reference becomes nil and `isAttached`
-    /// returns `false`; the underlying driver (if any) safely handles nil responders.
-    private weak var core: (AnyObject & LightGunResponder)?
+
+    /// Whether a driver is currently active. Set by `attach(to:)` / `detach()`.
+    /// Independent of the attached core's liveness — see `isAttached` docs.
+    private var _isAttached = false
 
     // MARK: - Init
 
@@ -72,7 +77,7 @@ public final class LightGunLifecycleManager {
         d.attach(to: core)
         self.driver = d
 #endif
-        self.core = core
+        _isAttached = true
     }
 
     /// Detach the light gun driver and release all references.
@@ -81,15 +86,16 @@ public final class LightGunLifecycleManager {
         driver?.detach()
         driver = nil
 #endif
-        core = nil
+        _isAttached = false
     }
 
     /// Whether a light gun driver is currently active.
     ///
-    /// Returns `true` as long as a light-gun-capable core is attached AND still alive.
-    /// If the core is deallocated before `detach()` is called, this returns `false`;
-    /// the underlying driver will silently discard events until `detach()` is explicitly called.
+    /// Returns `true` after a successful `attach(to:)` call and remains `true`
+    /// until `detach()` is explicitly called — even if the core is deallocated
+    /// in the meantime (the driver becomes a no-op in that case).
+    /// Always call `detach()` at the end of a game session to release resources.
     public var isAttached: Bool {
-        return core != nil
+        return _isAttached
     }
 }

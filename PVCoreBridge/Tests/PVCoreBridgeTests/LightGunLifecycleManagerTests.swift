@@ -116,14 +116,22 @@ final class LightGunLifecycleManagerTests: XCTestCase {
         XCTAssertFalse(manager.isAttached)
     }
 
-    // MARK: - isAttached weak reference behaviour
+    // MARK: - isAttached driver-flag behaviour
 
-    func testIsAttachedReturnsFalseAfterCoreDeallocates() {
+    /// isAttached is based on whether a driver is active, not the core's liveness.
+    /// If the core is deallocated without an explicit detach(), isAttached stays true
+    /// (the driver is still registered but becomes a no-op since its responder is nil).
+    func testIsAttachedRemainsTrueAfterCoreDeallocatesUntilDetach() {
         var core: MockLightGunCore? = MockLightGunCore(supportsLightGun: true)
         manager.attach(to: core!)
         XCTAssertTrue(manager.isAttached)
 
-        core = nil  // deallocate — weak ref in manager becomes nil
-        XCTAssertFalse(manager.isAttached, "isAttached must reflect core deallocation")
+        // Core deallocated without explicit detach — driver stays active (no-op)
+        core = nil
+        XCTAssertTrue(manager.isAttached, "isAttached must remain true until detach() is called")
+
+        // Explicit detach clears the flag
+        manager.detach()
+        XCTAssertFalse(manager.isAttached)
     }
 }
