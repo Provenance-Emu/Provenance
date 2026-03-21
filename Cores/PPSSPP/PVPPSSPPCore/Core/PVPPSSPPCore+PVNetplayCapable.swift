@@ -149,18 +149,18 @@ extension PVPPSSPPCore: PVNetplayCapable {
                     if let relay = settings.relayServer {
                         // WAN mode: connect to external relay server rather than hosting locally.
                         effectiveAddress = relay
-                        try _bridge.connectToAdhocServer(relay)
+                        try _bridge.connect(toAdhocServer: relay)
                     } else {
                         effectiveAddress = "127.0.0.1"
                         try _bridge.startAdhocLANHost()
                     }
                 case .client(let host, _):
                     effectiveAddress = host
-                    try _bridge.connectToAdhocServer(host)
+                    try _bridge.connect(toAdhocServer: host)
                 case .spectator(let host, _):
                     // PPSSPP has no spectator concept — join as a regular client.
                     effectiveAddress = host
-                    try _bridge.connectToAdhocServer(host)
+                    try _bridge.connect(toAdhocServer: host)
                 }
                 lastNetplayContext = PPSSPPNetplayContext(role: role, settings: settings, effectiveServerAddress: effectiveAddress)
             }
