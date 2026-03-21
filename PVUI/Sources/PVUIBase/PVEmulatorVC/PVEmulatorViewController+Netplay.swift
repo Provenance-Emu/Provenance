@@ -80,17 +80,15 @@ extension PVEmulatorViewController {
     /// Cancels any in-flight start task to prevent a stale bridge from being
     /// registered after the stop completes.
     func stopNetplayBridge() async {
-        guard let bridge = core as? any PVNetplayCapable else { return }
+        guard core is any PVNetplayCapable else { return }
         // Cancel any pending start task so it cannot re-register after we clear.
         netplayStartTaskBox?.task.cancel()
         netplayStartTaskBox = nil
-        // disconnect() stops netplay on the registered activeBridge and resets
-        // PVNetplayManager.state to .idle, preventing the manager from remaining
-        // in a non-idle state after the emulator session ends.
+        // disconnect() stops netplay on the registered activeBridge, resets
+        // PVNetplayManager.state to .idle, and clears the bridge reference.
+        // If the start task was cancelled before setActiveBridge ran, netplay
+        // was never started on the bridge, so no direct stop is required.
         await PVNetplayManager.shared.disconnect()
-        // Also stop netplay directly on the core bridge in case the start task was
-        // cancelled before setActiveBridge ran (disconnect() only reaches a registered bridge).
-        await bridge.stopNetplay()
         await PVNetplayManager.shared.setActiveBridge(nil)
         ILOG("Netplay: deregistered bridge from PVNetplayManager.")
     }

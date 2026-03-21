@@ -212,18 +212,24 @@ private extension NetplayRoom {
         port: UInt16,
         context: NetplaySessionContext?
     ) -> NetplayRoom {
-        let nickname = context.flatMap { $0.settings.nickname.isEmpty ? nil : $0.settings.nickname }
+        let settings = context?.settings
+        let nickname = settings.flatMap { $0.nickname.isEmpty ? nil : $0.nickname }
+        let isLAN = settings?.relayServer == nil
+        let isPasswordProtected = !(settings?.password?.isEmpty ?? true)
+        let allowsSpectators = settings?.allowSpectators ?? true
         return NetplayRoom(
             hostName: nickname ?? "RetroArch",
             gameName: "",
             gameHash: "",
             coreIdentifier: "com.provenance.retroarch",
-            maxPlayers: context?.settings.maxPlayers ?? 2,
+            maxPlayers: settings?.maxPlayers ?? 2,
             currentPlayers: 1,
-            isLAN: true,
+            isLAN: isLAN,
             hostAddress: address,
             port: port,
-            discoverySource: .manual
+            discoverySource: .manual,
+            isPasswordProtected: isPasswordProtected,
+            allowsSpectators: allowsSpectators
         )
     }
 }
