@@ -1254,8 +1254,11 @@ extension PVThinLibretroCore: MouseResponder {
     public func mouseMoved(atPoint point: CGPoint) {
         if let sysId = SystemIdentifier(rawValue: systemIdentifier ?? ""), sysId == .DS {
             // DS uses RETRO_DEVICE_POINTER — absolute normalised coordinates.
-            let nx = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
-            let ny = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
+            // Clamp to [0,1] in case callers provide out-of-range values or relative deltas.
+            let nxNorm = min(max(Double(point.x), 0.0), 1.0)
+            let nyNorm = min(max(Double(point.y), 0.0), 1.0)
+            let nx = Int16(clamping: Int((nxNorm * 2.0 - 1.0) * Double(Int16.max)))
+            let ny = Int16(clamping: Int((nyNorm * 2.0 - 1.0) * Double(Int16.max)))
             _bridge.setPointerX(nx, y: ny, pressed: _dsPointerPressed)
             return
         }
@@ -1293,8 +1296,11 @@ extension PVThinLibretroCore: MouseResponder {
     public func leftMouseDown(atPoint point: CGPoint) {
         if let sysId = SystemIdentifier(rawValue: systemIdentifier ?? ""), sysId == .DS {
             _dsPointerPressed = true
-            let nx = Int16(clamping: Int((Double(point.x) * 2.0 - 1.0) * Double(Int16.max)))
-            let ny = Int16(clamping: Int((Double(point.y) * 2.0 - 1.0) * Double(Int16.max)))
+            // Clamp to [0,1] in case callers provide out-of-range values or relative deltas.
+            let nxNorm = min(max(Double(point.x), 0.0), 1.0)
+            let nyNorm = min(max(Double(point.y), 0.0), 1.0)
+            let nx = Int16(clamping: Int((nxNorm * 2.0 - 1.0) * Double(Int16.max)))
+            let ny = Int16(clamping: Int((nyNorm * 2.0 - 1.0) * Double(Int16.max)))
             _bridge.setPointerX(nx, y: ny, pressed: true)
         } else {
             _bridge.setMouseButton(2, pressed: true)  // RETRO_DEVICE_ID_MOUSE_LEFT = 2
