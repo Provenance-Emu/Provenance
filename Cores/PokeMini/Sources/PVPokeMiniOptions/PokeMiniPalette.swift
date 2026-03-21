@@ -12,8 +12,8 @@ import PVCoreBridge
 
 /// All 14 built-in display palettes supported by the PokéMini emulator.
 ///
-/// Each palette is a 2-colour (light/dark) scheme. `light` maps to the OFF
-/// pixel and `dark` to the ON pixel, matching `p0`/`p1` in `Video.c`.
+/// Each palette defines two swatch entries corresponding to the emulator's pixel states.
+/// Index 0 maps to the OFF pixel (`p0`) and index 1 maps to the ON pixel (`p1`), matching `Video.c`.
 @objc public enum PokeMiniPalette: Int, CaseIterable {
     case defaultGreen    = 0   // "Default"
     case old             = 1   // "Old PokeMini"
@@ -77,7 +77,7 @@ extension PokeMiniPalette {
         }
     }
 
-    /// Two preview colours: index 0 = light (OFF pixel), index 1 = dark (ON pixel).
+    /// Two preview colours: index 0 = OFF pixel (`p0`), index 1 = ON pixel (`p1`).
     /// Hex values match `p0`/`p1` in `PokeMini_VideoPalette_Index()` in `Video.c`.
     public var previewColors: [PaletteColor] {
         switch self {
