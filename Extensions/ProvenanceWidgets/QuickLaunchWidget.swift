@@ -153,15 +153,15 @@ struct QuickLaunchEntryView: View {
     @Environment(\.widgetFamily) var family
     let entry: QuickLaunchEntry
 
-    var deepLinkURL: URL {
+    var deepLinkURL: URL? {
         if let game = entry.game {
             var components = URLComponents()
             components.scheme = "provenance"
             components.host = "open"
             components.queryItems = [URLQueryItem(name: "md5", value: game.id)]
-            return components.url ?? URL(string: "provenance://")!
+            return components.url ?? URL(string: "provenance://")
         }
-        return URL(string: "provenance://")!
+        return URL(string: "provenance://")
     }
 
     var body: some View {

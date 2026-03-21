@@ -172,10 +172,41 @@ public final class WidgetDataWriter: Sendable {
 
     private func reloadWidgetTimelines() {
 #if canImport(WidgetKit) && os(iOS)
-        WidgetCenter.shared.reloadAllTimelines()
+        WidgetTimelineReloader.shared.requestReload()
 #endif
     }
 }
+
+// MARK: - Debounced Timeline Reloader
+
+#if canImport(WidgetKit) && os(iOS)
+/// Debounces `WidgetCenter.reloadAllTimelines()` calls so rapid sequential writes
+/// (e.g., batch imports) only trigger a single reload after a short settling delay.
+private actor WidgetTimelineReloader {
+    static let shared = WidgetTimelineReloader()
+
+    private var isScheduled = false
+    private let debounceInterval: TimeInterval = 2
+
+    func requestReload() {
+        guard !isScheduled else { return }
+        isScheduled = true
+
+        Task { [debounceInterval] in
+            let delay = UInt64(debounceInterval * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: delay)
+            await MainActor.run {
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+            await self.reset()
+        }
+    }
+
+    private func reset() {
+        isScheduled = false
+    }
+}
+#endif
 
 // MARK: - GameEntity + WidgetGameData Bridge
 
