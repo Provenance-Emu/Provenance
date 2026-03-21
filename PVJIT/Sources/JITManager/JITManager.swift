@@ -362,17 +362,31 @@ public final class DOLJitManager {
     /// (Mupen64Plus, Flycast) must use the dual-mapping shadow-page pattern when this returns
     /// `true`.  See `Scripts/StikDebug/provenance.js` for the BRK #0x69 handler.
     ///
-    /// - Note: The check is based on OS version.  iOS 26 is identified by major version ≥ 26.
+    /// - Note: This check is based on iOS/tvOS 26 availability (`#available(iOS 26, tvOS 26, *)`).
     ///         On the simulator W×X is never enforced.
     public static var isWXEnforced: Bool {
+        return _isWXEnforced(isSimulator: {
 #if targetEnvironment(simulator)
-        return false
+            return true
 #else
+            return false
+#endif
+        }())
+    }
+
+    /// Internal helper that makes W×X enforcement logic testable by injecting
+    /// the simulator flag.
+    ///
+    /// - Parameter isSimulator: Whether the code is running under the simulator.
+    /// - Returns: `true` if W×X is enforced on the current OS, otherwise `false`.
+    static func _isWXEnforced(isSimulator: Bool) -> Bool {
+        if isSimulator {
+            return false
+        }
         if #available(iOS 26, tvOS 26, *) {
             return true
         }
         return false
-#endif
     }
 
     // MARK: - File-system JIT Source Detection

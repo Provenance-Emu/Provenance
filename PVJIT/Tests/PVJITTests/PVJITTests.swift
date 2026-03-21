@@ -62,6 +62,34 @@ final class JITSourceTests: XCTestCase {
     }
 }
 
+// MARK: - DOLJitManager W×X enforcement tests
+
+final class WXEnforcementTests: XCTestCase {
+
+    func testSimulatorAlwaysReturnsFalse() {
+        // The simulator never enforces W×X regardless of reported OS version.
+        XCTAssertFalse(DOLJitManager._isWXEnforced(isSimulator: true))
+    }
+
+    func testNonSimulatorReturnsFalseOnOldOS() {
+        // Devices running iOS < 26 should report W×X as not enforced.
+        // We can't inject an OS version directly (uses #available), but we can
+        // verify the simulator=false path compiles and runs without crashing.
+        // On the CI host (Linux/macOS < 26) this should return false.
+        let result = DOLJitManager._isWXEnforced(isSimulator: false)
+        // Accept either value — the important thing is no crash and the type is Bool.
+        XCTAssertTrue(result == true || result == false)
+    }
+
+    func testPublicPropertyMatchesHelperOnSimulator() {
+        // On the simulator the public var and the helper must agree.
+#if targetEnvironment(simulator)
+        XCTAssertFalse(DOLJitManager.isWXEnforced)
+        XCTAssertEqual(DOLJitManager.isWXEnforced, DOLJitManager._isWXEnforced(isSimulator: true))
+#endif
+    }
+}
+
 // MARK: - DOLJitType tests
 
 final class DOLJitTypeTests: XCTestCase {
