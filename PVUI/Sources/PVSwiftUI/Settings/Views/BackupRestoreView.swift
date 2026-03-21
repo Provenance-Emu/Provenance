@@ -8,6 +8,9 @@
 //  Provides a UI for manually backing up and restoring Provenance user data.
 //  Addresses issue #1005 (Backup / Restore).
 //
+//  Backup state lives in BackupCoordinator.shared so compression continues
+//  even after this view is dismissed, and the share sheet re-appears on return.
+//
 
 import SwiftUI
 import UniformTypeIdentifiers
@@ -19,17 +22,20 @@ import PVUIBase
 
 struct BackupRestoreView: View {
 
-    // MARK: - State
+    // MARK: - Coordinator (persists across view dismissal)
 
-    @State private var backupState: BackupViewState = .idle
-    @State private var restoreState: RestoreViewState = .idle
-    @State private var backupURL: URL? = nil
+    @ObservedObject private var coordinator = BackupCoordinator.shared
+
+    // MARK: - Local view state
+
     @State private var showShareSheet = false
     @State private var showFileImporter = false
     @State private var alertMessage: String? = nil
     @State private var showAlert = false
     @State private var showRestartAlert = false
     @State private var selectedContents: BackupContents = .all
+    /// Tracks a security-scoped URL that must be released when restore finishes.
+    @State private var pendingSecurityScopedURL: URL? = nil
 
     // MARK: - Body
 
@@ -56,13 +62,9 @@ struct BackupRestoreView: View {
         #if !os(tvOS)
         .navigationBarHidden(false)
         .sheet(isPresented: $showShareSheet, onDismiss: {
-            // Clean up temp file once the share sheet is dismissed
-            if let url = backupURL {
-                BackupManager.shared.cleanupBackup(at: url)
-                backupURL = nil
-            }
+            coordinator.cleanupAfterShare()
         }) {
-            if let url = backupURL {
+            if let url = coordinator.backupURL {
                 ActivityViewController(activityItems: [url])
             }
         }
@@ -92,9 +94,44 @@ struct BackupRestoreView: View {
             buttons: {
                 UIAlertAction(title: "OK", style: .default) { _ in
                     showRestartAlert = false
+                    coordinator.resetRestoreState()
                 }
             }
         )
+        .onAppear {
+            // If backup finished while the view was away, show share sheet immediately.
+            #if !os(tvOS)
+            if coordinator.backupState == .done, coordinator.backupURL != nil {
+                showShareSheet = true
+            }
+            #endif
+        }
+        #if !os(tvOS)
+        .onChange(of: coordinator.backupState) { state in
+            if state == .done, coordinator.backupURL != nil {
+                showShareSheet = true
+            }
+        }
+        #endif
+        .onChange(of: coordinator.restoreState) { state in
+            switch state {
+            case .done(let restored):
+                // Release security-scoped access now that restore has finished
+                pendingSecurityScopedURL?.stopAccessingSecurityScopedResource()
+                pendingSecurityScopedURL = nil
+                if restored.contains(.database) {
+                    showRestartAlert = true
+                } else {
+                    alertMessage = "Restore complete."
+                    showAlert = true
+                }
+            case .error:
+                pendingSecurityScopedURL?.stopAccessingSecurityScopedResource()
+                pendingSecurityScopedURL = nil
+            default:
+                break
+            }
+        }
     }
 
     // MARK: - Subviews
@@ -169,18 +206,28 @@ struct BackupRestoreView: View {
                     .foregroundColor(.white.opacity(0.6))
                 #endif
 
-                switch backupState {
+                switch coordinator.backupState {
                 case .idle:
                     createBackupButton
                 case .inProgress(let phase):
-                    ProgressRow(message: phase.rawValue)
+                    backupProgressView(phase: phase)
                 case .done:
                     #if os(tvOS)
                     Label("Backup saved to Documents folder.", systemImage: "checkmark.circle.fill")
                         .foregroundColor(.green)
                         .font(.caption)
-                    #else
                     createBackupButton
+                    #else
+                    // Share sheet auto-presented; show a "tap to share again" button
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Backup ready — share sheet opened.", systemImage: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundColor(.green)
+                        Button("Share Again") { showShareSheet = true }
+                            .font(.caption)
+                            .foregroundColor(.retroBlue)
+                        createBackupButton
+                    }
                     #endif
                 case .error(let msg):
                     VStack(alignment: .leading, spacing: 8) {
@@ -190,6 +237,20 @@ struct BackupRestoreView: View {
                         createBackupButton
                     }
                 }
+            }
+        }
+    }
+
+    /// Shows the current phase plus a hint that the user can leave the screen.
+    @ViewBuilder
+    private func backupProgressView(phase: BackupPhase) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ProgressRow(message: phase.rawValue)
+            if phase == .compressing {
+                Text("You can close this screen — the backup will continue in the background.")
+                    .font(.caption2)
+                    .foregroundColor(.white.opacity(0.5))
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -209,7 +270,7 @@ struct BackupRestoreView: View {
                     .foregroundColor(.white.opacity(0.6))
                 #endif
 
-                switch restoreState {
+                switch coordinator.restoreState {
                 case .idle:
                     restoreButton
                 case .inProgress(let phase):
@@ -313,34 +374,7 @@ struct BackupRestoreView: View {
 
     private func startBackup() {
         guard !selectedContents.isEmpty else { return }
-        backupState = .inProgress(.preparing)
-
-        Task {
-            do {
-                let url = try await BackupManager.shared.createBackup(
-                    contents: selectedContents,
-                    progressHandler: { phase in
-                        Task { @MainActor in
-                            backupState = .inProgress(phase)
-                        }
-                    }
-                )
-                await MainActor.run {
-                    backupURL = url
-                    backupState = .done
-                    #if !os(tvOS)
-                    showShareSheet = true
-                    #else
-                    // On tvOS, move backup to Documents so it can be retrieved via file sharing
-                    moveTVOSBackup(from: url)
-                    #endif
-                }
-            } catch {
-                await MainActor.run {
-                    backupState = .error(error.localizedDescription)
-                }
-            }
-        }
+        coordinator.startBackup(contents: selectedContents)
     }
 
     #if os(tvOS)
@@ -354,16 +388,18 @@ struct BackupRestoreView: View {
             alertMessage = "Backup saved to Documents: \(dest.lastPathComponent)"
             showAlert = true
         } catch {
-            backupState = .error("Could not save backup: \(error.localizedDescription)")
+            // State update handled via coordinator.backupState observer
+            ELOG("BackupRestoreView: could not move tvOS backup: \(error)")
         }
     }
 
     private func startTVOSRestore() {
-        // On tvOS, look for the most recent .pvbackup in Documents
         let docs = URL.documentsPath
         let fm = FileManager.default
         guard let files = try? fm.contentsOfDirectory(at: docs, includingPropertiesForKeys: [.contentModificationDateKey], options: .skipsHiddenFiles) else {
-            restoreState = .error("Could not read Documents folder.")
+            coordinator.resetRestoreState()
+            alertMessage = "Could not read Documents folder."
+            showAlert = true
             return
         }
         let backups = files
@@ -374,75 +410,27 @@ struct BackupRestoreView: View {
                 return d1 > d2
             }
         guard let latest = backups.first else {
-            restoreState = .error("No .pvbackup files found in Documents.")
+            alertMessage = "No .pvbackup files found in Documents."
+            showAlert = true
             return
         }
-        restoreState = .inProgress(.restoring)
-        Task {
-            do {
-                let restored = try await BackupManager.shared.restoreBackup(
-                    from: latest,
-                    contents: selectedContents,
-                    progressHandler: { phase in
-                        Task { @MainActor in restoreState = .inProgress(phase) }
-                    }
-                )
-                await MainActor.run {
-                    restoreState = .done(restored)
-                    if restored.contains(.database) {
-                        showRestartAlert = true
-                    } else {
-                        alertMessage = "Restore complete from \(latest.lastPathComponent)."
-                        showAlert = true
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    restoreState = .error(error.localizedDescription)
-                }
-            }
-        }
+        coordinator.startRestore(from: latest, contents: selectedContents)
     }
     #endif
 
     private func handleImport(result: Result<[URL], Error>) {
         switch result {
         case .failure(let error):
-            restoreState = .error("Could not access file: \(error.localizedDescription)")
+            alertMessage = "Could not access file: \(error.localizedDescription)"
+            showAlert = true
         case .success(let urls):
             guard let url = urls.first else { return }
-            restoreState = .inProgress(.restoring)
-
-            Task {
-                do {
-                    // Security-scoped access for files from the document picker
-                    let didAccess = url.startAccessingSecurityScopedResource()
-                    defer { if didAccess { url.stopAccessingSecurityScopedResource() } }
-
-                    let restored = try await BackupManager.shared.restoreBackup(
-                        from: url,
-                        contents: selectedContents,
-                        progressHandler: { phase in
-                            Task { @MainActor in
-                                restoreState = .inProgress(phase)
-                            }
-                        }
-                    )
-                    await MainActor.run {
-                        restoreState = .done(restored)
-                        if restored.contains(.database) {
-                            showRestartAlert = true
-                        } else {
-                            alertMessage = "Restore complete."
-                            showAlert = true
-                        }
-                    }
-                } catch {
-                    await MainActor.run {
-                        restoreState = .error(error.localizedDescription)
-                    }
-                }
+            // Security-scoped access for files from the document picker.
+            // We hold it open until the restore finishes (tracked via onChange above).
+            if url.startAccessingSecurityScopedResource() {
+                pendingSecurityScopedURL = url
             }
+            coordinator.startRestore(from: url, contents: selectedContents)
         }
     }
 
@@ -493,22 +481,6 @@ struct BackupRestoreView: View {
             )
             .padding(.bottom, 4)
     }
-}
-
-// MARK: - View State Enums
-
-private enum BackupViewState {
-    case idle
-    case inProgress(BackupPhase)
-    case done
-    case error(String)
-}
-
-private enum RestoreViewState {
-    case idle
-    case inProgress(BackupPhase)
-    case done(BackupContents)
-    case error(String)
 }
 
 // MARK: - BackupContentsToggle

@@ -3,11 +3,11 @@ import SwiftUI
 // MARK: - Main View
 
 public struct RoadmapView: View {
-    @State private var epics: [RoadmapEpic] = RoadmapLoader.loadAll()
+    @StateObject private var provider = RoadmapProvider()
     @State private var filter: EpicStatus? = nil
 
     private var displayed: [RoadmapEpic] {
-        let base = filter == nil ? epics : epics.filter { $0.status == filter }
+        let base = filter == nil ? provider.epics : provider.epics.filter { $0.status == filter }
         return base.sorted { lhs, rhs in
             if lhs.status == .complete && rhs.status != .complete { return false }
             if lhs.status != .complete && rhs.status == .complete { return true }
@@ -31,7 +31,23 @@ public struct RoadmapView: View {
         .navigationTitle("Roadmap")
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if provider.isRefreshing {
+                    ProgressView().scaleEffect(0.8)
+                } else {
+                    Button {
+                        provider.forceRefresh()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
+            }
+        }
         #endif
+        .task {
+            provider.refreshIfNeeded()
+        }
     }
 
     private var filterPicker: some View {
@@ -198,13 +214,13 @@ private struct FilterChip: View {
 // MARK: - Compact Summary (for Settings About tab)
 
 public struct RoadmapSummarySection: View {
-    private let epics = RoadmapLoader.loadAll()
+    @StateObject private var provider = RoadmapProvider()
 
-    private var activeCount: Int { epics.filter { $0.status == .active }.count }
-    private var completedCount: Int { epics.filter { $0.status == .complete }.count }
+    private var activeCount: Int { provider.epics.filter { $0.status == .active }.count }
+    private var completedCount: Int { provider.epics.filter { $0.status == .complete }.count }
     private var overallProgress: Double {
-        guard !epics.isEmpty else { return 0 }
-        return epics.map(\.progress).reduce(0, +) / Double(epics.count)
+        guard !provider.epics.isEmpty else { return 0 }
+        return provider.epics.map(\.progress).reduce(0, +) / Double(provider.epics.count)
     }
 
     public init() {}
@@ -226,6 +242,9 @@ public struct RoadmapSummarySection: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
+        .task {
+            provider.refreshIfNeeded()
+        }
     }
 
     private func stat(value: String, label: String, color: Color) -> some View {

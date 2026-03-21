@@ -33,7 +33,7 @@ extension RetroMenuView {
     /// Only rendered on platforms that ship CoreMIDI.
     @ViewBuilder
     var midiPickerSection: some View {
-#if canImport(CoreMIDI)
+#if canImport(CoreMIDI) && !os(tvOS)
         if coreSupportsMIDI {
             if #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
                 MIDIPickerSectionView(palette: ThemeManager.shared.currentPalette)
@@ -47,7 +47,7 @@ extension RetroMenuView {
 
 // MARK: - MIDIPickerSectionView
 
-#if canImport(CoreMIDI)
+#if canImport(CoreMIDI) && !os(tvOS)
 /// Stand-alone section view that owns the `@ObservedObject` for `MIDIDeviceManager`.
 @available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 struct MIDIPickerSectionView: View {
@@ -337,4 +337,4 @@ private struct AutoDetectButton: View {
     }
 }
 
-#endif // canImport(CoreMIDI)
+#endif // canImport(CoreMIDI) && !os(tvOS)

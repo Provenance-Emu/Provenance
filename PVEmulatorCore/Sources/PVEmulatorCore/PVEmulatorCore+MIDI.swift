@@ -39,7 +39,7 @@ extension PVEmulatorCore {
     /// Call after the core is fully loaded and `supportsMIDI` returns `true`.
     /// Only available on platforms that ship CoreMIDI (iOS, tvOS, macOS).
     @objc open func attachMIDIResponder() {
-#if canImport(CoreMIDI)
+#if canImport(CoreMIDI) && !os(tvOS)
         guard #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) else { return }
         guard supportsMIDI, let responder = bridge as? MIDIResponder else { return }
         Task { @MainActor in
@@ -53,7 +53,7 @@ extension PVEmulatorCore {
     /// Call when stopping emulation so the manager does not dispatch to a
     /// deallocated bridge.
     @objc open func detachMIDIResponder() {
-#if canImport(CoreMIDI)
+#if canImport(CoreMIDI) && !os(tvOS)
         guard #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) else { return }
         Task { @MainActor in
             MIDIDeviceManager.shared.setResponder(nil)

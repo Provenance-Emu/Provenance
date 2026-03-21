@@ -71,6 +71,17 @@ public struct WikiNavigationTree: Codable, Sendable {
         }
     }
 
+    /// Re-applies the App Store content filter to an already-decoded tree.
+    /// Call this on trees loaded from cache to catch any newly-blocked paths.
+    public func appStoreFiltered() -> WikiNavigationTree {
+        let filtered = sections.compactMap { section -> WikiSection? in
+            var s = section
+            s.items = WikiNavigationTree.filterItems(s.items)
+            return s.items.isEmpty && !s.title.isEmpty ? nil : s
+        }
+        return WikiNavigationTree(sections: filtered)
+    }
+
     /// Parse a GitBook SUMMARY.md into a navigation tree.
     public static func parse(markdown: String) -> WikiNavigationTree {
         var sections: [WikiSection] = []

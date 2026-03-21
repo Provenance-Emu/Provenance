@@ -69,7 +69,7 @@ public struct BackupContents: OptionSet, Sendable {
 
 // MARK: - BackupProgress
 
-public enum BackupPhase: String, Sendable {
+public enum BackupPhase: String, Sendable, Equatable {
     case preparing = "Preparing..."
     case copyingDatabase = "Copying database..."
     case copyingSaveStates = "Copying save states..."
@@ -82,6 +82,24 @@ public enum BackupPhase: String, Sendable {
     case restoringSaveStates = "Restoring save states..."
     case restoringArtwork = "Restoring artwork..."
     case restoringBatterySaves = "Restoring battery saves..."
+}
+
+// MARK: - BackupViewState
+
+public enum BackupViewState: Equatable, Sendable {
+    case idle
+    case inProgress(BackupPhase)
+    case done
+    case error(String)
+}
+
+// MARK: - RestoreViewState
+
+public enum RestoreViewState: Equatable, Sendable {
+    case idle
+    case inProgress(BackupPhase)
+    case done(BackupContents)
+    case error(String)
 }
 
 // MARK: - BackupManager

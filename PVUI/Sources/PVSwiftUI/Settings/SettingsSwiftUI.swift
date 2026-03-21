@@ -2504,13 +2504,25 @@ private struct DeltaStylesLinkView: View {
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 private struct RetroAchievementsSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
+    @State private var cheevosStatus: String = RetroAchievementsSection.computeStatus()
+
+    static func computeStatus() -> String {
+        let mgr = RetroCredentialsManager.shared
+        if mgr.hasValidSession, let username = mgr.loadCredentials()?.username {
+            return "Logged in as \(username)"
+        }
+        return "Not logged in"
+    }
 
     var body: some View {
         Section(header: Text("RetroAchievements")) {
             NavigationLink(destination: RetroAchievementsView()) {
                 SettingsRow(title: "RetroAchievements",
-                            subtitle: "Login and view your achievement progress",
+                            subtitle: cheevosStatus,
                             icon: .sfSymbol("trophy.fill"))
+            }
+            .onAppear {
+                cheevosStatus = RetroAchievementsSection.computeStatus()
             }
         }
     }

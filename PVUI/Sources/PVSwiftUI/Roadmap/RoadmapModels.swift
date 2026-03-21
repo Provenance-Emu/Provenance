@@ -14,6 +14,31 @@ public struct RoadmapEpic: Identifiable, Codable {
     public let tags: [String]
     public let provenancePlus: Bool
 
+    public init(id: Int, githubIssue: Int?, title: String, description: String,
+                status: EpicStatus, priority: EpicPriority, effort: EpicEffort,
+                revenueImpact: RevenueImpact, progress: Double, tags: [String], provenancePlus: Bool) {
+        self.id = id
+        self.githubIssue = githubIssue
+        self.title = title
+        self.description = description
+        self.status = status
+        self.priority = priority
+        self.effort = effort
+        self.revenueImpact = revenueImpact
+        self.progress = progress
+        self.tags = tags
+        self.provenancePlus = provenancePlus
+    }
+
+    /// Returns a copy of this epic with an updated status (and progress clamped to 1.0 when complete).
+    public func withStatus(_ newStatus: EpicStatus) -> RoadmapEpic {
+        RoadmapEpic(id: id, githubIssue: githubIssue, title: title, description: description,
+                    status: newStatus, priority: priority, effort: effort,
+                    revenueImpact: revenueImpact,
+                    progress: newStatus == .complete ? 1.0 : progress,
+                    tags: tags, provenancePlus: provenancePlus)
+    }
+
     public var githubURL: URL? {
         guard let issue = githubIssue else { return nil }
         return URL(string: "https://github.com/Provenance-Emu/Provenance/issues/\(issue)")

@@ -14,8 +14,8 @@ public final class WikiContentProvider: Sendable {
     /// Load the navigation tree with cache-first strategy.
     /// Returns cached tree immediately if available; refreshes in background if TTL expired.
     public func loadNavigationTree() async -> WikiNavigationTree {
-        // Try cache first
-        if let cached = cache.cachedNavigationTree() {
+        // Try cache first — re-apply filter in case blocklist has changed since caching
+        if let cached = cache.cachedNavigationTree()?.appStoreFiltered() {
             if !cache.isNavigationCacheValid() {
                 // Refresh in background
                 Task { await refreshNavigationTree() }
