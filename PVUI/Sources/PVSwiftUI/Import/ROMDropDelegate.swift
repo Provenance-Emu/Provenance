@@ -103,13 +103,16 @@ public struct ROMDropTargetModifier: ViewModifier {
     }
 
     /// Copies a dropped URL into an app-owned temporary directory so it survives past
-    /// the completion handler. A UUID prefix avoids collisions when multiple files share
-    /// the same name (e.g. two ROMs named "game.sfc" dropped simultaneously).
+    /// the completion handler. A UUID-named subdirectory provides uniqueness when multiple
+    /// files share the same name (e.g. two ROMs named "game.sfc" dropped simultaneously),
+    /// while preserving the original filename for the importer pipeline.
     private static func stableCopy(of sourceURL: URL) throws -> URL {
-        let importDir = FileManager.default.temporaryDirectory
+        let baseImportDir = FileManager.default.temporaryDirectory
             .appendingPathComponent("PVDropImports", isDirectory: true)
-        try FileManager.default.createDirectory(at: importDir, withIntermediateDirectories: true)
-        let dest = importDir.appendingPathComponent(UUID().uuidString + "_" + sourceURL.lastPathComponent)
+        try FileManager.default.createDirectory(at: baseImportDir, withIntermediateDirectories: true)
+        let uniqueDir = baseImportDir.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
+        let dest = uniqueDir.appendingPathComponent(sourceURL.lastPathComponent)
         try FileManager.default.copyItem(at: sourceURL, to: dest)
         return dest
     }
