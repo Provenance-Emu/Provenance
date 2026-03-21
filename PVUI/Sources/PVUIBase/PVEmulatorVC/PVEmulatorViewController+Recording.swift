@@ -175,16 +175,46 @@ extension PVEmulatorViewController {
         AppState.shared.emulationUIState.isClipBufferingActive
     }
 
-    /// Starts always-on clip buffering when the recorder is available.
-    /// No-op on iOS < 15 / tvOS < 15.
-    ///
-    /// Buffering itself starts unconditionally — only the **SAVE CLIP** UI action
-    /// is gated behind Provenance Plus.  This ensures the rolling buffer is warm
-    /// so that when the user does tap "Save Clip", recent footage is available.
+    /// Entry point called on game start.
+    /// - If the user has already opted in, starts buffering immediately.
+    /// - If the user has never been asked, shows a one-time in-app explainer
+    ///   alert *before* touching ReplayKit, so the system permission dialog
+    ///   never fires unexpectedly mid-game.
+    /// - If the user previously declined, does nothing.
     public func startClipBufferingIfAvailable() {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
-        guard Defaults[.clipBufferingEnabled] else { return }
         guard PVRecordingManager.shared.isAvailable else { return }
+
+        if Defaults[.clipBufferingEnabled] {
+            // User already opted in — start immediately.
+            _beginClipBuffering()
+        } else if !Defaults[.clipBufferingPermissionAsked] {
+            // First encounter — show our own explainer before ReplayKit prompts.
+            _promptClipBufferingOptIn()
+        }
+        // else: user previously declined — do nothing.
+    }
+
+    private func _promptClipBufferingOptIn() {
+        guard #available(iOS 15.0, tvOS 15.0, *) else { return }
+        let alert = UIAlertController(
+            title: "Save Gameplay Clips",
+            message: "Provenance can keep a rolling buffer of your gameplay so you can save recent clips at any time.\n\nThis uses screen recording and requires your permission.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Enable Clips", style: .default) { [weak self] _ in
+            Defaults[.clipBufferingPermissionAsked] = true
+            Defaults[.clipBufferingEnabled] = true
+            self?._beginClipBuffering()
+        })
+        alert.addAction(UIAlertAction(title: "Not Now", style: .cancel) { _ in
+            Defaults[.clipBufferingPermissionAsked] = true
+        })
+        present(alert, animated: true)
+    }
+
+    private func _beginClipBuffering() {
+        guard #available(iOS 15.0, tvOS 15.0, *) else { return }
         Task { @MainActor in
             do {
                 try await PVRecordingManager.shared.startClipBuffering()

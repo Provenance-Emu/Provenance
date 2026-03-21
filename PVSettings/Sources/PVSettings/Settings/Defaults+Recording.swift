@@ -26,4 +26,8 @@ public extension Defaults.Keys {
     /// Enable always-on clip buffering (requires ReplayKit permission).
     /// Off by default to avoid prompting for permissions on first launch.
     static let clipBufferingEnabled = Key<Bool>("clipBufferingEnabled", default: false)
+
+    /// Whether the user has already seen (and responded to) the in-app
+    /// clip buffering opt-in prompt. Once true, we never show it again.
+    static let clipBufferingPermissionAsked = Key<Bool>("clipBufferingPermissionAsked", default: false)
 }
