@@ -386,8 +386,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 #endif // os(iOS)
 
         // Set up the HUD quick-action strip (toggle button + fast-forward/save/load/record row).
+        // Scoped to iOS: the strip is touch-driven and recording is iOS-only.
+        // tvOS uses a remote/controller; the pause menu covers save/load/FF there.
+        #if os(iOS)
         setupToggleButton()
         setupQuickActionButtons()
+        #endif
 
         // Hardware switch overlay (e.g. Atari difficulty / TV-type switches)
         addHardwareSwitchOverlayIfNeeded()
@@ -1909,17 +1913,20 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc private func recordTapped() {
         vibrate()
         #if canImport(FreemiumKit)
-        guard FreemiumKit.shared.purchasedTier != nil else {
-            // Recording is a Plus feature; direct the user to the pause menu where
-            // the paywall is presented via PaidFeatureView.
-            let alert = UIAlertController(
-                title: "Provenance Plus Required",
-                message: "Gameplay recording is a Provenance Plus feature. Open the pause menu to upgrade.",
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
-            return
+        // Non-AppStore builds (dev / TestFlight / sideloaded) are treated as premium.
+        if AppState.shared.isAppStore {
+            guard FreemiumKit.shared.purchasedTier != nil else {
+                // Recording is a Plus feature; direct the user to the pause menu where
+                // the paywall is presented via PaidFeatureView.
+                let alert = UIAlertController(
+                    title: "Provenance Plus Required",
+                    message: "Gameplay recording is a Provenance Plus feature. Open the pause menu to upgrade.",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                present(alert, animated: true)
+                return
+            }
         }
         #endif
         guard let emulatorVC = parent as? PVEmulatorViewController else {

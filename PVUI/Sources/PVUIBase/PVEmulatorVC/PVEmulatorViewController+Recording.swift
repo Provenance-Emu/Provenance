@@ -74,7 +74,7 @@ extension PVEmulatorViewController {
 
     /// Discards the current recording without presenting the preview.
     /// Updates `AppState.shared.emulationUIState.isRecording` to keep state consistent.
-    public func discardScreenRecording() {
+    @MainActor public func discardScreenRecording() {
         PVRecordingManager.shared.discardRecording()
         AppState.shared.emulationUIState.isRecording = false
         notifyOSDRecordingStateChanged()
@@ -82,7 +82,8 @@ extension PVEmulatorViewController {
     }
 
     /// Notifies the OSD controller to refresh its record button appearance.
-    private func notifyOSDRecordingStateChanged() {
+    /// Must be called on the main actor since `OSDRecordingObserver` is `@MainActor`-isolated.
+    @MainActor private func notifyOSDRecordingStateChanged() {
         (controllerViewController as? OSDRecordingObserver)?.updateRecordButtonAppearance()
     }
 
