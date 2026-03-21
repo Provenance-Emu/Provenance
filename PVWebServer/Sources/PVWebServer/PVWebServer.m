@@ -646,12 +646,20 @@ NSUInteger webDavPort = 81;
 
 - (void)webUploader:(GCDWebUploader*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath
 {
-    NSLog(@"[MOVE] %@ -> %@", fromPath, toPath);
+    ILOG(@"[MOVE] %@ -> %@", fromPath, toPath);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:@"PVWebServerFileMovedNotification"
+                      object:self
+                    userInfo:@{@"fromPath": fromPath, @"toPath": toPath}];
 }
 
 - (void)webUploader:(GCDWebUploader*)uploader didDeleteItemAtPath:(NSString*)path
 {
-    NSLog(@"[DELETE] %@", path);
+    ILOG(@"[DELETE] %@", path);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:@"PVWebServerFileDeletedNotification"
+                      object:self
+                    userInfo:@{@"filePath": path}];
 }
 
 - (void)webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path
@@ -723,21 +731,29 @@ NSUInteger webDavPort = 81;
  *  This method is called whenever a file or directory has been moved.
  */
 - (void)davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-    NSLog(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
+    ILOG(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:@"PVWebServerFileMovedNotification"
+                      object:self
+                    userInfo:@{@"fromPath": fromPath, @"toPath": toPath}];
 }
 
 /**
  *  This method is called whenever a file or directory has been copied.
  */
 - (void)davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-    NSLog(@"[DAV COPY] %@ -> %@", fromPath, toPath);
+    ILOG(@"[DAV COPY] %@ -> %@", fromPath, toPath);
 }
 
 /**
  *  This method is called whenever a file or directory has been deleted.
  */
 - (void)davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
-    NSLog(@"[DAV DELETE] %@", path);
+    ILOG(@"[DAV DELETE] %@", path);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:@"PVWebServerFileDeletedNotification"
+                      object:self
+                    userInfo:@{@"filePath": path}];
 }
 
 /**

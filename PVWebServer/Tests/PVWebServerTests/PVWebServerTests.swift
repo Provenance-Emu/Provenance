@@ -6,6 +6,7 @@
 //  Copyright © 2024 Joseph Mattiello. All rights reserved.
 //
 
+import Combine
 import XCTest
 @testable import PVWebServer
 
@@ -90,5 +91,94 @@ class PVWebServerTests: XCTestCase {
                        "WebServerUploadCompleted")
         XCTAssertEqual(Notification.Name.pvWebServerStatusChanged.rawValue,
                        "WebServerStatusChanged")
+    }
+
+    func testFileLifecycleNotificationNamesExist() {
+        XCTAssertEqual(Notification.Name.pvWebServerFileDeleted.rawValue,
+                       "PVWebServerFileDeletedNotification")
+        XCTAssertEqual(Notification.Name.pvWebServerFileMoved.rawValue,
+                       "PVWebServerFileMovedNotification")
+    }
+
+    // MARK: - File-lifecycle notification posting
+
+    func testModernServerPostsDeleteNotification() throws {
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(UUID().uuidString)
+        let testFile = tmp.appendingPathComponent("test.rom")
+        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
+        try Data([0xDE, 0xAD, 0xBE, 0xEF]).write(to: testFile)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+
+        let server = PVModernWebServer(uploadDirectory: tmp)
+
+        var receivedPath: String?
+        let expectation = XCTestExpectation(description: "pvWebServerFileDeleted fires")
+
+        let token = NotificationCenter.default.addObserver(
+            forName: .pvWebServerFileDeleted, object: nil, queue: nil
+        ) { note in
+            receivedPath = note.userInfo?["filePath"] as? String
+            expectation.fulfill()
+        }
+        defer { NotificationCenter.default.removeObserver(token) }
+
+        // Simulate what the DELETE route handler does:
+        try FileManager.default.removeItem(at: testFile)
+        NotificationCenter.default.post(
+            name: .pvWebServerFileDeleted,
+            object: server,
+            userInfo: ["filePath": testFile.path]
+        )
+
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(receivedPath, testFile.path)
+    }
+
+    func testCombineFileDeletedPublisher() {
+        let manager = PVWebServerManager()
+        var cancellables = Set<AnyCancellable>()
+        var receivedPath: String?
+        let expectation = XCTestExpectation(description: "fileDeletedPublisher emits")
+
+        manager.fileDeletedPublisher
+            .sink { path in
+                receivedPath = path
+                expectation.fulfill()
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.post(
+            name: .pvWebServerFileDeleted,
+            object: nil,
+            userInfo: ["filePath": "/some/test.rom"]
+        )
+
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(receivedPath, "/some/test.rom")
+    }
+
+    func testCombineFileMovedPublisher() {
+        let manager = PVWebServerManager()
+        var cancellables = Set<AnyCancellable>()
+        var receivedEvent: (from: String, to: String)?
+        let expectation = XCTestExpectation(description: "fileMovedPublisher emits")
+
+        manager.fileMovedPublisher
+            .sink { event in
+                receivedEvent = event
+                expectation.fulfill()
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.post(
+            name: .pvWebServerFileMoved,
+            object: nil,
+            userInfo: ["fromPath": "/old/a.rom", "toPath": "/new/a.rom"]
+        )
+
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(receivedEvent?.from, "/old/a.rom")
+        XCTAssertEqual(receivedEvent?.to,   "/new/a.rom")
     }
 }

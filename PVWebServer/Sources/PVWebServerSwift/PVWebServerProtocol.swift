@@ -29,6 +29,16 @@ public extension Notification.Name {
     static let pvWebServerUploadCompleted      = Notification.Name("WebServerUploadCompleted")
     /// Fired when server start/stop state changes (userInfo: "isRunning", "type", "port", "url")
     static let pvWebServerStatusChanged        = Notification.Name("WebServerStatusChanged")
+
+    // MARK: File-lifecycle events (Task B — Epic #2758)
+
+    /// Fired when a file is deleted via the web UI or WebDAV.
+    /// userInfo: `"filePath": String` — absolute path of the deleted file.
+    static let pvWebServerFileDeleted          = Notification.Name("PVWebServerFileDeletedNotification")
+
+    /// Fired when a file is moved/renamed via the web UI or WebDAV.
+    /// userInfo: `"fromPath": String, "toPath": String` — absolute paths before and after.
+    static let pvWebServerFileMoved            = Notification.Name("PVWebServerFileMovedNotification")
 }
 
 // MARK: - PVWebServerProtocol
