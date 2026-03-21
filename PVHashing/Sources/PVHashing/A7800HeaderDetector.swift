@@ -41,8 +41,9 @@ public enum A7800HeaderDetector {
         }
         defer { try? fileHandle.close() }
 
-        guard let data = try? fileHandle.read(upToCount: Int(headerSize)),
-              data.count >= Int(headerSize) else {
+        let minimumBytes = 10
+        guard let data = try? fileHandle.read(upToCount: minimumBytes),
+              data.count >= minimumBytes else {
             WLOG("Atari 7800 file too small to contain header: \(fileURL.lastPathComponent)")
             return 0
         }
@@ -52,7 +53,8 @@ public enum A7800HeaderDetector {
 
     /// Detects the MD5 offset based on the file data's magic bytes.
     ///
-    /// - Parameter data: The file data (at least 128 bytes for header detection)
+    /// - Parameter data: The file data to inspect; only the first 10 bytes are required for header detection.
+    ///                   If fewer than 10 bytes are available, the data is treated as headerless.
     /// - Returns: The number of bytes to skip (128 if header present, 0 if headerless)
     public static func detectOffset(data: Data) -> UInt {
         if hasA7800Header(data: data) {

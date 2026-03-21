@@ -84,7 +84,7 @@ struct A7800HeaderDetectorTests {
 
     // MARK: - Data Shorter Than Header Size
 
-    @Test("detectOffset returns 0 for data shorter than header size but valid magic")
+    @Test("detectOffset returns headerSize (128) for data shorter than header size but with valid magic")
     func testDetectOffsetShortDataWithMagic() {
         // Only 10 bytes - has magic but no room for a full header
         var data = Data(repeating: 0x00, count: 10)
