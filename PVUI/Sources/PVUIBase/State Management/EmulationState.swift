@@ -28,7 +28,7 @@ public final class EmulationUIState : ObservableObject {
     public var isRecording: Bool = false
 
     /// Whether a ReplayKit live-broadcast session is currently active.
-    public var isBroadcasting: Bool = false
+    @Published public var isBroadcasting: Bool = false
 
     /// The current game that should be loaded in the emulator scene
     public var currentGame: PVGame? = nil
