@@ -882,7 +882,7 @@ public extension Defaults.Keys {
 public extension Defaults.Keys {
     /// CoreMIDI unique ID of the last selected MIDI input source.
     /// Persisted so the device picker restores the user's choice between sessions.
-    /// `nil` means "no preference" (auto-connect to first available source).
+    /// `nil` means "no preference" (connect all available input sources).
     static let midiSourceUniqueID = Key<Int32?>("midiSourceUniqueID", default: nil)
 
     /// CoreMIDI unique ID of the last selected MIDI output destination.

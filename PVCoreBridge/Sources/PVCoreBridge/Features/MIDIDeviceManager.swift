@@ -121,7 +121,7 @@ public final class MIDIDeviceManager: ObservableObject {
     private var activityResetTask: Task<Void, Never>?
 
     // UserDefaults keys — mirrors the PVSettings `midiSourceUniqueID` / `midiDestinationUniqueID` keys
-    // so PVSettings.Defaults[.midiSourceUniqueID] and MIDIDeviceManager both read/write the same value.
+    // so `Defaults[.midiSourceUniqueID]` and MIDIDeviceManager both read/write the same value.
     private static let udKeySource = "midiSourceUniqueID"
     private static let udKeyDestination = "midiDestinationUniqueID"
 

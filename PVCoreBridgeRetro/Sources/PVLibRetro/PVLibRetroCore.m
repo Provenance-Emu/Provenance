@@ -2084,11 +2084,18 @@ static bool environment_callback(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
             /// Wire the CoreMIDI-backed interface defined in PVThinLibretroFrontend.mm.
             /// Unlocks MIDI for cores like DOSBox-Pure, Hatari, and NP2Kai.
+#if TARGET_OS_TV
+            // CoreMIDI is unavailable on tvOS — return false so cores don't enable MIDI
+            // and then hit stub no-ops at runtime.
+            DLOG(@"Environ GET_MIDI_INTERFACE — CoreMIDI unavailable on tvOS");
+            return false;
+#else
             struct retro_midi_interface **midiPtr = (struct retro_midi_interface **)data;
             if (!midiPtr) return false;
             *midiPtr = pv_libretro_midi_interface();
             ILOG(@"Environ GET_MIDI_INTERFACE: provided CoreMIDI-backed interface");
             return true;
+#endif
         }
 
         // MARK: - Microphone Interface — env 75 | EXPERIMENTAL
