@@ -45,7 +45,7 @@ import UIKit
 ///
 /// Instantiate once and call ``attach(to:)`` when a core starts,
 /// ``detach()`` when it stops.
-@objc public final class GCMouseLightGunDriver: NSObject {
+@objc public final class GCMouseLightGunDriver: NSObject, @unchecked Sendable {
 
     // MARK: - Configuration
 
