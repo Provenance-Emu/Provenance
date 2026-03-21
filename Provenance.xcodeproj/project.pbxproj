@@ -16672,16 +16672,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		930498CA2A93073800BF257F /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
 		930498CC2A93073800BF257F /* XCRemoteSwiftPackageReference "Reachability" */ = {
@@ -16712,8 +16712,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		B341FCC32BE61EC100718929 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
@@ -16736,8 +16736,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		B347B2412BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
@@ -16768,8 +16768,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		B35EEF622C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
@@ -16856,8 +16856,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		B394CC622BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
@@ -16896,8 +16896,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		B3E0CF982C054D3F00F45074 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
@@ -16944,32 +16944,32 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		B3F7E2A4297736BE00362B92 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
 		B3F7E42F297736C200362B92 /* XCRemoteSwiftPackageReference "SteamController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
 		B3F7E431297736C200362B92 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
 		F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {

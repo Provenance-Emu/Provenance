@@ -35,7 +35,7 @@ let package = Package(
     ],
 
     dependencies: [
-        .package(url: "https://github.com/SideStore/SideKit.git", branch: "main"),
+        .package(url: "https://github.com/SideStore/SideKit.git", revision: "ab959a54fc2217464ffabd09322ec3351e3ca456"),
 //        .package(url: "https://github.com/SideStore/SideKit.git", .upToNextMajor(from: "0.0.1")),
         .package(name: "PVSupport", path: "../PVSupport/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
