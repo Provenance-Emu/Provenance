@@ -69,6 +69,16 @@ public struct SkinCatalogBrowserView: View {
     public init(preselectedSystem: String? = nil) {
         _selectedSystem = State(initialValue: preselectedSystem)
         _showingFilters = State(initialValue: preselectedSystem != nil)
+        // Pre-select the device filter that matches the current hardware so
+        // iPad users see iPad skins and iPhone users see iPhone skins by default.
+        let defaultDevice: String? = {
+            #if os(tvOS)
+            return "tv"
+            #else
+            return UIDevice.current.userInterfaceIdiom == .pad ? "ipad" : "iphone"
+            #endif
+        }()
+        _selectedDevice = State(initialValue: defaultDevice)
     }
 
     // MARK: - Body

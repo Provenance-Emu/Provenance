@@ -317,26 +317,30 @@ extension PVEmulatorViewController {
     /// Bring all virtual input overlays to the front of the view hierarchy in the correct stacking order.
     ///
     /// Order (back to front):
-    ///   trackpad → keyboard container → controller overlay (HUD buttons) → cursor (non-interactive) → menu button
+    ///   trackpad → controller overlay (HUD buttons) → keyboard container → cursor (non-interactive) → menu button
     ///
-    /// The keyboard container must be ABOVE the trackpad so UIKit checks it first during hit-testing.
-    /// KeyboardPassthroughView returns nil for non-interactive areas (the spacer above the keyboard
-    /// panel), so trackpad still receives game-viewport touches via UIKit's normal cascade.
-    /// The controller overlay is above both so HUD quick-action buttons are always tappable.
+    /// The keyboard container MUST be above the controller overlay. KeyboardPassthroughView.hitTest
+    /// returns nil for non-keyboard areas (the spacer above the keys), so those touches fall through
+    /// to the controller overlay below — HUD quick-action buttons remain fully tappable.
+    /// When the keyboard container was below the controller overlay, PVControllerViewController.view
+    /// (a full-screen UIView with userInteractionEnabled) consumed all touches first, making the
+    /// keyboard and its close button completely unresponsive.
     /// The menu button is topmost so it is always reachable regardless of other overlay state.
     public func bringVirtualInputOverlaysToFront() {
         if let trackpadView = touchTrackpadView {
             view.bringSubviewToFront(trackpadView)
         }
+        // Controller overlay (HUD quick-action buttons) above trackpad.
+        if let controllerView = controllerViewController?.view {
+            view.bringSubviewToFront(controllerView)
+        }
+        // Keyboard container above controller overlay. KeyboardPassthroughView passes
+        // non-keyboard-area touches back through to the controller overlay below.
         // Bring the passthrough *container*, not hostingVC.view — the container is the
         // direct subview of `view`; hostingVC.view is a subview of the container and
         // calling bringSubviewToFront on it would have no effect.
         if let keyboardContainer = virtualKeyboardContainer {
             view.bringSubviewToFront(keyboardContainer)
-        }
-        // HUD quick-action buttons live in the controller overlay — must be above the trackpad
-        if let controllerView = controllerViewController?.view {
-            view.bringSubviewToFront(controllerView)
         }
         if let cursorView = cursorHostingController?.view {
             view.bringSubviewToFront(cursorView)

@@ -546,11 +546,8 @@ struct RetroMenuView: View {
                     icon: "keyboard",
                     color: .retroBlue
                 ) {
-                    dismissAction(false)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        emulatorVC.toggleVirtualKeyboard()
-                        emulatorVC.core.setPauseEmulation(false)
-                    }
+                    emulatorVC.toggleVirtualKeyboard()
+                    dismissAction(true)
                 }
             }
 
@@ -560,11 +557,8 @@ struct RetroMenuView: View {
                     icon: "computermouse",
                     color: .retroCyan
                 ) {
-                    dismissAction(false)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        emulatorVC.toggleVirtualMouse()
-                        emulatorVC.core.setPauseEmulation(false)
-                    }
+                    emulatorVC.toggleVirtualMouse()
+                    dismissAction(true)
                 }
             }
             #endif
