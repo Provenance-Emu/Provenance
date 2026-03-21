@@ -78,5 +78,4 @@ ENABLE_BITCODE = NO
 // If a clang/ObjC build breaks, try removing CLANG_ENABLE_EXPLICIT_MODULES first
 // (it can conflict with -fmodules/-fcxx-modules in OTHER_CFLAGS).
 SWIFT_ENABLE_EXPLICIT_MODULES = YES
-CLANG_ENABLE_EXPLICIT_MODULES = YES
 //COMBINE_HIDPI_IMAGES = NO
