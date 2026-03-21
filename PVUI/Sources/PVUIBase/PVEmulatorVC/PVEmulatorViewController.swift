@@ -1473,7 +1473,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         removeIndicatorOverlay()
 
         // Detach MIDI responder before tearing down the core.
-        core.detachMIDIResponder()
+        #if canImport(CoreMIDI) && !os(tvOS)
+        if #available(iOS 15, tvOS 15, *) {
+            MIDIDeviceManager.shared.setResponder(nil)
+        }
+        #endif
 
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)
