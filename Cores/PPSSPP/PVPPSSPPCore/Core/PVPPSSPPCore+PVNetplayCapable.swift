@@ -173,7 +173,9 @@ extension PVPPSSPPCore: PVNetplayCapable {
     /// Stop the current adhoc session.
     public func stopNetplay() async {
         await MainActor.run {
-            _bridge.stopAdhoc()
+            if lastNetplayContext != nil {
+                _bridge.stopAdhoc()
+            }
             lastNetplayContext = nil
         }
     }
