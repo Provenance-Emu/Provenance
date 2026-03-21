@@ -19,6 +19,9 @@ import SwiftUI
 import PVCoreBridge
 import PVEmulatorCore
 import PVThemes
+#if canImport(CoreMIDI) && !os(tvOS)
+import CoreMIDI
+#endif
 
 // MARK: - RetroMenuView extension
 
