@@ -39,13 +39,13 @@ let package = Package(
         // MARK: Plugins
 
         // SwiftGenPlugin
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
 
         // MARK: Macros
 
         // SwiftMacros
         // https://github.com/ShenghaiWang/SwiftMacros?tab=readme-ov-file
-        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
+        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", from: "1.0.1"),
 
         // swift-macro-toolkit
         // https://github.com/stackotter/swift-macro-toolkit

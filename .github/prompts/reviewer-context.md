@@ -131,6 +131,15 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Both use `@Environment(\.pvEmulatorCoordinator)` — don't access directly from core bridge.
 - Platform-specific layouts (C64, ZX Spectrum, CPC) in `PVUI/Sources/PVSwiftUI/VirtualKeyboard/`.
 
+### Per-Game Mouse Detection (`MouseGameRegistry`)
+- `MouseGameRegistry.shared` in `PVCoreBridge/Features/` — single source of truth for whether a game uses a mouse.
+- Two-tier approach: **always-on** systems (DOS, Macintosh, AtariST…) always return `true`; **conditional** systems (SNES, Saturn, Dreamcast, PSX) require a game-level MD5 or title match.
+- `gameSupportsMouse` on `PVThinLibretroCore` delegates to `MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier:md5:title:)`.
+- Per-game user override stored in UserDefaults with key `"MouseGameRegistry.mouseEnabled.<md5>"` — overrides ALL automatic detection.
+- When reviewing new mouse game additions, verify the system is in `conditionalMouseSystems` (🔴 CRITICAL if a system that should be conditional is added to `alwaysMouseSystems`).
+- `MouseGamesProvider` protocol — cores declare static mouse game lists; registered at startup via `registerProvider(_:)`.
+- New mouse game databases go in `MouseGameRegistry.knownMouseGameMD5s` or `knownMouseGameTitlePatterns`; never hardcode mouse checks inline.
+
 ### JIT Capability Matrix
 - **`PVPrimitives.PVJITRequirement`** — rich 4-case Swift enum (`.notSupported`,
   `.optional(fallback:)`, `.automaticWithFallback`, `.requiredOrCrash`).
@@ -243,6 +252,18 @@ Missing `tvOS` in an `@available` guard is a 🟡 MINOR issue. Missing iOS is �
 
 Tier 0–2 modules that use Darwin-only APIs without `#if canImport(Darwin)` guards
 will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT otherwise.
+
+### WidgetKit Extension (ProvenanceWidgets)
+- `Extensions/ProvenanceWidgets/` — new iOS-only WidgetKit extension (`#if os(iOS)` guards throughout).
+- Widget data access uses `PVGameProxy` / `PVRecentGameProxy` — **local Realm proxy objects** that
+  mirror the schema of `PVGame` / `PVRecentGame`. These exist so the extension does NOT link PVLibrary.
+  When reviewing schema changes to `PVGame` or `PVRecentGame`, check that the proxy classes in
+  `WidgetDataProvider.swift` are kept in sync (property names and `@Persisted` attributes must match).
+- `WidgetDataProvider` opens Realm **read-only** with `readOnly: true` — never change to read-write.
+- All widget views are stateless SwiftUI; data comes from `TimelineEntry` only — no `@StateObject` / `@ObservedObject`.
+- `kSchemaVersion` in `WidgetDataProvider.swift` must stay in sync with `schemaVersion` in `RomDatabase.swift`.
+- The extension target requires the `group.org.provenance-emu.provenance` App Group entitlement.
+- After any game launch/end in the main app, call `WidgetCenter.shared.reloadAllTimelines()`.
 
 ## GitHub Workflow Awareness
 

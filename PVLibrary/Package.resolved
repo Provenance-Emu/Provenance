@@ -1,5 +1,5 @@
 {
-  "originHash" : "9808e701bd38987b1e20fed09084ddd4090a09971ce55a15236fb76f0ed50308",
+  "originHash" : "bc566d21e494130d0c3d45563599dab4f92776f18a2fcea59615f10dfc860659",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "72264f116f35dd9cfdc7c922c5983609826fc4ba"
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
+        "version" : "9.0.2"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/Lighter.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "b1c78989db429349427cd90b9b99925ff3253853"
+        "revision" : "b1c78989db429349427cd90b9b99925ff3253853",
+        "version" : "1.0.0"
       }
     },
     {
@@ -96,8 +96,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/SWCompression.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "6ab39d1a3d9db303947ea5408925c48b9367204f"
+        "revision" : "6ab39d1a3d9db303947ea5408925c48b9367204f",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-asn1",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-asn1.git",
+      "state" : {
+        "revision" : "9f542610331815e29cc3821d3b6f488db8715517",
+        "version" : "1.6.0"
       }
     },
     {
@@ -128,12 +137,30 @@
       }
     },
     {
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version" : "3.15.1"
+      }
+    },
+    {
       "identity" : "swift-http-types",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-http-types",
       "state" : {
         "revision" : "ef18d829e8b92d731ad27bb81583edd2094d1ce3",
         "version" : "1.3.1"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
       }
     },
     {
@@ -150,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "7335e4aab6136e42adeb7545a10570e543336d11"
+        "revision" : "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
+        "version" : "2.0.9"
       }
     },
     {
@@ -159,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
-        "version" : "509.1.1"
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     },
     {
@@ -177,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/SwiftMacros.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "c7430902f056432a07803f8580263b4acd7753f1"
+        "revision" : "cb30be65a3f121d756c98d442194c41eb24e9f09",
+        "version" : "1.0.0"
       }
     },
     {
@@ -195,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "770f990d3e4eececb57ac04a6076e22f8c97daeb",
-        "version" : "1.4.2"
+        "revision" : "dfd70507def84cb5fb821278448a262c6ff2bbad",
+        "version" : "1.9.0"
       }
     },
     {

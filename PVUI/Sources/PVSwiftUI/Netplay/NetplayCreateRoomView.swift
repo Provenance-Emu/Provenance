@@ -23,7 +23,7 @@ public struct NetplayCreateRoomView: View {
     let coreIdentifier: String
 
     @StateObject private var netplay = ObservableNetplayManager.shared
-    @State private var settings = NetplaySettings.defaultLAN
+    @State private var settings = NetplaySettings.fromStoredDefaults()
     @State private var isStarting = false
     @State private var errorMessage: String?
     @State private var showError = false
@@ -53,18 +53,18 @@ public struct NetplayCreateRoomView: View {
                     TextField("Room Name", text: $settings.roomName)
                         .autocorrectionDisabled()
 
-                    tvOSCompatibleStepper("Max Players", value: $settings.maxPlayers, in: 2...4)
+                    NetplayStepperView(label:"Max Players", value: $settings.maxPlayers, in: 2...4)
 
                     Toggle("Allow Spectators", isOn: $settings.allowSpectators)
 
                     if settings.allowSpectators {
-                        tvOSCompatibleStepper("Max Spectators", value: $settings.maxSpectators, in: 0...11)
+                        NetplayStepperView(label:"Max Spectators", value: $settings.maxSpectators, in: 0...11)
                     }
                 }
 
                 // Network settings
                 Section("Network") {
-                    tvOSCompatibleStepper("Frame Delay", value: $settings.frameDelay, in: 0...10)
+                    NetplayStepperView(label:"Frame Delay", value: $settings.frameDelay, in: 0...10)
                     HStack {
                         Text("Port")
                         Spacer()
@@ -72,10 +72,12 @@ public struct NetplayCreateRoomView: View {
                             .foregroundStyle(.secondary)
                     }
                     HStack {
-                        Text("Network")
+                        Text("Relay Server")
                         Spacer()
-                        Text("LAN Only")
+                        Text(settings.relayServer ?? "LAN Only")
                             .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
                     }
                 }
 
@@ -151,24 +153,6 @@ public struct NetplayCreateRoomView: View {
     }
 
     // MARK: - Actions
-
-    @ViewBuilder
-    private func tvOSCompatibleStepper(_ label: String, value: Binding<Int>, in range: ClosedRange<Int>) -> some View {
-        #if os(tvOS)
-        HStack {
-            Text("\(label): \(value.wrappedValue)")
-            Spacer()
-            Button { value.wrappedValue = max(range.lowerBound, value.wrappedValue - 1) } label: {
-                Image(systemName: "minus.circle")
-            }
-            Button { value.wrappedValue = min(range.upperBound, value.wrappedValue + 1) } label: {
-                Image(systemName: "plus.circle")
-            }
-        }
-        #else
-        Stepper("\(label): \(value.wrappedValue)", value: value, in: range)
-        #endif
-    }
 
     private func startHosting() {
         isStarting = true

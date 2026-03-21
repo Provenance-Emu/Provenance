@@ -36,7 +36,7 @@ let package = Package(
     dependencies: [
         .package(path: "../PVLogging"),
         .package(path: "../PVPrimitives"),
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
 
         ///
@@ -47,7 +47,7 @@ let package = Package(
 
         // https://github.com/Lighter-swift/Lighter
         //.package(url: "https://github.com/Lighter-swift/Lighter.git", from: "1.4.4"),
-        .package(url: "https://github.com/JoeMatt/Lighter.git", branch: "develop"),
+        .package(url: "https://github.com/JoeMatt/Lighter.git", from: "1.0.0"),
 
 //        .package(url: "https://github.com/JoeMatt/SWCompression.git", branch: "develop"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.18")),
