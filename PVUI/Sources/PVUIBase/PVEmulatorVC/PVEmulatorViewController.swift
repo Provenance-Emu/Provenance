@@ -1058,7 +1058,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         #if os(iOS) || os(tvOS)
-        stopClipBuffering()
+        // Only stop buffering when the VC is actually leaving the hierarchy, not
+        // when it's temporarily covered by a modal (settings, pause menu, etc.).
+        // Stopping on every viewWillDisappear would clear the rolling buffer, making
+        // "Save Clip" unreliable after dismissing a modal sheet.
+        if isMovingFromParent || isBeingDismissed {
+            stopClipBuffering()
+        }
         #endif
         destroyAutosaveTimer()
         #if !os(tvOS)

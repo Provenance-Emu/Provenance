@@ -208,7 +208,7 @@ extension PVRecordingManager {
                     ELOG("[ClipCapture] startClipBuffering error: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
                 } else {
-                    continuation.resume()
+                    continuation.resume(returning: ())
                 }
             }
         }
@@ -255,7 +255,7 @@ extension PVRecordingManager {
                     ELOG("[ClipCapture] exportClip error: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
                 } else {
-                    continuation.resume()
+                    continuation.resume(returning: ())
                 }
             }
         }

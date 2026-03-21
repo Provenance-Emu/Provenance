@@ -219,20 +219,36 @@ extension PVEmulatorViewController {
 
     private func saveClipToStorage(url: URL) {
         #if os(iOS)
-        // Save to Camera Roll on iOS using PHPhotoLibrary for proper success/failure reporting.
-        PHPhotoLibrary.shared().performChanges({
-            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-        }) { [weak self] success, error in
-            DispatchQueue.main.async {
-                if success {
-                    ILOG("[ClipCapture] Clip saved to Photos")
-                    // Clean up the temporary file now that it's safely in Photos.
-                    try? FileManager.default.removeItem(at: url)
-                    self?.showClipAlert(title: "Clip Saved", message: "Your gameplay clip was saved to Photos.")
-                } else {
-                    let msg = error?.localizedDescription ?? "Unknown error"
-                    ELOG("[ClipCapture] Failed to save clip to Photos: \(msg)")
-                    self?.showClipAlert(title: "Clip Error", message: "Failed to save to Photos: \(msg)")
+        // Request add-only authorization before writing so that if the user has
+        // denied or restricted access we can show a meaningful error rather than
+        // silently failing inside performChanges.
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { [weak self] status in
+            guard let self else { return }
+            guard status == .authorized || status == .limited else {
+                DispatchQueue.main.async {
+                    ELOG("[ClipCapture] Photos access denied (status: \(status.rawValue))")
+                    self.showClipAlert(
+                        title: "Photos Access Required",
+                        message: "Allow Provenance to add to Photos in Settings > Privacy > Photos."
+                    )
+                }
+                return
+            }
+            // Save to Camera Roll on iOS using PHPhotoLibrary for proper success/failure reporting.
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+            }) { [weak self] success, error in
+                DispatchQueue.main.async {
+                    if success {
+                        ILOG("[ClipCapture] Clip saved to Photos")
+                        // Clean up the temporary file now that it's safely in Photos.
+                        try? FileManager.default.removeItem(at: url)
+                        self?.showClipAlert(title: "Clip Saved", message: "Your gameplay clip was saved to Photos.")
+                    } else {
+                        let msg = error?.localizedDescription ?? "Unknown error"
+                        ELOG("[ClipCapture] Failed to save clip to Photos: \(msg)")
+                        self?.showClipAlert(title: "Clip Error", message: "Failed to save to Photos: \(msg)")
+                    }
                 }
             }
         }
