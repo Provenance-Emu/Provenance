@@ -304,6 +304,44 @@ struct RetroArchLobbyAddressTests {
         #expect(room.gameName == "Unknown Game")
         #expect(room.hostName == "Unknown Host")
     }
+
+    @Test("Missing has_spectate_password field allows spectators")
+    func missingSpectatePasswordAllowsSpectators() throws {
+        let json = """
+        [{"fields":{"username":"HostE","game_name":"Tetris","game_crc":"12345678",
+          "core_name":"gbcore","ip":"10.0.0.2","port":55435,
+          "has_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        // nil has_spectate_password means no password required → spectators allowed
+        #expect(room.allowsSpectators)
+    }
+
+    @Test("has_spectate_password true disallows spectators")
+    func spectatePasswordTrueDisallowsSpectators() throws {
+        let json = """
+        [{"fields":{"username":"HostF","game_name":"Pong","game_crc":"AAAABBBB",
+          "core_name":"atari","ip":"10.0.0.3","port":55435,
+          "has_password":false,"has_spectate_password":true,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(!room.allowsSpectators)
+    }
+
+    @Test("Rooms with same stable fields produce same deterministic UUID")
+    func deterministicUUIDStability() throws {
+        let json = """
+        [{"fields":{"username":"HostG","game_name":"BreakOut","game_crc":"CCCCDDDD",
+          "core_name":"atari","ip":"10.0.0.4","port":55435,
+          "has_password":false,"connectable":true}}]
+        """.data(using: .utf8)!
+        let entries = try JSONDecoder().decode([LobbyEntry].self, from: json)
+        let room1 = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        let room2 = try #require(NetplayRoom(lobbyEntry: entries[0]))
+        #expect(room1.id == room2.id)
+    }
 }
 #endif
 

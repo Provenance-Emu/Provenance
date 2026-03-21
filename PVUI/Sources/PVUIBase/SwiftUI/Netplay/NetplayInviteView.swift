@@ -140,15 +140,16 @@ public struct NetplayInviteView: View {
 
     private func buildInviteURL() -> URL? {
         guard !hostAddress.isEmpty else { return nil }
-        let portInt = Int(port) ?? -1
-        guard portInt >= 0, portInt <= 65535 else { return nil }
+        // Treat empty port as the default (55435). Port 0 is not a valid connection target.
+        let resolvedPort = port.isEmpty ? 55435 : (Int(port) ?? -1)
+        guard resolvedPort >= 1, resolvedPort <= 65535 else { return nil }
         var components = URLComponents()
         components.scheme = "provenance"
         components.host = "netplay"
         components.path = "/join"
         var items: [URLQueryItem] = [
             URLQueryItem(name: "host", value: hostAddress),
-            URLQueryItem(name: "port", value: port.isEmpty ? "55435" : port),
+            URLQueryItem(name: "port", value: "\(resolvedPort)"),
             URLQueryItem(name: "game", value: gameName)
         ]
         if useRelay && !relayServer.isEmpty {
@@ -172,11 +173,12 @@ public struct NetplayInviteView: View {
     }
 }
 
-// MARK: - UIActivityViewController wrapper (iOS only)
+// MARK: - UIKit helpers
 
-#if canImport(UIKit) && !os(tvOS)
+#if canImport(UIKit)
 import UIKit
 
+#if !os(tvOS)
 private struct ActivityView: UIViewControllerRepresentable {
     let items: [Any]
 
@@ -186,7 +188,9 @@ private struct ActivityView: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
-#endif
+#endif // !os(tvOS)
+
+#endif // canImport(UIKit)
 
 #if DEBUG
 #Preview {

@@ -166,6 +166,10 @@ public final class ObservableNetplayManager: ObservableObject {
     @Published public private(set) var state: NetplayState = .idle
     @Published public private(set) var discoveredRooms: [NetplayRoom] = []
     @Published public private(set) var wanRooms: [NetplayRoom] = []
+    /// Forwarded from `lobbyService.isFetching` so SwiftUI views can observe it directly.
+    @Published public private(set) var wanIsFetching: Bool = false
+    /// Forwarded from `lobbyService.lastError` so SwiftUI views can observe it directly.
+    @Published public private(set) var wanLastError: String?
 
     private let manager = PVNetplayManager.shared
     public let bonjourDiscovery = PVNetplayBonjourDiscovery()
@@ -184,6 +188,14 @@ public final class ObservableNetplayManager: ObservableObject {
 
         lobbyService.$rooms
             .assign(to: \.wanRooms, on: self)
+            .store(in: &cancellables)
+
+        lobbyService.$isFetching
+            .assign(to: \.wanIsFetching, on: self)
+            .store(in: &cancellables)
+
+        lobbyService.$lastError
+            .assign(to: \.wanLastError, on: self)
             .store(in: &cancellables)
     }
 

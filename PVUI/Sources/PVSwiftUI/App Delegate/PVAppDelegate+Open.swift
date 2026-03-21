@@ -223,7 +223,10 @@ extension PVAppDelegate {
                 return false
             }
             let portStr = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.port.rawValue })?.value ?? "55435"
-            let port = UInt16(portStr) ?? 55435
+            let defaultPort: UInt16 = 55435
+            let portRaw = UInt16(portStr) ?? defaultPort
+            // Port 0 is not a valid netplay connection target; fall back to the default.
+            let port: UInt16 = portRaw > 0 ? portRaw : defaultPort
             let relay = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.relay.rawValue })?.value
             let game = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.game.rawValue })?.value
             ILOG("netplay/join: host=\(host) port=\(port) relay=\(relay ?? "none")")

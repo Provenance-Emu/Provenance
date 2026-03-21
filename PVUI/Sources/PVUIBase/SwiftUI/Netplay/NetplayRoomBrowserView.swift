@@ -89,7 +89,7 @@ public struct NetplayRoomBrowserView: View {
                         if selectedTab == .lan, netplay.bonjourDiscovery.isSearching {
                             ProgressView().scaleEffect(0.8)
                         }
-                        if selectedTab == .wan, netplay.lobbyService.isFetching {
+                        if selectedTab == .wan, netplay.wanIsFetching {
                             ProgressView().scaleEffect(0.8)
                         }
                         Button {
@@ -188,7 +188,7 @@ public struct NetplayRoomBrowserView: View {
 
     @ViewBuilder
     private var wanContent: some View {
-        if netplay.lobbyService.isFetching && netplay.wanRooms.isEmpty {
+        if netplay.wanIsFetching && netplay.wanRooms.isEmpty {
             VStack(spacing: 16) {
                 ProgressView()
                 Text("Fetching internet rooms…")
@@ -196,7 +196,7 @@ public struct NetplayRoomBrowserView: View {
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let err = netplay.lobbyService.lastError, netplay.wanRooms.isEmpty {
+        } else if let err = netplay.wanLastError, netplay.wanRooms.isEmpty {
             VStack(spacing: 16) {
                 Image(systemName: "globe.slash")
                     .font(.system(size: 48))
@@ -266,7 +266,7 @@ public struct NetplayRoomBrowserView: View {
                                 .font(.caption2)
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(.blue)
+                        .tint(.accentColor)
                     }
                 }
             }

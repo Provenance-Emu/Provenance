@@ -73,6 +73,30 @@ public final class RetroArchLobbyService: ObservableObject {
     }
 }
 
+// MARK: - UUID deterministic helper
+
+private extension UUID {
+    /// Creates a UUID deterministically from a string using its SHA-1-like hash.
+    /// This ensures identical inputs always produce the same UUID (v5 name-based semantics),
+    /// which keeps SwiftUI List identity stable across fetches.
+    init(deterministicString string: String) {
+        var hash = [UInt8](repeating: 0, count: 16)
+        let bytes = Array(string.utf8)
+        for (index, byte) in bytes.enumerated() {
+            hash[index % 16] ^= byte &+ UInt8(truncatingIfNeeded: index)
+        }
+        // Set version 5 (name-based SHA-1) and variant bits.
+        hash[6] = (hash[6] & 0x0F) | 0x50
+        hash[8] = (hash[8] & 0x3F) | 0x80
+        self = UUID(uuid: (
+            hash[0], hash[1], hash[2], hash[3],
+            hash[4], hash[5], hash[6], hash[7],
+            hash[8], hash[9], hash[10], hash[11],
+            hash[12], hash[13], hash[14], hash[15]
+        ))
+    }
+}
+
 // MARK: - Lobby API Decodable models
 
 /// Top-level entry in the RetroArch lobby JSON array.
@@ -86,8 +110,8 @@ struct LobbyFields: Decodable {
     let gameCrc: String?
     let coreName: String?
     let ip: String?
-    let mitm_ip: String?
-    let mitm_port: Int?
+    let mitmIP: String?
+    let mitmPort: Int?
     let port: Int?
     let hasPassword: Bool?
     let hasSpectatePassword: Bool?
@@ -101,8 +125,8 @@ struct LobbyFields: Decodable {
         case gameCrc        = "game_crc"
         case coreName       = "core_name"
         case ip
-        case mitm_ip
-        case mitm_port
+        case mitmIP         = "mitm_ip"
+        case mitmPort       = "mitm_port"
         case port
         case hasPassword    = "has_password"
         case hasSpectatePassword = "has_spectate_password"
@@ -123,7 +147,7 @@ extension NetplayRoom {
         // Prefer MITM relay address when available (NAT traversal), fall back to direct IP.
         let address: String
         let roomPort: UInt16
-        if let mitm = fields.mitm_ip, !mitm.isEmpty, let mPort = fields.mitm_port, mPort > 0 {
+        if let mitm = fields.mitmIP, !mitm.isEmpty, let mPort = fields.mitmPort, mPort > 0 {
             address = mitm
             roomPort = UInt16(clamping: mPort)
         } else if let ip = fields.ip, !ip.isEmpty {
@@ -139,11 +163,14 @@ extension NetplayRoom {
         let rawUsername = fields.username ?? ""
         let hostText = rawUsername.isEmpty ? "Unknown Host" : rawUsername
         let coreText = fields.coreName ?? ""
+        // Use the lobby-provided ID when it's a valid UUID; otherwise derive a deterministic
+        // identifier from stable fields so SwiftUI List diffing stays stable across refreshes.
         let roomID: UUID
         if let idStr = fields.id, let parsed = UUID(uuidString: idStr) {
             roomID = parsed
         } else {
-            roomID = UUID()
+            let stableKey = "\(address):\(roomPort):\(fields.gameCrc ?? ""):\(rawUsername)"
+            roomID = UUID(deterministicString: stableKey)
         }
 
         self.init(
@@ -159,7 +186,8 @@ extension NetplayRoom {
             hostAddress: address,
             port: roomPort,
             isPasswordProtected: fields.hasPassword ?? false,
-            allowsSpectators: fields.hasSpectatePassword == false,
+            // nil means the field was absent — treat as "no spectate password" → spectators allowed.
+            allowsSpectators: fields.hasSpectatePassword != true,
             spectatorCount: 0,
             discoverySource: .lobbyAPI,
             lastSeen: Date()
