@@ -353,6 +353,44 @@ public final class DOLJitManager {
         jitSource = source
     }
 
+    // MARK: - iOS 26 W×X Detection
+
+    /// Returns `true` when the current OS enforces Write-XOR-Execute (W×X) page protections.
+    ///
+    /// iOS 26 introduces the Trusted Execution Monitor (TXM) which prevents a single mapping
+    /// from being both writable and executable at the same time.  Dynarec-based cores
+    /// (Mupen64Plus, Flycast) must use the dual-mapping shadow-page pattern when this returns
+    /// `true`.  See `Scripts/StikDebug/provenance.js` for the BRK #0x69 handler.
+    ///
+    /// - Note: This check is based on iOS/tvOS 26 availability (`#available(iOS 26, tvOS 26, *)`).
+    ///         On the simulator W×X is never enforced.
+    public static var isWXEnforced: Bool {
+        return _isWXEnforced(isSimulator: {
+#if targetEnvironment(simulator)
+            return true
+#else
+            return false
+#endif
+        }())
+    }
+
+    /// Internal helper that makes W×X enforcement logic testable by injecting
+    /// the simulator flag.
+    ///
+    /// - Parameter isSimulator: Whether the code is running under the simulator.
+    /// - Returns: `true` if W×X is enforced on the current OS, otherwise `false`.
+    static func _isWXEnforced(isSimulator: Bool) -> Bool {
+        if isSimulator {
+            return false
+        }
+#if os(iOS) || os(tvOS)
+        if #available(iOS 26, tvOS 26, *) {
+            return true
+        }
+#endif
+        return false
+    }
+
     // MARK: - File-system JIT Source Detection
 
     /// Performs lightweight, file-system-only detection of the JIT source.

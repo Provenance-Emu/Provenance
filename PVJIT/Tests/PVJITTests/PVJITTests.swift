@@ -62,6 +62,56 @@ final class JITSourceTests: XCTestCase {
     }
 }
 
+// MARK: - DOLJitManager W×X enforcement tests
+
+final class WXEnforcementTests: XCTestCase {
+
+    func testSimulatorAlwaysReturnsFalse() {
+        // The simulator never enforces W×X regardless of reported OS version.
+        XCTAssertFalse(DOLJitManager._isWXEnforced(isSimulator: true))
+    }
+
+    func testNonSimulatorWXEnforcementMatchesPlatformVersion() throws {
+        // On the simulator we cannot meaningfully test the non-simulator path.
+#if targetEnvironment(simulator)
+        throw XCTSkip("Non-simulator W×X enforcement is not testable on the simulator.")
+#else
+        // On a real device or non-simulator build host, the result must match
+        // the platform availability: true on iOS/tvOS 26+, false on earlier versions.
+#if os(iOS)
+        if #available(iOS 26, *) {
+            XCTAssertTrue(DOLJitManager._isWXEnforced(isSimulator: false),
+                          "On iOS 26+ non-simulator, W×X should be reported as enforced.")
+        } else {
+            XCTAssertFalse(DOLJitManager._isWXEnforced(isSimulator: false),
+                           "On iOS < 26 non-simulator, W×X should not be reported as enforced.")
+        }
+#elseif os(tvOS)
+        if #available(tvOS 26, *) {
+            XCTAssertTrue(DOLJitManager._isWXEnforced(isSimulator: false),
+                          "On tvOS 26+ non-simulator, W×X should be reported as enforced.")
+        } else {
+            XCTAssertFalse(DOLJitManager._isWXEnforced(isSimulator: false),
+                           "On tvOS < 26 non-simulator, W×X should not be reported as enforced.")
+        }
+#else
+        // On non-iOS/tvOS platforms (e.g. macOS, Linux CI), W×X via DOLJitManager
+        // should not be reported as enforced.
+        XCTAssertFalse(DOLJitManager._isWXEnforced(isSimulator: false),
+                       "On non-iOS/tvOS platforms, W×X enforcement should be reported as disabled.")
+#endif
+#endif
+    }
+
+    func testPublicPropertyMatchesHelperOnSimulator() {
+        // On the simulator the public var and the helper must agree.
+#if targetEnvironment(simulator)
+        XCTAssertFalse(DOLJitManager.isWXEnforced)
+        XCTAssertEqual(DOLJitManager.isWXEnforced, DOLJitManager._isWXEnforced(isSimulator: true))
+#endif
+    }
+}
+
 // MARK: - DOLJitType tests
 
 final class DOLJitTypeTests: XCTestCase {
