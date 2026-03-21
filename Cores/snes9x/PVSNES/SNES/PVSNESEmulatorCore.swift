@@ -61,6 +61,52 @@ extension PVSNES9xEmulatorCore: ArchiveSupport {
 }
 
 
+// MARK: - MouseResponder
+
+extension PVSNES9xEmulatorCore: MouseResponder {
+
+    public var gameSupportsMouse: Bool {
+        return (bridge as! PVSNESEmulatorCoreBridge).isSNESMouseGame
+    }
+
+    public var requiresMouse: Bool { false }
+
+#if canImport(GameController)
+    @available(iOS 14.0, tvOS 14.0, *)
+    public func didScroll(_ cursor: GCDeviceCursor) {}
+
+    public var mouseMovedHandler: GCMouseMoved? { nil }
+#endif
+
+    public func mouseMoved(atPoint point: CGPoint) {
+        let snesBridge = bridge as! PVSNESEmulatorCoreBridge
+#if os(tvOS)
+        // On tvOS the Siri Remote pan handler delivers per-event *relative* deltas in
+        // view-point units — not normalised [0,1] absolute positions.  Pass them through
+        // the dedicated delta path so we don't double-differentiate or misscale.
+        snesBridge.snesMouseMovedByDelta(point)
+#else
+        snesBridge.snesMouseMoved(to: point)
+#endif
+    }
+
+    public func leftMouseDown(atPoint point: CGPoint) {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLeftMouseDown()
+    }
+
+    public func leftMouseUp() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLeftMouseUp()
+    }
+
+    public func rightMouseDown(atPoint point: CGPoint) {
+        (bridge as! PVSNESEmulatorCoreBridge).snesRightMouseDown()
+    }
+
+    public func rightMouseUp() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesRightMouseUp()
+    }
+}
+
 extension PVSNESEmulatorCoreBridge: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
         do {

@@ -45,6 +45,21 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 # pragma CheatCodeSupport
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 
+# pragma mark - Mouse Support
+/// YES when the loaded ROM's CRC matches a known SNES mouse game.
+@property (nonatomic, readonly) BOOL isSNESMouseGame;
+/// Report normalised [0,1] cursor movement; bridge accumulates a virtual SNES-space position.
+- (void)snesMouseMovedTo:(CGPoint)normalizedPoint;
+/// Report a relative delta in view-point units (e.g. from a tvOS Siri Remote pan gesture).
+/// The delta is added directly to the accumulated SNES cursor position (1 pt ≈ 1 SNES pixel).
+/// Sub-pixel remainders are accumulated across calls to avoid dropped fractional movement.
+- (void)snesMouseMovedByDelta:(CGPoint)delta;
+- (void)snesLeftMouseDown;
+- (void)snesLeftMouseUp;
+- (void)snesRightMouseDown;
+- (void)snesRightMouseUp;
+- (void)resetSNESMouseTracking;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)
