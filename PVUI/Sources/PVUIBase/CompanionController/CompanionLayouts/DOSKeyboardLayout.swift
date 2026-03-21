@@ -193,14 +193,17 @@ public struct DOSKeyboardLayout: CompanionLayout {
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
             )
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in
+            .onLongPressGesture(
+                minimumDuration: 0,
+                maximumDistance: 44,
+                pressing: { pressing in
+                    if pressing {
                         if !isDown { onPress() }
-                    }
-                    .onEnded { _ in
+                    } else {
                         if isDown { onRelease() }
                     }
+                },
+                perform: {}
             )
     }
 }

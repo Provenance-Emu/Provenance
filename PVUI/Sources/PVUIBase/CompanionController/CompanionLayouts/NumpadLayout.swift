@@ -101,7 +101,7 @@ public struct NumpadLayout: View {
     public init(
         keys: [NumpadKey],
         router: CompanionInputRouter,
-        keysPerRow: Int = 4,
+        keysPerRow: Int = 3,
         keySize: CGFloat = 60,
         keySpacing: CGFloat = 8,
         keyCornerRadius: CGFloat = 8,
@@ -169,16 +169,26 @@ private struct NumpadKeyView: View {
     let pressedColor: Color
     let labelFont: Font
 
+    @GestureState private var isPressed = false
+
+    private var pressGesture: some Gesture {
+        LongPressGesture(minimumDuration: 0)
+            .updating($isPressed) { value, state, _ in
+                state = value
+            }
+    }
+
     var body: some View {
         CompanionControllerButton(button: key.button, router: router) {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(normalColor)
+                .fill(isPressed ? pressedColor : normalColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
                 )
                 .overlay(keyLabel)
         }
+        .simultaneousGesture(pressGesture)
     }
 
     @ViewBuilder
