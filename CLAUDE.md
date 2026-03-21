@@ -9,7 +9,7 @@ Provenance is a multi-platform emulator frontend for iOS/tvOS supporting 60+ ret
 ## Build & Development
 
 ### Prerequisites
-- Xcode 26+ (use `xcode-select -p` to confirm active version)
+- Xcode 16.x or Xcode 26+ (use `xcode-select -p` to confirm active version; both are supported)
 - Ruby + Bundler (for fastlane)
 - `make setup` to install all dependencies
 
