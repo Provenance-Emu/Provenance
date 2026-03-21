@@ -17,6 +17,7 @@ FOUNDATION_EXPORT const unsigned char MednafenGameCoreCVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <MednafenGameCoreC/PublicHeader.h>
 
 #import <MednafenGameCoreBridge/_MednafenGameCoreBridge.h>
+#import <MednafenGameCoreBridge/MednafenGameCoreBridge+Netplay.h>
 //
 //#pragma clang diagnostic push
 //#pragma clang diagnostic ignored "-Wall"
