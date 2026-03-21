@@ -149,8 +149,25 @@ static const void *kSavedAdhocServerKey = &kSavedAdhocServerKey;
     // so the user's prior PPSSPP network configuration is not permanently lost.
     NSNumber *savedWlan   = objc_getAssociatedObject(self, kSavedWlanKey);
     NSString *savedServer = objc_getAssociatedObject(self, kSavedAdhocServerKey);
-    g_Config.bEnableWlan    = savedWlan ? savedWlan.boolValue : false;
-    g_Config.proAdhocServer = savedServer ? std::string([savedServer UTF8String]) : "";
+
+    const BOOL hasSavedWlan   = (savedWlan != nil);
+    const BOOL hasSavedServer = (savedServer != nil);
+    const BOOL hasAnySaved    = hasSavedWlan || hasSavedServer;
+
+    // If no prior values were ever saved and we're already idle, do nothing.
+    // This avoids unintentionally wiping the user's PPSSPP WLAN/adhoc settings
+    // when stopAdhoc is called during teardown without an active netplay session.
+    if (!hasAnySaved && self.adhocStatus == PVPPSSPPAdhocStatusIdle) {
+        return;
+    }
+
+    if (hasSavedWlan) {
+        g_Config.bEnableWlan = savedWlan.boolValue;
+    }
+
+    if (hasSavedServer) {
+        g_Config.proAdhocServer = std::string([savedServer UTF8String]);
+    }
     objc_setAssociatedObject(self, kSavedWlanKey, nil, OBJC_ASSOCIATION_RETAIN);
     objc_setAssociatedObject(self, kSavedAdhocServerKey, nil, OBJC_ASSOCIATION_RETAIN);
     [self setAdhocStatus:PVPPSSPPAdhocStatusIdle];
