@@ -333,6 +333,10 @@ typedef struct PVThinLibretroSymbols {
     /// YES after startRenderingOnAlternateThread has been called on the render delegate.
     /// Used to avoid calling it more than once per session.
     BOOL _renderDelegateStarted;
+    /// YES when the delegate must re-create its IOSurface at new dimensions during an
+    /// HW FBO resize. Set instead of resetting _renderDelegateStarted so that flag
+    /// retains its per-session semantics.
+    BOOL _hwFBONeedsIOSurfaceRebuild;
     /// Current FBO dimensions — used to detect when a resize is needed.
     uint32_t _fboWidth;
     uint32_t _fboHeight;
@@ -2228,10 +2232,10 @@ static bool thin_environment(unsigned cmd, void *data) {
             if (_emuColorTex) { glDeleteTextures(1,      &_emuColorTex); _emuColorTex = 0; }
             if (_emuDepthRB)  { glDeleteRenderbuffers(1, &_emuDepthRB); _emuDepthRB = 0; }
             if (_ioSurface)   { CFRelease(_ioSurface);  _ioSurface = NULL; }
-            // Reset so setupHardwareContextFBOWidth:height: re-calls startRenderingOnAlternateThread
-            // to obtain a new IOSurface sized for the updated geometry. This is intentional:
-            // the delegate must re-create its Metal texture at the new dimensions.
-            _renderDelegateStarted = NO;
+            // Signal that the delegate must re-create its IOSurface at the new dimensions.
+            // Using a dedicated flag instead of resetting _renderDelegateStarted preserves
+            // the per-session semantics of that flag and makes the resize intent explicit.
+            _hwFBONeedsIOSurfaceRebuild = YES;
             [self setupHardwareContextFBOWidth:w height:h];
         }
     }
@@ -4212,13 +4216,14 @@ static bool thin_environment(unsigned cmd, void *data) {
     IOSurfaceRef delegateSurface = NULL;
 
     id renderDelegate = self.renderDelegate;
-    if (!_renderDelegateStarted
+    if ((!_renderDelegateStarted || _hwFBONeedsIOSurfaceRebuild)
         && [renderDelegate respondsToSelector:@selector(startRenderingOnAlternateThread)]) {
         // startRenderingOnAlternateThread may set a different GL context current.
         // Save/restore so we keep _glContext active on the emulation thread.
         EAGLContext *savedContext = [EAGLContext currentContext];
         [renderDelegate startRenderingOnAlternateThread];
         [EAGLContext setCurrentContext:savedContext];
+        _hwFBONeedsIOSurfaceRebuild = NO;
         ILOG(@"ThinFrontend: called startRenderingOnAlternateThread on render delegate");
     }
 
