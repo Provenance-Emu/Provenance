@@ -27,6 +27,9 @@ import PVEmulatorCore
 import PVPlists
 import PVSettings
 import PVUIBase
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 48.0
@@ -37,7 +40,7 @@ let volume = SubtleVolume(style: .roundedLine)
 let volumeHeight: CGFloat = 3
 #endif
 
-open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
+open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver {
 
     public func layoutViews() {}
 
@@ -192,6 +195,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var quickLoadButton: UIButton?
     private var fastForwardButton: UIButton?
     private var isFastForwardActive: Bool = false
+    #if os(iOS)
+    private var recordButton: UIButton?
+    private var recordPulseTimer: Timer?
+    #endif
     #if !os(tvOS)
     private var keyboardToggleButton: UIButton?
     private var mouseToggleButton: UIButton?
@@ -239,6 +246,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         for controller in GCController.controllers() {
             controller.clearPauseHandler()
         }
+        #if os(iOS)
+        stopRecordPulse()
+        #endif
     }
 
     func updateHideTouchControls() {
@@ -375,10 +385,23 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 #endif // !macCatalyst
 #endif // os(iOS)
 
-        // Quick action HUD strip removed — save/load/FF are accessible via the pause menu.
+        // Set up the HUD quick-action strip (toggle button + fast-forward/save/load/record row).
+        // Scoped to iOS: the strip is touch-driven and recording is iOS-only.
+        // tvOS uses a remote/controller; the pause menu covers save/load/FF there.
+        #if os(iOS)
+        setupToggleButton()
+        setupQuickActionButtons()
+        #endif
 
         // Hardware switch overlay (e.g. Atari difficulty / TV-type switches)
         addHardwareSwitchOverlayIfNeeded()
+    }
+
+    override public func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        #if os(iOS)
+        stopRecordPulse()
+        #endif
     }
 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
@@ -1741,13 +1764,51 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             quickActionButtons.append(mouseButton)
         }
         #endif // !os(tvOS)
+
+        // Record button — iOS only (ReplayKit not available on tvOS in the same way)
+        #if os(iOS)
+        setupRecordButton(buttonSize: buttonSize, spacing: spacing, safeTop: safeTop, topInset: topInset)
+        #endif
     }
+
+    #if os(iOS)
+    private func setupRecordButton(buttonSize: CGFloat, spacing: CGFloat, safeTop: NSLayoutYAxisAnchor, topInset: CGFloat) {
+        guard PVRecordingManager.shared.isAvailable else { return }
+
+        let recButton = makeQuickActionButton(
+            systemImage: "record.circle",
+            accessibilityLabel: "Record"
+        )
+        recButton.addTarget(self, action: #selector(recordTapped), for: .touchUpInside)
+        recButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(recButton)
+
+        // Place left of quick-save (if it exists), else left of quick-load, else left of FF.
+        let recTrailingButton: UIButton? = quickSaveButton ?? quickLoadButton ?? fastForwardButton
+        let recTrailingAnchor: NSLayoutXAxisAnchor = recTrailingButton.map { $0.leadingAnchor } ?? view.safeAreaLayoutGuide.trailingAnchor
+        let recTrailingConstant: CGFloat = recTrailingButton != nil ? -spacing : -8
+
+        NSLayoutConstraint.activate([
+            recButton.widthAnchor.constraint(equalToConstant: buttonSize),
+            recButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            recButton.trailingAnchor.constraint(equalTo: recTrailingAnchor, constant: recTrailingConstant),
+            recButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
+        ])
+        self.recordButton = recButton
+        quickActionButtons.append(recButton)
+        allButtons.append(recButton)
+        updateRecordButtonAppearance()
+    }
+    #endif
 
     /// Resets the alpha of quick-action buttons to 1.0 after controller opacity has been
     /// applied globally.  Game-controller buttons dim with `controllerOpacity`, but the
     /// quick-action strip should remain fully opaque at all times.
     private func restoreQuickActionButtonAlpha() {
         var buttons: [UIButton?] = [fastForwardButton, quickSaveButton, quickLoadButton]
+        #if os(iOS)
+        buttons.append(recordButton)
+        #endif
         #if !os(tvOS)
         buttons += [keyboardToggleButton, mouseToggleButton]
         #endif
@@ -1846,6 +1907,84 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             : UIColor.black.withAlphaComponent(0.4)
     }
     #endif // !os(tvOS)
+
+    // MARK: - Record Button
+
+    #if os(iOS)
+    @objc private func recordTapped() {
+        vibrate()
+        #if canImport(FreemiumKit)
+        // Non-AppStore builds (dev / TestFlight / sideloaded) are treated as premium.
+        if AppState.shared.isAppStore {
+            guard FreemiumKit.shared.purchasedTier != nil else {
+                // Recording is a Plus feature; direct the user to the pause menu where
+                // the paywall is presented via PaidFeatureView.
+                let alert = UIAlertController(
+                    title: "Provenance Plus Required",
+                    message: "Gameplay recording is a Provenance Plus feature. Open the pause menu to upgrade.",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                present(alert, animated: true)
+                return
+            }
+        }
+        #endif
+        guard let emulatorVC = parent as? PVEmulatorViewController else {
+            ELOG("Record: parent is not PVEmulatorViewController")
+            return
+        }
+        emulatorVC.toggleScreenRecording()
+        // Appearance is driven by the async recording-state notifications from the VC;
+        // no local delay needed here.
+    }
+
+    public func updateRecordButtonAppearance() {
+        let isRecording = AppState.shared.emulationUIState.isRecording
+        let image = isRecording ? "stop.circle.fill" : "record.circle"
+        recordButton?.setImage(UIImage(systemName: image), for: .normal)
+        recordButton?.tintColor = isRecording ? .systemRed : .white
+        recordButton?.backgroundColor = isRecording
+            ? UIColor.systemRed.withAlphaComponent(0.3)
+            : UIColor.black.withAlphaComponent(0.4)
+
+        // Update accessibility so VoiceOver reflects current recording state.
+        recordButton?.accessibilityLabel = isRecording ? "Stop Recording" : "Record"
+        recordButton?.accessibilityValue = isRecording ? "Recording" : "Not Recording"
+
+        if isRecording {
+            startRecordPulse()
+        } else {
+            stopRecordPulse()
+        }
+    }
+
+    private func startRecordPulse() {
+        stopRecordPulse()
+        recordPulseTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] _ in
+            guard let btn = self?.recordButton else { return }
+            UIView.animate(withDuration: 0.4, animations: {
+                btn.alpha = 0.4
+            }) { _ in
+                UIView.animate(withDuration: 0.4) {
+                    btn.alpha = 1.0
+                }
+            }
+        }
+    }
+
+    private func stopRecordPulse() {
+        recordPulseTimer?.invalidate()
+        recordPulseTimer = nil
+        recordButton?.alpha = 1.0
+        recordButton?.layer.removeAllAnimations()
+    }
+    #endif // os(iOS)
+
+    #if !os(iOS)
+    // OSDRecordingObserver stub — recording is iOS-only; no-op satisfies the protocol on all other platforms.
+    public func updateRecordButtonAppearance() {}
+    #endif
 }
 
 #endif // UIKit
