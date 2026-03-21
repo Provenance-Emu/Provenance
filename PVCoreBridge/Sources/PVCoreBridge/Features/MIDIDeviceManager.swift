@@ -81,6 +81,20 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Pulses `true` briefly whenever MIDI data is sent (drives TX indicator light).
     @Published public private(set) var txActivity: Bool = false
 
+    // MARK: - Parsed event value type
+
+    /// Parsed MIDI 1.0 channel-voice event decoded from a single UMP word.
+    /// Used to batch events from one `MIDIEventList` before hopping to the main actor.
+    private enum ParsedMIDIEvent: Sendable {
+        case noteOn(channel: UInt8, note: UInt8, velocity: UInt8)
+        case noteOff(channel: UInt8, note: UInt8, velocity: UInt8)
+        case controlChange(channel: UInt8, controller: UInt8, value: UInt8)
+        case programChange(channel: UInt8, program: UInt8)
+        case pitchBend(channel: UInt8, value: Int16)
+        case polyAftertouch(channel: UInt8, note: UInt8, pressure: UInt8)
+        case channelAftertouch(channel: UInt8, pressure: UInt8)
+    }
+
     // MARK: Private state
 
     private var client: MIDIClientRef = 0
@@ -142,19 +156,29 @@ public final class MIDIDeviceManager: ObservableObject {
               let destInfo = destinations.first(where: { $0.id == selectedDestinationID })
         else { return }
 
-        // Build a MIDIPacketList on the stack via the MIDIPacketList API
+        // Build a MIDIPacketList in properly-aligned raw storage.
+        // `[UInt8]` is only 1-byte aligned; MIDIPacketList may require 4-byte alignment
+        // on some architectures, so we allocate using the type's native alignment.
         let listSize = MemoryLayout<MIDIPacketList>.size + data.count
-        var rawStorage = [UInt8](repeating: 0, count: listSize)
-        rawStorage.withUnsafeMutableBytes { rawPtr in
-            let listPtr = rawPtr.bindMemory(to: MIDIPacketList.self).baseAddress!
-            var packetPtr = MIDIPacketListInit(listPtr)
-            data.withUnsafeBytes { dataBytes in
-                _ = MIDIPacketListAdd(listPtr, listSize, packetPtr, 0,
-                                      dataBytes.count,
-                                      dataBytes.bindMemory(to: UInt8.self).baseAddress!)
-            }
-            MIDISend(outputPort, destInfo.endpointRef, listPtr)
+        let rawPtr = UnsafeMutableRawPointer.allocate(
+            byteCount: listSize,
+            alignment: MemoryLayout<MIDIPacketList>.alignment
+        )
+        defer { rawPtr.deallocate() }
+
+        let listPtr = rawPtr.bindMemory(to: MIDIPacketList.self, capacity: 1)
+        let packetPtr = MIDIPacketListInit(listPtr)
+
+        data.withUnsafeBytes { dataBytes in
+            guard let baseAddress = dataBytes.baseAddress else { return }
+            _ = MIDIPacketListAdd(
+                listPtr, listSize, packetPtr, 0,
+                dataBytes.count,
+                baseAddress.assumingMemoryBound(to: UInt8.self)
+            )
         }
+
+        MIDISend(outputPort, destInfo.endpointRef, listPtr)
         pulseActivity(tx: true)
     }
 
@@ -203,17 +227,41 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Each source is connected with its `MIDIEndpointRef` encoded as the
     /// `connRefCon` so the input callback can identify which device sent each
     /// event (used for auto-detect and per-source filtering).
+    ///
+    /// When `selectedSourceID` is set, only the matching source is connected;
+    /// otherwise all available sources are connected (required for auto-detect).
     private func connectAllSources() {
         let count = MIDIGetNumberOfSources()
         for i in 0..<count {
             let src = MIDIGetSource(i)
             guard src != 0 else { continue }
+
+            // If a source is already selected, connect only that source.
+            if let selectedID = selectedSourceID {
+                var uniqueID: MIDIUniqueID = 0
+                guard MIDIObjectGetIntegerProperty(src, kMIDIPropertyUniqueID, &uniqueID) == noErr,
+                      uniqueID == selectedID else { continue }
+            }
+
             // Encode the endpoint ref as refCon for later identification
-            MIDIPortConnectSource(inputPort, src, UnsafeMutableRawPointer(bitPattern: UInt(src)))
+            let status = MIDIPortConnectSource(
+                inputPort, src,
+                UnsafeMutableRawPointer(bitPattern: UInt(src))
+            )
+            if status != noErr {
+                // kMIDIObjectNotFound (-10817) is expected for already-connected sources;
+                // log other errors for diagnostics.
+                if status != kMIDIObjectNotFound {
+                    assertionFailure("MIDIPortConnectSource failed for source \(src): \(status)")
+                }
+            }
         }
     }
 
-    /// Walk an `MIDIEventList` (MIDI 1.0 UMP packets) and dispatch each message.
+    /// Walk an `MIDIEventList` (MIDI 1.0 UMP packets), decode all channel-voice
+    /// events into a local array, then hop to the main actor **once** to dispatch
+    /// them all.  This avoids spawning one `Task` per word under dense CC/note streams.
+    ///
     /// Marked `nonisolated` because it is called from a CoreMIDI background thread.
     ///
     /// - Parameters:
@@ -241,58 +289,34 @@ public final class MIDIDeviceManager: ObservableObject {
         let packetOffset = MemoryLayout<MIDIEventList>.offset(of: \MIDIEventList.packet) ?? 8
         var current = (listRaw + packetOffset).assumingMemoryBound(to: MIDIEventPacket.self)
 
+        // Decode all words on the CoreMIDI thread; collect into a value-type array.
+        var events: [ParsedMIDIEvent] = []
         for _ in 0..<numPackets {
             let wordCount = Int(current.pointee.wordCount)
-            // Access the words tuple as contiguous UInt32 storage
             withUnsafeBytes(of: current.pointee.words) { rawWords in
                 let safeCount = min(wordCount, rawWords.count / 4)
                 for i in 0..<safeCount {
                     let word = rawWords.load(fromByteOffset: i * 4, as: UInt32.self)
-                    parseMIDI1UMPWord(word, sourceUniqueID: sourceUniqueID)
+                    if let event = decodeMIDI1UMPWord(word) {
+                        events.append(event)
+                    }
                 }
             }
             current = MIDIEventPacketNext(current)
         }
 
+        guard !events.isEmpty else { return }
+
+        // Single main-actor hop for the entire event list.
         Task { @MainActor [weak self] in
-            self?.pulseActivity(rx: true)
-        }
-    }
+            guard let self else { return }
 
-    /// Parse a single 32-bit MIDI 1.0 UMP word and dispatch to the responder.
-    ///
-    /// **Supported UMP message types:**
-    /// - `0x2` — MIDI 1.0 Channel Voice (Note On/Off, CC, Program Change,
-    ///   Aftertouch, Pitch Bend). Decoded and dispatched to `MIDIResponder`.
-    ///
-    /// **Not yet dispatched** (silently dropped):
-    /// - `0x0` — Utility messages (clock, jitter reduction)
-    /// - `0x1` — System Common / Real-time (MIDI Clock 0xF8, Start, Stop, Continue)
-    /// - `0x3` — SysEx (64-bit)
-    /// - `0x4` — MIDI 2.0 Channel Voice
-    /// - `0x5` — Data messages (SysEx 128-bit)
-    ///
-    /// Marked `nonisolated` because it is called from the CoreMIDI callback thread.
-    nonisolated private func parseMIDI1UMPWord(_ word: UInt32, sourceUniqueID: MIDIUniqueID) {
-        let msgType = (word >> 28) & 0xF
-        // Only handle MIDI 1.0 Channel Voice Messages (type 0x2)
-        guard msgType == 0x2 else { return }
-
-        let status = UInt8((word >> 16) & 0xF0)
-        let channel = UInt8((word >> 16) & 0x0F)
-        let data1 = UInt8((word >> 8) & 0xFF)
-        let data2 = UInt8(word & 0xFF)
-
-        Task { @MainActor [weak self] in
-            guard let self, let responder = self._responder else { return }
-
-            // Auto-detect: first message identifies and selects its source
+            // Auto-detect: first message identifies its source
             if self.isAutoDetecting {
                 if sourceUniqueID != 0 {
                     self.selectedSourceID = sourceUniqueID
                 }
                 self.isAutoDetecting = false
-                // Fall through and forward this first event to the responder
             } else if let selectedID = self.selectedSourceID,
                       sourceUniqueID != 0,
                       sourceUniqueID != selectedID {
@@ -300,31 +324,73 @@ public final class MIDIDeviceManager: ObservableObject {
                 return
             }
 
-            switch status {
-            case 0x80: // Note Off
-                responder.midiNoteOff(channel: channel, note: data1, velocity: data2)
-            case 0x90: // Note On (velocity 0 = implicit Note Off)
-                if data2 == 0 {
-                    responder.midiNoteOff(channel: channel, note: data1, velocity: 0)
-                } else {
-                    responder.midiNoteOn(channel: channel, note: data1, velocity: data2)
-                }
-            case 0xA0: // Polyphonic Aftertouch
-                responder.midiPolyAftertouch?(channel: channel, note: data1, pressure: data2)
-            case 0xB0: // Control Change
-                responder.midiControlChange?(channel: channel, controller: data1, value: data2)
-            case 0xC0: // Program Change
-                responder.midiProgramChange?(channel: channel, program: data1)
-            case 0xD0: // Channel Aftertouch
-                responder.midiChannelAftertouch?(channel: channel, pressure: data1)
-            case 0xE0: // Pitch Bend
-                let lsb = Int16(data1)
-                let msb = Int16(data2)
-                let bendValue = ((msb << 7) | lsb) - 8192
-                responder.midiPitchBend?(channel: channel, value: bendValue)
-            default:
-                break
+            self.pulseActivity(rx: true)
+
+            guard let responder = self._responder else { return }
+            for event in events {
+                self.dispatch(event, to: responder)
             }
+        }
+    }
+
+    /// Decode a single 32-bit MIDI 1.0 UMP word into a `ParsedMIDIEvent`.
+    ///
+    /// Returns `nil` for UMP message types other than MIDI 1.0 Channel Voice (0x2),
+    /// including Utility (0x0), System Common/Real-time (0x1), SysEx (0x3/0x5),
+    /// and MIDI 2.0 Channel Voice (0x4).
+    ///
+    /// Marked `nonisolated` because it is called from the CoreMIDI callback thread.
+    nonisolated private func decodeMIDI1UMPWord(_ word: UInt32) -> ParsedMIDIEvent? {
+        let msgType = (word >> 28) & 0xF
+        guard msgType == 0x2 else { return nil }
+
+        let status  = UInt8((word >> 16) & 0xF0)
+        let channel = UInt8((word >> 16) & 0x0F)
+        let data1   = UInt8((word >> 8) & 0xFF)
+        let data2   = UInt8(word & 0xFF)
+
+        switch status {
+        case 0x80: // Note Off
+            return .noteOff(channel: channel, note: data1, velocity: data2)
+        case 0x90: // Note On (velocity 0 = implicit Note Off)
+            return data2 == 0
+                ? .noteOff(channel: channel, note: data1, velocity: 0)
+                : .noteOn(channel: channel, note: data1, velocity: data2)
+        case 0xA0: // Polyphonic Aftertouch
+            return .polyAftertouch(channel: channel, note: data1, pressure: data2)
+        case 0xB0: // Control Change
+            return .controlChange(channel: channel, controller: data1, value: data2)
+        case 0xC0: // Program Change
+            return .programChange(channel: channel, program: data1)
+        case 0xD0: // Channel Aftertouch
+            return .channelAftertouch(channel: channel, pressure: data1)
+        case 0xE0: // Pitch Bend
+            let lsb = Int16(data1)
+            let msb = Int16(data2)
+            return .pitchBend(channel: channel, value: ((msb << 7) | lsb) - 8192)
+        default:
+            return nil
+        }
+    }
+
+    /// Dispatch a pre-decoded `ParsedMIDIEvent` to `responder`.
+    /// Must be called on the main actor (same isolation as `MIDIDeviceManager`).
+    private func dispatch(_ event: ParsedMIDIEvent, to responder: any MIDIResponder) {
+        switch event {
+        case .noteOn(let ch, let note, let vel):
+            responder.midiNoteOn(channel: ch, note: note, velocity: vel)
+        case .noteOff(let ch, let note, let vel):
+            responder.midiNoteOff(channel: ch, note: note, velocity: vel)
+        case .controlChange(let ch, let ctrl, let val):
+            responder.midiControlChange?(channel: ch, controller: ctrl, value: val)
+        case .programChange(let ch, let prog):
+            responder.midiProgramChange?(channel: ch, program: prog)
+        case .pitchBend(let ch, let val):
+            responder.midiPitchBend?(channel: ch, value: val)
+        case .polyAftertouch(let ch, let note, let pressure):
+            responder.midiPolyAftertouch?(channel: ch, note: note, pressure: pressure)
+        case .channelAftertouch(let ch, let pressure):
+            responder.midiChannelAftertouch?(channel: ch, pressure: pressure)
         }
     }
 

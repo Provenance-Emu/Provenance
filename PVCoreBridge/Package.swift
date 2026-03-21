@@ -68,11 +68,11 @@ let package = Package(
                 .define("CI_SILENCE_GL_DEPRECATION")
             ],
             linkerSettings: [
-                // CoreMIDI is available on iOS, tvOS, macOS, and Catalyst.
+                // CoreMIDI is available on iOS, tvOS, macOS, Catalyst, and visionOS.
                 // watchOS does not ship CoreMIDI; all usage is guarded with
                 // `#if canImport(CoreMIDI)` in source files.
                 .linkedFramework("CoreMIDI",
-                    .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst]))
+                    .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS]))
             ]
         ),
         
