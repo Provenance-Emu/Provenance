@@ -216,7 +216,7 @@ public enum PVSwapModeIndicatorState {
                 id: .swapMode,
                 color: .gray,
                 label: "MFi+ Inactive",
-                description: "Release modifier combo.",
+                description: "No modifier combo held.",
                 isVisible: false,
                 isPulsing: false
             )
