@@ -47,12 +47,12 @@ check "Global xcconfig" \
 # 2. RetroArch core C flags (release)
 check "BuildFlags OTHER_CFLAGS" \
     "$REPO_ROOT/CoresRetro/RetroArch/BuildFlags.xcconfig" \
-    "HAVE_CHEEVOS"
+    '^[[:space:]]*OTHER_CFLAGS[[:space:]]*=.*HAVE_CHEEVOS'
 
 # 3. RetroArch core C flags (debug)
 check "BuildFlags OTHER_DEBUG_CFLAGS" \
     "$REPO_ROOT/CoresRetro/RetroArch/BuildFlags.xcconfig" \
-    "HAVE_CHEEVOS"
+    '^[[:space:]]*OTHER_DEBUG_CFLAGS[[:space:]]*=.*HAVE_CHEEVOS'
 
 # 4. SPM Package.swift debug configuration
 check "CoresRetro Package.swift (debug)" \

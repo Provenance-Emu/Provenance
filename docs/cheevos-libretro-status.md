@@ -63,11 +63,11 @@ ACHIEVEMENTS
 ============================================================ */
 #if defined(HAVE_CHEEVOS)
 // cheevos.c, cheevos_client.c, cheevos_menu.c
-// + all 19 rcheevos source files (rc_client, rc_libretro, rhash, etc.)
+// + rcheevos source files (rc_client, rc_libretro, rhash, etc.)
 #endif
 ```
 
-All 22 cheevos/rcheevos source files are included unconditionally when `HAVE_CHEEVOS` is defined.
+All cheevos/rcheevos source files are included unconditionally when `HAVE_CHEEVOS` is defined (exact count varies as RetroArch updates; use the audit script to verify).
 
 ---
 
