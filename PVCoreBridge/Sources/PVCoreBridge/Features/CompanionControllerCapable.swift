@@ -7,6 +7,10 @@
 // These types live in PVCoreBridge so that both core bridges (Tier 4) and
 // the UI layer (PVUI, Tier 6) can reference them without a circular dependency.
 //
+// The PVUI layer owns `CompanionInputRouter`, `CompanionInputState`, and
+// `CompanionSlotDelegate` (DSU transport concerns). The core-facing types —
+// button/axis identifiers and the capability protocol — live here.
+//
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 import Foundation
@@ -17,10 +21,10 @@ import Foundation
 /// Maps onto the DSU button bitmask defined in the DSU protocol.
 public enum CompanionButton: UInt32, CaseIterable, Sendable {
     // Face buttons
-    case south      = 0x0001   // Cross / A
-    case east       = 0x0002   // Circle / B
-    case west       = 0x0004   // Square / X
-    case north      = 0x0008   // Triangle / Y
+    case south      = 0x0001   // Cross / A / Vectrex 1
+    case east       = 0x0002   // Circle / B / Vectrex 2
+    case west       = 0x0004   // Square / X / Vectrex 3
+    case north      = 0x0008   // Triangle / Y / Vectrex 4
 
     // Shoulder
     case l1         = 0x0010
