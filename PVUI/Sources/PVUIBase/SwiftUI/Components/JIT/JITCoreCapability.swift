@@ -187,7 +187,7 @@ public enum JITCoreCapability: CaseIterable {
     /// - Returns: `true` if the system is known to have JIT-capable cores.
     public static func systemHasJITCapability(_ systemIdentifier: String) -> Bool {
         #if DEBUG
-        debugAssertKnownSystemMappings()
+        assertKnownSystemMappingsOnce()
         #endif
         let id = systemIdentifier.lowercased()
         return allCases.contains { capability in
@@ -196,25 +196,27 @@ public enum JITCoreCapability: CaseIterable {
     }
 
     #if DEBUG
-    /// Debug-only self-checks for known system identifier mappings.
-    ///
-    /// These assertions act as a lightweight safeguard against regressions in the
-    /// keyword-based JIT capability lookup used by `systemHasJITCapability(_:)`.
-    private static func debugAssertKnownSystemMappings() {
+    /// Nonisolated flag so the once-check is safe to read from any context
+    /// without requiring actor hops on the hot SwiftUI render path.
+    private static let _assertOnceFlag: Bool = {
         func matchesJITSystem(_ systemIdentifier: String) -> Bool {
             let id = systemIdentifier.lowercased()
             return allCases.contains { capability in
                 capability.systemIdentifierKeywords.contains { id.contains($0) }
             }
         }
-
         // Expected JIT-capable systems
         assert(matchesJITSystem("com.provenance.psp"), "Expected PSP system to be JIT-capable.")
         assert(matchesJITSystem("com.provenance.n64"), "Expected N64 system to be JIT-capable.")
         assert(matchesJITSystem("com.provenance.gamecube"), "Expected GameCube system to be JIT-capable.")
-
         // Expected non-JIT system (acts as a control)
         assert(!matchesJITSystem("com.provenance.snes"), "Expected SNES system to NOT be JIT-capable.")
+        return true
+    }()
+
+    /// Triggers `_assertOnceFlag` initialisation on the first call only.
+    private static func assertKnownSystemMappingsOnce() {
+        _ = _assertOnceFlag
     }
     #endif
 
