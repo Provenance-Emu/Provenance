@@ -451,6 +451,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             registerIntentHandler()
         }
         #endif
+
+        // Register the ROM File Provider domain so Files.app shows Provenance as a location.
+        #if !os(tvOS)
+        registerFileProviderDomain()
+        #endif
     }
 
     public func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {

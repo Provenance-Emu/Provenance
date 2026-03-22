@@ -7,52 +7,92 @@
 //
 
 import FileProvider
+import RealmSwift
+import PVLibrary
+import PVRealm
 
-class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
-    
+/// Enumerates items in the Provenance ROM library for the Files.app file provider.
+///
+/// Supports two container kinds:
+/// - `.rootContainer` — lists all game-console system folders that have ≥ 1 game
+/// - `"system:<identifier>"` — lists all games belonging to that system
+///
+/// Realm objects are converted to thread-safe CPDI structs (`System`, `Game`)
+/// before being wrapped in `FileProviderItem` so no live Realm references escape
+/// the enumeration call.
+final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
+
+    // MARK: - Properties
+
     private let enumeratedItemIdentifier: NSFileProviderItemIdentifier
-    private let anchor = NSFileProviderSyncAnchor("an anchor".data(using: .utf8)!)
-    
+    /// A stable anchor; real-time change tracking is out-of-scope for v1.
+    private let anchor = NSFileProviderSyncAnchor(Data("provenance-v1".utf8))
+
+    // MARK: - Init
+
     init(enumeratedItemIdentifier: NSFileProviderItemIdentifier) {
         self.enumeratedItemIdentifier = enumeratedItemIdentifier
         super.init()
     }
 
-    func invalidate() {
-        // TODO: perform invalidation of server connection if necessary
-    }
+    // MARK: - NSFileProviderEnumerator
+
+    func invalidate() {}
 
     func enumerateItems(for observer: NSFileProviderEnumerationObserver, startingAt page: NSFileProviderPage) {
-        /* TODO:
-         - inspect the page to determine whether this is an initial or a follow-up request
-         
-         If this is an enumerator for a directory, the root container or all directories:
-         - perform a server request to fetch directory contents
-         If this is an enumerator for the active set:
-         - perform a server request to update your local database
-         - fetch the active set from your local database
-         
-         - inform the observer about the items returned by the server (possibly multiple times)
-         - inform the observer that you are finished with this page
-         */
-        observer.didEnumerate([FileProviderItem(identifier: NSFileProviderItemIdentifier("a file"))])
-        observer.finishEnumerating(upTo: nil)
+        do {
+            let items = try buildItems()
+            observer.didEnumerate(items)
+            observer.finishEnumerating(upTo: nil)
+        } catch {
+            observer.finishEnumeratingWithError(error)
+        }
     }
-    
+
     func enumerateChanges(for observer: NSFileProviderChangeObserver, from anchor: NSFileProviderSyncAnchor) {
-        /* TODO:
-         - query the server for updates since the passed-in sync anchor
-         
-         If this is an enumerator for the active set:
-         - note the changes in your local database
-         
-         - inform the observer about item deletions and updates (modifications + insertions)
-         - inform the observer when you have finished enumerating up to a subsequent sync anchor
-         */
+        // v1: no incremental change tracking — tell the system there are no pending changes.
         observer.finishEnumeratingChanges(upTo: anchor, moreComing: false)
     }
 
     func currentSyncAnchor(completionHandler: @escaping (NSFileProviderSyncAnchor?) -> Void) {
         completionHandler(anchor)
+    }
+
+    // MARK: - Private
+
+    private func buildItems() throws -> [FileProviderItem] {
+        let realm = try Realm(configuration: RealmConfiguration.realmConfig)
+
+        if enumeratedItemIdentifier == .rootContainer {
+            return buildSystemItems(realm: realm)
+        }
+
+        let raw = enumeratedItemIdentifier.rawValue
+        if raw.hasPrefix("system:") {
+            let systemIdentifier = String(raw.dropFirst("system:".count))
+            return buildGameItems(systemIdentifier: systemIdentifier, realm: realm)
+        }
+
+        return []
+    }
+
+    /// Returns one `FileProviderItem` per system that has at least one game.
+    private func buildSystemItems(realm: Realm) -> [FileProviderItem] {
+        let systems = realm.objects(PVSystem.self).filter("games.@count > 0")
+        return systems.compactMap { pvSystem -> FileProviderItem? in
+            guard !pvSystem.isInvalidated else { return nil }
+            return FileProviderItem(system: pvSystem.asDomain())
+        }
+    }
+
+    /// Returns one `FileProviderItem` per game in the given system.
+    private func buildGameItems(systemIdentifier: String, realm: Realm) -> [FileProviderItem] {
+        let games = realm.objects(PVGame.self)
+            .filter("systemIdentifier == %@", systemIdentifier)
+        return games.compactMap { pvGame -> FileProviderItem? in
+            guard !pvGame.isInvalidated else { return nil }
+            let romURL = pvGame.file?.url
+            return FileProviderItem(game: pvGame.asDomain(), romURL: romURL)
+        }
     }
 }
