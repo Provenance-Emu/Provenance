@@ -28,6 +28,7 @@
 		B3F8E0252CB388F200017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0232CB388F200017D1B /* CorePlist.swift */; };
 		B3F8E0262CB388F200017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0242CB388F200017D1B /* CorePlist-Generated.swift */; };
 		B3F8E0272CB388F200017D1B /* PVGearcolecoCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0222CB388F200017D1B /* PVGearcolecoCore.swift */; };
+		B3388A012CB3000000000001 /* PVGearcolecoCore+CompanionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3388A002CB3000000000001 /* PVGearcolecoCore+CompanionController.swift */; };
 		B3F8E02A2CB38A8200017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0292CB38A8200017D1B /* PVEmulatorCore */; };
 		B3F8E02D2CB38AD200017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E02C2CB38AD200017D1B /* PVPlists */; };
 		B3F8E0302CB38B1100017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E02F2CB38B1100017D1B /* PVCoreObjCBridge */; };
@@ -102,6 +103,7 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3388A002CB3000000000001 /* PVGearcolecoCore+CompanionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGearcolecoCore+CompanionController.swift"; sourceTree = "<group>"; };
 		B3F8E0222CB388F200017D1B /* PVGearcolecoCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGearcolecoCore.swift; sourceTree = "<group>"; };
 		B3F8E0232CB388F200017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3F8E0242CB388F200017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				B37022C6287253B300B3F6DA /* PVGearcolecoCore.mm */,
 				B30ED0DC2CFD587400AFCFCE /* PVGearcolecoCoreOptions.swift */,
 				B3F8E0222CB388F200017D1B /* PVGearcolecoCore.swift */,
+				B3388A002CB3000000000001 /* PVGearcolecoCore+CompanionController.swift */,
 				B3F8E0232CB388F200017D1B /* CorePlist.swift */,
 				B3F8E0242CB388F200017D1B /* CorePlist-Generated.swift */,
 			);
@@ -431,6 +434,7 @@
 				B3F8E0262CB388F200017D1B /* CorePlist-Generated.swift in Sources */,
 				B30ED0DD2CFD587400AFCFCE /* PVGearcolecoCoreOptions.swift in Sources */,
 				B3F8E0272CB388F200017D1B /* PVGearcolecoCore.swift in Sources */,
+				B3388A012CB3000000000001 /* PVGearcolecoCore+CompanionController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
