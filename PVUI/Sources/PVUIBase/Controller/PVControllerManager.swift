@@ -319,6 +319,21 @@ public final class PVControllerManager: NSObject, ObservableObject {
 #endif
 
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
+
+        // Detect physical case controllers and post the appropriate notification.
+        // Smart cases (GameSir Pocket Taco, Soolra) show up as GCControllers;
+        // passive cases (Buppin) are detected via skin IDs — see CaseControllerDetector.
+        #if !os(tvOS)
+        if let caseLayout = CaseControllerDetector.notifyIfCase(controller) {
+            PVToastManager.post(
+                "\(caseLayout.name) detected",
+                type: .success,
+                duration: 3.5,
+                icon: "iphone.gen3.badged.gamecontroller"
+            )
+        }
+        #endif
+
         controller.setupPauseHandler(onPause: {
             NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
         })
@@ -348,6 +363,11 @@ public final class PVControllerManager: NSObject, ObservableObject {
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
         }
+
+        // Notify observers if a known physical case controller disconnected.
+        #if !os(tvOS)
+        CaseControllerDetector.notifyDisconnectIfCase(controller)
+        #endif
 
         objectWillChange.send()
         removeRemappableController(for: controller)
