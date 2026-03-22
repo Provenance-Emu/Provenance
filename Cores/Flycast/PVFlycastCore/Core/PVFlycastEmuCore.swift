@@ -23,6 +23,10 @@ open class PVFlycastEmuCore: PVEmulatorCore {
     /// JIT recompiler gives a significant performance boost but is not required.
     open override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
 
+    /// Tracks whether the Dreamcast mouse port has been configured this session.
+    /// Ensures the retro_set_controller_port_device call is issued only once.
+    var _didConfigureMousePort: Bool = false
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
@@ -63,32 +67,43 @@ extension PVFlycastEmuCore: MouseResponder {
 
     public var requiresMouse: Bool { false }
 
+    /// Lazily configures the Dreamcast mouse port once per game session.
+    /// Caches the result so the device-type switch is issued exactly once,
+    /// not on every input event (mouseMoved, leftMouseDown, etc.).
+    private func ensureMousePortConfigured() {
+        guard !_didConfigureMousePort else { return }
+        _didConfigureMousePort = true
+        _bridge.configureDreamcastMousePort()
+    }
+
 #if canImport(GameController)
     public func didScroll(_ cursor: GCDeviceCursor) {
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).didScroll(cursor)
     }
     public var mouseMovedHandler: GCMouseMoved? { nil }
 #endif
     public func mouseMoved(atPoint point: CGPoint) {
-        // Lazily configure the Dreamcast mouse port on first mouse input.
-        // configureDreamcastMousePort is idempotent so this is safe to call every frame.
-        _bridge.configureDreamcastMousePort()
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).mouseMoved(atPoint: point)
     }
     public func mouseMoved(at point: CGPoint) {
-        _bridge.configureDreamcastMousePort()
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).mouseMoved(atPoint: point)
     }
     public func leftMouseDown(at point: CGPoint) {
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).leftMouseDown(atPoint: point)
     }
     public func leftMouseDown(atPoint point: CGPoint) {
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).leftMouseDown(atPoint: point)
     }
     public func leftMouseUp() {
         (_bridge as! MouseResponder).leftMouseUp()
     }
     public func rightMouseDown(atPoint point: CGPoint) {
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).rightMouseDown(atPoint: point)
     }
     public func rightMouseUp() {

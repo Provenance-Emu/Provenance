@@ -199,10 +199,13 @@ s8 joyx[4], joyy[4];
 #pragma mark - MouseResponder
 
 - (BOOL)gameSupportsMouse {
-    // The Dreamcast Maple bus CAN host a mouse device; per-game filtering is
-    // handled at the Swift layer (PVFlycastEmuCore.gameSupportsMouse) via
-    // MouseGameRegistry.  Always returning YES here ensures the libretro
-    // frontend reports RETRO_DEVICE_MOUSE capability to the Flycast core.
+    // The Dreamcast Maple bus CAN host a mouse device. Per-game mouse
+    // filtering is handled at the Swift layer (PVFlycastEmuCore.gameSupportsMouse)
+    // via MouseGameRegistry. Mouse capability is advertised to the libretro
+    // frontend based on MouseResponder protocol conformance, not this return
+    // value. Returning YES here simply declares that this core supports mouse
+    // input in general; whether it is enabled for a specific game is decided
+    // elsewhere.
     return YES;
 }
 
