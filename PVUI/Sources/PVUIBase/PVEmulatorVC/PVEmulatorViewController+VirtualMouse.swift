@@ -22,6 +22,7 @@ import PVLogging
 private enum VMKeys {
     static var cursorHostKey = "PVEmuVC_cursorHost"
     static var trackpadViewKey = "PVEmuVC_trackpadView"
+    static var gcMouseDriverKey = "PVEmuVC_gcMouseDriver"
 }
 
 // MARK: - Extension
@@ -41,6 +42,12 @@ extension PVEmulatorViewController {
     var touchTrackpadView: TouchTrackpadView? {
         get { objc_getAssociatedObject(self, &VMKeys.trackpadViewKey) as? TouchTrackpadView }
         set { objc_setAssociatedObject(self, &VMKeys.trackpadViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// Driver that routes physical GCMouse hardware to the MouseResponder core.
+    var gcMouseDriver: GCMouseMouseResponderDriver? {
+        get { objc_getAssociatedObject(self, &VMKeys.gcMouseDriverKey) as? GCMouseMouseResponderDriver }
+        set { objc_setAssociatedObject(self, &VMKeys.gcMouseDriverKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     // MARK: - Capability Checks
@@ -89,7 +96,27 @@ extension PVEmulatorViewController {
 
         virtualInputState.setMouseVisible(true)
 
+        // Attach GCMouse hardware driver so physical mice (Bluetooth, USB)
+        // route directly to the core without going through the touch trackpad.
+        let driver = GCMouseMouseResponderDriver()
+        driver.attach(to: mouseCore)
+        gcMouseDriver = driver
+
+        // On iPadOS 14+ request pointer lock so the system cursor is
+        // suppressed and raw deltas are delivered while emulation is active.
+        if #available(iOS 14.0, *) {
+            setNeedsUpdateOfPrefersPointerLocked()
+        }
+
         ILOG("[VirtualMouse] Setup complete")
+    }
+
+    /// Returns `true` while the GCMouse hardware driver is active so UIKit
+    /// suppresses the system cursor and delivers raw relative deltas via GCMouse.
+    /// Available on iPadOS 14+; UIKit ignores this on iPhone automatically.
+    @available(iOS 14.0, *)
+    public override var prefersPointerLocked: Bool {
+        gcMouseDriver != nil
     }
 
     // MARK: - Show / Hide / Toggle
@@ -128,6 +155,16 @@ extension PVEmulatorViewController {
         cursorHostingController?.view.removeFromSuperview()
         cursorHostingController?.removeFromParent()
         cursorHostingController = nil
+
+        // Detach GCMouse driver — releases button state and removes handlers.
+        gcMouseDriver?.detach()
+        gcMouseDriver = nil
+
+        // Release pointer lock so the system cursor reappears.
+        if #available(iOS 14.0, *) {
+            setNeedsUpdateOfPrefersPointerLocked()
+        }
+
         // Keep shared state in sync regardless of which teardown path was taken.
         virtualInputState.setMouseVisible(false)
     }
@@ -169,6 +206,14 @@ extension PVEmulatorViewController {
 
         objc_setAssociatedObject(self, &VMKeys.trackpadViewKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &VMKeys.cursorHostKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
+        // Detach and release the GCMouse driver on deinit — this is safe to call
+        // from a non-isolated context because GCMouseMouseResponderDriver is
+        // @unchecked Sendable and detach() performs no UI work.
+        if let driver = objc_getAssociatedObject(self, &VMKeys.gcMouseDriverKey) as? GCMouseMouseResponderDriver {
+            driver.detach()
+        }
+        objc_setAssociatedObject(self, &VMKeys.gcMouseDriverKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
         return (trackpadView, cursorHost)
     }
