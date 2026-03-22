@@ -526,5 +526,23 @@
         "subtitle": "Full-screen album art, track name, and artist shown in StandBy mode while game music plays — perfect for the nightstand."
       }
     ]
+  },
+  {
+    "version": "3.0.3",
+    "title": "Netplay for GameCube & Wii",
+    "features": [
+      {
+        "symbolName": "network",
+        "symbolColor": "blue",
+        "title": "Dolphin Netplay",
+        "subtitle": "Play GameCube and Wii games online with friends using Dolphin's built-in netplay, including rollback netcode and traversal relay support."
+      },
+      {
+        "symbolName": "antenna.radiowaves.left.and.right",
+        "symbolColor": "green",
+        "title": "Traversal Relay",
+        "subtitle": "Connect without port-forwarding via Dolphin's public STUN relay server — just share your traversal code."
+      }
+    ]
   }
 ]
