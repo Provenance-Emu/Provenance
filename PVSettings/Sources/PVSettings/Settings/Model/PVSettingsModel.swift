@@ -792,7 +792,7 @@ public extension Defaults.Keys {
 
 // MARK: Physical Case Controllers
 public extension Defaults.Keys {
-    #if !os(tvOS)
+    #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     /// Automatically apply a compatible skin when a physical controller case is
     /// detected — either by `GCController.vendorName` for smart (Bluetooth/MFi)
     /// cases, or by skin identifier when the user selects a skin published for a

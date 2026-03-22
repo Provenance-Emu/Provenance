@@ -131,7 +131,9 @@ public enum CaseControllerDetector {
     ///
     /// - Parameter vendorName: Partial or full vendor name to search for.
     public static func layoutByFuzzyVendorName(_ vendorName: String) -> PhysicalCaseLayout? {
-        let lowered = vendorName.lowercased()
+        let trimmed = vendorName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let lowered = trimmed.lowercased()
         return knownLayouts.first { layout in
             layout.vendorNames.contains {
                 let kl = $0.lowercased()
