@@ -155,6 +155,9 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                                 realm.delete(screenShotsToDelete)
                                 realm.delete(game)
                             }
+                            // Invalidate the in-memory games cache so stale entries
+                            // (e.g. gamesCache[romPath]) don't survive the hard-delete.
+                            RomDatabase.reloadGamesCache()
                         }
                         return
                     } else {
@@ -229,9 +232,11 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                 try realm.write {
                     game.romPath = newRelative
                     // Keep game.file.partialPath in sync so path-resolution via
-                    // PVFile.url returns the correct location.
+                    // PVFile.url returns the correct location.  partialPath is a
+                    // relative path (including any system subdirectory), not just
+                    // the bare filename, so use the full relative path here.
                     if let pvFile = game.file {
-                        pvFile.partialPath = newFilename
+                        pvFile.partialPath = newRelative
                     }
                 }
                 ILOG("PVWebFileEventObserver: updated romPath '\(oldRelative)' → '\(newRelative)' for '\(game.title)'")
