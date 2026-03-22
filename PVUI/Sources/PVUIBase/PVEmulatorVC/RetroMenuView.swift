@@ -1093,6 +1093,11 @@ struct RetroMenuView: View {
 
             let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(emulatorVC.game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
 
+            // Mouse input (only shown for games/systems that support mouse)
+            if emulatorVC.virtualInputState.supportsMouse {
+                mouseInputSection
+            }
+
             // P1 controls (blue = primary player)
             if let player1 = PVControllerManager.shared.player1 {
 #if os(iOS)
@@ -1122,6 +1127,71 @@ struct RetroMenuView: View {
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
+    }
+
+    // MARK: - Mouse Input Section (Options Tab)
+
+    /// Inline mouse input source picker + sensitivity slider for the Options tab.
+    /// Only rendered when `virtualInputState.supportsMouse` is true.
+    private var mouseInputSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(String(localized: "MOUSE INPUT"))
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor
+                    ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
+
+            // Input source picker
+            Picker(String(localized: "Input Source"), selection: $mouseInputSource) {
+                ForEach(MouseInputSource.allCases, id: \.rawValue) { source in
+                    Label(source.displayName, systemImage: source.symbolName)
+                        .tag(source)
+                }
+            }
+            #if !os(tvOS)
+            .pickerStyle(.menu)
+            #else
+            .pickerStyle(.segmented)
+            #endif
+            .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(
+                        (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                            .opacity(palette.dark ? 0.6 : 0.9)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 1)
+                    )
+            )
+
+            // Sensitivity slider
+            HStack {
+                Label(String(localized: "Sensitivity"), systemImage: "slider.horizontal.3")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                Spacer()
+                Text(String(format: "%.1f×", mouseSensitivity))
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .foregroundColor(palette.defaultTintColor.swiftUIColor)
+            }
+            Slider(value: $mouseSensitivity, in: 0.1...5.0, step: 0.1)
+                .accentColor(palette.defaultTintColor.swiftUIColor)
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(
+                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                        .opacity(palette.dark ? 0.6 : 0.9)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 1)
+                )
+        )
     }
 
     private func menuToggleRow(title: String, icon: String, color: Color, isOn: Binding<Bool>) -> some View {
@@ -1203,6 +1273,10 @@ struct RetroMenuView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHoveredSkinId: String? = nil
+
+    // Mouse input settings
+    @Default(.mouseInputSource) private var mouseInputSource
+    @Default(.mouseSensitivity) private var mouseSensitivity
 
     // Button effect and sound settings
     @Default(.buttonPressEffect) var buttonPressEffect

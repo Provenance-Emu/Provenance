@@ -529,8 +529,26 @@
   },
   {
     "version": "3.7.0",
-    "title": "Netplay, Save Export & Drag & Drop",
+    "title": "Mouse Input, Netplay & Drag & Drop",
     "features": [
+      {
+        "symbolName": "computermouse",
+        "symbolColor": "blue",
+        "title": "Mouse Input Source Picker",
+        "subtitle": "Choose your mouse input method: Auto, Touchscreen trackpad, Controller Touchpad, Gyroscope, or Physical Mouse — in Settings and the pause menu."
+      },
+      {
+        "symbolName": "slider.horizontal.3",
+        "symbolColor": "green",
+        "title": "Sensitivity Sliders",
+        "subtitle": "Fine-tune mouse and gyro sensitivity plus gyro dead zone from Settings → Controller → Mouse Input."
+      },
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "purple",
+        "title": "In-Game Mouse Settings",
+        "subtitle": "Quickly change input source and sensitivity from the pause menu Options tab without leaving your game."
+      },
       {
         "symbolName": "network",
         "symbolColor": "blue",
@@ -542,12 +560,6 @@
         "symbolColor": "orange",
         "title": "Export Game Saves",
         "subtitle": "Long-press any game and choose \"Export Saves\" to share all save states and battery saves as a zip via AirDrop, Mail, or Files."
-      },
-      {
-        "symbolName": "hand.draw.fill",
-        "symbolColor": "purple",
-        "title": "Drag Save States",
-        "subtitle": "Drag any save state card from the All Save States browser directly to Files.app or AirDrop."
       },
       {
         "symbolName": "arrow.down.doc.fill",

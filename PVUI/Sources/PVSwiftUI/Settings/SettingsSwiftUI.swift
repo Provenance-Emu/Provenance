@@ -838,6 +838,9 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Controller") {
                         ControllerSection()
                     }
+                    CollapsibleSection(title: "Mouse Input") {
+                        MouseSection()
+                    }
                     #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
                     CollapsibleSection(title: "Delta Skins") {
                         DeltaSkinsSection()
