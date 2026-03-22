@@ -55,6 +55,12 @@ public struct AllSaveStatesBrowserView: View {
     @State private var sortOrder: SaveStatesBrowserSort = .dateDescending
     @State private var showFavoritesOnly = false
 
+    // MARK: - Export
+    /// URL of the zip produced by `exportGame(gameId:)`; non-nil triggers the share sheet.
+    @State private var exportShareURL: URL? = nil
+    /// gameId currently being packaged; used to show a progress indicator on the export button.
+    @State private var exportingGameId: String? = nil
+
     /// Paging is only used for the default date-descending view without a favourites filter.
     /// Other sorts and the favourites filter require the full dataset to be correct,
     /// so we fall back to loading everything at once.
@@ -158,6 +164,25 @@ public struct AllSaveStatesBrowserView: View {
                 // "no favourites" when they simply haven't been loaded yet.
                 Task { await loadItems() }
             }
+            #if !os(tvOS)
+            .sheet(isPresented: Binding<Bool>(
+                get: { exportShareURL != nil },
+                set: { presenting in
+                    if !presenting {
+                        if let url = exportShareURL {
+                            SaveExporter.shared.cleanupExport(at: url)
+                        }
+                        exportShareURL = nil
+                    }
+                }
+            )) {
+                if let url = exportShareURL {
+                    ActivityViewController(activityItems: [url])
+                } else {
+                    Color.clear.onAppear { exportShareURL = nil }
+                }
+            }
+            #endif
     }
 
     @ViewBuilder
@@ -269,6 +294,23 @@ public struct AllSaveStatesBrowserView: View {
                     .padding(.vertical, 3)
                     .background(Capsule().fill(Color.secondary.opacity(0.15)))
 
+                #if !os(tvOS)
+                Button {
+                    exportGame(gameId: group.key)
+                } label: {
+                    if exportingGameId == group.key {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                    } else {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.callout)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
+                .disabled(exportingGameId != nil)
+                #endif
+
                 Button {
                     manageGame(gameId: group.key)
                 } label: {
@@ -324,6 +366,15 @@ public struct AllSaveStatesBrowserView: View {
         .focused($focusedItemID, equals: item.id)
         #else
         .buttonStyle(.plain)
+        .onDrag {
+            // Provide the save state file for drag to Files / AirDrop.
+            // Realm access is safe here: onDrag is called on the main thread.
+            guard let saveState = RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: item.id),
+                  let fileURL = saveState.file?.url else {
+                return NSItemProvider()
+            }
+            return NSItemProvider(contentsOf: fileURL) ?? NSItemProvider()
+        }
         #endif
         .contextMenu {
             Button {
@@ -388,13 +439,44 @@ public struct AllSaveStatesBrowserView: View {
 
     private func manageGame(gameId: String) {
         Task { @MainActor in
-            guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId) else {
+            // gameId is PVGame.id (UUID), not the Realm primary key (md5Hash) — use filter.
+            guard let game = RomDatabase.sharedInstance.realm
+                    .objects(PVGame.self)
+                    .filter("id == %@", gameId)
+                    .first else {
                 ELOG("AllSaveStatesBrowserView: Game not found for id: \(gameId)")
                 return
             }
             rootDelegate?.root_showContinuesManagement(game)
         }
     }
+
+    #if !os(tvOS)
+    /// Exports all saves for the given game as a zip and presents the system share sheet.
+    ///
+    /// `gameId` is `PVGame.id` (UUID), not the Realm primary key (`md5Hash`), so we use a
+    /// filter predicate rather than `forPrimaryKey`.
+    private func exportGame(gameId: String) {
+        guard exportingGameId == nil else { return }
+        exportingGameId = gameId
+        Task { @MainActor in
+            defer { exportingGameId = nil }
+            guard let game = RomDatabase.sharedInstance.realm
+                    .objects(PVGame.self)
+                    .filter("id == %@", gameId)
+                    .first else {
+                ELOG("AllSaveStatesBrowserView: Game not found for export, id: \(gameId)")
+                return
+            }
+            do {
+                let url = try await SaveExporter.shared.exportSaves(for: game)
+                exportShareURL = url
+            } catch {
+                ELOG("AllSaveStatesBrowserView: Export failed: \(error.localizedDescription)")
+            }
+        }
+    }
+    #endif
 
     private func deleteSaveState(item: RetroSaveStateItem) {
         Task { @MainActor in

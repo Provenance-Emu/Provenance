@@ -1591,6 +1591,9 @@ extension ConsoleGamesView {
                 )
             }
         }
+        #if os(iOS)
+        .saveStateDropTarget(gameId: game.md5)
+        #endif
     }
 
     @ViewBuilder
