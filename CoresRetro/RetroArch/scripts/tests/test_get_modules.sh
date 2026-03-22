@@ -374,8 +374,16 @@ test_active_platform_written_after_extraction() {
     make_mock_xxd_zip_valid
     make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "ios"
 
+    set +e
     SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || true
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1
+    local exit_code=$?
+    set -e
+    if [ "${exit_code}" -eq 0 ]; then
+        pass "get-modules.sh exited successfully"
+    else
+        fail "get-modules.sh exited with code ${exit_code}"
+    fi
 
     local platform_file="${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
     assert_file_exists "platform file written after extraction" "${platform_file}"

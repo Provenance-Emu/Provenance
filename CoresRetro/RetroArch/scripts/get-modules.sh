@@ -136,7 +136,13 @@ EXPECTED_COUNT=$(grep -v '^#' "${EFFECTIVE_MODULE_LIST}" | grep -c '.' || echo 0
 # skip both the purge and extraction entirely.  This keeps switching back to a
 # previously-built platform cheap once both platforms are locally cached.
 if (( TIMESTAMP <= LAST_TIMESTAMP )) && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ]; then
-	EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 -name "*.dylib" -type f 2>/dev/null | wc -l | tr -d ' ')
+	# Count only dylibs belonging to the current platform so stale other-platform
+	# artifacts cannot satisfy the threshold and trigger a false fast-path skip.
+	if [ "${CURRENT_PLATFORM}" = "tvos" ]; then
+		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 -name "*tvos*.dylib" -type f 2>/dev/null | wc -l | tr -d ' ')
+	else
+		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 -name "*ios*.dylib" -not -name "*tvos*.dylib" -type f 2>/dev/null | wc -l | tr -d ' ')
+	fi
 	if [ "${EXPECTED_COUNT}" -gt 0 ]; then
 		FAST_THRESHOLD=$(( EXPECTED_COUNT * 80 / 100 ))
 		[ "${FAST_THRESHOLD}" -lt 1 ] && FAST_THRESHOLD=1
