@@ -30,25 +30,27 @@ public enum PVFileProviderDomain {
 
     /// Registers the ROM library domain with `NSFileProviderManager`.
     ///
-    /// Safe to call multiple times — if the domain is already registered the
-    /// completion handler receives a non-fatal `NSFileProviderError.providerNotFound`
-    /// which is silently ignored.
+    /// Safe to call multiple times — checks existing domains first to avoid
+    /// redundant registration attempts.
     public static func registerIfNeeded() {
-        let domain = NSFileProviderDomain(
-            identifier: domainIdentifier,
-            displayName: displayName
-        )
-        NSFileProviderManager.add(domain) { error in
-            if let error = error as NSError? {
-                // Code 4 = domain already registered — not an error.
-                if error.domain == NSFileProviderErrorDomain,
-                   error.code == NSFileProviderError.providerNotFound.rawValue {
-                    DLOG("FileProvider: domain already registered")
-                    return
+        NSFileProviderManager.getDomainsWithCompletionHandler { existingDomains, fetchError in
+            if let fetchError = fetchError {
+                ELOG("FileProvider: failed to query existing domains — \(fetchError.localizedDescription)")
+            }
+            guard !(existingDomains ?? []).contains(where: { $0.identifier == domainIdentifier }) else {
+                DLOG("FileProvider: domain already registered, skipping")
+                return
+            }
+            let domain = NSFileProviderDomain(
+                identifier: domainIdentifier,
+                displayName: displayName
+            )
+            NSFileProviderManager.add(domain) { error in
+                if let error = error {
+                    ELOG("FileProvider: failed to register domain — \(error.localizedDescription)")
+                } else {
+                    ILOG("FileProvider: domain '\(displayName)' registered successfully")
                 }
-                ELOG("FileProvider: failed to register domain — \(error.localizedDescription)")
-            } else {
-                ILOG("FileProvider: domain '\(displayName)' registered successfully")
             }
         }
     }

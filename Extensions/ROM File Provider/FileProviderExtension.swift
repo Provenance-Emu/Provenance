@@ -97,7 +97,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             guard let romURL = pvGame.file?.url,
                   FileManager.default.fileExists(atPath: romURL.path) else {
                 WLOG("FileProvider: ROM file not locally available for \(pvGame.title)")
-                completionHandler(nil, nil, NSFileProviderError(.serverUnreachable))
+                completionHandler(nil, nil, NSFileProviderError(.noSuchItem))
                 return Progress()
             }
 
@@ -122,8 +122,9 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         request: NSFileProviderRequest,
         completionHandler: @escaping (NSFileProviderItem?, NSFileProviderItemFields, Bool, Error?) -> Void
     ) -> Progress {
-        // Return the template unchanged so the system knows we acknowledge the call.
-        completionHandler(itemTemplate, [], false, nil)
+        // Read-only extension — report that creation is unsupported (consistent with modifyItem/deleteItem).
+        let error = NSError(domain: NSCocoaErrorDomain, code: NSFeatureUnsupportedError, userInfo: nil)
+        completionHandler(nil, [], false, error)
         return Progress()
     }
 

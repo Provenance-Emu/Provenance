@@ -105,7 +105,8 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
     var capabilities: NSFileProviderItemCapabilities {
         switch kind {
         case .root, .systemFolder:
-            return .allowsReading
+            // allowsContentEnumerating is required for Files.app to treat these as browsable containers.
+            return [.allowsReading, .allowsContentEnumerating]
         case .gameFile:
             // Read-only; eviction allowed so the system can reclaim space.
             return [.allowsReading, .allowsEvicting]
@@ -139,8 +140,10 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         switch kind {
         case .root, .systemFolder:
             return nil
-        case .gameFile(let game, _):
-            return game.lastPlayed
+        case .gameFile(_, let romURL):
+            guard let romURL = romURL else { return nil }
+            let attributes = try? FileManager.default.attributesOfItem(atPath: romURL.path)
+            return attributes?[.modificationDate] as? Date
         }
     }
 
