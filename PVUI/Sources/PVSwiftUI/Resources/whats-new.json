@@ -562,5 +562,23 @@
         "subtitle": "Drop a save export zip or a .sav battery save file onto a game card to instantly import it."
       }
     ]
+  },
+  {
+    "version": "3.8.0",
+    "title": "Gyro Mouse & More",
+    "features": [
+      {
+        "symbolName": "gyroscope",
+        "symbolColor": "purple",
+        "title": "Gyro Mouse",
+        "subtitle": "Tilt your DualSense, Switch Pro controller, or iPhone/iPad to move the cursor in pointer-driven games like Mario Paint — perfect for tvOS where there is no touchscreen."
+      },
+      {
+        "symbolName": "slider.horizontal.3",
+        "symbolColor": "blue",
+        "title": "Gyro Settings",
+        "subtitle": "New Gyro Mouse settings let you tune sensitivity and dead zone so the cursor feels natural at rest and responsive in motion."
+      }
+    ]
   }
 ]

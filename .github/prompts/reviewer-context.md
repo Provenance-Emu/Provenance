@@ -141,6 +141,15 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Both use `@Environment(\.pvEmulatorCoordinator)` — don't access directly from core bridge.
 - Platform-specific layouts (C64, ZX Spectrum, CPC) in `PVUI/Sources/PVSwiftUI/VirtualKeyboard/`.
 
+### Gyro Mouse (`GyroMouseAdapter`)
+- `GyroMouseAdapter` in `PVCoreBridge/Features/` — drives `MouseResponder.mouseMoved(atPoint:)` from `GCMotion.rotationRate` (DualSense / Switch Pro) or `CMMotionManager` IMU fallback.
+- Settings keys live in `PVSettings.Defaults.Keys`: `gyroMouseEnabled`, `gyroMouseSensitivity`, `gyroMouseDeadZone`.
+- Adapter is main-thread-confined; motion callbacks hop to `DispatchQueue.main` before mutating cursor state.
+- Lifecycle: `attach(to:)` when core starts, `detach()` when game is paused or app backgrounds. `isEnabled = false` for temporary suspend.
+- Signal chain: dead zone → exponential moving average (low-pass) → sensitivity × dt → clamp to [0,1].
+- Platform guards: `#if canImport(CoreMotion)` wraps the IMU path (unavailable on tvOS); `#if canImport(GameController)` wraps the GCController path.
+- Flag 🟠 MAJOR if the adapter's motion callback writes cursor state off the main thread without a `DispatchQueue.main.async` hop.
+
 ### Per-Game Mouse Detection (`MouseGameRegistry`)
 - `MouseGameRegistry.shared` in `PVCoreBridge/Features/` — single source of truth for whether a game uses a mouse.
 - Two-tier approach: **always-on** systems (DOS, Macintosh, AtariST…) always return `true`; **conditional** systems (SNES, Saturn, Dreamcast, PSX) require a game-level MD5 or title match.
