@@ -21,8 +21,8 @@ import UIKit
 // MARK: - Stored-property shim (associated object)
 
 private enum CompanionAssociatedKeys {
-    static var sessionKey = "CompanionControllerSession"
-    static var bridgeKey  = "CompanionCoreInputBridge"
+    static var sessionKey: UInt8 = 0
+    static var bridgeKey:  UInt8 = 0
 }
 
 @MainActor
@@ -68,8 +68,12 @@ extension PVEmulatorViewController {
     /// Present the companion controller host view and wire the session to the core.
     ///
     /// Called from the pause menu when the user taps "Companion Controller".
-    /// No-ops if the core does not conform to `CompanionControllerCapable`.
+    /// If the core does not conform to `CompanionControllerCapable`, the overlay is still
+    /// presented but input events will not be forwarded to the core.
     public func presentCompanionController() {
+        // Tear down any existing session before creating a new one.
+        tearDownCompanionSession()
+
         let session = CompanionControllerSession()
 
         // Propagate the current system ID so CompanionLayoutFactory selects the right layout.
@@ -87,12 +91,19 @@ extension PVEmulatorViewController {
         companionSession = session
 
         let hostView = CompanionControllerHostView(session: session)
-        let hostVC = UIHostingController(rootView: hostView)
+        let hostVC = CompanionHostingController(rootView: hostView)
         hostVC.modalPresentationStyle = .fullScreen
-        hostVC.presentationController?.delegate = self as? UIAdaptivePresentationControllerDelegate
 
         // Pause emulation while the companion overlay is shown.
         core.setPauseEmulation(true)
+
+        // Resume emulation and tear down the session when the overlay is dismissed.
+        hostVC.onDismiss = { [weak self] in
+            guard let self else { return }
+            self.tearDownCompanionSession()
+            self.core.setPauseEmulation(false)
+            ILOG("[CompanionController] Companion overlay dismissed — emulation resumed")
+        }
 
         present(hostVC, animated: true)
         ILOG("[CompanionController] Presented companion overlay for system: \(session.activeSystemID)")
@@ -102,14 +113,29 @@ extension PVEmulatorViewController {
 
     /// Disconnect the session and release all resources.
     ///
-    /// Call this when the emulator is dismissed or when the user closes the
-    /// companion overlay.
+    /// Called automatically when the companion overlay is dismissed.
+    /// Also safe to call when the emulator itself is dismissed.
     public func tearDownCompanionSession() {
         guard let session = companionSession else { return }
         session.disconnect()
         companionSession = nil
         _coreInputBridge = nil
         DLOG("[CompanionController] Session torn down")
+    }
+}
+
+// MARK: - CompanionHostingController
+
+/// UIHostingController subclass that fires `onDismiss` when the view disappears
+/// due to being dismissed, enabling the presenter to run cleanup logic.
+private final class CompanionHostingController<Content: View>: UIHostingController<Content> {
+    var onDismiss: (() -> Void)?
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isBeingDismissed {
+            onDismiss?()
+        }
     }
 }
 
@@ -120,8 +146,11 @@ extension PVEmulatorViewController {
 ///
 /// This lives in PVUI because `CompanionSlotDelegate` and `CompanionInputState` are
 /// PVUI types; `CompanionControllerCapable` and `CompanionInputEvent` are PVCoreBridge types.
+///
+/// Thread safety: confined to `@MainActor` — all `CompanionSlotDelegate` callbacks
+/// are dispatched on the main actor, so no shared mutable state crosses thread boundaries.
 @MainActor
-private final class CoreCompanionBridge: CompanionSlotDelegate, @unchecked Sendable {
+private final class CoreCompanionBridge: CompanionSlotDelegate {
 
     private weak var capable: (any CompanionControllerCapable)?
     private let playerIndex: Int
