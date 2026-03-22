@@ -82,6 +82,11 @@ public extension PVEmulatorViewController {
         let hardcore = Defaults[.retroAchievementsHardcoreEnabled]
         achievementsCore.hardcoreMode = hardcore
 
+        // Hardcore mode forbids speed hacks — reset to normal immediately.
+        if hardcore {
+            core.gameSpeed = .normal
+        }
+
         // Create and start session manager.
         let manager = PVCheevos.sessionManager()
         achievementSessionManager = manager
@@ -120,6 +125,26 @@ public extension PVEmulatorViewController {
     /// Returns `true` when the current session is in hardcore mode and
     /// a save-state load should be blocked.
     func achievementsBlocksSaveStateLoad() -> Bool {
+        guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
+        guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }
+        return achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+    }
+
+    // MARK: - Fast-forward guard
+
+    /// Returns `true` when the current session is in hardcore mode and
+    /// fast-forward should be blocked.
+    func achievementsBlocksFastForward() -> Bool {
+        guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
+        guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }
+        return achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+    }
+
+    // MARK: - Rewind guard
+
+    /// Returns `true` when the current session is in hardcore mode and
+    /// rewind should be blocked.
+    func achievementsBlocksRewind() -> Bool {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
         guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }
         return achievementsCore.hardcoreMode && achievementsCore.achievementsActive

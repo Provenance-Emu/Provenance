@@ -616,6 +616,26 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Store the previous game speed when using hold-style buttons
     private var previousGameSpeed: GameSpeed?
 
+    /// Returns `true` when RetroAchievements hardcore mode blocks fast-forward,
+    /// and presents an error alert via the emulator controller.
+    private func isFastForwardBlockedByHardcore() -> Bool {
+        guard let achievementsCore = emulatorCore as? (any CoreRetroAchievements),
+              achievementsCore.hardcoreMode && achievementsCore.achievementsActive else {
+            return false
+        }
+        #if canImport(UIKit)
+        if let vc = emulatorController as? UIViewController {
+            DispatchQueue.main.async {
+                vc.presentError(
+                    "Fast-forward is disabled in RetroAchievements Hardcore Mode.",
+                    source: vc.view
+                )
+            }
+        }
+        #endif
+        return true
+    }
+
     /// Handle toggle fast forward button press
     private func toggleFastForwardPressed() {
         DLOG("Toggle fast forward button pressed")
@@ -623,6 +643,9 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot toggle fast forward - emulatorCore is nil")
             return
         }
+
+        // RetroAchievements hardcore mode disallows fast-forward.
+        guard !isFastForwardBlockedByHardcore() else { return }
 
         // If already in fast mode, go back to normal
         if core.gameSpeed == .fast || core.gameSpeed == .veryFast {
@@ -655,6 +678,9 @@ public class DeltaSkinInputHandler: ObservableObject {
             ELOG("Cannot set fast forward - emulatorCore is nil")
             return
         }
+
+        // RetroAchievements hardcore mode disallows fast-forward.
+        guard !isFastForwardBlockedByHardcore() else { return }
 
         // Save the current game speed to restore it on release
         previousGameSpeed = core.gameSpeed
