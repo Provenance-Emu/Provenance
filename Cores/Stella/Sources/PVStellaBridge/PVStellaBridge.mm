@@ -59,6 +59,14 @@
 
     // RETRO_REGION_NTSC, RETRO_REGION_PAL
     unsigned region;
+
+    // Trackball / Mouse state (Companion Controller input).
+    // Accumulated relative deltas consumed each frame by input_state_callback.
+    // Both the write side (main thread, companion input) and the read side
+    // (emulation thread, input_state_callback) are guarded by @synchronized(self).
+    float _pendingMouseDX;
+    float _pendingMouseDY;
+    BOOL  _mouseButtonLeft;
 }
 @property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
 @property (readwrite, nonatomic, copy) PVStellaBridgeOptionHandler optionHandler;
@@ -116,24 +124,49 @@ static void input_poll_callback(void) {
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id) {
 //    DLOG(@"polled input: port: %d device: %d id: %d", port, device, _id);
-    
+
     __strong PVStellaBridge *strongCurrent = _current;
     int16_t value = 0;
-    
-    if (port == 0 & device == RETRO_DEVICE_JOYPAD)
+
+    if (port == 0 && device == RETRO_DEVICE_JOYPAD)
     {
         value = strongCurrent->_pad[0][_id];
     }
-    else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
+    else if (port == 1 && device == RETRO_DEVICE_JOYPAD)
     {
-        if (value == 0)
-        {
-            value = strongCurrent->_pad[1][_id];
+        value = strongCurrent->_pad[1][_id];
+    }
+    else if (port == 0 && device == RETRO_DEVICE_MOUSE)
+    {
+        // Trackball / companion controller mouse input.
+        // Deltas are consumed (zeroed) after being read so they represent
+        // per-frame relative movement, not an absolute position.
+        @synchronized(strongCurrent) {
+            switch (_id) {
+                case RETRO_DEVICE_ID_MOUSE_X: {
+                    // Scale -1…1 normalised value to pixel-delta range.
+                    // 32 px/frame at full deflection gives a responsive feel.
+                    value = (int16_t)(strongCurrent->_pendingMouseDX * 32.0f);
+                    strongCurrent->_pendingMouseDX = 0.0f;
+                    break;
+                }
+                case RETRO_DEVICE_ID_MOUSE_Y: {
+                    value = (int16_t)(strongCurrent->_pendingMouseDY * 32.0f);
+                    strongCurrent->_pendingMouseDY = 0.0f;
+                    break;
+                }
+                case RETRO_DEVICE_ID_MOUSE_LEFT: {
+                    value = strongCurrent->_mouseButtonLeft ? 1 : 0;
+                    break;
+                }
+                default:
+                    break;
+            }
         }
     }
-    
+
     strongCurrent = nil;
-    
+
     return value;
 }
 
@@ -255,6 +288,9 @@ static void writeSaveFile(const char* path, int type) {
         _current = self;
         self.optionHandler = optionHandler;
         self.cheats = [[NSMutableArray alloc] init];
+        _pendingMouseDX = 0.0f;
+        _pendingMouseDY = 0.0f;
+        _mouseButtonLeft = NO;
     }
 
 	return self;
@@ -747,4 +783,24 @@ static void writeSaveFile(const char* path, int type) {
 - (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
     _pad[player][A2600EmulatorValues[button]] = 0;
 }
+@end
+
+// MARK: - Trackball / Mouse input (Companion Controller)
+
+@implementation PVStellaBridge (Trackball)
+
+- (void)setTrackballDeltaX:(float)deltaX deltaY:(float)deltaY {
+    // Accumulate: multiple companion events may arrive between emulation frames.
+    @synchronized(self) {
+        _pendingMouseDX += deltaX;
+        _pendingMouseDY += deltaY;
+    }
+}
+
+- (void)setMouseButtonLeft:(BOOL)pressed {
+    @synchronized(self) {
+        _mouseButtonLeft = pressed;
+    }
+}
+
 @end

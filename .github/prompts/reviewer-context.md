@@ -291,6 +291,14 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - The extension target requires the `group.org.provenance-emu.provenance` App Group entitlement.
 - After any game launch/end in the main app, call `WidgetCenter.shared.reloadAllTimelines()`.
 
+### CompanionControllerCapable / Trackball Input Pattern (added in #3393)
+- `CompanionControllerCapable` in `PVCoreBridge/CompanionControllerCapable.swift` — protocol cores adopt to receive Companion Controller axis/button events.
+- `TrackballGameRegistry.shared` in `PVCoreBridge/Features/` — per-game trackball detection (mirrors `MouseGameRegistry` pattern); only Atari 2600 in `conditionalTrackballSystems`.
+- `PVEmulatorViewController+CompanionController.swift` (PVUI Tier 6) — subscribes to `CompanionInputRouter.$heldButtons` and `.$axisValues` via Combine and forwards to the core each frame. Wiring is set up via `setupCompanionControllerBridgeIfNeeded(session:)` post-ROM-load.
+- `CompanionLayoutFactory.atari2600TrackballLayoutID` = `"com.provenance.atari2600.trackball"` — the ID returned by `PVStellaGameCore.preferredCompanionLayoutID` for trackball titles; factory maps it to `TrackballLayout`.
+- **Thread safety**: Stella bridge uses `@synchronized(self)` for `_pendingMouseDX/Y` and `_mouseButtonLeft` — both written from the main thread (companion events) and read from the emulation thread (`input_state_callback`).
+- New trackball game additions: add MD5 hashes and title patterns to `TrackballGameRegistry.knownTrackballGameMD5s` / `knownTrackballGameTitlePatterns`. Never inline trackball checks in core code.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:

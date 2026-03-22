@@ -5,32 +5,37 @@
 //  • "Use as Companion Controller" entry in the pause menu
 //  • Session lifecycle: present, wire delegate, tear down on dismiss
 //  • System ID propagation to CompanionControllerSession
+//  • Combine-based input bridge (setupCompanionControllerBridgeIfNeeded)
 //
 // iOS/macCatalyst only — no companion overlay is shown on tvOS or visionOS.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
-#if canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))
+#if canImport(UIKit) && !os(tvOS)
 import SwiftUI
+import UIKit
+import Combine
 import PVCoreBridge
 import PVLogging
-import UIKit
 
 // MARK: - Stored-property shim (associated object)
 
 private enum CompanionAssociatedKeys {
-    static var sessionKey: UInt8 = 0
-    static var bridgeKey:  UInt8 = 0
+    static var sessionKey:      UInt8 = 0
+    static var bridgeKey:       UInt8 = 0
+    static var cancellablesKey: UInt8 = 0
 }
 
 @MainActor
 extension PVEmulatorViewController {
 
+    // MARK: - Stored properties via associated objects
+
     /// The active companion controller session, if any.
     ///
     /// Set when the user opens the companion overlay from the pause menu,
     /// cleared when they dismiss it or the emulator tears down.
-    var companionSession: CompanionControllerSession? {
+    public var companionSession: CompanionControllerSession? {
         get {
             objc_getAssociatedObject(self, &CompanionAssociatedKeys.sessionKey)
                 as? CompanionControllerSession
@@ -59,6 +64,29 @@ extension PVEmulatorViewController {
                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC
             )
         }
+    }
+
+    private var companionCancellables: Set<AnyCancellable> {
+        get {
+            (objc_getAssociatedObject(self, &CompanionAssociatedKeys.cancellablesKey)
+                as? CancellablesBox)?.cancellables ?? []
+        }
+        set {
+            let box = CancellablesBox(newValue)
+            objc_setAssociatedObject(
+                self,
+                &CompanionAssociatedKeys.cancellablesKey,
+                box,
+                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
+    }
+
+    // MARK: - Capability
+
+    /// Whether the currently active core can receive Companion Controller input.
+    public var coreSupportsCompanionController: Bool {
+        core is CompanionControllerCapable
     }
 
     // MARK: - Present companion overlay
@@ -108,6 +136,64 @@ extension PVEmulatorViewController {
         ILOG("[CompanionController] Presented companion overlay for system: \(session.activeSystemID)")
     }
 
+    // MARK: - Combine-based bridge setup
+
+    /// Attach Companion Controller input forwarding when the core supports it.
+    ///
+    /// Call this after the core finishes loading a ROM so that `preferredCompanionLayoutID`
+    /// (which may depend on the game's MD5 / title) is available.
+    ///
+    /// - Parameter session: The active companion controller session whose
+    ///   `inputRouter` will be subscribed to.
+    public func setupCompanionControllerBridgeIfNeeded(session: CompanionControllerSession) {
+        guard let companionCore = core as? CompanionControllerCapable else { return }
+
+        // Store the session so it can be referenced later (e.g. for teardown).
+        companionSession = session
+
+        // Update the session's active system ID so the correct layout is shown.
+        if let preferredID = companionCore.preferredCompanionLayoutID {
+            session.activeSystemID = preferredID
+        }
+
+        ILOG("[CompanionController] Core adopts CompanionControllerCapable — wiring input router (layoutID: \(session.activeSystemID))")
+
+        var cancellables = Set<AnyCancellable>()
+
+        // Track button mask locally within the sink to compute press/release edges.
+        var previousButtonMask: UInt32 = 0
+
+        // Subscribe to button state changes and forward edge events to the core.
+        session.inputRouter.$heldButtons
+            .removeDuplicates()
+            .sink { [weak self] newMask in
+                guard self != nil else { return }
+                let pressed  = newMask & ~previousButtonMask   // bits newly set
+                let released = previousButtonMask & ~newMask   // bits newly cleared
+                previousButtonMask = newMask
+
+                for button in [CompanionCoreButton.south, .east, .west, .north] {
+                    if pressed  & button.rawValue != 0 { companionCore.companionButtonDown(button) }
+                    if released & button.rawValue != 0 { companionCore.companionButtonUp(button) }
+                }
+            }
+            .store(in: &cancellables)
+
+        // Subscribe to axis changes (trackball deltas) and forward to the core.
+        session.inputRouter.$axisValues
+            .sink { [weak self] axisMap in
+                guard self != nil else { return }
+                let dx = axisMap[.leftX] ?? 0
+                let dy = axisMap[.leftY] ?? 0
+                if dx != 0 || dy != 0 {
+                    companionCore.companionTrackballMoved(deltaX: dx, deltaY: dy)
+                }
+            }
+            .store(in: &cancellables)
+
+        companionCancellables = cancellables
+    }
+
     // MARK: - Tear down
 
     /// Disconnect the session and release all resources.
@@ -119,7 +205,15 @@ extension PVEmulatorViewController {
         session.disconnect()
         companionSession = nil
         _coreInputBridge = nil
+        companionCancellables = []
         DLOG("[CompanionController] Session torn down")
+    }
+
+    /// Stop forwarding Companion Controller input to the core (Combine bridge only).
+    public func teardownCompanionControllerBridge() {
+        companionCancellables = []
+        companionSession = nil
+        ILOG("[CompanionController] Companion input bridge torn down")
     }
 }
 
@@ -218,4 +312,14 @@ private final class CoreCompanionBridge: CompanionSlotDelegate {
     }
 }
 
-#endif // canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))
+// MARK: - CancellablesBox
+
+/// Reference-type wrapper so `Set<AnyCancellable>` can be stored via associated objects.
+private final class CancellablesBox {
+    var cancellables: Set<AnyCancellable>
+    init(_ cancellables: Set<AnyCancellable>) {
+        self.cancellables = cancellables
+    }
+}
+
+#endif // canImport(UIKit) && !os(tvOS)

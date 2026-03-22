@@ -50,10 +50,20 @@ import PVPrimitives
 
 @MainActor
 public enum CompanionLayoutFactory {
+
+    /// Layout ID string for Atari 2600 trackball games.
+    /// Matches `kAtari2600TrackballLayoutID` in `PVStellaGameCore+CompanionController.swift`.
+    public static let atari2600TrackballLayoutID = "com.provenance.atari2600.trackball"
+
     public static func makeLayout(
         systemID: String,
         router: CompanionInputRouter
     ) -> any CompanionLayout {
+        // Check for system-specific trackball layout first (overrides system default).
+        if systemID == atari2600TrackballLayoutID {
+            return TrackballLayout(router: router)
+        }
+
         switch SystemIdentifier(rawValue: systemID) {
         case .Atari5200?:
             return Atari5200Layout(router: router)
@@ -63,8 +73,9 @@ public enum CompanionLayoutFactory {
             return VectrexLayout(router: router)
         case .DOS?, .DOOM?:
             return DOSKeyboardLayout(router: router)
-        // Atari 2600 covers many game types; only specific trackball titles need TrackballLayout.
-        // Default to GenericCompanionLayout until a per-title capability flag is available.
+        // Atari 2600 — generic layout by default.
+        // The emulator VC will pass atari2600TrackballLayoutID for trackball titles,
+        // which is handled by the explicit check above.
         default:
             return GenericCompanionLayout(router: router)
         }
