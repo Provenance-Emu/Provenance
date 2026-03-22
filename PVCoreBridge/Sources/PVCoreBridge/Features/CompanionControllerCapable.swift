@@ -13,7 +13,11 @@
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
+import CoreGraphics
 import Foundation
+#if canImport(GameController)
+import GameController
+#endif
 
 // MARK: - CompanionButton
 
@@ -75,6 +79,17 @@ public enum CompanionInputEvent: Equatable, Sendable {
     case buttonDown(CompanionButton)
     case buttonUp(CompanionButton)
     case axisChanged(CompanionAxisID, Float)   // value: -1.0 … 1.0
+
+    // Keyboard events — routed to the emulator core via CompanionKeyboardMouseCapable.
+    // GCKeyCode is available from iOS/tvOS 14+, which is the minimum for Provenance.
+#if canImport(GameController)
+    case keyDown(GCKeyCode)
+    case keyUp(GCKeyCode)
+#endif
+
+    // Mouse/trackpad events — routed to the emulator core via CompanionKeyboardMouseCapable.
+    case mouseMove(CGPoint)                   // relative movement delta
+    case mouseButton(Int, Bool)               // button index (0=left, 1=right), isDown
 }
 
 // MARK: - CompanionLayoutID

@@ -12,7 +12,7 @@
 
 import Foundation
 import Combine
-import PVCoreBridge
+import GameController
 
 // CompanionButton, CompanionAxisID, CompanionInputEvent — defined in PVCoreBridge and
 // re-exported by PVUIBase; most consumers do not need an explicit PVCoreBridge import.
@@ -42,6 +42,15 @@ public final class CompanionInputRouter: ObservableObject {
     /// Nil until a DSU session is connected.
     public weak var slotDelegate: (any CompanionSlotDelegate)?
 
+    // MARK: - Keyboard / Mouse event stream
+
+    /// Publishes keyboard and mouse events that should be routed directly to the emulator core.
+    ///
+    /// The emulator view controller (wired in issue #2707) subscribes to this publisher and
+    /// forwards each event to the active `CompanionControllerCapable` core.
+    /// Button and axis events are *not* published here — they go through `slotDelegate`.
+    public let keyboardMouseEvents = PassthroughSubject<CompanionInputEvent, Never>()
+
     // MARK: - Init
 
     public init(slotDelegate: (any CompanionSlotDelegate)? = nil) {
@@ -61,8 +70,30 @@ public final class CompanionInputRouter: ObservableObject {
             // Clamp to the documented -1…1 range so downstream consumers
             // (DSU serialiser, core bridge) never receive out-of-range values.
             axisValues[axis] = max(-1.0, min(1.0, value))
+#if canImport(GameController)
+        case .keyDown, .keyUp, .mouseMove, .mouseButton:
+            // Keyboard and mouse events bypass DSU state and go straight to the core.
+            keyboardMouseEvents.send(event)
+            return
+#else
+        case .mouseMove, .mouseButton:
+            keyboardMouseEvents.send(event)
+            return
+#endif
         }
         slotDelegate?.companionInputRouter(self, didUpdateState: currentState)
+    }
+
+    /// Convenience entry-point for keyboard key-down events.
+    /// Publishes a `keyDown` event on `keyboardMouseEvents`.
+    @MainActor public func sendKeyDown(_ key: GCKeyCode) {
+        keyboardMouseEvents.send(.keyDown(key))
+    }
+
+    /// Convenience entry-point for keyboard key-up events.
+    /// Publishes a `keyUp` event on `keyboardMouseEvents`.
+    @MainActor public func sendKeyUp(_ key: GCKeyCode) {
+        keyboardMouseEvents.send(.keyUp(key))
     }
 
     // MARK: - Reset

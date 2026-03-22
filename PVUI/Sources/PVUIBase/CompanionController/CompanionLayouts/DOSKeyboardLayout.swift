@@ -33,6 +33,9 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
     // MARK: - State
 
+    /// Bridges VirtualKeyboardDelegate callbacks → CompanionInputRouter keyboard events.
+    /// Stored as a @StateObject so it outlives the VirtualKeyboardViewModel's weak delegate ref.
+    @StateObject private var keyboardBridge: CompanionKeyboardBridge
     @StateObject private var keyboardVM: VirtualKeyboardViewModel
     @State private var mouseOffset: CGSize = .zero
     @State private var leftButtonDown = false
@@ -40,9 +43,12 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
     // MARK: - Init
 
-    public init(router: CompanionInputRouter, keyboardDelegate: VirtualKeyboardDelegate? = nil) {
+    public init(router: CompanionInputRouter) {
+        let bridge = CompanionKeyboardBridge(inputRouter: router)
+        let vm = VirtualKeyboardViewModel(delegate: bridge, layout: .full, startExpanded: true)
+        self._keyboardBridge = StateObject(wrappedValue: bridge)
+        self._keyboardVM = StateObject(wrappedValue: vm)
         self.inputRouter = router
-        self._keyboardVM = StateObject(wrappedValue: VirtualKeyboardViewModel(delegate: keyboardDelegate, layout: .full, startExpanded: true))
     }
 
     // MARK: - Body
@@ -224,7 +230,7 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
 #if DEBUG
 #Preview {
-    DOSKeyboardLayout(router: CompanionInputRouter())
+    DOSKeyboardLayout(router: .init())
 }
 #endif
 
