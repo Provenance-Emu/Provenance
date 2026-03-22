@@ -23,6 +23,7 @@ let package = Package(
             targets: ["PVUIKit", "PVSwiftUI"]),
     ],
     dependencies: [
+        .package(path: "../PVAppIntents"),
         .package(path: "../PVAudio"),
         .package(path: "../PVFeatureFlags"),
         .package(path: "../PVNetplay"),
@@ -117,6 +118,7 @@ let package = Package(
                 "PVHelp",
                 "PVLibrary",
                 "PVLogging",
+                .product(name: "PVAppIntents", package: "PVAppIntents", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
                 .product(name: "PVNetplay", package: "PVNetplay", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
                 "PVSupport",
                 "PVShaders",

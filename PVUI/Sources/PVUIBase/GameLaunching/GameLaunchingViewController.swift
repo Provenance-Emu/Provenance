@@ -21,6 +21,10 @@ import PVUIBase
 import SwiftUI
 import Defaults
 import PVSettings
+import CryptoKit
+#if canImport(PVAppIntents)
+import PVAppIntents
+#endif
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -310,6 +314,7 @@ public extension GameLaunchingViewController {
     }
 
     func updateRecentGames(_ game: PVGame) {
+        defer { writeWidgetGameData() }
         let database = RomDatabase.sharedInstance
         RomDatabase.refresh()
 
@@ -357,6 +362,91 @@ public extension GameLaunchingViewController {
                 ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
             }
         }
+    }
+
+    /// Writes the current game library snapshot to shared UserDefaults so that
+    /// home screen and Lock Screen widgets can display up-to-date data.
+    /// Called automatically by `updateRecentGames(_:)` after each play session.
+    private func writeWidgetGameData() {
+#if canImport(PVAppIntents)
+        let database = RomDatabase.sharedInstance
+        let recentGameData: [WidgetGameData] = Array(
+            database.all(PVRecentGame.self)
+                .sorted(byKeyPath: "lastPlayedDate", ascending: false)
+                .prefix(12)
+        ).compactMap { recent in
+            guard let game = recent.game, !game.isInvalidated else { return nil }
+            return WidgetGameData(
+                id: game.md5Hash,
+                title: game.title,
+                systemName: game.system?.shortName ?? game.system?.name ?? "",
+                artworkPath: widgetArtworkRelativePath(for: game),
+                lastPlayedDate: recent.lastPlayedDate
+            )
+        }
+
+        let allGames = database.all(PVGame.self)
+        let totalCount = allGames.count
+        let systemCount = database.all(PVSystem.self).count
+        let totalPlayTime = allGames.sum(ofProperty: "timeSpentInGame") as Int
+        let favoritesCount = allGames.filter("isFavorite == true").count
+
+        let favoriteGameData: [WidgetGameData] = Array(
+            allGames.filter("isFavorite == true")
+                .sorted(byKeyPath: "title", ascending: true)
+                .prefix(12)
+        ).map { game in
+            WidgetGameData(id: game.md5Hash, title: game.title,
+                           systemName: game.system?.shortName ?? "",
+                           artworkPath: widgetArtworkRelativePath(for: game))
+        }
+
+        // Gallery: up to 12 random games from the library.
+        let gallerySlice = totalCount <= 12
+            ? Array(allGames.prefix(12))
+            : (0..<12).map { _ in allGames[Int.random(in: 0..<totalCount)] }
+        let galleryGameData: [WidgetGameData] = gallerySlice.map { game in
+            WidgetGameData(id: game.md5Hash, title: game.title,
+                           systemName: game.system?.shortName ?? "",
+                           artworkPath: widgetArtworkRelativePath(for: game))
+        }
+
+        WidgetDataWriter.shared.writeGameData(
+            recentGames: recentGameData,
+            galleryGames: galleryGameData,
+            favoriteGames: favoriteGameData,
+            totalCount: totalCount,
+            systemCount: systemCount,
+            totalPlayTimeSeconds: totalPlayTime,
+            favoritesCount: favoritesCount
+        )
+#endif
+    }
+
+    /// Returns the artwork path relative to the App Group container root for use
+    /// in widget data, or `nil` if app groups are disabled or the artwork file
+    /// does not exist in the cache.
+    ///
+    /// `PVMediaCache` stores artwork at `<documentsPath>/PVCache/<md5(key)>`.
+    /// When app groups are enabled, `documentsPath` IS `<container>/Documents/`,
+    /// so the relative path is `Documents/PVCache/<md5(key)>`.
+    private func widgetArtworkRelativePath(for game: PVGame) -> String? {
+        guard Defaults[.useAppGroups] else { return nil }
+        let artworkKey = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
+        guard !artworkKey.isEmpty else { return nil }
+
+        let keyHash = Insecure.MD5.hash(data: Data(artworkKey.utf8))
+            .map { String(format: "%02x", $0) }.joined()
+        let relPath = "Documents/PVCache/\(keyHash)"
+
+        let appGroupID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+            ?? "group.org.provenance-emu.provenance"
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            return nil
+        }
+        let fullURL = containerURL.appendingPathComponent(relPath)
+        guard FileManager.default.fileExists(atPath: fullURL.path) else { return nil }
+        return relPath
     }
 
     func doLoad(_ game: PVGame) async throws {

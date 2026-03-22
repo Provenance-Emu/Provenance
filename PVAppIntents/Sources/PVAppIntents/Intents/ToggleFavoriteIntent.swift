@@ -21,13 +21,13 @@ import Foundation
 /// Usage: "Hey Siri, add Donkey Kong Country to my Provenance favourites"
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
 public struct ToggleFavoriteIntent: AppIntent {
-    public static var title: LocalizedStringResource = "Toggle Favourite"
-    public static var description = IntentDescription(
+    public static let title: LocalizedStringResource = "Toggle Favourite"
+    public static let description = IntentDescription(
         "Marks or unmarks a game as a favourite in Provenance.",
         categoryName: "Games"
     )
 
-    public static var openAppWhenRun: Bool = false
+    public static let openAppWhenRun: Bool = false
 
     // MARK: - Parameters
 

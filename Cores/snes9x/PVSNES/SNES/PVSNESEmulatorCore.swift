@@ -84,7 +84,7 @@ extension PVSNES9xEmulatorCore: MouseResponder {
         // On tvOS the Siri Remote pan handler delivers per-event *relative* deltas in
         // view-point units — not normalised [0,1] absolute positions.  Pass them through
         // the dedicated delta path so we don't double-differentiate or misscale.
-        snesBridge.snesMouseMovedByDelta(point)
+        snesBridge.snesMouseMoved(byDelta: point)
 #else
         snesBridge.snesMouseMoved(to: point)
 #endif

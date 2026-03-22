@@ -17,8 +17,8 @@ import Foundation
 /// and the Shortcuts app.
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
 public struct GameEntity: AppEntity {
-    public static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Game")
-    public static var defaultQuery = GameEntityQuery()
+    public static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Game")
+    public static let defaultQuery = GameEntityQuery()
 
     // MARK: - Stored Properties
 

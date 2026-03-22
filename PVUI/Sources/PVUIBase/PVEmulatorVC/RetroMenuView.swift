@@ -673,8 +673,12 @@ struct RetroMenuView: View {
 #endif
 
 #if os(iOS) || os(tvOS)
-            broadcastButton
-            saveClipButton
+            if PVFeatureFlagsManager.shared.liveBroadcast {
+                broadcastButton
+            }
+            if PVFeatureFlagsManager.shared.clipBuffering {
+                saveClipButton
+            }
 #endif
 
             // MARK: - Peripherals section

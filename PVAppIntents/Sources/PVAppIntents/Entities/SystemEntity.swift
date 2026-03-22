@@ -16,8 +16,8 @@ import Foundation
 /// so users can say "Play a random Super Nintendo game on Provenance".
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
 public struct SystemEntity: AppEntity {
-    public static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "System")
-    public static var defaultQuery = SystemEntityQuery()
+    public static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "System")
+    public static let defaultQuery = SystemEntityQuery()
 
     // MARK: - Stored Properties
 

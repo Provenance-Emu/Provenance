@@ -91,6 +91,10 @@ public final class WidgetDataWriter: Sendable {
         static let nowPlaying = "widget.nowPlaying"
         static let gameCount = "widget.gameCount"
         static let galleryGames = "widget.galleryGames"
+        static let favoriteGames = "widget.favoriteGames"
+        static let systemCount = "widget.systemCount"
+        static let totalPlayTime = "widget.totalPlayTime"
+        static let favoritesCount = "widget.favoritesCount"
     }
 
     private var defaults: UserDefaults? {
@@ -105,11 +109,19 @@ public final class WidgetDataWriter: Sendable {
     /// - Parameters:
     ///   - recentGames: Recently-played games, ordered most-recent first (up to 12).
     ///   - galleryGames: Games chosen for art gallery rotation (up to 12).
+    ///   - favoriteGames: Favorite games sorted by title (up to 12).
     ///   - totalCount: Total number of games in the library.
+    ///   - systemCount: Number of distinct systems in the library.
+    ///   - totalPlayTimeSeconds: Aggregate play time across all games.
+    ///   - favoritesCount: Number of favorite games.
     public func writeGameData(
         recentGames: [WidgetGameData],
         galleryGames: [WidgetGameData],
-        totalCount: Int
+        favoriteGames: [WidgetGameData] = [],
+        totalCount: Int,
+        systemCount: Int = 0,
+        totalPlayTimeSeconds: Int = 0,
+        favoritesCount: Int = 0
     ) {
         guard let defaults else { return }
         let encoder = JSONEncoder()
@@ -121,7 +133,13 @@ public final class WidgetDataWriter: Sendable {
         if let data = try? encoder.encode(Array(galleryGames.prefix(12))) {
             defaults.set(data, forKey: Key.galleryGames)
         }
+        if let data = try? encoder.encode(Array(favoriteGames.prefix(12))) {
+            defaults.set(data, forKey: Key.favoriteGames)
+        }
         defaults.set(totalCount, forKey: Key.gameCount)
+        defaults.set(systemCount, forKey: Key.systemCount)
+        defaults.set(totalPlayTimeSeconds, forKey: Key.totalPlayTime)
+        defaults.set(favoritesCount, forKey: Key.favoritesCount)
 
         reloadWidgetTimelines()
     }
@@ -172,7 +190,7 @@ public final class WidgetDataWriter: Sendable {
 
     private func reloadWidgetTimelines() {
 #if canImport(WidgetKit) && os(iOS)
-        WidgetTimelineReloader.shared.requestReload()
+        Task { await WidgetTimelineReloader.shared.requestReload() }
 #endif
     }
 }

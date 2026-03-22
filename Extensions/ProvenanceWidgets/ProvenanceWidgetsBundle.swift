@@ -12,16 +12,29 @@ import WidgetKit
 
 /// Entry point for the Provenance Widgets extension.
 ///
-/// Included widgets:
-/// - **QuickLaunchWidget** — Lock Screen (circular, rectangular, inline): tap to launch last-played game
-/// - **NowPlayingWidget** — Lock Screen (inline, rectangular): shows current music track from Music Player (#2654)
-/// - **GameArtGalleryWidget** — StandBy (systemSmall): rotating game art gallery
-/// - **NowPlayingStandByWidget** — StandBy (systemSmall): full-screen album art + track info
+/// Home screen widgets:
+/// - **RecentlyPlayedWidget** — shows recently played games (small/medium/large)
+/// - **FavoritesWidget** — quick-access grid of favourite games (small/medium/large/xLarge)
+/// - **LibraryStatsWidget** — library overview (small/medium)
+///
+/// Lock Screen widgets:
+/// - **QuickLaunchWidget** — circular, rectangular, inline: tap to launch last-played game
+/// - **NowPlayingWidget** — inline/rectangular: current music track
+///
+/// StandBy widgets:
+/// - **GameArtGalleryWidget** — rotating game art gallery (systemSmall in StandBy)
+/// - **NowPlayingStandByWidget** — full-screen album art + track info (systemSmall in StandBy)
 @main
 struct ProvenanceWidgetsBundle: WidgetBundle {
     var body: some Widget {
+        // Home screen
+        RecentlyPlayedWidget()
+        FavoritesWidget()
+        LibraryStatsWidget()
+        // Lock Screen
         QuickLaunchWidget()
         NowPlayingWidget()
+        // StandBy
         GameArtGalleryWidget()
         NowPlayingStandByWidget()
     }

@@ -53,6 +53,11 @@ public enum PVFeature: String, CaseIterable {
     /// `PVWebServer*Notification` constants so the rest of the app is unaffected.
     /// Disabled by default while the new server stabilises (Epic #2758, Task A #2760).
     case modernWebServer = "modernWebServer"
+    /// Always-on ReplayKit clip buffering: keeps a rolling recording buffer so users
+    /// can save recent gameplay clips at any time. Disabled until the feature is stable.
+    case clipBuffering = "clipBuffering"
+    /// ReplayKit live broadcast (Go Live) button in the pause menu. Disabled until stable.
+    case liveBroadcast = "liveBroadcast"
 }
 
 /// Represents the type of app installation
@@ -156,6 +161,16 @@ public struct FeatureFlag: Codable, Sendable {
         minVersion: "3.1.0",
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         description: "Replaces the vendored 2015 ObjC GCDWebServer with a Swift-native Hummingbird HTTP/WebDAV server. Disabled by default while the new implementation stabilises (Epic #2758)."
+    )
+
+    public static let clipBuffering = FeatureFlag(
+        enabled: false,
+        description: "Always-on ReplayKit clip buffering. Keeps a rolling recording buffer so users can save recent gameplay clips. Disabled until stable."
+    )
+
+    public static let liveBroadcast = FeatureFlag(
+        enabled: false,
+        description: "ReplayKit Go Live broadcast button in the pause menu. Disabled until stable."
     )
 }
 
@@ -444,6 +459,8 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
     public var netplayEnabled: Bool { featureStates[.netplayEnabled] ?? false }
     public var modernWebServer: Bool { featureStates[.modernWebServer] ?? false }
+    public var clipBuffering: Bool { featureStates[.clipBuffering] ?? false }
+    public var liveBroadcast: Bool { featureStates[.liveBroadcast] ?? false }
 
     // MARK: - Feature Queries
 

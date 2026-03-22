@@ -10,18 +10,32 @@
 import WidgetKit
 import SwiftUI
 
+// MARK: - Entry
+
+struct LibraryStatsEntry: TimelineEntry {
+    let date: Date
+    let stats: WidgetLibraryStats
+    let isPlaceholder: Bool
+
+    static var placeholder: LibraryStatsEntry {
+        LibraryStatsEntry(
+            date: Date(),
+            stats: WidgetLibraryStats(totalGames: 0, totalSystems: 0, totalPlayTimeSeconds: 0, favoritesCount: 0),
+            isPlaceholder: true
+        )
+    }
+}
+
 // MARK: - Provider
 
 struct LibraryStatsProvider: TimelineProvider {
-    private let dataProvider = WidgetDataProvider()
-
     func placeholder(in context: Context) -> LibraryStatsEntry {
         .placeholder
     }
 
     func getSnapshot(in context: Context, completion: @escaping (LibraryStatsEntry) -> Void) {
         if context.isPreview {
-            let previewStats = LibraryStatsData(
+            let previewStats = WidgetLibraryStats(
                 totalGames: 247,
                 totalSystems: 18,
                 totalPlayTimeSeconds: 3 * 3600 + 25 * 60,
@@ -29,13 +43,13 @@ struct LibraryStatsProvider: TimelineProvider {
             )
             completion(LibraryStatsEntry(date: Date(), stats: previewStats, isPlaceholder: false))
         } else {
-            let stats = dataProvider.libraryStats()
+            let stats = WidgetSharedDefaults.loadLibraryStats()
             completion(LibraryStatsEntry(date: Date(), stats: stats, isPlaceholder: false))
         }
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<LibraryStatsEntry>) -> Void) {
-        let stats = dataProvider.libraryStats()
+        let stats = WidgetSharedDefaults.loadLibraryStats()
         let entry = LibraryStatsEntry(date: Date(), stats: stats, isPlaceholder: false)
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
@@ -93,7 +107,6 @@ struct LibraryStatsWidgetView: View {
 
     private var mediumView: some View {
         HStack(spacing: 0) {
-            // Left column — branding
             VStack(alignment: .leading, spacing: 4) {
                 Image(systemName: "books.vertical.fill")
                     .font(.title)
@@ -108,7 +121,6 @@ struct LibraryStatsWidgetView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 14)
 
-            // Right column — stats grid
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 statTile(value: String(entry.stats.totalGames), label: "Games", iconName: "gamecontroller.fill", color: .blue)
                 statTile(value: String(entry.stats.totalSystems), label: "Systems", iconName: "cpu.fill", color: .purple)
@@ -161,7 +173,7 @@ struct LibraryStatsWidgetView: View {
 } timeline: {
     LibraryStatsEntry(
         date: Date(),
-        stats: LibraryStatsData(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
+        stats: WidgetLibraryStats(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
         isPlaceholder: false
     )
 }
@@ -171,7 +183,7 @@ struct LibraryStatsWidgetView: View {
 } timeline: {
     LibraryStatsEntry(
         date: Date(),
-        stats: LibraryStatsData(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
+        stats: WidgetLibraryStats(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
         isPlaceholder: false
     )
 }

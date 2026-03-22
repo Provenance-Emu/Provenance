@@ -15,8 +15,8 @@ import Foundation
 /// Exposed to the Shortcuts app so users can automate "Continue [game] from slot 1".
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
 public struct SaveStateEntity: AppEntity {
-    public static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Save State")
-    public static var defaultQuery = SaveStateEntityQuery()
+    public static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Save State")
+    public static let defaultQuery = SaveStateEntityQuery()
 
     // MARK: - Stored Properties
 

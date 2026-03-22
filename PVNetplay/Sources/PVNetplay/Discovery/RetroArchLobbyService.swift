@@ -25,6 +25,8 @@ public final class RetroArchLobbyService: ObservableObject {
 
     private let lobbyURL = URL(string: "https://lobby.libretro.com/list/")!
     private var fetchTask: Task<Void, Never>?
+    /// Maximum seconds to wait for the lobby API before giving up.
+    private let fetchTimeout: TimeInterval = 15
 
     public init() {}
 
@@ -54,7 +56,8 @@ public final class RetroArchLobbyService: ObservableObject {
         defer { isFetching = false }
 
         do {
-            let (data, response) = try await URLSession.shared.data(from: lobbyURL)
+            let request = URLRequest(url: lobbyURL, timeoutInterval: fetchTimeout)
+            let (data, response) = try await URLSession.shared.data(for: request)
             guard !Task.isCancelled else { return }
 
             guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {

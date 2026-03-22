@@ -10,22 +10,21 @@
 import SwiftUI
 import UIKit
 
-/// Displays box art for a game from a local file path or falls back to a system-icon placeholder.
+/// Displays box art for a game or falls back to a system-icon placeholder.
+/// Pass `artworkData` as pre-loaded bytes from the timeline provider;
+/// no disk I/O is performed during rendering.
 struct GameArtworkView: View {
-    let entry: WidgetGameEntry
+    let artworkData: Data?
     let cornerRadius: CGFloat
 
-    init(entry: WidgetGameEntry, cornerRadius: CGFloat = 8) {
-        self.entry = entry
+    init(artworkData: Data?, cornerRadius: CGFloat = 8) {
+        self.artworkData = artworkData
         self.cornerRadius = cornerRadius
     }
 
     var body: some View {
         Group {
-            // artworkData is loaded at provider time (getTimeline/getSnapshot), so this
-            // call is cheap — no disk I/O occurs during widget rendering.
-            if let data = entry.artworkData,
-               let uiImage = UIImage(data: data) {
+            if let data = artworkData, let uiImage = UIImage(data: data) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)

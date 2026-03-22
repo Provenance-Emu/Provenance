@@ -10,26 +10,35 @@
 import WidgetKit
 import SwiftUI
 
+// MARK: - Entry
+
+struct RecentlyPlayedEntry: TimelineEntry {
+    let date: Date
+    let games: [WidgetGameEntry]
+    let isPlaceholder: Bool
+
+    static var placeholder: RecentlyPlayedEntry {
+        RecentlyPlayedEntry(date: Date(), games: [], isPlaceholder: true)
+    }
+}
+
 // MARK: - Provider
 
 struct RecentlyPlayedProvider: TimelineProvider {
-    private let dataProvider = WidgetDataProvider()
-
     func placeholder(in context: Context) -> RecentlyPlayedEntry {
         .placeholder
     }
 
     func getSnapshot(in context: Context, completion: @escaping (RecentlyPlayedEntry) -> Void) {
         let limit = gameLimit(for: context.family)
-        let games = dataProvider.recentGames(limit: limit)
+        let games = WidgetSharedDefaults.loadRecentGamesWithArtwork(limit: limit)
         completion(RecentlyPlayedEntry(date: Date(), games: games, isPlaceholder: context.isPreview && games.isEmpty))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<RecentlyPlayedEntry>) -> Void) {
         let limit = gameLimit(for: context.family)
-        let games = dataProvider.recentGames(limit: limit)
+        let games = WidgetSharedDefaults.loadRecentGamesWithArtwork(limit: limit)
         let entry = RecentlyPlayedEntry(date: Date(), games: games, isPlaceholder: false)
-        // Refresh every 15 minutes
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
@@ -91,7 +100,7 @@ struct RecentlyPlayedWidgetView: View {
             if let game = entry.games.first, let url = game.launchURL {
                 Link(destination: url) {
                     ZStack(alignment: .bottomLeading) {
-                        GameArtworkView(entry: game, cornerRadius: 12)
+                        GameArtworkView(artworkData: game.artworkData, cornerRadius: 12)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         VStack(alignment: .leading, spacing: 2) {
                             SystemBadgeView(systemShortName: game.systemShortName)
@@ -159,7 +168,7 @@ struct RecentlyPlayedWidgetView: View {
 
     private func gameRowContent(_ game: WidgetGameEntry) -> some View {
         HStack(spacing: 10) {
-            GameArtworkView(entry: game, cornerRadius: 6)
+            GameArtworkView(artworkData: game.artworkData, cornerRadius: 6)
                 .frame(width: 48, height: 48)
             VStack(alignment: .leading, spacing: 2) {
                 Text(game.title)
@@ -210,12 +219,11 @@ struct RecentlyPlayedWidgetView: View {
 
     // MARK: Helpers
 
-    /// Returns entry games padded to `count` with empty placeholder entries.
     private func paddedGames(count: Int) -> [WidgetGameEntry] {
         let games = Array(entry.games.prefix(count))
         if games.count == count { return games }
         let padding = (games.count..<count).map {
-            WidgetGameEntry(id: "placeholder-\($0)", title: "—", md5Hash: "", systemIdentifier: "", systemShortName: "", artworkData: nil, lastPlayedDate: nil, isFavorite: false)
+            WidgetGameEntry(id: "placeholder-\($0)", title: "—", systemName: "")
         }
         return games + padding
     }

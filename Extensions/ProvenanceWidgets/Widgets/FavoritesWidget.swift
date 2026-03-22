@@ -10,24 +10,34 @@
 import WidgetKit
 import SwiftUI
 
+// MARK: - Entry
+
+struct FavoritesEntry: TimelineEntry {
+    let date: Date
+    let games: [WidgetGameEntry]
+    let isPlaceholder: Bool
+
+    static var placeholder: FavoritesEntry {
+        FavoritesEntry(date: Date(), games: [], isPlaceholder: true)
+    }
+}
+
 // MARK: - Provider
 
 struct FavoritesProvider: TimelineProvider {
-    private let dataProvider = WidgetDataProvider()
-
     func placeholder(in context: Context) -> FavoritesEntry {
         .placeholder
     }
 
     func getSnapshot(in context: Context, completion: @escaping (FavoritesEntry) -> Void) {
         let limit = gameLimit(for: context.family)
-        let games = dataProvider.favoriteGames(limit: limit)
+        let games = WidgetSharedDefaults.loadFavoriteGamesWithArtwork(limit: limit)
         completion(FavoritesEntry(date: Date(), games: games, isPlaceholder: context.isPreview && games.isEmpty))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<FavoritesEntry>) -> Void) {
         let limit = gameLimit(for: context.family)
-        let games = dataProvider.favoriteGames(limit: limit)
+        let games = WidgetSharedDefaults.loadFavoriteGamesWithArtwork(limit: limit)
         let entry = FavoritesEntry(date: Date(), games: games, isPlaceholder: false)
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
@@ -117,12 +127,11 @@ struct FavoritesWidgetView: View {
     private func gameButton(_ game: WidgetGameEntry) -> some View {
         Group {
             if game.md5Hash.isEmpty {
-                // Padding placeholder tile
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(Color(.systemGray5).opacity(0.5))
             } else if let url = game.launchURL {
                 Link(destination: url) {
-                    GameArtworkView(entry: game, cornerRadius: 8)
+                    GameArtworkView(artworkData: game.artworkData, cornerRadius: 8)
                         .overlay(alignment: .bottom) {
                             Text(game.title)
                                 .font(.system(size: 8, weight: .semibold))
@@ -168,7 +177,7 @@ struct FavoritesWidgetView: View {
         let games = Array(entry.games.prefix(count))
         if games.count == count { return games }
         let padding = (games.count..<count).map {
-            WidgetGameEntry(id: "pad-\($0)", title: "", md5Hash: "", systemIdentifier: "", systemShortName: "", artworkData: nil, lastPlayedDate: nil, isFavorite: false)
+            WidgetGameEntry(id: "pad-\($0)", title: "", systemName: "")
         }
         return games + padding
     }

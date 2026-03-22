@@ -18,13 +18,13 @@ import Foundation
 /// Usage: "Hey Siri, how many games do I have in Provenance?"
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
 public struct GetLibraryStatsIntent: AppIntent {
-    public static var title: LocalizedStringResource = "Get Library Stats"
-    public static var description = IntentDescription(
+    public static let title: LocalizedStringResource = "Get Library Stats"
+    public static let description = IntentDescription(
         "Returns the total game count, system count, and other library statistics from Provenance.",
         categoryName: "Library"
     )
 
-    public static var openAppWhenRun: Bool = false
+    public static let openAppWhenRun: Bool = false
 
     // MARK: - Init
 

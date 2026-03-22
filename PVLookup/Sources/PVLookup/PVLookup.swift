@@ -299,34 +299,37 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         }
 
         /// Run OpenVGDB and LibretroDB searches in parallel
-        async let openVGDBResult: ROMMetadata? = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB search took \(String(format: "%.3f", duration))s")
+        var openVGDBMetadata: ROMMetadata?
+        var libretroDBMetadata: ROMMetadata?
+        await withTaskGroup(of: (Int, ROMMetadata?).self) { group in
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB search took \(String(format: "%.3f", duration))s")
+                }
+                guard let openVGDB = await self.getOpenVGDB() else { return (0, nil) }
+                return (0, try? await openVGDB.searchROM(byMD5: upperMD5))
             }
-
-            if let openVGDB = await getOpenVGDB() {
-                return try? await openVGDB.searchROM(byMD5: upperMD5)
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB search took \(String(format: "%.3f", duration))s")
+                }
+                guard let libreTroDB = await self.isolatedLibretroDB else { return (1, nil) }
+                return (1, try? await libreTroDB.searchROM(byMD5: upperMD5))
             }
-            return nil
-        }()
-
-        async let libretroDBResult: ROMMetadata? = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB search took \(String(format: "%.3f", duration))s")
+            for await (tag, result) in group {
+                switch tag {
+                case 0: openVGDBMetadata = result
+                case 1: libretroDBMetadata = result
+                default: break
+                }
             }
-
-            if let libreTroDB = await isolatedLibretroDB {
-                return try? await libreTroDB.searchROM(byMD5: upperMD5)
-            }
-            return nil
-        }()
+        }
 
         /// Await and merge results from primary databases
-        let (openVGDBMetadata, libretroDBMetadata) = await (openVGDBResult, libretroDBResult)
 
         if let mergedResult = openVGDBMetadata?.merged(with: libretroDBMetadata) ?? libretroDBMetadata?.merged(with: openVGDBMetadata) ?? openVGDBMetadata ?? libretroDBMetadata {
             cacheMD5Result(mergedResult, for: upperMD5)
@@ -413,75 +416,80 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run all database searches in parallel
-        async let openVGDBResults: [ROMMetadata] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB search took \(String(format: "%.3f", duration))s - found \(0) results")
+        var openVGDBResults: [ROMMetadata] = []
+        var libretroDatabaseResults: [ROMMetadata] = []
+        var shiraGameResults: [ROMMetadata] = []
+        var theGamesDBResults: [ROMMetadata] = []
+        await withTaskGroup(of: (Int, [ROMMetadata]).self) { group in
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                if shouldSearchOpenVGDB,
+                   let results = try? await self.openVGDB?.searchDatabase(usingFilename: filename, systemID: systemID) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (0, results)
+                }
+                return (0, [])
             }
-
-            if shouldSearchOpenVGDB,
-               let results = try? await openVGDB?.searchDatabase(usingFilename: filename, systemID: systemID) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                if shouldSearchLibretro,
+                   let results = try? await self.isolatedLibretroDB?.searchMetadata(usingFilename: filename, systemID: systemID) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (1, results)
+                }
+                return (1, [])
             }
-            return []
-        }()
-
-        async let libretroDatabaseResults: [ROMMetadata] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB search took \(String(format: "%.3f", duration))s - found \(0) results")
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("ShiraGame search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                if shouldSearchShiraGame,
+                   let results = try? await self.shiraGame?.searchDatabase(usingFilename: filename, systemID: systemID) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("ShiraGame search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (2, results)
+                }
+                return (2, [])
             }
-
-            if shouldSearchLibretro,
-               let results = try? await isolatedLibretroDB?.searchMetadata(usingFilename: filename, systemID: systemID) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                if shouldSearchTheGamesDB,
+                   let results = try? await self.isolatedTheGamesDB?.searchGames(name: filename, platformId: systemID?.theGamesDBID) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (3, results)
+                }
+                return (3, [])
             }
-            return []
-        }()
-
-        async let shiraGameResults: [ROMMetadata] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("ShiraGame search took \(String(format: "%.3f", duration))s - found \(0) results")
+            for await (tag, result) in group {
+                switch tag {
+                case 0: openVGDBResults = result
+                case 1: libretroDatabaseResults = result
+                case 2: shiraGameResults = result
+                case 3: theGamesDBResults = result
+                default: break
+                }
             }
-
-            if shouldSearchShiraGame,
-               let results = try? await shiraGame?.searchDatabase(usingFilename: filename, systemID: systemID) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("ShiraGame search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            }
-            return []
-        }()
-
-        async let theGamesDBResults: [ROMMetadata] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB search took \(String(format: "%.3f", duration))s - found \(0) results")
-            }
-
-            if shouldSearchTheGamesDB,
-               let results = try? await isolatedTheGamesDB?.searchGames(name: filename, platformId: systemID?.theGamesDBID) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            }
-            return []
-        }()
-
-        /// Await all results
-        let allResults = await (openVGDBResults, libretroDatabaseResults, shiraGameResults, theGamesDBResults)
+        }
 
         /// Combine results
-        let results = allResults.0 + allResults.1 + allResults.2 + allResults.3
+        let results = openVGDBResults + libretroDatabaseResults + shiraGameResults + theGamesDBResults
 
         let totalDuration = Date().timeIntervalSince(searchStartTime)
         cacheFilenameResult(results.isEmpty ? nil : results, for: cacheKey)
@@ -552,50 +560,49 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork mapping queries in parallel
-        async let openVGDBMappings: ArtworkMapping? = {
-            guard shouldSearchOpenVGDB else { return nil }
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB artwork mappings took \(String(format: "%.3f", duration))s")
+        var openVGDB: ArtworkMapping?
+        var libreTroDB: ArtworkMapping?
+        var theGamesDB: ArtworkMapping?
+        await withTaskGroup(of: (Int, ArtworkMapping?).self) { group in
+            group.addTask {
+                guard shouldSearchOpenVGDB else { return (0, nil) }
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB artwork mappings took \(String(format: "%.3f", duration))s")
+                }
+                guard let openVGDB = await self.isolatedOpenVGDB else { return (0, nil) }
+                return (0, try? openVGDB.getArtworkMappings())
             }
-
-            if let openVGDB = await isolatedOpenVGDB {
-                return try? openVGDB.getArtworkMappings()
+            group.addTask {
+                guard shouldSearchLibretro else { return (1, nil) }
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB artwork mappings took \(String(format: "%.3f", duration))s")
+                }
+                guard let libreTroDB = await self.isolatedLibretroDB else { return (1, nil) }
+                return (1, try? libreTroDB.getArtworkMappings())
             }
-            return nil
-        }()
-
-        async let libretroDBArtwork: ArtworkMapping? = {
-            guard shouldSearchLibretro else { return nil }
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB artwork mappings took \(String(format: "%.3f", duration))s")
+            group.addTask {
+                guard shouldSearchTheGamesDB else { return (2, nil) }
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB artwork mappings took \(String(format: "%.3f", duration))s")
+                }
+                guard let theGamesDB = await self.getTheGamesDB() else { return (2, nil) }
+                return (2, try? await theGamesDB.getArtworkMappings())
             }
-
-            if let libreTroDB = await isolatedLibretroDB {
-                return try? libreTroDB.getArtworkMappings()
+            for await (tag, result) in group {
+                switch tag {
+                case 0: openVGDB = result
+                case 1: libreTroDB = result
+                case 2: theGamesDB = result
+                default: break
+                }
             }
-            return nil
-        }()
-
-        async let theGamesDBMappings: ArtworkMapping? = {
-            guard shouldSearchTheGamesDB else { return nil }
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB artwork mappings took \(String(format: "%.3f", duration))s")
-            }
-
-            if let theGamesDB = await getTheGamesDB() {
-                return try? await theGamesDB.getArtworkMappings()
-            }
-            return nil
-        }()
-
-        /// Await all results
-        let (openVGDB, libreTroDB, theGamesDB) = await (openVGDBMappings, libretroDBArtwork, theGamesDBMappings)
+        }
 
         /// Merge results
         var mergedMD5: [String: [String: String]] = [:]
@@ -644,60 +651,67 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork URL queries in parallel
-        async let openVGDBUrls: [URL] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB artwork URLs lookup took \(String(format: "%.3f", duration))s")
+        var openVGDBUrls: [URL] = []
+        var libretroDBArtworkUrls: [URL] = []
+        var theGamesDBUrls: [URL] = []
+        await withTaskGroup(of: (Int, [URL]).self) { group in
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB artwork URLs lookup took \(String(format: "%.3f", duration))s")
+                }
+                if shouldSearchOpenVGDB,
+                   let openVGDB = await self.isolatedOpenVGDB,
+                   let urls = try? openVGDB.getArtworkURLs(forRom: rom) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB found \(urls.count) artwork URLs (\(String(format: "%.3f", duration))s)")
+                    return (0, urls)
+                }
+                return (0, [])
             }
-
-            if shouldSearchOpenVGDB,
-               let openVGDB = await isolatedOpenVGDB,
-               let urls = try? openVGDB.getArtworkURLs(forRom: rom) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB found \(urls.count) artwork URLs (\(String(format: "%.3f", duration))s)")
-                return urls
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB artwork URLs lookup took \(String(format: "%.3f", duration))s")
+                }
+                if shouldSearchLibretro,
+                   let libreTroDB = await self.isolatedLibretroDB,
+                   let urls = try? await libreTroDB.getArtworkURLs(forRom: rom) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB found \(urls.count) artwork URLs (\(String(format: "%.3f", duration))s)")
+                    return (1, urls)
+                }
+                return (1, [])
             }
-            return []
-        }()
-
-        async let libretroDBArtworkUrls: [URL] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB artwork URLs lookup took \(String(format: "%.3f", duration))s")
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB artwork URLs lookup took \(String(format: "%.3f", duration))s")
+                }
+                if shouldSearchTheGamesDB,
+                   let theGamesDB = await self.getTheGamesDB(),
+                   let urls = try? await theGamesDB.getArtworkURLs(forRom: rom) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB found \(urls.count) artwork URLs (\(String(format: "%.3f", duration))s)")
+                    return (2, urls)
+                }
+                return (2, [])
             }
-
-            if shouldSearchLibretro,
-               let libreTroDB = await isolatedLibretroDB,
-               let urls = try? await libreTroDB.getArtworkURLs(forRom: rom) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB found \(urls.count) artwork URLs (\(String(format: "%.3f", duration))s)")
-                return urls
+            for await (tag, result) in group {
+                switch tag {
+                case 0: openVGDBUrls = result
+                case 1: libretroDBArtworkUrls = result
+                case 2: theGamesDBUrls = result
+                default: break
+                }
             }
-            return []
-        }()
-
-        async let theGamesDBUrls: [URL] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB artwork URLs lookup took \(String(format: "%.3f", duration))s")
-            }
-
-            if shouldSearchTheGamesDB,
-               let theGamesDB = await getTheGamesDB(),
-               let urls = try? await theGamesDB.getArtworkURLs(forRom: rom) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB found \(urls.count) artwork URLs (\(String(format: "%.3f", duration))s)")
-                return urls
-            }
-            return []
-        }()
+        }
 
         /// Await and combine all results
-        let allUrls = await (openVGDBUrls, libretroDBArtworkUrls, theGamesDBUrls)
-        let urls = allUrls.0 + allUrls.1 + allUrls.2
+        let urls = openVGDBUrls + libretroDBArtworkUrls + theGamesDBUrls
 
         let totalDuration = Date().timeIntervalSince(searchStartTime)
         if urls.isEmpty {
@@ -835,42 +849,47 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let shouldSearchLibretro = databases.contains(.libretro)
 
         /// Run database searches in parallel
-        async let openVGDBResults: [ROMMetadata] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB MD5 search took \(String(format: "%.3f", duration))s - found \(0) results")
+        var openVGDB: [ROMMetadata] = []
+        var libreTroDB: [ROMMetadata] = []
+        await withTaskGroup(of: (Int, [ROMMetadata]).self) { group in
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB MD5 search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                if shouldSearchOpenVGDB,
+                   let openVGDB = await self.isolatedOpenVGDB,
+                   let results = try? openVGDB.searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: systemID) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB MD5 search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (0, results)
+                }
+                return (0, [])
             }
-
-            if shouldSearchOpenVGDB,
-               let openVGDB = await isolatedOpenVGDB,
-               let results = try? openVGDB.searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: systemID) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB MD5 search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
+            group.addTask {
+                let startTime = Date()
+                defer {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB MD5 search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                if shouldSearchLibretro,
+                   let libreTroDB = await self.isolatedLibretroDB,
+                   let results = try? await libreTroDB.searchMetadata(usingKey: "md5", value: upperMD5, systemID: systemID) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB MD5 search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (1, results)
+                }
+                return (1, [])
             }
-            return []
-        }()
-
-        async let libretroDatabaseResults: [ROMMetadata] = {
-            let startTime = Date()
-            defer {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB MD5 search took \(String(format: "%.3f", duration))s - found \(0) results")
+            for await (tag, result) in group {
+                switch tag {
+                case 0: openVGDB = result
+                case 1: libreTroDB = result
+                default: break
+                }
             }
-
-            if shouldSearchLibretro,
-               let libreTroDB = await isolatedLibretroDB,
-               let results = try? await libreTroDB.searchMetadata(usingKey: "md5", value: upperMD5, systemID: systemID) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB MD5 search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            }
-            return []
-        }()
-
-        /// Await all results
-        let (openVGDB, libreTroDB) = await (openVGDBResults, libretroDatabaseResults)
+        }
 
         /// Merge results with MD5 deduplication
         var resultsByMD5: [String: ROMMetadata] = [:]
@@ -920,77 +939,83 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork searches in parallel
-        async let openVGDBArtwork: [ArtworkMetadata] = {
-            guard shouldSearchOpenVGDB else {
-                ILOG("shouldSearchOpenVGDB false, skipping...")
-                return []
+        var openVGDBArtwork: [ArtworkMetadata] = []
+        var libretroDBArtwork: [ArtworkMetadata] = []
+        var theGamesDBartwork: [ArtworkMetadata] = []
+        await withTaskGroup(of: (Int, [ArtworkMetadata]).self) { group in
+            group.addTask {
+                guard shouldSearchOpenVGDB else {
+                    ILOG("shouldSearchOpenVGDB false, skipping...")
+                    return (0, [])
+                }
+                let startTime = Date()
+                if let results = try? await self.openVGDB?.searchArtwork(
+                    byGameName: name,
+                    systemID: systemID,
+                    artworkTypes: artworkTypes
+                   ) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB artwork search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (0, results)
+                } else {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                return (0, [])
             }
-            let startTime = Date()
-
-            if let results = try? await openVGDB?.searchArtwork(
-                byGameName: name,
-                systemID: systemID,
-                artworkTypes: artworkTypes
-               ) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB artwork search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            } else {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+            group.addTask {
+                guard shouldSearchLibretro else {
+                    ILOG("shouldSearchLibretro false, skipping...")
+                    return (1, [])
+                }
+                let startTime = Date()
+                if let results = try? await self.libreTroDB?.searchArtwork(
+                    byGameName: name,
+                    systemID: systemID,
+                    artworkTypes: artworkTypes
+                   ) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB artwork search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (1, results)
+                } else {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                return (1, [])
             }
-            return []
-        }()
-
-        async let libretroDBArtwork: [ArtworkMetadata] = {
-            guard shouldSearchLibretro else {
-                ILOG("shouldSearchLibretro false, skipping...")
-                return []
+            group.addTask {
+                guard shouldSearchTheGamesDB else {
+                    ILOG("shouldSearchTheGamesDB false, skipping...")
+                    return (2, [])
+                }
+                let startTime = Date()
+                if let theGamesDB = await self.getTheGamesDB(),
+                   let results = try? await theGamesDB.searchArtwork(
+                    byGameName: name,
+                    systemID: systemID,
+                    artworkTypes: artworkTypes
+                   ) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB artwork search took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (2, results)
+                } else {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                return (2, [])
             }
-
-            let startTime = Date()
-            if let results = try? await libreTroDB?.searchArtwork(
-                byGameName: name,
-                systemID: systemID,
-                artworkTypes: artworkTypes
-               ) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB artwork search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            } else {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+            for await (tag, result) in group {
+                switch tag {
+                case 0: openVGDBArtwork = result
+                case 1: libretroDBArtwork = result
+                case 2: theGamesDBartwork = result
+                default: break
+                }
             }
-            return []
-        }()
+        }
 
-        async let theGamesDBartwork: [ArtworkMetadata] = {
-            guard shouldSearchTheGamesDB else {
-                ILOG("shouldSearchTheGamesDB false, skipping...")
-                return []
-            }
-
-            let startTime = Date()
-
-            if let theGamesDB = await getTheGamesDB(),
-               let results = try? await theGamesDB.searchArtwork(
-                byGameName: name,
-                systemID: systemID,
-                artworkTypes: artworkTypes
-               ) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB artwork search took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            } else {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
-            }
-            return []
-        }()
-
-        /// Await all results
-        let allResults = await (openVGDBArtwork, libretroDBArtwork, theGamesDBartwork)
-        let results = allResults.0 + allResults.1 + allResults.2
+        /// Combine all results
+        let results = openVGDBArtwork + libretroDBArtwork + theGamesDBartwork
 
         // Sort artwork by type priority
         let sortedArtwork = sortArtworkByType(results)
@@ -1027,73 +1052,80 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork queries in parallel
-        async let openVGDBArtwork: [ArtworkMetadata] = {
-            guard shouldSearchOpenVGDB else {
-                ILOG("shouldSearchOpenVGDB false, skipping...")
-                return []
+        var openVGDBArtwork: [ArtworkMetadata] = []
+        var libretroDBArtwork: [ArtworkMetadata] = []
+        var theGamesDBartwork: [ArtworkMetadata] = []
+        await withTaskGroup(of: (Int, [ArtworkMetadata]).self) { group in
+            group.addTask {
+                guard shouldSearchOpenVGDB else {
+                    ILOG("shouldSearchOpenVGDB false, skipping...")
+                    return (0, [])
+                }
+                let startTime = Date()
+                if let results = try? await self.openVGDB?.getArtwork(
+                    forGameID: gameID,
+                    artworkTypes: artworkTypes
+                   ) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB artwork lookup took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (0, results)
+                } else {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("OpenVGDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                return (0, [])
             }
-            let startTime = Date()
-
-            if let results = try? await openVGDB?.getArtwork(
-                forGameID: gameID,
-                artworkTypes: artworkTypes
-               ) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB artwork lookup took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            } else {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("OpenVGDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+            group.addTask {
+                guard shouldSearchLibretro else {
+                    ILOG("shouldSearchLibretro false, skipping...")
+                    return (1, [])
+                }
+                let startTime = Date()
+                if let results = try? await self.libreTroDB?.getArtwork(
+                    forGameID: gameID,
+                    artworkTypes: artworkTypes
+                   ) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB artwork lookup took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (1, results)
+                } else {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("LibretroDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                return (1, [])
             }
-            return []
-        }()
-
-        async let libretroDBArtwork: [ArtworkMetadata] = {
-            guard shouldSearchLibretro else {
-                ILOG("shouldSearchLibretro false, skipping...")
-                return []
+            group.addTask {
+                guard shouldSearchTheGamesDB else {
+                    ILOG("shouldSearchTheGamesDB false, skipping...")
+                    return (2, [])
+                }
+                let startTime = Date()
+                if let theGamesDB = await self.getTheGamesDB(),
+                   let results = try? await theGamesDB.getArtwork(
+                    forGameID: gameID,
+                    artworkTypes: artworkTypes
+                   ) {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB artwork lookup took \(String(format: "%.3f", duration))s - found \(results.count) results")
+                    return (2, results)
+                } else {
+                    let duration = Date().timeIntervalSince(startTime)
+                    DLOG("TheGamesDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+                }
+                return (2, [])
             }
-            let startTime = Date()
-
-            if let results = try? await libreTroDB?.getArtwork(
-                forGameID: gameID,
-                artworkTypes: artworkTypes
-               ) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB artwork lookup took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            } else {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("LibretroDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
+            for await (tag, result) in group {
+                switch tag {
+                case 0: openVGDBArtwork = result
+                case 1: libretroDBArtwork = result
+                case 2: theGamesDBartwork = result
+                default: break
+                }
             }
-            return []
-        }()
-
-        async let theGamesDBartwork: [ArtworkMetadata] = {
-            guard shouldSearchTheGamesDB else {
-                ILOG("shouldSearchTheGamesDB false, skipping...")
-                return []
-            }
-            let startTime = Date()
-
-            if let theGamesDB = await getTheGamesDB(),
-               let results = try? await theGamesDB.getArtwork(
-                forGameID: gameID,
-                artworkTypes: artworkTypes
-               ) {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB artwork lookup took \(String(format: "%.3f", duration))s - found \(results.count) results")
-                return results
-            } else {
-                let duration = Date().timeIntervalSince(startTime)
-                DLOG("TheGamesDB artwork search took \(String(format: "%.3f", duration))s - found \(0) results")
-            }
-            return []
-        }()
+        }
 
         /// Await and combine all results
-        let allResults = await (openVGDBArtwork, libretroDBArtwork, theGamesDBartwork)
-        let results = allResults.0 + allResults.1 + allResults.2
+        let results = openVGDBArtwork + libretroDBArtwork + theGamesDBartwork
 
         // Sort artwork by type priority
         let sortedArtwork = sortArtworkByType(results)

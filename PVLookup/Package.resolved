@@ -1,13 +1,22 @@
 {
-  "originHash" : "b5c62efc980a518de3bb46d644c7353fded4c467fdb04d12580e09261c6739ff",
+  "originHash" : "d2c1f96c6da085f35f6887852a56a6b82be2d3952f7764515db3d4a36826ea8a",
   "pins" : [
     {
-      "identity" : "csqlite",
+      "identity" : "checksum",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stephencelis/CSQLite.git",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
       "state" : {
-        "revision" : "9106e983d5e3d5149ee35281ec089484b0def018",
-        "version" : "0.0.3"
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
+        "version" : "9.0.2"
       }
     },
     {
@@ -15,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/Lighter.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "b1c78989db429349427cd90b9b99925ff3253853"
+        "revision" : "b1c78989db429349427cd90b9b99925ff3253853",
+        "version" : "1.0.0"
       }
     },
     {
@@ -74,12 +83,21 @@
       }
     },
     {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
+      }
+    },
+    {
       "identity" : "swiftgenplugin",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
+        "version" : "1.0.0"
       }
     },
     {

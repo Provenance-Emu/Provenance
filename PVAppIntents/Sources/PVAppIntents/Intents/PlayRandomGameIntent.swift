@@ -15,13 +15,13 @@ import Foundation
 /// Usage: "Hey Siri, play a random SNES game on Provenance"
 @available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
 public struct PlayRandomGameIntent: AppIntent {
-    public static var title: LocalizedStringResource = "Play Random Game"
-    public static var description = IntentDescription(
+    public static let title: LocalizedStringResource = "Play Random Game"
+    public static let description = IntentDescription(
         "Picks a random game from your Provenance library and launches it.",
         categoryName: "Games"
     )
 
-    public static var openAppWhenRun: Bool = true
+    public static let openAppWhenRun: Bool = true
 
     // MARK: - Parameters
 

@@ -12,6 +12,9 @@ import PVEmulatorCore
 import PVFeatureFlags
 import PVSettings
 import PVLibrary
+#if canImport(PVNetplay)
+import PVNetplay
+#endif
 
 // MARK: - PauseTileMenuViewModel
 
@@ -74,10 +77,7 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
-        if featureFlags.netplayEnabled {
-            // Show the Network Play tile whenever netplay is enabled.
-            // Core-level capability gating is deferred to a later phase once
-            // PVNetplayCapable conformances are wired to emulator bridges.
+        if featureFlags.netplayEnabled && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
                 id: "networkPlay",
                 icon: "antenna.radiowaves.left.and.right",
@@ -244,6 +244,18 @@ final class PauseTileMenuViewModel: ObservableObject {
             colorKey: isActive ? .green : .orange,
             dismissOnTap: false
         )
+    }
+
+    /// Returns true only when the running core both conforms to `PVNetplayCapable`
+    /// and reports `supportsNetplay == true`. Falls back to false when PVNetplay is
+    /// not linked (e.g. stripped builds) so the tile is never shown unnecessarily.
+    private static func coreSupportsNetplay(_ emulatorVC: PVEmulatorViewController) -> Bool {
+#if canImport(PVNetplay)
+        guard let bridge = emulatorVC.core as? any PVNetplayCapable else { return false }
+        return bridge.supportsNetplay
+#else
+        return false
+#endif
     }
 
     private static func shouldSaveOnQuit(emulatorVC: PVEmulatorViewController) -> Bool {

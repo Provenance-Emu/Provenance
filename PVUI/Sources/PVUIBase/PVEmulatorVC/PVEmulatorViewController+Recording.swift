@@ -12,6 +12,7 @@ import Photos
 #endif
 import PVLogging
 import PVSettings
+import PVFeatureFlags
 import Defaults
 
 // MARK: - Live Broadcast (iOS + tvOS)
@@ -183,6 +184,7 @@ extension PVEmulatorViewController {
     /// - If the user previously declined, does nothing.
     public func startClipBufferingIfAvailable() {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
+        guard PVFeatureFlagsManager.shared.clipBuffering else { return }
         guard PVRecordingManager.shared.isAvailable else { return }
 
         if Defaults[.clipBufferingEnabled] {
@@ -197,19 +199,19 @@ extension PVEmulatorViewController {
 
     private func _promptClipBufferingOptIn() {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
+        // Mark as asked immediately so a swipe-dismiss / interruption (call, power-off)
+        // does not cause the prompt to reappear on the next game launch.
+        Defaults[.clipBufferingPermissionAsked] = true
         let alert = UIAlertController(
             title: "Save Gameplay Clips",
             message: "Provenance can keep a rolling buffer of your gameplay so you can save recent clips at any time.\n\nThis uses screen recording and requires your permission.",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "Enable Clips", style: .default) { [weak self] _ in
-            Defaults[.clipBufferingPermissionAsked] = true
             Defaults[.clipBufferingEnabled] = true
             self?._beginClipBuffering()
         })
-        alert.addAction(UIAlertAction(title: "Not Now", style: .cancel) { _ in
-            Defaults[.clipBufferingPermissionAsked] = true
-        })
+        alert.addAction(UIAlertAction(title: "Not Now", style: .cancel) { _ in })
         present(alert, animated: true)
     }
 

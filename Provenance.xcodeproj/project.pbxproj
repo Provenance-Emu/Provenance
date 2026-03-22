@@ -859,6 +859,11 @@
 		B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3DD04012F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3DD04022F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3DD06002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */; };
+		B3DD06012F20031900000001 /* Widgets/FavoritesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */; };
+		B3DD06022F20031900000001 /* Widgets/LibraryStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */; };
+		B3DD06032F20031900000001 /* Views/GameArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05032F20031900000001 /* Views/GameArtworkView.swift */; };
+		B3DD06042F20031900000001 /* Views/SystemBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */; };
 		B3DF8ED82CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
 		B3DF8ED92CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
 		B3DF8EDA2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
@@ -2686,6 +2691,11 @@
 		B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameArtGalleryWidget.swift; sourceTree = "<group>"; };
 		B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingStandByWidget.swift; sourceTree = "<group>"; };
 		B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSharedDefaults.swift; sourceTree = "<group>"; };
+		B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/RecentlyPlayedWidget.swift; sourceTree = "<group>"; };
+		B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/FavoritesWidget.swift; sourceTree = "<group>"; };
+		B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/LibraryStatsWidget.swift; sourceTree = "<group>"; };
+		B3DD05032F20031900000001 /* Views/GameArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/GameArtworkView.swift; sourceTree = "<group>"; };
+		B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SystemBadgeView.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DE9E462E2D7428008E97F6 /* PVDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVDolphin.xcframework; sourceTree = "<group>"; };
 		B3DE9E4D2E2D7AE9008E97F6 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVlibDolphin.xcframework; sourceTree = "<group>"; };
@@ -7093,11 +7103,16 @@
 			isa = PBXGroup;
 			children = (
 				B3DD01002F20031900000000 /* ProvenanceWidgetsBundle.swift */,
+				B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */,
 				B3DD01012F20031900000000 /* QuickLaunchWidget.swift */,
 				B3DD01022F20031900000000 /* NowPlayingWidget.swift */,
 				B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */,
 				B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */,
-				B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */,
+				B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */,
+				B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */,
+				B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */,
+				B3DD05032F20031900000001 /* Views/GameArtworkView.swift */,
+				B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */,
 			);
 			path = ProvenanceWidgets;
 			sourceTree = "<group>";
@@ -10969,6 +10984,11 @@
 				B3DD02032F20031900000000 /* GameArtGalleryWidget.swift in Sources */,
 				B3DD02042F20031900000000 /* NowPlayingStandByWidget.swift in Sources */,
 				B3DD02052F20031900000000 /* WidgetSharedDefaults.swift in Sources */,
+				B3DD06002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift in Sources */,
+				B3DD06012F20031900000001 /* Widgets/FavoritesWidget.swift in Sources */,
+				B3DD06022F20031900000001 /* Widgets/LibraryStatsWidget.swift in Sources */,
+				B3DD06032F20031900000001 /* Views/GameArtworkView.swift in Sources */,
+				B3DD06042F20031900000001 /* Views/SystemBadgeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15658,10 +15678,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtensionMacOS/ThumbnailExtensionMacOS.entitlements;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -15703,11 +15725,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtensionMacOS/ThumbnailExtensionMacOS.entitlements;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -15749,11 +15773,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtensionMacOS/ThumbnailExtensionMacOS.entitlements;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

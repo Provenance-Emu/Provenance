@@ -20,13 +20,13 @@ import Foundation
 public struct LaunchGameIntent: AppIntent, CustomIntentMigratedAppIntent {
     public static let intentClassName = "PVOpenIntent"
 
-    public static var title: LocalizedStringResource = "Launch Game"
-    public static var description = IntentDescription(
+    public static let title: LocalizedStringResource = "Launch Game"
+    public static let description = IntentDescription(
         "Opens a game in Provenance.",
         categoryName: "Games"
     )
 
-    public static var openAppWhenRun: Bool = true
+    public static let openAppWhenRun: Bool = true
 
     // MARK: - Parameters
 
