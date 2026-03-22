@@ -359,6 +359,172 @@ test_integration_all_downloads_fail() {
 }
 
 # ---------------------------------------------------------------------------
+# Tests: platform tracking — active_platform.txt and fast-path
+# ---------------------------------------------------------------------------
+
+test_active_platform_written_after_extraction() {
+    # After a successful run, active_platform.txt should record the built platform.
+    local workdir
+    workdir=$(_setup_integration_srcroot "platform_write")
+
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    make_mock_curl_success
+    make_mock_xxd_zip_valid
+    make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "ios"
+
+    SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || true
+
+    local platform_file="${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+    assert_file_exists "platform file written after extraction" "${platform_file}"
+    if [ -f "${platform_file}" ]; then
+        local stored_platform
+        stored_platform=$(cat "${platform_file}")
+        if [ "${stored_platform}" = "ios" ]; then
+            pass "platform file contains 'ios'"
+        else
+            fail "platform file should contain 'ios', got '${stored_platform}'"
+        fi
+    fi
+}
+
+test_fastpath_skips_extraction_when_platform_unchanged() {
+    # When: same platform as active_platform.txt, timestamp is fresh, ≥80% dylibs present.
+    # Expected: script exits 0 immediately without calling unzip.
+    local workdir
+    workdir=$(_setup_integration_srcroot "fastpath")
+
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    # Pre-populate modules/ with enough iOS dylibs (≥80% of 3 expected)
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_ios.dylib"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core2_libretro_ios.dylib"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core3_libretro_ios.dylib"
+    echo "ios" > "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+
+    # Write a far-future timestamp so the download interval has not expired
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS"
+    echo "9999999999" > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
+
+    # Mock unzip to create a sentinel file when called — fast-path must NOT call it
+    local flag_file="${workdir}/unzip_called"
+    cat > "${MOCK_BIN}/unzip" << UNZIPEOF
+#!/bin/bash
+touch "${flag_file}"
+exit 0
+UNZIPEOF
+    chmod +x "${MOCK_BIN}/unzip"
+
+    local output exit_code=0
+    output=$(SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" 2>&1) || exit_code=$?
+
+    assert_exit "fastpath: exits 0" 0 "${exit_code}"
+    assert_contains "fastpath: logs skipping message" "${output}" "skipping extraction"
+    assert_file_not_exists "fastpath: unzip was not called" "${flag_file}"
+}
+
+test_platform_switch_purges_old_dylibs() {
+    # When active_platform is ios but we build for tvOS, ios dylibs must be purged.
+    local workdir
+    workdir=$(_setup_integration_srcroot "platform_switch")
+
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls-tv.txt"
+
+    # Pre-populate modules/ with iOS dylibs and record ios as the active platform
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_ios.dylib"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core2_libretro_ios.dylib"
+    echo "ios" > "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+
+    make_mock_curl_success
+    make_mock_xxd_zip_valid
+    make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "tvos"
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="appletvos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    assert_exit "platform switch: exits 0" 0 "${exit_code}"
+    assert_file_not_exists "platform switch: ios dylib 1 purged" \
+        "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_ios.dylib"
+    assert_file_not_exists "platform switch: ios dylib 2 purged" \
+        "${workdir}/CoresRetro/RetroArch/modules/core2_libretro_ios.dylib"
+
+    local platform_file="${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+    if [ -f "${platform_file}" ]; then
+        local stored_platform
+        stored_platform=$(cat "${platform_file}")
+        if [ "${stored_platform}" = "tvos" ]; then
+            pass "platform file updated to 'tvos' after switch"
+        else
+            fail "platform file should be 'tvos', got '${stored_platform}'"
+        fi
+    else
+        fail "platform file should exist after switch"
+    fi
+}
+
+test_platform_switch_back_reuses_cached_dylibs() {
+    # Simulate: built iOS, then tvOS, then back to iOS.
+    # On the return to iOS: tvOS dylibs are purged and iOS ones re-extracted from cached
+    # zips (no re-download because the iOS timestamp is still fresh).
+    local workdir
+    workdir=$(_setup_integration_srcroot "switch_back")
+
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    # modules/ currently has tvOS dylibs (last platform was tvOS)
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_tvos.dylib"
+    echo "tvos" > "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+
+    # Simulate previously-cached iOS zip archives + a fresh timestamp (no re-download needed)
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS"
+    echo "9999999999" > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
+    # Write minimal valid zip files so the zip-validation loop finds something to extract
+    printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core1.zip"
+    printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core2.zip"
+    printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core3.zip"
+
+    # Mock tools: curl should NOT be called (timestamp is fresh); unzip creates ios dylibs
+    make_mock_curl_fail   # if download is accidentally triggered, fail loudly
+    make_mock_xxd_zip_valid
+    make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "ios"
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    assert_exit "switch back: exits 0" 0 "${exit_code}"
+    # tvOS dylibs should have been purged when we switched back to iOS
+    assert_file_not_exists "switch back: tvos dylib purged" \
+        "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_tvos.dylib"
+
+    local platform_file="${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+    if [ -f "${platform_file}" ]; then
+        local stored_platform
+        stored_platform=$(cat "${platform_file}")
+        if [ "${stored_platform}" = "ios" ]; then
+            pass "switch back: platform file updated to 'ios'"
+        else
+            fail "switch back: platform file should be 'ios', got '${stored_platform}'"
+        fi
+    else
+        fail "switch back: platform file should exist"
+    fi
+}
+
+# ---------------------------------------------------------------------------
 # Run all tests
 # ---------------------------------------------------------------------------
 setup_test_root
@@ -385,6 +551,11 @@ run_test "Corrupt zip detected and removed" test_corrupt_zip_detected
 
 run_test "Integration: all downloads succeed → exit 0 + dylibs created" test_integration_success
 run_test "Integration: all downloads fail → exit 1" test_integration_all_downloads_fail
+
+run_test "Platform tracking: active_platform.txt written after extraction" test_active_platform_written_after_extraction
+run_test "Platform fast-path: skips extraction on same platform + fresh timestamp" test_fastpath_skips_extraction_when_platform_unchanged
+run_test "Platform switch: iOS→tvOS purges ios dylibs" test_platform_switch_purges_old_dylibs
+run_test "Platform switch-back: tvOS→iOS purges tvos dylibs, reuses cached ios zips" test_platform_switch_back_reuses_cached_dylibs
 
 teardown_test_root
 print_summary
