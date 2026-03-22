@@ -156,6 +156,9 @@ struct TVMediaMainView: View {
             modalContent: { modal in modalContent(for: modal) },
             renameAlertContent: { renameAlertContent }
         )
+#if os(iOS)
+        .romDropTarget() // ROM drag & drop import (#2136)
+#endif
     }
 
     // MARK: - Main Layout Sections

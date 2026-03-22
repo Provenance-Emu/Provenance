@@ -773,6 +773,9 @@ struct HomeView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
+#if os(iOS)
+                .romDragSource(gameMD5: model.md5)
+#endif
                 .contextMenu {
                     if let live = liveGame(for: model) {
                         GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
@@ -812,6 +815,9 @@ struct HomeView: SwiftUI.View {
                     launchGame(md5: model.md5)
                 }
                 .focusableIfAvailable()
+#if os(iOS)
+                .romDragSource(gameMD5: model.md5)
+#endif
                 .contextMenu {
                     if let live = liveGame(for: model) {
                         GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
@@ -1170,6 +1176,9 @@ struct HomeView: SwiftUI.View {
             launchGame(md5: model.md5)
         }
         .focusableIfAvailable()
+#if os(iOS)
+        .romDragSource(gameMD5: model.md5)
+#endif
         .contextMenu {
             if let live = liveGame(for: model) {
                 GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
