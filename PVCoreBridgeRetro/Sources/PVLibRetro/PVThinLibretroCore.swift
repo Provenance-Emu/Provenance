@@ -459,7 +459,7 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                 md5: romMD5,
                 title: romTitleForLookup
             ) {
-                return 2 // RETRO_DEVICE_MOUSE
+                return LibretroDeviceType.mouse.rawValue
             }
         }
         // Dreamcast (Flycast): explicitly set port 0 device type so the core never silently
@@ -473,9 +473,9 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                 md5: romMD5,
                 title: romTitleForLookup
             ) {
-                return 2 // RETRO_DEVICE_MOUSE — Flycast maps this to MDT_Mouse on Maple port A
+                return LibretroDeviceType.mouse.rawValue // Flycast maps this to MDT_Mouse on Maple port A
             }
-            return 1 // RETRO_DEVICE_JOYPAD — prevent Flycast from defaulting to mouse
+            return LibretroDeviceType.joypad.rawValue // prevent Flycast from defaulting to mouse
         }
         return nil
     }
