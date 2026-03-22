@@ -308,6 +308,42 @@ public final class SaveExporter: @unchecked Sendable {
         ILOG("SaveExporter: import complete for game '\(frozenGame.title)'")
     }
 
+    // MARK: - Manifest Inspection
+
+    /// Reads the `manifest.json` embedded in a save-export bundle and returns
+    /// the MD5 hash of the game the bundle belongs to.
+    ///
+    /// This is a lightweight operation: the zip is extracted to a temp directory,
+    /// only `manifest.json` is read, and the temp directory is immediately removed.
+    ///
+    /// - Parameter zipURL: URL of the `.zip` save-export bundle.
+    /// - Returns: The lowercase MD5 hash string from the manifest, or `nil` if the
+    ///   archive is not a valid save-export bundle (e.g. missing manifest, wrong format).
+    public func gameMD5(inBundleAt zipURL: URL) -> String? {
+        let fm = FileManager.default
+        let tempDir = fm.temporaryDirectory
+            .appendingPathComponent("PVManifestPeek_\(UUID().uuidString)", isDirectory: true)
+        defer { try? fm.removeItem(at: tempDir) }
+
+        do {
+            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
+            guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path) else {
+                return nil
+            }
+            let manifestURL = tempDir.appendingPathComponent("manifest.json")
+            guard fm.fileExists(atPath: manifestURL.path),
+                  let data = try? Data(contentsOf: manifestURL),
+                  let manifest = try JSONSerialization.jsonObject(with: data) as? [String: String],
+                  let md5 = manifest["game"], !md5.isEmpty else {
+                return nil
+            }
+            return md5.lowercased()
+        } catch {
+            WLOG("SaveExporter: failed to read bundle manifest: \(error)")
+            return nil
+        }
+    }
+
     // MARK: - Helpers
 
     private func restoreDirectory(from source: URL, to destination: URL) throws {

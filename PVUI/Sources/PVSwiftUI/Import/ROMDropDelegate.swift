@@ -19,10 +19,17 @@ import PVUIBase
 // MARK: - Accepted drop types
 
 /// UTTypes accepted by the ROM drop target.
-/// Covers file URLs and generic binary data files that the OS may not map
-/// to a more specific type.
+///
+/// - `.fileURL`        — direct file-URL drops from the Files app and other sources
+/// - `.archive`        — `.zip` archives (ROM zips, save-export bundles, etc.)
+/// - `.data`           — fallback for providers that only advertise generic binary data
+///
+/// Zip archives are explicitly included because many ROM sets are distributed as `.zip`
+/// files and because `SaveExporter` export bundles are zips that can be re-imported via
+/// the save-states browser drop target (`SaveBundleDropModifier`).
 private let romAcceptedTypes: [UTType] = [
     .fileURL,
+    .archive,
     .data,
 ]
 
@@ -76,6 +83,22 @@ public struct ROMDropTargetModifier: ViewModifier {
                         enqueueURL(stableURL)
                     } catch {
                         ELOG("ROMDropDelegate: failed to copy drop to stable location: \(error)")
+                    }
+                }
+                handled = true
+            } else if provider.hasItemConformingToTypeIdentifier(UTType.archive.identifier) {
+                // Zip / archive: use loadFileRepresentation so the OS writes it to a temp URL.
+                provider.loadFileRepresentation(forTypeIdentifier: UTType.archive.identifier) { url, error in
+                    if let error {
+                        ELOG("ROMDropDelegate: loadFileRepresentation (archive) error: \(error)")
+                        return
+                    }
+                    guard let url else { return }
+                    do {
+                        let stableURL = try Self.stableCopy(of: url)
+                        enqueueURL(stableURL)
+                    } catch {
+                        ELOG("ROMDropDelegate: failed to copy drop (archive) to stable location: \(error)")
                     }
                 }
                 handled = true

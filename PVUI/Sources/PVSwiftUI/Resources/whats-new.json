@@ -560,6 +560,18 @@
         "symbolColor": "green",
         "title": "Drop to Import",
         "subtitle": "Drop a save export zip or a .sav battery save file onto a game card to instantly import it."
+      },
+      {
+        "symbolName": "tray.and.arrow.down.fill",
+        "symbolColor": "blue",
+        "title": "Drop ROMs to Import",
+        "subtitle": "Drag ROM files and zip archives from the Files app or AirDrop directly into the game library — no file picker needed."
+      },
+      {
+        "symbolName": "square.and.arrow.up.fill",
+        "symbolColor": "purple",
+        "title": "Drag Games to Export",
+        "subtitle": "Long-press any game in your library and drag it out to the Files app, AirDrop, or any compatible destination."
       }
     ]
   }

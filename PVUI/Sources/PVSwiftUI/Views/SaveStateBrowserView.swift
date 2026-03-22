@@ -15,6 +15,9 @@ import PVRealm
 import PVThemes
 import PVUIBase
 import PVLogging
+#if canImport(UIKit)
+import UIKit
+#endif
 
 // MARK: - Data Models
 
@@ -50,6 +53,13 @@ public struct SaveStateBrowserView: View {
     @State private var computedGroups: [SaveStateGameGroup] = []
     /// Raw items fetched from the store — filtering/grouping is applied client-side.
     @State private var allItems: [RetroSaveStateItem] = []
+
+    // MARK: - Drop import state
+    #if os(iOS)
+    @State private var dropImportAlertTitle: String = ""
+    @State private var dropImportAlertMessage: String = ""
+    @State private var showDropImportAlert: Bool = false
+    #endif
     // Artwork URL resolution is delegated to ArtworkLoader.shared which provides
     // a process-wide memo cache via resolveLocalArtworkFileURL(forGameId:).
 
@@ -88,6 +98,16 @@ public struct SaveStateBrowserView: View {
         #if os(iOS)
         .navigationViewStyle(.stack)
         #endif
+        #if os(iOS)
+        .saveBundleDropTarget { result in
+            handleDropImportResult(result)
+        }
+        .alert(dropImportAlertTitle, isPresented: $showDropImportAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(dropImportAlertMessage)
+        }
+        #endif
         .task {
             allItems = await store.loadAll()
             applyFilters()
@@ -95,6 +115,26 @@ public struct SaveStateBrowserView: View {
         .onChange(of: showAutosaves) { _ in applyFilters() }
         .onChange(of: searchText) { _ in applyFilters() }
     }
+
+    // MARK: - Drop import handler
+
+    #if os(iOS)
+    @MainActor
+    private func handleDropImportResult(_ result: SaveBundleDropResult) {
+        switch result {
+        case .success(let gameTitle):
+            dropImportAlertTitle = "Import Complete"
+            dropImportAlertMessage = "Save files for \(gameTitle) have been restored. Relaunch the app or re-scan your library to see the imported states."
+        case .missingGame:
+            dropImportAlertTitle = "Game Not Found"
+            dropImportAlertMessage = "The dropped save bundle belongs to a game that is not in your library."
+        case .failure(let error):
+            dropImportAlertTitle = "Import Failed"
+            dropImportAlertMessage = error.localizedDescription
+        }
+        showDropImportAlert = true
+    }
+    #endif
 
     // MARK: - Data Helpers
 
@@ -361,6 +401,9 @@ private struct SaveStateBrowserItemRow: View {
             .buttonStyle(.plain)
         }
         .padding(.vertical, 4)
+        #if os(iOS)
+        .saveStateDragSource(saveStateID: item.id)
+        #endif
         #if !os(tvOS)
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {

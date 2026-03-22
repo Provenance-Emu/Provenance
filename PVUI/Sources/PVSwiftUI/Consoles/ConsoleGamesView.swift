@@ -938,9 +938,9 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
                 }
-#if !os(tvOS) && !os(watchOS)
-                .onDrag { romDragProvider(for: model) }
-#endif
+                #if os(iOS)
+                .romDragSource(gameMD5: model.md5)
+                #endif
             }
         }
         .padding(.horizontal, 10)
@@ -1074,9 +1074,9 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
                 }
-#if !os(tvOS) && !os(watchOS)
-                .onDrag { romDragProvider(for: model) }
-#endif
+                #if os(iOS)
+                .romDragSource(gameMD5: model.md5)
+                #endif
                 GamesDividerView()
             }
         }
@@ -1236,6 +1236,9 @@ struct ConsoleGamesView: SwiftUI.View {
                                 )
                             }
                         }
+                        #if os(iOS)
+                        .romDragSource(gameMD5: game.md5)
+                        #endif
                         GamesDividerView()
                     }
                 }
