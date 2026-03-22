@@ -145,6 +145,9 @@ struct TVMediaGameTileView: View {
         .tvMediaFocusable()
         .applyGameFocus(focusedGameID: focusedGameID, fallback: $isFocusedInternal, id: game.id)
         .contextMenu { contextMenu() }
+#if !os(tvOS)
+        .onDrag { romDragProvider(for: game) }
+#endif
         .task(id: game.id) {
             await loadArtworkIfNeeded()
         }
@@ -191,6 +194,20 @@ struct TVMediaGameTileView: View {
         .saveStateDropTarget(gameId: game.md5Hash)
         #endif
     }
+
+    // MARK: - Drag Export
+
+#if !os(tvOS)
+    /// Creates an `NSItemProvider` for dragging a game's ROM file to Files.app / AirDrop.
+    /// Returns an empty provider when the ROM file is missing or iCloud-evicted.
+    private func romDragProvider(for game: PVGame) -> NSItemProvider {
+        guard let url = game.file?.url,
+              FileManager.default.fileExists(atPath: url.path) else {
+            return NSItemProvider()
+        }
+        return NSItemProvider(contentsOf: url) ?? NSItemProvider(object: url as NSURL)
+    }
+#endif
 
     // MARK: - Artwork View
 
