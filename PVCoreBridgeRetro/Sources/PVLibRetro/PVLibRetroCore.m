@@ -3637,6 +3637,13 @@ static os_unfair_lock    sPendingKeyLock  = OS_UNFAIR_LOCK_INIT;
     }
 }
 
+- (void)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port {
+    retro_ctx_controller_info_t pad;
+    pad.port   = port;
+    pad.device = device;
+    core_set_controller_port_device(&pad);
+}
+
 @end
 
 #pragma clang diagnostic pop

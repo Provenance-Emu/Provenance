@@ -11,12 +11,13 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVCoreObjCBridge
 import PVCoreBridgeRetro
+import PVSystems
 
 @objc
 @objcMembers
 open class PVFlycastEmuCore: PVEmulatorCore {
 
-    let _bridge: PVFlycastEmuCoreBridge = .init()
+    let _bridge: PVFlycastCoreBridge = .init()
 
     /// Flycast supports a pure-interpreter path when JIT is unavailable.
     /// JIT recompiler gives a significant performance boost but is not required.
@@ -50,7 +51,16 @@ extension PVFlycastEmuCore: PVDreamcastSystemResponderClient {
 }
 
 extension PVFlycastEmuCore: MouseResponder {
-    public var gameSupportsMouse: Bool { true }
+    /// Returns true only for known Dreamcast mouse games, checked via MouseGameRegistry.
+    /// Non-mouse games will use the standard controller without a mouse overlay.
+    public var gameSupportsMouse: Bool {
+        MouseGameRegistry.shared.gameSupportsMouse(
+            systemIdentifier: .Dreamcast,
+            md5: romMD5,
+            title: romName
+        )
+    }
+
     public var requiresMouse: Bool { false }
 
 #if canImport(GameController)
@@ -60,9 +70,13 @@ extension PVFlycastEmuCore: MouseResponder {
     public var mouseMovedHandler: GCMouseMoved? { nil }
 #endif
     public func mouseMoved(atPoint point: CGPoint) {
+        // Lazily configure the Dreamcast mouse port on first mouse input.
+        // configureDreamcastMousePort is idempotent so this is safe to call every frame.
+        _bridge.configureDreamcastMousePort()
         (_bridge as! MouseResponder).mouseMoved(atPoint: point)
     }
     public func mouseMoved(at point: CGPoint) {
+        _bridge.configureDreamcastMousePort()
         (_bridge as! MouseResponder).mouseMoved(atPoint: point)
     }
     public func leftMouseDown(at point: CGPoint) {

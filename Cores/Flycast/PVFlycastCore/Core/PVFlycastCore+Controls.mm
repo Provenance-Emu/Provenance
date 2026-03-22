@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
+@import PVCoreBridgeRetro;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -193,6 +194,61 @@ s8 joyx[4], joyy[4];
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
     [self didReleaseDreamcastButton:(PVDreamcastButton)button forPlayer:player];
+}
+
+#pragma mark - MouseResponder
+
+- (BOOL)gameSupportsMouse {
+    // The Dreamcast Maple bus CAN host a mouse device; per-game filtering is
+    // handled at the Swift layer (PVFlycastEmuCore.gameSupportsMouse) via
+    // MouseGameRegistry.  Always returning YES here ensures the libretro
+    // frontend reports RETRO_DEVICE_MOUSE capability to the Flycast core.
+    return YES;
+}
+
+- (BOOL)requiresMouse {
+    return NO;
+}
+
+// Swift @objc protocol selector: mouseMoved(atPoint:) → ObjC: mouseMovedAtPoint:
+- (void)mouseMovedAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
+}
+
+// Swift @objc protocol selector: leftMouseDown(atPoint:) → ObjC: leftMouseDownAtPoint:
+- (void)leftMouseDownAtPoint:(CGPoint)point {
+    [self setLeftMouseButtonPressed:YES];
+}
+
+- (void)leftMouseUp {
+    [self setLeftMouseButtonPressed:NO];
+}
+
+// Swift @objc protocol selector: rightMouseDown(atPoint:) → ObjC: rightMouseDownAtPoint:
+- (void)rightMouseDownAtPoint:(CGPoint)point {
+    [self setRightMouseButtonPressed:YES];
+}
+
+- (void)rightMouseUp {
+    [self setRightMouseButtonPressed:NO];
+}
+
+#if __has_include(<GameController/GameController.h>)
+- (void)didScroll:(GCDeviceCursor *)cursor API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // Scroll wheel not used by Dreamcast mouse — no-op.
+}
+
+- (GCMouseMoved)mouseMovedHandler {
+    return nil;
+}
+#endif
+
+- (void)configureDreamcastMousePort {
+    // Set port 0 (Maple bus A) to RETRO_DEVICE_MOUSE (value = 2) so that
+    // Flycast creates a Maple mouse device for mouse-peripheral games.
+    // This is safe to call multiple times — retro_set_controller_port_device
+    // is idempotent and simply updates the Maple device type.
+    [self pv_setControllerPortDevice:RETRO_DEVICE_MOUSE forPort:0];
 }
 
 @end
