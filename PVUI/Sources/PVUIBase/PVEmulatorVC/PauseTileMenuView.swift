@@ -164,6 +164,13 @@ struct PauseTileMenuView: View {
                 await emulatorVC.quit(optionallySave: false)
             }
 
+        // MARK: Companion Controller
+        case "companionController":
+            #if !os(tvOS)
+            dismissAction(false)
+            emulatorVC.presentCompanionController()
+            #endif
+
         // MARK: Transfer Pak config sheet
         case "transferPak":
             showingTransferPakConfig = true

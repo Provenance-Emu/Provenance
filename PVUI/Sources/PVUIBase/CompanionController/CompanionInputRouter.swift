@@ -4,75 +4,17 @@
 // Translates button/axis events from a CompanionLayout into DSU slot state updates.
 // Acts as the bridge between the SwiftUI overlay and the DSU transport layer.
 //
-// When the DSU module (PVControllerDSU) lands, replace the stub types below with
-// real imports from that module.
+// CompanionButton, CompanionAxisID, and CompanionInputEvent are defined in
+// PVCoreBridge so that emulator core bridges (Tier 4) can adopt
+// CompanionControllerCapable without depending on PVUI.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 import Foundation
 import Combine
+import PVCoreBridge
 
-// MARK: - CompanionButton
-
-/// Logical button identifiers shared across all companion layouts.
-/// Maps onto the DSU button bitmask defined in the DSU protocol.
-public enum CompanionButton: UInt32, CaseIterable, Sendable {
-    // Face buttons
-    case south      = 0x0001   // Cross / A
-    case east       = 0x0002   // Circle / B
-    case west       = 0x0004   // Square / X
-    case north      = 0x0008   // Triangle / Y
-
-    // Shoulder
-    case l1         = 0x0010
-    case r1         = 0x0020
-    case l2         = 0x0040
-    case r2         = 0x0080
-
-    // Special
-    case select     = 0x0100
-    case start      = 0x0200
-    case l3         = 0x0400
-    case r3         = 0x0800
-
-    // D-pad
-    case dpadUp     = 0x1000
-    case dpadDown   = 0x2000
-    case dpadLeft   = 0x4000
-    case dpadRight  = 0x8000
-
-    // Numpad digits (extra buttons for systems with keypads)
-    case num0       = 0x00010000
-    case num1       = 0x00020000
-    case num2       = 0x00040000
-    case num3       = 0x00080000
-    case num4       = 0x00100000
-    case num5       = 0x00200000
-    case num6       = 0x00400000
-    case num7       = 0x00800000
-    case num8       = 0x01000000
-    case num9       = 0x02000000
-    case numStar    = 0x04000000   // * (Atari/Coleco side button)
-    case numHash    = 0x08000000   // # (Atari/Coleco side button)
-}
-
-// MARK: - CompanionAxisID
-
-/// Named axes for joystick and trigger events.
-public enum CompanionAxisID: Hashable, Sendable {
-    case leftX, leftY
-    case rightX, rightY
-    case l2Analog, r2Analog
-}
-
-// MARK: - CompanionInputEvent
-
-/// A discrete input event emitted by a companion layout component.
-public enum CompanionInputEvent: Sendable {
-    case buttonDown(CompanionButton)
-    case buttonUp(CompanionButton)
-    case axisChanged(CompanionAxisID, Float)   // value: -1.0 … 1.0
-}
+// CompanionButton, CompanionAxisID, CompanionInputEvent — re-exported from PVCoreBridge.
 
 // MARK: - CompanionInputRouter
 
