@@ -99,6 +99,12 @@ public extension PVEmulatorViewController {
                 ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1), \(response.unlocks?.count ?? 0) existing unlocks.")
                 // Prepare the core's achievement runtime (rcheevos or equivalent).
                 await achievementsCore.prepareAchievements(gameHash: gameHash)
+                // achievementsActive is now true; enforce the speed restriction in
+                // case the user enabled fast-forward in the window between this
+                // function returning and the async session becoming active.
+                if achievementsCore.hardcoreMode && achievementsCore.achievementsActive {
+                    await MainActor.run { self.core.gameSpeed = .normal }
+                }
             } catch AchievementSessionError.unknownGame(let hash) {
                 ILOG("RetroAchievements: game hash \(hash) not in database, achievements unavailable.")
             } catch {

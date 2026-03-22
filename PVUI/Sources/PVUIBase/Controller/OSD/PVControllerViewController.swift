@@ -1865,8 +1865,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc private func fastForwardTapped() {
         guard let core = emulatorCore as? PVEmulatorCore else { return }
 
-        // RetroAchievements hardcore mode disallows fast-forward.
-        if let emulatorViewController = parent as? PVEmulatorViewController,
+        let willEnableFastForward = !isFastForwardActive
+
+        // RetroAchievements hardcore mode disallows entering fast-forward,
+        // but should still allow returning to normal speed.
+        if willEnableFastForward,
+           let emulatorViewController = parent as? PVEmulatorViewController,
            emulatorViewController.achievementsBlocksFastForward() {
             presentError(
                 "Fast-forward is disabled in RetroAchievements Hardcore Mode.",

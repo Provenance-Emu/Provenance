@@ -644,15 +644,16 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
-        // RetroAchievements hardcore mode disallows fast-forward.
-        guard !isFastForwardBlockedByHardcore() else { return }
-
-        // If already in fast mode, go back to normal
+        // If already in fast mode, go back to normal regardless of hardcore mode
+        // (we always allow returning to normal speed).
         if core.gameSpeed == .fast || core.gameSpeed == .veryFast {
             DLOG("Returning to normal speed from fast mode")
             core.gameSpeed = .normal
             return
         }
+
+        // RetroAchievements hardcore mode disallows *entering* fast-forward.
+        guard !isFastForwardBlockedByHardcore() else { return }
 
         // Otherwise, set to fast mode
         DLOG("Setting game speed to fast")
@@ -698,8 +699,17 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
-        // Reset to normal speed or previous speed
-        if let previousSpeed = previousGameSpeed {
+        // Reset to normal speed or previous speed.
+        // If hardcore mode is now active, never restore a fast speed —
+        // cap at .normal to avoid re-enabling a speed that became blocked.
+        let hardcoreActive: Bool
+        if let achievementsCore = emulatorCore as? (any CoreRetroAchievements) {
+            hardcoreActive = achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+        } else {
+            hardcoreActive = false
+        }
+        if let previousSpeed = previousGameSpeed,
+           !hardcoreActive || (previousSpeed != .fast && previousSpeed != .veryFast) {
             DLOG("Restoring previous game speed: \(previousSpeed)")
             core.gameSpeed = previousSpeed
         } else {
