@@ -159,6 +159,7 @@ public struct SaveBundleDropModifier: ViewModifier {
                     processDroppedZip(url)
                 }
                 handled = true
+                break
             } else {
                 // Fallback: provider vends raw data — let the OS write it to a temp file.
                 // Prefer a concrete registered archive type (e.g. public.zip-archive) over the
@@ -178,6 +179,7 @@ public struct SaveBundleDropModifier: ViewModifier {
                         processDroppedZip(url)
                     }
                     handled = true
+                    break
                 } else if provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) {
                     provider.loadFileRepresentation(forTypeIdentifier: UTType.data.identifier) { url, error in
                         if let error {
@@ -189,6 +191,7 @@ public struct SaveBundleDropModifier: ViewModifier {
                         processDroppedZip(url)
                     }
                     handled = true
+                    break
                 }
             }
         }

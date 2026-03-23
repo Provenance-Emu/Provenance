@@ -238,6 +238,8 @@ public final class SaveExporter: @unchecked Sendable {
         guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path) else {
             throw SaveExportError.invalidBundle("Failed to extract archive.")
         }
+        // Defense-in-depth: verify no extracted entry escaped tempDir.
+        try validateNoBundleEscape(in: tempDir)
 
         // Read and validate manifest
         let manifestURL = tempDir.appendingPathComponent("manifest.json")
@@ -346,6 +348,8 @@ public final class SaveExporter: @unchecked Sendable {
             guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path) else {
                 return nil
             }
+            // Defense-in-depth: verify no extracted entry escaped tempDir via symlinks or traversal paths.
+            try validateNoBundleEscape(in: tempDir)
             let manifestURL = tempDir.appendingPathComponent("manifest.json")
             // Guard against path traversal: ensure the manifest URL resolves inside tempDir.
             let tempDirResolved = tempDir.resolvingSymlinksInPath().path
@@ -365,6 +369,24 @@ public final class SaveExporter: @unchecked Sendable {
     }
 
     // MARK: - Helpers
+
+    /// Validates that every file/symlink extracted into `directory` resolves to a path
+    /// within that directory, guarding against Zip Slip / path traversal in untrusted archives.
+    ///
+    /// - Throws: `SaveExportError.invalidBundle` if any entry resolves outside `directory`.
+    private func validateNoBundleEscape(in directory: URL) throws {
+        let resolvedBase = directory.resolvingSymlinksInPath().path
+        let fm = FileManager.default
+        guard let enumerator = fm.enumerator(at: directory,
+                                              includingPropertiesForKeys: [.isSymbolicLinkKey],
+                                              options: [.skipsPackageDescendants]) else { return }
+        for case let fileURL as URL in enumerator {
+            let realPath = fileURL.resolvingSymlinksInPath().path
+            guard realPath.hasPrefix(resolvedBase) else {
+                throw SaveExportError.invalidBundle("Archive contains a path traversal entry: \(fileURL.lastPathComponent)")
+            }
+        }
+    }
 
     private func restoreDirectory(from source: URL, to destination: URL) throws {
         let fm = FileManager.default
