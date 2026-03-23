@@ -1460,16 +1460,39 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
 	[self refreshSystemConfig];
 	[self showGameView];
-	rarch_main(argc, argv, NULL);
-	_isInitialized=true;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
-        runloop_state_t *runloop_st = runloop_state_get_ptr();
-        runloop_st->flags &= ~RUNLOOP_FLAG_OVERRIDES_ACTIVE;
+
+    // rarch_main blocks in video_thread_send_and_wait_user_to_thread while the
+    // RetroArch video thread initialises. During that init the video thread calls
+    // setViewType: via dispatch_sync(main_queue). If we are already on the main
+    // thread that dispatch_sync deadlocks (main blocked waiting for video thread;
+    // video thread blocked waiting for main). Run rarch_main on a background
+    // thread so the main thread stays free to service those UI-setup dispatches.
+    //
+    // argv points to a local stack array that evaporates when startVM: returns,
+    // so copy each argument string with strdup before handing off to the block.
+    int capturedArgc = argc;
+    char **capturedArgv = malloc(sizeof(char *) * (capturedArgc + 1));
+    for (int i = 0; i < capturedArgc; i++) {
+        capturedArgv[i] = strdup(argv[i]);
+    }
+    capturedArgv[capturedArgc] = NULL;
+
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        rarch_main(capturedArgc, capturedArgv, NULL);
+
+        for (int i = 0; i < capturedArgc; i++) { free(capturedArgv[i]); }
+        free(capturedArgv);
+
+        _isInitialized = true;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+            runloop_state_t *runloop_st = runloop_state_get_ptr();
+            runloop_st->flags &= ~RUNLOOP_FLAG_OVERRIDES_ACTIVE;
+        });
+        iterate_observer = CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting, true, 0, rarch_draw_observer, 0);
+        CFRunLoopAddObserver(CFRunLoopGetMain(), iterate_observer, kCFRunLoopCommonModes);
+        apple_gamecontroller_joypad_init(NULL);
+        [self setupJoypad];
     });
-	iterate_observer = CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting, true, 0, rarch_draw_observer, 0);
-	CFRunLoopAddObserver(CFRunLoopGetMain(), iterate_observer, kCFRunLoopCommonModes);
-	apple_gamecontroller_joypad_init(NULL);
-    [self setupJoypad];
 }
 
 - (void)setupJoypad {
