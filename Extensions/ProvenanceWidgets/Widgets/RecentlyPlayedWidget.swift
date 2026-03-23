@@ -63,6 +63,8 @@ struct RecentlyPlayedWidget: Widget {
         StaticConfiguration(kind: kind, provider: RecentlyPlayedProvider()) { entry in
             RecentlyPlayedWidgetView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
+                // Tapping outside any Link row (e.g. padding) opens the most recent game.
+                .widgetURL(entry.games.first?.launchURL ?? URL(string: "provenance://screen/library")!)
         }
         .configurationDisplayName("Recently Played")
         .description("See the games you've played most recently.")

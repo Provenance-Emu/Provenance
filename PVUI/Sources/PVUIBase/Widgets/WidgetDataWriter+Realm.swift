@@ -43,7 +43,7 @@ public extension WidgetDataWriter {
         let totalPlayTime = allGames.sum(ofProperty: "timeSpentInGame") as Int
         let favoritesCount = allGames.filter("isFavorite == true").count
 
-        let recentGames: [WidgetGameData] = Array(
+        var recentGames: [WidgetGameData] = Array(
             database.all(PVRecentGame.self)
                 .sorted(byKeyPath: "lastPlayedDate", ascending: false)
                 .prefix(12)
@@ -56,6 +56,22 @@ public extension WidgetDataWriter {
                 artworkPath: widgetArtworkPath(for: game),
                 lastPlayedDate: recent.lastPlayedDate
             )
+        }
+
+        // Fall back to recently imported games when no games have been played yet.
+        if recentGames.isEmpty {
+            recentGames = Array(
+                allGames.sorted(byKeyPath: "importDate", ascending: false)
+                    .prefix(12)
+            ).map { game in
+                WidgetGameData(
+                    id: game.md5Hash,
+                    title: game.title,
+                    systemName: game.system?.shortName ?? game.system?.name ?? "",
+                    artworkPath: widgetArtworkPath(for: game),
+                    lastPlayedDate: nil
+                )
+            }
         }
 
         // Favorites: up to 16 to cover the systemExtraLarge 4×4 grid.
@@ -109,10 +125,14 @@ public extension WidgetDataWriter {
 /// Resolves a `PVGame`'s artwork to a relative path inside the App Group container,
 /// suitable for `WidgetGameData.artworkPath`.
 ///
-/// Returns `nil` when App Groups are disabled (sideload builds), the artwork key is
-/// empty, or the cached file is not yet present on disk.
+/// Always targets the App Group container (the only location widget extensions can
+/// read), regardless of whether the main app's `useAppGroups` setting is enabled.
+/// If the artwork exists in the local app sandbox but not yet in the App Group
+/// container, it is copied on first call so subsequent widget refreshes find it.
+///
+/// Returns `nil` when the artwork key is empty, the App Group container is
+/// unavailable, or the file cannot be found in either location.
 private func widgetArtworkPath(for game: PVGame) -> String? {
-    guard Defaults[.useAppGroups] else { return nil }
     let artworkKey = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
     guard !artworkKey.isEmpty else { return nil }
 
@@ -123,10 +143,29 @@ private func widgetArtworkPath(for game: PVGame) -> String? {
 
     // PVAppGroupId is the canonical constant (PVLibrary/PVFileSystem/Paths.swift).
     guard let container = FileManager.default
-        .containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId),
-          FileManager.default.fileExists(atPath: container.appendingPathComponent(relPath).path) else {
+        .containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
         return nil
     }
-    return relPath
+
+    let appGroupFile = container.appendingPathComponent(relPath)
+
+    // Fast path: file already in App Group container.
+    if FileManager.default.fileExists(atPath: appGroupFile.path) {
+        return relPath
+    }
+
+    // Slow path: file is in the local app Documents sandbox (useAppGroups == false).
+    // Copy it to the App Group container so the widget extension can read it.
+    if let localDocs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        let localFile = localDocs.appendingPathComponent("PVCache/\(keyHash)")
+        if FileManager.default.fileExists(atPath: localFile.path) {
+            let dir = appGroupFile.deletingLastPathComponent()
+            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            try? FileManager.default.copyItem(at: localFile, to: appGroupFile)
+            return relPath
+        }
+    }
+
+    return nil
 }
 #endif

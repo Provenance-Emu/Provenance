@@ -65,6 +65,7 @@ struct LibraryStatsWidget: Widget {
         StaticConfiguration(kind: kind, provider: LibraryStatsProvider()) { entry in
             LibraryStatsWidgetView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
+                .widgetURL(URL(string: "provenance://screen/library")!)
         }
         .configurationDisplayName("Library Stats")
         .description("An overview of your game library.")
