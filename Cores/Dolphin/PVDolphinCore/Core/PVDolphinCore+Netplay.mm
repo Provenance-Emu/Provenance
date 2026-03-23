@@ -208,9 +208,14 @@ static const char kClientBoxKey = 0;
             server->SetPassword(std::string(password.UTF8String));
         }
 
-        // TODO: wire maxPlayers to the server once the Dolphin API is confirmed.
-        // e.g. server->SetMaxPlayers((u32)maxPlayers); — verify method name against
-        // the dolphin-ios revision in use before enabling.
+        // maxPlayers: NetPlayServer does not expose a SetMaxPlayers() in the
+        // dolphin-ios revision currently in use.  The value is accepted and
+        // propagated to the session model for UI display, but is not enforced
+        // by the server.  Wire this once the API is confirmed upstream.
+        if (maxPlayers > 0) {
+            DLOG(@"[Dolphin Netplay] maxPlayers=%ld requested but not yet "
+                 "enforced by NetPlayServer (pending API confirmation).", (long)maxPlayers);
+        }
         (void)maxPlayers;
 
         _PVDolphinNetplayServerBox *sb = [_PVDolphinNetplayServerBox new];
@@ -270,11 +275,12 @@ static const char kClientBoxKey = 0;
                   error:(NSError *_Nullable __autoreleasing *_Nullable)error {
 #if HAVE_DOLPHIN_NETPLAY
     // Guard against overwriting an active session without proper teardown.
-    // The host path already calls stopNetplay before retrying; callers that
-    // invoke joinNetplayHost: directly must do the same.
+    // We check for a non-null client pointer (not just IsConnected) so that an
+    // in-progress connection attempt is also rejected; the host path skips this
+    // guard because it starts with no client box set.
     _PVDolphinNetplayClientBox *existingCB =
         objc_getAssociatedObject(self, &kClientBoxKey);
-    if (existingCB != nil && existingCB->client != nullptr && existingCB->client->IsConnected()) {
+    if (existingCB != nil && existingCB->client != nullptr) {
         if (error) {
             *error = [NSError errorWithDomain:PVDolphinNetplayErrorDomain
                                          code:PVDolphinNetplayErrorAlreadyActive
@@ -329,13 +335,16 @@ static const char kClientBoxKey = 0;
             traversalConfig
         );
 
-        // TODO: wire client-side password once the Dolphin API is confirmed.
-        // Some revisions expose NetPlayClient::SetPassword() or accept it via
-        // a settings struct passed to the constructor.  Example (verify first):
-        //   if (password.length > 0) {
-        //       client->SetPassword(std::string(password.UTF8String));
-        //   }
-        (void)password;
+        // Client-side password: Dolphin's NetPlayClient does not expose a
+        // SetPassword() method in the dolphin-ios revision currently in use.
+        // Password verification happens on the server side.  Log a warning so
+        // callers know the argument is not yet applied; update when the API is
+        // confirmed (search for NetPlayClient::SetPassword in the upstream).
+        if (password.length > 0) {
+            WLOG(@"[Dolphin Netplay] Password supplied to joinNetplayHost but "
+                 "client-side password auth is not yet wired. "
+                 "Join will succeed only if the server has no password set.");
+        }
 
         _PVDolphinNetplayClientBox *cb = [_PVDolphinNetplayClientBox new];
         cb->client = std::move(client);
