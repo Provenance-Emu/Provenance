@@ -90,10 +90,14 @@ struct CompanionInputRouterKeyboardTests {
         if case .mouseButton(let idx, let down) = received[0] {
             #expect(idx == 0)
             #expect(down == true)
+        } else {
+            Issue.record("Expected first event to be .mouseButton(0, true), got \(received[0])")
         }
         if case .mouseButton(let idx, let down) = received[1] {
             #expect(idx == 1)
             #expect(down == false)
+        } else {
+            Issue.record("Expected second event to be .mouseButton(1, false), got \(received[1])")
         }
         _ = cancellable
     }

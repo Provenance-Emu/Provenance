@@ -12,6 +12,7 @@
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 #if !os(tvOS)
+import CoreGraphics
 import GameController
 import SwiftUI
 import PVPrimitives
@@ -97,19 +98,19 @@ public struct DOSKeyboardLayout: CompanionLayout {
                         // Left mouse button
                         mouseButton("L", isDown: leftButtonDown) {
                             leftButtonDown = true
-                            inputRouter.send(.buttonDown(.south))
+                            inputRouter.send(.mouseButton(0, true))
                         } onRelease: {
                             leftButtonDown = false
-                            inputRouter.send(.buttonUp(.south))
+                            inputRouter.send(.mouseButton(0, false))
                         }
                         Spacer()
                         // Right mouse button
                         mouseButton("R", isDown: rightButtonDown) {
                             rightButtonDown = true
-                            inputRouter.send(.buttonDown(.east))
+                            inputRouter.send(.mouseButton(1, true))
                         } onRelease: {
                             rightButtonDown = false
-                            inputRouter.send(.buttonUp(.east))
+                            inputRouter.send(.mouseButton(1, false))
                         }
                     }
                     .padding(.horizontal, 20)
@@ -124,17 +125,10 @@ public struct DOSKeyboardLayout: CompanionLayout {
                             height: value.translation.height - mouseOffset.height
                         )
                         mouseOffset = value.translation
-                        // Send normalised relative mouse movement via left axis (clamped to -1…1)
-                        let scale: CGFloat = 0.01
-                        let clampedX = max(-1.0, min(1.0, Float(delta.width  * scale)))
-                        let clampedY = max(-1.0, min(1.0, Float(delta.height * scale)))
-                        inputRouter.send(.axisChanged(.leftX, clampedX))
-                        inputRouter.send(.axisChanged(.leftY, clampedY))
+                        inputRouter.send(.mouseMove(CGPoint(x: delta.width, y: delta.height)))
                     }
                     .onEnded { _ in
-                        mouseOffset     = .zero
-                        inputRouter.send(.axisChanged(.leftX, 0))
-                        inputRouter.send(.axisChanged(.leftY, 0))
+                        mouseOffset = .zero
                     }
             )
         }

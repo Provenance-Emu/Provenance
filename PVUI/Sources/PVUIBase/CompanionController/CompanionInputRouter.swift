@@ -12,6 +12,7 @@
 
 import Foundation
 import Combine
+import CoreGraphics
 import GameController
 
 // CompanionButton, CompanionAxisID, CompanionInputEvent — defined in PVCoreBridge and

@@ -26,15 +26,17 @@ private final class MouseCursorState {
     var position: CGPoint = CGPoint(x: 0.5, y: 0.5)
 }
 
-private var mouseStateKey: UInt8 = 0
+private enum AssociatedKeys {
+    static var mouseState: UInt8 = 0
+}
 
 private extension PVDosBoxCore {
     var mouseState: MouseCursorState {
-        if let existing = objc_getAssociatedObject(self, &mouseStateKey) as? MouseCursorState {
+        if let existing = objc_getAssociatedObject(self, &AssociatedKeys.mouseState) as? MouseCursorState {
             return existing
         }
         let state = MouseCursorState()
-        objc_setAssociatedObject(self, &mouseStateKey, state, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(self, &AssociatedKeys.mouseState, state, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return state
     }
 }
@@ -68,8 +70,8 @@ extension PVDosBoxCore: CompanionControllerCapable {
     public func companionMouseMoved(delta: CGPoint) {
         let sensitivity: CGFloat = 1.0 / 500.0
         let state = mouseState
-        let x = min(1, max(0, state.position.x + delta.x * sensitivity))
-        let y = min(1, max(0, state.position.y + delta.y * sensitivity))
+        let x = min(CGFloat(1.0), max(CGFloat(0.0), state.position.x + delta.x * sensitivity))
+        let y = min(CGFloat(1.0), max(CGFloat(0.0), state.position.y + delta.y * sensitivity))
         state.position = CGPoint(x: x, y: y)
         mouseMoved(atPoint: state.position)
     }
