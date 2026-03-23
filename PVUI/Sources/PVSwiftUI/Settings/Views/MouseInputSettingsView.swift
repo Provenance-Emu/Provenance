@@ -76,6 +76,11 @@ struct MouseSection: View {
 
                     deadZoneSlider
                 }
+
+                Text("Note: Gyro mouse settings are stored but not yet applied during gameplay in this build.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 4)
             }
         }
     }

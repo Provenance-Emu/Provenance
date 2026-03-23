@@ -224,6 +224,10 @@ public extension Defaults.Keys {
     /// When `true` and the active core conforms to `MouseResponder`, rotation-rate
     /// input from the connected GCController (or device IMU on iPhone/iPad) is
     /// translated into `mouseMoved(atPoint:)` calls.
+    ///
+    /// NOTE: This key is currently **not consumed by the gyro mouse runtime /
+    /// GyroMouseAdapter**. It is stored and exposed in the UI for future wiring, but
+    /// toggling it will not yet enable or disable gyro-based cursor translation in-game.
     static let gyroMouseEnabled = Key<Bool>("gyroMouseEnabled", default: false)
 
     /// Sensitivity multiplier intended to be applied only to gyroscope-driven mouse input.

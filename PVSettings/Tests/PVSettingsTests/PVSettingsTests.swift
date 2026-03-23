@@ -999,18 +999,6 @@ struct MouseDefaultsKeysTests {
         #expect(Defaults[.mouseSensitivity] == 1.0)
     }
 
-    @Test("gyroMouseSensitivity default is 1.0")
-    func gyroMouseSensitivityDefault() {
-        Defaults.reset(.gyroMouseSensitivity)
-        #expect(Defaults[.gyroMouseSensitivity] == 1.0)
-    }
-
-    @Test("gyroMouseDeadZone default is 0.05")
-    func gyroMouseDeadZoneDefault() {
-        Defaults.reset(.gyroMouseDeadZone)
-        #expect(Defaults[.gyroMouseDeadZone] == 0.05)
-    }
-
     @Test("mouseInputSource key name is correct")
     func mouseInputSourceKeyName() {
         #expect(Defaults.Keys.mouseInputSource.name == "mouseInputSource")
@@ -1019,16 +1007,6 @@ struct MouseDefaultsKeysTests {
     @Test("mouseSensitivity key name is correct")
     func mouseSensitivityKeyName() {
         #expect(Defaults.Keys.mouseSensitivity.name == "mouseSensitivity")
-    }
-
-    @Test("gyroMouseSensitivity key name is correct")
-    func gyroMouseSensitivityKeyName() {
-        #expect(Defaults.Keys.gyroMouseSensitivity.name == "gyroMouseSensitivity")
-    }
-
-    @Test("gyroMouseDeadZone key name is correct")
-    func gyroMouseDeadZoneKeyName() {
-        #expect(Defaults.Keys.gyroMouseDeadZone.name == "gyroMouseDeadZone")
     }
 
     @Test("mouseInputSource can be changed and reset")
@@ -1047,35 +1025,6 @@ struct MouseDefaultsKeysTests {
         defer { Defaults.reset(.mouseSensitivity) }
         Defaults[.mouseSensitivity] = 2.5
         #expect(Defaults[.mouseSensitivity] == 2.5)
-    }
-
-    @Test("gyroMouseDeadZone round-trip set and get")
-    func gyroMouseDeadZoneMutable() {
-        Defaults.reset(.gyroMouseDeadZone)
-        defer { Defaults.reset(.gyroMouseDeadZone) }
-        Defaults[.gyroMouseDeadZone] = 0.1
-        #expect(Defaults[.gyroMouseDeadZone] == 0.1)
-    }
-
-    @Test("gyroMouseDeadZone default is within valid slider range")
-    func gyroMouseDeadZoneDefaultWithinValidRange() {
-        Defaults.reset(.gyroMouseDeadZone)
-        let value = Defaults[.gyroMouseDeadZone]
-        // Valid range matches the UI slider: 0.0...0.5
-        #expect(value >= 0.0)
-        #expect(value <= 0.5)
-    }
-
-    @Test("gyroMouseDeadZone boundary values are within valid range")
-    func gyroMouseDeadZoneBoundaryValues() {
-        Defaults.reset(.gyroMouseDeadZone)
-        defer { Defaults.reset(.gyroMouseDeadZone) }
-
-        Defaults[.gyroMouseDeadZone] = 0.0
-        #expect(Defaults[.gyroMouseDeadZone] == 0.0)
-
-        Defaults[.gyroMouseDeadZone] = 0.5
-        #expect(Defaults[.gyroMouseDeadZone] == 0.5)
     }
 }
 
@@ -1202,6 +1151,27 @@ struct GyroMouseDefaultsTests {
         defer { Defaults.reset(.gyroMouseDeadZone) }
         Defaults[.gyroMouseDeadZone] = 0.1
         #expect(Defaults[.gyroMouseDeadZone] == 0.1)
+    }
+
+    @Test("gyroMouseDeadZone default is within valid slider range")
+    func gyroMouseDeadZoneDefaultWithinValidRange() {
+        Defaults.reset(.gyroMouseDeadZone)
+        let value = Defaults[.gyroMouseDeadZone]
+        // Valid range matches the UI slider: 0.0...0.5
+        #expect(value >= 0.0)
+        #expect(value <= 0.5)
+    }
+
+    @Test("gyroMouseDeadZone boundary values are within valid range")
+    func gyroMouseDeadZoneBoundaryValues() {
+        Defaults.reset(.gyroMouseDeadZone)
+        defer { Defaults.reset(.gyroMouseDeadZone) }
+
+        Defaults[.gyroMouseDeadZone] = 0.0
+        #expect(Defaults[.gyroMouseDeadZone] == 0.0)
+
+        Defaults[.gyroMouseDeadZone] = 0.5
+        #expect(Defaults[.gyroMouseDeadZone] == 0.5)
     }
 }
 
