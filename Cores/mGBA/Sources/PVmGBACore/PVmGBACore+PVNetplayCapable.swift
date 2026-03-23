@@ -220,14 +220,13 @@ extension PVmGBACore: PVNetplayCapable {
         let bridge = _bridge
         try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                // NOTE: Task.detached is used so the potentially-blocking socket
+                // operations (connect with 5-second timeout, accept) do not run on
+                // the main actor.  Cancellation is handled by the `onCancel` closure
+                // below, which calls stopLink() to close sockets and unblock any
+                // in-progress syscall.  Task.isCancelled is NOT checked here because
+                // Task.detached does not inherit the caller's cancellation scope.
                 Task.detached(priority: .userInitiated) {
-                    // Check for cancellation before starting the potentially blocking
-                    // socket work (join includes a 5-second connect timeout).
-                    guard !Task.isCancelled else {
-                        continuation.resume(throwing: CancellationError())
-                        return
-                    }
-
                     var nsError: NSError?
                     let success: Bool
 
@@ -241,14 +240,6 @@ extension PVmGBACore: PVNetplayCapable {
                     case .spectator(let host, let port):
                         // Link cable is 2-player only; spectator connects as the second player.
                         success = bridge.joinLink(atHost: host, port: port, error: &nsError)
-                    }
-
-                    // If the caller cancelled while we were in the blocking connect, tear
-                    // down any session that may have been established.
-                    if Task.isCancelled {
-                        if success { bridge.stopLink() }
-                        continuation.resume(throwing: CancellationError())
-                        return
                     }
 
                     if !success {
