@@ -103,6 +103,27 @@ auto-enable them once JIT is successfully acquired:
 The app layer (#2794) will query `EmulatorCoreInfoPlist.jitDisabledWithoutJIT` to find
 these cores and toggle them on when a JIT entitlement is obtained.
 
+## Submodule Management
+
+Provenance uses git submodules for emulator cores. Each core submodule is pinned to a specific commit (the gitlink in the tree). Some submodules also specify a `branch` in `.gitmodules`; this affects `git submodule update --remote` but **not** normal checkouts, which always use the pinned commit.
+
+### Updating a Core Submodule to Fork HEAD
+
+When a Provenance-Emu fork submodule has a `branch = <name>` entry and you want to advance it:
+
+```bash
+# Sync just that submodule to the remote branch HEAD
+git submodule update --remote --merge Cores/<CoreName>/<submodule-dir>
+
+# Review the new commit, then stage and commit
+git add Cores/<CoreName>/<submodule-dir>
+git commit -m "chore(<corename>): update submodule to <short-sha>"
+```
+
+Record the resulting commit hash in the changelog entry for traceability.
+
+> **Note:** `git submodule update` (without `--remote`) always checks out the pinned gitlink commit, ignoring `branch`. Only `--remote` advances to the branch tip.
+
 ## Building
 
 ### Setup Code Signing
