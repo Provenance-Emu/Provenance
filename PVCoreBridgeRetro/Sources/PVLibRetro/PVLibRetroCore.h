@@ -90,10 +90,10 @@ __attribute__((weak_import))
 - (void)setRightMouseButtonPressed:(BOOL)pressed;
 
 /// Sets the libretro controller device type for a specific port.
-/// Safe to call before the core is fully initialised — the call is a no-op
-/// (logs a warning) when the core is not ready, so callers can retry on
-/// the next input event. Ideally called after `retro_load_game` succeeds.
-- (void)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
+/// Returns YES when the device type was applied, NO when the core is not yet
+/// initialised (logs a warning). Safe to call before init — callers can retry
+/// on the next input event. Ideally called after `retro_load_game` succeeds.
+- (BOOL)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
 
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;

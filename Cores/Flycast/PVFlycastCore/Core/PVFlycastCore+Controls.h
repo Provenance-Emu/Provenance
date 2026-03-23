@@ -29,8 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Mouse Support
 
 /// Call after game loads to configure port 0 as RETRO_DEVICE_MOUSE for the libretro core.
-/// No-op if the core has not been initialised yet (safe to call before init).
-- (void)configureDreamcastMousePort;
+/// Returns YES if the device type was successfully applied, NO if the libretro core was not
+/// yet initialised (safe to call before init — callers can retry on the next input event).
+- (BOOL)configureDreamcastMousePort;
 
 @end
 

@@ -3637,17 +3637,19 @@ static os_unfair_lock    sPendingKeyLock  = OS_UNFAIR_LOCK_INIT;
     }
 }
 
-- (void)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port {
+- (BOOL)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port {
     @synchronized(self) {
         retro_ctx_controller_info_t pad;
         pad.port   = port;
         pad.device = device;
         // core_set_controller_port_device returns false when the libretro core
-        // is not yet initialised (_current is nil) or pad is nil. Log and bail
-        // so callers know to retry after the core finishes loading.
+        // is not yet initialised (_current is nil) or pad is nil. Log and return
+        // NO so callers know to retry after the core finishes loading.
         if (!core_set_controller_port_device(&pad)) {
             ILOG(@"pv_setControllerPortDevice: core not ready, skipping device=%u port=%u", device, port);
+            return NO;
         }
+        return YES;
     }
 }
 

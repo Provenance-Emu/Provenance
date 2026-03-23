@@ -250,12 +250,12 @@ s8 joyx[4], joyy[4];
 }
 #endif
 
-- (void)configureDreamcastMousePort {
+- (BOOL)configureDreamcastMousePort {
     // Set port 0 (Maple bus A) to RETRO_DEVICE_MOUSE (value = 2) so that
     // Flycast creates a Maple mouse device for mouse-peripheral games.
-    // This is safe to call multiple times — retro_set_controller_port_device
-    // is idempotent and simply updates the Maple device type.
-    [self pv_setControllerPortDevice:RETRO_DEVICE_MOUSE forPort:0];
+    // Returns YES when the core accepted the device type, NO when the core is
+    // not yet initialised — callers should retry on the next input event.
+    return [self pv_setControllerPortDevice:RETRO_DEVICE_MOUSE forPort:0];
 }
 
 @end
