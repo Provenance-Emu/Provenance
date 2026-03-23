@@ -673,8 +673,32 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 //                } else {
 //                    optionValues += "mupen64plus-rdp-plugin = \"gliden64\"\n";
 //                }
+                // ParallelRSP uses a JIT compiler; on iOS 26+ W×X enforcement prevents
+                // JIT pages from being mapped writable+executable, causing a crash.
+                // Fall back to the CXD4 interpreted RSP on iOS 26+ unless JIT is known
+                // to be active (in which case the user would have JIT available).
+                // On older iOS, ParallelRSP is the best choice.
+                #if os(iOS) || os(tvOS)
+                if #available(iOS 26, tvOS 26, *) {
+                    optionValues += "mupen64plus-rsp-plugin = \"cxd4\"\n"
+                } else {
+                    optionValues += "mupen64plus-rsp-plugin = \"parallel\"\n"
+                }
+                #else
+                optionValues += "mupen64plus-rsp-plugin = \"hle\"\n"
+                #endif
                 optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
+                // On iOS 26+ we must overwrite any existing .opt that may already contain
+                // mupen64plus-rsp-plugin = "parallel" from a previous session.
+                #if os(iOS) || os(tvOS)
+                if #available(iOS 26, tvOS 26, *) {
+                    optionOverwrite = true
+                } else {
+                    optionOverwrite = false
+                }
+                #else
                 optionOverwrite = false
+                #endif
             }
             if (coreIdentifier.contains("ppsspp")) {
                 optionValues += "ppsspp_cpu_core = \"Interpreter\"\n"
