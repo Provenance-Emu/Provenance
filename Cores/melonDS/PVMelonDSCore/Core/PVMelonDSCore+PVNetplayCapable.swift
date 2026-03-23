@@ -27,10 +27,11 @@ import ObjectiveC
 // Matches the melonDS upstream default of 7064.
 private let kMelonDSLocalMPDefaultPortBase: UInt16 = PVMelonDSLocalMPDefaultPortBase
 
-// The global Provenance/RetroArch netplay default port (55435) is treated as
-// "unspecified" for melonDS LocalMP. Using 55435 would collide with RetroArch
-// sessions; when it is the incoming port we fall back to the melonDS default (7064).
-private let kProvenanceGlobalNetplayDefaultPort: UInt16 = 55435
+// The global Provenance/RetroArch netplay default port is treated as "unspecified"
+// for melonDS LocalMP. Using it would collide with RetroArch sessions; when it is
+// the incoming port we fall back to the melonDS default (7064).
+// Derived from NetplaySettings.defaultLAN.port to avoid drift if the default changes.
+private let kProvenanceGlobalNetplayDefaultPort: UInt16 = NetplaySettings.defaultLAN.port
 
 // MARK: - Session context storage
 
@@ -154,10 +155,10 @@ extension PVMelonDSCore: PVNetplayCapable {
             effectiveRole = role
         }
 
-        // Resolve the port base: treat 0 and the global Provenance netplay default (55435)
-        // as "unspecified" so melonDS always uses its own default (7064) unless the user
-        // explicitly configured a melonDS-specific port. This avoids collision with
-        // RetroArch sessions that also default to 55435.
+        // Resolve the port base: treat 0 and the global Provenance netplay default
+        // (kProvenanceGlobalNetplayDefaultPort) as "unspecified" so melonDS always
+        // uses its own default (7064) unless the user explicitly configured a
+        // melonDS-specific port. This avoids collision with RetroArch sessions.
         func resolvedPortBase(_ port: UInt16) -> UInt16 {
             (port == 0 || port == kProvenanceGlobalNetplayDefaultPort)
                 ? kMelonDSLocalMPDefaultPortBase
