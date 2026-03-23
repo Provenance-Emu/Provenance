@@ -51,7 +51,9 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
             let (items, total) = try buildItems(offset: offset, limit: Self.pageSize)
             observer.didEnumerate(items)
 
-            let nextOffset = offset + items.count
+            // Advance by pageSize (not items.count) so that any compactMap-filtered
+            // invalidated objects don't cause the next offset to stall.
+            let nextOffset = offset + Self.pageSize
             if nextOffset < total {
                 observer.finishEnumerating(upTo: encodePageOffset(nextOffset))
             } else {
@@ -135,6 +137,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
             guard !pvSystem.isInvalidated else { return nil }
             return FileProviderItem(system: pvSystem.asDomain())
         }
+        // Advance by the window size (end - offset), not items.count, so that
+        // compactMap filtering out invalidated objects doesn't stall pagination.
         return (items, total)
     }
 

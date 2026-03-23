@@ -174,15 +174,19 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
 
     /// Sanitizes a raw name for safe use as a file provider filename.
     ///
-    /// Removes path separators and control characters that can break Files.app
-    /// presentation or cause provider errors.  Falls back to "Untitled" if the
-    /// result is empty after sanitization.
+    /// Removes path separators and control characters throughout the string (not just
+    /// at the edges) to avoid Files.app presentation errors or provider failures.
+    /// Falls back to "Untitled" if the result is empty after sanitization.
     private func sanitize(_ raw: String) -> String {
-        let cleaned = raw
+        // Replace path separators with a dash.
+        let withoutSeparators = raw
             .replacingOccurrences(of: "/", with: "-")
             .replacingOccurrences(of: ":", with: "-")
-            .trimmingCharacters(in: .controlCharacters)
-            .trimmingCharacters(in: .whitespaces)
+        // Strip control characters from the entire string (not just edges).
+        let withoutControlChars = String(
+            withoutSeparators.unicodeScalars.filter { !CharacterSet.controlCharacters.contains($0) }
+        )
+        let cleaned = withoutControlChars.trimmingCharacters(in: .whitespaces)
         return cleaned.isEmpty ? "Untitled" : cleaned
     }
 
