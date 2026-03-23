@@ -75,19 +75,11 @@ public struct ROMDropTargetModifier: ViewModifier {
                         ELOG("ROMDropDelegate: loadItem error: \(error)")
                         return
                     }
-                    // loadItem for public.file-url can return URL, NSURL, or Data depending on provider.
-                    let resolvedURL: URL?
-                    if let url = item as? URL {
-                        resolvedURL = url
-                    } else if let nsurl = item as? NSURL {
-                        resolvedURL = nsurl as URL
-                    } else if let data = item as? Data {
-                        resolvedURL = URL(dataRepresentation: data, relativeTo: nil)
-                    } else {
+                    // loadItem for public.file-url can return URL, NSURL, or Data — use shared helper.
+                    guard let url = NSItemProvider.fileURL(fromLoadedItem: item) else {
                         ELOG("ROMDropDelegate: unsupported item type for public.file-url: \(type(of: item))")
-                        resolvedURL = nil
+                        return
                     }
-                    guard let url = resolvedURL else { return }
                     // Copy to a stable location so the async import pipeline finds the file
                     // even if the source URL becomes inaccessible after this handler returns.
                     do {

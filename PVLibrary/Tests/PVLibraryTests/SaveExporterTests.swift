@@ -228,6 +228,42 @@ final class SaveExporterTests: XCTestCase {
         XCTAssertEqual(result, expectedMD5, "gameMD5(inBundleAt:) should handle manifests with non-string typed fields")
     }
 
+    // MARK: - validateNoBundleEscape
+
+    func testValidateNoBundleEscapePassesForLegitimateDirectory() throws {
+        // A directory containing only normal files and subdirectories should pass.
+        let dir = tempDir.appendingPathComponent("legit-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let sub = dir.appendingPathComponent("sub", isDirectory: true)
+        try FileManager.default.createDirectory(at: sub, withIntermediateDirectories: true)
+        try "data".data(using: .utf8)!.write(to: sub.appendingPathComponent("file.txt"))
+
+        // Should not throw — all paths reside within dir.
+        XCTAssertNoThrow(try SaveExporter.shared.validateNoBundleEscape(in: dir))
+    }
+
+    func testValidateNoBundleEscapeThrowsForSymlinkPointingOutside() throws {
+        // Simulate a Zip Slip scenario: a symlink inside the extraction dir that resolves
+        // to a path outside it. validateNoBundleEscape should detect and throw.
+        let dir = tempDir.appendingPathComponent("escape-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+
+        // Create a symlink that points to the parent temp directory (outside dir).
+        let symlinkURL = dir.appendingPathComponent("evil-link")
+        try FileManager.default.createSymbolicLink(at: symlinkURL, withDestinationURL: tempDir)
+
+        // Should throw because the symlink resolves outside dir.
+        XCTAssertThrowsError(
+            try SaveExporter.shared.validateNoBundleEscape(in: dir),
+            "validateNoBundleEscape should throw for a symlink escaping the extraction directory"
+        ) { error in
+            guard case SaveExportError.invalidBundle = error else {
+                XCTFail("Expected SaveExportError.invalidBundle, got \(error)")
+                return
+            }
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeGame(title: String, md5: String, romURL: URL?) -> PVGame {

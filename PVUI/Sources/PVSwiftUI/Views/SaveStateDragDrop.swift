@@ -133,26 +133,12 @@ public struct SaveBundleDropModifier: ViewModifier {
                         Task { @MainActor in self.onResult(.failure(error)) }
                         return
                     }
-                    // loadItem for public.file-url can return URL, NSURL, or Data.
-                    let resolvedURL: URL?
-                    if let url = item as? URL {
-                        resolvedURL = url
-                    } else if let nsurl = item as? NSURL {
-                        resolvedURL = nsurl as URL
-                    } else if let data = item as? Data {
-                        resolvedURL = URL(dataRepresentation: data, relativeTo: nil)
-                    } else {
+                    // loadItem for public.file-url can return URL, NSURL, or Data — use shared helper.
+                    guard let url = NSItemProvider.fileURL(fromLoadedItem: item) else {
                         let typeDescription = item.map { String(describing: type(of: $0)) } ?? "nil"
                         ELOG("SaveBundleDropModifier: unsupported item type for public.file-url: \(typeDescription)")
                         Task { @MainActor in
                             self.onResult(.failure(SaveExportError.invalidBundle("Dropped item has unsupported type: \(typeDescription)")))
-                        }
-                        return
-                    }
-                    guard let url = resolvedURL else {
-                        ELOG("SaveBundleDropModifier: failed to resolve URL from public.file-url item")
-                        Task { @MainActor in
-                            self.onResult(.failure(SaveExportError.invalidBundle("Could not resolve a file URL from the dropped item.")))
                         }
                         return
                     }
