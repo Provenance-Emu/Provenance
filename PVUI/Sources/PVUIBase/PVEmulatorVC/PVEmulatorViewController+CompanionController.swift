@@ -167,9 +167,15 @@ extension PVEmulatorViewController {
         // Track button mask locally within the sink to compute press/release edges.
         var previousButtonMask: UInt32 = 0
 
-        // Subscribe to button state changes and forward edge events to the core.
-        session.inputRouter.$heldButtons
-            .removeDuplicates()
+        // Subscribe via session.$inputRouter rather than session.inputRouter directly.
+        // CompanionControllerSession.disconnect() replaces inputRouter with a new instance;
+        // using switchToLatest ensures we automatically follow the new router instead of
+        // leaving stale subscriptions on the old one.
+
+        // Forward button edge events (press/release) to the core.
+        session.$inputRouter
+            .map { $0.$heldButtons.removeDuplicates() }
+            .switchToLatest()
             .sink { [weak self] newMask in
                 guard self != nil else { return }
                 let pressed  = newMask & ~previousButtonMask   // bits newly set
@@ -183,24 +189,24 @@ extension PVEmulatorViewController {
             }
             .store(in: &cancellables)
 
-        // Subscribe to axis changes (trackball deltas) and forward to the core.
+        // Forward trackball axis deltas to the core.
         //
         // TrackballLayout sends .axisChanged(.leftX, …) and .axisChanged(.leftY, …) as two
         // separate calls, so $axisValues fires twice per gesture update.  Subscribing to
         // each axis independently (with removeDuplicates) ensures only the changed axis
         // triggers a core call, preventing dx from being double-applied.
-        session.inputRouter.$axisValues
-            .map { $0[.leftX] ?? 0 }
-            .removeDuplicates()
+        session.$inputRouter
+            .map { $0.$axisValues.map { $0[.leftX] ?? 0 }.removeDuplicates() }
+            .switchToLatest()
             .sink { [weak self] dx in
                 guard self != nil, dx != 0 else { return }
                 companionCore.companionTrackballMoved(deltaX: dx, deltaY: 0)
             }
             .store(in: &cancellables)
 
-        session.inputRouter.$axisValues
-            .map { $0[.leftY] ?? 0 }
-            .removeDuplicates()
+        session.$inputRouter
+            .map { $0.$axisValues.map { $0[.leftY] ?? 0 }.removeDuplicates() }
+            .switchToLatest()
             .sink { [weak self] dy in
                 guard self != nil, dy != 0 else { return }
                 companionCore.companionTrackballMoved(deltaX: 0, deltaY: dy)
