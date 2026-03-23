@@ -922,6 +922,137 @@ struct RetroAchievementsDefaultsMigrationTests {
     }
 }
 
+// MARK: - MouseInputSource Tests
+
+@Suite("MouseInputSource")
+struct MouseInputSourceTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(MouseInputSource.allCases.count == 5)
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for source in MouseInputSource.allCases {
+            let reconstructed = MouseInputSource(rawValue: source.rawValue)
+            #expect(reconstructed == source)
+        }
+    }
+
+    @Test("RawValues are correct")
+    func rawValues() {
+        #expect(MouseInputSource.auto.rawValue == "auto")
+        #expect(MouseInputSource.touchscreen.rawValue == "touchscreen")
+        #expect(MouseInputSource.controllerTouchpad.rawValue == "controllerTouchpad")
+        #expect(MouseInputSource.gyro.rawValue == "gyro")
+        #expect(MouseInputSource.physicalMouse.rawValue == "physicalMouse")
+    }
+
+    @Test("DisplayNames are non-empty")
+    func displayNamesNonEmpty() {
+        for source in MouseInputSource.allCases {
+            #expect(!source.displayName.isEmpty)
+        }
+    }
+
+    @Test("Subtitles are non-empty")
+    func subtitlesNonEmpty() {
+        for source in MouseInputSource.allCases {
+            #expect(!source.subtitle.isEmpty)
+        }
+    }
+
+    @Test("SymbolNames are non-empty")
+    func symbolNamesNonEmpty() {
+        for source in MouseInputSource.allCases {
+            #expect(!source.symbolName.isEmpty)
+        }
+    }
+
+    @Test("Equality works correctly")
+    func equality() {
+        #expect(MouseInputSource.auto == .auto)
+        #expect(MouseInputSource.auto != .gyro)
+    }
+}
+
+// MARK: - Mouse Defaults Keys Tests
+
+@Suite("Mouse Defaults Keys")
+struct MouseDefaultsKeysTests {
+
+    @Test("mouseInputSource default is .auto")
+    func mouseInputSourceDefault() {
+        Defaults.reset(.mouseInputSource)
+        #expect(Defaults[.mouseInputSource] == .auto)
+    }
+
+    @Test("mouseSensitivity default is 1.0")
+    func mouseSensitivityDefault() {
+        Defaults.reset(.mouseSensitivity)
+        #expect(Defaults[.mouseSensitivity] == 1.0)
+    }
+
+    @Test("gyroMouseSensitivity default is 1.0")
+    func gyroMouseSensitivityDefault() {
+        Defaults.reset(.gyroMouseSensitivity)
+        #expect(Defaults[.gyroMouseSensitivity] == 1.0)
+    }
+
+    @Test("gyroMouseDeadZone default is 0.05")
+    func gyroMouseDeadZoneDefault() {
+        Defaults.reset(.gyroMouseDeadZone)
+        #expect(Defaults[.gyroMouseDeadZone] == 0.05)
+    }
+
+    @Test("mouseInputSource key name is correct")
+    func mouseInputSourceKeyName() {
+        #expect(Defaults.Keys.mouseInputSource.name == "mouseInputSource")
+    }
+
+    @Test("mouseSensitivity key name is correct")
+    func mouseSensitivityKeyName() {
+        #expect(Defaults.Keys.mouseSensitivity.name == "mouseSensitivity")
+    }
+
+    @Test("gyroMouseSensitivity key name is correct")
+    func gyroMouseSensitivityKeyName() {
+        #expect(Defaults.Keys.gyroMouseSensitivity.name == "gyroMouseSensitivity")
+    }
+
+    @Test("gyroMouseDeadZone key name is correct")
+    func gyroMouseDeadZoneKeyName() {
+        #expect(Defaults.Keys.gyroMouseDeadZone.name == "gyroMouseDeadZone")
+    }
+
+    @Test("mouseInputSource can be changed and reset")
+    func mouseInputSourceMutable() {
+        Defaults.reset(.mouseInputSource)
+        defer { Defaults.reset(.mouseInputSource) }
+        Defaults[.mouseInputSource] = .gyro
+        #expect(Defaults[.mouseInputSource] == .gyro)
+        Defaults.reset(.mouseInputSource)
+        #expect(Defaults[.mouseInputSource] == .auto)
+    }
+
+    @Test("mouseSensitivity can be changed")
+    func mouseSensitivityMutable() {
+        Defaults.reset(.mouseSensitivity)
+        defer { Defaults.reset(.mouseSensitivity) }
+        Defaults[.mouseSensitivity] = 2.5
+        #expect(Defaults[.mouseSensitivity] == 2.5)
+    }
+
+    @Test("gyroMouseDeadZone can be changed")
+    func gyroMouseDeadZoneMutable() {
+        Defaults.reset(.gyroMouseDeadZone)
+        defer { Defaults.reset(.gyroMouseDeadZone) }
+        Defaults[.gyroMouseDeadZone] = 0.1
+        #expect(Defaults[.gyroMouseDeadZone] == 0.1)
+    }
+}
+
 // MARK: - iCloudSyncMode Tests
 
 @Suite("iCloudSyncMode")
