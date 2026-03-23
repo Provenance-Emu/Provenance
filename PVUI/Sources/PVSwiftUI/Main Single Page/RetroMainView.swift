@@ -191,7 +191,7 @@ public struct RetroMainView: View {
         }
         .preferredColorScheme(.dark) // Retrowave theme works best with dark mode
         .ignoresSafeArea(.all) // Ensure the view extends edge-to-edge
-#if !os(tvOS)
+#if os(iOS)
         .romDropTarget() // ROM drag & drop import (#2136)
 #endif
         .hideHomeIndicator() // Hide the home indicator for immersive experience

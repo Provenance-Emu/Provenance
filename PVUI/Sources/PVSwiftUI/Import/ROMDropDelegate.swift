@@ -103,7 +103,7 @@ public struct ROMDropTargetModifier: ViewModifier {
                 // public.archive parent. Some providers won't respond to the parent identifier even
                 // though hasItemConformingToTypeIdentifier returns true for it.
                 UTType(id)?.conforms(to: .archive) == true
-            }) {
+            }), provider.hasItemConformingToTypeIdentifier(archiveTypeID) {
                 // Zip / archive: use loadFileRepresentation so the OS writes it to a temp URL.
                 provider.loadFileRepresentation(forTypeIdentifier: archiveTypeID) { url, error in
                     if let error {

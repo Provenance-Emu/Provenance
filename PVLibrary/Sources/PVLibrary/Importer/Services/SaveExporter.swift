@@ -246,19 +246,20 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         let manifestData = try Data(contentsOf: manifestURL)
-        guard let manifestDict = try JSONSerialization.jsonObject(with: manifestData) as? [String: String] else {
+        // Parse as [String: Any] so additional typed fields (e.g. numeric schemaVersion) don't cause a nil cast.
+        guard let manifestDict = try JSONSerialization.jsonObject(with: manifestData) as? [String: Any] else {
             throw SaveExportError.invalidBundle("manifest.json has unexpected format.")
         }
 
         // Validate schema version for forward/backward compatibility
-        guard let schemaVersion = manifestDict["schemaVersion"], !schemaVersion.isEmpty else {
+        guard let schemaVersion = manifestDict["schemaVersion"] as? String, !schemaVersion.isEmpty else {
             throw SaveExportError.invalidBundle("manifest.json missing 'schemaVersion' field.")
         }
         guard schemaVersion == "1" else {
             throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersion)'.")
         }
 
-        guard let bundleMD5 = manifestDict["game"], !bundleMD5.isEmpty else {
+        guard let bundleMD5 = manifestDict["game"] as? String, !bundleMD5.isEmpty else {
             throw SaveExportError.invalidBundle("manifest.json missing 'game' field.")
         }
 

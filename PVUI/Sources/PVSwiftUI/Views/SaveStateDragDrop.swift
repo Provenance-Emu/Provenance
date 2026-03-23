@@ -142,10 +142,20 @@ public struct SaveBundleDropModifier: ViewModifier {
                     } else if let data = item as? Data {
                         resolvedURL = URL(dataRepresentation: data, relativeTo: nil)
                     } else {
-                        ELOG("SaveBundleDropModifier: unsupported item type for public.file-url: \(type(of: item))")
-                        resolvedURL = nil
+                        let typeDescription = item.map { String(describing: type(of: $0)) } ?? "nil"
+                        ELOG("SaveBundleDropModifier: unsupported item type for public.file-url: \(typeDescription)")
+                        Task { @MainActor in
+                            self.onResult(.failure(SaveExportError.invalidBundle("Dropped item has unsupported type: \(typeDescription)")))
+                        }
+                        return
                     }
-                    guard let url = resolvedURL else { return }
+                    guard let url = resolvedURL else {
+                        ELOG("SaveBundleDropModifier: failed to resolve URL from public.file-url item")
+                        Task { @MainActor in
+                            self.onResult(.failure(SaveExportError.invalidBundle("Could not resolve a file URL from the dropped item.")))
+                        }
+                        return
+                    }
                     processDroppedZip(url)
                 }
                 handled = true
