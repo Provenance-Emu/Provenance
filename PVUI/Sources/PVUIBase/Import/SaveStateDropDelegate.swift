@@ -122,6 +122,7 @@ public struct SaveStateDropTargetModifier: ViewModifier {
     // MARK: - Bundle import (zip)
 
     private func importBundle(zipURL: URL) {
+        // Step 1: Fetch the Realm object on the main actor (Realm is not thread-safe).
         Task { @MainActor in
             let tempDir = zipURL.deletingLastPathComponent()
             guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId) else {
@@ -129,13 +130,23 @@ public struct SaveStateDropTargetModifier: ViewModifier {
                 try? FileManager.default.removeItem(at: tempDir)
                 return
             }
-            do {
-                try await SaveExporter.shared.importSaves(from: zipURL, for: game)
-                ILOG("SaveStateDropDelegate: Bundle import succeeded for '\(game.title)'")
-            } catch {
-                ELOG("SaveStateDropDelegate: Bundle import failed: \(error.localizedDescription)")
+            // Freeze the Realm object before leaving the main actor so the
+            // background task can read its properties without thread-safety issues.
+            let frozenGame = game.isFrozen ? game : game.freeze()
+            let gameTitle = game.title
+
+            // Step 2: Run the actual unzip + copy work off the main actor to
+            // avoid stalling the UI. SaveExporter also detaches internally, but
+            // being explicit here makes the threading intent clear.
+            Task.detached(priority: .userInitiated) {
+                defer { try? FileManager.default.removeItem(at: tempDir) }
+                do {
+                    try await SaveExporter.shared.importSaves(from: zipURL, for: frozenGame)
+                    await MainActor.run { ILOG("SaveStateDropDelegate: Bundle import succeeded for '\(gameTitle)'") }
+                } catch {
+                    await MainActor.run { ELOG("SaveStateDropDelegate: Bundle import failed: \(error.localizedDescription)") }
+                }
             }
-            try? FileManager.default.removeItem(at: tempDir)
         }
     }
 

@@ -529,7 +529,7 @@
   },
   {
     "version": "3.7.0",
-    "title": "Netplay for GameCube & Wii",
+    "title": "Netplay, Save Export & Drag & Drop",
     "features": [
       {
         "symbolName": "network",
@@ -542,6 +542,24 @@
         "symbolColor": "green",
         "title": "Traversal Relay",
         "subtitle": "Connect without port-forwarding via Dolphin's public STUN relay server — just share your traversal code."
+      },
+      {
+        "symbolName": "square.and.arrow.up",
+        "symbolColor": "orange",
+        "title": "Export Game Saves",
+        "subtitle": "Long-press any game and choose \"Export Saves\" to share all save states and battery saves as a zip via AirDrop, Mail, or Files."
+      },
+      {
+        "symbolName": "hand.draw.fill",
+        "symbolColor": "purple",
+        "title": "Drag Save States",
+        "subtitle": "Drag any save state card from the All Save States browser directly to Files.app or AirDrop."
+      },
+      {
+        "symbolName": "arrow.down.doc.fill",
+        "symbolColor": "green",
+        "title": "Drop to Import",
+        "subtitle": "Drop a save export zip or a .sav battery save file onto a game card to instantly import it."
       }
     ]
   }
