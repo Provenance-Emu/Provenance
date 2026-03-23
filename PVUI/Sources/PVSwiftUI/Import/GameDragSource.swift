@@ -14,7 +14,6 @@
 #if os(iOS)
 import Foundation
 import SwiftUI
-import UniformTypeIdentifiers
 import PVLogging
 import PVRealm
 import RealmSwift
@@ -49,8 +48,8 @@ public struct GameDragSourceModifier: ViewModifier {
     /// Builds an `NSItemProvider` that vends the ROM file URL.
     ///
     /// The Realm lookup is performed immediately on the calling thread (the `.onDrag`
-    /// closure, which runs on the main thread), so the `registerFileRepresentation`
-    /// handler is free of Realm access and safe to call on any thread.
+    /// closure, which runs on the main thread). The provider is built from the
+    /// already-resolved URL, so no Realm access occurs on a background thread.
     ///
     /// Returns an empty provider (no registered types) when the ROM is not
     /// found on disk so the drag simply does nothing — no crash, no alert.
@@ -61,17 +60,12 @@ public struct GameDragSourceModifier: ViewModifier {
             return NSItemProvider()
         }
 
-        let provider = NSItemProvider()
-        // Capture the already-resolved URL so the handler never touches Realm.
-        provider.registerFileRepresentation(
-            forTypeIdentifier: UTType.fileURL.identifier,
-            fileOptions: [],
-            visibility: .all
-        ) { completion in
-            completion(fileURL, false, nil)
-            return nil
+        // Vend via NSItemProvider(contentsOf:) / NSURL for better cross-app
+        // drag-out compatibility (preferred over registerFileRepresentation).
+        if let provider = NSItemProvider(contentsOf: fileURL) {
+            return provider
         }
-        return provider
+        return NSItemProvider(object: fileURL as NSURL)
     }
 
     // MARK: - File URL resolution

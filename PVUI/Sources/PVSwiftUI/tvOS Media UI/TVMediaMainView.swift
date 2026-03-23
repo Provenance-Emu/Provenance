@@ -157,6 +157,8 @@ struct TVMediaMainView: View {
             renameAlertContent: { renameAlertContent }
         )
 #if os(iOS)
+        // This shared view is compiled for both iOS and tvOS.
+        // romDropTarget() is iOS-only (onDrop is unavailable on tvOS).
         .romDropTarget() // ROM drag & drop import (#2136)
 #endif
     }

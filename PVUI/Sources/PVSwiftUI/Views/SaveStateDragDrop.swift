@@ -46,22 +46,15 @@ public struct SaveStateDragModifier: ViewModifier {
 
     private func makeItemProvider() -> NSItemProvider {
         // Resolve the URL now, on the main thread (called from .onDrag).
-        // Capturing the already-resolved URL keeps the registerFileRepresentation
-        // handler free of Realm access so it is safe on any thread.
         guard let fileURL = Self.resolveFileURL(forSaveStateID: saveStateID) else {
             WLOG("SaveStateDragDrop: no on-disk file found for save state \(saveStateID)")
             return NSItemProvider()
         }
-        let provider = NSItemProvider()
-        provider.registerFileRepresentation(
-            forTypeIdentifier: UTType.fileURL.identifier,
-            fileOptions: [],
-            visibility: .all
-        ) { completion in
-            completion(fileURL, false, nil)
-            return nil
+        // Vend via NSURL for better cross-app drag-out compatibility.
+        if let provider = NSItemProvider(contentsOf: fileURL) {
+            return provider
         }
-        return provider
+        return NSItemProvider(object: fileURL as NSURL)
     }
 
     private static func resolveFileURL(forSaveStateID id: String) -> URL? {
@@ -137,6 +130,7 @@ public struct SaveBundleDropModifier: ViewModifier {
                 provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, error in
                     if let error {
                         ELOG("SaveBundleDropModifier: loadItem error: \(error)")
+                        Task { @MainActor in self.onResult(.failure(error)) }
                         return
                     }
                     // loadItem for public.file-url can return URL, NSURL, or Data.
@@ -157,15 +151,17 @@ public struct SaveBundleDropModifier: ViewModifier {
                 handled = true
             } else {
                 // Fallback: provider vends raw data — let the OS write it to a temp file.
-                // Prefer an archive/zip-conforming type if available, then fall back to generic data.
-                let zipTypeID = saveBundleAcceptedTypes
-                    .first(where: { $0.conforms(to: .archive) })
-                    .map(\.identifier)
+                // Prefer a concrete registered archive type (e.g. public.zip-archive) over the
+                // abstract parent, because some providers won't respond to the parent identifier.
+                let zipTypeID = provider.registeredTypeIdentifiers.first(where: { id in
+                    UTType(id)?.conforms(to: .archive) == true
+                })
 
                 if let zipTypeID, provider.hasItemConformingToTypeIdentifier(zipTypeID) {
                     provider.loadFileRepresentation(forTypeIdentifier: zipTypeID) { url, error in
                         if let error {
                             ELOG("SaveBundleDropModifier: loadFileRepresentation (zip) error: \(error)")
+                            Task { @MainActor in self.onResult(.failure(error)) }
                             return
                         }
                         guard let url else { return }
@@ -176,6 +172,7 @@ public struct SaveBundleDropModifier: ViewModifier {
                     provider.loadFileRepresentation(forTypeIdentifier: UTType.data.identifier) { url, error in
                         if let error {
                             ELOG("SaveBundleDropModifier: loadFileRepresentation (data) error: \(error)")
+                            Task { @MainActor in self.onResult(.failure(error)) }
                             return
                         }
                         guard let url else { return }
@@ -203,19 +200,22 @@ public struct SaveBundleDropModifier: ViewModifier {
                     return
                 }
 
-                let (game, error) = await findGame(inBundle: stableURL)
+                let (liveGame, error) = await findGame(inBundle: stableURL)
 
                 if let error {
                     await MainActor.run { onResult(.failure(error)) }
                     return
                 }
+                // Freeze the Realm-managed object on the main actor so it can be safely
+                // read from this background Task without violating thread confinement.
+                let game = await MainActor.run { liveGame?.freeze() }
                 guard let game else {
                     await MainActor.run { onResult(.missingGame) }
                     return
                 }
 
                 try await SaveExporter.shared.importSaves(from: stableURL, for: game)
-                let title = await MainActor.run { game.title }
+                let title = game.title  // frozen objects are immutable and thread-safe
                 await MainActor.run { onResult(.success(gameTitle: title)) }
             } catch {
                 ELOG("SaveBundleDropModifier: import failed: \(error)")
@@ -233,6 +233,9 @@ public struct SaveBundleDropModifier: ViewModifier {
         let unique = base.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: unique, withIntermediateDirectories: true)
         let dest = unique.appendingPathComponent(sourceURL.lastPathComponent)
+        // Files/iCloud providers may vend security-scoped URLs — request access before copying.
+        let needsScope = sourceURL.startAccessingSecurityScopedResource()
+        defer { if needsScope { sourceURL.stopAccessingSecurityScopedResource() } }
         try FileManager.default.copyItem(at: sourceURL, to: dest)
         return dest
     }
