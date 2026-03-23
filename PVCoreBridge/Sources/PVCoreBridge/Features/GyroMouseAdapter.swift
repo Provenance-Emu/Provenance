@@ -238,6 +238,10 @@ import CoreMotion
 #if canImport(CoreMotion)
         _stopIMU()
 #endif
+        // Don't restart input sources while disabled — the isEnabled didSet will
+        // restart them when the adapter is re-enabled, preventing unnecessary
+        // 60 Hz IMU activity (battery drain) while the game is paused.
+        guard isEnabled, responder != nil else { return }
         _hookCurrentController()
 #if canImport(CoreMotion)
         if _shouldUseIMU() { _startIMU() }
@@ -364,8 +368,13 @@ import CoreMotion
         let scale = sensitivity * dt
 
         // Accumulate cursor (pitch = vertical, yaw = horizontal)
-        cursorX = max(0.0, min(1.0, cursorX + filteredY * scale))
-        cursorY = max(0.0, min(1.0, cursorY - filteredX * scale))
+        let newX = max(0.0, min(1.0, cursorX + filteredY * scale))
+        let newY = max(0.0, min(1.0, cursorY - filteredX * scale))
+
+        // Avoid spamming mouseMoved/notification at 60 Hz when stationary.
+        guard newX != cursorX || newY != cursorY else { return }
+        cursorX = newX
+        cursorY = newY
 
         _deliverPosition()
     }

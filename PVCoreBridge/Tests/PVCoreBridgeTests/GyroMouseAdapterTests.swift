@@ -154,16 +154,13 @@ final class GyroMouseAdapterTests: XCTestCase {
 
     func testDeadZoneSuppressesSmallInput() {
         adapter.attach(to: responder)
-        // Rate below default dead zone (0.05) should be filtered out.
+        // Rate below default dead zone (0.05) is filtered out: inX = inY = 0,
+        // filteredX/Y remain 0, so cursor stays exactly at (0.5, 0.5) — no
+        // displacement. The early-return guard in _applyRotation suppresses
+        // delivery when position is unchanged, so receivedPoints must be empty.
         adapter._testApplyRotation(rawX: 0.01, rawY: 0.01)
-        // With both axes in the dead zone, filteredX/Y converge toward 0 and
-        // no net cursor displacement occurs — but a point is still delivered
-        // (the cursor stays at 0.5,0.5). Verify count is still 1 (not 0 = no crash).
-        XCTAssertEqual(responder.receivedPoints.count, 1)
-        // Cursor should remain near centre (dead zone ate the input).
-        let pt = responder.receivedPoints[0]
-        XCTAssertEqual(pt.x, 0.5, accuracy: 0.01)
-        XCTAssertEqual(pt.y, 0.5, accuracy: 0.01)
+        XCTAssertTrue(responder.receivedPoints.isEmpty,
+                      "Dead-zone input must not spam mouseMoved when position is unchanged")
     }
 
     func testOutputClampedToUnitSquare() {
