@@ -40,7 +40,7 @@ let volume = SubtleVolume(style: .roundedLine)
 let volumeHeight: CGFloat = 3
 #endif
 
-open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver {
+open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver, OSDFastForwardObserver {
 
     public func layoutViews() {}
 
@@ -1864,6 +1864,22 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     @objc private func fastForwardTapped() {
         guard let core = emulatorCore as? PVEmulatorCore else { return }
+
+        // Sync isFastForwardActive from core.gameSpeed in case another code path
+        // changed the speed without going through this toggle (e.g. speed menu,
+        // or a hardcore reset from PVEmulatorViewController+Achievements).
+        isFastForwardActive = (core.gameSpeed == .fast || core.gameSpeed == .veryFast)
+        let willEnableFastForward = !isFastForwardActive
+
+        // RetroAchievements hardcore mode disallows entering fast-forward,
+        // but should still allow returning to normal speed.
+        if willEnableFastForward,
+           let emulatorViewController = parent as? PVEmulatorViewController,
+           emulatorViewController.achievementsBlocksFastForward() {
+            presentError(hardcoreFastForwardBlockedMessage, source: view)
+            return
+        }
+
         isFastForwardActive.toggle()
         core.gameSpeed = isFastForwardActive ? .fast : .normal
         updateFastForwardButtonAppearance()
@@ -1875,6 +1891,15 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         fastForwardButton?.backgroundColor = isFastForwardActive
             ? UIColor.systemOrange.withAlphaComponent(0.6)
             : UIColor.black.withAlphaComponent(0.4)
+    }
+
+    /// Syncs the fast-forward button visual state with the emulator core's current speed.
+    /// Called externally (e.g. when hardcore mode resets the core to `.normal`) so the
+    /// button does not remain highlighted after a speed change from outside this VC.
+    public func syncFastForwardDisplay() {
+        guard let core = emulatorCore as? PVEmulatorCore else { return }
+        isFastForwardActive = (core.gameSpeed == .fast || core.gameSpeed == .veryFast)
+        updateFastForwardButtonAppearance()
     }
 
     #if !os(tvOS)

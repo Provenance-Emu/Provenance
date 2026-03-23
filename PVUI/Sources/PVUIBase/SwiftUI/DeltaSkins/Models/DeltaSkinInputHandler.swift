@@ -616,7 +616,45 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Store the previous game speed when using hold-style buttons
     private var previousGameSpeed: GameSpeed?
 
+    /// Returns `true` when RetroAchievements hardcore mode blocks fast-forward.
+    ///
+    /// Delegates to `PVEmulatorViewController.achievementsBlocksFastForward()` when
+    /// available, so the check uses the same centralised logic and source-of-truth as
+    /// the OSD fast-forward button.  Falls back to a direct core inspection only when
+    /// the emulator controller is not a `PVEmulatorViewController` (e.g. tests).
+    ///
+    /// When UIKit is available and `emulatorController` is a `UIViewController`,
+    /// this presents a best-effort error alert to the user.
+    /// If no suitable view controller is available the block is still enforced
+    /// but no alert is shown; callers should not rely on the alert being visible.
+    ///
+    /// Must be called from the main actor because `PVEmulatorViewController`
+    /// (a `UIViewController` subclass) is `@MainActor`-isolated.
+    @MainActor
+    private func isFastForwardBlockedByHardcore() -> Bool {
+        let blocked: Bool
+        if let emulatorVC = emulatorController as? PVEmulatorViewController {
+            // Prefer the centralised VC helper — same logic used by the OSD button,
+            // and automatically correct once RetroArch's achievementsActive is wired up.
+            blocked = emulatorVC.achievementsBlocksFastForward()
+        } else {
+            // Fallback: inspect the core directly (non-VC controller contexts).
+            guard let achievementsCore = emulatorCore as? (any CoreRetroAchievements) else {
+                return false
+            }
+            blocked = achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+        }
+        guard blocked else { return false }
+        #if canImport(UIKit)
+        if let vc = emulatorController as? UIViewController {
+            vc.presentError(hardcoreFastForwardBlockedMessage, source: vc.view)
+        }
+        #endif
+        return true
+    }
+
     /// Handle toggle fast forward button press
+    @MainActor
     private func toggleFastForwardPressed() {
         DLOG("Toggle fast forward button pressed")
         guard let core = emulatorCore else {
@@ -624,12 +662,16 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
-        // If already in fast mode, go back to normal
+        // If already in fast mode, go back to normal regardless of hardcore mode
+        // (we always allow returning to normal speed).
         if core.gameSpeed == .fast || core.gameSpeed == .veryFast {
             DLOG("Returning to normal speed from fast mode")
             core.gameSpeed = .normal
             return
         }
+
+        // RetroAchievements hardcore mode disallows *entering* fast-forward.
+        guard !isFastForwardBlockedByHardcore() else { return }
 
         // Otherwise, set to fast mode
         DLOG("Setting game speed to fast")
@@ -649,12 +691,16 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle hold-style fast forward button press
+    @MainActor
     private func fastForwardPressed() {
         DLOG("Fast forward button pressed (hold style)")
         guard let core = emulatorCore else {
             ELOG("Cannot set fast forward - emulatorCore is nil")
             return
         }
+
+        // RetroAchievements hardcore mode disallows fast-forward.
+        guard !isFastForwardBlockedByHardcore() else { return }
 
         // Save the current game speed to restore it on release
         previousGameSpeed = core.gameSpeed
@@ -665,6 +711,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle hold-style fast forward button release
+    @MainActor
     private func fastForwardReleased() {
         DLOG("Fast forward button released (hold style)")
         guard let core = emulatorCore else {
@@ -672,8 +719,21 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
-        // Reset to normal speed or previous speed
-        if let previousSpeed = previousGameSpeed {
+        // Reset to normal speed or previous speed.
+        // If hardcore mode is now active, never restore a fast speed —
+        // cap at .normal to avoid re-enabling a speed that became blocked.
+        // Delegate the check to PVEmulatorViewController when available so the
+        // same centralised logic is used here as in the OSD and Delta-skin press handlers.
+        let hardcoreActive: Bool
+        if let emulatorVC = emulatorController as? PVEmulatorViewController {
+            hardcoreActive = emulatorVC.achievementsBlocksFastForward()
+        } else if let achievementsCore = emulatorCore as? (any CoreRetroAchievements) {
+            hardcoreActive = achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+        } else {
+            hardcoreActive = false
+        }
+        if let previousSpeed = previousGameSpeed,
+           !hardcoreActive || (previousSpeed != .fast && previousSpeed != .veryFast) {
             DLOG("Restoring previous game speed: \(previousSpeed)")
             core.gameSpeed = previousSpeed
         } else {

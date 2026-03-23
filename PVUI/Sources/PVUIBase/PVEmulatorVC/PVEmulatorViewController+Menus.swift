@@ -77,7 +77,7 @@ extension PVEmulatorViewController {
             let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.enableControllerInput(false)
                 self.isShowingMenu = false
-                self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
+                self.setGameSpeedRespectingAchievements(GameSpeed(rawValue: idx) ?? .normal)
                 self.core.setPauseEmulation(false)
             })
             actionSheet.addAction(action)
