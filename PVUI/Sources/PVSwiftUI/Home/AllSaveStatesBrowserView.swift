@@ -439,7 +439,8 @@ public struct AllSaveStatesBrowserView: View {
 
     private func manageGame(gameId: String) {
         Task { @MainActor in
-            // gameId is PVGame.id (UUID string), not the Realm primary key (md5Hash) — use filter.
+            // gameId is PVGame.id — a String field containing a UUID-formatted value (not a Realm UUID type).
+            // PVGame's Realm primary key is md5Hash, so we must use a filter predicate here.
             guard let game = RomDatabase.sharedInstance.realm
                     .objects(PVGame.self)
                     .filter("id == %@", gameId)
@@ -454,8 +455,8 @@ public struct AllSaveStatesBrowserView: View {
     #if os(iOS)
     /// Exports all saves for the given game as a zip and presents the system share sheet.
     ///
-    /// `gameId` is `PVGame.id` (UUID string), not the Realm primary key (`md5Hash`), so we use a
-    /// filter predicate rather than `forPrimaryKey`.
+    /// `gameId` is `PVGame.id` — a `String` field containing a UUID-formatted value (not a Realm `UUID` type).
+    /// `PVGame`'s Realm primary key is `md5Hash`, so we use a filter predicate rather than `forPrimaryKey`.
     private func exportGame(gameId: String) {
         guard exportingGameId == nil else { return }
         exportingGameId = gameId
