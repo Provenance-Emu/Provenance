@@ -204,10 +204,18 @@ public extension Defaults.Keys {
 
     /// Which physical input source delivers mouse / pointer events to the emulated core.
     /// Defaults to `.auto` so the engine picks the best available device at runtime.
+    ///
+    /// NOTE: As of this version, this key is **not yet read by the runtime mouse input
+    /// pipeline**, and changing it will not affect emulator behavior. It is reserved for
+    /// future use so that the input system can route mouse events based on this value.
     static let mouseInputSource = Key<MouseInputSource>("mouseInputSource", default: .auto)
 
-    /// Global sensitivity multiplier applied to all mouse delta events (touch, controller
-    /// touchpad, and physical mouse).  Range 0.1 – 5.0; default 1.0.
+    /// Global sensitivity multiplier intended to be applied to all mouse delta events
+    /// (touch, controller touchpad, and physical mouse). Range 0.1 – 5.0; default 1.0.
+    ///
+    /// NOTE: This value is currently **not applied by the runtime mouse input pipeline**.
+    /// It is stored and exposed in the UI for future use, but modifying it will not yet
+    /// change pointer sensitivity in-game.
     static let mouseSensitivity = Key<Double>("mouseSensitivity", default: 1.0)
 
     // MARK: Gyro Mouse
@@ -218,13 +226,21 @@ public extension Defaults.Keys {
     /// translated into `mouseMoved(atPoint:)` calls.
     static let gyroMouseEnabled = Key<Bool>("gyroMouseEnabled", default: false)
 
-    /// Sensitivity multiplier applied only to gyroscope-driven mouse input.
+    /// Sensitivity multiplier intended to be applied only to gyroscope-driven mouse input.
     /// Kept separate so gyro feel can be tuned independently of touch/mouse.
     /// Range 0.1 – 5.0; default 1.0.
+    ///
+    /// NOTE: This value is currently **not consumed by any gyro mouse handler**. It is
+    /// reserved for future wiring so that gyro-based pointing can be scaled using this
+    /// setting without requiring a migration.
     static let gyroMouseSensitivity = Key<Double>("gyroMouseSensitivity", default: 1.0)
 
-    /// Gyroscope dead zone in rad/s.  Rotations below this threshold are ignored,
-    /// preventing drift from a stationary device.  Range 0.0 – 0.5; default 0.05.
+    /// Gyroscope dead zone in rad/s. Rotations below this threshold are intended to be
+    /// ignored to prevent drift from a stationary device. Range 0.0 – 0.5; default 0.05.
+    ///
+    /// NOTE: This key is currently **not read by the gyro mouse input path**, so adjusting
+    /// it will not change behavior yet. It exists to support a future dead-zone
+    /// implementation without breaking stored preferences.
     static let gyroMouseDeadZone = Key<Double>("gyroMouseDeadZone", default: 0.05)
 
     /// Enable turbo/autofire: when a button has turbo active, it rapidly toggles press/release.

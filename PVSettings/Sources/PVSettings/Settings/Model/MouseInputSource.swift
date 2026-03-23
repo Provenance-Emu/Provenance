@@ -12,9 +12,9 @@ import Defaults
 /// Selects which physical input device drives mouse/pointer events
 /// forwarded to the emulated mouse peripheral.
 ///
-/// The `.auto` case lets the engine pick the best available source at runtime:
-/// a physical `GCMouse` beats a controller touchpad, which beats gyro,
-/// which beats the on-screen touch trackpad.
+/// The `.auto` case lets the engine pick an appropriate available source
+/// at runtime based on connected devices and platform capabilities.
+/// The exact selection strategy may evolve over time.
 public enum MouseInputSource: String, Codable, Equatable,
     UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, Sendable {
 
