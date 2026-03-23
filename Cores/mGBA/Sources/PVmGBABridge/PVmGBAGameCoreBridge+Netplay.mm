@@ -60,6 +60,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>    // memset, strerror
+#include <stdio.h>     // snprintf
+#include <stdatomic.h> // atomic_load, atomic_store
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Conditional mGBA SIO integration
@@ -102,11 +105,11 @@ static uint8_t kPVmGBALinkContextKey;
 
 /// Holds all mutable state for one link-cable session.
 @interface PVmGBALinkContext : NSObject
-@property (nonatomic) PVmGBALinkStatus status;
+@property (atomic) PVmGBALinkStatus status;
 /// Listening server socket (host only); -1 when unused.
-@property (nonatomic) int serverFD;
+@property (atomic) int serverFD;
 /// Accepted / connected peer socket; -1 until connected.
-@property (nonatomic) int peerFD;
+@property (atomic) int peerFD;
 /// YES for the host (player 1 / master), NO for the client (player 2 / slave).
 @property (nonatomic) BOOL isHost;
 /// Serial queue for async socket accept operations.
@@ -116,7 +119,7 @@ static uint8_t kPVmGBALinkContextKey;
 @property (nonatomic, weak) PVmGBAGameCoreBridge *bridge;
 /// Non-nil when the session was torn down due to an unexpected error (e.g. peer
 /// disconnect). Nil when torn down cleanly via -stopLink.
-@property (nonatomic, strong, nullable) NSError *lastDisconnectError;
+@property (atomic, strong, nullable) NSError *lastDisconnectError;
 @end
 
 @implementation PVmGBALinkContext
@@ -409,13 +412,13 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
 - (BOOL)startLinkHostOnPort:(uint16_t)port
                       error:(NSError *__autoreleasing _Nullable *)error
 {
-    // Reject privileged and unassigned ports (documented range is 1024-65535).
-    if (port < 1024) {
+    // Reject privileged and unassigned ports (documented range is 1024-65535, or 0 for OS-assigned).
+    if (port > 0 && port < 1024) {
         if (error) {
             *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
                                          code:PVmGBALinkErrorInvalidAddress
                                      userInfo:@{ NSLocalizedDescriptionKey:
-                                                     @"Port must be in the range 1024–65535." }];
+                                                     @"Port must be in the range 1024–65535 (or 0 for OS-assigned)." }];
         }
         return NO;
     }
@@ -490,30 +493,23 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
 
         if (peerFD < 0) {
             // accept() failed (likely -stopLink was called). Clean up the listening socket.
-            if (ctx2.serverFD >= 0) {
-                close(ctx2.serverFD);
-                ctx2.serverFD = -1;
+            @synchronized (ctx2) {
+                if (ctx2.serverFD >= 0) {
+                    close(ctx2.serverFD);
+                    ctx2.serverFD = -1;
+                }
+                ctx2.status = PVmGBALinkStatusIdle;
             }
-            ctx2.status = PVmGBALinkStatusIdle;
             return;
         }
 
         // Suppress SIGPIPE on the accepted peer socket.
-        int nosig = 1;
-        setsockopt(peerFD, SOL_SOCKET, SO_NOSIGPIPE, &nosig, sizeof(nosig));
+        int nosig2 = 1;
+        setsockopt(peerFD, SOL_SOCKET, SO_NOSIGPIPE, &nosig2, sizeof(nosig2));
         // Bound the emulation-thread recv() to 2 seconds so a stalled peer
         // doesn't hang the emulator indefinitely.
-        struct timeval rcvTimeout = { .tv_sec = 2, .tv_usec = 0 };
-        setsockopt(peerFD, SOL_SOCKET, SO_RCVTIMEO, &rcvTimeout, sizeof(rcvTimeout));
-
-        ctx2.peerFD = peerFD;
-
-        // 2-player link cable: close the listening socket once a peer is accepted.
-        // No further inbound connections are expected, and keeping it open wastes FDs.
-        if (ctx2.serverFD >= 0) {
-            close(ctx2.serverFD);
-            ctx2.serverFD = -1;
-        }
+        struct timeval rcvTimeout2 = { .tv_sec = 2, .tv_usec = 0 };
+        setsockopt(peerFD, SOL_SOCKET, SO_RCVTIMEO, &rcvTimeout2, sizeof(rcvTimeout2));
 
 #if PVMGBA_LINK_SIO_AVAILABLE
         // Install the SIO driver now that a peer is connected.
@@ -521,8 +517,10 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         if (drv == NULL) {
             // Driver allocation failed; treat as a hard failure and tear down.
             close(peerFD);
-            ctx2.peerFD = -1;
-            ctx2.status = PVmGBALinkStatusIdle;
+            @synchronized (ctx2) {
+                ctx2.peerFD = -1;
+                ctx2.status = PVmGBALinkStatusIdle;
+            }
             return;
         }
 
@@ -532,17 +530,35 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
                                      &kPVmGBALinkDriverKey,
                                      drvValue,
                                      OBJC_ASSOCIATION_RETAIN);
-            ctx2.status = PVmGBALinkStatusConnected;
+            @synchronized (ctx2) {
+                ctx2.peerFD   = peerFD;
+                // 2-player link cable: close the listening socket once a peer is accepted.
+                if (ctx2.serverFD >= 0) {
+                    close(ctx2.serverFD);
+                    ctx2.serverFD = -1;
+                }
+                ctx2.status = PVmGBALinkStatusConnected;
+            }
         } else {
             // Driver installation failed (core not ready); tear down the session.
             free(drv);
             close(peerFD);
-            ctx2.peerFD = -1;
-            ctx2.status = PVmGBALinkStatusIdle;
+            @synchronized (ctx2) {
+                ctx2.peerFD = -1;
+                ctx2.status = PVmGBALinkStatusIdle;
+            }
         }
 #else
         // When SIO is not available, consider the link connected once a peer is accepted.
-        ctx2.status = PVmGBALinkStatusConnected;
+        @synchronized (ctx2) {
+            ctx2.peerFD   = peerFD;
+            // 2-player link cable: close the listening socket once a peer is accepted.
+            if (ctx2.serverFD >= 0) {
+                close(ctx2.serverFD);
+                ctx2.serverFD = -1;
+            }
+            ctx2.status = PVmGBALinkStatusConnected;
+        }
 #endif
     });
 
@@ -566,12 +582,12 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     }
 
     // Reject privileged and unassigned ports — same range as -startLinkHostOnPort:.
-    if (port < 1024) {
+    if (port > 0 && port < 1024) {
         if (error) {
             *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
                                          code:PVmGBALinkErrorInvalidAddress
                                      userInfo:@{ NSLocalizedDescriptionKey:
-                                                     @"Port must be in the range 1024–65535." }];
+                                                     @"Port must be in the range 1024–65535 (or 0 for OS-assigned)." }];
         }
         return NO;
     }

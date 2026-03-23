@@ -257,6 +257,10 @@ extension PVmGBACore: PVNetplayCapable {
             bridge.stopLink()
         }
 
+        // Re-check cancellation: onCancel may have already called stopLink()
+        // while the detached task was completing. If so, do not set up state.
+        try Task.checkCancellation()
+
         // Only mutate state and notify observers on the main actor.
         await MainActor.run {
             _linkContext = MGBALinkContext(role: role, settings: settings)
