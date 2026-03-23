@@ -102,7 +102,7 @@ private final class MockVectrexResponder {
     enum Call: Equatable {
         case push(button: Int)
         case release(button: Int)
-        case moveJoystick(direction: Int, value: Double)
+        case moveJoystick(direction: Int, value: Float)
     }
 
     var calls: [Call] = []
@@ -133,7 +133,7 @@ private final class MockVectrexResponder {
     }
 
     private func handleAxis(_ axis: CompanionAxisID, value: Float) {
-        let magnitude = Double(abs(value))
+        let magnitude = abs(value)
         switch axis {
         case .leftX:
             if value >= 0 {
