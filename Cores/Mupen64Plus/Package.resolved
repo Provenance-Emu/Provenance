@@ -1,5 +1,5 @@
 {
-  "originHash" : "93549293af1a267a727fc48b5c5c76749a23f4075b3616716e05637808cfb436",
+  "originHash" : "dbf6ea71d3a507ada3319d53e4ffe5f733507af889840d78695b19510a57524c",
   "pins" : [
     {
       "identity" : "checksum",
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
+        "version" : "1.0.0"
       }
     }
   ],
