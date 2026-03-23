@@ -188,6 +188,11 @@ struct PauseTileMenuView: View {
         case "rumbleToggle":
             hapticFeedbackEnabled.toggle()
             rebuildSections()
+        case "mouseToggle":
+            #if canImport(UIKit) && !os(tvOS)
+            emulatorVC.toggleVirtualMouse()
+            rebuildSections()
+            #endif
         case "jitStatus":
             break // read-only
 

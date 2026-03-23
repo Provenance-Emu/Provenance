@@ -115,6 +115,11 @@ final class PauseTileMenuViewModel: ObservableObject {
         if let jitTile = Self.jitStatusTile(core: emulatorVC.core, indicatorRegistry: indicatorRegistry) {
             displayTiles.append(jitTile)
         }
+        #if canImport(UIKit) && !os(tvOS)
+        if let mouseTile = Self.mouseToggleTile(emulatorVC: emulatorVC) {
+            displayTiles.append(mouseTile)
+        }
+        #endif
         if !displayTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "display", title: String(localized: "QUICK SETTINGS"), tiles: displayTiles))
         }
@@ -242,6 +247,21 @@ final class PauseTileMenuViewModel: ObservableObject {
             dismissOnTap: false
         )
     }
+
+    #if canImport(UIKit) && !os(tvOS)
+    private static func mouseToggleTile(emulatorVC: PVEmulatorViewController) -> PauseMenuTile? {
+        guard emulatorVC.coreSupportsVirtualMouse else { return nil }
+        let isVisible = emulatorVC.isVirtualMouseVisible
+        return PauseMenuTile(
+            id: "mouseToggle",
+            icon: "cursorarrow",
+            label: String(localized: "Mouse"),
+            badge: isVisible ? "ON" : "OFF",
+            colorKey: isVisible ? .green : .gray,
+            dismissOnTap: false
+        )
+    }
+    #endif
 
     private static func jitStatusTile(core: PVEmulatorCore, indicatorRegistry: PVIndicatorRegistry) -> PauseMenuTile? {
         guard core.jitRequirement.hasJIT else { return nil }

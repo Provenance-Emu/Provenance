@@ -319,10 +319,17 @@ extension PVEmulatorViewController {
     /// Order (back to front) when DeltaSkins are OFF:
     ///   trackpad → controller overlay (HUD buttons) → keyboard container → cursor (non-interactive) → menu button
     ///
-    /// Order (back to front) when DeltaSkins are ON:
+    /// Order (back to front) when DeltaSkins are ON (no mouse):
     ///   trackpad → skin container → keyboard container → cursor (non-interactive) → menu button
     ///
-    /// When a DeltaSkin is active, the skin container provides all controller buttons.
+    /// Order (back to front) when DeltaSkins are ON + virtual mouse active:
+    ///   skin container → trackpad → keyboard container → cursor (non-interactive) → menu button
+    ///
+    /// When the virtual mouse is active with a skin, the trackpad must sit above the skin container
+    /// so it receives game-viewport touches.  TouchTrackpadView.hitTest() gates touches to the
+    /// game viewport rect, so skin button touches outside that area still fall through to the skin.
+    ///
+    /// When a DeltaSkin is active (no mouse), the skin container provides all controller buttons.
     /// The standard controller overlay is hidden and must NOT be raised above the skin container —
     /// doing so intercepts all touches before they reach the skin's MultiTouchView.
     public func bringVirtualInputOverlaysToFront() {
@@ -331,11 +338,18 @@ extension PVEmulatorViewController {
         }
         // When a DeltaSkin is active AND the skin container is already installed,
         // it is the interactive layer for button input — raise it above the trackpad.
+        // Exception: when virtual mouse is active, trackpad must be raised above the skin
+        // container afterwards so it can intercept game-viewport touches.
         // Fall back to the standard controller overlay in all other cases (skins off,
         // skin mode on but container not yet loaded, native core, etc.) so touches
         // are never blocked by a view that isn't there.
         if isDeltaSkinEnabled, let skinContainer = skinContainerView {
             view.bringSubviewToFront(skinContainer)
+            // Raise trackpad above skin when mouse is active — its hitTest() gates
+            // to the viewport rect so skin button touches still reach the skin below.
+            if isVirtualMouseVisible, let trackpad = touchTrackpadView {
+                view.bringSubviewToFront(trackpad)
+            }
         } else if let controllerView = controllerViewController?.view {
             view.bringSubviewToFront(controllerView)
         }

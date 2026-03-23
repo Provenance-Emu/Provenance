@@ -25,6 +25,7 @@ import Combine
 import Defaults
 import PVSettings
 import PVCoreBridge
+import PVPrimitives
 
 @objc
 @objcMembers
@@ -589,7 +590,19 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient, KeyboardResponder, Mo
         (_bridge as? PVDOSSystemResponderClient)?.keyUp(key)
     }
     public var gameSupportsMouse: Bool {
-        virtualInputSupport.supportsMouse
+        guard virtualInputSupport.supportsMouse else { return false }
+        // For systems where only specific games use a mouse (PSX, Saturn, SNES, Dreamcast),
+        // delegate to MouseGameRegistry for per-game detection so titles like Crash Bandicoot
+        // don't incorrectly show the mouse cursor.
+        if let sysID = SystemIdentifier(rawValue: systemIdentifier ?? ""),
+           MouseGameRegistry.shared.systemHasAnyMouseSupport(sysID) {
+            return MouseGameRegistry.shared.gameSupportsMouse(
+                systemIdentifier: sysID,
+                md5: romMD5,
+                title: romName
+            )
+        }
+        return true
     }
     public var requiresMouse: Bool {
         virtualInputSupport.requiresMouse
