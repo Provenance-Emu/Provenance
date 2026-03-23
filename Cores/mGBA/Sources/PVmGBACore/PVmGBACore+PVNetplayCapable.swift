@@ -112,7 +112,10 @@ private extension PVmGBACore {
             let (hostAddr, port): (String, UInt16)
             switch ctx.role {
             case .host(let p):
-                hostAddr = "127.0.0.1"
+                // Avoid advertising loopback (127.0.0.1) as the room address —
+                // it is not reachable from other devices. Use "0.0.0.0" to
+                // indicate "bound to all interfaces" without a concrete LAN IP.
+                hostAddr = "0.0.0.0"
                 port     = p
             case .client(let h, let p),
                  .spectator(let h, let p):
@@ -209,46 +212,58 @@ extension PVmGBACore: PVNetplayCapable {
         // Perform the potentially blocking bridge calls off the main actor.
         // joinLinkAtHost:port:error: performs a synchronous select(5s) on the
         // calling thread, which would freeze the UI if called on MainActor.
+        //
+        // `Task.detached` does not inherit the caller's cancellation scope, so we
+        // wrap with `withTaskCancellationHandler` to propagate cancellation: if the
+        // caller cancels while we are blocked in connect(), the handler calls
+        // stopLink() which closes the socket and unblocks the connect() syscall.
         let bridge = _bridge
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            Task.detached(priority: .userInitiated) {
-                // Check for cancellation before starting the potentially blocking
-                // socket work (join includes a 5-second connect timeout).
-                guard !Task.isCancelled else {
-                    continuation.resume(throwing: CancellationError())
-                    return
-                }
+        try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                Task.detached(priority: .userInitiated) {
+                    // Check for cancellation before starting the potentially blocking
+                    // socket work (join includes a 5-second connect timeout).
+                    guard !Task.isCancelled else {
+                        continuation.resume(throwing: CancellationError())
+                        return
+                    }
 
-                var nsError: NSError?
-                let success: Bool
+                    var nsError: NSError?
+                    let success: Bool
 
-                switch role {
-                case .host(let port):
-                    success = bridge.startLinkHost(onPort: port, error: &nsError)
+                    switch role {
+                    case .host(let port):
+                        success = bridge.startLinkHost(onPort: port, error: &nsError)
 
-                case .client(let host, let port):
-                    success = bridge.joinLink(atHost: host, port: port, error: &nsError)
+                    case .client(let host, let port):
+                        success = bridge.joinLink(atHost: host, port: port, error: &nsError)
 
-                case .spectator(let host, let port):
-                    // Link cable is 2-player only; spectator connects as the second player.
-                    success = bridge.joinLink(atHost: host, port: port, error: &nsError)
-                }
+                    case .spectator(let host, let port):
+                        // Link cable is 2-player only; spectator connects as the second player.
+                        success = bridge.joinLink(atHost: host, port: port, error: &nsError)
+                    }
 
-                // If the caller cancelled while we were in the blocking connect, tear
-                // down any session that may have been established.
-                if Task.isCancelled {
-                    if success { bridge.stopLink() }
-                    continuation.resume(throwing: CancellationError())
-                    return
-                }
+                    // If the caller cancelled while we were in the blocking connect, tear
+                    // down any session that may have been established.
+                    if Task.isCancelled {
+                        if success { bridge.stopLink() }
+                        continuation.resume(throwing: CancellationError())
+                        return
+                    }
 
-                if !success {
-                    let reason = nsError?.localizedDescription ?? "Unknown error"
-                    continuation.resume(throwing: NetplayError.connectionFailed(reason))
-                } else {
-                    continuation.resume()
+                    if !success {
+                        let reason = nsError?.localizedDescription ?? "Unknown error"
+                        continuation.resume(throwing: NetplayError.connectionFailed(reason))
+                    } else {
+                        continuation.resume()
+                    }
                 }
             }
+        } onCancel: {
+            // Fired when the caller's task is cancelled. Calling stopLink() closes
+            // all sockets, which unblocks any in-progress connect()/accept() syscall
+            // and causes the detached task to fail cleanly without a dangling session.
+            bridge.stopLink()
         }
 
         // Only mutate state and notify observers on the main actor.

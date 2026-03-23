@@ -379,14 +379,14 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         ctx = [[PVmGBALinkContext alloc] init];
         ctx.bridge = self;
         objc_setAssociatedObject(self, &kPVmGBALinkContextKey,
-                                 ctx, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                                 ctx, OBJC_ASSOCIATION_RETAIN);
     }
     return ctx;
 }
 
 - (void)_clearLinkContext {
     objc_setAssociatedObject(self, &kPVmGBALinkContextKey,
-                             nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                             nil, OBJC_ASSOCIATION_RETAIN);
 }
 
 // MARK: - Status properties
@@ -508,6 +508,13 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
 
         ctx2.peerFD = peerFD;
 
+        // 2-player link cable: close the listening socket once a peer is accepted.
+        // No further inbound connections are expected, and keeping it open wastes FDs.
+        if (ctx2.serverFD >= 0) {
+            close(ctx2.serverFD);
+            ctx2.serverFD = -1;
+        }
+
 #if PVMGBA_LINK_SIO_AVAILABLE
         // Install the SIO driver now that a peer is connected.
         PVmGBATCPLinkDriver *drv = _pvmgba_create_driver(ctx2);
@@ -515,10 +522,6 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
             // Driver allocation failed; treat as a hard failure and tear down.
             close(peerFD);
             ctx2.peerFD = -1;
-            if (ctx2.serverFD >= 0) {
-                close(ctx2.serverFD);
-                ctx2.serverFD = -1;
-            }
             ctx2.status = PVmGBALinkStatusIdle;
             return;
         }
@@ -528,17 +531,13 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
             objc_setAssociatedObject(strongSelf,
                                      &kPVmGBALinkDriverKey,
                                      drvValue,
-                                     OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                                     OBJC_ASSOCIATION_RETAIN);
             ctx2.status = PVmGBALinkStatusConnected;
         } else {
             // Driver installation failed (core not ready); tear down the session.
             free(drv);
             close(peerFD);
             ctx2.peerFD = -1;
-            if (ctx2.serverFD >= 0) {
-                close(ctx2.serverFD);
-                ctx2.serverFD = -1;
-            }
             ctx2.status = PVmGBALinkStatusIdle;
         }
 #else
@@ -657,8 +656,8 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
             }
         }
 
-        // Restore blocking mode.
-        fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
+        // Restore exact original descriptor flags (not just mask-off O_NONBLOCK).
+        fcntl(fd, F_SETFL, flags);
         sockFD = fd;
         break;
     }
@@ -702,7 +701,7 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         objc_setAssociatedObject(self,
                                  &kPVmGBALinkDriverKey,
                                  drvValue,
-                                 OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                                 OBJC_ASSOCIATION_RETAIN);
         ctx.status = PVmGBALinkStatusConnected;
     } else {
         // Driver installation failed (core not ready); tear down.
@@ -739,7 +738,7 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         if (drv != NULL) { atomic_store(&drv->inactive, true); }
         _pvmgba_uninstall_driver(self, drv);
         objc_setAssociatedObject(self, &kPVmGBALinkDriverKey,
-                                 nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                                 nil, OBJC_ASSOCIATION_RETAIN);
     }
 #endif
 
