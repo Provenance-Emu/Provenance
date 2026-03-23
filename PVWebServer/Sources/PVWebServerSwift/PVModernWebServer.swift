@@ -30,6 +30,7 @@ import UIKit
 #endif
 import Hummingbird
 import PVLogging
+import PVPrimitives
 
 // MARK: - PVModernWebServer
 
@@ -436,6 +437,11 @@ private extension PVModernWebServer {
             }
             do {
                 try FileManager.default.removeItem(at: target)
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileDeleted,
+                    object: self,
+                    userInfo: ["filePath": target.path]
+                )
                 return Response(status: .noContent)
             } catch {
                 return Response(status: .notFound)

@@ -15,8 +15,10 @@
 //    await PVWebServerManager.shared.stop()
 //
 
+import Combine
 import Foundation
 import PVLogging
+import PVPrimitives
 
 // MARK: - PVWebServerManager
 
@@ -109,6 +111,35 @@ public actor PVWebServerManager {
         } else {
             return await MainActor.run { PVLegacyWebServerAdapter() }
         }
+    }
+}
+
+// MARK: - Combine publishers for file-lifecycle events (Task B — Epic #2758)
+
+extension PVWebServerManager {
+
+    /// Emits the absolute path of every file deleted via the web UI or WebDAV.
+    /// Works with both the legacy and the modern server — they both post the same
+    /// `pvWebServerFileDeleted` notification to `NotificationCenter`.
+    public nonisolated var fileDeletedPublisher: AnyPublisher<String, Never> {
+        NotificationCenter.default
+            .publisher(for: .pvWebServerFileDeleted)
+            .compactMap { $0.userInfo?["filePath"] as? String }
+            .eraseToAnyPublisher()
+    }
+
+    /// Emits `(fromPath, toPath)` tuples for every file moved/renamed via the web UI or WebDAV.
+    public nonisolated var fileMovedPublisher: AnyPublisher<(from: String, to: String), Never> {
+        NotificationCenter.default
+            .publisher(for: .pvWebServerFileMoved)
+            .compactMap { note -> (from: String, to: String)? in
+                guard
+                    let from = note.userInfo?["fromPath"] as? String,
+                    let to   = note.userInfo?["toPath"]   as? String
+                else { return nil }
+                return (from: from, to: to)
+            }
+            .eraseToAnyPublisher()
     }
 }
 
