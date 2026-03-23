@@ -6,7 +6,7 @@
 // The Companion Controller (TrackballLayout) sends relative X/Y deltas and
 // button events via CompanionInputRouter.  PVEmulatorViewController detects
 // that this core adopts CompanionControllerCapable and forwards those events
-// here each main-run-loop pass.
+// here on Combine publisher updates (gesture and button edge changes).
 //
 // Input mapping:
 //   .axisChanged(.leftX, v)  → trackball horizontal delta (RETRO_DEVICE_MOUSE X)
