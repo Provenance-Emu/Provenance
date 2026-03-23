@@ -101,47 +101,40 @@ extension PVDolphinCore: PVNetplayCapable {
                     return
                 }
 
-                var nsError: NSError?
-                let ok: Bool
+                do {
+                    switch role {
+                    case .host(let port):
+                        try self._bridge.startNetplayHost(
+                            onPort: port == 0 ? UInt16(settings.port) : port,
+                            password: settings.password,
+                            maxPlayers: settings.maxPlayers
+                        )
 
-                switch role {
-                case .host(let port):
-                    ok = self._bridge.startNetplayHost(
-                        onPort: port == 0 ? UInt16(settings.port) : port,
-                        password: settings.password,
-                        maxPlayers: settings.maxPlayers,
-                        error: &nsError
-                    )
+                    case .client(let host, let port):
+                        // Dolphin traversal relay: non-nil relayServer triggers traversal mode.
+                        let traversalCode: String? = settings.relayServer != nil ? host : nil
+                        let directHost: String = settings.relayServer != nil ? "" : host
+                        try self._bridge.joinNetplay(
+                            host: directHost,
+                            port: port == 0 ? UInt16(settings.port) : port,
+                            traversalCode: traversalCode,
+                            password: settings.password
+                        )
 
-                case .client(let host, let port):
-                    // Dolphin traversal relay: non-nil relayServer triggers traversal mode.
-                    let traversalCode: String? = settings.relayServer != nil ? host : nil
-                    let directHost: String = settings.relayServer != nil ? "" : host
-                    ok = self._bridge.joinNetplay(
-                        host: directHost,
-                        port: port == 0 ? UInt16(settings.port) : port,
-                        traversalCode: traversalCode,
-                        password: settings.password,
-                        error: &nsError
-                    )
+                    case .spectator(let host, let port):
+                        // Dolphin has no spectator role; join as inactive client.
+                        try self._bridge.joinNetplay(
+                            host: host,
+                            port: port == 0 ? UInt16(settings.port) : port,
+                            traversalCode: nil,
+                            password: settings.password
+                        )
+                    }
 
-                case .spectator(let host, let port):
-                    // Dolphin has no spectator role; join as inactive client.
-                    ok = self._bridge.joinNetplay(
-                        host: host,
-                        port: port == 0 ? UInt16(settings.port) : port,
-                        traversalCode: nil,
-                        password: settings.password,
-                        error: &nsError
-                    )
-                }
-
-                if ok {
                     self._netplayContext = DolphinNetplayContext(role: role, settings: settings)
                     continuation.resume()
-                } else {
-                    let reason = nsError?.localizedDescription ?? "Unknown Dolphin netplay error."
-                    continuation.resume(throwing: NetplayError.connectionFailed(reason))
+                } catch {
+                    continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
                 }
             }
         }

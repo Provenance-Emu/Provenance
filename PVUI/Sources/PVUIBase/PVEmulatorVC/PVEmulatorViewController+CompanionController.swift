@@ -5,12 +5,13 @@
 //  • "Use as Companion Controller" entry in the pause menu
 //  • Session lifecycle: present, wire delegate, tear down on dismiss
 //  • System ID propagation to CompanionControllerSession
+//  • Per-game layout override via preferredCompanionLayoutID
 //
 // iOS/macCatalyst only — no companion overlay is shown on tvOS or visionOS.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
-#if canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))
+#if canImport(UIKit) && !os(tvOS)
 import SwiftUI
 import PVCoreBridge
 import PVLogging
@@ -80,6 +81,12 @@ extension PVEmulatorViewController {
 
         // Wire the core bridge if the core supports companion input.
         if let capable = core as? CompanionControllerCapable {
+            // Allow the core to override the layout for per-game peripherals
+            // (e.g. trackball titles on Atari 2600 return CompanionLayoutID.atari2600Trackball).
+            if let preferredID = capable.preferredCompanionLayoutID {
+                session.activeSystemID = preferredID
+            }
+
             let bridge = CoreCompanionBridge(capable: capable, playerIndex: 0)
             session.inputRouter.slotDelegate = bridge
             _coreInputBridge = bridge
@@ -218,4 +225,4 @@ private final class CoreCompanionBridge: CompanionSlotDelegate {
     }
 }
 
-#endif // canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))
+#endif // canImport(UIKit) && !os(tvOS)
