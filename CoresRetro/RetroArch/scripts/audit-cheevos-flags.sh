@@ -42,7 +42,7 @@ echo ""
 # 1. Global Xcode build settings
 check "Global xcconfig" \
     "$REPO_ROOT/Build.xcconfig" \
-    "HAVE_CHEEVOS"
+    '^[[:space:]]*GCC_PREPROCESSOR_DEFINITIONS[[:space:]]*=.*HAVE_CHEEVOS'
 
 # 2. RetroArch core C flags (release)
 check "BuildFlags OTHER_CFLAGS" \
@@ -64,17 +64,25 @@ check "CoresRetro Package.swift (release)" \
     "$REPO_ROOT/CoresRetro/Package.swift" \
     'define\("HAVE_CHEEVOS".*release\)'
 
-# 6. griffin.c includes cheevos.c under HAVE_CHEEVOS guard
+# 6. griffin.c has HAVE_CHEEVOS guard (prerequisite for checks 7-9)
+check "griffin.c HAVE_CHEEVOS guard" \
+    "$REPO_ROOT/CoresRetro/RetroArch/PVRetroArchCore/retroarch/griffin.c" \
+    '#if defined\(HAVE_CHEEVOS\)'
+
+# 7. griffin.c includes cheevos.c under HAVE_CHEEVOS guard
+# We verify both: the guard exists (check 6) and the include is present.
+# A false-positive would require the include to exist while the guard is absent —
+# both checks must pass for the audit to succeed.
 check "griffin.c cheevos.c include" \
     "$REPO_ROOT/CoresRetro/RetroArch/PVRetroArchCore/retroarch/griffin.c" \
     'include.*cheevos/cheevos\.c'
 
-# 7. griffin.c includes rcheevos rc_client.c
+# 8. griffin.c includes rcheevos rc_client.c
 check "griffin.c rc_client.c include" \
     "$REPO_ROOT/CoresRetro/RetroArch/PVRetroArchCore/retroarch/griffin.c" \
     'include.*rcheevos/src/rc_client\.c'
 
-# 8. griffin.c includes rcheevos hash.c (ROM identification)
+# 9. griffin.c includes rcheevos hash.c (ROM identification)
 check "griffin.c rhash/hash.c include" \
     "$REPO_ROOT/CoresRetro/RetroArch/PVRetroArchCore/retroarch/griffin.c" \
     'include.*rhash/hash\.c'
