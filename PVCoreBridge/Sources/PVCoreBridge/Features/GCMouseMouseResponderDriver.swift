@@ -124,7 +124,7 @@ import UIKit
         }
         if middleDown {
             middleDown = false
-            responder?.middleMouseUp?()
+            responder?.middleMouseUp?(atPoint: CGPoint(x: cursorX, y: cursorY))
         }
         responder = nil
     }
@@ -208,6 +208,7 @@ import UIKit
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.leftMouseDown(atPoint: point)
+                    NotificationCenter.default.post(name: Notification.Name("PVMouseButtonDidPress"), object: nil)
                 } else {
                     self.responder?.leftMouseUp()
                 }
@@ -223,6 +224,7 @@ import UIKit
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.rightMouseDown(atPoint: point)
+                    NotificationCenter.default.post(name: Notification.Name("PVMouseButtonDidPress"), object: nil)
                 } else {
                     self.responder?.rightMouseUp()
                 }
@@ -238,8 +240,9 @@ import UIKit
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.middleMouseDown?(atPoint: point)
+                    NotificationCenter.default.post(name: Notification.Name("PVMouseButtonDidPress"), object: nil)
                 } else {
-                    self.responder?.middleMouseUp?()
+                    self.responder?.middleMouseUp?(atPoint: point)
                 }
             }
         }
@@ -272,5 +275,12 @@ import UIKit
     private func _deliverPosition() {
         let point = CGPoint(x: cursorX, y: cursorY)
         responder?.mouseMoved(atPoint: point)
+        // Keep the cursor overlay in sync with hardware mouse movement.
+        // The overlay observes "PVMousePositionDidChange" to reposition the cursor sprite.
+        NotificationCenter.default.post(
+            name: Notification.Name("PVMousePositionDidChange"),
+            object: nil,
+            userInfo: ["PVMousePositionKey": NSValue(cgPoint: point)]
+        )
     }
 }

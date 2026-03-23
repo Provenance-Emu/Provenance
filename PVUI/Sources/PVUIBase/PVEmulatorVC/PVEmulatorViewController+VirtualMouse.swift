@@ -111,14 +111,6 @@ extension PVEmulatorViewController {
         ILOG("[VirtualMouse] Setup complete")
     }
 
-    /// Returns `true` while the GCMouse hardware driver is active so UIKit
-    /// suppresses the system cursor and delivers raw relative deltas via GCMouse.
-    /// Available on iPadOS 14+; UIKit ignores this on iPhone automatically.
-    @available(iOS 14.0, *)
-    public override var prefersPointerLocked: Bool {
-        gcMouseDriver != nil
-    }
-
     // MARK: - Show / Hide / Toggle
 
     /// Show the virtual mouse cursor and trackpad (main-actor isolated).
