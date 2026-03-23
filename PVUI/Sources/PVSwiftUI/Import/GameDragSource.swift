@@ -46,30 +46,31 @@ public struct GameDragSourceModifier: ViewModifier {
 
     // MARK: - NSItemProvider factory
 
-    /// Builds an `NSItemProvider` that lazily loads the ROM file URL.
+    /// Builds an `NSItemProvider` that vends the ROM file URL.
+    ///
+    /// The Realm lookup is performed immediately on the calling thread (the `.onDrag`
+    /// closure, which runs on the main thread), so the `registerFileRepresentation`
+    /// handler is free of Realm access and safe to call on any thread.
     ///
     /// Returns an empty provider (no registered types) when the ROM is not
     /// found on disk so the drag simply does nothing — no crash, no alert.
     private func makeItemProvider() -> NSItemProvider {
-        let provider = NSItemProvider()
+        // Resolve the file URL now, on the main thread (called from .onDrag).
+        guard let fileURL = Self.resolveFileURL(forMD5: gameMD5) else {
+            WLOG("GameDragSource: no on-disk ROM found for MD5 \(gameMD5)")
+            return NSItemProvider()
+        }
 
-        // Register a file URL representation.
-        // `loadItem` on the receiving side will get back the NSURL.
+        let provider = NSItemProvider()
+        // Capture the already-resolved URL so the handler never touches Realm.
         provider.registerFileRepresentation(
             forTypeIdentifier: UTType.fileURL.identifier,
             fileOptions: [],
             visibility: .all
         ) { completion in
-            let fileURL = Self.resolveFileURL(forMD5: self.gameMD5)
-            if let url = fileURL {
-                completion(url, false, nil)
-            } else {
-                WLOG("GameDragSource: no on-disk ROM found for MD5 \(self.gameMD5)")
-                completion(nil, false, nil)
-            }
+            completion(fileURL, false, nil)
             return nil
         }
-
         return provider
     }
 

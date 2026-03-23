@@ -45,19 +45,20 @@ public struct SaveStateDragModifier: ViewModifier {
     }
 
     private func makeItemProvider() -> NSItemProvider {
+        // Resolve the URL now, on the main thread (called from .onDrag).
+        // Capturing the already-resolved URL keeps the registerFileRepresentation
+        // handler free of Realm access so it is safe on any thread.
+        guard let fileURL = Self.resolveFileURL(forSaveStateID: saveStateID) else {
+            WLOG("SaveStateDragDrop: no on-disk file found for save state \(saveStateID)")
+            return NSItemProvider()
+        }
         let provider = NSItemProvider()
         provider.registerFileRepresentation(
             forTypeIdentifier: UTType.fileURL.identifier,
             fileOptions: [],
             visibility: .all
         ) { completion in
-            let url = Self.resolveFileURL(forSaveStateID: self.saveStateID)
-            if let url = url {
-                completion(url, false, nil)
-            } else {
-                WLOG("SaveStateDragDrop: no on-disk file found for save state \(self.saveStateID)")
-                completion(nil, false, nil)
-            }
+            completion(fileURL, false, nil)
             return nil
         }
         return provider
@@ -138,7 +139,19 @@ public struct SaveBundleDropModifier: ViewModifier {
                         ELOG("SaveBundleDropModifier: loadItem error: \(error)")
                         return
                     }
-                    guard let url = item as? URL else { return }
+                    // loadItem for public.file-url can return URL, NSURL, or Data.
+                    let resolvedURL: URL?
+                    if let url = item as? URL {
+                        resolvedURL = url
+                    } else if let nsurl = item as? NSURL {
+                        resolvedURL = nsurl as URL
+                    } else if let data = item as? Data {
+                        resolvedURL = URL(dataRepresentation: data, relativeTo: nil)
+                    } else {
+                        ELOG("SaveBundleDropModifier: unsupported item type for public.file-url: \(type(of: item))")
+                        resolvedURL = nil
+                    }
+                    guard let url = resolvedURL else { return }
                     processDroppedZip(url)
                 }
                 handled = true

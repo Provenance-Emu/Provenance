@@ -86,9 +86,14 @@ public struct ROMDropTargetModifier: ViewModifier {
                     }
                 }
                 handled = true
-            } else if provider.hasItemConformingToTypeIdentifier(UTType.archive.identifier) {
+            } else if let archiveTypeID = provider.registeredTypeIdentifiers.first(where: { id in
+                // Prefer a concrete registered type (e.g. public.zip-archive) over the generic
+                // public.archive parent. Some providers won't respond to the parent identifier even
+                // though hasItemConformingToTypeIdentifier returns true for it.
+                UTType(id)?.conforms(to: .archive) == true
+            }) {
                 // Zip / archive: use loadFileRepresentation so the OS writes it to a temp URL.
-                provider.loadFileRepresentation(forTypeIdentifier: UTType.archive.identifier) { url, error in
+                provider.loadFileRepresentation(forTypeIdentifier: archiveTypeID) { url, error in
                     if let error {
                         ELOG("ROMDropDelegate: loadFileRepresentation (archive) error: \(error)")
                         return

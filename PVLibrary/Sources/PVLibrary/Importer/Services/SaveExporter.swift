@@ -313,8 +313,9 @@ public final class SaveExporter: @unchecked Sendable {
     /// Reads the `manifest.json` embedded in a save-export bundle and returns
     /// the MD5 hash of the game the bundle belongs to.
     ///
-    /// This is a lightweight operation: the zip is extracted to a temp directory,
-    /// only `manifest.json` is read, and the temp directory is immediately removed.
+    /// Implementation note: the entire zip archive is extracted to a temporary directory,
+    /// `manifest.json` is read and parsed, and then the temporary directory is removed.
+    /// For large save bundles this may be relatively expensive in terms of I/O and disk space.
     ///
     /// - Parameter zipURL: URL of the `.zip` save-export bundle.
     /// - Returns: The lowercase MD5 hash string from the manifest, or `nil` if the
