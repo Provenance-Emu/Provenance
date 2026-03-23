@@ -60,12 +60,17 @@ struct MainView: View {
             // launchAction is the single callback for button taps; the sheet's own onDismiss
             // handles swipe-to-dismiss so no duplicate closures are needed.
             .sheet(item: $sceneCoordinator.preLaunchTransferPakGame, onDismiss: {
+                // onDismiss fires after the sheet animation fully completes.
+                // Resume the launch continuation here (not in launchAction) so that
+                // openEmulatorScene() is called only after the sheet is fully gone,
+                // preventing a SwiftUI freeze from racing sheet dismissal with root-view replacement.
                 SceneCoordinator.shared.dismissPreLaunchTransferPak()
             }) { game in
                 TransferPakConfigView(
                     game: game,
                     launchAction: {
-                        SceneCoordinator.shared.dismissPreLaunchTransferPak()
+                        // Only dismiss the sheet; onDismiss resumes the continuation.
+                        SceneCoordinator.shared.dismissPreLaunchTransferPakSheet()
                     }
                 )
             }

@@ -995,10 +995,20 @@ public class SceneCoordinator: ObservableObject {
         }
     }
 
-    /// Called when the pre-launch Transfer Pak sheet is dismissed (button tap or swipe).
-    /// Safe to call multiple times — second call is a no-op.
-    public func dismissPreLaunchTransferPak() {
+    /// Dismisses the pre-launch Transfer Pak sheet **without** resuming the launch
+    /// continuation. Call from button actions inside the sheet (`launchAction`).
+    /// The continuation is resumed by `dismissPreLaunchTransferPak()` once the sheet
+    /// animation has fully completed (via `onDismiss`), preventing a race where
+    /// `openEmulatorScene()` changes the root view while the sheet is still mid-animation.
+    public func dismissPreLaunchTransferPakSheet() {
         preLaunchTransferPakGame = nil
+    }
+
+    /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
+    /// Resumes the launch continuation so `openEmulatorScene()` is called only after the
+    /// sheet is fully gone. Safe to call multiple times — second call is a no-op.
+    public func dismissPreLaunchTransferPak() {
+        preLaunchTransferPakGame = nil   // no-op if already nil (button path cleared it)
         let cont = _preLaunchContinuation
         _preLaunchContinuation = nil
         cont?.resume()
