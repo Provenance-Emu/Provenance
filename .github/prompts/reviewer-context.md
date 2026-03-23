@@ -144,11 +144,12 @@ Higher tiers may import lower tiers. **Never the reverse.**
 ### Gyro Mouse (`GyroMouseAdapter`)
 - `GyroMouseAdapter` in `PVCoreBridge/Features/` — drives `MouseResponder.mouseMoved(atPoint:)` from `GCMotion.rotationRate` (DualSense / Switch Pro) or `CMMotionManager` IMU fallback.
 - Settings keys live in `PVSettings.Defaults.Keys`: `gyroMouseEnabled`, `gyroMouseSensitivity`, `gyroMouseDeadZone`.
-- Adapter is main-thread-confined; motion callbacks hop to `DispatchQueue.main` before mutating cursor state.
-- Lifecycle: call `attach(to:)` when the core starts. Use `isEnabled = false` / `true` to temporarily suspend or resume input during short pauses (e.g., in-game pause menu) while preserving cursor/filter state. Call `detach()` only for full teardown (game/core stop, system switch, or long-lived backgrounding) where resetting state is desired.
+- Adapter is `@MainActor`-confined. GCController motion callbacks hop to the main actor via `Task { @MainActor ... }`; CoreMotion callbacks are already delivered on the main queue (via `to: .main`) so `MainActor.assumeIsolated` is used instead to avoid per-sample Task overhead.
+- A `_sessionToken` (UInt64) is captured at callback-registration time and checked inside each Task/closure; stale deliveries from a previous `attach` session are silently dropped.
+- Lifecycle: call `attach(to:)` when the core starts. Use `isEnabled = false` / `true` to temporarily suspend or resume input during short pauses (e.g., in-game pause menu) while preserving cursor/filter state; setting `isEnabled = false` also resets the dt timestamp so cursor doesn't jump on resume. Call `detach()` only for full teardown (game/core stop, system switch, or long-lived backgrounding) where resetting all state is desired.
 - Signal chain: dead zone → exponential moving average (low-pass) → sensitivity × dt → clamp to [0,1].
 - Platform guards: `#if canImport(CoreMotion)` wraps the IMU path (unavailable on tvOS); `#if canImport(GameController)` wraps the GCController path.
-- Flag 🟠 MAJOR if the adapter's motion callback writes cursor state off the main thread without a `DispatchQueue.main.async` hop.
+- Flag 🟠 MAJOR if the adapter's motion callback writes cursor state without proper `@MainActor` isolation (missing `Task { @MainActor ... }` hop for GCController handlers, or missing `MainActor.assumeIsolated` for already-main-queue CoreMotion handlers).
 
 ### Per-Game Mouse Detection (`MouseGameRegistry`)
 - `MouseGameRegistry.shared` in `PVCoreBridge/Features/` — single source of truth for whether a game uses a mouse.

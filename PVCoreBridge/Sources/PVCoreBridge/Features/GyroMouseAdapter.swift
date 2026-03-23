@@ -77,7 +77,15 @@ import CoreMotion
     @objc public var inputSource: GyroMouseInputSource = .auto
 
     /// When `false` events are not delivered (e.g. while paused). Default `true`.
-    @objc public var isEnabled: Bool = true
+    @objc public var isEnabled: Bool = true {
+        didSet {
+            if !isEnabled {
+                // Reset timestamp so the first frame after re-enable uses the nominal
+                // dt (1/60) instead of computing a large elapsed gap.
+                lastCallbackTime = 0
+            }
+        }
+    }
 
     // MARK: - State (main-thread only)
 
@@ -110,6 +118,11 @@ import CoreMotion
 
     /// Timestamp of the last `_applyRotation` call, used to compute actual dt.
     private var lastCallbackTime: TimeInterval = 0
+
+    /// Monotonically-increasing counter incremented on every `_stopInput()` call.
+    /// Captured at callback-registration time; Tasks from a previous session
+    /// silently no-op when the captured token no longer matches the current one.
+    private var _sessionToken: UInt64 = 0
 
     // MARK: - Lifecycle
 
@@ -159,6 +172,8 @@ import CoreMotion
     }
 
     private func _stopInput() {
+        // Invalidate all pending motion Tasks from the outgoing session.
+        _sessionToken &+= 1
 #if canImport(GameController)
         _unhookCurrentController()
         _removeControllerObservers()
@@ -218,11 +233,13 @@ import CoreMotion
               let motion = controller.motion else { return }
 
         hookedController = controller
+        let token = _sessionToken
         motion.valueChangedHandler = { [weak self] motionData in
             let rx = motionData.rotationRate.x
             let ry = motionData.rotationRate.y
             Task { @MainActor [weak self] in
-                self?._applyRotation(rawX: rx, rawY: ry)
+                guard let self, self._sessionToken == token else { return }
+                self._applyRotation(rawX: rx, rawY: ry)
             }
         }
         ILOG("GyroMouseAdapter: hooked GCController motion (\(controller.vendorName ?? "unknown"))")
@@ -258,12 +275,17 @@ import CoreMotion
             return
         }
         manager.deviceMotionUpdateInterval = 1.0 / 60.0
+        // `to: .main` already delivers this closure on the main queue, so
+        // use `MainActor.assumeIsolated` to call the @MainActor-isolated method
+        // without spawning a new Task (avoids per-sample Task overhead at 60 Hz).
+        let token = _sessionToken
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motionData, error in
             guard error == nil, let m = motionData else { return }
             let rx = m.rotationRate.x
             let ry = m.rotationRate.y
-            Task { @MainActor [weak self] in
-                self?._applyRotation(rawX: rx, rawY: ry)
+            MainActor.assumeIsolated { [weak self] in
+                guard let self, self._sessionToken == token else { return }
+                self._applyRotation(rawX: rx, rawY: ry)
             }
         }
         motionManager = manager
