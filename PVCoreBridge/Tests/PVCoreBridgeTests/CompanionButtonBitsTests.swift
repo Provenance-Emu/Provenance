@@ -23,13 +23,17 @@ final class CompanionButtonBitsTests: XCTestCase {
 
     /// Each constant must be a non-zero power of two (exactly one bit set).
     ///
-    /// Uses wrapping subtraction (`&-`) so a hypothetical zero value produces
-    /// a clean test failure instead of trapping on UInt32 underflow.
+    /// Uses a `guard` to skip the power-of-two check when the value is zero —
+    /// this avoids a false-positive where `0 &- 1 == UInt32.max` and
+    /// `0 & UInt32.max == 0` would incorrectly pass the single-bit assertion.
     func testAllBitsAreSingleBitFlags() {
         for value in CompanionButtonBits.allBitValues {
-            XCTAssertNotEqual(value, 0, "CompanionButtonBits constant must not be zero")
+            guard value != 0 else {
+                XCTFail("CompanionButtonBits constant must not be zero")
+                continue
+            }
             XCTAssertEqual(
-                value & (value &- 1), 0,
+                value & (value - 1), 0,
                 "CompanionButtonBits value 0x\(String(value, radix: 16)) is not a single-bit flag"
             )
         }

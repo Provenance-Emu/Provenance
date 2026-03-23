@@ -67,7 +67,7 @@ public enum CompanionButtonBits {
     /// Used by the `#if DEBUG` validation block and unit tests so that both
     /// always check the same complete set — keeping them in sync when new
     /// buttons are added.
-    static let allBitValues: [UInt32] = [
+    public static let allBitValues: [UInt32] = [
         south, east, west, north,
         l1, r1, l2, r2,
         select, start, l3, r3,
@@ -104,8 +104,11 @@ extension CompanionButtonBits {
 
     /// Explicit hook for debug builds (e.g. unit tests) to validate the
     /// companion bitmask layout without affecting release behavior.
+    ///
+    /// Accessible as `public` so modules that import PVCoreBridge can call it
+    /// from their own DEBUG-only validation paths.
     @discardableResult
-    static func validateBitmaskLayoutForDebugging() -> Void {
+    public static func validateBitmaskLayoutForDebugging() -> Void {
         _bitValidation
     }
 }
