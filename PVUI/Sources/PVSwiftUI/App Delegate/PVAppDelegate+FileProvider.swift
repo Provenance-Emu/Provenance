@@ -55,10 +55,11 @@ public enum PVFileProviderDomain {
             NSFileProviderManager.add(domain) { error in
                 if let error = error {
                     let nsErr = error as NSError
-                    // domainAlreadyRegistered (-2006) is benign — can occur if a concurrent
-                    // call races past the pre-check above.
+                    // Error code -1 with NSCocoaErrorDomain or any FileProvider error where
+                    // the domain already exists is benign — can occur if a concurrent call
+                    // races past the pre-check above.
                     let isAlreadyRegistered = nsErr.domain == NSFileProviderErrorDomain
-                        && NSFileProviderError.Code(rawValue: nsErr.code) == .domainAlreadyRegistered
+                        && nsErr.code == -1
                     if isAlreadyRegistered {
                         DLOG("FileProvider: domain already registered (benign race) — OK")
                     } else {
@@ -72,12 +73,16 @@ public enum PVFileProviderDomain {
     }
 }
 
-// MARK: - PVAppDelegate hook
+#endif // canImport(FileProvider) && platforms
+
+// MARK: - PVAppDelegate hook (unconditional — body guards with same #if)
 
 extension PVAppDelegate {
     /// Call from `initializeAppComponents()` to register the file provider domain.
+    /// Always defined so the call site never needs a `#if canImport(FileProvider)` guard.
     func registerFileProviderDomain() {
+        #if canImport(FileProvider) && (os(iOS) || targetEnvironment(macCatalyst) || os(visionOS))
         PVFileProviderDomain.registerIfNeeded()
+        #endif
     }
 }
-#endif

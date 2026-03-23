@@ -454,10 +454,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         // Register the ROM File Provider domain so Files.app shows Provenance as a location.
         // Supported on iOS, Mac Catalyst, and visionOS (FileProvider is unavailable on tvOS).
-        // Guard must match the definition in PVAppDelegate+FileProvider.swift.
-        #if canImport(FileProvider) && (os(iOS) || targetEnvironment(macCatalyst) || os(visionOS))
         registerFileProviderDomain()
-        #endif
     }
 
     public func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
