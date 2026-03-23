@@ -96,7 +96,13 @@ public let PVMousePositionKey = "PVMousePositionKey"
     /// Button handler `Task { @MainActor }` closures capture this value; if it
     /// has changed by the time they execute (detach / re-attach raced), the
     /// stale events are discarded rather than routing to the new responder.
-    private var _session: Int = 0
+    ///
+    /// `nonisolated(unsafe)`: written only on the main actor (in `attach`), but
+    /// *read* from `nonisolated` GCController handler closures installed by
+    /// `_hookMouse`.  `Int` has no torn reads on any supported architecture, so
+    /// the only risk is observing a slightly stale value — acceptable for a
+    /// lightweight stale-event guard on a game-input hot path.
+    nonisolated(unsafe) private var _session: Int = 0
 
     // MARK: - Lifecycle
 
