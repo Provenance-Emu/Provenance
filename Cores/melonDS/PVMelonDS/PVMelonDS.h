@@ -16,4 +16,5 @@ FOUNDATION_EXPORT const unsigned char PVMelonDSVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVMelonDS/PublicHeader.h>
 #import <PVMelonDS/PVMelonDSCore.h>
+#import <PVMelonDS/PVMelonDSCore+Netplay.h>
 
