@@ -80,6 +80,26 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 - (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 @end
 
+// MARK: - Trackball / Mouse input (Companion Controller)
+
+/// Trackball and mouse input methods used by the Companion Controller bridge.
+/// The Stella libretro core reads these values via `RETRO_DEVICE_MOUSE` during
+/// the `input_state_callback`. Deltas are consumed (zeroed) after each poll.
+@interface PVStellaBridge (Trackball)
+
+/// Accumulate a relative trackball movement delta.
+/// Thread-safe: may be called from the main thread while the emulation thread
+/// polls via `input_state_callback`.
+/// @param deltaX  Horizontal delta, typically in the range -1.0…1.0.
+/// @param deltaY  Vertical delta, typically in the range -1.0…1.0.
+- (void)setTrackballDeltaX:(float)deltaX deltaY:(float)deltaY;
+
+/// Set the left mouse / fire button state.
+/// @param pressed `YES` when the fire button is held down.
+- (void)setMouseButtonLeft:(BOOL)pressed;
+
+@end
+
 @interface PVStellaBridge (Cheats)
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError **)error;
 - (void)resetCheatCodes;
