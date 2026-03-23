@@ -110,7 +110,10 @@ public extension PVEmulatorViewController {
         // use achievementSessionManager != nil as a proxy for "active session", so we only
         // assign it after startSession() succeeds.  This avoids a window where the manager
         // exists but the session has not yet been confirmed by the server.
-        let manager = PVCheevos.sessionManager()
+        guard let manager = PVCheevos.sessionManager() else {
+            ELOG("RetroAchievements: sessionManager() returned nil, cannot start session")
+            return
+        }
 
         // Create a cancellation token for this start attempt.  If stopAchievements() is
         // called while the Task is still awaiting the network, it will mark the token
