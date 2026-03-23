@@ -185,6 +185,7 @@ struct RecentlyPlayedWidgetView: View {
             Link(destination: url) {
                 gameRowContent(game)
             }
+            .frame(maxWidth: .infinity)
         } else {
             gameRowContent(game)
         }
@@ -210,6 +211,7 @@ struct RecentlyPlayedWidgetView: View {
             }
             Spacer()
         }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: Placeholder

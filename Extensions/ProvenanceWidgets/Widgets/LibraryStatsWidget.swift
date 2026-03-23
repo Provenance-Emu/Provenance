@@ -97,9 +97,10 @@ struct LibraryStatsWidgetView: View {
 
     private var smallView: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Image(systemName: "books.vertical.fill")
-                .font(.title2)
-                .foregroundStyle(.orange)
+            Image("prov_icon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 28, height: 28)
             Spacer()
             statValue(String(entry.stats.totalGames), label: "Games")
             statValue(String(entry.stats.totalSystems), label: "Systems")
@@ -113,9 +114,10 @@ struct LibraryStatsWidgetView: View {
     private var mediumView: some View {
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
-                Image(systemName: "books.vertical.fill")
-                    .font(.title)
-                    .foregroundStyle(.orange)
+                Image("prov_icon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 36, height: 36)
                 Text("Library")
                     .font(.headline)
                     .fontWeight(.bold)
@@ -142,9 +144,10 @@ struct LibraryStatsWidgetView: View {
     private var largeView: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 8) {
-                Image(systemName: "books.vertical.fill")
-                    .font(.title)
-                    .foregroundStyle(.orange)
+                Image("prov_icon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 36, height: 36)
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Provenance")
                         .font(.headline)
