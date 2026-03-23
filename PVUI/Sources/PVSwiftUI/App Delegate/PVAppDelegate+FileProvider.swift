@@ -21,8 +21,10 @@ import PVLogging
 /// (e.g. inside `PVAppDelegate.initializeAppComponents()`).
 public enum PVFileProviderDomain {
 
-    /// The domain identifier must match the `NSExtensionFileProviderDocumentGroup`
-    /// value in `Extensions/ROM File Provider/Info.plist`.
+    /// Uniquely identifies this file provider domain to the system.
+    ///
+    /// Must be the same value used when calling `NSFileProviderManager.add(_:)` from
+    /// the host app and when the system routes requests to the extension process.
     static let domainIdentifier = NSFileProviderDomainIdentifier("org.provenance-emu.provenance.roms")
 
     /// Human-readable name shown in Files.app under Browse > Locations.
@@ -47,7 +49,16 @@ public enum PVFileProviderDomain {
             )
             NSFileProviderManager.add(domain) { error in
                 if let error = error {
-                    ELOG("FileProvider: failed to register domain — \(error.localizedDescription)")
+                    let nsErr = error as NSError
+                    // domainAlreadyRegistered (-2006) is benign — can occur if a concurrent
+                    // call races past the pre-check above.
+                    let isAlreadyRegistered = nsErr.domain == NSFileProviderErrorDomain
+                        && NSFileProviderError.Code(rawValue: nsErr.code) == .domainAlreadyRegistered
+                    if isAlreadyRegistered {
+                        DLOG("FileProvider: domain already registered (benign race) — OK")
+                    } else {
+                        ELOG("FileProvider: failed to register domain — \(error.localizedDescription)")
+                    }
                 } else {
                     ILOG("FileProvider: domain '\(displayName)' registered successfully")
                 }

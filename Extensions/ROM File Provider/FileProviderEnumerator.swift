@@ -14,8 +14,8 @@ import PVRealm
 /// Enumerates items in the Provenance ROM library for the Files.app file provider.
 ///
 /// Supports two container kinds:
-/// - `.rootContainer` — lists all game-console system folders that have ≥ 1 game
-/// - `"system:<identifier>"` — lists all games belonging to that system
+/// - `.rootContainer` — lists all game-console system folders that have ≥ 1 locally-present ROM
+/// - `"system:<identifier>"` — lists all locally-present games belonging to that system
 ///
 /// Realm objects are converted to thread-safe CPDI structs (`System`, `Game`)
 /// before being wrapped in `FileProviderItem` so no live Realm references escape
@@ -42,27 +42,15 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
     func invalidate() {}
 
     func enumerateItems(for observer: NSFileProviderEnumerationObserver, startingAt page: NSFileProviderPage) {
-        // Decode the offset from the page token; treat the initial pages as offset 0.
-        let offset: Int
-        if page == NSFileProviderPage.initialPageSortedByName as NSFileProviderPage ||
-           page == NSFileProviderPage.initialPageSortedByDate as NSFileProviderPage {
-            offset = 0
-        } else {
-            offset = page.rawValue.withUnsafeBytes { ptr in
-                ptr.load(as: Int.self)
-            }
-        }
+        let offset = decodePageOffset(page)
 
         do {
-            let allItems = try buildItems()
-            let slice = Array(allItems.dropFirst(offset).prefix(Self.pageSize))
-            observer.didEnumerate(slice)
+            let (items, total) = try buildItems(offset: offset, limit: Self.pageSize)
+            observer.didEnumerate(items)
 
-            let nextOffset = offset + slice.count
-            if nextOffset < allItems.count {
-                var nextValue = nextOffset
-                let nextPage = NSFileProviderPage(Data(bytes: &nextValue, count: MemoryLayout<Int>.size))
-                observer.finishEnumerating(upTo: nextPage)
+            let nextOffset = offset + items.count
+            if nextOffset < total {
+                observer.finishEnumerating(upTo: encodePageOffset(nextOffset))
             } else {
                 observer.finishEnumerating(upTo: nil)
             }
@@ -80,48 +68,94 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         completionHandler(anchor)
     }
 
-    // MARK: - Private
+    // MARK: - Private: paging helpers
 
-    private func buildItems() throws -> [FileProviderItem] {
+    /// Decodes a page offset from a page token, returning 0 for initial pages.
+    ///
+    /// Page tokens are encoded as 8-byte little-endian UInt64. Malformed tokens
+    /// (wrong size) are treated as offset 0 rather than crashing.
+    private func decodePageOffset(_ page: NSFileProviderPage) -> Int {
+        if page == NSFileProviderPage.initialPageSortedByName as NSFileProviderPage ||
+           page == NSFileProviderPage.initialPageSortedByDate as NSFileProviderPage {
+            return 0
+        }
+        let rawData = page.rawValue
+        guard rawData.count == MemoryLayout<UInt64>.size else { return 0 }
+        var raw: UInt64 = 0
+        _ = withUnsafeMutableBytes(of: &raw) { rawData.copyBytes(to: $0) }
+        return Int(raw)
+    }
+
+    /// Encodes a page offset into a page token as an 8-byte little-endian UInt64.
+    private func encodePageOffset(_ offset: Int) -> NSFileProviderPage {
+        var value = UInt64(offset)
+        return NSFileProviderPage(Data(bytes: &value, count: MemoryLayout<UInt64>.size))
+    }
+
+    // MARK: - Private: item building
+
+    private func buildItems(offset: Int, limit: Int) throws -> ([FileProviderItem], Int) {
         let realm = try Realm(configuration: RealmConfiguration.realmConfig)
 
         if enumeratedItemIdentifier == .rootContainer {
-            return buildSystemItems(realm: realm)
+            return buildSystemItems(realm: realm, offset: offset, limit: limit)
         }
 
         let raw = enumeratedItemIdentifier.rawValue
         if raw.hasPrefix("system:") {
             let systemIdentifier = String(raw.dropFirst("system:".count))
-            return buildGameItems(systemIdentifier: systemIdentifier, realm: realm)
+            return buildGameItems(systemIdentifier: systemIdentifier, realm: realm, offset: offset, limit: limit)
         }
 
-        return []
+        return ([], 0)
     }
 
-    /// Returns one `FileProviderItem` per system that has at least one locally-present ROM.
-    private func buildSystemItems(realm: Realm) -> [FileProviderItem] {
-        // Collect the set of system identifiers that have at least one game with a local file.
+    /// Returns `FileProviderItem`s for systems that have at least one locally-present ROM,
+    /// sorted by system name and paginated to `[offset, offset+limit)`.
+    private func buildSystemItems(realm: Realm, offset: Int, limit: Int) -> ([FileProviderItem], Int) {
         let localSystemIDs = localGameSystemIdentifiers(realm: realm)
-        guard !localSystemIDs.isEmpty else { return [] }
+        guard !localSystemIDs.isEmpty else { return ([], 0) }
 
         let systems = realm.objects(PVSystem.self)
             .filter("identifier IN %@", Array(localSystemIDs))
-        return systems.compactMap { pvSystem -> FileProviderItem? in
+            .sorted(byKeyPath: "name", ascending: true)
+
+        let total = systems.count
+        guard offset < total else { return ([], total) }
+        let end = min(offset + limit, total)
+        let items = (offset..<end).compactMap { i -> FileProviderItem? in
+            let pvSystem = systems[i]
             guard !pvSystem.isInvalidated else { return nil }
             return FileProviderItem(system: pvSystem.asDomain())
         }
+        return (items, total)
     }
 
-    /// Returns one `FileProviderItem` per game in the given system that has a locally-present ROM file.
-    private func buildGameItems(systemIdentifier: String, realm: Realm) -> [FileProviderItem] {
+    /// Returns `FileProviderItem`s for locally-present games in the given system,
+    /// sorted by title and paginated to `[offset, offset+limit)`.
+    ///
+    /// Local file presence cannot be queried at the Realm level, so all games are
+    /// scanned once for filesystem checks; only the page window is converted to items.
+    private func buildGameItems(systemIdentifier: String, realm: Realm, offset: Int, limit: Int) -> ([FileProviderItem], Int) {
         let games = realm.objects(PVGame.self)
             .filter("systemIdentifier == %@", systemIdentifier)
-        return games.compactMap { pvGame -> FileProviderItem? in
+            .sorted(byKeyPath: "title", ascending: true)
+
+        // Collect locally-present games (filesystem check — cannot be done in Realm query).
+        var localGames: [(game: PVGame, url: URL)] = []
+        for pvGame in games {
             guard !pvGame.isInvalidated,
                   let romURL = pvGame.file?.url,
-                  FileManager.default.fileExists(atPath: romURL.path) else { return nil }
-            return FileProviderItem(game: pvGame.asDomain(), romURL: romURL)
+                  FileManager.default.fileExists(atPath: romURL.path) else { continue }
+            localGames.append((pvGame, romURL))
         }
+
+        let total = localGames.count
+        let page = localGames.dropFirst(offset).prefix(limit)
+        let items = page.map { pair -> FileProviderItem in
+            FileProviderItem(game: pair.game.asDomain(), romURL: pair.url)
+        }
+        return (Array(items), total)
     }
 
     /// Returns the set of system identifiers for which at least one ROM file is present on disk.

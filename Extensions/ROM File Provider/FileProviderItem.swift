@@ -114,17 +114,22 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
     }
 
     var itemVersion: NSFileProviderItemVersion {
-        let tag: String
         switch kind {
         case .root:
-            tag = "root"
+            let tag = Data("root".utf8)
+            return NSFileProviderItemVersion(contentVersion: tag, metadataVersion: tag)
         case .systemFolder(let system):
-            tag = system.identifier
+            let tag = Data(system.identifier.utf8)
+            return NSFileProviderItemVersion(contentVersion: tag, metadataVersion: tag)
         case .gameFile(let game, _):
-            tag = game.md5
+            // Content version: the ROM's md5 hash — stable content identity.
+            let contentTag = Data(game.md5.utf8)
+            // Metadata version: incorporates title and filename so that renames or
+            // metadata updates are detected by Files.app (not just content changes).
+            let metaString = "\(game.md5)|\(game.title)|\(game.file.fileName)"
+            let metaTag = Data(metaString.utf8)
+            return NSFileProviderItemVersion(contentVersion: contentTag, metadataVersion: metaTag)
         }
-        let tagData = Data(tag.utf8)
-        return NSFileProviderItemVersion(contentVersion: tagData, metadataVersion: tagData)
     }
 
     var documentSize: NSNumber? {
