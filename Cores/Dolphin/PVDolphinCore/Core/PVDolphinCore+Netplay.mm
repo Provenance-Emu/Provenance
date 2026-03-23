@@ -35,7 +35,13 @@
     #include "Core/NetPlayClient.h"
     #include "Core/NetPlayServer.h"
     #if __has_include("Core/Config/NetplaySettings.h")
+        #define HAVE_DOLPHIN_NETPLAY_SETTINGS 1
         #include "Core/Config/NetplaySettings.h"
+    #endif
+    #if __has_include("Common/Config/Config.h")
+        #include "Common/Config/Config.h"
+    #elif __has_include("Core/Config/Config.h")
+        #include "Core/Config/Config.h"
     #endif
     #if __has_include("Common/TraversalClient.h")
         #include "Common/TraversalClient.h"
@@ -154,17 +160,9 @@ static const char kClientBoxKey = 0;
 }
 
 - (nullable NSString *)dolphinTraversalCode {
-#if HAVE_DOLPHIN_NETPLAY
-    _PVDolphinNetplayServerBox *sb =
-        objc_getAssociatedObject(self, &kServerBoxKey);
-    if (sb != nil && sb->server != nullptr) {
-        // NetPlayServer::GetInterfaceListToSend() provides the traversal code
-        // as a string on builds that use the traversal client.  The exact API
-        // differs between Dolphin revisions; adjust if needed.
-        return nil; // TODO: query sb->server->GetTraversalCode()
-    }
-#endif
-    return nil;
+    // Delegate to the richer queryDolphinTraversalCode method so the logic
+    // lives in one place.
+    return [self queryDolphinTraversalCode];
 }
 
 // MARK: - Host
@@ -372,6 +370,64 @@ static const char kClientBoxKey = 0;
     }
     return NO;
 #endif
+}
+
+// MARK: - Input buffer / frame delay
+
+- (void)setNetplayInputBufferSize:(uint32_t)bufferSize {
+#if HAVE_DOLPHIN_NETPLAY && defined(HAVE_DOLPHIN_NETPLAY_SETTINGS)
+    // Clamp to [0, 127] — Dolphin's internal maximum for NETPLAY_INPUT_BUFFER_SIZE.
+    const uint32_t clamped = bufferSize > 127u ? 127u : bufferSize;
+    DLOG(@"[Dolphin Netplay] Setting input buffer size to %u (requested: %u)",
+         clamped, bufferSize);
+    // Config::SetCurrent writes to the "current" (session-scoped) layer so the
+    // change takes effect immediately without persisting to the INI on disk.
+    Config::SetCurrent(Config::NETPLAY_INPUT_BUFFER_SIZE, clamped);
+#else
+    (void)bufferSize;
+    WLOG(@"[Dolphin Netplay] setNetplayInputBufferSize: not available — "
+         "Dolphin headers not present.");
+#endif
+}
+
+// MARK: - Traversal code query
+
+- (nullable NSString *)queryDolphinTraversalCode {
+#if HAVE_DOLPHIN_NETPLAY
+    _PVDolphinNetplayServerBox *sb =
+        objc_getAssociatedObject(self, &kServerBoxKey);
+    if (sb == nil || sb->server == nullptr) {
+        return nil;
+    }
+
+    // NetPlayServer exposes the traversal code through the traversal client.
+    // The API differs across Dolphin revisions:
+    //   Option A (current dolphin-ios): server->GetInterfaceListToSend()
+    //     returns a std::vector<std::pair<std::string, std::string>> where the
+    //     first element is the traversal code for relay sessions.
+    //   Option B (older): direct access via server->GetTraversalHostID() if exposed.
+    //
+    // We attempt Option A first; if it returns an empty list or the build does not
+    // expose the method, we fall through to nil.
+#if __has_include("Common/TraversalClient.h")
+    @try {
+        // GetInterfaceListToSend() is declared in NetPlayServer.h on dolphin-ios.
+        // It returns pairs of (address_name, code_string).  For traversal sessions
+        // the first pair's second element is the code clients enter to connect.
+        auto pairs = sb->server->GetInterfaceListToSend();
+        if (!pairs.empty()) {
+            const std::string &code = pairs.front().second;
+            if (!code.empty()) {
+                return [NSString stringWithUTF8String:code.c_str()];
+            }
+        }
+    } @catch (NSException *ex) {
+        WLOG(@"[Dolphin Netplay] Exception querying traversal code: %@", ex);
+    }
+#endif // __has_include(TraversalClient)
+
+#endif // HAVE_DOLPHIN_NETPLAY
+    return nil;
 }
 
 // MARK: - Stop

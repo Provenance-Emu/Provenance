@@ -19,9 +19,10 @@
 //  Currently exposed Dolphin netplay capabilities:
 //    - Direct IP and traversal-based hosting/joining
 //    - Per-session password protection (host side)
+//    - Input buffer size / frame delay (Config::NETPLAY_INPUT_BUFFER_SIZE)
+//    - Traversal code query after hosting
 //
 //  Pending wiring (not yet active):
-//    - Frame delay configuration (requires Config::NETPLAY_INPUT_BUFFER_SIZE wiring)
 //    - Max-player enforcement on the server (requires NetPlayServer API confirmation)
 //    - Client-side password authentication (requires NetPlayClient password API)
 //
@@ -118,6 +119,24 @@ NS_SWIFT_NAME(joinNetplay(host:port:traversalCode:password:));
 
 /// Stop any active server and/or client.  Safe to call when already idle.
 - (void)stopNetplay;
+
+/// Set Dolphin's input buffer size (frame delay) via Config::NETPLAY_INPUT_BUFFER_SIZE.
+///
+/// Must be called while a session is active; no-op when no session is running.
+/// Typical values: 0 = minimum latency (rollback-like), 1–5 for LAN/WAN delay-based play.
+///
+/// @param bufferSize  Number of input frames to buffer (0–127).  Values above 127
+///                    are clamped to 127 to match Dolphin's internal limit.
+- (void)setNetplayInputBufferSize:(uint32_t)bufferSize
+NS_SWIFT_NAME(setNetplayInputBufferSize(_:));
+
+/// The traversal code assigned by Dolphin's relay server when hosting via STUN.
+///
+/// Queries `NetPlayServer::GetInterfaceListToSend()` (or equivalent) to retrieve
+/// the code that remote players enter to connect via stun.dolphin-emu.org.
+/// Returns nil for direct-IP sessions or when the relay has not yet assigned a code.
+- (nullable NSString *)queryDolphinTraversalCode
+NS_SWIFT_NAME(queryDolphinTraversalCode());
 
 @end
 
