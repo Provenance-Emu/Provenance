@@ -100,11 +100,12 @@ public extension PVEmulatorViewController {
                 ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1), \(response.unlocks?.count ?? 0) existing unlocks.")
                 // Prepare the core's achievement runtime (rcheevos or equivalent).
                 await achievementsCore.prepareAchievements(gameHash: gameHash)
-                // If hardcore is enabled and the core reports an active achievements
-                // session, enforce the speed restriction — games without achievements
-                // or inactive sessions won't trigger this, so fast-forward isn't
-                // incorrectly blocked.
-                if achievementsCore.hardcoreMode && achievementsCore.achievementsActive {
+                // If hardcore is enabled, enforce the speed restriction now that the
+                // session has successfully started. We use hardcoreMode alone here
+                // (not achievementsActive) because we are already in the success path
+                // of startSession+prepareAchievements, and some cores (e.g. RetroArch)
+                // always report achievementsActive == false even when a session is live.
+                if achievementsCore.hardcoreMode {
                     await MainActor.run {
                         self.core.gameSpeed = .normal
                         // Sync the OSD fast-forward button so it doesn't remain highlighted.
@@ -139,7 +140,10 @@ public extension PVEmulatorViewController {
     func achievementsBlocksSaveStateLoad() -> Bool {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
         guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }
-        return achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+        guard achievementsCore.hardcoreMode else { return false }
+        // achievementsActive is authoritative when true; fall back to checking whether
+        // a session manager exists for cores (e.g. RetroArch) that always report false.
+        return achievementsCore.achievementsActive || achievementSessionManager != nil
     }
 
     // MARK: - Fast-forward guard
@@ -149,7 +153,10 @@ public extension PVEmulatorViewController {
     func achievementsBlocksFastForward() -> Bool {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
         guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }
-        return achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+        guard achievementsCore.hardcoreMode else { return false }
+        // achievementsActive is authoritative when true; fall back to checking whether
+        // a session manager exists for cores (e.g. RetroArch) that always report false.
+        return achievementsCore.achievementsActive || achievementSessionManager != nil
     }
 
     /// Sets the core's game speed while respecting RetroAchievements hardcore mode.
@@ -174,15 +181,21 @@ public extension PVEmulatorViewController {
     /// Returns `true` when the current session is in hardcore mode and
     /// rewind should be blocked.
     ///
-    /// - Note: Rewind in the current codebase is a RetroArch/core-level setting
-    ///   (`rewind_enable`) rather than an interactive Swift UI toggle, so there is
-    ///   no single call-site to wire this guard into at the PVUI layer yet.
-    ///   This method is provided so future rewind UI (Delta-skin button, OSD button,
-    ///   or settings toggle) can enforce the restriction without duplicating the logic.
+    /// **Why is this not yet wired?**
+    /// Rewind in the current codebase is a RetroArch/core-level setting
+    /// (`rewind_enable`) rather than an interactive Swift UI toggle.  There is
+    /// no single PVUI call-site to guard at this time.  This method is
+    /// intentionally provided as a ready-to-use guard so that future rewind UI
+    /// (Delta-skin button, OSD button, or settings toggle) can call it directly
+    /// without duplicating the hardcore-check logic.
+    ///
+    /// When wiring, also apply the same `achievementsActive || achievementSessionManager != nil`
+    /// pattern used by `achievementsBlocksFastForward()` so RetroArch cores are covered.
     func achievementsBlocksRewind() -> Bool {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
         guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }
-        return achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+        guard achievementsCore.hardcoreMode else { return false }
+        return achievementsCore.achievementsActive || achievementSessionManager != nil
     }
 
     // MARK: - Overlay management
