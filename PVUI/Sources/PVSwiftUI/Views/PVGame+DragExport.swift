@@ -24,8 +24,10 @@ extension PVGame {
         ]),
            resourceValues.isUbiquitousItem == true,
            resourceValues.ubiquitousItemDownloadingStatus == .notDownloaded {
-            // Proactively trigger a re-download so the next drag attempt can succeed.
-            try? FileManager.default.startDownloadingUbiquitousItem(at: url)
+            // Proactively trigger a re-download off the main thread so the next drag attempt can succeed.
+            DispatchQueue.global(qos: .background).async {
+                try? FileManager.default.startDownloadingUbiquitousItem(at: url)
+            }
             return NSItemProvider()
         }
 
