@@ -175,7 +175,11 @@ public struct SaveBundleDropModifier: ViewModifier {
                             Task { @MainActor in self.onResult(.failure(error)) }
                             return
                         }
-                        guard let url else { return }
+                        guard let url else {
+                            ELOG("SaveBundleDropModifier: loadFileRepresentation (zip) returned nil URL with no error")
+                            Task { @MainActor in self.onResult(.failure(SaveExportError.invalidBundle("Zip provider returned no file URL."))) }
+                            return
+                        }
                         processDroppedZip(url)
                     }
                     handled = true
@@ -187,7 +191,11 @@ public struct SaveBundleDropModifier: ViewModifier {
                             Task { @MainActor in self.onResult(.failure(error)) }
                             return
                         }
-                        guard let url else { return }
+                        guard let url else {
+                            ELOG("SaveBundleDropModifier: loadFileRepresentation (data) returned nil URL with no error")
+                            Task { @MainActor in self.onResult(.failure(SaveExportError.invalidBundle("Data provider returned no file URL."))) }
+                            return
+                        }
                         processDroppedZip(url)
                     }
                     handled = true
