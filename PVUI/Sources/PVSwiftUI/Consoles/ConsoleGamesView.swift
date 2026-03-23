@@ -897,7 +897,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     )
                 }
 #if !os(tvOS) && !os(watchOS)
-                .onDrag { romDragProvider(for: game) }
+                .onDrag { game.romDragProvider() }
 #endif
             }
         }
@@ -986,7 +986,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
 #if !os(tvOS) && !os(watchOS)
-                    .onDrag { romDragProvider(for: game) }
+                    .onDrag { game.romDragProvider() }
 #endif
                 }
             }
@@ -1031,7 +1031,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     )
                 }
 #if !os(tvOS) && !os(watchOS)
-                .onDrag { romDragProvider(for: game) }
+                .onDrag { game.romDragProvider() }
 #endif
                 GamesDividerView()
             }
@@ -1106,7 +1106,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 .focusableIfAvailable()
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
 #if !os(tvOS) && !os(watchOS)
-                .onDrag { romDragProvider(for: game) }
+                .onDrag { game.romDragProvider() }
 #endif
             }
         }
@@ -1613,18 +1613,13 @@ extension ConsoleGamesView {
         .saveStateDropTarget(gameId: game.md5)
         #endif
 #if !os(tvOS) && !os(watchOS)
-        .onDrag { romDragProvider(for: game) }
+        .onDrag { game.romDragProvider() }
 #endif
     }
 
     // MARK: - Drag Export
 
 #if !os(tvOS) && !os(watchOS)
-    /// Delegates to the shared `PVGame.romDragProvider()` extension.
-    private func romDragProvider(for game: PVGame) -> NSItemProvider {
-        game.romDragProvider()
-    }
-
     /// Resolves the live Realm game from a `GameCellModel` then delegates to the shared helper.
     private func romDragProvider(for model: GameCellModel) -> NSItemProvider {
         guard let live = liveGame(for: model) else { return NSItemProvider() }
