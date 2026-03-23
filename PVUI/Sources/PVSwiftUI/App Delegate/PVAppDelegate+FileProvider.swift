@@ -7,6 +7,8 @@
 //  Registers the ROM library NSFileProviderDomain so that Files.app shows
 //  "Provenance" as a location under Browse > Locations.
 //
+//  Supported platforms: iOS, macOS, visionOS (FileProvider is unavailable on tvOS).
+//
 //  The domain must be registered from the host application on every launch
 //  before the extension process is started by the system.
 //

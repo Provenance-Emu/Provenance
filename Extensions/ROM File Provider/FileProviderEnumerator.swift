@@ -146,7 +146,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
     /// sorted by title and paginated to `[offset, offset+limit)`.
     ///
     /// Local file presence cannot be queried at the Realm level, so all games are
-    /// scanned once for filesystem checks; only the page window is converted to items.
+    /// scanned once for `fileExists` checks on the first call; the result is cached in
+    /// `cachedLocalGames` for subsequent pages. Only the page window is converted to items.
     private func buildGameItems(systemIdentifier: String, realm: Realm, offset: Int, limit: Int) -> ([FileProviderItem], Int) {
         if cachedLocalGames == nil {
             let games = realm.objects(PVGame.self)
@@ -174,6 +175,11 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
     }
 
     /// Returns the set of system identifiers for which at least one ROM file is present on disk.
+    ///
+    /// - Note: This performs an O(N) scan with `fileExists` checks across all games on the first
+    ///   call per enumerator instance. The result is cached in `cachedLocalSystemIDs` for the
+    ///   lifetime of this instance, so subsequent pages are free. A future optimisation could
+    ///   store a "locallyPresent" flag in the Realm schema to avoid filesystem I/O entirely.
     private func localGameSystemIdentifiers(realm: Realm) -> Set<String> {
         let allGames = realm.objects(PVGame.self)
         var ids = Set<String>()
