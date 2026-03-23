@@ -215,6 +215,7 @@ struct TVMediaGameTileView: View {
         guard let provider = NSItemProvider(contentsOf: url) else {
             return NSItemProvider()
         }
+        provider.suggestedName = url.lastPathComponent
         return provider
     }
 #endif
