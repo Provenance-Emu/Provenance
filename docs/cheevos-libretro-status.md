@@ -79,7 +79,7 @@ The Provenance-bundled `retroarch.cfg` ships with:
 cheevos_enable = "false"          # Disabled by default — user must opt in
 cheevos_hardcore_mode_enable = "false"
 cheevos_username = ""
-cheevos_token = ""
+cheevos_password = ""             # Written by RetroArchConfigManager (not cheevos_token)
 cheevos_richpresence_enable = "true"
 cheevos_verbose_enable = "true"
 ```
@@ -114,8 +114,8 @@ The "RA Coverage" column describes upstream RetroAchievements *game database* co
 | `snes9x2010` | SNES | High | ✅ | |
 | `gambatte` | GB / GBC | Very High | ✅ | Preferred GB core |
 | `sameboy` | GB / GBC | Very High | ✅ | Accuracy-focused |
-| `mgba` (via `mednafen_gba`) | GBA | Very High | ✅ | See note below |
-| `mednafen_gba` | GBA | Very High | ✅ | mGBA is the RA reference for GBA |
+| `mgba` | GBA | Very High | ✅ | mGBA core, RA reference for GBA cheevos |
+| `mednafen_gba` | GBA | Very High | ✅ | Mednafen GBA core (separate from mGBA) |
 | `vba_next` | GBA | High | ✅ | |
 | `vbam` | GBA / GBC | High | ✅ | |
 | `gpsp` | GBA | Medium | ✅ | |
@@ -245,9 +245,9 @@ The "RA Coverage" column describes upstream RetroAchievements *game database* co
 
 `retroarch.cfg` ships with `cheevos_enable = "false"`. Achievements are silently inactive for users who sign in but don't also toggle the switch in RetroArch settings.
 
-`RetroArchConfigManager` writes credentials to `retroarch.cfg` but it is unclear whether it also writes `cheevos_enable = "true"` when the user enables achievements via the PVCheevos Settings UI.
+`RetroArchConfigManager.updateCredentials(username:password:)` writes RetroAchievements credentials to `retroarch.cfg`. The `cheevos_enable` setting is written separately, based on the `isRetroAchievementsEnabled` flag — toggled via the PVCheevos Settings UI — which triggers `syncToRetroArch()`.
 
-**Recommendation**: Verify that `RetroArchConfigManager.setCredentials(...)` also sets `cheevos_enable = true` in `retroarch.cfg`.
+**Recommendation**: Verify that the PVCheevos "Enable RetroAchievements" toggle correctly updates `isRetroAchievementsEnabled` so that `RetroArchConfigManager` writes `cheevos_enable = "true"` in `retroarch.cfg` when achievements are enabled, and consider a combined sign-in + enable flow to reduce UX confusion.
 
 ### Finding 2 — `achievementsActive` Always Returns `false`
 
