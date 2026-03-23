@@ -25,6 +25,9 @@ public struct RetroWaveSlider<Value: BinaryFloatingPoint>: View where Value.Stri
     @State private var isEditing = false
     @State private var glowOpacity = 0.0
     @State private var geometry: GeometryProxy? = nil
+    #if os(tvOS)
+    @FocusState private var isSliderFocused: Bool
+    #endif
     
     public init(value: Binding<Value>, 
                 in range: ClosedRange<Value>, 
@@ -148,9 +151,7 @@ public struct RetroWaveSlider<Value: BinaryFloatingPoint>: View where Value.Stri
                 }
                 .frame(height: 24) // Height for the slider track
                 .contentShape(Rectangle()) // Make the entire area tappable
-#if os(tvOS)
-                .focusable(false)
-#else
+#if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { gesture in
@@ -224,8 +225,37 @@ public struct RetroWaveSlider<Value: BinaryFloatingPoint>: View where Value.Stri
             }
         }
         .frame(height: 60) // Fixed height for the entire slider component
+        #if os(tvOS)
+        .focused($isSliderFocused)
+        .focusable(true)
+        .onMoveCommand { direction in
+            let step = Double(self.step)
+            let current = Double(value)
+            let lo = Double(range.lowerBound)
+            let hi = Double(range.upperBound)
+            switch direction {
+            case .left:
+                value = Value(max(lo, current - step))
+            case .right:
+                value = Value(min(hi, current + step))
+            default:
+                break
+            }
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(
+                    isSliderFocused ? RetroTheme.retroPink : Color.clear,
+                    lineWidth: 2
+                )
+                .shadow(
+                    color: isSliderFocused ? RetroTheme.retroPink.opacity(0.5) : Color.clear,
+                    radius: 8
+                )
+        )
+        #endif
     }
-    
+
     // MARK: - Private Methods
     
     /// Calculate the position of the thumb along the track

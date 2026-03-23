@@ -21,7 +21,7 @@ struct BackgroundDownloadHandler: BADownloaderExtension
         // encouraged to use this file to determine what assets need to be downloaded.
         // The manifest that is downloaded is determined by `BAManifestURL` defined in the
         // application's `Info.plist`.
-        let appGroupIdentifier = "group.org.provenance-emu.provenance"
+        let appGroupIdentifier = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String ?? "group.org.provenance-emu.provenance"
         var downloadsToSchedule: Set<BADownload> = []
         
         // Parse the `manifestURL` to determine what assets are available that might need

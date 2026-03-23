@@ -18,6 +18,8 @@ import PVUIBase
 
 /// View for batch matching artwork to games without artwork
 public struct BatchArtworkMatchingView: View {
+    @Environment(\.dismiss) private var dismiss
+
     // MARK: - Properties
 
     // State for filtering and processing
@@ -85,6 +87,9 @@ public struct BatchArtworkMatchingView: View {
             .padding(.bottom, 20)
         }
         .navigationTitle("Batch Artwork Matcher")
+#if os(tvOS)
+        .onExitCommand { dismiss() }
+#endif
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

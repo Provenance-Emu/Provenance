@@ -80,11 +80,6 @@ public struct WidgetNowPlayingData: Codable, Sendable {
 public final class WidgetDataWriter: Sendable {
     public static let shared = WidgetDataWriter()
 
-    private var appGroupID: String {
-        Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
-            ?? "group.org.provenance-emu.provenance"
-    }
-
     // Keys must match `WidgetSharedDefaults.Keys` in the widget extension.
     private enum Key {
         static let recentGames = "widget.recentGames"
@@ -97,9 +92,7 @@ public final class WidgetDataWriter: Sendable {
         static let favoritesCount = "widget.favoritesCount"
     }
 
-    private var defaults: UserDefaults? {
-        UserDefaults(suiteName: appGroupID)
-    }
+    private var defaults: UserDefaults? { pvAppGroupDefaults }
 
     private init() {}
 
@@ -109,7 +102,7 @@ public final class WidgetDataWriter: Sendable {
     /// - Parameters:
     ///   - recentGames: Recently-played games, ordered most-recent first (up to 12).
     ///   - galleryGames: Games chosen for art gallery rotation (up to 12).
-    ///   - favoriteGames: Favorite games sorted by title (up to 12).
+    ///   - favoriteGames: Favorite games sorted by title (up to 16 — covers systemExtraLarge 4×4 grid).
     ///   - totalCount: Total number of games in the library.
     ///   - systemCount: Number of distinct systems in the library.
     ///   - totalPlayTimeSeconds: Aggregate play time across all games.
@@ -133,7 +126,7 @@ public final class WidgetDataWriter: Sendable {
         if let data = try? encoder.encode(Array(galleryGames.prefix(12))) {
             defaults.set(data, forKey: Key.galleryGames)
         }
-        if let data = try? encoder.encode(Array(favoriteGames.prefix(12))) {
+        if let data = try? encoder.encode(Array(favoriteGames.prefix(16))) {
             defaults.set(data, forKey: Key.favoriteGames)
         }
         defaults.set(totalCount, forKey: Key.gameCount)
@@ -243,10 +236,8 @@ private extension GameEntity {
 
     /// Converts an artwork URL to a path relative to the App Group container.
     static func relativePath(for url: URL) -> String? {
-        let groupID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
-            ?? "group.org.provenance-emu.provenance"
         guard let containerURL = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: groupID
+            forSecurityApplicationGroupIdentifier: pvAppGroupID
         ) else { return nil }
         let containerPath = containerURL.path
         let urlPath = url.path

@@ -17,6 +17,10 @@ import PVLogging
 import PVFeatureFlags
 import PVPrimitives
 
+#if canImport(PVAppIntents)
+import PVAppIntents
+#endif
+
 private struct CoreOptionEntry {
     let coreClass: CoreOptional.Type
     let principleClassName: String
@@ -287,12 +291,16 @@ public struct GameContextMenu: View {
     // Move heavy operations to background tasks
     private func toggleFavorite() {
         Task {
-            // Perform Realm write on background thread
             try RomDatabase.sharedInstance.asyncWriteTransaction {
                 if let thawedGame = game.thaw() {
                     thawedGame.isFavorite.toggle()
                 }
             }
+#if canImport(PVAppIntents)
+            await MainActor.run {
+                WidgetDataWriter.shared.writeFromRealm()
+            }
+#endif
         }
     }
 

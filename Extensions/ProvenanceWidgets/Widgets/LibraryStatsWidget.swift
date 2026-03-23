@@ -68,7 +68,7 @@ struct LibraryStatsWidget: Widget {
         }
         .configurationDisplayName("Library Stats")
         .description("An overview of your game library.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
 
@@ -83,6 +83,10 @@ struct LibraryStatsWidgetView: View {
         switch family {
         case .systemSmall:
             smallView
+        case .systemMedium:
+            mediumView
+        case .systemLarge, .systemExtraLarge:
+            largeView
         default:
             mediumView
         }
@@ -132,6 +136,44 @@ struct LibraryStatsWidgetView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    // MARK: Large / Extra Large — stats grid with recent-play hook
+
+    private var largeView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 8) {
+                Image(systemName: "books.vertical.fill")
+                    .font(.title)
+                    .foregroundStyle(.orange)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Provenance")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                    Text("Library Stats")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            LazyVGrid(
+                columns: [GridItem(.flexible()), GridItem(.flexible()),
+                          GridItem(.flexible()), GridItem(.flexible())],
+                spacing: 12
+            ) {
+                statTile(value: String(entry.stats.totalGames),
+                         label: "Games", iconName: "gamecontroller.fill", color: .blue)
+                statTile(value: String(entry.stats.totalSystems),
+                         label: "Systems", iconName: "cpu.fill", color: .purple)
+                statTile(value: entry.stats.totalPlayTimeFormatted,
+                         label: "Played", iconName: "clock.fill", color: .green)
+                statTile(value: String(entry.stats.favoritesCount),
+                         label: "Favorites", iconName: "star.fill", color: .yellow)
+            }
+            Spacer()
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
     // MARK: Helpers
 
     private func statValue(_ value: String, label: String) -> some View {
@@ -179,6 +221,16 @@ struct LibraryStatsWidgetView: View {
 }
 
 #Preview("Medium", as: .systemMedium) {
+    LibraryStatsWidget()
+} timeline: {
+    LibraryStatsEntry(
+        date: Date(),
+        stats: WidgetLibraryStats(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
+        isPlaceholder: false
+    )
+}
+
+#Preview("Large", as: .systemLarge) {
     LibraryStatsWidget()
 } timeline: {
     LibraryStatsEntry(

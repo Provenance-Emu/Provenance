@@ -661,8 +661,10 @@ public struct PVSettingsView: View {
                         .padding(.horizontal, 80)
                         .padding(.bottom, 80)
                     }
-                    // Remove default tvOS focus highlight; rely on our RetroWave styling
-                    .buttonStyle(TVOSSettingsSectionButtonStyle())
+                    // NOTE: Do NOT apply TVOSSettingsSectionButtonStyle here — it would
+                    // override NavigationLink buttons inside each section and prevent
+                    // navigation from working on tvOS. Each section header applies the
+                    // style to its own expand/collapse button individually (line ~430).
                     .focusSection()
                 }
                 #endif
@@ -1162,6 +1164,9 @@ private struct AppSection: View {
                             subtitle: "Information on system cores, their bioses, links and stats.",
                             icon: .sfSymbol("square.stack.3d.down.forward"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             /// Links to projects
             NavigationLink(destination: CoreProjectsView()) {
@@ -1169,12 +1174,18 @@ private struct AppSection: View {
                             subtitle: "Emulator cores provided by these projects.",
                             icon: .sfSymbol("square.3.layers.3d.middle.filled"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             NavigationLink(destination: ThemeSelectionView()) {
                 SettingsRow(title: "Theme",
                             value: themeManager.currentPalette.description,
                             icon: .sfSymbol("paintpalette"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             #if !os(tvOS)
             /// App icon selection section — all users can browse, premium icons gated inside
@@ -1211,6 +1222,9 @@ private struct CoreOptionsSection: View {
                             subtitle: "Configure emulator core settings.",
                             icon: .sfSymbol("gearshape.2"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             NavigationLink(destination: RetroArchQuickSettingsView()) {
                 SettingsRow(
@@ -1219,6 +1233,9 @@ private struct CoreOptionsSection: View {
                     icon: .sfSymbol("gearshape.2.fill")
                 )
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             if shouldShowResetButton {
                 Button(action: { showResetConfirmation = true }) {
@@ -1454,8 +1471,7 @@ private struct ExtraInfoSection: View {
                             subtitle: "Open-source libraries Provenance uses and their respective licenses.",
                             icon: .sfSymbol("doc.text"))
             }
-            .tvOSDisableFocusEffect()
-            .buttonStyle(.plain) // remove default tvOS focus overlay; rely on our styling
+            .retroFocusButtonStyle(showBorder: false)
             .alert(isPresented: $showLicensesAlert) {
                 Alert(
                     title: Text("View Licenses"),
@@ -1470,8 +1486,7 @@ private struct ExtraInfoSection: View {
                             subtitle: "View our privacy policy",
                             icon: .sfSymbol("hand.raised"))
             }
-            .tvOSDisableFocusEffect()
-            .buttonStyle(.plain) // remove default tvOS focus overlay; rely on our styling
+            .retroFocusButtonStyle(showBorder: false)
             .alert(isPresented: $showPrivacyAlert) {
                 Alert(
                     title: Text("Privacy Policy"),
@@ -1486,8 +1501,7 @@ private struct ExtraInfoSection: View {
                             subtitle: "Apple's standard EULA",
                             icon: .sfSymbol("signature"))
             }
-            .tvOSDisableFocusEffect()
-            .buttonStyle(.plain) // remove default tvOS focus overlay; rely on our styling
+            .retroFocusButtonStyle(showBorder: false)
             .alert(isPresented: $showEULAAlert) {
                 Alert(
                     title: Text("EULA"),
@@ -1573,6 +1587,9 @@ private struct AudioSection: View {
                                 subtitle: "Configure audio engine, buffer and latency settings.",
                                 icon: .sfSymbol("waveform.circle"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
             } lockedView: {
                 SettingsRow(title: "Audio Engine",
                             subtitle: "Unlock to configure advanced audio settings.",
@@ -1634,6 +1651,9 @@ private struct VideoSection: View {
                             subtitle: "Configure CRT and LCD filter effects.",
                             icon: .sfSymbol("tv.fill"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
         }
     }
 }
@@ -1677,16 +1697,25 @@ private struct ControllerSection: View {
                                 subtitle: "Supported controllers, pairing steps, and platform notes.",
                                 icon: .sfSymbol("books.vertical.fill"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
                 NavigationLink(destination: ControllerSettingsView()) {
                     SettingsRow(title: "Controller Selection",
                                 subtitle: "Configure external controller mappings.",
                                 icon: .sfSymbol("gamecontroller"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
                 NavigationLink(destination: ICadeControllerView()) {
                     SettingsRow(title: "iCade / 8Bitdo",
                                 subtitle: "Configure iCade and 8Bitdo controller settings.",
                                 icon: .sfSymbol("keyboard"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
                 ThemedToggle(isOn: $use8BitdoM30) {
                     SettingsRow(title: "Use 8BitDo M30 Mapping",
                                 subtitle: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine",
@@ -1769,7 +1798,11 @@ private struct AnalogDeadzoneSection: View {
                         .foregroundColor(.secondary)
                 }
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #else
             .buttonStyle(.plain)
+            #endif
             .sheet(isPresented: $showingCompatibility) {
                 CoreDeadzoneCompatibilityView()
             }
@@ -1811,6 +1844,9 @@ private struct CoreDeadzoneCompatibilityView: View {
                 }
             }
         }
+        #if os(tvOS)
+        .frame(minWidth: 700, minHeight: 750)
+        #endif
     }
 }
 
@@ -1958,6 +1994,7 @@ private struct HapticsRumbleSection: View {
                             subtitle: "Customize per-system and per-controller haptic profiles.",
                             icon: .sfSymbol("slider.horizontal.3"))
             }
+            .retroFocusButtonStyle(showBorder: false)
             TestRumbleButton()
         }
         #endif
@@ -2117,6 +2154,9 @@ private struct LibrarySection: View {
                             subtitle: "Visual options for Game Library",
                             icon: .sfSymbol("eye"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
         }
     }
 }
@@ -2135,11 +2175,13 @@ private struct LibrarySection2: View {
                                  subtitle: "Manage CloudKit and iCloud Drive sync settings",
                                  icon: .sfSymbol("icloud"))
                 }
+                .retroFocusButtonStyle(showBorder: false)
                 NavigationLink(destination: BackupRestoreView()) {
                     SettingsRow(title: "Backup & Restore",
                                 subtitle: "Manually back up and restore saves, database, and artwork.",
                                 icon: .sfSymbol("archivebox"))
                 }
+                .retroFocusButtonStyle(showBorder: false)
             #else
 //            if viewModel.showFeatureFlagsDebug {
                 PaidFeatureView {
@@ -2171,6 +2213,9 @@ private struct LibrarySection2: View {
                             subtitle: "Find and apply artwork for multiple games at once.",
                             icon: .sfSymbol("photo.on.rectangle.angled"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             ThemedToggle(isOn: $autoNormalizeROMTitles) {
                 SettingsRow(title: "Auto-Normalize Titles on Import",
@@ -2183,30 +2228,45 @@ private struct LibrarySection2: View {
                             subtitle: "Preview and clean up ROM annotation tags from current library titles.",
                             icon: .sfSymbol("text.badge.checkmark"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             Button(action: viewModel.reimportROMs) {
                 SettingsRow(title: "Scan ROM Directories",
                             subtitle: "Import new ROMs and update metadata without changing custom artwork or names.",
                             icon: .sfSymbol("magnifyingglass.circle"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             Button(action: viewModel.refreshGameLibrary) {
                 SettingsRow(title: "Update Game Metadata",
                             subtitle: "Re-fetch artwork and info from the database. Custom artwork and names are preserved.",
                             icon: .sfSymbol("arrow.triangle.2.circlepath"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             Button(action: viewModel.emptyImageCache) {
                 SettingsRow(title: "Clear Artwork Cache",
                             subtitle: "Delete cached artwork to free up space. Images re-download automatically.",
                             icon: .sfSymbol("photo.trianglebadge.exclamationmark"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
             Button(role: .destructive, action: viewModel.resetData) {
                 SettingsRow(title: "Reset Library",
                             subtitle: "Delete all game data, settings, and custom artwork, then re-import from scratch.",
                             icon: .sfSymbol("trash.slash"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
         }
         .alert(item: $viewModel.pendingLibraryAction) { action in
             Alert(
@@ -2238,6 +2298,9 @@ private struct AdvancedSection: View {
                                 subtitle: "Browse files in the app group container for debugging.",
                                 icon: .sfSymbol("folder.badge.gear"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
 
                 #if os(tvOS)
                 // TopShelf Log Viewer
@@ -2247,6 +2310,7 @@ private struct AdvancedSection: View {
 
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
+                .retroFocusButtonStyle(showBorder: false)
                 #endif
 
                 #if !os(tvOS)
@@ -2264,6 +2328,9 @@ private struct AdvancedSection: View {
                                 subtitle: "View logs for debugging.",
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
 
                 SecretSettingsRow()
             }
@@ -2551,6 +2618,9 @@ private struct RetroAchievementsSection: View {
                             subtitle: cheevosStatus,
                             icon: .sfSymbol("trophy.fill"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
             .onAppear {
                 cheevosStatus = RetroAchievementsSection.computeStatus()
             }

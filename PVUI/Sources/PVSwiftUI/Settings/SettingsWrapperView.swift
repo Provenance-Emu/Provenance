@@ -29,6 +29,14 @@ struct SettingsWrapperView: View {
     @State private var showingImportMessage = false
     @State private var showingSettings = true
 
+    /// Stable across re-renders — must NOT be created inside `body` or SwiftUI
+    /// will re-instantiate it on every render cycle, causing an init→observer→
+    /// state-change→re-render infinite loop.
+    @StateObject private var conflictsController = PVGameLibraryUpdatesController(
+        gameImporter: GameImporter.shared
+    )
+    private let menuDelegate = MockPVMenuDelegate()
+
     #if os(tvOS)
     init(canPop: Binding<Bool> = .constant(false)) {
         _canPop = canPop
@@ -38,26 +46,23 @@ struct SettingsWrapperView: View {
     #endif
 
     var body: some View {
-        NavigationStack {
-            let gameImporter = GameImporter.shared
-            let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-            let menuDelegate = MockPVMenuDelegate()
-
-            PVSettingsView(
-                conflictsController: pvgamelibraryUpdatesController,
-                menuDelegate: menuDelegate,
-                showsDoneButton: false
-            ) {
-                showingSettings = false
-            }
-            .navigationBarHidden(true)
-            #if os(tvOS)
-            .background(TVOSSettingsNavigationCanPopReader(canPop: $canPop))
-            #endif
-#if canImport(FreemiumKit)
-            .environmentObject(FreemiumKit.shared)
-#endif
+        // PVSettingsView already contains its own NavigationStack.
+        // Do NOT wrap it in another NavigationStack here — nested stacks
+        // prevent NavigationLink activation on tvOS.
+        PVSettingsView(
+            conflictsController: conflictsController,
+            menuDelegate: menuDelegate,
+            showsDoneButton: false
+        ) {
+            showingSettings = false
         }
+        .navigationBarHidden(true)
+        #if os(tvOS)
+        .background(TVOSSettingsNavigationCanPopReader(canPop: $canPop))
+        #endif
+#if canImport(FreemiumKit)
+        .environmentObject(FreemiumKit.shared)
+#endif
         #if !os(tvOS)
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker(onImport: importFiles)

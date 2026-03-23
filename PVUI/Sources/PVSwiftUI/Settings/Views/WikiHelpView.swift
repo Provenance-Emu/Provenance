@@ -5,6 +5,7 @@ import PVThemes
 import MarkdownView
 
 public struct WikiHelpView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = WikiHelpViewModel()
 
     public init() {}
@@ -22,6 +23,9 @@ public struct WikiHelpView: View {
             }
         }
         .navigationTitle("Help & Wiki")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         .task {
             await viewModel.loadNavigationTree()
         }

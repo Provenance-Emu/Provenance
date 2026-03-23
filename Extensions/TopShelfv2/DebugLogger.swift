@@ -33,11 +33,11 @@ import os.log
     @objc public func writeToLogFile(_ message: String) {
         let fileManager = FileManager.default
         
-        // Try multiple app group IDs to ensure we can write somewhere
-        let appGroupIDs = [
-            "group.org.provenance-emu.provenance",
-            "group.org.provenance-emu"
-        ]
+        // Primary: read the App Group ID from Info.plist (set via APP_GROUP_IDENTIFIER build setting).
+        // Fallback chain handles sideload/AltStore builds and CI environments.
+        let infoPlistID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String ?? ""
+        let appGroupIDs = ([infoPlistID, "group.org.provenance-emu.provenance", "group.org.provenance-emu"]
+            .filter { !$0.isEmpty && !$0.contains("$(") })
         
         for appGroupID in appGroupIDs {
             if let containerURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {

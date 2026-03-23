@@ -244,6 +244,9 @@ struct ProvenanceApp: App {
                 ILOG("skins: Setting SkinImporterInjector service to DeltaSkinManager.shared")
                 SkinImporterInjector.shared.service = DeltaSkinManager.shared
                 ILOG("skins: SkinImporterInjector service initialized")
+
+                // Drain any Siri/Shortcuts/Widget pending side-effects and refresh widget timelines
+                processPendingAppIntents()
             }
 
             // Handle scene phase changes for import pausing

@@ -48,7 +48,7 @@ struct FavoritesProvider: TimelineProvider {
         case .systemSmall: return 1
         case .systemMedium: return 4
         case .systemLarge: return 8
-        case .systemExtraLarge: return 8
+        case .systemExtraLarge: return 16
         default: return 4
         }
     }
@@ -86,8 +86,10 @@ struct FavoritesWidgetView: View {
                 smallView
             case .systemMedium:
                 gridView(columns: 2, rows: 2)
-            case .systemLarge, .systemExtraLarge:
+            case .systemLarge:
                 gridView(columns: 4, rows: 2)
+            case .systemExtraLarge:
+                gridView(columns: 4, rows: 4)
             default:
                 gridView(columns: 2, rows: 2)
             }

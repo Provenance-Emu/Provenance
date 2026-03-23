@@ -76,7 +76,7 @@ public actor PVWebServerManager {
             await existing.stopServers()
         }
 
-        let server = makeServer()
+        let server = await makeServer()
         let ok = try await server.startServers()
         if ok {
             activeServer = server
@@ -96,12 +96,18 @@ public actor PVWebServerManager {
 
     // MARK: - Private
 
-    private func makeServer() -> any PVWebServerProtocol {
-        // Allow override for test injection via dedicated method below.
+    /// Creates the active server implementation.
+    ///
+    /// `PVLegacyWebServerAdapter` wraps the ObjC `PVWebServer` singleton whose
+    /// `+initialize` method (`GCDWebServerInitializeFunctions`) asserts it is called
+    /// on the main thread.  Bounce through `MainActor.run` so the first ObjC class
+    /// initialisation always happens on the main thread regardless of which actor
+    /// or queue this method is called from.
+    private func makeServer() async -> any PVWebServerProtocol {
         if useModernServer {
             return PVModernWebServer()
         } else {
-            return PVLegacyWebServerAdapter()
+            return await MainActor.run { PVLegacyWebServerAdapter() }
         }
     }
 }

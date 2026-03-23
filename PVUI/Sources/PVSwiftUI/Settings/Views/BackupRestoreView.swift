@@ -25,6 +25,7 @@ struct BackupRestoreView: View {
     // MARK: - Coordinator (persists across view dismissal)
 
     @ObservedObject private var coordinator = BackupCoordinator.shared
+    @Environment(\.dismiss) private var dismiss
 
     // MARK: - Local view state
 
@@ -54,11 +55,18 @@ struct BackupRestoreView: View {
                     restoreSectionView
                     infoView
                 }
+                #if os(tvOS)
+                .padding(.horizontal, 80)
+                #else
                 .padding(.horizontal)
+                #endif
                 .padding(.bottom, 40)
             }
         }
         .navigationTitle("Backup & Restore")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarHidden(false)
         .sheet(isPresented: $showShareSheet, onDismiss: {
