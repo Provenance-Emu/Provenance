@@ -106,8 +106,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         }
 
         let raw = enumeratedItemIdentifier.rawValue
-        if raw.hasPrefix("system:") {
-            let systemIdentifier = String(raw.dropFirst("system:".count))
+        if raw.hasPrefix(FileProviderItem.systemIdentifierPrefix) {
+            let systemIdentifier = String(raw.dropFirst(FileProviderItem.systemIdentifierPrefix.count))
             return buildGameItems(systemIdentifier: systemIdentifier, realm: realm, offset: offset, limit: limit)
         }
 

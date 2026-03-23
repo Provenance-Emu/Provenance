@@ -56,6 +56,13 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         super.init()
     }
 
+    // MARK: - Identifier prefix constants
+
+    /// Prefix used in `NSFileProviderItemIdentifier` raw values for system-folder items.
+    static let systemIdentifierPrefix = "system:"
+    /// Prefix used in `NSFileProviderItemIdentifier` raw values for game-file items.
+    static let gameIdentifierPrefix = "game:"
+
     // MARK: - NSFileProviderItem
 
     var itemIdentifier: NSFileProviderItemIdentifier {
@@ -63,9 +70,9 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         case .root:
             return .rootContainer
         case .systemFolder(let system):
-            return NSFileProviderItemIdentifier("system:\(system.identifier)")
+            return NSFileProviderItemIdentifier("\(FileProviderItem.systemIdentifierPrefix)\(system.identifier)")
         case .gameFile(let game, _):
-            return NSFileProviderItemIdentifier("game:\(game.md5)")
+            return NSFileProviderItemIdentifier("\(FileProviderItem.gameIdentifierPrefix)\(game.md5)")
         }
     }
 
@@ -74,7 +81,7 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         case .root, .systemFolder:
             return .rootContainer
         case .gameFile(let game, _):
-            return NSFileProviderItemIdentifier("system:\(game.systemIdentifier)")
+            return NSFileProviderItemIdentifier("\(FileProviderItem.systemIdentifierPrefix)\(game.systemIdentifier)")
         }
     }
 
@@ -149,12 +156,21 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         switch kind {
         case .root, .systemFolder:
             return nil
-        case .gameFile(_, let romURL):
-            guard let romURL = romURL else { return nil }
-            let attributes = try? FileManager.default.attributesOfItem(atPath: romURL.path)
-            return attributes?[.modificationDate] as? Date
+        case .gameFile:
+            return _contentModificationDate
         }
     }
+
+    /// Cached content modification date — computed at most once per instance to avoid
+    /// repeated filesystem attribute lookups during listing/sorting in Files.app.
+    private lazy var _contentModificationDate: Date? = {
+        guard case .gameFile(_, let romURL) = kind,
+              let romURL = romURL else {
+            return nil
+        }
+        let attributes = try? FileManager.default.attributesOfItem(atPath: romURL.path)
+        return attributes?[.modificationDate] as? Date
+    }()
 
     /// Sanitizes a raw name for safe use as a file provider filename.
     ///

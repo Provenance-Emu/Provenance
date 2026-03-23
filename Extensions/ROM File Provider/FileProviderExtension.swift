@@ -78,12 +78,12 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         completionHandler: @escaping (URL?, NSFileProviderItem?, Error?) -> Void
     ) -> Progress {
         let raw = itemIdentifier.rawValue
-        guard raw.hasPrefix("game:") else {
+        guard raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) else {
             completionHandler(nil, nil, NSFileProviderError(.noSuchItem))
             return Progress()
         }
 
-        let md5 = String(raw.dropFirst("game:".count))
+        let md5 = String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count))
 
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
@@ -172,15 +172,15 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             let raw = identifier.rawValue
 
-            if raw.hasPrefix("system:") {
-                let sysID = String(raw.dropFirst("system:".count))
+            if raw.hasPrefix(FileProviderItem.systemIdentifierPrefix) {
+                let sysID = String(raw.dropFirst(FileProviderItem.systemIdentifierPrefix.count))
                 guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: sysID),
                       !pvSystem.isInvalidated else { return nil }
                 return FileProviderItem(system: pvSystem.asDomain())
             }
 
-            if raw.hasPrefix("game:") {
-                let md5 = String(raw.dropFirst("game:".count))
+            if raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) {
+                let md5 = String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count))
                 guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
                       !pvGame.isInvalidated else { return nil }
                 return FileProviderItem(game: pvGame.asDomain(), romURL: pvGame.file?.url)
