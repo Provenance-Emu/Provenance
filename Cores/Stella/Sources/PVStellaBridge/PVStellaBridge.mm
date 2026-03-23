@@ -75,6 +75,11 @@
 
 static __weak PVStellaBridge *_current;
 
+/// Scaling factor applied to the normalised companion trackball delta (-1…1)
+/// to produce a pixel-delta value for RETRO_DEVICE_MOUSE X/Y.
+/// 32 px/frame at full deflection gives a responsive feel without overshooting.
+static const float kTrackballMouseDeltaScale = 32.0f;
+
 @implementation PVStellaBridge
 
 #pragma mark - Static callbacks
@@ -144,14 +149,13 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
         @synchronized(strongCurrent) {
             switch (_id) {
                 case RETRO_DEVICE_ID_MOUSE_X: {
-                    // Scale -1…1 normalised value to pixel-delta range.
-                    // 32 px/frame at full deflection gives a responsive feel.
-                    value = (int16_t)(strongCurrent->_pendingMouseDX * 32.0f);
+                    // Scale -1…1 normalised delta to pixel-delta range.
+                    value = (int16_t)(strongCurrent->_pendingMouseDX * kTrackballMouseDeltaScale);
                     strongCurrent->_pendingMouseDX = 0.0f;
                     break;
                 }
                 case RETRO_DEVICE_ID_MOUSE_Y: {
-                    value = (int16_t)(strongCurrent->_pendingMouseDY * 32.0f);
+                    value = (int16_t)(strongCurrent->_pendingMouseDY * kTrackballMouseDeltaScale);
                     strongCurrent->_pendingMouseDY = 0.0f;
                     break;
                 }

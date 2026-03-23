@@ -146,6 +146,10 @@ extension PVEmulatorViewController {
     /// - Parameter session: The active companion controller session whose
     ///   `inputRouter` will be subscribed to.
     public func setupCompanionControllerBridgeIfNeeded(session: CompanionControllerSession) {
+        // Always tear down any existing bridge first so we don't keep forwarding
+        // input to a stale core or leak old Combine subscriptions.
+        teardownCompanionControllerBridge()
+
         guard let companionCore = core as? CompanionControllerCapable else { return }
 
         // Store the session so it can be referenced later (e.g. for teardown).

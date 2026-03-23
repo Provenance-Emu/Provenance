@@ -60,7 +60,7 @@ public enum CompanionCoreButton: UInt32 {
 ///     public var preferredCompanionLayoutID: String? {
 ///         // Only show trackball layout for trackball-using titles.
 ///         guard isTrackballGame else { return nil }
-///         return "com.provenance.atari2600.trackball"
+///         return CompanionLayoutID.atari2600Trackball
 ///     }
 ///
 ///     public func companionTrackballMoved(deltaX: Float, deltaY: Float) {

@@ -10,7 +10,7 @@
 // ## Registered systems
 //
 // - Atari 2600 — CX-22 (original trackball) and CX-80 (wired trackball):
-//     Centipede, Millipede, Missile Command, Crystal Castles, Liberator, Maze Craze
+//     Centipede, Millipede, Missile Command, Crystal Castles, Liberator
 //
 // ## Usage
 //
