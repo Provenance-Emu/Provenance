@@ -52,7 +52,25 @@ static const void *kLocalMPStatusKey = &kLocalMPStatusKey;
 
 - (PVMelonDSLocalMPStatus)localMPStatus {
     NSNumber *boxed = objc_getAssociatedObject(self, kLocalMPStatusKey);
-    return boxed ? (PVMelonDSLocalMPStatus)boxed.integerValue : PVMelonDSLocalMPStatusIdle;
+    PVMelonDSLocalMPStatus cachedStatus = boxed ? (PVMelonDSLocalMPStatus)boxed.integerValue : PVMelonDSLocalMPStatusIdle;
+
+#if PVMELON_LOCAL_MP_AVAILABLE
+    bool connected = LocalMP::IsConnected();
+
+    if (cachedStatus == PVMelonDSLocalMPStatusActive && !connected) {
+        // Underlying LocalMP disconnected; sync bookkeeping.
+        [self _setLocalMPStatus:PVMelonDSLocalMPStatusIdle];
+        return PVMelonDSLocalMPStatusIdle;
+    }
+
+    if (cachedStatus == PVMelonDSLocalMPStatusIdle && connected) {
+        // LocalMP reports active even though we think idle; sync bookkeeping.
+        [self _setLocalMPStatus:PVMelonDSLocalMPStatusActive];
+        return PVMelonDSLocalMPStatusActive;
+    }
+#endif
+
+    return cachedStatus;
 }
 
 - (void)_setLocalMPStatus:(PVMelonDSLocalMPStatus)status {

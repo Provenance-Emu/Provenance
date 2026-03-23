@@ -130,8 +130,7 @@ extension PVMelonDSCore: PVNetplayCapable {
     /// All mutations are dispatched to the main thread where the melonDS
     /// run-loop executes.
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
-        guard supportsNetplay else { throw NetplayError.featureDisabled }
-        guard _bridge.localMPStatus == .idle else { throw NetplayError.alreadyActive }
+        guard supportsNetplay else { throw NetplayError.unsupported }
 
         // melonDS LocalMP does not support spectator mode; normalize spectators to clients.
         let effectiveRole: NetplayRole
@@ -152,14 +151,16 @@ extension PVMelonDSCore: PVNetplayCapable {
             portBase = kMelonDSLocalMPDefaultPortBase
         }
 
-        do {
-            try await MainActor.run {
+        // Perform both the idle-guard and the start/store atomically on the main
+        // actor so there is no data race against bridge state mutations.
+        try await MainActor.run {
+            guard _bridge.localMPStatus == .idle else { throw NetplayError.alreadyActive }
+            do {
                 try _bridge.startLocalMP(withPortBase: portBase)
-                _netplayContext = MelonDSNetplayContext(role: effectiveRole, settings: settings, portBase: portBase)
+            } catch {
+                throw NetplayError.connectionFailed((error as NSError).localizedDescription)
             }
-        } catch {
-            let reason = (error as NSError).localizedDescription
-            throw NetplayError.connectionFailed(reason)
+            _netplayContext = MelonDSNetplayContext(role: effectiveRole, settings: settings, portBase: portBase)
         }
     }
 
