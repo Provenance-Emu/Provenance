@@ -127,7 +127,7 @@ extension PVWebServerManager {
             .eraseToAnyPublisher()
     }
 
-    /// Emits `(fromPath, toPath)` tuples for every file moved/renamed via WebDAV.
+    /// Emits `(fromPath, toPath)` tuples for every file moved/renamed via the web UI or WebDAV.
     public nonisolated var fileMovedPublisher: AnyPublisher<(from: String, to: String), Never> {
         NotificationCenter.default
             .publisher(for: .pvWebServerFileMoved)

@@ -39,9 +39,11 @@ private extension Notification.Name {
 /// - **BIOS files** — `isDownloaded` toggled on delete/restore events.
 ///
 /// Thread safety: `observations` is guarded by `lock`; `start()`/`stop()` may be
-/// called from any thread.  `romsPathPrefix` / `savesPathPrefix` / `biosPathPrefix`
-/// are snapshotted during `start()` to avoid iCloud-blocking calls on
-/// notification-delivery threads.
+/// called from any thread.  Path lookups (potentially iCloud-blocking) are deferred
+/// to the utility background queue used by each event handler.
+///
+/// `@unchecked Sendable` is required because `[NSObjectProtocol]` is not `Sendable`.
+/// The only mutable shared state is `observations`, which is fully guarded by `lock`.
 public final class PVWebFileEventObserver: @unchecked Sendable {
 
     public static let shared = PVWebFileEventObserver()
@@ -49,29 +51,21 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     private let lock = NSLock()
     private var observations: [NSObjectProtocol] = []
 
-    // Snapshotted at start() to avoid potentially iCloud-blocking path lookups
-    // on arbitrary notification-delivery threads.
-    private var romsPathPrefix: String = ""
-    private var savesPathPrefix: String = ""
-    private var biosPathPrefix: String  = ""
+    /// Realm configuration used when opening a Realm in event handlers.
+    /// Defaults to the process-default configuration; override in tests
+    /// to supply an in-memory configuration.
+    internal var realmConfiguration: Realm.Configuration = .defaultConfiguration
 
-    private init() {}
+    internal init() {}
 
     // MARK: Lifecycle
 
     /// Start listening.  Safe to call multiple times — subsequent calls are no-ops.
+    /// May be called from any thread; no iCloud-blocking work is performed here.
     public func start() {
         lock.lock()
         defer { lock.unlock() }
         guard observations.isEmpty else { return }
-
-        // Snapshot path prefixes once here (called from app launch on the main queue).
-        let romsDir  = Paths.romsPath.path
-        let savesDir = Paths.saveSavesPath.path
-        let biosDir  = Paths.biosesPath.path
-        romsPathPrefix  = romsDir.hasSuffix("/")  ? romsDir  : romsDir  + "/"
-        savesPathPrefix = savesDir.hasSuffix("/") ? savesDir : savesDir + "/"
-        biosPathPrefix  = biosDir.hasSuffix("/")  ? biosDir  : biosDir  + "/"
 
         let center = NotificationCenter.default
 
@@ -114,13 +108,18 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 
         ILOG("PVWebFileEventObserver: file deleted — \(fullPath)")
 
-        let romsPrefix  = romsPathPrefix
-        let savesPrefix = savesPathPrefix
-        let biosPrefix  = biosPathPrefix
-
+        let config = realmConfiguration
         DispatchQueue.global(qos: .utility).async {
+            // Compute potentially iCloud-blocking paths here on the background thread.
+            let romsDir = Paths.romsPath.path
+            let romsPrefix = romsDir.hasSuffix("/") ? romsDir : romsDir + "/"
+            let savesDir = Paths.saveSavesPath.path
+            let savesPrefix = savesDir.hasSuffix("/") ? savesDir : savesDir + "/"
+            let biosDir = Paths.biosesPath.path
+            let biosPrefix = biosDir.hasSuffix("/") ? biosDir : biosDir + "/"
+
             do {
-                let realm = try Realm()
+                let realm = try Realm(configuration: config)
 
                 // ── ROM file ──────────────────────────────────────────────────────────
                 if fullPath.hasPrefix(romsPrefix) {
@@ -133,7 +132,8 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                         .first
 
                     if let game {
-                        if game.cloudRecordID != nil {
+                        let hasCloudRecord = !(game.cloudRecordID?.isEmpty ?? true)
+                        if hasCloudRecord {
                             // Soft offline: file deleted locally, CloudKit record survives.
                             try realm.write {
                                 game.isDownloaded = false
@@ -207,21 +207,23 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     private func handleFileMoved(from fromPath: String, to toPath: String) {
         ILOG("PVWebFileEventObserver: file moved — \(fromPath) → \(toPath)")
 
-        let prefix = romsPathPrefix
-
-        guard fromPath.hasPrefix(prefix), toPath.hasPrefix(prefix) else {
-            // Only ROM moves require a Realm path update; other file types don't
-            // store absolute paths in the database.
-            return
-        }
-
-        let oldRelative = String(fromPath.dropFirst(prefix.count))
-        let newRelative = String(toPath.dropFirst(prefix.count))
-        let newFilename = URL(fileURLWithPath: toPath).lastPathComponent
-
+        let config = realmConfiguration
         DispatchQueue.global(qos: .utility).async {
+            // Compute potentially iCloud-blocking paths here on the background thread.
+            let romsDir = Paths.romsPath.path
+            let prefix = romsDir.hasSuffix("/") ? romsDir : romsDir + "/"
+
+            guard fromPath.hasPrefix(prefix), toPath.hasPrefix(prefix) else {
+                // Only ROM moves require a Realm path update; other file types don't
+                // store absolute paths in the database.
+                return
+            }
+
+            let oldRelative = String(fromPath.dropFirst(prefix.count))
+            let newRelative = String(toPath.dropFirst(prefix.count))
+
             do {
-                let realm = try Realm()
+                let realm = try Realm(configuration: config)
                 guard let game = realm.objects(PVGame.self)
                     .filter("romPath == %@", oldRelative)
                     .first else {
