@@ -365,14 +365,23 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             throw NSFileProviderError(.cannotSynchronize)
         }
 
-        // If a game with this MD5 already exists, drop the copy we just made and return
-        // the existing item using its canonical (database-tracked) file URL, not destURL.
+        // If a game with this MD5 already exists, check whether the existing record has a
+        // valid on-disk file before discarding the newly imported copy.
         if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
            !existing.isInvalidated {
-            try? FileManager.default.removeItem(at: destURL)
-            ILOG("FileProvider: ROM already exists (md5=\(md5)), discarding duplicate copy")
-            let canonicalURL = existing.file?.url ?? destURL
-            return FileProviderItem(game: existing.asDomain(), romURL: canonicalURL)
+            if let existingFileURL = existing.file?.url,
+               FileManager.default.fileExists(atPath: existingFileURL.path) {
+                // Existing record has a valid on-disk file — discard the duplicate copy
+                // and return the canonical URL so Files.app sees the correct path.
+                try? FileManager.default.removeItem(at: destURL)
+                ILOG("FileProvider: ROM already exists (md5=\(md5)), discarding duplicate copy at \(destURL.lastPathComponent)")
+                return FileProviderItem(game: existing.asDomain(), romURL: existingFileURL)
+            } else {
+                // Existing record is a placeholder or its local file is missing — keep
+                // the newly imported ROM so the user can access it via Files.app.
+                ILOG("FileProvider: existing ROM record for md5=\(md5) has no valid local file; keeping imported copy at \(destURL.lastPathComponent)")
+                return FileProviderItem(game: existing.asDomain(), romURL: destURL)
+            }
         }
 
         // Create a minimal PVGame; the main app directory-watcher fills in metadata.
@@ -426,8 +435,12 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         }
     }
 
-    /// Computes a lowercase hex-encoded MD5 hash by streaming the file in 1 MiB chunks,
+    /// Computes an uppercase hex-encoded MD5 hash by streaming the file in 1 MiB chunks,
     /// avoiding loading large ROM files entirely into memory.
+    ///
+    /// Uppercase output matches the convention used throughout the codebase (PVHashing,
+    /// CloudSyncManager, RomsDatastore) so that `PVGame.md5Hash` primary-key lookups
+    /// succeed without case-normalisation at the call site.
     private func streamingMD5(for url: URL) -> String? {
         let chunkSize = 1024 * 1024
         guard let stream = InputStream(url: url) else { return nil }
@@ -445,7 +458,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             hasher.update(data: UnsafeBufferPointer(start: buffer, count: n))
         }
 
-        return hasher.finalize().map { String(format: "%02x", $0) }.joined()
+        return hasher.finalize().map { String(format: "%02X", $0) }.joined()
     }
 
     // MARK: - Private: item resolution
