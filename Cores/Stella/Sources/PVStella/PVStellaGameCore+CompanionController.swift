@@ -32,7 +32,7 @@ import PVStellaBridge
 
 /// Companion layout identifier used for Atari 2600 trackball games.
 /// `CompanionLayoutFactory` maps this string to `TrackballLayout`.
-public let kAtari2600TrackballLayoutID = "com.provenance.atari2600.trackball"
+private let kAtari2600TrackballLayoutID = "com.provenance.atari2600.trackball"
 
 // MARK: - CompanionControllerCapable
 
