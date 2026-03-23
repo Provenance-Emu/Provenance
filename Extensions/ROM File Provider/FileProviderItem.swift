@@ -122,8 +122,11 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             // System folders can be browsed and accept ROM drops from Files.app.
             return [.allowsReading, .allowsContentEnumerating, .allowsAddingSubItems]
         case .gameFile:
-            // ROM files support read, delete, rename, and content replacement.
-            return [.allowsReading, .allowsDeleting, .allowsRenaming, .allowsWriting]
+            // ROM files support read, delete, and rename.
+            // Content replacement (.allowsWriting) is intentionally omitted: the
+            // provider's stable identifier is derived from the ROM's MD5 hash, which
+            // would change on a content swap, leaving identifiers inconsistent.
+            return [.allowsReading, .allowsDeleting, .allowsRenaming]
         }
     }
 

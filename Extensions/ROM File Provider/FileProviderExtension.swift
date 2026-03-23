@@ -154,8 +154,9 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         let systemID = String(parentRaw.dropFirst(FileProviderItem.systemIdentifierPrefix.count))
 
         let progress = Progress(totalUnitCount: 1)
-        Task.detached(priority: .userInitiated) { [weak self] in
-            guard let self else { return }
+        // Capture self strongly: the extension process is alive for the duration of
+        // the task, and weak capture risks the completion handler never being called.
+        Task.detached(priority: .userInitiated) { [self] in
             do {
                 let item = try self.performImport(
                     from: sourceURL,
@@ -175,11 +176,16 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
     // MARK: - Mutation: modify
 
-    /// Handles rename and content-replacement of a ROM file.
+    /// Handles rename of a ROM file.
     ///
     /// Supported `changedFields`:
     /// - `.filename` — renames the file on disk and updates the Realm record.
-    /// - `.contents` — atomically replaces the file content (e.g. overwrite with patched ROM).
+    ///
+    /// `.contents` writes are intentionally rejected: the provider uses the ROM's MD5 hash as
+    /// the `NSFileProviderItem` stable identifier and as the `PVGame` Realm primary key.
+    /// Replacing file content would change the MD5, making the identifier stale.  Until a
+    /// replace-as-new path (recompute hash → new record → delete old) is implemented, content
+    /// replacement is not supported.
     func modifyItem(
         _ item: NSFileProviderItem,
         baseVersion version: NSFileProviderItemVersion,
@@ -206,19 +212,13 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
                 return Progress()
             }
 
-            // Content replacement — atomically overwrite the existing ROM file.
-            if changedFields.contains(.contents), let newURL = newContents {
-                if let existingURL = pvGame.file?.url {
-                    var resultURL: NSURL?
-                    try FileManager.default.replaceItem(
-                        at: existingURL,
-                        withItemAt: newURL,
-                        backupItemName: nil,
-                        options: [],
-                        resultingItemURL: &resultURL
-                    )
-                    ILOG("FileProvider: replaced content for \(pvGame.title)")
-                }
+            // Content replacement is not supported: the item identifier is derived from the
+            // ROM's MD5 hash, which would change after a content swap, leaving the provider
+            // in an inconsistent state.  Reject the request so Files.app surfaces an error
+            // instead of silently corrupting the identifier / Realm record.
+            if changedFields.contains(.contents) {
+                completionHandler(nil, [], false, NSFileProviderError(.unsupported))
+                return Progress()
             }
 
             // Rename — move the file and update the Realm partial-path.
@@ -290,8 +290,21 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
                 ILOG("FileProvider: deleted file at \(romURL.lastPathComponent)")
             }
 
-            // Remove the Realm record and its associated PVFile.
+            // Realm does not cascade deletes; snapshot linking objects before the write
+            // to avoid invalidated-object crashes inside the transaction.
+            let saveStatesToDelete = Array(pvGame.saveStates)
+            let cheatsToDelete = Array(pvGame.cheats)
+            let recentPlaysToDelete = Array(pvGame.recentPlays)
+            let screenShotsToDelete = Array(pvGame.screenShots)
+
+            // Remove the Realm record plus all related objects (save states, cheats,
+            // recent-play entries, screenshots) that hold a non-optional reference to
+            // PVGame — leaving them behind would cause crashes or inconsistent UI.
             try realm.write {
+                realm.delete(saveStatesToDelete)
+                realm.delete(cheatsToDelete)
+                realm.delete(recentPlaysToDelete)
+                realm.delete(screenShotsToDelete)
                 if let pvFile = pvGame.file {
                     realm.delete(pvFile)
                 }
@@ -334,11 +347,10 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         // Destination: <romsRoot>/<systemID>/<filename>
         let destDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
         try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true)
-        let destURL = destDir.appendingPathComponent(filename)
 
-        if FileManager.default.fileExists(atPath: destURL.path) {
-            try FileManager.default.removeItem(at: destURL)
-        }
+        // Avoid silently overwriting an existing ROM that may have different content.
+        // Generate a unique destination path by appending a counter suffix when needed.
+        let destURL = uniqueDestinationURL(in: destDir, for: filename)
         try FileManager.default.copyItem(at: sourceURL, to: destURL)
 
         guard let md5 = streamingMD5(for: destURL) else {
@@ -347,11 +359,14 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             throw NSFileProviderError(.serverUnreachable)
         }
 
-        // Return existing entry if this ROM was already in the library.
+        // If a game with this MD5 already exists, drop the copy we just made and return
+        // the existing item using its canonical (database-tracked) file URL, not destURL.
         if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
            !existing.isInvalidated {
-            ILOG("FileProvider: ROM already exists (md5=\(md5))")
-            return FileProviderItem(game: existing.asDomain(), romURL: destURL)
+            try? FileManager.default.removeItem(at: destURL)
+            ILOG("FileProvider: ROM already exists (md5=\(md5)), discarding duplicate copy")
+            let canonicalURL = existing.file?.url ?? destURL
+            return FileProviderItem(game: existing.asDomain(), romURL: canonicalURL)
         }
 
         // Create a minimal PVGame; the main app directory-watcher fills in metadata.
@@ -372,6 +387,27 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
         ILOG("FileProvider: imported \(filename) md5=\(md5) system=\(systemID)")
         return FileProviderItem(game: game.asDomain(), romURL: destURL)
+    }
+
+    /// Returns a URL in `directory` for `filename` that does not yet exist on disk.
+    ///
+    /// If `<directory>/<filename>` is free it is returned as-is.  Otherwise a numeric
+    /// suffix is appended before the extension until a free slot is found, e.g.
+    /// `game.sfc` → `game-2.sfc` → `game-3.sfc` …
+    private func uniqueDestinationURL(in directory: URL, for filename: String) -> URL {
+        let candidate = directory.appendingPathComponent(filename)
+        guard FileManager.default.fileExists(atPath: candidate.path) else {
+            return candidate
+        }
+        let base = (filename as NSString).deletingPathExtension
+        let ext = (filename as NSString).pathExtension
+        var counter = 2
+        while true {
+            let name = ext.isEmpty ? "\(base)-\(counter)" : "\(base)-\(counter).\(ext)"
+            let url = directory.appendingPathComponent(name)
+            if !FileManager.default.fileExists(atPath: url.path) { return url }
+            counter += 1
+        }
     }
 
     /// Computes a lowercase hex-encoded MD5 hash by streaming the file in 1 MiB chunks,
