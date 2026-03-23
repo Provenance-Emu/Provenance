@@ -148,7 +148,9 @@ import CoreMotion
     }
 
     deinit {
-        detach()
+        MainActor.assumeIsolated {
+            detach()
+        }
     }
 
     /// Start delivering gyro-driven mouse input to `core`.
