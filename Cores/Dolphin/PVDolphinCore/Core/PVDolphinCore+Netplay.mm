@@ -208,6 +208,11 @@ static const char kClientBoxKey = 0;
             server->SetPassword(std::string(password.UTF8String));
         }
 
+        // TODO: wire maxPlayers to the server once the Dolphin API is confirmed.
+        // e.g. server->SetMaxPlayers((u32)maxPlayers); — verify method name against
+        // the dolphin-ios revision in use before enabling.
+        (void)maxPlayers;
+
         _PVDolphinNetplayServerBox *sb = [_PVDolphinNetplayServerBox new];
         sb->server = std::move(server);
         objc_setAssociatedObject(self, &kServerBoxKey, sb, OBJC_ASSOCIATION_RETAIN);
@@ -264,6 +269,21 @@ static const char kClientBoxKey = 0;
                password:(nullable NSString *)password
                   error:(NSError *_Nullable __autoreleasing *_Nullable)error {
 #if HAVE_DOLPHIN_NETPLAY
+    // Guard against overwriting an active session without proper teardown.
+    // The host path already calls stopNetplay before retrying; callers that
+    // invoke joinNetplayHost: directly must do the same.
+    _PVDolphinNetplayClientBox *existingCB =
+        objc_getAssociatedObject(self, &kClientBoxKey);
+    if (existingCB != nil && existingCB->client != nullptr && existingCB->client->IsConnected()) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVDolphinNetplayErrorDomain
+                                         code:PVDolphinNetplayErrorAlreadyActive
+                                     userInfo:@{NSLocalizedDescriptionKey:
+                                                    @"A Dolphin netplay client session is already active."}];
+        }
+        return NO;
+    }
+
     BOOL usingTraversal = traversalCode.length > 0;
     if (!usingTraversal && host.length == 0) {
         if (error) {
@@ -308,6 +328,14 @@ static const char kClientBoxKey = 0;
             /* player_name */ "",
             traversalConfig
         );
+
+        // TODO: wire client-side password once the Dolphin API is confirmed.
+        // Some revisions expose NetPlayClient::SetPassword() or accept it via
+        // a settings struct passed to the constructor.  Example (verify first):
+        //   if (password.length > 0) {
+        //       client->SetPassword(std::string(password.UTF8String));
+        //   }
+        (void)password;
 
         _PVDolphinNetplayClientBox *cb = [_PVDolphinNetplayClientBox new];
         cb->client = std::move(client);

@@ -16,11 +16,14 @@
 //                 (stun.dolphin-emu.org:6262) using the host's traversal code
 //                 instead of a direct IP address.
 //
-//  Dolphin features exposed:
-//    - Frame delay per session
-//    - Rollback (GOLF) mode
-//    - Traversal server for NAT traversal
-//    - Per-session password protection
+//  Currently exposed Dolphin netplay capabilities:
+//    - Direct IP and traversal-based hosting/joining
+//    - Per-session password protection (host side)
+//
+//  Pending wiring (not yet active):
+//    - Frame delay configuration (requires Config::NETPLAY_INPUT_BUFFER_SIZE wiring)
+//    - Max-player enforcement on the server (requires NetPlayServer API confirmation)
+//    - Client-side password authentication (requires NetPlayClient password API)
 //
 
 #pragma once

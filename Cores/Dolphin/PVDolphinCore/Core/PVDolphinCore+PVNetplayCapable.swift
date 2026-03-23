@@ -172,7 +172,14 @@ extension PVDolphinCore: PVNetplayCapable {
 
         case .hosting:
             let ctx = _netplayContext
-            let port = (ctx?.settings.port ?? 2626)
+            // Use the effective port from the role (the port actually passed to the server),
+            // falling back to settings.port only when the role port is 0.
+            let effectivePort: UInt16
+            if case .host(let rolePort) = ctx?.role, rolePort > 0 {
+                effectivePort = rolePort
+            } else {
+                effectivePort = UInt16(ctx?.settings.port ?? 2626)
+            }
             let room = NetplayRoom(
                 id: ctx?.sessionID ?? UUID(),
                 hostName: "Dolphin",
@@ -183,7 +190,7 @@ extension PVDolphinCore: PVNetplayCapable {
                 currentPlayers: 1,
                 isLAN: true,
                 hostAddress: "0.0.0.0",
-                port: port
+                port: effectivePort
             )
             return .hosting(room: room)
 
@@ -203,6 +210,10 @@ extension PVDolphinCore: PVNetplayCapable {
                 hostAddress: hostAddr,
                 port: port
             )
+            // NOTE: frameDelay is stored in the session model for display purposes
+            // but is not yet forwarded to Dolphin's netplay subsystem.
+            // TODO: wire via _bridge.setDolphinFrameDelay(settings.frameDelay) once
+            // the ObjC bridge exposes the Config::NETPLAY_INPUT_BUFFER_SIZE setter.
             let session = NetplaySession(
                 room: room,
                 role: role,

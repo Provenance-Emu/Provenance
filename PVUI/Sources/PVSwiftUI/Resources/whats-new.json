@@ -528,14 +528,14 @@
     ]
   },
   {
-    "version": "3.0.3",
+    "version": "3.7.0",
     "title": "Netplay for GameCube & Wii",
     "features": [
       {
         "symbolName": "network",
         "symbolColor": "blue",
         "title": "Dolphin Netplay",
-        "subtitle": "Play GameCube and Wii games online with friends using Dolphin's built-in netplay, including rollback netcode and traversal relay support."
+        "subtitle": "Play GameCube and Wii games online with friends using Dolphin's built-in netplay with direct IP and traversal relay support."
       },
       {
         "symbolName": "antenna.radiowaves.left.and.right",
