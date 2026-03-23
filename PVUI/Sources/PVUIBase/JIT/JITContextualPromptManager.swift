@@ -158,9 +158,12 @@ public final class JITContextualPromptManager {
         from viewController: UIViewController,
         completion: @escaping @Sendable (Bool) -> Void
     ) {
+        let message = "\(coreName) requires JIT (Performance Mode) to run correctly."
+            + " Without it the game may crash or produce incorrect output."
+            + "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
         let alert = UIAlertController(
             title: "Performance Mode Required",
-            message: "\(coreName) requires JIT (Performance Mode) to run correctly. Without it the game may crash or produce incorrect output.\n\nEnable via AltStore, SideStore, or StikDebug before launching.",
+            message: message,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "Launch Anyway", style: .destructive) { _ in
@@ -179,9 +182,12 @@ public final class JITContextualPromptManager {
         from viewController: UIViewController,
         completion: @escaping @Sendable (Bool) -> Void
     ) {
+        let message = "\(coreName) runs faster with JIT (Performance Mode)."
+            + "\n\nEnable via AltStore, SideStore, or StikDebug for the best experience."
+            + " You can also set a per-game preference in Game Info."
         let alert = UIAlertController(
             title: "Performance Mode Available",
-            message: "\(coreName) runs faster with JIT (Performance Mode).\n\nEnable via AltStore, SideStore, or StikDebug for the best experience. You can also set a per-game preference in Game Info.",
+            message: message,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "Launch", style: .default) { _ in
