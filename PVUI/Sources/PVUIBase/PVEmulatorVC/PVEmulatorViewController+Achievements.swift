@@ -114,8 +114,13 @@ public extension PVEmulatorViewController {
                 }
             } catch AchievementSessionError.unknownGame(let hash) {
                 ILOG("RetroAchievements: game hash \(hash) not in database, achievements unavailable.")
+                // Clear the manager so guard helpers (achievementsBlocksFastForward, etc.)
+                // correctly return false — no active session means no restrictions.
+                await MainActor.run { self.achievementSessionManager = nil }
             } catch {
                 ELOG("RetroAchievements: session start failed: \(error.localizedDescription)")
+                // Clear the manager on any other failure for the same reason.
+                await MainActor.run { self.achievementSessionManager = nil }
             }
         }
     }
