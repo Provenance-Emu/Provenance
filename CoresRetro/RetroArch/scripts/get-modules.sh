@@ -19,11 +19,25 @@ cd "${SCRIPTS_DIR}"
 if [ "${PLATFORM_NAME}" = "appletvos" ]; then
 	CORES_ARCHIVE_DIR="${SRCROOT}/CoresRetro/RetroArch/modules_compressed/tvOS"
 	MODULE_LIST="${SCRIPTS_DIR}/urls${URL_SUFFIX}-tv.txt"
-	rm -f "${CORES_DIR}/"*ios*.dylib 2>/dev/null
+	CURRENT_PLATFORM="tvos"
 else
 	CORES_ARCHIVE_DIR="${SRCROOT}/CoresRetro/RetroArch/modules_compressed/iOS"
 	MODULE_LIST="${SCRIPTS_DIR}/urls${URL_SUFFIX}.txt"
-	rm -f "${CORES_DIR}/"*tvos*.dylib 2>/dev/null
+	CURRENT_PLATFORM="ios"
+fi
+
+# Detect platform switch: compare current platform to the last-active platform
+# recorded after a successful extraction.  A change means we need to purge the
+# stale dylibs from the previous platform before re-extracting the new ones.
+PLATFORM_CHANGED=0
+STORED_PLATFORM=""
+ACTIVE_PLATFORM_FILE="${CORES_DIR}/active_platform.txt"
+if [ -f "${ACTIVE_PLATFORM_FILE}" ]; then
+	STORED_PLATFORM=$(cat "${ACTIVE_PLATFORM_FILE}" 2>/dev/null || true)
+fi
+if [ -n "${STORED_PLATFORM}" ] && [ "${CURRENT_PLATFORM}" != "${STORED_PLATFORM}" ]; then
+	echo "GetModule: platform changed (${STORED_PLATFORM} -> ${CURRENT_PLATFORM}), will purge stale dylibs"
+	PLATFORM_CHANGED=1
 fi
 
 # Read pinned date from cores.yml for reproducible builds.
@@ -117,6 +131,52 @@ echo "GetModule: ${TIMESTAMP} ${LAST_TIMESTAMP}"
 # Count expected cores from URL list (non-commented lines)
 EXPECTED_COUNT=$(grep -v '^#' "${EFFECTIVE_MODULE_LIST}" | grep -c '.' || echo 0)
 
+# Fast-path: when the platform is known (active_platform.txt exists), unchanged,
+# the pin is unchanged, the timestamp is still fresh (no download due), and ≥80%
+# of expected dylibs are already present, skip both the purge and extraction.
+# Note: PLATFORM_CHANGED=0 on its own does NOT mean "same platform" — it also stays 0
+# when STORED_PLATFORM="" (first run, no sentinel).  The explicit [ -n "${STORED_PLATFORM}" ]
+# guard below prevents the fast-path from firing on that first run.  Without it, a fresh
+# machine with no sentinel but a populated modules/ dir could incorrectly skip extraction.
+if (( TIMESTAMP <= LAST_TIMESTAMP )) && [ -n "${STORED_PLATFORM}" ] && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ]; then
+	# Count dylibs belonging to the current platform: include both platform-suffixed
+	# dylibs (e.g. *ios*.dylib / *tvos*.dylib) and platform-neutral ones (e.g.
+	# dolphin_libretro.dylib) so the 80% threshold is not artificially low when the
+	# URL list contains neutral-name cores.  Stale other-platform suffixed dylibs are
+	# explicitly excluded so they cannot satisfy the threshold and trigger a false skip.
+	if [ "${CURRENT_PLATFORM}" = "tvos" ]; then
+		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 \( -name "*tvos*.dylib" -o \( -name "*.dylib" -not -name "*ios*.dylib" -not -name "*tvos*.dylib" \) \) -type f 2>/dev/null | wc -l | tr -d ' ')
+	else
+		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 \( -name "*ios*.dylib" -o \( -name "*.dylib" -not -name "*ios*.dylib" -not -name "*tvos*.dylib" \) \) -type f 2>/dev/null | wc -l | tr -d ' ')
+	fi
+	if [ "${EXPECTED_COUNT}" -gt 0 ]; then
+		FAST_THRESHOLD=$(( EXPECTED_COUNT * 80 / 100 ))
+		[ "${FAST_THRESHOLD}" -lt 1 ] && FAST_THRESHOLD=1
+		if [ "${EXISTING_DYLIB_COUNT}" -ge "${FAST_THRESHOLD}" ]; then
+			echo "GetModule: platform '${CURRENT_PLATFORM}' unchanged, timestamp fresh, ${EXISTING_DYLIB_COUNT}/${EXPECTED_COUNT} dylibs present — skipping extraction"
+			exit 0
+		fi
+	fi
+fi
+
+# Purge the other-platform dylibs only when the platform has changed or when no
+# active platform has been recorded yet (first run).  Same-platform rebuilds skip
+# this step so the dylibs are left in place for unzip -n to confirm quickly.
+# On a platform switch we also remove platform-neutral dylibs (those without an
+# ios/tvos suffix, e.g. dolphin_libretro.dylib) so they are re-extracted for the
+# new platform rather than silently reused from the previous build.
+if [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
+	if [ "${CURRENT_PLATFORM}" = "tvos" ]; then
+		rm -f "${CORES_DIR}/"*ios*.dylib 2>/dev/null
+	else
+		rm -f "${CORES_DIR}/"*tvos*.dylib 2>/dev/null
+	fi
+	# Remove platform-neutral dylibs so they are not silently reused from the
+	# previous platform build (unzip -o below will re-extract the correct versions).
+	find "${CORES_DIR}" -maxdepth 1 -name "*.dylib" \
+		-not -name "*ios*" -not -name "*tvos*" -type f -delete 2>/dev/null || true
+fi
+
 if (( TIMESTAMP > LAST_TIMESTAMP )); then
 	echo "GetModule: ${TIMESTAMP} > ${LAST_TIMESTAMP} Starting Download... ${EFFECTIVE_MODULE_LIST}"
 	rm -f "${CORES_ARCHIVE_DIR}/"*.zip
@@ -183,12 +243,17 @@ if [ "${INVALID_ZIPS}" -gt 0 ]; then
 	echo "GetModule: WARNING — removed ${INVALID_ZIPS} invalid zip files (likely 404 HTML pages)"
 fi
 
-# Use -o (overwrite) when the pin just changed so stale dylibs are replaced;
-# use -n (never overwrite) otherwise for faster incremental builds.
-# When the pin changed, also purge existing dylibs so cores dropped from the
+# Use -o (overwrite) when the pin or platform just changed so stale dylibs are
+# replaced; use -n (never overwrite) otherwise for faster incremental builds.
+# When the pin changed, also purge ALL existing dylibs so cores dropped from the
 # new snapshot are not left behind (unzip -o only overwrites, never deletes).
+# When the platform changed, platform-specific and neutral dylibs were already
+# purged above; -o ensures any remaining shared names are overwritten correctly.
 if [ "${PIN_CHANGED}" = "1" ]; then
 	rm -f "${CORES_DIR}/"*.dylib
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
+elif [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
+	# Platform changed (or first run): stale dylibs purged above; overwrite to be safe.
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
 else
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';'
@@ -209,4 +274,8 @@ elif [ "${EXPECTED_COUNT}" -gt 0 ] && [ "${DYLIB_COUNT}" -lt $(( EXPECTED_COUNT 
 fi
 
 echo "GetModule: Completed (${VALID_ZIPS} valid zips, ${DYLIB_COUNT} dylibs)"
+
+# Record the active platform so the fast-path check above can skip extraction
+# on subsequent same-platform builds without re-purging or re-extracting.
+echo "${CURRENT_PLATFORM}" > "${CORES_DIR}/active_platform.txt"
 exit 0
