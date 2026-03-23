@@ -145,7 +145,7 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - `GyroMouseAdapter` in `PVCoreBridge/Features/` — drives `MouseResponder.mouseMoved(atPoint:)` from `GCMotion.rotationRate` (DualSense / Switch Pro) or `CMMotionManager` IMU fallback.
 - Settings keys live in `PVSettings.Defaults.Keys`: `gyroMouseEnabled`, `gyroMouseSensitivity`, `gyroMouseDeadZone`.
 - Adapter is main-thread-confined; motion callbacks hop to `DispatchQueue.main` before mutating cursor state.
-- Lifecycle: `attach(to:)` when core starts, `detach()` when game is paused or app backgrounds. `isEnabled = false` for temporary suspend.
+- Lifecycle: call `attach(to:)` when the core starts. Use `isEnabled = false` / `true` to temporarily suspend or resume input during short pauses (e.g., in-game pause menu) while preserving cursor/filter state. Call `detach()` only for full teardown (game/core stop, system switch, or long-lived backgrounding) where resetting state is desired.
 - Signal chain: dead zone → exponential moving average (low-pass) → sensitivity × dt → clamp to [0,1].
 - Platform guards: `#if canImport(CoreMotion)` wraps the IMU path (unavailable on tvOS); `#if canImport(GameController)` wraps the GCController path.
 - Flag 🟠 MAJOR if the adapter's motion callback writes cursor state off the main thread without a `DispatchQueue.main.async` hop.

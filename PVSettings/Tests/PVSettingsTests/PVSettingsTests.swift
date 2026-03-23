@@ -922,6 +922,51 @@ struct RetroAchievementsDefaultsMigrationTests {
     }
 }
 
+// MARK: - Gyro Mouse Defaults Tests
+
+@Suite("Gyro Mouse Defaults")
+struct GyroMouseDefaultsTests {
+
+    @Test("gyroMouseEnabled default is false")
+    func gyroMouseEnabledDefault() {
+        Defaults.reset(.gyroMouseEnabled)
+        #expect(Defaults[.gyroMouseEnabled] == false)
+    }
+
+    @Test("gyroMouseSensitivity default is 1.0")
+    func gyroMouseSensitivityDefault() {
+        Defaults.reset(.gyroMouseSensitivity)
+        #expect(Defaults[.gyroMouseSensitivity] == 1.0)
+    }
+
+    @Test("gyroMouseDeadZone default is 0.05")
+    func gyroMouseDeadZoneDefault() {
+        Defaults.reset(.gyroMouseDeadZone)
+        #expect(Defaults[.gyroMouseDeadZone] == 0.05)
+    }
+
+    @Test("gyroMouseEnabled key name is correct")
+    func gyroMouseEnabledKeyName() {
+        #expect(Defaults.Keys.gyroMouseEnabled.name == "gyroMouseEnabled")
+    }
+
+    @Test("gyroMouseSensitivity can be changed")
+    func gyroMouseSensitivityMutable() {
+        Defaults.reset(.gyroMouseSensitivity)
+        defer { Defaults.reset(.gyroMouseSensitivity) }
+        Defaults[.gyroMouseSensitivity] = 2.5
+        #expect(Defaults[.gyroMouseSensitivity] == 2.5)
+    }
+
+    @Test("gyroMouseDeadZone can be changed")
+    func gyroMouseDeadZoneMutable() {
+        Defaults.reset(.gyroMouseDeadZone)
+        defer { Defaults.reset(.gyroMouseDeadZone) }
+        Defaults[.gyroMouseDeadZone] = 0.1
+        #expect(Defaults[.gyroMouseDeadZone] == 0.1)
+    }
+}
+
 // MARK: - iCloudSyncMode Tests
 
 @Suite("iCloudSyncMode")

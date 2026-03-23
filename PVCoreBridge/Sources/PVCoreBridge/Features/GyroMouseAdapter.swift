@@ -52,8 +52,9 @@ import CoreMotion
 /// core starts, ``detach()`` when it stops.
 ///
 /// - Thread safety: Public API is main-thread-confined. Motion callbacks hop
-///   to `DispatchQueue.main` before mutating state. `@MainActor` enforces
-///   this at the type-system level; matches the pattern used by ``GCMouseLightGunDriver``.
+///   to the main actor via `Task { @MainActor in ... }` before mutating state.
+///   `@MainActor` enforces this at the type-system level (Swift 6–compatible);
+///   matches the pattern used by ``GCMouseLightGunDriver``.
 @MainActor
 @objc public final class GyroMouseAdapter: NSObject {
 
@@ -178,14 +179,18 @@ import CoreMotion
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?._onControllerChanged()
+            Task { @MainActor in
+                self?._onControllerChanged()
+            }
         }
         controllerDisconnectObserver = nc.addObserver(
             forName: .GCControllerDidDisconnect,
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?._onControllerChanged()
+            Task { @MainActor in
+                self?._onControllerChanged()
+            }
         }
     }
 
@@ -216,7 +221,7 @@ import CoreMotion
         motion.valueChangedHandler = { [weak self] motionData in
             let rx = motionData.rotationRate.x
             let ry = motionData.rotationRate.y
-            DispatchQueue.main.async { [weak self] in
+            Task { @MainActor [weak self] in
                 self?._applyRotation(rawX: rx, rawY: ry)
             }
         }
@@ -254,8 +259,12 @@ import CoreMotion
         }
         manager.deviceMotionUpdateInterval = 1.0 / 60.0
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motionData, error in
-            guard let self, error == nil, let m = motionData else { return }
-            self._applyRotation(rawX: m.rotationRate.x, rawY: m.rotationRate.y)
+            guard error == nil, let m = motionData else { return }
+            let rx = m.rotationRate.x
+            let ry = m.rotationRate.y
+            Task { @MainActor [weak self] in
+                self?._applyRotation(rawX: rx, rawY: ry)
+            }
         }
         motionManager = manager
         imuActive     = true
