@@ -529,19 +529,13 @@
   },
   {
     "version": "3.7.0",
-    "title": "Netplay, Save Export, Drag & Drop & Files.app",
+    "title": "Netplay, Save Export & Drag & Drop",
     "features": [
       {
         "symbolName": "network",
         "symbolColor": "blue",
         "title": "Dolphin Netplay",
         "subtitle": "Play GameCube and Wii games online with friends using Dolphin's built-in netplay with direct IP and traversal relay support."
-      },
-      {
-        "symbolName": "antenna.radiowaves.left.and.right",
-        "symbolColor": "green",
-        "title": "Traversal Relay",
-        "subtitle": "Connect without port-forwarding via Dolphin's public STUN relay server — just share your traversal code."
       },
       {
         "symbolName": "square.and.arrow.up",
@@ -572,10 +566,6 @@
         "symbolColor": "purple",
         "title": "Drag Games to Export",
         "subtitle": "Long-press any game in your library and drag it out to the Files app, AirDrop, or any compatible destination."
-        "symbolName": "folder.badge.plus",
-        "symbolColor": "blue",
-        "title": "Browse ROMs in Files",
-        "subtitle": "Provenance now appears as a location in Files.app. Browse your ROM library organised by system and drag ROMs out for Quick Look previews."
       }
     ]
   }
