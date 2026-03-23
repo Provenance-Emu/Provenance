@@ -254,8 +254,9 @@ extension PVDolphinCore: PVNetplayCapable {
     ) -> (String, UInt16) {
         let defaultPort: UInt16 = settings?.port ?? 2626
         switch role {
-        case .host:
-            return ("127.0.0.1", defaultPort)
+        case .host(let rolePort):
+            // Use the port explicitly provided in the role; fall back to settings.port.
+            return ("127.0.0.1", rolePort > 0 ? rolePort : defaultPort)
         case .client(let host, let port):
             return (host, port == 0 ? defaultPort : port)
         case .spectator(let host, let port):
