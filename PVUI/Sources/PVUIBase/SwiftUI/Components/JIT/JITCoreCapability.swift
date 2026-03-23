@@ -114,6 +114,25 @@ public enum JITCoreCapability: CaseIterable {
         }
     }
 
+    /// Whether this core runs significantly worse without JIT and should show a
+    /// one-time performance notice even when JIT cannot be acquired on the device.
+    ///
+    /// - `true`: Dolphin (GameCube/Wii), Azahar (3DS), Flycast (Dreamcast) —
+    ///   JIT makes the difference between "barely playable" and a good experience.
+    ///   Users should be warned to set expectations, even if JIT is structurally
+    ///   unavailable (e.g. iOS 26 App Store build without the JIT entitlement).
+    /// - `false`: PPSSPP (interpreter fallback is acceptable), Mupen64Plus (cached
+    ///   interpreter is tolerable for many games). No notice shown when JIT unavailable.
+    ///   PS2 is excluded here because it is handled by `isJITRequired`.
+    public var isPerformanceCritical: Bool {
+        switch self {
+        case .dolphin, .azahar, .flycast:
+            return true
+        case .ppsspp, .mupen, .pcsx2:
+            return false
+        }
+    }
+
     // MARK: - Lookup
 
     /// Returns the matched `JITCoreCapability` for `coreIdentifier` via keyword matching,
@@ -172,6 +191,20 @@ public enum JITCoreCapability: CaseIterable {
         }
         // Stage 2: compile-time keyword fallback
         return capability(for: coreIdentifier)?.isJITRequired == true
+    }
+
+    /// Returns `true` when the core runs significantly worse without JIT and should
+    /// always show a one-time performance notice — even when JIT cannot be acquired.
+    ///
+    /// Uses `PVJITRequirementRegistry` as the primary source; falls back to keyword
+    /// matching. Required cores (`coreIsJITRequired`) are excluded — they have a
+    /// separate blocking warning.
+    public static func isJITPerformanceCritical(_ coreIdentifier: String) -> Bool {
+        // Required cores are handled separately.
+        if coreIsJITRequired(coreIdentifier) { return false }
+        // Stage 1: if registry says optional, use keyword tier to determine criticality.
+        // Stage 2: compile-time keyword fallback.
+        return capability(for: coreIdentifier)?.isPerformanceCritical == true
     }
 
     // MARK: - System Lookup
