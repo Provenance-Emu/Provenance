@@ -644,10 +644,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         #if canImport(UIKit)
         if let vc = emulatorController as? UIViewController {
             Task { @MainActor in
-                vc.presentError(
-                    "Fast-forward is disabled in RetroAchievements Hardcore Mode.",
-                    source: vc.view
-                )
+                vc.presentError(hardcoreFastForwardBlockedMessage, source: vc.view)
             }
         }
         #endif
@@ -720,8 +717,12 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Reset to normal speed or previous speed.
         // If hardcore mode is now active, never restore a fast speed —
         // cap at .normal to avoid re-enabling a speed that became blocked.
+        // Delegate the check to PVEmulatorViewController when available so the
+        // same centralised logic is used here as in the OSD and Delta-skin press handlers.
         let hardcoreActive: Bool
-        if let achievementsCore = emulatorCore as? (any CoreRetroAchievements) {
+        if let emulatorVC = emulatorController as? PVEmulatorViewController {
+            hardcoreActive = emulatorVC.achievementsBlocksFastForward()
+        } else if let achievementsCore = emulatorCore as? (any CoreRetroAchievements) {
             hardcoreActive = achievementsCore.hardcoreMode && achievementsCore.achievementsActive
         } else {
             hardcoreActive = false

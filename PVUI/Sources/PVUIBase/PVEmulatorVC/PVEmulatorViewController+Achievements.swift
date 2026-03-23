@@ -28,6 +28,12 @@ private enum AssociatedKeys {
     static var overlayVC = "achievementOverlayVC"
 }
 
+/// Shared user-facing message shown whenever an action is blocked by
+/// RetroAchievements hardcore mode.  Centralised here so all guard sites
+/// stay in sync with a single string change or future localisation update.
+internal let hardcoreFastForwardBlockedMessage =
+    "Fast-forward is disabled in RetroAchievements Hardcore Mode."
+
 public extension PVEmulatorViewController {
 
     // MARK: - Associated-object accessors
@@ -154,10 +160,7 @@ public extension PVEmulatorViewController {
         if achievementsBlocksFastForward(), speed == .fast || speed == .veryFast {
             ILOG("Ignoring request to set fast game speed while RetroAchievements hardcore mode is active.")
             #if canImport(UIKit)
-            presentError(
-                "Fast-forward is disabled in RetroAchievements Hardcore Mode.",
-                source: view
-            )
+            presentError(hardcoreFastForwardBlockedMessage, source: view)
             #endif
             return
         }
@@ -169,6 +172,12 @@ public extension PVEmulatorViewController {
 
     /// Returns `true` when the current session is in hardcore mode and
     /// rewind should be blocked.
+    ///
+    /// - Note: Rewind in the current codebase is a RetroArch/core-level setting
+    ///   (`rewind_enable`) rather than an interactive Swift UI toggle, so there is
+    ///   no single call-site to wire this guard into at the PVUI layer yet.
+    ///   This method is provided so future rewind UI (Delta-skin button, OSD button,
+    ///   or settings toggle) can enforce the restriction without duplicating the logic.
     func achievementsBlocksRewind() -> Bool {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
         guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }

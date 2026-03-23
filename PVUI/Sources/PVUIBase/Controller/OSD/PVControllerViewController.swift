@@ -1876,10 +1876,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if willEnableFastForward,
            let emulatorViewController = parent as? PVEmulatorViewController,
            emulatorViewController.achievementsBlocksFastForward() {
-            presentError(
-                "Fast-forward is disabled in RetroAchievements Hardcore Mode.",
-                source: view
-            )
+            presentError(hardcoreFastForwardBlockedMessage, source: view)
             return
         }
 
