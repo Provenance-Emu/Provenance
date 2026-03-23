@@ -189,8 +189,8 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         let withoutControlChars = String(
             withoutSeparators.unicodeScalars.filter { !CharacterSet.controlCharacters.contains($0) }
         )
-        // Collapse consecutive whitespace into single spaces, then trim edges.
-        let components = withoutControlChars.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+        // Collapse consecutive whitespace (including newlines) into single spaces, then trim edges.
+        let components = withoutControlChars.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
         let cleaned = components.joined(separator: " ")
         return cleaned.isEmpty ? "Untitled" : cleaned
     }
