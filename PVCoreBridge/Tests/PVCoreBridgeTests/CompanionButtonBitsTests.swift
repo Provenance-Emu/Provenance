@@ -10,7 +10,7 @@
 @testable import PVCoreBridge
 import XCTest
 
-final class CompanionButtonBitsTests: XCTestCase {
+final class CompanionButtonTests: XCTestCase {
 
     /// All rawValues must be distinct — no two buttons may share a bit position.
     func testAllBitsAreUnique() {
@@ -29,8 +29,10 @@ final class CompanionButtonBitsTests: XCTestCase {
                 XCTFail("CompanionButton.\(btn) rawValue must not be zero")
                 continue
             }
+            // Use wrapping subtraction (&-) to avoid UInt32 underflow trap if
+            // a regression ever introduces a zero value that slips past the guard.
             XCTAssertEqual(
-                value & (value - 1), 0,
+                value & (value &- 1), 0,
                 "CompanionButton.\(btn) rawValue 0x\(String(value, radix: 16)) is not a single-bit flag"
             )
         }
