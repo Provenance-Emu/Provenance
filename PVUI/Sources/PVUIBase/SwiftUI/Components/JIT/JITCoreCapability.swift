@@ -69,6 +69,24 @@ public enum JITCoreCapability: CaseIterable {
         }
     }
 
+    /// Substrings that appear (lowercased) in a **system** identifier string.
+    ///
+    /// System identifiers follow the pattern `"com.provenance.<name>"` (e.g.
+    /// `"com.provenance.psp"`), which differs from core identifiers like
+    /// `"com.provenance.core.ppsspp"`.  Use this list in `systemHasJITCapability(_:)`
+    /// rather than `coreIdentifierKeywords` to avoid false negatives like
+    /// `"com.provenance.psp".contains("ppsspp") == false`.
+    public var systemIdentifierKeywords: [String] {
+        switch self {
+        case .dolphin:  return ["gamecube", "wii"]
+        case .ppsspp:   return ["psp"]
+        case .azahar:   return ["3ds"]
+        case .flycast:  return ["dreamcast"]
+        case .mupen:    return ["n64"]
+        case .pcsx2:    return ["ps2"]
+        }
+    }
+
     /// Whether this core category **requires** JIT to run at all.
     ///
     /// `true` corresponds to `PVJITPlistRequirement.required` / `.requiredOrCrash` in
@@ -155,6 +173,52 @@ public enum JITCoreCapability: CaseIterable {
         // Stage 2: compile-time keyword fallback
         return capability(for: coreIdentifier)?.isJITRequired == true
     }
+
+    // MARK: - System Lookup
+
+    /// Returns `true` when any JIT-relevant keyword matches the given system identifier.
+    ///
+    /// System identifiers follow the pattern `"com.provenance.<name>"` (e.g.
+    /// `"com.provenance.psp"`, `"com.provenance.n64"`, `"com.provenance.dreamcast"`).
+    /// This method uses `systemIdentifierKeywords` (not `coreIdentifierKeywords`) to
+    /// avoid false negatives such as `"com.provenance.psp".contains("ppsspp") == false`.
+    ///
+    /// - Parameter systemIdentifier: A system identifier string (case-insensitive).
+    /// - Returns: `true` if the system is known to have JIT-capable cores.
+    public static func systemHasJITCapability(_ systemIdentifier: String) -> Bool {
+        #if DEBUG
+        assertKnownSystemMappingsOnce()
+        #endif
+        let id = systemIdentifier.lowercased()
+        return allCases.contains { capability in
+            capability.systemIdentifierKeywords.contains { id.contains($0) }
+        }
+    }
+
+    #if DEBUG
+    /// Nonisolated flag so the once-check is safe to read from any context
+    /// without requiring actor hops on the hot SwiftUI render path.
+    private static let _assertOnceFlag: Bool = {
+        func matchesJITSystem(_ systemIdentifier: String) -> Bool {
+            let id = systemIdentifier.lowercased()
+            return allCases.contains { capability in
+                capability.systemIdentifierKeywords.contains { id.contains($0) }
+            }
+        }
+        // Expected JIT-capable systems
+        assert(matchesJITSystem("com.provenance.psp"), "Expected PSP system to be JIT-capable.")
+        assert(matchesJITSystem("com.provenance.n64"), "Expected N64 system to be JIT-capable.")
+        assert(matchesJITSystem("com.provenance.gamecube"), "Expected GameCube system to be JIT-capable.")
+        // Expected non-JIT system (acts as a control)
+        assert(!matchesJITSystem("com.provenance.snes"), "Expected SNES system to NOT be JIT-capable.")
+        return true
+    }()
+
+    /// Triggers `_assertOnceFlag` initialisation on the first call only.
+    private static func assertKnownSystemMappingsOnce() {
+        _ = _assertOnceFlag
+    }
+    #endif
 
     // MARK: - Deprecated
 

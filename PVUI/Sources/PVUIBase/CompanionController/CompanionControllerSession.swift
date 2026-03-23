@@ -105,11 +105,15 @@ public final class CompanionControllerSession: ObservableObject {
     }
 
     /// Disconnect from the current DSU server and reset state.
-    public func disconnect() {
+    ///
+    /// The existing `inputRouter` instance is *reset* (state cleared) rather than
+    /// replaced, so any `slotDelegate` wired to it (e.g. `CoreCompanionBridge`)
+    /// remains valid after disconnect and does not need to be re-attached.
+    @MainActor public func disconnect() {
         connectionTask?.cancel()
         connectionTask = nil
         connectionState = .disconnected
-        inputRouter = CompanionInputRouter()
+        inputRouter.reset()
     }
 
     /// Retry connection after an error using the last known host/port.

@@ -196,6 +196,14 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Future library actions: add a case to `LibraryAction`, a URL path to `AppRoute`, and a response in
   any interested view — no changes to `LibraryNavigator` core needed.
 
+### CompanionControllerCapable (March 2026)
+- `CompanionControllerCapable` in `PVCoreBridge/Features/CompanionControllerCapable.swift` — cores that accept a companion iPhone/iPad as a controller conform to this protocol.
+- `CompanionButton`, `CompanionAxisID`, `CompanionInputEvent` live in **PVCoreBridge** (not PVUI) so Tier-4 core bridges can conform without importing PVUI.
+- `CoreCompanionBridge` (private, PVUI) is the `CompanionSlotDelegate` that diffs `CompanionInputState` snapshots and calls `handleCompanionInput(_:forPlayer:)` on the core.
+- `PVEmulatorViewController.presentCompanionController()` sets `session.activeSystemID` preferring `game?.systemIdentifier` and falling back to `core.systemIdentifier` so `CompanionLayoutFactory` selects the right overlay.
+- Tear down: call `emulatorVC.tearDownCompanionSession()` when the emulator is dismissed.
+- iOS & macCatalyst only: all companion UI wiring is guarded with iOS/macCatalyst-specific `#if` checks (not a generic `#if !os(tvOS)`).
+
 ### Analog Deadzone Coordination (March 2026)
 - Universal deadzone is stored in `Defaults[.analogDeadzone]` (Float 0–0.5) via PVSettings.
 - **On-screen analog sticks** (DeltaSkins): `DeltaSkinInputHandler.analogStickMoved` applies
@@ -244,6 +252,7 @@ Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
 - `PVRetroArchCoreCore` forwards `PVNetplayCapable` calls to its underlying `_bridge`.
 - `PVEmulatorViewController+Netplay.swift` registers/deregisters the bridge with `PVNetplayManager.shared` around `startEmulation`/`stopEmulation`.
 - New cores that support netplay should conform to `PVNetplayCapable`; PVUI will auto-detect via `core as? any PVNetplayCapable`.
+- **Dolphin** (`PVDolphinCore`) conforms via `PVDolphinCore+PVNetplayCapable.swift` (Swift) + `PVDolphinCore+Netplay.mm` (ObjC++ bridge). The C++ API calls are guarded with `#if __has_include("Core/NetPlayClient.h")` so the file compiles even when the `dolphin-ios` submodule is absent. When reviewing changes to the bridge, check that `NetTraversalConfig`, `NetPlayClient`, and `NetPlayServer` constructor signatures still match the dolphin-ios submodule revision.
 
 ### PVToast In-Game Notification System
 - `PVToastManager.shared` (Tier 6, `PVUIBase`) is `@MainActor` — all calls must be on the main actor.

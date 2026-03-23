@@ -496,6 +496,9 @@ struct GameMoreInfoView: View {
                     VStack(spacing: 24) {
                         gameInfoSection
 
+                        // JIT preference section (only for JIT-capable systems)
+                        jitPreferenceSection
+
                         // Game description section
                         if let description = viewModel.gameDescription,
                            !description.isEmpty {
@@ -524,6 +527,10 @@ struct GameMoreInfoView: View {
                 }
                 .padding()
                 .padding(.top, 8)
+
+                // JIT preference section (only for JIT-capable systems)
+                jitPreferenceSection
+                    .padding(.horizontal)
 
                 // Game description section
                 if let description = viewModel.gameDescription,
@@ -753,6 +760,21 @@ struct GameMoreInfoView: View {
                 )
         )
         .padding(.horizontal)
+    }
+
+    /// JIT preference section — only shown for JIT-capable systems.
+    @ViewBuilder
+    private var jitPreferenceSection: some View {
+        if let md5 = viewModel.pvGame?.md5Hash,
+           let sysID = viewModel.pvGame?.systemIdentifier,
+           JITCoreCapability.systemHasJITCapability(sysID) {
+            JITGameSettingsView(
+                gameMD5: md5,
+                accentColor: accentColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
+            )
+        }
     }
 
     /// Rating section component

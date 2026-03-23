@@ -15,6 +15,7 @@
 
 #if !os(tvOS)
 import SwiftUI
+import PVCoreBridge
 import PVPrimitives
 
 // MARK: - TrackballLayout
