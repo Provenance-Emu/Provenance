@@ -75,4 +75,13 @@ public protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDeleg
     func updateRecordButtonAppearance()
 }
 
+/// Optional protocol adopted by OSD controller VCs that display a fast-forward button.
+/// `PVEmulatorViewController` casts `controllerViewController` to this type to push
+/// speed-state changes (e.g. hardcore-mode reset) into the OSD without a hard dependency
+/// on the concrete `PVControllerViewController` class.
+@MainActor public protocol OSDFastForwardObserver: AnyObject {
+    /// Syncs the fast-forward button visual state with the emulator core's actual speed.
+    func syncFastForwardDisplay()
+}
+
 #endif

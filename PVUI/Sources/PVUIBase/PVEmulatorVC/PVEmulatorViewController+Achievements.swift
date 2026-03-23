@@ -85,6 +85,7 @@ public extension PVEmulatorViewController {
         // Hardcore mode forbids speed hacks — reset to normal immediately.
         if hardcore {
             core.gameSpeed = .normal
+            (controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
         }
 
         // Create and start session manager.
@@ -103,7 +104,11 @@ public extension PVEmulatorViewController {
                 // case the user enabled fast-forward in the window between this
                 // function returning and the async session becoming active.
                 if achievementsCore.hardcoreMode && achievementsCore.achievementsActive {
-                    await MainActor.run { self.core.gameSpeed = .normal }
+                    await MainActor.run {
+                        self.core.gameSpeed = .normal
+                        // Sync the OSD fast-forward button so it doesn't remain highlighted.
+                        (self.controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
+                    }
                 }
             } catch AchievementSessionError.unknownGame(let hash) {
                 ILOG("RetroAchievements: game hash \(hash) not in database, achievements unavailable.")
@@ -144,6 +149,20 @@ public extension PVEmulatorViewController {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return false }
         guard let achievementsCore = core as? (any CoreRetroAchievements) else { return false }
         return achievementsCore.hardcoreMode && achievementsCore.achievementsActive
+    }
+
+    /// Sets the core's game speed while respecting RetroAchievements hardcore mode.
+    ///
+    /// When `achievementsBlocksFastForward()` is `true`, requests to set `.fast` or
+    /// `.veryFast` are silently ignored so alternative speed-changing UI (e.g. the
+    /// Game Speed action sheet) cannot bypass the hardcore restriction.
+    @MainActor func setGameSpeedRespectingAchievements(_ speed: GameSpeed) {
+        if achievementsBlocksFastForward(), speed == .fast || speed == .veryFast {
+            ILOG("Ignoring request to set fast game speed while RetroAchievements hardcore mode is active.")
+            return
+        }
+        core.gameSpeed = speed
+        (controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
     }
 
     // MARK: - Rewind guard

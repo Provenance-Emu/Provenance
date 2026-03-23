@@ -625,7 +625,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
         #if canImport(UIKit)
         if let vc = emulatorController as? UIViewController {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 vc.presentError(
                     "Fast-forward is disabled in RetroAchievements Hardcore Mode.",
                     source: vc.view
