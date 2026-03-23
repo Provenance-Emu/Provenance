@@ -82,6 +82,12 @@ typedef NS_ENUM(NSInteger, PVmGBALinkStatus) {
 /// YES when a peer is connected and exchanging SIO data.
 @property (nonatomic, readonly, getter=isLinkConnected) BOOL linkConnected;
 
+/// The last error that caused an unexpected session teardown (e.g. peer disconnect
+/// during an SIO exchange).  nil when the session ended cleanly via -stopLink.
+/// The Swift layer can read this after observing a transition to Idle to surface a
+/// diagnostic message instead of silently returning to the idle state.
+@property (nonatomic, readonly, nullable) NSError *lastDisconnectError;
+
 /// Bind a TCP server socket on `port` and asynchronously accept one peer.
 ///
 /// The receiver transitions to `PVmGBALinkStatusHosting` immediately on

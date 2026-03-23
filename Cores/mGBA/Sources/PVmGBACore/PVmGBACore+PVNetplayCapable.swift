@@ -26,6 +26,13 @@ import PVNetplay
 import PVmGBABridge
 import ObjectiveC
 
+// MARK: - Sendable
+
+/// PVmGBACore is an ObjC class whose thread safety is enforced by the
+/// emulator core's own serialisation. We declare @unchecked Sendable so
+/// Swift concurrency does not reject the PVNetplayCapable conformance.
+extension PVmGBACore: @unchecked Sendable {}
+
 // MARK: - Session context
 
 /// Boxes session metadata so it can be stored via ObjC associated objects.
@@ -90,7 +97,10 @@ private extension PVmGBACore {
             return .idle
 
         case .hosting:
-            let room = NetplayRoom.mgbaRoom(id: ctx?.roomID ?? UUID(),
+            // Return .idle when context is not yet set to avoid generating a
+            // new UUID on every poll tick (which causes spurious state updates).
+            guard let ctx else { return .idle }
+            let room = NetplayRoom.mgbaRoom(id: ctx.roomID,
                                             address: "0.0.0.0",
                                             context: ctx)
             return .hosting(room: room)
@@ -167,27 +177,38 @@ extension PVmGBACore: PVNetplayCapable {
             throw NetplayError.alreadyActive
         }
 
-        try await MainActor.run {
-            var nsError: NSError?
-            let success: Bool
+        // Perform the potentially blocking bridge calls off the main actor.
+        // joinLinkAtHost:port:error: performs a synchronous select(5s) on the
+        // calling thread, which would freeze the UI if called on MainActor.
+        let bridge = _bridge
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            Task.detached(priority: .userInitiated) {
+                var nsError: NSError?
+                let success: Bool
 
-            switch role {
-            case .host(let port):
-                success = _bridge.startLinkHost(onPort: port, error: &nsError)
+                switch role {
+                case .host(let port):
+                    success = bridge.startLinkHost(onPort: port, error: &nsError)
 
-            case .client(let host, let port):
-                success = _bridge.joinLink(atHost: host, port: port, error: &nsError)
+                case .client(let host, let port):
+                    success = bridge.joinLink(atHost: host, port: port, error: &nsError)
 
-            case .spectator(let host, let port):
-                // Link cable is 2-player only; spectator connects as the second player.
-                success = _bridge.joinLink(atHost: host, port: port, error: &nsError)
+                case .spectator(let host, let port):
+                    // Link cable is 2-player only; spectator connects as the second player.
+                    success = bridge.joinLink(atHost: host, port: port, error: &nsError)
+                }
+
+                if !success {
+                    let reason = nsError?.localizedDescription ?? "Unknown error"
+                    continuation.resume(throwing: NetplayError.connectionFailed(reason))
+                } else {
+                    continuation.resume()
+                }
             }
+        }
 
-            if !success {
-                let reason = nsError?.localizedDescription ?? "Unknown error"
-                throw NetplayError.connectionFailed(reason)
-            }
-
+        // Only mutate state and notify observers on the main actor.
+        await MainActor.run {
             _linkContext = MGBALinkContext(role: role, settings: settings)
             _stateSubject.send(_currentNetplayState)
             _startStatusPolling()
@@ -224,11 +245,13 @@ private extension NetplayRoom {
         let settings = context?.settings
         let nickname = settings.flatMap { $0.nickname.isEmpty ? nil : $0.nickname }
 
-        // Resolve port: for host we use the port from the role; default to 0 if unknown.
+        // Resolve port: for host/client/spectator we use the port from the role; default to 0 if unknown.
         let port: UInt16
         if case .host(let p) = context?.role {
             port = p
         } else if case .client(_, let p) = context?.role {
+            port = p
+        } else if case .spectator(_, let p) = context?.role {
             port = p
         } else {
             port = 0

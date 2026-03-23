@@ -114,6 +114,9 @@ static uint8_t kPVmGBALinkContextKey;
 /// Weak back-reference so the SIO driver can close the peer socket on error.
 /// (Set to nil on teardown to break any retain cycles.)
 @property (nonatomic, weak) PVmGBAGameCoreBridge *bridge;
+/// Non-nil when the session was torn down due to an unexpected error (e.g. peer
+/// disconnect). Nil when torn down cleanly via -stopLink.
+@property (nonatomic, strong, nullable) NSError *lastDisconnectError;
 @end
 
 @implementation PVmGBALinkContext
@@ -198,19 +201,36 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
     uint16_t localData = core->rawRead16(core, REG_SIODATA8, -1);
     uint16_t netLocal  = htons(localData);
 
-    // Send our data first.
-    ssize_t sent = send(ctx.peerFD, &netLocal, sizeof(netLocal), 0);
-    if (sent != sizeof(netLocal)) {
-        // Peer socket closed or error — tear down the session.
-        ctx.status = PVmGBALinkStatusIdle;
-        [ctx closeAllSockets];
-        return false;
+    // Send-all loop: send() may return fewer bytes than requested even for small
+    // payloads. Retry until all bytes are written before proceeding to recv.
+    {
+        const uint8_t *ptr = (const uint8_t *)&netLocal;
+        size_t remaining = sizeof(netLocal);
+        while (remaining > 0) {
+            ssize_t n = send(ctx.peerFD, ptr, remaining, 0);
+            if (n <= 0) {
+                // Peer socket closed or error — tear down the session.
+                ctx.lastDisconnectError =
+                    [NSError errorWithDomain:PVmGBALinkErrorDomain
+                                       code:PVmGBALinkErrorPeerDisconnected
+                                   userInfo:@{ NSLocalizedDescriptionKey: @"Peer disconnected during SIO send." }];
+                ctx.status = PVmGBALinkStatusIdle;
+                [ctx closeAllSockets];
+                return false;
+            }
+            ptr       += n;
+            remaining -= (size_t)n;
+        }
     }
 
     // Receive peer's data (blocking with MSG_WAITALL — expects exactly 2 bytes).
     uint16_t netRemote = 0;
     ssize_t recvd = recv(ctx.peerFD, &netRemote, sizeof(netRemote), MSG_WAITALL);
-    if (recvd != sizeof(netRemote)) {
+    if (recvd != (ssize_t)sizeof(netRemote)) {
+        ctx.lastDisconnectError =
+            [NSError errorWithDomain:PVmGBALinkErrorDomain
+                               code:PVmGBALinkErrorPeerDisconnected
+                           userInfo:@{ NSLocalizedDescriptionKey: @"Peer disconnected during SIO receive." }];
         ctx.status = PVmGBALinkStatusIdle;
         [ctx closeAllSockets];
         return false;
@@ -336,11 +356,26 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     return self.linkStatus == PVmGBALinkStatusConnected;
 }
 
+- (nullable NSError *)lastDisconnectError {
+    return [self _linkContext].lastDisconnectError;
+}
+
 // MARK: - startLinkHostOnPort:error:
 
 - (BOOL)startLinkHostOnPort:(uint16_t)port
                       error:(NSError *__autoreleasing _Nullable *)error
 {
+    // Reject privileged and unassigned ports (documented range is 1024-65535).
+    if (port < 1024) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
+                                         code:PVmGBALinkErrorInvalidAddress
+                                     userInfo:@{ NSLocalizedDescriptionKey:
+                                                     @"Port must be in the range 1024–65535." }];
+        }
+        return NO;
+    }
+
     // Reject if a session is already active.
     PVmGBALinkContext *existing = [self _linkContext];
     if (existing && existing.status != PVmGBALinkStatusIdle) {
@@ -361,8 +396,10 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     }
 
     // SO_REUSEADDR so we can restart quickly.
+    // SO_NOSIGPIPE prevents SIGPIPE if the peer closes the connection.
     int yes = 1;
     setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+    setsockopt(serverFD, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(yes));
 
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
@@ -408,28 +445,57 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         }
 
         if (peerFD < 0) {
-            // accept() failed (likely -stopLink was called).
+            // accept() failed (likely -stopLink was called). Clean up the listening socket.
+            if (ctx2.serverFD >= 0) {
+                close(ctx2.serverFD);
+                ctx2.serverFD = -1;
+            }
             ctx2.status = PVmGBALinkStatusIdle;
             return;
         }
 
+        // Suppress SIGPIPE on the accepted peer socket.
+        int nosig = 1;
+        setsockopt(peerFD, SOL_SOCKET, SO_NOSIGPIPE, &nosig, sizeof(nosig));
+
         ctx2.peerFD = peerFD;
-        ctx2.status = PVmGBALinkStatusConnected;
 
 #if PVMGBA_LINK_SIO_AVAILABLE
         // Install the SIO driver now that a peer is connected.
         PVmGBATCPLinkDriver *drv = _pvmgba_create_driver(ctx2);
-        if (drv != NULL) {
-            if (_pvmgba_install_driver(strongSelf, drv)) {
-                NSValue *drvValue = [NSValue valueWithPointer:drv];
-                objc_setAssociatedObject(strongSelf,
-                                         &kPVmGBALinkDriverKey,
-                                         drvValue,
-                                         OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            } else {
-                free(drv);
+        if (drv == NULL) {
+            // Driver allocation failed; treat as a hard failure and tear down.
+            close(peerFD);
+            ctx2.peerFD = -1;
+            if (ctx2.serverFD >= 0) {
+                close(ctx2.serverFD);
+                ctx2.serverFD = -1;
             }
+            ctx2.status = PVmGBALinkStatusIdle;
+            return;
         }
+
+        if (_pvmgba_install_driver(strongSelf, drv)) {
+            NSValue *drvValue = [NSValue valueWithPointer:drv];
+            objc_setAssociatedObject(strongSelf,
+                                     &kPVmGBALinkDriverKey,
+                                     drvValue,
+                                     OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            ctx2.status = PVmGBALinkStatusConnected;
+        } else {
+            // Driver installation failed (core not ready); tear down the session.
+            free(drv);
+            close(peerFD);
+            ctx2.peerFD = -1;
+            if (ctx2.serverFD >= 0) {
+                close(ctx2.serverFD);
+                ctx2.serverFD = -1;
+            }
+            ctx2.status = PVmGBALinkStatusIdle;
+        }
+#else
+        // When SIO is not available, consider the link connected once a peer is accepted.
+        ctx2.status = PVmGBALinkStatusConnected;
 #endif
     });
 
@@ -492,6 +558,10 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         return NO;
     }
 
+    // Suppress SIGPIPE: writing to a closed peer socket returns EPIPE instead of raising SIGPIPE.
+    int nosig = 1;
+    setsockopt(sockFD, SOL_SOCKET, SO_NOSIGPIPE, &nosig, sizeof(nosig));
+
     // Apply a 5-second connect timeout via non-blocking connect + select.
     int flags = fcntl(sockFD, F_GETFL, 0);
     fcntl(sockFD, F_SETFL, flags | O_NONBLOCK);
@@ -545,21 +615,46 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     PVmGBALinkContext *ctx = [self _linkContextCreatingIfNeeded];
     ctx.peerFD = sockFD;
     ctx.isHost = NO;
-    ctx.status = PVmGBALinkStatusConnected;
 
 #if PVMGBA_LINK_SIO_AVAILABLE
     PVmGBATCPLinkDriver *drv = _pvmgba_create_driver(ctx);
-    if (drv != NULL) {
-        if (_pvmgba_install_driver(self, drv)) {
-            NSValue *drvValue = [NSValue valueWithPointer:drv];
-            objc_setAssociatedObject(self,
-                                     &kPVmGBALinkDriverKey,
-                                     drvValue,
-                                     OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        } else {
-            free(drv);
+    if (drv == NULL) {
+        // Driver allocation failed; tear down the connection.
+        close(sockFD);
+        ctx.peerFD = -1;
+        [self _clearLinkContext];
+        if (error) {
+            *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
+                                         code:PVmGBALinkErrorNotReady
+                                     userInfo:@{ NSLocalizedDescriptionKey:
+                                                     @"Failed to allocate SIO driver." }];
         }
+        return NO;
     }
+
+    if (_pvmgba_install_driver(self, drv)) {
+        NSValue *drvValue = [NSValue valueWithPointer:drv];
+        objc_setAssociatedObject(self,
+                                 &kPVmGBALinkDriverKey,
+                                 drvValue,
+                                 OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        ctx.status = PVmGBALinkStatusConnected;
+    } else {
+        // Driver installation failed (core not ready); tear down.
+        free(drv);
+        close(sockFD);
+        ctx.peerFD = -1;
+        [self _clearLinkContext];
+        if (error) {
+            *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
+                                         code:PVmGBALinkErrorNotReady
+                                     userInfo:@{ NSLocalizedDescriptionKey:
+                                                     @"Core not ready; load a ROM before joining a link session." }];
+        }
+        return NO;
+    }
+#else
+    ctx.status = PVmGBALinkStatusConnected;
 #endif
 
     return YES;
@@ -582,6 +677,8 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     PVmGBALinkContext *ctx = [self _linkContext];
     if (ctx == nil) { return; }
 
+    // Clean teardown — clear any previous disconnect error.
+    ctx.lastDisconnectError = nil;
     ctx.status = PVmGBALinkStatusIdle;
     ctx.bridge = nil;
     [ctx closeAllSockets];
