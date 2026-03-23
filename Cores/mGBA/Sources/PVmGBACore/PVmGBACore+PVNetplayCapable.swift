@@ -102,7 +102,8 @@ private extension PVmGBACore {
             guard let ctx else { return .idle }
             let room = NetplayRoom.mgbaRoom(id: ctx.roomID,
                                             address: "0.0.0.0",
-                                            context: ctx)
+                                            context: ctx,
+                                            currentPlayers: 1)
             return .hosting(room: room)
 
         case .connected:
@@ -121,7 +122,8 @@ private extension PVmGBACore {
 
             let room = NetplayRoom.mgbaRoom(id: ctx.roomID,
                                             address: hostAddr,
-                                            context: ctx)
+                                            context: ctx,
+                                            currentPlayers: 2)
 
             // Host is still the logical host even after the client connects.
             if ctx.role.isHost {
@@ -197,6 +199,11 @@ extension PVmGBACore: PVNetplayCapable {
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
         guard _bridge.linkStatus == .idle else {
             throw NetplayError.alreadyActive
+        }
+
+        // This implementation is LAN-only; relay/WAN sessions are not supported.
+        if settings.relayServer != nil {
+            throw NetplayError.invalidSettings("mGBA link-cable netplay supports LAN only. Remove the relay server setting.")
         }
 
         // Perform the potentially blocking bridge calls off the main actor.
@@ -277,7 +284,8 @@ private extension NetplayRoom {
     static func mgbaRoom(
         id: UUID = UUID(),
         address: String,
-        context: MGBALinkContext?
+        context: MGBALinkContext?,
+        currentPlayers: Int = 1
     ) -> NetplayRoom {
         let settings = context?.settings
         let nickname = settings.flatMap { $0.nickname.isEmpty ? nil : $0.nickname }
@@ -301,7 +309,7 @@ private extension NetplayRoom {
             gameHash: "",
             coreIdentifier: CorePlist.pvCoreIdentifier,
             maxPlayers: 2,           // GBA link cable supports 2 players
-            currentPlayers: 1,
+            currentPlayers: currentPlayers,
             isLAN: settings?.relayServer == nil,
             hostAddress: address,
             port: port,

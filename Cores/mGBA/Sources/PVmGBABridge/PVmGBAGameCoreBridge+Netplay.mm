@@ -145,6 +145,10 @@ static uint8_t kPVmGBALinkContextKey;
         }
     }
 }
+- (void)dealloc {
+    // Ensure sockets are always closed even if -stopLink was not called.
+    [self closeAllSockets];
+}
 @end
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -161,6 +165,7 @@ static uint8_t kPVmGBALinkContextKey;
 typedef struct PVmGBATCPLinkDriver {
     struct GBASIODriver d;      ///< MUST be the first member.
     __unsafe_unretained PVmGBALinkContext *ctx;  ///< Non-owning; outlived by ctx.
+    _Atomic(bool) inactive;     ///< Set before uninstalling to guard in-flight callbacks.
 } PVmGBATCPLinkDriver;
 
 /// Attempt to access the private `core` ivar of PVmGBAGameCoreBridge at runtime.
@@ -193,6 +198,9 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
     PVmGBATCPLinkDriver *link = (PVmGBATCPLinkDriver *)driver;
     PVmGBALinkContext   *ctx  = link->ctx;
 
+    // Return immediately if stopLink marked this driver as inactive.
+    if (atomic_load(&link->inactive)) { return false; }
+
     // Snapshot the peer FD under the context lock to avoid a data race with
     // -stopLink (main thread) or the ioQueue accept block writing peerFD.
     int peerFD;
@@ -220,7 +228,8 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
         while (remaining > 0) {
             ssize_t n = send(peerFD, ptr, remaining, 0);
             if (n <= 0) {
-                // Peer socket closed or error — tear down the session.
+                if (n < 0 && errno == EINTR) { continue; }  // Retry on signal interruption
+                // Peer socket closed or non-retryable error — tear down the session.
                 NSError *disconnectErr =
                     [NSError errorWithDomain:PVmGBALinkErrorDomain
                                        code:PVmGBALinkErrorPeerDisconnected
@@ -244,8 +253,12 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
 
     // Receive peer's data. SO_RCVTIMEO is set on this socket (2-second deadline)
     // so a stalled peer triggers EAGAIN/EWOULDBLOCK rather than hanging indefinitely.
+    // Retry on EINTR to avoid spurious disconnects from signal interruptions.
     uint16_t netRemote = 0;
-    ssize_t recvd = recv(peerFD, &netRemote, sizeof(netRemote), MSG_WAITALL);
+    ssize_t recvd;
+    do {
+        recvd = recv(peerFD, &netRemote, sizeof(netRemote), MSG_WAITALL);
+    } while (recvd < 0 && errno == EINTR);
     if (recvd != (ssize_t)sizeof(netRemote)) {
         int recvErrno = errno;
         NSString *desc = (recvd == 0)
@@ -578,7 +591,7 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     // Resolve host and create socket.
     struct addrinfo hints, *res;
     memset(&hints, 0, sizeof(hints));
-    hints.ai_family   = AF_INET;
+    hints.ai_family   = AF_UNSPEC;   // Support both IPv4 and IPv6 (required for App Store)
     hints.ai_socktype = SOCK_STREAM;
 
     char portStr[8];
@@ -596,66 +609,66 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         return NO;
     }
 
-    int sockFD = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if (sockFD < 0) {
-        int err = errno;
-        freeaddrinfo(res);
-        if (error) { *error = _pvmgba_socket_error(PVmGBALinkErrorSocketFailed, err); }
-        return NO;
+    // Iterate resolved addresses (IPv4 and IPv6) and try each until one connects.
+    int sockFD = -1;
+    NSError *lastConnectError = nil;
+    for (struct addrinfo *rp = res; rp != NULL; rp = rp->ai_next) {
+        int fd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+        if (fd < 0) { continue; }
+
+        // Suppress SIGPIPE on this candidate socket.
+        int nosig = 1;
+        setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &nosig, sizeof(nosig));
+
+        // Apply a 5-second connect timeout via non-blocking connect + select.
+        int flags = fcntl(fd, F_GETFL, 0);
+        fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+
+        int connectResult = connect(fd, rp->ai_addr, rp->ai_addrlen);
+        if (connectResult < 0 && errno != EINPROGRESS) {
+            lastConnectError = _pvmgba_socket_error(PVmGBALinkErrorSocketFailed, errno);
+            close(fd);
+            continue;
+        }
+
+        if (connectResult != 0) {
+            fd_set writeSet;
+            FD_ZERO(&writeSet);
+            FD_SET(fd, &writeSet);
+            struct timeval tv = { .tv_sec = 5, .tv_usec = 0 };
+            int sel = select(fd + 1, NULL, &writeSet, NULL, &tv);
+            if (sel <= 0) {
+                NSString *desc = (sel == 0)
+                    ? [NSString stringWithFormat:@"Connection to %@:%u timed out.", host, (unsigned)port]
+                    : [NSString stringWithUTF8String:strerror(errno)];
+                lastConnectError = [NSError errorWithDomain:PVmGBALinkErrorDomain
+                                                       code:PVmGBALinkErrorSocketFailed
+                                                   userInfo:@{ NSLocalizedDescriptionKey: desc }];
+                close(fd);
+                continue;
+            }
+            int soErr = 0;
+            socklen_t soErrLen = sizeof(soErr);
+            getsockopt(fd, SOL_SOCKET, SO_ERROR, &soErr, &soErrLen);
+            if (soErr != 0) {
+                lastConnectError = _pvmgba_socket_error(PVmGBALinkErrorSocketFailed, soErr);
+                close(fd);
+                continue;
+            }
+        }
+
+        // Restore blocking mode.
+        fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
+        sockFD = fd;
+        break;
     }
-
-    // Suppress SIGPIPE: writing to a closed peer socket returns EPIPE instead of raising SIGPIPE.
-    int nosig = 1;
-    setsockopt(sockFD, SOL_SOCKET, SO_NOSIGPIPE, &nosig, sizeof(nosig));
-
-    // Apply a 5-second connect timeout via non-blocking connect + select.
-    int flags = fcntl(sockFD, F_GETFL, 0);
-    fcntl(sockFD, F_SETFL, flags | O_NONBLOCK);
-
-    int connectResult = connect(sockFD, res->ai_addr, res->ai_addrlen);
     freeaddrinfo(res);
 
-    if (connectResult < 0 && errno != EINPROGRESS) {
-        int err = errno;
-        close(sockFD);
-        if (error) { *error = _pvmgba_socket_error(PVmGBALinkErrorSocketFailed, err); }
+    if (sockFD < 0) {
+        if (error) { *error = lastConnectError ?: _pvmgba_socket_error(PVmGBALinkErrorSocketFailed, ECONNREFUSED); }
         return NO;
     }
 
-    if (connectResult != 0) {
-        // Wait up to 5 seconds for connect to complete.
-        fd_set writeSet;
-        FD_ZERO(&writeSet);
-        FD_SET(sockFD, &writeSet);
-        struct timeval tv = { .tv_sec = 5, .tv_usec = 0 };
-        int sel = select(sockFD + 1, NULL, &writeSet, NULL, &tv);
-
-        if (sel <= 0) {
-            close(sockFD);
-            NSString *desc = (sel == 0)
-                ? [NSString stringWithFormat:@"Connection to %@:%u timed out.", host, (unsigned)port]
-                : [NSString stringWithUTF8String:strerror(errno)];
-            if (error) {
-                *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
-                                             code:PVmGBALinkErrorSocketFailed
-                                         userInfo:@{ NSLocalizedDescriptionKey: desc }];
-            }
-            return NO;
-        }
-
-        // Verify the connect succeeded.
-        int soErr = 0;
-        socklen_t soErrLen = sizeof(soErr);
-        getsockopt(sockFD, SOL_SOCKET, SO_ERROR, &soErr, &soErrLen);
-        if (soErr != 0) {
-            close(sockFD);
-            if (error) { *error = _pvmgba_socket_error(PVmGBALinkErrorSocketFailed, soErr); }
-            return NO;
-        }
-    }
-
-    // Restore blocking mode for the frame-locked send/recv in the SIO driver.
-    fcntl(sockFD, F_SETFL, flags & ~O_NONBLOCK);
     // Bound the emulation-thread recv() to 2 seconds so a stalled peer
     // doesn't hang the emulator indefinitely.
     {
@@ -720,6 +733,10 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     NSValue *drvValue = objc_getAssociatedObject(self, &kPVmGBALinkDriverKey);
     if (drvValue != nil) {
         PVmGBATCPLinkDriver *drv = (PVmGBATCPLinkDriver *)[drvValue pointerValue];
+        // Mark the driver inactive before uninstalling so any in-flight
+        // _tcpLinkWriteRegister callback returns early and does not access
+        // memory that will be freed by _pvmgba_uninstall_driver.
+        if (drv != NULL) { atomic_store(&drv->inactive, true); }
         _pvmgba_uninstall_driver(self, drv);
         objc_setAssociatedObject(self, &kPVmGBALinkDriverKey,
                                  nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
