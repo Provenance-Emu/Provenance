@@ -478,6 +478,49 @@ test_platform_switch_purges_old_dylibs() {
     fi
 }
 
+test_fastpath_requires_sentinel_file() {
+    # When active_platform.txt does NOT exist (first run / sentinel cleared), the
+    # fast-path must NOT fire — even if the timestamp is fresh and dylibs are present.
+    # Regression test for: PLATFORM_CHANGED=0 when STORED_PLATFORM="" masking first run.
+    local workdir
+    workdir=$(_setup_integration_srcroot "fastpath_no_sentinel")
+
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    # Pre-populate modules/ with iOS dylibs — but do NOT write active_platform.txt
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_ios.dylib"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core2_libretro_ios.dylib"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core3_libretro_ios.dylib"
+    # Intentionally: no active_platform.txt — STORED_PLATFORM will be ""
+
+    # Write a far-future timestamp so the download interval has not expired
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS"
+    echo "9999999999" > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
+
+    # Mock unzip to record whether it was called — fast-path must NOT prevent this call
+    local flag_file="${workdir}/unzip_called"
+    cat > "${MOCK_BIN}/unzip" << UNZIPEOF
+#!/bin/bash
+touch "${flag_file}"
+exit 0
+UNZIPEOF
+    chmod +x "${MOCK_BIN}/unzip"
+
+    make_mock_curl_success
+    make_mock_xxd_zip_valid
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    assert_exit "no-sentinel: exits 0" 0 "${exit_code}"
+    assert_file_exists "no-sentinel: unzip was called (fast-path not taken)" "${flag_file}"
+    assert_file_exists "no-sentinel: active_platform.txt written after run" \
+        "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+}
+
 test_platform_switch_back_reuses_cached_dylibs() {
     # Simulate: built iOS, then tvOS, then back to iOS.
     # On the return to iOS: tvOS dylibs are purged and iOS ones re-extracted from cached
@@ -562,6 +605,7 @@ run_test "Integration: all downloads fail → exit 1" test_integration_all_downl
 
 run_test "Platform tracking: active_platform.txt written after extraction" test_active_platform_written_after_extraction
 run_test "Platform fast-path: skips extraction on same platform + fresh timestamp" test_fastpath_skips_extraction_when_platform_unchanged
+run_test "Platform fast-path: does not skip when sentinel is absent (first run)" test_fastpath_requires_sentinel_file
 run_test "Platform switch: iOS→tvOS purges ios dylibs" test_platform_switch_purges_old_dylibs
 run_test "Platform switch-back: tvOS→iOS purges tvos dylibs, reuses cached ios zips" test_platform_switch_back_reuses_cached_dylibs
 
