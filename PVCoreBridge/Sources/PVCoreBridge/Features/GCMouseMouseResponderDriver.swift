@@ -38,16 +38,19 @@ import UIKit
 #endif
 
 // MARK: - Notification constants
+// These are the canonical definitions used by both hardware and touch mouse paths.
+// PVUI's MouseCursorOverlayView and TouchTrackpadView import PVCoreBridge to use these.
 
-extension Notification.Name {
+public extension Notification.Name {
     /// Posted each time the hardware-mouse cursor position updates.
-    static let pvMousePositionDidChange = Notification.Name("PVMousePositionDidChange")
-    /// Posted on each mouse-button press (down transition).
-    static let pvMouseButtonDidPress = Notification.Name("PVMouseButtonDidPress")
+    /// UserInfo key `PVMousePositionKey` carries an `NSValue`-wrapped `CGPoint` (normalised 0–1).
+    static let PVMousePositionDidChange = Notification.Name("PVMousePositionDidChange")
+    /// Posted on each mouse-button press (down transition). No userInfo needed.
+    static let PVMouseButtonDidPress = Notification.Name("PVMouseButtonDidPress")
 }
 
-/// UserInfo key for `.pvMousePositionDidChange`; value is `NSValue(cgPoint:)`.
-let pvMousePositionKey = "PVMousePositionKey"
+/// UserInfo key for `.PVMousePositionDidChange`; value is `NSValue(cgPoint:)`.
+public let PVMousePositionKey = "PVMousePositionKey"
 
 /// Drives a ``MouseResponder`` from `GCMouse` delta events.
 ///
@@ -199,11 +202,13 @@ let pvMousePositionKey = "PVMousePositionKey"
 
         // Delta movement handler — GCMouse may invoke this off the main thread.
         // Deltas are captured as value types (CGFloat) before the hop to avoid
-        // shared mutable state being accessed off-actor.
+        // shared mutable state being accessed off-actor. DispatchQueue.main.async
+        // is used (matching GCMouseLightGunDriver) to minimise per-event overhead
+        // versus Task { @MainActor }, which can add scheduling latency at high poll rates.
         input?.mouseMovedHandler = { [weak self] _, deltaX, deltaY in
             let dx = CGFloat(deltaX)
             let dy = CGFloat(deltaY)
-            Task { @MainActor [weak self] in
+            DispatchQueue.main.async { [weak self] in
                 self?._applyDelta(dx: dx, dy: dy)
             }
         }
@@ -218,7 +223,7 @@ let pvMousePositionKey = "PVMousePositionKey"
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.leftMouseDown(atPoint: point)
-                    NotificationCenter.default.post(name: .pvMouseButtonDidPress, object: nil)
+                    NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
                 } else {
                     self.responder?.leftMouseUp()
                 }
@@ -234,7 +239,7 @@ let pvMousePositionKey = "PVMousePositionKey"
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.rightMouseDown(atPoint: point)
-                    NotificationCenter.default.post(name: .pvMouseButtonDidPress, object: nil)
+                    NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
                 } else {
                     self.responder?.rightMouseUp()
                 }
@@ -250,7 +255,7 @@ let pvMousePositionKey = "PVMousePositionKey"
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.middleMouseDown?(atPoint: point)
-                    NotificationCenter.default.post(name: .pvMouseButtonDidPress, object: nil)
+                    NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
                 } else {
                     self.responder?.middleMouseUp?(atPoint: point)
                 }
@@ -272,7 +277,9 @@ let pvMousePositionKey = "PVMousePositionKey"
 
     // MARK: - Delta accumulation
 
-    private func _applyDelta(dx: CGFloat, dy: CGFloat) {
+    /// Apply a raw mouse delta (in device counts) to the accumulated cursor position.
+    /// Exposed as `internal` so the test suite can drive the driver without a live GCMouse.
+    func _applyDelta(dx: CGFloat, dy: CGFloat) {
         guard isEnabled else { return }
         // Scale delta by sensitivity / a virtual 800-count "screen" so that
         // sensitivity=1 feels natural for a typical 400–800 DPI HID mouse.
@@ -286,11 +293,11 @@ let pvMousePositionKey = "PVMousePositionKey"
         let point = CGPoint(x: cursorX, y: cursorY)
         responder?.mouseMoved(atPoint: point)
         // Keep the cursor overlay in sync with hardware mouse movement.
-        // The overlay observes `.pvMousePositionDidChange` to reposition the cursor sprite.
+        // The overlay observes `.PVMousePositionDidChange` to reposition the cursor sprite.
         NotificationCenter.default.post(
-            name: .pvMousePositionDidChange,
+            name: .PVMousePositionDidChange,
             object: nil,
-            userInfo: [pvMousePositionKey: NSValue(cgPoint: point)]
+            userInfo: [PVMousePositionKey: NSValue(cgPoint: point)]
         )
     }
 }
