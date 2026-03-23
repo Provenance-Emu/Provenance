@@ -361,22 +361,15 @@ public final class DOLJitManager {
     /// the native JIT entitlement, where W×X enforcement (TXM) prevents debugger-based
     /// JIT from working. In this state, prompting the user to "enable via AltStore or
     /// SideStore" is meaningless. Callers should suppress optional JIT prompts entirely.
-    @MainActor
+    ///
+    /// Thread-safe: uses only NSLock-protected `acquired` and nonisolated `isWXEnforced`.
     public static var canPotentiallyAcquireJIT: Bool {
         if acquired { return true }
-        switch shared.jitType {
-        case .none:
-            return false
-        case .debugger:
-            // On iOS 26+ W×X is enforced by TXM. Attaching a debugger no longer
-            // grants JIT capability — only the nativeEntitlement path does.
-            if isWXEnforced { return false }
-            return true
-        default:
-            // .notRestricted, .nativeEntitlement, .trollStore, .allowUnsigned,
-            // .ptrace, .stikDebug — all have a viable acquisition path.
-            return true
-        }
+        // On iOS 26+ W×X is enforced by TXM. Attaching a debugger no longer grants
+        // JIT capability — only the native entitlement path does, and if that had
+        // worked, `acquired` would already be true.
+        if isWXEnforced { return false }
+        return true
     }
 
     // MARK: - iOS 26 W×X Detection
