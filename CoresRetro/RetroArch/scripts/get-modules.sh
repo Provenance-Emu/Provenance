@@ -159,12 +159,19 @@ fi
 # Purge the other-platform dylibs only when the platform has changed or when no
 # active platform has been recorded yet (first run).  Same-platform rebuilds skip
 # this step so the dylibs are left in place for unzip -n to confirm quickly.
+# On a platform switch we also remove platform-neutral dylibs (those without an
+# ios/tvos suffix, e.g. dolphin_libretro.dylib) so they are re-extracted for the
+# new platform rather than silently reused from the previous build.
 if [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
 	if [ "${CURRENT_PLATFORM}" = "tvos" ]; then
 		rm -f "${CORES_DIR}/"*ios*.dylib 2>/dev/null
 	else
 		rm -f "${CORES_DIR}/"*tvos*.dylib 2>/dev/null
 	fi
+	# Remove platform-neutral dylibs so they are not silently reused from the
+	# previous platform build (unzip -o below will re-extract the correct versions).
+	find "${CORES_DIR}" -maxdepth 1 -name "*.dylib" \
+		-not -name "*ios*" -not -name "*tvos*" -type f -delete 2>/dev/null || true
 fi
 
 if (( TIMESTAMP > LAST_TIMESTAMP )); then
@@ -233,12 +240,17 @@ if [ "${INVALID_ZIPS}" -gt 0 ]; then
 	echo "GetModule: WARNING — removed ${INVALID_ZIPS} invalid zip files (likely 404 HTML pages)"
 fi
 
-# Use -o (overwrite) when the pin just changed so stale dylibs are replaced;
-# use -n (never overwrite) otherwise for faster incremental builds.
-# When the pin changed, also purge existing dylibs so cores dropped from the
+# Use -o (overwrite) when the pin or platform just changed so stale dylibs are
+# replaced; use -n (never overwrite) otherwise for faster incremental builds.
+# When the pin changed, also purge ALL existing dylibs so cores dropped from the
 # new snapshot are not left behind (unzip -o only overwrites, never deletes).
+# When the platform changed, platform-specific and neutral dylibs were already
+# purged above; -o ensures any remaining shared names are overwritten correctly.
 if [ "${PIN_CHANGED}" = "1" ]; then
 	rm -f "${CORES_DIR}/"*.dylib
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
+elif [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
+	# Platform changed (or first run): stale dylibs purged above; overwrite to be safe.
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
 else
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';'

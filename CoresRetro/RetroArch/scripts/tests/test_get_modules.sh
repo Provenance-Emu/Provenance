@@ -584,6 +584,68 @@ test_platform_switch_back_reuses_cached_dylibs() {
     fi
 }
 
+test_platform_switch_replaces_neutral_dylibs() {
+    # Neutral dylibs (no ios/tvos suffix, e.g. dolphin_libretro.dylib) must be
+    # replaced when switching platforms, not silently reused via unzip -n.
+    local workdir
+    workdir=$(_setup_integration_srcroot "neutral_switch")
+
+    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls-tv.txt"
+
+    # Pre-populate modules/ with: one neutral dylib (shared name across platforms)
+    # and the ios active-platform sentinel. Simulates having previously built iOS.
+    mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
+    printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib"
+    echo "ios" > "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
+
+    # Create a mock unzip that records calls and writes tvos dylibs
+    local flag_file="${workdir}/unzip_called"
+    local tvos_modules_dir="${workdir}/CoresRetro/RetroArch/modules"
+    mkdir -p "${tvos_modules_dir}"
+    cat > "${MOCK_BIN}/unzip" << UNZIPEOF
+#!/bin/bash
+touch "${flag_file}"
+zip_file=""
+dest_dir="${tvos_modules_dir}"
+for i in "\$@"; do
+    if [[ "\$i" == *.zip ]]; then zip_file="\$i"; fi
+    if [ "\$prev" = "-d" ]; then dest_dir="\$i"; fi
+    prev="\$i"
+done
+if [ -n "\$zip_file" ]; then
+    base=\$(basename "\$zip_file" .zip)
+    printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${base}_libretro_tvos.dylib"
+    # Also write a "new" neutral dylib to simulate overwrite
+    printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/dolphin_libretro.dylib"
+fi
+exit 0
+UNZIPEOF
+    chmod +x "${MOCK_BIN}/unzip"
+
+    make_mock_curl_success
+    make_mock_xxd_zip_valid
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="appletvos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    assert_exit "neutral switch: exits 0" 0 "${exit_code}"
+    # Neutral dylib was removed before extraction (and re-created by mock unzip with -o)
+    assert_file_exists "neutral switch: dolphin_libretro.dylib re-extracted" \
+        "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib"
+    # unzip was called with -o flag (overwrite) on platform change
+    assert_file_exists "neutral switch: unzip was called" "${flag_file}"
+    # platform file updated to tvos
+    local stored_platform
+    stored_platform=$(cat "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt" 2>/dev/null || echo "")
+    if [ "${stored_platform}" = "tvos" ]; then
+        pass "neutral switch: platform file updated to 'tvos'"
+    else
+        fail "neutral switch: platform file should be 'tvos', got '${stored_platform}'"
+    fi
+}
+
 # ---------------------------------------------------------------------------
 # Run all tests
 # ---------------------------------------------------------------------------
@@ -617,6 +679,7 @@ run_test "Platform fast-path: skips extraction on same platform + fresh timestam
 run_test "Platform fast-path: does not skip when sentinel is absent (first run)" test_fastpath_requires_sentinel_file
 run_test "Platform switch: iOS→tvOS purges ios dylibs" test_platform_switch_purges_old_dylibs
 run_test "Platform switch-back: tvOS→iOS purges tvos dylibs, reuses cached ios zips" test_platform_switch_back_reuses_cached_dylibs
+run_test "Platform switch: neutral dylibs replaced on platform change" test_platform_switch_replaces_neutral_dylibs
 
 teardown_test_root
 print_summary
