@@ -595,12 +595,15 @@ test_platform_switch_replaces_neutral_dylibs() {
 
     # Pre-populate modules/ with: one neutral dylib (shared name across platforms)
     # and the ios active-platform sentinel. Simulates having previously built iOS.
+    # Use a distinct content marker so we can verify it was replaced after the switch.
     mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
     printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib"
     echo "ios" > "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
 
     # Create a mock unzip that records calls *and* arguments, then writes tvos dylibs.
     # We write the full argument list to flag_file so we can assert that -o was passed.
+    # The mock writes DIFFERENT content to dolphin_libretro.dylib so the content-change
+    # assertion below can verify the file was actually overwritten, not just kept.
     local flag_file="${workdir}/unzip_called"
     local tvos_modules_dir="${workdir}/CoresRetro/RetroArch/modules"
     mkdir -p "${tvos_modules_dir}"
@@ -618,7 +621,8 @@ done
 if [ -n "\$zip_file" ]; then
     base=\$(basename "\$zip_file" .zip)
     printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${base}_libretro_tvos.dylib"
-    # Simulate overwrite of the neutral dylib with new contents
+    # Simulate overwrite of the neutral dylib with new (distinct) contents so the
+    # content-change assertion below can confirm the old iOS-built file was replaced.
     printf '\\xca\\xfe\\xba\\xbe' > "\${dest_dir}/dolphin_libretro.dylib"
 fi
 exit 0
@@ -636,10 +640,20 @@ UNZIPEOF
     # Neutral dylib was removed before extraction and re-created by mock unzip
     assert_file_exists "neutral switch: dolphin_libretro.dylib re-extracted" \
         "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib"
+    # Verify the neutral dylib content changed — proves it was replaced, not left as-is.
+    local new_magic
+    new_magic=$(xxd -l 4 -p "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib" 2>/dev/null || echo "")
+    if [ "${new_magic}" = "cafebabe" ]; then
+        pass "neutral switch: dolphin_libretro.dylib contents replaced (old iOS bytes overwritten)"
+    else
+        fail "neutral switch: dolphin_libretro.dylib should have new content (cafebabe), got '${new_magic}'"
+    fi
     # unzip was called (flag_file contains the argument list)
     assert_file_exists "neutral switch: unzip was called" "${flag_file}"
-    # Verify unzip was invoked with -o (overwrite) on platform change
-    if grep -q -- " -o " "${flag_file}"; then
+    # Verify unzip was invoked with -o (overwrite) on platform change.
+    # Use a regex that matches -o at the start of the string OR between spaces,
+    # because get-modules.sh calls: unzip -o <zip> -d <dir>  (i.e. -o is first arg).
+    if grep -qE '(^| )-o( |$)' "${flag_file}"; then
         pass "neutral switch: unzip called with -o (overwrite)"
     else
         fail "neutral switch: unzip should be called with -o (overwrite); args were: $(cat "${flag_file}")"
