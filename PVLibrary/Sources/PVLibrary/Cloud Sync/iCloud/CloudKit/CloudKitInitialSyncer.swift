@@ -573,21 +573,22 @@ public actor CloudKitInitialSyncer {
 
             // Sync each ROM
             var syncedCount = 0
+            // Batch progress sends: only update UI every N items to avoid flooding the main
+            // actor with thousands of trivial updates (e.g. 1953 already-synced ROMs).
+            let progressBatchSize = 50
             DLOG("Starting to process \(games.count) ROMs...")
 
-                        for (index, game) in games.enumerated() {
+            for (index, game) in games.enumerated() {
                 DLOG("Processing ROM \(index + 1)/\(games.count): \(game.title) (\(game.md5Hash ?? "no-md5"))")
                 // Skip logic: only skip if not forcing sync AND record has cloudRecordID
                 if !forceSync && game.cloudRecordID != nil && !game.cloudRecordID!.isEmpty {
                     VLOG("ROM already synced: \(game.title) (\(game.md5Hash))")
-
-                    // Update progress
                     progress.romsCompleted += 1
-                    await MainActor.run {
+                    syncedCount += 1
+                    // Batch: only send progress every N skipped items to avoid main-thread flooding
+                    if progress.romsCompleted % progressBatchSize == 0 {
                         syncProgressSubject.send(progress)
                     }
-
-                    syncedCount += 1
                     continue
                 }
 
@@ -642,12 +643,12 @@ public actor CloudKitInitialSyncer {
                     await addToRetryQueue(retryUpload)
                 }
 
-                // Update progress (moved outside the try-catch for simplicity, updates regardless of success/failure/skip)
+                // Update progress on uploads (always send for actual uploads since they're infrequent)
                 progress.romsCompleted += 1
-                await MainActor.run {
-                    syncProgressSubject.send(progress)
-                }
+                syncProgressSubject.send(progress)
             }
+            // Flush final progress after loop
+            syncProgressSubject.send(progress)
 
             DLOG("Completed ROM sync: \(syncedCount) of \(games.count) ROMs synced")
             return syncedCount
