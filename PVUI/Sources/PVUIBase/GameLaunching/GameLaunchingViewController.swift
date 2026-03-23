@@ -1180,7 +1180,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             switch jitRecommendation {
             case .proceed, .skipJIT:
                 break // fall through to presentEMU immediately
-            case .showRequiredWarning, .showRecommendedPrompt:
+            case .showRequiredWarning, .showRecommendedPrompt, .showPerformanceNotice:
                 let shouldContinue = await withCheckedContinuation { continuation in
                     JITContextualPromptManager.shared.presentPrompt(
                         for: jitRecommendation,
