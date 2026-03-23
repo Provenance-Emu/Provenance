@@ -88,13 +88,15 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         #if os(iOS) || targetEnvironment(macCatalyst)
-        gameTiles.append(PauseMenuTile(
-            id: "companionController",
-            icon: "iphone.and.arrow.forward",
-            label: String(localized: "Companion"),
-            colorKey: .orange,
-            dismissOnTap: false
-        ))
+        if featureFlags.companionController {
+            gameTiles.append(PauseMenuTile(
+                id: "companionController",
+                icon: "iphone.and.arrow.forward",
+                label: String(localized: "Companion"),
+                colorKey: .orange,
+                dismissOnTap: false
+            ))
+        }
         #endif
 
         if shouldSave {

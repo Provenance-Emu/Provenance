@@ -74,6 +74,15 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             menuOverlay.bottomAnchor.constraint(equalTo: menuVC.view.bottomAnchor)
         ])
 
+        // Add the SwiftUI hosting controller as a proper child VC so SwiftUI .sheet()
+        // and other presentation APIs work correctly from within the tile menu.
+        // Without addChild, the hosting controller has no parent VC and UIKit cannot
+        // find a valid presenter — causing any sheet tap to freeze the app.
+        if let hostingVC = menuOverlay.hostingController {
+            menuVC.addChild(hostingVC)
+            hostingVC.didMove(toParent: menuVC)
+        }
+
         // Set the presentation delegate to handle dismissal
         menuVC.presentationController?.delegate = self
 

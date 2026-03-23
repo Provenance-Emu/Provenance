@@ -66,6 +66,10 @@
             "minVersion": "3.1.0",
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Replaces the vendored 2015 ObjC GCDWebServer with a Swift-native Hummingbird HTTP/WebDAV server via PVWebServerManager. Both implementations fire the same PVWebServer*Notification constants. Disabled by default during Epic #2758 stabilisation — enable in Settings > Advanced > Feature Flags."
+        },
+        "companionController": {
+            "enabled": false,
+            "description": "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete — enable in Settings > Advanced > Feature Flags."
         }
     }
 }

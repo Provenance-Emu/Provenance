@@ -167,8 +167,7 @@ struct PauseTileMenuView: View {
         // MARK: Companion Controller
         case "companionController":
             #if os(iOS) || targetEnvironment(macCatalyst)
-            dismissAction(false)
-            emulatorVC.presentCompanionController()
+            dismissForSubSheetThen { self.emulatorVC.presentCompanionController() }
             #endif
 
         // MARK: Transfer Pak config sheet

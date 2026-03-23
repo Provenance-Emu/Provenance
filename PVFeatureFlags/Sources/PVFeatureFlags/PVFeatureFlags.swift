@@ -58,6 +58,10 @@ public enum PVFeature: String, CaseIterable {
     case clipBuffering = "clipBuffering"
     /// ReplayKit live broadcast (Go Live) button in the pause menu. Disabled until stable.
     case liveBroadcast = "liveBroadcast"
+    /// Companion Controller overlay — lets the device act as a secondary controller
+    /// for systems that have non-standard input peripherals (trackball, numpad, Atari 5200 stick).
+    /// Disabled by default while the DSU integration is still in progress.
+    case companionController = "companionController"
 }
 
 /// Represents the type of app installation
@@ -171,6 +175,11 @@ public struct FeatureFlag: Codable, Sendable {
     public static let liveBroadcast = FeatureFlag(
         enabled: false,
         description: "ReplayKit Go Live broadcast button in the pause menu. Disabled until stable."
+    )
+
+    public static let companionController = FeatureFlag(
+        enabled: false,
+        description: "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete."
     )
 }
 
@@ -465,6 +474,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var modernWebServer: Bool { featureStates[.modernWebServer] ?? false }
     public var clipBuffering: Bool { featureStates[.clipBuffering] ?? false }
     public var liveBroadcast: Bool { featureStates[.liveBroadcast] ?? false }
+    public var companionController: Bool { featureStates[.companionController] ?? false }
 
     // MARK: - Feature Queries
 

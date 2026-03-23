@@ -32,7 +32,11 @@ enum MenuCategory {
     // MARK: - Properties
 
     weak var emulatorViewController: PVEmulatorViewController?
-    private var hostingController: UIViewController?
+    /// The hosting controller for the SwiftUI menu view.
+    /// Exposed so the presenter (`PVEmulatorViewController.showMenu`) can call
+    /// `addChild` and wire up the proper VC parent-child relationship, which is
+    /// required for SwiftUI `.sheet()` presentation to work from within the overlay.
+    var hostingController: UIViewController?
 
     // MARK: - Initialization
 
