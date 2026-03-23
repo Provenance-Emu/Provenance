@@ -201,6 +201,33 @@ final class SaveExporterTests: XCTestCase {
         XCTAssertNil(result, "gameMD5(inBundleAt:) should return nil when manifest.json is not valid JSON")
     }
 
+    func testGameMD5HandlesManifestWithMixedValueTypes() throws {
+        // Verify that manifest.json with non-string values (e.g. a numeric schemaVersion)
+        // still returns the MD5 correctly, since we parse as [String: Any] not [String: String].
+        let stagingDir = tempDir.appendingPathComponent("staging-mixed-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        let expectedMD5 = "cafebabe0123"
+        // Use an integer schemaVersion — this would break [String: String] parsing.
+        let manifest: [String: Any] = [
+            "schemaVersion": 1,   // Int, not String
+            "game": expectedMD5,
+            "title": "TestGame"
+        ]
+        let data = try JSONSerialization.data(withJSONObject: manifest)
+        try data.write(to: stagingDir.appendingPathComponent("manifest.json"))
+
+        let zipURL = tempDir.appendingPathComponent("mixed-manifest-\(expectedMD5).zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertEqual(result, expectedMD5, "gameMD5(inBundleAt:) should handle manifests with non-string typed fields")
+    }
+
     // MARK: - Helpers
 
     private func makeGame(title: String, md5: String, romURL: URL?) -> PVGame {

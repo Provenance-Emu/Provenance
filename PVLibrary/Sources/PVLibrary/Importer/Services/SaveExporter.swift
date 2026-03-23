@@ -332,10 +332,14 @@ public final class SaveExporter: @unchecked Sendable {
                 return nil
             }
             let manifestURL = tempDir.appendingPathComponent("manifest.json")
-            guard fm.fileExists(atPath: manifestURL.path),
+            // Guard against path traversal: ensure the manifest URL resolves inside tempDir.
+            let tempDirResolved = tempDir.resolvingSymlinksInPath().path
+            guard manifestURL.resolvingSymlinksInPath().path.hasPrefix(tempDirResolved),
+                  fm.fileExists(atPath: manifestURL.path),
                   let data = try? Data(contentsOf: manifestURL),
-                  let manifest = try JSONSerialization.jsonObject(with: data) as? [String: String],
-                  let md5 = manifest["game"], !md5.isEmpty else {
+                  // Parse as [String: Any] so additional typed fields don't cause nil cast.
+                  let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let md5 = manifest["game"] as? String, !md5.isEmpty else {
                 return nil
             }
             return md5.lowercased()
