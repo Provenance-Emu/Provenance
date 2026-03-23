@@ -19,7 +19,6 @@
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 import CoreGraphics
-import Foundation
 import PVCoreBridge
 
 // MARK: - CompanionControllerCapable
@@ -68,6 +67,10 @@ extension PVAtari800: CompanionControllerCapable {
 
     // MARK: - Axis handling
 
+    /// Matches `kJoystickDeadzone` in PVAtari800Bridge.m so companion and physical
+    /// controller input are treated identically by the core.
+    private static let joystickDeadzone: Float = 0.5
+
     /// Maps companion X/Y axis values to single-axis joystick calls.
     ///
     /// A positive X value → right; negative → left.
@@ -78,12 +81,13 @@ extension PVAtari800: CompanionControllerCapable {
         forPlayer player: Int
     ) {
         let magnitude = CGFloat(abs(value))
+        let deadzone = PVAtari800.joystickDeadzone
         switch axis {
         case .leftX:
-            if value > 0.05 {
+            if value > deadzone {
                 didMoveJoystick(.right, withValue: magnitude, forPlayer: player)
                 didMoveJoystick(.left,  withValue: 0, forPlayer: player)
-            } else if value < -0.05 {
+            } else if value < -deadzone {
                 didMoveJoystick(.left,  withValue: magnitude, forPlayer: player)
                 didMoveJoystick(.right, withValue: 0, forPlayer: player)
             } else {
@@ -92,10 +96,10 @@ extension PVAtari800: CompanionControllerCapable {
                 didMoveJoystick(.left,  withValue: 0, forPlayer: player)
             }
         case .leftY:
-            if value > 0.05 {
+            if value > deadzone {
                 didMoveJoystick(.down, withValue: magnitude, forPlayer: player)
                 didMoveJoystick(.up,   withValue: 0, forPlayer: player)
-            } else if value < -0.05 {
+            } else if value < -deadzone {
                 didMoveJoystick(.up,   withValue: magnitude, forPlayer: player)
                 didMoveJoystick(.down, withValue: 0, forPlayer: player)
             } else {

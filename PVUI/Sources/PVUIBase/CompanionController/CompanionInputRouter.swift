@@ -14,7 +14,8 @@ import Foundation
 import Combine
 import PVCoreBridge
 
-// CompanionButton, CompanionAxisID, CompanionInputEvent — re-exported from PVCoreBridge.
+// CompanionButton, CompanionAxisID, CompanionInputEvent — defined in PVCoreBridge.
+// Consumers of PVUIBase that need these types must also import PVCoreBridge directly.
 
 // MARK: - CompanionInputRouter
 
@@ -56,7 +57,9 @@ public final class CompanionInputRouter: ObservableObject {
         case .buttonUp(let btn):
             heldButtons &= ~btn.rawValue
         case .axisChanged(let axis, let value):
-            axisValues[axis] = value
+            // Clamp to the documented -1…1 range so downstream consumers
+            // (DSU serialiser, core bridge) never receive out-of-range values.
+            axisValues[axis] = max(-1.0, min(1.0, value))
         }
         slotDelegate?.companionInputRouter(self, didUpdateState: currentState)
     }
@@ -76,7 +79,7 @@ public final class CompanionInputRouter: ObservableObject {
     // MARK: - State snapshot
 
     /// Current snapshot of all inputs, ready to be serialised into a DSU packet.
-    public var currentState: CompanionInputState {
+    @MainActor public var currentState: CompanionInputState {
         CompanionInputState(
             buttons: heldButtons,
             leftX:   axisValues[.leftX]    ?? 0,
@@ -121,9 +124,12 @@ public struct CompanionInputState: Sendable {
 
 /// Implemented by the DSU transport layer to receive state updates.
 /// When `PVControllerDSU` lands, this will be implemented by `DSUServerSlot`.
-public protocol CompanionSlotDelegate: AnyObject, Sendable {
+///
+/// All callbacks are delivered on the main actor, matching the isolation of
+/// `CompanionInputRouter.send(_:)`.  Implementors do not need `@unchecked Sendable`.
+@MainActor
+public protocol CompanionSlotDelegate: AnyObject {
     /// Called every time the companion router has a new input snapshot ready.
-    @MainActor
     func companionInputRouter(
         _ router: CompanionInputRouter,
         didUpdateState state: CompanionInputState
