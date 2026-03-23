@@ -48,18 +48,19 @@ extension PVDosBoxCore: CompanionKeyboardMouseCapable {
     // MARK: Keyboard
 
     /// Routes a companion key-down event to the core's `KeyboardResponder.keyDown(_:)`.
-    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     public func companionKeyDown(_ key: GCKeyCode) {
         keyDown(key)
     }
 
     /// Routes a companion key-up event to the core's `KeyboardResponder.keyUp(_:)`.
-    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     public func companionKeyUp(_ key: GCKeyCode) {
         keyUp(key)
     }
 
     // MARK: Mouse
+
+    /// Sensitivity: maps a drag of this many screen points to a full-width/height cursor sweep.
+    private static let mouseMoveSensitivity: CGFloat = 1.0 / 500.0
 
     /// Accumulates the relative `delta` into a normalized cursor position (0…1) and
     /// forwards the result to `mouseMoved(atPoint:)`.
@@ -68,7 +69,7 @@ extension PVDosBoxCore: CompanionKeyboardMouseCapable {
     /// not a raw screen-point delta.  A sensitivity factor of 1/500 maps a 500-point drag
     /// to a full-width/height sweep; tune as needed.
     public func companionMouseMoved(delta: CGPoint) {
-        let sensitivity: CGFloat = 1.0 / 500.0
+        let sensitivity = PVDosBoxCore.mouseMoveSensitivity
         let state = mouseState
         let x = min(CGFloat(1.0), max(CGFloat(0.0), state.position.x + delta.x * sensitivity))
         let y = min(CGFloat(1.0), max(CGFloat(0.0), state.position.y + delta.y * sensitivity))

@@ -41,13 +41,11 @@ public final class CompanionKeyboardBridge: ObservableObject {
 extension CompanionKeyboardBridge: VirtualKeyboardDelegate {
 
     /// Forwards a key-down event from the on-screen keyboard to the companion router.
-    @available(iOS 14.0, *)
     public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyDown keyCode: GCKeyCode) {
         inputRouter.sendKeyDown(keyCode)
     }
 
     /// Forwards a key-up event from the on-screen keyboard to the companion router.
-    @available(iOS 14.0, *)
     public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyUp keyCode: GCKeyCode) {
         inputRouter.sendKeyUp(keyCode)
     }

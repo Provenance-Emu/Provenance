@@ -50,12 +50,10 @@ public protocol CompanionKeyboardMouseCapable: AnyObject {
 #if canImport(GameController)
     /// A companion keyboard key was pressed.
     /// - Parameter key: HID USB key code (matches `GCKeyCode.rawValue`).
-    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     func companionKeyDown(_ key: GCKeyCode)
 
     /// A companion keyboard key was released.
     /// - Parameter key: HID USB key code.
-    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     func companionKeyUp(_ key: GCKeyCode)
 #endif
 
