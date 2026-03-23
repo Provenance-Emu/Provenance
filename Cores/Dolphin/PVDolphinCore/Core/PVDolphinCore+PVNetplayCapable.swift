@@ -132,6 +132,13 @@ extension PVDolphinCore: PVNetplayCapable {
                     }
 
                     self._netplayContext = DolphinNetplayContext(role: role, settings: settings)
+                    // Apply input buffer size (frame delay) now that the session is live.
+                    // Dolphin supports 0–127; clamp before converting to avoid a UInt32 trap.
+                    // frameDelay of 0 maps to Dolphin's minimum-latency mode; values 1–5
+                    // are typical for LAN/WAN delay-based play.
+                    let clampedFrameDelay = max(0, min(settings.frameDelay, 127))
+                    let bufferSize = UInt32(clamping: clampedFrameDelay)
+                    self._bridge.setNetplayInputBufferSize(bufferSize)
                     continuation.resume()
                 } catch {
                     continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
@@ -173,6 +180,11 @@ extension PVDolphinCore: PVNetplayCapable {
             } else {
                 effectivePort = UInt16(ctx?.settings.port ?? 2626)
             }
+            // Query the traversal code on the netplay queue to avoid a race with
+            // stopNetplay(), which resets the server pointer on the same queue.
+            let traversalCode: String? = _netplayQueue.sync { [weak self] in
+                self?._bridge.queryDolphinTraversalCode()
+            }
             let room = NetplayRoom(
                 id: ctx?.sessionID ?? UUID(),
                 hostName: "Dolphin",
@@ -181,9 +193,10 @@ extension PVDolphinCore: PVNetplayCapable {
                 coreIdentifier: "com.provenance.dolphin",
                 maxPlayers: ctx?.settings.maxPlayers ?? 4,
                 currentPlayers: 1,
-                isLAN: true,
-                hostAddress: "0.0.0.0",
-                port: effectivePort
+                isLAN: traversalCode == nil,
+                hostAddress: traversalCode ?? "0.0.0.0",
+                port: effectivePort,
+                traversalCode: traversalCode
             )
             return .hosting(room: room)
 
@@ -203,10 +216,6 @@ extension PVDolphinCore: PVNetplayCapable {
                 hostAddress: hostAddr,
                 port: port
             )
-            // NOTE: frameDelay is stored in the session model for display purposes
-            // but is not yet forwarded to Dolphin's netplay subsystem.
-            // TODO: wire via _bridge.setDolphinFrameDelay(settings.frameDelay) once
-            // the ObjC bridge exposes the Config::NETPLAY_INPUT_BUFFER_SIZE setter.
             let session = NetplaySession(
                 room: room,
                 role: role,
