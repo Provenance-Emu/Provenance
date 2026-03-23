@@ -616,8 +616,12 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Store the previous game speed when using hold-style buttons
     private var previousGameSpeed: GameSpeed?
 
-    /// Returns `true` when RetroAchievements hardcore mode blocks fast-forward,
-    /// and presents an error alert via the emulator controller.
+    /// Returns `true` when RetroAchievements hardcore mode blocks fast-forward.
+    ///
+    /// When UIKit is available and `emulatorController` is a `UIViewController`,
+    /// this also attempts to present a best-effort error alert to the user.
+    /// If no suitable view controller is available the block is still enforced
+    /// but no alert is shown; callers should not rely on the alert being visible.
     private func isFastForwardBlockedByHardcore() -> Bool {
         guard let achievementsCore = emulatorCore as? (any CoreRetroAchievements),
               achievementsCore.hardcoreMode && achievementsCore.achievementsActive else {
