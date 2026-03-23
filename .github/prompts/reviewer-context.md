@@ -196,6 +196,14 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Future library actions: add a case to `LibraryAction`, a URL path to `AppRoute`, and a response in
   any interested view — no changes to `LibraryNavigator` core needed.
 
+### CompanionControllerCapable (March 2026)
+- `CompanionControllerCapable` in `PVCoreBridge/Features/CompanionControllerCapable.swift` — cores that accept a companion iPhone/iPad as a controller conform to this protocol.
+- `CompanionButton`, `CompanionAxisID`, `CompanionInputEvent` live in **PVCoreBridge** (not PVUI) so Tier-4 core bridges can conform without importing PVUI.
+- `CoreCompanionBridge` (private, PVUI) is the `CompanionSlotDelegate` that diffs `CompanionInputState` snapshots and calls `handleCompanionInput(_:forPlayer:)` on the core.
+- `PVEmulatorViewController.presentCompanionController()` sets `session.activeSystemID` preferring `game?.systemIdentifier` and falling back to `core.systemIdentifier` so `CompanionLayoutFactory` selects the right overlay.
+- Tear down: call `emulatorVC.tearDownCompanionSession()` when the emulator is dismissed.
+- iOS & macCatalyst only: all companion UI wiring is guarded with iOS/macCatalyst-specific `#if` checks (not a generic `#if !os(tvOS)`).
+
 ### Analog Deadzone Coordination (March 2026)
 - Universal deadzone is stored in `Defaults[.analogDeadzone]` (Float 0–0.5) via PVSettings.
 - **On-screen analog sticks** (DeltaSkins): `DeltaSkinInputHandler.analogStickMoved` applies
