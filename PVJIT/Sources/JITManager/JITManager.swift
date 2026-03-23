@@ -353,25 +353,6 @@ public final class DOLJitManager {
         jitSource = source
     }
 
-    // MARK: - JIT Acquirability
-
-    /// Returns `true` when JIT could potentially be acquired on this device and build.
-    ///
-    /// Returns `false` when JIT is structurally unavailable — e.g. on iOS 26 without
-    /// the native JIT entitlement, where W×X enforcement (TXM) prevents debugger-based
-    /// JIT from working. In this state, prompting the user to "enable via AltStore or
-    /// SideStore" is meaningless. Callers should suppress optional JIT prompts entirely.
-    ///
-    /// Thread-safe: uses only NSLock-protected `acquired` and nonisolated `isWXEnforced`.
-    public static var canPotentiallyAcquireJIT: Bool {
-        if acquired { return true }
-        // On iOS 26+ W×X is enforced by TXM. Attaching a debugger no longer grants
-        // JIT capability — only the native entitlement path does, and if that had
-        // worked, `acquired` would already be true.
-        if isWXEnforced { return false }
-        return true
-    }
-
     // MARK: - iOS 26 W×X Detection
 
     /// Returns `true` when the current OS enforces Write-XOR-Execute (W×X) page protections.

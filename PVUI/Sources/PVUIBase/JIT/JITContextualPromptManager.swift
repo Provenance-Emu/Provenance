@@ -87,7 +87,10 @@ public final class JITContextualPromptManager {
         #if canImport(JITManager)
         guard !DOLJitManager.acquired else { return .proceed }
 
-        let jitAcquirable = DOLJitManager.canPotentiallyAcquireJIT
+        // JIT is structurally unavailable when W×X is enforced (iOS 26+ without the
+        // native JIT entitlement). In that case acquired is false and there's no path
+        // to enable JIT — prompting "use AltStore" would be pointless noise.
+        let jitAcquirable = DOLJitManager.acquired || !DOLJitManager.isWXEnforced
 
         // 3. JIT cannot be acquired on this device/OS (e.g. iOS 26 App Store build).
         //    Prompting to "enable via AltStore" would be useless noise.
@@ -187,7 +190,7 @@ public final class JITContextualPromptManager {
         var message = "\(coreName) requires JIT (Performance Mode) to run correctly."
             + " Without it the game may crash or produce incorrect output."
         #if canImport(JITManager)
-        if DOLJitManager.canPotentiallyAcquireJIT {
+        if DOLJitManager.acquired || !DOLJitManager.isWXEnforced {
             message += "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
         } else {
             message += "\n\nJIT is not available on this device."
