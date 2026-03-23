@@ -90,8 +90,9 @@ __attribute__((weak_import))
 - (void)setRightMouseButtonPressed:(BOOL)pressed;
 
 /// Sets the libretro controller device type for a specific port.
-/// Call only after the core has been initialised and `retro_load_game` has succeeded
-/// to configure peripheral types (e.g. `RETRO_DEVICE_MOUSE = 2`) for the active game.
+/// Safe to call before the core is fully initialised — the call is a no-op
+/// (logs a warning) when the core is not ready, so callers can retry on
+/// the next input event. Ideally called after `retro_load_game` succeeds.
 - (void)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
 
 @property (nonatomic, readonly) CGFloat videoWidth;

@@ -70,10 +70,12 @@ extension PVFlycastEmuCore: MouseResponder {
     /// Lazily configures the Dreamcast mouse port once per game session.
     /// Caches the result so the device-type switch is issued exactly once,
     /// not on every input event (mouseMoved, leftMouseDown, etc.).
+    /// The flag is set only after the call completes — if the core is not
+    /// yet initialised the call is a no-op and we retry on the next event.
     private func ensureMousePortConfigured() {
         guard !_didConfigureMousePort else { return }
-        _didConfigureMousePort = true
         _bridge.configureDreamcastMousePort()
+        _didConfigureMousePort = true
     }
 
 #if canImport(GameController)
@@ -100,6 +102,7 @@ extension PVFlycastEmuCore: MouseResponder {
         (_bridge as! MouseResponder).leftMouseDown(atPoint: point)
     }
     public func leftMouseUp() {
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).leftMouseUp()
     }
     public func rightMouseDown(atPoint point: CGPoint) {
@@ -107,6 +110,7 @@ extension PVFlycastEmuCore: MouseResponder {
         (_bridge as! MouseResponder).rightMouseDown(atPoint: point)
     }
     public func rightMouseUp() {
+        ensureMousePortConfigured()
         (_bridge as! MouseResponder).rightMouseUp()
     }
 }

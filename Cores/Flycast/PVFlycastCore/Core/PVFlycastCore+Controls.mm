@@ -199,13 +199,11 @@ s8 joyx[4], joyy[4];
 #pragma mark - MouseResponder
 
 - (BOOL)gameSupportsMouse {
-    // The Dreamcast Maple bus CAN host a mouse device. Per-game mouse
-    // filtering is handled at the Swift layer (PVFlycastEmuCore.gameSupportsMouse)
-    // via MouseGameRegistry. Mouse capability is advertised to the libretro
-    // frontend based on MouseResponder protocol conformance, not this return
-    // value. Returning YES here simply declares that this core supports mouse
-    // input in general; whether it is enabled for a specific game is decided
-    // elsewhere.
+    // The Dreamcast Maple bus CAN host a mouse device. Returning YES here
+    // declares that the bridge itself supports mouse input. Per-game filtering
+    // is performed at the Swift layer (PVFlycastEmuCore.gameSupportsMouse) via
+    // MouseGameRegistry, which controls whether the on-screen mouse overlay is
+    // shown and whether the Maple mouse port is configured for a given title.
     return YES;
 }
 
@@ -219,7 +217,10 @@ s8 joyx[4], joyy[4];
 }
 
 // Swift @objc protocol selector: leftMouseDown(atPoint:) → ObjC: leftMouseDownAtPoint:
+// Update the cursor position first so a click without a prior move event
+// lands at the correct coordinates in the emulated Dreamcast mouse peripheral.
 - (void)leftMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
     [self setLeftMouseButtonPressed:YES];
 }
 
@@ -228,7 +229,10 @@ s8 joyx[4], joyy[4];
 }
 
 // Swift @objc protocol selector: rightMouseDown(atPoint:) → ObjC: rightMouseDownAtPoint:
+// Update the cursor position first so a click without a prior move event
+// lands at the correct coordinates in the emulated Dreamcast mouse peripheral.
 - (void)rightMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
     [self setRightMouseButtonPressed:YES];
 }
 

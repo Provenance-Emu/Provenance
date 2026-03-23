@@ -463,9 +463,9 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
             }
         }
         // Dreamcast (Flycast): explicitly set port 0 device type so the core never silently
-        // activates mouse input for standard games.  For known mouse titles (Typing of the Dead,
+        // activates mouse input for standard games. For known mouse titles (Typing of the Dead,
         // Planet Ring, etc.) switch port 0 to RETRO_DEVICE_MOUSE so touch/pointer events reach
-        // the Maple bus mouse peripheral.  For all other games force RETRO_DEVICE_JOYPAD, which
+        // the Maple bus mouse peripheral. For all other games force RETRO_DEVICE_JOYPAD, which
         // overrides any Flycast core-option that might enable mouse by default.
         if sysID == .Dreamcast && port == 0 {
             if MouseGameRegistry.shared.gameSupportsMouse(
