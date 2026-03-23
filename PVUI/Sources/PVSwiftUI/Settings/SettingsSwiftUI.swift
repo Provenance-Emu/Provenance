@@ -838,9 +838,6 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Controller") {
                         ControllerSection()
                     }
-                    CollapsibleSection(title: "Mouse Input") {
-                        MouseSection()
-                    }
                     #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
                     CollapsibleSection(title: "Delta Skins") {
                         DeltaSkinsSection()
@@ -1737,6 +1734,10 @@ private struct ControllerSection: View {
             OnScreenControllerSection()
             #endif
             AnalogDeadzoneSection(analogDeadzone: $analogDeadzone, coreDeadzoneMode: $coreDeadzoneMode)
+
+            Section(header: Text("Mouse Input")) {
+                MouseSection()
+            }
         }
     }
 }
