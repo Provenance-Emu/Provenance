@@ -17,6 +17,10 @@ final class FakeMouseResponder: NSObject, MouseResponder {
     var gameSupportsMouse: Bool = true
     var requiresMouse: Bool = false
     var receivedPoints: [CGPoint] = []
+    var leftDownPoints: [CGPoint] = []
+    var leftUpCount: Int = 0
+    var rightDownPoints: [CGPoint] = []
+    var rightUpCount: Int = 0
 
 #if canImport(GameController)
     @available(iOS 14.0, tvOS 14.0, *)
@@ -26,6 +30,22 @@ final class FakeMouseResponder: NSObject, MouseResponder {
 
     func mouseMoved(atPoint point: CGPoint) {
         receivedPoints.append(point)
+    }
+
+    func leftMouseDown(atPoint point: CGPoint) {
+        leftDownPoints.append(point)
+    }
+
+    func leftMouseUp() {
+        leftUpCount += 1
+    }
+
+    func rightMouseDown(atPoint point: CGPoint) {
+        rightDownPoints.append(point)
+    }
+
+    func rightMouseUp() {
+        rightUpCount += 1
     }
 }
 
@@ -121,5 +141,76 @@ final class GyroMouseAdapterTests: XCTestCase {
         // After disabling, re-enabling should work without crash.
         adapter.isEnabled = true
         XCTAssertTrue(adapter.isEnabled)
+    }
+
+    // MARK: - Signal chain (rotation input)
+
+    func testRotationDeliversPoint() {
+        // Large rotation rate well above default dead zone (0.05) should produce output.
+        adapter.attach(to: responder)
+        adapter._testApplyRotation(rawX: 1.0, rawY: 1.0)
+        XCTAssertEqual(responder.receivedPoints.count, 1)
+    }
+
+    func testDeadZoneSuppressesSmallInput() {
+        adapter.attach(to: responder)
+        // Rate below default dead zone (0.05) should be filtered out.
+        adapter._testApplyRotation(rawX: 0.01, rawY: 0.01)
+        // With both axes in the dead zone, filteredX/Y converge toward 0 and
+        // no net cursor displacement occurs — but a point is still delivered
+        // (the cursor stays at 0.5,0.5). Verify count is still 1 (not 0 = no crash).
+        XCTAssertEqual(responder.receivedPoints.count, 1)
+        // Cursor should remain near centre (dead zone ate the input).
+        let pt = responder.receivedPoints[0]
+        XCTAssertEqual(pt.x, 0.5, accuracy: 0.01)
+        XCTAssertEqual(pt.y, 0.5, accuracy: 0.01)
+    }
+
+    func testOutputClampedToUnitSquare() {
+        adapter.attach(to: responder)
+        // Massive rotation should drive cursor to boundary, not outside [0,1].
+        for _ in 0..<120 {
+            adapter._testApplyRotation(rawX: 100.0, rawY: 100.0)
+        }
+        let last = responder.receivedPoints.last!
+        XCTAssertGreaterThanOrEqual(Double(last.x), 0.0)
+        XCTAssertLessThanOrEqual(Double(last.x),    1.0)
+        XCTAssertGreaterThanOrEqual(Double(last.y), 0.0)
+        XCTAssertLessThanOrEqual(Double(last.y),    1.0)
+    }
+
+    func testNoDeliveryWhenDisabledDuringRotation() {
+        adapter.attach(to: responder)
+        adapter.isEnabled = false
+        adapter._testApplyRotation(rawX: 5.0, rawY: 5.0)
+        XCTAssertTrue(responder.receivedPoints.isEmpty)
+    }
+
+    func testNoDeliveryWhenGameDoesNotSupportMouseDuringRotation() {
+        responder.gameSupportsMouse = false
+        adapter.attach(to: responder)
+        adapter._testApplyRotation(rawX: 5.0, rawY: 5.0)
+        XCTAssertTrue(responder.receivedPoints.isEmpty)
+    }
+
+    func testCursorResetOnReattach() {
+        adapter.attach(to: responder)
+        // Drive cursor toward an edge.
+        for _ in 0..<60 {
+            adapter._testApplyRotation(rawX: 0.0, rawY: 50.0)
+        }
+        let afterFirst = responder.receivedPoints.last!
+        // Re-attach should reset cursor to 0.5,0.5.
+        let responder2 = FakeMouseResponder()
+        adapter.attach(to: responder2)
+        adapter._testApplyRotation(rawX: 0.0, rawY: 0.0)
+        // First delivery after fresh attach should originate from centre.
+        // (Zero input → dead zone → no displacement → stays at 0.5,0.5.)
+        if let pt = responder2.receivedPoints.first {
+            XCTAssertEqual(pt.x, 0.5, accuracy: 0.05)
+            XCTAssertEqual(pt.y, 0.5, accuracy: 0.05)
+        }
+        // Sanity: the old responder's last point was not at centre.
+        XCTAssertNotEqual(afterFirst.x, 0.5, accuracy: 0.05)
     }
 }

@@ -357,4 +357,12 @@ import CoreMotion
         let point = CGPoint(x: cursorX, y: cursorY)
         responder?.mouseMoved(atPoint: point)
     }
+
+    // MARK: - Testing support
+
+    /// Feeds a synthetic rotation sample through the full signal chain.
+    /// Intended for `@testable` unit tests only — do not call from production code.
+    internal func _testApplyRotation(rawX: Double, rawY: Double) {
+        _applyRotation(rawX: rawX, rawY: rawY)
+    }
 }
