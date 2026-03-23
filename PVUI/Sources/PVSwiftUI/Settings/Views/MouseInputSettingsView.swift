@@ -14,6 +14,19 @@ import PVSettings
 import Defaults
 import PVThemes
 
+// MARK: - MouseInputSettingsView (full-page navigation target)
+
+/// Full-page settings view for mouse input, suitable as a `NavigationLink` destination.
+struct MouseInputSettingsView: View {
+    var body: some View {
+        ScrollView {
+            MouseSection()
+                .padding()
+        }
+        .navigationTitle("Mouse Input")
+    }
+}
+
 // MARK: - MouseSection (for use inside CollapsibleSection)
 
 /// Embeddable settings content for the Mouse Input section.
@@ -65,7 +78,14 @@ struct MouseSection: View {
                 .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                     ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
-            ForEach(MouseInputSource.allCases, id: \.rawValue) { source in
+            ForEach(MouseInputSource.allCases.filter { source in
+                #if os(tvOS)
+                // Touchscreen virtual overlay is unavailable on tvOS
+                return source != .touchscreen
+                #else
+                return true
+                #endif
+            }, id: \.rawValue) { source in
                 Button(action: { inputSource = source }) {
                     HStack(spacing: 12) {
                         Image(systemName: source.symbolName)

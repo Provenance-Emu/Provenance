@@ -979,7 +979,7 @@ struct MouseInputSourceTests {
 
 // MARK: - Mouse Defaults Keys Tests
 
-@Suite("Mouse Defaults Keys")
+@Suite("Mouse Defaults Keys", .serialized)
 struct MouseDefaultsKeysTests {
 
     @Test("mouseInputSource default is .auto")

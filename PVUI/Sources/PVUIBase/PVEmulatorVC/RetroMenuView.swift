@@ -1142,7 +1142,14 @@ struct RetroMenuView: View {
 
             // Input source picker
             Picker(String(localized: "Input Source"), selection: $mouseInputSource) {
-                ForEach(MouseInputSource.allCases, id: \.rawValue) { source in
+                ForEach(MouseInputSource.allCases.filter { source in
+                    #if os(tvOS)
+                    // Touchscreen virtual overlay is unavailable on tvOS
+                    return source != .touchscreen
+                    #else
+                    return true
+                    #endif
+                }, id: \.rawValue) { source in
                     Label(source.displayName, systemImage: source.symbolName)
                         .tag(source)
                 }
