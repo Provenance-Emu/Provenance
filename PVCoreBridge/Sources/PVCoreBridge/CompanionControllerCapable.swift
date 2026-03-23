@@ -12,6 +12,18 @@
 
 import Foundation
 
+// MARK: - Companion layout ID constants
+
+/// Well-known companion controller layout identifiers shared between core and UI modules.
+///
+/// Define layout IDs here (PVCoreBridge) so both emulator cores and PVUI can reference
+/// the same string without duplicating the literal or creating a cross-module dependency.
+public enum CompanionLayoutID {
+    /// Companion layout identifier for Atari 2600 trackball games (Centipede, Missile Command…).
+    /// `CompanionLayoutFactory` maps this to `TrackballLayout`.
+    public static let atari2600Trackball = "com.provenance.atari2600.trackball"
+}
+
 // MARK: - Companion button bitmask constants
 
 /// Well-known button IDs used by the Companion Controller system.
@@ -32,7 +44,9 @@ public enum CompanionCoreButton: UInt32 {
 /// The emulator view controller (PVUI tier) is responsible for:
 ///   1. Detecting that the active core adopts this protocol.
 ///   2. Subscribing to `CompanionInputRouter`'s published state.
-///   3. Forwarding trackball delta and button events to the core each frame.
+///   3. Forwarding trackball delta and button events to the core whenever the
+///      published input state changes (e.g. on gesture updates and button
+///      edge changes).
 ///
 /// ## Layout selection
 ///

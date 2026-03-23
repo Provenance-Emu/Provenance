@@ -180,14 +180,26 @@ extension PVEmulatorViewController {
             .store(in: &cancellables)
 
         // Subscribe to axis changes (trackball deltas) and forward to the core.
+        //
+        // TrackballLayout sends .axisChanged(.leftX, …) and .axisChanged(.leftY, …) as two
+        // separate calls, so $axisValues fires twice per gesture update.  Subscribing to
+        // each axis independently (with removeDuplicates) ensures only the changed axis
+        // triggers a core call, preventing dx from being double-applied.
         session.inputRouter.$axisValues
-            .sink { [weak self] axisMap in
-                guard self != nil else { return }
-                let dx = axisMap[.leftX] ?? 0
-                let dy = axisMap[.leftY] ?? 0
-                if dx != 0 || dy != 0 {
-                    companionCore.companionTrackballMoved(deltaX: dx, deltaY: dy)
-                }
+            .map { $0[.leftX] ?? 0 }
+            .removeDuplicates()
+            .sink { [weak self] dx in
+                guard self != nil, dx != 0 else { return }
+                companionCore.companionTrackballMoved(deltaX: dx, deltaY: 0)
+            }
+            .store(in: &cancellables)
+
+        session.inputRouter.$axisValues
+            .map { $0[.leftY] ?? 0 }
+            .removeDuplicates()
+            .sink { [weak self] dy in
+                guard self != nil, dy != 0 else { return }
+                companionCore.companionTrackballMoved(deltaX: 0, deltaY: dy)
             }
             .store(in: &cancellables)
 

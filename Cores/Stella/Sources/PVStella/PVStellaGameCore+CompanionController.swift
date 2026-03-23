@@ -28,11 +28,6 @@ import PVCoreBridge
 import PVSystems
 import PVStellaBridge
 
-// MARK: - Layout ID constant
-
-/// Companion layout identifier used for Atari 2600 trackball games.
-/// `CompanionLayoutFactory` maps this string to `TrackballLayout`.
-private let kAtari2600TrackballLayoutID = "com.provenance.atari2600.trackball"
 
 // MARK: - CompanionControllerCapable
 
@@ -46,7 +41,7 @@ extension PVStellaGameCore: CompanionControllerCapable {
     /// Detection uses `TrackballGameRegistry` (MD5 first, then title keywords).
     public var preferredCompanionLayoutID: String? {
         guard isTrackballGame else { return nil }
-        return kAtari2600TrackballLayoutID
+        return CompanionLayoutID.atari2600Trackball
     }
 
     /// `true` when the currently loaded ROM is a known trackball title.
