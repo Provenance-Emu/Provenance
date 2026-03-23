@@ -167,6 +167,10 @@ public final class MouseGameRegistry: @unchecked Sendable {
             "typing of the dead",    // Typing of the Dead — keyboard + mouse required
             "planet ring",           // Planet Ring — party game with mouse mini-games
             "floigan brothers",      // Floigan Brothers Episode One — mouse pointer interactions
+            "industrial spy",        // Industrial Spy: Operation Espionage
+            "dreamcast browser",     // Various Dreamcast web browser discs
+            "web browser",           // Sega's Web Browser for Dreamcast
+            "dream passport",        // Dream Passport internet browser series
         ],
         .PSX: [
             "point blank",     // Point Blank / Gun Bullet series

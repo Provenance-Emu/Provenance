@@ -288,4 +288,43 @@ final class MouseGameRegistryTests: XCTestCase {
             MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Sonic Adventure 2")
         )
     }
+
+    func testDreamcastIndustrialSpyDetectedByTitle() {
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Industrial Spy: Operation Espionage")
+        )
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "INDUSTRIAL SPY")
+        )
+    }
+
+    func testDreamcastDreamPassportDetectedByTitle() {
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Dream Passport 3")
+        )
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Dream Passport (Japan)")
+        )
+    }
+
+    func testDreamcastWebBrowserDetectedByTitle() {
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Web Browser 2.0 for Dreamcast")
+        )
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Dreamcast Browser (Japan)")
+        )
+    }
+
+    func testDreamcastPlanetRingDetectedByTitle() {
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Planet Ring")
+        )
+    }
+
+    func testDreamcastFloiganBrothersDetectedByTitle() {
+        XCTAssertTrue(
+            MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Floigan Brothers")
+        )
+    }
 }
