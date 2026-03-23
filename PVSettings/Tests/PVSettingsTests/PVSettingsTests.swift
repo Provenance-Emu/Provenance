@@ -975,6 +975,11 @@ struct MouseInputSourceTests {
         #expect(MouseInputSource.auto == .auto)
         #expect(MouseInputSource.auto != .gyro)
     }
+
+    @Test("Invalid rawValue returns nil")
+    func invalidRawValueReturnsNil() {
+        #expect(MouseInputSource(rawValue: "nonexistent") == nil)
+    }
 }
 
 // MARK: - Mouse Defaults Keys Tests
@@ -1200,64 +1205,9 @@ struct GyroMouseDefaultsTests {
     }
 }
 
-// MARK: - MouseInputSource Tests
-
-@Suite("MouseInputSource")
-struct MouseInputSourceTests {
-
-    @Test("All cases have non-empty displayName")
-    func allCasesHaveDisplayName() {
-        for source in MouseInputSource.allCases {
-            #expect(!source.displayName.isEmpty)
-        }
-    }
-
-    @Test("All cases have non-empty subtitle")
-    func allCasesHaveSubtitle() {
-        for source in MouseInputSource.allCases {
-            #expect(!source.subtitle.isEmpty)
-        }
-    }
-
-    @Test("All cases have non-empty symbolName")
-    func allCasesHaveSymbolName() {
-        for source in MouseInputSource.allCases {
-            #expect(!source.symbolName.isEmpty)
-        }
-    }
-
-    @Test("RawValue round-trip for all cases")
-    func rawValueRoundTrip() {
-        for source in MouseInputSource.allCases {
-            let reconstructed = MouseInputSource(rawValue: source.rawValue)
-            #expect(reconstructed == source)
-        }
-    }
-
-    @Test("auto case raw value is 'auto'")
-    func autoRawValue() {
-        #expect(MouseInputSource.auto.rawValue == "auto")
-    }
-
-    @Test("physicalMouse case raw value is 'physicalMouse'")
-    func physicalMouseRawValue() {
-        #expect(MouseInputSource.physicalMouse.rawValue == "physicalMouse")
-    }
-
-    @Test("CaseIterable count is 5")
-    func caseIterableCount() {
-        #expect(MouseInputSource.allCases.count == 5)
-    }
-
-    @Test("Invalid rawValue returns nil")
-    func invalidRawValueReturnsNil() {
-        #expect(MouseInputSource(rawValue: "nonexistent") == nil)
-    }
-}
-
 // MARK: - Mouse Input Defaults Keys Tests
 
-@Suite("Mouse Input Defaults Keys")
+@Suite(.serialized, "Mouse Input Defaults Keys")
 struct MouseInputDefaultsTests {
 
     @Test("mouseInputSource default is .auto")
