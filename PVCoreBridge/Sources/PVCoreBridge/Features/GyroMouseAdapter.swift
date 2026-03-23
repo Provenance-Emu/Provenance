@@ -8,8 +8,8 @@
 //  Drives a ``MouseResponder`` from gyroscope rotation-rate input.
 //
 //  Sources:
-//  - GCController.current?.motion?.rotationRate  (DualSense, Switch Pro)
-//  - CMMotionManager.deviceMotion.rotationRate   (iPhone/iPad IMU fallback)
+//  - GCController.controllers().first(where:)?.motion?.rotationRate  (DualSense, Switch Pro)
+//  - CMMotionManager.deviceMotion.rotationRate                        (iPhone/iPad IMU fallback)
 //
 //  The adapter accumulates rotationRate.x / .y (rad/s) into a virtual cursor
 //  position in [0,1]×[0,1], applies a configurable dead zone and low-pass
@@ -24,6 +24,7 @@
 //    adapter.detach()
 //
 
+import CoreGraphics
 import Foundation
 import PVLogging
 
@@ -51,9 +52,10 @@ import CoreMotion
 /// core starts, ``detach()`` when it stops.
 ///
 /// - Thread safety: Public API is main-thread-confined. Motion callbacks hop
-///   to `DispatchQueue.main` before mutating state. `@unchecked Sendable`
-///   matches the pattern used by ``GCMouseLightGunDriver``.
-@objc public final class GyroMouseAdapter: NSObject, @unchecked Sendable {
+///   to `DispatchQueue.main` before mutating state. `@MainActor` enforces
+///   this at the type-system level; matches the pattern used by ``GCMouseLightGunDriver``.
+@MainActor
+@objc public final class GyroMouseAdapter: NSObject {
 
     // MARK: - Configuration
 
@@ -93,6 +95,7 @@ import CoreMotion
 #if canImport(GameController)
     private var controllerConnectObserver: NSObjectProtocol?
     private var controllerDisconnectObserver: NSObjectProtocol?
+    private weak var hookedController: GCController?
 #endif
 
     // MARK: - CoreMotion
@@ -103,6 +106,9 @@ import CoreMotion
 
     /// Whether the device IMU is currently providing input.
     private var imuActive: Bool = false
+
+    /// Timestamp of the last `_applyRotation` call, used to compute actual dt.
+    private var lastCallbackTime: TimeInterval = 0
 
     // MARK: - Lifecycle
 
@@ -121,11 +127,12 @@ import CoreMotion
     /// no events (guarded at call site for clarity, but attach is unconditional).
     @objc public func attach(to core: AnyObject & MouseResponder) {
         detach()
-        responder = core
-        cursorX   = 0.5
-        cursorY   = 0.5
-        filteredX = 0.0
-        filteredY = 0.0
+        responder        = core
+        cursorX          = 0.5
+        cursorY          = 0.5
+        filteredX        = 0.0
+        filteredY        = 0.0
+        lastCallbackTime = 0
         _startInput()
     }
 
@@ -202,9 +209,10 @@ import CoreMotion
 
     private func _hookCurrentController() {
         guard inputSource != .deviceIMU else { return }
-        guard let controller = GCController.current,
+        guard let controller = GCController.controllers().first(where: { $0.motion != nil }),
               let motion = controller.motion else { return }
 
+        hookedController = controller
         motion.valueChangedHandler = { [weak self] motionData in
             let rx = motionData.rotationRate.x
             let ry = motionData.rotationRate.y
@@ -216,7 +224,8 @@ import CoreMotion
     }
 
     private func _unhookCurrentController() {
-        GCController.current?.motion?.valueChangedHandler = nil
+        hookedController?.motion?.valueChangedHandler = nil
+        hookedController = nil
     }
 
 #endif // canImport(GameController)
@@ -231,7 +240,7 @@ import CoreMotion
         if inputSource == .deviceIMU { return true }
         // .auto: use IMU only when no controller with motion support is available
 #if canImport(GameController)
-        if GCController.current?.motion != nil { return false }
+        if GCController.controllers().contains(where: { $0.motion != nil }) { return false }
 #endif
         return true
     }
@@ -285,8 +294,17 @@ import CoreMotion
         filteredX = alpha * inX + (1.0 - alpha) * filteredX
         filteredY = alpha * inY + (1.0 - alpha) * filteredY
 
-        // Sensitivity + frame-rate normalisation (target 60 Hz)
-        let dt    = 1.0 / 60.0
+        // Compute actual dt from elapsed time; clamp to a sane range to avoid
+        // large jumps on first call or after long pauses.
+        let now = Date.timeIntervalSinceReferenceDate
+        let dt: Double
+        if lastCallbackTime == 0 {
+            dt = 1.0 / 60.0
+        } else {
+            dt = min(max(now - lastCallbackTime, 1.0 / 240.0), 1.0 / 15.0)
+        }
+        lastCallbackTime = now
+
         let scale = sensitivity * dt
 
         // Accumulate cursor (pitch = vertical, yaw = horizontal)
