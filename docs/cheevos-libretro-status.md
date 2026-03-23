@@ -264,9 +264,9 @@ public var achievementsActive: Bool {
 
 This means the PVLibrary / SwiftUI layer cannot query whether an active cheevos session is running.
 
-**Recommendation**: Implement the C-to-Swift bridge for `rcheevos_is_active()` or expose a flag set by the runloop when achievements activate.
+**Recommendation**: Implement the C-to-Swift bridge that reads rcheevos state (e.g. `rcheevos_hardcore_active`, the `cheevos_state` struct, or a `cheevos_get_active()` helper) and exposes it as a Swift `Bool` property, or set a flag from the runloop when achievements activate.
 
-### Finding 3 — Per-frame Callback Not Wired (Comment in PVLibRetroCore.m)
+### Finding 3 — Per-frame Callback Not Wired (TODO in PVRetroArchCoreCore+RetroAchievements.swift)
 
 **Severity**: Low (RetroArch handles internally)
 
