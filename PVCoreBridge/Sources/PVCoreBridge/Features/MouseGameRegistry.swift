@@ -164,8 +164,9 @@ public final class MouseGameRegistry: @unchecked Sendable {
             "typing of the dead",
         ],
         .Dreamcast: [
-            "typing of the dead",
-            "planet ring",
+            "typing of the dead",    // Typing of the Dead — keyboard + mouse required
+            "planet ring",           // Planet Ring — party game with mouse mini-games
+            "floigan brothers",      // Floigan Brothers Episode One — mouse pointer interactions
         ],
         .PSX: [
             "point blank",     // Point Blank / Gun Bullet series
