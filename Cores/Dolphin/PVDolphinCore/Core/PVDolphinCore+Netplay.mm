@@ -145,17 +145,21 @@ static const char kClientBoxKey = 0;
 
 - (PVDolphinNetplayStatus)dolphinNetplayStatus {
 #if HAVE_DOLPHIN_NETPLAY
-    // A live client connection takes precedence.
-    _PVDolphinNetplayClientBox *cb =
-        objc_getAssociatedObject(self, &kClientBoxKey);
-    if (cb != nil && cb->client != nullptr && cb->client->IsConnected()) {
-        return PVDolphinNetplayStatusConnected;
-    }
-    // Fall back to hosting state.
-    _PVDolphinNetplayServerBox *sb =
-        objc_getAssociatedObject(self, &kServerBoxKey);
-    if (sb != nil && sb->server != nullptr) {
-        return PVDolphinNetplayStatusHosting;
+    // @synchronized serializes reads of the associated client/server boxes
+    // against stopNetplay(), which resets them under the same lock.
+    @synchronized (self) {
+        // A live client connection takes precedence.
+        _PVDolphinNetplayClientBox *cb =
+            objc_getAssociatedObject(self, &kClientBoxKey);
+        if (cb != nil && cb->client != nullptr && cb->client->IsConnected()) {
+            return PVDolphinNetplayStatusConnected;
+        }
+        // Fall back to hosting state.
+        _PVDolphinNetplayServerBox *sb =
+            objc_getAssociatedObject(self, &kServerBoxKey);
+        if (sb != nil && sb->server != nullptr) {
+            return PVDolphinNetplayStatusHosting;
+        }
     }
 #endif
     return PVDolphinNetplayStatusIdle;

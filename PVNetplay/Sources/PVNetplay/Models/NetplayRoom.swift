@@ -32,9 +32,12 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
     public let hostAddress: String
     /// Netplay port (RetroArch default: 55435)
     public let port: UInt16
-    /// Dolphin relay traversal code (non-nil when the host used STUN relay).
-    /// Separate from `hostAddress` so consumers can distinguish relay sessions
-    /// from direct-IP sessions and handle them appropriately.
+    /// Dolphin relay traversal code (non-nil when the host used STUN/traversal relay).
+    ///
+    /// When this is non-nil, `hostAddress` is set to the same traversal code value
+    /// so that existing consumers that only read `hostAddress` can still connect via
+    /// the relay.  Consumers that want to distinguish relay sessions from direct-IP
+    /// sessions should check `traversalCode != nil` (or equivalently `isLAN == false`).
     public let traversalCode: String?
     /// Whether the room is password-protected
     public let isPasswordProtected: Bool
