@@ -43,7 +43,11 @@ private extension Notification.Name {
 /// to the utility background queue used by each event handler.
 ///
 /// `@unchecked Sendable` is required because `[NSObjectProtocol]` is not `Sendable`.
-/// The only mutable shared state is `observations`, which is fully guarded by `lock`.
+/// Mutable state inventory:
+/// - `observations` — guarded by `lock`; written only in `start()`/`stop()`.
+/// - `realmConfiguration` — set once before `start()` (test injection only); never
+///    written after observers are registered, so no additional locking is required.
+/// - `_testOn*` closures — set once before `start()` (tests only); same invariant.
 public final class PVWebFileEventObserver: @unchecked Sendable {
 
     public static let shared = PVWebFileEventObserver()
@@ -55,6 +59,17 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     /// Defaults to the process-default configuration; override in tests
     /// to supply an in-memory configuration.
     internal var realmConfiguration: Realm.Configuration = .defaultConfiguration
+
+    // MARK: Test instrumentation
+    // These closures are always `nil` in production. Tests set them before `start()`
+    // to verify handler delivery (e.g. with XCTestExpectation(isInverted:)).
+    // Because they are set before `start()` is called, no additional locking is
+    // needed — they are read-only from the perspective of concurrent event handlers.
+
+    /// Called at the start of `handleFileDeleted` with the full path of the deleted file.
+    internal var _testOnDeleteHandlerInvoked: ((String) -> Void)?
+    /// Called at the start of `handleFileMoved` with (fromPath, toPath).
+    internal var _testOnMoveHandlerInvoked: ((String, String) -> Void)?
 
     internal init() {}
 
@@ -103,6 +118,7 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     // MARK: - Delete handler
 
     private func handleFileDeleted(at fullPath: String) {
+        _testOnDeleteHandlerInvoked?(fullPath)
         let url = URL(fileURLWithPath: fullPath)
         let filename = url.lastPathComponent
 
@@ -142,7 +158,12 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                             }
                             ILOG("PVWebFileEventObserver: marked '\(game.title)' offline (CloudKit record retained)")
                         } else {
-                            // No remote copy — delete related objects then the game.
+                            // No remote copy — delete related Realm objects then the game.
+                            // NOTE: We do NOT call RomDatabase.delete(game:) here because
+                            // that method also tries to remove the physical ROM file from disk.
+                            // The file is already gone (we're reacting to its deletion), so
+                            // calling it would log a spurious ELOG and attempt unneeded FS work.
+                            // We replicate the Realm-side cleanup manually instead.
                             ILOG("PVWebFileEventObserver: hard-deleting '\(game.title)' (no CloudKit record)")
                             let saveStatesToDelete = Array(game.saveStates)
                             let cheatsToDelete = Array(game.cheats)
@@ -155,6 +176,10 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                                 realm.delete(screenShotsToDelete)
                                 realm.delete(game)
                             }
+                            // Remove from Spotlight so the game no longer appears in system search.
+#if canImport(CoreSpotlight) && !os(tvOS)
+                            RomDatabase.sharedInstance.deleteFromSpotlight(game: game)
+#endif
                             // Invalidate the in-memory games cache so stale entries
                             // (e.g. gamesCache[romPath]) don't survive the hard-delete.
                             RomDatabase.reloadGamesCache()
@@ -205,6 +230,7 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     // MARK: - Move handler
 
     private func handleFileMoved(from fromPath: String, to toPath: String) {
+        _testOnMoveHandlerInvoked?(fromPath, toPath)
         ILOG("PVWebFileEventObserver: file moved — \(fromPath) → \(toPath)")
 
         let config = realmConfiguration

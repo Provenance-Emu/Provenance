@@ -46,16 +46,25 @@ final class PVWebFileEventObserverTests: XCTestCase {
     }
 
     func testStopUnregistersObservers() {
+        // Use an inverted expectation: if the handler fires after stop(), the test fails.
+        // This verifies that NotificationCenter tokens are actually removed by stop(),
+        // not just that "no crash" occurs (which would pass even with a still-active observer).
+        let handlerMustNotFire = expectation(description: "delete handler must NOT fire after stop")
+        handlerMustNotFire.isInverted = true
+
         observer.start()
+        observer._testOnDeleteHandlerInvoked = { _ in handlerMustNotFire.fulfill() }
         observer.stop()
-        // After stop, posting a file-deleted notification must not invoke the handler.
-        // We verify this by checking that no crash occurs (the handler would error on
-        // Realm access if it were still subscribed).
+
+        // After stop(), the NotificationCenter token has been removed.
+        // Posting the notification now must not invoke the handler.
         NotificationCenter.default.post(
             name: Notification.Name("PVWebServerFileDeletedNotification"),
             object: nil,
             userInfo: ["filePath": "/some/nonexistent/path.rom"]
         )
+        // Give any (erroneously still-registered) async handler time to fire.
+        wait(for: [handlerMustNotFire], timeout: 0.5)
     }
 
     // MARK: - CloudKit record-presence logic
