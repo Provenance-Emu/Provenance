@@ -64,7 +64,7 @@ public enum CompanionButtonBits {
 }
 
 #if DEBUG
-private extension CompanionButtonBits {
+extension CompanionButtonBits {
     /// Debug-time validation to ensure the companion button bitmask remains
     /// unique and non-overlapping. This mirrors the expectations of the DSU
     /// protocol and PVUIBase's `CompanionButton` mapping.

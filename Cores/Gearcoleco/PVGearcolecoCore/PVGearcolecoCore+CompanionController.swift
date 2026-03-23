@@ -52,7 +52,7 @@ extension PVGearcolecoCore: CompanionControllerCapable {
     /// regardless of how many state snapshots the router sends.
     @MainActor
     public func companionButtonsChanged(
-        held: UInt32,
+        held _: UInt32,
         pressed: UInt32,
         released: UInt32,
         forPlayer player: Int
