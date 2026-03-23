@@ -61,6 +61,20 @@ public enum CompanionButtonBits {
     public static let num9:      UInt32 = 0x0200_0000
     public static let numStar:   UInt32 = 0x0400_0000   // * key
     public static let numHash:   UInt32 = 0x0800_0000   // # key
+
+    /// Canonical ordered list of every defined bit constant.
+    ///
+    /// Used by the `#if DEBUG` validation block and unit tests so that both
+    /// always check the same complete set — keeping them in sync when new
+    /// buttons are added.
+    static let allBitValues: [UInt32] = [
+        south, east, west, north,
+        l1, r1, l2, r2,
+        select, start, l3, r3,
+        dpadUp, dpadDown, dpadLeft, dpadRight,
+        num0, num1, num2, num3, num4, num5,
+        num6, num7, num8, num9, numStar, numHash,
+    ]
 }
 
 #if DEBUG
@@ -69,14 +83,7 @@ extension CompanionButtonBits {
     /// unique and non-overlapping. This mirrors the expectations of the DSU
     /// protocol and PVUIBase's `CompanionButton` mapping.
     static let _bitValidation: Void = {
-        let values: [UInt32] = [
-            south, east, west, north,
-            l1, r1, l2, r2,
-            select, start, l3, r3,
-            dpadUp, dpadDown, dpadLeft, dpadRight,
-            num0, num1, num2, num3, num4, num5,
-            num6, num7, num8, num9, numStar, numHash
-        ]
+        let values = allBitValues
 
         // All values must be unique.
         precondition(
@@ -85,9 +92,11 @@ extension CompanionButtonBits {
         )
 
         // Each value must be a single-bit flag (non-zero power of two).
+        // Use &- (wrapping subtraction) so a hypothetical zero value reports
+        // a clean precondition failure instead of trapping at runtime.
         for value in values {
             precondition(
-                value != 0 && (value & (value - 1)) == 0,
+                value != 0 && (value & (value &- 1)) == 0,
                 "CompanionButtonBits: value \(String(value, radix: 16)) is not a single-bit flag."
             )
         }

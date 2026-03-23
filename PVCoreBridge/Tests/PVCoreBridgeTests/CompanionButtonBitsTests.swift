@@ -12,39 +12,9 @@ import XCTest
 
 final class CompanionButtonBitsTests: XCTestCase {
 
-    private let allBits: [UInt32] = [
-        CompanionButtonBits.south,
-        CompanionButtonBits.east,
-        CompanionButtonBits.west,
-        CompanionButtonBits.north,
-        CompanionButtonBits.l1,
-        CompanionButtonBits.r1,
-        CompanionButtonBits.l2,
-        CompanionButtonBits.r2,
-        CompanionButtonBits.select,
-        CompanionButtonBits.start,
-        CompanionButtonBits.l3,
-        CompanionButtonBits.r3,
-        CompanionButtonBits.dpadUp,
-        CompanionButtonBits.dpadDown,
-        CompanionButtonBits.dpadLeft,
-        CompanionButtonBits.dpadRight,
-        CompanionButtonBits.num0,
-        CompanionButtonBits.num1,
-        CompanionButtonBits.num2,
-        CompanionButtonBits.num3,
-        CompanionButtonBits.num4,
-        CompanionButtonBits.num5,
-        CompanionButtonBits.num6,
-        CompanionButtonBits.num7,
-        CompanionButtonBits.num8,
-        CompanionButtonBits.num9,
-        CompanionButtonBits.numStar,
-        CompanionButtonBits.numHash,
-    ]
-
     /// All bit constants must be distinct — no two buttons may share a bit position.
     func testAllBitsAreUnique() {
+        let allBits = CompanionButtonBits.allBitValues
         XCTAssertEqual(
             Set(allBits).count, allBits.count,
             "CompanionButtonBits contains duplicate values — DSU on-the-wire mapping will be broken"
@@ -52,17 +22,23 @@ final class CompanionButtonBitsTests: XCTestCase {
     }
 
     /// Each constant must be a non-zero power of two (exactly one bit set).
+    ///
+    /// Uses wrapping subtraction (`&-`) so a hypothetical zero value produces
+    /// a clean test failure instead of trapping on UInt32 underflow.
     func testAllBitsAreSingleBitFlags() {
-        for value in allBits {
+        for value in CompanionButtonBits.allBitValues {
             XCTAssertNotEqual(value, 0, "CompanionButtonBits constant must not be zero")
             XCTAssertEqual(
-                value & (value - 1), 0,
+                value & (value &- 1), 0,
                 "CompanionButtonBits value 0x\(String(value, radix: 16)) is not a single-bit flag"
             )
         }
     }
 
     /// Smoke-test the debug-build validation hook (available in DEBUG builds only).
+    ///
+    /// This relies on CompanionButtonBits' own canonical validation logic, which
+    /// checks that all button bit constants are unique and single-bit flags.
     func testDebugValidationHook() {
         // validateBitmaskLayoutForDebugging() runs the same precondition checks
         // via the lazy _bitValidation stored property — calling it from here
