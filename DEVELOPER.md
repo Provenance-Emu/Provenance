@@ -112,17 +112,19 @@ Provenance uses git submodules for emulator cores. Each core submodule is pinned
 When a Provenance-Emu fork submodule has a `branch = <name>` entry and you want to advance it:
 
 ```bash
-# Sync just that submodule to the remote branch HEAD
-git submodule update --remote --merge Cores/<CoreName>/<submodule-dir>
+# Sync just that submodule to the remote branch HEAD.
+# Do NOT use --merge here: submodules are usually in detached-HEAD state after
+# a normal checkout and --merge will fail or produce unexpected results.
+git submodule update --remote Cores/<CoreName>/<submodule-dir>
 
 # Review the new commit, then stage and commit
 git add Cores/<CoreName>/<submodule-dir>
-git commit -m "chore(<corename>): update submodule to <short-sha>"
+git commit -m "chore(<CoreName>): update submodule to <short-sha>"
 ```
 
 Record the resulting commit hash in the changelog entry for traceability.
 
-> **Note:** `git submodule update` (without `--remote`) always checks out the pinned gitlink commit, ignoring `branch`. Only `--remote` advances to the branch tip.
+> **Note:** `git submodule update` (without `--remote`) always checks out the pinned gitlink commit, ignoring `branch`. Only `--remote` advances to the branch tip. Submodules are in a detached-HEAD state after a normal checkout; avoid `--merge`/`--rebase` unless you have already checked out a local branch inside the submodule.
 
 ## Building
 
