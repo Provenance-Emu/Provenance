@@ -1126,6 +1126,15 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
 - (void)setViewType:(apple_view_type_t)vt
 {
+    // This method creates UIViews and modifies the view hierarchy — must run on main thread.
+    // RetroArch's threaded video driver calls metal_init from video_thread_loop (background thread).
+    if (!NSThread.isMainThread) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setViewType:vt];
+        });
+        return;
+    }
+
     if (vt == _vt)
         return;
 
