@@ -1,17 +1,20 @@
 // PVEmulatorViewController+CompanionController.swift
 // PVUI
 //
-// Wires the CompanionControllerCapable protocol into PVEmulatorViewController:
+// Wires the CompanionControllerCapable and CompanionKeyboardMouseCapable protocols
+// into PVEmulatorViewController:
 //  • "Use as Companion Controller" entry in the pause menu
 //  • Session lifecycle: present, wire delegate, tear down on dismiss
 //  • System ID propagation to CompanionControllerSession
 //  • Per-game layout override via preferredCompanionLayoutID
+//  • Keyboard and mouse event subscription for cores that support them
 //
 // iOS/macCatalyst only — no companion overlay is shown on tvOS or visionOS.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
-#if canImport(UIKit) && !os(tvOS)
+#if canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))
+import Combine
 import SwiftUI
 import PVCoreBridge
 import PVLogging
@@ -20,8 +23,9 @@ import UIKit
 // MARK: - Stored-property shim (associated object)
 
 private enum CompanionAssociatedKeys {
-    static var sessionKey: UInt8 = 0
-    static var bridgeKey:  UInt8 = 0
+    static var sessionKey:   UInt8 = 0
+    static var bridgeKey:    UInt8 = 0
+    static var kmCancelKey:  UInt8 = 0   // keyboard/mouse Combine subscription
 }
 
 @MainActor
@@ -46,7 +50,7 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Private bridge between the session's input router and the emulator core.
+    /// Private bridge between the session's input router and the emulator core (button/axis).
     private var _coreInputBridge: CoreCompanionBridge? {
         get {
             objc_getAssociatedObject(self, &CompanionAssociatedKeys.bridgeKey)
@@ -62,13 +66,31 @@ extension PVEmulatorViewController {
         }
     }
 
+    /// Combine subscription for the keyboard/mouse event stream.
+    private var _keyboardMouseCancellable: AnyCancellable? {
+        get {
+            objc_getAssociatedObject(self, &CompanionAssociatedKeys.kmCancelKey)
+                as? AnyCancellable
+        }
+        set {
+            objc_setAssociatedObject(
+                self,
+                &CompanionAssociatedKeys.kmCancelKey,
+                newValue,
+                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
+    }
+
     // MARK: - Present companion overlay
 
     /// Present the companion controller host view and wire the session to the core.
     ///
     /// Called from the pause menu when the user taps "Companion Controller".
     /// If the core does not conform to `CompanionControllerCapable`, the overlay is still
-    /// presented but input events will not be forwarded to the core.
+    /// presented but button/axis events will not be forwarded to the core.
+    /// If the core also conforms to `CompanionKeyboardMouseCapable`, keyboard and mouse
+    /// events from the companion layout are forwarded directly.
     func presentCompanionController() {
         // Tear down any existing session before creating a new one.
         tearDownCompanionSession()
@@ -79,7 +101,7 @@ extension PVEmulatorViewController {
         // Prefer game.systemIdentifier (always populated after ROM load) over the core property.
         session.activeSystemID = game?.systemIdentifier ?? core.systemIdentifier ?? ""
 
-        // Wire the core bridge if the core supports companion input.
+        // Wire the core bridge if the core supports companion button/axis input.
         if let capable = core as? CompanionControllerCapable {
             // Allow the core to override the layout for per-game peripherals
             // (e.g. trackball titles on Atari 2600 return CompanionLayoutID.atari2600Trackball).
@@ -91,7 +113,27 @@ extension PVEmulatorViewController {
             session.inputRouter.slotDelegate = bridge
             _coreInputBridge = bridge
         } else {
-            DLOG("[CompanionController] Core \(type(of: core)) does not conform to CompanionControllerCapable — events will not be forwarded")
+            DLOG("[CompanionController] Core \(type(of: core)) does not conform to CompanionControllerCapable — button/axis events will not be forwarded")
+        }
+
+        // Subscribe to keyboard/mouse events if the core supports them.
+        if let kmCapable = core as? CompanionKeyboardMouseCapable {
+            _keyboardMouseCancellable = session.inputRouter.keyboardMouseEvents
+                .receive(on: DispatchQueue.main)
+                .sink { [weak kmCapable] event in
+                    guard let kmCapable else { return }
+                    switch event {
+                    case .keyDown(let key):
+                        kmCapable.companionKeyDown(key)
+                    case .keyUp(let key):
+                        kmCapable.companionKeyUp(key)
+                    case .mouseMove(let delta):
+                        kmCapable.companionMouseMoved(delta: delta)
+                    case .mouseButton(let index, let isDown):
+                        kmCapable.companionMouseButton(index, isDown: isDown)
+                    }
+                }
+            ILOG("[CompanionController] Subscribed keyboard/mouse events for core \(type(of: core))")
         }
 
         companionSession = session
@@ -126,6 +168,7 @@ extension PVEmulatorViewController {
         session.disconnect()
         companionSession = nil
         _coreInputBridge = nil
+        _keyboardMouseCancellable = nil
         DLOG("[CompanionController] Session torn down")
     }
 }
@@ -225,4 +268,4 @@ private final class CoreCompanionBridge: CompanionSlotDelegate {
     }
 }
 
-#endif // canImport(UIKit) && !os(tvOS)
+#endif // canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))

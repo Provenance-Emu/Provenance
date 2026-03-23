@@ -6,12 +6,21 @@
 // adding a mouse trackpad area and common DOS shortcut buttons.
 //
 // Input routing:
-//   Keyboard keys → VirtualKeyboardDelegate → KeyboardResponder on the DOS core
-//   Mouse         → handled by the trackpad gesture (wired in emulator VC)
+//   Keyboard keys → VirtualKeyboardDelegate → CompanionKeyboardBridge
+//                 → CompanionInputRouter.sendKeyDown/sendKeyUp
+//                 → keyboardMouseEvents → PVEmulatorViewController
+//                 → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionKeyDown/Up)
+//   Mouse trackpad → DragGesture.onChanged → CompanionInputRouter.sendMouseMove
+//                  → keyboardMouseEvents → PVEmulatorViewController
+//                  → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionMouseMoved)
+//   Mouse buttons  → onLongPressGesture → CompanionInputRouter.sendMouseButton
+//                  → keyboardMouseEvents → PVEmulatorViewController
+//                  → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionMouseButton)
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 #if !os(tvOS)
+import CoreGraphics
 import GameController
 import SwiftUI
 import PVPrimitives
@@ -33,6 +42,9 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
     // MARK: - State
 
+    /// Bridges VirtualKeyboardDelegate callbacks → CompanionInputRouter keyboard events.
+    /// Stored as a @StateObject so it outlives the VirtualKeyboardViewModel's weak delegate ref.
+    @StateObject private var keyboardBridge: CompanionKeyboardBridge
     @StateObject private var keyboardVM: VirtualKeyboardViewModel
     @State private var mouseOffset: CGSize = .zero
     @State private var leftButtonDown = false
@@ -40,9 +52,12 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
     // MARK: - Init
 
-    public init(router: CompanionInputRouter, keyboardDelegate: VirtualKeyboardDelegate? = nil) {
+    public init(router: CompanionInputRouter) {
+        let bridge = CompanionKeyboardBridge(inputRouter: router)
+        let vm = VirtualKeyboardViewModel(delegate: bridge, layout: .full, startExpanded: true)
+        self._keyboardBridge = StateObject(wrappedValue: bridge)
+        self._keyboardVM = StateObject(wrappedValue: vm)
         self.inputRouter = router
-        self._keyboardVM = StateObject(wrappedValue: VirtualKeyboardViewModel(delegate: keyboardDelegate, layout: .full, startExpanded: true))
     }
 
     // MARK: - Body
@@ -91,19 +106,19 @@ public struct DOSKeyboardLayout: CompanionLayout {
                         // Left mouse button
                         mouseButton("L", isDown: leftButtonDown) {
                             leftButtonDown = true
-                            inputRouter.send(.buttonDown(.south))
+                            inputRouter.sendMouseButton(0, isDown: true)
                         } onRelease: {
                             leftButtonDown = false
-                            inputRouter.send(.buttonUp(.south))
+                            inputRouter.sendMouseButton(0, isDown: false)
                         }
                         Spacer()
                         // Right mouse button
                         mouseButton("R", isDown: rightButtonDown) {
                             rightButtonDown = true
-                            inputRouter.send(.buttonDown(.east))
+                            inputRouter.sendMouseButton(1, isDown: true)
                         } onRelease: {
                             rightButtonDown = false
-                            inputRouter.send(.buttonUp(.east))
+                            inputRouter.sendMouseButton(1, isDown: false)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -118,17 +133,10 @@ public struct DOSKeyboardLayout: CompanionLayout {
                             height: value.translation.height - mouseOffset.height
                         )
                         mouseOffset = value.translation
-                        // Send normalised relative mouse movement via left axis (clamped to -1…1)
-                        let scale: CGFloat = 0.01
-                        let clampedX = max(-1.0, min(1.0, Float(delta.width  * scale)))
-                        let clampedY = max(-1.0, min(1.0, Float(delta.height * scale)))
-                        inputRouter.send(.axisChanged(.leftX, clampedX))
-                        inputRouter.send(.axisChanged(.leftY, clampedY))
+                        inputRouter.sendMouseMove(CGPoint(x: delta.width, y: delta.height))
                     }
                     .onEnded { _ in
-                        mouseOffset     = .zero
-                        inputRouter.send(.axisChanged(.leftX, 0))
-                        inputRouter.send(.axisChanged(.leftY, 0))
+                        mouseOffset = .zero
                     }
             )
         }
@@ -224,7 +232,7 @@ public struct DOSKeyboardLayout: CompanionLayout {
 
 #if DEBUG
 #Preview {
-    DOSKeyboardLayout(router: CompanionInputRouter())
+    DOSKeyboardLayout(router: .init())
 }
 #endif
 
