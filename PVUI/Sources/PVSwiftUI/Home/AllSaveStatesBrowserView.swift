@@ -164,7 +164,7 @@ public struct AllSaveStatesBrowserView: View {
                 // "no favourites" when they simply haven't been loaded yet.
                 Task { await loadItems() }
             }
-            #if canImport(UIKit) && !os(tvOS)
+            #if os(iOS)
             .sheet(isPresented: Binding<Bool>(
                 get: { exportShareURL != nil },
                 set: { presenting in
@@ -294,7 +294,7 @@ public struct AllSaveStatesBrowserView: View {
                     .padding(.vertical, 3)
                     .background(Capsule().fill(Color.secondary.opacity(0.15)))
 
-                #if canImport(UIKit) && !os(tvOS)
+                #if os(iOS)
                 Button {
                     exportGame(gameId: group.key)
                 } label: {
@@ -439,7 +439,7 @@ public struct AllSaveStatesBrowserView: View {
 
     private func manageGame(gameId: String) {
         Task { @MainActor in
-            // gameId is PVGame.id (UUID), not the Realm primary key (md5Hash) — use filter.
+            // gameId is PVGame.id (UUID string), not the Realm primary key (md5Hash) — use filter.
             guard let game = RomDatabase.sharedInstance.realm
                     .objects(PVGame.self)
                     .filter("id == %@", gameId)
@@ -451,10 +451,10 @@ public struct AllSaveStatesBrowserView: View {
         }
     }
 
-    #if canImport(UIKit) && !os(tvOS)
+    #if os(iOS)
     /// Exports all saves for the given game as a zip and presents the system share sheet.
     ///
-    /// `gameId` is `PVGame.id` (UUID), not the Realm primary key (`md5Hash`), so we use a
+    /// `gameId` is `PVGame.id` (UUID string), not the Realm primary key (`md5Hash`), so we use a
     /// filter predicate rather than `forPrimaryKey`.
     private func exportGame(gameId: String) {
         guard exportingGameId == nil else { return }

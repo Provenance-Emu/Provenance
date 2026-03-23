@@ -23,12 +23,10 @@ import PVFileSystem
 // MARK: - Accepted types
 
 /// UTTypes accepted by the save-state drop target.
-/// Covers our zip bundles, generic binary data (for `.sav`/`.state` files the OS maps to UTType.data),
-/// and explicit file URLs dragged from Files.app.
+/// Covers our zip bundles and explicit file URLs dragged from Files.app (e.g. `.sav`/`.srm` files).
 private let saveDropAcceptedTypes: [UTType] = [
     .zip,
     .fileURL,
-    .data,
 ]
 
 // MARK: - ViewModifier
@@ -97,18 +95,6 @@ public struct SaveStateDropTargetModifier: ViewModifier {
                     }
                 }
                 handled = true
-            } else if provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) {
-                provider.loadFileRepresentation(forTypeIdentifier: UTType.data.identifier) { url, error in
-                    if let error { ELOG("SaveStateDropDelegate: loadFileRepresentation(data) error: \(error)"); return }
-                    guard let url else { return }
-                    do {
-                        let stable = try Self.stableCopy(of: url)
-                        processDroppedFile(stable)
-                    } catch {
-                        ELOG("SaveStateDropDelegate: stableCopy(data) error: \(error)")
-                    }
-                }
-                handled = true
             }
         }
 
@@ -133,8 +119,10 @@ public struct SaveStateDropTargetModifier: ViewModifier {
 
     private func importBundle(zipURL: URL) {
         Task { @MainActor in
+            let tempDir = zipURL.deletingLastPathComponent()
             guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId) else {
                 ELOG("SaveStateDropDelegate: Game not found for id: \(gameId)")
+                try? FileManager.default.removeItem(at: tempDir)
                 return
             }
             do {
@@ -143,6 +131,7 @@ public struct SaveStateDropTargetModifier: ViewModifier {
             } catch {
                 ELOG("SaveStateDropDelegate: Bundle import failed: \(error.localizedDescription)")
             }
+            try? FileManager.default.removeItem(at: tempDir)
         }
     }
 
@@ -150,6 +139,7 @@ public struct SaveStateDropTargetModifier: ViewModifier {
 
     private func importBatterySave(fileURL: URL) {
         Task {
+            let tempDir = fileURL.deletingLastPathComponent()
             guard let romURL = await MainActor.run(body: {
                 RomDatabase.sharedInstance
                     .object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId)?
@@ -157,6 +147,7 @@ public struct SaveStateDropTargetModifier: ViewModifier {
                     .url
             }) else {
                 ELOG("SaveStateDropDelegate: Game \(gameId) has no ROM URL — cannot import battery save.")
+                try? FileManager.default.removeItem(at: tempDir)
                 return
             }
 
@@ -171,6 +162,7 @@ public struct SaveStateDropTargetModifier: ViewModifier {
             } catch {
                 ELOG("SaveStateDropDelegate: Failed to import battery save: \(error.localizedDescription)")
             }
+            try? FileManager.default.removeItem(at: tempDir)
         }
     }
 
