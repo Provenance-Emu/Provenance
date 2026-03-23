@@ -113,17 +113,24 @@ struct FavoritesWidgetView: View {
     private func gridView(columns: Int, rows: Int) -> some View {
         let total = columns * rows
         let games = paddedGames(count: total)
+        let spacing: CGFloat = 6
+        let padding: CGFloat = 10
 
-        return LazyVGrid(
-            columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: columns),
-            spacing: 8
-        ) {
-            ForEach(games) { game in
-                gameButton(game)
-                    .aspectRatio(1, contentMode: .fit)
+        return GeometryReader { geo in
+            let cellW = (geo.size.width  - 2 * padding - CGFloat(columns - 1) * spacing) / CGFloat(columns)
+            let cellH = (geo.size.height - 2 * padding - CGFloat(rows    - 1) * spacing) / CGFloat(rows)
+
+            LazyVGrid(
+                columns: Array(repeating: GridItem(.fixed(cellW), spacing: spacing), count: columns),
+                spacing: spacing
+            ) {
+                ForEach(games) { game in
+                    gameButton(game)
+                        .frame(width: cellW, height: cellH)
+                }
             }
+            .padding(padding)
         }
-        .padding(10)
     }
 
     // MARK: Tile

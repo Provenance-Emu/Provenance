@@ -23,22 +23,27 @@ struct GameArtworkView: View {
     }
 
     var body: some View {
-        Group {
-            if let data = artworkData, let uiImage = UIImage(data: data) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } else {
-                placeholderView
+        // Color.clear is fully flexible — it fills the parent's proposed size exactly.
+        // The overlay renders the artwork ON TOP using the same bounding rect.
+        // .clipped() then cuts any scaledToFill overflow to that rect before
+        // clipShape rounds the corners.
+        Color.clear
+            .overlay {
+                if let data = artworkData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    placeholderView
+                }
             }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     }
 
     private var placeholderView: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(Color(.systemGray5))
+            Color(.systemGray5)
             Image(systemName: "gamecontroller.fill")
                 .foregroundStyle(.secondary)
                 .font(.title2)
