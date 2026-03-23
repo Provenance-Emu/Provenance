@@ -33,7 +33,7 @@ private enum AssociatedKeys {
 /// `startAchievementsIfNeeded` Task before it publishes `achievementSessionManager`.
 /// Without this guard, a Task that completes after `stopAchievements()` clears
 /// the manager would re-assign it, leaving an active session that is never stopped.
-private final class StartToken: NSObject {
+private final class StartToken: NSObject, @unchecked Sendable {
     var isCancelled = false
 }
 
