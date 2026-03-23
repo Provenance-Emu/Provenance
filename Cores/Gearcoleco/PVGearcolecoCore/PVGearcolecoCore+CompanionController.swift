@@ -50,7 +50,6 @@ extension PVGearcolecoCore: CompanionControllerCapable {
 
     /// Handles a companion controller input event by forwarding button
     /// presses and releases to the ColecoVision button responder.
-    @MainActor
     public func handleCompanionInput(_ event: CompanionInputEvent, forPlayer player: Int) {
         switch event {
         case .buttonDown(let btn):
