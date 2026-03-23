@@ -45,7 +45,7 @@ private final class MelonDSNetplayContext {
 }
 
 private enum MelonDSNetplayContextKey {
-    nonisolated(unsafe) static var key: UInt8 = 0
+    static var key: UInt8 = 0
 }
 
 private extension PVMelonDSCore {
@@ -58,7 +58,7 @@ private extension PVMelonDSCore {
 // MARK: - Publisher storage
 
 private enum MelonDSStatePublisherKey {
-    nonisolated(unsafe) static var key: UInt8 = 0
+    static var key: UInt8 = 0
 }
 
 private extension PVMelonDSCore {
