@@ -146,15 +146,22 @@ final class GCMouseMouseResponderDriverTests: XCTestCase {
     // MARK: - Detach synthetic releases
 
     func testDetachReleasesHeldLeftButton() {
-        // Simulate held state by directly calling the down event;
-        // we set the internal flag via the attach-time reset then override via hook.
-        // Because GCMouseInput callbacks are GC-internal, we test via `_simulateLeftDown`
-        // which is exposed only in testable builds. Here we instead directly verify:
-        // after detach() with no buttons held, no extra ups are sent.
+        // Put the driver into a "left button held" state using the internal
+        // test-only hook, then verify that detach() sends a synthetic left-up
+        // to the responder. This exercises the synthetic-release behavior
+        // described in the file header.
         let upsBefore = responder.leftUpCount
+
+        // Simulate a left-button down, leaving the button logically held.
+        driver._simulateLeftDown()
+
         driver.detach()
-        XCTAssertEqual(responder.leftUpCount, upsBefore,
-                       "No synthetic left-up when button was never pressed")
+
+        XCTAssertEqual(
+            responder.leftUpCount,
+            upsBefore + 1,
+            "detach() must send a synthetic left-up when the left button is held"
+        )
     }
 
     func testDetachAfterAttachResetsState() {
