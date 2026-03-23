@@ -39,8 +39,10 @@
         #include "Core/Config/NetplaySettings.h"
     #endif
     #if __has_include("Common/Config/Config.h")
+        #define HAVE_DOLPHIN_CONFIG 1
         #include "Common/Config/Config.h"
     #elif __has_include("Core/Config/Config.h")
+        #define HAVE_DOLPHIN_CONFIG 1
         #include "Core/Config/Config.h"
     #endif
     #if __has_include("Common/TraversalClient.h")
@@ -375,7 +377,7 @@ static const char kClientBoxKey = 0;
 // MARK: - Input buffer / frame delay
 
 - (void)setNetplayInputBufferSize:(uint32_t)bufferSize {
-#if HAVE_DOLPHIN_NETPLAY && defined(HAVE_DOLPHIN_NETPLAY_SETTINGS)
+#if HAVE_DOLPHIN_NETPLAY && defined(HAVE_DOLPHIN_NETPLAY_SETTINGS) && defined(HAVE_DOLPHIN_CONFIG)
     // Clamp to [0, 127] — Dolphin's internal maximum for NETPLAY_INPUT_BUFFER_SIZE.
     const uint32_t clamped = bufferSize > 127u ? 127u : bufferSize;
     DLOG(@"[Dolphin Netplay] Setting input buffer size to %u (requested: %u)",
@@ -386,7 +388,7 @@ static const char kClientBoxKey = 0;
 #else
     (void)bufferSize;
     WLOG(@"[Dolphin Netplay] setNetplayInputBufferSize: not available — "
-         "Dolphin headers not present.");
+         "Dolphin or Config headers not present.");
 #endif
 }
 
@@ -410,7 +412,9 @@ static const char kClientBoxKey = 0;
     // We attempt Option A first; if it returns an empty list or the build does not
     // expose the method, we fall through to nil.
 #if __has_include("Common/TraversalClient.h")
-    @try {
+    // Use C++ try/catch — @try/@catch only catches ObjC exceptions, not C++
+    // exceptions that Dolphin's GetInterfaceListToSend() may throw.
+    try {
         // GetInterfaceListToSend() is declared in NetPlayServer.h on dolphin-ios.
         // It returns pairs of (address_name, code_string).  For traversal sessions
         // the first pair's second element is the code clients enter to connect.
@@ -421,8 +425,10 @@ static const char kClientBoxKey = 0;
                 return [NSString stringWithUTF8String:code.c_str()];
             }
         }
-    } @catch (NSException *ex) {
-        WLOG(@"[Dolphin Netplay] Exception querying traversal code: %@", ex);
+    } catch (const std::exception &e) {
+        WLOG(@"[Dolphin Netplay] C++ exception querying traversal code: %s", e.what());
+    } catch (...) {
+        WLOG(@"[Dolphin Netplay] Unknown exception querying traversal code.");
     }
 #endif // __has_include(TraversalClient)
 

@@ -32,6 +32,10 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
     public let hostAddress: String
     /// Netplay port (RetroArch default: 55435)
     public let port: UInt16
+    /// Dolphin relay traversal code (non-nil when the host used STUN relay).
+    /// Separate from `hostAddress` so consumers can distinguish relay sessions
+    /// from direct-IP sessions and handle them appropriately.
+    public let traversalCode: String?
     /// Whether the room is password-protected
     public let isPasswordProtected: Bool
     /// Whether the room accepts spectators
@@ -55,6 +59,7 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
         isLAN: Bool,
         hostAddress: String,
         port: UInt16,
+        traversalCode: String? = nil,
         isPasswordProtected: Bool = false,
         allowsSpectators: Bool = true,
         spectatorCount: Int = 0,
@@ -72,6 +77,7 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
         self.isLAN = isLAN
         self.hostAddress = hostAddress
         self.port = port
+        self.traversalCode = traversalCode
         self.isPasswordProtected = isPasswordProtected
         self.allowsSpectators = allowsSpectators
         self.spectatorCount = spectatorCount

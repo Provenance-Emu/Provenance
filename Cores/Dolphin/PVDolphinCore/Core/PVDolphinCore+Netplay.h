@@ -122,8 +122,12 @@ NS_SWIFT_NAME(joinNetplay(host:port:traversalCode:password:));
 
 /// Set Dolphin's input buffer size (frame delay) via Config::NETPLAY_INPUT_BUFFER_SIZE.
 ///
-/// Must be called while a session is active; no-op when no session is running.
-/// Typical values: 0 = minimum latency (rollback-like), 1–5 for LAN/WAN delay-based play.
+/// Can be called at any time; when a netplay session is active (or netplay
+/// headers have been compiled in) it writes to the "current" (session-scoped)
+/// Config layer so the change takes effect immediately without persisting to
+/// the INI on disk.  When the Dolphin or Config headers are absent this is a
+/// no-op.  Typical values: 0 = minimum latency (rollback-like), 1–5 for
+/// LAN/WAN delay-based play.
 ///
 /// @param bufferSize  Number of input frames to buffer (0–127).  Values above 127
 ///                    are clamped to 127 to match Dolphin's internal limit.
