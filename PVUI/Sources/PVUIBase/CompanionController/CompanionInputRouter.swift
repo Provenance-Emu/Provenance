@@ -38,7 +38,7 @@ public enum CompanionKeyboardMouseEvent: Sendable {
     /// The companion trackpad sent a relative movement delta.
     case mouseMove(CGPoint)
     /// A mouse button state changed. `index`: 0 = left, 1 = right, 2 = middle.
-    case mouseButton(Int, Bool)
+    case mouseButton(index: Int, isDown: Bool)
 }
 
 // MARK: - CompanionInputRouter
@@ -128,7 +128,7 @@ public final class CompanionInputRouter: ObservableObject {
 
     /// Forward a mouse button event to the keyboard/mouse publisher.
     @MainActor public func sendMouseButton(_ index: Int, isDown: Bool) {
-        _keyboardMouseEvents.send(.mouseButton(index, isDown))
+        _keyboardMouseEvents.send(.mouseButton(index: index, isDown: isDown))
     }
 
     // MARK: - Reset

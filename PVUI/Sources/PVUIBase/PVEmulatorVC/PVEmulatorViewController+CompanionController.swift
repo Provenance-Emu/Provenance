@@ -120,8 +120,7 @@ extension PVEmulatorViewController {
         if let kmCapable = core as? CompanionKeyboardMouseCapable {
             _keyboardMouseCancellable = session.inputRouter.keyboardMouseEvents
                 .receive(on: DispatchQueue.main)
-                .sink { [weak self] event in
-                    guard self != nil else { return }
+                .sink { event in
                     switch event {
                     case .keyDown(let key):
                         if #available(iOS 14.0, tvOS 14.0, macOS 11.0, *) {

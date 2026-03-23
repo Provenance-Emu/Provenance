@@ -9,8 +9,9 @@
 //     → PVEmulatorViewController subscriber
 //       → core.companionKeyDown / companionKeyUp / companionMouseMoved / companionMouseButton
 //
-// These types live in PVCoreBridge so that both core bridges (Tier 4) and
-// the UI layer (PVUI, Tier 6) can reference them without a circular dependency.
+// This protocol lives in PVCoreBridge so that emulator cores (Tier 4) can
+// receive keyboard and mouse callbacks from the emulator view controller
+// without introducing a circular dependency between core bridges and PVUI.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 

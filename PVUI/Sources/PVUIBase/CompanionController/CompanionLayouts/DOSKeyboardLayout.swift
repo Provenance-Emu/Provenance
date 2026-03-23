@@ -6,8 +6,16 @@
 // adding a mouse trackpad area and common DOS shortcut buttons.
 //
 // Input routing:
-//   Keyboard keys → VirtualKeyboardDelegate → KeyboardResponder on the DOS core
-//   Mouse         → handled by the trackpad gesture (wired in emulator VC)
+//   Keyboard keys → VirtualKeyboardDelegate → CompanionKeyboardBridge
+//                 → CompanionInputRouter.sendKeyDown/sendKeyUp
+//                 → keyboardMouseEvents publisher → PVEmulatorViewController
+//                 → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionKeyDown/Up)
+//   Mouse trackpad → DragGesture.onChanged → CompanionInputRouter.sendMouseMove(.mouseMove)
+//                  → keyboardMouseEvents publisher → PVEmulatorViewController
+//                  → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionMouseMoved)
+//   Mouse buttons  → onLongPressGesture → CompanionInputRouter.sendMouseButton(.mouseButton)
+//                  → keyboardMouseEvents publisher → PVEmulatorViewController
+//                  → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionMouseButton)
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
