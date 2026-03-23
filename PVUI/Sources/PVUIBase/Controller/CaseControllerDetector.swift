@@ -157,7 +157,7 @@ public enum CaseControllerDetector {
         NotificationCenter.default.post(
             name: .PVPhysicalCaseDidConnect,
             object: controller,
-            userInfo: [CaseControllerDetectorKeys.layout: caseLayout]
+            userInfo: caseLayout.notificationUserInfo
         )
         return caseLayout
     }
@@ -175,7 +175,7 @@ public enum CaseControllerDetector {
         NotificationCenter.default.post(
             name: .PVPhysicalCaseDidDisconnect,
             object: controller,
-            userInfo: [CaseControllerDetectorKeys.layout: caseLayout]
+            userInfo: caseLayout.notificationUserInfo
         )
         return caseLayout
     }
@@ -192,7 +192,7 @@ public enum CaseControllerDetector {
             NotificationCenter.default.post(
                 name: .PVPhysicalCaseSkinDetected,
                 object: skinIdentifier,
-                userInfo: [CaseControllerDetectorKeys.layout: caseLayout]
+                userInfo: caseLayout.notificationUserInfo
             )
         }
         return layouts
@@ -203,8 +203,20 @@ public enum CaseControllerDetector {
 
 /// String-keyed constants for ``CaseControllerDetector`` notification `userInfo` dictionaries.
 public enum CaseControllerDetectorKeys {
-    /// `userInfo` key whose value is the matching ``PhysicalCaseLayout``.
+    /// `userInfo` key whose value is the matching ``PhysicalCaseLayout`` Swift struct.
     public static let layout = "layout"
+
+    /// `userInfo` key whose value is the case's display name as an `NSString`.
+    ///
+    /// Provided for Objective-C observers that cannot consume the ``layout``
+    /// value directly (it bridges as an opaque `_SwiftValue`).
+    public static let layoutName = "layoutName"
+
+    /// `userInfo` key whose value is the case's ``PhysicalCaseLayout/buttonCount``
+    /// as an `NSNumber`.
+    ///
+    /// Provided for Objective-C observers alongside ``layoutName``.
+    public static let layoutButtonCount = "layoutButtonCount"
 }
 
 // MARK: - Notification.Name extensions

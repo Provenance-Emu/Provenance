@@ -323,7 +323,8 @@ public final class PVControllerManager: NSObject, ObservableObject {
         // Detect physical case controllers and post the appropriate notification.
         // Smart cases (GameSir Pocket Taco, Soolra) show up as GCControllers;
         // passive cases (Buppin) are detected via skin IDs — see CaseControllerDetector.
-        #if !os(tvOS)
+        // Physical iPhone cases only make sense on iOS / Mac Catalyst.
+        #if os(iOS) || targetEnvironment(macCatalyst)
         if let caseLayout = CaseControllerDetector.notifyIfCase(controller) {
             PVToastManager.post(
                 "\(caseLayout.name) detected",
@@ -365,7 +366,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
 
         // Notify observers if a known physical case controller disconnected.
-        #if !os(tvOS)
+        #if os(iOS) || targetEnvironment(macCatalyst)
         CaseControllerDetector.notifyDisconnectIfCase(controller)
         #endif
 

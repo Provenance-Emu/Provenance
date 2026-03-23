@@ -23,22 +23,28 @@ final class CaseControllerDetectorTests: XCTestCase {
 
     // MARK: - isSmart
 
-    func testGameSirIsSmart() {
-        let layout = CaseControllerDetector.knownLayouts.first { $0.name == "GameSir Pocket Taco" }
-        XCTAssertNotNil(layout)
-        XCTAssertTrue(layout!.isSmart)
+    func testGameSirIsSmart() throws {
+        let layout = try XCTUnwrap(
+            CaseControllerDetector.knownLayouts.first { $0.name == "GameSir Pocket Taco" },
+            "Expected to find GameSir Pocket Taco layout in knownLayouts"
+        )
+        XCTAssertTrue(layout.isSmart)
     }
 
-    func testSoolraIsSmart() {
-        let layout = CaseControllerDetector.knownLayouts.first { $0.name == "Soolra Controller" }
-        XCTAssertNotNil(layout)
-        XCTAssertTrue(layout!.isSmart)
+    func testSoolraIsSmart() throws {
+        let layout = try XCTUnwrap(
+            CaseControllerDetector.knownLayouts.first { $0.name == "Soolra Controller" },
+            "Expected to find Soolra Controller layout in knownLayouts"
+        )
+        XCTAssertTrue(layout.isSmart)
     }
 
-    func testBuppinIsNotSmart() {
-        let layout = CaseControllerDetector.knownLayouts.first { $0.name == "Buppin Case" }
-        XCTAssertNotNil(layout)
-        XCTAssertFalse(layout!.isSmart, "Buppin is a passive case — it should NOT be smart")
+    func testBuppinIsNotSmart() throws {
+        let layout = try XCTUnwrap(
+            CaseControllerDetector.knownLayouts.first { $0.name == "Buppin Case" },
+            "Expected to find Buppin Case layout in knownLayouts"
+        )
+        XCTAssertFalse(layout.isSmart, "Buppin is a passive case — it should NOT be smart")
     }
 
     // MARK: - casesCompatibleWithSkin

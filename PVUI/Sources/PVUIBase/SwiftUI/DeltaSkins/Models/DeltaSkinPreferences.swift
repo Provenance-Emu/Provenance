@@ -119,7 +119,8 @@ public final class DeltaSkinPreferences: ObservableObject {
             // Notify if this skin is designed for a known physical case.
             // Passive cases (e.g. Buppin) can only be identified via their
             // companion skin's identifier — this is the only detection point for them.
-            #if !os(tvOS)
+            // Physical iPhone cases only make sense on iOS / Mac Catalyst.
+            #if os(iOS) || targetEnvironment(macCatalyst)
             CaseControllerDetector.notifyIfCaseSkin(skinIdentifier)
             #endif
         } else {

@@ -48,6 +48,23 @@ public struct PhysicalCaseLayout: Identifiable, Hashable, Sendable {
     /// Returns `false` for purely mechanical cases like Buppin.
     public var isSmart: Bool { !vendorNames.isEmpty }
 
+    // MARK: - Notification helpers
+
+    /// A `userInfo` dictionary suitable for `NotificationCenter.post`.
+    ///
+    /// Includes both the Swift `PhysicalCaseLayout` struct (under
+    /// ``CaseControllerDetectorKeys/layout``) **and** ObjC-bridgeable primitives
+    /// (``CaseControllerDetectorKeys/layoutName`` / ``CaseControllerDetectorKeys/layoutButtonCount``)
+    /// so Objective-C observers can read the payload without handling an opaque
+    /// `_SwiftValue`.
+    public var notificationUserInfo: [AnyHashable: Any] {
+        [
+            CaseControllerDetectorKeys.layout: self,
+            CaseControllerDetectorKeys.layoutName: name as NSString,
+            CaseControllerDetectorKeys.layoutButtonCount: NSNumber(value: buttonCount)
+        ]
+    }
+
     // MARK: - Init
 
     public init(
