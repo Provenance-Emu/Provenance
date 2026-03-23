@@ -28,7 +28,7 @@
 
 #pragma once
 #import <Foundation/Foundation.h>
-#import "PVDolphinCore.h"
+#import <PVDolphin/PVDolphinCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
