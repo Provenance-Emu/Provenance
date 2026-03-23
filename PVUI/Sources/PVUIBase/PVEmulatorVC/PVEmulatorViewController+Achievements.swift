@@ -125,12 +125,17 @@ public extension PVEmulatorViewController {
                 let response = try await manager.startSession(gameHash: gameHash)
                 ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1), \(response.unlocks?.count ?? 0) existing unlocks.")
                 // Session confirmed active — verify stopAchievements() hasn't run since
-                // we kicked off this Task, then expose the manager and prepare the core.
+                // we kicked off this Task. If it has, tear down the session we just
+                // started so the manager's ping loop does not keep running.
+                if token.isCancelled {
+                    await manager.stopSession()
+                    return
+                }
+
+                // Expose the manager and prepare the core.
                 await MainActor.run {
-                    guard !token.isCancelled else { return }
                     self.achievementSessionManager = manager
                 }
-                guard !token.isCancelled else { return }
                 // Prepare the core's achievement runtime (rcheevos or equivalent).
                 await achievementsCore.prepareAchievements(gameHash: gameHash)
                 // If hardcore is enabled, enforce the speed restriction now that the
