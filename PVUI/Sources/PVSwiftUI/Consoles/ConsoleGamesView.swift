@@ -1613,7 +1613,7 @@ extension ConsoleGamesView {
         .saveStateDropTarget(gameId: game.md5)
         #endif
 #if !os(tvOS) && !os(watchOS)
-        .onDrag { game.romDragProvider() }
+        .onDrag { romDragProvider(for: game) }
 #endif
     }
 
