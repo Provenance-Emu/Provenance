@@ -778,6 +778,9 @@ struct HomeView: SwiftUI.View {
                         GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
                     }
                 }
+                #if os(iOS)
+                .saveStateDropTarget(gameId: model.md5)
+                #endif
             }
         }
     }
@@ -814,6 +817,9 @@ struct HomeView: SwiftUI.View {
                         GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
                     }
                 }
+                #if os(iOS)
+                .saveStateDropTarget(gameId: model.md5)
+                #endif
             }
         }
         .padding(.horizontal, 10)
@@ -1169,6 +1175,9 @@ struct HomeView: SwiftUI.View {
                 GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
             }
         }
+        #if os(iOS)
+        .saveStateDropTarget(gameId: model.md5)
+        #endif
     }
 
     private func setInitialFocus() {
@@ -1321,6 +1330,9 @@ struct HomeView: SwiftUI.View {
                                 GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
                             }
                         }
+                        #if os(iOS)
+                        .saveStateDropTarget(gameId: model.md5)
+                        #endif
                         GamesDividerView()
                     }
                 }
