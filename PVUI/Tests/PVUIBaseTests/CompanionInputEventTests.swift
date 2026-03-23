@@ -8,7 +8,6 @@
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 import Testing
-@testable import PVUIBase
 import PVCoreBridge
 
 // MARK: - CompanionButton bitmask tests
@@ -108,15 +107,7 @@ private final class MockVectrexResponder {
 
     var calls: [Call] = []
 
-    // Mirror of PVVectrexButton raw values for the mapping table.
-    // analogUp=0, analogDown=1, analogLeft=2, analogRight=3
-    // button1=4, button2=5, button3=6, button4=7
-    enum VectrexButton: Int {
-        case analogUp, analogDown, analogLeft, analogRight
-        case button1, button2, button3, button4
-    }
-
-    func vectrexButton(for companionButton: CompanionButton) -> VectrexButton? {
+    func vectrexButton(for companionButton: CompanionButton) -> PVVectrexButton? {
         switch companionButton {
         case .south: return .button1
         case .east:  return .button2
@@ -146,19 +137,19 @@ private final class MockVectrexResponder {
         switch axis {
         case .leftX:
             if value >= 0 {
-                calls.append(.moveJoystick(direction: VectrexButton.analogRight.rawValue, value: magnitude))
-                calls.append(.moveJoystick(direction: VectrexButton.analogLeft.rawValue,  value: 0))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogRight.rawValue, value: magnitude))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue,  value: 0))
             } else {
-                calls.append(.moveJoystick(direction: VectrexButton.analogLeft.rawValue,  value: magnitude))
-                calls.append(.moveJoystick(direction: VectrexButton.analogRight.rawValue, value: 0))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue,  value: magnitude))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogRight.rawValue, value: 0))
             }
         case .leftY:
             if value >= 0 {
-                calls.append(.moveJoystick(direction: VectrexButton.analogDown.rawValue, value: magnitude))
-                calls.append(.moveJoystick(direction: VectrexButton.analogUp.rawValue,   value: 0))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogDown.rawValue, value: magnitude))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogUp.rawValue,   value: 0))
             } else {
-                calls.append(.moveJoystick(direction: VectrexButton.analogUp.rawValue,   value: magnitude))
-                calls.append(.moveJoystick(direction: VectrexButton.analogDown.rawValue, value: 0))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogUp.rawValue,   value: magnitude))
+                calls.append(.moveJoystick(direction: PVVectrexButton.analogDown.rawValue, value: 0))
             }
         default:
             break
@@ -175,35 +166,35 @@ struct VectrexCompanionButtonMappingTests {
     func southMapsToButton1() {
         let mock = MockVectrexResponder()
         mock.handle(.buttonDown(.south))
-        #expect(mock.calls == [.push(button: MockVectrexResponder.VectrexButton.button1.rawValue)])
+        #expect(mock.calls == [.push(button: PVVectrexButton.button1.rawValue)])
     }
 
     @Test("east → button2 press")
     func eastMapsToButton2() {
         let mock = MockVectrexResponder()
         mock.handle(.buttonDown(.east))
-        #expect(mock.calls == [.push(button: MockVectrexResponder.VectrexButton.button2.rawValue)])
+        #expect(mock.calls == [.push(button: PVVectrexButton.button2.rawValue)])
     }
 
     @Test("west → button3 press")
     func westMapsToButton3() {
         let mock = MockVectrexResponder()
         mock.handle(.buttonDown(.west))
-        #expect(mock.calls == [.push(button: MockVectrexResponder.VectrexButton.button3.rawValue)])
+        #expect(mock.calls == [.push(button: PVVectrexButton.button3.rawValue)])
     }
 
     @Test("north → button4 press")
     func northMapsToButton4() {
         let mock = MockVectrexResponder()
         mock.handle(.buttonDown(.north))
-        #expect(mock.calls == [.push(button: MockVectrexResponder.VectrexButton.button4.rawValue)])
+        #expect(mock.calls == [.push(button: PVVectrexButton.button4.rawValue)])
     }
 
     @Test("south release → button1 release")
     func southReleaseButton1() {
         let mock = MockVectrexResponder()
         mock.handle(.buttonUp(.south))
-        #expect(mock.calls == [.release(button: MockVectrexResponder.VectrexButton.button1.rawValue)])
+        #expect(mock.calls == [.release(button: PVVectrexButton.button1.rawValue)])
     }
 
     @Test("Unmapped buttons produce no calls")
@@ -222,40 +213,40 @@ struct VectrexCompanionButtonMappingTests {
     func leftXPositiveIsRight() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftX, 0.8))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogRight.rawValue, value: 0.8)))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogLeft.rawValue,  value: 0)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogRight.rawValue, value: 0.8)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue,  value: 0)))
     }
 
     @Test("leftX negative → analogLeft active, analogRight zeroed")
     func leftXNegativeIsLeft() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftX, -0.6))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogLeft.rawValue,  value: 0.6)))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogRight.rawValue, value: 0)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue,  value: 0.6)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogRight.rawValue, value: 0)))
     }
 
     @Test("leftX zero → both directions zeroed")
     func leftXZeroBothZeroed() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftX, 0))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogRight.rawValue, value: 0)))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogLeft.rawValue,  value: 0)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogRight.rawValue, value: 0)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue,  value: 0)))
     }
 
     @Test("leftY positive → analogDown active, analogUp zeroed")
     func leftYPositiveIsDown() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftY, 0.5))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogDown.rawValue, value: 0.5)))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogUp.rawValue,   value: 0)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogDown.rawValue, value: 0.5)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogUp.rawValue,   value: 0)))
     }
 
     @Test("leftY negative → analogUp active, analogDown zeroed")
     func leftYNegativeIsUp() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftY, -1.0))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogUp.rawValue,   value: 1.0)))
-        #expect(mock.calls.contains(.moveJoystick(direction: MockVectrexResponder.VectrexButton.analogDown.rawValue, value: 0)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogUp.rawValue,   value: 1.0)))
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogDown.rawValue, value: 0)))
     }
 
     @Test("rightX axis is ignored (Vectrex has one stick)")

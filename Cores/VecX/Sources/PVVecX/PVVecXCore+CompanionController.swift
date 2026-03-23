@@ -27,6 +27,7 @@ import PVCoreBridge
 
 extension PVVecXCore: CompanionControllerCapable {
 
+    @MainActor
     public func handleCompanionInput(_ event: CompanionInputEvent, forPlayer player: Int) {
         switch event {
         case .buttonDown(let btn):
