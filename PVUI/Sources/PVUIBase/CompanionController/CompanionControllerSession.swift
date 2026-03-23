@@ -85,8 +85,12 @@ public final class CompanionControllerSession: ObservableObject {
 
     // MARK: - Init
 
-    public init(inputRouter: CompanionInputRouter = CompanionInputRouter()) {
-        self.inputRouter = inputRouter
+    // Default-parameter expressions are evaluated at the call site (potentially
+    // non-isolated), so we can't write `= CompanionInputRouter()` directly when
+    // CompanionInputRouter.init is @MainActor.  Accept an optional and construct
+    // the default inside the body, which runs on the main actor.
+    public init(inputRouter: CompanionInputRouter? = nil) {
+        self.inputRouter = inputRouter ?? CompanionInputRouter()
     }
 
     // MARK: - Connection lifecycle

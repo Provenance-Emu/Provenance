@@ -188,6 +188,7 @@ struct TVMediaGameTileView: View {
                 onPlay()
             }
         }
+        .saveStateDropTarget(gameId: game.md5Hash)
         #endif
     }
 

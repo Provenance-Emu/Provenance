@@ -1435,6 +1435,9 @@ extension RetroGameLibraryView {
         #if os(tvOS)
         .focused($focusedGameID, equals: gameID)
         #endif
+        #if os(iOS)
+        .saveStateDropTarget(gameId: game.md5Hash)
+        #endif
         .transition(.scale(scale: 0.95).combined(with: .opacity))
         .id("grid-item-\(gameID)")
     }
@@ -1475,6 +1478,9 @@ extension RetroGameLibraryView {
         }
         #if os(tvOS)
         .focused($focusedGameID, equals: gameID)
+        #endif
+        #if os(iOS)
+        .saveStateDropTarget(gameId: game.md5Hash)
         #endif
         .transition(.scale(scale: 0.95).combined(with: .opacity))
         .id("list-item-\(gameID)")
