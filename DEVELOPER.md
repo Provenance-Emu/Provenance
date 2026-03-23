@@ -112,6 +112,12 @@ Provenance uses git submodules for emulator cores. Each core submodule is pinned
 When a Provenance-Emu fork submodule has a `branch = <name>` entry and you want to advance it:
 
 ```bash
+# If this is a first-time checkout, ensure the submodule is initialized:
+git submodule update --init Cores/<CoreName>/<submodule-dir>
+
+# If you changed the submodule's URL or branch in .gitmodules, sync the local config:
+git submodule sync -- Cores/<CoreName>/<submodule-dir>
+
 # Sync just that submodule to the remote branch HEAD.
 # Do NOT use --merge here: submodules are usually in detached-HEAD state after
 # a normal checkout and --merge will fail or produce unexpected results.
