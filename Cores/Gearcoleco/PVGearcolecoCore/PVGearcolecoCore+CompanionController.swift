@@ -44,7 +44,7 @@ extension PVGearcolecoCore: CompanionControllerCapable {
         case .num0:      return .button0
         case .numStar:   return .asterisk
         case .numHash:   return .pound
-        default:         return nil
+        @unknown default: return nil
         }
     }
 
