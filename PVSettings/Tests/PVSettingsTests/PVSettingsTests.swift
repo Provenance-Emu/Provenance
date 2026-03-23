@@ -1136,7 +1136,7 @@ struct PhysicalCaseControllerDefaultsTests {
 
 // MARK: - Gyro Mouse Defaults Tests
 
-@Suite("Gyro Mouse Defaults")
+@Suite("Gyro Mouse Defaults", .serialized)
 struct GyroMouseDefaultsTests {
 
     @Test("gyroMouseEnabled default is false")

@@ -34,6 +34,7 @@ struct MouseInputSettingsView: View {
 struct MouseSection: View {
     @Default(.mouseInputSource) private var inputSource
     @Default(.mouseSensitivity) private var sensitivity
+    @Default(.gyroMouseEnabled) private var gyroMouseEnabled
     @Default(.gyroMouseSensitivity) private var gyroSensitivity
     @Default(.gyroMouseDeadZone) private var gyroDeadZone
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -58,13 +59,23 @@ struct MouseSection: View {
                 Divider()
                     .background(Color.retroBlue.opacity(0.3))
 
-                sensitivitySlider(
-                    title: "Gyro Sensitivity",
-                    subtitle: "Multiplier for gyroscope mouse movement",
-                    value: $gyroSensitivity
-                )
+                Toggle(isOn: $gyroMouseEnabled) {
+                    Label("Enable Gyro Mouse", systemImage: "gyroscope")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
+                            ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                }
+                .tint(.retroBlue)
 
-                deadZoneSlider
+                if gyroMouseEnabled {
+                    sensitivitySlider(
+                        title: "Gyro Sensitivity",
+                        subtitle: "Multiplier for gyroscope mouse movement",
+                        value: $gyroSensitivity
+                    )
+
+                    deadZoneSlider
+                }
             }
         }
     }
