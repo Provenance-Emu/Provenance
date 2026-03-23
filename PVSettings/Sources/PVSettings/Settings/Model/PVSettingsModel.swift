@@ -200,6 +200,24 @@ public extension Defaults.Keys {
     /// Range 0.1 – 5.0; default 1.0 (calibrated for a ~800 DPI mouse).
     static let lightGunMouseSensitivity = Key<Double>("lightGunMouseSensitivity", default: 1.0)
 
+    // MARK: Gyro Mouse
+
+    /// Master toggle for gyroscope-driven virtual mouse cursor.
+    /// When `true` and the active core conforms to `MouseResponder`, rotation-rate
+    /// input from the connected GCController (or device IMU on iPhone/iPad) is
+    /// translated into `mouseMoved(atPoint:)` calls.
+    static let gyroMouseEnabled = Key<Bool>("gyroMouseEnabled", default: false)
+
+    /// Sensitivity multiplier for gyro-driven mouse cursor.
+    /// Range 0.1 – 5.0; default 1.0.
+    static let gyroMouseSensitivity = Key<Double>("gyroMouseSensitivity", default: 1.0)
+
+    /// Dead zone in rad/s for gyro-driven mouse cursor.
+    /// Rotation rates whose absolute value is below this threshold are ignored
+    /// to prevent cursor drift when the controller/device is stationary.
+    /// Range 0.0 – 0.5; default 0.05.
+    static let gyroMouseDeadZone = Key<Double>("gyroMouseDeadZone", default: 0.05)
+
     /// Enable turbo/autofire: when a button has turbo active, it rapidly toggles press/release.
     static let turboEnabled = Key<Bool>("turboEnabled", default: true)
 

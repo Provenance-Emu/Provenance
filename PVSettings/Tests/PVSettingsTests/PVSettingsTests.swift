@@ -981,3 +981,69 @@ struct PhysicalCaseControllerDefaultsTests {
     }
 }
 #endif
+
+// MARK: - Gyro Mouse Defaults Tests
+
+@Suite("Gyro Mouse Defaults")
+struct GyroMouseDefaultsTests {
+
+    @Test("gyroMouseEnabled default is false")
+    func gyroMouseEnabledDefault() {
+        Defaults.reset(.gyroMouseEnabled)
+        #expect(Defaults[.gyroMouseEnabled] == false)
+    }
+
+    @Test("gyroMouseSensitivity default is 1.0")
+    func gyroMouseSensitivityDefault() {
+        Defaults.reset(.gyroMouseSensitivity)
+        #expect(Defaults[.gyroMouseSensitivity] == 1.0)
+    }
+
+    @Test("gyroMouseDeadZone default is 0.05")
+    func gyroMouseDeadZoneDefault() {
+        Defaults.reset(.gyroMouseDeadZone)
+        #expect(Defaults[.gyroMouseDeadZone] == 0.05)
+    }
+
+    @Test("gyroMouseEnabled key name is correct")
+    func gyroMouseEnabledKeyName() {
+        #expect(Defaults.Keys.gyroMouseEnabled.name == "gyroMouseEnabled")
+    }
+
+    @Test("gyroMouseSensitivity key name is correct")
+    func gyroMouseSensitivityKeyName() {
+        #expect(Defaults.Keys.gyroMouseSensitivity.name == "gyroMouseSensitivity")
+    }
+
+    @Test("gyroMouseDeadZone key name is correct")
+    func gyroMouseDeadZoneKeyName() {
+        #expect(Defaults.Keys.gyroMouseDeadZone.name == "gyroMouseDeadZone")
+    }
+
+    @Test("gyroMouseEnabled can be toggled")
+    func gyroMouseEnabledToggle() {
+        Defaults.reset(.gyroMouseEnabled)
+        defer { Defaults.reset(.gyroMouseEnabled) }
+        Defaults[.gyroMouseEnabled] = true
+        #expect(Defaults[.gyroMouseEnabled] == true)
+        Defaults[.gyroMouseEnabled] = false
+        #expect(Defaults[.gyroMouseEnabled] == false)
+    }
+
+    @Test("gyroMouseSensitivity persists to UserDefaults")
+    func gyroMouseSensitivityPersists() {
+        Defaults.reset(.gyroMouseSensitivity)
+        defer { Defaults.reset(.gyroMouseSensitivity) }
+        Defaults[.gyroMouseSensitivity] = 2.5
+        let raw = UserDefaults.standard.double(forKey: "gyroMouseSensitivity")
+        #expect(raw == 2.5)
+    }
+
+    @Test("gyroMouseDeadZone can be changed")
+    func gyroMouseDeadZoneMutable() {
+        Defaults.reset(.gyroMouseDeadZone)
+        defer { Defaults.reset(.gyroMouseDeadZone) }
+        Defaults[.gyroMouseDeadZone] = 0.1
+        #expect(Defaults[.gyroMouseDeadZone] == 0.1)
+    }
+}
