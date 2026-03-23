@@ -10,7 +10,6 @@ import PVUIBase
 import PVThemes
 import PVLogging
 import Combine
-import UniformTypeIdentifiers
 
 #if os(tvOS)
 /// Modifier that focuses the tab bar when Menu/Back is pressed on tvOS
