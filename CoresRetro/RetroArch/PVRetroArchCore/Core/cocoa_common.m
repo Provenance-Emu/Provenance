@@ -794,9 +794,11 @@ void cocoa_file_load_with_detect_core(const char *filename);
    cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
    if (!apple)
       return;
-   apple->mouse_rel_x = (int16_t)x;
-   apple->mouse_rel_y = (int16_t)y;
-   /* use location position to track pointer */
+   /* Accumulate deltas so multiple touchesMoved events in one frame are not lost. */
+   apple->mouse_rel_x += (int16_t)x;
+   apple->mouse_rel_y += (int16_t)y;
+   /* Signal touch-mouse mode: window_pos_x/y == 0 tells cocoa_input_poll not to
+    * overwrite mouse_rel_x/y with the (always-zero) absolute-position delta. */
    if (@available(iOS 13.4, *))
    {
       apple->window_pos_x = 0;

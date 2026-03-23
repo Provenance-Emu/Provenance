@@ -1762,7 +1762,7 @@ import UIKit
    func distanceBetween(pointA: CGPoint, pointB: CGPoint) -> CGFloat {
       let dx = pointA.x - pointB.x
       let dy = pointA.y - pointB.y
-      return sqrt(dx*dx*dy*dy)
+      return sqrt(dx*dx + dy*dy)
    }
 
    @available(iOS 13.4, *)

@@ -2251,11 +2251,30 @@ static void cocoa_input_poll(void *data)
     if (!apple)
        return;
 
+#ifdef HAVE_IOS_TOUCHMOUSE
+    /* When window_pos is 0, the touch mouse handler sets mouse_rel_x/y directly via
+     * handleMouseMoveWithX:y:. Do NOT overwrite those deltas here; only update
+     * mouse_x/y_last so future absolute-position deltas are computed correctly.
+     * When window_pos is non-zero a real pointer device is in use — compute delta normally. */
+    if (apple->window_pos_x != 0) {
+        apple->mouse_rel_x  = apple->window_pos_x - apple->mouse_x_last;
+        apple->mouse_x_last = apple->window_pos_x;
+    } else {
+        apple->mouse_x_last = 0;
+    }
+    if (apple->window_pos_y != 0) {
+        apple->mouse_rel_y  = apple->window_pos_y - apple->mouse_y_last;
+        apple->mouse_y_last = apple->window_pos_y;
+    } else {
+        apple->mouse_y_last = 0;
+    }
+#else
     apple->mouse_rel_x = apple->window_pos_x - apple->mouse_x_last;
     apple->mouse_x_last = apple->window_pos_x;
 
     apple->mouse_rel_y = apple->window_pos_y - apple->mouse_y_last;
     apple->mouse_y_last = apple->window_pos_y;
+#endif
 
     for (i = 0; i < apple->touch_count || i == 0; i++)
     {
@@ -2384,7 +2403,11 @@ static int16_t cocoa_input_state(
                      apple->mouse_x_last = apple->window_pos_x;
                   }
                   else
+                  {
+                     /* Consume the touch-delta; reset so it doesn't repeat next frame. */
                      val = apple->mouse_rel_x;
+                     apple->mouse_rel_x = 0;
+                  }
 #else
                   val = apple->mouse_rel_x;
 #endif
@@ -2410,7 +2433,10 @@ static int16_t cocoa_input_state(
                      apple->mouse_y_last = apple->window_pos_y;
                   }
                   else
+                  {
                      val = apple->mouse_rel_y;
+                     apple->mouse_rel_y = 0;
+                  }
 #else
                   val    = apple->mouse_rel_y;
 #endif
