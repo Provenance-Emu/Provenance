@@ -52,7 +52,11 @@ struct CompanionAxisIDTests {
         seen.insert(.rightY)
         seen.insert(.l2Analog)
         seen.insert(.r2Analog)
-        #expect(seen.count == 6)
+        let countAfterDistinctInserts = seen.count
+
+        // Inserting a duplicate should not increase the count
+        seen.insert(.leftX)
+        #expect(seen.count == countAfterDistinctInserts)
     }
 }
 
@@ -96,7 +100,17 @@ struct CompanionInputEventTests {
 // MARK: - Vectrex button mapping contract
 
 /// Mock that records calls without needing the real VecX core.
-/// Tests the same mapping logic that PVVecXCore+CompanionController uses.
+///
+/// This validates the *mapping contract* — the same logic that
+/// `PVVecXCore+CompanionController` implements — using only types from
+/// `PVCoreBridge`. The real `PVVectrexButton.init?(companionButton:)` lives
+/// inside the `PVVecX` module and cannot be imported here without adding a
+/// `PVVecX` dependency to `PVUIBaseTests`. A future `PVVecX` test target
+/// should add an integration test that calls `handleCompanionInput` on the
+/// real core and asserts the produced button/axis calls end-to-end.
+///
+/// If the mapping in `PVVecXCore+CompanionController.swift` ever changes,
+/// update `vectrexButton(for:)` and `handleAxis(_:value:)` below to match.
 private final class MockVectrexResponder {
 
     enum Call: Equatable {
@@ -107,13 +121,6 @@ private final class MockVectrexResponder {
 
     var calls: [Call] = []
 
-    /// Mirrors `PVVectrexButton.init?(companionButton:)` in `PVVecX`.
-    /// That initializer is internal to the PVVecX module; this copy lets
-    /// PVUIBaseTests validate the mapping contract without depending on the
-    /// VecX core package.
-    ///
-    /// If `PVVectrexButton` button ordering ever changes, update both here
-    /// and in `PVVecXCore+CompanionController.swift`.
     func vectrexButton(for companionButton: CompanionButton) -> PVVectrexButton? {
         switch companionButton {
         case .south: return .button1
@@ -220,15 +227,25 @@ struct VectrexCompanionButtonMappingTests {
     func leftXPositiveIsRight() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftX, 0.8))
-        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogRight.rawValue, value: 0.8)))
-        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue,  value: 0)))
+        #expect(mock.calls.contains { call in
+            if case let .moveJoystick(direction, value) = call {
+                return direction == PVVectrexButton.analogRight.rawValue && abs(value - 0.8) < 0.0001
+            }
+            return false
+        })
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue, value: 0)))
     }
 
     @Test("leftX negative → analogLeft active, analogRight zeroed")
     func leftXNegativeIsLeft() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftX, -0.6))
-        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogLeft.rawValue,  value: 0.6)))
+        #expect(mock.calls.contains { call in
+            if case let .moveJoystick(direction, value) = call {
+                return direction == PVVectrexButton.analogLeft.rawValue && abs(value - 0.6) < 0.0001
+            }
+            return false
+        })
         #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogRight.rawValue, value: 0)))
     }
 
@@ -244,8 +261,13 @@ struct VectrexCompanionButtonMappingTests {
     func leftYPositiveIsDown() {
         let mock = MockVectrexResponder()
         mock.handle(.axisChanged(.leftY, 0.5))
-        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogDown.rawValue, value: 0.5)))
-        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogUp.rawValue,   value: 0)))
+        #expect(mock.calls.contains { call in
+            if case let .moveJoystick(direction, value) = call {
+                return direction == PVVectrexButton.analogDown.rawValue && abs(value - 0.5) < 0.0001
+            }
+            return false
+        })
+        #expect(mock.calls.contains(.moveJoystick(direction: PVVectrexButton.analogUp.rawValue, value: 0)))
     }
 
     @Test("leftY negative → analogUp active, analogDown zeroed")
