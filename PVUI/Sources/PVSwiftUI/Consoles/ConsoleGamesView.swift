@@ -896,7 +896,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         contextMenuDelegate: self
                     )
                 }
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
                 .onDrag { romDragProvider(for: game) }
 #endif
             }
@@ -938,7 +938,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
                 }
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
                 .onDrag { romDragProvider(for: model) }
 #endif
             }
@@ -985,7 +985,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             contextMenuDelegate: self
                         )
                     }
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
                     .onDrag { romDragProvider(for: game) }
 #endif
                 }
@@ -1030,7 +1030,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         contextMenuDelegate: self
                     )
                 }
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
                 .onDrag { romDragProvider(for: game) }
 #endif
                 GamesDividerView()
@@ -1074,7 +1074,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
                 }
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
                 .onDrag { romDragProvider(for: model) }
 #endif
                 GamesDividerView()
@@ -1105,7 +1105,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 .id("\(game.id)_\(game.trueArtworkURL)")
                 .focusableIfAvailable()
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
                 .onDrag { romDragProvider(for: game) }
 #endif
             }
@@ -1612,22 +1612,32 @@ extension ConsoleGamesView {
         #if os(iOS)
         .saveStateDropTarget(gameId: game.md5)
         #endif
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
         .onDrag { romDragProvider(for: game) }
 #endif
     }
 
     // MARK: - Drag Export
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
     /// Creates an `NSItemProvider` for dragging a game's ROM file to Files.app / AirDrop.
     /// Returns an empty provider when the ROM file is missing or iCloud-evicted.
     private func romDragProvider(for game: PVGame) -> NSItemProvider {
-        guard let url = game.file?.url,
-              FileManager.default.fileExists(atPath: url.path) else {
+        guard let url = game.file?.url else {
             return NSItemProvider()
         }
-        return NSItemProvider(contentsOf: url) ?? NSItemProvider(object: url as NSURL)
+        if let resourceValues = try? url.resourceValues(forKeys: [.isUbiquitousItemKey, .ubiquitousItemDownloadingStatusKey]),
+           resourceValues.isUbiquitousItem == true,
+           resourceValues.ubiquitousItemDownloadingStatus == .notDownloaded {
+            return NSItemProvider()
+        }
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            return NSItemProvider()
+        }
+        guard let provider = NSItemProvider(contentsOf: url) else {
+            return NSItemProvider()
+        }
+        return provider
     }
 
     /// Creates an `NSItemProvider` from a `GameCellModel` by resolving the live Realm game.

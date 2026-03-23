@@ -1178,23 +1178,33 @@ struct HomeView: SwiftUI.View {
         #if os(iOS)
         .saveStateDropTarget(gameId: model.md5)
         #endif
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
         .onDrag { romDragProvider(for: model) }
 #endif
     }
 
     // MARK: - Drag Export
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
     /// Creates an `NSItemProvider` for dragging a game's ROM file to Files.app / AirDrop.
     /// Returns an empty provider when the ROM file is missing or iCloud-evicted.
     private func romDragProvider(for model: GameCellModel) -> NSItemProvider {
         guard let live = liveGame(for: model),
-              let url = live.file?.url,
-              FileManager.default.fileExists(atPath: url.path) else {
+              let url = live.file?.url else {
             return NSItemProvider()
         }
-        return NSItemProvider(contentsOf: url) ?? NSItemProvider(object: url as NSURL)
+        if let resourceValues = try? url.resourceValues(forKeys: [.isUbiquitousItemKey, .ubiquitousItemDownloadingStatusKey]),
+           resourceValues.isUbiquitousItem == true,
+           resourceValues.ubiquitousItemDownloadingStatus == .notDownloaded {
+            return NSItemProvider()
+        }
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            return NSItemProvider()
+        }
+        guard let provider = NSItemProvider(contentsOf: url) else {
+            return NSItemProvider()
+        }
+        return provider
     }
 #endif
 
