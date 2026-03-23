@@ -28,9 +28,9 @@ private enum AssociatedKeys {
     static var overlayVC = "achievementOverlayVC"
 }
 
-/// Shared user-facing message shown whenever an action is blocked by
-/// RetroAchievements hardcore mode.  Centralised here so all guard sites
-/// stay in sync with a single string change or future localisation update.
+/// Shared user-facing message shown when fast-forward is blocked by
+/// RetroAchievements Hardcore Mode.  Centralised here so all fast-forward
+/// guard sites stay in sync with a single string change or future localisation update.
 internal let hardcoreFastForwardBlockedMessage =
     "Fast-forward is disabled in RetroAchievements Hardcore Mode."
 
@@ -88,16 +88,20 @@ public extension PVEmulatorViewController {
         let hardcore = Defaults[.retroAchievementsHardcoreEnabled]
         achievementsCore.hardcoreMode = hardcore
 
-        // Create and start session manager.
+        // Create the session manager but do NOT assign it yet.
+        // The guard helpers (achievementsBlocksFastForward, achievementsBlocksSaveStateLoad)
+        // use achievementSessionManager != nil as a proxy for "active session", so we only
+        // assign it after startSession() succeeds.  This avoids a window where the manager
+        // exists but the session has not yet been confirmed by the server.
         let manager = PVCheevos.sessionManager()
-        achievementSessionManager = manager
 
         Task { [weak self, weak achievementsCore] in
             guard let self, let achievementsCore else { return }
             do {
-                guard let manager = self.achievementSessionManager else { return }
                 let response = try await manager.startSession(gameHash: gameHash)
                 ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1), \(response.unlocks?.count ?? 0) existing unlocks.")
+                // Session confirmed active — now safe to expose via achievementSessionManager.
+                await MainActor.run { self.achievementSessionManager = manager }
                 // Prepare the core's achievement runtime (rcheevos or equivalent).
                 await achievementsCore.prepareAchievements(gameHash: gameHash)
                 // If hardcore is enabled, enforce the speed restriction now that the
@@ -114,13 +118,10 @@ public extension PVEmulatorViewController {
                 }
             } catch AchievementSessionError.unknownGame(let hash) {
                 ILOG("RetroAchievements: game hash \(hash) not in database, achievements unavailable.")
-                // Clear the manager so guard helpers (achievementsBlocksFastForward, etc.)
-                // correctly return false — no active session means no restrictions.
-                await MainActor.run { self.achievementSessionManager = nil }
+                // achievementSessionManager was never set, so no cleanup needed.
             } catch {
                 ELOG("RetroAchievements: session start failed: \(error.localizedDescription)")
-                // Clear the manager on any other failure for the same reason.
-                await MainActor.run { self.achievementSessionManager = nil }
+                // achievementSessionManager was never set, so no cleanup needed.
             }
         }
     }
