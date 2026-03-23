@@ -19,10 +19,17 @@ import PVUIBase
 // MARK: - Accepted drop types
 
 /// UTTypes accepted by the ROM drop target.
-/// Covers file URLs and generic binary data files that the OS may not map
-/// to a more specific type.
+///
+/// - `.fileURL`        — direct file-URL drops from the Files app and other sources
+/// - `.archive`        — `.zip` archives (ROM zips, save-export bundles, etc.)
+/// - `.data`           — fallback for providers that only advertise generic binary data
+///
+/// Zip archives are explicitly included because many ROM sets are distributed as `.zip`
+/// files and because `SaveExporter` export bundles are zips that can be re-imported via
+/// the save-states browser drop target (`SaveBundleDropModifier`).
 private let romAcceptedTypes: [UTType] = [
     .fileURL,
+    .archive,
     .data,
 ]
 
@@ -68,7 +75,12 @@ public struct ROMDropTargetModifier: ViewModifier {
                         ELOG("ROMDropDelegate: loadItem error: \(error)")
                         return
                     }
-                    guard let url = item as? URL else { return }
+                    // loadItem for public.file-url can return URL, NSURL, or Data — use shared helper.
+                    guard let url = NSItemProvider.fileURL(fromLoadedItem: item) else {
+                        let itemTypeDescription = item.map { String(describing: type(of: $0)) } ?? "nil"
+                        ELOG("ROMDropDelegate: unsupported item type for public.file-url: \(itemTypeDescription)")
+                        return
+                    }
                     // Copy to a stable location so the async import pipeline finds the file
                     // even if the source URL becomes inaccessible after this handler returns.
                     do {
@@ -76,6 +88,27 @@ public struct ROMDropTargetModifier: ViewModifier {
                         enqueueURL(stableURL)
                     } catch {
                         ELOG("ROMDropDelegate: failed to copy drop to stable location: \(error)")
+                    }
+                }
+                handled = true
+            } else if let archiveTypeID = provider.registeredTypeIdentifiers.first(where: { id in
+                // Prefer a concrete registered type (e.g. public.zip-archive) over the generic
+                // public.archive parent. Some providers won't respond to the parent identifier even
+                // though hasItemConformingToTypeIdentifier returns true for it.
+                UTType(id)?.conforms(to: .archive) == true
+            }), provider.hasItemConformingToTypeIdentifier(archiveTypeID) {
+                // Zip / archive: use loadFileRepresentation so the OS writes it to a temp URL.
+                provider.loadFileRepresentation(forTypeIdentifier: archiveTypeID) { url, error in
+                    if let error {
+                        ELOG("ROMDropDelegate: loadFileRepresentation (archive) error: \(error)")
+                        return
+                    }
+                    guard let url else { return }
+                    do {
+                        let stableURL = try Self.stableCopy(of: url)
+                        enqueueURL(stableURL)
+                    } catch {
+                        ELOG("ROMDropDelegate: failed to copy drop (archive) to stable location: \(error)")
                     }
                 }
                 handled = true
@@ -106,6 +139,8 @@ public struct ROMDropTargetModifier: ViewModifier {
     /// the completion handler. A UUID-named subdirectory provides uniqueness when multiple
     /// files share the same name (e.g. two ROMs named "game.sfc" dropped simultaneously),
     /// while preserving the original filename for the importer pipeline.
+    ///
+    /// Security-scoped resources (Files/iCloud) are accessed and released around the copy.
     private static func stableCopy(of sourceURL: URL) throws -> URL {
         let baseImportDir = FileManager.default.temporaryDirectory
             .appendingPathComponent("PVDropImports", isDirectory: true)
@@ -113,6 +148,9 @@ public struct ROMDropTargetModifier: ViewModifier {
         let uniqueDir = baseImportDir.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
         let dest = uniqueDir.appendingPathComponent(sourceURL.lastPathComponent)
+        // Files/iCloud providers may vend security-scoped URLs — request access before copying.
+        let needsScope = sourceURL.startAccessingSecurityScopedResource()
+        defer { if needsScope { sourceURL.stopAccessingSecurityScopedResource() } }
         try FileManager.default.copyItem(at: sourceURL, to: dest)
         return dest
     }

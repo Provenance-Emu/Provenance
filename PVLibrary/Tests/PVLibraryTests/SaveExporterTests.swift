@@ -151,6 +151,119 @@ final class SaveExporterTests: XCTestCase {
         }
     }
 
+    // MARK: - gameMD5(inBundleAt:)
+
+    func testGameMD5ReturnsMD5ForValidBundle() throws {
+        let expectedMD5 = "deadbeef1234"
+        let zipURL = try makeMinimalExportZip(gameMD5: expectedMD5)
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertEqual(result, expectedMD5, "gameMD5(inBundleAt:) should return the MD5 stored in manifest.json")
+    }
+
+    func testGameMD5ReturnsNilForMissingManifest() throws {
+        // Create a zip that contains no manifest.json
+        let stagingDir = tempDir.appendingPathComponent("staging-empty-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        // Add a random file so the zip is non-empty but has no manifest
+        let dummyFile = stagingDir.appendingPathComponent("dummy.txt")
+        try "not a manifest".data(using: .utf8)!.write(to: dummyFile)
+
+        let zipURL = tempDir.appendingPathComponent("no-manifest.zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertNil(result, "gameMD5(inBundleAt:) should return nil when manifest.json is absent")
+    }
+
+    func testGameMD5ReturnsNilForInvalidManifest() throws {
+        // Create a zip where manifest.json exists but has invalid/empty content
+        let stagingDir = tempDir.appendingPathComponent("staging-bad-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        let manifestURL = stagingDir.appendingPathComponent("manifest.json")
+        try "not valid json".data(using: .utf8)!.write(to: manifestURL)
+
+        let zipURL = tempDir.appendingPathComponent("bad-manifest.zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertNil(result, "gameMD5(inBundleAt:) should return nil when manifest.json is not valid JSON")
+    }
+
+    func testGameMD5HandlesManifestWithMixedValueTypes() throws {
+        // Verify that manifest.json with non-string values (e.g. a numeric schemaVersion)
+        // still returns the MD5 correctly, since we parse as [String: Any] not [String: String].
+        let stagingDir = tempDir.appendingPathComponent("staging-mixed-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        let expectedMD5 = "cafebabe0123"
+        // Use an integer schemaVersion — this would break [String: String] parsing.
+        let manifest: [String: Any] = [
+            "schemaVersion": 1,   // Int, not String
+            "game": expectedMD5,
+            "title": "TestGame"
+        ]
+        let data = try JSONSerialization.data(withJSONObject: manifest)
+        try data.write(to: stagingDir.appendingPathComponent("manifest.json"))
+
+        let zipURL = tempDir.appendingPathComponent("mixed-manifest-\(expectedMD5).zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertEqual(result, expectedMD5, "gameMD5(inBundleAt:) should handle manifests with non-string typed fields")
+    }
+
+    // MARK: - validateNoBundleEscape
+
+    func testValidateNoBundleEscapePassesForLegitimateDirectory() throws {
+        // A directory containing only normal files and subdirectories should pass.
+        let dir = tempDir.appendingPathComponent("legit-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let sub = dir.appendingPathComponent("sub", isDirectory: true)
+        try FileManager.default.createDirectory(at: sub, withIntermediateDirectories: true)
+        try "data".data(using: .utf8)!.write(to: sub.appendingPathComponent("file.txt"))
+
+        // Should not throw — all paths reside within dir.
+        XCTAssertNoThrow(try SaveExporter.shared.validateNoBundleEscape(in: dir))
+    }
+
+    func testValidateNoBundleEscapeThrowsForSymlinkPointingOutside() throws {
+        // Simulate a Zip Slip scenario: a symlink inside the extraction dir that resolves
+        // to a path outside it. validateNoBundleEscape should detect and throw.
+        let dir = tempDir.appendingPathComponent("escape-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+
+        // Create a symlink that points to the parent temp directory (outside dir).
+        let symlinkURL = dir.appendingPathComponent("evil-link")
+        try FileManager.default.createSymbolicLink(at: symlinkURL, withDestinationURL: tempDir)
+
+        // Should throw because the symlink resolves outside dir.
+        XCTAssertThrowsError(
+            try SaveExporter.shared.validateNoBundleEscape(in: dir),
+            "validateNoBundleEscape should throw for a symlink escaping the extraction directory"
+        ) { error in
+            guard case SaveExportError.invalidBundle = error else {
+                XCTFail("Expected SaveExportError.invalidBundle, got \(error)")
+                return
+            }
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeGame(title: String, md5: String, romURL: URL?) -> PVGame {

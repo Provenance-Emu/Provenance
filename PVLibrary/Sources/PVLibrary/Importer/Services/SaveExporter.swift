@@ -238,6 +238,8 @@ public final class SaveExporter: @unchecked Sendable {
         guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path) else {
             throw SaveExportError.invalidBundle("Failed to extract archive.")
         }
+        // Defense-in-depth: verify no extracted entry escaped tempDir.
+        try validateNoBundleEscape(in: tempDir)
 
         // Read and validate manifest
         let manifestURL = tempDir.appendingPathComponent("manifest.json")
@@ -246,19 +248,34 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         let manifestData = try Data(contentsOf: manifestURL)
-        guard let manifestDict = try JSONSerialization.jsonObject(with: manifestData) as? [String: String] else {
+        // Parse as [String: Any] so additional typed fields (e.g. numeric schemaVersion) don't cause a nil cast.
+        guard let manifestDict = try JSONSerialization.jsonObject(with: manifestData) as? [String: Any] else {
             throw SaveExportError.invalidBundle("manifest.json has unexpected format.")
         }
 
         // Validate schema version for forward/backward compatibility
-        guard let schemaVersion = manifestDict["schemaVersion"], !schemaVersion.isEmpty else {
-            throw SaveExportError.invalidBundle("manifest.json missing 'schemaVersion' field.")
-        }
-        guard schemaVersion == "1" else {
-            throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersion)'.")
+        let rawSchemaVersion = manifestDict["schemaVersion"]
+
+        let schemaVersionInt: Int?
+        switch rawSchemaVersion {
+        case let s as String:
+            schemaVersionInt = Int(s.trimmingCharacters(in: .whitespacesAndNewlines))
+        case let i as Int:
+            schemaVersionInt = i
+        case let n as NSNumber:
+            schemaVersionInt = n.intValue
+        default:
+            schemaVersionInt = nil
         }
 
-        guard let bundleMD5 = manifestDict["game"], !bundleMD5.isEmpty else {
+        guard let schemaVersionIntUnwrapped = schemaVersionInt else {
+            throw SaveExportError.invalidBundle("manifest.json missing 'schemaVersion' field.")
+        }
+        guard schemaVersionIntUnwrapped == 1 else {
+            throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersionIntUnwrapped)'.")
+        }
+
+        guard let bundleMD5 = manifestDict["game"] as? String, !bundleMD5.isEmpty else {
             throw SaveExportError.invalidBundle("manifest.json missing 'game' field.")
         }
 
@@ -308,7 +325,68 @@ public final class SaveExporter: @unchecked Sendable {
         ILOG("SaveExporter: import complete for game '\(frozenGame.title)'")
     }
 
+    // MARK: - Manifest Inspection
+
+    /// Reads the `manifest.json` embedded in a save-export bundle and returns
+    /// the MD5 hash of the game the bundle belongs to.
+    ///
+    /// Implementation note: the entire zip archive is extracted to a temporary directory,
+    /// `manifest.json` is read and parsed, and then the temporary directory is removed.
+    /// For large save bundles this may be relatively expensive in terms of I/O and disk space.
+    ///
+    /// - Parameter zipURL: URL of the `.zip` save-export bundle.
+    /// - Returns: The lowercase MD5 hash string from the manifest, or `nil` if the
+    ///   archive is not a valid save-export bundle (e.g. missing manifest, wrong format).
+    public func gameMD5(inBundleAt zipURL: URL) -> String? {
+        let fm = FileManager.default
+        let tempDir = fm.temporaryDirectory
+            .appendingPathComponent("PVManifestPeek_\(UUID().uuidString)", isDirectory: true)
+        defer { try? fm.removeItem(at: tempDir) }
+
+        do {
+            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
+            guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path) else {
+                return nil
+            }
+            // Defense-in-depth: verify no extracted entry escaped tempDir via symlinks or traversal paths.
+            try validateNoBundleEscape(in: tempDir)
+            let manifestURL = tempDir.appendingPathComponent("manifest.json")
+            // Guard against path traversal: ensure the manifest URL resolves inside tempDir.
+            let tempDirResolved = tempDir.resolvingSymlinksInPath().path
+            guard manifestURL.resolvingSymlinksInPath().path.hasPrefix(tempDirResolved),
+                  fm.fileExists(atPath: manifestURL.path),
+                  let data = try? Data(contentsOf: manifestURL),
+                  // Parse as [String: Any] so additional typed fields don't cause nil cast.
+                  let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let md5 = manifest["game"] as? String, !md5.isEmpty else {
+                return nil
+            }
+            return md5.lowercased()
+        } catch {
+            WLOG("SaveExporter: failed to read bundle manifest: \(error)")
+            return nil
+        }
+    }
+
     // MARK: - Helpers
+
+    /// Validates that every file/symlink extracted into `directory` resolves to a path
+    /// within that directory, guarding against Zip Slip / path traversal in untrusted archives.
+    ///
+    /// - Throws: `SaveExportError.invalidBundle` if any entry resolves outside `directory`.
+    func validateNoBundleEscape(in directory: URL) throws {
+        let resolvedBase = directory.resolvingSymlinksInPath().path
+        let fm = FileManager.default
+        guard let enumerator = fm.enumerator(at: directory,
+                                              includingPropertiesForKeys: [.isSymbolicLinkKey],
+                                              options: [.skipsPackageDescendants]) else { return }
+        for case let fileURL as URL in enumerator {
+            let realPath = fileURL.resolvingSymlinksInPath().path
+            guard realPath.hasPrefix(resolvedBase) else {
+                throw SaveExportError.invalidBundle("Archive contains a path traversal entry: \(fileURL.lastPathComponent)")
+            }
+        }
+    }
 
     private func restoreDirectory(from source: URL, to destination: URL) throws {
         let fm = FileManager.default
