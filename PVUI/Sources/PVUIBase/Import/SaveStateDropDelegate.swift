@@ -77,21 +77,36 @@ public struct SaveStateDropTargetModifier: ViewModifier {
                 provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, error in
                     if let error { ELOG("SaveStateDropDelegate: loadItem(fileURL) error: \(error)"); return }
                     guard let url = item as? URL else { return }
-                    processDroppedFile(url)
+                    do {
+                        let stableURL = try Self.stableCopy(of: url)
+                        processDroppedFile(stableURL)
+                    } catch {
+                        ELOG("SaveStateDropDelegate: stableCopy(fileURL) error: \(error)")
+                    }
                 }
                 handled = true
             } else if provider.hasItemConformingToTypeIdentifier(UTType.zip.identifier) {
                 provider.loadFileRepresentation(forTypeIdentifier: UTType.zip.identifier) { url, error in
                     if let error { ELOG("SaveStateDropDelegate: loadFileRepresentation(zip) error: \(error)"); return }
                     guard let url else { return }
-                    if let stable = try? Self.stableCopy(of: url) { processDroppedFile(stable) }
+                    do {
+                        let stable = try Self.stableCopy(of: url)
+                        processDroppedFile(stable)
+                    } catch {
+                        ELOG("SaveStateDropDelegate: stableCopy(zip) error: \(error)")
+                    }
                 }
                 handled = true
             } else if provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) {
                 provider.loadFileRepresentation(forTypeIdentifier: UTType.data.identifier) { url, error in
                     if let error { ELOG("SaveStateDropDelegate: loadFileRepresentation(data) error: \(error)"); return }
                     guard let url else { return }
-                    if let stable = try? Self.stableCopy(of: url) { processDroppedFile(stable) }
+                    do {
+                        let stable = try Self.stableCopy(of: url)
+                        processDroppedFile(stable)
+                    } catch {
+                        ELOG("SaveStateDropDelegate: stableCopy(data) error: \(error)")
+                    }
                 }
                 handled = true
             }
@@ -135,10 +150,12 @@ public struct SaveStateDropTargetModifier: ViewModifier {
 
     private func importBatterySave(fileURL: URL) {
         Task {
-            guard let game = await MainActor.run(body: {
-                RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId)
-            }),
-            let romURL = game.file?.url else {
+            guard let romURL = await MainActor.run(body: {
+                RomDatabase.sharedInstance
+                    .object(ofType: PVGame.self, wherePrimaryKeyEquals: gameId)?
+                    .file?
+                    .url
+            }) else {
                 ELOG("SaveStateDropDelegate: Game \(gameId) has no ROM URL — cannot import battery save.")
                 return
             }

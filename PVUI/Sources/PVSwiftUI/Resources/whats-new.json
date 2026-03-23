@@ -526,29 +526,5 @@
         "subtitle": "Full-screen album art, track name, and artist shown in StandBy mode while game music plays — perfect for the nightstand."
       }
     ]
-  },
-  {
-    "version": "3.7.0",
-    "title": "Save Export & Drag & Drop",
-    "features": [
-      {
-        "symbolName": "square.and.arrow.up",
-        "symbolColor": "blue",
-        "title": "Export Game Saves",
-        "subtitle": "Long-press any game and choose \"Export Saves\" to share all save states and battery saves as a zip file via AirDrop, Mail, or Files."
-      },
-      {
-        "symbolName": "hand.draw.fill",
-        "symbolColor": "orange",
-        "title": "Drag Save States",
-        "subtitle": "Drag any save state card from the All Save States browser directly to Files.app or AirDrop."
-      },
-      {
-        "symbolName": "arrow.down.doc.fill",
-        "symbolColor": "green",
-        "title": "Drop to Import",
-        "subtitle": "Drop a save export zip or a .sav battery save file onto a game card to instantly import it."
-      }
-    ]
   }
 ]
