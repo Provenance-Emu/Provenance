@@ -325,14 +325,22 @@ import CoreMotion
         filteredX = alpha * inX + (1.0 - alpha) * filteredX
         filteredY = alpha * inY + (1.0 - alpha) * filteredY
 
-        // Compute actual dt from elapsed time; clamp to a sane range to avoid
-        // large jumps on first call or after long pauses.
+        // Compute actual dt from elapsed time; treat a fresh start or a long gap
+        // (> 250 ms) as a nominal frame to avoid cursor jumps.
         let now = Date.timeIntervalSinceReferenceDate
         let dt: Double
         if lastCallbackTime == 0 {
+            // First call after attach or re-enable: use nominal frame duration.
             dt = 1.0 / 60.0
         } else {
-            dt = min(max(now - lastCallbackTime, 1.0 / 240.0), 1.0 / 15.0)
+            let rawDt = now - lastCallbackTime
+            if rawDt > 0.25 {
+                // Long gap (e.g. motion callback stalled while isEnabled was true):
+                // treat like a fresh start so the cursor doesn't jump.
+                dt = 1.0 / 60.0
+            } else {
+                dt = min(max(rawDt, 1.0 / 240.0), 1.0 / 15.0)
+            }
         }
         lastCallbackTime = now
 
