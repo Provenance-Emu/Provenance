@@ -80,9 +80,12 @@ extension PVVecXCore: CompanionControllerCapable {
 
 // MARK: - PVVectrexButton + CompanionButton
 
-private extension PVVectrexButton {
+extension PVVectrexButton {
     /// Returns the Vectrex button corresponding to a companion face button,
     /// or `nil` when the button has no Vectrex equivalent.
+    ///
+    /// Internal (not private) so a `PVVecX` test target can validate the
+    /// mapping without duplicating the switch statement.
     init?(companionButton: CompanionButton) {
         switch companionButton {
         case .south: self = .button1

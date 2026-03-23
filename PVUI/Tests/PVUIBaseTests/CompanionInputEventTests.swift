@@ -107,6 +107,13 @@ private final class MockVectrexResponder {
 
     var calls: [Call] = []
 
+    /// Mirrors `PVVectrexButton.init?(companionButton:)` in `PVVecX`.
+    /// That initializer is internal to the PVVecX module; this copy lets
+    /// PVUIBaseTests validate the mapping contract without depending on the
+    /// VecX core package.
+    ///
+    /// If `PVVectrexButton` button ordering ever changes, update both here
+    /// and in `PVVecXCore+CompanionController.swift`.
     func vectrexButton(for companionButton: CompanionButton) -> PVVectrexButton? {
         switch companionButton {
         case .south: return .button1
