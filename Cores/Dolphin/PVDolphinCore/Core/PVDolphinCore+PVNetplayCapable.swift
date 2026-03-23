@@ -194,7 +194,7 @@ extension PVDolphinCore: PVNetplayCapable {
                 maxPlayers: ctx?.settings.maxPlayers ?? 4,
                 currentPlayers: 1,
                 isLAN: traversalCode == nil,
-                hostAddress: "0.0.0.0",
+                hostAddress: traversalCode ?? "0.0.0.0",
                 port: effectivePort,
                 traversalCode: traversalCode
             )

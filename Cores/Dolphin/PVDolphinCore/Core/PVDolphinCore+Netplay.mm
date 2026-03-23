@@ -193,10 +193,14 @@ static const char kClientBoxKey = 0;
         .traversal_port = 0,
     };
 
+    // Direct-connect only: use_traversal is false, so Dolphin will not assign
+    // a traversal code.  queryDolphinTraversalCode() will return nil for this
+    // session type.  Traversal hosting requires opt-in via a separate path.
+
     DLOG(@"[Dolphin Netplay] Starting server on port %u, maxPlayers=%ld",
          resolvedPort, (long)maxPlayers);
 
-    @try {
+    try {
         auto server = std::make_unique<NetPlay::NetPlayServer>(
             resolvedPort,
             /* forward_port */ false,
@@ -221,13 +225,21 @@ static const char kClientBoxKey = 0;
         _PVDolphinNetplayServerBox *sb = [_PVDolphinNetplayServerBox new];
         sb->server = std::move(server);
         objc_setAssociatedObject(self, &kServerBoxKey, sb, OBJC_ASSOCIATION_RETAIN);
-    } @catch (NSException *ex) {
-        ELOG(@"[Dolphin Netplay] Exception starting server: %@", ex);
+    } catch (const std::exception &cppEx) {
+        ELOG(@"[Dolphin Netplay] C++ exception starting server: %s", cppEx.what());
         if (error) {
             *error = [NSError errorWithDomain:PVDolphinNetplayErrorDomain
                                          code:PVDolphinNetplayErrorConnectFailed
                                      userInfo:@{NSLocalizedDescriptionKey:
-                                                    ex.reason ?: @"Unknown error starting server."}];
+                                                    [NSString stringWithUTF8String:cppEx.what()] ?: @"Unknown error starting server."}];
+        }
+        return NO;
+    } catch (...) {
+        ELOG(@"[Dolphin Netplay] Unknown C++ exception starting server.");
+        if (error) {
+            *error = [NSError errorWithDomain:PVDolphinNetplayErrorDomain
+                                         code:PVDolphinNetplayErrorConnectFailed
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Unknown error starting server."}];
         }
         return NO;
     }
@@ -320,7 +332,7 @@ static const char kClientBoxKey = 0;
         DLOG(@"[Dolphin Netplay] Connecting directly to %@:%u", host, resolvedPort);
     }
 
-    @try {
+    try {
         // NetPlayClient constructor (Dolphin 5.x / dolphin-ios):
         //   NetPlayClient(address, port, dialog, player_name, traversal_config)
         // If your dolphin-ios revision uses NetPlayClient::Create() (static factory),
@@ -349,13 +361,21 @@ static const char kClientBoxKey = 0;
         _PVDolphinNetplayClientBox *cb = [_PVDolphinNetplayClientBox new];
         cb->client = std::move(client);
         objc_setAssociatedObject(self, &kClientBoxKey, cb, OBJC_ASSOCIATION_RETAIN);
-    } @catch (NSException *ex) {
-        ELOG(@"[Dolphin Netplay] Exception during connect: %@", ex);
+    } catch (const std::exception &cppEx) {
+        ELOG(@"[Dolphin Netplay] C++ exception during connect: %s", cppEx.what());
         if (error) {
             *error = [NSError errorWithDomain:PVDolphinNetplayErrorDomain
                                          code:PVDolphinNetplayErrorConnectFailed
                                      userInfo:@{NSLocalizedDescriptionKey:
-                                                    ex.reason ?: @"Unknown error during connect."}];
+                                                    [NSString stringWithUTF8String:cppEx.what()] ?: @"Unknown error during connect."}];
+        }
+        return NO;
+    } catch (...) {
+        ELOG(@"[Dolphin Netplay] Unknown C++ exception during connect.");
+        if (error) {
+            *error = [NSError errorWithDomain:PVDolphinNetplayErrorDomain
+                                         code:PVDolphinNetplayErrorConnectFailed
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Unknown error during connect."}];
         }
         return NO;
     }
@@ -396,41 +416,46 @@ static const char kClientBoxKey = 0;
 
 - (nullable NSString *)queryDolphinTraversalCode {
 #if HAVE_DOLPHIN_NETPLAY
-    _PVDolphinNetplayServerBox *sb =
-        objc_getAssociatedObject(self, &kServerBoxKey);
-    if (sb == nil || sb->server == nullptr) {
-        return nil;
-    }
-
-    // NetPlayServer exposes the traversal code through the traversal client.
-    // The API differs across Dolphin revisions:
-    //   Option A (current dolphin-ios): server->GetInterfaceListToSend()
-    //     returns a std::vector<std::pair<std::string, std::string>> where the
-    //     first element is the traversal code for relay sessions.
-    //   Option B (older): direct access via server->GetTraversalHostID() if exposed.
-    //
-    // We attempt Option A first; if it returns an empty list or the build does not
-    // expose the method, we fall through to nil.
-#if __has_include("Common/TraversalClient.h")
-    // Use C++ try/catch — @try/@catch only catches ObjC exceptions, not C++
-    // exceptions that Dolphin's GetInterfaceListToSend() may throw.
-    try {
-        // GetInterfaceListToSend() is declared in NetPlayServer.h on dolphin-ios.
-        // It returns pairs of (address_name, code_string).  For traversal sessions
-        // the first pair's second element is the code clients enter to connect.
-        auto pairs = sb->server->GetInterfaceListToSend();
-        if (!pairs.empty()) {
-            const std::string &code = pairs.front().second;
-            if (!code.empty()) {
-                return [NSString stringWithUTF8String:code.c_str()];
-            }
+    // @synchronized serializes this method against stopNetplay(), which resets
+    // the server pointer.  The C++ try/catch inside prevents any C++ exception
+    // from propagating through the lock (which would leave it unreleased).
+    @synchronized (self) {
+        _PVDolphinNetplayServerBox *sb =
+            objc_getAssociatedObject(self, &kServerBoxKey);
+        if (sb == nil || sb->server == nullptr) {
+            return nil;
         }
-    } catch (const std::exception &e) {
-        WLOG(@"[Dolphin Netplay] C++ exception querying traversal code: %s", e.what());
-    } catch (...) {
-        WLOG(@"[Dolphin Netplay] Unknown exception querying traversal code.");
-    }
+
+        // NetPlayServer exposes the traversal code through the traversal client.
+        // The API differs across Dolphin revisions:
+        //   Option A (current dolphin-ios): server->GetInterfaceListToSend()
+        //     returns a std::vector<std::pair<std::string, std::string>> where the
+        //     first element is the traversal code for relay sessions.
+        //   Option B (older): direct access via server->GetTraversalHostID() if exposed.
+        //
+        // We attempt Option A first; if it returns an empty list or the build does not
+        // expose the method, we fall through to nil.
+#if __has_include("Common/TraversalClient.h")
+        // Use C++ try/catch — @try/@catch only catches ObjC exceptions, not C++
+        // exceptions that Dolphin's GetInterfaceListToSend() may throw.
+        try {
+            // GetInterfaceListToSend() is declared in NetPlayServer.h on dolphin-ios.
+            // It returns pairs of (address_name, code_string).  For traversal sessions
+            // the first pair's second element is the code clients enter to connect.
+            auto pairs = sb->server->GetInterfaceListToSend();
+            if (!pairs.empty()) {
+                const std::string &code = pairs.front().second;
+                if (!code.empty()) {
+                    return [NSString stringWithUTF8String:code.c_str()];
+                }
+            }
+        } catch (const std::exception &e) {
+            WLOG(@"[Dolphin Netplay] C++ exception querying traversal code: %s", e.what());
+        } catch (...) {
+            WLOG(@"[Dolphin Netplay] Unknown exception querying traversal code.");
+        }
 #endif // __has_include(TraversalClient)
+    }
 
 #endif // HAVE_DOLPHIN_NETPLAY
     return nil;
@@ -441,16 +466,20 @@ static const char kClientBoxKey = 0;
 - (void)stopNetplay {
     DLOG(@"[Dolphin Netplay] Stopping session.");
 #if HAVE_DOLPHIN_NETPLAY
-    // Tear down client first so the server doesn't block on pending connections.
-    _PVDolphinNetplayClientBox *cb = objc_getAssociatedObject(self, &kClientBoxKey);
-    if (cb != nil) {
-        cb->client.reset();
-        objc_setAssociatedObject(self, &kClientBoxKey, nil, OBJC_ASSOCIATION_RETAIN);
-    }
-    _PVDolphinNetplayServerBox *sb = objc_getAssociatedObject(self, &kServerBoxKey);
-    if (sb != nil) {
-        sb->server.reset();
-        objc_setAssociatedObject(self, &kServerBoxKey, nil, OBJC_ASSOCIATION_RETAIN);
+    // @synchronized serializes teardown against queryDolphinTraversalCode() and
+    // dolphinNetplayStatus, which read the same associated objects.
+    @synchronized (self) {
+        // Tear down client first so the server doesn't block on pending connections.
+        _PVDolphinNetplayClientBox *cb = objc_getAssociatedObject(self, &kClientBoxKey);
+        if (cb != nil) {
+            cb->client.reset();
+            objc_setAssociatedObject(self, &kClientBoxKey, nil, OBJC_ASSOCIATION_RETAIN);
+        }
+        _PVDolphinNetplayServerBox *sb = objc_getAssociatedObject(self, &kServerBoxKey);
+        if (sb != nil) {
+            sb->server.reset();
+            objc_setAssociatedObject(self, &kServerBoxKey, nil, OBJC_ASSOCIATION_RETAIN);
+        }
     }
 #endif
 }

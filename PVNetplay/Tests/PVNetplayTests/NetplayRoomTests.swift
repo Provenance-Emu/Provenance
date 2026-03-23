@@ -345,6 +345,66 @@ struct RetroArchLobbyAddressTests {
 }
 #endif
 
+// MARK: - TraversalCode Tests
+
+@Suite("NetplayRoom TraversalCode Tests")
+struct NetplayRoomTraversalCodeTests {
+
+    @Test("traversalCode is nil by default")
+    func traversalCodeDefaultsToNil() {
+        let room = NetplayRoom(
+            hostName: "DirectHost",
+            gameName: "F-Zero",
+            gameHash: "aabbccdd",
+            coreIdentifier: "com.provenance.dolphin",
+            maxPlayers: 4,
+            currentPlayers: 1,
+            isLAN: true,
+            hostAddress: "192.168.1.5",
+            port: 2626
+        )
+        #expect(room.traversalCode == nil)
+    }
+
+    @Test("traversalCode is preserved when non-nil")
+    func traversalCodeRoundTrips() {
+        let room = NetplayRoom(
+            hostName: "RelayHost",
+            gameName: "Mario Kart Wii",
+            gameHash: "deadbeef",
+            coreIdentifier: "com.provenance.dolphin",
+            maxPlayers: 4,
+            currentPlayers: 1,
+            isLAN: false,
+            hostAddress: "ABCD-EFGH",
+            port: 2626,
+            traversalCode: "ABCD-EFGH"
+        )
+        #expect(room.traversalCode == "ABCD-EFGH")
+        // When traversalCode is set, hostAddress should carry the same value
+        // so existing consumers can connect without needing to check traversalCode.
+        #expect(room.hostAddress == room.traversalCode)
+    }
+
+    @Test("traversal room is not LAN")
+    func traversalRoomIsNotLAN() {
+        let room = NetplayRoom(
+            hostName: "RelayHost",
+            gameName: "Super Smash Bros.",
+            gameHash: "cafebabe",
+            coreIdentifier: "com.provenance.dolphin",
+            maxPlayers: 4,
+            currentPlayers: 2,
+            isLAN: false,
+            hostAddress: "WXYZ-1234",
+            port: 2626,
+            traversalCode: "WXYZ-1234"
+        )
+        #expect(!room.isLAN)
+        #expect(room.traversalCode != nil)
+    }
+}
+
 // MARK: - PVNetplayCapable mock conformance test
 // Verifies the protocol requirements can be satisfied (compile-time check).
 
