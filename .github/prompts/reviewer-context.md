@@ -244,6 +244,7 @@ Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
 - `PVRetroArchCoreCore` forwards `PVNetplayCapable` calls to its underlying `_bridge`.
 - `PVEmulatorViewController+Netplay.swift` registers/deregisters the bridge with `PVNetplayManager.shared` around `startEmulation`/`stopEmulation`.
 - New cores that support netplay should conform to `PVNetplayCapable`; PVUI will auto-detect via `core as? any PVNetplayCapable`.
+- **Dolphin** (`PVDolphinCore`) conforms via `PVDolphinCore+PVNetplayCapable.swift` (Swift) + `PVDolphinCore+Netplay.mm` (ObjC++ bridge). The C++ API calls are guarded with `#if __has_include("Core/NetPlayClient.h")` so the file compiles even when the `dolphin-ios` submodule is absent. When reviewing changes to the bridge, check that `NetTraversalConfig`, `NetPlayClient`, and `NetPlayServer` constructor signatures still match the dolphin-ios submodule revision.
 
 ### PVToast In-Game Notification System
 - `PVToastManager.shared` (Tier 6, `PVUIBase`) is `@MainActor` — all calls must be on the main actor.
