@@ -42,12 +42,13 @@ private extension Notification.Name {
 /// called from any thread.  Path lookups (potentially iCloud-blocking) are deferred
 /// to the utility background queue used by each event handler.
 ///
-/// `@unchecked Sendable` is required because `[NSObjectProtocol]` is not `Sendable`.
-/// Mutable state inventory:
-/// - `observations` — guarded by `lock`; written only in `start()`/`stop()`.
-/// - `realmConfiguration` — set once before `start()` (test injection only); never
-///    written after observers are registered, so no additional locking is required.
-/// - `_testOn*` closures — set once before `start()` (tests only); same invariant.
+/// `@unchecked Sendable` justification:
+/// `[NSObjectProtocol]` is not `Sendable`, forcing the annotation.  The class is
+/// safe because all mutable state follows a strict write-before-start discipline:
+/// - `observations` — guarded by `lock`; written only inside `start()`/`stop()`.
+/// - `realmConfiguration`, `_testOn*` closures, `_test*PathPrefix` strings — all
+///   set once (by tests) before `start()` is called and never written afterward,
+///   so concurrent event handlers observe a stable, read-only snapshot.
 public final class PVWebFileEventObserver: @unchecked Sendable {
 
     public static let shared = PVWebFileEventObserver()
@@ -61,8 +62,8 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     internal var realmConfiguration: Realm.Configuration = .defaultConfiguration
 
     // MARK: Test instrumentation
-    // These closures are always `nil` in production. Tests set them before `start()`
-    // to verify handler delivery (e.g. with XCTestExpectation(isInverted:)).
+    // These properties are always `nil` in production. Tests set them before `start()`
+    // to override path prefixes or observe handler delivery.
     // Because they are set before `start()` is called, no additional locking is
     // needed — they are read-only from the perspective of concurrent event handlers.
 
@@ -70,6 +71,15 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     internal var _testOnDeleteHandlerInvoked: ((String) -> Void)?
     /// Called at the start of `handleFileMoved` with (fromPath, toPath).
     internal var _testOnMoveHandlerInvoked: ((String, String) -> Void)?
+
+    /// Override the ROMs directory prefix used during delete/move classification.
+    /// Nil in production — set in tests so handlers can classify paths against a
+    /// temp directory rather than `Paths.romsPath` (which is iCloud-blocking).
+    internal var _testRomsPathPrefix: String?
+    /// Override the save-states directory prefix for delete classification.
+    internal var _testSavesPathPrefix: String?
+    /// Override the BIOS directory prefix for delete classification.
+    internal var _testBiosPathPrefix: String?
 
     internal init() {}
 
@@ -125,14 +135,20 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
         ILOG("PVWebFileEventObserver: file deleted — \(fullPath)")
 
         let config = realmConfiguration
+        // Snapshot test overrides before entering the background queue so the
+        // closure captures value-type Strings (no actor-isolation concerns).
+        let testRoms  = _testRomsPathPrefix
+        let testSaves = _testSavesPathPrefix
+        let testBios  = _testBiosPathPrefix
         DispatchQueue.global(qos: .utility).async {
-            // Compute potentially iCloud-blocking paths here on the background thread.
-            let romsDir = Paths.romsPath.path
-            let romsPrefix = romsDir.hasSuffix("/") ? romsDir : romsDir + "/"
-            let savesDir = Paths.saveSavesPath.path
-            let savesPrefix = savesDir.hasSuffix("/") ? savesDir : savesDir + "/"
-            let biosDir = Paths.biosesPath.path
-            let biosPrefix = biosDir.hasSuffix("/") ? biosDir : biosDir + "/"
+            // Helper: ensure a directory path ends with "/" for prefix matching.
+            func ensureSlash(_ path: String) -> String { path.hasSuffix("/") ? path : path + "/" }
+            // Compute potentially iCloud-blocking paths here on the background thread,
+            // falling back to test overrides when provided (avoids iCloud I/O in tests).
+            // ensureSlash applied to both branches so caller doesn't need to add "/".
+            let romsPrefix  = ensureSlash(testRoms  ?? Paths.romsPath.path)
+            let savesPrefix = ensureSlash(testSaves ?? Paths.saveSavesPath.path)
+            let biosPrefix  = ensureSlash(testBios  ?? Paths.biosesPath.path)
 
             do {
                 let realm = try Realm(configuration: config)
@@ -234,10 +250,12 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
         ILOG("PVWebFileEventObserver: file moved — \(fromPath) → \(toPath)")
 
         let config = realmConfiguration
+        let testRoms = _testRomsPathPrefix
         DispatchQueue.global(qos: .utility).async {
-            // Compute potentially iCloud-blocking paths here on the background thread.
-            let romsDir = Paths.romsPath.path
-            let prefix = romsDir.hasSuffix("/") ? romsDir : romsDir + "/"
+            func ensureSlash(_ path: String) -> String { path.hasSuffix("/") ? path : path + "/" }
+            // Compute potentially iCloud-blocking path here on the background thread,
+            // falling back to test override when provided.
+            let prefix = ensureSlash(testRoms ?? Paths.romsPath.path)
 
             guard fromPath.hasPrefix(prefix), toPath.hasPrefix(prefix) else {
                 // Only ROM moves require a Realm path update; other file types don't

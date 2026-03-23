@@ -16,6 +16,11 @@ final class PVWebFileEventObserverTests: XCTestCase {
     // Use a fresh in-memory Realm for every test.
     private var realmConfig: Realm.Configuration!
     private var observer: PVWebFileEventObserver!
+    // Temp-directory prefixes injected into the observer so tests can classify
+    // paths without iCloud-blocking Paths.* calls.
+    private var romsPrefix: String!
+    private var savesPrefix: String!
+    private var biosPrefix: String!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -25,8 +30,17 @@ final class PVWebFileEventObserverTests: XCTestCase {
                           PVSystem.self, PVCore.self, PVFile.self,
                           PVImageFile.self, PVRecentGame.self, PVCheats.self]
         )
+
+        let tmp = NSTemporaryDirectory() + "PVWebFileEventObserverTests-\(UUID().uuidString)/"
+        romsPrefix  = tmp + "ROMs/"
+        savesPrefix = tmp + "SaveStates/"
+        biosPrefix  = tmp + "BIOS/"
+
         observer = PVWebFileEventObserver()
         observer.realmConfiguration = realmConfig
+        observer._testRomsPathPrefix  = romsPrefix
+        observer._testSavesPathPrefix = savesPrefix
+        observer._testBiosPathPrefix  = biosPrefix
     }
 
     override func tearDownWithError() throws {
@@ -81,50 +95,166 @@ final class PVWebFileEventObserverTests: XCTestCase {
         XCTAssertTrue(validResult,  "non-empty cloudRecordID should be treated as present")
     }
 
-    // MARK: - Notification delivery (in-memory Realm)
+    // MARK: - ROM delete — CloudKit soft-offline path
 
     /// When a ROM file is deleted and the matching PVGame has a CloudKit record,
-    /// the observer should mark the game as offline rather than deleting it.
-    func testDeleteWithCloudRecordMarksSoftOffline() throws {
+    /// the observer marks the game as offline (`isDownloaded = false`, `requiresSync = true`)
+    /// rather than deleting the Realm record.
+    func testDeleteROMWithCloudRecordMarksSoftOffline() throws {
         let realm = try Realm(configuration: realmConfig)
 
-        // Arrange: create a game with a CloudKit record.
         let game = PVGame()
-        game.title = "Test ROM"
-        game.romPath = "NES/test.nes"
+        game.title = "Super Mario World"
+        game.romPath = "SNES/mario.sfc"
         game.cloudRecordID = "ckrecord-001"
         game.isDownloaded = true
         game.requiresSync = false
 
         try realm.write { realm.add(game) }
 
-        // Simulate a ROMs-root path that the observer will compute via Paths.romsPath.
-        // We can't control Paths.romsPath in unit tests, so we post the notification
-        // with the full absolute path and rely on prefix matching.
-        // This test validates that the Realm write path succeeds without errors.
         observer.start()
 
-        let expectation = XCTestExpectation(description: "handler completes")
-        // Give the background queue time to process after posting.
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) {
-            expectation.fulfill()
+        let exp = expectation(description: "delete handler completes background work")
+        // _testOnDeleteHandlerInvoked fires at the *start* of the handler, before
+        // the async dispatch.  Give the background queue time to finish its Realm write.
+        observer._testOnDeleteHandlerInvoked = { _ in
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) {
+                exp.fulfill()
+            }
         }
 
-        // Post the notification — path doesn't need to match for the Realm write test
-        // since the observer queries by romPath, and the path matching depends on
-        // Paths.romsPath which is a real system path in this environment.
+        let deletedPath = romsPrefix + "SNES/mario.sfc"
         NotificationCenter.default.post(
             name: Notification.Name("PVWebServerFileDeletedNotification"),
             object: nil,
-            userInfo: ["filePath": "/totally/unrelated/path/test.nes"]
+            userInfo: ["filePath": deletedPath]
         )
 
-        wait(for: [expectation], timeout: 1)
-        // Verify game still exists (no crash / no spurious deletion)
+        wait(for: [exp], timeout: 2)
+
         let freshRealm = try Realm(configuration: realmConfig)
-        XCTAssertNotNil(freshRealm.objects(PVGame.self).filter("romPath == %@", "NES/test.nes").first,
-                        "Game should still exist after an unrelated-path delete event")
+        let found = freshRealm.objects(PVGame.self)
+            .filter("romPath == %@", "SNES/mario.sfc")
+            .first
+        XCTAssertNotNil(found, "Game should still exist in Realm (soft-offline, not hard-deleted)")
+        XCTAssertFalse(found?.isDownloaded ?? true, "isDownloaded should be set to false")
+        XCTAssertTrue(found?.requiresSync ?? false, "requiresSync should be set to true")
+        XCTAssertNil(found?.lastCloudSyncDate, "lastCloudSyncDate should be cleared")
     }
+
+    /// When a ROM file is deleted and the matching PVGame has NO CloudKit record,
+    /// the observer hard-deletes the game from Realm.
+    func testDeleteROMWithoutCloudRecordHardDeletes() throws {
+        let realm = try Realm(configuration: realmConfig)
+
+        let game = PVGame()
+        game.title = "Donkey Kong"
+        game.romPath = "NES/donkeykong.nes"
+        game.cloudRecordID = nil
+        game.isDownloaded = true
+
+        try realm.write { realm.add(game) }
+
+        observer.start()
+
+        let exp = expectation(description: "delete handler completes background work")
+        observer._testOnDeleteHandlerInvoked = { _ in
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) {
+                exp.fulfill()
+            }
+        }
+
+        let deletedPath = romsPrefix + "NES/donkeykong.nes"
+        NotificationCenter.default.post(
+            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            object: nil,
+            userInfo: ["filePath": deletedPath]
+        )
+
+        wait(for: [exp], timeout: 2)
+
+        let freshRealm = try Realm(configuration: realmConfig)
+        let found = freshRealm.objects(PVGame.self)
+            .filter("romPath == %@", "NES/donkeykong.nes")
+            .first
+        XCTAssertNil(found, "Game should be hard-deleted from Realm (no CloudKit record)")
+    }
+
+    /// An empty-string cloudRecordID is treated the same as nil —
+    /// the game should be hard-deleted, not soft-offlined.
+    func testDeleteROMWithEmptyCloudRecordIDHardDeletes() throws {
+        let realm = try Realm(configuration: realmConfig)
+
+        let game = PVGame()
+        game.title = "Pac-Man"
+        game.romPath = "Arcade/pacman.rom"
+        game.cloudRecordID = "" // empty string — treated as "no record"
+        game.isDownloaded = true
+
+        try realm.write { realm.add(game) }
+
+        observer.start()
+
+        let exp = expectation(description: "delete handler completes")
+        observer._testOnDeleteHandlerInvoked = { _ in
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
+        }
+
+        NotificationCenter.default.post(
+            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            object: nil,
+            userInfo: ["filePath": romsPrefix + "Arcade/pacman.rom"]
+        )
+
+        wait(for: [exp], timeout: 2)
+
+        let freshRealm = try Realm(configuration: realmConfig)
+        XCTAssertNil(freshRealm.objects(PVGame.self).filter("romPath == %@", "Arcade/pacman.rom").first,
+                     "Game with empty cloudRecordID should be hard-deleted")
+    }
+
+    // MARK: - ROM move path
+
+    /// When a ROM file is moved/renamed, the observer updates `romPath` and
+    /// `file.partialPath` in Realm to the new relative path.
+    func testMoveROMUpdatesRomPath() throws {
+        let realm = try Realm(configuration: realmConfig)
+
+        let oldRelative = "SNES/castlevania.sfc"
+        let newRelative = "SNES/Castlevania.sfc"
+
+        let game = PVGame()
+        game.title = "Castlevania"
+        game.romPath = oldRelative
+
+        try realm.write { realm.add(game) }
+
+        observer.start()
+
+        let exp = expectation(description: "move handler completes background work")
+        observer._testOnMoveHandlerInvoked = { _, _ in
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
+        }
+
+        NotificationCenter.default.post(
+            name: Notification.Name("PVWebServerFileMovedNotification"),
+            object: nil,
+            userInfo: [
+                "fromPath": romsPrefix + oldRelative,
+                "toPath":   romsPrefix + newRelative
+            ]
+        )
+
+        wait(for: [exp], timeout: 2)
+
+        let freshRealm = try Realm(configuration: realmConfig)
+        XCTAssertNil(freshRealm.objects(PVGame.self).filter("romPath == %@", oldRelative).first,
+                     "Old romPath should no longer exist in Realm")
+        XCTAssertNotNil(freshRealm.objects(PVGame.self).filter("romPath == %@", newRelative).first,
+                        "Game should be found under the new romPath")
+    }
+
+    // MARK: - No-op / edge cases
 
     /// Posting a delete notification when no game matches the path should be a no-op.
     func testDeleteUnknownPathIsNoop() throws {
