@@ -616,6 +616,9 @@ struct ThemeSelectionView: View {
             }
         }
         .navigationTitle("Select Theme")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
     }
 
     // MARK: - Theme Application Methods

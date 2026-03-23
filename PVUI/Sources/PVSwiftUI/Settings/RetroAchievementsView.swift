@@ -101,6 +101,9 @@ public struct RetroAchievementsView: View {
             }
         }
         .navigationTitle("RetroAchievements")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif

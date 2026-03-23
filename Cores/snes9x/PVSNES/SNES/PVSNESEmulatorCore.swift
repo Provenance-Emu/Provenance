@@ -3,12 +3,13 @@
 //  PVSNES
 //
 
-import PVSupport
 import Foundation
-import PVEmulatorCore
-
-import Foundation
+import PVAudio
 import PVCoreBridge
+import PVCoreObjCBridge
+import PVEmulatorCore
+import PVLogging
+import PVSupport
 #if canImport(GameController)
 import GameController
 #endif
@@ -16,10 +17,6 @@ import GameController
 import OpenGLES
 import OpenGLES.ES3
 #endif
-import PVLogging
-import PVAudio
-import PVEmulatorCore
-import PVCoreObjCBridge
 
 @objc
 @objcMembers

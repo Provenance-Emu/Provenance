@@ -13,10 +13,21 @@ import Foundation
 
 /// Keys used to share data between the main app and widget extension via App Groups.
 /// The main app writes these values; widgets read them.
+///
+/// **App Group ID note:** `appGroupID` here reads the `APP_GROUP_IDENTIFIER` build
+/// setting from Info.plist at runtime (with fallback for dev/CI builds).  This is a
+/// *necessary local copy* — the widget extension cannot import PVLibrary or PVAppIntents.
+/// The canonical sources are:
+///   - PVLibrary: `PVLibrary/Sources/PVFileSystem/Paths.swift` → `public let PVAppGroupId`
+///   - PVAppIntents: `PVAppIntents/Sources/PVAppIntents/AppGroupID.swift` → `internal let pvAppGroupID`
+/// All three must remain in sync with the `APP_GROUP_IDENTIFIER` build setting.
 public enum WidgetSharedDefaults {
     static var appGroupID: String {
-        Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
-            ?? "group.org.provenance-emu.provenance"
+        let raw = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
+        guard let raw, !raw.isEmpty, !raw.contains("$(") else {
+            return "group.org.provenance-emu.provenance"
+        }
+        return raw
     }
 
     public enum Keys {
@@ -172,35 +183,29 @@ extension WidgetSharedDefaults {
     }
 
     /// Loads raw image bytes for the given relative artwork path.
-    /// Call this in a timeline provider (not in a view body) to avoid synchronous
-    /// disk I/O during widget rendering.
+    ///
+    /// Returns `nil` — without blocking — when the file is an iCloud ubiquity
+    /// placeholder that has not yet been downloaded locally.  Views will show the
+    /// `GameArtworkView` placeholder until the next widget timeline refresh after
+    /// the file is available.
+    ///
+    /// Call this in a timeline provider (not in a view body) to keep disk I/O
+    /// out of the rendering path.
     static func artworkData(forRelativePath path: String) -> Data? {
         guard let url = artworkURL(forRelativePath: path) else { return nil }
+        // Skip iCloud placeholder files that would block waiting for a network download.
+        if url.isUbiquitousPlaceholder { return nil }
         return try? Data(contentsOf: url)
     }
 
     /// Returns up to `limit` recently-played games with `artworkData` pre-loaded.
-    /// Safe to call from a timeline provider; performs disk I/O at provider time so
-    /// views never block on artwork reads during rendering.
     static func loadRecentGamesWithArtwork(limit: Int = 12) -> [WidgetGameEntry] {
-        var games = Array(loadRecentGames().prefix(limit))
-        for index in games.indices {
-            if let path = games[index].artworkPath {
-                games[index].artworkData = artworkData(forRelativePath: path)
-            }
-        }
-        return games
+        loadGames(loadRecentGames(), limit: limit)
     }
 
     /// Returns up to `limit` gallery games with `artworkData` pre-loaded.
     static func loadGalleryGamesWithArtwork(limit: Int = 12) -> [WidgetGameEntry] {
-        var games = Array(loadGalleryGames().prefix(limit))
-        for index in games.indices {
-            if let path = games[index].artworkPath {
-                games[index].artworkData = artworkData(forRelativePath: path)
-            }
-        }
-        return games
+        loadGames(loadGalleryGames(), limit: limit)
     }
 
     static func loadFavoriteGames() -> [WidgetGameEntry] {
@@ -211,13 +216,20 @@ extension WidgetSharedDefaults {
     }
 
     static func loadFavoriteGamesWithArtwork(limit: Int = 12) -> [WidgetGameEntry] {
-        var games = Array(loadFavoriteGames().prefix(limit))
-        for index in games.indices {
-            if let path = games[index].artworkPath {
-                games[index].artworkData = artworkData(forRelativePath: path)
+        loadGames(loadFavoriteGames(), limit: limit)
+    }
+
+    // MARK: - Private
+
+    /// Truncates `games` to `limit` entries and pre-populates `artworkData` from disk.
+    private static func loadGames(_ games: [WidgetGameEntry], limit: Int) -> [WidgetGameEntry] {
+        var result = Array(games.prefix(limit))
+        for index in result.indices {
+            if let path = result[index].artworkPath {
+                result[index].artworkData = artworkData(forRelativePath: path)
             }
         }
-        return games
+        return result
     }
 
     static func loadLibraryStats() -> WidgetLibraryStats {
@@ -230,6 +242,22 @@ extension WidgetSharedDefaults {
             totalPlayTimeSeconds: defaults.integer(forKey: Keys.totalPlayTime),
             favoritesCount: defaults.integer(forKey: Keys.favoritesCount)
         )
+    }
+}
+
+// MARK: - URL iCloud helpers
+
+private extension URL {
+    /// `true` when the URL points to an iCloud ubiquity item that has not yet been
+    /// downloaded to this device.  Reading such a URL would trigger a blocking network
+    /// fetch, so callers should treat it as absent and wait for the next refresh.
+    var isUbiquitousPlaceholder: Bool {
+        guard (try? resourceValues(forKeys: [.isUbiquitousItemKey]).isUbiquitousItem) == true else {
+            return false
+        }
+        let status = (try? resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+            .ubiquitousItemDownloadingStatus) ?? .notDownloaded
+        return status != .current
     }
 }
 #endif

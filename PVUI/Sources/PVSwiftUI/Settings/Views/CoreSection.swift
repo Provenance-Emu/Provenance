@@ -20,13 +20,10 @@ struct CoreSection: View {
         Section {
             #if os(tvOS)
             // Wrap entire content in a focusable button for tvOS to enable scrolling
-            Button(action: {
-                // Optional: Could navigate to core details or do nothing
-            }) {
+            Button(action: {}) {
                 coreContent
             }
-            .buttonStyle(PlainButtonStyle())
-            .focusable()
+            .retroFocusButtonStyle(showBorder: false)
             #else
             coreContent
             #endif

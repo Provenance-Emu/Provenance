@@ -18,6 +18,7 @@ import RealmSwift
 
 /// Debug view for Spotlight integration
 public struct SpotlightDebugView: View {
+    @Environment(\.dismiss) private var dismiss
     // State for the view
     @State private var spotlightItems: [CSSearchableItem] = []
     @State private var isLoading = false
@@ -63,6 +64,9 @@ public struct SpotlightDebugView: View {
             }
         }
         .navigationTitle("Spotlight Debug")
+#if os(tvOS)
+        .onExitCommand { dismiss() }
+#endif
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

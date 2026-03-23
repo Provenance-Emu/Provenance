@@ -124,7 +124,6 @@ struct SystemSettingsView: View {
                     LazyVStack(spacing: 20) {
                         ForEach(filteredSystems) { system in
                             SystemSection(system: system)
-                                .focusable(true)
                         }
                     }
                     .padding()
@@ -323,6 +322,9 @@ struct SystemSection: View {
                             .fill(Color.black.opacity(0.4))
                     )
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
 
                 if isCoresExpanded {
                     VStack(alignment: .leading, spacing: 8) {
@@ -384,6 +386,9 @@ struct SystemSection: View {
                                 .fill(Color.black.opacity(0.4))
                         )
                     }
+                    #if os(tvOS)
+                    .retroFocusButtonStyle(showBorder: false)
+                    #endif
 
                     if isBiosesExpanded {
                         VStack(alignment: .leading, spacing: 8) {

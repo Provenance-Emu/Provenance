@@ -459,7 +459,10 @@ struct TVMediaMainView: View {
 
         @ViewBuilder
         private var contentGroup: some View {
-            if (router.destination == .settings && settingsCanPop) || router.destination == .saves {
+            if router.destination == .settings || router.destination == .saves {
+                // Settings: always bypass TVMediaFocusAwareContent so that back-navigation
+                // within the settings NavigationStack does NOT change view identity, which
+                // would otherwise retrigger the focus engine and open the sidebar.
                 contentArea()
             } else {
                 TVMediaFocusAwareContent(focusCoordinator: focusCoordinator) { contentArea() }

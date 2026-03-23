@@ -23,6 +23,7 @@ import PVUI_TV
 
 /// A SwiftUI view for managing controller assignments to players
 struct ControllerSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     /// Observed instance of the controller manager
     @ObservedObject private var controllerManager = PVControllerManager.shared
     /// Theme manager for consistent styling
@@ -430,6 +431,9 @@ struct ControllerSettingsView: View {
         .listStyle(.insetGrouped)
         #endif
         .navigationTitle("Controller Settings")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         .confirmationDialog(
             "Select a controller for Player \(selectedPlayer ?? 0)",
             isPresented: $showingActionSheet,
@@ -728,6 +732,7 @@ private struct DisconnectedControllerSlotModeRow: View {
 /// View for remapping controller buttons
 struct ButtonRemappingView: View {
     let controller: GCController
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var currentMappings: [ButtonIdentifier: ButtonIdentifier] = [:]
     @State private var selectedButton: ButtonIdentifier?
@@ -878,6 +883,9 @@ struct ButtonRemappingView: View {
             }
         }
         .navigationTitle(controller.vendorName ?? "Remap Buttons")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -1019,6 +1027,7 @@ struct ButtonRemappingView: View {
 private struct KeyboardControlsGuideView: View {
     let keyboardMappingDocs: String
     let accentColor: Color
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
@@ -1052,6 +1061,9 @@ private struct KeyboardControlsGuideView: View {
             #endif
         }
         .navigationTitle("Keyboard Controls")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif

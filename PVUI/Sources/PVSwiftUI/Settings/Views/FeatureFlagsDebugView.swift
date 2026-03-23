@@ -24,6 +24,7 @@ import Defaults
 import AudioToolbox
 
 struct FeatureFlagsDebugView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
     @State private var flags: [(key: String, flag: FeatureFlag, enabled: Bool)] = []
     @State private var isLoading = false
@@ -106,6 +107,9 @@ struct FeatureFlagsDebugView: View {
             }
         }
         .navigationTitle("Feature Flags Debug")
+#if os(tvOS)
+        .onExitCommand { dismiss() }
+#endif
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -131,14 +135,18 @@ struct FeatureFlagsDebugView: View {
 
     @MainActor
     private func loadInitialConfiguration() async {
+        // Always populate flags immediately so the list is never empty on load.
+        // This shows all known PVFeature cases (with "not defined" fallback descriptions)
+        // before the remote config arrives, and also reflects any debug overrides.
+        flags = featureFlags.getAllFeatureFlags()
         isLoading = true
 
         do {
             try await loadDefaultConfiguration()
             flags = featureFlags.getAllFeatureFlags()
         } catch {
-            errorMessage = "Failed to load remote configuration: \(error.localizedDescription)"
-            flags = featureFlags.getAllFeatureFlags()
+            // Flags are already displayed from above; just report that remote failed.
+            errorMessage = "Remote config unavailable: \(error.localizedDescription)"
         }
 
         isLoading = false

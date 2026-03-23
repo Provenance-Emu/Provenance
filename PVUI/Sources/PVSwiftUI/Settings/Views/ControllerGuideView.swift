@@ -97,6 +97,7 @@ private let onScreenEntry = OnScreenControllerEntry()
 /// A dedicated guide screen explaining supported controllers, pairing steps,
 /// controller type differences, and links to the wiki.
 public struct ControllerGuideView: View {
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var expandedController: String?
 
@@ -119,6 +120,9 @@ public struct ControllerGuideView: View {
         .listStyle(.insetGrouped)
         #endif
         .navigationTitle("Controller Guide")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif

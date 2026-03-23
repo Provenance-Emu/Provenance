@@ -66,11 +66,19 @@ struct ShaderParameterSlider: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(label)
+                    #if os(tvOS)
+                    .font(.system(size: 22, weight: .medium))
+                    #else
                     .font(.system(size: 14, weight: .medium))
+                    #endif
                     .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
                 Spacer()
                 Text(formattedValue)
+                    #if os(tvOS)
+                    .font(.system(size: 20, weight: .regular).monospacedDigit())
+                    #else
                     .font(.system(size: 13, weight: .regular).monospacedDigit())
+                    #endif
                     .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
             }
             #if os(tvOS)
@@ -79,10 +87,19 @@ struct ShaderParameterSlider: View {
                     adjustValue(by: -tvStep)
                 }) {
                     Image(systemName: "minus.circle.fill")
-                        .font(.system(size: 22, weight: .semibold))
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundStyle(palette.defaultTintColor.swiftUIColor)
                 }
-                .buttonStyle(.bordered)
-                .tint(palette.defaultTintColor.swiftUIColor)
+                .retroFocusButtonStyle(
+                    focusScale: 1.15,
+                    cornerRadius: 22,
+                    primaryColor: palette.defaultTintColor.swiftUIColor,
+                    secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                    glowRadius: 8,
+                    showBorder: false,
+                    showGlow: true,
+                    showScale: true
+                )
                 .disabled(!canDecrease)
 
                 GeometryReader { geometry in
@@ -95,15 +112,25 @@ struct ShaderParameterSlider: View {
                     }
                 }
                 .frame(height: 10)
+                .allowsHitTesting(false)
 
                 Button(action: {
                     adjustValue(by: tvStep)
                 }) {
                     Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 22, weight: .semibold))
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundStyle(palette.defaultTintColor.swiftUIColor)
                 }
-                .buttonStyle(.bordered)
-                .tint(palette.defaultTintColor.swiftUIColor)
+                .retroFocusButtonStyle(
+                    focusScale: 1.15,
+                    cornerRadius: 22,
+                    primaryColor: palette.defaultTintColor.swiftUIColor,
+                    secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                    glowRadius: 8,
+                    showBorder: false,
+                    showGlow: true,
+                    showScale: true
+                )
                 .disabled(!canIncrease)
             }
             #else
@@ -293,6 +320,51 @@ struct FilterPreviewBarsView: View {
     }
 }
 
+// MARK: - tvOS filter toggles
+
+#if os(tvOS)
+/// Replaces `Toggle` for shader flags on tvOS so focus uses `retroFocusButtonStyle` instead of the system card fill that obscures labels.
+private struct RetroFilterToggleRow: View {
+    let title: String
+    @Binding var isOn: Bool
+    let palette: UXThemePalette
+
+    var body: some View {
+        Button(action: { isOn.toggle() }) {
+            HStack {
+                Text(title)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                Spacer()
+                Text(isOn ? String(localized: "ON") : String(localized: "OFF"))
+                    .font(.system(size: 18, weight: .bold, design: .monospaced))
+                    .foregroundColor(isOn ? palette.defaultTintColor.swiftUIColor : Color.gray.opacity(0.55))
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill((palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.78 : 0.94))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(palette.defaultTintColor.swiftUIColor.opacity(isOn ? 0.8 : 0.3), lineWidth: 2)
+                    )
+            )
+        }
+        .retroFocusButtonStyle(
+            focusScale: 1.04,
+            cornerRadius: 12,
+            primaryColor: palette.defaultTintColor.swiftUIColor,
+            secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+            glowRadius: 8,
+            showBorder: false,
+            showGlow: true,
+            showScale: true
+        )
+    }
+}
+#endif
+
 // MARK: - Complex CRT Parameters View
 
 /// Displays adjustable parameters for the Complex CRT shader.
@@ -314,11 +386,20 @@ struct ComplexCRTParametersView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("COMPLEX CRT PARAMETERS")
+                #if os(tvOS)
+                .font(.system(size: 20, weight: .bold))
+                #else
                 .font(.system(size: 14, weight: .bold))
+                #endif
                 .foregroundColor(palette.defaultTintColor.swiftUIColor)
                 .padding(.bottom, 4)
 
             // Feature toggles
+            #if os(tvOS)
+            RetroFilterToggleRow(title: String(localized: "Scanlines"), isOn: $useScanlines, palette: palette)
+            RetroFilterToggleRow(title: String(localized: "Shadow Mask"), isOn: $useShadowMask, palette: palette)
+            RetroFilterToggleRow(title: String(localized: "Screen Warp"), isOn: $useWarp, palette: palette)
+            #else
             Toggle("Scanlines", isOn: $useScanlines)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
@@ -333,6 +414,7 @@ struct ComplexCRTParametersView: View {
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
                 .tint(palette.defaultTintColor.swiftUIColor)
+            #endif
 
             ShaderParameterSlider(label: "Bloom Amount", value: $bloomAmount, range: 0.0...6.0, palette: palette)
 
@@ -365,11 +447,27 @@ struct ComplexCRTParametersView: View {
                     Image(systemName: "arrow.counterclockwise")
                     Text("Reset to Defaults")
                 }
+                #if os(tvOS)
+                .font(.system(size: 20, weight: .medium))
+                #else
                 .font(.system(size: 14, weight: .medium))
+                #endif
                 .foregroundColor(.red)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 8)
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(
+                focusScale: 1.04,
+                cornerRadius: 12,
+                primaryColor: .red,
+                secondaryColor: palette.defaultTintColor.swiftUIColor,
+                glowRadius: 8,
+                showBorder: false,
+                showGlow: true,
+                showScale: true
+            )
+            #endif
         }
         .padding(.horizontal, 4)
     }

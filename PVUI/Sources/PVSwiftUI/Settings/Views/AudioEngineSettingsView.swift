@@ -5,6 +5,7 @@ import PVCoreAudio
 import PVAudio
 
 struct AudioEngineSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     /// Audio Engine Selection
     @Default(.audioEngine) var audioEngine
     @Default(.audioRingBufferType) var ringBufferType
@@ -83,5 +84,8 @@ struct AudioEngineSettingsView: View {
             #endif
         }
         .navigationTitle("Audio Engine")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
     }
 }

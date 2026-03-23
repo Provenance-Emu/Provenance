@@ -51,13 +51,9 @@ public struct ToggleFavoriteIntent: AppIntent {
     public func perform() async throws -> some IntentResult & ProvidesDialog {
         // Notify the host app via App Group UserDefaults so it can write to Realm
         // without needing write access from this extension process.
-        // TODO: Add host-app handler that scans for `pendingFavorite_*` keys in
-        // the shared UserDefaults suite on `applicationDidBecomeActive`, applies
-        // the Realm write, and removes the keys to prevent stale accumulation.
-        let appGroupID = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
-            ?? "group.org.provenance-emu.provenance"
-        let defaults = UserDefaults(suiteName: appGroupID)
-        defaults?.set(isFavorite, forKey: "pendingFavorite_\(game.id)")
+        // `PVAppDelegate.processPendingIntents()` scans for `pendingFavorite_*` keys
+        // in `applicationDidBecomeActive`, applies the Realm write, and removes them.
+        pvAppGroupDefaults?.set(isFavorite, forKey: "pendingFavorite_\(game.id)")
 
         let verb = isFavorite ? "Added" : "Removed"
         return .result(dialog: "\(verb) \(game.title) \(isFavorite ? "to" : "from") favourites.")

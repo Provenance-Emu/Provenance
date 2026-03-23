@@ -221,8 +221,12 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     // MARK: - Configuration Loading
 
     /// Load feature flags from a JSON file at the given URL (remote or local).
+    /// Uses a 10-second timeout so the call never hangs indefinitely on tvOS
+    /// or when there is no network connectivity.
     public func loadConfiguration(from url: URL) async throws {
-        let (data, _) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 10
+        let (data, _) = try await URLSession.shared.data(for: request)
         configuration = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
     }
 
