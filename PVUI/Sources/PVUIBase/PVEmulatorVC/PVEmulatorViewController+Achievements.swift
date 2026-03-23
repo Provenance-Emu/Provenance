@@ -26,6 +26,15 @@ import UIKit
 private enum AssociatedKeys {
     static var sessionManager = "achievementSessionManager"
     static var overlayVC = "achievementOverlayVC"
+    static var startToken = "achievementStartToken"
+}
+
+/// Cancellation token that lets `stopAchievements()` invalidate an in-flight
+/// `startAchievementsIfNeeded` Task before it publishes `achievementSessionManager`.
+/// Without this guard, a Task that completes after `stopAchievements()` clears
+/// the manager would re-assign it, leaving an active session that is never stopped.
+private final class StartToken: NSObject {
+    var isCancelled = false
 }
 
 /// Shared user-facing message shown when fast-forward is blocked by
@@ -43,6 +52,14 @@ public extension PVEmulatorViewController {
     internal var achievementSessionManager: AchievementSessionManager? {
         get { objc_getAssociatedObject(self, &AssociatedKeys.sessionManager) as? AchievementSessionManager }
         set { objc_setAssociatedObject(self, &AssociatedKeys.sessionManager, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// Token for the most recent `startAchievementsIfNeeded` Task.
+    /// `stopAchievements()` cancels this so a slow network response can never
+    /// publish `achievementSessionManager` after emulation has already stopped.
+    private var achievementStartToken: StartToken? {
+        get { objc_getAssociatedObject(self, &AssociatedKeys.startToken) as? StartToken }
+        set { objc_setAssociatedObject(self, &AssociatedKeys.startToken, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     /// The overlay view controller that renders achievement toasts.
@@ -95,13 +112,25 @@ public extension PVEmulatorViewController {
         // exists but the session has not yet been confirmed by the server.
         let manager = PVCheevos.sessionManager()
 
+        // Create a cancellation token for this start attempt.  If stopAchievements() is
+        // called while the Task is still awaiting the network, it will mark the token
+        // cancelled so the Task does not publish achievementSessionManager after the
+        // emulator has already stopped — preventing a session that can never be torn down.
+        let token = StartToken()
+        achievementStartToken = token
+
         Task { [weak self, weak achievementsCore] in
             guard let self, let achievementsCore else { return }
             do {
                 let response = try await manager.startSession(gameHash: gameHash)
                 ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1), \(response.unlocks?.count ?? 0) existing unlocks.")
-                // Session confirmed active — now safe to expose via achievementSessionManager.
-                await MainActor.run { self.achievementSessionManager = manager }
+                // Session confirmed active — verify stopAchievements() hasn't run since
+                // we kicked off this Task, then expose the manager and prepare the core.
+                await MainActor.run {
+                    guard !token.isCancelled else { return }
+                    self.achievementSessionManager = manager
+                }
+                guard !token.isCancelled else { return }
                 // Prepare the core's achievement runtime (rcheevos or equivalent).
                 await achievementsCore.prepareAchievements(gameHash: gameHash)
                 // If hardcore is enabled, enforce the speed restriction now that the
@@ -111,6 +140,7 @@ public extension PVEmulatorViewController {
                 // always report achievementsActive == false even when a session is live.
                 if achievementsCore.hardcoreMode {
                     await MainActor.run {
+                        guard !token.isCancelled else { return }
                         self.core.gameSpeed = .normal
                         // Sync the OSD fast-forward button so it doesn't remain highlighted.
                         (self.controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
@@ -131,6 +161,11 @@ public extension PVEmulatorViewController {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return }
 
         (core as? (any CoreRetroAchievements))?.stopAchievements()
+
+        // Cancel any in-flight start Task so it cannot publish achievementSessionManager
+        // after we've already cleared it below.
+        achievementStartToken?.isCancelled = true
+        achievementStartToken = nil
 
         let manager = achievementSessionManager
         achievementSessionManager = nil
