@@ -97,10 +97,10 @@ final class GyroMouseAdapterTests: XCTestCase {
     func testNoDeliveryWhenDisabled() {
         adapter.attach(to: responder)
         adapter.isEnabled = false
-        // Directly verify that _applyRotation guard fires:
-        // We can't call the private method; verify via public API that
-        // no events are stored when disabled.
-        XCTAssertTrue(responder.receivedPoints.isEmpty)
+        // Drive rotation through the internal test hook; the isEnabled guard
+        // must suppress delivery even with valid rotation input.
+        adapter._testApplyRotation(rawX: 5.0, rawY: 5.0)
+        XCTAssertTrue(responder.receivedPoints.isEmpty, "Disabled adapter must not deliver events")
     }
 
     // MARK: - gameSupportsMouse gate

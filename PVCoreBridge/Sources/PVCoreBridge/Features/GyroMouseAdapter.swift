@@ -77,12 +77,29 @@ import CoreMotion
     @objc public var inputSource: GyroMouseInputSource = .auto
 
     /// When `false` events are not delivered (e.g. while paused). Default `true`.
+    ///
+    /// Toggling this property also stops/starts the CoreMotion IMU (if active) to
+    /// conserve battery when the game is paused.  GCController observers remain
+    /// registered so reconnect events are still handled.
     @objc public var isEnabled: Bool = true {
         didSet {
-            if !isEnabled {
+            guard isEnabled != oldValue else { return }
+            if isEnabled {
                 // Reset timestamp so the first frame after re-enable uses the nominal
                 // dt (1/60) instead of computing a large elapsed gap.
                 lastCallbackTime = 0
+                // Restart IMU if we should be using it.
+#if canImport(CoreMotion)
+                if _shouldUseIMU() { _startIMU() }
+#endif
+            } else {
+                // Stop the IMU at 60 Hz to conserve battery while paused.
+                // GCController hook stays active (minimal cost) so reconnects
+                // are still observed; _applyRotation guards on isEnabled.
+                lastCallbackTime = 0
+#if canImport(CoreMotion)
+                _stopIMU()
+#endif
             }
         }
     }
@@ -356,6 +373,13 @@ import CoreMotion
     private func _deliverPosition() {
         let point = CGPoint(x: cursorX, y: cursorY)
         responder?.mouseMoved(atPoint: point)
+        // Keep the cursor overlay (`MouseCursorOverlayView`) in sync.
+        // Matches the notification posted by `GCMouseMouseResponderDriver`.
+        NotificationCenter.default.post(
+            name: .PVMousePositionDidChange,
+            object: nil,
+            userInfo: [PVMousePositionKey: NSValue(cgPoint: point)]
+        )
     }
 
     // MARK: - Testing support
