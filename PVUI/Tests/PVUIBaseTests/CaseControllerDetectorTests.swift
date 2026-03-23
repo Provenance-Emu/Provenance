@@ -112,18 +112,12 @@ final class CaseControllerDetectorTests: XCTestCase {
     }
 
     func testNotifyIfCaseSkinUnknownDoesNotPost() {
-        var posted = false
-        let observer = NotificationCenter.default.addObserver(
-            forName: .PVPhysicalCaseSkinDetected,
-            object: nil,
-            queue: .main
-        ) { _ in posted = true }
-        defer { NotificationCenter.default.removeObserver(observer) }
+        let expectation = XCTNSNotificationExpectation(name: .PVPhysicalCaseSkinDetected)
+        expectation.isInverted = true
 
         let layouts = CaseControllerDetector.notifyIfCaseSkin("com.nobody.unknown")
         XCTAssertTrue(layouts.isEmpty)
-        // Run loop once to drain any pending posts
-        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
-        XCTAssertFalse(posted, "No notification should fire for unknown skin IDs")
+
+        wait(for: [expectation], timeout: 0.1)
     }
 }
