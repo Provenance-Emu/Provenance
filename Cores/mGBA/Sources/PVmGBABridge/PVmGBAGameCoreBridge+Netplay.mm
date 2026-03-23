@@ -623,13 +623,15 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         return NO;
     }
 
-    // Reject privileged and unassigned ports — same range as -startLinkHostOnPort:.
-    if (port > 0 && port < 1024) {
+    // Reject port 0 and privileged ports: connecting to port 0 is not valid.
+    // Unlike -startLinkHostOnPort: (where 0 means OS-assigned), a client must
+    // specify an explicit target port in the range 1024–65535.
+    if (port < 1024) {
         if (error) {
             *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
                                          code:PVmGBALinkErrorInvalidAddress
                                      userInfo:@{ NSLocalizedDescriptionKey:
-                                                     @"Port must be in the range 1024–65535 (or 0 for OS-assigned)." }];
+                                                     @"Port must be in the range 1024–65535." }];
         }
         return NO;
     }
