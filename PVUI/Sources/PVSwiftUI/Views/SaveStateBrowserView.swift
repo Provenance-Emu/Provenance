@@ -15,9 +15,6 @@ import PVRealm
 import PVThemes
 import PVUIBase
 import PVLogging
-#if canImport(UIKit)
-import UIKit
-#endif
 
 // MARK: - Data Models
 

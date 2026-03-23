@@ -151,6 +151,56 @@ final class SaveExporterTests: XCTestCase {
         }
     }
 
+    // MARK: - gameMD5(inBundleAt:)
+
+    func testGameMD5ReturnsMD5ForValidBundle() throws {
+        let expectedMD5 = "deadbeef1234"
+        let zipURL = try makeMinimalExportZip(gameMD5: expectedMD5)
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertEqual(result, expectedMD5, "gameMD5(inBundleAt:) should return the MD5 stored in manifest.json")
+    }
+
+    func testGameMD5ReturnsNilForMissingManifest() throws {
+        // Create a zip that contains no manifest.json
+        let stagingDir = tempDir.appendingPathComponent("staging-empty-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        // Add a random file so the zip is non-empty but has no manifest
+        let dummyFile = stagingDir.appendingPathComponent("dummy.txt")
+        try "not a manifest".data(using: .utf8)!.write(to: dummyFile)
+
+        let zipURL = tempDir.appendingPathComponent("no-manifest.zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertNil(result, "gameMD5(inBundleAt:) should return nil when manifest.json is absent")
+    }
+
+    func testGameMD5ReturnsNilForInvalidManifest() throws {
+        // Create a zip where manifest.json exists but has invalid/empty content
+        let stagingDir = tempDir.appendingPathComponent("staging-bad-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        let manifestURL = stagingDir.appendingPathComponent("manifest.json")
+        try "not valid json".data(using: .utf8)!.write(to: manifestURL)
+
+        let zipURL = tempDir.appendingPathComponent("bad-manifest.zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: zipURL)
+        XCTAssertNil(result, "gameMD5(inBundleAt:) should return nil when manifest.json is not valid JSON")
+    }
+
     // MARK: - Helpers
 
     private func makeGame(title: String, md5: String, romURL: URL?) -> PVGame {

@@ -144,16 +144,32 @@ public struct SaveBundleDropModifier: ViewModifier {
                 handled = true
             } else {
                 // Fallback: provider vends raw data — let the OS write it to a temp file.
-                let typeID = saveBundleAcceptedTypes.first?.identifier ?? UTType.data.identifier
-                provider.loadFileRepresentation(forTypeIdentifier: typeID) { url, error in
-                    if let error {
-                        ELOG("SaveBundleDropModifier: loadFileRepresentation error: \(error)")
-                        return
+                // Prefer an archive/zip-conforming type if available, then fall back to generic data.
+                let zipTypeID = saveBundleAcceptedTypes
+                    .first(where: { $0.conforms(to: .archive) })
+                    .map(\.identifier)
+
+                if let zipTypeID, provider.hasItemConformingToTypeIdentifier(zipTypeID) {
+                    provider.loadFileRepresentation(forTypeIdentifier: zipTypeID) { url, error in
+                        if let error {
+                            ELOG("SaveBundleDropModifier: loadFileRepresentation (zip) error: \(error)")
+                            return
+                        }
+                        guard let url else { return }
+                        processDroppedZip(url)
                     }
-                    guard let url else { return }
-                    processDroppedZip(url)
+                    handled = true
+                } else if provider.hasItemConformingToTypeIdentifier(UTType.data.identifier) {
+                    provider.loadFileRepresentation(forTypeIdentifier: UTType.data.identifier) { url, error in
+                        if let error {
+                            ELOG("SaveBundleDropModifier: loadFileRepresentation (data) error: \(error)")
+                            return
+                        }
+                        guard let url else { return }
+                        processDroppedZip(url)
+                    }
+                    handled = true
                 }
-                handled = true
             }
         }
         return handled
@@ -168,6 +184,9 @@ public struct SaveBundleDropModifier: ViewModifier {
 
                 guard stableURL.pathExtension.lowercased() == "zip" else {
                     WLOG("SaveBundleDropModifier: dropped file is not a zip: \(stableURL.lastPathComponent)")
+                    await MainActor.run {
+                        onResult(.failure(SaveExportError.invalidBundle("Dropped file is not a .zip save-export bundle.")))
+                    }
                     return
                 }
 
