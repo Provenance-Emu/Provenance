@@ -30,7 +30,7 @@
 // NetPlay headers depending on the Dolphin revision.
 // ---------------------------------------------------------------------------
 
-#if __has_include("Core/NetPlayClient.h")
+#if __has_include("Core/NetPlayClient.h") && __has_include(<SFML/Network/Packet.hpp>)
     #define HAVE_DOLPHIN_NETPLAY 1
     #include "Core/NetPlayClient.h"
     #include "Core/NetPlayServer.h"
