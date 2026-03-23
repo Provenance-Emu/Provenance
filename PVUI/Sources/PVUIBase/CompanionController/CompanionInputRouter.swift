@@ -24,7 +24,8 @@ import PVCoreBridge
 ///
 /// Layout components call `send(_:)` on this object whenever a touch begins
 /// or ends. The router maintains the current bitmask / axis state and pushes
-/// updates to DSU via the `DSUSlotDelegate` protocol.
+/// updates to the DSU transport via `CompanionSlotDelegate`.
+@MainActor
 public final class CompanionInputRouter: ObservableObject {
 
     // MARK: - Published state (for debug overlays)
