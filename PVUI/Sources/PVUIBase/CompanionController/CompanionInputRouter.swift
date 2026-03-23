@@ -8,15 +8,38 @@
 // PVCoreBridge so that emulator core bridges (Tier 4) can adopt
 // CompanionControllerCapable without depending on PVUI.
 //
+// Keyboard and mouse events are routed via a separate publisher
+// (keyboardMouseEvents) using CompanionKeyboardMouseEvent — a PVUI-only type —
+// so that cores implementing CompanionKeyboardMouseCapable can receive them
+// directly without going through the DSU state snapshot pipeline.
+//
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
 import Foundation
 import Combine
 import CoreGraphics
 import GameController
+import PVCoreBridge
 
-// CompanionButton, CompanionAxisID, CompanionInputEvent — defined in PVCoreBridge and
-// re-exported by PVUIBase; most consumers do not need an explicit PVCoreBridge import.
+// CompanionButton, CompanionAxisID, CompanionInputEvent — re-exported from PVCoreBridge.
+
+// MARK: - CompanionKeyboardMouseEvent
+
+/// Discrete keyboard and mouse events emitted by companion layouts.
+///
+/// These events bypass the DSU state snapshot pipeline and are published directly
+/// on `CompanionInputRouter.keyboardMouseEvents`. The emulator view controller
+/// forwards them to any core that conforms to `CompanionKeyboardMouseCapable`.
+public enum CompanionKeyboardMouseEvent: Sendable {
+    /// A keyboard key was pressed.
+    case keyDown(GCKeyCode)
+    /// A keyboard key was released.
+    case keyUp(GCKeyCode)
+    /// The companion trackpad sent a relative movement delta.
+    case mouseMove(CGPoint)
+    /// A mouse button state changed. `index`: 0 = left, 1 = right, 2 = middle.
+    case mouseButton(Int, Bool)
+}
 
 // MARK: - CompanionInputRouter
 
@@ -25,7 +48,10 @@ import GameController
 ///
 /// Layout components call `send(_:)` on this object whenever a touch begins
 /// or ends. The router maintains the current bitmask / axis state and pushes
-/// updates to the DSU transport via `CompanionSlotDelegate`.
+/// updates to DSU via the `DSUSlotDelegate` protocol.
+///
+/// Keyboard and mouse events are forwarded via `keyboardMouseEvents` — a
+/// separate Combine publisher — rather than going through DSU state.
 @MainActor
 public final class CompanionInputRouter: ObservableObject {
 
@@ -45,16 +71,16 @@ public final class CompanionInputRouter: ObservableObject {
 
     // MARK: - Keyboard / Mouse event stream
 
-    /// Internal subject — kept private so only `send(_:)` can publish events,
-    /// enforcing routing invariants and preventing unsynchronised external sends.
-    private let _keyboardMouseEvents = PassthroughSubject<CompanionInputEvent, Never>()
+    /// Internal subject — kept private so only `send*` methods can publish events.
+    private let _keyboardMouseEvents = PassthroughSubject<CompanionKeyboardMouseEvent, Never>()
 
     /// Publishes keyboard and mouse events that should be routed directly to the emulator core.
     ///
-    /// The emulator view controller (wired in issue #2707) subscribes to this publisher and
-    /// forwards each event to the active `CompanionControllerCapable` core.
+    /// The emulator view controller (wired in `PVEmulatorViewController+CompanionController`)
+    /// subscribes to this publisher and forwards each event to any active
+    /// `CompanionKeyboardMouseCapable` core.
     /// Button and axis events are *not* published here — they go through `slotDelegate`.
-    public var keyboardMouseEvents: AnyPublisher<CompanionInputEvent, Never> {
+    public var keyboardMouseEvents: AnyPublisher<CompanionKeyboardMouseEvent, Never> {
         _keyboardMouseEvents.eraseToAnyPublisher()
     }
 
@@ -64,9 +90,9 @@ public final class CompanionInputRouter: ObservableObject {
         self.slotDelegate = slotDelegate
     }
 
-    // MARK: - Event ingestion
+    // MARK: - Button / Axis event ingestion
 
-    /// Send an input event from a layout component.
+    /// Send a button or axis input event from a layout component.
     @MainActor public func send(_ event: CompanionInputEvent) {
         switch event {
         case .buttonDown(let btn):
@@ -77,30 +103,32 @@ public final class CompanionInputRouter: ObservableObject {
             // Clamp to the documented -1…1 range so downstream consumers
             // (DSU serialiser, core bridge) never receive out-of-range values.
             axisValues[axis] = max(-1.0, min(1.0, value))
-#if canImport(GameController)
-        case .keyDown, .keyUp, .mouseMove, .mouseButton:
-            // Keyboard and mouse events bypass DSU state and go straight to the core.
-            _keyboardMouseEvents.send(event)
-            return
-#else
-        case .mouseMove, .mouseButton:
-            keyboardMouseEvents.send(event)
-            return
-#endif
         }
         slotDelegate?.companionInputRouter(self, didUpdateState: currentState)
     }
 
-    /// Convenience entry-point for keyboard key-down events.
-    /// Publishes a `keyDown` event via `send(_:)`.
+    // MARK: - Keyboard convenience
+
+    /// Forward a key-down event to the keyboard/mouse publisher.
     @MainActor public func sendKeyDown(_ key: GCKeyCode) {
-        send(.keyDown(key))
+        _keyboardMouseEvents.send(.keyDown(key))
     }
 
-    /// Convenience entry-point for keyboard key-up events.
-    /// Publishes a `keyUp` event via `send(_:)`.
+    /// Forward a key-up event to the keyboard/mouse publisher.
     @MainActor public func sendKeyUp(_ key: GCKeyCode) {
-        send(.keyUp(key))
+        _keyboardMouseEvents.send(.keyUp(key))
+    }
+
+    // MARK: - Mouse convenience
+
+    /// Forward a relative mouse movement delta to the keyboard/mouse publisher.
+    @MainActor public func sendMouseMove(_ delta: CGPoint) {
+        _keyboardMouseEvents.send(.mouseMove(delta))
+    }
+
+    /// Forward a mouse button event to the keyboard/mouse publisher.
+    @MainActor public func sendMouseButton(_ index: Int, isDown: Bool) {
+        _keyboardMouseEvents.send(.mouseButton(index, isDown))
     }
 
     // MARK: - Reset

@@ -98,19 +98,19 @@ public struct DOSKeyboardLayout: CompanionLayout {
                         // Left mouse button
                         mouseButton("L", isDown: leftButtonDown) {
                             leftButtonDown = true
-                            inputRouter.send(.mouseButton(0, true))
+                            inputRouter.sendMouseButton(0, isDown: true)
                         } onRelease: {
                             leftButtonDown = false
-                            inputRouter.send(.mouseButton(0, false))
+                            inputRouter.sendMouseButton(0, isDown: false)
                         }
                         Spacer()
                         // Right mouse button
                         mouseButton("R", isDown: rightButtonDown) {
                             rightButtonDown = true
-                            inputRouter.send(.mouseButton(1, true))
+                            inputRouter.sendMouseButton(1, isDown: true)
                         } onRelease: {
                             rightButtonDown = false
-                            inputRouter.send(.mouseButton(1, false))
+                            inputRouter.sendMouseButton(1, isDown: false)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -125,7 +125,7 @@ public struct DOSKeyboardLayout: CompanionLayout {
                             height: value.translation.height - mouseOffset.height
                         )
                         mouseOffset = value.translation
-                        inputRouter.send(.mouseMove(CGPoint(x: delta.width, y: delta.height)))
+                        inputRouter.sendMouseMove(CGPoint(x: delta.width, y: delta.height))
                     }
                     .onEnded { _ in
                         mouseOffset = .zero

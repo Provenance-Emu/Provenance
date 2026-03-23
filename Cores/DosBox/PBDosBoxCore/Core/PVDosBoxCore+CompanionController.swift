@@ -1,13 +1,13 @@
 // PVDosBoxCore+CompanionController.swift
 // PVDosBox
 //
-// Extends PVDosBoxCore to adopt CompanionControllerCapable, routing companion
+// Extends PVDosBoxCore to adopt CompanionKeyboardMouseCapable, routing companion
 // keyboard and mouse events to the core's existing KeyboardResponder and
 // MouseResponder implementations.
 //
 // Event flow:
 //   CompanionInputRouter.keyboardMouseEvents
-//     → PVEmulatorViewController (wired in issue #2707)
+//     → PVEmulatorViewController (wired in PVEmulatorViewController+CompanionController)
 //       → PVDosBoxCore.companionKeyDown/Up / companionMouseMoved / companionMouseButton
 //         → PVDosBoxCoreBridge keyboard/mouse methods (libretro pipeline)
 //
@@ -41,20 +41,20 @@ private extension PVDosBoxCore {
     }
 }
 
-// MARK: - CompanionControllerCapable
+// MARK: - CompanionKeyboardMouseCapable
 
-extension PVDosBoxCore: CompanionControllerCapable {
+extension PVDosBoxCore: CompanionKeyboardMouseCapable {
 
     // MARK: Keyboard
 
     /// Routes a companion key-down event to the core's `KeyboardResponder.keyDown(_:)`.
-    @available(iOS 14.0, tvOS 14.0, *)
+    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     public func companionKeyDown(_ key: GCKeyCode) {
         keyDown(key)
     }
 
     /// Routes a companion key-up event to the core's `KeyboardResponder.keyUp(_:)`.
-    @available(iOS 14.0, tvOS 14.0, *)
+    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     public func companionKeyUp(_ key: GCKeyCode) {
         keyUp(key)
     }

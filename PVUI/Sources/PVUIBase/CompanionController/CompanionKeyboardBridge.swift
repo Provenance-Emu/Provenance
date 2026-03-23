@@ -16,7 +16,7 @@ import GameController
 
 // MARK: - CompanionKeyboardBridge
 
-/// Converts `VirtualKeyboardDelegate` key callbacks into `CompanionInputEvent.keyDown/keyUp`
+/// Converts `VirtualKeyboardDelegate` key callbacks into `CompanionKeyboardMouseEvent.keyDown/keyUp`
 /// events forwarded through the shared `CompanionInputRouter`.
 ///
 /// `DOSKeyboardLayout` owns this bridge as a `@StateObject` so it outlives the
@@ -43,13 +43,13 @@ extension CompanionKeyboardBridge: VirtualKeyboardDelegate {
     /// Forwards a key-down event from the on-screen keyboard to the companion router.
     @available(iOS 14.0, *)
     public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyDown keyCode: GCKeyCode) {
-        inputRouter.send(.keyDown(keyCode))
+        inputRouter.sendKeyDown(keyCode)
     }
 
     /// Forwards a key-up event from the on-screen keyboard to the companion router.
     @available(iOS 14.0, *)
     public func virtualKeyboard(_ keyboard: VirtualKeyboardViewModel, keyUp keyCode: GCKeyCode) {
-        inputRouter.send(.keyUp(keyCode))
+        inputRouter.sendKeyUp(keyCode)
     }
 }
 

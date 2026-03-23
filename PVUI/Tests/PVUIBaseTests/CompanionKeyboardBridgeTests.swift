@@ -1,8 +1,8 @@
 // CompanionKeyboardBridgeTests.swift
 // PVUIBaseTests
 //
-// Unit tests for CompanionKeyboardBridge and the keyboard/mouse extension of
-// CompanionInputEvent / CompanionInputRouter.
+// Unit tests for CompanionKeyboardBridge and the keyboard/mouse event routing
+// through CompanionKeyboardMouseEvent / CompanionInputRouter.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
@@ -10,6 +10,7 @@
 import Testing
 import GameController
 import Combine
+import PVCoreBridge
 @testable import PVUIBase
 
 // MARK: - CompanionInputRouter keyboard/mouse event tests
@@ -18,15 +19,15 @@ import Combine
 @MainActor
 struct CompanionInputRouterKeyboardTests {
 
-    // MARK: - keyDown / keyUp publish to keyboardMouseEvents
+    // MARK: - sendKeyDown / sendKeyUp publish to keyboardMouseEvents
 
-    @Test("send(.keyDown) publishes on keyboardMouseEvents and does not update DSU state")
+    @Test("sendKeyDown publishes .keyDown on keyboardMouseEvents and does not update DSU state")
     func keyDownPublishesOnKeyboardMouseEvents() async throws {
         let router = CompanionInputRouter()
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
-        router.send(.keyDown(.keyA))
+        router.sendKeyDown(.keyA)
 
         try #require(received.count == 1)
         if case .keyDown(let key) = received[0] {
@@ -39,13 +40,13 @@ struct CompanionInputRouterKeyboardTests {
         _ = cancellable
     }
 
-    @Test("send(.keyUp) publishes on keyboardMouseEvents and does not update DSU state")
+    @Test("sendKeyUp publishes .keyUp on keyboardMouseEvents and does not update DSU state")
     func keyUpPublishesOnKeyboardMouseEvents() async throws {
         let router = CompanionInputRouter()
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
-        router.send(.keyUp(.returnOrEnter))
+        router.sendKeyUp(.returnOrEnter)
 
         try #require(received.count == 1)
         if case .keyUp(let key) = received[0] {
@@ -57,16 +58,16 @@ struct CompanionInputRouterKeyboardTests {
         _ = cancellable
     }
 
-    // MARK: - mouseMove / mouseButton publish to keyboardMouseEvents
+    // MARK: - sendMouseMove / sendMouseButton publish to keyboardMouseEvents
 
-    @Test("send(.mouseMove) publishes delta on keyboardMouseEvents")
+    @Test("sendMouseMove publishes delta on keyboardMouseEvents")
     func mouseMovePublishesOnKeyboardMouseEvents() throws {
         let router = CompanionInputRouter()
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         let delta = CGPoint(x: 3.5, y: -2.0)
-        router.send(.mouseMove(delta))
+        router.sendMouseMove(delta)
 
         try #require(received.count == 1)
         if case .mouseMove(let pt) = received[0] {
@@ -77,14 +78,14 @@ struct CompanionInputRouterKeyboardTests {
         _ = cancellable
     }
 
-    @Test("send(.mouseButton) publishes button index and state on keyboardMouseEvents")
+    @Test("sendMouseButton publishes button index and state on keyboardMouseEvents")
     func mouseButtonPublishesOnKeyboardMouseEvents() throws {
         let router = CompanionInputRouter()
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
-        router.send(.mouseButton(0, true))
-        router.send(.mouseButton(1, false))
+        router.sendMouseButton(0, isDown: true)
+        router.sendMouseButton(1, isDown: false)
 
         try #require(received.count == 2)
         if case .mouseButton(let idx, let down) = received[0] {
@@ -107,7 +108,7 @@ struct CompanionInputRouterKeyboardTests {
     @Test("send(.buttonDown) does not publish on keyboardMouseEvents")
     func buttonDownDoesNotPublishOnKeyboardMouseEvents() {
         let router = CompanionInputRouter()
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         router.send(.buttonDown(.south))
@@ -117,12 +118,12 @@ struct CompanionInputRouterKeyboardTests {
         _ = cancellable
     }
 
-    // MARK: - sendKeyDown / sendKeyUp convenience methods
+    // MARK: - sendKeyDown / sendKeyUp convenience methods (re-test via convenience path)
 
-    @Test("sendKeyDown publishes .keyDown on keyboardMouseEvents")
+    @Test("sendKeyDown convenience publishes .keyDown on keyboardMouseEvents")
     func sendKeyDownConvenience() throws {
         let router = CompanionInputRouter()
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         router.sendKeyDown(.escape)
@@ -136,10 +137,10 @@ struct CompanionInputRouterKeyboardTests {
         _ = cancellable
     }
 
-    @Test("sendKeyUp publishes .keyUp on keyboardMouseEvents")
+    @Test("sendKeyUp convenience publishes .keyUp on keyboardMouseEvents")
     func sendKeyUpConvenience() throws {
         let router = CompanionInputRouter()
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         router.sendKeyUp(.spacebar)
@@ -165,7 +166,7 @@ struct CompanionKeyboardBridgeTests {
         let router = CompanionInputRouter()
         let bridge = CompanionKeyboardBridge(inputRouter: router)
 
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         let vm = VirtualKeyboardViewModel()
@@ -185,7 +186,7 @@ struct CompanionKeyboardBridgeTests {
         let router = CompanionInputRouter()
         let bridge = CompanionKeyboardBridge(inputRouter: router)
 
-        var received: [CompanionInputEvent] = []
+        var received: [CompanionKeyboardMouseEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         let vm = VirtualKeyboardViewModel()

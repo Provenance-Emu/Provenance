@@ -1,13 +1,16 @@
-// CompanionControllerCapable.swift
+// CompanionKeyboardMouseCapable.swift
 // PVCoreBridge
 //
-// Protocol adopted by emulator cores that can receive keyboard and mouse input
-// directly from a companion controller session.
+// Protocol adopted by emulator cores that handle keyboard and/or mouse input
+// from a companion controller session.
 //
-// Flow (wired in issue #2707):
-//   CompanionInputRouter.keyboardMouseEvents (Publisher<CompanionInputEvent>)
+// Flow (wired in PVEmulatorViewController+CompanionController):
+//   CompanionInputRouter.keyboardMouseEvents (Publisher<CompanionKeyboardMouseEvent>)
 //     → PVEmulatorViewController subscriber
 //       → core.companionKeyDown / companionKeyUp / companionMouseMoved / companionMouseButton
+//
+// These types live in PVCoreBridge so that both core bridges (Tier 4) and
+// the UI layer (PVUI, Tier 6) can reference them without a circular dependency.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
@@ -18,39 +21,40 @@ import CoreGraphics
 import GameController
 #endif
 
-// MARK: - CompanionControllerCapable
+// MARK: - CompanionKeyboardMouseCapable
 
 /// Adopted by emulator cores that handle keyboard and/or mouse input from a
 /// companion controller session.
 ///
-/// The emulator view controller calls these methods on the main thread when
-/// keyboard or mouse events arrive from the companion device.
+/// The emulator view controller subscribes to `CompanionInputRouter.keyboardMouseEvents`
+/// and calls these methods on the main thread when keyboard or mouse events
+/// arrive from the companion device.
 ///
-/// Cores that support only keyboard should return empty implementations for the
+/// Cores that support only keyboard should provide empty implementations for the
 /// mouse methods (and vice versa).
 ///
 /// Example — DOS core keyboard forwarding:
 /// ```swift
-/// extension PVDosBoxCore: CompanionControllerCapable {
+/// extension PVDosBoxCore: CompanionKeyboardMouseCapable {
 ///     public func companionKeyDown(_ key: GCKeyCode) { keyDown(key) }
 ///     public func companionKeyUp(_ key: GCKeyCode)   { keyUp(key) }
 ///     public func companionMouseMoved(delta: CGPoint) { /* accumulate + normalize */ }
 ///     public func companionMouseButton(_ index: Int, isDown: Bool) { ... }
 /// }
 /// ```
-public protocol CompanionControllerCapable: AnyObject {
+public protocol CompanionKeyboardMouseCapable: AnyObject {
 
     // MARK: - Keyboard
 
 #if canImport(GameController)
     /// A companion keyboard key was pressed.
     /// - Parameter key: HID USB key code (matches `GCKeyCode.rawValue`).
-    @available(iOS 14.0, tvOS 14.0, *)
+    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     func companionKeyDown(_ key: GCKeyCode)
 
     /// A companion keyboard key was released.
     /// - Parameter key: HID USB key code.
-    @available(iOS 14.0, tvOS 14.0, *)
+    @available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
     func companionKeyUp(_ key: GCKeyCode)
 #endif
 
@@ -61,10 +65,8 @@ public protocol CompanionControllerCapable: AnyObject {
     ///   Components can be positive or negative.
     ///
     /// **Coordinate system note:** `delta` is a *relative* offset, not an absolute position.
-    /// The underlying libretro/libRetroArch mouse pipeline (`setMousePosition`) expects a
-    /// *normalized absolute* position in the range 0.0–1.0. Core implementations must
-    /// therefore accumulate incoming deltas into a tracked cursor position (scaled
-    /// appropriately and clamped to 0…1) before forwarding to the mouse API.
+    /// Core implementations that use a normalized absolute cursor position must
+    /// accumulate incoming deltas and clamp to 0…1 before forwarding to the mouse API.
     func companionMouseMoved(delta: CGPoint)
 
     /// A companion mouse button state changed.
