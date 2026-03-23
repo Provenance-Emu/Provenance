@@ -208,8 +208,13 @@ public let PVMousePositionKey = "PVMousePositionKey"
         input?.mouseMovedHandler = { [weak self] _, deltaX, deltaY in
             let dx = CGFloat(deltaX)
             let dy = CGFloat(deltaY)
+            let session = self?._session ?? -1
             DispatchQueue.main.async { [weak self] in
-                self?._applyDelta(dx: dx, dy: dy)
+                guard let self,
+                      self._session == session,
+                      self.isEnabled,
+                      self.responder != nil else { return }
+                self._applyDelta(dx: dx, dy: dy)
             }
         }
 
