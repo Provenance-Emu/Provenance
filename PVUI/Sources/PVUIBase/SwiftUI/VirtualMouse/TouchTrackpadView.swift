@@ -141,30 +141,34 @@ public final class TouchTrackpadView: UIView {
 
     /// Returns `self` only when the touch falls within the game display area.
     ///
-    /// The trackpad's frame is set to the game viewport by `refreshVirtualMouseLayout()`,
-    /// so the default bounds check is usually sufficient. The `explicitGameViewRect` /
-    /// `gameViewRef` safety net covers the brief window before the first layout pass
-    /// constrains the frame.
-    ///
-    /// Touch priority for buttons, menus, and skin controls is handled by proper
-    /// z-ordering (see `bringVirtualInputOverlaysToFront()`), not by sibling checks
-    /// in this method.
+    /// Gating priority:
+    ///   1. `gameViewRef` — the live GPU view frame, always up-to-date after layout.
+    ///      Preferred because `explicitGameViewRect` can be stale (set before the skin
+    ///      has positioned the viewport) and may cover more area than the actual game rect.
+    ///   2. `explicitGameViewRect` — fallback when `gameViewRef` hasn't been laid out yet
+    ///      (empty converted rect).
+    ///   3. `nil` — pass all touches through when no viewport info is available.
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
         guard self.point(inside: point, with: event) else { return nil }
 
-        /// Safety net: if the frame hasn't been constrained to the viewport yet,
-        /// use the explicit rect or gameViewRef to gate touches.
-        if let explicit = explicitGameViewRect, !explicit.isEmpty {
-            let localRect = CGRect(origin: .zero, size: bounds.size)
-            if localRect != explicit {
-                let pointInSuperview = convert(point, to: superview)
-                guard explicit.contains(pointInSuperview) else { return nil }
-            }
-        } else if let gameView = gameViewRef {
+        if let gameView = gameViewRef {
             let converted = gameView.convert(gameView.bounds, to: self)
-            guard !converted.isEmpty else { return nil }
-            guard converted.contains(point) else { return nil }
+            if !converted.isEmpty {
+                // GPU view is laid out — gate strictly to its rect.
+                guard converted.contains(point) else { return nil }
+            } else {
+                // GPU view not yet laid out — fall back to explicit rect or pass through.
+                if let explicit = explicitGameViewRect, !explicit.isEmpty {
+                    let pointInSuperview = convert(point, to: superview)
+                    guard explicit.contains(pointInSuperview) else { return nil }
+                } else {
+                    return nil
+                }
+            }
+        } else if let explicit = explicitGameViewRect, !explicit.isEmpty {
+            let pointInSuperview = convert(point, to: superview)
+            guard explicit.contains(pointInSuperview) else { return nil }
         } else {
             return nil
         }
