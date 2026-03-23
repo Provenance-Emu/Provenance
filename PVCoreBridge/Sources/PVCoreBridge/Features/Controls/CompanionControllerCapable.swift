@@ -34,7 +34,7 @@ import GameController
 /// extension PVDosBoxCore: CompanionControllerCapable {
 ///     public func companionKeyDown(_ key: GCKeyCode) { keyDown(key) }
 ///     public func companionKeyUp(_ key: GCKeyCode)   { keyUp(key) }
-///     public func companionMouseMoved(delta: CGPoint) { mouseMoved(atPoint: delta) }
+///     public func companionMouseMoved(delta: CGPoint) { /* accumulate + normalize */ }
 ///     public func companionMouseButton(_ index: Int, isDown: Bool) { ... }
 /// }
 /// ```
@@ -57,9 +57,14 @@ public protocol CompanionControllerCapable: AnyObject {
     // MARK: - Mouse
 
     /// The companion trackpad sent a relative movement delta.
-    /// - Parameter delta: Movement in points relative to the last reported position.
-    ///   Components can be positive or negative. The emulator core maps this to its
-    ///   internal mouse coordinate system.
+    /// - Parameter delta: Raw movement offset in screen points since the last event.
+    ///   Components can be positive or negative.
+    ///
+    /// **Coordinate system note:** `delta` is a *relative* offset, not an absolute position.
+    /// The underlying libretro/libRetroArch mouse pipeline (`setMousePosition`) expects a
+    /// *normalized absolute* position in the range 0.0–1.0. Core implementations must
+    /// therefore accumulate incoming deltas into a tracked cursor position (scaled
+    /// appropriately and clamped to 0…1) before forwarding to the mouse API.
     func companionMouseMoved(delta: CGPoint)
 
     /// A companion mouse button state changed.

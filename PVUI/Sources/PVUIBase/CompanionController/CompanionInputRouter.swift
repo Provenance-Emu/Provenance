@@ -44,12 +44,18 @@ public final class CompanionInputRouter: ObservableObject {
 
     // MARK: - Keyboard / Mouse event stream
 
+    /// Internal subject — kept private so only `send(_:)` can publish events,
+    /// enforcing routing invariants and preventing unsynchronised external sends.
+    private let _keyboardMouseEvents = PassthroughSubject<CompanionInputEvent, Never>()
+
     /// Publishes keyboard and mouse events that should be routed directly to the emulator core.
     ///
     /// The emulator view controller (wired in issue #2707) subscribes to this publisher and
     /// forwards each event to the active `CompanionControllerCapable` core.
     /// Button and axis events are *not* published here — they go through `slotDelegate`.
-    public let keyboardMouseEvents = PassthroughSubject<CompanionInputEvent, Never>()
+    public var keyboardMouseEvents: AnyPublisher<CompanionInputEvent, Never> {
+        _keyboardMouseEvents.eraseToAnyPublisher()
+    }
 
     // MARK: - Init
 
@@ -73,7 +79,7 @@ public final class CompanionInputRouter: ObservableObject {
 #if canImport(GameController)
         case .keyDown, .keyUp, .mouseMove, .mouseButton:
             // Keyboard and mouse events bypass DSU state and go straight to the core.
-            keyboardMouseEvents.send(event)
+            _keyboardMouseEvents.send(event)
             return
 #else
         case .mouseMove, .mouseButton:
@@ -85,15 +91,15 @@ public final class CompanionInputRouter: ObservableObject {
     }
 
     /// Convenience entry-point for keyboard key-down events.
-    /// Publishes a `keyDown` event on `keyboardMouseEvents`.
+    /// Publishes a `keyDown` event via `send(_:)`.
     @MainActor public func sendKeyDown(_ key: GCKeyCode) {
-        keyboardMouseEvents.send(.keyDown(key))
+        send(.keyDown(key))
     }
 
     /// Convenience entry-point for keyboard key-up events.
-    /// Publishes a `keyUp` event on `keyboardMouseEvents`.
+    /// Publishes a `keyUp` event via `send(_:)`.
     @MainActor public func sendKeyUp(_ key: GCKeyCode) {
-        keyboardMouseEvents.send(.keyUp(key))
+        send(.keyUp(key))
     }
 
     // MARK: - Reset
