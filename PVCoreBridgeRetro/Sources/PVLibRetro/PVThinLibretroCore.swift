@@ -459,8 +459,23 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                 md5: romMD5,
                 title: romTitleForLookup
             ) {
-                return 2 // RETRO_DEVICE_MOUSE
+                return LibretroDeviceType.mouse.rawValue
             }
+        }
+        // Dreamcast (Flycast): explicitly set port 0 device type so the core never silently
+        // activates mouse input for standard games. For known mouse titles (Typing of the Dead,
+        // Planet Ring, etc.) switch port 0 to RETRO_DEVICE_MOUSE so touch/pointer events reach
+        // the Maple bus mouse peripheral. For all other games force RETRO_DEVICE_JOYPAD, which
+        // overrides any Flycast core-option that might enable mouse by default.
+        if sysID == .Dreamcast && port == 0 {
+            if MouseGameRegistry.shared.gameSupportsMouse(
+                systemIdentifier: sysID,
+                md5: romMD5,
+                title: romTitleForLookup
+            ) {
+                return LibretroDeviceType.mouse.rawValue // Flycast maps this to MDT_Mouse on Maple port A
+            }
+            return LibretroDeviceType.joypad.rawValue // prevent Flycast from defaulting to mouse
         }
         return nil
     }

@@ -32,6 +32,7 @@ struct PickerStyleModifier: ViewModifier {
 
 /// A view that allows browsing the App Group container files, local app storage, and iCloud directory
 public struct AppGroupFileBrowserView: View {
+    @Environment(\.dismiss) private var dismiss
 
     // MARK: - Properties
 
@@ -261,6 +262,9 @@ public struct AppGroupFileBrowserView: View {
             loadDirectoryContents()
         }
         .navigationTitle("App Group Files")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         .sheet(isPresented: $showingFileContents) {
             FileContentsView(fileName: selectedItem?.name ?? "", contents: fileContents)
         }

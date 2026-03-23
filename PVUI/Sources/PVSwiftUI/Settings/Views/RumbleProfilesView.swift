@@ -44,6 +44,7 @@ struct RumbleProfilesView: View {
     @State private var presetToDelete: RumblePreset?
     @State private var showDeleteConfirm = false
 
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var themeManager = ThemeManager.shared
 
     private var accentColor: Color {
@@ -79,6 +80,9 @@ struct RumbleProfilesView: View {
         .listStyle(.insetGrouped)
         #endif
         .navigationTitle("Rumble Profiles")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -417,7 +421,32 @@ private struct SystemProfileRow: View {
         allOptions.first { $0.id == currentValue }?.label ?? "System Default"
     }
 
+    #if os(tvOS)
+    private var pickerBinding: Binding<String> {
+        Binding(
+            get: { currentValue },
+            set: { newValue in
+                if newValue == "default" {
+                    systemOverrides.removeValue(forKey: overrideKey)
+                } else {
+                    systemOverrides[overrideKey] = newValue
+                }
+            }
+        )
+    }
+    #endif
+
     var body: some View {
+        #if os(tvOS)
+        Picker(selection: pickerBinding) {
+            ForEach(allOptions, id: \.id) { option in
+                Text(option.label).tag(option.id)
+            }
+        } label: {
+            Label(row.displayName, systemImage: row.icon)
+        }
+        .padding(.vertical, 2)
+        #else
         HStack {
             Image(systemName: row.icon)
                 .imageScale(.medium)
@@ -458,6 +487,7 @@ private struct SystemProfileRow: View {
             .buttonStyle(.borderless)
         }
         .padding(.vertical, 2)
+        #endif
     }
 }
 
@@ -484,7 +514,32 @@ private struct ControllerOverrideRow: View {
         allOptions.first { $0.id == currentValue }?.label ?? "System Default"
     }
 
+    #if os(tvOS)
+    private var pickerBinding: Binding<String> {
+        Binding(
+            get: { currentValue },
+            set: { newValue in
+                if newValue == "default" {
+                    controllerOverrides.removeValue(forKey: row.key)
+                } else {
+                    controllerOverrides[row.key] = newValue
+                }
+            }
+        )
+    }
+    #endif
+
     var body: some View {
+        #if os(tvOS)
+        Picker(selection: pickerBinding) {
+            ForEach(allOptions, id: \.id) { option in
+                Text(option.label).tag(option.id)
+            }
+        } label: {
+            Label(row.displayName, systemImage: row.icon)
+        }
+        .padding(.vertical, 2)
+        #else
         HStack {
             Image(systemName: row.icon)
                 .imageScale(.medium)
@@ -525,6 +580,7 @@ private struct ControllerOverrideRow: View {
             .buttonStyle(.borderless)
         }
         .padding(.vertical, 2)
+        #endif
     }
 }
 
@@ -542,6 +598,7 @@ struct RumblePresetEditorView: View {
     @State private var minBurstDuration: Double
 
     @ObservedObject private var themeManager = ThemeManager.shared
+    @Environment(\.dismiss) private var dismiss
 
     init(preset: RumblePreset, onSave: @escaping (RumblePreset) -> Void) {
         self.preset = preset
@@ -637,6 +694,9 @@ struct RumblePresetEditorView: View {
         .listStyle(.insetGrouped)
         #endif
         .navigationTitle(name.isEmpty ? "Edit Preset" : name)
+        #if os(tvOS)
+        .onExitCommand { save(); dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -668,12 +728,14 @@ struct RumblePresetEditorView: View {
                     let s = range.upperBound > 1 ? 5.0 : 0.01
                     value.wrappedValue = max(range.lowerBound, value.wrappedValue - s)
                 }) { Image(systemName: "minus.circle") }
+                .retroFocusButtonStyle(showBorder: false)
                 ProgressView(value: (value.wrappedValue - range.lowerBound) / (range.upperBound - range.lowerBound))
                     .tint(accentColor)
                 Button(action: {
                     let s = range.upperBound > 1 ? 5.0 : 0.01
                     value.wrappedValue = min(range.upperBound, value.wrappedValue + s)
                 }) { Image(systemName: "plus.circle") }
+                .retroFocusButtonStyle(showBorder: false)
             }
             #else
             Slider(value: value, in: range, step: range.upperBound > 1 ? 5 : 0.01)

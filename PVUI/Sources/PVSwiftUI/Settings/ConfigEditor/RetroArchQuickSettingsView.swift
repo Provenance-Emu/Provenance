@@ -3,6 +3,7 @@ import PVThemes
 import PVLogging
 
 struct RetroArchQuickSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = RetroArchQuickSettingsViewModel()
     @ObservedObject private var themeManager = ThemeManager.shared
 
@@ -18,6 +19,9 @@ struct RetroArchQuickSettingsView: View {
             }
         }
         .navigationTitle("RetroArch Settings")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         .task {
             await viewModel.loadConfig()
         }

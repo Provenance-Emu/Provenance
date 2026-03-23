@@ -37,6 +37,11 @@ import PVJIT
 import JITManager
 #endif
 
+// Conditionally import `PVAppIntents` if available
+#if canImport(PVAppIntents)
+import PVAppIntents
+#endif
+
 // Conditionally import SteamController for non-macCatalyst and non-macOS targets
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)

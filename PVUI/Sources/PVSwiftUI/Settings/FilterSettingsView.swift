@@ -5,6 +5,7 @@ import PVThemes
 import PVUIBase
 
 struct FilterSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @Default(.metalFilterMode) var metalFilterMode
     @Default(.openGLFilterMode) var openGLFilterMode
 
@@ -29,6 +30,9 @@ struct FilterSettingsView: View {
         // .scrollContentBackground(.hidden)
         #endif
         .navigationTitle("Display Filters")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
 
         Text("Metal filters provided by Mr. J & Mame4iOS.")
             .font(.caption)

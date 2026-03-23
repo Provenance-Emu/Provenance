@@ -48,6 +48,7 @@ struct RecentlyPlayedProvider: TimelineProvider {
         case .systemSmall: return 1
         case .systemMedium: return 2
         case .systemLarge: return 4
+        case .systemExtraLarge: return 8
         default: return 2
         }
     }
@@ -65,7 +66,7 @@ struct RecentlyPlayedWidget: Widget {
         }
         .configurationDisplayName("Recently Played")
         .description("See the games you've played most recently.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
 
@@ -87,6 +88,8 @@ struct RecentlyPlayedWidgetView: View {
                 mediumView
             case .systemLarge:
                 largeView
+            case .systemExtraLarge:
+                extraLargeView
             default:
                 mediumView
             }
@@ -148,6 +151,25 @@ struct RecentlyPlayedWidgetView: View {
         VStack(spacing: 8) {
             ForEach(paddedGames(count: 4)) { game in
                 gameRow(game)
+            }
+        }
+        .padding(12)
+    }
+
+    // MARK: Extra Large (iPad) — two columns of four games
+
+    private var extraLargeView: some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 8) {
+                ForEach(paddedGames(count: 8).prefix(4)) { game in
+                    gameRow(game)
+                }
+            }
+            Divider()
+            VStack(spacing: 8) {
+                ForEach(paddedGames(count: 8).dropFirst(4)) { game in
+                    gameRow(game)
+                }
             }
         }
         .padding(12)
@@ -244,6 +266,12 @@ struct RecentlyPlayedWidgetView: View {
 }
 
 #Preview("Large", as: .systemLarge) {
+    RecentlyPlayedWidget()
+} timeline: {
+    RecentlyPlayedEntry.placeholder
+}
+
+#Preview("Extra Large", as: .systemExtraLarge) {
     RecentlyPlayedWidget()
 } timeline: {
     RecentlyPlayedEntry.placeholder

@@ -21,6 +21,9 @@ import PVFileSystem
 import Combine
 import Observation
 import Perception
+#if canImport(PVAppIntents)
+import PVAppIntents
+#endif
 
 //@Observable
 public final class PVGameLibraryUpdatesController: ObservableObject {
@@ -118,6 +121,10 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 }
                 await self?.hudCoordinator.updateHUD(.hidden)
                 DLOG("HUD state updated for import completion")
+#if canImport(PVAppIntents)
+                // Refresh widgets after library import so new games appear immediately.
+                WidgetDataWriter.shared.writeFromRealm()
+#endif
             }
         }
     }

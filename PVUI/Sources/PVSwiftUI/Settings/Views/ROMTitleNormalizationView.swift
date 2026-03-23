@@ -14,6 +14,7 @@ import PVLogging
 // MARK: - Main View
 
 public struct ROMTitleNormalizationView: View {
+    @Environment(\.dismiss) private var dismiss
 
     // MARK: State
 
@@ -55,6 +56,9 @@ public struct ROMTitleNormalizationView: View {
             }
         }
         .navigationTitle("Normalize ROM Titles")
+#if os(tvOS)
+        .onExitCommand { dismiss() }
+#endif
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarItems }

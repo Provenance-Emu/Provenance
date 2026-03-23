@@ -5,6 +5,7 @@ import struct PVUIBase.ActivityViewController
 #endif
 
 struct RetroArchConfigEditorView: View {
+    @Environment(\.dismiss) private var dismiss
     @Binding var showExportSheet: Bool
     @Binding var showImportPicker: Bool
     @ObservedObject var filterVM: ConfigFilterViewModel
@@ -45,6 +46,9 @@ struct RetroArchConfigEditorView: View {
             editVM: editVM
         )
         .navigationTitle("RetroArch Config")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         .uiKitAlert(
             editVM.getEditorTitle(),
             message: editVM.getEditorMessage(),

@@ -110,11 +110,15 @@ public struct NetplayInviteView: View {
                     #endif
 
                     #if os(tvOS)
-                    /// tvOS has no `UIPasteboard` or `ShareLink`; the URL above is the invite — use it on another device.
-                    Text("Use the URL shown above on another device running Provenance, or share it from your phone or computer. tvOS cannot use the clipboard or system share sheet.")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    // tvOS has no clipboard or share sheet — show a QR code instead.
+                    // Viewers can scan this with any phone camera to open the invite.
+                    PVQRCodeView(
+                        url.absoluteString,
+                        correctionLevel: .quarter,
+                        label: "Scan with your phone to join"
+                    )
+                    .frame(width: 180, height: 200)
+                    .padding(.top, 8)
                     #else
                     Button {
                         inviteURL = url

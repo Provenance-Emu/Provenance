@@ -10,6 +10,7 @@ import Defaults
 import PVSettings
 
 struct RecordingSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
 
     @Default(.recordingMicEnabled) var recordingMicEnabled
     @Default(.recordingAutoSave) var recordingAutoSave
@@ -103,5 +104,8 @@ struct RecordingSettingsView: View {
             }
         }
         .navigationTitle("Recording & Streaming")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
     }
 }

@@ -86,6 +86,8 @@ static NSArray<NSString *> *dos_relative_mouse_system_ids(void) {
         // "snes" covers bsnes / snes9x-next when port 2 is RETRO_DEVICE_MOUSE.
         // "saturn" covers Beetle-Saturn mouse peripheral.
         // "psx" covers Beetle-PSX / PCSX-ReARMed mouse peripheral.
+        // Dreamcast/Flycast uses the Maple bus port device mechanism instead of
+        // DOS-style relative mouse, so it is intentionally excluded here.
         ids = @[ @"atarist", @"doom", @"snes", @"saturn", @"psx" ];
     });
     return ids;
@@ -96,6 +98,7 @@ static NSArray<NSString *> *dos_relative_mouse_core_ids(void) {
     static NSArray *ids;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
+        // Flycast uses the Maple bus port device mechanism, not DOS-style relative mouse.
         ids = @[ @"hatari", @"prboom", @"bsnes", @"snes9x", @"mednafen_snes",
                  @"mednafen_psx", @"mednafen_saturn", @"pcsx_rearmed" ];
     });

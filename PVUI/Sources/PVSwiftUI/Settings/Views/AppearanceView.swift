@@ -13,6 +13,7 @@ import FreemiumKit
 #endif
 
 struct AppearanceView: View {
+    @Environment(\.dismiss) private var dismiss
     @Default(.showGameTitles) var showGameTitles
     @Default(.showRecentGames) var showRecentGames
     @Default(.showSearchbar) var showSearchbar
@@ -169,6 +170,10 @@ struct AppearanceView: View {
                     }
                     .navigationTitle("Appearance")
                 }
+                #if os(tvOS)
+                .padding(.horizontal, 80)
+                .onExitCommand { dismiss() }
+                #endif
             }
         }
     }
@@ -337,6 +342,9 @@ fileprivate struct MissingArtworkStyleView: View {
             }
         }
         .navigationTitle("Missing Artwork Style")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         .sheet(isPresented: $showingFullScreenPreview) {
             FullScreenPreview(style: selectedStyle, previewTitle: previewTitle)
         }

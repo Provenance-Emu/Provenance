@@ -46,6 +46,10 @@ import PVWebServer
 import PVUI_TV
 #endif
 
+#if canImport(PVAppIntents)
+import PVAppIntents
+#endif
+
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
@@ -1349,8 +1353,15 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     func toggleFavorite(for game: PVGame) {
         gameLibrary.toggleFavorite(for: game)
             .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-                self.collectionView?.reloadData()
+            .subscribe(onCompleted: { [weak self] in
+                self?.collectionView?.reloadData()
+#if canImport(PVAppIntents)
+                // RxSwift callback: schedule on main actor explicitly to satisfy
+                // Swift concurrency isolation requirements.
+                Task { @MainActor in
+                    WidgetDataWriter.shared.writeFromRealm()
+                }
+#endif
             }, onError: { error in
                 ELOG("Failed to toggle Favorite for game \(game.title)")
             })

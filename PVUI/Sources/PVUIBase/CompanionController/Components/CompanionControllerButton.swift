@@ -9,6 +9,7 @@
 
 #if !os(tvOS)
 import SwiftUI
+import PVCoreBridge
 #if canImport(UIKit)
 import UIKit
 #endif

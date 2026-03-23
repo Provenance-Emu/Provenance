@@ -89,6 +89,12 @@ __attribute__((weak_import))
 - (void)setLeftMouseButtonPressed:(BOOL)pressed;
 - (void)setRightMouseButtonPressed:(BOOL)pressed;
 
+/// Sets the libretro controller device type for a specific port.
+/// Returns YES when the device type was applied, NO when the core is not yet
+/// initialised (logs an info message). Safe to call before init — callers can retry
+/// on the next input event. Ideally called after `retro_load_game` succeeds.
+- (BOOL)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
+
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
 @property (nonatomic, retain, nullable) NSString * romPath;

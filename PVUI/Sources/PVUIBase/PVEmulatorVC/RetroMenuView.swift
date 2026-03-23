@@ -696,7 +696,6 @@ struct RetroMenuView: View {
         let core = emulatorVC.core
 
         // Check if any peripherals are relevant
-        let hasMic = (core as? KeyboardResponder)?.gameSupportsKeyboard == true || true // TODO: proper mic check
         let hasMouse = (core as? MouseResponder)?.gameSupportsMouse == true
         let hasKeyboard = (core as? KeyboardResponder)?.gameSupportsKeyboard == true
 
@@ -2054,18 +2053,91 @@ struct RetroMenuView: View {
     // Filter picker sheet view
     private var filterPickerView: some View {
         #if os(tvOS)
-        NavigationStack {
-            SwiftUI.Form(content: {
-                tvOSFilterPickerContent
-            })
-            .navigationTitle("Screen Filters")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
-                        showingFilterPicker = false
+        /// Full-screen retrowave layout (opaque card, no `Form` glass). Preview stays beside the scroll area so adjustments remain visible while scrolling parameters.
+        GeometryReader { geometry in
+            let headerShadow = palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.8 : 0.5)
+            let containerBg = (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                .opacity(palette.dark ? 0.98 : 1.0)
+            let previewHeight = min(280, max(120, geometry.size.height * 0.28))
+            let previewColumnWidth = min(420, geometry.size.width * 0.36)
+
+            ZStack {
+                Color(palette.gameLibraryBackground)
+                    .ignoresSafeArea()
+
+                RetroGrid(
+                    lineSpacing: 20,
+                    lineColor: palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.1 : 0.05)
+                )
+                .opacity(palette.dark ? 0.3 : 0.2)
+                .ignoresSafeArea()
+
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    HStack(alignment: .top, spacing: 28) {
+                        VStack(alignment: .center, spacing: 12) {
+                            Text(String(localized: "PREVIEW"))
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
+                                .shadow(color: headerShadow, radius: 10, x: 0, y: 0)
+                            if selectedMetalFilter != .none {
+                                FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
+                                    .frame(height: previewHeight)
+                                    .frame(maxWidth: .infinity)
+                            } else {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill((palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(0.5))
+                                    .frame(height: previewHeight)
+                                    .overlay(
+                                        Text(String(localized: "Select a filter"))
+                                            .font(.system(size: 18, weight: .medium))
+                                            .foregroundColor((palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
+                                    )
+                            }
+                        }
+                        .frame(width: previewColumnWidth)
+
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(String(localized: "SCREEN FILTERS"))
+                                .font(.system(size: 40, weight: .bold, design: .rounded))
+                                .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
+                                .shadow(color: headerShadow, radius: 10, x: 0, y: 0)
+                                .padding(.bottom, 16)
+
+                            ScrollView(.vertical, showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 20) {
+                                    ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
+                                        filterOptionRow(for: option, isCompact: false)
+                                    }
+                                    if selectedMetalFilter.hasEditableParameters {
+                                        Rectangle()
+                                            .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
+                                            .frame(height: 1)
+                                            .padding(.vertical, 8)
+                                        shaderParametersSection(for: selectedMetalFilter)
+                                    }
+                                }
+                                .padding(.bottom, 4)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+
+                            filterPickerDoneButton
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     }
-                    .font(.headline)
+                    .padding(.horizontal, 36)
+                    .padding(.vertical, 32)
+                    .frame(maxWidth: min(1200, geometry.size.width * 0.92), maxHeight: geometry.size.height * 0.92)
+                    .background(containerBg)
+                    .cornerRadius(24)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24)
+                            .strokeBorder(palette.defaultTintColor.swiftUIColor.opacity(0.4), lineWidth: 1.5)
+                    )
+                    .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(0.35), radius: 24, x: 0, y: 0)
+                    Spacer(minLength: 0)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .onAppear { syncSelectedFilterFromSettings() }
@@ -2096,87 +2168,11 @@ struct RetroMenuView: View {
         #endif
     }
 
-    #if os(tvOS)
-    @ViewBuilder
-    private var tvOSFilterPickerContent: some View {
-        SwiftUI.Section {
-            SwiftUI.Picker("Screen Filter", selection: $selectedMetalFilter) {
-                ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
-                    Text(option == .none ? "None" : option.description)
-                        .tag(option)
-                }
-            }
-            .pickerStyle(.navigationLink)
-        }
-
-        if selectedMetalFilter != .none {
-            SwiftUI.Section {
-                FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
-            }
-
-            SwiftUI.Section {
-                shaderParametersSection(for: selectedMetalFilter)
-            }
-        }
-    }
-    #endif
-
     @ViewBuilder
     private func filterPickerContent(geometry: GeometryProxy, isCompact: Bool) -> some View {
         let headerShadow = palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.8 : 0.5)
         let containerBg = (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.7 : 0.95)
 
-        #if os(tvOS)
-        // tvOS: Center content with generous sizing
-        HStack {
-            Spacer()
-            VStack(spacing: 0) {
-                // Header
-                Text("SCREEN FILTERS")
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
-                    .padding(.top, 80)
-                    .padding(.bottom, 40)
-                    .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
-                    .shadow(color: headerShadow, radius: 10, x: 0, y: 0)
-
-                // Filter options - larger for TV
-                ScrollView {
-                    VStack(spacing: 20) {
-                        ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
-                            filterOptionRow(for: option, isCompact: false)
-                        }
-
-                        // Show shader parameters for the selected filter
-                        if selectedMetalFilter.hasEditableParameters {
-                            Rectangle()
-                                .fill(palette.defaultTintColor.swiftUIColor.opacity(0.5))
-                                .frame(height: 1)
-                                .padding(.vertical, 8)
-
-                            FilterPreviewBarsView(filter: selectedMetalFilter, palette: palette)
-                                .padding(.bottom, 4)
-
-                            shaderParametersSection(for: selectedMetalFilter)
-                        }
-                    }
-                    .padding(.horizontal, 60)
-                }
-                .frame(maxWidth: 900)
-
-                Spacer()
-
-                // Done button
-                filterPickerDoneButton
-                    .padding(.bottom, 60)
-            }
-            .frame(width: min(1000, geometry.size.width * 0.6))
-            .background(containerBg)
-            .cornerRadius(24)
-            .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(0.4), radius: 30)
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        #else
         VStack(spacing: 0) {
             // Header
             Text("SCREEN FILTERS")
@@ -2222,7 +2218,6 @@ struct RetroMenuView: View {
         .cornerRadius(20)
         .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 20)
         .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-        #endif
     }
 
     // Load available skins for the current system

@@ -201,4 +201,56 @@ struct JITCoreCapabilityTests {
         #expect(JITCoreCapability.coreRequiresJIT("flycast") == true)
         #expect(JITCoreCapability.coreRequiresJIT("snes9x") == false)
     }
+
+    // MARK: - systemHasJITCapability (system identifier — not core identifier)
+
+    @Test("PSP system identifier is JIT-capable")
+    func pspSystemHasJITCapability() {
+        // "com.provenance.psp" must match even though it does NOT contain "ppsspp"
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.psp") == true)
+        #expect(JITCoreCapability.systemHasJITCapability("psp") == true)
+    }
+
+    @Test("N64 system identifier is JIT-capable")
+    func n64SystemHasJITCapability() {
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.n64") == true)
+        #expect(JITCoreCapability.systemHasJITCapability("n64") == true)
+    }
+
+    @Test("GameCube and Wii system identifiers are JIT-capable")
+    func gamecubeWiiSystemHasJITCapability() {
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.gamecube") == true)
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.wii") == true)
+    }
+
+    @Test("Dreamcast system identifier is JIT-capable")
+    func dreamcastSystemHasJITCapability() {
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.dreamcast") == true)
+    }
+
+    @Test("PS2 system identifier is JIT-capable")
+    func ps2SystemHasJITCapability() {
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.ps2") == true)
+    }
+
+    @Test("3DS system identifier is JIT-capable")
+    func threeDSSystemHasJITCapability() {
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.3ds") == true)
+    }
+
+    @Test("Non-JIT systems return false from systemHasJITCapability")
+    func nonJITSystemsHaveNoCapability() {
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.snes") == false)
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.nes") == false)
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.gba") == false)
+        #expect(JITCoreCapability.systemHasJITCapability("com.provenance.gb") == false)
+        #expect(JITCoreCapability.systemHasJITCapability("") == false)
+    }
+
+    @Test("systemHasJITCapability is case-insensitive")
+    func systemCapabilityCaseInsensitive() {
+        #expect(JITCoreCapability.systemHasJITCapability("COM.PROVENANCE.PSP") == true)
+        #expect(JITCoreCapability.systemHasJITCapability("COM.PROVENANCE.N64") == true)
+        #expect(JITCoreCapability.systemHasJITCapability("COM.PROVENANCE.SNES") == false)
+    }
 }

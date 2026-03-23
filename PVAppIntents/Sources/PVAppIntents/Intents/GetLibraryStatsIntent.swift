@@ -42,20 +42,4 @@ public struct GetLibraryStatsIntent: AppIntent {
     }
 }
 
-// MARK: - LibraryStatsResult
-
-/// Structured result type for Shortcuts automations and widget timeline consumption.
-public struct LibraryStatsResult: Codable, Sendable {
-    public let totalGames: Int
-    public let totalSystems: Int
-    public let favoriteCount: Int
-    public let generatedAt: Date
-
-    public init(totalGames: Int, totalSystems: Int, favoriteCount: Int, generatedAt: Date = .now) {
-        self.totalGames = totalGames
-        self.totalSystems = totalSystems
-        self.favoriteCount = favoriteCount
-        self.generatedAt = generatedAt
-    }
-}
 #endif

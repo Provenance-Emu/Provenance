@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
+@import PVCoreBridgeRetro;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -193,6 +194,68 @@ s8 joyx[4], joyy[4];
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
     [self didReleaseDreamcastButton:(PVDreamcastButton)button forPlayer:player];
+}
+
+#pragma mark - MouseResponder
+
+- (BOOL)gameSupportsMouse {
+    // The Dreamcast Maple bus CAN host a mouse device. Returning YES here
+    // declares that the bridge itself supports mouse input. Per-game filtering
+    // is performed at the Swift layer (PVFlycastEmuCore.gameSupportsMouse) via
+    // MouseGameRegistry, which controls whether the on-screen mouse overlay is
+    // shown and whether the Maple mouse port is configured for a given title.
+    return YES;
+}
+
+- (BOOL)requiresMouse {
+    return NO;
+}
+
+// Swift @objc protocol selector: mouseMoved(atPoint:) → ObjC: mouseMovedAtPoint:
+- (void)mouseMovedAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
+}
+
+// Swift @objc protocol selector: leftMouseDown(atPoint:) → ObjC: leftMouseDownAtPoint:
+// Update the cursor position first so a click without a prior move event
+// lands at the correct coordinates in the emulated Dreamcast mouse peripheral.
+- (void)leftMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
+    [self setLeftMouseButtonPressed:YES];
+}
+
+- (void)leftMouseUp {
+    [self setLeftMouseButtonPressed:NO];
+}
+
+// Swift @objc protocol selector: rightMouseDown(atPoint:) → ObjC: rightMouseDownAtPoint:
+// Update the cursor position first so a click without a prior move event
+// lands at the correct coordinates in the emulated Dreamcast mouse peripheral.
+- (void)rightMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
+    [self setRightMouseButtonPressed:YES];
+}
+
+- (void)rightMouseUp {
+    [self setRightMouseButtonPressed:NO];
+}
+
+#if __has_include(<GameController/GameController.h>)
+- (void)didScroll:(GCDeviceCursor *)cursor API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // Scroll wheel not used by Dreamcast mouse — no-op.
+}
+
+- (GCMouseMoved)mouseMovedHandler {
+    return nil;
+}
+#endif
+
+- (BOOL)configureDreamcastMousePort {
+    // Set port 0 (Maple bus A) to RETRO_DEVICE_MOUSE (value = 2) so that
+    // Flycast creates a Maple mouse device for mouse-peripheral games.
+    // Returns YES when the core accepted the device type, NO when the core is
+    // not yet initialised — callers should retry on the next input event.
+    return [self pv_setControllerPortDevice:RETRO_DEVICE_MOUSE forPort:0];
 }
 
 @end

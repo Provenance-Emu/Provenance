@@ -17,6 +17,7 @@
 
 #if !os(tvOS)
 import SwiftUI
+import PVCoreBridge
 import PVPrimitives
 
 // MARK: - Atari5200Layout

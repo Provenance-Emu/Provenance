@@ -94,9 +94,32 @@ public struct ArtworkResolver {
     }
 
     /// Returns the raw image bytes (JPEG or PNG) for the cached artwork at `key`,
-    /// or `nil` when the file cannot be found or cannot be read.
+    /// or `nil` when the file cannot be found, is a ubiquity placeholder, or cannot be read.
     public static func data(forKey key: String) -> Data? {
         guard let url = fileURL(forKey: key) else { return nil }
+        // Skip iCloud placeholder files — reading them blocks on a network download.
+        // Extensions are short-lived and cannot reliably wait for ubiquity downloads.
+        if url.isUbiquitousPlaceholder { return nil }
         return try? Data(contentsOf: url)
+    }
+}
+
+// MARK: - URL+Ubiquity
+
+private extension URL {
+    /// `true` when this URL points to an iCloud placeholder that is not yet downloaded locally.
+    ///
+    /// A ubiquitous item in the "not downloaded" state is represented on disk as a
+    /// zero-byte `.icloud` shadow file next to the evicted content path.  Attempting
+    /// `Data(contentsOf:)` on such a URL would either fail or trigger a blocking
+    /// network download — both unacceptable in a short-lived extension process.
+    var isUbiquitousPlaceholder: Bool {
+        guard (try? resourceValues(forKeys: [.isUbiquitousItemKey]).isUbiquitousItem) == true else {
+            return false
+        }
+        // Downloaded items are fine; only skip placeholders.
+        let downloaded = (try? resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+            .ubiquitousItemDownloadingStatus) ?? .notDownloaded
+        return downloaded != .current
     }
 }

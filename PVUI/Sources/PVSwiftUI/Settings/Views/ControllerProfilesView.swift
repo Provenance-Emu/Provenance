@@ -42,6 +42,7 @@ struct ControllerProfilesView: View {
 
     // MARK: - Theme
 
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var themeManager = ThemeManager.shared
 
     private var accentColor: Color {
@@ -82,6 +83,9 @@ struct ControllerProfilesView: View {
             }
         }
         .navigationTitle(controller.vendorName ?? "Controller Profiles")
+        #if os(tvOS)
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
