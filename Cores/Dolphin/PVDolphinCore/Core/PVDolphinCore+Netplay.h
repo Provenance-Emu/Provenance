@@ -96,7 +96,7 @@ typedef NS_ERROR_ENUM(PVDolphinNetplayErrorDomain, PVDolphinNetplayError) {
                       password:(nullable NSString *)password
                     maxPlayers:(NSInteger)maxPlayers
                          error:(NSError *_Nullable __autoreleasing *_Nullable)error
-NS_SWIFT_NAME(startNetplayHost(onPort:password:maxPlayers:error:));
+NS_SWIFT_NAME(startNetplayHost(onPort:password:maxPlayers:));
 
 /// Join an existing session by direct IP:port.
 ///
@@ -114,7 +114,7 @@ NS_SWIFT_NAME(startNetplayHost(onPort:password:maxPlayers:error:));
           traversalCode:(nullable NSString *)traversalCode
                password:(nullable NSString *)password
                   error:(NSError *_Nullable __autoreleasing *_Nullable)error
-NS_SWIFT_NAME(joinNetplay(host:port:traversalCode:password:error:));
+NS_SWIFT_NAME(joinNetplay(host:port:traversalCode:password:));
 
 /// Stop any active server and/or client.  Safe to call when already idle.
 - (void)stopNetplay;
