@@ -134,7 +134,6 @@
 		B322019B2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = B32201992D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h */; };
 		B322019C2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = B322019A2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
-
 		B33CFF0A2ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m in Sources */ = {isa = PBXBuildFile; fileRef = B33CFF092ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m */; };
 		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B353DCAA2E43018C00DA569C /* PVRetroArchCore+Controls+2600.m in Sources */ = {isa = PBXBuildFile; fileRef = B353DCA92E43018C00DA569C /* PVRetroArchCore+Controls+2600.m */; };
@@ -642,7 +641,6 @@
 				B3FD968A2D613FD600397643 /* libavfilter.xcframework in Frameworks */,
 				B3EEFB9F2D66C9820080CA51 /* CoreGraphics.framework in Frameworks */,
 				936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */,
-	
 				B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */,
 				93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */,
 				B3EEFB632D66BA3F0080CA51 /* Unrar in Frameworks */,
@@ -1234,7 +1232,6 @@
 				B39D853B2ED67EC500896E92 /* PVShaders */,
 				B39D855B2ED6801300896E92 /* Defaults */,
 				B3740A722F580F1D00BCD1E2 /* PVPrimitives */,
-	
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -1304,7 +1301,6 @@
 				B39D853A2ED67EC500896E92 /* XCLocalSwiftPackageReference "../../PVShaders" */,
 				B39D855A2ED6801300896E92 /* XCRemoteSwiftPackageReference "Defaults" */,
 				B3740A712F580F1D00BCD1E2 /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
-	
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2375,7 +2371,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
-
 		B3740A712F580F1D00BCD1E2 /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPrimitives;
@@ -2446,7 +2441,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
 		};
-
 		B3740A722F580F1D00BCD1E2 /* PVPrimitives */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPrimitives;
