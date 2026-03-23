@@ -29,6 +29,9 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
     private let anchor = NSFileProviderSyncAnchor(Data("provenance-v1".utf8))
     /// Maximum number of items returned in a single enumeration page.
     private static let pageSize = 100
+    private var cachedLocalSystemIDs: Set<String>?
+    /// Cached page-source for game enumeration — stores domain snapshots (not live Realm objects).
+    private var cachedLocalGames: [(game: Game, url: URL)]?
 
     // MARK: - Init
 
@@ -83,12 +86,13 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         guard rawData.count == MemoryLayout<UInt64>.size else { return 0 }
         var raw: UInt64 = 0
         _ = withUnsafeMutableBytes(of: &raw) { rawData.copyBytes(to: $0) }
-        return Int(raw)
+        let value = UInt64(littleEndian: raw)
+        return value > UInt64(Int.max) ? Int.max : Int(value)
     }
 
     /// Encodes a page offset into a page token as an 8-byte little-endian UInt64.
     private func encodePageOffset(_ offset: Int) -> NSFileProviderPage {
-        var value = UInt64(offset)
+        var value = UInt64(offset).littleEndian
         return NSFileProviderPage(Data(bytes: &value, count: MemoryLayout<UInt64>.size))
     }
 
@@ -107,13 +111,16 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
             return buildGameItems(systemIdentifier: systemIdentifier, realm: realm, offset: offset, limit: limit)
         }
 
-        return ([], 0)
+        throw NSFileProviderError(.noSuchItem)
     }
 
     /// Returns `FileProviderItem`s for systems that have at least one locally-present ROM,
     /// sorted by system name and paginated to `[offset, offset+limit)`.
     private func buildSystemItems(realm: Realm, offset: Int, limit: Int) -> ([FileProviderItem], Int) {
-        let localSystemIDs = localGameSystemIdentifiers(realm: realm)
+        if cachedLocalSystemIDs == nil {
+            cachedLocalSystemIDs = localGameSystemIdentifiers(realm: realm)
+        }
+        let localSystemIDs = cachedLocalSystemIDs!
         guard !localSystemIDs.isEmpty else { return ([], 0) }
 
         let systems = realm.objects(PVSystem.self)
@@ -137,23 +144,27 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
     /// Local file presence cannot be queried at the Realm level, so all games are
     /// scanned once for filesystem checks; only the page window is converted to items.
     private func buildGameItems(systemIdentifier: String, realm: Realm, offset: Int, limit: Int) -> ([FileProviderItem], Int) {
-        let games = realm.objects(PVGame.self)
-            .filter("systemIdentifier == %@", systemIdentifier)
-            .sorted(byKeyPath: "title", ascending: true)
+        if cachedLocalGames == nil {
+            let games = realm.objects(PVGame.self)
+                .filter("systemIdentifier == %@", systemIdentifier)
+                .sorted(byKeyPath: "title", ascending: true)
 
-        // Collect locally-present games (filesystem check — cannot be done in Realm query).
-        var localGames: [(game: PVGame, url: URL)] = []
-        for pvGame in games {
-            guard !pvGame.isInvalidated,
-                  let romURL = pvGame.file?.url,
-                  FileManager.default.fileExists(atPath: romURL.path) else { continue }
-            localGames.append((pvGame, romURL))
+            // Convert to domain snapshots immediately so no live Realm objects are retained.
+            var localGames: [(game: Game, url: URL)] = []
+            for pvGame in games {
+                guard !pvGame.isInvalidated,
+                      let romURL = pvGame.file?.url,
+                      FileManager.default.fileExists(atPath: romURL.path) else { continue }
+                localGames.append((pvGame.asDomain(), romURL))
+            }
+            cachedLocalGames = localGames
         }
+        let localGames = cachedLocalGames!
 
         let total = localGames.count
         let page = localGames.dropFirst(offset).prefix(limit)
         let items = page.map { pair -> FileProviderItem in
-            FileProviderItem(game: pair.game.asDomain(), romURL: pair.url)
+            FileProviderItem(game: pair.game, romURL: pair.url)
         }
         return (Array(items), total)
     }

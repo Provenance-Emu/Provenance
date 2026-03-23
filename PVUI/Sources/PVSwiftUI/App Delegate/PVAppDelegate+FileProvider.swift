@@ -12,8 +12,10 @@
 //
 
 import Foundation
-import FileProvider
 import PVLogging
+
+#if !os(tvOS)
+import FileProvider
 
 /// Domain registration helpers for the ROM File Provider extension.
 ///
@@ -23,8 +25,8 @@ public enum PVFileProviderDomain {
 
     /// Uniquely identifies this file provider domain to the system.
     ///
-    /// Must be the same value used when calling `NSFileProviderManager.add(_:)` from
-    /// the host app and when the system routes requests to the extension process.
+    /// The domain identifier is used by `NSFileProviderManager.add(_:)` in the host app
+    /// and when the system routes requests to the extension process.
     static let domainIdentifier = NSFileProviderDomainIdentifier("org.provenance-emu.provenance.roms")
 
     /// Human-readable name shown in Files.app under Browse > Locations.
@@ -67,7 +69,6 @@ public enum PVFileProviderDomain {
     }
 }
 
-#if !os(tvOS)
 // MARK: - PVAppDelegate hook
 
 extension PVAppDelegate {

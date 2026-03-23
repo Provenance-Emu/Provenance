@@ -96,9 +96,13 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         switch kind {
         case .root, .systemFolder:
             return .folder
-        case .gameFile(_, let romURL):
+        case .gameFile(let game, let romURL):
             let ext = romURL?.pathExtension ?? ""
-            return ROMContentType.contentType(forExtension: ext)
+            if !ext.isEmpty { return ROMContentType.contentType(forExtension: ext) }
+            let fileNameExt = (game.file.fileName as NSString).pathExtension
+            if !fileNameExt.isEmpty { return ROMContentType.contentType(forExtension: fileNameExt) }
+            let displayExt = (filename as NSString).pathExtension
+            return ROMContentType.contentType(forExtension: displayExt)
         }
     }
 
