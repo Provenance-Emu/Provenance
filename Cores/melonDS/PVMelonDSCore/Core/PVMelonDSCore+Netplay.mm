@@ -17,8 +17,8 @@
 // only have the libretro wrapper), we stub the namespace so the rest of the
 // bridge code compiles cleanly and reports "unavailable" at runtime.
 // ---------------------------------------------------------------------------
-#if __has_include("../melonDS/src/LocalMP.h")
-#include "../melonDS/src/LocalMP.h"
+#if __has_include("../../melonDS/src/LocalMP.h")
+#include "../../melonDS/src/LocalMP.h"
 #define PVMELON_LOCAL_MP_AVAILABLE 1
 #else
 #define PVMELON_LOCAL_MP_AVAILABLE 0

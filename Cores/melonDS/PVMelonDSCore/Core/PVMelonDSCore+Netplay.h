@@ -52,8 +52,9 @@ static const uint16_t PVMelonDSLocalMPDefaultPortBase = 7064;
 
 /// LocalMP networking category on PVMelonDSCoreBridge.
 ///
-/// Wraps `LocalMP::Init()`, `LocalMP::DeInit()`, and `LocalMP::IsConnected()`
-/// from the melonDS upstream source so that PVNetplayManager can drive sessions.
+/// Wraps `LocalMP::Init()` and `LocalMP::DeInit()` from the melonDS upstream
+/// source and exposes local wireless session status so that PVNetplayManager
+/// can drive sessions.
 @interface PVMelonDSCoreBridge (Netplay)
 
 /// Current local wireless session status.

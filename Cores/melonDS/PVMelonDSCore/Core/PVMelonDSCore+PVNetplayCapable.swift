@@ -133,18 +133,29 @@ extension PVMelonDSCore: PVNetplayCapable {
         guard supportsNetplay else { throw NetplayError.featureDisabled }
         guard _bridge.localMPStatus == .idle else { throw NetplayError.alreadyActive }
 
-        let portBase: UInt16
+        // melonDS LocalMP does not support spectator mode; normalize spectators to clients.
+        let effectiveRole: NetplayRole
         switch role {
+        case .spectator(let host, let port):
+            effectiveRole = .client(host: host, port: port)
+        default:
+            effectiveRole = role
+        }
+
+        let portBase: UInt16
+        switch effectiveRole {
         case .host(let port):
             portBase = port == 0 ? kMelonDSLocalMPDefaultPortBase : port
-        case .client(_, let port), .spectator(_, let port):
+        case .client(_, let port):
             portBase = port == 0 ? kMelonDSLocalMPDefaultPortBase : port
+        default:
+            portBase = kMelonDSLocalMPDefaultPortBase
         }
 
         do {
             try await MainActor.run {
                 try _bridge.startLocalMP(withPortBase: portBase)
-                _netplayContext = MelonDSNetplayContext(role: role, settings: settings, portBase: portBase)
+                _netplayContext = MelonDSNetplayContext(role: effectiveRole, settings: settings, portBase: portBase)
             }
         } catch {
             let reason = (error as NSError).localizedDescription
