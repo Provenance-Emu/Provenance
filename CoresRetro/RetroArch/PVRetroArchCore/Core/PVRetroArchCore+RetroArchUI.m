@@ -1128,8 +1128,11 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 {
     // This method creates UIViews and modifies the view hierarchy — must run on main thread.
     // RetroArch's threaded video driver calls metal_init from video_thread_loop (background thread).
+    // Use dispatch_SYNC so the video thread blocks until the view is fully set up before it
+    // attempts to render; dispatch_async caused a race where metal_frame ran before the Metal
+    // render target was attached, producing a "no output textures" Metal validation crash.
     if (!NSThread.isMainThread) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
             [self setViewType:vt];
         });
         return;
