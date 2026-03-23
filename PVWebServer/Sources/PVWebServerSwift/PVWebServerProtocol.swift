@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import PVPrimitives
 
 // MARK: - Notification names (kept identical to legacy PVWebServer.m constants)
 
@@ -31,14 +32,12 @@ public extension Notification.Name {
     static let pvWebServerStatusChanged        = Notification.Name("WebServerStatusChanged")
 
     // MARK: File-lifecycle events (Task B — Epic #2758)
-
-    /// Fired when a file is deleted via the web UI or WebDAV.
-    /// userInfo: `"filePath": String` — absolute path of the deleted file.
-    static let pvWebServerFileDeleted          = Notification.Name("PVWebServerFileDeletedNotification")
-
-    /// Fired when a file is moved/renamed via the web UI or WebDAV.
-    /// userInfo: `"fromPath": String, "toPath": String` — absolute paths before and after.
-    static let pvWebServerFileMoved            = Notification.Name("PVWebServerFileMovedNotification")
+    // Canonical definitions live in PVPrimitives/StatusNotifications.swift so both
+    // PVWebServer (this module) and PVLibrary can reference the same typed constants
+    // without a cross-tier dependency between those two modules.
+    // Access them via `import PVPrimitives`:
+    //   Notification.Name.pvWebServerFileDeleted
+    //   Notification.Name.pvWebServerFileMoved
 }
 
 // MARK: - PVWebServerProtocol

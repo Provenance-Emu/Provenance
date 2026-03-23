@@ -8,6 +8,7 @@
 
 import XCTest
 import RealmSwift
+import PVPrimitives
 @testable import PVLibrary
 @testable import PVRealm
 
@@ -73,7 +74,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         // After stop(), the NotificationCenter token has been removed.
         // Posting the notification now must not invoke the handler.
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
             userInfo: ["filePath": "/some/nonexistent/path.rom"]
         )
@@ -125,7 +126,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
         let deletedPath = romsPrefix + "SNES/mario.sfc"
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
             userInfo: ["filePath": deletedPath]
         )
@@ -166,7 +167,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
         let deletedPath = romsPrefix + "NES/donkeykong.nes"
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
             userInfo: ["filePath": deletedPath]
         )
@@ -201,7 +202,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         }
 
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
             userInfo: ["filePath": romsPrefix + "Arcade/pacman.rom"]
         )
@@ -237,7 +238,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         }
 
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileMovedNotification"),
+            name: Notification.Name.pvWebServerFileMoved,
             object: nil,
             userInfo: [
                 "fromPath": romsPrefix + oldRelative,
@@ -264,7 +265,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
 
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
             userInfo: ["filePath": "/some/nonexistent/rom.sfc"]
         )
@@ -279,7 +280,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
 
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileMovedNotification"),
+            name: Notification.Name.pvWebServerFileMoved,
             object: nil,
             userInfo: ["fromPath": "/some/old.sfc", "toPath": "/some/new.sfc"]
         )
@@ -291,7 +292,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         observer.start()
         // Missing "filePath" key
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileDeletedNotification"),
+            name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
             userInfo: [:]
         )
@@ -302,7 +303,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         observer.start()
         // Missing "toPath" key
         NotificationCenter.default.post(
-            name: Notification.Name("PVWebServerFileMovedNotification"),
+            name: Notification.Name.pvWebServerFileMoved,
             object: nil,
             userInfo: ["fromPath": "/some/old.rom"]
         )

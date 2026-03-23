@@ -8,6 +8,7 @@
 
 import Combine
 import XCTest
+import PVPrimitives
 @testable import PVWebServer
 
 class PVWebServerTests: XCTestCase {

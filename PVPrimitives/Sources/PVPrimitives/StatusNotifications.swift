@@ -33,6 +33,18 @@ public extension Notification.Name {
     /// Notification posted with progress during cache management operations
     static let cacheManagementProgress = Notification.Name("CacheManagementProgressNotification")
 
+    // MARK: - Web Server File-lifecycle Events (Task B, Epic #2758)
+
+    /// Fired when a file is deleted via the web UI or WebDAV.
+    /// userInfo: `"filePath": String` — absolute path of the deleted file.
+    /// Raw value must match `PVWebServerFileDeletedNotification` in PVWebServer.m.
+    static let pvWebServerFileDeleted = Notification.Name("PVWebServerFileDeletedNotification")
+
+    /// Fired when a file is moved/renamed via the web UI or WebDAV.
+    /// userInfo: `"fromPath": String, "toPath": String` — absolute paths before and after.
+    /// Raw value must match `PVWebServerFileMovedNotification` in PVWebServer.m.
+    static let pvWebServerFileMoved   = Notification.Name("PVWebServerFileMovedNotification")
+
     // MARK: - Network Operations
 
     /// Notification posted when network connectivity changes

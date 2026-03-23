@@ -17,17 +17,9 @@
 import Foundation
 import RealmSwift
 import PVLogging
+import PVPrimitives
 import PVRealm
 import PVFileSystem
-
-// MARK: - Notification name mirrors
-// These raw values mirror Notification.Name constants defined in
-// PVWebServerProtocol.swift (PVWebServer module).  Duplicated here so
-// PVLibrary does not need to import PVWebServer (avoiding a cross-tier dependency).
-private extension Notification.Name {
-    static let webFileDeleted = Notification.Name("PVWebServerFileDeletedNotification")
-    static let webFileMoved   = Notification.Name("PVWebServerFileMovedNotification")
-}
 
 // MARK: - PVWebFileEventObserver
 
@@ -95,14 +87,14 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
         let center = NotificationCenter.default
 
         observations.append(
-            center.addObserver(forName: .webFileDeleted, object: nil, queue: nil) { [weak self] note in
+            center.addObserver(forName: .pvWebServerFileDeleted, object: nil, queue: nil) { [weak self] note in
                 guard let filePath = note.userInfo?["filePath"] as? String else { return }
                 self?.handleFileDeleted(at: filePath)
             }
         )
 
         observations.append(
-            center.addObserver(forName: .webFileMoved, object: nil, queue: nil) { [weak self] note in
+            center.addObserver(forName: .pvWebServerFileMoved, object: nil, queue: nil) { [weak self] note in
                 guard
                     let fromPath = note.userInfo?["fromPath"] as? String,
                     let toPath   = note.userInfo?["toPath"]   as? String
