@@ -130,8 +130,10 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             let tag = Data("root".utf8)
             return NSFileProviderItemVersion(contentVersion: tag, metadataVersion: tag)
         case .systemFolder(let system):
-            let tag = Data(system.identifier.utf8)
-            return NSFileProviderItemVersion(contentVersion: tag, metadataVersion: tag)
+            let contentTag = Data(system.identifier.utf8)
+            // Metadata version: incorporates name so that display-name changes are detected.
+            let metaTag = Data("\(system.identifier)|\(system.name)".utf8)
+            return NSFileProviderItemVersion(contentVersion: contentTag, metadataVersion: metaTag)
         case .gameFile(let game, _):
             // Content version: the ROM's md5 hash — stable content identity.
             let contentTag = Data(game.md5.utf8)

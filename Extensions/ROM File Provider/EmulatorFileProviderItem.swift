@@ -1,11 +1,13 @@
 //
-//  EmulatorFileProviderItem.swift
+//  EmulatorFileProviderItem.swift  (contains ROMContentType)
 //  ROM File Provider
 //
 //  Created by Joseph Mattiello on 8/23/24.
 //  Copyright © 2024 Provenance Emu. All rights reserved.
 //
 //  Provides UTType resolution for ROM file extensions used by FileProviderItem.
+//  Note: this file defines `ROMContentType`; the filename predates a refactor and
+//  cannot be changed without modifying project.pbxproj.
 //
 
 import UniformTypeIdentifiers

@@ -81,8 +81,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
     /// Page tokens are encoded as 8-byte little-endian UInt64. Malformed tokens
     /// (wrong size) are treated as offset 0 rather than crashing.
     private func decodePageOffset(_ page: NSFileProviderPage) -> Int {
-        if page == NSFileProviderPage.initialPageSortedByName as NSFileProviderPage ||
-           page == NSFileProviderPage.initialPageSortedByDate as NSFileProviderPage {
+        if page == .initialPageSortedByName ||
+           page == .initialPageSortedByDate {
             return 0
         }
         let rawData = page.rawValue
