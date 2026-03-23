@@ -146,6 +146,8 @@ public struct ROMDropTargetModifier: ViewModifier {
     /// the completion handler. A UUID-named subdirectory provides uniqueness when multiple
     /// files share the same name (e.g. two ROMs named "game.sfc" dropped simultaneously),
     /// while preserving the original filename for the importer pipeline.
+    ///
+    /// Security-scoped resources (Files/iCloud) are accessed and released around the copy.
     private static func stableCopy(of sourceURL: URL) throws -> URL {
         let baseImportDir = FileManager.default.temporaryDirectory
             .appendingPathComponent("PVDropImports", isDirectory: true)
@@ -153,6 +155,9 @@ public struct ROMDropTargetModifier: ViewModifier {
         let uniqueDir = baseImportDir.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
         let dest = uniqueDir.appendingPathComponent(sourceURL.lastPathComponent)
+        // Files/iCloud providers may vend security-scoped URLs — request access before copying.
+        let needsScope = sourceURL.startAccessingSecurityScopedResource()
+        defer { if needsScope { sourceURL.stopAccessingSecurityScopedResource() } }
         try FileManager.default.copyItem(at: sourceURL, to: dest)
         return dest
     }
