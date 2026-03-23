@@ -252,11 +252,25 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         // Validate schema version for forward/backward compatibility
-        guard let schemaVersion = manifestDict["schemaVersion"] as? String, !schemaVersion.isEmpty else {
+        let rawSchemaVersion = manifestDict["schemaVersion"]
+
+        let schemaVersionInt: Int?
+        switch rawSchemaVersion {
+        case let s as String:
+            schemaVersionInt = Int(s.trimmingCharacters(in: .whitespacesAndNewlines))
+        case let i as Int:
+            schemaVersionInt = i
+        case let n as NSNumber:
+            schemaVersionInt = n.intValue
+        default:
+            schemaVersionInt = nil
+        }
+
+        guard let schemaVersionIntUnwrapped = schemaVersionInt else {
             throw SaveExportError.invalidBundle("manifest.json missing 'schemaVersion' field.")
         }
-        guard schemaVersion == "1" else {
-            throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersion)'.")
+        guard schemaVersionIntUnwrapped == 1 else {
+            throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersionIntUnwrapped)'.")
         }
 
         guard let bundleMD5 = manifestDict["game"] as? String, !bundleMD5.isEmpty else {
