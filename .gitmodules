@@ -30,7 +30,8 @@
 	url = https://JoeMatt@github.com/Provenance-Emu/dolphin-ios-jitless.git
 [submodule "Cores/DuckStation/duckstation"]
 	path = Cores/DuckStation/duckstation
-	url = https://github.com/stenzek/duckstation.git
+	url = https://github.com/Provenance-Emu/duckstation.git
+	branch = master
 [submodule "Cores/Desmume2015/desmume2015"]
 	path = Cores/Desmume2015/desmume2015
 	url = https://github.com/Provenance-Emu/desmume2015-1.git
