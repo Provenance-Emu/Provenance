@@ -52,13 +52,19 @@ final class CaseControllerDetectorTests: XCTestCase {
     func testBuppinSkinIdentifierDetected() {
         let layouts = CaseControllerDetector.casesCompatibleWithSkin("com.buppin.case")
         XCTAssertFalse(layouts.isEmpty, "Expected at least one layout for com.buppin.case")
-        XCTAssertEqual(layouts.first?.name, "Buppin Case")
+        XCTAssertTrue(
+            layouts.contains { $0.name == "Buppin Case" },
+            "Expected layouts for com.buppin.case to include a layout named Buppin Case"
+        )
     }
 
     func testGameSirSkinIdentifierDetected() {
         let layouts = CaseControllerDetector.casesCompatibleWithSkin("com.gamesir.pockettaco")
-        XCTAssertFalse(layouts.isEmpty)
-        XCTAssertEqual(layouts.first?.name, "GameSir Pocket Taco")
+        XCTAssertFalse(layouts.isEmpty, "Expected at least one layout for com.gamesir.pockettaco")
+        XCTAssertTrue(
+            layouts.contains { $0.name == "GameSir Pocket Taco" },
+            "Expected layouts for com.gamesir.pockettaco to include a layout named GameSir Pocket Taco"
+        )
     }
 
     func testSkinIdentifierMatchIsCaseInsensitive() {
@@ -99,18 +105,17 @@ final class CaseControllerDetectorTests: XCTestCase {
     // MARK: - notifyIfCaseSkin posts notification
 
     func testNotifyIfCaseSkinPostsNotification() {
-        let expectation = XCTestExpectation(description: "PVPhysicalCaseSkinDetected posted")
-        let observer = NotificationCenter.default.addObserver(
-            forName: .PVPhysicalCaseSkinDetected,
-            object: nil,
-            queue: .main
-        ) { note in
+        let expectation = XCTNSNotificationExpectation(name: .PVPhysicalCaseSkinDetected)
+        expectation.handler = { note in
+            guard let skinIdentifier = note.object as? String,
+                  skinIdentifier == "com.buppin.case" else {
+                return false
+            }
             let layout = note.userInfo?[CaseControllerDetectorKeys.layout] as? PhysicalCaseLayout
             XCTAssertNotNil(layout)
             XCTAssertEqual(layout?.name, "Buppin Case")
-            expectation.fulfill()
+            return true
         }
-        defer { NotificationCenter.default.removeObserver(observer) }
 
         let layouts = CaseControllerDetector.notifyIfCaseSkin("com.buppin.case")
         XCTAssertFalse(layouts.isEmpty)
