@@ -1726,6 +1726,14 @@ private struct ControllerSection: View {
                                 subtitle: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game",
                                 icon: .sfSymbol("pause.rectangle"))
                 }
+                NavigationLink(destination: MouseInputSettingsView()) {
+                    SettingsRow(title: "Mouse Input",
+                                subtitle: "Configure input source and sensitivity for mouse emulation",
+                                icon: .sfSymbol("computermouse"))
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
             }
 
             HapticsRumbleSection()

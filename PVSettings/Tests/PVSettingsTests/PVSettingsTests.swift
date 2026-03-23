@@ -922,6 +922,112 @@ struct RetroAchievementsDefaultsMigrationTests {
     }
 }
 
+// MARK: - MouseInputSource Tests
+
+@Suite("MouseInputSource")
+struct MouseInputSourceTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(MouseInputSource.allCases.count == 5)
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for source in MouseInputSource.allCases {
+            let reconstructed = MouseInputSource(rawValue: source.rawValue)
+            #expect(reconstructed == source)
+        }
+    }
+
+    @Test("RawValues are correct")
+    func rawValues() {
+        #expect(MouseInputSource.auto.rawValue == "auto")
+        #expect(MouseInputSource.touchscreen.rawValue == "touchscreen")
+        #expect(MouseInputSource.controllerTouchpad.rawValue == "controllerTouchpad")
+        #expect(MouseInputSource.gyro.rawValue == "gyro")
+        #expect(MouseInputSource.physicalMouse.rawValue == "physicalMouse")
+    }
+
+    @Test("DisplayNames are non-empty")
+    func displayNamesNonEmpty() {
+        for source in MouseInputSource.allCases {
+            #expect(!source.displayName.isEmpty)
+        }
+    }
+
+    @Test("Subtitles are non-empty")
+    func subtitlesNonEmpty() {
+        for source in MouseInputSource.allCases {
+            #expect(!source.subtitle.isEmpty)
+        }
+    }
+
+    @Test("SymbolNames are non-empty")
+    func symbolNamesNonEmpty() {
+        for source in MouseInputSource.allCases {
+            #expect(!source.symbolName.isEmpty)
+        }
+    }
+
+    @Test("Equality works correctly")
+    func equality() {
+        #expect(MouseInputSource.auto == .auto)
+        #expect(MouseInputSource.auto != .gyro)
+    }
+
+    @Test("Invalid rawValue returns nil")
+    func invalidRawValueReturnsNil() {
+        #expect(MouseInputSource(rawValue: "nonexistent") == nil)
+    }
+}
+
+// MARK: - Mouse Defaults Keys Tests
+
+@Suite("Mouse Defaults Keys", .serialized)
+struct MouseDefaultsKeysTests {
+
+    @Test("mouseInputSource default is .auto")
+    func mouseInputSourceDefault() {
+        Defaults.reset(.mouseInputSource)
+        #expect(Defaults[.mouseInputSource] == .auto)
+    }
+
+    @Test("mouseSensitivity default is 1.0")
+    func mouseSensitivityDefault() {
+        Defaults.reset(.mouseSensitivity)
+        #expect(Defaults[.mouseSensitivity] == 1.0)
+    }
+
+    @Test("mouseInputSource key name is correct")
+    func mouseInputSourceKeyName() {
+        #expect(Defaults.Keys.mouseInputSource.name == "mouseInputSource")
+    }
+
+    @Test("mouseSensitivity key name is correct")
+    func mouseSensitivityKeyName() {
+        #expect(Defaults.Keys.mouseSensitivity.name == "mouseSensitivity")
+    }
+
+    @Test("mouseInputSource can be changed and reset")
+    func mouseInputSourceMutable() {
+        Defaults.reset(.mouseInputSource)
+        defer { Defaults.reset(.mouseInputSource) }
+        Defaults[.mouseInputSource] = .gyro
+        #expect(Defaults[.mouseInputSource] == .gyro)
+        Defaults.reset(.mouseInputSource)
+        #expect(Defaults[.mouseInputSource] == .auto)
+    }
+
+    @Test("mouseSensitivity can be changed")
+    func mouseSensitivityMutable() {
+        Defaults.reset(.mouseSensitivity)
+        defer { Defaults.reset(.mouseSensitivity) }
+        Defaults[.mouseSensitivity] = 2.5
+        #expect(Defaults[.mouseSensitivity] == 2.5)
+    }
+}
+
 // MARK: - iCloudSyncMode Tests
 
 @Suite("iCloudSyncMode")
@@ -984,7 +1090,7 @@ struct PhysicalCaseControllerDefaultsTests {
 
 // MARK: - Gyro Mouse Defaults Tests
 
-@Suite("Gyro Mouse Defaults")
+@Suite("Gyro Mouse Defaults", .serialized)
 struct GyroMouseDefaultsTests {
 
     @Test("gyroMouseEnabled default is false")
@@ -1046,4 +1152,26 @@ struct GyroMouseDefaultsTests {
         Defaults[.gyroMouseDeadZone] = 0.1
         #expect(Defaults[.gyroMouseDeadZone] == 0.1)
     }
+
+    @Test("gyroMouseDeadZone default is within valid slider range")
+    func gyroMouseDeadZoneDefaultWithinValidRange() {
+        Defaults.reset(.gyroMouseDeadZone)
+        let value = Defaults[.gyroMouseDeadZone]
+        // Valid range matches the UI slider: 0.0...0.5
+        #expect(value >= 0.0)
+        #expect(value <= 0.5)
+    }
+
+    @Test("gyroMouseDeadZone boundary values are within valid range")
+    func gyroMouseDeadZoneBoundaryValues() {
+        Defaults.reset(.gyroMouseDeadZone)
+        defer { Defaults.reset(.gyroMouseDeadZone) }
+
+        Defaults[.gyroMouseDeadZone] = 0.0
+        #expect(Defaults[.gyroMouseDeadZone] == 0.0)
+
+        Defaults[.gyroMouseDeadZone] = 0.5
+        #expect(Defaults[.gyroMouseDeadZone] == 0.5)
+    }
 }
+
