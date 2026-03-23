@@ -93,9 +93,15 @@ public enum CompanionLayoutID {
 
 /// Adopted by emulator cores that support companion controller input.
 ///
-/// The emulator view controller calls `handleCompanionInput(_:forPlayer:)` for
-/// every event produced by an active `CompanionControllerSession`. Cores that
-/// do not conform are silently skipped.
+/// The wiring is:
+/// 1. A `CompanionControllerSession` contains a `CompanionInputRouter`.
+/// 2. Layout components call `router.send(_:)` on each touch event.
+/// 3. `CompanionInputRouter` notifies its `slotDelegate` (a `CoreCompanionBridge`)
+///    with an updated `CompanionInputState` snapshot.
+/// 4. `CoreCompanionBridge` diffs the snapshot and calls `handleCompanionInput(_:forPlayer:)`
+///    for each changed button or axis.
+///
+/// Cores that do not conform are silently skipped when the session is wired.
 ///
 /// ## Layout selection
 ///

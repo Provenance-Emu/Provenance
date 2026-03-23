@@ -96,7 +96,13 @@ public let PVMousePositionKey = "PVMousePositionKey"
     /// Button handler `Task { @MainActor }` closures capture this value; if it
     /// has changed by the time they execute (detach / re-attach raced), the
     /// stale events are discarded rather than routing to the new responder.
-    private var _session: Int = 0
+    ///
+    /// `nonisolated(unsafe)`: written only on the main actor (in `attach`), but
+    /// *read* from `nonisolated` GCController handler closures installed by
+    /// `_hookMouse`.  `Int` has no torn reads on any supported architecture, so
+    /// the only risk is observing a slightly stale value — acceptable for a
+    /// lightweight stale-event guard on a game-input hot path.
+    nonisolated(unsafe) private var _session: Int = 0
 
     // MARK: - Lifecycle
 
@@ -105,7 +111,9 @@ public let PVMousePositionKey = "PVMousePositionKey"
     }
 
     deinit {
-        detach()
+        // deinit is always called on the main actor for @MainActor classes;
+        // assumeIsolated makes this explicit to the compiler.
+        MainActor.assumeIsolated { detach() }
     }
 
     /// Start delivering mouse input to `core`.
@@ -195,7 +203,12 @@ public let PVMousePositionKey = "PVMousePositionKey"
 #endif
     }
 
-    private func _hookMouse(_ mouse: GCMouse) {
+    // nonisolated: only configures GCMouseInput handlers; all @MainActor work
+    // happens inside the handler closures themselves via Task { @MainActor } /
+    // DispatchQueue.main.async.  Being nonisolated lets the NotificationCenter
+    // observer closures (which are plain @Sendable, not @MainActor) call this
+    // without crossing an isolation boundary — eliminating the "sending" errors.
+    nonisolated private func _hookMouse(_ mouse: GCMouse) {
 #if canImport(GameController)
         guard #available(iOS 14.0, tvOS 14.0, *) else { return }
         let input = mouse.mouseInput
@@ -269,7 +282,7 @@ public let PVMousePositionKey = "PVMousePositionKey"
 #endif
     }
 
-    private func _unhookMouse(_ mouse: GCMouse) {
+    nonisolated private func _unhookMouse(_ mouse: GCMouse) {
 #if canImport(GameController)
         guard #available(iOS 14.0, tvOS 14.0, *) else { return }
         let input = mouse.mouseInput
