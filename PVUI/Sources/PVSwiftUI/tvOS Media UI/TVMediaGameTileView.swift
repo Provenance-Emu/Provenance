@@ -198,25 +198,9 @@ struct TVMediaGameTileView: View {
     // MARK: - Drag Export
 
 #if !os(tvOS) && !os(watchOS)
-    /// Creates an `NSItemProvider` for dragging a game's ROM file to Files.app / AirDrop.
-    /// Returns an empty provider when the ROM file is missing or iCloud-evicted.
+    /// Delegates to the shared `PVGame.romDragProvider()` extension.
     private func romDragProvider(for game: PVGame) -> NSItemProvider {
-        guard let url = game.file?.url else {
-            return NSItemProvider()
-        }
-        if let resourceValues = try? url.resourceValues(forKeys: [.isUbiquitousItemKey, .ubiquitousItemDownloadingStatusKey]),
-           resourceValues.isUbiquitousItem == true,
-           resourceValues.ubiquitousItemDownloadingStatus == .notDownloaded {
-            return NSItemProvider()
-        }
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            return NSItemProvider()
-        }
-        guard let provider = NSItemProvider(contentsOf: url) else {
-            return NSItemProvider()
-        }
-        provider.suggestedName = url.lastPathComponent
-        return provider
+        game.romDragProvider()
     }
 #endif
 
