@@ -53,12 +53,23 @@ check_in_cheevos_block() {
         return
     fi
 
-    # awk: set in_block=1 on HAVE_CHEEVOS guard open, clear on first #endif.
-    # found=1 if pattern matches while in block.
+    # awk: enter block on `#if defined(HAVE_CHEEVOS)`, track nested #if depth so we
+    # only exit when we see the matching #endif for the HAVE_CHEEVOS guard.
+    # Nested #if/#ifdef/#ifndef directives inside the block increment depth;
+    # #endif decrements depth (or closes the guard when depth reaches 0).
+    # found=1 if pattern matches while in the HAVE_CHEEVOS block.
     if awk -v pat="$pattern" '
-        /^#if defined\(HAVE_CHEEVOS\)/ { in_block=1 }
+        /^#if defined\(HAVE_CHEEVOS\)/ { in_block=1; depth=0; next }
+        in_block && /^#if/ { depth++; next }
+        in_block && /^#endif/ {
+            if (depth > 0) {
+                depth--
+            } else {
+                in_block=0
+            }
+            next
+        }
         in_block && $0 ~ pat { found=1 }
-        in_block && /^#endif/ { in_block=0 }
         END { exit (found ? 0 : 1) }
     ' "$file"; then
         echo "OK       [$description] $file"
