@@ -300,12 +300,14 @@ extension ProvenanceApp {
     private func prepareGameForEmulatorScene() {
         switch appState.appOpenAction {
         case .openMD5(let md5):
-            // Fetch the game from the database
-            if let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) {
-                ILOG("ProvenanceApp: Found game '\(game.title)' for MD5: \(md5)")
+            // MD5 primary keys are stored uppercase; normalise to avoid case mismatches
+            // when the deep link supplies a lower- or mixed-case hash.
+            let normalizedMD5 = md5.uppercased()
+            if let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: normalizedMD5) {
+                ILOG("ProvenanceApp: Found game '\(game.title)' for MD5: \(normalizedMD5)")
                 appState.emulationUIState.currentGame = game
             } else {
-                ELOG("ProvenanceApp: No game found for MD5: \(md5)")
+                ELOG("ProvenanceApp: No game found for MD5: \(normalizedMD5)")
             }
         case .openGame(let game):
             ILOG("ProvenanceApp: Setting currentGame to '\(game.title)'")

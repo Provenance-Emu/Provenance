@@ -161,6 +161,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     override public var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
     #endif
 
+    #if canImport(UIKit) && !os(tvOS)
+    /// Returns `true` while the GCMouse hardware driver is active so UIKit
+    /// suppresses the system cursor and delivers raw relative deltas via GCMouse.
+    /// Available on iPadOS 14+; UIKit ignores this on iPhone automatically.
+    @available(iOS 14.0, *)
+    override public var prefersPointerLocked: Bool {
+        gcMouseDriver != nil
+    }
+    #endif
+
     public var audioInited: Bool = false
     public private(set) lazy var gameAudio: any AudioEngineProtocol = {
         audioInited = true

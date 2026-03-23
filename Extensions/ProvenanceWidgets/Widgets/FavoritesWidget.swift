@@ -63,6 +63,8 @@ struct FavoritesWidget: Widget {
         StaticConfiguration(kind: kind, provider: FavoritesProvider()) { entry in
             FavoritesWidgetView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
+                // Tapping outside any Link cell (e.g. padding) opens the first game.
+                .widgetURL(entry.games.first?.launchURL ?? URL(string: "provenance://screen/library")!)
         }
         .configurationDisplayName("Favorites")
         .description("Quick access to your favourite games.")
@@ -131,9 +133,11 @@ struct FavoritesWidgetView: View {
             if game.md5Hash.isEmpty {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(Color(.systemGray5).opacity(0.5))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let url = game.launchURL {
                 Link(destination: url) {
                     GameArtworkView(artworkData: game.artworkData, cornerRadius: 8)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .overlay(alignment: .bottom) {
                             Text(game.title)
                                 .font(.system(size: 8, weight: .semibold))
@@ -151,6 +155,7 @@ struct FavoritesWidgetView: View {
                                 )
                         }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
