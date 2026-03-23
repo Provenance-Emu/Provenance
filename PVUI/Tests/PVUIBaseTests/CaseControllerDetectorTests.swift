@@ -102,6 +102,14 @@ final class CaseControllerDetectorTests: XCTestCase {
         XCTAssertNil(layout)
     }
 
+    func testFuzzyVendorEmptyStringReturnsNil() {
+        XCTAssertNil(CaseControllerDetector.layoutByFuzzyVendorName(""), "Empty string must not match any layout")
+    }
+
+    func testFuzzyVendorWhitespaceOnlyStringReturnsNil() {
+        XCTAssertNil(CaseControllerDetector.layoutByFuzzyVendorName("   "), "Whitespace-only string must not match any layout")
+    }
+
     // MARK: - notifyIfCaseSkin posts notification
 
     func testNotifyIfCaseSkinPostsNotification() {

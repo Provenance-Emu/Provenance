@@ -957,7 +957,7 @@ struct iCloudSyncModeTests {
 
 // MARK: - Physical Case Controller Defaults Tests
 
-#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || targetEnvironment(macCatalyst)
 @Suite("Physical Case Controller Defaults")
 struct PhysicalCaseControllerDefaultsTests {
 
