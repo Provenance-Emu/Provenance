@@ -83,12 +83,12 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         case .root:
             return "Provenance"
         case .systemFolder(let system):
-            return system.name
+            return sanitize(system.name)
         case .gameFile(let game, let romURL):
             // Prefer the actual on-disk filename; fall back to the CPDI fileName; then a title-based default.
-            if let name = romURL?.lastPathComponent, !name.isEmpty { return name }
-            if !game.file.fileName.isEmpty { return game.file.fileName }
-            return game.title
+            if let name = romURL?.lastPathComponent, !name.isEmpty { return sanitize(name) }
+            if !game.file.fileName.isEmpty { return sanitize(game.file.fileName) }
+            return sanitize(game.title)
         }
     }
 
@@ -112,8 +112,8 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             // allowsContentEnumerating is required for Files.app to treat these as browsable containers.
             return [.allowsReading, .allowsContentEnumerating]
         case .gameFile:
-            // Read-only; eviction allowed so the system can reclaim space.
-            return [.allowsReading, .allowsEvicting]
+            // Read-only; eviction is not advertised since there is no rehydration path.
+            return [.allowsReading]
         }
     }
 
@@ -154,6 +154,20 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             let attributes = try? FileManager.default.attributesOfItem(atPath: romURL.path)
             return attributes?[.modificationDate] as? Date
         }
+    }
+
+    /// Sanitizes a raw name for safe use as a file provider filename.
+    ///
+    /// Removes path separators and control characters that can break Files.app
+    /// presentation or cause provider errors.  Falls back to "Untitled" if the
+    /// result is empty after sanitization.
+    private func sanitize(_ raw: String) -> String {
+        let cleaned = raw
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+            .trimmingCharacters(in: .controlCharacters)
+            .trimmingCharacters(in: .whitespaces)
+        return cleaned.isEmpty ? "Untitled" : cleaned
     }
 
     // MARK: - Internal helpers

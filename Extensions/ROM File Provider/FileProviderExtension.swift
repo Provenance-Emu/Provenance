@@ -123,8 +123,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         completionHandler: @escaping (NSFileProviderItem?, NSFileProviderItemFields, Bool, Error?) -> Void
     ) -> Progress {
         // Read-only extension — report that creation is unsupported (consistent with modifyItem/deleteItem).
-        let error = NSError(domain: NSCocoaErrorDomain, code: NSFeatureUnsupportedError, userInfo: nil)
-        completionHandler(nil, [], false, error)
+        completionHandler(nil, [], false, NSFileProviderError(.unsupported))
         return Progress()
     }
 
@@ -137,7 +136,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         request: NSFileProviderRequest,
         completionHandler: @escaping (NSFileProviderItem?, NSFileProviderItemFields, Bool, Error?) -> Void
     ) -> Progress {
-        completionHandler(nil, [], false, NSError(domain: NSCocoaErrorDomain, code: NSFeatureUnsupportedError, userInfo: nil))
+        completionHandler(nil, [], false, NSFileProviderError(.unsupported))
         return Progress()
     }
 
@@ -148,7 +147,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         request: NSFileProviderRequest,
         completionHandler: @escaping (Error?) -> Void
     ) -> Progress {
-        completionHandler(NSError(domain: NSCocoaErrorDomain, code: NSFeatureUnsupportedError, userInfo: nil))
+        completionHandler(NSFileProviderError(.unsupported))
         return Progress()
     }
 

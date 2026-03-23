@@ -14,7 +14,7 @@
 import Foundation
 import PVLogging
 
-#if !os(tvOS)
+#if canImport(FileProvider) && (os(iOS) || os(macOS) || os(visionOS))
 import FileProvider
 
 /// Domain registration helpers for the ROM File Provider extension.
