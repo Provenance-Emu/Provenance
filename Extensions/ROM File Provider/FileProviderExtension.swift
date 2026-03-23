@@ -236,6 +236,10 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
                             try realm.write {
                                 pvFile.partialPath = newPartial
                                 pvGame.title = (newFilename as NSString).deletingPathExtension
+                                // Keep romPath in sync with the primary file path so that
+                                // caches, sync, and metadata enrichment that key off romPath
+                                // see the updated location immediately.
+                                pvGame.romPath = newPartial
                             }
                         }
                         ILOG("FileProvider: renamed \(existingURL.lastPathComponent) → \(newFilename)")
@@ -358,7 +362,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         guard let md5 = streamingMD5(for: destURL) else {
             try? FileManager.default.removeItem(at: destURL)
             ELOG("FileProvider: failed to compute MD5 for \(filename)")
-            throw NSFileProviderError(.serverUnreachable)
+            throw NSFileProviderError(.cannotSynchronize)
         }
 
         // If a game with this MD5 already exists, drop the copy we just made and return
@@ -373,14 +377,19 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
         // Create a minimal PVGame; the main app directory-watcher fills in metadata.
         let romFile = PVFile(withURL: destURL)
+        // Derive title from the actual on-disk filename (may differ from the user-supplied
+        // name after uniqueDestinationURL appends a collision suffix).
+        let actualFilename = destURL.lastPathComponent
         let game = PVGame()
         game.md5Hash = md5
         game.systemIdentifier = systemID
         game.system = pvSystem
-        game.title = (filename as NSString).deletingPathExtension
+        game.title = (actualFilename as NSString).deletingPathExtension
         game.requiresSync = true
         game.isDownloaded = true
         game.file = romFile
+        // romPath is used by caches, sync, and metadata enrichment — keep it in sync.
+        game.romPath = romFile.partialPath
 
         try realm.write {
             realm.add(romFile)
