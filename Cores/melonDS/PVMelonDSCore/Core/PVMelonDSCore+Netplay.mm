@@ -30,6 +30,10 @@ namespace LocalMP {
 }
 #endif
 
+// Compile-time guard: verify the port base macro equals the melonDS upstream default.
+static_assert(PVMelonDSLocalMPDefaultPortBase == 7064U,
+              "PVMelonDSLocalMPDefaultPortBase has drifted from the melonDS upstream default");
+
 NSErrorDomain const PVMelonDSLocalMPErrorDomain = @"org.provenance-emu.melonds.localmp";
 
 // ---------------------------------------------------------------------------

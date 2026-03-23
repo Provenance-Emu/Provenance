@@ -23,8 +23,9 @@ import Combine
 import PVNetplay
 import ObjectiveC
 
-// UDP port base used by melonDS LocalMP — matches melonDS upstream default (7064).
-private let kMelonDSLocalMPDefaultPortBase: UInt16 = 7064
+// UDP port base used by melonDS LocalMP — must match PVMelonDSLocalMPDefaultPortBase
+// in PVMelonDSCore+Netplay.h (both equal the melonDS upstream default of 7064).
+private let kMelonDSLocalMPDefaultPortBase: UInt16 = PVMelonDSLocalMPDefaultPortBase
 
 // MARK: - Session context storage
 
@@ -86,23 +87,24 @@ private extension PVMelonDSCore {
         case .idle:
             return .idle
         case .active:
-            let ctx = _netplayContext
-            let portBase = ctx?.portBase ?? kMelonDSLocalMPDefaultPortBase
+            // _netplayContext should always be set when LocalMP is active because
+            // startNetplay stores the context atomically with Init on the main actor.
+            // Guard here to prevent UUID churn if state ever desyncs.
+            guard let ctx = _netplayContext else { return .idle }
             let room = NetplayRoom.melonDSRoom(
-                id: ctx?.roomID ?? UUID(),
-                portBase: portBase,
+                id: ctx.roomID,
+                portBase: ctx.portBase,
                 context: ctx
             )
-            if case .host = ctx?.role {
+            if case .host = ctx.role {
                 return .hosting(room: room)
             }
-            let sessionRole = ctx?.role ?? .client(host: "0.0.0.0", port: portBase)
             let session = NetplaySession(
-                id: ctx?.sessionID ?? UUID(),
+                id: ctx.sessionID,
                 room: room,
-                role: sessionRole,
+                role: ctx.role,
                 peers: [],
-                frameDelay: ctx?.settings.frameDelay ?? 0,
+                frameDelay: ctx.settings.frameDelay,
                 isRollbackEnabled: false
             )
             return .connected(session: session)

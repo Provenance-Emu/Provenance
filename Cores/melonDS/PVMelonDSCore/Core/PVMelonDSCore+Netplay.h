@@ -48,13 +48,14 @@ typedef NS_ENUM(NSInteger, PVMelonDSLocalMPStatus) {
 };
 
 /// The default UDP port base used by melonDS LocalMP (matches melonDS upstream default).
-static const uint16_t PVMelonDSLocalMPDefaultPortBase = 7064;
+/// Use this macro in Swift to reference the constant directly and avoid drift.
+#define PVMelonDSLocalMPDefaultPortBase ((uint16_t)7064)
 
 /// LocalMP networking category on PVMelonDSCoreBridge.
 ///
-/// Wraps `LocalMP::Init()` and `LocalMP::DeInit()` from the melonDS upstream
-/// source and exposes local wireless session status so that PVNetplayManager
-/// can drive sessions.
+/// Wraps `LocalMP::Init()`, `LocalMP::DeInit()`, and `LocalMP::IsConnected()`
+/// from the melonDS upstream source and exposes local wireless session status
+/// so that PVNetplayManager can drive sessions.
 @interface PVMelonDSCoreBridge (Netplay)
 
 /// Current local wireless session status.
