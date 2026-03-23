@@ -29,16 +29,11 @@
 #if canImport(UIKit)
 import SwiftUI
 import Combine
+import PVCoreBridge
 
-// MARK: - Notification constants
-
-public extension Notification.Name {
-    /// Posted whenever the emulator's normalised mouse position changes (0–1 range).
-    static let PVMousePositionDidChange = Notification.Name("PVMousePositionDidChange")
-}
-
-/// Key whose value is an `NSValue`-wrapped `CGPoint` (normalised 0–1 coordinates).
-public let PVMousePositionKey = "PVMousePositionKey"
+// Notification constants `PVMousePositionDidChange`, `PVMouseButtonDidPress`, and
+// `PVMousePositionKey` are defined in PVCoreBridge/GCMouseMouseResponderDriver.swift
+// as the canonical cross-module integration point. No redefinition needed here.
 
 // MARK: - Cursor overlay
 
@@ -120,13 +115,6 @@ public struct MouseCursorOverlayView: View {
             } catch {}
         }
     }
-}
-
-// MARK: - Click notification name
-
-public extension Notification.Name {
-    /// Posted when any mouse button is pressed.  No user-info needed.
-    static let PVMouseButtonDidPress = Notification.Name("PVMouseButtonDidPress")
 }
 
 // MARK: - Cursor arrow shape
