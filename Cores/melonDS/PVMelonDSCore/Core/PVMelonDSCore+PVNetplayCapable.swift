@@ -23,9 +23,14 @@ import Combine
 import PVNetplay
 import ObjectiveC
 
-// UDP port base used by melonDS LocalMP — must match PVMelonDSLocalMPDefaultPortBase
-// in PVMelonDSCore+Netplay.h (both equal the melonDS upstream default of 7064).
+// UDP port base used by melonDS LocalMP — sourced from ObjC constant to avoid drift.
+// Matches the melonDS upstream default of 7064.
 private let kMelonDSLocalMPDefaultPortBase: UInt16 = PVMelonDSLocalMPDefaultPortBase
+
+// The global Provenance/RetroArch netplay default port (55435) is treated as
+// "unspecified" for melonDS LocalMP. Using 55435 would collide with RetroArch
+// sessions; when it is the incoming port we fall back to the melonDS default (7064).
+private let kProvenanceGlobalNetplayDefaultPort: UInt16 = 55435
 
 // MARK: - Session context storage
 
@@ -131,6 +136,12 @@ extension PVMelonDSCore: PVNetplayCapable {
     /// Both host and client call LocalMP::Init with the same port_base.
     /// All mutations are dispatched to the main thread where the melonDS
     /// run-loop executes.
+    ///
+    /// - Important: melonDS LocalMP uses UDP multicast on the local subnet.
+    ///   The app target must include the `com.apple.developer.networking.multicast`
+    ///   entitlement (requires Apple approval) for multicast traffic to work
+    ///   reliably on-device. Without it, discovery may silently fail at runtime
+    ///   even when all other conditions are met.
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
         guard supportsNetplay else { throw NetplayError.unsupported }
 
@@ -143,12 +154,22 @@ extension PVMelonDSCore: PVNetplayCapable {
             effectiveRole = role
         }
 
+        // Resolve the port base: treat 0 and the global Provenance netplay default (55435)
+        // as "unspecified" so melonDS always uses its own default (7064) unless the user
+        // explicitly configured a melonDS-specific port. This avoids collision with
+        // RetroArch sessions that also default to 55435.
+        func resolvedPortBase(_ port: UInt16) -> UInt16 {
+            (port == 0 || port == kProvenanceGlobalNetplayDefaultPort)
+                ? kMelonDSLocalMPDefaultPortBase
+                : port
+        }
+
         let portBase: UInt16
         switch effectiveRole {
         case .host(let port):
-            portBase = port == 0 ? kMelonDSLocalMPDefaultPortBase : port
+            portBase = resolvedPortBase(port)
         case .client(_, let port):
-            portBase = port == 0 ? kMelonDSLocalMPDefaultPortBase : port
+            portBase = resolvedPortBase(port)
         default:
             portBase = kMelonDSLocalMPDefaultPortBase
         }
