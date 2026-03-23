@@ -1,4 +1,5 @@
 module PVmGBABridge {
     header "../mGBAGameCoreBridge.h"
+    header "../PVmGBAGameCoreBridge+Netplay.h"
     export *
 }
