@@ -1728,7 +1728,7 @@ private struct ControllerSection: View {
                 }
                 NavigationLink(destination: MouseInputSettingsView()) {
                     SettingsRow(title: "Mouse Input",
-                                subtitle: "Configure input source and sensitivity for mouse emulation.",
+                                subtitle: "Configure input source and sensitivity for mouse emulation",
                                 icon: .sfSymbol("computermouse"))
                 }
                 #if os(tvOS)

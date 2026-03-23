@@ -54,7 +54,7 @@ public enum MouseInputSource: String, Codable, Equatable, Hashable,
         case .controllerTouchpad:
             return "Use DualSense / DS4 capacitive touchpad"
         case .gyro:
-            return "Tilt the device to move the cursor"
+            return "Use device or controller gyroscope to move the cursor"
         case .physicalMouse:
             return "Use a USB or Bluetooth mouse"
         }
