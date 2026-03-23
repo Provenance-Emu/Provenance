@@ -48,7 +48,7 @@ public enum CompanionKeyboardMouseEvent: Sendable {
 ///
 /// Layout components call `send(_:)` on this object whenever a touch begins
 /// or ends. The router maintains the current bitmask / axis state and pushes
-/// updates to DSU via the `DSUSlotDelegate` protocol.
+/// updates to DSU via the `CompanionSlotDelegate` protocol.
 ///
 /// Keyboard and mouse events are forwarded via `keyboardMouseEvents` — a
 /// separate Combine publisher — rather than going through DSU state.
