@@ -529,7 +529,7 @@
   },
   {
     "version": "3.7.0",
-    "title": "Netplay, Save Export & Drag & Drop",
+    "title": "Netplay, Save Export, Drag & Drop & Files.app",
     "features": [
       {
         "symbolName": "network",
@@ -560,6 +560,12 @@
         "symbolColor": "green",
         "title": "Drop to Import",
         "subtitle": "Drop a save export zip or a .sav battery save file onto a game card to instantly import it."
+      },
+      {
+        "symbolName": "folder.badge.plus",
+        "symbolColor": "blue",
+        "title": "Browse ROMs in Files",
+        "subtitle": "Provenance now appears as a location in Files.app. Browse your ROM library organised by system and drag ROMs out for Quick Look previews."
       }
     ]
   }

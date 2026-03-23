@@ -1,102 +1,44 @@
 //
-//  EmulatorFileProviderItem.swift
-//  Provenance
+//  EmulatorFileProviderItem.swift  (contains ROMContentType)
+//  ROM File Provider
 //
 //  Created by Joseph Mattiello on 8/23/24.
 //  Copyright © 2024 Provenance Emu. All rights reserved.
 //
+//  Provides UTType resolution for ROM file extensions used by FileProviderItem.
+//  Note: this file defines `ROMContentType`; the filename predates a refactor and
+//  cannot be changed without modifying project.pbxproj.
+//
 
-
-import FileProvider
 import UniformTypeIdentifiers
 
-class EmulatorFileProviderItem: NSObject, NSFileProviderItem {
-    
-    // MARK: - Properties
-    
-    let identifier: NSFileProviderItemIdentifier
-    let parentIdentifier: NSFileProviderItemIdentifier
-    let filename: String
-    let gameSystem: GameSystem
-    let fileSize: Int64
-    let creationDate: Date?
-    let contentModificationDate: Date?
-    
-    // MARK: - Initializer
-    
-    init(identifier: NSFileProviderItemIdentifier,
-         parentIdentifier: NSFileProviderItemIdentifier,
-         filename: String,
-         gameSystem: GameSystem,
-         fileSize: Int64,
-         creationDate: Date,
-         contentModificationDate: Date) {
-        self.identifier = identifier
-        self.parentIdentifier = parentIdentifier
-        self.filename = filename
-        self.gameSystem = gameSystem
-        self.fileSize = fileSize
-        self.creationDate = creationDate
-        self.contentModificationDate = contentModificationDate
-        super.init()
-    }
-    
-    // MARK: - NSFileProviderItem Protocol
-    
-    var itemIdentifier: NSFileProviderItemIdentifier {
-        return identifier
-    }
-    
-    var parentItemIdentifier: NSFileProviderItemIdentifier {
-        return parentIdentifier
-    }
-    
-    var capabilities: NSFileProviderItemCapabilities {
-        return [.allowsReading, .allowsEvicting]
-    }
-    
-    var documentSize: NSNumber? {
-        return NSNumber(value: fileSize)
-    }
-    
-    var contentType: UTType {
-        switch gameSystem {
-        case .nes:
-            return UTType("com.example.nes-rom")!
-        case .snes:
-            return UTType("com.example.snes-rom")!
-        case .gba:
-            return UTType("com.example.gba-rom")!
-        // Add more cases for other game systems
+/// Maps ROM file extensions to the most appropriate `UTType` for display in Files.app.
+///
+/// Provenance does not (yet) declare custom UTIs in its Info.plist for individual
+/// systems, so most ROM files fall back to `.data`. This helper is kept here as
+/// the single place to extend UTType coverage once system-specific UTIs are added.
+enum ROMContentType {
+    /// Returns the best-effort `UTType` for a given ROM file extension.
+    ///
+    /// Falls back to `.data` for any extension that lacks a registered system UTType.
+    static func contentType(forExtension ext: String) -> UTType {
+        switch ext.lowercased() {
+        // CD / disc images
+        case "iso", "bin":
+            return UTType("public.iso-image") ?? .data
+        case "cue":
+            return UTType("com.goldenhawk.cdrwin-cuesheet") ?? .data
+        // Compressed archives
+        case "zip":
+            return .zip
+        case "7z":
+            return UTType("org.7-zip.7-zip-archive") ?? .data
+        // Playlist / multi-disc descriptor
+        case "m3u":
+            return UTType("public.m3u-playlist") ?? .data
+        // All cartridge ROMs and anything else
         default:
-            return UTType.data
+            return .data
         }
     }
-    
-    var lastUsedDate: Date? {
-        // You might want to track this separately
-        return contentModificationDate
-    }
-    
-    var tagData: Data? {
-        // You can use this to store custom metadata
-        return gameSystem.rawValue.data(using: .utf8)
-    }
-    
-    // MARK: - Helper Methods
-    
-    func makeFileURL() -> URL {
-        // This should return the actual file URL for the ROM
-        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return documentsPath.appendingPathComponent(filename)
-    }
-}
-
-// MARK: - Supporting Types
-
-enum GameSystem: String {
-    case nes = "Nintendo Entertainment System"
-    case snes = "Super Nintendo"
-    case gba = "Game Boy Advance"
-    // Add more game systems as needed
 }
