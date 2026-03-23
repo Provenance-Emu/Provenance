@@ -42,10 +42,9 @@ public enum PVFileProviderDomain {
         NSFileProviderManager.getDomainsWithCompletionHandler { existingDomains, fetchError in
             if let fetchError = fetchError {
                 ELOG("FileProvider: failed to query existing domains — \(fetchError.localizedDescription)")
-                // Without a reliable domain list, skip registration to avoid redundant noise.
-                guard existingDomains != nil else { return }
+                return
             }
-            guard !(existingDomains ?? []).contains(where: { $0.identifier == domainIdentifier }) else {
+            guard !existingDomains.contains(where: { $0.identifier == domainIdentifier }) else {
                 DLOG("FileProvider: domain already registered, skipping")
                 return
             }

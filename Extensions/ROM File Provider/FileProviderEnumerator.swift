@@ -53,7 +53,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
 
             // Advance by pageSize (not items.count) so that any compactMap-filtered
             // invalidated objects don't cause the next offset to stall.
-            let nextOffset = offset + Self.pageSize
+            // Guard against overflow: decodePageOffset may return Int.max for malformed tokens.
+            let nextOffset = offset <= Int.max - Self.pageSize ? offset + Self.pageSize : Int.max
             if nextOffset < total {
                 observer.finishEnumerating(upTo: encodePageOffset(nextOffset))
             } else {
