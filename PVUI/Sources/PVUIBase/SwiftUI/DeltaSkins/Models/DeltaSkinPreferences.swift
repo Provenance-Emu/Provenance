@@ -115,9 +115,17 @@ public final class DeltaSkinPreferences: ObservableObject {
                 selectedSkins[system] = [:]
             }
             selectedSkins[system]?[orientation] = skinIdentifier
+
+            // Notify if this skin is designed for a known physical case.
+            // Passive cases (e.g. Buppin) can only be identified via their
+            // companion skin's identifier — this is the only detection point for them.
+            // Physical iPhone cases only make sense on iOS / Mac Catalyst.
+            #if os(iOS) || targetEnvironment(macCatalyst)
+            CaseControllerDetector.notifyIfCaseSkin(skinIdentifier)
+            #endif
         } else {
             selectedSkins[system]?[orientation] = nil
-            
+
             // If both orientations are nil, remove the system entry entirely
             if selectedSkins[system]?.isEmpty ?? true {
                 selectedSkins.removeValue(forKey: system)

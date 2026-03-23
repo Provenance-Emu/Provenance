@@ -790,6 +790,19 @@ public extension Defaults.Keys {
     #endif
 }
 
+// MARK: Physical Case Controllers
+public extension Defaults.Keys {
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    /// Automatically apply a compatible skin when a physical controller case is
+    /// detected — either by `GCController.vendorName` for smart (Bluetooth/MFi)
+    /// cases, or by skin identifier when the user selects a skin published for a
+    /// known passive case (e.g. Buppin) on deltastyles.com or similar sites.
+    ///
+    /// Physical iPhone cases are only relevant on iOS and Mac Catalyst.
+    static let autoLoadCaseSkin = Key<Bool>("autoLoadCaseSkin", default: true)
+    #endif
+}
+
 // MARK: Video Options
 public extension Defaults.Keys {
     static let multiThreadedGL = Key<Bool>("multiThreadedGL", default: true)
