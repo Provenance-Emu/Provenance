@@ -63,6 +63,45 @@ public enum CompanionButtonBits {
     public static let numHash:   UInt32 = 0x0800_0000   // # key
 }
 
+#if DEBUG
+private extension CompanionButtonBits {
+    /// Debug-time validation to ensure the companion button bitmask remains
+    /// unique and non-overlapping. This mirrors the expectations of the DSU
+    /// protocol and PVUIBase's `CompanionButton` mapping.
+    static let _bitValidation: Void = {
+        let values: [UInt32] = [
+            south, east, west, north,
+            l1, r1, l2, r2,
+            select, start, l3, r3,
+            dpadUp, dpadDown, dpadLeft, dpadRight,
+            num0, num1, num2, num3, num4, num5,
+            num6, num7, num8, num9, numStar, numHash
+        ]
+
+        // All values must be unique.
+        precondition(
+            Set(values).count == values.count,
+            "CompanionButtonBits: duplicate bit values detected; this will break DSU/on-the-wire mapping."
+        )
+
+        // Each value must be a single-bit flag (non-zero power of two).
+        for value in values {
+            precondition(
+                value != 0 && (value & (value - 1)) == 0,
+                "CompanionButtonBits: value \(String(value, radix: 16)) is not a single-bit flag."
+            )
+        }
+    }()
+
+    /// Explicit hook for debug builds (e.g. unit tests) to validate the
+    /// companion bitmask layout without affecting release behavior.
+    @discardableResult
+    static func validateBitmaskLayoutForDebugging() -> Void {
+        _bitValidation
+    }
+}
+#endif
+
 // MARK: - CompanionControllerCapable
 
 /// Adopted by emulator cores that can accept input from the Companion
@@ -97,6 +136,7 @@ public protocol CompanionControllerCapable: AnyObject {
     ///   - pressed:  Bits that transitioned released → held in this update.
     ///   - released: Bits that transitioned held → released in this update.
     ///   - player:   Zero-based player index.
+    @MainActor
     func companionButtonsChanged(
         held: UInt32,
         pressed: UInt32,

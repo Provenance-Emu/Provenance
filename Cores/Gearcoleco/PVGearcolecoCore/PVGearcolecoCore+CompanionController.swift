@@ -22,40 +22,42 @@ import PVCoreBridge
 
 extension PVGearcolecoCore: CompanionControllerCapable {
 
+    /// Cached mapping from CompanionButtonBits to PVColecoVisionButton.
+    /// Defined as a static let so the array is allocated once, not per call.
+    private static let companionMapping: [(bit: UInt32, button: PVColecoVisionButton)] = [
+        (CompanionButtonBits.dpadUp,    .up),
+        (CompanionButtonBits.dpadDown,  .down),
+        (CompanionButtonBits.dpadLeft,  .left),
+        (CompanionButtonBits.dpadRight, .right),
+        (CompanionButtonBits.south,     .leftAction),
+        (CompanionButtonBits.east,      .rightAction),
+        (CompanionButtonBits.num1,      .button1),
+        (CompanionButtonBits.num2,      .button2),
+        (CompanionButtonBits.num3,      .button3),
+        (CompanionButtonBits.num4,      .button4),
+        (CompanionButtonBits.num5,      .button5),
+        (CompanionButtonBits.num6,      .button6),
+        (CompanionButtonBits.num7,      .button7),
+        (CompanionButtonBits.num8,      .button8),
+        (CompanionButtonBits.num9,      .button9),
+        (CompanionButtonBits.num0,      .button0),
+        (CompanionButtonBits.numStar,   .asterisk),
+        (CompanionButtonBits.numHash,   .pound),
+    ]
+
     /// Maps companion-controller bitmask deltas to ColecoVision button events.
     ///
     /// Only `pressed` and `released` bits are acted on so that the core
     /// receives exactly one `didPush` / `didRelease` per state transition,
     /// regardless of how many state snapshots the router sends.
+    @MainActor
     public func companionButtonsChanged(
         held: UInt32,
         pressed: UInt32,
         released: UInt32,
         forPlayer player: Int
     ) {
-        // Build the mapping table once per call (compiler will constant-fold the literals).
-        let mapping: [(bit: UInt32, button: PVColecoVisionButton)] = [
-            (CompanionButtonBits.dpadUp,    .up),
-            (CompanionButtonBits.dpadDown,  .down),
-            (CompanionButtonBits.dpadLeft,  .left),
-            (CompanionButtonBits.dpadRight, .right),
-            (CompanionButtonBits.south,     .leftAction),
-            (CompanionButtonBits.east,      .rightAction),
-            (CompanionButtonBits.num1,      .button1),
-            (CompanionButtonBits.num2,      .button2),
-            (CompanionButtonBits.num3,      .button3),
-            (CompanionButtonBits.num4,      .button4),
-            (CompanionButtonBits.num5,      .button5),
-            (CompanionButtonBits.num6,      .button6),
-            (CompanionButtonBits.num7,      .button7),
-            (CompanionButtonBits.num8,      .button8),
-            (CompanionButtonBits.num9,      .button9),
-            (CompanionButtonBits.num0,      .button0),
-            (CompanionButtonBits.numStar,   .asterisk),
-            (CompanionButtonBits.numHash,   .pound),
-        ]
-
-        for (bit, button) in mapping {
+        for (bit, button) in Self.companionMapping {
             if pressed & bit != 0 {
                 didPush(button, forPlayer: player)
             } else if released & bit != 0 {
