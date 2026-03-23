@@ -33,6 +33,11 @@ public enum JITLaunchRecommendation: Equatable {
     /// The user can choose to try to enable JIT or continue without it.
     case showRecommendedPrompt(coreName: String)
 
+    /// Show a one-time performance notice: JIT is not acquirable on this device, but
+    /// the core (e.g. Dolphin, 3DS, Flycast) runs significantly worse without it.
+    /// No suggestion to enable via AltStore — just sets performance expectations.
+    case showPerformanceNotice(coreName: String)
+
     /// The per-game preference is `.skipJIT` — suppress the pre-launch JIT prompt
     /// and launch immediately. JIT acquisition at the core level is unaffected;
     /// the core uses its default fallback if JIT is unavailable.
@@ -81,21 +86,40 @@ public final class JITContextualPromptManager {
         // 2. If JIT is already acquired, no action needed.
         #if canImport(JITManager)
         guard !DOLJitManager.acquired else { return .proceed }
+
+        let jitAcquirable = DOLJitManager.canPotentiallyAcquireJIT
+
+        // 3. JIT cannot be acquired on this device/OS (e.g. iOS 26 App Store build).
+        //    Prompting to "enable via AltStore" would be useless noise.
+        if !jitAcquirable {
+            // Required cores still need a blocking warning — they may crash.
+            if JITCoreCapability.coreIsJITRequired(coreIdentifier) {
+                return .showRequiredWarning(coreName: coreName)
+            }
+            // Performance-critical optional cores (Dolphin, 3DS, Flycast): show a
+            // one-time notice to set expectations. N64, PPSSPP: proceed silently.
+            if JITCoreCapability.isJITPerformanceCritical(coreIdentifier),
+               !sessionShownCoreIDs.contains(coreIdentifier) {
+                sessionShownCoreIDs.insert(coreIdentifier)
+                return .showPerformanceNotice(coreName: coreName)
+            }
+            return .proceed
+        }
         #endif
 
-        // 3. Required-or-crash cores always show a blocking warning when JIT is unavailable,
-        //    regardless of per-game preference — .skipJIT cannot suppress a crash-risk warning.
+        // 4. JIT is acquirable but not yet acquired.
+        //    Required-or-crash cores always show a blocking warning.
         if JITCoreCapability.coreIsJITRequired(coreIdentifier) {
             return .showRequiredWarning(coreName: coreName)
         }
 
-        // 4. Check per-game preference (only for optional-JIT cores).
+        // 5. Check per-game preference (only for optional-JIT cores).
         let gamePreference = Defaults.jitPreference(forGameMD5: gameMD5)
         if gamePreference == .skipJIT {
             return .skipJIT
         }
 
-        // 5. Optional JIT: show informational prompt based on preference.
+        // 6. Optional JIT: show informational prompt based on preference.
         //    - preferJIT: always show (user explicitly wants JIT).
         //    - automatic: show once per core per session.
         if gamePreference == .preferJIT {
@@ -147,6 +171,8 @@ public final class JITContextualPromptManager {
                 from: viewController,
                 completion: completion
             )
+        case .showPerformanceNotice(let coreName):
+            presentPerformanceNotice(coreName: coreName, from: viewController, completion: completion)
         }
     }
 
@@ -158,15 +184,44 @@ public final class JITContextualPromptManager {
         from viewController: UIViewController,
         completion: @escaping @Sendable (Bool) -> Void
     ) {
-        let message = "\(coreName) requires JIT (Performance Mode) to run correctly."
+        var message = "\(coreName) requires JIT (Performance Mode) to run correctly."
             + " Without it the game may crash or produce incorrect output."
-            + "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
+        #if canImport(JITManager)
+        if DOLJitManager.canPotentiallyAcquireJIT {
+            message += "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
+        } else {
+            message += "\n\nJIT is not available on this device."
+        }
+        #else
+        message += "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
+        #endif
         let alert = UIAlertController(
             title: "Performance Mode Required",
             message: message,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "Launch Anyway", style: .destructive) { _ in
+            completion(true)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            completion(false)
+        })
+        viewController.present(alert, animated: true)
+    }
+
+    @MainActor
+    private func presentPerformanceNotice(
+        coreName: String,
+        from viewController: UIViewController,
+        completion: @escaping @Sendable (Bool) -> Void
+    ) {
+        let message = "\(coreName) runs best with JIT (Performance Mode), which isn't available on this device. Expect reduced performance."
+        let alert = UIAlertController(
+            title: "Reduced Performance Expected",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Launch", style: .default) { _ in
             completion(true)
         })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
