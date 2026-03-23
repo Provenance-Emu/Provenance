@@ -91,10 +91,11 @@ struct CompanionButtonMappingTests {
 @Suite("Atari 5200 companion axis deadzone")
 struct CompanionAxisDeadzoneTests {
 
-    @Test("joystickDeadzone constant matches kJoystickDeadzone in PVAtari800Bridge.m (0.5)")
+    @Test("joystickDeadzone default is 0.5")
     func deadzoneValue() {
-        // Mirror of PVAtari800.joystickDeadzone; if the bridge constant changes,
-        // update both to keep companion and physical controller behaviour in sync.
+        // Ensure the Swift joystickDeadzone constant remains at the expected default.
+        // If you change kJoystickDeadzone in PVAtari800Bridge.m, update this value too
+        // to keep companion and physical controller behaviour in sync.
         let expected: Float = 0.5
         #expect(PVAtari800.joystickDeadzone == expected)
     }
