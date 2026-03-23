@@ -1,9 +1,9 @@
-// CompanionButtonBitsTests.swift
+// CompanionButtonTests.swift
 // PVCoreBridgeTests
 //
-// Validates that CompanionButton rawValues remain unique and are each
-// a single-bit power-of-two flag.  This guards against accidental on-the-wire
-// bitmask collisions with the DSU protocol.
+// Validates that CompanionButton rawValues are each a non-zero single-bit
+// (power-of-two) flag, guarding against accidental on-the-wire bitmask
+// collisions with the DSU protocol.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
@@ -12,16 +12,10 @@ import XCTest
 
 final class CompanionButtonTests: XCTestCase {
 
-    /// All rawValues must be distinct — no two buttons may share a bit position.
-    func testAllBitsAreUnique() {
-        let allValues = CompanionButton.allCases.map { $0.rawValue }
-        XCTAssertEqual(
-            Set(allValues).count, allValues.count,
-            "CompanionButton has duplicate rawValues — DSU on-the-wire mapping will be broken"
-        )
-    }
-
     /// Each rawValue must be a non-zero power of two (exactly one bit set).
+    ///
+    /// Uniqueness of rawValues is verified separately in
+    /// `CompanionControllerCapableTests.testAllCasesAreUnique()`.
     func testAllBitsAreSingleBitFlags() {
         for btn in CompanionButton.allCases {
             let value = btn.rawValue
