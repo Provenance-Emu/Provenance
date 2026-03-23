@@ -70,6 +70,7 @@ public final class CompanionInputRouter: ObservableObject {
     @MainActor public func reset() {
         heldButtons = 0
         axisValues = [:]
+        slotDelegate?.companionInputRouter(self, didUpdateState: currentState)
     }
 
     // MARK: - State snapshot
