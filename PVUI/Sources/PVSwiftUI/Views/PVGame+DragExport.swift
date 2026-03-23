@@ -8,10 +8,11 @@ extension PVGame {
     /// Creates an `NSItemProvider` for dragging this ROM file to Files.app / AirDrop.
     ///
     /// - Returns an empty provider when the ROM URL is unavailable.
-    /// - Returns an empty provider when the file is iCloud-evicted; also starts a background
-    ///   download so the next attempt may succeed.
-    /// - Relies on `NSItemProvider(contentsOf:)` for the actual file-availability check to
-    ///   avoid synchronous `fileExists` I/O on the main thread.
+    /// - Returns an empty provider when the file is iCloud-evicted (detected via a synchronous
+    ///   `url.resourceValues(forKeys:)` call on the calling thread); also enqueues a background
+    ///   download via `Task.detached` so the next attempt may succeed.
+    /// - Relies on `NSItemProvider(contentsOf:)` for the actual file-availability check;
+    ///   returns an empty provider when the file cannot be opened.
     func romDragProvider() -> NSItemProvider {
         guard let url = file?.url else {
             return NSItemProvider()
@@ -24,15 +25,15 @@ extension PVGame {
         ]),
            resourceValues.isUbiquitousItem == true,
            resourceValues.ubiquitousItemDownloadingStatus == .notDownloaded {
-            // Proactively trigger a re-download off the main thread so the next drag attempt can succeed.
-            DispatchQueue.global(qos: .background).async {
+            // Proactively trigger a re-download so the next drag attempt can succeed.
+            Task.detached(priority: .background) {
                 try? FileManager.default.startDownloadingUbiquitousItem(at: url)
             }
             return NSItemProvider()
         }
 
         // NSItemProvider(contentsOf:) returns nil when the path is inaccessible,
-        // avoiding an extra synchronous fileExists check on the main thread.
+        // avoiding an extra synchronous fileExists check.
         guard let provider = NSItemProvider(contentsOf: url) else {
             return NSItemProvider()
         }

@@ -145,8 +145,8 @@ struct TVMediaGameTileView: View {
         .tvMediaFocusable()
         .applyGameFocus(focusedGameID: focusedGameID, fallback: $isFocusedInternal, id: game.id)
         .contextMenu { contextMenu() }
-#if !os(tvOS) && !os(watchOS)
-        .onDrag { romDragProvider(for: game) }
+#if os(iOS)
+        .onDrag { game.romDragProvider() }
 #endif
         .task(id: game.id) {
             await loadArtworkIfNeeded()
@@ -194,15 +194,6 @@ struct TVMediaGameTileView: View {
         .saveStateDropTarget(gameId: game.md5Hash)
         #endif
     }
-
-    // MARK: - Drag Export
-
-#if !os(tvOS) && !os(watchOS)
-    /// Delegates to the shared `PVGame.romDragProvider()` extension.
-    private func romDragProvider(for game: PVGame) -> NSItemProvider {
-        game.romDragProvider()
-    }
-#endif
 
     // MARK: - Artwork View
 
