@@ -14,8 +14,8 @@ import Foundation
 import Combine
 import PVCoreBridge
 
-// CompanionButton, CompanionAxisID, CompanionInputEvent — defined in PVCoreBridge.
-// Consumers of PVUIBase that need these types must also import PVCoreBridge directly.
+// CompanionButton, CompanionAxisID, CompanionInputEvent — defined in PVCoreBridge and
+// re-exported by PVUIBase; most consumers do not need an explicit PVCoreBridge import.
 
 // MARK: - CompanionInputRouter
 

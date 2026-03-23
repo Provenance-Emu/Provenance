@@ -21,6 +21,37 @@
 import CoreGraphics
 import PVCoreBridge
 
+// MARK: - Button mapping (free function — testable without instantiating the core)
+
+/// Maps a `CompanionButton` to the corresponding `PV5200Button`, or `nil` for
+/// buttons that have no Atari 5200 equivalent.
+///
+/// Extracted as a free function so unit tests can exercise the full mapping table
+/// without needing to allocate an ObjC `PVAtari800` instance.
+@inline(__always)
+internal func mapCompanionButtonToPV5200(_ btn: CompanionButton) -> PV5200Button? {
+    switch btn {
+    case .num1:    return .number1
+    case .num2:    return .number2
+    case .num3:    return .number3
+    case .num4:    return .number4
+    case .num5:    return .number5
+    case .num6:    return .number6
+    case .num7:    return .number7
+    case .num8:    return .number8
+    case .num9:    return .number9
+    case .num0:    return .number0
+    case .numStar: return .asterisk
+    case .numHash: return .pound
+    case .south:   return .fire1
+    case .east:    return .fire2
+    case .start:   return .start
+    case .select:  return .pause
+    case .l1:      return .reset
+    default:       return nil
+    }
+}
+
 // MARK: - CompanionControllerCapable
 
 extension PVAtari800: CompanionControllerCapable {
@@ -28,11 +59,11 @@ extension PVAtari800: CompanionControllerCapable {
     public func handleCompanionInput(_ event: CompanionInputEvent, forPlayer player: Int) {
         switch event {
         case .buttonDown(let btn):
-            if let pv = pv5200Button(from: btn) {
+            if let pv = mapCompanionButtonToPV5200(btn) {
                 didPush(pv, forPlayer: player)
             }
         case .buttonUp(let btn):
-            if let pv = pv5200Button(from: btn) {
+            if let pv = mapCompanionButtonToPV5200(btn) {
                 didRelease(pv, forPlayer: player)
             }
         case .axisChanged(let axis, let value):
@@ -40,36 +71,11 @@ extension PVAtari800: CompanionControllerCapable {
         }
     }
 
-    // MARK: - Button mapping
-
-    private func pv5200Button(from btn: CompanionButton) -> PV5200Button? {
-        switch btn {
-        case .num1:    return .number1
-        case .num2:    return .number2
-        case .num3:    return .number3
-        case .num4:    return .number4
-        case .num5:    return .number5
-        case .num6:    return .number6
-        case .num7:    return .number7
-        case .num8:    return .number8
-        case .num9:    return .number9
-        case .num0:    return .number0
-        case .numStar: return .asterisk
-        case .numHash: return .pound
-        case .south:   return .fire1
-        case .east:    return .fire2
-        case .start:   return .start
-        case .select:  return .pause
-        case .l1:      return .reset
-        default:       return nil
-        }
-    }
-
     // MARK: - Axis handling
 
     /// Matches `kJoystickDeadzone` in PVAtari800Bridge.m so companion and physical
     /// controller input are treated identically by the core.
-    private static let joystickDeadzone: Float = 0.5
+    internal static let joystickDeadzone: Float = 0.5
 
     /// Maps companion X/Y axis values to single-axis joystick calls.
     ///
