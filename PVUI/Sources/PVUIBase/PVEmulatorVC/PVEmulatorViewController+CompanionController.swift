@@ -6,17 +6,15 @@
 //  • Session lifecycle: present, wire delegate, tear down on dismiss
 //  • System ID propagation to CompanionControllerSession
 //
-// iOS only — no companion overlay is shown on tvOS.
+// iOS/macCatalyst only — no companion overlay is shown on tvOS or visionOS.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
-#if !os(tvOS)
+#if canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))
 import SwiftUI
 import PVCoreBridge
 import PVLogging
-#if canImport(UIKit)
 import UIKit
-#endif
 
 // MARK: - Stored-property shim (associated object)
 
@@ -32,7 +30,7 @@ extension PVEmulatorViewController {
     ///
     /// Set when the user opens the companion overlay from the pause menu,
     /// cleared when they dismiss it or the emulator tears down.
-    public var companionSession: CompanionControllerSession? {
+    var companionSession: CompanionControllerSession? {
         get {
             objc_getAssociatedObject(self, &CompanionAssociatedKeys.sessionKey)
                 as? CompanionControllerSession
@@ -70,7 +68,7 @@ extension PVEmulatorViewController {
     /// Called from the pause menu when the user taps "Companion Controller".
     /// If the core does not conform to `CompanionControllerCapable`, the overlay is still
     /// presented but input events will not be forwarded to the core.
-    public func presentCompanionController() {
+    func presentCompanionController() {
         // Tear down any existing session before creating a new one.
         tearDownCompanionSession()
 
@@ -115,7 +113,7 @@ extension PVEmulatorViewController {
     ///
     /// Called automatically when the companion overlay is dismissed.
     /// Also safe to call when the emulator itself is dismissed.
-    public func tearDownCompanionSession() {
+    func tearDownCompanionSession() {
         guard let session = companionSession else { return }
         session.disconnect()
         companionSession = nil
@@ -219,4 +217,4 @@ private final class CoreCompanionBridge: CompanionSlotDelegate {
     }
 }
 
-#endif // !os(tvOS)
+#endif // canImport(UIKit) && (os(iOS) || targetEnvironment(macCatalyst))

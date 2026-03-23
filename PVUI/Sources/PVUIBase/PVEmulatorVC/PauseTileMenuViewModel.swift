@@ -87,7 +87,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
-        #if !os(tvOS)
+        #if os(iOS) || targetEnvironment(macCatalyst)
         gameTiles.append(PauseMenuTile(
             id: "companionController",
             icon: "iphone.and.arrow.forward",

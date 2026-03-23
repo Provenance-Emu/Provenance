@@ -166,7 +166,7 @@ struct PauseTileMenuView: View {
 
         // MARK: Companion Controller
         case "companionController":
-            #if !os(tvOS)
+            #if os(iOS) || targetEnvironment(macCatalyst)
             dismissAction(false)
             emulatorVC.presentCompanionController()
             #endif
