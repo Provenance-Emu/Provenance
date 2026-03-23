@@ -39,6 +39,7 @@ let package = Package(
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(name: "PVSupport", path: "../PVSupport/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
+        .package(name: "PVPrimitives", path: "../PVPrimitives/"),
         // Modern HTTP/WebDAV server backend (Task A, Epic #2758)
         // Hummingbird 2.x — Swift-native, built on Swift NIO, iOS/tvOS compatible.
         // Used by PVModernWebServer when the `modernWebServer` feature flag is on.
@@ -86,6 +87,7 @@ let package = Package(
                 "PVWebServerObjC",
                 "PVLogging",
                 "PVSupport",
+                "PVPrimitives",
                 .product(name: "Hummingbird", package: "hummingbird"),
                 .product(name: "HTTPTypes", package: "swift-http-types"),
             ],
@@ -97,6 +99,7 @@ let package = Package(
             name: "PVWebServerTests",
             dependencies: [
                 "PVWebServer",
+                "PVPrimitives",
                 .product(name: "Hummingbird", package: "hummingbird"),
             ]
         )

@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import PVPrimitives
 
 // MARK: - Notification names (kept identical to legacy PVWebServer.m constants)
 
@@ -29,6 +30,14 @@ public extension Notification.Name {
     static let pvWebServerUploadCompleted      = Notification.Name("WebServerUploadCompleted")
     /// Fired when server start/stop state changes (userInfo: "isRunning", "type", "port", "url")
     static let pvWebServerStatusChanged        = Notification.Name("WebServerStatusChanged")
+
+    // MARK: File-lifecycle events (Task B — Epic #2758)
+    // Canonical definitions live in PVPrimitives/StatusNotifications.swift so both
+    // PVWebServer (this module) and PVLibrary can reference the same typed constants
+    // without a cross-tier dependency between those two modules.
+    // Access them via `import PVPrimitives`:
+    //   Notification.Name.pvWebServerFileDeleted
+    //   Notification.Name.pvWebServerFileMoved
 }
 
 // MARK: - PVWebServerProtocol

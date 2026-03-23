@@ -16,6 +16,10 @@ NSString* const PVWebServerFileUploadProgressNotification = @"PVWebServerFileUpl
 NSString* const PVWebServerFileUploadCompletedNotification = @"PVWebServerFileUploadCompletedNotification";
 NSString* const PVWebServerFileUploadFailedNotification = @"PVWebServerFileUploadFailedNotification";
 
+// File-lifecycle notification names (delete / move)
+NSString* const PVWebServerFileDeletedNotification = @"PVWebServerFileDeletedNotification";
+NSString* const PVWebServerFileMovedNotification   = @"PVWebServerFileMovedNotification";
+
 // Status message notification names
 NSString* const PVWebServerUploadProgressNotification = @"WebServerUploadProgress";
 NSString* const PVWebServerUploadCompletedNotification = @"WebServerUploadCompleted";
@@ -219,19 +223,8 @@ NSUInteger webDavPort = 81;
         return nil;
     }];
 
-    // Track upload progress by implementing the GCDWebUploaderDelegate methods
-    // This is done in the webUploader:didUploadFileAtPath: method
-
-    // We'll also periodically check the progress of active uploads
-    // Create a timer to track upload progress
-    NSTimer *progressTimer = [NSTimer timerWithTimeInterval:0.5
-                                                   target:self
-                                                 selector:@selector(updateUploadProgress:)
-                                                 userInfo:nil
-                                                  repeats:YES];
-
-    // Add the timer to the main run loop
-    [[NSRunLoop mainRunLoop] addTimer:progressTimer forMode:NSRunLoopCommonModes];
+    // Progress tracking is handled by `processNextFileInUploadQueue` which starts a
+    // per-file timer calling `updateUploadProgressNotification`.
 }
 
 - (void)updateUploadProgress:(uint64_t)bytesTransferred totalBytes:(uint64_t)totalBytes {
@@ -373,6 +366,61 @@ NSUInteger webDavPort = 81;
     }
 }
 
+- (void)fileUploadCompleted:(NSString *)filePath {
+    if (!filePath) { return; }
+
+    uint64_t fileSize = 0;
+    NSError *error = nil;
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:&error];
+    if (!error) {
+        fileSize = [attributes fileSize];
+    }
+
+    NSDictionary *userInfo = @{
+        @"filePath": filePath,
+        @"fileSize": @(fileSize)
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerUploadCompletedNotification
+                                                        object:self
+                                                      userInfo:@{
+                                                          @"fileName": filePath,
+                                                          @"fileSize": @(fileSize)
+                                                      }];
+
+    if ([filePath isEqualToString:self.currentUploadingFilePath]) {
+        if (self.uploadQueue.count > 0) {
+            [self.uploadQueue removeObjectAtIndex:0];
+        }
+        [self processNextFileInUploadQueue];
+    } else {
+        [self.uploadQueue removeObject:filePath];
+    }
+}
+
+- (void)fileUploadFailed:(NSString *)filePath error:(NSError *)error {
+    if (!filePath) { return; }
+
+    NSDictionary *userInfo = @{
+        @"filePath": filePath,
+        @"error": error ?: [NSError errorWithDomain:NSCocoaErrorDomain code:-1 userInfo:nil]
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:PVWebServerFileUploadFailedNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+
+    if ([filePath isEqualToString:self.currentUploadingFilePath]) {
+        if (self.uploadQueue.count > 0) {
+            [self.uploadQueue removeObjectAtIndex:0];
+        }
+        [self processNextFileInUploadQueue];
+    } else {
+        [self.uploadQueue removeObject:filePath];
+    }
+}
+
 - (BOOL)startServers {
     BOOL success;
 
@@ -405,7 +453,7 @@ NSUInteger webDavPort = 81;
     return _webServer.isRunning;
 }
 
-- (BOOL)isIsWebDavServerRunning {
+- (BOOL)isWebDavServerRunning {
     return _webDavServer.isRunning;
 }
 
@@ -646,12 +694,20 @@ NSUInteger webDavPort = 81;
 
 - (void)webUploader:(GCDWebUploader*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath
 {
-    NSLog(@"[MOVE] %@ -> %@", fromPath, toPath);
+    ILOG(@"[MOVE] %@ -> %@", fromPath, toPath);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:PVWebServerFileMovedNotification
+                      object:self
+                    userInfo:@{@"fromPath": fromPath, @"toPath": toPath}];
 }
 
 - (void)webUploader:(GCDWebUploader*)uploader didDeleteItemAtPath:(NSString*)path
 {
-    NSLog(@"[DELETE] %@", path);
+    ILOG(@"[DELETE] %@", path);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:PVWebServerFileDeletedNotification
+                      object:self
+                    userInfo:@{@"filePath": path}];
 }
 
 - (void)webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path
@@ -723,21 +779,29 @@ NSUInteger webDavPort = 81;
  *  This method is called whenever a file or directory has been moved.
  */
 - (void)davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-    NSLog(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
+    ILOG(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:PVWebServerFileMovedNotification
+                      object:self
+                    userInfo:@{@"fromPath": fromPath, @"toPath": toPath}];
 }
 
 /**
  *  This method is called whenever a file or directory has been copied.
  */
 - (void)davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-    NSLog(@"[DAV COPY] %@ -> %@", fromPath, toPath);
+    ILOG(@"[DAV COPY] %@ -> %@", fromPath, toPath);
 }
 
 /**
  *  This method is called whenever a file or directory has been deleted.
  */
 - (void)davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
-    NSLog(@"[DAV DELETE] %@", path);
+    ILOG(@"[DAV DELETE] %@", path);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:PVWebServerFileDeletedNotification
+                      object:self
+                    userInfo:@{@"filePath": path}];
 }
 
 /**
