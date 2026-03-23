@@ -41,7 +41,8 @@ private let saveDropAcceptedTypes: [UTType] = [
 /// Neither path registers new `PVSaveState` objects in Realm; a library re-scan or relaunch
 /// will surface the restored states in the UI. See issue #3409 for the Realm registration follow-up.
 public struct SaveStateDropTargetModifier: ViewModifier {
-    /// Primary key (MD5) of the game this drop target belongs to.
+    /// The Realm primary key of the game this drop target belongs to.
+    /// This is `PVGame.md5Hash` — **not** `PVGame.id` (UUID-formatted string).
     let gameId: String
 
     @State private var isTargeted = false
@@ -112,6 +113,9 @@ public struct SaveStateDropTargetModifier: ViewModifier {
             importBatterySave(fileURL: url)
         default:
             WLOG("SaveStateDropDelegate: Unsupported file extension '\(ext)' — ignoring drop.")
+            // Clean up the temp copy created by stableCopy(of:) to avoid leaking storage.
+            let tempDir = url.deletingLastPathComponent()
+            try? FileManager.default.removeItem(at: tempDir)
         }
     }
 
@@ -188,7 +192,7 @@ public extension View {
     /// Accepts export zip bundles and `.sav`/`.srm` battery save files.
     /// iOS / macCatalyst only.
     ///
-    /// - Parameter gameId: The primary key (MD5) of the game this card represents.
+    /// - Parameter gameId: `PVGame.md5Hash` — the Realm primary key. Do **not** pass `PVGame.id` (UUID string).
     func saveStateDropTarget(gameId: String) -> some View {
         modifier(SaveStateDropTargetModifier(gameId: gameId))
     }
