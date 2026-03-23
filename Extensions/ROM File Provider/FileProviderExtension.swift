@@ -29,7 +29,7 @@ import RealmSwift
 /// - `createItem` — copies a ROM dropped into a system folder into the library;
 ///   creates a minimal `PVGame` Realm record so it appears immediately; the main
 ///   app's directory-watcher enriches metadata on next launch.
-/// - `modifyItem` — handles renames (`.filename`) and content replacement (`.contents`).
+/// - `modifyItem` — handles renames (`.filename`); content replacement is rejected (see `modifyItem` for rationale).
 /// - `deleteItem` — removes the ROM file from disk and the Realm record.
 ///
 /// ## Domain registration
@@ -223,7 +223,9 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
             // Rename — move the file and update the Realm partial-path.
             if changedFields.contains(.filename) {
-                let newFilename = item.filename
+                // Strip path components to prevent traversal via `../` or `/` in the
+                // OS-supplied filename before constructing the destination URL.
+                let newFilename = (item.filename as NSString).lastPathComponent
                 if let existingURL = pvGame.file?.url {
                     let destURL = existingURL.deletingLastPathComponent()
                         .appendingPathComponent(newFilename)
@@ -394,13 +396,18 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
     /// If `<directory>/<filename>` is free it is returned as-is.  Otherwise a numeric
     /// suffix is appended before the extension until a free slot is found, e.g.
     /// `game.sfc` → `game-2.sfc` → `game-3.sfc` …
+    ///
+    /// The filename is stripped to its last path component before use to prevent
+    /// path-traversal attacks (e.g. a crafted name containing `../`).
     private func uniqueDestinationURL(in directory: URL, for filename: String) -> URL {
-        let candidate = directory.appendingPathComponent(filename)
+        // Strip any directory components to prevent path traversal via `..` or `/`.
+        let safeFilename = (filename as NSString).lastPathComponent
+        let candidate = directory.appendingPathComponent(safeFilename)
         guard FileManager.default.fileExists(atPath: candidate.path) else {
             return candidate
         }
-        let base = (filename as NSString).deletingPathExtension
-        let ext = (filename as NSString).pathExtension
+        let base = (safeFilename as NSString).deletingPathExtension
+        let ext = (safeFilename as NSString).pathExtension
         var counter = 2
         while true {
             let name = ext.isEmpty ? "\(base)-\(counter)" : "\(base)-\(counter).\(ext)"

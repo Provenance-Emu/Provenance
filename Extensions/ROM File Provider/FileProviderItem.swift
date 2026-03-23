@@ -15,7 +15,7 @@ import PVPrimitives
 /// Items represent one of three kinds:
 /// - **Root** — the virtual root container (read-only; no direct sub-item creation)
 /// - **System folder** — one per game console; accepts ROM drops from Files.app
-/// - **Game ROM file** — an individual ROM file; supports read, delete, rename, and write
+/// - **Game ROM file** — an individual ROM file; supports read, delete, and rename
 ///
 /// Uses `Game` and `System` CPDI structs from `PVPrimitives` so the item is
 /// completely decoupled from Realm — safe to pass across threads and to store
