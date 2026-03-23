@@ -61,6 +61,17 @@ public final class CompanionInputRouter: ObservableObject {
         slotDelegate?.companionInputRouter(self, didUpdateState: currentState)
     }
 
+    // MARK: - Reset
+
+    /// Reset all input state to zero without replacing this router instance.
+    ///
+    /// Use this instead of replacing the router so that any `slotDelegate` wired
+    /// to this instance (e.g. `CoreCompanionBridge`) remains valid after a disconnect.
+    @MainActor public func reset() {
+        heldButtons = 0
+        axisValues = [:]
+    }
+
     // MARK: - State snapshot
 
     /// Current snapshot of all inputs, ready to be serialised into a DSU packet.

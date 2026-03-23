@@ -75,7 +75,8 @@ extension PVEmulatorViewController {
         let session = CompanionControllerSession()
 
         // Propagate the current system ID so CompanionLayoutFactory selects the right layout.
-        session.activeSystemID = core.systemIdentifier ?? ""
+        // Prefer game.systemIdentifier (always populated after ROM load) over the core property.
+        session.activeSystemID = game?.systemIdentifier ?? core.systemIdentifier ?? ""
 
         // Wire the core bridge if the core supports companion input.
         if let capable = core as? CompanionControllerCapable {

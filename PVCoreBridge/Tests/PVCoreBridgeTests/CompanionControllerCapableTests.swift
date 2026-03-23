@@ -26,19 +26,6 @@ final class MockCompanionCapableCore: CompanionControllerCapable {
     }
 }
 
-extension CompanionInputEvent: Equatable {
-    public static func == (lhs: CompanionInputEvent, rhs: CompanionInputEvent) -> Bool {
-        switch (lhs, rhs) {
-        case (.buttonDown(let a), .buttonDown(let b)):     return a == b
-        case (.buttonUp(let a),   .buttonUp(let b)):       return a == b
-        case (.axisChanged(let a, let va), .axisChanged(let b, let vb)):
-            return a == b && va == vb
-        default:
-            return false
-        }
-    }
-}
-
 // MARK: - Tests
 
 final class CompanionControllerCapableTests: XCTestCase {

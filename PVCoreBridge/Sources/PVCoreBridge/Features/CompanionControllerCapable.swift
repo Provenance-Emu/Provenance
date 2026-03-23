@@ -67,7 +67,7 @@ public enum CompanionAxisID: Hashable, Sendable {
 // MARK: - CompanionInputEvent
 
 /// A discrete input event emitted by a companion layout component.
-public enum CompanionInputEvent: Sendable {
+public enum CompanionInputEvent: Equatable, Sendable {
     case buttonDown(CompanionButton)
     case buttonUp(CompanionButton)
     case axisChanged(CompanionAxisID, Float)   // value: -1.0 … 1.0
