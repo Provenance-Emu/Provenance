@@ -28,7 +28,7 @@ struct CompanionInputRouterKeyboardTests {
 
         router.send(.keyDown(.keyA))
 
-        #expect(received.count == 1)
+        try #require(received.count == 1)
         if case .keyDown(let key) = received[0] {
             #expect(key == .keyA)
         } else {
@@ -47,7 +47,7 @@ struct CompanionInputRouterKeyboardTests {
 
         router.send(.keyUp(.returnOrEnter))
 
-        #expect(received.count == 1)
+        try #require(received.count == 1)
         if case .keyUp(let key) = received[0] {
             #expect(key == .returnOrEnter)
         } else {
@@ -60,7 +60,7 @@ struct CompanionInputRouterKeyboardTests {
     // MARK: - mouseMove / mouseButton publish to keyboardMouseEvents
 
     @Test("send(.mouseMove) publishes delta on keyboardMouseEvents")
-    func mouseMovePublishesOnKeyboardMouseEvents() {
+    func mouseMovePublishesOnKeyboardMouseEvents() throws {
         let router = CompanionInputRouter()
         var received: [CompanionInputEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
@@ -68,7 +68,7 @@ struct CompanionInputRouterKeyboardTests {
         let delta = CGPoint(x: 3.5, y: -2.0)
         router.send(.mouseMove(delta))
 
-        #expect(received.count == 1)
+        try #require(received.count == 1)
         if case .mouseMove(let pt) = received[0] {
             #expect(pt == delta)
         } else {
@@ -78,7 +78,7 @@ struct CompanionInputRouterKeyboardTests {
     }
 
     @Test("send(.mouseButton) publishes button index and state on keyboardMouseEvents")
-    func mouseButtonPublishesOnKeyboardMouseEvents() {
+    func mouseButtonPublishesOnKeyboardMouseEvents() throws {
         let router = CompanionInputRouter()
         var received: [CompanionInputEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
@@ -86,7 +86,7 @@ struct CompanionInputRouterKeyboardTests {
         router.send(.mouseButton(0, true))
         router.send(.mouseButton(1, false))
 
-        #expect(received.count == 2)
+        try #require(received.count == 2)
         if case .mouseButton(let idx, let down) = received[0] {
             #expect(idx == 0)
             #expect(down == true)
@@ -120,14 +120,14 @@ struct CompanionInputRouterKeyboardTests {
     // MARK: - sendKeyDown / sendKeyUp convenience methods
 
     @Test("sendKeyDown publishes .keyDown on keyboardMouseEvents")
-    func sendKeyDownConvenience() {
+    func sendKeyDownConvenience() throws {
         let router = CompanionInputRouter()
         var received: [CompanionInputEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         router.sendKeyDown(.escape)
 
-        #expect(received.count == 1)
+        try #require(received.count == 1)
         if case .keyDown(let key) = received[0] {
             #expect(key == .escape)
         } else {
@@ -137,14 +137,14 @@ struct CompanionInputRouterKeyboardTests {
     }
 
     @Test("sendKeyUp publishes .keyUp on keyboardMouseEvents")
-    func sendKeyUpConvenience() {
+    func sendKeyUpConvenience() throws {
         let router = CompanionInputRouter()
         var received: [CompanionInputEvent] = []
         let cancellable = router.keyboardMouseEvents.sink { received.append($0) }
 
         router.sendKeyUp(.spacebar)
 
-        #expect(received.count == 1)
+        try #require(received.count == 1)
         if case .keyUp(let key) = received[0] {
             #expect(key == .spacebar)
         } else {
@@ -161,7 +161,7 @@ struct CompanionInputRouterKeyboardTests {
 struct CompanionKeyboardBridgeTests {
 
     @Test("virtualKeyboard(_:keyDown:) forwards key to router as .keyDown")
-    func keyDownForwardedToRouter() {
+    func keyDownForwardedToRouter() throws {
         let router = CompanionInputRouter()
         let bridge = CompanionKeyboardBridge(inputRouter: router)
 
@@ -171,7 +171,7 @@ struct CompanionKeyboardBridgeTests {
         let vm = VirtualKeyboardViewModel()
         bridge.virtualKeyboard(vm, keyDown: .keyA)
 
-        #expect(received.count == 1)
+        try #require(received.count == 1)
         if case .keyDown(let key) = received[0] {
             #expect(key == .keyA)
         } else {
@@ -181,7 +181,7 @@ struct CompanionKeyboardBridgeTests {
     }
 
     @Test("virtualKeyboard(_:keyUp:) forwards key to router as .keyUp")
-    func keyUpForwardedToRouter() {
+    func keyUpForwardedToRouter() throws {
         let router = CompanionInputRouter()
         let bridge = CompanionKeyboardBridge(inputRouter: router)
 
@@ -191,7 +191,7 @@ struct CompanionKeyboardBridgeTests {
         let vm = VirtualKeyboardViewModel()
         bridge.virtualKeyboard(vm, keyUp: .escape)
 
-        #expect(received.count == 1)
+        try #require(received.count == 1)
         if case .keyUp(let key) = received[0] {
             #expect(key == .escape)
         } else {
