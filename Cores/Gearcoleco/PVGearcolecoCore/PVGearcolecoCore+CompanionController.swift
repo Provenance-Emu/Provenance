@@ -60,7 +60,7 @@ extension PVGearcolecoCore: CompanionControllerCapable {
             if let colecoBtn = Self.colecoButton(for: btn) {
                 didRelease(colecoBtn, forPlayer: player)
             }
-        case .axisChanged:
+        case .axisChanged(_, _):
             // ColecoVision uses d-pad only; analogue axes are not mapped.
             break
         }
