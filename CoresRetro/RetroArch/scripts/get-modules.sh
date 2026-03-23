@@ -134,8 +134,10 @@ EXPECTED_COUNT=$(grep -v '^#' "${EFFECTIVE_MODULE_LIST}" | grep -c '.' || echo 0
 # Fast-path: when the platform is known (active_platform.txt exists), unchanged,
 # the pin is unchanged, the timestamp is still fresh (no download due), and ≥80%
 # of expected dylibs are already present, skip both the purge and extraction.
-# Requiring a non-empty STORED_PLATFORM prevents the fast-path from firing on the
-# very first run (before the sentinel exists), which would skip extraction entirely.
+# Note: PLATFORM_CHANGED=0 on its own does NOT mean "same platform" — it also stays 0
+# when STORED_PLATFORM="" (first run, no sentinel).  The explicit [ -n "${STORED_PLATFORM}" ]
+# guard below prevents the fast-path from firing on that first run.  Without it, a fresh
+# machine with no sentinel but a populated modules/ dir could incorrectly skip extraction.
 if (( TIMESTAMP <= LAST_TIMESTAMP )) && [ -n "${STORED_PLATFORM}" ] && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ]; then
 	# Count only dylibs belonging to the current platform so stale other-platform
 	# artifacts cannot satisfy the threshold and trigger a false fast-path skip.

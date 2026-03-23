@@ -495,9 +495,18 @@ test_fastpath_requires_sentinel_file() {
     printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/core3_libretro_ios.dylib"
     # Intentionally: no active_platform.txt — STORED_PLATFORM will be ""
 
-    # Write a far-future timestamp so the download interval has not expired
+    # Write a far-future timestamp so the download interval has not expired.
+    # Also pre-populate the zip cache so the extraction step has files to process —
+    # without cached zips the find/unzip step would silently skip (no files found),
+    # and the unzip_called assertion below would always fail regardless of fast-path.
     mkdir -p "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS"
     echo "9999999999" > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
+    printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core1.zip"
+    printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core2.zip"
+    printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core3.zip"
 
     # Mock unzip to record whether it was called — fast-path must NOT prevent this call
     local flag_file="${workdir}/unzip_called"
