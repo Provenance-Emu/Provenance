@@ -74,9 +74,9 @@ public struct SaveStateDropTargetModifier: ViewModifier {
 
         for provider in providers {
             if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
-                provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, error in
-                    if let error { ELOG("SaveStateDropDelegate: loadItem(fileURL) error: \(error)"); return }
-                    guard let url = item as? URL else { return }
+                provider.loadFileRepresentation(forTypeIdentifier: UTType.fileURL.identifier) { url, error in
+                    if let error { ELOG("SaveStateDropDelegate: loadFileRepresentation(fileURL) error: \(error)"); return }
+                    guard let url else { return }
                     do {
                         let stableURL = try Self.stableCopy(of: url)
                         processDroppedFile(stableURL)

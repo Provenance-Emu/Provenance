@@ -164,7 +164,7 @@ public struct AllSaveStatesBrowserView: View {
                 // "no favourites" when they simply haven't been loaded yet.
                 Task { await loadItems() }
             }
-            #if !os(tvOS)
+            #if canImport(UIKit) && !os(tvOS)
             .sheet(isPresented: Binding<Bool>(
                 get: { exportShareURL != nil },
                 set: { presenting in
@@ -294,7 +294,7 @@ public struct AllSaveStatesBrowserView: View {
                     .padding(.vertical, 3)
                     .background(Capsule().fill(Color.secondary.opacity(0.15)))
 
-                #if !os(tvOS)
+                #if canImport(UIKit) && !os(tvOS)
                 Button {
                     exportGame(gameId: group.key)
                 } label: {
@@ -451,7 +451,7 @@ public struct AllSaveStatesBrowserView: View {
         }
     }
 
-    #if !os(tvOS)
+    #if canImport(UIKit) && !os(tvOS)
     /// Exports all saves for the given game as a zip and presents the system share sheet.
     ///
     /// `gameId` is `PVGame.id` (UUID), not the Realm primary key (`md5Hash`), so we use a
