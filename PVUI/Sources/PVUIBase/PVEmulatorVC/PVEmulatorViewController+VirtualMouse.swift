@@ -20,9 +20,9 @@ import PVLogging
 // MARK: - Associated-object keys for extension-level "stored" properties
 
 private enum VMKeys {
-    static var cursorHostKey = "PVEmuVC_cursorHost"
-    static var trackpadViewKey = "PVEmuVC_trackpadView"
-    static var gcMouseDriverKey = "PVEmuVC_gcMouseDriver"
+    static var cursorHostKey: UInt8 = 0
+    static var trackpadViewKey: UInt8 = 0
+    static var gcMouseDriverKey: UInt8 = 0
 }
 
 // MARK: - Extension
@@ -199,11 +199,12 @@ extension PVEmulatorViewController {
         objc_setAssociatedObject(self, &VMKeys.trackpadViewKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &VMKeys.cursorHostKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
-        // Detach and release the GCMouse driver on deinit — this is safe to call
-        // from a non-isolated context because GCMouseMouseResponderDriver is
-        // @unchecked Sendable and detach() performs no UI work.
+        // Detach and release the GCMouse driver on deinit. GCMouseMouseResponderDriver
+        // is @MainActor-isolated so detach() must run on the main actor.
         if let driver = objc_getAssociatedObject(self, &VMKeys.gcMouseDriverKey) as? GCMouseMouseResponderDriver {
-            driver.detach()
+            Task { @MainActor in
+                driver.detach()
+            }
         }
         objc_setAssociatedObject(self, &VMKeys.gcMouseDriverKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 

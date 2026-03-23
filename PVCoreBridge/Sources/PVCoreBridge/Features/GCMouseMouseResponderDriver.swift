@@ -37,6 +37,18 @@ import GameController
 import UIKit
 #endif
 
+// MARK: - Notification constants
+
+extension Notification.Name {
+    /// Posted each time the hardware-mouse cursor position updates.
+    static let pvMousePositionDidChange = Notification.Name("PVMousePositionDidChange")
+    /// Posted on each mouse-button press (down transition).
+    static let pvMouseButtonDidPress = Notification.Name("PVMouseButtonDidPress")
+}
+
+/// UserInfo key for `.pvMousePositionDidChange`; value is `NSValue(cgPoint:)`.
+let pvMousePositionKey = "PVMousePositionKey"
+
 /// Drives a ``MouseResponder`` from `GCMouse` delta events.
 ///
 /// All currently-connected `GCMouse` devices are observed on attach, and
@@ -44,7 +56,7 @@ import UIKit
 ///
 /// Instantiate once and call ``attach(to:)`` when a core starts,
 /// ``detach()`` when it stops.
-@objc public final class GCMouseMouseResponderDriver: NSObject, @unchecked Sendable {
+@MainActor @objc public final class GCMouseMouseResponderDriver: NSObject {
 
     // MARK: - Configuration
 
@@ -187,13 +199,11 @@ import UIKit
 
         // Delta movement handler — GCMouse may invoke this off the main thread.
         // Deltas are captured as value types (CGFloat) before the hop to avoid
-        // shared mutable state being accessed off-actor. DispatchQueue.main.async
-        // is used instead of Task { @MainActor } to minimise per-event overhead
-        // at high mouse polling rates.
+        // shared mutable state being accessed off-actor.
         input?.mouseMovedHandler = { [weak self] _, deltaX, deltaY in
             let dx = CGFloat(deltaX)
             let dy = CGFloat(deltaY)
-            DispatchQueue.main.async { [weak self] in
+            Task { @MainActor [weak self] in
                 self?._applyDelta(dx: dx, dy: dy)
             }
         }
@@ -208,7 +218,7 @@ import UIKit
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.leftMouseDown(atPoint: point)
-                    NotificationCenter.default.post(name: Notification.Name("PVMouseButtonDidPress"), object: nil)
+                    NotificationCenter.default.post(name: .pvMouseButtonDidPress, object: nil)
                 } else {
                     self.responder?.leftMouseUp()
                 }
@@ -224,7 +234,7 @@ import UIKit
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.rightMouseDown(atPoint: point)
-                    NotificationCenter.default.post(name: Notification.Name("PVMouseButtonDidPress"), object: nil)
+                    NotificationCenter.default.post(name: .pvMouseButtonDidPress, object: nil)
                 } else {
                     self.responder?.rightMouseUp()
                 }
@@ -240,7 +250,7 @@ import UIKit
                 let point = CGPoint(x: self.cursorX, y: self.cursorY)
                 if pressed {
                     self.responder?.middleMouseDown?(atPoint: point)
-                    NotificationCenter.default.post(name: Notification.Name("PVMouseButtonDidPress"), object: nil)
+                    NotificationCenter.default.post(name: .pvMouseButtonDidPress, object: nil)
                 } else {
                     self.responder?.middleMouseUp?(atPoint: point)
                 }
@@ -276,11 +286,11 @@ import UIKit
         let point = CGPoint(x: cursorX, y: cursorY)
         responder?.mouseMoved(atPoint: point)
         // Keep the cursor overlay in sync with hardware mouse movement.
-        // The overlay observes "PVMousePositionDidChange" to reposition the cursor sprite.
+        // The overlay observes `.pvMousePositionDidChange` to reposition the cursor sprite.
         NotificationCenter.default.post(
-            name: Notification.Name("PVMousePositionDidChange"),
+            name: .pvMousePositionDidChange,
             object: nil,
-            userInfo: ["PVMousePositionKey": NSValue(cgPoint: point)]
+            userInfo: [pvMousePositionKey: NSValue(cgPoint: point)]
         )
     }
 }
