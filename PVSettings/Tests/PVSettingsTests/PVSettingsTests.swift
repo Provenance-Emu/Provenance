@@ -954,3 +954,30 @@ struct iCloudSyncModeTests {
         #expect(reconstructed == mode)
     }
 }
+
+// MARK: - Physical Case Controller Defaults Tests
+
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+@Suite("Physical Case Controller Defaults")
+struct PhysicalCaseControllerDefaultsTests {
+
+    @Test("autoLoadCaseSkin default is true")
+    func autoLoadCaseSkinDefault() {
+        Defaults.reset(.autoLoadCaseSkin)
+        #expect(Defaults[.autoLoadCaseSkin] == true)
+    }
+
+    @Test("autoLoadCaseSkin key name is correct")
+    func autoLoadCaseSkinKeyName() {
+        #expect(Defaults.Keys.autoLoadCaseSkin.name == "autoLoadCaseSkin")
+    }
+
+    @Test("autoLoadCaseSkin resets to default after change")
+    func autoLoadCaseSkinReset() {
+        Defaults[.autoLoadCaseSkin] = false
+        #expect(Defaults[.autoLoadCaseSkin] == false)
+        Defaults.reset(.autoLoadCaseSkin)
+        #expect(Defaults[.autoLoadCaseSkin] == true)
+    }
+}
+#endif
