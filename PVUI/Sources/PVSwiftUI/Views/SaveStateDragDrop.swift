@@ -254,7 +254,7 @@ public struct SaveBundleDropModifier: ViewModifier {
     /// Returns `(nil, error)` when the manifest cannot be read or parsed.
     private func findGame(inBundle zipURL: URL) async -> (PVGame?, Error?) {
         // Delegate zip-peeking to SaveExporter, which owns the ZipArchive dependency.
-        let md5: String? = await Task.detached(priority: .userInitiated) {
+        let md5: String? = await Task(priority: .userInitiated) {
             SaveExporter.shared.gameMD5(inBundleAt: zipURL)
         }.value
 
