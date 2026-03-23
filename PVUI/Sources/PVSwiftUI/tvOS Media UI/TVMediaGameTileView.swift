@@ -145,6 +145,9 @@ struct TVMediaGameTileView: View {
         .tvMediaFocusable()
         .applyGameFocus(focusedGameID: focusedGameID, fallback: $isFocusedInternal, id: game.id)
         .contextMenu { contextMenu() }
+#if os(iOS)
+        .onDrag { game.romDragProvider() }
+#endif
         .task(id: game.id) {
             await loadArtworkIfNeeded()
         }

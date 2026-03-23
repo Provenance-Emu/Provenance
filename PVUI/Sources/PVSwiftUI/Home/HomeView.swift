@@ -1178,7 +1178,21 @@ struct HomeView: SwiftUI.View {
         #if os(iOS)
         .saveStateDropTarget(gameId: model.md5)
         #endif
+#if !os(tvOS) && !os(watchOS)
+        .onDrag { romDragProvider(for: model) }
+#endif
     }
+
+    // MARK: - Drag Export
+
+#if !os(tvOS) && !os(watchOS)
+    /// Resolves the live Realm game from a `GameCellModel` then delegates to the shared
+    /// `PVGame.romDragProvider()` helper for consistent iCloud-eviction handling.
+    private func romDragProvider(for model: GameCellModel) -> NSItemProvider {
+        guard let live = liveGame(for: model) else { return NSItemProvider() }
+        return live.romDragProvider()
+    }
+#endif
 
     private func setInitialFocus() {
         if let firstSection = [
