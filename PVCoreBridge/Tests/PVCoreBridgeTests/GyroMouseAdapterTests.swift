@@ -108,9 +108,11 @@ final class GyroMouseAdapterTests: XCTestCase {
     func testNoDeliveryWhenGameDoesNotSupportMouse() {
         responder.gameSupportsMouse = false
         adapter.attach(to: responder)
-        // No motion input is hooked in unit tests (no real hardware), so
-        // verify the responder hasn't received any phantom deliveries.
-        XCTAssertTrue(responder.receivedPoints.isEmpty)
+        // Drive rotation above the dead zone — the gameSupportsMouse gate in
+        // _applyRotation must suppress delivery even with valid input.
+        adapter._testApplyRotation(rawX: 5.0, rawY: 5.0)
+        XCTAssertTrue(responder.receivedPoints.isEmpty,
+                      "gameSupportsMouse=false must prevent event delivery")
     }
 
     // MARK: - Lifecycle
