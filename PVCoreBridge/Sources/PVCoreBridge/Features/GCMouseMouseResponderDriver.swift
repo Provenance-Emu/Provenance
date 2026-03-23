@@ -105,7 +105,9 @@ public let PVMousePositionKey = "PVMousePositionKey"
     }
 
     deinit {
-        detach()
+        // deinit is always called on the main actor for @MainActor classes;
+        // assumeIsolated makes this explicit to the compiler.
+        MainActor.assumeIsolated { detach() }
     }
 
     /// Start delivering mouse input to `core`.
@@ -195,7 +197,12 @@ public let PVMousePositionKey = "PVMousePositionKey"
 #endif
     }
 
-    private func _hookMouse(_ mouse: GCMouse) {
+    // nonisolated: only configures GCMouseInput handlers; all @MainActor work
+    // happens inside the handler closures themselves via Task { @MainActor } /
+    // DispatchQueue.main.async.  Being nonisolated lets the NotificationCenter
+    // observer closures (which are plain @Sendable, not @MainActor) call this
+    // without crossing an isolation boundary — eliminating the "sending" errors.
+    nonisolated private func _hookMouse(_ mouse: GCMouse) {
 #if canImport(GameController)
         guard #available(iOS 14.0, tvOS 14.0, *) else { return }
         let input = mouse.mouseInput
@@ -269,7 +276,7 @@ public let PVMousePositionKey = "PVMousePositionKey"
 #endif
     }
 
-    private func _unhookMouse(_ mouse: GCMouse) {
+    nonisolated private func _unhookMouse(_ mouse: GCMouse) {
 #if canImport(GameController)
         guard #available(iOS 14.0, tvOS 14.0, *) else { return }
         let input = mouse.mouseInput
