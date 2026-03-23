@@ -132,13 +132,17 @@ static uint8_t kPVmGBALinkContextKey;
     return self;
 }
 - (void)closeAllSockets {
-    if (_peerFD != -1) {
-        close(_peerFD);
-        _peerFD = -1;
-    }
-    if (_serverFD != -1) {
-        close(_serverFD);
-        _serverFD = -1;
+    // Synchronized to prevent double-close races between the emulation thread
+    // (_tcpLinkWriteRegister on disconnect) and the main thread (-stopLink).
+    @synchronized (self) {
+        if (_peerFD != -1) {
+            close(_peerFD);
+            _peerFD = -1;
+        }
+        if (_serverFD != -1) {
+            close(_serverFD);
+            _serverFD = -1;
+        }
     }
 }
 @end
@@ -189,7 +193,14 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
     PVmGBATCPLinkDriver *link = (PVmGBATCPLinkDriver *)driver;
     PVmGBALinkContext   *ctx  = link->ctx;
 
-    if (ctx == nil || ctx.peerFD < 0) { return false; }
+    // Snapshot the peer FD under the context lock to avoid a data race with
+    // -stopLink (main thread) or the ioQueue accept block writing peerFD.
+    int peerFD;
+    @synchronized (ctx) {
+        if (ctx == nil || ctx.peerFD < 0) { return false; }
+        peerFD = ctx.peerFD;
+    }
+
     if (address != REG_SIOCNT)        { return false; }
     if (!(value & SIO_MULTI_BUSY))    { return false; }
 
@@ -207,15 +218,23 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
         const uint8_t *ptr = (const uint8_t *)&netLocal;
         size_t remaining = sizeof(netLocal);
         while (remaining > 0) {
-            ssize_t n = send(ctx.peerFD, ptr, remaining, 0);
+            ssize_t n = send(peerFD, ptr, remaining, 0);
             if (n <= 0) {
                 // Peer socket closed or error — tear down the session.
-                ctx.lastDisconnectError =
+                NSError *disconnectErr =
                     [NSError errorWithDomain:PVmGBALinkErrorDomain
                                        code:PVmGBALinkErrorPeerDisconnected
                                    userInfo:@{ NSLocalizedDescriptionKey: @"Peer disconnected during SIO send." }];
-                ctx.status = PVmGBALinkStatusIdle;
-                [ctx closeAllSockets];
+                @synchronized (ctx) {
+                    if (ctx.peerFD == peerFD) {  // guard against concurrent teardown
+                        ctx.lastDisconnectError = disconnectErr;
+                        ctx.status = PVmGBALinkStatusIdle;
+                        [ctx closeAllSockets];
+                    }
+                }
+                // NOTE: The SIO driver remains installed until -stopLink is called by
+                // the Swift polling layer after it observes lastDisconnectError.
+                // Subsequent writeRegister calls return early (peerFD == -1).
                 return false;
             }
             ptr       += n;
@@ -223,16 +242,28 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
         }
     }
 
-    // Receive peer's data (blocking with MSG_WAITALL — expects exactly 2 bytes).
+    // Receive peer's data. SO_RCVTIMEO is set on this socket (2-second deadline)
+    // so a stalled peer triggers EAGAIN/EWOULDBLOCK rather than hanging indefinitely.
     uint16_t netRemote = 0;
-    ssize_t recvd = recv(ctx.peerFD, &netRemote, sizeof(netRemote), MSG_WAITALL);
+    ssize_t recvd = recv(peerFD, &netRemote, sizeof(netRemote), MSG_WAITALL);
     if (recvd != (ssize_t)sizeof(netRemote)) {
-        ctx.lastDisconnectError =
+        int recvErrno = errno;
+        NSString *desc = (recvd == 0)
+            ? @"Peer disconnected during SIO receive."
+            : ((recvErrno == EAGAIN || recvErrno == EWOULDBLOCK)
+               ? @"SIO receive timed out — peer may be stalled."
+               : [NSString stringWithUTF8String:strerror(recvErrno)]);
+        NSError *disconnectErr =
             [NSError errorWithDomain:PVmGBALinkErrorDomain
                                code:PVmGBALinkErrorPeerDisconnected
-                           userInfo:@{ NSLocalizedDescriptionKey: @"Peer disconnected during SIO receive." }];
-        ctx.status = PVmGBALinkStatusIdle;
-        [ctx closeAllSockets];
+                           userInfo:@{ NSLocalizedDescriptionKey: desc }];
+        @synchronized (ctx) {
+            if (ctx.peerFD == peerFD) {
+                ctx.lastDisconnectError = disconnectErr;
+                ctx.status = PVmGBALinkStatusIdle;
+                [ctx closeAllSockets];
+            }
+        }
         return false;
     }
 
@@ -457,6 +488,10 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
         // Suppress SIGPIPE on the accepted peer socket.
         int nosig = 1;
         setsockopt(peerFD, SOL_SOCKET, SO_NOSIGPIPE, &nosig, sizeof(nosig));
+        // Bound the emulation-thread recv() to 2 seconds so a stalled peer
+        // doesn't hang the emulator indefinitely.
+        struct timeval rcvTimeout = { .tv_sec = 2, .tv_usec = 0 };
+        setsockopt(peerFD, SOL_SOCKET, SO_RCVTIMEO, &rcvTimeout, sizeof(rcvTimeout));
 
         ctx2.peerFD = peerFD;
 
@@ -514,6 +549,17 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
                                          code:PVmGBALinkErrorInvalidAddress
                                      userInfo:@{ NSLocalizedDescriptionKey:
                                                      @"Host address must not be empty." }];
+        }
+        return NO;
+    }
+
+    // Reject privileged and unassigned ports — same range as -startLinkHostOnPort:.
+    if (port < 1024) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
+                                         code:PVmGBALinkErrorInvalidAddress
+                                     userInfo:@{ NSLocalizedDescriptionKey:
+                                                     @"Port must be in the range 1024–65535." }];
         }
         return NO;
     }
@@ -610,6 +656,12 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
 
     // Restore blocking mode for the frame-locked send/recv in the SIO driver.
     fcntl(sockFD, F_SETFL, flags & ~O_NONBLOCK);
+    // Bound the emulation-thread recv() to 2 seconds so a stalled peer
+    // doesn't hang the emulator indefinitely.
+    {
+        struct timeval rcvTimeout = { .tv_sec = 2, .tv_usec = 0 };
+        setsockopt(sockFD, SOL_SOCKET, SO_RCVTIMEO, &rcvTimeout, sizeof(rcvTimeout));
+    }
 
     // Session is connected.
     PVmGBALinkContext *ctx = [self _linkContextCreatingIfNeeded];

@@ -149,6 +149,28 @@ private extension PVmGBACore {
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self else { return }
+
+                // Detect unexpected peer disconnect: bridge returned to idle with
+                // a recorded error. Translate to .disconnected rather than .idle
+                // so the UI can show a meaningful message, then clean up.
+                if let disconnectError = self._bridge.lastDisconnectError,
+                   self._bridge.linkStatus == .idle {
+                    let nsErr = disconnectError as NSError
+                    let reason: DisconnectReason
+                    if nsErr.domain == PVmGBALinkErrorDomain as String &&
+                       nsErr.code == PVmGBALinkError.peerDisconnected.rawValue {
+                        reason = .peerDisconnected
+                    } else {
+                        reason = .networkError
+                    }
+                    self._stateSubject.send(.disconnected(reason: reason))
+                    self._linkContext = nil
+                    self._stopStatusPolling()
+                    // stopLink clears lastDisconnectError and releases all resources.
+                    self._bridge.stopLink()
+                    return
+                }
+
                 let newState = self._currentNetplayState
                 if self._stateSubject.value != newState {
                     self._stateSubject.send(newState)
@@ -183,6 +205,13 @@ extension PVmGBACore: PVNetplayCapable {
         let bridge = _bridge
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             Task.detached(priority: .userInitiated) {
+                // Check for cancellation before starting the potentially blocking
+                // socket work (join includes a 5-second connect timeout).
+                guard !Task.isCancelled else {
+                    continuation.resume(throwing: CancellationError())
+                    return
+                }
+
                 var nsError: NSError?
                 let success: Bool
 
@@ -196,6 +225,14 @@ extension PVmGBACore: PVNetplayCapable {
                 case .spectator(let host, let port):
                     // Link cable is 2-player only; spectator connects as the second player.
                     success = bridge.joinLink(atHost: host, port: port, error: &nsError)
+                }
+
+                // If the caller cancelled while we were in the blocking connect, tear
+                // down any session that may have been established.
+                if Task.isCancelled {
+                    if success { bridge.stopLink() }
+                    continuation.resume(throwing: CancellationError())
+                    return
                 }
 
                 if !success {
