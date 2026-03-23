@@ -624,9 +624,13 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// the emulator controller is not a `PVEmulatorViewController` (e.g. tests).
     ///
     /// When UIKit is available and `emulatorController` is a `UIViewController`,
-    /// this also attempts to present a best-effort error alert to the user.
+    /// this presents a best-effort error alert to the user.
     /// If no suitable view controller is available the block is still enforced
     /// but no alert is shown; callers should not rely on the alert being visible.
+    ///
+    /// Must be called from the main actor because `PVEmulatorViewController`
+    /// (a `UIViewController` subclass) is `@MainActor`-isolated.
+    @MainActor
     private func isFastForwardBlockedByHardcore() -> Bool {
         let blocked: Bool
         if let emulatorVC = emulatorController as? PVEmulatorViewController {
@@ -643,15 +647,14 @@ public class DeltaSkinInputHandler: ObservableObject {
         guard blocked else { return false }
         #if canImport(UIKit)
         if let vc = emulatorController as? UIViewController {
-            Task { @MainActor in
-                vc.presentError(hardcoreFastForwardBlockedMessage, source: vc.view)
-            }
+            vc.presentError(hardcoreFastForwardBlockedMessage, source: vc.view)
         }
         #endif
         return true
     }
 
     /// Handle toggle fast forward button press
+    @MainActor
     private func toggleFastForwardPressed() {
         DLOG("Toggle fast forward button pressed")
         guard let core = emulatorCore else {
@@ -688,6 +691,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle hold-style fast forward button press
+    @MainActor
     private func fastForwardPressed() {
         DLOG("Fast forward button pressed (hold style)")
         guard let core = emulatorCore else {
@@ -707,6 +711,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle hold-style fast forward button release
+    @MainActor
     private func fastForwardReleased() {
         DLOG("Fast forward button released (hold style)")
         guard let core = emulatorCore else {

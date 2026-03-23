@@ -100,9 +100,10 @@ public extension PVEmulatorViewController {
                 ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1), \(response.unlocks?.count ?? 0) existing unlocks.")
                 // Prepare the core's achievement runtime (rcheevos or equivalent).
                 await achievementsCore.prepareAchievements(gameHash: gameHash)
-                // achievementsActive is now true; enforce the speed restriction only
-                // when a real hardcore session is running — games without achievements
-                // never reach this point, so fast-forward is not incorrectly blocked.
+                // If hardcore is enabled and the core reports an active achievements
+                // session, enforce the speed restriction — games without achievements
+                // or inactive sessions won't trigger this, so fast-forward isn't
+                // incorrectly blocked.
                 if achievementsCore.hardcoreMode && achievementsCore.achievementsActive {
                     await MainActor.run {
                         self.core.gameSpeed = .normal
