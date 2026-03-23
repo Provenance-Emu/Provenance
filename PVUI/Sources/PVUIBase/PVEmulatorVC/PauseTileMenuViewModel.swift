@@ -75,6 +75,46 @@ final class PauseTileMenuViewModel: ObservableObject {
         gameTiles.append(PauseMenuTile(id: "screenshots", icon: "photo.on.rectangle", label: String(localized: "Screenshots"), colorKey: .yellow, dismissOnTap: false))
         #endif
 
+        // Recording — iOS only, hardware-gated (no feature flag in RetroMenuView either)
+        #if os(iOS)
+        if emulatorVC.isRecordingAvailable {
+            let isRec = emulatorVC.isRecording
+            gameTiles.append(PauseMenuTile(
+                id: "recording",
+                icon: isRec ? "stop.circle" : "record.circle",
+                label: String(localized: isRec ? "Stop Rec" : "Record"),
+                badge: isRec ? "REC" : nil,
+                colorKey: isRec ? .pink : .orange,
+                dismissOnTap: true
+            ))
+        }
+        #endif
+
+        // Broadcast — feature-flagged, iOS + tvOS
+        #if os(iOS) || os(tvOS)
+        if featureFlags.liveBroadcast {
+            let isBcast = emulatorVC.isBroadcasting
+            gameTiles.append(PauseMenuTile(
+                id: "broadcast",
+                icon: isBcast ? "stop.circle" : "dot.radiowaves.left.and.right",
+                label: String(localized: isBcast ? "Stop Live" : "Go Live"),
+                badge: isBcast ? "LIVE" : nil,
+                colorKey: isBcast ? .pink : .cyan,
+                dismissOnTap: false
+            ))
+        }
+        // Save Clip — feature-flagged, only visible when clip buffering is active
+        if featureFlags.clipBuffering && emulatorVC.isClipBufferingActive {
+            gameTiles.append(PauseMenuTile(
+                id: "saveClip",
+                icon: "scissors.badge.ellipsis",
+                label: String(localized: "Save Clip"),
+                colorKey: .purple,
+                dismissOnTap: true
+            ))
+        }
+        #endif
+
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if featureFlags.netplayEnabled && Self.coreSupportsNetplay(emulatorVC) {
@@ -116,6 +156,9 @@ final class PauseTileMenuViewModel: ObservableObject {
             displayTiles.append(jitTile)
         }
         #if canImport(UIKit) && !os(tvOS)
+        if let keyboardTile = Self.keyboardToggleTile(emulatorVC: emulatorVC) {
+            displayTiles.append(keyboardTile)
+        }
         if let mouseTile = Self.mouseToggleTile(emulatorVC: emulatorVC) {
             displayTiles.append(mouseTile)
         }
@@ -249,6 +292,19 @@ final class PauseTileMenuViewModel: ObservableObject {
     }
 
     #if canImport(UIKit) && !os(tvOS)
+    private static func keyboardToggleTile(emulatorVC: PVEmulatorViewController) -> PauseMenuTile? {
+        guard emulatorVC.coreSupportsVirtualKeyboard else { return nil }
+        let isVisible = emulatorVC.isVirtualKeyboardVisible
+        return PauseMenuTile(
+            id: "keyboardToggle",
+            icon: isVisible ? "keyboard.fill" : "keyboard",
+            label: String(localized: "Keyboard"),
+            badge: isVisible ? "ON" : "OFF",
+            colorKey: isVisible ? .green : .gray,
+            dismissOnTap: false
+        )
+    }
+
     private static func mouseToggleTile(emulatorVC: PVEmulatorViewController) -> PauseMenuTile? {
         guard emulatorVC.coreSupportsVirtualMouse else { return nil }
         let isVisible = emulatorVC.isVirtualMouseVisible

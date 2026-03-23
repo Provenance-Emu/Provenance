@@ -188,6 +188,11 @@ struct PauseTileMenuView: View {
         case "rumbleToggle":
             hapticFeedbackEnabled.toggle()
             rebuildSections()
+        case "keyboardToggle":
+            #if canImport(UIKit) && !os(tvOS)
+            emulatorVC.toggleVirtualKeyboard()
+            rebuildSections()
+            #endif
         case "mouseToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualMouse()
@@ -195,6 +200,30 @@ struct PauseTileMenuView: View {
             #endif
         case "jitStatus":
             break // read-only
+
+        // MARK: Recording / broadcast / clip
+        case "recording":
+            #if os(iOS)
+            if emulatorVC.isRecording {
+                dismissForSubSheetThen { self.emulatorVC.stopScreenRecording() }
+            } else {
+                dismissAction(true)
+                emulatorVC.startScreenRecording()
+            }
+            #endif
+        case "broadcast":
+            #if os(iOS) || os(tvOS)
+            if emulatorVC.isBroadcasting {
+                dismissForSubSheetThen { self.emulatorVC.stopBroadcast() }
+            } else {
+                dismissForSubSheetThen { self.emulatorVC.startBroadcast() }
+            }
+            #endif
+        case "saveClip":
+            #if os(iOS) || os(tvOS)
+            dismissAction(true)
+            emulatorVC.saveClip()
+            #endif
 
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):

@@ -563,6 +563,16 @@ struct RetroMenuView: View {
                     dismissAction(true)
                 }
             }
+
+            if PVFeatureFlagsManager.shared.companionController {
+                menuButton(
+                    title: String(localized: "COMPANION CONTROLLER"),
+                    icon: "iphone.and.arrow.forward",
+                    color: .retroOrange
+                ) {
+                    dismissMenuForSubSheetThen { emulatorVC.presentCompanionController() }
+                }
+            }
             #endif
 
             // Per-port device type picker (e.g. Joypad → Mouse for Mario Paint)
