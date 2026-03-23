@@ -5,13 +5,13 @@
 // from a companion controller session.
 //
 // Flow (wired in PVEmulatorViewController+CompanionController):
-//   CompanionInputRouter.keyboardMouseEvents (Publisher<CompanionKeyboardMouseEvent>)
+//   CompanionInputRouter.keyboardMouseEvents (keyboard/mouse event stream, defined in PVUI)
 //     → PVEmulatorViewController subscriber
 //       → core.companionKeyDown / companionKeyUp / companionMouseMoved / companionMouseButton
 //
 // This protocol lives in PVCoreBridge so that emulator cores (Tier 4) can
 // receive keyboard and mouse callbacks from the emulator view controller
-// without introducing a circular dependency between core bridges and PVUI.
+// without introducing a circular dependency between core bridges and the UI.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 

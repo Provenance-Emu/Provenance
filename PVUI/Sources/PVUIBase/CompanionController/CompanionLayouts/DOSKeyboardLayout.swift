@@ -8,13 +8,13 @@
 // Input routing:
 //   Keyboard keys → VirtualKeyboardDelegate → CompanionKeyboardBridge
 //                 → CompanionInputRouter.sendKeyDown/sendKeyUp
-//                 → keyboardMouseEvents publisher → PVEmulatorViewController
+//                 → keyboardMouseEvents → PVEmulatorViewController
 //                 → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionKeyDown/Up)
-//   Mouse trackpad → DragGesture.onChanged → CompanionInputRouter.sendMouseMove(.mouseMove)
-//                  → keyboardMouseEvents publisher → PVEmulatorViewController
+//   Mouse trackpad → DragGesture.onChanged → CompanionInputRouter.sendMouseMove
+//                  → keyboardMouseEvents → PVEmulatorViewController
 //                  → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionMouseMoved)
-//   Mouse buttons  → onLongPressGesture → CompanionInputRouter.sendMouseButton(.mouseButton)
-//                  → keyboardMouseEvents publisher → PVEmulatorViewController
+//   Mouse buttons  → onLongPressGesture → CompanionInputRouter.sendMouseButton
+//                  → keyboardMouseEvents → PVEmulatorViewController
 //                  → CompanionKeyboardMouseCapable core (PVDosBoxCore.companionMouseButton)
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
