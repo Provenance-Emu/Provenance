@@ -188,9 +188,11 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 #if canImport(CoreSpotlight) && !os(tvOS)
                             RomDatabase.sharedInstance.deleteFromSpotlight(game: game)
 #endif
-                            // Invalidate the in-memory games cache so stale entries
-                            // (e.g. gamesCache[romPath]) don't survive the hard-delete.
-                            RomDatabase.reloadGamesCache()
+                            // Invalidate the in-memory games cache entry for this game
+                            // so stale entries (e.g. gamesCache[romPath]) don't survive
+                            // the hard-delete, without reloading from a different Realm
+                            // configuration.
+                            RomDatabase.removeGameFromCache(game)
                         }
                         return
                     } else {
