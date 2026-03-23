@@ -6,7 +6,7 @@
 // The Companion Controller (TrackballLayout) sends relative X/Y deltas and
 // button events via CompanionInputRouter.  PVEmulatorViewController detects
 // that this core adopts CompanionControllerCapable and forwards those events
-// here on Combine publisher updates (gesture and button edge changes).
+// here via handleCompanionInput(_:forPlayer:).
 //
 // Input mapping:
 //   .axisChanged(.leftX, v)  → trackball horizontal delta (RETRO_DEVICE_MOUSE X)
@@ -57,40 +57,23 @@ extension PVStellaGameCore: CompanionControllerCapable {
         )
     }
 
-    // MARK: - Trackball movement
+    // MARK: - Input handling
 
-    /// Route a relative trackball delta from the Companion Controller to Stella.
+    /// Route a Companion Controller input event to Stella.
     ///
-    /// The Stella libretro core reads the pending deltas in `input_state_callback`
-    /// on the next frame as `RETRO_DEVICE_MOUSE` X/Y values.  Deltas accumulate
-    /// between frames and are zeroed after consumption.
-    ///
-    /// - Parameters:
-    ///   - deltaX: Normalised horizontal delta (-1.0…1.0 per gesture update).
-    ///   - deltaY: Normalised vertical delta.
-    public func companionTrackballMoved(deltaX: Float, deltaY: Float) {
-        _bridge.setTrackballDeltaX(deltaX, deltaY: deltaY)
-    }
-
-    // MARK: - Buttons
-
-    /// Route a Companion Controller button press to Stella.
-    ///
-    /// `.south` (the large red FIRE button on TrackballLayout) maps to the
-    /// trackball's fire button (`RETRO_DEVICE_MOUSE_LEFT`).
-    public func companionButtonDown(_ button: CompanionCoreButton) {
-        switch button {
-        case .south:
+    /// - Axis events map to `RETRO_DEVICE_MOUSE` X/Y deltas consumed in
+    ///   `input_state_callback` on the next emulation frame.
+    /// - The `.south` button maps to the trackball fire button
+    ///   (`RETRO_DEVICE_MOUSE_LEFT`).
+    public func handleCompanionInput(_ event: CompanionInputEvent, forPlayer player: Int) {
+        switch event {
+        case .axisChanged(.leftX, let value):
+            _bridge.setTrackballDeltaX(value, deltaY: 0)
+        case .axisChanged(.leftY, let value):
+            _bridge.setTrackballDeltaX(0, deltaY: value)
+        case .buttonDown(.south):
             _bridge.setMouseButtonLeft(true)
-        default:
-            break
-        }
-    }
-
-    /// Route a Companion Controller button release to Stella.
-    public func companionButtonUp(_ button: CompanionCoreButton) {
-        switch button {
-        case .south:
+        case .buttonUp(.south):
             _bridge.setMouseButtonLeft(false)
         default:
             break

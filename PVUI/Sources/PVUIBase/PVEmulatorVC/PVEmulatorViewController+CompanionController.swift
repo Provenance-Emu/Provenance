@@ -5,7 +5,7 @@
 //  • "Use as Companion Controller" entry in the pause menu
 //  • Session lifecycle: present, wire delegate, tear down on dismiss
 //  • System ID propagation to CompanionControllerSession
-//  • Combine-based input bridge (setupCompanionControllerBridgeIfNeeded)
+//  • Per-game layout override via preferredCompanionLayoutID
 //
 // iOS/macCatalyst only — no companion overlay is shown on tvOS or visionOS.
 //
@@ -13,29 +13,25 @@
 
 #if canImport(UIKit) && !os(tvOS)
 import SwiftUI
-import UIKit
-import Combine
 import PVCoreBridge
 import PVLogging
+import UIKit
 
 // MARK: - Stored-property shim (associated object)
 
 private enum CompanionAssociatedKeys {
-    static var sessionKey:      UInt8 = 0
-    static var bridgeKey:       UInt8 = 0
-    static var cancellablesKey: UInt8 = 0
+    static var sessionKey: UInt8 = 0
+    static var bridgeKey:  UInt8 = 0
 }
 
 @MainActor
 extension PVEmulatorViewController {
 
-    // MARK: - Stored properties via associated objects
-
     /// The active companion controller session, if any.
     ///
     /// Set when the user opens the companion overlay from the pause menu,
     /// cleared when they dismiss it or the emulator tears down.
-    public var companionSession: CompanionControllerSession? {
+    var companionSession: CompanionControllerSession? {
         get {
             objc_getAssociatedObject(self, &CompanionAssociatedKeys.sessionKey)
                 as? CompanionControllerSession
@@ -66,29 +62,6 @@ extension PVEmulatorViewController {
         }
     }
 
-    private var companionCancellables: Set<AnyCancellable> {
-        get {
-            (objc_getAssociatedObject(self, &CompanionAssociatedKeys.cancellablesKey)
-                as? CancellablesBox)?.cancellables ?? []
-        }
-        set {
-            let box = CancellablesBox(newValue)
-            objc_setAssociatedObject(
-                self,
-                &CompanionAssociatedKeys.cancellablesKey,
-                box,
-                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-            )
-        }
-    }
-
-    // MARK: - Capability
-
-    /// Whether the currently active core can receive Companion Controller input.
-    public var coreSupportsCompanionController: Bool {
-        core is CompanionControllerCapable
-    }
-
     // MARK: - Present companion overlay
 
     /// Present the companion controller host view and wire the session to the core.
@@ -108,6 +81,12 @@ extension PVEmulatorViewController {
 
         // Wire the core bridge if the core supports companion input.
         if let capable = core as? CompanionControllerCapable {
+            // Allow the core to override the layout for per-game peripherals
+            // (e.g. trackball titles on Atari 2600 return CompanionLayoutID.atari2600Trackball).
+            if let preferredID = capable.preferredCompanionLayoutID {
+                session.activeSystemID = preferredID
+            }
+
             let bridge = CoreCompanionBridge(capable: capable, playerIndex: 0)
             session.inputRouter.slotDelegate = bridge
             _coreInputBridge = bridge
@@ -136,86 +115,6 @@ extension PVEmulatorViewController {
         ILOG("[CompanionController] Presented companion overlay for system: \(session.activeSystemID)")
     }
 
-    // MARK: - Combine-based bridge setup
-
-    /// Attach Companion Controller input forwarding when the core supports it.
-    ///
-    /// Call this after the core finishes loading a ROM so that `preferredCompanionLayoutID`
-    /// (which may depend on the game's MD5 / title) is available.
-    ///
-    /// - Parameter session: The active companion controller session whose
-    ///   `inputRouter` will be subscribed to.
-    public func setupCompanionControllerBridgeIfNeeded(session: CompanionControllerSession) {
-        // Always tear down any existing bridge first so we don't keep forwarding
-        // input to a stale core or leak old Combine subscriptions.
-        teardownCompanionControllerBridge()
-
-        guard let companionCore = core as? CompanionControllerCapable else { return }
-
-        // Store the session so it can be referenced later (e.g. for teardown).
-        companionSession = session
-
-        // Update the session's active system ID so the correct layout is shown.
-        if let preferredID = companionCore.preferredCompanionLayoutID {
-            session.activeSystemID = preferredID
-        }
-
-        ILOG("[CompanionController] Core adopts CompanionControllerCapable — wiring input router (layoutID: \(session.activeSystemID))")
-
-        var cancellables = Set<AnyCancellable>()
-
-        // Track button mask locally within the sink to compute press/release edges.
-        var previousButtonMask: UInt32 = 0
-
-        // Subscribe via session.$inputRouter rather than session.inputRouter directly.
-        // CompanionControllerSession.disconnect() replaces inputRouter with a new instance;
-        // using switchToLatest ensures we automatically follow the new router instead of
-        // leaving stale subscriptions on the old one.
-
-        // Forward button edge events (press/release) to the core.
-        session.$inputRouter
-            .map { $0.$heldButtons.removeDuplicates() }
-            .switchToLatest()
-            .sink { [weak self] newMask in
-                guard self != nil else { return }
-                let pressed  = newMask & ~previousButtonMask   // bits newly set
-                let released = previousButtonMask & ~newMask   // bits newly cleared
-                previousButtonMask = newMask
-
-                for button in [CompanionCoreButton.south, .east, .west, .north] {
-                    if pressed  & button.rawValue != 0 { companionCore.companionButtonDown(button) }
-                    if released & button.rawValue != 0 { companionCore.companionButtonUp(button) }
-                }
-            }
-            .store(in: &cancellables)
-
-        // Forward trackball axis deltas to the core.
-        //
-        // TrackballLayout sends .axisChanged(.leftX, …) and .axisChanged(.leftY, …) as two
-        // separate calls, so $axisValues fires twice per gesture update.  Subscribing to
-        // each axis independently (with removeDuplicates) ensures only the changed axis
-        // triggers a core call, preventing dx from being double-applied.
-        session.$inputRouter
-            .map { $0.$axisValues.map { $0[.leftX] ?? 0 }.removeDuplicates() }
-            .switchToLatest()
-            .sink { [weak self] dx in
-                guard self != nil, dx != 0 else { return }
-                companionCore.companionTrackballMoved(deltaX: dx, deltaY: 0)
-            }
-            .store(in: &cancellables)
-
-        session.$inputRouter
-            .map { $0.$axisValues.map { $0[.leftY] ?? 0 }.removeDuplicates() }
-            .switchToLatest()
-            .sink { [weak self] dy in
-                guard self != nil, dy != 0 else { return }
-                companionCore.companionTrackballMoved(deltaX: 0, deltaY: dy)
-            }
-            .store(in: &cancellables)
-
-        companionCancellables = cancellables
-    }
-
     // MARK: - Tear down
 
     /// Disconnect the session and release all resources.
@@ -227,15 +126,7 @@ extension PVEmulatorViewController {
         session.disconnect()
         companionSession = nil
         _coreInputBridge = nil
-        companionCancellables = []
         DLOG("[CompanionController] Session torn down")
-    }
-
-    /// Stop forwarding Companion Controller input to the core (Combine bridge only).
-    public func teardownCompanionControllerBridge() {
-        companionCancellables = []
-        companionSession = nil
-        ILOG("[CompanionController] Companion input bridge torn down")
     }
 }
 
@@ -331,16 +222,6 @@ private final class CoreCompanionBridge: CompanionSlotDelegate {
             capable.handleCompanionInput(.axisChanged(.r2Analog, state.r2), forPlayer: playerIndex)
             lastR2 = state.r2
         }
-    }
-}
-
-// MARK: - CancellablesBox
-
-/// Reference-type wrapper so `Set<AnyCancellable>` can be stored via associated objects.
-private final class CancellablesBox {
-    var cancellables: Set<AnyCancellable>
-    init(_ cancellables: Set<AnyCancellable>) {
-        self.cancellables = cancellables
     }
 }
 
