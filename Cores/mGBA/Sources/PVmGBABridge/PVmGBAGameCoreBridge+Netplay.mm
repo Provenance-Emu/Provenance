@@ -330,7 +330,15 @@ static BOOL _pvmgba_install_driver(PVmGBAGameCoreBridge *bridge,
     return YES;
 }
 
-/// Remove any installed TCP link driver from the SIO and free its memory.
+/// Remove the TCP link driver from the SIO subsystem.
+///
+/// This function does NOT free the driver struct. The caller is responsible
+/// for freeing `drv` once it is certain no emulator-thread callbacks are in
+/// flight.  Separating uninstall from free prevents a use-after-free: after
+/// GBASIOSetDriver(NULL) returns, no NEW callbacks will fire, but a callback
+/// that started before the uninstall may still be executing on the emulator
+/// thread and accessing `drv` fields (e.g. `drv->inactive` at the inactive
+/// guard check).  See `_pvmgba_free_driver` for deferred cleanup.
 static void _pvmgba_uninstall_driver(PVmGBAGameCoreBridge *bridge,
                                      PVmGBATCPLinkDriver *drv)
 {
@@ -342,7 +350,18 @@ static void _pvmgba_uninstall_driver(PVmGBAGameCoreBridge *bridge,
             GBASIOSetDriver(&gba->sio, NULL, SIO_MULTI);
         }
     }
-    free(drv);
+    // NOTE: Do NOT call free(drv) here — see _pvmgba_free_driver.
+}
+
+/// Free a previously uninstalled TCP link driver.
+///
+/// Must only be called when no emulator-thread callback can still be
+/// executing with a pointer to `drv`.  Safe call sites:
+///   • At the start of a new link session (emulator is between frames).
+///   • From the bridge's dealloc path (emulator is torn down).
+static void _pvmgba_free_driver(PVmGBATCPLinkDriver *drv)
+{
+    if (drv != NULL) { free(drv); }
 }
 
 #endif // PVMGBA_LINK_SIO_AVAILABLE
@@ -412,6 +431,18 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
 - (BOOL)startLinkHostOnPort:(uint16_t)port
                       error:(NSError *__autoreleasing _Nullable *)error
 {
+#if PVMGBA_LINK_SIO_AVAILABLE
+    // Free any driver left over from the previous session.  This is the safe
+    // point to do so: the emulator is between frames (not mid-SIO-callback),
+    // so no in-flight _tcpLinkWriteRegister can still be accessing the old drv.
+    NSValue *oldDrvValue = objc_getAssociatedObject(self, &kPVmGBALinkDriverKey);
+    if (oldDrvValue != nil) {
+        _pvmgba_free_driver((PVmGBATCPLinkDriver *)[oldDrvValue pointerValue]);
+        objc_setAssociatedObject(self, &kPVmGBALinkDriverKey,
+                                 nil, OBJC_ASSOCIATION_RETAIN);
+    }
+#endif
+
     // Reject privileged and unassigned ports (documented range is 1024-65535, or 0 for OS-assigned).
     if (port > 0 && port < 1024) {
         if (error) {
@@ -571,6 +602,17 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
                   port:(uint16_t)port
                  error:(NSError *__autoreleasing _Nullable *)error
 {
+#if PVMGBA_LINK_SIO_AVAILABLE
+    // Free any driver left over from the previous session (same reasoning as
+    // in -startLinkHostOnPort:error: — emulator is between frames here).
+    NSValue *oldDrvValue = objc_getAssociatedObject(self, &kPVmGBALinkDriverKey);
+    if (oldDrvValue != nil) {
+        _pvmgba_free_driver((PVmGBATCPLinkDriver *)[oldDrvValue pointerValue]);
+        objc_setAssociatedObject(self, &kPVmGBALinkDriverKey,
+                                 nil, OBJC_ASSOCIATION_RETAIN);
+    }
+#endif
+
     if (host.length == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PVmGBALinkErrorDomain
@@ -748,13 +790,19 @@ static NSError *_pvmgba_socket_error(PVmGBALinkError code, int err) {
     NSValue *drvValue = objc_getAssociatedObject(self, &kPVmGBALinkDriverKey);
     if (drvValue != nil) {
         PVmGBATCPLinkDriver *drv = (PVmGBATCPLinkDriver *)[drvValue pointerValue];
-        // Mark the driver inactive before uninstalling so any in-flight
-        // _tcpLinkWriteRegister callback returns early and does not access
-        // memory that will be freed by _pvmgba_uninstall_driver.
+        // Mark the driver inactive BEFORE removing it from the SIO subsystem
+        // so that any callback already past the entry point returns immediately
+        // at the inactive guard without touching the peer socket or I/O memory.
         if (drv != NULL) { atomic_store(&drv->inactive, true); }
         _pvmgba_uninstall_driver(self, drv);
-        objc_setAssociatedObject(self, &kPVmGBALinkDriverKey,
-                                 nil, OBJC_ASSOCIATION_RETAIN);
+        // Intentionally do NOT free `drv` here and do NOT clear the associated
+        // object yet.  An emulator-thread callback that started just before
+        // GBASIOSetDriver(NULL) may still be executing and could read driver
+        // fields (e.g. drv->inactive) before returning.  The driver is freed
+        // at the start of the next session (see _pvmgba_free_driver call in
+        // startLinkHostOnPort:/joinLinkAtHost:port:) when we can be certain
+        // no callbacks are in-flight.  Leaking ~48 bytes per session is
+        // preferable to a use-after-free.
     }
 #endif
 
