@@ -573,7 +573,7 @@ extension MupenGameCore: TransferPakSupport {
     public var transferPakSlotCount: Int { 4 }
 
     public func setTransferPakROM(_ rom: TransferPakROM?, forPort port: Int) {
-        let mupenBridge = bridge as! PVMupenBridge
+        let mupenBridge = _bridge
         mupenBridge.setGBCartROMPath(
             rom?.romPath.path,
             savePath: rom?.savePath?.path,
@@ -587,7 +587,7 @@ extension MupenGameCore: TransferPakSupport {
 
     public func transferPakROM(forPort port: Int) -> TransferPakROM? {
         guard port >= 0 && port < 4 else { return nil }
-        let mupenBridge = bridge as! PVMupenBridge
+        let mupenBridge = _bridge
         guard let romPathStr = mupenBridge.gbCartROMPath(forPort: port) else { return nil }
         let romURL = URL(fileURLWithPath: romPathStr)
         let saveURL = mupenBridge.gbCartSavePath(forPort: port).map { URL(fileURLWithPath: $0) }
