@@ -15,7 +15,7 @@ import Defaults
 /// The `.auto` case lets the engine pick an appropriate available source
 /// at runtime based on connected devices and platform capabilities.
 /// The exact selection strategy may evolve over time.
-public enum MouseInputSource: String, Codable, Equatable,
+public enum MouseInputSource: String, Codable, Equatable, Hashable,
     UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, Sendable {
 
     /// Automatically select the best available input source.
