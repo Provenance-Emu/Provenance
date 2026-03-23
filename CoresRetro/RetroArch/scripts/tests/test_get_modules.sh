@@ -599,13 +599,15 @@ test_platform_switch_replaces_neutral_dylibs() {
     printf '\xcf\xfa\xed\xfe' > "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib"
     echo "ios" > "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt"
 
-    # Create a mock unzip that records calls and writes tvos dylibs
+    # Create a mock unzip that records calls *and* arguments, then writes tvos dylibs.
+    # We write the full argument list to flag_file so we can assert that -o was passed.
     local flag_file="${workdir}/unzip_called"
     local tvos_modules_dir="${workdir}/CoresRetro/RetroArch/modules"
     mkdir -p "${tvos_modules_dir}"
     cat > "${MOCK_BIN}/unzip" << UNZIPEOF
 #!/bin/bash
-touch "${flag_file}"
+# Record all arguments so the test can verify -o was present.
+echo "\$*" > "${flag_file}"
 zip_file=""
 dest_dir="${tvos_modules_dir}"
 for i in "\$@"; do
@@ -616,8 +618,8 @@ done
 if [ -n "\$zip_file" ]; then
     base=\$(basename "\$zip_file" .zip)
     printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${base}_libretro_tvos.dylib"
-    # Also write a "new" neutral dylib to simulate overwrite
-    printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/dolphin_libretro.dylib"
+    # Simulate overwrite of the neutral dylib with new contents
+    printf '\\xca\\xfe\\xba\\xbe' > "\${dest_dir}/dolphin_libretro.dylib"
 fi
 exit 0
 UNZIPEOF
@@ -631,11 +633,17 @@ UNZIPEOF
         bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
 
     assert_exit "neutral switch: exits 0" 0 "${exit_code}"
-    # Neutral dylib was removed before extraction (and re-created by mock unzip with -o)
+    # Neutral dylib was removed before extraction and re-created by mock unzip
     assert_file_exists "neutral switch: dolphin_libretro.dylib re-extracted" \
         "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib"
-    # unzip was called with -o flag (overwrite) on platform change
+    # unzip was called (flag_file contains the argument list)
     assert_file_exists "neutral switch: unzip was called" "${flag_file}"
+    # Verify unzip was invoked with -o (overwrite) on platform change
+    if grep -q -- " -o " "${flag_file}"; then
+        pass "neutral switch: unzip called with -o (overwrite)"
+    else
+        fail "neutral switch: unzip should be called with -o (overwrite); args were: $(cat "${flag_file}")"
+    fi
     # platform file updated to tvos
     local stored_platform
     stored_platform=$(cat "${workdir}/CoresRetro/RetroArch/modules/active_platform.txt" 2>/dev/null || echo "")

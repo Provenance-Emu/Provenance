@@ -139,12 +139,15 @@ EXPECTED_COUNT=$(grep -v '^#' "${EFFECTIVE_MODULE_LIST}" | grep -c '.' || echo 0
 # guard below prevents the fast-path from firing on that first run.  Without it, a fresh
 # machine with no sentinel but a populated modules/ dir could incorrectly skip extraction.
 if (( TIMESTAMP <= LAST_TIMESTAMP )) && [ -n "${STORED_PLATFORM}" ] && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ]; then
-	# Count only dylibs belonging to the current platform so stale other-platform
-	# artifacts cannot satisfy the threshold and trigger a false fast-path skip.
+	# Count dylibs belonging to the current platform: include both platform-suffixed
+	# dylibs (e.g. *ios*.dylib / *tvos*.dylib) and platform-neutral ones (e.g.
+	# dolphin_libretro.dylib) so the 80% threshold is not artificially low when the
+	# URL list contains neutral-name cores.  Stale other-platform suffixed dylibs are
+	# explicitly excluded so they cannot satisfy the threshold and trigger a false skip.
 	if [ "${CURRENT_PLATFORM}" = "tvos" ]; then
-		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 -name "*tvos*.dylib" -type f 2>/dev/null | wc -l | tr -d ' ')
+		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 \( -name "*tvos*.dylib" -o \( -name "*.dylib" -not -name "*ios*.dylib" -not -name "*tvos*.dylib" \) \) -type f 2>/dev/null | wc -l | tr -d ' ')
 	else
-		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 -name "*ios*.dylib" -not -name "*tvos*.dylib" -type f 2>/dev/null | wc -l | tr -d ' ')
+		EXISTING_DYLIB_COUNT=$(find "${CORES_DIR}" -maxdepth 1 \( -name "*ios*.dylib" -o \( -name "*.dylib" -not -name "*ios*.dylib" -not -name "*tvos*.dylib" \) \) -type f 2>/dev/null | wc -l | tr -d ' ')
 	fi
 	if [ "${EXPECTED_COUNT}" -gt 0 ]; then
 		FAST_THRESHOLD=$(( EXPECTED_COUNT * 80 / 100 ))
