@@ -59,9 +59,9 @@ check_in_cheevos_block() {
     # #endif decrements depth (or closes the guard when depth reaches 0).
     # found=1 if pattern matches while in the HAVE_CHEEVOS block.
     if awk -v pat="$pattern" '
-        /^#if defined\(HAVE_CHEEVOS\)/ { in_block=1; depth=0; next }
-        in_block && /^#if/ { depth++; next }
-        in_block && /^#endif/ {
+        /^[[:space:]]*#if[[:space:]]+defined\(HAVE_CHEEVOS\)/ { in_block=1; depth=0; next }
+        in_block && /^[[:space:]]*#if(n?def)?\b/ { depth++; next }
+        in_block && /^[[:space:]]*#endif\b/ {
             if (depth > 0) {
                 depth--
             } else {
