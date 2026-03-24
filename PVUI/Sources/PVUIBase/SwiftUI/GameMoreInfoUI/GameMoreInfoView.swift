@@ -603,9 +603,19 @@ struct GameMoreInfoView: View {
     }
 
     /// Returns the preferred CoreOptional class and display name for the current game, or nil if none.
+    /// Respects game-level and system-level preferred core ID before falling back to the first available CoreOptional core.
     private var coreOptionsInfo: (coreClass: CoreOptional.Type, name: String)? {
-        guard let system = viewModel.pvGame?.system else { return nil }
-        for core in system.cores {
+        guard let game = viewModel.pvGame,
+              let system = game.system else { return nil }
+        let cores = Array(system.cores)
+        // Resolve preferred core: game-level preference → system-level preference → first CoreOptional
+        let preferredID = game.userPreferredCoreID ?? system.userPreferredCoreID
+        if let preferredID = preferredID,
+           let preferred = cores.first(where: { $0.identifier == preferredID }),
+           let coreClass = NSClassFromString(preferred.principleClass) as? CoreOptional.Type {
+            return (coreClass, preferred.projectName)
+        }
+        for core in cores {
             if let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type {
                 return (coreClass, core.projectName)
             }
@@ -618,8 +628,9 @@ struct GameMoreInfoView: View {
         guard let info = coreOptionsInfo,
               let md5 = viewModel.pvGame?.md5Hash,
               !md5.isEmpty else { return 0 }
-        let prefix = info.coreClass.perGameKeyPrefix(md5: md5)
-        return UserDefaults.standard.dictionaryRepresentation().keys.filter { $0.hasPrefix(prefix) }.count
+        return info.coreClass.options.reduce(0) { count, option in
+            info.coreClass.hasPerGameOverride(for: option, md5: md5) ? count + 1 : count
+        }
     }
 
     private func editField(_ field: EditableField, initialValue: String?) {
@@ -808,7 +819,7 @@ struct GameMoreInfoView: View {
     private var coreOptionsSection: some View {
         let info = coreOptionsInfo
         let overrideCount = perGameOverrideCount
-        let hasGame = viewModel.pvGame != nil
+        let isMatched = viewModel.pvGame?.system != nil
 
         VStack(alignment: .leading, spacing: 8) {
             Text("CORE OPTIONS")
@@ -824,7 +835,7 @@ struct GameMoreInfoView: View {
                 HStack {
                     Image(systemName: "slider.horizontal.3")
                         .foregroundColor(info != nil ? accentColor : .secondary)
-                    Text(info != nil ? "Per-Game Settings" : (hasGame ? "No configurable core" : "ROM not matched"))
+                    Text(info != nil ? "Per-Game Settings" : (isMatched ? "No configurable core" : "ROM not matched"))
                         .font(.system(size: 14))
                         .foregroundColor(info != nil ? primaryTextColor : .secondary)
                     Spacer()
