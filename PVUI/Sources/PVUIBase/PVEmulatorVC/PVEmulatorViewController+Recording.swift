@@ -7,6 +7,7 @@
 
 #if os(iOS) || os(tvOS)
 import UIKit
+import ReplayKit
 #if canImport(Photos)
 import Photos
 #endif
@@ -116,12 +117,14 @@ extension PVEmulatorViewController {
         Task { @MainActor in
             do {
                 try await PVRecordingManager.shared.stopRecording(presenter: self)
+                RPScreenRecorder.shared().isCameraEnabled = false
                 AppState.shared.emulationUIState.isRecording = false
                 notifyOSDRecordingStateChanged()
                 ILOG("[Recording] Recording stopped and preview presented")
             } catch {
                 // On error clear the resume callback so we don't hang in a paused state
                 PVRecordingManager.shared.onPreviewDismissed = nil
+                RPScreenRecorder.shared().isCameraEnabled = false
                 AppState.shared.emulationUIState.isRecording = false
                 notifyOSDRecordingStateChanged()
                 ELOG("[Recording] Could not stop recording: \(error.localizedDescription)")
@@ -137,6 +140,7 @@ extension PVEmulatorViewController {
     @MainActor public func discardScreenRecording() {
         hideCameraOverlay()
         PVRecordingManager.shared.discardRecording()
+        RPScreenRecorder.shared().isCameraEnabled = false
         AppState.shared.emulationUIState.isRecording = false
         notifyOSDRecordingStateChanged()
         ILOG("[Recording] Recording discarded via VC")

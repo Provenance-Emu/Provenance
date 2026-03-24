@@ -243,11 +243,11 @@ struct CameraOverlaySizeTests {
         }
     }
 
-    @Test("Points values are positive")
-    func pointsPositive() {
-        for size in CameraOverlaySize.allCases {
-            #expect(size.points > 0)
-        }
+    @Test("Points match expected values")
+    func pointValues() {
+        #expect(CameraOverlaySize.small.points == 80)
+        #expect(CameraOverlaySize.medium.points == 120)
+        #expect(CameraOverlaySize.large.points == 160)
     }
 
     @Test("Points values are ordered small < medium < large")
