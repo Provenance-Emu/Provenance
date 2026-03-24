@@ -282,6 +282,52 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
 // MARK: - Query Methods
 public extension libretrodb {
+    /// Search by disc serial / product code.
+    /// In LibretroDB `serial_id` is the primary join key shared by `games` and `roms` tables.
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
+        let sanitizedSerial = sanitizeForSQLLike(serial)
+        var query = """
+            SELECT DISTINCT
+                games.display_name as game_title,
+                games.full_name,
+                games.release_year,
+                games.release_month,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                ratings.name as rating_name,
+                franchises.name as franchise_name,
+                regions.name as region_name,
+                genres.name as genre_name,
+                roms.name as rom_name,
+                roms.md5 as rom_md5,
+                platforms.id as platform_id,
+                manufacturers.name as manufacturer_name,
+                GROUP_CONCAT(genres.name) as genres
+            FROM games
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN ratings ON games.rating_id = ratings.id
+            LEFT JOIN franchises ON games.franchise_id = franchises.id
+            LEFT JOIN regions ON games.region_id = regions.id
+            LEFT JOIN genres ON games.genre_id = genres.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            WHERE games.serial_id = '\(sanitizedSerial)' COLLATE NOCASE
+            """
+
+        if let systemID = systemID {
+            query += " AND games.platform_id = \(systemID.libretroDatabaseID)"
+        }
+
+        query += "\nGROUP BY games.id\nLIMIT 1"
+
+        let results = try db.execute(query: query)
+        guard let first = results.first,
+              let metadata = try? convertDictToMetadata(first) else { return nil }
+        return convertToROMMetadata(metadata)
+    }
+
     /// Search by MD5 or other key
     internal func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [LibretroDBROMMetadata]? {
         if key == "romHashMD5" || key == "md5" {

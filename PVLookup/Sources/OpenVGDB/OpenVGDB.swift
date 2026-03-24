@@ -703,6 +703,35 @@ public extension OpenVGDB {
         return try await searchByCRC(crc)?.first
     }
 
+    /// Search by disc serial / product code.
+    /// OpenVGDB stores serials in `ROMs.romSerial` for CD-based systems (PSX, Saturn, Dreamcast, etc.).
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
+        let properties = getStandardProperties()
+        let sanitizedSerial = sanitizeForSQLLike(serial)
+        let query: String
+
+        if let systemID = systemID {
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE rom.romSerial = '\(sanitizedSerial)' COLLATE NOCASE
+                AND rom.systemID = \(systemID.openVGDBID)
+                LIMIT 1
+                """
+        } else {
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE rom.romSerial = '\(sanitizedSerial)' COLLATE NOCASE
+                LIMIT 1
+                """
+        }
+
+        return try executeQuery(query)?.first
+    }
+
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
         // First try MD5
         var query = """

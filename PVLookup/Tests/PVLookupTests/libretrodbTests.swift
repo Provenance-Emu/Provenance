@@ -92,6 +92,20 @@ struct LibretroDBTests {
         region: "Japan"
     )
 
+    // MARK: - Serial Search Tests
+
+    @Test("Search by non-existent serial returns nil")
+    func searchBySerialNotFound() async throws {
+        let result = try await db.searchROM(bySerial: "XXXXXX-INVALID", systemID: nil)
+        #expect(result == nil)
+    }
+
+    @Test("Search by non-existent serial with systemID returns nil")
+    func searchBySerialNotFoundWithSystem() async throws {
+        let result = try await db.searchROM(bySerial: "XXXXXX-INVALID", systemID: .SNES)
+        #expect(result == nil)
+    }
+
     // MARK: - MD5 Search Tests
     @Test
     func searchByMD5CaseInsensitive() async throws {

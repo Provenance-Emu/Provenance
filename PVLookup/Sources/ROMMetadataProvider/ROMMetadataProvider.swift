@@ -22,6 +22,13 @@ public protocol ROMMetadataProvider {
     ///   - systemID: Optional system ID to filter results
     /// - Returns: Array of ROM metadata matching the MD5, or nil if none found
     func searchByMD5(_ md5: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]?
+
+    /// Search by disc serial / product code
+    /// - Parameters:
+    ///   - serial: The serial / product code extracted from the disc image (e.g. "SLUS-00214")
+    ///   - systemID: Optional system ID to narrow the search
+    /// - Returns: First matching ROM metadata, or nil if not found
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata?
 }
 
 // Helper methods for database providers
@@ -59,6 +66,11 @@ public extension ROMMetadataProvider {
 
 // Default implementation for backward compatibility
 public extension ROMMetadataProvider {
+    /// Default no-op implementation — providers that lack serial data return nil.
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
+        return nil
+    }
+
     func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
         // Default implementation just wraps searchROM(byMD5:)
         if let result = try await searchROM(byMD5: md5) {

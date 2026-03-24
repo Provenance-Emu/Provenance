@@ -10,6 +10,7 @@ import Foundation
 package enum MatchType: Sendable {
     case byExtension
     case byHash(MatchHashType)
+    case bySerial(String)
     case byFolder
     case manually
 }
