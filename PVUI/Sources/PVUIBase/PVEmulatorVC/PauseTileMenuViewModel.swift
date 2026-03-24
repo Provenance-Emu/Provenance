@@ -190,9 +190,14 @@ final class PauseTileMenuViewModel: ObservableObject {
         // ── CORE section (dynamic, per-core) ────────────────────────────
         var coreTiles: [PauseMenuTile] = []
 
+        // Show Transfer Pak tile only for known compatible titles.
+        // Showing it for all N64 games is misleading — most games don't use the Transfer Pak.
+        let gameTitle = emulatorVC.game?.title ?? ""
         if let transferCore = emulatorVC.core as? TransferPakSupport,
            featureFlags.mupenTransferPak,
-           transferCore.transferPakSlotCount > 0 {
+           transferCore.transferPakSlotCount > 0,
+           TransferPakCompatibleGames.isKnownTransferPakGame(gameTitle)
+               || (0..<transferCore.transferPakSlotCount).contains(where: { transferCore.transferPakROM(forPort: $0) != nil }) {
             let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
                 transferCore.transferPakROM(forPort: $0) != nil
             }.count

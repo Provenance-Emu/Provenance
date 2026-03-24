@@ -601,10 +601,14 @@ struct PauseTileMenuView: View {
             }
         }
         .sheet(isPresented: $showingTransferPakConfig) {
-            if let game = emulatorVC.game, !game.isInvalidated {
+            if let rawGame = emulatorVC.game, !rawGame.isInvalidated {
+                // Freeze the Realm object before capturing it in the SwiftUI closure to
+                // avoid a thread-violation crash when SwiftUI evaluates the sheet content
+                // on a thread other than the one that owns the live Realm instance.
+                let frozenGame = rawGame.isFrozen ? rawGame : rawGame.freeze()
                 let transferCore = emulatorVC.core as? TransferPakSupport
                 TransferPakConfigView(
-                    game: game,
+                    game: frozenGame,
                     slotCount: transferCore?.transferPakSlotCount ?? 4,
                     applyLiveSlotChange: transferCore.map { core in
                         { port, rom in core.setTransferPakROM(rom, forPort: port) }

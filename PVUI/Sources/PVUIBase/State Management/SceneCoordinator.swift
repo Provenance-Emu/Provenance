@@ -995,23 +995,30 @@ public class SceneCoordinator: ObservableObject {
         }
     }
 
-    /// Dismisses the pre-launch Transfer Pak sheet **without** resuming the launch
-    /// continuation. Call from button actions inside the sheet (`launchAction`).
-    /// The continuation is resumed by `dismissPreLaunchTransferPak()` once the sheet
-    /// animation has fully completed (via `onDismiss`), preventing a race where
-    /// `openEmulatorScene()` changes the root view while the sheet is still mid-animation.
+    /// Dismisses the pre-launch Transfer Pak sheet and resumes the launch continuation.
+    ///
+    /// Call from button actions inside the sheet (`launchAction`).  The continuation is
+    /// resumed eagerly here — not deferred to `onDismiss` — because `.sheet(item:)` may
+    /// skip `onDismiss` when the binding is set to nil programmatically (a known SwiftUI
+    /// bug on some iOS versions), which would leave the continuation hanging and deadlock
+    /// the game-launch flow.  `dismissPreLaunchTransferPak()` (called from `onDismiss`)
+    /// is a safe no-op when called after this method.
     public func dismissPreLaunchTransferPakSheet() {
         preLaunchTransferPakGame = nil
-    }
-
-    /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
-    /// Resumes the launch continuation so `openEmulatorScene()` is called only after the
-    /// sheet is fully gone. Safe to call multiple times — second call is a no-op.
-    public func dismissPreLaunchTransferPak() {
-        preLaunchTransferPakGame = nil   // no-op if already nil (button path cleared it)
         let cont = _preLaunchContinuation
         _preLaunchContinuation = nil
         cont?.resume()
+    }
+
+    /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
+    /// Resumes the launch continuation if it has not already been resumed by
+    /// `dismissPreLaunchTransferPakSheet()`. Safe to call multiple times — second call is
+    /// a no-op because `_preLaunchContinuation` is cleared on first use.
+    public func dismissPreLaunchTransferPak() {
+        preLaunchTransferPakGame = nil   // no-op if already nil (button path cleared it)
+        guard let cont = _preLaunchContinuation else { return }
+        _preLaunchContinuation = nil
+        cont.resume()
     }
 
     /// Show error alert for game launch failures and return to main scene
