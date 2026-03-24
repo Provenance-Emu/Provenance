@@ -16,6 +16,9 @@ import PVLibrary
 import PVFeatureFlags
 import UniformTypeIdentifiers
 import PVThemes
+#if os(iOS) || targetEnvironment(macCatalyst)
+import AVKit
+#endif
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -1107,6 +1110,12 @@ struct RetroMenuView: View {
                 }
             }
 
+            #if os(iOS) || targetEnvironment(macCatalyst)
+            // AirPlay — lets users stream audio/video to nearby AirPlay devices
+            // without leaving the game session.
+            airPlaySection
+            #endif
+
             #if os(iOS)
             // Audio visualizer button (iOS 16+ only, if supported by core)
             if emulatorVC.core.supportsAudioVisualizer {
@@ -1162,6 +1171,52 @@ struct RetroMenuView: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
+
+    // MARK: - AirPlay Section (Options Tab, iOS/Catalyst only)
+
+    /// AirPlay route picker row in the Options tab.
+    /// Renders the system `AVRoutePickerView` styled to match the retro-menu aesthetic.
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    private var airPlaySection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(String(localized: "AIRPLAY"))
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
+
+            HStack(spacing: 12) {
+                Image(systemName: "airplayvideo")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(Color(red: 0.0, green: 0.8, blue: 1.0))
+                    .shadow(color: Color(red: 0.0, green: 0.8, blue: 1.0).opacity(0.7), radius: 5)
+
+                Text(String(localized: "Stream to AirPlay device"))
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+
+                Spacer()
+
+                // The AVRoutePickerView IS the button — tapping it opens the system picker.
+                AirPlayMenuButton(
+                    tintColor: .white,
+                    activeTintColor: Color(red: 0.0, green: 0.8, blue: 1.0)
+                )
+                .frame(width: 36, height: 36)
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(
+                        (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                            .opacity(palette.dark ? 0.6 : 0.9)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(Color(red: 0.0, green: 0.8, blue: 1.0).opacity(0.4), lineWidth: 1)
+                    )
+            )
+        }
+    }
+    #endif
 
     // MARK: - Mouse Input Section (Options Tab)
 

@@ -1,0 +1,94 @@
+//
+//  AirPlayRoutePickerView.swift
+//  PVUI
+//
+//  SwiftUI wrappers for AVRoutePickerView so AirPlay can be surfaced
+//  in the tile pause menu and the classic RetroMenuView.
+//
+//  Only compiled on iOS / macCatalyst — tvOS and macOS do not need
+//  an in-app AirPlay button (Control Center handles it there).
+//
+//  Part of #2684 — Add AirPlay button to pause menu / RetroMenuView
+//
+
+#if os(iOS) || targetEnvironment(macCatalyst)
+import SwiftUI
+import AVKit
+
+// MARK: - AirPlayPickerTrigger
+
+/// Invisible UIViewRepresentable that programmatically triggers the system
+/// AirPlay route picker sheet when `show` transitions to `true`.
+///
+/// Embed this with a zero-size frame inside the pause menu overlay so it
+/// is part of the view hierarchy (required for the picker to attach to
+/// the correct window), then set `show = true` from your tile/button action.
+struct AirPlayPickerTrigger: UIViewRepresentable {
+    @Binding var show: Bool
+
+    func makeUIView(context: Context) -> AVRoutePickerView {
+        let view = AVRoutePickerView()
+        // Completely invisible — this is a trigger-only helper.
+        view.alpha = 0
+        view.isUserInteractionEnabled = false
+        view.tintColor = .clear
+        return view
+    }
+
+    func updateUIView(_ uiView: AVRoutePickerView, context: Context) {
+        guard show else { return }
+        // Find the internal UIButton and fire it so the system sheet appears.
+        if let button = uiView.subviews.compactMap({ $0 as? UIButton }).first {
+            button.sendActions(for: .touchUpInside)
+        }
+        // Reset immediately so subsequent taps work.
+        DispatchQueue.main.async { show = false }
+    }
+}
+
+// MARK: - AirPlayMenuButton
+
+/// A self-contained AirPlay button styled to match the retro-menu aesthetic.
+/// It embeds an `AVRoutePickerView` directly so the system picker appears
+/// when tapped — no trigger binding required.
+///
+/// Usage in RetroMenuView:
+/// ```swift
+/// AirPlayMenuButton()
+/// ```
+struct AirPlayMenuButton: View {
+    /// Tint applied to the AVRoutePickerView icon (default: white).
+    var tintColor: Color = .white
+    /// Active (connected) tint color.
+    var activeTintColor: Color = Color(red: 0.0, green: 0.8, blue: 1.0) // retroCyan-ish
+
+    var body: some View {
+        _AVRoutePickerRepresentable(
+            tintColor: UIColor(tintColor),
+            activeTintColor: UIColor(activeTintColor)
+        )
+    }
+}
+
+// MARK: - Internal UIViewRepresentable
+
+/// Raw UIViewRepresentable wrapper — use `AirPlayMenuButton` instead.
+private struct _AVRoutePickerRepresentable: UIViewRepresentable {
+    var tintColor: UIColor
+    var activeTintColor: UIColor
+
+    func makeUIView(context: Context) -> AVRoutePickerView {
+        let view = AVRoutePickerView()
+        view.tintColor = tintColor
+        view.activeTintColor = activeTintColor
+        view.prioritizesVideoDevices = false
+        return view
+    }
+
+    func updateUIView(_ uiView: AVRoutePickerView, context: Context) {
+        uiView.tintColor = tintColor
+        uiView.activeTintColor = activeTintColor
+    }
+}
+
+#endif // os(iOS) || targetEnvironment(macCatalyst)
