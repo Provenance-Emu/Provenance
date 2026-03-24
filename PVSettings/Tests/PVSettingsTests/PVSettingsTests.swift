@@ -110,6 +110,74 @@ struct RecordingDefaultsTests {
         Defaults[.recordingClipDuration] = 60
         #expect(Defaults[.recordingClipDuration] == 60)
     }
+
+    @Test("recordingCameraPosition default is bottomRight")
+    func recordingCameraPositionDefault() {
+        Defaults.reset(.recordingCameraPosition)
+        #expect(Defaults[.recordingCameraPosition] == .bottomRight)
+    }
+
+    @Test("recordingCameraPosition key name is correct")
+    func recordingCameraPositionKeyName() {
+        #expect(Defaults.Keys.recordingCameraPosition.name == "recordingCameraPosition")
+    }
+
+    @Test("recordingCameraPosition can be changed and reset")
+    func recordingCameraPositionMutable() {
+        Defaults.reset(.recordingCameraPosition)
+        defer { Defaults.reset(.recordingCameraPosition) }
+        Defaults[.recordingCameraPosition] = .topLeft
+        #expect(Defaults[.recordingCameraPosition] == .topLeft)
+    }
+}
+
+// MARK: - CameraPosition Tests
+
+@Suite("CameraPosition")
+struct CameraPositionTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(CameraPosition.allCases.count == 4)
+    }
+
+    @Test("RawValues are correct")
+    func rawValues() {
+        #expect(CameraPosition.topLeft.rawValue == "topLeft")
+        #expect(CameraPosition.topRight.rawValue == "topRight")
+        #expect(CameraPosition.bottomLeft.rawValue == "bottomLeft")
+        #expect(CameraPosition.bottomRight.rawValue == "bottomRight")
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for position in CameraPosition.allCases {
+            let reconstructed = CameraPosition(rawValue: position.rawValue)
+            #expect(reconstructed == position)
+        }
+    }
+
+    @Test("DisplayNames are non-empty")
+    func displayNamesNonEmpty() {
+        for position in CameraPosition.allCases {
+            #expect(!position.displayName.isEmpty)
+        }
+    }
+
+    @Test("DisplayNames are correct")
+    func displayNames() {
+        #expect(CameraPosition.topLeft.displayName == "Top Left")
+        #expect(CameraPosition.topRight.displayName == "Top Right")
+        #expect(CameraPosition.bottomLeft.displayName == "Bottom Left")
+        #expect(CameraPosition.bottomRight.displayName == "Bottom Right")
+    }
+
+    @Test("SymbolNames are non-empty")
+    func symbolNamesNonEmpty() {
+        for position in CameraPosition.allCases {
+            #expect(!position.symbolName.isEmpty)
+        }
+    }
 }
 
 // MARK: - ButtonPressEffect Tests
