@@ -74,21 +74,27 @@ struct MIDIPickerSectionView: View {
             .foregroundColor(sectionHeaderColor)
             .padding(.top, 6)
 
-            // Input source picker
+            // Input source picker (single-select convenience view)
             MIDIEndpointRow(
                 label: String(localized: "INPUT"),
                 symbolName: "arrow.down.circle",
                 endpoints: midi.sources,
-                selectedID: $midi.selectedSourceID,
+                selectedID: Binding(
+                    get: { midi.selectedSourceID },
+                    set: { midi.selectedSourceID = $0 }
+                ),
                 palette: palette
             )
 
-            // Output destination picker
+            // Output destination picker (single-select convenience view)
             MIDIEndpointRow(
                 label: String(localized: "OUTPUT"),
                 symbolName: "arrow.up.circle",
                 endpoints: midi.destinations,
-                selectedID: $midi.selectedDestinationID,
+                selectedID: Binding(
+                    get: { midi.selectedDestinationID },
+                    set: { midi.selectedDestinationID = $0 }
+                ),
                 palette: palette
             )
 

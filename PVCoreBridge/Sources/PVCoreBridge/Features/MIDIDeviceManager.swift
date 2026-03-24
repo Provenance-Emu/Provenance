@@ -66,43 +66,74 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Available MIDI output destinations (devices that receive MIDI *from* Provenance).
     @Published public private(set) var destinations: [MIDIEndpointInfo] = []
 
-    /// Currently selected MIDI input source (`nil` = all sources / auto-detect).
-    /// Setting this disconnects all other sources and reconnects only the selected one
-    /// (or all sources when set to `nil`, enabling auto-detect across every device).
-    /// Changes are persisted to UserDefaults so the choice survives app restarts.
-    @Published public var selectedSourceID: MIDIUniqueID? {
+    /// Selected MIDI input source IDs.
+    /// Empty set = connect all available sources (auto-detect mode).
+    /// Non-empty = connect only the listed sources simultaneously.
+    /// Persisted across app launches via UserDefaults.
+    @Published public var selectedSourceIDs: Set<MIDIUniqueID> = [] {
         didSet {
-            if oldValue != selectedSourceID {
-                reconnectSources()
-                if let id = selectedSourceID {
-                    UserDefaults.standard.set(Int(id), forKey: Self.udKeySource)
-                } else if !clearingStaleSelection {
-                    // User explicitly chose "None": remove the persisted key so auto-restore
-                    // doesn't override the choice if the device reappears this session or next launch.
-                    UserDefaults.standard.removeObject(forKey: Self.udKeySource)
-                    sourcePreferenceApplied = true
-                }
-                // clearingStaleSelection == true: nil was set by `refreshEndpoints()` because the
-                // device went away. Preserve UserDefaults so it can be restored when it reappears.
+            guard oldValue != selectedSourceIDs else { return }
+            reconnectSources()
+            if !clearingStaleSelection {
+                persistSourceIDs()
+                if selectedSourceIDs.isEmpty { sourcePreferenceApplied = true }
             }
         }
     }
 
-    /// Currently selected MIDI output destination (`nil` = no active destination).
-    /// Changes are persisted to UserDefaults so the choice survives app restarts.
-    @Published public var selectedDestinationID: MIDIUniqueID? {
+    /// Selected MIDI output destination IDs.
+    /// Empty set = no MIDI output.
+    /// Non-empty = broadcast outgoing MIDI to all listed destinations simultaneously.
+    /// Persisted across app launches via UserDefaults.
+    @Published public var selectedDestinationIDs: Set<MIDIUniqueID> = [] {
         didSet {
-            if oldValue != selectedDestinationID {
-                if let id = selectedDestinationID {
-                    UserDefaults.standard.set(Int(id), forKey: Self.udKeyDestination)
-                } else if !clearingStaleSelection {
-                    // User explicitly chose "None": remove the persisted key so auto-restore
-                    // doesn't override the choice if the device reappears this session or next launch.
-                    UserDefaults.standard.removeObject(forKey: Self.udKeyDestination)
-                    destinationPreferenceApplied = true
-                }
-                // clearingStaleSelection == true: device went away; preserve UserDefaults for restore.
+            guard oldValue != selectedDestinationIDs else { return }
+            if !clearingStaleSelection {
+                persistDestinationIDs()
+                if selectedDestinationIDs.isEmpty { destinationPreferenceApplied = true }
             }
+        }
+    }
+
+    // MARK: - Single-device convenience accessors (backward compatibility)
+
+    /// The single selected source, if exactly one is selected; `nil` otherwise.
+    /// Setting this replaces `selectedSourceIDs` with a singleton set or empties it.
+    public var selectedSourceID: MIDIUniqueID? {
+        get { selectedSourceIDs.count == 1 ? selectedSourceIDs.first : nil }
+        set {
+            if let id = newValue { selectedSourceIDs = [id] }
+            else { selectedSourceIDs = [] }
+        }
+    }
+
+    /// The single selected destination, if exactly one is selected; `nil` otherwise.
+    /// Setting this replaces `selectedDestinationIDs` with a singleton set or empties it.
+    public var selectedDestinationID: MIDIUniqueID? {
+        get { selectedDestinationIDs.count == 1 ? selectedDestinationIDs.first : nil }
+        set {
+            if let id = newValue { selectedDestinationIDs = [id] }
+            else { selectedDestinationIDs = [] }
+        }
+    }
+
+    // MARK: - Multi-select toggle helpers
+
+    /// Toggle the given source in/out of the active selected set.
+    public func toggleSource(_ id: MIDIUniqueID) {
+        if selectedSourceIDs.contains(id) {
+            selectedSourceIDs.remove(id)
+        } else {
+            selectedSourceIDs.insert(id)
+        }
+    }
+
+    /// Toggle the given destination in/out of the active selected set.
+    public func toggleDestination(_ id: MIDIUniqueID) {
+        if selectedDestinationIDs.contains(id) {
+            selectedDestinationIDs.remove(id)
+        } else {
+            selectedDestinationIDs.insert(id)
         }
     }
 
@@ -150,17 +181,15 @@ public final class MIDIDeviceManager: ObservableObject {
     // device can still be auto-restored when it reappears.
     private var clearingStaleSelection = false
 
-    // UserDefaults keys — MUST match the `Defaults.Keys` string names defined in PVSettings
-    // (`midiSourceUniqueID` / `midiDestinationUniqueID`).
+    // UserDefaults keys
     //
-    // These are intentionally duplicated here rather than importing PVSettings into PVCoreBridge,
-    // which would add a cross-tier dependency. If you rename these keys, update BOTH this file
-    // and `PVSettings/Sources/PVSettings/Settings/Model/PVSettingsModel.swift` in lockstep.
-    //
-    // The shared string ensures `Defaults[.midiSourceUniqueID]` (PVSettings) and
-    // `UserDefaults.standard.object(forKey:)` (MIDIDeviceManager) read/write the same slot.
+    // Legacy single-select keys kept for migration (written by older builds).
+    // If you rename these, update PVSettings/Sources/PVSettings/Settings/Model/PVSettingsModel.swift too.
     private static let udKeySource = "midiSourceUniqueID"
     private static let udKeyDestination = "midiDestinationUniqueID"
+    // Multi-select keys: stored as [Int] (array of MIDIUniqueID raw values)
+    private static let udKeySourceIDs = "midiSourceUniqueIDs"
+    private static let udKeyDestinationIDs = "midiDestinationUniqueIDs"
 
     // MARK: Init
 
@@ -173,21 +202,39 @@ public final class MIDIDeviceManager: ObservableObject {
     // MARK: Private helpers
 
     /// Restores the previously-persisted source/destination selection from UserDefaults.
+    /// Prefers the multi-select `*IDs` keys; falls back to the legacy single-ID key for migration.
     /// Called once during init, after `refreshEndpoints()` has populated `sources`/`destinations`.
     private func restorePersistedSelection() {
-        if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
-           let id = MIDIUniqueID(exactly: raw) {
-            if sources.contains(where: { $0.id == id }) {
-                selectedSourceID = id
+        // Restore source IDs (multi-select)
+        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int], !rawIDs.isEmpty {
+            let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
+                .filter { id in sources.contains(where: { $0.id == id }) })
+            if !ids.isEmpty {
+                selectedSourceIDs = ids
                 sourcePreferenceApplied = true
             }
+        } else if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
+                  let id = MIDIUniqueID(exactly: raw),
+                  sources.contains(where: { $0.id == id }) {
+            // Migrate from legacy single-select key
+            selectedSourceIDs = [id]
+            sourcePreferenceApplied = true
         }
-        if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
-           let id = MIDIUniqueID(exactly: raw) {
-            if destinations.contains(where: { $0.id == id }) {
-                selectedDestinationID = id
+
+        // Restore destination IDs (multi-select)
+        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int], !rawIDs.isEmpty {
+            let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
+                .filter { id in destinations.contains(where: { $0.id == id }) })
+            if !ids.isEmpty {
+                selectedDestinationIDs = ids
                 destinationPreferenceApplied = true
             }
+        } else if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
+                  let id = MIDIUniqueID(exactly: raw),
+                  destinations.contains(where: { $0.id == id }) {
+            // Migrate from legacy single-select key
+            selectedDestinationIDs = [id]
+            destinationPreferenceApplied = true
         }
     }
 
@@ -209,43 +256,46 @@ public final class MIDIDeviceManager: ObservableObject {
         // Connect input port to all sources (idempotent for already-connected sources)
         connectAllSources()
 
-        // Clear stale selections — set clearingStaleSelection so didSet observers know this
-        // is a topology-driven nil (device gone) rather than a user "None" choice, so they
-        // preserve the UserDefaults key and leave preference-applied flags unchanged.
+        // Remove stale IDs — set clearingStaleSelection so didSet observers preserve UserDefaults
+        // and leave preference-applied flags unchanged (device gone, not user "None" choice).
         clearingStaleSelection = true
-        if let id = selectedSourceID, !sources.contains(where: { $0.id == id }) {
-            selectedSourceID = nil
-        }
-        if let id = selectedDestinationID, !destinations.contains(where: { $0.id == id }) {
-            selectedDestinationID = nil
-        }
+        let validSourceIDs = selectedSourceIDs.filter { id in sources.contains(where: { $0.id == id }) }
+        if validSourceIDs != selectedSourceIDs { selectedSourceIDs = validSourceIDs }
+        let validDestIDs = selectedDestinationIDs.filter { id in destinations.contains(where: { $0.id == id }) }
+        if validDestIDs != selectedDestinationIDs { selectedDestinationIDs = validDestIDs }
         clearingStaleSelection = false
 
         // Re-attempt to restore the persisted selection if it wasn't applied at init
-        // (handles the case where the previously-selected device appears after launch
-        // due to a CoreMIDI topology change / hot-plug event).
-        //
-        // To avoid overriding an explicit "None / all sources" user choice, we only
-        // auto-apply a persisted selection once per session. After a successful restore,
-        // subsequent calls to `refreshEndpoints()` will not re-apply it when the
-        // current selection is `nil`.  The flag is in-memory only so each app launch
-        // gets a fresh opportunity to restore.
-        if selectedSourceID == nil,
-           !sourcePreferenceApplied,
-           let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
-           let id = MIDIUniqueID(exactly: raw) {
-            if sources.contains(where: { $0.id == id }) {
-                selectedSourceID = id
+        // (handles hot-plug: the previously-selected device appears after launch).
+        // Only auto-applies once per session to avoid overriding an explicit "all sources" choice.
+        if selectedSourceIDs.isEmpty, !sourcePreferenceApplied {
+            if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int], !rawIDs.isEmpty {
+                let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
+                    .filter { id in sources.contains(where: { $0.id == id }) })
+                if !ids.isEmpty {
+                    selectedSourceIDs = ids
+                    sourcePreferenceApplied = true
+                }
+            } else if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
+                      let id = MIDIUniqueID(exactly: raw),
+                      sources.contains(where: { $0.id == id }) {
+                selectedSourceIDs = [id]
                 sourcePreferenceApplied = true
             }
         }
 
-        if selectedDestinationID == nil,
-           !destinationPreferenceApplied,
-           let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
-           let id = MIDIUniqueID(exactly: raw) {
-            if destinations.contains(where: { $0.id == id }) {
-                selectedDestinationID = id
+        if selectedDestinationIDs.isEmpty, !destinationPreferenceApplied {
+            if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int], !rawIDs.isEmpty {
+                let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
+                    .filter { id in destinations.contains(where: { $0.id == id }) })
+                if !ids.isEmpty {
+                    selectedDestinationIDs = ids
+                    destinationPreferenceApplied = true
+                }
+            } else if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
+                      let id = MIDIUniqueID(exactly: raw),
+                      destinations.contains(where: { $0.id == id }) {
+                selectedDestinationIDs = [id]
                 destinationPreferenceApplied = true
             }
         }
@@ -262,13 +312,13 @@ public final class MIDIDeviceManager: ObservableObject {
         isAutoDetecting = false
     }
 
-    /// Send raw MIDI 1.0 bytes to the currently selected output destination.
+    /// Send raw MIDI 1.0 bytes to all currently selected output destinations (broadcast).
     ///
     /// - Parameter data: Raw MIDI bytes, e.g. `Data([0x90, 60, 100])` = Note On C4.
     public func send(_ data: Data) {
-        guard !data.isEmpty,
-              let destInfo = destinations.first(where: { $0.id == selectedDestinationID })
-        else { return }
+        guard !data.isEmpty else { return }
+        let targetDests = destinations.filter { selectedDestinationIDs.contains($0.id) }
+        guard !targetDests.isEmpty else { return }
 
         // Build a MIDIPacketList in properly-aligned raw storage.
         // `[UInt8]` is only 1-byte aligned; MIDIPacketList may require 4-byte alignment
@@ -295,10 +345,13 @@ public final class MIDIDeviceManager: ObservableObject {
         }
         guard packetAdded else { return }
 
-        let sendStatus = MIDISend(outputPort, destInfo.endpointRef, listPtr)
-        if sendStatus == noErr {
-            pulseActivity(tx: true)
+        var sent = false
+        for destInfo in targetDests {
+            if MIDISend(outputPort, destInfo.endpointRef, listPtr) == noErr {
+                sent = true
+            }
         }
+        if sent { pulseActivity(tx: true) }
     }
 
     // MARK: Private — CoreMIDI setup
@@ -347,7 +400,7 @@ public final class MIDIDeviceManager: ObservableObject {
     /// `connRefCon` so the input callback can identify which device sent each
     /// event (used for auto-detect and per-source filtering).
     ///
-    /// When `selectedSourceID` is set, only the matching source is connected;
+    /// When `selectedSourceIDs` is non-empty, only matching sources are connected;
     /// otherwise all available sources are connected (required for auto-detect).
     private func connectAllSources() {
         let count = MIDIGetNumberOfSources()
@@ -355,11 +408,11 @@ public final class MIDIDeviceManager: ObservableObject {
             let src = MIDIGetSource(i)
             guard src != 0 else { continue }
 
-            // If a source is already selected, connect only that source.
-            if let selectedID = selectedSourceID {
+            // If specific sources are selected, connect only those.
+            if !selectedSourceIDs.isEmpty {
                 var uniqueID: MIDIUniqueID = 0
                 guard MIDIObjectGetIntegerProperty(src, kMIDIPropertyUniqueID, &uniqueID) == noErr,
-                      uniqueID == selectedID else { continue }
+                      selectedSourceIDs.contains(uniqueID) else { continue }
             }
 
             // Encode the endpoint ref as refCon for later identification
@@ -378,9 +431,9 @@ public final class MIDIDeviceManager: ObservableObject {
     }
 
     /// Disconnect all sources from the input port, then reconnect according to the
-    /// current `selectedSourceID`.  Called whenever `selectedSourceID` changes so
-    /// the port only receives events from the user's chosen device (or all devices
-    /// when nil).
+    /// current `selectedSourceIDs` set. Called whenever `selectedSourceIDs` changes
+    /// so the port only receives events from the selected devices (or all devices
+    /// when the set is empty).
     private func reconnectSources() {
         let count = MIDIGetNumberOfSources()
         for i in 0..<count {
@@ -446,16 +499,16 @@ public final class MIDIDeviceManager: ObservableObject {
         Task { @MainActor [weak self] in
             guard let self else { return }
 
-            // Auto-detect: first message identifies its source
+            // Auto-detect: first message selects its source (replaces current selection)
             if self.isAutoDetecting {
                 if sourceUniqueID != 0 {
-                    self.selectedSourceID = sourceUniqueID
+                    self.selectedSourceIDs = [sourceUniqueID]
                 }
                 self.isAutoDetecting = false
-            } else if let selectedID = self.selectedSourceID,
+            } else if !self.selectedSourceIDs.isEmpty,
                       sourceUniqueID != 0,
-                      sourceUniqueID != selectedID {
-                // Filter: discard events from sources other than the user's selection
+                      !self.selectedSourceIDs.contains(sourceUniqueID) {
+                // Filter: discard events from sources not in the selected set
                 return
             }
 
@@ -539,6 +592,14 @@ public final class MIDIDeviceManager: ObservableObject {
         MIDIObjectGetStringProperty(ref, kMIDIPropertyDisplayName, &cfName)
         let name = cfName?.takeRetainedValue() as String? ?? "Unknown Device"
         return MIDIEndpointInfo(id: uniqueID, name: name, endpointRef: ref)
+    }
+
+    private func persistSourceIDs() {
+        UserDefaults.standard.set(selectedSourceIDs.map { Int($0) }, forKey: Self.udKeySourceIDs)
+    }
+
+    private func persistDestinationIDs() {
+        UserDefaults.standard.set(selectedDestinationIDs.map { Int($0) }, forKey: Self.udKeyDestinationIDs)
     }
 
     private func pulseActivity(rx: Bool = false, tx: Bool = false) {

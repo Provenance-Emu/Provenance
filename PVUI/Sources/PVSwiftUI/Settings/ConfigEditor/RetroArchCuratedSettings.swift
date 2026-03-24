@@ -18,6 +18,7 @@ enum CuratedSettingCategory: String, CaseIterable, Identifiable {
     case notifications = "Notifications"
     case video = "Video"
     case audio = "Audio"
+    case midi = "MIDI"
     case performance = "Performance"
     case saves = "Saves"
     case debug = "Debug"
@@ -29,6 +30,7 @@ enum CuratedSettingCategory: String, CaseIterable, Identifiable {
         case .notifications: return "bell"
         case .video: return "tv"
         case .audio: return "speaker.wave.2"
+        case .midi: return "pianokeys"
         case .performance: return "gauge.with.needle"
         case .saves: return "square.and.arrow.down"
         case .debug: return "ladybug"
@@ -45,7 +47,7 @@ enum CuratedControlType {
 // MARK: - Settings Catalog
 
 enum RetroArchCuratedSettings {
-    static let all: [CuratedSetting] = notifications + video + audio + performance + saves + debug
+    static let all: [CuratedSetting] = notifications + video + audio + midi + performance + saves + debug
 
     static func settings(for category: CuratedSettingCategory) -> [CuratedSetting] {
         all.filter { $0.category == category }
@@ -288,6 +290,38 @@ extension RetroArchCuratedSettings {
             category: .audio,
             controlType: .toggle,
             defaultValue: "false"
+        )
+    ]
+
+    // MARK: - MIDI
+
+    static let midi: [CuratedSetting] = [
+        CuratedSetting(
+            key: "midi_enable",
+            title: "MIDI Enabled",
+            description: "Enable MIDI input/output support in RetroArch",
+            category: .midi,
+            controlType: .toggle,
+            defaultValue: "true"
+        ),
+        CuratedSetting(
+            key: "midi_driver",
+            title: "MIDI Driver",
+            description: "Backend driver used for MIDI I/O",
+            category: .midi,
+            controlType: .picker(options: [
+                (label: "CoreMIDI", value: "coremidi"),
+                (label: "None", value: "null")
+            ]),
+            defaultValue: "coremidi"
+        ),
+        CuratedSetting(
+            key: "midi_volume",
+            title: "MIDI Volume",
+            description: "Volume for MIDI synthesizer output (0–100%)",
+            category: .midi,
+            controlType: .slider(min: 0, max: 100, step: 1),
+            defaultValue: "100"
         )
     ]
 
