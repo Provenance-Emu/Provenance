@@ -352,7 +352,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
         // Destination: <romsRoot>/<systemID>/<filename>
         let destDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
-        try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
 
         // Avoid silently overwriting an existing ROM that may have different content.
         // Generate a unique destination path by appending a counter suffix when needed.
@@ -378,8 +378,20 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
                 return FileProviderItem(game: existing.asDomain(), romURL: existingFileURL)
             } else {
                 // Existing record is a placeholder or its local file is missing — keep
-                // the newly imported ROM so the user can access it via Files.app.
-                ILOG("FileProvider: existing ROM record for md5=\(md5) has no valid local file; keeping imported copy at \(destURL.lastPathComponent)")
+                // the newly imported ROM and update the Realm record so caches, sync,
+                // and metadata enrichment see the correct on-disk path.
+                ILOG("FileProvider: existing ROM record for md5=\(md5) has no valid local file; updating record with imported copy at \(destURL.lastPathComponent)")
+                let newRomFile = PVFile(withURL: destURL)
+                let newPartialPath = newRomFile.partialPath
+                try realm.write {
+                    if let oldFile = existing.file {
+                        realm.delete(oldFile)
+                    }
+                    realm.add(newRomFile)
+                    existing.file = newRomFile
+                    existing.romPath = newPartialPath
+                    existing.isDownloaded = true
+                }
                 return FileProviderItem(game: existing.asDomain(), romURL: destURL)
             }
         }
@@ -455,7 +467,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             let n = stream.read(buffer, maxLength: chunkSize)
             if n < 0 { return nil }
             if n == 0 { break }
-            hasher.update(data: UnsafeBufferPointer(start: buffer, count: n))
+            hasher.update(data: Data(bytes: buffer, count: n))
         }
 
         return hasher.finalize().map { String(format: "%02X", $0) }.joined()
