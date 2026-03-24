@@ -68,7 +68,6 @@ let package = Package(
     platforms: [
         .iOS(.v17),
         .tvOS(.v17),
-        .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),
         .visionOS(.v1)
@@ -120,7 +119,8 @@ let package = Package(
 //                "PVMupen64PlusVideoGlideN64",
 //                "PVMupen64PlusVideoRice",
                 "PVRSPCXD4",
-                "PVNetplay",
+                .product(name: "PVNetplay", package: "PVNetplay",
+                         condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
             ],
             resources: [
                 .process("Resources/Core.plist")

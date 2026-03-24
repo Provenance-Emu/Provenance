@@ -27,6 +27,7 @@
 //  PVNetplayCapable with supportsNetplay = true.
 //
 
+#if canImport(PVNetplay)
 import Foundation
 import Combine
 import PVNetplay
@@ -34,8 +35,11 @@ import PVNetplay
 // MARK: - Sendable
 
 // MupenGameCore is a mutable ObjC-derived class. State mutation is serialised
-// on the mupen run-loop thread. @unchecked Sendable is safe because PVNetplayCapable
-// callers are expected to dispatch through MainActor.run.
+// on the mupen run-loop thread. Callers (e.g. PVNetplayManager, which is an
+// actor) may invoke netplay methods from any concurrency context without an
+// explicit MainActor hop. @unchecked Sendable is therefore correct here:
+// thread safety is guaranteed by the mupen run-loop serialisation, not by
+// Swift's concurrency system.
 extension MupenGameCore: @unchecked Sendable {}
 
 // MARK: - PVNetplayCapable
@@ -77,3 +81,4 @@ extension MupenGameCore: PVNetplayCapable {
         Just(.idle).eraseToAnyPublisher()
     }
 }
+#endif // canImport(PVNetplay)
