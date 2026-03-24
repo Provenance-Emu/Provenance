@@ -285,13 +285,15 @@ public extension libretrodb {
     /// Search by disc serial / product code.
     /// In LibretroDB `serial_id` is the primary join key shared by `games` and `roms` tables.
     func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
-        let sanitizedSerial = sanitizeForSQLLike(serial)
+        // Use literal escaping (not LIKE-escaping) so that `_` in serials is preserved for = comparison.
+        let sanitizedSerial = sanitizeForSQLLiteral(serial)
         var query = """
             SELECT DISTINCT
                 games.display_name as game_title,
                 games.full_name,
                 games.release_year,
                 games.release_month,
+                games.serial_id as serial_id,
                 developers.name as developer_name,
                 publishers.name as publisher_name,
                 ratings.name as rating_name,
@@ -325,7 +327,8 @@ public extension libretrodb {
         let results = try db.execute(query: query)
         guard let first = results.first,
               let metadata = try? convertDictToMetadata(first) else { return nil }
-        return convertToROMMetadata(metadata)
+        let matchedSerial = (first["serial_id"] as? String) ?? serial
+        return convertToROMMetadata(metadata).withSerial(matchedSerial)
     }
 
     /// Search by MD5 or other key

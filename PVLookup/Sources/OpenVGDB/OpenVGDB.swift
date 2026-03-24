@@ -705,9 +705,23 @@ public extension OpenVGDB {
 
     /// Search by disc serial / product code.
     /// OpenVGDB stores serials in `ROMs.romSerial` for CD-based systems (PSX, Saturn, Dreamcast, etc.).
+    /// `romSerial` may contain comma-separated values (e.g. "T-6802G,T-6804G"), so we match against
+    /// exact equality OR a comma-padded LIKE pattern to catch list membership.
     func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
         let properties = getStandardProperties()
-        let sanitizedSerial = sanitizeForSQLLike(serial)
+        // Use literal escaping (not LIKE-escaping) for the = comparison so that `_` in serials is preserved.
+        let escapedSerial = sanitizeForSQLLiteral(serial)
+        // For the LIKE patterns, also escape LIKE wildcards.
+        let escapedSerialLike = sanitizeForSQLLike(serial)
+
+        // Match: exact ("T-5016H"), at start of list ("SERIAL,…"), middle (",SERIAL,"), end (",SERIAL")
+        let serialCondition = """
+            (rom.romSerial = '\(escapedSerial)' COLLATE NOCASE
+            OR rom.romSerial LIKE '\(escapedSerialLike),%' COLLATE NOCASE
+            OR rom.romSerial LIKE '%,\(escapedSerialLike),%' COLLATE NOCASE
+            OR rom.romSerial LIKE '%,\(escapedSerialLike)' COLLATE NOCASE)
+            """
+
         let query: String
 
         if let systemID = systemID {
@@ -715,7 +729,7 @@ public extension OpenVGDB {
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE rom.romSerial = '\(sanitizedSerial)' COLLATE NOCASE
+                WHERE \(serialCondition)
                 AND rom.systemID = \(systemID.openVGDBID)
                 LIMIT 1
                 """
@@ -724,7 +738,7 @@ public extension OpenVGDB {
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE rom.romSerial = '\(sanitizedSerial)' COLLATE NOCASE
+                WHERE \(serialCondition)
                 LIMIT 1
                 """
         }

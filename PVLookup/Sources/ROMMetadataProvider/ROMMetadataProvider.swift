@@ -55,6 +55,15 @@ public extension ROMMetadataProvider {
         return escapedLike
     }
 
+    /// Sanitizes a string for safe use in SQL equality (`=`) queries.
+    /// Only escapes single quotes; does NOT escape `_`, `%`, or other LIKE wildcards.
+    /// Use this for exact-match comparisons — use `sanitizeForSQLLike` only for LIKE patterns.
+    /// - Parameter string: The string to sanitize
+    /// - Returns: A sanitized string safe for SQL literal equality comparisons
+    func sanitizeForSQLLiteral(_ string: String) -> String {
+        return string.replacingOccurrences(of: "'", with: "''")
+    }
+
     /// Creates a SQL LIKE pattern for fuzzy matching
     /// - Parameter filename: The filename to create a pattern for
     /// - Returns: A sanitized SQL LIKE pattern

@@ -74,6 +74,34 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
         self.source = source
     }
 
+    /// Creates a copy with the given serial, preserving all other fields
+    public func withSerial(_ newSerial: String?) -> ROMMetadata {
+        return ROMMetadata(
+            gameTitle: gameTitle,
+            boxImageURL: boxImageURL,
+            region: region,
+            gameDescription: gameDescription,
+            boxBackURL: boxBackURL,
+            developer: developer,
+            publisher: publisher,
+            serial: newSerial,
+            releaseDate: releaseDate,
+            genres: genres,
+            referenceURL: referenceURL,
+            releaseID: releaseID,
+            language: language,
+            regionID: regionID,
+            systemID: systemID,
+            systemShortName: systemShortName,
+            romFileName: romFileName,
+            romHashCRC: romHashCRC,
+            romHashMD5: romHashMD5,
+            romID: romID,
+            isBIOS: isBIOS,
+            source: source
+        )
+    }
+
     /// Creates a copy with a new title
     public func copy(gameTitle: String) -> ROMMetadata {
         return ROMMetadata(

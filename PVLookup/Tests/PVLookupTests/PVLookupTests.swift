@@ -843,4 +843,51 @@ struct PVLookupSystemTests {
         #expect(!mappings.romFileNameToMD5.isEmpty, "Should have filename mappings")
     }
 
+    // MARK: - Serial Search Tests (PVLookup aggregation)
+
+    let nhlPSX = (
+        serial: "SLUS-00030",
+        systemID: SystemIdentifier.PSX
+    )
+
+    @Test("PVLookup: serial search returns result from OpenVGDB")
+    func searchBySerialAggregation() async throws {
+        let result = try await lookup.searchROM(bySerial: nhlPSX.serial, systemID: nil)
+
+        #expect(result != nil)
+        #expect(result?.serial == nhlPSX.serial)
+        #expect(result?.systemID == nhlPSX.systemID)
+    }
+
+    @Test("PVLookup: serial search respects systemID filter")
+    func searchBySerialWithSystemFilter() async throws {
+        let correctSystem = try await lookup.searchROM(bySerial: nhlPSX.serial, systemID: nhlPSX.systemID)
+        #expect(correctSystem != nil)
+
+        let wrongSystem = try await lookup.searchROM(bySerial: nhlPSX.serial, systemID: .Saturn)
+        #expect(wrongSystem == nil)
+    }
+
+    @Test("PVLookup: serial cache returns same result on second call")
+    func searchBySerialCacheHit() async throws {
+        let first = try await lookup.searchROM(bySerial: nhlPSX.serial, systemID: nil)
+        let second = try await lookup.searchROM(bySerial: nhlPSX.serial, systemID: nil)
+
+        // Both calls should return the same non-nil result (second is from cache)
+        #expect(first != nil)
+        #expect(second != nil)
+        #expect(first?.gameTitle == second?.gameTitle)
+        #expect(first?.serial == second?.serial)
+    }
+
+    @Test("PVLookup: non-existent serial returns nil and caches miss")
+    func searchBySerialMissIsCached() async throws {
+        let result = try await lookup.searchROM(bySerial: "XXXXXX-INVALID-SERIAL", systemID: nil)
+        #expect(result == nil)
+
+        // Second call should also return nil (cached miss)
+        let result2 = try await lookup.searchROM(bySerial: "XXXXXX-INVALID-SERIAL", systemID: nil)
+        #expect(result2 == nil)
+    }
+
 }
