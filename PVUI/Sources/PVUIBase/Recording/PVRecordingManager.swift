@@ -84,6 +84,9 @@ import PVSettings
 
         let recorder = RPScreenRecorder.shared()
         recorder.isMicrophoneEnabled = Defaults[.recordingMicEnabled]
+        // Camera PIP: enable before startRecording so ReplayKit provides
+        // cameraPreviewLayer immediately after the call completes.
+        recorder.isCameraEnabled = Defaults[.recordingCameraEnabled]
 
         // Mark that a recording setup is in-flight *before* calling startRecording.
         // The system may show a permission/indicator UI during startRecording, which

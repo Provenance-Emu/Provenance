@@ -82,12 +82,14 @@ extension PVEmulatorViewController {
 
     /// Starts a ReplayKit screen recording session.
     /// Updates `AppState.shared.emulationUIState.isRecording` on success.
+    /// If camera is enabled in settings, also shows the face-cam overlay.
     public func startScreenRecording() {
         Task { @MainActor in
             do {
                 try await PVRecordingManager.shared.startRecording()
                 AppState.shared.emulationUIState.isRecording = true
                 notifyOSDRecordingStateChanged()
+                showCameraOverlayIfEnabled()
                 ILOG("[Recording] Recording started")
             } catch {
                 ELOG("[Recording] Could not start recording: \(error.localizedDescription)")
@@ -102,6 +104,8 @@ extension PVEmulatorViewController {
     /// The game **remains paused** while the preview sheet is visible.  Emulation
     /// resumes automatically once the user dismisses the preview (save / discard).
     public func stopScreenRecording() {
+        hideCameraOverlay()
+
         // Register a callback so emulation resumes after the preview is dismissed.
         PVRecordingManager.shared.onPreviewDismissed = { [weak self] in
             guard let self, self.core.isOn else { return }
@@ -131,6 +135,7 @@ extension PVEmulatorViewController {
     /// Discards the current recording without presenting the preview.
     /// Updates `AppState.shared.emulationUIState.isRecording` to keep state consistent.
     @MainActor public func discardScreenRecording() {
+        hideCameraOverlay()
         PVRecordingManager.shared.discardRecording()
         AppState.shared.emulationUIState.isRecording = false
         notifyOSDRecordingStateChanged()
@@ -150,6 +155,37 @@ extension PVEmulatorViewController {
         } else {
             startScreenRecording()
         }
+    }
+
+    // MARK: - Camera Overlay
+
+    /// The lazily-created face-cam overlay view. Nil until created or when camera capture is disabled.
+    private static var cameraOverlayKey: UInt8 = 0
+    private var cameraOverlayView: PVCameraOverlayView? {
+        get { objc_getAssociatedObject(self, &Self.cameraOverlayKey) as? PVCameraOverlayView }
+        set { objc_setAssociatedObject(self, &Self.cameraOverlayKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// Shows the face-cam overlay if the user has enabled camera capture in Settings.
+    /// Must be called after `startRecording()` succeeds so that `cameraPreviewLayer` is non-nil.
+    public func showCameraOverlayIfEnabled() {
+        guard Defaults[.recordingCameraEnabled] else { return }
+
+        if cameraOverlayView == nil {
+            let overlay = PVCameraOverlayView()
+            view.addSubview(overlay)
+            overlay.frame = view.bounds
+            overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            cameraOverlayView = overlay
+        }
+        // Restart observation in case a previous detach() cancelled the tasks.
+        cameraOverlayView?.startObservingSettings()
+        cameraOverlayView?.attach()
+    }
+
+    /// Hides and detaches the face-cam overlay. Safe to call even if no overlay is active.
+    public func hideCameraOverlay() {
+        cameraOverlayView?.detach()
     }
 
     // MARK: Private
