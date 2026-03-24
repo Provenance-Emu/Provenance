@@ -1,0 +1,634 @@
+##
+## project.yml — XcodeGen spec for PVMupen64Plus
+##
+## Usage:
+##   xcodegen generate --spec project.yml
+##
+## This file mirrors the structure defined in Package.swift so that both
+## SPM (swift build) and Xcode (via XcodeGen) build paths are supported.
+##
+## Regenerate the .xcodeproj at any time with:
+##   cd Cores/Mupen64Plus && xcodegen generate
+##
+
+name: PVMupen64Plus
+
+options:
+  bundleIdPrefix: org.provenance-emu
+  createIntermediateGroups: true
+  defaultConfig: Release
+  deploymentTarget:
+    iOS: "17.0"
+    tvOS: "17.0"
+  developmentLanguage: en
+  groupSortPosition: top
+  minimumXcodeGenVersion: "2.36"
+  indentWidth: 4
+  tabWidth: 4
+  usesTabs: false
+  xcodeVersion: "16.0"
+  # Allow multi-platform targets
+  allowedOverridesForPlatformSpecialization: true
+
+configs:
+  Debug: debug
+  Release: release
+
+# ─── Shared preprocessor defines ─────────────────────────────────────────────
+# These are common across all C/ObjC targets and mirror sharedCSettings in
+# Package.swift.
+
+settings:
+  base:
+    ALLOW_TARGET_PLATFORM_SPECIALIZATION: YES
+    SUPPORTED_PLATFORMS: "iphoneos iphonesimulator appletvos appletvsimulator"
+    SWIFT_VERSION: "5.0"
+    CLANG_CXX_LANGUAGE_STANDARD: "gnu++11"
+    GCC_C_LANGUAGE_STANDARD: "gnu99"
+    # Common preprocessor defines (all platforms)
+    GCC_PREPROCESSOR_DEFINITIONS:
+      - "$(inherited)"
+      - "__unix__=1"
+      - "GCC=1"
+      - "GLES_SILENCE_DEPRECATION=1"
+      - "GL_SILENCE_DEPRECATION=1"
+      - "M64P_PLUGIN_PROTOTYPES=1"
+      - "MUPENPLUSAPI=1"
+      - "M64P_PLUGIN_API=1"
+      - "IN_OPENEMU=1"
+      - "PIC=1"
+      - "M64P_PARALLEL=1"
+      - "NO_ASM=1"
+      - "PROVENANCE=1"
+      - "TXFILTER_LIB=1"
+      - "VFP_HARD=1"
+    OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC"
+    HEADER_SEARCH_PATHS: "$(inherited)"
+    FRAMEWORK_SEARCH_PATHS: "$(inherited)"
+    LD_RUNPATH_SEARCH_PATHS: "$(inherited)"
+  configs:
+    Debug:
+      COPY_PHASE_STRIP: NO
+      GCC_OPTIMIZATION_LEVEL: "0"
+      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+      MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
+    Release:
+      COPY_PHASE_STRIP: YES
+      SWIFT_OPTIMIZATION_LEVEL: "-O"
+      MTL_ENABLE_DEBUG_INFO: NO
+
+# ─── Targets ─────────────────────────────────────────────────────────────────
+
+targets:
+
+  # ===========================================================================
+  # PVMupen — Main Swift product target
+  # ===========================================================================
+  PVMupen:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/PVMupen
+        excludes:
+          - "CorePlist-Generated.swift"
+    dependencies:
+      - target: PVMupenBridge
+      - target: PVMupen64PlusCore
+      - target: PVRSPCXD4
+    settings:
+      base:
+        PRODUCT_NAME: PVMupen
+        INFOPLIST_FILE: PVMupen64Plus-Info.plist
+        SWIFT_VERSION: "5.0"
+        DEFINES_MODULE: YES
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS:
+          - "$(inherited)"
+          - "GLES_SILENCE_DEPRECATION"
+          - "GL_SILENCE_DEPRECATION"
+          - "M64P_PLUGIN_PROTOTYPES"
+          - "MUPENPLUSAPI"
+          - "NO_ASM"
+          - "PROVENANCE"
+          - "TXFILTER_LIB"
+          - "USE_GLES"
+          - "VFP_HARD"
+          - "__unix__"
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/Core/Core/src/"
+
+  # ===========================================================================
+  # PVMupenBridge — ObjC bridge layer
+  # ===========================================================================
+  PVMupenBridge:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/PVMupenBridge
+        excludes: []
+    dependencies:
+      - target: PVMupen64PlusCore
+      - target: SDL
+    settings:
+      base:
+        PRODUCT_NAME: PVMupenBridge
+        DEFINES_MODULE: YES
+        CLANG_ENABLE_MODULES: YES
+        CLANG_ENABLE_OBJC_ARC: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/Core/Core/src/"
+          - "Sources/Plugins/Core/Core/src/api"
+          - "Sources/Compatibility/SDL/"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+
+  # ===========================================================================
+  # PVMupen64PlusCore — Core emulator library (libmupen64plus)
+  # ===========================================================================
+  PVMupen64PlusCore:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Plugins/Core/Core/src
+        # Only the explicit sources from Package.swift
+        includes:
+          - "api/callbacks.c"
+          - "api/common.c"
+          - "api/config.c"
+          - "api/debugger.c"
+          - "api/frontend.c"
+          - "asm_defines/asm_defines.c"
+          - "backends/clock_ctime_plus_delta.c"
+          - "backends/file_storage.c"
+          - "backends/plugins_compat/audio_plugin_compat.c"
+          - "backends/plugins_compat/input_plugin_compat.c"
+          - "device/cart/af_rtc.c"
+          - "device/cart/cart.c"
+          - "device/cart/cart_rom.c"
+          - "device/cart/eeprom.c"
+          - "device/cart/flashram.c"
+          - "device/cart/sram.c"
+          - "device/controllers/game_controller.c"
+          - "device/controllers/paks/mempak.c"
+          - "device/controllers/paks/rumblepak.c"
+          - "device/controllers/paks/transferpak.c"
+          - "device/device.c"
+          - "device/gb/gb_cart.c"
+          - "device/gb/m64282fp.c"
+          - "device/gb/mbc3_rtc.c"
+          - "device/memory/memory.c"
+          - "device/pif/bootrom_hle.c"
+          - "device/pif/cic.c"
+          - "device/pif/n64_cic_nus_6105.c"
+          - "device/pif/pif.c"
+          - "device/r4300/cached_interp.c"
+          - "device/r4300/cp0.c"
+          - "device/r4300/cp1.c"
+          - "device/r4300/idec.c"
+          - "device/r4300/interrupt.c"
+          - "device/r4300/pure_interp.c"
+          - "device/r4300/r4300_core.c"
+          - "device/r4300/tlb.c"
+          - "device/rcp/ai/ai_controller.c"
+          - "device/rcp/mi/mi_controller.c"
+          - "device/rcp/pi/pi_controller.c"
+          - "device/rcp/rdp/fb.c"
+          - "device/rcp/rdp/rdp_core.c"
+          - "device/rcp/ri/ri_controller.c"
+          - "device/rcp/rsp/rsp_core.c"
+          - "device/rcp/si/si_controller.c"
+          - "device/rcp/vi/vi_controller.c"
+          - "device/rdram/rdram.c"
+          - "main/cheat.c"
+          - "main/lirc.c"
+          - "main/md5.c"
+          - "main/rom.c"
+          - "main/savestates.c"
+          - "main/sdl_key_converter.c"
+          - "main/util.c"
+          - "main/workqueue.c"
+          - "main/xxHash/xxhash.c"
+          - "main/zip/ioapi.c"
+          - "main/zip/unzip.c"
+          - "main/zip/zip.c"
+          - "osal/dynamiclib_unix.c"
+          - "osal/files_macos.c"
+          - "plugin/dummy_audio.c"
+          - "plugin/dummy_input.c"
+          - "plugin/dummy_rsp.c"
+          - "plugin/dummy_video.c"
+          - "plugin/plugin.c"
+    dependencies:
+      - target: SDL
+    settings:
+      base:
+        PRODUCT_NAME: PVMupen64PlusCore
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/Core/Core/src/"
+          - "Sources/Compatibility/SDL/"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+
+  # ===========================================================================
+  # PVRSPCXD4 — CXD4 RSP plugin
+  # ===========================================================================
+  PVRSPCXD4:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Plugins/rsp/cxd4
+        includes:
+          - "module.c"
+          - "osal_dynamiclib_unix.c"
+          - "su.c"
+          - "vu/add.c"
+          - "vu/divide.c"
+          - "vu/logical.c"
+          - "vu/multiply.c"
+          - "vu/select.c"
+          - "vu/vu.c"
+    settings:
+      base:
+        PRODUCT_NAME: PVRSPCXD4
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/rsp/cxd4/"
+          - "Sources/Plugins/Core/Core/src/api"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+          - "HAVE_STANDARD_INTEGER_TYPES=1"
+          - "M64P_PLUGIN_API=1"
+
+  # ===========================================================================
+  # PVMupen64PlusRspHLE — HLE RSP plugin
+  # ===========================================================================
+  PVMupen64PlusRspHLE:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Plugins/rsp/hle/src
+        includes:
+          - "alist.c"
+          - "alist_audio.c"
+          - "alist_naudio.c"
+          - "alist_nead.c"
+          - "audio.c"
+          - "cicx105.c"
+          - "hle.c"
+          - "hvqm.c"
+          - "jpeg.c"
+          - "memory.c"
+          - "mp3.c"
+          - "musyx.c"
+          - "osal_dynamiclib_unix.c"
+          - "plugin.c"
+          - "re2.c"
+    settings:
+      base:
+        PRODUCT_NAME: PVMupen64PlusRspHLE
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/rsp/hle/src/"
+          - "Sources/Plugins/Core/Core/src/api"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+
+  # ===========================================================================
+  # SDL — Stub SDL compatibility layer
+  # ===========================================================================
+  SDL:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Compatibility/SDL
+        includes:
+          - "SDLStubs.m"
+    settings:
+      base:
+        PRODUCT_NAME: SDL
+        DEFINES_MODULE: YES
+        CLANG_ENABLE_OBJC_ARC: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Compatibility/SDL/"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+
+  # ===========================================================================
+  # libpng — PNG library (bundled)
+  # ===========================================================================
+  libpng:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/libpng
+        includes:
+          - "png/arm/arm_init.c"
+          - "png/arm/filter_neon_intrinsics.c"
+          - "png/png.c"
+          - "png/pngerror.c"
+          - "png/pngget.c"
+          - "png/pngmem.c"
+          - "png/pngpread.c"
+          - "png/pngread.c"
+          - "png/pngrio.c"
+          - "png/pngrtran.c"
+          - "png/pngrutil.c"
+          - "png/pngset.c"
+          - "png/pngtest.c"
+          - "png/pngtrans.c"
+          - "png/pngwio.c"
+          - "png/pngwrite.c"
+          - "png/pngwtran.c"
+          - "png/pngwutil.c"
+    settings:
+      base:
+        PRODUCT_NAME: libpng
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/libpng/include"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+          - "PNG_ARM_NEON_OPT=0"
+      linkerFlags:
+        - "-lz"
+
+  # ===========================================================================
+  # glidenhq — GlideN64 texture enhancement library
+  # ===========================================================================
+  glidenhq:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Plugins/Video/gliden64/src/GLideNHQ
+        includes:
+          - "TextureFilters.cpp"
+          - "TextureFilters_2xsai.cpp"
+          - "TextureFilters_hq2x.cpp"
+          - "TextureFilters_hq4x.cpp"
+          - "TextureFilters_xbrz.cpp"
+          - "TxCache.cpp"
+          - "TxDbg_ios.mm"
+          - "TxFilter.cpp"
+          - "TxFilterExport.cpp"
+          - "TxHiResCache.cpp"
+          - "TxImage.cpp"
+          - "TxQuantize.cpp"
+          - "TxReSample.cpp"
+          - "TxTexCache.cpp"
+          - "TxUtil.cpp"
+          - "txWidestringWrapper.cpp"
+    dependencies:
+      - target: libpng
+    settings:
+      base:
+        PRODUCT_NAME: glidenhq
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/Video/gliden64/src/"
+          - "Sources/Plugins/Video/gliden64/src/inc"
+          - "Sources/Plugins/Video/gliden64/src/GLideNHQ"
+          - "Sources/Plugins/Video/gliden64/src/GLideNHQ/inc"
+          - "Sources/Plugins/Video/gliden64/src/osal/"
+          - "Sources/Plugins/Video/gliden64/src/xxHash/"
+          - "Sources/Plugins/Video/gliden64/src/Neon/"
+          - "Sources/Plugins/Video/gliden64/src/mupenplus/"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+      linkerFlags:
+        - "-lz"
+
+  # ===========================================================================
+  # gliden_osd — OSD compatibility shim for GlideN64
+  # ===========================================================================
+  gliden_osd:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Compatibility/GlideN
+        includes:
+          - "gliden_osd.cpp"
+    settings:
+      base:
+        PRODUCT_NAME: gliden_osd
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Compatibility/GlideN/"
+          - "Sources/Plugins/Video/gliden64/src"
+          - "Sources/Plugins/Video/rice/src"
+          - "Sources/Plugins/Core/Core/src"
+        OTHER_CFLAGS:
+          - "$(inherited)"
+          - "-ffast-math"
+          - "-fno-strict-aliasing"
+          - "-fvisibility=hidden"
+          - "-fomit-frame-pointer"
+          - "-fvisibility-inlines-hidden"
+          - "-fPIC"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+
+  # ===========================================================================
+  # PVMupen64PlusVideoGlideN64 — GlideN64 video plugin
+  # ===========================================================================
+  PVMupen64PlusVideoGlideN64:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Plugins/Video/gliden64/src
+        includes:
+          - "BufferCopy/ColorBufferToRDRAM.cpp"
+          - "BufferCopy/DepthBufferToRDRAM.cpp"
+          - "BufferCopy/RDRAMtoColorBuffer.cpp"
+          - "Combiner.cpp"
+          - "CombinerKey.cpp"
+          - "CommonPluginAPI.cpp"
+          - "Config.cpp"
+          - "DebugDump.cpp"
+          - "Debugger.cpp"
+          - "DepthBuffer.cpp"
+          - "DepthBufferRender/ClipPolygon.cpp"
+          - "DepthBufferRender/DepthBufferRender.cpp"
+          - "DisplayLoadProgress.cpp"
+          - "DisplayWindow.cpp"
+          - "FrameBuffer.cpp"
+          - "FrameBufferInfo.cpp"
+          - "GBI.cpp"
+          - "GLideN64.cpp"
+          - "Graphics/ColorBufferReader.cpp"
+          - "Graphics/CombinerProgram.cpp"
+          - "Graphics/Context.cpp"
+          - "Graphics/ObjectHandle.cpp"
+          - "Graphics/OpenGLContext/GLFunctions.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_CombinerInputs.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_CombinerProgramImpl.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_CombinerProgramUniformFactory.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_FXAA.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_ShaderStorage.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_SpecialShadersFactory.cpp"
+          - "Graphics/OpenGLContext/GLSL/glsl_Utils.cpp"
+          - "Graphics/OpenGLContext/mupen64plus/mupen64plus_DisplayWindow.cpp"
+          - "Graphics/OpenGLContext/opengl_Attributes.cpp"
+          - "Graphics/OpenGLContext/opengl_BufferManipulationObjectFactory.cpp"
+          - "Graphics/OpenGLContext/opengl_BufferedDrawer.cpp"
+          - "Graphics/OpenGLContext/opengl_CachedFunctions.cpp"
+          - "Graphics/OpenGLContext/opengl_ColorBufferReaderWithBufferStorage.cpp"
+          - "Graphics/OpenGLContext/opengl_ColorBufferReaderWithPixelBuffer.cpp"
+          - "Graphics/OpenGLContext/opengl_ColorBufferReaderWithReadPixels.cpp"
+          - "Graphics/OpenGLContext/opengl_ContextImpl.cpp"
+          - "Graphics/OpenGLContext/opengl_GLInfo.cpp"
+          - "Graphics/OpenGLContext/opengl_Parameters.cpp"
+          - "Graphics/OpenGLContext/opengl_TextureManipulationObjectFactory.cpp"
+          - "Graphics/OpenGLContext/opengl_UnbufferedDrawer.cpp"
+          - "Graphics/OpenGLContext/opengl_Utils.cpp"
+          - "GraphicsDrawer.cpp"
+          - "Keys.cpp"
+          - "Log_ios.mm"
+          - "MupenPlusPluginAPI.cpp"
+          - "N64.cpp"
+          - "Neon/3DMathNeon.cpp"
+          - "Neon/CRC_OPT_NEON.cpp"
+          - "Neon/RSP_LoadMatrixNeon.cpp"
+          - "Neon/gSPNeon.cpp"
+          - "NoiseTexture.cpp"
+          - "PaletteTexture.cpp"
+          - "Performance.cpp"
+          - "PostProcessor.cpp"
+          - "RDP.cpp"
+          - "RSP.cpp"
+          - "SoftwareRender.cpp"
+          - "TexrectDrawer.cpp"
+          - "TextureFilterHandler.cpp"
+          - "Textures.cpp"
+          - "VI.cpp"
+          - "ZlutTexture.cpp"
+          - "common/CommonAPIImpl_common.cpp"
+          - "convert.cpp"
+          - "gDP.cpp"
+          - "mupenplus/CommonAPIImpl_mupenplus.cpp"
+          - "mupenplus/Config_mupenplus.cpp"
+          - "mupenplus/MupenPlusAPIImpl.cpp"
+          - "osal/osal_files_ios.mm"
+          - "uCodes/F3D.cpp"
+          - "uCodes/F3DAM.cpp"
+          - "uCodes/F3DBETA.cpp"
+          - "uCodes/F3DDKR.cpp"
+          - "uCodes/F3DEX.cpp"
+          - "uCodes/F3DEX2.cpp"
+          - "uCodes/F3DEX2ACCLAIM.cpp"
+          - "uCodes/F3DEX2CBFD.cpp"
+          - "uCodes/F3DFLX2.cpp"
+          - "uCodes/F3DGOLDEN.cpp"
+          - "uCodes/F3DPD.cpp"
+          - "uCodes/F3DSETA.cpp"
+          - "uCodes/F3DTEXA.cpp"
+          - "uCodes/F3DZEX2.cpp"
+          - "uCodes/F5Indi_Naboo.cpp"
+          - "uCodes/F5Rogue.cpp"
+          - "uCodes/L3D.cpp"
+          - "uCodes/L3DEX.cpp"
+          - "uCodes/L3DEX2.cpp"
+          - "uCodes/S2DEX.cpp"
+          - "uCodes/S2DEX2.cpp"
+          - "uCodes/T3DUX.cpp"
+          - "uCodes/Turbo3D.cpp"
+          - "uCodes/ZSort.cpp"
+          - "uCodes/ZSortBOSS.cpp"
+          - "xxHash/xxhash.c"
+        # Exclude non-NEON sources (Package.swift uses Neon/* variants for iOS/tvOS)
+        excludes:
+          - "CRC_OPT.cpp"
+          - "3DMath.cpp"
+          - "RSP_LoadMatrix.cpp"
+          - "gSP.cpp"
+    dependencies:
+      - target: glidenhq
+      - target: gliden_osd
+    settings:
+      base:
+        PRODUCT_NAME: PVMupen64PlusVideoGlideN64
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/Video/gliden64/src/"
+          - "Sources/Plugins/Video/gliden64/src/osal"
+          - "Sources/Plugins/Video/gliden64/src/inc"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+      linkerFlags:
+        - "-lz"
+      sdk:
+        iOS:
+          OTHER_LDFLAGS: "-framework OpenGLES"
+        tvOS:
+          OTHER_LDFLAGS: "-framework OpenGLES"
+
+  # ===========================================================================
+  # PVMupen64PlusVideoRice — Rice video plugin
+  # ===========================================================================
+  PVMupen64PlusVideoRice:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: Sources/Plugins/Video/rice/rice/src
+        includes:
+          - "Blender.cpp"
+          - "Combiner.cpp"
+          - "Config.cpp"
+          - "ConvertImage.cpp"
+          - "ConvertImage16.cpp"
+          - "Debugger.cpp"
+          - "DeviceBuilder.cpp"
+          - "FrameBuffer.cpp"
+          - "GraphicsContext.cpp"
+          - "OGLCombiner.cpp"
+          - "OGLExtensions.cpp"
+          - "OGLGraphicsContext.cpp"
+          - "OGLRender.cpp"
+          - "OGLRenderExt.cpp"
+          - "OGLTexture.cpp"
+          - "RSP_Parser.cpp"
+          - "RSP_S2DEX.cpp"
+          - "Render.cpp"
+          - "RenderBase.cpp"
+          - "RenderExt.cpp"
+          - "RenderTexture.cpp"
+          - "Texture.cpp"
+          - "TextureFilters.cpp"
+          - "TextureFilters_2xsai.cpp"
+          - "TextureFilters_hq2x.cpp"
+          - "TextureFilters_hq4x.cpp"
+          - "TextureManager.cpp"
+          - "VectorMath.cpp"
+          - "Video.cpp"
+          - "liblinux/BMGImage.c"
+          - "liblinux/BMGUtils.c"
+          - "liblinux/bmp.c"
+          - "liblinux/pngrw.c"
+          - "osal_dynamiclib_unix.c"
+          - "osal_files_unix.c"
+    dependencies:
+      - target: libpng
+    settings:
+      base:
+        PRODUCT_NAME: PVMupen64PlusVideoRice
+        DEFINES_MODULE: YES
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "Sources/Plugins/Video/rice/rice/src/"
+          - "Sources/Plugins/Core/Core/src/"
+          - "Sources/Plugins/Core/Core/src/api"
+          - "Sources/Compatibility/SDL/"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - "$(inherited)"
+      linkerFlags:
+        - "-lz"
