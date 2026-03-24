@@ -78,44 +78,72 @@ extension PVEmulatorViewController {
 
     @objc func screenDidConnect(_ note: Notification?) {
         ILOG("Screen did connect: \(note?.object ?? "")")
-        if secondaryScreen == nil {
-            secondaryScreen = UIScreen.screens[1]
-            if let aBounds = secondaryScreen?.bounds {
-                secondaryWindow = UIWindow(frame: aBounds)
-            }
-            if let aScreen = secondaryScreen {
-                secondaryWindow?.screen = aScreen
-            }
-            gpuViewController.view?.removeFromSuperview()
-            gpuViewController.removeFromParent()
-            secondaryWindow?.rootViewController = gpuViewController
-            gpuViewController.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = gpuViewController.view {
-                secondaryWindow?.addSubview(aView)
-            }
-            secondaryWindow?.isHidden = false
-            gpuViewController.view?.setNeedsLayout()
+        guard secondaryScreen == nil else { return }
+
+        let mode = Defaults[.externalDisplayMode]
+        let canUseDedicated = !core.skipLayout  // standard Metal cores
+
+        guard mode == .dedicated && canUseDedicated else {
+            ILOG("External display connected – using system mirror mode (mode=\(mode.rawValue), canUseDedicated=\(canUseDedicated))")
+            hideOrShowMenuButton()
+            return
         }
+
+        ILOG("External display connected – activating dedicated game view")
+        attachGPUView(to: UIScreen.screens[1])
         hideOrShowMenuButton()
     }
 
     @objc func screenDidDisconnect(_ note: Notification?) {
         ILOG("Screen did disconnect: \(note?.object ?? "")")
         let screen = note?.object as? UIScreen
-        if secondaryScreen == screen {
-            gpuViewController.view?.removeFromSuperview()
-            gpuViewController.removeFromParent()
-            addChild(gpuViewController)
-
-            if let aView = gpuViewController.view, let aView1 = controllerViewController?.view {
-                view.insertSubview(aView, belowSubview: aView1)
-            }
-
-            gpuViewController.view?.setNeedsLayout()
-            secondaryWindow = nil
-            secondaryScreen = nil
-        }
+        guard secondaryScreen == screen else { return }
+        restoreGPUViewToDevice()
         hideOrShowMenuButton()
+    }
+
+    // MARK: - External Display Helpers
+
+    /// Moves the GPU view controller to the specified external screen's window.
+    func attachGPUView(to screen: UIScreen) {
+        secondaryScreen = screen
+        // Detach from primary screen first
+        gpuViewController.view?.removeFromSuperview()
+        gpuViewController.removeFromParent()
+
+        let window = UIWindow(frame: screen.bounds)
+        // `UIWindow.screen` is deprecated in iOS 13 but remains the only reliable
+        // way to target a specific `UIScreen` without a full `UIWindowScene`
+        // integration.  The scene-based path (iOS 16+) would require adopting
+        // `UIWindowSceneGeometryPreferencesExternal`, which is a multi-step refactor
+        // tracked in the issue body.  For now we keep the legacy assignment so the
+        // feature works on iOS 15 and up.
+        window.screen = screen
+        window.rootViewController = gpuViewController
+        gpuViewController.view?.frame = window.bounds
+        if let gpuView = gpuViewController.view {
+            window.addSubview(gpuView)
+        }
+        window.isHidden = false
+        gpuViewController.view?.setNeedsLayout()
+        secondaryWindow = window
+    }
+
+    /// Restores the GPU view controller back to the primary device screen after
+    /// an external display disconnects.
+    func restoreGPUViewToDevice() {
+        gpuViewController.view?.removeFromSuperview()
+        gpuViewController.removeFromParent()
+        addChild(gpuViewController)
+
+        if let gpuView = gpuViewController.view,
+           let controllerView = controllerViewController?.view {
+            view.insertSubview(gpuView, belowSubview: controllerView)
+        }
+
+        gpuViewController.view?.setNeedsLayout()
+        secondaryWindow = nil
+        secondaryScreen = nil
     }
 }
 

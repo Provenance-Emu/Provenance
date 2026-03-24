@@ -288,6 +288,15 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// Whether this core supports dual screens (e.g., 3DS, DS)
     @objc dynamic open var supportsDualScreens: Bool { false }
 
+    /// Whether this core supports dedicated external-display mode.
+    ///
+    /// When `true` the emulator view controller may move the Metal GPU view to the
+    /// external screen and leave the controller skin on the device.  Return `false`
+    /// (the default) for any core that manages its own rendering surface (RetroArch,
+    /// Dolphin, PPSSPP, Play!, emuThreeDS, etc.); those cores fall back to system
+    /// AirPlay mirroring and the user-selected `ExternalDisplayMode` is ignored.
+    @objc dynamic open var supportsExternalDisplay: Bool { false }
+
     // MARK: JIT
 
     /// Describes how this core uses JIT compilation.

@@ -754,21 +754,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             try core.loadFile(atPath: romURL.path)
         }
 
-        #warning("TODO: Handle multiple screens with UIScene")
-        if UIScreen.screens.count > 1 && !core.skipLayout {
-            secondaryScreen = UIScreen.screens[1]
-            if let aBounds = secondaryScreen?.bounds {
-                secondaryWindow = UIWindow(frame: aBounds)
-            }
-            if let aScreen = secondaryScreen {
-                secondaryWindow?.screen = aScreen
-            }
-            secondaryWindow?.rootViewController = gpuViewController
-            gpuViewController.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = gpuViewController.view {
-                secondaryWindow?.addSubview(aView)
-            }
-            secondaryWindow?.isHidden = false
+        // Route game view to an external display when one is already connected at launch
+        // and the user has chosen dedicated mode.  Non-capable cores (skipLayout=true)
+        // fall through and receive the normal primary-screen path below.
+        let externalMode = Defaults[.externalDisplayMode]
+        let screenCount = UIScreen.screens.count
+        if screenCount > 1 && !core.skipLayout && externalMode == .dedicated {
+            attachGPUView(to: UIScreen.screens[1])
         } else {
             // For RetroArch cores with skipLayout and no skins, GPU view controller is not attached
             // RetroArch manages its own view hierarchy (CocoaView + Metal/GL surfaces)
