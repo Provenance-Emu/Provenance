@@ -18,6 +18,18 @@ extension Data {
         UInt32(self[offset + 2]) << 16 |
         UInt32(self[offset + 3]) << 24
     }
+
+    /// Read an 8-byte little-endian UInt64 at the given byte offset.
+    func readLE64(at offset: Int) -> UInt64 {
+        UInt64(self[offset]) |
+        UInt64(self[offset + 1]) << 8 |
+        UInt64(self[offset + 2]) << 16 |
+        UInt64(self[offset + 3]) << 24 |
+        UInt64(self[offset + 4]) << 32 |
+        UInt64(self[offset + 5]) << 40 |
+        UInt64(self[offset + 6]) << 48 |
+        UInt64(self[offset + 7]) << 56
+    }
 }
 
 /// Read a variable-length integer (VLI) from `data` starting at `pos`, advancing `pos`.

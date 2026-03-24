@@ -100,7 +100,9 @@ public actor PatchApplier {
             return try UPSPatcher().apply(patch: patch, to: source)
         case .xdelta, .xdelta3:
             throw PatchError.unsupportedFormat("\(format.rawValue) — xdelta support coming in a future update")
-        case .ppf, .aps, .rup, .nsp:
+        case .ppf:
+            return try PPFPatcher().apply(patch: patch, to: source)
+        case .aps, .rup, .nsp:
             throw PatchError.unsupportedFormat("\(format.displayName) — not yet implemented")
         }
     }
