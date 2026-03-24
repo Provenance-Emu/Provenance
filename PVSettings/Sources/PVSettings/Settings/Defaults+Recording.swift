@@ -14,6 +14,9 @@ public extension Defaults.Keys {
     /// Enable camera capture during screen recording (iOS only).
     static let recordingCameraEnabled = Key<Bool>("recordingCameraEnabled", default: false)
 
+    /// Corner position for the camera preview overlay (iOS only).
+    static let recordingCameraPosition = Key<CameraPosition>("recordingCameraPosition", default: .bottomRight)
+
     /// Automatically save completed recordings to the Photos library.
     static let recordingAutoSave = Key<Bool>("recordingAutoSave", default: true)
 
