@@ -65,14 +65,22 @@ extension PVEmulatorViewController {
     }
 }
 
-// MARK: - Screen Recording (iOS only)
+// MARK: - Screen Recording (iOS + tvOS)
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 extension PVEmulatorViewController {
 
     /// Whether the device/session supports ReplayKit recording.
+    ///
+    /// On tvOS, this also requires a physical game controller to be connected.
     public var isRecordingAvailable: Bool {
         PVRecordingManager.shared.isAvailable
+    }
+
+    /// Whether recording is unavailable because no game controller is connected (tvOS only).
+    /// Use this to show the "Connect a game controller to enable recording" hint.
+    public var isRecordingUnavailableDueToNoController: Bool {
+        PVRecordingManager.shared.isUnavailableDueToNoController
     }
 
     /// Whether a recording session is currently active.
@@ -89,8 +97,10 @@ extension PVEmulatorViewController {
             do {
                 try await PVRecordingManager.shared.startRecording()
                 AppState.shared.emulationUIState.isRecording = true
+                #if os(iOS)
                 notifyOSDRecordingStateChanged()
                 showCameraOverlayIfEnabled()
+                #endif
                 ILOG("[Recording] Recording started")
             } catch {
                 ELOG("[Recording] Could not start recording: \(error.localizedDescription)")
@@ -99,36 +109,48 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Stops the current ReplayKit recording and presents the share sheet.
-    /// Updates `AppState.shared.emulationUIState.isRecording` on completion.
+    /// Stops the current ReplayKit recording.
     ///
-    /// The game **remains paused** while the preview sheet is visible.  Emulation
-    /// resumes automatically once the user dismisses the preview (save / discard).
+    /// On iOS, presents the `RPPreviewViewController` share sheet. The game remains
+    /// paused while the sheet is visible and resumes automatically on dismiss.
+    /// On tvOS, the recording is saved to the system and emulation resumes immediately.
     public func stopScreenRecording() {
+        #if os(iOS)
         hideCameraOverlay()
+        // Register a callback so emulation resumes after the ReplayKit preview is dismissed.
 
-        // Register a callback so emulation resumes after the preview is dismissed.
         PVRecordingManager.shared.onPreviewDismissed = { [weak self] in
             guard let self, self.core.isOn else { return }
             self.core.setPauseEmulation(false)
             ILOG("[Recording] Resumed emulation after preview dismissed")
         }
+        #endif
 
         Task { @MainActor in
             do {
                 try await PVRecordingManager.shared.stopRecording(presenter: self)
                 RPScreenRecorder.shared().isCameraEnabled = false
                 AppState.shared.emulationUIState.isRecording = false
+                #if os(iOS)
                 notifyOSDRecordingStateChanged()
                 ILOG("[Recording] Recording stopped and preview presented")
+                #elseif os(tvOS)
+                // Resume immediately — no preview sheet on tvOS.
+                if core.isOn { core.setPauseEmulation(false) }
+                showRecordingStoppedAlert()
+                ILOG("[Recording] Recording stopped on tvOS")
+                #endif
             } catch {
-                // On error clear the resume callback so we don't hang in a paused state
+                #if os(iOS)
+                // On error clear the resume callback so we don't hang in a paused state.
                 PVRecordingManager.shared.onPreviewDismissed = nil
                 RPScreenRecorder.shared().isCameraEnabled = false
+                #endif
                 AppState.shared.emulationUIState.isRecording = false
+                #if os(iOS)
                 notifyOSDRecordingStateChanged()
+                #endif
                 ELOG("[Recording] Could not stop recording: \(error.localizedDescription)")
-                // Resume emulation since we won't be showing the preview
                 if core.isOn { core.setPauseEmulation(false) }
                 showRecordingError(error)
             }
@@ -142,14 +164,10 @@ extension PVEmulatorViewController {
         PVRecordingManager.shared.discardRecording()
         RPScreenRecorder.shared().isCameraEnabled = false
         AppState.shared.emulationUIState.isRecording = false
+        #if os(iOS)
         notifyOSDRecordingStateChanged()
+        #endif
         ILOG("[Recording] Recording discarded via VC")
-    }
-
-    /// Notifies the OSD controller to refresh its record button appearance.
-    /// Must be called on the main actor since `OSDRecordingObserver` is `@MainActor`-isolated.
-    @MainActor private func notifyOSDRecordingStateChanged() {
-        (controllerViewController as? OSDRecordingObserver)?.updateRecordButtonAppearance()
     }
 
     /// Toggles recording on/off.
@@ -203,8 +221,33 @@ extension PVEmulatorViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+
+    #if os(tvOS)
+    /// On tvOS, after stopping a recording, show a brief confirmation since there
+    /// is no `RPPreviewViewController` share sheet.
+    private func showRecordingStoppedAlert() {
+        let alert = UIAlertController(
+            title: "Recording Saved",
+            message: "Your gameplay recording has been saved and is accessible via the Apple TV Photos app or iCloud Photo Library.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            guard let self, self.core.isOn else { return }
+            self.core.setPauseEmulation(false)
+        })
+        present(alert, animated: true)
+    }
+    #endif
+
+    #if os(iOS)
+    /// Notifies the OSD controller to refresh its record button appearance.
+    /// Must be called on the main actor since `OSDRecordingObserver` is `@MainActor`-isolated.
+    @MainActor private func notifyOSDRecordingStateChanged() {
+        (controllerViewController as? OSDRecordingObserver)?.updateRecordButtonAppearance()
+    }
+    #endif
 }
-#endif // os(iOS)
+#endif // os(iOS) || os(tvOS)
 
 
 // MARK: - Clip Capture (iOS/tvOS 15+)
