@@ -309,6 +309,17 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - **Thread safety**: Stella bridge uses `@synchronized(self)` for `_pendingMouseDX/Y` and `_mouseButtonLeft` — both written from the main thread (companion events) and read from the emulation thread (`input_state_callback`).
 - New trackball game additions: add MD5 hashes and title patterns to `TrackballGameRegistry.knownTrackballGameMD5s` / `knownTrackballGameTitlePatterns`. Never inline trackball checks in core code.
 
+### Multi-Select / Batch Operations Pattern (added in #2821)
+- `ConsoleGamesViewModel.isMultiSelectMode` — Bool flag; toggled via `enterMultiSelectMode()` / `exitMultiSelectMode()`.
+- `ConsoleGamesViewModel.selectedGameMD5s` — `Set<String>` of selected game MD5 hashes (never Realm objects). All batch operations consume this set.
+- `multiSelectOverlay(md5:content:)` in `ConsoleGamesView+MultiSelect.swift` — wraps a game cell with a selection badge overlay; **must** call `.allowsHitTesting(!isMultiSelectMode)` on the inner content so the outer `onTapGesture` controls selection.
+- `gameAction(for:)` returns a closure that either toggles selection (multi-select mode) or launches the game (normal mode). Use this as the action for all `GameItemPresentableView` cells in `showGamesGrid`/`showGamesList`.
+- `ROMTitleNormalizer` — pure enum in `PVUI/Sources/PVSwiftUI/Library/`; no Realm or file-system access. All new normalisation rules go here.
+- Batch Realm writes: EITHER run on `MainActor` using the main-thread Realm (`RomDatabase.sharedInstance.realm`) via `Task { @MainActor in realm.write { ... } }`, OR for large batches use `RealmContext.withBackgroundRealm` to obtain a background Realm and perform writes there.
+- **Never** use `RomDatabase.sharedInstance.realm` from a background task (e.g. `Task.detached`) — that instance is main-thread-only; use `RealmContext.withBackgroundRealm` instead for background batch work.
+- **Flag 🟠 MAJOR** if `RomDatabase.sharedInstance.realm` is accessed from a non-main-actor context (e.g. `Task.detached`).
+- **Flag 🟡 MINOR** if new batch operations are added without a `NormalizeTitlePreviewRow`-style preview step for destructive changes.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:

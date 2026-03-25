@@ -387,6 +387,10 @@ struct ConsoleGamesView: SwiftUI.View {
 
                     biosesView
                 }
+                // Normalize-Titles preview sheet
+                .sheet(isPresented: $gamesViewModel.showNormalizeTitlePreview) {
+                    normalizeTitleSheet
+                }
                 .sheet(isPresented: $gamesViewModel.showImagePicker) {
 #if !os(tvOS)
                     imagePickerSheet
@@ -842,6 +846,9 @@ struct ConsoleGamesView: SwiftUI.View {
                 .onChange(of: viewModel.sortGamesAscending) { newValue in
                     gamesViewModel.sortAscending = newValue
                 }
+
+            // Multi-select batch-action toolbar — overlays at the bottom in select mode
+            multiSelectToolbar
         }
         .modifier(ConditionalSearchModifier(
             isEnabled: allGamesModels.count > 8,
@@ -929,22 +936,23 @@ struct ConsoleGamesView: SwiftUI.View {
     private func showGamesGrid(_ games: [GameCellModel]) -> some View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games, id: \.id) { model in
-                GameItemPresentableView(
-                    game: model,
-                        constrainHeight: false,
-                        sectionContext: .allGames,
-                        isFocused: focusBinding(itemId: model.id, section: .allGames)
-                ) {
-                    launchGame(md5: model.md5)
+                multiSelectOverlay(md5: model.md5) {
+                    GameItemPresentableView(
+                        game: model,
+                            constrainHeight: false,
+                            sectionContext: .allGames,
+                            isFocused: focusBinding(itemId: model.id, section: .allGames)
+                    ) {
+                        gameAction(for: model.md5)()
+                    }
                 }
-                /// Recreate the tile only when the artwork URL changes, not on every
-                /// model field update (playCount, lastPlayed, etc.).  Using the full
-                /// model.hashValue caused unnecessary view identity changes and scroll
-                /// stutter on Realm writes.
+                /// Recreate the tile only when the artwork URL changes.
+                /// Selection state is handled by `multiSelectOverlay` via SwiftUI observation —
+                /// including it in `.id` would force full view recreation on every tap.
                 .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
-                    if let live = liveGame(for: model) {
+                    if !gamesViewModel.isMultiSelectMode, let live = liveGame(for: model) {
                         GameContextMenu(
                             game: live,
                             rootDelegate: rootDelegate,
@@ -1042,23 +1050,24 @@ struct ConsoleGamesView: SwiftUI.View {
     private func showGamesList(_ games: [GameCellModel]) -> some View {
         LazyVStack(spacing: 0) {
             ForEach(games, id: \.id) { model in
-                GameItemPresentableView(
-                    game: model,
-                        constrainHeight: true,
-                        viewType: .row,
-                        sectionContext: .allGames,
-                        isFocused: focusBinding(itemId: model.id, section: .allGames)
-                ) {
-                    launchGame(md5: model.md5)
+                multiSelectOverlay(md5: model.md5) {
+                    GameItemPresentableView(
+                        game: model,
+                            constrainHeight: true,
+                            viewType: .row,
+                            sectionContext: .allGames,
+                            isFocused: focusBinding(itemId: model.id, section: .allGames)
+                    ) {
+                        gameAction(for: model.md5)()
+                    }
                 }
-                /// Recreate the tile only when the artwork URL changes, not on every
-                /// model field update (playCount, lastPlayed, etc.).  Using the full
-                /// model.hashValue caused unnecessary view identity changes and scroll
-                /// stutter on Realm writes.
+                /// Recreate the tile only when the artwork URL changes.
+                /// Selection state is handled by `multiSelectOverlay` via SwiftUI observation —
+                /// including it in `.id` would force full view recreation on every tap.
                 .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
-                    if let live = liveGame(for: model) {
+                    if !gamesViewModel.isMultiSelectMode, let live = liveGame(for: model) {
                         GameContextMenu(
                             game: live,
                             rootDelegate: rootDelegate,
@@ -1532,6 +1541,10 @@ extension ConsoleGamesView {
                         .strokeBorder(Color.retroBlue, lineWidth: 1)
                 )
                 .cornerRadius(12)
+
+#if !os(tvOS)
+            multiSelectToggleButton
+#endif
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 16)

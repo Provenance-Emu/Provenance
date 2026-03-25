@@ -1,0 +1,14 @@
+/* Localizable.strings — Korean (ko)
+   Provenance
+   AI-generated translation based on community contribution (issue #2255)
+   Note: Translation was AI-generated because the original community zip could not be downloaded in CI.
+   Please compare with the original attachment in issue #2255 and apply any corrections.
+*/
+
+"DeleteGameTitle" = "게임을 삭제할까요?";
+"DeleteGameBody" = "\"%@\" 게임을 정말 삭제하시겠습니까?";
+"OK" = "확인";
+"Cancel" = "취소";
+"Delete" = "삭제";
+"Error" = "오류";
+"Warning" = "경고";
