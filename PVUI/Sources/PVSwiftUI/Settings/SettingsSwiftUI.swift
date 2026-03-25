@@ -1214,9 +1214,24 @@ private struct CoreOptionsSection: View {
     @State private var showResetConfirmation = false
     @State private var resetError: String? = nil
     @State private var showConfigEditor = false
+    @Default(.coreLanguage) var coreLanguage
 
     var body: some View {
         Section(header: Text("Core Options")) {
+
+            Picker(selection: $coreLanguage) {
+                ForEach(CoreLanguageSetting.allCases, id: \.self) { lang in
+                    Text(lang.description).tag(lang)
+                }
+            } label: {
+                SettingsRow(title: "Core Language",
+                            subtitle: "Language used by emulator cores. Default follows device locale.",
+                            icon: .sfSymbol("globe"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
             NavigationLink(destination: CoreOptionsView()) {
                 SettingsRow(title: "Core Options",
                             subtitle: "Configure emulator core settings.",

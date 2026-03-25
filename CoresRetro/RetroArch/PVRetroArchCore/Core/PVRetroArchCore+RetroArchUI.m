@@ -587,7 +587,6 @@ void extract_bundles();
             [self syncResource:src to:verFile];
         }
 
-
         if(shouldUpdateAssets) {
             NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
             [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory]];
@@ -637,6 +636,15 @@ void extract_bundles();
         // Store flag to trigger updates after RetroArch is initialized
         self.shouldTriggerRetroArchUpdates = YES;
     }
+
+    // Always sync user_language in retroarch.cfg so locale/override changes
+    // take effect on next core launch (not just on first-run or version update).
+    NSString *mainCfgPath = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
+                             self.documentsDirectory];
+    if ([fm fileExistsAtPath:mainCfgPath]) {
+        [self applyUserLanguageToRetroArchConfig:mainCfgPath];
+    }
+
     // Additional Override Settings
     NSString* content = @"video_driver = \"vulkan\"\n";
     if (self.gsPreference == 0) {
@@ -1227,6 +1235,18 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
                 inFile:cfgPath];
 }
 #endif // !TARGET_OS_TV
+
+/// Updates (or adds) `user_language = "N"` in the RetroArch config file at
+/// `configPath` to match the language resolved from the `coreLanguage` user setting.
+/// Called every time `writeConfigFile` runs so that locale changes take effect at
+/// the next core launch without requiring a config reset.
+- (void)applyUserLanguageToRetroArchConfig:(NSString *)configPath {
+    NSInteger langID = [PVRetroArchCoreBridge resolvedUserLanguage];
+    NSString *langValue = [NSString stringWithFormat:@"%ld", (long)langID];
+    ILOG(@"applyUserLanguageToRetroArchConfig: setting user_language = %ld", (long)langID);
+    [self patchCfgKey:@"user_language" value:langValue inFile:configPath];
+}
+
 
 - (void)setViewType:(apple_view_type_t)vt
 {
