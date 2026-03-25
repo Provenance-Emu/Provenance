@@ -330,6 +330,19 @@ public extension Defaults.Keys {
     static let playerUsername = Key<String>("playerUsername", default: "")
 }
 
+// MARK: Cheats
+public extension Defaults.Keys {
+    /// When `true`, the app first queries the cheat proxy endpoint for GameHacking.org
+    /// cheats instead of scraping the site directly.  Falls back to direct scraping
+    /// if the proxy returns an empty result or is unreachable.
+    static let useCheatProxy = Key<Bool>("useCheatProxy", default: true)
+
+    /// Base URL of the deployed Provenance cheat proxy worker.
+    /// Set to empty string to disable the proxy and always use direct scraping.
+    /// See `Scripts/cheat-proxy/README.md` for deployment instructions.
+    static let cheatProxyURL = Key<String>("cheatProxyURL", default: "")
+}
+
 public enum ButtonPressEffect: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {
     case bubble = "bubble"
     case ring = "ring"
