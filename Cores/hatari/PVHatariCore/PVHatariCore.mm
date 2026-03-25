@@ -155,7 +155,7 @@
 
 #pragma mark - MIDIResponder
 
-/// Atari ST has built-in MIDI In/Out/Thru ports on all models (1985–).
+/// Atari ST has built-in MIDI In/Out/Thru ports on all models since 1985.
 /// The Hatari libretro core routes MIDI through retro_midi_interface,
 /// which is wired to CoreMIDI via pv_libretro_midi_inject_byte().
 - (BOOL)gameSupportsMIDI {

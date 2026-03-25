@@ -1460,11 +1460,11 @@ static void thin_midi_ensure_ring_buffer_initialized(void) {
     static atomic_bool s_ringBufferInitialized = ATOMIC_VAR_INIT(false);
     bool expected = false;
     if (atomic_compare_exchange_strong(&s_ringBufferInitialized, &expected, true)) {
-        // Reset the indices only. Buffer content is always written before it is
-        // read by a correct consumer, so memset is unnecessary and would race
-        // with any producers or consumers already active.
-        atomic_store(&s_midiState.readWritePos, 0);
-        atomic_store(&s_midiState.readReadPos, 0);
+        // NOTE: We intentionally do *not* reset the ring buffer indices here.
+        // `s_midiState` has static storage duration and is zero-initialized,
+        // so `readWritePos` / `readReadPos` already start at 0. Resetting them
+        // on first injection can corrupt state if the CoreMIDI path has
+        // already begun using the buffer.
     }
 }
 #endif
@@ -1479,9 +1479,10 @@ static void thin_midi_ensure_ring_buffer_initialized(void) {
 /// it only ensures the ring buffer state is ready, preserving the device
 /// selection made via `MIDIDeviceManager`.
 ///
-/// Thread-safe: uses CAS on `readWritePos` to handle concurrent producers
-/// (CoreMIDI read callback + MIDIResponder injection).  Bytes are silently
-/// dropped when the buffer is full.
+/// Thread-safe: writes are serialized via `s_midiRingLock` inside
+/// `thin_midi_ring_write_byte`, and the ring indices remain atomic to
+/// coordinate readers and writers.  Bytes are silently dropped when the
+/// buffer is full.
 extern "C" void pv_libretro_midi_inject_byte(uint8_t byte) {
 #if PV_HAS_COREMIDI
     // Ensure ring buffer indices are initialised without opening a CoreMIDI port.
