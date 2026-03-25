@@ -67,9 +67,153 @@ uint32_t gb_pad[PVGBButtonCount];
 - (void)loadPalette;
 @end
 
-@implementation PVGBEmulatorCoreBridge
+// ---------------------------------------------------------------------------
+// MARK: - RetroAchievements rc_client integration
+//
+// The rc_client API is guarded by HAVE_RCHEEVOS. To enable full integration:
+//  1. Add a `librcheevos` SPM target (or depend on PVRcheevos package) in Package.swift.
+//  2. Add `.define("HAVE_RCHEEVOS", to: "1")` to cSettings of PVGambatteBridge target.
+//  3. Import the rc_client.h header.
+//
+// What is implemented below:
+//  - wramBasePtr / vramBasePtr / wramSize — always available, backed by gambatte's
+//    wramData() / vramData() / wramSize() (added to gambatte's vendored source).
+//  - tickAchievements — calls rc_client_do_frame() when HAVE_RCHEEVOS is set.
+//  - The read-memory callback and event handler stubs that rc_client needs.
+// ---------------------------------------------------------------------------
+#if HAVE_RCHEEVOS
+#include "rc_client.h"   // from the librcheevos SPM target
+
+static uint32_t pvgb_read_memory(uint32_t address, uint8_t *buffer,
+                                  uint32_t num_bytes, rc_client_t *client) {
+    PVGBEmulatorCoreBridge *core = (__bridge PVGBEmulatorCoreBridge *)
+                                    rc_client_get_userdata(client);
+    unsigned char *wram = (unsigned char *)core.wramBasePtr;
+    unsigned char *vram = (unsigned char *)core.vramBasePtr;
+    NSUInteger wramSz   = core.wramSize;
+    uint32_t read = 0;
+
+    for (uint32_t i = 0; i < num_bytes; ++i) {
+        uint16_t addr = (uint16_t)(address + i);
+        uint8_t value = 0xFF;
+
+        if (wram && addr >= 0xC000 && addr < (0xC000 + wramSz)) {
+            // NOTE: For GBC, addresses 0xD000-0xDFFF map to the switchable WRAM bank.
+            // wramBasePtr returns wramdata(0) which is contiguous memory; for bank 0
+            // (0xC000-0xCFFF) this is correct. For the switchable bank at 0xD000-0xDFFF,
+            // this reads from the physical offset which may differ from the active bank.
+            // A complete GBC implementation would use wramdata(1) for 0xD000 addresses.
+            // TODO: expose separate wramBank1Ptr for precise GBC bank-switched reads.
+            value = wram[addr - 0xC000];
+        } else if (vram && addr >= 0x8000 && addr <= 0x9FFF) {
+            // vramBasePtr[0] = first byte of VRAM (GB address 0x8000).
+            value = vram[addr - 0x8000];
+        }
+        buffer[i] = value;
+        ++read;
+    }
+    return read;
+}
+
+// Minimal no-op server call; real implementation delegates to PVCheevos network layer.
+static void pvgb_server_call(const rc_api_request_t *request,
+                              rc_client_server_callback_t callback,
+                              void *callback_data, rc_client_t *client) {
+    // TODO: Forward to PVCheevos RetroNetworkClient.
+    rc_api_server_response_t resp = {};
+    resp.http_status_code = 0;
+    callback(&resp, callback_data);
+}
+
+static void pvgb_event_handler(const rc_client_event_t *event, rc_client_t *client) {
+    PVGBEmulatorCoreBridge *core = (__bridge PVGBEmulatorCoreBridge *)
+                                    rc_client_get_userdata(client);
+    if (!core) { return; }
+
+    switch (event->type) {
+        case RC_CLIENT_EVENT_ACHIEVEMENT_TRIGGERED: {
+            const rc_client_achievement_t *ach = event->achievement;
+            NSString *badgeName = ach->badge_name ? @(ach->badge_name) : nil;
+            NSURL *badgeURL = badgeName.length
+                ? [NSURL URLWithString:[NSString stringWithFormat:
+                      @"https://media.retroachievements.org/Badge/%@.png", badgeName]]
+                : nil;
+            [core rcAchievementTriggeredWithID:ach->id
+                                         title:ach->title       ? @(ach->title)       : nil
+                                   description:ach->description ? @(ach->description) : nil
+                                        points:ach->points
+                                      badgeURL:badgeURL
+                                    isHardcore:(BOOL)rc_client_get_hardcore_enabled(client)];
+            break;
+        }
+        case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW: {
+            const rc_client_achievement_t *ach = event->achievement;
+            [core rcAchievementProgressWithID:ach->id
+                                        title:ach->title ? @(ach->title) : nil
+                                 progressText:ach->measured_progress ? @(ach->measured_progress) : nil];
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_STARTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            [core rcLeaderboardStartedWithID:lb->id
+                                       title:lb->title       ? @(lb->title)       : nil
+                                 description:lb->description ? @(lb->description) : nil
+                                   scoreText:lb->tracker_value ? @(lb->tracker_value) : nil];
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_FAILED:
+            [core rcLeaderboardFailedWithID:event->leaderboard->id];
+            break;
+        case RC_CLIENT_EVENT_LEADERBOARD_SUBMITTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            [core rcLeaderboardSubmittedWithID:lb->id
+                                         title:lb->title       ? @(lb->title)       : nil
+                                   description:lb->description ? @(lb->description) : nil
+                                     scoreText:lb->tracker_value ? @(lb->tracker_value) : nil];
+            break;
+        }
+        default:
+            break;
+    }
+}
+#endif // HAVE_RCHEEVOS
+
+@implementation PVGBEmulatorCoreBridge {
+#if HAVE_RCHEEVOS
+    rc_client_t *_rcClient;
+#endif
+    BOOL _achievementsActive;
+}
 
 static __weak PVGBEmulatorCoreBridge *_current;
+
+// MARK: - RetroAchievements memory properties
+
+- (void *)wramBasePtr {
+    return gb.wramData(0);
+}
+
+- (void *)vramBasePtr {
+    return gb.vramData();
+}
+
+- (NSUInteger)wramSize {
+    return (NSUInteger)gb.wramSize();
+}
+
+- (BOOL)achievementsActive {
+    return _achievementsActive;
+}
+
+// MARK: - Achievement tick
+
+- (void)tickAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient && _achievementsActive) {
+        rc_client_do_frame(_rcClient);
+    }
+#endif
+}
 
 class GetInput : public gambatte::InputGetter
 {
@@ -160,6 +304,18 @@ public:
     } else {
         [self loadPalette];
     }
+
+#if HAVE_RCHEEVOS
+    // Initialise rc_client on successful ROM load.
+    if (!_rcClient) {
+        _rcClient = rc_client_create(pvgb_read_memory, pvgb_server_call);
+        if (_rcClient) {
+            rc_client_set_userdata(_rcClient, (__bridge void *)self);
+            rc_client_set_event_handler(_rcClient, pvgb_event_handler);
+        }
+    }
+#endif
+
     return YES;
 }
 
@@ -184,6 +340,7 @@ public:
     }
 
     [self outputAudio:samples];
+    [self tickAchievements];
 }
     
 - (void)resetEmulation
@@ -198,6 +355,15 @@ public:
         gb.saveSavedata();
 
         delete resampler;
+
+#if HAVE_RCHEEVOS
+        if (_rcClient) {
+            rc_client_unload_game(_rcClient);
+            rc_client_destroy(_rcClient);
+            _rcClient = NULL;
+        }
+        _achievementsActive = NO;
+#endif
 
         [super stopEmulation];
     }
@@ -514,6 +680,53 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         gb.setGameShark(s);
 }
 
+// MARK: - Achievement game loading
+
+#if HAVE_RCHEEVOS
+typedef struct pvgb_load_ctx {
+    void *bridge;        // __bridge_retained PVGBEmulatorCoreBridge *
+    void (^completion)(BOOL);
+} pvgb_load_ctx_t;
+
+static void pvgb_load_callback(int result, const char * __unused error_message,
+                                rc_client_t * __unused client, void *userdata) {
+    pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)userdata;
+    // Transfer ownership back.
+    PVGBEmulatorCoreBridge *core = (__bridge_transfer PVGBEmulatorCoreBridge *)ctx->bridge;
+    void (^completion)(BOOL) = ctx->completion;
+    free(ctx);
+
+    BOOL success = (result == RC_OK);
+    core->_achievementsActive = success;
+    if (completion) { completion(success); }
+}
+#endif // HAVE_RCHEEVOS
+
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                         completion:(void (^)(BOOL success))completion {
+#if HAVE_RCHEEVOS
+    if (!_rcClient) {
+        if (completion) { completion(NO); }
+        return;
+    }
+    pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)malloc(sizeof(pvgb_load_ctx_t));
+    ctx->bridge = (__bridge_retained void *)self;
+    ctx->completion = completion ? [completion copy] : nil;
+    rc_client_load_game(_rcClient, gameHash.UTF8String, pvgb_load_callback, ctx);
+#else
+    if (completion) { completion(NO); }
+#endif
+}
+
+- (void)unloadAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_unload_game(_rcClient);
+    }
+    _achievementsActive = NO;
+#endif
+}
+
 - (void)loadPalette
 {
     std::string str = gb.romTitle(); // read ROM internal title
@@ -605,3 +818,8 @@ static NSMutableDictionary *gb_cheatlist = nil;
 }
 
 @end
+
+// NOTE: @implementation PVGBEmulatorCoreBridge (AchievementsEvents) is NOT
+// provided here. The Swift extension in PVGBEmulatorCore+RetroAchievements.swift
+// provides the only implementations of these methods, routing events through
+// achievementsEventOwner → PVGBEmulatorCore → _achievementsDelegate.

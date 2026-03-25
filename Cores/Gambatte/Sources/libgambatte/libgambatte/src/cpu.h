@@ -71,6 +71,10 @@ public:
 	void setGameGenie(std::string const &codes) { mem_.setGameGenie(codes); }
 	void setGameShark(std::string const &codes) { mem_.setGameShark(codes); }
 
+	// Memory accessors for RetroAchievements integration.
+	unsigned char * wramdata(unsigned area) const { return mem_.wramdata(area); }
+	unsigned char * vramdata() const { return mem_.vramdata(); }
+
 private:
 	Memory mem_;
 	unsigned long cycleCounter_;

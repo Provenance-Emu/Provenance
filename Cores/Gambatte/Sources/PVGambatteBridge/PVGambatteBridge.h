@@ -44,6 +44,64 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 -(enum GBPalette)currentDisplayMode;
 -(void)changeDisplayMode:(NSInteger)displayMode;
 
+// MARK: - RetroAchievements memory access
+
+/// Pointer to WRAM bank 0 base, valid while a ROM is loaded.
+/// Bank 0 is 4 KiB; use wramSize to determine total allocation.
+@property (nonatomic, readonly, nullable) void *wramBasePtr;
+/// Pointer to the physical start of VRAM data, valid while a ROM is loaded.
+/// Index 0 corresponds to GB bus address 0x8000.
+/// Total VRAM allocation: 16 KiB (both DMG and GBC). DMG uses only the first 8 KiB bank.
+@property (nonatomic, readonly, nullable) void *vramBasePtr;
+/// Total WRAM size in bytes: 8192 for DMG, 32768 for GBC.
+@property (nonatomic, readonly) NSUInteger wramSize;
+
+/// Whether rc_client has a game successfully loaded for achievements.
+@property (nonatomic, readonly) BOOL achievementsActive;
+
+/// Weak back-reference to the owning Swift core (PVGBEmulatorCore).
+/// Set by PVGBEmulatorCore at init time so achievement event callbacks
+/// can walk back to the RetroAchievementsOSDDelegate.
+@property (nonatomic, weak, nullable) id achievementsEventOwner;
+
+/// Advance the achievement runtime by one frame.
+/// Called after executeFrame/executeFrameSkippingFrame:.
+- (void)tickAchievements;
+
+/// Load the game into rc_client using the provided MD5 hash.
+/// Completion fires on an arbitrary queue; forward result to achievementsActive.
+/// @param gameHash   MD5 hex string (32 chars) for the ROM.
+/// @param completion Called with YES if game loaded successfully.
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                         completion:(void (^)(BOOL success))completion;
+
+/// Unload the current game from rc_client and mark achievements inactive.
+- (void)unloadAchievements;
+
+@end
+
+/// Achievement event callbacks, invoked from rc_client event handler.
+/// The Swift layer (PVGBEmulatorCore+RetroAchievements) overrides these to
+/// forward events to the RetroAchievementsOSDDelegate.
+@interface PVGBEmulatorCoreBridge (AchievementsEvents)
+- (void)rcAchievementTriggeredWithID:(uint32_t)achievementID
+                               title:(NSString * _Nullable)title
+                         description:(NSString * _Nullable)description
+                              points:(uint32_t)points
+                            badgeURL:(NSURL * _Nullable)badgeURL
+                          isHardcore:(BOOL)isHardcore;
+- (void)rcAchievementProgressWithID:(uint32_t)achievementID
+                              title:(NSString * _Nullable)title
+                       progressText:(NSString * _Nullable)progressText;
+- (void)rcLeaderboardStartedWithID:(uint32_t)leaderboardID
+                             title:(NSString * _Nullable)title
+                       description:(NSString * _Nullable)description
+                         scoreText:(NSString * _Nullable)scoreText;
+- (void)rcLeaderboardFailedWithID:(uint32_t)leaderboardID;
+- (void)rcLeaderboardSubmittedWithID:(uint32_t)leaderboardID
+                               title:(NSString * _Nullable)title
+                         description:(NSString * _Nullable)description
+                           scoreText:(NSString * _Nullable)scoreText;
 @end
 
 @interface PVGBEmulatorCoreBridge (Cheats)

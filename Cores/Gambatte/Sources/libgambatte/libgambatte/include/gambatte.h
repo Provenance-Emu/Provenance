@@ -180,6 +180,30 @@ public:
 	  */
 	void setGameShark(std::string const &codes);
 
+	// MARK: - RetroAchievements memory accessors
+
+	/**
+	  * Returns a pointer to the start of WRAM bank @a area (0 = bank 0, 1 = bank 1, etc.).
+	  * Each bank is 4 KiB.  DMG has 2 banks (8 KiB total); CGB has 8 banks (32 KiB total).
+	  * The pointer remains valid for the lifetime of the loaded ROM.
+	  * Returns nullptr if no ROM is loaded.
+	  */
+	unsigned char * wramData(unsigned area) const;
+
+	/**
+	  * Returns a pointer to the physical start of the VRAM allocation.
+	  * Index 0 corresponds to GB bus address 0x8000.
+	  * Both DMG and CGB allocate 16 KiB (two 8-KiB banks); DMG uses only bank 0.
+	  * Returns nullptr if no ROM is loaded.
+	  */
+	unsigned char * vramData() const;
+
+	/**
+	  * Returns the total WRAM size in bytes.
+	  * DMG: 8192 (8 KiB), CGB: 32768 (32 KiB).
+	  */
+	std::size_t wramSize() const;
+
 private:
 	struct Priv;
 	Priv *const p_;

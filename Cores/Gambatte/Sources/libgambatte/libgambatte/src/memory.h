@@ -109,6 +109,12 @@ public:
 	void setGameShark(std::string const &codes) { interrupter_.setGameShark(codes); }
 	void updateInput();
 
+	// Memory accessors for RetroAchievements integration.
+	// WRAM bank 0 base — pointer is valid for the lifetime of the loaded ROM.
+	unsigned char * wramdata(unsigned area) const { return cart_.wramdata(area); }
+	// VRAM base pointer (vramdata()[0x8000] = first byte of VRAM region).
+	unsigned char * vramdata() const { return cart_.vramdata(); }
+
 private:
 	Cartridge cart_;
 	unsigned char ioamhram_[0x200];
