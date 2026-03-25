@@ -744,5 +744,5 @@ static const CheatInfoStruct CheatInfo =
 // ---- Provenance RetroAchievements RAM accessors ----
 extern "C" {
     uint8_t* mdfn_pce_fast_baseram_ptr(void) { return MDFN_IEN_PCE_FAST::BaseRAM; }
-    size_t   mdfn_pce_fast_baseram_size(void) { return 8192; } // 8 KB standard PCE RAM
+    size_t   mdfn_pce_fast_baseram_size(void) { return MDFN_IEN_PCE_FAST::IsSGX ? 32768 : 8192; } // 32 KB for SuperGrafx, 8 KB for PCE
 }

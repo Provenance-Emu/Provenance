@@ -138,6 +138,18 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
 
     /// Hardcore mode flag.
     var _hardcoreMode: Bool = false
+
+    // MARK: - executeFrame hook
+
+    /// Tick the achievement runtime after each emulated frame.
+    ///
+    /// Must live in the class body (not an extension) so Swift accepts the override.
+    open override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
 }
 
 @objc extension MednafenGameCore: PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient {

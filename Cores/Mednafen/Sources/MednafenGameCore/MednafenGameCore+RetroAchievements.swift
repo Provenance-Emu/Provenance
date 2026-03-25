@@ -62,21 +62,11 @@ extension MednafenGameCore: CoreRetroAchievements {
 
     /// Advance the achievement runtime by one emulated frame.
     ///
-    /// Called from our `executeFrame` override below, after the Mednafen core
-    /// has updated all memory.  Phase 2 will call `rc_client_do_frame()` here.
+    /// Called from `executeFrame` (in MednafenGameCore.swift) after the Mednafen
+    /// core has updated all memory.  Phase 2 will call `rc_client_do_frame()` here.
     public func tickAchievements() {
         // Phase 2: call rc_client_do_frame(client) once PVRcheevos is linked.
         // Memory regions returned by achievementMemoryRegions() will be read here.
-    }
-
-    // MARK: - executeFrame hook
-
-    /// Override executeFrame to tick the achievement runtime after each frame.
-    open override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
     }
 
     // MARK: - Memory regions
@@ -86,7 +76,7 @@ extension MednafenGameCore: CoreRetroAchievements {
     /// Pointers come from the `mdfn_*_ptr()` C accessors appended to each system's
     /// mednafen .cpp file.  They are valid for the lifetime of the loaded game.
     public func achievementMemoryRegions() -> [AchievementMemoryRegion] {
-        let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "")
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return [] }
         switch sysID {
 
         case .PSX:
@@ -127,7 +117,7 @@ extension MednafenGameCore: CoreRetroAchievements {
             ]
 
         case .PCE, .PCECD, .SGFX:
-            // 8 KB base RAM (0x1F0000–0x1F1FFF in rcheevos address space)
+            // 8 KB base RAM for PCE/PCECD, 32 KB for SuperGrafx (0x1F0000–0x1F1FFF / 0x1F7FFF)
             if MednafenGameCoreOptions.mednafen_pceFast {
                 guard let ptr = mdfn_pce_fast_baseram_ptr() else { return [] }
                 return [AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
@@ -153,10 +143,13 @@ extension MednafenGameCore: CoreRetroAchievements {
     /// Phase 2 will also require a valid rc_client session before returning true.
     public var achievementsActive: Bool {
         guard isRunning else { return false }
-        let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "")
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
         switch sysID {
-        case .PSX, .NES, .FDS, .SNES, .Saturn, .PCE, .PCECD, .SGFX:
+        case .PSX, .NES, .FDS, .Saturn, .PCE, .PCECD, .SGFX:
             return true
+        case .SNES:
+            // Only snes_faust exposes a RAM pointer; legacy snes core is unsupported.
+            return MednafenGameCoreOptions.mednafen_snesFast
         default:
             return false
         }
