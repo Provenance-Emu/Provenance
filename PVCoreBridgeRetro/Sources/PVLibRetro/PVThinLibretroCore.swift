@@ -44,7 +44,7 @@ class PVThinLibretroCore: PVEmulatorCore {
     /// Cancellable for the Combine subscription that routes MIDIDeviceManager
     /// destination changes to the thin libretro frontend.
     /// Only set on platforms with CoreMIDI (iOS, macOS, Catalyst); nil on tvOS.
-    nonisolated(unsafe) var _midiDestinationCancellable: AnyCancellable?
+    @MainActor var _midiDestinationCancellable: AnyCancellable?
 
     // MARK: - RetroAchievements backing storage
     weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?

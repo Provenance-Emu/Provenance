@@ -221,12 +221,11 @@ static os_unfair_lock s_midiRingLock = OS_UNFAIR_LOCK_INIT;
 
 /// Thread-safe cache of user-selected MIDI output destination endpoint refs.
 /// Updated by +setMIDIOutputEndpoints: (called from Swift via MIDIDeviceManager observation).
-/// -1 = not yet set by the app layer (legacy fallback: use s_midiState.outputEndpoint if available).
-///  0 = user selected "None" — thin_midi_write is a no-op.
+///  0 = no output destinations selected — thin_midi_write is a no-op.
 /// >0 = N selected destinations.
 static os_unfair_lock s_midiDestCacheLock = OS_UNFAIR_LOCK_INIT;
 static MIDIEndpointRef s_midiCachedDests[16] = {0};
-static int s_midiCachedDestCount = -1;
+static int s_midiCachedDestCount = 0;
 #endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -1358,17 +1357,18 @@ static bool thin_midi_ensure_initialized(void) {
         }
     }
 
-    // Create output port. Destination selection is controlled at runtime via
-    // +setMIDIOutputEndpoints: (driven by MIDIDeviceManager). We do NOT cache
-    // MIDIGetDestination(0) here — that hardcodes the first device regardless
-    // of the user's picker selection.
-    if (MIDIGetNumberOfDestinations() > 0) {
-        err = MIDIOutputPortCreate(s_midiState.client, CFSTR("Provenance MIDI Out"),
-                                   &s_midiState.outputPort);
-        if (err == noErr) {
-            ILOG(@"ThinFrontend MIDI: output port created (%lu destination(s) available)",
-                 (unsigned long)MIDIGetNumberOfDestinations());
-        }
+    // Create output port unconditionally. Destination selection is controlled at
+    // runtime via +setMIDIOutputEndpoints: (driven by MIDIDeviceManager). We do
+    // NOT cache MIDIGetDestination(0) here — that hardcodes the first device
+    // regardless of the user's picker selection. Creating the port unconditionally
+    // ensures hot-plug destinations work even when none exist at init time.
+    err = MIDIOutputPortCreate(s_midiState.client, CFSTR("Provenance MIDI Out"),
+                               &s_midiState.outputPort);
+    if (err == noErr) {
+        ILOG(@"ThinFrontend MIDI: output port created (%lu destination(s) available)",
+             (unsigned long)MIDIGetNumberOfDestinations());
+    } else {
+        ELOG(@"ThinFrontend MIDI: MIDIOutputPortCreate failed: %d", (int)err);
     }
 
     // Ring-buffer indices are already zero: s_midiState has static storage
@@ -1412,7 +1412,6 @@ static bool thin_midi_output_enabled(void) {
     os_unfair_lock_lock(&s_midiDestCacheLock);
     int count = s_midiCachedDestCount;
     os_unfair_lock_unlock(&s_midiDestCacheLock);
-    // Cache not yet set by the app layer: no destination selected yet.
     return count > 0;
 }
 
@@ -1447,8 +1446,9 @@ static bool thin_midi_write(uint8_t byte, uint32_t delta_time) {
     // No destination selected (user chose "None") — be a no-op.
     if (destCount <= 0) return false;
 
-    // Build a single-byte MIDIPacketList.
-    char buf[sizeof(MIDIPacketList) + sizeof(MIDIPacket)];
+    // Build a single-byte MIDIPacketList. Use alignas to satisfy MIDIPacketList's
+    // alignment requirement — a plain char[] may be under-aligned on some archs.
+    alignas(MIDIPacketList) char buf[sizeof(MIDIPacketList) + sizeof(MIDIPacket)];
     MIDIPacketList *pktList = (MIDIPacketList *)buf;
     MIDIPacket *pkt = MIDIPacketListInit(pktList);
     pkt = MIDIPacketListAdd(pktList, sizeof(buf), pkt, 0, 1, &byte);
