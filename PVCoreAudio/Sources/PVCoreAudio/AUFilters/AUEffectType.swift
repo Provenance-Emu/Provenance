@@ -260,6 +260,7 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
 
         case .distortion:
             let distortion = AVAudioUnitDistortion()
+            distortion.loadFactoryPreset(.multiBrokenSpeaker)
             distortion.preGain = Float(parameters[AUEffectParameterKey.preGain] ?? 6.0)
             distortion.wetDryMix = Float(parameters[AUEffectParameterKey.wetDryMix] ?? 25.0)
             return distortion
