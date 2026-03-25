@@ -113,7 +113,8 @@ extension PVEmulatorViewController {
     /// Moves the GPU view controller to the specified external screen's window.
     func attachGPUView(to screen: UIScreen) {
         secondaryScreen = screen
-        // Detach from primary screen first
+        // Detach from primary screen first using the full containment sequence.
+        gpuViewController.willMove(toParent: nil)
         gpuViewController.view?.removeFromSuperview()
         gpuViewController.removeFromParent()
 
@@ -125,11 +126,10 @@ extension PVEmulatorViewController {
         // tracked in the issue body.  For now we keep the legacy assignment so the
         // feature works on iOS 15 and up.
         window.screen = screen
+        // Setting rootViewController lets UIWindow own and manage the view lifecycle.
+        // Do NOT also call window.addSubview(gpuViewController.view) — that would
+        // create a redundant subview relationship and cause layout/lifecycle issues.
         window.rootViewController = gpuViewController
-        gpuViewController.view?.frame = window.bounds
-        if let gpuView = gpuViewController.view {
-            window.addSubview(gpuView)
-        }
         window.isHidden = false
         gpuViewController.view?.setNeedsLayout()
         secondaryWindow = window
@@ -138,8 +138,12 @@ extension PVEmulatorViewController {
     /// Restores the GPU view controller back to the primary device screen after
     /// an external display disconnects.
     func restoreGPUViewToDevice() {
+        // Full containment removal sequence before re-parenting.
+        gpuViewController.willMove(toParent: nil)
         gpuViewController.view?.removeFromSuperview()
         gpuViewController.removeFromParent()
+
+        // addChild automatically calls willMove(toParent: self) on the child.
         addChild(gpuViewController)
 
         if let gpuView = gpuViewController.view,
@@ -151,6 +155,8 @@ extension PVEmulatorViewController {
             view.insertSubview(gpuView, belowSubview: controllerView)
         }
 
+        // Complete the containment cycle; this triggers viewDidMove and appearance callbacks.
+        gpuViewController.didMove(toParent: self)
         gpuViewController.view?.setNeedsLayout()
         secondaryWindow = nil
         secondaryScreen = nil
