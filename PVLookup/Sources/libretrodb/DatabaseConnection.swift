@@ -57,7 +57,8 @@ private actor DatabaseConnection {
             platform: (dict["platform_id"] as? NSNumber)?.stringValue,
             manufacturer: dict["manufacturer_name"] as? String,
             genres: genresArray,
-            romFileName: dict["rom_name"] as? String
+            romFileName: dict["rom_name"] as? String,
+            serialID: dict["serial_id"] as? String
         )
     }
 }

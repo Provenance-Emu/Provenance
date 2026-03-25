@@ -170,7 +170,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     var backingIOSurface: IOSurfaceRef?    // for OpenGL core support
     var backingMTLTexture: (any MTLTexture)?   // for OpenGL core support
 
-    private var uploadBuffer: MTLBuffer? // Not an array
     var frameCount: UInt = 0
 
     var renderSettings: RenderSettings = .init()
@@ -228,7 +227,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     private var isLayouting: Bool = false
 
     /// Tracks the number of buffer allocations for performance monitoring
-    private var bufferCreationCount: Int = 0
 
     // Add this property to the class
     private var customPipeline: MTLRenderPipelineState?
@@ -478,6 +476,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         )
 
         textureDescriptor.usage = [.shaderRead, .renderTarget]
+        #if os(macOS) || targetEnvironment(macCatalyst)
+        // Managed storage on Intel Mac (discrete GPU): CPU writes are flushed to VRAM
+        // by an explicit synchronize blit each frame. Shared on unified-memory devices.
+        textureDescriptor.storageMode = device.hasUnifiedMemory ? .shared : .managed
+        #else
+        textureDescriptor.storageMode = .shared
+        #endif
 
         // Create the texture
         inputTexture = device.makeTexture(descriptor: textureDescriptor)
@@ -916,26 +921,22 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             mipmapped: false
         )
 
-        // Set usage options
+        // Set usage options — on unified-memory devices (all iOS/tvOS + Apple Silicon Mac)
+        // shared storage allows direct CPU writes each frame, eliminating the staging
+        // MTLBuffer and GPU blit copy. On Intel Mac with discrete GPU use managed storage
+        // so the driver can synchronize the CPU copy to VRAM via a blit each frame.
         textureDescriptor.usage = [.shaderRead, .renderTarget]
+        #if os(macOS) || targetEnvironment(macCatalyst)
+        textureDescriptor.storageMode = device.hasUnifiedMemory ? .shared : .managed
+        #else
+        textureDescriptor.storageMode = .shared
+        #endif
 
         // Create the texture
         inputTexture = device.makeTexture(descriptor: textureDescriptor)
 
         if inputTexture == nil {
             throw MetalViewControllerError.failedToCreateTexture("input texture")
-        }
-
-        // Create an upload buffer if needed - always use buffer size for this
-        let bytesPerPixel = getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
-        let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
-        let totalBytes = bytesPerRow * Int(bufferSize.height)
-
-        if uploadBuffer == nil || uploadBuffer!.length < totalBytes, totalBytes > 0 {
-            uploadBuffer = device.makeBuffer(length: totalBytes, options: .storageModeShared)
-            if uploadBuffer == nil {
-                throw MetalViewControllerError.failedToCreateTexture("upload buffer")
-            }
         }
 
         ILOG("Created input texture: \(effectiveWidth)x\(effectiveHeight), format: \(mtlPixelFormat)")
@@ -952,23 +953,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         try updateInputTexture()
-
-        if !emulatorCore.rendersToOpenGL {
-            let formatByteWidth = getByteWidth(for: Int32(emulatorCore.pixelFormat),
-                                               type: Int32(emulatorCore.pixelType))
-
-            let width = emulatorCore.bufferSize.width
-            let height = emulatorCore.bufferSize.height
-            let length = Int(width * height) * Int(formatByteWidth)
-
-            if length > 0 {
-                uploadBuffer = device.makeBuffer(length: length,
-                                                 options: .storageModeShared)
-                ILOG("Created upload buffer with length: \(length)")
-            } else {
-                throw MetalViewControllerError.invalidBufferSize(width: width, height: height)
-            }
-        }
 
         // Create point sampler
         let pointDesc = MTLSamplerDescriptor()
@@ -2482,10 +2466,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// Updates the texture from the emulator core's video buffer
     /// Returns true if the update was successful, false otherwise
     private func updateTextureFromCore() -> Bool {
-        guard let emulatorCore = emulatorCore,
-              let device = device else {
+        guard let emulatorCore = emulatorCore else {
             DLOG("Missing required resources for texture update")
-            // Don't call recovery here as this is often a normal initial state
             return false
         }
 
@@ -2584,53 +2566,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
         let totalBytes = bytesPerRow * Int(bufferSize.height)
 
-        // Use a buffer pool to reduce allocations and improve performance
-        let tempBuffer: MTLBuffer
-        if let uploadBuffer = uploadBuffer, uploadBuffer.length >= totalBytes {
-            // Reuse existing buffer if it's large enough
-            tempBuffer = uploadBuffer
-        } else {
-            // Create a new buffer with some extra capacity to avoid frequent reallocations
-            let paddedSize = Int(Double(totalBytes) * 1.2) // Add 20% extra capacity
-            DLOG("Creating new upload buffer of size \(paddedSize) (requested: \(totalBytes))")
-
-            guard let newBuffer = device.makeBuffer(length: paddedSize, options: .storageModeShared) else {
-                ELOG("Failed to create upload buffer")
-                recoverFromGPUError()
-                return false
-            }
-
-            // Track buffer creation for debugging
-            bufferCreationCount += 1
-            DLOG("Buffer creation count: \(bufferCreationCount)")
-
-            uploadBuffer = newBuffer
-            tempBuffer = newBuffer
-        }
-
-        // Copy the video buffer to the upload buffer
-        let uploadContents = tempBuffer.contents()
-        memcpy(uploadContents, videoBuffer, totalBytes)
-
-        // Create a command buffer
-        guard let commandQueue = commandQueue,
-              let commandBuffer = commandQueue.makeCommandBuffer() else {
-            DLOG("Failed to create command buffer")
-            return false
-        }
-
-        // Create a blit command encoder
-        guard let blitEncoder = commandBuffer.makeBlitCommandEncoder() else {
-            DLOG("Failed to create blit encoder")
-            return false
-        }
-
-        defer {
-            blitEncoder.endEncoding()
-            commandBuffer.commit()
-            commandBuffer.waitUntilCompleted()  // Wait for the copy to complete
-        }
-
         // Calculate effective source size using the effective screen rect
         let effectiveWidth = Int(effectiveScreenRect.width)
         let effectiveHeight = Int(effectiveScreenRect.height)
@@ -2705,24 +2640,35 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return false
         }
 
-//        VLOG("Copying buffer to texture: size=(\(finalWidth)x\(finalHeight)), offset=\(finalSourceOffset)")
-
-        // Copy from the upload buffer to the texture with safe dimensions
-        blitEncoder.copy(
-            from: tempBuffer,
-            sourceOffset: finalSourceOffset,
-            sourceBytesPerRow: bytesPerRow,
-            sourceBytesPerImage: totalBytes,
-            sourceSize: MTLSizeMake(finalWidth, finalHeight, 1),
-            to: inputTexture,
-            destinationSlice: 0,
-            destinationLevel: 0,
-            destinationOrigin: MTLOriginMake(0, 0, 0)
+        // Write directly to the texture. On unified-memory devices (all iOS/tvOS and Apple
+        // Silicon Mac) the CPU write is immediately GPU-visible — no staging buffer or blit
+        // needed. On Intel Mac with discrete GPU the texture uses managed storage, so we
+        // replace the CPU copy and issue an explicit synchronize blit to push it to VRAM.
+        #if os(macOS) || targetEnvironment(macCatalyst)
+        if device?.hasUnifiedMemory == false,
+           let commandQueue = commandQueue,
+           let commandBuffer = commandQueue.makeCommandBuffer(),
+           let blitEncoder = commandBuffer.makeBlitCommandEncoder() {
+            inputTexture.replace(
+                region: MTLRegionMake2D(0, 0, finalWidth, finalHeight),
+                mipmapLevel: 0,
+                withBytes: videoBuffer.advanced(by: finalSourceOffset),
+                bytesPerRow: bytesPerRow
+            )
+            blitEncoder.synchronize(resource: inputTexture)
+            blitEncoder.endEncoding()
+            commandBuffer.commit()
+            commandBuffer.waitUntilCompleted()
+            return true
+        }
+        #endif
+        // Zero-copy path: CPU write to shared texture, immediately visible to GPU.
+        inputTexture.replace(
+            region: MTLRegionMake2D(0, 0, finalWidth, finalHeight),
+            mipmapLevel: 0,
+            withBytes: videoBuffer.advanced(by: finalSourceOffset),
+            bytesPerRow: bytesPerRow
         )
-
-
-
-        //        VLOG("Updated texture from core: \(bufferSize.width)x\(bufferSize.height), bytes per pixel: \(bytesPerPixel)")
         return true
     }
 

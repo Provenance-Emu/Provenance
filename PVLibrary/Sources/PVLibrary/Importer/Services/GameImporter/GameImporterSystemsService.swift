@@ -102,9 +102,9 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
     }
 
     func determineSystems(for item: ImportQueueItem) async throws -> [SystemIdentifier] {
-        // For directory ROM sets (e.g., MAME unpacked folders), the system was already determined
-        // by ArchiveZipSupportChecker in performImport.  Return the pre-set systems so that the
-        // normal extension/MD5-based path (which doesn't understand directories) is bypassed.
+        // For directory ROM sets (MAME or DOSBox), the system is resolved in performImport and
+        // stored in item.systems before determineSystems is called.  Return it directly to bypass
+        // the extension/MD5-based path (which doesn't understand directories).
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(atPath: item.url.path, isDirectory: &isDirectory),
            isDirectory.boolValue {
@@ -112,7 +112,12 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                 DLOG("GameImporter: Using pre-determined systems for directory: \(item.url.lastPathComponent)")
                 return item.systems
             }
-            // No pre-set systems — the folder wasn't identified as a ROM set.
+            // Fallback: check for DOSBox folder via the shared importer helper to avoid duplicating the heuristic.
+            if GameImporter.shared.isDOSBoxFolder(item) {
+                DLOG("GameImporter: Detected DOSBox game folder (fallback): \(item.url.lastPathComponent)")
+                return [.DOS]
+            }
+            DLOG("GameImporter: Directory \(item.url.lastPathComponent) is not a recognised game folder, skipping")
             return []
         }
 

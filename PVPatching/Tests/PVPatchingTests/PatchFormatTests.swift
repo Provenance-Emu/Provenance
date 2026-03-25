@@ -52,6 +52,11 @@ final class PatchFormatTests: XCTestCase {
         XCTAssertNil(PatchFormat.detect(from: url))
     }
 
+    func testDetectNSP() {
+        let url = URL(fileURLWithPath: "/roms/patch.nsp")
+        XCTAssertEqual(PatchFormat.detect(from: url), .nsp)
+    }
+
     func testDetectCaseInsensitive() {
         let url = URL(fileURLWithPath: "/roms/patch.IPS")
         XCTAssertEqual(PatchFormat.detect(from: url), .ips)

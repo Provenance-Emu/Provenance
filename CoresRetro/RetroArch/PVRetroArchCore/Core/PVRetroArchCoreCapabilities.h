@@ -62,6 +62,19 @@ bool pv_core_declares_l2r2_triggers(void);
 // RETRO_ENVIRONMENT_SET_CONTROLLER_INFO.
 bool pv_core_declares_keyboard_device(void);
 
+// ---------------------------------------------------------------------------
+// Port device type configuration
+// ---------------------------------------------------------------------------
+// Calls RetroArch's core_set_controller_port_device() to set the libretro
+// device type on a specific controller port.  Must be called AFTER
+// retro_load_game (i.e. after the core has initialised its port table).
+//
+// Common device type values (from libretro.h):
+//   RETRO_DEVICE_NONE    = 0
+//   RETRO_DEVICE_JOYPAD  = 1
+//   RETRO_DEVICE_MOUSE   = 2
+void pv_core_set_controller_port_device(unsigned port, unsigned device);
+
 #ifdef __cplusplus
 }
 #endif

@@ -2536,8 +2536,8 @@ public final class GameImporter: GameImporting, ObservableObject {
     // This is the version of determineImportType called internally for quick checks, non-throwing.
     // Relies on the simpler helpers above.
     private func determineImportType(_ item: ImportQueueItem) -> ImportQueueItem.FileType {
-        // Check for directories first — they may be MAME unpacked ROM set folders.
-        // The async DB lookup happens later in performImport.
+        // Check for directories first — could be MAME ROM sets or DOSBox game folders.
+        // Both are returned as .folder; performImport resolves the specific system asynchronously.
         var isDir: ObjCBool = false
         if FileManager.default.fileExists(atPath: item.url.path, isDirectory: &isDir), isDir.boolValue {
             return .folder
@@ -3117,22 +3117,29 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
         }
 
-        // Handle directory ROM sets (e.g., MAME unpacked folders).
-        // The folder was detected synchronously in determineImportType; here we do the async DB lookup.
+        // Handle directory ROM sets — could be a DOSBox game folder or a MAME unpacked ROM set.
+        // DOSBox is identified synchronously (file-system heuristic); MAME requires an async DB lookup.
         if item.fileType == .folder {
-            ILOG("Processing potential MAME ROM folder: \(fileName)")
-            let mameSystemID = await ArchiveZipSupportChecker.shared.shouldTreatFolderAsMameRom(item.url)
-            if let systemID = mameSystemID {
-                ILOG("Folder '\(fileName)' identified as \(systemID.rawValue) ROM set — importing as game")
-                item.systems = [systemID]
+            if isDOSBoxFolder(item) {
+                ILOG("Folder '\(fileName)' identified as DOSBox game — importing as DOS game")
+                item.systems = [.DOS]
                 item.fileType = .game
-                // Fall through to normal game processing (system detection, file move, DB import).
+                // Fall through to normal game processing.
             } else {
-                WLOG("Folder '\(fileName)' not recognised as a MAME ROM set — skipping import")
-                await MainActor.run {
-                    item.status = .failure(error: GameImporterError.unsupportedFile)
+                ILOG("Processing potential MAME ROM folder: \(fileName)")
+                let mameSystemID = await ArchiveZipSupportChecker.shared.shouldTreatFolderAsMameRom(item.url)
+                if let systemID = mameSystemID {
+                    ILOG("Folder '\(fileName)' identified as \(systemID.rawValue) ROM set — importing as game")
+                    item.systems = [systemID]
+                    item.fileType = .game
+                    // Fall through to normal game processing (system detection, file move, DB import).
+                } else {
+                    WLOG("Folder '\(fileName)' not recognised as a DOSBox or MAME ROM set — skipping import")
+                    await MainActor.run {
+                        item.status = .failure(error: GameImporterError.unsupportedFile)
+                    }
+                    throw GameImporterError.unsupportedFile
                 }
-                throw GameImporterError.unsupportedFile
             }
         }
 

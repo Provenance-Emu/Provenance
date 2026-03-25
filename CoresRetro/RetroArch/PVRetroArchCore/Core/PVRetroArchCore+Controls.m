@@ -933,6 +933,12 @@ static bool is_virtual_touch_controller(GCController *controller) {
     }
 
 }
+
+- (void)setControllerPortDevice:(uint32_t)device forPort:(uint32_t)port {
+    pv_core_set_controller_port_device(port, device);
+    ILOG(@"[RA] setControllerPortDevice: port=%u device=%u", port, device);
+}
+
 @end
 static bool apple_gamecontroller_available(void) {
 	return true;

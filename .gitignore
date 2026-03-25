@@ -131,3 +131,4 @@ build
 # Claude Code
 .claude/
 memory-bank/
+Package.resolved
