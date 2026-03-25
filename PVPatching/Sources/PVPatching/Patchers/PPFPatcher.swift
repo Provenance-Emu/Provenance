@@ -86,7 +86,8 @@ public struct PPFPatcher: Sendable {
             if magic[0] == UInt8(ascii: "P"),
                magic[1] == UInt8(ascii: "P"),
                magic[2] == UInt8(ascii: "F") {
-                throw PatchError.unsupportedFormat("PPF version \(magic[3])\(magic[4]) is not supported (only 10, 20, 30)")
+                let versionString = String(decoding: [magic[3], magic[4]], as: UTF8.self)
+                throw PatchError.unsupportedFormat("PPF version \(versionString) is not supported (only 10, 20, 30)")
             }
             throw PatchError.corruptPatchFile("Invalid PPF magic bytes — not a PPF file")
         }
@@ -99,6 +100,13 @@ public struct PPFPatcher: Sendable {
         let headerSize = 59
         guard patch.count >= headerSize else {
             throw PatchError.corruptPatchFile("PPF 1.0 header truncated (need \(headerSize) bytes, got \(patch.count))")
+        }
+
+        // Read the 4-byte expected file size (at offset 55, after magic+description).
+        // If non-zero, validate it against the source size to catch wrong-file mistakes.
+        let expectedSize = Int(patch.readLE32(at: 55))
+        if expectedSize != 0 && expectedSize != source.count {
+            throw PatchError.sourceROMMismatch
         }
 
         var result = source
@@ -193,9 +201,20 @@ public struct PPFPatcher: Sendable {
                 throw PatchError.corruptPatchFile("PPF record data truncated at file offset \(pos)")
             }
 
+            // Validate that the 64-bit offset fits in Int on this platform.
+            guard offset64 <= UInt64(Int.max) else {
+                throw PatchError.corruptPatchFile("PPF record offset \(offset64) is out of range for this platform")
+            }
+
             let offset = Int(offset64)
             let patchBytes = patch[pos..<(pos + length)]
             pos += length
+
+            // Ensure offset + patchBytes.count does not overflow Int before applying.
+            let byteCount = patchBytes.count
+            guard offset <= Int.max - byteCount else {
+                throw PatchError.corruptPatchFile("PPF record offset + length overflows addressable range")
+            }
 
             applyBytes(patchBytes, at: offset, into: &result)
         }
@@ -216,6 +235,6 @@ public struct PPFPatcher: Sendable {
     private func isBeginFileMarker(_ data: Data, at pos: Int) -> Bool {
         let markerLen = Self.beginFileMarker.count
         guard pos + markerLen <= data.count else { return false }
-        return Array(data[pos..<(pos + markerLen)]) == Self.beginFileMarker
+        return data[pos..<(pos + markerLen)].elementsEqual(Self.beginFileMarker)
     }
 }
