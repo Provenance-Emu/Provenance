@@ -1,0 +1,14 @@
+/* Localizable.strings — Arabic (ar)
+   Provenance
+   AI-generated translation based on community contribution (issue #2256)
+   Note: Translation was AI-generated because the original community zip could not be downloaded in CI.
+   Please compare with the original attachment in issue #2256 and apply any corrections.
+*/
+
+"DeleteGameTitle" = "حذف اللعبة؟";
+"DeleteGameBody" = "هل أنت متأكد من حذف اللعبة \"%@\"؟";
+"OK" = "موافق";
+"Cancel" = "إلغاء";
+"Delete" = "حذف";
+"Error" = "خطأ";
+"Warning" = "تحذير";
