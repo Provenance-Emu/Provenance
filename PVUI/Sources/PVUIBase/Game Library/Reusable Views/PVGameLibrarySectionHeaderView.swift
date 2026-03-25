@@ -72,8 +72,8 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 
         // Style
             backgroundColor = UIColor.black.withAlphaComponent(0.8)
-            let layoutDirection1 = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
-            titleLabel.textAlignment = layoutDirection1 == .rightToLeft ? .right : .left
+            let layoutDirection = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
+            titleLabel.textAlignment = layoutDirection == .rightToLeft ? .right : .left
             titleLabel.backgroundColor = .clear
             titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
             clipsToBounds = false
@@ -98,8 +98,8 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 
             // Style
             backgroundColor = ThemeManager.shared.currentPalette.gameLibraryHeaderBackground
-            let layoutDirection2 = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
-            titleLabel.textAlignment = layoutDirection2 == .rightToLeft ? .right : .left
+            let layoutDirection = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
+            titleLabel.textAlignment = layoutDirection == .rightToLeft ? .right : .left
             titleLabel.textColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
 //        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
