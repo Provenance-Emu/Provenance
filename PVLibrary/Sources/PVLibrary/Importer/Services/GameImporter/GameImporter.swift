@@ -3057,9 +3057,11 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     /// Imports a ROM patch file by creating a `PVPatch` Realm record for it.
+    /// The file must already have been moved to its destination before calling this method.
     /// Full patch application is handled by PatchImporter (TODO #2676).
     private func importPatchFile(_ item: ImportQueueItem) async throws {
-        let url = item.url
+        // Use the destination URL set by moveImportItem, falling back to the original URL.
+        let url = item.destinationUrl ?? item.url
         guard let format = PatchFormat(fileURL: url) else {
             ELOG("Cannot determine patch format for \(url.lastPathComponent)")
             throw GameImporterError.unsupportedFile
@@ -3075,10 +3077,9 @@ public final class GameImporter: GameImporting, ObservableObject {
             title: url.deletingPathExtension().lastPathComponent
         )
 
+        // addAsync dispatches to main thread, ensuring the main-thread Realm instance is used.
         let database = RomDatabase.sharedInstance
-        try database.writeTransaction {
-            database.realm.add(patch, update: .modified)
-        }
+        try await database.addAsync(patch, update: true)
         ILOG("Saved PVPatch record for \(url.lastPathComponent)")
     }
 
@@ -3253,10 +3254,12 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        // Handle patch files — store in Realm, full application deferred to PatchImporter (TODO #2676)
+        // Handle patch files — move to Patches dir, then store in Realm.
+        // Full patch application is deferred to PatchImporter (TODO #2676).
         if item.fileType == .patch {
             ILOG("Processing as ROM patch file: \(fileName)")
             do {
+                try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: item)
                 try await importPatchFile(item)
                 await MainActor.run {
                     item.status = .success

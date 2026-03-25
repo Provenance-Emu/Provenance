@@ -18,7 +18,8 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
 
     // MARK: - Primary Key
 
-    @Persisted(wrappedValue: UUID().uuidString, primaryKey: true) public var id: String
+    /// Deterministic ID derived from the patch file's relative path; stable across re-imports.
+    @Persisted(primaryKey: true) public var id: String = ""
 
     // MARK: - File & Game
 
@@ -80,6 +81,9 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
         sourceURLString: String? = nil
     ) {
         self.init()
+        // Derive a stable primary key from the file's relative path so that
+        // re-importing the same patch updates the record rather than creating a duplicate.
+        self.id = file.partialPath.isEmpty ? UUID().uuidString : file.partialPath
         self.file = file
         self.game = game
         self.date = date

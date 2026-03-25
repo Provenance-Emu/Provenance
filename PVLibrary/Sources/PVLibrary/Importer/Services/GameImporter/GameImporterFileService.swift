@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVFileSystem
 import PVSupport
 import RealmSwift
 import PVPrimitives
@@ -40,9 +41,14 @@ class GameImporterFileService : GameImporterFileServicing {
         case .game, .cdRom, .zip, .folder:
             _ = try await processQueueItem(queueItem)
         case .patch:
-            // TODO(#2676): route patch file to PatchImporter once implemented
-            ILOG("Patch file detected: \(queueItem.url.lastPathComponent) — patch import not yet implemented")
-            return
+            let patchesDir = Paths.patchesPath
+            try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true)
+            let destURL = patchesDir.appendingPathComponent(queueItem.url.lastPathComponent)
+            if !FileManager.default.fileExists(atPath: destURL.path) {
+                try FileManager.default.moveItem(at: queueItem.url, to: destURL)
+            }
+            queueItem.destinationUrl = destURL
+            ILOG("Moved patch file to: \(destURL.path)")
         case .unknown:
             throw GameImporterError.unsupportedFile
         }
