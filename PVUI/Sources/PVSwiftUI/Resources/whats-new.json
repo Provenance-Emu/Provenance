@@ -568,23 +568,5 @@
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
       }
     ]
-  },
-  {
-    "version": "3.8.0",
-    "title": "Controller Cases & Peripheral Support",
-    "features": [
-      {
-        "symbolName": "iphone.gen3.badged.gamecontroller",
-        "symbolColor": "blue",
-        "title": "Physical Case Detection",
-        "subtitle": "Provenance now recognises popular controller cases (GameSir Pocket Taco, Soolra, Buppin) and can automatically load a matching skin when your case connects."
-      },
-      {
-        "symbolName": "sparkles",
-        "symbolColor": "purple",
-        "title": "Auto-Load Case Skins",
-        "subtitle": "Enable \"Auto-load case skin on detection\" in Controller Settings to have the right skin appear the moment you snap on your case."
-      }
-    ]
   }
 ]

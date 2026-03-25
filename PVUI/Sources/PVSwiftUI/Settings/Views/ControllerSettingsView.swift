@@ -13,6 +13,7 @@ import PVThemes
 import PVLibrary
 import PVRealm
 import PVFeatureFlags
+import PVSettings
 import MarkdownView
 #if canImport(PVUI_IOS)
 import PVUI_IOS

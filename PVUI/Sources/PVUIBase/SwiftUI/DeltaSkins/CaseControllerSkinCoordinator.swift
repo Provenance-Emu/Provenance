@@ -27,7 +27,8 @@ import Defaults
 ///    `.portrait` and `.landscape` orientations so the skin is active immediately.
 /// 4. Posts a single success toast: `"[Case name] detected — loading compatible skin"`.
 ///    Falls back to `"[Case name] detected"` when no matching skin is installed.
-public final class CaseControllerSkinCoordinator: @unchecked Sendable {
+@MainActor
+public final class CaseControllerSkinCoordinator {
 
     // MARK: - State
 

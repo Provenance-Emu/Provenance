@@ -36,16 +36,13 @@ final class CaseControllerSkinCoordinatorTests: XCTestCase {
         let layout = CaseControllerDetector.knownLayouts.first { $0.name == "Buppin Case" }
         XCTAssertNotNil(layout, "Buppin Case layout must be registered")
 
-        let expectation = expectation(description: "Notification handled without crash")
-        expectation.fulfill()
-
         NotificationCenter.default.post(
             name: .PVPhysicalCaseDidConnect,
             object: nil,
             userInfo: layout!.notificationUserInfo
         )
-
-        wait(for: [expectation], timeout: 0.5)
+        // Spin the main run loop so the main-queue observer fires before the test exits.
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
     }
 
     func testCaseConnectNotificationWithMissingLayoutUserInfoIsHandledGracefully() {
@@ -54,16 +51,13 @@ final class CaseControllerSkinCoordinatorTests: XCTestCase {
         defer { coordinator.stop() }
 
         // Post notification without a layout in userInfo — coordinator must not crash.
-        let expectation = expectation(description: "Graceful handling of missing userInfo")
-        expectation.fulfill()
-
         NotificationCenter.default.post(
             name: .PVPhysicalCaseDidConnect,
             object: nil,
             userInfo: nil
         )
-
-        wait(for: [expectation], timeout: 0.5)
+        // Spin the main run loop so the observer fires and we verify it doesn't crash.
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
     }
 
     // MARK: - Deinit
