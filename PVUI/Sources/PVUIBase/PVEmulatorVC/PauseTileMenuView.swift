@@ -73,6 +73,11 @@ struct PauseTileMenuView: View {
     // Haptic feedback toggle
     @Default(.hapticFeedback) private var hapticFeedbackEnabled
 
+    // Camera position for recording overlay — iOS only
+    #if os(iOS)
+    @Default(.recordingCameraPosition) private var recordingCameraPosition
+    #endif
+
     #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     #endif
@@ -225,6 +230,16 @@ struct PauseTileMenuView: View {
             emulatorVC.saveClip()
             #endif
 
+        // MARK: Camera position cycle
+        case "cameraPosition":
+            #if os(iOS)
+            let all = CameraPosition.allCases
+            if let idx = all.firstIndex(of: recordingCameraPosition) {
+                recordingCameraPosition = all[(idx + 1) % all.count]
+            }
+            rebuildSections()
+            #endif
+
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
             guard let actionTitle = CoreActionTileProvider.actionTitle(fromTileID: id),
@@ -281,6 +296,16 @@ struct PauseTileMenuView: View {
             rebuildSections()
             return
         }
+
+        #if os(iOS)
+        if tile.id == "cameraPosition" {
+            if let pos = CameraPosition.allCases.first(where: { "camPos_\($0.rawValue)" == lpOption.id }) {
+                recordingCameraPosition = pos
+                rebuildSections()
+            }
+            return
+        }
+        #endif
 
         if tile.id.hasPrefix(CoreActionTileProvider.idPrefix) {
             guard let actionTitle = CoreActionTileProvider.actionTitle(fromTileID: tile.id),

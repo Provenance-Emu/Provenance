@@ -57,6 +57,9 @@ struct RetroMenuView: View {
     /// Get device orientation
     #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    @Default(.recordingCameraEnabled) private var recordingCameraEnabled
+    @Default(.recordingCameraPosition) private var recordingCameraPosition
+    @State private var showingCameraPositionPicker = false
     #endif
 
     /// Compute if we're in landscape mode
@@ -347,6 +350,20 @@ struct RetroMenuView: View {
                 }
             }
         }
+        #if os(iOS)
+        .confirmationDialog(String(localized: "Camera Corner"), isPresented: $showingCameraPositionPicker, titleVisibility: .visible) {
+            ForEach(CameraPosition.allCases, id: \.self) { position in
+                Button(position.displayName) {
+                    recordingCameraPosition = position
+                }
+            }
+            Button(String(localized: "Cancel"), role: .cancel) {
+                showingCameraPositionPicker = false
+            }
+        } message: {
+            Text(String(localized: "Choose where the camera preview appears during recording."))
+        }
+        #endif
         // Listen for orientation changes
 #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -680,6 +697,7 @@ struct RetroMenuView: View {
 
 #if os(iOS)
             recordingButton
+            cameraPositionButton
 #endif
 
 #if os(iOS) || os(tvOS)
@@ -801,6 +819,22 @@ struct RetroMenuView: View {
             }
         }
     }
+
+    // Camera corner picker button — shown only when recording is available and camera overlay is enabled
+#if os(iOS)
+    @ViewBuilder
+    private var cameraPositionButton: some View {
+        if PVRecordingManager.shared.isAvailable && recordingCameraEnabled {
+            menuButton(
+                title: "CAMERA: \(recordingCameraPosition.displayName.uppercased())",
+                icon: recordingCameraPosition.symbolName,
+                color: .retroBlue
+            ) {
+                showingCameraPositionPicker = true
+            }
+        }
+    }
+#endif
 
     // Screen recording button with Plus gating
 #if os(iOS)
