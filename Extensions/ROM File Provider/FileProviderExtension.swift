@@ -250,6 +250,10 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
                                 // caches, sync, and metadata enrichment that key off romPath
                                 // see the updated location immediately.
                                 pvGame.romPath = newPartial
+                                // Note: PVFile.fileName is a computed property derived from
+                                // url?.lastPathComponent (which is derived from partialPath),
+                                // so it reflects the new name automatically — no separate
+                                // stored field needs updating.
                             }
                         }
                         ILOG("FileProvider: renamed \(existingURL.lastPathComponent) → \(newFilename)")
@@ -362,6 +366,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
         // Hash the source file first so we can detect duplicates before doing any disk
         // writes — avoids copying large ROMs that will be immediately discarded.
+        try Task.checkCancellation()
         guard let md5 = streamingMD5(for: sourceURL) else {
             ELOG("FileProvider: failed to compute MD5 for \(filename)")
             throw NSFileProviderError(.cannotSynchronize)
@@ -382,10 +387,16 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         let destDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
         try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
 
+        // Check cancellation before the potentially large file copy.
+        try Task.checkCancellation()
+
         // Avoid silently overwriting an existing ROM that may have different content.
         // Generate a unique destination path by appending a counter suffix when needed.
         let destURL = uniqueDestinationURL(in: destDir, for: filename)
         try FileManager.default.copyItem(at: sourceURL, to: destURL)
+
+        // Check cancellation before the Realm write.
+        try Task.checkCancellation()
 
         // If the existing record is a placeholder or its local file is missing, update
         // it to point to the newly imported copy.
@@ -480,7 +491,8 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             let n = stream.read(buffer, maxLength: chunkSize)
             if n < 0 { return nil }
             if n == 0 { break }
-            hasher.update(data: Data(bytes: buffer, count: n))
+            // Use a no-copy raw buffer pointer to avoid a per-chunk Data allocation.
+            hasher.update(bufferPointer: UnsafeRawBufferPointer(start: buffer, count: n))
         }
 
         return hasher.finalize().map { String(format: "%02X", $0) }.joined()
