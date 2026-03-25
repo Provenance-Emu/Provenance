@@ -112,7 +112,7 @@ public struct PPFPatcher: Sendable {
         var result = source
         var pos = headerSize  // skip magic + description + 4-byte file size
 
-        try applyRecords4ByteOffset(patch: patch, pos: &pos, result: &result)
+        try applyRecords4ByteOffset(patch: patch, pos: &pos, result: &result, maxOutputSize: source.count)
         return result
     }
 
@@ -124,10 +124,26 @@ public struct PPFPatcher: Sendable {
             throw PatchError.corruptPatchFile("PPF 2.0 header truncated (need \(headerSize) bytes, got \(patch.count))")
         }
 
-        var result = source
-        var pos = headerSize  // skip header fields
+        // Validate that only the simplest PPF 2.0 variant is used:
+        // encoding method 0 (no special encoding), no block-check, no undo-data.
+        let encodingMethod = patch[5]
+        let blockCheckFlag = patch[60]
+        let undoDataFlag   = patch[61]
 
-        try applyRecords4ByteOffset(patch: patch, pos: &pos, result: &result)
+        if encodingMethod != 0 {
+            throw PatchError.unsupportedFormat("PPF 2.0 encoding method \(encodingMethod) is not supported (only method 0)")
+        }
+        if blockCheckFlag != 0 {
+            throw PatchError.unsupportedFormat("PPF 2.0 block-check data is not supported")
+        }
+        if undoDataFlag != 0 {
+            throw PatchError.unsupportedFormat("PPF 2.0 undo-data section is not supported")
+        }
+
+        var result = source
+        var pos = headerSize  // skip validated header fields
+
+        try applyRecords4ByteOffset(patch: patch, pos: &pos, result: &result, maxOutputSize: source.count)
         return result
     }
 
@@ -139,17 +155,36 @@ public struct PPFPatcher: Sendable {
             throw PatchError.corruptPatchFile("PPF 3.0 header truncated (need \(headerSize) bytes, got \(patch.count))")
         }
 
-        var result = source
-        var pos = headerSize  // skip header fields
+        // Validate that only the simplest PPF 3.0 variant is used:
+        // encoding method 0, no block-check, no undo-data.
+        let encodingMethod = patch[5]
+        let blockCheckFlag = patch[57]
+        let undoDataFlag   = patch[58]
 
-        try applyRecords8ByteOffset(patch: patch, pos: &pos, result: &result)
+        if encodingMethod != 0 {
+            throw PatchError.unsupportedFormat("PPF 3.0 encoding method \(encodingMethod) is not supported (only method 0)")
+        }
+        if blockCheckFlag != 0 {
+            throw PatchError.unsupportedFormat("PPF 3.0 block-check data is not supported")
+        }
+        if undoDataFlag != 0 {
+            throw PatchError.unsupportedFormat("PPF 3.0 undo-data section is not supported")
+        }
+
+        var result = source
+        var pos = headerSize  // skip validated header fields
+
+        try applyRecords8ByteOffset(patch: patch, pos: &pos, result: &result, maxOutputSize: source.count)
         return result
     }
 
     // MARK: - Record application
 
     /// Apply patch records using 4-byte (32-bit) offsets (PPF 1.0 and 2.0).
-    private func applyRecords4ByteOffset(patch: Data, pos: inout Int, result: inout Data) throws {
+    ///
+    /// - Parameter maxOutputSize: The original source size; records that would write beyond this
+    ///   are rejected as corrupt to prevent unbounded allocation from malicious patches.
+    private func applyRecords4ByteOffset(patch: Data, pos: inout Int, result: inout Data, maxOutputSize: Int) throws {
         while pos < patch.count {
             // Check for @BEGIN_FILE marker (optional suffix block in some PPF 2 files)
             if isBeginFileMarker(patch, at: pos) { break }
@@ -170,6 +205,9 @@ public struct PPFPatcher: Sendable {
             guard pos + length <= patch.count else {
                 throw PatchError.corruptPatchFile("PPF record data truncated at file offset \(pos)")
             }
+            guard offset + length <= maxOutputSize else {
+                throw PatchError.corruptPatchFile("PPF record writes beyond source image boundary (offset \(offset), length \(length), sourceSize \(maxOutputSize))")
+            }
 
             let patchBytes = patch[pos..<(pos + length)]
             pos += length
@@ -179,7 +217,10 @@ public struct PPFPatcher: Sendable {
     }
 
     /// Apply patch records using 8-byte (64-bit) offsets (PPF 3.0).
-    private func applyRecords8ByteOffset(patch: Data, pos: inout Int, result: inout Data) throws {
+    ///
+    /// - Parameter maxOutputSize: The original source size; records that would write beyond this
+    ///   are rejected as corrupt to prevent unbounded allocation from malicious patches.
+    private func applyRecords8ByteOffset(patch: Data, pos: inout Int, result: inout Data, maxOutputSize: Int) throws {
         while pos < patch.count {
             // Check for @BEGIN_FILE marker
             if isBeginFileMarker(patch, at: pos) { break }
@@ -214,6 +255,9 @@ public struct PPFPatcher: Sendable {
             let byteCount = patchBytes.count
             guard offset <= Int.max - byteCount else {
                 throw PatchError.corruptPatchFile("PPF record offset + length overflows addressable range")
+            }
+            guard offset + byteCount <= maxOutputSize else {
+                throw PatchError.corruptPatchFile("PPF record writes beyond source image boundary (offset \(offset), length \(byteCount), sourceSize \(maxOutputSize))")
             }
 
             applyBytes(patchBytes, at: offset, into: &result)

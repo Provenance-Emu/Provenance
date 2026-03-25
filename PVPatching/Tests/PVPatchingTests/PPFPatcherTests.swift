@@ -116,16 +116,16 @@ final class PPFPatcherTests: XCTestCase {
         XCTAssertEqual(result[6], 0x00)
     }
 
-    func testV1PatchExtendsSourceIfNeeded() throws {
+    func testV1RecordBeyondSourceSizeThrows() {
+        // Writing beyond the original source boundary should be rejected to prevent
+        // unbounded allocation from malicious/corrupt patches.
         let source = Data([0x01, 0x02])
         let patch = makePPFv1Patch(records: [(offset: 5, data: [0xFF])])
-        let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(result.count, 6)
-        XCTAssertEqual(result[5], 0xFF)
-        // Padding bytes are zero
-        XCTAssertEqual(result[2], 0x00)
-        XCTAssertEqual(result[3], 0x00)
-        XCTAssertEqual(result[4], 0x00)
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
+            guard case PatchError.corruptPatchFile = error else {
+                return XCTFail("Expected corruptPatchFile, got \(error)")
+            }
+        }
     }
 
     func testV1AtOffset0() throws {
@@ -179,6 +179,54 @@ final class PPFPatcherTests: XCTestCase {
         XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
+            }
+        }
+    }
+
+    func testV2NonZeroEncodingMethodThrows() {
+        var patch = Data("PPF20".utf8)
+        patch.append(0x01)  // encoding method = 1 (unsupported)
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 57))  // rest of header
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+            guard case PatchError.unsupportedFormat = error else {
+                return XCTFail("Expected unsupportedFormat, got \(error)")
+            }
+        }
+    }
+
+    func testV2NonZeroBlockCheckThrows() {
+        var patch = Data("PPF20".utf8)
+        patch.append(0x00)  // encoding = 0
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 54))  // description + imageType
+        patch.append(0x01)  // blockCheck = 1 (unsupported)
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 2))
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+            guard case PatchError.unsupportedFormat = error else {
+                return XCTFail("Expected unsupportedFormat, got \(error)")
+            }
+        }
+    }
+
+    func testV3NonZeroEncodingMethodThrows() {
+        var patch = Data("PPF30".utf8)
+        patch.append(0x01)  // encoding method = 1 (unsupported)
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 54))  // rest of header
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+            guard case PatchError.unsupportedFormat = error else {
+                return XCTFail("Expected unsupportedFormat, got \(error)")
+            }
+        }
+    }
+
+    func testV3NonZeroUndoDataThrows() {
+        var patch = Data("PPF30".utf8)
+        patch.append(0x00)  // encoding = 0
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 51))  // description + imageType + blockCheck
+        patch.append(0x01)  // undoData = 1 (unsupported)
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 2))
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+            guard case PatchError.unsupportedFormat = error else {
+                return XCTFail("Expected unsupportedFormat, got \(error)")
             }
         }
     }
