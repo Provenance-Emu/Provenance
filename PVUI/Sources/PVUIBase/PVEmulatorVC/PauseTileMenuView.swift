@@ -50,6 +50,10 @@ struct PauseTileMenuView: View {
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
+    /// Triggers the AirPlay route-picker sheet via the hidden AVRoutePickerView bridge.
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    @State private var triggerAirPlayPicker = false
+    #endif
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
@@ -264,6 +268,14 @@ struct PauseTileMenuView: View {
                 recordingCameraPosition = all[(idx + 1) % all.count]
             }
             rebuildSections()
+            #endif
+
+        // MARK: AirPlay
+        case "airPlay":
+            #if os(iOS) || targetEnvironment(macCatalyst)
+            triggerAirPlayPicker = true
+            #else
+            break
             #endif
 
         // MARK: Core action tiles
@@ -668,6 +680,16 @@ struct PauseTileMenuView: View {
                 }
             }
         }
+        // AirPlay trigger — invisible bridge that fires the system route-picker sheet.
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        .overlay(
+            AirPlayPickerTrigger(show: $triggerAirPlayPicker)
+                .frame(width: 1, height: 1)
+                .opacity(0)
+                .allowsHitTesting(false),
+            alignment: .center
+        )
+        #endif
         #if os(iOS)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
