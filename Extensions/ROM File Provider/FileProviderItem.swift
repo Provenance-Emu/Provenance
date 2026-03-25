@@ -13,9 +13,9 @@ import PVPrimitives
 /// A virtual item surfaced by the Provenance ROM library file provider.
 ///
 /// Items represent one of three kinds:
-/// - **Root** — the virtual root container (read-only folder)
-/// - **System folder** — one per game console that has at least one locally-present ROM
-/// - **Game ROM file** — an individual ROM file nested inside its system folder
+/// - **Root** — the virtual root container (read-only; no direct sub-item creation)
+/// - **System folder** — one per game console; accepts ROM drops from Files.app
+/// - **Game ROM file** — an individual ROM file; supports read, delete, and rename
 ///
 /// Uses `Game` and `System` CPDI structs from `PVPrimitives` so the item is
 /// completely decoupled from Realm — safe to pass across threads and to store
@@ -115,12 +115,18 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
 
     var capabilities: NSFileProviderItemCapabilities {
         switch kind {
-        case .root, .systemFolder:
-            // allowsContentEnumerating is required for Files.app to treat these as browsable containers.
+        case .root:
+            // Root is read-only; users cannot create new top-level system folders.
             return [.allowsReading, .allowsContentEnumerating]
+        case .systemFolder:
+            // System folders can be browsed and accept ROM drops from Files.app.
+            return [.allowsReading, .allowsContentEnumerating, .allowsAddingSubItems]
         case .gameFile:
-            // Read-only; eviction is not advertised since there is no rehydration path.
-            return [.allowsReading]
+            // ROM files support read, delete, and rename.
+            // Content replacement (.allowsWriting) is intentionally omitted: the
+            // provider's stable identifier is derived from the ROM's MD5 hash, which
+            // would change on a content swap, leaving identifiers inconsistent.
+            return [.allowsReading, .allowsDeleting, .allowsRenaming]
         }
     }
 

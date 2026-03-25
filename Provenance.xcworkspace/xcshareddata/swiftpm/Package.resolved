@@ -686,15 +686,6 @@
         }
       },
       {
-        "package": "Turbo-Base64.swift",
-        "repositoryURL": "https://github.com/JoeMatt/Turbo-Base64.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "c955cae318ed42be87f62a159884cf6734afcb15",
-          "version": "1.0.1"
-        }
-      },
-      {
         "package": "Unrar",
         "repositoryURL": "https://github.com/mtgto/Unrar.swift.git",
         "state": {

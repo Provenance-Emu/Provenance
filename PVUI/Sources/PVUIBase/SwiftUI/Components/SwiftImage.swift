@@ -705,16 +705,13 @@ public struct MissingArtworkView: View {
     }
 
     public var body: some View {
-        GeometryReader { geometry in
-            Image(uiImage: SwiftImage.missingArtworkImage(
-                gameTitle: gameTitle,
-                ratio: ratio,
-                pattern: pattern
-            ))
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: geometry.size.height * ratio, height: geometry.size.height)
-        }
+        Image(uiImage: SwiftImage.missingArtworkImage(
+            gameTitle: gameTitle,
+            ratio: ratio,
+            pattern: pattern
+        ))
+        .resizable()
+        .aspectRatio(ratio, contentMode: .fit)
         .frame(height: CGFloat(PVThumbnailMaxResolution))
     }
 }

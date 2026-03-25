@@ -2724,12 +2724,12 @@ static bool thin_environment(unsigned cmd, void *data) {
     NSUInteger maxW = (_rawAVInfo.geometry.max_width  ?: w);
     NSUInteger bpp  = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
     NSUInteger dstStride  = maxW * bpp;
-    NSUInteger copyBytes  = MIN(w, maxW) * bpp;
-    for (unsigned y = 0; y < h; y++) {
-        memcpy(_videoBufferData + (NSUInteger)y * dstStride,
-               (const uint8_t *)data + (NSUInteger)y * pitch,
-               copyBytes);
-    }
+    NSUInteger copyW = MIN(w, maxW);
+    // vImageCopyBuffer handles strided copies with NEON, avoiding per-row memcpy overhead.
+    // When pitch == dstStride it degrades to a single vectorised block copy.
+    vImage_Buffer src = { .data = (void *)data,       .height = h, .width = copyW, .rowBytes = pitch    };
+    vImage_Buffer dst = { .data = _videoBufferData,   .height = h, .width = copyW, .rowBytes = dstStride };
+    vImageCopyBuffer(&src, &dst, bpp, kvImageNoFlags);
 }
 
 - (void)_thinAudioSample:(int16_t)left right:(int16_t)right {

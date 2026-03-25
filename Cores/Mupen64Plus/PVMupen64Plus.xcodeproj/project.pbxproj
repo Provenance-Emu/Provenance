@@ -77,6 +77,8 @@
 		B3919A31292C3CB600519575 /* CRC_OPT_NEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */; };
 		B3919A32292C3CDE00519575 /* RSP_LoadMatrixNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603282038AE7B001E70F1 /* RSP_LoadMatrixNeon.cpp */; };
 		B3919A33292C3CF600519575 /* 3DMathNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603272038AE7B001E70F1 /* 3DMathNeon.cpp */; };
+		B391B43A2F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B391B4392F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift */; };
+		B391B43D2F73A3D800A03B02 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B391B43C2F73A3D800A03B02 /* PVNetplay */; };
 		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
@@ -308,7 +310,6 @@
 		B3C65E522CA53330000E37B0 /* new_vi_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8B35D712260F9D00C4C844 /* new_vi_main.m */; };
 		B3C65E532CA53330000E37B0 /* vidext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0BF1183E6FA002995A1 /* vidext.m */; };
 		B3C65E542CA53356000E37B0 /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
-		D2A1A1B12D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */; };
 		B3C65E652CA53CAB000E37B0 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C65E642CA53C00000E37B0 /* CorePlist.swift */; };
 		B3C83E1727960C0F0020824C /* mupencheat.txt in Resources */ = {isa = PBXBuildFile; fileRef = B30559E22072FEE9001212D2 /* mupencheat.txt */; };
 		B3C83E1B279617760020824C /* assem_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A852072FEE9001212D2 /* assem_arm.h */; };
@@ -327,6 +328,7 @@
 		B3F2058326FBCBC600A4196B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F2058226FBCBC600A4196B /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3F94A502CBE6B7200237221 /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C078F82C750D33006F109B /* PVMupen64PlusBridge.framework */; };
 		B3FAC9B9292B522C005E8B11 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
+		D2A1A1B12D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */; };
 		DF0035C0203C8F6E00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		DF0035C1203C8F6E00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		DFB603C12038B6FE001E70F1 /* 3DMath.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB6032B2038AE7B001E70F1 /* 3DMath.h */; };
@@ -991,7 +993,6 @@
 		B34CB0ED2274BA8C009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
 		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
-		D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMupenBridgeRumbleHelper.swift; sourceTree = "<group>"; };
 		B36EF440279C5AB1005C7ED4 /* assem_arm64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = assem_arm64.h; sourceTree = "<group>"; };
 		B36EF441279C5AB1005C7ED4 /* linkage_arm64.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = linkage_arm64.S; sourceTree = "<group>"; };
 		B36EF442279C5AB1005C7ED4 /* assem_arm64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_arm64.c; sourceTree = "<group>"; };
@@ -1004,6 +1005,7 @@
 		B37EFF381C72F43300857158 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3800FF5208522DC00FA03B8 /* libglidenhq.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglidenhq.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380101320854EAA00FA03B8 /* TxDbg_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TxDbg_ios.mm; sourceTree = "<group>"; };
+		B391B4392F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 		B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B39C29D027A120780078D028 /* PVMupenBridge+Controls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVMupenBridge+Controls.m"; sourceTree = "<group>"; };
@@ -1255,6 +1257,7 @@
 		B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDrawerStub.cpp; sourceTree = "<group>"; };
 		B3F2058226FBCBC600A4196B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMupenBridgeRumbleHelper.swift; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFB6018E2038AE78001E70F1 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -1721,6 +1724,7 @@
 			files = (
 				B3EED1FB2C7179BB00443F64 /* PVSupport in Frameworks */,
 				B3C078582C74DDA2006F109B /* PVSettings in Frameworks */,
+				B391B43D2F73A3D800A03B02 /* PVNetplay in Frameworks */,
 				B30E9B2B2C71349500C1431E /* PVEmulatorCore in Frameworks */,
 				B30E98FA2C6EF15700C1431E /* PVSupport in Frameworks */,
 				B383C8732CAD377C00F532C9 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
@@ -2598,6 +2602,7 @@
 				B3C078672C74EFA8006F109B /* MupenGameCore+Core.swift */,
 				B3C0785A2C74EC64006F109B /* MupenGameCore+Audio.swift */,
 				B3C0785B2C74EC64006F109B /* MupenGameCore+Controls.swift */,
+				B391B4392F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift */,
 				B3C0785C2C74EC64006F109B /* MupenGameCore+Resources.swift */,
 				B3C0785D2C74EC64006F109B /* MupenGameCore+Rumble.swift */,
 				B3C0785E2C74EC64006F109B /* MupenGameCore+Video.swift */,
@@ -4247,6 +4252,7 @@
 				B3C65E402CA52EA7000E37B0 /* PVLogging */,
 				B3E264D62CA54426002BB0FE /* PVPlists */,
 				B3A483322F569B14004A995B /* PVPrimitives */,
+				B391B43C2F73A3D800A03B02 /* PVNetplay */,
 			);
 			productName = PVMupen64PlusDynamic;
 			productReference = B37EFF381C72F43300857158 /* PVMupen64Plus.framework */;
@@ -4394,6 +4400,7 @@
 				B3C65E3F2CA52EA7000E37B0 /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3E264D52CA54426002BB0FE /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B3A483312F569B14004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
+				B391B43B2F73A3D800A03B02 /* XCLocalSwiftPackageReference "../../PVNetplay" */,
 			);
 			projectDirPath = "";
 			projectRoot = "";
@@ -4564,6 +4571,7 @@
 				B3C65E652CA53CAB000E37B0 /* CorePlist.swift in Sources */,
 				B383C8792CAD392500F532C9 /* MupenGameCore+Rumble.swift in Sources */,
 				B383C7F42CAD279B00F532C9 /* MupenGameCore+Video.swift in Sources */,
+				B391B43A2F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift in Sources */,
 				B383C87A2CAD3CBB00F532C9 /* MupenGameCore+Resources.swift in Sources */,
 				B383C7F22CAD237200F532C9 /* MupenGameCore+Audio.swift in Sources */,
 			);
@@ -6997,6 +7005,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVEmulatorCore;
 		};
+		B391B43B2F73A3D800A03B02 /* XCLocalSwiftPackageReference "../../PVNetplay" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVNetplay;
+		};
 		B3A483312F569B14004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPrimitives;
@@ -7035,6 +7047,10 @@
 		B30E9B2A2C71349500C1431E /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
+		};
+		B391B43C2F73A3D800A03B02 /* PVNetplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVNetplay;
 		};
 		B3A483322F569B14004A995B /* PVPrimitives */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -13,15 +13,11 @@ internal struct SecretSettingsRow: View {
     @State private var showSecretView = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
-    /// Show feature flags unconditionally in debug builds, simulator, or after konami code unlock
+    /// Show feature flags unconditionally in debug builds and simulator runs.
+    /// On release-device builds, keep them visible for non-App-Store installs
+    /// (sideload + TestFlight) and fall back to hidden unlock for App Store installs.
     private var shouldShowFeatureFlags: Bool {
-        #if DEBUG
-        return true
-        #elseif targetEnvironment(simulator)
-        return true
-        #else
-        return showFeatureFlagsDebug
-        #endif
+        AppState.shared.shouldShowFeatureFlagsByDefault || showFeatureFlagsDebug
     }
 
     var body: some View {

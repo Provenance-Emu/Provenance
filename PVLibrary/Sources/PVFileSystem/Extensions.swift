@@ -5,6 +5,8 @@
 //  Created by Joseph Mattiello on 9/8/24.
 //
 
+import PVPatching
+
 public enum Extensions: String, CaseIterable {
     
     case sevenZip = "7z"
@@ -55,6 +57,19 @@ public enum Extensions: String, CaseIterable {
     /// Mednafen auto-loads `<disc>.sbi` when it is placed next to the matching `.cue` file.
     case sbi = "sbi"
 
+    // Patches
+    case ips      = "ips"
+    case ips32    = "ips32"
+    case bps      = "bps"
+    case ups      = "ups"
+    case xdelta   = "xdelta"
+    case delta    = "delta"
+    case xdelta3  = "xdelta3"
+    case vcdiff   = "vcdiff"
+    case ppf      = "ppf"
+    case aps      = "aps"
+    case rup      = "rup"
+
     private static let _archiveExtensions: Set<Extensions> = [
         .sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip,
         .tar, .bz2, .bzip2, .lzh, .lha, .xz, .zst, .zstd
@@ -74,6 +89,8 @@ public enum Extensions: String, CaseIterable {
     /// Supplementary files that accompany disc images (e.g. `.sbi` subchannel data, `.sub` subchannel tracks).
     public static let cdSupplementaryExtensions: Set<String> = Set(_cdSupplementaryExtensions.map { $0.rawValue })
     public static let skinExtensions: Set<String> = Set(_skinExtensions.map { $0.rawValue })
+    /// Patch file extensions — derived from `PatchFormat.allFileExtensions` (single source of truth).
+    public static let patchExtensions: Set<String> = PatchFormat.allFileExtensions
 
-    public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions).union(cdSupplementaryExtensions).union(skinExtensions)
+    public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions).union(cdSupplementaryExtensions).union(skinExtensions).union(patchExtensions)
 }

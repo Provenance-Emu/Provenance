@@ -6,6 +6,9 @@
 //
 
 #if os(iOS) || os(tvOS)
+#if os(tvOS)
+import GameController
+#endif
 import ReplayKit
 import UIKit
 import Defaults
@@ -21,15 +24,43 @@ import PVSettings
     public static let shared = PVRecordingManager()
 
     /// Whether the recorder is available on this device/session.
+    ///
+    /// On tvOS, recording requires a physical game controller to be connected
+    /// (Apple policy). This property checks both `RPScreenRecorder.shared().isAvailable`
+    /// and controller presence on tvOS.
     public var isAvailable: Bool {
-        RPScreenRecorder.shared().isAvailable
+        #if os(tvOS)
+        // Require at least one physical (non-remote) controller: the Siri Remote is also
+        // a GCController, so `.isEmpty` alone doesn't enforce the Apple policy requirement.
+        return RPScreenRecorder.shared().isAvailable && GCController.controllers().contains { !$0.isRemote }
+        #else
+        return RPScreenRecorder.shared().isAvailable
+        #endif
+    }
+
+    /// On tvOS, whether recording is unavailable specifically because no
+    /// game controller is connected (rather than some other system restriction).
+    ///
+    /// Use this to show a "Connect a game controller to enable recording" hint.
+    ///
+    /// - Note: This is a best-effort heuristic based on controller presence.
+    ///   On Apple TV, `RPScreenRecorder.isAvailable` typically returns `false`
+    ///   when no controller is connected, so controller presence is used directly
+    ///   rather than inspecting `isAvailable`.
+    public var isUnavailableDueToNoController: Bool {
+        #if os(tvOS)
+        // Return true when no physical (non-remote) controller is connected.
+        // The Siri Remote is a GCController, so `isEmpty` alone is unreliable here.
+        return !GCController.controllers().contains { !$0.isRemote }
+        #else
+        return false
+        #endif
     }
 
     /// Whether always-on clip buffering is currently active (iOS/tvOS 15+).
     @available(iOS 15.0, tvOS 15.0, *)
     public private(set) var isClipBuffering: Bool = false
 
-    #if os(iOS)
     /// Whether a recording session is currently active.
     ///
     /// Access is race-free because this class is `@MainActor`-isolated.
@@ -49,6 +80,7 @@ import PVSettings
     /// ReplayKit's main-thread requirements.
     public private(set) var isPreparingRecording: Bool = false
 
+    #if os(iOS)
     /// Separate `NSObject` subclass used as `RPPreviewViewControllerDelegate`,
     /// keeping `PVRecordingManager` free of Objective-C inheritance.
     private let previewDelegate = PreviewDelegate()
@@ -61,9 +93,8 @@ import PVSettings
 
     private init() {}
 
-    // MARK: - Screen Recording (iOS only)
+    // MARK: - Screen Recording (iOS + tvOS)
 
-    #if os(iOS)
     /// Starts a screen recording session.
     ///
     /// Microphone audio is enabled or disabled according to the user's
@@ -84,9 +115,14 @@ import PVSettings
 
         let recorder = RPScreenRecorder.shared()
         recorder.isMicrophoneEnabled = Defaults[.recordingMicEnabled]
-        // Camera PIP: enable before startRecording so ReplayKit provides
-        // cameraPreviewLayer immediately after the call completes.
+        #if os(iOS)
+        // Camera overlay is iOS-only: tvOS has no built-in camera and
+        // `RPScreenRecorder.cameraPreviewLayer` is unavailable on tvOS.
+        // NOTE: tvOS 17+ supports iPhone as a Continuity Camera for FaceTime, but
+        // that integration is not exposed through RPScreenRecorder's camera overlay API.
+        // Revisit if Apple extends camera overlay support to tvOS in a future SDK.
         recorder.isCameraEnabled = Defaults[.recordingCameraEnabled]
+        #endif
 
         // Mark that a recording setup is in-flight *before* calling startRecording.
         // The system may show a permission/indicator UI during startRecording, which
@@ -117,8 +153,13 @@ import PVSettings
         ILOG("[Recording] Recording started successfully")
     }
 
-    /// Stops the current recording session and presents the share sheet.
-    /// - Parameter presenter: The view controller from which to present `RPPreviewViewController`.
+    /// Stops the current recording session.
+    ///
+    /// On iOS, presents an `RPPreviewViewController` sheet so the user can save or share.
+    /// On tvOS, the preview VC is unavailable; the recording is saved to the system and
+    /// the completion callback is called directly.
+    ///
+    /// - Parameter presenter: The view controller from which to present `RPPreviewViewController` (iOS only).
     /// - Throws: An `RPScreenRecorder` error if stopping failed.
     public func stopRecording(presenter: UIViewController) async throws {
         guard isRecording else {
@@ -126,6 +167,7 @@ import PVSettings
             return
         }
 
+        #if os(iOS)
         let previewVC: RPPreviewViewController? = try await withCheckedThrowingContinuation { continuation in
             // Same main-queue dispatch as startRecording: ensures RPScreenRecorder is always
             // called on the main thread and the handler fires on the main queue.
@@ -145,6 +187,8 @@ import PVSettings
 
         guard let previewVC else {
             WLOG("[Recording] No preview controller returned after stop")
+            onPreviewDismissed?()
+            onPreviewDismissed = nil
             return
         }
 
@@ -158,6 +202,27 @@ import PVSettings
         onPreviewDismissed = nil
         await presenter.present(previewVC, animated: true)
         ILOG("[Recording] Preview controller presented")
+
+        #elseif os(tvOS)
+        // RPPreviewViewController is not available on tvOS. Stop recording and
+        // let the system save the clip. The recording is accessible via the
+        // Apple TV home screen "My Clips" section or iCloud Photo Library.
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            DispatchQueue.main.async {
+                RPScreenRecorder.shared().stopRecording { _, error in
+                    if let error {
+                        ELOG("[Recording] Failed to stop recording: \(error.localizedDescription)")
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+        }
+
+        isRecording = false
+        ILOG("[Recording] Recording stopped on tvOS — clip saved to system")
+        #endif
     }
 
     /// Discards any in-progress recording without presenting the preview.
@@ -168,10 +233,9 @@ import PVSettings
         }
         isRecording = false
     }
-    #endif // os(iOS)
 }
 
-// MARK: - Private Delegate
+// MARK: - Private Delegate (iOS only)
 
 #if os(iOS)
 extension PVRecordingManager {

@@ -5,6 +5,7 @@
 //  Created by David Proskin on 11/3/24.
 //
 
+import PVPatching
 
 extension GameImporter {
 
@@ -68,6 +69,16 @@ extension GameImporter {
         let artworkExtensions = Extensions.artworkExtensions
         let fileExtension = queueItem.url.pathExtension.lowercased()
         return artworkExtensions.contains(fileExtension)
+    }
+
+    /// Returns the `PatchFormat` for the item's file extension, or `nil` if not a patch.
+    internal func patchFormat(for item: ImportQueueItem) -> PatchFormat? {
+        PatchFormat.detect(from: item.url)
+    }
+
+    /// Returns `true` if the item has a recognised ROM-patch file extension.
+    internal func isPatch(_ item: ImportQueueItem) -> Bool {
+        patchFormat(for: item) != nil
     }
 
     internal func isBIOS(_ item: ImportQueueItem) -> Bool {

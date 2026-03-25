@@ -506,8 +506,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "b31565862a8f39866af50bc6676160d8dda7de35",
-        "version" : "2.96.0"
+        "revision" : "bdf004b44f77c56fca752cd1cf243c802f8469c9",
+        "version" : "2.97.0"
       }
     },
     {
@@ -524,8 +524,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio-http2.git",
       "state" : {
-        "revision" : "9019b76fa858564a27e0aab13c01987d6e2869fa",
-        "version" : "1.41.0"
+        "revision" : "6d8d596f0a9bfebb925733003731fe2d749b7e02",
+        "version" : "1.42.0"
       }
     },
     {
@@ -650,15 +650,6 @@
       "state" : {
         "revision" : "980921a595b098f2ad51198becada43bd0f5888e",
         "version" : "2.1.6"
-      }
-    },
-    {
-      "identity" : "turbo-base64.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Turbo-Base64.swift.git",
-      "state" : {
-        "revision" : "c955cae318ed42be87f62a159884cf6734afcb15",
-        "version" : "1.0.1"
       }
     },
     {

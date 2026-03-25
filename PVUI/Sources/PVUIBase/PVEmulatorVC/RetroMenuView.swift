@@ -10,7 +10,6 @@ import UIKit
 import PVCoreBridge
 import PVLogging
 import PVSettings
-import GameController
 import PVSupport
 import PVLibrary
 import PVFeatureFlags
@@ -704,8 +703,10 @@ struct RetroMenuView: View {
             }
 #endif
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
             recordingButton
+#endif
+#if os(iOS)
             cameraPositionButton
 #endif
 
@@ -845,8 +846,8 @@ struct RetroMenuView: View {
     }
 #endif
 
-    // Screen recording button with Plus gating
-#if os(iOS)
+    // Screen recording button with Plus gating (iOS + tvOS)
+#if os(iOS) || os(tvOS)
     @ViewBuilder
     private var recordingButton: some View {
         let isRecording = AppState.shared.emulationUIState.isRecording
@@ -856,20 +857,28 @@ struct RetroMenuView: View {
             let icon = isRecording ? "stop.circle" : "record.circle"
             let color: Color = isRecording ? .retroPink : .retroOrange
             let role: MenuButtonRole = isRecording ? .destructive : .secondary
+            let recordAction = {
+                if isRecording {
+                    #if os(iOS)
+                    // Keep game paused while the ReplayKit preview sheet is shown;
+                    // emulation resumes automatically when the preview is dismissed.
+                    dismissMenuForSubSheetThen {
+                        emulatorVC.stopScreenRecording()
+                    }
+                    #elseif os(tvOS)
+                    // Keep game paused while the system "Recording Saved" UI is shown on tvOS as well.
+                    dismissMenuForSubSheetThen {
+                        emulatorVC.stopScreenRecording()
+                    }
+                    #endif
+                } else {
+                    dismissAction(true)
+                    emulatorVC.startScreenRecording()
+                }
+            }
 #if canImport(FreemiumKit)
             PaidFeatureView {
-                menuButton(title: title, icon: icon, color: color, role: role) {
-                    if isRecording {
-                        // Keep game paused while the ReplayKit preview sheet is shown;
-                        // emulation resumes automatically when the preview is dismissed.
-                        dismissMenuForSubSheetThen {
-                            emulatorVC.stopScreenRecording()
-                        }
-                    } else {
-                        dismissAction(true)
-                        emulatorVC.startScreenRecording()
-                    }
-                }
+                menuButton(title: title, icon: icon, color: color, role: role, action: recordAction)
             } lockedView: {
                 HStack {
                     menuButton(title: title, icon: icon, color: color, role: role) {}
@@ -903,19 +912,27 @@ struct RetroMenuView: View {
             }
             .freemiumKitColorReset()
 #else
-            menuButton(title: title, icon: icon, color: color, role: role) {
-                if isRecording {
-                    // Keep game paused while the ReplayKit preview sheet is shown;
-                    // emulation resumes automatically when the preview is dismissed.
-                    dismissMenuForSubSheetThen {
-                        emulatorVC.stopScreenRecording()
-                    }
-                } else {
-                    dismissAction(true)
-                    emulatorVC.startScreenRecording()
-                }
-            }
+            menuButton(title: title, icon: icon, color: color, role: role, action: recordAction)
 #endif
+        } else {
+            // Recording unavailable — show an informational hint.
+            // On tvOS, this typically means no game controller is connected.
+            #if os(tvOS)
+            let hint = PVRecordingManager.shared.isUnavailableDueToNoController
+                ? "Connect a game controller to enable recording"
+                : "Recording is unavailable on this device"
+            #else
+            let hint = "Recording is unavailable on this device"
+            #endif
+            menuButton(title: "RECORD GAMEPLAY", icon: "record.circle", color: .gray, role: .secondary) {}
+                .disabled(true)
+                .opacity(0.5)
+                .overlay(alignment: .bottom) {
+                    Text(hint)
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(Color.white.opacity(0.5))
+                        .padding(.bottom, -14)
+                }
         }
     }
 
@@ -978,6 +995,25 @@ struct RetroMenuView: View {
 #else
             menuButton(title: title, icon: icon, color: color, role: role, action: broadcastAction)
 #endif
+        } else {
+            // Broadcasting unavailable — show informational hint.
+            // On tvOS, broadcasting requires a physical controller to be connected.
+            #if os(tvOS)
+            let hint = !GamepadManager.shared.hasPhysicalGamepad
+                ? "Connect a game controller to enable live streaming"
+                : "Live streaming is unavailable on this device"
+            menuButton(title: "GO LIVE", icon: "dot.radiowaves.left.and.right", color: .gray, role: .secondary) {}
+                .disabled(true)
+                .opacity(0.5)
+                .overlay(alignment: .bottom) {
+                    Text(hint)
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(Color.white.opacity(0.5))
+                        .padding(.bottom, -14)
+                }
+            #else
+            EmptyView()
+            #endif
         }
     }
 #endif

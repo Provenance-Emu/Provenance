@@ -19,6 +19,7 @@ struct LibretroDBROMMetadata: Codable {
     let manufacturer: String?
     let genres: [String]?
     let romFileName: String?
+    let serialID: String?
 
     /// Convert platform ID to SystemIdentifier
     var systemID: SystemIdentifier? {

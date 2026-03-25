@@ -9,22 +9,21 @@ struct ColorBarsView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                ForEach(Array(currentPattern.colors.enumerated()), id: \.offset) { _, color in
-                    Rectangle()
-                        .fill(color)
-                }
+        HStack(spacing: 0) {
+            ForEach(Array(currentPattern.colors.enumerated()), id: \.offset) { _, color in
+                Rectangle()
+                    .fill(color)
+                    .frame(maxWidth: .infinity)
             }
-            .overlay(
-                Text(currentPattern.name)
-                    .font(.caption)
-                    .foregroundColor(.white)
-                    .shadow(radius: 1)
-                    .padding(4),
-                alignment: .topLeading
-            )
         }
+        .overlay(
+            Text(currentPattern.name)
+                .font(.caption)
+                .foregroundColor(.white)
+                .shadow(radius: 1)
+                .padding(4),
+            alignment: .topLeading
+        )
         .onReceive(timer) { _ in
             withAnimation {
                 patternIndex = (patternIndex + 1) % DeltaSkinTestPattern.allCases.count

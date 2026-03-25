@@ -159,18 +159,19 @@ public struct ImportProgressView: View {
             // Progress fill - count both completed and failed items for progress
             let processedCount = viewModel.importQueueItems.filter { $0.status == .success || $0.status.isFailure }.count
             let progress = viewModel.importQueueItems.isEmpty ? 0.0 : Double(processedCount) / Double(viewModel.importQueueItems.count)
+            let clampedProgress = max(0, min(CGFloat(progress), 1))
 
-            GeometryReader { geometry in
-                LinearGradient(
-                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-                .frame(width: max(12, progress * geometry.size.width), height: 8)
-                .cornerRadius(4)
-                .padding(2)
-            }
-            .frame(height: 12)
+            LinearGradient(
+                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(maxWidth: .infinity)
+            .frame(height: 8)
+            .scaleEffect(x: clampedProgress, y: 1, anchor: .leading)
+            .cornerRadius(4)
+            .padding(2)
+            .animation(.easeInOut(duration: 0.3), value: clampedProgress)
         }
     }
     
@@ -366,22 +367,22 @@ public struct ImportProgressView: View {
                         .frame(maxWidth: 80, alignment: .leading)
                     
                     // Mini progress bar
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 1)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 2)
-                            
-                            RoundedRectangle(cornerRadius: 1)
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(height: 2)
+
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
                                 )
-                                .frame(width: geometry.size.width * operation.progress, height: 2)
-                        }
+                            )
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 2)
+                            .scaleEffect(x: max(0, min(CGFloat(operation.progress), 1)), y: 1, anchor: .leading)
                     }
                     .frame(height: 2)
                     

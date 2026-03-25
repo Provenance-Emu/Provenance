@@ -131,6 +131,11 @@ public struct Paths {
     public static var cheatsPath: URL { get {
         return URL.documentsiCloudOrLocalPath.appendingPathComponent("Cheats", isDirectory: true)
     }}
+
+    /// Should be called on BG Thread, iCloud blocks
+    public static var patchesPath: URL { get {
+        return URL.documentsiCloudOrLocalPath.appendingPathComponent("Patches", isDirectory: true)
+    }}
 }
 
 public extension Paths {

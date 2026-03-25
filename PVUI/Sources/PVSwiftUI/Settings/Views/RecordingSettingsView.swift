@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import PVSettings
+import PVUIBase
 
 struct RecordingSettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -24,6 +25,10 @@ struct RecordingSettingsView: View {
     @Default(.cameraOverlayShape) var cameraOverlayShape
 #endif
 
+    #if os(tvOS)
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+    #endif
+
     private static let clipDurationOptions: [(label: String, value: Int)] = [
         ("15 seconds", 15),
         ("30 seconds", 30),
@@ -32,6 +37,18 @@ struct RecordingSettingsView: View {
 
     var body: some View {
         List {
+            #if os(tvOS)
+            if !gamepadManager.hasPhysicalGamepad {
+                SwiftUI.Section {
+                    SettingsRow(
+                        title: "Controller Required",
+                        subtitle: "Connect a game controller to enable recording and live streaming on Apple TV.",
+                        icon: .sfSymbol("gamecontroller.fill")
+                    )
+                }
+            }
+            #endif
+
             SwiftUI.Section(header: Text("Audio")) {
                 ThemedToggle(isOn: $recordingMicEnabled) {
                     SettingsRow(
@@ -154,6 +171,13 @@ struct RecordingSettingsView: View {
                     subtitle: "Coming soon — stream directly to Twitch, YouTube, or Kick without a third-party app.",
                     icon: .sfSymbol("antenna.radiowaves.left.and.right")
                 )
+                #if os(tvOS)
+                SettingsRow(
+                    title: "Apple TV Requirement",
+                    subtitle: "Recording and live streaming on Apple TV require a physical game controller to be connected.",
+                    icon: .sfSymbol("gamecontroller.fill")
+                )
+                #endif
             }
         }
         .navigationTitle("Recording & Streaming")

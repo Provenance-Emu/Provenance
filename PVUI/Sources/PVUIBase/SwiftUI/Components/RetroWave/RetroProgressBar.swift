@@ -25,22 +25,18 @@ public struct RetroProgressBar: View {
     }
 
     public var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                // Animated progress
-                Rectangle()
-                    .fill(LinearGradient(
-                        gradient: Gradient(colors: [.retroBlue, .retroPink]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ))
-                    .frame(
-                        width: geometry.size.width * displayProgress,
-                        height: geometry.size.height
-                    )
-                    .cornerRadius(4)
-                    .animation(.easeInOut(duration: 0.3), value: displayProgress)
-            }
+        ZStack(alignment: .leading) {
+            // Animated progress
+            Rectangle()
+                .fill(LinearGradient(
+                    gradient: Gradient(colors: [.retroBlue, .retroPink]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .scaleEffect(x: displayProgress, y: 1, anchor: .leading)
+                .cornerRadius(4)
+                .animation(.easeInOut(duration: 0.3), value: displayProgress)
         }
         .onAppear {
             guard realProgress == nil else { return }
