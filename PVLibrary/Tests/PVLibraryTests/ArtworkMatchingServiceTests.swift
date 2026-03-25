@@ -16,13 +16,18 @@ import PVSystems
 
 // MARK: - Mock Lookup Provider
 
-/// Simple mock for ArtworkMatchingLookupProvider.
-/// Used only from one task at a time in tests; `@unchecked Sendable` suppresses
-/// the compiler's cross-actor warning without requiring actor isolation.
-private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, @unchecked Sendable {
+/// Simple actor-based mock for ArtworkMatchingLookupProvider.
+/// Using an actor ensures mutable state is safely accessed under concurrency checking.
+private actor MockArtworkMatchingLookup: ArtworkMatchingLookupProvider {
     var artworkResults: [ArtworkMetadata]?
     var artworkError: Error?
     var romMetadata: ROMMetadata?
+
+    init(artworkResults: [ArtworkMetadata]? = nil, artworkError: Error? = nil, romMetadata: ROMMetadata? = nil) {
+        self.artworkResults = artworkResults
+        self.artworkError = artworkError
+        self.romMetadata = romMetadata
+    }
 
     func searchArtwork(
         byGameName name: String,
@@ -46,18 +51,18 @@ private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, @u
     }
 }
 
-/// Mock that returns nil for the first N artwork searches, then returns results.
+/// Actor-based mock that returns nil for the first N artwork searches, then returns results.
 /// Used to test the MD5 fallback code path.
-/// `@unchecked Sendable` is safe because each test uses a single task.
-private final class MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProvider, @unchecked Sendable {
+private actor MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProvider {
     var romMetadata: ROMMetadata?
     private let firstNilCount: Int
     private let thenResults: [ArtworkMetadata]
     private var callCount = 0
 
-    init(firstNilCount: Int, thenResults: [ArtworkMetadata]) {
+    init(firstNilCount: Int, thenResults: [ArtworkMetadata], romMetadata: ROMMetadata? = nil) {
         self.firstNilCount = firstNilCount
         self.thenResults = thenResults
+        self.romMetadata = romMetadata
     }
 
     func searchArtwork(
@@ -82,9 +87,9 @@ private final class MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProv
     }
 }
 
-/// Mock that suspends for a configurable duration before returning results.
+/// Actor-based mock that suspends for a configurable duration before returning results.
 /// Used to verify the timeout path.
-private final class MockArtworkMatchingLookupSlow: ArtworkMatchingLookupProvider, @unchecked Sendable {
+private actor MockArtworkMatchingLookupSlow: ArtworkMatchingLookupProvider {
     let delayNanoseconds: UInt64
     let result: ArtworkMetadata?
 
@@ -201,8 +206,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
 
     func testFindArtwork_returnsURLWhenExactTitleMatches() async {
         let expectedURL = "https://example.com/cover.jpg"
-        let mock = MockArtworkMatchingLookup()
-        mock.artworkResults = [makeArtwork(urlString: expectedURL)]
+        let mock = MockArtworkMatchingLookup(artworkResults: [makeArtwork(urlString: expectedURL)])
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Super Mario World", md5: "abc123", systemID: .SNES)
@@ -213,11 +217,10 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testFindArtwork_prefersBoxFrontOverOtherTypes() async {
         let screenshotURL = "https://example.com/thumb.jpg"
         let boxFrontURL = "https://example.com/boxfront.jpg"
-        let mock = MockArtworkMatchingLookup()
-        mock.artworkResults = [
+        let mock = MockArtworkMatchingLookup(artworkResults: [
             makeArtwork(urlString: screenshotURL, type: .screenshot),
             makeArtwork(urlString: boxFrontURL, type: .boxFront)
-        ]
+        ])
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Some Game", md5: "", systemID: nil)
@@ -230,9 +233,9 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         let expectedURL = "https://example.com/md5cover.jpg"
         let mock = MockArtworkMatchingLookupCounting(
             firstNilCount: 2,
-            thenResults: [makeArtwork(urlString: expectedURL)]
+            thenResults: [makeArtwork(urlString: expectedURL)],
+            romMetadata: makeROMMetadata(gameTitle: "Resolved Title")
         )
-        mock.romMetadata = makeROMMetadata(gameTitle: "Resolved Title")
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Unknown Title", md5: "deadbeef", systemID: .NES)
@@ -245,7 +248,6 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testFindArtwork_returnsNilWhenNoResultsFound() async {
         // Simulates the case where neither OpenVGDB nor any other source finds artwork.
         let mock = MockArtworkMatchingLookup()
-        mock.artworkResults = nil
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Obscure Game Title", md5: "ffffffff", systemID: .SNES)
@@ -254,8 +256,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     }
 
     func testFindArtwork_returnsNilWhenResultsEmpty() async {
-        let mock = MockArtworkMatchingLookup()
-        mock.artworkResults = []  // Empty array (not nil)
+        let mock = MockArtworkMatchingLookup(artworkResults: [])
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Some Game", md5: "11223344", systemID: nil)
@@ -264,8 +265,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     }
 
     func testFindArtwork_returnsNilForWhitespaceOnlyTitle() async {
-        let mock = MockArtworkMatchingLookup()
-        mock.artworkResults = [makeArtwork(urlString: "https://example.com/art.jpg")]
+        let mock = MockArtworkMatchingLookup(artworkResults: [makeArtwork(urlString: "https://example.com/art.jpg")])
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "   ", md5: "abc", systemID: nil)
@@ -276,8 +276,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testFindArtwork_returnsNilWhenFeatureFlagDisabled() async {
         await PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: false)
 
-        let mock = MockArtworkMatchingLookup()
-        mock.artworkResults = [makeArtwork(urlString: "https://example.com/art.jpg")]
+        let mock = MockArtworkMatchingLookup(artworkResults: [makeArtwork(urlString: "https://example.com/art.jpg")])
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Any Game", md5: "abc", systemID: nil)
@@ -290,8 +289,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     // MARK: Error Handling
 
     func testFindArtwork_handlesLookupErrorGracefully() async {
-        let mock = MockArtworkMatchingLookup()
-        mock.artworkError = NSError(domain: "TestDomain", code: -1, userInfo: [NSLocalizedDescriptionKey: "Network error"])
+        let mock = MockArtworkMatchingLookup(artworkError: NSError(domain: "TestDomain", code: -1, userInfo: [NSLocalizedDescriptionKey: "Network error"]))
 
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Error Game", md5: "abc", systemID: .NES)
@@ -304,7 +302,6 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testFindArtwork_completesQuicklyWhenNoArtworkFound() async {
         // Fast lookup returning nil should resolve well under 2s.
         let mock = MockArtworkMatchingLookup()
-        mock.artworkResults = nil
 
         let service = ArtworkMatchingService(lookup: mock)
         let start = Date()

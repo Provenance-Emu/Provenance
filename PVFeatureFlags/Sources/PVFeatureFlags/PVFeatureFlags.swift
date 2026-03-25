@@ -225,12 +225,10 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Shared instance.
     public static let shared = PVFeatureFlags()
 
-    /// Loaded configuration. Marked `nonisolated(unsafe)` so `isEnabled` can be called from
-    /// any actor/thread without `await`. Writes always happen from the MainActor; reads are
-    /// safe because `FeatureFlagsConfiguration` is a value type (`Sendable` struct) and the
-    /// configuration is set once at startup before feature-flag queries begin.
-    nonisolated(unsafe) internal private(set) var configuration: FeatureFlagsConfiguration?
-    nonisolated(unsafe) private let appType: PVAppType
+    /// Loaded configuration. `@MainActor`-isolated; may be updated at runtime (e.g. remote reload).
+    /// Callers on background actors must use `await` on `PVFeatureFlags` APIs to access it safely.
+    internal private(set) var configuration: FeatureFlagsConfiguration?
+    private let appType: PVAppType
     private let buildNumber: String?
     private let appVersion: String
 
@@ -300,8 +298,8 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     // MARK: - Feature Evaluation
 
     /// Check whether a feature is enabled by its `PVFeature` enum case.
-    /// `nonisolated` so callers on any actor or thread can check flags without `await`.
-    nonisolated public func isEnabled(_ feature: PVFeature) -> Bool {
+    /// `@MainActor`-isolated; call with `await` from non-main-actor contexts.
+    public func isEnabled(_ feature: PVFeature) -> Bool {
         // Debug overrides take highest priority.
         // Read directly from UserDefaults (thread-safe) to avoid actor-isolation hop.
         if let rawDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
@@ -333,8 +331,8 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     }
 
     /// Check whether a feature is enabled by its raw string key.
-    /// `nonisolated` so callers on any actor or thread can check flags without `await`.
-    nonisolated public func isEnabled(_ featureKey: String) -> Bool {
+    /// `@MainActor`-isolated; call with `await` from non-main-actor contexts.
+    public func isEnabled(_ featureKey: String) -> Bool {
         // If this key matches a known PVFeature, use the enum-based evaluation (including debug overrides).
         if let feature = PVFeature(rawValue: featureKey) {
             return isEnabled(feature)

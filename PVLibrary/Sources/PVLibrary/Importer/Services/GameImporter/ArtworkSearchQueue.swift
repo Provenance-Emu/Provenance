@@ -92,7 +92,7 @@ public actor ArtworkSearchQueue {
     /// Process pending artwork searches (lower priority)
     /// Should be called after primary imports complete
     public func processPendingSearches() async {
-        let featureEnabled = PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch)
+        let featureEnabled = await PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch)
         ILOG("ArtworkSearchQueue: processPendingSearches called (enhancedArtworkSearch=\(featureEnabled), isProcessing=\(isProcessing), pendingGames.count=\(pendingGames.count))")
 
         guard featureEnabled else {
