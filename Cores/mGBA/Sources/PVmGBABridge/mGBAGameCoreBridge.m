@@ -100,6 +100,11 @@ static struct mLogger logger = { .log = _log };
 
 @implementation PVmGBAGameCoreBridge
 
+// Expose the mCore pointer to achievement categories without making it public API.
+- (struct mCore *)_mCore {
+    return core;
+}
+
 - (instancetype)init {
     if ((self = [super init])) {
 
@@ -306,6 +311,16 @@ static struct mLogger logger = { .log = _log };
 
 - (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
 {
+    // Hardcore mode: save-state loads are disallowed while achievements are active.
+    if (self.hardcoreMode && self.achievementsActive) {
+        if (outError) {
+            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                           code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                       userInfo:@{NSLocalizedDescriptionKey: @"Save state loading is disabled in hardcore achievement mode."}];
+        }
+        return NO;
+    }
+
     struct VFile* vf = VFileFromConstMemory(state.bytes, state.length);
     if (!mCoreLoadStateNamed(core, vf, SAVESTATE_SAVEDATA)) {
         if (outError) {
@@ -338,6 +353,18 @@ static struct mLogger logger = { .log = _log };
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
+    // Hardcore mode: save-state loads are disallowed while achievements are active.
+    if (self.hardcoreMode && self.achievementsActive) {
+        NSError *error = [NSError errorWithDomain:@"org.provenance.GameCore.ErrorDomain"
+                                            code:-6
+                                        userInfo:@{
+            NSLocalizedDescriptionKey : @"Save state loading is disabled in hardcore achievement mode.",
+            NSFilePathErrorKey : fileName
+        }];
+        block(error);
+        return;
+    }
+
     struct VFile* vf = VFileOpen([fileName fileSystemRepresentation], O_RDONLY);
     BOOL success = mCoreLoadStateNamed(core, vf, SAVESTATE_RTC);
     if(!success) {
@@ -345,7 +372,7 @@ static struct mLogger logger = { .log = _log };
         error = [NSError errorWithDomain:@"org.provenance.GameCore.ErrorDomain"
                                     code:-5
                                 userInfo:@{
-            NSLocalizedDescriptionKey : @"Jagar Could not load the current state.",
+            NSLocalizedDescriptionKey : @"mGBA could not load the current state.",
             NSFilePathErrorKey : fileName
         }];
         block(error);

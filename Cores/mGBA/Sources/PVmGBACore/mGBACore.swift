@@ -45,6 +45,9 @@ public class PVmGBACore: PVEmulatorCore {
 
     /// Hardcore mode flag.
     var _hardcoreMode: Bool = false
+
+    /// Whether the achievement runtime is currently active for the loaded game.
+    var _achievementsActive: Bool = false
 }
 
 extension PVmGBACore: PVGBASystemResponderClient {
