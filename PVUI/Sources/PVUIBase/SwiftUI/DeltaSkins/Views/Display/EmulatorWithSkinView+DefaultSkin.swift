@@ -18,6 +18,7 @@ import PVThemes
 import PVLogging
 import PVUIBase
 import PVSettings
+import Defaults
 
 // MARK: - Retrowave Styling Components
 
@@ -179,6 +180,10 @@ struct DefaultControllerSkinView: View {
     // Bridge to protocol system (replaces notification system)
     @State private var viewportBridge: ViewportLayoutProviderBridge?
 
+    // User-configurable overlay scale and opacity
+    @Default(.controllerScale) private var controllerScale
+    @Default(.controllerOpacity) private var controllerOpacity
+
     init(useJoystick: Bool, inputHandler: DeltaSkinInputHandler, systemId: SystemIdentifier?, coreInstance: PVEmulatorCore) {
         self._useJoystickInternal = State(initialValue: useJoystick)
         self.inputHandler = inputHandler
@@ -253,6 +258,8 @@ struct DefaultControllerSkinView: View {
                     if isLandscape {
                         // Landscape layout - controls positioned at edges with safe area awareness
                         dynamicLandscapeControllerSkin
+                            .scaleEffect(controllerScale)
+                            .opacity(controllerOpacity)
                             .onAppear {
                                 loadControlLayoutData()
                                 // Ensure input handler has the core set
@@ -269,6 +276,8 @@ struct DefaultControllerSkinView: View {
 
                             // Controller area - constrained to bottom portion
                             dynamicControllerSkin
+                                .scaleEffect(controllerScale)
+                                .opacity(controllerOpacity)
                                 .frame(maxHeight: geometry.size.height * 0.35)
                                 .clipped()
                                 .onAppear {
