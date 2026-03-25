@@ -18,6 +18,7 @@ final class WidgetDataWriterTests: XCTestCase {
             id: "abc123",
             title: "Super Mario World",
             systemName: "Super Nintendo",
+            systemIdentifier: "com.provenance.snes",
             artworkPath: "artwork/snes/smw.jpg",
             lastPlayedDate: Date(timeIntervalSince1970: 1_700_000_000)
         )
@@ -32,6 +33,7 @@ final class WidgetDataWriterTests: XCTestCase {
         XCTAssertEqual(decoded.id, game.id)
         XCTAssertEqual(decoded.title, game.title)
         XCTAssertEqual(decoded.systemName, game.systemName)
+        XCTAssertEqual(decoded.systemIdentifier, game.systemIdentifier)
         XCTAssertEqual(decoded.artworkPath, game.artworkPath)
         XCTAssertNotNil(decoded.lastPlayedDate)
     }
@@ -43,6 +45,7 @@ final class WidgetDataWriterTests: XCTestCase {
         let decoded = try JSONDecoder().decode(WidgetGameData.self, from: data)
         XCTAssertNil(decoded.artworkPath)
         XCTAssertNil(decoded.lastPlayedDate)
+        XCTAssertNil(decoded.systemIdentifier)
     }
 
     // MARK: - WidgetNowPlayingData

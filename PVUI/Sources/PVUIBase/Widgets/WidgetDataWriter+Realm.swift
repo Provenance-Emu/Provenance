@@ -53,6 +53,7 @@ public extension WidgetDataWriter {
                 id: game.md5Hash,
                 title: game.title,
                 systemName: game.system?.shortName ?? game.system?.name ?? "",
+                systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
                 artworkPath: widgetArtworkPath(for: game),
                 lastPlayedDate: recent.lastPlayedDate
             )
@@ -68,6 +69,7 @@ public extension WidgetDataWriter {
                     id: game.md5Hash,
                     title: game.title,
                     systemName: game.system?.shortName ?? game.system?.name ?? "",
+                    systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
                     artworkPath: widgetArtworkPath(for: game),
                     lastPlayedDate: nil
                 )
@@ -82,6 +84,7 @@ public extension WidgetDataWriter {
         ).map {
             WidgetGameData(id: $0.md5Hash, title: $0.title,
                            systemName: $0.system?.shortName ?? "",
+                           systemIdentifier: $0.systemIdentifier.isEmpty ? nil : $0.systemIdentifier,
                            artworkPath: widgetArtworkPath(for: $0))
         }
 
@@ -92,6 +95,7 @@ public extension WidgetDataWriter {
             gallery = Array(allGames.prefix(galleryCount)).map {
                 WidgetGameData(id: $0.md5Hash, title: $0.title,
                                systemName: $0.system?.shortName ?? "",
+                               systemIdentifier: $0.systemIdentifier.isEmpty ? nil : $0.systemIdentifier,
                                artworkPath: widgetArtworkPath(for: $0))
             }
         } else {
@@ -104,6 +108,7 @@ public extension WidgetDataWriter {
                 let g = allGames[idx]
                 return WidgetGameData(id: g.md5Hash, title: g.title,
                                      systemName: g.system?.shortName ?? "",
+                                     systemIdentifier: g.systemIdentifier.isEmpty ? nil : g.systemIdentifier,
                                      artworkPath: widgetArtworkPath(for: g))
             }
         }

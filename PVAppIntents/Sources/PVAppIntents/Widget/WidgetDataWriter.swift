@@ -31,6 +31,8 @@ public struct WidgetGameData: Codable, Sendable {
     public let id: String
     public let title: String
     public let systemName: String
+    /// Reverse-DNS system id (e.g. `com.provenance.snes`) when known; used by widgets for per-system glyphs.
+    public let systemIdentifier: String?
     /// Path relative to the App Group container root where artwork is cached.
     public let artworkPath: String?
     public let lastPlayedDate: Date?
@@ -39,12 +41,14 @@ public struct WidgetGameData: Codable, Sendable {
         id: String,
         title: String,
         systemName: String,
+        systemIdentifier: String? = nil,
         artworkPath: String? = nil,
         lastPlayedDate: Date? = nil
     ) {
         self.id = id
         self.title = title
         self.systemName = systemName
+        self.systemIdentifier = systemIdentifier
         self.artworkPath = artworkPath
         self.lastPlayedDate = lastPlayedDate
     }
@@ -226,6 +230,7 @@ private extension GameEntity {
             id: id,
             title: title,
             systemName: systemName,
+            systemIdentifier: systemIdentifier.isEmpty ? nil : systemIdentifier,
             artworkPath: artworkURL.flatMap { Self.relativePath(for: $0) },
             lastPlayedDate: lastPlayedDate
         )

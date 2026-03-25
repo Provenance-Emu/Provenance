@@ -67,6 +67,8 @@ public struct WidgetGameEntry: Codable, Identifiable {
     public let id: String
     public let title: String
     public let systemName: String
+    /// Reverse-DNS system id (e.g. `com.provenance.snes`) when present in shared JSON; drives per-system SF Symbols in widgets.
+    public let systemIdentifier: String?
     /// Relative path inside the App Group container where box art is cached.
     public let artworkPath: String?
     public let lastPlayedDate: Date?
@@ -94,12 +96,14 @@ public struct WidgetGameEntry: Codable, Identifiable {
         id: String,
         title: String,
         systemName: String,
+        systemIdentifier: String? = nil,
         artworkPath: String? = nil,
         lastPlayedDate: Date? = nil
     ) {
         self.id = id
         self.title = title
         self.systemName = systemName
+        self.systemIdentifier = systemIdentifier
         self.artworkPath = artworkPath
         self.lastPlayedDate = lastPlayedDate
         self.artworkData = nil
@@ -107,7 +111,7 @@ public struct WidgetGameEntry: Codable, Identifiable {
 
     // MARK: Codable — exclude artworkData from JSON
     enum CodingKeys: String, CodingKey {
-        case id, title, systemName, artworkPath, lastPlayedDate
+        case id, title, systemName, systemIdentifier, artworkPath, lastPlayedDate
     }
 }
 
