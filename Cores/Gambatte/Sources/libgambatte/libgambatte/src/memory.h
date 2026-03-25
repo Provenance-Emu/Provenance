@@ -114,10 +114,16 @@ public:
 	// area 1 corresponds to 0xD000 (switchable bank). The pointer for area 0
 	// is stable for the lifetime of the loaded ROM; the pointer for area 1
 	// may change when the active WRAM bank changes.
-	unsigned char * wramdata(unsigned area) const { return cart_.wramdata(area); }
+	const unsigned char * wramdata(unsigned area) const { return cart_.wramdata(area); }
 	// VRAM base pointer: index 0 corresponds to bus address 0x8000.
 	// To access VRAM bus address 'addr' in [0x8000, 0x9FFF], use vramdata()[addr - 0x8000].
-	unsigned char * vramdata() const { return cart_.vramdata(); }
+	// DMG uses only bank 0; CGB supports bank 0 and bank 1 (16 KiB total).
+	const unsigned char * vramdata() const { return cart_.vramdata(); }
+	// VRAM bank pointer: pre-adjusted for direct address indexing.
+	// vrambankptr()[addr] for addr in [0x8000, 0x9FFF] gives the correct byte
+	// for the currently active VRAM bank (updated when CGB register FF4F is written).
+	// On DMG this always points to bank 0. Use this instead of vramdata() for reads.
+	unsigned char * vrambankptr() const { return cart_.vrambankptr(); }
 
 private:
 	Cartridge cart_;

@@ -191,7 +191,7 @@ public:
 	  * The pointer for area 0 is stable for the lifetime of the loaded ROM.
 	  * Returns nullptr if no ROM is loaded.
 	  */
-	unsigned char * wramData(unsigned area) const;
+	const unsigned char * wramData(unsigned area) const;
 
 	/**
 	  * Returns a pointer to the physical start of the VRAM allocation.
@@ -199,7 +199,16 @@ public:
 	  * Both DMG and CGB allocate 16 KiB (two 8-KiB banks); DMG uses only bank 0.
 	  * Returns nullptr if no ROM is loaded.
 	  */
-	unsigned char * vramData() const;
+	const unsigned char * vramData() const;
+
+	/**
+	  * Returns a pre-adjusted pointer for direct VRAM address indexing.
+	  * vrambankptr[addr] for addr in [0x8000, 0x9FFF] returns the correct byte
+	  * for the currently active VRAM bank on CGB (bank register FF4F).
+	  * On DMG this always refers to bank 0. Updated in real time during emulation.
+	  * Returns nullptr if no ROM is loaded.
+	  */
+	unsigned char * vramBankPtr() const;
 
 	/**
 	  * Returns the total WRAM size in bytes.

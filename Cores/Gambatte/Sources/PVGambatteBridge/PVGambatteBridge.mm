@@ -88,9 +88,9 @@ static uint32_t pvgb_read_memory(uint32_t address, uint8_t *buffer,
                                   uint32_t num_bytes, rc_client_t *client) {
     PVGBEmulatorCoreBridge *core = (__bridge PVGBEmulatorCoreBridge *)
                                     rc_client_get_userdata(client);
-    unsigned char *wram0 = (unsigned char *)core.wramBasePtr;
-    unsigned char *wram1 = (unsigned char *)core.wramBank1Ptr;
-    unsigned char *vram  = (unsigned char *)core.vramBasePtr;
+    unsigned char *wram0    = (unsigned char *)core.wramBasePtr;
+    unsigned char *wram1    = (unsigned char *)core.wramBank1Ptr;
+    unsigned char *vramBank = (unsigned char *)core.vramBankPtr;
     uint32_t read = 0;
 
     for (uint32_t i = 0; i < num_bytes; ++i) {
@@ -108,9 +108,10 @@ static uint32_t pvgb_read_memory(uint32_t address, uint8_t *buffer,
                 // Switchable bank (area 1): 0xD000–0xDFFF
                 if (wram1) { value = wram1[effAddr - 0xD000]; }
             }
-        } else if (vram && addr >= 0x8000 && addr <= 0x9FFF) {
-            // vramBasePtr[0] = first byte of VRAM (GB address 0x8000).
-            value = vram[addr - 0x8000];
+        } else if (addr >= 0x8000 && addr <= 0x9FFF) {
+            // Use vrambankptr_ which is pre-adjusted for direct address indexing
+            // and tracks the currently active VRAM bank on CGB (updated when FF4F is written).
+            if (vramBank) { value = vramBank[addr]; }
         }
         buffer[i] = value;
         ++read;
@@ -195,15 +196,19 @@ static __weak PVGBEmulatorCoreBridge *_current;
 // MARK: - RetroAchievements memory properties
 
 - (void *)wramBasePtr {
-    return gb.wramData(0);
+    return (void *)gb.wramData(0);
 }
 
 - (void *)wramBank1Ptr {
-    return gb.wramData(1);
+    return (void *)gb.wramData(1);
 }
 
 - (void *)vramBasePtr {
-    return gb.vramData();
+    return (void *)gb.vramData();
+}
+
+- (void *)vramBankPtr {
+    return gb.vramBankPtr();
 }
 
 - (NSUInteger)wramSize {

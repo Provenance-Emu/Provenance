@@ -211,7 +211,7 @@ void GB::setGameShark(std::string const &codes) {
 
 // MARK: - RetroAchievements memory accessors
 
-unsigned char * GB::wramData(unsigned area) const {
+const unsigned char * GB::wramData(unsigned area) const {
 	if (area > 1)
 		return nullptr;
 	if (!p_->cpu.loaded())
@@ -219,10 +219,16 @@ unsigned char * GB::wramData(unsigned area) const {
 	return p_->cpu.wramdata(area);
 }
 
-unsigned char * GB::vramData() const {
+const unsigned char * GB::vramData() const {
 	if (!p_->cpu.loaded())
 		return nullptr;
 	return p_->cpu.vramdata();
+}
+
+unsigned char * GB::vramBankPtr() const {
+	if (!p_->cpu.loaded())
+		return nullptr;
+	return p_->cpu.vrambankptr();
 }
 
 std::size_t GB::wramSize() const {

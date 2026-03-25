@@ -57,6 +57,11 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 /// Index 0 corresponds to GB bus address 0x8000.
 /// Total VRAM allocation: 16 KiB (both DMG and GBC). DMG uses only the first 8 KiB bank.
 @property (nonatomic, readonly, nullable) void *vramBasePtr;
+/// Pre-adjusted VRAM bank pointer for direct address indexing.
+/// vramBankPtr[addr] for addr in [0x8000, 0x9FFF] returns the byte for the currently
+/// active VRAM bank on CGB (controlled by register FF4F). On DMG always refers to bank 0.
+/// Use this instead of vramBasePtr for reads to correctly support CGB VRAM bank switching.
+@property (nonatomic, readonly, nullable) void *vramBankPtr;
 /// Total WRAM size in bytes: 8192 for DMG, 32768 for GBC.
 @property (nonatomic, readonly) NSUInteger wramSize;
 
