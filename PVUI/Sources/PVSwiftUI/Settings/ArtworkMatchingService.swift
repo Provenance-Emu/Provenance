@@ -27,17 +27,23 @@ public enum ArtworkSource: String, CaseIterable, Identifiable, Sendable {
 ///
 /// Wraps `PVLookup.shared.searchArtwork` with:
 /// - Title normalization via `FuzzyGameMatcher.normalize`
-/// - Per-source filtering based on the caller's enabled set
+/// - Post-query result filtering by source (all databases are still queried; results
+///   from disabled sources are discarded before returning)
 /// - First-3-word fallback when the full title yields no results
 public enum ArtworkMatchingService {
 
-    /// Find box-front artwork for a game, filtering to the requested sources.
+    /// Find box-front artwork for a game, filtering results to the requested sources.
+    ///
+    /// All enabled databases are queried regardless of `enabledSources`; this parameter
+    /// acts as a **post-query filter** that discards results whose `source` field does not
+    /// match the allowed set.  To skip querying a database entirely, configure
+    /// `PVLookup` database settings upstream.
     ///
     /// - Parameters:
     ///   - gameTitle: Raw ROM title; normalized internally via `FuzzyGameMatcher`.
     ///   - systemID: System identifier string for the game.
-    ///   - enabledSources: Sources to include in results. Pass the full
-    ///     `ArtworkSource.allCases` set (or leave default) to query all sources.
+    ///   - enabledSources: Sources whose results should be kept. Pass the full
+    ///     `ArtworkSource.allCases` set (or leave default) to keep results from all sources.
     /// - Returns: Filtered artwork results, or `nil` if nothing was found.
     public static func findArtwork(
         gameTitle: String,

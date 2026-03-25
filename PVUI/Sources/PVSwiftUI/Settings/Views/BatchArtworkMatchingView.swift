@@ -144,9 +144,10 @@ public struct BatchArtworkMatchingView: View {
                 }
             }
 
-            // Source picker
+            // Source result filter (all databases are queried; results from
+            // deselected sources are discarded before being shown)
             VStack(alignment: .leading, spacing: 6) {
-                Text("SOURCES")
+                Text("FILTER BY SOURCE")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.retroBlue)
 
