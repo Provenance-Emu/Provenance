@@ -24,6 +24,7 @@ struct PauseMenuTileTests {
         #expect(tile.isEnabled == true)
         #expect(tile.colorKey == .blue)
         #expect(tile.dismissOnTap == true)
+        #expect(tile.destinationRoute == nil)
     }
 
     @Test("Badge can be set")
@@ -58,7 +59,7 @@ struct PauseMenuTileTests {
         let tiles = [
             PauseMenuTile(id: "a", icon: "1.circle", label: "A"),
             PauseMenuTile(id: "b", icon: "2.circle", label: "B"),
-            PauseMenuTile(id: "c", icon: "3.circle", label: "C"),
+            PauseMenuTile(id: "c", icon: "3.circle", label: "C")
         ]
         let section = PauseMenuTileSection(id: "primary", tiles: tiles)
         #expect(section.tiles.map(\.id) == ["a", "b", "c"])
@@ -79,5 +80,16 @@ struct PauseMenuTileTests {
     @Test("PauseMenuTileSection is Sendable")
     func sectionSendable() {
         let _: any Sendable = PauseMenuTileSection(id: "test", tiles: [])
+    }
+
+    @Test("Submenu route metadata is preserved")
+    func destinationRoutePreserved() {
+        let tile = PauseMenuTile(
+            id: "skins",
+            icon: "paintbrush",
+            label: "Skins",
+            destinationRoute: .skins
+        )
+        #expect(tile.destinationRoute == .skins)
     }
 }

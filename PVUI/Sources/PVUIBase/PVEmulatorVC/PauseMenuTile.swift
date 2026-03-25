@@ -10,6 +10,18 @@ import Foundation
 
 // MARK: - Tile Data Model
 
+/// Route identifiers for nested tile-menu navigation.
+public enum PauseTileMenuRoute: String, Sendable, Hashable {
+    case root
+    case states
+    case options
+    case core
+    case skins
+    case skinsSelection
+    case skinsButtons
+    case skinsTools
+}
+
 /// A single action tile in the tile-based pause menu grid.
 public struct PauseMenuTile: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
@@ -30,6 +42,8 @@ public struct PauseMenuTile: Identifiable, Equatable, Hashable, Sendable {
     public let dismissOnTap: Bool
     /// Optional list of choices for long-press context menu (e.g. enum option values).
     public var longPressOptions: [PauseMenuTileLongPressOption]?
+    /// Optional nested destination route. Non-nil means this tile opens a submenu.
+    public let destinationRoute: PauseTileMenuRoute?
 
     public init(
         id: String,
@@ -40,7 +54,8 @@ public struct PauseMenuTile: Identifiable, Equatable, Hashable, Sendable {
         isEnabled: Bool = true,
         colorKey: PauseMenuTileColor = .blue,
         dismissOnTap: Bool = true,
-        longPressOptions: [PauseMenuTileLongPressOption]? = nil
+        longPressOptions: [PauseMenuTileLongPressOption]? = nil,
+        destinationRoute: PauseTileMenuRoute? = nil
     ) {
         self.id = id
         self.icon = icon
@@ -51,6 +66,7 @@ public struct PauseMenuTile: Identifiable, Equatable, Hashable, Sendable {
         self.colorKey = colorKey
         self.dismissOnTap = dismissOnTap
         self.longPressOptions = longPressOptions
+        self.destinationRoute = destinationRoute
     }
 }
 

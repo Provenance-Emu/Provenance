@@ -10,6 +10,7 @@ import Foundation
 import PVCoreBridge
 import PVEmulatorCore
 import PVFeatureFlags
+import PVPrimitives
 import PVSettings
 import PVLibrary
 #if canImport(PVNetplay)
@@ -46,7 +47,8 @@ final class PauseTileMenuViewModel: ObservableObject {
         hapticFeedbackEnabled: Bool,
         featureFlags: PVFeatureFlagsManager,
         indicatorRegistry: PVIndicatorRegistry,
-        hasControllerProfiles: Bool
+        hasControllerProfiles: Bool,
+        route: PauseTileMenuRoute
     ) {
         var built: [PauseMenuTileSection] = []
 
@@ -159,13 +161,14 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
 
         // Skins tile — opens RetroMenuView at the SKINS tab (iOS only)
-        #if os(iOS) && !targetEnvironment(macCatalyst)
+        #if os(iOS) || os(tvOS)
         gameTiles.append(PauseMenuTile(
             id: "skins",
             icon: "paintbrush.pointed",
             label: String(localized: "Skins"),
             colorKey: .orange,
-            dismissOnTap: false
+            dismissOnTap: false,
+            destinationRoute: .skins
         ))
         #endif
 
@@ -194,6 +197,15 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
 
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
+
+        let categoryTiles: [PauseMenuTile] = [
+            PauseMenuTile(id: "menu_main", icon: "house.fill", label: String(localized: "Main"), colorKey: .green, dismissOnTap: false, destinationRoute: .root),
+            PauseMenuTile(id: "menu_states", icon: "internaldrive", label: String(localized: "States"), colorKey: .cyan, dismissOnTap: false, destinationRoute: .states),
+            PauseMenuTile(id: "menu_options", icon: "slider.horizontal.3", label: String(localized: "Options"), colorKey: .teal, dismissOnTap: false, destinationRoute: .options),
+            PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core),
+            PauseMenuTile(id: "menu_skins", icon: "paintbrush.pointed", label: String(localized: "Skins"), colorKey: .orange, dismissOnTap: false, destinationRoute: .skins),
+        ]
+        built.append(PauseMenuTileSection(id: "categories", title: String(localized: "CATEGORIES"), tiles: categoryTiles))
 
         // ── QUICK SETTINGS section ──────────────────────────────────────
         var displayTiles: [PauseMenuTile] = []
@@ -335,8 +347,84 @@ final class PauseTileMenuViewModel: ObservableObject {
             }
         }
 
-        sections = built
+        sections = sections(for: route, from: built, emulatorVC: emulatorVC)
         descriptionsByTileID = descs
+    }
+
+    /// Returns the visible sections for the active tile-menu route.
+    private func sections(
+        for route: PauseTileMenuRoute,
+        from rootSections: [PauseMenuTileSection],
+        emulatorVC: PVEmulatorViewController
+    ) -> [PauseMenuTileSection] {
+        switch route {
+        case .root:
+            return rootSections
+        case .states:
+            let stateIDs: Set<String> = ["saveState", "loadState", "browseSaves", "screenshot", "screenshots", "saveClip"]
+            let tiles = tiles(matching: stateIDs, from: rootSections)
+            return [PauseMenuTileSection(id: "states_route", title: String(localized: "STATES"), tiles: tiles)]
+        case .options:
+            let optionIDs: Set<String> = [
+                "filterCycle", "shaderSettings", "rumbleToggle", "airPlay", "recording", "broadcast", "saveClip",
+                "controllerProfile", "networkPlay", "keyboardToggle", "mouseToggle", "companionController",
+            ]
+            var tiles = tiles(matching: optionIDs, from: rootSections)
+            tiles.insert(
+                PauseMenuTile(
+                    id: "skins_route_entry",
+                    icon: "paintbrush.pointed",
+                    label: String(localized: "Skins"),
+                    colorKey: .orange,
+                    dismissOnTap: false,
+                    destinationRoute: .skins
+                ),
+                at: 0
+            )
+            return [PauseMenuTileSection(id: "options_route", title: String(localized: "OPTIONS"), tiles: tiles)]
+        case .core:
+            let core = rootSections.first(where: { $0.id == "core" })
+            return core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? []
+        case .skins:
+            let tiles: [PauseMenuTile] = [
+                PauseMenuTile(id: "skins_selection_menu", icon: "rectangle.portrait.and.arrow.right", label: String(localized: "Skin Selection"), colorKey: .blue, dismissOnTap: false, destinationRoute: .skinsSelection),
+                PauseMenuTile(id: "skins_buttons_menu", icon: "hand.tap", label: String(localized: "Button Controls"), badge: Defaults[.buttonPressEffect].description, colorKey: .purple, dismissOnTap: false, destinationRoute: .skinsButtons),
+                PauseMenuTile(id: "skins_tools_menu", icon: "wrench.and.screwdriver", label: String(localized: "Tools"), colorKey: .cyan, dismissOnTap: false, destinationRoute: .skinsTools),
+            ]
+            return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
+        case .skinsSelection:
+            let systemIdentifier = SystemIdentifier(rawValue: emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier ?? "")
+            let systemLabel = systemIdentifier?.fullName ?? String(localized: "Current System")
+            let tiles: [PauseMenuTile] = [
+                PauseMenuTile(id: "skins_pick_for_system", icon: "paintpalette", label: String(localized: "Choose Skin"), badge: systemLabel, colorKey: .orange, dismissOnTap: false),
+            ]
+            return [PauseMenuTileSection(id: "skins_selection", title: String(localized: "SKIN SELECTION"), tiles: tiles)]
+        case .skinsButtons:
+            let tiles: [PauseMenuTile] = [
+                PauseMenuTile(id: "skins_button_effect", icon: "wand.and.sparkles", label: String(localized: "Button Effect"), badge: Defaults[.buttonPressEffect].description, colorKey: .purple, dismissOnTap: false),
+                PauseMenuTile(id: "skins_button_sound", icon: "speaker.wave.2", label: String(localized: "Button Sound"), badge: Defaults[.buttonSound].description, colorKey: .blue, dismissOnTap: false),
+            ]
+            return [PauseMenuTileSection(id: "skins_buttons", title: String(localized: "BUTTON CONTROLS"), tiles: tiles)]
+        case .skinsTools:
+            var tools: [PauseMenuTile] = [
+                PauseMenuTile(id: "skins_browse_catalog", icon: "arrow.down.circle.fill", label: String(localized: "Browse Catalog"), colorKey: .orange, dismissOnTap: false),
+            ]
+            #if !os(tvOS)
+            tools.insert(PauseMenuTile(id: "skins_import_file", icon: "square.and.arrow.down", label: String(localized: "Import Skin File"), colorKey: .cyan, dismissOnTap: false), at: 0)
+            #endif
+            return [PauseMenuTileSection(id: "skins_tools", title: String(localized: "TOOLS"), tiles: tools)]
+        }
+    }
+
+    /// Returns matching tiles in their original section order.
+    private func tiles(matching ids: Set<String>, from sections: [PauseMenuTileSection]) -> [PauseMenuTile] {
+        var matches: [PauseMenuTile] = []
+        for section in sections {
+            for tile in section.tiles where ids.contains(tile.id) {
+                matches.append(tile)
+            }
+        }
+        return matches
     }
 
     /// Looks up the description for a tile by ID, returning nil when none exists.

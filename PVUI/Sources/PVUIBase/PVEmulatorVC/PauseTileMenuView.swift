@@ -19,10 +19,14 @@ import PVCoreBridge
 import PVFeatureFlags
 import PVLogging
 import PVLibrary
+import PVPrimitives
 import PVSettings
 import PVThemes
 #if canImport(UIKit)
 import UIKit
+#endif
+#if !os(tvOS)
+import UniformTypeIdentifiers
 #endif
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -30,6 +34,7 @@ import FreemiumKit
 
 // MARK: - PauseTileMenuView
 
+// swiftlint:disable type_body_length
 /// Compact tile/grid pause overlay that floats over the game screen.
 /// Enabled when the `pauseTileMenu` feature flag is on; otherwise `PVGameMenuOverlay`
 /// falls back to the classic `RetroMenuView`.
@@ -60,6 +65,15 @@ struct PauseTileMenuView: View {
     @State private var showingShaderSettings = false
     @State private var showingPortDevices = false
     @State private var showingMIDIPicker = false
+    @State private var showingSystemSkinSelection = false
+    @State private var showingSkinCatalog = false
+    @State private var showingButtonEffectPicker = false
+    @State private var showingButtonSoundPicker = false
+    #if !os(tvOS)
+    @State private var showingSkinImporter = false
+    @State private var showingSkinImportError = false
+    @State private var skinImportErrorMessage: String?
+    #endif
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
@@ -70,6 +84,7 @@ struct PauseTileMenuView: View {
     // MARK: tvOS Focus
 
     @FocusState private var focusedTileID: String?
+    @State private var routeStack: [PauseTileMenuRoute] = [.root]
 
     // MARK: Size class / orientation
 
@@ -83,6 +98,8 @@ struct PauseTileMenuView: View {
 
     // Haptic feedback toggle
     @Default(.hapticFeedback) private var hapticFeedbackEnabled
+    @Default(.buttonPressEffect) private var buttonPressEffect
+    @Default(.buttonSound) private var buttonSound
 
     // Camera position for recording overlay — iOS only
     #if os(iOS)
@@ -103,6 +120,13 @@ struct PauseTileMenuView: View {
     }
 
     private var palette: UXThemePalette { themeManager.currentPalette }
+    private var currentRoute: PauseTileMenuRoute { routeStack.last ?? .root }
+
+    /// Resolves the active game/system identifier to a concrete `SystemIdentifier`.
+    private var activeSystemIdentifier: SystemIdentifier {
+        let raw = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier ?? SystemIdentifier.RetroArch.rawValue
+        return SystemIdentifier(rawValue: raw) ?? .RetroArch
+    }
 
     // MARK: - Rebuild cached sections via view model
 
@@ -114,7 +138,8 @@ struct PauseTileMenuView: View {
             hapticFeedbackEnabled: hapticFeedbackEnabled,
             featureFlags: featureFlags,
             indicatorRegistry: indicatorRegistry,
-            hasControllerProfiles: hasControllerProfiles
+            hasControllerProfiles: hasControllerProfiles,
+            route: currentRoute
         )
     }
 
@@ -143,10 +168,64 @@ struct PauseTileMenuView: View {
         #endif
     }
 
+    /// Pushes a submenu route and refreshes section data/focus.
+    private func pushRoute(_ route: PauseTileMenuRoute) {
+        if route == .root {
+            routeStack = [.root]
+        } else {
+            routeStack.append(route)
+        }
+        rebuildSections()
+        reattachTVOSFocusIfNeeded()
+    }
+
+    /// Pops one submenu level; returns true when a route was popped.
+    @discardableResult
+    private func popRoute() -> Bool {
+        guard routeStack.count > 1 else { return false }
+        routeStack.removeLast()
+        rebuildSections()
+        reattachTVOSFocusIfNeeded()
+        return true
+    }
+
+    /// Handles controller/menu back by popping submenus before dismissing the pause menu.
+    private func handleBackCommand() {
+        if !popRoute() {
+            dismissAction(true)
+        }
+    }
+
+    /// Current header title for the active tile-menu route.
+    private var routeTitle: String {
+        switch currentRoute {
+        case .root:
+            return String(localized: "GAME MENU")
+        case .states:
+            return String(localized: "STATES")
+        case .options:
+            return String(localized: "OPTIONS")
+        case .core:
+            return String(localized: "CORE")
+        case .skins:
+            return String(localized: "SKINS")
+        case .skinsSelection:
+            return String(localized: "SKIN SELECTION")
+        case .skinsButtons:
+            return String(localized: "BUTTON CONTROLS")
+        case .skinsTools:
+            return String(localized: "TOOLS")
+        }
+    }
+
     // MARK: - Tile action dispatcher
 
     private func handle(_ tile: PauseMenuTile) {
         guard tile.isEnabled else { return }
+        if let destination = tile.destinationRoute {
+            pushRoute(destination)
+            return
+        }
         #if !os(tvOS)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         #endif
@@ -265,10 +344,18 @@ struct PauseTileMenuView: View {
         case "midiDevice":
             showingMIDIPicker = true
 
-        // MARK: Skins — opens RetroMenuView at the SKINS tab
-        case "skins":
-            #if os(iOS) && !targetEnvironment(macCatalyst)
-            dismissForSubSheetThen { self.emulatorVC.showSkinOptions() }
+        // MARK: Skins submenu actions
+        case "skins_pick_for_system":
+            showingSystemSkinSelection = true
+        case "skins_button_effect":
+            showingButtonEffectPicker = true
+        case "skins_button_sound":
+            showingButtonSoundPicker = true
+        case "skins_browse_catalog":
+            showingSkinCatalog = true
+        case "skins_import_file":
+            #if !os(tvOS)
+            showingSkinImporter = true
             #endif
 
         // MARK: Recording / broadcast / clip
@@ -422,6 +509,43 @@ struct PauseTileMenuView: View {
         metalFilterMode = next == .none ? .none : .always(filter: next)
         rebuildSections()
     }
+
+    /// Plays a sample click when selecting a button sound style.
+    private func playButtonSoundSample(_ sound: ButtonSound) {
+        guard sound != .none else { return }
+        ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
+    }
+
+    #if !os(tvOS)
+    /// Supported import types for skin package files.
+    private var supportedSkinTypes: [UTType] {
+        var skinTypes: [UTType] = [UTType.deltaSkin, UTType.deltaAppSkin, UTType.manicSkin, .archive]
+        if let deltaskinData = UTType(filenameExtension: "deltaskin", conformingTo: .data) { skinTypes.append(deltaskinData) }
+        if let manicData = UTType(filenameExtension: "manicskin", conformingTo: .data) { skinTypes.append(manicData) }
+        if let deltaskinPackage = UTType(filenameExtension: "deltaskin", conformingTo: .package) { skinTypes.append(deltaskinPackage) }
+        if let manicPackage = UTType(filenameExtension: "manicskin", conformingTo: .package) { skinTypes.append(manicPackage) }
+        if let deltaskinArchive = UTType(filenameExtension: "deltaskin", conformingTo: .archive) { skinTypes.append(deltaskinArchive) }
+        if let manicArchive = UTType(filenameExtension: "manicskin", conformingTo: .archive) { skinTypes.append(manicArchive) }
+        return skinTypes
+    }
+
+    /// Imports selected skin files and refreshes the tile badges afterward.
+    private func importSkins(from urls: [URL]) async {
+        do {
+            for url in urls {
+                guard url.startAccessingSecurityScopedResource() else { continue }
+                defer { url.stopAccessingSecurityScopedResource() }
+                try await DeltaSkinManager.shared.importSkin(from: url)
+            }
+            await DeltaSkinManager.shared.reloadSkins()
+            rebuildSections()
+        } catch {
+            skinImportErrorMessage = error.localizedDescription
+            showingSkinImportError = true
+            ELOG("Tile menu skin import failed: \(error.localizedDescription)")
+        }
+    }
+    #endif
 
     // MARK: - Layout helpers
 
@@ -595,12 +719,27 @@ struct PauseTileMenuView: View {
                         VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
                             // Panel title
                             HStack {
+                                if routeStack.count > 1 {
+                                    Button {
+                                        _ = popRoute()
+                                    } label: {
+                                        Label(String(localized: "Back"), systemImage: "chevron.left")
+                                            .font(.system(size: tvOSAdjusted(11, tvOS: 17), weight: .semibold))
+                                            .foregroundColor(.white.opacity(0.8))
+                                    }
+                                    .buttonStyle(.plain)
+                                } else {
+                                    Spacer().frame(width: tvOSAdjusted(46, tvOS: 68))
+                                }
+
                                 Spacer()
-                                Text(String(localized: "GAME MENU"))
+                                Text(routeTitle)
                                     .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .heavy, design: .rounded))
                                     .foregroundColor(.white.opacity(0.55))
                                     .tracking(tvOSAdjusted(2, tvOS: 3.5))
                                 Spacer()
+
+                                Spacer().frame(width: tvOSAdjusted(46, tvOS: 68))
                             }
                             .padding(.top, tvOSAdjusted(2, tvOS: 6))
 
@@ -647,6 +786,66 @@ struct PauseTileMenuView: View {
                 showingControllerProfiles = false
             }
         }
+        .sheet(isPresented: $showingSystemSkinSelection) {
+            NavigationStack {
+                SystemSkinSelectionView(system: activeSystemIdentifier, game: emulatorVC.game)
+            }
+        }
+        .sheet(isPresented: $showingSkinCatalog) {
+            NavigationStack {
+                SkinCatalogBrowserView(preselectedSystem: activeSystemIdentifier.skinCatalogSystemCode)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(String(localized: "Done")) { showingSkinCatalog = false }
+                        }
+                    }
+            }
+        }
+        .sheet(isPresented: $showingButtonEffectPicker) {
+            NavigationStack {
+                List {
+                    ForEach(ButtonPressEffect.allCases, id: \.self) { effect in
+                        Button {
+                            buttonPressEffect = effect
+                            showingButtonEffectPicker = false
+                            rebuildSections()
+                        } label: {
+                            HStack {
+                                Text(effect.description)
+                                Spacer()
+                                if effect == buttonPressEffect {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                }
+                .navigationTitle(String(localized: "Button Effect"))
+            }
+        }
+        .sheet(isPresented: $showingButtonSoundPicker) {
+            NavigationStack {
+                List {
+                    ForEach(ButtonSound.allCases, id: \.self) { sound in
+                        Button {
+                            buttonSound = sound
+                            playButtonSoundSample(sound)
+                            showingButtonSoundPicker = false
+                            rebuildSections()
+                        } label: {
+                            HStack {
+                                Text(sound.description)
+                                Spacer()
+                                if sound == buttonSound {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                }
+                .navigationTitle(String(localized: "Button Sound"))
+            }
+        }
         .sheet(isPresented: $showingTransferPakConfig, onDismiss: { frozenTransferPakGame = nil }) {
             if let frozenGame = frozenTransferPakGame {
                 let transferCore = emulatorVC.core as? TransferPakSupport
@@ -690,6 +889,28 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingPortDevices) {
             PortDevicesPauseSheet(emulatorVC: emulatorVC)
         }
+        #if !os(tvOS)
+        .fileImporter(
+            isPresented: $showingSkinImporter,
+            allowedContentTypes: supportedSkinTypes,
+            allowsMultipleSelection: true
+        ) { result in
+            Task {
+                do {
+                    let urls = try result.get()
+                    await importSkins(from: urls)
+                } catch {
+                    skinImportErrorMessage = error.localizedDescription
+                    showingSkinImportError = true
+                }
+            }
+        }
+        .alert(String(localized: "Skin Import Error"), isPresented: $showingSkinImportError) {
+            Button(String(localized: "OK"), role: .cancel) { }
+        } message: {
+            Text(skinImportErrorMessage ?? String(localized: "Unable to import selected skin files."))
+        }
+        #endif
         #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
         .sheet(isPresented: $showingMIDIPicker) {
             if #available(iOS 16.0, *) {
@@ -744,6 +965,7 @@ struct PauseTileMenuView: View {
         }
         .onAppear {
             orientation = UIDevice.current.orientation
+            routeStack = [.root]
             refreshControllerProfileState()
             rebuildSections()
         }
@@ -754,6 +976,7 @@ struct PauseTileMenuView: View {
         }
         #elseif os(tvOS)
         .onAppear {
+            routeStack = [.root]
             refreshControllerProfileState()
             rebuildSections()
             reattachTVOSFocusIfNeeded()
@@ -767,8 +990,8 @@ struct PauseTileMenuView: View {
             guard newPhase == .active else { return }
             reattachTVOSFocusIfNeeded()
         }
-        .onExitCommand { dismissAction(true) }
-        .onPlayPauseCommand { dismissAction(true) }
+        .onExitCommand { handleBackCommand() }
+        .onPlayPauseCommand { handleBackCommand() }
         #endif
     }
 
@@ -818,6 +1041,7 @@ struct PauseTileMenuView: View {
         }
     }
 }
+// swiftlint:enable type_body_length
 
 // MARK: - TileButtonStyle
 
