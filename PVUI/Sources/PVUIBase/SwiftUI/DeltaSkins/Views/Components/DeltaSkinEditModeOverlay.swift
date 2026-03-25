@@ -42,9 +42,6 @@ struct DeltaSkinEditModeOverlay: View {
         let savedOffset = buttonOffsets.offset(for: button.id, skinIdentifier: skin.identifier)
         let dragOffset = dragTranslations[button.id] ?? .zero
 
-        // Compute the screen-space frame of the button (with saved offset applied)
-        let screenFrame = screenFrame(for: button, savedOffset: savedOffset)
-
         // Convert the live drag translation to normalized space so we can preview
         let liveNormalizedOffset = normalizedOffset(fromScreenDelta: CGSize(
             width: dragOffset.width,
@@ -99,11 +96,18 @@ struct DeltaSkinEditModeOverlay: View {
                         dragTranslations[button.id] = value.translation
                     }
                     .onEnded { value in
-                        // Convert screen delta to normalized offset
+                        // Convert screen delta to normalized offset and clamp to mappingSize bounds
                         let delta = normalizedOffset(fromScreenDelta: value.translation)
-                        let newOffset = CGPoint(
+                        let rawOffset = CGPoint(
                             x: savedOffset.x + delta.x,
                             y: savedOffset.y + delta.y
+                        )
+                        // Clamp so the button frame stays within mappingSize
+                        let clampedMinX = max(0, min(mappingSize.width - button.frame.width, button.frame.minX + rawOffset.x))
+                        let clampedMinY = max(0, min(mappingSize.height - button.frame.height, button.frame.minY + rawOffset.y))
+                        let newOffset = CGPoint(
+                            x: clampedMinX - button.frame.minX,
+                            y: clampedMinY - button.frame.minY
                         )
                         onOffsetChanged(button.id, newOffset)
                         dragTranslations.removeValue(forKey: button.id)
@@ -171,9 +175,7 @@ struct DeltaSkinEditModeToolbar: View {
             // Reset button — only shown in edit mode when there are custom offsets
             if isEditMode && hasCustomOffsets {
                 Button(action: {
-                    Task { @MainActor in
-                        buttonOffsets.resetOffsets(for: skinIdentifier)
-                    }
+                    buttonOffsets.resetOffsets(for: skinIdentifier)
                 }) {
                     Label("Reset to Default", systemImage: "arrow.counterclockwise")
                         .font(.system(size: 12, weight: .regular))

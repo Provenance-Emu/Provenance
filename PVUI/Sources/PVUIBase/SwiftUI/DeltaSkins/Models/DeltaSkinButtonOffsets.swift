@@ -6,6 +6,7 @@ import Combine
 /// Offsets are keyed by `skinIdentifier + "." + buttonId` and stored in normalized
 /// coordinates (same space as `DeltaSkinButton.frame`).  A positive `x` offset moves
 /// the button right; a positive `y` offset moves it down.
+@MainActor
 public final class DeltaSkinButtonOffsets: ObservableObject {
 
     // MARK: - Shared instance
@@ -43,7 +44,6 @@ public final class DeltaSkinButtonOffsets: ObservableObject {
     }
 
     /// Persists an offset for a button.  Pass `.zero` to reset it to the default position.
-    @MainActor
     public func setOffset(_ offset: CGPoint, for buttonId: String, skinIdentifier: String) {
         let key = cacheKey(buttonId: buttonId, skinIdentifier: skinIdentifier)
         cache[key] = offset
@@ -52,7 +52,6 @@ public final class DeltaSkinButtonOffsets: ObservableObject {
     }
 
     /// Resets all custom offsets for a given skin back to zero.
-    @MainActor
     public func resetOffsets(for skinIdentifier: String) {
         let udKey = userDefaultsKeyPrefix + skinIdentifier
         UserDefaults.standard.removeObject(forKey: udKey)

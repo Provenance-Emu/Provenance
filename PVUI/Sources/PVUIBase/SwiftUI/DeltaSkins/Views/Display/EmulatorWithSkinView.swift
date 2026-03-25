@@ -190,7 +190,7 @@ struct EmulatorWithSkinView: View {
                                     for: skinLoader.selectedSkin?.identifier ?? ""
                                 )
                             )
-                            .padding(.top, 12)
+                            .padding(.top, geometry.safeAreaInsets.top + 12)
                             .padding(.trailing, 12)
                         }
                         Spacer()
