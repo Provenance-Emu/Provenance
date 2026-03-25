@@ -1265,3 +1265,8 @@ using namespace MDFN_IEN_PCE;
  2,     // Number of output sound channels
 };
 
+// ---- Provenance RetroAchievements RAM accessors ----
+extern "C" {
+    uint8_t* mdfn_pce_baseram_ptr(void) { return BaseRAM; }
+    size_t   mdfn_pce_baseram_size(void) { return 8192; } // 8 KB standard PCE RAM (first 8 KB)
+}

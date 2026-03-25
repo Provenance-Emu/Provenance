@@ -2593,3 +2593,10 @@ using namespace MDFN_IEN_SS;
  2,     // Number of output sound channels
 };
 
+// ---- Provenance RetroAchievements RAM accessors ----
+extern "C" {
+    uint8_t* mdfn_ss_workraml_ptr(void) { return reinterpret_cast<uint8_t*>(WorkRAML); }
+    size_t   mdfn_ss_workraml_size(void) { return sizeof(WorkRAML); }
+    uint8_t* mdfn_ss_workramh_ptr(void) { return reinterpret_cast<uint8_t*>(WorkRAMH); }
+    size_t   mdfn_ss_workramh_size(void) { return sizeof(WorkRAMH); }
+}

@@ -741,3 +741,8 @@ static const CheatInfoStruct CheatInfo =
  2,     // Number of output sound channels
 };
 
+// ---- Provenance RetroAchievements RAM accessors ----
+extern "C" {
+    uint8_t* mdfn_pce_fast_baseram_ptr(void) { return MDFN_IEN_PCE_FAST::BaseRAM; }
+    size_t   mdfn_pce_fast_baseram_size(void) { return 8192; } // 8 KB standard PCE RAM
+}
