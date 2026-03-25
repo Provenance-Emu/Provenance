@@ -42,8 +42,8 @@ struct DeltaSkinEditModeOverlay: View {
         let savedOffset = buttonOffsets.offset(for: button.id, skinIdentifier: skin.identifier)
         let dragOffset = dragTranslations[button.id] ?? .zero
 
-        // Convert the live drag translation to normalized space so we can preview
-        let liveNormalizedOffset = normalizedOffset(fromScreenDelta: CGSize(
+        // Convert the live drag translation to mapping-space delta so we can preview
+        let liveNormalizedOffset = mappingSpaceDelta(fromScreenDelta: CGSize(
             width: dragOffset.width,
             height: dragOffset.height
         ))
@@ -96,8 +96,8 @@ struct DeltaSkinEditModeOverlay: View {
                         dragTranslations[button.id] = value.translation
                     }
                     .onEnded { value in
-                        // Convert screen delta to normalized offset and clamp to mappingSize bounds
-                        let delta = normalizedOffset(fromScreenDelta: value.translation)
+                        // Convert screen delta to mapping-space delta and clamp to mappingSize bounds
+                        let delta = mappingSpaceDelta(fromScreenDelta: value.translation)
                         let rawOffset = CGPoint(
                             x: savedOffset.x + delta.x,
                             y: savedOffset.y + delta.y
@@ -137,8 +137,10 @@ struct DeltaSkinEditModeOverlay: View {
         )
     }
 
-    /// Convert a screen-space drag delta (points) to a normalized mappingSize delta.
-    private func normalizedOffset(fromScreenDelta delta: CGSize) -> CGPoint {
+    /// Convert a screen-space drag delta (points) to a delta in mapping-space units.
+    /// The returned value is in the same coordinate space as `DeltaSkinButton.frame`
+    /// and should NOT be confused with a 0–1 normalized value.
+    private func mappingSpaceDelta(fromScreenDelta delta: CGSize) -> CGPoint {
         guard containerSize.width > 0, containerSize.height > 0 else { return .zero }
         return CGPoint(
             x: (delta.width / containerSize.width) * mappingSize.width,

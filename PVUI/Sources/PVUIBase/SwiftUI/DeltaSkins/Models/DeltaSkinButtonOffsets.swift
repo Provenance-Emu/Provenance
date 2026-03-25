@@ -1,11 +1,12 @@
+import CoreGraphics
 import Foundation
 import Combine
 
 /// Stores per-button position offsets for drag-to-reposition edit mode.
 ///
-/// Offsets are keyed by `skinIdentifier + "." + buttonId` and stored in normalized
-/// coordinates (same space as `DeltaSkinButton.frame`).  A positive `x` offset moves
-/// the button right; a positive `y` offset moves it down.
+/// Offsets are keyed by `skinIdentifier + "." + buttonId` and stored as deltas in
+/// mapping-space points (the same coordinate space as `DeltaSkinButton.frame`).
+/// A positive `x` offset moves the button right; a positive `y` offset moves it down.
 @MainActor
 public final class DeltaSkinButtonOffsets: ObservableObject {
 
