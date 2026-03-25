@@ -1,6 +1,7 @@
 import SwiftUI
 import PVCoreBridge
 import PVEmulatorCore
+import PVFeatureFlags
 import PVLibrary
 import PVSystems
 import Combine
@@ -158,8 +159,8 @@ struct EmulatorWithSkinView: View {
                         }
                 }
 
-                // Light gun crosshair overlay
-                if coreSupportsLightGun {
+                // Light gun crosshair overlay (gated by feature flag)
+                if coreSupportsLightGun && PVFeatureFlagsManager.shared.lightGunCrosshair {
                     LightGunCrosshairView()
                         .allowsHitTesting(false)
                 }

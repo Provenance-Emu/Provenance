@@ -67,6 +67,11 @@ public enum PVFeature: String, CaseIterable {
     /// multiple available cores. When disabled, a plain list picker is used instead.
     /// Disabled by default until core capability data is fully audited.
     case smartCoreSelection = "smartCoreSelection"
+    /// Enables the light-gun crosshair overlay that renders a configurable crosshair
+    /// at the cursor position during light-gun gameplay. When disabled, no crosshair
+    /// is shown regardless of the `lightGunCrosshairStyle` setting.
+    /// Disabled by default; enable in Settings > Advanced > Feature Flags.
+    case lightGunCrosshair = "lightGunCrosshair"
 }
 
 /// Represents the type of app installation
@@ -486,6 +491,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var liveBroadcast: Bool { featureStates[.liveBroadcast] ?? false }
     public var companionController: Bool { featureStates[.companionController] ?? false }
     public var smartCoreSelection: Bool { featureStates[.smartCoreSelection] ?? false }
+    public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
 
     // MARK: - Feature Queries
 
