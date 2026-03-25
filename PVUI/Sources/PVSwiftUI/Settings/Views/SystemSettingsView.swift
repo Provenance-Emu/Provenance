@@ -414,12 +414,27 @@ struct SystemSection: View {
             if let sysID = SystemIdentifier(rawValue: system.identifier),
                let variants = sysID.availableControllerLayoutVariants,
                variants.count > 1 {
+                // Normalize stored ID: fall back to the default if the stored ID is stale/invalid.
+                let storedVariantID = variantsBySystem[system.identifier]
+                let normalizedVariantID: String
+                if let storedVariantID, variants.contains(where: { $0.id == storedVariantID }) {
+                    normalizedVariantID = storedVariantID
+                } else {
+                    normalizedVariantID = variants[0].id
+                }
+
                 ControllerLayoutVariantPicker(
                     systemIdentifier: system.identifier,
                     variants: variants,
-                    selectedVariantID: variantsBySystem[system.identifier] ?? variants[0].id
+                    selectedVariantID: normalizedVariantID
                 ) { newVariantID in
-                    Defaults.setControllerLayoutVariant(newVariantID, forSystemID: system.identifier)
+                    // Clear the override when the user selects the default variant so storage
+                    // stays minimal (only non-default selections are persisted).
+                    if newVariantID == variants[0].id {
+                        Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
+                    } else {
+                        Defaults.setControllerLayoutVariant(newVariantID, forSystemID: system.identifier)
+                    }
                 }
             }
         }

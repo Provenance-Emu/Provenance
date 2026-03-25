@@ -26,6 +26,16 @@ public struct ControllerLayoutVariant: Identifiable, Sendable, Equatable, Hashab
         self.description = description
         self.sfSymbol = sfSymbol
     }
+
+    // Identity is determined solely by `id`; display-name / symbol changes don't
+    // create a new logical variant.
+    public static func == (lhs: ControllerLayoutVariant, rhs: ControllerLayoutVariant) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 // MARK: - Built-in Variants
@@ -136,6 +146,10 @@ public extension SystemIdentifier {
 /// The variant `id` corresponds to one of the `ControllerLayoutVariant` constants
 /// (e.g. `"genesis-6btn"`, `"wii-classic"`). Cores should map those IDs to their
 /// own device-type or core-option values.
+///
+/// - Note: This PR introduces the model, persistence layer, and Settings UI picker.
+///   The emulator VC / core-bridge call-site that invokes `applyControllerLayoutVariant(_:)`
+///   at launch and on variant change will be wired in a follow-up PR.
 public protocol ConsoleVariantConfigurable: AnyObject {
     /// Apply the selected controller layout variant.
     /// - Parameter variantID: The `ControllerLayoutVariant.id` string chosen by the user.

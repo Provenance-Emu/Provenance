@@ -568,29 +568,5 @@
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
       }
     ]
-  },
-  {
-    "version": "3.8.0",
-    "title": "Controller Layout Variants",
-    "features": [
-      {
-        "symbolName": "gamecontroller.fill",
-        "symbolColor": "purple",
-        "title": "Console Layout Variants",
-        "subtitle": "Choose the controller layout for systems that shipped with multiple peripherals — Genesis 3 vs 6-Button, Wii Wiimote vs Classic Controller, NES Zapper, and more."
-      },
-      {
-        "symbolName": "slider.horizontal.3",
-        "symbolColor": "blue",
-        "title": "Per-System Preference",
-        "subtitle": "Your controller layout choice is saved per system in Settings → Systems, so each console remembers the peripheral you prefer."
-      },
-      {
-        "symbolName": "scope",
-        "symbolColor": "orange",
-        "title": "Light Gun Support",
-        "subtitle": "Select the NES Zapper layout to enable light gun targeting for Duck Hunt, Hogan's Alley, and other compatible games."
-      }
-    ]
   }
 ]
