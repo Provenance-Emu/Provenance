@@ -925,18 +925,24 @@ final class TVMediaLibraryModel: ObservableObject {
         // Only reload games for the selected system (visible) plus any already-loaded
         // systems (to keep existing shelves in sync). Avoid reloading every system on
         // each Realm write — with 50+ systems that causes O(n) sequential queries.
-        var identifiersToRefresh: Set<String> = []
+        // Build an ordered list: selected/visible system first so it appears
+        // refreshed immediately, followed by any other cached systems.
+        var identifiersToRefresh: [String] = []
+        var seenIdentifiers = Set<String>()
         if !selectedSystemIdentifier.isEmpty {
-            identifiersToRefresh.insert(selectedSystemIdentifier)
+            identifiersToRefresh.append(selectedSystemIdentifier)
+            seenIdentifiers.insert(selectedSystemIdentifier)
         }
-        // Include systems that were already loaded so their cached data stays fresh.
         for id in gamesBySystemIdentifier.keys {
-            identifiersToRefresh.insert(id)
+            if !seenIdentifiers.contains(id) {
+                identifiersToRefresh.append(id)
+                seenIdentifiers.insert(id)
+            }
         }
         // Run reloads concurrently instead of sequentially, but with a bounded level
         // of concurrency to avoid spawning too many Realm loads at once.
         let maxConcurrentGameLoads = 4
-        let ids = Array(identifiersToRefresh)
+        let ids = identifiersToRefresh
         var index = 0
 
         while index < ids.count {
@@ -2657,6 +2663,7 @@ struct TVMediaHomeView: View {
 
     private func loadAllGames() async {
         isLoading = true
+        defer { isLoading = false }
         // Load systems with a small concurrency cap to reduce startup time
         // without overwhelming Realm or the device on setups with many systems.
         let maxConcurrentLoads = 4
@@ -2683,7 +2690,6 @@ struct TVMediaHomeView: View {
             // Drain any remaining tasks.
             while await group.next() != nil {}
         }
-        isLoading = false
 
         // Auto-expand sidebar if no games to guide first-time users
         if !hasAnyGames {
@@ -2757,8 +2763,9 @@ struct TVMediaSystemsView: View {
     private var systemsWithGames: [PVSystem] {
         model.systems.filter { system in
             guard let cached = model.gamesBySystemIdentifier[system.identifier] else {
-                // Not yet loaded — exclude until games are available; loading is
-                // triggered lazily by TVMediaSystemShelfRow.ensureLoaded.
+                // Not yet loaded — exclude until games are available. A `.task`
+                // modifier on this view eagerly triggers loading for all systems,
+                // so this guard handles the brief window before loading completes.
                 return false
             }
             return !cached.isEmpty

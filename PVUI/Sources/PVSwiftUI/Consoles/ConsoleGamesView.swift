@@ -928,7 +928,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 /// model field update (playCount, lastPlayed, etc.).  Using the full
                 /// model.hashValue caused unnecessary view identity changes and scroll
                 /// stutter on Realm writes.
-                .id("\(model.id)_\(model.trueArtworkURL)")
+                .id("\(model.id)_\(model.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1069,7 +1069,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 /// model field update (playCount, lastPlayed, etc.).  Using the full
                 /// model.hashValue caused unnecessary view identity changes and scroll
                 /// stutter on Realm writes.
-                .id("\(model.id)_\(model.trueArtworkURL)")
+                .id("\(model.id)_\(model.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
