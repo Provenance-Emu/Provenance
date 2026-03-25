@@ -219,6 +219,8 @@ struct DefaultControllerSkinView: View {
             // Guard against invalid geometry that could cause the view to disappear
             let validSize = geometry.size.width > 0 && geometry.size.height > 0
             let isLandscape = validSize && geometry.size.width > geometry.size.height
+            // Compute once so the background and controller layout always use the same fraction
+            let controllerFraction = min(0.55, max(0.20, 0.35 * CGFloat(controllerScale)))
 
             ZStack {
                 // Ensure view always renders even with invalid geometry
@@ -228,9 +230,9 @@ struct DefaultControllerSkinView: View {
                     if !isLandscape {
                         // Portrait mode - show background only in bottom controller area
                         VStack(spacing: 0) {
-                            // Spacer for screen area (top ~65%) - no background here
+                            // Spacer for screen area — mirrors the game-area spacer below
                             Spacer()
-                                .frame(maxHeight: geometry.size.height * 0.65)
+                                .frame(maxHeight: geometry.size.height * (1.0 - controllerFraction))
 
                             // Controller area background with gradual fade
                             ZStack {
@@ -250,7 +252,7 @@ struct DefaultControllerSkinView: View {
                                         )
                                     )
                             }
-                            .frame(maxHeight: geometry.size.height * 0.35)
+                            .frame(maxHeight: geometry.size.height * controllerFraction)
                             .clipped()
                         }
                     }
@@ -271,7 +273,6 @@ struct DefaultControllerSkinView: View {
                         // Portrait layout — allocate height proportional to controllerScale
                         // so the game viewport and controller area grow/shrink together,
                         // with no clipping and no overlap possible.
-                        let controllerFraction = min(0.55, max(0.20, 0.35 * CGFloat(controllerScale)))
                         VStack(spacing: 0) {
                             // Game area — expands when controls shrink, contracts when they grow
                             Spacer()
