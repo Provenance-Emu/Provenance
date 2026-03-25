@@ -415,16 +415,21 @@ struct RetroMenuView: View {
 #endif
     }
 
+    /// True when the active core is a RetroArch/libretro-path core.
+    /// Core identifiers either contain "libretro" (sub-cores like dosbox_pure_libretro)
+    /// or "retroarch" (the main bridge core). This is the established detection pattern
+    /// used throughout the codebase (PVEmulatorViewController, AudioVisualizer, etc.).
+    var isLibretroCore: Bool {
+        guard let coreID = emulatorVC.core.coreIdentifier else { return false }
+        return coreID.contains("libretro") || coreID.localizedCaseInsensitiveContains("retroarch")
+    }
+
     /// True when the active core is a RetroArch/libretro-path core running on a
     /// MIDI-capable system (DOS, Atari ST, MSX, etc.).
     /// Used to decide whether to show the RetroArch MIDI driver toggle in the CORE tab.
     var isRetroArchMIDICapable: Bool {
 #if canImport(CoreMIDI) && !os(tvOS)
-        // Match any RetroArch/libretro core — identifiers either contain "libretro" (sub-cores
-        // like dosbox_pure_libretro) or "retroarch" (the main bridge core).
-        // This mirrors the check used in PVEmulatorViewController for RetroArch detection.
-        guard let coreID = emulatorVC.core.coreIdentifier,
-              coreID.contains("libretro") || coreID.localizedCaseInsensitiveContains("retroarch") else { return false }
+        guard isLibretroCore else { return false }
         guard let sysID = SystemIdentifier(rawValue: emulatorVC.game.system?.identifier ?? "") else { return false }
         return MIDISystemRegistry.shared.supportsMIDI(sysID)
 #else
@@ -436,14 +441,20 @@ struct RetroMenuView: View {
     private var hasCoreFeatures: Bool {
         let hasPaletteSupport = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
         #if !os(tvOS)
+        // Use explicit CoreMIDI guard so this flag only activates when the MIDI UI sections
+        // actually render — prevents a "ghost" true that would hide the "no features" message.
+        #if canImport(CoreMIDI)
+        let hasMIDI = coreSupportsMIDI || isRetroArchMIDICapable
+        #else
+        let hasMIDI = coreSupportsMIDI
+        #endif
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
         hasPaletteSupport ||
         emulatorVC.coreSupportsVirtualKeyboard ||
         emulatorVC.coreSupportsVirtualMouse ||
         hasPortDeviceOptions ||
-        coreSupportsMIDI ||
-        isRetroArchMIDICapable
+        hasMIDI
         #else
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||

@@ -1198,8 +1198,8 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
 /// Reads the `retroArchMIDIEnabled` preference from NSUserDefaults (default: YES when absent)
 /// and patches `midi_input` / `midi_output` in the user's retroarch.cfg accordingly.
-/// Called on every core startup so the user's choice (from the MIDI toggle in RetroMenuView)
-/// is always applied, even for existing users whose cfg pre-dates this feature.
+/// Called at core startup when the user cfg already exists; on first run the bundled
+/// retroarch.cfg already ships with "coremidi" as the default so no patch is needed.
 /// Both keys are patched in a single read-modify-write cycle to avoid unnecessary I/O.
 #if !TARGET_OS_TV
 - (void)applyMIDIPreferenceToUserCfg:(NSString *)cfgPath {
