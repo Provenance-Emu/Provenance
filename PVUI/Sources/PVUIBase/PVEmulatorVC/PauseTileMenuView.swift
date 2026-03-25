@@ -50,6 +50,10 @@ struct PauseTileMenuView: View {
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
+    /// Triggers the AirPlay route-picker sheet via the hidden AVRoutePickerView bridge.
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    @State private var triggerAirPlayPicker = false
+    #endif
     @State private var showingShaderSettings = false
     @State private var showingPortDevices = false
     @State private var showingMIDIPicker = false
@@ -225,18 +229,23 @@ struct PauseTileMenuView: View {
         case "keyboardToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualKeyboard()
-            // Dismiss the menu so the user can interact with the keyboard overlay.
-            // The tile menu keeping the game paused while showing the overlay is unhelpful.
-            dismissAction(true)
+            rebuildSections()
             #endif
         case "mouseToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualMouse()
-            // Dismiss the menu so the user can interact with the mouse overlay.
-            dismissAction(true)
+            rebuildSections()
             #endif
         case "jitStatus":
             break // read-only
+
+        // MARK: AirPlay
+        case "airPlay":
+            #if os(iOS) || targetEnvironment(macCatalyst)
+            triggerAirPlayPicker = true
+            #else
+            break
+            #endif
 
         // MARK: Shader settings sheet
         case "shaderSettings":
@@ -673,6 +682,16 @@ struct PauseTileMenuView: View {
                 MIDIDevicePauseSheet()
             }
         }
+        #endif
+        // AirPlay trigger — invisible bridge that fires the system route-picker sheet.
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        .overlay(
+            AirPlayPickerTrigger(show: $triggerAirPlayPicker)
+                .frame(width: 1, height: 1)
+                .opacity(0)
+                .allowsHitTesting(false),
+            alignment: .center
+        )
         #endif
         // Core action option picker — shown when a CoreAction exposes multiple options.
         .confirmationDialog(

@@ -181,6 +181,18 @@ final class PauseTileMenuViewModel: ObservableObject {
         ))
         #endif
 
+        // AirPlay — iOS / Catalyst only; lets users stream audio+video without leaving the game
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        gameTiles.append(PauseMenuTile(
+            id: "airPlay",
+            icon: "airplayvideo",
+            label: String(localized: "AirPlay"),
+            description: String(localized: "Stream audio and video to AirPlay devices"),
+            colorKey: .cyan,
+            dismissOnTap: false
+        ))
+        #endif
+
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
 
         // ── QUICK SETTINGS section ──────────────────────────────────────
