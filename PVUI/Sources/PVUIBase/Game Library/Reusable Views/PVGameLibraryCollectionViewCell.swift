@@ -602,6 +602,14 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 return
             }
 
+            // Swipe-to-delete displacement fractions (relative to contentView width).
+            // maxSwipeFraction: how far the cell can travel before clamping.
+            // thresholdFraction: how far the user must swipe to trigger the delete prompt.
+            // snapFraction: final resting position of the cell while the delete prompt is shown.
+            let maxSwipeFraction: CGFloat = 0.85
+            let thresholdFraction: CGFloat = 0.6
+            let snapFraction: CGFloat = 0.9
+
             struct Holder {
                 static var originalLocation: CGPoint = .zero
             }
@@ -615,7 +623,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 deleteActionView?.alpha = 1
             case .changed:
                 let displacement = panGesture.location(in: self).x - Holder.originalLocation.x
-                let maxDisplacement = contentView.frame.width * 0.85
+                let maxDisplacement = contentView.frame.width * maxSwipeFraction
                 let newX: CGFloat
                 if isRTL {
                     // RTL: positive x (swipe right) reveals delete action on the left
@@ -639,7 +647,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     }
                 }
 
-                let threshold = contentView.frame.width * 0.6
+                let threshold = contentView.frame.width * thresholdFraction
                 let swipedFarEnough: Bool
                 if isRTL {
                     swipedFarEnough = contentView.frame.origin.x > threshold
@@ -647,7 +655,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     swipedFarEnough = contentView.frame.origin.x < -threshold
                 }
                 if swipedFarEnough {
-                    let finalX = isRTL ? contentView.frame.width * 0.9 : contentView.frame.width * 0.9 * -1
+                    let finalX = isRTL ? contentView.frame.width * snapFraction : contentView.frame.width * snapFraction * -1
                     f.origin.x = finalX
                     UIView.animate(withDuration: 0.1) {
                         self.contentView.frame = f

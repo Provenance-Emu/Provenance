@@ -121,8 +121,11 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         isOpaque = true
     }
 
-    public override func traitCollectionDidChange(_: UITraitCollection?) {
-        titleLabel.textAlignment = effectiveUserInterfaceLayoutDirection == .rightToLeft ? .right : .left
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if previousTraitCollection?.layoutDirection != traitCollection.layoutDirection {
+            titleLabel.textAlignment = effectiveUserInterfaceLayoutDirection == .rightToLeft ? .right : .left
+        }
         #if os(tvOS)
         titleLabel.textColor = colorForText
         #else
