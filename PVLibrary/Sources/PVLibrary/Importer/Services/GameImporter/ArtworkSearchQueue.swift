@@ -158,8 +158,8 @@ public actor ArtworkSearchQueue {
         let md5Hash = metadata.md5Hash.uppercased()
         let gameTitle = metadata.title.isEmpty ? metadata.gameID : metadata.title
 
-        // Need at least one searchable term
-        guard !metadata.title.isEmpty || !metadata.filename.isEmpty else {
+        // Need at least one meaningful searchable term (after bracket/noise stripping)
+        guard !metadata.title.cleanedForArtworkSearch().isEmpty || !metadata.filename.cleanedForArtworkSearch().isEmpty else {
             WLOG("ArtworkSearchQueue: Game \(metadata.gameID) has no searchable title or filename")
             return
         }

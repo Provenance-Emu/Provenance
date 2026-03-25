@@ -163,10 +163,12 @@ extension String {
             )
         }
 
-        // Remove isolated special characters surrounded by spaces
+        // Remove isolated special characters surrounded by spaces.
+        // Note: hyphen is moved to the end to avoid defining a range inside the character class.
         let charsToRemove = ",:;!^%&*+/-"
+        let safeCharsToRemove = charsToRemove.replacingOccurrences(of: "-", with: "\\-")
         cleaned = cleaned.replacingOccurrences(
-            of: "\\s[\(charsToRemove)]\\s",
+            of: "\\s[\(safeCharsToRemove)]\\s",
             with: " ",
             options: .regularExpression
         )

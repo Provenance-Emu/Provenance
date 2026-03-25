@@ -426,12 +426,14 @@ public struct BatchArtworkMatchingView: View {
                 let systemID = SystemIdentifier(rawValue: game.systemIdentifier)
                 let filename = URL(fileURLWithPath: game.romPath).deletingPathExtension().lastPathComponent
 
-                if let results = try? await ArtworkMatchingService.shared.searchWithFallback(
+                let results = try await ArtworkMatchingService.shared.searchWithFallback(
                     title: game.title,
                     filename: filename,
                     systemID: systemID,
                     md5Hash: md5
-                ), let firstResult = results.first {
+                )
+
+                if let firstResult = results?.first {
                     artworkResults[md5] = firstResult
                     selectedArtworks.insert(md5)
                     DLOG("Found artwork for '\(game.title)' at \(firstResult.url)")

@@ -56,7 +56,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testCleanedForArtworkSearch_removesIsolatedSpecialChars() {
         // Characters surrounded by spaces should be removed
         let input = "Game , Extra"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Game  Extra")
+        XCTAssertEqual(input.cleanedForArtworkSearch(), "Game Extra")
     }
 
     // MARK: - ArtworkMatchingService shared instance
