@@ -451,7 +451,7 @@ The artwork pipeline lives in `PVLookup` (Tier 5). `PVLookup.shared` is the sing
 PVLookup.shared (actor)
 ├── OpenVGDB          (offline SQLite — ArtworkLookupOfflineService)
 ├── libretrodb        (offline SQLite + remote thumbnails — ArtworkLookupOfflineService)
-└── TheGamesDB        (offline SQLite — ArtworkLookupOnlineService)
+└── TheGamesDB        (offline SQLite index + remote CDN URLs — ArtworkLookupService)
 ```
 
 All three back-ends are queried **in parallel** via `withTaskGroup`. Results are concatenated in source order (OpenVGDB → LibretroDB → TheGamesDB), then sorted by `ArtworkType` priority.
@@ -478,19 +478,19 @@ Composite constants:
 
 #### Per-source type support
 
-| Source | boxFront | boxBack | screenshot | titleScreen | fanArt | banner | clearLogo | other |
-|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **OpenVGDB** | ✅ | ✅ | ✅ | — | — | — | — | — |
-| **LibretroDB** | ✅ | — | ✅ | ✅ | — | — | — | — |
-| **TheGamesDB** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Source | boxFront | boxBack | screenshot | titleScreen | fanArt | banner | clearLogo | manual | other |
+|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **OpenVGDB** | ✅ | ✅ | ✅ | — | — | — | — | — | ✅ |
+| **LibretroDB** | ✅ | — | ✅ | ✅ | — | — | — | — | — |
+| **TheGamesDB** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | ✅ |
 
-OpenVGDB infers type from URL path keywords (`"front"` → `.boxFront`, `"back"` → `.boxBack`, `"screenshot"` → `.screenshot`).
+OpenVGDB infers type from URL path keywords (`"front"` → `.boxFront`, `"back"` → `.boxBack`, `"screenshot"` → `.screenshot`); other artwork URLs (for example, cart/disc covers) fall back to `.other`.
 LibretroDB maps its three thumbnail directories: `named_boxarts/` → `.boxFront`, `named_titles/` → `.titleScreen`, `named_snaps/` → `.screenshot`.
-TheGamesDB maps its `type`/`side` columns via `ArtworkType(fromTheGamesDB:side:)`.
+TheGamesDB maps its `type`/`side` columns via `ArtworkType(fromTheGamesDB:side:)`; several logical artwork types (including manuals) are currently collapsed to `.other` rather than emitting `.manual`.
 
 ### `ArtworkSearchCache` — LRU cache
 
-`ArtworkSearchCache` is a Swift `actor` singleton (`ArtworkSearchCache.shared`) backed by a `[ArtworkSearchKey: [ArtworkMetadata]]` dictionary.
+`ArtworkSearchCache` is a Swift `actor` singleton (`ArtworkSearchCache.shared`) backed by a `[ArtworkSearchKey: [ArtworkMetadata]]` dictionary, defined in `PVLookup/Sources/PVLookupTypes/ArtworkSearchCache.swift`.
 
 - **Capacity**: 100 entries (`maxCacheSize = 100`).
 - **Eviction**: Least-recently-used. Access order is tracked in an `accessOrder: [ArtworkSearchKey]` array. On every cache hit the key is moved to the end; on overflow the first (oldest) key is removed.
@@ -512,7 +512,7 @@ The combined array is then sorted by type priority (highest first):
 boxFront → boxBack → screenshot → titleScreen → clearLogo → banner → fanArt → manual → other
 ```
 
-This sort is performed by `PVLookup.sortArtworkByType(_:)`. Within the same type, the source order (OpenVGDB first) determines relative position.
+This sort is performed by `PVLookup.sortArtworkByType(_:)`, which only compares type priority. Relative ordering of artwork items with the same type is not guaranteed (Swift's `Array.sorted` is not guaranteed stable); if you need a deterministic secondary ordering, apply an additional stable sort or sort by a composite key such as `(typePriority, sourceRank)` at the call site.
 
 ### Deduplication strategy
 
@@ -630,7 +630,7 @@ Then guard initialization and the `databases.contains(.myNewDB)` check with the 
 
 ```swift
 // In initializeDatabases():
-guard await PVFeatureFlagsFetcher.shared.isFeatureEnabled(.myNewDBArtwork) else { return }
+guard await PVFeatureFlags.shared.isEnabled(.myNewDBArtwork) else { return }
 
 // In the databases array initializer:
 private var databases: [LocalDatabases] = {
