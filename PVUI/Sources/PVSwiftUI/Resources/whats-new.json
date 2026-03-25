@@ -586,5 +586,35 @@
         "subtitle": "Pick a specific language for all cores under Settings → Core Options → Core Language, independent of your device locale."
       }
     ]
+  },
+  {
+    "version": "3.8.1",
+    "title": "DualSense & DS4 Enhancements",
+    "features": [
+      {
+        "symbolName": "light.beacon.max.fill",
+        "symbolColor": "blue",
+        "title": "Controller Light Bar",
+        "subtitle": "DualSense and DS4 light bars now glow with a per-system color — PlayStation blue for PSX, SNES purple, GBA violet, and more."
+      },
+      {
+        "symbolName": "mic.fill",
+        "symbolColor": "orange",
+        "title": "DualSense Mic Button → Mute",
+        "subtitle": "Press the DualSense microphone button during gameplay to instantly mute or unmute game audio."
+      },
+      {
+        "symbolName": "hand.tap.fill",
+        "symbolColor": "purple",
+        "title": "Touchpad Click Binding",
+        "subtitle": "The DS4/DualSense touchpad click is now bindable in controller settings — assign it to any button action."
+      },
+      {
+        "symbolName": "square.and.arrow.up",
+        "symbolColor": "green",
+        "title": "Share / Create Button",
+        "subtitle": "The Share (DS4) and Create (DualSense) buttons are now exposed as bindable actions in controller settings."
+      }
+    ]
   }
 ]

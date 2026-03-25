@@ -149,8 +149,31 @@ public final class PVRemappableController: NSObject {
             dualSense.touchpadPrimary.valueChangedHandler = { [weak self] (pad: GCControllerDirectionPad, x: Float, y: Float) in
                 self?.touchpadHandler?(x, y)
             }
-        }
 
+            // Microphone button — posts a notification so the emulator VC can toggle audio mute.
+            dualSense.buttonMicrophone.pressedChangedHandler = { [weak self] (_, _, pressed) in
+                guard pressed else { return }
+                self?.handleMicButtonPressed()
+            }
+
+            // Share/Create button — expose as a configurable action (options button).
+            // On DualSense buttonOptions is the "Create" button.
+            dualSense.buttonOptions?.pressedChangedHandler = { [weak self] (button, value, pressed) in
+                if pressed {
+                    self?.handleSpecialButton(.share)
+                }
+            }
+        }
+    }
+
+    private func handleMicButtonPressed() {
+        let action = UserDefaults.standard.string(forKey: "dualSenseMicButtonAction") ?? "muteAudio"
+        switch action {
+        case "muteAudio":
+            NotificationCenter.default.post(name: .PVControllerMicButtonToggleMute, object: wrappedController)
+        default:
+            break
+        }
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
