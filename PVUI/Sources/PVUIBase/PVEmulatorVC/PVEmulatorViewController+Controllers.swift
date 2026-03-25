@@ -117,6 +117,7 @@ extension PVEmulatorViewController {
         gpuViewController.willMove(toParent: nil)
         gpuViewController.view?.removeFromSuperview()
         gpuViewController.removeFromParent()
+        gpuViewController.didMove(toParent: nil)
 
         let window = UIWindow(frame: screen.bounds)
         // `UIWindow.screen` is deprecated in iOS 13 but remains the only reliable
@@ -142,17 +143,23 @@ extension PVEmulatorViewController {
         gpuViewController.willMove(toParent: nil)
         gpuViewController.view?.removeFromSuperview()
         gpuViewController.removeFromParent()
+        gpuViewController.didMove(toParent: nil)
 
         // addChild automatically calls willMove(toParent: self) on the child.
         addChild(gpuViewController)
 
-        if let gpuView = gpuViewController.view,
-           let controllerView = controllerViewController?.view {
+        if let gpuView = gpuViewController.view {
             // Reset to device bounds so the view isn't left with an external-display
             // sized frame after disconnect.
             gpuView.frame = view.bounds
             gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            view.insertSubview(gpuView, belowSubview: controllerView)
+
+            if let controllerView = controllerViewController?.view {
+                view.insertSubview(gpuView, belowSubview: controllerView)
+            } else {
+                // Fallback: reattach GPU view even when controller view is unavailable.
+                view.addSubview(gpuView)
+            }
         }
 
         // Complete the containment cycle; this triggers viewDidMove and appearance callbacks.

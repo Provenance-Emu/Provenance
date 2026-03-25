@@ -293,15 +293,16 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// When `true` the emulator view controller may move the Metal GPU view to the
     /// external screen and leave the controller skin on the device.
     ///
-    /// The default derives from `!skipLayout`: cores that manage their own
-    /// rendering surface set `skipLayout = true` (RetroArch, Dolphin, PPSSPP,
-    /// emuThreeDS, Citra), so they automatically opt **out** of dedicated mode.
-    /// Standard cores that use the shared `PVMetalViewController` render path
-    /// (`skipLayout == false`) opt **in** by default.
+    /// The default derives from `!skipLayout`: cores that manage their own rendering
+    /// surface set `skipLayout = true` (RetroArch, Dolphin, PPSSPP, emuThreeDS, Citra),
+    /// so they automatically opt **out** of dedicated mode. Standard cores that use the
+    /// shared `PVMetalViewController` render path have `skipLayout == false` and
+    /// therefore opt **in** by default.
     ///
     /// Cores with custom Metal/GL surfaces that do **not** set `skipLayout = true`
-    /// (e.g. Play! with its CAMetalLayer/CAEAGLLayer GS renderer) must explicitly
-    /// override this property and return `false` to stay in system-mirror mode.
+    /// (e.g. Play! with its `CAMetalLayer`/`CAEAGLLayer` GS renderer) **must**
+    /// explicitly override this property and return `false` to prevent routing UIKit
+    /// window management to an incompatible render surface.
     @objc dynamic open var supportsExternalDisplay: Bool { !skipLayout }
 
     // MARK: JIT
