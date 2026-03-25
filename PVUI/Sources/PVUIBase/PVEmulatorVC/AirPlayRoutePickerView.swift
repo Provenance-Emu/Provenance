@@ -37,12 +37,27 @@ struct AirPlayPickerTrigger: UIViewRepresentable {
 
     func updateUIView(_ uiView: AVRoutePickerView, context: Context) {
         guard show else { return }
-        // Find the internal UIButton and fire it so the system sheet appears.
-        if let button = uiView.subviews.compactMap({ $0 as? UIButton }).first {
+        // Find the internal UIButton recursively to be robust across iOS
+        // view-hierarchy changes, then fire it to show the system sheet.
+        if let button = firstButton(in: uiView) {
             button.sendActions(for: .touchUpInside)
+        } else {
+            // Fallback: nothing matched — log so failures are visible in debug builds.
+            #if DEBUG
+            print("[AirPlayPickerTrigger] Could not locate AVRoutePickerView's internal button; picker sheet will not appear.")
+            #endif
         }
         // Reset immediately so subsequent taps work.
         DispatchQueue.main.async { show = false }
+    }
+
+    /// Recursively searches `view` and its descendants for the first `UIButton`.
+    private func firstButton(in view: UIView) -> UIButton? {
+        if let button = view as? UIButton { return button }
+        for subview in view.subviews {
+            if let button = firstButton(in: subview) { return button }
+        }
+        return nil
     }
 }
 

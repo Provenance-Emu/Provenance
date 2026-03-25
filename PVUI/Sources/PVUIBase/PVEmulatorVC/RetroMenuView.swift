@@ -16,9 +16,6 @@ import PVLibrary
 import PVFeatureFlags
 import UniformTypeIdentifiers
 import PVThemes
-#if os(iOS) || targetEnvironment(macCatalyst)
-import AVKit
-#endif
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
