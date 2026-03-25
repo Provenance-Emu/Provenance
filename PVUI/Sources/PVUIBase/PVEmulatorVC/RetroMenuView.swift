@@ -416,9 +416,9 @@ struct RetroMenuView: View {
     }
 
     /// True when the active core is a RetroArch/libretro-path core.
-    /// Uses explicit prefix and substring checks against known stable identifier patterns:
+    /// Uses case-insensitive substring checks against known stable identifier patterns:
     /// - "libretro" substring covers sub-cores (e.g., "dosbox_pure_libretro", "mednafen_pce_libretro")
-    /// - "retroarch" substring (case-insensitive) covers the main bridge bundle identifier
+    /// - "retroarch" substring covers the main bridge bundle identifier
     /// Matches the established detection pattern used throughout the codebase.
     var isLibretroCore: Bool {
         guard let coreID = emulatorVC.core.coreIdentifier else { return false }
@@ -432,11 +432,8 @@ struct RetroMenuView: View {
     var isRetroArchMIDICapable: Bool {
 #if canImport(CoreMIDI) && !os(tvOS)
         guard isLibretroCore else { return false }
-        guard
-            let game = emulatorVC.game,
-            let systemIdentifier = game.system?.identifier,
-            let sysID = SystemIdentifier(rawValue: systemIdentifier)
-        else { return false }
+        guard let game = emulatorVC.game else { return false }
+        guard let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return false }
         return MIDISystemRegistry.shared.supportsMIDI(sysID)
 #else
         return false
