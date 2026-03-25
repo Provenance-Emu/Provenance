@@ -518,7 +518,19 @@ This sort is performed by `PVLookup.sortArtworkByType(_:)`, which only compares 
 
 `ArtworkMetadata` is `Hashable` by `(url, type, source)`. Individual back-ends or helper types may perform their own internal deduplication using `Set<ArtworkMetadata>` (for example, the `LibretroArtwork.searchArtwork(byGameName:systemID:artworkTypes:)` helper can do this when used directly). The LibretroDB code path that `PVLookup` currently uses (`libretrodb.searchArtwork(...)` in `libretrodb.swift`) does **not** perform `Set`-based deduplication. The merged result from `PVLookup` is **not** additionally deduplicated at the aggregation layer, so distinct sources can return the same artwork URL as long as `source` differs.
 
-> If you need a globally deduplicated set, convert the result array to a `Set<ArtworkMetadata>` at the call site.
+> Note: Converting the result array to a `Set<ArtworkMetadata>` only removes exact `(url, type, source)` duplicates. If you need **global** deduplication across sources (e.g. by URL or by `(url, type)`), build a dictionary keyed by your desired key and then take the values, for example:
+>
+> ```swift
+> let byURL = Dictionary(uniqueKeysWithValues: artworks.map { ($0.url, $0) })
+> let globallyDedupedByURL = Array(byURL.values)
+> ```
+>
+> or, if you need `(url, type)` as the key:
+>
+> ```swift
+> let byURLAndType = Dictionary(uniqueKeysWithValues: artworks.map { (($0.url, $0.type), $0) })
+> let globallyDedupedByURLAndType = Array(byURLAndType.values)
+> ```
 
 ### Adding a new artwork source
 
@@ -556,7 +568,7 @@ public struct MyNewDB: ArtworkLookupService {
 }
 ```
 
-For sources that also provide ROM-to-artwork mapping tables, additionally conform to `ArtworkLookupOfflineService` or `ArtworkLookupOnlineService` (both add `getArtworkMappings() async throws -> ArtworkMapping`).
+For sources that also provide ROM-to-artwork mapping tables, additionally conform to `ArtworkLookupOfflineService` (for fully offline sources) or `ArtworkLookupOnlineService` (for sources that require an online connection). As of now, both protocols simply add `getArtworkMappings() async throws -> ArtworkMapping` and are distinguished by their connectivity semantics.
 
 #### 2. Register the source in `PVLookup`
 
