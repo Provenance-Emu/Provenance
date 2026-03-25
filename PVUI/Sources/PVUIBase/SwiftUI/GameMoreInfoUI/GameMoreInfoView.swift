@@ -971,7 +971,7 @@ struct GameMoreInfoView: View {
     /// Light gun settings section — only shown for light-gun-capable systems.
     @ViewBuilder
     private var lightGunPreferenceSection: some View {
-        if let md5 = viewModel.pvGame?.md5Hash,
+        if let md5 = viewModel.pvGame?.md5Hash, !md5.isEmpty,
            let sysIDString = viewModel.pvGame?.systemIdentifier,
            let sysID = SystemIdentifier(rawValue: sysIDString),
            sysID.supportsLightGun {

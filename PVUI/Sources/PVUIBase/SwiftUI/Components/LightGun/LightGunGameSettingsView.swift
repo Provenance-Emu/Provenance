@@ -215,12 +215,16 @@ struct LightGunGameSettingsView: View {
 
     private func saveSensitivity(_ value: Double?) {
         var settings = current
-        // Treat a value that matches the global sensitivity as "no override"
-        // so future global changes continue to apply to this game.
-        if let value = value, abs(value - globalSensitivity) < 0.001 {
-            settings.sensitivityOverride = nil
+        if let rawValue = value {
+            // Round to the slider's step (0.1) to remove floating-point noise,
+            // then treat values equal to the global default as "no override"
+            // so future global changes continue to apply to this game.
+            let step = 0.1
+            let rounded = (rawValue / step).rounded() * step
+            let globalRounded = (globalSensitivity / step).rounded() * step
+            settings.sensitivityOverride = abs(rounded - globalRounded) < 0.0001 ? nil : rounded
         } else {
-            settings.sensitivityOverride = value
+            settings.sensitivityOverride = nil
         }
         persist(settings)
     }

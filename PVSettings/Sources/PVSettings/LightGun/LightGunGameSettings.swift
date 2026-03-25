@@ -49,7 +49,7 @@ public enum LightGunMode: String, Codable, Equatable, Defaults.Serializable,
         switch self {
         case .automatic: return "gearshape"
         case .enabled:   return "scope"
-        case .disabled:  return "scope"
+        case .disabled:  return "nosign"
         }
     }
 }
