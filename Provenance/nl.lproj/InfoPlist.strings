@@ -2,11 +2,11 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "Camera is nodig voor het scannen van QR-codes en functies van de gamebibliotheek.";
-NSMicrophoneUsageDescription = "Microfoon is nodig voor spraakinvoer.";
-NSPhotoLibraryUsageDescription = "Fotobibliotheek is nodig voor het importeren van spelcover-afbeeldingen.";
-NSPhotoLibraryAddUsageDescription = "Om schermafbeeldingen op te slaan in de fotobibliotheek.";
-NSLocalNetworkUsageDescription = "Lokaal netwerk wordt gebruikt voor multiplayerfuncties en streamen naar Apple TV.";
-NSBluetoothAlwaysUsageDescription = "Bluetooth wordt gebruikt om controllers te verbinden.";
-NSMotionUsageDescription = "Bewegingsdata wordt gebruikt voor op beweging gebaseerde bediening en functies.";
-NSFileProviderDomainUsageDescription = "Toegang tot uw bestanden is nodig om gamedata te beheren en te importeren.";
+NSCameraUsageDescription = "Gebruikt voor albumillustraties.";
+NSMicrophoneUsageDescription = "Provenance gebruikt de microfoon voor systemen die audio-invoer ondersteunen (bijv. Famicom).";
+NSPhotoLibraryUsageDescription = "Provenance kan aangepaste illustraties instellen vanuit uw foto's of schermafbeeldingen opslaan in de fotobibliotheek.";
+NSPhotoLibraryAddUsageDescription = "Provenance kan aangepaste illustraties instellen vanuit uw foto's of schermafbeeldingen opslaan in de fotobibliotheek.";
+NSLocalNetworkUsageDescription = "Provenance gebruikt het lokale netwerk om te communiceren met AltServer en netplay-kamers voor multiplayer te ontdekken.";
+NSBluetoothAlwaysUsageDescription = "Provenance gebruikt Bluetooth voor ondersteuning van gamecontrollers.";
+NSMotionUsageDescription = "Provenance gebruikt de versnellingsmeter en gyroscoop van uw apparaat om de ingebouwde sensoren van draagbare consoles te emuleren.";
+NSFileProviderDomainUsageDescription = "Provenance gebruikt de bestandsprovider voor het laden van ROM's.";

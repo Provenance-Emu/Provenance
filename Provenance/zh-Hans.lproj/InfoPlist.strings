@@ -2,11 +2,11 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "需要相机权限以扫描二维码和使用游戏库功能。";
-NSMicrophoneUsageDescription = "需要麦克风权限以使用语音输入。";
-NSPhotoLibraryUsageDescription = "需要相册权限以导入游戏封面图片。";
-NSPhotoLibraryAddUsageDescription = "用于将截图保存到相册。";
-NSLocalNetworkUsageDescription = "本地网络用于多人游戏功能和投屏到 Apple TV。";
-NSBluetoothAlwaysUsageDescription = "蓝牙用于连接游戏手柄。";
-NSMotionUsageDescription = "运动数据用于基于运动的控制和功能。";
-NSFileProviderDomainUsageDescription = "需要访问您的文件以管理和导入游戏数据。";
+NSCameraUsageDescription = "用于专辑封面图片。";
+NSMicrophoneUsageDescription = "Provenance 为支持音频输入的系统（如 Famicom）使用麦克风。";
+NSPhotoLibraryUsageDescription = "Provenance 可以从您的照片设置自定义图片，或将截图保存到相册。";
+NSPhotoLibraryAddUsageDescription = "Provenance 可以从您的照片设置自定义图片，或将截图保存到相册。";
+NSLocalNetworkUsageDescription = "Provenance 使用本地网络与 AltServer 通信，并发现用于多人游戏的联网游戏房间。";
+NSBluetoothAlwaysUsageDescription = "Provenance 使用蓝牙支持游戏手柄。";
+NSMotionUsageDescription = "Provenance 使用您设备的加速度传感器和陀螺仪来模拟便携式游戏机的内置传感器。";
+NSFileProviderDomainUsageDescription = "Provenance 使用文件提供程序加载 ROM 文件。";

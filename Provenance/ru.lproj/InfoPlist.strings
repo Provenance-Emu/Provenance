@@ -2,11 +2,11 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "Камера нужна для сканирования QR-кодов и работы с библиотекой игр.";
-NSMicrophoneUsageDescription = "Микрофон нужен для голосового ввода.";
-NSPhotoLibraryUsageDescription = "Доступ к фото нужен для импорта обложек игр.";
-NSPhotoLibraryAddUsageDescription = "Для сохранения скриншотов в фотоальбом.";
-NSLocalNetworkUsageDescription = "Локальная сеть используется для многопользовательских функций и трансляции на Apple TV.";
-NSBluetoothAlwaysUsageDescription = "Bluetooth используется для подключения геймпадов.";
-NSMotionUsageDescription = "Данные движения используются для управления и функций на основе движения.";
-NSFileProviderDomainUsageDescription = "Доступ к вашим файлам необходим для управления и импорта игровых данных.";
+NSCameraUsageDescription = "Используется для обложек альбомов.";
+NSMicrophoneUsageDescription = "Provenance использует микрофон для систем, поддерживающих звуковой ввод (например, Famicom).";
+NSPhotoLibraryUsageDescription = "Provenance может устанавливать пользовательские иллюстрации из ваших фото или сохранять скриншоты в фотоальбом.";
+NSPhotoLibraryAddUsageDescription = "Provenance может устанавливать пользовательские иллюстрации из ваших фото или сохранять скриншоты в фотоальбом.";
+NSLocalNetworkUsageDescription = "Provenance использует локальную сеть для связи с AltServer и поиска комнат сетевой игры для многопользовательских игр.";
+NSBluetoothAlwaysUsageDescription = "Provenance использует Bluetooth для поддержки игровых контроллеров.";
+NSMotionUsageDescription = "Provenance использует акселерометр и гироскоп вашего устройства для эмуляции встроенных датчиков портативных консолей.";
+NSFileProviderDomainUsageDescription = "Provenance использует файловый провайдер для загрузки ROM-файлов.";

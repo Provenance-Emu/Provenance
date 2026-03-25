@@ -2,11 +2,11 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "Se necesita la cámara para escanear códigos QR y funciones de la biblioteca de juegos.";
-NSMicrophoneUsageDescription = "Se necesita el micrófono para la entrada de voz.";
-NSPhotoLibraryUsageDescription = "Se necesita la fototeca para importar imágenes de portadas de juegos.";
-NSPhotoLibraryAddUsageDescription = "Para guardar capturas de pantalla en la fototeca.";
-NSLocalNetworkUsageDescription = "La red local se usa para funciones multijugador y transmisión a Apple TV.";
-NSBluetoothAlwaysUsageDescription = "El Bluetooth se usa para conectar mandos.";
-NSMotionUsageDescription = "Los datos de movimiento se usan para controles y funciones basados en movimiento.";
-NSFileProviderDomainUsageDescription = "Se necesita acceso a sus archivos para administrar e importar datos de juegos.";
+NSCameraUsageDescription = "Se usa para portadas de álbumes.";
+NSMicrophoneUsageDescription = "Provenance usa el micrófono para sistemas que admiten entrada de audio (p. ej. Famicom).";
+NSPhotoLibraryUsageDescription = "Provenance puede establecer ilustraciones personalizadas de tus fotos o guardar capturas de pantalla en la fototeca.";
+NSPhotoLibraryAddUsageDescription = "Provenance puede establecer ilustraciones personalizadas de tus fotos o guardar capturas de pantalla en la fototeca.";
+NSLocalNetworkUsageDescription = "Provenance usa la red local para comunicarse con AltServer y descubrir salas de juego en red para partidas multijugador.";
+NSBluetoothAlwaysUsageDescription = "Provenance usa Bluetooth para admitir mandos de juego.";
+NSMotionUsageDescription = "Provenance usa el acelerómetro y giroscopio de tu dispositivo para emular los sensores integrados de las consolas portátiles.";
+NSFileProviderDomainUsageDescription = "Provenance usa el proveedor de archivos para cargar ROMs.";

@@ -2,11 +2,11 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "QRコードのスキャンやゲームライブラリ機能にカメラが必要です。";
-NSMicrophoneUsageDescription = "音声入力にマイクが必要です。";
-NSPhotoLibraryUsageDescription = "ゲームのカバー画像をインポートするためにフォトライブラリが必要です。";
-NSPhotoLibraryAddUsageDescription = "スクリーンショットをフォトライブラリに保存するために使用します。";
-NSLocalNetworkUsageDescription = "マルチプレイヤー機能やApple TVへのストリーミングにローカルネットワークを使用します。";
-NSBluetoothAlwaysUsageDescription = "コントローラーの接続にBluetoothを使用します。";
-NSMotionUsageDescription = "モーションデータはモーションベースの操作と機能に使用されます。";
-NSFileProviderDomainUsageDescription = "ゲームデータの管理とインポートのためにファイルへのアクセスが必要です。";
+NSCameraUsageDescription = "アルバムアートワークに使用します。";
+NSMicrophoneUsageDescription = "Provenanceは、音声入力に対応したシステム（例：ファミコン）のためにマイクを使用します。";
+NSPhotoLibraryUsageDescription = "Provenanceは写真からカスタムアートワークを設定したり、スクリーンショットをフォトライブラリに保存することができます。";
+NSPhotoLibraryAddUsageDescription = "Provenanceは写真からカスタムアートワークを設定したり、スクリーンショットをフォトライブラリに保存することができます。";
+NSLocalNetworkUsageDescription = "ProvenanceはAltServerとの通信や、マルチプレイゲームのためのネットプレイルーム探索にローカルネットワークを使用します。";
+NSBluetoothAlwaysUsageDescription = "ProvenanceはゲームコントローラーのサポートにBluetoothを使用します。";
+NSMotionUsageDescription = "Provenanceはお使いのデバイスの加速度センサーとジャイロスコープを使用して、携帯ゲーム機の内蔵センサーをエミュレートします。";
+NSFileProviderDomainUsageDescription = "ProvenanceはROMの読み込みにファイルプロバイダーを使用します。";
