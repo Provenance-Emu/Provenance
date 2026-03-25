@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVFeatureFlags
 import PVSupport
 import RealmSwift
 import PVCoreLoader
@@ -262,7 +263,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         // This runs synchronously in the import pipeline so the game gets artwork immediately
         // if found. Fuzzy/cleaned-title search is intentionally skipped here — that runs
         // later via ArtworkSearchQueue.
-        if ENABLE_ENHANCED_ARTWORK_SEARCH && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
+        if PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
             DLOG("ArtworkMatchingService: Attempting fast artwork lookup for '\(title)'")
             if let artworkURL = await ArtworkMatchingService.shared.findArtwork(
                 exactTitle: title,

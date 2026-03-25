@@ -227,6 +227,7 @@ let package = Package(
             name: "PVLibraryTests",
             dependencies: [
                 "PVLibrary",
+                "PVFeatureFlags",
                 "PVRealm",
                 "PVLookup",
                 "PVPrimitives",

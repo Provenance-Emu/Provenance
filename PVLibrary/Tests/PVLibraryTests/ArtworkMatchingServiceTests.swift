@@ -9,6 +9,7 @@
 
 import XCTest
 import Foundation
+import PVFeatureFlags
 import PVLookupTypes
 import PVSystems
 @testable import PVLibrary
@@ -239,9 +240,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     }
 
     func testFindArtwork_returnsNilWhenFeatureFlagDisabled() async {
-        let previousValue = ENABLE_ENHANCED_ARTWORK_SEARCH
-        ENABLE_ENHANCED_ARTWORK_SEARCH = false
-        defer { ENABLE_ENHANCED_ARTWORK_SEARCH = previousValue }
+        await PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: false)
 
         let mock = MockArtworkMatchingLookup()
         mock.artworkResults = [makeArtwork(urlString: "https://example.com/art.jpg")]
@@ -249,7 +248,9 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         let service = ArtworkMatchingService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Any Game", md5: "abc", systemID: nil)
 
-        XCTAssertNil(result, "Should return nil when ENABLE_ENHANCED_ARTWORK_SEARCH is false")
+        await PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: nil)
+
+        XCTAssertNil(result, "Should return nil when enhancedArtworkSearch feature flag is disabled")
     }
 
     // MARK: Error Handling

@@ -74,6 +74,11 @@
         "smartCoreSelection": {
             "enabled": false,
             "description": "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations when multiple cores are available. Disabled until core capability data is fully audited — enable in Settings > Advanced > Feature Flags."
+        },
+        "enhancedArtworkSearch": {
+            "enabled": true,
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Multi-source artwork matching at ROM import time (TheGamesDB, LibretroDB, OpenVGDB). Background ArtworkSearchQueue retries unmatched games. Enabled by default — disable in Settings > Advanced > Feature Flags if regressions are found."
         }
     }
 }
