@@ -117,8 +117,12 @@ static void flushGunState(uint32_t **inputBuffer, int player, const SSGunState &
 // -------------------------------------------------------------------------
 - (void)lightGunMovedToPoint:(CGPoint)point isOffscreen:(BOOL)isOffscreen {
     const int player = 0;
-    ssGunState[player].normX      = point.x;
-    ssGunState[player].normY      = point.y;
+    // Clamp defensively to [0,1] to prevent rounding-error or caller bugs from
+    // producing negative/overflow coordinates in Mednafen pointer space.
+    const CGFloat clampedX = fmin(fmax(point.x, 0.0), 1.0);
+    const CGFloat clampedY = fmin(fmax(point.y, 0.0), 1.0);
+    ssGunState[player].normX      = clampedX;
+    ssGunState[player].normY      = clampedY;
     ssGunState[player].offscreen  = isOffscreen;
     flushGunState(self->inputBuffer, player, ssGunState[player]);
 }
@@ -180,5 +184,14 @@ static void flushGunState(uint32_t **inputBuffer, int player, const SSGunState &
 - (void)lightGunAuxBUp    { /* no-op */ }
 - (void)lightGunSelectDown{ /* no-op */ }
 - (void)lightGunSelectUp  { /* no-op */ }
+
+// -------------------------------------------------------------------------
+// Session lifecycle — called at game load and stop to prevent stale state
+// from leaking across emulator sessions (e.g. trigger held at session end).
+// -------------------------------------------------------------------------
+- (void)resetLightGunState {
+    ssGunState[0] = {0.5, 0.5, NO, NO, NO};
+    ssGunState[1] = {0.5, 0.5, NO, NO, NO};
+}
 
 @end

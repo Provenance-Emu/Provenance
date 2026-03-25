@@ -250,19 +250,15 @@
 - (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
     // When the active port is configured as a light gun, writing gamepad button bits
     // into the first two bytes would corrupt the gun's X/Y coordinate fields.
-    // Light gun input is routed exclusively through the LightGunResponder methods,
-    // except Start which must also update isStartPressed and route through
-    // lightGunStartDown so in-game menus work in light-gun titles.
-    if (self->_isLightGunGame) {
-        const int gunPorts = self->_lightGunPlayerCount;
-        if (player < gunPorts) {
-            if (button == PVSaturnButtonStart) {
-                DLOG("Start on (gun port)");
-                self.isStartPressed = true;
-                [self lightGunStartDown];
-            }
-            return;
+    // Only port 0 is configured as a gun (port 1 stays as gamepad until a second
+    // gun input path is implemented), so guard only player == 0.
+    if (self->_isLightGunGame && player == 0) {
+        if (button == PVSaturnButtonStart) {
+            DLOG("Start on (gun port)");
+            self.isStartPressed = true;
+            [self lightGunStartDown];
         }
+        return;
     }
     if (button == PVSaturnButtonStart) {
         DLOG("Start on");
@@ -272,18 +268,14 @@
 }
 
 -(void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
-    // Same guard as didPushSSButton — skip gamepad writes for gun-configured ports,
-    // but still relay Start through lightGunStartUp and clear isStartPressed.
-    if (self->_isLightGunGame) {
-        const int gunPorts = self->_lightGunPlayerCount;
-        if (player < gunPorts) {
-            if (button == PVSaturnButtonStart) {
-                DLOG("Start off (gun port)");
-                self.isStartPressed = false;
-                [self lightGunStartUp];
-            }
-            return;
+    // Same guard as didPushSSButton — only port 0 is the gun port.
+    if (self->_isLightGunGame && player == 0) {
+        if (button == PVSaturnButtonStart) {
+            DLOG("Start off (gun port)");
+            self.isStartPressed = false;
+            [self lightGunStartUp];
         }
+        return;
     }
     if (button == PVSaturnButtonStart) {
         DLOG("Start off");

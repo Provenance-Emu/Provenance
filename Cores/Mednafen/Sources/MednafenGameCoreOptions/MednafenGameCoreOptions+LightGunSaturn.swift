@@ -19,7 +19,9 @@ import Foundation
 
 @objc public extension MednafenGameCoreOptions {
 
-    /// Saturn games that require a light gun peripheral.
+    /// Saturn games that support a light gun peripheral.
+    /// Includes titles that require the gun to be playable AND hybrid titles where
+    /// the gun is used only in certain scenes (e.g. Die Hard Trilogy).
     /// Key:   Saturn product/game serial (from disc header, same format as ss/db.cpp).
     /// Value: number of guns supported — 1 for single-gun, 2 for dual-gun play.
     @objc static var saturnLightGunGames: [String: NSNumber] {
