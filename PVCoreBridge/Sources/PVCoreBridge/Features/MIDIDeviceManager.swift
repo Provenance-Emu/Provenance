@@ -209,12 +209,17 @@ public final class MIDIDeviceManager: ObservableObject {
         // Treat the multi-select key as authoritative if it exists — even when the stored IDs
         // resolve to an empty set (devices unavailable at launch). This prevents falling through
         // to the legacy single-select key for a user who intentionally cleared their selection.
+        // However, only mark the preference as "applied" when either:
+        //   (a) rawIDs is empty — user explicitly cleared their selection, OR
+        //   (b) at least one stored ID resolved to a currently-available endpoint.
+        // If rawIDs is non-empty but none are available yet, leave the flag false so
+        // refreshEndpoints() can hot-plug restore them when the device appears later.
         if UserDefaults.standard.object(forKey: Self.udKeySourceIDs) != nil {
             let rawIDs = (UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int]) ?? []
             let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                 .filter { id in sources.contains(where: { $0.id == id }) })
             selectedSourceIDs = ids
-            sourcePreferenceApplied = true
+            sourcePreferenceApplied = rawIDs.isEmpty || !ids.isEmpty
         } else if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
                   let id = MIDIUniqueID(exactly: raw),
                   sources.contains(where: { $0.id == id }) {
@@ -224,13 +229,13 @@ public final class MIDIDeviceManager: ObservableObject {
         }
 
         // Restore destination IDs (multi-select).
-        // Same rationale as sources: key presence is authoritative.
+        // Same rationale as sources: mark applied only on intentional clear or successful resolve.
         if UserDefaults.standard.object(forKey: Self.udKeyDestinationIDs) != nil {
             let rawIDs = (UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int]) ?? []
             let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                 .filter { id in destinations.contains(where: { $0.id == id }) })
             selectedDestinationIDs = ids
-            destinationPreferenceApplied = true
+            destinationPreferenceApplied = rawIDs.isEmpty || !ids.isEmpty
         } else if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
                   let id = MIDIUniqueID(exactly: raw),
                   destinations.contains(where: { $0.id == id }) {
