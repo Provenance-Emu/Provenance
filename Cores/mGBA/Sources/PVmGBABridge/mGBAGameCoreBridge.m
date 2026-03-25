@@ -297,7 +297,7 @@ static struct mLogger logger = { .log = _log };
     struct VFile* vf = VFileMemChunk(nil, 0);
     if (!mCoreSaveStateNamed(core, vf, SAVESTATE_SAVEDATA)) {
         if (outError) {
-            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:nil];
+            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotSaveState userInfo:nil];
         }
         vf->close(vf);
         return nil;

@@ -75,30 +75,39 @@ static const char kAchievementsActiveKey = 0;
 
 // MARK: - GBA memory region accessors
 
-- (nullable void *)ewramPointer:(nonnull NSUInteger *)sizeOut {
+- (nullable void *)ewramPointer:(nullable NSUInteger *)sizeOut {
     struct mCore *c = [self _mCore];
-    if (!c || !c->getMemoryBlock) { *sizeOut = 0; return NULL; }
+    if (!c || !c->getMemoryBlock) {
+        if (sizeOut) { *sizeOut = 0; }
+        return NULL;
+    }
     size_t sz = 0;
     void *ptr = c->getMemoryBlock(c, GBA_REGION_EWRAM, &sz);
-    *sizeOut = (NSUInteger)sz;
+    if (sizeOut) { *sizeOut = (NSUInteger)sz; }
     return ptr;
 }
 
-- (nullable void *)iwramPointer:(nonnull NSUInteger *)sizeOut {
+- (nullable void *)iwramPointer:(nullable NSUInteger *)sizeOut {
     struct mCore *c = [self _mCore];
-    if (!c || !c->getMemoryBlock) { *sizeOut = 0; return NULL; }
+    if (!c || !c->getMemoryBlock) {
+        if (sizeOut) { *sizeOut = 0; }
+        return NULL;
+    }
     size_t sz = 0;
     void *ptr = c->getMemoryBlock(c, GBA_REGION_IWRAM, &sz);
-    *sizeOut = (NSUInteger)sz;
+    if (sizeOut) { *sizeOut = (NSUInteger)sz; }
     return ptr;
 }
 
-- (nullable void *)sramPointer:(nonnull NSUInteger *)sizeOut {
+- (nullable void *)sramPointer:(nullable NSUInteger *)sizeOut {
     struct mCore *c = [self _mCore];
-    if (!c || !c->getMemoryBlock) { *sizeOut = 0; return NULL; }
+    if (!c || !c->getMemoryBlock) {
+        if (sizeOut) { *sizeOut = 0; }
+        return NULL;
+    }
     size_t sz = 0;
     void *ptr = c->getMemoryBlock(c, GBA_REGION_SRAM, &sz);
-    *sizeOut = (NSUInteger)sz;
+    if (sizeOut) { *sizeOut = (NSUInteger)sz; }
     return ptr;
 }
 
@@ -112,29 +121,38 @@ static const char kAchievementsActiveKey = 0;
 
 // MARK: - GB/GBC memory region accessors
 
-- (nullable void *)gbWramPointer:(nonnull NSUInteger *)sizeOut {
+- (nullable void *)gbWramPointer:(nullable NSUInteger *)sizeOut {
     struct mCore *c = [self _mCore];
-    if (!c || !c->getMemoryBlock) { *sizeOut = 0; return NULL; }
+    if (!c || !c->getMemoryBlock) {
+        if (sizeOut) { *sizeOut = 0; }
+        return NULL;
+    }
 
     size_t bank0Size = 0;
     uint8_t *bank0 = (uint8_t *)c->getMemoryBlock(c, GB_REGION_WRAM_0, &bank0Size);
-    if (!bank0) { *sizeOut = 0; return NULL; }
+    if (!bank0) {
+        if (sizeOut) { *sizeOut = 0; }
+        return NULL;
+    }
 
     // On GBC, bank1 immediately follows bank0 in the returned pointer range.
     // We return bank0 as the base and sum both bank sizes for the total.
     size_t bank1Size = 0;
     c->getMemoryBlock(c, GB_REGION_WRAM_1, &bank1Size); // size only; pointer is contiguous
 
-    *sizeOut = (NSUInteger)(bank0Size + bank1Size);
+    if (sizeOut) { *sizeOut = (NSUInteger)(bank0Size + bank1Size); }
     return bank0;
 }
 
-- (nullable void *)gbVramPointer:(nonnull NSUInteger *)sizeOut {
+- (nullable void *)gbVramPointer:(nullable NSUInteger *)sizeOut {
     struct mCore *c = [self _mCore];
-    if (!c || !c->getMemoryBlock) { *sizeOut = 0; return NULL; }
+    if (!c || !c->getMemoryBlock) {
+        if (sizeOut) { *sizeOut = 0; }
+        return NULL;
+    }
     size_t sz = 0;
     void *ptr = c->getMemoryBlock(c, GB_REGION_VRAM, &sz);
-    *sizeOut = (NSUInteger)sz;
+    if (sizeOut) { *sizeOut = (NSUInteger)sz; }
     return ptr;
 }
 

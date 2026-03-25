@@ -40,15 +40,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Pointer to External Working RAM (EWRAM, 256 KiB).
 /// Returns NULL when the core has not yet loaded a ROM.
-- (nullable void *)ewramPointer:(nonnull NSUInteger *)sizeOut;
+/// @param sizeOut Written with the region size in bytes; ignored when NULL.
+- (nullable void *)ewramPointer:(nullable NSUInteger *)sizeOut;
 
 /// Pointer to Internal Working RAM (IWRAM, 32 KiB).
 /// Returns NULL when the core has not yet loaded a ROM.
-- (nullable void *)iwramPointer:(nonnull NSUInteger *)sizeOut;
+/// @param sizeOut Written with the region size in bytes; ignored when NULL.
+- (nullable void *)iwramPointer:(nullable NSUInteger *)sizeOut;
 
 /// Pointer to cartridge SRAM (size varies by game; may be NULL if the
 /// cartridge has no battery-backed RAM).
-- (nullable void *)sramPointer:(nonnull NSUInteger *)sizeOut;
+/// @param sizeOut Written with the region size in bytes; ignored when NULL.
+- (nullable void *)sramPointer:(nullable NSUInteger *)sizeOut;
 
 // MARK: - GB / GBC memory regions
 
@@ -57,11 +60,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Pointer to GB/GBC Working RAM (WRAM).
 /// 8 KiB on DMG/SGB, 32 KiB on GBC (all banks combined).
-- (nullable void *)gbWramPointer:(nonnull NSUInteger *)sizeOut;
+/// @param sizeOut Written with the region size in bytes; ignored when NULL.
+- (nullable void *)gbWramPointer:(nullable NSUInteger *)sizeOut;
 
 /// Pointer to GB/GBC Video RAM (VRAM).
 /// 8 KiB on DMG/SGB, 16 KiB on GBC (both banks).
-- (nullable void *)gbVramPointer:(nonnull NSUInteger *)sizeOut;
+/// @param sizeOut Written with the region size in bytes; ignored when NULL.
+- (nullable void *)gbVramPointer:(nullable NSUInteger *)sizeOut;
 
 @end
 

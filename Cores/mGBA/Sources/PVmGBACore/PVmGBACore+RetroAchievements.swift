@@ -8,10 +8,11 @@
 //
 //  mGBA ships `src/core/achievements.c` which wraps the rcheevos `rc_client`
 //  internally. When `USE_ACHIEVEMENTS=1` is defined (Package.swift), that
-//  file is compiled into libmGBA. Full callback bridging (unlock events,
-//  progress notifications) requires the PVRcheevos target from #3375.
-//  This Swift extension coordinates Provenance-side state, memory regions,
-//  and lifecycle (active flag, hardcore mode) for the scaffolding phase.
+//  file is compiled into libmGBA and drives achievement evaluation via the
+//  mCoreCallbacks mechanism. This Swift extension handles Provenance-side
+//  state (active flag, hardcore mode) and memory-region exposure.
+//  TODO: Wire mGBA's unlock/progress/challenge callbacks into
+//  `achievementsDelegate` once the rc_client callback bridge is in place.
 //
 //  Memory regions:
 //   - GBA : EWRAM (256 KiB), IWRAM (32 KiB), optional cart SRAM
