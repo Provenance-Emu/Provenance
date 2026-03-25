@@ -1444,3 +1444,177 @@ struct CoreLanguageSettingTests {
     }
 }
 
+// MARK: - Light Gun Settings Tests
+
+@Suite("Light Gun Settings")
+struct LightGunSettingsTests {
+
+    // MARK: - LightGunCrosshairStyle
+
+    @Test("LightGunCrosshairStyle has three cases")
+    func crosshairStyleCaseCount() {
+        #expect(LightGunCrosshairStyle.allCases.count == 3)
+    }
+
+    @Test("LightGunCrosshairStyle rawValues are stable")
+    func crosshairStyleRawValues() {
+        #expect(LightGunCrosshairStyle.dot.rawValue == "dot")
+        #expect(LightGunCrosshairStyle.crosshair.rawValue == "crosshair")
+        #expect(LightGunCrosshairStyle.off.rawValue == "off")
+    }
+
+    // MARK: - LightGunMode
+
+    @Test("LightGunMode has three cases")
+    func lightGunModeCaseCount() {
+        #expect(LightGunMode.allCases.count == 3)
+    }
+
+    @Test("LightGunMode rawValues are stable")
+    func lightGunModeRawValues() {
+        #expect(LightGunMode.automatic.rawValue == "automatic")
+        #expect(LightGunMode.enabled.rawValue == "enabled")
+        #expect(LightGunMode.disabled.rawValue == "disabled")
+    }
+
+    // MARK: - LightGunGameSettings
+
+    @Test("LightGunGameSettings default values")
+    func lightGunGameSettingsDefaults() {
+        let settings = LightGunGameSettings()
+        #expect(settings.mode == .automatic)
+        #expect(settings.crosshairStyle == nil)
+        #expect(settings.sensitivityOverride == nil)
+        #expect(settings.isDefault == true)
+    }
+
+    @Test("LightGunGameSettings isDefault false when mode overridden")
+    func lightGunGameSettingsNotDefaultWhenModeSet() {
+        let settings = LightGunGameSettings(mode: .enabled)
+        #expect(settings.isDefault == false)
+    }
+
+    @Test("LightGunGameSettings isDefault false when crosshair overridden")
+    func lightGunGameSettingsNotDefaultWhenCrosshairSet() {
+        let settings = LightGunGameSettings(crosshairStyle: .dot)
+        #expect(settings.isDefault == false)
+    }
+
+    @Test("LightGunGameSettings isDefault false when sensitivity overridden")
+    func lightGunGameSettingsNotDefaultWhenSensitivitySet() {
+        let settings = LightGunGameSettings(sensitivityOverride: 2.0)
+        #expect(settings.isDefault == false)
+    }
+
+    // MARK: - Defaults Keys
+
+    @Test("lightGunCrosshairStyle default is crosshair")
+    func lightGunCrosshairStyleDefault() {
+        Defaults.reset(.lightGunCrosshairStyle)
+        defer { Defaults.reset(.lightGunCrosshairStyle) }
+        #expect(Defaults[.lightGunCrosshairStyle] == .crosshair)
+    }
+
+    @Test("lightGunAutoDetect default is true")
+    func lightGunAutoDetectDefault() {
+        Defaults.reset(.lightGunAutoDetect)
+        defer { Defaults.reset(.lightGunAutoDetect) }
+        #expect(Defaults[.lightGunAutoDetect] == true)
+    }
+
+    @Test("lightGunGameSettings default is empty dictionary")
+    func lightGunGameSettingsDefaultEmpty() {
+        Defaults.reset(.lightGunGameSettings)
+        defer { Defaults.reset(.lightGunGameSettings) }
+        #expect(Defaults[.lightGunGameSettings].isEmpty)
+    }
+
+    // MARK: - Defaults Helpers
+
+    @Test("lightGunSettings returns default for unknown MD5")
+    func lightGunSettingsDefaultForUnknownMD5() {
+        Defaults.reset(.lightGunGameSettings)
+        defer { Defaults.reset(.lightGunGameSettings) }
+        let settings = Defaults.lightGunSettings(forGameMD5: "unknownmd5hash")
+        #expect(settings.isDefault)
+    }
+
+    @Test("setLightGunSettings persists and retrieves settings")
+    func setAndGetLightGunSettings() {
+        Defaults.reset(.lightGunGameSettings)
+        defer { Defaults.reset(.lightGunGameSettings) }
+        let md5 = "testmd5abc"
+        let custom = LightGunGameSettings(mode: .enabled, crosshairStyle: .dot, sensitivityOverride: 2.5)
+        Defaults.setLightGunSettings(custom, forGameMD5: md5)
+        let retrieved = Defaults.lightGunSettings(forGameMD5: md5)
+        #expect(retrieved.mode == .enabled)
+        #expect(retrieved.crosshairStyle == .dot)
+        #expect(retrieved.sensitivityOverride == 2.5)
+    }
+
+    @Test("setLightGunSettings removes entry when set to defaults")
+    func setLightGunSettingsRemovesWhenDefault() {
+        Defaults.reset(.lightGunGameSettings)
+        defer { Defaults.reset(.lightGunGameSettings) }
+        let md5 = "testmd5def"
+        Defaults.setLightGunSettings(LightGunGameSettings(mode: .enabled), forGameMD5: md5)
+        #expect(!Defaults[.lightGunGameSettings].isEmpty)
+        Defaults.setLightGunSettings(LightGunGameSettings(), forGameMD5: md5)
+        #expect(Defaults[.lightGunGameSettings][md5] == nil)
+    }
+
+    @Test("effectiveCrosshairStyle uses per-game override when set")
+    func effectiveCrosshairStyleUsesPerGameOverride() {
+        Defaults.reset(.lightGunGameSettings)
+        Defaults.reset(.lightGunCrosshairStyle)
+        defer {
+            Defaults.reset(.lightGunGameSettings)
+            Defaults.reset(.lightGunCrosshairStyle)
+        }
+        let md5 = "testmd5ghi"
+        Defaults[.lightGunCrosshairStyle] = .crosshair
+        Defaults.setLightGunSettings(LightGunGameSettings(crosshairStyle: .off), forGameMD5: md5)
+        #expect(Defaults.effectiveCrosshairStyle(forGameMD5: md5) == .off)
+    }
+
+    @Test("effectiveCrosshairStyle falls back to global when no per-game override")
+    func effectiveCrosshairStyleFallsBackToGlobal() {
+        Defaults.reset(.lightGunGameSettings)
+        Defaults.reset(.lightGunCrosshairStyle)
+        defer {
+            Defaults.reset(.lightGunGameSettings)
+            Defaults.reset(.lightGunCrosshairStyle)
+        }
+        let md5 = "testmd5jkl"
+        Defaults[.lightGunCrosshairStyle] = .dot
+        #expect(Defaults.effectiveCrosshairStyle(forGameMD5: md5) == .dot)
+    }
+
+    @Test("effectiveLightGunSensitivity uses per-game override when set")
+    func effectiveSensitivityUsesPerGameOverride() {
+        Defaults.reset(.lightGunGameSettings)
+        Defaults.reset(.lightGunMouseSensitivity)
+        defer {
+            Defaults.reset(.lightGunGameSettings)
+            Defaults.reset(.lightGunMouseSensitivity)
+        }
+        let md5 = "testmd5mno"
+        Defaults[.lightGunMouseSensitivity] = 1.0
+        Defaults.setLightGunSettings(LightGunGameSettings(sensitivityOverride: 3.0), forGameMD5: md5)
+        #expect(Defaults.effectiveLightGunSensitivity(forGameMD5: md5) == 3.0)
+    }
+
+    @Test("effectiveLightGunSensitivity falls back to global when no per-game override")
+    func effectiveSensitivityFallsBackToGlobal() {
+        Defaults.reset(.lightGunGameSettings)
+        Defaults.reset(.lightGunMouseSensitivity)
+        defer {
+            Defaults.reset(.lightGunGameSettings)
+            Defaults.reset(.lightGunMouseSensitivity)
+        }
+        let md5 = "testmd5pqr"
+        Defaults[.lightGunMouseSensitivity] = 2.0
+        #expect(Defaults.effectiveLightGunSensitivity(forGameMD5: md5) == 2.0)
+    }
+}
+
