@@ -104,13 +104,16 @@ import PVLogging
     /// Call this after `stopRecording()` or `discardRecording()` returns.
     /// Camera enable/disable is owned by the recording lifecycle caller, not this view.
     public func detach() {
-        guard isAttached else { return }
+        // Always stop observing settings and clean up the camera layer, even if we were never attached.
         stopObservingSettings()
         cameraLayer?.removeFromSuperlayer()
         cameraLayer = nil
         isHidden = true
-        isAttached = false
-        ILOG("[CameraOverlay] Camera overlay detached")
+
+        if isAttached {
+            isAttached = false
+            ILOG("[CameraOverlay] Camera overlay detached")
+        }
     }
 
     // MARK: - Layout
