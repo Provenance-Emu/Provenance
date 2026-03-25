@@ -39,10 +39,10 @@ extension PVDesmume2015Core: PVDSSystemResponderClient {
         (_bridge as! PVDSSystemResponderClient).didRelease(button, forPlayer: player)
     }
     public func touchScreenAtPoint(_ point: CGPoint) {
-        (_bridge as? PVDSSystemResponderClient)?.touchScreenAtPoint?(point)
+        (_bridge as! PVDSSystemResponderClient).touchScreenAtPoint?(point)
     }
     public func releaseScreenTouch() {
-        (_bridge as? PVDSSystemResponderClient)?.releaseScreenTouch?()
+        (_bridge as! PVDSSystemResponderClient).releaseScreenTouch?()
     }
 }
 
