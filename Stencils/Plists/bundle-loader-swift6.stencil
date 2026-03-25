@@ -1,0 +1,43 @@
+// swiftlint:disable all
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+
+{% if files %}
+{% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
+import Foundation
+
+// MARK: - Plist Files (bundle-loaded)
+//
+// Loads plist data from the module bundle at runtime rather than inlining it as
+// Swift literals. Inlining a large plist as [[String: Any]] literals causes the
+// Swift type-checker to stall during archive/WMO builds (exponential Any inference).
+
+// swiftlint:disable identifier_name line_length type_body_length
+{{accessModifier}} enum {{param.enumName|default:"PlistFiles"}} {
+  {% for file in files %}
+  {% if file.documents.count == 1 and file.documents.first.metadata.type == "Array" %}
+  nonisolated(unsafe) {{accessModifier}} static let items: [[String: Any]] = {
+    guard let url = Bundle.module.url(forResource: "{{file.name}}", withExtension: "plist"),
+          let array = NSArray(contentsOf: url) as? [[String: Any]] else {
+      assertionFailure("{{file.name}}.plist not found in PVCoreLoader module bundle")
+      return []
+    }
+    return array
+  }()
+  {% elif file.documents.count == 1 and file.documents.first.metadata.type == "Dictionary" %}
+  nonisolated(unsafe) {{accessModifier}} static let dictionary: [String: Any] = {
+    guard let url = Bundle.module.url(forResource: "{{file.name}}", withExtension: "plist"),
+          let dict = NSDictionary(contentsOf: url) as? [String: Any] else {
+      assertionFailure("{{file.name}}.plist not found in PVCoreLoader module bundle")
+      return [:]
+    }
+    return dict
+  }()
+  {% else %}
+  // {{file.name}}.plist has multiple documents — use inline-swift6.stencil for this file.
+  {% endif %}
+  {% endfor %}
+}
+// swiftlint:enable identifier_name line_length type_body_length
+{% else %}
+// No files found
+{% endif %}
