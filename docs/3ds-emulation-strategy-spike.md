@@ -74,6 +74,8 @@ Both cores override, among others, the following key files relative to their res
 | `vk_platform.cpp` | Vulkan platform abstraction for Metal | |
 | `vk_rasterizer.cpp` | Rasterizer tweaks | |
 | `vk_render_manager.cpp` | Render manager adjustments | |
+| `vk_swapchain.cpp` | Metal/MoltenVK swap chain management | |
+| `vk_texture_runtime.cpp` | Texture allocation and runtime tweaks for Metal | |
 | `shader_interpreter.cpp` | Shader interpreter patches | |
 
 #### Misc C++ Patches
@@ -131,7 +133,7 @@ points, so there may be a units mismatch causing incorrect framebuffer layout di
 - **PVAzahar** `enableAsyncShader` defaults to `false`; PVEmuThree defaults to `true`
 
 #### OSD Integration
-- PVAzahar's `CitraWrapper.mm` includes an `PVPostOSD` helper for posting OSD notifications via
+- PVAzahar's `CitraWrapper.mm` includes a `PVPostOSD` helper for posting OSD notifications via
   `NSNotificationCenter` — not present in PVEmuThree (added in PR #3151)
 
 ---
