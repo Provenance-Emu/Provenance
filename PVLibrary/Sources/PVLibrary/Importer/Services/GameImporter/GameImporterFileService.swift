@@ -47,11 +47,14 @@ class GameImporterFileService : GameImporterFileServicing {
             // The Realm PVPatch record is created by GameImporter.importPatchFile, which is
             // called by performImport immediately after this method returns.
             let patchesDir = Paths.patchesPath
-            try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true, attributes: nil)
             let destURL = patchesDir.appendingPathComponent(queueItem.url.lastPathComponent)
-            if !FileManager.default.fileExists(atPath: destURL.path) {
-                try FileManager.default.moveItem(at: queueItem.url, to: destURL)
+            // If the destination already exists, remove it before moving so the source file
+            // is always cleared from the Imports folder and the dest is authoritative.
+            if FileManager.default.fileExists(atPath: destURL.path) {
+                try FileManager.default.removeItem(at: destURL)
             }
+            try FileManager.default.moveItem(at: queueItem.url, to: destURL)
             queueItem.destinationUrl = destURL
             ILOG("Moved patch file to: \(destURL.path)")
         case .unknown:

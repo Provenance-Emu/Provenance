@@ -8,7 +8,6 @@
 
 import Foundation
 import RealmSwift
-import PVLogging
 import PVPrimitives
 import PVPatching
 
@@ -83,7 +82,10 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
         self.init()
         // Derive a stable primary key from the file's relative path so that
         // re-importing the same patch updates the record rather than creating a duplicate.
-        self.id = file.partialPath.isEmpty ? UUID().uuidString : file.partialPath
+        // A non-empty partialPath is required for idempotent imports; fall back to the
+        // file URL's last path component (still filename-stable) rather than a random UUID.
+        assert(!file.partialPath.isEmpty, "PVFile.partialPath is empty — patch import will not be idempotent")
+        self.id = file.partialPath.isEmpty ? file.url?.lastPathComponent ?? UUID().uuidString : file.partialPath
         self.file = file
         self.game = game
         self.date = date
