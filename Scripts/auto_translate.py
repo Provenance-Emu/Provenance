@@ -33,7 +33,6 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
 
 try:
     import anthropic
@@ -83,22 +82,17 @@ PRESERVE_NOUNS = [
 # Parsing helpers
 # ---------------------------------------------------------------------------
 
-_STRINGS_RE = re.compile(
-    r'(?:/\*\s*translation-skip\s*\*/\s*\n)?"([^"\\]|\\.)+"\s*=\s*"([^"\\]|\\.)*"\s*;',
-    re.MULTILINE,
-)
 _KEY_VALUE_RE = re.compile(r'"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*;')
+_SKIP_RE = re.compile(r"/\*\s*translation-skip\s*\*/")
 
 
-def parse_strings_file(path: Path) -> dict[str, str]:
-    """Parse a .strings file into {key: value} dict. Skips translation-skip entries."""
-    text = path.read_text(encoding="utf-8")
+def _parse_strings_text(text: str) -> dict[str, str]:
+    """Parse .strings text into {key: value}, honouring /* translation-skip */ markers."""
     result: dict[str, str] = {}
-    lines = text.splitlines(keepends=True)
     skip_next = False
-    for line in lines:
+    for line in text.splitlines():
         stripped = line.strip()
-        if re.match(r"/\*\s*translation-skip\s*\*/", stripped):
+        if _SKIP_RE.match(stripped):
             skip_next = True
             continue
         m = _KEY_VALUE_RE.match(stripped)
@@ -106,9 +100,8 @@ def parse_strings_file(path: Path) -> dict[str, str]:
             if not skip_next:
                 result[m.group(1)] = m.group(2)
             skip_next = False
-        else:
-            if stripped:
-                skip_next = False
+        elif stripped:
+            skip_next = False
     return result
 
 
@@ -124,16 +117,8 @@ def get_changed_keys(base_ref: str, head_ref: str, strings_file: str) -> dict[st
     old_text = git_show(base_ref, strings_file)
     new_text = git_show(head_ref, strings_file)
 
-    def parse_text(text: str) -> dict[str, str]:
-        result: dict[str, str] = {}
-        for line in text.splitlines():
-            m = _KEY_VALUE_RE.match(line.strip())
-            if m:
-                result[m.group(1)] = m.group(2)
-        return result
-
-    old = parse_text(old_text)
-    new = parse_text(new_text)
+    old = _parse_strings_text(old_text)
+    new = _parse_strings_text(new_text)
 
     changed: dict[str, str] = {}
     for key, value in new.items():
@@ -190,11 +175,11 @@ def translate_keys(
         if m:
             translated[m.group(1)] = m.group(2)
 
-    # Verify all keys came back; fall back to English for missing ones
-    for key, eng_value in keys.items():
+    # Warn about any keys the model omitted; do NOT fall back to English
+    # (overwriting an existing translation with English silently regresses it)
+    for key in keys:
         if key not in translated:
-            print(f"  Warning: key '{key}' missing from {lang_code} response, using English fallback")
-            translated[key] = eng_value
+            print(f"  Warning: key '{key}' missing from {lang_code} response — skipping to preserve existing translation")
 
     return translated
 
@@ -223,6 +208,7 @@ def merge_translations(
     output_dir: Path,
     lang_code: str,
     translated: dict[str, str],
+    strings_filename: str = "Localizable.strings",
 ) -> Path:
     """
     Merge translated keys into the existing language .strings file.
@@ -231,7 +217,7 @@ def merge_translations(
     """
     lproj_dir = output_dir / f"{lang_code}.lproj"
     lproj_dir.mkdir(parents=True, exist_ok=True)
-    strings_path = lproj_dir / "Localizable.strings"
+    strings_path = lproj_dir / strings_filename
 
     lines, key_lines = read_existing_strings(strings_path)
 
@@ -311,6 +297,7 @@ def main() -> int:
 
     client = anthropic.Anthropic(api_key=api_key)
     output_dir = Path(args.output_dir)
+    strings_filename = Path(args.strings_file).name
 
     summary_lines: list[str] = []
     for lang_code in args.languages:
@@ -321,7 +308,7 @@ def main() -> int:
         print(f"Translating to {lang_name} ({lang_code})...")
         try:
             translated = translate_keys(client, changed_keys, lang_code, lang_name)
-            written_path = merge_translations(output_dir, lang_code, translated)
+            written_path = merge_translations(output_dir, lang_code, translated, strings_filename)
             print(f"  Wrote {written_path}")
             summary_lines.append(f"- **{lang_name}** (`{lang_code}`): {len(translated)} key(s) written to `{written_path}`")
         except Exception as exc:  # noqa: BLE001
