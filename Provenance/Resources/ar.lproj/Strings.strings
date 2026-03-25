@@ -5,7 +5,9 @@
   Created by Joseph Mattiello on 8/16/21.
   Copyright © 2021 Provenance Emu. All rights reserved.
 
-  Translated to Arabic by community contributor (issue #2256)
+  AI-generated Arabic translation based on community contribution (issue #2256)
+  Note: Translation was AI-generated because the original community zip could not be downloaded in CI.
+  Please compare with the original attachment in issue #2256 and apply any corrections.
 */
 
 /* Loading and item */
@@ -67,7 +69,6 @@
 "Empty Image Cache" = "مسح ذاكرة تخزين الصور";
 "Manage Conflicts" = "إدارة التعارضات";
 "Advanced Features" = "الميزات المتقدمة";
-"Unknown" = "غير معروف";
 "Version" = "الإصدار";
 "Build Information" = "معلومات البناء";
 "3rd Party & Legal" = "أطراف ثالثة وقانونية";

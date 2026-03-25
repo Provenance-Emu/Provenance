@@ -1,6 +1,8 @@
 /* Localizable.strings — Arabic (ar)
    Provenance
-   Translated by community contributor (issue #2256)
+   AI-generated translation based on community contribution (issue #2256)
+   Note: Translation was AI-generated because the original community zip could not be downloaded in CI.
+   Please compare with the original attachment in issue #2256 and apply any corrections.
 */
 
 "DeleteGameTitle" = "حذف اللعبة؟";

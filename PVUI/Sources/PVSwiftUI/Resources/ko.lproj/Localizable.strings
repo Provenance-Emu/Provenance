@@ -1,6 +1,8 @@
 /* Localizable.strings — Korean (ko)
    Provenance
-   Translated by community contributor (issue #2255)
+   AI-generated translation based on community contribution (issue #2255)
+   Note: Translation was AI-generated because the original community zip could not be downloaded in CI.
+   Please compare with the original attachment in issue #2255 and apply any corrections.
 */
 
 "DeleteGameTitle" = "게임을 삭제할까요?";

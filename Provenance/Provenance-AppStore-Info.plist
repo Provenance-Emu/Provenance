@@ -208,6 +208,8 @@
 		<string>ja</string>
 		<string>en</string>
 		<string>zh_CN</string>
+		<string>ko</string>
+		<string>ar</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
