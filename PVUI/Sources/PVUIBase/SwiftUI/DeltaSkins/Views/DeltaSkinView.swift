@@ -151,7 +151,7 @@ public struct DeltaSkinView: View {
     @State private var processedTouches: Set<ObjectIdentifier> = []
 
     // Track touch IDs that are actively touching the NDS bottom screen (for continuous updates and release)
-    @State private var touchToNDSScreenMap: [ObjectIdentifier: Bool] = [:]
+    @State private var ndsScreenTouches: Set<ObjectIdentifier> = []
 
     // Track the current preview size
     @State private var previewSize: CGSize = .zero
@@ -933,7 +933,7 @@ public struct DeltaSkinView: View {
 
                                 // Check if this touch is associated with a D-pad or NDS screen (needs continuous processing)
                                 let isDPadTouch = touchToDPadMap[touch.id] != nil
-                                let isNDSScreenTouch = touchToNDSScreenMap[touch.id] != nil
+                                let isNDSScreenTouch = ndsScreenTouches.contains(touch.id)
 
                                 // Check if touch has moved significantly (more than 1 point)
                                 let hasMoved: Bool
@@ -1009,18 +1009,18 @@ public struct DeltaSkinView: View {
                                 }
 
                                 // Release NDS bottom screen touch if this was a screen touch
-                                if touchToNDSScreenMap[touch.id] != nil {
+                                if ndsScreenTouches.contains(touch.id) {
                                     DLOG("Releasing NDS screen touch for touch \(touch.id)")
-                                    touchToNDSScreenMap.removeValue(forKey: touch.id)
+                                    ndsScreenTouches.remove(touch.id)
                                     // Only signal release when the last screen touch lifts
-                                    if touchToNDSScreenMap.isEmpty {
+                                    if ndsScreenTouches.isEmpty {
                                         inputHandler.ndsBottomScreenTouchReleased()
                                     }
                                 }
                             }
 
                             // If all touches are gone, ensure everything is reset
-                            if touchToButtonMap.isEmpty && touchToDPadMap.isEmpty && touchToNDSScreenMap.isEmpty {
+                            if touchToButtonMap.isEmpty && touchToDPadMap.isEmpty && ndsScreenTouches.isEmpty {
                                 DLOG("All touches ended, cleaning up")
 
                                 // Clear active buttons to ensure visual feedback is removed
@@ -1332,15 +1332,19 @@ public struct DeltaSkinView: View {
 
         // NDS bottom-screen: if this touch is already tracked as an NDS screen touch,
         // update the touch position or release if it has moved off the screen area.
-        if touchToNDSScreenMap[touchId] != nil {
+        if ndsScreenTouches.contains(touchId) {
             if let normalizedPoint = mapToNDSBottomScreen(location, in: size) {
                 DLOG("DS bottom screen touch moved: normalized=\(normalizedPoint)")
                 inputHandler.ndsBottomScreenTouched(at: normalizedPoint)
             } else {
-                // Touch dragged off the bottom screen — release and fall through to button detection
-                DLOG("DS bottom screen touch left screen area, releasing")
-                touchToNDSScreenMap.removeValue(forKey: touchId)
-                inputHandler.ndsBottomScreenTouchReleased()
+                // Touch dragged off the bottom screen — potentially release and fall through to button detection
+                DLOG("DS bottom screen touch left screen area for touchId=\(touchId), removing mapping")
+                ndsScreenTouches.remove(touchId)
+                // Only release when this was the last active NDS bottom-screen touch
+                if ndsScreenTouches.isEmpty {
+                    DLOG("No remaining DS bottom screen touches, releasing stylus")
+                    inputHandler.ndsBottomScreenTouchReleased()
+                }
             }
             return
         }
@@ -1540,7 +1544,7 @@ public struct DeltaSkinView: View {
             // Check if it is on the NDS bottom screen touchscreen area.
             if let normalizedPoint = mapToNDSBottomScreen(location, in: size) {
                 DLOG("DS bottom screen touch began: normalized=\(normalizedPoint)")
-                touchToNDSScreenMap[touchId] = true
+                ndsScreenTouches.insert(touchId)
                 inputHandler.ndsBottomScreenTouched(at: normalizedPoint)
                 return
             }
@@ -1731,12 +1735,38 @@ public struct DeltaSkinView: View {
 
         guard let screen = bottomScreen, let outputFrame = screen.outputFrame else { return nil }
 
+        // Normalize outputFrame into 0–1 space if it is specified in mappingSize pixels.
+        // Some skins (e.g. DefaultDeltaSkin) already use normalized coordinates (0–1),
+        // while others may specify absolute positions in the skin's mapping space.
+        let isPixelBased = outputFrame.maxX > 1 || outputFrame.maxY > 1
+        let normalizedFrame: CGRect
+        if isPixelBased, mappingSize.width > 0, mappingSize.height > 0 {
+            normalizedFrame = CGRect(
+                x: outputFrame.minX / mappingSize.width,
+                y: outputFrame.minY / mappingSize.height,
+                width: outputFrame.width / mappingSize.width,
+                height: outputFrame.height / mappingSize.height
+            )
+        } else {
+            normalizedFrame = outputFrame
+        }
+
+        // Convert normalized frame back into mapping-space pixels so that
+        // calculateButtonTransform (which works in mappingSize coordinates)
+        // can be applied consistently for both normalized and pixel-based skins.
+        let mappingFrame = CGRect(
+            x: normalizedFrame.minX * mappingSize.width,
+            y: normalizedFrame.minY * mappingSize.height,
+            width: normalizedFrame.width * mappingSize.width,
+            height: normalizedFrame.height * mappingSize.height
+        )
+
         let (scaleX, scaleY, xOffset, yOffset) = calculateButtonTransform(in: size, mappingSize: mappingSize)
         let scaledFrame = CGRect(
-            x: outputFrame.minX * scaleX + xOffset,
-            y: yOffset + outputFrame.minY * scaleY,
-            width: outputFrame.width * scaleX,
-            height: outputFrame.height * scaleY
+            x: mappingFrame.minX * scaleX + xOffset,
+            y: yOffset + mappingFrame.minY * scaleY,
+            width: mappingFrame.width * scaleX,
+            height: mappingFrame.height * scaleY
         )
 
         guard scaledFrame.contains(location), scaledFrame.width > 0, scaledFrame.height > 0 else {
