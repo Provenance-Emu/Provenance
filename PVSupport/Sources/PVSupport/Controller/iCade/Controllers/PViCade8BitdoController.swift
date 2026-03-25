@@ -35,7 +35,7 @@ public final class PViCade8BitdoController: PViCadeController {
     }
 
     public override var vendorName: String? {
-        return "8Bitdo"
+        return "8BitDo"
     }
 }
 
@@ -64,7 +64,7 @@ public final class PViCade8BitdoSNES30Controller: PViCadeController {
     }
 
     public override var vendorName: String? {
-        return "8Bitdo SNES30"
+        return "8BitDo SNES30"
     }
 }
 
@@ -145,7 +145,7 @@ public final class PViCade8BitdoZeroController: PViCadeController {
     }
 
     public override var vendorName: String? {
-        return "8Bitdo Zero"
+        return "8BitDo Zero"
     }
 }
 #endif

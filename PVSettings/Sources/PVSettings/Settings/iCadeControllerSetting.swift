@@ -30,9 +30,9 @@ public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, 
         case .standard:
             return "Standard Controller"
         case .eightBitdo:
-            return "8Bitdo Controller"
+            return "8BitDo Controller"
         case .eightBitdoZero:
-            return "8Bitdo Zero Controller"
+            return "8BitDo Zero Controller"
         case .steelSeries:
             return "SteelSeries Free Controller"
         case .mocute:
