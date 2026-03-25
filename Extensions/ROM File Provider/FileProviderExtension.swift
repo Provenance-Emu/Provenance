@@ -156,7 +156,8 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         let progress = Progress(totalUnitCount: 1)
         // Capture self strongly: the extension process is alive for the duration of
         // the task, and weak capture risks the completion handler never being called.
-        Task.detached(priority: .userInitiated) { [self] in
+        // Retain the task handle so progress cancellation can cancel the underlying work.
+        let task = Task.detached(priority: .userInitiated) { [self] in
             do {
                 let item = try self.performImport(
                     from: sourceURL,
@@ -170,6 +171,9 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
                 completionHandler(nil, [], false, error)
             }
         }
+        // Wire progress cancellation to the underlying task so that a user/system cancel
+        // stops the file copy + hash instead of letting it run to completion.
+        progress.cancellationHandler = { task.cancel() }
 
         return progress
     }
@@ -230,6 +234,12 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
                     let destURL = existingURL.deletingLastPathComponent()
                         .appendingPathComponent(newFilename)
                     if existingURL.path != destURL.path {
+                        // Explicitly surface name conflicts as `.filenameCollision` so Files.app
+                        // can show a user-friendly "name already in use" error instead of a
+                        // generic OS error from `moveItem`.
+                        if FileManager.default.fileExists(atPath: destURL.path) {
+                            throw NSFileProviderError(.filenameCollision)
+                        }
                         try FileManager.default.moveItem(at: existingURL, to: destURL)
                         if let pvFile = pvGame.file {
                             let newPartial = pvFile.relativeRoot.createRelativePath(fromURL: destURL)
@@ -350,6 +360,24 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             throw NSFileProviderError(.noSuchItem)
         }
 
+        // Hash the source file first so we can detect duplicates before doing any disk
+        // writes — avoids copying large ROMs that will be immediately discarded.
+        guard let md5 = streamingMD5(for: sourceURL) else {
+            ELOG("FileProvider: failed to compute MD5 for \(filename)")
+            throw NSFileProviderError(.cannotSynchronize)
+        }
+
+        // Fast-path: if a game with this MD5 already exists and has a valid on-disk
+        // file, return the canonical record immediately without touching disk.
+        if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+           !existing.isInvalidated {
+            if let existingFileURL = existing.file?.url,
+               FileManager.default.fileExists(atPath: existingFileURL.path) {
+                ILOG("FileProvider: ROM already exists (md5=\(md5)), skipping copy")
+                return FileProviderItem(game: existing.asDomain(), romURL: existingFileURL)
+            }
+        }
+
         // Destination: <romsRoot>/<systemID>/<filename>
         let destDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
         try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
@@ -359,41 +387,26 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         let destURL = uniqueDestinationURL(in: destDir, for: filename)
         try FileManager.default.copyItem(at: sourceURL, to: destURL)
 
-        guard let md5 = streamingMD5(for: destURL) else {
-            try? FileManager.default.removeItem(at: destURL)
-            ELOG("FileProvider: failed to compute MD5 for \(filename)")
-            throw NSFileProviderError(.cannotSynchronize)
-        }
-
-        // If a game with this MD5 already exists, check whether the existing record has a
-        // valid on-disk file before discarding the newly imported copy.
+        // If the existing record is a placeholder or its local file is missing, update
+        // it to point to the newly imported copy.
         if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
            !existing.isInvalidated {
-            if let existingFileURL = existing.file?.url,
-               FileManager.default.fileExists(atPath: existingFileURL.path) {
-                // Existing record has a valid on-disk file — discard the duplicate copy
-                // and return the canonical URL so Files.app sees the correct path.
-                try? FileManager.default.removeItem(at: destURL)
-                ILOG("FileProvider: ROM already exists (md5=\(md5)), discarding duplicate copy at \(destURL.lastPathComponent)")
-                return FileProviderItem(game: existing.asDomain(), romURL: existingFileURL)
-            } else {
-                // Existing record is a placeholder or its local file is missing — keep
-                // the newly imported ROM and update the Realm record so caches, sync,
-                // and metadata enrichment see the correct on-disk path.
-                ILOG("FileProvider: existing ROM record for md5=\(md5) has no valid local file; updating record with imported copy at \(destURL.lastPathComponent)")
-                let newRomFile = PVFile(withURL: destURL)
-                let newPartialPath = newRomFile.partialPath
-                try realm.write {
-                    if let oldFile = existing.file {
-                        realm.delete(oldFile)
-                    }
-                    realm.add(newRomFile)
-                    existing.file = newRomFile
-                    existing.romPath = newPartialPath
-                    existing.isDownloaded = true
+            // Existing record is a placeholder or its local file is missing — keep
+            // the newly imported ROM and update the Realm record so caches, sync,
+            // and metadata enrichment see the correct on-disk path.
+            ILOG("FileProvider: existing ROM record for md5=\(md5) has no valid local file; updating record with imported copy at \(destURL.lastPathComponent)")
+            let newRomFile = PVFile(withURL: destURL)
+            let newPartialPath = newRomFile.partialPath
+            try realm.write {
+                if let oldFile = existing.file {
+                    realm.delete(oldFile)
                 }
-                return FileProviderItem(game: existing.asDomain(), romURL: destURL)
+                realm.add(newRomFile)
+                existing.file = newRomFile
+                existing.romPath = newPartialPath
+                existing.isDownloaded = true
             }
+            return FileProviderItem(game: existing.asDomain(), romURL: destURL)
         }
 
         // Create a minimal PVGame; the main app directory-watcher fills in metadata.
