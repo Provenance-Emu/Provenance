@@ -170,6 +170,12 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     // MARK: - Viewport Application (Simplified)
 
+    /// Returns true when the bridge has started shutdown and viewport updates should be ignored.
+    private func isBridgeShuttingDownForViewport(_ viewport: EmulatorCoreViewportPositioning? = nil) -> Bool {
+        let target = viewport ?? (core.bridge as? EmulatorCoreViewportPositioning)
+        return target?.isShuttingDownForViewportUpdates?() ?? false
+    }
+
     /// Apply viewport from current skin - single, simple entry point
     internal func applyViewportFromCurrentSkin() {
         guard Thread.isMainThread else {
@@ -179,6 +185,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
+        guard !isBridgeShuttingDownForViewport() else { return }
         guard !isApplyingViewport else { return }
         guard view.bounds.width > 0 && view.bounds.height > 0 else { return }
 
@@ -212,6 +219,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             // This handles cases like rotation where we need a fresh calculation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
                 guard let self = self else { return }
+                guard !self.isBridgeShuttingDownForViewport() else { return }
                 if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
                     self.applyFrameToGPUView(frame)
                 } else {
@@ -255,6 +263,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 guard let self = self else { return }
+                guard !self.isBridgeShuttingDownForViewport() else { return }
                 if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
                     // Verify frame is still correct, recalculate if needed
                     if let recalculatedFrame = self.calculateFrameFromSkin(), self.isValidFrame(recalculatedFrame) {
@@ -290,6 +299,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             // If calculation fails, try again after a short delay (for initial load timing issues)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                 guard let self = self else { return }
+                guard !self.isBridgeShuttingDownForViewport() else { return }
                 if let frame = self.calculateFrameFromSkin(), self.isValidFrame(frame) {
                     self.currentTargetFrame = frame
                     self.applyFrameToGPUView(frame)
@@ -504,6 +514,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     /// Apply frame to GPU view - single, clear application path
     internal func applyFrameToGPUView(_ frame: CGRect) {
+        guard !isBridgeShuttingDownForViewport() else { return }
         guard let gameScreenView = gpuViewController.view else { return }
         guard isValidFrame(frame) else {
             ELOG("🎮 SKIN: Invalid frame: \(frame)")
@@ -545,6 +556,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     /// Apply frame to RetroArch core
     private func applyFrameToRetroArch(_ frame: CGRect, gameScreenView: UIView, viewport: EmulatorCoreViewportPositioning) {
+        guard !isBridgeShuttingDownForViewport(viewport) else { return }
         let mtkView = gameScreenView.superview ?? gameScreenView
 
         // Ensure layout
