@@ -211,10 +211,43 @@ extension PVCameraOverlayView {
                     guard !Task.isCancelled else { break }
                     self?.applyCurrentSettings()
                 }
+            },
+            Task { @MainActor [weak self] in
+                for await _ in Defaults.updates(.recordingCameraEnabled) {
+                    guard !Task.isCancelled else { break }
+                    guard let self else { continue }
+
+                    // When the user turns the Face-Cam toggle off during recording,
+                    // immediately detach/hide the overlay and disable camera capture
+                    // to keep runtime behavior consistent with Settings.
+                    if !Defaults[.recordingCameraEnabled] {
+                        self.handleCameraDisabledBySettings()
+                    }
+                }
             }
         ]
     }
 
+    /// Responds to the recording camera being disabled via Settings while a
+    /// recording session is active. Detaches or hides the overlay and ensures
+    /// ReplayKit camera capture is turned off.
+    private func handleCameraDisabledBySettings() {
+        // If the overlay is currently attached, detach it so the preview layer
+        // is removed and observation tasks are cancelled as appropriate.
+        if isAttached {
+            detach()
+        } else {
+            // Fallback: hide the view in case it was not yet attached.
+            isHidden = true
+        }
+
+        // Also ensure that ReplayKit's camera capture is disabled to match the
+        // user's expectation from the Settings toggle.
+        let recorder = RPScreenRecorder.shared()
+        if recorder.isCameraEnabled {
+            recorder.isCameraEnabled = false
+        }
+    }
     /// Cancels all active Defaults observation tasks.
     public func stopObservingSettings() {
         observationTasks.forEach { $0.cancel() }
