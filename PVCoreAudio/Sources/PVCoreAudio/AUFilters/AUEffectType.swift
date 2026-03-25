@@ -247,6 +247,7 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
         switch self {
         case .reverb:
             let reverb = AVAudioUnitReverb()
+            reverb.loadFactoryPreset(.mediumHall)
             reverb.wetDryMix = Float(parameters[AUEffectParameterKey.wetDryMix] ?? 20.0)
             return reverb
 
