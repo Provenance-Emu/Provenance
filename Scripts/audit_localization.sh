@@ -30,25 +30,44 @@ strings_key_count() {
 PVUI_DIR="$REPO_ROOT/PVUI"
 PROVENANCE_DIR="$REPO_ROOT/Provenance"
 PROVENANCETV_DIR="$REPO_ROOT/ProvenanceTV"
+EXTENSIONS_DIR="$REPO_ROOT/Extensions"
+WATCHAPP_DIR="$REPO_ROOT/Provenance Mini Watch App"
 
-# Build PV_DIRS using an associative array to avoid duplicates
-declare -A _seen_dirs
-_seen_dirs["$(realpath "$PVUI_DIR" 2>/dev/null || echo "$PVUI_DIR")"]=1
-_seen_dirs["$(realpath "$PROVENANCE_DIR" 2>/dev/null || echo "$PROVENANCE_DIR")"]=1
-_seen_dirs["$(realpath "$PROVENANCETV_DIR" 2>/dev/null || echo "$PROVENANCETV_DIR")"]=1
-PV_DIRS=("$PVUI_DIR" "$PROVENANCE_DIR" "$PROVENANCETV_DIR")
+# Build PV_DIRS list while avoiding duplicates, without Bash 4 associative arrays
+PV_DIRS=()
+PV_DIR_REALPATHS=()
+
+add_pv_dir() {
+    local dir="$1"
+    [ -d "$dir" ] || return 0
+
+    local real
+    real="$(realpath "$dir" 2>/dev/null || echo "$dir")"
+
+    local existing
+    for existing in ${PV_DIR_REALPATHS[@]+"${PV_DIR_REALPATHS[@]}"}; do
+        if [ "$existing" = "$real" ]; then
+            return 0
+        fi
+    done
+
+    PV_DIRS+=("$dir")
+    PV_DIR_REALPATHS+=("$real")
+}
+
+add_pv_dir "$PVUI_DIR"
+add_pv_dir "$PROVENANCE_DIR"
+add_pv_dir "$PROVENANCETV_DIR"
+add_pv_dir "$EXTENSIONS_DIR"
+add_pv_dir "$WATCHAPP_DIR"
 
 # Add any PV* top-level module dirs (but skip Cores, which are upstreams)
 for d in "$REPO_ROOT"/PV*/; do
     if [ -d "$d" ]; then
-        _real="$(realpath "$d" 2>/dev/null || echo "$d")"
-        if [ -z "${_seen_dirs[$_real]+x}" ]; then
-            _seen_dirs["$_real"]=1
-            PV_DIRS+=("$d")
-        fi
+        add_pv_dir "$d"
     fi
 done
-unset _seen_dirs _real
+unset d PV_DIR_REALPATHS
 
 # ─── 1. Hardcoded SwiftUI Text("…") ─────────────────────────────────────────
 
@@ -191,12 +210,14 @@ grep -rh 'NSLocalizedString(' \
 
 NLS_UNIQUE_KEYS=$(wc -l < "$OUT_DIR/used_nls_keys.txt")
 
-# Extract keys from SwiftUI Text("…") calls (LocalizedStringKey)
+# Extract keys from SwiftUI Text("…") calls (LocalizedStringKey), excluding
+# interpolated strings (those containing '\(') which can't map to .strings keys.
 grep -rh 'Text("' \
     --include="*.swift" \
     "${PV_DIRS[@]}" 2>/dev/null \
     | grep -oE 'Text\("[^"]+' \
     | sed 's/Text("//g' \
+    | grep -v '\\(' \
     | sort -u \
     > "$OUT_DIR/used_text_keys.txt" || true
 
@@ -271,7 +292,7 @@ echo "  Output files:"
 echo "    $OUT_DIR/hardcoded_swiftui_text.txt  — all Text(\"…\") calls with file/line"
 echo "    $OUT_DIR/nslocalizedstring_usage.txt — all NSLocalizedString usages"
 echo "    $OUT_DIR/used_nls_keys.txt            — unique NSLocalizedString keys"
-echo "    $OUT_DIR/used_text_keys.txt           — unique SwiftUI Text(\"…\") keys"
+echo "    $OUT_DIR/used_text_keys.txt           — unique SwiftUI Text(\"…\") keys (no interpolated strings)"
 echo "    $OUT_DIR/all_used_keys.txt            — all unique keys combined"
 echo "    $OUT_DIR/defined_en_keys.txt          — keys present in EN strings files"
 echo "    $OUT_DIR/missing_keys.txt             — keys used in code but absent from files"
