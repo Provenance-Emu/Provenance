@@ -697,6 +697,8 @@ struct RetroMenuView: View {
 
 #if os(iOS) || os(tvOS)
             recordingButton
+#endif
+#if os(iOS)
             cameraPositionButton
 #endif
 
@@ -1002,6 +1004,8 @@ struct RetroMenuView: View {
                         .foregroundStyle(Color.white.opacity(0.5))
                         .padding(.bottom, -14)
                 }
+            #else
+            EmptyView()
             #endif
         }
     }
