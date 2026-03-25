@@ -13,13 +13,9 @@ import PVRealm
 import RealmSwift
 import PVSystems
 
-/// Feature flag to enable/disable enhanced artwork search
-/// Set to false to disable this feature if bugs are found
-#if DEBUG
+/// Feature flag to enable/disable enhanced artwork search.
+/// Set to `false` to disable this feature if bugs are found.
 public var ENABLE_ENHANCED_ARTWORK_SEARCH: Bool = true
-#else
-public var ENABLE_ENHANCED_ARTWORK_SEARCH: Bool = true
-#endif
 
 /// Metadata needed for artwork search (no Realm objects required)
 private struct ArtworkSearchMetadata: Sendable {
@@ -287,7 +283,7 @@ public actor ArtworkSearchQueue {
                     if retryCount < maxRetries - 1 {
                         retryCount += 1
                         ILOG("ArtworkSearchQueue: Game \(gameTitle) (MD5: \(md5Hash), ID: \(metadata.gameID)) not found in database, retrying (\(retryCount)/\(maxRetries))...")
-                        try? await Task.sleep(nanoseconds: 500_000_000) // 500ms delay
+                        try? await Task.sleep(for: .milliseconds(500))
                     } else {
                         break
                     }
@@ -357,16 +353,11 @@ public actor ArtworkSearchQueue {
                         }
                     }
                 } else {
-                    // Provide more detailed logging about why we're skipping
                     if gameFound {
                         if hasOriginalArtworkFile {
                             VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has original artwork file, skipping save")
                         } else if hasCustomArtworkURL {
                             VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has custom artwork, skipping save")
-                        } else if !currentOriginalArtworkURL.isEmpty {
-                            VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has original artwork URL set, skipping save")
-                        } else {
-                            WLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) found but check failed for unknown reason - may need artwork but conditions not met")
                         }
                     } else {
                         WLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) not found in database after \(finalRetryCount + 1) attempts, skipping save. Game may not be committed yet or MD5 mismatch.")

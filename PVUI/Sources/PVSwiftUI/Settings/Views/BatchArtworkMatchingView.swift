@@ -134,7 +134,7 @@ public struct BatchArtworkMatchingView: View {
             #if !os(tvOS)
             .toggleStyle(SwitchToggleStyle(tint: .retroPink))
             #endif
-            .onChange(of: includeGamesWithOriginalArtwork) { _ in
+            .onChange(of: includeGamesWithOriginalArtwork) { _, _ in
                 Task {
                     await loadGamesNeedingArtwork()
                 }
@@ -301,8 +301,8 @@ public struct BatchArtworkMatchingView: View {
                 ForEach(gamesNeedingArtwork, id: \.md5Hash) { game in
                     GameArtworkRow(
                         game: game,
-                        artworkResult: artworkResults[game.md5Hash ?? ""],
-                        isSelected: selectedArtworks.contains(game.md5Hash ?? ""),
+                        artworkResult: artworkResults[game.md5Hash],
+                        isSelected: selectedArtworks.contains(game.md5Hash),
                         onToggleSelection: { toggleSelection(for: game) }
                     )
                     .padding(.horizontal)
