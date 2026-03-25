@@ -95,7 +95,11 @@ struct ExternalDisplaySection: View {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle")
                         .foregroundColor(.orange)
-                    Text("Dedicated mode is only supported for standard Metal-based cores. Cores that manage their own rendering surface (such as those with custom OpenGL or Metal renderers) automatically use system mirroring instead.")
+                    Text(
+                        "Dedicated mode is only supported for standard Metal-based cores. " +
+                        "Cores that manage their own rendering surface (such as those with custom " +
+                        "OpenGL or Metal renderers) automatically use system mirroring instead."
+                    )
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

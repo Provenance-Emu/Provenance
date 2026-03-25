@@ -82,7 +82,7 @@ extension PVEmulatorViewController {
 
         guard let screen = note?.object as? UIScreen else {
             ELOG("screenDidConnect: notification did not carry a UIScreen – ignoring")
-            hideOrShowMenuButton()
+            Task { @MainActor in self.hideOrShowMenuButton() }
             return
         }
 
@@ -91,13 +91,15 @@ extension PVEmulatorViewController {
 
         guard mode == .dedicated && canUseDedicated else {
             ILOG("External display connected – using system mirror mode (mode=\(mode.rawValue), canUseDedicated=\(canUseDedicated))")
-            hideOrShowMenuButton()
+            Task { @MainActor in self.hideOrShowMenuButton() }
             return
         }
 
         ILOG("External display connected – activating dedicated game view")
-        attachGPUView(to: screen)
-        hideOrShowMenuButton()
+        Task { @MainActor in
+            self.attachGPUView(to: screen)
+            self.hideOrShowMenuButton()
+        }
     }
 
     @objc func screenDidDisconnect(_ note: Notification?) {
@@ -122,7 +124,7 @@ extension PVEmulatorViewController {
             gpuViewController.willMove(toParent: nil)
             gpuViewController.view?.removeFromSuperview()
             gpuViewController.removeFromParent()
-            gpuViewController.didMove(toParent: nil)
+            // Note: removeFromParent() automatically calls didMove(toParent: nil)
         }
 
         let window = UIWindow(frame: screen.bounds)
@@ -161,7 +163,7 @@ extension PVEmulatorViewController {
             gpuViewController.willMove(toParent: nil)
             gpuViewController.view?.removeFromSuperview()
             gpuViewController.removeFromParent()
-            gpuViewController.didMove(toParent: nil)
+            // Note: removeFromParent() automatically calls didMove(toParent: nil)
         }
 
         // addChild automatically calls willMove(toParent: self) on the child.

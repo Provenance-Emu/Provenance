@@ -1359,3 +1359,41 @@ struct GyroMouseDefaultsTests {
     }
 }
 
+// MARK: - External Display Mode Tests
+
+@Suite("External Display Mode Defaults")
+struct ExternalDisplayModeTests {
+
+    @Test("externalDisplayMode default is systemMirror")
+    func externalDisplayModeDefault() {
+        Defaults.reset(.externalDisplayMode)
+        #expect(Defaults[.externalDisplayMode] == .systemMirror)
+    }
+
+    @Test("externalDisplayMode key name is correct")
+    func externalDisplayModeKeyName() {
+        #expect(Defaults.Keys.externalDisplayMode.name == "externalDisplayMode")
+    }
+
+    @Test("externalDisplayMode can be set to dedicated and reset")
+    func externalDisplayModeMutable() {
+        Defaults.reset(.externalDisplayMode)
+        defer { Defaults.reset(.externalDisplayMode) }
+        Defaults[.externalDisplayMode] = .dedicated
+        #expect(Defaults[.externalDisplayMode] == .dedicated)
+        Defaults.reset(.externalDisplayMode)
+        #expect(Defaults[.externalDisplayMode] == .systemMirror)
+    }
+
+    @Test("ExternalDisplayMode rawValues are stable")
+    func externalDisplayModeRawValues() {
+        #expect(ExternalDisplayMode.systemMirror.rawValue == "systemMirror")
+        #expect(ExternalDisplayMode.dedicated.rawValue == "dedicated")
+    }
+
+    @Test("ExternalDisplayMode has exactly two cases")
+    func externalDisplayModeCaseCount() {
+        #expect(ExternalDisplayMode.allCases.count == 2)
+    }
+}
+
