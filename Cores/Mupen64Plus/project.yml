@@ -124,6 +124,21 @@ settings:
       - "USE_GLES_ES3=1"
       - "USE_GLES_ES3_2=1"
     OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC"
+    # SDK-specific OTHER_CFLAGS (mirrors Config.xcconfig)
+    "OTHER_CFLAGS[sdk=iphoneos*]": "$(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
+    "OTHER_CFLAGS[sdk=iphonesimulator*]": "$(inherited) -DOS_IOS"
+    "OTHER_CFLAGS[sdk=appletvos*]": "$(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
+    "OTHER_CFLAGS[sdk=appletvsimulator*]": "$(inherited) -DOS_IOS"
+    # macOS preprocessor defines (mirrors Config.xcconfig)
+    "GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*]":
+      - "$(inherited)"
+      - "OS_MAC_OS_X=1"
+      - "SDL_VIDEO_OPENGL=1"
+    # Exclude non-NEON sources on tvOS device (mirrors Config.xcconfig)
+    "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*]": "$(inherited) 3DMath.cpp RSP_LoadMatrix.cpp CRC_OPT.cpp"
+    # tvOS Simulator: exclude all compiled sources, include only stub (mirrors Config.xcconfig)
+    "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "*"
+    "INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "PVDebug.c"
     HEADER_SEARCH_PATHS: "$(inherited)"
     FRAMEWORK_SEARCH_PATHS: "$(inherited)"
     LD_RUNPATH_SEARCH_PATHS: "$(inherited)"
@@ -438,6 +453,8 @@ targets:
   libpng:
     type: library.static
     platform: [iOS, tvOS]
+    dependencies:
+      - sdk: libz.tbd
     sources:
       - path: Sources/libpng
         includes:
@@ -469,9 +486,6 @@ targets:
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
           - "PNG_ARM_NEON_OPT=0"
-        OTHER_LDFLAGS:
-          - "$(inherited)"
-          - "-lz"
 
   # ===========================================================================
   # glidenhq — GlideN64 texture enhancement library
@@ -500,6 +514,7 @@ targets:
           - "txWidestringWrapper.cpp"
     dependencies:
       - target: libpng
+      - sdk: libz.tbd
     settings:
       base:
         PRODUCT_NAME: glidenhq
@@ -516,9 +531,6 @@ targets:
           - "Sources/Plugins/Video/gliden64/src/mupenplus/"
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
-        OTHER_LDFLAGS:
-          - "$(inherited)"
-          - "-lz"
 
   # ===========================================================================
   # gliden_osd — OSD compatibility shim for GlideN64
@@ -668,6 +680,8 @@ targets:
     dependencies:
       - target: glidenhq
       - target: gliden_osd
+      - sdk: libz.tbd
+      - sdk: OpenGLES.framework
     settings:
       base:
         PRODUCT_NAME: PVMupen64PlusVideoGlideN64
@@ -679,10 +693,6 @@ targets:
           - "Sources/Plugins/Video/gliden64/src/inc"
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
-        OTHER_LDFLAGS:
-          - "$(inherited)"
-          - "-lz"
-          - "-framework OpenGLES"
 
   # ===========================================================================
   # PVMupen64PlusVideoRice — Rice video plugin
@@ -730,6 +740,7 @@ targets:
           - "osal_files_unix.c"
     dependencies:
       - target: libpng
+      - sdk: libz.tbd
     settings:
       base:
         PRODUCT_NAME: PVMupen64PlusVideoRice
@@ -742,6 +753,3 @@ targets:
           - "Sources/Compatibility/SDL/"
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
-        OTHER_LDFLAGS:
-          - "$(inherited)"
-          - "-lz"
