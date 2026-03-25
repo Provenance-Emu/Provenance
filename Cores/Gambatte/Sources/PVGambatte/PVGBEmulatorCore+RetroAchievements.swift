@@ -113,11 +113,11 @@ extension PVGBEmulatorCore: CoreRetroAchievements {
 
 // MARK: - AchievementsEvents Swift overrides
 
-// The ObjC PVGambatteBridge (AchievementsEvents) category defines default no-op
-// implementations of these methods (compiled into PVGambatteBridge.mm).
-// We override them here in Swift on PVGBEmulatorCoreBridge so that when
-// pvgb_event_handler calls the method on the bridge instance, we route the event
-// through achievementsEventOwner → PVGBEmulatorCore → _achievementsDelegate.
+// The ObjC PVGambatteBridge (AchievementsEvents) category declares these
+// selectors for pvgb_event_handler to call, but their implementations are
+// provided here in Swift on PVGBEmulatorCoreBridge.
+// When pvgb_event_handler calls the method on the bridge instance, we route
+// the event through achievementsEventOwner → PVGBEmulatorCore → _achievementsDelegate.
 
 extension PVGBEmulatorCoreBridge {
 

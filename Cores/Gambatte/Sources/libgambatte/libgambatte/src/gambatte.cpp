@@ -213,13 +213,13 @@ void GB::setGameShark(std::string const &codes) {
 
 unsigned char * GB::wramData(unsigned area) const {
 	if (!p_->cpu.loaded())
-		return 0;
+		return nullptr;
 	return p_->cpu.wramdata(area);
 }
 
 unsigned char * GB::vramData() const {
 	if (!p_->cpu.loaded())
-		return 0;
+		return nullptr;
 	return p_->cpu.vramdata();
 }
 

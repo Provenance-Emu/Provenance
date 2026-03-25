@@ -183,9 +183,12 @@ public:
 	// MARK: - RetroAchievements memory accessors
 
 	/**
-	  * Returns a pointer to the start of WRAM bank @a area (0 = bank 0, 1 = bank 1, etc.).
-	  * Each bank is 4 KiB.  DMG has 2 banks (8 KiB total); CGB has 8 banks (32 KiB total).
-	  * The pointer remains valid for the lifetime of the loaded ROM.
+	  * Returns a pointer to the WRAM mapped area selected by @a area.
+	  * area 0 = fixed bank region (bus address 0xC000–0xCFFF, always bank 0).
+	  * area 1 = switchable bank region (bus address 0xD000–0xDFFF, reflects the
+	  *          currently active bank; may change during emulation on CGB).
+	  * Only area 0 and 1 are valid; each covers 4 KiB.
+	  * The pointer for area 0 is stable for the lifetime of the loaded ROM.
 	  * Returns nullptr if no ROM is loaded.
 	  */
 	unsigned char * wramData(unsigned area) const;

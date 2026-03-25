@@ -88,23 +88,26 @@ static uint32_t pvgb_read_memory(uint32_t address, uint8_t *buffer,
                                   uint32_t num_bytes, rc_client_t *client) {
     PVGBEmulatorCoreBridge *core = (__bridge PVGBEmulatorCoreBridge *)
                                     rc_client_get_userdata(client);
-    unsigned char *wram = (unsigned char *)core.wramBasePtr;
-    unsigned char *vram = (unsigned char *)core.vramBasePtr;
-    NSUInteger wramSz   = core.wramSize;
+    unsigned char *wram0 = (unsigned char *)core.wramBasePtr;
+    unsigned char *wram1 = (unsigned char *)core.wramBank1Ptr;
+    unsigned char *vram  = (unsigned char *)core.vramBasePtr;
     uint32_t read = 0;
 
     for (uint32_t i = 0; i < num_bytes; ++i) {
         uint16_t addr = (uint16_t)(address + i);
         uint8_t value = 0xFF;
 
-        if (wram && addr >= 0xC000 && addr < (0xC000 + wramSz)) {
-            // NOTE: For GBC, addresses 0xD000-0xDFFF map to the switchable WRAM bank.
-            // wramBasePtr returns wramdata(0) which is contiguous memory; for bank 0
-            // (0xC000-0xCFFF) this is correct. For the switchable bank at 0xD000-0xDFFF,
-            // this reads from the physical offset which may differ from the active bank.
-            // A complete GBC implementation would use wramdata(1) for 0xD000 addresses.
-            // TODO: expose separate wramBank1Ptr for precise GBC bank-switched reads.
-            value = wram[addr - 0xC000];
+        // WRAM: 0xC000–0xFDFF (0xE000–0xFDFF is an echo of 0xC000–0xDDFF).
+        // Exclude 0xFE00–0xFFFF (OAM, I/O, HRAM, IE) which are not WRAM.
+        if (addr >= 0xC000 && addr < 0xFE00) {
+            uint16_t effAddr = (addr >= 0xE000) ? (addr - 0x2000u) : addr;
+            if (effAddr < 0xD000) {
+                // Fixed bank (area 0): 0xC000–0xCFFF
+                if (wram0) { value = wram0[effAddr - 0xC000]; }
+            } else {
+                // Switchable bank (area 1): 0xD000–0xDFFF
+                if (wram1) { value = wram1[effAddr - 0xD000]; }
+            }
         } else if (vram && addr >= 0x8000 && addr <= 0x9FFF) {
             // vramBasePtr[0] = first byte of VRAM (GB address 0x8000).
             value = vram[addr - 0x8000];
@@ -191,6 +194,10 @@ static __weak PVGBEmulatorCoreBridge *_current;
 
 - (void *)wramBasePtr {
     return gb.wramData(0);
+}
+
+- (void *)wramBank1Ptr {
+    return gb.wramData(1);
 }
 
 - (void *)vramBasePtr {
@@ -710,6 +717,10 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
         return;
     }
     pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)malloc(sizeof(pvgb_load_ctx_t));
+    if (!ctx) {
+        if (completion) { completion(NO); }
+        return;
+    }
     ctx->bridge = (__bridge_retained void *)self;
     ctx->completion = completion ? [completion copy] : nil;
     rc_client_load_game(_rcClient, gameHash.UTF8String, pvgb_load_callback, ctx);

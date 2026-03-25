@@ -110,7 +110,10 @@ public:
 	void updateInput();
 
 	// Memory accessors for RetroAchievements integration.
-	// WRAM bank 0 base — pointer is valid for the lifetime of the loaded ROM.
+	// WRAM mapped-area base: area 0 corresponds to 0xC000 (fixed bank 0),
+	// area 1 corresponds to 0xD000 (switchable bank). The pointer for area 0
+	// is stable for the lifetime of the loaded ROM; the pointer for area 1
+	// may change when the active WRAM bank changes.
 	unsigned char * wramdata(unsigned area) const { return cart_.wramdata(area); }
 	// VRAM base pointer (vramdata()[0x8000] = first byte of VRAM region).
 	unsigned char * vramdata() const { return cart_.vramdata(); }

@@ -46,9 +46,12 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 // MARK: - RetroAchievements memory access
 
-/// Pointer to WRAM bank 0 base, valid while a ROM is loaded.
-/// Bank 0 is 4 KiB; use wramSize to determine total allocation.
+/// Pointer to WRAM area 0 base (mapped region 0xC000–0xCFFF), valid while a ROM is loaded.
+/// Always the fixed bank; 4 KiB per area.
 @property (nonatomic, readonly, nullable) void *wramBasePtr;
+/// Pointer to WRAM area 1 base (mapped region 0xD000–0xDFFF), valid while a ROM is loaded.
+/// On CGB this points to the currently selected switchable bank; on DMG it mirrors area 0's bank 1.
+@property (nonatomic, readonly, nullable) void *wramBank1Ptr;
 /// Pointer to the physical start of VRAM data, valid while a ROM is loaded.
 /// Index 0 corresponds to GB bus address 0x8000.
 /// Total VRAM allocation: 16 KiB (both DMG and GBC). DMG uses only the first 8 KiB bank.
