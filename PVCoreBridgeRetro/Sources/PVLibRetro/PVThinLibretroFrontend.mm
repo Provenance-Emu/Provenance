@@ -4406,23 +4406,57 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (BOOL)loadMoltenVKLibrary {
-    const char *moltenVKPaths[] = {
-        "MoltenVK",
-        "MoltenVK.framework",
+    // First try RTLD_DEFAULT — if MoltenVK is already linked into the process
+    // (e.g., as a dynamic framework in the app bundle), vkGetInstanceProcAddr
+    // will be available without an explicit dlopen.
+    {
+        void *sym = dlsym(RTLD_DEFAULT, "vkGetInstanceProcAddr");
+        if (sym) {
+            // Use sentinel handle: NULL means "use RTLD_DEFAULT for all dlsym calls"
+            _vulkanLibrary = RTLD_DEFAULT;
+            ILOG(@"ThinFrontend: MoltenVK symbols already available via RTLD_DEFAULT");
+            return YES;
+        }
+    }
+
+    // Build a list of candidate paths.  On iOS/tvOS the framework lives inside
+    // the app bundle's Frameworks/ directory, accessible via @rpath.
+    NSBundle *mainBundle = NSBundle.mainBundle;
+    NSString *frameworksPath = [mainBundle.privateFrameworksPath
+                                stringByAppendingPathComponent:@"MoltenVK.framework/MoltenVK"];
+    NSString *bundleFrameworksPath = [[mainBundle bundlePath]
+                                      stringByAppendingPathComponent:@"Frameworks/MoltenVK.framework/MoltenVK"];
+
+    const char *hardcodedPaths[] = {
+        // rpath-resolved — works when the app has Frameworks/ in LD_RUNPATH_SEARCH_PATHS
+        "@rpath/MoltenVK.framework/MoltenVK",
         "MoltenVK.framework/MoltenVK",
+        "MoltenVK",
         "../Contents/MoltenVK.framework/MoltenVK",
         "/System/Library/Frameworks/MoltenVK.framework/MoltenVK",
         "/usr/local/lib/libMoltenVK.dylib",
         NULL
     };
 
-    for (int i = 0; moltenVKPaths[i] != NULL; i++) {
-        _vulkanLibrary = dlopen(moltenVKPaths[i], RTLD_LOCAL | RTLD_LAZY);
+    // Try bundle-derived paths first (absolute, most reliable on iOS/tvOS)
+    NSArray<NSString *> *bundlePaths = @[ frameworksPath, bundleFrameworksPath ];
+    for (NSString *p in bundlePaths) {
+        if (!p) continue;
+        _vulkanLibrary = dlopen(p.UTF8String, RTLD_LOCAL | RTLD_LAZY);
         if (_vulkanLibrary) {
-            ILOG(@"ThinFrontend: MoltenVK loaded from: %s", moltenVKPaths[i]);
+            ILOG(@"ThinFrontend: MoltenVK loaded from bundle path: %@", p);
             return YES;
         }
-        DLOG(@"ThinFrontend: failed to load MoltenVK from: %s (%s)", moltenVKPaths[i], dlerror());
+        DLOG(@"ThinFrontend: failed to load MoltenVK from %@ (%s)", p, dlerror());
+    }
+
+    for (int i = 0; hardcodedPaths[i] != NULL; i++) {
+        _vulkanLibrary = dlopen(hardcodedPaths[i], RTLD_LOCAL | RTLD_LAZY);
+        if (_vulkanLibrary) {
+            ILOG(@"ThinFrontend: MoltenVK loaded from: %s", hardcodedPaths[i]);
+            return YES;
+        }
+        DLOG(@"ThinFrontend: failed to load MoltenVK from: %s (%s)", hardcodedPaths[i], dlerror());
     }
 
     ELOG(@"ThinFrontend: failed to load MoltenVK from any known path");
@@ -4430,10 +4464,13 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)unloadMoltenVKLibrary {
-    if (_vulkanLibrary) {
+    if (_vulkanLibrary && _vulkanLibrary != RTLD_DEFAULT) {
         dlclose(_vulkanLibrary);
         _vulkanLibrary = NULL;
         ILOG(@"ThinFrontend: MoltenVK library unloaded");
+    } else if (_vulkanLibrary == RTLD_DEFAULT) {
+        _vulkanLibrary = NULL;
+        ILOG(@"ThinFrontend: MoltenVK (RTLD_DEFAULT) reference released");
     }
 }
 
@@ -4443,7 +4480,10 @@ static bool thin_environment(unsigned cmd, void *data) {
         return NO;
     }
 
-    _vkGetInstanceProcAddr = (PFN_vkVoidFunction (*)(VkInstance, const char *))dlsym(_vulkanLibrary, "vkGetInstanceProcAddr");
+    // When _vulkanLibrary == RTLD_DEFAULT the symbols are already in the
+    // process image; use RTLD_DEFAULT directly for the initial dlsym lookup.
+    void *libHandle = (_vulkanLibrary == RTLD_DEFAULT) ? RTLD_DEFAULT : _vulkanLibrary;
+    _vkGetInstanceProcAddr = (PFN_vkVoidFunction (*)(VkInstance, const char *))dlsym(libHandle, "vkGetInstanceProcAddr");
     if (!_vkGetInstanceProcAddr) {
         ELOG(@"ThinFrontend: failed to load vkGetInstanceProcAddr");
         return NO;
