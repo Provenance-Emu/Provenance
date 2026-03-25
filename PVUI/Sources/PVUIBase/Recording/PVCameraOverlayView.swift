@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Face-cam picture-in-picture overlay displayed during ReplayKit recording.
-//  Wraps `RPScreenRecorder.cameraPreviewLayer` and positions it in a
+//  Wraps `RPScreenRecorder.cameraPreviewView` and positions it in a
 //  configurable corner of the parent view.
 //
 
@@ -16,7 +16,7 @@ import PVLogging
 
 // MARK: - PVCameraOverlayView
 
-/// A `UIView` that hosts the `RPScreenRecorder.cameraPreviewLayer` as a
+/// A `UIView` that hosts the `RPScreenRecorder.cameraPreviewView` as a
 /// face-cam picture-in-picture overlay during screen recording.
 ///
 /// Usage:
@@ -35,11 +35,11 @@ import PVLogging
 
     // MARK: - State
 
-    /// Whether `cameraPreviewLayer` has been successfully added.
+    /// Whether `cameraPreviewView` has been successfully added.
     public private(set) var isAttached: Bool = false
 
-    /// The ReplayKit-supplied preview layer, retained while recording is active.
-    private weak var cameraLayer: CALayer?
+    /// The ReplayKit-supplied preview view, retained while recording is active.
+    private weak var cameraView: UIView?
 
     /// Inset from the safe-area edge in points.
     private let edgeInset: CGFloat = 16
@@ -72,10 +72,10 @@ import PVLogging
 
     // MARK: - Public API
 
-    /// Attaches `RPScreenRecorder.cameraPreviewLayer` to this view and makes it visible.
+    /// Attaches `RPScreenRecorder.cameraPreviewView` to this view and makes it visible.
     ///
     /// Call this **after** `RPScreenRecorder.startRecording()` completes successfully
-    /// and `recordingCameraEnabled` is `true`.  If `cameraPreviewLayer` is `nil`
+    /// and `recordingCameraEnabled` is `true`.  If `cameraPreviewView` is `nil`
     /// (recording not active or camera permission denied) this is a no-op.
     ///
     /// Camera enable/disable (`isCameraEnabled`) is owned by the recording lifecycle
@@ -86,13 +86,14 @@ import PVLogging
 
         let recorder = RPScreenRecorder.shared()
 
-        guard let layer = recorder.cameraPreviewLayer else {
-            WLOG("[CameraOverlay] cameraPreviewLayer is nil — camera may not be permitted")
+        guard let preview = recorder.cameraPreviewView else {
+            WLOG("[CameraOverlay] cameraPreviewView is nil — camera may not be permitted")
             return
         }
 
-        cameraLayer = layer
-        self.layer.addSublayer(layer)
+        preview.isUserInteractionEnabled = false
+        cameraView = preview
+        addSubview(preview)
         applyCurrentSettings()
         isHidden = false
         isAttached = true
@@ -106,8 +107,8 @@ import PVLogging
     public func detach() {
         // Always stop observing settings and clean up the camera layer, even if we were never attached.
         stopObservingSettings()
-        cameraLayer?.removeFromSuperlayer()
-        cameraLayer = nil
+        cameraView?.removeFromSuperview()
+        cameraView = nil
         isHidden = true
 
         if isAttached {
@@ -126,9 +127,9 @@ import PVLogging
 
     // MARK: - Private helpers
 
-    /// Reads current Defaults and repositions / resizes / reshapes the camera layer.
+    /// Reads current Defaults and repositions / resizes / reshapes the camera preview view.
     private func applyCurrentSettings() {
-        guard let cameraLayer else { return }
+        guard let cameraView else { return }
 
         let size = CGFloat(Defaults[.cameraOverlaySize].points)
         let position = Defaults[.recordingCameraPosition]
@@ -165,11 +166,11 @@ import PVLogging
 
         let cameraRect = CGRect(x: x, y: y, width: size, height: size)
 
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        cameraLayer.frame = cameraRect
-        cameraLayer.cornerRadius = cornerRadius
-        cameraLayer.masksToBounds = true
+        UIView.performWithoutAnimation {
+            cameraView.frame = cameraRect
+            cameraView.layer.cornerRadius = cornerRadius
+            cameraView.layer.masksToBounds = true
+        }
 
         // Subtle drop shadow scoped to the camera PIP rect for correctness and performance.
         // Setting shadowPath avoids CoreAnimation rasterising the full-screen view bounds.
@@ -178,8 +179,6 @@ import PVLogging
         layer.shadowRadius = 4
         layer.shadowOffset = CGSize(width: 0, height: 2)
         layer.shadowPath = UIBezierPath(roundedRect: cameraRect, cornerRadius: cornerRadius).cgPath
-
-        CATransaction.commit()
     }
 }
 
