@@ -48,13 +48,20 @@ extension PVThinLibretroCore {
         DLOG("ThinCore MIDI: started destination observation")
     }
 
-    /// Stop observing and clear the frontend's destination cache (no-op output).
+    /// Stop observing further destination changes.
     /// Must be called on the main actor.
+    ///
+    /// Does NOT clear the frontend's destination cache: the shared retro_midi_interface
+    /// (and its cache) is also used by the full RetroArch bridge (PVLibRetroCore).
+    /// Clearing the cache here would force it to zero, disabling the legacy fallback
+    /// (-1 = MIDIGetDestination(0)) for any subsequent libretro core that does not
+    /// wire its own MIDIDeviceManager observer. No MIDI is sent while emulation is
+    /// stopped, so leaving the cache intact is harmless; startMIDIDestinationObservation()
+    /// will re-sync on the next session.
     @MainActor
     func stopMIDIDestinationObservation() {
         _midiDestinationCancellable = nil
-        PVThinLibretroFrontend.setMIDIOutputEndpoints([])
-        DLOG("ThinCore MIDI: stopped destination observation, cleared cache")
+        DLOG("ThinCore MIDI: stopped destination observation")
     }
 
     // MARK: Private
