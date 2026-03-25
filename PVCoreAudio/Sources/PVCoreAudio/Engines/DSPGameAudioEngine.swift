@@ -91,35 +91,6 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
     /// Type alias for the read block
     typealias OEAudioBufferReadBlock = (UnsafeMutableRawPointer, Int) -> Int
 
-    /// Kaiser window helper function
-    private func createKaiserWindow(size: Int, beta: Double) -> [Double] {
-        var window = [Double](repeating: 0.0, count: size)
-        let iZero = modifiedBessel0(beta)
-
-        for i in 0..<size {
-            let x = beta * sqrt(1.0 - pow(2.0 * Double(i) / Double(size - 1) - 1.0, 2))
-            window[i] = modifiedBessel0(x) / iZero
-        }
-
-        return window
-    }
-
-    /// Modified Bessel function of the first kind, order 0
-    private func modifiedBessel0(_ x: Double) -> Double {
-        var sum = 1.0
-        var term = 1.0
-
-        for k in 1...20 {  // 20 terms is usually sufficient
-            let xk = x / 2.0
-            term *= (xk * xk) / (Double(k) * Double(k))
-            sum += term
-
-            if term < 1e-12 { break }
-        }
-
-        return sum
-    }
-
     private func updateSourceNode() {
         if let src {
             engine.detach(src)
@@ -174,14 +145,13 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
                 ablPointer[i].mDataByteSize = UInt32(count * 4)
             }
 
-            // Capture audio data for visualization
+            // Capture audio data for visualization (vDSP channel average, no scalar loop)
             if let leftChannel = pcmBuffer.floatChannelData?[0], let rightChannel = pcmBuffer.floatChannelData?[1] {
                 self.audioBufferLock.withLock {
                     let count = min(Int(pcmBuffer.frameLength), self.audioBufferForVisualization.count)
-                    // Average left and right channels for visualization
-                    for i in 0..<count {
-                        self.audioBufferForVisualization[i] = (leftChannel[i] + rightChannel[i]) / 2.0
-                    }
+                    var half: Float = 0.5
+                    vDSP_vadd(leftChannel, 1, rightChannel, 1, &self.audioBufferForVisualization, 1, vDSP_Length(count))
+                    vDSP_vsmul(self.audioBufferForVisualization, 1, &half, &self.audioBufferForVisualization, 1, vDSP_Length(count))
                 }
             }
 

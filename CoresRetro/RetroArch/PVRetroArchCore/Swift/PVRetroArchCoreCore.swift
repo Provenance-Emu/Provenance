@@ -326,8 +326,41 @@ extension PVRetroArchCoreCore: PV2600SystemResponderClient {
 }
 // MARK: Atari 5200
 extension PVRetroArchCoreCore: PV5200SystemResponderClient {
+    /// Keep joystick deadzone behavior aligned with the Atari 5200 bridge implementation.
+    private static let atari5200JoystickDeadzone: CGFloat = 0.5
+
+    /// Converts generic x/y joystick movement into 5200 directional analog calls.
+    /// This avoids forwarding to a selector path the RetroArch 5200 Obj-C bridge does not implement.
     public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
-        (_bridge as! PV5200SystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+        /// Atari 5200 only has one stick; ignore right-stick style events.
+        guard button == 0 else { return }
+
+        let responder = (_bridge as! PV5200SystemResponderClient)
+        let deadzone = Self.atari5200JoystickDeadzone
+        let xMagnitude = min(1, abs(xValue))
+        let yMagnitude = min(1, abs(yValue))
+
+        if xValue > deadzone {
+            responder.didMoveJoystick(.right, withValue: xMagnitude, forPlayer: player)
+            responder.didMoveJoystick(.left, withValue: 0, forPlayer: player)
+        } else if xValue < -deadzone {
+            responder.didMoveJoystick(.left, withValue: xMagnitude, forPlayer: player)
+            responder.didMoveJoystick(.right, withValue: 0, forPlayer: player)
+        } else {
+            responder.didMoveJoystick(.right, withValue: 0, forPlayer: player)
+            responder.didMoveJoystick(.left, withValue: 0, forPlayer: player)
+        }
+
+        if yValue > deadzone {
+            responder.didMoveJoystick(.down, withValue: yMagnitude, forPlayer: player)
+            responder.didMoveJoystick(.up, withValue: 0, forPlayer: player)
+        } else if yValue < -deadzone {
+            responder.didMoveJoystick(.up, withValue: yMagnitude, forPlayer: player)
+            responder.didMoveJoystick(.down, withValue: 0, forPlayer: player)
+        } else {
+            responder.didMoveJoystick(.up, withValue: 0, forPlayer: player)
+            responder.didMoveJoystick(.down, withValue: 0, forPlayer: player)
+        }
     }
     public func didMoveJoystick(_ button: PVCoreBridge.PV5200Button, withValue value: CGFloat, forPlayer player: Int) {
         (_bridge as! PV5200SystemResponderClient).didMoveJoystick(button, withValue: value, forPlayer: player)

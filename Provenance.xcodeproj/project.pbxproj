@@ -8576,8 +8576,7 @@
 				B30585672C0C14ED00B91D7A /* XCLocalSwiftPackageReference "PVWebServer" */,
 				B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */,
 				B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */,
-				B33B4F3B2C198EB8007371C5 /* XCLocalSwiftPackageReference "PVmemcpy" */,
-				B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
+					B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
 				B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */,
 				B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */,
 				B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */,
@@ -16684,10 +16683,6 @@
 		B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVCheevos;
-		};
-		B33B4F3B2C198EB8007371C5 /* XCLocalSwiftPackageReference "PVmemcpy" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = PVmemcpy;
 		};
 		B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */ = {
 			isa = XCLocalSwiftPackageReference;

@@ -49,6 +49,7 @@
 		B37CDB1F2CAA1EB40026E901 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB1E2CAA1EB40026E901 /* PVPlists */; };
 		B37CDB222CAA1EEF0026E901 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB212CAA1EEF0026E901 /* PVCoreObjCBridge */; };
 		B37CDB252CAA1F2A0026E901 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB242CAA1F2A0026E901 /* PVSettings */; };
+		B391B7772F73A44300A03B02 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B391B7762F73A44300A03B02 /* PVNetplay */; };
 		B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = B392F75F296F6B2B008BAEF1 /* EAGL.h */; };
 		B3A483202F569A7C004A995B /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3A4831F2F569A7C004A995B /* PVPrimitives */; };
 		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilters = (ios, tvos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
@@ -565,6 +566,7 @@
 				B37CDB1F2CAA1EB40026E901 /* PVPlists in Frameworks */,
 				B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */,
 				B37CDB252CAA1F2A0026E901 /* PVSettings in Frameworks */,
+				B391B7772F73A44300A03B02 /* PVNetplay in Frameworks */,
 				B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */,
 				B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */,
 				B3A483202F569A7C004A995B /* PVPrimitives in Frameworks */,
@@ -951,6 +953,7 @@
 				B37CDB232CAA1F2A0026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				B3CB25CA2D24E97A00D5224E /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3A4831E2F569A7C004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
+				B391B7752F73A44300A03B02 /* XCLocalSwiftPackageReference "../../PVNetplay" */,
 			);
 			productRefGroup = 02695362143169EB003A07D4 /* Products */;
 			projectDirPath = "";
@@ -1442,11 +1445,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -1510,11 +1513,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -1577,11 +1580,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -1642,10 +1645,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "";
@@ -1741,10 +1744,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "";
@@ -1840,10 +1843,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "";
@@ -1939,12 +1942,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2002,12 +2005,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2066,12 +2069,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3203C2226DB19CC00B016C6 /* Config.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2186,6 +2189,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSettings;
 		};
+		B391B7752F73A44300A03B02 /* XCLocalSwiftPackageReference "../../PVNetplay" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVNetplay;
+		};
 		B3A4831E2F569A7C004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPrimitives;
@@ -2220,6 +2227,10 @@
 		B37CDB242CAA1F2A0026E901 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSettings;
+		};
+		B391B7762F73A44300A03B02 /* PVNetplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVNetplay;
 		};
 		B3A4831F2F569A7C004A995B /* PVPrimitives */ = {
 			isa = XCSwiftPackageProductDependency;

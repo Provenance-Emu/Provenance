@@ -1566,6 +1566,28 @@ struct ScrollViewWithOffset<Content: View>: View {
 
     var body: some View {
         ScrollView(axes, showsIndicators: showsIndicators) {
+            offsetReader
+
+            content
+        }
+        .coordinateSpace(name: "scrollView")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+            offsetChanged(offset)
+        }
+    }
+
+    /// Tracks scroll offset with modern geometry observation when available.
+    @ViewBuilder
+    private var offsetReader: some View {
+        if #available(iOS 18.0, tvOS 18.0, *) {
+            Color.clear
+                .frame(width: 0, height: 0)
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.frame(in: .named("scrollView")).origin.y
+                } action: { offset in
+                    offsetChanged(offset)
+                }
+        } else {
             GeometryReader { geometry in
                 Color.clear.preference(
                     key: ScrollOffsetPreferenceKey.self,
@@ -1573,12 +1595,6 @@ struct ScrollViewWithOffset<Content: View>: View {
                 )
             }
             .frame(width: 0, height: 0)
-
-            content
-        }
-        .coordinateSpace(name: "scrollView")
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            offsetChanged(offset)
         }
     }
 }

@@ -212,4 +212,56 @@ extension SystemIdentifier {
         // Unknown code — at least make it readable
         return code.uppercased()
     }
+
+    /// All catalog system codes related to this system through shared skin-layout groups.
+    ///
+    /// For example:
+    /// - NES includes FDS ("nes")
+    /// - Genesis includes Sega CD / 32X ("genesis", "segacd", "32x")
+    ///
+    /// The returned list is lowercased and de-duplicated.
+    public var relatedSkinCatalogSystemCodes: [String] {
+        guard let gameType = DeltaSkinGameType(systemIdentifier: self) else {
+            guard let code = skinCatalogSystemCode?.lowercased() else { return [] }
+            return [code]
+        }
+
+        let group = gameType.skinLayoutGroup
+        let codes = Set(
+            SystemIdentifier.allCases.compactMap { candidate -> String? in
+                guard let candidateGameType = DeltaSkinGameType(systemIdentifier: candidate),
+                      candidateGameType.skinLayoutGroup == group else {
+                    return nil
+                }
+                return candidate.skinCatalogSystemCode?.lowercased()
+            }
+        )
+
+        if codes.isEmpty, let code = skinCatalogSystemCode?.lowercased() {
+            return [code]
+        }
+        return Array(codes).sorted()
+    }
+
+    /// Returns all catalog system codes related to the provided catalog code via
+    /// shared skin-layout groups.
+    ///
+    /// If the code is unknown, this returns the normalized code itself so callers
+    /// can still perform exact matching.
+    ///
+    /// - Parameter code: A catalog system code (for example "nes" or "32x").
+    /// - Returns: De-duplicated, lowercased related system codes.
+    public static func relatedCatalogSystemCodes(forCatalogCode code: String) -> Set<String> {
+        let normalized = code.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !normalized.isEmpty else { return [] }
+
+        guard let match = SystemIdentifier.allCases.first(where: {
+            $0.skinCatalogSystemCode?.lowercased() == normalized
+        }) else {
+            return [normalized]
+        }
+
+        let related = Set(match.relatedSkinCatalogSystemCodes)
+        return related.isEmpty ? [normalized] : related
+    }
 }

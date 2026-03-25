@@ -647,45 +647,46 @@ public struct CloudSyncSettingsView: View {
                         }
 
                         // Custom animated progress bar
-                        GeometryReader { geometry in
-                            ZStack(alignment: .leading) {
-                                // Background track
-                                Rectangle()
-                                    .fill(Color.retroBlack.opacity(0.5))
-                                    .frame(height: 12)
-                                    .cornerRadius(6)
+                        let clampedProgress = max(0, min(CGFloat(viewModel.syncProgress), 1))
+                        ZStack(alignment: .leading) {
+                            // Background track
+                            Rectangle()
+                                .fill(Color.retroBlack.opacity(0.5))
+                                .frame(height: 12)
+                                .cornerRadius(6)
 
-                                // Progress fill
-                                Rectangle()
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [.retroBlue, .retroPurple, .retroPink]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
+                            // Progress fill
+                            Rectangle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroBlue, .retroPurple, .retroPink]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 12)
+                                .scaleEffect(x: clampedProgress, y: 1, anchor: .leading)
+                                .cornerRadius(6)
+                                .overlay(alignment: .trailing) {
+                                    // Glow effect tracks the leading-scaled fill.
+                                    Rectangle()
+                                        .fill(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [.clear, .retroPink.opacity(0.5), .clear]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
                                         )
-                                    )
-                                    .frame(width: max(0, CGFloat(viewModel.syncProgress) * geometry.size.width), height: 12)
-                                    .cornerRadius(6)
-
-                                // Glow effect
-                                Rectangle()
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [.clear, .retroPink.opacity(0.5), .clear]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
-                                    .frame(width: 20, height: 12)
-                                    .cornerRadius(6)
-                                    .offset(x: max(0, CGFloat(viewModel.syncProgress) * geometry.size.width - 20))
-                                    .opacity(viewModel.syncProgress > 0.02 ? 1 : 0)
-                                    .animation(
-                                        Animation.easeInOut(duration: 1.5)
-                                            .repeatForever(autoreverses: true),
-                                        value: viewModel.syncProgress
-                                    )
-                            }
+                                        .frame(width: 20, height: 12)
+                                        .cornerRadius(6)
+                                        .opacity(clampedProgress > 0.02 ? 1 : 0)
+                                }
+                                .animation(
+                                    Animation.easeInOut(duration: 1.5)
+                                        .repeatForever(autoreverses: true),
+                                    value: viewModel.syncProgress
+                                )
                         }
                         .frame(height: 12)
                     }

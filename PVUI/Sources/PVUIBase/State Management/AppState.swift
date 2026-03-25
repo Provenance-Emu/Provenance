@@ -173,6 +173,67 @@ public class AppState: ObservableObject {
         return true
     }
 
+    /// Distribution channel of the currently running install.
+    public enum DistributionChannel: String {
+        case debug
+        case simulator
+        case sideload
+        case testFlight
+        case appStore
+    }
+
+    /// Returns true when the app bundle includes an embedded provisioning profile.
+    ///
+    /// TestFlight and sideloaded installs usually include this file, while App Store
+    /// installs strip it from the final bundle.
+    public var hasEmbeddedProvisioningProfile: Bool {
+        Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") != nil
+    }
+
+    /// Returns true when an official App Store flavor build is running via TestFlight.
+    ///
+    /// TestFlight installs use a `sandboxReceipt`.
+    public var isTestFlight: Bool {
+        guard isAppStore else { return false }
+        #if targetEnvironment(simulator)
+        return false
+        #else
+        return Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+        #endif
+    }
+
+    /// Returns true only for official App Store builds installed from the App Store.
+    ///
+    /// This intentionally excludes TestFlight and sideloaded installs of official
+    /// bundle IDs so internal/debug settings can remain visible there.
+    public var isInstalledFromAppStore: Bool {
+        guard isAppStore else { return false }
+        #if targetEnvironment(simulator)
+        return false
+        #else
+        return !isTestFlight && !hasEmbeddedProvisioningProfile
+        #endif
+    }
+
+    /// Returns the effective distribution channel used for install-specific behavior.
+    public var distributionChannel: DistributionChannel {
+        #if DEBUG
+        return .debug
+        #elseif targetEnvironment(simulator)
+        return .simulator
+        #else
+        guard isAppStore else { return .sideload }
+        if isTestFlight { return .testFlight }
+        if hasEmbeddedProvisioningProfile { return .sideload }
+        return .appStore
+        #endif
+    }
+
+    /// Default visibility policy for advanced internal feature-flag controls.
+    public var shouldShowFeatureFlagsByDefault: Bool {
+        distributionChannel != .appStore
+    }
+
     public var isSimulator: Bool {
         #if targetEnvironment(simulator)
         return true
