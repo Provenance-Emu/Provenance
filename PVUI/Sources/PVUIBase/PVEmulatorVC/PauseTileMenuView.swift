@@ -50,6 +50,9 @@ struct PauseTileMenuView: View {
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
+    @State private var showingShaderSettings = false
+    @State private var showingPortDevices = false
+    @State private var showingMIDIPicker = false
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
@@ -222,15 +225,36 @@ struct PauseTileMenuView: View {
         case "keyboardToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualKeyboard()
-            rebuildSections()
+            // Dismiss the menu so the user can interact with the keyboard overlay.
+            // The tile menu keeping the game paused while showing the overlay is unhelpful.
+            dismissAction(true)
             #endif
         case "mouseToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualMouse()
-            rebuildSections()
+            // Dismiss the menu so the user can interact with the mouse overlay.
+            dismissAction(true)
             #endif
         case "jitStatus":
             break // read-only
+
+        // MARK: Shader settings sheet
+        case "shaderSettings":
+            showingShaderSettings = true
+
+        // MARK: Port device type picker
+        case "portDevices":
+            showingPortDevices = true
+
+        // MARK: MIDI device picker
+        case "midiDevice":
+            showingMIDIPicker = true
+
+        // MARK: Skins — opens RetroMenuView at the SKINS tab
+        case "skins":
+            #if os(iOS) && !targetEnvironment(macCatalyst)
+            dismissForSubSheetThen { self.emulatorVC.showSkinOptions() }
+            #endif
 
         // MARK: Recording / broadcast / clip
         case "recording":
@@ -635,6 +659,19 @@ struct PauseTileMenuView: View {
                 coreIdentifier: emulatorVC.core.coreIdentifier ?? "",
                 localGameHash: emulatorVC.game?.md5Hash ?? ""
             )
+        }
+        #endif
+        .sheet(isPresented: $showingShaderSettings) {
+            ShaderSettingsPauseSheet()
+        }
+        .sheet(isPresented: $showingPortDevices) {
+            PortDevicesPauseSheet(emulatorVC: emulatorVC)
+        }
+        #if canImport(CoreMIDI) && !os(tvOS)
+        .sheet(isPresented: $showingMIDIPicker) {
+            if #available(iOS 14.0, macCatalyst 14.0, *) {
+                MIDIDevicePauseSheet()
+            }
         }
         #endif
         // Core action option picker — shown when a CoreAction exposes multiple options.

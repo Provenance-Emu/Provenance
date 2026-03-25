@@ -138,4 +138,34 @@ extension PVEmulatorViewController {
 #endif
         // hideMoreInfo will handle re-enabling controller input
     }
+
+    /// Presents RetroMenuView at the SKINS tab, keeping the game paused.
+    /// Call this after the tile-menu has been dismissed (`dismissNav(resumeEmulation: false)`).
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+    public func showSkinOptions() {
+        enableControllerInput(true)
+        isShowingMenu = true
+
+        let skinMenuView = RetroMenuView(
+            emulatorVC: self,
+            dismissAction: { [weak self] resumeEmulation in
+                self?.presentedViewController?.dismiss(animated: true) {
+                    guard let self = self else { return }
+                    self.enableControllerInput(false)
+                    self.isShowingMenu = false
+                    self.menuPresentationViewController = nil
+                    if self.core.isOn {
+                        self.core.setPauseEmulation(!resumeEmulation)
+                    }
+                }
+            },
+            initialCategory: .skins
+        )
+        let hostingVC = UIHostingController(rootView: skinMenuView)
+        hostingVC.modalPresentationStyle = .overFullScreen
+        hostingVC.view.backgroundColor = .clear
+        menuPresentationViewController = hostingVC
+        present(hostingVC, animated: true)
+    }
+    #endif
 }

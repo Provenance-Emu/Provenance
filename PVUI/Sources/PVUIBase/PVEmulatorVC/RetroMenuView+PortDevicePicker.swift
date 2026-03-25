@@ -68,7 +68,7 @@ extension RetroMenuView {
 // MARK: - PortDeviceRow
 
 /// A single row showing one controller port and a picker for its device type.
-private struct PortDeviceRow: View {
+struct PortDeviceRow: View {
     let portIndex: Int
     let descriptors: [PortDeviceDescriptor]
     /// External source of truth — used to re-sync `selectedDeviceType` if the core
