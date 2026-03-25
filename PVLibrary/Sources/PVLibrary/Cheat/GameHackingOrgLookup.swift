@@ -94,12 +94,15 @@ public actor GameHackingOrgLookup {
 
         let proxyURL = resolvedProxyURL()
         if !proxyURL.isEmpty, Defaults[.useCheatProxy] {
+            // fetchFromProxy returns nil when the proxy is unreachable or fails (caller should
+            // fallback to direct scraping), or a non-nil array when the proxy successfully
+            // responded — including an empty array meaning "no cheats found" (no fallback needed).
             let proxyResults = await fetchFromProxy(title: title, systemSlug: systemSlug, proxyBaseURL: proxyURL)
-            if !proxyResults.isEmpty {
+            if let proxyResults {
                 DLOG("GameHackingOrgLookup: proxy returned \(proxyResults.count) codes for '\(title)'")
                 results = proxyResults
             } else {
-                DLOG("GameHackingOrgLookup: proxy empty, falling back to direct scrape for '\(title)'")
+                DLOG("GameHackingOrgLookup: proxy failed/unreachable, falling back to direct scrape for '\(title)'")
                 results = await fetchWithFallback(title: title, systemSlug: systemSlug)
             }
         } else {
@@ -128,8 +131,14 @@ public actor GameHackingOrgLookup {
     /// Fetch cheat entries from the Provenance cheat proxy worker.
     ///
     /// The proxy endpoint is `GET <proxyBaseURL>/cheats?title=<title>&system=<slug>`.
-    /// Returns an empty array when the proxy is unreachable or returns no results.
-    private func fetchFromProxy(title: String, systemSlug: String?, proxyBaseURL: String) async -> [CheatDatabaseEntry] {
+    ///
+    /// Returns:
+    /// - `nil` when the proxy is unreachable, returns a non-2xx status, or a network/decode
+    ///   error occurs — the caller should fall back to direct scraping.
+    /// - `[]` when the proxy successfully contacted upstream but found no cheats
+    ///   (signalled by `X-Proxy-Status: ok` in the response) — no fallback needed.
+    /// - `[entries]` when the proxy found results.
+    private func fetchFromProxy(title: String, systemSlug: String?, proxyBaseURL: String) async -> [CheatDatabaseEntry]? {
         var components = URLComponents(string: proxyBaseURL.hasSuffix("/")
             ? proxyBaseURL + "cheats"
             : proxyBaseURL + "/cheats")
@@ -141,7 +150,7 @@ public actor GameHackingOrgLookup {
 
         guard let url = components?.url else {
             WLOG("GameHackingOrgLookup: invalid proxy URL '\(proxyBaseURL)'")
-            return []
+            return nil
         }
 
         do {
@@ -152,10 +161,22 @@ public actor GameHackingOrgLookup {
             guard let http = response as? HTTPURLResponse,
                   (200..<300).contains(http.statusCode) else {
                 WLOG("GameHackingOrgLookup: proxy non-200 for '\(title)'")
-                return []
+                return nil
             }
 
             let raw = try JSONDecoder().decode([ProxyCheatEntry].self, from: data)
+            if raw.isEmpty {
+                // Only trust an empty result as "no cheats found" when the proxy confirms it
+                // successfully contacted upstream via X-Proxy-Status: ok.  Without this header
+                // the empty array may be a transient error — fall back to direct scraping.
+                let proxyStatus = http.value(forHTTPHeaderField: "X-Proxy-Status")
+                guard proxyStatus == "ok" else {
+                    DLOG("GameHackingOrgLookup: proxy returned empty without ok status for '\(title)' — falling back")
+                    return nil
+                }
+                return []
+            }
+
             return raw.enumerated().map { index, entry in
                 CheatDatabaseEntry(
                     id: Self.idOffset + index,
@@ -172,7 +193,7 @@ public actor GameHackingOrgLookup {
             }
         } catch {
             WLOG("GameHackingOrgLookup: proxy fetch error for '\(title)': \(error)")
-            return []
+            return nil
         }
     }
 

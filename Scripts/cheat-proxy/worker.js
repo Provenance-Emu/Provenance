@@ -75,7 +75,10 @@ export default {
             try {
                 const cached = await env[KV_NAMESPACE].get(cacheKey, { type: "json" });
                 if (cached !== null) {
-                    return jsonResponse(cached, { "X-Cache": "HIT" }, origin, env);
+                    // X-Proxy-Status: ok signals to clients that the proxy successfully
+                    // contacted upstream — an empty array here means "no cheats found",
+                    // not a transient error, so clients should skip the direct-scrape fallback.
+                    return jsonResponse(cached, { "X-Cache": "HIT", "X-Proxy-Status": "ok" }, origin, env);
                 }
             } catch (err) {
                 console.error("KV get error:", err);
@@ -104,7 +107,10 @@ export default {
             );
         }
 
-        return jsonResponse(results, { "X-Cache": "MISS" }, origin, env);
+        // X-Proxy-Status: ok when the upstream fetch succeeded (even with 0 results).
+        // X-Proxy-Status: error when the fetch itself threw (network/parse failure).
+        // Clients use this to decide whether to fall back to direct scraping.
+        return jsonResponse(results, { "X-Cache": "MISS", "X-Proxy-Status": fetchSucceeded ? "ok" : "error" }, origin, env);
     },
 };
 
