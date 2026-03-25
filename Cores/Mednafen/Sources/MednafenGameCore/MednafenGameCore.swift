@@ -353,55 +353,55 @@ extension MednafenGameCore: LightGunResponder {
     }
 
     public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
-        (_bridge as! LightGunResponder).lightGunMovedToPoint(point, isOffscreen: isOffscreen)
+        _bridge.lightGunMovedToPoint(point, isOffscreen: isOffscreen)
     }
 
     public func lightGunTriggerDown() {
-        (_bridge as! LightGunResponder).lightGunTriggerDown()
+        _bridge.lightGunTriggerDown()
     }
 
     public func lightGunTriggerUp() {
-        (_bridge as! LightGunResponder).lightGunTriggerUp()
+        _bridge.lightGunTriggerUp()
     }
 
     public func lightGunAuxADown() {
-        (_bridge as! LightGunResponder).lightGunAuxADown?()
+        _bridge.lightGunAuxADown()
     }
 
     public func lightGunAuxAUp() {
-        (_bridge as! LightGunResponder).lightGunAuxAUp?()
+        _bridge.lightGunAuxAUp()
     }
 
     public func lightGunAuxBDown() {
-        (_bridge as! LightGunResponder).lightGunAuxBDown?()
+        _bridge.lightGunAuxBDown()
     }
 
     public func lightGunAuxBUp() {
-        (_bridge as! LightGunResponder).lightGunAuxBUp?()
+        _bridge.lightGunAuxBUp()
     }
 
     public func lightGunStartDown() {
-        (_bridge as! LightGunResponder).lightGunStartDown?()
+        _bridge.lightGunStartDown()
     }
 
     public func lightGunStartUp() {
-        (_bridge as! LightGunResponder).lightGunStartUp?()
+        _bridge.lightGunStartUp()
     }
 
     public func lightGunSelectDown() {
-        (_bridge as! LightGunResponder).lightGunSelectDown?()
+        _bridge.lightGunSelectDown()
     }
 
     public func lightGunSelectUp() {
-        (_bridge as! LightGunResponder).lightGunSelectUp?()
+        _bridge.lightGunSelectUp()
     }
 
     public func lightGunReloadDown() {
-        (_bridge as! LightGunResponder).lightGunReloadDown?()
+        _bridge.lightGunReloadDown()
     }
 
     public func lightGunReloadUp() {
-        (_bridge as! LightGunResponder).lightGunReloadUp?()
+        _bridge.lightGunReloadUp()
     }
 }
 

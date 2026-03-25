@@ -110,7 +110,7 @@ __attribute__((visibility("default")))
 @end
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Weverything"
+#pragma clang diagnostic ignored "-Wprotocol" // Forward-declared protocol; full definition in PVCoreBridge module.
 /// PSX GunCon light gun support. Conforms to LightGunResponder protocol.
 @interface MednafenGameCoreBridge (LightGun) <LightGunResponder>
 #pragma clang diagnostic pop

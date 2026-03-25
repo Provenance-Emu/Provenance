@@ -140,8 +140,9 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
     } else if (self.systemType == MednaSystemPSX) {
         uint8_t *buf = (uint8_t *)self->inputBuffer[0];
         if (isOffscreen) {
-            gc_write16(buf, 0, -1);
-            gc_write16(buf, 2, -1);
+            // Write a sentinel far outside the visible area so the GunCon misses.
+            gc_write16(buf, 0, INT16_MIN);
+            gc_write16(buf, 2, INT16_MIN);
             buf[4] |= (1 << 3);
         } else {
             int width  = (self->videoWidth  > 0) ? self->videoWidth  : (int)kGunConScreenWidth;
@@ -150,7 +151,7 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
             CGFloat cy = MAX(0.0, MIN(1.0, point.y));
             gc_write16(buf, 0, (int16_t)(cx * (width  - 1)));
             gc_write16(buf, 2, (int16_t)(cy * (height - 1)));
-            buf[4] &= ~(1 << 3);
+            buf[4] &= ~(1 << 3); // clear off-screen bit when on-screen
         }
     }
 }
@@ -174,57 +175,6 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
         flushGunState(self->inputBuffer, player, ssGunState[player]);
     } else if (self.systemType == MednaSystemPSX) {
         ((uint8_t *)self->inputBuffer[0])[4] &= ~(1 << 0);
-    }
-}
-
-#pragma mark - LightGunResponder — start button
-
-- (void)lightGunStartDown {
-    if (self.systemType == MednaSystemSS) {
-        const int player = 0;
-        ssGunState[player].start = YES;
-        flushGunState(self->inputBuffer, player, ssGunState[player]);
-    } else if (self.systemType == MednaSystemPSX) {
-        // GunCon "A" button doubles as start/confirm in some games.
-        [self lightGunAuxADown];
-    }
-}
-
-- (void)lightGunStartUp {
-    if (self.systemType == MednaSystemSS) {
-        const int player = 0;
-        ssGunState[player].start = NO;
-        flushGunState(self->inputBuffer, player, ssGunState[player]);
-    } else if (self.systemType == MednaSystemPSX) {
-        [self lightGunAuxAUp];
-    }
-}
-
-#pragma mark - LightGunResponder — reload / off-screen
-
-// Setting the offscreen bit causes Mednafen's IODevice_Gun::UpdateInput() to
-// activate its 250 ms off-screen timer (osshot_counter) on Saturn, simulating
-// the real-world trick of firing at the ceiling to reload.
-- (void)lightGunReloadDown {
-    if (self.systemType == MednaSystemSS) {
-        const int player = 0;
-        ssGunState[player].offscreen = YES;
-        flushGunState(self->inputBuffer, player, ssGunState[player]);
-    } else if (self.systemType == MednaSystemPSX) {
-        uint8_t *buf = (uint8_t *)self->inputBuffer[0];
-        buf[4] |= (1 << 3);
-        gc_write16(buf, 0, -1);
-        gc_write16(buf, 2, -1);
-    }
-}
-
-- (void)lightGunReloadUp {
-    if (self.systemType == MednaSystemSS) {
-        const int player = 0;
-        ssGunState[player].offscreen = NO;
-        flushGunState(self->inputBuffer, player, ssGunState[player]);
-    } else if (self.systemType == MednaSystemPSX) {
-        ((uint8_t *)self->inputBuffer[0])[4] &= ~(1 << 3);
     }
 }
 
@@ -255,6 +205,58 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
 - (void)lightGunAuxBUp {
     if (self.systemType == MednaSystemPSX) {
         ((uint8_t *)self->inputBuffer[0])[4] &= ~(1 << 2);
+    }
+}
+
+#pragma mark - LightGunResponder — reload / off-screen
+
+// Setting the offscreen bit causes Mednafen's IODevice_Gun::UpdateInput() to
+// activate its 250 ms off-screen timer (osshot_counter) on Saturn, simulating
+// the real-world trick of firing at the ceiling to reload.
+- (void)lightGunReloadDown {
+    if (self.systemType == MednaSystemSS) {
+        const int player = 0;
+        ssGunState[player].offscreen = YES;
+        flushGunState(self->inputBuffer, player, ssGunState[player]);
+    } else if (self.systemType == MednaSystemPSX) {
+        uint8_t *buf = (uint8_t *)self->inputBuffer[0];
+        buf[4] |= (1 << 3);
+        // Also move coordinates off-screen, using a sentinel far outside the visible area.
+        gc_write16(buf, 0, INT16_MIN);
+        gc_write16(buf, 2, INT16_MIN);
+    }
+}
+
+- (void)lightGunReloadUp {
+    if (self.systemType == MednaSystemSS) {
+        const int player = 0;
+        ssGunState[player].offscreen = NO;
+        flushGunState(self->inputBuffer, player, ssGunState[player]);
+    } else if (self.systemType == MednaSystemPSX) {
+        ((uint8_t *)self->inputBuffer[0])[4] &= ~(1 << 3);
+    }
+}
+
+#pragma mark - LightGunResponder — start button
+
+- (void)lightGunStartDown {
+    if (self.systemType == MednaSystemSS) {
+        const int player = 0;
+        ssGunState[player].start = YES;
+        flushGunState(self->inputBuffer, player, ssGunState[player]);
+    } else if (self.systemType == MednaSystemPSX) {
+        // GunCon "A" button doubles as start/confirm in some games.
+        [self lightGunAuxADown];
+    }
+}
+
+- (void)lightGunStartUp {
+    if (self.systemType == MednaSystemSS) {
+        const int player = 0;
+        ssGunState[player].start = NO;
+        flushGunState(self->inputBuffer, player, ssGunState[player]);
+    } else if (self.systemType == MednaSystemPSX) {
+        [self lightGunAuxAUp];
     }
 }
 
