@@ -747,15 +747,16 @@ public final class DirectoryWatcher: ObservableObject {
         }
 
         let isInImportsFolder = url.path.contains("/Imports/")
+        let isInBIOSFolder = watchedDirectory.path.contains("/BIOS/")
 
         if isDirectory.boolValue {
-            // Directories are only forwarded when they're in the Imports folder —
-            // other directories (e.g. system sub-directories) are not ROM sets.
-            guard isInImportsFolder else {
+            let isDOSBox = !isInBIOSFolder && isDOSBoxGameFolder(url)
+            // Allow MAME ROM set folders (any directory in /Imports/) and DOSBox game folders (non-BIOS paths)
+            guard isInImportsFolder || isDOSBox else {
                 Task { await watcherManager.removeWatcher(for: url) }
                 return
             }
-            ILOG("Processing directory in Imports folder as potential MAME ROM set: \(url.lastPathComponent)")
+            ILOG("Processing game folder: \(url.lastPathComponent) (inImports=\(isInImportsFolder), isDOSBox=\(isDOSBox))")
             processNonArchive(at: url)
             return
         }
@@ -784,6 +785,23 @@ public final class DirectoryWatcher: ObservableObject {
 }
 
 public extension DirectoryWatcher {
+
+    /// Check if a URL points to a directory
+    private func isDirectory(_ url: URL) -> Bool {
+        var isDir: ObjCBool = false
+        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue
+    }
+
+    /// Check whether a directory looks like a DOSBox game folder.
+    ///
+    /// Delegates to `GameImporter.isDOSBoxFolder(_:)` so the DOSBox detection
+    /// heuristic stays centralized in one place.
+    func isDOSBoxGameFolder(_ url: URL) -> Bool {
+        guard isDirectory(url) else {
+            return false
+        }
+        return GameImporter.shared.isDOSBoxFolder(url)
+    }
 
     /// Check if a file is an archive
     func isArchive(_ url: URL) -> Bool {
@@ -821,28 +839,34 @@ fileprivate extension DirectoryWatcher {
                 ILOG("Found \(contents.count) items in directory: \(self.watchedDirectory)")
 
                 let isImportsFolder = self.watchedDirectory.path.contains("/Imports/")
+                let isInBIOSFolder = self.watchedDirectory.path.contains("/BIOS/")
 
-                for item in contents where self.isValidFile(item) {
-                    var isDirectory: ObjCBool = false
-                    FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory)
-
-                    if isDirectory.boolValue {
-                        // Directories are only processed when in the Imports folder (potential MAME ROM sets).
-                        // GameImporter will determine if it's a recognised ROM set or ignore it.
+                // Collect files and recognized game folders (MAME folders from /Imports/, DOSBox anywhere except BIOS)
+                var itemsToImport: [URL] = []
+                for item in contents {
+                    var isDir: ObjCBool = false
+                    guard FileManager.default.fileExists(atPath: item.path, isDirectory: &isDir) else { continue }
+                    if isDir.boolValue {
                         if isImportsFolder {
-                            ILOG("Found directory in Imports folder: \(item.lastPathComponent) — queuing for MAME ROM set detection")
-                            await GameImporter.shared.addImports(forPaths: [item])
+                            ILOG("Found directory in Imports folder: \(item.lastPathComponent) — queuing for ROM set detection")
+                            itemsToImport.append(item)
+                        } else if !isInBIOSFolder && isDOSBoxGameFolder(item) {
+                            ILOG("Found DOSBox game folder: \(item.lastPathComponent)")
+                            itemsToImport.append(item)
                         }
-                    } else {
+                    } else if self.isValidFile(item) {
                         let isArchive = Extensions.archiveExtensions.contains(item.pathExtension.lowercased())
                         if isArchive {
-                            ILOG("Processing existing archive: \(item.lastPathComponent) - passing to GameImporter for BIOS detection and extraction")
+                            ILOG("Processing existing archive: \(item.lastPathComponent)")
                         } else {
                             ILOG("Processing existing non-archive file: \(item.lastPathComponent)")
                         }
-                        // Add to import queue - GameImporter will handle BIOS detection and extraction
-                        await GameImporter.shared.addImports(forPaths: [item])
+                        itemsToImport.append(item)
                     }
+                }
+
+                if !itemsToImport.isEmpty {
+                    await GameImporter.shared.addImports(forPaths: itemsToImport)
                 }
 
                 ILOG("Finished processing existing files")
@@ -876,18 +900,17 @@ fileprivate extension DirectoryWatcher {
             }
 
             let isImportsFolder = watchedDirectory.path.contains("/Imports/")
+            let isInBIOSFolder = watchedDirectory.path.contains("/BIOS/")
 
-            // Filter to files, plus directories inside the Imports folder (potential MAME ROM sets).
+            // Filter to files, plus directories that are game folders:
+            // MAME ROM sets (any directory in /Imports/) or DOSBox game folders (non-BIOS paths only).
             var filesOnly = contents.filter { item in
-                guard isValidFile(item) else { return false }
-                var isDirectory: ObjCBool = false
-                FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory)
-                if isDirectory.boolValue {
-                    // Only accept directories from the Imports folder so we don't accidentally
-                    // pick up system sub-directories (e.g. ROMs/com.provenance.mame/).
-                    return isImportsFolder
+                var isDir: ObjCBool = false
+                guard FileManager.default.fileExists(atPath: item.path, isDirectory: &isDir) else { return false }
+                if isDir.boolValue {
+                    return isImportsFolder || (!isInBIOSFolder && isDOSBoxGameFolder(item))
                 }
-                return true
+                return isValidFile(item)
             }
 
             // Merge any buffered events collected during pause
