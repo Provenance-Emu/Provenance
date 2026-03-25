@@ -2489,7 +2489,7 @@ private struct OnScreenControllerSection: View {
                                      in: 0.5...2.0,
                                      step: 0.05,
                                      onEditingChanged: { _ in },
-                                     label: { Text("Size of the on-screen controller overlay.") },
+                                     label: { Text("Scales on-screen controls and adjusts the game viewport so nothing clips or overlaps.") },
                                      minimumValueLabel: { Text("") },
                                      maximumValueLabel: { Text("") },
                                      leadingIcon: {
