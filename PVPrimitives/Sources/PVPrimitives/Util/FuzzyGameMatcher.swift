@@ -45,13 +45,19 @@ public enum FuzzyGameMatcher: Sendable {
     ///
     /// - Complexity: O(m × n) time and O(min(m, n)) space.
     public static func editDistance(_ a: String, _ b: String) -> Int {
-        let aScalars = Array(a.unicodeScalars)
-        let bScalars = Array(b.unicodeScalars)
-        let m = aScalars.count
-        let n = bScalars.count
+        var aScalars = Array(a.unicodeScalars)
+        var bScalars = Array(b.unicodeScalars)
+        var m = aScalars.count
+        var n = bScalars.count
 
         guard m > 0 else { return n }
         guard n > 0 else { return m }
+
+        // Ensure b is the shorter string so the DP rows are O(min(m,n)) space.
+        if n > m {
+            swap(&aScalars, &bScalars)
+            swap(&m, &n)
+        }
 
         // Two-row DP to keep memory at O(min(m,n))
         var prev = Array(0...n)
@@ -90,7 +96,7 @@ public enum FuzzyGameMatcher: Sendable {
         guard a != b else { return 1.0 }
 
         let dist = editDistance(a, b)
-        let maxLen = max(a.count, b.count)
+        let maxLen = max(a.unicodeScalars.count, b.unicodeScalars.count)
         let editRatio = 1.0 - Double(dist) / Double(maxLen)
 
         let aTokens = Set(a.components(separatedBy: .whitespaces).filter { !$0.isEmpty })
@@ -115,7 +121,9 @@ public enum FuzzyGameMatcher: Sendable {
             .sorted { $0.score > $1.score }
     }
 
-    /// Returns the single best-matching candidate, or `nil` if `candidates` is empty.
+    /// Returns the single best-matching candidate, or `nil` if there are no
+    /// candidates with a positive similarity score (including when `candidates`
+    /// is empty).
     public static func bestMatch(query: String, candidates: [String]) -> String? {
         rank(query: query, candidates: candidates).first?.title
     }
