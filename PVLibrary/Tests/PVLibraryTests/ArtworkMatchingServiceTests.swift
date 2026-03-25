@@ -2,8 +2,8 @@
 //  ArtworkMatchingServiceTests.swift
 //  PVLibraryTests
 //
-//  Tests for ArtworkMatchingService — covers the shared fallback-search logic
-//  extracted from ArtworkSearchQueue and BatchArtworkMatchingView.
+//  Tests for ArtworkMatchingService string cleaning and shared-instance wiring.
+//  Exercises cleanedForArtworkSearch() plus basic protocol/shared-instance checks.
 //
 
 import XCTest

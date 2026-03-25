@@ -26,9 +26,9 @@ public protocol ArtworkMatchingServiceProtocol: Sendable {
     /// Returns the first non-empty result set found, or `nil` if all strategies fail.
     func searchWithFallback(
         title: String,
-        filename: String,
+        filename: String?,
         systemID: SystemIdentifier?,
-        md5Hash: String
+        md5Hash: String?
     ) async throws -> [ArtworkMetadata]?
 }
 
@@ -51,15 +51,15 @@ public actor ArtworkMatchingService: ArtworkMatchingServiceProtocol {
 
     public func searchWithFallback(
         title: String,
-        filename: String,
+        filename: String? = nil,
         systemID: SystemIdentifier?,
-        md5Hash: String
+        md5Hash: String? = nil
     ) async throws -> [ArtworkMetadata]? {
 
         let originalTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let cleanedTitle  = title.cleanedForArtworkSearch()
-        let cleanedFile   = filename.cleanedForArtworkSearch()
-        let upperMD5      = md5Hash.uppercased()
+        let cleanedFile   = (filename ?? "").cleanedForArtworkSearch()
+        let upperMD5      = (md5Hash ?? "").uppercased()
 
         // Build search terms in preference order.
         // Deduplicate: drop "cleaned title" when it is identical to the original.
