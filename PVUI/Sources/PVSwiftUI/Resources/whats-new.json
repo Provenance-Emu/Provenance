@@ -566,6 +566,12 @@
         "symbolColor": "blue",
         "title": "DOSBox Folder Import",
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
+      },
+      {
+        "symbolName": "arrow.up.and.down.and.arrow.left.and.right",
+        "symbolColor": "purple",
+        "title": "Drag-to-Reposition Controller Buttons",
+        "subtitle": "Tap \"Edit Layout\" while playing to drag any on-screen button to your preferred position. Tap \"Done\" to save, or \"Reset to Default\" to restore the original layout."
       }
     ]
   },

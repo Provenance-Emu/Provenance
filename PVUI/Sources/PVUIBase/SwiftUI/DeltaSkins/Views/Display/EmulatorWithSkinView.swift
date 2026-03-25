@@ -36,6 +36,12 @@ struct EmulatorWithSkinView: View {
     // Debug mode
     @State private var showDebugOverlay = false
 
+    // Layout edit mode — when true, each button shows a drag handle for repositioning
+    @State private var isEditMode = false
+
+    // Shared button offsets manager
+    @ObservedObject private var buttonOffsets = DeltaSkinButtonOffsets.shared
+
     // Add this to the struct to track rotation changes
     @State private var rotationCount: Int = 0
 
@@ -169,6 +175,28 @@ struct EmulatorWithSkinView: View {
                 if showDebugOverlay {
                     debugOverlayView
                 }
+
+                // Edit Layout toolbar — shown when a skin is active (iOS only; tvOS lacks DragGesture)
+                #if !os(tvOS)
+                if skinLoader.selectedSkin != nil {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            DeltaSkinEditModeToolbar(
+                                isEditMode: $isEditMode,
+                                skinIdentifier: skinLoader.selectedSkin?.identifier ?? "",
+                                buttonOffsets: buttonOffsets,
+                                hasCustomOffsets: buttonOffsets.hasCustomOffsets(
+                                    for: skinLoader.selectedSkin?.identifier ?? ""
+                                )
+                            )
+                            .padding(.top, 12)
+                            .padding(.trailing, 12)
+                        }
+                        Spacer()
+                    }
+                }
+                #endif
 
                 #if DEBUG
                 // Debug toggle button
@@ -595,7 +623,9 @@ struct EmulatorWithSkinView: View {
                     screenAspectRatio: aspectRatio,
                     isInEmulator: true,
                     inputHandler: inputHandler,
-                    core: coreInstance
+                    core: coreInstance,
+                    isEditMode: $isEditMode,
+                    buttonOffsets: buttonOffsets
                 )
             } else {
                 // For other skin types
@@ -608,7 +638,9 @@ struct EmulatorWithSkinView: View {
                     screenAspectRatio: aspectRatio,
                     isInEmulator: true,
                     inputHandler: inputHandler,
-                    core: coreInstance
+                    core: coreInstance,
+                    isEditMode: $isEditMode,
+                    buttonOffsets: buttonOffsets
                 )
             }
         }
