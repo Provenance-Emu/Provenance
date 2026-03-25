@@ -213,6 +213,20 @@ extension PVEmulatorViewController {
             return
         }
 
+        // Metal dual-screen path: for DS cores (melonDS, DeSmuME) with an active
+        // skin, hand the sub-rectangle layout to PVMetalViewController so it can
+        // render both screens in a single GPU pass instead of resizing the view.
+        if canUseMetalDualScreenRendering {
+            if applyMetalDualScreenLayout() {
+                DLOG("🎮 Applied Metal dual-screen layout")
+                return
+            }
+            // Layout computation failed — fall through to the legacy path.
+        } else {
+            // Skin disabled or core not Metal-based; clear any stale layout.
+            clearMetalDualScreenLayout()
+        }
+
         // Ensure GPU view is visible and properly layered before positioning
         ensureGPUViewVisibilityAndZOrder()
 

@@ -283,6 +283,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// (PROVENANCE-18N — async shader compile to unblock launch.)
     private var isPreparingShaders: Bool = false
 
+    // MARK: Dual-screen (DS) Metal rendering
+
+    /// Per-screen layout for systems with two independent screens (e.g. Nintendo DS).
+    /// When non-nil `directRender` routes through the dual-screen sub-rectangle
+    /// blit pipeline instead of the standard fullscreen blit.
+    /// Set by `PVEmulatorViewController` via the skin system.
+    var dualScreenLayout: [DualScreenRenderInfo]? = nil
+
+    /// Compiled render pipeline for the dual-screen sub-rectangle blitter.
+    /// Built lazily the first time it is needed.
+    var dualScreenBlitPipeline: MTLRenderPipelineState? = nil
+
     /// Controls whether VSync is enabled (synchronizes rendering with display refresh rate)
     public var vsyncEnabled: Bool = true
 
@@ -2744,6 +2756,37 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
+        // flipY = true for top-left origin textures (software cores, Vulkan),
+        // false for bottom-left origin (OpenGL via IOSurface).
+        // Vulkan and Metal share top-left origin, but the shader's default UV
+        // mapping assumes bottom-left (OpenGL), so Vulkan frames need flipping.
+        let flipY: Bool = emulatorCore.rendersToVulkan || !emulatorCore.rendersToOpenGL
+
+        // --- Dual-screen path (e.g. Nintendo DS) ---
+        // When a skin has provided per-screen source/destination rects, render each
+        // screen as its own sub-rectangle blit instead of the standard fullscreen pass.
+        if dualScreenLayout != nil {
+            let drawableSize = CGSize(width: drawable.texture.width,
+                                     height: drawable.texture.height)
+            renderDualScreenLayout(encoder:       renderEncoder,
+                                   sourceTexture: inputTexture,
+                                   drawableSize:  drawableSize,
+                                   flipY:         flipY)
+            renderEncoder.endEncoding()
+            commandBuffer.present(drawable)
+            commandBuffer.addCompletedHandler { [weak self] buffer in
+                if let error = buffer.error {
+                    ELOG("GPU error during dual-screen rendering: \(error)")
+                    self?.recoverFromGPUError()
+                }
+            }
+            commandBuffer.commit()
+            previousCommandBuffer = commandBuffer
+            frameCount += 1
+            markFramePresented()
+            return
+        }
+
         /// Local scope so `endEncoding` runs before `present`/`commit` (function-scoped `defer` would run too late and trip Metal debug `encoding in progress`).
         do {
             defer { renderEncoder.endEncoding() }
@@ -2759,12 +2802,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 zfar: 1.0
             )
             renderEncoder.setViewport(viewport)
-
-            // flipY = true for top-left origin textures (software cores, Vulkan),
-            // false for bottom-left origin (OpenGL via IOSurface).
-            // Vulkan and Metal share top-left origin, but the shader's default UV
-            // mapping assumes bottom-left (OpenGL), so Vulkan frames need flipping.
-            let flipY: Bool = emulatorCore.rendersToVulkan || !emulatorCore.rendersToOpenGL
 
             // Use cached flipY buffer if value hasn't changed, otherwise create new one
             let flipYBuffer: MTLBuffer
