@@ -1,0 +1,21 @@
+Provenance 是适用于 iOS 和 tvOS 的强大多系统模拟器。在一个应用中畅玩 60 多个复古游戏系统的经典游戏。
+
+支持的系统
+• Nintendo：NES、SNES、Nintendo 64、Game Boy、GBC、Game Boy Advance
+• Sega：Master System、Mega Drive/Genesis、Game Gear、Saturn、32X、CD
+• Sony：PlayStation
+• Atari：2600、5200、7800、Lynx、Jaguar
+• Neo Geo、Neo Geo Pocket、WonderSwan、PC Engine/TurboGrafx-16
+• 街机（MAME）、DOS 等更多系统！
+
+主要功能
+• 针对 iOS 和 tvOS 优化的原生 SwiftUI 界面
+• 手柄支持：MFi、Xbox、PlayStation 及自定义按键映射
+• 存档状态 — 随时保存和加载游戏进度
+• 金手指（作弊码）支持
+• RetroAchievements 成就集成
+• 游戏库和存档的 iCloud 同步
+• 支持 AirPlay 和 Apple TV
+• 带封面图和元数据的游戏库
+
+导入您自己的 ROM 和 BIOS 文件即可开始游戏。Provenance 是开源且由社区驱动的项目。

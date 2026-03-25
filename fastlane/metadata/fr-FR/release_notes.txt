@@ -1,0 +1,1 @@
+Corrections de bugs et améliorations des performances. Interface mise à jour et meilleure prise en charge des manettes.

@@ -1,2 +1,11 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "QRコードのスキャンやゲームライブラリ機能にカメラが必要です。";
+NSMicrophoneUsageDescription = "音声入力にマイクが必要です。";
+NSPhotoLibraryUsageDescription = "ゲームのカバー画像をインポートするためにフォトライブラリが必要です。";
+NSPhotoLibraryAddUsageDescription = "スクリーンショットをフォトライブラリに保存するために使用します。";
+NSLocalNetworkUsageDescription = "マルチプレイヤー機能やApple TVへのストリーミングにローカルネットワークを使用します。";
+NSBluetoothAlwaysUsageDescription = "コントローラーの接続にBluetoothを使用します。";
+NSBluetoothPeripheralUsageDescription = "コントローラーの接続にBluetoothを使用します。";

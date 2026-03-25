@@ -1,2 +1,11 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "Камера нужна для сканирования QR-кодов и работы с библиотекой игр.";
+NSMicrophoneUsageDescription = "Микрофон нужен для голосового ввода.";
+NSPhotoLibraryUsageDescription = "Доступ к фото нужен для импорта обложек игр.";
+NSPhotoLibraryAddUsageDescription = "Для сохранения скриншотов в фотоальбом.";
+NSLocalNetworkUsageDescription = "Локальная сеть используется для многопользовательских функций и трансляции на Apple TV.";
+NSBluetoothAlwaysUsageDescription = "Bluetooth используется для подключения геймпадов.";
+NSBluetoothPeripheralUsageDescription = "Bluetooth используется для подключения геймпадов.";

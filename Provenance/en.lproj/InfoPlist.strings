@@ -1,2 +1,11 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "Camera is needed for scanning QR codes and game library features.";
+NSMicrophoneUsageDescription = "Microphone is needed for voice input.";
+NSPhotoLibraryUsageDescription = "Photo library is needed to import game cover images.";
+NSPhotoLibraryAddUsageDescription = "To save screenshots to the photo library.";
+NSLocalNetworkUsageDescription = "Local network is used for multiplayer features and streaming to Apple TV.";
+NSBluetoothAlwaysUsageDescription = "Bluetooth is used to connect controllers.";
+NSBluetoothPeripheralUsageDescription = "Bluetooth is used to connect controllers.";

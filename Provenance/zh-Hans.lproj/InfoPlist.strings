@@ -1,2 +1,11 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "需要相机权限以扫描二维码和使用游戏库功能。";
+NSMicrophoneUsageDescription = "需要麦克风权限以使用语音输入。";
+NSPhotoLibraryUsageDescription = "需要相册权限以导入游戏封面图片。";
+NSPhotoLibraryAddUsageDescription = "用于将截图保存到相册。";
+NSLocalNetworkUsageDescription = "本地网络用于多人游戏功能和投屏到 Apple TV。";
+NSBluetoothAlwaysUsageDescription = "蓝牙用于连接游戏手柄。";
+NSBluetoothPeripheralUsageDescription = "蓝牙用于连接游戏手柄。";

@@ -1,2 +1,11 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "Camera is nodig voor het scannen van QR-codes en functies van de gamebibliotheek.";
+NSMicrophoneUsageDescription = "Microfoon is nodig voor spraakinvoer.";
+NSPhotoLibraryUsageDescription = "Fotobibliotheek is nodig voor het importeren van spelcover-afbeeldingen.";
+NSPhotoLibraryAddUsageDescription = "Om schermafbeeldingen op te slaan in de fotobibliotheek.";
+NSLocalNetworkUsageDescription = "Lokaal netwerk wordt gebruikt voor multiplayerfuncties en streamen naar Apple TV.";
+NSBluetoothAlwaysUsageDescription = "Bluetooth wordt gebruikt om controllers te verbinden.";
+NSBluetoothPeripheralUsageDescription = "Bluetooth wordt gebruikt om controllers te verbinden.";

@@ -1,0 +1,21 @@
+Provenance는 iOS 및 tvOS를 위한 강력한 멀티 시스템 에뮬레이터입니다. 60개 이상의 레트로 게임 시스템에서 좋아하는 클래식 게임을 하나의 앱으로 즐기세요.
+
+지원 시스템
+• Nintendo: NES, SNES, 닌텐도 64, 게임보이, GBC, 게임보이 어드밴스
+• Sega: 마스터 시스템, 메가 드라이브/Genesis, 게임 기어, 새턴, 32X, CD
+• Sony: 플레이스테이션
+• Atari: 2600, 5200, 7800, Lynx, Jaguar
+• Neo Geo, Neo Geo Pocket, 원더스완, PC 엔진/TurboGrafx-16
+• 아케이드 (MAME), DOS 등
+
+주요 기능
+• iOS 및 tvOS에 최적화된 네이티브 SwiftUI 인터페이스
+• 컨트롤러 지원: MFi, Xbox, 플레이스테이션, 사용자 정의 매핑
+• 저장 상태 — 언제든지 진행 상황 저장 및 불러오기
+• 치트 코드 지원
+• RetroAchievements 연동
+• 게임 라이브러리 및 저장 상태의 iCloud 동기화
+• AirPlay 및 Apple TV 지원
+• 아트워크 및 메타데이터가 포함된 게임 라이브러리
+
+나만의 ROM 및 BIOS 파일을 가져와 시작하세요. Provenance는 오픈 소스이며 커뮤니티가 주도합니다.
