@@ -91,3 +91,9 @@ public protocol MonoAudioEngine: AudioEngineProtocol {
     func setMono(_ isMono: Bool)
     func toggleMonoOutput()
 }
+
+/// Optional protocol adopted by audio engines that support AU effects chains.
+public protocol AUFilterableAudioEngine: AudioEngineProtocol {
+    /// Rebuilds the effects chain from the current `Defaults[.auEffectsChain]` setting.
+    func reloadEffectsChainIfRunning()
+}
