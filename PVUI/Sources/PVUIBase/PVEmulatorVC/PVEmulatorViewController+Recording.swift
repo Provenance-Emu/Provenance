@@ -135,10 +135,9 @@ extension PVEmulatorViewController {
                 notifyOSDRecordingStateChanged()
                 ILOG("[Recording] Recording stopped and preview presented")
                 #elseif os(tvOS)
-                // Resume immediately — no preview sheet on tvOS.
-                if core.isOn { core.setPauseEmulation(false) }
+                // On tvOS, defer resuming emulation until the "Recording Saved" alert is dismissed.
                 showRecordingStoppedAlert()
-                ILOG("[Recording] Recording stopped on tvOS")
+                ILOG("[Recording] Recording stopped on tvOS, alert presented")
                 #endif
             } catch {
                 #if os(iOS)

@@ -7,8 +7,8 @@
 
 import SwiftUI
 import Defaults
-import GameController
 import PVSettings
+import PVUIBase
 
 struct RecordingSettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -25,6 +25,10 @@ struct RecordingSettingsView: View {
     @Default(.cameraOverlayShape) var cameraOverlayShape
 #endif
 
+    #if os(tvOS)
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+    #endif
+
     private static let clipDurationOptions: [(label: String, value: Int)] = [
         ("15 seconds", 15),
         ("30 seconds", 30),
@@ -34,7 +38,7 @@ struct RecordingSettingsView: View {
     var body: some View {
         List {
             #if os(tvOS)
-            if GCController.controllers().isEmpty {
+            if !gamepadManager.isControllerConnected {
                 SwiftUI.Section {
                     SettingsRow(
                         title: "Controller Required",

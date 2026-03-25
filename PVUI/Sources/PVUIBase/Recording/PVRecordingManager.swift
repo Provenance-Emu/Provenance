@@ -105,8 +105,8 @@ import PVSettings
         let recorder = RPScreenRecorder.shared()
         recorder.isMicrophoneEnabled = Defaults[.recordingMicEnabled]
         #if os(iOS)
-        // Camera PIP: enable before startRecording so ReplayKit provides
-        // cameraPreviewLayer immediately after the call completes.
+        // Camera overlay is only available on iOS (tvOS has no front camera).
+        // Enable camera before startRecording so ReplayKit provides cameraPreviewLayer on success.
         recorder.isCameraEnabled = Defaults[.recordingCameraEnabled]
         #endif
 
