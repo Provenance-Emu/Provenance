@@ -435,6 +435,14 @@ struct SystemSection: View {
                         Defaults.setControllerLayoutVariant(newVariantID, forSystemID: system.identifier)
                     }
                 }
+                .task(id: storedVariantID) {
+                    // If the persisted variant ID is stale (no longer a valid variant),
+                    // remove it so Defaults stays in sync with the displayed default.
+                    if let stale = storedVariantID,
+                       !variants.contains(where: { $0.id == stale }) {
+                        Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
+                    }
+                }
             }
         }
         .padding(16)
