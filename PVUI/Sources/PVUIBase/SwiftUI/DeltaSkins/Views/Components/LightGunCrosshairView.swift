@@ -153,6 +153,7 @@ public struct LightGunCrosshairView: View {
             }
             .onReceive(
                 NotificationCenter.default.publisher(for: .lightGunCursorDidMove)
+                    .receive(on: RunLoop.main)
             ) { note in
                 let info = note.userInfo
                 if let nx = info?[LightGunCursorNotification.positionXKey] as? NSNumber,

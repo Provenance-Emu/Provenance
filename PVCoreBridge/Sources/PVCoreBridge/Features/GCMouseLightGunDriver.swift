@@ -290,14 +290,22 @@ import UIKit
         responder?.lightGunMovedToPoint(point, isOffscreen: offscreen)
         // Broadcast to the UI layer so the crosshair overlay can follow the cursor
         // without needing a direct reference to the driver.
-        NotificationCenter.default.post(
-            name: .lightGunCursorDidMove,
-            object: nil,
-            userInfo: [
-                LightGunCursorNotification.positionXKey: NSNumber(value: Double(point.x)),
-                LightGunCursorNotification.positionYKey: NSNumber(value: Double(point.y)),
-                LightGunCursorNotification.isOffscreenKey: offscreen
-            ]
-        )
+        let userInfo: [String: Any] = [
+            LightGunCursorNotification.positionXKey: NSNumber(value: Double(point.x)),
+            LightGunCursorNotification.positionYKey: NSNumber(value: Double(point.y)),
+            LightGunCursorNotification.isOffscreenKey: offscreen
+        ]
+        let postNotification = {
+            NotificationCenter.default.post(
+                name: .lightGunCursorDidMove,
+                object: nil,
+                userInfo: userInfo
+            )
+        }
+        if Thread.isMainThread {
+            postNotification()
+        } else {
+            DispatchQueue.main.async(execute: postNotification)
+        }
     }
 }
