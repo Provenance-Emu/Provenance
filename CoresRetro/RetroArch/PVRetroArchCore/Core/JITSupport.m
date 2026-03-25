@@ -9,7 +9,6 @@
 //  
 
 #import <Foundation/Foundation.h>
-#import <Security/Security.h>
 
 #import "JITSupport.h"
 
@@ -95,49 +94,24 @@ bool jb_enable_ptrace_hack(void) {
     return true;
 }
 
+// Delegate to PVJIT's DOLJitManager for authoritative JIT acquisition state.
+// DOLJitManager.attemptToAcquireJitOnStartup() runs at app launch and handles
+// all platform-specific detection (iOS 26 JITAuthorizer/native entitlement,
+// TrollStore, jailbreak daemons, debugger attachment, etc.).
+// Declared weak so that if PVJIT is not linked the call simply returns false
+// and the fallback detection below takes over.
+extern bool PVJITManagerIsAcquired(void) __attribute__((weak));
+
 bool jit_available(void)
 {
-   // iOS 26+ native JIT: JITAuthorizer is a private class introduced in iOS 26
-   // that authorises JIT when the app carries the
-   // com.apple.developer.kernel.allow-jit entitlement.  Its presence signals
-   // that the OS will honour MAP_JIT allocations without a debugger or
-   // jailbreak being required.
-   // We also verify the running process actually holds the entitlement via
-   // SecTaskCopyValueForEntitlement to avoid a false-positive on builds that
-   // lack the required code-sign entitlement.
-   if (NSClassFromString(@"JITAuthorizer") != nil) {
-      SecTaskRef task = SecTaskCreateFromSelf(NULL);
-      if (task != NULL) {
-         CFTypeRef value = SecTaskCopyValueForEntitlement(task, CFSTR("com.apple.developer.kernel.allow-jit"), NULL);
-         CFRelease(task);
-         if (value != NULL) {
-            CFRelease(value);
-            return true;
-         }
-      }
-   }
-
-   // TrollStore grants unrestricted entitlements (including get-task-allow)
-   // at install time and leaves identifiable file-system markers on the device.
-   static bool hasTrollStore = false;
-   static dispatch_once_t trollOnce = 0;
-   dispatch_once(&trollOnce, ^{
-      const char *markers[] = {
-         "/var/mobile/Library/Application Support/TrollStore",
-         "/usr/lib/TrollStore",
-         "/var/containers/Bundle/TrollStore",
-      };
-      for (size_t i = 0; i < sizeof(markers) / sizeof(markers[0]); i++)
-      {
-         if ([[NSFileManager defaultManager] fileExistsAtPath:@(markers[i])])
-         {
-            hasTrollStore = true;
-            break;
-         }
-      }
-   });
-   if (hasTrollStore)
+   // Primary path: ask DOLJitManager (PVJIT) whether JIT was already acquired.
+   // This avoids duplicating the iOS 26 JITAuthorizer / TrollStore / debugger
+   // checks that DOLJitManager already performs at startup.
+   if (PVJITManagerIsAcquired != NULL && PVJITManagerIsAcquired())
       return true;
+
+   // Fallback: DOLJitManager not linked or hasn't run yet.
+   // Check legacy jailbreak markers + CS_DEBUGGED directly.
 
    static bool canOpenApps = false;
    static dispatch_once_t appsOnce = 0;

@@ -494,3 +494,24 @@ public final class DOLJitManager {
         return true
     }
 }
+
+// MARK: - C-callable bridge for RetroArch core
+
+/// C-callable wrapper around `DOLJitManager.acquired` for use by the RetroArch
+/// bridge (`jit_available()` in `JITSupport.m`).
+///
+/// The RetroArch core can't import Swift modules directly, so we expose this as
+/// a plain C symbol via `@_cdecl`.  The caller should declare it as a weak
+/// extern so the call gracefully no-ops when PVJIT isn't linked:
+///
+/// ```objc
+/// extern bool PVJITManagerIsAcquired(void) __attribute__((weak));
+/// ```
+///
+/// By the time RetroArch responds to `RETRO_ENVIRONMENT_GET_JIT_CAPABLE`,
+/// `DOLJitManager.attemptToAcquireJitOnStartup()` has already run, so
+/// `acquired` reflects the true acquisition state without re-running detection.
+@_cdecl("PVJITManagerIsAcquired")
+public func PVJITManagerIsAcquired() -> Bool {
+    return DOLJitManager.acquired
+}
