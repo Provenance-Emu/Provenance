@@ -17,6 +17,7 @@ import Foundation
 import GameController
 import PVLogging
 import PVPrimitives
+import PVSettings
 
 /// Manages light bar color output for DualSense and DualShock 4 controllers.
 /// One shared instance applies per-system colors to all registered controllers.
@@ -88,14 +89,6 @@ public final class ControllerLightBarManager {
         public static let `default`         = LightBarColor(red: 1.00, green: 1.00, blue: 1.00)
         /// Off — black, zero emission.
         public static let off               = LightBarColor(red: 0.00, green: 0.00, blue: 0.00)
-    }
-
-    // MARK: - UserDefaults Key Constants
-    // Mirror the key strings from PVSettingsModel to avoid raw string literals.
-    // Keep in sync with Defaults.Keys.controllerLightBarEnabled / controllerLightBarSystemColors.
-    private enum UDKey {
-        static let lightBarEnabled     = "controllerLightBarEnabled"
-        static let lightBarSystemColors = "controllerLightBarSystemColors"
     }
 
     // MARK: - Private State
@@ -198,8 +191,8 @@ public final class ControllerLightBarManager {
     /// Priority: user override → built-in default.
     public func effectiveColor(forSystemIdentifier sysId: String) -> LightBarColor {
         // User override: stored as hex string keyed by system identifier.
-        if let overrides = UserDefaults.standard.dictionary(forKey: UDKey.lightBarSystemColors) as? [String: String],
-           let hexValue = overrides[sysId],
+        let overrides = Defaults[.controllerLightBarSystemColors]
+        if let hexValue = overrides[sysId],
            let color = LightBarColor(hex: hexValue) {
             return color
         }
@@ -207,7 +200,7 @@ public final class ControllerLightBarManager {
     }
 
     private func isLightBarEnabled() -> Bool {
-        UserDefaults.standard.object(forKey: UDKey.lightBarEnabled) as? Bool ?? true
+        Defaults[.controllerLightBarEnabled]
     }
 
     // MARK: - Default System Color Map

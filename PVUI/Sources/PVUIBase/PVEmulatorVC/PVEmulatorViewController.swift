@@ -2951,7 +2951,13 @@ extension PVEmulatorViewController {
     }
 
     /// Toggle the game audio mute state in response to the DualSense microphone button.
-    @MainActor @objc func handleMicButtonToggleMute(_ notification: Notification) {
+    /// `@MainActor` is a compile-time hint only for `@objc` selectors, so we hop
+    /// to the main thread explicitly in case the notification ever arrives off-main.
+    @objc func handleMicButtonToggleMute(_ notification: Notification) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.handleMicButtonToggleMute(notification) }
+            return
+        }
         isAudioMuted.toggle()
         if isAudioMuted {
             gameAudio.setVolume(0)
