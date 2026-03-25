@@ -1,6 +1,7 @@
 import GameController
 import Foundation
 import PVLogging
+import PVSettings
 
 /// Identifies which button on a controller
 public enum ButtonIdentifier: String, Codable, CaseIterable {
@@ -167,7 +168,7 @@ public final class PVRemappableController: NSObject {
     }
 
     private func handleMicButtonPressed() {
-        let action = UserDefaults.standard.string(forKey: "dualSenseMicButtonAction") ?? "muteAudio"
+        let action = Defaults[.dualSenseMicButtonAction]
         switch action {
         case "muteAudio":
             NotificationCenter.default.post(name: .PVControllerMicButtonToggleMute, object: wrappedController)

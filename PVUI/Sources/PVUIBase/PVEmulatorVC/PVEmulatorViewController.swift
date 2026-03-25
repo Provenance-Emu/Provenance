@@ -2890,7 +2890,9 @@ extension PVEmulatorViewController {
 
     fileprivate func startAudio() throws {
         //        gameAudio.outputDeviceID = 0
-        gameAudio.setVolume(Defaults[.volume])
+        // Respect the mic-button mute state so that (re)starting audio
+        // doesn't silently undo the user's mute preference.
+        gameAudio.setVolume(isAudioMuted ? 0 : Defaults[.volume])
         do {
             try gameAudio.startAudio()
         } catch {
@@ -2949,7 +2951,7 @@ extension PVEmulatorViewController {
     }
 
     /// Toggle the game audio mute state in response to the DualSense microphone button.
-    @objc func handleMicButtonToggleMute(_ notification: Notification) {
+    @MainActor @objc func handleMicButtonToggleMute(_ notification: Notification) {
         isAudioMuted.toggle()
         if isAudioMuted {
             gameAudio.setVolume(0)

@@ -90,6 +90,14 @@ public final class ControllerLightBarManager {
         public static let off               = LightBarColor(red: 0.00, green: 0.00, blue: 0.00)
     }
 
+    // MARK: - UserDefaults Key Constants
+    // Mirror the key strings from PVSettingsModel to avoid raw string literals.
+    // Keep in sync with Defaults.Keys.controllerLightBarEnabled / controllerLightBarSystemColors.
+    private enum UDKey {
+        static let lightBarEnabled     = "controllerLightBarEnabled"
+        static let lightBarSystemColors = "controllerLightBarSystemColors"
+    }
+
     // MARK: - Private State
 
     /// Maps 0-based player index → GCController.
@@ -111,8 +119,7 @@ public final class ControllerLightBarManager {
 
         let connectObs = nc.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] note in
             guard let gc = note.object as? GCController else { return }
-            nonisolated(unsafe) let controller = gc
-            MainActor.assumeIsolated { self?.controllerConnected(controller) }
+            Task { @MainActor in self?.controllerConnected(gc) }
         }
         notificationObservers.append(connectObs)
 
@@ -145,12 +152,13 @@ public final class ControllerLightBarManager {
         reapplyCurrentSystemColor()
     }
 
-    /// Reset the light bar to the default color and clear the current system.
+    /// Reset the light bar to the default (or off, if disabled) and clear the current system.
     /// Call this when an emulation session ends.
     public func resetSystemColor() {
         currentSystemIdentifier = nil
+        let enabled = isLightBarEnabled()
         for controller in playerControllers.values {
-            setLightBar(of: controller, to: .default)
+            setLightBar(of: controller, to: enabled ? .default : .off)
         }
     }
 
@@ -190,7 +198,7 @@ public final class ControllerLightBarManager {
     /// Priority: user override → built-in default.
     public func effectiveColor(forSystemIdentifier sysId: String) -> LightBarColor {
         // User override: stored as hex string keyed by system identifier.
-        if let overrides = UserDefaults.standard.dictionary(forKey: "controllerLightBarSystemColors") as? [String: String],
+        if let overrides = UserDefaults.standard.dictionary(forKey: UDKey.lightBarSystemColors) as? [String: String],
            let hexValue = overrides[sysId],
            let color = LightBarColor(hex: hexValue) {
             return color
@@ -199,7 +207,7 @@ public final class ControllerLightBarManager {
     }
 
     private func isLightBarEnabled() -> Bool {
-        UserDefaults.standard.object(forKey: "controllerLightBarEnabled") as? Bool ?? true
+        UserDefaults.standard.object(forKey: UDKey.lightBarEnabled) as? Bool ?? true
     }
 
     // MARK: - Default System Color Map
