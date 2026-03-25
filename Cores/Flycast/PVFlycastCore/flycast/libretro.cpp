@@ -1132,10 +1132,11 @@ void retro_run()
 
 	// 30fps detection: accumulate dupe-frame counts over a 120-run window and, when
 	// ≥45% of frames are dupes, report 30fps to the frontend (interval=2).
-	// Only run while interval==1: once upgraded to 30fps the frontend calls retro_run()
-	// at 30fps so dupes drop to ~0%, which would immediately re-trigger the <20% branch
-	// and cause a flip-flop.  Reset happens in retro_unload_game() so each new game
-	// re-runs detection from scratch.  Based on upstream flyinghead/flycast commit fb69bd8.
+	// Detection is intentionally one-way (1→2 only, no downgrade path).  Once upgraded,
+	// the frontend drives retro_run() at 30fps so the dupe ratio collapses to ~0%;
+	// a downgrade path would immediately flip back and cause oscillation.
+	// Reset happens in retro_unload_game() so each new game re-runs detection from scratch.
+	// Based on upstream flyinghead/flycast commit fb69bd8.
 	// Use first_attempt_dupe for accurate counting in threaded mode (avoids retry masking).
 	if (libretro_detect_vsync_swap_interval && libretro_vsync_swap_interval == 1) {
 		swapDetectFrames++;
