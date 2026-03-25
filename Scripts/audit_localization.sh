@@ -178,12 +178,14 @@ echo ""
 echo "=== 5. Gap analysis ==="
 echo ""
 
-# Extract keys used in NSLocalizedString calls (Swift and ObjC forms)
+# Extract keys used in NSLocalizedString calls (Swift and ObjC forms).
+# The pattern handles optional whitespace between '(' and the string literal
+# so both NSLocalizedString("key" and NSLocalizedString( @"key" are matched.
 grep -rh 'NSLocalizedString(' \
     --include="*.swift" --include="*.m" --include="*.mm" \
     "${PV_DIRS[@]}" 2>/dev/null \
-    | grep -oE 'NSLocalizedString\(@?"[^"]+' \
-    | sed 's/NSLocalizedString(@\{0,1\}"//g' \
+    | grep -oE 'NSLocalizedString\([[:space:]]*@?"[^"]+' \
+    | sed 's/NSLocalizedString([[:space:]]*@\{0,1\}"//g' \
     | sort -u \
     > "$OUT_DIR/used_nls_keys.txt" || true
 
@@ -253,11 +255,15 @@ printf "  %-45s  %6d\n" "Unique keys in code (NLS + Text)" "$ALL_UNIQUE_KEYS"
 printf "  %-45s  %6d\n" "Keys missing from EN strings files" "$MISSING_KEYS"
 echo ""
 
-TOTAL_STRING_CALLS=$((SWIFTUI_TEXT_LINES + NLS_LINES))
-if [ "$TOTAL_STRING_CALLS" -gt 0 ]; then
-    coverage=$(( NLS_LINES * 100 / TOTAL_STRING_CALLS ))
-    printf "  Estimated i18n wrapping coverage:          ~%d%%\n" "$coverage"
-    echo "  (NSLocalizedString / LocalizedStringKey calls vs. total Text+NLS calls)"
+# Both Text("…") (LocalizedStringKey) and NSLocalizedString are localized
+# mechanisms, so comparing them to each other is not meaningful. Instead,
+# report what fraction of all unique code keys have a matching .strings entry.
+if [ "$ALL_UNIQUE_KEYS" -gt 0 ]; then
+    covered_keys=$(( ALL_UNIQUE_KEYS - MISSING_KEYS ))
+    coverage=$(( covered_keys * 100 / ALL_UNIQUE_KEYS ))
+    printf "  Keys with EN .strings coverage:            ~%d%%  (%d / %d)\n" \
+        "$coverage" "$covered_keys" "$ALL_UNIQUE_KEYS"
+    echo "  (unique keys referenced in code that have a matching entry in .strings files)"
 fi
 
 echo ""
