@@ -18,7 +18,9 @@
 ///
 /// Offscreen vs. onscreen
 /// ----------------------
-/// A touch that falls outside the game viewport is treated as an offscreen shot.
+/// Touches outside the game viewport pass through to the underlying view (hitTest
+/// returns nil for those points). The isOffscreen() helper is used for touches
+/// already within the view's bounds to distinguish intentional off-screen shots.
 /// Two-finger tap always sends an explicit reload regardless of position.
 ///
 /// Gestures only activate when `lightGunResponder.gameSupportsLightGun == true`.
@@ -45,7 +47,7 @@ public final class LightGunTouchView: UIView {
     /// (e.g. PSX Guncon off-screen reload).
     public weak var gameViewRef: UIView?
 
-    /// Explicit game-screen rect in the touch view's own coordinate space.
+    /// Explicit game-screen rect in the touch view's parent (superview) coordinate space.
     ///
     /// Used when `gameViewRef` has not yet been laid out. Set this whenever the
     /// authoritative game-display rect is known (e.g. after GPU view positioning).
@@ -61,6 +63,8 @@ public final class LightGunTouchView: UIView {
     private var touchBeganTime: TimeInterval = 0
     /// True once the finger travels beyond `tapMovementThreshold`.
     private var touchHasDragged = false
+    /// Pending single-tap trigger work item; cancelled when a double-tap is recognized.
+    private var pendingSingleTapTrigger: DispatchWorkItem?
 
     /// Minimum movement (points) that promotes a touch to a drag, suppressing tap.
     private let tapMovementThreshold: CGFloat = 8
@@ -191,19 +195,26 @@ public final class LightGunTouchView: UIView {
 
         let duration = touch.timestamp - touchBeganTime
 
-        // Fire trigger only when the finger did not drag and the touch was short.
-        // Skip if the double-tap recognizer already consumed this as its first tap
-        // (it sets touchHasDragged via handleDoubleTap's suppression path).
+        // Schedule trigger only when the finger did not drag and the touch was short.
+        // Use a delayed work item so handleDoubleTap can cancel it if a double-tap
+        // is recognised after this touchesEnded fires.
         if !touchHasDragged && duration < tapMaxDuration {
             let normalised = normalisedPoint(for: touch.location(in: self))
             let offscreen = isOffscreen(touch.location(in: self))
             lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
-            lightGunResponder?.lightGunTriggerDown()
-            lightGunResponder?.lightGunTriggerUp()
+            let workItem = DispatchWorkItem { [weak self] in
+                self?.pendingSingleTapTrigger = nil
+                self?.lightGunResponder?.lightGunTriggerDown()
+                self?.lightGunResponder?.lightGunTriggerUp()
+            }
+            pendingSingleTapTrigger = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: workItem)
         }
     }
 
     public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        pendingSingleTapTrigger?.cancel()
+        pendingSingleTapTrigger = nil
         trackedTouch = nil
         touchBeganLocation = nil
         touchHasDragged = false
@@ -221,7 +232,9 @@ public final class LightGunTouchView: UIView {
     /// Double tap (single finger) → start button (Guncon A, Super Scope start, Menacer start)
     @objc private func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
         guard gesture.state == .ended else { return }
-        // Suppress the single-tap trigger that would fire on finger-up.
+        // Cancel the delayed single-tap trigger scheduled in touchesEnded.
+        pendingSingleTapTrigger?.cancel()
+        pendingSingleTapTrigger = nil
         touchHasDragged = true
         lightGunResponder?.lightGunStartDown?()
         lightGunResponder?.lightGunStartUp?()

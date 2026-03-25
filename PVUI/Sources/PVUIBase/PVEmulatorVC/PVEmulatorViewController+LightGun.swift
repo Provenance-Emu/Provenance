@@ -12,11 +12,6 @@
 ///   - Long press (≥ 0.5 s)       → auxA button
 ///   - Double tap                 → start button
 ///
-/// On tvOS, Siri Remote interaction is mapped separately via `pressesBegan`:
-///   - Play/Pause press           → trigger
-///   - Menu press                 → start button
-///   - Touch-surface swipe        → reload (send off-screen shot)
-///
 
 #if canImport(UIKit) && !os(tvOS)
 import UIKit
