@@ -129,6 +129,44 @@ struct RecordingDefaultsTests {
         Defaults[.recordingCameraPosition] = .topLeft
         #expect(Defaults[.recordingCameraPosition] == .topLeft)
     }
+
+    @Test("cameraOverlaySize default is medium")
+    func cameraOverlaySizeDefault() {
+        Defaults.reset(.cameraOverlaySize)
+        #expect(Defaults[.cameraOverlaySize] == .medium)
+    }
+
+    @Test("cameraOverlaySize key name is correct")
+    func cameraOverlaySizeKeyName() {
+        #expect(Defaults.Keys.cameraOverlaySize.name == "cameraOverlaySize")
+    }
+
+    @Test("cameraOverlaySize can be changed and reset")
+    func cameraOverlaySizeMutable() {
+        Defaults.reset(.cameraOverlaySize)
+        defer { Defaults.reset(.cameraOverlaySize) }
+        Defaults[.cameraOverlaySize] = .large
+        #expect(Defaults[.cameraOverlaySize] == .large)
+    }
+
+    @Test("cameraOverlayShape default is circle")
+    func cameraOverlayShapeDefault() {
+        Defaults.reset(.cameraOverlayShape)
+        #expect(Defaults[.cameraOverlayShape] == .circle)
+    }
+
+    @Test("cameraOverlayShape key name is correct")
+    func cameraOverlayShapeKeyName() {
+        #expect(Defaults.Keys.cameraOverlayShape.name == "cameraOverlayShape")
+    }
+
+    @Test("cameraOverlayShape can be changed and reset")
+    func cameraOverlayShapeMutable() {
+        Defaults.reset(.cameraOverlayShape)
+        defer { Defaults.reset(.cameraOverlayShape) }
+        Defaults[.cameraOverlayShape] = .roundedRect
+        #expect(Defaults[.cameraOverlayShape] == .roundedRect)
+    }
 }
 
 // MARK: - CameraPosition Tests
@@ -176,6 +214,84 @@ struct CameraPositionTests {
     func symbolNamesNonEmpty() {
         for position in CameraPosition.allCases {
             #expect(!position.symbolName.isEmpty)
+        }
+    }
+}
+
+// MARK: - CameraOverlaySize Tests
+
+@Suite("CameraOverlaySize")
+struct CameraOverlaySizeTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(CameraOverlaySize.allCases.count == 3)
+    }
+
+    @Test("RawValues are correct")
+    func rawValues() {
+        #expect(CameraOverlaySize.small.rawValue == "small")
+        #expect(CameraOverlaySize.medium.rawValue == "medium")
+        #expect(CameraOverlaySize.large.rawValue == "large")
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for size in CameraOverlaySize.allCases {
+            let reconstructed = CameraOverlaySize(rawValue: size.rawValue)
+            #expect(reconstructed == size)
+        }
+    }
+
+    @Test("Points match expected values")
+    func pointValues() {
+        #expect(CameraOverlaySize.small.points == 80)
+        #expect(CameraOverlaySize.medium.points == 120)
+        #expect(CameraOverlaySize.large.points == 160)
+    }
+
+    @Test("Points values are ordered small < medium < large")
+    func pointsOrdered() {
+        #expect(CameraOverlaySize.small.points < CameraOverlaySize.medium.points)
+        #expect(CameraOverlaySize.medium.points < CameraOverlaySize.large.points)
+    }
+
+    @Test("DisplayNames are non-empty")
+    func displayNamesNonEmpty() {
+        for size in CameraOverlaySize.allCases {
+            #expect(!size.displayName.isEmpty)
+        }
+    }
+}
+
+// MARK: - CameraOverlayShape Tests
+
+@Suite("CameraOverlayShape")
+struct CameraOverlayShapeTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(CameraOverlayShape.allCases.count == 2)
+    }
+
+    @Test("RawValues are correct")
+    func rawValues() {
+        #expect(CameraOverlayShape.circle.rawValue == "circle")
+        #expect(CameraOverlayShape.roundedRect.rawValue == "roundedRect")
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for shape in CameraOverlayShape.allCases {
+            let reconstructed = CameraOverlayShape(rawValue: shape.rawValue)
+            #expect(reconstructed == shape)
+        }
+    }
+
+    @Test("DisplayNames are non-empty")
+    func displayNamesNonEmpty() {
+        for shape in CameraOverlayShape.allCases {
+            #expect(!shape.displayName.isEmpty)
         }
     }
 }

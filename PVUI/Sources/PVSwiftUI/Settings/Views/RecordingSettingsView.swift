@@ -20,6 +20,8 @@ struct RecordingSettingsView: View {
 #if os(iOS)
     @Default(.recordingCameraEnabled) var recordingCameraEnabled
     @Default(.recordingCameraPosition) var recordingCameraPosition
+    @Default(.cameraOverlaySize) var cameraOverlaySize
+    @Default(.cameraOverlayShape) var cameraOverlayShape
 #endif
 
     private static let clipDurationOptions: [(label: String, value: Int)] = [
@@ -41,14 +43,15 @@ struct RecordingSettingsView: View {
             }
 
 #if os(iOS)
-            SwiftUI.Section(header: Text("Camera")) {
+            SwiftUI.Section(header: Text("Camera Overlay")) {
                 ThemedToggle(isOn: $recordingCameraEnabled) {
                     SettingsRow(
-                        title: "Camera",
-                        subtitle: "Include front camera in recordings (picture-in-picture).",
+                        title: "Face-Cam Overlay",
+                        subtitle: "Show a front-camera picture-in-picture during recordings.",
                         icon: .sfSymbol("camera.fill")
                     )
                 }
+
                 if recordingCameraEnabled {
                     Picker(selection: $recordingCameraPosition) {
                         ForEach(CameraPosition.allCases, id: \.self) { position in
@@ -57,12 +60,36 @@ struct RecordingSettingsView: View {
                         }
                     } label: {
                         SettingsRow(
-                            title: "Camera Position",
+                            title: "Position",
                             subtitle: "Corner where the camera preview appears.",
                             icon: .sfSymbol("pip")
                         )
                     }
                     .pickerStyle(.automatic)
+
+                    Picker(selection: $cameraOverlaySize) {
+                        ForEach(CameraOverlaySize.allCases, id: \.self) { size in
+                            Text(size.displayName).tag(size)
+                        }
+                    } label: {
+                        SettingsRow(
+                            title: "Size",
+                            subtitle: "Diameter of the overlay.",
+                            icon: .sfSymbol("magnifyingglass")
+                        )
+                    }
+
+                    Picker(selection: $cameraOverlayShape) {
+                        ForEach(CameraOverlayShape.allCases, id: \.self) { shape in
+                            Text(shape.displayName).tag(shape)
+                        }
+                    } label: {
+                        SettingsRow(
+                            title: "Shape",
+                            subtitle: "Mask shape for the overlay.",
+                            icon: .sfSymbol("circle.square")
+                        )
+                    }
                 }
             }
 #endif
@@ -111,11 +138,21 @@ struct RecordingSettingsView: View {
                 .pickerStyle(.automatic)
             }
 
-            SwiftUI.Section(header: Text("Live Streaming")) {
+            SwiftUI.Section(
+                header: Text("Live Streaming"),
+                footer: Text("Direct RTMP streaming to Twitch, YouTube, and Kick is planned. See the streaming settings when available.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            ) {
                 SettingsRow(
-                    title: "About Live Streaming",
-                    subtitle: "Live streaming support via ReplayKit is planned for a future release.",
-                    icon: .sfSymbol("info.circle")
+                    title: "Broadcast via App Extensions",
+                    subtitle: "Use 'Go Live' in the pause menu to stream via installed broadcast apps (e.g. Twitch).",
+                    icon: .sfSymbol("dot.radiowaves.left.and.right")
+                )
+                SettingsRow(
+                    title: "Direct RTMP Streaming",
+                    subtitle: "Coming soon — stream directly to Twitch, YouTube, or Kick without a third-party app.",
+                    icon: .sfSymbol("antenna.radiowaves.left.and.right")
                 )
             }
         }
