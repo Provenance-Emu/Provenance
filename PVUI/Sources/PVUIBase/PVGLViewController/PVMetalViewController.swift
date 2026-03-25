@@ -1844,8 +1844,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         /// Ensure OpenGL commands are flushed before using the shared texture
         glFlush()
 
-        // Capture weak reference before entering the lock scope so that the
-        // guard at the end can release early without holding the lock.
+        // Capture a strong reference before entering the lock scope.
         guard let emulatorCore = emulatorCore else {
             ELOG("Emulator core is nil")
             return
@@ -1944,12 +1943,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return true
         }
 
-        /// Signal that the front buffer is ready only when the blit/copy succeeded
-        if copySucceeded {
-            emulatorCore.frontBufferCondition.withLock {
+        /// Always signal the front buffer condition so the render thread is never
+        /// left blocked indefinitely. Only mark the buffer as ready when the
+        /// blit/copy actually succeeded.
+        emulatorCore.frontBufferCondition.withLock {
+            if copySucceeded {
                 emulatorCore.isFrontBufferReady = true
-                emulatorCore.frontBufferCondition.signal()
             }
+            emulatorCore.frontBufferCondition.signal()
         }
     }
 
