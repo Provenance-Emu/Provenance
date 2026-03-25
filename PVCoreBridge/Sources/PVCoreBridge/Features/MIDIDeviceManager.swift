@@ -74,7 +74,7 @@ public final class MIDIDeviceManager: ObservableObject {
         didSet {
             guard oldValue != selectedSourceIDs else { return }
             reconnectSources()
-            if !clearingStaleSelection {
+            if !clearingStaleSelection && !restoringSelection {
                 persistSourceIDs()
                 if selectedSourceIDs.isEmpty { sourcePreferenceApplied = true }
             }
@@ -88,7 +88,7 @@ public final class MIDIDeviceManager: ObservableObject {
     @Published public var selectedDestinationIDs: Set<MIDIUniqueID> = [] {
         didSet {
             guard oldValue != selectedDestinationIDs else { return }
-            if !clearingStaleSelection {
+            if !clearingStaleSelection && !restoringSelection {
                 persistDestinationIDs()
                 if selectedDestinationIDs.isEmpty { destinationPreferenceApplied = true }
             }
@@ -181,6 +181,12 @@ public final class MIDIDeviceManager: ObservableObject {
     // device can still be auto-restored when it reappears.
     private var clearingStaleSelection = false
 
+    // Guard flag set during `restorePersistedSelection()` to suppress the `didSet` persistence
+    // side effect. Without this, setting `selectedSourceIDs = ids` (where `ids` may be empty
+    // because no endpoints are available at launch) would write `[]` back to UserDefaults,
+    // discarding the original stored preference and breaking hot-plug restore.
+    private var restoringSelection = false
+
     // UserDefaults keys
     //
     // Legacy single-select keys kept for migration (written by older builds).
@@ -205,6 +211,14 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Prefers the multi-select `*IDs` keys; falls back to the legacy single-ID key for migration.
     /// Called once during init, after `refreshEndpoints()` has populated `sources`/`destinations`.
     private func restorePersistedSelection() {
+        // Suppress persistence side effects while restoring. Without this guard, setting
+        // `selectedSourceIDs = ids` (where `ids` may be empty because no endpoints are
+        // available at launch) triggers `didSet` → `persistSourceIDs()`, which overwrites
+        // the stored preference with `[]`. That breaks hot-plug restore on subsequent
+        // `refreshEndpoints()` calls, because the stored IDs are gone.
+        restoringSelection = true
+        defer { restoringSelection = false }
+
         // Restore source IDs (multi-select).
         // Treat the multi-select key as authoritative if it exists — even when the stored IDs
         // resolve to an empty set (devices unavailable at launch). This prevents falling through
