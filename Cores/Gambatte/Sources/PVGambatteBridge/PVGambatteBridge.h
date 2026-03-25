@@ -50,7 +50,8 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 /// Always the fixed bank; 4 KiB per area.
 @property (nonatomic, readonly, nullable) void *wramBasePtr;
 /// Pointer to WRAM area 1 base (mapped region 0xD000–0xDFFF), valid while a ROM is loaded.
-/// On CGB this points to the currently selected switchable bank; on DMG it mirrors area 0's bank 1.
+/// On CGB this points to the currently selected switchable bank (changes when the bank register is written).
+/// On DMG it points to the upper half of WRAM (second 4 KiB, 0xD000–0xDFFF); not a mirror of area 0.
 @property (nonatomic, readonly, nullable) void *wramBank1Ptr;
 /// Pointer to the physical start of VRAM data, valid while a ROM is loaded.
 /// Index 0 corresponds to GB bus address 0x8000.

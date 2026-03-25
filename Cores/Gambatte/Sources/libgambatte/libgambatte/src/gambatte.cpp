@@ -212,6 +212,8 @@ void GB::setGameShark(std::string const &codes) {
 // MARK: - RetroAchievements memory accessors
 
 unsigned char * GB::wramData(unsigned area) const {
+	if (area > 1)
+		return nullptr;
 	if (!p_->cpu.loaded())
 		return nullptr;
 	return p_->cpu.wramdata(area);

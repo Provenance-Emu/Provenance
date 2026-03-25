@@ -204,6 +204,7 @@ public:
 	/**
 	  * Returns the total WRAM size in bytes.
 	  * DMG: 8192 (8 KiB), CGB: 32768 (32 KiB).
+	  * Returns 0 if no ROM is loaded.
 	  */
 	std::size_t wramSize() const;
 

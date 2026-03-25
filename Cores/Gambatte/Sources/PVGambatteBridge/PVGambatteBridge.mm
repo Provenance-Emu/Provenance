@@ -119,9 +119,9 @@ static uint32_t pvgb_read_memory(uint32_t address, uint8_t *buffer,
 }
 
 // Minimal no-op server call; real implementation delegates to PVCheevos network layer.
-static void pvgb_server_call(const rc_api_request_t *request,
+static void pvgb_server_call(const rc_api_request_t * __unused request,
                               rc_client_server_callback_t callback,
-                              void *callback_data, rc_client_t *client) {
+                              void *callback_data, rc_client_t * __unused client) {
     // TODO: Forward to PVCheevos RetroNetworkClient.
     rc_api_server_response_t resp = {};
     resp.http_status_code = 0;
@@ -694,17 +694,18 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 #if HAVE_RCHEEVOS
 typedef struct pvgb_load_ctx {
     void *bridge;        // __bridge_retained PVGBEmulatorCoreBridge *
-    void (^completion)(BOOL);
+    void *completion;    // __bridge_retained void (^)(BOOL); explicit retain needed for C-struct fields
 } pvgb_load_ctx_t;
 
 static void pvgb_load_callback(int result, const char * __unused error_message,
                                 rc_client_t * __unused client, void *userdata) {
     pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)userdata;
-    // Transfer ownership back.
+    // Transfer ownership back; __bridge_transfer moves the +1 retain to ARC.
     PVGBEmulatorCoreBridge *core = (__bridge_transfer PVGBEmulatorCoreBridge *)ctx->bridge;
-    void (^completion)(BOOL) = ctx->completion;
-    // Nil out the block member before free() so ARC releases the retained block copy.
-    ctx->completion = nil;
+    // Transfer the __bridge_retained block back to ARC ownership so it is
+    // released when the local variable goes out of scope (balances [completion copy]).
+    void (^completion)(BOOL) = (__bridge_transfer void (^)(BOOL))ctx->completion;
+    ctx->completion = NULL;
     free(ctx);
 
     BOOL success = (result == RC_OK);
@@ -726,7 +727,7 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
         return;
     }
     ctx->bridge = (__bridge_retained void *)self;
-    ctx->completion = completion ? [completion copy] : nil;
+    ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
     rc_client_load_game(_rcClient, gameHash.UTF8String, pvgb_load_callback, ctx);
 #else
     if (completion) { completion(NO); }
