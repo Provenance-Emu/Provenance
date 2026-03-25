@@ -1128,6 +1128,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     hostView.frame = skinContainer.bounds
                 }
             }
+            #if !os(tvOS)
+            /// Final post-rotation sync: ensures virtual mouse gating and overlay
+            /// stacking use the latest viewport after transition settles.
+            self.refreshVirtualMouseLayout()
+            self.bringVirtualInputOverlaysToFront()
+            #endif
         })
     }
 
