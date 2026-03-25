@@ -4,6 +4,7 @@
 //
 //  Standalone, protocol-driven service for artwork matching.
 //  Used by ArtworkSearchQueue at import time to perform progressive-fallback artwork lookup.
+//  Note: PVUI manages its own title-cleaning extension and does not currently depend on this service.
 //
 
 import Foundation

@@ -20,13 +20,18 @@ import PVSystems
 // MARK: - Mock service
 
 /// Deterministic mock that returns a configurable list of ArtworkMetadata items.
-/// `@unchecked Sendable` is safe here because this mock is only used from a single test thread.
+/// Uses a lock to safely record calls from concurrent tasks spawned by `ArtworkSearchQueue`.
 final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol, @unchecked Sendable {
 
     /// Results returned regardless of input parameters.
     var stubbedResults: [ArtworkMetadata] = []
     /// Records every call so tests can assert on parameters.
-    private(set) var calls: [(title: String, artworkTypes: ArtworkType)] = []
+    /// Protected by `callsLock` — ArtworkSearchQueue may call findArtwork from concurrent tasks.
+    private let callsLock = NSLock()
+    private var _calls: [(title: String, artworkTypes: ArtworkType)] = []
+    var calls: [(title: String, artworkTypes: ArtworkType)] {
+        callsLock.withLock { _calls }
+    }
 
     func findArtwork(
         title: String,
@@ -35,7 +40,7 @@ final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol, @uncheck
         systemIdentifier: SystemIdentifier?,
         artworkTypes: ArtworkType
     ) async throws -> [ArtworkMetadata] {
-        calls.append((title: title, artworkTypes: artworkTypes))
+        callsLock.withLock { _calls.append((title: title, artworkTypes: artworkTypes)) }
         return stubbedResults
     }
 }
@@ -212,8 +217,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
 
     // MARK: ArtworkMatchingService (unit, no network)
 
-    /// The service must call PVLookup — this test validates the fallback pipeline
-    /// using a mock so no real network/DB calls are made.
+    /// Validates that the mock correctly returns stubbed results and records call parameters.
     func test_mockService_returnsBoxFrontAndBoxBack() async throws {
         let mock = MockArtworkMatchingService()
         mock.stubbedResults = [
@@ -229,17 +233,22 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             )
         ]
 
+        let requestedTypes: ArtworkType = [.boxFront, .boxBack]
         let results = try await mock.findArtwork(
             title: "Zelda",
             filename: "Zelda",
             md5: nil,
             systemIdentifier: .NES,
-            artworkTypes: [.boxFront, .boxBack]
+            artworkTypes: requestedTypes
         )
 
         XCTAssertEqual(results.count, 2)
         XCTAssertTrue(results.contains { $0.type == .boxFront })
         XCTAssertTrue(results.contains { $0.type == .boxBack })
+        // Verify call was recorded with correct parameters
+        XCTAssertEqual(mock.calls.count, 1)
+        XCTAssertEqual(mock.calls.first?.title, "Zelda")
+        XCTAssertEqual(mock.calls.first?.artworkTypes, requestedTypes)
     }
 
     func test_mockService_emptyResultsWhenNoneStubbed() async throws {
@@ -276,7 +285,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
 
         // The queue should have called findArtwork with [.boxFront, .boxBack]
         XCTAssertFalse(mock.calls.isEmpty, "Expected at least one findArtwork call")
-        let primaryTypes = ArtworkType([.boxFront, .boxBack])
+        let primaryTypes: ArtworkType = [.boxFront, .boxBack]
         XCTAssertTrue(
             mock.calls.contains { $0.artworkTypes == primaryTypes },
             "Expected primary types \(primaryTypes) in calls \(mock.calls.map { $0.artworkTypes })"

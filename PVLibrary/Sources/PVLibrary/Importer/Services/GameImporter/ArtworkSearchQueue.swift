@@ -98,11 +98,11 @@ public actor ArtworkSearchQueue {
 
             // Schedule processing with debounce - cancel previous task and start new one
             processingTask?.cancel()
-            processingTask = Task.detached(priority: .utility) {
+            processingTask = Task.detached(priority: .utility) { [self] in
                 // Wait for more games to be queued (debounce)
                 try? await Task.sleep(for: .seconds(3))
                 // Check if we still have games to process
-                await ArtworkSearchQueue.shared.processPendingSearches()
+                await self.processPendingSearches()
             }
         }
     }
@@ -280,7 +280,7 @@ public actor ArtworkSearchQueue {
                 hasOriginalArtworkFile = lookupResult.hasOriginalFile
                 hasCustomArtworkURL = lookupResult.hasCustomURL
                 currentOriginalArtworkURL = lookupResult.originalURL
-                shouldSave = !hasOriginalArtworkFile && !hasCustomArtworkURL
+                shouldSave = !hasOriginalArtworkFile && !hasCustomArtworkURL && currentOriginalArtworkURL.isEmpty
                 break
             }
             if retryCount < maxRetries - 1 {
@@ -398,9 +398,9 @@ public actor ArtworkSearchQueue {
         }
     }
 
-    /// Placeholder for persisting screenshot / title-screen artwork (background priority).
-    /// Currently logs the available URL; actual persistence is deferred until a `PVImageFile`
-    /// download helper exists for `game.screenShots` (see TODO below).
+    /// Logs the first available screenshot / title-screen URL from `results`.
+    /// Full persistence to `game.screenShots` is deferred until a `PVImageFile` download
+    /// helper exists (see TODO comment inside).
     internal func saveBackgroundArtwork(_ results: [ArtworkMetadata], md5Hash: String, gameID: String) async {
         guard let first = results.first else { return }
         let urlString = first.url.absoluteString
