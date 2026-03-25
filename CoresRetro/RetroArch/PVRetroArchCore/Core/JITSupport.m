@@ -9,6 +9,7 @@
 //  
 
 #import <Foundation/Foundation.h>
+#import <Security/Security.h>
 
 #import "JITSupport.h"
 
@@ -101,8 +102,20 @@ bool jit_available(void)
    // com.apple.developer.kernel.allow-jit entitlement.  Its presence signals
    // that the OS will honour MAP_JIT allocations without a debugger or
    // jailbreak being required.
-   if (NSClassFromString(@"JITAuthorizer") != nil)
-      return true;
+   // We also verify the running process actually holds the entitlement via
+   // SecTaskCopyValueForEntitlement to avoid a false-positive on builds that
+   // lack the required code-sign entitlement.
+   if (NSClassFromString(@"JITAuthorizer") != nil) {
+      SecTaskRef task = SecTaskCreateFromSelf(NULL);
+      if (task != NULL) {
+         CFTypeRef value = SecTaskCopyValueForEntitlement(task, CFSTR("com.apple.developer.kernel.allow-jit"), NULL);
+         CFRelease(task);
+         if (value != NULL) {
+            CFRelease(value);
+            return true;
+         }
+      }
+   }
 
    // TrollStore grants unrestricted entitlements (including get-task-allow)
    // at install time and leaves identifiable file-system markers on the device.

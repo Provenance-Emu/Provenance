@@ -19,10 +19,11 @@ open class PVFlycastEmuCore: PVEmulatorCore {
 
     let _bridge: PVFlycastCoreBridge = .init()
 
-    /// On iOS the Flycast libretro bridge checks RETRO_ENVIRONMENT_GET_JIT_CAPABLE
-    /// and refuses to load a game if JIT is unavailable, logging
-    /// "Cannot run without JIT" and returning false from retro_load_game.
-    /// JIT is therefore required on iOS — running without it is not possible.
+    /// On Apple platforms built with TARGET_OS_IPHONE (iOS and tvOS), the Flycast
+    /// libretro bridge checks RETRO_ENVIRONMENT_GET_JIT_CAPABLE and refuses to
+    /// load a game if JIT is unavailable, logging "Cannot run without JIT" and
+    /// returning false from retro_load_game. JIT is therefore required on these
+    /// platforms — running without it is not possible.
     open override var jitRequirement: PVJITRequirement { .requiredOrCrash }
 
     /// Tracks whether the Dreamcast mouse port has been configured this session.
