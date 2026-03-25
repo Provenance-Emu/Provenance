@@ -611,7 +611,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
             switch panGesture.state {
             case .began:
-                Holder.originalLocation = panGesture.location(in: contentView)
+                Holder.originalLocation = panGesture.location(in: self)
                 deleteActionView?.alpha = 1
             case .changed:
                 let displacement = panGesture.location(in: self).x - Holder.originalLocation.x

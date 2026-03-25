@@ -216,7 +216,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         let fpsLabel = UILabel()
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
         fpsLabel.backgroundColor = .clear
-        fpsLabel.textAlignment = .right // RTL: do not flip — FPS counter is always anchored to the trailing edge via constraints
+        fpsLabel.textAlignment = .right // RTL: do not flip — FPS counter is always pinned to the right edge regardless of locale
         fpsLabel.lineBreakMode = .byClipping
         fpsLabel.isOpaque = false
         fpsLabel.numberOfLines = 5
