@@ -148,6 +148,7 @@ public final class LightGunTouchView: UIView {
         let normalised = normalisedPoint(for: touch.location(in: self))
         let offscreen = isOffscreen(touch.location(in: self))
         lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+        postAimPositionNotification(normalised)
     }
 
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -166,6 +167,7 @@ public final class LightGunTouchView: UIView {
         let normalised = normalisedPoint(for: touch.location(in: self))
         let offscreen = isOffscreen(touch.location(in: self))
         lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+        postAimPositionNotification(normalised)
     }
 
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -188,6 +190,7 @@ public final class LightGunTouchView: UIView {
             let normalised = normalisedPoint(for: touch.location(in: self))
             let offscreen = isOffscreen(touch.location(in: self))
             lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+            postAimPositionNotification(normalised)
             let workItem = DispatchWorkItem { [weak self] in
                 self?.pendingSingleTapTrigger = nil
                 self?.lightGunResponder?.lightGunTriggerDown()
@@ -235,6 +238,7 @@ public final class LightGunTouchView: UIView {
             let normalised = normalisedPoint(for: gesture.location(in: self))
             let offscreen = isOffscreen(gesture.location(in: self))
             lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+            postAimPositionNotification(normalised)
             lightGunResponder?.lightGunAuxADown?()
         case .ended, .cancelled, .failed:
             lightGunResponder?.lightGunAuxAUp?()
@@ -251,6 +255,18 @@ public final class LightGunTouchView: UIView {
         return CGPoint(
             x: max(0, min(1, point.x / bounds.width)),
             y: max(0, min(1, point.y / bounds.height))
+        )
+    }
+
+    /// Forward aim position to the cursor overlay so a visual crosshair tracks the gun position.
+    ///
+    /// `MouseCursorOverlayView` subscribes to `.PVMousePositionDidChange`; posting here lets
+    /// it display a cursor/crosshair at the current aim point without any direct coupling.
+    private func postAimPositionNotification(_ normalised: CGPoint) {
+        NotificationCenter.default.post(
+            name: .PVMousePositionDidChange,
+            object: nil,
+            userInfo: [PVMousePositionKey: NSValue(cgPoint: normalised)]
         )
     }
 
