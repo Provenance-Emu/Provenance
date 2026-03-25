@@ -27,9 +27,9 @@ fork of the same emuThreeDS codebase as PVEmuThree, with additional Azahar-deriv
 
 ---
 
-### 1.2 Override File Manifest
+### 1.2 Override File Overview (High-Level)
 
-Both cores override the following files relative to their respective submodule root:
+Both cores override, among others, the following key files relative to their respective submodule root:
 
 #### Core Bridge / iOS Integration Files (Objective-C/C++)
 
@@ -115,8 +115,10 @@ requires the GPU object to be fully initialized. If the GPU hasn't been initiali
 reference to an uninitialized object, leading to the flickering first frame then black screen.
 The frame counter logging added in PVAzahar also suggests someone was investigating this.
 
-Additionally, the `window_width/height` calculation in PVAzahar (`drawableSize / scale`) is
-opposite to native scale convention — this could produce incorrect framebuffer layout dimensions.
+Additionally, PVAzahar computes `window_width/height` as `drawableSize / nativeScale`, which
+converts the Metal layer's pixel-backed `drawableSize` into logical points. It's unclear whether
+`window_width/height` and `UpdateCurrentFramebufferLayout(...)` are intended to use pixels or
+points, so there may be a units mismatch causing incorrect framebuffer layout dimensions.
 
 #### Frame Rate Default
 - **PVEmuThree**: `_frameInterval = 60` (correct for 3DS)
@@ -255,7 +257,7 @@ new upstream base:
 
 - [x] Written recommendation on which option to pursue
 - [x] List of all iOS perf hacks / override files in current cores (audit manifest above)
-- [x] GPU regression root cause identified (§3.1)
+- [x] GPU regression root cause hypothesis documented (§3.1)
 - [x] Assessment of Lime3DS/Azahar build feasibility (§2)
 - [x] Links to relevant forks/repos (§2.2)
 
