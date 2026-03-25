@@ -159,10 +159,11 @@ public final class PVRemappableController: NSObject {
 
             // Share/Create button — expose as a configurable action (options button).
             // On DualSense buttonOptions is the "Create" button.
-            dualSense.buttonOptions?.pressedChangedHandler = { [weak self] (button, value, pressed) in
-                if pressed {
-                    self?.handleSpecialButton(.share)
-                }
+            // Use valueChangedHandler so the event travels the same path as normal button events
+            // (pressedChangedHandler alone won't reach PVControllerManager or the remapping pipeline).
+            dualSense.buttonOptions?.valueChangedHandler = { [weak self] (_, _, pressed) in
+                guard pressed else { return }
+                self?.handleSpecialButton(.share)
             }
         }
     }

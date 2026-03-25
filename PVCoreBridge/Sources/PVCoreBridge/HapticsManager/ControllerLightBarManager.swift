@@ -15,7 +15,6 @@
 import Foundation
 #if canImport(GameController)
 import GameController
-import PVLogging
 import PVPrimitives
 import PVSettings
 
@@ -180,8 +179,9 @@ public final class ControllerLightBarManager {
     }
 
     private func controllerConnected(_ controller: GCController) {
-        // If a system is active, apply its color immediately on connect.
+        // Only apply colors to controllers that are registered for this session.
         guard let sysId = currentSystemIdentifier else { return }
+        guard playerControllers.values.contains(where: { $0 === controller }) else { return }
         applyColor(forSystemIdentifier: sysId, to: controller)
     }
 
