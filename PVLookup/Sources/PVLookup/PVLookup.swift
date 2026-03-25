@@ -432,21 +432,37 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
         var openVGDBResult: ROMMetadata?
         var libretroDBResult: ROMMetadata?
+        var hadProviderError = false
 
-        await withTaskGroup(of: (Int, ROMMetadata?).self) { group in
+        // Wrap each provider result in Result<> so errors are surfaced (not swallowed as cache misses).
+        await withTaskGroup(of: (Int, Result<ROMMetadata?, Error>).self) { group in
             group.addTask {
-                guard let openVGDB = await self.getOpenVGDB() else { return (0, nil) }
-                return (0, try? await openVGDB.searchROM(bySerial: serial, systemID: systemID))
+                guard let openVGDB = await self.getOpenVGDB() else { return (0, .success(nil)) }
+                do {
+                    return (0, .success(try await openVGDB.searchROM(bySerial: serial, systemID: systemID)))
+                } catch {
+                    return (0, .failure(error))
+                }
             }
             group.addTask {
-                guard let libreTroDB = await self.isolatedLibretroDB else { return (1, nil) }
-                return (1, try? await libreTroDB.searchROM(bySerial: serial, systemID: systemID))
+                guard let libreTroDB = await self.isolatedLibretroDB else { return (1, .success(nil)) }
+                do {
+                    return (1, .success(try await libreTroDB.searchROM(bySerial: serial, systemID: systemID)))
+                } catch {
+                    return (1, .failure(error))
+                }
             }
-            for await (tag, result) in group {
-                switch tag {
-                case 0: openVGDBResult = result
-                case 1: libretroDBResult = result
-                default: break
+            for await (tag, resultOrError) in group {
+                switch resultOrError {
+                case .success(let result):
+                    switch tag {
+                    case 0: openVGDBResult = result
+                    case 1: libretroDBResult = result
+                    default: break
+                    }
+                case .failure(let error):
+                    hadProviderError = true
+                    ELOG("PVLookup: Serial search DB error for \(serial): \(error.localizedDescription)")
                 }
             }
         }
@@ -456,7 +472,12 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             ?? openVGDBResult
             ?? libretroDBResult
 
-        cacheSerialResult(merged, for: cacheKey)
+        // Skip caching a nil result if a DB error occurred — the miss may be transient.
+        // Always cache if we got an actual result.
+        let shouldCache = merged != nil || (!hadProviderError && !isInitializing)
+        if shouldCache {
+            cacheSerialResult(merged, for: cacheKey)
+        }
         ILOG("PVLookup: Serial search result for \(serial): \(merged?.gameTitle ?? "nil")")
         return merged
     }

@@ -113,8 +113,9 @@ struct LibretroDBTests {
         let rom = try #require(md5Results?.first, "DragonQuest3 should exist in test DB")
 
         guard let serial = rom.serialID, !serial.isEmpty else {
-            // Cartridge-based games may not have a serial_id in LibretroDB — skip gracefully
-            return
+            // Cartridge-based SNES games have no serial_id in LibretroDB.
+            // Throw Skip so the test is explicitly reported as skipped rather than silently passing.
+            throw Skip("DragonQuest3 fixture has no serial_id in LibretroDB; serial search round-trip cannot be validated for this cartridge-based ROM. Use a disc-based game fixture (PSX/Saturn) for positive serial tests.")
         }
 
         // Round-trip: searching by the serial_id should return the same game

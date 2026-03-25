@@ -667,7 +667,7 @@ public extension OpenVGDB {
 
     func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let sanitizedMD5 = sanitizeForSQLLike(md5.uppercased())
+        let sanitizedMD5 = sanitizeForSQLLiteral(md5.uppercased())
 
         let query = """
             SELECT DISTINCT \(properties)
@@ -685,7 +685,7 @@ public extension OpenVGDB {
     /// enabling fast ROM identification directly from archive central directories.
     func searchByCRC(_ crc: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let sanitizedCRC = sanitizeForSQLLike(crc.uppercased())
+        let sanitizedCRC = sanitizeForSQLLiteral(crc.uppercased())
 
         let query = """
             SELECT DISTINCT \(properties)
@@ -757,7 +757,7 @@ public extension OpenVGDB {
             SELECT DISTINCT rom.systemID
             FROM ROMs rom
             LEFT JOIN RELEASES release ON rom.romID = release.romID
-            WHERE rom.romHashMD5 = '\(sanitizeForSQLLike(md5.uppercased()))'
+            WHERE rom.romHashMD5 = '\(sanitizeForSQLLiteral(md5.uppercased()))'
         """
 
         // Then try filename if provided
