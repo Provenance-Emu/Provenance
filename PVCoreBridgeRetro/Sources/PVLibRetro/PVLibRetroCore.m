@@ -29,6 +29,10 @@ extern bool pvjit_acquired(void);
 /// Declared here so the ObjC env callback can fill the pointer without C++ headers.
 extern struct retro_midi_interface *pv_libretro_midi_interface(void);
 
+/// Injects a raw MIDI byte into the shared input ring buffer (PVThinLibretroFrontend.mm).
+/// Used by MIDIResponder implementations to forward decoded MIDI events from MIDIDeviceManager.
+extern void pv_libretro_midi_inject_byte(uint8_t byte);
+
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
@@ -3660,6 +3664,12 @@ static os_unfair_lock    sPendingKeyLock  = OS_UNFAIR_LOCK_INIT;
         }
         return YES;
     }
+}
+
+// MARK: - MIDI injection
+
+- (void)injectMIDIByte:(uint8_t)byte {
+    pv_libretro_midi_inject_byte(byte);
 }
 
 @end

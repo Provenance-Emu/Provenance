@@ -1423,6 +1423,31 @@ extern "C" struct retro_midi_interface *pv_libretro_midi_interface(void) {
 #endif
 }
 
+/// Inject a single raw MIDI byte into the libretro MIDI input ring buffer.
+///
+/// Called by `MIDIResponder` protocol implementations (e.g. `PVHatariCore`) to
+/// forward decoded MIDI events from `MIDIDeviceManager` into the
+/// `retro_midi_interface` read path so the emulated core receives them.
+///
+/// Thread-safe: uses the same atomic write/read positions as the CoreMIDI
+/// read callback.  Bytes are silently dropped when the buffer is full.
+extern "C" void pv_libretro_midi_inject_byte(uint8_t byte) {
+#if PV_HAS_COREMIDI
+    // Ensure the MIDI state is initialised before writing.
+    thin_midi_ensure_initialized();
+    size_t writePos = atomic_load(&s_midiState.readWritePos);
+    size_t next = (writePos + 1) % PV_MIDI_READ_BUFFER_SIZE;
+    // Drop the byte if the ring buffer is full (next == readReadPos means full).
+    if (next == atomic_load(&s_midiState.readReadPos)) {
+        return; // buffer full — silently discard
+    }
+    s_midiState.readBuffer[writePos] = byte;
+    atomic_store(&s_midiState.readWritePos, next);
+#else
+    (void)byte;
+#endif
+}
+
 // ---------------------------------------------------------------------------
 // MARK: - Microphone interface (AudioUnit)
 // ---------------------------------------------------------------------------
