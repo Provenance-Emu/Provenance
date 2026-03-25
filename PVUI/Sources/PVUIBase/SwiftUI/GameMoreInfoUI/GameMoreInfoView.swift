@@ -948,6 +948,7 @@ struct GameMoreInfoView: View {
     @ViewBuilder
     private var mousePreferenceSection: some View {
         if let md5 = viewModel.pvGame?.md5Hash,
+           !md5.isEmpty,
            let sysID = viewModel.pvGame?.systemIdentifier,
            let systemID = SystemIdentifier(rawValue: sysID),
            MouseGameRegistry.shared.systemHasAnyMouseSupport(systemID) {
