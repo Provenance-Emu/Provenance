@@ -58,6 +58,25 @@ public final class LightGunLifecycleManager {
 
     // MARK: - Public API
 
+    /// Sensitivity multiplier forwarded to the ``GCMouseLightGunDriver`` on attach.
+    ///
+    /// Set this before calling ``attach(to:)`` — or update it at any point while
+    /// the driver is active. Clamped to the valid range 0.1 – 5.0; default 1.0.
+    ///
+    /// Callers at higher tiers (e.g. PVUIBase) should read the effective value from
+    /// `Defaults.effectiveLightGunSensitivity(forGameMD5:)` and assign it here so that
+    /// per-game and global sensitivity preferences are applied.
+    public var sensitivity: Double {
+        get { _sensitivity }
+        set {
+            _sensitivity = min(max(newValue, 0.1), 5.0)
+#if canImport(GameController)
+            driver?.sensitivity = CGFloat(_sensitivity)
+#endif
+        }
+    }
+    private var _sensitivity: Double = 1.0
+
     /// Attach light gun input to the given core if it supports light guns.
     ///
     /// If the core reports `gameSupportsLightGun == false`, any currently-attached driver
@@ -70,6 +89,7 @@ public final class LightGunLifecycleManager {
         guard core.gameSupportsLightGun else { return }
 #if canImport(GameController)
         let d = GCMouseLightGunDriver()
+        d.sensitivity = CGFloat(sensitivity)
         d.attach(to: core)
         self.driver = d
 #endif

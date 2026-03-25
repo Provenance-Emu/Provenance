@@ -1,1 +1,21 @@
-mupen64plus-core - 192:1e98e0427e78
+mupen64plus-core v2.5.1 (0x020501) - vendored from Provenance-Emu/mupen64plus-core@provenance
+  Upstream: mupen64plus/mupen64plus-core (latest: 2026-02, 424 commits ahead)
+  iOS patches: Quick hack for paths on tvOS/iOS, buffer size increase, new_vi macro
+
+GLideN64 v2.0.0 (0x020000) - vendored from Provenance-Emu/GLideN64@provenance
+  Upstream: gonetz/GLideN64 / Provenance-Emu/GLideN64@provenance_2025 (March 2025)
+  iOS patches: OS_IOS NPOT texture clamp, CommonPluginAPI int return type
+
+mupen64plus-rsp-hle - vendored from mupen64plus/mupen64plus-rsp-hle
+  iOS patches: none (standard upstream)
+
+mupen64plus-rsp-cxd4 - vendored from Provenance-Emu/mupen64plus-rsp-cxd4
+  iOS patches: none significant
+
+mupen64plus-video-rice - vendored from Provenance-Emu/mupen64plus-video-rice
+  iOS patches: GLES-specific rendering paths
+
+Mupen64Plus-NX (RetroArch) - real git submodule
+  Current: Provenance-Emu/mupen64plus-libretro-nx@spm-2024 (388bd4bfb49, 2024-10-18)
+  Upstream: libretro/mupen64plus-libretro-nx (latest: 2026-03, 72 commits ahead)
+  Provenance patches: ios files wrapper, arm linkage hacks, ROM size limit 64MB

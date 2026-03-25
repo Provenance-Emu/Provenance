@@ -282,6 +282,7 @@ namespace opengl {
 				glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GLint(_parameters.minFilter));
 				(*m_texparams)[u32(_parameters.handle)].minFilter = GLint(_parameters.minFilter);
 			}
+#if !defined(OS_IOS) && !defined(EMSCRIPTEN)
 			if (_parameters.wrapS.isValid() && !(iterValid && iter->second.wrapS == GLint(_parameters.wrapS))) {
 				glTexParameteri(target, GL_TEXTURE_WRAP_S, GLint(_parameters.wrapS));
 				(*m_texparams)[u32(_parameters.handle)].wrapS = GLint(_parameters.wrapS);
@@ -290,6 +291,28 @@ namespace opengl {
 				glTexParameteri(target, GL_TEXTURE_WRAP_T, GLint(_parameters.wrapT));
 				(*m_texparams)[u32(_parameters.handle)].wrapT = GLint(_parameters.wrapT);
 			}
+#else
+			// HACK: OpenGL ES 2.0 (iOS/tvOS) and WebGL (Emscripten) only support
+			// GL_CLAMP_TO_EDGE for non-power-of-two (NPOT) textures; using GL_REPEAT or
+			// GL_MIRRORED_REPEAT on NPOT textures is undefined behaviour and causes rendering
+			// artifacts. GL_CLAMP_TO_EDGE is forced for all textures here because
+			// TexParameters does not carry dimension information so POT vs NPOT cannot be
+			// distinguished at this call site. N64 game textures are almost exclusively NPOT
+			// so the impact on POT textures (which would legitimately support GL_REPEAT on
+			// OpenGL ES 3.0) is negligible in practice. Cache/compare against the forced
+			// wrap value so the parameter is not re-submitted on every apply call.
+			{
+				const GLint forcedWrap = GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE);
+				if (!iterValid || iter->second.wrapS != forcedWrap) {
+					glTexParameteri(target, GL_TEXTURE_WRAP_S, forcedWrap);
+					(*m_texparams)[u32(_parameters.handle)].wrapS = forcedWrap;
+				}
+				if (!iterValid || iter->second.wrapT != forcedWrap) {
+					glTexParameteri(target, GL_TEXTURE_WRAP_T, forcedWrap);
+					(*m_texparams)[u32(_parameters.handle)].wrapT = forcedWrap;
+				}
+			}
+#endif
 			if (m_supportMipmapLevel && _parameters.maxMipmapLevel.isValid() && !(iterValid && iter->second.maxMipmapLevel == GLint(_parameters.maxMipmapLevel))) {
 				glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, GLint(_parameters.maxMipmapLevel));
 				(*m_texparams)[u32(_parameters.handle)].maxMipmapLevel = GLint(_parameters.maxMipmapLevel);

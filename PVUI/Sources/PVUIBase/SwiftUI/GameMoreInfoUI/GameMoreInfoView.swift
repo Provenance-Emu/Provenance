@@ -501,6 +501,12 @@ struct GameMoreInfoView: View {
                         // JIT preference section (only for JIT-capable systems)
                         jitPreferenceSection
 
+                        // Mouse input override section (only for mouse-capable systems)
+                        mousePreferenceSection
+
+                        // Light gun settings section (only for light-gun-capable systems)
+                        lightGunPreferenceSection
+
                         // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
                         coreOptionsSection
 
@@ -535,6 +541,14 @@ struct GameMoreInfoView: View {
 
                 // JIT preference section (only for JIT-capable systems)
                 jitPreferenceSection
+                    .padding(.horizontal)
+
+                // Mouse input override section (only for mouse-capable systems)
+                mousePreferenceSection
+                    .padding(.horizontal)
+
+                // Light gun settings section (only for light-gun-capable systems)
+                lightGunPreferenceSection
                     .padding(.horizontal)
 
                 // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
@@ -929,6 +943,39 @@ struct GameMoreInfoView: View {
            let sysID = viewModel.pvGame?.systemIdentifier,
            JITCoreCapability.systemHasJITCapability(sysID) {
             JITGameSettingsView(
+                gameMD5: md5,
+                accentColor: accentColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
+            )
+        }
+    }
+
+    /// Mouse input override section — only shown for mouse-capable systems.
+    @ViewBuilder
+    private var mousePreferenceSection: some View {
+        if let md5 = viewModel.pvGame?.md5Hash,
+           !md5.isEmpty,
+           let sysID = viewModel.pvGame?.systemIdentifier,
+           let systemID = SystemIdentifier(rawValue: sysID),
+           MouseGameRegistry.shared.systemHasAnyMouseSupport(systemID) {
+            MouseGameSettingsView(
+                gameMD5: md5,
+                accentColor: accentColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
+            )
+        }
+    }
+
+    /// Light gun settings section — only shown for light-gun-capable systems.
+    @ViewBuilder
+    private var lightGunPreferenceSection: some View {
+        if let md5 = viewModel.pvGame?.md5Hash, !md5.isEmpty,
+           let sysIDString = viewModel.pvGame?.systemIdentifier,
+           let sysID = SystemIdentifier(rawValue: sysIDString),
+           sysID.supportsLightGun {
+            LightGunGameSettingsView(
                 gameMD5: md5,
                 accentColor: accentColor,
                 backgroundColor: cellBackgroundColor,
