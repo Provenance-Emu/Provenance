@@ -226,13 +226,14 @@ public actor SkinCatalogService {
             }
         }
 
-        // Filter by device support (match any).
-        // Use prefix matching so broad filter tokens (e.g. "iphone") match
-        // specific catalog variants (e.g. "iphone-x", "iphone-legacy").
+        /// Filter by device support (match any).
+        /// Use prefix matching so broad filter tokens (e.g. "iphone") match
+        /// specific catalog variants (e.g. "iphone-x", "iphone-legacy").
+        /// Treat an omitted or empty `deviceSupport` list as unrestricted support.
         if let deviceSupport = deviceSupport, !deviceSupport.isEmpty {
             let lowerFilters = deviceSupport.map { $0.lowercased() }
             results = results.filter { entry in
-                guard let entryDevices = entry.deviceSupport else { return true } // No restriction = all devices
+                guard let entryDevices = entry.deviceSupport, !entryDevices.isEmpty else { return true }
                 let entryLower = entryDevices.map { $0.lowercased() }
                 return lowerFilters.contains { filter in
                     entryLower.contains { device in
