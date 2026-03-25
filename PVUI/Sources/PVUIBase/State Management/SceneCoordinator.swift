@@ -995,15 +995,18 @@ public class SceneCoordinator: ObservableObject {
         }
     }
 
-    /// Dismisses the pre-launch Transfer Pak sheet and resumes the launch continuation.
+    /// Confirms the Transfer Pak setup and dismisses the pre-launch sheet, resuming the
+    /// launch continuation on the next main run-loop turn.
     ///
-    /// Call from button actions inside the sheet (`launchAction`).  The continuation is
-    /// resumed eagerly here — not deferred to `onDismiss` — because `.sheet(item:)` may
-    /// skip `onDismiss` when the binding is set to nil programmatically (a known SwiftUI
-    /// bug on some iOS versions), which would leave the continuation hanging and deadlock
-    /// the game-launch flow.  `dismissPreLaunchTransferPak()` (called from `onDismiss`)
-    /// is a safe no-op when called after this method.
-    public func dismissPreLaunchTransferPakSheet() {
+    /// Call from button actions inside the sheet (`launchAction`). Deferring the
+    /// continuation resumption to the next run-loop turn (via `DispatchQueue.main.async`)
+    /// prevents changing root-level navigation state while the sheet dismissal animation
+    /// is still in-flight, which would cause layout warnings on some iOS versions.
+    /// `.sheet(item:)` may skip `onDismiss` when the binding is cleared programmatically
+    /// (a known SwiftUI bug), so this method resumes the continuation proactively rather
+    /// than relying solely on `onDismiss`.  `dismissPreLaunchTransferPak()` (called from
+    /// `onDismiss`) is a safe no-op when called after this method.
+    public func confirmAndDismissPreLaunchTransferPak() {
         preLaunchTransferPakGame = nil
         let cont = _preLaunchContinuation
         _preLaunchContinuation = nil
@@ -1017,7 +1020,7 @@ public class SceneCoordinator: ObservableObject {
 
     /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
     /// Resumes the launch continuation if it has not already been resumed by
-    /// `dismissPreLaunchTransferPakSheet()`. Safe to call multiple times — second call is
+    /// `confirmAndDismissPreLaunchTransferPak()`. Safe to call multiple times — second call is
     /// a no-op because `_preLaunchContinuation` is cleared on first use.
     public func dismissPreLaunchTransferPak() {
         preLaunchTransferPakGame = nil   // no-op if already nil (button path cleared it)
