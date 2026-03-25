@@ -1908,11 +1908,20 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
         case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
             /// Tell the core which HW context type we prefer.
-            /// On iOS/tvOS we prefer OpenGL ES 3; on macOS/Catalyst prefer OpenGL.
+            /// On iOS/tvOS prefer Vulkan (MoltenVK) when HAVE_VULKAN is compiled in;
+            /// this lets Vulkan-capable cores (e.g. Beetle PSX HW) use the optimal
+            /// hardware path. Cores that only support GLES will call SET_HW_RENDER
+            /// with a GLES context type regardless of this hint.
+            /// On macOS/Catalyst prefer the desktop OpenGL Core profile.
             unsigned *preferred = (unsigned *)data;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+#if HAVE_VULKAN
+            *preferred = RETRO_HW_CONTEXT_VULKAN;
+            ILOG(@"Environ GET_PREFERRED_HW_RENDER: VULKAN (MoltenVK)");
+#else
             *preferred = RETRO_HW_CONTEXT_OPENGLES3;
             ILOG(@"Environ GET_PREFERRED_HW_RENDER: OPENGLES3");
+#endif
 #else
             *preferred = RETRO_HW_CONTEXT_OPENGL_CORE;
             ILOG(@"Environ GET_PREFERRED_HW_RENDER: OPENGL_CORE");
