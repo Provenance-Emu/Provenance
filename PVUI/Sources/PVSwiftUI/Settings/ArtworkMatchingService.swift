@@ -99,7 +99,18 @@ public enum ArtworkMatchingService {
         sources: Set<ArtworkSource>
     ) -> [ArtworkMetadata] {
         guard !sources.isEmpty else { return [] }
-        let sourceNames = Set(sources.map(\.rawValue))
-        return results.filter { sourceNames.contains($0.source) }
+        return results.filter { metadata in
+            sources.contains { source in
+                switch source {
+                case .libretroDB:
+                    // PVLookup emits both "LibretroDB" (SQLite DB path) and
+                    // "LibretroThumbnails" (thumbnail CDN path) — treat the
+                    // toggle as an umbrella covering both source strings.
+                    return metadata.source == "LibretroDB" || metadata.source == "LibretroThumbnails"
+                default:
+                    return metadata.source == source.rawValue
+                }
+            }
+        }
     }
 }

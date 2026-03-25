@@ -479,6 +479,7 @@ public struct BatchArtworkMatchingView: View {
     // MARK: - Methods
 
     /// Load games that need artwork
+    @MainActor
     private func loadGamesNeedingArtwork() async {
         isLoading = true
         defer { isLoading = false }
@@ -508,12 +509,14 @@ public struct BatchArtworkMatchingView: View {
     }
 
     /// Find artwork for all games in the list
+    @MainActor
     private func findArtworkForGames() async {
         guard !gamesNeedingArtwork.isEmpty else { return }
         await runSearch(games: gamesNeedingArtwork, clearExisting: true)
     }
 
     /// Re-queue only previously failed games
+    @MainActor
     private func retryFailedGames() async {
         guard !failedGames.isEmpty else { return }
         let toRetry = failedGames
@@ -523,6 +526,7 @@ public struct BatchArtworkMatchingView: View {
     }
 
     /// Core search loop shared by findArtworkForGames and retryFailedGames
+    @MainActor
     private func runSearch(games: [PVGame], clearExisting: Bool) async {
         processingGames = true
         searchProgress = 0.0
@@ -594,6 +598,7 @@ public struct BatchArtworkMatchingView: View {
     }
 
     /// Apply selected artwork to games
+    @MainActor
     private func applySelectedArtwork() async {
         isLoading = true
         defer { isLoading = false }
