@@ -151,6 +151,26 @@ English strings to translate:
 Respond with ONLY the translated .strings lines, nothing else."""
 
 
+_FORMAT_SPEC_RE = re.compile(
+    r"%(?:\d+\$)?(?:[-+0 #]*(?:\*|\d+)?(?:\.(?:\*|\d+))?)?[diouxXeEfFgGaAcsCSpnm@]"
+    r"|%(?:\d+\$)?[ld]{1,2}[diouxX]"
+)
+
+
+def _check_format_specifiers(key: str, eng_value: str, translated_value: str, lang_code: str) -> bool:
+    """Return True if format specifiers match; warn and return False otherwise."""
+    eng_specs = sorted(_FORMAT_SPEC_RE.findall(eng_value))
+    tr_specs = sorted(_FORMAT_SPEC_RE.findall(translated_value))
+    if eng_specs != tr_specs:
+        print(
+            f"  Warning: format specifier mismatch for key '{key}' in {lang_code}: "
+            f"expected {eng_specs}, got {tr_specs} — skipping key",
+            file=sys.stderr,
+        )
+        return False
+    return True
+
+
 def translate_keys(
     client: anthropic.Anthropic,
     keys: dict[str, str],
@@ -167,13 +187,25 @@ def translate_keys(
         max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
     )
-    response_text = message.content[0].text.strip()
+    text_chunks: list[str] = []
+    for block in message.content:
+        if isinstance(block, anthropic.types.TextBlock):
+            text_chunks.append(block.text)
+        else:
+            print(
+                f"  Warning: ignoring non-text content block of type {type(block).__name__} in Claude response",
+                file=sys.stderr,
+            )
+    response_text = "\n".join(text_chunks).strip()
 
     translated: dict[str, str] = {}
     for line in response_text.splitlines():
         m = _KEY_VALUE_RE.match(line.strip())
         if m:
-            translated[m.group(1)] = m.group(2)
+            key_parsed, value_parsed = m.group(1), m.group(2)
+            # Only keep if format specifiers match the English source
+            if _check_format_specifiers(key_parsed, keys.get(key_parsed, ""), value_parsed, lang_code):
+                translated[key_parsed] = value_parsed
 
     # Warn about any keys the model omitted; do NOT fall back to English
     # (overwriting an existing translation with English silently regresses it)
@@ -224,8 +256,9 @@ def merge_translations(
     # Update existing keys in-place, collect new keys
     new_keys: dict[str, str] = {}
     for key, value in translated.items():
-        escaped_value = value.replace('"', '\\"')
-        entry_line = f'"{key}" = "{escaped_value}";\n'
+        # Values are already in proper .strings escaped format (parsed via _KEY_VALUE_RE);
+        # write them verbatim to avoid double-escaping existing backslash sequences.
+        entry_line = f'"{key}" = "{value}";\n'
         if key in key_lines:
             lines[key_lines[key]] = entry_line
         else:
@@ -237,8 +270,7 @@ def merge_translations(
             lines.append("\n")
         lines.append("\n/* Auto-translated — please review */\n")
         for key, value in new_keys.items():
-            escaped_value = value.replace('"', '\\"')
-            lines.append(f'"{key}" = "{escaped_value}";\n')
+            lines.append(f'"{key}" = "{value}";\n')
 
     strings_path.write_text("".join(lines), encoding="utf-8")
     return strings_path
@@ -274,6 +306,18 @@ def main() -> int:
         help="Print what would be translated without calling the API or writing files",
     )
     args = parser.parse_args()
+
+    # Validate --strings-file: must be relative, no traversal, must be **/en.lproj/*.strings
+    sf = args.strings_file
+    if os.path.isabs(sf):
+        print(f"Error: --strings-file must be a relative path, got: {sf!r}", file=sys.stderr)
+        return 1
+    if os.path.normpath(sf).startswith(".."):
+        print(f"Error: --strings-file contains path traversal: {sf!r}", file=sys.stderr)
+        return 1
+    if not re.match(r".*/en\.lproj/[^/]+\.strings$", sf):
+        print(f"Error: --strings-file must match **/en.lproj/*.strings, got: {sf!r}", file=sys.stderr)
+        return 1
 
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key and not args.dry_run:
