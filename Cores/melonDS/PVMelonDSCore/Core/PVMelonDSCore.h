@@ -25,6 +25,7 @@ __attribute__((visibility("default")))
 #pragma clang diagnostic pop
 @public
     dispatch_queue_t _callbackQueue;
+    BOOL ndsTouchActive; // tracks whether stylus is currently down to avoid spamming PVMouseButtonDidPress
 }
 
 @end

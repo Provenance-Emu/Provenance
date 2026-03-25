@@ -292,10 +292,15 @@ typedef unsigned int   u32;
     CGFloat normalizedX = point.x / 256.0;
     CGFloat normalizedY = point.y / 192.0;
     [self setMousePosition:CGPointMake(normalizedX, normalizedY)];
-    [self setLeftMouseButtonPressed:YES];
+    // Only transition to pressed on touch-down; avoid re-sending press notifications on move updates.
+    if (!ndsTouchActive) {
+        ndsTouchActive = YES;
+        [self setLeftMouseButtonPressed:YES];
+    }
 }
 
 - (void)releaseScreenTouch {
+    ndsTouchActive = NO;
     [self setLeftMouseButtonPressed:NO];
 }
 
