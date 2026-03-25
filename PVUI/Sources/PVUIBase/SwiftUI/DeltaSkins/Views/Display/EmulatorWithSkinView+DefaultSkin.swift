@@ -252,6 +252,7 @@ struct DefaultControllerSkinView: View {
                                         )
                                     )
                             }
+                            .opacity(controllerOpacity)
                             .frame(maxHeight: geometry.size.height * controllerFraction)
                             .clipped()
                         }
@@ -448,6 +449,17 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             )
+            .onChange(of: controllerScale) { _ in
+                // Re-emit viewport whenever the scale setting changes so the
+                // game render area immediately matches the new controller height.
+                guard geometry.size.width > 0 && geometry.size.height > 0 else { return }
+                let newIsLandscape = geometry.size.width > geometry.size.height
+                emitDefaultViewportIfNeeded(
+                    size: geometry.size,
+                    safeInsets: geometry.safeAreaInsets,
+                    isLandscape: newIsLandscape
+                )
+            }
         }
     }
 
