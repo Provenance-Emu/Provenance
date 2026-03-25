@@ -88,9 +88,13 @@ public struct GameContextMenu: View {
                     }
                 }
 
-                // Transfer Pak configuration for N64 games (feature-flagged)
+                // Transfer Pak configuration — only shown for N64 games that are known to
+                // support the Transfer Pak accessory (e.g. Pokémon Stadium, Mario Tennis).
+                // Showing the option for all N64 games is confusing because most titles
+                // never use the Transfer Pak.
                 if featureFlags.mupenTransferPak,
-                   game.systemIdentifier == SystemIdentifier.N64.rawValue {
+                   game.systemIdentifier == SystemIdentifier.N64.rawValue,
+                   TransferPakCompatibleGames.isKnownTransferPakGame(game.title) {
                     Button {
                         contextMenuDelegate?.gameContextMenu(self, didRequestTransferPakConfigFor: game)
                     } label: {
