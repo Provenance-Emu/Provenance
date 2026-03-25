@@ -715,11 +715,13 @@ public extension OpenVGDB {
         let escapedSerialLike = sanitizeForSQLLike(serial)
 
         // Match: exact ("T-5016H"), at start of list ("SERIAL,…"), middle (",SERIAL,"), end (",SERIAL")
+        // ESCAPE '\\' is required so that backslash-escaped _ and % from sanitizeForSQLLike are treated
+        // as literal characters rather than LIKE wildcards.
         let serialCondition = """
             (rom.romSerial = '\(escapedSerial)' COLLATE NOCASE
-            OR rom.romSerial LIKE '\(escapedSerialLike),%' COLLATE NOCASE
-            OR rom.romSerial LIKE '%,\(escapedSerialLike),%' COLLATE NOCASE
-            OR rom.romSerial LIKE '%,\(escapedSerialLike)' COLLATE NOCASE)
+            OR rom.romSerial LIKE '\(escapedSerialLike),%' ESCAPE '\\' COLLATE NOCASE
+            OR rom.romSerial LIKE '%,\(escapedSerialLike),%' ESCAPE '\\' COLLATE NOCASE
+            OR rom.romSerial LIKE '%,\(escapedSerialLike)' ESCAPE '\\' COLLATE NOCASE)
             """
 
         let query: String

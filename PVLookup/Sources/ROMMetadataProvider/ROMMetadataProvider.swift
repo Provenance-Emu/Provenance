@@ -37,22 +37,13 @@ public extension ROMMetadataProvider {
     /// - Parameter string: The string to sanitize
     /// - Returns: A sanitized string safe for SQL LIKE queries
     func sanitizeForSQLLike(_ string: String) -> String {
-        // First escape special LIKE characters
-        let escapedLike = string
+        // Escape backslash FIRST so subsequent escapes aren't double-escaped,
+        // then escape the two SQLite LIKE wildcards, then SQL single-quotes.
+        return string
+            .replacingOccurrences(of: "\\", with: "\\\\")  // Must be first
             .replacingOccurrences(of: "%", with: "\\%")
             .replacingOccurrences(of: "_", with: "\\_")
-            .replacingOccurrences(of: "\\", with: "\\\\")  // Escape backslashes first
-            .replacingOccurrences(of: "'", with: "''")     // SQL quotes
-            .replacingOccurrences(of: "\"", with: "\\\"")  // Double quotes
-            .replacingOccurrences(of: "(", with: "\\(")    // Parentheses
-            .replacingOccurrences(of: ")", with: "\\)")
-            .replacingOccurrences(of: "[", with: "\\[")    // Square brackets
-            .replacingOccurrences(of: "]", with: "\\]")
-            .replacingOccurrences(of: "*", with: "\\*")    // Wildcards
-            .replacingOccurrences(of: "?", with: "\\?")
-            .replacingOccurrences(of: "#", with: "\\#")
-
-        return escapedLike
+            .replacingOccurrences(of: "'", with: "''")
     }
 
     /// Sanitizes a string for safe use in SQL equality (`=`) queries.
