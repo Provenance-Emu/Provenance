@@ -100,7 +100,7 @@ public enum ArtworkMatchingService {
         _ results: [ArtworkMetadata],
         sources: Set<ArtworkSource>
     ) -> [ArtworkMetadata] {
-        guard !sources.isEmpty else { return results }
+        guard !sources.isEmpty else { return [] }
         let sourceNames = Set(sources.map(\.rawValue))
         return results.filter { sourceNames.contains($0.source) }
     }

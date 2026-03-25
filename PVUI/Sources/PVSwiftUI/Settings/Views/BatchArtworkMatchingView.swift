@@ -11,7 +11,6 @@ import PVSupport
 import PVLogging
 import PVLookup
 import PVLookupTypes
-import PVPrimitives
 import PVSystems
 import RealmSwift
 import PVMediaCache
@@ -25,7 +24,24 @@ public struct BatchArtworkMatchingView: View {
 
     // Filter and processing state
     @State private var includeGamesWithOriginalArtwork = false
-    @State private var enabledSources: Set<ArtworkSource> = Set(ArtworkSource.allCases)
+    /// Comma-separated raw values of enabled artwork sources; persisted across navigation via AppStorage.
+    @AppStorage("BatchArtworkMatchingView.enabledSourcesRaw")
+    private var enabledSourcesRaw: String = ArtworkSource.allCases.map(\.rawValue).joined(separator: ",")
+
+    private var enabledSources: Set<ArtworkSource> {
+        Set(enabledSourcesRaw.split(separator: ",").compactMap { ArtworkSource(rawValue: String($0)) })
+    }
+
+    private func setSourceEnabled(_ source: ArtworkSource, _ enabled: Bool) {
+        var current = enabledSources
+        if enabled {
+            current.insert(source)
+        } else if current.count > 1 {
+            current.remove(source)
+        }
+        enabledSourcesRaw = current.map(\.rawValue).joined(separator: ",")
+    }
+
     @State private var isLoading = false
     @State private var processingGames = false
     @State private var searchProgress: Double = 0
@@ -154,16 +170,7 @@ public struct BatchArtworkMatchingView: View {
                 ForEach(ArtworkSource.allCases) { source in
                     Toggle(isOn: Binding(
                         get: { enabledSources.contains(source) },
-                        set: { enabled in
-                            if enabled {
-                                enabledSources.insert(source)
-                            } else {
-                                // Keep at least one source enabled
-                                if enabledSources.count > 1 {
-                                    enabledSources.remove(source)
-                                }
-                            }
-                        }
+                        set: { enabled in setSourceEnabled(source, enabled) }
                     )) {
                         Text(source.displayName)
                             .font(.system(size: 14))
