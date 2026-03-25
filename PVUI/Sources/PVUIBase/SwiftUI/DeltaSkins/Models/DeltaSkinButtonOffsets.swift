@@ -80,7 +80,17 @@ public final class DeltaSkinButtonOffsets: ObservableObject {
     private func loadOffset(buttonId: String, skinIdentifier: String) -> CGPoint {
         let udKey = userDefaultsKeyPrefix + skinIdentifier
         guard let dict = UserDefaults.standard.dictionary(forKey: udKey),
-              let rawValue = dict[buttonId] as? [String: Double] else {
+              let rawAny = dict[buttonId] else {
+            return .zero
+        }
+        // UserDefaults returns NSDictionary-bridged values; tolerate both [String: Double]
+        // (Swift-native) and [String: Any] (ObjC-bridged NSNumber values).
+        let rawValue: [String: Double]
+        if let typed = rawAny as? [String: Double] {
+            rawValue = typed
+        } else if let nsDict = rawAny as? [String: Any] {
+            rawValue = nsDict.compactMapValues { $0 as? Double }
+        } else {
             return .zero
         }
         return CGPoint(x: rawValue["x"] ?? 0, y: rawValue["y"] ?? 0)
@@ -96,7 +106,19 @@ public final class DeltaSkinButtonOffsets: ObservableObject {
             buttonId = key
         }
         let udKey = userDefaultsKeyPrefix + skinIdentifier
-        var dict = (UserDefaults.standard.dictionary(forKey: udKey) as? [String: [String: Double]]) ?? [:]
+        // UserDefaults.dictionary(forKey:) returns [String: Any]; the nested button dicts
+        // come back as NSDictionary (ObjC-bridged), so we can't cast directly to
+        // [String: [String: Double]]. Decode each nested dict tolerantly instead.
+        var dict: [String: [String: Double]] = [:]
+        if let existingRaw = UserDefaults.standard.dictionary(forKey: udKey) {
+            for (k, v) in existingRaw {
+                if let typed = v as? [String: Double] {
+                    dict[k] = typed
+                } else if let nsDict = v as? [String: Any] {
+                    dict[k] = nsDict.compactMapValues { $0 as? Double }
+                }
+            }
+        }
         if offset == .zero {
             dict.removeValue(forKey: buttonId)
         } else {

@@ -178,16 +178,16 @@ struct EmulatorWithSkinView: View {
 
                 // Edit Layout toolbar — shown when a skin is active (iOS only; tvOS lacks DragGesture)
                 #if !os(tvOS)
-                if skinLoader.selectedSkin != nil {
+                if let activeSkin = skinLoader.selectedSkin {
                     VStack {
                         HStack {
                             Spacer()
                             DeltaSkinEditModeToolbar(
                                 isEditMode: $isEditMode,
-                                skinIdentifier: skinLoader.selectedSkin?.identifier ?? "",
+                                skinIdentifier: activeSkin.identifier,
                                 buttonOffsets: buttonOffsets,
                                 hasCustomOffsets: buttonOffsets.hasCustomOffsets(
-                                    for: skinLoader.selectedSkin?.identifier ?? ""
+                                    for: activeSkin.identifier
                                 )
                             )
                             .padding(.top, geometry.safeAreaInsets.top + 12)

@@ -25,6 +25,8 @@ public struct MultiTouchView: UIViewRepresentable {
     let touchHandler: (MultiTouchPhase, [TouchPoint]) -> Void
     /// Rects to ignore for hit testing (touches pass through)
     var ignoredRects: [CGRect] = []
+    /// When true, all touches pass through so SwiftUI drag gestures (edit handles) can receive them
+    var isEditMode: Bool = false
 
     public func makeUIView(context: Context) -> TouchDetectingView {
         let view = TouchDetectingView()
@@ -34,6 +36,7 @@ public struct MultiTouchView: UIViewRepresentable {
 #endif
         view.backgroundColor = .clear
         view.ignoredRects = ignoredRects
+        view.isEditMode = isEditMode
         DLOG("MultiTouchView created with frame: \(view.frame)")
         return view
     }
@@ -41,6 +44,7 @@ public struct MultiTouchView: UIViewRepresentable {
     public func updateUIView(_ uiView: TouchDetectingView, context: Context) {
         uiView.touchHandler = touchHandler
         uiView.ignoredRects = ignoredRects
+        uiView.isEditMode = isEditMode
     }
 
     /// The UIView that detects touches
@@ -62,9 +66,13 @@ public struct MultiTouchView: UIViewRepresentable {
         }
         var touchHandler: ((MultiTouchPhase, [TouchPoint]) -> Void)?
         var ignoredRects: [CGRect] = []
+        /// When true, the UIKit view passes all touches through so SwiftUI DragGesture can handle them
+        var isEditMode: Bool = false
 
-        /// Allow touches to pass through specific regions so underlying controls (e.g., thumbsticks) can receive gestures
+        /// Allow touches to pass through specific regions so underlying controls (e.g., thumbsticks) can receive gestures.
+        /// In edit mode all touches pass through so the SwiftUI drag handles work correctly.
         override public func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+            guard !isEditMode else { return false }
             for rect in ignoredRects {
                 if rect.contains(point) { return false }
             }

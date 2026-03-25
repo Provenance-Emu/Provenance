@@ -997,6 +997,7 @@ public struct DeltaSkinView: View {
                         }
                     }
                     , ignoredRects: thumbstickIgnoredRects(in: geometry)
+                    , isEditMode: isEditMode
                 )
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .allowsHitTesting(!isEditMode)
@@ -1422,7 +1423,8 @@ public struct DeltaSkinView: View {
                 // Special handling for D-pad buttons to allow direction changes
                 // Track this touch as being on the D-pad
                 touchToDPadMap[touchId] = button
-                handleDPadInput(button, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
+                let effectiveButton = buttonWithEffectiveFrame(button)
+                handleDPadInput(effectiveButton, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
             } else {
                 // For non-D-pad buttons, use our multi-button press system
                 // If this touch was previously on the D-pad, release D-pad directions for it
@@ -2301,8 +2303,8 @@ public struct DeltaSkinView: View {
             }
             #endif
 
-            // Play sound with current position (only once)
-            playClickSound(for: button)
+            // Play sound using the button's effective (possibly offset) position
+            playClickSound(for: buttonWithEffectiveFrame(button))
 
         }
 
