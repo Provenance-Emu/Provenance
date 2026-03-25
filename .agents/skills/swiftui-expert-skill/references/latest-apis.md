@@ -11,7 +11,7 @@
 
 ---
 
-## Always Use (iOS 15+)
+## Always Use (iOS/tvOS 17+)
 
 These APIs have been deprecated long enough that there is no reason to use the old variants.
 
