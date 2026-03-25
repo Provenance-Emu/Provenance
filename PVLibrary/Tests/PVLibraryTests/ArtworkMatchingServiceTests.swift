@@ -20,7 +20,8 @@ import PVSystems
 // MARK: - Mock service
 
 /// Deterministic mock that returns a configurable list of ArtworkMetadata items.
-final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol {
+/// `@unchecked Sendable` is safe here because this mock is only used from a single test thread.
+final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol, @unchecked Sendable {
 
     /// Results returned regardless of input parameters.
     var stubbedResults: [ArtworkMetadata] = []

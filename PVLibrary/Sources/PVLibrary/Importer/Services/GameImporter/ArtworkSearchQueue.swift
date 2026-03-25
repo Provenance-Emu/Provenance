@@ -192,7 +192,7 @@ public actor ArtworkSearchQueue {
                 ILOG("ArtworkSearchQueue: Found \(artworkResults.count) result(s) for \(gameTitle)")
 
                 // --- Box front ---
-                if let frontArtwork = artworkResults.first(where: { $0.type == .boxFront }) ?? artworkResults.first {
+                if let frontArtwork = artworkResults.first(where: { $0.type == .boxFront }) {
                     await saveBoxFrontArtwork(frontArtwork, metadata: metadata, md5Hash: md5Hash, gameTitle: gameTitle)
                 }
 
@@ -221,7 +221,7 @@ public actor ArtworkSearchQueue {
         let md5Hash = metadata.md5Hash.uppercased()
         let gameTitle = metadata.title.isEmpty ? metadata.gameID : metadata.title
 
-        Task.detached(priority: .background) { [matchingService] in
+        Task.detached(priority: .background) { [weak self, matchingService] in
             do {
                 let results = try await matchingService.findArtwork(
                     title: metadata.title,
@@ -234,7 +234,7 @@ public actor ArtworkSearchQueue {
                     VLOG("ArtworkSearchQueue: No screenshot/title-screen artwork for \(gameTitle)")
                 } else {
                     ILOG("ArtworkSearchQueue: Found \(results.count) screenshot/title-screen result(s) for \(gameTitle) — saving URLs")
-                    await ArtworkSearchQueue.shared.saveBackgroundArtwork(results, md5Hash: md5Hash, gameID: metadata.gameID)
+                    await self?.saveBackgroundArtwork(results, md5Hash: md5Hash, gameID: metadata.gameID)
                 }
             } catch {
                 WLOG("ArtworkSearchQueue: Background artwork search error for \(gameTitle): \(error.localizedDescription)")
@@ -398,8 +398,9 @@ public actor ArtworkSearchQueue {
         }
     }
 
-    /// Persist screenshot / title-screen artwork URLs (background priority).
-    /// Currently stores the first result's URL; future work can expand to multiple screenshots.
+    /// Placeholder for persisting screenshot / title-screen artwork (background priority).
+    /// Currently logs the available URL; actual persistence is deferred until a `PVImageFile`
+    /// download helper exists for `game.screenShots` (see TODO below).
     internal func saveBackgroundArtwork(_ results: [ArtworkMetadata], md5Hash: String, gameID: String) async {
         guard let first = results.first else { return }
         let urlString = first.url.absoluteString
@@ -468,14 +469,14 @@ public actor ArtworkSearchQueue {
         #if os(macOS)
         guard let artwork = NSImage(data: data) else { return }
         do {
-            let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
+            _ = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
             try await Task.detached(priority: .utility) {
                 guard let realm = try? Realm(),
                       let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
                                  (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
                 else { return }
                 try realm.write {
-                    game.boxBackArtworkURL = localURL.absoluteString
+                    game.boxBackArtworkURL = artworkURL.absoluteString
                 }
             }.value
             ILOG("ArtworkSearchQueue: Cached box-back artwork for \(gameTitle)")
@@ -485,14 +486,14 @@ public actor ArtworkSearchQueue {
         #elseif !os(watchOS)
         guard let artwork = UIImage(data: data) else { return }
         do {
-            let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
+            _ = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
             try await Task.detached(priority: .utility) {
                 guard let realm = try? Realm(),
                       let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
                                  (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
                 else { return }
                 try realm.write {
-                    game.boxBackArtworkURL = localURL.absoluteString
+                    game.boxBackArtworkURL = artworkURL.absoluteString
                 }
             }.value
             ILOG("ArtworkSearchQueue: Cached box-back artwork for \(gameTitle)")

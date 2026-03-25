@@ -3,7 +3,7 @@
 //  PVLibrary
 //
 //  Standalone, protocol-driven service for artwork matching.
-//  Used by both ArtworkSearchQueue (import time) and BatchArtworkMatchingView (batch re-match).
+//  Used by ArtworkSearchQueue at import time to perform progressive-fallback artwork lookup.
 //
 
 import Foundation
@@ -81,25 +81,34 @@ public actor ArtworkMatchingService: ArtworkMatchingServiceProtocol {
         // --- Pass 1: title/filename searches ---
         for (label, term) in searchTerms {
             if let systemID = systemIdentifier {
-                if let found = try? await lookup.searchArtwork(
-                    byGameName: term,
-                    systemID: systemID,
-                    artworkTypes: artworkTypes
-                ), !found.isEmpty {
-                    ILOG("ArtworkMatchingService: \(found.count) result(s) via \(label) + system \(systemID.rawValue)")
-                    return found   // best match: term + system
+                do {
+                    if let found = try await lookup.searchArtwork(
+                        byGameName: term,
+                        systemID: systemID,
+                        artworkTypes: artworkTypes
+                    ), !found.isEmpty {
+                        ILOG("ArtworkMatchingService: \(found.count) result(s) via \(label) + system \(systemID.rawValue)")
+                        return found   // best match: term + system
+                    }
+                } catch {
+                    ELOG("ArtworkMatchingService: searchArtwork failed for term '\(term)' with system \(systemID.rawValue): \(error)")
                 }
             }
 
             // Broader search without system filter
-            if results.isEmpty,
-               let found = try? await lookup.searchArtwork(
-                    byGameName: term,
-                    systemID: nil,
-                    artworkTypes: artworkTypes
-               ), !found.isEmpty {
-                ILOG("ArtworkMatchingService: \(found.count) result(s) via \(label) (no system filter)")
-                results = found   // keep as candidate; try next term with system first
+            if results.isEmpty {
+                do {
+                    if let found = try await lookup.searchArtwork(
+                        byGameName: term,
+                        systemID: nil,
+                        artworkTypes: artworkTypes
+                    ), !found.isEmpty {
+                        ILOG("ArtworkMatchingService: \(found.count) result(s) via \(label) (no system filter)")
+                        results = found   // keep as candidate; try next term with system first
+                    }
+                } catch {
+                    ELOG("ArtworkMatchingService: searchArtwork (no system) failed for term '\(term)': \(error)")
+                }
             }
         }
 
@@ -113,28 +122,41 @@ public actor ArtworkMatchingService: ArtworkMatchingServiceProtocol {
         }
 
         let md5Upper = md5.uppercased()
-        if let romMeta = try? await lookup.searchROM(byMD5: md5Upper) {
-            let romTitle = romMeta.gameTitle.artworkSearchCleaned()
-            guard !romTitle.isEmpty else { return [] }
+        do {
+            if let romMeta = try await lookup.searchROM(byMD5: md5Upper) {
+                let romTitle = romMeta.gameTitle.artworkSearchCleaned()
+                guard !romTitle.isEmpty else { return [] }
 
-            if let systemID = systemIdentifier,
-               let found = try? await lookup.searchArtwork(
-                    byGameName: romTitle,
-                    systemID: systemID,
-                    artworkTypes: artworkTypes
-               ), !found.isEmpty {
-                ILOG("ArtworkMatchingService: \(found.count) result(s) via MD5 ROM title + system")
-                return found
-            }
+                if let systemID = systemIdentifier {
+                    do {
+                        if let found = try await lookup.searchArtwork(
+                            byGameName: romTitle,
+                            systemID: systemID,
+                            artworkTypes: artworkTypes
+                        ), !found.isEmpty {
+                            ILOG("ArtworkMatchingService: \(found.count) result(s) via MD5 ROM title + system")
+                            return found
+                        }
+                    } catch {
+                        ELOG("ArtworkMatchingService: searchArtwork failed for MD5 ROM title with system \(systemID.rawValue): \(error)")
+                    }
+                }
 
-            if let found = try? await lookup.searchArtwork(
-                    byGameName: romTitle,
-                    systemID: nil,
-                    artworkTypes: artworkTypes
-               ), !found.isEmpty {
-                ILOG("ArtworkMatchingService: \(found.count) result(s) via MD5 ROM title (no system filter)")
-                return found
+                do {
+                    if let found = try await lookup.searchArtwork(
+                        byGameName: romTitle,
+                        systemID: nil,
+                        artworkTypes: artworkTypes
+                    ), !found.isEmpty {
+                        ILOG("ArtworkMatchingService: \(found.count) result(s) via MD5 ROM title (no system filter)")
+                        return found
+                    }
+                } catch {
+                    ELOG("ArtworkMatchingService: searchArtwork (no system) failed for MD5 ROM title: \(error)")
+                }
             }
+        } catch {
+            ELOG("ArtworkMatchingService: searchROM(byMD5:) failed for '\(md5Upper)': \(error)")
         }
 
         return []
