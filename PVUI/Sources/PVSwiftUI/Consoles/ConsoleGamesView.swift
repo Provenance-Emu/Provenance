@@ -131,6 +131,31 @@ struct ConsoleGamesView: SwiftUI.View {
         return nil
     }
 
+    /// Creates a stable view identity key that only changes when artwork changes.
+    private func gameIdentityKey(id: String, artworkURL: String) -> String {
+        "\(id)_\(artworkURL)"
+    }
+
+    /// Shares focus binding construction so SwiftUI builders stay lightweight for type-checking.
+    private func focusBinding(
+        itemId: String,
+        section: HomeSectionType,
+        requiresValidityCheck: @escaping () -> Bool = { true }
+    ) -> Binding<Bool> {
+        Binding(
+            get: {
+                requiresValidityCheck() &&
+                gamesViewModel.focusedSection == section &&
+                gamesViewModel.focusedItemInSection == itemId
+            },
+            set: { isFocused in
+                guard isFocused, requiresValidityCheck() else { return }
+                gamesViewModel.focusedSection = section
+                gamesViewModel.focusedItemInSection = itemId
+            }
+        )
+    }
+
     func launchGame(md5: String) {
         Task.detached { @MainActor in
             let realm = RomDatabase.sharedInstance.realm
@@ -872,12 +897,10 @@ struct ConsoleGamesView: SwiftUI.View {
                     game: game,
                     constrainHeight: false,
                     sectionContext: .allGames,
-                    isFocused: Binding(
-                        get: {
-                            !game.isInvalidated &&
-                            gamesViewModel.focusedSection == .allGames &&
-                            gamesViewModel.focusedItemInSection == game.id },
-                        set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
+                    isFocused: focusBinding(
+                        itemId: game.id,
+                        section: .allGames,
+                        requiresValidityCheck: { !game.isInvalidated }
                     )
                 ) {
                     Task.detached { @MainActor in
@@ -885,7 +908,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+                .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -910,17 +933,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     game: model,
                         constrainHeight: false,
                         sectionContext: .allGames,
-                        isFocused: Binding(
-                            get: {
-                                gamesViewModel.focusedSection == .allGames &&
-                                gamesViewModel.focusedItemInSection == model.id
-                            },
-                            set: {
-                                if $0 {
-                                    gamesViewModel.focusedItemInSection = model.id
-                                }
-                            }
-                        )
+                        isFocused: focusBinding(itemId: model.id, section: .allGames)
                 ) {
                     launchGame(md5: model.md5)
                 }
@@ -928,7 +941,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 /// model field update (playCount, lastPlayed, etc.).  Using the full
                 /// model.hashValue caused unnecessary view identity changes and scroll
                 /// stutter on Realm writes.
-                .id("\(model.id)_\(model.trueArtworkURL?.absoluteString ?? "")")
+                .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -959,18 +972,10 @@ struct ConsoleGamesView: SwiftUI.View {
                             constrainHeight: false,
                             viewType: .cell,
                             sectionContext: .allGames,
-                            isFocused: Binding(
-                                get: {
-                                    !game.isInvalidated &&
-                                    gamesViewModel.focusedSection == .allGames &&
-                                    gamesViewModel.focusedItemInSection == game.id
-                                },
-                                set: {
-                                    if $0 && !game.isInvalidated {
-                                        gamesViewModel.focusedSection = .allGames
-                                        gamesViewModel.focusedItemInSection = game.id
-                                    }
-                                }
+                            isFocused: focusBinding(
+                                itemId: game.id,
+                                section: .allGames,
+                                requiresValidityCheck: { !game.isInvalidated }
                             )
                         ) {
                             Task.detached { @MainActor in
@@ -978,7 +983,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             }
                         }
                         /// Use compound ID so view recreates when artwork URL changes
-                        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+                        .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
                         .focusableIfAvailable()
                         .contextMenu {
                             GameContextMenu(
@@ -1005,18 +1010,10 @@ struct ConsoleGamesView: SwiftUI.View {
                     constrainHeight: true,
                     viewType: .row,
                     sectionContext: .allGames,
-                    isFocused: Binding(
-                        get: {
-                            !game.isInvalidated &&
-                            gamesViewModel.focusedSection == .allGames &&
-                            gamesViewModel.focusedItemInSection == game.id
-                        },
-                        set: {
-                            if $0 && !game.isInvalidated {
-                                gamesViewModel.focusedSection = .allGames
-                                gamesViewModel.focusedItemInSection = game.id
-                            }
-                        }
+                    isFocused: focusBinding(
+                        itemId: game.id,
+                        section: .allGames,
+                        requiresValidityCheck: { !game.isInvalidated }
                     )
                 ) {
                     Task.detached { @MainActor in
@@ -1024,7 +1021,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+                .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -1050,18 +1047,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         constrainHeight: true,
                         viewType: .row,
                         sectionContext: .allGames,
-                        isFocused: Binding(
-                            get: {
-                                gamesViewModel.focusedSection == .allGames &&
-                                gamesViewModel.focusedItemInSection == model.id
-                            },
-                            set: {
-                                if $0 {
-                                    gamesViewModel.focusedSection = .allGames
-                                    gamesViewModel.focusedItemInSection = model.id
-                                }
-                            }
-                        )
+                        isFocused: focusBinding(itemId: model.id, section: .allGames)
                 ) {
                     launchGame(md5: model.md5)
                 }
@@ -1069,7 +1055,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 /// model field update (playCount, lastPlayed, etc.).  Using the full
                 /// model.hashValue caused unnecessary view identity changes and scroll
                 /// stutter on Realm writes.
-                .id("\(model.id)_\(model.trueArtworkURL?.absoluteString ?? "")")
+                .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1099,18 +1085,16 @@ struct ConsoleGamesView: SwiftUI.View {
                         constrainHeight: false,
                         viewType: .row,
                         sectionContext: .allGames,
-                        isFocused: Binding(
-                            get: {
-                                !game.isInvalidated &&
-                                gamesViewModel.focusedSection == .allGames &&
-                                gamesViewModel.focusedItemInSection == game.id },
-                            set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
+                        isFocused: focusBinding(
+                            itemId: game.id,
+                            section: .allGames,
+                            requiresValidityCheck: { !game.isInvalidated }
                         ))
                     {
                         loadGame(game)
                     }
                     /// Use compound ID so view recreates when artwork URL changes
-                    .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+                    .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
                     .focusableIfAvailable()
                     .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
 #if !os(tvOS) && !os(watchOS)
@@ -1218,22 +1202,11 @@ struct ConsoleGamesView: SwiftUI.View {
                             constrainHeight: true,
                             viewType: .row,
                             sectionContext: .allGames,
-                            isFocused: Binding(
-                                get: {
-                                    gamesViewModel.focusedSection == .allGames &&
-                                    gamesViewModel.focusedItemInSection == game.id
-                                },
-                                set: {
-                                    if $0 {
-                                        gamesViewModel.focusedSection = .allGames
-                                        gamesViewModel.focusedItemInSection = game.id
-                                    }
-                                }
-                            )
+                            isFocused: focusBinding(itemId: game.id, section: .allGames)
                         ) {
                             launchGame(md5: game.md5)
                         }
-                        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+                        .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
                         .focusableIfAvailable()
                         .contextMenu {
                             if let live = liveGame(for: game) {
@@ -1593,22 +1566,11 @@ extension ConsoleGamesView {
                 constrainHeight: true,
                 viewType: .cell,
                 sectionContext: section,
-                isFocused: Binding(
-                    get: {
-                        gamesViewModel.focusedSection == section &&
-                        gamesViewModel.focusedItemInSection == game.id
-                    },
-                    set: {
-                        if $0 {
-                            gamesViewModel.focusedSection = section
-                            gamesViewModel.focusedItemInSection = game.id
-                        }
-                    }
-                )
+                isFocused: focusBinding(itemId: game.id, section: section)
         ) {
             launchGame(md5: game.md5)
         }
-        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+        .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
         .focusableIfAvailable()
         .contextMenu {
             if let live = liveGame(for: game) {
