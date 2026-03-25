@@ -208,7 +208,7 @@ struct PauseTileMenuView: View {
         case "transferPak":
             // Freeze the Realm object on the current (main) thread before opening the sheet,
             // so the sheet closure never touches a live Realm instance on an unknown thread.
-            // Only present the sheet when the freeze succeeds; otherwise log and skip.
+            // Only present the sheet when the game is available and not invalidated.
             if let rawGame = emulatorVC.game, !rawGame.isInvalidated {
                 frozenTransferPakGame = rawGame.isFrozen ? rawGame : rawGame.freeze()
                 showingTransferPakConfig = true

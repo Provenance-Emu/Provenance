@@ -196,11 +196,11 @@ final class PauseTileMenuViewModel: ObservableObject {
         if let transferCore = emulatorVC.core as? TransferPakSupport,
            featureFlags.mupenTransferPak,
            transferCore.transferPakSlotCount > 0 {
-            // Compute configured-slot count in a single pass; reuse for both the visibility
-            // guard and the badge label to avoid calling transferPakROM(forPort:) twice.
-            let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
-                transferCore.transferPakROM(forPort: $0) != nil
-            }.count
+            // Count configured slots in one pass; reuse for both the visibility guard and
+            // the badge label to avoid calling transferPakROM(forPort:) more than once per slot.
+            let configuredCount = (0..<transferCore.transferPakSlotCount).reduce(0) { count, port in
+                count + (transferCore.transferPakROM(forPort: port) != nil ? 1 : 0)
+            }
             if TransferPakCompatibleGames.isKnownTransferPakGame(gameTitle) || configuredCount > 0 {
                 coreTiles.append(PauseMenuTile(
                     id: "transferPak",
