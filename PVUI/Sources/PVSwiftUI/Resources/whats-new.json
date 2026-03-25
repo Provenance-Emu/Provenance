@@ -560,6 +560,12 @@
         "symbolColor": "purple",
         "title": "Drag Games to Export",
         "subtitle": "Long-press any game in your library and drag it out to the Files app, AirDrop, or any compatible destination."
+      },
+      {
+        "symbolName": "folder.fill",
+        "symbolColor": "blue",
+        "title": "DOSBox Folder Import",
+        "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .bat, or .conf files is recognised automatically as a DOS game."
       }
     ]
   }

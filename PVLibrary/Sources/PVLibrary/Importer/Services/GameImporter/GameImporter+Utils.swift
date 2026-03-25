@@ -70,6 +70,33 @@ extension GameImporter {
         return artworkExtensions.contains(fileExtension)
     }
 
+    /// Checks if a given import queue item is a DOSBox game folder
+    internal func isDOSBoxFolder(_ queueItem: ImportQueueItem) -> Bool {
+        return isDOSBoxFolder(queueItem.url)
+    }
+
+    /// Checks whether a URL points to a directory that looks like a DOSBox game.
+    ///
+    /// A folder is considered a DOSBox game folder when it is a directory and contains
+    /// at least one of: `.conf`, `.exe`, `.bat`, or `.com` file at its root level.
+    /// The presence of `dosbox.conf` in particular is a strong indicator.
+    internal func isDOSBoxFolder(_ url: URL) -> Bool {
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+              isDirectory.boolValue else {
+            return false
+        }
+
+        guard let contents = try? FileManager.default.contentsOfDirectory(atPath: url.path) else {
+            return false
+        }
+
+        let dosMarkerExtensions: Set<String> = ["conf", "exe", "bat", "com"]
+        return contents.contains { filename in
+            dosMarkerExtensions.contains(URL(fileURLWithPath: filename).pathExtension.lowercased())
+        }
+    }
+
     internal func isBIOS(_ item: ImportQueueItem) -> Bool {
         let urlPath = item.url.path
         let filenameLowercased = item.url.lastPathComponent.lowercased()
