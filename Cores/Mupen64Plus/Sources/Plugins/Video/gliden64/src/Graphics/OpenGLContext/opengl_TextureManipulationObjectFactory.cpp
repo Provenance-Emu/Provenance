@@ -292,16 +292,20 @@ namespace opengl {
 				(*m_texparams)[u32(_parameters.handle)].wrapT = GLint(_parameters.wrapT);
 			}
 #else
-			// HACK: iOS (OpenGL ES) only supports GL_CLAMP_TO_EDGE for NPOT textures.
-			// Using other wrap modes on NPOT textures causes rendering artifacts.
-			// Force GL_CLAMP_TO_EDGE unconditionally on iOS/tvOS.
-			if (_parameters.wrapS.isValid() && !(iterValid && iter->second.wrapS == GLint(_parameters.wrapS))) {
-				glTexParameteri(target, GL_TEXTURE_WRAP_S, GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE));
-				(*m_texparams)[u32(_parameters.handle)].wrapS = GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE);
-			}
-			if (_parameters.wrapT.isValid() && !(iterValid && iter->second.wrapT == GLint(_parameters.wrapT))) {
-				glTexParameteri(target, GL_TEXTURE_WRAP_T, GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE));
-				(*m_texparams)[u32(_parameters.handle)].wrapT = GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE);
+			// HACK: iOS/tvOS and Emscripten (OpenGL ES/WebGL) effectively only support
+			// GL_CLAMP_TO_EDGE for NPOT textures. Using other wrap modes on NPOT textures
+			// causes rendering artifacts. Force GL_CLAMP_TO_EDGE unconditionally here,
+			// and cache/compare against the forced wrap value rather than the requested one.
+			{
+				const GLint forcedWrap = GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE);
+				if (_parameters.wrapS.isValid() && !(iterValid && iter->second.wrapS == forcedWrap)) {
+					glTexParameteri(target, GL_TEXTURE_WRAP_S, forcedWrap);
+					(*m_texparams)[u32(_parameters.handle)].wrapS = forcedWrap;
+				}
+				if (_parameters.wrapT.isValid() && !(iterValid && iter->second.wrapT == forcedWrap)) {
+					glTexParameteri(target, GL_TEXTURE_WRAP_T, forcedWrap);
+					(*m_texparams)[u32(_parameters.handle)].wrapT = forcedWrap;
+				}
 			}
 #endif
 			if (m_supportMipmapLevel && _parameters.maxMipmapLevel.isValid() && !(iterValid && iter->second.maxMipmapLevel == GLint(_parameters.maxMipmapLevel))) {
