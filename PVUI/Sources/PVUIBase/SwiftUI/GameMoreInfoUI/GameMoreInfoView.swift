@@ -590,16 +590,16 @@ struct GameMoreInfoView: View {
         }
         .sheet(isPresented: $showCoreOptionsSheet) {
             if let info = coreOptionsInfo,
-               let md5 = viewModel.pvGame?.md5Hash {
-                NavigationView {
+               let md5 = viewModel.pvGame?.md5Hash, !md5.isEmpty {
+                NavigationStack {
                     CoreOptionsDetailView(
                         coreClass: info.coreClass,
                         title: info.name,
-                        gameMD5: md5.isEmpty ? nil : md5
+                        gameMD5: md5
                     )
                 }
             } else {
-                NavigationView {
+                NavigationStack {
                     VStack(spacing: 16) {
                         Text("Unable to load core options.")
                             .multilineTextAlignment(.center)
@@ -840,8 +840,10 @@ struct GameMoreInfoView: View {
     private var coreOptionsSection: some View {
         let info = coreOptionsInfo
         let md5 = viewModel.pvGame?.md5Hash ?? ""
+        let hasMD5 = !md5.isEmpty
+        let isEnabled = info != nil && hasMD5
         let overrideCount: Int = {
-            guard let info = info, !md5.isEmpty else { return 0 }
+            guard let info = info, hasMD5 else { return 0 }
             return countPerGameOverrides(in: info.coreClass.options, coreClass: info.coreClass, md5: md5)
         }()
         let isMatched = viewModel.pvGame?.system != nil
@@ -849,20 +851,26 @@ struct GameMoreInfoView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("CORE OPTIONS")
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(info != nil ? accentColor : accentColor.opacity(0.4))
-                .shadow(color: accentColor.opacity(info != nil ? glowOpacity : 0.2), radius: 3, x: 0, y: 0)
+                .foregroundColor(isEnabled ? accentColor : accentColor.opacity(0.4))
+                .shadow(color: accentColor.opacity(isEnabled ? glowOpacity : 0.2), radius: 3, x: 0, y: 0)
 
             Button(action: {
-                if info != nil {
-                    showCoreOptionsSheet = true
-                }
+                showCoreOptionsSheet = true
             }) {
                 HStack {
                     Image(systemName: "slider.horizontal.3")
-                        .foregroundColor(info != nil ? accentColor : .secondary)
-                    Text(info != nil ? "Per-Game Settings" : (isMatched ? "No configurable core" : "ROM not matched"))
+                        .foregroundColor(isEnabled ? accentColor : .secondary)
+                    Text({
+                        if info == nil {
+                            return isMatched ? "No configurable core" : "ROM not matched"
+                        } else if !hasMD5 {
+                            return "No ROM hash"
+                        } else {
+                            return "Per-Game Settings"
+                        }
+                    }())
                         .font(.system(size: 14))
-                        .foregroundColor(info != nil ? primaryTextColor : .secondary)
+                        .foregroundColor(isEnabled ? primaryTextColor : .secondary)
                     Spacer()
                     if overrideCount > 0 {
                         Text("\(overrideCount) override\(overrideCount == 1 ? "" : "s")")
@@ -873,7 +881,7 @@ struct GameMoreInfoView: View {
                             .foregroundColor(accentColor)
                             .clipShape(Capsule())
                     }
-                    if info != nil {
+                    if isEnabled {
                         Image(systemName: "chevron.right")
                             .foregroundColor(accentColor.opacity(0.6))
                             .font(.caption)
@@ -887,13 +895,13 @@ struct GameMoreInfoView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .strokeBorder(
-                                    info != nil ? accentGradient() : LinearGradient(colors: [.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
+                                    isEnabled ? accentGradient() : LinearGradient(colors: [.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
                                     lineWidth: 1
                                 )
                         )
                 )
             }
-            .disabled(info == nil)
+            .disabled(!isEnabled)
             #if os(tvOS)
             .buttonStyle(.plain)
             #endif
@@ -905,7 +913,7 @@ struct GameMoreInfoView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
-                            info != nil ? accentGradient([accentColor, accentColor.opacity(0.7), accentColor.opacity(0.5)]) :
+                            isEnabled ? accentGradient([accentColor, accentColor.opacity(0.7), accentColor.opacity(0.5)]) :
                                 LinearGradient(colors: [.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
                             lineWidth: 1.5
                         )
