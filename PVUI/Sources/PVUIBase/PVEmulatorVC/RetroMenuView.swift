@@ -10,7 +10,6 @@ import UIKit
 import PVCoreBridge
 import PVLogging
 import PVSettings
-import GameController
 import PVSupport
 import PVLibrary
 import PVFeatureFlags
@@ -992,9 +991,7 @@ struct RetroMenuView: View {
             // Broadcasting unavailable — show informational hint.
             // On tvOS, broadcasting requires a physical controller to be connected.
             #if os(tvOS)
-            // Check for a physical (non-remote) controller — the Siri Remote is also
-            // a GCController, so `.isEmpty` alone is not reliable for this check.
-            let hint = !GCController.controllers().contains { !$0.isRemote }
+            let hint = !GamepadManager.shared.hasPhysicalGamepad
                 ? "Connect a game controller to enable live streaming"
                 : "Live streaming is unavailable on this device"
             menuButton(title: "GO LIVE", icon: "dot.radiowaves.left.and.right", color: .gray, role: .secondary) {}

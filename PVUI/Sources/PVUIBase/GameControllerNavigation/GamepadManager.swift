@@ -3,6 +3,7 @@ import GameController
 import SwiftUI
 import Combine
 import PVSettings
+import PVLogging
 
 public enum GamepadEvent {
     case buttonPress(Bool)
@@ -52,7 +53,7 @@ public class GamepadManager: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            print("Gamepad disconnected")
+            DLOG("[GamepadManager] Gamepad disconnected")
             self?.isControllerConnected = !GCController.controllers().isEmpty
             self?.hasPhysicalGamepad = GCController.controllers().contains { !$0.isRemote }
         }
@@ -66,11 +67,11 @@ public class GamepadManager: ObservableObject {
     
     private func connectGamepad() {
         guard let controller = GCController.current ?? GCController.controllers().first else {
-            print("No gamepad connected")
+            DLOG("[GamepadManager] No gamepad connected")
             return
         }
-        
-        print("Gamepad connected and setting up handlers")
+
+        DLOG("[GamepadManager] Gamepad connected and setting up handlers")
         setupBasicControls(controller)
         setupMenuToggleHandlers(controller)
         disableDefaultGestures(controller)
