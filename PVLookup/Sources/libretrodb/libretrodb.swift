@@ -141,7 +141,7 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
                 manufacturer: dict["manufacturer_name"] as? String,
                 genres: (dict["genres"] as? String)?.components(separatedBy: ","),
                 romFileName: dict["rom_name"] as? String,
-                serialID: nil
+                serialID: dict["serial_id"] as? String
             )
         }
 
