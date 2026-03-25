@@ -598,6 +598,17 @@ struct GameMoreInfoView: View {
                         gameMD5: md5.isEmpty ? nil : md5
                     )
                 }
+            } else {
+                NavigationView {
+                    VStack(spacing: 16) {
+                        Text("Unable to load core options.")
+                            .multilineTextAlignment(.center)
+                        Button(NSLocalizedString("Close", comment: "Close core options sheet")) {
+                            showCoreOptionsSheet = false
+                        }
+                    }
+                    .padding()
+                }
             }
         }
     }
@@ -623,14 +634,24 @@ struct GameMoreInfoView: View {
         return nil
     }
 
-    /// Counts active per-game option overrides for the current game.
-    private var perGameOverrideCount: Int {
-        guard let info = coreOptionsInfo,
-              let md5 = viewModel.pvGame?.md5Hash,
-              !md5.isEmpty else { return 0 }
-        return info.coreClass.options.reduce(0) { count, option in
-            info.coreClass.hasPerGameOverride(for: option, md5: md5) ? count + 1 : count
+    /// Counts active per-game option overrides for the given core and md5, recursing into option groups.
+    private func countPerGameOverrides(in options: [CoreOption], coreClass: CoreOptional.Type, md5: String) -> Int {
+        var seen = Set<String>()
+        func count(_ opts: [CoreOption]) -> Int {
+            var total = 0
+            for option in opts {
+                switch option {
+                case let .group(_, subOptions: subOptions):
+                    total += count(subOptions)
+                default:
+                    guard !seen.contains(option.key) else { continue }
+                    seen.insert(option.key)
+                    if coreClass.hasPerGameOverride(for: option, md5: md5) { total += 1 }
+                }
+            }
+            return total
         }
+        return count(options)
     }
 
     private func editField(_ field: EditableField, initialValue: String?) {
@@ -814,11 +835,15 @@ struct GameMoreInfoView: View {
         .padding(.horizontal)
     }
 
-    /// Core Options section — shown when the game's system has a CoreOptional core.
+    /// Core Options section — always shown; the button is enabled only when the game's system has a configurable CoreOptional core.
     @ViewBuilder
     private var coreOptionsSection: some View {
         let info = coreOptionsInfo
-        let overrideCount = perGameOverrideCount
+        let md5 = viewModel.pvGame?.md5Hash ?? ""
+        let overrideCount: Int = {
+            guard let info = info, !md5.isEmpty else { return 0 }
+            return countPerGameOverrides(in: info.coreClass.options, coreClass: info.coreClass, md5: md5)
+        }()
         let isMatched = viewModel.pvGame?.system != nil
 
         VStack(alignment: .leading, spacing: 8) {
