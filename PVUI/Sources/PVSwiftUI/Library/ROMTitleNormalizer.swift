@@ -13,6 +13,15 @@ import Foundation
 /// No-Intro and Redump catalogues.
 ///
 /// All methods are pure functions — no Realm or file-system access occurs here.
+///
+/// ## Relationship to `String.normalizedROMTitle()` (PVPrimitives)
+///
+/// `normalizedROMTitle()` aggressively removes **all** parenthetical and bracketed
+/// content. `ROMTitleNormalizer` is intentionally more conservative: it only
+/// removes **known** noise tags (regions, revisions, disc markers, etc.) so that
+/// meaningful parenthetical subtitles — e.g. `"Castlevania: Symphony of the Night"` —
+/// are not accidentally stripped. It also adds trailing-article normalisation
+/// (`"Legend of Zelda, The" → "The Legend of Zelda"`) which is not in the shared utility.
 public enum ROMTitleNormalizer {
 
     // MARK: - Public API

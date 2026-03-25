@@ -568,23 +568,5 @@
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
       }
     ]
-  },
-  {
-    "version": "3.8.0",
-    "title": "Batch Library Management",
-    "features": [
-      {
-        "symbolName": "checkmark.circle",
-        "symbolColor": "blue",
-        "title": "Multi-Select Games",
-        "subtitle": "Tap \"Select\" in the game library to enter multi-select mode. Tap games to check them, then apply batch actions in one go."
-      },
-      {
-        "symbolName": "textformat.abc",
-        "symbolColor": "green",
-        "title": "Normalize Titles",
-        "subtitle": "Select multiple ROMs and choose \"Normalize Titles\" to strip region tags, revision numbers, and other noise from display names — with a preview before applying."
-      }
-    ]
   }
 ]

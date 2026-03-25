@@ -17,6 +17,20 @@ import PVThemes
 
 extension ConsoleGamesView {
 
+    // MARK: - Selection toggle (shared helper)
+
+    /// Fires a haptic tap and toggles the selection state for `md5`.
+    /// Centralised here so `gameAction(for:)` and `multiSelectOverlay`'s
+    /// tap gesture use identical behaviour and cannot drift.
+    private func performSelectionToggle(md5: String) {
+        #if !os(tvOS)
+        Haptics.impact(style: .light)
+        #endif
+        Task { @MainActor in
+            gamesViewModel.toggleSelection(md5: md5)
+        }
+    }
+
     // MARK: - Select-mode overlay wrapper
 
     /// Returns the appropriate tap action for a game cell, respecting multi-select mode.
@@ -24,12 +38,7 @@ extension ConsoleGamesView {
     func gameAction(for md5: String) -> () -> Void {
         {
             if gamesViewModel.isMultiSelectMode {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
-                Task { @MainActor in
-                    gamesViewModel.toggleSelection(md5: md5)
-                }
+                performSelectionToggle(md5: md5)
             } else {
                 launchGame(md5: md5)
             }
@@ -65,12 +74,7 @@ extension ConsoleGamesView {
         .contentShape(Rectangle())
         .onTapGesture {
             if gamesViewModel.isMultiSelectMode {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
-                Task { @MainActor in
-                    gamesViewModel.toggleSelection(md5: md5)
-                }
+                performSelectionToggle(md5: md5)
             }
         }
     }
@@ -198,38 +202,35 @@ extension ConsoleGamesView {
         .environmentObject(themeManager)
     }
 
-    // MARK: - Realm write
+    // MARK: - Realm write via ROMTitleNormalizationService
 
     private func applyNormalization(rows: [NormalizeTitlePreviewRow]) {
-        let updates: [(md5: String, newTitle: String)] = rows.map { ($0.id, $0.proposedTitle) }
+        // Convert preview rows to ROMTitleRenameProposal for the shared service.
+        // The service runs writes on a background Realm context to avoid
+        // blocking the main thread during a large batch rename.
+        let proposals = rows.map {
+            ROMTitleRenameProposal(id: $0.id, currentTitle: $0.currentTitle, proposedTitle: $0.proposedTitle)
+        }
 
-        // Run on main thread to match the Realm instance used by the rest of the app.
-        Task { @MainActor in
+        Task {
             do {
-                let realm = RomDatabase.sharedInstance.realm
-                try realm.write {
-                    for update in updates {
-                        // Try both original case and uppercase (primary key may vary)
-                        let key = realm.object(ofType: PVGame.self, forPrimaryKey: update.md5) != nil
-                            ? update.md5
-                            : update.md5.uppercased()
-                        if let game = realm.object(ofType: PVGame.self, forPrimaryKey: key) {
-                            game.title = update.newTitle
-                        }
-                    }
+                let count = try await ROMTitleNormalizationService().applyProposals(proposals)
+                await MainActor.run {
+                    gamesViewModel.showNormalizeTitlePreview = false
+                    gamesViewModel.exitMultiSelectMode()
+                    rootDelegate?.showMessage(
+                        "\(count) title\(count == 1 ? "" : "s") normalized.",
+                        title: "Done"
+                    )
                 }
-                gamesViewModel.showNormalizeTitlePreview = false
-                gamesViewModel.exitMultiSelectMode()
-                rootDelegate?.showMessage(
-                    "\(updates.count) title\(updates.count == 1 ? "" : "s") normalized.",
-                    title: "Done"
-                )
             } catch {
-                gamesViewModel.showNormalizeTitlePreview = false
-                rootDelegate?.showMessage(
-                    "Failed to normalize titles: \(error.localizedDescription)",
-                    title: "Error"
-                )
+                await MainActor.run {
+                    gamesViewModel.showNormalizeTitlePreview = false
+                    rootDelegate?.showMessage(
+                        "Failed to normalize titles: \(error.localizedDescription)",
+                        title: "Error"
+                    )
+                }
             }
         }
     }
