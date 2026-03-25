@@ -1336,8 +1336,9 @@ public struct DeltaSkinView: View {
             if let normalizedPoint = mapToNDSBottomScreen(location, in: size) {
                 DLOG("DS bottom screen touch moved: normalized=\(normalizedPoint)")
                 inputHandler.ndsBottomScreenTouched(at: normalizedPoint)
+                return
             } else {
-                // Touch dragged off the bottom screen — potentially release and fall through to button detection
+                // Touch dragged off the bottom screen — release stylus and fall through to button detection
                 DLOG("DS bottom screen touch left screen area for touchId=\(touchId), removing mapping")
                 ndsScreenTouches.remove(touchId)
                 // Only release when this was the last active NDS bottom-screen touch
@@ -1345,8 +1346,8 @@ public struct DeltaSkinView: View {
                     DLOG("No remaining DS bottom screen touches, releasing stylus")
                     inputHandler.ndsBottomScreenTouchReleased()
                 }
+                // Fall through: continue to button/D-pad hit-testing for this touch
             }
-            return
         }
 
         guard let buttons = skin.buttons(for: traits),
@@ -1726,12 +1727,18 @@ public struct DeltaSkinView: View {
         let allScreens = groups.flatMap { $0.screens }
         guard allScreens.count >= 2 else { return nil }
 
-        // Prefer explicit id; fall back to the screen with the largest minY (portrait-stacked bottom)
+        // Prefer explicit id; fall back to the screen with the largest minY (portrait-stacked bottom),
+        // and when minY ties (e.g., side-by-side landscape), choose the one with the largest minX.
         let bottomScreen: DeltaSkinScreen? = allScreens.first { $0.id == "nds_bottom" }
-            ?? allScreens.compactMap { screen -> (DeltaSkinScreen, CGFloat)? in
+            ?? allScreens.compactMap { screen -> (DeltaSkinScreen, CGRect)? in
                 guard let frame = screen.outputFrame else { return nil }
-                return (screen, frame.minY)
-            }.max(by: { $0.1 < $1.1 })?.0
+                return (screen, frame)
+            }.max(by: { lhs, rhs in
+                if lhs.1.minY == rhs.1.minY {
+                    return lhs.1.minX < rhs.1.minX
+                }
+                return lhs.1.minY < rhs.1.minY
+            })?.0
 
         guard let screen = bottomScreen, let outputFrame = screen.outputFrame else { return nil }
 
