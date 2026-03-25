@@ -536,17 +536,53 @@ static bool environment_callback(unsigned cmd, void *data)
 
     if (retro_load_game(&info)) {
 
-        // Detect Sega TeamPlayer via ROM peripheral header bit.
-        // Bit 7 ('4') in rominfo.peripherals indicates TeamPlayer multi-tap support.
-        // Note: EA 4-Way Play uses SYSTEM_WAYPLAY (both ports) and requires a separate
-        // title database to distinguish — header bit detection alone cannot differentiate.
-        // This code enables SYSTEM_TEAMPLAYER only; EA 4-Way Play is not yet supported.
-        static const uint16_t kTeamPlayerBit = (1 << 7);
-        if (rominfo.peripherals & kTeamPlayerBit) {
-            // Enable TeamPlayer on port A (virtual ports 0-3).
+        // Detect 4-player multitap peripherals after ROM load.
+        // rominfo is only populated inside retro_load_game, so we check it here.
+        //
+        // Two mutually exclusive multi-tap modes exist:
+        //   SYSTEM_TEAMPLAYER — Sega's adapter; port A only, virtual ports 0-3.
+        //   SYSTEM_WAYPLAY    — EA 4-Way Play adapter; BOTH ports must be set.
+        //
+        // Both are indicated by peripheral bit 7 ('4') in the ROM header, so
+        // we require that bit before doing the title-string lookup to identify
+        // EA 4-Way Play games, then fall back to Sega TeamPlayer for the rest.
+        static const uint16_t kMultiTapBit = (1 << 7); // 'Team Player' peripheral bit
+
+        // Known EA 4-Way Play titles (EA Sports, 1993-1996).
+        // Matched against the international ROM header string.
+        static const char * const kEA4WayPlayTitles[] = {
+            "FIFA INTERNATIONAL SOCCER",  // FIFA 1993/94
+            "FIFA SOCCER",                // FIFA 95/96/97
+            "NBA LIVE 95",
+            "NBA LIVE 96",
+            "MADDEN NFL 96",
+            "BILL WALSH",                 // Bill Walsh College Football 96
+            NULL
+        };
+
+        BOOL isWayPlay = NO;
+        if (rominfo.peripherals & kMultiTapBit) {
+            for (int i = 0; kEA4WayPlayTitles[i] != NULL; i++) {
+                if (strstr(rominfo.international, kEA4WayPlayTitles[i]) != NULL) {
+                    isWayPlay = YES;
+                    break;
+                }
+            }
+        }
+
+        if (isWayPlay) {
+            // EA 4-Way Play requires SYSTEM_WAYPLAY on BOTH controller ports.
+            // io_init() is idempotent and re-initialises the port handlers.
+            input.system[0] = SYSTEM_WAYPLAY;
+            input.system[1] = SYSTEM_WAYPLAY;
+            _multiTapPlayerCount = 4;
+            DLOG(@"GenesisPlusBridge: EA 4-Way Play detected for '%s', enabling 4-player mode",
+                 rominfo.international);
+            io_init();
+        } else if (rominfo.peripherals & kMultiTapBit) {
+            // Sega TeamPlayer: multi-tap on port A only, virtual ports 0-3.
             // rominfo is only populated inside retro_load_game, so we set input.system[]
             // after load and call io_init() again to re-initialise port handlers.
-            // io_init() is idempotent and safe to call multiple times.
             input.system[0] = SYSTEM_TEAMPLAYER;
             input.system[1] = SYSTEM_GAMEPAD;
             _multiTapPlayerCount = 4;

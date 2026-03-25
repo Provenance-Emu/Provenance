@@ -173,6 +173,11 @@ float libretro_expected_audio_samples_per_run;
 unsigned libretro_vsync_swap_interval = 1;
 bool libretro_detect_vsync_swap_interval = false;
 
+// 30fps detection state: count retro_run() calls and dupe frames over a window.
+// A 30fps game renders every other vblank, producing ~50% dupe frames when polled at 60fps.
+static u32 swapDetectFrames = 0;
+static u32 swapDetectDupes  = 0;
+
 static retro_perf_callback perf_cb;
 static retro_get_cpu_features_t perf_get_cpu_features_cb;
 
@@ -381,6 +386,8 @@ void retro_deinit()
 	lightgunSettingsShown = true;
 	libretro_vsync_swap_interval = 1;
 	libretro_detect_vsync_swap_interval = false;
+	swapDetectFrames = 0;
+	swapDetectDupes  = 0;
 	LogManager::Shutdown();
 
 	retro_audio_deinit();
@@ -818,7 +825,7 @@ static void update_variables(bool first_startup)
 				libretro_detect_vsync_swap_interval = false;
 		}
 		else
-			libretro_detect_vsync_swap_interval = false;
+			libretro_detect_vsync_swap_interval = true; // default to enabled
 	}
 
 	if (first_startup)
@@ -1049,14 +1056,16 @@ static void update_variables(bool first_startup)
 		if (rotate_game)
 			config::Widescreen.override(false);
 
-		if ((libretro_detect_vsync_swap_interval != prevDetectVsyncSwapInterval) &&
-			 !libretro_detect_vsync_swap_interval &&
-			 (libretro_vsync_swap_interval != 1))
-		{
-			libretro_vsync_swap_interval = 1;
-			retro_system_av_info avinfo;
-			setAVInfo(avinfo);
-			environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &avinfo);
+		if (libretro_detect_vsync_swap_interval != prevDetectVsyncSwapInterval) {
+			swapDetectFrames = 0;
+			swapDetectDupes  = 0;
+			if (!libretro_detect_vsync_swap_interval && libretro_vsync_swap_interval != 1)
+			{
+				libretro_vsync_swap_interval = 1;
+				retro_system_av_info avinfo;
+				setAVInfo(avinfo);
+				environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &avinfo);
+			}
 		}
 		// must *not* be changed once a game is started
 		config::EmulateBBA.override(emulateBba);
@@ -1088,17 +1097,25 @@ void retro_run()
 		settings.input.fastForwardMode = fastforward;
 
 	is_dupe = true;
+	// In threaded rendering, capture the first-attempt dupe result before retries.
+	// Retries can clear is_dupe even for frames where the game hasn't produced a new
+	// image yet, which would undercount dupes in 30fps detection.
+	bool first_attempt_dupe = true;
 	try {
 		if (config::ThreadedRendering)
 		{
 			// Render
-			for (int i = 0; i < 5 && is_dupe; i++)
+			for (int i = 0; i < 5 && is_dupe; i++) {
 				is_dupe = !emu.render();
+				if (i == 0)
+					first_attempt_dupe = is_dupe; // capture before any retry succeeds
+			}
 		}
 		else
 		{
 			startTime = sh4_sched_now64();
 			emu.render();
+			first_attempt_dupe = is_dupe; // non-threaded: is_dupe set by retro_rend_present
 		}
 	} catch (const FlycastException& e) {
 		ERROR_LOG(COMMON, "%s", e.what());
@@ -1112,6 +1129,31 @@ void retro_run()
 #endif
 
 	video_cb(is_dupe ? 0 : RETRO_HW_FRAME_BUFFER_VALID, framebufferWidth, framebufferHeight, 0);
+
+	// 30fps detection: accumulate dupe-frame counts over a 120-run window and, when
+	// ≥45% of frames are dupes, report 30fps to the frontend (interval=2).
+	// Detection is intentionally one-way (1→2 only, no downgrade path).  Once upgraded,
+	// the frontend drives retro_run() at 30fps so the dupe ratio collapses to ~0%;
+	// a downgrade path would immediately flip back and cause oscillation.
+	// Reset happens in retro_unload_game() so each new game re-runs detection from scratch.
+	// Based on upstream flyinghead/flycast commit fb69bd8.
+	// Use first_attempt_dupe for accurate counting in threaded mode (avoids retry masking).
+	if (libretro_detect_vsync_swap_interval && libretro_vsync_swap_interval == 1) {
+		swapDetectFrames++;
+		if (first_attempt_dupe)
+			swapDetectDupes++;
+		if (swapDetectFrames >= 120) {
+			bool is30fps = (swapDetectDupes * 100 >= swapDetectFrames * 45);
+			swapDetectFrames = 0;
+			swapDetectDupes  = 0;
+			if (is30fps) {
+				libretro_vsync_swap_interval = 2; // ≥45% dupes → 30fps game
+				retro_system_av_info avinfo;
+				setAVInfo(avinfo);
+				environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &avinfo);
+			}
+		}
+	}
 
 	if (!config::ThreadedRendering || config::LimitFPS)
 		retro_audio_upload();
@@ -2040,6 +2082,9 @@ void retro_unload_game()
 	disk_paths.clear();
 	disk_labels.clear();
 	blankVmus();
+	libretro_vsync_swap_interval = 1;
+	swapDetectFrames = 0;
+	swapDetectDupes  = 0;
 }
 
 

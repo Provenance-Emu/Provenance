@@ -273,6 +273,10 @@ public extension Defaults.Keys {
     ///   1 = universal (always apply)
     ///   2 = coreManaged (never apply universal; trust each core)
     static let coreDeadzoneMode = Key<Int>("coreDeadzoneMode", default: 0)
+
+    /// Language used by emulator cores (RetroArch `user_language` and native core equivalents).
+    /// Defaults to `.systemLocale` so cores follow the device's preferred language.
+    static let coreLanguage = Key<CoreLanguageSetting>("coreLanguage", default: .systemLocale)
 }
 
 public enum ButtonPressEffect: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {

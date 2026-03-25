@@ -151,13 +151,14 @@ import PVCoreBridge
     }
     
     // # The system language that Citra will use during emulation
-    // # 0: Japanese, 1: English (default), 2: French, 3: German, 4: Italian, 5: Spanish,
+    // # -1: System (Auto), 0: Japanese, 1: English, 2: French, 3: German, 4: Italian, 5: Spanish,
     // # 6: Simplified Chinese, 7: Korean, 8: Dutch, 9: Portuguese, 10: Russian, 11: Traditional Chinese
     static var languageOption: CoreOption {
-        .enumeration(.init(title: "System Region",
-                           description: "The system language that 3DS will use during emulation.",
+        .enumeration(.init(title: "System Language",
+                           description: "The system language that 3DS will use during emulation. 'System (Auto)' follows the device locale.",
                            requiresRestart: true),
                      values: [
+                        .init(title: "System (Auto)", value: -1),
                         .init(title: "Japanese", value: 0),
                         .init(title: "English", value: 1),
                         .init(title: "French", value: 2),
@@ -171,7 +172,7 @@ import PVCoreBridge
                         .init(title: "Russian", value: 10),
                         .init(title: "Traditional Chinese", value: 11),
                      ],
-                     defaultValue: 1)
+                     defaultValue: -1)
     }
     /*
      eNearest  = VK_FILTER_NEAREST,
@@ -424,7 +425,9 @@ extension PVAzaharCoreOptions {
         self.asyncPresent = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableAsyncPresentOption).asBool
         self.shaderType = NSNumber(value:PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.shaderTypeOption).asInt ?? 2).int8Value
         self.region = NSNumber(value:PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.regionOption).asInt ?? -1).int8Value
-        self.language = NSNumber(value:PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.languageOption).asInt ?? 1).int8Value
+        let rawLanguage = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.languageOption).asInt ?? -1
+        let resolvedLanguage = rawLanguage == -1 ? CoreLocaleMapper.currentCTRLanguageID : rawLanguage
+        self.language = NSNumber(value: resolvedLanguage).int8Value
         self.enableVSync = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableVSyncOption).asBool
         self.enableShaderAccurate = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableShaderAccurateMulOption).asBool
         self.enableShaderJIT = PVAzaharCoreOptions.valueForOption(PVAzaharCoreOptions.enableShaderJITOption).asBool
