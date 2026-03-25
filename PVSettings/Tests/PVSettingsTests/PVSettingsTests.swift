@@ -1361,7 +1361,7 @@ struct GyroMouseDefaultsTests {
 
 // MARK: - External Display Mode Tests
 
-@Suite("External Display Mode Defaults")
+@Suite("External Display Mode Defaults", .serialized)
 struct ExternalDisplayModeTests {
 
     @Test("externalDisplayMode default is systemMirror")
