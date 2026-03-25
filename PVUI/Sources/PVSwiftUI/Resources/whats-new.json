@@ -566,6 +566,12 @@
         "symbolColor": "blue",
         "title": "DOSBox Folder Import",
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
+      },
+      {
+        "symbolName": "target",
+        "symbolColor": "red",
+        "title": "Saturn Light Gun Support",
+        "subtitle": "Play Virtua Cop, House of the Dead, and other Saturn light gun games using touch or a connected mouse. Both the Sega Virtua Gun and Konami Stunner peripherals are emulated."
       }
     ]
   },
