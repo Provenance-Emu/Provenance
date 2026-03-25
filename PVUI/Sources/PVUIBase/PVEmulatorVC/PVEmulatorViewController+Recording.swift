@@ -130,7 +130,9 @@ extension PVEmulatorViewController {
         Task { @MainActor in
             do {
                 try await PVRecordingManager.shared.stopRecording(presenter: self)
+                #if os(iOS)
                 RPScreenRecorder.shared().isCameraEnabled = false
+                #endif
                 AppState.shared.emulationUIState.isRecording = false
                 #if os(iOS)
                 notifyOSDRecordingStateChanged()
@@ -160,9 +162,13 @@ extension PVEmulatorViewController {
     /// Discards the current recording without presenting the preview.
     /// Updates `AppState.shared.emulationUIState.isRecording` to keep state consistent.
     @MainActor public func discardScreenRecording() {
+        #if os(iOS)
         hideCameraOverlay()
+        #endif
         PVRecordingManager.shared.discardRecording()
+        #if os(iOS)
         RPScreenRecorder.shared().isCameraEnabled = false
+        #endif
         AppState.shared.emulationUIState.isRecording = false
         #if os(iOS)
         notifyOSDRecordingStateChanged()
@@ -181,6 +187,7 @@ extension PVEmulatorViewController {
 
     // MARK: - Camera Overlay
 
+#if os(iOS)
     /// The lazily-created face-cam overlay view. Nil until created or when camera capture is disabled.
     private static var cameraOverlayKey: UInt8 = 0
     private var cameraOverlayView: PVCameraOverlayView? {
@@ -209,6 +216,7 @@ extension PVEmulatorViewController {
     public func hideCameraOverlay() {
         cameraOverlayView?.detach()
     }
+#endif
 
     // MARK: Private
 

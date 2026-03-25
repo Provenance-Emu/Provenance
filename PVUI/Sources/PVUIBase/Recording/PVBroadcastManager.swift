@@ -6,7 +6,9 @@
 //
 
 #if os(iOS) || os(tvOS)
+#if os(tvOS)
 import GameController
+#endif
 import ReplayKit
 import UIKit
 import PVLogging
