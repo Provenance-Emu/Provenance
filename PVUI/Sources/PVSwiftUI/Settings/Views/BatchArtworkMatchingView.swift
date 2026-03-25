@@ -11,6 +11,7 @@ import PVSupport
 import PVLogging
 import PVLookup
 import PVLookupTypes
+import PVPrimitives
 import PVSystems
 import RealmSwift
 import PVMediaCache
@@ -22,17 +23,20 @@ public struct BatchArtworkMatchingView: View {
 
     // MARK: - Properties
 
-    // State for filtering and processing
+    // Filter and processing state
     @State private var includeGamesWithOriginalArtwork = false
+    @State private var enabledSources: Set<ArtworkSource> = Set(ArtworkSource.allCases)
     @State private var isLoading = false
     @State private var processingGames = false
     @State private var searchProgress: Double = 0
+    @State private var currentSearchTitle: String = ""
     @State private var errorMessage: String?
 
     // Game and artwork data
     @State private var gamesNeedingArtwork: [PVGame] = []
     @State private var artworkResults: [String: ArtworkMetadata] = [:]
     @State private var selectedArtworks: Set<String> = []
+    @State private var failedGames: [PVGame] = []
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
@@ -140,11 +144,49 @@ public struct BatchArtworkMatchingView: View {
                 }
             }
 
-            // Game count
-            Text("\(gamesNeedingArtwork.count) games need artwork")
-                .font(.system(size: 14))
-                .foregroundColor(.retroBlue)
-                .padding(.top, 4)
+            // Source picker
+            VStack(alignment: .leading, spacing: 6) {
+                Text("SOURCES")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.retroBlue)
+
+                ForEach(ArtworkSource.allCases) { source in
+                    Toggle(isOn: Binding(
+                        get: { enabledSources.contains(source) },
+                        set: { enabled in
+                            if enabled {
+                                enabledSources.insert(source)
+                            } else {
+                                // Keep at least one source enabled
+                                if enabledSources.count > 1 {
+                                    enabledSources.remove(source)
+                                }
+                            }
+                        }
+                    )) {
+                        Text(source.displayName)
+                            .font(.system(size: 14))
+                            .foregroundColor(.white)
+                    }
+                    #if !os(tvOS)
+                    .toggleStyle(SwitchToggleStyle(tint: .retroPink))
+                    #endif
+                }
+            }
+
+            // Game count + failure summary
+            HStack(spacing: 16) {
+                Text("\(gamesNeedingArtwork.count) games need artwork")
+                    .font(.system(size: 14))
+                    .foregroundColor(.retroBlue)
+
+                if !failedGames.isEmpty {
+                    Text("\(failedGames.count) failed")
+                        .font(.system(size: 14))
+                        .foregroundColor(.retroPink)
+                }
+            }
+            .padding(.top, 4)
         }
         .padding()
         .background(
@@ -166,7 +208,7 @@ public struct BatchArtworkMatchingView: View {
 
     /// Action buttons for the view
     private var actionButtons: some View {
-        HStack(spacing: 20) {
+        HStack(spacing: 12) {
             // Find Artwork button
             Button(action: {
                 Task {
@@ -203,6 +245,44 @@ public struct BatchArtworkMatchingView: View {
             #endif
             .disabled(isLoading || processingGames || gamesNeedingArtwork.isEmpty)
 
+            // Retry Failed button — only shown when there are failures
+            if !failedGames.isEmpty {
+                Button(action: {
+                    Task {
+                        await retryFailedGames()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 16))
+                        Text("RETRY (\(failedGames.count))")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .foregroundColor(.white)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink.opacity(0.6), .retroPurple.opacity(0.6)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.retroPink, lineWidth: 1)
+                    )
+                }
+                #if os(tvOS)
+                .buttonStyle(.card)
+                .retroThemedFocus(cornerRadius: 8)
+                #else
+                .buttonStyle(PlainButtonStyle())
+                #endif
+                .disabled(isLoading || processingGames)
+            }
+
             // Refresh button
             Button(action: {
                 Task {
@@ -212,7 +292,7 @@ public struct BatchArtworkMatchingView: View {
                 HStack {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 16))
-                    Text("REFRESH LIST")
+                    Text("REFRESH")
                         .font(.system(size: 14, weight: .bold))
                 }
                 .frame(maxWidth: .infinity)
@@ -267,9 +347,24 @@ public struct BatchArtworkMatchingView: View {
                 .font(.headline)
                 .foregroundColor(.retroPink)
 
+            if !currentSearchTitle.isEmpty {
+                Text(currentSearchTitle)
+                    .font(.system(size: 13))
+                    .foregroundColor(.retroBlue)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: 280)
+            }
+
             Text("\(artworkResults.count) matches found so far")
                 .font(.subheadline)
                 .foregroundColor(.retroBlue)
+
+            if !failedGames.isEmpty {
+                Text("\(failedGames.count) failed")
+                    .font(.subheadline)
+                    .foregroundColor(.retroPink)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -397,6 +492,7 @@ public struct BatchArtworkMatchingView: View {
             ILOG("Found \(gamesNeedingArtwork.count) games needing artwork")
             artworkResults.removeAll()
             selectedArtworks.removeAll()
+            failedGames.removeAll()
         } catch {
             ELOG("Error loading games: \(error)")
             errorMessage = "Error loading games: \(error.localizedDescription)"
@@ -406,37 +502,49 @@ public struct BatchArtworkMatchingView: View {
     /// Find artwork for all games in the list
     private func findArtworkForGames() async {
         guard !gamesNeedingArtwork.isEmpty else { return }
+        await runSearch(games: gamesNeedingArtwork, clearExisting: true)
+    }
 
+    /// Re-queue only previously failed games
+    private func retryFailedGames() async {
+        guard !failedGames.isEmpty else { return }
+        let toRetry = failedGames
+        failedGames.removeAll()
+        await runSearch(games: toRetry, clearExisting: false)
+    }
+
+    /// Core search loop shared by findArtworkForGames and retryFailedGames
+    private func runSearch(games: [PVGame], clearExisting: Bool) async {
         processingGames = true
         searchProgress = 0.0
-        artworkResults.removeAll()
-        selectedArtworks.removeAll()
+        currentSearchTitle = ""
+        if clearExisting {
+            artworkResults.removeAll()
+            selectedArtworks.removeAll()
+            failedGames.removeAll()
+        }
+
+        let totalGames = games.count
 
         do {
-            let totalGames = gamesNeedingArtwork.count
-
-            for (index, game) in gamesNeedingArtwork.enumerated() {
+            for (index, game) in games.enumerated() {
                 searchProgress = Double(index) / Double(totalGames)
+                currentSearchTitle = game.title
 
                 let md5 = game.md5Hash
                 guard !md5.isEmpty else { continue }
 
-                DLOG("Searching for artwork for '\(game.title)'")
-
-                let systemID = SystemIdentifier(rawValue: game.systemIdentifier)
-                let filename = URL(fileURLWithPath: game.romPath).deletingPathExtension().lastPathComponent
-
-                let results = try await ArtworkMatchingService.shared.searchWithFallback(
-                    title: game.title,
-                    filename: filename,
-                    systemID: systemID,
-                    md5Hash: md5
-                )
-
-                if let firstResult = results?.first {
+                if let results = try await ArtworkMatchingService.findArtwork(
+                    gameTitle: game.title,
+                    systemID: game.systemIdentifier,
+                    enabledSources: enabledSources
+                ), let firstResult = results.first {
                     artworkResults[md5] = firstResult
                     selectedArtworks.insert(md5)
                     DLOG("Found artwork for '\(game.title)' at \(firstResult.url)")
+                } else {
+                    failedGames.append(game)
+                    DLOG("No artwork found for '\(game.title)'")
                 }
 
                 // Small delay to avoid hammering the API
@@ -444,7 +552,8 @@ public struct BatchArtworkMatchingView: View {
             }
 
             searchProgress = 1.0
-            ILOG("Found artwork for \(artworkResults.count) out of \(totalGames) games")
+            currentSearchTitle = ""
+            ILOG("Found artwork for \(artworkResults.count) out of \(totalGames) games; \(failedGames.count) failed")
         } catch {
             ELOG("Error searching for artwork: \(error)")
             errorMessage = "Error searching for artwork: \(error.localizedDescription)"
@@ -570,6 +679,12 @@ struct GameArtworkRow: View {
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }
+
+                if let source = artworkResult?.source {
+                    Text(source)
+                        .font(.system(size: 11))
+                        .foregroundColor(.retroBlue.opacity(0.8))
+                }
             }
 
             Spacer()
@@ -661,7 +776,6 @@ struct GameArtworkRow: View {
         }
     }
 }
-
 
 // MARK: - Preview
 
