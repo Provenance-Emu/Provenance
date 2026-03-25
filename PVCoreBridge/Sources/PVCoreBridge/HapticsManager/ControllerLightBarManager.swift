@@ -206,41 +206,61 @@ public final class ControllerLightBarManager {
 
     /// Built-in default light bar color for a Provenance system identifier.
     public func defaultColor(forSystemIdentifier sysId: String) -> LightBarColor {
-        let id = sysId.lowercased()
+        let system = SystemIdentifier(rawValue: sysId) ?? .Unknown
+        return system.lightBarColor
+    }
+}
 
+// MARK: - SystemIdentifier + LightBar
+
+private extension SystemIdentifier {
+    /// The default controller light bar color for this system.
+    typealias Color = ControllerLightBarManager.LightBarColor
+
+    var lightBarColor: Color {
+        switch self {
         // PlayStation family — blue shades
-        if id.contains("psx") || id.contains("ps1") { return .playstationBlue }
-        if id.contains("ps2") { return LightBarColor(red: 0.00, green: 0.30, blue: 0.90) }
-        if id.contains("ps3") { return LightBarColor(red: 0.00, green: 0.20, blue: 0.80) }
+        case .PSX:
+            return .playstationBlue
+        case .PS2:
+            return Color(red: 0.00, green: 0.30, blue: 0.90)
+        case .PS3:
+            return Color(red: 0.00, green: 0.20, blue: 0.80)
 
-        // Nintendo SNES — purple
-        if id.contains("snes") || id.contains("superfamicom") { return .snesPurple }
+        // Nintendo — purple / grey / blue
+        case .SNES:
+            return .snesPurple
+        case .NES, .FDS:
+            return .nesGray
+        case .GBA:
+            return .gbaPurple
+        case .GBC:
+            return Color(red: 0.20, green: 0.70, blue: 0.20)
+        case .GB:
+            return .gameBoyGreen
+        case .N64:
+            return .n64Blue
+        case .GameCube:
+            return .gameCubeIndigo
 
-        // NES / Famicom — grey
-        if id.contains(".nes") || id.contains("famicom") { return .nesGray }
+        // Sega — blue / orange / cyan / yellow
+        case .Genesis, .MasterSystem, .SegaCD, .Sega32X, .SG1000:
+            return .segaBlue
+        case .Dreamcast:
+            return .dreamcastOrange
+        case .GameGear:
+            return Color(red: 0.00, green: 0.65, blue: 0.90)
+        case .Saturn:
+            return Color(red: 0.60, green: 0.60, blue: 0.00)
 
-        // Game Boy family
-        if id.contains("gba") { return .gbaPurple }
-        if id.contains("gbc") { return LightBarColor(red: 0.20, green: 0.70, blue: 0.20) }
-        if id.contains(".gb") { return .gameBoyGreen }
-
-        // N64 — blue
-        if id.contains("n64") { return .n64Blue }
-
-        // GameCube — indigo
-        if id.contains("gamecube") || id.contains("gcn") { return .gameCubeIndigo }
-
-        // Sega
-        if id.contains("genesis") || id.contains("megadrive") || id.contains("mastersystem") { return .segaBlue }
-        if id.contains("dreamcast") { return .dreamcastOrange }
-        if id.contains("gamegear") { return LightBarColor(red: 0.00, green: 0.65, blue: 0.90) }
-        if id.contains("saturn") { return LightBarColor(red: 0.60, green: 0.60, blue: 0.00) }
-
-        // Atari
-        if id.contains("atari") { return .atariGold }
+        // Atari — gold
+        case .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .AtariJaguarCD, .AtariST, .Atari8bit, .Lynx:
+            return .atariGold
 
         // Default warm white
-        return .default
+        default:
+            return .default
+        }
     }
 }
 
