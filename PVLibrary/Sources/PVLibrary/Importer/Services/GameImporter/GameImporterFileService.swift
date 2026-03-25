@@ -39,6 +39,10 @@ class GameImporterFileService : GameImporterFileServicing {
             return
         case .game, .cdRom, .zip, .folder:
             _ = try await processQueueItem(queueItem)
+        case .patch:
+            // TODO(#2676): route patch file to PatchImporter once implemented
+            ILOG("Patch file detected: \(queueItem.url.lastPathComponent) — patch import not yet implemented")
+            return
         case .unknown:
             throw GameImporterError.unsupportedFile
         }

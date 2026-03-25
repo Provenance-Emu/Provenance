@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 25
+public let schemaVersion: UInt64 = 26
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -306,6 +306,11 @@ public final class RealmConfiguration {
                 // Optional String properties default to nil automatically; no data migration needed.
                 ILOG("Migration to version 25 complete. (Added PVCore.licenseName/licenseURL/copyright)")
             }
+            if oldSchemaVersion < 26 {
+                // PVPatch added as a new top-level Realm object.
+                // Realm handles new object types automatically; no field migration needed.
+                ILOG("Migration to version 26 complete. (Added PVPatch)")
+            }
         }
 
 #if DEBUG
@@ -337,6 +342,7 @@ public final class RealmConfiguration {
                 PVCore.self,
                 PVGame.self,
                 PVLibrary.self,
+                PVPatch.self,
                 PVRecentGame.self,
                 PVSaveState.self,
                 PVSystem.self,

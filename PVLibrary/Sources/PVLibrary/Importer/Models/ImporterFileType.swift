@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import PVRealm
 
 public enum ImporterFileType: Sendable {
     case rom
     case image
     case package(SerializerPackageType)
     case archive(ImporterArchiveType)
+    case patch(PatchFormat)
     case unknown
 }

@@ -55,6 +55,20 @@ public enum Extensions: String, CaseIterable {
     /// Mednafen auto-loads `<disc>.sbi` when it is placed next to the matching `.cue` file.
     case sbi = "sbi"
 
+    // Patches
+    case ips      = "ips"
+    case ips32    = "ips32"
+    case bps      = "bps"
+    case ups      = "ups"
+    case xdelta   = "xdelta"
+    case delta    = "delta"
+    case xdelta3  = "xdelta3"
+    case vcdiff   = "vcdiff"
+    case ppf      = "ppf"
+    case aps      = "aps"
+    case rup      = "rup"
+    case nsp      = "nsp"
+
     private static let _archiveExtensions: Set<Extensions> = [
         .sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip,
         .tar, .bz2, .bzip2, .lzh, .lha, .xz, .zst, .zstd
@@ -65,6 +79,9 @@ public enum Extensions: String, CaseIterable {
     private static let _specialExtensions: Set<Extensions> = [.svs, .mcr, .plist, .ccd, .sub, .bin]
     private static let _cdSupplementaryExtensions: Set<Extensions> = [.sbi, .sub]
     private static let _skinExtensions: Set<Extensions> = [.deltaSkin, .manicSkin]
+    private static let _patchExtensions: Set<Extensions> = [
+        .ips, .ips32, .bps, .ups, .xdelta, .delta, .xdelta3, .vcdiff, .ppf, .aps, .rup, .nsp
+    ]
 
     public static let archiveExtensions: Set<String> = Set(_archiveExtensions.map { $0.rawValue })
     public static let artworkExtensions: Set<String> = Set(_artworkExtensions.map { $0.rawValue })
@@ -74,6 +91,7 @@ public enum Extensions: String, CaseIterable {
     /// Supplementary files that accompany disc images (e.g. `.sbi` subchannel data, `.sub` subchannel tracks).
     public static let cdSupplementaryExtensions: Set<String> = Set(_cdSupplementaryExtensions.map { $0.rawValue })
     public static let skinExtensions: Set<String> = Set(_skinExtensions.map { $0.rawValue })
+    public static let patchExtensions: Set<String> = Set(_patchExtensions.map { $0.rawValue })
 
-    public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions).union(cdSupplementaryExtensions).union(skinExtensions)
+    public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions).union(cdSupplementaryExtensions).union(skinExtensions).union(patchExtensions)
 }

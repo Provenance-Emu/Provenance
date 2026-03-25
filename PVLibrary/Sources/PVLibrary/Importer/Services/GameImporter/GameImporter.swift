@@ -2573,6 +2573,9 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Check for other archive types
         if Extensions.archiveExtensions.contains(item.url.pathExtension.lowercased()) { return .zip }
 
+        // Detect ROM patch files (IPS, BPS, UPS, xdelta, etc.)
+        if isPatch(item) { return .patch }
+
         if !item.url.pathExtension.isEmpty { return .game } // Default to .game if has an extension and not other types
         return .unknown
     }
@@ -3052,6 +3055,32 @@ public final class GameImporter: GameImporting, ObservableObject {
         ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
     }
 
+    /// Imports a ROM patch file by creating a `PVPatch` Realm record for it.
+    /// Full patch application is handled by PatchImporter (TODO #2676).
+    private func importPatchFile(_ item: ImportQueueItem) async throws {
+        let url = item.url
+        guard let format = PatchFormat(fileURL: url) else {
+            ELOG("Cannot determine patch format for \(url.lastPathComponent)")
+            throw GameImporterError.unsupportedFile
+        }
+        ILOG("Importing patch file \(url.lastPathComponent) as format: \(format.rawValue)")
+
+        let pvFile = PVFile(withURL: url)
+        let patch = PVPatch(
+            file: pvFile,
+            game: nil,
+            date: Date(),
+            format: format,
+            title: url.deletingPathExtension().lastPathComponent
+        )
+
+        let database = RomDatabase.sharedInstance
+        try database.writeTransaction {
+            database.realm.add(patch, update: .modified)
+        }
+        ILOG("Saved PVPatch record for \(url.lastPathComponent)")
+    }
+
     private func performImport(for item: ImportQueueItem) async throws {
         let fileName = item.url.lastPathComponent
         ILOG("Starting import for file: \(fileName)")
@@ -3215,6 +3244,25 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
             } catch {
                 ELOG("Failed to import artwork file: \(error.localizedDescription)")
+                await MainActor.run {
+                    item.status = .failure(error: error)
+                }
+                throw error
+            }
+            return
+        }
+
+        // Handle patch files — store in Realm, full application deferred to PatchImporter (TODO #2676)
+        if item.fileType == .patch {
+            ILOG("Processing as ROM patch file: \(fileName)")
+            do {
+                try await importPatchFile(item)
+                await MainActor.run {
+                    item.status = .success
+                }
+                ILOG("Successfully imported patch file: \(fileName)")
+            } catch {
+                ELOG("Failed to import patch file: \(error.localizedDescription)")
                 await MainActor.run {
                     item.status = .failure(error: error)
                 }
