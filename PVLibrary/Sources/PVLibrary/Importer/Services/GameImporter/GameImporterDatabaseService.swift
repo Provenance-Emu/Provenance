@@ -263,12 +263,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         // if found. Fuzzy/cleaned-title search is intentionally skipped here — that runs
         // later via ArtworkSearchQueue.
         if ENABLE_ENHANCED_ARTWORK_SEARCH && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
-            let fastSystemID = SystemIdentifier(rawValue: systemID.rawValue)
             DLOG("ArtworkMatchingService: Attempting fast artwork lookup for '\(title)'")
             if let artworkURL = await ArtworkMatchingService.shared.findArtwork(
                 exactTitle: title,
                 md5: md5,
-                systemID: fastSystemID
+                systemID: systemID
             ) {
                 ILOG("ArtworkMatchingService: Fast match set artwork URL for '\(title)': \(artworkURL)")
                 game.originalArtworkURL = artworkURL

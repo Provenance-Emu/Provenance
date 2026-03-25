@@ -15,11 +15,12 @@ import PVSystems
 
 // MARK: - Mock Lookup Provider
 
-/// Thread-safe mock for ArtworkMatchingLookupProvider.
-private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, @unchecked Sendable {
-    var artworkResults: [ArtworkMetadata]?
-    var artworkError: Error?
-    var romMetadata: ROMMetadata?
+/// Mock for ArtworkMatchingLookupProvider. Properties are written before use in tests
+/// and read from a single task, so `nonisolated(unsafe)` correctly expresses the intent.
+private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, Sendable {
+    nonisolated(unsafe) var artworkResults: [ArtworkMetadata]?
+    nonisolated(unsafe) var artworkError: Error?
+    nonisolated(unsafe) var romMetadata: ROMMetadata?
 
     func searchArtwork(
         byGameName name: String,
@@ -45,11 +46,12 @@ private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, @u
 
 /// Mock that returns nil for the first N artwork searches, then returns results.
 /// Used to test the MD5 fallback code path.
-private final class MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProvider, @unchecked Sendable {
-    var romMetadata: ROMMetadata?
+/// `callCount` is mutated only from a single search task so `nonisolated(unsafe)` is correct.
+private final class MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProvider, Sendable {
+    nonisolated(unsafe) var romMetadata: ROMMetadata?
     private let firstNilCount: Int
     private let thenResults: [ArtworkMetadata]
-    private var callCount = 0
+    nonisolated(unsafe) private var callCount = 0
 
     init(firstNilCount: Int, thenResults: [ArtworkMetadata]) {
         self.firstNilCount = firstNilCount

@@ -72,6 +72,7 @@ public actor ArtworkMatchingService {
 
         ILOG("ArtworkMatchingService: Fast lookup for '\(title)' (MD5: \(md5))")
 
+        let timeoutNanoseconds = fastTimeoutNanoseconds
         return await withTaskGroup(of: String?.self) { group in
             // Search task — does the actual lookup
             group.addTask {
@@ -85,7 +86,7 @@ public actor ArtworkMatchingService {
 
             // Timeout task — races against the search task
             group.addTask {
-                try? await Task.sleep(nanoseconds: self.fastTimeoutNanoseconds)
+                try? await Task.sleep(nanoseconds: timeoutNanoseconds)
                 return nil
             }
 
@@ -107,7 +108,7 @@ public actor ArtworkMatchingService {
 
         // Step 1: exact title with system (most precise)
         if let sysID = systemID,
-           let results = try await lookup.searchArtwork(byGameName: title, systemID: sysID, artworkTypes: .defaults),
+           let results = try await lookup.searchArtwork(byGameName: title, systemID: sysID, artworkTypes: .boxFront),
            !results.isEmpty {
             let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
             ILOG("ArtworkMatchingService: Matched '\(title)' via exact title + system '\(sysID.rawValue)'")
@@ -115,7 +116,7 @@ public actor ArtworkMatchingService {
         }
 
         // Step 2: exact title without system filter (broader)
-        if let results = try await lookup.searchArtwork(byGameName: title, systemID: nil, artworkTypes: .defaults),
+        if let results = try await lookup.searchArtwork(byGameName: title, systemID: nil, artworkTypes: .boxFront),
            !results.isEmpty {
             let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
             ILOG("ArtworkMatchingService: Matched '\(title)' via exact title (no system filter)")
@@ -128,13 +129,13 @@ public actor ArtworkMatchingService {
                !romMetadata.gameTitle.isEmpty {
                 let romTitle = romMetadata.gameTitle
                 if let sysID = systemID,
-                   let results = try await lookup.searchArtwork(byGameName: romTitle, systemID: sysID, artworkTypes: .defaults),
+                   let results = try await lookup.searchArtwork(byGameName: romTitle, systemID: sysID, artworkTypes: .boxFront),
                    !results.isEmpty {
                     let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
                     ILOG("ArtworkMatchingService: Matched MD5 '\(md5)' via ROM title '\(romTitle)' + system")
                     return best.url.absoluteString
                 }
-                if let results = try await lookup.searchArtwork(byGameName: romTitle, systemID: nil, artworkTypes: .defaults),
+                if let results = try await lookup.searchArtwork(byGameName: romTitle, systemID: nil, artworkTypes: .boxFront),
                    !results.isEmpty {
                     let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
                     ILOG("ArtworkMatchingService: Matched MD5 '\(md5)' via ROM title '\(romTitle)'")
