@@ -926,6 +926,7 @@ struct RetroMenuView: View {
                 }
         }
     }
+#endif
 
     // Live-broadcast button (iOS + tvOS) with Plus gating
 #if os(iOS) || os(tvOS)
