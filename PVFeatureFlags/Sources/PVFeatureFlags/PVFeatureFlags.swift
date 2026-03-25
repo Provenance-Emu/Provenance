@@ -62,6 +62,11 @@ public enum PVFeature: String, CaseIterable {
     /// for systems that have non-standard input peripherals (trackball, numpad, Atari 5200 stick).
     /// Disabled by default while the DSU integration is still in progress.
     case companionController = "companionController"
+    /// Enables the enriched "smart" core selection UI that shows capability badges,
+    /// quality rankings, and per-game recommendations when launching a game with
+    /// multiple available cores. When disabled, a plain list picker is used instead.
+    /// Disabled by default until core capability data is fully audited.
+    case smartCoreSelection = "smartCoreSelection"
 }
 
 /// Represents the type of app installation
@@ -180,6 +185,11 @@ public struct FeatureFlag: Codable, Sendable {
     public static let companionController = FeatureFlag(
         enabled: false,
         description: "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete."
+    )
+
+    public static let smartCoreSelection = FeatureFlag(
+        enabled: false,
+        description: "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations. Disabled until core capability data is fully audited."
     )
 }
 
@@ -475,6 +485,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var clipBuffering: Bool { featureStates[.clipBuffering] ?? false }
     public var liveBroadcast: Bool { featureStates[.liveBroadcast] ?? false }
     public var companionController: Bool { featureStates[.companionController] ?? false }
+    public var smartCoreSelection: Bool { featureStates[.smartCoreSelection] ?? false }
 
     // MARK: - Feature Queries
 

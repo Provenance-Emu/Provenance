@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/swift-server/async-http-client.git",
         "state": {
           "branch": null,
-          "revision": "c5784ca81535cc6a92d900f84abd070dfb0e9392",
-          "version": "1.32.1"
+          "revision": "3b57e00556515b126ad74455de1e6fa456856391",
+          "version": "1.33.0"
         }
       },
       {
@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
           "branch": "main",
-          "revision": "752bcb9eb2e110fa9d82826c99857b0e9a76fb1d",
+          "revision": "d9406c926b86a1ea642cab375b4745c5e15cc808",
           "version": null
         }
       },
@@ -195,8 +195,8 @@
         "repositoryURL": "https://github.com/hummingbird-project/hummingbird.git",
         "state": {
           "branch": null,
-          "revision": "282f55d605bf9324d2da7cbebbf30112a0ae575d",
-          "version": "2.21.0"
+          "revision": "d1ce7bbd2f1b17f22031ca4c0daeb39eff07a92e",
+          "version": "2.21.1"
         }
       },
       {
@@ -537,8 +537,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "b31565862a8f39866af50bc6676160d8dda7de35",
-          "version": "2.96.0"
+          "revision": "bdf004b44f77c56fca752cd1cf243c802f8469c9",
+          "version": "2.97.0"
         }
       },
       {
@@ -555,8 +555,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-http2.git",
         "state": {
           "branch": null,
-          "revision": "9019b76fa858564a27e0aab13c01987d6e2869fa",
-          "version": "1.41.0"
+          "revision": "6d8d596f0a9bfebb925733003731fe2d749b7e02",
+          "version": "1.42.0"
         }
       },
       {

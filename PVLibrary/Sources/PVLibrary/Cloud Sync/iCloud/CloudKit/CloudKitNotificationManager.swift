@@ -30,11 +30,11 @@ public class CloudKitNotificationManager {
 
     // MARK: - Properties
 
-    /// The CloudKit container
-    private let container = CKContainer.default()
+    /// The CloudKit container — nil when running without CloudKit entitlement (sideloaded builds).
+    private let container: CKContainer?
 
-    /// The CloudKit database
-    private let privateDatabase: CKDatabase
+    /// The CloudKit database — nil when container is unavailable.
+    private let privateDatabase: CKDatabase?
 
     /// Publisher for notification events
     private let notificationSubject = PassthroughSubject<CKNotification, Never>()
@@ -53,7 +53,12 @@ public class CloudKitNotificationManager {
     // MARK: - Initialization
 
     private init() {
-        privateDatabase = container.privateCloudDatabase
+        container = iCloudConstants.container
+        privateDatabase = container?.privateCloudDatabase
+        guard container != nil else {
+            WLOG("[CloudKitNotificationManager] CloudKit entitlement not present — notification manager disabled (sideloaded?)")
+            return
+        }
         checkNotificationStatus()
         checkBackgroundRefreshStatus()
     }
@@ -84,6 +89,7 @@ public class CloudKitNotificationManager {
 
     /// Setup CloudKit subscriptions for database changes
     public func setupSubscriptions() async {
+        guard container != nil else { return }
         DLOG("Setting up CloudKit subscriptions")
 
         do {
@@ -105,6 +111,7 @@ public class CloudKitNotificationManager {
     /// - Returns: Background fetch result
     @discardableResult
     public func processNotification(_ userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
+        guard container != nil else { return .noData }
         // Check if this is a CloudKit notification
         guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) else {
             ELOG("[SYNC] Not a CloudKit notification")
@@ -192,6 +199,8 @@ public class CloudKitNotificationManager {
     /// Setup a subscription for a specific record type
     /// - Parameter recordType: The record type to subscribe to
     private func setupSubscription(for recordType: String) async throws {
+        guard let privateDatabase else { return }
+
         // Create a unique subscription ID
         let subscriptionID = "com.provenance-emu.provenance.subscription.\(recordType)"
 

@@ -24,10 +24,11 @@ public extension PVAppDelegate {
 
             // Initialize CloudKit schema first
             Task<Void, Never>.detached {
-                let containerIdentifier = iCloudConstants.containerIdentifier
-
-                // Initialize CloudKit container and database
-                let container = CKContainer(identifier: containerIdentifier)
+                // Guard: skip CloudKit init entirely on sideloaded builds without entitlement
+                guard let container = iCloudConstants.container else {
+                    WLOG("[CloudKit] Entitlement not present — CloudKit disabled (sideloaded build?)")
+                    return
+                }
                 let privateDatabase = container.privateCloudDatabase
 
                 // Initialize CloudKit schema

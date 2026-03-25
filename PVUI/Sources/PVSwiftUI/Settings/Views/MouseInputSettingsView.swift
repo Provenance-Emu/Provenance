@@ -13,6 +13,7 @@ import SwiftUI
 import PVSettings
 import Defaults
 import PVThemes
+import PVUIBase
 
 // MARK: - MouseInputSettingsView (full-page navigation target)
 
@@ -165,7 +166,7 @@ struct MouseSection: View {
             Text(subtitle)
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
-            Slider(value: value, in: 0.1...5.0, step: 0.1)
+            RetroWaveSlider(value: value, in: 0.1...5.0, step: 0.1)
                 .accentColor(.retroBlue)
         }
     }
@@ -187,7 +188,9 @@ struct MouseSection: View {
             Text("Minimum rotation (rad/s) to register as movement")
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
-            Slider(value: $gyroDeadZone, in: 0.0...0.5, step: 0.01)
+            RetroWaveSlider(value: $gyroDeadZone,
+                            in: 0.0...0.5,
+                            step: 0.01)
                 .accentColor(.retroBlue)
         }
     }

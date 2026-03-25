@@ -322,6 +322,7 @@ struct TVMediaMainView: View {
                         return
                     }
                     if router.destination == .settings, settingsCanPop {
+                        NotificationCenter.default.post(name: .tvOSSettingsRequestPop, object: nil)
                         return
                     }
                     focusCoordinator.toggleSidebar()

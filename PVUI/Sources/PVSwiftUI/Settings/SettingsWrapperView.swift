@@ -137,7 +137,11 @@ struct SettingsWrapperView: View {
     }
 }
 
-#if os(tvOS)
+extension Notification.Name {
+    /// Posted by tvOS media shell when Settings should pop one navigation level.
+    static let tvOSSettingsRequestPop = Notification.Name("TVOSSettingsRequestPop")
+}
+
 /// Tracks whether the Settings navigation stack can pop (i.e. a subpage is pushed).
 /// This is used by the tvOS Media UI to suppress sidebar gestures while inside Settings subpages.
 private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable {
@@ -163,6 +167,18 @@ private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable
         @available(*, unavailable)
         required init?(coder: NSCoder) { nil }
 
+        deinit {
+            NotificationCenter.default.removeObserver(self, name: .tvOSSettingsRequestPop, object: nil)
+        }
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(handleSettingsPopRequest),
+                                                   name: .tvOSSettingsRequestPop,
+                                                   object: nil)
+        }
+
         override func didMove(toParent parent: UIViewController?) {
             super.didMove(toParent: parent)
             refresh()
@@ -178,7 +194,9 @@ private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable
         }
 
         func refresh() {
-            refresh(for: navigationController)
+            // SwiftUI can host nested NavigationStack containers, where `self.navigationController`
+            // may be nil even though a stack is active. Resolve the closest active UINavigationController.
+            refresh(for: resolvedNavigationController())
         }
 
         private func refresh(for navigationController: UINavigationController?) {
@@ -188,6 +206,46 @@ private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable
                 canPop.wrappedValue = value
             }
         }
+
+        /// Resolves the nearest active UINavigationController for this representable.
+        /// This keeps `canPop` accurate when Settings is hosted inside nested SwiftUI stacks.
+        private func resolvedNavigationController() -> UINavigationController? {
+            if let navigationController {
+                return navigationController
+            }
+
+            var ancestor = parent
+            while let current = ancestor {
+                if let nav = current as? UINavigationController {
+                    return nav
+                }
+                if let nav = firstNavigationController(in: current.children) {
+                    return nav
+                }
+                ancestor = current.parent
+            }
+
+            return firstNavigationController(in: children)
+        }
+
+        /// Depth-first search for the first UINavigationController within child controllers.
+        private func firstNavigationController(in controllers: [UIViewController]) -> UINavigationController? {
+            for controller in controllers {
+                if let nav = controller as? UINavigationController {
+                    return nav
+                }
+                if let nav = firstNavigationController(in: controller.children) {
+                    return nav
+                }
+            }
+            return nil
+        }
+
+        /// Pops one Settings subpage when requested by the parent tvOS shell.
+        @objc private func handleSettingsPopRequest() {
+            guard let nav = resolvedNavigationController(), nav.viewControllers.count > 1 else { return }
+            nav.popViewController(animated: true)
+            refresh(for: nav)
+        }
     }
 }
-#endif
