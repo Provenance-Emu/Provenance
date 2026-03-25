@@ -3465,8 +3465,8 @@ struct TVMediaSystemGamesView: View {
         }
         .task {
             isLoading = true
+            defer { isLoading = false }
             await loadContent()
-            isLoading = false
         }
     }
 
