@@ -1097,17 +1097,25 @@ void retro_run()
 		settings.input.fastForwardMode = fastforward;
 
 	is_dupe = true;
+	// In threaded rendering, capture the first-attempt dupe result before retries.
+	// Retries can clear is_dupe even for frames where the game hasn't produced a new
+	// image yet, which would undercount dupes in 30fps detection.
+	bool first_attempt_dupe = true;
 	try {
 		if (config::ThreadedRendering)
 		{
 			// Render
-			for (int i = 0; i < 5 && is_dupe; i++)
+			for (int i = 0; i < 5 && is_dupe; i++) {
 				is_dupe = !emu.render();
+				if (i == 0)
+					first_attempt_dupe = is_dupe; // capture before any retry succeeds
+			}
 		}
 		else
 		{
 			startTime = sh4_sched_now64();
 			emu.render();
+			first_attempt_dupe = is_dupe; // non-threaded: is_dupe set by retro_rend_present
 		}
 	} catch (const FlycastException& e) {
 		ERROR_LOG(COMMON, "%s", e.what());
@@ -1128,9 +1136,10 @@ void retro_run()
 	// at 30fps so dupes drop to ~0%, which would immediately re-trigger the <20% branch
 	// and cause a flip-flop.  Reset happens in retro_unload_game() so each new game
 	// re-runs detection from scratch.  Based on upstream flyinghead/flycast commit fb69bd8.
+	// Use first_attempt_dupe for accurate counting in threaded mode (avoids retry masking).
 	if (libretro_detect_vsync_swap_interval && libretro_vsync_swap_interval == 1) {
 		swapDetectFrames++;
-		if (is_dupe)
+		if (first_attempt_dupe)
 			swapDetectDupes++;
 		if (swapDetectFrames >= 120) {
 			bool is30fps = (swapDetectDupes * 100 >= swapDetectFrames * 45);
