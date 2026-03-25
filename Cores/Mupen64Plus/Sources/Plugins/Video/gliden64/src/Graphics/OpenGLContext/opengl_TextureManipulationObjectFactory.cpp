@@ -303,11 +303,11 @@ namespace opengl {
 			// wrap value so the parameter is not re-submitted on every apply call.
 			{
 				const GLint forcedWrap = GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE);
-				if (_parameters.wrapS.isValid() && !(iterValid && iter->second.wrapS == forcedWrap)) {
+				if (!iterValid || iter->second.wrapS != forcedWrap) {
 					glTexParameteri(target, GL_TEXTURE_WRAP_S, forcedWrap);
 					(*m_texparams)[u32(_parameters.handle)].wrapS = forcedWrap;
 				}
-				if (_parameters.wrapT.isValid() && !(iterValid && iter->second.wrapT == forcedWrap)) {
+				if (!iterValid || iter->second.wrapT != forcedWrap) {
 					glTexParameteri(target, GL_TEXTURE_WRAP_T, forcedWrap);
 					(*m_texparams)[u32(_parameters.handle)].wrapT = forcedWrap;
 				}
