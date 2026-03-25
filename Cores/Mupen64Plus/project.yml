@@ -122,11 +122,9 @@ settings:
       - "USE_GLES_ES3=1"
       - "USE_GLES_ES3_2=1"
     OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC -pthread"
-    # pthread is set in Config.xcconfig OTHER_CFLAGS[arch=*]; mirror it here for the XcodeGen path
-    "OTHER_CFLAGS[arch=*]": "$(inherited) -pthread"
     # ARMv8 / Apple CPU tuning: apply only to arm64 slices to avoid passing ARM-only flags to x86_64 simulator toolchains
     "OTHER_CFLAGS[arch=arm64]": "$(inherited) -march=armv8-a+simd+crc+crypto -mcpu=apple-a10 -mtune=apple-a15"
-    # Explicit x86_64 override: no ARM-specific tuning flags
+    # Explicit x86_64 override: inherit base flags, no ARM-specific tuning
     "OTHER_CFLAGS[arch=x86_64]": "$(inherited)"
     # SDK-specific OTHER_CFLAGS (mirrors Config.xcconfig)
     "OTHER_CFLAGS[sdk=iphoneos*]": "$(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
@@ -147,6 +145,9 @@ settings:
     HEADER_SEARCH_PATHS: "$(inherited)"
     FRAMEWORK_SEARCH_PATHS: "$(inherited)"
     LD_RUNPATH_SEARCH_PATHS: "$(inherited)"
+    # Suppress Xcode validation warnings for deprecated-but-required OpenGLES.framework
+    # (mirrors VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS in the hand-maintained .xcodeproj)
+    VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS: OpenGLES
   configs:
     Debug:
       COPY_PHASE_STRIP: NO
