@@ -258,12 +258,31 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         game.relatedFiles.append(objectsIn: uniqueRelatedFiles)
         game.md5Hash = md5
 
+        // Fast artwork lookup (exact title + MD5, ~2s timeout) before saving to Realm.
+        // This runs synchronously in the import pipeline so the game gets artwork immediately
+        // if found. Fuzzy/cleaned-title search is intentionally skipped here — that runs
+        // later via ArtworkSearchQueue.
+        if ENABLE_ENHANCED_ARTWORK_SEARCH && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
+            let fastSystemID = SystemIdentifier(rawValue: systemID.rawValue)
+            DLOG("ArtworkMatchingService: Attempting fast artwork lookup for '\(title)'")
+            if let artworkURL = await ArtworkMatchingService.shared.findArtwork(
+                exactTitle: title,
+                md5: md5,
+                systemID: fastSystemID
+            ) {
+                ILOG("ArtworkMatchingService: Fast match set artwork URL for '\(title)': \(artworkURL)")
+                game.originalArtworkURL = artworkURL
+            }
+        }
+
         // Capture all game properties BEFORE finishUpdateOrImport (which adds game to Realm)
         // After that, game becomes managed and can't be accessed from background threads
         let gameID = game.id
         let gameTitle = game.title ?? "Unknown"
         let gameRomPath = game.romPath
         let gameMd5Hash = game.md5Hash
+        // needsArtwork is evaluated AFTER the fast path so ArtworkSearchQueue is only queued
+        // when the fast exact-match also failed.
         let needsArtwork = game.originalArtworkFile == nil && game.originalArtworkURL.isEmpty
 
         DLOG("About to call finishUpdateOrImport for game: \(partialPath)")
