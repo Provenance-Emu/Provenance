@@ -381,7 +381,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                     let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
                     decodedImage = UIImage(svgData: data, size: renderSize)
                     if decodedImage == nil {
-                        lastError = DeltaSkinError.invalidPNG
+                        lastError = DeltaSkinError.invalidSVG
                         continue
                     }
                 } else {
@@ -438,7 +438,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
                 decodedImage = UIImage(svgData: assetData, size: renderSize)
                 guard decodedImage != nil else {
-                    throw DeltaSkinError.invalidPNG
+                    throw DeltaSkinError.invalidSVG
                 }
             } else {
                 decodedImage = UIImage(data: assetData, scale: UIScreen.main.scale)
@@ -1196,6 +1196,7 @@ public enum DeltaSkinError: Error {
     case missingAssetFile
     case invalidPDF
     case invalidPNG
+    case invalidSVG
     case invalidAssetSize
     case invalidScreenConfiguration
     case invalidButtonConfiguration
