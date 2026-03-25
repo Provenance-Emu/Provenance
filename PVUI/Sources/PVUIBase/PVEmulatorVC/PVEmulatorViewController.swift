@@ -819,6 +819,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // also calls it via showVirtualMouse when the core supports mouse.
         setupVirtualMouseIfNeeded()
         setupVirtualInputOverlaysIfNeeded()
+        setupLightGunIfNeeded()
         #endif
 
         configureFPSCounterPreferenceObservationIfNeeded()
@@ -1039,6 +1040,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Ensure the virtual-mouse trackpad uses the correct game viewport rect
         // now that the view hierarchy is fully laid out.
         refreshVirtualMouseLayout()
+        refreshLightGunLayout()
         #endif
 
         #if os(iOS)
@@ -1074,6 +1076,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         destroyAutosaveTimer()
         #if !os(tvOS)
         removeVirtualInputOverlays()
+        teardownLightGun()
         #endif
         // Remove the JIT indicator view controller on the main actor (#2796).
         // The Combine subscription is cancelled earlier in deinit via cancelJITIndicatorSubscription().
@@ -1437,6 +1440,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// button after initial setup, blocking all touches.
         bringVirtualInputOverlaysToFront()
         refreshVirtualMouseLayout()
+        refreshLightGunLayout()
         #endif
         #endif
     }

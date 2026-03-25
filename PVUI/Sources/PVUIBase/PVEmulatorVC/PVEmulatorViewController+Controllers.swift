@@ -71,6 +71,7 @@ extension PVEmulatorViewController {
         #endif
         #if os(tvOS)
         setupSiriRemoteForKeyboardCore()
+        setupSiriRemoteForLightGunCore()
         #endif
     }
 
@@ -398,6 +399,92 @@ extension PVEmulatorViewController {
         default:
             break
         }
+    }
+}
+
+// MARK: - tvOS Light Gun Remote Input
+
+extension PVEmulatorViewController {
+
+    /// Installs Siri Remote (GCMicroGamepad) gesture handlers for cores that
+    /// implement `LightGunResponder`.
+    ///
+    /// Mapping:
+    ///   - D-pad / touch-surface pan  → aim (lightGunMovedToPoint)
+    ///   - Button A (select)          → trigger (lightGunTriggerDown/Up)
+    ///   - Button X (menu)            → start (lightGunStartDown/Up)
+    ///   - D-pad click / long swipe   → reload (lightGunReloadDown/Up)
+    func setupSiriRemoteForLightGunCore() {
+        guard let gunCore = core as? LightGunResponder,
+              gunCore.gameSupportsLightGun else { return }
+        guard let microGamepad = GCController.controllers()
+                .first(where: { $0.microGamepad != nil })?.microGamepad else {
+            WLOG("tvOS: No micro-gamepad found for light gun mapping")
+            return
+        }
+
+        ILOG("tvOS: Installing Siri Remote light-gun handlers")
+
+        // D-pad → aim; accumulates a virtual normalized position.
+        var aimPosition = CGPoint(x: 0.5, y: 0.5)
+        let step: CGFloat = 0.05
+
+        microGamepad.valueChangedHandler = { [weak gunCore] (gamepad, _) in
+            guard let gunCore = gunCore else { return }
+
+            // Move aim with D-pad.
+            aimPosition.x = max(0, min(1, aimPosition.x + CGFloat(gamepad.dpad.right.value - gamepad.dpad.left.value) * step))
+            aimPosition.y = max(0, min(1, aimPosition.y + CGFloat(gamepad.dpad.down.value  - gamepad.dpad.up.value)   * step))
+            gunCore.lightGunMovedToPoint(aimPosition, isOffscreen: false)
+
+            // buttonA → trigger
+            if gamepad.buttonA.isPressed {
+                gunCore.lightGunTriggerDown()
+            } else {
+                gunCore.lightGunTriggerUp()
+            }
+        }
+
+        // Touch-surface tap → trigger at current aim position
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSiriRemoteLightGunTap(_:)))
+        tapGesture.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        tapGesture.name = "SiriRemoteLightGunTap"
+        view.addGestureRecognizer(tapGesture)
+
+        // Touch-surface long press → reload
+        let reloadGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleSiriRemoteLightGunReload(_:)))
+        reloadGesture.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        reloadGesture.name = "SiriRemoteLightGunReload"
+        reloadGesture.minimumPressDuration = 0.6
+        view.addGestureRecognizer(reloadGesture)
+    }
+
+    @objc private func handleSiriRemoteLightGunTap(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended,
+              let gunCore = core as? LightGunResponder,
+              gunCore.gameSupportsLightGun else { return }
+        gunCore.lightGunTriggerDown()
+        gunCore.lightGunTriggerUp()
+    }
+
+    @objc private func handleSiriRemoteLightGunReload(_ gesture: UILongPressGestureRecognizer) {
+        guard let gunCore = core as? LightGunResponder,
+              gunCore.gameSupportsLightGun else { return }
+        switch gesture.state {
+        case .began:
+            gunCore.lightGunReloadDown?()
+        case .ended, .cancelled, .failed:
+            gunCore.lightGunReloadUp?()
+        default:
+            break
+        }
+    }
+
+    /// Remove all Siri Remote light-gun gesture recognizers.
+    func teardownSiriRemoteForLightGun() {
+        view.gestureRecognizers?
+            .filter { $0.name == "SiriRemoteLightGunTap" || $0.name == "SiriRemoteLightGunReload" }
+            .forEach { view.removeGestureRecognizer($0) }
     }
 }
 

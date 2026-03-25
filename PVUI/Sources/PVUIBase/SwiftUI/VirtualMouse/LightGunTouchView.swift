@@ -1,0 +1,275 @@
+///
+/// LightGunTouchView.swift
+/// PVUI
+///
+/// A UIView subclass that intercepts touch events and forwards them to a
+/// `LightGunResponder` core as normalised (0–1) screen coordinates.
+///
+/// Touch gesture mapping
+/// ---------------------
+/// - **Single-finger tap**       → aim + trigger (down + up)
+/// - **Single-finger drag**      → aim movement (lightGunMovedToPoint)
+/// - **Two-finger tap**          → offscreen reload (lightGunReloadDown + lightGunReloadUp)
+/// - **Long press**              → auxiliary button A (e.g. Guncon B, Super Scope pause)
+/// - **Double tap**              → start button (e.g. Guncon A / SNES Super Scope start)
+///
+/// The view uses direct (1:1) coordinate mapping — each touch position is
+/// normalised to the game viewport bounds, matching how real light guns aim.
+///
+/// Offscreen vs. onscreen
+/// ----------------------
+/// A touch that falls outside the game viewport is treated as an offscreen shot.
+/// Two-finger tap always sends an explicit reload regardless of position.
+///
+/// Gestures only activate when `lightGunResponder.gameSupportsLightGun == true`.
+///
+
+#if canImport(UIKit) && !os(tvOS)
+import UIKit
+import PVCoreBridge
+
+// MARK: - LightGunTouchView
+
+/// Transparent UIView that sits over the emulator surface and translates
+/// touch input into light gun events forwarded to the provided `LightGunResponder`.
+public final class LightGunTouchView: UIView {
+
+    // MARK: Public configuration
+
+    /// The core that will receive light gun events.
+    public weak var lightGunResponder: (AnyObject & LightGunResponder)?
+
+    /// Weak reference to the GPU / game-screen view used for offscreen detection.
+    ///
+    /// When non-nil, touches outside this view's frame are flagged as offscreen
+    /// (e.g. PSX Guncon off-screen reload).
+    public weak var gameViewRef: UIView?
+
+    /// Explicit game-screen rect in the touch view's own coordinate space.
+    ///
+    /// Used when `gameViewRef` has not yet been laid out. Set this whenever the
+    /// authoritative game-display rect is known (e.g. after GPU view positioning).
+    public var explicitGameViewRect: CGRect?
+
+    // MARK: Private state
+
+    /// The active single-finger touch being tracked for aim/move/tap.
+    private var trackedTouch: UITouch?
+    /// Location where the tracked touch began (drag-vs-tap discrimination).
+    private var touchBeganLocation: CGPoint?
+    /// Timestamp of touchesBegan (tap-duration discrimination).
+    private var touchBeganTime: TimeInterval = 0
+    /// True once the finger travels beyond `tapMovementThreshold`.
+    private var touchHasDragged = false
+
+    /// Minimum movement (points) that promotes a touch to a drag, suppressing tap.
+    private let tapMovementThreshold: CGFloat = 8
+    /// Maximum touch duration (seconds) still counted as a tap (not a drag).
+    private let tapMaxDuration: TimeInterval = 0.45
+
+    // MARK: - Gesture recognizers
+
+    private var twoFingerTapRecognizer: UITapGestureRecognizer!
+    private var doubleTapRecognizer: UITapGestureRecognizer!
+    private var longPressRecognizer: UILongPressGestureRecognizer!
+
+    // MARK: - Init
+
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonInit()
+    }
+
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func commonInit() {
+        backgroundColor = .clear
+        isUserInteractionEnabled = true
+        isMultipleTouchEnabled = true
+
+        // Two-finger tap → offscreen reload
+        let twoFinger = UITapGestureRecognizer(target: self, action: #selector(handleTwoFingerTap(_:)))
+        twoFinger.numberOfTapsRequired = 1
+        twoFinger.numberOfTouchesRequired = 2
+        addGestureRecognizer(twoFinger)
+        twoFingerTapRecognizer = twoFinger
+
+        // Double tap (single finger) → start button
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+        doubleTap.numberOfTapsRequired = 2
+        doubleTap.numberOfTouchesRequired = 1
+        addGestureRecognizer(doubleTap)
+        doubleTapRecognizer = doubleTap
+
+        // Long press → auxA button (single-finger)
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        longPress.minimumPressDuration = 0.5
+        longPress.numberOfTouchesRequired = 1
+        addGestureRecognizer(longPress)
+        longPressRecognizer = longPress
+
+        // Single-tap must fail if double-tap succeeds
+        // (handled in touchesEnded via duration/drag check to avoid interference)
+    }
+
+    // MARK: - Hit-testing: capture inside the game viewport only
+
+    /// Returns `self` only when the touch falls within the game display area.
+    /// Touches outside (e.g. skin buttons, menu overlays) pass through.
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
+        guard self.point(inside: point, with: event) else { return nil }
+
+        // Gate on live GPU view frame first (always up-to-date after layout).
+        if let gameView = gameViewRef {
+            let converted = gameView.convert(gameView.bounds, to: self)
+            if !converted.isEmpty {
+                // Strict gating: only intercept if inside the game viewport.
+                guard converted.contains(point) else { return nil }
+            } else {
+                // Not yet laid out — fall back to explicit rect or pass through.
+                if let explicit = explicitGameViewRect, !explicit.isEmpty {
+                    let pointInSuperview = convert(point, to: superview)
+                    guard explicit.contains(pointInSuperview) else { return nil }
+                } else {
+                    return nil
+                }
+            }
+        } else if let explicit = explicitGameViewRect, !explicit.isEmpty {
+            let pointInSuperview = convert(point, to: superview)
+            guard explicit.contains(pointInSuperview) else { return nil }
+        } else {
+            return nil
+        }
+
+        return super.hitTest(point, with: event)
+    }
+
+    // MARK: - Touch tracking (aim movement)
+
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // Only track the first single-finger touch; gesture recognizers handle multi.
+        guard trackedTouch == nil, touches.count == 1, let touch = touches.first else { return }
+        trackedTouch = touch
+        touchBeganLocation = touch.location(in: self)
+        touchBeganTime = touch.timestamp
+        touchHasDragged = false
+
+        let normalised = normalisedPoint(for: touch.location(in: self))
+        let offscreen = isOffscreen(touch.location(in: self))
+        lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+    }
+
+    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = trackedTouch, touches.contains(touch) else { return }
+
+        // Promote to drag once the finger moves past the threshold.
+        if !touchHasDragged, let began = touchBeganLocation {
+            let loc = touch.location(in: self)
+            let dx = loc.x - began.x
+            let dy = loc.y - began.y
+            if (dx * dx + dy * dy) > (tapMovementThreshold * tapMovementThreshold) {
+                touchHasDragged = true
+            }
+        }
+
+        let normalised = normalisedPoint(for: touch.location(in: self))
+        let offscreen = isOffscreen(touch.location(in: self))
+        lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+    }
+
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = trackedTouch, touches.contains(touch) else { return }
+        defer {
+            trackedTouch = nil
+            touchBeganLocation = nil
+            touchHasDragged = false
+        }
+
+        let duration = touch.timestamp - touchBeganTime
+
+        // Fire trigger only when the finger did not drag and the touch was short.
+        // Skip if the double-tap recognizer already consumed this as its first tap
+        // (it sets touchHasDragged via handleDoubleTap's suppression path).
+        if !touchHasDragged && duration < tapMaxDuration {
+            let normalised = normalisedPoint(for: touch.location(in: self))
+            let offscreen = isOffscreen(touch.location(in: self))
+            lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+            lightGunResponder?.lightGunTriggerDown()
+            lightGunResponder?.lightGunTriggerUp()
+        }
+    }
+
+    public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        trackedTouch = nil
+        touchBeganLocation = nil
+        touchHasDragged = false
+    }
+
+    // MARK: - Gesture handlers
+
+    /// Two-finger tap → offscreen reload (supports PSX Guncon, SNES Super Scope, etc.)
+    @objc private func handleTwoFingerTap(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended else { return }
+        lightGunResponder?.lightGunReloadDown?()
+        lightGunResponder?.lightGunReloadUp?()
+    }
+
+    /// Double tap (single finger) → start button (Guncon A, Super Scope start, Menacer start)
+    @objc private func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended else { return }
+        // Suppress the single-tap trigger that would fire on finger-up.
+        touchHasDragged = true
+        lightGunResponder?.lightGunStartDown?()
+        lightGunResponder?.lightGunStartUp?()
+    }
+
+    /// Long press → auxA button (Guncon B, Super Scope pause button, Menacer aux)
+    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            // Suppress the tap-trigger path.
+            touchHasDragged = true
+            let normalised = normalisedPoint(for: gesture.location(in: self))
+            let offscreen = isOffscreen(gesture.location(in: self))
+            lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+            lightGunResponder?.lightGunAuxADown?()
+        case .ended, .cancelled, .failed:
+            lightGunResponder?.lightGunAuxAUp?()
+        default:
+            break
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// Convert a touch point to normalised (0–1) coordinates within the view bounds.
+    private func normalisedPoint(for point: CGPoint) -> CGPoint {
+        guard bounds.width > 0, bounds.height > 0 else { return CGPoint(x: 0.5, y: 0.5) }
+        return CGPoint(
+            x: max(0, min(1, point.x / bounds.width)),
+            y: max(0, min(1, point.y / bounds.height))
+        )
+    }
+
+    /// Returns `true` when `point` (in self's coordinate space) falls outside
+    /// the game viewport — indicating an intentional off-screen shot or reload.
+    private func isOffscreen(_ point: CGPoint) -> Bool {
+        if let gameView = gameViewRef {
+            let converted = gameView.convert(gameView.bounds, to: self)
+            if !converted.isEmpty {
+                return !converted.contains(point)
+            }
+        }
+        if let explicit = explicitGameViewRect, !explicit.isEmpty {
+            let pointInSuperview = convert(point, to: superview)
+            return !explicit.contains(pointInSuperview)
+        }
+        // No viewport reference — assume onscreen.
+        return false
+    }
+}
+#endif // canImport(UIKit) && !os(tvOS)

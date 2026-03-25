@@ -566,6 +566,12 @@
         "symbolColor": "blue",
         "title": "DOSBox Folder Import",
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
+      },
+      {
+        "symbolName": "scope",
+        "symbolColor": "red",
+        "title": "Light Gun Touch Gestures",
+        "subtitle": "Tap to shoot, two-finger tap to reload off-screen, long-press for the aux button, and double-tap for start — full light gun support for Zapper, Super Scope, Guncon, and more."
       }
     ]
   }
