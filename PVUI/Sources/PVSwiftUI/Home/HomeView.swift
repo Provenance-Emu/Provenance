@@ -23,6 +23,14 @@ import UIKit
 import FreemiumKit
 #endif
 
+/// Reference-type scroll tracking that avoids triggering SwiftUI re-renders on every scroll frame.
+/// `previousOffset` is intentionally not published — only `isSearchBarVisible` drives rendering.
+/// Stored as a plain class (no ObservableObject) to avoid unnecessary subscription overhead;
+/// use @State to hold the reference so it persists across view updates without causing redraws.
+private final class ScrollTracker {
+    var previousOffset: CGFloat = 0
+}
+
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
 
@@ -91,8 +99,9 @@ struct HomeView: SwiftUI.View {
 
     @State private var searchText = ""
 
-    @State private var scrollOffset: CGFloat = 0
-    @State private var previousScrollOffset: CGFloat = 0
+    /// Mutable scroll-tracking state stored in a reference type so that updates to
+    /// `previousOffset` do NOT trigger a HomeView body re-render on every scroll frame.
+    @State private var scrollTracker = ScrollTracker()
     @State private var isSearchBarVisible: Bool = true
 
     init(
@@ -187,26 +196,22 @@ struct HomeView: SwiftUI.View {
 
                 ScrollViewWithOffset(
                     offsetChanged: { offset in
-                        // Detect scroll direction and distance
-                        let scrollingDown = offset < previousScrollOffset
-                        let scrollDistance = abs(offset - previousScrollOffset)
+                        // Detect scroll direction and distance using reference-type tracker
+                        // (avoids a HomeView body re-render on every pixel of scroll)
+                        let scrollingDown = offset < scrollTracker.previousOffset
+                        let scrollDistance = abs(offset - scrollTracker.previousOffset)
+                        scrollTracker.previousOffset = offset
 
                         // Only respond to significant scroll movements
-                        if scrollDistance > 5 {
-                            // Hide search bar when scrolling down, show when scrolling up
-                            if scrollingDown && offset < -10 {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    isSearchBarVisible = false
-                                }
-                            } else if !scrollingDown {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    isSearchBarVisible = true
-                                }
+                        guard scrollDistance > 5 else { return }
+
+                        // Only write @State when visibility actually needs to change
+                        let shouldBeVisible = !scrollingDown || offset >= -10
+                        if shouldBeVisible != isSearchBarVisible {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                isSearchBarVisible = shouldBeVisible
                             }
                         }
-
-                        scrollOffset = offset
-                        previousScrollOffset = offset
                     }
                 ) {
                     ScrollViewReader { proxy in

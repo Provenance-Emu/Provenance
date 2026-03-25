@@ -885,7 +885,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL)")
+                .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -924,8 +924,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                /// Use model hash as ID so view recreates when artwork URL changes
-                .id(model.hashValue)
+                /// Recreate the tile only when the artwork URL changes, not on every
+                /// model field update (playCount, lastPlayed, etc.).  Using the full
+                /// model.hashValue caused unnecessary view identity changes and scroll
+                /// stutter on Realm writes.
+                .id("\(model.id)_\(model.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -948,44 +951,46 @@ struct ConsoleGamesView: SwiftUI.View {
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         ScrollViewReader { proxy in
             LazyVGrid(columns: columns, spacing: 10) {
-                // Custom styling for grid items
-                ForEach(games.toArray().filter { !$0.isInvalidated }, id: \.id) { game in
-                    GameItemView(
-                        game: game,
-                        constrainHeight: false,
-                        viewType: .cell,
-                        sectionContext: .allGames,
-                        isFocused: Binding(
-                            get: {
-                                !game.isInvalidated &&
-                                gamesViewModel.focusedSection == .allGames &&
-                                gamesViewModel.focusedItemInSection == game.id
-                            },
-                            set: {
-                                if $0 && !game.isInvalidated {
-                                    gamesViewModel.focusedSection = .allGames
-                                    gamesViewModel.focusedItemInSection = game.id
-                                }
-                            }
-                        )
-                    ) {
-                        Task.detached { @MainActor in
-                            SceneCoordinator.shared.launchGame(game.freeze())
-                        }
-                    }
-                    /// Use compound ID so view recreates when artwork URL changes
-                    .id("\(game.id)_\(game.trueArtworkURL)")
-                    .focusableIfAvailable()
-                    .contextMenu {
-                        GameContextMenu(
+                // Use Results<PVGame> directly (lazy) — avoid .toArray() which materialises all games
+                ForEach(games, id: \.id) { game in
+                    if !game.isInvalidated {
+                        GameItemView(
                             game: game,
-                            rootDelegate: rootDelegate,
-                            contextMenuDelegate: self
-                        )
-                    }
+                            constrainHeight: false,
+                            viewType: .cell,
+                            sectionContext: .allGames,
+                            isFocused: Binding(
+                                get: {
+                                    !game.isInvalidated &&
+                                    gamesViewModel.focusedSection == .allGames &&
+                                    gamesViewModel.focusedItemInSection == game.id
+                                },
+                                set: {
+                                    if $0 && !game.isInvalidated {
+                                        gamesViewModel.focusedSection = .allGames
+                                        gamesViewModel.focusedItemInSection = game.id
+                                    }
+                                }
+                            )
+                        ) {
+                            Task.detached { @MainActor in
+                                SceneCoordinator.shared.launchGame(game.freeze())
+                            }
+                        }
+                        /// Use compound ID so view recreates when artwork URL changes
+                        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+                        .focusableIfAvailable()
+                        .contextMenu {
+                            GameContextMenu(
+                                game: game,
+                                rootDelegate: rootDelegate,
+                                contextMenuDelegate: self
+                            )
+                        }
 #if !os(tvOS) && !os(watchOS)
-                    .onDrag { game.romDragProvider() }
+                        .onDrag { game.romDragProvider() }
 #endif
+                    }
                 }
             }
         }
@@ -1019,7 +1024,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL)")
+                .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -1060,8 +1065,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                /// Use model hash as ID so view recreates when artwork URL changes
-                .id(model.hashValue)
+                /// Recreate the tile only when the artwork URL changes, not on every
+                /// model field update (playCount, lastPlayed, etc.).  Using the full
+                /// model.hashValue caused unnecessary view identity changes and scroll
+                /// stutter on Realm writes.
+                .id("\(model.id)_\(model.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1083,29 +1091,32 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
-            ForEach(games.toArray().filter { !$0.isInvalidated }, id: \.id) { game in
-                GameItemView(
-                    game: game,
-                    constrainHeight: false,
-                    viewType: .row,
-                    sectionContext: .allGames,
-                    isFocused: Binding(
-                        get: {
-                            !game.isInvalidated &&
-                            gamesViewModel.focusedSection == .allGames &&
-                            gamesViewModel.focusedItemInSection == game.id },
-                        set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
-                    ))
-                {
-                    loadGame(game)
-                }
-                /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL)")
-                .focusableIfAvailable()
-                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+            // Use Results<PVGame> directly (lazy) — avoid .toArray() which materialises all games
+            ForEach(games, id: \.id) { game in
+                if !game.isInvalidated {
+                    GameItemView(
+                        game: game,
+                        constrainHeight: false,
+                        viewType: .row,
+                        sectionContext: .allGames,
+                        isFocused: Binding(
+                            get: {
+                                !game.isInvalidated &&
+                                gamesViewModel.focusedSection == .allGames &&
+                                gamesViewModel.focusedItemInSection == game.id },
+                            set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
+                        ))
+                    {
+                        loadGame(game)
+                    }
+                    /// Use compound ID so view recreates when artwork URL changes
+                    .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
+                    .focusableIfAvailable()
+                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
 #if !os(tvOS) && !os(watchOS)
-                .onDrag { game.romDragProvider() }
+                    .onDrag { game.romDragProvider() }
 #endif
+                }
             }
         }
     }
@@ -1222,8 +1233,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         ) {
                             launchGame(md5: game.md5)
                         }
-                        /// Use model hash as ID so view recreates when artwork URL changes
-                        .id(game.hashValue)
+                        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                         .focusableIfAvailable()
                         .contextMenu {
                             if let live = liveGame(for: game) {
@@ -1598,8 +1608,7 @@ extension ConsoleGamesView {
         ) {
             launchGame(md5: game.md5)
         }
-        /// Use model hash as ID so view recreates when artwork URL changes
-        .id(game.hashValue)
+        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
         .focusableIfAvailable()
         .contextMenu {
             if let live = liveGame(for: game) {
