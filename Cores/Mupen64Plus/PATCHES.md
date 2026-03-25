@@ -32,8 +32,10 @@ These files are entirely Provenance-specific (no upstream equivalent):
 ### `vidext.m` — Video Extension (iOS/tvOS)
 The video extension hooks replace the SDL-based windowing system with iOS-native rendering.
 Key implementations:
-- `VidExt_Init` / `VidExt_Quit` — no-op (iOS manages the GL context lifecycle)
-- `VidExt_ListFullscreenModes` — returns device screen size
+- `VidExt_Init` — no-op (iOS manages the GL context lifecycle; returns `M64ERR_SUCCESS`)
+- `VidExt_Quit` — sets `sActive = 0`; not a true no-op (state tracked for `VidExt_VideoRunning`)
+- `VidExt_VideoRunning` — returns `sActive` (1 after `VidExt_SetVideoMode`, 0 after `VidExt_Quit`)
+- `VidExt_ListFullscreenModes` — returns two entries: 640×480 default and current device screen size; note: currently assigns `SizeArray` to a local stack variable rather than filling the caller-provided buffer — a known bug with no visible impact since GLideN64 ignores the mode list
 - `VidExt_SetVideoMode` — stores width/height/depth on the bridge object, sets `sActive = 1`
 - `VidExt_GL_GetProcAddress` — uses `dlsym(RTLD_NEXT, ...)` to locate GL symbols
 - `VidExt_GL_SwapBuffers` — calls `[current swapBuffers]` on the bridge

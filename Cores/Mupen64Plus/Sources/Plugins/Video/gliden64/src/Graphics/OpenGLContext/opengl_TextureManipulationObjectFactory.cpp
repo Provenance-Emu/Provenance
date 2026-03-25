@@ -292,10 +292,15 @@ namespace opengl {
 				(*m_texparams)[u32(_parameters.handle)].wrapT = GLint(_parameters.wrapT);
 			}
 #else
-			// HACK: iOS/tvOS and Emscripten (OpenGL ES/WebGL) effectively only support
-			// GL_CLAMP_TO_EDGE for NPOT textures. Using other wrap modes on NPOT textures
-			// causes rendering artifacts. Force GL_CLAMP_TO_EDGE unconditionally here,
-			// and cache/compare against the forced wrap value rather than the requested one.
+			// HACK: OpenGL ES 2.0 (iOS/tvOS) and WebGL (Emscripten) only support
+			// GL_CLAMP_TO_EDGE for non-power-of-two (NPOT) textures; using GL_REPEAT or
+			// GL_MIRRORED_REPEAT on NPOT textures is undefined behaviour and causes rendering
+			// artifacts. GL_CLAMP_TO_EDGE is forced for all textures here because
+			// TexParameters does not carry dimension information so POT vs NPOT cannot be
+			// distinguished at this call site. N64 game textures are almost exclusively NPOT
+			// so the impact on POT textures (which would legitimately support GL_REPEAT on
+			// OpenGL ES 3.0) is negligible in practice. Cache/compare against the forced
+			// wrap value so the parameter is not re-submitted on every apply call.
 			{
 				const GLint forcedWrap = GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE);
 				if (_parameters.wrapS.isValid() && !(iterValid && iter->second.wrapS == forcedWrap)) {
