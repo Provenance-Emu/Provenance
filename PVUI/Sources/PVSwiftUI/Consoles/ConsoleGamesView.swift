@@ -342,11 +342,10 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     var body: some SwiftUI.View {
-        GeometryReader { geometry in
-            ZStack {
-                // Theme-aware RetroWave background (includes grid overlay)
-                RetroTheme.RetroBackgroundView()
-                    .environmentObject(themeManager)
+        ZStack {
+            // Theme-aware RetroWave background (includes grid overlay)
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
 
                 VStack(spacing: 4) {
 
@@ -818,17 +817,16 @@ struct ConsoleGamesView: SwiftUI.View {
                 .onChange(of: viewModel.sortGamesAscending) { newValue in
                     gamesViewModel.sortAscending = newValue
                 }
-            }
-            .modifier(ConditionalSearchModifier(
-                isEnabled: allGamesModels.count > 8,
-                searchText: $gamesViewModel.searchText
-            ))
-            .ignoresSafeArea(.all)
-            // ROM drag & drop import — iOS/iPadOS/macCatalyst only (#3406)
-#if os(iOS)
-            .romDropTarget()
-#endif
         }
+        .modifier(ConditionalSearchModifier(
+            isEnabled: allGamesModels.count > 8,
+            searchText: $gamesViewModel.searchText
+        ))
+        .ignoresSafeArea(.all)
+        // ROM drag & drop import — iOS/iPadOS/macCatalyst only (#3406)
+#if os(iOS)
+        .romDropTarget()
+#endif
     }
 
     private var sectionHeight: CGFloat {

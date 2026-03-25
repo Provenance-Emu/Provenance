@@ -130,25 +130,25 @@ private struct FileCopyOperationRow: View {
             // Progress bar and status
             HStack {
                 // Progress bar
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        // Background
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(height: 4)
-                        
-                        // Progress fill
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
+                ZStack(alignment: .leading) {
+                    // Background
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 4)
+
+                    // Progress fill
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
                             )
-                            .frame(width: geometry.size.width * operation.progress, height: 4)
-                            .shadow(color: RetroTheme.retroBlue.opacity(pulseOpacity), radius: 2, x: 0, y: 0)
-                    }
+                        )
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 4)
+                        .scaleEffect(x: max(0, min(CGFloat(operation.progress), 1)), y: 1, anchor: .leading)
+                        .shadow(color: RetroTheme.retroBlue.opacity(pulseOpacity), radius: 2, x: 0, y: 0)
                 }
                 .frame(height: 4)
                 

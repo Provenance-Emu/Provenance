@@ -132,6 +132,8 @@ public struct StatusMessageView: View {
     /// - Returns: A progress view
     @ViewBuilder
     private func progressView(title: String, current: Int, total: Int, color: Color) -> some View {
+        /// Clamp to prevent invalid scale values when totals are unavailable.
+        let progressFraction = total > 0 ? max(0, min(CGFloat(current) / CGFloat(total), 1)) : 0
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(title)
@@ -148,25 +150,25 @@ public struct StatusMessageView: View {
             }
             
             // Progress bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.black.opacity(0.5))
-                        .frame(height: 8)
-                    
-                    // Progress
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [color, RetroTheme.retroPurple]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
+            ZStack(alignment: .leading) {
+                // Background
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.black.opacity(0.5))
+                    .frame(height: 8)
+
+                // Progress
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [color, RetroTheme.retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
-                        .frame(width: max(0, min(CGFloat(current) / CGFloat(total) * geometry.size.width, geometry.size.width)), height: 8)
-                        .animation(.easeInOut(duration: 0.3), value: current)
-                }
+                    )
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 8)
+                    .scaleEffect(x: progressFraction, y: 1, anchor: .leading)
+                    .animation(.easeInOut(duration: 0.3), value: current)
             }
             .frame(height: 8)
         }

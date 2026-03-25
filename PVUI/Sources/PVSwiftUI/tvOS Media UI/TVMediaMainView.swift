@@ -1091,12 +1091,46 @@ private struct TVMediaWidthPreferenceKey: PreferenceKey {
 
 private extension View {
     func tvMediaTrackWidth(_ onChange: @escaping (CGFloat) -> Void) -> some View {
-        background(
-            GeometryReader { geo in
-                Color.clear.preference(key: TVMediaWidthPreferenceKey.self, value: geo.size.width)
-            }
-        )
-        .onPreferenceChange(TVMediaWidthPreferenceKey.self, perform: onChange)
+        modifier(TVMediaTrackWidthModifier(onChange: onChange))
+    }
+}
+
+private struct TVMediaTrackWidthModifier: ViewModifier {
+    /// Width callback for parent layout decisions.
+    let onChange: (CGFloat) -> Void
+    @State private var lastReportedWidth: CGFloat?
+    private let widthEpsilon: CGFloat = 0.5
+
+    private func reportWidthIfNeeded(_ width: CGFloat) {
+        guard width > 0 else { return }
+        if let lastReportedWidth, abs(lastReportedWidth - width) < widthEpsilon {
+            return
+        }
+        self.lastReportedWidth = width
+        onChange(width)
+    }
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, tvOS 18.0, *) {
+            content.background(
+                Color.clear
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.size.width
+                    } action: { width in
+                        reportWidthIfNeeded(width)
+                    }
+            )
+        } else {
+            content
+                .background(
+                    GeometryReader { geo in
+                        Color.clear.preference(key: TVMediaWidthPreferenceKey.self, value: geo.size.width)
+                    }
+                )
+                .onPreferenceChange(TVMediaWidthPreferenceKey.self) { width in
+                    reportWidthIfNeeded(width)
+                }
+        }
     }
 }
 
@@ -1867,7 +1901,8 @@ struct TVMediaSavesView: View {
             columns: [GridItem(.adaptive(minimum: tileWidth, maximum: tileWidth), spacing: spacing)],
             spacing: spacing
         ) {
-            ForEach(Array(filteredSaves.enumerated()), id: \.element.id) { index, item in
+            ForEach(filteredSaves.indices, id: \.self) { index in
+                let item = filteredSaves[index]
                 let isAtLeftEdge = (index % columnsPerRow) == 0
                 TVMediaSaveStateTileButton(
                     item: item,
@@ -2326,6 +2361,7 @@ struct TVMediaHomeView: View {
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @State private var isLoading = true
     @State private var currentSection: String? = "home_top"
+    @State private var recentSaveLoadsRequested: Set<String> = []
 #if canImport(PVWebServer)
     @State private var webServerURL: String?
 #endif
@@ -2345,6 +2381,10 @@ struct TVMediaHomeView: View {
     }
 
     var body: some View {
+        let favorites = model.favoriteGames(limit: 40)
+        let hasFavorites = !favorites.isEmpty
+        let visibleSystems = systemsWithGames
+
         ScrollViewReader { proxy in
             ZStack(alignment: .trailing) {
                 ScrollView {
@@ -2362,15 +2402,14 @@ struct TVMediaHomeView: View {
                                 .tvMediaFocusSection()
                         } else {
                             // Favorites section
-                            let favorites = model.favoriteGames(limit: 40)
-                            if !favorites.isEmpty {
+                            if hasFavorites {
                                 TVMediaShelf(title: "Favorites", items: favorites, gameActions: gameActions)
                                     .id("favorites")
                                     .background(
                                         GeometryReader { geo in
                                             Color.clear.preference(
                                                 key: VisibleSectionPreferenceKey.self,
-                                                value: [VisibleSectionInfo(id: "favorites", minY: geo.frame(in: .global).minY)]
+                                                value: [VisibleSectionInfo(id: "favorites", minY: geo.frame(in: .named("tvMediaHomeScroll")).minY)]
                                             )
                                         }
                                     )
@@ -2399,12 +2438,12 @@ struct TVMediaHomeView: View {
                                         GeometryReader { geo in
                                             Color.clear.preference(
                                                 key: VisibleSectionPreferenceKey.self,
-                                                value: [VisibleSectionInfo(id: sectionID, minY: geo.frame(in: .global).minY)]
+                                                value: [VisibleSectionInfo(id: sectionID, minY: geo.frame(in: .named("tvMediaHomeScroll")).minY)]
                                             )
                                         }
                                     )
                                     .task {
-                                        _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 6)
+                                        await loadRecentSavesIfNeeded(for: system.identifier)
                                     }
 
                                     if let recent = saveStatesStore.recentBySystem[system.identifier], !recent.isEmpty {
@@ -2424,24 +2463,32 @@ struct TVMediaHomeView: View {
                     .padding(.horizontal, 60)
                     .padding(.vertical, 40)
                 }
+                .coordinateSpace(name: "tvMediaHomeScroll")
                 .onPreferenceChange(VisibleSectionPreferenceKey.self) { sections in
                     // Find the section closest to the top of the screen (but still visible)
                     // A section is "current" if its top is near or above the top of the visible area
                     let threshold: CGFloat = 250 // Adjust based on header height
+                    let nextSectionID: String?
                     if let topSection = sections
                         .filter({ $0.minY < threshold })
                         .max(by: { $0.minY < $1.minY }) {
-                        currentSection = topSection.id
+                        nextSectionID = topSection.id
                     } else if let firstVisible = sections.min(by: { $0.minY < $1.minY }) {
-                        currentSection = firstVisible.id
+                        nextSectionID = firstVisible.id
+                    } else {
+                        nextSectionID = nil
+                    }
+
+                    if currentSection != nextSectionID {
+                        currentSection = nextSectionID
                     }
                 }
 
                 // Scroll index rail - only show when there are multiple systems
-                if systemsWithGames.count > 2 && !isLoading {
+                if visibleSystems.count > 2 && !isLoading {
                     TVMediaScrollIndexRail(
-                        systems: systemsWithGames,
-                        hasFavorites: !model.favoriteGames(limit: 1).isEmpty,
+                        systems: visibleSystems,
+                        hasFavorites: hasFavorites,
                         currentSection: $currentSection,
                         onSelectSystem: { systemID in
                             currentSection = "system_\(systemID)"
@@ -2599,6 +2646,12 @@ struct TVMediaHomeView: View {
         }
     }
 
+    private func loadRecentSavesIfNeeded(for systemID: String) async {
+        let shouldLoad = await MainActor.run { recentSaveLoadsRequested.insert(systemID).inserted }
+        guard shouldLoad else { return }
+        _ = await saveStatesStore.loadRecent(forSystemID: systemID, limit: 6)
+    }
+
 #if canImport(PVWebServer)
     private func refreshWebServerURL() {
         Task { @MainActor in
@@ -2666,7 +2719,8 @@ struct TVMediaSystemsView: View {
                     TVMediaTopBar(title: "Systems")
 
                     LazyVGrid(columns: columns, spacing: gridSpacing) {
-                        ForEach(Array(systemsWithGames.enumerated()), id: \.element.identifier) { index, system in
+                        ForEach(systemsWithGames.indices, id: \.self) { index in
+                            let system = systemsWithGames[index]
                             let isAtLeftEdge = index % columnsPerRow == 0
                             TVMediaSystemCard(
                                 system: system,
@@ -3441,7 +3495,8 @@ struct TVMediaAllGamesGrid: View {
         )
 
         LazyVGrid(columns: columns, spacing: 20) {
-            ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
+            ForEach(games.indices, id: \.self) { index in
+                let game = games[index]
                 // First column in each row is at left edge
                 let isAtLeftEdge = index % columnsPerRow == 0
                 TVMediaGameTileView(
@@ -4261,7 +4316,8 @@ struct TVMediaShelf: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: itemSpacing) {
-                    ForEach(Array(items.enumerated()), id: \.element.id) { index, game in
+                    ForEach(items.indices, id: \.self) { index in
+                        let game = items[index]
                         TVMediaGameTileView(
                             game: game,
                             titleFont: .callout.weight(.semibold),
@@ -4349,7 +4405,8 @@ struct TVMediaSystemShelfRow: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 24) {
                     let gamesArray = Array(games.prefix(30))
-                    ForEach(Array(gamesArray.enumerated()), id: \.element.id) { index, game in
+                    ForEach(gamesArray.indices, id: \.self) { index in
+                        let game = gamesArray[index]
                         TVMediaGameTileView(
                             game: game,
                             titleFont: .callout.weight(.semibold),
@@ -4523,7 +4580,8 @@ struct TVMediaSearchResultsGrid: View {
         )
 
         LazyVGrid(columns: columns, spacing: 20) {
-            ForEach(Array(results.enumerated()), id: \.element.id) { index, game in
+            ForEach(results.indices, id: \.self) { index in
+                let game = results[index]
                 let isAtLeftEdge = index % columnsPerRow == 0
                 TVMediaGameTileView(
                     game: game,
@@ -4743,7 +4801,7 @@ struct TVMediaScanlines: View {
 /// SMPTE color bars for save states without thumbnails - optimized for performance
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSaveStateSMPTE: View {
-    private let colors: [Color] = [
+    private static let colors: [Color] = [
         Color(red: 0.75, green: 0.75, blue: 0.75),
         Color(red: 0.75, green: 0.75, blue: 0.0),
         Color(red: 0.0, green: 0.75, blue: 0.75),
@@ -4752,16 +4810,19 @@ struct TVMediaSaveStateSMPTE: View {
         Color(red: 0.75, green: 0.0, blue: 0.0),
         Color(red: 0.0, green: 0.0, blue: 0.75)
     ]
+    /// Precomputed stops avoid per-render allocation churn while scrolling.
+    private static let gradientStops: [Gradient.Stop] = {
+        Self.colors.enumerated().map { index, color in
+            Gradient.Stop(
+                color: color,
+                location: CGFloat(index) / CGFloat(Self.colors.count - 1)
+            )
+        }
+    }()
 
     var body: some View {
-        // Optimized: Use LinearGradient instead of GeometryReader + ForEach
         LinearGradient(
-            stops: colors.enumerated().map { index, color in
-                Gradient.Stop(
-                    color: color,
-                    location: CGFloat(index) / CGFloat(colors.count - 1)
-                )
-            },
+            stops: Self.gradientStops,
             startPoint: .leading,
             endPoint: .trailing
         )
@@ -4830,7 +4891,6 @@ struct TVMediaSaveStateTile: View {
                 }
                 .frame(width: tileWidth, height: tileHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .drawingGroup() // Flatten image rendering for better performance
 
                 // Scanline overlay - optimized with Canvas for better performance
                 Canvas { context, size in
@@ -4889,7 +4949,7 @@ struct TVMediaSaveStateTile: View {
             .frame(width: tileWidth, height: tileHeight)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(focusBorder)
-            .drawingGroup() // Flatten inner content for better scroll performance
+            .compositingGroup()
         }
         .frame(width: tileWidth, height: tileHeight)
         .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 20, x: 0, y: 8)
