@@ -427,8 +427,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         effectChainNodes = []
 
         // Build active effects chain from settings.
-        // Use Defaults[.auFiltersEnabled] as the single master toggle; ignore chain.isEnabled
-        // to avoid dual-flag desync (chain.isEnabled is a UI convenience, not authoritative here).
+        // Use Defaults[.auFiltersEnabled] as the single master toggle.
+        // AUEffectsChain no longer carries its own isEnabled flag.
         let chain = Defaults[.auEffectsChain]
         var newEffectNodes: [AVAudioUnit] = []
         if Defaults[.auFiltersEnabled] && chain.nodes.contains(where: { $0.isEnabled }) {

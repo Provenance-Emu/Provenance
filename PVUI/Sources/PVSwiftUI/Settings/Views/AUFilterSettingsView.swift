@@ -169,13 +169,11 @@ struct AUFilterSettingsView: View {
     private func addEffect(_ effectType: AUEffectType) {
         let node = AUEffectNode(effectType: effectType)
         chain.nodes.append(node)
-        chain.isEnabled = true
         auFiltersEnabled = true
     }
 
     private func loadPreset(_ preset: AUEffectsPreset) {
         chain = preset.chain
-        chain.isEnabled = auFiltersEnabled
     }
 
     private func saveCurrentChainAsPreset() {
@@ -234,10 +232,6 @@ private struct EffectNodeRow: View {
                         .frame(width: 24, height: 24)
                 }
                 .buttonStyle(.plain)
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                onToggleExpand()
             }
 
             // Parameter sliders (expanded)

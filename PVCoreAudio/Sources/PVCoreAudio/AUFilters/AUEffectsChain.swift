@@ -13,25 +13,22 @@ import Defaults
 public struct AUEffectsChain: Codable, Sendable, Equatable {
     /// Ordered list of effects nodes. Applied source → first → … → last → output.
     public var nodes: [AUEffectNode]
-    /// Master enable toggle. When false, the entire chain is bypassed.
-    public var isEnabled: Bool
 
-    public static let empty = AUEffectsChain(nodes: [], isEnabled: false)
+    public static let empty = AUEffectsChain(nodes: [])
 
-    public init(nodes: [AUEffectNode] = [], isEnabled: Bool = false) {
+    public init(nodes: [AUEffectNode] = []) {
         self.nodes = nodes
-        self.isEnabled = isEnabled
     }
 
-    /// Returns true when the chain has at least one enabled node and the master switch is on.
+    /// Returns true when the chain has at least one enabled node.
+    /// The master on/off toggle is `Defaults[.auFiltersEnabled]` — not stored in the chain.
     public var hasActiveEffects: Bool {
-        isEnabled && nodes.contains { $0.isEnabled }
+        nodes.contains { $0.isEnabled }
     }
 
-    /// Returns only the nodes that are currently active.
+    /// Returns only the nodes that are currently enabled.
     public var activeNodes: [AUEffectNode] {
-        guard isEnabled else { return [] }
-        return nodes.filter(\.isEnabled)
+        nodes.filter(\.isEnabled)
     }
 }
 
