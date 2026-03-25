@@ -8,8 +8,6 @@
 
 #if canImport(SwiftUI)
 import SwiftUI
-import PVLibrary
-import PVRealm
 import PVThemes
 
 /// A single row in the preview list.

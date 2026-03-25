@@ -170,7 +170,8 @@ extension ConsoleGamesView {
     /// Builds the preview rows from the current selection and presents the sheet.
     @ViewBuilder
     var normalizeTitleSheet: some View {
-        let selectedMD5s = gamesViewModel.selectedGameMD5s
+        // Sort for deterministic ordering (Set iteration is nondeterministic).
+        let selectedMD5s = gamesViewModel.selectedGameMD5s.sorted()
         let realm = RomDatabase.sharedInstance.realm
         let rows: [NormalizeTitlePreviewRow] = selectedMD5s.compactMap { md5 in
             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)

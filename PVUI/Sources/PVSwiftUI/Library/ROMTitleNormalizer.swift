@@ -40,7 +40,7 @@ public enum ROMTitleNormalizer {
     /// Remove common parenthetical groups such as:
     ///   (USA), (Europe), (Japan), (World), (En,Fr,De), (Rev A), (Rev 1),
     ///   (v1.1), (Disc 1), (Disk 2), (Side A), (Proto), (Beta), (Demo),
-    ///   (Unl), (Pirate), (Hack), (Homebrewː), (Aftermarket), (Sample),
+    ///   (Unl), (Pirate), (Hack), (Homebrew), (Aftermarket), (Sample),
     ///   (Alt), (Alt 1), (Kiosk), (Limited Edition), (Collector's Edition),
     ///   (BIOS), (Program), (Data), (Edu), (Test Program), (Check Program)
     private static func stripParentheticals(_ title: String) -> String {
@@ -66,7 +66,7 @@ public enum ROMTitleNormalizer {
             // Release status
             "Proto", "Prototype", "Beta", "Alpha", "Demo", "Sample",
             "Preview", "Pre-release", "Pre\\-release",
-            "Aftermarket", "Unl", "Pirate", "Hack", "Homebrewː?",
+            "Aftermarket", "Unl", "Pirate", "Hack", "Homebrew:?",
             "Kiosk", "Limited Edition", "Collector's Edition",
             "Collector.s Edition",
 
@@ -110,16 +110,18 @@ public enum ROMTitleNormalizer {
         )
     }
 
-    /// Move leading article to the end if it's in a "The, Article" / "A, Article"
-    /// pattern, or move a trailing ", The" / ", A" back to the front.
+    /// Move a trailing article suffix back to the front of the title.
+    ///
+    /// Matches titles of the form `"<body>, The|A|An"` (case-insensitive) and
+    /// returns `"<Article> <body>"` with the article capitalised.
     ///
     /// Examples:
-    ///   "Legend of Zelda, The" → "The Legend of Zelda"
+    ///   "Legend of Zelda, The"          → "The Legend of Zelda"
     ///   "Incredible Crash Dummies, The" → "The Incredible Crash Dummies"
-    ///   "Adventures of Lolo, The" → "The Adventures of Lolo"
+    ///   "Adventures of Lolo, the"       → "The Adventures of Lolo"
     ///
-    /// **Note:** We do NOT move "The" from the front to the back — that would
-    /// conflict with the actual display title users see in-app.
+    /// **Note:** We do NOT move a leading "The" to the back — that would
+    /// conflict with the display title users expect to see in-app.
     private static func fixArticle(_ title: String) -> String {
         let pattern = "^(.+),\\s+(The|A|An)$"
         guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
@@ -131,8 +133,9 @@ public enum ROMTitleNormalizer {
            let bodyRange = Range(match.range(at: 1), in: title),
            let articleRange = Range(match.range(at: 2), in: title) {
             let body = String(title[bodyRange])
-            let article = String(title[articleRange])
-            // Capitalise article correctly
+            let rawArticle = String(title[articleRange])
+            // Capitalise the first letter of the article regardless of source casing
+            let article = rawArticle.prefix(1).uppercased() + rawArticle.dropFirst().lowercased()
             return "\(article) \(body)"
         }
         return title

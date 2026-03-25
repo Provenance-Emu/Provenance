@@ -50,6 +50,9 @@ struct ROMTitleNormalizerTests {
     func trailingArticleFixed() {
         #expect(ROMTitleNormalizer.normalize("Legend of Zelda, The") == "The Legend of Zelda")
         #expect(ROMTitleNormalizer.normalize("Incredible Crash Dummies, The") == "The Incredible Crash Dummies")
+        // Lowercase article from caseInsensitive match must be capitalised
+        #expect(ROMTitleNormalizer.normalize("Legend of Zelda, the") == "The Legend of Zelda")
+        #expect(ROMTitleNormalizer.normalize("Adventures of Lolo, an") == "An Adventures of Lolo")
     }
 
     @Test("Already-normalized titles are unchanged")

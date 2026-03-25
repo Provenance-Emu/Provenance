@@ -946,8 +946,10 @@ struct ConsoleGamesView: SwiftUI.View {
                         gameAction(for: model.md5)()
                     }
                 }
-                /// Recreate the tile only when the artwork URL changes or selection state changes.
-                .id("\(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))_\(gamesViewModel.selectedGameMD5s.contains(model.md5))")
+                /// Recreate the tile only when the artwork URL changes.
+                /// Selection state is handled by `multiSelectOverlay` via SwiftUI observation —
+                /// including it in `.id` would force full view recreation on every tap.
+                .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
                     if !gamesViewModel.isMultiSelectMode, let live = liveGame(for: model) {
@@ -1059,8 +1061,10 @@ struct ConsoleGamesView: SwiftUI.View {
                         gameAction(for: model.md5)()
                     }
                 }
-                /// Recreate the tile only when the artwork URL changes or selection state changes.
-                .id("\(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))_\(gamesViewModel.selectedGameMD5s.contains(model.md5))")
+                /// Recreate the tile only when the artwork URL changes.
+                /// Selection state is handled by `multiSelectOverlay` via SwiftUI observation —
+                /// including it in `.id` would force full view recreation on every tap.
+                .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
                     if !gamesViewModel.isMultiSelectMode, let live = liveGame(for: model) {
