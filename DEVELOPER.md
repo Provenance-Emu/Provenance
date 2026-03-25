@@ -109,7 +109,7 @@ Provenance uses git submodules for emulator cores. Each core submodule is pinned
 
 ### Updating a Core Submodule to Fork HEAD
 
-When a Provenance-Emu fork submodule has a `branch = <name>` entry and you want to advance it:
+When a Provenance-Emu fork submodule has a `branch = <branch-name>` entry and you want to advance it:
 
 ```bash
 # If this is a first-time checkout, ensure the submodule is initialized:
