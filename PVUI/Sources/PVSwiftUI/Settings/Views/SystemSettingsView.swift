@@ -11,6 +11,8 @@ import Combine
 import RealmSwift
 import PVPrimitives
 import PVThemes
+import PVSettings
+import PVCoreBridge
 
 struct SystemSettingsView: View {
     @ObservedResults(PVSystem.self) private var systems
@@ -211,6 +213,7 @@ struct SystemSection: View {
     @State private var isCoresExpanded = false
     @State private var isBiosesExpanded = false
     @Default(.unsupportedCores) private var unsupportedCores
+    @Default(.controllerLayoutVariantsBySystem) private var variantsBySystem
 
     private var isAppStore: Bool { AppState.shared.isAppStore }
 
@@ -404,6 +407,19 @@ struct SystemSection: View {
                         .cornerRadius(6)
                         .transition(.opacity)
                     }
+                }
+            }
+
+            // Controller layout variant picker — only shown for systems with multiple layouts
+            if let sysID = SystemIdentifier(rawValue: system.identifier),
+               let variants = sysID.availableControllerLayoutVariants,
+               variants.count > 1 {
+                ControllerLayoutVariantPicker(
+                    systemIdentifier: system.identifier,
+                    variants: variants,
+                    selectedVariantID: variantsBySystem[system.identifier] ?? variants[0].id
+                ) { newVariantID in
+                    Defaults.setControllerLayoutVariant(newVariantID, forSystemID: system.identifier)
                 }
             }
         }
