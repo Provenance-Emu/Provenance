@@ -266,12 +266,12 @@ public struct PPFPatcher: Sendable {
 
     // MARK: - Helpers
 
-    /// Write `bytes` starting at `offset` into `result`, extending if needed.
+    /// Write `bytes` starting at `offset` into `result`.
+    ///
+    /// Callers must ensure that `offset + bytes.count` does not exceed `result.count`;
+    /// the record-processing logic enforces this via `maxOutputSize` bounds checks.
     private func applyBytes(_ bytes: Data.SubSequence, at offset: Int, into result: inout Data) {
         let end = offset + bytes.count
-        if result.count < end {
-            result.append(contentsOf: Data(repeating: 0, count: end - result.count))
-        }
         result.replaceSubrange(offset..<end, with: bytes)
     }
 
