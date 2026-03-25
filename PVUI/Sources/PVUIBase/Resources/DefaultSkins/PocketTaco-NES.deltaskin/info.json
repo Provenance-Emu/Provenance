@@ -1,0 +1,250 @@
+{
+  "name": "GameSir Pocket Taco — NES",
+  "identifier": "com.provenance.defaultskins.pockettaco.nes",
+  "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+  "debug": false,
+  "representations": {
+    "iphone": {
+      "standard": {
+        "portrait": {
+          "assets": {
+            "resizable": "transparent.png"
+          },
+          "translucent": true,
+          "mappingSize": {
+            "width": 750,
+            "height": 1334
+          },
+          "gameScreenFrame": {
+            "x": 0,
+            "y": 80,
+            "width": 750,
+            "height": 703
+          },
+          "screens": [
+            {
+              "inputFrame": {
+                "x": 0,
+                "y": 0,
+                "width": 256,
+                "height": 240
+              },
+              "outputFrame": {
+                "x": 0,
+                "y": 80,
+                "width": 750,
+                "height": 703
+              },
+              "placement": "controller"
+            }
+          ],
+          "items": [
+            {
+              "inputs": {
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right"
+              },
+              "frame": {
+                "x": 40,
+                "y": 970,
+                "width": 220,
+                "height": 220
+              },
+              "extendedEdges": {
+                "top": 10,
+                "bottom": 10,
+                "left": 10,
+                "right": 10
+              }
+            },
+            {
+              "inputs": ["a"],
+              "frame": {
+                "x": 640,
+                "y": 1045,
+                "width": 90,
+                "height": 90
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["b"],
+              "frame": {
+                "x": 535,
+                "y": 1045,
+                "width": 90,
+                "height": 90
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["start"],
+              "frame": {
+                "x": 390,
+                "y": 1210,
+                "width": 90,
+                "height": 55
+              }
+            },
+            {
+              "inputs": ["select"],
+              "frame": {
+                "x": 270,
+                "y": 1210,
+                "width": 90,
+                "height": 55
+              }
+            },
+            {
+              "inputs": ["menu"],
+              "frame": {
+                "x": 330,
+                "y": 1135,
+                "width": 90,
+                "height": 55
+              }
+            }
+          ],
+          "extendedEdges": {
+            "top": 7,
+            "bottom": 7,
+            "left": 7,
+            "right": 7
+          }
+        }
+      },
+      "edgeToEdge": {
+        "portrait": {
+          "assets": {
+            "resizable": "transparent.png"
+          },
+          "translucent": true,
+          "mappingSize": {
+            "width": 393,
+            "height": 852
+          },
+          "gameScreenFrame": {
+            "x": 0,
+            "y": 42,
+            "width": 393,
+            "height": 369
+          },
+          "screens": [
+            {
+              "inputFrame": {
+                "x": 0,
+                "y": 0,
+                "width": 256,
+                "height": 240
+              },
+              "outputFrame": {
+                "x": 0,
+                "y": 42,
+                "width": 393,
+                "height": 369
+              },
+              "placement": "controller"
+            }
+          ],
+          "items": [
+            {
+              "inputs": {
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right"
+              },
+              "frame": {
+                "x": 21,
+                "y": 508,
+                "width": 115,
+                "height": 115
+              },
+              "extendedEdges": {
+                "top": 10,
+                "bottom": 10,
+                "left": 10,
+                "right": 10
+              }
+            },
+            {
+              "inputs": ["a"],
+              "frame": {
+                "x": 330,
+                "y": 558,
+                "width": 50,
+                "height": 50
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["b"],
+              "frame": {
+                "x": 272,
+                "y": 558,
+                "width": 50,
+                "height": 50
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["start"],
+              "frame": {
+                "x": 204,
+                "y": 634,
+                "width": 47,
+                "height": 29
+              }
+            },
+            {
+              "inputs": ["select"],
+              "frame": {
+                "x": 142,
+                "y": 634,
+                "width": 47,
+                "height": 29
+              }
+            },
+            {
+              "inputs": ["menu"],
+              "frame": {
+                "x": 173,
+                "y": 595,
+                "width": 47,
+                "height": 29
+              }
+            }
+          ],
+          "extendedEdges": {
+            "top": 7,
+            "bottom": 7,
+            "left": 7,
+            "right": 7
+          }
+        }
+      }
+    }
+  }
+}

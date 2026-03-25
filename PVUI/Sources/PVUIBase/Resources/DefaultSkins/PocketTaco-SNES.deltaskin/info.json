@@ -1,0 +1,322 @@
+{
+  "name": "GameSir Pocket Taco — SNES",
+  "identifier": "com.provenance.defaultskins.pockettaco.snes",
+  "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+  "debug": false,
+  "representations": {
+    "iphone": {
+      "standard": {
+        "portrait": {
+          "assets": {
+            "resizable": "transparent.png"
+          },
+          "translucent": true,
+          "mappingSize": {
+            "width": 750,
+            "height": 1334
+          },
+          "gameScreenFrame": {
+            "x": 0,
+            "y": 80,
+            "width": 750,
+            "height": 656
+          },
+          "screens": [
+            {
+              "inputFrame": {
+                "x": 0,
+                "y": 0,
+                "width": 256,
+                "height": 224
+              },
+              "outputFrame": {
+                "x": 0,
+                "y": 80,
+                "width": 750,
+                "height": 656
+              },
+              "placement": "controller"
+            }
+          ],
+          "items": [
+            {
+              "inputs": {
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right"
+              },
+              "frame": {
+                "x": 40,
+                "y": 970,
+                "width": 220,
+                "height": 220
+              },
+              "extendedEdges": {
+                "top": 10,
+                "bottom": 10,
+                "left": 10,
+                "right": 10
+              }
+            },
+            {
+              "inputs": ["x"],
+              "frame": {
+                "x": 555,
+                "y": 965,
+                "width": 85,
+                "height": 85
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["y"],
+              "frame": {
+                "x": 462,
+                "y": 1055,
+                "width": 85,
+                "height": 85
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["a"],
+              "frame": {
+                "x": 648,
+                "y": 1055,
+                "width": 85,
+                "height": 85
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["b"],
+              "frame": {
+                "x": 555,
+                "y": 1145,
+                "width": 85,
+                "height": 85
+              },
+              "extendedEdges": {
+                "top": 8,
+                "bottom": 8,
+                "left": 8,
+                "right": 8
+              }
+            },
+            {
+              "inputs": ["l"],
+              "frame": {
+                "x": 0,
+                "y": 0,
+                "width": 225,
+                "height": 80
+              }
+            },
+            {
+              "inputs": ["r"],
+              "frame": {
+                "x": 525,
+                "y": 0,
+                "width": 225,
+                "height": 80
+              }
+            },
+            {
+              "inputs": ["start"],
+              "frame": {
+                "x": 390,
+                "y": 1210,
+                "width": 90,
+                "height": 55
+              }
+            },
+            {
+              "inputs": ["select"],
+              "frame": {
+                "x": 270,
+                "y": 1210,
+                "width": 90,
+                "height": 55
+              }
+            },
+            {
+              "inputs": ["menu"],
+              "frame": {
+                "x": 330,
+                "y": 1135,
+                "width": 90,
+                "height": 55
+              }
+            }
+          ],
+          "extendedEdges": {
+            "top": 7,
+            "bottom": 7,
+            "left": 7,
+            "right": 7
+          }
+        }
+      },
+      "edgeToEdge": {
+        "portrait": {
+          "assets": {
+            "resizable": "transparent.png"
+          },
+          "translucent": true,
+          "mappingSize": {
+            "width": 393,
+            "height": 852
+          },
+          "gameScreenFrame": {
+            "x": 0,
+            "y": 42,
+            "width": 393,
+            "height": 344
+          },
+          "screens": [
+            {
+              "inputFrame": {
+                "x": 0,
+                "y": 0,
+                "width": 256,
+                "height": 224
+              },
+              "outputFrame": {
+                "x": 0,
+                "y": 42,
+                "width": 393,
+                "height": 344
+              },
+              "placement": "controller"
+            }
+          ],
+          "items": [
+            {
+              "inputs": {
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right"
+              },
+              "frame": {
+                "x": 21,
+                "y": 508,
+                "width": 115,
+                "height": 115
+              },
+              "extendedEdges": {
+                "top": 10,
+                "bottom": 10,
+                "left": 10,
+                "right": 10
+              }
+            },
+            {
+              "inputs": ["x"],
+              "frame": {
+                "x": 275,
+                "y": 505,
+                "width": 50,
+                "height": 50
+              }
+            },
+            {
+              "inputs": ["y"],
+              "frame": {
+                "x": 218,
+                "y": 558,
+                "width": 50,
+                "height": 50
+              }
+            },
+            {
+              "inputs": ["a"],
+              "frame": {
+                "x": 332,
+                "y": 558,
+                "width": 50,
+                "height": 50
+              }
+            },
+            {
+              "inputs": ["b"],
+              "frame": {
+                "x": 275,
+                "y": 611,
+                "width": 50,
+                "height": 50
+              }
+            },
+            {
+              "inputs": ["l"],
+              "frame": {
+                "x": 0,
+                "y": 0,
+                "width": 118,
+                "height": 42
+              }
+            },
+            {
+              "inputs": ["r"],
+              "frame": {
+                "x": 275,
+                "y": 0,
+                "width": 118,
+                "height": 42
+              }
+            },
+            {
+              "inputs": ["start"],
+              "frame": {
+                "x": 204,
+                "y": 690,
+                "width": 47,
+                "height": 29
+              }
+            },
+            {
+              "inputs": ["select"],
+              "frame": {
+                "x": 142,
+                "y": 690,
+                "width": 47,
+                "height": 29
+              }
+            },
+            {
+              "inputs": ["menu"],
+              "frame": {
+                "x": 173,
+                "y": 660,
+                "width": 47,
+                "height": 29
+              }
+            }
+          ],
+          "extendedEdges": {
+            "top": 7,
+            "bottom": 7,
+            "left": 7,
+            "right": 7
+          }
+        }
+      }
+    }
+  }
+}
