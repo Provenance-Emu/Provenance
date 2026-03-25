@@ -8,6 +8,10 @@
 // Notes:
 // This entire file is one ugly math hack with ordering mattering in parsing.
 // TLDR; refactor this to SwiftUI or constraints
+//
+// RTL: do not flip — on-screen game controls are a spatial mapping of physical hardware buttons.
+// The d-pad is always on the left and action buttons are always on the right regardless of locale.
+// Mirroring these would break muscle memory and make games unplayable.
 
 #if canImport(UIKit)
 import AudioToolbox

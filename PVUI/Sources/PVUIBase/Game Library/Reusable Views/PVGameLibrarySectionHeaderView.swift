@@ -72,7 +72,7 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 
         // Style
             backgroundColor = UIColor.black.withAlphaComponent(0.8)
-            titleLabel.textAlignment = .left
+            titleLabel.textAlignment = .natural // RTL: mirrors to right-aligned in Arabic/Hebrew
             titleLabel.backgroundColor = .clear
             titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
             clipsToBounds = false
@@ -97,7 +97,7 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 
             // Style
             backgroundColor = ThemeManager.shared.currentPalette.gameLibraryHeaderBackground
-            titleLabel.textAlignment = .left
+            titleLabel.textAlignment = .natural // RTL: mirrors to right-aligned in Arabic/Hebrew
             titleLabel.textColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
 //        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
