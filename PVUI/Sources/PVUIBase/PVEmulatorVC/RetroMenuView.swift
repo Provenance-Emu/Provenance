@@ -1075,7 +1075,7 @@ struct RetroMenuView: View {
                         HStack(spacing: 3) {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 10, weight: .semibold))
-                            Text("PLUS")
+                            Text(String(localized: "retro_menu.plus.badge", bundle: .module))
                                 .font(.system(size: 9, weight: .heavy))
                         }
                         .foregroundStyle(
