@@ -1085,13 +1085,11 @@ static void emulation_run(BOOL skipFrame) {
     }
     else if (self.systemType == MednaSystemPSX)
     {
-        // Detect GunCon light gun games and wire port 0 as "guncon".
+        // Detect GunCon light gun games — port 0 is wired as "guncon" AFTER the multitap
+        // block (below) to guarantee the assignment cannot be silently overridden by any
+        // multitap re-initialisation loop.
         BOOL isLightGunGame = self.gameSupportsLightGun;
         if (isLightGunGame) {
-            ILOG(@"Mednafen PSX: GunCon game detected (serial=%@), configuring port 0 as guncon", self.romSerial);
-            // Zero out the guncon buffer; coordinates will be written by LightGunResponder callbacks.
-            memset((uint8_t *)inputBuffer[0], 0, 9 * sizeof(uint32_t));
-            game->SetInput(0, "guncon", (uint8_t *)inputBuffer[0]);
             // Port 1 remains a standard DualShock for menu navigation / 2-player fallback.
             uint8 *buf1 = (uint8 *)inputBuffer[1];
             Mednafen::MDFN_en16lsb(&buf1[3],   (uint16) 32767);
@@ -1153,6 +1151,14 @@ static void emulation_run(BOOL skipFrame) {
             // Explicitly disable multi-tap for non-multi-tap games to prevent bleed from prior loads
             Mednafen::MDFNI_SetSettingB("psx.input.pport1.multitap", false);
             Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", false);
+        }
+        // Wire port 0 as "guncon" AFTER the multitap block so it cannot be overridden
+        // by the multitap re-initialisation loop above.
+        if (isLightGunGame) {
+            ILOG(@"Mednafen PSX: GunCon game detected (serial=%@), configuring port 0 as guncon", self.romSerial);
+            // Zero out the guncon buffer; coordinates will be written by LightGunResponder callbacks.
+            memset((uint8_t *)inputBuffer[0], 0, 9 * sizeof(uint32_t));
+            game->SetInput(0, "guncon", (uint8_t *)inputBuffer[0]);
         }
         // PSX: Check if SBI file is required (LibCrypt copy-protection)
         if ([MednafenGameCoreOptions sbiRequiredGames][self.romSerial])
