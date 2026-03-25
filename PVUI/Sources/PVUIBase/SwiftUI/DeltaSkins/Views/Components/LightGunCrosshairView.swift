@@ -160,7 +160,17 @@ public struct LightGunCrosshairView: View {
                    let ny = info?[LightGunCursorNotification.positionYKey] as? NSNumber {
                     cursorPosition = CGPoint(x: CGFloat(nx.doubleValue), y: CGFloat(ny.doubleValue))
                 }
-                isOffscreen = info?[LightGunCursorNotification.isOffscreenKey] as? Bool ?? false
+                if let rawIsOffscreen = info?[LightGunCursorNotification.isOffscreenKey] {
+                    if let boolValue = rawIsOffscreen as? Bool {
+                        isOffscreen = boolValue
+                    } else if let numberValue = rawIsOffscreen as? NSNumber {
+                        isOffscreen = numberValue.boolValue
+                    } else {
+                        isOffscreen = false
+                    }
+                } else {
+                    isOffscreen = false
+                }
             }
         }
     }
