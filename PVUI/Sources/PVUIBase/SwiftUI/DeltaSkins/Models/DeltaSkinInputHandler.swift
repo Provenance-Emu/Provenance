@@ -906,7 +906,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         let systemIdentifier = core.systemIdentifier
         let systemId = systemIdentifier.flatMap { SystemIdentifier(rawValue: $0) }
         let systemsWithDPadOnly: Set<SystemIdentifier> = [
-            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST, ._3DO, .Music, .ColecoVision
+            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST, ._3DO, .Music, .ColecoVision, .Odyssey2
         ]
 
         // Convert joystick to D-pad for systems that only had D-pad

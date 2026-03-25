@@ -337,10 +337,21 @@ extension PVRetroArchCoreCore: PV5200SystemResponderClient {
     /// Converts generic x/y joystick movement into 5200 directional analog calls.
     /// This avoids forwarding to a selector path the RetroArch 5200 Obj-C bridge does not implement.
     public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        /// Only Atari 5200 sessions may use this generic joystick entry point.
+        /// Other RetroArch systems can conform to JoystickResponder but do not implement 5200 selectors.
+        guard SystemIdentifier(rawValue: systemIdentifier ?? "") == .Atari5200 else {
+            DLOG("Ignoring generic joystick input for non-Atari5200 system: \(systemIdentifier ?? "nil")")
+            return
+        }
+
         /// Atari 5200 only has one stick; ignore right-stick style events.
         guard button == 0 else { return }
 
-        let responder = (_bridge as! PV5200SystemResponderClient)
+        /// Use optional cast to avoid selector crashes if the bridge state is unexpected.
+        guard let responder = _bridge as? PV5200SystemResponderClient else {
+            ELOG("PVRetroArch bridge does not conform to PV5200SystemResponderClient for Atari5200 system")
+            return
+        }
         let deadzone = Self.atari5200JoystickDeadzone
         let xMagnitude = min(1, abs(xValue))
         let yMagnitude = min(1, abs(yValue))
