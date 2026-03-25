@@ -3,6 +3,7 @@ import Defaults
 @testable import PVUIBase
 
 #if os(iOS) || targetEnvironment(macCatalyst)
+@MainActor
 final class CaseControllerSkinCoordinatorTests: XCTestCase {
 
     // MARK: - Lifecycle

@@ -240,9 +240,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
     deinit {
         NotificationCenter.default.removeObserver(self)
         UserDefaults.standard.removeObserver(self, forKeyPath: "kICadeControllerSettingKey")
-        #if os(iOS) || targetEnvironment(macCatalyst)
-        caseSkinCoordinator.stop()
-        #endif
+        // caseSkinCoordinator.stop() is called automatically in its own deinit.
     }
 
     func isAssigned(_ controller: GCController) -> Bool {
