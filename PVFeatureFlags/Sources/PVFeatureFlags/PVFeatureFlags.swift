@@ -73,8 +73,8 @@ public enum PVFeature: String, CaseIterable {
     /// Disabled by default; enable in Settings > Advanced > Feature Flags.
     case lightGunCrosshair = "lightGunCrosshair"
     /// Enables multi-source artwork matching at ROM import time: queries TheGamesDB,
-    /// LibretroDB, and OpenVGDB in parallel and picks the best result via a scored
-    /// strategy. A background `ArtworkSearchQueue` retries games that were not matched
+    /// LibretroDB, and OpenVGDB in parallel and selects the best result by artwork type priority.
+    /// A background `ArtworkSearchQueue` retries games that were not matched
     /// during import. Enabled by default; disable via Settings > Advanced > Feature Flags
     /// if regressions are found.
     case enhancedArtworkSearch = "enhancedArtworkSearch"
@@ -222,7 +222,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
 /// Core feature flags engine: loads configuration, evaluates flag states against app criteria.
 @MainActor public final class PVFeatureFlags: @unchecked Sendable {
-    /// Shared instance
+    /// Shared instance.
     public static let shared = PVFeatureFlags()
 
     /// Loaded configuration. Marked `nonisolated(unsafe)` so `isEnabled` can be called from
@@ -511,7 +511,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var companionController: Bool { featureStates[.companionController] ?? false }
     public var smartCoreSelection: Bool { featureStates[.smartCoreSelection] ?? false }
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
-    public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? true }
+    public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
 
     // MARK: - Feature Queries
 

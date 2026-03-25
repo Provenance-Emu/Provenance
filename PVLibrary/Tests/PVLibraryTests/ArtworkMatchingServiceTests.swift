@@ -16,12 +16,13 @@ import PVSystems
 
 // MARK: - Mock Lookup Provider
 
-/// Mock for ArtworkMatchingLookupProvider. Properties are written before use in tests
-/// and read from a single task, so `nonisolated(unsafe)` correctly expresses the intent.
-private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, Sendable {
-    nonisolated(unsafe) var artworkResults: [ArtworkMetadata]?
-    nonisolated(unsafe) var artworkError: Error?
-    nonisolated(unsafe) var romMetadata: ROMMetadata?
+/// Simple mock for ArtworkMatchingLookupProvider.
+/// Used only from one task at a time in tests; `@unchecked Sendable` suppresses
+/// the compiler's cross-actor warning without requiring actor isolation.
+private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, @unchecked Sendable {
+    var artworkResults: [ArtworkMetadata]?
+    var artworkError: Error?
+    var romMetadata: ROMMetadata?
 
     func searchArtwork(
         byGameName name: String,
@@ -47,12 +48,12 @@ private final class MockArtworkMatchingLookup: ArtworkMatchingLookupProvider, Se
 
 /// Mock that returns nil for the first N artwork searches, then returns results.
 /// Used to test the MD5 fallback code path.
-/// `callCount` is mutated only from a single search task so `nonisolated(unsafe)` is correct.
-private final class MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProvider, Sendable {
-    nonisolated(unsafe) var romMetadata: ROMMetadata?
+/// `@unchecked Sendable` is safe because each test uses a single task.
+private final class MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProvider, @unchecked Sendable {
+    var romMetadata: ROMMetadata?
     private let firstNilCount: Int
     private let thenResults: [ArtworkMetadata]
-    nonisolated(unsafe) private var callCount = 0
+    private var callCount = 0
 
     init(firstNilCount: Int, thenResults: [ArtworkMetadata]) {
         self.firstNilCount = firstNilCount
@@ -78,6 +79,39 @@ private final class MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProv
 
     func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
         return romMetadata
+    }
+}
+
+/// Mock that suspends for a configurable duration before returning results.
+/// Used to verify the timeout path.
+private final class MockArtworkMatchingLookupSlow: ArtworkMatchingLookupProvider, @unchecked Sendable {
+    let delayNanoseconds: UInt64
+    let result: ArtworkMetadata?
+
+    init(delayNanoseconds: UInt64, result: ArtworkMetadata? = nil) {
+        self.delayNanoseconds = delayNanoseconds
+        self.result = result
+    }
+
+    func searchArtwork(
+        byGameName name: String,
+        systemID: SystemIdentifier?,
+        artworkTypes: ArtworkType?
+    ) async throws -> [ArtworkMetadata]? {
+        try? await Task.sleep(nanoseconds: delayNanoseconds)
+        return result.map { [$0] }
+    }
+
+    func getArtwork(forGameID gameID: String, artworkTypes: ArtworkType?) async throws -> [ArtworkMetadata]? {
+        return result.map { [$0] }
+    }
+
+    func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        return result.map { [$0.url] }
+    }
+
+    func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
+        return nil
     }
 }
 
@@ -279,5 +313,23 @@ final class ArtworkMatchingServiceTests: XCTestCase {
 
         XCTAssertNil(result)
         XCTAssertLessThan(elapsed, 2.0, "Fast lookup returning nil should not block for 2s")
+    }
+
+    func testFindArtwork_returnsNilAndCancelsWhenLookupExceedsTimeout() async {
+        // Lookup takes 500ms; timeout is 100ms — service should return nil in ~100ms.
+        let delayNs: UInt64 = 500_000_000  // 500 ms
+        let timeoutNs: UInt64 = 100_000_000 // 100 ms
+        let mock = MockArtworkMatchingLookupSlow(
+            delayNanoseconds: delayNs,
+            result: makeArtwork(urlString: "https://example.com/slow.jpg")
+        )
+
+        let service = ArtworkMatchingService(lookup: mock, timeoutNanoseconds: timeoutNs)
+        let start = Date()
+        let result = await service.findArtwork(exactTitle: "Slow Game", md5: "00000000", systemID: nil)
+        let elapsed = Date().timeIntervalSince(start)
+
+        XCTAssertNil(result, "Should return nil when lookup exceeds the timeout")
+        XCTAssertLessThan(elapsed, 0.4, "Should complete in ~100ms (well under the 500ms lookup delay)")
     }
 }

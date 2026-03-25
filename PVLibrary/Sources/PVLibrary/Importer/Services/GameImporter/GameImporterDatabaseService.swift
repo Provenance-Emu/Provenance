@@ -263,7 +263,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         // This runs synchronously in the import pipeline so the game gets artwork immediately
         // if found. Fuzzy/cleaned-title search is intentionally skipped here — that runs
         // later via ArtworkSearchQueue.
-        if PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
+        if await PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
             DLOG("ArtworkMatchingService: Attempting fast artwork lookup for '\(title)'")
             if let artworkURL = await ArtworkMatchingService.shared.findArtwork(
                 exactTitle: title,
@@ -292,8 +292,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("Completed finishUpdateOrImport for game: \(partialPath) in \(String(format: "%.2f", finishDuration))s")
 
         queueItem.gameDatabaseID = gameID
-        // Use the system identifier from the parameter
-        let systemIdentifier = systemID.rawValue
 
         if needsArtwork {
             // Extract filename from romPath (format: "systemID/filename" or just "filename")
@@ -307,7 +305,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 return ""
             }()
 
-            let systemID = SystemIdentifier(rawValue: systemIdentifier)
             let md5Hash = gameMd5Hash.uppercased()
 
             ILOG("GameImporterDatabaseService: Queuing artwork search for game \(gameTitle) (ID: \(gameID))")

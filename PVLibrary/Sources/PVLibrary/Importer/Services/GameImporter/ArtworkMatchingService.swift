@@ -44,17 +44,19 @@ public actor ArtworkMatchingService {
 
     // MARK: Private properties
     private let lookup: any ArtworkMatchingLookupProvider
-    /// Timeout for the fast path (nanoseconds).
-    private let fastTimeoutNanoseconds: UInt64 = 2_000_000_000 // 2 seconds
+    /// Timeout for the fast path (nanoseconds). Configurable via internal init for testing.
+    private let fastTimeoutNanoseconds: UInt64
 
     // MARK: Init (private — use shared or inject for tests)
     private init() {
         self.lookup = PVLookup.shared
+        self.fastTimeoutNanoseconds = 2_000_000_000 // 2 seconds
     }
 
     /// Internal init for dependency injection (used by tests).
-    init(lookup: any ArtworkMatchingLookupProvider) {
+    init(lookup: any ArtworkMatchingLookupProvider, timeoutNanoseconds: UInt64 = 2_000_000_000) {
         self.lookup = lookup
+        self.fastTimeoutNanoseconds = timeoutNanoseconds
     }
 
     // MARK: Public API
@@ -67,33 +69,42 @@ public actor ArtworkMatchingService {
     ///   - systemID: Optional system identifier to narrow results.
     /// - Returns: An artwork URL string if found within the timeout, otherwise `nil`.
     public func findArtwork(exactTitle: String, md5: String, systemID: SystemIdentifier?) async -> String? {
-        guard PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) else { return nil }
+        guard await PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) else { return nil }
         let title = exactTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return nil }
 
         ILOG("ArtworkMatchingService: Fast lookup for '\(title)' (MD5: \(md5))")
 
         let timeoutNanoseconds = fastTimeoutNanoseconds
-        return await withTaskGroup(of: String?.self) { group in
-            // Search task — does the actual lookup
-            group.addTask {
-                do {
-                    return try await self.performExactSearch(title: title, md5: md5, systemID: systemID)
-                } catch {
-                    WLOG("ArtworkMatchingService: search error for '\(title)': \(error.localizedDescription)")
-                    return nil
-                }
-            }
 
-            // Timeout task — races against the search task
+        // Use an unstructured Task for the search so it can be cancelled independently
+        // once the timeout fires. withTaskGroup awaits all child tasks before returning,
+        // so wrapping the unstructured task's value lets us return as soon as either
+        // the search completes or the sentinel fires — then cancel the search task.
+        let searchTask = Task {
+            do {
+                return try await self.performExactSearch(title: title, md5: md5, systemID: systemID)
+            } catch {
+                WLOG("ArtworkMatchingService: search error for '\(title)': \(error.localizedDescription)")
+                return nil as String?
+            }
+        }
+
+        return await withTaskGroup(of: String?.self) { group in
+            // Wrap the unstructured search task so it participates in the race
+            group.addTask { await searchTask.value }
+
+            // Timeout sentinel — races against the search task
             group.addTask {
                 try? await Task.sleep(nanoseconds: timeoutNanoseconds)
                 return nil
             }
 
-            // Return whichever completes first (search result or timeout nil)
+            // Return whichever completes first (search result or timeout nil),
+            // then cancel the search task so it doesn't linger in the background.
             let result = await group.next() ?? nil
             group.cancelAll()
+            searchTask.cancel()
             return result
         }
     }
@@ -104,7 +115,7 @@ public actor ArtworkMatchingService {
     /// Steps (in order of preference):
     ///   1. Exact title + system identifier
     ///   2. Exact title without system filter
-    ///   3. ROM MD5 → ROM title → artwork search
+    ///   3. ROM MD5 → ROM metadata title → artwork search
     private func performExactSearch(title: String, md5: String, systemID: SystemIdentifier?) async throws -> String? {
 
         // Step 1: exact title with system (most precise)
