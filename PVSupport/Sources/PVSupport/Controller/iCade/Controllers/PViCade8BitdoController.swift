@@ -71,7 +71,7 @@ public final class PViCade8BitdoSNES30Controller: PViCadeController {
 /// 8BitDo SN30 Pro / Pro+ in iCade mode.
 ///
 /// The SN30 Pro uses the same physical iCade button protocol as the SNES30.
-/// Pair in iCade mode (hold Start + B at power-on until LED blinks) then select
+/// Pair in iCade mode (hold Start + R1 at power-on until LED blinks) then select
 /// this profile in Settings > Controllers > iCade Controller.
 ///
 /// For better button coverage (including analog sticks and triggers) use
@@ -116,7 +116,7 @@ public final class PViCade8BitdoSN30ProController: PViCadeController {
     }
 
     public override var vendorName: String? {
-        return "8Bitdo SN30 Pro"
+        return "8BitDo SN30 Pro"
     }
 }
 

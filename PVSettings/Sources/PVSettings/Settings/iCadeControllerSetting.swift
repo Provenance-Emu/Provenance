@@ -38,9 +38,9 @@ public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, 
         case .mocute:
             return "Mocute Controller"
         case .eightBitdoSNES30:
-            return "8Bitdo SNES30 Controller"
+            return "8BitDo SNES30 Controller"
         case .eightBitdoSN30Pro:
-            return "8Bitdo SN30 Pro (iCade Mode)"
+            return "8BitDo SN30 Pro (iCade Mode)"
         }
     }
 }
