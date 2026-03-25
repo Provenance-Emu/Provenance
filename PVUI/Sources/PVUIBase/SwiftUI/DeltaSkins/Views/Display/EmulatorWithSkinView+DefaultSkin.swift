@@ -270,18 +270,21 @@ struct DefaultControllerSkinView: View {
                             }
                             .edgesIgnoringSafeArea([]) // Respect safe areas for notch
                     } else {
-                        // Portrait layout — allocate height proportional to controllerScale
-                        // so the game viewport and controller area grow/shrink together,
-                        // with no clipping and no overlap possible.
+                        // Portrait layout — height allocated proportional to controllerScale;
+                        // scaleEffect applied so buttons actually resize visually.
                         VStack(spacing: 0) {
                             // Game area — expands when controls shrink, contracts when they grow
                             Spacer()
                                 .frame(maxHeight: geometry.size.height * (1.0 - controllerFraction))
 
-                            // Controller area — height is the layout truth; no scaleEffect needed
+                            // Controller area — scale content visually, clip overflow,
+                            // and constrain hit-testing to the allocated frame area.
                             dynamicControllerSkin
                                 .opacity(controllerOpacity)
+                                .scaleEffect(CGFloat(controllerScale), anchor: .bottom)
                                 .frame(maxHeight: geometry.size.height * controllerFraction)
+                                .clipped()
+                                .contentShape(Rectangle())
                                 .onAppear {
                                     loadControlLayoutData()
                                     // Ensure input handler has the core set
