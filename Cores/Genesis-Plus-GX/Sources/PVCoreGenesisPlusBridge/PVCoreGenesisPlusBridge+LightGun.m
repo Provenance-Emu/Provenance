@@ -14,6 +14,7 @@
 #import "PVCoreGenesisPlusBridge.h"
 @import PVCoreBridge;
 @import PVLoggingObjC;
+#import <os/lock.h>
 
 // ── Genesis Plus GX types ────────────────────────────────────────────────────
 // Forward-declare only what this category needs so we don't pull in the entire
@@ -70,6 +71,14 @@ static inline BOOL isLightGunSystem(int sysType) {
         || sysType == SYSTEM_LIGHTPHASER_GP;
 }
 
+// ── Thread safety ─────────────────────────────────────────────────────────────
+// LightGun callbacks arrive on the main thread while the emulation loop reads
+// `input` on its own thread.  A single unfair lock serialises our writes.
+// The emulation side does not hold this lock on read; individual int16_t writes
+// on ARM64 are naturally atomic, so the practical worst-case is a momentary
+// sub-frame glitch rather than memory corruption.
+static os_unfair_lock sLightGunLock = OS_UNFAIR_LOCK_INIT;
+
 // ─────────────────────────────────────────────────────────────────────────────
 #pragma mark - LightGun category
 // ─────────────────────────────────────────────────────────────────────────────
@@ -100,31 +109,79 @@ static inline BOOL isLightGunSystem(int sysType) {
     return kPortB; // conventional fallback
 }
 
+// Returns YES when both port B indices (4 and 5) must be updated.
+// Konami Justifiers dynamically switch between indices 4 and 5 depending on
+// which gun fired last (justifier_write sets lightgun.Port = 4 + (data>>5 & 1)).
+// Mirroring both ensures gun #2 reads from index 5 see consistent aim/trigger.
+- (BOOL)needsJustifierDualPort {
+    return input.system[1] == SYSTEM_JUSTIFIER_GP;
+}
+
 // MARK: – LightGunResponder: position update
 
 - (void)lightGunMovedToPoint:(CGPoint)point isOffscreen:(BOOL)isOffscreen {
     if (!self.gameSupportsLightGun) { return; }
 
     int port = (int)self.lightGunPort;
+    BOOL dualPort = self.needsJustifierDualPort;
+
+    os_unfair_lock_lock(&sLightGunLock);
 
     if (isOffscreen) {
         // Move cursor well outside the active area so the scanline comparator
         // never matches → the hardware sees a "miss", triggering reload/penalty.
         input.analog[port][0] = -64;
         input.analog[port][1] = -64;
+        if (dualPort) {
+            input.analog[5][0] = -64;
+            input.analog[5][1] = -64;
+        }
+        os_unfair_lock_unlock(&sLightGunLock);
         return;
     }
 
+    int vpX = bitmap.viewport.x;
+    int vpY = bitmap.viewport.y;
     int vpW = bitmap.viewport.w;
     int vpH = bitmap.viewport.h;
-    if (vpW <= 0 || vpH <= 0) { return; }
+
+    // The underlying buffer includes borders/overscan: total = viewport + 2 * offset.
+    int totalW = vpW + 2 * vpX;
+    int totalH = vpH + 2 * vpY;
+
+    if (vpW <= 0 || vpH <= 0 || totalW <= 0 || totalH <= 0) {
+        os_unfair_lock_unlock(&sLightGunLock);
+        return;
+    }
 
     // Clamp to [0, 1] before scaling.
     float nx = (float)MAX(0.0, MIN(1.0, point.x));
     float ny = (float)MAX(0.0, MIN(1.0, point.y));
 
-    input.analog[port][0] = (int16_gp)(nx * (vpW - 1));
-    input.analog[port][1] = (int16_gp)(ny * (vpH - 1));
+    // First map normalised UI coordinates into the full presented buffer.
+    float bufX = nx * (float)(totalW - 1);
+    float bufY = ny * (float)(totalH - 1);
+
+    // Then shift into viewport space by subtracting the border/overscan.
+    float viewX = bufX - (float)vpX;
+    float viewY = bufY - (float)vpY;
+
+    // Clamp to the valid viewport pixel range [0, vpW-1] / [0, vpH-1].
+    if (viewX < 0.0f) { viewX = 0.0f; }
+    if (viewY < 0.0f) { viewY = 0.0f; }
+    float maxViewX = (float)(vpW - 1);
+    float maxViewY = (float)(vpH - 1);
+    if (viewX > maxViewX) { viewX = maxViewX; }
+    if (viewY > maxViewY) { viewY = maxViewY; }
+
+    input.analog[port][0] = (int16_gp)viewX;
+    input.analog[port][1] = (int16_gp)viewY;
+    if (dualPort) {
+        input.analog[5][0] = (int16_gp)viewX;
+        input.analog[5][1] = (int16_gp)viewY;
+    }
+
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 // MARK: – LightGunResponder: trigger
@@ -137,12 +194,22 @@ static inline BOOL isLightGunSystem(int sysType) {
 
 - (void)lightGunTriggerDown {
     if (!self.gameSupportsLightGun) { return; }
-    input.pad[self.lightGunPort] |= INPUT_A_GP;
+    int port = (int)self.lightGunPort;
+    BOOL dualPort = self.needsJustifierDualPort;
+    os_unfair_lock_lock(&sLightGunLock);
+    input.pad[port] |= INPUT_A_GP;
+    if (dualPort) { input.pad[5] |= INPUT_A_GP; }
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 - (void)lightGunTriggerUp {
     if (!self.gameSupportsLightGun) { return; }
-    input.pad[self.lightGunPort] &= ~INPUT_A_GP;
+    int port = (int)self.lightGunPort;
+    BOOL dualPort = self.needsJustifierDualPort;
+    os_unfair_lock_lock(&sLightGunLock);
+    input.pad[port] &= ~INPUT_A_GP;
+    if (dualPort) { input.pad[5] &= ~INPUT_A_GP; }
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 // MARK: – LightGunResponder: off-screen reload
@@ -152,14 +219,27 @@ static inline BOOL isLightGunSystem(int sysType) {
 - (void)lightGunReloadDown {
     if (!self.gameSupportsLightGun) { return; }
     int port = (int)self.lightGunPort;
+    BOOL dualPort = self.needsJustifierDualPort;
+    os_unfair_lock_lock(&sLightGunLock);
     input.analog[port][0] = -64;
     input.analog[port][1] = -64;
     input.pad[port] |= INPUT_A_GP;
+    if (dualPort) {
+        input.analog[5][0] = -64;
+        input.analog[5][1] = -64;
+        input.pad[5] |= INPUT_A_GP;
+    }
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 - (void)lightGunReloadUp {
     if (!self.gameSupportsLightGun) { return; }
-    input.pad[self.lightGunPort] &= ~INPUT_A_GP;
+    int port = (int)self.lightGunPort;
+    BOOL dualPort = self.needsJustifierDualPort;
+    os_unfair_lock_lock(&sLightGunLock);
+    input.pad[port] &= ~INPUT_A_GP;
+    if (dualPort) { input.pad[5] &= ~INPUT_A_GP; }
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 // MARK: – LightGunResponder: Menacer aux buttons
@@ -172,32 +252,44 @@ static inline BOOL isLightGunSystem(int sysType) {
 
 - (void)lightGunAuxADown {
     if (!self.gameSupportsLightGun) { return; }
+    os_unfair_lock_lock(&sLightGunLock);
     input.pad[self.lightGunPort] |= INPUT_C_GP;
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 - (void)lightGunAuxAUp {
     if (!self.gameSupportsLightGun) { return; }
+    os_unfair_lock_lock(&sLightGunLock);
     input.pad[self.lightGunPort] &= ~INPUT_C_GP;
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 - (void)lightGunAuxBDown {
     if (!self.gameSupportsLightGun) { return; }
+    os_unfair_lock_lock(&sLightGunLock);
     input.pad[self.lightGunPort] |= INPUT_B_GP;
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 - (void)lightGunAuxBUp {
     if (!self.gameSupportsLightGun) { return; }
+    os_unfair_lock_lock(&sLightGunLock);
     input.pad[self.lightGunPort] &= ~INPUT_B_GP;
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 - (void)lightGunStartDown {
     if (!self.gameSupportsLightGun) { return; }
+    os_unfair_lock_lock(&sLightGunLock);
     input.pad[self.lightGunPort] |= INPUT_START_GP;
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 - (void)lightGunStartUp {
     if (!self.gameSupportsLightGun) { return; }
+    os_unfair_lock_lock(&sLightGunLock);
     input.pad[self.lightGunPort] &= ~INPUT_START_GP;
+    os_unfair_lock_unlock(&sLightGunLock);
 }
 
 @end
