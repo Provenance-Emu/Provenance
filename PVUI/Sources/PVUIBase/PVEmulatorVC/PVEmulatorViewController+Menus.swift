@@ -142,6 +142,7 @@ extension PVEmulatorViewController {
     /// Presents RetroMenuView at the SKINS tab, keeping the game paused.
     /// Call this after the tile-menu has been dismissed (`dismissNav(resumeEmulation: false)`).
     #if os(iOS) && !targetEnvironment(macCatalyst)
+    @MainActor
     public func showSkinOptions() {
         enableControllerInput(true)
         isShowingMenu = true
@@ -151,16 +152,11 @@ extension PVEmulatorViewController {
         let skinMenuView = RetroMenuView(
             emulatorVC: self,
             dismissAction: { [weak self] resumeEmulation in
-                self?.presentedViewController?.dismiss(animated: true) {
-                    guard let self = self else { return }
-                    self.enableControllerInput(false)
-                    self.isShowingMenu = false
-                    self.menuPresentationViewController = nil
+                guard let self = self else { return }
+                // Route through dismissNav so cleanup notifications and GPU refresh fire consistently.
+                self.dismissNav(resumeEmulation: resumeEmulation) { [weak self] in
                     // Restore the indicator overlay hidden by temporarilyHideIndicatorOverlay().
-                    self.restoreIndicatorOverlay()
-                    if self.core.isOn {
-                        self.core.setPauseEmulation(!resumeEmulation)
-                    }
+                    self?.restoreIndicatorOverlay()
                 }
             },
             initialCategory: .skins

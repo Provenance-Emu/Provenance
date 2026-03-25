@@ -11,7 +11,6 @@ import SwiftUI
 import PVThemes
 
 #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
-import CoreMIDI
 
 // MARK: - MIDIDevicePauseSheet
 
