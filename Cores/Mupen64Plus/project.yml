@@ -121,7 +121,9 @@ settings:
       - "USE_GLES_ES2=1"
       - "USE_GLES_ES3=1"
       - "USE_GLES_ES3_2=1"
-    OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC"
+    OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC -pthread"
+    # pthread is set in Config.xcconfig OTHER_CFLAGS[arch=*]; mirror it here for the XcodeGen path
+    "OTHER_CFLAGS[arch=*]": "$(inherited) -pthread -march=armv8-a+simd+crc+crypto -mcpu=apple-a10 -mtune=apple-a15"
     # SDK-specific OTHER_CFLAGS (mirrors Config.xcconfig)
     "OTHER_CFLAGS[sdk=iphoneos*]": "$(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
     "OTHER_CFLAGS[sdk=iphonesimulator*]": "$(inherited) -DOS_IOS"
@@ -556,6 +558,8 @@ targets:
           - "-fomit-frame-pointer"
           - "-fvisibility-inlines-hidden"
           - "-fPIC"
+          - "-flto"
+          - "-pthread"
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
 
