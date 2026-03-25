@@ -9,8 +9,6 @@ import SwiftUI
 import PVLibrary
 import PVThemes
 import PVCoreBridge
-import PVSettings
-import Defaults
 #if canImport(SafariServices)
 import SafariServices
 #endif

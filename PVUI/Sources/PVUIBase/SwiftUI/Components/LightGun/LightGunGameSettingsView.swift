@@ -25,7 +25,6 @@ struct LightGunGameSettingsView: View {
 
     @Default(.lightGunGameSettings) private var gameSettings
     @Default(.lightGunCrosshairStyle) private var globalCrosshairStyle
-    @Default(.lightGunAutoDetect) private var globalAutoDetect
     @Default(.lightGunMouseSensitivity) private var globalSensitivity
 
     private var current: LightGunGameSettings {
@@ -208,13 +207,21 @@ struct LightGunGameSettingsView: View {
 
     private func saveCrosshair(_ style: LightGunCrosshairStyle?) {
         var settings = current
-        settings.crosshairStyle = style
+        // Treat a selection that matches the global default as "no override"
+        // so the per-game dictionary stays compact and future global changes apply.
+        settings.crosshairStyle = (style == globalCrosshairStyle) ? nil : style
         persist(settings)
     }
 
     private func saveSensitivity(_ value: Double?) {
         var settings = current
-        settings.sensitivityOverride = value
+        // Treat a value that matches the global sensitivity as "no override"
+        // so future global changes continue to apply to this game.
+        if let value = value, abs(value - globalSensitivity) < 0.001 {
+            settings.sensitivityOverride = nil
+        } else {
+            settings.sensitivityOverride = value
+        }
         persist(settings)
     }
 
