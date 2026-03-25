@@ -164,11 +164,12 @@ extension String {
         }
 
         // Remove isolated special characters surrounded by spaces.
-        // Note: hyphen is moved to the end to avoid defining a range inside the character class.
-        let charsToRemove = ",:;!^%&*+/-"
-        let safeCharsToRemove = charsToRemove.replacingOccurrences(of: "-", with: "\\-")
+        // Hyphen ('-') is placed last in the character class so the regex engine treats it
+        // as a literal character, not a range operator.  This preserves the same effective
+        // character set as the original cleanedForSearch() implementation this refactors.
+        let charsToRemove = ",:;!^%&*+/-"   // '-' is last → literal, no range formed
         cleaned = cleaned.replacingOccurrences(
-            of: "\\s[\(safeCharsToRemove)]\\s",
+            of: "\\s[\(charsToRemove)]\\s",
             with: " ",
             options: .regularExpression
         )
