@@ -99,9 +99,16 @@ final class FuzzyGameMatcherTests: XCTestCase {
     }
 
     func testRank_excludesZeroScores() {
-        let candidates = ["Zelda", "Metroid"]
+        let zeroScoreTitle = ""
+        let candidates = ["Zelda", "Metroid", zeroScoreTitle]
+
+        // Sanity check: ensure this candidate truly has a zero similarity score
+        let zeroScore = FuzzyGameMatcher.similarity("Castlevania", zeroScoreTitle)
+        XCTAssertEqual(zeroScore, 0.0, accuracy: 0.0001)
+
         let results = FuzzyGameMatcher.rank(query: "Castlevania", candidates: candidates)
         XCTAssertTrue(results.allSatisfy { $0.score > 0 })
+        XCTAssertFalse(results.contains { $0.title == zeroScoreTitle })
     }
 
     func testRank_emptyInputReturnsEmpty() {
