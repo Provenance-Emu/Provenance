@@ -1,7 +1,7 @@
 // GameHackingOrgLookupTests.swift
 // PVLibraryTests
 //
-// Unit tests for GameHackingOrgLookup's HTML parsing strategies.
+// Unit tests for GameHackingOrgLookup's HTML parsing strategies and proxy path.
 // Tests run against static HTML fixtures — no network required.
 
 @testable import PVLibrary
@@ -114,4 +114,112 @@ final class GameHackingOrgLookupTests: XCTestCase {
         let result = await lookup.looksLikeCode("Infinite Lives")
         XCTAssertFalse(result)
     }
+
+    // MARK: - Proxy Path (URLProtocol stubs)
+
+    func testSearchCheats_proxyReturnsResults() async {
+        URLProtocol.registerClass(ProxyCannedProtocol.self)
+        defer { URLProtocol.unregisterClass(ProxyCannedProtocol.self) }
+
+        let json = #"[{"name":"Infinite Lives","code":"DEADBEEF00000001","category":"General"}]"#
+        ProxyCannedProtocol.cannedJSON = Data(json.utf8)
+        ProxyCannedProtocol.statusCode = 200
+        ProxyCannedProtocol.lastRequest = nil
+
+        UserDefaults.standard.set(true, forKey: "useCheatProxy")
+        UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
+        defer {
+            UserDefaults.standard.set(false, forKey: "useCheatProxy")
+            UserDefaults.standard.set("", forKey: "cheatProxyURL")
+        }
+
+        let title = "ProxyHappyPath_\(UUID().uuidString)"
+        let entries = await GameHackingOrgLookup.shared.searchCheats(title: title, systemSlug: "n64")
+
+        // The proxy URL should have been contacted with the correct path/query
+        let intercepted = ProxyCannedProtocol.lastRequest?.url?.absoluteString ?? ""
+        XCTAssertTrue(intercepted.contains("/cheats"), "Expected /cheats in proxy request URL, got: \(intercepted)")
+        XCTAssertTrue(intercepted.contains("title="), "Expected title= query param in proxy request URL")
+
+        // Results should be decoded from the proxy JSON
+        XCTAssertEqual(entries.count, 1)
+        XCTAssertEqual(entries.first?.cheatName, "Infinite Lives")
+        XCTAssertEqual(entries.first?.cheatCode, "DEADBEEF00000001")
+        XCTAssertEqual(entries.first?.deviceName, "GameHacking.org")
+        XCTAssertTrue(entries.first?.isOnlineResult ?? false)
+    }
+
+    func testSearchCheats_proxyReturnsEmpty_fallsThrough() async {
+        URLProtocol.registerClass(ProxyCannedProtocol.self)
+        defer { URLProtocol.unregisterClass(ProxyCannedProtocol.self) }
+
+        // Proxy returns empty array — direct scraping also yields nothing (no network in CI)
+        ProxyCannedProtocol.cannedJSON = Data("[]".utf8)
+        ProxyCannedProtocol.statusCode = 200
+        ProxyCannedProtocol.lastRequest = nil
+
+        UserDefaults.standard.set(true, forKey: "useCheatProxy")
+        UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
+        defer {
+            UserDefaults.standard.set(false, forKey: "useCheatProxy")
+            UserDefaults.standard.set("", forKey: "cheatProxyURL")
+        }
+
+        let title = "ProxyEmptyFallback_\(UUID().uuidString)"
+        let entries = await GameHackingOrgLookup.shared.searchCheats(title: title, systemSlug: nil)
+        // Proxy was contacted but returned empty; direct scraping also fails offline — result is empty
+        XCTAssertTrue(entries.isEmpty)
+        let intercepted = ProxyCannedProtocol.lastRequest?.url?.absoluteString ?? ""
+        XCTAssertTrue(intercepted.contains("/cheats"), "Proxy should still have been contacted even when empty")
+    }
+
+    func testSearchCheats_proxyDisabled_doesNotContactProxy() async {
+        URLProtocol.registerClass(ProxyCannedProtocol.self)
+        defer { URLProtocol.unregisterClass(ProxyCannedProtocol.self) }
+
+        ProxyCannedProtocol.cannedJSON = Data()
+        ProxyCannedProtocol.lastRequest = nil
+
+        UserDefaults.standard.set(false, forKey: "useCheatProxy")
+        UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
+        defer {
+            UserDefaults.standard.set(false, forKey: "useCheatProxy")
+            UserDefaults.standard.set("", forKey: "cheatProxyURL")
+        }
+
+        let title = "ProxyDisabled_\(UUID().uuidString)"
+        _ = await GameHackingOrgLookup.shared.searchCheats(title: title, systemSlug: nil)
+        // The proxy should not have been contacted when useCheatProxy is false
+        XCTAssertNil(ProxyCannedProtocol.lastRequest, "Proxy should not be contacted when useCheatProxy is false")
+    }
+}
+
+// MARK: - URLProtocol stub for proxy tests
+
+/// Intercepts requests to the test proxy host and returns canned JSON.
+private final class ProxyCannedProtocol: URLProtocol {
+    static var cannedJSON: Data = Data()
+    static var statusCode: Int = 200
+    static var lastRequest: URLRequest?
+
+    override class func canInit(with request: URLRequest) -> Bool {
+        request.url?.host?.contains("test.proxy.pvemu.invalid") ?? false
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+
+    override func startLoading() {
+        ProxyCannedProtocol.lastRequest = request
+        let response = HTTPURLResponse(
+            url: request.url!,
+            statusCode: ProxyCannedProtocol.statusCode,
+            httpVersion: "HTTP/1.1",
+            headerFields: ["Content-Type": "application/json"]
+        )!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: ProxyCannedProtocol.cannedJSON)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+
+    override func stopLoading() {}
 }
