@@ -71,6 +71,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
 
     /// Task observing Defaults changes for the AU effects chain; cancelled in deinit.
     private var effectsChainObserverTask: Task<Void, Never>?
+    /// Task observing Defaults changes for the AU filters master toggle; cancelled in deinit.
+    private var effectsEnabledObserverTask: Task<Void, Never>?
 
     /// Delegate for audio sample rate changes
     public weak var delegate: PVAudioDelegate?
@@ -106,6 +108,15 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
             }
         }
 
+        // Observe the master effects toggle separately so toggling it also reloads the chain.
+        effectsEnabledObserverTask = Task {
+            for await _ in Defaults.updates(Defaults.Keys.auFiltersEnabled) {
+                await MainActor.run { [weak self] in
+                    self?.reloadEffectsChainIfRunning()
+                }
+            }
+        }
+
         #if !os(macOS)
         NotificationCenter.default.addObserver(
             self,
@@ -119,6 +130,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
     deinit {
         effectsChainObserverTask?.cancel()
         effectsChainObserverTask = nil
+        effectsEnabledObserverTask?.cancel()
+        effectsEnabledObserverTask = nil
         muteSwitchMonitor.stopMonitoring()
         stopAudio()
         #if !os(macOS)
@@ -422,9 +435,10 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         effectChainNodes = []
 
         // Build active effects chain from settings.
+        // Respect both the master toggle and the chain's own isEnabled flag.
         let chain = Defaults[.auEffectsChain]
         var newEffectNodes: [AVAudioUnit] = []
-        if chain.hasActiveEffects {
+        if Defaults[.auFiltersEnabled] && chain.hasActiveEffects {
             for node in chain.activeNodes {
                 if let avUnit = node.effectType.makeAVAudioUnit(parameters: node.parameters) {
                     newEffectNodes.append(avUnit)

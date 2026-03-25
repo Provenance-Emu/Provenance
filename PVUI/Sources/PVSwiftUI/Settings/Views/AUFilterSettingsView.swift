@@ -103,6 +103,9 @@ struct AUFilterSettingsView: View {
                         isExpanded: expandedNodeID == node.id,
                         onToggleExpand: {
                             expandedNodeID = expandedNodeID == node.id ? nil : node.id
+                        },
+                        onDelete: {
+                            chain.nodes.removeAll { $0.id == node.id }
                         }
                     )
                 }
@@ -126,8 +129,13 @@ struct AUFilterSettingsView: View {
                 .buttonStyle(.plain)
             }
         } footer: {
+            #if os(tvOS)
+            Text("Effects are applied in order from top to bottom. Use the Load button to apply a preset.")
+                .font(.caption)
+            #else
             Text("Effects are applied in order from top to bottom. Drag to reorder, swipe to remove.")
                 .font(.caption)
+            #endif
         }
     }
 
@@ -193,6 +201,7 @@ private struct EffectNodeRow: View {
     @Binding var node: AUEffectNode
     let isExpanded: Bool
     let onToggleExpand: () -> Void
+    var onDelete: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -210,6 +219,17 @@ private struct EffectNodeRow: View {
                 Toggle("", isOn: $node.isEnabled)
                     .labelsHidden()
                     .tint(.blue)
+
+                #if os(tvOS)
+                if let onDelete {
+                    Button(role: .destructive, action: onDelete) {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.red)
+                            .frame(width: 24, height: 24)
+                    }
+                    .buttonStyle(.plain)
+                }
+                #endif
 
                 Button {
                     onToggleExpand()

@@ -196,7 +196,7 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
         case .delay:
             return [
                 AUEffectParameterDefinition(key: AUEffectParameterKey.delayTime, name: "Delay Time", min: 0, max: 2, unit: "s"),
-                AUEffectParameterDefinition(key: AUEffectParameterKey.feedback, name: "Feedback", min: -100, max: 100, unit: "%"),
+                AUEffectParameterDefinition(key: AUEffectParameterKey.feedback, name: "Feedback", min: 0, max: 100, unit: "%"),
                 AUEffectParameterDefinition(key: AUEffectParameterKey.lowPassCutoff, name: "Low Pass Cutoff", min: 10, max: 22050, unit: "Hz"),
                 AUEffectParameterDefinition(key: AUEffectParameterKey.wetDryMix, name: "Mix", min: 0, max: 100, unit: "%")
             ]
@@ -265,13 +265,14 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
             return distortion
 
         case .lowPassFilter, .highPassFilter, .bandPassFilter, .parametricEQ, .peakLimiter, .dynamicsProcessor:
-            return makeEQSubstitute(parameters: parameters)
+            return makeFilterUnit(parameters: parameters)
         }
     }
 
-    /// For filter types that lack high-level AVFoundation wrappers, returns an AVAudioUnitEQ
-    /// configured to approximate the requested response.
-    private func makeEQSubstitute(parameters: [String: Double]) -> AVAudioUnit? {
+    /// Returns an AVAudioUnit for filter/dynamics types that lack a high-level AVFoundation wrapper.
+    /// EQ-based types use AVAudioUnitEQ; peakLimiter/dynamicsProcessor use AVAudioUnitEffect
+    /// and apply parameters via the AU parameter tree using Apple-defined parameter addresses.
+    private func makeFilterUnit(parameters: [String: Double]) -> AVAudioUnit? {
         switch self {
         case .lowPassFilter:
             let eq = AVAudioUnitEQ(numberOfBands: 1)
@@ -314,13 +315,13 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
 
         case .peakLimiter:
             let effect = AVAudioUnitEffect(audioComponentDescription: componentDescription)
-            // Apply parameters via the AU parameter tree.
-            // PeakLimiter parameter addresses: 0=AttackTime, 1=DecayTime, 2=PreGain
+            // Apply parameters via the AU parameter tree using Apple-defined constants from
+            // <AudioUnit/AudioUnitParameters.h>: kLimiterParam_AttackTime=0, DecayTime=1, PreGain=2
             if let tree = effect.auAudioUnit.parameterTree {
                 let addressMap: [AUParameterAddress: Double] = [
-                    0: parameters[AUEffectParameterKey.attackTime] ?? 0.001,
-                    1: parameters[AUEffectParameterKey.decayTime] ?? 0.01,
-                    2: parameters[AUEffectParameterKey.preGain] ?? 0.0
+                    AUParameterAddress(kLimiterParam_AttackTime): parameters[AUEffectParameterKey.attackTime] ?? 0.001,
+                    AUParameterAddress(kLimiterParam_DecayTime): parameters[AUEffectParameterKey.decayTime] ?? 0.01,
+                    AUParameterAddress(kLimiterParam_PreGain): parameters[AUEffectParameterKey.preGain] ?? 0.0
                 ]
                 for param in tree.allParameters {
                     if let value = addressMap[param.address] {
@@ -332,14 +333,14 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
 
         case .dynamicsProcessor:
             let effect = AVAudioUnitEffect(audioComponentDescription: componentDescription)
-            // Apply parameters via the AU parameter tree.
-            // DynamicsProcessor parameter addresses: 0=Threshold, 1=HeadRoom, 4=AttackTime, 5=ReleaseTime
+            // Apply parameters via the AU parameter tree using Apple-defined constants from
+            // <AudioUnit/AudioUnitParameters.h>: Threshold=0, HeadRoom=1, AttackTime=4, ReleaseTime=5
             if let tree = effect.auAudioUnit.parameterTree {
                 let addressMap: [AUParameterAddress: Double] = [
-                    0: parameters[AUEffectParameterKey.threshold] ?? -20.0,
-                    1: parameters[AUEffectParameterKey.headRoom] ?? 5.0,
-                    4: parameters[AUEffectParameterKey.attackTime] ?? 0.001,
-                    5: parameters[AUEffectParameterKey.releaseTime] ?? 0.05
+                    AUParameterAddress(kDynamicsProcessorParam_Threshold): parameters[AUEffectParameterKey.threshold] ?? -20.0,
+                    AUParameterAddress(kDynamicsProcessorParam_HeadRoom): parameters[AUEffectParameterKey.headRoom] ?? 5.0,
+                    AUParameterAddress(kDynamicsProcessorParam_AttackTime): parameters[AUEffectParameterKey.attackTime] ?? 0.001,
+                    AUParameterAddress(kDynamicsProcessorParam_ReleaseTime): parameters[AUEffectParameterKey.releaseTime] ?? 0.05
                 ]
                 for param in tree.allParameters {
                     if let value = addressMap[param.address] {
