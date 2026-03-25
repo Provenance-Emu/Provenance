@@ -4439,7 +4439,13 @@ static bool thin_environment(unsigned cmd, void *data) {
     };
 
     // Try bundle-derived paths first (absolute, most reliable on iOS/tvOS)
-    NSArray<NSString *> *bundlePaths = @[ frameworksPath, bundleFrameworksPath ];
+    NSMutableArray<NSString *> *bundlePaths = [NSMutableArray array];
+    if (frameworksPath) {
+        [bundlePaths addObject:frameworksPath];
+    }
+    if (bundleFrameworksPath) {
+        [bundlePaths addObject:bundleFrameworksPath];
+    }
     for (NSString *p in bundlePaths) {
         if (!p) continue;
         _vulkanLibrary = dlopen(p.UTF8String, RTLD_LOCAL | RTLD_LAZY);
