@@ -274,16 +274,8 @@ struct PauseTileMenuView: View {
         case "airPlay":
             #if os(iOS) || targetEnvironment(macCatalyst)
             triggerAirPlayPicker = true
-            #endif
-
-        // MARK: Camera position cycle
-        case "cameraPosition":
-            #if os(iOS)
-            let all = CameraPosition.allCases
-            if let idx = all.firstIndex(of: recordingCameraPosition) {
-                recordingCameraPosition = all[(idx + 1) % all.count]
-            }
-            rebuildSections()
+            #else
+            break
             #endif
 
         // MARK: Core action tiles

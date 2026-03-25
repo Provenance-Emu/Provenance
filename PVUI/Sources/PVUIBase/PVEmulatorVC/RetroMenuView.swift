@@ -910,21 +910,6 @@ struct RetroMenuView: View {
         }
     }
 
-    // Camera corner picker button — shown only when recording is available and camera overlay is enabled
-    @ViewBuilder
-    private var cameraPositionButton: some View {
-        if PVRecordingManager.shared.isAvailable && recordingCameraEnabled {
-            menuButton(
-                title: "CAMERA: \(recordingCameraPosition.displayName.uppercased())",
-                icon: recordingCameraPosition.symbolName,
-                color: .retroBlue
-            ) {
-                showingCameraPositionPicker = true
-            }
-        }
-    }
-#endif
-
     // Live-broadcast button (iOS + tvOS) with Plus gating
 #if os(iOS) || os(tvOS)
     @ViewBuilder
@@ -1197,8 +1182,8 @@ struct RetroMenuView: View {
             HStack(spacing: 12) {
                 Image(systemName: "airplayvideo")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(Color(red: 0.0, green: 0.8, blue: 1.0))
-                    .shadow(color: Color(red: 0.0, green: 0.8, blue: 1.0).opacity(0.7), radius: 5)
+                    .foregroundColor(.retroCyan)
+                    .shadow(color: Color.retroCyan.opacity(0.7), radius: 5)
 
                 Text(String(localized: "Stream to AirPlay device"))
                     .font(.system(size: 15, weight: .medium))
@@ -1209,7 +1194,7 @@ struct RetroMenuView: View {
                 // The AVRoutePickerView IS the button — tapping it opens the system picker.
                 AirPlayMenuButton(
                     tintColor: .white,
-                    activeTintColor: Color(red: 0.0, green: 0.8, blue: 1.0)
+                    activeTintColor: .retroCyan
                 )
                 .frame(width: 36, height: 36)
             }
@@ -1222,7 +1207,7 @@ struct RetroMenuView: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(Color(red: 0.0, green: 0.8, blue: 1.0).opacity(0.4), lineWidth: 1)
+                            .strokeBorder(Color.retroCyan.opacity(0.4), lineWidth: 1)
                     )
             )
         }
