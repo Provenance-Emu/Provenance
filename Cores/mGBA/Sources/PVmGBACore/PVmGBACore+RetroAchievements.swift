@@ -8,8 +8,10 @@
 //
 //  mGBA ships `src/core/achievements.c` which wraps the rcheevos `rc_client`
 //  internally. When `USE_ACHIEVEMENTS=1` is defined (Package.swift), that
-//  file is compiled into libmGBA and driven via the core/bridge callbacks.
-//  This Swift extension coordinates Provenance-side state and memory regions.
+//  file is compiled into libmGBA. Full callback bridging (unlock events,
+//  progress notifications) requires the PVRcheevos target from #3375.
+//  This Swift extension coordinates Provenance-side state, memory regions,
+//  and lifecycle (active flag, hardcore mode) for the scaffolding phase.
 //
 //  Memory regions:
 //   - GBA : EWRAM (256 KiB), IWRAM (32 KiB), optional cart SRAM
@@ -31,6 +33,8 @@ extension PVmGBACore: CoreRetroAchievements {
 
     // MARK: - Delegate
 
+    // TODO: Wire mGBA/rcheevos achievement events (unlock, progress, challenge) to this
+    // delegate once PVRcheevos (#3375) provides the rc_client callback bridge.
     public var achievementsDelegate: (any RetroAchievementsOSDDelegate)? {
         get { _achievementsDelegate }
         set { _achievementsDelegate = newValue }
@@ -47,18 +51,14 @@ extension PVmGBACore: CoreRetroAchievements {
         // Sync hardcore mode to the bridge before activating.
         _bridge.hardcoreMode = _hardcoreMode
 
-        // Do not unconditionally enable achievements here. The bridge is
-        // responsible for starting the underlying achievements runtime for
-        // `gameHash` and updating its own `achievementsActive` flag. Mirror
-        // that state into the core so the UI enforces hardcore restrictions
-        // only when the runtime is actually active.
-        _achievementsActive = _bridge.achievementsActive
+        // Mark achievements as active in the bridge so the hardcore save-state
+        // guard in mGBAGameCoreBridge.m fires correctly.
+        // TODO: When PVRcheevos (#3375) lands, replace this with a real rc_client
+        // load call and drive achievementsActive from the runtime callback.
+        _bridge.achievementsActive = true
+        _achievementsActive = true
 
-        if _achievementsActive {
-            DLOG("mGBA achievements prepared for hash: \(gameHash), hardcore: \(_hardcoreMode)")
-        } else {
-            WLOG("mGBA achievements runtime not active for hash: \(gameHash); hardcore: \(_hardcoreMode)")
-        }
+        DLOG("mGBA achievements prepared for hash: \(gameHash), hardcore: \(_hardcoreMode)")
     }
 
     /// Tear down the achievement runtime.

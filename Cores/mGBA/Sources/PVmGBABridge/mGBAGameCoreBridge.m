@@ -23,6 +23,7 @@
  */
 
 #import "mGBAGameCoreBridge.h"
+#import "mGBAGameCoreBridge+Achievements.h"
 
 @import libmGBA;
 @import PVCoreBridge;
@@ -338,7 +339,7 @@ static struct mLogger logger = { .log = _log };
     BOOL success = mCoreSaveStateNamed(core, vf, SAVESTATE_SAVEDATA | SAVESTATE_RTC);
     if(!success) {
         NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                             code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                             code:PVEmulatorCoreErrorCodeCouldNotSaveState
                                          userInfo:@{
             NSLocalizedDescriptionKey : @"mGBA could not save the current state.",
             NSFilePathErrorKey : fileName
