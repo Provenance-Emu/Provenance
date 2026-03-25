@@ -42,7 +42,7 @@ settings:
   base:
     ALLOW_TARGET_PLATFORM_SPECIALIZATION: YES
     SUPPORTED_PLATFORMS: "iphoneos iphonesimulator appletvos appletvsimulator"
-    SWIFT_VERSION: "5.0"
+    SWIFT_VERSION: "6.0"
     CLANG_CXX_LANGUAGE_STANDARD: "gnu++11"
     GCC_C_LANGUAGE_STANDARD: "gnu99"
     # Common preprocessor defines (all platforms)
@@ -62,6 +62,67 @@ settings:
       - "PROVENANCE=1"
       - "TXFILTER_LIB=1"
       - "VFP_HARD=1"
+    # iOS/tvOS-specific defines (GLES, NEON, etc.) — mirrors sharedCSettings .when(platforms:) in Package.swift
+    "GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*]":
+      - "$(inherited)"
+      - "GLESX=1"
+      - "NEON=1"
+      - "OS_IOS=1"
+      - "__VEC4_OPT=1"
+      - "__NEON_OPT=1"
+      - "SDL_VIDEO_OPENGL_ES2=1"
+      - "USE_GLES=1"
+      - "USE_GLES2=1"
+      - "USE_GLES3=1"
+      - "USE_GLES3_2=1"
+      - "USE_GLES_ES2=1"
+      - "USE_GLES_ES3=1"
+      - "USE_GLES_ES3_2=1"
+    "GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]":
+      - "$(inherited)"
+      - "GLESX=1"
+      - "NEON=1"
+      - "OS_IOS=1"
+      - "__VEC4_OPT=1"
+      - "__NEON_OPT=1"
+      - "SDL_VIDEO_OPENGL_ES2=1"
+      - "USE_GLES=1"
+      - "USE_GLES2=1"
+      - "USE_GLES3=1"
+      - "USE_GLES3_2=1"
+      - "USE_GLES_ES2=1"
+      - "USE_GLES_ES3=1"
+      - "USE_GLES_ES3_2=1"
+    "GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*]":
+      - "$(inherited)"
+      - "GLESX=1"
+      - "NEON=1"
+      - "OS_IOS=1"
+      - "__VEC4_OPT=1"
+      - "__NEON_OPT=1"
+      - "SDL_VIDEO_OPENGL_ES2=1"
+      - "USE_GLES=1"
+      - "USE_GLES2=1"
+      - "USE_GLES3=1"
+      - "USE_GLES3_2=1"
+      - "USE_GLES_ES2=1"
+      - "USE_GLES_ES3=1"
+      - "USE_GLES_ES3_2=1"
+    "GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*]":
+      - "$(inherited)"
+      - "GLESX=1"
+      - "NEON=1"
+      - "OS_IOS=1"
+      - "__VEC4_OPT=1"
+      - "__NEON_OPT=1"
+      - "SDL_VIDEO_OPENGL_ES2=1"
+      - "USE_GLES=1"
+      - "USE_GLES2=1"
+      - "USE_GLES3=1"
+      - "USE_GLES3_2=1"
+      - "USE_GLES_ES2=1"
+      - "USE_GLES_ES3=1"
+      - "USE_GLES_ES3_2=1"
     OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC"
     HEADER_SEARCH_PATHS: "$(inherited)"
     FRAMEWORK_SEARCH_PATHS: "$(inherited)"
@@ -76,6 +137,28 @@ settings:
       COPY_PHASE_STRIP: YES
       SWIFT_OPTIMIZATION_LEVEL: "-O"
       MTL_ENABLE_DEBUG_INFO: NO
+
+# ─── External Swift Packages ──────────────────────────────────────────────────
+# Local PV* packages referenced by PVMupen and PVMupenBridge — mirrors
+# the `dependencies:` entries in Package.swift.
+
+packages:
+  PVAudio:
+    path: ../../PVAudio
+  PVCoreBridge:
+    path: ../../PVCoreBridge
+  PVCoreObjCBridge:
+    path: ../../PVCoreObjCBridge
+  PVEmulatorCore:
+    path: ../../PVEmulatorCore
+  PVLogging:
+    path: ../../PVLogging
+  PVObjCUtils:
+    path: ../../PVObjCUtils
+  PVPlists:
+    path: ../../PVPlists
+  PVSupport:
+    path: ../../PVSupport
 
 # ─── Targets ─────────────────────────────────────────────────────────────────
 
@@ -95,11 +178,25 @@ targets:
       - target: PVMupenBridge
       - target: PVMupen64PlusCore
       - target: PVRSPCXD4
+      - package: PVAudio
+        product: PVAudio
+      - package: PVCoreBridge
+        product: PVCoreBridge
+      - package: PVCoreObjCBridge
+        product: PVCoreObjCBridge
+      - package: PVEmulatorCore
+        product: PVEmulatorCore
+      - package: PVLogging
+        product: PVLogging
+      - package: PVPlists
+        product: PVPlists
+      - package: PVSupport
+        product: PVSupport
     settings:
       base:
         PRODUCT_NAME: PVMupen
         INFOPLIST_FILE: PVMupen64Plus-Info.plist
-        SWIFT_VERSION: "5.0"
+        SWIFT_VERSION: "6.0"
         DEFINES_MODULE: YES
         SWIFT_ACTIVE_COMPILATION_CONDITIONS:
           - "$(inherited)"
@@ -129,6 +226,22 @@ targets:
     dependencies:
       - target: PVMupen64PlusCore
       - target: SDL
+      - package: PVAudio
+        product: PVAudio
+      - package: PVCoreBridge
+        product: PVCoreBridge
+      - package: PVCoreObjCBridge
+        product: PVCoreObjCBridge
+      - package: PVEmulatorCore
+        product: PVEmulatorCore
+      - package: PVLogging
+        product: PVLogging
+      - package: PVObjCUtils
+        product: PVObjCUtils
+      - package: PVPlists
+        product: PVPlists
+      - package: PVSupport
+        product: PVSupport
     settings:
       base:
         PRODUCT_NAME: PVMupenBridge
@@ -323,7 +436,7 @@ targets:
   # libpng — PNG library (bundled)
   # ===========================================================================
   libpng:
-    type: framework
+    type: library.static
     platform: [iOS, tvOS]
     sources:
       - path: Sources/libpng
@@ -356,14 +469,15 @@ targets:
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
           - "PNG_ARM_NEON_OPT=0"
-      linkerFlags:
-        - "-lz"
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-lz"
 
   # ===========================================================================
   # glidenhq — GlideN64 texture enhancement library
   # ===========================================================================
   glidenhq:
-    type: framework
+    type: library.static
     platform: [iOS, tvOS]
     sources:
       - path: Sources/Plugins/Video/gliden64/src/GLideNHQ
@@ -402,8 +516,9 @@ targets:
           - "Sources/Plugins/Video/gliden64/src/mupenplus/"
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
-      linkerFlags:
-        - "-lz"
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-lz"
 
   # ===========================================================================
   # gliden_osd — OSD compatibility shim for GlideN64
@@ -564,13 +679,10 @@ targets:
           - "Sources/Plugins/Video/gliden64/src/inc"
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
-      linkerFlags:
-        - "-lz"
-      sdk:
-        iOS:
-          OTHER_LDFLAGS: "-framework OpenGLES"
-        tvOS:
-          OTHER_LDFLAGS: "-framework OpenGLES"
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-lz"
+          - "-framework OpenGLES"
 
   # ===========================================================================
   # PVMupen64PlusVideoRice — Rice video plugin
@@ -630,5 +742,6 @@ targets:
           - "Sources/Compatibility/SDL/"
         GCC_PREPROCESSOR_DEFINITIONS:
           - "$(inherited)"
-      linkerFlags:
-        - "-lz"
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-lz"
