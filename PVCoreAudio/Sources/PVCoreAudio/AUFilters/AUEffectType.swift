@@ -162,7 +162,7 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
         case .bandPassFilter:
             return [
                 AUEffectParameterKey.centerFrequency: 1000.0,
-                AUEffectParameterKey.bandwidth: 500.0
+                AUEffectParameterKey.bandwidth: 1.0
             ]
         case .parametricEQ:
             return [
@@ -218,7 +218,7 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
         case .bandPassFilter:
             return [
                 AUEffectParameterDefinition(key: AUEffectParameterKey.centerFrequency, name: "Center Freq", min: 20, max: 22050, unit: "Hz"),
-                AUEffectParameterDefinition(key: AUEffectParameterKey.bandwidth, name: "Bandwidth", min: 100, max: 12000, unit: "Hz")
+                AUEffectParameterDefinition(key: AUEffectParameterKey.bandwidth, name: "Bandwidth", min: 0.05, max: 5.0, unit: "oct")
             ]
         case .parametricEQ:
             return [
@@ -299,7 +299,7 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
             let band = eq.bands[0]
             band.filterType = .bandPass
             band.frequency = Float(parameters[AUEffectParameterKey.centerFrequency] ?? 1000.0)
-            band.bandwidth = Float(parameters[AUEffectParameterKey.bandwidth] ?? 500.0) / 1000.0
+            band.bandwidth = Float(parameters[AUEffectParameterKey.bandwidth] ?? 1.0)
             band.bypass = false
             return eq
 
@@ -308,7 +308,9 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
             let band = eq.bands[0]
             band.filterType = .parametric
             band.frequency = Float(parameters[AUEffectParameterKey.centerFrequency] ?? 1000.0)
-            band.bandwidth = Float(1.0 / (parameters[AUEffectParameterKey.qFactor] ?? 1.0))
+            let q = parameters[AUEffectParameterKey.qFactor] ?? 1.0
+            let bwOctaves = 2.0 * asinh(1.0 / (2.0 * q)) / log(2.0)
+            band.bandwidth = Float(bwOctaves)
             band.gain = Float(parameters[AUEffectParameterKey.gain] ?? 0.0)
             band.bypass = false
             return eq

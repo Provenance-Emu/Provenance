@@ -58,14 +58,6 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         }
     }
 
-    /// Legacy single-band EQ filter (kept for backward compatibility).
-    private let filterNode = AVAudioUnitEQ(numberOfBands: 1)
-    public var filterEnabled: Bool = false {
-        didSet {
-            filterNode.bypass = !filterEnabled
-        }
-    }
-
     /// Currently-attached AU effects chain nodes. Rebuilt in `updateSourceNode()`.
     internal var effectChainNodes: [AVAudioUnit] = []
 
@@ -633,7 +625,12 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
     /// Called when the AU effects chain settings change while audio is playing.
     public func reloadEffectsChainIfRunning() {
         guard isRunning else { return }
-        engine.pause()
+        engine.stop()
+        // Detach previous effect nodes before rebuilding the graph.
+        for node in effectChainNodes {
+            engine.detach(node)
+        }
+        effectChainNodes = []
         updateSourceNode()
         engine.prepare()
         do {
