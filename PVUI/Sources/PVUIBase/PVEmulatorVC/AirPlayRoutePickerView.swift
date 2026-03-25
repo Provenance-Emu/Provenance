@@ -34,6 +34,7 @@ struct AirPlayPickerTrigger: UIViewRepresentable {
         view.alpha = 0
         view.isUserInteractionEnabled = false
         view.tintColor = .clear
+        view.prioritizesVideoDevices = true
         return view
     }
 
