@@ -355,8 +355,8 @@ static struct mLogger logger = { .log = _log };
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     // Hardcore mode: save-state loads are disallowed while achievements are active.
     if (self.hardcoreMode && self.achievementsActive) {
-        NSError *error = [NSError errorWithDomain:@"org.provenance.GameCore.ErrorDomain"
-                                            code:-6
+        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                         userInfo:@{
             NSLocalizedDescriptionKey : @"Save state loading is disabled in hardcore achievement mode.",
             NSFilePathErrorKey : fileName

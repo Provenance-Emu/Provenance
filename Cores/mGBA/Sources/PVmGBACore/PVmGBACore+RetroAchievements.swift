@@ -7,8 +7,9 @@
 //  ## Architecture
 //
 //  mGBA ships `src/core/achievements.c` which wraps the rcheevos `rc_client`
-//  internally.  When `USE_ACHIEVEMENTS=1` is defined (Package.swift), that
-//  file is compiled into libmGBA and the functions below delegate to it.
+//  internally. When `USE_ACHIEVEMENTS=1` is defined (Package.swift), that
+//  file is compiled into libmGBA and driven via the core/bridge callbacks.
+//  This Swift extension coordinates Provenance-side state and memory regions.
 //
 //  Memory regions:
 //   - GBA : EWRAM (256 KiB), IWRAM (32 KiB), optional cart SRAM
@@ -46,14 +47,17 @@ extension PVmGBACore: CoreRetroAchievements {
         // Sync hardcore mode to the bridge before activating.
         _bridge.hardcoreMode = _hardcoreMode
 
-        // Mark achievements active — the session manager (PVCheevos layer above)
-        // has already started the RA server session by the time this is called.
-        // We flip the flag here so the core starts enforcing hardcore restrictions
-        // and so `achievementsActive` reports the correct state.
-        _achievementsActive = true
+        // Activate achievements on the bridge, then mirror its reported state
+        // back into the core. This ensures the core only enforces hardcore
+        // restrictions when the bridge confirms the runtime is actually active.
         _bridge.achievementsActive = true
+        _achievementsActive = _bridge.achievementsActive
 
-        DLOG("mGBA achievements prepared for hash: \(gameHash), hardcore: \(_hardcoreMode)")
+        if _achievementsActive {
+            DLOG("mGBA achievements prepared for hash: \(gameHash), hardcore: \(_hardcoreMode)")
+        } else {
+            WLOG("mGBA achievements runtime not active for hash: \(gameHash); hardcore: \(_hardcoreMode)")
+        }
     }
 
     /// Tear down the achievement runtime.
@@ -65,15 +69,14 @@ extension PVmGBACore: CoreRetroAchievements {
 
     // MARK: - Per-frame tick
 
-    /// Advance the achievement runtime by one emulated frame.
+    /// Per-frame hook called by the emulation loop.
     ///
-    /// Called by the emulation loop at the end of each frame.  When
-    /// `USE_ACHIEVEMENTS` is defined mGBA evaluates all achievement conditions
-    /// internally and fires OSD callbacks here.
+    /// mGBA evaluates achievement conditions internally via the `mCoreCallbacks`
+    /// mechanism registered during core initialisation; no explicit tick call is
+    /// required from this layer. This method is a no-op placeholder for future
+    /// standalone `rc_client` bridging if needed.
     public func tickAchievements() {
-        // The Provenance OSD layer drives timing; mGBA's achievement tick is
-        // handled via the mCoreCallbacks mechanism registered in the bridge.
-        // No explicit call is required here unless bridging a standalone rc_client.
+        // No-op: mGBA drives its own achievement tick via mCoreCallbacks.
     }
 
     // MARK: - Memory regions
