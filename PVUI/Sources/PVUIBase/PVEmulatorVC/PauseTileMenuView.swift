@@ -276,6 +276,16 @@ struct PauseTileMenuView: View {
             triggerAirPlayPicker = true
             #endif
 
+        // MARK: Camera position cycle
+        case "cameraPosition":
+            #if os(iOS)
+            let all = CameraPosition.allCases
+            if let idx = all.firstIndex(of: recordingCameraPosition) {
+                recordingCameraPosition = all[(idx + 1) % all.count]
+            }
+            rebuildSections()
+            #endif
+
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
             guard let actionTitle = CoreActionTileProvider.actionTitle(fromTileID: id),

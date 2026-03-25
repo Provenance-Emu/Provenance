@@ -909,6 +909,20 @@ struct RetroMenuView: View {
 #endif
         }
     }
+
+    // Camera corner picker button — shown only when recording is available and camera overlay is enabled
+    @ViewBuilder
+    private var cameraPositionButton: some View {
+        if PVRecordingManager.shared.isAvailable && recordingCameraEnabled {
+            menuButton(
+                title: "CAMERA: \(recordingCameraPosition.displayName.uppercased())",
+                icon: recordingCameraPosition.symbolName,
+                color: .retroBlue
+            ) {
+                showingCameraPositionPicker = true
+            }
+        }
+    }
 #endif
 
     // Live-broadcast button (iOS + tvOS) with Plus gating
