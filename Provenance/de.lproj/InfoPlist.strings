@@ -8,4 +8,5 @@ NSPhotoLibraryUsageDescription = "Fotobibliothek wird zum Importieren von Spielc
 NSPhotoLibraryAddUsageDescription = "Zum Speichern von Screenshots in der Fotobibliothek.";
 NSLocalNetworkUsageDescription = "Lokales Netzwerk wird für Multiplayer-Funktionen und die Übertragung auf das Apple TV verwendet.";
 NSBluetoothAlwaysUsageDescription = "Bluetooth wird für die Verbindung von Controllern verwendet.";
-NSBluetoothPeripheralUsageDescription = "Bluetooth wird für die Verbindung von Controllern verwendet.";
+NSMotionUsageDescription = "Bewegungsdaten werden für bewegungsbasierte Steuerung und Funktionen verwendet.";
+NSFileProviderDomainUsageDescription = "Zugriff auf Ihre Dateien wird benötigt, um Spieldaten zu verwalten und zu importieren.";

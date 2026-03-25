@@ -8,4 +8,5 @@ NSPhotoLibraryUsageDescription = "需要相册权限以导入游戏封面图片�
 NSPhotoLibraryAddUsageDescription = "用于将截图保存到相册。";
 NSLocalNetworkUsageDescription = "本地网络用于多人游戏功能和投屏到 Apple TV。";
 NSBluetoothAlwaysUsageDescription = "蓝牙用于连接游戏手柄。";
-NSBluetoothPeripheralUsageDescription = "蓝牙用于连接游戏手柄。";
+NSMotionUsageDescription = "运动数据用于基于运动的控制和功能。";
+NSFileProviderDomainUsageDescription = "需要访问您的文件以管理和导入游戏数据。";

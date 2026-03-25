@@ -8,4 +8,5 @@ NSPhotoLibraryUsageDescription = "A biblioteca de fotos é necessária para impo
 NSPhotoLibraryAddUsageDescription = "Para salvar capturas de tela na biblioteca de fotos.";
 NSLocalNetworkUsageDescription = "A rede local é usada para recursos multijogador e transmissão para Apple TV.";
 NSBluetoothAlwaysUsageDescription = "O Bluetooth é usado para conectar controles.";
-NSBluetoothPeripheralUsageDescription = "O Bluetooth é usado para conectar controles.";
+NSMotionUsageDescription = "Os dados de movimento são usados para controles e recursos baseados em movimento.";
+NSFileProviderDomainUsageDescription = "O acesso aos seus arquivos é necessário para gerenciar e importar dados de jogos.";

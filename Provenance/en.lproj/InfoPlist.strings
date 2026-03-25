@@ -8,4 +8,5 @@ NSPhotoLibraryUsageDescription = "Photo library is needed to import game cover i
 NSPhotoLibraryAddUsageDescription = "To save screenshots to the photo library.";
 NSLocalNetworkUsageDescription = "Local network is used for multiplayer features and streaming to Apple TV.";
 NSBluetoothAlwaysUsageDescription = "Bluetooth is used to connect controllers.";
-NSBluetoothPeripheralUsageDescription = "Bluetooth is used to connect controllers.";
+NSMotionUsageDescription = "Motion data is used for motion-based controls and features.";
+NSFileProviderDomainUsageDescription = "Access to your files is needed to manage and import game data.";

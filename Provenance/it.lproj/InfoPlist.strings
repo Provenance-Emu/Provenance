@@ -8,4 +8,5 @@ NSPhotoLibraryUsageDescription = "La libreria foto è necessaria per importare i
 NSPhotoLibraryAddUsageDescription = "Per salvare gli screenshot nella libreria foto.";
 NSLocalNetworkUsageDescription = "La rete locale è usata per le funzioni multiplayer e lo streaming su Apple TV.";
 NSBluetoothAlwaysUsageDescription = "Il Bluetooth è usato per collegare i controller.";
-NSBluetoothPeripheralUsageDescription = "Il Bluetooth è usato per collegare i controller.";
+NSMotionUsageDescription = "I dati di movimento sono usati per i controlli e le funzioni basati sul movimento.";
+NSFileProviderDomainUsageDescription = "L'accesso ai tuoi file è necessario per gestire e importare i dati di gioco.";

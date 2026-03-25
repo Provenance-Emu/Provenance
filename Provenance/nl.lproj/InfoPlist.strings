@@ -8,4 +8,5 @@ NSPhotoLibraryUsageDescription = "Fotobibliotheek is nodig voor het importeren v
 NSPhotoLibraryAddUsageDescription = "Om schermafbeeldingen op te slaan in de fotobibliotheek.";
 NSLocalNetworkUsageDescription = "Lokaal netwerk wordt gebruikt voor multiplayerfuncties en streamen naar Apple TV.";
 NSBluetoothAlwaysUsageDescription = "Bluetooth wordt gebruikt om controllers te verbinden.";
-NSBluetoothPeripheralUsageDescription = "Bluetooth wordt gebruikt om controllers te verbinden.";
+NSMotionUsageDescription = "Bewegingsdata wordt gebruikt voor op beweging gebaseerde bediening en functies.";
+NSFileProviderDomainUsageDescription = "Toegang tot uw bestanden is nodig om gamedata te beheren en te importeren.";

@@ -8,4 +8,5 @@ NSPhotoLibraryUsageDescription = "Доступ к фото нужен для и�
 NSPhotoLibraryAddUsageDescription = "Для сохранения скриншотов в фотоальбом.";
 NSLocalNetworkUsageDescription = "Локальная сеть используется для многопользовательских функций и трансляции на Apple TV.";
 NSBluetoothAlwaysUsageDescription = "Bluetooth используется для подключения геймпадов.";
-NSBluetoothPeripheralUsageDescription = "Bluetooth используется для подключения геймпадов.";
+NSMotionUsageDescription = "Данные движения используются для управления и функций на основе движения.";
+NSFileProviderDomainUsageDescription = "Доступ к вашим файлам необходим для управления и импорта игровых данных.";
