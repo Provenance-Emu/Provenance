@@ -7,6 +7,9 @@
 //
 
 #import "PVHatariCore.h"
+// Import the Swift-generated bridging header here (not in the public .h) to
+// satisfy the MIDIResponder forward declaration and avoid circular includes.
+#import <PVCoreBridge/PVCoreBridge-Swift.h>
 #include <stdatomic.h>
 //#import "PVHatariCore+Controls.h"
 //#import "PVHatariCore+Audio.h"

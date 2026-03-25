@@ -1423,26 +1423,61 @@ extern "C" struct retro_midi_interface *pv_libretro_midi_interface(void) {
 #endif
 }
 
+/// Initialise only the ring buffer bookkeeping, without creating any CoreMIDI
+/// client or input port.  Safe to call multiple times (one-time via atomic
+/// flag).  This is intentionally decoupled from `thin_midi_ensure_initialized`
+/// so that callers that only need the ring buffer (e.g. `MIDIResponder`
+/// injection) do not implicitly open a CoreMIDI port or connect to source 0,
+/// which would bypass the user's device selection in `MIDIDeviceManager`.
+#if PV_HAS_COREMIDI
+static void thin_midi_ensure_ring_buffer_initialized(void) {
+    static atomic_bool s_ringBufferInitialized = ATOMIC_VAR_INIT(false);
+    bool expected = false;
+    if (atomic_compare_exchange_strong(&s_ringBufferInitialized, &expected, true)) {
+        atomic_store(&s_midiState.readWritePos, 0);
+        atomic_store(&s_midiState.readReadPos, 0);
+        memset(s_midiState.readBuffer, 0, sizeof(s_midiState.readBuffer));
+    }
+}
+#endif
+
 /// Inject a single raw MIDI byte into the libretro MIDI input ring buffer.
 ///
 /// Called by `MIDIResponder` protocol implementations (e.g. `PVHatariCore`) to
 /// forward decoded MIDI events from `MIDIDeviceManager` into the
 /// `retro_midi_interface` read path so the emulated core receives them.
 ///
-/// Thread-safe: uses the same atomic write/read positions as the CoreMIDI
-/// read callback.  Bytes are silently dropped when the buffer is full.
+/// This function does NOT create a CoreMIDI port or connect to any source —
+/// it only ensures the ring buffer state is ready, preserving the device
+/// selection made via `MIDIDeviceManager`.
+///
+/// Thread-safe: uses CAS on `readWritePos` to handle concurrent producers
+/// (CoreMIDI read callback + MIDIResponder injection).  Bytes are silently
+/// dropped when the buffer is full.
 extern "C" void pv_libretro_midi_inject_byte(uint8_t byte) {
 #if PV_HAS_COREMIDI
-    // Ensure the MIDI state is initialised before writing.
-    thin_midi_ensure_initialized();
-    size_t writePos = atomic_load(&s_midiState.readWritePos);
-    size_t next = (writePos + 1) % PV_MIDI_READ_BUFFER_SIZE;
-    // Drop the byte if the ring buffer is full (next == readReadPos means full).
-    if (next == atomic_load(&s_midiState.readReadPos)) {
-        return; // buffer full — silently discard
+    // Ensure ring buffer indices are initialised without opening a CoreMIDI port.
+    thin_midi_ensure_ring_buffer_initialized();
+
+    // Multi-producer-safe ring buffer write using CAS on readWritePos.
+    // Both this path and thin_midi_read_callback can run concurrently.
+    for (;;) {
+        size_t writePos = atomic_load(&s_midiState.readWritePos);
+        size_t readPos  = atomic_load(&s_midiState.readReadPos);
+        size_t next     = (writePos + 1) % PV_MIDI_READ_BUFFER_SIZE;
+
+        // Drop the byte if the ring buffer is full.
+        if (next == readPos) {
+            return; // buffer full — silently discard
+        }
+
+        // Attempt to atomically claim this slot.  If another producer advanced
+        // readWritePos first, reload and retry.
+        if (atomic_compare_exchange_weak(&s_midiState.readWritePos, &writePos, next)) {
+            s_midiState.readBuffer[writePos] = byte;
+            return;
+        }
     }
-    s_midiState.readBuffer[writePos] = byte;
-    atomic_store(&s_midiState.readWritePos, next);
 #else
     (void)byte;
 #endif
