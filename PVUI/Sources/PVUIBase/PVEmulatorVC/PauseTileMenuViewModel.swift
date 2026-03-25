@@ -195,20 +195,22 @@ final class PauseTileMenuViewModel: ObservableObject {
         let gameTitle = emulatorVC.game?.title ?? ""
         if let transferCore = emulatorVC.core as? TransferPakSupport,
            featureFlags.mupenTransferPak,
-           transferCore.transferPakSlotCount > 0,
-           TransferPakCompatibleGames.isKnownTransferPakGame(gameTitle)
-               || (0..<transferCore.transferPakSlotCount).contains(where: { transferCore.transferPakROM(forPort: $0) != nil }) {
+           transferCore.transferPakSlotCount > 0 {
+            // Compute configured-slot count in a single pass; reuse for both the visibility
+            // guard and the badge label to avoid calling transferPakROM(forPort:) twice.
             let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
                 transferCore.transferPakROM(forPort: $0) != nil
             }.count
-            coreTiles.append(PauseMenuTile(
-                id: "transferPak",
-                icon: "memorychip",
-                label: String(localized: "Transfer Pak"),
-                badge: configuredCount > 0 ? "\(configuredCount)" : nil,
-                colorKey: .green,
-                dismissOnTap: false
-            ))
+            if TransferPakCompatibleGames.isKnownTransferPakGame(gameTitle) || configuredCount > 0 {
+                coreTiles.append(PauseMenuTile(
+                    id: "transferPak",
+                    icon: "memorychip",
+                    label: String(localized: "Transfer Pak"),
+                    badge: configuredCount > 0 ? "\(configuredCount)" : nil,
+                    colorKey: .green,
+                    dismissOnTap: false
+                ))
+            }
         }
 
         let n64ID = SystemIdentifier.N64.rawValue

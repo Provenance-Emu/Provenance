@@ -47,6 +47,9 @@ struct PauseTileMenuView: View {
     @State private var showingScreenshotBrowser = false
     @State private var showingControllerProfiles = false
     @State private var showingTransferPakConfig = false
+    /// Frozen snapshot of `emulatorVC.game` captured on the main thread before the sheet opens.
+    /// The sheet closure reads this instead of the live Realm object to avoid thread-violation crashes.
+    @State private var frozenTransferPakGame: PVGame?
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
@@ -203,6 +206,11 @@ struct PauseTileMenuView: View {
 
         // MARK: Transfer Pak config sheet
         case "transferPak":
+            // Freeze the Realm object on the current (main) thread before opening the sheet,
+            // so the sheet closure never touches a live Realm instance on an unknown thread.
+            if let rawGame = emulatorVC.game, !rawGame.isInvalidated {
+                frozenTransferPakGame = rawGame.isFrozen ? rawGame : rawGame.freeze()
+            }
             showingTransferPakConfig = true
 
         // MARK: N64 Controller Pak slot picker
@@ -600,12 +608,8 @@ struct PauseTileMenuView: View {
                 showingControllerProfiles = false
             }
         }
-        .sheet(isPresented: $showingTransferPakConfig) {
-            if let rawGame = emulatorVC.game, !rawGame.isInvalidated {
-                // Freeze the Realm object before capturing it in the SwiftUI closure to
-                // avoid a thread-violation crash when SwiftUI evaluates the sheet content
-                // on a thread other than the one that owns the live Realm instance.
-                let frozenGame = rawGame.isFrozen ? rawGame : rawGame.freeze()
+        .sheet(isPresented: $showingTransferPakConfig, onDismiss: { frozenTransferPakGame = nil }) {
+            if let frozenGame = frozenTransferPakGame {
                 let transferCore = emulatorVC.core as? TransferPakSupport
                 TransferPakConfigView(
                     game: frozenGame,

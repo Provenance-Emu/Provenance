@@ -1007,7 +1007,12 @@ public class SceneCoordinator: ObservableObject {
         preLaunchTransferPakGame = nil
         let cont = _preLaunchContinuation
         _preLaunchContinuation = nil
-        cont?.resume()
+        // Defer resumption to the next run-loop turn so SwiftUI can finish tearing down
+        // the sheet's view hierarchy before we mutate root-level navigation state.
+        // Without this deferral, clearing `preLaunchTransferPakGame` and immediately
+        // resuming can trigger a root-view update while the sheet dismissal is still
+        // in-flight, causing layout warnings or dropped animations on some iOS versions.
+        DispatchQueue.main.async { cont?.resume() }
     }
 
     /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
