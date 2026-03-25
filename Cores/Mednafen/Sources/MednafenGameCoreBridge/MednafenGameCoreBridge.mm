@@ -1119,9 +1119,12 @@ static void emulation_run(BOOL skipFrame) {
             multiDiscGame = YES;
         }
 
-        // PSX: Set multitap configuration if detected by serial
+        // PSX: Set multitap configuration if detected by serial.
+        // Skip multitap setup for light-gun games: GunCon occupies port 0 exclusively,
+        // and a dual-serial (e.g. Time Crisis EU / SLES-00284) must not have its port 0
+        // reset to "dualshock" by the multitap re-initialisation loop below.
         NSString *serial = self.romSerial;
-        NSNumber *multitapCount = [MednafenGameCoreOptions multiTapPSXGames][serial];
+        NSNumber *multitapCount = !isLightGunGame ? [MednafenGameCoreOptions multiTapPSXGames][serial] : nil;
         if (multitapCount != nil) {
             self->multiTapPlayerCount = [multitapCount intValue];
             ILOG(@"Mednafen PSX: multi-tap serial=%@ players=%d", serial, self->multiTapPlayerCount);

@@ -9,10 +9,10 @@
 import Foundation
 
 /// PSX GunCon (Namco NPC-103) light gun game database.
-/// Keys are BIOS serial strings; value is ignored (use the key set for membership tests).
+/// Keys are PSX disc/game serial strings (e.g., SLUS/SLES/SLPS); value is ignored (use the key set for membership tests).
 @objc public extension MednafenGameCoreOptions {
-    /// Set of known PSX serial IDs that use a GunCon light gun.
-    /// Caller should check `[MednafenGameCoreOptions psxLightGunGames][serial] != nil`.
+    /// Set of known PSX disc/game serial IDs that use a GunCon light gun.
+    /// Caller should check `[MednafenGameCoreOptions psxLightGunGames][serial] != nil`, where `serial` is the game's disc ID.
     @objc static var psxLightGunGames: [String: NSNumber] {
         struct Static {
             static let dict: [String: NSNumber] = [
