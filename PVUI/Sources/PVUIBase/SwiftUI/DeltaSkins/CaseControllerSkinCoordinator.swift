@@ -52,7 +52,10 @@ public final class CaseControllerSkinCoordinator {
             object: nil,
             queue: .main
         ) { [weak self] note in
-            self?.handleCaseConnect(note)
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.handleCaseConnect(note)
+            }
         }
         DLOG("CaseControllerSkinCoordinator: started")
     }

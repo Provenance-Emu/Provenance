@@ -1,5 +1,6 @@
 import XCTest
 import Defaults
+import PVSettings
 @testable import PVUIBase
 
 #if os(iOS) || targetEnvironment(macCatalyst)
