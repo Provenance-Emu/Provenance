@@ -32,8 +32,12 @@ public enum FuzzyGameMatcher: Sendable {
     /// - Disc labels: `(Disc 1)`, `(Disk 2)`, `(CD1)`, `(Track 3)`
     /// - No-Intro flags: `[!]`, `[b]`, `[h]`, `[o]`, `[T-Eng]`, etc.
     ///
+    /// If stripping all tags would produce an empty string, the original title is
+    /// returned unchanged so matchers always receive a non-empty value.
+    ///
     ///     FuzzyGameMatcher.normalize("Sonic (USA) (Rev 1)")  // "Sonic"
     ///     FuzzyGameMatcher.normalize("Final Fantasy VII [!]") // "Final Fantasy VII"
+    ///     FuzzyGameMatcher.normalize("(USA)")                 // "(USA)" — fallback to original
     public static func normalize(_ title: String) -> String {
         title.normalizedROMTitle()
     }

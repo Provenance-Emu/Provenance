@@ -26,6 +26,11 @@ final class FuzzyGameMatcherTests: XCTestCase {
         XCTAssertEqual(FuzzyGameMatcher.normalize("Metal Gear Solid (Disc 1) (USA)"), "Metal Gear Solid")
     }
 
+    func testNormalize_doesNotReturnEmptyWhenAllTagsStripped() {
+        // When stripping tags would produce an empty string, the original is returned.
+        XCTAssertEqual(FuzzyGameMatcher.normalize("(USA)"), "(USA)")
+    }
+
     // MARK: - editDistance
 
     func testEditDistance_identical() {
