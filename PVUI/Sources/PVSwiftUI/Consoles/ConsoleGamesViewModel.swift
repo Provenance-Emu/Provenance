@@ -78,6 +78,39 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var showSaveExportShareSheet = false
     @Published var saveExportURL: URL? = nil
 
+    // MARK: - Multi-Select State
+
+    /// Whether the library is in multi-select (batch-edit) mode.
+    @Published var isMultiSelectMode: Bool = false
+    /// MD5 hashes of currently-selected games.
+    @Published var selectedGameMD5s: Set<String> = []
+    /// Controls presentation of the "Normalize Titles" preview sheet.
+    @Published var showNormalizeTitlePreview: Bool = false
+
+    /// Toggle a game in/out of the selection set.
+    @MainActor
+    func toggleSelection(md5: String) {
+        if selectedGameMD5s.contains(md5) {
+            selectedGameMD5s.remove(md5)
+        } else {
+            selectedGameMD5s.insert(md5)
+        }
+    }
+
+    /// Enter multi-select mode; clears any previous selection.
+    @MainActor
+    func enterMultiSelectMode() {
+        selectedGameMD5s = []
+        isMultiSelectMode = true
+    }
+
+    /// Exit multi-select mode and clear selection.
+    @MainActor
+    func exitMultiSelectMode() {
+        isMultiSelectMode = false
+        selectedGameMD5s = []
+    }
+
     // Properties that were @State in the View, now @Published in ViewModel
     @Published var searchText: String = "" {
         didSet {
