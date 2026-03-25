@@ -106,6 +106,31 @@ struct LibretroDBTests {
         #expect(result == nil)
     }
 
+    @Test("Serial search round-trip: MD5 lookup provides serial_id for confirming serial search")
+    func searchBySerialRoundTrip() async throws {
+        // Find a game via MD5; if it has a serial_id we can validate the round-trip
+        let md5Results = try db.searchDatabase(usingKey: "romHashMD5", value: dragonQuest3.md5, systemID: nil)
+        let rom = try #require(md5Results?.first, "DragonQuest3 should exist in test DB")
+
+        guard let serial = rom.serialID, !serial.isEmpty else {
+            // Cartridge-based games may not have a serial_id in LibretroDB — skip gracefully
+            return
+        }
+
+        // Round-trip: searching by the serial_id should return the same game
+        let found = try await db.searchROM(bySerial: serial, systemID: nil)
+        #expect(found != nil)
+        #expect(found?.gameTitle == dragonQuest3.displayName)
+
+        // System filter: correct system should find it
+        let correctSystem = try await db.searchROM(bySerial: serial, systemID: dragonQuest3.systemID)
+        #expect(correctSystem != nil)
+
+        // System filter: wrong system should return nil
+        let wrongSystem = try await db.searchROM(bySerial: serial, systemID: .NES)
+        #expect(wrongSystem == nil)
+    }
+
     // MARK: - MD5 Search Tests
     @Test
     func searchByMD5CaseInsensitive() async throws {

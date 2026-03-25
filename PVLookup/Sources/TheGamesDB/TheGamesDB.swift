@@ -364,13 +364,13 @@ public final class TheGamesDB: ArtworkLookupService, ROMMetadataProvider, @unche
             SELECT DISTINCT games.id, games.serial_id,
                    CASE
                        WHEN games.display_name = '\(sanitizedName)' THEN 0
-                       WHEN games.display_name LIKE '\(sanitizedName) %' THEN 1
-                       WHEN games.display_name LIKE '% \(sanitizedName) %' THEN 2
-                       WHEN games.display_name LIKE '%\(sanitizedName)%' THEN 3
+                       WHEN games.display_name LIKE '\(sanitizedName) %' ESCAPE '\\' THEN 1
+                       WHEN games.display_name LIKE '% \(sanitizedName) %' ESCAPE '\\' THEN 2
+                       WHEN games.display_name LIKE '%\(sanitizedName)%' ESCAPE '\\' THEN 3
                        ELSE 4
                    END as match_quality
             FROM games
-            WHERE games.display_name LIKE '%\(sanitizedName)%'
+            WHERE games.display_name LIKE '%\(sanitizedName)%' ESCAPE '\\'
             \(platformFilter)
             ORDER BY match_quality, games.display_name
             LIMIT 10

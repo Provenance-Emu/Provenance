@@ -140,7 +140,8 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
                 platform: dict["platform_id"] as? String,
                 manufacturer: dict["manufacturer_name"] as? String,
                 genres: (dict["genres"] as? String)?.components(separatedBy: ","),
-                romFileName: dict["rom_name"] as? String
+                romFileName: dict["rom_name"] as? String,
+                serialID: nil
             )
         }
 
@@ -347,7 +348,7 @@ public extension libretrodb {
         var query = standardMetadataQuery
         let pattern = createSQLLikePattern(filename)
 
-        query += " WHERE roms.name LIKE '\(pattern)' COLLATE NOCASE"
+        query += " WHERE roms.name LIKE '\(pattern)' ESCAPE '\\' COLLATE NOCASE"
 
         if let systemID = systemID?.libretroDatabaseID {
             query += " AND platform_id = \(systemID)"
@@ -460,7 +461,8 @@ public extension libretrodb {
             platform: platformString,
             manufacturer: dict["manufacturer_name"] as? String,
             genres: (dict["genres"] as? String)?.components(separatedBy: ","),
-            romFileName: dict["rom_name"] as? String
+            romFileName: dict["rom_name"] as? String,
+            serialID: dict["serial_id"] as? String
         )
     }
 
@@ -794,6 +796,7 @@ public extension libretrodb {
         let query = """
             SELECT DISTINCT
                 games.display_name as game_title,
+                games.serial_id as serial_id,
                 games.full_name,
                 games.release_year,
                 games.release_month,
@@ -1067,13 +1070,13 @@ extension libretrodb {
                 SELECT DISTINCT games.id, games.serial_id,
                        CASE
                            WHEN LOWER(games.display_name) = LOWER('\(sanitizedName)') THEN 0  -- Exact match
-                           WHEN LOWER(games.display_name) LIKE LOWER('\(sanitizedName) %') THEN 1  -- Starts with name
-                           WHEN LOWER(games.display_name) LIKE LOWER('% \(sanitizedName) %') THEN 2  -- Contains word
-                           WHEN LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%') THEN 3  -- Contains substring
+                           WHEN LOWER(games.display_name) LIKE LOWER('\(sanitizedName) %') ESCAPE '\\' THEN 1  -- Starts with name
+                           WHEN LOWER(games.display_name) LIKE LOWER('% \(sanitizedName) %') ESCAPE '\\' THEN 2  -- Contains word
+                           WHEN LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%') ESCAPE '\\' THEN 3  -- Contains substring
                            ELSE 4
                        END as match_quality
                 FROM games
-                WHERE LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%')
+                WHERE LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%') ESCAPE '\\'
                 \(platformFilter)
                 ORDER BY match_quality, games.display_name
                 LIMIT 10

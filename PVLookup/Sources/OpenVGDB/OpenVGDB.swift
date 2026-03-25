@@ -745,7 +745,10 @@ public extension OpenVGDB {
                 """
         }
 
-        return try executeQuery(query)?.first
+        guard let result = try executeQuery(query)?.first else { return nil }
+        // Normalize the serial field to the matched input serial so multi-serial rows
+        // (e.g. "T-6802G,T-6804G") don't persist the full comma-separated list.
+        return result.withSerial(serial)
     }
 
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
