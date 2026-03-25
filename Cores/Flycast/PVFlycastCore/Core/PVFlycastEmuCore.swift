@@ -19,13 +19,14 @@ open class PVFlycastEmuCore: PVEmulatorCore {
 
     let _bridge: PVFlycastCoreBridge = .init()
 
-    /// On iOS and tvOS (`TARGET_OS_IPHONE`), the Flycast libretro bridge checks
-    /// `RETRO_ENVIRONMENT_GET_JIT_CAPABLE` and refuses to load a game if JIT is
-    /// unavailable, logging "Cannot run without JIT" and returning `false` from
-    /// `retro_load_game`. JIT is therefore hard-required on those platforms.
+    /// On iOS and tvOS, the Flycast libretro core is compiled with `#if defined(IOS)`,
+    /// which causes `retro_load_game` to call `RETRO_ENVIRONMENT_GET_JIT_CAPABLE`
+    /// and return `false` with "Cannot run without JIT" if unavailable.
+    /// JIT is therefore hard-required on those platforms.
     ///
-    /// On macOS (Catalyst), `TARGET_OS_IPHONE` is not set and the Flycast core
-    /// does not perform the JIT capability check, so JIT is optional there.
+    /// On macOS (including Mac Catalyst), the Flycast core is not compiled with
+    /// `#if defined(IOS)` and does not perform the JIT capability check, so JIT
+    /// is optional there.
     open override var jitRequirement: PVJITRequirement {
         #if os(iOS) || os(tvOS)
         return .requiredOrCrash
