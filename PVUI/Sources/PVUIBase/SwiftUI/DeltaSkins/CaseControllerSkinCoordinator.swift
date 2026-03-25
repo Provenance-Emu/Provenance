@@ -52,10 +52,8 @@ public final class CaseControllerSkinCoordinator {
             object: nil,
             queue: .main
         ) { [weak self] note in
-            Task { @MainActor [weak self] in
-                guard let self else { return }
-                self.handleCaseConnect(note)
-            }
+            // queue: .main already delivers on the main thread; no Task hop needed.
+            self?.handleCaseConnect(note)
         }
         DLOG("CaseControllerSkinCoordinator: started")
     }
@@ -92,7 +90,6 @@ public final class CaseControllerSkinCoordinator {
         }
     }
 
-    @MainActor
     private func loadFirstAvailableSkin(for layout: PhysicalCaseLayout) async {
         let skinManager = DeltaSkinManager.shared
 
