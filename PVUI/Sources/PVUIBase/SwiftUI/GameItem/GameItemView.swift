@@ -74,10 +74,7 @@ public struct GameItemView: SwiftUI.View {
             .onAppear {
                 isVisible = true
                 loadArtworkIfNeeded()
-                if !game.isInvalidated {
-                    let files = game.relatedFiles.toArray()
-                    cachedDiscCount = Set(files.compactMap { $0.url?.path }).count
-                }
+                refreshCachedDiscCount()
             }
             .onDisappear {
                 isVisible = false
@@ -87,10 +84,7 @@ public struct GameItemView: SwiftUI.View {
             .onChange(of: game.relatedFiles.count) { _ in
                 /// Keep disc count in sync if related files change while cell is on screen
                 /// (e.g. a second disc is imported after the initial appear).
-                if !game.isInvalidated {
-                    let files = game.relatedFiles.toArray()
-                    cachedDiscCount = Set(files.compactMap { $0.url?.path }).count
-                }
+                refreshCachedDiscCount()
             }
             .onChange(of: isFocused) { newValue in
                 /// Prioritize loading artwork for focused items
@@ -111,6 +105,12 @@ public struct GameItemView: SwiftUI.View {
             .modifier(FocusEffectsModifier(isFocused: shouldShowFocus))
             #endif
         }
+    }
+
+    private func refreshCachedDiscCount() {
+        guard !game.isInvalidated else { return }
+        let files = game.relatedFiles.toArray()
+        cachedDiscCount = Set(files.compactMap { $0.url?.path }).count
     }
 
     private func loadArtworkIfNeeded() {

@@ -2822,7 +2822,9 @@ struct TVMediaSystemsView: View {
                 }
             }
         }
-        .task {
+        // Re-fire icon loading whenever the set of visible systems changes so
+        // that icons for systems loaded after first appearance are requested.
+        .task(id: systemsWithGames.map(\.identifier).joined()) {
             await iconLoader.loadIcons(for: systemsWithGames)
         }
         .task(id: model.systems.map(\.identifier)) {
@@ -2836,6 +2838,13 @@ struct TVMediaSystemsView: View {
             }
         }
         .onAppear {
+            if focusedSystemID == nil {
+                focusedSystemID = systemsWithGames.first?.identifier
+            }
+        }
+        .onChange(of: systemsWithGames.count) { _ in
+            // Assign initial focus once the first systems appear in the cache
+            // (on first load `systemsWithGames` may be empty during `.onAppear`).
             if focusedSystemID == nil {
                 focusedSystemID = systemsWithGames.first?.identifier
             }
