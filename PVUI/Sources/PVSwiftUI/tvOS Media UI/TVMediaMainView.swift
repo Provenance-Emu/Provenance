@@ -2824,7 +2824,9 @@ struct TVMediaSystemsView: View {
         }
         // Re-fire icon loading whenever the set of visible systems changes so
         // that icons for systems loaded after first appearance are requested.
-        .task(id: systemsWithGames.map(\.identifier).joined()) {
+        // Use [String] directly (not .joined()) to avoid hash collisions between
+        // different arrays that produce the same concatenated string.
+        .task(id: systemsWithGames.map(\.identifier)) {
             await iconLoader.loadIcons(for: systemsWithGames)
         }
         .task(id: model.systems.map(\.identifier)) {
