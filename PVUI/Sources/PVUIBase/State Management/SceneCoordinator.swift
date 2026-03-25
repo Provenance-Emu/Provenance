@@ -995,23 +995,44 @@ public class SceneCoordinator: ObservableObject {
         }
     }
 
-    /// Dismisses the pre-launch Transfer Pak sheet **without** resuming the launch
-    /// continuation. Call from button actions inside the sheet (`launchAction`).
-    /// The continuation is resumed by `dismissPreLaunchTransferPak()` once the sheet
-    /// animation has fully completed (via `onDismiss`), preventing a race where
-    /// `openEmulatorScene()` changes the root view while the sheet is still mid-animation.
-    public func dismissPreLaunchTransferPakSheet() {
+    /// Confirms the Transfer Pak setup and dismisses the pre-launch sheet, resuming the
+    /// launch continuation on the next main run-loop turn.
+    ///
+    /// Call from button actions inside the sheet (`launchAction`). Deferring the
+    /// continuation resumption to the next run-loop turn (via `DispatchQueue.main.async`)
+    /// prevents changing root-level navigation state while the sheet dismissal animation
+    /// is still in-flight, which would cause layout warnings on some iOS versions.
+    /// `.sheet(item:)` may skip `onDismiss` when the binding is cleared programmatically
+    /// (a known SwiftUI bug), so this method resumes the continuation proactively rather
+    /// than relying solely on `onDismiss`.  `dismissPreLaunchTransferPak()` (called from
+    /// `onDismiss`) is a safe no-op when called after this method.
+    public func confirmAndDismissPreLaunchTransferPak() {
         preLaunchTransferPakGame = nil
-    }
-
-    /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
-    /// Resumes the launch continuation so `openEmulatorScene()` is called only after the
-    /// sheet is fully gone. Safe to call multiple times — second call is a no-op.
-    public func dismissPreLaunchTransferPak() {
-        preLaunchTransferPakGame = nil   // no-op if already nil (button path cleared it)
         let cont = _preLaunchContinuation
         _preLaunchContinuation = nil
-        cont?.resume()
+        // Defer resumption to the next run-loop turn so SwiftUI can finish tearing down
+        // the sheet's view hierarchy before we mutate root-level navigation state.
+        // Without this deferral, clearing `preLaunchTransferPakGame` and immediately
+        // resuming can trigger a root-view update while the sheet dismissal is still
+        // in-flight, causing layout warnings or dropped animations on some iOS versions.
+        DispatchQueue.main.async { cont?.resume() }
+    }
+
+    /// Deprecated: use `confirmAndDismissPreLaunchTransferPak()` instead.
+    /// This wrapper is kept for source compatibility with existing callers.
+    @available(*, deprecated, message: "Use confirmAndDismissPreLaunchTransferPak() instead.")
+    public func dismissPreLaunchTransferPakSheet() {
+        confirmAndDismissPreLaunchTransferPak()
+    }
+    /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
+    /// Resumes the launch continuation if it has not already been resumed by
+    /// `confirmAndDismissPreLaunchTransferPak()`. Safe to call multiple times — second call is
+    /// a no-op because `_preLaunchContinuation` is cleared on first use.
+    public func dismissPreLaunchTransferPak() {
+        preLaunchTransferPakGame = nil   // no-op if already nil (button path cleared it)
+        guard let cont = _preLaunchContinuation else { return }
+        _preLaunchContinuation = nil
+        cont.resume()
     }
 
     /// Show error alert for game launch failures and return to main scene

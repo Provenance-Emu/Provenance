@@ -69,8 +69,10 @@ struct MainView: View {
                 TransferPakConfigView(
                     game: game,
                     launchAction: {
-                        // Only dismiss the sheet; onDismiss resumes the continuation.
-                        SceneCoordinator.shared.dismissPreLaunchTransferPakSheet()
+                        // Dismiss the sheet and resume the launch continuation (deferred to
+                        // next run-loop turn). onDismiss calls dismissPreLaunchTransferPak()
+                        // as a safe no-op fallback for swipe-to-dismiss.
+                        SceneCoordinator.shared.confirmAndDismissPreLaunchTransferPak()
                     }
                 )
             }

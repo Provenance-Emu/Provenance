@@ -36,7 +36,7 @@ let package = Package(
         .iOS(.v17),
         .tvOS(.v17),
         .watchOS(.v9),
-        .macOS(.v10_13),
+        .macOS(.v13),
         .macCatalyst(.v17),
         .visionOS(.v1)
     ],
@@ -65,6 +65,7 @@ let package = Package(
         .package(path: "../../PVObjCUtils"),
         .package(name: "PVPrimitives", path: "../PVPrimitives/"),
         .package(path: "../../PVNetplay"),
+        .package(path: "../../PVPatching"),
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
     ],
@@ -82,6 +83,7 @@ let package = Package(
                 "PVPlists",
                 "PVPrimitives",
                 "PVNetplay",
+                "PVPatching",
                 "libmGBA",
                 "PVmGBABridge"
             ],

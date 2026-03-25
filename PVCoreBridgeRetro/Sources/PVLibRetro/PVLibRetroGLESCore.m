@@ -462,19 +462,30 @@ static bool video_driver_cached_frame(void)
 
     MakeCurrentThreadRealTime();
 
-    /// Make the core's dedicated GL context current on the emu thread
-    [self makeGLContextCurrent];
+    BOOL isVulkan = (current_context_type == RETRO_HW_CONTEXT_VULKAN);
 
-    /// Create the emu thread's own FBO backed by the shared IOSurface.
-    /// GL FBOs are per-context (not shareable across EAGLContexts), so we
-    /// must create our own in hardware_context rather than reusing the
-    /// render delegate's FBO name. The IOSurface bridge gives zero-copy.
-    [self setupEmuThreadFBO];
+    if (!isVulkan) {
+        /// Make the core's dedicated GL context current on the emu thread.
+        /// Skipped for Vulkan: there is no GL context, and calling
+        /// [EAGLContext setCurrentContext:nil] is harmless but confusing.
+        [self makeGLContextCurrent];
+
+        /// Create the emu thread's own FBO backed by the shared IOSurface.
+        /// GL FBOs are per-context (not shareable across EAGLContexts), so we
+        /// must create our own in hardware_context rather than reusing the
+        /// render delegate's FBO name. The IOSurface bridge gives zero-copy.
+        /// Skipped for Vulkan: the core manages its own render targets.
+        [self setupEmuThreadFBO];
+    }
 
     /// Fire any deferred context_reset on the emu thread — cores assume
     /// context_reset and retro_run share the same thread and GL context.
     if (_pendingContextReset && _coreContextReset) {
-        ILOG(@"Firing deferred context_reset on emu thread (FBO=%u)", _emuThreadFBO);
+        if (isVulkan) {
+            ILOG(@"Firing deferred Vulkan context_reset on emu thread");
+        } else {
+            ILOG(@"Firing deferred context_reset on emu thread (FBO=%u)", _emuThreadFBO);
+        }
         [self contextReset];
         _pendingContextReset = NO;
     }
@@ -492,12 +503,14 @@ static bool video_driver_cached_frame(void)
                 break;
         }
 
-        /// Ensure GL context is current before each retro_run()
-        [self makeGLContextCurrent];
+        if (!isVulkan) {
+            /// Ensure GL context is current before each retro_run()
+            [self makeGLContextCurrent];
 
-        /// Bind the emu thread's IOSurface-backed FBO
-        if (_emuThreadFBO > 0) {
-            glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
+            /// Bind the emu thread's IOSurface-backed FBO
+            if (_emuThreadFBO > 0) {
+                glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
+            }
         }
 
         if (core->retro_run)
@@ -1183,24 +1196,58 @@ static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) 
 #pragma mark - MoltenVK/Vulkan Support Methods
 
 - (BOOL)loadMoltenVKLibrary {
-    // Try multiple paths to find MoltenVK library as specified by user
-    const char* moltenVKPaths[] = {
-        "MoltenVK",
-        "MoltenVK.framework",
+    // First: check if vkGetInstanceProcAddr is already in the process image.
+    // This succeeds when MoltenVK is a dynamic framework linked into the app.
+    {
+        void *sym = dlsym(RTLD_DEFAULT, "vkGetInstanceProcAddr");
+        if (sym) {
+            vulkan_library = RTLD_DEFAULT;
+            ILOG(@"MoltenVK symbols already available via RTLD_DEFAULT");
+            return YES;
+        }
+    }
+
+    // Try bundle-relative paths before hard-coded ones.
+    NSBundle *mainBundle = NSBundle.mainBundle;
+    NSString *fwPath = [mainBundle.privateFrameworksPath
+                        stringByAppendingPathComponent:@"MoltenVK.framework/MoltenVK"];
+    NSString *bundlePath = [[mainBundle bundlePath]
+                             stringByAppendingPathComponent:@"Frameworks/MoltenVK.framework/MoltenVK"];
+
+    NSMutableArray<NSString *> *bundlePaths = [NSMutableArray array];
+    if (fwPath) {
+        [bundlePaths addObject:fwPath];
+    }
+    if (bundlePath) {
+        [bundlePaths addObject:bundlePath];
+    }
+    for (NSString *p in bundlePaths) {
+        if (!p) continue;
+        vulkan_library = dylib_load(p.UTF8String);
+        if (vulkan_library) {
+            ILOG(@"MoltenVK library loaded from bundle path: %@", p);
+            return YES;
+        }
+        DLOG(@"Failed to load MoltenVK from %@", p);
+    }
+
+    const char* hardcodedPaths[] = {
+        "@rpath/MoltenVK.framework/MoltenVK",
         "MoltenVK.framework/MoltenVK",
+        "MoltenVK",
         "../Contents/MoltenVK.framework/MoltenVK",
         "/System/Library/Frameworks/MoltenVK.framework/MoltenVK",
         "/usr/local/lib/libMoltenVK.dylib",
         NULL
     };
 
-    for (int i = 0; moltenVKPaths[i] != NULL; i++) {
-        vulkan_library = dylib_load(moltenVKPaths[i]);
+    for (int i = 0; hardcodedPaths[i] != NULL; i++) {
+        vulkan_library = dylib_load(hardcodedPaths[i]);
         if (vulkan_library) {
-            ILOG(@"MoltenVK library loaded from: %s", moltenVKPaths[i]);
+            ILOG(@"MoltenVK library loaded from: %s", hardcodedPaths[i]);
             return YES;
         }
-        DLOG(@"Failed to load MoltenVK from: %s", moltenVKPaths[i]);
+        DLOG(@"Failed to load MoltenVK from: %s", hardcodedPaths[i]);
     }
 
     ELOG(@"Failed to load MoltenVK library from any known path");
@@ -1208,10 +1255,13 @@ static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) 
 }
 
 - (void)unloadMoltenVKLibrary {
-    if (vulkan_library) {
+    if (vulkan_library && vulkan_library != RTLD_DEFAULT) {
         dylib_close(vulkan_library);
         vulkan_library = NULL;
         ILOG(@"MoltenVK library unloaded");
+    } else if (vulkan_library == RTLD_DEFAULT) {
+        vulkan_library = NULL;
+        ILOG(@"MoltenVK (RTLD_DEFAULT) reference released");
     }
 }
 
@@ -1221,8 +1271,10 @@ static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) 
         return NO;
     }
 
-    // Load essential Vulkan function pointers
-    vkGetInstanceProcAddr = (PFN_vkVoidFunction (*)(VkInstance, const char*))dylib_proc(vulkan_library, "vkGetInstanceProcAddr");
+    // When vulkan_library == RTLD_DEFAULT, use RTLD_DEFAULT for the initial
+    // dlsym; otherwise use dylib_proc (which is a thin wrapper around dlsym).
+    void *libHandle = (vulkan_library == RTLD_DEFAULT) ? RTLD_DEFAULT : vulkan_library;
+    vkGetInstanceProcAddr = (PFN_vkVoidFunction (*)(VkInstance, const char*))dlsym(libHandle, "vkGetInstanceProcAddr");
     if (!vkGetInstanceProcAddr) {
         ELOG(@"Failed to load vkGetInstanceProcAddr");
         return NO;
