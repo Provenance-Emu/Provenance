@@ -33,9 +33,15 @@ public protocol ROMMetadataProvider {
 
 // Helper methods for database providers
 public extension ROMMetadataProvider {
-    /// Sanitizes a string for safe use in SQL LIKE queries
+    /// Sanitizes a string for safe use in SQL LIKE queries.
+    ///
+    /// This escapes `\`, `%`, and `_` using a backslash escape character.
+    /// **Callers MUST include `ESCAPE '\\'` in their LIKE clause** for the
+    /// backslash-escaped wildcards to be treated as literals by SQLite.
+    /// For exact-match (`=`) comparisons use `sanitizeForSQLLiteral` instead.
+    ///
     /// - Parameter string: The string to sanitize
-    /// - Returns: A sanitized string safe for SQL LIKE queries
+    /// - Returns: A sanitized string safe for SQL LIKE patterns (requires `ESCAPE '\\'`)
     func sanitizeForSQLLike(_ string: String) -> String {
         // Escape backslash FIRST so subsequent escapes aren't double-escaped,
         // then escape the two SQLite LIKE wildcards, then SQL single-quotes.

@@ -285,8 +285,6 @@ public extension libretrodb {
     /// Search by disc serial / product code.
     /// In LibretroDB `serial_id` is the primary join key shared by `games` and `roms` tables.
     func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
-        // Use literal escaping (not LIKE-escaping) so that `_` in serials is preserved for = comparison.
-        let sanitizedSerial = sanitizeForSQLLiteral(serial)
         var query = """
             SELECT DISTINCT
                 games.display_name as game_title,
@@ -315,16 +313,19 @@ public extension libretrodb {
             LEFT JOIN regions ON games.region_id = regions.id
             LEFT JOIN genres ON games.genre_id = genres.id
             LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
-            WHERE games.serial_id = '\(sanitizedSerial)' COLLATE NOCASE
+            WHERE games.serial_id = ? COLLATE NOCASE
             """
 
+        var parameters: [Any] = [serial]
+
         if let systemID = systemID {
-            query += " AND games.platform_id = \(systemID.libretroDatabaseID)"
+            query += " AND games.platform_id = ?"
+            parameters.append(systemID.libretroDatabaseID)
         }
 
         query += "\nGROUP BY games.id\nLIMIT 1"
 
-        let results = try db.execute(query: query)
+        let results = try db.execute(query: query, parameters: parameters)
         guard let first = results.first,
               let metadata = try? convertDictToMetadata(first) else { return nil }
         let matchedSerial = (first["serial_id"] as? String) ?? serial
