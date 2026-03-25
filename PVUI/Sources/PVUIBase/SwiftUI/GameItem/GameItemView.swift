@@ -28,6 +28,8 @@ public struct GameItemView: SwiftUI.View {
     @ObservedObject private var gamepadManager = GamepadManager.shared
     @State private var artwork: SwiftImage?
     @State private var isVisible: Bool = false
+    /// Cached on first appear — avoids re-running relatedFiles.toArray() on every body evaluation.
+    @State private var cachedDiscCount: Int = 1
     public var action: () -> Void
 
     public init(game: PVGame, constrainHeight: Bool = false, viewType: GameItemViewType = .cell, sectionContext: HomeSectionType = .allGames, isFocused: Binding<Bool> = .constant(false), themeManager: ThemeManager = ThemeManager.shared, gamepadManager: GamepadManager = GamepadManager.shared, artwork: SwiftImage? = nil, isVisible: Bool = false, action: @escaping () -> Void) {
@@ -43,14 +45,8 @@ public struct GameItemView: SwiftUI.View {
         self.action = action
     }
 
-    private var discCount: Int {
-        let allFiles = game.relatedFiles.toArray()
-        let uniqueFiles = Set(allFiles.compactMap { $0.url?.path })
-        return uniqueFiles.count
-    }
-
     private var shouldShowDiscIndicator: Bool {
-        discCount > 1
+        cachedDiscCount > 1
     }
 
     private var shouldShowFocus: Bool {
@@ -67,7 +63,7 @@ public struct GameItemView: SwiftUI.View {
                     GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
                         .overlay(alignment: .topTrailing) {
                             if shouldShowDiscIndicator {
-                                DiscIndicatorView(count: discCount)
+                                DiscIndicatorView(count: cachedDiscCount)
                                     .padding(4)
                             }
                         }
@@ -78,6 +74,10 @@ public struct GameItemView: SwiftUI.View {
             .onAppear {
                 isVisible = true
                 loadArtworkIfNeeded()
+                if !game.isInvalidated {
+                    let files = game.relatedFiles.toArray()
+                    cachedDiscCount = Set(files.compactMap { $0.url?.path }).count
+                }
             }
             .onDisappear {
                 isVisible = false

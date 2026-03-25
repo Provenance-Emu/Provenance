@@ -951,44 +951,46 @@ struct ConsoleGamesView: SwiftUI.View {
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         ScrollViewReader { proxy in
             LazyVGrid(columns: columns, spacing: 10) {
-                // Custom styling for grid items
-                ForEach(games.toArray().filter { !$0.isInvalidated }, id: \.id) { game in
-                    GameItemView(
-                        game: game,
-                        constrainHeight: false,
-                        viewType: .cell,
-                        sectionContext: .allGames,
-                        isFocused: Binding(
-                            get: {
-                                !game.isInvalidated &&
-                                gamesViewModel.focusedSection == .allGames &&
-                                gamesViewModel.focusedItemInSection == game.id
-                            },
-                            set: {
-                                if $0 && !game.isInvalidated {
-                                    gamesViewModel.focusedSection = .allGames
-                                    gamesViewModel.focusedItemInSection = game.id
-                                }
-                            }
-                        )
-                    ) {
-                        Task.detached { @MainActor in
-                            SceneCoordinator.shared.launchGame(game.freeze())
-                        }
-                    }
-                    /// Use compound ID so view recreates when artwork URL changes
-                    .id("\(game.id)_\(game.trueArtworkURL)")
-                    .focusableIfAvailable()
-                    .contextMenu {
-                        GameContextMenu(
+                // Use Results<PVGame> directly (lazy) — avoid .toArray() which materialises all games
+                ForEach(games, id: \.id) { game in
+                    if !game.isInvalidated {
+                        GameItemView(
                             game: game,
-                            rootDelegate: rootDelegate,
-                            contextMenuDelegate: self
-                        )
-                    }
+                            constrainHeight: false,
+                            viewType: .cell,
+                            sectionContext: .allGames,
+                            isFocused: Binding(
+                                get: {
+                                    !game.isInvalidated &&
+                                    gamesViewModel.focusedSection == .allGames &&
+                                    gamesViewModel.focusedItemInSection == game.id
+                                },
+                                set: {
+                                    if $0 && !game.isInvalidated {
+                                        gamesViewModel.focusedSection = .allGames
+                                        gamesViewModel.focusedItemInSection = game.id
+                                    }
+                                }
+                            )
+                        ) {
+                            Task.detached { @MainActor in
+                                SceneCoordinator.shared.launchGame(game.freeze())
+                            }
+                        }
+                        /// Use compound ID so view recreates when artwork URL changes
+                        .id("\(game.id)_\(game.trueArtworkURL)")
+                        .focusableIfAvailable()
+                        .contextMenu {
+                            GameContextMenu(
+                                game: game,
+                                rootDelegate: rootDelegate,
+                                contextMenuDelegate: self
+                            )
+                        }
 #if !os(tvOS) && !os(watchOS)
-                    .onDrag { game.romDragProvider() }
+                        .onDrag { game.romDragProvider() }
 #endif
+                    }
                 }
             }
         }
@@ -1089,29 +1091,32 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
-            ForEach(games.toArray().filter { !$0.isInvalidated }, id: \.id) { game in
-                GameItemView(
-                    game: game,
-                    constrainHeight: false,
-                    viewType: .row,
-                    sectionContext: .allGames,
-                    isFocused: Binding(
-                        get: {
-                            !game.isInvalidated &&
-                            gamesViewModel.focusedSection == .allGames &&
-                            gamesViewModel.focusedItemInSection == game.id },
-                        set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
-                    ))
-                {
-                    loadGame(game)
-                }
-                /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL)")
-                .focusableIfAvailable()
-                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+            // Use Results<PVGame> directly (lazy) — avoid .toArray() which materialises all games
+            ForEach(games, id: \.id) { game in
+                if !game.isInvalidated {
+                    GameItemView(
+                        game: game,
+                        constrainHeight: false,
+                        viewType: .row,
+                        sectionContext: .allGames,
+                        isFocused: Binding(
+                            get: {
+                                !game.isInvalidated &&
+                                gamesViewModel.focusedSection == .allGames &&
+                                gamesViewModel.focusedItemInSection == game.id },
+                            set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
+                        ))
+                    {
+                        loadGame(game)
+                    }
+                    /// Use compound ID so view recreates when artwork URL changes
+                    .id("\(game.id)_\(game.trueArtworkURL)")
+                    .focusableIfAvailable()
+                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
 #if !os(tvOS) && !os(watchOS)
-                .onDrag { game.romDragProvider() }
+                    .onDrag { game.romDragProvider() }
 #endif
+                }
             }
         }
     }

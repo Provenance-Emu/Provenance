@@ -486,63 +486,62 @@ private struct CustomPageIndicator: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            ScrollViewReader { scrollProxy in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: Constants.spacing) {
-                        ForEach(0..<numberOfPages, id: \.self) { index in
-                            // Retrowave-styled indicator with glow effect
-                            Capsule()
-                                .fill(
-                                    // Use AnyShapeStyle to handle different types
-                                    currentPage == index ?
-                                    AnyShapeStyle(LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                            RetroTheme.retroPurple
-                                        ]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )) :
-                                    // Use solid color with opacity for non-selected indicators
-                                    AnyShapeStyle((themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5))
-                                )
-                                .frame(
-                                    width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
-                                    height: Constants.indicatorHeight
-                                )
-                                // Add glow effect to selected indicator
-                                .shadow(color: currentPage == index ?
-                                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.8) :
-                                        Color.clear,
-                                        radius: 3)
-                                .id(index)
-                                .animation(.spring(response: 0.3), value: currentPage)
-                        }
-                    }
-                    .frame(minWidth: geometry.size.width)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: Constants.indicatorHeight + 16) // Add padding for touch area
-                }
-                .onChange(of: currentPage) { newPage in
-                    // Calculate visible range and scroll if needed
-                    let halfVisible = Constants.maxVisibleIndicators / 2
-                    if newPage >= halfVisible && newPage < numberOfPages - halfVisible {
-                        withAnimation {
-                            scrollProxy.scrollTo(newPage, anchor: .center)
-                        }
-                    } else if newPage < halfVisible {
-                        withAnimation {
-                            scrollProxy.scrollTo(0, anchor: .leading)
-                        }
-                    } else {
-                        withAnimation {
-                            scrollProxy.scrollTo(numberOfPages - 1, anchor: .trailing)
-                        }
+        // No GeometryReader needed — .frame(maxWidth: .infinity) centres the HStack without
+        // measuring the container, avoiding a layout pass on every scroll frame.
+        ScrollViewReader { scrollProxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: Constants.spacing) {
+                    ForEach(0..<numberOfPages, id: \.self) { index in
+                        // Retrowave-styled indicator with glow effect
+                        Capsule()
+                            .fill(
+                                // Use AnyShapeStyle to handle different types
+                                currentPage == index ?
+                                AnyShapeStyle(LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                                        RetroTheme.retroPurple
+                                    ]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )) :
+                                // Use solid color with opacity for non-selected indicators
+                                AnyShapeStyle((themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5))
+                            )
+                            .frame(
+                                width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
+                                height: Constants.indicatorHeight
+                            )
+                            // Add glow effect to selected indicator
+                            .shadow(color: currentPage == index ?
+                                    (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.8) :
+                                    Color.clear,
+                                    radius: 3)
+                            .id(index)
+                            .animation(.spring(response: 0.3), value: currentPage)
                     }
                 }
-                .allowsHitTesting(false)
+                .frame(maxWidth: .infinity)
+                .frame(height: Constants.indicatorHeight + 16) // Add padding for touch area
             }
+            .onChange(of: currentPage) { newPage in
+                // Calculate visible range and scroll if needed
+                let halfVisible = Constants.maxVisibleIndicators / 2
+                if newPage >= halfVisible && newPage < numberOfPages - halfVisible {
+                    withAnimation {
+                        scrollProxy.scrollTo(newPage, anchor: .center)
+                    }
+                } else if newPage < halfVisible {
+                    withAnimation {
+                        scrollProxy.scrollTo(0, anchor: .leading)
+                    }
+                } else {
+                    withAnimation {
+                        scrollProxy.scrollTo(numberOfPages - 1, anchor: .trailing)
+                    }
+                }
+            }
+            .allowsHitTesting(false)
         }
         .frame(height: Constants.indicatorHeight + 16)
     }
@@ -578,6 +577,10 @@ struct HomeContinueSection: SwiftUI.View {
     /// Flag to track if the view has appeared
     @State private var hasAppeared: Bool = false
     @State private var driverTask: Task<Void, Never>? = nil
+
+    /// Cached result of `resolveCurrentSaveState()` — avoids a live Realm lookup on every body render.
+    /// Updated via onChange when page or focused item changes.
+    @State private var cachedCurrentSaveState: PVSaveState? = nil
 
     weak var rootDelegate: PVRootDelegate?
     let defaultHeight: CGFloat = 260
@@ -701,9 +704,10 @@ struct HomeContinueSection: SwiftUI.View {
 
                 // Footer and page indicator overlay
                 ZStack {
-                    // Footer at bottom
+                    // Footer at bottom — use cachedCurrentSaveState to avoid a live Realm
+                    // lookup on every body re-render.
                     ContinuesFooterView(
-                        saveState: resolveCurrentSaveState(),
+                        saveState: cachedCurrentSaveState,
                         hideSystemLabel: consoleIdentifier != nil
                     )
                     .zIndex(0) // Ensure footer is behind
@@ -773,6 +777,7 @@ struct HomeContinueSection: SwiftUI.View {
                 // Initialize with the initial limit
                 updateSaveStateLimit(ContinuesSectionViewModel.initialSaveStateLimit)
                 syncSelectionState()
+                cachedCurrentSaveState = resolveCurrentSaveState()
             }
         }
         .onDisappear {
@@ -789,6 +794,7 @@ struct HomeContinueSection: SwiftUI.View {
         }
         .onChange(of: parentFocusedItem) { _ in
             syncSelectionState()
+            cachedCurrentSaveState = resolveCurrentSaveState()
         }
         .onChange(of: isLandscapePhone) { _ in
             viewModel.updateItems(limitedItems, isLandscape: isLandscapePhone, totalCount: totalSaveStatesCount)
@@ -800,6 +806,7 @@ struct HomeContinueSection: SwiftUI.View {
                 handlePageChange(newPage)
             }
             syncSelectionState()
+            cachedCurrentSaveState = resolveCurrentSaveState()
 
             // Check if we need to load more save states
             if viewModel.shouldLoadMoreSaveStates {
@@ -1076,6 +1083,7 @@ struct HomeContinueSection: SwiftUI.View {
             index = end
         }
         pagedItems = pages
+        cachedCurrentSaveState = resolveCurrentSaveState()
     }
 }
 
