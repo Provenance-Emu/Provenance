@@ -9,6 +9,7 @@
 #if os(iOS)
 import WidgetKit
 import SwiftUI
+import PVLibrary
 
 // MARK: - Entry
 
@@ -44,12 +45,100 @@ struct RecentlyPlayedProvider: TimelineProvider {
     }
 
     private func gameLimit(for family: WidgetFamily) -> Int {
+        RecentlyPlayedWidgetGameCounts.limit(for: family)
+    }
+}
+
+// MARK: - Layout metrics
+
+/// Row counts per widget family; kept in sync with timeline `gameLimit` so layout matches loaded entries.
+private enum RecentlyPlayedWidgetGameCounts {
+    static func limit(for family: WidgetFamily) -> Int {
         switch family {
         case .systemSmall: return 1
-        case .systemMedium: return 2
+        case .systemMedium: return 3
         case .systemLarge: return 4
         case .systemExtraLarge: return 8
         default: return 2
+        }
+    }
+}
+
+/// Padding, spacing, corner radii, and typography hints for Recently Played across widget families.
+struct RecentlyPlayedWidgetLayoutMetrics {
+    let contentPadding: CGFloat
+    let rowSpacing: CGFloat
+    let rowCardCornerRadius: CGFloat
+    let artworkCornerRadius: CGFloat
+    let listArtworkSide: CGFloat
+    let titleLineLimit: Int
+    let heroArtworkCornerRadius: CGFloat
+    let heroTitleFont: Font
+    let listTitleFont: Font
+    let rowHorizontalPadding: CGFloat
+    let rowVerticalPadding: CGFloat
+
+    /// Returns layout tuned for small through extra-large while keeping the same per-family game counts.
+    static func metrics(for family: WidgetFamily) -> RecentlyPlayedWidgetLayoutMetrics {
+        switch family {
+        case .systemSmall:
+            return RecentlyPlayedWidgetLayoutMetrics(
+                contentPadding: 8,
+                rowSpacing: 0,
+                rowCardCornerRadius: 14,
+                artworkCornerRadius: 8,
+                listArtworkSide: 48,
+                titleLineLimit: 2,
+                heroArtworkCornerRadius: 14,
+                heroTitleFont: .system(.subheadline, design: .rounded).weight(.bold),
+                listTitleFont: .system(.subheadline, design: .rounded).weight(.semibold),
+                rowHorizontalPadding: 10,
+                rowVerticalPadding: 8
+            )
+        case .systemMedium:
+            return RecentlyPlayedWidgetLayoutMetrics(
+                contentPadding: 6,
+                rowSpacing: 4,
+                rowCardCornerRadius: 10,
+                artworkCornerRadius: 7,
+                listArtworkSide: 38,
+                titleLineLimit: 2,
+                heroArtworkCornerRadius: 12,
+                heroTitleFont: .system(.subheadline, design: .rounded).weight(.bold),
+                listTitleFont: .system(.caption, design: .rounded).weight(.semibold),
+                rowHorizontalPadding: 8,
+                rowVerticalPadding: 5
+            )
+        case .systemLarge:
+            return RecentlyPlayedWidgetLayoutMetrics(
+                contentPadding: 12,
+                rowSpacing: 9,
+                rowCardCornerRadius: 12,
+                artworkCornerRadius: 9,
+                listArtworkSide: 56,
+                titleLineLimit: 2,
+                heroArtworkCornerRadius: 14,
+                heroTitleFont: .system(.subheadline, design: .rounded).weight(.bold),
+                listTitleFont: .system(.body, design: .rounded).weight(.semibold),
+                rowHorizontalPadding: 10,
+                rowVerticalPadding: 8
+            )
+        case .systemExtraLarge:
+            return RecentlyPlayedWidgetLayoutMetrics(
+                contentPadding: 14,
+                rowSpacing: 10,
+                rowCardCornerRadius: 14,
+                artworkCornerRadius: 10,
+                listArtworkSide: 58,
+                titleLineLimit: 2,
+                heroArtworkCornerRadius: 14,
+                heroTitleFont: .system(.subheadline, design: .rounded).weight(.bold),
+                listTitleFont: .system(.body, design: .rounded).weight(.semibold),
+                rowHorizontalPadding: 10,
+                rowVerticalPadding: 8
+            )
+        default:
+            return .metrics(for: .systemMedium)
         }
     }
 }
@@ -62,13 +151,25 @@ struct RecentlyPlayedWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: RecentlyPlayedProvider()) { entry in
             RecentlyPlayedWidgetView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) {
+                    RecentlyPlayedWidgetContainerBackground()
+                }
                 // Tapping outside any Link row (e.g. padding) opens the most recent game.
-                .widgetURL(entry.games.first?.launchURL ?? URL(string: "provenance://screen/library")!)
+                .widgetURL(entry.games.first?.launchURL ?? PVLibraryScreenURL)
         }
         .configurationDisplayName("Recently Played")
         .description("See the games you've played most recently.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+    }
+}
+
+/// Dark RetroWave base with a soft neon wash matching other Provenance widgets.
+private struct RecentlyPlayedWidgetContainerBackground: View {
+    var body: some View {
+        ZStack {
+            RetroWaveWidgetPalette.retroBlack
+            RetroWaveWidgetGradients.mainNeon.opacity(0.2)
+        }
     }
 }
 
@@ -78,6 +179,10 @@ struct RecentlyPlayedWidgetView: View {
     let entry: RecentlyPlayedEntry
 
     @Environment(\.widgetFamily) private var family
+
+    private var layoutMetrics: RecentlyPlayedWidgetLayoutMetrics {
+        RecentlyPlayedWidgetLayoutMetrics.metrics(for: family)
+    }
 
     var body: some View {
         if entry.isPlaceholder || entry.games.isEmpty {
@@ -98,120 +203,159 @@ struct RecentlyPlayedWidgetView: View {
         }
     }
 
-    // MARK: Small — single game
+    // MARK: Small — single hero card
 
     private var smallView: some View {
         Group {
             if let game = entry.games.first, let url = game.launchURL {
                 Link(destination: url) {
-                    ZStack(alignment: .bottomLeading) {
-                        GameArtworkView(artworkData: game.artworkData, cornerRadius: 12)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        VStack(alignment: .leading, spacing: 2) {
-                            SystemBadgeView(systemShortName: game.systemShortName)
-                            Text(game.title)
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                                .lineLimit(1)
-                            if let playedDate = game.lastPlayedDate {
-                                Text(playedDate, style: .relative)
-                                    .font(.caption2)
-                                    .foregroundStyle(.white.opacity(0.8))
-                            }
-                        }
-                        .padding(8)
-                        .background(
-                            LinearGradient(
-                                colors: [.clear, .black.opacity(0.7)],
-                                startPoint: .center,
-                                endPoint: .bottom
-                            )
-                        )
-                    }
+                    smallHeroCard(game: game)
                 }
             } else {
                 emptyStateView
             }
         }
+        .padding(layoutMetrics.contentPadding)
     }
 
-    // MARK: Medium — two games side by side
+    private func smallHeroCard(game: WidgetGameEntry) -> some View {
+        let m = layoutMetrics
+        return ZStack(alignment: .bottomLeading) {
+            GameArtworkView(artworkData: game.artworkData, cornerRadius: m.heroArtworkCornerRadius)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            LinearGradient(
+                colors: [
+                    RetroWaveWidgetPalette.retroBlack.opacity(0.1),
+                    RetroWaveWidgetPalette.retroBlack.opacity(0.88)
+                ],
+                startPoint: .center,
+                endPoint: .bottom
+            )
+            VStack(alignment: .leading, spacing: 6) {
+                Text(game.title)
+                    .font(m.heroTitleFont)
+                    .foregroundStyle(RetroWaveWidgetTypography.titleForeground)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.88)
+                recentlyPlayedMetaRow(game: game, compact: true)
+            }
+            .padding(10)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: m.heroArtworkCornerRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: m.heroArtworkCornerRadius, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            RetroWaveWidgetPalette.neonPink.opacity(0.45),
+                            RetroWaveWidgetPalette.neonCyan.opacity(0.35)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+    }
+
+    // MARK: Medium — stacked rows (full-width titles)
 
     private var mediumView: some View {
-        HStack(spacing: 8) {
-            ForEach(paddedGames(count: 2)) { game in
-                gameRow(game)
+        VStack(spacing: layoutMetrics.rowSpacing) {
+            ForEach(paddedGames(count: RecentlyPlayedWidgetGameCounts.limit(for: .systemMedium))) { game in
+                recentlyPlayedRow(game: game)
             }
         }
-        .padding(12)
+        .padding(layoutMetrics.contentPadding)
     }
 
-    // MARK: Large — four games stacked
+    // MARK: Large — four stacked rows
 
     private var largeView: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: layoutMetrics.rowSpacing) {
             ForEach(paddedGames(count: 4)) { game in
-                gameRow(game)
+                recentlyPlayedRow(game: game)
             }
         }
-        .padding(12)
+        .padding(layoutMetrics.contentPadding)
     }
 
-    // MARK: Extra Large (iPad) — two columns of four games
+    // MARK: Extra Large — two columns of four
 
     private var extraLargeView: some View {
         HStack(alignment: .top, spacing: 12) {
-            VStack(spacing: 8) {
+            VStack(spacing: layoutMetrics.rowSpacing) {
                 ForEach(paddedGames(count: 8).prefix(4)) { game in
-                    gameRow(game)
+                    recentlyPlayedRow(game: game)
                 }
             }
-            Divider()
-            VStack(spacing: 8) {
+            retroWaveColumnDivider
+            VStack(spacing: layoutMetrics.rowSpacing) {
                 ForEach(paddedGames(count: 8).dropFirst(4)) { game in
-                    gameRow(game)
+                    recentlyPlayedRow(game: game)
                 }
             }
         }
-        .padding(12)
+        .padding(layoutMetrics.contentPadding)
     }
 
-    // MARK: Shared row
+    private var retroWaveColumnDivider: some View {
+        Rectangle()
+            .fill(RetroWaveWidgetPalette.neonPurple.opacity(0.4))
+            .frame(width: 1)
+            .frame(maxHeight: .infinity)
+    }
+
+    // MARK: Row
 
     @ViewBuilder
-    private func gameRow(_ game: WidgetGameEntry) -> some View {
+    private func recentlyPlayedRow(game: WidgetGameEntry) -> some View {
+        let inner = recentlyPlayedRowContent(game: game)
         if let url = game.launchURL {
             Link(destination: url) {
-                gameRowContent(game)
+                inner
             }
-            .frame(maxWidth: .infinity)
         } else {
-            gameRowContent(game)
+            inner.opacity(0.45)
         }
     }
 
-    private func gameRowContent(_ game: WidgetGameEntry) -> some View {
-        HStack(spacing: 10) {
-            GameArtworkView(artworkData: game.artworkData, cornerRadius: 6)
-                .frame(width: 48, height: 48)
-            VStack(alignment: .leading, spacing: 2) {
+    private func recentlyPlayedRowContent(game: WidgetGameEntry) -> some View {
+        let m = layoutMetrics
+        return HStack(alignment: .center, spacing: 10) {
+            GameArtworkView(artworkData: game.artworkData, cornerRadius: m.artworkCornerRadius)
+                .frame(width: m.listArtworkSide, height: m.listArtworkSide)
+            VStack(alignment: .leading, spacing: 5) {
                 Text(game.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                HStack(spacing: 4) {
-                    SystemBadgeView(systemShortName: game.systemShortName)
-                    if let playedDate = game.lastPlayedDate {
-                        Text(playedDate, style: .relative)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                    .font(m.listTitleFont)
+                    .foregroundStyle(RetroWaveWidgetTypography.titleForeground)
+                    .lineLimit(m.titleLineLimit)
+                    .minimumScaleFactor(0.86)
+                    .multilineTextAlignment(.leading)
+                recentlyPlayedMetaRow(game: game, compact: false)
             }
-            Spacer()
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity)
+        .padding(.horizontal, m.rowHorizontalPadding)
+        .padding(.vertical, m.rowVerticalPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .retroWaveWidgetGridCellSurface(cornerRadius: m.rowCardCornerRadius)
+    }
+
+    /// Single-line metadata: system badge, dot separator, and optional relative last-played time (`compact` tightens spacing).
+    @ViewBuilder
+    private func recentlyPlayedMetaRow(game: WidgetGameEntry, compact: Bool) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: compact ? 5 : 6) {
+            SystemBadgeView(systemShortName: game.systemShortName, chrome: .retroWaveNeon)
+            if let playedDate = game.lastPlayedDate {
+                Text("·")
+                    .retroWaveWidgetMetaStyle()
+                    .opacity(0.7)
+                Text(playedDate, style: .relative)
+                    .retroWaveWidgetMetaStyle()
+            }
+        }
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: Placeholder
@@ -220,25 +364,23 @@ struct RecentlyPlayedWidgetView: View {
         VStack(spacing: 8) {
             Image(systemName: "gamecontroller.fill")
                 .font(.largeTitle)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(RetroWaveWidgetPalette.neonCyan.opacity(0.65))
             Text("No Recent Games")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .retroWaveWidgetMetaStyle()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var emptyStateView: some View {
         ZStack {
-            Color(.systemGray6)
-            VStack(spacing: 4) {
+            RetroWaveWidgetPalette.retroBlack.opacity(0.35)
+            VStack(spacing: 6) {
                 Image(systemName: "gamecontroller")
                     .font(.title2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RetroWaveWidgetPalette.neonCyan.opacity(0.7))
                 Text("Play a game\nto see it here")
-                    .font(.caption2)
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
+                    .retroWaveWidgetMetaStyle()
             }
         }
     }

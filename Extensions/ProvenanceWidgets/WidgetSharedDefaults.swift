@@ -8,6 +8,7 @@
 
 #if os(iOS)
 import Foundation
+import PVLibrary
 
 // MARK: - Shared UserDefaults Keys
 
@@ -16,7 +17,9 @@ import Foundation
 ///
 /// **App Group ID note:** `appGroupID` here reads the `APP_GROUP_IDENTIFIER` build
 /// setting from Info.plist at runtime (with fallback for dev/CI builds).  This is a
-/// *necessary local copy* — the widget extension cannot import PVLibrary or PVAppIntents.
+/// *necessary local copy* — the widget extension cannot import PVAppIntents.
+/// Deep-link URL helpers use `PVLibrary` (`PVAppConstants`), which wraps primitives.
+
 /// The canonical sources are:
 ///   - PVLibrary: `PVLibrary/Sources/PVFileSystem/Paths.swift` → `public let PVAppGroupId`
 ///   - PVAppIntents: `PVAppIntents/Sources/PVAppIntents/AppGroupID.swift` → `internal let pvAppGroupID`
@@ -84,7 +87,7 @@ public struct WidgetGameEntry: Codable, Identifiable {
     /// Deep-link URL for launching the game from a widget tap.
     public var launchURL: URL? {
         guard !id.isEmpty else { return nil }
-        return URL(string: "provenance://open?md5=\(id)")
+        return URL(string: PVOpenGameMD5URI(id))
     }
 
     public init(

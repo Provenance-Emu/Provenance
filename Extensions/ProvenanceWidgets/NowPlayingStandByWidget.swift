@@ -15,6 +15,7 @@
 import SwiftUI
 import UIKit
 import WidgetKit
+import PVLibrary
 
 // MARK: - Timeline Entry
 
@@ -82,7 +83,7 @@ struct NowPlayingStandByView: View {
             contentOverlay
         }
         .containerBackground(.black, for: .widget)
-        .widgetURL(URL(string: "provenance://screen/library"))
+        .widgetURL(PVLibraryScreenURL)
     }
 
     @ViewBuilder

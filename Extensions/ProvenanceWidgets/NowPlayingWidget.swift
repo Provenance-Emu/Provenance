@@ -10,6 +10,7 @@
 import SwiftUI
 import UIKit
 import WidgetKit
+import PVLibrary
 
 // MARK: - Timeline Entry
 
@@ -155,7 +156,7 @@ struct NowPlayingEntryView: View {
             }
         }
         .containerBackground(.fill.tertiary, for: .widget)
-        .widgetURL(URL(string: "provenance://screen/library"))
+        .widgetURL(PVLibraryScreenURL)
     }
 }
 

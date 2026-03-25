@@ -10,6 +10,7 @@
 import SwiftUI
 import UIKit
 import WidgetKit
+import PVLibrary
 
 // MARK: - Timeline Entry
 
@@ -155,13 +156,9 @@ struct QuickLaunchEntryView: View {
 
     var deepLinkURL: URL? {
         if let game = entry.game {
-            var components = URLComponents()
-            components.scheme = "provenance"
-            components.host = "open"
-            components.queryItems = [URLQueryItem(name: "md5", value: game.id)]
-            return components.url ?? URL(string: "provenance://")
+            return URL(string: PVOpenGameMD5URI(game.id)) ?? URL(string: "\(PVAppURLKey)://")
         }
-        return URL(string: "provenance://")
+        return URL(string: "\(PVAppURLKey)://")
     }
 
     var body: some View {

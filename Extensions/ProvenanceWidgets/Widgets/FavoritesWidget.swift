@@ -9,6 +9,7 @@
 #if os(iOS)
 import WidgetKit
 import SwiftUI
+import PVLibrary
 
 // MARK: - Entry
 
@@ -54,6 +55,62 @@ struct FavoritesProvider: TimelineProvider {
     }
 }
 
+// MARK: - Layout
+
+/// Padding, grid gaps, corner radii, and title styling scaled per widget size for a consistent rhythm across families.
+struct FavoritesWidgetLayoutMetrics {
+    let contentPadding: CGFloat
+    let gridSpacing: CGFloat
+    let tileCornerRadius: CGFloat
+    let artworkTitleFont: Font
+    let overlayHorizontalPadding: CGFloat
+    let overlayVerticalPadding: CGFloat
+
+    /// Returns layout values aligned to small through extra-large sizes while preserving the same grid item counts.
+    static func metrics(for family: WidgetFamily) -> FavoritesWidgetLayoutMetrics {
+        switch family {
+        case .systemSmall:
+            return FavoritesWidgetLayoutMetrics(
+                contentPadding: 8,
+                gridSpacing: 0,
+                tileCornerRadius: 10,
+                artworkTitleFont: .system(.subheadline, design: .rounded).weight(.bold),
+                overlayHorizontalPadding: 8,
+                overlayVerticalPadding: 6
+            )
+        case .systemMedium:
+            return FavoritesWidgetLayoutMetrics(
+                contentPadding: 10,
+                gridSpacing: 8,
+                tileCornerRadius: 10,
+                artworkTitleFont: .system(.caption, design: .rounded).weight(.semibold),
+                overlayHorizontalPadding: 6,
+                overlayVerticalPadding: 4
+            )
+        case .systemLarge:
+            return FavoritesWidgetLayoutMetrics(
+                contentPadding: 12,
+                gridSpacing: 10,
+                tileCornerRadius: 12,
+                artworkTitleFont: .system(.caption, design: .rounded).weight(.semibold),
+                overlayHorizontalPadding: 6,
+                overlayVerticalPadding: 5
+            )
+        case .systemExtraLarge:
+            return FavoritesWidgetLayoutMetrics(
+                contentPadding: 14,
+                gridSpacing: 12,
+                tileCornerRadius: 12,
+                artworkTitleFont: .system(.callout, design: .rounded).weight(.semibold),
+                overlayHorizontalPadding: 8,
+                overlayVerticalPadding: 6
+            )
+        default:
+            return .metrics(for: .systemMedium)
+        }
+    }
+}
+
 // MARK: - Widget
 
 struct FavoritesWidget: Widget {
@@ -62,13 +119,25 @@ struct FavoritesWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: FavoritesProvider()) { entry in
             FavoritesWidgetView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) {
+                    FavoritesWidgetContainerBackground()
+                }
                 // Tapping outside any Link cell (e.g. padding) opens the first game.
-                .widgetURL(entry.games.first?.launchURL ?? URL(string: "provenance://screen/library")!)
+                .widgetURL(entry.games.first?.launchURL ?? PVLibraryScreenURL)
         }
         .configurationDisplayName("Favorites")
         .description("Quick access to your favourite games.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+    }
+}
+
+/// Dark RetroWave base with a soft neon wash for the favorites widget chrome.
+private struct FavoritesWidgetContainerBackground: View {
+    var body: some View {
+        ZStack {
+            RetroWaveWidgetPalette.retroBlack
+            RetroWaveWidgetGradients.mainNeon.opacity(0.2)
+        }
     }
 }
 
@@ -78,6 +147,10 @@ struct FavoritesWidgetView: View {
     let entry: FavoritesEntry
 
     @Environment(\.widgetFamily) private var family
+
+    private var layoutMetrics: FavoritesWidgetLayoutMetrics {
+        FavoritesWidgetLayoutMetrics.metrics(for: family)
+    }
 
     var body: some View {
         if entry.isPlaceholder || entry.games.isEmpty {
@@ -98,7 +171,7 @@ struct FavoritesWidgetView: View {
         }
     }
 
-    // MARK: Small — single tile
+    // MARK: Small — single game
 
     private var smallView: some View {
         Group {
@@ -106,6 +179,7 @@ struct FavoritesWidgetView: View {
                 gameButton(game)
             }
         }
+        .padding(layoutMetrics.contentPadding)
     }
 
     // MARK: Grid layouts
@@ -113,12 +187,12 @@ struct FavoritesWidgetView: View {
     private func gridView(columns: Int, rows: Int) -> some View {
         let total = columns * rows
         let games = paddedGames(count: total)
-        let spacing: CGFloat = 6
-        let padding: CGFloat = 10
+        let spacing = layoutMetrics.gridSpacing
+        let padding = layoutMetrics.contentPadding
 
         return GeometryReader { geo in
-            let cellW = (geo.size.width  - 2 * padding - CGFloat(columns - 1) * spacing) / CGFloat(columns)
-            let cellH = (geo.size.height - 2 * padding - CGFloat(rows    - 1) * spacing) / CGFloat(rows)
+            let cellW = (geo.size.width - 2 * padding - CGFloat(columns - 1) * spacing) / CGFloat(columns)
+            let cellH = (geo.size.height - 2 * padding - CGFloat(rows - 1) * spacing) / CGFloat(rows)
 
             LazyVGrid(
                 columns: Array(repeating: GridItem(.fixed(cellW), spacing: spacing), count: columns),
@@ -133,33 +207,31 @@ struct FavoritesWidgetView: View {
         }
     }
 
-    // MARK: Tile
+    // MARK: Game cell
 
     private func gameButton(_ game: WidgetGameEntry) -> some View {
-        Group {
+        let metrics = layoutMetrics
+        return Group {
             if game.md5Hash.isEmpty {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color(.systemGray5).opacity(0.5))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ZStack {
+                    Color.clear
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .retroWaveWidgetGridCellSurface(cornerRadius: metrics.tileCornerRadius)
+                    Image(systemName: "star")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(RetroWaveWidgetPalette.neonCyan.opacity(0.45))
+                }
             } else if let url = game.launchURL {
                 Link(destination: url) {
-                    GameArtworkView(artworkData: game.artworkData, cornerRadius: 8)
+                    GameArtworkView(artworkData: game.artworkData, cornerRadius: metrics.tileCornerRadius)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .overlay(alignment: .topLeading) {
+                            SystemBadgeView(systemShortName: game.systemShortName, chrome: .retroWaveNeon)
+                                .padding(.leading, 6)
+                                .padding(.top, 6)
+                        }
                         .overlay(alignment: .bottom) {
-                            Text(game.title)
-                                .font(.system(size: 8, weight: .semibold))
-                                .foregroundStyle(.white)
-                                .lineLimit(1)
-                                .padding(.horizontal, 4)
-                                .padding(.bottom, 4)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .background(
-                                    LinearGradient(
-                                        colors: [.clear, .black.opacity(0.65)],
-                                        startPoint: .center,
-                                        endPoint: .bottom
-                                    )
-                                )
+                            favoritesArtworkTitleBar(title: game.title, metrics: metrics)
                         }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -170,19 +242,22 @@ struct FavoritesWidgetView: View {
     // MARK: Empty state
 
     private var emptyStateView: some View {
-        VStack(spacing: 8) {
+        let metrics = layoutMetrics
+        return VStack(spacing: metrics.contentPadding) {
             Image(systemName: "star.fill")
-                .font(.largeTitle)
-                .foregroundStyle(.yellow)
+                .font(.title)
+                .foregroundStyle(RetroWaveWidgetPalette.neonYellow)
+                .shadow(color: RetroWaveWidgetPalette.neonPink.opacity(0.55), radius: 5, x: 0, y: 0)
             Text("No Favorites")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .retroWaveWidgetTitleStyle()
             Text("Mark games as\nfavorites to see them here")
-                .font(.caption2)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.tertiary)
+                .retroWaveWidgetMetaStyle()
         }
+        .padding(metrics.contentPadding + 6)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .retroWaveWidgetSectionSurface(cornerRadius: max(10, metrics.tileCornerRadius * 0.85))
+        .padding(metrics.contentPadding)
     }
 
     // MARK: Helpers
@@ -195,6 +270,40 @@ struct FavoritesWidgetView: View {
         }
         return games + padding
     }
+}
+
+// MARK: - Artwork title overlay
+
+/// Bottom-aligned title strip with a strong scrim and shadow so names stay readable on busy artwork.
+private func favoritesArtworkTitleBar(title: String, metrics: FavoritesWidgetLayoutMetrics) -> some View {
+    VStack(spacing: 0) {
+        Spacer(minLength: 0)
+        Text(title)
+            .font(metrics.artworkTitleFont)
+            .foregroundStyle(Color.white)
+            .shadow(color: Color.black.opacity(0.92), radius: 4, x: 0, y: 1)
+            .shadow(color: Color.black.opacity(0.55), radius: 1, x: 0, y: 0)
+            .lineLimit(1)
+            .minimumScaleFactor(0.72)
+            .padding(.horizontal, metrics.overlayHorizontalPadding)
+            .padding(.vertical, metrics.overlayVerticalPadding)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .background(favoritesArtworkTitleScrim())
+    }
+}
+
+/// Multi-stop vertical scrim under artwork titles for higher contrast than a single gradient stop.
+private func favoritesArtworkTitleScrim() -> LinearGradient {
+    LinearGradient(
+        colors: [
+            Color.black.opacity(0),
+            Color.black.opacity(0.38),
+            Color.black.opacity(0.78),
+            Color.black.opacity(0.94)
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
 }
 
 // MARK: - Previews

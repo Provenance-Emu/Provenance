@@ -15,6 +15,7 @@
 import SwiftUI
 import UIKit
 import WidgetKit
+import PVLibrary
 
 // MARK: - Timeline Entry
 
@@ -95,7 +96,7 @@ struct GameArtGalleryView: View {
             titleOverlay
         }
         .containerBackground(.black, for: .widget)
-        .widgetURL(URL(string: "provenance://screen/library"))
+        .widgetURL(PVLibraryScreenURL)
     }
 
     @ViewBuilder

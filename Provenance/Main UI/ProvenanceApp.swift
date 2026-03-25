@@ -159,7 +159,7 @@ struct ProvenanceApp: App {
                         if let components = components,
                            components.host?.lowercased() == "open",
                            let queryItems = components.queryItems,
-                           let md5Value = queryItems.first(where: { $0.name == "md5" })?.value,
+                           let md5Value = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.md5.rawValue })?.value,
                            !md5Value.isEmpty {
                             ILOG("ProvenanceApp: Found direct md5 parameter in URL: \(md5Value)")
                             AppState.shared.appOpenAction = .openMD5(md5Value)
@@ -453,7 +453,7 @@ extension ProvenanceApp {
             }
 
             // Check for direct md5 parameter (provenance://open?md5=...)
-            if let md5Value = queryItems.first(where: { $0.name == "md5" })?.value, !md5Value.isEmpty {
+            if let md5Value = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.md5.rawValue })?.value, !md5Value.isEmpty {
                 DLOG("Found direct md5 parameter: \(md5Value)")
                 if let matchedGame = fetchGame(byMD5: md5Value) {
                     ILOG("Opening game by direct md5 parameter: \(md5Value)")
