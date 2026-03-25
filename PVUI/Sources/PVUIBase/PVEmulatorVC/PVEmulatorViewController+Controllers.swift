@@ -113,11 +113,15 @@ extension PVEmulatorViewController {
     /// Moves the GPU view controller to the specified external screen's window.
     func attachGPUView(to screen: UIScreen) {
         secondaryScreen = screen
-        // Detach from primary screen first using the full containment sequence.
-        gpuViewController.willMove(toParent: nil)
-        gpuViewController.view?.removeFromSuperview()
-        gpuViewController.removeFromParent()
-        gpuViewController.didMove(toParent: nil)
+        // Only run the containment removal sequence when the VC is currently parented
+        // (e.g., the launch-time path calls this before the first addChild, so there is
+        // nothing to remove and calling willMove/removeFromParent would be a no-op).
+        if gpuViewController.parent != nil {
+            gpuViewController.willMove(toParent: nil)
+            gpuViewController.view?.removeFromSuperview()
+            gpuViewController.removeFromParent()
+            gpuViewController.didMove(toParent: nil)
+        }
 
         let window = UIWindow(frame: screen.bounds)
         // `UIWindow.screen` is deprecated in iOS 13 but remains the only reliable
@@ -139,6 +143,13 @@ extension PVEmulatorViewController {
     /// Restores the GPU view controller back to the primary device screen after
     /// an external display disconnects.
     func restoreGPUViewToDevice() {
+        // Detach from the external window FIRST, before re-parenting, so that
+        // gpuViewController is never simultaneously owned by two windows/hierarchies.
+        secondaryWindow?.rootViewController = nil
+        secondaryWindow?.isHidden = true
+        secondaryWindow = nil
+        secondaryScreen = nil
+
         // Full containment removal sequence before re-parenting.
         gpuViewController.willMove(toParent: nil)
         gpuViewController.view?.removeFromSuperview()
@@ -165,13 +176,6 @@ extension PVEmulatorViewController {
         // Complete the containment cycle; this triggers viewDidMove and appearance callbacks.
         gpuViewController.didMove(toParent: self)
         gpuViewController.view?.setNeedsLayout()
-
-        // Explicitly clear the secondary window before releasing it so that
-        // the external display does not show a blank window until deallocation.
-        secondaryWindow?.rootViewController = nil
-        secondaryWindow?.isHidden = true
-        secondaryWindow = nil
-        secondaryScreen = nil
     }
 }
 
