@@ -5,6 +5,8 @@
 //  Created by Joseph Mattiello on 9/8/24.
 //
 
+import PVPatching
+
 public enum Extensions: String, CaseIterable {
     
     case sevenZip = "7z"
@@ -78,9 +80,6 @@ public enum Extensions: String, CaseIterable {
     private static let _specialExtensions: Set<Extensions> = [.svs, .mcr, .plist, .ccd, .sub, .bin]
     private static let _cdSupplementaryExtensions: Set<Extensions> = [.sbi, .sub]
     private static let _skinExtensions: Set<Extensions> = [.deltaSkin, .manicSkin]
-    private static let _patchExtensions: Set<Extensions> = [
-        .ips, .ips32, .bps, .ups, .xdelta, .delta, .xdelta3, .vcdiff, .ppf, .aps, .rup
-    ]
 
     public static let archiveExtensions: Set<String> = Set(_archiveExtensions.map { $0.rawValue })
     public static let artworkExtensions: Set<String> = Set(_artworkExtensions.map { $0.rawValue })
@@ -90,7 +89,8 @@ public enum Extensions: String, CaseIterable {
     /// Supplementary files that accompany disc images (e.g. `.sbi` subchannel data, `.sub` subchannel tracks).
     public static let cdSupplementaryExtensions: Set<String> = Set(_cdSupplementaryExtensions.map { $0.rawValue })
     public static let skinExtensions: Set<String> = Set(_skinExtensions.map { $0.rawValue })
-    public static let patchExtensions: Set<String> = Set(_patchExtensions.map { $0.rawValue })
+    /// Patch file extensions — derived from `PatchFormat.allFileExtensions` (single source of truth).
+    public static let patchExtensions: Set<String> = PatchFormat.allFileExtensions
 
     public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions).union(cdSupplementaryExtensions).union(skinExtensions).union(patchExtensions)
 }

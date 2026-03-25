@@ -52,12 +52,28 @@ class GameImporterFileService : GameImporterFileServicing {
             let baseName = srcURL.deletingPathExtension().lastPathComponent
             let ext = srcURL.pathExtension
             var destURL = patchesDir.appendingPathComponent(srcURL.lastPathComponent)
-            // If a file with the same name already exists, generate a unique name to avoid
-            // silently overwriting a different patch (common for generic names like "patch.ips").
+            // If a file with the same name already exists, check whether it's the same file
+            // before generating a unique name. Same size → treat as re-import (idempotent).
             if FileManager.default.fileExists(atPath: destURL.path) {
-                let suffix = UUID().uuidString.prefix(8)
-                let uniqueName = ext.isEmpty ? "\(baseName)-\(suffix)" : "\(baseName)-\(suffix).\(ext)"
-                destURL = patchesDir.appendingPathComponent(uniqueName)
+                let srcAttrs = try? FileManager.default.attributesOfItem(atPath: srcURL.path)
+                let dstAttrs = try? FileManager.default.attributesOfItem(atPath: destURL.path)
+                let srcSize = srcAttrs?[.size] as? Int
+                let dstSize = dstAttrs?[.size] as? Int
+                if let srcSize = srcSize, srcSize == dstSize {
+                    // Same size → likely the same patch; use existing file (idempotent re-import).
+                    ILOG("Patch file already exists at destination with same size — using existing: \(destURL.path)")
+                    queueItem.destinationUrl = destURL
+                    // Clean up source from Imports folder to avoid duplicate watching.
+                    if srcURL.path.contains("/Imports/") {
+                        try? FileManager.default.removeItem(at: srcURL)
+                    }
+                    return
+                } else {
+                    // Different content — generate a unique filename to avoid overwriting.
+                    let suffix = UUID().uuidString.prefix(8)
+                    let uniqueName = ext.isEmpty ? "\(baseName)-\(suffix)" : "\(baseName)-\(suffix).\(ext)"
+                    destURL = patchesDir.appendingPathComponent(uniqueName)
+                }
             }
             try FileManager.default.moveItem(at: srcURL, to: destURL)
             queueItem.destinationUrl = destURL
