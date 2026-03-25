@@ -91,7 +91,45 @@ public enum FuzzyGameMatcher: Sendable {
     public static func similarity(_ query: String, _ candidate: String) -> Double {
         let a = normalize(query).lowercased()
         let b = normalize(candidate).lowercased()
+        return score(a, b)
+    }
 
+    /// Ranks `candidates` by their similarity to `query`, highest score first.
+    ///
+    /// Results with a score of `0` are excluded from the output.
+    ///
+    ///     let results = FuzzyGameMatcher.rank(query: "Mega Man", candidates: titles)
+    ///     // results[0] is the closest match
+    public static func rank(query: String, candidates: [String]) -> [(title: String, score: Double)] {
+        let a = normalize(query).lowercased()
+        return candidates
+            .map { title in (title: title, score: score(a, normalize(title).lowercased())) }
+            .filter { $0.score > 0 }
+            .sorted { $0.score > $1.score }
+    }
+
+    /// Returns the single best-matching candidate, or `nil` if there are no
+    /// candidates with a positive similarity score (including when `candidates`
+    /// is empty).
+    public static func bestMatch(query: String, candidates: [String]) -> String? {
+        let a = normalize(query).lowercased()
+        var bestTitle: String?
+        var bestScore: Double = 0.0
+        for title in candidates {
+            let s = score(a, normalize(title).lowercased())
+            if s > bestScore {
+                bestScore = s
+                bestTitle = title
+            }
+        }
+        return bestTitle
+    }
+
+    // MARK: - Private
+
+    /// Scores two already-normalized, lowercased strings using edit-distance ratio
+    /// and token-set Jaccard overlap, returning the higher of the two.
+    private static func score(_ a: String, _ b: String) -> Double {
         guard !a.isEmpty, !b.isEmpty else { return a == b ? 1.0 : 0.0 }
         guard a != b else { return 1.0 }
 
@@ -106,25 +144,5 @@ public enum FuzzyGameMatcher: Sendable {
         let tokenScore = union > 0 ? Double(intersection) / Double(union) : 0.0
 
         return max(editRatio, tokenScore)
-    }
-
-    /// Ranks `candidates` by their similarity to `query`, highest score first.
-    ///
-    /// Results with a score of `0` are excluded from the output.
-    ///
-    ///     let results = FuzzyGameMatcher.rank(query: "Mega Man", candidates: titles)
-    ///     // results[0] is the closest match
-    public static func rank(query: String, candidates: [String]) -> [(title: String, score: Double)] {
-        candidates
-            .map { title in (title: title, score: similarity(query, title)) }
-            .filter { $0.score > 0 }
-            .sorted { $0.score > $1.score }
-    }
-
-    /// Returns the single best-matching candidate, or `nil` if there are no
-    /// candidates with a positive similarity score (including when `candidates`
-    /// is empty).
-    public static func bestMatch(query: String, candidates: [String]) -> String? {
-        rank(query: query, candidates: candidates).first?.title
     }
 }
