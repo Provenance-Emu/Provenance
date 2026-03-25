@@ -3310,7 +3310,7 @@ struct TVMediaSaveStatesViewAllCard: View {
                         .tracking(1)
                         .foregroundStyle(isFocused ? .white : .white.opacity(0.8))
 
-                    Text(verbatim: "\(count) saves")
+                    Text("tv_media.saves.count \(count)", bundle: .module)
                         .font(.system(size: 11, weight: .medium, design: .default))
                         .foregroundStyle(.white.opacity(0.5))
                 }
@@ -5751,7 +5751,7 @@ struct TVMediaImportStatusSheet: View {
                     .shadow(color: Color.retroPink.opacity(0.5), radius: 10)
 
                 if !viewModel.importQueueItems.isEmpty {
-                    Text(verbatim: "\(viewModel.importQueueItems.count) files in queue")
+                    Text("tv_media.import_queue.files_in_queue \(viewModel.importQueueItems.count)", bundle: .module)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.white.opacity(0.6))
                 }

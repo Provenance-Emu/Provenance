@@ -125,8 +125,8 @@
 "cloud_sync.reset.confirm" = "Reset";
 
 "cloud_sync.pagination.directory" = "Directory";
-"cloud_sync.pagination.local_count" = "Local: 0";
-"cloud_sync.pagination.icloud_count" = "iCloud: 0";
+"cloud_sync.pagination.local_count %lld" = "Local: %lld";
+"cloud_sync.pagination.icloud_count %lld" = "iCloud: %lld";
 "cloud_sync.pagination.total_files" = "Total Files";
 
 "cloud_sync.diff.no_differences" = "No differences found";
@@ -164,6 +164,7 @@
 "tv_media.library.icloud_in_progress" = "iCloud sync may be in progress";
 "tv_media.games" = "GAMES";
 "tv_media.saves.view_all" = "VIEW ALL";
+"tv_media.saves.count %lld" = "%lld saves";
 "tv_media.search.recent" = "RECENT";
 "tv_media.search.recent_searches" = "RECENT SEARCHES";
 "tv_media.search.clear_all" = "CLEAR ALL";
@@ -195,6 +196,7 @@
 "tv_media.roms.full_documentation" = "FULL DOCUMENTATION";
 "tv_media.import_queue.title" = "IMPORT QUEUE";
 "tv_media.import_queue.close" = "CLOSE";
+"tv_media.import_queue.files_in_queue %lld" = "%lld files in queue";
 "tv_media.import_queue.no_pending" = "NO PENDING IMPORTS";
 "tv_media.import_queue.all_processed" = "All files have been processed";
 "tv_media.icloud_sync.title" = "iCLOUD SYNC";
@@ -206,5 +208,8 @@
 "retro_menu.filter.done" = "DONE";
 "retro_menu.filter.screen_filters" = "SCREEN FILTERS";
 "retro_menu.saves.no_screenshots" = "No Screenshots";
+"retro_menu.saves.screenshots_hint" = "Use \"Save Screenshot\" from the pause menu to capture screenshots.";
 "retro_menu.saves.no_save_states" = "No Save States";
+"retro_menu.saves.save_states_hint" = "Use \"Save State\" from the pause menu to create saves.";
+"retro_menu.saves.auto_save_to_photos" = "Auto-Save to Photos";
 "retro_menu.plus.badge" = "PLUS";

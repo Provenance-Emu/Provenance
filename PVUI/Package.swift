@@ -149,6 +149,7 @@ let package = Package(
                 .copy("Resources/catalog_seed.json"),
                 .copy("Resources/system-native-resolutions.json"),
                 .copy("Resources/DefaultSkins"),
+                .process("Resources/en.lproj"),
             ],
             cSettings: [
                 .define("GL_SILENCE_DEPRECATION", to: "1"),

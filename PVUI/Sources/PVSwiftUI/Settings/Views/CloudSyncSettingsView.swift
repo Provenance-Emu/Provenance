@@ -1047,11 +1047,11 @@ public struct CloudSyncSettingsView: View {
                         let totalLocal = viewModel.localFiles.values.reduce(0) { $0 + $1.count }
                         let totalICloud = viewModel.iCloudFiles.values.reduce(0) { $0 + $1.count }
 
-                        Text(verbatim: "Local: \(totalLocal)")
+                        Text("cloud_sync.pagination.local_count \(totalLocal)", bundle: .module)
                             .fontWeight(.bold)
                             .foregroundColor(.retroBlue)
 
-                        Text(verbatim: "iCloud: \(totalICloud)")
+                        Text("cloud_sync.pagination.icloud_count \(totalICloud)", bundle: .module)
                             .fontWeight(.bold)
                             .foregroundColor(.retroPink)
                     }
