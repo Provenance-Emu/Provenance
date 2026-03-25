@@ -60,6 +60,7 @@
 #endif
 
 #include <dlfcn.h>
+#include <os/lock.h>
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -211,6 +212,9 @@ typedef struct pv_midi_state {
 } pv_midi_state_t;
 
 static pv_midi_state_t s_midiState = {0};
+/// Lock protecting all ring-buffer reads and writes so the byte write always
+/// precedes the index advance, eliminating the TOCTOU window in the CAS pattern.
+static os_unfair_lock s_midiRingLock = OS_UNFAIR_LOCK_INIT;
 #endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -1279,26 +1283,35 @@ static struct retro_vfs_interface s_thinVFSInterface = {
 
 #if PV_HAS_COREMIDI
 
+/// Write a single byte into the read ring buffer.
+/// Protected by s_midiRingLock so the byte write always precedes the index
+/// advance, eliminating the TOCTOU window present in a plain CAS approach.
+/// Both the CoreMIDI callback and pv_libretro_midi_inject_byte use this helper
+/// so the write protocol is defined in exactly one place.
+/// Returns false (and drops the byte) when the buffer is full.
+static bool thin_midi_ring_write_byte(uint8_t byte) {
+    os_unfair_lock_lock(&s_midiRingLock);
+    size_t writePos = atomic_load_explicit(&s_midiState.readWritePos, memory_order_relaxed);
+    size_t readPos  = atomic_load_explicit(&s_midiState.readReadPos,  memory_order_relaxed);
+    size_t next     = (writePos + 1) % PV_MIDI_READ_BUFFER_SIZE;
+    if (next == readPos) {
+        os_unfair_lock_unlock(&s_midiRingLock);
+        return false; // buffer full — drop byte
+    }
+    s_midiState.readBuffer[writePos] = byte;
+    atomic_store_explicit(&s_midiState.readWritePos, next, memory_order_release);
+    os_unfair_lock_unlock(&s_midiRingLock);
+    return true;
+}
+
 /// CoreMIDI read callback -- pushes incoming bytes into our ring buffer.
-/// Uses CAS on readWritePos so this path is safe to run concurrently with
-/// pv_libretro_midi_inject_byte (which also writes via CAS).
 static void thin_midi_read_callback(const MIDIPacketList *pktlist, void *readProcRefCon, void *srcConnRefCon) {
     (void)readProcRefCon;
     (void)srcConnRefCon;
     const MIDIPacket *packet = &pktlist->packet[0];
     for (UInt32 i = 0; i < pktlist->numPackets; i++) {
         for (UInt16 j = 0; j < packet->length; j++) {
-            // Multi-producer-safe write: CAS on readWritePos to claim a slot.
-            for (;;) {
-                size_t writePos = atomic_load(&s_midiState.readWritePos);
-                size_t readPos  = atomic_load(&s_midiState.readReadPos);
-                size_t next     = (writePos + 1) % PV_MIDI_READ_BUFFER_SIZE;
-                if (next == readPos) break; // buffer full — drop byte
-                if (atomic_compare_exchange_weak(&s_midiState.readWritePos, &writePos, next)) {
-                    s_midiState.readBuffer[writePos] = packet->data[j];
-                    break;
-                }
-            }
+            thin_midi_ring_write_byte(packet->data[j]);
         }
         packet = MIDIPacketNext(packet);
     }
@@ -1373,11 +1386,16 @@ static bool thin_midi_output_enabled(void) {
 
 static bool thin_midi_read(uint8_t *byte) {
     if (!byte) return false;
-    size_t rp = atomic_load(&s_midiState.readReadPos);
-    size_t wp = atomic_load(&s_midiState.readWritePos);
-    if (rp == wp) return false; // empty
+    os_unfair_lock_lock(&s_midiRingLock);
+    size_t rp = atomic_load_explicit(&s_midiState.readReadPos,  memory_order_relaxed);
+    size_t wp = atomic_load_explicit(&s_midiState.readWritePos, memory_order_acquire);
+    if (rp == wp) {
+        os_unfair_lock_unlock(&s_midiRingLock);
+        return false; // empty
+    }
     *byte = s_midiState.readBuffer[rp];
-    atomic_store(&s_midiState.readReadPos, (rp + 1) % PV_MIDI_READ_BUFFER_SIZE);
+    atomic_store_explicit(&s_midiState.readReadPos, (rp + 1) % PV_MIDI_READ_BUFFER_SIZE, memory_order_release);
+    os_unfair_lock_unlock(&s_midiRingLock);
     return true;
 }
 
@@ -1442,9 +1460,11 @@ static void thin_midi_ensure_ring_buffer_initialized(void) {
     static atomic_bool s_ringBufferInitialized = ATOMIC_VAR_INIT(false);
     bool expected = false;
     if (atomic_compare_exchange_strong(&s_ringBufferInitialized, &expected, true)) {
+        // Reset the indices only. Buffer content is always written before it is
+        // read by a correct consumer, so memset is unnecessary and would race
+        // with any producers or consumers already active.
         atomic_store(&s_midiState.readWritePos, 0);
         atomic_store(&s_midiState.readReadPos, 0);
-        memset(s_midiState.readBuffer, 0, sizeof(s_midiState.readBuffer));
     }
 }
 #endif
@@ -1466,26 +1486,9 @@ extern "C" void pv_libretro_midi_inject_byte(uint8_t byte) {
 #if PV_HAS_COREMIDI
     // Ensure ring buffer indices are initialised without opening a CoreMIDI port.
     thin_midi_ensure_ring_buffer_initialized();
-
-    // Multi-producer-safe ring buffer write using CAS on readWritePos.
-    // Both this path and thin_midi_read_callback can run concurrently.
-    for (;;) {
-        size_t writePos = atomic_load(&s_midiState.readWritePos);
-        size_t readPos  = atomic_load(&s_midiState.readReadPos);
-        size_t next     = (writePos + 1) % PV_MIDI_READ_BUFFER_SIZE;
-
-        // Drop the byte if the ring buffer is full.
-        if (next == readPos) {
-            return; // buffer full — silently discard
-        }
-
-        // Attempt to atomically claim this slot.  If another producer advanced
-        // readWritePos first, reload and retry.
-        if (atomic_compare_exchange_weak(&s_midiState.readWritePos, &writePos, next)) {
-            s_midiState.readBuffer[writePos] = byte;
-            return;
-        }
-    }
+    // Delegate to the shared write helper which holds s_midiRingLock so the
+    // byte write always precedes the index advance (no TOCTOU window).
+    thin_midi_ring_write_byte(byte);
 #else
     (void)byte;
 #endif

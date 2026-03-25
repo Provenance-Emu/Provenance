@@ -199,7 +199,10 @@
 /// Forward Pitch Bend messages (14-bit value split into two 7-bit bytes).
 - (void)midiPitchBendWithChannel:(uint8_t)channel value:(int16_t)value {
     // MIDI pitch bend: centre = 0x2000, range -8192..+8191.
-    uint16_t normalized = (uint16_t)(value + 8192);
+    // Clamp to valid range before arithmetic to prevent underflow/overflow
+    // when the caller passes an out-of-range value.
+    int16_t clamped = value < -8192 ? -8192 : (value > 8191 ? 8191 : value);
+    uint16_t normalized = (uint16_t)(clamped + 8192);
     [self injectMIDIByte:0xE0 | (channel & 0x0F)];
     [self injectMIDIByte:normalized & 0x7F];          // LSB
     [self injectMIDIByte:(normalized >> 7) & 0x7F];   // MSB
