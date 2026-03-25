@@ -839,8 +839,9 @@ fileprivate extension DirectoryWatcher {
                 ILOG("Found \(contents.count) items in directory: \(self.watchedDirectory)")
 
                 let isImportsFolder = self.watchedDirectory.path.contains("/Imports/")
+                let isInBIOSFolder = self.watchedDirectory.path.contains("/BIOS/")
 
-                // Collect files and recognized game folders (MAME folders from /Imports/, DOSBox anywhere)
+                // Collect files and recognized game folders (MAME folders from /Imports/, DOSBox anywhere except BIOS)
                 var itemsToImport: [URL] = []
                 for item in contents {
                     var isDir: ObjCBool = false
@@ -849,7 +850,7 @@ fileprivate extension DirectoryWatcher {
                         if isImportsFolder {
                             ILOG("Found directory in Imports folder: \(item.lastPathComponent) — queuing for ROM set detection")
                             itemsToImport.append(item)
-                        } else if isDOSBoxGameFolder(item) {
+                        } else if !isInBIOSFolder && isDOSBoxGameFolder(item) {
                             ILOG("Found DOSBox game folder: \(item.lastPathComponent)")
                             itemsToImport.append(item)
                         }
@@ -899,14 +900,15 @@ fileprivate extension DirectoryWatcher {
             }
 
             let isImportsFolder = watchedDirectory.path.contains("/Imports/")
+            let isInBIOSFolder = watchedDirectory.path.contains("/BIOS/")
 
             // Filter to files, plus directories that are game folders:
-            // MAME ROM sets (any directory in /Imports/) or DOSBox game folders (anywhere).
+            // MAME ROM sets (any directory in /Imports/) or DOSBox game folders (non-BIOS paths only).
             var filesOnly = contents.filter { item in
                 var isDir: ObjCBool = false
                 guard FileManager.default.fileExists(atPath: item.path, isDirectory: &isDir) else { return false }
                 if isDir.boolValue {
-                    return isImportsFolder || isDOSBoxGameFolder(item)
+                    return isImportsFolder || (!isInBIOSFolder && isDOSBoxGameFolder(item))
                 }
                 return isValidFile(item)
             }
