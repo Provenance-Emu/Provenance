@@ -544,8 +544,8 @@ static bool environment_callback(unsigned cmd, void *data)
         //   SYSTEM_WAYPLAY    — EA 4-Way Play adapter; BOTH ports must be set.
         //
         // Both are indicated by peripheral bit 7 ('4') in the ROM header, so
-        // we use a title-string lookup to identify EA 4-Way Play games first,
-        // then fall back to header-bit detection for Sega TeamPlayer.
+        // we require that bit before doing the title-string lookup to identify
+        // EA 4-Way Play games, then fall back to Sega TeamPlayer for the rest.
         static const uint16_t kMultiTapBit = (1 << 7); // 'Team Player' peripheral bit
 
         // Known EA 4-Way Play titles (EA Sports, 1993-1996).
@@ -561,10 +561,12 @@ static bool environment_callback(unsigned cmd, void *data)
         };
 
         BOOL isWayPlay = NO;
-        for (int i = 0; kEA4WayPlayTitles[i] != NULL; i++) {
-            if (strstr(rominfo.international, kEA4WayPlayTitles[i]) != NULL) {
-                isWayPlay = YES;
-                break;
+        if (rominfo.peripherals & kMultiTapBit) {
+            for (int i = 0; kEA4WayPlayTitles[i] != NULL; i++) {
+                if (strstr(rominfo.international, kEA4WayPlayTitles[i]) != NULL) {
+                    isWayPlay = YES;
+                    break;
+                }
             }
         }
 
