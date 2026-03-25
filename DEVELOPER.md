@@ -494,7 +494,7 @@ TheGamesDB maps its `type`/`side` columns via `ArtworkType(fromTheGamesDB:side:)
 
 - **Capacity**: 100 entries (`maxCacheSize = 100`).
 - **Eviction**: Least-recently-used. Access order is tracked in an `accessOrder: [ArtworkSearchKey]` array. On every cache hit the key is moved to the end; on overflow the first (oldest) key is removed.
-- **Cache key** (`ArtworkSearchKey`): composite of `gameName` (lowercased), `systemID: SystemIdentifier?`, and `artworkTypes: ArtworkType`. Two keys are equal when all three fields match (name comparison is case-insensitive).
+- **Cache key** (`ArtworkSearchKey`): composite of `gameName` (case-insensitive, compared using `lowercased()`), `systemID: SystemIdentifier?`, and `artworkTypes: ArtworkType`. Two keys are equal when all three fields match (name comparison is case-insensitive).
 - **Writes**: `PVLookup.searchArtwork(byGameName:systemID:artworkTypes:)` writes to the cache after a successful search. A result is only cached when it is non-empty.
 - **Invalidation**: Call `ArtworkSearchCache.shared.clear()` to flush the entire cache (e.g., after a library rescan).
 
@@ -512,11 +512,11 @@ The combined array is then sorted by type priority (highest first):
 boxFront → boxBack → screenshot → titleScreen → clearLogo → banner → fanArt → manual → other
 ```
 
-This sort is performed by `PVLookup.sortArtworkByType(_:)`, which only compares type priority. Relative ordering of artwork items with the same type is not guaranteed (Swift's `Array.sorted` is not guaranteed stable); if you need a deterministic secondary ordering, apply an additional stable sort or sort by a composite key such as `(typePriority, sourceRank)` at the call site.
+This sort is performed by `PVLookup.sortArtworkByType(_:)`, which only compares type priority. Relative ordering of artwork items with the same type is not guaranteed by this sort; if you need a deterministic secondary ordering (for example, preferring OpenVGDB over LibretroDB over TheGamesDB), apply an additional stable sort or explicitly sort by a composite key such as `(typePriority, sourceRank)` at the call site.
 
 ### Deduplication strategy
 
-`ArtworkMetadata` is `Hashable` by `(url, type, source)`. Individual back-ends may perform their own internal deduplication using `Set<ArtworkMetadata>` (LibretroDB does this in `LibretroArtwork.searchArtwork(byGameName:systemID:artworkTypes:)`). The merged result from `PVLookup` is **not** additionally deduplicated at the aggregation layer, so distinct sources can return the same artwork URL as long as `source` differs.
+`ArtworkMetadata` is `Hashable` by `(url, type, source)`. Individual back-ends or helper types may perform their own internal deduplication using `Set<ArtworkMetadata>` (for example, the `LibretroArtwork.searchArtwork(byGameName:systemID:artworkTypes:)` helper can do this when used directly). The LibretroDB code path that `PVLookup` currently uses (`libretrodb.searchArtwork(...)` in `libretrodb.swift`) does **not** perform `Set`-based deduplication. The merged result from `PVLookup` is **not** additionally deduplicated at the aggregation layer, so distinct sources can return the same artwork URL as long as `source` differs.
 
 > If you need a globally deduplicated set, convert the result array to a `Set<ArtworkMetadata>` at the call site.
 
@@ -524,7 +524,7 @@ This sort is performed by `PVLookup.sortArtworkByType(_:)`, which only compares 
 
 #### 1. Conform to `ArtworkLookupService`
 
-Create a new type that conforms to `ArtworkLookupService` (for offline sources) or `ArtworkLookupOnlineService` (for sources that require a network connection):
+Create a new type that conforms to `ArtworkLookupService`. If your source also needs to expose a mapping from logical artwork types to its own identifiers (e.g. size or variant codes), additionally conform to `ArtworkLookupOnlineService` and implement `getArtworkMappings()`. The choice of protocol is about capabilities, not whether the source is online or offline:
 
 ```swift
 // PVLookup/Sources/MyNewDB/MyNewDB.swift
