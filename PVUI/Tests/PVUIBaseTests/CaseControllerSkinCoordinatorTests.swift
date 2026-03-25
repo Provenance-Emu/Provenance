@@ -35,13 +35,15 @@ final class CaseControllerSkinCoordinatorTests: XCTestCase {
         defer { coordinator.stop() }
 
         // Post a fake PVPhysicalCaseDidConnect with a known layout.
-        let layout = CaseControllerDetector.knownLayouts.first { $0.name == "Buppin Case" }
-        XCTAssertNotNil(layout, "Buppin Case layout must be registered")
+        guard let layout = CaseControllerDetector.knownLayouts.first(where: { $0.name == "Buppin Case" }) else {
+            XCTFail("Buppin Case layout must be registered")
+            return
+        }
 
         NotificationCenter.default.post(
             name: .PVPhysicalCaseDidConnect,
             object: nil,
-            userInfo: layout!.notificationUserInfo
+            userInfo: layout.notificationUserInfo
         )
         // Spin the main run loop so the main-queue observer fires before the test exits.
         RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
