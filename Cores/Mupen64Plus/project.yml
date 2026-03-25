@@ -136,9 +136,10 @@ settings:
       - "SDL_VIDEO_OPENGL=1"
     # Exclude non-NEON sources on tvOS device (mirrors Config.xcconfig)
     "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*]": "$(inherited) 3DMath.cpp RSP_LoadMatrix.cpp CRC_OPT.cpp"
-    # tvOS Simulator: exclude all compiled sources, include only stub (mirrors Config.xcconfig)
-    "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "*"
-    "INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "PVDebug.c"
+    # tvOS Simulator: default source behavior (XcodeGen resolves sources explicitly;
+    # PVDebug.c stub sourcing is handled per-target via dedicated Debug target)
+    "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "$(inherited)"
+    "INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "$(inherited)"
     HEADER_SEARCH_PATHS: "$(inherited)"
     FRAMEWORK_SEARCH_PATHS: "$(inherited)"
     LD_RUNPATH_SEARCH_PATHS: "$(inherited)"
@@ -154,7 +155,7 @@ settings:
       MTL_ENABLE_DEBUG_INFO: NO
 
 # ─── External Swift Packages ──────────────────────────────────────────────────
-# Local PV* packages referenced by PVMupen and PVMupenBridge — mirrors
+# Local PV* packages referenced by PVMupen and PVMupen64PlusBridge — mirrors
 # the `dependencies:` entries in Package.swift.
 
 packages:
@@ -172,6 +173,8 @@ packages:
     path: ../../PVObjCUtils
   PVPlists:
     path: ../../PVPlists
+  PVSettings:
+    path: ../../PVSettings
   PVSupport:
     path: ../../PVSupport
 
@@ -187,8 +190,10 @@ targets:
     platform: [iOS, tvOS]
     sources:
       - path: Sources/PVMupen
+    resources:
+      - path: Sources/PVMupen/Resources/Core.plist
     dependencies:
-      - target: PVMupenBridge
+      - target: PVMupen64PlusBridge
       - target: PVMupen64PlusCore
       - target: PVRSPCXD4
       - package: PVAudio
@@ -203,6 +208,8 @@ targets:
         product: PVLogging
       - package: PVPlists
         product: PVPlists
+      - package: PVSettings
+        product: PVSettings
       - package: PVSupport
         product: PVSupport
     settings:
@@ -228,9 +235,9 @@ targets:
           - "Sources/Plugins/Core/Core/src/"
 
   # ===========================================================================
-  # PVMupenBridge — ObjC bridge layer
+  # PVMupen64PlusBridge — ObjC bridge layer
   # ===========================================================================
-  PVMupenBridge:
+  PVMupen64PlusBridge:
     type: framework
     platform: [iOS, tvOS]
     sources:
@@ -249,15 +256,20 @@ targets:
         product: PVEmulatorCore
       - package: PVLogging
         product: PVLogging
+      - package: PVLogging
+        product: PVLoggingObjC
       - package: PVObjCUtils
         product: PVObjCUtils
       - package: PVPlists
         product: PVPlists
+      - package: PVSettings
+        product: PVSettings
       - package: PVSupport
         product: PVSupport
     settings:
       base:
-        PRODUCT_NAME: PVMupenBridge
+        PRODUCT_NAME: PVMupen64PlusBridge
+        PRODUCT_MODULE_NAME: PVMupen64PlusBridge
         DEFINES_MODULE: YES
         CLANG_ENABLE_MODULES: YES
         CLANG_ENABLE_OBJC_ARC: YES
