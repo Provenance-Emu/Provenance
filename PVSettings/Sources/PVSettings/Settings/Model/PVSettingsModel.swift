@@ -29,6 +29,11 @@ extension Defaults.Keys {
 
     static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
 
+    /// How the game is presented when an external display (HDMI / USB-C / AirPlay) is connected.
+    /// Defaults to `.systemMirror` so that the device behaves identically to previous versions
+    /// unless the user opts into dedicated mode.
+    static let externalDisplayMode = Key<ExternalDisplayMode>("externalDisplayMode", default: .systemMirror)
+
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
 
     /// When false (default), the Recent Saves carousel collapses timed autosaves: only the
