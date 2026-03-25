@@ -150,7 +150,7 @@ public struct CloudSyncSettingsView: View {
                         .foregroundColor(.white)
 
                     if iCloudSyncEnabled && viewModel.iCloudAvailable {
-                        Text(verbatim: "Mode: \(currentiCloudSyncMode.description)")
+                        Text("cloud_sync.status.mode \(currentiCloudSyncMode.description)", bundle: .module)
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -873,7 +873,7 @@ public struct CloudSyncSettingsView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 if let currentFile = viewModel.currentSyncFile {
-                    Text(verbatim: "Current File: \(currentFile)")
+                    Text("cloud_sync.progress.current_file_format \(currentFile)", bundle: .module)
                         .font(.caption)
                         .foregroundColor(.white)
                         .lineLimit(1)
@@ -1022,10 +1022,10 @@ public struct CloudSyncSettingsView: View {
 
                                 Spacer()
 
-                                Text("cloud_sync.pagination.local_count", bundle: .module)
+                                Text("cloud_sync.pagination.local_header", bundle: .module)
                                     .foregroundColor(Color.retroBlue)
 
-                                Text("cloud_sync.pagination.icloud_count", bundle: .module)
+                                Text("cloud_sync.pagination.icloud_header", bundle: .module)
                                     .foregroundColor(.retroPink)
                             }
 
@@ -1068,7 +1068,7 @@ public struct CloudSyncSettingsView: View {
     /// Shows filename, directory, file sizes, and sync status with color-coded badges.
     private var syncDifferencesView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(verbatim: "Sync Differences (\(viewModel.syncDifferences.count))")
+            Text("cloud_sync.diff.header \(viewModel.syncDifferences.count)", bundle: .module)
                 .cloudSyncSectionTitle()
 
             ScrollView {

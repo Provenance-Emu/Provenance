@@ -28,6 +28,7 @@
 "settings.section.audio" = "Audio";
 "settings.section.video" = "Video";
 "settings.section.recording_streaming" = "Recording & Streaming";
+
 "settings.section.controllers" = "Controllers";
 "settings.section.analog_deadzone" = "Analog Deadzone";
 "settings.section.haptics_rumble" = "Haptics & Rumble";
@@ -54,8 +55,6 @@
 "settings.audio.volume" = "Volume";
 "settings.audio.volume_level" = "Volume Level";
 "settings.audio.volume_description" = "System-wide volume level for games.";
-
-"settings.video.section" = "Video";
 
 "settings.controller.deadzone" = "Deadzone";
 "settings.controller.core_compatibility" = "Core Compatibility";
@@ -92,6 +91,7 @@
 
 "cloud_sync.status.title" = "Sync Status";
 "cloud_sync.status.refresh" = "Refresh";
+"cloud_sync.status.mode %@" = "Mode: %@";
 "cloud_sync.status.local_files" = "Local Files";
 "cloud_sync.status.icloud_files" = "iCloud Files";
 "cloud_sync.status.differences" = "Differences";
@@ -103,6 +103,7 @@
 
 "cloud_sync.progress.title" = "Sync Progress";
 "cloud_sync.progress.current_file" = "Current File:";
+"cloud_sync.progress.current_file_format %@" = "Current File: %@";
 "cloud_sync.progress.progress_label" = "Progress:";
 "cloud_sync.progress.completed" = "Completed";
 "cloud_sync.progress.total" = "Total";
@@ -125,10 +126,13 @@
 "cloud_sync.reset.confirm" = "Reset";
 
 "cloud_sync.pagination.directory" = "Directory";
+"cloud_sync.pagination.local_header" = "Local";
+"cloud_sync.pagination.icloud_header" = "iCloud";
 "cloud_sync.pagination.local_count %lld" = "Local: %lld";
 "cloud_sync.pagination.icloud_count %lld" = "iCloud: %lld";
 "cloud_sync.pagination.total_files" = "Total Files";
 
+"cloud_sync.diff.header %lld" = "Sync Differences (%lld)";
 "cloud_sync.diff.no_differences" = "No differences found";
 "cloud_sync.diff.unknown" = "Unknown";
 "cloud_sync.diff.directory_unknown" = "Directory: Unknown";
