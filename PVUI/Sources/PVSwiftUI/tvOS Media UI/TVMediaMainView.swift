@@ -922,10 +922,22 @@ final class TVMediaLibraryModel: ObservableObject {
         await loadSystems()
         await loadFavorites()
 
-        // Reload games for already-known systems to keep shelves in sync
-        let identifiers = systems.map { $0.identifier }
-        for id in identifiers {
-            await loadGamesForSystemAsync(identifier: id)
+        // Only reload games for the selected system (visible) plus any already-loaded
+        // systems (to keep existing shelves in sync). Avoid reloading every system on
+        // each Realm write — with 50+ systems that causes O(n) sequential queries.
+        var identifiersToRefresh: Set<String> = []
+        if !selectedSystemIdentifier.isEmpty {
+            identifiersToRefresh.insert(selectedSystemIdentifier)
+        }
+        // Include systems that were already loaded so their cached data stays fresh.
+        for id in gamesBySystemIdentifier.keys {
+            identifiersToRefresh.insert(id)
+        }
+        // Run reloads concurrently instead of sequentially.
+        await withTaskGroup(of: Void.self) { group in
+            for id in identifiersToRefresh {
+                group.addTask { await self.loadGamesForSystemAsync(identifier: id) }
+            }
         }
     }
 
@@ -2633,8 +2645,13 @@ struct TVMediaHomeView: View {
 
     private func loadAllGames() async {
         isLoading = true
-        for system in model.systems {
-            await model.loadGamesForSystemAsync(identifier: system.identifier)
+        // Load all systems concurrently rather than sequentially to reduce
+        // startup time on devices with many systems (50+).
+        await withTaskGroup(of: Void.self) { group in
+            for system in model.systems {
+                let id = system.identifier
+                group.addTask { await model.loadGamesForSystemAsync(identifier: id) }
+            }
         }
         isLoading = false
 
@@ -2704,11 +2721,17 @@ struct TVMediaSystemsView: View {
         [GridItem(.adaptive(minimum: minCardWidth, maximum: maxCardWidth), spacing: gridSpacing)]
     }
 
-    /// Only show systems that have games
+    /// Only show systems that have games.
+    /// Uses the pre-loaded snapshot from `model.gamesBySystemIdentifier` to avoid
+    /// triggering live Realm queries (`system.games.count`) on the main thread.
     private var systemsWithGames: [PVSystem] {
         model.systems.filter { system in
-            let gameCount = model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count
-            return gameCount > 0
+            guard let cached = model.gamesBySystemIdentifier[system.identifier] else {
+                // Not yet loaded — exclude until games are available; loading is
+                // triggered lazily by TVMediaSystemShelfRow.ensureLoaded.
+                return false
+            }
+            return !cached.isEmpty
         }
     }
 
@@ -2725,7 +2748,7 @@ struct TVMediaSystemsView: View {
                             TVMediaSystemCard(
                                 system: system,
                                 icon: iconLoader.icon(for: system.identifier),
-                                gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count,
+                                gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? 0,
                                 isAtLeftEdge: isAtLeftEdge,
                                 focusCoordinator: focusCoordinator,
                                 focusedSystemID: $focusedSystemID
@@ -3413,23 +3436,16 @@ struct TVMediaSystemGamesView: View {
 struct TVMediaSystemHeader: View {
     let system: PVSystem
 
-    @ObservedObject private var iconLoader = SystemIconLoader.shared
-
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
-            ZStack {
-                if let icon = iconLoader.icon(for: system.identifier) {
-                    icon
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.white.opacity(0.85))
-                        .padding(14)
-                } else {
-                    Image(systemName: "gamecontroller.fill")
-                        .font(.largeTitle.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.5))
-                }
-            }
+            // TVMediaSystemIconView isolates the icon-load observer so only this
+            // container redraws when the icon arrives, not the whole header row.
+            TVMediaSystemIconView(
+                systemIdentifier: system.identifier,
+                size: 52,
+                placeholder: "gamecontroller.fill"
+            )
+            .foregroundStyle(.white.opacity(0.85))
             .frame(width: 80, height: 80)
 
             VStack(alignment: .leading, spacing: 6) {
@@ -3446,7 +3462,7 @@ struct TVMediaSystemHeader: View {
             Spacer()
         }
         .task {
-            await iconLoader.loadIcons(for: [system])
+            await SystemIconLoader.shared.loadIcons(for: [system])
         }
     }
 
@@ -3594,6 +3610,8 @@ struct TVMediaSearchView: View {
     @State private var isSearching: Bool = false
     @State private var showRecentSearches: Bool = false
     @State private var didRestoreLastSearch: Bool = false
+    /// Debounce timer — prevents a Realm search on every keystroke.
+    @State private var searchDebounceTask: Task<Void, Never>? = nil
 
     @AppStorage("TVMediaSearch.lastSearch") private var lastSearch: String = ""
     @AppStorage("TVMediaSearch.recentSearches") private var recentSearchesData: Data = Data()
@@ -3604,6 +3622,7 @@ struct TVMediaSearchView: View {
     @FocusState private var isRecentButtonFocused: Bool
 
     private let maxRecentSearches = 8
+    private let searchDebounceInterval: Duration = .milliseconds(300)
 
     private var recentSearches: [String] {
         (try? JSONDecoder().decode([String].self, from: recentSearchesData)) ?? []
@@ -3706,8 +3725,15 @@ struct TVMediaSearchView: View {
                 .foregroundStyle(.white)
                 .font(.system(size: 24, weight: .medium))
                 .focused($isSearchFieldFocused)
-                .onChange(of: text) { newValue in
-                    Task { await performSearch() }
+                .onChange(of: text) { _ in
+                    // Debounce: cancel any pending search and schedule a new one
+                    // after a short delay so we don't query Realm on every keystroke.
+                    searchDebounceTask?.cancel()
+                    searchDebounceTask = Task {
+                        try? await Task.sleep(for: searchDebounceInterval)
+                        guard !Task.isCancelled else { return }
+                        await performSearch()
+                    }
                 }
                 .onSubmit {
                     if !text.isEmpty {
@@ -3885,7 +3911,7 @@ struct TVMediaSearchView: View {
             // Recent search chips
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
-                    ForEach(Array(recentSearches.enumerated()), id: \.offset) { index, query in
+                    ForEach(Array(recentSearches.enumerated()), id: \.element) { index, query in
                         recentSearchChip(query: query, index: index)
                     }
                 }
@@ -4265,6 +4291,39 @@ struct TVMediaTopBar: View {
     }
 }
 
+// MARK: - System Icon View
+
+/// Isolated view that observes SystemIconLoader only for a single system.
+/// Keeping the observation here prevents a shared `@ObservedObject iconLoader`
+/// on shelf/header views from triggering full-shelf redraws every time any
+/// system icon loads.
+@available(tvOS 16.0, iOS 17.0, *)
+private struct TVMediaSystemIconView: View {
+    let systemIdentifier: String
+    let size: CGFloat
+    /// Fallback SF Symbol shown while the icon is loading.
+    var placeholder: String = "gamecontroller"
+    @ObservedObject private var iconLoader = SystemIconLoader.shared
+
+    init(systemIdentifier: String, size: CGFloat = 30, placeholder: String = "gamecontroller") {
+        self.systemIdentifier = systemIdentifier
+        self.size = size
+        self.placeholder = placeholder
+    }
+
+    var body: some View {
+        Group {
+            if let icon = iconLoader.icon(for: systemIdentifier) {
+                icon.resizable().scaledToFit()
+            } else {
+                Image(systemName: placeholder)
+                    .font(.system(size: size * 0.55, weight: .light))
+            }
+        }
+        .frame(width: size, height: size)
+    }
+}
+
 // MARK: - Shelf Components
 
 @available(tvOS 16.0, iOS 17.0, *)
@@ -4346,7 +4405,6 @@ struct TVMediaSystemShelfRow: View {
 
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
-    @ObservedObject private var iconLoader = SystemIconLoader.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -4370,21 +4428,17 @@ struct TVMediaSystemShelfRow: View {
                         .frame(width: 3, height: 28)
                 }
 
-                // System icon with subtle glow
-                if let icon = iconLoader.icon(for: system.identifier) {
-                    icon
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.white.opacity(0.9), Color.retroBlue.opacity(0.7)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
+                // System icon with subtle glow — rendered by TVMediaSystemIconView
+                // to isolate icon-load redraws from the parent shelf.
+                TVMediaSystemIconView(systemIdentifier: system.identifier, size: 30)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.white.opacity(0.9), Color.retroBlue.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
-                        .frame(width: 30, height: 30)
-                        .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
-                }
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
 
                 Text(system.name.uppercased())
                     .font(.system(size: 17, weight: .semibold, design: .default))
@@ -4431,7 +4485,8 @@ struct TVMediaSystemShelfRow: View {
         }
         .onAppear(perform: ensureLoaded)
         .task {
-            await iconLoader.loadIcons(for: [system])
+            // Trigger icon loading so TVMediaSystemIconView can display it.
+            await SystemIconLoader.shared.loadIcons(for: [system])
         }
     }
 }

@@ -924,8 +924,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                /// Use model hash as ID so view recreates when artwork URL changes
-                .id(model.hashValue)
+                /// Recreate the tile only when the artwork URL changes, not on every
+                /// model field update (playCount, lastPlayed, etc.).  Using the full
+                /// model.hashValue caused unnecessary view identity changes and scroll
+                /// stutter on Realm writes.
+                .id("\(model.id)_\(model.trueArtworkURL)")
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1060,8 +1063,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                /// Use model hash as ID so view recreates when artwork URL changes
-                .id(model.hashValue)
+                /// Recreate the tile only when the artwork URL changes, not on every
+                /// model field update (playCount, lastPlayed, etc.).  Using the full
+                /// model.hashValue caused unnecessary view identity changes and scroll
+                /// stutter on Realm writes.
+                .id("\(model.id)_\(model.trueArtworkURL)")
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1222,8 +1228,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         ) {
                             launchGame(md5: game.md5)
                         }
-                        /// Use model hash as ID so view recreates when artwork URL changes
-                        .id(game.hashValue)
+                        .id("\(game.id)_\(game.trueArtworkURL)")
                         .focusableIfAvailable()
                         .contextMenu {
                             if let live = liveGame(for: game) {
@@ -1598,8 +1603,7 @@ extension ConsoleGamesView {
         ) {
             launchGame(md5: game.md5)
         }
-        /// Use model hash as ID so view recreates when artwork URL changes
-        .id(game.hashValue)
+        .id("\(game.id)_\(game.trueArtworkURL)")
         .focusableIfAvailable()
         .contextMenu {
             if let live = liveGame(for: game) {
