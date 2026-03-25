@@ -508,9 +508,12 @@ public final class DOLJitManager {
 /// extern bool PVJITManagerIsAcquired(void) __attribute__((weak));
 /// ```
 ///
-/// By the time RetroArch responds to `RETRO_ENVIRONMENT_GET_JIT_CAPABLE`,
-/// `DOLJitManager.attemptToAcquireJitOnStartup()` has already run, so
-/// `acquired` reflects the true acquisition state without re-running detection.
+/// - Important: This function only reports the current value of `DOLJitManager.acquired`.
+///   It does not attempt to acquire JIT itself and does not guarantee that
+///   `DOLJitManager.attemptToAcquireJitOnStartup()` (or any other acquisition path)
+///   has already been run. Callers that rely on JIT being available must ensure
+///   acquisition has been attempted earlier in the app lifecycle. The `jit_available()`
+///   fallback path in `JITSupport.m` handles cases where acquisition hasn't run yet.
 @_cdecl("PVJITManagerIsAcquired")
 public func PVJITManagerIsAcquired() -> Bool {
     return DOLJitManager.acquired

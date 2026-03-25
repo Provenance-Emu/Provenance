@@ -9,11 +9,13 @@
 //  
 
 #import <Foundation/Foundation.h>
+#import <Security/SecTask.h>
 
 #import "JITSupport.h"
 
 #include <dlfcn.h>
 #include <mach/mach.h>
+#include <sys/stat.h>
 #include <mach-o/dyld.h>
 #include <mach-o/loader.h>
 #include <mach-o/getsect.h>
@@ -110,9 +112,54 @@ bool jit_available(void)
    if (PVJITManagerIsAcquired != NULL && PVJITManagerIsAcquired())
       return true;
 
-   // Fallback: DOLJitManager not linked or hasn't run yet.
-   // Check legacy jailbreak markers + CS_DEBUGGED directly.
+   // Fallback: DOLJitManager not linked or has not yet acquired JIT.
+   // Run platform-specific detection directly so cores can load even if
+   // attemptToAcquireJitOnStartup() hasn't been called yet.
 
+   // iOS 26+ native JIT: JITAuthorizer class present AND allow-jit entitlement set.
+   // Check the entitlement value is explicitly kCFBooleanTrue, not merely non-null,
+   // to avoid false-positives when the entitlement key is present but set to false.
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
+   static bool hasNativeJIT = false;
+   static dispatch_once_t nativeJITOnce = 0;
+   dispatch_once(&nativeJITOnce, ^{
+      if (NSClassFromString(@"JITAuthorizer") != nil) {
+         SecTaskRef task = SecTaskCreateFromSelf(NULL);
+         if (task) {
+            CFTypeRef value = SecTaskCopyValueForEntitlement(
+               task, CFSTR("com.apple.developer.kernel.allow-jit"), NULL);
+            if (value != NULL) {
+               hasNativeJIT = (CFGetTypeID(value) == CFBooleanGetTypeID() &&
+                               CFBooleanGetValue((CFBooleanRef)value));
+               CFRelease(value);
+            }
+            CFRelease(task);
+         }
+      }
+   });
+   if (hasNativeJIT) return true;
+
+   // TrollStore: check for file-system markers left by TrollStore on the device.
+   static bool hasTrollStore = false;
+   static dispatch_once_t trollStoreOnce = 0;
+   dispatch_once(&trollStoreOnce, ^{
+      const char *markers[] = {
+         "/var/mobile/Library/Application Support/TrollStore",
+         "/usr/lib/TrollStore",
+         "/var/containers/Bundle/TrollStore",
+      };
+      for (size_t i = 0; i < sizeof(markers) / sizeof(markers[0]); i++) {
+         struct stat st;
+         if (stat(markers[i], &st) == 0) {
+            hasTrollStore = true;
+            break;
+         }
+      }
+   });
+   if (hasTrollStore) return true;
+#endif
+
+   // Legacy jailbreak markers + CS_DEBUGGED (older jailbreaks / debugger-attached).
    static bool canOpenApps = false;
    static dispatch_once_t appsOnce = 0;
    dispatch_once(&appsOnce, ^{
