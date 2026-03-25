@@ -351,20 +351,28 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
 
     /// Fetches GB and GBC games on a detached background task, then publishes the
     /// frozen results to the main actor so the List can render without stalling.
+    /// Realm is opened and queried through `readGBAndGbcGamesFromCurrentThreadRealm()`
+    /// so thread-confined Realm objects are never used across suspension points.
     private func loadGBAndGbcGames() {
         Task.detached(priority: .userInitiated) {
-            guard let realm = try? await Realm() else { return }
-            // Use `systemIdentifier` (a direct Realm-indexed property) rather than
-            // traversing the optional `system` relationship, which is faster and
-            // avoids predicate failures when `system` is nil.
-            let gbSystemIDs = [SystemIdentifier.GB.rawValue, SystemIdentifier.GBC.rawValue]
-            let games = realm.objects(PVGame.self)
-                .filter("systemIdentifier IN %@ AND file != nil AND isDownloaded == true", gbSystemIDs)
-                .sorted(byKeyPath: "title")
-                .freeze()
-            let frozen = Array(games)
+            let frozen = Self.readGBAndGbcGamesFromCurrentThreadRealm()
             await MainActor.run { gbAndGbcGames = frozen }
         }
+    }
+
+    /// Reads GB/GBC library entries from a Realm opened on the caller's current thread.
+    /// The returned values are frozen snapshots so they can be safely consumed on the main actor.
+    private static func readGBAndGbcGamesFromCurrentThreadRealm() -> [PVGame] {
+        guard let realm = try? Realm() else { return [] }
+        // Use `systemIdentifier` (a direct Realm-indexed property) rather than
+        // traversing the optional `system` relationship, which is faster and
+        // avoids predicate failures when `system` is nil.
+        let gbSystemIDs = [SystemIdentifier.GB.rawValue, SystemIdentifier.GBC.rawValue]
+        let games = realm.objects(PVGame.self)
+            .filter("systemIdentifier IN %@ AND file != nil AND isDownloaded == true", gbSystemIDs)
+            .sorted(byKeyPath: "title")
+            .freeze()
+        return Array(games)
     }
 }
 
