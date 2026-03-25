@@ -1122,24 +1122,22 @@ void retro_run()
 
 	video_cb(is_dupe ? 0 : RETRO_HW_FRAME_BUFFER_VALID, framebufferWidth, framebufferHeight, 0);
 
-	// 30fps detection: after a window of 120 frames, check the dupe ratio.
-	// If ≥45% of frames are dupes the game renders at 30fps (one real frame every two vblanks).
-	// If <20% are dupes the game renders at 60fps. Otherwise keep the current interval.
-	// Based on upstream flyinghead/flycast commit fb69bd8.
-	if (libretro_detect_vsync_swap_interval) {
+	// 30fps detection: accumulate dupe-frame counts over a 120-run window and, when
+	// ≥45% of frames are dupes, report 30fps to the frontend (interval=2).
+	// Only run while interval==1: once upgraded to 30fps the frontend calls retro_run()
+	// at 30fps so dupes drop to ~0%, which would immediately re-trigger the <20% branch
+	// and cause a flip-flop.  Reset happens in retro_unload_game() so each new game
+	// re-runs detection from scratch.  Based on upstream flyinghead/flycast commit fb69bd8.
+	if (libretro_detect_vsync_swap_interval && libretro_vsync_swap_interval == 1) {
 		swapDetectFrames++;
 		if (is_dupe)
 			swapDetectDupes++;
 		if (swapDetectFrames >= 120) {
-			unsigned newInterval = libretro_vsync_swap_interval;
-			if (swapDetectDupes * 100 >= swapDetectFrames * 45)
-				newInterval = 2; // ≥45% dupes → 30fps game
-			else if (swapDetectDupes * 100 < swapDetectFrames * 20)
-				newInterval = 1; // <20% dupes → 60fps game
+			bool is30fps = (swapDetectDupes * 100 >= swapDetectFrames * 45);
 			swapDetectFrames = 0;
 			swapDetectDupes  = 0;
-			if (newInterval != libretro_vsync_swap_interval) {
-				libretro_vsync_swap_interval = newInterval;
+			if (is30fps) {
+				libretro_vsync_swap_interval = 2; // ≥45% dupes → 30fps game
 				retro_system_av_info avinfo;
 				setAVInfo(avinfo);
 				environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &avinfo);
