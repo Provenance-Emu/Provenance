@@ -309,6 +309,16 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - **Thread safety**: Stella bridge uses `@synchronized(self)` for `_pendingMouseDX/Y` and `_mouseButtonLeft` — both written from the main thread (companion events) and read from the emulation thread (`input_state_callback`).
 - New trackball game additions: add MD5 hashes and title patterns to `TrackballGameRegistry.knownTrackballGameMD5s` / `knownTrackballGameTitlePatterns`. Never inline trackball checks in core code.
 
+### Multi-Select / Batch Operations Pattern (added in #2821)
+- `ConsoleGamesViewModel.isMultiSelectMode` — Bool flag; toggled via `enterMultiSelectMode()` / `exitMultiSelectMode()`.
+- `ConsoleGamesViewModel.selectedGameMD5s` — `Set<String>` of selected game MD5 hashes (never Realm objects). All batch operations consume this set.
+- `multiSelectOverlay(md5:content:)` in `ConsoleGamesView+MultiSelect.swift` — wraps a game cell with a selection badge overlay; **must** call `.allowsHitTesting(!isMultiSelectMode)` on the inner content so the outer `onTapGesture` controls selection.
+- `gameAction(for:)` returns a closure that either toggles selection (multi-select mode) or launches the game (normal mode). Use this as the action for all `GameItemPresentableView` cells in `showGamesGrid`/`showGamesList`.
+- `ROMTitleNormalizer` — pure enum in `PVUI/Sources/PVSwiftUI/Library/`; no Realm or file-system access. All new normalisation rules go here.
+- Batch Realm writes: run on `MainActor` (use `Task { @MainActor in realm.write { ... } }`) — not `Task.detached` — to use the main-thread Realm instance.
+- **Flag 🟠 MAJOR** if batch writes use `Task.detached` and access `RomDatabase.sharedInstance.realm` (main-thread Realm from background thread).
+- **Flag 🟡 MINOR** if new batch operations are added without a `NormalizeTitlePreviewRow`-style preview step for destructive changes.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:
