@@ -25,6 +25,15 @@ import FreemiumKit
 struct RetroMenuView: View {
     let emulatorVC: PVEmulatorViewController
     let dismissAction: (Bool) -> Void
+
+    /// Allow callers to open the menu at a specific tab (e.g. .skins from tile-menu).
+    /// Defaults to .main for backward compatibility.
+    init(emulatorVC: PVEmulatorViewController, dismissAction: @escaping (Bool) -> Void, initialCategory: MenuCategory = .main) {
+        self.emulatorVC = emulatorVC
+        self.dismissAction = dismissAction
+        _selectedCategory = State(initialValue: initialCategory)
+    }
+
     @ObservedObject private var themeManager = ThemeManager.shared
     @Default(.showFPSCount) private var showFPSCount
 

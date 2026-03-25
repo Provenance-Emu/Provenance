@@ -59,13 +59,24 @@ final class PauseTileMenuViewModel: ObservableObject {
         let supportsCheatCodes = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
         let shouldSave = Self.shouldSaveOnQuit(emulatorVC: emulatorVC)
 
+        // Resume + quit tiles are placed at the top (positions 0-2) to match
+        // RetroMenuView's ordering where quit is near the top of the main section.
         var gameTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "resume",     icon: "play.fill",                 label: String(localized: "Resume"),      colorKey: .green),
-            PauseMenuTile(id: "saveState",  icon: "square.and.arrow.down",     label: String(localized: "Save State"),  isEnabled: supportsSaveStates,           colorKey: .cyan),
-            PauseMenuTile(id: "loadState",  icon: "arrowshape.turn.up.left",   label: String(localized: "Quick Load"),  isEnabled: supportsSaveStates && hasSave, colorKey: .blue),
-            PauseMenuTile(id: "browseSaves",icon: "list.bullet.rectangle.portrait", label: String(localized: "Saves"),  isEnabled: supportsSaveStates,           colorKey: .purple, dismissOnTap: false),
-            PauseMenuTile(id: "reset",      icon: "arrow.counterclockwise",    label: String(localized: "Reset"),       colorKey: .orange),
+            PauseMenuTile(id: "resume", icon: "play.fill", label: String(localized: "Resume"), colorKey: .green),
         ]
+        if shouldSave {
+            gameTiles.append(PauseMenuTile(id: "saveQuit", icon: "square.and.arrow.down.on.square", label: String(localized: "Save & Quit"), colorKey: .cyan))
+        }
+        gameTiles.append(PauseMenuTile(id: "quit", icon: "xmark.circle", label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit"), colorKey: .pink))
+
+        // Save state tiles
+        gameTiles += [
+            PauseMenuTile(id: "saveState",   icon: "square.and.arrow.down",         label: String(localized: "Save State"),  isEnabled: supportsSaveStates,            colorKey: .cyan),
+            PauseMenuTile(id: "loadState",   icon: "arrowshape.turn.up.left",        label: String(localized: "Quick Load"),  isEnabled: supportsSaveStates && hasSave, colorKey: .blue),
+            PauseMenuTile(id: "browseSaves", icon: "list.bullet.rectangle.portrait", label: String(localized: "Saves"),       isEnabled: supportsSaveStates,            colorKey: .purple, dismissOnTap: false),
+        ]
+
+        gameTiles.append(PauseMenuTile(id: "reset", icon: "arrow.counterclockwise", label: String(localized: "Reset"), colorKey: .orange))
         if supportsCheatCodes {
             gameTiles.append(PauseMenuTile(id: "cheats", icon: "wand.and.stars", label: String(localized: "Cheats"), colorKey: .purple))
         }
@@ -147,6 +158,17 @@ final class PauseTileMenuViewModel: ObservableObject {
         ))
         #endif
 
+        // Skins tile — opens RetroMenuView at the SKINS tab (iOS only)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        gameTiles.append(PauseMenuTile(
+            id: "skins",
+            icon: "paintbrush.pointed",
+            label: String(localized: "Skins"),
+            colorKey: .orange,
+            dismissOnTap: false
+        ))
+        #endif
+
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if featureFlags.netplayEnabled && Self.coreSupportsNetplay(emulatorVC) {
@@ -171,16 +193,22 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
-        if shouldSave {
-            gameTiles.append(PauseMenuTile(id: "saveQuit", icon: "square.and.arrow.down.on.square", label: String(localized: "Save & Quit"), colorKey: .cyan))
-        }
-        gameTiles.append(PauseMenuTile(id: "quit", icon: "xmark.circle", label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit"), colorKey: .pink))
-
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
 
         // ── QUICK SETTINGS section ──────────────────────────────────────
         var displayTiles: [PauseMenuTile] = []
         displayTiles.append(Self.filterCycleTile(metalFilterMode: metalFilterMode))
+        // Shader settings tile — shown when the current filter has adjustable parameters
+        let currentFilter = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
+        if currentFilter.hasEditableParameters {
+            displayTiles.append(PauseMenuTile(
+                id: "shaderSettings",
+                icon: "slider.horizontal.3",
+                label: String(localized: "Shader Settings"),
+                colorKey: .teal,
+                dismissOnTap: false
+            ))
+        }
         if let rumbleTile = Self.rumbleToggleTile(core: emulatorVC.core, hapticFeedbackEnabled: hapticFeedbackEnabled) {
             displayTiles.append(rumbleTile)
         }
@@ -249,6 +277,35 @@ final class PauseTileMenuViewModel: ObservableObject {
                 dismissOnTap: false
             ))
         }
+
+        // Port device type picker — shown when core supports per-port device selection
+        if let portDeviceCore = emulatorVC.core as? (any PortDeviceConfigurable),
+           !portDeviceCore.controllerPortDescriptors.isEmpty {
+            coreTiles.append(PauseMenuTile(
+                id: "portDevices",
+                icon: "gamecontroller",
+                label: String(localized: "Port Devices"),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
+        }
+
+        // MIDI device picker — shown when core supports MIDI (iOS only, not tvOS or macCatalyst).
+        // Note: RetroMenuView+MIDIPicker uses `#if canImport(CoreMIDI) && !os(tvOS)` and therefore
+        // includes macCatalyst. The tile menu intentionally excludes macCatalyst because the compact
+        // tile layout doesn't adapt well to pointer/keyboard workflows; users can still reach MIDI
+        // settings via the classic RetroMenuView on macCatalyst.
+        #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
+        if emulatorVC.core.supportsMIDI {
+            coreTiles.append(PauseMenuTile(
+                id: "midiDevice",
+                icon: "pianokeys",
+                label: String(localized: "MIDI Device"),
+                colorKey: .purple,
+                dismissOnTap: false
+            ))
+        }
+        #endif
 
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
             let isPaletteProviding = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
