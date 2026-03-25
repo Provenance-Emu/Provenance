@@ -163,7 +163,7 @@ public final class PVRemappableController: NSObject {
             // (pressedChangedHandler alone won't reach PVControllerManager or the remapping pipeline).
             dualSense.buttonOptions?.valueChangedHandler = { [weak self] (_, _, pressed) in
                 guard pressed else { return }
-                self?.handleSpecialButton(.share)
+                self?.handleSpecialButton(.createButton)
             }
         }
     }
@@ -529,7 +529,7 @@ public final class PVRemappableController: NSObject {
                 // DualSense: buttonOptions is the "Share" button.
                 if let dualSense = gamepad as? GCDualSenseGamepad {
                     switch element {
-                    case dualSense.buttonOptions: return .share
+                    case dualSense.buttonOptions: return .createButton
                     case dualSense.touchpadButton: return .touchpadButton
                     default: break
                     }

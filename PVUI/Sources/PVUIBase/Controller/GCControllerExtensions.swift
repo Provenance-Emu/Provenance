@@ -6,6 +6,7 @@
 //  Copyright © 2019 Provenance Emu. All rights reserved.
 //
 
+import Foundation
 import GameController
 import PVLogging
 
