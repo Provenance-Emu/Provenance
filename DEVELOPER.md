@@ -521,14 +521,14 @@ This sort is performed by `PVLookup.sortArtworkByType(_:)`, which only compares 
 > Note: Converting the result array to a `Set<ArtworkMetadata>` only removes exact `(url, type, source)` duplicates. If you need **global** deduplication across sources (e.g. by URL or by `(url, type)`), build a dictionary keyed by your desired key and then take the values, for example:
 >
 > ```swift
-> let byURL = Dictionary(uniqueKeysWithValues: artworks.map { ($0.url, $0) })
+> let byURL = Dictionary(artworks.map { ($0.url, $0) }, uniquingKeysWith: { first, _ in first })
 > let globallyDedupedByURL = Array(byURL.values)
 > ```
 >
 > or, if you need `(url, type)` as the key:
 >
 > ```swift
-> let byURLAndType = Dictionary(uniqueKeysWithValues: artworks.map { (($0.url, $0.type), $0) })
+> let byURLAndType = Dictionary(artworks.map { (($0.url, $0.type), $0) }, uniquingKeysWith: { first, _ in first })
 > let globallyDedupedByURLAndType = Array(byURLAndType.values)
 > ```
 
