@@ -587,6 +587,11 @@ void extract_bundles();
             [self syncResource:src to:verFile];
         }
 
+        // After the primary config is on disk, stamp in the locale-derived
+        // user_language so existing English-defaulted configs get updated.
+        if ([fm fileExistsAtPath:fileName]) {
+            [self applyUserLanguageToRetroArchConfig:fileName];
+        }
 
         if(shouldUpdateAssets) {
             NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
@@ -627,6 +632,15 @@ void extract_bundles();
         // Store flag to trigger updates after RetroArch is initialized
         self.shouldTriggerRetroArchUpdates = YES;
     }
+
+    // Always sync user_language in retroarch.cfg so locale/override changes
+    // take effect on next core launch (not just on first-run or version update).
+    NSString *mainCfgPath = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
+                             self.documentsDirectory];
+    if ([fm fileExistsAtPath:mainCfgPath]) {
+        [self applyUserLanguageToRetroArchConfig:mainCfgPath];
+    }
+
     // Additional Override Settings
     NSString* content = @"video_driver = \"vulkan\"\n";
     if (self.gsPreference == 0) {
@@ -1133,6 +1147,59 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     } else {
         ILOG(@"Successfully merged %lu forced defaults into user cfg at %@",
              (unsigned long)forcedValues.count, userPath);
+    }
+}
+
+/// Updates (or adds) `user_language = "N"` in the RetroArch config file at
+/// `configPath` to match the language resolved from the `coreLanguage` user setting.
+/// Called every time `writeConfigFile` runs so that locale changes take effect at
+/// the next core launch without requiring a config reset.
+- (void)applyUserLanguageToRetroArchConfig:(NSString *)configPath {
+    NSError *readErr = nil;
+    NSString *content = [NSString stringWithContentsOfFile:configPath
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:&readErr];
+    if (!content) {
+        ELOG(@"applyUserLanguageToRetroArchConfig: failed to read %@: %@",
+             configPath, readErr.localizedDescription);
+        return;
+    }
+
+    NSInteger langID = [PVRetroArchCoreBridge resolvedUserLanguage];
+    NSString *newLine = [NSString stringWithFormat:@"user_language = \"%ld\"", (long)langID];
+    ILOG(@"applyUserLanguageToRetroArchConfig: setting user_language = %ld", (long)langID);
+
+    NSError *regexErr = nil;
+    NSRegularExpression *regex = [NSRegularExpression
+        regularExpressionWithPattern:@"(?m)^[ \\t]*user_language[ \\t]*=.*$"
+                             options:0
+                               error:&regexErr];
+    if (!regex) {
+        ELOG(@"applyUserLanguageToRetroArchConfig: bad regex: %@", regexErr.localizedDescription);
+        return;
+    }
+
+    NSMutableString *result = [content mutableCopy];
+    NSTextCheckingResult *match = [regex firstMatchInString:result
+                                                    options:0
+                                                      range:NSMakeRange(0, result.length)];
+    if (match) {
+        [result replaceCharactersInRange:match.range withString:newLine];
+    } else {
+        if (![result hasSuffix:@"\n"]) {
+            [result appendString:@"\n"];
+        }
+        [result appendFormat:@"%@\n", newLine];
+    }
+
+    NSError *writeErr = nil;
+    BOOL ok = [result writeToFile:configPath
+                       atomically:YES
+                         encoding:NSUTF8StringEncoding
+                            error:&writeErr];
+    if (!ok || writeErr) {
+        ELOG(@"applyUserLanguageToRetroArchConfig: write failed for %@: %@",
+             configPath, writeErr.localizedDescription);
     }
 }
 

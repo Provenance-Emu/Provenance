@@ -1397,3 +1397,50 @@ struct ExternalDisplayModeTests {
     }
 }
 
+// MARK: - CoreLanguageSetting Tests
+
+@Suite("CoreLanguageSetting")
+struct CoreLanguageSettingTests {
+
+    @Test("default coreLanguage is systemLocale")
+    func coreLanguageDefault() {
+        Defaults.reset(.coreLanguage)
+        #expect(Defaults[.coreLanguage] == .systemLocale)
+    }
+
+    @Test("explicit override round-trips through Defaults")
+    func coreLanguageExplicitOverride() {
+        Defaults.reset(.coreLanguage)
+        defer { Defaults.reset(.coreLanguage) }
+        Defaults[.coreLanguage] = .japanese
+        #expect(Defaults[.coreLanguage] == .japanese)
+        Defaults.reset(.coreLanguage)
+        #expect(Defaults[.coreLanguage] == .systemLocale)
+    }
+
+    @Test("systemLocale raw value is -1")
+    func systemLocaleRawValue() {
+        #expect(CoreLanguageSetting.systemLocale.rawValue == -1)
+    }
+
+    @Test("retroArchLanguageID is nil for systemLocale")
+    func retroArchLanguageIDSystemLocale() {
+        #expect(CoreLanguageSetting.systemLocale.retroArchLanguageID == nil)
+    }
+
+    @Test("retroArchLanguageID matches raw value for explicit languages")
+    func retroArchLanguageIDExplicit() {
+        #expect(CoreLanguageSetting.english.retroArchLanguageID == 0)
+        #expect(CoreLanguageSetting.japanese.retroArchLanguageID == 1)
+        #expect(CoreLanguageSetting.french.retroArchLanguageID == 2)
+        #expect(CoreLanguageSetting.chineseSimplified.retroArchLanguageID == 11)
+        #expect(CoreLanguageSetting.russian.retroArchLanguageID == 16)
+    }
+
+    @Test("allCases contains systemLocale and all explicit languages")
+    func allCasesCount() {
+        #expect(CoreLanguageSetting.allCases.contains(.systemLocale))
+        #expect(CoreLanguageSetting.allCases.count >= 17)
+    }
+}
+
