@@ -41,6 +41,12 @@ extension PVMelonDSCore: PVDSSystemResponderClient {
     public func didRelease(_ button: PVCoreBridge.PVDSButton, forPlayer player: Int) {
         (_bridge as! PVDSSystemResponderClient).didRelease(button, forPlayer: player)
     }
+    public func touchScreenAtPoint(_ point: CGPoint) {
+        (_bridge as? PVDSSystemResponderClient)?.touchScreenAtPoint?(point)
+    }
+    public func releaseScreenTouch() {
+        (_bridge as? PVDSSystemResponderClient)?.releaseScreenTouch?()
+    }
 }
 
 extension PVMelonDSCore: CoreOptional {

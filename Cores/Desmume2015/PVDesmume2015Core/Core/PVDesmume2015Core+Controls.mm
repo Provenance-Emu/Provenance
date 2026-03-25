@@ -284,4 +284,19 @@ typedef unsigned int   u32;
     [self didReleaseDSButton:(PVDSButton)button forPlayer:player];
 }
 
+#pragma mark - DS Touchscreen
+
+- (void)touchScreenAtPoint:(CGPoint)point {
+    // DS hardware touchscreen coordinates: x in 0-255, y in 0-191
+    // Normalize to 0.0-1.0 for the libretro pointer state used by RETRO_DEVICE_POINTER
+    CGFloat normalizedX = point.x / 255.0;
+    CGFloat normalizedY = point.y / 191.0;
+    [self setMousePosition:CGPointMake(normalizedX, normalizedY)];
+    [self setLeftMouseButtonPressed:YES];
+}
+
+- (void)releaseScreenTouch {
+    [self setLeftMouseButtonPressed:NO];
+}
+
 @end
