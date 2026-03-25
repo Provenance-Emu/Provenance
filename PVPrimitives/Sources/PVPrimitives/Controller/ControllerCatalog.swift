@@ -43,6 +43,7 @@ public enum ControllerCatalog {
         xboxSeriesX,
         switchPro,
         dualShock4,
+        eightBitdoSN30Pro,
         mfiStandard,
         siriRemote,
         iCade,
@@ -146,6 +147,45 @@ public enum ControllerCatalog {
         imageAssetName: "controller-dualshock4"
     )
 
+    // MARK: - Third-Party Controllers
+
+    /// 8BitDo SN30 Pro / Pro+ / Pro 2 — Recommended mode: Switch (S)
+    ///
+    /// 8BitDo controllers support multiple connection modes. **Switch mode** is
+    /// strongly recommended for Provenance: the controller appears as a standard
+    /// GCController with full button coverage including analog sticks and triggers.
+    ///
+    /// Mode selection at pairing time:
+    /// - **Switch mode (S)** — Hold Start+Y before power-on. Recommended.
+    /// - **Android mode (D)** — Hold Start+B. Works as GCController; fewer features.
+    /// - **iCade mode** — Hold Start+B (some variants). Keyboard HID; no analog input.
+    ///
+    /// In Switch mode Provenance detects the controller automatically — no iCade
+    /// configuration is required.  Select "8Bitdo SN30 Pro (iCade Mode)" in
+    /// Settings > Controllers > iCade only when using iCade/keyboard mode.
+    public static let eightBitdoSN30Pro = ControllerGuideInfo(
+        name: "8BitDo SN30 Pro / Pro+",
+        controllerType: .mfi,
+        supportedPlatforms: .iOS,
+        pairingInstructions: [
+            "Power on in Switch mode: hold the Start button + Y button simultaneously until the LEDs blink rapidly.",
+            "On your iPhone or iPad, open Settings > Bluetooth.",
+            "Select \"8BitDo SN30 Pro\" (or similar) from the list of available devices.",
+            "Provenance detects it automatically — no iCade configuration needed in Switch mode.",
+            "For iCade mode (no analog sticks): power on with Start + B, then in Provenance go to Settings > Controllers > iCade Controller and select \"8Bitdo SN30 Pro (iCade Mode)\".",
+        ],
+        featureNotes: [
+            "Switch mode (recommended): full GCController support — 4 face buttons, L1/L2/R1/R2, dual analog sticks, L3/R3, +/−.",
+            "Android mode: connects as GCController but analog triggers may report as digital only on some iOS versions.",
+            "iCade mode: digital D-pad + 8 buttons only — no analog sticks, no Start/Select, no triggers.",
+            "Extra back buttons (if present on Pro 2) are not individually accessible via the GCController API.",
+            "Screenshot button is not exposed to third-party apps in any mode.",
+            "Use the button remapping UI (Settings > Controllers > Remap) to reassign any button in Switch mode.",
+        ],
+        isRecommended: false,
+        imageAssetName: nil
+    )
+
     /// Generic Apple MFi certified controller
     public static let mfiStandard = ControllerGuideInfo(
         name: "MFi Game Controller",
@@ -202,7 +242,8 @@ public enum ControllerCatalog {
             "Flip the power switch on the iCade to the ON position.",
             "Open the iCade app (required for initial setup) and follow the on-screen pairing steps.",
             "Once paired via the iCade app, the cabinet is available to Provenance.",
-            "Enable iCade in Provenance Settings > Controllers > iCade.",
+            "Enable iCade in Provenance Settings > Controllers > iCade Controller and choose \"Standard Controller\".",
+            "For 8BitDo controllers in iCade mode, choose the matching 8BitDo profile instead.",
         ],
         featureNotes: [
             "8-directional joystick and 8 buttons (4 top row, 4 front row).",
@@ -210,6 +251,8 @@ public enum ControllerCatalog {
             "No analog sticks or analog triggers — digital inputs only.",
             "Legacy hardware — no longer manufactured; use modern controllers for new purchases.",
             "Best suited for arcade-style games: MAME, NES, SNES, Sega Genesis.",
+            "8BitDo controllers can connect in iCade mode — see the 8BitDo SN30 Pro entry for details.",
+            "Mocute 057/060 in HID mode: select \"Mocute Controller\" from the iCade profile list.",
             "Not supported on tvOS.",
         ],
         isRecommended: false,

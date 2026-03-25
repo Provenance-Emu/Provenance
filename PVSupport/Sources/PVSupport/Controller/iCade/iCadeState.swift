@@ -40,9 +40,9 @@ public struct iCadeControllerState: OptionSet, Hashable, @preconcurrency CustomS
     static let buttonG = iCadeControllerState(rawValue: 1 << 10)
     static let buttonH = iCadeControllerState(rawValue: 1 << 11)
     static let buttonI = iCadeControllerState(rawValue: 1 << 13) // Mocute Left Trigger
-    static let buttonJ = iCadeControllerState(rawValue: 1 << 13) // Mocute Right Trigger
-    static let buttonK = iCadeControllerState(rawValue: 1 << 14)
-    static let buttonL = iCadeControllerState(rawValue: 1 << 15)
+    static let buttonJ = iCadeControllerState(rawValue: 1 << 14) // Mocute Right Trigger
+    static let buttonK = iCadeControllerState(rawValue: 1 << 15)
+    static let buttonL = iCadeControllerState(rawValue: 1 << 16)
 
     static let joystickStates: iCadeControllerState = [.joystickUp, .joystickDown, .joystickLeft, .joystickRight]
     static let buttons: iCadeControllerState = [

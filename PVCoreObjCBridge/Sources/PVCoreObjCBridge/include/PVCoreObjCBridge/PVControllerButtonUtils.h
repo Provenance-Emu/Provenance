@@ -15,6 +15,68 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// =============================================================================
+// THIRD-PARTY CONTROLLER BUTTON MATRIX
+// =============================================================================
+//
+// 8BitDo SN30 Pro / Pro+ / Pro 2 — GCController button mapping
+//
+// Recommended pairing mode: Switch mode (Start + Y at power-on).
+// The controller appears as a standard GCExtendedGamepad in iOS 14+.
+//
+// | Physical Button | GCController property         | Notes                     |
+// |-----------------|-------------------------------|---------------------------|
+// | A (south)       | extendedGamepad.buttonA       | Always works              |
+// | B (east)        | extendedGamepad.buttonB       | Always works              |
+// | X (north)       | extendedGamepad.buttonX       | Always works              |
+// | Y (west)        | extendedGamepad.buttonY       | Always works              |
+// | L1              | extendedGamepad.leftShoulder  | Always works              |
+// | R1              | extendedGamepad.rightShoulder | Always works              |
+// | L2 (trigger)    | extendedGamepad.leftTrigger   | Analog in Switch mode     |
+// | R2 (trigger)    | extendedGamepad.rightTrigger  | Analog in Switch mode     |
+// | L3 (stick click)| extendedGamepad.leftThumbstickButton  | Switch mode only|
+// | R3 (stick click)| extendedGamepad.rightThumbstickButton | Switch mode only|
+// | Start / +       | extendedGamepad.buttonMenu    | Maps to emulator Start    |
+// | Select / −      | extendedGamepad.buttonOptions | Maps to emulator Select   |
+// | Left stick      | extendedGamepad.leftThumbstick| Switch mode (analog)      |
+// | Right stick     | extendedGamepad.rightThumbstick| Switch mode (analog)     |
+// | Home            | extendedGamepad.buttonHome    | System-reserved; may be nil|
+// | Screenshot      | Not exposed by GCController   | Not accessible            |
+// | Back paddle M1  | Not individually accessible   | Merges with another button|
+// | Back paddle M2  | Not individually accessible   | Merges with another button|
+//
+// Android mode (Start + B): L2/R2 may be reported as digital (0 or 1 only)
+// on some iOS versions. All other buttons behave identically to Switch mode.
+//
+// iCade mode: 8 digital buttons + D-pad only. Select PViCade8BitdoSN30ProController
+// in Settings > Controllers > iCade. No analog sticks or triggers.
+//
+// -----------------------------------------------------------------------------
+//
+// Mocute 057 / 060 — GCController button mapping (HID mode)
+//
+// The Mocute connects in standard HID gamepad mode on iPadOS 14+.
+// Select "Mocute Controller" in Settings > Controllers > iCade for iCade mode.
+//
+// | Physical Button | GCController property         | Notes                     |
+// |-----------------|-------------------------------|---------------------------|
+// | A (south)       | extendedGamepad.buttonA       | Works                     |
+// | B (east)        | extendedGamepad.buttonB       | Works                     |
+// | X (north)       | extendedGamepad.buttonX       | Works                     |
+// | Y (west)        | extendedGamepad.buttonY       | Works                     |
+// | L1              | extendedGamepad.leftShoulder  | Works                     |
+// | R1              | extendedGamepad.rightShoulder | Works                     |
+// | L2              | extendedGamepad.leftTrigger   | Digital only (no analog)  |
+// | R2              | extendedGamepad.rightTrigger  | Digital only (no analog)  |
+// | Start           | extendedGamepad.buttonMenu    | Maps to emulator Start    |
+// | Select          | extendedGamepad.buttonOptions | May be nil on some units  |
+// | D-pad           | extendedGamepad.dpad          | Digital 8-direction       |
+// | Left stick      | extendedGamepad.leftThumbstick| Depends on firmware       |
+// | Right stick     | extendedGamepad.rightThumbstick| Depends on firmware      |
+// | Thumbstick btns | nil — not exposed             | L3/R3 not accessible      |
+//
+// =============================================================================
+
 #pragma mark - Share/Create/Capture Button Detection
 
 /**

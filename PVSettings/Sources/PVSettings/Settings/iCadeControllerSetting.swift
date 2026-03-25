@@ -20,6 +20,8 @@ public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, 
     case eightBitdoZero
     case steelSeries
     case mocute
+    case eightBitdoSNES30
+    case eightBitdoSN30Pro
 
     public var description: String {
         switch self {
@@ -35,6 +37,10 @@ public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, 
             return "SteelSeries Free Controller"
         case .mocute:
             return "Mocute Controller"
+        case .eightBitdoSNES30:
+            return "8Bitdo SNES30 Controller"
+        case .eightBitdoSN30Pro:
+            return "8Bitdo SN30 Pro (iCade Mode)"
         }
     }
 }

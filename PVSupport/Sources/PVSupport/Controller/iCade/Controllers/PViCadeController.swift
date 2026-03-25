@@ -62,10 +62,6 @@ public class PViCadeController: GCController {
             return iCadeGamepad.buttonX
         case iCadeControllerState.buttonH:
             return iCadeGamepad.buttonA
-        case iCadeControllerState.buttonH:
-            return iCadeGamepad.leftTrigger
-        case iCadeControllerState.buttonH:
-            return iCadeGamepad.rightTrigger
         default:
             return nil
         }
