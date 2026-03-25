@@ -880,8 +880,8 @@ fileprivate extension DirectoryWatcher {
                     }
                 }
 
-                for item in itemsToImport {
-                    await GameImporter.shared.addImports(forPaths: [item])
+                if !itemsToImport.isEmpty {
+                    await GameImporter.shared.addImports(forPaths: itemsToImport)
                 }
 
                 ILOG("Finished processing existing files")
