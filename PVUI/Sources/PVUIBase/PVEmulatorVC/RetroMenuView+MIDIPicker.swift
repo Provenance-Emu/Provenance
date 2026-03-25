@@ -18,6 +18,7 @@
 import SwiftUI
 import PVCoreBridge
 import PVEmulatorCore
+import PVSettings
 import PVThemes
 #if canImport(CoreMIDI) && !os(tvOS)
 import CoreMIDI
@@ -40,6 +41,22 @@ extension RetroMenuView {
         if coreSupportsMIDI {
             if #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
                 MIDIPickerSectionView(palette: ThemeManager.shared.currentPalette)
+            }
+        }
+#else
+        EmptyView()
+#endif
+    }
+
+    /// Toggle section for the RetroArch-level MIDI driver, shown in the CORE tab
+    /// for libretro cores on MIDI-capable systems.
+    /// The setting is applied to `retroarch.cfg` on the next session start.
+    @ViewBuilder
+    var retroArchMIDISection: some View {
+#if canImport(CoreMIDI) && !os(tvOS)
+        if isRetroArchMIDICapable {
+            if #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
+                RetroArchMIDIToggleView(palette: ThemeManager.shared.currentPalette)
             }
         }
 #else
@@ -362,6 +379,69 @@ private struct AutoDetectButton: View {
                         lineWidth: 1
                     )
             )
+    }
+}
+
+// MARK: - RetroArchMIDIToggleView
+
+/// Toggle that enables or disables the RetroArch CoreMIDI driver for the next session.
+/// Writes to `Defaults[.retroArchMIDIEnabled]`; the Obj-C `applyMIDIPreferenceToUserCfg:`
+/// method reads this key at core startup and patches `retroarch.cfg` accordingly.
+@available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
+struct RetroArchMIDIToggleView: View {
+    let palette: UXThemePalette
+
+    @Default(.retroArchMIDIEnabled) private var midiEnabled
+
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "pianokeys")
+                    .font(.system(size: 10, weight: .bold))
+                Text(String(localized: "RETROARCH MIDI"))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .tracking(1.5)
+                Spacer()
+            }
+            .foregroundColor(headerColor)
+            .padding(.top, 6)
+
+            Toggle(isOn: $midiEnabled) {
+                HStack(spacing: 8) {
+                    Image(systemName: midiEnabled ? "waveform.path" : "waveform.path.badge.minus")
+                        .font(.system(size: 13))
+                        .foregroundColor(palette.defaultTintColor.swiftUIColor)
+                        .frame(width: 22)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(String(localized: "Enable MIDI Driver"))
+                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                            .foregroundColor(palette.gameLibraryText.swiftUIColor)
+                        Text(String(localized: "Applies on next session start"))
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.5))
+                    }
+                }
+            }
+            .toggleStyle(SwitchToggleStyle(tint: palette.defaultTintColor.swiftUIColor))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(palette.defaultTintColor.swiftUIColor.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(
+                                palette.defaultTintColor.swiftUIColor.opacity(0.25),
+                                lineWidth: 1
+                            )
+                    )
+            )
+        }
+    }
+
+    private var headerColor: Color {
+        (palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+            .opacity(0.55)
     }
 }
 

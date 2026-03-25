@@ -953,4 +953,10 @@ public extension Defaults.Keys {
     /// CoreMIDI unique ID of the last selected MIDI output destination.
     /// `nil` means "no preference" (no active output connection).
     static let midiDestinationUniqueID = Key<Int?>("midiDestinationUniqueID", default: nil)
+
+    /// Whether the RetroArch MIDI driver (CoreMIDI) is enabled for RetroArch-path cores.
+    /// When `true`, `midi_input` and `midi_output` in retroarch.cfg are set to "coremidi".
+    /// When `false`, both are set to "Off", disabling MIDI routing for all RA cores.
+    /// Applied to the user's retroarch.cfg on every core startup via `applyMIDIPreferenceToUserCfg:`.
+    static let retroArchMIDIEnabled = Key<Bool>("retroArchMIDIEnabled", default: true)
 }

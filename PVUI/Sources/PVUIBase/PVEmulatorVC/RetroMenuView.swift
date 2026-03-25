@@ -415,6 +415,19 @@ struct RetroMenuView: View {
 #endif
     }
 
+    /// True when the active core is a RetroArch/libretro-path core running on a
+    /// MIDI-capable system (DOS, Atari ST, MSX, etc.).
+    /// Used to decide whether to show the RetroArch MIDI driver toggle in the CORE tab.
+    var isRetroArchMIDICapable: Bool {
+#if canImport(CoreMIDI) && !os(tvOS)
+        guard emulatorVC.core.coreIdentifier?.contains("libretro") == true else { return false }
+        guard let sysID = SystemIdentifier(rawValue: emulatorVC.game.system?.identifier ?? "") else { return false }
+        return MIDISystemRegistry.shared.supportsMIDI(sysID)
+#else
+        return false
+#endif
+    }
+
     /// Check if core has features that warrant a CORE tab
     private var hasCoreFeatures: Bool {
         let hasPaletteSupport = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
@@ -425,7 +438,8 @@ struct RetroMenuView: View {
         emulatorVC.coreSupportsVirtualKeyboard ||
         emulatorVC.coreSupportsVirtualMouse ||
         hasPortDeviceOptions ||
-        coreSupportsMIDI
+        coreSupportsMIDI ||
+        isRetroArchMIDICapable
         #else
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
@@ -605,6 +619,9 @@ struct RetroMenuView: View {
 
             // MIDI device picker (source / destination + TX/RX lights)
             midiPickerSection
+
+            // RetroArch MIDI driver toggle (libretro cores on MIDI-capable systems)
+            retroArchMIDISection
 
             // If no core features available, show message
             if !hasCoreFeatures {
