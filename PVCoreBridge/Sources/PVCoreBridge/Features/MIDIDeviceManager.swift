@@ -205,14 +205,16 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Prefers the multi-select `*IDs` keys; falls back to the legacy single-ID key for migration.
     /// Called once during init, after `refreshEndpoints()` has populated `sources`/`destinations`.
     private func restorePersistedSelection() {
-        // Restore source IDs (multi-select)
-        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int] {
+        // Restore source IDs (multi-select).
+        // Treat the multi-select key as authoritative if it exists — even when the stored IDs
+        // resolve to an empty set (devices unavailable at launch). This prevents falling through
+        // to the legacy single-select key for a user who intentionally cleared their selection.
+        if UserDefaults.standard.object(forKey: Self.udKeySourceIDs) != nil {
+            let rawIDs = (UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int]) ?? []
             let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                 .filter { id in sources.contains(where: { $0.id == id }) })
-            if !ids.isEmpty {
-                selectedSourceIDs = ids
-                sourcePreferenceApplied = true
-            }
+            selectedSourceIDs = ids
+            sourcePreferenceApplied = true
         } else if let raw = UserDefaults.standard.object(forKey: Self.udKeySource) as? Int,
                   let id = MIDIUniqueID(exactly: raw),
                   sources.contains(where: { $0.id == id }) {
@@ -221,14 +223,14 @@ public final class MIDIDeviceManager: ObservableObject {
             sourcePreferenceApplied = true
         }
 
-        // Restore destination IDs (multi-select)
-        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int] {
+        // Restore destination IDs (multi-select).
+        // Same rationale as sources: key presence is authoritative.
+        if UserDefaults.standard.object(forKey: Self.udKeyDestinationIDs) != nil {
+            let rawIDs = (UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int]) ?? []
             let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                 .filter { id in destinations.contains(where: { $0.id == id }) })
-            if !ids.isEmpty {
-                selectedDestinationIDs = ids
-                destinationPreferenceApplied = true
-            }
+            selectedDestinationIDs = ids
+            destinationPreferenceApplied = true
         } else if let raw = UserDefaults.standard.object(forKey: Self.udKeyDestination) as? Int,
                   let id = MIDIUniqueID(exactly: raw),
                   destinations.contains(where: { $0.id == id }) {
@@ -269,7 +271,10 @@ public final class MIDIDeviceManager: ObservableObject {
         // (handles hot-plug: the previously-selected device appears after launch).
         // Only auto-applies once per session to avoid overriding an explicit "all sources" choice.
         if selectedSourceIDs.isEmpty, !sourcePreferenceApplied {
-            if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int], !rawIDs.isEmpty {
+            // If the multi-select key exists, honour it (even empty = auto-detect mode).
+            // Only fall through to the legacy key when the new key is absent entirely.
+            if UserDefaults.standard.object(forKey: Self.udKeySourceIDs) != nil {
+                let rawIDs = (UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int]) ?? []
                 let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                     .filter { id in sources.contains(where: { $0.id == id }) })
                 if !ids.isEmpty {
@@ -285,7 +290,8 @@ public final class MIDIDeviceManager: ObservableObject {
         }
 
         if selectedDestinationIDs.isEmpty, !destinationPreferenceApplied {
-            if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int], !rawIDs.isEmpty {
+            if UserDefaults.standard.object(forKey: Self.udKeyDestinationIDs) != nil {
+                let rawIDs = (UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int]) ?? []
                 let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                     .filter { id in destinations.contains(where: { $0.id == id }) })
                 if !ids.isEmpty {

@@ -36,6 +36,16 @@ enum CuratedSettingCategory: String, CaseIterable, Identifiable {
         case .debug: return "ladybug"
         }
     }
+
+    /// Whether this category is available on the current platform.
+    /// The MIDI category requires CoreMIDI, which is unavailable on tvOS.
+    var isAvailableOnCurrentPlatform: Bool {
+        #if os(tvOS)
+        return self != .midi
+        #else
+        return true
+        #endif
+    }
 }
 
 enum CuratedControlType {
@@ -296,14 +306,6 @@ extension RetroArchCuratedSettings {
     // MARK: - MIDI
 
     static let midi: [CuratedSetting] = [
-        CuratedSetting(
-            key: "midi_enable",
-            title: "MIDI Enabled",
-            description: "Enable MIDI input/output support in RetroArch",
-            category: .midi,
-            controlType: .toggle,
-            defaultValue: "true"
-        ),
         CuratedSetting(
             key: "midi_driver",
             title: "MIDI Driver",

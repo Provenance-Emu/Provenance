@@ -74,7 +74,9 @@ struct MIDIPickerSectionView: View {
             .foregroundColor(sectionHeaderColor)
             .padding(.top, 6)
 
-            // Input source picker (single-select convenience view)
+            // Input source picker (single-select convenience view).
+            // multipleSelectedCount lets the row surface "Multiple" when more than one
+            // source is selected via the Quick Settings multi-select picker.
             MIDIEndpointRow(
                 label: String(localized: "INPUT"),
                 symbolName: "arrow.down.circle",
@@ -83,10 +85,11 @@ struct MIDIPickerSectionView: View {
                     get: { midi.selectedSourceID },
                     set: { midi.selectedSourceID = $0 }
                 ),
+                multipleSelectedCount: midi.selectedSourceIDs.count,
                 palette: palette
             )
 
-            // Output destination picker (single-select convenience view)
+            // Output destination picker (single-select convenience view).
             MIDIEndpointRow(
                 label: String(localized: "OUTPUT"),
                 symbolName: "arrow.up.circle",
@@ -95,6 +98,7 @@ struct MIDIPickerSectionView: View {
                     get: { midi.selectedDestinationID },
                     set: { midi.selectedDestinationID = $0 }
                 ),
+                multipleSelectedCount: midi.selectedDestinationIDs.count,
                 palette: palette
             )
 
@@ -140,12 +144,21 @@ private struct MIDIEndpointRow: View {
     let symbolName: String
     let endpoints: [MIDIEndpointInfo]
     @Binding var selectedID: MIDIUniqueID?
+    /// Total number of selected IDs from the backing multi-select set.
+    /// Used to distinguish "Multiple devices selected" from "None selected" when
+    /// `selectedID` is nil (which happens whenever count != 1).
+    var multipleSelectedCount: Int = 0
     let palette: UXThemePalette
 
     @State private var expanded = false
 
     private var selectedName: String {
-        endpoints.first { $0.id == selectedID }?.name ?? String(localized: "None")
+        if let id = selectedID {
+            return endpoints.first { $0.id == id }?.name ?? String(localized: "None")
+        } else if multipleSelectedCount > 1 {
+            return String(localized: "Multiple (\(multipleSelectedCount))")
+        }
+        return String(localized: "None")
     }
 
     var body: some View {

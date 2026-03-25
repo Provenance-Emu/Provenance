@@ -29,7 +29,7 @@ struct RetroArchQuickSettingsView: View {
 
     private var settingsList: some View {
         List {
-            ForEach(CuratedSettingCategory.allCases) { category in
+            ForEach(CuratedSettingCategory.allCases.filter { $0.isAvailableOnCurrentPlatform }) { category in
                 Section {
                     ForEach(RetroArchCuratedSettings.settings(for: category)) { setting in
                         settingRow(for: setting)
@@ -37,14 +37,17 @@ struct RetroArchQuickSettingsView: View {
                 } header: {
                     Label(category.rawValue, systemImage: category.icon)
                 }
-            }
 
-            // MIDI device picker — iOS/macOS/macCatalyst (CoreMIDI not available on tvOS)
+                // MIDI device picker rendered immediately after the MIDI curated settings section.
+                // iOS/macOS/macCatalyst only — CoreMIDI is not available on tvOS.
 #if canImport(CoreMIDI) && !os(tvOS)
-            if #available(iOS 14.0, macCatalyst 14.0, macOS 11.0, *) {
-                MIDIDevicePickerSection(palette: palette)
-            }
+                if category == .midi {
+                    if #available(iOS 14.0, macCatalyst 14.0, macOS 11.0, *) {
+                        MIDIDevicePickerSection(palette: palette)
+                    }
+                }
 #endif
+            }
 
             // Advanced section with link to full editor
             Section {
