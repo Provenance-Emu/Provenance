@@ -271,7 +271,11 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
-        // MIDI device picker — shown when core supports MIDI (iOS only, not tvOS or macCatalyst)
+        // MIDI device picker — shown when core supports MIDI (iOS only, not tvOS or macCatalyst).
+        // Note: RetroMenuView+MIDIPicker uses `#if canImport(CoreMIDI) && !os(tvOS)` and therefore
+        // includes macCatalyst. The tile menu intentionally excludes macCatalyst because the compact
+        // tile layout doesn't adapt well to pointer/keyboard workflows; users can still reach MIDI
+        // settings via the classic RetroMenuView on macCatalyst.
         #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
         if emulatorVC.core.supportsMIDI {
             coreTiles.append(PauseMenuTile(

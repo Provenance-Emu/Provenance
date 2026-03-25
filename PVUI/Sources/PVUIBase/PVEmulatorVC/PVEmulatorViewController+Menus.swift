@@ -145,6 +145,8 @@ extension PVEmulatorViewController {
     public func showSkinOptions() {
         enableControllerInput(true)
         isShowingMenu = true
+        // Mirror showMenu's indicator-overlay lifecycle to avoid z-order/interaction conflicts.
+        temporarilyHideIndicatorOverlay()
 
         let skinMenuView = RetroMenuView(
             emulatorVC: self,
@@ -154,6 +156,8 @@ extension PVEmulatorViewController {
                     self.enableControllerInput(false)
                     self.isShowingMenu = false
                     self.menuPresentationViewController = nil
+                    // Restore the indicator overlay hidden by temporarilyHideIndicatorOverlay().
+                    self.restoreIndicatorOverlay()
                     if self.core.isOn {
                         self.core.setPauseEmulation(!resumeEmulation)
                     }
