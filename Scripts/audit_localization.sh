@@ -68,8 +68,8 @@ echo ""
 
 for d in "${PV_DIRS[@]}"; do
     [ -d "$d" ] || continue
-    lines=$(grep -r 'Text("' --include="*.swift" "$d" 2>/dev/null | wc -l)
-    files=$(grep -rl 'Text("' --include="*.swift" "$d" 2>/dev/null | wc -l)
+    lines=$({ grep -r 'Text("' --include="*.swift" "$d" 2>/dev/null || true; } | wc -l)
+    files=$({ grep -rl 'Text("' --include="*.swift" "$d" 2>/dev/null || true; } | wc -l)
     if [ "$lines" -gt 0 ]; then
         module="$(basename "$d")"
         printf "  %-40s %4d occurrences in %3d files\n" "$module" "$lines" "$files"
@@ -79,7 +79,7 @@ for d in "${PV_DIRS[@]}"; do
 done
 
 echo ""
-printf "  TOTAL hardcoded Text(\"…\"): %d occurrences across %d files\n" \
+printf "  TOTAL SwiftUI Text(\"…\") (LocalizedStringKey): %d occurrences across %d files\n" \
     "$SWIFTUI_TEXT_LINES" "$SWIFTUI_TEXT_FILES"
 
 # Dump full list to file
@@ -99,12 +99,12 @@ NLS_FILES=0
 
 for d in "${PV_DIRS[@]}"; do
     [ -d "$d" ] || continue
-    lines=$(grep -r 'NSLocalizedString\|LocalizedStringKey' \
+    lines=$({ grep -rE 'NSLocalizedString|LocalizedStringKey' \
         --include="*.swift" --include="*.m" --include="*.mm" \
-        "$d" 2>/dev/null | wc -l)
-    files=$(grep -rl 'NSLocalizedString\|LocalizedStringKey' \
+        "$d" 2>/dev/null || true; } | wc -l)
+    files=$({ grep -rlE 'NSLocalizedString|LocalizedStringKey' \
         --include="*.swift" --include="*.m" --include="*.mm" \
-        "$d" 2>/dev/null | wc -l)
+        "$d" 2>/dev/null || true; } | wc -l)
     if [ "$lines" -gt 0 ]; then
         module="$(basename "$d")"
         printf "  %-40s %4d occurrences in %3d files\n" "$module" "$lines" "$files"
@@ -117,10 +117,10 @@ echo ""
 printf "  TOTAL NSLocalizedString: %d occurrences across %d files\n" \
     "$NLS_LINES" "$NLS_FILES"
 
-grep -rn 'NSLocalizedString\|LocalizedStringKey' \
+{ grep -rnE 'NSLocalizedString|LocalizedStringKey' \
     --include="*.swift" --include="*.m" --include="*.mm" \
-    "${PV_DIRS[@]}" 2>/dev/null \
-    > "$OUT_DIR/nslocalizedstring_usage.txt" || true
+    "${PV_DIRS[@]}" 2>/dev/null || true; } \
+    > "$OUT_DIR/nslocalizedstring_usage.txt"
 echo "  → Full list: $OUT_DIR/nslocalizedstring_usage.txt"
 
 echo ""
@@ -160,7 +160,7 @@ for lang in "${LANGS[@]}"; do
         continue
     fi
     key_count=$(strings_key_count "$f")
-    diff_lines=$(diff "$f" "$EN_STRINGS" 2>/dev/null | grep '^[<>]' | wc -l)
+    diff_lines=$({ diff "$f" "$EN_STRINGS" 2>/dev/null || true; } | { grep -c '^[<>]' || true; })
     if [ "$diff_lines" -eq 0 ]; then
         same="YES (copy)"
         translated="NO"
