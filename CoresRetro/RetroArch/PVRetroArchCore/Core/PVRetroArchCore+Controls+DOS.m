@@ -199,26 +199,18 @@ static BOOL dos_uses_relative_mouse_fallback(PVRetroArchCoreBridge *bridge) {
 /// Detection order:
 ///  1. Dynamic: query RETRO_ENVIRONMENT_SET_CONTROLLER_INFO data the core reported.
 ///     If the core declared RETRO_DEVICE_MOUSE for any port, return YES.
-///  2. Fallback: if the core never called SET_CONTROLLER_INFO (ports.size == 0),
-///     fall back to static system/core identifier substring matching.
+///  2. Fallback: static system/core identifier substring matching.
+///     This handles cores like snes9x-next/bsnes that declare port info with
+///     joypad device types but support RETRO_DEVICE_MOUSE when explicitly set
+///     via retro_set_controller_port_device — e.g. SNES Mouse in Mario Paint.
 static BOOL dos_uses_relative_mouse(PVRetroArchCoreBridge *bridge) {
     // Try dynamic detection first (available after core init).
     if (pv_core_declares_mouse_device())
         return YES;
-
-    // Inspect runloop system ports to determine whether the core provided
-    // any controller info via SET_CONTROLLER_INFO.
-    const runloop_state_t *state = runloop_state_get_ptr();
-
-    // If runloop state is unavailable or the core never called
-    // SET_CONTROLLER_INFO (ports.size == 0), fall back to the static
-    // identifier-based lists.
-    if (!state || state->system.ports.size == 0)
-        return dos_uses_relative_mouse_fallback(bridge);
-
-    // Controller info is present but no RETRO_DEVICE_MOUSE was declared.
-    // Respect the core's declaration and do not force relative mouse.
-    return NO;
+    // Fall back to static system/core identifier lists.
+    // This handles SNES/Saturn/PSX cores that declare joypad ports by default
+    // but use RETRO_DEVICE_MOUSE when the port device type is overridden.
+    return dos_uses_relative_mouse_fallback(bridge);
 }
 
 @interface PVRetroArchCoreBridge (DOSControls) <PVDOSSystemResponderClient>

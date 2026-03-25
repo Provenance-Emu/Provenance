@@ -16,8 +16,8 @@ FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <PVRetroArch/PublicHeader.h>
 #import <PVRetroArch/PVRetroArchCoreBridge.h>
 #import <PVRetroArch/PVRetroArchCoreBridge+Netplay.h>
+#import <PVRetroArch/PVRetroArchCoreBridge+Controls.h>
 //#import <PVRetroArch/PVRetroArchCoreBridge+Audio.h>
-//#import <PVRetroArch/PVRetroArchCoreBridge+Controls.h>
 //#import <PVRetroArch/PVRetroArchCoreBridge+Video.h>
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"

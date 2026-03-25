@@ -129,6 +129,11 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
 #endif
         }
         super.startEmulation()
+        // Apply per-port device type defaults after the game has loaded.
+        // RetroArch loads the game synchronously inside startVM: (called from the ObjC
+        // bridge's startEmulation), so by the time super.startEmulation() returns the
+        // core's retro_load_game has already run and port device types can be configured.
+        restorePortDeviceTypes()
     }
 
     /// Reset the haptic profile so the next core starts with neutral tuning.
@@ -826,5 +831,66 @@ extension PVRetroArchCoreCore: PVWiiSystemResponderClient {
     }
     public func didPush(_ button: PVCoreBridge.PVWiiMoteButton, forPlayer player: Int) {
         (_bridge as! PVWiiSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}
+
+// MARK: - PortDeviceConfigurable
+
+extension PVRetroArchCoreCore: PortDeviceConfigurable {
+
+    /// RetroArch manages its own controller info UI; return empty to hide
+    /// the in-app port device picker for RetroArch cores.
+    public var controllerPortDescriptors: [[PortDeviceDescriptor]] { [] }
+
+    public func currentDeviceType(forPort port: Int) -> UInt {
+        let key = portDevicePersistenceKey(port: port)
+        if UserDefaults.standard.object(forKey: key) != nil {
+            return UInt(UserDefaults.standard.integer(forKey: key))
+        }
+        return LibretroDeviceType.joypad.rawValue
+    }
+
+    public func setDeviceType(_ deviceType: UInt, forPort port: Int) {
+        _bridge.setControllerPortDevice(UInt32(deviceType), forPort: UInt32(port))
+        let key = portDevicePersistenceKey(port: port)
+        UserDefaults.standard.set(Int(deviceType), forKey: key)
+    }
+
+    /// Apply saved (or platform-default) port device types after the game has loaded.
+    func restorePortDeviceTypes() {
+        // Iterate ports 0 and 1 — most peripheral devices appear on port 1 (e.g. SNES Mouse).
+        for port in 0..<2 {
+            let key = portDevicePersistenceKey(port: port)
+            if UserDefaults.standard.object(forKey: key) != nil {
+                let saved = UInt(UserDefaults.standard.integer(forKey: key))
+                _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
+            } else if let defaultDevice = platformDefaultPortDevice(forPort: port) {
+                _bridge.setControllerPortDevice(UInt32(defaultDevice), forPort: UInt32(port))
+                ILOG("[RA] restorePortDeviceTypes: applied platform default device=\(defaultDevice) on port \(port)")
+            }
+        }
+    }
+
+    /// Returns a platform-specific default device type for a port, or nil to leave at core default.
+    private func platformDefaultPortDevice(forPort port: Int) -> UInt? {
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return nil }
+        // SNES: port 2 (index 1) defaults to RETRO_DEVICE_MOUSE for known SNES Mouse games.
+        if sysID == .SNES && port == 1 {
+            if MouseGameRegistry.shared.gameSupportsMouse(
+                systemIdentifier: sysID,
+                md5: romMD5,
+                title: romName
+            ) {
+                return LibretroDeviceType.mouse.rawValue
+            }
+        }
+        return nil
+    }
+
+    /// UserDefaults key scoped to this core + game combination.
+    private func portDevicePersistenceKey(port: Int) -> String {
+        let md5 = romMD5 ?? "global"
+        let coreID = coreIdentifier ?? String(describing: type(of: self))
+        return "PVRetroArchCoreCore.\(md5).\(coreID).portDeviceType.port\(port)"
     }
 }
