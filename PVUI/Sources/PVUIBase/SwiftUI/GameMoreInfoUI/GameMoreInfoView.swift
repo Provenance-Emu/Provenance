@@ -501,7 +501,7 @@ struct GameMoreInfoView: View {
                         // JIT preference section (only for JIT-capable systems)
                         jitPreferenceSection
 
-                        // Core Options section (only for games with a CoreOptional core)
+                        // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
                         coreOptionsSection
 
                         // Game description section
@@ -537,7 +537,7 @@ struct GameMoreInfoView: View {
                 jitPreferenceSection
                     .padding(.horizontal)
 
-                // Core Options section (only for games with a CoreOptional core)
+                // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
                 coreOptionsSection
                     .padding(.horizontal)
 
