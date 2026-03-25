@@ -97,6 +97,7 @@ struct NormalizeTitlePreviewSheet: View {
         #if !os(tvOS)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .interactiveDismissDisabled(isApplying)
         #endif
     }
 
