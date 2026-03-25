@@ -162,7 +162,7 @@ private struct MIDIEndpointRow: View {
         if let id = selectedID {
             return endpoints.first { $0.id == id }?.name ?? emptySelectionLabel
         } else if multipleSelectedCount > 1 {
-            return String(localized: "Multiple (\(multipleSelectedCount))")
+            return String(format: String(localized: "Multiple (%d)"), multipleSelectedCount)
         }
         return emptySelectionLabel
     }
@@ -204,7 +204,7 @@ private struct MIDIEndpointRow: View {
             if expanded {
                 VStack(spacing: 2) {
                     EndpointOptionRow(
-                        name: String(localized: "None"),
+                        name: emptySelectionLabel,
                         isSelected: selectedID == nil,
                         palette: palette
                     ) {
