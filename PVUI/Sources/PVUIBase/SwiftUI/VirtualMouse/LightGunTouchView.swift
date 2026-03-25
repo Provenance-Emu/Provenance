@@ -75,9 +75,10 @@ public final class LightGunTouchView: UIView {
 
     // MARK: - Gesture recognizers
 
-    private var twoFingerTapRecognizer: UITapGestureRecognizer!
-    private var doubleTapRecognizer: UITapGestureRecognizer!
-    private var longPressRecognizer: UILongPressGestureRecognizer!
+    // Stored so callers can enable/disable individual gestures at runtime.
+    private(set) var twoFingerTapRecognizer: UITapGestureRecognizer!
+    private(set) var doubleTapRecognizer: UITapGestureRecognizer!
+    private(set) var longPressRecognizer: UILongPressGestureRecognizer!
 
     // MARK: - Init
 
@@ -124,13 +125,19 @@ public final class LightGunTouchView: UIView {
     // MARK: - Hit-testing
 
     /// Participates in standard UIKit hit-testing, but only when this view is
-    /// visible and the touch is inside its bounds.
+    /// visible, the game currently supports light-gun input, and the touch is
+    /// inside its bounds.
     ///
     /// The view is sized to the game viewport frame by `refreshLightGunLayout`,
     /// so touches outside the viewport naturally fall outside the view's bounds
     /// and pass through to underlying controls without any extra gating needed.
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
+        guard
+            isUserInteractionEnabled,
+            !isHidden,
+            alpha > 0.01,
+            lightGunResponder?.gameSupportsLightGun == true
+        else { return nil }
         guard self.point(inside: point, with: event) else { return nil }
         return super.hitTest(point, with: event)
     }

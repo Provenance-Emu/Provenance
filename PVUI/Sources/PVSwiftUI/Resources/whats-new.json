@@ -568,5 +568,41 @@
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
       }
     ]
+  },
+  {
+    "version": "3.8.0",
+    "title": "Your Language, Your Games",
+    "features": [
+      {
+        "symbolName": "globe",
+        "symbolColor": "blue",
+        "title": "Core Language Sync",
+        "subtitle": "Emulator cores now default to your device's language — no more English-only menus on a Japanese device."
+      },
+      {
+        "symbolName": "textformat.abc",
+        "symbolColor": "purple",
+        "title": "Language Override",
+        "subtitle": "Pick a specific language for all cores under Settings → Core Options → Core Language, independent of your device locale."
+      }
+    ]
+  },
+  {
+    "version": "3.9.0",
+    "title": "Light Gun & Touch Aim",
+    "features": [
+      {
+        "symbolName": "scope",
+        "symbolColor": "red",
+        "title": "Light Gun Touch Support",
+        "subtitle": "Tap to shoot, drag to aim, two-finger tap to reload offscreen — full touch gesture support for light gun games like Point Blank, Lethal Enforcers, and Super Scope titles."
+      },
+      {
+        "symbolName": "appletvremote.gen4",
+        "symbolColor": "orange",
+        "title": "tvOS Siri Remote Aiming",
+        "subtitle": "Use the Apple TV Siri Remote D-pad to aim, tap the touch surface to shoot, and long-press to reload — full light gun support on Apple TV."
+      }
+    ]
   }
 ]
