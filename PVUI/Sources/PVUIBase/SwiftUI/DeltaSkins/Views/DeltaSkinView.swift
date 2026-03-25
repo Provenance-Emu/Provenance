@@ -1877,7 +1877,8 @@ public struct DeltaSkinView: View {
         }
 
         return buttons.first { button in
-            let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+            let effective = buttonWithEffectiveFrame(button)
+            let hitFrame = effective.frame.insetBy(dx: -20, dy: -20)
             let scaledFrame = transformFrame(hitFrame, in: geometry, mappingSize: mappingSize)
             return scaledFrame.contains(point)
         }
@@ -1916,7 +1917,7 @@ public struct DeltaSkinView: View {
                let (image, size) = await loadThumbstickImage(for: button) {
                 // Determine stick ID based on button ID (check for "right" or "right" in button ID)
                 let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
-                activeThumbsticks.append(ActiveThumbstickInfo(frame: button.frame, image: image, size: size, buttonId: stickId))
+                activeThumbsticks.append(ActiveThumbstickInfo(frame: buttonWithEffectiveFrame(button).frame, image: image, size: size, buttonId: stickId))
             }
         }
     }
