@@ -35,8 +35,16 @@ struct AirPlayPickerTrigger: UIViewRepresentable {
         return view
     }
 
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
     func updateUIView(_ uiView: AVRoutePickerView, context: Context) {
-        guard show else { return }
+        // Only fire on the false → true transition; SwiftUI may call updateUIView
+        // more than once per state change, and we must not open the sheet twice.
+        guard show, !context.coordinator.didTrigger else {
+            if !show { context.coordinator.didTrigger = false }
+            return
+        }
+        context.coordinator.didTrigger = true
         // Find the internal UIButton recursively to be robust across iOS
         // view-hierarchy changes, then fire it to show the system sheet.
         if let button = firstButton(in: uiView) {
@@ -47,8 +55,13 @@ struct AirPlayPickerTrigger: UIViewRepresentable {
             print("[AirPlayPickerTrigger] Could not locate AVRoutePickerView's internal button; picker sheet will not appear.")
             #endif
         }
-        // Reset immediately so subsequent taps work.
+        // Reset so subsequent taps work.
         DispatchQueue.main.async { show = false }
+    }
+
+    final class Coordinator {
+        /// Tracks whether we have already fired the picker for the current `show == true` epoch.
+        var didTrigger = false
     }
 
     /// Recursively searches `view` and its descendants for the first `UIButton`.
@@ -96,7 +109,7 @@ private struct _AVRoutePickerRepresentable: UIViewRepresentable {
         let view = AVRoutePickerView()
         view.tintColor = tintColor
         view.activeTintColor = activeTintColor
-        view.prioritizesVideoDevices = false
+        view.prioritizesVideoDevices = true
         return view
     }
 
