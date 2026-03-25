@@ -72,8 +72,7 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 
         // Style
             backgroundColor = UIColor.black.withAlphaComponent(0.8)
-            let layoutDirection = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
-            titleLabel.textAlignment = layoutDirection == .rightToLeft ? .right : .left
+            titleLabel.textAlignment = effectiveUserInterfaceLayoutDirection == .rightToLeft ? .right : .left
             titleLabel.backgroundColor = .clear
             titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
             clipsToBounds = false
@@ -98,8 +97,7 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 
             // Style
             backgroundColor = ThemeManager.shared.currentPalette.gameLibraryHeaderBackground
-            let layoutDirection = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
-            titleLabel.textAlignment = layoutDirection == .rightToLeft ? .right : .left
+            titleLabel.textAlignment = effectiveUserInterfaceLayoutDirection == .rightToLeft ? .right : .left
             titleLabel.textColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
 //        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
@@ -124,6 +122,7 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     }
 
     public override func traitCollectionDidChange(_: UITraitCollection?) {
+        titleLabel.textAlignment = effectiveUserInterfaceLayoutDirection == .rightToLeft ? .right : .left
         #if os(tvOS)
         titleLabel.textColor = colorForText
         #else
