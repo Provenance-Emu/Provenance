@@ -221,11 +221,14 @@ static os_unfair_lock s_midiRingLock = OS_UNFAIR_LOCK_INIT;
 
 /// Thread-safe cache of user-selected MIDI output destination endpoint refs.
 /// Updated by +setMIDIOutputEndpoints: (called from Swift via MIDIDeviceManager observation).
-///  0 = no output destinations selected — thin_midi_write is a no-op.
-/// >0 = N selected destinations.
+/// -1 = never explicitly set by the user — legacy fallback: thin_midi_write uses MIDIGetDestination(0).
+///      This preserves the pre-PR behaviour for cores that use pv_libretro_midi_interface() but
+///      do not wire up the MIDIDeviceManager observer (e.g. the full RetroArch bridge PVLibRetroCore).
+///  0 = user explicitly selected "None" — thin_midi_write is a no-op.
+/// >0 = N user-selected destinations.
 static os_unfair_lock s_midiDestCacheLock = OS_UNFAIR_LOCK_INIT;
 static MIDIEndpointRef s_midiCachedDests[16] = {0};
-static int s_midiCachedDestCount = 0;
+static int s_midiCachedDestCount = -1; // -1 = never set; 0 = "None"; >0 = N destinations
 #endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -1412,6 +1415,9 @@ static bool thin_midi_output_enabled(void) {
     os_unfair_lock_lock(&s_midiDestCacheLock);
     int count = s_midiCachedDestCount;
     os_unfair_lock_unlock(&s_midiDestCacheLock);
+    // -1 means the user has never made an explicit selection — fall back to legacy behaviour
+    // (MIDIGetDestination(0)) for cores that don't wire the MIDIDeviceManager observer.
+    if (count < 0) return MIDIGetNumberOfDestinations() > 0;
     return count > 0;
 }
 
@@ -1443,8 +1449,18 @@ static bool thin_midi_write(uint8_t byte, uint32_t delta_time) {
     }
     os_unfair_lock_unlock(&s_midiDestCacheLock);
 
-    // No destination selected (user chose "None") — be a no-op.
-    if (destCount <= 0) return false;
+    // -1 means the user has never made an explicit selection (e.g. PVLibRetroCore which does
+    // not wire the MIDIDeviceManager observer). Fall back to the first available destination
+    // to preserve pre-PR behaviour for those cores.
+    if (destCount < 0) {
+        MIDIEndpointRef fallback = MIDIGetDestination(0);
+        if (!fallback) return false;
+        dests[0] = fallback;
+        destCount = 1;
+    }
+
+    // No destination selected (user explicitly chose "None") — be a no-op.
+    if (destCount == 0) return false;
 
     // Build a single-byte MIDIPacketList. Use alignas to satisfy MIDIPacketList's
     // alignment requirement — a plain char[] may be under-aligned on some archs.
@@ -1844,6 +1860,8 @@ static bool thin_environment(unsigned cmd, void *data) {
     s_midiCachedDestCount = n;
     os_unfair_lock_unlock(&s_midiDestCacheLock);
     ILOG(@"ThinFrontend MIDI: output destinations updated (count=%d)", n);
+#else
+    (void)endpointRefs; // suppress unused-parameter warning on non-CoreMIDI builds
 #endif
 }
 
