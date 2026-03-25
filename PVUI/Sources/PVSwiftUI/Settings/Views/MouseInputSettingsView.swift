@@ -38,12 +38,19 @@ struct MouseSection: View {
     @Default(.gyroMouseEnabled) private var gyroMouseEnabled
     @Default(.gyroMouseSensitivity) private var gyroSensitivity
     @Default(.gyroMouseDeadZone) private var gyroDeadZone
+    @Default(.lightGunCrosshairStyle) private var crosshairStyle
     @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Input source picker
             inputSourcePicker
+
+            Divider()
+                .background(Color.retroBlue.opacity(0.3))
+
+            // Light gun crosshair style
+            crosshairStylePicker
 
             Divider()
                 .background(Color.retroBlue.opacity(0.3))
@@ -137,6 +144,66 @@ struct MouseSection: View {
                                 RoundedRectangle(cornerRadius: 8)
                                     .strokeBorder(
                                         inputSource == source
+                                            ? Color.retroBlue.opacity(0.5)
+                                            : Color.white.opacity(0.08),
+                                        lineWidth: 1
+                                    )
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+
+    // MARK: - Crosshair Style Picker
+
+    private var crosshairStylePicker: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Light Gun Crosshair", systemImage: "scope")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
+                    ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
+
+            Text("Shown when playing light-gun games")
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+
+            ForEach(LightGunCrosshairStyle.allCases, id: \.rawValue) { style in
+                Button(action: { crosshairStyle = style }) {
+                    HStack(spacing: 12) {
+                        Image(systemName: style.symbolName)
+                            .font(.system(size: 16))
+                            .frame(width: 24)
+                            .foregroundColor(crosshairStyle == style ? .retroBlue : .secondary)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(style.displayName)
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
+                                    ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            Text(style.subtitle)
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        if crosshairStyle == style {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.retroBlue)
+                        }
+                    }
+                    .padding(10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(crosshairStyle == style
+                                ? Color.retroBlue.opacity(0.12)
+                                : Color.clear)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(
+                                        crosshairStyle == style
                                             ? Color.retroBlue.opacity(0.5)
                                             : Color.white.opacity(0.08),
                                         lineWidth: 1

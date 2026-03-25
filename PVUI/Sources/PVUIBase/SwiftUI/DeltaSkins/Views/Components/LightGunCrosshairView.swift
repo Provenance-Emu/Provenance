@@ -14,7 +14,8 @@
 //  - Coordinate mapping assumes the overlay covers the same area as the game screen.
 //  - `.allowsHitTesting(false)` must be set by the caller so the crosshair does
 //    not absorb touch events.
-//  - All drawing is done with Canvas for zero-allocation rendering on every frame.
+//  - `PlusCrosshair` and `ReticleCrosshair` use `Canvas` for efficient rendering;
+//    `DotCrosshair` uses standard SwiftUI `Circle()` views.
 //
 
 import SwiftUI
