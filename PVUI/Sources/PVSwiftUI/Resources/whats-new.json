@@ -586,35 +586,5 @@
         "subtitle": "Pick a specific language for all cores under Settings → Core Options → Core Language, independent of your device locale."
       }
     ]
-  },
-  {
-    "version": "3.8.1",
-    "title": "Light Gun Settings & Per-Game Overrides",
-    "features": [
-      {
-        "symbolName": "scope",
-        "symbolColor": "red",
-        "title": "Light Gun Settings",
-        "subtitle": "New Light Gun section in the Game Info screen for NES, SNES, Genesis, PlayStation, Saturn and other supported systems."
-      },
-      {
-        "symbolName": "plus.viewfinder",
-        "symbolColor": "orange",
-        "title": "Crosshair Style",
-        "subtitle": "Choose between dot, crosshair reticle, or no overlay — per game or as a global default."
-      },
-      {
-        "symbolName": "dial.medium.fill",
-        "symbolColor": "blue",
-        "title": "Per-Game Sensitivity",
-        "subtitle": "Tune the aim sensitivity independently for each light gun game to match each title's calibration."
-      },
-      {
-        "symbolName": "gearshape.2.fill",
-        "symbolColor": "green",
-        "title": "Auto-Detect Override",
-        "subtitle": "Force light gun mode on or off for any game regardless of the system-level auto-detect setting."
-      }
-    ]
   }
 ]
