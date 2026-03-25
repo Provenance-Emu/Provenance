@@ -3068,18 +3068,21 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
         ILOG("Importing patch file \(url.lastPathComponent) as format: \(format.rawValue)")
 
-        let pvFile = PVFile(withURL: url)
-        let patch = PVPatch(
-            file: pvFile,
-            game: nil,
-            date: Date(),
-            format: format,
-            title: url.deletingPathExtension().lastPathComponent
-        )
-
-        // addAsync dispatches to main thread, ensuring the main-thread Realm instance is used.
-        let database = RomDatabase.sharedInstance
-        try await database.addAsync(patch, update: true)
+        // Realm objects must be created and written on the same thread.
+        // Run on MainActor to use the main-thread Realm instance safely.
+        let title = url.deletingPathExtension().lastPathComponent
+        try await MainActor.run {
+            let pvFile = PVFile(withURL: url)
+            let patch = PVPatch(
+                file: pvFile,
+                game: nil,
+                date: Date(),
+                format: format,
+                title: title
+            )
+            let database = RomDatabase.sharedInstance
+            try database.add(patch, update: true)
+        }
         ILOG("Saved PVPatch record for \(url.lastPathComponent)")
     }
 

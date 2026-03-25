@@ -41,6 +41,11 @@ class GameImporterFileService : GameImporterFileServicing {
         case .game, .cdRom, .zip, .folder:
             _ = try await processQueueItem(queueItem)
         case .patch:
+            // Move the patch file to the dedicated patches directory and record the destination.
+            // processQueueItem is intentionally NOT called here — it requires .game/.cdRom types
+            // and handles ROM-specific logic (system matching, ROM directory placement).
+            // The Realm PVPatch record is created by GameImporter.importPatchFile, which is
+            // called by performImport immediately after this method returns.
             let patchesDir = Paths.patchesPath
             try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true)
             let destURL = patchesDir.appendingPathComponent(queueItem.url.lastPathComponent)
