@@ -27,8 +27,6 @@ options:
   tabWidth: 4
   usesTabs: false
   xcodeVersion: "16.0"
-  # Allow multi-platform targets
-  allowedOverridesForPlatformSpecialization: true
 
 configs:
   Debug: debug
@@ -187,8 +185,6 @@ targets:
     platform: [iOS, tvOS]
     sources:
       - path: Sources/PVMupen
-        excludes:
-          - "CorePlist-Generated.swift"
     dependencies:
       - target: PVMupenBridge
       - target: PVMupen64PlusCore
@@ -740,6 +736,7 @@ targets:
           - "osal_files_unix.c"
     dependencies:
       - target: libpng
+      - target: SDL
       - sdk: libz.tbd
     settings:
       base:
