@@ -52,6 +52,14 @@ bool pv_core_declares_l2r2_triggers(void) {
 }
 
 // ---------------------------------------------------------------------------
+// Port device type configuration
+// ---------------------------------------------------------------------------
+void pv_core_set_controller_port_device(unsigned port, unsigned device) {
+    retro_ctx_controller_info_t pad = { .port = port, .device = device };
+    core_set_controller_port_device(&pad);
+}
+
+// ---------------------------------------------------------------------------
 // RETRO_DEVICE_KEYBOARD detection
 // ---------------------------------------------------------------------------
 bool pv_core_declares_keyboard_device(void) {

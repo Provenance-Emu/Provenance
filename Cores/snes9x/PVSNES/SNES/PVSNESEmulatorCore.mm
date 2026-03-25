@@ -1068,12 +1068,12 @@ static void FinalizeSamplesAudioCallback(void *) {
 
 - (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
-    S9xReportButton((player+1 << 16) | button, true);
+    S9xReportButton(((player+1) << 16) | button, true);
 }
 
 - (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
-    S9xReportButton((player+1 << 16) | button, false);
+    S9xReportButton(((player+1) << 16) | button, false);
 }
 
 - (void)mapButtons
