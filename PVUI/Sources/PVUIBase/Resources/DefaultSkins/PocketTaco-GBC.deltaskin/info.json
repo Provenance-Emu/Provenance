@@ -1,7 +1,7 @@
 {
-  "name": "GameSir Pocket Taco — SNES",
-  "identifier": "com.provenance.defaultskins.pockettaco.snes",
-  "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+  "name": "GameSir Pocket Taco — GBC",
+  "identifier": "com.provenance.defaultskins.pockettaco.gbc",
+  "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
   "debug": false,
   "representations": {
     "iphone": {
@@ -19,21 +19,21 @@
             "x": 0,
             "y": 80,
             "width": 750,
-            "height": 656
+            "height": 563
           },
           "screens": [
             {
               "inputFrame": {
                 "x": 0,
                 "y": 0,
-                "width": 256,
-                "height": 224
+                "width": 160,
+                "height": 144
               },
               "outputFrame": {
                 "x": 0,
                 "y": 80,
                 "width": 750,
-                "height": 656
+                "height": 563
               },
               "placement": "controller"
             }
@@ -61,47 +61,13 @@
             },
             {
               "inputs": [
-                "x"
-              ],
-              "frame": {
-                "x": 555,
-                "y": 965,
-                "width": 85,
-                "height": 85
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "y"
-              ],
-              "frame": {
-                "x": 462,
-                "y": 1055,
-                "width": 85,
-                "height": 85
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
                 "a"
               ],
               "frame": {
-                "x": 648,
-                "y": 1055,
-                "width": 85,
-                "height": 85
+                "x": 640,
+                "y": 1045,
+                "width": 90,
+                "height": 90
               },
               "extendedEdges": {
                 "top": 8,
@@ -115,38 +81,16 @@
                 "b"
               ],
               "frame": {
-                "x": 555,
-                "y": 1145,
-                "width": 85,
-                "height": 85
+                "x": 535,
+                "y": 1045,
+                "width": 90,
+                "height": 90
               },
               "extendedEdges": {
                 "top": 8,
                 "bottom": 8,
                 "left": 8,
                 "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "l"
-              ],
-              "frame": {
-                "x": 0,
-                "y": 0,
-                "width": 225,
-                "height": 80
-              }
-            },
-            {
-              "inputs": [
-                "r"
-              ],
-              "frame": {
-                "x": 525,
-                "y": 0,
-                "width": 225,
-                "height": 80
               }
             },
             {
@@ -205,21 +149,21 @@
             "x": 0,
             "y": 42,
             "width": 393,
-            "height": 344
+            "height": 295
           },
           "screens": [
             {
               "inputFrame": {
                 "x": 0,
                 "y": 0,
-                "width": 256,
-                "height": 224
+                "width": 160,
+                "height": 144
               },
               "outputFrame": {
                 "x": 0,
                 "y": 42,
                 "width": 393,
-                "height": 344
+                "height": 295
               },
               "placement": "controller"
             }
@@ -247,47 +191,13 @@
             },
             {
               "inputs": [
-                "x"
-              ],
-              "frame": {
-                "x": 291,
-                "y": 616,
-                "width": 45,
-                "height": 54
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "y"
-              ],
-              "frame": {
-                "x": 242,
-                "y": 674,
-                "width": 45,
-                "height": 54
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
                 "a"
               ],
               "frame": {
-                "x": 340,
-                "y": 674,
-                "width": 45,
-                "height": 54
+                "x": 335,
+                "y": 667,
+                "width": 47,
+                "height": 57
               },
               "extendedEdges": {
                 "top": 8,
@@ -301,38 +211,16 @@
                 "b"
               ],
               "frame": {
-                "x": 291,
-                "y": 731,
-                "width": 45,
-                "height": 54
+                "x": 280,
+                "y": 667,
+                "width": 47,
+                "height": 57
               },
               "extendedEdges": {
                 "top": 8,
                 "bottom": 8,
                 "left": 8,
                 "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "l"
-              ],
-              "frame": {
-                "x": 0,
-                "y": 0,
-                "width": 118,
-                "height": 51
-              }
-            },
-            {
-              "inputs": [
-                "r"
-              ],
-              "frame": {
-                "x": 275,
-                "y": 0,
-                "width": 118,
-                "height": 51
               }
             },
             {
@@ -393,21 +281,21 @@
             "x": 0,
             "y": 61,
             "width": 768,
-            "height": 504
+            "height": 432
           },
           "screens": [
             {
               "inputFrame": {
                 "x": 0,
                 "y": 0,
-                "width": 256,
-                "height": 224
+                "width": 160,
+                "height": 144
               },
               "outputFrame": {
                 "x": 0,
                 "y": 61,
                 "width": 768,
-                "height": 504
+                "height": 432
               },
               "placement": "controller"
             }
@@ -435,47 +323,13 @@
             },
             {
               "inputs": [
-                "x"
-              ],
-              "frame": {
-                "x": 568,
-                "y": 741,
-                "width": 87,
-                "height": 65
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "y"
-              ],
-              "frame": {
-                "x": 473,
-                "y": 810,
-                "width": 87,
-                "height": 65
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
                 "a"
               ],
               "frame": {
-                "x": 664,
-                "y": 810,
-                "width": 87,
-                "height": 65
+                "x": 655,
+                "y": 802,
+                "width": 92,
+                "height": 69
               },
               "extendedEdges": {
                 "top": 8,
@@ -489,38 +343,16 @@
                 "b"
               ],
               "frame": {
-                "x": 568,
-                "y": 879,
-                "width": 87,
-                "height": 65
+                "x": 548,
+                "y": 802,
+                "width": 92,
+                "height": 69
               },
               "extendedEdges": {
                 "top": 8,
                 "bottom": 8,
                 "left": 8,
                 "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "l"
-              ],
-              "frame": {
-                "x": 0,
-                "y": 0,
-                "width": 230,
-                "height": 61
-              }
-            },
-            {
-              "inputs": [
-                "r"
-              ],
-              "frame": {
-                "x": 538,
-                "y": 0,
-                "width": 230,
-                "height": 61
               }
             },
             {
@@ -579,21 +411,21 @@
             "x": 0,
             "y": 71,
             "width": 820,
-            "height": 580
+            "height": 498
           },
           "screens": [
             {
               "inputFrame": {
                 "x": 0,
                 "y": 0,
-                "width": 256,
-                "height": 224
+                "width": 160,
+                "height": 144
               },
               "outputFrame": {
                 "x": 0,
                 "y": 71,
                 "width": 820,
-                "height": 580
+                "height": 498
               },
               "placement": "controller"
             }
@@ -621,47 +453,13 @@
             },
             {
               "inputs": [
-                "x"
-              ],
-              "frame": {
-                "x": 607,
-                "y": 854,
-                "width": 93,
-                "height": 75
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "y"
-              ],
-              "frame": {
-                "x": 505,
-                "y": 933,
-                "width": 93,
-                "height": 75
-              },
-              "extendedEdges": {
-                "top": 8,
-                "bottom": 8,
-                "left": 8,
-                "right": 8
-              }
-            },
-            {
-              "inputs": [
                 "a"
               ],
               "frame": {
-                "x": 708,
-                "y": 933,
-                "width": 93,
-                "height": 75
+                "x": 700,
+                "y": 924,
+                "width": 98,
+                "height": 80
               },
               "extendedEdges": {
                 "top": 8,
@@ -675,38 +473,16 @@
                 "b"
               ],
               "frame": {
-                "x": 607,
-                "y": 1013,
-                "width": 93,
-                "height": 75
+                "x": 585,
+                "y": 924,
+                "width": 98,
+                "height": 80
               },
               "extendedEdges": {
                 "top": 8,
                 "bottom": 8,
                 "left": 8,
                 "right": 8
-              }
-            },
-            {
-              "inputs": [
-                "l"
-              ],
-              "frame": {
-                "x": 0,
-                "y": 0,
-                "width": 246,
-                "height": 71
-              }
-            },
-            {
-              "inputs": [
-                "r"
-              ],
-              "frame": {
-                "x": 574,
-                "y": 0,
-                "width": 246,
-                "height": 71
               }
             },
             {

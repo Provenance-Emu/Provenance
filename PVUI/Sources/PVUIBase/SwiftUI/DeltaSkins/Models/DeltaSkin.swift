@@ -377,6 +377,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
                         lastError = DeltaSkinError.invalidPDF
                         continue
                     }
+                } else if lower.hasSuffix(".svg") {
+                    let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+                    decodedImage = UIImage(svgData: data, size: renderSize)
+                    if decodedImage == nil {
+                        lastError = DeltaSkinError.invalidPNG
+                        continue
+                    }
                 } else {
                     decodedImage = UIImage(data: data, scale: UIScreen.main.scale)
                     if decodedImage == nil {
@@ -426,6 +433,12 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 decodedImage = UIImage(pdfData: assetData, preserveTransparency: true, size: renderSize)
                 guard decodedImage != nil else {
                     throw DeltaSkinError.invalidPDF
+                }
+            } else if lower.hasSuffix(".svg") {
+                let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+                decodedImage = UIImage(svgData: assetData, size: renderSize)
+                guard decodedImage != nil else {
+                    throw DeltaSkinError.invalidPNG
                 }
             } else {
                 decodedImage = UIImage(data: assetData, scale: UIScreen.main.scale)
@@ -734,8 +747,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
             if let assets = assets {
                 // Allow both PDF and PNG for resizable assets
                 if let resizable = assets.resizable,
-                   !resizable.hasSuffix(".pdf") && !resizable.hasSuffix(".png") {
-                    ELOG("Resizable asset must be a PDF or PNG file")
+                   !resizable.hasSuffix(".pdf") && !resizable.hasSuffix(".png") && !resizable.hasSuffix(".svg") {
+                    ELOG("Resizable asset must be a PDF, PNG, or SVG file")
                     return DeltaSkin.RepresentationInfo(
                         assets: defaultAssets,
                         mappingSize: mappingSize ?? CGSize(width: 0, height: 0),
