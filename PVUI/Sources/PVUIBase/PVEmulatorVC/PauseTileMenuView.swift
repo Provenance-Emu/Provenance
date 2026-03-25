@@ -47,6 +47,9 @@ struct PauseTileMenuView: View {
     @State private var showingScreenshotBrowser = false
     @State private var showingControllerProfiles = false
     @State private var showingTransferPakConfig = false
+    /// Frozen snapshot of `emulatorVC.game` captured on the main thread before the sheet opens.
+    /// The sheet closure reads this instead of the live Realm object to avoid thread-violation crashes.
+    @State private var frozenTransferPakGame: PVGame?
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
@@ -210,7 +213,15 @@ struct PauseTileMenuView: View {
 
         // MARK: Transfer Pak config sheet
         case "transferPak":
-            showingTransferPakConfig = true
+            // Freeze the Realm object on the current (main) thread before opening the sheet,
+            // so the sheet closure never touches a live Realm instance on an unknown thread.
+            // Only present the sheet when the game is available and not invalidated.
+            if let rawGame = emulatorVC.game, !rawGame.isInvalidated {
+                frozenTransferPakGame = rawGame.isFrozen ? rawGame : rawGame.freeze()
+                showingTransferPakConfig = true
+            } else {
+                ELOG("Transfer Pak config requested but emulatorVC.game was nil or invalidated; sheet will not be shown.")
+            }
 
         // MARK: N64 Controller Pak slot picker
         case "n64PakSlots":
@@ -229,12 +240,15 @@ struct PauseTileMenuView: View {
         case "keyboardToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualKeyboard()
-            rebuildSections()
+            // Dismiss the menu so the user can interact with the keyboard overlay.
+            // The tile menu keeping the game paused while showing the overlay is unhelpful.
+            dismissAction(true)
             #endif
         case "mouseToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualMouse()
-            rebuildSections()
+            // Dismiss the menu so the user can interact with the mouse overlay.
+            dismissAction(true)
             #endif
         case "jitStatus":
             break // read-only
@@ -633,11 +647,11 @@ struct PauseTileMenuView: View {
                 showingControllerProfiles = false
             }
         }
-        .sheet(isPresented: $showingTransferPakConfig) {
-            if let game = emulatorVC.game, !game.isInvalidated {
+        .sheet(isPresented: $showingTransferPakConfig, onDismiss: { frozenTransferPakGame = nil }) {
+            if let frozenGame = frozenTransferPakGame {
                 let transferCore = emulatorVC.core as? TransferPakSupport
                 TransferPakConfigView(
-                    game: game,
+                    game: frozenGame,
                     slotCount: transferCore?.transferPakSlotCount ?? 4,
                     applyLiveSlotChange: transferCore.map { core in
                         { port, rom in core.setTransferPakROM(rom, forPort: port) }
