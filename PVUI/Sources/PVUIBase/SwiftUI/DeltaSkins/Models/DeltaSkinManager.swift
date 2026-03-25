@@ -401,18 +401,15 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             locations.append(contentsOf: frameworkSkins)
         }
 
-        // Add SPM resource bundle skins — Bundle.module for SwiftPM targets lives in
-        // Bundle.allBundles (not allFrameworks), so scan it to pick up DefaultSkins
-        // bundled via Package.swift resource rules.
-        let allBundleSkins = Bundle.allBundles.flatMap { bundle -> [URL] in
-            let deltaSkins = bundle.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
-            let manicSkins = bundle.urls(forResourcesWithExtension: "manicskin", subdirectory: nil) ?? []
-            return deltaSkins + manicSkins
-        }
-        let newBundleSkins = allBundleSkins.filter { url in !locations.contains(url) }
-        if !newBundleSkins.isEmpty {
-            ILOG("skins: Found \(newBundleSkins.count) SPM resource bundle skins: \(newBundleSkins.map { $0.lastPathComponent }.joined(separator: ", "))")
-            locations.append(contentsOf: newBundleSkins)
+        // Add bundled DefaultSkins from this SwiftPM module's resource bundle.
+        // Bundle.module is the authoritative, deterministic way to access SwiftPM
+        // resources — it avoids walking every unrelated bundle in Bundle.allBundles.
+        let moduleDeltaSkins = Bundle.module.urls(forResourcesWithExtension: "deltaskin", subdirectory: "DefaultSkins") ?? []
+        let moduleManicSkins = Bundle.module.urls(forResourcesWithExtension: "manicskin", subdirectory: "DefaultSkins") ?? []
+        let moduleSkins = (moduleDeltaSkins + moduleManicSkins).filter { !locations.contains($0) }
+        if !moduleSkins.isEmpty {
+            ILOG("skins: Found \(moduleSkins.count) DefaultSkins in module bundle: \(moduleSkins.map { $0.lastPathComponent }.joined(separator: ", "))")
+            locations.append(contentsOf: moduleSkins)
         }
 
         // Add Documents directory skins (use URL.documentsPath for tvOS caches mapping)

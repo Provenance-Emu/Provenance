@@ -68,9 +68,16 @@ final class SVGRenderer: NSObject, XMLParserDelegate {
     // MARK: - Init
 
     init?(data: Data) {
+        // Reject DOCTYPE/ENTITY declarations to prevent entity-expansion attacks
+        // before handing the data to XMLParser.
+        if let head = String(data: data.prefix(512), encoding: .utf8),
+           head.contains("<!DOCTYPE") || head.contains("<!ENTITY") {
+            return nil
+        }
         super.init()
         let parser = XMLParser(data: data)
         parser.delegate = self
+        parser.shouldResolveExternalEntities = false
         guard parser.parse() else { return nil }
     }
 
