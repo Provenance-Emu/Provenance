@@ -100,7 +100,12 @@ static void flushGunState(uint32_t **inputBuffer, int player, const SSGunState &
 }
 
 - (BOOL)requiresLightGun {
-    return self->_isLightGunGame;
+    // The Saturn serial registry distinguishes between games that support
+    // a light gun and those that strictly require one to be playable.
+    // Until a dedicated "requires" source of truth is available, report
+    // that no title strictly requires a light gun and use
+    // -gameSupportsLightGun for "gun-capable" detection.
+    return NO;
 }
 
 // -------------------------------------------------------------------------

@@ -52,11 +52,11 @@ import Foundation
                 "GS-9184"       : 2,   // Gunblade NY (Japan)
                 "MK-81189"      : 2,   // Gunblade NY (USA/Europe)
 
-                // ----- Die Hard Arcade / Dynamite Deka (Sega, 1996) -----
+                // ----- Die Hard Trilogy (Sega, 1996) -----
                 // Note: light gun used only in specific scenes; primary mode is beat-em-up.
                 // Included to allow gun aim if the player has a gun attached.
-                "GS-9123"       : 1,   // Die Hard Arcade (Japan)
-                "T-16103H"      : 1,   // Die Hard Arcade (Europe/USA)
+                "GS-9123"       : 1,   // Die Hard Trilogy (Japan)
+                "T-16103H"      : 1,   // Die Hard Trilogy (Europe/USA)
             ]
         }
         return Static.dict

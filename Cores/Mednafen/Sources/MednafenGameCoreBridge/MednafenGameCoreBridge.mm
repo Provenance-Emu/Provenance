@@ -889,6 +889,16 @@ static void emulation_run(BOOL skipFrame) {
                  connectedControllers, ssMaxPlayers);
         }
 
+        // Light gun peripherals are incompatible with the TeamTap multitap
+        // (Mednafen's own device description warns about this).  Force multitap
+        // off so the post-load SetInput block can correctly set the "gun" device
+        // type for port 0 (and optionally port 1).
+        if (self->_isLightGunGame && ssEnableMultitap) {
+            WLOG(@"Mednafen Saturn pre-load: disabling multitap — incompatible with light gun peripherals (serial=%@)", serial);
+            ssEnableMultitap = NO;
+            ssMaxPlayers = 2;
+        }
+
         if (ssEnableMultitap) {
             ssUsePort2 = serial != nil && [[MednafenGameCoreOptions multiTapSaturnPort2Games] containsObject:serial];
             Mednafen::MDFNI_SetSettingB("ss.input.sport1.multitap", !ssUsePort2);
