@@ -95,12 +95,13 @@ struct AUFilterSettingsView: View {
                 ForEach($chain.nodes) { $node in
                     EffectNodeRow(
                         node: $node,
-                        isExpanded: expandedNodeID == node.id,
+                        isExpanded: expandedNodeID == $node.wrappedValue.id,
                         onToggleExpand: {
-                            expandedNodeID = expandedNodeID == node.id ? nil : node.id
+                            let nodeID = $node.wrappedValue.id
+                            expandedNodeID = expandedNodeID == nodeID ? nil : nodeID
                         },
                         onDelete: {
-                            chain.nodes.removeAll { $0.id == node.id }
+                            chain.nodes.removeAll { $0.id == $node.wrappedValue.id }
                         }
                     )
                 }
