@@ -1,0 +1,79 @@
+/*
+  Strings.strings
+  Provenance
+
+  Created by Joseph Mattiello on 8/16/21.
+  Copyright © 2021 Provenance Emu. All rights reserved.
+
+  Translated to Arabic by community contributor (issue #2256)
+*/
+
+/* Loading and item */
+"Loading" = "جار التحميل";
+
+"App" = "التطبيق";
+"Core Options" = "خيارات النواة";
+"Auto Save" = "الحفظ التلقائي";
+"Timed Auto Saves" = "الحفظ التلقائي المجدول";
+"Auto Load Saves" = "تحميل الحفظ تلقائياً";
+"Ask to Load Saves" = "طلب تأكيد تحميل الحفظ";
+"Opacity" = "الشفافية";
+"Saves" = "الحفظات";
+"Video Options" = "خيارات الفيديو";
+
+"Button Colors" = "ألوان الأزرار";
+
+"All-Right Shoulders" = "أزرار الكتف اليمنى";
+
+"Haptic Feedback" = "الاهتزاز اللمسي";
+
+"Enable 8BitDo M30 Mapping" = "تفعيل تعيين 8BitDo M30";
+
+"Controllers" = "أجهزة التحكم";
+"Controller" = "جهاز التحكم";
+
+"iCade Controller" = "جهاز التحكم iCade";
+
+"Appearance" = "المظهر";
+
+"Build" = "البناء";
+
+"Mode" = "الوضع";
+
+"Git Revision" = "مراجعة Git";
+"Build Data" = "بيانات البناء";
+"Builder" = "المُجمِّع";
+"Bundle ID" = "معرّف الحزمة";
+"Unknown" = "غير معروف";
+"Cores" = "النوى";
+"Licenses" = "التراخيص";
+"Logs" = "السجلات";
+"Systems" = "الأنظمة";
+"Volume HUD" = "عرض مستوى الصوت";
+"Native Scale" = "الحجم الأصلي";
+"Integer Scaling" = "تحجيم صحيح";
+"CRT Filter" = "فلتر CRT";
+"Image Smoothing" = "تنعيم الصور";
+"FPS Counter" = "عداد FPS";
+"Missing Buttons Always On-Screen" = "إظهار الأزرار المفقودة دائماً";
+"iCloud Sync" = "مزامنة iCloud";
+"Use Metal" = "استخدام Metal";
+"Multi-threaded GL" = "GL متعدد الخيوط";
+"4X Multisampling GL" = "GL متعدد العينات 4X";
+"Disable Auto Lock" = "تعطيل القفل التلقائي";
+"Launch Web Server" = "تشغيل خادم الويب";
+"Game Library" = "مكتبة الألعاب";
+"Refresh Game Library" = "تحديث مكتبة الألعاب";
+"Empty Image Cache" = "مسح ذاكرة تخزين الصور";
+"Manage Conflicts" = "إدارة التعارضات";
+"Advanced Features" = "الميزات المتقدمة";
+"Unknown" = "غير معروف";
+"Version" = "الإصدار";
+"Build Information" = "معلومات البناء";
+"3rd Party & Legal" = "أطراف ثالثة وقانونية";
+"Debug" = "تصحيح الأخطاء";
+"No" = "لا";
+"Empty Image Cache?" = "مسح ذاكرة تخزين الصور؟";
+"Yes" = "نعم";
+"Acknowledgements" = "الشكر والتقدير";
+"Database Error" = "خطأ في قاعدة البيانات";

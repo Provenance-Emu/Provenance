@@ -1,0 +1,79 @@
+/*
+  Strings.strings
+  Provenance
+
+  Created by Joseph Mattiello on 8/16/21.
+  Copyright © 2021 Provenance Emu. All rights reserved.
+
+  Translated to Korean by community contributor (issue #2255)
+*/
+
+/* Loading and item */
+"Loading" = "로딩 중";
+
+"App" = "앱";
+"Core Options" = "코어 옵션";
+"Auto Save" = "자동 저장";
+"Timed Auto Saves" = "시간 자동 저장";
+"Auto Load Saves" = "자동 저장 불러오기";
+"Ask to Load Saves" = "저장 불러오기 확인";
+"Opacity" = "불투명도";
+"Saves" = "저장";
+"Video Options" = "비디오 옵션";
+
+"Button Colors" = "버튼 색상";
+
+"All-Right Shoulders" = "오른쪽 어깨 버튼 전체";
+
+"Haptic Feedback" = "햅틱 피드백";
+
+"Enable 8BitDo M30 Mapping" = "8BitDo M30 매핑 활성화";
+
+"Controllers" = "컨트롤러";
+"Controller" = "컨트롤러";
+
+"iCade Controller" = "iCade 컨트롤러";
+
+"Appearance" = "외관";
+
+"Build" = "빌드";
+
+"Mode" = "모드";
+
+"Git Revision" = "Git 리비전";
+"Build Data" = "빌드 데이터";
+"Builder" = "빌더";
+"Bundle ID" = "번들 ID";
+"Unknown" = "알 수 없음";
+"Cores" = "코어";
+"Licenses" = "라이선스";
+"Logs" = "로그";
+"Systems" = "시스템";
+"Volume HUD" = "볼륨 표시기";
+"Native Scale" = "원래 크기";
+"Integer Scaling" = "정수 배율";
+"CRT Filter" = "CRT 필터";
+"Image Smoothing" = "이미지 스무딩";
+"FPS Counter" = "FPS 카운터";
+"Missing Buttons Always On-Screen" = "누락된 버튼 항상 화면에 표시";
+"iCloud Sync" = "iCloud 동기화";
+"Use Metal" = "Metal 사용";
+"Multi-threaded GL" = "멀티스레드 GL";
+"4X Multisampling GL" = "4X 멀티샘플링 GL";
+"Disable Auto Lock" = "자동 잠금 비활성화";
+"Launch Web Server" = "웹 서버 시작";
+"Game Library" = "게임 라이브러리";
+"Refresh Game Library" = "게임 라이브러리 새로고침";
+"Empty Image Cache" = "이미지 캐시 지우기";
+"Manage Conflicts" = "충돌 관리";
+"Advanced Features" = "고급 기능";
+"Unknown" = "알 수 없음";
+"Version" = "버전";
+"Build Information" = "빌드 정보";
+"3rd Party & Legal" = "서드파티 및 법적 정보";
+"Debug" = "디버그";
+"No" = "아니오";
+"Empty Image Cache?" = "이미지 캐시를 지울까요?";
+"Yes" = "예";
+"Acknowledgements" = "감사의 글";
+"Database Error" = "데이터베이스 오류";

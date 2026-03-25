@@ -1,0 +1,12 @@
+/* Localizable.strings — Korean (ko)
+   Provenance
+   Translated by community contributor (issue #2255)
+*/
+
+"DeleteGameTitle" = "게임을 삭제할까요?";
+"DeleteGameBody" = "\"%@\" 게임을 정말 삭제하시겠습니까?";
+"OK" = "확인";
+"Cancel" = "취소";
+"Delete" = "삭제";
+"Error" = "오류";
+"Warning" = "경고";

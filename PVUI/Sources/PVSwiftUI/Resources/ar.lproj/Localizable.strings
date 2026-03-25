@@ -1,0 +1,12 @@
+/* Localizable.strings — Arabic (ar)
+   Provenance
+   Translated by community contributor (issue #2256)
+*/
+
+"DeleteGameTitle" = "حذف اللعبة؟";
+"DeleteGameBody" = "هل أنت متأكد من حذف اللعبة \"%@\"؟";
+"OK" = "موافق";
+"Cancel" = "إلغاء";
+"Delete" = "حذف";
+"Error" = "خطأ";
+"Warning" = "تحذير";
