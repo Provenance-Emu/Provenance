@@ -29,7 +29,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 @end
 
 @interface PVCoreGenesisPlusBridge (LightGun)
-/// The port index used for the active light gun device (0 for port A, 4 or 5 for port B when using Justifiers).
+/// The port index used for the active light gun device (0 for port A, 4 for port B when using Justifiers).
 @property (nonatomic, readonly) NSInteger lightGunPort;
 @end
 
