@@ -35,13 +35,13 @@ import PVLogging
 /// - `viewDestRect`: where to paint the result, expressed in the MTKView's
 ///   UIKit-point coordinate space.  The renderer converts to NDC at draw time
 ///   so it stays correct regardless of the drawable's `contentScaleFactor`.
-public struct DualScreenRenderInfo: Sendable {
+struct DualScreenRenderInfo: Sendable {
     /// Normalized (0…1) source sub-rectangle inside the combined input texture.
-    public let normalizedSourceRect: CGRect
+    let normalizedSourceRect: CGRect
     /// Destination in the Metal view's UIKit-point coordinate space.
-    public let viewDestRect: CGRect
+    let viewDestRect: CGRect
 
-    public init(normalizedSourceRect: CGRect, viewDestRect: CGRect) {
+    init(normalizedSourceRect: CGRect, viewDestRect: CGRect) {
         self.normalizedSourceRect = normalizedSourceRect
         self.viewDestRect = viewDestRect
     }
@@ -55,8 +55,8 @@ extension PVMetalViewController {
 
     /// Metal source for the dual-screen sub-rectangle blit shaders.
     ///
-    /// Compiled at runtime so we don't need to load from a bundle — matches the
-    /// pattern already used by `createBasicShaders()`.
+    /// Compiled at runtime via `makeLibrary(source:)` — the same pattern used
+    /// elsewhere in PVMetalViewController for inline shaders.
     static let dualScreenShaderSource = """
     #include <metal_stdlib>
     using namespace metal;
@@ -193,9 +193,10 @@ extension PVMetalViewController {
                 SIMD4(nx1, ny1, u1, v1),
             ]
 
-            encoder.setVertexBytes(&vertices,
-                                   length: vertices.count * MemoryLayout<SIMD4<Float>>.stride,
-                                   index: 0)
+            let byteLength = vertices.count * MemoryLayout<SIMD4<Float>>.stride
+            vertices.withUnsafeBytes { ptr in
+                encoder.setVertexBytes(ptr.baseAddress!, length: byteLength, index: 0)
+            }
             encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         }
         return true

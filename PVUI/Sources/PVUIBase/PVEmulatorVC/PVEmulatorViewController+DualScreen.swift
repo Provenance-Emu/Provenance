@@ -544,6 +544,10 @@ extension PVEmulatorViewController {
                 if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
                     DLOG("🎮 SKIN: Applying dual screen viewport for emuThreeDS: \(combinedRect)")
                     self.applyDualScreenViewportForEmuThree(frame: combinedRect)
+                } else if self.canUseMetalDualScreenRendering {
+                    // Metal dual-screen is handling layout via sub-rectangle blits;
+                    // skip applyFrameToGPUView to avoid overriding expandMetalViewToFillParent.
+                    DLOG("🎮 SKIN: Metal dual-screen active, skipping applyFrameToGPUView")
                 } else {
                     DLOG("🎮 SKIN: Applying dual screen viewport (standard): \(combinedRect)")
                     self.applyFrameToGPUView(combinedRect)
@@ -563,7 +567,7 @@ extension PVEmulatorViewController {
                 DLOG("🎮 SKIN: Timeout - only one screen received, applying single frame: \(frame)")
                 if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
                     self.applyDualScreenViewportForEmuThree(frame: frame)
-                } else {
+                } else if !self.canUseMetalDualScreenRendering {
                     self.applyFrameToGPUView(frame)
                 }
                 self.currentTargetFrame = frame
