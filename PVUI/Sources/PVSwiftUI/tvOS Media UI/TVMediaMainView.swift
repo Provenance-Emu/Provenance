@@ -933,11 +933,23 @@ final class TVMediaLibraryModel: ObservableObject {
         for id in gamesBySystemIdentifier.keys {
             identifiersToRefresh.insert(id)
         }
-        // Run reloads concurrently instead of sequentially.
-        await withTaskGroup(of: Void.self) { group in
-            for id in identifiersToRefresh {
-                group.addTask { await self.loadGamesForSystemAsync(identifier: id) }
+        // Run reloads concurrently instead of sequentially, but with a bounded level
+        // of concurrency to avoid spawning too many Realm loads at once.
+        let maxConcurrentGameLoads = 4
+        let ids = Array(identifiersToRefresh)
+        var index = 0
+
+        while index < ids.count {
+            let end = min(index + maxConcurrentGameLoads, ids.count)
+            let slice = ids[index..<end]
+
+            await withTaskGroup(of: Void.self) { group in
+                for id in slice {
+                    group.addTask { await self.loadGamesForSystemAsync(identifier: id) }
+                }
             }
+
+            index = end
         }
     }
 
@@ -2645,13 +2657,31 @@ struct TVMediaHomeView: View {
 
     private func loadAllGames() async {
         isLoading = true
-        // Load all systems concurrently rather than sequentially to reduce
-        // startup time on devices with many systems (50+).
+        // Load systems with a small concurrency cap to reduce startup time
+        // without overwhelming Realm or the device on setups with many systems.
+        let maxConcurrentLoads = 4
+
         await withTaskGroup(of: Void.self) { group in
-            for system in model.systems {
+            var systemsIterator = model.systems.makeIterator()
+
+            // Prime the task group with up to `maxConcurrentLoads` systems.
+            var started = 0
+            while started < maxConcurrentLoads, let system = systemsIterator.next() {
+                let id = system.identifier
+                started += 1
+                group.addTask { await model.loadGamesForSystemAsync(identifier: id) }
+            }
+
+            // For any remaining systems, wait for a task to finish before
+            // scheduling a new one to keep concurrency bounded.
+            while let system = systemsIterator.next() {
+                _ = await group.next()
                 let id = system.identifier
                 group.addTask { await model.loadGamesForSystemAsync(identifier: id) }
             }
+
+            // Drain any remaining tasks.
+            while await group.next() != nil {}
         }
         isLoading = false
 
@@ -2785,6 +2815,14 @@ struct TVMediaSystemsView: View {
         }
         .task {
             await iconLoader.loadIcons(for: systemsWithGames)
+        }
+        .task(id: model.systems.count) {
+            // Trigger a load for any system not yet in the cache so that
+            // `systemsWithGames` can populate and show all systems, even
+            // on first appearance before shelf rows have lazy-loaded them.
+            for system in model.systems {
+                model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+            }
         }
         .onAppear {
             if focusedSystemID == nil {
@@ -3684,6 +3722,11 @@ struct TVMediaSearchView: View {
                 Task { await performSearch() }
             }
         }
+        .onDisappear {
+            // Cancel any pending debounce task so it doesn't fire after navigation.
+            searchDebounceTask?.cancel()
+            searchDebounceTask = nil
+        }
     }
 
     private var searchField: some View {
@@ -3736,9 +3779,13 @@ struct TVMediaSearchView: View {
                     }
                 }
                 .onSubmit {
+                    // Cancel any pending debounced task and perform search immediately.
+                    searchDebounceTask?.cancel()
+                    searchDebounceTask = nil
                     if !text.isEmpty {
                         addToRecentSearches(text)
                         lastSearch = text
+                        Task { await performSearch() }
                     }
                 }
 
