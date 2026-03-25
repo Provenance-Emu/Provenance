@@ -103,18 +103,12 @@ extension MednafenGameCore: CoreRetroAchievements {
                                             kind: .systemRAM)]
 
         case .Saturn:
-            // 1 MB Work RAM Low  (0x00200000–0x002FFFFF)
-            // 1 MB Work RAM High (0x06000000–0x060FFFFF)
-            guard let ptrL = mdfn_ss_workraml_ptr(),
-                  let ptrH = mdfn_ss_workramh_ptr() else { return [] }
-            return [
-                AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptrL),
-                                        size: mdfn_ss_workraml_size(),
-                                        kind: .systemRAM),
-                AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptrH),
-                                        size: mdfn_ss_workramh_size(),
-                                        kind: .systemRAM),
-            ]
+            // Saturn Work RAM is backed by uint16 storage in Mednafen and requires
+            // address translation/byte swapping (ne16_rbo_be) for correct 8-bit access.
+            // Exposing a raw reinterpret_cast<uint8_t*> pointer gives rcheevos scrambled
+            // bytes on little-endian hosts.  Until a shadow byte-buffer or read-callback
+            // implementation is added, do not expose Saturn regions.
+            return []
 
         case .PCE, .PCECD, .SGFX:
             // 8 KB base RAM for PCE/PCECD, 32 KB for SuperGrafx (0x1F0000–0x1F1FFF / 0x1F7FFF)
@@ -145,8 +139,11 @@ extension MednafenGameCore: CoreRetroAchievements {
         guard isRunning else { return false }
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
         switch sysID {
-        case .PSX, .NES, .FDS, .Saturn, .PCE, .PCECD, .SGFX:
+        case .PSX, .NES, .FDS, .PCE, .PCECD, .SGFX:
             return true
+        case .Saturn:
+            // Saturn RAM wiring requires byte-order correction; disabled until Phase 2.
+            return false
         case .SNES:
             // Only snes_faust exposes a RAM pointer; legacy snes core is unsupported.
             return MednafenGameCoreOptions.mednafen_snesFast
