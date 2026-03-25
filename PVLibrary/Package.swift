@@ -50,7 +50,7 @@ let package = Package(
     dependencies:
         ["Support", "Logging", "Hashing",
          "EmulatorCore", "CoreLoader", "Primitives",
-         "Plists", "Lookup", "Settings", "FeatureFlags"]
+         "Plists", "Lookup", "Settings", "FeatureFlags", "Patching"]
         .map { .package(path: "../PV\($0)") }
         + [
         .package(url: "https://github.com/ReactiveX/RxSwift.git",
@@ -109,6 +109,7 @@ let package = Package(
                 "PVSettings",
                 "PVEmulatorCore",
                 "PVCoreLoader",
+                "PVPatching",
                 .product(name: "Unrar", package: "Unrar.swift"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
                 .product(name: "SQLite", package: "SQLite.swift"),
@@ -139,6 +140,7 @@ let package = Package(
                 "PVLookup",
                 "PVPrimitives",
                 "PVMediaCache",
+                "PVPatching",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
                 .product(name: "PVCoreLoader", package: "PVCoreLoader"),
                 .product(name: "SQLite", package: "SQLite.swift"),

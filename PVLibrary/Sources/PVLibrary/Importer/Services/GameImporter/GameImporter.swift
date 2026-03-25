@@ -19,6 +19,7 @@ import PVFileSystem
 import PVLogging
 import PVLookup
 import PVMediaCache
+import PVPatching
 import PVPlists
 import PVPrimitives
 import PVRealm

@@ -10,30 +10,7 @@ import Foundation
 import RealmSwift
 import PVLogging
 import PVPrimitives
-
-/// Supported ROM patch file formats.
-public enum PatchFormat: String, Codable, Equatable, Hashable, Sendable, CaseIterable {
-    case ips      = "ips"
-    case ips32    = "ips32"
-    case bps      = "bps"
-    case ups      = "ups"
-    case xdelta   = "xdelta"
-    case delta    = "delta"
-    case xdelta3  = "xdelta3"
-    case vcdiff   = "vcdiff"
-    case ppf      = "ppf"
-    case aps      = "aps"
-    case rup      = "rup"
-    case nsp      = "nsp"
-
-    /// All file extensions that are recognised as patch files.
-    public static let allExtensions: Set<String> = Set(PatchFormat.allCases.map { $0.rawValue })
-
-    /// Initialise from a file URL's path extension (case-insensitive).
-    public init?(fileURL: URL) {
-        self.init(rawValue: fileURL.pathExtension.lowercased())
-    }
-}
+import PVPatching
 
 /// A Realm-persisted record representing a ROM patch file linked (optionally) to a game.
 @objcMembers

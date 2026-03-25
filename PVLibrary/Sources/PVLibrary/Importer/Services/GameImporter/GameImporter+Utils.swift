@@ -5,6 +5,7 @@
 //  Created by David Proskin on 11/3/24.
 //
 
+import PVPatching
 
 extension GameImporter {
 

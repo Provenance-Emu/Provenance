@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import PVRealm
+import PVPatching
 
 public enum ImporterFileType: Sendable {
     case rom
