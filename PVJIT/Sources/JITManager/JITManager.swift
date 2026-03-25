@@ -518,3 +518,48 @@ public final class DOLJitManager {
 public func PVJITManagerIsAcquired() -> Bool {
     return DOLJitManager.acquired
 }
+
+/// C-callable entitlement check for the iOS 26 native JIT path.
+///
+/// Returns `true` only when `com.apple.developer.kernel.allow-jit` is present
+/// **and** set to `true` in the running binary's code signature. Uses the same
+/// binary-level entitlement parser as `DOLJitManager.hasNativeJitEntitlement()`
+/// so that no Security.framework link-time dependency is introduced in the
+/// calling target.
+///
+/// ```objc
+/// extern bool PVJITHasNativeJITEntitlement(void) __attribute__((weak));
+/// ```
+@_cdecl("PVJITHasNativeJITEntitlement")
+public func PVJITHasNativeJITEntitlement() -> Bool {
+    if #available(iOS 13.4, tvOS 13.4, *) {
+        return HasBooleanEntitlement("com.apple.developer.kernel.allow-jit")
+    }
+    return false
+}
+
+/// C-callable check for whether this app was installed via TrollStore.
+///
+/// Combines device-wide file-system markers with a `get-task-allow` entitlement
+/// check (via binary code-signature parsing) so that TrollStore being present on
+/// the device alone is not sufficient — the app must also carry `get-task-allow`.
+/// This prevents a false-positive on non-TrollStore builds on TrollStore devices.
+///
+/// ```objc
+/// extern bool PVJITIsInstalledViaTrollStore(void) __attribute__((weak));
+/// ```
+@_cdecl("PVJITIsInstalledViaTrollStore")
+public func PVJITIsInstalledViaTrollStore() -> Bool {
+    let deviceMarkers = [
+        "/var/mobile/Library/Application Support/TrollStore",
+        "/usr/lib/TrollStore",
+        "/var/containers/Bundle/TrollStore",
+    ]
+    guard deviceMarkers.contains(where: { FileManager.default.fileExists(atPath: $0) }) else {
+        return false
+    }
+    if #available(iOS 13.4, tvOS 13.4, *) {
+        return HasBooleanEntitlement("get-task-allow")
+    }
+    return false
+}

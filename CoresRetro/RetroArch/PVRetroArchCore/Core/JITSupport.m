@@ -9,8 +9,6 @@
 //  
 
 #import <Foundation/Foundation.h>
-#import <Security/SecTask.h>
-
 #import "JITSupport.h"
 
 #include <dlfcn.h>
@@ -104,6 +102,16 @@ bool jb_enable_ptrace_hack(void) {
 // and the fallback detection below takes over.
 extern bool PVJITManagerIsAcquired(void) __attribute__((weak));
 
+// Checks com.apple.developer.kernel.allow-jit in the binary code signature.
+// Implemented in PVJIT (JITManager.swift) using binary-level entitlement parsing
+// so no Security.framework link dependency is introduced here.
+extern bool PVJITHasNativeJITEntitlement(void) __attribute__((weak));
+
+// Returns true only when TrollStore is installed AND this binary carries
+// get-task-allow — avoids false-positives on non-TrollStore builds on
+// TrollStore devices. Implemented in PVJIT (JITManager.swift).
+extern bool PVJITIsInstalledViaTrollStore(void) __attribute__((weak));
+
 bool jit_available(void)
 {
    // Primary path: ask DOLJitManager (PVJIT) whether JIT was already acquired.
@@ -117,44 +125,28 @@ bool jit_available(void)
    // attemptToAcquireJitOnStartup() hasn't been called yet.
 
    // iOS 26+ native JIT: JITAuthorizer class present AND allow-jit entitlement set.
-   // Check the entitlement value is explicitly kCFBooleanTrue, not merely non-null,
-   // to avoid false-positives when the entitlement key is present but set to false.
+   // PVJITHasNativeJITEntitlement() verifies the entitlement via binary code-signature
+   // parsing (no Security.framework link required) to avoid false-positives on
+   // iOS 26 builds that lack the entitlement.
 #if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
    static bool hasNativeJIT = false;
    static dispatch_once_t nativeJITOnce = 0;
    dispatch_once(&nativeJITOnce, ^{
       if (NSClassFromString(@"JITAuthorizer") != nil) {
-         SecTaskRef task = SecTaskCreateFromSelf(NULL);
-         if (task) {
-            CFTypeRef value = SecTaskCopyValueForEntitlement(
-               task, CFSTR("com.apple.developer.kernel.allow-jit"), NULL);
-            if (value != NULL) {
-               hasNativeJIT = (CFGetTypeID(value) == CFBooleanGetTypeID() &&
-                               CFBooleanGetValue((CFBooleanRef)value));
-               CFRelease(value);
-            }
-            CFRelease(task);
-         }
+         hasNativeJIT = (PVJITHasNativeJITEntitlement != NULL &&
+                         PVJITHasNativeJITEntitlement());
       }
    });
    if (hasNativeJIT) return true;
 
-   // TrollStore: check for file-system markers left by TrollStore on the device.
+   // TrollStore: combines file-system markers with a get-task-allow entitlement
+   // check to avoid false-positives when TrollStore is on the device but this app
+   // was not installed via TrollStore.
    static bool hasTrollStore = false;
    static dispatch_once_t trollStoreOnce = 0;
    dispatch_once(&trollStoreOnce, ^{
-      const char *markers[] = {
-         "/var/mobile/Library/Application Support/TrollStore",
-         "/usr/lib/TrollStore",
-         "/var/containers/Bundle/TrollStore",
-      };
-      for (size_t i = 0; i < sizeof(markers) / sizeof(markers[0]); i++) {
-         struct stat st;
-         if (stat(markers[i], &st) == 0) {
-            hasTrollStore = true;
-            break;
-         }
-      }
+      hasTrollStore = (PVJITIsInstalledViaTrollStore != NULL &&
+                       PVJITIsInstalledViaTrollStore());
    });
    if (hasTrollStore) return true;
 #endif
