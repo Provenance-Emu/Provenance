@@ -17,7 +17,10 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
 
     // MARK: - Primary Key
 
-    /// Deterministic ID derived from the patch file's relative path; stable across re-imports.
+    /// Primary key for this patch record.
+    /// Derived from `file.partialPath` when available (idempotent across re-imports),
+    /// falling back to `file.url.lastPathComponent` (filename-stable),
+    /// or a random UUID only if no file path is resolvable.
     @Persisted(primaryKey: true) public var id: String = ""
 
     // MARK: - File & Game
