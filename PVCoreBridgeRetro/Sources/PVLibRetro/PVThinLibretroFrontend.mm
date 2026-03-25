@@ -212,8 +212,11 @@ typedef struct pv_midi_state {
 } pv_midi_state_t;
 
 static pv_midi_state_t s_midiState = {0};
-/// Lock protecting all ring-buffer reads and writes so the byte write always
-/// precedes the index advance, eliminating the TOCTOU window in the CAS pattern.
+/// Lock protecting concurrent ring-buffer reads and writes during active MIDI use.
+/// Ensures byte data is written before the index advances (no TOCTOU window).
+/// NOTE: lifecycle transitions (thin_midi_ensure_initialized / thin_midi_shutdown)
+/// are not fully protected by this lock; they must be called on non-concurrent paths
+/// (i.e., before any CoreMIDI callbacks or libretro reads are in flight).
 static os_unfair_lock s_midiRingLock = OS_UNFAIR_LOCK_INIT;
 #endif
 
@@ -1289,6 +1292,11 @@ static struct retro_vfs_interface s_thinVFSInterface = {
 /// Both the CoreMIDI callback and pv_libretro_midi_inject_byte use this helper
 /// so the write protocol is defined in exactly one place.
 /// Returns false (and drops the byte) when the buffer is full.
+///
+/// NOTE on locking in the CoreMIDI callback: CoreMIDI delivers packets on a
+/// background thread, not a real-time audio thread, so taking os_unfair_lock
+/// (held for < 1 µs) is acceptable here.  A true lock-free scheme would add
+/// significant complexity for negligible practical benefit.
 static bool thin_midi_ring_write_byte(uint8_t byte) {
     os_unfair_lock_lock(&s_midiRingLock);
     size_t writePos = atomic_load_explicit(&s_midiState.readWritePos, memory_order_relaxed);
@@ -1351,9 +1359,12 @@ static bool thin_midi_ensure_initialized(void) {
         }
     }
 
+    // Ring-buffer indices are already zero: s_midiState has static storage
+    // duration (zero-initialized at start) and thin_midi_shutdown() memsets
+    // the whole struct to 0.  Do NOT reset them here — callbacks can fire
+    // immediately after MIDIPortConnectSource above and a reset would lose
+    // any bytes they already deposited.
     s_midiState.initialized = true;
-    atomic_store(&s_midiState.readWritePos, 0);
-    atomic_store(&s_midiState.readReadPos, 0);
     ILOG(@"ThinFrontend MIDI: initialized (inputs=%lu, outputs=%lu)",
          (unsigned long)MIDIGetNumberOfSources(),
          (unsigned long)MIDIGetNumberOfDestinations());
@@ -1371,7 +1382,11 @@ static void thin_midi_shutdown(void) {
         MIDIPortDispose(s_midiState.outputPort);
     if (s_midiState.client)
         MIDIClientDispose(s_midiState.client);
+    // Hold the ring lock while zeroing state so concurrent thin_midi_read calls
+    // (driven by the libretro core) cannot observe partially-cleared indices.
+    os_unfair_lock_lock(&s_midiRingLock);
     memset(&s_midiState, 0, sizeof(s_midiState));
+    os_unfair_lock_unlock(&s_midiRingLock);
 }
 
 static bool thin_midi_input_enabled(void) {
