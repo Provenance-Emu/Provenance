@@ -104,8 +104,10 @@ extension PVEmulatorViewController {
         ILOG("Screen did disconnect: \(note?.object ?? "")")
         let screen = note?.object as? UIScreen
         guard secondaryScreen == screen else { return }
-        restoreGPUViewToDevice()
-        hideOrShowMenuButton()
+        Task { @MainActor in
+            self.restoreGPUViewToDevice()
+            self.hideOrShowMenuButton()
+        }
     }
 
     // MARK: - External Display Helpers
