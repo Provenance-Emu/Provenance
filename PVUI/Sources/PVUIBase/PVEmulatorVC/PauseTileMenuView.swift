@@ -253,14 +253,6 @@ struct PauseTileMenuView: View {
         case "jitStatus":
             break // read-only
 
-        // MARK: AirPlay
-        case "airPlay":
-            #if os(iOS) || targetEnvironment(macCatalyst)
-            triggerAirPlayPicker = true
-            #else
-            break
-            #endif
-
         // MARK: Shader settings sheet
         case "shaderSettings":
             showingShaderSettings = true
@@ -311,6 +303,14 @@ struct PauseTileMenuView: View {
                 recordingCameraPosition = all[(idx + 1) % all.count]
             }
             rebuildSections()
+            #endif
+
+        // MARK: AirPlay
+        case "airPlay":
+            #if os(iOS) || targetEnvironment(macCatalyst)
+            triggerAirPlayPicker = true
+            #else
+            break
             #endif
 
         // MARK: Core action tiles
@@ -697,16 +697,6 @@ struct PauseTileMenuView: View {
             }
         }
         #endif
-        // AirPlay trigger — invisible bridge that fires the system route-picker sheet.
-        #if os(iOS) || targetEnvironment(macCatalyst)
-        .overlay(
-            AirPlayPickerTrigger(show: $triggerAirPlayPicker)
-                .frame(width: 1, height: 1)
-                .opacity(0)
-                .allowsHitTesting(false),
-            alignment: .center
-        )
-        #endif
         // Core action option picker — shown when a CoreAction exposes multiple options.
         .confirmationDialog(
             pendingCoreAction?.title ?? "",
@@ -738,6 +728,16 @@ struct PauseTileMenuView: View {
                 }
             }
         }
+        // AirPlay trigger — invisible bridge that fires the system route-picker sheet.
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        .overlay(
+            AirPlayPickerTrigger(show: $triggerAirPlayPicker)
+                .frame(width: 1, height: 1)
+                .opacity(0)
+                .allowsHitTesting(false),
+            alignment: .center
+        )
+        #endif
         #if os(iOS)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation

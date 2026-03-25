@@ -146,6 +146,29 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
+        // AirPlay — iOS / Catalyst only; lets users stream audio+video without leaving the game
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        gameTiles.append(PauseMenuTile(
+            id: "airPlay",
+            icon: "airplayvideo",
+            label: String(localized: "AirPlay"),
+            description: String(localized: "Stream audio and video to AirPlay devices"),
+            colorKey: .cyan,
+            dismissOnTap: false
+        ))
+        #endif
+
+        // Skins tile — opens RetroMenuView at the SKINS tab (iOS only)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        gameTiles.append(PauseMenuTile(
+            id: "skins",
+            icon: "paintbrush.pointed",
+            label: String(localized: "Skins"),
+            colorKey: .orange,
+            dismissOnTap: false
+        ))
+        #endif
+
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if featureFlags.netplayEnabled && Self.coreSupportsNetplay(emulatorVC) {
@@ -168,29 +191,6 @@ final class PauseTileMenuViewModel: ObservableObject {
                 dismissOnTap: false
             ))
         }
-        #endif
-
-        // Skins tile — opens RetroMenuView at the SKINS tab (iOS only)
-        #if os(iOS) && !targetEnvironment(macCatalyst)
-        gameTiles.append(PauseMenuTile(
-            id: "skins",
-            icon: "paintbrush.pointed",
-            label: String(localized: "Skins"),
-            colorKey: .orange,
-            dismissOnTap: false
-        ))
-        #endif
-
-        // AirPlay — iOS / Catalyst only; lets users stream audio+video without leaving the game
-        #if os(iOS) || targetEnvironment(macCatalyst)
-        gameTiles.append(PauseMenuTile(
-            id: "airPlay",
-            icon: "airplayvideo",
-            label: String(localized: "AirPlay"),
-            description: String(localized: "Stream audio and video to AirPlay devices"),
-            colorKey: .cyan,
-            dismissOnTap: false
-        ))
         #endif
 
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
