@@ -2,7 +2,7 @@
 # audit_localization.sh — Localization coverage audit for Provenance
 #
 # Usage:  Scripts/audit_localization.sh [REPO_ROOT]
-# Output: Summary printed to stdout; details written to /tmp/localization_audit/
+# Output: Summary printed to stdout; details written to ${TMPDIR:-/tmp}/localization_audit/
 #
 # Part of #2862 / #2868
 
@@ -18,37 +18,6 @@ mkdir -p "$OUT_DIR"
 
 hr() { printf '%0.s─' {1..72}; echo; }
 
-count_grep() {
-    # count_grep <pattern> <dir> [glob-expr]
-    local pattern="$1" dir="$2"
-    local globs=("${@:3}")
-    local total=0
-    if [ "${#globs[@]}" -eq 0 ]; then
-        globs=("*.swift" "*.m" "*.mm")
-    fi
-    for g in "${globs[@]}"; do
-        local n
-        n=$(grep -rl "$pattern" --include="$g" "$dir" 2>/dev/null | wc -l)
-        total=$((total + n))
-    done
-    echo "$total"
-}
-
-count_grep_lines() {
-    local pattern="$1" dir="$2"
-    local globs=("${@:3}")
-    local total=0
-    if [ "${#globs[@]}" -eq 0 ]; then
-        globs=("*.swift" "*.m" "*.mm")
-    fi
-    for g in "${globs[@]}"; do
-        local n
-        n=$(grep -r "$pattern" --include="$g" "$dir" 2>/dev/null | wc -l)
-        total=$((total + n))
-    done
-    echo "$total"
-}
-
 strings_key_count() {
     # Count key = value; lines in a .strings file
     local f="$1"
@@ -61,12 +30,25 @@ strings_key_count() {
 PVUI_DIR="$REPO_ROOT/PVUI"
 PROVENANCE_DIR="$REPO_ROOT/Provenance"
 PROVENANCETV_DIR="$REPO_ROOT/ProvenanceTV"
+
+# Build PV_DIRS using an associative array to avoid duplicates
+declare -A _seen_dirs
+_seen_dirs["$(realpath "$PVUI_DIR" 2>/dev/null || echo "$PVUI_DIR")"]=1
+_seen_dirs["$(realpath "$PROVENANCE_DIR" 2>/dev/null || echo "$PROVENANCE_DIR")"]=1
+_seen_dirs["$(realpath "$PROVENANCETV_DIR" 2>/dev/null || echo "$PROVENANCETV_DIR")"]=1
 PV_DIRS=("$PVUI_DIR" "$PROVENANCE_DIR" "$PROVENANCETV_DIR")
 
 # Add any PV* top-level module dirs (but skip Cores, which are upstreams)
 for d in "$REPO_ROOT"/PV*/; do
-    [ -d "$d" ] && PV_DIRS+=("$d")
+    if [ -d "$d" ]; then
+        _real="$(realpath "$d" 2>/dev/null || echo "$d")"
+        if [ -z "${_seen_dirs[$_real]+x}" ]; then
+            _seen_dirs["$_real"]=1
+            PV_DIRS+=("$d")
+        fi
+    fi
 done
+unset _seen_dirs _real
 
 # ─── 1. Hardcoded SwiftUI Text("…") ─────────────────────────────────────────
 
@@ -81,7 +63,7 @@ echo ""
 SWIFTUI_TEXT_LINES=0
 SWIFTUI_TEXT_FILES=0
 
-echo "=== 1. Hardcoded SwiftUI Text(\"…\") calls ==="
+echo "=== 1. SwiftUI Text(\"…\") calls (uses LocalizedStringKey — verify keys exist in .strings) ==="
 echo ""
 
 for d in "${PV_DIRS[@]}"; do
@@ -196,16 +178,33 @@ echo ""
 echo "=== 5. Gap analysis ==="
 echo ""
 
-# Extract keys used in NSLocalizedString calls
+# Extract keys used in NSLocalizedString calls (Swift and ObjC forms)
 grep -rh 'NSLocalizedString(' \
     --include="*.swift" --include="*.m" --include="*.mm" \
     "${PV_DIRS[@]}" 2>/dev/null \
-    | grep -oE 'NSLocalizedString\("[^"]+' \
-    | sed 's/NSLocalizedString("//g' \
+    | grep -oE 'NSLocalizedString\(@?"[^"]+' \
+    | sed 's/NSLocalizedString(@\{0,1\}"//g' \
     | sort -u \
     > "$OUT_DIR/used_nls_keys.txt" || true
 
 NLS_UNIQUE_KEYS=$(wc -l < "$OUT_DIR/used_nls_keys.txt")
+
+# Extract keys from SwiftUI Text("…") calls (LocalizedStringKey)
+grep -rh 'Text("' \
+    --include="*.swift" \
+    "${PV_DIRS[@]}" 2>/dev/null \
+    | grep -oE 'Text\("[^"]+' \
+    | sed 's/Text("//g' \
+    | sort -u \
+    > "$OUT_DIR/used_text_keys.txt" || true
+
+TEXT_UNIQUE_KEYS=$(wc -l < "$OUT_DIR/used_text_keys.txt")
+
+# Combine all keys used in code
+sort -u "$OUT_DIR/used_nls_keys.txt" "$OUT_DIR/used_text_keys.txt" \
+    > "$OUT_DIR/all_used_keys.txt" || true
+
+ALL_UNIQUE_KEYS=$(wc -l < "$OUT_DIR/all_used_keys.txt")
 
 # Extract keys defined in EN strings files
 {
@@ -217,13 +216,15 @@ DEFINED_EN_KEYS=$(wc -l < "$OUT_DIR/defined_en_keys.txt")
 
 # Keys used but not defined
 comm -23 \
-    <(sort "$OUT_DIR/used_nls_keys.txt") \
+    <(sort "$OUT_DIR/all_used_keys.txt") \
     <(sort "$OUT_DIR/defined_en_keys.txt") \
     > "$OUT_DIR/missing_keys.txt" || true
 
 MISSING_KEYS=$(wc -l < "$OUT_DIR/missing_keys.txt")
 
 printf "  NSLocalizedString unique keys in use:   %3d\n" "$NLS_UNIQUE_KEYS"
+printf "  SwiftUI Text(\"…\") unique keys in use:   %3d\n" "$TEXT_UNIQUE_KEYS"
+printf "  Total unique keys in code:              %3d\n" "$ALL_UNIQUE_KEYS"
 printf "  Keys defined in EN strings files:       %3d\n" "$DEFINED_EN_KEYS"
 printf "  Keys used but NOT in strings files:     %3d\n" "$MISSING_KEYS"
 echo ""
@@ -244,25 +245,28 @@ hr
 echo "  SUMMARY"
 hr
 echo ""
-printf "  %-45s  %6d\n" "Hardcoded Text(\"…\") calls (SwiftUI)" "$SWIFTUI_TEXT_LINES"
-printf "  %-45s  %6d\n" "Files with hardcoded Text(\"…\")" "$SWIFTUI_TEXT_FILES"
+printf "  %-45s  %6d\n" "SwiftUI Text(\"…\") calls (LocalizedStringKey)" "$SWIFTUI_TEXT_LINES"
+printf "  %-45s  %6d\n" "Files with Text(\"…\") calls" "$SWIFTUI_TEXT_FILES"
 printf "  %-45s  %6d\n" "NSLocalizedString / LocalizedStringKey calls" "$NLS_LINES"
 printf "  %-45s  %6d\n" "English baseline keys (all .strings files)" "$TOTAL_EN_KEYS"
-printf "  %-45s  %6d\n" "NSLocalizedString keys used in code" "$NLS_UNIQUE_KEYS"
+printf "  %-45s  %6d\n" "Unique keys in code (NLS + Text)" "$ALL_UNIQUE_KEYS"
 printf "  %-45s  %6d\n" "Keys missing from EN strings files" "$MISSING_KEYS"
 echo ""
 
-if [ "$SWIFTUI_TEXT_LINES" -gt 0 ]; then
-    coverage=$(( 100 - (SWIFTUI_TEXT_LINES * 100 / (SWIFTUI_TEXT_LINES + NLS_LINES + 1)) ))
+TOTAL_STRING_CALLS=$((SWIFTUI_TEXT_LINES + NLS_LINES))
+if [ "$TOTAL_STRING_CALLS" -gt 0 ]; then
+    coverage=$(( NLS_LINES * 100 / TOTAL_STRING_CALLS ))
     printf "  Estimated i18n wrapping coverage:          ~%d%%\n" "$coverage"
-    echo "  (strings wrapped via NSLocalizedString / LocalizedStringKey vs. hardcoded)"
+    echo "  (NSLocalizedString / LocalizedStringKey calls vs. total Text+NLS calls)"
 fi
 
 echo ""
 echo "  Output files:"
-echo "    $OUT_DIR/hardcoded_swiftui_text.txt  — all hardcoded Text(\"…\") with file/line"
+echo "    $OUT_DIR/hardcoded_swiftui_text.txt  — all Text(\"…\") calls with file/line"
 echo "    $OUT_DIR/nslocalizedstring_usage.txt — all NSLocalizedString usages"
-echo "    $OUT_DIR/used_nls_keys.txt            — unique keys extracted from code"
+echo "    $OUT_DIR/used_nls_keys.txt            — unique NSLocalizedString keys"
+echo "    $OUT_DIR/used_text_keys.txt           — unique SwiftUI Text(\"…\") keys"
+echo "    $OUT_DIR/all_used_keys.txt            — all unique keys combined"
 echo "    $OUT_DIR/defined_en_keys.txt          — keys present in EN strings files"
 echo "    $OUT_DIR/missing_keys.txt             — keys used in code but absent from files"
 echo ""
