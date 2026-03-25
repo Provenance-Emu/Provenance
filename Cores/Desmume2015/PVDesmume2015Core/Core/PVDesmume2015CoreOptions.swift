@@ -8,6 +8,7 @@
 import Foundation
 import PVCoreBridge
 import PVLogging
+import PVSupport
 
 @objc
 @objcMembers
@@ -362,7 +363,13 @@ public extension Desmume2015Options {
         case Keys.gfxEdge: return enabledDisabledString(for: gfxEdgeMarkOption)
         case Keys.gfxLineHack: return enabledDisabledString(for: gfxLineHackOption)
         case Keys.gfxTextureHack: return enabledDisabledString(for: gfxTextureHackOption)
-        case Keys.firmwareLanguage: return choiceValue(for: firmwareLanguageOption, choices: firmwareLanguageChoices)
+        case Keys.firmwareLanguage:
+            // When the user chose "Auto" (index 0), resolve from device locale at runtime
+            let selected = valueForOption(firmwareLanguageOption).asInt ?? 0
+            if selected == 0 {
+                return CoreLocaleMapper.currentNDSLanguageString
+            }
+            return choiceValue(for: firmwareLanguageOption, choices: firmwareLanguageChoices)
         case Keys.micMode: return choiceValue(for: micModeOption, choices: micModeChoices)
         case Keys.micForceEnable: return enabledDisabledString(for: micForceEnableOption)
         default:
