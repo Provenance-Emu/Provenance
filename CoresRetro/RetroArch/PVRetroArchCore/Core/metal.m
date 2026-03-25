@@ -898,6 +898,10 @@ font_renderer_t metal_raster_font = {
 
 - (void)dealloc
 {
+   MetalView *view = (MetalView *)apple_platform.renderView;
+   if ([view respondsToSelector:@selector(setDelegate:)])
+      view.delegate = nil;
+
    if (_viewport)
    {
       free(_viewport);
@@ -974,6 +978,18 @@ font_renderer_t metal_raster_font = {
 
 - (void)setViewportWidth:(unsigned)width height:(unsigned)height forceFull:(BOOL)forceFull allowRotate:(BOOL)allowRotate
 {
+   if (!_viewport)
+   {
+      RARCH_WARN("[Metal]: setViewportWidth called with null viewport\n");
+      return;
+   }
+
+   if (width == 0 || height == 0)
+   {
+      RARCH_WARN("[Metal]: setViewportWidth received invalid size %ux%u\n", width, height);
+      return;
+   }
+
    _viewport->full_width   = width;
    _viewport->full_height  = height;
    video_driver_set_size(_viewport->full_width, _viewport->full_height);
