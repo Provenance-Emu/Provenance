@@ -55,7 +55,7 @@ let package = Package(
                 "PVEmulatorCore",
                 .product(name: "JITManager", package: "PVJIT"),
                 "PVLogging",
-                .product(name: "MoltenVK-1.2.8", package: "MoltenVK"),
+                .product(name: "MoltenVK-1.2.8", package: "MoltenVK", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst])),
                 "PVObjCUtils",
                 "PVPlists",
                 "PVSettings",
