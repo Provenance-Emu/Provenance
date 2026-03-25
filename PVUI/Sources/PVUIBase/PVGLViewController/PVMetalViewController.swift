@@ -2768,23 +2768,29 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if dualScreenLayout != nil {
             let drawableSize = CGSize(width: drawable.texture.width,
                                      height: drawable.texture.height)
-            renderDualScreenLayout(encoder:       renderEncoder,
-                                   sourceTexture: inputTexture,
-                                   drawableSize:  drawableSize,
-                                   flipY:         flipY)
-            renderEncoder.endEncoding()
-            commandBuffer.present(drawable)
-            commandBuffer.addCompletedHandler { [weak self] buffer in
-                if let error = buffer.error {
-                    ELOG("GPU error during dual-screen rendering: \(error)")
-                    self?.recoverFromGPUError()
+            let didRender = renderDualScreenLayout(encoder:       renderEncoder,
+                                                   sourceTexture: inputTexture,
+                                                   drawableSize:  drawableSize,
+                                                   flipY:         flipY)
+            if didRender {
+                renderEncoder.endEncoding()
+                commandBuffer.present(drawable)
+                commandBuffer.addCompletedHandler { [weak self] buffer in
+                    if let error = buffer.error {
+                        ELOG("GPU error during dual-screen rendering: \(error)")
+                        self?.recoverFromGPUError()
+                    }
                 }
+                commandBuffer.commit()
+                previousCommandBuffer = commandBuffer
+                frameCount += 1
+                markFramePresented()
+                return
             }
-            commandBuffer.commit()
-            previousCommandBuffer = commandBuffer
-            frameCount += 1
-            markFramePresented()
-            return
+            // renderDualScreenLayout produced no output (empty layout or pipeline
+            // failure) — fall through to the standard fullscreen blit below to
+            // avoid presenting a black frame.
+            WLOG("dual-screen: renderDualScreenLayout produced no output, falling back to standard blit")
         }
 
         /// Local scope so `endEncoding` runs before `present`/`commit` (function-scoped `defer` would run too late and trip Metal debug `encoding in progress`).

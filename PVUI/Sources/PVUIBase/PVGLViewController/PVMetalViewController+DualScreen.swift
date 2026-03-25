@@ -79,10 +79,12 @@ extension PVMetalViewController {
 
     fragment half4 dual_screen_ps(
         DSVSOut         in     [[stage_in]],
-        texture2d<half> source [[texture(0)]],
-        sampler         samp   [[sampler(0)]])
+        texture2d<half> source [[texture(0)]])
     {
-        half4 c = source.sample(samp, in.texCoord);
+        constexpr sampler s(coord::normalized,
+                            address::clamp_to_edge,
+                            filter::linear);
+        half4 c = source.sample(s, in.texCoord);
         c.a = 1.0h;
         return c;
     }
@@ -139,22 +141,24 @@ extension PVMetalViewController {
     ///   - sourceTexture: The combined emulator framebuffer (e.g. 256×384 for DS).
     ///   - drawableSize:  Pixel dimensions of the current drawable.
     ///   - flipY:         Pass `true` when `sourceTexture` has OpenGL/bottom-up origin.
+    /// - Returns: `true` if at least one screen was drawn; `false` if the layout
+    ///   was empty or the pipeline was unavailable (caller should fall back to
+    ///   the standard fullscreen blit to avoid presenting a black frame).
+    @discardableResult
     func renderDualScreenLayout(encoder:       MTLRenderCommandEncoder,
                                  sourceTexture: MTLTexture,
                                  drawableSize:  CGSize,
-                                 flipY:         Bool) {
-        guard let layout = dualScreenLayout, !layout.isEmpty else { return }
+                                 flipY:         Bool) -> Bool {
+        guard let layout = dualScreenLayout, !layout.isEmpty else { return false }
 
         buildDualScreenBlitPipelineIfNeeded()
         guard let pipeline = dualScreenBlitPipeline else {
             ELOG("dual-screen: pipeline unavailable, skipping dual-screen render")
-            return
+            return false
         }
 
-        let sampler = renderSettings.smoothingEnabled ? linearSampler : pointSampler
         encoder.setRenderPipelineState(pipeline)
         encoder.setFragmentTexture(sourceTexture, index: 0)
-        if let sampler { encoder.setFragmentSamplerState(sampler, index: 0) }
 
         let dw = Float(drawableSize.width)
         let dh = Float(drawableSize.height)
@@ -194,5 +198,6 @@ extension PVMetalViewController {
                                    index: 0)
             encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         }
+        return true
     }
 }

@@ -16,6 +16,7 @@
 import UIKit
 import PVEmulatorCore
 import PVLogging
+import PVPrimitives
 
 // MARK: - Metal Dual-Screen Layout
 
@@ -34,7 +35,9 @@ extension PVEmulatorViewController {
         return false
         #else
         guard gpuViewController is PVMetalViewController else { return false }
-        guard core.supportsDualScreens else { return false }
+        // Only use the DS split-framebuffer path for Nintendo DS systems.
+        // Other dual-screen cores (e.g. 3DS/emuThree) use their own layout logic.
+        guard SystemIdentifier(rawValue: core.systemIdentifier ?? "") == .DS else { return false }
         guard isDeltaSkinEnabled, currentSkin != nil else { return false }
         return true
         #endif
@@ -58,7 +61,7 @@ extension PVEmulatorViewController {
         #else
         let skinDevice: DeltaSkinDevice = .tv
         #endif
-        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+        let orientation: DeltaSkinOrientation = (currentOrientation == .landscape) ? .landscape : .portrait
         let traits = DeltaSkinTraits(device: skinDevice,
                                      displayType: .standard,
                                      orientation: orientation,

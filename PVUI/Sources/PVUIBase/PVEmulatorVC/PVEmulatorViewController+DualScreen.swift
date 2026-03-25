@@ -221,7 +221,9 @@ extension PVEmulatorViewController {
                 DLOG("🎮 Applied Metal dual-screen layout")
                 return
             }
-            // Layout computation failed — fall through to the legacy path.
+            // Layout computation failed — clear any stale Metal layout before
+            // falling back to the legacy viewport-resize path.
+            clearMetalDualScreenLayout()
         } else {
             // Skin disabled or core not Metal-based; clear any stale layout.
             clearMetalDualScreenLayout()

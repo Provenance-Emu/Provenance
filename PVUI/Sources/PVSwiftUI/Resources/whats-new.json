@@ -498,24 +498,6 @@
     ]
   },
   {
-    "version": "3.8.0",
-    "title": "DS Dual-Screen Skins",
-    "features": [
-      {
-        "symbolName": "rectangle.split.1x2.fill",
-        "symbolColor": "blue",
-        "title": "Nintendo DS Dual-Screen Skins",
-        "subtitle": "DS games now support full DeltaSkin overlays with GPU-accelerated dual-screen rendering. Both top and bottom screens are positioned independently according to your skin layout."
-      },
-      {
-        "symbolName": "square.3.layers.3d",
-        "symbolColor": "purple",
-        "title": "Metal Sub-Rectangle Rendering",
-        "subtitle": "The DS framebuffer is split into two sub-rectangles on the GPU in a single render pass — no extra copies, minimal overhead."
-      }
-    ]
-  },
-  {
     "version": "3.1.0",
     "title": "USB Peripherals & DriverKit",
     "features": [
