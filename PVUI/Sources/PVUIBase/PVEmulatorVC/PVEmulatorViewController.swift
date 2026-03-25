@@ -1078,6 +1078,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         removeVirtualInputOverlays()
         teardownLightGun()
         #endif
+        #if os(tvOS)
+        if isMovingFromParent || isBeingDismissed {
+            teardownSiriRemoteForLightGun()
+        }
+        #endif
         // Remove the JIT indicator view controller on the main actor (#2796).
         // The Combine subscription is cancelled earlier in deinit via cancelJITIndicatorSubscription().
         removeJITIndicator()

@@ -18,10 +18,11 @@
 ///
 /// Offscreen vs. onscreen
 /// ----------------------
-/// Touches outside the game viewport pass through to the underlying view (hitTest
-/// returns nil for those points). The isOffscreen() helper is used for touches
-/// already within the view's bounds to distinguish intentional off-screen shots.
-/// Two-finger tap always sends an explicit reload regardless of position.
+/// This view only intercepts touches that fall within its bounds (which are set to
+/// the game viewport frame). Offscreen shots and reloads are emulated logically:
+/// a two-finger tap always sends an explicit reload regardless of position.
+/// The `isOffscreen()` helper is reserved for future use if the view is ever
+/// sized larger than the viewport to capture true off-screen touches.
 ///
 /// Gestures only activate when `lightGunResponder.gameSupportsLightGun == true`.
 ///
@@ -47,10 +48,11 @@ public final class LightGunTouchView: UIView {
     /// (e.g. PSX Guncon off-screen reload).
     public weak var gameViewRef: UIView?
 
-    /// Explicit game-screen rect in the touch view's parent (superview) coordinate space.
+    /// Explicit game-screen rect in the *superview's* coordinate space.
     ///
-    /// Used when `gameViewRef` has not yet been laid out. Set this whenever the
-    /// authoritative game-display rect is known (e.g. after GPU view positioning).
+    /// Used when `gameViewRef` has not yet been laid out. Set this to the authoritative
+    /// game-display rect (typically `gameView.frame` in its superview). Hit testing and
+    /// offscreen checks compare superview-space touch points against this rect.
     public var explicitGameViewRect: CGRect?
 
     // MARK: Private state
@@ -119,36 +121,17 @@ public final class LightGunTouchView: UIView {
         // (handled in touchesEnded via duration/drag check to avoid interference)
     }
 
-    // MARK: - Hit-testing: capture inside the game viewport only
+    // MARK: - Hit-testing
 
-    /// Returns `self` only when the touch falls within the game display area.
-    /// Touches outside (e.g. skin buttons, menu overlays) pass through.
+    /// Participates in standard UIKit hit-testing, but only when this view is
+    /// visible and the touch is inside its bounds.
+    ///
+    /// The view is sized to the game viewport frame by `refreshLightGunLayout`,
+    /// so touches outside the viewport naturally fall outside the view's bounds
+    /// and pass through to underlying controls without any extra gating needed.
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
         guard self.point(inside: point, with: event) else { return nil }
-
-        // Gate on live GPU view frame first (always up-to-date after layout).
-        if let gameView = gameViewRef {
-            let converted = gameView.convert(gameView.bounds, to: self)
-            if !converted.isEmpty {
-                // Strict gating: only intercept if inside the game viewport.
-                guard converted.contains(point) else { return nil }
-            } else {
-                // Not yet laid out — fall back to explicit rect or pass through.
-                if let explicit = explicitGameViewRect, !explicit.isEmpty {
-                    let pointInSuperview = convert(point, to: superview)
-                    guard explicit.contains(pointInSuperview) else { return nil }
-                } else {
-                    return nil
-                }
-            }
-        } else if let explicit = explicitGameViewRect, !explicit.isEmpty {
-            let pointInSuperview = convert(point, to: superview)
-            guard explicit.contains(pointInSuperview) else { return nil }
-        } else {
-            return nil
-        }
-
         return super.hitTest(point, with: event)
     }
 
