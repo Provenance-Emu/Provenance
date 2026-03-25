@@ -38,6 +38,10 @@ struct ControllerSettingsView: View {
     @State private var connectionAnimation = false
     /// Current window for iCade setup
     @State private var window: UIWindow?
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    /// Auto-load a compatible skin when a physical case is detected.
+    @Default(.autoLoadCaseSkin) private var autoLoadCaseSkin
+    #endif
 
     /// Keyboard mapping documentation
     private let keyboardMappingDocs = """
@@ -361,6 +365,25 @@ struct ControllerSettingsView: View {
                     }
                 }
             }
+
+            // MARK: - Physical Cases (iOS only — smart and passive phone cases)
+            #if os(iOS) || targetEnvironment(macCatalyst)
+            Section {
+                Toggle(isOn: $autoLoadCaseSkin) {
+                    Label("Auto-load case skin on detection", systemImage: "iphone.gen3.badged.gamecontroller")
+                }
+            } header: {
+                HStack {
+                    Image(systemName: "iphone.gen3.badged.gamecontroller")
+                    Text("Physical Cases")
+                }
+                .font(.headline)
+            } footer: {
+                Text("When a recognised controller case (GameSir Pocket Taco, Soolra, …) connects, automatically apply a compatible skin for the current system.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
+            #endif
 
             // MARK: - Preferences
             Section {
