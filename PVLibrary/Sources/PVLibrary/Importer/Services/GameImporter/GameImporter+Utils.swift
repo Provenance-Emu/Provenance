@@ -73,7 +73,7 @@ extension GameImporter {
 
     /// Returns the `PatchFormat` for the item's file extension, or `nil` if not a patch.
     internal func patchFormat(for item: ImportQueueItem) -> PatchFormat? {
-        PatchFormat(rawValue: item.url.pathExtension.lowercased())
+        PatchFormat.detect(from: item.url)
     }
 
     /// Returns `true` if the item has a recognised ROM-patch file extension.

@@ -48,13 +48,18 @@ class GameImporterFileService : GameImporterFileServicing {
             // called by performImport immediately after this method returns.
             let patchesDir = Paths.patchesPath
             try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true, attributes: nil)
-            let destURL = patchesDir.appendingPathComponent(queueItem.url.lastPathComponent)
-            // If the destination already exists, remove it before moving so the source file
-            // is always cleared from the Imports folder and the dest is authoritative.
+            let srcURL = queueItem.url
+            let baseName = srcURL.deletingPathExtension().lastPathComponent
+            let ext = srcURL.pathExtension
+            var destURL = patchesDir.appendingPathComponent(srcURL.lastPathComponent)
+            // If a file with the same name already exists, generate a unique name to avoid
+            // silently overwriting a different patch (common for generic names like "patch.ips").
             if FileManager.default.fileExists(atPath: destURL.path) {
-                try FileManager.default.removeItem(at: destURL)
+                let suffix = UUID().uuidString.prefix(8)
+                let uniqueName = ext.isEmpty ? "\(baseName)-\(suffix)" : "\(baseName)-\(suffix).\(ext)"
+                destURL = patchesDir.appendingPathComponent(uniqueName)
             }
-            try FileManager.default.moveItem(at: queueItem.url, to: destURL)
+            try FileManager.default.moveItem(at: srcURL, to: destURL)
             queueItem.destinationUrl = destURL
             ILOG("Moved patch file to: \(destURL.path)")
         case .unknown:

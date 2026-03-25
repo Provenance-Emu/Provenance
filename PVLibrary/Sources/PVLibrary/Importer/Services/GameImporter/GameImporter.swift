@@ -3062,7 +3062,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     private func importPatchFile(_ item: ImportQueueItem) async throws {
         // Use the destination URL set by moveImportItem, falling back to the original URL.
         let url = item.destinationUrl ?? item.url
-        guard let format = PatchFormat(fileURL: url) else {
+        guard let format = PatchFormat.detect(from: url) else {
             ELOG("Cannot determine patch format for \(url.lastPathComponent)")
             throw GameImporterError.unsupportedFile
         }

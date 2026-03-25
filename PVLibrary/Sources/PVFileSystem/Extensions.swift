@@ -67,7 +67,6 @@ public enum Extensions: String, CaseIterable {
     case ppf      = "ppf"
     case aps      = "aps"
     case rup      = "rup"
-    case nsp      = "nsp"
 
     private static let _archiveExtensions: Set<Extensions> = [
         .sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip,
@@ -80,7 +79,7 @@ public enum Extensions: String, CaseIterable {
     private static let _cdSupplementaryExtensions: Set<Extensions> = [.sbi, .sub]
     private static let _skinExtensions: Set<Extensions> = [.deltaSkin, .manicSkin]
     private static let _patchExtensions: Set<Extensions> = [
-        .ips, .ips32, .bps, .ups, .xdelta, .delta, .xdelta3, .vcdiff, .ppf, .aps, .rup, .nsp
+        .ips, .ips32, .bps, .ups, .xdelta, .delta, .xdelta3, .vcdiff, .ppf, .aps, .rup
     ]
 
     public static let archiveExtensions: Set<String> = Set(_archiveExtensions.map { $0.rawValue })
