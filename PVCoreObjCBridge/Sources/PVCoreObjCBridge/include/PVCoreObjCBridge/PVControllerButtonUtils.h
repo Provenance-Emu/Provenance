@@ -49,14 +49,14 @@ NS_ASSUME_NONNULL_BEGIN
 // on some iOS versions. All other buttons behave identically to Switch mode.
 //
 // iCade mode: 8 digital buttons + D-pad only. Select PViCade8BitdoSN30ProController
-// in Settings > Controllers > iCade. No analog sticks or triggers.
+// in Settings > Controllers > iCade Controller. No analog sticks or triggers.
 //
 // -----------------------------------------------------------------------------
 //
 // Mocute 057 / 060 — GCController button mapping (HID mode)
 //
 // The Mocute connects in standard HID gamepad mode on iPadOS 14+.
-// Select "Mocute Controller" in Settings > Controllers > iCade for iCade mode.
+// Select "Mocute Controller" in Settings > Controllers > iCade Controller for iCade mode.
 //
 // | Physical Button | GCController property         | Notes                     |
 // |-----------------|-------------------------------|---------------------------|

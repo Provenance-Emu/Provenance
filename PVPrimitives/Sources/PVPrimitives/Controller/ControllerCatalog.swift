@@ -158,7 +158,7 @@ public enum ControllerCatalog {
     /// Mode selection at pairing time:
     /// - **Switch mode (S)** — Hold Start+Y before power-on. Recommended.
     /// - **Android mode (D)** — Hold Start+B. Works as GCController; fewer features.
-    /// - **iCade mode** — Hold Start+B (some variants). Keyboard HID; no analog input.
+    /// - **iCade mode** — Hold Start+R1 (SN30 Pro). Keyboard HID; no analog input.
     ///
     /// In Switch mode Provenance detects the controller automatically — no iCade
     /// configuration is required.  Select "8Bitdo SN30 Pro (iCade Mode)" in
@@ -172,17 +172,17 @@ public enum ControllerCatalog {
             "On your iPhone or iPad, open Settings > Bluetooth.",
             "Select \"8BitDo SN30 Pro\" (or similar) from the list of available devices.",
             "Provenance detects it automatically — no iCade configuration needed in Switch mode.",
-            "For iCade mode (no analog sticks): power on with Start + B, then in Provenance go to Settings > Controllers > iCade Controller and select \"8Bitdo SN30 Pro (iCade Mode)\".",
+            "For iCade mode (no analog sticks): power on with Start + R1 (SN30 Pro), then in Provenance go to Settings > Controllers > iCade Controller and select \"8Bitdo SN30 Pro (iCade Mode)\".",
         ],
         featureNotes: [
             "Switch mode (recommended): full GCController support — 4 face buttons, L1/L2/R1/R2, dual analog sticks, L3/R3, +/−.",
             "Android mode: connects as GCController but analog triggers may report as digital only on some iOS versions.",
-            "iCade mode: digital D-pad + 8 buttons only — no analog sticks, no Start/Select, no triggers.",
+            "iCade mode: digital D-pad + 8 buttons only — no analog sticks, no Start/Select, no analog triggers (L2/R2 mapped as digital buttons).",
             "Extra back buttons (if present on Pro 2) are not individually accessible via the GCController API.",
             "Screenshot button is not exposed to third-party apps in any mode.",
             "Use the button remapping UI (Settings > Controllers > Remap) to reassign any button in Switch mode.",
         ],
-        isRecommended: false,
+        isRecommended: true,
         imageAssetName: nil
     )
 
