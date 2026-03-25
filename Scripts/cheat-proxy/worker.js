@@ -47,34 +47,25 @@ export default {
         }
 
         if (url.pathname !== "/cheats") {
-            return new Response(JSON.stringify({ error: "Not found" }), {
-                status: 404,
-                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
-            });
+            // Return empty array (200) rather than 404 so clients can always decode an array.
+            // The path mismatch is surfaced via a diagnostic header.
+            return jsonResponse([], { "X-Validation-Error": "Unknown path — use /cheats" }, origin, env);
         }
 
         const title = url.searchParams.get("title");
         const system = url.searchParams.get("system") || "";
 
         if (!title || title.trim() === "") {
-            return new Response(JSON.stringify({ error: "Missing required parameter: title" }), {
-                status: 400,
-                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
-            });
+            // Return empty array (200) so clients can always decode an array.
+            return jsonResponse([], { "X-Validation-Error": "Missing required parameter: title" }, origin, env);
         }
 
         if (title.trim().length > MAX_TITLE_LENGTH) {
-            return new Response(JSON.stringify({ error: "Parameter too long: title" }), {
-                status: 400,
-                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
-            });
+            return jsonResponse([], { "X-Validation-Error": "Parameter too long: title" }, origin, env);
         }
 
         if (system.length > MAX_SYSTEM_LENGTH) {
-            return new Response(JSON.stringify({ error: "Parameter too long: system" }), {
-                status: 400,
-                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
-            });
+            return jsonResponse([], { "X-Validation-Error": "Parameter too long: system" }, origin, env);
         }
 
         const cacheKey = makeCacheKey(title, system);
@@ -154,12 +145,27 @@ function jsonResponse(data, extraHeaders = {}, origin = "", env = {}) {
 }
 
 /**
+ * Truncate a string so that its UTF-8 byte representation fits within maxBytes.
+ * Cloudflare KV keys are limited by byte length (512 bytes), not character count,
+ * so character-level slicing is insufficient for non-ASCII titles (e.g. CJK, emoji).
+ */
+function truncateToBytes(str, maxBytes) {
+    if (str.length * 4 <= maxBytes) return str; // fast-path: all code-units use ≤4 bytes
+    const encoder = new TextEncoder();
+    const encoded = encoder.encode(str);
+    if (encoded.length <= maxBytes) return str;
+    const truncated = encoded.slice(0, maxBytes);
+    return new TextDecoder("utf-8", { fatal: false }).decode(truncated);
+}
+
+/**
  * Build a KV cache key from title and system.
- * Inputs are truncated to avoid exceeding Cloudflare KV's 512-byte key limit.
+ * Inputs are truncated by UTF-8 byte length to avoid exceeding Cloudflare KV's
+ * 512-byte key limit even for non-ASCII titles (CJK, emoji, etc.).
  */
 function makeCacheKey(title, system) {
-    const t = title.toLowerCase().trim().slice(0, MAX_TITLE_LENGTH);
-    const s = (system || "any").toLowerCase().trim().slice(0, MAX_SYSTEM_LENGTH);
+    const t = truncateToBytes(title.toLowerCase().trim(), MAX_TITLE_LENGTH);
+    const s = truncateToBytes((system || "any").toLowerCase().trim(), MAX_SYSTEM_LENGTH);
     return `ghorg::${t}::${s}`;
 }
 

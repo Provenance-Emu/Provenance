@@ -21,8 +21,11 @@ GET /cheats?title=<game title>&system=<system slug>
 ]
 ```
 
-Returns an empty array `[]` when no cheats are found. HTTP 4xx/5xx are not returned
-for failed lookups — the caller should fall back to direct scraping on an empty result.
+Returns an empty array `[]` when no cheats are found or when the request is invalid
+(e.g. missing `title`, unknown path). The response is always HTTP 200 with a JSON array
+so clients can safely decode without checking the status code. Invalid requests also
+include an `X-Validation-Error` header with a short description. The caller should fall
+back to direct scraping on an empty result.
 
 ## Health check
 

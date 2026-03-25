@@ -5,6 +5,8 @@
 // Tests run against static HTML fixtures — no network required.
 
 @testable import PVLibrary
+import Defaults
+import PVSettings
 import XCTest
 
 final class GameHackingOrgLookupTests: XCTestCase {
@@ -126,11 +128,11 @@ final class GameHackingOrgLookupTests: XCTestCase {
         ProxyCannedProtocol.statusCode = 200
         ProxyCannedProtocol.lastRequest = nil
 
-        UserDefaults.standard.set(true, forKey: "useCheatProxy")
-        UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
+        Defaults[.useCheatProxy] = true
+        Defaults[.cheatProxyURL] = "https://test.proxy.pvemu.invalid"
         defer {
-            UserDefaults.standard.removeObject(forKey: "useCheatProxy")
-            UserDefaults.standard.removeObject(forKey: "cheatProxyURL")
+            Defaults.reset(.useCheatProxy)
+            Defaults.reset(.cheatProxyURL)
         }
 
         let title = "ProxyHappyPath_\(UUID().uuidString)"
@@ -158,11 +160,11 @@ final class GameHackingOrgLookupTests: XCTestCase {
         ProxyCannedProtocol.statusCode = 200
         ProxyCannedProtocol.lastRequest = nil
 
-        UserDefaults.standard.set(true, forKey: "useCheatProxy")
-        UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
+        Defaults[.useCheatProxy] = true
+        Defaults[.cheatProxyURL] = "https://test.proxy.pvemu.invalid"
         defer {
-            UserDefaults.standard.removeObject(forKey: "useCheatProxy")
-            UserDefaults.standard.removeObject(forKey: "cheatProxyURL")
+            Defaults.reset(.useCheatProxy)
+            Defaults.reset(.cheatProxyURL)
         }
 
         let title = "ProxyEmptyFallback_\(UUID().uuidString)"
@@ -180,11 +182,11 @@ final class GameHackingOrgLookupTests: XCTestCase {
         ProxyCannedProtocol.cannedJSON = Data()
         ProxyCannedProtocol.lastRequest = nil
 
-        UserDefaults.standard.set(false, forKey: "useCheatProxy")
-        UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
+        Defaults[.useCheatProxy] = false
+        Defaults[.cheatProxyURL] = "https://test.proxy.pvemu.invalid"
         defer {
-            UserDefaults.standard.removeObject(forKey: "useCheatProxy")
-            UserDefaults.standard.removeObject(forKey: "cheatProxyURL")
+            Defaults.reset(.useCheatProxy)
+            Defaults.reset(.cheatProxyURL)
         }
 
         let title = "ProxyDisabled_\(UUID().uuidString)"
