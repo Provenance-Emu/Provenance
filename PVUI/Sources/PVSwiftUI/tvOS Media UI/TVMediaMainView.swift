@@ -964,7 +964,10 @@ final class TVMediaLibraryModel: ObservableObject {
         await loadGamesForSystemAsync(identifier: identifier)
     }
 
-    /// Async method that always loads games (no guard)
+    /// Async method that always loads games (no guard).
+    /// Thread-safety: marked @MainActor so all mutations to `gamesBySystemIdentifier`
+    /// are serialised on the main actor. Realm reads run in a detached task to avoid
+    /// blocking the main thread; results are frozen before crossing actor boundaries.
     @MainActor
     func loadGamesForSystemAsync(identifier: String) async {
         let loaded: [PVGame] = await Task.detached(priority: .userInitiated) {
@@ -979,9 +982,8 @@ final class TVMediaLibraryModel: ObservableObject {
             }
         }.value
 
-        await MainActor.run {
-            gamesBySystemIdentifier[identifier] = loaded
-        }
+        // Already on MainActor — direct assignment is safe.
+        gamesBySystemIdentifier[identifier] = loaded
     }
 
     func loadGamesIfNeeded(systemIdentifier: String) {

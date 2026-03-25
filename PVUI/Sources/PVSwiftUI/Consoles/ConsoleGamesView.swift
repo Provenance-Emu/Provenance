@@ -1024,7 +1024,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL)")
+                .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -1110,7 +1110,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         loadGame(game)
                     }
                     /// Use compound ID so view recreates when artwork URL changes
-                    .id("\(game.id)_\(game.trueArtworkURL)")
+                    .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                     .focusableIfAvailable()
                     .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
 #if !os(tvOS) && !os(watchOS)
@@ -1233,7 +1233,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         ) {
                             launchGame(md5: game.md5)
                         }
-                        .id("\(game.id)_\(game.trueArtworkURL)")
+                        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                         .focusableIfAvailable()
                         .contextMenu {
                             if let live = liveGame(for: game) {
@@ -1608,7 +1608,7 @@ extension ConsoleGamesView {
         ) {
             launchGame(md5: game.md5)
         }
-        .id("\(game.id)_\(game.trueArtworkURL)")
+        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
         .focusableIfAvailable()
         .contextMenu {
             if let live = liveGame(for: game) {
