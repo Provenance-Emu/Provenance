@@ -105,6 +105,8 @@ extension GameImporter {
             }
             return dosMarkerExtensions.contains(fileURL.pathExtension.lowercased())
         }
+    }
+
     /// Returns the `PatchFormat` for the item's file extension, or `nil` if not a patch.
     internal func patchFormat(for item: ImportQueueItem) -> PatchFormat? {
         PatchFormat.detect(from: item.url)
