@@ -23,20 +23,33 @@ const GAMEHACKING_SEARCH = "https://gamehacking.org/search/";
 
 const USER_AGENT = "Mozilla/5.0 (compatible; Provenance-Emu/1.0; +https://github.com/Provenance-Emu/Provenance)";
 
+// Maximum lengths for KV key inputs — Cloudflare KV keys are limited to 512 bytes
+const MAX_TITLE_LENGTH = 200;
+const MAX_SYSTEM_LENGTH = 64;
+
 export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
+        const origin = request.headers.get("Origin") || "";
+
+        // Handle CORS preflight
+        if (request.method === "OPTIONS") {
+            return new Response(null, {
+                status: 204,
+                headers: corsHeaders(origin, env),
+            });
+        }
 
         if (url.pathname === "/health") {
             return new Response(JSON.stringify({ status: "ok" }), {
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
             });
         }
 
         if (url.pathname !== "/cheats") {
             return new Response(JSON.stringify({ error: "Not found" }), {
                 status: 404,
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
             });
         }
 
@@ -46,7 +59,7 @@ export default {
         if (!title || title.trim() === "") {
             return new Response(JSON.stringify({ error: "Missing required parameter: title" }), {
                 status: 400,
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
             });
         }
 
@@ -54,51 +67,85 @@ export default {
 
         // Check KV cache
         if (env[KV_NAMESPACE]) {
-            const cached = await env[KV_NAMESPACE].get(cacheKey, { type: "json" });
-            if (cached !== null) {
-                return jsonResponse(cached, { "X-Cache": "HIT" });
+            try {
+                const cached = await env[KV_NAMESPACE].get(cacheKey, { type: "json" });
+                if (cached !== null) {
+                    return jsonResponse(cached, { "X-Cache": "HIT" }, origin, env);
+                }
+            } catch (err) {
+                console.error("KV get error:", err);
             }
         }
 
         // Fetch from GameHacking.org
         let results = [];
+        let fetchSucceeded = false;
         try {
             results = await fetchCheats(title, system || null);
+            fetchSucceeded = true;
         } catch (err) {
             console.error("Cheat fetch error:", err);
             // Return empty array rather than error — caller falls back to direct scraping
             results = [];
         }
 
-        // Store in KV with TTL
-        if (env[KV_NAMESPACE]) {
+        // Store in KV with TTL only when the upstream fetch succeeded,
+        // to avoid caching transient errors as "no cheats" for 24h.
+        if (env[KV_NAMESPACE] && fetchSucceeded) {
             ctx.waitUntil(
                 env[KV_NAMESPACE].put(cacheKey, JSON.stringify(results), {
                     expirationTtl: CACHE_TTL_SECONDS,
-                })
+                }).catch((err) => console.error("KV put error:", err))
             );
         }
 
-        return jsonResponse(results, { "X-Cache": "MISS" });
+        return jsonResponse(results, { "X-Cache": "MISS" }, origin, env);
     },
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function jsonResponse(data, extraHeaders = {}) {
+/**
+ * Build CORS response headers.
+ * If the `ALLOWED_ORIGINS` env var is set (comma-separated), only matching
+ * origins receive `Access-Control-Allow-Origin`; otherwise the wildcard is used.
+ */
+function corsHeaders(origin, env) {
+    const allowed = env.ALLOWED_ORIGINS
+        ? env.ALLOWED_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean)
+        : [];
+
+    let allowOrigin = "*";
+    if (allowed.length > 0) {
+        allowOrigin = allowed.includes(origin) ? origin : allowed[0];
+    }
+
+    return {
+        "Access-Control-Allow-Origin": allowOrigin,
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        ...(allowed.length > 0 ? { "Vary": "Origin" } : {}),
+    };
+}
+
+function jsonResponse(data, extraHeaders = {}, origin = "", env = {}) {
     return new Response(JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
             "Cache-Control": `public, max-age=${CACHE_TTL_SECONDS}`,
+            ...corsHeaders(origin, env),
             ...extraHeaders,
         },
     });
 }
 
+/**
+ * Build a KV cache key from title and system.
+ * Inputs are truncated to avoid exceeding Cloudflare KV's 512-byte key limit.
+ */
 function makeCacheKey(title, system) {
-    const t = title.toLowerCase().trim();
-    const s = (system || "any").toLowerCase().trim();
+    const t = title.toLowerCase().trim().slice(0, MAX_TITLE_LENGTH);
+    const s = (system || "any").toLowerCase().trim().slice(0, MAX_SYSTEM_LENGTH);
     return `ghorg::${t}::${s}`;
 }
 
