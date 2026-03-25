@@ -173,6 +173,8 @@ packages:
     path: ../../PVEmulatorCore
   PVLogging:
     path: ../../PVLogging
+  PVNetplay:
+    path: ../../PVNetplay
   PVObjCUtils:
     path: ../../PVObjCUtils
   PVPlists:
@@ -214,6 +216,8 @@ targets:
         product: PVPlists
       - package: PVSettings
         product: PVSettings
+      - package: PVNetplay
+        product: PVNetplay
       - package: PVSupport
         product: PVSupport
     settings:
