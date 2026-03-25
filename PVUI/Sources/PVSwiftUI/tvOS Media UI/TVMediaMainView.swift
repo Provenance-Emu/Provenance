@@ -2823,10 +2823,12 @@ struct TVMediaSystemsView: View {
         .task {
             await iconLoader.loadIcons(for: systemsWithGames)
         }
-        .task(id: model.systems.count) {
+        .task(id: model.systems.map(\.identifier)) {
             // Trigger a load for any system not yet in the cache so that
             // `systemsWithGames` can populate and show all systems, even
             // on first appearance before shelf rows have lazy-loaded them.
+            // Using the full identifiers list (not just count) ensures the task
+            // re-fires when systems are replaced or reordered even if count stays the same.
             for system in model.systems {
                 model.loadGamesIfNeeded(systemIdentifier: system.identifier)
             }

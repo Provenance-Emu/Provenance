@@ -885,7 +885,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
-                .id("\(game.id)_\(game.trueArtworkURL)")
+                .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -978,7 +978,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             }
                         }
                         /// Use compound ID so view recreates when artwork URL changes
-                        .id("\(game.id)_\(game.trueArtworkURL)")
+                        .id("\(game.id)_\(game.trueArtworkURL?.absoluteString ?? "")")
                         .focusableIfAvailable()
                         .contextMenu {
                             GameContextMenu(

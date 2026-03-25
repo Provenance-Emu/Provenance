@@ -24,8 +24,10 @@ import FreemiumKit
 #endif
 
 /// Reference-type scroll tracking that avoids triggering SwiftUI re-renders on every scroll frame.
-/// `previousOffset` is intentionally NOT @Published — only `isSearchBarVisible` drives rendering.
-private final class ScrollTracker: ObservableObject {
+/// `previousOffset` is intentionally not published — only `isSearchBarVisible` drives rendering.
+/// Stored as a plain class (no ObservableObject) to avoid unnecessary subscription overhead;
+/// use @State to hold the reference so it persists across view updates without causing redraws.
+private final class ScrollTracker {
     var previousOffset: CGFloat = 0
 }
 
@@ -99,7 +101,7 @@ struct HomeView: SwiftUI.View {
 
     /// Mutable scroll-tracking state stored in a reference type so that updates to
     /// `previousOffset` do NOT trigger a HomeView body re-render on every scroll frame.
-    @StateObject private var scrollTracker = ScrollTracker()
+    @State private var scrollTracker = ScrollTracker()
     @State private var isSearchBarVisible: Bool = true
 
     init(

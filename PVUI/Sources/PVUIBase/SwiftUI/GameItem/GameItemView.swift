@@ -84,6 +84,14 @@ public struct GameItemView: SwiftUI.View {
                 /// Cancel artwork loading if it's still in progress when view disappears
                 ArtworkLoader.shared.cancelLoading(for: game.id)
             }
+            .onChange(of: game.relatedFiles.count) { _ in
+                /// Keep disc count in sync if related files change while cell is on screen
+                /// (e.g. a second disc is imported after the initial appear).
+                if !game.isInvalidated {
+                    let files = game.relatedFiles.toArray()
+                    cachedDiscCount = Set(files.compactMap { $0.url?.path }).count
+                }
+            }
             .onChange(of: isFocused) { newValue in
                 /// Prioritize loading artwork for focused items
                 if newValue && artwork == nil {
