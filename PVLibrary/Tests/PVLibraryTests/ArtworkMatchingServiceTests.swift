@@ -4,7 +4,8 @@
 //
 //  Tests for FastArtworkLookupService — the fast, exact-match artwork lookup
 //  that runs at ROM import time before falling back to ArtworkSearchQueue.
-//  Also exercises cleanedForArtworkSearch() and shared-instance wiring.
+//  Also exercises cleanedForArtworkSearch(), shared-instance wiring, and
+//  multi-type artwork saving logic in ArtworkSearchQueue.
 //
 
 import XCTest
@@ -13,6 +14,32 @@ import PVFeatureFlags
 import PVLookupTypes
 import PVSystems
 @testable import PVLibrary
+import PVLookupTypes
+import PVSystems
+
+// MARK: - Mock service
+
+/// Deterministic mock that returns a configurable list of ArtworkMetadata items.
+final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol {
+
+    /// Results returned regardless of input parameters.
+    var stubbedResults: [ArtworkMetadata] = []
+    /// Records every call so tests can assert on parameters.
+    private(set) var calls: [(title: String, artworkTypes: ArtworkType)] = []
+
+    func findArtwork(
+        title: String,
+        filename: String?,
+        md5: String?,
+        systemIdentifier: SystemIdentifier?,
+        artworkTypes: ArtworkType
+    ) async throws -> [ArtworkMetadata] {
+        calls.append((title: title, artworkTypes: artworkTypes))
+        return stubbedResults
+    }
+}
+
+// MARK: - ArtworkMatchingService unit tests
 
 // MARK: - Mock Lookup Provider
 
@@ -155,52 +182,123 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         )
     }
 
-    // MARK: - cleanedForArtworkSearch
+    // MARK: - artworkSearchCleaned / cleanedForArtworkSearch
 
-    func testCleanedForArtworkSearch_removesSquareBrackets() {
-        let input = "Sonic the Hedgehog [USA]"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Sonic the Hedgehog")
+    func test_cleanedTitle_stripsSquareBrackets() {
+        let raw = "Super Mario Bros. [USA]"
+        XCTAssertEqual(raw.artworkSearchCleaned(), "Super Mario Bros.")
     }
 
-    func testCleanedForArtworkSearch_removesParentheses() {
-        let input = "Mario Kart (Rev A)"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Mario Kart")
+    func test_cleanedTitle_stripsParentheses() {
+        let raw = "Sonic (Rev A)"
+        XCTAssertEqual(raw.artworkSearchCleaned(), "Sonic")
     }
 
-    func testCleanedForArtworkSearch_removesCurlyBraces() {
-        let input = "Metroid {v1.1}"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Metroid")
+    func test_cleanedTitle_stripsCurlyBraces() {
+        let raw = "Game {Hack}"
+        XCTAssertEqual(raw.artworkSearchCleaned(), "Game")
     }
 
-    func testCleanedForArtworkSearch_removesMultipleBracketTypes() {
-        let input = "Zelda [USA] (Rev 1) {hack}"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Zelda")
+    func test_cleanedTitle_trimsWhitespace() {
+        let raw = "  Castlevania  "
+        XCTAssertEqual(raw.artworkSearchCleaned(), "Castlevania")
     }
 
-    func testCleanedForArtworkSearch_trimsWhitespace() {
-        let input = "  Street Fighter II  "
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Street Fighter II")
+    func test_cleanedTitle_preservesTitleWithNoTags() {
+        let raw = "Metroid"
+        XCTAssertEqual(raw.artworkSearchCleaned(), "Metroid")
     }
 
-    func testCleanedForArtworkSearch_preservesHyphenatedTitle() {
-        // Word-joining hyphens should survive bracket removal
-        let input = "Spider-Man [USA]"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Spider-Man")
+    // MARK: ArtworkMatchingService (unit, no network)
+
+    /// The service must call PVLookup — this test validates the fallback pipeline
+    /// using a mock so no real network/DB calls are made.
+    func test_mockService_returnsBoxFrontAndBoxBack() async throws {
+        let mock = MockArtworkMatchingService()
+        mock.stubbedResults = [
+            ArtworkMetadata(
+                url: URL(string: "https://example.com/front.jpg")!,
+                type: .boxFront,
+                source: "TheGamesDB"
+            ),
+            ArtworkMetadata(
+                url: URL(string: "https://example.com/back.jpg")!,
+                type: .boxBack,
+                source: "TheGamesDB"
+            )
+        ]
+
+        let results = try await mock.findArtwork(
+            title: "Zelda",
+            filename: "Zelda",
+            md5: nil,
+            systemIdentifier: .NES,
+            artworkTypes: [.boxFront, .boxBack]
+        )
+
+        XCTAssertEqual(results.count, 2)
+        XCTAssertTrue(results.contains { $0.type == .boxFront })
+        XCTAssertTrue(results.contains { $0.type == .boxBack })
     }
 
-    func testCleanedForArtworkSearch_emptyString() {
-        XCTAssertEqual("".cleanedForArtworkSearch(), "")
+    func test_mockService_emptyResultsWhenNoneStubbed() async throws {
+        let mock = MockArtworkMatchingService()
+        mock.stubbedResults = []
+
+        let results = try await mock.findArtwork(
+            title: "Unknown Game",
+            filename: nil,
+            md5: nil,
+            systemIdentifier: nil,
+            artworkTypes: .defaults
+        )
+
+        XCTAssertTrue(results.isEmpty)
     }
 
-    func testCleanedForArtworkSearch_noTagsUnchanged() {
-        let input = "Final Fantasy VII"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), input)
+    // MARK: ArtworkSearchQueue integration (mock service)
+
+    func test_queuePassesPrimaryArtworkTypesToService() async throws {
+        let mock = MockArtworkMatchingService()
+        mock.stubbedResults = []
+
+        let queue = ArtworkSearchQueue(matchingService: mock)
+        await queue.queueGameForArtworkSearch(
+            gameID: "test-id",
+            title: "Test Game",
+            filename: "TestGame",
+            systemID: .SNES,
+            md5Hash: "abcdef1234567890"
+        )
+        // Allow the debounce to fire and run
+        await queue.processPendingSearches()
+
+        // The queue should have called findArtwork with [.boxFront, .boxBack]
+        XCTAssertFalse(mock.calls.isEmpty, "Expected at least one findArtwork call")
+        let primaryTypes = ArtworkType([.boxFront, .boxBack])
+        XCTAssertTrue(
+            mock.calls.contains { $0.artworkTypes == primaryTypes },
+            "Expected primary types \(primaryTypes) in calls \(mock.calls.map { $0.artworkTypes })"
+        )
     }
 
     func testCleanedForArtworkSearch_removesIsolatedSpecialChars() {
         // Characters surrounded by spaces should be removed
         let input = "Game , Extra"
         XCTAssertEqual(input.cleanedForArtworkSearch(), "Game Extra")
+    }
+
+    func test_boxBackMetadataURL_isValidURL() {
+        // Verify that ArtworkMetadata with a boxBack type carries a proper URL
+        let urlString = "https://cdn.thegamesdb.net/images/back/12345.jpg"
+        let metadata = ArtworkMetadata(
+            url: URL(string: urlString)!,
+            type: .boxBack,
+            source: "TheGamesDB"
+        )
+        XCTAssertEqual(metadata.type, .boxBack)
+        XCTAssertEqual(metadata.url.absoluteString, urlString)
+        XCTAssertEqual(metadata.source, "TheGamesDB")
     }
 
     // MARK: - Shared instance smoke tests

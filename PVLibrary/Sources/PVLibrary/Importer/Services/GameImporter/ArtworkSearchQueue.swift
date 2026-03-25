@@ -38,18 +38,36 @@ public actor ArtworkSearchQueue {
     private var pendingGames: [ArtworkSearchMetadata] = [] // Game metadata for artwork search
     private var isProcessing = false
     private var processingTask: Task<Void, Never>? // Track processing task for cancellation
-    private let lookup: PVLookup
+    /// Service that performs the multi-source artwork search with progressive fallback.
+    private let matchingService: any ArtworkMatchingServiceProtocol
+
+    /// Artwork types fetched in the primary (box art) pass.
+    private static let primaryArtworkTypes: ArtworkType = [.boxFront, .boxBack]
+    /// Artwork types deferred to background tasks after the primary pass.
+    private static let backgroundArtworkTypes: ArtworkType = [.screenshot, .titleScreen]
 
     /// Custom URLSession for artwork downloads with longer timeouts
     private let artworkURLSession: URLSession
 
     private init() {
-        self.lookup = PVLookup.shared
+        self.matchingService = ArtworkMatchingService.shared
 
         // Configure URLSession for artwork downloads with longer timeouts
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 30.0 // 30 second timeout
         configuration.timeoutIntervalForResource = 60.0 // 60 second total timeout
+        configuration.waitsForConnectivity = true
+        configuration.allowsCellularAccess = true
+        self.artworkURLSession = URLSession(configuration: configuration)
+    }
+
+    /// Initialiser for unit testing — injects a mock matching service.
+    internal init(matchingService: any ArtworkMatchingServiceProtocol) {
+        self.matchingService = matchingService
+
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 30.0
+        configuration.timeoutIntervalForResource = 60.0
         configuration.waitsForConnectivity = true
         configuration.allowsCellularAccess = true
         self.artworkURLSession = URLSession(configuration: configuration)
@@ -147,224 +165,341 @@ public actor ArtworkSearchQueue {
         }
     }
 
-    /// Search for artwork for a specific game using enhanced search
-    /// Uses metadata directly - no Realm lookup required
+    /// Search for artwork for a specific game using enhanced search.
+    /// Delegates lookup to `ArtworkMatchingService`, then persists each artwork type separately.
     private func searchArtworkForGame(_ metadata: ArtworkSearchMetadata) async {
-        // Check if game still needs artwork (quick Realm check only when saving)
-        // We'll verify this when we actually save the artwork
-
         let md5Hash = metadata.md5Hash.uppercased()
         let gameTitle = metadata.title.isEmpty ? metadata.gameID : metadata.title
 
-        // Need at least one meaningful searchable term (after bracket/noise stripping)
-        guard !metadata.title.cleanedForArtworkSearch().isEmpty || !metadata.filename.cleanedForArtworkSearch().isEmpty else {
+        guard !metadata.title.isEmpty || !metadata.filename.isEmpty else {
             WLOG("ArtworkSearchQueue: Game \(metadata.gameID) has no searchable title or filename")
             return
         }
 
         do {
-            // Delegate progressive fallback search to ArtworkMatchingService
-            let artworkResults = try await ArtworkMatchingService.shared.searchWithFallback(
+            // Fetch box front + box back in one round-trip via ArtworkMatchingService.
+            let artworkResults = try await matchingService.findArtwork(
                 title: metadata.title,
                 filename: metadata.filename,
-                systemID: metadata.systemID,
-                md5Hash: metadata.md5Hash
+                md5: md5Hash,
+                systemIdentifier: metadata.systemID,
+                artworkTypes: Self.primaryArtworkTypes
             )
 
-            if artworkResults?.isEmpty ?? true {
-                VLOG("ArtworkSearchQueue: No artwork found for \(gameTitle) after trying title, filename, and MD5 lookup")
-            }
+            if artworkResults.isEmpty {
+                VLOG("ArtworkSearchQueue: No artwork found for \(gameTitle)")
+            } else {
+                ILOG("ArtworkSearchQueue: Found \(artworkResults.count) result(s) for \(gameTitle)")
 
-            // Process results if found
-            if let artworkResults = artworkResults, !artworkResults.isEmpty {
-                // Prioritize box front artwork if available, otherwise use first result
-                let selectedArtwork = artworkResults.first { $0.type == .boxFront } ?? artworkResults.first!
-
-                // Found artwork! Download and set it
-                ILOG("ArtworkSearchQueue: Found artwork for \(gameTitle) from \(selectedArtwork.source) (type: \(selectedArtwork.type.displayName))")
-
-                // Download and cache the artwork image
-                let artworkURL = selectedArtwork.url
-                var imageData: Data?
-                var downloadError: Error?
-
-                // Download the image using custom URLSession with longer timeouts
-                // Use Task.detached to prevent cancellation from parent task group
-                ILOG("ArtworkSearchQueue: Downloading artwork from \(artworkURL.absoluteString)")
-
-                // Capture URLSession before detached task (actor isolation)
-                let session = artworkURLSession
-
-                // Perform download in detached task to avoid cancellation from task group
-                // Don't check cancellation - let the download attempt proceed
-                let downloadResult = await Task.detached(priority: .utility) { () -> (Data?, Error?) in
-                    do {
-                        let response = try await session.data(from: artworkURL)
-                        if let httpResponse = response.1 as? HTTPURLResponse {
-                            if httpResponse.statusCode == 200 {
-                                return (response.0, nil)
-                            } else {
-                                let error = NSError(domain: "ArtworkSearchQueue", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode)"])
-                                return (nil, error)
-                            }
-                        } else {
-                            // No HTTP response (shouldn't happen but handle it)
-                            return (response.0, nil)
-                        }
-                    } catch {
-                        return (nil, error)
-                    }
-                }.value
-
-                imageData = downloadResult.0
-                downloadError = downloadResult.1
-
-                if let data = imageData {
-                    ILOG("ArtworkSearchQueue: Successfully downloaded \(data.count) bytes from \(artworkURL.absoluteString)")
-                } else if let error = downloadError {
-                    // Log error details
-                    if let urlError = error as? URLError {
-                        if urlError.code == .cancelled {
-                            WLOG("ArtworkSearchQueue: Download was cancelled for \(artworkURL.absoluteString) - this may indicate a timeout or task cancellation")
-                        } else {
-                            WLOG("ArtworkSearchQueue: URL error \(urlError.code.rawValue) (\(urlError.localizedDescription)) downloading from \(artworkURL.absoluteString)")
-                        }
-                    } else if error is CancellationError {
-                        WLOG("ArtworkSearchQueue: Download was cancelled (CancellationError) for \(artworkURL.absoluteString)")
-                    } else {
-                        WLOG("ArtworkSearchQueue: Download error (\(error.localizedDescription)) for \(artworkURL.absoluteString)")
-                    }
+                // --- Box front ---
+                if let frontArtwork = artworkResults.first(where: { $0.type == .boxFront }) ?? artworkResults.first {
+                    await saveBoxFrontArtwork(frontArtwork, metadata: metadata, md5Hash: md5Hash, gameTitle: gameTitle)
                 }
 
-                // Save artwork to database using md5Hash (primary key)
-                // Add retry mechanism in case game hasn't been committed yet
-                // Create Realm in detached task to avoid actor isolation issues
-                let maxRetries = 3
-                var retryCount = 0
-                var gameFound = false
-                var shouldSave = false
-                var hasOriginalArtworkFile = false
-                var hasCustomArtworkURL = false
-                var currentOriginalArtworkURL = ""
-
-                // Try to find the game with retries (game might not be committed yet)
-                while !gameFound && retryCount < maxRetries {
-                    let lookupResult = await Task.detached(priority: .utility) { () -> (found: Bool, hasOriginalFile: Bool, hasCustomURL: Bool, originalURL: String) in
-                        guard let realm = try? Realm() else {
-                            return (false, false, false, "")
-                        }
-
-                        // Try lookup by MD5 hash (primary key)
-                        if let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) {
-                            return (true, game.originalArtworkFile != nil, !game.customArtworkURL.isEmpty, game.originalArtworkURL)
-                        }
-
-                        // If not found by MD5, try lookup by id as fallback
-                        if !metadata.gameID.isEmpty,
-                           let game = realm.objects(PVGame.self).filter("id == %@", metadata.gameID).first {
-                            return (true, game.originalArtworkFile != nil, !game.customArtworkURL.isEmpty, game.originalArtworkURL)
-                        }
-
-                        return (false, false, false, "")
-                    }.value
-
-                    gameFound = lookupResult.found
-                    if gameFound {
-                        hasOriginalArtworkFile = lookupResult.hasOriginalFile
-                        hasCustomArtworkURL = lookupResult.hasCustomURL
-                        currentOriginalArtworkURL = lookupResult.originalURL
-                        shouldSave = !hasOriginalArtworkFile && !hasCustomArtworkURL
-                        break
-                    }
-
-                    // If still not found and we have retries left, wait a bit and try again
-                    if retryCount < maxRetries - 1 {
-                        retryCount += 1
-                        ILOG("ArtworkSearchQueue: Game \(gameTitle) (MD5: \(md5Hash), ID: \(metadata.gameID)) not found in database, retrying (\(retryCount)/\(maxRetries))...")
-                        try? await Task.sleep(for: .milliseconds(500))
-                    } else {
-                        break
-                    }
-                }
-
-                let finalRetryCount = retryCount
-
-                // Quick check if game exists and still needs artwork
-                // Save if: no artwork file exists AND no custom artwork
-                if gameFound && shouldSave {
-                    if let data = imageData {
-                        #if os(macOS)
-                        if let artwork = NSImage(data: data) {
-                            do {
-                                let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
-                                try await Task.detached(priority: .utility) {
-                                    guard let realm = try? Realm() else { return }
-                                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
-                                                      (!metadata.gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", metadata.gameID).first : nil) else { return }
-                                    try realm.write {
-                                        let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
-                                        game.originalArtworkFile = file
-                                        game.originalArtworkURL = artworkURL.absoluteString
-                                    }
-                                }.value
-                                ILOG("ArtworkSearchQueue: Downloaded and cached artwork for \(gameTitle)")
-                            } catch {
-                                WLOG("ArtworkSearchQueue: Failed to cache artwork for \(gameTitle): \(error.localizedDescription)")
-                            }
-                        }
-                        #elseif !os(watchOS)
-                        if let artwork = UIImage(data: data) {
-                            do {
-                                let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
-                                try await Task.detached(priority: .utility) {
-                                    guard let realm = try? Realm() else { return }
-                                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
-                                                      (!metadata.gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", metadata.gameID).first : nil) else { return }
-                                    try realm.write {
-                                        let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
-                                        game.originalArtworkFile = file
-                                        game.originalArtworkURL = artworkURL.absoluteString
-                                    }
-                                }.value
-                                ILOG("ArtworkSearchQueue: Downloaded and cached artwork for \(gameTitle)")
-                            } catch {
-                                WLOG("ArtworkSearchQueue: Failed to cache artwork for \(gameTitle): \(error.localizedDescription)")
-                            }
-                        }
-                        #endif
-                    } else {
-                        // If download failed, at least set the URL so it can be downloaded later
-                        // Only set URL if it's not already set (avoid overwriting with same failed URL)
-                        let errorDescription = downloadError?.localizedDescription ?? "Unknown error"
-                        if currentOriginalArtworkURL != artworkURL.absoluteString {
-                            try? await Task.detached(priority: .utility) {
-                                guard let realm = try? Realm() else { return }
-                                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
-                                                  (!metadata.gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", metadata.gameID).first : nil) else { return }
-                                try? realm.write {
-                                    game.originalArtworkURL = artworkURL.absoluteString
-                                }
-                            }.value
-                            WLOG("ArtworkSearchQueue: Found artwork URL for \(gameTitle) but download failed (\(errorDescription)), URL saved for later: \(artworkURL.absoluteString)")
-                        } else {
-                            WLOG("ArtworkSearchQueue: Artwork URL already set for \(gameTitle), skipping duplicate URL: \(artworkURL.absoluteString)")
-                        }
-                    }
-                } else {
-                    if gameFound {
-                        if hasOriginalArtworkFile {
-                            VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has original artwork file, skipping save")
-                        } else if hasCustomArtworkURL {
-                            VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has custom artwork, skipping save")
-                        }
-                    } else {
-                        WLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) not found in database after \(finalRetryCount + 1) attempts, skipping save. Game may not be committed yet or MD5 mismatch.")
-                    }
+                // --- Box back ---
+                if let backArtwork = artworkResults.first(where: { $0.type == .boxBack }) {
+                    await saveBoxBackArtwork(backArtwork, md5Hash: md5Hash, gameID: metadata.gameID, gameTitle: gameTitle)
                 }
             }
+
+            // --- Screenshots / title screens (lower priority, non-blocking) ---
+            queueBackgroundArtworkSearch(metadata: metadata)
+
         } catch {
             WLOG("ArtworkSearchQueue: Error searching artwork for \(gameTitle): \(error.localizedDescription)")
         }
+    }
+
+        } catch {
+            WLOG("ArtworkSearchQueue: Error searching artwork for \(gameTitle): \(error.localizedDescription)")
+        }
+    }
+
+    /// Queue a background task to fetch screenshot / title-screen artwork after box art is done.
+    /// Uses `.background` priority so it never contends with box-art downloads.
+    private func queueBackgroundArtworkSearch(metadata: ArtworkSearchMetadata) {
+        let md5Hash = metadata.md5Hash.uppercased()
+        let gameTitle = metadata.title.isEmpty ? metadata.gameID : metadata.title
+
+        Task.detached(priority: .background) { [matchingService] in
+            do {
+                let results = try await matchingService.findArtwork(
+                    title: metadata.title,
+                    filename: metadata.filename,
+                    md5: md5Hash,
+                    systemIdentifier: metadata.systemID,
+                    artworkTypes: ArtworkSearchQueue.backgroundArtworkTypes
+                )
+                if results.isEmpty {
+                    VLOG("ArtworkSearchQueue: No screenshot/title-screen artwork for \(gameTitle)")
+                } else {
+                    ILOG("ArtworkSearchQueue: Found \(results.count) screenshot/title-screen result(s) for \(gameTitle) — saving URLs")
+                    await ArtworkSearchQueue.shared.saveBackgroundArtwork(results, md5Hash: md5Hash, gameID: metadata.gameID)
+                }
+            } catch {
+                WLOG("ArtworkSearchQueue: Background artwork search error for \(gameTitle): \(error.localizedDescription)")
+            }
+        }
+    }
+
+    // MARK: - Artwork persistence helpers
+
+    /// Download box-front image and persist both file and URL to the game record.
+    private func saveBoxFrontArtwork(
+        _ artwork: ArtworkMetadata,
+        metadata: ArtworkSearchMetadata,
+        md5Hash: String,
+        gameTitle: String
+    ) async {
+        let artworkURL = artwork.url
+
+        // Check game state (retrying until it is committed to Realm)
+        let maxRetries = 3
+        var retryCount = 0
+        var gameFound = false
+        var shouldSave = false
+        var hasOriginalArtworkFile = false
+        var hasCustomArtworkURL = false
+        var currentOriginalArtworkURL = ""
+
+        while !gameFound && retryCount < maxRetries {
+            let lookupResult = await Task.detached(priority: .utility) { () -> (found: Bool, hasOriginalFile: Bool, hasCustomURL: Bool, originalURL: String) in
+                guard let realm = try? Realm() else { return (false, false, false, "") }
+                if let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) {
+                    return (true, game.originalArtworkFile != nil, !game.customArtworkURL.isEmpty, game.originalArtworkURL)
+                }
+                if !metadata.gameID.isEmpty,
+                   let game = realm.objects(PVGame.self).filter("id == %@", metadata.gameID).first {
+                    return (true, game.originalArtworkFile != nil, !game.customArtworkURL.isEmpty, game.originalArtworkURL)
+                }
+                return (false, false, false, "")
+            }.value
+
+            gameFound = lookupResult.found
+            if gameFound {
+                hasOriginalArtworkFile = lookupResult.hasOriginalFile
+                hasCustomArtworkURL = lookupResult.hasCustomURL
+                currentOriginalArtworkURL = lookupResult.originalURL
+                shouldSave = !hasOriginalArtworkFile && !hasCustomArtworkURL
+                break
+            }
+            if retryCount < maxRetries - 1 {
+                retryCount += 1
+                ILOG("ArtworkSearchQueue: Game \(gameTitle) not in DB yet, retrying (\(retryCount)/\(maxRetries))…")
+                try? await Task.sleep(nanoseconds: 500_000_000)
+            } else {
+                break
+            }
+        }
+
+        guard gameFound else {
+            WLOG("ArtworkSearchQueue: Game \(gameTitle) (MD5: \(md5Hash)) not found after \(retryCount + 1) attempt(s)")
+            return
+        }
+
+        guard shouldSave else {
+            if hasOriginalArtworkFile {
+                VLOG("ArtworkSearchQueue: \(gameTitle) already has box-front file, skipping")
+            } else if hasCustomArtworkURL {
+                VLOG("ArtworkSearchQueue: \(gameTitle) has custom artwork, skipping")
+            } else if !currentOriginalArtworkURL.isEmpty {
+                VLOG("ArtworkSearchQueue: \(gameTitle) already has originalArtworkURL, skipping")
+            }
+            return
+        }
+
+        let session = artworkURLSession
+        let downloadResult = await Task.detached(priority: .utility) { () -> (Data?, Error?) in
+            do {
+                let (data, response) = try await session.data(from: artworkURL)
+                if let http = response as? HTTPURLResponse, http.statusCode != 200 {
+                    return (nil, NSError(domain: "ArtworkSearchQueue", code: http.statusCode,
+                                        userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode)"]))
+                }
+                return (data, nil)
+            } catch {
+                return (nil, error)
+            }
+        }.value
+
+        if let data = downloadResult.0 {
+            ILOG("ArtworkSearchQueue: Downloaded \(data.count) bytes (box front) for \(gameTitle)")
+            await persistBoxFrontImage(data: data, artworkURL: artworkURL, md5Hash: md5Hash, gameID: metadata.gameID, gameTitle: gameTitle)
+        } else {
+            let desc = downloadResult.1?.localizedDescription ?? "unknown"
+            if currentOriginalArtworkURL != artworkURL.absoluteString {
+                await Task.detached(priority: .utility) {
+                    guard let realm = try? Realm(),
+                          let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                     (!metadata.gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", metadata.gameID).first : nil)
+                    else { return }
+                    try? realm.write { game.originalArtworkURL = artworkURL.absoluteString }
+                }.value
+                WLOG("ArtworkSearchQueue: Box-front download failed (\(desc)), URL saved for later: \(artworkURL.absoluteString)")
+            }
+        }
+    }
+
+    /// Download a box-back image and store its URL in `game.boxBackArtworkURL`.
+    private func saveBoxBackArtwork(
+        _ artwork: ArtworkMetadata,
+        md5Hash: String,
+        gameID: String,
+        gameTitle: String
+    ) async {
+        let artworkURL = artwork.url
+
+        // Skip if boxBackArtworkURL is already set.
+        let alreadySet = await Task.detached(priority: .utility) { () -> Bool in
+            guard let realm = try? Realm() else { return false }
+            if let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) {
+                return game.boxBackArtworkURL != nil && !(game.boxBackArtworkURL?.isEmpty ?? true)
+            }
+            if !gameID.isEmpty,
+               let game = realm.objects(PVGame.self).filter("id == %@", gameID).first {
+                return game.boxBackArtworkURL != nil && !(game.boxBackArtworkURL?.isEmpty ?? true)
+            }
+            return false
+        }.value
+
+        guard !alreadySet else {
+            VLOG("ArtworkSearchQueue: \(gameTitle) already has boxBackArtworkURL, skipping")
+            return
+        }
+
+        let session = artworkURLSession
+        let downloadResult = await Task.detached(priority: .utility) { () -> (Data?, Error?) in
+            do {
+                let (data, response) = try await session.data(from: artworkURL)
+                if let http = response as? HTTPURLResponse, http.statusCode != 200 {
+                    return (nil, NSError(domain: "ArtworkSearchQueue", code: http.statusCode,
+                                        userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode)"]))
+                }
+                return (data, nil)
+            } catch {
+                return (nil, error)
+            }
+        }.value
+
+        if let data = downloadResult.0 {
+            ILOG("ArtworkSearchQueue: Downloaded \(data.count) bytes (box back) for \(gameTitle)")
+            await persistBoxBackImage(data: data, artworkURL: artworkURL, md5Hash: md5Hash, gameID: gameID, gameTitle: gameTitle)
+        } else {
+            // Save URL even if download failed so it can be retried later.
+            let desc = downloadResult.1?.localizedDescription ?? "unknown"
+            await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try? realm.write { game.boxBackArtworkURL = artworkURL.absoluteString }
+            }.value
+            WLOG("ArtworkSearchQueue: Box-back download failed (\(desc)), URL saved for later: \(artworkURL.absoluteString)")
+        }
+    }
+
+    /// Persist screenshot / title-screen artwork URLs (background priority).
+    /// Currently stores the first result's URL; future work can expand to multiple screenshots.
+    internal func saveBackgroundArtwork(_ results: [ArtworkMetadata], md5Hash: String, gameID: String) async {
+        guard let first = results.first else { return }
+        let urlString = first.url.absoluteString
+
+        await Task.detached(priority: .background) {
+            guard let realm = try? Realm(),
+                  let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                             (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+            else { return }
+            // Only set if no boxBackArtworkURL was already captured as screenshot
+            // (screenshots are stored separately from box art)
+            ILOG("ArtworkSearchQueue: Background artwork URL available for \(game.title): \(urlString)")
+            // TODO: Persist to game.screenShots once a PVImageFile download helper exists (#3470)
+        }.value
+    }
+
+    // MARK: - Image caching helpers
+
+    private func persistBoxFrontImage(data: Data, artworkURL: URL, md5Hash: String, gameID: String, gameTitle: String) async {
+        #if os(macOS)
+        guard let artwork = NSImage(data: data) else {
+            WLOG("ArtworkSearchQueue: Could not decode image data for \(gameTitle)")
+            return
+        }
+        do {
+            let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
+            try await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try realm.write {
+                    game.originalArtworkFile = PVImageFile(withURL: localURL, relativeRoot: .documents)
+                    game.originalArtworkURL = artworkURL.absoluteString
+                }
+            }.value
+            ILOG("ArtworkSearchQueue: Cached box-front artwork for \(gameTitle)")
+        } catch {
+            WLOG("ArtworkSearchQueue: Failed to cache box-front for \(gameTitle): \(error.localizedDescription)")
+        }
+        #elseif !os(watchOS)
+        guard let artwork = UIImage(data: data) else {
+            WLOG("ArtworkSearchQueue: Could not decode image data for \(gameTitle)")
+            return
+        }
+        do {
+            let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
+            try await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try realm.write {
+                    game.originalArtworkFile = PVImageFile(withURL: localURL, relativeRoot: .documents)
+                    game.originalArtworkURL = artworkURL.absoluteString
+                }
+            }.value
+            ILOG("ArtworkSearchQueue: Cached box-front artwork for \(gameTitle)")
+        } catch {
+            WLOG("ArtworkSearchQueue: Failed to cache box-front for \(gameTitle): \(error.localizedDescription)")
+        }
+        #endif
+    }
+
+    private func persistBoxBackImage(data: Data, artworkURL: URL, md5Hash: String, gameID: String, gameTitle: String) async {
+        #if os(macOS)
+        guard let artwork = NSImage(data: data) else { return }
+        do {
+            let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
+            try await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try realm.write {
+                    game.boxBackArtworkURL = localURL.absoluteString
+                }
+            }.value
+            ILOG("ArtworkSearchQueue: Cached box-back artwork for \(gameTitle)")
+        } catch {
+            WLOG("ArtworkSearchQueue: Failed to cache box-back for \(gameTitle): \(error.localizedDescription)")
+        }
+        #elseif !os(watchOS)
+        guard let artwork = UIImage(data: data) else { return }
+        do {
+            let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
+            try await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try realm.write {
+                    game.boxBackArtworkURL = localURL.absoluteString
+                }
+            }.value
+            ILOG("ArtworkSearchQueue: Cached box-back artwork for \(gameTitle)")
+        } catch {
+            WLOG("ArtworkSearchQueue: Failed to cache box-back for \(gameTitle): \(error.localizedDescription)")
+        }
+        #endif
     }
 
     /// Clear the queue (useful for testing or reset)
@@ -499,3 +634,4 @@ public actor ArtworkSearchQueue {
     }
 }
 
+// Title-cleaning logic lives in ArtworkMatchingService.artworkSearchCleaned().
