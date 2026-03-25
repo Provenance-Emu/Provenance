@@ -206,7 +206,7 @@ public final class MIDIDeviceManager: ObservableObject {
     /// Called once during init, after `refreshEndpoints()` has populated `sources`/`destinations`.
     private func restorePersistedSelection() {
         // Restore source IDs (multi-select)
-        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int], !rawIDs.isEmpty {
+        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeySourceIDs) as? [Int] {
             let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                 .filter { id in sources.contains(where: { $0.id == id }) })
             if !ids.isEmpty {
@@ -222,7 +222,7 @@ public final class MIDIDeviceManager: ObservableObject {
         }
 
         // Restore destination IDs (multi-select)
-        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int], !rawIDs.isEmpty {
+        if let rawIDs = UserDefaults.standard.array(forKey: Self.udKeyDestinationIDs) as? [Int] {
             let ids = Set(rawIDs.compactMap { MIDIUniqueID(exactly: $0) }
                 .filter { id in destinations.contains(where: { $0.id == id }) })
             if !ids.isEmpty {

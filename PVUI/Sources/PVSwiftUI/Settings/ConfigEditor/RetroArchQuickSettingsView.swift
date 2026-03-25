@@ -39,7 +39,7 @@ struct RetroArchQuickSettingsView: View {
                 }
             }
 
-            // MIDI device picker — iOS/macCatalyst only (CoreMIDI not available on tvOS)
+            // MIDI device picker — iOS/macOS/macCatalyst (CoreMIDI not available on tvOS)
 #if canImport(CoreMIDI) && !os(tvOS)
             if #available(iOS 14.0, macCatalyst 14.0, macOS 11.0, *) {
                 MIDIDevicePickerSection(palette: palette)
