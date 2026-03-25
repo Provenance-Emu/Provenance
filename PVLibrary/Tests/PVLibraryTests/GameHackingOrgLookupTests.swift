@@ -129,8 +129,8 @@ final class GameHackingOrgLookupTests: XCTestCase {
         UserDefaults.standard.set(true, forKey: "useCheatProxy")
         UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
         defer {
-            UserDefaults.standard.set(false, forKey: "useCheatProxy")
-            UserDefaults.standard.set("", forKey: "cheatProxyURL")
+            UserDefaults.standard.removeObject(forKey: "useCheatProxy")
+            UserDefaults.standard.removeObject(forKey: "cheatProxyURL")
         }
 
         let title = "ProxyHappyPath_\(UUID().uuidString)"
@@ -161,8 +161,8 @@ final class GameHackingOrgLookupTests: XCTestCase {
         UserDefaults.standard.set(true, forKey: "useCheatProxy")
         UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
         defer {
-            UserDefaults.standard.set(false, forKey: "useCheatProxy")
-            UserDefaults.standard.set("", forKey: "cheatProxyURL")
+            UserDefaults.standard.removeObject(forKey: "useCheatProxy")
+            UserDefaults.standard.removeObject(forKey: "cheatProxyURL")
         }
 
         let title = "ProxyEmptyFallback_\(UUID().uuidString)"
@@ -183,8 +183,8 @@ final class GameHackingOrgLookupTests: XCTestCase {
         UserDefaults.standard.set(false, forKey: "useCheatProxy")
         UserDefaults.standard.set("https://test.proxy.pvemu.invalid", forKey: "cheatProxyURL")
         defer {
-            UserDefaults.standard.set(false, forKey: "useCheatProxy")
-            UserDefaults.standard.set("", forKey: "cheatProxyURL")
+            UserDefaults.standard.removeObject(forKey: "useCheatProxy")
+            UserDefaults.standard.removeObject(forKey: "cheatProxyURL")
         }
 
         let title = "ProxyDisabled_\(UUID().uuidString)"

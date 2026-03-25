@@ -63,6 +63,20 @@ export default {
             });
         }
 
+        if (title.trim().length > MAX_TITLE_LENGTH) {
+            return new Response(JSON.stringify({ error: "Parameter too long: title" }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
+            });
+        }
+
+        if (system.length > MAX_SYSTEM_LENGTH) {
+            return new Response(JSON.stringify({ error: "Parameter too long: system" }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders(origin, env) },
+            });
+        }
+
         const cacheKey = makeCacheKey(title, system);
 
         // Check KV cache
