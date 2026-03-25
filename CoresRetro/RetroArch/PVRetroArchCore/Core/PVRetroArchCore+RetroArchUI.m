@@ -587,12 +587,6 @@ void extract_bundles();
             [self syncResource:src to:verFile];
         }
 
-        // After the primary config is on disk, stamp in the locale-derived
-        // user_language so existing English-defaulted configs get updated.
-        if ([fm fileExistsAtPath:fileName]) {
-            [self applyUserLanguageToRetroArchConfig:fileName];
-        }
-
         if(shouldUpdateAssets) {
             NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
             [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory]];

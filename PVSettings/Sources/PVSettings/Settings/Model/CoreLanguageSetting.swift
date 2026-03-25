@@ -6,6 +6,7 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
+import Defaults
 import Foundation
 
 /// Controls the language used by emulator cores (RetroArch `user_language` and
