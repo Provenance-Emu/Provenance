@@ -1085,15 +1085,31 @@ static void emulation_run(BOOL skipFrame) {
     }
     else if (self.systemType == MednaSystemPSX)
     {
-        for(unsigned i = 0; i < self->multiTapPlayerCount; i++) {
-            // Center the Dual Analog Sticks
-            uint8 *buf = (uint8 *)inputBuffer[i];
-            Mednafen::MDFN_en16lsb(&buf[3], (uint16) 32767);
-            Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
-            Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
-            Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
-            // Do we want to use gamepad when not using an MFi device?
-            game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
+        // Detect GunCon light gun games and wire port 0 as "guncon".
+        BOOL isLightGunGame = self.gameSupportsLightGun;
+        if (isLightGunGame) {
+            ILOG(@"Mednafen PSX: GunCon game detected (serial=%@), configuring port 0 as guncon", self.romSerial);
+            // Zero out the guncon buffer; coordinates will be written by LightGunResponder callbacks.
+            memset((uint8_t *)inputBuffer[0], 0, 9 * sizeof(uint32_t));
+            game->SetInput(0, "guncon", (uint8_t *)inputBuffer[0]);
+            // Port 1 remains a standard DualShock for menu navigation / 2-player fallback.
+            uint8 *buf1 = (uint8 *)inputBuffer[1];
+            Mednafen::MDFN_en16lsb(&buf1[3],   (uint16) 32767);
+            Mednafen::MDFN_en16lsb(&buf1[3]+2, (uint16) 32767);
+            Mednafen::MDFN_en16lsb(&buf1[3]+4, (uint16) 32767);
+            Mednafen::MDFN_en16lsb(&buf1[3]+6, (uint16) 32767);
+            game->SetInput(1, "dualshock", (uint8_t *)inputBuffer[1]);
+        } else {
+            for(unsigned i = 0; i < self->multiTapPlayerCount; i++) {
+                // Center the Dual Analog Sticks
+                uint8 *buf = (uint8 *)inputBuffer[i];
+                Mednafen::MDFN_en16lsb(&buf[3], (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
+                // Do we want to use gamepad when not using an MFi device?
+                game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
+            }
         }
 
         // Multi-Disc check

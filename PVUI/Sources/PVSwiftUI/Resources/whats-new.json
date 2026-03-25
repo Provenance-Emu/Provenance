@@ -568,5 +568,23 @@
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
       }
     ]
+  },
+  {
+    "version": "3.8.0",
+    "title": "Light Gun Support",
+    "features": [
+      {
+        "symbolName": "scope",
+        "symbolColor": "red",
+        "title": "PSX GunCon Support",
+        "subtitle": "Time Crisis, Point Blank, Lethal Enforcers and other classic PSX light gun games now work via touch or mouse — aim, shoot, and reload just like the real GunCon peripheral."
+      },
+      {
+        "symbolName": "hand.tap.fill",
+        "symbolColor": "orange",
+        "title": "Touch-to-Aim",
+        "subtitle": "Tap anywhere on screen to aim, tap to fire, and swipe off-screen to reload. Light gun A and B buttons are mapped to intuitive gesture zones."
+      }
+    ]
   }
 ]

@@ -34,8 +34,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /// Forward Declarations
 @protocol ObjCBridgedCoreBridge, GameWithCheat;
-@protocol PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, DiscSwappable;
-@protocol LightGunResponder;
+@protocol PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, DiscSwappable, LightGunResponder;
 typedef enum PVGBAButton: NSInteger PVGBAButton;
 typedef enum PVGBButton: NSInteger PVGBButton;
 typedef enum PVGenesisButton: NSInteger PVGenesisButton;
@@ -108,6 +107,32 @@ __attribute__((visibility("default")))
 - (NSArray<NSString*> *)getCheatCodeTypes;
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 - (BOOL)getCheatSupport;
+@end
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
+/// PSX GunCon light gun support. Conforms to LightGunResponder protocol.
+@interface MednafenGameCoreBridge (LightGun) <LightGunResponder>
+#pragma clang diagnostic pop
+
+/// Returns YES when the loaded PSX game is a known GunCon title.
+@property (nonatomic, readonly) BOOL gameSupportsLightGun;
+/// Always NO — GunCon games can be played without the peripheral.
+@property (nonatomic, readonly) BOOL requiresLightGun;
+
+- (void)lightGunMovedToPoint:(CGPoint)point isOffscreen:(BOOL)isOffscreen;
+- (void)lightGunTriggerDown;
+- (void)lightGunTriggerUp;
+- (void)lightGunAuxADown;
+- (void)lightGunAuxAUp;
+- (void)lightGunAuxBDown;
+- (void)lightGunAuxBUp;
+- (void)lightGunStartDown;
+- (void)lightGunStartUp;
+- (void)lightGunSelectDown;
+- (void)lightGunSelectUp;
+- (void)lightGunReloadDown;
+- (void)lightGunReloadUp;
 @end
 
 #pragma clang diagnostic push

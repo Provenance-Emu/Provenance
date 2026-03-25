@@ -341,6 +341,70 @@ extension MednafenGameCore: PaletteProviding {
     }
 }
 
+// MARK: - LightGunResponder
+
+extension MednafenGameCore: LightGunResponder {
+    public var gameSupportsLightGun: Bool {
+        return _bridge.gameSupportsLightGun
+    }
+
+    public var requiresLightGun: Bool {
+        return _bridge.requiresLightGun
+    }
+
+    public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
+        (_bridge as! LightGunResponder).lightGunMovedToPoint(point, isOffscreen: isOffscreen)
+    }
+
+    public func lightGunTriggerDown() {
+        (_bridge as! LightGunResponder).lightGunTriggerDown()
+    }
+
+    public func lightGunTriggerUp() {
+        (_bridge as! LightGunResponder).lightGunTriggerUp()
+    }
+
+    public func lightGunAuxADown() {
+        (_bridge as! LightGunResponder).lightGunAuxADown?()
+    }
+
+    public func lightGunAuxAUp() {
+        (_bridge as! LightGunResponder).lightGunAuxAUp?()
+    }
+
+    public func lightGunAuxBDown() {
+        (_bridge as! LightGunResponder).lightGunAuxBDown?()
+    }
+
+    public func lightGunAuxBUp() {
+        (_bridge as! LightGunResponder).lightGunAuxBUp?()
+    }
+
+    public func lightGunStartDown() {
+        (_bridge as! LightGunResponder).lightGunStartDown?()
+    }
+
+    public func lightGunStartUp() {
+        (_bridge as! LightGunResponder).lightGunStartUp?()
+    }
+
+    public func lightGunSelectDown() {
+        (_bridge as! LightGunResponder).lightGunSelectDown?()
+    }
+
+    public func lightGunSelectUp() {
+        (_bridge as! LightGunResponder).lightGunSelectUp?()
+    }
+
+    public func lightGunReloadDown() {
+        (_bridge as! LightGunResponder).lightGunReloadDown?()
+    }
+
+    public func lightGunReloadUp() {
+        (_bridge as! LightGunResponder).lightGunReloadUp?()
+    }
+}
+
 extension MednafenGameCore: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
         _bridge.setCheat(code: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled)
