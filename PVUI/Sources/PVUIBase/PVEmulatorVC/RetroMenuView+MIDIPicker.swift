@@ -77,6 +77,8 @@ struct MIDIPickerSectionView: View {
             // Input source picker (single-select convenience view).
             // multipleSelectedCount lets the row surface "Multiple" when more than one
             // source is selected via the Quick Settings multi-select picker.
+            // emptySelectionLabel is "All" because an empty source set means auto-detect
+            // (listen to all available MIDI sources), not "disabled".
             MIDIEndpointRow(
                 label: String(localized: "INPUT"),
                 symbolName: "arrow.down.circle",
@@ -86,6 +88,7 @@ struct MIDIPickerSectionView: View {
                     set: { midi.selectedSourceID = $0 }
                 ),
                 multipleSelectedCount: midi.selectedSourceIDs.count,
+                emptySelectionLabel: String(localized: "All"),
                 palette: palette
             )
 
@@ -145,20 +148,23 @@ private struct MIDIEndpointRow: View {
     let endpoints: [MIDIEndpointInfo]
     @Binding var selectedID: MIDIUniqueID?
     /// Total number of selected IDs from the backing multi-select set.
-    /// Used to distinguish "Multiple devices selected" from "None selected" when
+    /// Used to distinguish "Multiple devices selected" from "None/All selected" when
     /// `selectedID` is nil (which happens whenever count != 1).
     var multipleSelectedCount: Int = 0
+    /// Label shown when no specific device is selected (empty set).
+    /// Use "All" for INPUT (empty = listen to all sources) and "None" for OUTPUT (empty = disabled).
+    var emptySelectionLabel: String = String(localized: "None")
     let palette: UXThemePalette
 
     @State private var expanded = false
 
     private var selectedName: String {
         if let id = selectedID {
-            return endpoints.first { $0.id == id }?.name ?? String(localized: "None")
+            return endpoints.first { $0.id == id }?.name ?? emptySelectionLabel
         } else if multipleSelectedCount > 1 {
             return String(localized: "Multiple (\(multipleSelectedCount))")
         }
-        return String(localized: "None")
+        return emptySelectionLabel
     }
 
     var body: some View {
