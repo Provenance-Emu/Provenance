@@ -108,16 +108,11 @@ struct LibretroDBTests {
 
     @Test("Serial search round-trip: MD5 lookup provides serial_id for confirming serial search")
     func searchBySerialRoundTrip() async throws {
-        // Find a game via MD5; if it has a serial_id we can validate the round-trip
+        // Find a game via MD5; it must have a serial_id so we can validate the round-trip
         let md5Results = try db.searchDatabase(usingKey: "romHashMD5", value: dragonQuest3.md5, systemID: nil)
         let rom = try #require(md5Results?.first, "DragonQuest3 should exist in test DB")
-
-        guard let serial = rom.serialID, !serial.isEmpty else {
-            // Cartridge-based SNES games have no serial_id in LibretroDB.
-            // Throw Skip so the test is explicitly reported as skipped rather than silently passing.
-            throw Skip("DragonQuest3 fixture has no serial_id in LibretroDB; serial search round-trip cannot be validated for this cartridge-based ROM. Use a disc-based game fixture (PSX/Saturn) for positive serial tests.")
-        }
-
+        let serial = try #require(rom.serialID, "DragonQuest3 fixture must have a serial_id in LibretroDB for serial search round-trip testing")
+        #expect(!serial.isEmpty)
         // Round-trip: searching by the serial_id should return the same game
         let found = try await db.searchROM(bySerial: serial, systemID: nil)
         #expect(found != nil)
