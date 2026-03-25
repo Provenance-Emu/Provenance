@@ -15,6 +15,8 @@
 	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array/>
+	<key>com.apple.developer.kernel.allow-jit</key>
+	<true/>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
 	<key>com.apple.developer.siri</key>

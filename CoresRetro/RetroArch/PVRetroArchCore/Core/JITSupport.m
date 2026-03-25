@@ -96,6 +96,36 @@ bool jb_enable_ptrace_hack(void) {
 
 bool jit_available(void)
 {
+   // iOS 26+ native JIT: JITAuthorizer is a private class introduced in iOS 26
+   // that authorises JIT when the app carries the
+   // com.apple.developer.kernel.allow-jit entitlement.  Its presence signals
+   // that the OS will honour MAP_JIT allocations without a debugger or
+   // jailbreak being required.
+   if (NSClassFromString(@"JITAuthorizer") != nil)
+      return true;
+
+   // TrollStore grants unrestricted entitlements (including get-task-allow)
+   // at install time and leaves identifiable file-system markers on the device.
+   static bool hasTrollStore = false;
+   static dispatch_once_t trollOnce = 0;
+   dispatch_once(&trollOnce, ^{
+      const char *markers[] = {
+         "/var/mobile/Library/Application Support/TrollStore",
+         "/usr/lib/TrollStore",
+         "/var/containers/Bundle/TrollStore",
+      };
+      for (size_t i = 0; i < sizeof(markers) / sizeof(markers[0]); i++)
+      {
+         if ([[NSFileManager defaultManager] fileExistsAtPath:@(markers[i])])
+         {
+            hasTrollStore = true;
+            break;
+         }
+      }
+   });
+   if (hasTrollStore)
+      return true;
+
    static bool canOpenApps = false;
    static dispatch_once_t appsOnce = 0;
    dispatch_once(&appsOnce, ^{
