@@ -123,14 +123,14 @@ public struct CloudSyncSettingsView: View {
     private var statusHeader: some View {
         VStack(spacing: 12) {
             #if os(tvOS)
-            Text("CLOUD SYNC")
+            Text("cloud_sync.title_tvos", bundle: .module)
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
                 )
                 .padding(.top)
             #else
-            Text("Cloud Sync")
+            Text("cloud_sync.title", bundle: .module)
                 .font(.title)
                 .foregroundColor(.retroPink)
                 .padding(.top)
@@ -150,7 +150,7 @@ public struct CloudSyncSettingsView: View {
                         .foregroundColor(.white)
 
                     if iCloudSyncEnabled && viewModel.iCloudAvailable {
-                        Text("Mode: \(currentiCloudSyncMode.description)")
+                        Text(verbatim: "Mode: \(currentiCloudSyncMode.description)")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -163,7 +163,7 @@ public struct CloudSyncSettingsView: View {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
 
-                        Text("Syncing...")
+                        Text("cloud_sync.syncing", bundle: .module)
                             .font(.caption)
                             .foregroundColor(.retroPink)
                     }
@@ -290,12 +290,12 @@ public struct CloudSyncSettingsView: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.orange)
 
-                Text("iCloud Account Issue")
+                Text("cloud_sync.account.issue_title", bundle: .module)
                     .font(.headline)
                     .foregroundColor(.white)
             }
 
-            Text("CloudKit sync requires a valid iCloud account. Please check your iCloud settings in System Settings.")
+            Text("cloud_sync.account.issue_description", bundle: .module)
                 .font(.subheadline)
                 .foregroundColor(.gray)
         }
@@ -320,7 +320,7 @@ public struct CloudSyncSettingsView: View {
 #endif
             }) {
                 HStack {
-                    Text("Sync Logs")
+                    Text("cloud_sync.logs.title", bundle: .module)
                         .cloudSyncSectionTitle()
 
                     Spacer()
@@ -378,13 +378,13 @@ public struct CloudSyncSettingsView: View {
     /// Shows sync activity over time with a line chart
     private var syncActivityChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Sync Activity (Uploads - Last 7 Days)")
+            Text("cloud_sync.activity.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             // Line chart visualization
             // This uses mock data - in a real implementation, this would use historical sync data
             if dailyUploadDataPoints.isEmpty {
-                Text("No recent sync activity found.")
+                Text("cloud_sync.activity.no_recent", bundle: .module)
                     .foregroundColor(.gray)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -407,7 +407,7 @@ public struct CloudSyncSettingsView: View {
     private var syncStatusView: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Sync Status")
+                Text("cloud_sync.status.title", bundle: .module)
                     .cloudSyncSectionTitle()
                 Spacer()
                 Button(action: {
@@ -417,7 +417,7 @@ public struct CloudSyncSettingsView: View {
                 }) {
                     HStack {
                         Image(systemName: "arrow.clockwise")
-                        Text("Refresh")
+                        Text("cloud_sync.status.refresh", bundle: .module)
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -434,18 +434,18 @@ public struct CloudSyncSettingsView: View {
 
             HStack(spacing: 16) {
                 VStack(alignment: .leading) {
-                    Text("Local Files")
+                    Text("cloud_sync.status.local_files", bundle: .module)
                         .font(.subheadline)
-                    Text("\(viewModel.localFileCount)")
+                    Text(verbatim: "\(viewModel.localFileCount)")
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(Color.retroBlue)
                 }
 
                 VStack(alignment: .leading) {
-                    Text("iCloud Files")
+                    Text("cloud_sync.status.icloud_files", bundle: .module)
                         .font(.subheadline)
-                    Text("\(viewModel.iCloudFileCount)")
+                    Text(verbatim: "\(viewModel.iCloudFileCount)")
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(Color.retroPink)
@@ -454,9 +454,9 @@ public struct CloudSyncSettingsView: View {
                 Spacer()
 
                 VStack(alignment: .leading) {
-                    Text("Differences")
+                    Text("cloud_sync.status.differences", bundle: .module)
                         .font(.subheadline)
-                    Text("\(viewModel.syncDifferences.count)")
+                    Text(verbatim: "\(viewModel.syncDifferences.count)")
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(Color.retroPurple)
@@ -497,7 +497,7 @@ public struct CloudSyncSettingsView: View {
                     }) {
                         HStack {
                             Image(systemName: "info.circle")
-                            Text("Load Diagnostics")
+                            Text("cloud_sync.status.load_diagnostics", bundle: .module)
                             Spacer()
                             Image(systemName: "chevron.right")
                         }
@@ -540,7 +540,7 @@ public struct CloudSyncSettingsView: View {
     /// Displays record counts with a RetroWave bar chart visualization
     private var recordCountsWithChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("CloudKit Records")
+            Text("cloud_sync.records.cloudkit", bundle: .module)
                 .cloudSyncSectionTitle()
 
             if viewModel.isLoadingCloudKitRecords {
@@ -570,11 +570,11 @@ public struct CloudSyncSettingsView: View {
                 // Text summary
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Total Records:")
+                        Text("cloud_sync.records.total", bundle: .module)
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.total)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.total)")
                             .foregroundColor(.green)
                             .fontWeight(.bold)
                     }
@@ -589,7 +589,7 @@ public struct CloudSyncSettingsView: View {
     /// Shows a pie chart of storage distribution by file type
     private var storageDistributionView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Storage Distribution")
+            Text("cloud_sync.records.storage_distribution", bundle: .module)
                 .cloudSyncSectionTitle()
 
             // Pie chart visualization
@@ -610,13 +610,13 @@ public struct CloudSyncSettingsView: View {
     /// Shows enhanced sync progress with visual feedback
     private var enhancedSyncProgressView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Sync Progress")
+            Text("cloud_sync.progress.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             VStack(alignment: .leading, spacing: 16) {
                 if let currentFile = viewModel.currentSyncFile {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Current File:")
+                        Text("cloud_sync.progress.current_file", bundle: .module)
                             .font(.caption)
                             .foregroundColor(.gray)
 
@@ -634,13 +634,13 @@ public struct CloudSyncSettingsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         // Progress percentage
                         HStack {
-                            Text("Progress:")
+                            Text("cloud_sync.progress.progress_label", bundle: .module)
                                 .font(.caption)
                                 .foregroundColor(.gray)
 
                             Spacer()
 
-                            Text("\(Int(viewModel.syncProgress * 100))%")
+                            Text(verbatim: "\(Int(viewModel.syncProgress * 100))%")
                                 .font(.subheadline)
                                 .foregroundColor(.retroBlue)
                                 .fontWeight(.bold)
@@ -694,12 +694,12 @@ public struct CloudSyncSettingsView: View {
                     // File counts
                     HStack(spacing: 20) {
                         VStack {
-                            Text("\(viewModel.syncingFiles)")
+                            Text(verbatim: "\(viewModel.syncingFiles)")
                                 .font(.title3)
                                 .foregroundColor(.retroBlue)
                                 .fontWeight(.bold)
 
-                            Text("Completed")
+                            Text("cloud_sync.progress.completed", bundle: .module)
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
@@ -709,12 +709,12 @@ public struct CloudSyncSettingsView: View {
                         .cornerRadius(8)
 
                         VStack {
-                            Text("\(viewModel.totalFiles ?? 0)")
+                            Text(verbatim: "\(viewModel.totalFiles ?? 0)")
                                 .font(.title3)
                                 .foregroundColor(.retroPink)
                                 .fontWeight(.bold)
 
-                            Text("Total")
+                            Text("cloud_sync.progress.total", bundle: .module)
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
@@ -729,21 +729,21 @@ public struct CloudSyncSettingsView: View {
                                 let remainingFiles = total - viewModel.syncingFiles
                                 let estimatedSeconds = remainingFiles * 3 // Rough estimate
 
-                                Text(formatTimeRemaining(seconds: estimatedSeconds))
+                                Text(verbatim: formatTimeRemaining(seconds: estimatedSeconds))
                                     .font(.title3)
                                     .foregroundColor(.retroPurple)
                                     .fontWeight(.bold)
 
-                                Text("Remaining")
+                                Text("cloud_sync.progress.remaining", bundle: .module)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             } else {
-                                Text("--")
+                                Text(verbatim: "--")
                                     .font(.title3)
                                     .foregroundColor(.retroPurple)
                                     .fontWeight(.bold)
 
-                                Text("Remaining")
+                                Text("cloud_sync.progress.remaining", bundle: .module)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
@@ -780,7 +780,7 @@ public struct CloudSyncSettingsView: View {
     /// Shows ROMs, save states, BIOS files, battery states, screenshots, and Delta skins.
     private var recordCountsView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("CloudKit Records")
+            Text("cloud_sync.records.cloudkit", bundle: .module)
                 .cloudSyncSectionTitle()
 
             if viewModel.isLoadingCloudKitRecords {
@@ -794,26 +794,26 @@ public struct CloudSyncSettingsView: View {
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("ROMs:")
+                        Text("cloud_sync.records.roms", bundle: .module)
                             .foregroundColor(.gray)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.roms)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.roms)")
                             .foregroundColor(.retroBlue)
                     }
 
                     HStack {
-                        Text("Save States:")
+                        Text("cloud_sync.records.save_states", bundle: .module)
                             .foregroundColor(.gray)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.saveStates)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.saveStates)")
                             .foregroundColor(.retroPurple)
                     }
 
                     HStack {
-                        Text("BIOS:")
+                        Text("cloud_sync.records.bios", bundle: .module)
                             .foregroundColor(.gray)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.bios)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.bios)")
                             .foregroundColor(.retroPink)
                     }
 
@@ -821,26 +821,26 @@ public struct CloudSyncSettingsView: View {
                         .background(Color.retroPurple.opacity(0.5))
 
                     HStack {
-                        Text("Battery States:")
+                        Text("cloud_sync.records.battery_states", bundle: .module)
                             .foregroundColor(.gray)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.batteryStates)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.batteryStates)")
                             .foregroundColor(.retroBlue)
                     }
 
                     HStack {
-                        Text("Screenshots:")
+                        Text("cloud_sync.records.screenshots", bundle: .module)
                             .foregroundColor(.gray)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.screenshots)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.screenshots)")
                             .foregroundColor(.retroPurple)
                     }
 
                     HStack {
-                        Text("Delta Skins:")
+                        Text("cloud_sync.records.delta_skins", bundle: .module)
                             .foregroundColor(.gray)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.deltaSkins)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.deltaSkins)")
                             .foregroundColor(.retroPink)
                     }
 
@@ -848,11 +848,11 @@ public struct CloudSyncSettingsView: View {
                         .background(Color.retroPurple.opacity(0.5))
 
                     HStack {
-                        Text("Total Records:")
+                        Text("cloud_sync.records.total_label", bundle: .module)
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                         Spacer()
-                        Text("\(viewModel.cloudKitRecords.total)")
+                        Text(verbatim: "\(viewModel.cloudKitRecords.total)")
                             .foregroundColor(.green)
                             .fontWeight(.bold)
                     }
@@ -868,12 +868,12 @@ public struct CloudSyncSettingsView: View {
     /// Displays the current file being synced, overall progress, and file counts.
     private var syncProgressView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Sync Progress")
+            Text("cloud_sync.progress.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             VStack(alignment: .leading, spacing: 8) {
                 if let currentFile = viewModel.currentSyncFile {
-                    Text("Current File: \(currentFile)")
+                    Text(verbatim: "Current File: \(currentFile)")
                         .font(.caption)
                         .foregroundColor(.white)
                         .lineLimit(1)
@@ -883,13 +883,13 @@ public struct CloudSyncSettingsView: View {
                     .progressViewStyle(LinearProgressViewStyle(tint: .retroBlue))
 
                 HStack {
-                    Text("\(viewModel.syncingFiles) of \(viewModel.totalFiles ?? 0) files")
+                    Text(verbatim: "\(viewModel.syncingFiles) of \(viewModel.totalFiles ?? 0) files")
                         .font(.caption)
                         .foregroundColor(.gray)
 
                     Spacer()
 
-                    Text("\(Int(viewModel.syncProgress * 100))%")
+                    Text(verbatim: "\(Int(viewModel.syncProgress * 100))%")
                         .font(.caption)
                         .foregroundColor(.retroBlue)
                 }
@@ -904,7 +904,7 @@ public struct CloudSyncSettingsView: View {
     /// The reset option is only available in DEBUG builds for safety.
     private var syncActionsView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Sync Actions")
+            Text("cloud_sync.actions.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             VStack(spacing: 10) {
@@ -913,7 +913,7 @@ public struct CloudSyncSettingsView: View {
                 }) {
                     HStack {
                         Image(systemName: "arrow.triangle.2.circlepath")
-                        Text("Sync All Content")
+                        Text("cloud_sync.actions.sync_all", bundle: .module)
                         Spacer()
                     }
                     .padding()
@@ -939,7 +939,7 @@ public struct CloudSyncSettingsView: View {
                 }) {
                     HStack {
                         Image(systemName: "exclamationmark.triangle")
-                        Text("Reset Cloud Sync")
+                        Text("cloud_sync.actions.reset", bundle: .module)
                         Spacer()
                     }
                     .padding()
@@ -960,9 +960,9 @@ public struct CloudSyncSettingsView: View {
                 .disabled(!viewModel.iCloudAvailable || viewModel.isSyncing)
                 .alert(isPresented: $showingResetConfirmation) {
                     Alert(
-                        title: Text("Reset Cloud Sync"),
-                        message: Text("This will delete all cloud sync data and restart the sync process. Are you sure you want to continue?"),
-                        primaryButton: .destructive(Text("Reset")) {
+                        title: Text("cloud_sync.reset.alert_title", bundle: .module),
+                        message: Text("cloud_sync.reset.alert_message", bundle: .module),
+                        primaryButton: .destructive(Text("cloud_sync.reset.confirm", bundle: .module)) {
                             viewModel.resetCloudSync()
                         },
                         secondaryButton: .cancel()
@@ -1014,18 +1014,18 @@ public struct CloudSyncSettingsView: View {
                             }
                         } label: {
                             HStack {
-                                Text("\(viewModel.itemsPerPage) per page")
+                                Text(verbatim: "\(viewModel.itemsPerPage) per page")
                                     .font(.caption)
                                     .foregroundColor(.gray)
-                                Text("Directory")
+                                Text("cloud_sync.pagination.directory", bundle: .module)
                                     .foregroundColor(.white)
 
                                 Spacer()
 
-                                Text("Local: 0")
+                                Text("cloud_sync.pagination.local_count", bundle: .module)
                                     .foregroundColor(Color.retroBlue)
 
-                                Text("iCloud: 0")
+                                Text("cloud_sync.pagination.icloud_count", bundle: .module)
                                     .foregroundColor(.retroPink)
                             }
 
@@ -1038,7 +1038,7 @@ public struct CloudSyncSettingsView: View {
 
                     // Total counts
                     HStack {
-                        Text("Total Files")
+                        Text("cloud_sync.pagination.total_files", bundle: .module)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
 
@@ -1047,11 +1047,11 @@ public struct CloudSyncSettingsView: View {
                         let totalLocal = viewModel.localFiles.values.reduce(0) { $0 + $1.count }
                         let totalICloud = viewModel.iCloudFiles.values.reduce(0) { $0 + $1.count }
 
-                        Text("Local: \(totalLocal)")
+                        Text(verbatim: "Local: \(totalLocal)")
                             .fontWeight(.bold)
                             .foregroundColor(.retroBlue)
 
-                        Text("iCloud: \(totalICloud)")
+                        Text(verbatim: "iCloud: \(totalICloud)")
                             .fontWeight(.bold)
                             .foregroundColor(.retroPink)
                     }
@@ -1068,13 +1068,13 @@ public struct CloudSyncSettingsView: View {
     /// Shows filename, directory, file sizes, and sync status with color-coded badges.
     private var syncDifferencesView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Sync Differences (\(viewModel.syncDifferences.count))")
+            Text(verbatim: "Sync Differences (\(viewModel.syncDifferences.count))")
                 .cloudSyncSectionTitle()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if viewModel.syncDifferences.isEmpty {
-                        Text("No differences found")
+                        Text("cloud_sync.diff.no_differences", bundle: .module)
                             .foregroundColor(Color.gray)
                             .padding()
                     } else {
@@ -1082,7 +1082,7 @@ public struct CloudSyncSettingsView: View {
                             let difference = viewModel.syncDifferences[index]
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack {
-                                    Text(difference)
+                                    Text(verbatim: difference)
                                         .font(.subheadline)
                                         .fontWeight(.medium)
                                         .foregroundColor(.white)
@@ -1090,7 +1090,7 @@ public struct CloudSyncSettingsView: View {
                                     Spacer()
 
                                     // Default status badge
-                                    Text("Unknown")
+                                    Text("cloud_sync.diff.unknown", bundle: .module)
                                         .font(.caption)
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
@@ -1099,7 +1099,7 @@ public struct CloudSyncSettingsView: View {
                                         .cornerRadius(12)
                                 }
 
-                                Text("Directory: Unknown")
+                                Text("cloud_sync.diff.directory_unknown", bundle: .module)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
@@ -1121,7 +1121,7 @@ public struct CloudSyncSettingsView: View {
         Group {
             switch status {
             case .localOnly:
-                Text("Local Only")
+                Text("cloud_sync.diff.local_only", bundle: .module)
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
@@ -1129,7 +1129,7 @@ public struct CloudSyncSettingsView: View {
                     .cornerRadius(4)
                     .foregroundColor(.white)
             case .iCloudOnly:
-                Text("iCloud Only")
+                Text("cloud_sync.diff.icloud_only", bundle: .module)
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
@@ -1137,7 +1137,7 @@ public struct CloudSyncSettingsView: View {
                     .cornerRadius(4)
                     .foregroundColor(.white)
             case .different:
-                Text("Different")
+                Text("cloud_sync.diff.different", bundle: .module)
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
@@ -1145,7 +1145,7 @@ public struct CloudSyncSettingsView: View {
                     .cornerRadius(4)
                     .foregroundColor(.white)
             case .synced:
-                Text("Synced")
+                Text("cloud_sync.diff.synced", bundle: .module)
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
@@ -1202,11 +1202,11 @@ public struct CloudSyncSettingsView: View {
     /// Network conditions settings for CloudKit sync
     private var networkSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Network Settings")
+            Text("cloud_sync.network.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             #if os(tvOS)
-            Text("Sync Network Mode")
+            Text("cloud_sync.network.sync_mode", bundle: .module)
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(.white)
 
@@ -1238,7 +1238,7 @@ public struct CloudSyncSettingsView: View {
             )
             #else
             VStack(alignment: .leading, spacing: 8) {
-                Text("Sync Network Mode")
+                Text("cloud_sync.network.sync_mode", bundle: .module)
                     .font(.subheadline)
                     .foregroundColor(.white)
 
@@ -1258,12 +1258,12 @@ public struct CloudSyncSettingsView: View {
                 .cloudSyncCard()
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Max Cellular File Size")
+                    Text("cloud_sync.network.max_cellular_size", bundle: .module)
                         .font(.subheadline)
                         .foregroundColor(.white)
 
                     HStack {
-                        Text("\(Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))) MB")
+                        Text(verbatim: "\(Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))) MB")
                             .foregroundColor(.retroBlue)
                         Spacer()
                         Slider(
@@ -1288,11 +1288,11 @@ public struct CloudSyncSettingsView: View {
     /// Sync frequency and timing settings
     private var syncFrequencySection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Sync Frequency")
+            Text("cloud_sync.frequency.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             #if os(tvOS)
-            Text("Check for Changes")
+            Text("cloud_sync.frequency.check_for_changes", bundle: .module)
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(.white)
 
@@ -1309,7 +1309,7 @@ public struct CloudSyncSettingsView: View {
             }
             #else
             VStack(alignment: .leading, spacing: 8) {
-                Text("Check for Changes")
+                Text("cloud_sync.frequency.check_for_changes", bundle: .module)
                     .font(.subheadline)
                     .foregroundColor(.white)
 
@@ -1335,11 +1335,11 @@ public struct CloudSyncSettingsView: View {
     /// Content type selection settings
     private var contentTypeSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Content Types")
+            Text("cloud_sync.content.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             #if os(tvOS)
-            Text("What to Sync")
+            Text("cloud_sync.content.what_to_sync", bundle: .module)
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(.white)
 
@@ -1356,7 +1356,7 @@ public struct CloudSyncSettingsView: View {
             }
             #else
             VStack(alignment: .leading, spacing: 8) {
-                Text("What to Sync")
+                Text("cloud_sync.content.what_to_sync", bundle: .module)
                     .font(.subheadline)
                     .foregroundColor(.white)
 
@@ -1382,7 +1382,7 @@ public struct CloudSyncSettingsView: View {
     /// Power management and battery settings
     private var powerManagementSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Power Management")
+            Text("cloud_sync.power.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             VStack(spacing: 8) {
@@ -1410,7 +1410,7 @@ public struct CloudSyncSettingsView: View {
     /// Performance and optimization settings
     private var performanceSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Performance")
+            Text("cloud_sync.performance.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             VStack(spacing: 8) {
@@ -1451,7 +1451,7 @@ public struct CloudSyncSettingsView: View {
     /// Advanced settings for power users
     private var advancedSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Advanced")
+            Text("cloud_sync.advanced.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             VStack(spacing: 8) {
@@ -1514,7 +1514,7 @@ public struct CloudSyncSettingsView: View {
     /// Shows iCloud container info, entitlements, Info.plist configuration, and container info.
     private var diagnosticsView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Diagnostics")
+            Text("cloud_sync.diagnostics.title", bundle: .module)
                 .cloudSyncSectionTitle()
 
             VStack(alignment: .leading, spacing: 16) {

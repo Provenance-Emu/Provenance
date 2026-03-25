@@ -1,0 +1,2 @@
+### Changed
+- **Localization (l10n)** — Replaced all hardcoded `Text("literal")` calls in `SettingsSwiftUI.swift`, `CloudSyncSettingsView.swift`, `TVMediaMainView.swift`, and `RetroMenuView.swift` with `Text("key", bundle: .module)` (or `Text(String(localized:))` for PVUIBase) and corresponding entries in `Localizable.strings`. Dynamic interpolated strings use `Text(verbatim:)` to avoid accidental translation. Adds ~120 new localization keys organized under `settings.*`, `cloud_sync.*`, `tv_media.*`, and `retro_menu.*` namespaces. Part of #2869.

@@ -835,7 +835,7 @@ struct RetroMenuView: View {
                                     .foregroundColor(.retroBlue)
                                     .frame(width: 30)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("PORT \(portIndex + 1)")
+                                    Text(verbatim: "PORT \(portIndex + 1)")
                                         .font(.system(size: 10, weight: .bold, design: .monospaced))
                                         .foregroundColor(.retroBlue.opacity(0.8))
                                     Text(deviceNames.joined(separator: " / "))
@@ -922,7 +922,7 @@ struct RetroMenuView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 10, weight: .semibold))
-                        Text("PLUS")
+                        Text(String(localized: "PLUS"))
                             .font(.system(size: 9, weight: .heavy))
                     }
                     .foregroundStyle(
@@ -1004,7 +1004,7 @@ struct RetroMenuView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 10, weight: .semibold))
-                        Text("PLUS")
+                        Text(String(localized: "PLUS"))
                             .font(.system(size: 9, weight: .heavy))
                     }
                     .foregroundStyle(
@@ -1518,9 +1518,9 @@ struct RetroMenuView: View {
                         .tracking(1.5)
 
                     Picker("Scope", selection: $selectedSkinScope) {
-                        Text("Session").tag(SkinScope.session)
-                        Text("This Game").tag(SkinScope.game)
-                        Text("System").tag(SkinScope.system)
+                        Text(String(localized: "retro_menu.skins.session")).tag(SkinScope.session)
+                        Text(String(localized: "retro_menu.skins.this_game")).tag(SkinScope.game)
+                        Text(String(localized: "retro_menu.skins.system")).tag(SkinScope.system)
                     }
                     .pickerStyle(.segmented)
                 }
@@ -2280,7 +2280,7 @@ struct RetroMenuView: View {
         let shadowColor = (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(0.5)
 
         Button(action: { showingFilterPicker = false }) {
-            Text("DONE")
+            Text(String(localized: "retro_menu.filter.done"))
                 #if os(tvOS)
                 .font(.system(size: 28, weight: .bold))
                 .padding(.vertical, 24)
@@ -2438,7 +2438,7 @@ struct RetroMenuView: View {
 
         VStack(spacing: 0) {
             // Header
-            Text("SCREEN FILTERS")
+            Text(String(localized: "retro_menu.filter.screen_filters"))
                 .font(.system(size: isCompact ? 24 : 28, weight: .bold, design: .rounded))
                 .padding(.top, 30)
                 .padding(.bottom, 20)
@@ -3315,7 +3315,7 @@ struct PauseMenuScreenshotBrowserView: View {
                         Image(systemName: "photo.on.rectangle.angled")
                             .font(.system(size: 48))
                             .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
-                        Text("No Screenshots")
+                        Text(String(localized: "retro_menu.saves.no_screenshots"))
                             .font(.system(size: 20, weight: .semibold, design: .monospaced))
                             .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.6))
                         Text("Use \"Save Screenshot\" from the pause menu to capture screenshots.")
@@ -3470,7 +3470,7 @@ struct PauseMenuSaveStateBrowserView: View {
                         Image(systemName: "internaldrive")
                             .font(.system(size: 48))
                             .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
-                        Text("No Save States")
+                        Text(String(localized: "retro_menu.saves.no_save_states"))
                             .font(.system(size: 20, weight: .semibold, design: .monospaced))
                             .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.6))
                         Text("Use \"Save State\" from the pause menu to create saves.")
