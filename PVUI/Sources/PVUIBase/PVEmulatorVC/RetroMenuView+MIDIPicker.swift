@@ -39,9 +39,7 @@ extension RetroMenuView {
     var midiPickerSection: some View {
 #if canImport(CoreMIDI) && !os(tvOS)
         if coreSupportsMIDI {
-            if #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
-                MIDIPickerSectionView(palette: ThemeManager.shared.currentPalette)
-            }
+            MIDIPickerSectionView(palette: ThemeManager.shared.currentPalette)
         }
 #else
         EmptyView()
@@ -55,9 +53,7 @@ extension RetroMenuView {
     var retroArchMIDISection: some View {
 #if canImport(CoreMIDI) && !os(tvOS)
         if isRetroArchMIDICapable {
-            if #available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
-                RetroArchMIDIToggleView(palette: ThemeManager.shared.currentPalette)
-            }
+            RetroArchMIDIToggleView(palette: ThemeManager.shared.currentPalette)
         }
 #else
         EmptyView()
@@ -69,7 +65,6 @@ extension RetroMenuView {
 
 #if canImport(CoreMIDI) && !os(tvOS)
 /// Stand-alone section view that owns the `@ObservedObject` for `MIDIDeviceManager`.
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 struct MIDIPickerSectionView: View {
     let palette: UXThemePalette
 
@@ -136,7 +131,6 @@ struct MIDIPickerSectionView: View {
 // MARK: - ActivityLight
 
 /// Pulsing coloured dot that lights up on MIDI activity.
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 private struct ActivityLight: View {
     let active: Bool
     let label: String
@@ -158,7 +152,6 @@ private struct ActivityLight: View {
 // MARK: - MIDIEndpointRow
 
 /// Expandable row for selecting a MIDI input source or output destination.
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 private struct MIDIEndpointRow: View {
     let label: String
     let symbolName: String
@@ -274,7 +267,6 @@ private struct MIDIEndpointRow: View {
 
 // MARK: - EndpointOptionRow
 
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 private struct EndpointOptionRow: View {
     let name: String
     let isSelected: Bool
@@ -316,7 +308,6 @@ private struct EndpointOptionRow: View {
 // MARK: - AutoDetectButton
 
 /// "Press any key on your MIDI device" auto-select control.
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 private struct AutoDetectButton: View {
     @ObservedObject var midi: MIDIDeviceManager
     let palette: UXThemePalette
@@ -387,7 +378,6 @@ private struct AutoDetectButton: View {
 /// Toggle that enables or disables the RetroArch CoreMIDI driver for the next session.
 /// Writes to `Defaults[.retroArchMIDIEnabled]`; the Obj-C `applyMIDIPreferenceToUserCfg:`
 /// method reads this key at core startup and patches `retroarch.cfg` accordingly.
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 struct RetroArchMIDIToggleView: View {
     let palette: UXThemePalette
 

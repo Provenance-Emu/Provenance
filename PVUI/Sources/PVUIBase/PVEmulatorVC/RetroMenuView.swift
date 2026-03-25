@@ -420,7 +420,11 @@ struct RetroMenuView: View {
     /// Used to decide whether to show the RetroArch MIDI driver toggle in the CORE tab.
     var isRetroArchMIDICapable: Bool {
 #if canImport(CoreMIDI) && !os(tvOS)
-        guard emulatorVC.core.coreIdentifier?.contains("libretro") == true else { return false }
+        // Match any RetroArch/libretro core — identifiers either contain "libretro" (sub-cores
+        // like dosbox_pure_libretro) or "retroarch" (the main bridge core).
+        // This mirrors the check used in PVEmulatorViewController for RetroArch detection.
+        guard let coreID = emulatorVC.core.coreIdentifier,
+              coreID.contains("libretro") || coreID.localizedCaseInsensitiveContains("retroarch") else { return false }
         guard let sysID = SystemIdentifier(rawValue: emulatorVC.game.system?.identifier ?? "") else { return false }
         return MIDISystemRegistry.shared.supportsMIDI(sysID)
 #else

@@ -615,9 +615,10 @@ void extract_bundles();
     }
 
 #if !TARGET_OS_TV
-    // Always apply the user's MIDI preference (retroArchMIDIEnabled) so the
-    // in-game toggle takes effect on the next session start, regardless of
-    // whether this is a first run or a version update.
+    // Apply the user's MIDI preference (retroArchMIDIEnabled) so the
+    // in-game toggle takes effect on the next session start.
+    // Only patched when the user cfg already exists; on first run the
+    // bundled retroarch.cfg already ships with coremidi as the default.
     if ([fm fileExistsAtPath:fileName]) {
         [self applyMIDIPreferenceToUserCfg:fileName];
     }
@@ -1151,38 +1152,47 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 /// The replacement is done in-place using a regex that matches `key = "..."` lines.
 /// If the key is absent the line is appended.
 - (void)patchCfgKey:(NSString *)key value:(NSString *)value inFile:(NSString *)cfgPath {
+    [self patchCfgKeys:@{key: value} inFile:cfgPath];
+}
+
+/// Patches multiple keys in `cfgPath` in a single read-modify-write cycle.
+/// Each key is replaced (or appended) using a regex matching `key = "..."` lines.
+- (void)patchCfgKeys:(NSDictionary<NSString *, NSString *> *)patches inFile:(NSString *)cfgPath {
     NSError *err = nil;
     NSMutableString *content = [NSMutableString stringWithContentsOfFile:cfgPath
                                                                 encoding:NSUTF8StringEncoding
                                                                    error:&err];
     if (!content) {
-        ELOG(@"patchCfgKey: failed to read %@: %@", cfgPath, err.localizedDescription);
+        ELOG(@"patchCfgKeys: failed to read %@: %@", cfgPath, err.localizedDescription);
         return;
     }
 
-    NSString *newLine = [NSString stringWithFormat:@"%@ = \"%@\"", key, value];
-    NSString *escapedKey = [NSRegularExpression escapedPatternForString:key];
-    NSString *pattern = [NSString stringWithFormat:@"(?m)^[ \\t]*%@[ \\t]*=.*$", escapedKey];
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern
-                                                                          options:0
-                                                                            error:&err];
-    if (!regex) {
-        ELOG(@"patchCfgKey: bad regex for key %@: %@", key, err.localizedDescription);
-        return;
-    }
-    NSTextCheckingResult *match = [regex firstMatchInString:content options:0
-                                                      range:NSMakeRange(0, content.length)];
-    if (match) {
-        [content replaceCharactersInRange:match.range withString:newLine];
-    } else {
-        if (![content hasSuffix:@"\n"]) [content appendString:@"\n"];
-        [content appendFormat:@"%@\n", newLine];
+    for (NSString *key in patches) {
+        NSString *value = patches[key];
+        NSString *newLine = [NSString stringWithFormat:@"%@ = \"%@\"", key, value];
+        NSString *escapedKey = [NSRegularExpression escapedPatternForString:key];
+        NSString *pattern = [NSString stringWithFormat:@"(?m)^[ \\t]*%@[ \\t]*=.*$", escapedKey];
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern
+                                                                              options:0
+                                                                                error:&err];
+        if (!regex) {
+            ELOG(@"patchCfgKeys: bad regex for key %@: %@", key, err.localizedDescription);
+            continue;
+        }
+        NSTextCheckingResult *match = [regex firstMatchInString:content options:0
+                                                          range:NSMakeRange(0, content.length)];
+        if (match) {
+            [content replaceCharactersInRange:match.range withString:newLine];
+        } else {
+            if (![content hasSuffix:@"\n"]) [content appendString:@"\n"];
+            [content appendFormat:@"%@\n", newLine];
+        }
     }
 
     NSError *writeErr = nil;
     BOOL ok = [content writeToFile:cfgPath atomically:YES encoding:NSUTF8StringEncoding error:&writeErr];
     if (!ok) {
-        ELOG(@"patchCfgKey: failed to write %@: %@", cfgPath, writeErr.localizedDescription);
+        ELOG(@"patchCfgKeys: failed to write %@: %@", cfgPath, writeErr.localizedDescription);
     }
 }
 
@@ -1190,6 +1200,7 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 /// and patches `midi_input` / `midi_output` in the user's retroarch.cfg accordingly.
 /// Called on every core startup so the user's choice (from the MIDI toggle in RetroMenuView)
 /// is always applied, even for existing users whose cfg pre-dates this feature.
+/// Both keys are patched in a single read-modify-write cycle to avoid unnecessary I/O.
 #if !TARGET_OS_TV
 - (void)applyMIDIPreferenceToUserCfg:(NSString *)cfgPath {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -1200,8 +1211,8 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     }
     NSString *deviceValue = midiEnabled ? @"coremidi" : @"Off";
     ILOG(@"Applying MIDI preference to cfg: midi_input/output = \"%@\"", deviceValue);
-    [self patchCfgKey:@"midi_input" value:deviceValue inFile:cfgPath];
-    [self patchCfgKey:@"midi_output" value:deviceValue inFile:cfgPath];
+    [self patchCfgKeys:@{@"midi_input": deviceValue, @"midi_output": deviceValue}
+                inFile:cfgPath];
 }
 #endif // !TARGET_OS_TV
 
