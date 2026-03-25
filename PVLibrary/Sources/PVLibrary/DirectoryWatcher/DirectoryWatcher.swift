@@ -750,12 +750,13 @@ public final class DirectoryWatcher: ObservableObject {
         let isInBIOSFolder = watchedDirectory.path.contains("/BIOS/")
 
         if isDirectory.boolValue {
+            let isDOSBox = !isInBIOSFolder && isDOSBoxGameFolder(url)
             // Allow MAME ROM set folders (any directory in /Imports/) and DOSBox game folders (non-BIOS paths)
-            guard isInImportsFolder || (!isInBIOSFolder && isDOSBoxGameFolder(url)) else {
+            guard isInImportsFolder || isDOSBox else {
                 Task { await watcherManager.removeWatcher(for: url) }
                 return
             }
-            ILOG("Processing game folder: \(url.lastPathComponent) (inImports=\(isInImportsFolder), isDOSBox=\(isDOSBoxGameFolder(url)))")
+            ILOG("Processing game folder: \(url.lastPathComponent) (inImports=\(isInImportsFolder), isDOSBox=\(isDOSBox))")
             processNonArchive(at: url)
             return
         }

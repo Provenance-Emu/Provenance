@@ -670,5 +670,56 @@ class ArchiveBatchMoveTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: extractedFile.path),
                       "Extracted file must remain in the temp dir when its move failed")
     }
+
+    // MARK: - isDOSBoxFolder tests
+
+    func testIsDOSBoxFolder_withConfFile() throws {
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("DOSBoxTest_\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+        FileManager.default.createFile(atPath: tmp.appendingPathComponent("dosbox.conf").path, contents: nil)
+        XCTAssertTrue(GameImporter.shared.isDOSBoxFolder(tmp), "Directory with .conf file should be a DOSBox folder")
+    }
+
+    func testIsDOSBoxFolder_withExeFile() throws {
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("DOSBoxTest_\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+        FileManager.default.createFile(atPath: tmp.appendingPathComponent("game.exe").path, contents: nil)
+        XCTAssertTrue(GameImporter.shared.isDOSBoxFolder(tmp), "Directory with .exe file should be a DOSBox folder")
+    }
+
+    func testIsDOSBoxFolder_withBatFile() throws {
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("DOSBoxTest_\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+        FileManager.default.createFile(atPath: tmp.appendingPathComponent("start.bat").path, contents: nil)
+        XCTAssertTrue(GameImporter.shared.isDOSBoxFolder(tmp), "Directory with .bat file should be a DOSBox folder")
+    }
+
+    func testIsDOSBoxFolder_noMarkers_returnsFalse() throws {
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("DOSBoxTest_\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+        FileManager.default.createFile(atPath: tmp.appendingPathComponent("readme.txt").path, contents: nil)
+        XCTAssertFalse(GameImporter.shared.isDOSBoxFolder(tmp), "Directory without DOS markers should not be a DOSBox folder")
+    }
+
+    func testIsDOSBoxFolder_notDirectory_returnsFalse() throws {
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("DOSBoxTest_\(UUID().uuidString).exe")
+        FileManager.default.createFile(atPath: tmp.path, contents: nil)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+        XCTAssertFalse(GameImporter.shared.isDOSBoxFolder(tmp), "A plain file should not be treated as a DOSBox folder")
+    }
+
+    func testIsDOSBoxFolder_subdirNamedExe_returnsFalse() throws {
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("DOSBoxTest_\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+        // A sub-directory named "game.exe" is not a regular file — must not match
+        let exeDir = tmp.appendingPathComponent("game.exe")
+        try FileManager.default.createDirectory(at: exeDir, withIntermediateDirectories: true)
+        XCTAssertFalse(GameImporter.shared.isDOSBoxFolder(tmp), "Subdirectory named .exe should not trigger DOSBox detection")
+    }
 }
 
