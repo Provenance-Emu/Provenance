@@ -126,7 +126,9 @@ final class GameHackingOrgLookupTests: XCTestCase {
         let json = #"[{"name":"Infinite Lives","code":"DEADBEEF00000001","category":"General"}]"#
         ProxyCannedProtocol.cannedJSON = Data(json.utf8)
         ProxyCannedProtocol.statusCode = 200
+        ProxyCannedProtocol.cannedHeaders = ["X-Proxy-Status": "ok"]
         ProxyCannedProtocol.lastRequest = nil
+        defer { ProxyCannedProtocol.cannedHeaders = [:] }
 
         Defaults[.useCheatProxy] = true
         Defaults[.cheatProxyURL] = "https://test.proxy.pvemu.invalid"
@@ -151,14 +153,27 @@ final class GameHackingOrgLookupTests: XCTestCase {
         XCTAssertTrue(entries.first?.isOnlineResult ?? false)
     }
 
-    func testSearchCheats_proxyReturnsEmpty_fallsThrough() async {
+    func testSearchCheats_proxyReturnsEmpty_noFallback() async {
+        // Proxy returns [] with X-Proxy-Status: ok — meaning "upstream confirmed no cheats".
+        // searchCheats should trust this and NOT fall back to direct scraping.
+        // DirectScrapeBlockerProtocol is registered to ensure no gamehacking.org request is made.
         URLProtocol.registerClass(ProxyCannedProtocol.self)
-        defer { URLProtocol.unregisterClass(ProxyCannedProtocol.self) }
+        URLProtocol.registerClass(DirectScrapeBlockerProtocol.self)
+        defer {
+            URLProtocol.unregisterClass(ProxyCannedProtocol.self)
+            URLProtocol.unregisterClass(DirectScrapeBlockerProtocol.self)
+        }
 
-        // Proxy returns empty array — direct scraping also yields nothing (no network in CI)
         ProxyCannedProtocol.cannedJSON = Data("[]".utf8)
         ProxyCannedProtocol.statusCode = 200
+        // X-Proxy-Status: ok tells the client the proxy successfully ran and found nothing
+        ProxyCannedProtocol.cannedHeaders = ["X-Proxy-Status": "ok"]
         ProxyCannedProtocol.lastRequest = nil
+        DirectScrapeBlockerProtocol.requestCount = 0
+        defer {
+            ProxyCannedProtocol.cannedHeaders = [:]
+            DirectScrapeBlockerProtocol.requestCount = 0
+        }
 
         Defaults[.useCheatProxy] = true
         Defaults[.cheatProxyURL] = "https://test.proxy.pvemu.invalid"
@@ -167,20 +182,31 @@ final class GameHackingOrgLookupTests: XCTestCase {
             Defaults.reset(.cheatProxyURL)
         }
 
-        let title = "ProxyEmptyFallback_\(UUID().uuidString)"
+        let title = "ProxyEmptyNoFallback_\(UUID().uuidString)"
         let entries = await GameHackingOrgLookup.shared.searchCheats(title: title, systemSlug: nil)
-        // Proxy was contacted but returned empty; direct scraping also fails offline — result is empty
+
+        // Proxy was contacted and returned empty with ok status — no direct scrape should happen
         XCTAssertTrue(entries.isEmpty)
         let intercepted = ProxyCannedProtocol.lastRequest?.url?.absoluteString ?? ""
-        XCTAssertTrue(intercepted.contains("/cheats"), "Proxy should still have been contacted even when empty")
+        XCTAssertTrue(intercepted.contains("/cheats"), "Proxy should have been contacted")
+        XCTAssertEqual(DirectScrapeBlockerProtocol.requestCount, 0, "Direct scrape should NOT occur when proxy confirms no cheats")
     }
 
     func testSearchCheats_proxyDisabled_doesNotContactProxy() async {
+        // Proxy is disabled — only the direct scrape path runs.
+        // DirectScrapeBlockerProtocol intercepts gamehacking.org requests so no real
+        // network call is made; it returns empty HTML so the scrape yields no results.
         URLProtocol.registerClass(ProxyCannedProtocol.self)
-        defer { URLProtocol.unregisterClass(ProxyCannedProtocol.self) }
+        URLProtocol.registerClass(DirectScrapeBlockerProtocol.self)
+        defer {
+            URLProtocol.unregisterClass(ProxyCannedProtocol.self)
+            URLProtocol.unregisterClass(DirectScrapeBlockerProtocol.self)
+        }
 
         ProxyCannedProtocol.cannedJSON = Data()
         ProxyCannedProtocol.lastRequest = nil
+        DirectScrapeBlockerProtocol.requestCount = 0
+        defer { DirectScrapeBlockerProtocol.requestCount = 0 }
 
         Defaults[.useCheatProxy] = false
         Defaults[.cheatProxyURL] = "https://test.proxy.pvemu.invalid"
@@ -202,6 +228,7 @@ final class GameHackingOrgLookupTests: XCTestCase {
 private final class ProxyCannedProtocol: URLProtocol {
     static var cannedJSON: Data = Data()
     static var statusCode: Int = 200
+    static var cannedHeaders: [String: String] = [:]
     static var lastRequest: URLRequest?
 
     override class func canInit(with request: URLRequest) -> Bool {
@@ -212,14 +239,45 @@ private final class ProxyCannedProtocol: URLProtocol {
 
     override func startLoading() {
         ProxyCannedProtocol.lastRequest = request
+        var headers = ["Content-Type": "application/json"]
+        for (key, value) in ProxyCannedProtocol.cannedHeaders {
+            headers[key] = value
+        }
         let response = HTTPURLResponse(
             url: request.url!,
             statusCode: ProxyCannedProtocol.statusCode,
             httpVersion: "HTTP/1.1",
-            headerFields: ["Content-Type": "application/json"]
+            headerFields: headers
         )!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: ProxyCannedProtocol.cannedJSON)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+
+    override func stopLoading() {}
+}
+
+/// Intercepts requests to gamehacking.org and returns empty HTML, preventing real network calls
+/// during tests that exercise the direct-scrape fallback path.
+private final class DirectScrapeBlockerProtocol: URLProtocol {
+    static var requestCount: Int = 0
+
+    override class func canInit(with request: URLRequest) -> Bool {
+        request.url?.host?.contains("gamehacking.org") ?? false
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+
+    override func startLoading() {
+        DirectScrapeBlockerProtocol.requestCount += 1
+        let response = HTTPURLResponse(
+            url: request.url!,
+            statusCode: 200,
+            httpVersion: "HTTP/1.1",
+            headerFields: ["Content-Type": "text/html"]
+        )!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: Data("<html><body></body></html>".utf8))
         client?.urlProtocolDidFinishLoading(self)
     }
 
