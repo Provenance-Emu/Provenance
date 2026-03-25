@@ -22,8 +22,10 @@
 //    - Namco GunCon (used by Point Blank, Time Crisis, etc.)
 //
 //  GunCon input buffer layout (5 bytes, stored in inputBuffer[0]):
-//    bytes[0-1] : int16 LE  — X coordinate in PSX screen space (0..319)
-//    bytes[2-3] : int16 LE  — Y coordinate in PSX screen space (0..239)
+//    bytes[0-1] : int16 LE  — X axis: 16-bit value scaled to the current visible area width
+//                             (roughly 0..videoWidth-1 + videoOffsetX; INT16_MIN = off-screen)
+//    bytes[2-3] : int16 LE  — Y axis: 16-bit value scaled to the current visible area height
+//                             (roughly 0..videoHeight-1 + videoOffsetY; INT16_MIN = off-screen)
 //    byte[4]    : button bitmask
 //                   bit 0 — trigger (primary fire)
 //                   bit 1 — button A  (left side button)
@@ -145,12 +147,17 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
             gc_write16(buf, 2, INT16_MIN);
             buf[4] |= (1 << 3);
         } else {
+            // Map normalized (0,1) → Mednafen internal coordinates.
+            // Mednafen applies per-frame video offsets (visible scanline start) to GunCon hits,
+            // so we add videoOffsetX/Y to keep the mapped position inside the visible area.
             int width  = (self->videoWidth  > 0) ? self->videoWidth  : (int)kGunConScreenWidth;
             int height = (self->videoHeight > 0) ? self->videoHeight : (int)kGunConScreenHeight;
             CGFloat cx = MAX(0.0, MIN(1.0, point.x));
             CGFloat cy = MAX(0.0, MIN(1.0, point.y));
-            gc_write16(buf, 0, (int16_t)(cx * (width  - 1)));
-            gc_write16(buf, 2, (int16_t)(cy * (height - 1)));
+            int16_t px = (int16_t)(cx * (width  - 1)) + (int16_t)self->videoOffsetX;
+            int16_t py = (int16_t)(cy * (height - 1)) + (int16_t)self->videoOffsetY;
+            gc_write16(buf, 0, px);
+            gc_write16(buf, 2, py);
             buf[4] &= ~(1 << 3); // clear off-screen bit when on-screen
         }
     }
@@ -219,9 +226,12 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
         ssGunState[player].offscreen = YES;
         flushGunState(self->inputBuffer, player, ssGunState[player]);
     } else if (self.systemType == MednaSystemPSX) {
+        // Per the LightGunResponder contract, an off-screen reload requires both:
+        //   • the off-screen bit (bit 3) so Mednafen skips hit-detection, and
+        //   • the trigger bit  (bit 0) so the game registers an actual shot event.
         uint8_t *buf = (uint8_t *)self->inputBuffer[0];
-        buf[4] |= (1 << 3);
-        // Also move coordinates off-screen, using a sentinel far outside the visible area.
+        buf[4] |= (1 << 3) | (1 << 0); // off-screen flag + trigger press
+        // Move coordinates far outside the visible area (unambiguous sentinel).
         gc_write16(buf, 0, INT16_MIN);
         gc_write16(buf, 2, INT16_MIN);
     }
@@ -233,7 +243,7 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
         ssGunState[player].offscreen = NO;
         flushGunState(self->inputBuffer, player, ssGunState[player]);
     } else if (self.systemType == MednaSystemPSX) {
-        ((uint8_t *)self->inputBuffer[0])[4] &= ~(1 << 3);
+        ((uint8_t *)self->inputBuffer[0])[4] &= ~((1 << 3) | (1 << 0)); // clear off-screen flag + trigger
     }
 }
 
