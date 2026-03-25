@@ -37,7 +37,7 @@ class GameImporterFileService : GameImporterFileServicing {
         case .artwork:
             //TODO: implement me
             return
-        case .game,.cdRom, .zip: // TODO: Something different for zips?
+        case .game, .cdRom, .zip, .folder:
             _ = try await processQueueItem(queueItem)
         case .unknown:
             throw GameImporterError.unsupportedFile
@@ -210,7 +210,7 @@ class GameImporterFileService : GameImporterFileServicing {
     /// Moves an ImportQueueItem to the appropriate subfolder
     //    @MainActor
     internal func processQueueItem(_ queueItem: ImportQueueItem) async throws {
-        guard queueItem.fileType == .game || queueItem.fileType == .cdRom else {
+        guard queueItem.fileType == .game || queueItem.fileType == .cdRom || queueItem.fileType == .folder else {
             throw GameImporterError.unsupportedFile
         }
 

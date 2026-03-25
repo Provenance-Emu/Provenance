@@ -23,9 +23,20 @@ public class ImportQueueItem: Identifiable, ObservableObject {
 
     // Enum to define file types for each import
     public enum FileType {
-        case bios, artwork, game, cdRom, unknown, skin, zip
+        case bios, artwork, game, cdRom, unknown, skin, zip, folder
     }
 
+    /// Optional explicit MD5 override for this item.
+    ///
+    /// This is particularly important for `.folder` imports (e.g., MAME),
+    /// where hashing the underlying path via `FileHandle(forReadingFrom:)`
+    /// will fail because the URL points to a directory rather than a file.
+    ///
+    /// Higher-level import logic can set this to a stable identifier such as
+    /// `systemIdentifier + "/" + folderName`, and MD5-based duplicate checks
+    /// should prefer this value when present instead of attempting to hash
+    /// the filesystem entry.
+    public var md5Override: String?
     // Enum to define the possible statuses of each import
     public enum ImportStatus: CustomStringConvertible {
         case conflict  // Indicates additional action needed by user after successful import

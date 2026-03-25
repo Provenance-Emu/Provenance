@@ -102,6 +102,20 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
     }
 
     func determineSystems(for item: ImportQueueItem) async throws -> [SystemIdentifier] {
+        // For directory ROM sets (e.g., MAME unpacked folders), the system was already determined
+        // by ArchiveZipSupportChecker in performImport.  Return the pre-set systems so that the
+        // normal extension/MD5-based path (which doesn't understand directories) is bypassed.
+        var isDirectory: ObjCBool = false
+        if FileManager.default.fileExists(atPath: item.url.path, isDirectory: &isDirectory),
+           isDirectory.boolValue {
+            if !item.systems.isEmpty {
+                DLOG("GameImporter: Using pre-determined systems for directory: \(item.url.lastPathComponent)")
+                return item.systems
+            }
+            // No pre-set systems — the folder wasn't identified as a ROM set.
+            return []
+        }
+
         let filename = item.url.lastPathComponent
         let fileExtension = filename.components(separatedBy: ".").last?.lowercased() ?? ""
         let normalizedFilename = filename.lowercased()
