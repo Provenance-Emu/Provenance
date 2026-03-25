@@ -53,15 +53,22 @@ class GameImporterFileService : GameImporterFileServicing {
             let ext = srcURL.pathExtension
             var destURL = patchesDir.appendingPathComponent(srcURL.lastPathComponent)
             // If a file with the same name already exists, check whether it's the same file
-            // before generating a unique name. Same size → treat as re-import (idempotent).
+            // before generating a unique name. Same size + mtime → treat as re-import (idempotent).
             if FileManager.default.fileExists(atPath: destURL.path) {
                 let srcAttrs = try? FileManager.default.attributesOfItem(atPath: srcURL.path)
                 let dstAttrs = try? FileManager.default.attributesOfItem(atPath: destURL.path)
-                let srcSize = srcAttrs?[.size] as? Int
-                let dstSize = dstAttrs?[.size] as? Int
-                if let srcSize = srcSize, srcSize == dstSize {
-                    // Same size → likely the same patch; use existing file (idempotent re-import).
-                    ILOG("Patch file already exists at destination with same size — using existing: \(destURL.path)")
+                let srcSize = (srcAttrs?[.size] as? NSNumber)?.uint64Value
+                let dstSize = (dstAttrs?[.size] as? NSNumber)?.uint64Value
+                let srcMtime = srcAttrs?[.modificationDate] as? Date
+                let dstMtime = dstAttrs?[.modificationDate] as? Date
+                if let srcSize = srcSize,
+                   let dstSize = dstSize,
+                   let srcMtime = srcMtime,
+                   let dstMtime = dstMtime,
+                   srcSize == dstSize,
+                   srcMtime == dstMtime {
+                    // Same size and modification date → likely the same patch; use existing file (idempotent re-import).
+                    ILOG("Patch file already exists at destination with same size and mtime — using existing: \(destURL.path)")
                     queueItem.destinationUrl = destURL
                     // Clean up source from Imports folder to avoid duplicate watching.
                     if srcURL.path.contains("/Imports/") {
