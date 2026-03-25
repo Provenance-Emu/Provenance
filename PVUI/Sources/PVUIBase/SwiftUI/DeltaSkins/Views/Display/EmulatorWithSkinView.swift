@@ -104,24 +104,18 @@ struct EmulatorWithSkinView: View {
                         .onDisappear {
                             loadingTimeoutTask?.cancel()
                         }
-                } else if let skin = skinLoader.selectedSkin {
-                    // Render the skin
+                } else if let skin = skinLoader.selectedSkin, skin.supports(createSkinTraits()) {
+                    // Skin supports the current orientation — render it
                     skinContentView(skin: skin, geometry: geometry)
-                        .background(Color.clear) // Ensure background is transparent
+                        .background(Color.clear)
                         .onAppear {
-                            // Cancel timeout since skin loaded successfully
                             loadingTimeoutTask?.cancel()
-
-                            // When the skin content appears, wait for layout to stabilize
-                            // before marking as complete to ensure correct initial positioning
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 if !skinRenderComplete {
                                     skinRenderComplete = true
                                     onSkinLoaded()
                                     DLOG("🎮 EmulatorWithSkinView: Skin render complete, notifying observers")
 
-                                    // Post a notification that the skin is loaded
-                                    // This will trigger the GPU view positioning in PVEmulatorViewController
                                     NotificationCenter.default.post(
                                         name: NSNotification.Name("DeltaSkinLoaded"),
                                         object: nil,
@@ -129,12 +123,10 @@ struct EmulatorWithSkinView: View {
                                     )
                                     DLOG("🎮 Posted DeltaSkinLoaded notification for skin: \(skin.identifier)")
 
-                                    // Request a refresh after the skin is loaded to ensure screen positions are correct
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                         onRefreshRequested()
                                     }
 
-                                    // Auto-show keyboard overlay if requested by the skin (iOS only)
                                     #if !os(tvOS)
                                     if let kbConfig = skin.keyboardOverlay, kbConfig.autoShow {
                                         isKeyboardOverlayVisible = true
@@ -145,18 +137,16 @@ struct EmulatorWithSkinView: View {
                             }
                         }
                 } else {
-                    // No skin loaded - show fallback controller with input handling
-                    // This ensures the game is always playable even if skin loading fails
+                    // No skin, or selected skin doesn't support the current orientation.
+                    // Show the built-in fallback controller so the game remains playable.
                     defaultControllerSkin()
-                        .background(Color.clear) // Ensure background is transparent
+                        .background(Color.clear)
                         .onAppear {
-                            // Cancel timeout if we got here
                             loadingTimeoutTask?.cancel()
-                            // Even with the fallback, notify that we're ready
                             if !skinRenderComplete {
                                 skinRenderComplete = true
                                 onSkinLoaded()
-                                DLOG("🎮 EmulatorWithSkinView: Showing fallback controller, skin loading failed or no skin available")
+                                DLOG("🎮 EmulatorWithSkinView: Showing fallback controller (no skin or unsupported orientation)")
                             }
                         }
                 }
@@ -682,10 +672,15 @@ struct EmulatorWithSkinView: View {
             if newOrientation.isLandscape || newOrientation.isPortrait {
                 self.currentOrientation = newOrientation
                 self.rotationCount += 1
+                // Reset so DeltaSkinLoaded fires again when skin view reappears after rotation.
+                // Without this, rotating back to an orientation the skin supports would not
+                // notify PVEmulatorViewController to reposition the GPU view.
+                self.skinRenderComplete = false
                 DLOG("🎮 EmulatorWithSkinView: Orientation changed to: \(newOrientation.isLandscape ? "landscape" : "portrait"), rotation count: \(self.rotationCount)")
 
-                // Refresh the view
+                // Refresh the view and reload skin for the new orientation
                 self.refreshView()
+                Task { @MainActor in self.loadSkinSafely() }
             }
         }
 #endif
