@@ -39,6 +39,13 @@ struct AUFilterSettingsView: View {
             }
         }
         .navigationTitle("Audio Effects")
+        .toolbar {
+            #if !os(tvOS)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
+            }
+            #endif
+        }
         .sheet(isPresented: $showingAddEffect) {
             AddEffectSheet { effectType in
                 addEffect(effectType)

@@ -75,20 +75,22 @@ struct AudioEngineSettingsView: View {
                     .foregroundColor(.secondary)
             }
             #endif
-            Section(header: Text("Effects")) {
-                NavigationLink(destination: AUFilterSettingsView()) {
-                    HStack {
-                        SettingsRow(
-                            title: "Audio Effects",
-                            subtitle: auFiltersEnabled
-                                ? "\(auEffectsChain.activeNodes.count) effect\(auEffectsChain.activeNodes.count == 1 ? "" : "s") active"
-                                : "Add reverb, delay, EQ and more",
-                            icon: .sfSymbol("waveform.badge.plus")
-                        )
-                        if auFiltersEnabled {
-                            Image(systemName: "circle.fill")
-                                .font(.caption2)
-                                .foregroundStyle(.green)
+            if audioEngine == .avAudioEngineGameAudioEngine {
+                Section(header: Text("Effects")) {
+                    NavigationLink(destination: AUFilterSettingsView()) {
+                        HStack {
+                            SettingsRow(
+                                title: "Audio Effects",
+                                subtitle: auFiltersEnabled
+                                    ? "\(auEffectsChain.activeNodes.count) effect\(auEffectsChain.activeNodes.count == 1 ? "" : "s") active"
+                                    : "Add reverb, delay, EQ and more",
+                                icon: .sfSymbol("waveform.badge.plus")
+                            )
+                            if auFiltersEnabled {
+                                Image(systemName: "circle.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(.green)
+                            }
                         }
                     }
                 }

@@ -69,6 +69,9 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
     /// Currently-attached AU effects chain nodes. Rebuilt in `updateSourceNode()`.
     internal var effectChainNodes: [AVAudioUnit] = []
 
+    /// Task observing Defaults changes for the AU effects chain; cancelled in deinit.
+    private var effectsChainObserverTask: Task<Void, Never>?
+
     /// Delegate for audio sample rate changes
     public weak var delegate: PVAudioDelegate?
 
@@ -95,7 +98,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         }
 
         // Observe AU effects chain changes and reload when running.
-        Task {
+        effectsChainObserverTask = Task {
             for await _ in Defaults.updates(Defaults.Keys.auEffectsChain) {
                 await MainActor.run { [weak self] in
                     self?.reloadEffectsChainIfRunning()
@@ -114,6 +117,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
     }
 
     deinit {
+        effectsChainObserverTask?.cancel()
+        effectsChainObserverTask = nil
         muteSwitchMonitor.stopMonitoring()
         stopAudio()
         #if !os(macOS)
@@ -433,10 +438,10 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
             var previousNode: AVAudioNode = src
             for avUnit in newEffectNodes {
                 engine.attach(avUnit)
-                engine.connect(previousNode, to: avUnit, format: nil)
+                engine.connect(previousNode, to: avUnit, format: format)
                 previousNode = avUnit
             }
-            engine.connect(previousNode, to: engine.mainMixerNode, format: nil)
+            engine.connect(previousNode, to: engine.mainMixerNode, format: format)
         }
         effectChainNodes = newEffectNodes
 

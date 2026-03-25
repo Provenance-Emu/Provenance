@@ -24,8 +24,7 @@ public struct AUEffectsChain: Codable, Sendable, Equatable {
     }
 
     public static func == (lhs: AUEffectsChain, rhs: AUEffectsChain) -> Bool {
-        lhs.isEnabled == rhs.isEnabled &&
-        lhs.nodes.map(\.id) == rhs.nodes.map(\.id)
+        lhs.isEnabled == rhs.isEnabled && lhs.nodes == rhs.nodes
     }
 
     /// Returns true when the chain has at least one enabled node and the master switch is on.
@@ -65,6 +64,9 @@ extension AUEffectsPreset: Defaults.Serializable {}
 
 extension AUEffectNode: Equatable {
     public static func == (lhs: AUEffectNode, rhs: AUEffectNode) -> Bool {
-        lhs.id == rhs.id
+        lhs.id == rhs.id &&
+        lhs.effectType == rhs.effectType &&
+        lhs.isEnabled == rhs.isEnabled &&
+        lhs.parameters == rhs.parameters
     }
 }

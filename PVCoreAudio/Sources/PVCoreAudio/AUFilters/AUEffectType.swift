@@ -313,12 +313,41 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
             return eq
 
         case .peakLimiter:
-            let dynamics = AVAudioUnitEffect(audioComponentDescription: componentDescription)
-            return dynamics
+            let effect = AVAudioUnitEffect(audioComponentDescription: componentDescription)
+            // Apply parameters via the AU parameter tree.
+            // PeakLimiter parameter addresses: 0=AttackTime, 1=DecayTime, 2=PreGain
+            if let tree = effect.auAudioUnit.parameterTree {
+                let addressMap: [AUParameterAddress: Double] = [
+                    0: parameters[AUEffectParameterKey.attackTime] ?? 0.001,
+                    1: parameters[AUEffectParameterKey.decayTime] ?? 0.01,
+                    2: parameters[AUEffectParameterKey.preGain] ?? 0.0
+                ]
+                for param in tree.allParameters {
+                    if let value = addressMap[param.address] {
+                        param.value = AUValue(value)
+                    }
+                }
+            }
+            return effect
 
         case .dynamicsProcessor:
-            let dynamics = AVAudioUnitEffect(audioComponentDescription: componentDescription)
-            return dynamics
+            let effect = AVAudioUnitEffect(audioComponentDescription: componentDescription)
+            // Apply parameters via the AU parameter tree.
+            // DynamicsProcessor parameter addresses: 0=Threshold, 1=HeadRoom, 4=AttackTime, 5=ReleaseTime
+            if let tree = effect.auAudioUnit.parameterTree {
+                let addressMap: [AUParameterAddress: Double] = [
+                    0: parameters[AUEffectParameterKey.threshold] ?? -20.0,
+                    1: parameters[AUEffectParameterKey.headRoom] ?? 5.0,
+                    4: parameters[AUEffectParameterKey.attackTime] ?? 0.001,
+                    5: parameters[AUEffectParameterKey.releaseTime] ?? 0.05
+                ]
+                for param in tree.allParameters {
+                    if let value = addressMap[param.address] {
+                        param.value = AUValue(value)
+                    }
+                }
+            }
+            return effect
 
         default:
             return nil

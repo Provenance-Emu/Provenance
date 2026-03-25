@@ -568,29 +568,5 @@
         "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
       }
     ]
-  },
-  {
-    "version": "3.8.0",
-    "title": "Audio Effects",
-    "features": [
-      {
-        "symbolName": "waveform.badge.plus",
-        "symbolColor": "blue",
-        "title": "AU Audio Effects Chain",
-        "subtitle": "Post-process emulator audio with built-in Apple Audio Units: reverb, delay, distortion, filters, EQ, and more."
-      },
-      {
-        "symbolName": "waveform.path.ecg",
-        "symbolColor": "orange",
-        "title": "Retro-Style Effects",
-        "subtitle": "Add echo, reverb, lo-fi distortion, and warm filters to recreate the sound of classic hardware."
-      },
-      {
-        "symbolName": "square.and.arrow.down",
-        "symbolColor": "green",
-        "title": "Effects Presets",
-        "subtitle": "Save and restore named effects chain snapshots. Four factory presets included: Room Reverb, Retro Echo, Warm, and Lo-Fi."
-      }
-    ]
   }
 ]
