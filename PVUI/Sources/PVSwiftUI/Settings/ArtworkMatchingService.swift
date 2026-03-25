@@ -34,10 +34,8 @@ public enum ArtworkMatchingService {
 
     /// Find box-front artwork for a game, filtering results to the requested sources.
     ///
-    /// All enabled databases are queried regardless of `enabledSources`; this parameter
-    /// acts as a **post-query filter** that discards results whose `source` field does not
-    /// match the allowed set.  To skip querying a database entirely, configure
-    /// `PVLookup` database settings upstream.
+    /// All enabled databases are always queried; this parameter acts as a **post-query
+    /// filter** that discards results whose `source` field does not match the allowed set.
     ///
     /// - Parameters:
     ///   - gameTitle: Raw ROM title; normalized internally via `FuzzyGameMatcher`.

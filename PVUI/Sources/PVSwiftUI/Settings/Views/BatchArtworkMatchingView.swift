@@ -39,7 +39,7 @@ public struct BatchArtworkMatchingView: View {
         } else if current.count > 1 {
             current.remove(source)
         }
-        enabledSourcesRaw = current.map(\.rawValue).joined(separator: ",")
+        enabledSourcesRaw = current.map(\.rawValue).sorted().joined(separator: ",")
     }
 
     @State private var isLoading = false
@@ -517,7 +517,8 @@ public struct BatchArtworkMatchingView: View {
     private func retryFailedGames() async {
         guard !failedGames.isEmpty else { return }
         let toRetry = failedGames
-        failedGames.removeAll()
+        // Do not clear failedGames here; runSearch defers the update until the
+        // pass completes, so the retry queue is preserved if an error occurs.
         await runSearch(games: toRetry, clearExisting: false)
     }
 
@@ -533,6 +534,7 @@ public struct BatchArtworkMatchingView: View {
         }
 
         let totalGames = games.count
+        var newFailures: [PVGame] = []
 
         do {
             for (index, game) in games.enumerated() {
@@ -551,7 +553,7 @@ public struct BatchArtworkMatchingView: View {
                     selectedArtworks.insert(md5)
                     DLOG("Found artwork for '\(game.title)' at \(firstResult.url)")
                 } else {
-                    failedGames.append(game)
+                    newFailures.append(game)
                     DLOG("No artwork found for '\(game.title)'")
                 }
 
@@ -561,10 +563,19 @@ public struct BatchArtworkMatchingView: View {
 
             searchProgress = 1.0
             currentSearchTitle = ""
+            // Defer failedGames update until after a successful pass so that an
+            // interrupted retry does not lose the original queue.
+            failedGames = newFailures
             ILOG("Found artwork for \(artworkResults.count) out of \(totalGames) games; \(failedGames.count) failed")
         } catch {
             ELOG("Error searching for artwork: \(error)")
             errorMessage = "Error searching for artwork: \(error.localizedDescription)"
+            if clearExisting {
+                // Show partial failure info from an interrupted initial scan.
+                failedGames = newFailures
+            }
+            // For interrupted retries (clearExisting: false), failedGames still
+            // holds the original retry queue — preserve it without modification.
         }
 
         processingGames = false
