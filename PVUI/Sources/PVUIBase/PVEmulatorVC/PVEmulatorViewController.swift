@@ -755,12 +755,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         // Route game view to an external display when one is already connected at launch
-        // and the user has chosen dedicated mode.  Non-capable cores (skipLayout=true)
+        // and the user has chosen dedicated mode.  Non-capable cores (supportsExternalDisplay=false)
         // fall through and receive the normal primary-screen path below.
         let externalMode = Defaults[.externalDisplayMode]
-        let screenCount = UIScreen.screens.count
-        if screenCount > 1 && !core.skipLayout && externalMode == .dedicated {
-            attachGPUView(to: UIScreen.screens[1])
+        let externalScreens = UIScreen.screens.dropFirst()
+        if let externalScreen = externalScreens.first, core.supportsExternalDisplay && externalMode == .dedicated {
+            attachGPUView(to: externalScreen)
         } else {
             // For RetroArch cores with skipLayout and no skins, GPU view controller is not attached
             // RetroArch manages its own view hierarchy (CocoaView + Metal/GL surfaces)

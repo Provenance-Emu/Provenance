@@ -80,8 +80,14 @@ extension PVEmulatorViewController {
         ILOG("Screen did connect: \(note?.object ?? "")")
         guard secondaryScreen == nil else { return }
 
+        guard let screen = note?.object as? UIScreen else {
+            ELOG("screenDidConnect: notification did not carry a UIScreen – ignoring")
+            hideOrShowMenuButton()
+            return
+        }
+
         let mode = Defaults[.externalDisplayMode]
-        let canUseDedicated = !core.skipLayout  // standard Metal cores
+        let canUseDedicated = core.supportsExternalDisplay
 
         guard mode == .dedicated && canUseDedicated else {
             ILOG("External display connected – using system mirror mode (mode=\(mode.rawValue), canUseDedicated=\(canUseDedicated))")
@@ -90,7 +96,7 @@ extension PVEmulatorViewController {
         }
 
         ILOG("External display connected – activating dedicated game view")
-        attachGPUView(to: UIScreen.screens[1])
+        attachGPUView(to: screen)
         hideOrShowMenuButton()
     }
 
@@ -138,6 +144,10 @@ extension PVEmulatorViewController {
 
         if let gpuView = gpuViewController.view,
            let controllerView = controllerViewController?.view {
+            // Reset to device bounds so the view isn't left with an external-display
+            // sized frame after disconnect.
+            gpuView.frame = view.bounds
+            gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             view.insertSubview(gpuView, belowSubview: controllerView)
         }
 
