@@ -12,8 +12,10 @@
 //
 
 #if os(iOS) || targetEnvironment(macCatalyst)
-import SwiftUI
 import AVKit
+import SwiftUI
+import UIKit
+import PVLogging
 
 // MARK: - AirPlayPickerTrigger
 
@@ -51,12 +53,10 @@ struct AirPlayPickerTrigger: UIViewRepresentable {
             button.sendActions(for: .touchUpInside)
         } else {
             // Fallback: nothing matched — log so failures are visible in debug builds.
-            #if DEBUG
-            print("[AirPlayPickerTrigger] Could not locate AVRoutePickerView's internal button; picker sheet will not appear.")
-            #endif
+            DLOG("[AirPlayPickerTrigger] Could not locate AVRoutePickerView's internal button; picker sheet will not appear.")
         }
         // Reset so subsequent taps work.
-        DispatchQueue.main.async { show = false }
+        DispatchQueue.main.async { self.show = false }
     }
 
     final class Coordinator {
