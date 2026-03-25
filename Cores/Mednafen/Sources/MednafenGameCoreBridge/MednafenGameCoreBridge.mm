@@ -847,6 +847,20 @@ static void emulation_run(BOOL skipFrame) {
         // All MDFNI_SetSettingB calls must happen here (before MDFNI_LoadGame) because
         // Saturn's ss.cpp reads and latches these settings during SMPC_SetMultitap().
         NSString *serial = self.romSerial;
+
+        // Light gun detection — must happen before MDFNI_LoadGame so we can configure
+        // the correct device type in the post-load SetInput block.
+        NSNumber *gunCount = serial ? [MednafenGameCoreOptions saturnLightGunGames][serial] : nil;
+        if (gunCount != nil) {
+            self->_isLightGunGame = YES;
+            self->_lightGunPlayerCount = MAX(1, MIN(2, [gunCount intValue]));
+            ILOG(@"Mednafen Saturn pre-load: light gun game detected, serial=%@ guns=%d",
+                 serial, self->_lightGunPlayerCount);
+        } else {
+            self->_isLightGunGame = NO;
+            self->_lightGunPlayerCount = 0;
+        }
+
         NSNumber *tapCount = serial ? [MednafenGameCoreOptions multiTapSaturnGames][serial] : nil;
         BOOL userForcedMultitap = MednafenGameCoreOptions.ss_multitap;
 
@@ -1035,8 +1049,24 @@ static void emulation_run(BOOL skipFrame) {
                 memset(inputBuffer[port], 0, sizeof(inputBuffer[port]));
             }
             self->multiTapPlayerCount = 2;
-            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+
+            if (self->_isLightGunGame) {
+                // Light gun game: configure port(s) as "gun" peripheral.
+                // The gun buffer layout (5 bytes) fits within the existing 36-byte allocation.
+                // Port 0 is always the primary gun.  Port 1 gets a gun if the game supports
+                // two-player simultaneous gun play (e.g. Virtua Cop 2, House of the Dead).
+                ILOG(@"Mednafen Saturn SetInput: using 'gun' device type (guns=%d)",
+                     self->_lightGunPlayerCount);
+                game->SetInput(0, "gun", (uint8_t *)inputBuffer[0]);
+                if (self->_lightGunPlayerCount >= 2) {
+                    game->SetInput(1, "gun", (uint8_t *)inputBuffer[1]);
+                } else {
+                    game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+                }
+            } else {
+                game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+                game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+            }
         }
     }
     else if (self.systemType == MednaSystemPSX)

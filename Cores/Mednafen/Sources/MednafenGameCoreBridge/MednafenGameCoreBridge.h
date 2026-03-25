@@ -35,6 +35,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 /// Forward Declerations
 @protocol ObjCBridgedCoreBridge, GameWithCheat;
 @protocol PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, DiscSwappable;
+@protocol LightGunResponder;
 typedef enum PVGBAButton: NSInteger PVGBAButton;
 typedef enum PVGBButton: NSInteger PVGBButton;
 typedef enum PVGenesisButton: NSInteger PVGenesisButton;
@@ -66,7 +67,13 @@ __attribute__((visibility("default")))
     double masterClock;
     
     BOOL _isSBIRequired;
-    
+
+    /// Set to YES when the loaded game is a Saturn light gun title.
+    /// Controls whether Saturn input ports are configured as "gun" devices.
+    BOOL _isLightGunGame;
+    /// Number of light guns supported by the current game (1 or 2).
+    int _lightGunPlayerCount;
+
     NSString *mednafenCoreModule;
     NSTimeInterval mednafenCoreTiming;
 }
@@ -105,7 +112,7 @@ __attribute__((visibility("default")))
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface MednafenGameCoreBridge (Controls) <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient>
+@interface MednafenGameCoreBridge (Controls) <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, LightGunResponder>
 #pragma clang diagnostic pop
 
 - (void)didPushLynxButton:(PVLynxButton)lynxButton forPlayer:(NSInteger)player;
@@ -143,6 +150,16 @@ __attribute__((visibility("default")))
 #pragma mark SS Sega Saturn
 - (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
+#pragma mark SS Light Gun (LightGunResponder)
+@property (nonatomic, readonly) BOOL gameSupportsLightGun;
+@property (nonatomic, readonly) BOOL requiresLightGun;
+- (void)lightGunMovedToPoint:(CGPoint)point isOffscreen:(BOOL)isOffscreen;
+- (void)lightGunTriggerDown;
+- (void)lightGunTriggerUp;
+- (void)lightGunStartDown;
+- (void)lightGunStartUp;
+- (void)lightGunReloadDown;
+- (void)lightGunReloadUp;
 #pragma mark PSX
 - (void)didPushPSXButton:(enum PVPSXButton)button forPlayer:(NSInteger)player;
 - (void)didReleasePSXButton:(enum PVPSXButton)button forPlayer:(NSInteger)player;
