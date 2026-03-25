@@ -7,6 +7,8 @@
 
 import Foundation
 import PVLogging
+import PVPrimitives
+import PVSystems
 
 // MARK: - Errors
 
@@ -165,22 +167,20 @@ public actor SkinCatalogService {
     public func searchSkins(query: String, system: String? = nil) async throws -> [SkinCatalogEntry] {
         let catalog = try await fetchCatalog()
         let lowercasedQuery = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let systemFilterCodes = Self.resolvedSystemFilterCodes(system)
 
         guard !lowercasedQuery.isEmpty else {
             // Empty query: return all skins, optionally filtered by system
-            if let system = system {
-                let lowerSystem = system.lowercased()
-                return catalog.skins.filter { $0.systems.contains(where: { $0.lowercased() == lowerSystem }) }
+            if let filterCodes = systemFilterCodes {
+                return catalog.skins.filter { Self.matchesAnySystemCode(in: $0.systems, filterCodes: filterCodes) }
             }
             return catalog.skins
         }
 
         return catalog.skins.filter { entry in
-            // System filter — normalize both sides so mixed-case catalog codes (e.g. "masterSystem")
-            // match correctly regardless of how the caller specifies the code.
-            if let system = system {
-                let lowerSystem = system.lowercased()
-                guard entry.systems.contains(where: { $0.lowercased() == lowerSystem }) else { return false }
+            // System filter — include related group codes (for example Genesis/Sega CD/32X).
+            if let filterCodes = systemFilterCodes {
+                guard Self.matchesAnySystemCode(in: entry.systems, filterCodes: filterCodes) else { return false }
             }
 
             // Text search across name, author, tags, source
@@ -209,12 +209,11 @@ public actor SkinCatalogService {
     ) async throws -> [SkinCatalogEntry] {
         let catalog = try await fetchCatalog()
         var results = catalog.skins
+        let systemFilterCodes = Self.resolvedSystemFilterCodes(system)
 
-        // Filter by system — normalize both sides so mixed-case catalog codes (e.g. "masterSystem")
-        // match correctly regardless of how the caller specifies the code.
-        if let system = system {
-            let lowerSystem = system.lowercased()
-            results = results.filter { $0.systems.contains(where: { $0.lowercased() == lowerSystem }) }
+        // Filter by system — include related group codes (for example NES/FDS sharing NES code).
+        if let filterCodes = systemFilterCodes {
+            results = results.filter { Self.matchesAnySystemCode(in: $0.systems, filterCodes: filterCodes) }
         }
 
         // Filter by tags (match any)
@@ -296,6 +295,26 @@ public actor SkinCatalogService {
         lastFetchDate = nil
         removeDiskCache()
         DLOG("SkinCatalogService: Cache invalidated")
+    }
+
+    /// Resolves an optional system filter into all related catalog codes.
+    ///
+    /// This expands a single selected system into its skin-layout family
+    /// (for example Genesis -> Genesis/Sega CD/32X), while preserving exact
+    /// matching behavior for unknown codes.
+    nonisolated static func resolvedSystemFilterCodes(_ system: String?) -> Set<String>? {
+        guard let system else { return nil }
+        let normalized = system.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !normalized.isEmpty else { return nil }
+        return SystemIdentifier.relatedCatalogSystemCodes(forCatalogCode: normalized)
+    }
+
+    /// Returns `true` when at least one entry system code matches the filter set.
+    ///
+    /// Entry systems are normalized to lowercase before comparison to tolerate
+    /// mixed-case data from remote catalog entries.
+    nonisolated static func matchesAnySystemCode(in entrySystems: [String], filterCodes: Set<String>) -> Bool {
+        !Set(entrySystems.map { $0.lowercased() }).isDisjoint(with: filterCodes)
     }
 
     // MARK: - Private Helpers

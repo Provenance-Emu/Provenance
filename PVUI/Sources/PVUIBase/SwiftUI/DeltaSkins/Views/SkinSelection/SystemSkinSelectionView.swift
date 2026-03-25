@@ -58,7 +58,7 @@ public struct SystemSkinSelectionView: View {
 
     /// System short code for skin catalog filter (e.g. "nes", "snes")
     private var catalogSystemFilter: String? {
-        PVEmulatorConfiguration.shortName(forSystemIdentifier: system)?.lowercased()
+        system.skinCatalogSystemCode
     }
 
     /// Get the current device type

@@ -45,15 +45,32 @@ public struct TVOSSkinCatalogBrowserView: View {
 
     // MARK: - Derived data
 
+    /// Expanded system filter codes based on shared skin-layout groups.
+    ///
+    /// For example, selecting `genesis` also includes `segacd` and `32x`.
+    private var selectedSystemFilterCodes: Set<String>? {
+        guard let selectedSystem else { return nil }
+        return SystemIdentifier.relatedCatalogSystemCodes(forCatalogCode: selectedSystem)
+    }
+
+    /// Catalog entries after applying the optional selected-system filter.
+    private var filteredCatalog: [SkinCatalogEntry] {
+        guard let filterCodes = selectedSystemFilterCodes else { return catalog }
+        return catalog.filter { entry in
+            let entryCodes = Set(entry.systems.map { $0.lowercased() })
+            return !entryCodes.isDisjoint(with: filterCodes)
+        }
+    }
+
     private var popularSkins: [SkinCatalogEntry] {
-        catalog
+        filteredCatalog
             .sorted { ($0.downloadCount ?? 0) > ($1.downloadCount ?? 0) }
             .prefix(12)
             .map { $0 }
     }
 
     private var newSkins: [SkinCatalogEntry] {
-        catalog
+        filteredCatalog
             .sorted { ($0.lastUpdated ?? .distantPast) > ($1.lastUpdated ?? .distantPast) }
             .prefix(12)
             .map { $0 }
@@ -61,7 +78,7 @@ public struct TVOSSkinCatalogBrowserView: View {
 
     private var skinsBySystem: [(system: String, skins: [SkinCatalogEntry])] {
         // Group by the first non-legacy system code (normalized to lowercase).
-        let grouped = Dictionary(grouping: catalog) { entry -> String in
+        let grouped = Dictionary(grouping: filteredCatalog) { entry -> String in
             entry.systems
                 .map { $0.lowercased() }
                 .first { !SkinCatalogService.isLegacySystemCode($0) }
@@ -76,7 +93,7 @@ public struct TVOSSkinCatalogBrowserView: View {
     private var searchResults: [SkinCatalogEntry] {
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return [] }
-        return catalog.filter {
+        return filteredCatalog.filter {
             $0.name.lowercased().contains(q)
             || ($0.author?.lowercased().contains(q) ?? false)
             || $0.systems.contains(where: { $0.lowercased().contains(q) })
@@ -136,7 +153,7 @@ public struct TVOSSkinCatalogBrowserView: View {
 
                 // By System sections
                 ForEach(skinsBySystem, id: \.system) { item in
-                    if selectedSystem == nil || selectedSystem == item.system {
+                    if selectedSystem == nil || selectedSystemFilterCodes?.contains(item.system) == true {
                         sectionRow(title: SystemIdentifier.displayName(forCatalogCode: item.system), skins: item.skins)
                     }
                 }
