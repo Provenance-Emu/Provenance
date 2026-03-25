@@ -47,10 +47,11 @@ extension PVmGBACore: CoreRetroAchievements {
         // Sync hardcore mode to the bridge before activating.
         _bridge.hardcoreMode = _hardcoreMode
 
-        // Activate achievements on the bridge, then mirror its reported state
-        // back into the core. This ensures the core only enforces hardcore
-        // restrictions when the bridge confirms the runtime is actually active.
-        _bridge.achievementsActive = true
+        // Do not unconditionally enable achievements here. The bridge is
+        // responsible for starting the underlying achievements runtime for
+        // `gameHash` and updating its own `achievementsActive` flag. Mirror
+        // that state into the core so the UI enforces hardcore restrictions
+        // only when the runtime is actually active.
         _achievementsActive = _bridge.achievementsActive
 
         if _achievementsActive {
