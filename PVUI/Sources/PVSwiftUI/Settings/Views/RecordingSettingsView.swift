@@ -19,6 +19,7 @@ struct RecordingSettingsView: View {
 
 #if os(iOS)
     @Default(.recordingCameraEnabled) var recordingCameraEnabled
+    @Default(.recordingCameraPosition) var recordingCameraPosition
 #endif
 
     private static let clipDurationOptions: [(label: String, value: Int)] = [
@@ -47,6 +48,21 @@ struct RecordingSettingsView: View {
                         subtitle: "Include front camera in recordings (picture-in-picture).",
                         icon: .sfSymbol("camera.fill")
                     )
+                }
+                if recordingCameraEnabled {
+                    Picker(selection: $recordingCameraPosition) {
+                        ForEach(CameraPosition.allCases, id: \.self) { position in
+                            Label(position.displayName, systemImage: position.symbolName)
+                                .tag(position)
+                        }
+                    } label: {
+                        SettingsRow(
+                            title: "Camera Position",
+                            subtitle: "Corner where the camera preview appears.",
+                            icon: .sfSymbol("pip")
+                        )
+                    }
+                    .pickerStyle(.automatic)
                 }
             }
 #endif
