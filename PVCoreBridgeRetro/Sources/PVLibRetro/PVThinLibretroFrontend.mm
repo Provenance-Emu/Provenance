@@ -1280,16 +1280,24 @@ static struct retro_vfs_interface s_thinVFSInterface = {
 #if PV_HAS_COREMIDI
 
 /// CoreMIDI read callback -- pushes incoming bytes into our ring buffer.
+/// Uses CAS on readWritePos so this path is safe to run concurrently with
+/// pv_libretro_midi_inject_byte (which also writes via CAS).
 static void thin_midi_read_callback(const MIDIPacketList *pktlist, void *readProcRefCon, void *srcConnRefCon) {
     (void)readProcRefCon;
     (void)srcConnRefCon;
     const MIDIPacket *packet = &pktlist->packet[0];
     for (UInt32 i = 0; i < pktlist->numPackets; i++) {
         for (UInt16 j = 0; j < packet->length; j++) {
-            size_t next = (atomic_load(&s_midiState.readWritePos) + 1) % PV_MIDI_READ_BUFFER_SIZE;
-            if (next != atomic_load(&s_midiState.readReadPos)) {
-                s_midiState.readBuffer[atomic_load(&s_midiState.readWritePos)] = packet->data[j];
-                atomic_store(&s_midiState.readWritePos, next);
+            // Multi-producer-safe write: CAS on readWritePos to claim a slot.
+            for (;;) {
+                size_t writePos = atomic_load(&s_midiState.readWritePos);
+                size_t readPos  = atomic_load(&s_midiState.readReadPos);
+                size_t next     = (writePos + 1) % PV_MIDI_READ_BUFFER_SIZE;
+                if (next == readPos) break; // buffer full — drop byte
+                if (atomic_compare_exchange_weak(&s_midiState.readWritePos, &writePos, next)) {
+                    s_midiState.readBuffer[writePos] = packet->data[j];
+                    break;
+                }
             }
         }
         packet = MIDIPacketNext(packet);
