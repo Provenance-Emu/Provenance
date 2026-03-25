@@ -28,6 +28,8 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     case aps
     /// RUP (Real Universal Patcher) format.
     case rup
+    /// NSP (N64 split patch) format.
+    case nsp
 
     public var id: String { rawValue }
 
@@ -43,6 +45,7 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
         case .ppf:     return ["ppf"]
         case .aps:     return ["aps"]
         case .rup:     return ["rup"]
+        case .nsp:     return ["nsp"]
         }
     }
 
@@ -58,6 +61,7 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
         case .ppf:     return "PPF"
         case .aps:     return "APS"
         case .rup:     return "RUP"
+        case .nsp:     return "NSP"
         }
     }
 
@@ -65,7 +69,7 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     public var hasIntegrityCheck: Bool {
         switch self {
         case .bps, .ups, .ppf, .xdelta3: return true
-        case .ips, .ips32, .xdelta, .aps, .rup: return false
+        case .ips, .ips32, .xdelta, .aps, .rup, .nsp: return false
         }
     }
 
