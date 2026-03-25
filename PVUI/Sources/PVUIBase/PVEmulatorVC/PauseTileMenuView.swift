@@ -667,9 +667,9 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingPortDevices) {
             PortDevicesPauseSheet(emulatorVC: emulatorVC)
         }
-        #if canImport(CoreMIDI) && !os(tvOS)
+        #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
         .sheet(isPresented: $showingMIDIPicker) {
-            if #available(iOS 14.0, macCatalyst 14.0, *) {
+            if #available(iOS 16.0, *) {
                 MIDIDevicePauseSheet()
             }
         }

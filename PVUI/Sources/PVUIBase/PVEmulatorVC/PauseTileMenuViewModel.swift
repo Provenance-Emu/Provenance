@@ -271,8 +271,8 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
-        // MIDI device picker — shown when core supports MIDI (iOS/Mac only, not tvOS)
-        #if canImport(CoreMIDI) && !os(tvOS)
+        // MIDI device picker — shown when core supports MIDI (iOS only, not tvOS or macCatalyst)
+        #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
         if emulatorVC.core.supportsMIDI {
             coreTiles.append(PauseMenuTile(
                 id: "midiDevice",

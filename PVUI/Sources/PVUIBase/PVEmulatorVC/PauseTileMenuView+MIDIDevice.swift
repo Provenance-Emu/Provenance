@@ -10,14 +10,14 @@
 import SwiftUI
 import PVThemes
 
-#if canImport(CoreMIDI) && !os(tvOS)
+#if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
 import CoreMIDI
 
 // MARK: - MIDIDevicePauseSheet
 
 /// Sheet that shows the MIDI input/output device picker.
 /// Displayed when the user taps the "MIDI Device" tile in PauseTileMenuView.
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 16.0, *)
 struct MIDIDevicePauseSheet: View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
