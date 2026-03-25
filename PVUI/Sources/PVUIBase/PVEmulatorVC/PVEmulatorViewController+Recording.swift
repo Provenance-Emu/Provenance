@@ -182,9 +182,9 @@ extension PVEmulatorViewController {
             overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             cameraOverlayView = overlay
         }
-        // Restart observation in case a previous detach() cancelled the tasks.
-        cameraOverlayView?.startObservingSettings()
+        // Attempt to attach first; if attach() no-ops, we avoid starting observation unnecessarily.
         cameraOverlayView?.attach()
+        cameraOverlayView?.startObservingSettings()
     }
 
     /// Hides and detaches the face-cam overlay. Safe to call even if no overlay is active.
