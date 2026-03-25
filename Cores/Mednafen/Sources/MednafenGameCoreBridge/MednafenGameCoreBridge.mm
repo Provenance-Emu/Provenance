@@ -1046,7 +1046,7 @@ static void emulation_run(BOOL skipFrame) {
             // Clear Saturn input buffers to avoid leaking state from a prior multitap configuration.
             int portsToClear = (self->multiTapPlayerCount > 2) ? 6 : 2;
             for (int port = 0; port < portsToClear; port++) {
-                memset(inputBuffer[port], 0, sizeof(inputBuffer[port]));
+                memset(inputBuffer[port], 0, 9 * sizeof(uint32_t));
             }
             self->multiTapPlayerCount = 2;
 

@@ -50,7 +50,13 @@ static struct SSGunState {
     BOOL    trigger;      // trigger held
     BOOL    start;        // start button held
     BOOL    offscreen;    // aim explicitly off-screen (reload gesture)
-} ssGunState[2];
+} ssGunState[2] = {
+    // Default aim position to screen centre so a trigger press before any
+    // lightGunMovedToPoint event targets the middle of the screen rather than
+    // the top-left corner (which would be (0,0) zero-initialisation).
+    {0.5, 0.5, NO, NO, NO},
+    {0.5, 0.5, NO, NO, NO},
+};
 
 // -------------------------------------------------------------------------
 // Helper: write the current per-player state into inputBuffer[player]

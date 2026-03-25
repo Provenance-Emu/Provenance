@@ -32,7 +32,7 @@
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-/// Forward Declerations
+/// Forward Declarations
 @protocol ObjCBridgedCoreBridge, GameWithCheat;
 @protocol PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, DiscSwappable;
 @protocol LightGunResponder;
