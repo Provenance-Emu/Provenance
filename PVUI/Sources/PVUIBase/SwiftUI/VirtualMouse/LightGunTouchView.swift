@@ -198,7 +198,10 @@ public final class LightGunTouchView: UIView {
         // Schedule trigger only when the finger did not drag and the touch was short.
         // Use a delayed work item so handleDoubleTap can cancel it if a double-tap
         // is recognised after this touchesEnded fires.
+        // Cancel any prior pending trigger first — both taps of a double-tap call
+        // touchesEnded, so without this the first tap's work item leaks and fires.
         if !touchHasDragged && duration < tapMaxDuration {
+            pendingSingleTapTrigger?.cancel()
             let normalised = normalisedPoint(for: touch.location(in: self))
             let offscreen = isOffscreen(touch.location(in: self))
             lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)

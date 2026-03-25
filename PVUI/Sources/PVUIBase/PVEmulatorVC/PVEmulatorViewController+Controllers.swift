@@ -414,9 +414,10 @@ extension PVEmulatorViewController {
     /// implement `LightGunResponder`.
     ///
     /// Mapping:
-    ///   - D-pad / touch-surface pan  → aim (lightGunMovedToPoint)
+    ///   - D-pad                      → aim (lightGunMovedToPoint)
     ///   - Button A (select)          → trigger (lightGunTriggerDown/Up)
-    ///   - D-pad click / long swipe   → reload (lightGunReloadDown/Up)
+    ///   - Touch-surface tap          → trigger at current aim point
+    ///   - Touch-surface long press   → reload (lightGunReloadDown/Up)
     func setupSiriRemoteForLightGunCore() {
         guard let gunCore = core as? LightGunResponder,
               gunCore.gameSupportsLightGun else { return }
