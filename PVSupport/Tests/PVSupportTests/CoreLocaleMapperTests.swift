@@ -82,4 +82,71 @@ struct CoreLocaleMapperTests {
         #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("xx")) == 0)
         #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zz-ZZ")) == 0)
     }
+
+    // MARK: - CTR (3DS) language IDs
+
+    @Test("CTR: English maps to 1")
+    func ctrEnglish() {
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("en")) == 1)
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("en-US")) == 1)
+    }
+
+    @Test("CTR: Japanese maps to 0")
+    func ctrJapanese() {
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("ja")) == 0)
+    }
+
+    @Test("CTR: French maps to 2")
+    func ctrFrench() {
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("fr")) == 2)
+    }
+
+    @Test("CTR: Korean maps to 7")
+    func ctrKorean() {
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("ko")) == 7)
+    }
+
+    @Test("CTR: Chinese Simplified maps to 6 for CN region")
+    func ctrChineseSimplified() {
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("zh-CN")) == 6)
+    }
+
+    @Test("CTR: Chinese Traditional maps to 11 for TW region")
+    func ctrChineseTraditional() {
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("zh-TW")) == 11)
+    }
+
+    @Test("CTR: Unknown locale falls back to English (1)")
+    func ctrUnknownFallsBackToEnglish() {
+        #expect(CoreLocaleMapper.ctrLanguageID(for: locale("xx")) == 1)
+    }
+
+    // MARK: - NDS firmware language strings
+
+    @Test("NDS: English maps to 'English'")
+    func ndsEnglish() {
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("en")) == "English")
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("en-US")) == "English")
+    }
+
+    @Test("NDS: Japanese maps to 'Japanese'")
+    func ndsJapanese() {
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("ja")) == "Japanese")
+    }
+
+    @Test("NDS: French maps to 'French'")
+    func ndsFrench() {
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("fr")) == "French")
+    }
+
+    @Test("NDS: Spanish maps to 'Spanish'")
+    func ndsSpanish() {
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("es")) == "Spanish")
+    }
+
+    @Test("NDS: Unknown locale falls back to 'English'")
+    func ndsUnknownFallsBackToEnglish() {
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("xx")) == "English")
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("ko")) == "English") // Korean not in NDS set
+    }
 }

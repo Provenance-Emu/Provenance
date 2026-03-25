@@ -100,4 +100,88 @@ public enum CoreLocaleMapper {
     public static var currentRetroArchLanguageID: Int {
         retroArchLanguageID(for: .current)
     }
+
+    // MARK: - CTR (3DS / Citra / Azahar) language IDs
+    //
+    // Matches the Citra/Azahar SystemLanguage enum:
+    //   0=Japanese 1=English 2=French 3=German 4=Italian 5=Spanish
+    //   6=SimplifiedChinese 7=Korean 8=Dutch 9=Portuguese 10=Russian 11=TraditionalChinese
+
+    /// Returns the CTR (3DS) language integer that best matches `locale`.
+    /// Falls back to English (1) for unrecognised locales.
+    public static func ctrLanguageID(for locale: Locale) -> Int {
+        let languageCode: String
+        if #available(iOS 16, tvOS 16, macOS 13, *) {
+            languageCode = locale.language.languageCode?.identifier ?? locale.languageCode ?? "en"
+        } else {
+            languageCode = locale.languageCode ?? "en"
+        }
+
+        let scriptCode: String?
+        if #available(iOS 16, tvOS 16, macOS 13, *) {
+            scriptCode = locale.language.script?.identifier
+        } else {
+            scriptCode = locale.scriptCode
+        }
+
+        switch languageCode {
+        case "ja": return 0
+        case "fr": return 2
+        case "de": return 3
+        case "it": return 4
+        case "es": return 5
+        case "ko": return 7
+        case "nl": return 8
+        case "pt": return 9
+        case "ru": return 10
+        case "zh":
+            if let script = scriptCode {
+                return script == "Hans" ? 6 : 11
+            }
+            let regionCode: String?
+            if #available(iOS 16, tvOS 16, macOS 13, *) {
+                regionCode = locale.region?.identifier
+            } else {
+                regionCode = locale.regionCode
+            }
+            return (regionCode == "CN" || regionCode == "SG") ? 6 : 11
+        default:
+            return 1 // English
+        }
+    }
+
+    /// Convenience: resolve CTR language ID from `Locale.current`.
+    public static var currentCTRLanguageID: Int {
+        ctrLanguageID(for: .current)
+    }
+
+    // MARK: - NDS (DS) firmware language strings
+    //
+    // Used by melonDS (`melonds_language`) and Desmume2015 (`desmume_firmware_language`).
+    // Supported values: "Japanese" | "English" | "French" | "German" | "Italian" | "Spanish"
+
+    /// Returns the NDS firmware language string that best matches `locale`.
+    /// Falls back to "English" for unrecognised locales.
+    public static func ndsLanguageString(for locale: Locale) -> String {
+        let languageCode: String
+        if #available(iOS 16, tvOS 16, macOS 13, *) {
+            languageCode = locale.language.languageCode?.identifier ?? locale.languageCode ?? "en"
+        } else {
+            languageCode = locale.languageCode ?? "en"
+        }
+
+        switch languageCode {
+        case "ja": return "Japanese"
+        case "fr": return "French"
+        case "de": return "German"
+        case "it": return "Italian"
+        case "es": return "Spanish"
+        default:   return "English"
+        }
+    }
+
+    /// Convenience: resolve NDS language string from `Locale.current`.
+    public static var currentNDSLanguageString: String {
+        ndsLanguageString(for: .current)
+    }
 }

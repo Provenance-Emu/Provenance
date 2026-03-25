@@ -8,6 +8,7 @@
 import Foundation
 import PVCoreBridge
 import PVLogging
+import PVSupport
 
 @objc
 @objcMembers
@@ -49,6 +50,7 @@ public class MelonDSOptions: NSObject, CoreOptions {
         static let dsiSD = "melonds_dsi_sdcard"
         static let audioBitrate = "melonds_audio_bitrate"
         static let audioInterpolation = "melonds_audio_interpolation"
+        static let firmwareLanguage = "melonds_language"
     }
 
     // MARK: - Choices
@@ -64,6 +66,8 @@ public class MelonDSOptions: NSObject, CoreOptions {
     private static let openglFilteringChoices = OptionChoice.choices(["nearest", "linear"])
     private static let audioBitrateChoices = OptionChoice.choices(["Automatic", "10-bit", "16-bit"])
     private static let audioInterpolationChoices = OptionChoice.choices(["None", "Linear", "Cosine", "Cubic"])
+    // NDS firmware language — "Auto" resolves to device locale at runtime
+    private static let firmwareLanguageChoices = OptionChoice.choices(["Auto", "Japanese", "English", "French", "German", "Italian", "Spanish"])
 
     private static let screenGapRange = CoreOptionRange(defaultValue: 0, min: 0, max: 192)
     private static let jitBlockRange = CoreOptionRange(defaultValue: 32, min: 1, max: 100)
@@ -228,6 +232,14 @@ public class MelonDSOptions: NSObject, CoreOptions {
         defaultValue: 3 // Cubic
     )
 
+    private static let firmwareLanguageOption = CoreOption.enumeration(
+        .init(title: Keys.firmwareLanguage,
+              description: "NDS firmware language. 'Auto' follows the device locale.",
+              requiresRestart: true),
+        values: enumValues(from: firmwareLanguageChoices),
+        defaultValue: 0 // Auto
+    )
+
     // MARK: - Option tree
     public static var options: [CoreOption] {
         var groups: [CoreOption] = [
@@ -236,7 +248,8 @@ public class MelonDSOptions: NSObject, CoreOptions {
                     consoleModeOption,
                     bootDirectlyOption,
                     randomMacOption,
-                    dsiSDOption
+                    dsiSDOption,
+                    firmwareLanguageOption
                    ]),
             .group(.init(title: "Display & Layout", description: nil),
                    subOptions: [
@@ -322,6 +335,13 @@ public extension MelonDSOptions {
         case Keys.dsiSD: return enabledDisabledString(for: dsiSDOption)
         case Keys.audioBitrate: return choiceValue(for: audioBitrateOption, choices: audioBitrateChoices)
         case Keys.audioInterpolation: return choiceValue(for: audioInterpolationOption, choices: audioInterpolationChoices)
+        case Keys.firmwareLanguage:
+            // When the user chose "Auto" (index 0), resolve from device locale at runtime
+            let selected = valueForOption(firmwareLanguageOption).asInt ?? 0
+            if selected == 0 {
+                return CoreLocaleMapper.currentNDSLanguageString
+            }
+            return choiceValue(for: firmwareLanguageOption, choices: firmwareLanguageChoices)
         default:
             WLOG("Unsupported melonds option key: \(variable)")
             return nil
