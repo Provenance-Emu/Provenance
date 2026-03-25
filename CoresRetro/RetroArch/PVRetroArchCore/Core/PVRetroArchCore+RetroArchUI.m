@@ -27,6 +27,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <boolean.h>
 
@@ -162,6 +163,7 @@ int argc =  1;
 @property (nonatomic, assign) BOOL useCustomRenderViewLayout;
 @property (nonatomic, assign) BOOL shouldTriggerRetroArchUpdates;
 @property (nonatomic, assign) NSInteger pendingFrameApplicationCount;
+@property (nonatomic, assign) BOOL isShuttingDownForViewportUpdates;
 @end
 
 @implementation PVRetroArchCoreBridge (CustomLayout)
@@ -254,6 +256,15 @@ int argc =  1;
 - (NSInteger)pendingFrameApplicationCount {
     NSNumber *val = objc_getAssociatedObject(self, @selector(pendingFrameApplicationCount));
     return val ? val.integerValue : 0;
+}
+
+- (void)setIsShuttingDownForViewportUpdates:(BOOL)isShuttingDown {
+    objc_setAssociatedObject(self, @selector(isShuttingDownForViewportUpdates), @(isShuttingDown), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)isShuttingDownForViewportUpdates {
+    NSNumber *val = objc_getAssociatedObject(self, @selector(isShuttingDownForViewportUpdates));
+    return val.boolValue;
 }
 
 @end
@@ -485,6 +496,7 @@ int argc =  1;
 }
 
 - (void)stopEmulation {
+    self.isShuttingDownForViewportUpdates = YES;
 	[super stopEmulation];
 	self.shouldStop = YES;
 	if (iterate_observer) {
@@ -1226,6 +1238,11 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 //
 // Custom Viewport Positioning methods
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame {
+    if (self.isShuttingDownForViewportUpdates) {
+        WLOG(@"[RA] Skipping frame apply during shutdown");
+        return;
+    }
+
     if (!_renderView) {
         WLOG(@"_renderView nil, exiting.");
         return;
@@ -1240,6 +1257,11 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     UIView *mtkView = rootView.superview;
     if (!mtkView) {
         WLOG(@"[RA] No MTKView superview");
+        return;
+    }
+
+    if (!mtkView.window) {
+        WLOG(@"[RA] MTKView not in window yet, skipping frame apply");
         return;
     }
 
@@ -1271,6 +1293,11 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
     /// Pixel-align
     CGFloat scale = UIScreen.mainScreen.scale;
+    if (!isfinite(scale) || scale <= 0) {
+        WLOG(@"[RA] Invalid screen scale: %f", scale);
+        return;
+    }
+
     CGRect aligned = CGRectMake(
         floor(clamped.origin.x * scale) / scale,
         floor(clamped.origin.y * scale) / scale,
@@ -1332,6 +1359,10 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
     /// Update Metal layer size to match container
     CGSize pixelSize = CGSizeMake(aligned.size.width * scale, aligned.size.height * scale);
+    if (!isfinite(pixelSize.width) || !isfinite(pixelSize.height) || pixelSize.width < 1.0 || pixelSize.height < 1.0) {
+        WLOG(@"[RA] Invalid pixel size: %@", NSStringFromCGSize(pixelSize));
+        return;
+    }
     _renderView.contentScaleFactor = scale;
 
     if ([_renderView respondsToSelector:@selector(setDrawableSize:)]) {
@@ -1353,6 +1384,10 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
         unsigned int w = (unsigned)lrintf(pixelSize.width);
         unsigned int h = (unsigned)lrintf(pixelSize.height);
+        if (w == 0 || h == 0) {
+            WLOG(@"[RA] Skipping viewport update due to zero size: %ux%u", w, h);
+            return;
+        }
         video_driver_set_size(w, h);
 
         settings->video_vp_custom.x = 0;
@@ -1376,6 +1411,7 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 }
 
 - (void)setupView {
+    self.isShuttingDownForViewportUpdates = NO;
     printf("Set:SetupView %d", self.gsPreference);
 	if(self.gsPreference == 0) {
 		[self setViewType:APPLE_VIEW_TYPE_METAL];
@@ -1623,6 +1659,8 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
 - (void)showGameView {
     ILOG(@"In Show Game View now\n");
+    self.isShuttingDownForViewportUpdates = NO;
+
     // Ensure UI operations happen on the main thread
     if (![NSThread isMainThread]) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1655,6 +1693,10 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        if (self.isShuttingDownForViewportUpdates) {
+            DLOG(@"[RA] Skipping delayed showGameView work during shutdown");
+            return;
+        }
         [self setVolume];
 		command_event(CMD_EVENT_AUDIO_START, NULL);
         command_event(CMD_EVENT_UNPAUSE, NULL);
@@ -1666,9 +1708,17 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
             // Pause the core before triggering updates to ensure safe state
             command_event(CMD_EVENT_PAUSE, NULL);
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                if (self.isShuttingDownForViewportUpdates) {
+                    DLOG(@"[RA] Skipping update trigger during shutdown");
+                    return;
+                }
                 [self triggerRetroArchResourceUpdates];
                 // Resume after updates are triggered (they run in background)
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                    if (self.isShuttingDownForViewportUpdates) {
+                        DLOG(@"[RA] Skipping unpause during shutdown");
+                        return;
+                    }
                     command_event(CMD_EVENT_UNPAUSE, NULL);
                 });
             });

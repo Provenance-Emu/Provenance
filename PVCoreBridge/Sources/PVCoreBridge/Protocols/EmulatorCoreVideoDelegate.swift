@@ -52,6 +52,8 @@ import PVPrimitives
 @objc public protocol EmulatorCoreViewportPositioning {
     @objc func setUseCustomRenderViewLayout(_ enabled: Bool)
     @objc func applyRenderViewFrameInTouchView(_ frame: CGRect)
+    /// Returns true when bridge teardown has started and delayed viewport work should be skipped.
+    @objc optional func isShuttingDownForViewportUpdates() -> Bool
 }
 
 //public extension EmulatorCoreVideoDelegate {
