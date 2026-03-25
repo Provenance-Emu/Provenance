@@ -18,6 +18,7 @@ import PVThemes
 struct PortDevicesPauseSheet: View {
     let emulatorVC: PVEmulatorViewController
     @ObservedObject private var themeManager = ThemeManager.shared
+    @Environment(\.dismiss) private var dismiss
 
     private var palette: UXThemePalette { themeManager.currentPalette }
 
@@ -49,5 +50,9 @@ struct PortDevicesPauseSheet: View {
             .navigationTitle(String(localized: "Port Devices"))
             .navigationBarTitleDisplayMode(.inline)
         }
+        #if os(tvOS)
+        // On tvOS the hardware Menu button is the standard way to dismiss sheets.
+        .onExitCommand { dismiss() }
+        #endif
     }
 }

@@ -10,7 +10,6 @@
 import SwiftUI
 import PVSettings
 import PVThemes
-import Defaults
 
 // MARK: - ShaderSettingsPauseSheet
 
@@ -19,6 +18,7 @@ import Defaults
 struct ShaderSettingsPauseSheet: View {
     @Default(.metalFilterMode) private var metalFilterMode
     @ObservedObject private var themeManager = ThemeManager.shared
+    @Environment(\.dismiss) private var dismiss
 
     private var palette: UXThemePalette { themeManager.currentPalette }
 
@@ -53,6 +53,10 @@ struct ShaderSettingsPauseSheet: View {
             .navigationTitle(currentFilter == .none ? String(localized: "Shader Settings") : currentFilter.description)
             .navigationBarTitleDisplayMode(.inline)
         }
+        #if os(tvOS)
+        // On tvOS the hardware Menu button is the standard way to dismiss sheets.
+        .onExitCommand { dismiss() }
+        #endif
     }
 
     @ViewBuilder
