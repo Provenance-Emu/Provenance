@@ -793,30 +793,13 @@ public extension DirectoryWatcher {
 
     /// Check whether a directory looks like a DOSBox game folder.
     ///
-    /// A folder qualifies when it contains at least one `.conf`, `.exe`, `.bat`, or `.com`
-    /// file at its root level — the same heuristic used by the game importer.
+    /// Delegates to `GameImporter.isDOSBoxFolder(_:)` so the DOSBox detection
+    /// heuristic stays centralized in one place.
     func isDOSBoxGameFolder(_ url: URL) -> Bool {
-        var isDir: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir),
-              isDir.boolValue else {
+        guard isDirectory(url) else {
             return false
         }
-        let resourceKeys: Set<URLResourceKey> = [.isRegularFileKey]
-        guard let contents = try? FileManager.default.contentsOfDirectory(
-            at: url,
-            includingPropertiesForKeys: Array(resourceKeys),
-            options: [.skipsHiddenFiles]
-        ) else {
-            return false
-        }
-        let dosMarkers: Set<String> = ["conf", "exe", "bat", "com"]
-        return contents.contains { fileURL in
-            guard let resourceValues = try? fileURL.resourceValues(forKeys: resourceKeys),
-                  resourceValues.isRegularFile == true else {
-                return false
-            }
-            return dosMarkers.contains(fileURL.pathExtension.lowercased())
-        }
+        return GameImporter.shared.isDOSBoxFolder(url)
     }
 
     /// Check if a file is an archive
