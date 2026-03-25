@@ -160,16 +160,16 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// NOTE: "com.provenance.ds" is intentionally NOT listed here — DS skins
     /// use the DefaultDeltaSkin NDS dual-screen layout (portrait + landscape).
     private static let skinUnsupportedSystems: Set<String> = [
-        "com.provenance.3ds",
-        "com.provenance.dos",
-        "com.provenance.mame",
-        "com.provenance.arcade",
-        "com.provenance.palmos",
-        "com.provenance.cps1",
-        "com.provenance.cps2",
-        "com.provenance.cps3",
-        "com.provenance.msx",
-        "com.provenance.msx2"
+        SystemIdentifier._3DS.rawValue,
+        SystemIdentifier.DOS.rawValue,
+        SystemIdentifier.MAME.rawValue,
+        "com.provenance.arcade",  // No SystemIdentifier case defined
+        SystemIdentifier.PalmOS.rawValue,
+        SystemIdentifier.CPS1.rawValue,
+        SystemIdentifier.CPS2.rawValue,
+        SystemIdentifier.CPS3.rawValue,
+        SystemIdentifier.MSX.rawValue,
+        SystemIdentifier.MSX2.rawValue
     ]
 
     public override var supportsSkins: Bool {
