@@ -88,7 +88,7 @@ struct AirPlayMenuButton: View {
     /// Tint applied to the AVRoutePickerView icon (default: white).
     var tintColor: Color = .white
     /// Active (connected) tint color.
-    var activeTintColor: Color = Color(red: 0.0, green: 0.8, blue: 1.0) // retroCyan-ish
+    var activeTintColor: Color = .retroCyan
 
     var body: some View {
         _AVRoutePickerRepresentable(
