@@ -18,12 +18,21 @@ import PVThemes
 
 /// Full-page settings view for external display mode.
 struct ExternalDisplaySettingsView: View {
+    #if os(tvOS)
+    @Environment(\.dismiss) private var dismiss
+    #endif
+
     var body: some View {
         ScrollView {
             ExternalDisplaySection()
                 .padding()
         }
         .navigationTitle("External Display")
+        #if os(tvOS)
+        .onExitCommand {
+            dismiss()
+        }
+        #endif
     }
 }
 

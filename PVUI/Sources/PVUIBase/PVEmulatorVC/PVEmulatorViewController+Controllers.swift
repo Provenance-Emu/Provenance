@@ -150,11 +150,17 @@ extension PVEmulatorViewController {
         secondaryWindow = nil
         secondaryScreen = nil
 
-        // Full containment removal sequence before re-parenting.
-        gpuViewController.willMove(toParent: nil)
-        gpuViewController.view?.removeFromSuperview()
-        gpuViewController.removeFromParent()
-        gpuViewController.didMove(toParent: nil)
+        // Only run the containment removal sequence when the VC has a parent.
+        // When it is a window rootViewController (the dedicated-display path),
+        // UIKit manages its lifecycle via `secondaryWindow?.rootViewController = nil`
+        // above, so manually calling willMove/removeFromParent/didMove on a
+        // parentless VC would be incorrect.
+        if gpuViewController.parent != nil {
+            gpuViewController.willMove(toParent: nil)
+            gpuViewController.view?.removeFromSuperview()
+            gpuViewController.removeFromParent()
+            gpuViewController.didMove(toParent: nil)
+        }
 
         // addChild automatically calls willMove(toParent: self) on the child.
         addChild(gpuViewController)
