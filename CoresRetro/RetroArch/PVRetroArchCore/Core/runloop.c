@@ -732,10 +732,17 @@ static bool dynamic_verify_hw_context(
 {
    if (!driver_switch_enable)
    {
+      /* Metal driver on Apple platforms supports Vulkan via MoltenVK and
+       * GLES via the Metal-to-GLES translation layer (for GLES2/3 cores).
+       * Accept Metal as a valid driver for both context families so that
+       * hardware-accelerated cores (e.g. Beetle PSX HW) can run without
+       * requiring an explicit video_driver switch. */
+      bool is_metal = string_is_equal(video_ident, "metal");
+
       switch (type)
       {
          case RETRO_HW_CONTEXT_VULKAN:
-            if (!string_is_equal(video_ident, "vulkan"))
+            if (!string_is_equal(video_ident, "vulkan") && !is_metal)
                return false;
             break;
 #if defined(HAVE_OPENGL_CORE)
@@ -750,8 +757,11 @@ static bool dynamic_verify_hw_context(
          case RETRO_HW_CONTEXT_OPENGLES3:
          case RETRO_HW_CONTEXT_OPENGLES_VERSION:
          case RETRO_HW_CONTEXT_OPENGL:
+            /* Metal driver on Apple platforms can serve GLES2/3 cores via
+             * the Metal+ANGLE GLES emulation layer. */
             if (     !string_is_equal(video_ident, "gl")
-                  && !string_is_equal(video_ident, "glcore"))
+                  && !string_is_equal(video_ident, "glcore")
+                  && !is_metal)
                return false;
             break;
          case RETRO_HW_CONTEXT_D3D10:
@@ -2300,6 +2310,15 @@ bool runloop_environment_cb(unsigned cmd, void *data)
          {
              *cb = RETRO_HW_CONTEXT_D3D12;
              RARCH_LOG("[Environ]: GET_PREFERRED_HW_RENDER - Context callback set to RETRO_HW_CONTEXT_D3D12.\n");
+         }
+         else if (string_is_equal(video_driver_name, "metal"))
+         {
+             /* Metal driver on Apple platforms: Vulkan cores run via MoltenVK,
+              * so we report RETRO_HW_CONTEXT_VULKAN as preferred. GLES cores
+              * request their context type directly via SET_HW_RENDER and driver
+              * switching will handle the rest. */
+             *cb = RETRO_HW_CONTEXT_VULKAN;
+             RARCH_LOG("[Environ]: GET_PREFERRED_HW_RENDER - Metal driver: Context callback set to RETRO_HW_CONTEXT_VULKAN (MoltenVK).\n");
          }
          else
          {

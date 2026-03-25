@@ -19,6 +19,7 @@ import PVFileSystem
 import PVLogging
 import PVLookup
 import PVMediaCache
+import PVPatching
 import PVPlists
 import PVPrimitives
 import PVRealm
@@ -2573,6 +2574,9 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Check for other archive types
         if Extensions.archiveExtensions.contains(item.url.pathExtension.lowercased()) { return .zip }
 
+        // Detect ROM patch files (IPS, BPS, UPS, xdelta, etc.)
+        if isPatch(item) { return .patch }
+
         if !item.url.pathExtension.isEmpty { return .game } // Default to .game if has an extension and not other types
         return .unknown
     }
@@ -3052,6 +3056,36 @@ public final class GameImporter: GameImporting, ObservableObject {
         ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
     }
 
+    /// Imports a ROM patch file by creating a `PVPatch` Realm record for it.
+    /// The file must already have been moved to its destination before calling this method.
+    /// Full patch application is handled by PatchImporter (TODO #2676).
+    private func importPatchFile(_ item: ImportQueueItem) async throws {
+        // Use the destination URL set by moveImportItem, falling back to the original URL.
+        let url = item.destinationUrl ?? item.url
+        guard let format = PatchFormat.detect(from: url) else {
+            ELOG("Cannot determine patch format for \(url.lastPathComponent)")
+            throw GameImporterError.unsupportedFile
+        }
+        ILOG("Importing patch file \(url.lastPathComponent) as format: \(format.rawValue)")
+
+        // Realm objects must be created and written on the same thread.
+        // Run on MainActor to use the main-thread Realm instance safely.
+        let title = url.deletingPathExtension().lastPathComponent
+        try await MainActor.run {
+            let pvFile = PVFile(withURL: url)
+            let patch = PVPatch(
+                file: pvFile,
+                game: nil,
+                date: Date(),
+                format: format,
+                title: title
+            )
+            let database = RomDatabase.sharedInstance
+            try database.add(patch, update: true)
+        }
+        ILOG("Saved PVPatch record for \(url.lastPathComponent)")
+    }
+
     private func performImport(for item: ImportQueueItem) async throws {
         let fileName = item.url.lastPathComponent
         ILOG("Starting import for file: \(fileName)")
@@ -3222,6 +3256,27 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
             } catch {
                 ELOG("Failed to import artwork file: \(error.localizedDescription)")
+                await MainActor.run {
+                    item.status = .failure(error: error)
+                }
+                throw error
+            }
+            return
+        }
+
+        // Handle patch files — move to Patches dir, then store in Realm.
+        // Full patch application is deferred to PatchImporter (TODO #2676).
+        if item.fileType == .patch {
+            ILOG("Processing as ROM patch file: \(fileName)")
+            do {
+                try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: item)
+                try await importPatchFile(item)
+                await MainActor.run {
+                    item.status = .success
+                }
+                ILOG("Successfully imported patch file: \(fileName)")
+            } catch {
+                ELOG("Failed to import patch file: \(error.localizedDescription)")
                 await MainActor.run {
                     item.status = .failure(error: error)
                 }

@@ -8,6 +8,7 @@
 import SwiftUI
 import PVLibrary
 import PVThemes
+import PVCoreBridge
 #if canImport(SafariServices)
 import SafariServices
 #endif
@@ -396,6 +397,7 @@ struct GameMoreInfoView: View {
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
     @State private var showingResetStatsConfirmation = false
+    @State private var showCoreOptionsSheet = false
     @FocusState private var focusedField: EditableField?
     /// Context menu delegate for handling artwork selection
     var contextMenuDelegate: GameContextMenuDelegate?
@@ -499,6 +501,9 @@ struct GameMoreInfoView: View {
                         // JIT preference section (only for JIT-capable systems)
                         jitPreferenceSection
 
+                        // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
+                        coreOptionsSection
+
                         // Game description section
                         if let description = viewModel.gameDescription,
                            !description.isEmpty {
@@ -530,6 +535,10 @@ struct GameMoreInfoView: View {
 
                 // JIT preference section (only for JIT-capable systems)
                 jitPreferenceSection
+                    .padding(.horizontal)
+
+                // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
+                coreOptionsSection
                     .padding(.horizontal)
 
                 // Game description section
@@ -579,6 +588,70 @@ struct GameMoreInfoView: View {
         } message: {
             Text("Enter a new value")
         }
+        .sheet(isPresented: $showCoreOptionsSheet) {
+            if let info = coreOptionsInfo,
+               let md5 = viewModel.pvGame?.md5Hash, !md5.isEmpty {
+                NavigationStack {
+                    CoreOptionsDetailView(
+                        coreClass: info.coreClass,
+                        title: info.name,
+                        gameMD5: md5
+                    )
+                }
+            } else {
+                NavigationStack {
+                    VStack(spacing: 16) {
+                        Text("Unable to load core options.")
+                            .multilineTextAlignment(.center)
+                        Button(NSLocalizedString("Close", comment: "Close core options sheet")) {
+                            showCoreOptionsSheet = false
+                        }
+                    }
+                    .padding()
+                }
+            }
+        }
+    }
+
+    /// Returns the preferred CoreOptional class and display name for the current game, or nil if none.
+    /// Respects game-level and system-level preferred core ID before falling back to the first available CoreOptional core.
+    private var coreOptionsInfo: (coreClass: CoreOptional.Type, name: String)? {
+        guard let game = viewModel.pvGame,
+              let system = game.system else { return nil }
+        let cores = Array(system.cores)
+        // Resolve preferred core: game-level preference → system-level preference → first CoreOptional
+        let preferredID = game.userPreferredCoreID ?? system.userPreferredCoreID
+        if let preferredID = preferredID,
+           let preferred = cores.first(where: { $0.identifier == preferredID }),
+           let coreClass = NSClassFromString(preferred.principleClass) as? CoreOptional.Type {
+            return (coreClass, preferred.projectName)
+        }
+        for core in cores {
+            if let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type {
+                return (coreClass, core.projectName)
+            }
+        }
+        return nil
+    }
+
+    /// Counts active per-game option overrides for the given core and md5, recursing into option groups.
+    private func countPerGameOverrides(in options: [CoreOption], coreClass: CoreOptional.Type, md5: String) -> Int {
+        var seen = Set<String>()
+        func count(_ opts: [CoreOption]) -> Int {
+            var total = 0
+            for option in opts {
+                switch option {
+                case let .group(_, subOptions: subOptions):
+                    total += count(subOptions)
+                default:
+                    guard !seen.contains(option.key) else { continue }
+                    seen.insert(option.key)
+                    if coreClass.hasPerGameOverride(for: option, md5: md5) { total += 1 }
+                }
+            }
+            return total
+        }
+        return count(options)
     }
 
     private func editField(_ field: EditableField, initialValue: String?) {
@@ -760,6 +833,93 @@ struct GameMoreInfoView: View {
                 )
         )
         .padding(.horizontal)
+    }
+
+    /// Core Options section — always shown; the button is enabled only when the game's system has a configurable CoreOptional core.
+    @ViewBuilder
+    private var coreOptionsSection: some View {
+        let info = coreOptionsInfo
+        let md5 = viewModel.pvGame?.md5Hash ?? ""
+        let hasMD5 = !md5.isEmpty
+        let isEnabled = info != nil && hasMD5
+        let overrideCount: Int = {
+            guard let info = info, hasMD5 else { return 0 }
+            return countPerGameOverrides(in: info.coreClass.options, coreClass: info.coreClass, md5: md5)
+        }()
+        let isMatched = viewModel.pvGame?.system != nil
+
+        VStack(alignment: .leading, spacing: 8) {
+            Text("CORE OPTIONS")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(isEnabled ? accentColor : accentColor.opacity(0.4))
+                .shadow(color: accentColor.opacity(isEnabled ? glowOpacity : 0.2), radius: 3, x: 0, y: 0)
+
+            Button(action: {
+                showCoreOptionsSheet = true
+            }) {
+                HStack {
+                    Image(systemName: "slider.horizontal.3")
+                        .foregroundColor(isEnabled ? accentColor : .secondary)
+                    Text({
+                        if info == nil {
+                            return isMatched ? "No configurable core" : "ROM not matched"
+                        } else if !hasMD5 {
+                            return "No ROM hash"
+                        } else {
+                            return "Per-Game Settings"
+                        }
+                    }())
+                        .font(.system(size: 14))
+                        .foregroundColor(isEnabled ? primaryTextColor : .secondary)
+                    Spacer()
+                    if overrideCount > 0 {
+                        Text("\(overrideCount) override\(overrideCount == 1 ? "" : "s")")
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(accentColor.opacity(0.2))
+                            .foregroundColor(accentColor)
+                            .clipShape(Capsule())
+                    }
+                    if isEnabled {
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(accentColor.opacity(0.6))
+                            .font(.caption)
+                    }
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(cellBackgroundColor)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    isEnabled ? accentGradient() : LinearGradient(colors: [.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
+                                    lineWidth: 1
+                                )
+                        )
+                )
+            }
+            .disabled(!isEnabled)
+            #if os(tvOS)
+            .buttonStyle(.plain)
+            #endif
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(sectionBackgroundColor)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            isEnabled ? accentGradient([accentColor, accentColor.opacity(0.7), accentColor.opacity(0.5)]) :
+                                LinearGradient(colors: [.secondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
+                            lineWidth: 1.5
+                        )
+                        .blur(radius: 1)
+                )
+        )
     }
 
     /// JIT preference section — only shown for JIT-capable systems.

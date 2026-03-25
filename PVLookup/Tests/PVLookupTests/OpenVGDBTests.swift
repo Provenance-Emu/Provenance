@@ -97,6 +97,39 @@ struct OpenVGDBTests {
         #expect(psxVersion?.serial == nhlPSX.serial)
     }
 
+    // MARK: - Serial Search Tests
+
+    @Test("Search by serial returns correct game")
+    func searchBySerial() async throws {
+        let result = try await db.searchROM(bySerial: nhlPSX.serial, systemID: nil)
+
+        #expect(result != nil)
+        #expect(result?.serial == nhlPSX.serial)
+        #expect(result?.systemID == nhlPSX.systemID)
+    }
+
+    @Test("Search by serial with matching systemID returns game")
+    func searchBySerialWithMatchingSystem() async throws {
+        let result = try await db.searchROM(bySerial: nhlPSX.serial, systemID: nhlPSX.systemID)
+
+        #expect(result != nil)
+        #expect(result?.serial == nhlPSX.serial)
+    }
+
+    @Test("Search by serial with wrong systemID returns nil")
+    func searchBySerialWithWrongSystem() async throws {
+        let result = try await db.searchROM(bySerial: nhlPSX.serial, systemID: .Saturn)
+
+        #expect(result == nil)
+    }
+
+    @Test("Search by non-existent serial returns nil")
+    func searchByNonExistentSerial() async throws {
+        let result = try await db.searchROM(bySerial: "XXXXXX-INVALID", systemID: nil)
+
+        #expect(result == nil)
+    }
+
     @Test
     func searchByFilenameWithSystem() async throws {
         let results = try await db.searchDatabase(

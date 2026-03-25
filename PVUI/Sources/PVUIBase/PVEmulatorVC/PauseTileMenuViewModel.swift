@@ -135,6 +135,18 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
+        // AirPlay — iOS / Catalyst only; lets users stream audio+video without leaving the game
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        gameTiles.append(PauseMenuTile(
+            id: "airPlay",
+            icon: "airplayvideo",
+            label: String(localized: "AirPlay"),
+            description: String(localized: "Stream audio and video to AirPlay devices"),
+            colorKey: .cyan,
+            dismissOnTap: false
+        ))
+        #endif
+
         gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if featureFlags.netplayEnabled && Self.coreSupportsNetplay(emulatorVC) {
@@ -190,20 +202,27 @@ final class PauseTileMenuViewModel: ObservableObject {
         // ── CORE section (dynamic, per-core) ────────────────────────────
         var coreTiles: [PauseMenuTile] = []
 
+        // Show Transfer Pak tile only for known compatible titles.
+        // Showing it for all N64 games is misleading — most games don't use the Transfer Pak.
+        let gameTitle = emulatorVC.game?.title ?? ""
         if let transferCore = emulatorVC.core as? TransferPakSupport,
            featureFlags.mupenTransferPak,
            transferCore.transferPakSlotCount > 0 {
-            let configuredCount = (0..<transferCore.transferPakSlotCount).filter {
-                transferCore.transferPakROM(forPort: $0) != nil
-            }.count
-            coreTiles.append(PauseMenuTile(
-                id: "transferPak",
-                icon: "memorychip",
-                label: String(localized: "Transfer Pak"),
-                badge: configuredCount > 0 ? "\(configuredCount)" : nil,
-                colorKey: .green,
-                dismissOnTap: false
-            ))
+            // Count configured slots in one pass; reuse for both the visibility guard and
+            // the badge label to avoid calling transferPakROM(forPort:) more than once per slot.
+            let configuredCount = (0..<transferCore.transferPakSlotCount).reduce(0) { count, port in
+                count + (transferCore.transferPakROM(forPort: port) != nil ? 1 : 0)
+            }
+            if TransferPakCompatibleGames.isKnownTransferPakGame(gameTitle) || configuredCount > 0 {
+                coreTiles.append(PauseMenuTile(
+                    id: "transferPak",
+                    icon: "memorychip",
+                    label: String(localized: "Transfer Pak"),
+                    badge: configuredCount > 0 ? "\(configuredCount)" : nil,
+                    colorKey: .green,
+                    dismissOnTap: false
+                ))
+            }
         }
 
         let n64ID = SystemIdentifier.N64.rawValue

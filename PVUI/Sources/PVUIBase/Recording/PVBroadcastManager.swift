@@ -6,6 +6,9 @@
 //
 
 #if os(iOS) || os(tvOS)
+#if os(tvOS)
+import GameController
+#endif
 import ReplayKit
 import UIKit
 import PVLogging
@@ -30,8 +33,18 @@ import PVLogging
     public private(set) var isBroadcasting: Bool = false
 
     /// Whether the broadcast API is available on this device/OS version.
+    ///
+    /// On tvOS, broadcasting requires a physical game controller to be connected
+    /// (Apple policy). This property checks both `RPScreenRecorder.shared().isAvailable`
+    /// and controller presence on tvOS.
     public var isAvailable: Bool {
-        RPScreenRecorder.shared().isAvailable
+        #if os(tvOS)
+        // Require at least one physical (non-remote) controller: the Siri Remote is also
+        // a GCController, so `.isEmpty` alone doesn't enforce the Apple policy requirement.
+        return RPScreenRecorder.shared().isAvailable && GCController.controllers().contains { !$0.isRemote }
+        #else
+        return RPScreenRecorder.shared().isAvailable
+        #endif
     }
 
     /// Optional callback invoked on the main actor when the broadcast activity

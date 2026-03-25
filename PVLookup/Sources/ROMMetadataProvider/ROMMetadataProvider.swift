@@ -22,30 +22,43 @@ public protocol ROMMetadataProvider {
     ///   - systemID: Optional system ID to filter results
     /// - Returns: Array of ROM metadata matching the MD5, or nil if none found
     func searchByMD5(_ md5: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]?
+
+    /// Search by disc serial / product code
+    /// - Parameters:
+    ///   - serial: The serial / product code extracted from the disc image (e.g. "SLUS-00214")
+    ///   - systemID: Optional system ID to narrow the search
+    /// - Returns: First matching ROM metadata, or nil if not found
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata?
 }
 
 // Helper methods for database providers
 public extension ROMMetadataProvider {
-    /// Sanitizes a string for safe use in SQL LIKE queries
+    /// Sanitizes a string for safe use in SQL LIKE queries.
+    ///
+    /// This escapes `\`, `%`, and `_` using a backslash escape character.
+    /// **Callers MUST include `ESCAPE '\\'` in their LIKE clause** for the
+    /// backslash-escaped wildcards to be treated as literals by SQLite.
+    /// For exact-match (`=`) comparisons use `sanitizeForSQLLiteral` instead.
+    ///
     /// - Parameter string: The string to sanitize
-    /// - Returns: A sanitized string safe for SQL LIKE queries
+    /// - Returns: A sanitized string safe for SQL LIKE patterns (requires `ESCAPE '\\'`)
     func sanitizeForSQLLike(_ string: String) -> String {
-        // First escape special LIKE characters
-        let escapedLike = string
+        // Escape backslash FIRST so subsequent escapes aren't double-escaped,
+        // then escape the two SQLite LIKE wildcards, then SQL single-quotes.
+        return string
+            .replacingOccurrences(of: "\\", with: "\\\\")  // Must be first
             .replacingOccurrences(of: "%", with: "\\%")
             .replacingOccurrences(of: "_", with: "\\_")
-            .replacingOccurrences(of: "\\", with: "\\\\")  // Escape backslashes first
-            .replacingOccurrences(of: "'", with: "''")     // SQL quotes
-            .replacingOccurrences(of: "\"", with: "\\\"")  // Double quotes
-            .replacingOccurrences(of: "(", with: "\\(")    // Parentheses
-            .replacingOccurrences(of: ")", with: "\\)")
-            .replacingOccurrences(of: "[", with: "\\[")    // Square brackets
-            .replacingOccurrences(of: "]", with: "\\]")
-            .replacingOccurrences(of: "*", with: "\\*")    // Wildcards
-            .replacingOccurrences(of: "?", with: "\\?")
-            .replacingOccurrences(of: "#", with: "\\#")
+            .replacingOccurrences(of: "'", with: "''")
+    }
 
-        return escapedLike
+    /// Sanitizes a string for safe use in SQL equality (`=`) queries.
+    /// Only escapes single quotes; does NOT escape `_`, `%`, or other LIKE wildcards.
+    /// Use this for exact-match comparisons — use `sanitizeForSQLLike` only for LIKE patterns.
+    /// - Parameter string: The string to sanitize
+    /// - Returns: A sanitized string safe for SQL literal equality comparisons
+    func sanitizeForSQLLiteral(_ string: String) -> String {
+        return string.replacingOccurrences(of: "'", with: "''")
     }
 
     /// Creates a SQL LIKE pattern for fuzzy matching
@@ -59,6 +72,11 @@ public extension ROMMetadataProvider {
 
 // Default implementation for backward compatibility
 public extension ROMMetadataProvider {
+    /// Default no-op implementation — providers that lack serial data return nil.
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
+        return nil
+    }
+
     func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
         // Default implementation just wraps searchROM(byMD5:)
         if let result = try await searchROM(byMD5: md5) {

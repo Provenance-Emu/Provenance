@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVFileSystem
 import PVSupport
 import RealmSwift
 import PVPrimitives
@@ -39,6 +40,55 @@ class GameImporterFileService : GameImporterFileServicing {
             return
         case .game, .cdRom, .zip, .folder:
             _ = try await processQueueItem(queueItem)
+        case .patch:
+            // Move the patch file to the dedicated patches directory and record the destination.
+            // processQueueItem is intentionally NOT called here — it requires .game/.cdRom types
+            // and handles ROM-specific logic (system matching, ROM directory placement).
+            // The Realm PVPatch record is created by GameImporter.importPatchFile, which is
+            // called by performImport immediately after this method returns.
+            let patchesDir = Paths.patchesPath
+            try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true, attributes: nil)
+            let srcURL = queueItem.url
+            let baseName = srcURL.deletingPathExtension().lastPathComponent
+            let ext = srcURL.pathExtension
+            var destURL = patchesDir.appendingPathComponent(srcURL.lastPathComponent)
+            // If a file with the same name already exists, check whether it's the same file
+            // before generating a unique name. Same size + mtime → treat as re-import (idempotent).
+            if FileManager.default.fileExists(atPath: destURL.path) {
+                let srcAttrs = try? FileManager.default.attributesOfItem(atPath: srcURL.path)
+                let dstAttrs = try? FileManager.default.attributesOfItem(atPath: destURL.path)
+                let srcSize = (srcAttrs?[.size] as? NSNumber)?.uint64Value
+                let dstSize = (dstAttrs?[.size] as? NSNumber)?.uint64Value
+                let srcMtime = srcAttrs?[.modificationDate] as? Date
+                let dstMtime = dstAttrs?[.modificationDate] as? Date
+                if let srcSize = srcSize,
+                   let dstSize = dstSize,
+                   let srcMtime = srcMtime,
+                   let dstMtime = dstMtime,
+                   srcSize == dstSize,
+                   srcMtime == dstMtime {
+                    // Same size and modification date → likely the same patch; use existing file (idempotent re-import).
+                    ILOG("Patch file already exists at destination with same size and mtime — using existing: \(destURL.path)")
+                    queueItem.destinationUrl = destURL
+                    // Clean up source from Imports folder to avoid duplicate watching.
+                    let importsURL = Paths.importsPath.standardizedFileURL
+                    let sourceURL = srcURL.standardizedFileURL
+                    let importsComponents = importsURL.pathComponents
+                    let sourceComponents = sourceURL.pathComponents
+                    if sourceComponents.starts(with: importsComponents) {
+                        try? FileManager.default.removeItem(at: srcURL)
+                    }
+                    return
+                } else {
+                    // Different content — generate a unique filename to avoid overwriting.
+                    let suffix = UUID().uuidString.prefix(8)
+                    let uniqueName = ext.isEmpty ? "\(baseName)-\(suffix)" : "\(baseName)-\(suffix).\(ext)"
+                    destURL = patchesDir.appendingPathComponent(uniqueName)
+                }
+            }
+            try FileManager.default.moveItem(at: srcURL, to: destURL)
+            queueItem.destinationUrl = destURL
+            ILOG("Moved patch file to: \(destURL.path)")
         case .unknown:
             throw GameImporterError.unsupportedFile
         }

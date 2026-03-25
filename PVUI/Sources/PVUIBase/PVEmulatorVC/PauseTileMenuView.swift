@@ -47,9 +47,16 @@ struct PauseTileMenuView: View {
     @State private var showingScreenshotBrowser = false
     @State private var showingControllerProfiles = false
     @State private var showingTransferPakConfig = false
+    /// Frozen snapshot of `emulatorVC.game` captured on the main thread before the sheet opens.
+    /// The sheet closure reads this instead of the live Realm object to avoid thread-violation crashes.
+    @State private var frozenTransferPakGame: PVGame?
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
+    /// Triggers the AirPlay route-picker sheet via the hidden AVRoutePickerView bridge.
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    @State private var triggerAirPlayPicker = false
+    #endif
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
@@ -203,7 +210,15 @@ struct PauseTileMenuView: View {
 
         // MARK: Transfer Pak config sheet
         case "transferPak":
-            showingTransferPakConfig = true
+            // Freeze the Realm object on the current (main) thread before opening the sheet,
+            // so the sheet closure never touches a live Realm instance on an unknown thread.
+            // Only present the sheet when the game is available and not invalidated.
+            if let rawGame = emulatorVC.game, !rawGame.isInvalidated {
+                frozenTransferPakGame = rawGame.isFrozen ? rawGame : rawGame.freeze()
+                showingTransferPakConfig = true
+            } else {
+                ELOG("Transfer Pak config requested but emulatorVC.game was nil or invalidated; sheet will not be shown.")
+            }
 
         // MARK: N64 Controller Pak slot picker
         case "n64PakSlots":
@@ -264,6 +279,14 @@ struct PauseTileMenuView: View {
                 recordingCameraPosition = all[(idx + 1) % all.count]
             }
             rebuildSections()
+            #endif
+
+        // MARK: AirPlay
+        case "airPlay":
+            #if os(iOS) || targetEnvironment(macCatalyst)
+            triggerAirPlayPicker = true
+            #else
+            break
             #endif
 
         // MARK: Core action tiles
@@ -600,11 +623,11 @@ struct PauseTileMenuView: View {
                 showingControllerProfiles = false
             }
         }
-        .sheet(isPresented: $showingTransferPakConfig) {
-            if let game = emulatorVC.game, !game.isInvalidated {
+        .sheet(isPresented: $showingTransferPakConfig, onDismiss: { frozenTransferPakGame = nil }) {
+            if let frozenGame = frozenTransferPakGame {
                 let transferCore = emulatorVC.core as? TransferPakSupport
                 TransferPakConfigView(
-                    game: game,
+                    game: frozenGame,
                     slotCount: transferCore?.transferPakSlotCount ?? 4,
                     applyLiveSlotChange: transferCore.map { core in
                         { port, rom in core.setTransferPakROM(rom, forPort: port) }
@@ -668,6 +691,16 @@ struct PauseTileMenuView: View {
                 }
             }
         }
+        // AirPlay trigger — invisible bridge that fires the system route-picker sheet.
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        .overlay(
+            AirPlayPickerTrigger(show: $triggerAirPlayPicker)
+                .frame(width: 1, height: 1)
+                .opacity(0)
+                .allowsHitTesting(false),
+            alignment: .center
+        )
+        #endif
         #if os(iOS)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
