@@ -1214,7 +1214,13 @@ static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) 
     NSString *bundlePath = [[mainBundle bundlePath]
                              stringByAppendingPathComponent:@"Frameworks/MoltenVK.framework/MoltenVK"];
 
-    NSArray<NSString *> *bundlePaths = @[ fwPath, bundlePath ];
+    NSMutableArray<NSString *> *bundlePaths = [NSMutableArray array];
+    if (fwPath) {
+        [bundlePaths addObject:fwPath];
+    }
+    if (bundlePath) {
+        [bundlePaths addObject:bundlePath];
+    }
     for (NSString *p in bundlePaths) {
         if (!p) continue;
         vulkan_library = dylib_load(p.UTF8String);
