@@ -227,9 +227,10 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
 
             // Rename — move the file and update the Realm partial-path.
             if changedFields.contains(.filename) {
-                // Strip path components to prevent traversal via `../` or `/` in the
-                // OS-supplied filename before constructing the destination URL.
-                let newFilename = (item.filename as NSString).lastPathComponent
+                // Sanitize the OS-supplied filename: strip directory components to prevent
+                // path traversal, replace `:` and `/`, and normalize whitespace — matching
+                // the sanitization applied to display filenames in FileProviderItem.
+                let newFilename = sanitizedFilename(from: item.filename)
                 if let existingURL = pvGame.file?.url {
                     let destURL = existingURL.deletingLastPathComponent()
                         .appendingPathComponent(newFilename)
@@ -445,17 +446,42 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(game: game.asDomain(), romURL: destURL)
     }
 
+    /// Sanitizes a raw filename for safe on-disk use.
+    ///
+    /// - Strips directory components (prevents path-traversal via `../` or `/`).
+    /// - Replaces `:` and `/` with `-`.
+    /// - Removes control characters.
+    /// - Collapses consecutive whitespace into single spaces and trims edges.
+    /// - Falls back to `"Untitled"` when the result is empty.
+    ///
+    /// Matches the sanitization applied to display filenames in `FileProviderItem.sanitize(_:)`
+    /// so that the on-disk filename is consistent with what Files.app presents to the user.
+    private func sanitizedFilename(from rawFilename: String) -> String {
+        // Strip directory components first to prevent path traversal.
+        var name = (rawFilename as NSString).lastPathComponent
+        // Replace characters that are unsafe or unusual in on-disk filenames.
+        name = name
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+        // Remove control characters throughout.
+        let filteredScalars = name.unicodeScalars.filter { !CharacterSet.controlCharacters.contains($0) }
+        name = String(String.UnicodeScalarView(filteredScalars))
+        // Collapse consecutive whitespace into a single space and trim edges.
+        let components = name.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        name = components.joined(separator: " ")
+        return name.isEmpty ? "Untitled" : name
+    }
+
     /// Returns a URL in `directory` for `filename` that does not yet exist on disk.
     ///
     /// If `<directory>/<filename>` is free it is returned as-is.  Otherwise a numeric
     /// suffix is appended before the extension until a free slot is found, e.g.
     /// `game.sfc` → `game-2.sfc` → `game-3.sfc` …
     ///
-    /// The filename is stripped to its last path component before use to prevent
-    /// path-traversal attacks (e.g. a crafted name containing `../`).
+    /// The filename is sanitized before use to prevent path-traversal attacks and to
+    /// keep the on-disk name consistent with the display name used by `FileProviderItem`.
     private func uniqueDestinationURL(in directory: URL, for filename: String) -> URL {
-        // Strip any directory components to prevent path traversal via `..` or `/`.
-        let safeFilename = (filename as NSString).lastPathComponent
+        let safeFilename = sanitizedFilename(from: filename)
         let candidate = directory.appendingPathComponent(safeFilename)
         guard FileManager.default.fileExists(atPath: candidate.path) else {
             return candidate
