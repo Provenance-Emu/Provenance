@@ -1397,3 +1397,75 @@ struct ExternalDisplayModeTests {
     }
 }
 
+// MARK: - ControllerLayoutSettings Tests
+
+@Suite("ControllerLayoutSettings")
+struct ControllerLayoutSettingsTests {
+
+    @Test("Default is empty dictionary")
+    func defaultIsEmpty() {
+        Defaults.reset(.controllerLayoutVariantsBySystem)
+        defer { Defaults.reset(.controllerLayoutVariantsBySystem) }
+        #expect(Defaults[.controllerLayoutVariantsBySystem].isEmpty)
+    }
+
+    @Test("Reading absent system returns nil")
+    func readAbsentSystemReturnsNil() {
+        Defaults.reset(.controllerLayoutVariantsBySystem)
+        defer { Defaults.reset(.controllerLayoutVariantsBySystem) }
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "com.provenance.genesis") == nil)
+    }
+
+    @Test("Storing and reading a variant ID round-trips correctly")
+    func storeAndReadVariant() {
+        Defaults.reset(.controllerLayoutVariantsBySystem)
+        defer { Defaults.reset(.controllerLayoutVariantsBySystem) }
+        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: "com.provenance.genesis")
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "com.provenance.genesis") == "genesis-6btn")
+    }
+
+    @Test("Clearing with nil removes the key from storage")
+    func clearingWithNilRemovesKey() {
+        Defaults.reset(.controllerLayoutVariantsBySystem)
+        defer { Defaults.reset(.controllerLayoutVariantsBySystem) }
+        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: "com.provenance.genesis")
+        Defaults.setControllerLayoutVariant(nil, forSystemID: "com.provenance.genesis")
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "com.provenance.genesis") == nil)
+        #expect(!Defaults[.controllerLayoutVariantsBySystem].keys.contains("com.provenance.genesis"))
+    }
+
+    @Test("Multiple systems are stored independently")
+    func multipleSystemsIndependent() {
+        Defaults.reset(.controllerLayoutVariantsBySystem)
+        defer { Defaults.reset(.controllerLayoutVariantsBySystem) }
+        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: "com.provenance.genesis")
+        Defaults.setControllerLayoutVariant("wii-classic", forSystemID: "com.provenance.wii")
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "com.provenance.genesis") == "genesis-6btn")
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "com.provenance.wii") == "wii-classic")
+    }
+
+    @Test("Clearing one system does not affect another")
+    func clearingOneSystemDoesNotAffectOther() {
+        Defaults.reset(.controllerLayoutVariantsBySystem)
+        defer { Defaults.reset(.controllerLayoutVariantsBySystem) }
+        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: "com.provenance.genesis")
+        Defaults.setControllerLayoutVariant("wii-classic", forSystemID: "com.provenance.wii")
+        Defaults.setControllerLayoutVariant(nil, forSystemID: "com.provenance.genesis")
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "com.provenance.genesis") == nil)
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "com.provenance.wii") == "wii-classic")
+    }
+
+    @Test("Empty systemID is ignored on read")
+    func emptySystemIDReadReturnsNil() {
+        #expect(Defaults.controllerLayoutVariant(forSystemID: "") == nil)
+    }
+
+    @Test("Empty systemID is ignored on write")
+    func emptySystemIDWriteIsIgnored() {
+        Defaults.reset(.controllerLayoutVariantsBySystem)
+        defer { Defaults.reset(.controllerLayoutVariantsBySystem) }
+        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: "")
+        #expect(Defaults[.controllerLayoutVariantsBySystem].isEmpty)
+    }
+}
+

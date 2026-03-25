@@ -424,7 +424,6 @@ struct SystemSection: View {
                 }
 
                 ControllerLayoutVariantPicker(
-                    systemIdentifier: system.identifier,
                     variants: variants,
                     selectedVariantID: normalizedVariantID
                 ) { newVariantID in

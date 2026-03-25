@@ -8,12 +8,10 @@
 
 import SwiftUI
 import PVCoreBridge
-import PVSettings
 
 /// An inline settings row that lets the user pick a controller layout variant
 /// for a specific console (e.g. Genesis 3-Button vs 6-Button Pad).
 struct ControllerLayoutVariantPicker: View {
-    let systemIdentifier: String
     let variants: [ControllerLayoutVariant]
     let selectedVariantID: String
     let onSelect: (String) -> Void
