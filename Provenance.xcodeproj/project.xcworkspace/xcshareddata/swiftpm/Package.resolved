@@ -653,15 +653,6 @@
       }
     },
     {
-      "identity" : "turbo-base64.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Turbo-Base64.swift.git",
-      "state" : {
-        "revision" : "c955cae318ed42be87f62a159884cf6734afcb15",
-        "version" : "1.0.1"
-      }
-    },
-    {
       "identity" : "unrar.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mtgto/Unrar.swift.git",
