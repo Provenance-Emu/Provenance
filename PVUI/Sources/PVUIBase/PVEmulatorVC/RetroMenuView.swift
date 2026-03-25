@@ -357,6 +357,9 @@ struct RetroMenuView: View {
                     recordingCameraPosition = position
                 }
             }
+            Button(String(localized: "Cancel"), role: .cancel) {
+                showingCameraPositionPicker = false
+            }
         } message: {
             Text(String(localized: "Choose where the camera preview appears during recording."))
         }
