@@ -309,6 +309,14 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - **Thread safety**: Stella bridge uses `@synchronized(self)` for `_pendingMouseDX/Y` and `_mouseButtonLeft` — both written from the main thread (companion events) and read from the emulation thread (`input_state_callback`).
 - New trackball game additions: add MD5 hashes and title patterns to `TrackballGameRegistry.knownTrackballGameMD5s` / `knownTrackballGameTitlePatterns`. Never inline trackball checks in core code.
 
+### Light Gun Crosshair Overlay Pattern (added in #3365)
+- `LightGunCrosshairView` in `PVUI/Sources/PVUIBase/SwiftUI/DeltaSkins/Views/Components/LightGunCrosshairView.swift` — transparent SwiftUI overlay rendering a configurable crosshair (dot/crosshair/reticle/off) at the light-gun cursor position.
+- Overlay is driven by `Notification.Name.lightGunCursorDidMove` posted from `GCMouseLightGunDriver._deliverPosition()`. `userInfo` keys: `LightGunCursorNotification.positionXKey` / `positionYKey` (NSNumber, normalised [0,1]) and `LightGunCursorNotification.isOffscreenKey` (Bool).
+- `LightGunCursorNotification.swift` in `PVCoreBridge/Features/` — defines the notification name and userInfo key constants. Import `PVCoreBridge` to use them.
+- `LightGunCrosshairStyle` enum in `PVSettings/Settings/Model/LightGunCrosshairStyle.swift` — persisted via `Defaults.Keys.lightGunCrosshairStyle` (default `.crosshair`).
+- `EmulatorWithSkinView` gates the overlay on `coreSupportsLightGun` — a `@State` Bool set on `.onAppear` by casting `coreInstance` to `LightGunResponder`. The overlay has `.allowsHitTesting(false)` so it never intercepts touch input.
+- **Do not** remove the `.allowsHitTesting(false)` modifier — without it the overlay will block all touch input to the game screen.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:
