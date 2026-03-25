@@ -68,8 +68,7 @@ let package = Package(
     platforms: [
         .iOS(.v17),
         .tvOS(.v17),
-        .watchOS(.v9),
-        .macOS(.v11),
+        .macOS(.v13),
         .macCatalyst(.v17),
         .visionOS(.v1)
     ],
@@ -96,6 +95,7 @@ let package = Package(
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
+        .package(path: "../../PVNetplay"),
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
     ],
@@ -119,6 +119,8 @@ let package = Package(
 //                "PVMupen64PlusVideoGlideN64",
 //                "PVMupen64PlusVideoRice",
                 "PVRSPCXD4",
+                .product(name: "PVNetplay", package: "PVNetplay",
+                         condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
             ],
             resources: [
                 .process("Resources/Core.plist")
