@@ -87,6 +87,26 @@ final class PauseTileMenuViewModel: ObservableObject {
                 colorKey: isRec ? .pink : .orange,
                 dismissOnTap: true
             ))
+            // Camera position — only when camera overlay is enabled
+            if Defaults[.recordingCameraEnabled] {
+                let pos = Defaults[.recordingCameraPosition]
+                let lpOptions = CameraPosition.allCases.map { camPos in
+                    PauseMenuTileLongPressOption(
+                        id: "camPos_\(camPos.rawValue)",
+                        title: camPos.displayName,
+                        isSelected: camPos == pos
+                    )
+                }
+                gameTiles.append(PauseMenuTile(
+                    id: "cameraPosition",
+                    icon: pos.symbolName,
+                    label: String(localized: "Cam Corner"),
+                    badge: pos.displayName,
+                    colorKey: .blue,
+                    dismissOnTap: false,
+                    longPressOptions: lpOptions
+                ))
+            }
         }
         #endif
 
