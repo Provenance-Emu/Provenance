@@ -71,12 +71,12 @@ class GameImporterFileService : GameImporterFileServicing {
                     ILOG("Patch file already exists at destination with same size and mtime — using existing: \(destURL.path)")
                     queueItem.destinationUrl = destURL
                     // Clean up source from Imports folder to avoid duplicate watching.
-                    let importsURL = Paths.importsPath.standardizedFileURL
+                    let importsURL = Paths.romsImportPath.standardizedFileURL
                     let sourceURL = srcURL.standardizedFileURL
                     let importsComponents = importsURL.pathComponents
                     let sourceComponents = sourceURL.pathComponents
                     if sourceComponents.starts(with: importsComponents) {
-                        try? FileManager.default.removeItem(at: srcURL)
+                        try? await FileManager.default.removeItem(at: srcURL)
                     }
                     return
                 } else {
