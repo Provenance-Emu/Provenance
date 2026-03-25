@@ -8,11 +8,11 @@
 
 @import Foundation;
 @import PVCoreObjCBridge;
-@import PVCoreBridge;
 
 @protocol ObjCBridgedCoreBridge;
 @protocol PVGenesisSystemResponderClient;
 @protocol PVSG1000SystemResponderClient;
+@protocol LightGunResponder;
 typedef enum PVGenesisButton: NSInteger PVGenesisButton;
 typedef enum PVSG1000Button: NSInteger PVSG1000Button;
 
