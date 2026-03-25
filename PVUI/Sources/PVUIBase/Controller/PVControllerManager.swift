@@ -153,6 +153,11 @@ public final class PVControllerManager: NSObject, ObservableObject {
     @MainActor
     public static let shared: PVControllerManager = PVControllerManager()
 
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    /// Observes physical case connect notifications and auto-loads a compatible skin.
+    private let caseSkinCoordinator = CaseControllerSkinCoordinator()
+    #endif
+
 #if canImport(UIKit) && canImport(GameController)
     @MainActor
     package func listenForICadeControllers(window: UIWindow?, preferredPlayer: Int = -1, completion: iCadeListenCompletion? = nil) {
@@ -227,11 +232,15 @@ public final class PVControllerManager: NSObject, ObservableObject {
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()
 //        setupICade()
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        caseSkinCoordinator.start()
+        #endif
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
         UserDefaults.standard.removeObserver(self, forKeyPath: "kICadeControllerSettingKey")
+        // caseSkinCoordinator.stop() is called automatically in its own deinit.
     }
 
     func isAssigned(_ controller: GCController) -> Bool {
@@ -324,15 +333,10 @@ public final class PVControllerManager: NSObject, ObservableObject {
         // Smart cases (GameSir Pocket Taco, Soolra) show up as GCControllers;
         // passive cases (Buppin) are detected via skin IDs — see CaseControllerDetector.
         // Physical iPhone cases only make sense on iOS / Mac Catalyst.
+        // Toast and skin auto-loading are handled by CaseControllerSkinCoordinator which
+        // observes PVPhysicalCaseDidConnect and decides whether to load a skin.
         #if os(iOS) || targetEnvironment(macCatalyst)
-        if let caseLayout = CaseControllerDetector.notifyIfCase(controller) {
-            PVToastManager.post(
-                "\(caseLayout.name) detected",
-                type: .success,
-                duration: 3.5,
-                icon: "iphone.gen3.badged.gamecontroller"
-            )
-        }
+        CaseControllerDetector.notifyIfCase(controller)
         #endif
 
         controller.setupPauseHandler(onPause: {
