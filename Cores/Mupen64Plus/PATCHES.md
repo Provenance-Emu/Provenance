@@ -105,13 +105,15 @@ From the Provenance-Emu/mupen64plus-core `provenance` branch (7 commits ahead of
 
 From the Provenance-Emu/GLideN64 `provenance` and `provenance_2025` branches:
 
-### 1. iOS NPOT texture wrap mode — APPLIED (2025-03)
+### 1. iOS/Emscripten NPOT texture wrap mode — APPLIED (2025-03)
 - **File**: `src/Graphics/OpenGLContext/opengl_TextureManipulationObjectFactory.cpp`
-- **Change**: Wraps `glTexParameteri(GL_TEXTURE_WRAP_S/T)` in `#if !defined(OS_IOS)` guard;
-  forces `GL_CLAMP_TO_EDGE` on iOS/tvOS
-- **Why**: OpenGL ES on iOS only supports `GL_CLAMP_TO_EDGE` for non-power-of-two (NPOT)
-  textures. Using `GL_REPEAT` or `GL_MIRRORED_REPEAT` on NPOT textures is undefined and
-  causes rendering artifacts (black textures, GL errors).
+- **Change**: Wraps `glTexParameteri(GL_TEXTURE_WRAP_S/T)` in `#if !defined(OS_IOS) && !defined(EMSCRIPTEN)` guard;
+  forces `GL_CLAMP_TO_EDGE` on iOS/tvOS and Emscripten/WebGL builds, while leaving the
+  original wrap mode (`GL_REPEAT`/`GL_MIRRORED_REPEAT`) on other platforms.
+- **Why**: OpenGL ES on iOS and WebGL via Emscripten only support `GL_CLAMP_TO_EDGE` for
+  non-power-of-two (NPOT) textures. Using `GL_REPEAT` or `GL_MIRRORED_REPEAT` on NPOT
+  textures is undefined and causes rendering artifacts (black textures, GL errors), so the
+  implementation forces `GL_CLAMP_TO_EDGE` on those platforms.
 - **Source**: `Provenance-Emu/GLideN64@provenance_2025` commit `d0c7c06476`
 
 ### 2. `int` return type for `InitiateGFX` — ALREADY APPLIED
