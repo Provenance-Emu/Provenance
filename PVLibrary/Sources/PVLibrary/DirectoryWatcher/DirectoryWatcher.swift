@@ -739,28 +739,32 @@ public final class DirectoryWatcher: ObservableObject {
     private func processFile(at url: URL) {
         ILOG("Processing file: \(url.path)")
 
-        // Safety check: ensure this is actually a file, not a directory
         var isDirectory: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
-              !isDirectory.boolValue else {
-            WLOG("Skipping directory or non-existent file: \(url.lastPathComponent)")
-            // Stop watching if file doesn't exist or is a directory
-            Task {
-                await watcherManager.removeWatcher(for: url)
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) else {
+            WLOG("Item no longer exists, skipping: \(url.lastPathComponent)")
+            Task { await watcherManager.removeWatcher(for: url) }
+            return
+        }
+
+        let isInImportsFolder = url.path.contains("/Imports/")
+
+        if isDirectory.boolValue {
+            // Directories are only forwarded when they're in the Imports folder —
+            // other directories (e.g. system sub-directories) are not ROM sets.
+            guard isInImportsFolder else {
+                Task { await watcherManager.removeWatcher(for: url) }
+                return
             }
+            ILOG("Processing directory in Imports folder as potential MAME ROM set: \(url.lastPathComponent)")
+            processNonArchive(at: url)
             return
         }
 
         // Check if file is still in Imports folder (it may have been moved during import)
-        let isInImportsFolder = url.path.contains("/Imports/")
         if isInImportsFolder {
-            // Verify file still exists in Imports folder before processing
-            // This prevents processing files that have already been moved by GameImporter
             guard FileManager.default.fileExists(atPath: url.path) else {
                 ILOG("File \(url.lastPathComponent) no longer exists in Imports folder (likely moved during import), skipping processing")
-                Task {
-                    await watcherManager.removeWatcher(for: url)
-                }
+                Task { await watcherManager.removeWatcher(for: url) }
                 return
             }
         }
@@ -816,27 +820,29 @@ fileprivate extension DirectoryWatcher {
                 let contents = try FileManager.default.contentsOfDirectory(at: self.watchedDirectory, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles])
                 ILOG("Found \(contents.count) items in directory: \(self.watchedDirectory)")
 
-                // Filter to only actual files (not directories)
-                var filesOnly: [URL] = []
-                for item in contents {
-                    var isDirectory: ObjCBool = false
-                    if FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory),
-                       !isDirectory.boolValue {
-                        filesOnly.append(item)
-                    }
-                }
+                let isImportsFolder = self.watchedDirectory.path.contains("/Imports/")
 
-                // Process all files (archives and non-archives) - pass to GameImporter
-                // GameImporter will handle BIOS detection and archive extraction
-                for file in filesOnly where isValidFile(file) {
-                    let isArchive = Extensions.archiveExtensions.contains(file.pathExtension.lowercased())
-                    if isArchive {
-                        ILOG("Processing existing archive: \(file.lastPathComponent) - passing to GameImporter for BIOS detection and extraction")
+                for item in contents where self.isValidFile(item) {
+                    var isDirectory: ObjCBool = false
+                    FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory)
+
+                    if isDirectory.boolValue {
+                        // Directories are only processed when in the Imports folder (potential MAME ROM sets).
+                        // GameImporter will determine if it's a recognised ROM set or ignore it.
+                        if isImportsFolder {
+                            ILOG("Found directory in Imports folder: \(item.lastPathComponent) — queuing for MAME ROM set detection")
+                            await GameImporter.shared.addImports(forPaths: [item])
+                        }
                     } else {
-                        ILOG("Processing existing non-archive file: \(file.lastPathComponent)")
+                        let isArchive = Extensions.archiveExtensions.contains(item.pathExtension.lowercased())
+                        if isArchive {
+                            ILOG("Processing existing archive: \(item.lastPathComponent) - passing to GameImporter for BIOS detection and extraction")
+                        } else {
+                            ILOG("Processing existing non-archive file: \(item.lastPathComponent)")
+                        }
+                        // Add to import queue - GameImporter will handle BIOS detection and extraction
+                        await GameImporter.shared.addImports(forPaths: [item])
                     }
-                    // Add to import queue - GameImporter will handle BIOS detection and extraction
-                    await GameImporter.shared.addImports(forPaths: [file])
                 }
 
                 ILOG("Finished processing existing files")
@@ -871,11 +877,17 @@ fileprivate extension DirectoryWatcher {
 
             let isImportsFolder = watchedDirectory.path.contains("/Imports/")
 
-            // Filter to only actual files (not directories)
+            // Filter to files, plus directories inside the Imports folder (potential MAME ROM sets).
             var filesOnly = contents.filter { item in
                 guard isValidFile(item) else { return false }
                 var isDirectory: ObjCBool = false
-                return FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory) && !isDirectory.boolValue
+                FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory)
+                if isDirectory.boolValue {
+                    // Only accept directories from the Imports folder so we don't accidentally
+                    // pick up system sub-directories (e.g. ROMs/com.provenance.mame/).
+                    return isImportsFolder
+                }
+                return true
             }
 
             // Merge any buffered events collected during pause
@@ -894,6 +906,16 @@ fileprivate extension DirectoryWatcher {
             for file in filesOnly {
                 if await !isWatchingFile(at: file) {
                     ILOG("Starting to watch new file: \(file.lastPathComponent)")
+
+                    // Directories (potential MAME ROM set folders) don't go through the file-stability
+                    // checker — they're processed immediately via GameImporter.
+                    var fileIsDirectory: ObjCBool = false
+                    FileManager.default.fileExists(atPath: file.path, isDirectory: &fileIsDirectory)
+                    if fileIsDirectory.boolValue {
+                        ILOG("Directory '\(file.lastPathComponent)' in Imports folder — processing immediately as potential ROM set")
+                        Task { await GameImporter.shared.addImports(forPaths: [file]) }
+                        continue
+                    }
 
                     // For files in Imports folder, check immediately if they're already stable
                     // This handles cases where files are copied via file browser and are already complete

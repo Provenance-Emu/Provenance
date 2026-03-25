@@ -916,6 +916,16 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         // Resolve and verify the ROM file path early to avoid duplicate error logs from header detectors
         guard let romPath = game.file?.url else { return nil }
         let fm = FileManager.default
+
+        // For directory ROM sets (e.g., MAME unpacked folders), generate a stable identifier
+        // from the folder name.  Directories cannot be hashed as files; using a name-based MD5
+        // ensures consistent deduplication without reading ROM data.
+        var isDirectory: ObjCBool = false
+        if fm.fileExists(atPath: romPath.path, isDirectory: &isDirectory), isDirectory.boolValue {
+            let folderKey = "\(game.systemIdentifier)/\(romPath.lastPathComponent)".lowercased()
+            return folderKey.MD5.uppercased()
+        }
+
         guard fm.fileExists(atPath: romPath.path) else {
             ELOG("Cannot find file at path: \(romPath)")
             return nil

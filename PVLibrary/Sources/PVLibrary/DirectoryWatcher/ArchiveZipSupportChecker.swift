@@ -125,6 +125,51 @@ public actor ArchiveZipSupportChecker {
         return (false, nil)
     }
 
+    /// Checks if a folder should be treated as a MAME ROM set.
+    ///
+    /// MAME ROM sets are sometimes distributed as unpacked folders rather than ZIP archives.
+    /// A folder named `mk` is equivalent to `mk.zip` for MAME — both contain the same ROM files.
+    ///
+    /// Detection strategy: look up `<folderName>.zip` in the libretro database for the MAME system.
+    /// If found, the folder is a recognised MAME ROM set.
+    ///
+    /// - Parameter folderURL: URL of the directory to check.
+    /// - Returns: `.MAME` (or another arcade system identifier) if the folder matches a known ROM set, `nil` otherwise.
+    public func shouldTreatFolderAsMameRom(_ folderURL: URL) async -> SystemIdentifier? {
+        guard ENABLE_ZIP_AS_ROM_SUPPORT else { return nil }
+
+        let folderName = folderURL.lastPathComponent.lowercased()
+        guard !folderName.isEmpty else { return nil }
+
+        // Search the libretro database using "<folderName>.zip" — that is how MAME ROMs are stored.
+        let searchName = "\(folderName).zip"
+        do {
+            if let results = try await lookup.searchDatabase(usingFilename: searchName, systemID: .MAME),
+               !results.isEmpty {
+                ILOG("Folder '\(folderName)' matches MAME ROM set via libretro DB (searched as '\(searchName)')")
+                return .MAME
+            }
+        } catch {
+            WLOG("Failed to query libretro DB for MAME folder '\(folderName)': \(error.localizedDescription)")
+        }
+
+        // Also check other arcade systems that use ZIP-named ROM sets (CPS1/2/3).
+        let arcadeSystems: [SystemIdentifier] = [.CPS1, .CPS2, .CPS3]
+        for systemID in arcadeSystems {
+            do {
+                if let results = try await lookup.searchDatabase(usingFilename: searchName, systemID: systemID),
+                   !results.isEmpty {
+                    ILOG("Folder '\(folderName)' matches \(systemID.rawValue) ROM set via libretro DB")
+                    return systemID
+                }
+            } catch {
+                WLOG("Failed to query libretro DB for folder '\(folderName)' against \(systemID.rawValue): \(error.localizedDescription)")
+            }
+        }
+
+        return nil
+    }
+
     /// Returns priority for system matching (lower number = higher priority)
     /// MAME gets highest priority since it's the general arcade emulator
     private func systemPriority(for systemID: SystemIdentifier) -> Int {
