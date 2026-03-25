@@ -24,6 +24,11 @@ open class PVPlayCore: PVEmulatorCore, @unchecked Sendable {
     /// garbage output without a JIT entitlement.
     open override var jitRequirement: PVJITRequirement { .requiredOrCrash }
 
+    /// Play! uses a custom CAMetalLayer/CAEAGLLayer GS renderer that is
+    /// incompatible with the standard `PVMetalViewController` external-display
+    /// path.  Override to `false` so dedicated mode is never activated for PS2.
+    open override var supportsExternalDisplay: Bool { false }
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)

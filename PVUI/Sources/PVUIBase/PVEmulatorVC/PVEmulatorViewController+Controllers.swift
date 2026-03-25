@@ -158,6 +158,11 @@ extension PVEmulatorViewController {
         // Complete the containment cycle; this triggers viewDidMove and appearance callbacks.
         gpuViewController.didMove(toParent: self)
         gpuViewController.view?.setNeedsLayout()
+
+        // Explicitly clear the secondary window before releasing it so that
+        // the external display does not show a blank window until deallocation.
+        secondaryWindow?.rootViewController = nil
+        secondaryWindow?.isHidden = true
         secondaryWindow = nil
         secondaryScreen = nil
     }
