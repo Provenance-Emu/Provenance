@@ -115,7 +115,8 @@ public:
 	// is stable for the lifetime of the loaded ROM; the pointer for area 1
 	// may change when the active WRAM bank changes.
 	unsigned char * wramdata(unsigned area) const { return cart_.wramdata(area); }
-	// VRAM base pointer (vramdata()[0x8000] = first byte of VRAM region).
+	// VRAM base pointer: index 0 corresponds to bus address 0x8000.
+	// To access VRAM bus address 'addr' in [0x8000, 0x9FFF], use vramdata()[addr - 0x8000].
 	unsigned char * vramdata() const { return cart_.vramdata(); }
 
 private:

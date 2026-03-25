@@ -73,3 +73,25 @@ struct GBPaletteTests {
         #expect(abs(red.blue) < 0.01)
     }
 }
+
+// MARK: - CoreRetroAchievements behaviour tests (no ROM loaded, no HAVE_RCHEEVOS)
+
+struct RetroAchievementsTests {
+
+    /// prepareAchievements must complete (not hang) when HAVE_RCHEEVOS is disabled
+    /// or when no rc_client has been initialised (pre-ROM-load state).
+    @Test func prepareAchievementsCompletesWithoutRcheevos() async {
+        let core = PVGBEmulatorCore()
+        // Should return immediately — no rc_client, completion fires synchronously.
+        await core.prepareAchievements(gameHash: "0000000000000000")
+        // If we reach here the call didn't hang.
+    }
+
+    /// achievementMemoryRegions must return an empty array when no ROM is loaded
+    /// (wramBasePtr is nil because Gambatte has not loaded a ROM yet).
+    @Test func achievementMemoryRegionsEmptyBeforeROMLoad() {
+        let core = PVGBEmulatorCore()
+        let regions = core.achievementMemoryRegions()
+        #expect(regions.isEmpty, "Expected no memory regions before a ROM is loaded")
+    }
+}

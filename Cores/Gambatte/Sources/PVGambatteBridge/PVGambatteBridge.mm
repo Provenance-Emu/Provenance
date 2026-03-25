@@ -185,7 +185,9 @@ static void pvgb_event_handler(const rc_client_event_t *event, rc_client_t *clie
 #if HAVE_RCHEEVOS
     rc_client_t *_rcClient;
 #endif
-    BOOL _achievementsActive;
+    // Written from pvgb_load_callback (arbitrary queue) and read from tickAchievements
+    // (emulation thread); use an atomic to avoid a data race.
+    _Atomic(BOOL) _achievementsActive;
 }
 
 static __weak PVGBEmulatorCoreBridge *_current;
@@ -701,6 +703,8 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
     // Transfer ownership back.
     PVGBEmulatorCoreBridge *core = (__bridge_transfer PVGBEmulatorCoreBridge *)ctx->bridge;
     void (^completion)(BOOL) = ctx->completion;
+    // Nil out the block member before free() so ARC releases the retained block copy.
+    ctx->completion = nil;
     free(ctx);
 
     BOOL success = (result == RC_OK);
