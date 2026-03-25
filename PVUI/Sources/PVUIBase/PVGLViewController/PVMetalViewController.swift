@@ -1851,7 +1851,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        emulatorCore.frontBufferLock.withLock {
+        let copySucceeded = emulatorCore.frontBufferLock.withLock { () -> Bool in
             /// Wait for any previous command buffer to be scheduled
             previousCommandBuffer?.waitUntilScheduled()
 
@@ -1859,14 +1859,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
                 ELOG("commandBuffer was nil")
                 recoverFromGPUError()
-                return
+                return false
             }
 
             /// Create a blit encoder for copying textures
             guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
                 ELOG("encoder was nil")
                 recoverFromGPUError()
-                return
+                return false
             }
 
             let screenRect = emulatorCore.screenRect
@@ -1885,7 +1885,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     ELOG("Failed to create input texture for OpenGL core: \(error)")
                     encoder.endEncoding()
                     commandBuffer.commit()
-                    return
+                    return false
                 }
             }
 
@@ -1894,7 +1894,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 ELOG("Input texture is still nil after creation attempt")
                 encoder.endEncoding()
                 commandBuffer.commit()
-                return
+                return false
             }
 
             // Verify dimensions to avoid crashes
@@ -1941,12 +1941,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             /// End encoding and commit the command buffer
             encoder.endEncoding()
             commandBuffer.commit()
+            return true
         }
 
-        /// Signal that the front buffer is ready
-        emulatorCore.frontBufferCondition.withLock {
-            emulatorCore.isFrontBufferReady = true
-            emulatorCore.frontBufferCondition.signal()
+        /// Signal that the front buffer is ready only when the blit/copy succeeded
+        if copySucceeded {
+            emulatorCore.frontBufferCondition.withLock {
+                emulatorCore.isFrontBufferReady = true
+                emulatorCore.frontBufferCondition.signal()
+            }
         }
     }
 

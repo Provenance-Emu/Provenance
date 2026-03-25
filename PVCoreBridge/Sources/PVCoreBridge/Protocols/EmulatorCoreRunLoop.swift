@@ -10,7 +10,7 @@ import Foundation
 // MARK: - Lock Design (Option A)
 //
 // `emulationLoopThreadLock` and `frontBufferLock` are kept as `NSLock` on the
-// `@objc` protocol boundary so that ObjC bridge code (PVCoreObjCBridge.m,
+// `@objc` protocol boundary so that ObjC bridge code (_PVCoreObjCBridge.m,
 // emulator core .mm files) can continue calling `[lock lock]`/`[lock unlock]`.
 //
 // Swift call-sites should use the `NSLocking.withLock { }` extension instead of

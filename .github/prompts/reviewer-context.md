@@ -123,7 +123,7 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - `resetOptionsForGame(md5:)` and `resetAllOptions()` are the scoped reset helpers.
 - Options stored in `UserDefaults` with key `"pvcore.<bundleIdentifier>.<optionKey>.<md5>"`.
 
-### Lock Safety — `withLock` / `defer` pattern (added in #3528)
+### Lock Safety — `withLock` / `defer` pattern (added in #3531)
 - **Swift call-sites** on `NSLock` and `NSCondition` MUST use `.withLock { }` (or
   `defer { lock.unlock() }` for conditional-lock render blocks).  Never use bare
   `lock()`/`unlock()` pairs in Swift — an early `guard return` between them leaves
