@@ -107,9 +107,13 @@ extension PVEmulatorViewController {
         let yOff: CGFloat = isPortraitPhone ? viewSize.height - scaledH
                                             : (viewSize.height - scaledH) / 2
 
-        // Sort screens top-to-bottom by their outputFrame Y value.
+        // Sort screens top-to-bottom (then left-to-right) so landscape side-by-side
+        // layouts (same minY for both screens) get a stable deterministic order.
         let sorted = group.screens.sorted { a, b in
-            (a.outputFrame?.minY ?? 0) < (b.outputFrame?.minY ?? 0)
+            let ay = a.outputFrame?.minY ?? 0
+            let by = b.outputFrame?.minY ?? 0
+            if ay != by { return ay < by }
+            return (a.outputFrame?.minX ?? 0) < (b.outputFrame?.minX ?? 0)
         }
 
         var renderInfos: [DualScreenRenderInfo] = []
@@ -155,6 +159,7 @@ extension PVEmulatorViewController {
 
         ILOG("dual-screen metal: installing layout with \(renderInfos.count) screens")
         metalVC.dualScreenLayout = renderInfos
+        isMetalDualScreenActive = true
 
         // Expand the Metal view to fill the parent so both screen quads are visible.
         expandMetalViewToFillParent(metalVC)
@@ -164,6 +169,7 @@ extension PVEmulatorViewController {
     /// Removes the Metal dual-screen layout (reverts to standard fullscreen blit).
     func clearMetalDualScreenLayout() {
         (gpuViewController as? PVMetalViewController)?.dualScreenLayout = nil
+        isMetalDualScreenActive = false
     }
 
     // MARK: Helpers

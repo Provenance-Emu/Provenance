@@ -139,6 +139,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var lastViewportLayoutBounds: CGRect = .null
     var lastViewportLayoutSafeArea: UIEdgeInsets = UIEdgeInsets(top: -1, left: -1, bottom: -1, right: -1)
 
+    /// `true` when `applyMetalDualScreenLayout()` successfully installed a layout on
+    /// `PVMetalViewController`.  Set to `false` by `clearMetalDualScreenLayout()`.
+    /// Use this instead of `canUseMetalDualScreenRendering` to check whether Metal
+    /// dual-screen blitting is *active* (not just *eligible*).
+    var isMetalDualScreenActive: Bool = false
+
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
 
