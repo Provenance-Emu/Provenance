@@ -200,10 +200,11 @@ public actor ArtworkSearchQueue {
                 if let backArtwork = artworkResults.first(where: { $0.type == .boxBack }) {
                     await saveBoxBackArtwork(backArtwork, md5Hash: md5Hash, gameID: metadata.gameID, gameTitle: gameTitle)
                 }
-            }
 
-            // --- Screenshots / title screens (lower priority, non-blocking) ---
-            queueBackgroundArtworkSearch(metadata: metadata)
+                // --- Screenshots / title screens (lower priority, non-blocking) ---
+                // Only queue background artwork when box art was found to avoid excess API traffic.
+                queueBackgroundArtworkSearch(metadata: metadata)
+            }
 
         } catch {
             WLOG("ArtworkSearchQueue: Error searching artwork for \(gameTitle): \(error.localizedDescription)")
@@ -635,4 +636,4 @@ public actor ArtworkSearchQueue {
     }
 }
 
-// Title-cleaning logic lives in ArtworkMatchingService.artworkSearchCleaned().
+// Title-cleaning logic lives in String.artworkSearchCleaned() (defined in ArtworkMatchingService.swift).

@@ -168,8 +168,9 @@ public actor ArtworkMatchingService: ArtworkMatchingServiceProtocol {
 
 extension String {
     /// Strip region/revision tags from a game title so it matches database entries.
-    /// Identical to the logic previously duplicated in `ArtworkSearchQueue` and
-    /// `BatchArtworkMatchingView`.
+    /// Mirrors the core cleaning previously used in `ArtworkSearchQueue` / `ArtworkSearchView`
+    /// and is a simplified variant of the more aggressive cleaning in
+    /// `BatchArtworkMatchingView.cleanedForSearch()`.
     func artworkSearchCleaned() -> String {
         var cleaned = self
 

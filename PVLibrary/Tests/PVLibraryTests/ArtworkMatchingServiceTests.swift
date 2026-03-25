@@ -20,17 +20,25 @@ import PVSystems
 // MARK: - Mock service
 
 /// Deterministic mock that returns a configurable list of ArtworkMetadata items.
-/// Uses a lock to safely record calls from concurrent tasks spawned by `ArtworkSearchQueue`.
+/// All mutable state is protected by `lock` so concurrent tasks from `ArtworkSearchQueue`
+/// cannot race on reads or writes.
 final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol, @unchecked Sendable {
 
+    private let lock = NSLock()
+
+    private var _stubbedResults: [ArtworkMetadata] = []
     /// Results returned regardless of input parameters.
-    var stubbedResults: [ArtworkMetadata] = []
-    /// Records every call so tests can assert on parameters.
-    /// Protected by `callsLock` — ArtworkSearchQueue may call findArtwork from concurrent tasks.
-    private let callsLock = NSLock()
+    /// Protected by `lock` — set from the test thread, read from concurrent tasks.
+    var stubbedResults: [ArtworkMetadata] {
+        get { lock.withLock { _stubbedResults } }
+        set { lock.withLock { _stubbedResults = newValue } }
+    }
+
     private var _calls: [(title: String, artworkTypes: ArtworkType)] = []
+    /// Records every call so tests can assert on parameters.
+    /// Protected by `lock` — ArtworkSearchQueue may call findArtwork from concurrent tasks.
     var calls: [(title: String, artworkTypes: ArtworkType)] {
-        callsLock.withLock { _calls }
+        lock.withLock { _calls }
     }
 
     func findArtwork(
@@ -40,8 +48,8 @@ final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol, @uncheck
         systemIdentifier: SystemIdentifier?,
         artworkTypes: ArtworkType
     ) async throws -> [ArtworkMetadata] {
-        callsLock.withLock { _calls.append((title: title, artworkTypes: artworkTypes)) }
-        return stubbedResults
+        lock.withLock { _calls.append((title: title, artworkTypes: artworkTypes)) }
+        return lock.withLock { _stubbedResults }
     }
 }
 
@@ -280,7 +288,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             systemID: .SNES,
             md5Hash: "abcdef1234567890"
         )
-        // Allow the debounce to fire and run
+        // Force processing of pending searches immediately (bypasses debounce delay)
         await queue.processPendingSearches()
 
         // The queue should have called findArtwork with [.boxFront, .boxBack]
