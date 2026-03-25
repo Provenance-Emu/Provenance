@@ -8,7 +8,6 @@
 
 #if canImport(SwiftUI)
 import SwiftUI
-import PVThemes
 
 /// A single row in the preview list.
 struct NormalizeTitlePreviewRow: Identifiable {
@@ -33,7 +32,6 @@ struct NormalizeTitlePreviewSheet: View {
     // MARK: - State
 
     @State private var isApplying = false
-    @EnvironmentObject private var themeManager: ThemeManager
 
     private var changingRows: [NormalizeTitlePreviewRow] { rows.filter { $0.willChange } }
     private var unchangedRows: [NormalizeTitlePreviewRow] { rows.filter { !$0.willChange } }

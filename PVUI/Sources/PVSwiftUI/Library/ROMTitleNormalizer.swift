@@ -19,7 +19,7 @@ import Foundation
 /// `normalizedROMTitle()` aggressively removes **all** parenthetical and bracketed
 /// content. `ROMTitleNormalizer` is intentionally more conservative: it only
 /// removes **known** noise tags (regions, revisions, disc markers, etc.) so that
-/// meaningful parenthetical subtitles — e.g. `"Castlevania: Symphony of the Night"` —
+/// meaningful parenthetical subtitles — e.g. `"Dragon Quest XI (Echoes of an Elusive Age)"` —
 /// are not accidentally stripped. It also adds trailing-article normalisation
 /// (`"Legend of Zelda, The" → "The Legend of Zelda"`) which is not in the shared utility.
 public enum ROMTitleNormalizer {

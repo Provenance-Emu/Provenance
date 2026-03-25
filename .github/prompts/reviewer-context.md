@@ -315,8 +315,9 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - `multiSelectOverlay(md5:content:)` in `ConsoleGamesView+MultiSelect.swift` — wraps a game cell with a selection badge overlay; **must** call `.allowsHitTesting(!isMultiSelectMode)` on the inner content so the outer `onTapGesture` controls selection.
 - `gameAction(for:)` returns a closure that either toggles selection (multi-select mode) or launches the game (normal mode). Use this as the action for all `GameItemPresentableView` cells in `showGamesGrid`/`showGamesList`.
 - `ROMTitleNormalizer` — pure enum in `PVUI/Sources/PVSwiftUI/Library/`; no Realm or file-system access. All new normalisation rules go here.
-- Batch Realm writes: run on `MainActor` (use `Task { @MainActor in realm.write { ... } }`) — not `Task.detached` — to use the main-thread Realm instance.
-- **Flag 🟠 MAJOR** if batch writes use `Task.detached` and access `RomDatabase.sharedInstance.realm` (main-thread Realm from background thread).
+- Batch Realm writes: EITHER run on `MainActor` using the main-thread Realm (`RomDatabase.sharedInstance.realm`) via `Task { @MainActor in realm.write { ... } }`, OR for large batches use `RealmContext.withBackgroundRealm` to obtain a background Realm and perform writes there.
+- **Never** use `RomDatabase.sharedInstance.realm` from a background task (e.g. `Task.detached`) — that instance is main-thread-only; use `RealmContext.withBackgroundRealm` instead for background batch work.
+- **Flag 🟠 MAJOR** if `RomDatabase.sharedInstance.realm` is accessed from a non-main-actor context (e.g. `Task.detached`).
 - **Flag 🟡 MINOR** if new batch operations are added without a `NormalizeTitlePreviewRow`-style preview step for destructive changes.
 
 ## GitHub Workflow Awareness

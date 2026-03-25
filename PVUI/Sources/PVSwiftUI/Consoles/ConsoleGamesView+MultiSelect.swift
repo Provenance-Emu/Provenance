@@ -184,7 +184,7 @@ extension ConsoleGamesView {
             }
             let proposed = ROMTitleNormalizer.normalize(game.title)
             return NormalizeTitlePreviewRow(
-                id: md5,
+                id: game.md5Hash,
                 currentTitle: game.title,
                 proposedTitle: proposed
             )
@@ -199,7 +199,6 @@ extension ConsoleGamesView {
                 gamesViewModel.showNormalizeTitlePreview = false
             }
         )
-        .environmentObject(themeManager)
     }
 
     // MARK: - Realm write via ROMTitleNormalizationService
