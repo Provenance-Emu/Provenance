@@ -139,6 +139,12 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
     /// Hardcore mode flag.
     var _hardcoreMode: Bool = false
 
+    /// Set to true once a real rcheevos session is active (Phase 2).
+    ///
+    /// Guards `achievementsActive` so that hardcore restrictions in PVUI are not
+    /// triggered before a game has successfully loaded an achievement session.
+    var _achievementsSessionActive: Bool = false
+
     // MARK: - executeFrame hook
 
     /// Tick the achievement runtime after each emulated frame.

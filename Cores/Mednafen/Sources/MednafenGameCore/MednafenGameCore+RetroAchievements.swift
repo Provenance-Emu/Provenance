@@ -10,8 +10,15 @@
 //  - achievementMemoryRegions() returns correct RAM pointers for each system
 //    via the `mdfn_*_ptr()` / `mdfn_*_size()` C accessors defined at the end
 //    of each system's .cpp file.
-//  - achievementsActive returns true for supported systems while running.
+//  - achievementsActive returns true only when a session is active (Phase 2 sets
+//    _achievementsSessionActive = true after rc_client_load_game succeeds).
 //  - executeFrame is overridden to call tickAchievements() after each frame.
+//
+//  NOTE: Saturn is intentionally NOT wired in Phase 1. WorkRAML/WorkRAMH are
+//  uint16 arrays in Mednafen and require ne16_rbo_be byte-lane translation for
+//  correct 8-bit reads; a raw reinterpret_cast<uint8_t*> gives scrambled bytes on
+//  little-endian hosts.  Saturn support requires a shadow byte-buffer or an
+//  rcheevos read-callback and is deferred to a future PR.
 //
 //  Phase 2 (future PR) — rcheevos runtime:
 //  - Link PVRcheevos (shared SPM target wrapping rcheevos C library).
@@ -22,14 +29,13 @@
 //
 //  ## System memory maps (rcheevos address space)
 //
-//  | System  | Region           | rcheevos addr | Size   |
-//  |---------|------------------|---------------|--------|
-//  | PSX     | Main RAM         | 0x00000000    | 2 MB   |
-//  | NES     | CPU RAM          | 0x0000        | 2 KB   |
-//  | Saturn  | Work RAM Low     | 0x00200000    | 1 MB   |
-//  | Saturn  | Work RAM High    | 0x06000000    | 1 MB   |
-//  | PCE     | Base RAM         | 0x1F0000      | 8 KB   |
-//  | SNES    | Work RAM         | 0x7E0000      | 128 KB |
+//  | System  | Region           | rcheevos addr | Size         |
+//  |---------|------------------|---------------|--------------|
+//  | PSX     | Main RAM         | 0x00000000    | 2 MB         |
+//  | NES     | CPU RAM          | 0x0000        | 2 KB         |
+//  | Saturn  | (disabled)       | —             | byte-order fix needed |
+//  | PCE     | Base RAM         | 0x1F0000      | 8 KB / 32 KB |
+//  | SNES    | Work RAM         | 0x7E0000      | 128 KB       |
 //
 
 import Foundation
@@ -52,10 +58,12 @@ extension MednafenGameCore: CoreRetroAchievements {
     public func prepareAchievements(gameHash: String) async {
         // Phase 2: call rc_client_load_game(client, gameHash) once PVRcheevos is linked.
         // The game hash is the MD5 of the ROM/disc image (supplied by PVHashing).
+        // On success, set: _achievementsSessionActive = true
     }
 
     public func stopAchievements() {
         // Phase 2: call rc_client_unload_game(client) once PVRcheevos is linked.
+        _achievementsSessionActive = false
     }
 
     // MARK: - Per-frame tick
@@ -131,12 +139,14 @@ extension MednafenGameCore: CoreRetroAchievements {
 
     // MARK: - State
 
-    /// True when the current system has RetroAchievements support in Mednafen
-    /// and the emulation is running.
+    /// True when a real rcheevos session is active for the current game.
     ///
-    /// Phase 2 will also require a valid rc_client session before returning true.
+    /// Guarded by `_achievementsSessionActive` (set in Phase 2 when
+    /// `rc_client_load_game` succeeds) so that PVUI hardcore restrictions
+    /// (fast-forward/save-state guards) are not triggered before an actual
+    /// achievement session is running.
     public var achievementsActive: Bool {
-        guard isRunning else { return false }
+        guard isRunning, _achievementsSessionActive else { return false }
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
         switch sysID {
         case .PSX, .NES, .FDS, .PCE, .PCECD, .SGFX:

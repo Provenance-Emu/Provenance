@@ -27,8 +27,8 @@
 // Systems covered:
 //   PSX    — 2 MB main RAM (MDFN_IEN_PSX::MainRAM)
 //   NES    — 2 KB CPU RAM  (MDFN_IEN_NES::RAM)
-//   Saturn — 1 MB Work RAM Low + 1 MB Work RAM High (MDFN_IEN_SS)
-//   PCE    — 8 KB base RAM (MDFN_IEN_PCE / MDFN_IEN_PCE_FAST)
+//   Saturn — accessors declared but NOT used (uint16 backing requires byte-order fix)
+//   PCE    — 8 KB base RAM (32 KB for SuperGrafx) (MDFN_IEN_PCE / MDFN_IEN_PCE_FAST)
 //   SNES   — 128 KB Work RAM (MDFN_IEN_SNES_FAUST::WRAM)
 
 #ifdef __cplusplus
@@ -51,11 +51,11 @@ size_t   mdfn_ss_workraml_size(void);
 uint8_t* mdfn_ss_workramh_ptr(void);
 size_t   mdfn_ss_workramh_size(void);
 
-/// PCE (full accuracy) — 8 KB base RAM
+/// PCE (full accuracy) — 8 KB base RAM (32 KB when IsSGX, i.e. SuperGrafx)
 uint8_t* mdfn_pce_baseram_ptr(void);
 size_t   mdfn_pce_baseram_size(void);
 
-/// PCE Fast — 8 KB base RAM
+/// PCE Fast — 8 KB base RAM (32 KB when IsSGX, i.e. SuperGrafx)
 uint8_t* mdfn_pce_fast_baseram_ptr(void);
 size_t   mdfn_pce_fast_baseram_size(void);
 
