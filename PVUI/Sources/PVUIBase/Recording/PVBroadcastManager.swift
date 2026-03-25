@@ -39,7 +39,9 @@ import PVLogging
     /// and controller presence on tvOS.
     public var isAvailable: Bool {
         #if os(tvOS)
-        return RPScreenRecorder.shared().isAvailable && !GCController.controllers().isEmpty
+        // Require at least one physical (non-remote) controller: the Siri Remote is also
+        // a GCController, so `.isEmpty` alone doesn't enforce the Apple policy requirement.
+        return RPScreenRecorder.shared().isAvailable && GCController.controllers().contains { !$0.isRemote }
         #else
         return RPScreenRecorder.shared().isAvailable
         #endif

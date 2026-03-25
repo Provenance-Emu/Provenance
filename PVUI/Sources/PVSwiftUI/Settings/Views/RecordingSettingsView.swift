@@ -38,7 +38,7 @@ struct RecordingSettingsView: View {
     var body: some View {
         List {
             #if os(tvOS)
-            if !gamepadManager.isControllerConnected {
+            if !gamepadManager.hasPhysicalGamepad {
                 SwiftUI.Section {
                     SettingsRow(
                         title: "Controller Required",
