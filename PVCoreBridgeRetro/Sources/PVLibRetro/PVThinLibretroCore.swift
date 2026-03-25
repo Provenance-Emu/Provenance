@@ -11,6 +11,7 @@
 //  a proper `PVEmulatorCore` subclass to instantiate.
 //
 
+import Combine
 import Foundation
 import PVCoreBridge
 import PVEmulatorCore
@@ -38,6 +39,12 @@ class PVThinLibretroCore: PVEmulatorCore {
     nonisolated(unsafe) static weak var current: PVThinLibretroCore?
 
     lazy var _bridge: PVThinLibretroFrontend = .init()
+
+    // MARK: - MIDI destination observation
+    /// Cancellable for the Combine subscription that routes MIDIDeviceManager
+    /// destination changes to the thin libretro frontend.
+    /// Only set on platforms with CoreMIDI (iOS, macOS, Catalyst); nil on tvOS.
+    nonisolated(unsafe) var _midiDestinationCancellable: AnyCancellable?
 
     // MARK: - RetroAchievements backing storage
     weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
@@ -115,6 +122,14 @@ class PVThinLibretroCore: PVEmulatorCore {
             guard let strongSelf = self else { return }
             strongSelf.pollControllers()
         }
+        // Start observing MIDIDeviceManager so MIDI output goes to the user-selected device.
+#if canImport(CoreMIDI) && !os(tvOS)
+        if #available(iOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
+            Task { @MainActor [weak self] in
+                self?.startMIDIDestinationObservation()
+            }
+        }
+#endif
         ILOG("ThinCore: startEmulation — inputPollBlock wired, sysId=\(systemIdentifier ?? "nil")")
         super.startEmulation()
     }
@@ -124,6 +139,14 @@ class PVThinLibretroCore: PVEmulatorCore {
 #if canImport(GameController) && canImport(CoreHaptics)
         if #available(iOS 14.0, tvOS 14.0, *) {
             GCControllerHapticsManager.shared.resetSystemProfile()
+        }
+#endif
+        // Stop MIDI destination observation and clear the frontend cache.
+#if canImport(CoreMIDI) && !os(tvOS)
+        if #available(iOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
+            Task { @MainActor [weak self] in
+                self?.stopMIDIDestinationObservation()
+            }
         }
 #endif
         super.stopEmulation()
