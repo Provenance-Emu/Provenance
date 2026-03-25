@@ -2,7 +2,7 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "Используется для обложек альбомов.";
+NSCameraUsageDescription = "Provenance использует камеру для создания обложек игр и функций эмулятора, использующих камеру.";
 NSMicrophoneUsageDescription = "Provenance использует микрофон для систем, поддерживающих звуковой ввод (например, Famicom).";
 NSPhotoLibraryUsageDescription = "Provenance может устанавливать пользовательские иллюстрации из ваших фото или сохранять скриншоты в фотоальбом.";
 NSPhotoLibraryAddUsageDescription = "Provenance может устанавливать пользовательские иллюстрации из ваших фото или сохранять скриншоты в фотоальбом.";

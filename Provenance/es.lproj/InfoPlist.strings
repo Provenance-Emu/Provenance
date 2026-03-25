@@ -2,7 +2,7 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "Se usa para portadas de álbumes.";
+NSCameraUsageDescription = "Provenance usa la cámara para capturar carátulas de juegos personalizadas y para funciones de juego que requieren cámara.";
 NSMicrophoneUsageDescription = "Provenance usa el micrófono para sistemas que admiten entrada de audio (p. ej. Famicom).";
 NSPhotoLibraryUsageDescription = "Provenance puede establecer ilustraciones personalizadas de tus fotos o guardar capturas de pantalla en la fototeca.";
 NSPhotoLibraryAddUsageDescription = "Provenance puede establecer ilustraciones personalizadas de tus fotos o guardar capturas de pantalla en la fototeca.";

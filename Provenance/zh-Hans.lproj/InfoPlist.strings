@@ -2,7 +2,7 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "用于专辑封面图片。";
+NSCameraUsageDescription = "Provenance 使用相机拍摄自定义游戏封面图片，以及支持摄像头的游戏功能。";
 NSMicrophoneUsageDescription = "Provenance 为支持音频输入的系统（如 Famicom）使用麦克风。";
 NSPhotoLibraryUsageDescription = "Provenance 可以从您的照片设置自定义图片，或将截图保存到相册。";
 NSPhotoLibraryAddUsageDescription = "Provenance 可以从您的照片设置自定义图片，或将截图保存到相册。";

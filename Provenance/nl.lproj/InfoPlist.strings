@@ -2,7 +2,7 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "Gebruikt voor albumillustraties.";
+NSCameraUsageDescription = "Provenance gebruikt de camera voor aangepaste spelillustraties en voor spelfeatures die een camera vereisen.";
 NSMicrophoneUsageDescription = "Provenance gebruikt de microfoon voor systemen die audio-invoer ondersteunen (bijv. Famicom).";
 NSPhotoLibraryUsageDescription = "Provenance kan aangepaste illustraties instellen vanuit uw foto's of schermafbeeldingen opslaan in de fotobibliotheek.";
 NSPhotoLibraryAddUsageDescription = "Provenance kan aangepaste illustraties instellen vanuit uw foto's of schermafbeeldingen opslaan in de fotobibliotheek.";

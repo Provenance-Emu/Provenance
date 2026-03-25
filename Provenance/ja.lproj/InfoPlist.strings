@@ -2,7 +2,7 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "アルバムアートワークに使用します。";
+NSCameraUsageDescription = "Provenanceは、カスタムゲームアートワークの撮影とカメラ対応のゲーム機能のためにカメラを使用します。";
 NSMicrophoneUsageDescription = "Provenanceは、音声入力に対応したシステム（例：ファミコン）のためにマイクを使用します。";
 NSPhotoLibraryUsageDescription = "Provenanceは写真からカスタムアートワークを設定したり、スクリーンショットをフォトライブラリに保存することができます。";
 NSPhotoLibraryAddUsageDescription = "Provenanceは写真からカスタムアートワークを設定したり、スクリーンショットをフォトライブラリに保存することができます。";

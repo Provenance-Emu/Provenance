@@ -1,1 +1,1 @@
-Bug fixes and performance improvements. Updated UI and enhanced controller support.
+Bug fixes and performance improvements.

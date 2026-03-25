@@ -2,7 +2,7 @@
 
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
-NSCameraUsageDescription = "Used for album artwork.";
+NSCameraUsageDescription = "Provenance uses the camera to capture custom game artwork and for camera-enabled game features.";
 NSMicrophoneUsageDescription = "Provenance uses the microphone for systems that support audio input (eg. Famicom).";
 NSPhotoLibraryUsageDescription = "Provenance can set custom artworks from your photos or save screenshots to the Photo Library.";
 NSPhotoLibraryAddUsageDescription = "Provenance can set custom artworks from your photos or save screenshots to the Photo Library.";
