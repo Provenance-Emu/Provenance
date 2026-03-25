@@ -86,13 +86,18 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
         self.init()
         // Derive a stable primary key from the file's relative path so that
         // re-importing the same patch updates the record rather than creating a duplicate.
-        // A non-empty partialPath is required for idempotent imports; fall back to the
-        // file's absolute URL path (stable per destination) rather than a random UUID.
+        // A non-empty partialPath is ideal for idempotent imports; otherwise, we fall back to
+        // the file's absolute URL path (idempotent per stable destination path), and only use
+        // a random UUID if no path information is available.
         if file.partialPath.isEmpty {
-            WLOG("PVFile.partialPath is empty — patch import will not be idempotent; falling back to absolute URL path key")
+            if let absolutePath = file.url?.path, !absolutePath.isEmpty {
+                WLOG("PVFile.partialPath is empty — using absolute URL path for patch id; imports remain idempotent as long as the destination path stays stable")
+            } else {
+                WLOG("PVFile.partialPath and file URL path are unavailable — patch import may not be idempotent; falling back to a random UUID key")
+            }
         }
         // Use relative path for deterministic, collision-resistant key.
-        // Fall back to URL path (absolute but stable) if partial path is unavailable.
+        // Fall back to URL path (absolute but stable per destination) if partial path is unavailable.
         let stableKey = !file.partialPath.isEmpty
             ? file.partialPath
             : file.url?.path ?? UUID().uuidString
