@@ -440,3 +440,231 @@ Each line represents a core option in `key = "value"` format. Lines starting wit
 3. **Config Directory**: The base config directory (`<Documents>/RetroArch/config`) is determined by RetroArch's path system via `APPLICATION_SPECIAL_DIRECTORY_CONFIG`.
 
 4. **File Creation**: RetroArch creates `.opt` files automatically when core options are changed and `game_specific_options` is enabled in the configuration (which is the default in Provenance).
+
+## Extending the Artwork Pipeline
+
+The artwork pipeline lives in `PVLookup` (Tier 5). `PVLookup.shared` is the single entry point; it fans out to multiple database back-ends, merges their results, sorts by type priority, and caches the final list.
+
+### Architecture Overview
+
+```
+PVLookup.shared (actor)
+├── OpenVGDB          (offline SQLite — ArtworkLookupOfflineService)
+├── libretrodb        (offline SQLite + remote thumbnails — ArtworkLookupOfflineService)
+└── TheGamesDB        (offline SQLite — ArtworkLookupOnlineService)
+```
+
+All three back-ends are queried **in parallel** via `withTaskGroup`. Results are concatenated in source order (OpenVGDB → LibretroDB → TheGamesDB), then sorted by `ArtworkType` priority.
+
+### `ArtworkType` OptionSet
+
+`ArtworkType` is a `UInt`-backed `OptionSet` defined in `PVLookup/Sources/PVLookupTypes/ArtworkType.swift`:
+
+| Case | Raw bit | Display name |
+|------|---------|--------------|
+| `.boxFront` | `1 << 0` | Box Front |
+| `.boxBack` | `1 << 1` | Box Back |
+| `.manual` | `1 << 2` | Manual |
+| `.screenshot` | `1 << 3` | Screenshot |
+| `.titleScreen` | `1 << 4` | Title Screen |
+| `.fanArt` | `1 << 5` | Fan Art |
+| `.banner` | `1 << 6` | Banner |
+| `.clearLogo` | `1 << 7` | Clear Logo |
+| `.other` | `1 << 8` | Other |
+
+Composite constants:
+- `.defaults` — `[.boxFront, .titleScreen, .boxBack]` — used when no type filter is supplied
+- `.retroDBSupported` — `[.boxFront, .titleScreen, .screenshot]` — the subset LibretroDB thumbnails can provide
+
+#### Per-source type support
+
+| Source | boxFront | boxBack | screenshot | titleScreen | fanArt | banner | clearLogo | other |
+|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **OpenVGDB** | ✅ | ✅ | ✅ | — | — | — | — | — |
+| **LibretroDB** | ✅ | — | ✅ | ✅ | — | — | — | — |
+| **TheGamesDB** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+OpenVGDB infers type from URL path keywords (`"front"` → `.boxFront`, `"back"` → `.boxBack`, `"screenshot"` → `.screenshot`).
+LibretroDB maps its three thumbnail directories: `named_boxarts/` → `.boxFront`, `named_titles/` → `.titleScreen`, `named_snaps/` → `.screenshot`.
+TheGamesDB maps its `type`/`side` columns via `ArtworkType(fromTheGamesDB:side:)`.
+
+### `ArtworkSearchCache` — LRU cache
+
+`ArtworkSearchCache` is a Swift `actor` singleton (`ArtworkSearchCache.shared`) backed by a `[ArtworkSearchKey: [ArtworkMetadata]]` dictionary.
+
+- **Capacity**: 100 entries (`maxCacheSize = 100`).
+- **Eviction**: Least-recently-used. Access order is tracked in an `accessOrder: [ArtworkSearchKey]` array. On every cache hit the key is moved to the end; on overflow the first (oldest) key is removed.
+- **Cache key** (`ArtworkSearchKey`): composite of `gameName` (lowercased), `systemID: SystemIdentifier?`, and `artworkTypes: ArtworkType`. Two keys are equal when all three fields match (name comparison is case-insensitive).
+- **Writes**: `PVLookup.searchArtwork(byGameName:systemID:artworkTypes:)` writes to the cache after a successful search. A result is only cached when it is non-empty.
+- **Invalidation**: Call `ArtworkSearchCache.shared.clear()` to flush the entire cache (e.g., after a library rescan).
+
+### Source ranking and result merging
+
+After the parallel task group completes, results are combined in this fixed order:
+
+```
+openVGDBArtwork + libretroDBArtwork + theGamesDBartwork
+```
+
+The combined array is then sorted by type priority (highest first):
+
+```
+boxFront → boxBack → screenshot → titleScreen → clearLogo → banner → fanArt → manual → other
+```
+
+This sort is performed by `PVLookup.sortArtworkByType(_:)`. Within the same type, the source order (OpenVGDB first) determines relative position.
+
+### Deduplication strategy
+
+`ArtworkMetadata` is `Hashable` by `(url, type, source)`. Individual back-ends may perform their own internal deduplication using `Set<ArtworkMetadata>` (LibretroDB does this in `LibretroArtwork.searchArtwork(byGameName:systemID:artworkTypes:)`). The merged result from `PVLookup` is **not** additionally deduplicated at the aggregation layer, so distinct sources can return the same artwork URL as long as `source` differs.
+
+> If you need a globally deduplicated set, convert the result array to a `Set<ArtworkMetadata>` at the call site.
+
+### Adding a new artwork source
+
+#### 1. Conform to `ArtworkLookupService`
+
+Create a new type that conforms to `ArtworkLookupService` (for offline sources) or `ArtworkLookupOnlineService` (for sources that require a network connection):
+
+```swift
+// PVLookup/Sources/MyNewDB/MyNewDB.swift
+import PVLookupTypes
+import PVSystems
+
+public struct MyNewDB: ArtworkLookupService {
+
+    public func searchArtwork(
+        byGameName name: String,
+        systemID: SystemIdentifier?,
+        artworkTypes: ArtworkType?
+    ) async throws -> [ArtworkMetadata]? {
+        // Query your data source and return ArtworkMetadata values.
+        // Use `source: "MyNewDB"` so duplicates from other sources are kept distinct.
+        return nil
+    }
+
+    public func getArtwork(
+        forGameID gameID: String,
+        artworkTypes: ArtworkType?
+    ) async throws -> [ArtworkMetadata]? {
+        return nil
+    }
+
+    public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        return nil
+    }
+}
+```
+
+For sources that also provide ROM-to-artwork mapping tables, additionally conform to `ArtworkLookupOfflineService` or `ArtworkLookupOnlineService` (both add `getArtworkMappings() async throws -> ArtworkMapping`).
+
+#### 2. Register the source in `PVLookup`
+
+Open `PVLookup/Sources/PVLookup/PVLookup.swift` and make four edits:
+
+**a. Add a case to `LocalDatabases`:**
+
+```swift
+public enum LocalDatabases: CaseIterable {
+    // ... existing cases ...
+    case myNewDB
+}
+```
+
+**b. Add a stored property to `PVLookup`:**
+
+```swift
+private var myNewDB: MyNewDB?
+```
+
+**c. Initialize it in `initializeDatabases()`:**
+
+```swift
+do {
+    let db = try await MyNewDB()
+    self.myNewDB = db
+} catch {
+    ELOG("Failed to initialize MyNewDB: \(error)")
+}
+```
+
+**d. Query it in `searchArtwork(byGameName:systemID:artworkTypes:)` and `getArtwork(forGameID:artworkTypes:)`:**
+
+```swift
+let shouldSearchMyNewDB = databases.contains(.myNewDB)
+var myNewDBArtwork: [ArtworkMetadata] = []
+
+// Inside the existing withTaskGroup block:
+group.addTask {
+    guard shouldSearchMyNewDB else { return (3, []) }
+    if let results = try? await self.myNewDB?.searchArtwork(
+        byGameName: name,
+        systemID: systemID,
+        artworkTypes: artworkTypes
+    ) {
+        return (3, results)
+    }
+    return (3, [])
+}
+
+// In the for-await loop:
+case 3: myNewDBArtwork = result
+
+// In the combine step:
+let results = openVGDBArtwork + libretroDBArtwork + theGamesDBartwork + myNewDBArtwork
+```
+
+Also add it to the default `databases` array and to `getArtworkURLs(forRom:)` / `getArtworkMappings()` if applicable.
+
+#### 3. Gate behind a feature flag (optional)
+
+If your source is experimental, add a case to `PVFeature` in `PVFeatureFlags/Sources/PVFeatureFlags/PVFeatureFlags.swift`:
+
+```swift
+/// Enables artwork lookup from MyNewDB.
+/// Disabled by default until the data set is validated.
+case myNewDBArtwork = "myNewDBArtwork"
+```
+
+Then guard initialization and the `databases.contains(.myNewDB)` check with the flag:
+
+```swift
+// In initializeDatabases():
+guard await PVFeatureFlagsFetcher.shared.isFeatureEnabled(.myNewDBArtwork) else { return }
+
+// In the databases array initializer:
+private var databases: [LocalDatabases] = {
+    var dbs: [LocalDatabases] = [.libretro, .openVGDB, .theGamesDB]
+    // myNewDB added at runtime after flag check
+    return dbs
+}()
+```
+
+Alternatively, check the flag inside the `group.addTask` closure so the query is skipped at search time rather than at initialization time.
+
+#### 4. Add the `SPM` module target
+
+If your source lives in a new Swift package target, add it to `PVLookup/Package.swift`:
+
+```swift
+.target(
+    name: "MyNewDB",
+    dependencies: ["PVLookupTypes", "PVSQLiteDatabase", "PVSystems", "PVLogging"],
+    path: "Sources/MyNewDB"
+),
+```
+
+And add it as a dependency of the `PVLookup` target:
+
+```swift
+.target(
+    name: "PVLookup",
+    dependencies: [
+        // ... existing dependencies ...
+        .target(name: "MyNewDB"),
+    ],
+    ...
+),
+```
+
+Use `#if canImport(MyNewDB)` guards in `PVLookup.swift` to keep the module optional (matching the pattern used for OpenVGDB, libretrodb, TheGamesDB, and ShiraGame).
