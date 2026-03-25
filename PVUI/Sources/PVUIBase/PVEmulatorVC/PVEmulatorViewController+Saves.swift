@@ -97,11 +97,15 @@ public extension PVEmulatorViewController {
         }
 
         if !alreadyConfirmed {
+            // Enable UIKit controller interaction so MFi gamepads can navigate the alert
+            // on tvOS (GCEventViewController intercepts input when the game is active).
+            enableControllerInput(true)
             let shouldLoad = await SaveStateVersionChecker.confirmLoad(
                 saveState: state,
                 overrideCore: core,
                 on: self
             )
+            enableControllerInput(false)
             guard shouldLoad else {
                 return false
             }

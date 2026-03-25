@@ -1575,6 +1575,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         dismissNav(resumeEmulation: resumeEmulation, completion: nil)
     }
 
+    /// Restores controller/gesture state after menu dismissal so tvOS pause input remains reliable.
+    @MainActor
+    private func restoreInputStateAfterMenuDismissal() {
+        enableControllerInput(false)
+        #if os(tvOS)
+        resetTVOSMenuGestures()
+        #endif
+    }
+
     func dismissNav(resumeEmulation: Bool, completion: (() -> Void)?) {
         // Dismiss the menu container reliably if we have it; otherwise fall back to the currently presented VC.
         let dismissalTarget = menuPresentationViewController ?? presentedViewController
@@ -1583,6 +1592,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             if core.isOn {
                 core.setPauseEmulation(!resumeEmulation)
             }
+            restoreInputStateAfterMenuDismissal()
             completion?()
             return
         }
@@ -1626,10 +1636,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
         }
 
-        enableControllerInput(false)
-        #if os(tvOS)
-        resetTVOSMenuGestures()
-        #endif
+        restoreInputStateAfterMenuDismissal()
     }
 }
 

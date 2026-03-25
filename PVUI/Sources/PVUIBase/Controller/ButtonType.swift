@@ -54,6 +54,23 @@ public extension GCExtendedGamepad {
 // MARK: - Controller type detection
 public extension GCController {
     var isRemote: Bool {
+        #if os(tvOS)
+        if #available(tvOS 15.0, *) {
+            // On Apple TV 4K 3rd gen and later, the Siri Remote can present as
+            // ExtendedGamepad (not just MicroGamepad), making `extendedGamepad == nil`
+            // unreliable. Check productCategory to detect all Apple remote variants.
+            switch productCategory {
+            case GCProductCategorySiriRemote1stGen,
+                 GCProductCategorySiriRemote2ndGen,
+                 GCProductCategoryCoalescedRemote,
+                 GCProductCategoryControlCenterRemote,
+                 GCProductCategoryUniversalElectronicsRemote:
+                return true
+            default:
+                return false
+            }
+        }
+        #endif
         return self.extendedGamepad == nil && self.microGamepad != nil
     }
     

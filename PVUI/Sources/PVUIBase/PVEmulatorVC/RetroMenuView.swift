@@ -1218,7 +1218,7 @@ struct RetroMenuView: View {
                     .font(.system(size: 13, weight: .medium, design: .monospaced))
                     .foregroundColor(palette.defaultTintColor.swiftUIColor)
             }
-            Slider(value: $mouseSensitivity, in: 0.1...5.0, step: 0.1)
+            RetroWaveSlider(value: $mouseSensitivity, in: 0.1...5.0, step: 0.1)
                 .accentColor(palette.defaultTintColor.swiftUIColor)
             Text(String(localized: "Note: Mouse input options are not yet active in-game."))
                 .font(.footnote)

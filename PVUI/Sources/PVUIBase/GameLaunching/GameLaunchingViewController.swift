@@ -21,6 +21,7 @@ import PVUIBase
 import SwiftUI
 import Defaults
 import PVSettings
+import PVFeatureFlags
 import CryptoKit
 #if canImport(PVAppIntents)
 import PVAppIntents
@@ -744,7 +745,10 @@ public extension GameLaunchingViewController {
                             || (rec.metadata?.qualityRank ?? 0) > 0
                             || !rec.highlightedCapabilities.isEmpty
                     }
-                    if hasMetadata {
+                    // Show the enriched smart picker when the feature flag is on AND there is
+                    // useful metadata; fall back to the plain list picker otherwise.
+                    let useSmartPicker = hasMetadata && (await PVFeatureFlags.shared.isEnabled(.smartCoreSelection))
+                    if useSmartPicker {
                         let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in
                             guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
                             return SmartCoreSelectionItem(recommendation: rec, coreName: core.projectName)
@@ -1245,14 +1249,17 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
             // Check for core version mismatch before loading.
-            // Prefer presenting from the currently displayed emulator VC if possible.
+            // Enable UIKit controller interaction so MFi gamepads can navigate the alert
+            // on tvOS (GCEventViewController intercepts input while the game is running).
             let pvCore = saveState.core
             let presenter = (gameVC as? UIViewController) ?? self
+            gameVC.enableControllerInput(true)
             let shouldLoad = await SaveStateVersionChecker.confirmLoad(
                 saveState: saveState,
                 overrideCore: pvCore,
                 on: presenter
             )
+            gameVC.enableControllerInput(false)
             guard shouldLoad else {
                 return
             }

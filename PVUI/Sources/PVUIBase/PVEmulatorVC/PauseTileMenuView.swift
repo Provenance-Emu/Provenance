@@ -66,6 +66,7 @@ struct PauseTileMenuView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.featureFlags) private var featureFlags
+    @Environment(\.scenePhase) private var scenePhase
 
     // Metal filter state — read/write directly to react to changes.
     @Default(.metalFilterMode) private var metalFilterMode
@@ -105,6 +106,31 @@ struct PauseTileMenuView: View {
             indicatorRegistry: indicatorRegistry,
             hasControllerProfiles: hasControllerProfiles
         )
+    }
+
+    /// Returns the first focusable tile identifier in display order.
+    private func firstEnabledTileID() -> String? {
+        for section in viewModel.sections {
+            if let tile = section.tiles.first(where: { $0.isEnabled }) {
+                return tile.id
+            }
+        }
+        return nil
+    }
+
+    /// Reattaches focus to a valid tile when tvOS focus is lost after lifecycle transitions.
+    private func reattachTVOSFocusIfNeeded() {
+        #if os(tvOS)
+        let focusedID = focusedTileID
+        let hasValidFocus = viewModel.sections.contains { section in
+            section.tiles.contains(where: { $0.id == focusedID && $0.isEnabled })
+        }
+        guard !hasValidFocus else { return }
+        guard let fallbackID = firstEnabledTileID() else { return }
+        DispatchQueue.main.async {
+            focusedTileID = fallbackID
+        }
+        #endif
     }
 
     // MARK: - Tile action dispatcher
@@ -660,14 +686,16 @@ struct PauseTileMenuView: View {
         .onAppear {
             refreshControllerProfileState()
             rebuildSections()
-            if let firstEnabled = viewModel.sections.first?.tiles.first(where: { $0.isEnabled }) {
-                focusedTileID = firstEnabled.id
-            }
+            reattachTVOSFocusIfNeeded()
         }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
                 infoText = viewModel.description(forTileID: newID)
             }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            guard newPhase == .active else { return }
+            reattachTVOSFocusIfNeeded()
         }
         .onExitCommand { dismissAction(true) }
         .onPlayPauseCommand { dismissAction(true) }

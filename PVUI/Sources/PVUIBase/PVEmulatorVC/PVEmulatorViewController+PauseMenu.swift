@@ -29,15 +29,15 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
         // If something is already presented, don't permanently wedge the pause menu.
         // This can happen if we're racing a prior dismissal or another modal flow.
         if let presented = presentedViewController {
-            if presented === menuPresentationViewController {
-                DLOG("Pause menu already presented, ignoring duplicate request")
-                return
-            }
             if presented.isBeingDismissed || presented.isBeingPresented {
                 DLOG("Presented VC is in transition (\(type(of: presented))); retrying showMenu shortly")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
                     self?.showMenu(sender)
                 }
+                return
+            }
+            if presented === menuPresentationViewController {
+                DLOG("Pause menu already presented and stable, ignoring duplicate request")
                 return
             }
             DLOG("Dismissing existing presented VC (\(type(of: presented))) to show pause menu")
