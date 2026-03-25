@@ -112,13 +112,10 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                 DLOG("GameImporter: Using pre-determined systems for directory: \(item.url.lastPathComponent)")
                 return item.systems
             }
-            // Fallback: check for DOSBox folder (handles calls outside the normal performImport path)
-            if let contents = try? FileManager.default.contentsOfDirectory(atPath: item.url.path) {
-                let dosMarkers: Set<String> = ["conf", "exe", "bat", "com"]
-                if contents.contains(where: { dosMarkers.contains(URL(fileURLWithPath: $0).pathExtension.lowercased()) }) {
-                    DLOG("GameImporter: Detected DOSBox game folder (fallback): \(item.url.lastPathComponent)")
-                    return [.DOS]
-                }
+            // Fallback: check for DOSBox folder via the shared importer helper to avoid duplicating the heuristic.
+            if GameImporter.shared.isDOSBoxFolder(item) {
+                DLOG("GameImporter: Detected DOSBox game folder (fallback): \(item.url.lastPathComponent)")
+                return [.DOS]
             }
             DLOG("GameImporter: Directory \(item.url.lastPathComponent) is not a recognised game folder, skipping")
             return []

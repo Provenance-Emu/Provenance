@@ -87,13 +87,22 @@ extension GameImporter {
             return false
         }
 
-        guard let contents = try? FileManager.default.contentsOfDirectory(atPath: url.path) else {
+        let resourceKeys: Set<URLResourceKey> = [.isRegularFileKey]
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: url,
+            includingPropertiesForKeys: Array(resourceKeys),
+            options: [.skipsHiddenFiles]
+        ) else {
             return false
         }
 
         let dosMarkerExtensions: Set<String> = ["conf", "exe", "bat", "com"]
-        return contents.contains { filename in
-            dosMarkerExtensions.contains(URL(fileURLWithPath: filename).pathExtension.lowercased())
+        return contents.contains { fileURL in
+            guard let resourceValues = try? fileURL.resourceValues(forKeys: resourceKeys),
+                  resourceValues.isRegularFile == true else {
+                return false
+            }
+            return dosMarkerExtensions.contains(fileURL.pathExtension.lowercased())
         }
     }
 

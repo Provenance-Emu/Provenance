@@ -747,10 +747,11 @@ public final class DirectoryWatcher: ObservableObject {
         }
 
         let isInImportsFolder = url.path.contains("/Imports/")
+        let isInBIOSFolder = watchedDirectory.path.contains("/BIOS/")
 
         if isDirectory.boolValue {
-            // Allow MAME ROM set folders (any directory in /Imports/) and DOSBox game folders (anywhere)
-            guard isInImportsFolder || isDOSBoxGameFolder(url) else {
+            // Allow MAME ROM set folders (any directory in /Imports/) and DOSBox game folders (non-BIOS paths)
+            guard isInImportsFolder || (!isInBIOSFolder && isDOSBoxGameFolder(url)) else {
                 Task { await watcherManager.removeWatcher(for: url) }
                 return
             }
@@ -785,7 +786,7 @@ public final class DirectoryWatcher: ObservableObject {
 public extension DirectoryWatcher {
 
     /// Check if a URL points to a directory
-    func isDirectory(_ url: URL) -> Bool {
+    private func isDirectory(_ url: URL) -> Bool {
         var isDir: ObjCBool = false
         return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue
     }
@@ -800,12 +801,21 @@ public extension DirectoryWatcher {
               isDir.boolValue else {
             return false
         }
-        guard let contents = try? FileManager.default.contentsOfDirectory(atPath: url.path) else {
+        let resourceKeys: Set<URLResourceKey> = [.isRegularFileKey]
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: url,
+            includingPropertiesForKeys: Array(resourceKeys),
+            options: [.skipsHiddenFiles]
+        ) else {
             return false
         }
         let dosMarkers: Set<String> = ["conf", "exe", "bat", "com"]
-        return contents.contains { filename in
-            dosMarkers.contains(URL(fileURLWithPath: filename).pathExtension.lowercased())
+        return contents.contains { fileURL in
+            guard let resourceValues = try? fileURL.resourceValues(forKeys: resourceKeys),
+                  resourceValues.isRegularFile == true else {
+                return false
+            }
+            return dosMarkers.contains(fileURL.pathExtension.lowercased())
         }
     }
 
