@@ -218,12 +218,25 @@ final class PPFPatcherTests: XCTestCase {
         }
     }
 
+    func testV3NonZeroBlockCheckThrows() {
+        var patch = Data("PPF30".utf8)
+        patch.append(0x00)  // encoding = 0
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 51))  // description + imageType
+        patch.append(0x01)  // blockCheck = 1 (unsupported)
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 2))  // undoData + reserved
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+            guard case PatchError.unsupportedFormat = error else {
+                return XCTFail("Expected unsupportedFormat, got \(error)")
+            }
+        }
+    }
+
     func testV3NonZeroUndoDataThrows() {
         var patch = Data("PPF30".utf8)
         patch.append(0x00)  // encoding = 0
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 51))  // description + imageType + blockCheck
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 52))  // description + imageType + blockCheck
         patch.append(0x01)  // undoData = 1 (unsupported)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 2))
+        patch.append(contentsOf: [UInt8](repeating: 0, count: 1))  // reserved
         XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
             guard case PatchError.unsupportedFormat = error else {
                 return XCTFail("Expected unsupportedFormat, got \(error)")
