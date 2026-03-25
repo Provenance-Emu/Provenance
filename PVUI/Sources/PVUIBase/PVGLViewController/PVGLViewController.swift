@@ -920,13 +920,24 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             guard let strongSelf = self else { return }
 
             var frontBufferTex: GLuint = 0
-            if let emulatorCore = strongSelf.emulatorCore, emulatorCore.rendersToOpenGL {
+            let core = strongSelf.emulatorCore
+            let rendersToOpenGL = core?.rendersToOpenGL ?? false
+
+            if rendersToOpenGL {
                 frontBufferTex = strongSelf.alternateThreadColorTextureFront
-                emulatorCore.frontBufferLock.lock()
+                core?.frontBufferLock.lock()
             } else {
                 glBindTexture(GLenum(GL_TEXTURE_2D), strongSelf.texture)
                 glTexSubImage2D(GLenum(GL_TEXTURE_2D), 0, 0, 0, GLsizei(videoBufferSize.width), GLsizei(videoBufferSize.height), videoBufferPixelFormat, videoBufferPixelType, videoBuffer)
                 frontBufferTex = strongSelf.texture
+            }
+            // defer ensures frontBufferLock is released even if an early return is added
+            // in the future.  The flush must happen BEFORE the unlock (GPU must drain).
+            defer {
+                if rendersToOpenGL {
+                    glFlush()
+                    core?.frontBufferLock.unlock()
+                }
             }
 
             if frontBufferTex != 0 {
@@ -958,28 +969,23 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0)
 
             glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-
-            if let emulatorCore = strongSelf.emulatorCore, emulatorCore.rendersToOpenGL {
-                glFlush()
-                emulatorCore.frontBufferLock.unlock()
-            }
         }
 
         if emulatorCore.rendersToOpenGL {
             if (!emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused) || emulatorCore.isFrontBufferReady {
-                emulatorCore.frontBufferCondition.lock()
-                while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                    emulatorCore.frontBufferCondition.wait()
+                let isFrontBufferReady = emulatorCore.frontBufferCondition.withLock {
+                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
+                        emulatorCore.frontBufferCondition.wait()
+                    }
+                    return emulatorCore.isFrontBufferReady
                 }
-                let isFrontBufferReady = emulatorCore.isFrontBufferReady
-                emulatorCore.frontBufferCondition.unlock()
                 if isFrontBufferReady {
                     fetchVideoBuffer()
                     renderBlock()
-                    emulatorCore.frontBufferCondition.lock()
-                    emulatorCore.isFrontBufferReady = false
-                    emulatorCore.frontBufferCondition.signal()
-                    emulatorCore.frontBufferCondition.unlock()
+                    emulatorCore.frontBufferCondition.withLock {
+                        emulatorCore.isFrontBufferReady = false
+                        emulatorCore.frontBufferCondition.signal()
+                    }
                 }
             }
         } else {
@@ -988,16 +994,16 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 renderBlock()
             } else {
                 if emulatorCore.isDoubleBuffered {
-                    emulatorCore.frontBufferCondition.lock()
-                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                        emulatorCore.frontBufferCondition.wait()
+                    emulatorCore.frontBufferCondition.withLock {
+                        while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
+                            emulatorCore.frontBufferCondition.wait()
+                        }
+                        emulatorCore.isFrontBufferReady = false
+                        emulatorCore.frontBufferLock.withLock {
+                            fetchVideoBuffer()
+                            renderBlock()
+                        }
                     }
-                    emulatorCore.isFrontBufferReady = false
-                    emulatorCore.frontBufferLock.lock()
-                    fetchVideoBuffer()
-                    renderBlock()
-                    emulatorCore.frontBufferLock.unlock()
-                    emulatorCore.frontBufferCondition.unlock()
                 } else {
                     // Non-double-buffered: synchronize with emulator core's @synchronized(self)
                     // (executeFrame is wrapped in @synchronized(self) / objc_sync_enter(self))
@@ -1094,6 +1100,14 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 self.effect?.prepareToDraw()
 #endif
             }
+            // defer ensures frontBufferLock is released even if an early return is added
+            // in the future.  The flush must happen BEFORE the unlock (GPU must drain).
+            defer {
+                if rendersToOpenGL {
+                    glFlush()
+                    emulatorCore.frontBufferLock.unlock()
+                }
+            }
 
             if frontBufferTex != 0 {
                 glActiveTexture(GLenum(GL_TEXTURE0))
@@ -1144,30 +1158,23 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             glDisableVertexAttribArray(GLuint(GLKVertexAttrib.position.rawValue))
 
             glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-
-            if rendersToOpenGL {
-                glFlush()
-                emulatorCore.frontBufferLock.unlock()
-            }
         }
 
         if emulatorCore.rendersToOpenGL {
             if (!emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused) || emulatorCore.isFrontBufferReady {
-                emulatorCore.frontBufferCondition.lock()
-                while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                    emulatorCore.frontBufferCondition.wait()
+                let isFrontBufferReady = emulatorCore.frontBufferCondition.withLock {
+                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
+                        emulatorCore.frontBufferCondition.wait()
+                    }
+                    return emulatorCore.isFrontBufferReady
                 }
-                let isFrontBufferReady = emulatorCore.isFrontBufferReady
-                emulatorCore.frontBufferCondition.unlock()
-
                 if isFrontBufferReady {
                     fetchVideoBuffer()
                     renderBlock()
-
-                    emulatorCore.frontBufferCondition.lock()
-                    emulatorCore.isFrontBufferReady = false
-                    emulatorCore.frontBufferCondition.signal()
-                    emulatorCore.frontBufferCondition.unlock()
+                    emulatorCore.frontBufferCondition.withLock {
+                        emulatorCore.isFrontBufferReady = false
+                        emulatorCore.frontBufferCondition.signal()
+                    }
                 }
             }
         } else {
@@ -1175,16 +1182,16 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 fetchVideoBuffer()
                 renderBlock()
             } else if emulatorCore.isDoubleBuffered {
-                emulatorCore.frontBufferCondition.lock()
-                while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                    emulatorCore.frontBufferCondition.wait()
+                emulatorCore.frontBufferCondition.withLock {
+                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
+                        emulatorCore.frontBufferCondition.wait()
+                    }
+                    emulatorCore.isFrontBufferReady = false
+                    emulatorCore.frontBufferLock.withLock {
+                        fetchVideoBuffer()
+                        renderBlock()
+                    }
                 }
-                emulatorCore.isFrontBufferReady = false
-                emulatorCore.frontBufferLock.lock()
-                fetchVideoBuffer()
-                renderBlock()
-                emulatorCore.frontBufferLock.unlock()
-                emulatorCore.frontBufferCondition.unlock()
             } else {
                 // Non-double-buffered: synchronize with emulator core's @synchronized(self)
                 // (executeFrame is wrapped in @synchronized(self) / objc_sync_enter(self))
@@ -1205,14 +1212,13 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     }
 
     func didRenderFrameOnAlternateThread() {
-        self.emulatorCore?.frontBufferLock.lock()
         // TODO: Copy the back buffer
-        self.emulatorCore?.frontBufferLock.unlock()
+        self.emulatorCore?.frontBufferLock.withLock { }
         // Notify render thread that the front buffer is ready
-        self.emulatorCore?.frontBufferCondition.lock()
-        self.emulatorCore?.isFrontBufferReady = true
-        self.emulatorCore?.frontBufferCondition.signal()
-        self.emulatorCore?.frontBufferCondition.unlock()
+        self.emulatorCore?.frontBufferCondition.withLock {
+            self.emulatorCore?.isFrontBufferReady = true
+            self.emulatorCore?.frontBufferCondition.signal()
+        }
 
         // Switch context back to emulator's
         //    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
@@ -1310,54 +1316,55 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), 0);
         glFlush();
 
-        // Blit back buffer to front buffer
-        emulatorCore.frontBufferLock.lock()
+        // Blit back buffer to front buffer, guarded by the front-buffer lock so
+        // the display thread cannot read a partially-written texture.
+        // Swift call-site: withLock ensures the unlock runs even on early exit.
+        emulatorCore.frontBufferLock.withLock {
+            // NOTE: We switch contexts here because we don't know what state
+            // the emulator core might have OpenGL in and we need to avoid
+            // changing any state it's relying on. It's more efficient and
+            // less verbose to switch contexts than to try do a bunch of
+            // state retrieval and restoration.
+            EAGLContext.setCurrent(alternateThreadBufferCopyGLContext)
+            glBindFramebuffer(GLenum(GL_FRAMEBUFFER), alternateThreadFramebufferFront)
 
-        // NOTE: We switch contexts here because we don't know what state
-        // the emulator core might have OpenGL in and we need to avoid
-        // changing any state it's relying on. It's more efficient and
-        // less verbose to switch contexts than to try do a bunch of
-        // state retrieval and restoration.
-        EAGLContext.setCurrent(alternateThreadBufferCopyGLContext)
-        glBindFramebuffer(GLenum(GL_FRAMEBUFFER), alternateThreadFramebufferFront)
+            let screenRect = emulatorCore.screenRect
+            glViewport(GLint(screenRect.origin.x), GLint(screenRect.origin.y),
+                       GLsizei(screenRect.width), GLsizei(screenRect.height))
 
-        let screenRect = emulatorCore.screenRect
-        glViewport(GLint(screenRect.origin.x), GLint(screenRect.origin.y),
-                   GLsizei(screenRect.width), GLsizei(screenRect.height))
+            glBindTexture(GLenum(GL_TEXTURE_2D), alternateThreadColorTextureBack)
+            glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_LINEAR))
+            glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_LINEAR))
 
-        glBindTexture(GLenum(GL_TEXTURE_2D), alternateThreadColorTextureBack)
-        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_LINEAR))
-        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_LINEAR))
+            glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexVBO)
 
-        glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexVBO)
+            glEnableVertexAttribArray(GLuint(GLKVertexAttrib.position.rawValue))
+            glVertexAttribPointer(GLuint(GLKVertexAttrib.position.rawValue), 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride), nil)
 
-        glEnableVertexAttribArray(GLuint(GLKVertexAttrib.position.rawValue))
-        glVertexAttribPointer(GLuint(GLKVertexAttrib.position.rawValue), 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride), nil)
+            glEnableVertexAttribArray(GLuint(GLKVertexAttrib.texCoord0.rawValue))
+            let texCoordOffset = MemoryLayout<Float>.stride * 3
+            glVertexAttribPointer(GLuint(GLKVertexAttrib.texCoord0.rawValue), 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride), UnsafeRawPointer(bitPattern: texCoordOffset))
 
-        glEnableVertexAttribArray(GLuint(GLKVertexAttrib.texCoord0.rawValue))
-        let texCoordOffset = MemoryLayout<Float>.stride * 3
-        glVertexAttribPointer(GLuint(GLKVertexAttrib.texCoord0.rawValue), 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<PVVertex>.stride), UnsafeRawPointer(bitPattern: texCoordOffset))
+            glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
 
-        glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
+            glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), indexVBO)
+            glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_SHORT), nil)
 
-        glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), indexVBO)
-        glDrawElements(GLenum(GL_TRIANGLES), 6, GLenum(GL_UNSIGNED_SHORT), nil)
+            glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0)
 
-        glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0)
+            glBindTexture(GLenum(GL_TEXTURE_2D), 0)
 
-        glBindTexture(GLenum(GL_TEXTURE_2D), 0)
+            glBindFramebuffer(GLenum(GL_FRAMEBUFFER), 0)
 
-        glBindFramebuffer(GLenum(GL_FRAMEBUFFER), 0)
+            glFlush()
+        }
 
-        glFlush()
-
-        emulatorCore.frontBufferLock.unlock()
-
-        // Notify render thread that the front buffer is ready
-        emulatorCore.frontBufferCondition.lock()
-        emulatorCore.isFrontBufferReady = true
-        emulatorCore.frontBufferCondition.signal()
-        emulatorCore.frontBufferCondition.unlock()
+        // Notify render thread that the front buffer is ready.
+        // withLock on NSCondition ensures the unlock runs on all paths.
+        emulatorCore.frontBufferCondition.withLock {
+            emulatorCore.isFrontBufferReady = true
+            emulatorCore.frontBufferCondition.signal()
+        }
 
         // Switch context back to emulator's
         EAGLContext.setCurrent(alternateThreadGLContext)

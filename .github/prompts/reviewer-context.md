@@ -123,6 +123,19 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - `resetOptionsForGame(md5:)` and `resetAllOptions()` are the scoped reset helpers.
 - Options stored in `UserDefaults` with key `"pvcore.<bundleIdentifier>.<optionKey>.<md5>"`.
 
+### Lock Safety — `withLock` / `defer` pattern (added in #3528)
+- **Swift call-sites** on `NSLock` and `NSCondition` MUST use `.withLock { }` (or
+  `defer { lock.unlock() }` for conditional-lock render blocks).  Never use bare
+  `lock()`/`unlock()` pairs in Swift — an early `guard return` between them leaves
+  the lock permanently acquired (deadlock).
+- **ObjC call-sites** (`.mm`/`.m` bridge files) continue using `[lock lock]`/
+  `[lock unlock]` — ObjC lacks `withLock`.
+- The `NSLock`/`NSCondition` types on `EmulatorCoreRunLoop` are preserved as-is;
+  ObjC bridge code requires them.
+- For `NSCondition` wait loops: `condition.withLock { while !ready { condition.wait() }; return state }`
+  is correct because `wait()` temporarily releases the lock internally.
+- Flag any new bare `lock()`/`unlock()` pair in Swift as 🟠 MAJOR.
+
 ### WhatsNew Release Notes (JSON-driven)
 - Release notes live in `PVUI/Sources/PVSwiftUI/Resources/whats-new.json`.
 - `WhatsNewLoader.loadAll(...)` in `PVSwiftUI` converts JSON → `[WhatsNew]` for WhatsNewKit.

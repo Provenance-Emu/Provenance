@@ -18,8 +18,9 @@ import PVLogging
         if flag {
             stopHaptic()
             skipEmulationLoop = true
-            frontBufferLock.lock()
-            frontBufferLock.unlock()
+            // Wait until any in-flight front-buffer access completes before marking
+            // the core as paused.  The empty critical section is intentional.
+            frontBufferLock.withLock { }
             isRunning = false
         } else {
             startHaptic()
