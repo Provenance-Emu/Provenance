@@ -12,14 +12,15 @@
 
 Provenance ships two separate 3DS core wrappers:
 
-| Wrapper | Path | Submodule URL | Submodule Alias |
-|---------|------|---------------|-----------------|
+| Wrapper | Path | Submodule URL | Submodule path |
+|---------|------|---------------|----------------|
 | **PVEmuThree** | `Cores/emuThree/` | `rf2222222/emuThreeDS` | `Cores/emuThree/emuthree` |
 | **PVAzahar** | `Cores/Citra/` *(dir name mismatch)* | `Provenance-Emu/emuThreeDS` | `Cores/Citra/azahar` |
 
 Both cores share an identical "override files" build pattern: local files placed in
-`PVEmuThreeCore/emuThree/` or `PVAzaharCore/azahar/` shadow identically-named files from the
-upstream submodule at compile time via Xcode's header search path and source file ordering.
+`Cores/emuThree/PVEmuThreeCore/emuThree/` or `Cores/Citra/PVAzaharCore/azahar/` shadow
+identically-named files from the upstream submodule at compile time via Xcode's header search
+path and source file ordering.
 
 **Key architectural note:** `Cores/Citra/azahar` does NOT point to `AzaharEmulator/azahar`
 (the actual Azahar upstream). It points to `Provenance-Emu/emuThreeDS` — a Provenance-owned
@@ -256,7 +257,7 @@ new upstream base:
 ## 5. Acceptance Criteria — Completed
 
 - [x] Written recommendation on which option to pursue
-- [x] List of all iOS perf hacks / override files in current cores (audit manifest above)
+- [x] High-level list of key iOS perf hacks / override files in current cores (audit overview above)
 - [x] GPU regression root cause hypothesis documented (§3.1)
 - [x] Assessment of Lime3DS/Azahar build feasibility (§2)
 - [x] Links to relevant forks/repos (§2.2)
