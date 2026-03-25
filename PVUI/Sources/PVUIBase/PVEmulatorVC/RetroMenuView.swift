@@ -856,9 +856,10 @@ struct RetroMenuView: View {
                         emulatorVC.stopScreenRecording()
                     }
                     #elseif os(tvOS)
-                    // On tvOS there is no preview sheet — dismiss menu and stop immediately.
-                    dismissAction(true)
-                    emulatorVC.stopScreenRecording()
+                    // Keep game paused while the system "Recording Saved" UI is shown on tvOS as well.
+                    dismissMenuForSubSheetThen {
+                        emulatorVC.stopScreenRecording()
+                    }
                     #endif
                 } else {
                     dismissAction(true)

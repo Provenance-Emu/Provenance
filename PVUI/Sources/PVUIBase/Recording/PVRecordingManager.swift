@@ -35,12 +35,22 @@ import PVSettings
     }
 
     /// On tvOS, whether recording is unavailable specifically because no
-    /// game controller is connected (rather than some other system restriction).
+    /// game controller is connected, while `RPScreenRecorder` itself reports
+    /// that recording is otherwise available.
+    ///
     /// Use this to show a "Connect a game controller to enable recording" hint.
+    ///
+    /// - Note: This is a best-effort heuristic. It returns `true` when ReplayKit reports
+    ///   it would be available but no controller is connected. Other system restrictions
+    ///   (e.g., in-call, low battery) that also make `isAvailable` return `false` are
+    ///   not distinguished here.
     public var isUnavailableDueToNoController: Bool {
         #if os(tvOS)
-        // Recording is unavailable and the only known reason is no controller connected.
-        return !isAvailable && GCController.controllers().isEmpty
+        // ReplayKit reports recording is available, but we require a controller
+        // and none is currently connected.
+        let hasControllers = !GCController.controllers().isEmpty
+        let recorderAvailable = RPScreenRecorder.shared().isAvailable
+        return !hasControllers && recorderAvailable
         #else
         return false
         #endif

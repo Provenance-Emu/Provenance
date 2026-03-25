@@ -113,7 +113,8 @@ extension PVEmulatorViewController {
     ///
     /// On iOS, presents the `RPPreviewViewController` share sheet. The game remains
     /// paused while the sheet is visible and resumes automatically on dismiss.
-    /// On tvOS, the recording is saved to the system and emulation resumes immediately.
+    /// On tvOS, the recording is saved to the system and a "Recording Saved" alert is shown.
+    /// Emulation resumes after the alert is dismissed.
     public func stopScreenRecording() {
         #if os(iOS)
         hideCameraOverlay()
