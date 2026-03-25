@@ -667,7 +667,7 @@ public extension OpenVGDB {
 
     func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let sanitizedMD5 = sanitizeForSQLLike(md5.uppercased())
+        let sanitizedMD5 = sanitizeForSQLLiteral(md5.uppercased())
 
         let query = """
             SELECT DISTINCT \(properties)
@@ -685,7 +685,7 @@ public extension OpenVGDB {
     /// enabling fast ROM identification directly from archive central directories.
     func searchByCRC(_ crc: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let sanitizedCRC = sanitizeForSQLLike(crc.uppercased())
+        let sanitizedCRC = sanitizeForSQLLiteral(crc.uppercased())
 
         let query = """
             SELECT DISTINCT \(properties)
@@ -703,13 +703,61 @@ public extension OpenVGDB {
         return try await searchByCRC(crc)?.first
     }
 
+    /// Search by disc serial / product code.
+    /// OpenVGDB stores serials in `ROMs.romSerial` for CD-based systems (PSX, Saturn, Dreamcast, etc.).
+    /// `romSerial` may contain comma-separated values (e.g. "T-6802G,T-6804G"), so we match against
+    /// exact equality OR a comma-padded LIKE pattern to catch list membership.
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
+        let properties = getStandardProperties()
+        // Use literal escaping (not LIKE-escaping) for the = comparison so that `_` in serials is preserved.
+        let escapedSerial = sanitizeForSQLLiteral(serial)
+        // For the LIKE patterns, also escape LIKE wildcards.
+        let escapedSerialLike = sanitizeForSQLLike(serial)
+
+        // Match: exact ("T-5016H"), at start of list ("SERIAL,…"), middle (",SERIAL,"), end (",SERIAL")
+        // ESCAPE '\\' is required so that backslash-escaped _ and % from sanitizeForSQLLike are treated
+        // as literal characters rather than LIKE wildcards.
+        let serialCondition = """
+            (rom.romSerial = '\(escapedSerial)' COLLATE NOCASE
+            OR rom.romSerial LIKE '\(escapedSerialLike),%' ESCAPE '\\' COLLATE NOCASE
+            OR rom.romSerial LIKE '%,\(escapedSerialLike),%' ESCAPE '\\' COLLATE NOCASE
+            OR rom.romSerial LIKE '%,\(escapedSerialLike)' ESCAPE '\\' COLLATE NOCASE)
+            """
+
+        let query: String
+
+        if let systemID = systemID {
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE \(serialCondition)
+                AND rom.systemID = \(systemID.openVGDBID)
+                LIMIT 1
+                """
+        } else {
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE \(serialCondition)
+                LIMIT 1
+                """
+        }
+
+        guard let result = try executeQuery(query)?.first else { return nil }
+        // Normalize the serial field to the matched input serial so multi-serial rows
+        // (e.g. "T-6802G,T-6804G") don't persist the full comma-separated list.
+        return result.withSerial(serial)
+    }
+
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
         // First try MD5
         var query = """
             SELECT DISTINCT rom.systemID
             FROM ROMs rom
             LEFT JOIN RELEASES release ON rom.romID = release.romID
-            WHERE rom.romHashMD5 = '\(sanitizeForSQLLike(md5.uppercased()))'
+            WHERE rom.romHashMD5 = '\(sanitizeForSQLLiteral(md5.uppercased()))'
         """
 
         // Then try filename if provided

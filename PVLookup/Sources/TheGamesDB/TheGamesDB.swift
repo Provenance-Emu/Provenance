@@ -352,7 +352,9 @@ public final class TheGamesDB: ArtworkLookupService, ROMMetadataProvider, @unche
     }
 
     private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifier?) -> String {
-        let sanitizedName = sanitizeForSQLLike(name)
+        // Use literal escaping for equality comparisons and LIKE escaping for LIKE patterns.
+        let sanitizedNameLiteral = sanitizeForSQLLiteral(name)
+        let sanitizedNameLike = sanitizeForSQLLike(name)
         let platformFilter = if let id = systemID?.theGamesDBID {
             "AND games.platform_id = \(id)"
         } else {
@@ -363,14 +365,14 @@ public final class TheGamesDB: ArtworkLookupService, ROMMetadataProvider, @unche
         WITH matched_games AS (
             SELECT DISTINCT games.id, games.serial_id,
                    CASE
-                       WHEN games.display_name = '\(sanitizedName)' THEN 0
-                       WHEN games.display_name LIKE '\(sanitizedName) %' THEN 1
-                       WHEN games.display_name LIKE '% \(sanitizedName) %' THEN 2
-                       WHEN games.display_name LIKE '%\(sanitizedName)%' THEN 3
+                       WHEN games.display_name = '\(sanitizedNameLiteral)' THEN 0
+                       WHEN games.display_name LIKE '\(sanitizedNameLike) %' ESCAPE '\\' THEN 1
+                       WHEN games.display_name LIKE '% \(sanitizedNameLike) %' ESCAPE '\\' THEN 2
+                       WHEN games.display_name LIKE '%\(sanitizedNameLike)%' ESCAPE '\\' THEN 3
                        ELSE 4
                    END as match_quality
             FROM games
-            WHERE games.display_name LIKE '%\(sanitizedName)%'
+            WHERE games.display_name LIKE '%\(sanitizedNameLike)%' ESCAPE '\\'
             \(platformFilter)
             ORDER BY match_quality, games.display_name
             LIMIT 10

@@ -140,7 +140,8 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
                 platform: dict["platform_id"] as? String,
                 manufacturer: dict["manufacturer_name"] as? String,
                 genres: (dict["genres"] as? String)?.components(separatedBy: ","),
-                romFileName: dict["rom_name"] as? String
+                romFileName: dict["rom_name"] as? String,
+                serialID: dict["serial_id"] as? String
             )
         }
 
@@ -282,6 +283,56 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
 // MARK: - Query Methods
 public extension libretrodb {
+    /// Search by disc serial / product code.
+    /// In LibretroDB `serial_id` is the primary join key shared by `games` and `roms` tables.
+    func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
+        var query = """
+            SELECT DISTINCT
+                games.display_name as game_title,
+                games.full_name,
+                games.release_year,
+                games.release_month,
+                games.serial_id as serial_id,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                ratings.name as rating_name,
+                franchises.name as franchise_name,
+                regions.name as region_name,
+                genres.name as genre_name,
+                roms.name as rom_name,
+                roms.md5 as rom_md5,
+                platforms.id as platform_id,
+                manufacturers.name as manufacturer_name,
+                GROUP_CONCAT(genres.name) as genres
+            FROM games
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN ratings ON games.rating_id = ratings.id
+            LEFT JOIN franchises ON games.franchise_id = franchises.id
+            LEFT JOIN regions ON games.region_id = regions.id
+            LEFT JOIN genres ON games.genre_id = genres.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            WHERE games.serial_id = ? COLLATE NOCASE
+            """
+
+        var parameters: [Any] = [serial]
+
+        if let systemID = systemID {
+            query += " AND games.platform_id = ?"
+            parameters.append(systemID.libretroDatabaseID)
+        }
+
+        query += "\nGROUP BY games.id\nLIMIT 1"
+
+        let results = try db.execute(query: query, parameters: parameters)
+        guard let first = results.first,
+              let metadata = try? convertDictToMetadata(first) else { return nil }
+        let matchedSerial = (first["serial_id"] as? String) ?? serial
+        return convertToROMMetadata(metadata).withSerial(matchedSerial)
+    }
+
     /// Search by MD5 or other key
     internal func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [LibretroDBROMMetadata]? {
         if key == "romHashMD5" || key == "md5" {
@@ -297,7 +348,7 @@ public extension libretrodb {
         var query = standardMetadataQuery
         let pattern = createSQLLikePattern(filename)
 
-        query += " WHERE roms.name LIKE '\(pattern)' COLLATE NOCASE"
+        query += " WHERE roms.name LIKE '\(pattern)' ESCAPE '\\' COLLATE NOCASE"
 
         if let systemID = systemID?.libretroDatabaseID {
             query += " AND platform_id = \(systemID)"
@@ -339,8 +390,8 @@ public extension libretrodb {
     func systemIdentifier(forRomMD5 md5: String, or filename: String?, platformID: SystemIdentifier? = nil) async throws -> SystemIdentifier? {
         let platformID = platformID?.libretroDatabaseID
 
-        // MD5 search with proper sanitization
-        let sanitizedMD5 = sanitizeForSQLLike(md5.uppercased())
+        // MD5 search — use literal escaping (not LIKE) since this is an equality comparison.
+        let sanitizedMD5 = sanitizeForSQLLiteral(md5.uppercased())
         let query = """
             SELECT platform_id
             FROM roms r
@@ -410,7 +461,8 @@ public extension libretrodb {
             platform: platformString,
             manufacturer: dict["manufacturer_name"] as? String,
             genres: (dict["genres"] as? String)?.components(separatedBy: ","),
-            romFileName: dict["rom_name"] as? String
+            romFileName: dict["rom_name"] as? String,
+            serialID: dict["serial_id"] as? String
         )
     }
 
@@ -744,6 +796,7 @@ public extension libretrodb {
         let query = """
             SELECT DISTINCT
                 games.display_name as game_title,
+                games.serial_id as serial_id,
                 games.full_name,
                 games.release_year,
                 games.release_month,
@@ -1006,8 +1059,9 @@ extension libretrodb {
             DLOG("- LibretroDB Platform ID: \(systemID.libretroDatabaseID)")
         }
 
-        // Clean the name and escape SQL including parentheses
-        let sanitizedName = sanitizeForSQLLike(name)
+        // Clean the name and escape SQL; use literal escaping for equality, LIKE escaping for LIKE patterns.
+        let sanitizedNameLiteral = sanitizeForSQLLiteral(name)
+        let sanitizedNameLike = sanitizeForSQLLike(name)
         let platformFilter = systemID?.libretroDatabaseID != nil ?
             "AND games.platform_id = \(systemID!.libretroDatabaseID)" : ""
 
@@ -1016,14 +1070,14 @@ extension libretrodb {
             WITH matched_games AS (
                 SELECT DISTINCT games.id, games.serial_id,
                        CASE
-                           WHEN LOWER(games.display_name) = LOWER('\(sanitizedName)') THEN 0  -- Exact match
-                           WHEN LOWER(games.display_name) LIKE LOWER('\(sanitizedName) %') THEN 1  -- Starts with name
-                           WHEN LOWER(games.display_name) LIKE LOWER('% \(sanitizedName) %') THEN 2  -- Contains word
-                           WHEN LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%') THEN 3  -- Contains substring
+                           WHEN LOWER(games.display_name) = LOWER('\(sanitizedNameLiteral)') THEN 0  -- Exact match
+                           WHEN LOWER(games.display_name) LIKE LOWER('\(sanitizedNameLike) %') ESCAPE '\\' THEN 1  -- Starts with name
+                           WHEN LOWER(games.display_name) LIKE LOWER('% \(sanitizedNameLike) %') ESCAPE '\\' THEN 2  -- Contains word
+                           WHEN LOWER(games.display_name) LIKE LOWER('%\(sanitizedNameLike)%') ESCAPE '\\' THEN 3  -- Contains substring
                            ELSE 4
                        END as match_quality
                 FROM games
-                WHERE LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%')
+                WHERE LOWER(games.display_name) LIKE LOWER('%\(sanitizedNameLike)%') ESCAPE '\\'
                 \(platformFilter)
                 ORDER BY match_quality, games.display_name
                 LIMIT 10

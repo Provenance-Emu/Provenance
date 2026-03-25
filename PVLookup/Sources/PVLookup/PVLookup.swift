@@ -72,6 +72,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     private let md5CacheLimit = 512
     private var filenameCache: [FilenameCacheKey: CacheEntry<[ROMMetadata]>] = [:]
     private let filenameCacheLimit = 256
+    private var serialCache: [String: CacheEntry<ROMMetadata>] = [:]
+    private let serialCacheLimit = 256
 
     // MARK: - Databases
 #if canImport(OpenVGDB)
@@ -215,6 +217,35 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
         for key in keysByAge {
             filenameCache.removeValue(forKey: key)
+        }
+    }
+
+    private func cachedSerialResult(for key: String) -> CachedLookup<ROMMetadata>? {
+        guard var entry = serialCache[key] else { return nil }
+        entry.lastAccess = Date().timeIntervalSinceReferenceDate
+        serialCache[key] = entry
+        if let value = entry.value {
+            return .hit(value)
+        } else {
+            return .miss
+        }
+    }
+
+    private func cacheSerialResult(_ value: ROMMetadata?, for key: String) {
+        serialCache[key] = CacheEntry(value: value, lastAccess: Date().timeIntervalSinceReferenceDate)
+        pruneSerialCacheIfNeeded()
+    }
+
+    private func pruneSerialCacheIfNeeded() {
+        guard serialCache.count > serialCacheLimit else { return }
+        let overflow = serialCache.count - serialCacheLimit
+        let keysByAge = serialCache
+            .sorted { $0.value.lastAccess < $1.value.lastAccess }
+            .prefix(overflow)
+            .map { $0.key }
+
+        for key in keysByAge {
+            serialCache.removeValue(forKey: key)
         }
     }
 
@@ -379,6 +410,76 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             }
         }
         return nil
+    }
+
+    /// Search for a ROM by disc serial / product code.
+    /// Queries OpenVGDB (romSerial column) and LibretroDB (serial_id column) in parallel,
+    /// merges results, and caches the answer to prevent duplicate DB round-trips.
+    public func searchROM(bySerial serial: String, systemID: SystemIdentifier?) async throws -> ROMMetadata? {
+        let cacheKey = "\(serial.uppercased()):\(systemID?.rawValue ?? "")"
+        ILOG("PVLookup: Starting ROM search for serial: \(serial)")
+
+        if let cached = cachedSerialResult(for: cacheKey) {
+            switch cached {
+            case .hit(let metadata):
+                ILOG("PVLookup: Returning cached serial result for: \(serial)")
+                return metadata
+            case .miss:
+                ILOG("PVLookup: Cached serial miss for: \(serial)")
+                return nil
+            }
+        }
+
+        var openVGDBResult: ROMMetadata?
+        var libretroDBResult: ROMMetadata?
+        var hadProviderError = false
+
+        // Wrap each provider result in Result<> so errors are surfaced (not swallowed as cache misses).
+        await withTaskGroup(of: (Int, Result<ROMMetadata?, Error>).self) { group in
+            group.addTask {
+                guard let openVGDB = await self.getOpenVGDB() else { return (0, .success(nil)) }
+                do {
+                    return (0, .success(try await openVGDB.searchROM(bySerial: serial, systemID: systemID)))
+                } catch {
+                    return (0, .failure(error))
+                }
+            }
+            group.addTask {
+                guard let libreTroDB = await self.isolatedLibretroDB else { return (1, .success(nil)) }
+                do {
+                    return (1, .success(try await libreTroDB.searchROM(bySerial: serial, systemID: systemID)))
+                } catch {
+                    return (1, .failure(error))
+                }
+            }
+            for await (tag, resultOrError) in group {
+                switch resultOrError {
+                case .success(let result):
+                    switch tag {
+                    case 0: openVGDBResult = result
+                    case 1: libretroDBResult = result
+                    default: break
+                    }
+                case .failure(let error):
+                    hadProviderError = true
+                    ELOG("PVLookup: Serial search DB error for \(serial): \(error.localizedDescription)")
+                }
+            }
+        }
+
+        let merged = openVGDBResult?.merged(with: libretroDBResult)
+            ?? libretroDBResult?.merged(with: openVGDBResult)
+            ?? openVGDBResult
+            ?? libretroDBResult
+
+        // Skip caching a nil result if a DB error occurred — the miss may be transient.
+        // Always cache if we got an actual result.
+        let shouldCache = merged != nil || (!hadProviderError && !isInitializing)
+        if shouldCache {
+            cacheSerialResult(merged, for: cacheKey)
+        }
+        ILOG("PVLookup: Serial search result for \(serial): \(merged?.gameTitle ?? "nil")")
+        return merged
     }
 
     /// Search database by CRC32, returning all matches.
