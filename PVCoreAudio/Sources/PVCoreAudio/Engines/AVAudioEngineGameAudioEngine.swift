@@ -427,11 +427,12 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         effectChainNodes = []
 
         // Build active effects chain from settings.
-        // Respect both the master toggle and the chain's own isEnabled flag.
+        // Use Defaults[.auFiltersEnabled] as the single master toggle; ignore chain.isEnabled
+        // to avoid dual-flag desync (chain.isEnabled is a UI convenience, not authoritative here).
         let chain = Defaults[.auEffectsChain]
         var newEffectNodes: [AVAudioUnit] = []
-        if Defaults[.auFiltersEnabled] && chain.hasActiveEffects {
-            for node in chain.activeNodes {
+        if Defaults[.auFiltersEnabled] && chain.nodes.contains(where: { $0.isEnabled }) {
+            for node in chain.nodes.filter(\.isEnabled) {
                 if let avUnit = node.effectType.makeAVAudioUnit(parameters: node.parameters) {
                     newEffectNodes.append(avUnit)
                 }
@@ -621,10 +622,12 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         isRunning = false
     }
 
-    /// Rebuilds the effect chain without fully stopping the engine.
+    /// Rebuilds the effect chain by stopping the engine, rewiring the graph, then restarting.
     /// Called when the AU effects chain settings change while audio is playing.
     public func reloadEffectsChainIfRunning() {
         guard isRunning else { return }
+        // Stop before mutating the graph to avoid AVAudioEngine internal assertions.
+        isRunning = false
         engine.stop()
         // Detach previous effect nodes before rebuilding the graph.
         for node in effectChainNodes {
@@ -635,8 +638,10 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         engine.prepare()
         do {
             try engine.start()
+            isRunning = true
         } catch {
             ELOG("Failed to restart engine after effects chain reload: \(error)")
+            // isRunning stays false so callers don't assume audio is active.
         }
     }
 

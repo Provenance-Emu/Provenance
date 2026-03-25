@@ -13,6 +13,7 @@ struct AudioEngineSettingsView: View {
     @Default(.monoAudio) var monoAudio
     @Default(.audioEngineDSPAlgorithm) var dspAlgorithm
     @Default(.auEffectsChain) var auEffectsChain
+    @Default(.auFiltersEnabled) var auFiltersEnabled
 
     var audioLatencySubLabelText: String {
         "Increase latency to improve performance on slower devices.(\(Int(audioLatency))ms)"
@@ -78,14 +79,17 @@ struct AudioEngineSettingsView: View {
                 Section(header: Text("Effects")) {
                     NavigationLink(destination: AUFilterSettingsView()) {
                         HStack {
+                            // Use the master toggle as the single source of truth for "active" display.
+                            let effectsActive = auFiltersEnabled && auEffectsChain.nodes.contains(where: { $0.isEnabled })
+                            let activeCount = auEffectsChain.nodes.filter(\.isEnabled).count
                             SettingsRow(
                                 title: "Audio Effects",
-                                subtitle: auEffectsChain.hasActiveEffects
-                                    ? "\(auEffectsChain.activeNodes.count) effect\(auEffectsChain.activeNodes.count == 1 ? "" : "s") active"
+                                subtitle: effectsActive
+                                    ? "\(activeCount) effect\(activeCount == 1 ? "" : "s") active"
                                     : "Add reverb, delay, EQ and more",
                                 icon: .sfSymbol("waveform.badge.plus")
                             )
-                            if auEffectsChain.hasActiveEffects {
+                            if effectsActive {
                                 Image(systemName: "circle.fill")
                                     .font(.caption2)
                                     .foregroundStyle(.green)

@@ -79,11 +79,6 @@ struct AUFilterSettingsView: View {
                         .foregroundStyle(.blue)
                 }
             }
-            .onChange(of: auFiltersEnabled) { _, enabled in
-                var updated = chain
-                updated.isEnabled = enabled
-                chain = updated
-            }
         }
     }
 

@@ -23,10 +23,6 @@ public struct AUEffectsChain: Codable, Sendable, Equatable {
         self.isEnabled = isEnabled
     }
 
-    public static func == (lhs: AUEffectsChain, rhs: AUEffectsChain) -> Bool {
-        lhs.isEnabled == rhs.isEnabled && lhs.nodes == rhs.nodes
-    }
-
     /// Returns true when the chain has at least one enabled node and the master switch is on.
     public var hasActiveEffects: Bool {
         isEnabled && nodes.contains { $0.isEnabled }
