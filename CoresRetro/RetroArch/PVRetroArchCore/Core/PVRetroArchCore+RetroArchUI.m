@@ -615,10 +615,10 @@ void extract_bundles();
     }
 
 #if !TARGET_OS_TV
-    // Apply the user's MIDI preference (retroArchMIDIEnabled) so the
-    // in-game toggle takes effect on the next session start.
-    // Only patched when the user cfg already exists; on first run the
-    // bundled retroarch.cfg already ships with coremidi as the default.
+    // When the user's config file already exists, apply the MIDI preference
+    // (retroArchMIDIEnabled) so the in-game toggle takes effect on the next
+    // session start. On first run the bundled retroarch.cfg already ships
+    // with "coremidi" as the default, so no patch is needed before the file exists.
     if ([fm fileExistsAtPath:fileName]) {
         [self applyMIDIPreferenceToUserCfg:fileName];
     }
@@ -1157,6 +1157,8 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
 /// Patches multiple keys in `cfgPath` in a single read-modify-write cycle.
 /// Each key is replaced (or appended) using a regex matching `key = "..."` lines.
+/// The file is only written when at least one value actually changes, avoiding
+/// unnecessary I/O on repeated calls with the same values.
 - (void)patchCfgKeys:(NSDictionary<NSString *, NSString *> *)patches inFile:(NSString *)cfgPath {
     NSError *err = nil;
     NSMutableString *content = [NSMutableString stringWithContentsOfFile:cfgPath
@@ -1167,6 +1169,7 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
         return;
     }
 
+    BOOL didModify = NO;
     for (NSString *key in patches) {
         NSString *value = patches[key];
         NSString *newLine = [NSString stringWithFormat:@"%@ = \"%@\"", key, value];
@@ -1182,11 +1185,20 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
         NSTextCheckingResult *match = [regex firstMatchInString:content options:0
                                                           range:NSMakeRange(0, content.length)];
         if (match) {
-            [content replaceCharactersInRange:match.range withString:newLine];
+            NSString *existing = [content substringWithRange:match.range];
+            if (![existing isEqualToString:newLine]) {
+                [content replaceCharactersInRange:match.range withString:newLine];
+                didModify = YES;
+            }
         } else {
             if (![content hasSuffix:@"\n"]) [content appendString:@"\n"];
             [content appendFormat:@"%@\n", newLine];
+            didModify = YES;
         }
+    }
+
+    if (!didModify) {
+        return;
     }
 
     NSError *writeErr = nil;

@@ -54,6 +54,8 @@ extension RetroMenuView {
 #if canImport(CoreMIDI) && !os(tvOS)
         if isRetroArchMIDICapable {
             RetroArchMIDIToggleView(palette: ThemeManager.shared.currentPalette)
+        } else {
+            EmptyView()
         }
 #else
         EmptyView()
@@ -74,7 +76,7 @@ struct MIDIPickerSectionView: View {
         VStack(spacing: 8) {
             // Section header + activity lights
             HStack(spacing: 6) {
-                Image(systemName: "pianokeys")
+                Image(systemName: "pianokeys") // SF Symbols 4 — available iOS 16+; minimum target is iOS 17
                     .font(.system(size: 10, weight: .bold))
                 Text(String(localized: "MIDI DEVICE"))
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
@@ -386,7 +388,7 @@ struct RetroArchMIDIToggleView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 6) {
-                Image(systemName: "pianokeys")
+                Image(systemName: "pianokeys") // SF Symbols 4 — available iOS 16+; minimum target is iOS 17
                     .font(.system(size: 10, weight: .bold))
                 Text(String(localized: "RETROARCH MIDI"))
                     .font(.system(size: 11, weight: .bold, design: .monospaced))

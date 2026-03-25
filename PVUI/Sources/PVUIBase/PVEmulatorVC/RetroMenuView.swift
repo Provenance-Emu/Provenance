@@ -416,12 +416,14 @@ struct RetroMenuView: View {
     }
 
     /// True when the active core is a RetroArch/libretro-path core.
-    /// Core identifiers either contain "libretro" (sub-cores like dosbox_pure_libretro)
-    /// or "retroarch" (the main bridge core). This is the established detection pattern
-    /// used throughout the codebase (PVEmulatorViewController, AudioVisualizer, etc.).
+    /// Uses explicit prefix and substring checks against known stable identifier patterns:
+    /// - "libretro" substring covers sub-cores (e.g., "dosbox_pure_libretro", "mednafen_pce_libretro")
+    /// - "retroarch" substring (case-insensitive) covers the main bridge bundle identifier
+    /// Matches the established detection pattern used throughout the codebase.
     var isLibretroCore: Bool {
         guard let coreID = emulatorVC.core.coreIdentifier else { return false }
-        return coreID.contains("libretro") || coreID.localizedCaseInsensitiveContains("retroarch")
+        let lower = coreID.lowercased()
+        return lower.contains("libretro") || lower.contains("retroarch")
     }
 
     /// True when the active core is a RetroArch/libretro-path core running on a
@@ -430,7 +432,11 @@ struct RetroMenuView: View {
     var isRetroArchMIDICapable: Bool {
 #if canImport(CoreMIDI) && !os(tvOS)
         guard isLibretroCore else { return false }
-        guard let sysID = SystemIdentifier(rawValue: emulatorVC.game.system?.identifier ?? "") else { return false }
+        guard
+            let game = emulatorVC.game,
+            let systemIdentifier = game.system?.identifier,
+            let sysID = SystemIdentifier(rawValue: systemIdentifier)
+        else { return false }
         return MIDISystemRegistry.shared.supportsMIDI(sysID)
 #else
         return false
