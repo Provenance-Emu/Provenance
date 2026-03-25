@@ -912,7 +912,60 @@ fileprivate extension DirectoryWatcher {
                     var fileIsDirectory: ObjCBool = false
                     FileManager.default.fileExists(atPath: file.path, isDirectory: &fileIsDirectory)
                     if fileIsDirectory.boolValue {
-                        ILOG("Directory '\(file.lastPathComponent)' in Imports folder — processing immediately as potential ROM set")
+                        ILOG("Directory '\(file.lastPathComponent)' in Imports folder — processing as potential ROM set")
+
+                        // For directories in the Imports folder, wait for recursive contents to stabilize
+                        if isImportsFolder {
+                            let fileManager = FileManager.default
+                            var previousSnapshot: (fileCount: Int, totalSize: UInt64)?
+                            let stabilityCheckInterval: UInt64 = 200_000_000 // 200ms
+                            let maxStabilityWait: TimeInterval = 30
+                            let start = Date()
+
+                            while !Task.isCancelled {
+                                var fileCount = 0
+                                var totalSize: UInt64 = 0
+
+                                if let enumerator = fileManager.enumerator(
+                                    at: file,
+                                    includingPropertiesForKeys: [
+                                        .isRegularFileKey,
+                                        .totalFileAllocatedSizeKey,
+                                        .fileAllocatedSizeKey
+                                    ],
+                                    options: [.skipsHiddenFiles]
+                                ) {
+                                    for case let child as URL in enumerator {
+                                        let resourceValues = try? child.resourceValues(forKeys: [
+                                            .isRegularFileKey,
+                                            .totalFileAllocatedSizeKey,
+                                            .fileAllocatedSizeKey
+                                        ])
+
+                                        if resourceValues?.isRegularFile == true {
+                                            fileCount += 1
+                                            if let size = resourceValues?.totalFileAllocatedSize ?? resourceValues?.fileAllocatedSize {
+                                                totalSize += UInt64(size)
+                                            }
+                                        }
+                                    }
+                                }
+
+                                let snapshot = (fileCount: fileCount, totalSize: totalSize)
+                                if let previous = previousSnapshot, previous == snapshot {
+                                    // Directory contents appear stable
+                                    break
+                                }
+
+                                if Date().timeIntervalSince(start) >= maxStabilityWait {
+                                    WLOG("Directory '\(file.lastPathComponent)' did not stabilize within \(maxStabilityWait)s; proceeding with import")
+                                    break
+                                }
+
+                                previousSnapshot = snapshot
+                                try? await Task.sleep(nanoseconds: stabilityCheckInterval)
+                            }
+                        }
                         Task { await GameImporter.shared.addImports(forPaths: [file]) }
                         continue
                     }
