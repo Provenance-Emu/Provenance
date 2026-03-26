@@ -1615,7 +1615,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             let commandBuffer: MTLCommandBuffer
             if let queue = self.commandQueue {
                 commandBuffer = queue.makeCommandBuffer()!
-                self.previousCommandBuffer = commandBuffer
             } else {
                 DLOG("Error: Command queue is nil")
                 return
@@ -1733,8 +1732,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // Present the drawable
             commandBuffer.present(currentDrawable)
 
-            // Commit the command buffer
+            // Commit the command buffer; only then update previousCommandBuffer so
+            // that waitUntilScheduled() in didRenderFrameOnAlternateThread never
+            // blocks on an uncommitted buffer from a failed/early-return render pass.
             commandBuffer.commit()
+            self.previousCommandBuffer = commandBuffer
         }
 
         if emulatorCore.rendersToOpenGL {
