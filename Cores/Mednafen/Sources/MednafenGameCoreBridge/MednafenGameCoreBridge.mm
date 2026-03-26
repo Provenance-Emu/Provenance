@@ -1090,6 +1090,9 @@ static void emulation_run(BOOL skipFrame) {
         // multitap re-initialisation loop.
         BOOL isLightGunGame = self.gameSupportsLightGun;
         if (isLightGunGame) {
+            // GunCon uses port 0 (guncon) + port 1 (dualshock); cap player count at 2
+            // so maxNumberPlayers and controller polling don't inherit a stale multitap count.
+            self->multiTapPlayerCount = 2;
             // Port 1 remains a standard DualShock for menu navigation / 2-player fallback.
             uint8 *buf1 = (uint8 *)inputBuffer[1];
             Mednafen::MDFN_en16lsb(&buf1[3],   (uint16) 32767);
