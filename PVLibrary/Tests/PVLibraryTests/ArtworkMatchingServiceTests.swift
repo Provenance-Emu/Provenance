@@ -2,7 +2,7 @@
 //  ArtworkMatchingServiceTests.swift
 //  PVLibraryTests
 //
-//  Tests for ArtworkMatchingService — the fast, exact-match artwork lookup
+//  Tests for FastArtworkLookupService — the fast, exact-match artwork lookup
 //  that runs at ROM import time before falling back to ArtworkSearchQueue.
 //  Also exercises cleanedForArtworkSearch() and shared-instance wiring.
 //
@@ -16,7 +16,7 @@ import PVSystems
 
 // MARK: - Mock Lookup Provider
 
-/// Simple actor-based mock for ArtworkMatchingLookupProvider.
+/// Simple actor-based mock for ArtworkMatchingLookupProvider (used by FastArtworkLookupService).
 /// Using an actor ensures mutable state is safely accessed under concurrency checking.
 private actor MockArtworkMatchingLookup: ArtworkMatchingLookupProvider {
     var artworkResults: [ArtworkMetadata]?
@@ -203,17 +203,23 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         XCTAssertEqual(input.cleanedForArtworkSearch(), "Game Extra")
     }
 
-    // MARK: - ArtworkMatchingService shared instance
+    // MARK: - Shared instance smoke tests
 
-    func testSharedInstanceIsNotNil() {
-        // Smoke test: the shared actor is accessible
+    func testArtworkMatchingServiceSharedInstanceIsNotNil() {
+        // ArtworkMatchingService (progressive fallback, used by ArtworkSearchQueue)
         let service = ArtworkMatchingService.shared
         XCTAssertNotNil(service)
     }
 
-    func testServiceConformsToProtocol() {
-        // Compile-time check via typed assignment
+    func testArtworkMatchingServiceConformsToProtocol() {
+        // Compile-time check: ArtworkMatchingService must satisfy ArtworkMatchingServiceProtocol
         let _: any ArtworkMatchingServiceProtocol = ArtworkMatchingService.shared
+    }
+
+    func testFastArtworkLookupServiceSharedInstanceIsNotNil() {
+        // FastArtworkLookupService (import-time exact match)
+        let service = FastArtworkLookupService.shared
+        XCTAssertNotNil(service)
     }
 
     // MARK: Happy Path
@@ -222,7 +228,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         let expectedURL = "https://example.com/cover.jpg"
         let mock = MockArtworkMatchingLookup(artworkResults: [makeArtwork(urlString: expectedURL)])
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Super Mario World", md5: "abc123", systemID: .SNES)
 
         XCTAssertEqual(result, expectedURL)
@@ -236,7 +242,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             makeArtwork(urlString: boxFrontURL, type: .boxFront)
         ])
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Some Game", md5: "", systemID: nil)
 
         XCTAssertEqual(result, boxFrontURL)
@@ -251,7 +257,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             romMetadata: makeROMMetadata(gameTitle: "Resolved Title")
         )
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Unknown Title", md5: "deadbeef", systemID: .NES)
 
         XCTAssertEqual(result, expectedURL)
@@ -263,7 +269,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         // Simulates the case where neither OpenVGDB nor any other source finds artwork.
         let mock = MockArtworkMatchingLookup()
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Obscure Game Title", md5: "ffffffff", systemID: .SNES)
 
         XCTAssertNil(result, "Should return nil when no artwork source finds a match")
@@ -272,7 +278,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testFindArtwork_returnsNilWhenResultsEmpty() async {
         let mock = MockArtworkMatchingLookup(artworkResults: [])
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Some Game", md5: "11223344", systemID: nil)
 
         XCTAssertNil(result, "Should return nil when artwork search returns empty array")
@@ -281,7 +287,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testFindArtwork_returnsNilForWhitespaceOnlyTitle() async {
         let mock = MockArtworkMatchingLookup(artworkResults: [makeArtwork(urlString: "https://example.com/art.jpg")])
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "   ", md5: "abc", systemID: nil)
 
         XCTAssertNil(result, "Should return nil for whitespace-only title")
@@ -292,7 +298,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
 
         let mock = MockArtworkMatchingLookup(artworkResults: [makeArtwork(urlString: "https://example.com/art.jpg")])
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Any Game", md5: "abc", systemID: nil)
 
         await PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: nil)
@@ -305,7 +311,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testFindArtwork_handlesLookupErrorGracefully() async {
         let mock = MockArtworkMatchingLookup(artworkError: NSError(domain: "TestDomain", code: -1, userInfo: [NSLocalizedDescriptionKey: "Network error"]))
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let result = await service.findArtwork(exactTitle: "Error Game", md5: "abc", systemID: .NES)
 
         XCTAssertNil(result, "Should return nil (not throw) when lookup throws an error")
@@ -317,7 +323,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         // Fast lookup returning nil should resolve well under 2s.
         let mock = MockArtworkMatchingLookup()
 
-        let service = ArtworkMatchingService(lookup: mock)
+        let service = FastArtworkLookupService(lookup: mock)
         let start = Date()
         let result = await service.findArtwork(exactTitle: "Slow Game", md5: "00000000", systemID: nil)
         let elapsed = Date().timeIntervalSince(start)
@@ -335,7 +341,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             result: makeArtwork(urlString: "https://example.com/slow.jpg")
         )
 
-        let service = ArtworkMatchingService(lookup: mock, timeoutNanoseconds: timeoutNs)
+        let service = FastArtworkLookupService(lookup: mock, timeoutNanoseconds: timeoutNs)
         let start = Date()
         let result = await service.findArtwork(exactTitle: "Slow Game", md5: "00000000", systemID: nil)
         let elapsed = Date().timeIntervalSince(start)

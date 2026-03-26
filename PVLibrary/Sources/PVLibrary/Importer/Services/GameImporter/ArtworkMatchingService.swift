@@ -1,5 +1,5 @@
 //
-//  ArtworkMatchingService.swift
+//  FastArtworkLookupService.swift
 //  PVLibrary
 //
 //  Fast, exact-match artwork lookup for use at ROM import time.
@@ -15,7 +15,7 @@ import PVSystems
 
 // MARK: - Lookup Provider Protocol
 
-/// Combined protocol used for dependency injection in `ArtworkMatchingService`.
+/// Combined protocol used for dependency injection in `FastArtworkLookupService`.
 /// Inherits the full `ArtworkLookupService` surface (`searchArtwork`, `getArtwork(forGameID:)`,
 /// `getArtworkURLs(forRom:)`) and adds `searchROM(byMD5:)` for MD5-based fallback lookup.
 public protocol ArtworkMatchingLookupProvider: ArtworkLookupService {
@@ -25,7 +25,7 @@ public protocol ArtworkMatchingLookupProvider: ArtworkLookupService {
 
 extension PVLookup: ArtworkMatchingLookupProvider {}
 
-// MARK: - ArtworkMatchingService
+// MARK: - FastArtworkLookupService
 
 /// Performs a fast, exact-match artwork lookup during ROM import.
 ///
@@ -35,13 +35,13 @@ extension PVLookup: ArtworkMatchingLookupProvider {}
 /// to stay within the ~2 second import-time budget.
 ///
 /// If the fast lookup fails, the caller should fall back to `ArtworkSearchQueue`,
-/// which runs a full multi-strategy search in the background.
+/// which runs a full multi-strategy search via `ArtworkMatchingService` in the background.
 ///
 /// Feature-gated by the ``PVFeature/enhancedArtworkSearch`` flag.
-public actor ArtworkMatchingService {
+public actor FastArtworkLookupService {
 
     // MARK: Singleton
-    public static let shared = ArtworkMatchingService()
+    public static let shared = FastArtworkLookupService()
 
     // MARK: Private properties
     private let lookup: any ArtworkMatchingLookupProvider
@@ -74,7 +74,7 @@ public actor ArtworkMatchingService {
         let title = exactTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return nil }
 
-        ILOG("ArtworkMatchingService: Fast lookup for '\(title)' (MD5: \(md5))")
+        ILOG("FastArtworkLookupService: Fast lookup for '\(title)' (MD5: \(md5))")
 
         let timeoutNanoseconds = fastTimeoutNanoseconds
 
@@ -86,7 +86,7 @@ public actor ArtworkMatchingService {
             do {
                 return try await self.performExactSearch(title: title, md5: md5, systemID: systemID)
             } catch {
-                WLOG("ArtworkMatchingService: search error for '\(title)': \(error.localizedDescription)")
+                WLOG("FastArtworkLookupService: search error for '\(title)': \(error.localizedDescription)")
                 return nil as String?
             }
         }
@@ -124,7 +124,7 @@ public actor ArtworkMatchingService {
            let results = try await lookup.searchArtwork(byGameName: title, systemID: sysID, artworkTypes: .boxFront),
            !results.isEmpty {
             let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
-            ILOG("ArtworkMatchingService: Matched '\(title)' via exact title + system '\(sysID.rawValue)'")
+            ILOG("FastArtworkLookupService: Matched '\(title)' via exact title + system '\(sysID.rawValue)'")
             return best.url.absoluteString
         }
 
@@ -132,7 +132,7 @@ public actor ArtworkMatchingService {
         if let results = try await lookup.searchArtwork(byGameName: title, systemID: nil, artworkTypes: .boxFront),
            !results.isEmpty {
             let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
-            ILOG("ArtworkMatchingService: Matched '\(title)' via exact title (no system filter)")
+            ILOG("FastArtworkLookupService: Matched '\(title)' via exact title (no system filter)")
             return best.url.absoluteString
         }
 
@@ -145,19 +145,19 @@ public actor ArtworkMatchingService {
                    let results = try await lookup.searchArtwork(byGameName: romTitle, systemID: sysID, artworkTypes: .boxFront),
                    !results.isEmpty {
                     let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
-                    ILOG("ArtworkMatchingService: Matched MD5 '\(md5)' via ROM title '\(romTitle)' + system")
+                    ILOG("FastArtworkLookupService: Matched MD5 '\(md5)' via ROM title '\(romTitle)' + system")
                     return best.url.absoluteString
                 }
                 if let results = try await lookup.searchArtwork(byGameName: romTitle, systemID: nil, artworkTypes: .boxFront),
                    !results.isEmpty {
                     let best = results.first(where: { $0.type == .boxFront }) ?? results[0]
-                    ILOG("ArtworkMatchingService: Matched MD5 '\(md5)' via ROM title '\(romTitle)'")
+                    ILOG("FastArtworkLookupService: Matched MD5 '\(md5)' via ROM title '\(romTitle)'")
                     return best.url.absoluteString
                 }
             }
         }
 
-        VLOG("ArtworkMatchingService: No exact match for '\(title)' (MD5: \(md5))")
+        VLOG("FastArtworkLookupService: No exact match for '\(title)' (MD5: \(md5))")
         return nil
     }
 }
