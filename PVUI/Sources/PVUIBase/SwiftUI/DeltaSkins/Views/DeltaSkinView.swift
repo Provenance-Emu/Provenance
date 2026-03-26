@@ -1570,20 +1570,12 @@ public struct DeltaSkinView: View {
     private func buttonWithEffectiveFrame(_ button: DeltaSkinButton) -> DeltaSkinButton {
         let offset = buttonOffsets.offset(for: button.id, skinIdentifier: skin.identifier)
         guard offset != .zero else { return button }
-        return DeltaSkinButton(
-            id: button.id,
-            input: button.input,
-            frame: CGRect(
-                x: button.frame.minX + offset.x,
-                y: button.frame.minY + offset.y,
-                width: button.frame.width,
-                height: button.frame.height
-            ),
-            extendedEdges: button.extendedEdges,
-            haptic: button.haptic,
-            states: button.states,
-            selfRetracting: button.selfRetracting
-        )
+        return button.withFrame(CGRect(
+            x: button.frame.minX + offset.x,
+            y: button.frame.minY + offset.y,
+            width: button.frame.width,
+            height: button.frame.height
+        ))
     }
 
     private func transformFrame(_ frame: CGRect, in geometry: GeometryProxy, mappingSize: CGSize) -> CGRect {

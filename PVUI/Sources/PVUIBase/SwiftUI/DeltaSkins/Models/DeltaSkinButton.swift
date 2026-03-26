@@ -103,6 +103,42 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
         self.buttonKind = .normal
     }
 
+    /// Returns a copy of this button with a different frame, preserving all other fields
+    /// (including the internal `buttonKind`).
+    func withFrame(_ newFrame: CGRect) -> DeltaSkinButton {
+        DeltaSkinButton(
+            id: id,
+            input: input,
+            frame: newFrame,
+            extendedEdges: extendedEdges,
+            haptic: haptic,
+            states: states,
+            selfRetracting: selfRetracting,
+            buttonKind: buttonKind
+        )
+    }
+
+    /// Internal initializer that allows preserving `buttonKind` when creating copies.
+    init(
+        id: String,
+        input: DeltaSkinInput,
+        frame: CGRect,
+        extendedEdges: UIEdgeInsets? = nil,
+        haptic: DeltaSkinHaptic? = nil,
+        states: DeltaSkinButtonStates? = nil,
+        selfRetracting: Bool = false,
+        buttonKind: DeltaSkinButtonKind
+    ) {
+        self.id = id
+        self.input = input
+        self.frame = frame
+        self.extendedEdges = extendedEdges
+        self.haptic = haptic
+        self.states = states
+        self.selfRetracting = selfRetracting
+        self.buttonKind = buttonKind
+    }
+
     private enum CodingKeys: String, CodingKey {
         case id
         case input
