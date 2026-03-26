@@ -24,8 +24,12 @@ GET /cheats?title=<game title>&system=<system slug>
 Returns an empty array `[]` when no cheats are found or when the request is invalid
 (e.g. missing `title`, unknown path). The response is always HTTP 200 with a JSON array
 so clients can safely decode without checking the status code. Invalid requests also
-include an `X-Validation-Error` header with a short description. The caller should fall
-back to direct scraping on an empty result.
+include an `X-Validation-Error` header with a short description.
+
+Responses include an `X-Proxy-Status` header (`ok` or `error`) indicating whether the
+proxy successfully contacted GameHacking.org. Callers should treat an empty array with
+`X-Proxy-Status: ok` as "confirmed no cheats found" and skip the direct-scrape fallback;
+fall back only when the proxy request fails or `X-Proxy-Status` is missing or `error`.
 
 ## Health check
 

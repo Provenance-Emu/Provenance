@@ -214,18 +214,18 @@ function buildSearchURL(title, systemSlug) {
 }
 
 async function fetchHTML(url) {
-    try {
-        const resp = await fetch(url, {
-            headers: {
-                "User-Agent": USER_AGENT,
-                "Accept": "text/html,application/xhtml+xml",
-            },
-        });
-        if (!resp.ok) return null;
-        return await resp.text();
-    } catch {
-        return null;
+    const resp = await fetch(url, {
+        headers: {
+            "User-Agent": USER_AGENT,
+            "Accept": "text/html,application/xhtml+xml",
+        },
+    });
+    if (resp.status >= 500) {
+        // Server error — treat as transient failure so it is not KV-cached
+        throw new Error(`Upstream HTTP ${resp.status} from ${url}`);
     }
+    if (!resp.ok) return null; // 4xx → legitimate "not found"
+    return await resp.text();
 }
 
 // ─── Search result parsing ────────────────────────────────────────────────────
