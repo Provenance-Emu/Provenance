@@ -22,7 +22,7 @@ strings_key_count() {
     # Count key = value; lines in a .strings file
     local f="$1"
     [ -f "$f" ] || { echo 0; return; }
-    grep -c '^"' "$f" 2>/dev/null || echo 0
+    grep -c '^"' "$f" 2>/dev/null || true
 }
 
 # ─── Source tree roots ───────────────────────────────────────────────────────
