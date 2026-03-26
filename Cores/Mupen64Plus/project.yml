@@ -121,16 +121,21 @@ settings:
       - "USE_GLES_ES2=1"
       - "USE_GLES_ES3=1"
       - "USE_GLES_ES3_2=1"
-    OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC -pthread"
-    # ARMv8 / Apple CPU tuning: apply only to arm64 slices to avoid passing ARM-only flags to x86_64 simulator toolchains
-    "OTHER_CFLAGS[arch=arm64]": "$(inherited) -march=armv8-a+simd+crc+crypto -mcpu=apple-a10 -mtune=apple-a15"
-    # Explicit x86_64 override: inherit base flags, no ARM-specific tuning
-    "OTHER_CFLAGS[arch=x86_64]": "$(inherited)"
-    # SDK-specific OTHER_CFLAGS (mirrors Config.xcconfig)
-    "OTHER_CFLAGS[sdk=iphoneos*]": "$(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
-    "OTHER_CFLAGS[sdk=iphonesimulator*]": "$(inherited) -DOS_IOS"
-    "OTHER_CFLAGS[sdk=appletvos*]": "$(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
-    "OTHER_CFLAGS[sdk=appletvsimulator*]": "$(inherited) -DOS_IOS"
+    # Compose OTHER_CFLAGS from helper settings so arch-tuning and SDK defines
+    # are both applied. Xcode resolves a single conditionalized value per build
+    # dimension, so split them into M64_ARCH_CFLAGS + M64_SDK_CFLAGS and
+    # reference both from the unconditional OTHER_CFLAGS entry.
+    OTHER_CFLAGS: "$(inherited) -fno-strict-aliasing -fvisibility=hidden -fomit-frame-pointer -fvisibility-inlines-hidden -fPIC -pthread $(M64_ARCH_CFLAGS) $(M64_SDK_CFLAGS)"
+    # ARMv8 / Apple CPU tuning helper — applied only on arm64 slices
+    M64_ARCH_CFLAGS: ""
+    "M64_ARCH_CFLAGS[arch=arm64]": "-march=armv8-a+simd+crc+crypto -mcpu=apple-a10 -mtune=apple-a15"
+    "M64_ARCH_CFLAGS[arch=x86_64]": ""
+    # SDK-specific C defines helper (mirrors Config.xcconfig)
+    M64_SDK_CFLAGS: ""
+    "M64_SDK_CFLAGS[sdk=iphoneos*]": "-DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
+    "M64_SDK_CFLAGS[sdk=iphonesimulator*]": "-DOS_IOS"
+    "M64_SDK_CFLAGS[sdk=appletvos*]": "-DOS_IOS -D__VEC4_OPT -D__NEON_OPT"
+    "M64_SDK_CFLAGS[sdk=appletvsimulator*]": "-DOS_IOS"
     # macOS preprocessor defines (mirrors Config.xcconfig)
     "GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*]":
       - "$(inherited)"
@@ -138,8 +143,9 @@ settings:
       - "SDL_VIDEO_OPENGL=1"
     # Exclude non-NEON sources on tvOS device (mirrors Config.xcconfig)
     "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*]": "$(inherited) 3DMath.cpp RSP_LoadMatrix.cpp CRC_OPT.cpp"
-    # tvOS Simulator: default source behavior (XcodeGen resolves sources explicitly;
-    # PVDebug.c stub sourcing is handled per-target via dedicated Debug target)
+    # tvOS Simulator: use inherited source inclusion/exclusion behavior.
+    # XcodeGen resolves sources explicitly for each target; no additional stub
+    # files are required beyond what each target already declares.
     "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "$(inherited)"
     "INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "$(inherited)"
     HEADER_SEARCH_PATHS: "$(inherited)"
@@ -569,7 +575,7 @@ targets:
           - "$(inherited)"
           - "Sources/Compatibility/GlideN/"
           - "Sources/Plugins/Video/gliden64/src"
-          - "Sources/Plugins/Video/rice/src"
+          - "Sources/Plugins/Video/rice/rice/src"
           - "Sources/Plugins/Core/Core/src"
         OTHER_CFLAGS:
           - "$(inherited)"
