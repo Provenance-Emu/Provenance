@@ -1085,15 +1085,32 @@ static void emulation_run(BOOL skipFrame) {
     }
     else if (self.systemType == MednaSystemPSX)
     {
-        for(unsigned i = 0; i < self->multiTapPlayerCount; i++) {
-            // Center the Dual Analog Sticks
-            uint8 *buf = (uint8 *)inputBuffer[i];
-            Mednafen::MDFN_en16lsb(&buf[3], (uint16) 32767);
-            Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
-            Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
-            Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
-            // Do we want to use gamepad when not using an MFi device?
-            game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
+        // Detect GunCon light gun games — port 0 is wired as "guncon" AFTER the multitap
+        // block (below) to guarantee the assignment cannot be silently overridden by any
+        // multitap re-initialisation loop.
+        BOOL isLightGunGame = self.gameSupportsLightGun;
+        if (isLightGunGame) {
+            // GunCon uses port 0 (guncon) + port 1 (dualshock); cap player count at 2
+            // so maxNumberPlayers and controller polling don't inherit a stale multitap count.
+            self->multiTapPlayerCount = 2;
+            // Port 1 remains a standard DualShock for menu navigation / 2-player fallback.
+            uint8 *buf1 = (uint8 *)inputBuffer[1];
+            Mednafen::MDFN_en16lsb(&buf1[3],   (uint16) 32767);
+            Mednafen::MDFN_en16lsb(&buf1[3]+2, (uint16) 32767);
+            Mednafen::MDFN_en16lsb(&buf1[3]+4, (uint16) 32767);
+            Mednafen::MDFN_en16lsb(&buf1[3]+6, (uint16) 32767);
+            game->SetInput(1, "dualshock", (uint8_t *)inputBuffer[1]);
+        } else {
+            for(unsigned i = 0; i < self->multiTapPlayerCount; i++) {
+                // Center the Dual Analog Sticks
+                uint8 *buf = (uint8 *)inputBuffer[i];
+                Mednafen::MDFN_en16lsb(&buf[3], (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
+                // Do we want to use gamepad when not using an MFi device?
+                game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
+            }
         }
 
         // Multi-Disc check
@@ -1103,9 +1120,12 @@ static void emulation_run(BOOL skipFrame) {
             multiDiscGame = YES;
         }
 
-        // PSX: Set multitap configuration if detected by serial
+        // PSX: Set multitap configuration if detected by serial.
+        // Skip multitap setup for light-gun games: GunCon occupies port 0 exclusively,
+        // and a dual-serial (e.g. Time Crisis EU / SLES-00284) must not have its port 0
+        // reset to "dualshock" by the multitap re-initialisation loop below.
         NSString *serial = self.romSerial;
-        NSNumber *multitapCount = [MednafenGameCoreOptions multiTapPSXGames][serial];
+        NSNumber *multitapCount = !isLightGunGame ? [MednafenGameCoreOptions multiTapPSXGames][serial] : nil;
         if (multitapCount != nil) {
             self->multiTapPlayerCount = [multitapCount intValue];
             ILOG(@"Mednafen PSX: multi-tap serial=%@ players=%d", serial, self->multiTapPlayerCount);
@@ -1134,6 +1154,14 @@ static void emulation_run(BOOL skipFrame) {
             // Explicitly disable multi-tap for non-multi-tap games to prevent bleed from prior loads
             Mednafen::MDFNI_SetSettingB("psx.input.pport1.multitap", false);
             Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", false);
+        }
+        // Wire port 0 as "guncon" AFTER the multitap block so it cannot be overridden
+        // by the multitap re-initialisation loop above.
+        if (isLightGunGame) {
+            ILOG(@"Mednafen PSX: GunCon game detected (serial=%@), configuring port 0 as guncon", self.romSerial);
+            // Zero out the guncon buffer; coordinates will be written by LightGunResponder callbacks.
+            memset((uint8_t *)inputBuffer[0], 0, 9 * sizeof(uint32_t));
+            game->SetInput(0, "guncon", (uint8_t *)inputBuffer[0]);
         }
         // PSX: Check if SBI file is required (LibCrypt copy-protection)
         if ([MednafenGameCoreOptions sbiRequiredGames][self.romSerial])

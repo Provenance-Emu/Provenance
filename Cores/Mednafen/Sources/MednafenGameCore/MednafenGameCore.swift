@@ -341,6 +341,70 @@ extension MednafenGameCore: PaletteProviding {
     }
 }
 
+// MARK: - LightGunResponder
+
+extension MednafenGameCore: LightGunResponder {
+    public var gameSupportsLightGun: Bool {
+        return _bridge.gameSupportsLightGun
+    }
+
+    public var requiresLightGun: Bool {
+        return _bridge.requiresLightGun
+    }
+
+    public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
+        _bridge.lightGunMovedToPoint(point, isOffscreen: isOffscreen)
+    }
+
+    public func lightGunTriggerDown() {
+        _bridge.lightGunTriggerDown()
+    }
+
+    public func lightGunTriggerUp() {
+        _bridge.lightGunTriggerUp()
+    }
+
+    public func lightGunAuxADown() {
+        _bridge.lightGunAuxADown()
+    }
+
+    public func lightGunAuxAUp() {
+        _bridge.lightGunAuxAUp()
+    }
+
+    public func lightGunAuxBDown() {
+        _bridge.lightGunAuxBDown()
+    }
+
+    public func lightGunAuxBUp() {
+        _bridge.lightGunAuxBUp()
+    }
+
+    public func lightGunStartDown() {
+        _bridge.lightGunStartDown()
+    }
+
+    public func lightGunStartUp() {
+        _bridge.lightGunStartUp()
+    }
+
+    public func lightGunSelectDown() {
+        _bridge.lightGunSelectDown()
+    }
+
+    public func lightGunSelectUp() {
+        _bridge.lightGunSelectUp()
+    }
+
+    public func lightGunReloadDown() {
+        _bridge.lightGunReloadDown()
+    }
+
+    public func lightGunReloadUp() {
+        _bridge.lightGunReloadUp()
+    }
+}
+
 extension MednafenGameCore: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
         _bridge.setCheat(code: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled)
