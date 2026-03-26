@@ -72,8 +72,9 @@ public:
 	void setGameShark(std::string const &codes) { mem_.setGameShark(codes); }
 
 	// Memory accessors for RetroAchievements integration.
-	unsigned char * wramdata(unsigned area) const { return mem_.wramdata(area); }
-	unsigned char * vramdata() const { return mem_.vramdata(); }
+	const unsigned char * wramdata(unsigned area) const { return mem_.wramdata(area); }
+	const unsigned char * vramdata() const { return mem_.vramdata(); }
+	unsigned char * vrambankptr() const { return mem_.vrambankptr(); }
 
 private:
 	Memory mem_;

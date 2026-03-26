@@ -49,6 +49,7 @@
 //#include "resampler.h"
 
 #include "gbcpalettes.h"
+#include <atomic>
 
 gambatte::GB gb;
 Resampler *resampler;
@@ -187,8 +188,8 @@ static void pvgb_event_handler(const rc_client_event_t *event, rc_client_t *clie
     rc_client_t *_rcClient;
 #endif
     // Written from pvgb_load_callback (arbitrary queue) and read from tickAchievements
-    // (emulation thread); use an atomic to avoid a data race.
-    _Atomic(BOOL) _achievementsActive;
+    // (emulation thread); use std::atomic to avoid a data race.
+    std::atomic<bool> _achievementsActive;
 }
 
 static __weak PVGBEmulatorCoreBridge *_current;
@@ -216,14 +217,14 @@ static __weak PVGBEmulatorCoreBridge *_current;
 }
 
 - (BOOL)achievementsActive {
-    return _achievementsActive;
+    return _achievementsActive.load();
 }
 
 // MARK: - Achievement tick
 
 - (void)tickAchievements {
 #if HAVE_RCHEEVOS
-    if (_rcClient && _achievementsActive) {
+    if (_rcClient && _achievementsActive.load()) {
         rc_client_do_frame(_rcClient);
     }
 #endif
@@ -376,7 +377,7 @@ public:
             rc_client_destroy(_rcClient);
             _rcClient = NULL;
         }
-        _achievementsActive = NO;
+        _achievementsActive.store(false);
 #endif
 
         [super stopEmulation];
@@ -714,7 +715,7 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
     free(ctx);
 
     BOOL success = (result == RC_OK);
-    core->_achievementsActive = success;
+    core->_achievementsActive.store(success);
     if (completion) { completion(success); }
 }
 #endif // HAVE_RCHEEVOS
@@ -744,7 +745,7 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
     if (_rcClient) {
         rc_client_unload_game(_rcClient);
     }
-    _achievementsActive = NO;
+    _achievementsActive.store(false);
 #endif
 }
 

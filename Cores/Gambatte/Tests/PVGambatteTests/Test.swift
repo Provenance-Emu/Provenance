@@ -83,7 +83,7 @@ struct RetroAchievementsTests {
     @Test func prepareAchievementsCompletesWithoutRcheevos() async {
         let core = PVGBEmulatorCore()
         // Should return immediately — no rc_client, completion fires synchronously.
-        await core.prepareAchievements(gameHash: "0000000000000000")
+        await core.prepareAchievements(gameHash: "00000000000000000000000000000000")
         // If we reach here the call didn't hang.
     }
 
