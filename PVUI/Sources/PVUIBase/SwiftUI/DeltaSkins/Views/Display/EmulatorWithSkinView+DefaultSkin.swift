@@ -215,8 +215,15 @@ struct DefaultControllerSkinView: View {
 
     /// Returns the fraction of the view height allocated to the controller overlay in portrait mode.
     /// Extracted to ensure the SwiftUI layout and the viewport calculation always use the same value.
+    /// The incoming `scale` value is expected to be in the range 0.5–2.0, but since it comes from
+    /// persisted Defaults, we defensively sanitize and clamp it to avoid NaN / non-finite layouts.
     private static func portraitControllerFraction(scale: Double) -> CGFloat {
-        min(0.70, max(0.20, 0.35 * CGFloat(scale)))
+        // Normalize non-finite values (NaN / ±infinity) to a safe default of 1.0
+        let finiteScale = scale.isFinite ? scale : 1.0
+        // Clamp to the expected range from settings UI
+        let clampedScale = min(2.0, max(0.5, finiteScale))
+
+        return min(0.70, max(0.20, 0.35 * CGFloat(clampedScale)))
     }
 
     var body: some View {
