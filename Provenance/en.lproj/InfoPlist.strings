@@ -9,4 +9,4 @@ NSPhotoLibraryAddUsageDescription = "Provenance can set custom artworks from you
 NSLocalNetworkUsageDescription = "Provenance uses the local network to find and communicate with AltServer and to discover netplay rooms for multiplayer gaming.";
 NSBluetoothAlwaysUsageDescription = "Provenance uses Bluetooth to support game controllers.";
 NSMotionUsageDescription = "Provenance uses your device's accelerometer and gyroscope to emulate the portable consoles' built-in accelerometer and gyroscope.";
-NSFileProviderDomainUsageDescription = "Provenance uses file provider for loading ROMs.";
+NSFileProviderDomainUsageDescription = "Provenance uses the file provider to load ROMs.";
