@@ -3,7 +3,7 @@
 CFBundleDisplayName = "Provenance";
 CFBundleName = "Provenance";
 NSCameraUsageDescription = "Provenance uses the camera to capture custom game artwork and for camera-enabled game features.";
-NSMicrophoneUsageDescription = "Provenance uses the microphone for systems that support audio input (eg. Famicom).";
+NSMicrophoneUsageDescription = "Provenance uses the microphone for systems that support audio input (e.g., Famicom).";
 NSPhotoLibraryUsageDescription = "Provenance can set custom artworks from your photos or save screenshots to the Photo Library.";
 NSPhotoLibraryAddUsageDescription = "Provenance can set custom artworks from your photos or save screenshots to the Photo Library.";
 NSLocalNetworkUsageDescription = "Provenance uses the local network to find and communicate with AltServer and to discover netplay rooms for multiplayer gaming.";
