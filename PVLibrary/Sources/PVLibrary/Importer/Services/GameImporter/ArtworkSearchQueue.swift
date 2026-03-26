@@ -99,10 +99,13 @@ public actor ArtworkSearchQueue {
             // Schedule processing with debounce - cancel previous task and start new one
             processingTask?.cancel()
             processingTask = Task.detached(priority: .utility) { [self] in
-                // Wait for more games to be queued (debounce)
-                try? await Task.sleep(for: .seconds(3))
-                // Respect cancellation: if a newer task was queued during the sleep, bail out.
-                guard !Task.isCancelled else { return }
+                do {
+                    // Debounce: wait for more games to be queued before processing.
+                    // CancellationError propagates when a newer task cancels this one.
+                    try await Task.sleep(for: .seconds(3))
+                } catch {
+                    return // Cancelled — the newest queued task will process instead
+                }
                 await self.processPendingSearches()
             }
         }
