@@ -31,7 +31,7 @@ private final class AudioEngineContext {
 }
 
 @available(macOS 11.0, iOS 14.0, *)
-final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
+final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterableAudioEngine {
     private lazy var engine: AVAudioEngine = {
         let engine = AVAudioEngine()
         return engine
@@ -58,13 +58,13 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         }
     }
 
-    /// Filter support
-    private let filterNode = AVAudioUnitEQ(numberOfBands: 1)
-    public var filterEnabled: Bool = false {
-        didSet {
-            filterNode.bypass = !filterEnabled
-        }
-    }
+    /// Currently-attached AU effects chain nodes. Rebuilt in `updateSourceNode()`.
+    internal var effectChainNodes: [AVAudioUnit] = []
+
+    /// Task observing Defaults changes for the AU effects chain; cancelled in deinit.
+    private var effectsChainObserverTask: Task<Void, Never>?
+    /// Task observing Defaults changes for the AU filters master toggle; cancelled in deinit.
+    private var effectsEnabledObserverTask: Task<Void, Never>?
 
     /// Delegate for audio sample rate changes
     public weak var delegate: PVAudioDelegate?
@@ -91,6 +91,24 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             }
         }
 
+        // Observe AU effects chain changes and reload when running.
+        effectsChainObserverTask = Task {
+            for await _ in Defaults.updates(Defaults.Keys.auEffectsChain) {
+                await MainActor.run { [weak self] in
+                    self?.reloadEffectsChainIfRunning()
+                }
+            }
+        }
+
+        // Observe the master effects toggle separately so toggling it also reloads the chain.
+        effectsEnabledObserverTask = Task {
+            for await _ in Defaults.updates(Defaults.Keys.auFiltersEnabled) {
+                await MainActor.run { [weak self] in
+                    self?.reloadEffectsChainIfRunning()
+                }
+            }
+        }
+
         #if !os(macOS)
         NotificationCenter.default.addObserver(
             self,
@@ -102,6 +120,10 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
     }
 
     deinit {
+        effectsChainObserverTask?.cancel()
+        effectsChainObserverTask = nil
+        effectsEnabledObserverTask?.cancel()
+        effectsEnabledObserverTask = nil
         muteSwitchMonitor.stopMonitoring()
         stopAudio()
         #if !os(macOS)
@@ -397,8 +419,40 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         }
 
         engine.attach(src)
-        engine.connect(src, to: engine.mainMixerNode, format: format)
-        DLOG("Source node updated and connected successfully")
+
+        // Detach previous effect chain nodes.
+        for node in effectChainNodes {
+            engine.detach(node)
+        }
+        effectChainNodes = []
+
+        // Build active effects chain from settings.
+        // Use Defaults[.auFiltersEnabled] as the single master toggle.
+        // AUEffectsChain no longer carries its own isEnabled flag.
+        let chain = Defaults[.auEffectsChain]
+        var newEffectNodes: [AVAudioUnit] = []
+        if Defaults[.auFiltersEnabled] && chain.nodes.contains(where: { $0.isEnabled }) {
+            for node in chain.nodes.filter(\.isEnabled) {
+                if let avUnit = node.effectType.makeAVAudioUnit(parameters: node.parameters) {
+                    newEffectNodes.append(avUnit)
+                }
+            }
+        }
+
+        if newEffectNodes.isEmpty {
+            engine.connect(src, to: engine.mainMixerNode, format: format)
+        } else {
+            var previousNode: AVAudioNode = src
+            for avUnit in newEffectNodes {
+                engine.attach(avUnit)
+                engine.connect(previousNode, to: avUnit, format: format)
+                previousNode = avUnit
+            }
+            engine.connect(previousNode, to: engine.mainMixerNode, format: format)
+        }
+        effectChainNodes = newEffectNodes
+
+        DLOG("Source node updated and connected successfully (effect nodes: \(newEffectNodes.count))")
     }
 
     /// Captures audio data for visualization
@@ -560,8 +614,35 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         if let src {
             engine.detach(src)
         }
+        for node in effectChainNodes {
+            engine.detach(node)
+        }
+        effectChainNodes = []
         src = nil
         isRunning = false
+    }
+
+    /// Rebuilds the effect chain by stopping the engine, rewiring the graph, then restarting.
+    /// Called when the AU effects chain settings change while audio is playing.
+    public func reloadEffectsChainIfRunning() {
+        guard isRunning else { return }
+        // Stop before mutating the graph to avoid AVAudioEngine internal assertions.
+        isRunning = false
+        engine.stop()
+        // Detach previous effect nodes before rebuilding the graph.
+        for node in effectChainNodes {
+            engine.detach(node)
+        }
+        effectChainNodes = []
+        updateSourceNode()
+        engine.prepare()
+        do {
+            try engine.start()
+            isRunning = true
+        } catch {
+            ELOG("Failed to restart engine after effects chain reload: \(error)")
+            // isRunning stays false so callers don't assume audio is active.
+        }
     }
 
     public func pauseAudio() {
