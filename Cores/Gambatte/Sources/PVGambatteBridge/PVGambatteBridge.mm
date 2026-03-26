@@ -724,11 +724,13 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
                          completion:(void (^)(BOOL success))completion {
 #if HAVE_RCHEEVOS
     if (!_rcClient) {
+        _achievementsActive.store(false);
         if (completion) { completion(NO); }
         return;
     }
     pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)malloc(sizeof(pvgb_load_ctx_t));
     if (!ctx) {
+        _achievementsActive.store(false);
         if (completion) { completion(NO); }
         return;
     }
@@ -736,6 +738,7 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
     ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
     rc_client_load_game(_rcClient, gameHash.UTF8String, pvgb_load_callback, ctx);
 #else
+    _achievementsActive.store(false);
     if (completion) { completion(NO); }
 #endif
 }

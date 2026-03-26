@@ -74,7 +74,7 @@ public:
 	// Memory accessors for RetroAchievements integration.
 	const unsigned char * wramdata(unsigned area) const { return mem_.wramdata(area); }
 	const unsigned char * vramdata() const { return mem_.vramdata(); }
-	unsigned char * vrambankptr() const { return mem_.vrambankptr(); }
+	const unsigned char * vrambankptr() const { return mem_.vrambankptr(); }
 
 private:
 	Memory mem_;

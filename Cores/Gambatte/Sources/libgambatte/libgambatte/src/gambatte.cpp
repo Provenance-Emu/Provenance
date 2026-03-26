@@ -225,7 +225,7 @@ const unsigned char * GB::vramData() const {
 	return p_->cpu.vramdata();
 }
 
-unsigned char * GB::vramBankPtr() const {
+const unsigned char * GB::vramBankPtr() const {
 	if (!p_->cpu.loaded())
 		return nullptr;
 	return p_->cpu.vrambankptr();

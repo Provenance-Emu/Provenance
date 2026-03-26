@@ -208,7 +208,7 @@ public:
 	  * On DMG this always refers to bank 0. Updated in real time during emulation.
 	  * Returns nullptr if no ROM is loaded.
 	  */
-	unsigned char * vramBankPtr() const;
+	const unsigned char * vramBankPtr() const;
 
 	/**
 	  * Returns the total WRAM size in bytes.

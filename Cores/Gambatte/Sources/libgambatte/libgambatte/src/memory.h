@@ -123,7 +123,7 @@ public:
 	// vrambankptr()[addr] for addr in [0x8000, 0x9FFF] gives the correct byte
 	// for the currently active VRAM bank (updated when CGB register FF4F is written).
 	// On DMG this always points to bank 0. Use this instead of vramdata() for reads.
-	unsigned char * vrambankptr() const { return cart_.vrambankptr(); }
+	const unsigned char * vrambankptr() const { return cart_.vrambankptr(); }
 
 private:
 	Cartridge cart_;
