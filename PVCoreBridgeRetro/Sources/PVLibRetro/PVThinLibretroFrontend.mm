@@ -1452,11 +1452,21 @@ static bool thin_midi_write(uint8_t byte, uint32_t delta_time) {
     // -1 means the user has never made an explicit selection (e.g. PVLibRetroCore which does
     // not wire the MIDIDeviceManager observer). Fall back to the first available destination
     // to preserve pre-PR behaviour for those cores.
+    // Cache the result: MIDIGetDestination(0) is called at byte granularity, so hitting
+    // CoreMIDI enumeration APIs on every send would be a performance regression.
+    // Benign init race: two threads may both see s_fallbackDest == 0 simultaneously and
+    // both call MIDIGetDestination(0); they receive the same value and the final store is
+    // idempotent — no lock needed here.
     if (destCount < 0) {
-        if (MIDIGetNumberOfDestinations() <= 0) return false;
-        MIDIEndpointRef fallback = MIDIGetDestination(0);
-        if (!fallback) return false;
-        dests[0] = fallback;
+        static MIDIEndpointRef s_fallbackDest = (MIDIEndpointRef)0;
+        if (!s_fallbackDest) {
+            if (MIDIGetNumberOfDestinations() <= 0) return false;
+            MIDIEndpointRef ep = MIDIGetDestination(0);
+            if (!ep) return false;
+            s_fallbackDest = ep;
+        }
+        if (!s_fallbackDest) return false;
+        dests[0] = s_fallbackDest;
         destCount = 1;
     }
 
