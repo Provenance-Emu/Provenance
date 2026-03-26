@@ -135,6 +135,7 @@ let targets: [Target] = [
       "MednafenGameCoreBridge",
       "MednafenGameCoreC",
       "MednafenGameCoreOptions",
+      "MednafenRcheevosObjC",
       "PVAudio",
       "PVCoreBridge",
       "PVCoreObjCBridge",
@@ -198,6 +199,21 @@ let targets: [Target] = [
       "PVSettings",
       "PVSupport",
       "mednafen",
+    ]
+  ),
+  // MARK: --------- MednafenRcheevosObjC ------------ //
+  // Objective-C++ bridge between the Mednafen Swift layer and the rcheevos C library.
+  // Requires `git submodule update --init PVRcheevos/rcheevos` before building.
+  .target(
+    name: "MednafenRcheevosObjC",
+    dependencies: [
+      "MednafenGameCoreC",
+      .product(name: "CRcheevos", package: "PVRcheevos"),
+    ],
+    path: "Sources/MednafenRcheevosObjC",
+    publicHeadersPath: "include",
+    cSettings: [
+      .headerSearchPath("./include"),
     ]
   ),
   // MARK: --------- MednafenGameCoreC ------------ //
@@ -676,6 +692,7 @@ let package = Package(
     .package(path: "../../PVSettings"),
     .package(path: "../../PVSupport"),
     .package(name: "PVPrimitives", path: "../PVPrimitives/"),
+    .package(path: "../../PVRcheevos"),
     .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
     .package(url: "https://github.com/OlehKulykov/PLzmaSDK.git",
              revision: "1.2.5"),
