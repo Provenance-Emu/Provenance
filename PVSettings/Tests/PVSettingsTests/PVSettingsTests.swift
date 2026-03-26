@@ -1166,6 +1166,86 @@ struct MouseInputSourceTests {
     }
 }
 
+// MARK: - LightGunCrosshairStyle Tests
+
+@Suite("LightGunCrosshairStyle")
+struct LightGunCrosshairStyleTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(LightGunCrosshairStyle.allCases.count == 4)
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for style in LightGunCrosshairStyle.allCases {
+            let reconstructed = LightGunCrosshairStyle(rawValue: style.rawValue)
+            #expect(reconstructed == style)
+        }
+    }
+
+    @Test("RawValues are correct")
+    func rawValues() {
+        #expect(LightGunCrosshairStyle.off.rawValue == "off")
+        #expect(LightGunCrosshairStyle.dot.rawValue == "dot")
+        #expect(LightGunCrosshairStyle.crosshair.rawValue == "crosshair")
+        #expect(LightGunCrosshairStyle.reticle.rawValue == "reticle")
+    }
+
+    @Test("DisplayNames are non-empty")
+    func displayNamesNonEmpty() {
+        for style in LightGunCrosshairStyle.allCases {
+            #expect(!style.displayName.isEmpty)
+        }
+    }
+
+    @Test("Subtitles are non-empty")
+    func subtitlesNonEmpty() {
+        for style in LightGunCrosshairStyle.allCases {
+            #expect(!style.subtitle.isEmpty)
+        }
+    }
+
+    @Test("SymbolNames are non-empty")
+    func symbolNamesNonEmpty() {
+        for style in LightGunCrosshairStyle.allCases {
+            #expect(!style.symbolName.isEmpty)
+        }
+    }
+
+    @Test("Invalid rawValue returns nil")
+    func invalidRawValueReturnsNil() {
+        #expect(LightGunCrosshairStyle(rawValue: "nonexistent") == nil)
+    }
+}
+
+// MARK: - LightGunCrosshairStyle Defaults Key Tests
+
+@Suite("LightGunCrosshairStyle Defaults Key", .serialized)
+struct LightGunCrosshairStyleDefaultsTests {
+
+    @Test("lightGunCrosshairStyle default is .crosshair")
+    func defaultIsCrosshair() {
+        Defaults.reset(.lightGunCrosshairStyle)
+        #expect(Defaults[.lightGunCrosshairStyle] == .crosshair)
+    }
+
+    @Test("lightGunCrosshairStyle key name is correct")
+    func keyName() {
+        #expect(Defaults.Keys.lightGunCrosshairStyle.name == "lightGunCrosshairStyle")
+    }
+
+    @Test("lightGunCrosshairStyle can be mutated and reset")
+    func mutable() {
+        Defaults.reset(.lightGunCrosshairStyle)
+        defer { Defaults.reset(.lightGunCrosshairStyle) }
+        Defaults[.lightGunCrosshairStyle] = .off
+        #expect(Defaults[.lightGunCrosshairStyle] == .off)
+        Defaults.reset(.lightGunCrosshairStyle)
+        #expect(Defaults[.lightGunCrosshairStyle] == .crosshair)
+    }
+}
+
 // MARK: - Mouse Defaults Keys Tests
 
 @Suite("Mouse Defaults Keys", .serialized)

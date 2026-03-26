@@ -1,5 +1,7 @@
 import SwiftUI
+import PVCoreBridge
 import PVEmulatorCore
+import PVFeatureFlags
 import PVLibrary
 import PVSystems
 import Combine
@@ -51,6 +53,12 @@ struct EmulatorWithSkinView: View {
 
     // Track if we have a user-selected filter
     @State private var hasUserSelectedFilter = false
+
+    // MARK: - Light gun crosshair overlay
+
+    /// Whether the active core supports a light gun.
+    /// Evaluated once on appear and cached to avoid repeated protocol casts.
+    @State private var coreSupportsLightGun: Bool = false
 
     // MARK: - Keyboard overlay (iOS only)
 
@@ -151,6 +159,12 @@ struct EmulatorWithSkinView: View {
                         }
                 }
 
+                // Light gun crosshair overlay (gated by feature flag)
+                if coreSupportsLightGun && PVFeatureFlagsManager.shared.lightGunCrosshair {
+                    LightGunCrosshairView()
+                        .allowsHitTesting(false)
+                }
+
                 // Debug overlay if enabled
                 if showDebugOverlay {
                     debugOverlayView
@@ -214,6 +228,9 @@ struct EmulatorWithSkinView: View {
             }
             .background(Color.clear) // Ensure the background is transparent
             .onAppear {
+                // Determine whether the active core supports a light gun
+                coreSupportsLightGun = (coreInstance as? LightGunResponder)?.gameSupportsLightGun == true
+
                 // Set the emulator core in the input handler
                 inputHandler.setEmulatorCore(coreInstance)
 
