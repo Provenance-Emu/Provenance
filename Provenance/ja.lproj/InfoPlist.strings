@@ -1,2 +1,12 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "Provenanceは、カスタムゲームアートワークの撮影とカメラ対応のゲーム機能のためにカメラを使用します。";
+NSMicrophoneUsageDescription = "Provenanceは、音声入力に対応したシステム（例：ファミコン）のためにマイクを使用します。";
+NSPhotoLibraryUsageDescription = "Provenanceは写真からカスタムアートワークを設定したり、スクリーンショットをフォトライブラリに保存することができます。";
+NSPhotoLibraryAddUsageDescription = "Provenanceは写真からカスタムアートワークを設定したり、スクリーンショットをフォトライブラリに保存することができます。";
+NSLocalNetworkUsageDescription = "ProvenanceはAltServerとの通信や、マルチプレイゲームのためのネットプレイルーム探索にローカルネットワークを使用します。";
+NSBluetoothAlwaysUsageDescription = "ProvenanceはゲームコントローラーのサポートにBluetoothを使用します。";
+NSMotionUsageDescription = "Provenanceはお使いのデバイスの加速度センサーとジャイロスコープを使用して、携帯ゲーム機の内蔵センサーをエミュレートします。";
+NSFileProviderDomainUsageDescription = "ProvenanceはROMの読み込みにファイルプロバイダーを使用します。";

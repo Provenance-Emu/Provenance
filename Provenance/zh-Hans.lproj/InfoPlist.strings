@@ -1,2 +1,12 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "Provenance 使用相机拍摄自定义游戏封面图片，以及支持摄像头的游戏功能。";
+NSMicrophoneUsageDescription = "Provenance 为支持音频输入的系统（如 Famicom）使用麦克风。";
+NSPhotoLibraryUsageDescription = "Provenance 可以从您的照片设置自定义图片，或将截图保存到相册。";
+NSPhotoLibraryAddUsageDescription = "Provenance 可以从您的照片设置自定义图片，或将截图保存到相册。";
+NSLocalNetworkUsageDescription = "Provenance 使用本地网络与 AltServer 通信，并发现用于多人游戏的联网游戏房间。";
+NSBluetoothAlwaysUsageDescription = "Provenance 使用蓝牙支持游戏手柄。";
+NSMotionUsageDescription = "Provenance 使用您设备的加速度传感器和陀螺仪来模拟便携式游戏机的内置传感器。";
+NSFileProviderDomainUsageDescription = "Provenance 使用文件提供程序加载 ROM 文件。";

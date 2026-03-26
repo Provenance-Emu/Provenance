@@ -1,2 +1,12 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "Provenance usa la cámara para capturar carátulas de juegos personalizadas y para funciones de juego que requieren cámara.";
+NSMicrophoneUsageDescription = "Provenance usa el micrófono para sistemas que admiten entrada de audio (p. ej. Famicom).";
+NSPhotoLibraryUsageDescription = "Provenance puede establecer ilustraciones personalizadas de tus fotos o guardar capturas de pantalla en la fototeca.";
+NSPhotoLibraryAddUsageDescription = "Provenance puede establecer ilustraciones personalizadas de tus fotos o guardar capturas de pantalla en la fototeca.";
+NSLocalNetworkUsageDescription = "Provenance usa la red local para comunicarse con AltServer y descubrir salas de juego en red para partidas multijugador.";
+NSBluetoothAlwaysUsageDescription = "Provenance usa Bluetooth para admitir mandos de juego.";
+NSMotionUsageDescription = "Provenance usa el acelerómetro y giroscopio de tu dispositivo para emular los sensores integrados de las consolas portátiles.";
+NSFileProviderDomainUsageDescription = "Provenance usa el proveedor de archivos para cargar ROMs.";
