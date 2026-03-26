@@ -47,7 +47,7 @@ final class MockArtworkMatchingService: ArtworkMatchingServiceProtocol, @uncheck
         md5: String?,
         systemIdentifier: SystemIdentifier?,
         artworkTypes: ArtworkType
-    ) async throws -> [ArtworkMetadata] {
+    ) async -> [ArtworkMetadata] {
         lock.withLock { _calls.append((title: title, artworkTypes: artworkTypes)) }
         return lock.withLock { _stubbedResults }
     }
@@ -226,7 +226,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     // MARK: ArtworkMatchingService (unit, no network)
 
     /// Validates that the mock correctly returns stubbed results and records call parameters.
-    func test_mockService_returnsBoxFrontAndBoxBack() async throws {
+    func test_mockService_returnsBoxFrontAndBoxBack() async {
         let mock = MockArtworkMatchingService()
         mock.stubbedResults = [
             ArtworkMetadata(
@@ -242,7 +242,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         ]
 
         let requestedTypes: ArtworkType = [.boxFront, .boxBack]
-        let results = try await mock.findArtwork(
+        let results = await mock.findArtwork(
             title: "Zelda",
             filename: "Zelda",
             md5: nil,
@@ -259,11 +259,11 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         XCTAssertEqual(mock.calls.first?.artworkTypes, requestedTypes)
     }
 
-    func test_mockService_emptyResultsWhenNoneStubbed() async throws {
+    func test_mockService_emptyResultsWhenNoneStubbed() async {
         let mock = MockArtworkMatchingService()
         mock.stubbedResults = []
 
-        let results = try await mock.findArtwork(
+        let results = await mock.findArtwork(
             title: "Unknown Game",
             filename: nil,
             md5: nil,
@@ -276,7 +276,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
 
     // MARK: ArtworkSearchQueue integration (mock service)
 
-    func test_queuePassesPrimaryArtworkTypesToService() async throws {
+    func test_queuePassesPrimaryArtworkTypesToService() async {
         let mock = MockArtworkMatchingService()
         mock.stubbedResults = []
 

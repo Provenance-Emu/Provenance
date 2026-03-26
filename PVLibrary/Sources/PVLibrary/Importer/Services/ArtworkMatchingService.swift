@@ -31,13 +31,14 @@ public protocol ArtworkMatchingServiceProtocol: Sendable {
     ///   - systemIdentifier: The console/system for this game (narrows results)
     ///   - artworkTypes: Which artwork types to return (e.g. `[.boxFront, .boxBack]`)
     /// - Returns: All matching `ArtworkMetadata` items, ranked best-first within each type.
+    /// Note: All internal lookup errors are caught and logged; this method never throws.
     func findArtwork(
         title: String,
         filename: String?,
         md5: String?,
         systemIdentifier: SystemIdentifier?,
         artworkTypes: ArtworkType
-    ) async throws -> [ArtworkMetadata]
+    ) async -> [ArtworkMetadata]
 }
 
 // MARK: - Actor implementation
@@ -59,7 +60,7 @@ public actor ArtworkMatchingService: ArtworkMatchingServiceProtocol {
         md5: String?,
         systemIdentifier: SystemIdentifier?,
         artworkTypes: ArtworkType = .defaults
-    ) async throws -> [ArtworkMetadata] {
+    ) async -> [ArtworkMetadata] {
 
         let cleanedTitle = title.artworkSearchCleaned()
         let cleanedFilename = filename?.artworkSearchCleaned() ?? ""
