@@ -205,10 +205,6 @@ public extension Defaults.Keys {
     /// Range 0.1 – 5.0; default 1.0 (calibrated for a ~800 DPI mouse).
     static let lightGunMouseSensitivity = Key<Double>("lightGunMouseSensitivity", default: 1.0)
 
-    /// Visual style for the crosshair overlay drawn over the game screen when a
-    /// light-gun game is active.  Defaults to `.crosshair`.
-    static let lightGunCrosshairStyle = Key<LightGunCrosshairStyle>("lightGunCrosshairStyle", default: .crosshair)
-
     // MARK: - Mouse Input Settings
 
     /// Which physical input source delivers mouse / pointer events to the emulated core.
