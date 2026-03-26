@@ -52,6 +52,12 @@ public final class DOLJitManager {
     /// and refined by UIKit-capable detection (see `JITSourceDetector`).
     private var jitSource: JITSource = .none
 
+    /// Returns `true` if the running binary has the `com.apple.developer.kernel.allow-jit` entitlement.
+    ///
+    /// - Important: This entitlement is **not** included in App Store builds because Apple does not
+    ///   allow it in App Store submissions. It is present only in jailbreak (JB) builds where the
+    ///   entitlement can be granted outside of App Store review. App Store users rely on alternative
+    ///   JIT acquisition paths (debugger attach, TrollStore, AltJIT, StikDebug, JitStreamer).
     private func hasNativeJitEntitlement() -> Bool {
         if #available(iOS 13.4, tvOS 13.4, *) {
             return HasBooleanEntitlement("com.apple.developer.kernel.allow-jit")
@@ -493,4 +499,73 @@ public final class DOLJitManager {
 
         return true
     }
+}
+
+// MARK: - C-callable bridge for RetroArch core
+
+/// C-callable wrapper around `DOLJitManager.acquired` for use by the RetroArch
+/// bridge (`jit_available()` in `JITSupport.m`).
+///
+/// The RetroArch core can't import Swift modules directly, so we expose this as
+/// a plain C symbol via `@_cdecl`.  The caller should declare it as a weak
+/// extern so the call gracefully no-ops when PVJIT isn't linked:
+///
+/// ```objc
+/// extern bool PVJITManagerIsAcquired(void) __attribute__((weak));
+/// ```
+///
+/// - Important: This function only reports the current value of `DOLJitManager.acquired`.
+///   It does not attempt to acquire JIT itself and does not guarantee that
+///   `DOLJitManager.attemptToAcquireJitOnStartup()` (or any other acquisition path)
+///   has already been run. Callers that rely on JIT being available must ensure
+///   acquisition has been attempted earlier in the app lifecycle. The `jit_available()`
+///   fallback path in `JITSupport.m` handles cases where acquisition hasn't run yet.
+@_cdecl("PVJITManagerIsAcquired")
+public func PVJITManagerIsAcquired() -> Bool {
+    return DOLJitManager.acquired
+}
+
+/// C-callable entitlement check for the iOS 26 native JIT path.
+///
+/// Returns `true` only when `com.apple.developer.kernel.allow-jit` is present
+/// **and** set to `true` in the running binary's code signature. Uses the same
+/// binary-level entitlement parser as `DOLJitManager.hasNativeJitEntitlement()`
+/// so that no Security.framework link-time dependency is introduced in the
+/// calling target.
+///
+/// ```objc
+/// extern bool PVJITHasNativeJITEntitlement(void) __attribute__((weak));
+/// ```
+@_cdecl("PVJITHasNativeJITEntitlement")
+public func PVJITHasNativeJITEntitlement() -> Bool {
+    if #available(iOS 13.4, tvOS 13.4, *) {
+        return HasBooleanEntitlement("com.apple.developer.kernel.allow-jit")
+    }
+    return false
+}
+
+/// C-callable check for whether this app was installed via TrollStore.
+///
+/// Combines device-wide file-system markers with a `get-task-allow` entitlement
+/// check (via binary code-signature parsing) so that TrollStore being present on
+/// the device alone is not sufficient — the app must also carry `get-task-allow`.
+/// This prevents a false-positive on non-TrollStore builds on TrollStore devices.
+///
+/// ```objc
+/// extern bool PVJITIsInstalledViaTrollStore(void) __attribute__((weak));
+/// ```
+@_cdecl("PVJITIsInstalledViaTrollStore")
+public func PVJITIsInstalledViaTrollStore() -> Bool {
+    let deviceMarkers = [
+        "/var/mobile/Library/Application Support/TrollStore",
+        "/usr/lib/TrollStore",
+        "/var/containers/Bundle/TrollStore",
+    ]
+    guard deviceMarkers.contains(where: { FileManager.default.fileExists(atPath: $0) }) else {
+        return false
+    }
+    if #available(iOS 13.4, tvOS 13.4, *) {
+        return HasBooleanEntitlement("get-task-allow")
+    }
+    return false
 }
