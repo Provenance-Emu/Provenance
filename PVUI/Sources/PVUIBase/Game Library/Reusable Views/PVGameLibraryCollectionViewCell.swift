@@ -602,20 +602,41 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 return
             }
 
+            // Swipe-to-delete displacement fractions (relative to contentView width).
+            // maxSwipeFraction: how far the cell can travel before clamping.
+            // thresholdFraction: how far the user must swipe to trigger the delete prompt.
+            // snapFraction: final resting position of the cell while the delete prompt is shown (must be <= maxSwipeFraction).
+            let maxSwipeFraction: CGFloat = 0.85
+            let thresholdFraction: CGFloat = 0.6
+            let snapFraction: CGFloat = 0.8
+
             struct Holder {
                 static var originalLocation: CGPoint = .zero
+                static var startOriginX: CGFloat = 0
             }
+
+            // RTL: swipe direction is reversed — in RTL layouts the user swipes right to reveal the delete action.
+            let isRTL = effectiveUserInterfaceLayoutDirection == .rightToLeft
 
             switch panGesture.state {
             case .began:
-                Holder.originalLocation = panGesture.location(in: contentView)
+                Holder.originalLocation = panGesture.location(in: self)
+                Holder.startOriginX = contentView.frame.origin.x
                 deleteActionView?.alpha = 1
             case .changed:
-                let newX = min(max(panGesture.location(in: self).x - Holder.originalLocation.x, contentView.frame.width * 0.85 * -1), 0)
-
+                let displacement = panGesture.location(in: self).x - Holder.originalLocation.x
+                let rawX = Holder.startOriginX + displacement
+                let maxDisplacement = contentView.frame.width * maxSwipeFraction
+                let newX: CGFloat
+                if isRTL {
+                    // RTL: positive x (swipe right) reveals delete action on the left
+                    newX = max(min(rawX, maxDisplacement), 0)
+                } else {
+                    // LTR: negative x (swipe left) reveals delete action on the right
+                    newX = min(max(rawX, -maxDisplacement), 0)
+                }
                 var f = contentView.frame
                 f.origin.x = newX
-
                 contentView.frame = f
             case .ended:
                 var f = contentView.frame
@@ -629,10 +650,15 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     }
                 }
 
-                let swipeDistanceRequired = contentView.frame.width * 0.6 * -1
-                let swipedFarEnough = contentView.frame.origin.x < swipeDistanceRequired
+                let threshold = contentView.frame.width * thresholdFraction
+                let swipedFarEnough: Bool
+                if isRTL {
+                    swipedFarEnough = contentView.frame.origin.x > threshold
+                } else {
+                    swipedFarEnough = contentView.frame.origin.x < -threshold
+                }
                 if swipedFarEnough {
-                    let finalX = contentView.frame.width * 0.9 * -1
+                    let finalX = isRTL ? contentView.frame.width * snapFraction : contentView.frame.width * snapFraction * -1
                     f.origin.x = finalX
                     UIView.animate(withDuration: 0.1) {
                         self.contentView.frame = f

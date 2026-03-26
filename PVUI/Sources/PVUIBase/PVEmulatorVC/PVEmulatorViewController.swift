@@ -141,6 +141,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     var menuButton: MenuButton?
 
+    // RTL: do not flip — the emulator screen renders pixel-accurate game content.
+    // Mirroring the GPU viewport would produce a horizontally inverted image, breaking gameplay.
     private(set) lazy var gpuViewController: PVGPUViewController = {
         let useMetal = (use_metal && !core.alwaysUseGL) || core.alwaysUseMetal
         let vc: PVGPUViewController = useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
@@ -214,7 +216,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         let fpsLabel = UILabel()
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
         fpsLabel.backgroundColor = .clear
-        fpsLabel.textAlignment = .right
+        fpsLabel.textAlignment = .right // RTL: do not flip — FPS counter is always pinned to the right edge (not trailing) regardless of locale
         fpsLabel.lineBreakMode = .byClipping
         fpsLabel.isOpaque = false
         fpsLabel.numberOfLines = 5
