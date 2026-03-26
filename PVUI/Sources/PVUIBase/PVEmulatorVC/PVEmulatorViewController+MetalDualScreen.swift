@@ -131,9 +131,18 @@ extension PVEmulatorViewController {
                                  width: inFrame.width  / texW,
                                  height: inFrame.height / texH)
             } else {
-                // Default: split the framebuffer into equal vertical halves.
-                let halfH: CGFloat = 0.5
-                srcRect = CGRect(x: 0, y: CGFloat(index) * halfH, width: 1, height: halfH)
+                // Default: split the framebuffer based on DS native screen dimensions.
+                // DS native: 256 px wide, 192 px per screen, 384 px combined height.
+                // Some emulators (e.g. DeSmuME2015) report a large padded bufferSize
+                // (2048×2048) where the valid DS content sits only in the top-left
+                // 256×384 region.  Normalising by texW/texH ensures the UVs land on
+                // the correct texels rather than always splitting the full 0–1 range.
+                let dsNativeW: CGFloat = 256  // DS screen width in native pixels
+                let dsNativeH: CGFloat = 192  // DS per-screen height in native pixels
+                srcRect = CGRect(x: 0,
+                                 y: CGFloat(index) * (dsNativeH / texH),
+                                 width:  dsNativeW / texW,
+                                 height: dsNativeH / texH)
             }
 
             // --- Destination (view-space points) ---

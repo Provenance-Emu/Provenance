@@ -55,8 +55,13 @@ extension PVMetalViewController {
 
     /// Metal source for the dual-screen sub-rectangle blit shaders.
     ///
-    /// Compiled at runtime via `makeLibrary(source:)` — the same pattern used
-    /// elsewhere in PVMetalViewController for inline shaders.
+    /// The canonical source lives in
+    /// `PVShaders/Sources/PVShaders/Resources/Metal/Blitters/dual_screen_blit.metal`.
+    /// That file is compiled into the PVShaders bundle's metallib during the Xcode
+    /// build, but loading it at runtime requires explicit bundle access across the
+    /// module boundary.  To avoid that coupling (and to match the pattern used by
+    /// every other shader in PVMetalViewController) we embed an identical copy here
+    /// and compile it at runtime via `device.makeLibrary(source:)`.
     static let dualScreenShaderSource = """
     #include <metal_stdlib>
     using namespace metal;
