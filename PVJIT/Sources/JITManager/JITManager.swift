@@ -52,6 +52,12 @@ public final class DOLJitManager {
     /// and refined by UIKit-capable detection (see `JITSourceDetector`).
     private var jitSource: JITSource = .none
 
+    /// Returns `true` if the running binary has the `com.apple.developer.kernel.allow-jit` entitlement.
+    ///
+    /// - Important: This entitlement is **not** included in App Store builds because Apple does not
+    ///   allow it in App Store submissions. It is present only in jailbreak (JB) builds where the
+    ///   entitlement can be granted outside of App Store review. App Store users rely on alternative
+    ///   JIT acquisition paths (debugger attach, TrollStore, AltJIT, StikDebug, JitStreamer).
     private func hasNativeJitEntitlement() -> Bool {
         if #available(iOS 13.4, tvOS 13.4, *) {
             return HasBooleanEntitlement("com.apple.developer.kernel.allow-jit")

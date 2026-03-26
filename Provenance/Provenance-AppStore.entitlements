@@ -16,8 +16,6 @@
 		<string>CloudDocuments</string>
 		<string>CloudKit</string>
 	</array>
-	<key>com.apple.developer.kernel.allow-jit</key>
-	<true/>
 	<key>com.apple.developer.sustained-execution</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
