@@ -17,6 +17,17 @@ import PVLibrary
 import PVNetplay
 #endif
 
+/// Ranked search hit for a tile menu query.
+struct PauseMenuSearchResult: Identifiable, Hashable {
+    /// Stable ID combining route and tile identity.
+    var id: String { "\(route.rawValue)::\(tile.id)" }
+    let route: PauseTileMenuRoute
+    let tile: PauseMenuTile
+    let matchedTitle: Bool
+    let matchedDescription: Bool
+    let isCurrentRoute: Bool
+}
+
 // MARK: - PauseTileMenuViewModel
 
 /// Lightweight cache that owns the `[PauseMenuTileSection]` array.
@@ -31,6 +42,10 @@ final class PauseTileMenuViewModel: ObservableObject {
     /// Flat lookup table: tile ID -> description text.
     /// Built alongside `sections` so the info shelf can resolve descriptions in O(1).
     private(set) var descriptionsByTileID: [String: String] = [:]
+    static let hardwareSwitchTilePrefix = "hardwareSwitch_"
+    static let hardwareMomentaryTilePrefix = "hardwareMomentary_"
+    /// Cache of route -> visible sections to support global search.
+    private var sectionsByRoute: [PauseTileMenuRoute: [PauseMenuTileSection]] = [:]
 
     /// Recomputes every tile section from the current emulator state.
     ///
@@ -44,10 +59,13 @@ final class PauseTileMenuViewModel: ObservableObject {
     func rebuild(
         emulatorVC: PVEmulatorViewController,
         metalFilterMode: MetalFilterModeOption,
+        showFPSCount: Bool,
         hapticFeedbackEnabled: Bool,
         featureFlags: PVFeatureFlagsManager,
         indicatorRegistry: PVIndicatorRegistry,
         hasControllerProfiles: Bool,
+        hardwareSwitchStates: [String: Bool],
+        coreOptionsMD5: String?,
         route: PauseTileMenuRoute
     ) {
         var built: [PauseMenuTileSection] = []
@@ -64,18 +82,32 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Resume + quit tiles are placed at the top (positions 0-2) to match
         // RetroMenuView's ordering where quit is near the top of the main section.
         var gameTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "resume", icon: "play.fill", label: String(localized: "Resume"), colorKey: .green),
+            PauseMenuTile(id: "resume", icon: "play.fill", label: String(localized: "Resume"), colorKey: .green)
         ]
         if shouldSave {
             gameTiles.append(PauseMenuTile(id: "saveQuit", icon: "square.and.arrow.down.on.square", label: String(localized: "Save & Quit"), colorKey: .cyan))
         }
         gameTiles.append(PauseMenuTile(id: "quit", icon: "xmark.circle", label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit"), colorKey: .pink))
 
-        // Save state tiles
-        gameTiles += [
-            PauseMenuTile(id: "saveState",   icon: "square.and.arrow.down",         label: String(localized: "Save State"),  isEnabled: supportsSaveStates,            colorKey: .cyan),
-            PauseMenuTile(id: "loadState",   icon: "arrowshape.turn.up.left",        label: String(localized: "Quick Load"),  isEnabled: supportsSaveStates && hasSave, colorKey: .blue),
-            PauseMenuTile(id: "browseSaves", icon: "list.bullet.rectangle.portrait", label: String(localized: "Saves"),       isEnabled: supportsSaveStates,            colorKey: .purple, dismissOnTap: false),
+        let stateTiles: [PauseMenuTile] = [
+            PauseMenuTile(id: "saveState", icon: "square.and.arrow.down", label: String(localized: "Quick Save"), isEnabled: supportsSaveStates, colorKey: .cyan),
+            PauseMenuTile(id: "loadState", icon: "arrowshape.turn.up.left", label: String(localized: "Quick Load"), isEnabled: supportsSaveStates && hasSave, colorKey: .blue),
+            PauseMenuTile(
+                id: "browseSaves",
+                icon: "list.bullet.rectangle.portrait",
+                label: String(localized: "Browse Saves"),
+                isEnabled: supportsSaveStates,
+                colorKey: .purple,
+                dismissOnTap: false
+            ),
+            PauseMenuTile(
+                id: "autoSaveState",
+                icon: "clock.arrow.circlepath",
+                label: String(localized: "Auto Save"),
+                isEnabled: supportsSaveStates,
+                colorKey: .teal,
+                dismissOnTap: false
+            )
         ]
 
         gameTiles.append(PauseMenuTile(id: "reset", icon: "arrow.counterclockwise", label: String(localized: "Reset"), colorKey: .orange))
@@ -84,50 +116,16 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         #if os(iOS) || targetEnvironment(macCatalyst)
-        gameTiles.append(PauseMenuTile(id: "screenshot",  icon: "camera",            label: String(localized: "Screenshot"),  colorKey: .yellow))
+        gameTiles.append(PauseMenuTile(id: "screenshot", icon: "camera", label: String(localized: "Screenshot"), colorKey: .yellow))
         gameTiles.append(PauseMenuTile(id: "screenshots", icon: "photo.on.rectangle", label: String(localized: "Screenshots"), colorKey: .yellow, dismissOnTap: false))
         #endif
 
-        // Recording — iOS only, hardware-gated (no feature flag in RetroMenuView either)
-        #if os(iOS)
-        if emulatorVC.isRecordingAvailable {
-            let isRec = emulatorVC.isRecording
-            gameTiles.append(PauseMenuTile(
-                id: "recording",
-                icon: isRec ? "stop.circle" : "record.circle",
-                label: String(localized: isRec ? "Stop Rec" : "Record"),
-                badge: isRec ? "REC" : nil,
-                colorKey: isRec ? .pink : .orange,
-                dismissOnTap: true
-            ))
-            // Camera position — only when camera overlay is enabled
-            if Defaults[.recordingCameraEnabled] {
-                let pos = Defaults[.recordingCameraPosition]
-                let lpOptions = CameraPosition.allCases.map { camPos in
-                    PauseMenuTileLongPressOption(
-                        id: "camPos_\(camPos.rawValue)",
-                        title: camPos.displayName,
-                        isSelected: camPos == pos
-                    )
-                }
-                gameTiles.append(PauseMenuTile(
-                    id: "cameraPosition",
-                    icon: pos.symbolName,
-                    label: String(localized: "Cam Corner"),
-                    badge: pos.displayName,
-                    colorKey: .blue,
-                    dismissOnTap: false,
-                    longPressOptions: lpOptions
-                ))
-            }
-        }
-        #endif
-
         // Broadcast — feature-flagged, iOS + tvOS
+        var recordingTiles: [PauseMenuTile] = []
         #if os(iOS) || os(tvOS)
         if featureFlags.liveBroadcast {
             let isBcast = emulatorVC.isBroadcasting
-            gameTiles.append(PauseMenuTile(
+            recordingTiles.append(PauseMenuTile(
                 id: "broadcast",
                 icon: isBcast ? "stop.circle" : "dot.radiowaves.left.and.right",
                 label: String(localized: isBcast ? "Stop Live" : "Go Live"),
@@ -138,13 +136,46 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         // Save Clip — feature-flagged, only visible when clip buffering is active
         if featureFlags.clipBuffering && emulatorVC.isClipBufferingActive {
-            gameTiles.append(PauseMenuTile(
+            recordingTiles.append(PauseMenuTile(
                 id: "saveClip",
                 icon: "scissors.badge.ellipsis",
                 label: String(localized: "Save Clip"),
                 colorKey: .purple,
                 dismissOnTap: true
             ))
+        }
+        #endif
+
+        #if os(iOS)
+        if emulatorVC.isRecordingAvailable {
+            let isRec = emulatorVC.isRecording
+            recordingTiles.insert(PauseMenuTile(
+                id: "recording",
+                icon: isRec ? "stop.circle" : "record.circle",
+                label: String(localized: isRec ? "Stop Rec" : "Record"),
+                badge: isRec ? "REC" : nil,
+                colorKey: isRec ? .pink : .orange,
+                dismissOnTap: true
+            ), at: 0)
+            if Defaults[.recordingCameraEnabled] {
+                let pos = Defaults[.recordingCameraPosition]
+                let lpOptions = CameraPosition.allCases.map { camPos in
+                    PauseMenuTileLongPressOption(
+                        id: "camPos_\(camPos.rawValue)",
+                        title: camPos.displayName,
+                        isSelected: camPos == pos
+                    )
+                }
+                recordingTiles.append(PauseMenuTile(
+                    id: "cameraPosition",
+                    icon: pos.symbolName,
+                    label: String(localized: "Cam Corner"),
+                    badge: pos.displayName,
+                    colorKey: .blue,
+                    dismissOnTap: false,
+                    longPressOptions: lpOptions
+                ))
+            }
         }
         #endif
 
@@ -160,20 +191,8 @@ final class PauseTileMenuViewModel: ObservableObject {
         ))
         #endif
 
-        // Skins tile — opens RetroMenuView at the SKINS tab (iOS only)
-        #if os(iOS) || os(tvOS)
-        gameTiles.append(PauseMenuTile(
-            id: "skins",
-            icon: "paintbrush.pointed",
-            label: String(localized: "Skins"),
-            colorKey: .orange,
-            dismissOnTap: false,
-            destinationRoute: .skins
-        ))
-        #endif
-
-        gameTiles.append(PauseMenuTile(id: "gameInfo",          icon: "info.circle",    label: String(localized: "Game Info"),   colorKey: .blue))
-        gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"),  isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
+        gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
+        gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if featureFlags.netplayEnabled && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
                 id: "networkPlay",
@@ -197,18 +216,54 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
 
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
+        built.append(PauseMenuTileSection(id: "statesData", title: String(localized: "STATES"), tiles: stateTiles))
 
-        let categoryTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "menu_main", icon: "house.fill", label: String(localized: "Main"), colorKey: .green, dismissOnTap: false, destinationRoute: .root),
-            PauseMenuTile(id: "menu_states", icon: "internaldrive", label: String(localized: "States"), colorKey: .cyan, dismissOnTap: false, destinationRoute: .states),
-            PauseMenuTile(id: "menu_options", icon: "slider.horizontal.3", label: String(localized: "Options"), colorKey: .teal, dismissOnTap: false, destinationRoute: .options),
+        let menuTiles: [PauseMenuTile] = [
+            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording),
             PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core),
             PauseMenuTile(id: "menu_skins", icon: "paintbrush.pointed", label: String(localized: "Skins"), colorKey: .orange, dismissOnTap: false, destinationRoute: .skins),
-        ]
-        built.append(PauseMenuTileSection(id: "categories", title: String(localized: "CATEGORIES"), tiles: categoryTiles))
+            PauseMenuTile(
+                id: "appSettings",
+                icon: "gearshape",
+                label: String(localized: "App Settings"),
+                description: String(localized: "Open global app settings"),
+                colorKey: .teal,
+                dismissOnTap: false
+            ),
+            PauseMenuTile(
+                id: "logViewer",
+                icon: "doc.text.magnifyingglass",
+                label: String(localized: "Log Viewer"),
+                description: String(localized: "Open runtime logs"),
+                colorKey: .cyan,
+                dismissOnTap: false
+            )
+        ] + {
+            guard emulatorVC.core.coreIdentifier?.contains("libretro") == true,
+                  PauseMenuViewRegistry.retroArchSettingsView() != nil else { return [] }
+            return [
+                PauseMenuTile(
+                    id: "retroArchSettings",
+                    icon: "gearshape.2",
+                    label: String(localized: "RetroArch Quick Settings"),
+                    description: String(localized: "Open curated RetroArch settings"),
+                    colorKey: .cyan,
+                    dismissOnTap: false
+                )
+            ]
+        }()
+        built.append(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles))
 
         // ── QUICK SETTINGS section ──────────────────────────────────────
         var displayTiles: [PauseMenuTile] = []
+        displayTiles.append(Self.fastForwardToggleTile(core: emulatorVC.core))
+        displayTiles.append(Self.gameSpeedTile(core: emulatorVC.core))
+        displayTiles.append(Self.fpsCounterToggleTile(showFPSCount: showFPSCount))
+        let rewindQuickControlAdded = Self.appendRewindTileIfSupported(
+            to: &displayTiles,
+            core: emulatorVC.core,
+            coreOptionsMD5: coreOptionsMD5
+        )
         displayTiles.append(Self.filterCycleTile(metalFilterMode: metalFilterMode))
         // Shader settings tile — shown when the current filter has adjustable parameters
         let currentFilter = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
@@ -227,6 +282,11 @@ final class PauseTileMenuViewModel: ObservableObject {
         if let jitTile = Self.jitStatusTile(core: emulatorVC.core, indicatorRegistry: indicatorRegistry) {
             displayTiles.append(jitTile)
         }
+        #if os(iOS)
+        if emulatorVC.core.supportsAudioVisualizer {
+            displayTiles.append(Self.audioVisualizerTile(currentMode: emulatorVC.visualizerMode))
+        }
+        #endif
         #if canImport(UIKit) && !os(tvOS)
         if let keyboardTile = Self.keyboardToggleTile(emulatorVC: emulatorVC) {
             displayTiles.append(keyboardTile)
@@ -237,6 +297,9 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
         if !displayTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "display", title: String(localized: "QUICK SETTINGS"), tiles: displayTiles))
+        }
+        if !recordingTiles.isEmpty {
+            built.append(PauseMenuTileSection(id: "recording", title: String(localized: "RECORDING"), tiles: recordingTiles))
         }
 
         // ── CORE section (dynamic, per-core) ────────────────────────────
@@ -334,7 +397,39 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         if let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type {
-            coreTiles += CoreOptionTileProvider.tiles(from: coreClass.options, coreClass: coreClass)
+            coreTiles += CoreOptionTileProvider.tiles(from: coreClass.options, coreClass: coreClass, md5Scope: coreOptionsMD5)
+            if rewindQuickControlAdded {
+                coreTiles.removeAll { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) && $0.label.localizedCaseInsensitiveContains("rewind") }
+            }
+        }
+
+        if let activeSystem = Self.resolvedSystemIdentifier(emulatorVC: emulatorVC) {
+            let hardwareSwitches = activeSystem.hardwareSwitches ?? []
+            let hardwareMomentaryButtons = activeSystem.hardwareMomentaryButtons ?? []
+
+            for descriptor in hardwareSwitches {
+                let isOn = hardwareSwitchStates[descriptor.id] ?? descriptor.defaultState
+                let activePosition = isOn ? descriptor.positions.on : descriptor.positions.off
+                coreTiles.append(PauseMenuTile(
+                    id: "\(Self.hardwareSwitchTilePrefix)\(descriptor.id)",
+                    icon: "switch.2",
+                    label: descriptor.title,
+                    badge: activePosition.label,
+                    colorKey: isOn ? .green : .gray,
+                    dismissOnTap: false
+                ))
+            }
+
+            for descriptor in hardwareMomentaryButtons {
+                coreTiles.append(PauseMenuTile(
+                    id: "\(Self.hardwareMomentaryTilePrefix)\(descriptor.id)",
+                    icon: "dot.radiowaves.left.and.right",
+                    label: descriptor.title,
+                    badge: descriptor.label,
+                    colorKey: .orange,
+                    dismissOnTap: false
+                ))
+            }
         }
 
         if !coreTiles.isEmpty {
@@ -351,7 +446,12 @@ final class PauseTileMenuViewModel: ObservableObject {
             }
         }
 
-        sections = sections(for: route, from: built, emulatorVC: emulatorVC)
+        var rebuiltByRoute: [PauseTileMenuRoute: [PauseMenuTileSection]] = [:]
+        for routeCase in PauseTileMenuRoute.allCases {
+            rebuiltByRoute[routeCase] = sections(for: routeCase, from: built, emulatorVC: emulatorVC)
+        }
+        sectionsByRoute = rebuiltByRoute
+        sections = rebuiltByRoute[route] ?? []
         descriptionsByTileID = descs
     }
 
@@ -363,61 +463,89 @@ final class PauseTileMenuViewModel: ObservableObject {
     ) -> [PauseMenuTileSection] {
         switch route {
         case .root:
-            return rootSections
+            return rootSections.filter { $0.id == "game" || $0.id == "statesData" || $0.id == "display" || $0.id == "menu" }
         case .states:
-            let stateIDs: Set<String> = ["saveState", "loadState", "browseSaves", "screenshot", "screenshots", "saveClip"]
+            let stateIDs: Set<String> = ["saveState", "loadState", "browseSaves", "autoSaveState", "screenshot", "screenshots"]
             let tiles = tiles(matching: stateIDs, from: rootSections)
             return [PauseMenuTileSection(id: "states_route", title: String(localized: "STATES"), tiles: tiles)]
         case .options:
             let optionIDs: Set<String> = [
-                "filterCycle", "shaderSettings", "rumbleToggle", "airPlay", "recording", "broadcast", "saveClip",
-                "controllerProfile", "networkPlay", "keyboardToggle", "mouseToggle", "companionController",
+                "fastForwardToggle", "gameSpeedCycle", "fpsCounterToggle", "rewindToggle",
+                "filterCycle", "shaderSettings", "rumbleToggle", "airPlay", "keyboardToggle", "mouseToggle",
+                "retroArchSettings", "audioVisualizer"
             ]
-            var tiles = tiles(matching: optionIDs, from: rootSections)
-            tiles.insert(
-                PauseMenuTile(
-                    id: "skins_route_entry",
-                    icon: "paintbrush.pointed",
-                    label: String(localized: "Skins"),
-                    colorKey: .orange,
-                    dismissOnTap: false,
-                    destinationRoute: .skins
-                ),
-                at: 0
-            )
+            let tiles = tiles(matching: optionIDs, from: rootSections)
             return [PauseMenuTileSection(id: "options_route", title: String(localized: "OPTIONS"), tiles: tiles)]
+        case .recording:
+            let recordingIDs: Set<String> = ["recording", "broadcast", "saveClip", "cameraPosition"]
+            let tiles = tiles(matching: recordingIDs, from: rootSections)
+            return [PauseMenuTileSection(id: "recording_route", title: String(localized: "RECORDING"), tiles: tiles)]
         case .core:
             let core = rootSections.first(where: { $0.id == "core" })
             return core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? []
         case .skins:
-            let tiles: [PauseMenuTile] = [
-                PauseMenuTile(id: "skins_selection_menu", icon: "rectangle.portrait.and.arrow.right", label: String(localized: "Skin Selection"), colorKey: .blue, dismissOnTap: false, destinationRoute: .skinsSelection),
-                PauseMenuTile(id: "skins_buttons_menu", icon: "hand.tap", label: String(localized: "Button Controls"), badge: Defaults[.buttonPressEffect].description, colorKey: .purple, dismissOnTap: false, destinationRoute: .skinsButtons),
-                PauseMenuTile(id: "skins_tools_menu", icon: "wrench.and.screwdriver", label: String(localized: "Tools"), colorKey: .cyan, dismissOnTap: false, destinationRoute: .skinsTools),
-            ]
-            return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
-        case .skinsSelection:
             let systemIdentifier = SystemIdentifier(rawValue: emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier ?? "")
             let systemLabel = systemIdentifier?.fullName ?? String(localized: "Current System")
-            let tiles: [PauseMenuTile] = [
+            var tiles: [PauseMenuTile] = [
                 PauseMenuTile(id: "skins_pick_for_system", icon: "paintpalette", label: String(localized: "Choose Skin"), badge: systemLabel, colorKey: .orange, dismissOnTap: false),
-            ]
-            return [PauseMenuTileSection(id: "skins_selection", title: String(localized: "SKIN SELECTION"), tiles: tiles)]
-        case .skinsButtons:
-            let tiles: [PauseMenuTile] = [
                 PauseMenuTile(id: "skins_button_effect", icon: "wand.and.sparkles", label: String(localized: "Button Effect"), badge: Defaults[.buttonPressEffect].description, colorKey: .purple, dismissOnTap: false),
                 PauseMenuTile(id: "skins_button_sound", icon: "speaker.wave.2", label: String(localized: "Button Sound"), badge: Defaults[.buttonSound].description, colorKey: .blue, dismissOnTap: false),
-            ]
-            return [PauseMenuTileSection(id: "skins_buttons", title: String(localized: "BUTTON CONTROLS"), tiles: tiles)]
-        case .skinsTools:
-            var tools: [PauseMenuTile] = [
-                PauseMenuTile(id: "skins_browse_catalog", icon: "arrow.down.circle.fill", label: String(localized: "Browse Catalog"), colorKey: .orange, dismissOnTap: false),
+                PauseMenuTile(id: "skins_browse_catalog", icon: "arrow.down.circle.fill", label: String(localized: "Browse Catalog"), colorKey: .orange, dismissOnTap: false)
             ]
             #if !os(tvOS)
-            tools.insert(PauseMenuTile(id: "skins_import_file", icon: "square.and.arrow.down", label: String(localized: "Import Skin File"), colorKey: .cyan, dismissOnTap: false), at: 0)
+            tiles.insert(PauseMenuTile(id: "skins_import_file", icon: "square.and.arrow.down", label: String(localized: "Import Skin File"), colorKey: .cyan, dismissOnTap: false), at: 3)
             #endif
-            return [PauseMenuTileSection(id: "skins_tools", title: String(localized: "TOOLS"), tiles: tools)]
+            return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
         }
+    }
+
+    /// Searches all routes by tile label/description and ranks current-route title hits first.
+    func search(query: String, currentRoute: PauseTileMenuRoute) -> [PauseMenuSearchResult] {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+        let needle = trimmed.lowercased()
+
+        var bestByTileID: [String: PauseMenuSearchResult] = [:]
+
+        for (route, sections) in sectionsByRoute {
+            for section in sections {
+                for tile in section.tiles {
+                    let titleMatch = tile.label.lowercased().contains(needle)
+                    let descriptionMatch = tile.description?.lowercased().contains(needle) == true
+                    guard titleMatch || descriptionMatch else { continue }
+
+                    let candidate = PauseMenuSearchResult(
+                        route: route,
+                        tile: tile,
+                        matchedTitle: titleMatch,
+                        matchedDescription: descriptionMatch,
+                        isCurrentRoute: route == currentRoute
+                    )
+
+                    if let existing = bestByTileID[tile.id] {
+                        if shouldReplace(existing: existing, with: candidate) {
+                            bestByTileID[tile.id] = candidate
+                        }
+                    } else {
+                        bestByTileID[tile.id] = candidate
+                    }
+                }
+            }
+        }
+
+        return bestByTileID.values.sorted { lhs, rhs in
+            if lhs.isCurrentRoute != rhs.isCurrentRoute { return lhs.isCurrentRoute && !rhs.isCurrentRoute }
+            if lhs.matchedTitle != rhs.matchedTitle { return lhs.matchedTitle && !rhs.matchedTitle }
+            if lhs.matchedDescription != rhs.matchedDescription { return lhs.matchedDescription && !rhs.matchedDescription }
+            return lhs.tile.label.localizedCaseInsensitiveCompare(rhs.tile.label) == .orderedAscending
+        }
+    }
+
+    private func shouldReplace(existing: PauseMenuSearchResult, with candidate: PauseMenuSearchResult) -> Bool {
+        if existing.isCurrentRoute != candidate.isCurrentRoute { return candidate.isCurrentRoute }
+        if existing.matchedTitle != candidate.matchedTitle { return candidate.matchedTitle }
+        if existing.matchedDescription != candidate.matchedDescription { return candidate.matchedDescription }
+        return candidate.route == .root && existing.route != .root
     }
 
     /// Returns matching tiles in their original section order.
@@ -546,6 +674,21 @@ final class PauseTileMenuViewModel: ObservableObject {
         result = result && emulatorVC.core.supportsSaveStates
         return result
     }
+
+    /// Resolves the most accurate runtime system identifier for tile-generation.
+    /// Prefers concrete game-system identifiers before core-level fallback.
+    private static func resolvedSystemIdentifier(emulatorVC: PVEmulatorViewController) -> SystemIdentifier? {
+        let candidates: [String?] = [
+            emulatorVC.game?.system?.identifier,
+            emulatorVC.game?.systemIdentifier,
+            emulatorVC.core.systemIdentifier
+        ]
+        let parsed = candidates.compactMap { raw -> SystemIdentifier? in
+            guard let raw, !raw.isEmpty else { return nil }
+            return SystemIdentifier(rawValue: raw)
+        }
+        return parsed.first(where: { $0 != .RetroArch }) ?? parsed.first
+    }
 }
 
 // MARK: - MetalFilterModeOption extension
@@ -561,5 +704,111 @@ extension MetalFilterModeOption {
         case let .auto(crt: crt, lcd: lcd):
             return crt != .none ? crt : lcd
         }
+    }
+}
+
+private extension PauseTileMenuViewModel {
+    static func fastForwardToggleTile(core: PVEmulatorCore) -> PauseMenuTile {
+        let isFastForwarding = core.gameSpeed == .fast || core.gameSpeed == .veryFast
+        return PauseMenuTile(
+            id: "fastForwardToggle",
+            icon: isFastForwarding ? "forward.fill" : "forward",
+            label: String(localized: "Fast Forward"),
+            badge: isFastForwarding ? "ON" : "OFF",
+            colorKey: isFastForwarding ? .green : .gray,
+            dismissOnTap: false
+        )
+    }
+
+    static func gameSpeedTile(core: PVEmulatorCore) -> PauseMenuTile {
+        let speed = core.gameSpeed
+        let badge = String(format: "%.2gx", speed.multiplier)
+        let isBoosted = speed == .fast || speed == .veryFast
+        let lpOptions = GameSpeed.allCases.map { value in
+            PauseMenuTileLongPressOption(
+                id: "gameSpeed_\(value.rawValue)",
+                title: value.description,
+                isSelected: value == speed
+            )
+        }
+        return PauseMenuTile(
+            id: "gameSpeedCycle",
+            icon: "speedometer",
+            label: String(localized: "Game Speed"),
+            badge: badge,
+            colorKey: isBoosted ? .yellow : .cyan,
+            dismissOnTap: false,
+            longPressOptions: lpOptions
+        )
+    }
+
+    static func fpsCounterToggleTile(showFPSCount: Bool) -> PauseMenuTile {
+        PauseMenuTile(
+            id: "fpsCounterToggle",
+            icon: "speedometer",
+            label: String(localized: "FPS Counter"),
+            badge: showFPSCount ? "ON" : "OFF",
+            colorKey: showFPSCount ? .green : .gray,
+            dismissOnTap: false
+        )
+    }
+
+    /// Builds an audio visualizer tile with toggle tap behavior and long-press mode selection.
+    static func audioVisualizerTile(currentMode: VisualizerMode) -> PauseMenuTile {
+        let modeOptions = VisualizerMode.allCases.map { mode in
+            PauseMenuTileLongPressOption(
+                id: "audioViz_mode_\(mode.rawValue)",
+                title: mode.description,
+                isSelected: mode == currentMode
+            )
+        }
+        return PauseMenuTile(
+            id: "audioVisualizer",
+            icon: currentMode == .off ? "waveform" : "waveform.path.ecg",
+            label: String(localized: "Audio Visualizer"),
+            badge: currentMode == .off ? "OFF" : currentMode.description,
+            description: String(localized: "Tap to toggle on/off. Long-press to choose visualizer style."),
+            colorKey: currentMode == .off ? .gray : .teal,
+            dismissOnTap: false,
+            longPressOptions: modeOptions
+        )
+    }
+
+    @discardableResult
+    static func appendRewindTileIfSupported(
+        to tiles: inout [PauseMenuTile],
+        core: PVEmulatorCore,
+        coreOptionsMD5: String?
+    ) -> Bool {
+        guard let coreClass = type(of: core) as? CoreOptional.Type,
+              let rewindOption = findRewindOption(in: coreClass.options) else { return false }
+        let isEnabled: Bool = coreClass.valueForOption(rewindOption, andMD5: coreOptionsMD5)
+        tiles.append(PauseMenuTile(
+            id: "rewindToggle",
+            icon: isEnabled ? "backward.fill" : "backward",
+            label: String(localized: "Rewind"),
+            badge: isEnabled ? "ON" : "OFF",
+            colorKey: isEnabled ? .green : .gray,
+            dismissOnTap: false
+        ))
+        return true
+    }
+
+    static func findRewindOption(in options: [CoreOption]) -> CoreOption? {
+        for option in options {
+            switch option {
+            case let .bool(display, _, _) where display.title.localizedCaseInsensitiveContains("rewind"):
+                return option
+            case .bool where option.key.localizedCaseInsensitiveContains("rewind"):
+                return option
+            case let .group(_, subOptions):
+                if let nested = findRewindOption(in: subOptions) {
+                    return nested
+                }
+            default:
+                continue
+            }
+        }
+        return nil
     }
 }

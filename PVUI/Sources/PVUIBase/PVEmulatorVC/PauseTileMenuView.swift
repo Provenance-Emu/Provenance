@@ -69,6 +69,9 @@ struct PauseTileMenuView: View {
     @State private var showingSkinCatalog = false
     @State private var showingButtonEffectPicker = false
     @State private var showingButtonSoundPicker = false
+    @State private var showingLogViewer = false
+    @State private var showingRetroArchSettings = false
+    @State private var showingAppSettings = false
     #if !os(tvOS)
     @State private var showingSkinImporter = false
     @State private var showingSkinImportError = false
@@ -78,8 +81,18 @@ struct PauseTileMenuView: View {
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
     @State private var hasControllerProfiles = false
+    /// In-memory on/off states for hardware switch tiles (e.g. Atari difficulty / TV type).
+    @State private var hardwareSwitchStates: [String: Bool] = [:]
+    /// Query string for global tile search.
+    @State private var searchText: String = ""
+    /// Ranked search results across the full pause-menu tree.
+    @State private var searchResults: [PauseMenuSearchResult] = []
     /// Description text shown in the bottom info shelf when a tile is focused/long-pressed.
     @State private var infoText: String?
+    /// Tracks whether changed core options require a deferred reset prompt.
+    @State private var pendingCoreReset = false
+    /// Controls display of restart prompt when user exits the pause menu.
+    @State private var showingDeferredRestartPrompt = false
 
     // MARK: tvOS Focus
 
@@ -98,8 +111,13 @@ struct PauseTileMenuView: View {
 
     // Haptic feedback toggle
     @Default(.hapticFeedback) private var hapticFeedbackEnabled
+    @Default(.showFPSCount) private var showFPSCount
     @Default(.buttonPressEffect) private var buttonPressEffect
     @Default(.buttonSound) private var buttonSound
+    /// Whether core option writes should be scoped to the current game hash (if available).
+    @AppStorage("PauseTileMenu.coreOptionsPerGame") private var coreOptionsPerGame = true
+    /// Easy kill-switch for the deferred restart workflow.
+    @AppStorage("PauseTileMenu.deferredRestartPromptEnabled") private var deferredRestartPromptEnabled = true
 
     // Camera position for recording overlay — iOS only
     #if os(iOS)
@@ -121,11 +139,24 @@ struct PauseTileMenuView: View {
 
     private var palette: UXThemePalette { themeManager.currentPalette }
     private var currentRoute: PauseTileMenuRoute { routeStack.last ?? .root }
+    private var currentCoreOptionsMD5Scope: String? {
+        guard coreOptionsPerGame else { return nil }
+        guard let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type else { return nil }
+        return coreClass.currentGameMD5
+    }
 
     /// Resolves the active game/system identifier to a concrete `SystemIdentifier`.
     private var activeSystemIdentifier: SystemIdentifier {
-        let raw = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier ?? SystemIdentifier.RetroArch.rawValue
-        return SystemIdentifier(rawValue: raw) ?? .RetroArch
+        let candidates: [String?] = [
+            emulatorVC.game?.system?.identifier,
+            emulatorVC.game?.systemIdentifier,
+            emulatorVC.core.systemIdentifier
+        ]
+        let parsed = candidates.compactMap { raw -> SystemIdentifier? in
+            guard let raw, !raw.isEmpty else { return nil }
+            return SystemIdentifier(rawValue: raw)
+        }
+        return parsed.first(where: { $0 != .RetroArch }) ?? parsed.first ?? .RetroArch
     }
 
     // MARK: - Rebuild cached sections via view model
@@ -135,12 +166,16 @@ struct PauseTileMenuView: View {
         viewModel.rebuild(
             emulatorVC: emulatorVC,
             metalFilterMode: metalFilterMode,
+            showFPSCount: showFPSCount,
             hapticFeedbackEnabled: hapticFeedbackEnabled,
             featureFlags: featureFlags,
             indicatorRegistry: indicatorRegistry,
             hasControllerProfiles: hasControllerProfiles,
+            hardwareSwitchStates: hardwareSwitchStates,
+            coreOptionsMD5: currentCoreOptionsMD5Scope,
             route: currentRoute
         )
+        refreshSearchResults()
     }
 
     /// Returns the first focusable tile identifier in display order.
@@ -192,7 +227,7 @@ struct PauseTileMenuView: View {
     /// Handles controller/menu back by popping submenus before dismissing the pause menu.
     private func handleBackCommand() {
         if !popRoute() {
-            dismissAction(true)
+            requestPauseMenuClose()
         }
     }
 
@@ -205,16 +240,12 @@ struct PauseTileMenuView: View {
             return String(localized: "STATES")
         case .options:
             return String(localized: "OPTIONS")
+        case .recording:
+            return String(localized: "RECORDING")
         case .core:
             return String(localized: "CORE")
         case .skins:
             return String(localized: "SKINS")
-        case .skinsSelection:
-            return String(localized: "SKIN SELECTION")
-        case .skinsButtons:
-            return String(localized: "BUTTON CONTROLS")
-        case .skinsTools:
-            return String(localized: "TOOLS")
         }
     }
 
@@ -231,7 +262,7 @@ struct PauseTileMenuView: View {
         #endif
         switch tile.id {
         case "resume":
-            dismissAction(true)
+            requestPauseMenuClose()
         case "saveState":
             let screenshot = emulatorVC.captureScreenshot()
             Task { @MainActor in
@@ -251,6 +282,16 @@ struct PauseTileMenuView: View {
             }
         case "browseSaves":
             showingSaveStateBrowser = true
+        case "autoSaveState":
+            let screenshot = emulatorVC.captureScreenshot()
+            Task { @MainActor in
+                do {
+                    try await emulatorVC.createNewSaveState(auto: true, screenshot: screenshot)
+                } catch {
+                    ELOG("Tile menu autosave error: \(error.localizedDescription)")
+                }
+                rebuildSections()
+            }
         case "reset":
             dismissAction(true)
             emulatorVC.core.resetEmulation()
@@ -267,6 +308,10 @@ struct PauseTileMenuView: View {
             emulatorVC.takeScreenshot()
         case "screenshots":
             showingScreenshotBrowser = true
+        case "logViewer":
+            showingLogViewer = true
+        case "appSettings":
+            showingAppSettings = true
         case "saveQuit":
             dismissAction(false)
             let image = emulatorVC.captureScreenshot()
@@ -313,6 +358,27 @@ struct PauseTileMenuView: View {
         // MARK: Quick-settings tiles
         case "filterCycle":
             cycleFilter()
+        case "fastForwardToggle":
+            let isFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
+            applyGameSpeed(isFastForwarding ? .normal : .fast)
+        case "gameSpeedCycle":
+            let speeds = GameSpeed.allCases
+            let current = emulatorVC.core.gameSpeed
+            let currentIndex = speeds.firstIndex(of: current) ?? 0
+            let next = speeds[(currentIndex + 1) % speeds.count]
+            applyGameSpeed(next)
+        case "fpsCounterToggle":
+            showFPSCount.toggle()
+            rebuildSections()
+        case "rewindToggle":
+            guard let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
+                  let rewindOption = findRewindOption(in: coreClass.options) else { return }
+            let currentValue: Bool = coreClass.valueForOption(rewindOption, andMD5: currentCoreOptionsMD5Scope)
+            coreClass.setValue(!currentValue, forOption: rewindOption, andMD5: currentCoreOptionsMD5Scope)
+            if optionRequiresRestart(rewindOption), deferredRestartPromptEnabled {
+                pendingCoreReset = true
+            }
+            rebuildSections()
         case "rumbleToggle":
             hapticFeedbackEnabled.toggle()
             rebuildSections()
@@ -364,8 +430,7 @@ struct PauseTileMenuView: View {
             if emulatorVC.isRecording {
                 dismissForSubSheetThen { self.emulatorVC.stopScreenRecording() }
             } else {
-                dismissAction(true)
-                emulatorVC.startScreenRecording()
+                dismissThenResumeAndRun { self.emulatorVC.startScreenRecording() }
             }
             #endif
         case "broadcast":
@@ -399,6 +464,18 @@ struct PauseTileMenuView: View {
             #else
             break
             #endif
+        case "retroArchSettings":
+            showingRetroArchSettings = true
+        case "audioVisualizer":
+            #if os(iOS)
+            if emulatorVC.visualizerMode == .off {
+                let restoreMode = VisualizerMode.current != .off ? VisualizerMode.current : .standard
+                emulatorVC.setVisualizerMode(restoreMode)
+            } else {
+                emulatorVC.setVisualizerMode(.off)
+            }
+            rebuildSections()
+            #endif
 
         // MARK: Core action tiles
         case let id where id.hasPrefix(CoreActionTileProvider.idPrefix):
@@ -421,18 +498,32 @@ struct PauseTileMenuView: View {
                   let option = CoreOptionTileProvider.findOption(atIndex: optIndex, key: key, in: coreClass.options) else { return }
             switch option {
             case .bool:
-                let currentValue: Bool = coreClass.valueForOption(option)
-                coreClass.setValue(!currentValue, forOption: option, andMD5: coreClass.currentGameMD5)
+                let currentValue: Bool = coreClass.valueForOption(option, andMD5: currentCoreOptionsMD5Scope)
+                coreClass.setValue(!currentValue, forOption: option, andMD5: currentCoreOptionsMD5Scope)
             case .enumeration, .multi:
-                CoreOptionTileProvider.cycleNextValue(for: option, coreClass: coreClass)
+                CoreOptionTileProvider.cycleNextValue(for: option, coreClass: coreClass, md5Scope: currentCoreOptionsMD5Scope)
             default:
                 break
+            }
+            if optionRequiresRestart(option), deferredRestartPromptEnabled {
+                pendingCoreReset = true
             }
             rebuildSections()
 
         // MARK: Core settings gateway
         case CoreOptionTileProvider.coreSettingsTileID:
             dismissForSubSheetThen { self.emulatorVC.showCoreOptions() }
+        case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareSwitchTilePrefix):
+            guard let descriptor = hardwareSwitchDescriptor(forTileID: id) else { return }
+            let current = hardwareSwitchStates[descriptor.id] ?? descriptor.defaultState
+            let next = !current
+            hardwareSwitchStates[descriptor.id] = next
+            let selectedButtonId = next ? descriptor.positions.on.buttonId : descriptor.positions.off.buttonId
+            dispatchHardwareSwitchButton(selectedButtonId)
+            rebuildSections()
+        case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareMomentaryTilePrefix):
+            guard let descriptor = hardwareMomentaryDescriptor(forTileID: id) else { return }
+            dispatchHardwareSwitchButton(descriptor.buttonId)
 
         default:
             break
@@ -454,6 +545,27 @@ struct PauseTileMenuView: View {
                 metalFilterMode = .always(filter: filter)
             }
             rebuildSections()
+            return
+        }
+
+        if tile.id == "gameSpeedCycle" {
+            if lpOption.id.hasPrefix("gameSpeed_"),
+               let raw = Int(lpOption.id.replacingOccurrences(of: "gameSpeed_", with: "")),
+               let selectedSpeed = GameSpeed(rawValue: raw) {
+                applyGameSpeed(selectedSpeed)
+            }
+            return
+        }
+
+        if tile.id == "audioVisualizer" {
+            #if os(iOS)
+            if lpOption.id.hasPrefix("audioViz_mode_"),
+               let rawValue = Int(lpOption.id.replacingOccurrences(of: "audioViz_mode_", with: "")),
+               let mode = VisualizerMode(rawValue: rawValue) {
+                emulatorVC.setVisualizerMode(mode)
+                rebuildSections()
+            }
+            #endif
             return
         }
 
@@ -488,7 +600,10 @@ struct PauseTileMenuView: View {
             guard let (optIndex, key) = CoreOptionTileProvider.optionIndexAndKey(fromTileID: tile.id),
                   let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
                   let option = CoreOptionTileProvider.findOption(atIndex: optIndex, key: key, in: coreClass.options) else { return }
-            CoreOptionTileProvider.selectValue(titled: lpOption.title, for: option, coreClass: coreClass)
+            CoreOptionTileProvider.selectValue(titled: lpOption.title, for: option, coreClass: coreClass, md5Scope: currentCoreOptionsMD5Scope)
+            if optionRequiresRestart(option), deferredRestartPromptEnabled {
+                pendingCoreReset = true
+            }
             rebuildSections()
         }
     }
@@ -497,6 +612,97 @@ struct PauseTileMenuView: View {
         emulatorVC.dismissNav(resumeEmulation: false, completion: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { action() }
         })
+    }
+
+    /// Dismisses the tile menu while resuming emulation, then runs follow-up work.
+    /// This avoids running ReplayKit start logic while the pause-menu dismissal
+    /// transition is still in flight.
+    private func dismissThenResumeAndRun(_ action: @escaping () -> Void) {
+        emulatorVC.dismissNav(resumeEmulation: true, completion: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { action() }
+        })
+    }
+
+    /// Routes pause-menu closure through deferred restart flow when enabled.
+    private func requestPauseMenuClose() {
+        guard pendingCoreReset, deferredRestartPromptEnabled else {
+            dismissAction(true)
+            return
+        }
+        showingDeferredRestartPrompt = true
+    }
+
+    /// Resets core options for the selected scope (per-game or global).
+    private func resetCoreSettingsForCurrentScope() {
+        guard let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type else { return }
+        if let md5 = currentCoreOptionsMD5Scope, !md5.isEmpty {
+            coreClass.resetAllOptions(forMD5: md5)
+        } else {
+            coreClass.resetAllOptions()
+        }
+        if deferredRestartPromptEnabled, coreHasRestartRequiredOption(in: coreClass.options) {
+            pendingCoreReset = true
+        }
+        rebuildSections()
+    }
+
+    private func coreHasRestartRequiredOption(in options: [CoreOption]) -> Bool {
+        for option in options {
+            switch option {
+            case let .group(_, subOptions):
+                if coreHasRestartRequiredOption(in: subOptions) {
+                    return true
+                }
+            default:
+                if optionRequiresRestart(option) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    /// Applies game-speed changes and mirrors fast-forward toggling for libretro cores.
+    private func applyGameSpeed(_ speed: GameSpeed) {
+        let wasFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
+        emulatorVC.setGameSpeedRespectingAchievements(speed)
+        let isFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
+        if emulatorVC.core.coreIdentifier?.contains("libretro") == true, wasFastForwarding != isFastForwarding {
+            dispatchHardwareButton("togglefastforward")
+        }
+        rebuildSections()
+    }
+
+    /// Handles a deferred core restart after closing the pause menu.
+    private func performDeferredCoreRestart(createSaveState: Bool) {
+        let screenshot = createSaveState ? emulatorVC.captureScreenshot() : nil
+        dismissAction(true)
+        Task { @MainActor in
+            if let screenshot {
+                do {
+                    try await emulatorVC.createNewSaveState(auto: true, screenshot: screenshot)
+                } catch {
+                    ELOG("Deferred restart autosave failed: \(error.localizedDescription)")
+                }
+            }
+            emulatorVC.core.resetEmulation()
+            pendingCoreReset = false
+        }
+    }
+
+    /// Returns true when an option's metadata indicates a restart is required.
+    private func optionRequiresRestart(_ option: CoreOption) -> Bool {
+        switch option {
+        case let .bool(display, _, _),
+             let .range(display, _, _, _),
+             let .rangef(display, _, _, _),
+             let .multi(display, _, _),
+             let .enumeration(display, _, _, _),
+             let .string(display, _, _):
+            return display.requiresRestart
+        case .group:
+            return false
+        }
     }
 
     // MARK: - Filter cycling helper
@@ -698,6 +904,198 @@ struct PauseTileMenuView: View {
         }
     }
 
+    /// Thin stylized search bar for global tile lookup.
+    private var searchBarView: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: tvOSAdjusted(11, tvOS: 15), weight: .semibold))
+                .foregroundColor(.white.opacity(0.7))
+            TextField(String(localized: "Search settings"), text: $searchText)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+                .font(.system(size: tvOSAdjusted(11, tvOS: 15), weight: .medium, design: .rounded))
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
+        .padding(.vertical, tvOSAdjusted(6, tvOS: 10))
+        .background(
+            RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
+                .fill(Color.white.opacity(0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
+                        .strokeBorder(Color.retroCyan.opacity(0.45), lineWidth: 1)
+                )
+        )
+    }
+
+    /// Core-specific toggle controls for option scope and deferred restart behavior.
+    private var coreScopeControlsView: some View {
+        VStack(spacing: tvOSAdjusted(10, tvOS: 14)) {
+            neonToggleRow(
+                title: String(localized: "Per-Game Core Options"),
+                subtitle: String(localized: "When off, edits apply globally to this core"),
+                isOn: $coreOptionsPerGame
+            )
+            neonToggleRow(
+                title: String(localized: "Prompt Restart On Close"),
+                subtitle: String(localized: "Ask to save state + restart for required changes"),
+                isOn: $deferredRestartPromptEnabled,
+                onToggle: { isEnabled in
+                    if !isEnabled {
+                        pendingCoreReset = false
+                    }
+                }
+            )
+        }
+    }
+
+    /// Core route footer actions matching the thin neon search-bar styling.
+    private var coreRouteFooterActionsView: some View {
+        HStack(spacing: tvOSAdjusted(8, tvOS: 12)) {
+            coreRouteActionButton(
+                title: String(localized: "Reset Game"),
+                icon: "arrow.counterclockwise",
+                accent: .retroOrange
+            ) {
+                dismissAction(true)
+                emulatorVC.core.resetEmulation()
+            }
+            coreRouteActionButton(
+                title: String(localized: "Reset Core Settings"),
+                icon: "gearshape.2",
+                accent: .retroCyan
+            ) {
+                resetCoreSettingsForCurrentScope()
+            }
+        }
+    }
+
+    private func coreRouteActionButton(title: String, icon: String, accent: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: tvOSAdjusted(11, tvOS: 15), weight: .semibold))
+                Text(title)
+                    .font(.system(size: tvOSAdjusted(11, tvOS: 15), weight: .semibold, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundColor(.white.opacity(0.92))
+            .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
+            .padding(.vertical, tvOSAdjusted(6, tvOS: 10))
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
+                    .fill(Color.white.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
+                            .strokeBorder(accent.opacity(0.55), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// Thin neon-styled toggle row that is tap-friendly on iOS and tvOS.
+    private func neonToggleRow(title: String, subtitle: String, isOn: Binding<Bool>, onToggle: ((Bool) -> Void)? = nil) -> some View {
+        Button {
+            isOn.wrappedValue.toggle()
+            onToggle?(isOn.wrappedValue)
+            rebuildSections()
+        } label: {
+            HStack(spacing: tvOSAdjusted(10, tvOS: 14)) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(size: tvOSAdjusted(10, tvOS: 14), weight: .semibold))
+                        .foregroundColor(.white)
+                    Text(subtitle)
+                        .font(.system(size: tvOSAdjusted(9, tvOS: 12), weight: .medium))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+                Spacer(minLength: 6)
+                ZStack(alignment: isOn.wrappedValue ? .trailing : .leading) {
+                    Capsule()
+                        .fill((isOn.wrappedValue ? Color.retroCyan : Color.white.opacity(0.20)).opacity(0.22))
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(isOn.wrappedValue ? Color.retroCyan.opacity(0.95) : Color.white.opacity(0.45), lineWidth: 1.2)
+                        )
+                        .frame(width: tvOSAdjusted(50, tvOS: 70), height: tvOSAdjusted(24, tvOS: 30))
+                    Circle()
+                        .fill(isOn.wrappedValue ? Color.retroCyan : Color.white.opacity(0.85))
+                        .frame(width: tvOSAdjusted(18, tvOS: 24), height: tvOSAdjusted(18, tvOS: 24))
+                        .padding(.horizontal, tvOSAdjusted(3, tvOS: 4))
+                        .shadow(color: (isOn.wrappedValue ? Color.retroCyan : Color.white).opacity(0.75), radius: 6, x: 0, y: 0)
+                }
+            }
+            .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
+            .padding(.vertical, tvOSAdjusted(8, tvOS: 11))
+            .background(
+                RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
+                    .fill(Color.white.opacity(0.06))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
+                            .strokeBorder(Color.retroCyan.opacity(0.28), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// Search result list grouped by ranking order.
+    private var searchResultsView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(String(localized: "SEARCH RESULTS"))
+                .font(.system(size: tvOSAdjusted(9, tvOS: 13), weight: .heavy))
+                .foregroundColor(.white.opacity(0.45))
+                .tracking(tvOSAdjusted(1.5, tvOS: 2.5))
+                .padding(.horizontal, 2)
+
+            if searchResults.isEmpty {
+                Text(String(localized: "No matching settings found."))
+                    .font(.system(size: tvOSAdjusted(10, tvOS: 14), weight: .medium, design: .rounded))
+                    .foregroundColor(.white.opacity(0.65))
+                    .padding(.top, 4)
+            } else {
+                ForEach(searchResults) { result in
+                    Button {
+                        handleSearchResult(result)
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: result.tile.icon)
+                                .foregroundColor(color(for: result.tile.colorKey))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(result.tile.label)
+                                    .font(.system(size: tvOSAdjusted(11, tvOS: 16), weight: .semibold))
+                                    .foregroundColor(.white)
+                                Text(result.route.rawValue.uppercased())
+                                    .font(.system(size: tvOSAdjusted(8, tvOS: 11), weight: .bold))
+                                    .foregroundColor(.white.opacity(0.55))
+                            }
+                            Spacer()
+                            if let badge = result.tile.badge {
+                                Text(badge)
+                                    .font(.system(size: tvOSAdjusted(9, tvOS: 12), weight: .bold))
+                                    .foregroundColor(.black)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 3)
+                                    .background(color(for: result.tile.colorKey))
+                                    .clipShape(Capsule())
+                            }
+                        }
+                        .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
+                        .padding(.vertical, tvOSAdjusted(7, tvOS: 10))
+                        .background(
+                            RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
+                                .fill(Color.white.opacity(0.05))
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -706,7 +1104,7 @@ struct PauseTileMenuView: View {
                 // Dimmed game background — tapping it resumes
                 Color.black.opacity(0.5)
                     .ignoresSafeArea()
-                    .onTapGesture { dismissAction(true) }
+                    .onTapGesture { requestPauseMenuClose() }
 
                 // Floating tile panel
                 let panelWidth = min(geo.size.width - 32, panelMaxWidth)
@@ -743,13 +1141,26 @@ struct PauseTileMenuView: View {
                             }
                             .padding(.top, tvOSAdjusted(2, tvOS: 6))
 
-                            // Grouped sections
-                            ForEach(sections) { section in
-                                sectionView(section: section, cols: cols, spacing: spacing)
-                                if section.id != sections.last?.id {
-                                    Divider()
-                                        .background(Color.white.opacity(0.12))
+                            searchBarView
+                            if currentRoute == .core {
+                                coreScopeControlsView
+                            }
+
+                            if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                // Grouped sections
+                                ForEach(sections) { section in
+                                    sectionView(section: section, cols: cols, spacing: spacing)
+                                    if section.id != sections.last?.id {
+                                        Divider()
+                                            .background(Color.white.opacity(0.12))
+                                    }
                                 }
+                            } else {
+                                searchResultsView
+                            }
+
+                            if currentRoute == .core {
+                                coreRouteFooterActionsView
                             }
                         }
                         .padding(tvOSAdjusted(12, tvOS: 20))
@@ -784,6 +1195,25 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingControllerProfiles) {
             InSessionProfilePickerView(emulatorVC: emulatorVC) {
                 showingControllerProfiles = false
+            }
+        }
+        .fullScreenCover(isPresented: $showingLogViewer) {
+            RetroLogView(isFullscreen: $showingLogViewer)
+        }
+        .sheet(isPresented: $showingAppSettings) {
+            if let appSettings = PauseMenuViewRegistry.appSettingsView(dismissAction: {
+                showingAppSettings = false
+            }) {
+                appSettings
+            } else {
+                EmptyView()
+            }
+        }
+        .sheet(isPresented: $showingRetroArchSettings) {
+            if let retroArchSettings = PauseMenuViewRegistry.retroArchSettingsView() {
+                retroArchSettings
+            } else {
+                EmptyView()
             }
         }
         .sheet(isPresented: $showingSystemSkinSelection) {
@@ -949,6 +1379,21 @@ struct PauseTileMenuView: View {
                 }
             }
         }
+        .confirmationDialog(
+            String(localized: "Restart Required"),
+            isPresented: $showingDeferredRestartPrompt,
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "Save State and Restart")) {
+                performDeferredCoreRestart(createSaveState: true)
+            }
+            Button(String(localized: "Restart Without Saving"), role: .destructive) {
+                performDeferredCoreRestart(createSaveState: false)
+            }
+            Button(String(localized: "Not Now"), role: .cancel) { }
+        } message: {
+            Text(String(localized: "Some core settings require a restart. Apply them now?"))
+        }
         // AirPlay trigger — invisible bridge that fires the system route-picker sheet.
         #if os(iOS) || targetEnvironment(macCatalyst)
         .overlay(
@@ -959,6 +1404,9 @@ struct PauseTileMenuView: View {
             alignment: .center
         )
         #endif
+        .onChange(of: searchText) { _ in
+            refreshSearchResults()
+        }
         #if os(iOS)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
@@ -967,6 +1415,7 @@ struct PauseTileMenuView: View {
             orientation = UIDevice.current.orientation
             routeStack = [.root]
             refreshControllerProfileState()
+            initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
         }
         .onChange(of: focusedTileID) { newID in
@@ -978,6 +1427,7 @@ struct PauseTileMenuView: View {
         .onAppear {
             routeStack = [.root]
             refreshControllerProfileState()
+            initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
             reattachTVOSFocusIfNeeded()
         }
@@ -1004,6 +1454,82 @@ struct PauseTileMenuView: View {
             guard let name = c.vendorName else { return false }
             return !db.controllerProfiles(forVendor: name).isEmpty
         }
+    }
+
+    /// Seeds local switch states from system defaults once per menu presentation.
+    private func initializeHardwareSwitchStatesIfNeeded() {
+        guard hardwareSwitchStates.isEmpty else { return }
+        let switches = activeSystemIdentifier.hardwareSwitches ?? []
+        hardwareSwitchStates = switches.reduce(into: [:]) { partialResult, descriptor in
+            partialResult[descriptor.id] = descriptor.defaultState
+        }
+    }
+
+    private func hardwareSwitchDescriptor(forTileID id: String) -> HardwareSwitchDescriptor? {
+        guard id.hasPrefix(PauseTileMenuViewModel.hardwareSwitchTilePrefix) else { return nil }
+        let descriptorID = String(id.dropFirst(PauseTileMenuViewModel.hardwareSwitchTilePrefix.count))
+        return activeSystemIdentifier.hardwareSwitches?.first(where: { $0.id == descriptorID })
+    }
+
+    private func hardwareMomentaryDescriptor(forTileID id: String) -> HardwareMomentaryDescriptor? {
+        guard id.hasPrefix(PauseTileMenuViewModel.hardwareMomentaryTilePrefix) else { return nil }
+        let descriptorID = String(id.dropFirst(PauseTileMenuViewModel.hardwareMomentaryTilePrefix.count))
+        return activeSystemIdentifier.hardwareMomentaryButtons?.first(where: { $0.id == descriptorID })
+    }
+
+    /// Sends a short press/release edge through the active input route.
+    private func dispatchHardwareButton(_ buttonId: String) {
+        if let inputHandler = emulatorVC.sharedInputHandler {
+            inputHandler.buttonPressed(buttonId)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                inputHandler.buttonReleased(buttonId)
+            }
+            return
+        }
+        emulatorVC.controllerViewController?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)
+    }
+
+    /// Sends switch input through the controller bridge first, then falls back to skin input.
+    private func dispatchHardwareSwitchButton(_ buttonId: String) {
+        if emulatorVC.controllerViewController != nil {
+            emulatorVC.controllerViewController?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)
+            return
+        }
+        dispatchHardwareButton(buttonId)
+    }
+
+    /// Locates a rewind-related bool option in the active core option tree.
+    private func findRewindOption(in options: [CoreOption]) -> CoreOption? {
+        for option in options {
+            switch option {
+            case let .bool(display, _, _) where display.title.localizedCaseInsensitiveContains("rewind"):
+                return option
+            case .bool where option.key.localizedCaseInsensitiveContains("rewind"):
+                return option
+            case let .group(_, subOptions):
+                if let nested = findRewindOption(in: subOptions) {
+                    return nested
+                }
+            default:
+                continue
+            }
+        }
+        return nil
+    }
+
+    /// Updates ranked global search hits from the current query text.
+    private func refreshSearchResults() {
+        searchResults = viewModel.search(query: searchText, currentRoute: currentRoute)
+    }
+
+    /// Navigates to a result route (if needed), then executes the tile action.
+    private func handleSearchResult(_ result: PauseMenuSearchResult) {
+        searchText = ""
+        if result.route != currentRoute {
+            routeStack = result.route == .root ? [.root] : [.root, result.route]
+            rebuildSections()
+        }
+        handle(result.tile)
     }
 
     private func tvOSAdjusted(_ standard: CGFloat, tvOS tvOSValue: CGFloat) -> CGFloat {
