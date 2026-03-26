@@ -6,43 +6,50 @@
 //
 //  ## Integration status
 //
-//  Phase 1 (this file) — memory region wiring:
+//  Phase 1 (PR #3510) — memory region wiring:
 //  - achievementMemoryRegions() returns correct RAM pointers for each system
 //    via the `mdfn_*_ptr()` / `mdfn_*_size()` C accessors defined at the end
 //    of each system's .cpp file.
-//  - achievementsActive returns true only when a session is active (Phase 2 sets
-//    _achievementsSessionActive = true after rc_client_load_game succeeds).
 //  - executeFrame is overridden to call tickAchievements() after each frame.
 //
-//  NOTE: Saturn is intentionally NOT wired in Phase 1. WorkRAML/WorkRAMH are
-//  uint16 arrays in Mednafen and require ne16_rbo_be byte-lane translation for
-//  correct 8-bit reads; a raw reinterpret_cast<uint8_t*> gives scrambled bytes on
-//  little-endian hosts.  Saturn support requires a shadow byte-buffer or an
-//  rcheevos read-callback and is deferred to a future PR.
+//  Phase 2 (this file) — rcheevos runtime:
+//  - prepareAchievements: authenticates via stored RA credentials and calls
+//    rc_client_begin_load_game() through MednafenRcheevosClient.
+//  - tickAchievements: calls rc_client_do_frame() once a session is active.
+//  - stopAchievements: calls rc_client_unload_game().
+//  - MednafenGameCore conforms to MednafenRcheevosDelegate and forwards events
+//    to achievementsDelegate (RetroAchievementsOSDDelegate).
 //
-//  Phase 2 (future PR) — rcheevos runtime:
-//  - Link PVRcheevos (shared SPM target wrapping rcheevos C library).
-//  - prepareAchievements: call rc_client_load_game() with the MD5 hash.
-//  - tickAchievements: call rc_client_do_frame().
-//  - stopAchievements: call rc_client_unload_game().
-//  - Register rc_client callbacks and forward events to achievementsDelegate.
+//  ## Prerequisites
+//
+//  Run `git submodule update --init PVRcheevos/rcheevos` before building.
+//  The PVRcheevos/rcheevos submodule provides the rcheevos C sources compiled
+//  into the CRcheevos SPM target that MednafenRcheevosObjC links against.
 //
 //  ## System memory maps (rcheevos address space)
 //
-//  | System  | Region           | rcheevos addr | Size         |
-//  |---------|------------------|---------------|--------------|
-//  | PSX     | Main RAM         | 0x00000000    | 2 MB         |
-//  | NES     | CPU RAM          | 0x0000        | 2 KB         |
-//  | Saturn  | (disabled)       | —             | byte-order fix needed |
-//  | PCE     | Base RAM         | 0x1F0000      | 8 KB / 32 KB |
-//  | SNES    | Work RAM         | 0x7E0000      | 128 KB       |
+//  | System  | Region           | rcheevos addr | Size         | Swap        |
+//  |---------|------------------|---------------|--------------|-------------|
+//  | PSX     | Main RAM         | 0x00000000    | 2 MB         | none        |
+//  | NES     | CPU RAM          | 0x0000        | 2 KB         | none        |
+//  | SNES    | Work RAM         | 0x7E0000      | 128 KB       | none        |
+//  | PCE     | Base RAM         | 0x1F0000      | 8 KB / 32 KB | none        |
+//  | Saturn  | Low Work RAM     | 0x000000      | 1 MB         | word16 [^1] |
+//  | Saturn  | High Work RAM    | 0x100000      | 1 MB         | word16 [^1] |
+//
+//  [^1] Experimental: uint16 big-endian storage in Mednafen requires k^1 byte
+//       addressing.  Verify with known-good Saturn title before marking stable.
 //
 
 import Foundation
 import PVCoreBridge
 import PVPrimitives
+import PVLogging
 import MednafenGameCoreC
 import MednafenGameCoreOptions
+import MednafenRcheevosObjC
+
+// MARK: - CoreRetroAchievements conformance
 
 extension MednafenGameCore: CoreRetroAchievements {
 
@@ -56,17 +63,51 @@ extension MednafenGameCore: CoreRetroAchievements {
     // MARK: - Session lifecycle
 
     public func prepareAchievements(gameHash: String) async {
-        // Phase 1: intentionally a no-op. `_achievementsSessionActive` stays false,
-        // so `achievementsActive` returns false and PVUI hardcore restrictions are not
-        // triggered in this phase.
-        //
-        // Phase 2 will call rc_client_load_game(client, gameHash) here and, on a
-        // successful load, set `_achievementsSessionActive = true` so that
-        // `executeFrame` begins calling `tickAchievements()`.
+        // Build memory-region descriptors with their rcheevos base addresses.
+        let regions = _rcheevosRegions()
+        guard !regions.isEmpty else {
+            DLOG("MednafenRcheevos: no memory regions for \(systemIdentifier ?? "unknown"); skipping.")
+            return
+        }
+
+        // Tear down any existing session before creating a new one.
+        // Without this, an in-flight URLSession callback on the old rc_client_t
+        // could fire after _rcheevosClient is overwritten, calling back into a
+        // deallocated MednafenRcheevosClient via the userdata pointer.
+        _rcheevosClient?.unloadGame()
+        _rcheevosClient = nil
+
+        let client = MednafenRcheevosClient()
+        client.delegate = self
+
+        regions.withUnsafeBufferPointer { buf in
+            client.setRegions(buf.baseAddress, count: UInt(buf.count))
+        }
+
+        _rcheevosClient = client
+
+        // Authenticate + load game asynchronously; completion fires on main queue.
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            client.loginAndLoadGame(gameHash) { [weak self] success, errorMessage in
+                guard let self else {
+                    continuation.resume()
+                    return
+                }
+                if success {
+                    self._achievementsSessionActive = true
+                    ILOG("MednafenRcheevos: session active for \(gameHash).")
+                } else {
+                    WLOG("MednafenRcheevos: could not start session — \(errorMessage ?? "unknown error").")
+                    self._rcheevosClient = nil
+                }
+                continuation.resume()
+            }
+        }
     }
 
     public func stopAchievements() {
-        // Phase 2: call rc_client_unload_game(client) once PVRcheevos is linked.
+        _rcheevosClient?.unloadGame()
+        _rcheevosClient = nil
         _achievementsSessionActive = false
     }
 
@@ -75,10 +116,9 @@ extension MednafenGameCore: CoreRetroAchievements {
     /// Advance the achievement runtime by one emulated frame.
     ///
     /// Called from `executeFrame` (in MednafenGameCore.swift) after the Mednafen
-    /// core has updated all memory.  Phase 2 will call `rc_client_do_frame()` here.
+    /// core has updated all memory.
     public func tickAchievements() {
-        // Phase 2: call rc_client_do_frame(client) once PVRcheevos is linked.
-        // Memory regions returned by achievementMemoryRegions() will be read here.
+        _rcheevosClient?.doFrame()
     }
 
     // MARK: - Memory regions
@@ -88,67 +128,16 @@ extension MednafenGameCore: CoreRetroAchievements {
     /// Pointers come from the `mdfn_*_ptr()` C accessors appended to each system's
     /// mednafen .cpp file.  They are valid for the lifetime of the loaded game.
     public func achievementMemoryRegions() -> [AchievementMemoryRegion] {
-        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return [] }
-        switch sysID {
-
-        case .PSX:
-            // 2 MB main RAM (0x00000000–0x001FFFFF in rcheevos address space)
-            guard let ptr = mdfn_psx_mainram_ptr() else { return [] }
-            return [AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
-                                            size: mdfn_psx_mainram_size(),
-                                            kind: .systemRAM)]
-
-        case .NES, .FDS:
-            // 2 KB CPU RAM (0x0000–0x07FF, mirrored to 0x1FFF)
-            guard let ptr = mdfn_nes_ram_ptr() else { return [] }
-            return [AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
-                                            size: mdfn_nes_ram_size(),
-                                            kind: .systemRAM)]
-
-        case .SNES:
-            // 128 KB Work RAM (0x7E0000–0x7FFFFF)
-            // Only snes_faust exposes a direct pointer; legacy snes core is unsupported.
-            guard MednafenGameCoreOptions.mednafen_snesFast else { return [] }
-            guard let ptr = mdfn_snes_faust_wram_ptr() else { return [] }
-            return [AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
-                                            size: mdfn_snes_faust_wram_size(),
-                                            kind: .systemRAM)]
-
-        case .Saturn:
-            // Saturn Work RAM is backed by uint16 storage in Mednafen and requires
-            // address translation/byte swapping (ne16_rbo_be) for correct 8-bit access.
-            // Exposing a raw reinterpret_cast<uint8_t*> pointer gives rcheevos scrambled
-            // bytes on little-endian hosts.  Until a shadow byte-buffer or read-callback
-            // implementation is added, do not expose Saturn regions.
-            return []
-
-        case .PCE, .PCECD, .SGFX:
-            // 8 KB base RAM for PCE/PCECD, 32 KB for SuperGrafx (0x1F0000–0x1F1FFF / 0x1F7FFF)
-            if MednafenGameCoreOptions.mednafen_pceFast {
-                guard let ptr = mdfn_pce_fast_baseram_ptr() else { return [] }
-                return [AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
-                                                size: mdfn_pce_fast_baseram_size(),
-                                                kind: .systemRAM)]
-            } else {
-                guard let ptr = mdfn_pce_baseram_ptr() else { return [] }
-                return [AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
-                                                size: mdfn_pce_baseram_size(),
-                                                kind: .systemRAM)]
-            }
-
-        default:
-            return []
+        _rcheevosRegions().compactMap { r in
+            guard let ptr = r.ptr else { return nil }
+            return AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
+                                           size: Int(r.size),
+                                           kind: .systemRAM)
         }
     }
 
     // MARK: - State
 
-    /// True when a real rcheevos session is active for the current game.
-    ///
-    /// Guarded by `_achievementsSessionActive` (set in Phase 2 when
-    /// `rc_client_load_game` succeeds) so that PVUI hardcore restrictions
-    /// (fast-forward/save-state guards) are not triggered before an actual
-    /// achievement session is running.
     public var achievementsActive: Bool {
         guard isRunning, _achievementsSessionActive else { return false }
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
@@ -156,10 +145,11 @@ extension MednafenGameCore: CoreRetroAchievements {
         case .PSX, .NES, .FDS, .PCE, .PCECD, .SGFX:
             return true
         case .Saturn:
-            // Saturn RAM wiring requires byte-order correction; disabled until Phase 2.
-            return false
+            // Byte-swap correction is applied in the read-memory callback
+            // (MednafenRcheevosByteSwapModeWord16).  Experimental — disable by
+            // returning false if achievements misbehave on a specific title.
+            return true
         case .SNES:
-            // Only snes_faust exposes a RAM pointer; legacy snes core is unsupported.
             return MednafenGameCoreOptions.mednafen_snesFast
         default:
             return false
@@ -169,5 +159,156 @@ extension MednafenGameCore: CoreRetroAchievements {
     public var hardcoreMode: Bool {
         get { _hardcoreMode }
         set { _hardcoreMode = newValue }
+    }
+
+    // MARK: - Private helpers
+
+    /// Build an array of MednafenRcheevosRegion for the active system.
+    ///
+    /// Each entry pairs a raw RAM pointer with its base address in the rcheevos
+    /// address space.  The read-memory callback in MednafenRcheevosClient uses
+    /// these to satisfy rc_client address requests.
+    private func _rcheevosRegions() -> [MednafenRcheevosRegion] {
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return [] }
+        switch sysID {
+
+        case .PSX:
+            // 2 MB main RAM (rcheevos 0x00000000–0x001FFFFF)
+            guard let ptr = mdfn_psx_mainram_ptr() else { return [] }
+            return [MednafenRcheevosRegion(rcAddress: 0x00000000,
+                                           ptr: ptr,
+                                           size: UInt32(mdfn_psx_mainram_size()),
+                                           byteSwapMode: .off)]
+
+        case .NES, .FDS:
+            // 2 KB CPU RAM (rcheevos 0x0000–0x07FF, mirrored to 0x1FFF)
+            guard let ptr = mdfn_nes_ram_ptr() else { return [] }
+            return [MednafenRcheevosRegion(rcAddress: 0x0000,
+                                           ptr: ptr,
+                                           size: UInt32(mdfn_nes_ram_size()),
+                                           byteSwapMode: .off)]
+
+        case .SNES:
+            // 128 KB Work RAM (rcheevos 0x7E0000–0x7FFFFF) — snes_faust only
+            guard MednafenGameCoreOptions.mednafen_snesFast else { return [] }
+            guard let ptr = mdfn_snes_faust_wram_ptr() else { return [] }
+            return [MednafenRcheevosRegion(rcAddress: 0x7E0000,
+                                           ptr: ptr,
+                                           size: UInt32(mdfn_snes_faust_wram_size()),
+                                           byteSwapMode: .off)]
+
+        case .Saturn:
+            // Saturn Work RAM: Mednafen stores both regions as uint16_t arrays in
+            // big-endian byte order on little-endian hosts (using ne16_rbo_be
+            // internally).  The .word16 byteSwapMode tells MednafenRcheevosClient to
+            // XOR each logical offset by 1 before reading, restoring the byte order
+            // rcheevos expects.
+            //
+            // rcheevos address space for Saturn (verified against libretro/rcheevos):
+            //   Low  Work RAM (1 MB): 0x000000–0x0FFFFF
+            //   High Work RAM (1 MB): 0x100000–0x1FFFFF
+            //
+            // Experimental — verify achievement unlock behaviour on hardware before
+            // removing this comment.
+            guard let ptrL = mdfn_ss_workraml_ptr(),
+                  let ptrH = mdfn_ss_workramh_ptr() else { return [] }
+            return [
+                MednafenRcheevosRegion(rcAddress: 0x000000,
+                                       ptr: ptrL,
+                                       size: UInt32(mdfn_ss_workraml_size()),
+                                       byteSwapMode: .word16),
+                MednafenRcheevosRegion(rcAddress: 0x100000,
+                                       ptr: ptrH,
+                                       size: UInt32(mdfn_ss_workramh_size()),
+                                       byteSwapMode: .word16),
+            ]
+
+        case .PCE, .PCECD, .SGFX:
+            // 8 KB base RAM for PCE/PCECD, 32 KB for SuperGrafx (rcheevos 0x1F0000)
+            if MednafenGameCoreOptions.mednafen_pceFast {
+                guard let ptr = mdfn_pce_fast_baseram_ptr() else { return [] }
+                return [MednafenRcheevosRegion(rcAddress: 0x1F0000,
+                                               ptr: ptr,
+                                               size: UInt32(mdfn_pce_fast_baseram_size()),
+                                               byteSwapMode: .off)]
+            } else {
+                guard let ptr = mdfn_pce_baseram_ptr() else { return [] }
+                return [MednafenRcheevosRegion(rcAddress: 0x1F0000,
+                                               ptr: ptr,
+                                               size: UInt32(mdfn_pce_baseram_size()),
+                                               byteSwapMode: .off)]
+            }
+
+        default:
+            return []
+        }
+    }
+}
+
+// MARK: - MednafenRcheevosDelegate
+
+/// Forward rcheevos events to the achievement OSD delegate.
+extension MednafenGameCore: MednafenRcheevosDelegate {
+
+    public func rcheevosDidUnlockAchievementID(_ achievementID: UInt32,
+                                               title: String,
+                                               description: String,
+                                               points: UInt32,
+                                               isHardcore: Bool) {
+        let note = AchievementUnlockNotification(
+            id: achievementID,
+            title: title,
+            description: description,
+            points: points,
+            badgeURL: nil,
+            isHardcore: isHardcore)
+        achievementsDelegate?.achievementUnlocked(note)
+    }
+
+    public func rcheevosShowProgress(forAchievementID achievementID: UInt32,
+                                     title: String,
+                                     progressText: String) {
+        let note = AchievementProgressNotification(
+            achievementID: achievementID,
+            title: title,
+            progressText: progressText)
+        achievementsDelegate?.achievementProgress(note)
+    }
+
+    public func rcheevosShowChallenge(forAchievementID achievementID: UInt32) {
+        let note = AchievementChallengeNotification(achievementID: achievementID, badgeURL: nil)
+        achievementsDelegate?.showChallengeIndicator(note)
+    }
+
+    public func rcheevosHideChallenge(forAchievementID achievementID: UInt32) {
+        achievementsDelegate?.hideChallengeIndicator(achievementID: achievementID)
+    }
+
+    public func rcheevosLeaderboardStarted(withID leaderboardID: UInt32,
+                                           title: String,
+                                           description: String,
+                                           scoreText: String) {
+        let note = AchievementLeaderboardNotification(
+            leaderboardID: leaderboardID,
+            title: title,
+            description: description,
+            scoreText: scoreText)
+        achievementsDelegate?.leaderboardStarted(note)
+    }
+
+    public func rcheevosLeaderboardFailed(withID leaderboardID: UInt32) {
+        achievementsDelegate?.leaderboardFailed(leaderboardID: leaderboardID)
+    }
+
+    public func rcheevosLeaderboardSubmitted(withID leaderboardID: UInt32,
+                                             title: String,
+                                             description: String,
+                                             scoreText: String) {
+        let note = AchievementLeaderboardNotification(
+            leaderboardID: leaderboardID,
+            title: title,
+            description: description,
+            scoreText: scoreText)
+        achievementsDelegate?.leaderboardSubmitted(note)
     }
 }

@@ -27,7 +27,7 @@
 // Systems covered:
 //   PSX    — 2 MB main RAM (MDFN_IEN_PSX::MainRAM)
 //   NES    — 2 KB CPU RAM  (MDFN_IEN_NES::RAM)
-//   Saturn — accessors declared but NOT used (uint16 backing requires byte-order fix)
+//   Saturn — uint16 backing; byte-order corrected via MednafenRcheevosByteSwapModeWord16
 //   PCE    — 8 KB base RAM (32 KB for SuperGrafx) (MDFN_IEN_PCE / MDFN_IEN_PCE_FAST)
 //   SNES   — 128 KB Work RAM (MDFN_IEN_SNES_FAUST::WRAM)
 

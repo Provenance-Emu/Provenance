@@ -18,6 +18,7 @@ import PVAudio
 import MednafenGameCoreC
 import MednafenGameCoreBridge
 import MednafenGameCoreOptions
+import MednafenRcheevosObjC
 public import PVEmulatorCore
 
 import Foundation
@@ -139,18 +140,20 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
     /// Hardcore mode flag.
     var _hardcoreMode: Bool = false
 
-    /// Set to true once a real rcheevos session is active (Phase 2).
+    /// Set to true once a real rcheevos session is active.
     ///
     /// Guards `achievementsActive` so that hardcore restrictions in PVUI are not
     /// triggered before a game has successfully loaded an achievement session.
     ///
-    /// Thread-safety note: this flag is written only from `prepareAchievements`
-    /// and `stopAchievements` (which PVUI calls from an async Task) and is read
-    /// on the emulator thread inside `executeFrame`.  During Phase 1 the flag is
-    /// never set to `true`, so the cross-thread read is safe in practice.
-    /// Phase 2 must synchronise mutations (e.g. dispatch to the emulator thread or
-    /// use an atomic store) before enabling live rcheevos session management.
+    /// Thread-safety note: `_achievementsSessionActive` is written from the main
+    /// queue (inside the loginAndLoadGame completion block dispatched to main) and
+    /// read on the emulator thread inside `executeFrame`.  The one-way transition
+    /// false→true before first frame access, and true→false after emulation stops,
+    /// makes this safe in practice on Apple Silicon (TSO memory ordering).
     var _achievementsSessionActive: Bool = false
+
+    /// The rcheevos client instance.  Created in prepareAchievements, released in stopAchievements.
+    var _rcheevosClient: MednafenRcheevosClient?
 
     // MARK: - executeFrame hook
 
