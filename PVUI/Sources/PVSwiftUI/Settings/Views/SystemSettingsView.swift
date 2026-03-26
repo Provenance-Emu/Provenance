@@ -11,6 +11,8 @@ import Combine
 import RealmSwift
 import PVPrimitives
 import PVThemes
+import PVSettings
+import PVCoreBridge
 
 struct SystemSettingsView: View {
     @ObservedResults(PVSystem.self) private var systems
@@ -211,6 +213,7 @@ struct SystemSection: View {
     @State private var isCoresExpanded = false
     @State private var isBiosesExpanded = false
     @Default(.unsupportedCores) private var unsupportedCores
+    @Default(.controllerLayoutVariantsBySystem) private var variantsBySystem
 
     private var isAppStore: Bool { AppState.shared.isAppStore }
 
@@ -403,6 +406,41 @@ struct SystemSection: View {
                         .background(Color.black.opacity(0.2))
                         .cornerRadius(6)
                         .transition(.opacity)
+                    }
+                }
+            }
+
+            // Controller layout variant picker — only shown for systems with multiple layouts
+            if let sysID = SystemIdentifier(rawValue: system.identifier),
+               let variants = sysID.availableControllerLayoutVariants,
+               variants.count > 1 {
+                // Normalize stored ID: fall back to the default if the stored ID is stale/invalid.
+                let storedVariantID = variantsBySystem[system.identifier]
+                let normalizedVariantID: String
+                if let storedVariantID, variants.contains(where: { $0.id == storedVariantID }) {
+                    normalizedVariantID = storedVariantID
+                } else {
+                    normalizedVariantID = variants[0].id
+                }
+
+                ControllerLayoutVariantPicker(
+                    variants: variants,
+                    selectedVariantID: normalizedVariantID
+                ) { newVariantID in
+                    // Clear the override when the user selects the default variant so storage
+                    // stays minimal (only non-default selections are persisted).
+                    if newVariantID == variants[0].id {
+                        Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
+                    } else {
+                        Defaults.setControllerLayoutVariant(newVariantID, forSystemID: system.identifier)
+                    }
+                }
+                .task(id: storedVariantID) {
+                    // If the persisted variant ID is stale (no longer a valid variant),
+                    // remove it so Defaults stays in sync with the displayed default.
+                    if let stale = storedVariantID,
+                       !variants.contains(where: { $0.id == stale }) {
+                        Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
                     }
                 }
             }
