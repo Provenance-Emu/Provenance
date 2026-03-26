@@ -301,7 +301,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// `@MainActor`-isolated; call with `await` from non-main-actor contexts.
     public func isEnabled(_ feature: PVFeature) -> Bool {
         // Debug overrides take highest priority.
-        // Read directly from UserDefaults (thread-safe) to avoid actor-isolation hop.
+        // Read directly from UserDefaults (thread-safe) to avoid allocating/parsing the overrides dictionary.
         if let rawDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
            let value = rawDict[feature.rawValue] {
             if let boolValue = value as? Bool { return boolValue }

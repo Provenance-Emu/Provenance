@@ -124,6 +124,20 @@ private actor MockArtworkMatchingLookupSlow: ArtworkMatchingLookupProvider {
 
 final class ArtworkMatchingServiceTests: XCTestCase {
 
+    // MARK: setUp / tearDown
+
+    /// Enable the feature flag before every test so `findArtwork` is not gated by the flag.
+    override func setUp() async throws {
+        try await super.setUp()
+        await PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: true)
+    }
+
+    /// Clear the override after every test to avoid cross-test contamination.
+    override func tearDown() async throws {
+        await PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: nil)
+        try await super.tearDown()
+    }
+
     // MARK: Helpers
 
     private func makeArtwork(urlString: String, type: ArtworkType = .boxFront) -> ArtworkMetadata {

@@ -15,8 +15,9 @@ import PVSystems
 
 // MARK: - Lookup Provider Protocol
 
-/// Combined protocol used for dependency injection in ArtworkMatchingService.
-/// Conformers must support both artwork search and ROM metadata lookup by MD5.
+/// Combined protocol used for dependency injection in `ArtworkMatchingService`.
+/// Inherits the full `ArtworkLookupService` surface (`searchArtwork`, `getArtwork(forGameID:)`,
+/// `getArtworkURLs(forRom:)`) and adds `searchROM(byMD5:)` for MD5-based fallback lookup.
 public protocol ArtworkMatchingLookupProvider: ArtworkLookupService {
     /// Look up ROM metadata by MD5 hash.
     func searchROM(byMD5 md5: String) async throws -> ROMMetadata?
