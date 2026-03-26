@@ -40,8 +40,7 @@ let package = Package(
         .package(name: "PVNetplay", path: "../../PVNetplay"),
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
-        // TODO(#3375): Uncomment once PVRcheevos (shared rcheevos SPM target) is merged.
-        // .package(path: "../../PVRcheevos"),
+        .package(path: "../../PVRcheevos"),
     ],
     targets: [
         // MARK: ------- CORE --------
@@ -88,18 +87,15 @@ let package = Package(
                 "PVGambatteOptions",
                 "libgambatte",
                 "libresample",
-                // TODO(#3375): Uncomment once PVRcheevos is available:
-                // .product(name: "librcheevos", package: "PVRcheevos"),
+                // CRcheevos provides the rc_client C API from the shared PVRcheevos package.
+                .product(name: "CRcheevos", package: "PVRcheevos"),
             ],
             cSettings: [
                 .define("INT_LEAST_32"),
                 .define("HAVE_STDINT_H", to: "1"),
-                // TODO(#3375): Uncomment to enable rc_client integration once PVRcheevos is linked:
-                // .define("HAVE_RCHEEVOS", to: "1"),
+                .define("HAVE_RCHEEVOS", to: "1"),
                 .headerSearchPath("../libgambatte/libgambatte/include"),
                 .headerSearchPath("../libresample/common/resample"),
-                // TODO(#3375): Add rcheevos header search path once PVRcheevos is linked:
-                // .headerSearchPath("../../PVRcheevos/Sources/rcheevos/include"),
                 .unsafeFlags([
                     "-fmodules",
                     "-fcxx-modules"
