@@ -38,7 +38,7 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         
         // Kick off ROM migration
         Task {
-            if await PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false {
+            if PVFeatureFlags.shared.isEnabled(.romPathMigrator) {
                 do {
                     try await self.romMigrator.migrateIfNeeded()
                     try await self.romMigrator.fixOrphanedFiles()

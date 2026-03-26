@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(os)
+import os
+#endif
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -225,10 +228,11 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 /// Thread-safe feature flag engine.
 ///
 /// All flag reads (`isEnabled`, subscript) are **synchronous** and may be called from any
-/// thread or actor — **no `await` required**. Internal state is protected by an `NSLock`
-/// so it is safe on every platform including Linux. Configuration mutations (loading from
-/// network or disk) update a pre-computed cache so subsequent reads are a single lock-
-/// protected dictionary lookup.
+/// thread or actor — **no `await` required**. Internal state is protected by an
+/// `OSAllocatedUnfairLock` (iOS/tvOS 16+), which eliminates bare lock/unlock pairs and
+/// the associated early-return deadlock risk. Configuration mutations (loading from
+/// network or disk) update a pre-computed cache so subsequent reads are a single
+/// lock-protected dictionary lookup.
 ///
 /// Combine subscribers receive a `stateDidChange` notification whenever the cache is
 /// rebuilt (config load or debug-override change). `PVFeatureFlagsManager` uses this to
@@ -257,11 +261,31 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     // MARK: - Mutable State (lock-protected)
 
+    private struct _State {
+        var configuration: FeatureFlagsConfiguration?
+        /// Pre-computed flag states keyed by `PVFeature.rawValue`.
+        /// Rebuilt whenever configuration or debug overrides change.
+        var cachedStates: [String: Bool] = [:]
+    }
+
+#if canImport(os)
+    /// `OSAllocatedUnfairLock` bundles all mutable state and eliminates bare
+    /// lock/unlock pairs — available on iOS 16+ / tvOS 16+.
+    private let _storage = OSAllocatedUnfairLock(initialState: _State())
+
+    private func _withState<T>(_ body: (inout _State) -> T) -> T {
+        _storage.withLock { body(&$0) }
+    }
+#else
     private let _lock = NSLock()
-    private var _configuration: FeatureFlagsConfiguration?
-    /// Pre-computed flag states keyed by `PVFeature.rawValue`.
-    /// Rebuilt whenever configuration or debug overrides change.
-    private var _cachedStates: [String: Bool] = [:]
+    private var _rawState = _State()
+
+    private func _withState<T>(_ body: (inout _State) -> T) -> T {
+        _lock.lock()
+        defer { _lock.unlock() }
+        return body(&_rawState)
+    }
+#endif
 
     // MARK: - Change Notifications
 
@@ -295,30 +319,26 @@ public final class PVFeatureFlags: @unchecked Sendable {
         appVersion: String? = nil
     ) {
         self.init(appType: appType, buildNumber: buildNumber, appVersion: appVersion)
-        _lock.lock()
-        _configuration = configuration
-        _rebuildCacheLocked()
-        _lock.unlock()
+        _withState { state in
+            state.configuration = configuration
+            _rebuildCache(&state)
+        }
     }
 
     // MARK: - Internal Configuration Access (tests + manager)
 
     /// Returns the current configuration (snapshot).
     internal var configuration: FeatureFlagsConfiguration? {
-        _lock.lock()
-        defer { _lock.unlock() }
-        return _configuration
+        _withState { $0.configuration }
     }
 
     internal func setConfiguration(_ configuration: FeatureFlagsConfiguration) {
-        let changed: Bool = {
-            _lock.lock()
-            defer { _lock.unlock() }
-            _configuration = configuration
-            let before = _cachedStates
-            _rebuildCacheLocked()
-            return _cachedStates != before
-        }()
+        let changed = _withState { state -> Bool in
+            state.configuration = configuration
+            let before = state.cachedStates
+            _rebuildCache(&state)
+            return state.cachedStates != before
+        }
         if changed { _notifyChange() }
     }
 
@@ -369,9 +389,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     /// Debug overrides (stored in `UserDefaults`) take precedence over configuration values.
     public func isEnabled(_ feature: PVFeature) -> Bool {
         if let override = _debugOverride(for: feature) { return override }
-        _lock.lock()
-        defer { _lock.unlock() }
-        return _cachedStates[feature.rawValue] ?? false
+        return _withState { $0.cachedStates[feature.rawValue] ?? false }
     }
 
     /// Returns `true` if the feature identified by `featureKey` is enabled.
@@ -380,10 +398,10 @@ public final class PVFeatureFlags: @unchecked Sendable {
     /// live against the current configuration (useful for remotely-defined flags not in the enum).
     public func isEnabled(_ featureKey: String) -> Bool {
         if let feature = PVFeature(rawValue: featureKey) { return isEnabled(feature) }
-        _lock.lock()
-        defer { _lock.unlock() }
-        guard let featureConfig = _configuration?.features[featureKey] else { return false }
-        return _evaluateLocked(featureConfig)
+        return _withState { state -> Bool in
+            guard let featureConfig = state.configuration?.features[featureKey] else { return false }
+            return _evaluate(featureConfig)
+        }
     }
 
     /// Subscript shorthand: `PVFeatureFlags.shared[.pauseTileMenu]`
@@ -438,33 +456,31 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     /// Returns restriction reasons for a feature (empty = no restrictions).
     public func getFeatureRestrictions(_ featureKey: String) -> [String] {
-        _lock.lock()
-        defer { _lock.unlock() }
-        guard let feature = _configuration?.features[featureKey] else { return ["Feature not found"] }
-        var restrictions: [String] = []
-        if let allowed = feature.allowedAppTypes, !allowed.contains(_appType.rawValue) {
-            restrictions.append("App type \(_appType.rawValue) not allowed")
+        _withState { state -> [String] in
+            guard let feature = state.configuration?.features[featureKey] else { return ["Feature not found"] }
+            var restrictions: [String] = []
+            if let allowed = feature.allowedAppTypes, !allowed.contains(_appType.rawValue) {
+                restrictions.append("App type \(_appType.rawValue) not allowed")
+            }
+            if let minBuild = feature.minBuildNumber, let current = _buildNumber,
+               Self._compareVersions(current, minBuild) < 0 {
+                restrictions.append("Build \(current) below minimum \(minBuild)")
+            }
+            if let minVer = feature.minVersion, Self._compareVersions(_appVersion, minVer) < 0 {
+                restrictions.append("Version \(_appVersion) below minimum \(minVer)")
+            }
+            return restrictions
         }
-        if let minBuild = feature.minBuildNumber, let current = _buildNumber,
-           Self._compareVersions(current, minBuild) < 0 {
-            restrictions.append("Build \(current) below minimum \(minBuild)")
-        }
-        if let minVer = feature.minVersion, Self._compareVersions(_appVersion, minVer) < 0 {
-            restrictions.append("Version \(_appVersion) below minimum \(minVer)")
-        }
-        return restrictions
     }
 
     /// Returns all feature flags with their configuration and current enabled state.
     public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
         PVFeature.allCases.map { featureCase in
             let key = featureCase.rawValue
-            let featureConfig: FeatureFlag = {
-                _lock.lock()
-                defer { _lock.unlock() }
-                return _configuration?.features[key]
+            let featureConfig = _withState { state in
+                state.configuration?.features[key]
                     ?? FeatureFlag(enabled: false, description: "Feature not defined in configuration")
-            }()
+            }
             return (key: key, flag: featureConfig, enabled: isEnabled(featureCase))
         }
     }
@@ -477,23 +493,24 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     // MARK: - Private Helpers
 
-    /// Rebuilds `_cachedStates` from `_configuration`. **Must be called with `_lock` held.**
-    private func _rebuildCacheLocked() {
+    /// Rebuilds `state.cachedStates` from `state.configuration`.
+    /// Must be called inside `_withState { }`.
+    private func _rebuildCache(_ state: inout _State) {
         var newStates: [String: Bool] = [:]
         for feature in PVFeature.allCases {
-            guard let config = _configuration?.features[feature.rawValue] else {
+            guard let config = state.configuration?.features[feature.rawValue] else {
                 newStates[feature.rawValue] = false
                 continue
             }
-            newStates[feature.rawValue] = _evaluateLocked(config)
+            newStates[feature.rawValue] = _evaluate(config)
         }
-        _cachedStates = newStates
+        state.cachedStates = newStates
     }
 
-    /// Evaluates a single `FeatureFlag` against the current app context.
-    /// **Must be called with `_lock` held** (reads `_appType`, `_buildNumber`, `_appVersion`,
-    /// which are immutable but kept consistent with state accesses).
-    private func _evaluateLocked(_ featureConfig: FeatureFlag) -> Bool {
+    /// Evaluates a single `FeatureFlag` against the current (immutable) app context.
+    /// Safe to call from inside or outside the lock — only reads `_appType`, `_buildNumber`,
+    /// and `_appVersion`, which are set once at init and never mutated.
+    private func _evaluate(_ featureConfig: FeatureFlag) -> Bool {
         if let allowedTypes = featureConfig.allowedAppTypes,
            !allowedTypes.contains(_appType.rawValue) {
             return false
