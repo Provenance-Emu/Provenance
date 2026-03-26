@@ -14,8 +14,6 @@ import PVFeatureFlags
 import PVLookupTypes
 import PVSystems
 @testable import PVLibrary
-import PVLookupTypes
-import PVSystems
 
 // MARK: - Mock service
 
@@ -300,7 +298,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
     func testCleanedForArtworkSearch_removesIsolatedSpecialChars() {
         // Characters surrounded by spaces should be removed
         let input = "Game , Extra"
-        XCTAssertEqual(input.cleanedForArtworkSearch(), "Game Extra")
+        XCTAssertEqual(input.artworkSearchCleaned(), "Game Extra")
     }
 
     func test_boxBackMetadataURL_isValidURL() {
