@@ -132,9 +132,21 @@ static const NSUInteger kMaxRegions = 8;
     for (NSUInteger i = 0; i < _regionCount; i++) {
         const MednafenRcheevosRegion *r = &_regions[i];
         if (address >= r->rcAddress && address < r->rcAddress + r->size) {
-            uint32_t offset  = address - r->rcAddress;
+            uint32_t offset   = address - r->rcAddress;
             uint32_t readable = numBytes < (r->size - offset) ? numBytes : (r->size - offset);
-            memcpy(buffer, r->ptr + offset, readable);
+
+            if (r->byteSwapMode == MednafenRcheevosByteSwapModeWord16) {
+                // Saturn Work RAM: Mednafen stores uint16 values big-endian on
+                // little-endian hosts.  Logical byte at position k lives at
+                // physical position k^1 (swap within each 16-bit word).
+                // Example: uint16 value 0xABCD is stored as [0xCD, 0xAB] in host
+                // memory; rcheevos expects [0xAB, 0xCD] (big-endian / Saturn order).
+                for (uint32_t j = 0; j < readable; j++) {
+                    buffer[j] = r->ptr[(offset + j) ^ 1u];
+                }
+            } else {
+                memcpy(buffer, r->ptr + offset, readable);
+            }
             return readable;
         }
     }

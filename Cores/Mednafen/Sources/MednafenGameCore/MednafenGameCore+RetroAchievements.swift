@@ -28,13 +28,17 @@
 //
 //  ## System memory maps (rcheevos address space)
 //
-//  | System  | Region           | rcheevos addr | Size         |
-//  |---------|------------------|---------------|--------------|
-//  | PSX     | Main RAM         | 0x00000000    | 2 MB         |
-//  | NES     | CPU RAM          | 0x0000        | 2 KB         |
-//  | SNES    | Work RAM         | 0x7E0000      | 128 KB       |
-//  | PCE     | Base RAM         | 0x1F0000      | 8 KB / 32 KB |
-//  | Saturn  | (disabled)       | —             | byte-order fix needed |
+//  | System  | Region           | rcheevos addr | Size         | Swap        |
+//  |---------|------------------|---------------|--------------|-------------|
+//  | PSX     | Main RAM         | 0x00000000    | 2 MB         | none        |
+//  | NES     | CPU RAM          | 0x0000        | 2 KB         | none        |
+//  | SNES    | Work RAM         | 0x7E0000      | 128 KB       | none        |
+//  | PCE     | Base RAM         | 0x1F0000      | 8 KB / 32 KB | none        |
+//  | Saturn  | Low Work RAM     | 0x000000      | 1 MB         | word16 [^1] |
+//  | Saturn  | High Work RAM    | 0x100000      | 1 MB         | word16 [^1] |
+//
+//  [^1] Experimental: uint16 big-endian storage in Mednafen requires k^1 byte
+//       addressing.  Verify with known-good Saturn title before marking stable.
 //
 
 import Foundation
@@ -141,8 +145,10 @@ extension MednafenGameCore: CoreRetroAchievements {
         case .PSX, .NES, .FDS, .PCE, .PCECD, .SGFX:
             return true
         case .Saturn:
-            // Saturn RAM wiring requires byte-order correction; disabled until a future PR.
-            return false
+            // Byte-swap correction is applied in the read-memory callback
+            // (MednafenRcheevosByteSwapModeWord16).  Experimental — disable by
+            // returning false if achievements misbehave on a specific title.
+            return true
         case .SNES:
             return MednafenGameCoreOptions.mednafen_snesFast
         default:
@@ -171,14 +177,16 @@ extension MednafenGameCore: CoreRetroAchievements {
             guard let ptr = mdfn_psx_mainram_ptr() else { return [] }
             return [MednafenRcheevosRegion(rcAddress: 0x00000000,
                                            ptr: ptr,
-                                           size: UInt32(mdfn_psx_mainram_size()))]
+                                           size: UInt32(mdfn_psx_mainram_size()),
+                                           byteSwapMode: .off)]
 
         case .NES, .FDS:
             // 2 KB CPU RAM (rcheevos 0x0000–0x07FF, mirrored to 0x1FFF)
             guard let ptr = mdfn_nes_ram_ptr() else { return [] }
             return [MednafenRcheevosRegion(rcAddress: 0x0000,
                                            ptr: ptr,
-                                           size: UInt32(mdfn_nes_ram_size()))]
+                                           size: UInt32(mdfn_nes_ram_size()),
+                                           byteSwapMode: .off)]
 
         case .SNES:
             // 128 KB Work RAM (rcheevos 0x7E0000–0x7FFFFF) — snes_faust only
@@ -186,15 +194,34 @@ extension MednafenGameCore: CoreRetroAchievements {
             guard let ptr = mdfn_snes_faust_wram_ptr() else { return [] }
             return [MednafenRcheevosRegion(rcAddress: 0x7E0000,
                                            ptr: ptr,
-                                           size: UInt32(mdfn_snes_faust_wram_size()))]
+                                           size: UInt32(mdfn_snes_faust_wram_size()),
+                                           byteSwapMode: .off)]
 
         case .Saturn:
-            // Saturn Work RAM uses uint16 storage in Mednafen and requires
-            // ne16_rbo_be address translation for correct 8-bit reads.
-            // Exposing a raw uint8* pointer gives rcheevos scrambled bytes on
-            // little-endian hosts.  Disabled until a shadow buffer / read-callback
-            // implementation is added.
-            return []
+            // Saturn Work RAM: Mednafen stores both regions as uint16_t arrays in
+            // big-endian byte order on little-endian hosts (using ne16_rbo_be
+            // internally).  The .word16 byteSwapMode tells MednafenRcheevosClient to
+            // XOR each logical offset by 1 before reading, restoring the byte order
+            // rcheevos expects.
+            //
+            // rcheevos address space for Saturn (verified against libretro/rcheevos):
+            //   Low  Work RAM (1 MB): 0x000000–0x0FFFFF
+            //   High Work RAM (1 MB): 0x100000–0x1FFFFF
+            //
+            // Experimental — verify achievement unlock behaviour on hardware before
+            // removing this comment.
+            guard let ptrL = mdfn_ss_workraml_ptr(),
+                  let ptrH = mdfn_ss_workramh_ptr() else { return [] }
+            return [
+                MednafenRcheevosRegion(rcAddress: 0x000000,
+                                       ptr: ptrL,
+                                       size: UInt32(mdfn_ss_workraml_size()),
+                                       byteSwapMode: .word16),
+                MednafenRcheevosRegion(rcAddress: 0x100000,
+                                       ptr: ptrH,
+                                       size: UInt32(mdfn_ss_workramh_size()),
+                                       byteSwapMode: .word16),
+            ]
 
         case .PCE, .PCECD, .SGFX:
             // 8 KB base RAM for PCE/PCECD, 32 KB for SuperGrafx (rcheevos 0x1F0000)
@@ -202,12 +229,14 @@ extension MednafenGameCore: CoreRetroAchievements {
                 guard let ptr = mdfn_pce_fast_baseram_ptr() else { return [] }
                 return [MednafenRcheevosRegion(rcAddress: 0x1F0000,
                                                ptr: ptr,
-                                               size: UInt32(mdfn_pce_fast_baseram_size()))]
+                                               size: UInt32(mdfn_pce_fast_baseram_size()),
+                                               byteSwapMode: .off)]
             } else {
                 guard let ptr = mdfn_pce_baseram_ptr() else { return [] }
                 return [MednafenRcheevosRegion(rcAddress: 0x1F0000,
                                                ptr: ptr,
-                                               size: UInt32(mdfn_pce_baseram_size()))]
+                                               size: UInt32(mdfn_pce_baseram_size()),
+                                               byteSwapMode: .off)]
             }
 
         default:

@@ -47,6 +47,31 @@ NS_ASSUME_NONNULL_BEGIN
                                  scoreText:(NSString *)scoreText;
 @end
 
+// MARK: - Byte-swap mode
+
+/// Controls per-byte reordering applied inside the read-memory callback before
+/// bytes are handed to rcheevos.
+///
+/// Most systems store RAM as plain bytes and need no swapping.  Saturn is an
+/// exception: Mednafen represents Saturn Work RAM as @c uint16_t arrays that are
+/// written/read through @c ne16_rbo_be helpers which swap adjacent bytes on
+/// little-endian hosts (byte offset @c k maps to physical offset @c k^1 within
+/// each 16-bit word).  Exposing the raw @c uint8_t* to rcheevos without correction
+/// yields scrambled bytes on ARM (little-endian) devices.
+///
+/// @note Future big-endian-storage systems may share this pattern.  Add additional
+///       modes here rather than duplicating swap logic in each core bridge.
+typedef NS_ENUM(uint8_t, MednafenRcheevosByteSwapMode) {
+    /// No byte swapping — bytes are served as-is (default for most systems).
+    MednafenRcheevosByteSwapModeOff    = 0,
+    /// Swap bytes within each 16-bit word before serving to rcheevos.
+    /// Physical byte at logical offset @c k is read from physical offset @c k^1.
+    /// Required for Saturn Work RAM on little-endian hosts (iOS/tvOS/macOS).
+    /// @experimental Verify against known-good achievement hashes before removing
+    ///               this note.
+    MednafenRcheevosByteSwapModeWord16 = 1,
+};
+
 // MARK: - Memory region descriptor
 
 /// Maps a range of rcheevos address space onto a pointer into emulator RAM.
@@ -58,6 +83,10 @@ typedef struct {
     uint8_t *ptr;
     /// Size of this region in bytes.
     uint32_t size;
+    /// Byte-swap mode applied when the read-memory callback services this region.
+    /// Use @c MednafenRcheevosByteSwapModeOff for all standard systems.
+    /// Use @c MednafenRcheevosByteSwapModeWord16 for Saturn Work RAM.
+    MednafenRcheevosByteSwapMode byteSwapMode;
 } MednafenRcheevosRegion;
 
 // MARK: - Client
