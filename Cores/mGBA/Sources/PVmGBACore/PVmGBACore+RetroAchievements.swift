@@ -11,8 +11,8 @@
 //  file is compiled into libmGBA and drives achievement evaluation via the
 //  mCoreCallbacks mechanism. This Swift extension handles Provenance-side
 //  state (active flag, hardcore mode) and memory-region exposure.
-//  TODO: Wire mGBA's unlock/progress/challenge callbacks into
-//  `achievementsDelegate` once the rc_client callback bridge is in place.
+//  TODO: Wire mGBA's unlock/progress/challenge C callbacks (registered via
+//  `mCoreCallbacks`) to `achievementsDelegate` in the Objective-C bridge layer.
 //
 //  Memory regions:
 //   - GBA : EWRAM (256 KiB), IWRAM (32 KiB), optional cart SRAM
@@ -35,7 +35,9 @@ extension PVmGBACore: CoreRetroAchievements {
     // MARK: - Delegate
 
     // TODO: Wire mGBA/rcheevos achievement events (unlock, progress, challenge) to this
-    // delegate once PVRcheevos (#3375) provides the rc_client callback bridge.
+    // delegate. The rcheevos runtime is already compiled into libmGBA via
+    // USE_ACHIEVEMENTS=1 (see Package.swift); the remaining work is registering a C
+    // callback in PVmGBABridge that dispatches rc_client events to this delegate.
     public var achievementsDelegate: (any RetroAchievementsOSDDelegate)? {
         get { _achievementsDelegate }
         set { _achievementsDelegate = newValue }
@@ -52,10 +54,13 @@ extension PVmGBACore: CoreRetroAchievements {
         // Sync hardcore mode to the bridge before activating.
         _bridge.hardcoreMode = _hardcoreMode
 
-        // Mark achievements as active in the bridge so the hardcore save-state
-        // guard in mGBAGameCoreBridge.m fires correctly.
-        // TODO: When PVRcheevos (#3375) lands, replace this with a real rc_client
-        // load call and drive achievementsActive from the runtime callback.
+        // Mark achievements as active so the hardcore save-state guard in
+        // mGBAGameCoreBridge.m fires correctly.
+        // NOTE: The rcheevos sources are already compiled into libmGBA via
+        // USE_ACHIEVEMENTS=1 (see Package.swift). What remains is registering
+        // an rc_client event handler in the bridge that dispatches unlock/progress
+        // callbacks to `achievementsDelegate`. Until that wiring exists, we set
+        // the active flag eagerly here so hardcore restrictions are enforced.
         _bridge.achievementsActive = true
         _achievementsActive = true
 
