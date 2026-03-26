@@ -74,6 +74,11 @@
         "smartCoreSelection": {
             "enabled": false,
             "description": "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations when multiple cores are available. Disabled until core capability data is fully audited — enable in Settings > Advanced > Feature Flags."
+        },
+        "skinButtonReposition": {
+            "enabled": false,
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users can drag buttons to new positions. Offsets persist per skin in UserDefaults. iOS only — enable in Settings > Advanced > Feature Flags."
         }
     }
 }

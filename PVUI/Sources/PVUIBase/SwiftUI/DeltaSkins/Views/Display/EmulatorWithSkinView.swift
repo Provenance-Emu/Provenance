@@ -176,11 +176,12 @@ struct EmulatorWithSkinView: View {
                     debugOverlayView
                 }
 
-                // Edit Layout toolbar — shown only when a skin is active AND supports the current
-                // traits (same condition used to render the skin view above). iOS only; tvOS
+                // Edit Layout toolbar — shown only when the skinButtonReposition feature flag
+                // is enabled, a skin is active AND supports the current traits. iOS only; tvOS
                 // lacks DragGesture so edit mode is unsupported there.
                 #if !os(tvOS)
-                if let activeSkin = skinLoader.selectedSkin, activeSkin.supports(createSkinTraits()) {
+                if PVFeatureFlagsManager.shared.skinButtonReposition,
+                   let activeSkin = skinLoader.selectedSkin, activeSkin.supports(createSkinTraits()) {
                     VStack {
                         HStack {
                             Spacer()
