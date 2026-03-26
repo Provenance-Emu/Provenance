@@ -1,2 +1,12 @@
 /* Localized versions of Info.plist keys */
 
+CFBundleDisplayName = "Provenance";
+CFBundleName = "Provenance";
+NSCameraUsageDescription = "Provenance использует камеру для создания обложек игр и функций эмулятора, использующих камеру.";
+NSMicrophoneUsageDescription = "Provenance использует микрофон для систем, поддерживающих звуковой ввод (например, Famicom).";
+NSPhotoLibraryUsageDescription = "Provenance может устанавливать пользовательские иллюстрации из ваших фото или сохранять скриншоты в фотоальбом.";
+NSPhotoLibraryAddUsageDescription = "Provenance может устанавливать пользовательские иллюстрации из ваших фото или сохранять скриншоты в фотоальбом.";
+NSLocalNetworkUsageDescription = "Provenance использует локальную сеть для связи с AltServer и поиска комнат сетевой игры для многопользовательских игр.";
+NSBluetoothAlwaysUsageDescription = "Provenance использует Bluetooth для поддержки игровых контроллеров.";
+NSMotionUsageDescription = "Provenance использует акселерометр и гироскоп вашего устройства для эмуляции встроенных датчиков портативных консолей.";
+NSFileProviderDomainUsageDescription = "Provenance использует файловый провайдер для загрузки ROM-файлов.";

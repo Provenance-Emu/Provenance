@@ -1,0 +1,1 @@
+Corrección de errores y mejoras de rendimiento. Interfaz actualizada y mejor soporte para mandos.

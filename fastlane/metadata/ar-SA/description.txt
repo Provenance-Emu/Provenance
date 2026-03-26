@@ -1,0 +1,21 @@
+Provenance هو محاكٍ متعدد الأنظمة لنظامَي iOS وtvOS. العب ألعابك الكلاسيكية المفضلة من أكثر من 60 نظام ألعاب قديم، كل ذلك في تطبيق واحد.
+
+الأنظمة المدعومة
+• Nintendo: NES, SNES, Nintendo 64, Game Boy, GBC, Game Boy Advance
+• Sega: Master System, Mega Drive/Genesis, Game Gear, Saturn, 32X, CD
+• Sony: PlayStation
+• Atari: 2600, 5200, 7800, Lynx, Jaguar
+• Neo Geo, Neo Geo Pocket, WonderSwan, PC Engine/TurboGrafx-16
+• الألعاب الإلكترونية (MAME), DOS والمزيد!
+
+الميزات الرئيسية
+• واجهة SwiftUI أصلية محسّنة لنظامَي iOS وtvOS
+• دعم وحدات التحكم: MFi, Xbox, PlayStation وتخصيص الأزرار
+• حالات الحفظ — احفظ تقدمك واستعده في أي وقت
+• دعم رموز الغش
+• تكامل RetroAchievements
+• مزامنة iCloud لمكتبة الألعاب وحالات الحفظ
+• دعم AirPlay وApple TV
+• مكتبة ألعاب بأغلفة وبيانات وصفية
+
+استورد ملفات ROM وBIOS الخاصة بك للبدء. Provenance مفتوح المصدر ومدعوم من المجتمع.
