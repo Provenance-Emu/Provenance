@@ -95,6 +95,15 @@ __attribute__((weak_import))
 /// on the next input event. Ideally called after `retro_load_game` succeeds.
 - (BOOL)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
 
+/// Inject a single raw MIDI byte into the libretro MIDI input ring buffer.
+///
+/// Called by `MIDIResponder` protocol implementations to forward decoded MIDI
+/// events received from `MIDIDeviceManager` into the `retro_midi_interface`
+/// read path so that the emulated core receives them on the next `retro_run` frame.
+///
+/// Thread-safe; silently drops bytes when the buffer is full.
+- (void)injectMIDIByte:(uint8_t)byte;
+
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
 @property (nonatomic, retain, nullable) NSString * romPath;

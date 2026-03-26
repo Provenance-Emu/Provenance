@@ -7,6 +7,9 @@
 //
 
 #import "PVHatariCore.h"
+// Import the Swift-generated bridging header here (not in the public .h) to
+// satisfy the MIDIResponder forward declaration and avoid circular includes.
+#import <PVCoreBridge/PVCoreBridge-Swift.h>
 #include <stdatomic.h>
 //#import "PVHatariCore+Controls.h"
 //#import "PVHatariCore+Audio.h"
@@ -149,4 +152,60 @@
 - (double)audioSampleRate {
     return 22255;
 }
+
+#pragma mark - MIDIResponder
+
+/// Atari ST has built-in MIDI In/Out/Thru ports on all models since 1985.
+/// The Hatari libretro core routes MIDI through retro_midi_interface,
+/// which is wired to CoreMIDI via pv_libretro_midi_inject_byte().
+- (BOOL)gameSupportsMIDI {
+    return YES;
+}
+
+/// MIDI is optional — the Atari ST can run without any MIDI device connected.
+- (BOOL)requiresMIDI {
+    return NO;
+}
+
+/// Encode a Note On message and inject the three raw bytes into the
+/// libretro MIDI input ring buffer for the Hatari core to read via
+/// retro_midi_interface.read().
+- (void)midiNoteOnWithChannel:(uint8_t)channel note:(uint8_t)note velocity:(uint8_t)velocity {
+    [self injectMIDIByte:0x90 | (channel & 0x0F)];
+    [self injectMIDIByte:note & 0x7F];
+    [self injectMIDIByte:velocity & 0x7F];
+}
+
+/// Encode a Note Off message and inject the three raw bytes.
+- (void)midiNoteOffWithChannel:(uint8_t)channel note:(uint8_t)note velocity:(uint8_t)velocity {
+    [self injectMIDIByte:0x80 | (channel & 0x0F)];
+    [self injectMIDIByte:note & 0x7F];
+    [self injectMIDIByte:velocity & 0x7F];
+}
+
+/// Forward Control Change messages (mod wheel, sustain pedal, volume, etc.).
+- (void)midiControlChangeWithChannel:(uint8_t)channel controller:(uint8_t)controller value:(uint8_t)value {
+    [self injectMIDIByte:0xB0 | (channel & 0x0F)];
+    [self injectMIDIByte:controller & 0x7F];
+    [self injectMIDIByte:value & 0x7F];
+}
+
+/// Forward Program Change messages (patch/instrument selection).
+- (void)midiProgramChangeWithChannel:(uint8_t)channel program:(uint8_t)program {
+    [self injectMIDIByte:0xC0 | (channel & 0x0F)];
+    [self injectMIDIByte:program & 0x7F];
+}
+
+/// Forward Pitch Bend messages (14-bit value split into two 7-bit bytes).
+- (void)midiPitchBendWithChannel:(uint8_t)channel value:(int16_t)value {
+    // MIDI pitch bend: centre = 0x2000, range -8192..+8191.
+    // Clamp to valid range before arithmetic to prevent underflow/overflow
+    // when the caller passes an out-of-range value.
+    int16_t clamped = value < -8192 ? -8192 : (value > 8191 ? 8191 : value);
+    uint16_t normalized = (uint16_t)(clamped + 8192);
+    [self injectMIDIByte:0xE0 | (channel & 0x0F)];
+    [self injectMIDIByte:normalized & 0x7F];          // LSB
+    [self injectMIDIByte:(normalized >> 7) & 0x7F];   // MSB
+}
+
 @end
