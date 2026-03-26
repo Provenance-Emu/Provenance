@@ -213,6 +213,12 @@ struct DefaultControllerSkinView: View {
         }
     }
 
+    /// Returns the fraction of the view height allocated to the controller overlay in portrait mode.
+    /// Extracted to ensure the SwiftUI layout and the viewport calculation always use the same value.
+    private static func portraitControllerFraction(scale: Double) -> CGFloat {
+        min(0.70, max(0.20, 0.35 * CGFloat(scale)))
+    }
+
     var body: some View {
         // Load control layout data when view appears
         GeometryReader { geometry in
@@ -220,7 +226,7 @@ struct DefaultControllerSkinView: View {
             let validSize = geometry.size.width > 0 && geometry.size.height > 0
             let isLandscape = validSize && geometry.size.width > geometry.size.height
             // Compute once so the background and controller layout always use the same fraction
-            let controllerFraction = min(0.55, max(0.20, 0.35 * CGFloat(controllerScale)))
+            let controllerFraction = DefaultControllerSkinView.portraitControllerFraction(scale: controllerScale)
 
             ZStack {
                 // Ensure view always renders even with invalid geometry
@@ -800,7 +806,7 @@ struct DefaultControllerSkinView: View {
             /// Keep the screen in the upper portion, leaving room for controls.
             /// Mirror the same fraction used in the portrait layout view so the
             /// game viewport exactly matches the space above the controller area.
-            let controllerFraction = min(0.55, max(0.20, 0.35 * controllerScaleVal))
+            let controllerFraction = DefaultControllerSkinView.portraitControllerFraction(scale: Double(controllerScaleVal))
             let controllerHeight = safeHeight * controllerFraction
             /// Ensure minimum top safe area to avoid notch (at least 44pt for status bar/notch area)
             let minTopSafeArea: CGFloat = 44
