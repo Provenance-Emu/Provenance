@@ -12,17 +12,44 @@ import UIKit
 import WidgetKit
 import PVLibrary
 
+// MARK: - Recent activity buckets
+
+/// Computes daily play counts from widget recent-game entries for the medium sparkline.
+private enum LibraryStatsRecentActivity {
+    /// Number of calendar days in the activity window (today inclusive).
+    static let bucketCount = 7
+
+    /// Returns one bucket per day for the last `bucketCount` days ending at `referenceDate`, oldest first. Missing dates are ignored; empty input yields zeros.
+    static func buckets(from recentGames: [WidgetGameEntry], referenceDate: Date = Date(), calendar: Calendar = .current) -> [Int] {
+        var buckets = [Int](repeating: 0, count: bucketCount)
+        let todayStart = calendar.startOfDay(for: referenceDate)
+        guard let windowStart = calendar.date(byAdding: .day, value: -(bucketCount - 1), to: todayStart) else { return buckets }
+        for game in recentGames {
+            guard let played = game.lastPlayedDate else { continue }
+            let dayStart = calendar.startOfDay(for: played)
+            let dayIndex = calendar.dateComponents([.day], from: windowStart, to: dayStart).day ?? -999
+            if dayIndex >= 0, dayIndex < bucketCount {
+                buckets[dayIndex] += 1
+            }
+        }
+        return buckets
+    }
+}
+
 // MARK: - Entry
 
 struct LibraryStatsEntry: TimelineEntry {
     let date: Date
     let stats: WidgetLibraryStats
+    /// One count per calendar day for the last 7 days (today inclusive), oldest day first — derived from recent games' `lastPlayedDate`.
+    let recentActivityBuckets: [Int]
     let isPlaceholder: Bool
 
     static var placeholder: LibraryStatsEntry {
         LibraryStatsEntry(
             date: Date(),
             stats: WidgetLibraryStats(totalGames: 0, totalSystems: 0, totalPlayTimeSeconds: 0, favoritesCount: 0),
+            recentActivityBuckets: [Int](repeating: 0, count: LibraryStatsRecentActivity.bucketCount),
             isPlaceholder: true
         )
     }
@@ -43,16 +70,19 @@ struct LibraryStatsProvider: TimelineProvider {
                 totalPlayTimeSeconds: 3 * 3600 + 25 * 60,
                 favoritesCount: 12
             )
-            completion(LibraryStatsEntry(date: Date(), stats: previewStats, isPlaceholder: false))
+            let previewBuckets = [0, 1, 2, 1, 1, 3, 2]
+            completion(LibraryStatsEntry(date: Date(), stats: previewStats, recentActivityBuckets: previewBuckets, isPlaceholder: false))
         } else {
             let stats = WidgetSharedDefaults.loadLibraryStats()
-            completion(LibraryStatsEntry(date: Date(), stats: stats, isPlaceholder: false))
+            let buckets = LibraryStatsRecentActivity.buckets(from: WidgetSharedDefaults.loadRecentGames())
+            completion(LibraryStatsEntry(date: Date(), stats: stats, recentActivityBuckets: buckets, isPlaceholder: false))
         }
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<LibraryStatsEntry>) -> Void) {
         let stats = WidgetSharedDefaults.loadLibraryStats()
-        let entry = LibraryStatsEntry(date: Date(), stats: stats, isPlaceholder: false)
+        let buckets = LibraryStatsRecentActivity.buckets(from: WidgetSharedDefaults.loadRecentGames())
+        let entry = LibraryStatsEntry(date: Date(), stats: stats, recentActivityBuckets: buckets, isPlaceholder: false)
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
@@ -111,122 +141,142 @@ private enum LibraryStatsWidgetLayout {
     static let headerTitleSpacing: CGFloat = 2
     /// Icon column width in each stat cell (keeps value column as wide as possible).
     static let statTileIconWidth: CGFloat = 14
-    /// Space between the medium header lines and the usage bar section.
-    static let mediumUsageSectionTopSpacing: CGFloat = 6
-    /// Vertical spacing between the two usage bar rows.
-    static let mediumUsageRowSpacing: CGFloat = 6
-    /// Track height for medium usage bars.
-    static let mediumUsageBarHeight: CGFloat = 7
-    /// Minimum visible fill width when fraction is non-zero (avoids invisible slivers).
-    static let mediumUsageBarMinFillWidth: CGFloat = 2
-    /// Corner radius for medium usage bar tracks.
-    static let mediumUsageBarCornerRadius: CGFloat = 3
-    /// Spacing between row icon and label above each usage bar.
-    static let mediumUsageLabelIconSpacing: CGFloat = 5
+    /// Space between the medium header lines and the activity sparkline.
+    static let mediumSparklineSectionTopSpacing: CGFloat = 6
+    /// Height of the 7-day activity sparkline chart.
+    static let mediumSparklineHeight: CGFloat = 44
+    /// Vertical inset for the sparkline polyline so point markers are not clipped.
+    static let mediumSparklineVerticalPadding: CGFloat = 5
+    /// Diameter of each sparkline vertex marker.
+    static let mediumSparklinePointDiameter: CGFloat = 4
+    /// Spacing between sparkline caption icon and label.
+    static let mediumSparklineLabelIconSpacing: CGFloat = 5
+    /// Corner radius for the sparkline chart surface and clipping.
+    static let mediumSparklineChartCornerRadius: CGFloat = 6
 }
 
-// MARK: - Medium usage visualization (systemMedium only)
+// MARK: - Medium recent activity sparkline (systemMedium only)
 
-/// Normalized fractions for medium-widget usage bars derived only from `WidgetLibraryStats` snapshots.
-private enum LibraryStatsMediumUsageVisualization {
-    /// Display-only cap: playtime bar reaches full width at this total play time (~100 h).
-    static let playtimeBarFullWidthSeconds: Double = 100 * 60 * 60
-
-    /// Returns the share of favorited games in `0...1`, or `0` when the library is empty.
-    static func favoritesShareFraction(stats: WidgetLibraryStats) -> CGFloat {
-        guard stats.totalGames > 0 else { return 0 }
-        return CGFloat(min(1, Double(stats.favoritesCount) / Double(stats.totalGames)))
-    }
-
-    /// Returns total play time mapped to `0...1` against `playtimeBarFullWidthSeconds` for bar fill only.
-    static func playtimeLevelFraction(stats: WidgetLibraryStats) -> CGFloat {
-        guard stats.totalPlayTimeSeconds > 0 else { return 0 }
-        return CGFloat(min(1, Double(stats.totalPlayTimeSeconds) / playtimeBarFullWidthSeconds))
-    }
+/// Pads or truncates bucket arrays so the chart always draws seven days.
+private func libraryStatsNormalizedActivityBuckets(_ raw: [Int]) -> [Int] {
+    let n = LibraryStatsRecentActivity.bucketCount
+    if raw.count == n { return raw }
+    if raw.count > n { return Array(raw.prefix(n)) }
+    return raw + [Int](repeating: 0, count: n - raw.count)
 }
 
-/// Single horizontal RetroWave track + neon fill for one usage metric.
-private struct LibraryStatsMediumNeonTrackBar: View {
-    /// Fill amount as a fraction of track width; drawing clamps to `0...1`.
-    let fillFraction: CGFloat
-    /// Neon accent color for the fill gradient (matches adjacent stat tile accents).
-    let accent: Color
+/// Caption + RetroWave sparkline for recent daily play counts on the medium widget.
+private struct LibraryStatsMediumRecentActivitySparklineView: View {
+    /// Daily play counts (typically length `LibraryStatsRecentActivity.bucketCount`); normalized in `body`.
+    let activityBuckets: [Int]
 
     var body: some View {
-        GeometryReader { geo in
-            let clamped = max(0, min(1, fillFraction))
-            let rawWidth = CGFloat(clamped) * geo.size.width
-            let fillWidth = clamped > 0 ? max(LibraryStatsWidgetLayout.mediumUsageBarMinFillWidth, rawWidth) : 0
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: LibraryStatsWidgetLayout.mediumUsageBarCornerRadius, style: .continuous)
-                    .fill(RetroWaveWidgetPalette.retroBlack.opacity(0.55))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: LibraryStatsWidgetLayout.mediumUsageBarCornerRadius, style: .continuous)
-                            .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
-                    )
-                RoundedRectangle(cornerRadius: LibraryStatsWidgetLayout.mediumUsageBarCornerRadius, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [accent.opacity(0.95), accent.opacity(0.55)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(width: fillWidth)
-                    .opacity(clamped > 0 ? 1 : 0)
-            }
-        }
-        .frame(height: LibraryStatsWidgetLayout.mediumUsageBarHeight)
-        .frame(maxWidth: .infinity)
-    }
-}
-
-/// Two compact labeled bars: playtime level (normalized) and favorites share of the library.
-private struct LibraryStatsMediumUsageBarsView: View {
-    let stats: WidgetLibraryStats
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: LibraryStatsWidgetLayout.mediumUsageRowSpacing) {
-            LibraryStatsMediumUsageBarRow(
-                label: String(localized: "widget.common.played", defaultValue: "Played", comment: "Play time label"),
-                systemImage: "clock.fill",
-                fillFraction: LibraryStatsMediumUsageVisualization.playtimeLevelFraction(stats: stats),
-                accent: RetroWaveWidgetPalette.neonGreen
-            )
-            LibraryStatsMediumUsageBarRow(
-                label: String(localized: "widget.common.favorites", defaultValue: "Favorites", comment: "Favorites count label"),
-                systemImage: "star.fill",
-                fillFraction: LibraryStatsMediumUsageVisualization.favoritesShareFraction(stats: stats),
-                accent: RetroWaveWidgetPalette.neonYellow
-            )
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-/// Label row + track for one medium usage metric (matches stat grid icon accents).
-private struct LibraryStatsMediumUsageBarRow: View {
-    let label: String
-    let systemImage: String
-    let fillFraction: CGFloat
-    let accent: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(alignment: .center, spacing: LibraryStatsWidgetLayout.mediumUsageLabelIconSpacing) {
-                Image(systemName: systemImage)
+        let buckets = libraryStatsNormalizedActivityBuckets(activityBuckets)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .center, spacing: LibraryStatsWidgetLayout.mediumSparklineLabelIconSpacing) {
+                Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
+                    .foregroundStyle(RetroWaveWidgetPalette.neonCyan)
                     .frame(width: LibraryStatsWidgetLayout.statTileIconWidth, alignment: .leading)
-                Text(label)
+                Text(String(localized: "widget.library-stats.recent-activity", defaultValue: "Recent Activity", comment: "Medium Library Stats sparkline caption"))
                     .retroWaveWidgetMetaStyle()
                     .lineLimit(1)
                     .minimumScaleFactor(0.78)
                     .allowsTightening(true)
                     .truncationMode(.tail)
             }
-            LibraryStatsMediumNeonTrackBar(fillFraction: fillFraction, accent: accent)
+            LibraryStatsMediumSparklineChart(values: buckets)
+                .frame(height: LibraryStatsWidgetLayout.mediumSparklineHeight)
+                .frame(maxWidth: .infinity)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// Neon gradient line, soft fill, and vertex dots for the 7-day activity series.
+private struct LibraryStatsMediumSparklineChart: View {
+    /// One non-negative count per day, left (oldest) to right (newest).
+    let values: [Int]
+
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            let pad = LibraryStatsWidgetLayout.mediumSparklineVerticalPadding
+            let chartH = max(h - pad * 2, 1)
+            let maxV = max(values.max() ?? 0, 1)
+            let n = values.count
+            let points: [CGPoint] = values.enumerated().map { i, v in
+                let x: CGFloat
+                if n <= 1 {
+                    x = w * 0.5
+                } else {
+                    x = CGFloat(i) / CGFloat(n - 1) * w
+                }
+                let frac = CGFloat(v) / CGFloat(maxV)
+                let y = h - pad - frac * chartH
+                return CGPoint(x: x, y: y)
+            }
+            ZStack {
+                RoundedRectangle(cornerRadius: LibraryStatsWidgetLayout.mediumSparklineChartCornerRadius, style: .continuous)
+                    .fill(RetroWaveWidgetPalette.retroBlack.opacity(0.5))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: LibraryStatsWidgetLayout.mediumSparklineChartCornerRadius, style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
+                    )
+                if points.count >= 2 {
+                    Path { path in
+                        path.move(to: CGPoint(x: points[0].x, y: h))
+                        for p in points {
+                            path.addLine(to: p)
+                        }
+                        path.addLine(to: CGPoint(x: points[points.count - 1].x, y: h))
+                        path.closeSubpath()
+                    }
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                RetroWaveWidgetPalette.neonPink.opacity(0.38),
+                                RetroWaveWidgetPalette.neonCyan.opacity(0.06)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                }
+                if let first = points.first {
+                    Path { path in
+                        path.move(to: first)
+                        for p in points.dropFirst() {
+                            path.addLine(to: p)
+                        }
+                    }
+                    .stroke(
+                        LinearGradient(
+                            colors: [RetroWaveWidgetPalette.neonCyan, RetroWaveWidgetPalette.neonPink],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                    )
+                }
+                ForEach(Array(points.enumerated()), id: \.offset) { _, pt in
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [RetroWaveWidgetPalette.neonCyan.opacity(0.98), RetroWaveWidgetPalette.neonPink.opacity(0.55)],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: LibraryStatsWidgetLayout.mediumSparklinePointDiameter * 0.6
+                            )
+                        )
+                        .frame(width: LibraryStatsWidgetLayout.mediumSparklinePointDiameter, height: LibraryStatsWidgetLayout.mediumSparklinePointDiameter)
+                        .position(pt)
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: LibraryStatsWidgetLayout.mediumSparklineChartCornerRadius, style: .continuous))
+        }
+        .frame(height: LibraryStatsWidgetLayout.mediumSparklineHeight)
     }
 }
 
@@ -271,7 +321,7 @@ struct LibraryStatsWidgetView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
-    // MARK: Medium — header + usage bars + 2×2 stat grid
+    // MARK: Medium — header + activity sparkline + 2×2 stat grid
 
     private var mediumView: some View {
         HStack(spacing: 0) {
@@ -281,8 +331,8 @@ struct LibraryStatsWidgetView: View {
                     .retroWaveWidgetTitleStyle()
                 Text(String(localized: "widget.library-stats.title.stats", defaultValue: "Stats", comment: "Library Stats header second line"))
                     .retroWaveWidgetMetaStyle()
-                LibraryStatsMediumUsageBarsView(stats: entry.stats)
-                    .padding(.top, LibraryStatsWidgetLayout.mediumUsageSectionTopSpacing)
+                LibraryStatsMediumRecentActivitySparklineView(activityBuckets: entry.recentActivityBuckets)
+                    .padding(.top, LibraryStatsWidgetLayout.mediumSparklineSectionTopSpacing)
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -562,6 +612,7 @@ private struct LibraryStatsBrandedHeaderView: View {
     LibraryStatsEntry(
         date: Date(),
         stats: WidgetLibraryStats(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
+        recentActivityBuckets: [0, 1, 2, 1, 1, 3, 2],
         isPlaceholder: false
     )
 }
@@ -572,6 +623,7 @@ private struct LibraryStatsBrandedHeaderView: View {
     LibraryStatsEntry(
         date: Date(),
         stats: WidgetLibraryStats(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
+        recentActivityBuckets: [0, 1, 2, 1, 1, 3, 2],
         isPlaceholder: false
     )
 }
@@ -582,6 +634,7 @@ private struct LibraryStatsBrandedHeaderView: View {
     LibraryStatsEntry(
         date: Date(),
         stats: WidgetLibraryStats(totalGames: 247, totalSystems: 18, totalPlayTimeSeconds: 3 * 3600 + 25 * 60, favoritesCount: 12),
+        recentActivityBuckets: [0, 1, 2, 1, 1, 3, 2],
         isPlaceholder: false
     )
 }

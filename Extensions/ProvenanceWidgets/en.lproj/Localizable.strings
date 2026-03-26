@@ -44,6 +44,7 @@
 "widget.library-stats.title.library" = "Library";
 "widget.library-stats.title.stats" = "Stats";
 "widget.library-stats.header" = "Library Stats";
+"widget.library-stats.recent-activity" = "Recent Activity";
 
 /* Recently Played */
 "widget.recent.display-name" = "Recently Played";

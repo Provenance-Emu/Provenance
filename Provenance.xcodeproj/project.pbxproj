@@ -2696,13 +2696,13 @@
 		B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameArtGalleryWidget.swift; sourceTree = "<group>"; };
 		B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingStandByWidget.swift; sourceTree = "<group>"; };
 		B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSharedDefaults.swift; sourceTree = "<group>"; };
-		B3DD07032F20031900000000 /* WidgetLocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocalizedStrings.swift; sourceTree = "<group>"; };
-		B3DD07052F20031900000000 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/RecentlyPlayedWidget.swift; sourceTree = "<group>"; };
 		B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/FavoritesWidget.swift; sourceTree = "<group>"; };
 		B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/LibraryStatsWidget.swift; sourceTree = "<group>"; };
 		B3DD05032F20031900000001 /* Views/GameArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/GameArtworkView.swift; sourceTree = "<group>"; };
 		B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SystemBadgeView.swift; sourceTree = "<group>"; };
+		B3DD07032F20031900000000 /* WidgetLocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocalizedStrings.swift; sourceTree = "<group>"; };
+		B3DD07052F20031900000000 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DE9E462E2D7428008E97F6 /* PVDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVDolphin.xcframework; sourceTree = "<group>"; };
 		B3DE9E4D2E2D7AE9008E97F6 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVlibDolphin.xcframework; sourceTree = "<group>"; };
@@ -8587,7 +8587,7 @@
 				B30585672C0C14ED00B91D7A /* XCLocalSwiftPackageReference "PVWebServer" */,
 				B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */,
 				B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */,
-					B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
+				B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
 				B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */,
 				B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */,
 				B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */,
