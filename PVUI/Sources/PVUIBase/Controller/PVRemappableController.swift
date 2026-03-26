@@ -124,14 +124,21 @@ public final class PVRemappableController: NSObject {
             if let dualSense = wrappedController.physicalInputProfile as? GCDualSenseGamepad {
                 setupDualSenseFeatures(dualSense)
             }
+            // DualShock 4 features
+            else if let dualShock = wrappedController.physicalInputProfile as? GCDualShockGamepad {
+                setupDualShockFeatures(dualShock)
+            }
 
             // Xbox features
             if let xbox = wrappedController.physicalInputProfile as? GCXboxGamepad {
                 setupXboxFeatures(xbox)
             }
 
-            // Switch features
-            if let switchPro = wrappedController.physicalInputProfile as? GCExtendedGamepad {
+            // Switch features (only for controllers that are not DualSense/DS4/Xbox)
+            if wrappedController.physicalInputProfile as? GCDualSenseGamepad == nil,
+               wrappedController.physicalInputProfile as? GCDualShockGamepad == nil,
+               wrappedController.physicalInputProfile as? GCXboxGamepad == nil,
+               let switchPro = wrappedController.physicalInputProfile as? GCExtendedGamepad {
                 setupSwitchFeatures(switchPro)
             }
         }
@@ -165,6 +172,27 @@ public final class PVRemappableController: NSObject {
                 guard pressed else { return }
                 self?.handleSpecialButton(.createButton)
             }
+        }
+    }
+
+    @available(iOS 14.0, tvOS 14.0, *)
+    private func setupDualShockFeatures(_ dualShock: GCDualShockGamepad) {
+        // Touchpad click — expose as remappable button.
+        dualShock.touchpadButton.valueChangedHandler = { [weak self] (_, _, pressed) in
+            if pressed {
+                self?.handleSpecialButton(.touchpadButton)
+            }
+        }
+
+        dualShock.touchpadPrimary.valueChangedHandler = { [weak self] (_, x, y) in
+            self?.touchpadHandler?(x, y)
+        }
+
+        // Share button (buttonOptions on DS4) — expose as a configurable action.
+        // Use valueChangedHandler so the event travels the same path as normal button events.
+        dualShock.buttonOptions?.valueChangedHandler = { [weak self] (_, _, pressed) in
+            guard pressed else { return }
+            self?.handleSpecialButton(.share)
         }
     }
 
@@ -210,10 +238,14 @@ public final class PVRemappableController: NSObject {
             // the same path as a normal button press (valueChangedHandler is the
             // primary path used by PVControllerManager and the remapping pipeline;
             // pressedChangedHandler fires for threshold-crossing events).
+            // A synthesized release (0.0/false) immediately follows so the destination
+            // button is not left stuck in the pressed state.
             if let gamepad = wrappedController.extendedGamepad,
                let destButton = self.button(for: mapping.destinationId, on: gamepad) {
                 destButton.valueChangedHandler?(destButton, 1.0, true)
                 destButton.pressedChangedHandler?(destButton, 1.0, true)
+                destButton.valueChangedHandler?(destButton, 0.0, false)
+                destButton.pressedChangedHandler?(destButton, 0.0, false)
             }
         }
     }
@@ -544,6 +576,15 @@ public final class PVRemappableController: NSObject {
                     case xbox.buttonOptions: return .shareButton
                     default: break
                     }
+                }
+            }
+            // DualShock 4 (iOS 14.0+): buttonOptions is the "Share" button; touchpadButton is remappable.
+            if #available(iOS 14.0, tvOS 14.0, *),
+               let dualShock = gamepad as? GCDualShockGamepad {
+                switch element {
+                case dualShock.buttonOptions: return .share
+                case dualShock.touchpadButton: return .touchpadButton
+                default: break
                 }
             }
             // Generic GCExtendedGamepad options button (e.g. PS4 Options, Switch Pro Capture).
