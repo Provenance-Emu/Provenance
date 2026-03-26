@@ -1,1 +1,1 @@
-Fehlerbehebungen und Leistungsverbesserungen. Aktualisiertes UI und verbesserte Gamepad-Unterstützung.
+Fehlerbehebungen und Leistungsverbesserungen.
