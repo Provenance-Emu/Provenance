@@ -103,6 +103,11 @@ int mednafenCurrentDisplayMode = 1;
 
 @end
 
+// Forward-declare LightGun category methods used in this translation unit.
+@interface MednafenGameCoreBridge (LightGun)
+- (void)resetLightGunState;
+@end
+
 static __weak MednafenGameCoreBridge *_current;
 
 @implementation MednafenGameCoreBridge
@@ -847,6 +852,20 @@ static void emulation_run(BOOL skipFrame) {
         // All MDFNI_SetSettingB calls must happen here (before MDFNI_LoadGame) because
         // Saturn's ss.cpp reads and latches these settings during SMPC_SetMultitap().
         NSString *serial = self.romSerial;
+
+        // Light gun detection — must happen before MDFNI_LoadGame so we can configure
+        // the correct device type in the post-load SetInput block.
+        NSNumber *gunCount = serial ? [MednafenGameCoreOptions saturnLightGunGames][serial] : nil;
+        if (gunCount != nil) {
+            self->_isLightGunGame = YES;
+            self->_lightGunPlayerCount = MAX(1, MIN(2, [gunCount intValue]));
+            ILOG(@"Mednafen Saturn pre-load: light gun game detected, serial=%@ guns=%d",
+                 serial, self->_lightGunPlayerCount);
+        } else {
+            self->_isLightGunGame = NO;
+            self->_lightGunPlayerCount = 0;
+        }
+
         NSNumber *tapCount = serial ? [MednafenGameCoreOptions multiTapSaturnGames][serial] : nil;
         BOOL userForcedMultitap = MednafenGameCoreOptions.ss_multitap;
 
@@ -873,6 +892,16 @@ static void emulation_run(BOOL skipFrame) {
             ssEnableMultitap = YES;
             ILOG(@"Mednafen Saturn pre-load: multitap enabled by controller count (%d), players=%d",
                  connectedControllers, ssMaxPlayers);
+        }
+
+        // Light gun peripherals are incompatible with the TeamTap multitap
+        // (Mednafen's own device description warns about this).  Force multitap
+        // off so the post-load SetInput block can correctly set the "gun" device
+        // type for port 0 (and optionally port 1).
+        if (self->_isLightGunGame && ssEnableMultitap) {
+            WLOG(@"Mednafen Saturn pre-load: disabling multitap — incompatible with light gun peripherals (serial=%@)", serial);
+            ssEnableMultitap = NO;
+            ssMaxPlayers = 2;
         }
 
         if (ssEnableMultitap) {
@@ -1032,11 +1061,26 @@ static void emulation_run(BOOL skipFrame) {
             // Clear Saturn input buffers to avoid leaking state from a prior multitap configuration.
             int portsToClear = (self->multiTapPlayerCount > 2) ? 6 : 2;
             for (int port = 0; port < portsToClear; port++) {
-                memset(inputBuffer[port], 0, sizeof(inputBuffer[port]));
+                memset(inputBuffer[port], 0, 9 * sizeof(uint32_t));
             }
             self->multiTapPlayerCount = 2;
-            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+
+            if (self->_isLightGunGame) {
+                // Light gun game: configure port 0 as "gun" peripheral.
+                // The gun buffer layout (5 bytes) fits within the existing 36-byte allocation.
+                // Port 1 stays as "gamepad" — the LightGunResponder protocol has no player-index
+                // parameter so all gun events currently route to port 0 only.  Routing P2 gun
+                // input requires a second responder path; until then, configuring port 1 as "gun"
+                // would disable gamepad input there while leaving the gun buffer at defaults.
+                ILOG(@"Mednafen Saturn SetInput: using 'gun' device type for port 0 (game supports %d guns)",
+                     self->_lightGunPlayerCount);
+                [self resetLightGunState];
+                game->SetInput(0, "gun", (uint8_t *)inputBuffer[0]);
+                game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+            } else {
+                game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+                game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+            }
         }
     }
     else if (self.systemType == MednaSystemPSX)
@@ -1361,6 +1405,13 @@ static void emulation_run(BOOL skipFrame) {
             default: break;
         }
 
+        // Skip per-frame gamepad polling for Saturn ports configured as light guns.
+        // The LightGunResponder path owns inputBuffer[0] for gun games; writing
+        // gamepad bitfields into word 0 would corrupt the X/Y coordinate bytes.
+        if (self.systemType == MednaSystemSS && self->_isLightGunGame && playerIndex == 0) {
+            continue;
+        }
+
         if (controller) {
             uint8 *d8 = (uint8 *)inputBuffer[playerIndex];
             bool analogMode = (d8[2] & 0x02);
@@ -1382,9 +1433,10 @@ static void emulation_run(BOOL skipFrame) {
                                             forPlayer:playerIndex];
                 }
             }
-        } else {
+        } else if (!(self.systemType == MednaSystemSS && self->_isLightGunGame && playerIndex == 0)) {
             // No controller present — reset the input buffer to a safe neutral state
             // to prevent phantom button holds from leaking when a controller disconnects.
+            // (Gun ports are excluded: the LightGunResponder path owns their buffers.)
             if (self.systemType == MednaSystemPSX) {
                 // PSX DualShock buffer: clear buttons then re-center analog axes.
                 // Zeroing the whole buffer would pin analog axes to 0 instead of center.
@@ -1428,6 +1480,9 @@ static void emulation_run(BOOL skipFrame) {
     // Close any loaded content and kill Mednafen to reset global/static state
     Mednafen::MDFNI_CloseGame();
     Mednafen::MDFNI_Kill();
+
+    // Reset Saturn light gun state so the next session starts clean.
+    [self resetLightGunState];
 
     // Clear pointers and local static state
     if (backBufferSurf) { delete backBufferSurf; backBufferSurf = NULL; }
