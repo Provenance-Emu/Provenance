@@ -60,6 +60,7 @@ import FreemiumKit
 public final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject {
     /// This is set by the UIApplicationDelegateAdaptor
     public var window: UIWindow? = nil
+    private let pauseMenuSettingsDelegate = MockPVMenuDelegate()
 
     static func main() {
         UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, NSStringFromClass(PVApplication.self), NSStringFromClass(PVAppDelegate.self))
@@ -442,6 +443,19 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         // (PVUIBase can't import PVSwiftUI directly, so we use a static registry)
         PauseMenuViewRegistry.registerRetroArchSettingsView {
             AnyView(NavigationStack { RetroArchQuickSettingsView() })
+        }
+        PauseMenuViewRegistry.registerAppSettingsView { dismissAction in
+            let conflictsController = AppState.shared.libraryUpdatesController
+                ?? PVGameLibraryUpdatesController(gameImporter: GameImporter.shared)
+            return AnyView(
+                NavigationStack {
+                    PVSettingsView(
+                        conflictsController: conflictsController,
+                        menuDelegate: self.pauseMenuSettingsDelegate,
+                        dismissAction: { dismissAction?() }
+                    )
+                }
+            )
         }
 
         _initThemeListener()
