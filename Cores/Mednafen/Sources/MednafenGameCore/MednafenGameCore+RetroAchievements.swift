@@ -66,7 +66,13 @@ extension MednafenGameCore: CoreRetroAchievements {
             return
         }
 
-        // Create (or reuse) the rcheevos client.
+        // Tear down any existing session before creating a new one.
+        // Without this, an in-flight URLSession callback on the old rc_client_t
+        // could fire after _rcheevosClient is overwritten, calling back into a
+        // deallocated MednafenRcheevosClient via the userdata pointer.
+        _rcheevosClient?.unloadGame()
+        _rcheevosClient = nil
+
         let client = MednafenRcheevosClient()
         client.delegate = self
 

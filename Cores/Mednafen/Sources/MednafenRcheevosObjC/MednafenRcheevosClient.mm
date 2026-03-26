@@ -218,12 +218,43 @@ static const NSUInteger kMaxRegions = 8;
         return;
     }
 
-    const char *cUsername = username.UTF8String;
-    const char *cToken    = token.UTF8String;
     NSString *hash = [md5Hash copy];
     __weak typeof(self) weakSelf = self;
     // Capture the client pointer directly so callbacks work even if self is mid-dealloc.
     rc_client_t *rawClient = _client;
+
+    // Helper block that loads the game once we are authenticated.
+    // Completion is always invoked, regardless of whether self is still alive.
+    RcCallbackBlock loadBlock = ^(int result2, const char *errMsg2) {
+        if (result2 == RC_OK) {
+            __strong typeof(weakSelf) s = weakSelf;
+            if (s) s->_isGameLoaded = YES;
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue(), ^{ completion(YES, nil); });
+            }
+        } else {
+            NSString *msg2 = errMsg2
+                ? [NSString stringWithUTF8String:errMsg2]
+                : @"RetroAchievements game load failed.";
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue(), ^{ completion(NO, msg2); });
+            }
+        }
+    };
+
+    // If already authenticated (e.g. loading a second game in the same session)
+    // skip the login round-trip and go straight to loading the game.
+    if (rc_client_get_user_info(rawClient) != NULL) {
+        rc_client_begin_load_game(
+            rawClient,
+            hash.UTF8String,
+            rc_callback_trampoline,
+            (__bridge_retained void *)loadBlock);
+        return;
+    }
+
+    const char *cUsername = username.UTF8String;
+    const char *cToken    = token.UTF8String;
 
     // Step 1: Login.
     RcCallbackBlock loginBlock = ^(int result, const char *errMsg) {
@@ -238,24 +269,6 @@ static const NSUInteger kMaxRegions = 8;
         }
 
         // Step 2: Load game.
-        // Completion is always invoked, regardless of whether self is still alive.
-        RcCallbackBlock loadBlock = ^(int result2, const char *errMsg2) {
-            if (result2 == RC_OK) {
-                __strong typeof(weakSelf) s = weakSelf;
-                if (s) s->_isGameLoaded = YES;
-                if (completion) {
-                    dispatch_async(dispatch_get_main_queue(), ^{ completion(YES, nil); });
-                }
-            } else {
-                NSString *msg2 = errMsg2
-                    ? [NSString stringWithUTF8String:errMsg2]
-                    : @"RetroAchievements game load failed.";
-                if (completion) {
-                    dispatch_async(dispatch_get_main_queue(), ^{ completion(NO, msg2); });
-                }
-            }
-        };
-
         rc_client_begin_load_game(
             rawClient,
             hash.UTF8String,
@@ -354,15 +367,16 @@ static const NSUInteger kMaxRegions = 8;
         case RC_CLIENT_EVENT_LEADERBOARD_STARTED: {
             if (!event->leaderboard) break;
             const rc_client_leaderboard_t *lb = event->leaderboard;
-            uint32_t lbID   = lb->id;
-            NSString *title = lb->title ? @(lb->title) : @"";
-            NSString *desc  = lb->description ? @(lb->description) : @"";
+            uint32_t lbID     = lb->id;
+            NSString *title   = lb->title ? @(lb->title) : @"";
+            NSString *desc    = lb->description ? @(lb->description) : @"";
+            NSString *score   = lb->tracker_value ? @(lb->tracker_value) : @"";
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([delegate respondsToSelector:@selector(rcheevosLeaderboardStartedWithID:title:description:scoreText:)]) {
                     [delegate rcheevosLeaderboardStartedWithID:lbID
                                                          title:title
                                                    description:desc
-                                                     scoreText:@""];
+                                                     scoreText:score];
                 }
             });
             break;
@@ -382,15 +396,16 @@ static const NSUInteger kMaxRegions = 8;
         case RC_CLIENT_EVENT_LEADERBOARD_SUBMITTED: {
             if (!event->leaderboard) break;
             const rc_client_leaderboard_t *lb = event->leaderboard;
-            uint32_t lbID   = lb->id;
-            NSString *title = lb->title ? @(lb->title) : @"";
-            NSString *desc  = lb->description ? @(lb->description) : @"";
+            uint32_t lbID     = lb->id;
+            NSString *title   = lb->title ? @(lb->title) : @"";
+            NSString *desc    = lb->description ? @(lb->description) : @"";
+            NSString *score   = lb->tracker_value ? @(lb->tracker_value) : @"";
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([delegate respondsToSelector:@selector(rcheevosLeaderboardSubmittedWithID:title:description:scoreText:)]) {
                     [delegate rcheevosLeaderboardSubmittedWithID:lbID
                                                            title:title
                                                      description:desc
-                                                       scoreText:@""];
+                                                       scoreText:score];
                 }
             });
             break;

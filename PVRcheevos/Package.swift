@@ -64,8 +64,11 @@ let package = Package(
             publicHeadersPath: "include",
             cSettings: [
                 .headerSearchPath("include"),
-                // Disable rcheevos's internal threading; Mednafen and most native cores
-                // are single-threaded.  The server-call callback is the only async path.
+                // RC_NO_THREADS removes rcheevos's internal mutex entirely.
+                // This is safe for Mednafen (single emulator thread) but means any
+                // core that calls doFrame from a different thread than loginAndLoadGame
+                // must provide its own synchronisation.  Do NOT set this flag in cores
+                // that drive rc_client from multiple threads.
                 .define("RC_NO_THREADS", to: "1"),
             ]
         ),
