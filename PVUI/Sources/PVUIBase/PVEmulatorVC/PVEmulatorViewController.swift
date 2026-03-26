@@ -2843,6 +2843,19 @@ extension PVEmulatorViewController {
             return
         }
 
+        #if os(iOS)
+        /// ReplayKit start/stop may transiently resign active while presenting
+        /// system UI. In that window, forcing our own pause menu can leave the
+        /// emulator in a wedged modal/input state after returning to foreground.
+        let replayKitTransitionActive = PVRecordingManager.shared.isPreparingRecording
+                                    || PVRecordingManager.shared.isRecording
+        if replayKitTransitionActive {
+            ILOG("appWillResignActive: Skipping pause-menu presentation — ReplayKit transition in progress")
+            gameAudio.pauseAudio()
+            return
+        }
+        #endif
+
         Task { [weak self] in
             guard let self = self else { return }
             if Defaults[.autoSave], self.core.supportsSaveStates {
@@ -2880,10 +2893,10 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
-        if !isShowingMenu {
-            core.setPauseEmulation(false)
-        }
-        core.setPauseEmulation(true)
+        /// Match pause state to the actual menu visibility instead of always forcing
+        /// pause. This prevents returning from transient ReplayKit UI in a permanently
+        /// paused-looking state with no visible pause menu.
+        core.setPauseEmulation(isShowingMenu)
 
         do {
             // TODO: Test if we need to recreate the audio graph
