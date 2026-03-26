@@ -209,7 +209,7 @@ static __weak PVGBEmulatorCoreBridge *_current;
 }
 
 - (void *)vramBankPtr {
-    return gb.vramBankPtr();
+    return (void *)gb.vramBankPtr();
 }
 
 - (NSUInteger)wramSize {
