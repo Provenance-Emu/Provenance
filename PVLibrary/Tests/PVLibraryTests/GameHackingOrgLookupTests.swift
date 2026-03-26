@@ -120,7 +120,7 @@ final class GameHackingOrgLookupTests: XCTestCase {
     // MARK: - Proxy Path (URLProtocol stubs)
 
     func testSearchCheats_proxyReturnsResults() async {
-        URLProtocol.registerClass(ProxyCannedProtocol.self)
+        XCTAssertTrue(URLProtocol.registerClass(ProxyCannedProtocol.self), "URLProtocol registration failed — test may hit real network")
         defer { URLProtocol.unregisterClass(ProxyCannedProtocol.self) }
 
         let json = #"[{"name":"Infinite Lives","code":"DEADBEEF00000001","category":"General"}]"#
@@ -157,8 +157,8 @@ final class GameHackingOrgLookupTests: XCTestCase {
         // Proxy returns [] with X-Proxy-Status: ok — meaning "upstream confirmed no cheats".
         // searchCheats should trust this and NOT fall back to direct scraping.
         // DirectScrapeBlockerProtocol is registered to ensure no gamehacking.org request is made.
-        URLProtocol.registerClass(ProxyCannedProtocol.self)
-        URLProtocol.registerClass(DirectScrapeBlockerProtocol.self)
+        XCTAssertTrue(URLProtocol.registerClass(ProxyCannedProtocol.self), "URLProtocol registration failed — test may hit real network")
+        XCTAssertTrue(URLProtocol.registerClass(DirectScrapeBlockerProtocol.self), "URLProtocol registration failed — test may hit real network")
         defer {
             URLProtocol.unregisterClass(ProxyCannedProtocol.self)
             URLProtocol.unregisterClass(DirectScrapeBlockerProtocol.self)
@@ -196,8 +196,8 @@ final class GameHackingOrgLookupTests: XCTestCase {
         // Proxy is disabled — only the direct scrape path runs.
         // DirectScrapeBlockerProtocol intercepts gamehacking.org requests so no real
         // network call is made; it returns empty HTML so the scrape yields no results.
-        URLProtocol.registerClass(ProxyCannedProtocol.self)
-        URLProtocol.registerClass(DirectScrapeBlockerProtocol.self)
+        XCTAssertTrue(URLProtocol.registerClass(ProxyCannedProtocol.self), "URLProtocol registration failed — test may hit real network")
+        XCTAssertTrue(URLProtocol.registerClass(DirectScrapeBlockerProtocol.self), "URLProtocol registration failed — test may hit real network")
         defer {
             URLProtocol.unregisterClass(ProxyCannedProtocol.self)
             URLProtocol.unregisterClass(DirectScrapeBlockerProtocol.self)

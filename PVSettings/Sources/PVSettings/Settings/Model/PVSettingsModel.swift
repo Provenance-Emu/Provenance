@@ -333,8 +333,10 @@ public extension Defaults.Keys {
 // MARK: Cheats
 public extension Defaults.Keys {
     /// When `true`, the app first queries the cheat proxy endpoint for GameHacking.org
-    /// cheats instead of scraping the site directly.  Falls back to direct scraping
-    /// if the proxy returns an empty result or is unreachable.
+    /// cheats instead of scraping the site directly. Falls back to direct scraping only
+    /// if the proxy is unreachable, returns a non-2xx status, or returns an empty result
+    /// without confirming success via `X-Proxy-Status: ok`. An empty result with
+    /// `X-Proxy-Status: ok` is treated as "no cheats found" and skips the fallback.
     static let useCheatProxy = Key<Bool>("useCheatProxy", default: true)
 
     /// Base URL of the deployed Provenance cheat proxy worker.
