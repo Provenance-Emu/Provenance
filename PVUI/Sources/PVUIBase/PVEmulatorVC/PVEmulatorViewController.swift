@@ -174,6 +174,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     #endif
 
     public var audioInited: Bool = false
+
+    /// Whether the game audio is currently muted by the user (e.g. via the DualSense mic button).
+    /// Toggling this adjusts `gameAudio.setVolume(0)` / restores the user's preferred volume.
+    public private(set) var isAudioMuted: Bool = false
+
     public private(set) lazy var gameAudio: any AudioEngineProtocol = {
         audioInited = true
 
@@ -486,6 +491,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
+
+        // DualSense microphone button → toggle audio mute
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleMicButtonToggleMute(_:)), name: .PVControllerMicButtonToggleMute, object: nil)
 
         // Observer for Delta skin menu button reconnection
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.reconnectDeltaSkinMenuHandler(_:)), name: Notification.Name("DeltaSkinReconnectMenuHandler"), object: nil)
@@ -2882,7 +2890,9 @@ extension PVEmulatorViewController {
 
     fileprivate func startAudio() throws {
         //        gameAudio.outputDeviceID = 0
-        gameAudio.setVolume(Defaults[.volume])
+        // Respect the mic-button mute state so that (re)starting audio
+        // doesn't silently undo the user's mute preference.
+        gameAudio.setVolume(isAudioMuted ? 0 : Defaults[.volume])
         do {
             try gameAudio.startAudio()
         } catch {
@@ -2938,6 +2948,24 @@ extension PVEmulatorViewController {
             name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
             object: nil
         )
+    }
+
+    /// Toggle the game audio mute state in response to the DualSense microphone button.
+    /// `@MainActor` is a compile-time hint only for `@objc` selectors, so we hop
+    /// to the main thread explicitly in case the notification ever arrives off-main.
+    @objc func handleMicButtonToggleMute(_ notification: Notification) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.handleMicButtonToggleMute(notification) }
+            return
+        }
+        isAudioMuted.toggle()
+        if isAudioMuted {
+            gameAudio.setVolume(0)
+            ILOG("DualSense mic button: audio muted")
+        } else {
+            gameAudio.setVolume(Defaults[.volume])
+            ILOG("DualSense mic button: audio unmuted")
+        }
     }
 
     /// Handler for skin change notifications

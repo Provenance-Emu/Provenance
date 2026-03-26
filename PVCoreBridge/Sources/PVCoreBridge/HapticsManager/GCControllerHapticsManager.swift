@@ -105,12 +105,16 @@ public final class GCControllerHapticsManager {
     /// override is set or the stored data cannot be decoded.
     ///
     /// Also applies the appropriate DualSense adaptive trigger profile for the system
-    /// if `dualSenseAdaptiveTriggersEnabled` is true.
+    /// if `dualSenseAdaptiveTriggersEnabled` is true, and updates the light bar color
+    /// via `ControllerLightBarManager`.
     public func setSystemProfile(forSystemIdentifier sysId: String) {
         currentSystemIdentifier = sysId
         systemProfile = effectiveProfile(forSystemIdentifier: sysId)
         if #available(iOS 14.5, tvOS 14.5, *) {
             applyAdaptiveTriggers()
+        }
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            ControllerLightBarManager.shared.setSystemColor(forSystemIdentifier: sysId)
         }
     }
 
@@ -213,7 +217,7 @@ public final class GCControllerHapticsManager {
 
     /// Reset the system profile back to `.generic`.
     /// Call this when an emulation session ends so the next core starts with neutral tuning.
-    /// Also turns off adaptive triggers on any connected DualSense controllers.
+    /// Also turns off adaptive triggers and resets the light bar on any connected controllers.
     public func resetSystemProfile() {
         systemProfile = .generic
         currentSystemIdentifier = nil
@@ -221,6 +225,9 @@ public final class GCControllerHapticsManager {
             for controller in playerControllers.values {
                 configureDualSenseAdaptiveTriggers(controller: controller, profile: .off)
             }
+        }
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            ControllerLightBarManager.shared.resetSystemColor()
         }
     }
 
@@ -341,6 +348,9 @@ public final class GCControllerHapticsManager {
 
         guard let controller = controller else {
             playerControllers.removeValue(forKey: player)
+            if #available(iOS 14.0, tvOS 14.0, *) {
+                ControllerLightBarManager.shared.register(controller: nil, forPlayer: player)
+            }
             return
         }
 
@@ -350,6 +360,11 @@ public final class GCControllerHapticsManager {
         // Apply adaptive triggers to a newly registered DualSense if a system is active.
         if #available(iOS 14.5, tvOS 14.5, *) {
             applyAdaptiveTriggers()
+        }
+
+        // Keep light bar manager in sync with the same player-controller map.
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            ControllerLightBarManager.shared.register(controller: controller, forPlayer: player)
         }
     }
 

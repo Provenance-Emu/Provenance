@@ -145,6 +145,23 @@ public extension Defaults.Keys {
     /// PlayStation-family systems; other systems currently use no adaptive trigger resistance.
     static let dualSenseAdaptiveTriggersEnabled = Key<Bool>("dualSenseAdaptiveTriggersEnabled", default: true)
 
+    // MARK: Controller Light Bar
+
+    /// Master toggle for controller light bar color output.
+    /// When `true`, `ControllerLightBarManager` applies per-system colors to DualSense/DS4.
+    static let controllerLightBarEnabled = Key<Bool>("controllerLightBarEnabled", default: true)
+
+    /// Per-system light bar color overrides.
+    /// Key = Provenance system identifier (e.g. "com.provenance.psx").
+    /// Value = hex color string in the format "#RRGGBB".
+    static let controllerLightBarSystemColors = Key<[String: String]>("controllerLightBarSystemColors", default: [:])
+
+    // MARK: DualSense Extras
+
+    /// Action to perform when the DualSense microphone button is pressed during gameplay.
+    /// Supported values: "muteAudio", "none".
+    static let dualSenseMicButtonAction = Key<String>("dualSenseMicButtonAction", default: "muteAudio")
+
     /// Intensity multiplier for external controller rumble motors via GCDeviceHaptics.
     /// Range 0.0 (silent) – 1.0 (full intensity). Default 1.0.
     static let controllerHapticIntensity = Key<Double>("controllerHapticIntensity", default: 1.0)

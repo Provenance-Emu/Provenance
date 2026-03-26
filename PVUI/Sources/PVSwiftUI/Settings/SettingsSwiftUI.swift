@@ -1761,6 +1761,8 @@ private struct ControllerSection: View {
 
             HapticsRumbleSection()
 
+            DualSenseExtrasSection()
+
             #if !os(tvOS)
             OnScreenControllerSection()
             #endif
@@ -2029,6 +2031,30 @@ private struct HapticsRumbleSection: View {
             TestRumbleButton()
         }
         #endif
+    }
+}
+
+/// DualSense / DualShock 4 extras section: light bar and microphone button settings.
+private struct DualSenseExtrasSection: View {
+    @Default(.controllerLightBarEnabled) var lightBarEnabled
+    @Default(.dualSenseMicButtonAction) var micButtonAction
+
+    var body: some View {
+        Section(header: Text("DualSense / DS4 Features")) {
+            ThemedToggle(isOn: $lightBarEnabled) {
+                SettingsRow(title: "Controller Light Bar",
+                            subtitle: "Show a per-system color on the DualSense / DS4 light bar.",
+                            icon: .sfSymbol("light.beacon.max.fill"))
+            }
+            Picker(selection: $micButtonAction,
+                   label: SettingsRow(title: "Mic Button Action",
+                                      subtitle: "Action performed when the DualSense microphone button is pressed.",
+                                      icon: .sfSymbol("mic.fill"))) {
+                Text("Mute Audio").tag("muteAudio")
+                Text("None").tag("none")
+            }
+            .pickerStyle(.menu)
+        }
     }
 }
 

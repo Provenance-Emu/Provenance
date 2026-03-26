@@ -1,6 +1,7 @@
 import GameController
 import Foundation
 import PVLogging
+import PVSettings
 
 /// Identifies which button on a controller
 public enum ButtonIdentifier: String, Codable, CaseIterable {
@@ -123,14 +124,21 @@ public final class PVRemappableController: NSObject {
             if let dualSense = wrappedController.physicalInputProfile as? GCDualSenseGamepad {
                 setupDualSenseFeatures(dualSense)
             }
+            // DualShock 4 features
+            else if let dualShock = wrappedController.physicalInputProfile as? GCDualShockGamepad {
+                setupDualShockFeatures(dualShock)
+            }
 
             // Xbox features
             if let xbox = wrappedController.physicalInputProfile as? GCXboxGamepad {
                 setupXboxFeatures(xbox)
             }
 
-            // Switch features
-            if let switchPro = wrappedController.physicalInputProfile as? GCExtendedGamepad {
+            // Switch features (only for controllers that are not DualSense/DS4/Xbox)
+            if wrappedController.physicalInputProfile as? GCDualSenseGamepad == nil,
+               wrappedController.physicalInputProfile as? GCDualShockGamepad == nil,
+               wrappedController.physicalInputProfile as? GCXboxGamepad == nil,
+               let switchPro = wrappedController.physicalInputProfile as? GCExtendedGamepad {
                 setupSwitchFeatures(switchPro)
             }
         }
@@ -149,42 +157,75 @@ public final class PVRemappableController: NSObject {
             dualSense.touchpadPrimary.valueChangedHandler = { [weak self] (pad: GCControllerDirectionPad, x: Float, y: Float) in
                 self?.touchpadHandler?(x, y)
             }
+
+            // Microphone button — posts a notification so the emulator VC can toggle audio mute.
+            dualSense.buttonMicrophone.pressedChangedHandler = { [weak self] (_, _, pressed) in
+                guard pressed else { return }
+                self?.handleMicButtonPressed()
+            }
+
+            // Note: DualSense buttonOptions (Create button) is handled by the remapping pipeline
+            // in setupButtonRemappingHandlers (keyed as .createButton). Do NOT install a
+            // valueChangedHandler here — it would overwrite the pipeline's handler.
+        }
+    }
+
+    @available(iOS 14.0, tvOS 14.0, *)
+    private func setupDualShockFeatures(_ dualShock: GCDualShockGamepad) {
+        // Touchpad click — expose as remappable button.
+        dualShock.touchpadButton.valueChangedHandler = { [weak self] (_, _, pressed) in
+            if pressed {
+                self?.handleSpecialButton(.touchpadButton)
+            }
         }
 
+        dualShock.touchpadPrimary.valueChangedHandler = { [weak self] (_, x, y) in
+            self?.touchpadHandler?(x, y)
+        }
+
+        // Note: DS4 buttonOptions (Share button) is handled by the remapping pipeline in
+        // setupButtonRemappingHandlers (keyed as .share). Do NOT install a valueChangedHandler
+        // here — it would overwrite the pipeline's handler.
+    }
+
+    private func handleMicButtonPressed() {
+        let action = Defaults[.dualSenseMicButtonAction]
+        switch action {
+        case "muteAudio":
+            NotificationCenter.default.post(name: .PVControllerMicButtonToggleMute, object: wrappedController)
+        default:
+            break
+        }
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
     private func setupXboxFeatures(_ xbox: GCXboxGamepad) {
-        if #available(iOS 14.5, tvOS 14.5, *) {
-            // Share button (buttonOptions maps to Xbox Share on Elite/Series X controllers)
-            xbox.buttonOptions?.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.shareButton) }
-            }
-            // Note: Xbox Elite paddle buttons (P1–P4) are not individually accessible via
-            // GCXboxGamepad in the current GCController API. They surface through the
-            // standard button inputs, so no additional setup is needed here.
-        }
+        // Xbox buttonOptions (Share on Elite/Series X) is handled by the remapping pipeline
+        // in setupButtonRemappingHandlers (keyed as .shareButton).
+        // Note: Xbox Elite paddle buttons (P1–P4) are not individually accessible via
+        // GCXboxGamepad in the current GCController API. They surface through the
+        // standard button inputs, so no additional setup is needed here.
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
     private func setupSwitchFeatures(_ switchPro: GCExtendedGamepad) {
-        if #available(iOS 14.5, tvOS 14.5, *) {
-            // Special Switch Pro buttons if available
-            if let button = switchPro.buttonOptions {
-                button.pressedChangedHandler = { [weak self] button, value, pressed in
-                    if pressed { self?.handleSpecialButton(.capture) }
-                }
-            }
-        }
+        // Switch Pro buttonOptions (Capture) is handled by the remapping pipeline in
+        // setupButtonRemappingHandlers (keyed as .options for generic GCExtendedGamepad).
     }
 
     /// Handle special button press
     private func handleSpecialButton(_ button: ButtonIdentifier) {
         if let mapping = buttonMappings[button] {
-            // Forward to mapped button
+            // Forward to the mapped destination button via valueChangedHandler only.
+            // valueChangedHandler is the primary path used by PVControllerManager and
+            // the remapping pipeline. Calling pressedChangedHandler separately would
+            // double-fire actions when both handlers are set on the destination button.
+            // Synthesize an immediate release (0.0/false) so the destination is not
+            // left stuck in the pressed state.
             if let gamepad = wrappedController.extendedGamepad,
                let destButton = self.button(for: mapping.destinationId, on: gamepad) {
-                destButton.pressedChangedHandler?(destButton, 1.0, true)
+                destButton.valueChangedHandler?(destButton, 1.0, true)
+                destButton.valueChangedHandler?(destButton, 0.0, false)
             }
         }
     }
@@ -331,9 +372,9 @@ public final class PVRemappableController: NSObject {
             if #available(iOS 14.5, tvOS 14.5, *),
                let dualSense = gamepad as? GCDualSenseGamepad {
                 switch id {
-                case .touchpad: return nil // Touchpad is not a button
+                case .touchpad: return nil // Touchpad surface is not a GCControllerButtonInput
                 case .touchpadButton: return dualSense.touchpadButton
-                case .micButton: return dualSense.buttonOptions
+                case .micButton: return dualSense.buttonMicrophone // Not buttonOptions
                 case .createButton: return dualSense.buttonOptions
                 default: return nil
                 }
@@ -446,28 +487,43 @@ public final class PVRemappableController: NSObject {
             }
         }
 
-        // Handle options button if available
+        // Handle the platform-specific options/share/create button.
+        // Use the correct ButtonIdentifier for the controller type so user mappings for
+        // .createButton (DualSense), .share (DS4), .shareButton (Xbox), or .options
+        // (generic) are all routed through the same remapping pipeline — and so this
+        // single handler installation is never clobbered by setupSpecialFeatures().
         if #available(iOS 14.0, tvOS 14.0, *), let optionsButton = gamepad.buttonOptions {
-            originalButtonHandlers[.options] = optionsButton.valueChangedHandler
+            let platformId: ButtonIdentifier
+            if #available(iOS 14.5, tvOS 14.5, *), gamepad is GCDualSenseGamepad {
+                platformId = .createButton
+            } else if gamepad is GCDualShockGamepad {
+                platformId = .share
+            } else if gamepad is GCXboxGamepad {
+                platformId = .shareButton
+            } else {
+                platformId = .options
+            }
+
+            originalButtonHandlers[platformId] = optionsButton.valueChangedHandler
             optionsButton.valueChangedHandler = { [weak self] (button, value, pressed) in
                 guard let self = self else { return }
-                guard !self.remappingInProgress.contains(.options) else {
-                    self.originalButtonHandlers[.options]?(button, value, pressed)
+                guard !self.remappingInProgress.contains(platformId) else {
+                    self.originalButtonHandlers[platformId]?(button, value, pressed)
                     return
                 }
-                if let mapping = self.buttonMappings[.options],
+                if let mapping = self.buttonMappings[platformId],
                    let destButton = self.button(for: mapping.destinationId, on: gamepad) {
-                    self.remappingInProgress.insert(.options)
+                    self.remappingInProgress.insert(platformId)
                     if let destId = self.identifier(for: destButton),
                        let destOriginalHandler = self.originalButtonHandlers[destId] {
                         destOriginalHandler(destButton, value, pressed)
                     } else {
                         destButton.valueChangedHandler?(destButton, value, pressed)
                     }
-                    self.remappingInProgress.remove(.options)
-                    self.originalButtonHandlers[.options]?(button, value, pressed)
+                    self.remappingInProgress.remove(platformId)
+                    self.originalButtonHandlers[platformId]?(button, value, pressed)
                 } else {
-                    self.originalButtonHandlers[.options]?(button, value, pressed)
+                    self.originalButtonHandlers[platformId]?(button, value, pressed)
                 }
             }
         }
@@ -501,10 +557,10 @@ public final class PVRemappableController: NSObject {
         default:
             if #available(iOS 14.5, tvOS 14.5, *) {
                 // Platform-specific mappings take precedence over the generic options button.
-                // DualSense: buttonOptions is the "Share" button.
+                // DualSense: buttonOptions is the "Create" button.
                 if let dualSense = gamepad as? GCDualSenseGamepad {
                     switch element {
-                    case dualSense.buttonOptions: return .share
+                    case dualSense.buttonOptions: return .createButton
                     case dualSense.touchpadButton: return .touchpadButton
                     default: break
                     }
@@ -515,6 +571,15 @@ public final class PVRemappableController: NSObject {
                     case xbox.buttonOptions: return .shareButton
                     default: break
                     }
+                }
+            }
+            // DualShock 4 (iOS 14.0+): buttonOptions is the "Share" button; touchpadButton is remappable.
+            if #available(iOS 14.0, tvOS 14.0, *),
+               let dualShock = gamepad as? GCDualShockGamepad {
+                switch element {
+                case dualShock.buttonOptions: return .share
+                case dualShock.touchpadButton: return .touchpadButton
+                default: break
                 }
             }
             // Generic GCExtendedGamepad options button (e.g. PS4 Options, Switch Pro Capture).

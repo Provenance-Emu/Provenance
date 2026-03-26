@@ -6,8 +6,17 @@
 //  Copyright © 2019 Provenance Emu. All rights reserved.
 //
 
+import Foundation
 import GameController
 import PVLogging
+
+// MARK: - Controller Notifications
+
+public extension Notification.Name {
+    /// Posted when the DualSense microphone button is pressed and the user action is "muteAudio".
+    /// The `object` is the `GCController` that fired the event.
+    static let PVControllerMicButtonToggleMute = Notification.Name("PVControllerMicButtonToggleMuteNotification")
+}
 
 // MARK: ThumbSticks
 public extension GCController {
