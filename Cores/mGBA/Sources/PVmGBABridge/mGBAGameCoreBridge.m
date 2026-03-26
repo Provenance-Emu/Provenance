@@ -23,6 +23,7 @@
  */
 
 #import "mGBAGameCoreBridge.h"
+#import "mGBAGameCoreBridge+Achievements.h"
 
 @import libmGBA;
 @import PVCoreBridge;
@@ -99,6 +100,11 @@ static void _log(struct mLogger* log,
 static struct mLogger logger = { .log = _log };
 
 @implementation PVmGBAGameCoreBridge
+
+// Expose the mCore pointer to achievement categories without making it public API.
+- (struct mCore *)_mCore {
+    return core;
+}
 
 - (instancetype)init {
     if ((self = [super init])) {
@@ -291,7 +297,7 @@ static struct mLogger logger = { .log = _log };
     struct VFile* vf = VFileMemChunk(nil, 0);
     if (!mCoreSaveStateNamed(core, vf, SAVESTATE_SAVEDATA)) {
         if (outError) {
-            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:nil];
+            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotSaveState userInfo:nil];
         }
         vf->close(vf);
         return nil;
@@ -306,6 +312,16 @@ static struct mLogger logger = { .log = _log };
 
 - (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
 {
+    // Hardcore mode: save-state loads are disallowed while achievements are active.
+    if (self.hardcoreMode && self.achievementsActive) {
+        if (outError) {
+            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                           code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                       userInfo:@{NSLocalizedDescriptionKey: @"Save state loading is disabled in RetroAchievements Hardcore Mode."}];
+        }
+        return NO;
+    }
+
     struct VFile* vf = VFileFromConstMemory(state.bytes, state.length);
     if (!mCoreLoadStateNamed(core, vf, SAVESTATE_SAVEDATA)) {
         if (outError) {
@@ -322,11 +338,10 @@ static struct mLogger logger = { .log = _log };
     struct VFile* vf = VFileOpen([fileName fileSystemRepresentation], O_CREAT | O_TRUNC | O_RDWR);
     BOOL success = mCoreSaveStateNamed(core, vf, SAVESTATE_SAVEDATA | SAVESTATE_RTC);
     if(!success) {
-        NSError *error = nil;
-        error = [NSError errorWithDomain:@"org.provenance.GameCore.ErrorDomain"
-                                    code:-5
-                                userInfo:@{
-            NSLocalizedDescriptionKey : @"mGBA Could not load the current state.",
+        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                             code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                         userInfo:@{
+            NSLocalizedDescriptionKey : @"mGBA could not save the current state.",
             NSFilePathErrorKey : fileName
         }];
         block(error);
@@ -334,18 +349,28 @@ static struct mLogger logger = { .log = _log };
         block(nil);
     }
     vf->close(vf);
-    return success;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
+    // Hardcore mode: save-state loads are disallowed while achievements are active.
+    if (self.hardcoreMode && self.achievementsActive) {
+        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                        userInfo:@{
+            NSLocalizedDescriptionKey : @"Save state loading is disabled in RetroAchievements Hardcore Mode.",
+            NSFilePathErrorKey : fileName
+        }];
+        block(error);
+        return;
+    }
+
     struct VFile* vf = VFileOpen([fileName fileSystemRepresentation], O_RDONLY);
     BOOL success = mCoreLoadStateNamed(core, vf, SAVESTATE_RTC);
     if(!success) {
-        NSError *error = nil;
-        error = [NSError errorWithDomain:@"org.provenance.GameCore.ErrorDomain"
-                                    code:-5
-                                userInfo:@{
-            NSLocalizedDescriptionKey : @"Jagar Could not load the current state.",
+        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                             code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                         userInfo:@{
+            NSLocalizedDescriptionKey : @"mGBA could not load the current state.",
             NSFilePathErrorKey : fileName
         }];
         block(error);
@@ -353,7 +378,6 @@ static struct mLogger logger = { .log = _log };
         block(nil);
     }
     vf->close(vf);
-    return success;
 }
 
 #pragma mark - Input

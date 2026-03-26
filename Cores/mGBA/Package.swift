@@ -19,13 +19,18 @@ let libmGBACSettings: [PackageDescription.CSetting] = [
     .define("MINIMAL_CORE", to: "1"),
     .define("M_CORE_GBA", to: "1"),
     .define("M_CORE_GB", to: "1"),
-    
+
+    // RetroAchievements: enable mGBA's built-in rcheevos wrapper (achievements.c)
+    // Requires src/third-party/rcheevos/ sources to also be compiled (see mGBASources).
+    .define("USE_ACHIEVEMENTS", to: "1"),
+    .define("HAVE_CHEATS", to: "1"),
+
     .define("ENABLE_VFS", to: "1"),
     .define("ENABLE_VFS_FD", to: "1"),
 //    .define("ENABLE_VFS_FILE", to: "1"),
 
     // Fix weird underflow/overflow issues
-    
+
     .define("_SIZE_T", to: "int"),
     .define("size_t", to: "int"),
 ]
@@ -106,7 +111,8 @@ let package = Package(
             publicHeadersPath: "include",
             cSettings: libmGBACSettings + [
                 .headerSearchPath("../libmGBA/include"),
-                .headerSearchPath("../libmGBA/src")]),
+                .headerSearchPath("../libmGBA/src"),
+                .headerSearchPath("../libmGBA/src/third-party/rcheevos/include")]),
         // MARK: ============ Core =============
         .target(
             name: "libmGBA",
@@ -148,7 +154,8 @@ let package = Package(
             cSettings:
                 libmGBACSettings + [
                 .headerSearchPath("./include"),
-                .headerSearchPath("./src")])
+                .headerSearchPath("./src"),
+                .headerSearchPath("./src/third-party/rcheevos/include")])
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu99,
@@ -181,6 +188,26 @@ let mGBASources: [String] = [
         "src/core/thread.c",
         "src/core/tile-cache.c",
         "src/core/timing.c",
+        // RetroAchievements: mGBA's built-in rcheevos wrapper
+        "src/core/achievements.c",
+        // rcheevos sources bundled with mGBA (src/third-party/rcheevos/)
+        "src/third-party/rcheevos/src/rc_client.c",
+        "src/third-party/rcheevos/src/rc_client_external.c",
+        "src/third-party/rcheevos/src/rc_api_common.c",
+        "src/third-party/rcheevos/src/rc_api_runtime.c",
+        "src/third-party/rcheevos/src/rc_api_user.c",
+        "src/third-party/rcheevos/src/rc_url.c",
+        "src/third-party/rcheevos/src/rc_util.c",
+        "src/third-party/rcheevos/src/rcheevos/alloc.c",
+        "src/third-party/rcheevos/src/rcheevos/format.c",
+        "src/third-party/rcheevos/src/rcheevos/lboard.c",
+        "src/third-party/rcheevos/src/rcheevos/operand.c",
+        "src/third-party/rcheevos/src/rcheevos/rc_validate.c",
+        "src/third-party/rcheevos/src/rcheevos/richpresence.c",
+        "src/third-party/rcheevos/src/rcheevos/runtime.c",
+        "src/third-party/rcheevos/src/rcheevos/runtime_progress.c",
+        "src/third-party/rcheevos/src/rcheevos/trigger.c",
+        "src/third-party/rcheevos/src/rcheevos/value.c",
         "src/gba/audio.c",
         "src/gba/bios.c",
         "src/gba/cheats/codebreaker.c",
