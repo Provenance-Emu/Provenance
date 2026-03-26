@@ -165,7 +165,7 @@ public enum ControllerCatalog {
     /// Settings > Controllers > iCade Controller only when using iCade/keyboard mode.
     public static let eightBitdoSN30Pro = ControllerGuideInfo(
         name: "8BitDo SN30 Pro / Pro+",
-        controllerType: .mfi,
+        controllerType: .switchPro,
         supportedPlatforms: .iOS,
         pairingInstructions: [
             "Power on in Switch mode: hold the Start button + Y button simultaneously until the LEDs blink rapidly.",
