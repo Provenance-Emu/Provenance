@@ -138,6 +138,33 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
 
     /// Hardcore mode flag.
     var _hardcoreMode: Bool = false
+
+    /// Set to true once a real rcheevos session is active (Phase 2).
+    ///
+    /// Guards `achievementsActive` so that hardcore restrictions in PVUI are not
+    /// triggered before a game has successfully loaded an achievement session.
+    ///
+    /// Thread-safety note: this flag is written only from `prepareAchievements`
+    /// and `stopAchievements` (which PVUI calls from an async Task) and is read
+    /// on the emulator thread inside `executeFrame`.  During Phase 1 the flag is
+    /// never set to `true`, so the cross-thread read is safe in practice.
+    /// Phase 2 must synchronise mutations (e.g. dispatch to the emulator thread or
+    /// use an atomic store) before enabling live rcheevos session management.
+    var _achievementsSessionActive: Bool = false
+
+    // MARK: - executeFrame hook
+
+    /// Tick the achievement runtime after each emulated frame.
+    ///
+    /// Must live in the class body (not an extension) so Swift accepts the override.
+    /// `achievementsActive` is gated on `_achievementsSessionActive` (default false)
+    /// so the tick is a no-op during Phase 1.
+    open override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
 }
 
 @objc extension MednafenGameCore: PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient {

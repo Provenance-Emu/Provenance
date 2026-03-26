@@ -1477,3 +1477,8 @@ using namespace MDFN_IEN_SNES_FAUST;
  2,     // Number of output sound channels
 };
 
+// ---- Provenance RetroAchievements RAM accessors ----
+extern "C" {
+    uint8_t* mdfn_snes_faust_wram_ptr(void) { return WRAM; }
+    size_t   mdfn_snes_faust_wram_size(void) { return sizeof(WRAM); }
+}
