@@ -358,6 +358,11 @@ extension PVEmulatorViewController {
         if let keyboardContainer = virtualKeyboardContainer {
             view.bringSubviewToFront(keyboardContainer)
         }
+        // Light gun touch layer sits above the controller/skin interactive layer
+        // but below the cursor overlay, so the aim-point cursor renders on top.
+        if let lightGunView = lightGunTouchView {
+            view.bringSubviewToFront(lightGunView)
+        }
         if let cursorView = cursorHostingController?.view {
             view.bringSubviewToFront(cursorView)
         }

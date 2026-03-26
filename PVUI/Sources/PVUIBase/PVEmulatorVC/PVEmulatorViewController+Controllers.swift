@@ -71,6 +71,7 @@ extension PVEmulatorViewController {
         #endif
         #if os(tvOS)
         setupSiriRemoteForKeyboardCore()
+        setupSiriRemoteForLightGunCore()
         #endif
     }
 
@@ -398,6 +399,129 @@ extension PVEmulatorViewController {
         default:
             break
         }
+    }
+}
+
+// MARK: - tvOS Light Gun Remote Input
+
+private enum LGRemoteHandlerKey {
+    static var savedHandler: UInt8 = 0
+}
+
+extension PVEmulatorViewController {
+
+    /// Installs Siri Remote (GCMicroGamepad) gesture handlers for cores that
+    /// implement `LightGunResponder`.
+    ///
+    /// Mapping:
+    ///   - D-pad                      → aim (lightGunMovedToPoint)
+    ///   - Button A (select)          → trigger (lightGunTriggerDown/Up)
+    ///   - Touch-surface tap          → trigger at current aim point
+    ///   - Touch-surface long press   → reload (lightGunReloadDown/Up)
+    func setupSiriRemoteForLightGunCore() {
+        guard let gunCore = core as? LightGunResponder,
+              gunCore.gameSupportsLightGun else { return }
+        guard let microGamepad = GCController.controllers()
+                .first(where: { $0.microGamepad != nil })?.microGamepad else {
+            WLOG("tvOS: No micro-gamepad found for light gun mapping")
+            return
+        }
+
+        teardownSiriRemoteForLightGun()
+
+        ILOG("tvOS: Installing Siri Remote light-gun handlers")
+
+        // Save the existing valueChangedHandler so teardown can restore it.
+        let savedHandler = microGamepad.valueChangedHandler
+        objc_setAssociatedObject(
+            microGamepad,
+            &LGRemoteHandlerKey.savedHandler,
+            Box(savedHandler),
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+
+        // D-pad → aim; accumulates a virtual normalized position.
+        var aimPosition = CGPoint(x: 0.5, y: 0.5)
+        let step: CGFloat = 0.05
+        var wasButtonAPressed = false
+
+        microGamepad.valueChangedHandler = { [weak gunCore] (gamepad, _) in
+            guard let gunCore = gunCore else { return }
+
+            // Move aim with D-pad.
+            aimPosition.x = max(0, min(1, aimPosition.x + CGFloat(gamepad.dpad.right.value - gamepad.dpad.left.value) * step))
+            aimPosition.y = max(0, min(1, aimPosition.y + CGFloat(gamepad.dpad.down.value  - gamepad.dpad.up.value)   * step))
+            gunCore.lightGunMovedToPoint(aimPosition, isOffscreen: false)
+
+            // buttonA → trigger (fire only on state transitions to avoid repeated calls)
+            let isPressed = gamepad.buttonA.isPressed
+            if isPressed != wasButtonAPressed {
+                wasButtonAPressed = isPressed
+                if isPressed {
+                    gunCore.lightGunTriggerDown()
+                } else {
+                    gunCore.lightGunTriggerUp()
+                }
+            }
+        }
+
+        // Touch-surface tap → trigger at current aim position
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSiriRemoteLightGunTap(_:)))
+        tapGesture.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        tapGesture.name = "SiriRemoteLightGunTap"
+        view.addGestureRecognizer(tapGesture)
+
+        // Touch-surface long press → reload
+        let reloadGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleSiriRemoteLightGunReload(_:)))
+        reloadGesture.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        reloadGesture.name = "SiriRemoteLightGunReload"
+        reloadGesture.minimumPressDuration = 0.6
+        view.addGestureRecognizer(reloadGesture)
+    }
+
+    @objc private func handleSiriRemoteLightGunTap(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended,
+              let gunCore = core as? LightGunResponder,
+              gunCore.gameSupportsLightGun else { return }
+        gunCore.lightGunTriggerDown()
+        gunCore.lightGunTriggerUp()
+    }
+
+    @objc private func handleSiriRemoteLightGunReload(_ gesture: UILongPressGestureRecognizer) {
+        guard let gunCore = core as? LightGunResponder,
+              gunCore.gameSupportsLightGun else { return }
+        switch gesture.state {
+        case .began:
+            gunCore.lightGunReloadDown?()
+        case .ended, .cancelled, .failed:
+            gunCore.lightGunReloadUp?()
+        default:
+            break
+        }
+    }
+
+    /// Remove all Siri Remote light-gun gesture recognizers and restore the previous
+    /// valueChangedHandler on the micro-gamepad.
+    func teardownSiriRemoteForLightGun() {
+        view.gestureRecognizers?
+            .filter { $0.name == "SiriRemoteLightGunTap" || $0.name == "SiriRemoteLightGunReload" }
+            .forEach { view.removeGestureRecognizer($0) }
+
+        guard let microGamepad = GCController.controllers()
+                .first(where: { $0.microGamepad != nil })?.microGamepad else { return }
+
+        // Restore the previously saved valueChangedHandler (if any).
+        let boxedHandler = objc_getAssociatedObject(
+            microGamepad,
+            &LGRemoteHandlerKey.savedHandler
+        ) as? Box<GCMicroGamepadValueChangedHandler?>
+        microGamepad.valueChangedHandler = boxedHandler?.value ?? nil
+        objc_setAssociatedObject(
+            microGamepad,
+            &LGRemoteHandlerKey.savedHandler,
+            nil,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
     }
 }
 

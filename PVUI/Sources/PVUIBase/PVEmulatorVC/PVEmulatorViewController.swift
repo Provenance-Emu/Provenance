@@ -414,10 +414,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         core.touchViewController = nil
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
         let (trackpadView, cursorHost) = takeVirtualMouseCleanupHandles()
+        let lightGunView = takeLightGunCleanupHandle()
         Task { @MainActor in
             trackpadView?.removeFromSuperview()
             cursorHost?.view.removeFromSuperview()
             cursorHost?.removeFromParent()
+            lightGunView?.removeFromSuperview()
         }
         #endif
         #if os(iOS) || os(tvOS)
@@ -819,6 +821,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // also calls it via showVirtualMouse when the core supports mouse.
         setupVirtualMouseIfNeeded()
         setupVirtualInputOverlaysIfNeeded()
+        setupLightGunIfNeeded()
         #endif
 
         configureFPSCounterPreferenceObservationIfNeeded()
@@ -1039,6 +1042,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Ensure the virtual-mouse trackpad uses the correct game viewport rect
         // now that the view hierarchy is fully laid out.
         refreshVirtualMouseLayout()
+        refreshLightGunLayout()
         #endif
 
         #if os(iOS)
@@ -1074,6 +1078,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         destroyAutosaveTimer()
         #if !os(tvOS)
         removeVirtualInputOverlays()
+        teardownLightGun()
+        #endif
+        #if os(tvOS)
+        if isMovingFromParent || isBeingDismissed {
+            teardownSiriRemoteForLightGun()
+        }
         #endif
         // Remove the JIT indicator view controller on the main actor (#2796).
         // The Combine subscription is cancelled earlier in deinit via cancelJITIndicatorSubscription().
@@ -1437,6 +1447,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// button after initial setup, blocking all touches.
         bringVirtualInputOverlaysToFront()
         refreshVirtualMouseLayout()
+        refreshLightGunLayout()
         #endif
         #endif
     }
