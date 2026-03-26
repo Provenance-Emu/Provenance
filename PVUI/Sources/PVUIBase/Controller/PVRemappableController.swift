@@ -206,9 +206,13 @@ public final class PVRemappableController: NSObject {
     /// Handle special button press
     private func handleSpecialButton(_ button: ButtonIdentifier) {
         if let mapping = buttonMappings[button] {
-            // Forward to mapped button
+            // Forward to mapped button using both handlers so the event travels
+            // the same path as a normal button press (valueChangedHandler is the
+            // primary path used by PVControllerManager and the remapping pipeline;
+            // pressedChangedHandler fires for threshold-crossing events).
             if let gamepad = wrappedController.extendedGamepad,
                let destButton = self.button(for: mapping.destinationId, on: gamepad) {
+                destButton.valueChangedHandler?(destButton, 1.0, true)
                 destButton.pressedChangedHandler?(destButton, 1.0, true)
             }
         }
@@ -526,7 +530,7 @@ public final class PVRemappableController: NSObject {
         default:
             if #available(iOS 14.5, tvOS 14.5, *) {
                 // Platform-specific mappings take precedence over the generic options button.
-                // DualSense: buttonOptions is the "Share" button.
+                // DualSense: buttonOptions is the "Create" button.
                 if let dualSense = gamepad as? GCDualSenseGamepad {
                     switch element {
                     case dualSense.buttonOptions: return .createButton
