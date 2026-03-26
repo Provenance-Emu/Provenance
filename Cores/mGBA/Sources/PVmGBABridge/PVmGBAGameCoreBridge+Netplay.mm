@@ -35,7 +35,7 @@
 //  • `joinLinkAtHost:port:` connects synchronously (with a short timeout)
 //    on a background queue.
 //  • Once connected, the SIO driver (path 1) performs blocking send/recv
-//    of exactly 2 bytes each call.  Because `writeRegister` is called from
+//    of exactly 2 bytes each call.  Because `writeSIOCNT` is called from
 //    the emulator thread, these calls block that thread very briefly — the
 //    TCP round-trip on a local Wi-Fi LAN is typically < 2 ms, well within
 //    the ~16 ms frame budget.
@@ -68,21 +68,12 @@
 // Conditional mGBA SIO integration
 // ──────────────────────────────────────────────────────────────────────────────
 
-#if __has_include(<mgba/internal/gba/sio.h>) && __has_include(<mgba/gba/core.h>)
+#if __has_include(<mgba/internal/gba/sio.h>) && __has_include(<mgba/core/core.h>) && __has_include(<mgba/internal/gba/gba.h>) && __has_include(<mgba/internal/gba/io.h>)
     #define PVMGBA_LINK_SIO_AVAILABLE 1
     #include <mgba/internal/gba/sio.h>
-    #include <mgba/gba/core.h>
-    // GBA I/O register addresses used by SIO
-    #ifndef REG_SIOCNT
-        #define REG_SIOCNT   0x128
-    #endif
-    #ifndef REG_SIODATA8
-        #define REG_SIODATA8 0x12A
-    #endif
-    // SIO_MULTI_BUSY is the transfer-in-progress flag in SIOCNT
-    #ifndef SIO_MULTI_BUSY
-        #define SIO_MULTI_BUSY 0x0080
-    #endif
+    #include <mgba/core/core.h>
+    #include <mgba/internal/gba/gba.h>
+    #include <mgba/internal/gba/io.h>
 #else
     #define PVMGBA_LINK_SIO_AVAILABLE 0
 #endif
@@ -169,6 +160,8 @@ typedef struct PVmGBATCPLinkDriver {
     struct GBASIODriver d;      ///< MUST be the first member.
     __unsafe_unretained PVmGBALinkContext *ctx;  ///< Non-owning; outlived by ctx.
     _Atomic(bool) inactive;     ///< Set before uninstalling to guard in-flight callbacks.
+    uint16_t pendingRemoteData;
+    bool hasPendingRemoteData;
 } PVmGBATCPLinkDriver;
 
 /// Attempt to access the private `core` ivar of PVmGBAGameCoreBridge at runtime.
@@ -176,15 +169,16 @@ static inline struct mCore * _Nullable _pvmgba_core(PVmGBAGameCoreBridge *bridge
     static Ivar ivar = NULL;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        ivar = class_getInstanceVariable(object_getClass(bridge), "core");
+        ivar = class_getInstanceVariable([PVmGBAGameCoreBridge class], "core");
     });
     if (ivar == NULL) { return NULL; }
-    return *((struct mCore * __unsafe_unretained *)((__bridge uint8_t *)bridge + ivar_getOffset(ivar)));
+    uintptr_t address = (uintptr_t)(__bridge void *)bridge + (uintptr_t)ivar_getOffset(ivar);
+    return *((struct mCore * __unsafe_unretained *)address);
 }
 
 /// Called by the mGBA core when the game writes to a SIO register.
 ///
-/// When SIOCNT is written with SIO_MULTI_BUSY set (transfer initiated):
+/// When SIOCNT is written with the multiplayer busy bit set (transfer initiated):
 ///  1. Read this player's SIODATA8.
 ///  2. Send it to the peer as a big-endian uint16_t over TCP.
 ///  3. Receive the peer's SIODATA8.
@@ -194,33 +188,30 @@ static inline struct mCore * _Nullable _pvmgba_core(PVmGBAGameCoreBridge *bridge
 /// is inherently synchronous (the master waits for slaves), so stalling
 /// the emulation thread by a LAN round-trip (< 2 ms typically) is
 /// acceptable and matches how a physical link cable would behave.
-static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
-                                   uint32_t address,
-                                   uint16_t value)
+static uint16_t _tcpLinkWriteSIOCNT(struct GBASIODriver *driver,
+                                    uint16_t value)
 {
     PVmGBATCPLinkDriver *link = (PVmGBATCPLinkDriver *)driver;
     PVmGBALinkContext   *ctx  = link->ctx;
 
     // Return immediately if stopLink marked this driver as inactive.
-    if (atomic_load(&link->inactive)) { return false; }
+    if (atomic_load(&link->inactive)) { return value; }
 
     // Snapshot the peer FD under the context lock to avoid a data race with
     // -stopLink (main thread) or the ioQueue accept block writing peerFD.
     int peerFD;
     @synchronized (ctx) {
-        if (ctx == nil || ctx.peerFD < 0) { return false; }
+        if (ctx == nil || ctx.peerFD < 0) { return value; }
         peerFD = ctx.peerFD;
     }
 
-    if (address != REG_SIOCNT)        { return false; }
-    if (!(value & SIO_MULTI_BUSY))    { return false; }
+    if (!GBASIOMultiplayerIsBusy(value)) { return value; }
 
-    // Retrieve the mCore pointer to read/write I/O memory.
-    struct mCore *core = (struct mCore *)driver->p->p;  // GBASIO → GBA → mCore
-    if (core == NULL) { return false; }
+    struct GBASIO *sio = driver->p;
+    if (sio == NULL || sio->p == NULL) { return value; }
 
     // Player's own SIO data (SIODATA8, 8-bit, padded to 16-bit network word).
-    uint16_t localData = core->rawRead16(core, REG_SIODATA8, -1);
+    uint16_t localData = sio->p->memory.io[GBA_REG(SIOMLT_SEND)];
     uint16_t netLocal  = htons(localData);
 
     // Send-all loop: send() may return fewer bytes than requested even for small
@@ -246,8 +237,8 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
                 }
                 // NOTE: The SIO driver remains installed until -stopLink is called by
                 // the Swift polling layer after it observes lastDisconnectError.
-                // Subsequent writeRegister calls return early (peerFD == -1).
-                return false;
+                // Subsequent writeSIOCNT calls return early (peerFD == -1).
+                return value;
             }
             ptr       += n;
             remaining -= (size_t)n;
@@ -280,36 +271,75 @@ static bool _tcpLinkWriteRegister(struct GBASIODriver *driver,
                 [ctx closeAllSockets];
             }
         }
-        return false;
+        return value;
     }
 
-    uint16_t remoteData = ntohs(netRemote);
+    link->pendingRemoteData = ntohs(netRemote);
+    link->hasPendingRemoteData = true;
+    return value;
+}
 
-    // Write the peer's data into the GBA I/O memory so the game can read it.
-    // SIODATA8 offset 0 is player 1 (master), offset 2 is player 2 (slave).
-    // Host is player 1 (master), client is player 2 (slave).
-    if (ctx.isHost) {
-        // We are master; write slave's data to SIODATA8[1].
-        core->rawWrite16(core, REG_SIODATA8 + 2, -1, remoteData);
-    } else {
-        // We are slave; write master's data to SIODATA8[0].
-        core->rawWrite16(core, REG_SIODATA8, -1, remoteData);
+static bool _tcpLinkHandlesMode(struct GBASIODriver *driver, enum GBASIOMode mode) {
+    UNUSED(driver);
+    return mode == GBA_SIO_MULTI;
+}
+
+static int _tcpLinkConnectedDevices(struct GBASIODriver *driver) {
+    PVmGBATCPLinkDriver *link = (PVmGBATCPLinkDriver *)driver;
+    PVmGBALinkContext *ctx = link->ctx;
+    if (ctx == nil) { return 0; }
+    @synchronized (ctx) {
+        return ctx.peerFD >= 0 ? 2 : 1;
     }
+}
 
-    return false; // false = let the core continue handling the register write
+static int _tcpLinkDeviceId(struct GBASIODriver *driver) {
+    PVmGBATCPLinkDriver *link = (PVmGBATCPLinkDriver *)driver;
+    PVmGBALinkContext *ctx = link->ctx;
+    if (ctx == nil) { return 0; }
+    return ctx.isHost ? 0 : 1;
+}
+
+static void _tcpLinkFinishMultiplayer(struct GBASIODriver *driver, uint16_t data[4]) {
+    PVmGBATCPLinkDriver *link = (PVmGBATCPLinkDriver *)driver;
+    PVmGBALinkContext *ctx = link->ctx;
+    struct GBASIO *sio = driver->p;
+    if (ctx == nil || sio == NULL || sio->p == NULL) { return; }
+
+    data[0] = 0xFFFF;
+    data[1] = 0xFFFF;
+    data[2] = 0xFFFF;
+    data[3] = 0xFFFF;
+
+    uint16_t localData = sio->p->memory.io[GBA_REG(SIOMLT_SEND)];
+    data[ctx.isHost ? 0 : 1] = localData;
+    if (!link->hasPendingRemoteData) { return; }
+    data[ctx.isHost ? 1 : 0] = link->pendingRemoteData;
+    link->hasPendingRemoteData = false;
 }
 
 /// Allocate and configure a PVmGBATCPLinkDriver for the given context.
 static PVmGBATCPLinkDriver *_pvmgba_create_driver(PVmGBALinkContext *ctx) {
     PVmGBATCPLinkDriver *drv = (PVmGBATCPLinkDriver *)calloc(1, sizeof(PVmGBATCPLinkDriver));
     if (drv == NULL) { return NULL; }
-    // Minimal driver — only writeRegister is needed for SIO_MULTI.
-    drv->d.init          = NULL;
-    drv->d.deinit        = NULL;
-    drv->d.load          = NULL;
-    drv->d.unload        = NULL;
-    drv->d.writeRegister = _tcpLinkWriteRegister;
-    drv->ctx             = ctx;
+    // Install callbacks for the current mGBA SIO driver API.
+    drv->d.init              = NULL;
+    drv->d.deinit            = NULL;
+    drv->d.reset             = NULL;
+    drv->d.driverId          = NULL;
+    drv->d.loadState         = NULL;
+    drv->d.saveState         = NULL;
+    drv->d.setMode           = NULL;
+    drv->d.handlesMode       = _tcpLinkHandlesMode;
+    drv->d.connectedDevices  = _tcpLinkConnectedDevices;
+    drv->d.deviceId          = _tcpLinkDeviceId;
+    drv->d.writeSIOCNT       = _tcpLinkWriteSIOCNT;
+    drv->d.writeRCNT         = NULL;
+    drv->d.start             = NULL;
+    drv->d.finishMultiplayer = _tcpLinkFinishMultiplayer;
+    drv->d.finishNormal8     = NULL;
+    drv->d.finishNormal32    = NULL;
+    drv->ctx                 = ctx;
     return drv;
 }
 
@@ -326,7 +356,7 @@ static BOOL _pvmgba_install_driver(PVmGBAGameCoreBridge *bridge,
     struct GBA *gba = (struct GBA *)core->board;
     if (gba == NULL)  { return NO; }
 
-    GBASIOSetDriver(&gba->sio, &drv->d, SIO_MULTI);
+    GBASIOSetDriver(&gba->sio, &drv->d);
     return YES;
 }
 
@@ -347,7 +377,7 @@ static void _pvmgba_uninstall_driver(PVmGBAGameCoreBridge *bridge,
     if (core != NULL) {
         struct GBA *gba = (struct GBA *)core->board;
         if (gba != NULL) {
-            GBASIOSetDriver(&gba->sio, NULL, SIO_MULTI);
+            GBASIOSetDriver(&gba->sio, NULL);
         }
     }
     // NOTE: Do NOT call free(drv) here — see _pvmgba_free_driver.

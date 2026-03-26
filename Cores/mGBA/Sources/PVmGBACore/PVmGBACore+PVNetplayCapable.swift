@@ -33,6 +33,10 @@ import ObjectiveC
 /// Swift concurrency does not reject the PVNetplayCapable conformance.
 extension PVmGBACore: @unchecked Sendable {}
 
+/// PVmGBAGameCoreBridge is an ObjC bridge type used from detached tasks for
+/// blocking socket setup. Access remains synchronized by the bridge internals.
+extension PVmGBAGameCoreBridge: @unchecked Sendable {}
+
 // MARK: - Session context
 
 /// Boxes session metadata so it can be stored via ObjC associated objects.
@@ -227,26 +231,22 @@ extension PVmGBACore: PVNetplayCapable {
                 // in-progress syscall.  Task.isCancelled is NOT checked here because
                 // Task.detached does not inherit the caller's cancellation scope.
                 Task.detached(priority: .userInitiated) {
-                    var nsError: NSError?
-                    let success: Bool
+                    do {
+                        switch role {
+                        case .host(let port):
+                            try bridge.startLinkHost(onPort: port)
 
-                    switch role {
-                    case .host(let port):
-                        success = bridge.startLinkHost(onPort: port, error: &nsError)
+                        case .client(let host, let port):
+                            try bridge.joinLink(atHost: host, port: port)
 
-                    case .client(let host, let port):
-                        success = bridge.joinLink(atHost: host, port: port, error: &nsError)
+                        case .spectator(let host, let port):
+                            // Link cable is 2-player only; spectator connects as the second player.
+                            try bridge.joinLink(atHost: host, port: port)
+                        }
 
-                    case .spectator(let host, let port):
-                        // Link cable is 2-player only; spectator connects as the second player.
-                        success = bridge.joinLink(atHost: host, port: port, error: &nsError)
-                    }
-
-                    if !success {
-                        let reason = nsError?.localizedDescription ?? "Unknown error"
-                        continuation.resume(throwing: NetplayError.connectionFailed(reason))
-                    } else {
                         continuation.resume()
+                    } catch {
+                        continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
                     }
                 }
             }
