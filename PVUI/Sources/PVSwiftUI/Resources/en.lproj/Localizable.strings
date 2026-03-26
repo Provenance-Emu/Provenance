@@ -106,7 +106,7 @@
 "cloud_sync.progress.current_file" = "Current File:";
 "cloud_sync.progress.current_file_format %@" = "Current File: %@";
 "cloud_sync.progress.progress_label" = "Progress:";
-"cloud_sync.progress.files_progress %lld %lld" = "%lld of %lld files";
+// Pluralized via Localizable.stringsdict: cloud_sync.progress.files_progress
 "cloud_sync.progress.completed" = "Completed";
 "cloud_sync.progress.total" = "Total";
 "cloud_sync.progress.remaining" = "Remaining";
@@ -133,7 +133,7 @@
 "cloud_sync.pagination.icloud_count %lld" = "iCloud: %lld";
 "cloud_sync.pagination.total_files" = "Total Files";
 
-"cloud_sync.diff.header %lld" = "Sync Differences (%lld)";
+// Pluralized via Localizable.stringsdict: cloud_sync.diff.header
 "cloud_sync.diff.no_differences" = "No differences found";
 "cloud_sync.diff.unknown" = "Unknown";
 "cloud_sync.diff.directory_unknown" = "Directory: Unknown";
@@ -168,10 +168,10 @@
 "tv_media.library.add_roms_hint" = "Add ROMs via Web Server or CloudKit sync from an iPhone, iPad or Macintosh";
 "tv_media.library.icloud_in_progress" = "iCloud sync may be in progress";
 "tv_media.games" = "GAMES";
-"tv_media.games_count %lld" = "%lld GAMES";
+// Pluralized via Localizable.stringsdict: tv_media.games_count
 "tv_media.all_system_games %@" = "ALL %@ GAMES";
 "tv_media.saves.view_all" = "VIEW ALL";
-"tv_media.saves.count %lld" = "%lld saves";
+// Pluralized via Localizable.stringsdict: tv_media.saves.count
 "tv_media.search.recent" = "RECENT";
 "tv_media.search.recent_searches" = "RECENT SEARCHES";
 "tv_media.search.clear_all" = "CLEAR ALL";
@@ -203,7 +203,7 @@
 "tv_media.roms.full_documentation" = "FULL DOCUMENTATION";
 "tv_media.import_queue.title" = "IMPORT QUEUE";
 "tv_media.import_queue.close" = "CLOSE";
-"tv_media.import_queue.files_in_queue %lld" = "%lld files in queue";
+// Pluralized via Localizable.stringsdict: tv_media.import_queue.files_in_queue
 "tv_media.import_queue.no_pending" = "NO PENDING IMPORTS";
 "tv_media.import_queue.all_processed" = "All files have been processed";
 "tv_media.icloud_sync.title" = "iCLOUD SYNC";

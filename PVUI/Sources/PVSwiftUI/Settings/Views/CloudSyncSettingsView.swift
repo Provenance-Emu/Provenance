@@ -883,7 +883,7 @@ public struct CloudSyncSettingsView: View {
                     .progressViewStyle(LinearProgressViewStyle(tint: .retroBlue))
 
                 HStack {
-                    Text("cloud_sync.progress.files_progress \(viewModel.syncingFiles) \(viewModel.totalFiles ?? 0)", bundle: .module)
+                    Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("cloud_sync.progress.files_progress", bundle: .module, comment: ""), viewModel.syncingFiles, viewModel.totalFiles ?? 0))
                         .font(.caption)
                         .foregroundColor(.gray)
 
@@ -1068,7 +1068,7 @@ public struct CloudSyncSettingsView: View {
     /// Shows filename, directory, file sizes, and sync status with color-coded badges.
     private var syncDifferencesView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("cloud_sync.diff.header \(viewModel.syncDifferences.count)", bundle: .module)
+            Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("cloud_sync.diff.header", bundle: .module, comment: ""), viewModel.syncDifferences.count))
                 .cloudSyncSectionTitle()
 
             ScrollView {

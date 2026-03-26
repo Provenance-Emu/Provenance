@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+    <!-- retro_save.saves_available: "N saves available" / "1 save available" -->
+    <key>retro_save.saves_available</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@saves@</string>
+        <key>saves</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld save available</string>
+            <key>other</key>
+            <string>%lld saves available</string>
+        </dict>
+    </dict>
+
+    <!-- retro_save.more_saves: "(N more)" / "(1 more)" -->
+    <key>retro_save.more_saves</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@saves@</string>
+        <key>saves</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>(%lld more)</string>
+            <key>other</key>
+            <string>(%lld more)</string>
+        </dict>
+    </dict>
+
+</dict>
+</plist>

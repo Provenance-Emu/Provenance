@@ -287,7 +287,7 @@ public struct AllSaveStatesBrowserView: View {
                     }
                 }
                 Spacer()
-                Text("\(saves.count) save\(saves.count == 1 ? "" : "s")")
+                Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("all_saves.group.saves_count", bundle: .module, comment: ""), saves.count))
                     .font(.caption.weight(.medium))
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 8)

@@ -3310,7 +3310,7 @@ struct TVMediaSaveStatesViewAllCard: View {
                         .tracking(1)
                         .foregroundStyle(isFocused ? .white : .white.opacity(0.8))
 
-                    Text("tv_media.saves.count \(count)", bundle: .module)
+                    Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.saves.count", bundle: .module, comment: ""), count))
                         .font(.system(size: 11, weight: .medium, design: .default))
                         .foregroundStyle(.white.opacity(0.5))
                 }
@@ -3435,7 +3435,7 @@ struct TVMediaSystemGamesView: View {
                                 Spacer()
 
                                 let gameCount = model.gamesBySystemIdentifier[system.identifier]?.count ?? 0
-                                Text("tv_media.games_count \(gameCount)", bundle: .module)
+                                Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.games_count", bundle: .module, comment: ""), gameCount))
                                     .font(.system(size: 13, weight: .medium, design: .default))
                                     .tracking(0.8)
                                     .foregroundStyle(.white.opacity(0.4))
@@ -5751,7 +5751,7 @@ struct TVMediaImportStatusSheet: View {
                     .shadow(color: Color.retroPink.opacity(0.5), radius: 10)
 
                 if !viewModel.importQueueItems.isEmpty {
-                    Text("tv_media.import_queue.files_in_queue \(viewModel.importQueueItems.count)", bundle: .module)
+                    Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.import_queue.files_in_queue", bundle: .module, comment: ""), viewModel.importQueueItems.count))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.white.opacity(0.6))
                 }
