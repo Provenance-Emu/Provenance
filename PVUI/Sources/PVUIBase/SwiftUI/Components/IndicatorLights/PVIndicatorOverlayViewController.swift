@@ -103,15 +103,25 @@ public final class PVIndicatorOverlayViewController: UIViewController {
         let host = UIHostingController(rootView: overlayView)
         host.view.backgroundColor = .clear
         host.view.isUserInteractionEnabled = false
+        /// Keep the hosting view sized to its content instead of pinning full-screen.
+        /// This prevents hidden SwiftUI internals from absorbing touches outside the
+        /// visible indicator row.
+        host.view.setContentHuggingPriority(.required, for: .horizontal)
+        host.view.setContentHuggingPriority(.required, for: .vertical)
+        host.view.setContentCompressionResistancePriority(.required, for: .horizontal)
+        host.view.setContentCompressionResistancePriority(.required, for: .vertical)
+        if #available(iOS 16.0, tvOS 16.0, *) {
+            host.sizingOptions = [.intrinsicContentSize]
+        }
 
         addChild(host)
         view.addSubview(host.view)
         host.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            host.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            host.view.topAnchor.constraint(equalTo: view.topAnchor),
-            host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            host.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            host.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            host.view.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            host.view.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
         ])
         host.didMove(toParent: self)
         hostingController = host
