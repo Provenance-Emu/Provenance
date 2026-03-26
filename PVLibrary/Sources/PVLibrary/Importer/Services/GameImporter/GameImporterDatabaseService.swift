@@ -263,7 +263,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         // This runs synchronously in the import pipeline so the game gets artwork immediately
         // if found. Fuzzy/cleaned-title search is intentionally skipped here — that runs
         // later via ArtworkSearchQueue.
-        if await PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
+        if PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
             DLOG("FastArtworkLookupService: Attempting fast artwork lookup for '\(title)'")
             if let artworkURL = await FastArtworkLookupService.shared.findArtwork(
                 exactTitle: title,

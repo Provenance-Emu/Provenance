@@ -127,14 +127,15 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                         }
 
                         // Safely capture @MainActor state before doing background work.
-                        let (updatesController, migratorEnabled, romMigrator, hasLibraryVC) = await MainActor.run {
+                        let (updatesController, romMigrator, hasLibraryVC) = await MainActor.run {
                             (
                                 self.appState?.libraryUpdatesController,
-                                PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false,
                                 self.appState?.gameLibrary?.romMigrator,
                                 self.gameLibraryViewController != nil
                             )
                         }
+                        // Synchronous — no actor hop needed (PVFeatureFlags is thread-safe)
+                        let migratorEnabled = PVFeatureFlags.shared.isEnabled(.romPathMigrator)
 
                         // Heavy work must never run on the main actor during boot.
                         RomDatabase.refresh()
@@ -210,7 +211,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                                 DLOG("Finished save state recovery.")
                             }
 
-                            if await PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false {
+                            if PVFeatureFlags.shared.isEnabled(.romPathMigrator) {
                                 fixFilesTask = Task.detached { @MainActor in
                                     DLOG("Starting ROM path migration fixes...")
                                     try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()

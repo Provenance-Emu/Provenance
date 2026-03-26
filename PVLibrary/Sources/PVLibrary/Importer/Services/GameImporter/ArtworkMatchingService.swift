@@ -70,7 +70,7 @@ public actor FastArtworkLookupService {
     ///   - systemID: Optional system identifier to narrow results.
     /// - Returns: An artwork URL string if found within the timeout, otherwise `nil`.
     public func findArtwork(exactTitle: String, md5: String, systemID: SystemIdentifier?) async -> String? {
-        guard await PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) else { return nil }
+        guard PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) else { return nil }
         let title = exactTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return nil }
 

@@ -747,7 +747,7 @@ public extension GameLaunchingViewController {
                     }
                     // Show the enriched smart picker when the feature flag is on AND there is
                     // useful metadata; fall back to the plain list picker otherwise.
-                    let smartFlagEnabled = await PVFeatureFlags.shared.isEnabled(.smartCoreSelection)
+                    let smartFlagEnabled = PVFeatureFlags.shared.isEnabled(.smartCoreSelection)
                     let useSmartPicker = hasMetadata && smartFlagEnabled
                     if useSmartPicker {
                         let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in

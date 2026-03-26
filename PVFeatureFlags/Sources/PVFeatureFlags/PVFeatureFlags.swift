@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(os)
+import os
+#endif
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -15,7 +18,7 @@ import Combine
 #endif
 
 /// Enum representing all available feature flags
-public enum PVFeature: String, CaseIterable {
+public enum PVFeature: String, CaseIterable, Sendable {
     case inAppFreeROMs = "inAppFreeROMs"
     case romPathMigrator = "romPathMigrator"
     case cheatsUseSwiftUI = "cheatsUseSwiftUI"
@@ -81,7 +84,7 @@ public enum PVFeature: String, CaseIterable {
 }
 
 /// Represents the type of app installation
-public enum PVAppType: String, CaseIterable {
+public enum PVAppType: String, CaseIterable, Sendable {
     /// Standard non-App Store version
     case standard = "standard"
     /// Lite non-App Store version
@@ -220,27 +223,95 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     }
 }
 
-/// Core feature flags engine: loads configuration, evaluates flag states against app criteria.
-@MainActor public final class PVFeatureFlags: @unchecked Sendable {
-    /// Shared instance.
+// MARK: - PVFeatureFlags
+
+/// Thread-safe feature flag engine.
+///
+/// All flag reads (`isEnabled`, subscript) are **synchronous** and may be called from any
+/// thread or actor — **no `await` required**. Internal state is protected by an
+/// `OSAllocatedUnfairLock` (iOS/tvOS 16+), which eliminates bare lock/unlock pairs and
+/// the associated early-return deadlock risk. Configuration mutations (loading from
+/// network or disk) update a pre-computed cache so subsequent reads are a single
+/// lock-protected dictionary lookup.
+///
+/// Combine subscribers receive a `stateDidChange` notification whenever the cache is
+/// rebuilt (config load or debug-override change). `PVFeatureFlagsManager` uses this to
+/// keep its `@Published featureStates` up to date on the main actor without polling.
+///
+/// Usage:
+/// ```swift
+/// // Synchronous — no await, no actor hop
+/// if PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) { ... }
+/// if PVFeatureFlags.shared[.pauseTileMenu] { ... }
+///
+/// // Async configuration loading (network I/O)
+/// try await PVFeatureFlags.shared.loadConfiguration(from: remoteURL)
+/// ```
+public final class PVFeatureFlags: @unchecked Sendable {
+
+    // MARK: - Shared Singleton
+
     public static let shared = PVFeatureFlags()
 
-    /// Loaded configuration. `@MainActor`-isolated; may be updated at runtime (e.g. remote reload).
-    /// Callers on background actors must use `await` on `PVFeatureFlags` APIs to access it safely.
-    internal private(set) var configuration: FeatureFlagsConfiguration?
-    private let appType: PVAppType
-    private let buildNumber: String?
-    private let appVersion: String
+    // MARK: - Immutable App Context (set once at init, never mutated)
 
-    public init(appType: PVAppType? = nil,
-                buildNumber: String? = nil,
-                appVersion: String? = nil) {
-        self.appType = appType ?? PVFeatureFlags.getCurrentAppType()
-        self.buildNumber = buildNumber ?? PVFeatureFlags.getCurrentBuildNumber()
-        self.appVersion = appVersion ?? PVFeatureFlags.getCurrentAppVersion()
+    private let _appType: PVAppType
+    private let _buildNumber: String?
+    private let _appVersion: String
+
+    // MARK: - Mutable State (lock-protected)
+
+    private struct _State {
+        var configuration: FeatureFlagsConfiguration?
+        /// Pre-computed flag states keyed by `PVFeature.rawValue`.
+        /// Rebuilt whenever configuration or debug overrides change.
+        var cachedStates: [String: Bool] = [:]
     }
 
-    /// Convenience initializer with a pre-loaded configuration (for testing)
+#if canImport(os)
+    /// `OSAllocatedUnfairLock` bundles all mutable state and eliminates bare
+    /// lock/unlock pairs — available on iOS 16+ / tvOS 16+.
+    private let _storage = OSAllocatedUnfairLock(initialState: _State())
+
+    private func _withState<T>(_ body: (inout _State) -> T) -> T {
+        _storage.withLock { body(&$0) }
+    }
+#else
+    private let _lock = NSLock()
+    private var _rawState = _State()
+
+    private func _withState<T>(_ body: (inout _State) -> T) -> T {
+        _lock.lock()
+        defer { _lock.unlock() }
+        return body(&_rawState)
+    }
+#endif
+
+    // MARK: - Change Notifications
+
+#if canImport(Combine)
+    private let _changeSubject = PassthroughSubject<Void, Never>()
+
+    /// Publisher that fires (on an unspecified thread) whenever any feature flag state changes.
+    /// Downstream observers should use `.receive(on: DispatchQueue.main)` if they update UI.
+    public var stateDidChange: AnyPublisher<Void, Never> {
+        _changeSubject.eraseToAnyPublisher()
+    }
+#endif
+
+    // MARK: - Init
+
+    public init(
+        appType: PVAppType? = nil,
+        buildNumber: String? = nil,
+        appVersion: String? = nil
+    ) {
+        _appType = appType ?? PVFeatureFlags.getCurrentAppType()
+        _buildNumber = buildNumber ?? PVFeatureFlags.getCurrentBuildNumber()
+        _appVersion = appVersion ?? PVFeatureFlags.getCurrentAppVersion()
+    }
+
+    /// Convenience initializer with a pre-loaded configuration (for testing).
     internal convenience init(
         configuration: FeatureFlagsConfiguration,
         appType: PVAppType? = nil,
@@ -248,27 +319,42 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         appVersion: String? = nil
     ) {
         self.init(appType: appType, buildNumber: buildNumber, appVersion: appVersion)
-        self.configuration = configuration
+        _withState { state in
+            state.configuration = configuration
+            _rebuildCache(&state)
+        }
     }
 
-    /// Set configuration directly (for testing or programmatic setup)
+    // MARK: - Internal Configuration Access (tests + manager)
+
+    /// Returns the current configuration (snapshot).
+    internal var configuration: FeatureFlagsConfiguration? {
+        _withState { $0.configuration }
+    }
+
     internal func setConfiguration(_ configuration: FeatureFlagsConfiguration) {
-        self.configuration = configuration
+        let changed = _withState { state -> Bool in
+            state.configuration = configuration
+            let before = state.cachedStates
+            _rebuildCache(&state)
+            return state.cachedStates != before
+        }
+        if changed { _notifyChange() }
     }
 
     // MARK: - Configuration Loading
 
-    /// Load feature flags from a JSON file at the given URL (remote or local).
-    /// Uses a 10-second timeout so the call never hangs indefinitely on tvOS
-    /// or when there is no network connectivity.
+    /// Load feature flags from a JSON URL (remote or local). The cache is rebuilt
+    /// automatically on success.
     public func loadConfiguration(from url: URL) async throws {
         var request = URLRequest(url: url)
         request.timeoutInterval = 10
         let (data, _) = try await URLSession.shared.data(for: request)
-        configuration = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+        let config = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+        setConfiguration(config)
     }
 
-    /// Load the bundled `features.json` shipped inside the SPM package as a fallback.
+    /// Load the bundled `features.json` shipped inside the SPM package.
     /// - Returns: `true` if the bundled configuration was loaded successfully.
     @discardableResult
     public func loadBundledConfiguration() -> Bool {
@@ -276,15 +362,15 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
               let data = try? Data(contentsOf: url),
               let config = try? JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
         else { return false }
-        configuration = config
+        setConfiguration(config)
         return true
     }
 
     // MARK: - App Metadata
 
     public static func getCurrentAppType() -> PVAppType {
-        let appTypeString = Bundle.main.infoDictionary?["PVAppType"] as? String ?? "standard"
-        return PVAppType(rawValue: appTypeString) ?? .standard
+        let str = Bundle.main.infoDictionary?["PVAppType"] as? String ?? "standard"
+        return PVAppType(rawValue: str) ?? .standard
     }
 
     public static func getCurrentBuildNumber() -> String? {
@@ -295,169 +381,171 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
     }
 
-    // MARK: - Feature Evaluation
+    // MARK: - Flag Reads (Synchronous, thread-safe, no actor hop required)
 
-    /// Check whether a feature is enabled by its `PVFeature` enum case.
-    /// `@MainActor`-isolated; call with `await` from non-main-actor contexts.
+    /// Returns `true` if the feature is enabled.
+    ///
+    /// This is a **synchronous** call safe from any thread or Swift actor — no `await` needed.
+    /// Debug overrides (stored in `UserDefaults`) take precedence over configuration values.
     public func isEnabled(_ feature: PVFeature) -> Bool {
-        // Debug overrides take highest priority.
-        // Read directly from UserDefaults (thread-safe) to avoid allocating/parsing the overrides dictionary.
-        if let rawDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
-           let value = rawDict[feature.rawValue] {
-            if let boolValue = value as? Bool { return boolValue }
-        }
-
-        guard let featureConfig = configuration?.features[feature.rawValue] else {
-            return false
-        }
-
-        if let allowedTypes = featureConfig.allowedAppTypes,
-           !allowedTypes.contains(appType.rawValue) {
-            return false
-        }
-
-        if let minBuild = featureConfig.minBuildNumber,
-           let currentBuild = buildNumber,
-           compareVersions(currentBuild, minBuild) < 0 {
-            return false
-        }
-
-        if let minVersion = featureConfig.minVersion,
-           compareVersions(appVersion, minVersion) < 0 {
-            return false
-        }
-
-        return featureConfig.enabled
+        if let override = _debugOverride(for: feature) { return override }
+        return _withState { $0.cachedStates[feature.rawValue] ?? false }
     }
 
-    /// Check whether a feature is enabled by its raw string key.
-    /// `@MainActor`-isolated; call with `await` from non-main-actor contexts.
+    /// Returns `true` if the feature identified by `featureKey` is enabled.
+    ///
+    /// Known `PVFeature` raw values use the pre-computed cache. Unknown keys are evaluated
+    /// live against the current configuration (useful for remotely-defined flags not in the enum).
     public func isEnabled(_ featureKey: String) -> Bool {
-        // If this key matches a known PVFeature, use the enum-based evaluation (including debug overrides).
-        if let feature = PVFeature(rawValue: featureKey) {
-            return isEnabled(feature)
-        }
-
-        // Otherwise, evaluate directly from the configuration using the raw key.
-        guard let featureConfig = configuration?.features[featureKey] else {
-            return false
-        }
-
-        if let allowedTypes = featureConfig.allowedAppTypes,
-           !allowedTypes.contains(appType.rawValue) {
-            return false
-        }
-
-        if let minBuild = featureConfig.minBuildNumber,
-           let currentBuild = buildNumber,
-           compareVersions(currentBuild, minBuild) < 0 {
-            return false
-        }
-
-        if let minVersion = featureConfig.minVersion,
-           compareVersions(appVersion, minVersion) < 0 {
-            return false
-        }
-
-        return featureConfig.enabled
-    }
-
-    /// Returns an array of restriction reasons for a feature (empty = no restrictions / feature not found).
-    public func getFeatureRestrictions(_ featureKey: String) -> [String] {
-        guard let feature = configuration?.features[featureKey] else { return ["Feature not found"] }
-
-        var restrictions: [String] = []
-
-        if let allowedTypes = feature.allowedAppTypes,
-           !allowedTypes.contains(appType.rawValue) {
-            restrictions.append("App type \(appType.rawValue) not allowed")
-        }
-
-        if let minBuild = feature.minBuildNumber,
-           let currentBuild = buildNumber,
-           compareVersions(currentBuild, minBuild) < 0 {
-            restrictions.append("Build \(currentBuild) below minimum \(minBuild)")
-        }
-
-        if let minVersion = feature.minVersion,
-           compareVersions(appVersion, minVersion) < 0 {
-            restrictions.append("Version \(appVersion) below minimum \(minVersion)")
-        }
-
-        return restrictions
-    }
-
-    /// Returns all feature flags with their config and current enabled state.
-    public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
-        PVFeature.allCases.map { featureCase in
-            let key = featureCase.rawValue
-            let featureConfig = configuration?.features[key]
-                ?? FeatureFlag(enabled: false, description: "Feature not defined in configuration")
-            return (key: key, flag: featureConfig, enabled: isEnabled(featureCase))
+        if let feature = PVFeature(rawValue: featureKey) { return isEnabled(feature) }
+        return _withState { state -> Bool in
+            guard let featureConfig = state.configuration?.features[featureKey] else { return false }
+            return _evaluate(featureConfig)
         }
     }
 
-    // MARK: - Debug Overrides
-
-    /// Set a debug/test configuration, replacing any loaded configuration.
-    public func setDebugConfiguration(features: [String: FeatureFlag]) {
-        self.configuration = FeatureFlagsConfiguration(features: features)
+    /// Subscript shorthand: `PVFeatureFlags.shared[.pauseTileMenu]`
+    public subscript(_ feature: PVFeature) -> Bool {
+        isEnabled(feature)
     }
 
-    internal var debugOverrides: [PVFeature: Bool?] {
-        get {
-            let defaults = UserDefaults.standard
-            guard let rawDict = defaults.dictionary(forKey: "PVFeatureFlagsDebugOverrides") else {
-                return [:]
-            }
-            var result: [PVFeature: Bool?] = [:]
-            for (key, value) in rawDict {
-                guard let feature = PVFeature(rawValue: key) else { continue }
-                if let boolValue = value as? Bool {
-                    result[feature] = boolValue
-                } else if (value as? String) == "nil" {
-                    result[feature] = nil
-                }
-            }
-            return result
-        }
-        set {
-            var storableDict: [String: Any] = [:]
-            for (feature, optionalValue) in newValue {
-                if let boolValue = optionalValue {
-                    storableDict[feature.rawValue] = boolValue
-                } else {
-                    storableDict[feature.rawValue] = "nil"
-                }
-            }
-            UserDefaults.standard.set(storableDict, forKey: "PVFeatureFlagsDebugOverrides")
-        }
-    }
+    // MARK: - Debug Overrides (synchronous, thread-safe via UserDefaults)
 
-    /// Set a per-feature debug override (`nil` clears the override).
+    private static let _overridesKey = "PVFeatureFlagsDebugOverrides"
+
+    /// Set a per-feature debug override (`nil` clears the override for that feature).
     public func setDebugOverride(for feature: PVFeature, enabled: Bool?) {
-        var current = self.debugOverrides
-        current[feature] = enabled
-        self.debugOverrides = current
+        var dict = UserDefaults.standard.dictionary(forKey: Self._overridesKey) ?? [:]
+        if let v = enabled {
+            dict[feature.rawValue] = v
+        } else {
+            dict.removeValue(forKey: feature.rawValue)
+        }
+        UserDefaults.standard.set(dict, forKey: Self._overridesKey)
+        _notifyChange()
     }
 
     /// Clear all debug overrides.
     public func clearDebugOverrides() {
-        self.debugOverrides = [:]
+        UserDefaults.standard.removeObject(forKey: Self._overridesKey)
+        _notifyChange()
     }
 
-    // MARK: - Helpers
+    /// Dictionary view of current debug overrides (keyed by `PVFeature`).
+    internal var debugOverrides: [PVFeature: Bool?] {
+        get {
+            let raw = UserDefaults.standard.dictionary(forKey: Self._overridesKey) ?? [:]
+            var result: [PVFeature: Bool?] = [:]
+            for (key, value) in raw {
+                guard let feature = PVFeature(rawValue: key) else { continue }
+                result[feature] = value as? Bool
+            }
+            return result
+        }
+        set {
+            var dict: [String: Any] = [:]
+            for (feature, opt) in newValue {
+                if let b = opt { dict[feature.rawValue] = b }
+            }
+            UserDefaults.standard.set(dict, forKey: Self._overridesKey)
+            _notifyChange()
+        }
+    }
 
-    nonisolated private func compareVersions(_ version1: String, _ version2: String) -> Int {
-        let components1 = version1.split(separator: ".")
-        let components2 = version2.split(separator: ".")
-        let maxLength = max(components1.count, components2.count)
+    // MARK: - Feature Info
 
-        for i in 0..<maxLength {
-            let num1 = i < components1.count ? Int(components1[i]) ?? 0 : 0
-            let num2 = i < components2.count ? Int(components2[i]) ?? 0 : 0
-            if num1 < num2 { return -1 }
-            if num1 > num2 { return 1 }
+    /// Returns restriction reasons for a feature (empty = no restrictions).
+    public func getFeatureRestrictions(_ featureKey: String) -> [String] {
+        _withState { state -> [String] in
+            guard let feature = state.configuration?.features[featureKey] else { return ["Feature not found"] }
+            var restrictions: [String] = []
+            if let allowed = feature.allowedAppTypes, !allowed.contains(_appType.rawValue) {
+                restrictions.append("App type \(_appType.rawValue) not allowed")
+            }
+            if let minBuild = feature.minBuildNumber, let current = _buildNumber,
+               Self._compareVersions(current, minBuild) < 0 {
+                restrictions.append("Build \(current) below minimum \(minBuild)")
+            }
+            if let minVer = feature.minVersion, Self._compareVersions(_appVersion, minVer) < 0 {
+                restrictions.append("Version \(_appVersion) below minimum \(minVer)")
+            }
+            return restrictions
+        }
+    }
+
+    /// Returns all feature flags with their configuration and current enabled state.
+    public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
+        PVFeature.allCases.map { featureCase in
+            let key = featureCase.rawValue
+            let featureConfig = _withState { state in
+                state.configuration?.features[key]
+                    ?? FeatureFlag(enabled: false, description: "Feature not defined in configuration")
+            }
+            return (key: key, flag: featureConfig, enabled: isEnabled(featureCase))
+        }
+    }
+
+    // MARK: - Debug Configuration
+
+    public func setDebugConfiguration(features: [String: FeatureFlag]) {
+        setConfiguration(FeatureFlagsConfiguration(features: features))
+    }
+
+    // MARK: - Private Helpers
+
+    /// Rebuilds `state.cachedStates` from `state.configuration`.
+    /// Must be called inside `_withState { }`.
+    private func _rebuildCache(_ state: inout _State) {
+        var newStates: [String: Bool] = [:]
+        for feature in PVFeature.allCases {
+            guard let config = state.configuration?.features[feature.rawValue] else {
+                newStates[feature.rawValue] = false
+                continue
+            }
+            newStates[feature.rawValue] = _evaluate(config)
+        }
+        state.cachedStates = newStates
+    }
+
+    /// Evaluates a single `FeatureFlag` against the current (immutable) app context.
+    /// Safe to call from inside or outside the lock — only reads `_appType`, `_buildNumber`,
+    /// and `_appVersion`, which are set once at init and never mutated.
+    private func _evaluate(_ featureConfig: FeatureFlag) -> Bool {
+        if let allowedTypes = featureConfig.allowedAppTypes,
+           !allowedTypes.contains(_appType.rawValue) {
+            return false
+        }
+        if let minBuild = featureConfig.minBuildNumber,
+           let currentBuild = _buildNumber,
+           Self._compareVersions(currentBuild, minBuild) < 0 {
+            return false
+        }
+        if let minVersion = featureConfig.minVersion,
+           Self._compareVersions(_appVersion, minVersion) < 0 {
+            return false
+        }
+        return featureConfig.enabled
+    }
+
+    private func _debugOverride(for feature: PVFeature) -> Bool? {
+        UserDefaults.standard.dictionary(forKey: Self._overridesKey)?[feature.rawValue] as? Bool
+    }
+
+    private func _notifyChange() {
+#if canImport(Combine)
+        _changeSubject.send()
+#endif
+    }
+
+    private static func _compareVersions(_ v1: String, _ v2: String) -> Int {
+        let c1 = v1.split(separator: ".")
+        let c2 = v2.split(separator: ".")
+        let maxLen = max(c1.count, c2.count)
+        for i in 0..<maxLen {
+            let n1 = i < c1.count ? Int(c1[i]) ?? 0 : 0
+            let n2 = i < c2.count ? Int(c2[i]) ?? 0 : 0
+            if n1 < n2 { return -1 }
+            if n1 > n2 { return 1 }
         }
         return 0
     }
@@ -466,27 +554,43 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 // MARK: - PVFeatureFlagsManager
 
 #if canImport(Combine)
-/// Observable manager for SwiftUI integration; wraps `PVFeatureFlags` and publishes reactive state.
+/// `@MainActor`-isolated SwiftUI integration layer.
+///
+/// Wraps `PVFeatureFlags` and exposes a `@Published featureStates` dictionary so SwiftUI
+/// views can react to flag changes. Convenience `Bool` properties are pre-computed from the
+/// cached states — all reads are O(1) dictionary lookups on the main actor.
+///
+/// For non-UI code, prefer `PVFeatureFlags.shared.isEnabled(_:)` directly — it is
+/// synchronous and does not require the main actor.
 @MainActor public final class PVFeatureFlagsManager: ObservableObject, @unchecked Sendable {
-    /// Shared singleton
+    /// Shared singleton.
     public static let shared = PVFeatureFlagsManager()
 
     private let featureFlags: PVFeatureFlags
     private var remoteFetcher: PVFeatureFlagsFetcher?
+    private var changeCancellable: AnyCancellable?
 
-    /// Published dictionary of current feature states.
+    /// Published dictionary of current feature states (rebuilt on the main actor whenever
+    /// `PVFeatureFlags` reports a state change via its `stateDidChange` publisher).
     @Published public private(set) var featureStates: [PVFeature: Bool] = [:]
 
     private var flagObservablesCache: [PVFeature: FeatureFlagObservable] = [:]
 
     private init() {
-        self.featureFlags = PVFeatureFlags()
-        updateFeatureStates()
+        self.featureFlags = PVFeatureFlags.shared
+        _bootstrap()
     }
 
-    init(featureFlags: PVFeatureFlags) {
+    internal init(featureFlags: PVFeatureFlags) {
         self.featureFlags = featureFlags
-        updateFeatureStates()
+        _bootstrap()
+    }
+
+    private func _bootstrap() {
+        _updateFeatureStates()
+        changeCancellable = featureFlags.stateDidChange
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?._updateFeatureStates() }
     }
 
     // MARK: - Convenience Feature Properties
@@ -513,26 +617,18 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
     // MARK: - Feature Queries
 
-    /// Check whether a feature is enabled by its raw string key.
-    /// - Parameter featureKey: The raw string key for the feature.
-    /// - Returns: `true` if the feature is enabled. For keys that map to a `PVFeature` case,
-    ///            the precomputed `featureStates` are used; otherwise, this falls back to
-    ///            the underlying `featureFlags` configuration.
+    /// Returns `true` if the feature is enabled. For known `PVFeature` cases the
+    /// pre-computed `featureStates` cache is used; unknown raw keys fall back to the engine.
     public func isEnabled(_ featureKey: String) -> Bool {
         if let feature = PVFeature(rawValue: featureKey) {
             return featureStates[feature] ?? false
         }
-
         return featureFlags.isEnabled(featureKey)
     }
 
     // MARK: - Remote Configuration
 
     /// Configure a remote URL for feature flags with optional cache and retry settings.
-    /// - Parameters:
-    ///   - url: Remote URL of the JSON configuration
-    ///   - cacheDuration: Seconds before a cached config is considered stale (default: 3600)
-    ///   - maxRetries: Maximum retry attempts on network failure (default: 3)
     public func configureRemote(url: URL, cacheDuration: TimeInterval = 3600, maxRetries: Int = 3) {
         remoteFetcher = PVFeatureFlagsFetcher(url: url, maxRetries: maxRetries, cacheDuration: cacheDuration)
     }
@@ -540,7 +636,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Load configuration from a specific URL (simple, no retry/cache logic).
     public func loadConfiguration(from url: URL) async throws {
         try await featureFlags.loadConfiguration(from: url)
-        updateFeatureStates()
+        // stateDidChange fires automatically; _updateFeatureStates will be called via Combine.
     }
 
     /// Load remote configuration using the configured fetcher.
@@ -550,45 +646,30 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// 2. Remote fetch with exponential-backoff retry
     /// 3. Stale cache (if remote fails)
     /// 4. Bundled `features.json` (last resort)
-    ///
-    /// - Throws: `PVFeatureFlagsFetcherError.notConfigured` if no remote URL is set,
-    ///           or any network/decoding error if all fallbacks fail.
     public func loadRemoteConfiguration() async throws {
         guard let fetcher = remoteFetcher else {
             throw PVFeatureFlagsFetcherError.notConfigured
         }
 
-        // 1. Fresh cache
         if fetcher.isCacheValid(), let cached = fetcher.loadCached() {
             featureFlags.setConfiguration(cached)
-            updateFeatureStates()
             return
         }
 
-        // 2. Remote fetch with retry
         do {
             let config = try await fetcher.fetchWithRetry()
             featureFlags.setConfiguration(config)
-            updateFeatureStates()
         } catch {
-            // 3. Stale cache fallback
             if let stale = fetcher.loadCached() {
                 featureFlags.setConfiguration(stale)
-                updateFeatureStates()
                 return
             }
-            // 4. Bundled fallback
-            if featureFlags.loadBundledConfiguration() {
-                updateFeatureStates()
-                return
-            }
-            // All fallbacks failed — propagate the original error
+            if featureFlags.loadBundledConfiguration() { return }
             throw error
         }
     }
 
     /// Refresh the configuration only if the cache has expired.
-    /// Does nothing if no remote URL is configured or the cache is still valid.
     public func refreshIfNeeded() async throws {
         guard let fetcher = remoteFetcher, !fetcher.isCacheValid() else { return }
         try await loadRemoteConfiguration()
@@ -601,19 +682,17 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         }
         let config = try await fetcher.fetchWithRetry()
         featureFlags.setConfiguration(config)
-        updateFeatureStates()
     }
 
     // MARK: - Debug Overrides
 
     public func setDebugOverride(for feature: PVFeature, enabled: Bool?) {
         featureFlags.setDebugOverride(for: feature, enabled: enabled)
-        updateFeatureStates()
+        // stateDidChange fires; manager updates via Combine subscription.
     }
 
     public func clearDebugOverrides() {
         featureFlags.clearDebugOverrides()
-        updateFeatureStates()
     }
 
     public func getCurrentDebugOverrides() -> [PVFeature: Bool?] {
@@ -624,18 +703,12 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
     public func setDebugConfiguration(features: [String: FeatureFlag]) {
         featureFlags.setDebugConfiguration(features: features)
-        updateFeatureStates()
     }
 
     // MARK: - Feature Info
 
     public func getAllFeatureFlags() -> [(key: String, flag: FeatureFlag, enabled: Bool)] {
-        PVFeature.allCases.map { featureCase in
-            let key = featureCase.rawValue
-            let featureConfig = featureFlags.configuration?.features[key]
-                ?? FeatureFlag(enabled: false, description: "Feature not defined in configuration")
-            return (key: key, flag: featureConfig, enabled: featureFlags.isEnabled(featureCase))
-        }
+        featureFlags.getAllFeatureFlags()
     }
 
     public func getFeatureRestrictions(_ featureKey: String) -> [String] {
@@ -654,16 +727,14 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
     // MARK: - Private
 
-    private func updateFeatureStates() {
+    private func _updateFeatureStates() {
         var newStates: [PVFeature: Bool] = [:]
         var hasChanges = false
-
         for feature in PVFeature.allCases {
-            let effectiveState = featureFlags.isEnabled(feature)
-            newStates[feature] = effectiveState
-            if featureStates[feature] != effectiveState { hasChanges = true }
+            let state = featureFlags.isEnabled(feature)
+            newStates[feature] = state
+            if featureStates[feature] != state { hasChanges = true }
         }
-
         if hasChanges || featureStates.count != newStates.count {
             featureStates = newStates
         }
