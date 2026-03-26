@@ -143,11 +143,12 @@ settings:
       - "SDL_VIDEO_OPENGL=1"
     # Exclude non-NEON sources on tvOS device (mirrors Config.xcconfig)
     "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*]": "$(inherited) 3DMath.cpp RSP_LoadMatrix.cpp CRC_OPT.cpp"
-    # tvOS Simulator: use inherited source inclusion/exclusion behavior.
-    # XcodeGen resolves sources explicitly for each target; no additional stub
-    # files are required beyond what each target already declares.
-    "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "$(inherited)"
-    "INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*]": "$(inherited)"
+    # tvOS Simulator: mirror Config.xcconfig — compile only the PVDebug.c stub.
+    # Config.xcconfig uses:
+    #   EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
+    #   INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+    "EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*]": "$(inherited) *"
+    "INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*]": "$(inherited) PVDebug.c"
     HEADER_SEARCH_PATHS: "$(inherited)"
     FRAMEWORK_SEARCH_PATHS: "$(inherited)"
     LD_RUNPATH_SEARCH_PATHS: "$(inherited)"
