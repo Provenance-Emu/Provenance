@@ -435,7 +435,14 @@ public actor ArtworkSearchQueue {
     private func persistBoxFrontImage(data: Data, artworkURL: URL, md5Hash: String, gameID: String, gameTitle: String) async {
         #if os(macOS)
         guard let artwork = NSImage(data: data) else {
-            WLOG("ArtworkSearchQueue: Could not decode image data for \(gameTitle)")
+            WLOG("ArtworkSearchQueue: Could not decode image data for \(gameTitle) — persisting URL for retry")
+            await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try? realm.write { game.originalArtworkURL = artworkURL.absoluteString }
+            }.value
             return
         }
         do {
@@ -456,7 +463,14 @@ public actor ArtworkSearchQueue {
         }
         #elseif !os(watchOS)
         guard let artwork = UIImage(data: data) else {
-            WLOG("ArtworkSearchQueue: Could not decode image data for \(gameTitle)")
+            WLOG("ArtworkSearchQueue: Could not decode image data for \(gameTitle) — persisting URL for retry")
+            await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try? realm.write { game.originalArtworkURL = artworkURL.absoluteString }
+            }.value
             return
         }
         do {
@@ -480,7 +494,17 @@ public actor ArtworkSearchQueue {
 
     private func persistBoxBackImage(data: Data, artworkURL: URL, md5Hash: String, gameID: String, gameTitle: String) async {
         #if os(macOS)
-        guard let artwork = NSImage(data: data) else { return }
+        guard let artwork = NSImage(data: data) else {
+            WLOG("ArtworkSearchQueue: Could not decode box-back image for \(gameTitle) — persisting URL for later")
+            await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try? realm.write { game.boxBackArtworkURL = artworkURL.absoluteString }
+            }.value
+            return
+        }
         do {
             _ = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
             try await Task.detached(priority: .utility) {
@@ -497,7 +521,17 @@ public actor ArtworkSearchQueue {
             WLOG("ArtworkSearchQueue: Failed to cache box-back for \(gameTitle): \(error.localizedDescription)")
         }
         #elseif !os(watchOS)
-        guard let artwork = UIImage(data: data) else { return }
+        guard let artwork = UIImage(data: data) else {
+            WLOG("ArtworkSearchQueue: Could not decode box-back image for \(gameTitle) — persisting URL for later")
+            await Task.detached(priority: .utility) {
+                guard let realm = try? Realm(),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                                 (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+                else { return }
+                try? realm.write { game.boxBackArtworkURL = artworkURL.absoluteString }
+            }.value
+            return
+        }
         do {
             _ = try PVMediaCache.writeImage(toDisk: artwork, withKey: artworkURL.absoluteString)
             try await Task.detached(priority: .utility) {
