@@ -29,7 +29,9 @@ public struct BatchArtworkMatchingView: View {
     private var enabledSourcesRaw: String = ArtworkSource.allCases.map(\.rawValue).joined(separator: ",")
 
     private var enabledSources: Set<ArtworkSource> {
-        Set(enabledSourcesRaw.split(separator: ",").compactMap { ArtworkSource(rawValue: String($0)) })
+        let parsed = Set(enabledSourcesRaw.split(separator: ",").compactMap { ArtworkSource(rawValue: String($0)) })
+        // Fall back to all sources when the stored value is empty/invalid (e.g., after migration or reset)
+        return parsed.isEmpty ? Set(ArtworkSource.allCases) : parsed
     }
 
     private func setSourceEnabled(_ source: ArtworkSource, _ enabled: Bool) {
@@ -179,6 +181,9 @@ public struct BatchArtworkMatchingView: View {
                     #if !os(tvOS)
                     .toggleStyle(SwitchToggleStyle(tint: .retroPink))
                     #endif
+                    // Prevent disabling the last remaining source — keep Toggle greyed out so
+                    // the user understands it can't be deselected rather than seeing a snap-back.
+                    .disabled(enabledSources.contains(source) && enabledSources.count == 1)
                 }
             }
 
