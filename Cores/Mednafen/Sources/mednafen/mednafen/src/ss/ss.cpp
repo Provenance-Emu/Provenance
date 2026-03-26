@@ -2594,6 +2594,18 @@ using namespace MDFN_IEN_SS;
 };
 
 // ---- Provenance RetroAchievements RAM accessors ----
+//
+// WARNING: WorkRAML / WorkRAMH are uint16_t arrays that Mednafen accesses through
+// ne16_rbo_be / ne16_wbo_be helpers which swap byte lanes on little-endian hosts
+// (byte_offset ^ 1 for 8-bit reads).  The reinterpret_cast<uint8_t*> below
+// exposes raw host memory layout — byte-wise readers (e.g. rcheevos) will see
+// scrambled byte order on ARM/x86.
+//
+// These accessors are declared in the public header so the linker can resolve the
+// symbols, but the Swift bridge (MednafenGameCore+RetroAchievements.swift) returns
+// an empty region list for Saturn and NEVER calls them.  Do NOT call these
+// functions until a byte-correct shadow buffer or rcheevos read-callback is
+// implemented for Saturn.  See issue #3380 Phase 2.
 extern "C" {
     uint8_t* mdfn_ss_workraml_ptr(void) { return reinterpret_cast<uint8_t*>(WorkRAML); }
     size_t   mdfn_ss_workraml_size(void) { return sizeof(WorkRAML); }

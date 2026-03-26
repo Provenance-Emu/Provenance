@@ -56,9 +56,13 @@ extension MednafenGameCore: CoreRetroAchievements {
     // MARK: - Session lifecycle
 
     public func prepareAchievements(gameHash: String) async {
-        // Phase 2: call rc_client_load_game(client, gameHash) once PVRcheevos is linked.
-        // The game hash is the MD5 of the ROM/disc image (supplied by PVHashing).
-        // On success, set: _achievementsSessionActive = true
+        // Phase 1: intentionally a no-op. `_achievementsSessionActive` stays false,
+        // so `achievementsActive` returns false and PVUI hardcore restrictions are not
+        // triggered in this phase.
+        //
+        // Phase 2 will call rc_client_load_game(client, gameHash) here and, on a
+        // successful load, set `_achievementsSessionActive = true` so that
+        // `executeFrame` begins calling `tickAchievements()`.
     }
 
     public func stopAchievements() {
