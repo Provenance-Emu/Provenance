@@ -218,6 +218,17 @@ static pv_midi_state_t s_midiState = {0};
 /// are not fully protected by this lock; they must be called on non-concurrent paths
 /// (i.e., before any CoreMIDI callbacks or libretro reads are in flight).
 static os_unfair_lock s_midiRingLock = OS_UNFAIR_LOCK_INIT;
+
+/// Thread-safe cache of user-selected MIDI output destination endpoint refs.
+/// Updated by +setMIDIOutputEndpoints: (called from Swift via MIDIDeviceManager observation).
+/// -1 = never explicitly set by the user — legacy fallback: thin_midi_write uses MIDIGetDestination(0).
+///      This preserves the pre-PR behaviour for cores that use pv_libretro_midi_interface() but
+///      do not wire up the MIDIDeviceManager observer (e.g. the full RetroArch bridge PVLibRetroCore).
+///  0 = user explicitly selected "None" — thin_midi_write is a no-op.
+/// >0 = N user-selected destinations.
+static os_unfair_lock s_midiDestCacheLock = OS_UNFAIR_LOCK_INIT;
+static MIDIEndpointRef s_midiCachedDests[16] = {0};
+static int s_midiCachedDestCount = -1; // -1 = never set; 0 = "None"; >0 = N destinations
 #endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -1349,14 +1360,18 @@ static bool thin_midi_ensure_initialized(void) {
         }
     }
 
-    // Create output port and find first available destination
-    if (MIDIGetNumberOfDestinations() > 0) {
-        err = MIDIOutputPortCreate(s_midiState.client, CFSTR("Provenance MIDI Out"),
-                                   &s_midiState.outputPort);
-        if (err == noErr) {
-            s_midiState.outputEndpoint = MIDIGetDestination(0);
-            ILOG(@"ThinFrontend MIDI: connected to output destination");
-        }
+    // Create output port unconditionally. Destination selection is controlled at
+    // runtime via +setMIDIOutputEndpoints: (driven by MIDIDeviceManager). We do
+    // NOT cache MIDIGetDestination(0) here — that hardcodes the first device
+    // regardless of the user's picker selection. Creating the port unconditionally
+    // ensures hot-plug destinations work even when none exist at init time.
+    err = MIDIOutputPortCreate(s_midiState.client, CFSTR("Provenance MIDI Out"),
+                               &s_midiState.outputPort);
+    if (err == noErr) {
+        ILOG(@"ThinFrontend MIDI: output port created (%lu destination(s) available)",
+             (unsigned long)MIDIGetNumberOfDestinations());
+    } else {
+        ELOG(@"ThinFrontend MIDI: MIDIOutputPortCreate failed: %d", (int)err);
     }
 
     // Ring-buffer indices are already zero: s_midiState has static storage
@@ -1396,7 +1411,14 @@ static bool thin_midi_input_enabled(void) {
 
 static bool thin_midi_output_enabled(void) {
     thin_midi_ensure_initialized();
-    return s_midiState.outputPort != 0 && s_midiState.outputEndpoint != 0;
+    if (!s_midiState.outputPort) return false;
+    os_unfair_lock_lock(&s_midiDestCacheLock);
+    int count = s_midiCachedDestCount;
+    os_unfair_lock_unlock(&s_midiDestCacheLock);
+    // -1 means the user has never made an explicit selection — fall back to legacy behaviour
+    // (MIDIGetDestination(0)) for cores that don't wire the MIDIDeviceManager observer.
+    if (count < 0) return MIDIGetNumberOfDestinations() > 0;
+    return count > 0;
 }
 
 static bool thin_midi_read(uint8_t *byte) {
@@ -1416,17 +1438,57 @@ static bool thin_midi_read(uint8_t *byte) {
 
 static bool thin_midi_write(uint8_t byte, uint32_t delta_time) {
     (void)delta_time;
-    if (!s_midiState.outputPort || !s_midiState.outputEndpoint) return false;
+    if (!s_midiState.outputPort) return false;
 
-    // Build a single-byte MIDIPacketList
-    char buf[sizeof(MIDIPacketList) + sizeof(MIDIPacket)];
+    // Snapshot the current user-selected destinations (thread-safe).
+    os_unfair_lock_lock(&s_midiDestCacheLock);
+    int destCount = s_midiCachedDestCount;
+    MIDIEndpointRef dests[16];
+    if (destCount > 0) {
+        memcpy(dests, s_midiCachedDests, (size_t)destCount * sizeof(MIDIEndpointRef));
+    }
+    os_unfair_lock_unlock(&s_midiDestCacheLock);
+
+    // -1 means the user has never made an explicit selection (e.g. PVLibRetroCore which does
+    // not wire the MIDIDeviceManager observer). Fall back to the first available destination
+    // to preserve pre-PR behaviour for those cores.
+    // Cache the result: MIDIGetDestination(0) is called at byte granularity, so hitting
+    // CoreMIDI enumeration APIs on every send would be a performance regression.
+    // Benign init race: two threads may both see s_fallbackDest == 0 simultaneously and
+    // both call MIDIGetDestination(0); they receive the same value and the final store is
+    // idempotent — no lock needed here.
+    if (destCount < 0) {
+        static MIDIEndpointRef s_fallbackDest = (MIDIEndpointRef)0;
+        if (!s_fallbackDest) {
+            if (MIDIGetNumberOfDestinations() <= 0) return false;
+            MIDIEndpointRef ep = MIDIGetDestination(0);
+            if (!ep) return false;
+            s_fallbackDest = ep;
+        }
+        if (!s_fallbackDest) return false;
+        dests[0] = s_fallbackDest;
+        destCount = 1;
+    }
+
+    // No destination selected (user explicitly chose "None") — be a no-op.
+    if (destCount == 0) return false;
+
+    // Build a single-byte MIDIPacketList. Use alignas to satisfy MIDIPacketList's
+    // alignment requirement — a plain char[] may be under-aligned on some archs.
+    alignas(MIDIPacketList) char buf[sizeof(MIDIPacketList) + sizeof(MIDIPacket)];
     MIDIPacketList *pktList = (MIDIPacketList *)buf;
     MIDIPacket *pkt = MIDIPacketListInit(pktList);
     pkt = MIDIPacketListAdd(pktList, sizeof(buf), pkt, 0, 1, &byte);
     if (!pkt) return false;
 
-    OSStatus err = MIDISend(s_midiState.outputPort, s_midiState.outputEndpoint, pktList);
-    return err == noErr;
+    // Broadcast to all selected destinations.
+    bool sent = false;
+    for (int i = 0; i < destCount; i++) {
+        if (dests[i] && MIDISend(s_midiState.outputPort, dests[i], pktList) == noErr) {
+            sent = true;
+        }
+    }
+    return sent;
 }
 
 static bool thin_midi_flush(void) {
@@ -1790,6 +1852,29 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize savePath = _savePath;
 @synthesize frontendDelegate = _frontendDelegate;
 // Note: controllerPortInfo is a readonly property with an explicit getter below; no @synthesize needed.
+
+// MARK: - MIDI routing (class-level, called from Swift MIDIDeviceManager observation)
+
+/// Update the cached list of MIDI output destination endpoint refs.
+/// Called from `PVThinLibretroCore+MIDI.swift` whenever `MIDIDeviceManager.selectedDestinationIDs`
+/// or `destinations` changes. Thread-safe; may be called from any thread.
+///
+/// @param endpointRefs  Array of NSNumber wrapping MIDIEndpointRef (UInt32) values.
+///                      Pass an empty array when the user selects "None".
++ (void)setMIDIOutputEndpoints:(NSArray<NSNumber *> *)endpointRefs {
+#if PV_HAS_COREMIDI
+    int n = (int)MIN((NSInteger)endpointRefs.count, (NSInteger)16);
+    os_unfair_lock_lock(&s_midiDestCacheLock);
+    for (int i = 0; i < n; i++) {
+        s_midiCachedDests[i] = (MIDIEndpointRef)[endpointRefs[(NSUInteger)i] unsignedIntValue];
+    }
+    s_midiCachedDestCount = n;
+    os_unfair_lock_unlock(&s_midiDestCacheLock);
+    ILOG(@"ThinFrontend MIDI: output destinations updated (count=%d)", n);
+#else
+    (void)endpointRefs; // suppress unused-parameter warning on non-CoreMIDI builds
+#endif
+}
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (uintptr_t)currentEmuFBO {
