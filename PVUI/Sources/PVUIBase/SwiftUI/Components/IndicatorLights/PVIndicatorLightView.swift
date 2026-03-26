@@ -216,19 +216,11 @@ public struct PVIndicatorOverlayView: View {
     }
 
     public var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-
-                if registry.hasVisibleIndicators {
-                    PVIndicatorLightRowView(indicators: registry.visibleIndicators)
-                        .transition(.opacity.combined(with: .scale))
-                }
+        Group {
+            if registry.hasVisibleIndicators {
+                PVIndicatorLightRowView(indicators: registry.visibleIndicators)
+                    .transition(.opacity.combined(with: .scale))
             }
-            .padding(.top, 8)
-            .padding(.trailing, 16)
-
-            Spacer()
         }
     }
 }
