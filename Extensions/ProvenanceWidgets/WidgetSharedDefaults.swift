@@ -125,9 +125,27 @@ public struct WidgetLibraryStats: Sendable {
     public var totalPlayTimeFormatted: String {
         let hours = totalPlayTimeSeconds / 3600
         let minutes = (totalPlayTimeSeconds % 3600) / 60
-        if hours > 0 { return "\(hours)h \(minutes)m" }
-        if minutes > 0 { return "\(minutes)m" }
-        return "<1m"
+        if hours > 0 {
+            let format = NSLocalizedString(
+                "widget.common.playtime-hours-minutes %lld %lld",
+                bundle: .main,
+                comment: "Library Stats total play time formatted as hours and minutes"
+            )
+            return String(format: format, locale: Locale.current, hours, minutes)
+        }
+        if minutes > 0 {
+            let format = NSLocalizedString(
+                "widget.common.playtime-minutes %lld",
+                bundle: .main,
+                comment: "Library Stats total play time formatted as minutes only"
+            )
+            return String(format: format, locale: Locale.current, minutes)
+        }
+        return String(
+            localized: "widget.common.playtime-under-one-minute",
+            defaultValue: "<1m",
+            comment: "Library Stats total play time under one minute"
+        )
     }
 }
 

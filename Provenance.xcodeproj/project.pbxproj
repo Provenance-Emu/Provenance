@@ -864,6 +864,8 @@
 		B3DD06022F20031900000001 /* Widgets/LibraryStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */; };
 		B3DD06032F20031900000001 /* Views/GameArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05032F20031900000001 /* Views/GameArtworkView.swift */; };
 		B3DD06042F20031900000001 /* Views/SystemBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */; };
+		B3DD07042F20031900000000 /* WidgetLocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD07032F20031900000000 /* WidgetLocalizedStrings.swift */; };
+		B3DD07062F20031900000000 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3DD07052F20031900000000 /* Localizable.strings */; };
 		B3DF8ED82CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
 		B3DF8ED92CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
 		B3DF8EDA2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
@@ -2694,6 +2696,8 @@
 		B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameArtGalleryWidget.swift; sourceTree = "<group>"; };
 		B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingStandByWidget.swift; sourceTree = "<group>"; };
 		B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSharedDefaults.swift; sourceTree = "<group>"; };
+		B3DD07032F20031900000000 /* WidgetLocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocalizedStrings.swift; sourceTree = "<group>"; };
+		B3DD07052F20031900000000 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/RecentlyPlayedWidget.swift; sourceTree = "<group>"; };
 		B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/FavoritesWidget.swift; sourceTree = "<group>"; };
 		B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/LibraryStatsWidget.swift; sourceTree = "<group>"; };
@@ -7107,6 +7111,8 @@
 			children = (
 				B3DD01002F20031900000000 /* ProvenanceWidgetsBundle.swift */,
 				B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */,
+				B3DD07032F20031900000000 /* WidgetLocalizedStrings.swift */,
+				B3DD07052F20031900000000 /* Localizable.strings */,
 				B3DD01012F20031900000000 /* QuickLaunchWidget.swift */,
 				B3DD01022F20031900000000 /* NowPlayingWidget.swift */,
 				B3DD01032F20031900000000 /* GameArtGalleryWidget.swift */,
@@ -10210,6 +10216,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3DD07062F20031900000000 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10988,6 +10995,7 @@
 				B3DD02032F20031900000000 /* GameArtGalleryWidget.swift in Sources */,
 				B3DD02042F20031900000000 /* NowPlayingStandByWidget.swift in Sources */,
 				B3DD02052F20031900000000 /* WidgetSharedDefaults.swift in Sources */,
+				B3DD07042F20031900000000 /* WidgetLocalizedStrings.swift in Sources */,
 				B3DD06002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift in Sources */,
 				B3DD06012F20031900000001 /* Widgets/FavoritesWidget.swift in Sources */,
 				B3DD06022F20031900000001 /* Widgets/LibraryStatsWidget.swift in Sources */,

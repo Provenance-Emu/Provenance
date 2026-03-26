@@ -24,7 +24,7 @@ struct SystemBadgeView: View {
     var chrome: SystemBadgeChrome = .accentPill
 
     var body: some View {
-        Text(systemShortName.isEmpty ? "???" : systemShortName)
+        Text(systemShortName.isEmpty ? WidgetLocalizedStrings.unknownSystemAbbreviation : systemShortName)
             .font(.caption2)
             .fontWeight(.semibold)
             .foregroundStyle(.white)

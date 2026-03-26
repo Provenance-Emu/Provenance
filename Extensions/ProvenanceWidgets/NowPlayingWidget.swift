@@ -68,7 +68,18 @@ struct NowPlayingInlineView: View {
         if let track = entry.nowPlaying {
             Label {
                 if let artist = track.artistName {
-                    Text("\(track.trackTitle) — \(artist)")
+                    Text(
+                        String(
+                            format: NSLocalizedString(
+                                "widget.now-playing.track-line %@ — %@",
+                                bundle: .main,
+                                comment: "Now Playing title and artist line"
+                            ),
+                            locale: Locale.current,
+                            track.trackTitle,
+                            artist
+                        )
+                    )
                 } else {
                     Text(track.trackTitle)
                 }
@@ -77,7 +88,17 @@ struct NowPlayingInlineView: View {
             }
         } else {
             Label {
-                Text("Provenance — \(entry.gameCount) games")
+                Text(
+                    String(
+                        format: NSLocalizedString(
+                            "widget.now-playing.brand-games-count %lld",
+                            bundle: .main,
+                            comment: "Now Playing fallback branded game count"
+                        ),
+                        locale: Locale.current,
+                        entry.gameCount
+                    )
+                )
             } icon: {
                 Image(systemName: "gamecontroller.fill")
             }
@@ -112,10 +133,10 @@ struct NowPlayingRectangularView: View {
                             .lineLimit(1)
                     }
                 } else {
-                    Text("Nothing Playing")
+                    Text(String(localized: "widget.now-playing.nothing-playing", defaultValue: "Nothing Playing", comment: "Now Playing empty title"))
                         .font(.headline)
                         .lineLimit(1)
-                    Text("Provenance")
+                    Text(WidgetLocalizedStrings.brandName)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -169,8 +190,14 @@ struct NowPlayingWidget: Widget {
         StaticConfiguration(kind: Self.kind, provider: NowPlayingProvider()) { entry in
             NowPlayingEntryView(entry: entry)
         }
-        .configurationDisplayName("Now Playing")
-        .description("Shows the current game music track, or your library count when nothing is playing.")
+        .configurationDisplayName(String(localized: "widget.now-playing.display-name", defaultValue: "Now Playing", comment: "Now Playing widget display name"))
+        .description(
+            String(
+                localized: "widget.now-playing.description",
+                defaultValue: "Shows the current game music track, or your library count when nothing is playing.",
+                comment: "Now Playing widget description"
+            )
+        )
         .supportedFamilies([.accessoryInline, .accessoryRectangular])
     }
 }

@@ -182,8 +182,8 @@ struct FavoritesWidget: Widget {
                 // Tapping outside any Link cell (e.g. padding) opens the first game.
                 .widgetURL(entry.games.first(where: { !$0.id.isEmpty && $0.launchURL != nil })?.launchURL ?? PVLibraryScreenURL)
         }
-        .configurationDisplayName("Favorites")
-        .description("Quick access to your favourite games.")
+        .configurationDisplayName(String(localized: "widget.favorites.display-name", defaultValue: "Favorites", comment: "Favorites widget display name"))
+        .description(String(localized: "widget.favorites.description", defaultValue: "Quick access to your favourite games.", comment: "Favorites widget description"))
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
@@ -345,9 +345,9 @@ struct FavoritesWidgetView: View {
                 .font(.title)
                 .foregroundStyle(RetroWaveWidgetPalette.neonYellow)
                 .shadow(color: RetroWaveWidgetPalette.neonPink.opacity(0.55), radius: 5, x: 0, y: 0)
-            Text("No Favorites")
+            Text(String(localized: "widget.favorites.empty-title", defaultValue: "No Favorites", comment: "Favorites widget empty state title"))
                 .retroWaveWidgetTitleStyle()
-            Text("Mark games as\nfavorites to see them here")
+            Text(String(localized: "widget.favorites.empty-message", defaultValue: "Mark games as\nfavorites to see them here", comment: "Favorites widget empty state message"))
                 .multilineTextAlignment(.center)
                 .retroWaveWidgetMetaStyle()
         }

@@ -157,8 +157,8 @@ struct RecentlyPlayedWidget: Widget {
                 // Tapping outside any Link row (e.g. padding) opens the most recent game.
                 .widgetURL(entry.games.first(where: { !$0.id.isEmpty && $0.launchURL != nil })?.launchURL ?? PVLibraryScreenURL)
         }
-        .configurationDisplayName("Recently Played")
-        .description("See the games you've played most recently.")
+        .configurationDisplayName(String(localized: "widget.recent.display-name", defaultValue: "Recently Played", comment: "Recently Played widget display name"))
+        .description(String(localized: "widget.recent.description", defaultValue: "See the games you've played most recently.", comment: "Recently Played widget description"))
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
@@ -356,7 +356,7 @@ struct RecentlyPlayedWidgetView: View {
             Image(systemName: "gamecontroller.fill")
                 .font(.largeTitle)
                 .foregroundStyle(RetroWaveWidgetPalette.neonCyan.opacity(0.65))
-            Text("No Recent Games")
+            Text(String(localized: "widget.recent.empty-title", defaultValue: "No Recent Games", comment: "Recently Played widget empty state title"))
                 .retroWaveWidgetMetaStyle()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -369,7 +369,7 @@ struct RecentlyPlayedWidgetView: View {
                 Image(systemName: "gamecontroller")
                     .font(.title2)
                     .foregroundStyle(RetroWaveWidgetPalette.neonCyan.opacity(0.7))
-                Text("Play a game\nto see it here")
+                Text(String(localized: "widget.recent.empty-message", defaultValue: "Play a game\nto see it here", comment: "Recently Played widget empty state message"))
                     .multilineTextAlignment(.center)
                     .retroWaveWidgetMetaStyle()
             }
