@@ -11,8 +11,17 @@
 //
 // ## Targets
 //
-//   CRcheevos   — C target; compiles all rcheevos .c sources; exposes rc_client.h etc.
-//   PVRcheevos  — Swift target; re-exports CRcheevos and documents the integration.
+//   CRcheevos       — C target; compiles all rcheevos .c sources; exposes rc_client.h etc.
+//                     Requires the rcheevos git submodule (see Setup above).
+//   PVRcheevosCore  — Pure-Swift utilities (byte-swap, address constants, region descriptors).
+//                     No C dependency — safe on all platforms including Linux.
+//                     Lives in the sibling PVRcheevosCore/ package and is re-exported here.
+//   PVRcheevos      — Swift entry point; re-exports both CRcheevos and PVRcheevosCore.
+//
+// ## Testing
+//
+//   Tests live in PVRcheevosCore/ (no submodule needed):
+//     cd PVRcheevosCore && swift test
 //
 
 import PackageDescription
@@ -48,10 +57,15 @@ let package = Package(
         .visionOS(.v1),
     ],
     products: [
-        // PVRcheevos re-exports CRcheevos for Swift consumers.
+        // PVRcheevos re-exports CRcheevos and PVRcheevosCore for Swift consumers.
         .library(name: "PVRcheevos",  targets: ["PVRcheevos"]),
         // CRcheevos is exposed separately so ObjC/C++ targets can depend on it directly.
         .library(name: "CRcheevos",   targets: ["CRcheevos"]),
+    ],
+    dependencies: [
+        // Pure-Swift utilities with no C dependency.
+        // Tests live here so they can run without the rcheevos submodule.
+        .package(path: "../PVRcheevosCore"),
     ],
     targets: [
         // MARK: - CRcheevos (C library)
@@ -72,10 +86,13 @@ let package = Package(
                 .define("RC_NO_THREADS", to: "1"),
             ]
         ),
-        // MARK: - PVRcheevos (Swift entry point)
+        // MARK: - PVRcheevos (Swift entry point, re-exports both)
         .target(
             name: "PVRcheevos",
-            dependencies: ["CRcheevos"],
+            dependencies: [
+                "CRcheevos",
+                .product(name: "PVRcheevosCore", package: "PVRcheevosCore"),
+            ],
             path: "Sources/PVRcheevos"
         ),
     ],

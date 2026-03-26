@@ -20,4 +20,12 @@
 //     unlock / progress / challenge / leaderboard notifications.
 //
 
+//  ## Pure-Swift utilities
+//
+//  `RcheevosByteSwapMode`, `RcheevosAddressSpace`, and `RcheevosMemoryRegion`
+//  are re-exported from `PVRcheevosCore` (no C dependency, testable on Linux).
+//  Tests live in PVRcheevosCore/: `cd PVRcheevosCore && swift test`
+//
+
 @_exported import CRcheevos
+@_exported import PVRcheevosCore
