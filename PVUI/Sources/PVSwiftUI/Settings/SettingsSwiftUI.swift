@@ -262,7 +262,7 @@ struct TVOSSettingsHeader: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("SETTINGS")
+                    Text("settings.title", bundle: .module)
                         .font(.system(size: 42, weight: .bold, design: .default))
                         .tracking(4)
                         .foregroundStyle(
@@ -274,7 +274,7 @@ struct TVOSSettingsHeader: View {
                         )
                         .shadow(color: Color.retroPink.opacity(0.5), radius: 15, x: 0, y: 0)
 
-                    Text("CONFIGURE YOUR EXPERIENCE")
+                    Text("settings.subtitle", bundle: .module)
                         .font(.system(size: 14, weight: .medium, design: .default))
                         .tracking(3)
                         .foregroundStyle(Color.retroPink.opacity(0.7))
@@ -531,7 +531,7 @@ public struct PVSettingsView: View {
                         HStack {
                             if showsDoneButton {
                                 Button(action: { dismissAction() }) {
-                                    Text("DONE")
+                                    Text("settings.done", bundle: .module)
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                                         .padding(.horizontal, 16)
@@ -556,7 +556,7 @@ public struct PVSettingsView: View {
                                 Spacer()
 
                                 Button(action: { showWiki = true }) {
-                                    Text("HELP")
+                                    Text("settings.help", bundle: .module)
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                                         .padding(.horizontal, 16)
@@ -734,7 +734,7 @@ public struct PVSettingsView: View {
     private var generalTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("GENERAL")
+                Text("settings.tab.general", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -776,7 +776,7 @@ public struct PVSettingsView: View {
     private var emulationTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("EMULATION")
+                Text("settings.tab.emulation", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -821,7 +821,7 @@ public struct PVSettingsView: View {
     private var controllerTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("CONTROLLER")
+                Text("settings.tab.controller", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -853,7 +853,7 @@ public struct PVSettingsView: View {
     private var aboutTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("ABOUT")
+                Text("settings.tab.about", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -897,7 +897,7 @@ public struct PVSettingsView: View {
     private var advancedTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("ADVANCED")
+                Text("settings.tab.advanced", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -1156,7 +1156,7 @@ private struct AppSection: View {
     @ObservedObject private var iconManager = IconManager.shared
 
     var body: some View {
-        Section(header: Text("App")) {
+        Section(header: Text("settings.section.app", bundle: .module)) {
 
             /// Information about PVSystems
             NavigationLink(destination: SystemSettingsView()) {
@@ -1196,7 +1196,7 @@ private struct AppSection: View {
                     .scaledToFit()
                     .frame(width: 22, height: 22)
                     .foregroundColor(.accentColor)
-                    Text("Change App Icon")
+                    Text("settings.app.change_app_icon", bundle: .module)
                     Spacer()
                     IconImage(
                         iconName: iconManager.currentIconName ?? "AppIcon",
@@ -1217,7 +1217,7 @@ private struct CoreOptionsSection: View {
     @Default(.coreLanguage) var coreLanguage
 
     var body: some View {
-        Section(header: Text("Core Options")) {
+        Section(header: Text("settings.section.core_options", bundle: .module)) {
 
             Picker(selection: $coreLanguage) {
                 ForEach(CoreLanguageSetting.allCases, id: \.self) { lang in
@@ -1323,7 +1323,7 @@ private struct SavesSection: View {
     private static let thirtyMinutes: TimeInterval = 1800
 
     var body: some View {
-        SwiftUI.Section(header: Text("Saves")) {
+        SwiftUI.Section(header: Text("settings.section.saves", bundle: .module)) {
             savesToggles
 #if !os(tvOS)
             timedAutosaveSlider
@@ -1361,14 +1361,14 @@ private struct SavesSection: View {
     @ViewBuilder
     private var timedAutosaveSlider: some View {
         HStack {
-            Text("Auto-save Time")
+            Text("settings.saves.auto_save_time", bundle: .module)
             RetroWaveSlider(value: $timedAutoSaveInterval,
                            in: Self.oneMinute...Self.thirtyMinutes,
                            step: Self.oneMinute,
                            onEditingChanged: { _ in },
-                           label: { Text("Auto-save Time") },
-                           minimumValueLabel: { Text("1m") },
-                           maximumValueLabel: { Text("30m") },
+                           label: { Text("settings.saves.auto_save_time_label", bundle: .module) },
+                           minimumValueLabel: { Text("settings.saves.min_1", bundle: .module) },
+                           maximumValueLabel: { Text("settings.saves.min_30", bundle: .module) },
                            leadingIcon: {
                                Image(systemName: "hare")
                                    .foregroundColor(RetroTheme.retroBlue)
@@ -1392,7 +1392,7 @@ private struct SocialLinksSection: View {
     }()
 
     var body: some View {
-        Section(header: Text("Social")) {
+        Section(header: Text("settings.section.social", bundle: .module)) {
             if !isAppStore {
                 Link(destination: URL(string: "https://www.patreon.com/provenance")!) {
                     SettingsRow(title: "Patreon",
@@ -1428,7 +1428,7 @@ private struct SocialLinksSection: View {
 
 private struct DocumentationSection: View {
     var body: some View {
-        Section(header: Text("Documentation")) {
+        Section(header: Text("settings.section.documentation", bundle: .module)) {
             NavigationLink(destination: WikiHelpView()) {
                 SettingsRow(title: "Help & Wiki",
                             subtitle: "Browse the Provenance wiki for guides, FAQs, and tips.",
@@ -1447,7 +1447,7 @@ private struct BuildSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
 
     var body: some View {
-        Section(header: Text("Build Information")) {
+        Section(header: Text("settings.section.build_information", bundle: .module)) {
             SettingsRow(title: "Version",
                         subtitle: "Current app version.",
                         value: viewModel.versionText,
@@ -1478,7 +1478,7 @@ private struct ExtraInfoSection: View {
     @State private var showEULAAlert = false
 
     var body: some View {
-        Section(header: Text("3rd Party & Legal")) {
+        Section(header: Text("settings.section.third_party_legal", bundle: .module)) {
             #if os(tvOS)
             /// Open source licenses - Show alert on tvOS
             Button(action: { showLicensesAlert = true }) {
@@ -1489,9 +1489,9 @@ private struct ExtraInfoSection: View {
             .retroFocusButtonStyle(showBorder: false)
             .alert(isPresented: $showLicensesAlert) {
                 Alert(
-                    title: Text("View Licenses"),
-                    message: Text("Licenses are available in the iOS/iPadOS app or at:\nhttps://provenance-emu.com/licenses/"),
-                    dismissButton: .default(Text("OK"))
+                    title: Text("settings.legal.view_licenses_title", bundle: .module),
+                    message: Text("settings.legal.view_licenses_message", bundle: .module),
+                    dismissButton: .default(Text("OK", bundle: .module))
                 )
             }
 
@@ -1504,9 +1504,9 @@ private struct ExtraInfoSection: View {
             .retroFocusButtonStyle(showBorder: false)
             .alert(isPresented: $showPrivacyAlert) {
                 Alert(
-                    title: Text("Privacy Policy"),
-                    message: Text("Visit our privacy policy at:\nhttps://provenance-emu.com/privacy/"),
-                    dismissButton: .default(Text("OK"))
+                    title: Text("settings.legal.privacy_policy_title", bundle: .module),
+                    message: Text("settings.legal.privacy_policy_message", bundle: .module),
+                    dismissButton: .default(Text("OK", bundle: .module))
                 )
             }
 
@@ -1519,9 +1519,9 @@ private struct ExtraInfoSection: View {
             .retroFocusButtonStyle(showBorder: false)
             .alert(isPresented: $showEULAAlert) {
                 Alert(
-                    title: Text("EULA"),
-                    message: Text("Apple's standard EULA is available at:\nhttps://www.apple.com/legal/internet-services/itunes/dev/stdeula/"),
-                    dismissButton: .default(Text("OK"))
+                    title: Text("settings.legal.eula_title", bundle: .module),
+                    message: Text("settings.legal.eula_message", bundle: .module),
+                    dismissButton: .default(Text("OK", bundle: .module))
                 )
             }
             #else
@@ -1556,7 +1556,7 @@ private struct AudioSection: View {
     #endif
     @Default(.pauseOnHeadphonesDisconnect) var pauseOnHeadphonesDisconnect
     var body: some View {
-        Section(header: Text("Audio")) {
+        Section(header: Text("settings.section.audio", bundle: .module)) {
             ThemedToggle(isOn: $pauseOnHeadphonesDisconnect) {
                 SettingsRow(title: "Pause on Headphones Disconnect",
                             subtitle: "Auto-pause emulation when AirPods or Bluetooth headphones disconnect.",
@@ -1574,12 +1574,12 @@ private struct AudioSection: View {
 //                            icon: .sfSymbol("speaker.wave.2"))
 //            }
             HStack {
-                Text("Volume")
+                Text("settings.audio.volume", bundle: .module)
                 RetroWaveSlider<Float>(value: $volume,
                                      in: 0...1,
                                      step: 0.1,
                                      onEditingChanged: { _ in },
-                                     label: { Text("Volume Level") },
+                                     label: { Text("settings.audio.volume_level", bundle: .module) },
                                      minimumValueLabel: { Text("") },
                                      maximumValueLabel: { Text("") },
                                      leadingIcon: {
@@ -1591,7 +1591,7 @@ private struct AudioSection: View {
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
             }
-            Text("System-wide volume level for games.")
+            Text("settings.audio.volume_description", bundle: .module)
                 .font(.caption)
                 .foregroundColor(.secondary)
             #endif
@@ -1625,7 +1625,7 @@ private struct VideoSection: View {
     @Default(.vsyncEnabled) var vsyncEnabled
 
     var body: some View {
-        Section(header: Text("Video")) {
+        Section(header: Text("settings.section.video", bundle: .module)) {
             ThemedToggle(isOn: $vsyncEnabled) {
                 SettingsRow(title: "V-Sync",
                             subtitle: "Synchronizes the rendering frame rate with the monitor refresh rate.",
@@ -1684,7 +1684,7 @@ private struct VideoSection: View {
 private struct RecordingSection: View {
     var body: some View {
 #if os(iOS)
-        Section(header: Text("Recording & Streaming")) {
+        Section(header: Text("settings.section.recording_streaming", bundle: .module)) {
             PaidFeatureView {
                 NavigationLink(destination: RecordingSettingsView()) {
                     SettingsRow(
@@ -1714,7 +1714,7 @@ private struct ControllerSection: View {
 
     var body: some View {
         Group {
-            Section(header: Text("Controllers")) {
+            Section(header: Text("settings.section.controllers", bundle: .module)) {
                 NavigationLink(destination: ControllerGuideView()) {
                     SettingsRow(title: "Controller Guide",
                                 subtitle: "Supported controllers, pairing steps, and platform notes.",
@@ -1784,7 +1784,7 @@ private struct AnalogDeadzoneSection: View {
 
     var body: some View {
         Section(
-            header: Text("Analog Deadzone"),
+            header: Text("settings.section.analog_deadzone", bundle: .module),
             footer: Text(CoreDeadzoneCompatibilityCatalog.progressSummary)
                 .foregroundColor(.secondary)
         ) {
@@ -1793,7 +1793,7 @@ private struct AnalogDeadzoneSection: View {
                             subtitle: "Dead region at center of analog sticks (0 = off). Applied on top of hardware deadzoning.",
                             icon: .sfSymbol("circle.dashed"))
                 RetroWaveSlider(value: $analogDeadzone, in: 0.0...0.5, step: 0.01) {
-                    Text("Deadzone")
+                    Text("settings.controller.deadzone", bundle: .module)
                 } minimumValueLabel: {
                     Image(systemName: "circle")
                 } maximumValueLabel: {
@@ -1818,11 +1818,11 @@ private struct AnalogDeadzoneSection: View {
                 HStack {
                     Image(systemName: "list.bullet.clipboard")
                         .foregroundColor(.accentColor)
-                    Text("Core Compatibility")
+                    Text("settings.controller.core_compatibility", bundle: .module)
                     Spacer()
                     let done = CoreDeadzoneCompatibilityCatalog.supportedEntries.count
                     let total = CoreDeadzoneCompatibilityCatalog.entries.count
-                    Text("\(done)/\(total)")
+                    Text(verbatim: "\(done)/\(total)")
                         .foregroundColor(.secondary)
                     Image(systemName: "chevron.right")
                         .font(.caption)
@@ -1848,13 +1848,13 @@ private struct CoreDeadzoneCompatibilityView: View {
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Coordinated")) {
+                Section(header: Text("settings.controller.coordinated", bundle: .module)) {
                     ForEach(CoreDeadzoneCompatibilityCatalog.supportedEntries) { entry in
                         CoreDeadzoneEntryRow(entry: entry)
                     }
                 }
                 if !CoreDeadzoneCompatibilityCatalog.pendingEntries.isEmpty {
-                    Section(header: Text("Coming Soon")) {
+                    Section(header: Text("settings.controller.coming_soon", bundle: .module)) {
                         ForEach(CoreDeadzoneCompatibilityCatalog.pendingEntries) { entry in
                             CoreDeadzoneEntryRow(entry: entry)
                         }
@@ -1939,7 +1939,7 @@ private struct HapticsRumbleSection: View {
 
     var body: some View {
         #if !os(tvOS)
-        Section(header: Text("Haptics & Rumble")) {
+        Section(header: Text("settings.section.haptics_rumble", bundle: .module)) {
             ThemedToggle(isOn: $hapticFeedback) {
                 SettingsRow(title: "Haptic Feedback",
                             subtitle: "Vibrate when pressing on-screen buttons.",
@@ -1971,7 +1971,7 @@ private struct HapticsRumbleSection: View {
                                 subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
                                 icon: .sfSymbol("waveform.path"))
                     RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
-                        Text("Intensity")
+                        Text("settings.controller.intensity", bundle: .module)
                     } minimumValueLabel: {
                         Image(systemName: "speaker")
                     } maximumValueLabel: {
@@ -1989,7 +1989,7 @@ private struct HapticsRumbleSection: View {
         }
         #else
         // tvOS: always show rumble controls since external controllers are the primary input.
-        Section(header: Text("Haptics & Rumble")) {
+        Section(header: Text("settings.section.haptics_rumble", bundle: .module)) {
             ThemedToggle(isOn: $rumbleEnabled) {
                 SettingsRow(title: "Game Rumble",
                             subtitle: "Master on/off for all in-game rumble events from emulator cores.",
@@ -2011,7 +2011,7 @@ private struct HapticsRumbleSection: View {
                                 subtitle: "Motor strength for connected controllers.",
                                 icon: .sfSymbol("waveform.path"))
                     RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
-                        Text("Intensity")
+                        Text("settings.controller.intensity", bundle: .module)
                     } minimumValueLabel: {
                         Image(systemName: "speaker")
                     } maximumValueLabel: {
@@ -2045,9 +2045,9 @@ private struct TestRumbleButton: View {
                     .foregroundStyle(isTesting ? .green : .accentColor)
                     .animation(.easeInOut(duration: 0.2), value: isTesting)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Test Rumble")
+                    Text("settings.controller.test_rumble", bundle: .module)
                         .font(.body)
-                    Text("Fire a short rumble on connected controllers and/or device.")
+                    Text("settings.controller.test_rumble_description", bundle: .module)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -2098,14 +2098,14 @@ private struct OnScreenControllerSection: View {
 #endif
 
     var body: some View {
-        Section(header: Text("On-Screen Controller")) {
+        Section(header: Text("settings.section.on_screen_controller", bundle: .module)) {
             HStack {
-                Text("Controller Opacity")
+                Text("settings.on_screen.controller_opacity", bundle: .module)
                 RetroWaveSlider<Double>(value: $controllerOpacity,
                                      in: 0...1.0,
                                      step: 0.05,
                                      onEditingChanged: { _ in },
-                                     label: { Text("Transparency amount of on-screen controls overlays.") },
+                                     label: { Text("settings.on_screen.transparency_description", bundle: .module) },
                                      minimumValueLabel: { Text("") },
                                      maximumValueLabel: { Text("") },
                                      leadingIcon: {
@@ -2172,7 +2172,7 @@ private struct LibrarySection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
 
     var body: some View {
-        Section(header: Text("Library")) {
+        Section(header: Text("settings.section.library", bundle: .module)) {
             //#if canImport(PVWebServer)
             //            Button(action: viewModel.launchWebServer) {
             //                SettingsRow(title: "Launch Web Server",
@@ -2197,7 +2197,7 @@ private struct LibrarySection2: View {
     @Default(.autoNormalizeROMTitles) var autoNormalizeROMTitles
 
     var body: some View {
-        Section(header: Text("Library Management")) {
+        Section(header: Text("settings.section.library_management", bundle: .module)) {
 
             #if os(tvOS)
                 // Cloud Sync Settings
@@ -2315,7 +2315,7 @@ private struct LibrarySection2: View {
 private struct AdvancedSection: View {
     var body: some View {
         Group {
-            Section(header: Text("Advanced")) {
+            Section(header: Text("settings.section.advanced", bundle: .module)) {
                 #if canImport(FreemiumKit)
                 PaidStatusView(style: .decorative(icon: .star))
                     .freemiumKitColorReset()
@@ -2377,7 +2377,7 @@ private struct DeltaSkinsSection: View {
     var body: some View {
         Section {
             VStack {
-                Text("SKIN MODE")
+                Text("settings.skins.skin_mode", bundle: .module)
                     .font(.system(.headline, design: .monospaced))
                     .foregroundColor(.retroBlue)
                     .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
@@ -2507,7 +2507,7 @@ private struct DeltaStylesLinkView: View {
                         )
                     )
 
-                Text("Download more skins from DeltaStyles")
+                Text("settings.skins.download_more", bundle: .module)
                     .font(.subheadline)
                     .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
 
@@ -2530,7 +2530,7 @@ private struct DeltaStylesLinkView: View {
                             )
                         )
 
-                    Text("Visit DeltaStyles.com")
+                    Text("settings.skins.visit_deltastyles", bundle: .module)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
@@ -2584,7 +2584,7 @@ private struct DeltaStylesLinkView: View {
                             )
                         )
 
-                    Text("Visit DeltaStyles.com")
+                    Text("settings.skins.visit_deltastyles", bundle: .module)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
@@ -2643,7 +2643,7 @@ private struct RetroAchievementsSection: View {
     }
 
     var body: some View {
-        Section(header: Text("RetroAchievements")) {
+        Section(header: Text("settings.section.retroachievements", bundle: .module)) {
             NavigationLink(destination: RetroAchievementsView()) {
                 SettingsRow(title: "RetroAchievements",
                             subtitle: cheevosStatus,
@@ -2679,7 +2679,7 @@ struct PlusStatusBanner: View {
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("PROVENANCE PLUS ACTIVE")
+                    Text("settings.plus.active_title", bundle: .module)
                         .font(.system(size: 14, weight: .heavy, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
@@ -2688,7 +2688,7 @@ struct PlusStatusBanner: View {
                                 endPoint: .trailing
                             )
                         )
-                    Text("Thank you for your support!")
+                    Text("settings.plus.thank_you", bundle: .module)
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
@@ -2734,7 +2734,7 @@ struct PlusStatusBanner: View {
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("UPGRADE TO PROVENANCE PLUS")
+                    Text("settings.plus.upgrade_title", bundle: .module)
                         .font(.system(size: 13, weight: .heavy, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
@@ -2743,7 +2743,7 @@ struct PlusStatusBanner: View {
                                 endPoint: .trailing
                             )
                         )
-                    Text("Unlock cloud sync, premium themes & more")
+                    Text("settings.plus.upgrade_description", bundle: .module)
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }

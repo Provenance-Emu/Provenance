@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+    <!-- tv_media.saves.count: "N saves" / "1 save" -->
+    <key>tv_media.saves.count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@saves@</string>
+        <key>saves</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld save</string>
+            <key>other</key>
+            <string>%lld saves</string>
+        </dict>
+    </dict>
+
+    <!-- tv_media.games_count: "N GAMES" / "1 GAME" -->
+    <key>tv_media.games_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@games@</string>
+        <key>games</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld GAME</string>
+            <key>other</key>
+            <string>%lld GAMES</string>
+        </dict>
+    </dict>
+
+    <!-- tv_media.import_queue.files_in_queue: "N files in queue" / "1 file in queue" -->
+    <key>tv_media.import_queue.files_in_queue</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@files@</string>
+        <key>files</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld file in queue</string>
+            <key>other</key>
+            <string>%lld files in queue</string>
+        </dict>
+    </dict>
+
+    <!-- cloud_sync.progress.files_progress: "N of M files" / "N of 1 file"
+         Call as: String.localizedStringWithFormat(format, syncingFiles, totalFiles) -->
+    <key>cloud_sync.progress.files_progress</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%lld of %#@files@</string>
+        <key>files</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld file</string>
+            <key>other</key>
+            <string>%lld files</string>
+        </dict>
+    </dict>
+
+    <!-- cloud_sync.diff.header: "Sync Differences (N)" / "Sync Difference (1)" -->
+    <key>cloud_sync.diff.header</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@differences@</string>
+        <key>differences</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>Sync Difference (%lld)</string>
+            <key>other</key>
+            <string>Sync Differences (%lld)</string>
+        </dict>
+    </dict>
+
+    <!-- all_saves.group.saves_count: "N saves" / "1 save" (AllSaveStatesBrowserView) -->
+    <key>all_saves.group.saves_count</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@saves@</string>
+        <key>saves</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld save</string>
+            <key>other</key>
+            <string>%lld saves</string>
+        </dict>
+    </dict>
+
+</dict>
+</plist>

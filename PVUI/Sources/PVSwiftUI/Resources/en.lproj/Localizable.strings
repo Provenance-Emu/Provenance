@@ -5,3 +5,218 @@
 "Delete" = "Delete";
 "Error" = "Error";
 "Warning" = "Warning";
+
+// MARK: - Settings (SettingsSwiftUI.swift)
+"settings.title" = "SETTINGS";
+"settings.subtitle" = "CONFIGURE YOUR EXPERIENCE";
+"settings.done" = "DONE";
+"settings.help" = "HELP";
+
+"settings.tab.general" = "GENERAL";
+"settings.tab.emulation" = "EMULATION";
+"settings.tab.controller" = "CONTROLLER";
+"settings.tab.about" = "ABOUT";
+"settings.tab.advanced" = "ADVANCED";
+
+"settings.section.app" = "App";
+"settings.section.core_options" = "Core Options";
+"settings.section.saves" = "Saves";
+"settings.section.social" = "Social";
+"settings.section.documentation" = "Documentation";
+"settings.section.build_information" = "Build Information";
+"settings.section.third_party_legal" = "3rd Party & Legal";
+"settings.section.audio" = "Audio";
+"settings.section.video" = "Video";
+"settings.section.recording_streaming" = "Recording & Streaming";
+
+"settings.section.controllers" = "Controllers";
+"settings.section.analog_deadzone" = "Analog Deadzone";
+"settings.section.haptics_rumble" = "Haptics & Rumble";
+"settings.section.on_screen_controller" = "On-Screen Controller";
+"settings.section.library" = "Library";
+"settings.section.library_management" = "Library Management";
+"settings.section.advanced" = "Advanced";
+"settings.section.retroachievements" = "RetroAchievements";
+
+"settings.app.change_app_icon" = "Change App Icon";
+
+"settings.saves.auto_save_time" = "Auto-save Time";
+"settings.saves.auto_save_time_label" = "Auto-save Time";
+"settings.saves.min_1" = "1m";
+"settings.saves.min_30" = "30m";
+
+"settings.legal.view_licenses_title" = "View Licenses";
+"settings.legal.view_licenses_message" = "Licenses are available in the iOS/iPadOS app or at:\nhttps://provenance-emu.com/licenses/";
+"settings.legal.privacy_policy_title" = "Privacy Policy";
+"settings.legal.privacy_policy_message" = "Visit our privacy policy at:\nhttps://provenance-emu.com/privacy/";
+"settings.legal.eula_title" = "EULA";
+"settings.legal.eula_message" = "Apple's standard EULA is available at:\nhttps://www.apple.com/legal/internet-services/itunes/dev/stdeula/";
+
+"settings.audio.volume" = "Volume";
+"settings.audio.volume_level" = "Volume Level";
+"settings.audio.volume_description" = "System-wide volume level for games.";
+
+"settings.controller.deadzone" = "Deadzone";
+"settings.controller.core_compatibility" = "Core Compatibility";
+"settings.controller.coordinated" = "Coordinated";
+"settings.controller.coming_soon" = "Coming Soon";
+"settings.controller.intensity" = "Intensity";
+"settings.controller.test_rumble" = "Test Rumble";
+"settings.controller.test_rumble_description" = "Fire a short rumble on connected controllers and/or device.";
+
+"settings.on_screen.controller_opacity" = "Controller Opacity";
+"settings.on_screen.transparency_description" = "Transparency amount of on-screen controls overlays.";
+
+"settings.skins.skin_mode" = "SKIN MODE";
+"settings.skins.download_more" = "Download more skins from DeltaStyles";
+"settings.skins.visit_deltastyles" = "Visit DeltaStyles.com";
+
+"settings.plus.active_title" = "PROVENANCE PLUS ACTIVE";
+"settings.plus.thank_you" = "Thank you for your support!";
+"settings.plus.upgrade_title" = "UPGRADE TO PROVENANCE PLUS";
+"settings.plus.upgrade_description" = "Unlock cloud sync, premium themes & more";
+
+// MARK: - Cloud Sync (CloudSyncSettingsView.swift)
+"cloud_sync.title_tvos" = "CLOUD SYNC";
+"cloud_sync.title" = "Cloud Sync";
+"cloud_sync.syncing" = "Syncing...";
+
+"cloud_sync.account.issue_title" = "iCloud Account Issue";
+"cloud_sync.account.issue_description" = "CloudKit sync requires a valid iCloud account. Please check your iCloud settings in System Settings.";
+
+"cloud_sync.logs.title" = "Sync Logs";
+
+"cloud_sync.activity.title" = "Sync Activity (Uploads - Last 7 Days)";
+"cloud_sync.activity.no_recent" = "No recent sync activity found.";
+
+"cloud_sync.status.title" = "Sync Status";
+"cloud_sync.status.refresh" = "Refresh";
+"cloud_sync.status.mode %@" = "Mode: %@";
+"cloud_sync.status.local_files" = "Local Files";
+"cloud_sync.status.icloud_files" = "iCloud Files";
+"cloud_sync.status.differences" = "Differences";
+"cloud_sync.status.load_diagnostics" = "Load Diagnostics";
+
+"cloud_sync.records.cloudkit" = "CloudKit Records";
+"cloud_sync.records.total" = "Total Records:";
+"cloud_sync.records.storage_distribution" = "Storage Distribution";
+
+
+"cloud_sync.progress.title" = "Sync Progress";
+"cloud_sync.progress.current_file" = "Current File:";
+"cloud_sync.progress.current_file_format %@" = "Current File: %@";
+"cloud_sync.progress.progress_label" = "Progress:";
+// Pluralized via Localizable.stringsdict: cloud_sync.progress.files_progress
+"cloud_sync.progress.completed" = "Completed";
+"cloud_sync.progress.total" = "Total";
+"cloud_sync.progress.remaining" = "Remaining";
+
+"cloud_sync.records.roms" = "ROMs:";
+"cloud_sync.records.save_states" = "Save States:";
+"cloud_sync.records.bios" = "BIOS:";
+"cloud_sync.records.battery_states" = "Battery States:";
+"cloud_sync.records.screenshots" = "Screenshots:";
+"cloud_sync.records.delta_skins" = "Delta Skins:";
+
+"cloud_sync.actions.title" = "Sync Actions";
+"cloud_sync.actions.sync_all" = "Sync All Content";
+"cloud_sync.actions.reset" = "Reset Cloud Sync";
+
+"cloud_sync.reset.alert_title" = "Reset Cloud Sync";
+"cloud_sync.reset.alert_message" = "This will delete all cloud sync data and restart the sync process. Are you sure you want to continue?";
+"cloud_sync.reset.confirm" = "Reset";
+
+"cloud_sync.pagination.directory" = "Directory";
+"cloud_sync.pagination.local_header" = "Local";
+"cloud_sync.pagination.icloud_header" = "iCloud";
+"cloud_sync.pagination.local_count %lld" = "Local: %lld";
+"cloud_sync.pagination.icloud_count %lld" = "iCloud: %lld";
+"cloud_sync.pagination.total_files" = "Total Files";
+
+// Pluralized via Localizable.stringsdict: cloud_sync.diff.header
+"cloud_sync.diff.no_differences" = "No differences found";
+"cloud_sync.diff.unknown" = "Unknown";
+"cloud_sync.diff.directory_unknown" = "Directory: Unknown";
+"cloud_sync.diff.local_only" = "Local Only";
+"cloud_sync.diff.icloud_only" = "iCloud Only";
+"cloud_sync.diff.different" = "Different";
+"cloud_sync.diff.synced" = "Synced";
+
+"cloud_sync.network.title" = "Network Settings";
+"cloud_sync.network.sync_mode" = "Sync Network Mode";
+"cloud_sync.network.max_cellular_size" = "Max Cellular File Size";
+
+"cloud_sync.frequency.title" = "Sync Frequency";
+"cloud_sync.frequency.check_for_changes" = "Check for Changes";
+
+"cloud_sync.content.title" = "Content Types";
+"cloud_sync.content.what_to_sync" = "What to Sync";
+
+"cloud_sync.power.title" = "Power Management";
+"cloud_sync.performance.title" = "Performance";
+"cloud_sync.advanced.title" = "Advanced";
+"cloud_sync.diagnostics.title" = "Diagnostics";
+
+// MARK: - TV Media Main View (TVMediaMainView.swift)
+"tv_media.hint.swipe_navigation" = "Swipe left or press Menu for navigation";
+"tv_media.help_wiki" = "HELP & WIKI";
+"tv_media.filter.clear" = "CLEAR FILTER";
+"tv_media.filter.by_system" = "FILTER BY SYSTEM";
+"tv_media.filter.select_systems" = "Select systems to show saves from";
+"tv_media.library.loading" = "LOADING LIBRARY";
+"tv_media.library.no_games" = "NO GAMES YET";
+"tv_media.library.add_roms_hint" = "Add ROMs via Web Server or CloudKit sync from an iPhone, iPad or Macintosh";
+"tv_media.library.icloud_in_progress" = "iCloud sync may be in progress";
+"tv_media.games" = "GAMES";
+// Pluralized via Localizable.stringsdict: tv_media.games_count
+"tv_media.all_system_games %@" = "ALL %@ GAMES";
+"tv_media.saves.view_all" = "VIEW ALL";
+// Pluralized via Localizable.stringsdict: tv_media.saves.count
+"tv_media.search.recent" = "RECENT";
+"tv_media.search.recent_searches" = "RECENT SEARCHES";
+"tv_media.search.clear_all" = "CLEAR ALL";
+"tv_media.search.searching" = "SEARCHING...";
+"tv_media.search.prompt" = "SEARCH YOUR LIBRARY";
+"tv_media.search.type_hint" = "Type to find games by title";
+"tv_media.search.no_results" = "NO RESULTS";
+"tv_media.search.try_recent" = "Try one of your recent searches above";
+"tv_media.favorites.no_favorites" = "No Favorites";
+"tv_media.favorites.mark_hint" = "Mark games as favorites to see them here.";
+"tv_media.imports.title" = "IMPORTS";
+"tv_media.imports.choose_option" = "Choose an option";
+"tv_media.imports.queue" = "Import Queue";
+"tv_media.imports.queue_subtitle" = "View active and completed imports";
+"tv_media.imports.free_roms" = "Free ROMs";
+"tv_media.imports.free_roms_subtitle" = "Browse open-source and public domain ROMs";
+"tv_media.imports.how_to_add" = "How to Add ROMs";
+"tv_media.imports.how_to_add_subtitle" = "Web server, AirDrop, and more";
+"tv_media.artwork.choose_source_title" = "Choose Artwork Source";
+"tv_media.artwork.choose_source_message" = "Select artwork from your photo library or search online sources";
+"tv_media.artwork.search_online" = "Search Online";
+"tv_media.artwork.select_from_photos" = "Select from Photos";
+"tv_media.status.importing" = "IMPORTING";
+"tv_media.status.syncing" = "SYNCING";
+"tv_media.status.processing" = "PROCESSING";
+"tv_media.roms.adding" = "ADDING ROMS";
+"tv_media.roms.several_ways" = "There are several ways to add ROMs to Provenance";
+"tv_media.roms.start_web_server" = "Start the web server from Settings to see the URL";
+"tv_media.roms.full_documentation" = "FULL DOCUMENTATION";
+"tv_media.import_queue.title" = "IMPORT QUEUE";
+"tv_media.import_queue.close" = "CLOSE";
+// Pluralized via Localizable.stringsdict: tv_media.import_queue.files_in_queue
+"tv_media.import_queue.no_pending" = "NO PENDING IMPORTS";
+"tv_media.import_queue.all_processed" = "All files have been processed";
+"tv_media.icloud_sync.title" = "iCLOUD SYNC";
+
+// MARK: - Retro Menu View (RetroMenuView.swift)
+"retro_menu.skins.session" = "Session";
+"retro_menu.skins.this_game" = "This Game";
+"retro_menu.skins.system" = "System";
+"retro_menu.filter.done" = "DONE";
+"retro_menu.filter.screen_filters" = "SCREEN FILTERS";
+"retro_menu.saves.no_screenshots" = "No Screenshots";
+"retro_menu.saves.screenshots_hint" = "Use \"Save Screenshot\" from the pause menu to capture screenshots.";
+"retro_menu.saves.no_save_states" = "No Save States";
+"retro_menu.saves.save_states_hint" = "Use \"Save State\" from the pause menu to create saves.";
+"retro_menu.saves.auto_save_to_photos" = "Auto-Save to Photos";
+"retro_menu.plus.badge" = "PLUS";
