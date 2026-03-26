@@ -248,8 +248,18 @@
     }
 }
 - (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
-    //    int mappedButton = [InputMaps.SSMap[button] intValue];
-    //    inputBuffer[player][0] |= 1 << mappedButton;
+    // When the active port is configured as a light gun, writing gamepad button bits
+    // into the first two bytes would corrupt the gun's X/Y coordinate fields.
+    // Only port 0 is configured as a gun (port 1 stays as gamepad until a second
+    // gun input path is implemented), so guard only player == 0.
+    if (self->_isLightGunGame && player == 0) {
+        if (button == PVSaturnButtonStart) {
+            DLOG("Start on (gun port)");
+            self.isStartPressed = true;
+            [self lightGunStartDown];
+        }
+        return;
+    }
     if (button == PVSaturnButtonStart) {
         DLOG("Start on");
         self.isStartPressed = true;
@@ -258,7 +268,15 @@
 }
 
 -(void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
-    //    inputBuffer[player][0] &= ~(1 << [InputMaps.SSMap[button] intValue]);
+    // Same guard as didPushSSButton — only port 0 is the gun port.
+    if (self->_isLightGunGame && player == 0) {
+        if (button == PVSaturnButtonStart) {
+            DLOG("Start off (gun port)");
+            self.isStartPressed = false;
+            [self lightGunStartUp];
+        }
+        return;
+    }
     if (button == PVSaturnButtonStart) {
         DLOG("Start off");
         self.isStartPressed = false;
