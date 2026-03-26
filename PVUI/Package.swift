@@ -146,6 +146,7 @@ let package = Package(
                 .copy("Resources/PrivacyInfo.xcprivacy"),
                 .copy("Resources/catalog_seed.json"),
                 .copy("Resources/system-native-resolutions.json"),
+                .copy("Resources/DefaultSkins"),
             ],
             cSettings: [
                 .define("GL_SILENCE_DEPRECATION", to: "1"),

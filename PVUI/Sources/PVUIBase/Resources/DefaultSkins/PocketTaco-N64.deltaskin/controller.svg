@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1334" viewBox="0 0 750 1334">
+  <rect x="0.0" y="80.0" width="750.0" height="560.0" rx="4" fill="none" stroke="#444466" stroke-width="1.5" opacity="0.5"/>
+  <text x="375.0" y="665.0" text-anchor="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="18" opacity="0.9">N64</text>
+  <rect x="0.0" y="0.0" width="225.0" height="70.0" rx="10.0" fill="#2a2a3a" stroke="#8888aa" stroke-width="2" opacity="0.85"/>
+  <text x="112.5" y="40.0" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="13" opacity="1">L</text>
+  <rect x="525.0" y="0.0" width="225.0" height="70.0" rx="10.0" fill="#2a2a3a" stroke="#8888aa" stroke-width="2" opacity="0.85"/>
+  <text x="637.5" y="40.0" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="13" opacity="1">R</text>
+  <polygon points="118.3,985.0 181.7,985.0 181.7,1048.3 245.0,1048.3 245.0,1111.7 181.7,1111.7 181.7,1175.0 118.3,1175.0 118.3,1111.7 55.0,1111.7 55.0,1048.3 118.3,1048.3" fill="#2a2a3a" stroke="#6a6a8a" stroke-width="2" opacity="0.85" rx="3"/>
+  <circle cx="600.0" cy="1080.0" r="38" fill="#cc3333" stroke="#ff5555" stroke-width="2" opacity="0.85"/>
+  <text x="600.0" y="1084.6" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="12" opacity="1">A</text>
+  <circle cx="510.0" cy="1130.0" r="38" fill="#ccaa22" stroke="#ffcc44" stroke-width="2" opacity="0.85"/>
+  <text x="510.0" y="1134.6" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="12" opacity="1">B</text>
+  <circle cx="600.0" cy="980.0" r="38" fill="#aa33cc" stroke="#cc55ee" stroke-width="2" opacity="0.85"/>
+  <text x="600.0" y="984.6" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="12" opacity="1">C↑</text>
+  <circle cx="660.0" cy="1050.0" r="38" fill="#aa33cc" stroke="#cc55ee" stroke-width="2" opacity="0.85"/>
+  <text x="660.0" y="1054.6" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="12" opacity="1">C→</text>
+  <circle cx="600.0" cy="1155.0" r="38" fill="#aa33cc" stroke="#cc55ee" stroke-width="2" opacity="0.85"/>
+  <text x="600.0" y="1159.6" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="12" opacity="1">C↓</text>
+  <circle cx="535.0" cy="1050.0" r="38" fill="#aa33cc" stroke="#cc55ee" stroke-width="2" opacity="0.85"/>
+  <text x="535.0" y="1054.6" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="12" opacity="1">C←</text>
+  <rect x="262.0" y="0.0" width="226.0" height="70.0" rx="10.0" fill="#2a2a3a" stroke="#8888aa" stroke-width="2" opacity="0.85"/>
+  <text x="375.0" y="40.0" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="13" opacity="1">Z</text>
+  <rect x="270.0" y="1210.0" width="90.0" height="55.0" rx="12.0" fill="#1a1a2a" stroke="#666688" stroke-width="2" opacity="0.85"/>
+  <text x="315.0" y="1241.3" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="10" opacity="1">SEL</text>
+  <rect x="390.0" y="1210.0" width="90.0" height="55.0" rx="12.0" fill="#1a1a2a" stroke="#666688" stroke-width="2" opacity="0.85"/>
+  <text x="435.0" y="1241.3" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="10" opacity="1">STA</text>
+  <circle cx="375.0" cy="1162.0" r="28" fill="#1a1a2a" stroke="#666688" stroke-width="2" opacity="0.85"/>
+  <text x="375.0" y="1166.2" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-weight="bold" font-size="11" opacity="1">☰</text>
+</svg>
