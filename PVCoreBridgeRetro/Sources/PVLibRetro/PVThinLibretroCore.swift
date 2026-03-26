@@ -141,7 +141,9 @@ class PVThinLibretroCore: PVEmulatorCore {
             GCControllerHapticsManager.shared.resetSystemProfile()
         }
 #endif
-        // Stop MIDI destination observation and clear the frontend cache.
+        // Stop MIDI destination observation (does NOT clear the frontend cache —
+        // the shared retro_midi_interface is also used by PVLibRetroCore, which
+        // relies on the -1 legacy fallback if it never wired its own observer).
 #if canImport(CoreMIDI) && !os(tvOS)
         if #available(iOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
             Task { @MainActor [weak self] in

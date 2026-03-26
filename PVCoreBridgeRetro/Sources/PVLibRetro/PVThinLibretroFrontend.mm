@@ -1453,6 +1453,7 @@ static bool thin_midi_write(uint8_t byte, uint32_t delta_time) {
     // not wire the MIDIDeviceManager observer). Fall back to the first available destination
     // to preserve pre-PR behaviour for those cores.
     if (destCount < 0) {
+        if (MIDIGetNumberOfDestinations() <= 0) return false;
         MIDIEndpointRef fallback = MIDIGetDestination(0);
         if (!fallback) return false;
         dests[0] = fallback;
