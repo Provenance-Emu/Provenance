@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVFeatureFlags
 import PVSupport
 import RealmSwift
 import PVCoreLoader
@@ -258,12 +259,30 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         game.relatedFiles.append(objectsIn: uniqueRelatedFiles)
         game.md5Hash = md5
 
+        // Fast artwork lookup (exact title + MD5, ~2s timeout) before saving to Realm.
+        // This runs synchronously in the import pipeline so the game gets artwork immediately
+        // if found. Fuzzy/cleaned-title search is intentionally skipped here — that runs
+        // later via ArtworkSearchQueue.
+        if await PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) && game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil {
+            DLOG("FastArtworkLookupService: Attempting fast artwork lookup for '\(title)'")
+            if let artworkURL = await FastArtworkLookupService.shared.findArtwork(
+                exactTitle: title,
+                md5: md5,
+                systemID: systemID
+            ) {
+                ILOG("FastArtworkLookupService: Fast match set artwork URL for '\(title)': \(artworkURL)")
+                game.originalArtworkURL = artworkURL
+            }
+        }
+
         // Capture all game properties BEFORE finishUpdateOrImport (which adds game to Realm)
         // After that, game becomes managed and can't be accessed from background threads
         let gameID = game.id
         let gameTitle = game.title ?? "Unknown"
         let gameRomPath = game.romPath
         let gameMd5Hash = game.md5Hash
+        // needsArtwork is evaluated AFTER the fast path so ArtworkSearchQueue is only queued
+        // when the fast exact-match also failed.
         let needsArtwork = game.originalArtworkFile == nil && game.originalArtworkURL.isEmpty
 
         DLOG("About to call finishUpdateOrImport for game: \(partialPath)")
@@ -273,8 +292,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("Completed finishUpdateOrImport for game: \(partialPath) in \(String(format: "%.2f", finishDuration))s")
 
         queueItem.gameDatabaseID = gameID
-        // Use the system identifier from the parameter
-        let systemIdentifier = systemID.rawValue
 
         if needsArtwork {
             // Extract filename from romPath (format: "systemID/filename" or just "filename")
@@ -288,7 +305,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 return ""
             }()
 
-            let systemID = SystemIdentifier(rawValue: systemIdentifier)
             let md5Hash = gameMd5Hash.uppercased()
 
             ILOG("GameImporterDatabaseService: Queuing artwork search for game \(gameTitle) (ID: \(gameID))")

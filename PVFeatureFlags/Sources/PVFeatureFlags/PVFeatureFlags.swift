@@ -72,6 +72,12 @@ public enum PVFeature: String, CaseIterable {
     /// is shown regardless of the `lightGunCrosshairStyle` setting.
     /// Disabled by default; enable in Settings > Advanced > Feature Flags.
     case lightGunCrosshair = "lightGunCrosshair"
+    /// Enables multi-source artwork matching at ROM import time: queries TheGamesDB,
+    /// LibretroDB, and OpenVGDB in parallel and selects the best result by artwork type priority.
+    /// A background `ArtworkSearchQueue` retries games that were not matched
+    /// during import. Enabled by default; disable via Settings > Advanced > Feature Flags
+    /// if regressions are found.
+    case enhancedArtworkSearch = "enhancedArtworkSearch"
 }
 
 /// Represents the type of app installation
@@ -196,6 +202,12 @@ public struct FeatureFlag: Codable, Sendable {
         enabled: false,
         description: "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations. Disabled until core capability data is fully audited."
     )
+
+    public static let enhancedArtworkSearch = FeatureFlag(
+        enabled: true,
+        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+        description: "Multi-source artwork matching at import time (TheGamesDB, LibretroDB, OpenVGDB). Background ArtworkSearchQueue retries unmatched games. Enabled by default — disable in Settings > Advanced > Feature Flags if regressions are found."
+    )
 }
 
 /// Root structure for feature flags JSON
@@ -210,9 +222,11 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
 /// Core feature flags engine: loads configuration, evaluates flag states against app criteria.
 @MainActor public final class PVFeatureFlags: @unchecked Sendable {
-    /// Shared instance
+    /// Shared instance.
     public static let shared = PVFeatureFlags()
 
+    /// Loaded configuration. `@MainActor`-isolated; may be updated at runtime (e.g. remote reload).
+    /// Callers on background actors must use `await` on `PVFeatureFlags` APIs to access it safely.
     internal private(set) var configuration: FeatureFlagsConfiguration?
     private let appType: PVAppType
     private let buildNumber: String?
@@ -284,11 +298,13 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     // MARK: - Feature Evaluation
 
     /// Check whether a feature is enabled by its `PVFeature` enum case.
+    /// `@MainActor`-isolated; call with `await` from non-main-actor contexts.
     public func isEnabled(_ feature: PVFeature) -> Bool {
-        // Debug overrides take highest priority
-        if let overrideEntry = self.debugOverrides[feature],
-           let boolValue = overrideEntry {
-            return boolValue
+        // Debug overrides take highest priority.
+        // Read directly from UserDefaults (thread-safe) to avoid allocating/parsing the overrides dictionary.
+        if let rawDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
+           let value = rawDict[feature.rawValue] {
+            if let boolValue = value as? Bool { return boolValue }
         }
 
         guard let featureConfig = configuration?.features[feature.rawValue] else {
@@ -315,6 +331,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     }
 
     /// Check whether a feature is enabled by its raw string key.
+    /// `@MainActor`-isolated; call with `await` from non-main-actor contexts.
     public func isEnabled(_ featureKey: String) -> Bool {
         // If this key matches a known PVFeature, use the enum-based evaluation (including debug overrides).
         if let feature = PVFeature(rawValue: featureKey) {
@@ -431,7 +448,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
     // MARK: - Helpers
 
-    private func compareVersions(_ version1: String, _ version2: String) -> Int {
+    nonisolated private func compareVersions(_ version1: String, _ version2: String) -> Int {
         let components1 = version1.split(separator: ".")
         let components2 = version2.split(separator: ".")
         let maxLength = max(components1.count, components2.count)
@@ -492,6 +509,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var companionController: Bool { featureStates[.companionController] ?? false }
     public var smartCoreSelection: Bool { featureStates[.smartCoreSelection] ?? false }
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
+    public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
 
     // MARK: - Feature Queries
 
