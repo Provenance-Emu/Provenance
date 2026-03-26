@@ -1558,22 +1558,22 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             if !emulatorCore.isSpeedModified
                 && (!emulatorCore.isEmulationPaused || emulatorCore.isFrontBufferReady)
                 && !emulatorCore.skipLayout { // Skip layout is mostly for Retroarch
-                emulatorCore.frontBufferCondition.lock()
-                while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                    emulatorCore.frontBufferCondition.wait()
+                let isFrontBufferReady = emulatorCore.frontBufferCondition.withLock {
+                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
+                        emulatorCore.frontBufferCondition.wait()
+                    }
+                    return emulatorCore.isFrontBufferReady
                 }
-                let isFrontBufferReady = emulatorCore.isFrontBufferReady
-                emulatorCore.frontBufferCondition.unlock()
 
                 if isFrontBufferReady {
                     // For OpenGL cores, the texture is updated in didRenderFrameOnAlternateThread
                     // We just need to render it here
                     directRender(in: view)
 
-                    emulatorCore.frontBufferCondition.lock()
-                    emulatorCore.isFrontBufferReady = false
-                    emulatorCore.frontBufferCondition.signal()
-                    emulatorCore.frontBufferCondition.unlock()
+                    emulatorCore.frontBufferCondition.withLock {
+                        emulatorCore.isFrontBufferReady = false
+                        emulatorCore.frontBufferCondition.signal()
+                    }
                 }
             } else {
                 // Not speed modifed or paused, just keep rendering
@@ -1606,137 +1606,143 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
         let outputTexture = currentDrawable.texture
 
-        if emulatorCore.rendersToOpenGL {
-            emulatorCore.frontBufferLock.lock()
-        }
+        // The inner work is extracted so it can be wrapped in frontBufferLock.withLock
+        // when the core uses OpenGL HW-render.  Using withLock guarantees the unlock
+        // runs on every exit path — including the early `return` paths below — which
+        // the original conditional lock/unlock pattern did NOT guarantee.
+        let doRenderWork = { [self] in
+            // Reuse command buffers efficiently
+            let commandBuffer: MTLCommandBuffer
+            if let queue = self.commandQueue {
+                commandBuffer = queue.makeCommandBuffer()!
+            } else {
+                DLOG("Error: Command queue is nil")
+                return
+            }
 
-        // Reuse command buffers efficiently
-        let commandBuffer: MTLCommandBuffer
-        if let queue = self.commandQueue {
-            commandBuffer = queue.makeCommandBuffer()!
-            self.previousCommandBuffer = commandBuffer
-        } else {
-            DLOG("Error: Command queue is nil")
-            return
-        }
+            guard let inputTexture = self.inputTexture else {
+                DLOG("Error: Input texture is nil")
+                return
+            }
 
-        guard let inputTexture = inputTexture else {
-            DLOG("Error: Input texture is nil")
-            return
-        }
+            // Apply CIFilter if present - MUST happen BEFORE creating the render encoder
+            // CIContext.render() adds commands to the command buffer that conflict with an active render encoder
+            let finalSourceTexture: MTLTexture
+            if let filter = self.filter,
+               let ciContext = self.ciContext,
+               let ciImage = CIImage(mtlTexture: inputTexture, options: nil),
+               let filteredImage = filter.apply(to: ciImage,
+                                                in: CGRect(x: 0, y: 0,
+                                                           width: inputTexture.width,
+                                                           height: inputTexture.height)) {
+                let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+                    pixelFormat: inputTexture.pixelFormat,
+                    width: inputTexture.width,
+                    height: inputTexture.height,
+                    mipmapped: false
+                )
+                descriptor.usage = [.shaderRead, .renderTarget]
 
-        // Apply CIFilter if present - MUST happen BEFORE creating the render encoder
-        // CIContext.render() adds commands to the command buffer that conflict with an active render encoder
-        let finalSourceTexture: MTLTexture
-        if let filter = self.filter,
-           let ciContext = self.ciContext,
-           let ciImage = CIImage(mtlTexture: inputTexture, options: nil),
-           let filteredImage = filter.apply(to: ciImage,
-                                            in: CGRect(x: 0, y: 0,
-                                                       width: inputTexture.width,
-                                                       height: inputTexture.height)) {
-            let descriptor = MTLTextureDescriptor.texture2DDescriptor(
-                pixelFormat: inputTexture.pixelFormat,
-                width: inputTexture.width,
-                height: inputTexture.height,
-                mipmapped: false
-            )
-            descriptor.usage = [.shaderRead, .renderTarget]
-
-            if let filteredTexture = device?.makeTexture(descriptor: descriptor) {
-                // Use the same command buffer to ensure proper synchronization
-                ciContext.render(filteredImage,
-                                 to: filteredTexture,
-                                 commandBuffer: commandBuffer,
-                                 bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height),
-                                 colorSpace: CGColorSpaceCreateDeviceRGB())
-                finalSourceTexture = filteredTexture
+                if let filteredTexture = self.device?.makeTexture(descriptor: descriptor) {
+                    // Use the same command buffer to ensure proper synchronization
+                    ciContext.render(filteredImage,
+                                     to: filteredTexture,
+                                     commandBuffer: commandBuffer,
+                                     bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height),
+                                     colorSpace: CGColorSpaceCreateDeviceRGB())
+                    finalSourceTexture = filteredTexture
+                } else {
+                    finalSourceTexture = inputTexture
+                }
             } else {
                 finalSourceTexture = inputTexture
             }
-        } else {
-            finalSourceTexture = inputTexture
-        }
 
-        // Create a render pass descriptor
-        let renderPassDescriptor = MTLRenderPassDescriptor()
-        renderPassDescriptor.colorAttachments[0].texture = outputTexture
-        renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+            // Create a render pass descriptor
+            let renderPassDescriptor = MTLRenderPassDescriptor()
+            renderPassDescriptor.colorAttachments[0].texture = outputTexture
+            renderPassDescriptor.colorAttachments[0].loadAction = .clear
+            renderPassDescriptor.colorAttachments[0].storeAction = .store
+            renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
 
-        // Create a render command encoder AFTER CIFilter has been applied
-        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-            DLOG("Error: Could not create render encoder")
-            return
-        }
-
-        // Set the viewport
-        let viewport = MTLViewport(
-            originX: 0,
-            originY: 0,
-            width: Double(outputTexture.width),
-            height: Double(outputTexture.height),
-            znear: 0.0,
-            zfar: 1.0
-        )
-        renderEncoder.setViewport(viewport)
-
-        var filterApplied = false
-        if renderSettings.metalFilterMode != .none {
-            filterApplied = applyMetalFilterIfPossible(encoder: renderEncoder,
-                                                       targetTexture: outputTexture,
-                                                       sourceTexture: finalSourceTexture)
-        }
-
-        if !filterApplied {
-            guard let blitPipeline = blitPipeline else {
-                ELOG("Error: Blit pipeline is nil")
-                renderEncoder.endEncoding()
+            // Create a render command encoder AFTER CIFilter has been applied
+            guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+                DLOG("Error: Could not create render encoder")
                 return
             }
 
-            renderEncoder.setRenderPipelineState(blitPipeline)
-            DLOG("🔬 Drawing primitives with blit pipeline")
+            // Set the viewport
+            let viewport = MTLViewport(
+                originX: 0,
+                originY: 0,
+                width: Double(outputTexture.width),
+                height: Double(outputTexture.height),
+                znear: 0.0,
+                zfar: 1.0
+            )
+            renderEncoder.setViewport(viewport)
 
-            let vertices: [Float] = [
-                -1.0, -1.0, 0.0, 0.0, 0.0,
-                 1.0, -1.0, 0.0, 1.0, 0.0,
-                -1.0,  1.0, 0.0, 0.0, 1.0,
-                 1.0,  1.0, 0.0, 1.0, 1.0
-            ]
-
-            if let vertexBuffer = device?.makeBuffer(bytes: vertices,
-                                                     length: vertices.count * MemoryLayout<Float>.size,
-                                                     options: .storageModeShared) {
-                renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+            var filterApplied = false
+            if self.renderSettings.metalFilterMode != .none {
+                filterApplied = self.applyMetalFilterIfPossible(encoder: renderEncoder,
+                                                           targetTexture: outputTexture,
+                                                           sourceTexture: finalSourceTexture)
             }
 
-            renderEncoder.setFragmentTexture(finalSourceTexture, index: 0)
+            if !filterApplied {
+                guard let blitPipeline = self.blitPipeline else {
+                    ELOG("Error: Blit pipeline is nil")
+                    renderEncoder.endEncoding()
+                    return
+                }
 
-            let sampler = renderSettings.smoothingEnabled ? linearSampler : pointSampler
-            if let sampler = sampler {
-                renderEncoder.setFragmentSamplerState(sampler, index: 0)
-            } else {
-                DLOG("Error: No sampler state available")
-                renderEncoder.endEncoding()
-                return
+                renderEncoder.setRenderPipelineState(blitPipeline)
+                DLOG("🔬 Drawing primitives with blit pipeline")
+
+                let vertices: [Float] = [
+                    -1.0, -1.0, 0.0, 0.0, 0.0,
+                     1.0, -1.0, 0.0, 1.0, 0.0,
+                    -1.0,  1.0, 0.0, 0.0, 1.0,
+                     1.0,  1.0, 0.0, 1.0, 1.0
+                ]
+
+                if let vertexBuffer = self.device?.makeBuffer(bytes: vertices,
+                                                         length: vertices.count * MemoryLayout<Float>.size,
+                                                         options: .storageModeShared) {
+                    renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+                }
+
+                renderEncoder.setFragmentTexture(finalSourceTexture, index: 0)
+
+                let sampler = self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler
+                if let sampler = sampler {
+                    renderEncoder.setFragmentSamplerState(sampler, index: 0)
+                } else {
+                    DLOG("Error: No sampler state available")
+                    renderEncoder.endEncoding()
+                    return
+                }
+
+                renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
             }
 
-            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+            // End encoding
+            renderEncoder.endEncoding()
+
+            // Present the drawable
+            commandBuffer.present(currentDrawable)
+
+            // Commit the command buffer; only then update previousCommandBuffer so
+            // that waitUntilScheduled() in didRenderFrameOnAlternateThread never
+            // blocks on an uncommitted buffer from a failed/early-return render pass.
+            commandBuffer.commit()
+            self.previousCommandBuffer = commandBuffer
         }
-
-        // End encoding
-        renderEncoder.endEncoding()
-
-        // Present the drawable
-        commandBuffer.present(currentDrawable)
-
-        // Commit the command buffer
-        commandBuffer.commit()
 
         if emulatorCore.rendersToOpenGL {
-            emulatorCore.frontBufferLock.unlock()
+            emulatorCore.frontBufferLock.withLock { doRenderWork() }
+        } else {
+            doRenderWork()
         }
     }
 
@@ -1840,119 +1846,114 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         /// Ensure OpenGL commands are flushed before using the shared texture
         glFlush()
 
-        /// Lock the front buffer to prevent concurrent access
-        emulatorCore?.frontBufferLock.lock()
-
-        /// Wait for any previous command buffer to be scheduled
-        previousCommandBuffer?.waitUntilScheduled()
-
-        /// Create a new command buffer
-        guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
-            ELOG("commandBuffer was nil")
-            emulatorCore?.frontBufferLock.unlock()
-            recoverFromGPUError()
-            return
-        }
-
-        /// Create a blit encoder for copying textures
-        guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
-            ELOG("encoder was nil")
-            emulatorCore?.frontBufferLock.unlock()
-            recoverFromGPUError()
-            return
-        }
-
-        // Get the screen rect or use a default
+        // Capture a strong reference before entering the lock scope.
         guard let emulatorCore = emulatorCore else {
             ELOG("Emulator core is nil")
-            encoder.endEncoding()
-            commandBuffer.commit()
             return
         }
 
-        let screenRect = emulatorCore.screenRect
+        let copySucceeded = emulatorCore.frontBufferLock.withLock { () -> Bool in
+            /// Wait for any previous command buffer to be scheduled
+            previousCommandBuffer?.waitUntilScheduled()
 
-        // For OpenGL cores, create the input texture on demand if needed
-        if inputTexture == nil ||
-           (inputTexture != nil &&
-            (inputTexture!.width != Int(screenRect.width) ||
-             inputTexture!.height != Int(screenRect.height))) {
+            /// Create a new command buffer
+            guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
+                ELOG("commandBuffer was nil")
+                recoverFromGPUError()
+                return false
+            }
 
-            ILOG("Creating/updating input texture for OpenGL core: \(Int(screenRect.width))x\(Int(screenRect.height))")
+            /// Create a blit encoder for copying textures
+            guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
+                ELOG("encoder was nil")
+                recoverFromGPUError()
+                return false
+            }
 
-            do {
-                try updateInputTexture()
-            } catch {
-                ELOG("Failed to create input texture for OpenGL core: \(error)")
+            let screenRect = emulatorCore.screenRect
+
+            // For OpenGL cores, create the input texture on demand if needed
+            if inputTexture == nil ||
+               (inputTexture != nil &&
+                (inputTexture!.width != Int(screenRect.width) ||
+                 inputTexture!.height != Int(screenRect.height))) {
+
+                ILOG("Creating/updating input texture for OpenGL core: \(Int(screenRect.width))x\(Int(screenRect.height))")
+
+                do {
+                    try updateInputTexture()
+                } catch {
+                    ELOG("Failed to create input texture for OpenGL core: \(error)")
+                    encoder.endEncoding()
+                    commandBuffer.commit()
+                    return false
+                }
+            }
+
+            // Ensure we have a valid input texture after potential creation
+            guard let destTexture = inputTexture else {
+                ELOG("Input texture is still nil after creation attempt")
                 encoder.endEncoding()
                 commandBuffer.commit()
-                emulatorCore.frontBufferLock.unlock()
-                return
+                return false
             }
-        }
 
-        // Ensure we have a valid input texture after potential creation
-        guard let destTexture = inputTexture else {
-            ELOG("Input texture is still nil after creation attempt")
+            // Verify dimensions to avoid crashes
+            let isValidRect = screenRect.width > 0 && screenRect.height > 0 &&
+                              Int(screenRect.width) <= backingTexture.width &&
+                              Int(screenRect.height) <= backingTexture.height
+
+            if !isValidRect {
+                WLOG("Invalid screen rect for OpenGL texture copy: \(screenRect)")
+                WLOG("Backing texture size: \(backingTexture.width)x\(backingTexture.height)")
+
+                // Use the entire backing texture as fallback
+                let safeWidth = min(backingTexture.width, destTexture.width)
+                let safeHeight = min(backingTexture.height, destTexture.height)
+
+                VLOG("Using fallback texture copy: size=(\(safeWidth),\(safeHeight))")
+
+                encoder.copy(from: backingTexture,
+                             sourceSlice: 0, sourceLevel: 0,
+                             sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                             sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
+                             to: destTexture,
+                             destinationSlice: 0, destinationLevel: 0,
+                             destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+            } else {
+                /// Use safe dimensions that won't exceed the texture bounds
+                let safeX = max(0, Int(screenRect.origin.x))
+                let safeY = max(0, Int(screenRect.origin.y))
+                let safeWidth = min(Int(screenRect.width), backingTexture.width - safeX)
+                let safeHeight = min(Int(screenRect.height), backingTexture.height - safeY)
+
+                VLOG("OpenGL texture copy: origin=(\(safeX),\(safeY)), size=(\(safeWidth),\(safeHeight))")
+
+                /// Copy from the backing texture to the input texture
+                encoder.copy(from: backingTexture,
+                             sourceSlice: 0, sourceLevel: 0,
+                             sourceOrigin: MTLOrigin(x: safeX, y: safeY, z: 0),
+                             sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
+                             to: destTexture,
+                             destinationSlice: 0, destinationLevel: 0,
+                             destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+            }
+
+            /// End encoding and commit the command buffer
             encoder.endEncoding()
             commandBuffer.commit()
-            emulatorCore.frontBufferLock.unlock()
-            return
+            return true
         }
 
-        // Verify dimensions to avoid crashes
-        let isValidRect = screenRect.width > 0 && screenRect.height > 0 &&
-                          Int(screenRect.width) <= backingTexture.width &&
-                          Int(screenRect.height) <= backingTexture.height
-
-        if !isValidRect {
-            WLOG("Invalid screen rect for OpenGL texture copy: \(screenRect)")
-            WLOG("Backing texture size: \(backingTexture.width)x\(backingTexture.height)")
-
-            // Use the entire backing texture as fallback
-            let safeWidth = min(backingTexture.width, destTexture.width)
-            let safeHeight = min(backingTexture.height, destTexture.height)
-
-            VLOG("Using fallback texture copy: size=(\(safeWidth),\(safeHeight))")
-
-            encoder.copy(from: backingTexture,
-                         sourceSlice: 0, sourceLevel: 0,
-                         sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
-                         sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
-                         to: destTexture,
-                         destinationSlice: 0, destinationLevel: 0,
-                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
-        } else {
-            /// Use safe dimensions that won't exceed the texture bounds
-            let safeX = max(0, Int(screenRect.origin.x))
-            let safeY = max(0, Int(screenRect.origin.y))
-            let safeWidth = min(Int(screenRect.width), backingTexture.width - safeX)
-            let safeHeight = min(Int(screenRect.height), backingTexture.height - safeY)
-
-            VLOG("OpenGL texture copy: origin=(\(safeX),\(safeY)), size=(\(safeWidth),\(safeHeight))")
-
-            /// Copy from the backing texture to the input texture
-            encoder.copy(from: backingTexture,
-                         sourceSlice: 0, sourceLevel: 0,
-                         sourceOrigin: MTLOrigin(x: safeX, y: safeY, z: 0),
-                         sourceSize: MTLSize(width: safeWidth, height: safeHeight, depth: 1),
-                         to: destTexture,
-                         destinationSlice: 0, destinationLevel: 0,
-                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        /// Always signal the front buffer condition so the render thread is never
+        /// left blocked indefinitely. Only mark the buffer as ready when the
+        /// blit/copy actually succeeded.
+        emulatorCore.frontBufferCondition.withLock {
+            if copySucceeded {
+                emulatorCore.isFrontBufferReady = true
+            }
+            emulatorCore.frontBufferCondition.signal()
         }
-
-        /// End encoding and commit the command buffer
-        encoder.endEncoding()
-        commandBuffer.commit()
-
-        /// Unlock the front buffer
-        emulatorCore.frontBufferLock.unlock()
-
-        /// Signal that the front buffer is ready
-        emulatorCore.frontBufferCondition.lock()
-        emulatorCore.isFrontBufferReady = true
-        emulatorCore.frontBufferCondition.signal()
-        emulatorCore.frontBufferCondition.unlock()
     }
 
     /// Cached viewport values
@@ -3363,69 +3364,68 @@ extension PVMetalViewController: PVRenderDelegateMetal {
 
         // Acquire the lock before reading/modifying inputTexture to match the
         // thread-safety contract used by the OpenGL HW-render path.
-        emulatorCore?.frontBufferLock.lock()
-        previousCommandBuffer?.waitUntilScheduled()
+        // withLock ensures the unlock runs even on early exit (guard/return).
+        var blitSucceeded = false
+        emulatorCore?.frontBufferLock.withLock {
+            previousCommandBuffer?.waitUntilScheduled()
 
-        // Ensure inputTexture matches the Vulkan texture's exact dimensions and pixel
-        // format. updateInputTexture() uses emulatorCore geometry which may differ from
-        // the actual VkImage size/format, so create the destination texture directly
-        // from the Vulkan texture's properties.
-        if inputTexture == nil
-            || inputTexture?.width       != texture.width
-            || inputTexture?.height      != texture.height
-            || inputTexture?.pixelFormat != texture.pixelFormat {
-            guard let dev = device else {
-                emulatorCore?.frontBufferLock.unlock()
-                ELOG("PVMetalViewController: no Metal device for Vulkan frame")
-                recoverFromGPUError()
+            // Ensure inputTexture matches the Vulkan texture's exact dimensions and pixel
+            // format. updateInputTexture() uses emulatorCore geometry which may differ from
+            // the actual VkImage size/format, so create the destination texture directly
+            // from the Vulkan texture's properties.
+            if inputTexture == nil
+                || inputTexture?.width       != texture.width
+                || inputTexture?.height      != texture.height
+                || inputTexture?.pixelFormat != texture.pixelFormat {
+                guard let dev = device else {
+                    ELOG("PVMetalViewController: no Metal device for Vulkan frame")
+                    recoverFromGPUError()
+                    return
+                }
+                let desc = MTLTextureDescriptor.texture2DDescriptor(
+                    pixelFormat: texture.pixelFormat,
+                    width: texture.width,
+                    height: texture.height,
+                    mipmapped: false)
+                desc.usage = [.shaderRead, .renderTarget]
+                inputTexture = dev.makeTexture(descriptor: desc)
+                if inputTexture == nil {
+                    ELOG("PVMetalViewController: failed to create inputTexture for Vulkan frame")
+                    recoverFromGPUError()
+                    return
+                }
+            }
+
+            guard let destTexture = inputTexture,
+                  let commandBuffer = commandQueue?.makeCommandBuffer(),
+                  let encoder = commandBuffer.makeBlitCommandEncoder() else {
+                ELOG("PVMetalViewController: failed to create blit command encoder for Vulkan frame — dropping frame")
                 return
             }
-            let desc = MTLTextureDescriptor.texture2DDescriptor(
-                pixelFormat: texture.pixelFormat,
-                width: texture.width,
-                height: texture.height,
-                mipmapped: false)
-            desc.usage = [.shaderRead, .renderTarget]
-            inputTexture = dev.makeTexture(descriptor: desc)
-            if inputTexture == nil {
-                emulatorCore?.frontBufferLock.unlock()
-                ELOG("PVMetalViewController: failed to create inputTexture for Vulkan frame")
-                recoverFromGPUError()
-                return
-            }
+
+            let w = min(texture.width,  destTexture.width)
+            let h = min(texture.height, destTexture.height)
+            encoder.copy(from: texture,
+                         sourceSlice: 0, sourceLevel: 0,
+                         sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                         sourceSize:   MTLSize(width: w, height: h, depth: 1),
+                         to: destTexture,
+                         destinationSlice: 0, destinationLevel: 0,
+                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+            encoder.endEncoding()
+            commandBuffer.commit()
+            previousCommandBuffer = commandBuffer
+            blitSucceeded = true
         }
 
-        guard let destTexture = inputTexture,
-              let commandBuffer = commandQueue?.makeCommandBuffer(),
-              let encoder = commandBuffer.makeBlitCommandEncoder() else {
-            emulatorCore?.frontBufferLock.unlock()
-            ELOG("PVMetalViewController: failed to create blit command encoder for Vulkan frame — dropping frame")
-            // Signal so callers waiting on frontBufferCondition don't stall forever.
-            emulatorCore?.frontBufferCondition.lock()
+        // Signal so any render thread waiting on frontBufferCondition is unblocked,
+        // whether or not the blit succeeded (avoids a stall on dropped frames).
+        emulatorCore?.frontBufferCondition.withLock {
+            if blitSucceeded {
+                emulatorCore?.isFrontBufferReady = true
+            }
             emulatorCore?.frontBufferCondition.signal()
-            emulatorCore?.frontBufferCondition.unlock()
-            return
         }
-
-        let w = min(texture.width,  destTexture.width)
-        let h = min(texture.height, destTexture.height)
-        encoder.copy(from: texture,
-                     sourceSlice: 0, sourceLevel: 0,
-                     sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
-                     sourceSize:   MTLSize(width: w, height: h, depth: 1),
-                     to: destTexture,
-                     destinationSlice: 0, destinationLevel: 0,
-                     destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
-        encoder.endEncoding()
-        commandBuffer.commit()
-        previousCommandBuffer = commandBuffer
-
-        emulatorCore?.frontBufferLock.unlock()
-
-        emulatorCore?.frontBufferCondition.lock()
-        emulatorCore?.isFrontBufferReady = true
-        emulatorCore?.frontBufferCondition.signal()
-        emulatorCore?.frontBufferCondition.unlock()
     }
 }
 
