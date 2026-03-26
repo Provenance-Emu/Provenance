@@ -1,0 +1,1 @@
+Bugfixes en prestatieverbeteringen. Bijgewerkte UI en verbeterde controllerondersteuning.

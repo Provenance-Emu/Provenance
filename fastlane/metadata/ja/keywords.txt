@@ -1,0 +1,1 @@
+エミュレータ,レトロ,ゲーム,SNES,NES,N64,GBA,セガ,PlayStation,アーケード

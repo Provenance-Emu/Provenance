@@ -1,0 +1,1 @@
+эмулятор,ретро,игры,SNES,NES,N64,GBA,Sega,PlayStation,аркада

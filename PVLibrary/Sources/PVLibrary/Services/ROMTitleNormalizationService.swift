@@ -19,6 +19,12 @@ public struct ROMTitleRenameProposal: Identifiable, Sendable {
     public let id: String
     public let currentTitle: String
     public let proposedTitle: String
+
+    public init(id: String, currentTitle: String, proposedTitle: String) {
+        self.id = id
+        self.currentTitle = currentTitle
+        self.proposedTitle = proposedTitle
+    }
 }
 
 // MARK: - Service

@@ -74,12 +74,14 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleLocalizations</key>
 	<array>
-		<string>Spanish</string>
+		<string>es</string>
 		<string>zh_TW</string>
 		<string>it</string>
 		<string>ja</string>
 		<string>en</string>
 		<string>zh_CN</string>
+		<string>ko</string>
+		<string>ar</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
