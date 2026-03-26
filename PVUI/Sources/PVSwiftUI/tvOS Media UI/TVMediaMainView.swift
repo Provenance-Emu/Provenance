@@ -3427,7 +3427,7 @@ struct TVMediaSystemGamesView: View {
                                         .frame(width: 3, height: 26)
                                 }
 
-                                Text(verbatim: "ALL \(system.shortName.uppercased()) GAMES")
+                                Text("tv_media.all_system_games \(system.shortName.uppercased())", bundle: .module)
                                     .font(.system(size: 18, weight: .semibold, design: .default))
                                     .tracking(1.2)
                                     .foregroundStyle(.white.opacity(0.95))
@@ -3435,7 +3435,7 @@ struct TVMediaSystemGamesView: View {
                                 Spacer()
 
                                 let gameCount = model.gamesBySystemIdentifier[system.identifier]?.count ?? 0
-                                Text(verbatim: "\(gameCount) GAMES")
+                                Text("tv_media.games_count \(gameCount)", bundle: .module)
                                     .font(.system(size: 13, weight: .medium, design: .default))
                                     .tracking(0.8)
                                     .foregroundStyle(.white.opacity(0.4))

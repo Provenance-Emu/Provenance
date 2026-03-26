@@ -101,10 +101,12 @@
 "cloud_sync.records.total" = "Total Records:";
 "cloud_sync.records.storage_distribution" = "Storage Distribution";
 
+
 "cloud_sync.progress.title" = "Sync Progress";
 "cloud_sync.progress.current_file" = "Current File:";
 "cloud_sync.progress.current_file_format %@" = "Current File: %@";
 "cloud_sync.progress.progress_label" = "Progress:";
+"cloud_sync.progress.files_progress %lld %lld" = "%lld of %lld files";
 "cloud_sync.progress.completed" = "Completed";
 "cloud_sync.progress.total" = "Total";
 "cloud_sync.progress.remaining" = "Remaining";
@@ -115,7 +117,6 @@
 "cloud_sync.records.battery_states" = "Battery States:";
 "cloud_sync.records.screenshots" = "Screenshots:";
 "cloud_sync.records.delta_skins" = "Delta Skins:";
-"cloud_sync.records.total_label" = "Total Records:";
 
 "cloud_sync.actions.title" = "Sync Actions";
 "cloud_sync.actions.sync_all" = "Sync All Content";
@@ -167,6 +168,8 @@
 "tv_media.library.add_roms_hint" = "Add ROMs via Web Server or CloudKit sync from an iPhone, iPad or Macintosh";
 "tv_media.library.icloud_in_progress" = "iCloud sync may be in progress";
 "tv_media.games" = "GAMES";
+"tv_media.games_count %lld" = "%lld GAMES";
+"tv_media.all_system_games %@" = "ALL %@ GAMES";
 "tv_media.saves.view_all" = "VIEW ALL";
 "tv_media.saves.count %lld" = "%lld saves";
 "tv_media.search.recent" = "RECENT";

@@ -848,7 +848,7 @@ public struct CloudSyncSettingsView: View {
                         .background(Color.retroPurple.opacity(0.5))
 
                     HStack {
-                        Text("cloud_sync.records.total_label", bundle: .module)
+                        Text("cloud_sync.records.total", bundle: .module)
                             .foregroundColor(.white)
                             .fontWeight(.bold)
                         Spacer()
@@ -883,7 +883,7 @@ public struct CloudSyncSettingsView: View {
                     .progressViewStyle(LinearProgressViewStyle(tint: .retroBlue))
 
                 HStack {
-                    Text(verbatim: "\(viewModel.syncingFiles) of \(viewModel.totalFiles ?? 0) files")
+                    Text("cloud_sync.progress.files_progress \(viewModel.syncingFiles) \(viewModel.totalFiles ?? 0)", bundle: .module)
                         .font(.caption)
                         .foregroundColor(.gray)
 

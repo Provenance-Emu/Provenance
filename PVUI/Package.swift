@@ -267,6 +267,8 @@ let package = Package(
                 .copy("Resources/whats-new.json"),
                 .copy("Resources/roadmap.json"),
                 .process("Resources/en.lproj"),
+                .process("Resources/ar.lproj"),
+                .process("Resources/ko.lproj"),
             ]
         ),
 
