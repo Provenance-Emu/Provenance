@@ -48,6 +48,37 @@ final class WidgetDataWriterTests: XCTestCase {
         XCTAssertNil(decoded.systemIdentifier)
     }
 
+    // MARK: - WidgetPlayActivityTimestamp
+
+    func testWidgetPlayActivityTimestampPrefersLatestOfRecentAndGame() {
+        let recent = Date(timeIntervalSince1970: 1_700_000_000)
+        let gamePlayed = Date(timeIntervalSince1970: 1_800_000_000)
+        let importDate = Date(timeIntervalSince1970: 1_000_000_000)
+        let resolved = WidgetPlayActivityTimestamp.best(
+            recentLastPlayed: recent,
+            gameLastPlayed: gamePlayed,
+            importDate: importDate
+        )
+        XCTAssertEqual(resolved, gamePlayed)
+    }
+
+    func testWidgetPlayActivityTimestampFallsBackToImportWhenNoPlayDates() {
+        let importDate = Date(timeIntervalSince1970: 1_650_000_000)
+        XCTAssertEqual(
+            WidgetPlayActivityTimestamp.best(recentLastPlayed: nil, gameLastPlayed: nil, importDate: importDate),
+            importDate
+        )
+    }
+
+    func testWidgetPlayActivityTimestampUsesGameWhenRecentNil() {
+        let gamePlayed = Date(timeIntervalSince1970: 1_750_000_000)
+        let importDate = Date(timeIntervalSince1970: 1_000_000_000)
+        XCTAssertEqual(
+            WidgetPlayActivityTimestamp.best(recentLastPlayed: nil, gameLastPlayed: gamePlayed, importDate: importDate),
+            gamePlayed
+        )
+    }
+
     // MARK: - WidgetNowPlayingData
 
     func testWidgetNowPlayingDataRoundTripsJSON() throws {
@@ -105,8 +136,8 @@ final class WidgetDataWriterTests: XCTestCase {
     func testWriterCapsGamesToTwelve() {
         // Supplying more than 12 games should not crash;
         // internals enforce the 12-game cap via prefix(12).
-        let games = (0..<20).map { i in
-            WidgetGameData(id: "game-\(i)", title: "Game \(i)", systemName: "NES")
+        let games = (0..<20).map { index in
+            WidgetGameData(id: "game-\(index)", title: "Game \(index)", systemName: "NES")
         }
         WidgetDataWriter.shared.writeGameData(
             recentGames: games,

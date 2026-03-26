@@ -54,6 +54,15 @@ public struct WidgetGameData: Codable, Sendable {
     }
 }
 
+/// Resolves a single activity timestamp for `WidgetGameData.lastPlayedDate` from Realm fields that can diverge:
+/// `PVRecentGame.lastPlayedDate` (updated when a session is queued) and `PVGame.lastPlayed` (session / play tracking).
+public enum WidgetPlayActivityTimestamp {
+    /// Returns the latest play-related timestamp, or `importDate` when neither play field is set.
+    public static func best(recentLastPlayed: Date?, gameLastPlayed: Date?, importDate: Date) -> Date {
+        [recentLastPlayed, gameLastPlayed].compactMap { $0 }.max() ?? importDate
+    }
+}
+
 /// Now-playing track info written by Music Player (#2654) and read by the widget extension.
 /// Must remain Codable-compatible with `WidgetNowPlayingEntry` in the widget target.
 public struct WidgetNowPlayingData: Codable, Sendable {

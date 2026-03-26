@@ -55,7 +55,11 @@ public extension WidgetDataWriter {
                 systemName: game.system?.shortName ?? game.system?.name ?? "",
                 systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
                 artworkPath: widgetArtworkPath(for: game),
-                lastPlayedDate: recent.lastPlayedDate
+                lastPlayedDate: WidgetPlayActivityTimestamp.best(
+                    recentLastPlayed: recent.lastPlayedDate,
+                    gameLastPlayed: game.lastPlayed,
+                    importDate: game.importDate
+                )
             )
         }
 
@@ -71,7 +75,11 @@ public extension WidgetDataWriter {
                     systemName: game.system?.shortName ?? game.system?.name ?? "",
                     systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
                     artworkPath: widgetArtworkPath(for: game),
-                    lastPlayedDate: nil
+                    lastPlayedDate: WidgetPlayActivityTimestamp.best(
+                        recentLastPlayed: nil,
+                        gameLastPlayed: game.lastPlayed,
+                        importDate: game.importDate
+                    )
                 )
             }
         }
