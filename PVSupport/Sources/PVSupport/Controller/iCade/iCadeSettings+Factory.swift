@@ -24,6 +24,10 @@ public extension iCadeControllerSetting {
             return PViCadeSteelSeriesController()
         case .mocute:
             return PViCadeMocuteController()
+        case .eightBitdoSNES30:
+            return PViCade8BitdoSNES30Controller()
+        case .eightBitdoSN30Pro:
+            return PViCade8BitdoSN30ProController()
         }
     }
 
