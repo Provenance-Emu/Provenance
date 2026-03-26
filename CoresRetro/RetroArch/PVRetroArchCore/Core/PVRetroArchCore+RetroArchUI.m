@@ -613,6 +613,16 @@ void extract_bundles();
         processing_init = true;
     }
 
+#if !TARGET_OS_TV
+    // When the user's config file already exists, apply the MIDI preference
+    // (retroArchMIDIEnabled) so the in-game toggle takes effect on the next
+    // session start. On first run the bundled retroarch.cfg already ships
+    // with "coremidi" as the default, so no patch is needed before the file exists.
+    if ([fm fileExistsAtPath:fileName]) {
+        [self applyMIDIPreferenceToUserCfg:fileName];
+    }
+#endif // !TARGET_OS_TV
+
     // Handle overlay updates
     if (shouldUpdateOverlays) {
         ILOG(@"Overlays need updating, starting download...");
@@ -1045,6 +1055,8 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     return @[
         @"notification_show_autoconfig",
         @"notification_show_autoconfig_fails",
+        @"midi_input",
+        @"midi_output",
     ];
 }
 
@@ -1144,58 +1156,97 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     }
 }
 
+/// Patches a single key in `cfgPath` to the given value.
+/// The replacement is done in-place using a regex that matches `key = "..."` lines.
+/// If the key is absent the line is appended.
+- (void)patchCfgKey:(NSString *)key value:(NSString *)value inFile:(NSString *)cfgPath {
+    [self patchCfgKeys:@{key: value} inFile:cfgPath];
+}
+
+/// Patches multiple keys in `cfgPath` in a single read-modify-write cycle.
+/// Each key is replaced (or appended) using a regex matching `key = "..."` lines.
+/// The file is only written when at least one value actually changes, avoiding
+/// unnecessary I/O on repeated calls with the same values.
+- (void)patchCfgKeys:(NSDictionary<NSString *, NSString *> *)patches inFile:(NSString *)cfgPath {
+    NSError *err = nil;
+    NSMutableString *content = [NSMutableString stringWithContentsOfFile:cfgPath
+                                                                encoding:NSUTF8StringEncoding
+                                                                   error:&err];
+    if (!content) {
+        ELOG(@"patchCfgKeys: failed to read %@: %@", cfgPath, err.localizedDescription);
+        return;
+    }
+
+    BOOL didModify = NO;
+    for (NSString *key in patches) {
+        NSString *value = patches[key];
+        NSString *newLine = [NSString stringWithFormat:@"%@ = \"%@\"", key, value];
+        NSString *escapedKey = [NSRegularExpression escapedPatternForString:key];
+        NSString *pattern = [NSString stringWithFormat:@"(?m)^[ \\t]*%@[ \\t]*=.*$", escapedKey];
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern
+                                                                              options:0
+                                                                                error:&err];
+        if (!regex) {
+            ELOG(@"patchCfgKeys: bad regex for key %@: %@", key, err.localizedDescription);
+            continue;
+        }
+        NSTextCheckingResult *match = [regex firstMatchInString:content options:0
+                                                          range:NSMakeRange(0, content.length)];
+        if (match) {
+            NSString *existing = [content substringWithRange:match.range];
+            if (![existing isEqualToString:newLine]) {
+                [content replaceCharactersInRange:match.range withString:newLine];
+                didModify = YES;
+            }
+        } else {
+            if (![content hasSuffix:@"\n"]) [content appendString:@"\n"];
+            [content appendFormat:@"%@\n", newLine];
+            didModify = YES;
+        }
+    }
+
+    if (!didModify) {
+        return;
+    }
+
+    NSError *writeErr = nil;
+    BOOL ok = [content writeToFile:cfgPath atomically:YES encoding:NSUTF8StringEncoding error:&writeErr];
+    if (!ok) {
+        ELOG(@"patchCfgKeys: failed to write %@: %@", cfgPath, writeErr.localizedDescription);
+    }
+}
+
+/// Reads the `retroArchMIDIEnabled` preference from NSUserDefaults (default: YES when absent)
+/// and patches `midi_input` / `midi_output` in the user's retroarch.cfg accordingly.
+/// Called at core startup when the user cfg already exists; on first run the bundled
+/// retroarch.cfg already ships with "coremidi" as the default so no patch is needed.
+/// Both keys are patched in a single read-modify-write cycle to avoid unnecessary I/O.
+#if !TARGET_OS_TV
+- (void)applyMIDIPreferenceToUserCfg:(NSString *)cfgPath {
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    BOOL midiEnabled = YES;
+    // Key matches PVSettingsModel's `retroArchMIDIEnabled` Defaults key.
+    if ([ud objectForKey:@"retroArchMIDIEnabled"] != nil) {
+        midiEnabled = [ud boolForKey:@"retroArchMIDIEnabled"];
+    }
+    NSString *deviceValue = midiEnabled ? @"coremidi" : @"Off";
+    ILOG(@"Applying MIDI preference to cfg: midi_input/output = \"%@\"", deviceValue);
+    [self patchCfgKeys:@{@"midi_input": deviceValue, @"midi_output": deviceValue}
+                inFile:cfgPath];
+}
+#endif // !TARGET_OS_TV
+
 /// Updates (or adds) `user_language = "N"` in the RetroArch config file at
 /// `configPath` to match the language resolved from the `coreLanguage` user setting.
 /// Called every time `writeConfigFile` runs so that locale changes take effect at
 /// the next core launch without requiring a config reset.
 - (void)applyUserLanguageToRetroArchConfig:(NSString *)configPath {
-    NSError *readErr = nil;
-    NSString *content = [NSString stringWithContentsOfFile:configPath
-                                                  encoding:NSUTF8StringEncoding
-                                                     error:&readErr];
-    if (!content) {
-        ELOG(@"applyUserLanguageToRetroArchConfig: failed to read %@: %@",
-             configPath, readErr.localizedDescription);
-        return;
-    }
-
     NSInteger langID = [PVRetroArchCoreBridge resolvedUserLanguage];
-    NSString *newLine = [NSString stringWithFormat:@"user_language = \"%ld\"", (long)langID];
+    NSString *langValue = [NSString stringWithFormat:@"%ld", (long)langID];
     ILOG(@"applyUserLanguageToRetroArchConfig: setting user_language = %ld", (long)langID);
-
-    NSError *regexErr = nil;
-    NSRegularExpression *regex = [NSRegularExpression
-        regularExpressionWithPattern:@"(?m)^[ \\t]*user_language[ \\t]*=.*$"
-                             options:0
-                               error:&regexErr];
-    if (!regex) {
-        ELOG(@"applyUserLanguageToRetroArchConfig: bad regex: %@", regexErr.localizedDescription);
-        return;
-    }
-
-    NSMutableString *result = [content mutableCopy];
-    NSTextCheckingResult *match = [regex firstMatchInString:result
-                                                    options:0
-                                                      range:NSMakeRange(0, result.length)];
-    if (match) {
-        [result replaceCharactersInRange:match.range withString:newLine];
-    } else {
-        if (![result hasSuffix:@"\n"]) {
-            [result appendString:@"\n"];
-        }
-        [result appendFormat:@"%@\n", newLine];
-    }
-
-    NSError *writeErr = nil;
-    BOOL ok = [result writeToFile:configPath
-                       atomically:YES
-                         encoding:NSUTF8StringEncoding
-                            error:&writeErr];
-    if (!ok || writeErr) {
-        ELOG(@"applyUserLanguageToRetroArchConfig: write failed for %@: %@",
-             configPath, writeErr.localizedDescription);
-    }
+    [self patchCfgKey:@"user_language" value:langValue inFile:configPath];
 }
+
 
 - (void)setViewType:(apple_view_type_t)vt
 {

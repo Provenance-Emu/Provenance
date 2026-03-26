@@ -415,17 +415,49 @@ struct RetroMenuView: View {
 #endif
     }
 
+    /// True when the active core is a RetroArch/libretro-path core.
+    /// Uses case-insensitive substring checks against known stable identifier patterns:
+    /// - "libretro" substring covers sub-cores (e.g., "dosbox_pure_libretro", "mednafen_pce_libretro")
+    /// - "retroarch" substring covers the main bridge bundle identifier
+    /// Matches the established detection pattern used throughout the codebase.
+    var isLibretroCore: Bool {
+        guard let coreID = emulatorVC.core.coreIdentifier else { return false }
+        let lower = coreID.lowercased()
+        return lower.contains("libretro") || lower.contains("retroarch")
+    }
+
+    /// True when the active core is a RetroArch/libretro-path core running on a
+    /// MIDI-capable system (DOS, Atari ST, MSX, etc.).
+    /// Used to decide whether to show the RetroArch MIDI driver toggle in the CORE tab.
+    var isRetroArchMIDICapable: Bool {
+#if canImport(CoreMIDI) && !os(tvOS)
+        guard isLibretroCore else { return false }
+        guard let game = emulatorVC.game else { return false }
+        guard let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return false }
+        return MIDISystemRegistry.shared.supportsMIDI(sysID)
+#else
+        return false
+#endif
+    }
+
     /// Check if core has features that warrant a CORE tab
     private var hasCoreFeatures: Bool {
         let hasPaletteSupport = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
         #if !os(tvOS)
+        // Use explicit CoreMIDI guard so this flag only activates when the MIDI UI sections
+        // actually render — prevents a "ghost" true that would hide the "no features" message.
+        #if canImport(CoreMIDI)
+        let hasMIDI = coreSupportsMIDI || isRetroArchMIDICapable
+        #else
+        let hasMIDI = coreSupportsMIDI
+        #endif
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
         hasPaletteSupport ||
         emulatorVC.coreSupportsVirtualKeyboard ||
         emulatorVC.coreSupportsVirtualMouse ||
         hasPortDeviceOptions ||
-        coreSupportsMIDI
+        hasMIDI
         #else
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
@@ -605,6 +637,9 @@ struct RetroMenuView: View {
 
             // MIDI device picker (source / destination + TX/RX lights)
             midiPickerSection
+
+            // RetroArch MIDI driver toggle (libretro cores on MIDI-capable systems)
+            retroArchMIDISection
 
             // If no core features available, show message
             if !hasCoreFeatures {
