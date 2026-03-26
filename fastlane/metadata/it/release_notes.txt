@@ -1,0 +1,1 @@
+Correzioni di bug e miglioramenti delle prestazioni. Interfaccia aggiornata e supporto controller migliorato.

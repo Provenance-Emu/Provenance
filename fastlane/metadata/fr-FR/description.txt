@@ -1,0 +1,21 @@
+Provenance est un puissant émulateur multi-système pour iOS et tvOS. Jouez à vos jeux classiques préférés sur plus de 60 systèmes de jeux rétro, le tout dans une seule application.
+
+SYSTÈMES PRIS EN CHARGE
+• Nintendo : NES, SNES, Nintendo 64, Game Boy, GBC, Game Boy Advance
+• Sega : Master System, Mega Drive/Genesis, Game Gear, Saturn, 32X, CD
+• Sony : PlayStation
+• Atari : 2600, 5200, 7800, Lynx, Jaguar
+• Neo Geo, Neo Geo Pocket, WonderSwan, PC Engine/TurboGrafx-16
+• Arcade (MAME), DOS et bien plus encore !
+
+FONCTIONNALITÉS CLÉS
+• Interface SwiftUI native optimisée pour iOS et tvOS
+• Support manettes : MFi, Xbox, PlayStation et mappage personnalisé
+• États de sauvegarde — sauvegardez et chargez votre progression à tout moment
+• Support des codes de triche
+• Intégration RetroAchievements
+• Synchronisation iCloud pour la bibliothèque et les sauvegardes
+• Support AirPlay et Apple TV
+• Bibliothèque de jeux avec illustrations et métadonnées
+
+Importez vos propres fichiers ROM et BIOS pour commencer. Provenance est open source et animé par sa communauté.

@@ -1,0 +1,21 @@
+Provenanceは、iOSおよびtvOS向けの強力なマルチシステムエミュレータです。60以上のレトロゲームシステムのお気に入りのクラシックゲームを1つのアプリでお楽しみください。
+
+対応システム
+• Nintendo: NES、SNES、Nintendo 64、ゲームボーイ、GBC、ゲームボーイアドバンス
+• Sega: マスターシステム、メガドライブ/Genesis、ゲームギア、サターン、32X、CD
+• Sony: PlayStation
+• Atari: 2600、5200、7800、Lynx、Jaguar
+• Neo Geo、Neo Geo Pocket、ワンダースワン、PCエンジン/TurboGrafx-16
+• アーケード (MAME)、DOSなど
+
+主な機能
+• iOSおよびtvOS向けに最適化されたネイティブSwiftUIインターフェース
+• コントローラー対応: MFi、Xbox、PlayStation、カスタムマッピング
+• セーブステート — いつでも進行状況を保存・読み込み
+• チートコードのサポート
+• RetroAchievements統合
+• ゲームライブラリとセーブステートのiCloud同期
+• AirPlayおよびApple TVのサポート
+• アートワークとメタデータ付きゲームライブラリ
+
+独自のROMとBIOSファイルをインポートして始めましょう。Provenanceはオープンソースでコミュニティ主導のアプリです。

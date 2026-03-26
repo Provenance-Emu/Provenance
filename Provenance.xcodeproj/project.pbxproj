@@ -2659,6 +2659,9 @@
 		B3CE7FFF2873FB7600B6BB5A /* PVVecXGL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecXGL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CEC5A62794CD8C004A7CC1 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Strings.strings; sourceTree = "<group>"; };
 		B3CEC5A72794CD8D004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3287500AA001100BB000001 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3287500AA001100BB000002 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3287500AA001100BB000003 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B3D1800828963AD3001207AF /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D1800D28963E80001207AF /* PVBliss-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVBliss-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D180892896437C001207AF /* PVBliss-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVBliss-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8557,6 +8560,8 @@
 				nl,
 				it,
 				"pt-BR",
+				de,
+				fr,
 				Base,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
@@ -11311,6 +11316,9 @@
 				B311B1E127A53F9E00D1DE41 /* ja */,
 				B311B1EE27A53FC500D1DE41 /* nl */,
 				B311B1FB27A53FF000D1DE41 /* it */,
+				B3287500AA001100BB000001 /* de */,
+				B3287500AA001100BB000002 /* fr */,
+				B3287500AA001100BB000003 /* pt-BR */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

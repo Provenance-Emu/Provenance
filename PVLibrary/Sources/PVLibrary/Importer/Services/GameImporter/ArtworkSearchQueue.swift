@@ -13,13 +13,9 @@ import PVRealm
 import RealmSwift
 import PVSystems
 
-/// Feature flag to enable/disable enhanced artwork search
-/// Set to false to disable this feature if bugs are found
-#if DEBUG
+/// Feature flag to enable/disable enhanced artwork search.
+/// Set to `false` to disable this feature if bugs are found.
 public var ENABLE_ENHANCED_ARTWORK_SEARCH: Bool = true
-#else
-public var ENABLE_ENHANCED_ARTWORK_SEARCH: Bool = true
-#endif
 
 /// Metadata needed for artwork search (no Realm objects required)
 private struct ArtworkSearchMetadata: Sendable {
@@ -159,104 +155,23 @@ public actor ArtworkSearchQueue {
         // Check if game still needs artwork (quick Realm check only when saving)
         // We'll verify this when we actually save the artwork
 
-        let cleanedTitle = metadata.title.cleanedForSearch()
-        let cleanedFilename = metadata.filename.cleanedForSearch()
         let md5Hash = metadata.md5Hash.uppercased()
         let gameTitle = metadata.title.isEmpty ? metadata.gameID : metadata.title
 
-        // Need at least one searchable term
-        guard !cleanedTitle.isEmpty || !cleanedFilename.isEmpty else {
+        // Need at least one meaningful searchable term (after bracket/noise stripping)
+        guard !metadata.title.cleanedForArtworkSearch().isEmpty || !metadata.filename.cleanedForArtworkSearch().isEmpty else {
             WLOG("ArtworkSearchQueue: Game \(metadata.gameID) has no searchable title or filename")
             return
         }
 
         do {
-            // Progressive fallback search with multiple search terms
-            // Try original title first (best match), then cleaned title, then filename, then MD5-based lookup
-            var artworkResults: [ArtworkMetadata]? = nil
-
-            // Search terms to try in order of preference
-            // Try original title first (like ArtworkSearchView does), then cleaned versions
-            let originalTitle = metadata.title.trimmingCharacters(in: .whitespacesAndNewlines)
-            var searchTerms: [(String, String)] = [
-                ("original title", originalTitle),
-                ("cleaned title", cleanedTitle),
-                ("filename", cleanedFilename)
-            ].filter { !$0.1.isEmpty }
-
-            // Remove duplicates - if cleaned title equals original, remove cleaned
-            if cleanedTitle.lowercased() == originalTitle.lowercased() {
-                searchTerms.removeAll { $0.0 == "cleaned title" }
-            }
-
-            // Try each search term with systemID first (more precise), then without systemID as fallback
-            // Prioritize original title, then cleaned title, then filename
-            for (termType, searchTerm) in searchTerms {
-                // First attempt: search with systemID (more precise) - prefer these results
-                if let systemID = metadata.systemID {
-                    let systemResults = try await lookup.searchArtwork(
-                        byGameName: searchTerm,
-                        systemID: systemID,
-                        artworkTypes: .defaults
-                    )
-
-                    if let results = systemResults, !results.isEmpty {
-                        // Results with systemID are best - use these and stop trying other terms
-                        artworkResults = results
-                        ILOG("ArtworkSearchQueue: Found \(results.count) results using \(termType) '\(searchTerm)' with system \(systemID.rawValue)")
-                        break // Found good results with systemID, stop here
-                    }
-                }
-
-                // Fallback: try without systemID (broader search) only if we don't have results yet
-                if artworkResults?.isEmpty ?? true {
-                    let fallbackResults = try await lookup.searchArtwork(
-                        byGameName: searchTerm,
-                        systemID: nil,
-                        artworkTypes: .defaults
-                    )
-
-                    if let fallbackResults = fallbackResults, !fallbackResults.isEmpty {
-                        ILOG("ArtworkSearchQueue: Found \(fallbackResults.count) results using \(termType) '\(searchTerm)' without system filter")
-                        artworkResults = fallbackResults
-                        // Continue to try next term with systemID (might find better match)
-                    }
-                } else {
-                    // Already have results with systemID from a previous term - stop here
-                    break
-                }
-            }
-
-            // If still no results and we have MD5, try MD5-based ROM lookup then artwork lookup
-            if artworkResults?.isEmpty ?? true && !md5Hash.isEmpty {
-                ILOG("ArtworkSearchQueue: No results from name search, trying MD5-based lookup for \(gameTitle)")
-                if let romMetadata = try? await lookup.searchROM(byMD5: md5Hash) {
-                    let romTitle = romMetadata.gameTitle
-                    let cleanedROMTitle = romTitle.cleanedForSearch()
-                    if !cleanedROMTitle.isEmpty {
-                        // Try searching with the ROM metadata title
-                        if let systemID = metadata.systemID {
-                            artworkResults = try? await lookup.searchArtwork(
-                                byGameName: cleanedROMTitle,
-                                systemID: systemID,
-                                artworkTypes: .defaults
-                            )
-                        }
-
-                        if artworkResults?.isEmpty ?? true {
-                            artworkResults = try? await lookup.searchArtwork(
-                                byGameName: cleanedROMTitle,
-                                systemID: nil,
-                                artworkTypes: .defaults
-                            )
-                        }
-
-                        if let results = artworkResults, !results.isEmpty {
-                            ILOG("ArtworkSearchQueue: Found \(results.count) results using ROM metadata title '\(cleanedROMTitle)' from MD5 lookup")
-                        }
-                    }
-                }
-            }
+            // Delegate progressive fallback search to ArtworkMatchingService
+            let artworkResults = try await ArtworkMatchingService.shared.searchWithFallback(
+                title: metadata.title,
+                filename: metadata.filename,
+                systemID: metadata.systemID,
+                md5Hash: metadata.md5Hash
+            )
 
             if artworkResults?.isEmpty ?? true {
                 VLOG("ArtworkSearchQueue: No artwork found for \(gameTitle) after trying title, filename, and MD5 lookup")
@@ -368,7 +283,7 @@ public actor ArtworkSearchQueue {
                     if retryCount < maxRetries - 1 {
                         retryCount += 1
                         ILOG("ArtworkSearchQueue: Game \(gameTitle) (MD5: \(md5Hash), ID: \(metadata.gameID)) not found in database, retrying (\(retryCount)/\(maxRetries))...")
-                        try? await Task.sleep(nanoseconds: 500_000_000) // 500ms delay
+                        try? await Task.sleep(for: .milliseconds(500))
                     } else {
                         break
                     }
@@ -438,16 +353,11 @@ public actor ArtworkSearchQueue {
                         }
                     }
                 } else {
-                    // Provide more detailed logging about why we're skipping
                     if gameFound {
                         if hasOriginalArtworkFile {
                             VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has original artwork file, skipping save")
                         } else if hasCustomArtworkURL {
                             VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has custom artwork, skipping save")
-                        } else if !currentOriginalArtworkURL.isEmpty {
-                            VLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) already has original artwork URL set, skipping save")
-                        } else {
-                            WLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) found but check failed for unknown reason - may need artwork but conditions not met")
                         }
                     } else {
                         WLOG("ArtworkSearchQueue: Game \(metadata.title) (MD5: \(md5Hash), ID: \(metadata.gameID)) not found in database after \(finalRetryCount + 1) attempts, skipping save. Game may not be committed yet or MD5 mismatch.")
@@ -591,37 +501,3 @@ public actor ArtworkSearchQueue {
     }
 }
 
-/// Extension to clean game titles for artwork search (same as ArtworkSearchView)
-private extension String {
-    func cleanedForSearch() -> String {
-        var cleaned = self
-
-        // Remove text in brackets: [], (), {}
-        let bracketPatterns = [
-            "\\[.*?\\]",  // Square brackets
-            "\\(.*?\\)",  // Parentheses
-            "\\{.*?\\}"   // Curly braces
-        ]
-
-        for pattern in bracketPatterns {
-            cleaned = cleaned.replacingOccurrences(
-                of: pattern,
-                with: "",
-                options: .regularExpression
-            )
-        }
-
-        // Remove specific characters when surrounded by spaces
-        let charsToRemove = ",:;!^%&*+/-"
-        let spacePattern = "\\s[\(charsToRemove)]\\s"
-
-        cleaned = cleaned.replacingOccurrences(
-            of: spacePattern,
-            with: " ",
-            options: .regularExpression
-        )
-
-        // Trim whitespace and newlines
-        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-}
