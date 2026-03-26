@@ -13,7 +13,6 @@
 
 #include <dlfcn.h>
 #include <mach/mach.h>
-#include <sys/stat.h>
 #include <mach-o/dyld.h>
 #include <mach-o/loader.h>
 #include <mach-o/getsect.h>
