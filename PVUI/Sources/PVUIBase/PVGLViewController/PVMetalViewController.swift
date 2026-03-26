@@ -295,6 +295,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// Built lazily the first time it is needed.
     var dualScreenBlitPipeline: MTLRenderPipelineState? = nil
 
+    /// Set to `true` after a failed attempt to build `dualScreenBlitPipeline` so
+    /// subsequent frames skip the (expensive) retry and log the error only once.
+    var dualScreenPipelineBuildFailed: Bool = false
+
     /// Controls whether VSync is enabled (synchronizes rendering with display refresh rate)
     public var vsyncEnabled: Bool = true
 
@@ -2790,7 +2794,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // renderDualScreenLayout produced no output (empty layout or pipeline
             // failure) — fall through to the standard fullscreen blit below to
             // avoid presenting a black frame.
-            WLOG("dual-screen: renderDualScreenLayout produced no output, falling back to standard blit")
+            if !dualScreenPipelineBuildFailed {
+                WLOG("dual-screen: renderDualScreenLayout produced no output, falling back to standard blit")
+                dualScreenPipelineBuildFailed = true
+            }
         }
 
         /// Local scope so `endEncoding` runs before `present`/`commit` (function-scoped `defer` would run too late and trip Metal debug `encoding in progress`).

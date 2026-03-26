@@ -98,11 +98,14 @@ extension PVMetalViewController {
     // MARK: Pipeline setup
 
     /// Compiles and caches the dual-screen blit pipeline.
-    /// Safe to call multiple times; no-ops when the pipeline already exists.
+    /// Safe to call multiple times; no-ops when the pipeline already exists or after a build failure.
     func buildDualScreenBlitPipelineIfNeeded() {
         guard dualScreenBlitPipeline == nil else { return }
+        // Skip retry after a failure to avoid per-frame shader compilation attempts.
+        guard !dualScreenPipelineBuildFailed else { return }
         guard let device = device else {
             ELOG("dual-screen: cannot build pipeline – Metal device is nil")
+            dualScreenPipelineBuildFailed = true
             return
         }
 
@@ -111,12 +114,14 @@ extension PVMetalViewController {
             library = try device.makeLibrary(source: Self.dualScreenShaderSource, options: nil)
         } catch {
             ELOG("dual-screen: shader compile error: \(error)")
+            dualScreenPipelineBuildFailed = true
             return
         }
 
         guard let vertFn = library.makeFunction(name: "dual_screen_vs"),
               let fragFn = library.makeFunction(name: "dual_screen_ps") else {
             ELOG("dual-screen: shader functions missing from compiled library")
+            dualScreenPipelineBuildFailed = true
             return
         }
 
@@ -130,6 +135,7 @@ extension PVMetalViewController {
             ILOG("dual-screen: render pipeline ready")
         } catch {
             ELOG("dual-screen: pipeline creation failed: \(error)")
+            dualScreenPipelineBuildFailed = true
         }
     }
 

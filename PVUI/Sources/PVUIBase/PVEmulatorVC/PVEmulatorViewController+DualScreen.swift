@@ -544,10 +544,11 @@ extension PVEmulatorViewController {
                 if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
                     DLOG("🎮 SKIN: Applying dual screen viewport for emuThreeDS: \(combinedRect)")
                     self.applyDualScreenViewportForEmuThree(frame: combinedRect)
-                } else if self.isMetalDualScreenActive {
-                    // Metal dual-screen is actively handling layout via sub-rectangle blits;
-                    // skip applyFrameToGPUView to avoid overriding expandMetalViewToFillParent.
-                    DLOG("🎮 SKIN: Metal dual-screen active, skipping applyFrameToGPUView")
+                } else if (self.gpuViewController as? PVMetalViewController)?.dualScreenLayout != nil {
+                    // Metal dual-screen layout is installed and handling rendering via
+                    // sub-rectangle blits; skip applyFrameToGPUView to avoid overriding
+                    // the view that expandMetalViewToFillParent already sized to full frame.
+                    DLOG("🎮 SKIN: Metal dual-screen layout active, skipping applyFrameToGPUView")
                 } else {
                     DLOG("🎮 SKIN: Applying dual screen viewport (standard): \(combinedRect)")
                     self.applyFrameToGPUView(combinedRect)
@@ -567,7 +568,7 @@ extension PVEmulatorViewController {
                 DLOG("🎮 SKIN: Timeout - only one screen received, applying single frame: \(frame)")
                 if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
                     self.applyDualScreenViewportForEmuThree(frame: frame)
-                } else if !self.isMetalDualScreenActive {
+                } else if (self.gpuViewController as? PVMetalViewController)?.dualScreenLayout == nil {
                     self.applyFrameToGPUView(frame)
                 }
                 self.currentTargetFrame = frame

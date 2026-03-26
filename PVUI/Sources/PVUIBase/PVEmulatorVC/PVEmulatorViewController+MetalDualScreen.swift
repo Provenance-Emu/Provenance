@@ -147,10 +147,24 @@ extension PVEmulatorViewController {
 
             // --- Destination (view-space points) ---
             // Mirror the calculation in currentDualScreenViewportFrame() exactly.
-            let inLayout = CGRect(x: outputFrame.minX * scaledW,
-                                  y: outputFrame.minY * scaledH,
-                                  width:  outputFrame.width  * scaledW,
-                                  height: outputFrame.height * scaledH)
+            // Skin outputFrames are *supposed* to be 0–1 normalised relative to
+            // mappingSize, but some JSON skins store raw pixel coordinates instead.
+            // Apply the same heuristic used by normalizeFrame(): if any component
+            // exceeds 1.0, divide by mappingSize to convert to the 0–1 range first.
+            let normOutput: CGRect
+            if outputFrame.origin.x > 1.0 || outputFrame.origin.y > 1.0 ||
+               outputFrame.size.width > 1.0 || outputFrame.size.height > 1.0 {
+                normOutput = CGRect(x: outputFrame.minX / mappingSize.width,
+                                    y: outputFrame.minY / mappingSize.height,
+                                    width:  outputFrame.width  / mappingSize.width,
+                                    height: outputFrame.height / mappingSize.height)
+            } else {
+                normOutput = outputFrame
+            }
+            let inLayout = CGRect(x: normOutput.minX * scaledW,
+                                  y: normOutput.minY * scaledH,
+                                  width:  normOutput.width  * scaledW,
+                                  height: normOutput.height * scaledH)
             let destRect = CGRect(x: xOff + inLayout.midX - inLayout.width  / 2,
                                   y: yOff + inLayout.midY - inLayout.height / 2,
                                   width:  inLayout.width,
@@ -168,6 +182,8 @@ extension PVEmulatorViewController {
 
         ILOG("dual-screen metal: installing layout with \(renderInfos.count) screens")
         metalVC.dualScreenLayout = renderInfos
+        // Reset failure flag so the pipeline gets another build attempt on new layout.
+        metalVC.dualScreenPipelineBuildFailed = false
         isMetalDualScreenActive = true
 
         // Expand the Metal view to fill the parent so both screen quads are visible.
