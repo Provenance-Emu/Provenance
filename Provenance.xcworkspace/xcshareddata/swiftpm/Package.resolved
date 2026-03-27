@@ -95,9 +95,9 @@
         "package": "Defaults",
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
-          "branch": "main",
-          "revision": "d9406c926b86a1ea642cab375b4745c5e15cc808",
-          "version": null
+          "branch": null,
+          "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+          "version": "9.0.8"
         }
       },
       {
