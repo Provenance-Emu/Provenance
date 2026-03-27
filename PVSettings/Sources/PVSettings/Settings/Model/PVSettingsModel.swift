@@ -99,6 +99,11 @@ extension Defaults.Keys {
 
     static let sort = Key<SortOptions>("sort", default: SortOptions.title)
 
+    /// If true, automatically triggers a metadata re-lookup when the user renames an unmatched game.
+    /// Only applies to games that have never been successfully matched (matchSource == .none).
+    /// Defaults to false — the user must opt in.
+    static let autoApplyMetadataOnRename = Key<Bool>("autoApplyMetadataOnRename", default: false)
+
     static let haveWarnedAboutDebug = Key<Bool>("haveWarnedAboutDebug", default: false)
     static let collapsedSystems = Key<Set<String>>("collapsedSystems", default: [])
 
