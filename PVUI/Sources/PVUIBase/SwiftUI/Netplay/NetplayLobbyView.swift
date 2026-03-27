@@ -237,5 +237,4 @@ public struct NetplayLobbyView: View {
     }
 }
 
-
 #endif

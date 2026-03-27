@@ -27,6 +27,8 @@ public struct NetplayDeepLinkHandlerModifier: ViewModifier {
     @State private var joinError: String?
     @State private var showError = false
 
+    public init() {}
+
     public func body(content: Content) -> some View {
         content
             .onReceive(

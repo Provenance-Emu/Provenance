@@ -16,6 +16,13 @@ import GameKit
 import PVNetplay
 import PVLogging
 
+// MARK: - Constants
+
+/// Default RetroArch relay server used for Game Center-brokered sessions.
+/// GKMatch does not expose raw IP addresses, so all traffic is routed through
+/// a relay rather than direct P2P.
+private let kGKRelayServer = "ra.me"
+
 // MARK: - GameKit Authenticator
 
 /// Manages Game Center local player authentication state.
@@ -59,7 +66,7 @@ public final class PVGameKitManager: NSObject, ObservableObject {
         guard let scene = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first(where: { $0.activationState == .foregroundActive }),
-              let rootVC = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController else { return }
+              let rootVC = scene.keyWindow?.rootViewController else { return }
         rootVC.topmostPresentedViewController.present(viewController, animated: true)
     }
 #else
@@ -122,7 +129,7 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
     private func startAsHost(match: GKMatch) async {
         do {
             var settings = NetplaySettings.fromStoredDefaults(roomName: gameName)
-            settings.relayServer = "ra.me"
+            settings.relayServer = kGKRelayServer
             try await ObservableNetplayManager.shared.host(settings: settings)
             // Broadcast the port so joining peers can connect.
             let port = settings.port
@@ -161,7 +168,7 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
             discoverySource: .manual
         )
         var settings = NetplaySettings.fromStoredDefaults()
-        settings.relayServer = "ra.me"
+        settings.relayServer = kGKRelayServer
         Task {
             do {
                 try await ObservableNetplayManager.shared.join(room: room, settings: settings)
@@ -210,9 +217,15 @@ struct GKMatchmakerRepresentable: UIViewControllerRepresentable {
             // (e.g. minPlayers < 2). Fire the cancel callback so the sheet is dismissed.
             ELOG("[GameKit] GKMatchmakerViewController init returned nil — invalid GKMatchRequest")
             onCancelled()
-            // Return a throw-away instance so the non-optional return type is satisfied;
-            // it will be dismissed immediately via onCancelled above.
-            return GKMatchmakerViewController(matchRequest: GKMatchRequest())!
+            // Return a minimal placeholder to satisfy the non-optional return type;
+            // the sheet will be dismissed on the next run-loop tick via onCancelled above.
+            let fallbackRequest = GKMatchRequest()
+            fallbackRequest.minPlayers = 2
+            fallbackRequest.maxPlayers = 4
+            guard let placeholder = GKMatchmakerViewController(matchRequest: fallbackRequest) else {
+                fatalError("[GameKit] Could not create fallback GKMatchmakerViewController with valid GKMatchRequest")
+            }
+            return placeholder
         }
         vc.matchmakerDelegate = context.coordinator
         return vc
