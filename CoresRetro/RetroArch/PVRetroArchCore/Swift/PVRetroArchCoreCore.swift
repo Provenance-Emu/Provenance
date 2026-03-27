@@ -134,6 +134,12 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
         // bridge's startEmulation), so by the time super.startEmulation() returns the
         // core's retro_load_game has already run and port device types can be configured.
         restorePortDeviceTypes()
+        // Cache light gun capability into the shared registry so that future queries
+        // (before a core is loaded) return the correct answer for this system.
+        if _bridge.coreDeclaresLightGunDevice,
+           let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") {
+            LightGunSystemRegistry.shared.register(system: sysID)
+        }
     }
 
     /// Reset the haptic profile so the next core starts with neutral tuning.
@@ -885,6 +891,11 @@ extension PVRetroArchCoreCore: PortDeviceConfigurable {
     /// Returns a platform-specific default device type for a port, or nil to leave at core default.
     private func platformDefaultPortDevice(forPort port: Int) -> UInt? {
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return nil }
+        // Port 0: if the core declared RETRO_DEVICE_LIGHTGUN at load time, configure it so
+        // the core receives light gun queries from cocoa_input_state.
+        if port == 0 && _bridge.coreDeclaresLightGunDevice {
+            return LibretroDeviceType.lightgun.rawValue
+        }
         // SNES: port 2 (index 1) defaults to RETRO_DEVICE_MOUSE for known SNES Mouse games.
         if sysID == .SNES && port == 1 {
             if MouseGameRegistry.shared.gameSupportsMouse(

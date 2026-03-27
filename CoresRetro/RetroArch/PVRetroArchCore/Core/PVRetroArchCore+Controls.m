@@ -2511,6 +2511,8 @@ static int16_t cocoa_input_state(
          break;
       case RETRO_DEVICE_LIGHTGUN:
          /* Only port 0 is supported for light gun input. */
+         if (port != 0)
+            return 0;
          switch (id)
          {
             case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X:    return s_lightgun_x;

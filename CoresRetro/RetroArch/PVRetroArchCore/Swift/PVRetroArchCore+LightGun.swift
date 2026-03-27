@@ -29,14 +29,7 @@ extension PVRetroArchCoreCore: LightGunResponder {
     /// (NES Zapper, SNES Super Scope/Justifier, PSX GunCon, etc.).
     public var gameSupportsLightGun: Bool {
         // Dynamic path: core declared RETRO_DEVICE_LIGHTGUN after load.
-        if _bridge.coreDeclaresLightGunDevice {
-            // Cache into the session registry so that future queries
-            // (before a core is loaded) return the right answer.
-            if let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") {
-                LightGunSystemRegistry.shared.register(system: sysID)
-            }
-            return true
-        }
+        if _bridge.coreDeclaresLightGunDevice { return true }
         // Static fallback: consult the registry (built-in baseline + cached
         // discoveries from prior game sessions this run).
         return SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsLightGun ?? false
