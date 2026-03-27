@@ -6,6 +6,7 @@
 //
 
 import SwiftData
+import PVPrimitives
 
 @Model
 public class Game_Data {
@@ -37,6 +38,12 @@ public class Game_Data {
     public var originalArtworkFile: ImageFile_Data?
 
     public var requiresSync: Bool = true
+    /// Raw integer encoding of `GameMatchSource`; 0 == `.none`
+    public var matchSourceRaw: Int = 0
+    /// Bitmask of `GameCustomizedFields` the user has explicitly set; 0 == none
+    public var userCustomizedFieldsMask: Int = 0
+    /// Date of the last metadata lookup attempt; nil if never looked up
+    public var lastMetadataLookupDate: Date?
     public var isFavorite: Bool = false
 
     public var romSerial: String?
@@ -138,7 +145,9 @@ public class Game_Data {
                 romPath: String = "", file: File_Data? = nil,
                 relatedFiles: [File_Data] = [], customArtworkURL: String = "",
                 originalArtworkURL: String = "", originalArtworkFile: ImageFile_Data? = nil,
-                requiresSync: Bool = true, isFavorite: Bool = false,
+                requiresSync: Bool = true, matchSourceRaw: Int = 0,
+                userCustomizedFieldsMask: Int = 0, lastMetadataLookupDate: Date? = nil,
+                isFavorite: Bool = false,
                 romSerial: String? = nil, romHeader: String? = nil,
                 importDate: Date = Date(), systemIdentifier: String = "",
                 system: System_Data? = nil, md5Hash: String, crc: String = "",
@@ -161,6 +170,9 @@ public class Game_Data {
         self.originalArtworkURL = originalArtworkURL
         self.originalArtworkFile = originalArtworkFile
         self.requiresSync = requiresSync
+        self.matchSourceRaw = matchSourceRaw
+        self.userCustomizedFieldsMask = userCustomizedFieldsMask
+        self.lastMetadataLookupDate = lastMetadataLookupDate
         self.isFavorite = isFavorite
         self.romSerial = romSerial
         self.romHeader = romHeader
@@ -194,6 +206,23 @@ public class Game_Data {
 }
 
 public extension Game_Data {
+    /// Type-safe access to how this game's metadata was sourced
+    var matchSource: GameMatchSource {
+        get { GameMatchSource(rawValue: matchSourceRaw) ?? .none }
+        set { matchSourceRaw = newValue.rawValue }
+    }
+
+    /// Type-safe access to the set of fields the user has customized
+    var userCustomizedFields: GameCustomizedFields {
+        get { GameCustomizedFields(rawValue: userCustomizedFieldsMask) }
+        set { userCustomizedFieldsMask = newValue.rawValue }
+    }
+
+    /// Returns true if the game has never been successfully matched against a database
+    var isUnmatched: Bool {
+        matchSource == .none || requiresSync
+    }
+
     var genresArray: [String] {
         genres?.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
     }

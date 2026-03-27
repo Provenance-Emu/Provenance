@@ -239,8 +239,11 @@ public extension Game {
                             local: true)
         let gameDescription = game.gameDescription
         let publishDate = game.publishDate
+        let matchSourceRaw = game.matchSourceRaw
+        let userCustomizedFieldsMask = game.userCustomizedFieldsMask
+        let lastMetadataLookupDate = game.lastMetadataLookupDate
         // TODO: Screenshots
-        self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language)
+        self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language, matchSourceRaw: matchSourceRaw, userCustomizedFieldsMask: userCustomizedFieldsMask, lastMetadataLookupDate: lastMetadataLookupDate)
     }
 
 //    init(withGame game: Game_Data) {
@@ -318,6 +321,9 @@ public extension Realm {
             object.regionID = game.regionID
             object.systemShortName = game.systemShortName
             object.language = game.language
+            object.matchSourceRaw = game.matchSourceRaw
+            object.userCustomizedFieldsMask = game.userCustomizedFieldsMask
+            object.lastMetadataLookupDate = game.lastMetadataLookupDate
             object.file =  PVFile(withPartialPath: game.file.fileName, relativeRoot: .iCloud)
         }
     }
