@@ -32,7 +32,7 @@ let package = Package(
         .package(name: "PVSettings", path: "../PVSettings/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(name: "PVAudio", path: "../PVAudio/"),
-        .package(url: "https://github.com/sindresorhus/Defaults.git", exact: "9.0.2"),
+        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "8.2.0"),
     ],
 
     // MARK: - Targets
