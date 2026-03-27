@@ -328,6 +328,10 @@ public final class SaveExporter: @unchecked Sendable {
             throw SaveExportError.invalidBundle(parseError.localizedDescription)
         }
 
+        guard !manifest.gameMD5.isEmpty else {
+            throw SaveExportError.invalidBundle("manifest.json missing game MD5.")
+        }
+
         guard manifest.gameMD5.lowercased() == frozenGame.md5Hash.lowercased() else {
             WLOG("SaveExporter: MD5 mismatch — bundle '\(manifest.gameMD5)' != game '\(frozenGame.md5Hash)'")
             throw SaveExportError.gameMismatch
