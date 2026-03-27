@@ -307,25 +307,6 @@ public struct TransferPakConfigView: View {
                 )
             }
 
-            // "Auto-configure pak type" tip — shown only in pre-launch & pause modes
-            HStack(spacing: 8) {
-                Image(systemName: "lightbulb.fill")
-                    .foregroundStyle(Color.retroYellow)
-                    .font(.caption)
-                Text("Assigning a game below automatically sets that port to Transfer Pak mode.")
-                    .font(.caption)
-                    .foregroundStyle(Color.retroYellow.opacity(0.8))
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.retroYellow.opacity(0.08))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(Color.retroYellow.opacity(0.3), lineWidth: 1)
-                    )
-            )
         }
     }
 
@@ -630,6 +611,14 @@ public struct TransferPakConfigView: View {
     private func clearAll() {
         for port in 0..<slotCount {
             updateSlot(port: port, gbGame: nil)
+        }
+        // Reset the skip flag whenever the user explicitly clears all slots.
+        // Without this, a previously-skipped game that has been fully cleared would
+        // never show the pre-launch prompt again, even though the user has now wiped
+        // their config and would benefit from seeing it next time they launch.
+        let md5 = game.md5Hash
+        Task.detached(priority: .utility) {
+            TransferPakStore.clearSkipFlag(forGameMD5: md5)
         }
     }
 
