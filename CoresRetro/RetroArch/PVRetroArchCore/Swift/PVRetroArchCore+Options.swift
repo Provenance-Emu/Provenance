@@ -735,15 +735,21 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                     let preservedPakLines = existingMupenOpt.components(separatedBy: "\n")
                         .filter { line in !line.hasPrefix("#") && line.hasPrefix("mupen64plus-pak") }
                     if preservedPakLines.isEmpty {
+                        ILOG("Mupen64Plus-Next: fresh install or no pak settings found — defaulting pak1 = rumble")
                         optionValues += "mupen64plus-pak1 = \"rumble\"\n"
                     } else {
+                        ILOG("Mupen64Plus-Next: preserving pak settings from previous session: \(preservedPakLines)")
                         optionValues += preservedPakLines.joined(separator: "\n") + "\n"
                     }
                     optionOverwrite = true
                 } else {
-                    // iOS < 26: append-only. Only write pak1 default if not already set,
-                    // so user-configured or previously auto-detected values are respected.
-                    if !existingMupenOpt.contains("mupen64plus-pak1") {
+                    // iOS < 26: append-only. Only write pak1 default on fresh install
+                    // (file absent). Active comment lines are excluded so a commented-out
+                    // pak1 key is not mistaken for an existing setting.
+                    let hasPak1 = existingMupenOpt.components(separatedBy: "\n")
+                        .contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-pak1") }
+                    if !hasPak1 {
+                        ILOG("Mupen64Plus-Next: pak1 not set — defaulting pak1 = rumble")
                         optionValues += "mupen64plus-pak1 = \"rumble\"\n"
                     }
                     optionOverwrite = false
