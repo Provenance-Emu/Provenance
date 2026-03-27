@@ -201,6 +201,7 @@ private func openReadOnlyGroupRealm() throws -> Realm? {
 #endif
     } else {
         WLOG("[PVQuickLookSupport] App Group container unavailable for: \(PVAppGroupId)")
+        return nil
     }
 
     // Find the first candidate that actually exists on disk.

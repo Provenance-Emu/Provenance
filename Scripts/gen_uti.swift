@@ -342,6 +342,13 @@ if let spec = baseRomEntry["UTTypeTagSpecification"] as? [String: Any],
     print("  \(exts)")
 }
 
+// NOTE: The QuickLook extension Info.plists (Extensions/QuickLookPreview/Info.plist
+// and Extensions/ThumbnailExtension/Info.plist) use a different structure
+// (QLSupportedContentTypes under NSExtension > NSExtensionAttributes) and are NOT
+// auto-updated by this script. After adding a new system to systemUTIMap, manually
+// add the corresponding "com.provenance.rom.<suffix>" string to QLSupportedContentTypes
+// in both extension plists to avoid thumbnail/preview gaps for new file types.
+
 // Plists to fully replace UTI sections (standard builds)
 let plistPaths = [
     "Provenance/Provenance-Info.plist",

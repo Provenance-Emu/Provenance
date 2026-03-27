@@ -89,6 +89,18 @@ final class ROMGameLookupTests: XCTestCase {
         XCTAssertEqual(ROMGameLookup.realFilename(from: url), "SuperMario64.n64")
     }
 
+    func testRealFilenameOnlyIcloudSuffixReturnsEmpty() {
+        // Degenerate case: filename is just ".icloud" — returns "" which lookup rejects safely
+        let url = URL(fileURLWithPath: "/ROMs/.icloud")
+        XCTAssertEqual(ROMGameLookup.realFilename(from: url), "")
+    }
+
+    func testRealFilenamePreservesHiddenFileWithoutIcloud() {
+        // A legitimately hidden file (dot-prefixed, no .icloud suffix) passes through unchanged
+        let url = URL(fileURLWithPath: "/ROMs/.hidden-game.sfc")
+        XCTAssertEqual(ROMGameLookup.realFilename(from: url), ".hidden-game.sfc")
+    }
+
     // MARK: - lookup (no-database branch)
 
     func testLookupReturnsNilWhenAppGroupsUnavailable() {
