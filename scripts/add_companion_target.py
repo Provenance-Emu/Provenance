@@ -155,25 +155,21 @@ def build_phases():
 def build_configs():
     shared_settings = """
 \t\t\t\tALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-\t\t\t\tASCATALOG_COMPILER_APPICON_NAME = AppIcon;
-\t\t\t\tASETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+\t\t\t\tASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 \t\t\t\tCLANG_ANALYZER_NONNULL = YES;
 \t\t\t\tCLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 \t\t\t\tCLANG_ENABLE_MODULES = YES;
 \t\t\t\tCLANG_ENABLE_OBJC_ARC = YES;
-\t\t\t\tCODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/ProvenanceCompanion.entitlements";
 \t\t\t\tCODE_SIGN_IDENTITY = "Apple Development";
 \t\t\t\tCODE_SIGN_STYLE = Automatic;
 \t\t\t\tDEAD_CODE_STRIPPING = YES;
 \t\t\t\tDEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 \t\t\t\tENABLE_HARDENED_RUNTIME = YES;
 \t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (
-\t\t\t\t\t"GL_SILENCE_DEPRECATION=1",
 \t\t\t\t\t"$(inherited)",
 \t\t\t\t);
 \t\t\t\tINFOPLIST_FILE = "ProvenanceCompanion/ProvenanceCompanion-Info.plist";
 \t\t\t\tINFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 16.0;
 \t\t\t\tLD_RUNPATH_SEARCH_PATHS = (
 \t\t\t\t\t"@executable_path/Frameworks",
 \t\t\t\t\t"@loader_path/Frameworks",
@@ -195,6 +191,7 @@ def build_configs():
 \t\t\tbaseConfigurationReference = {XCCONFIG_REF} /* Build-iOS.xcconfig */;
 \t\t\tbuildSettings = {{{shared_settings}
 \t\t\t\tAPP_DISPLAY_NAME = "Companion Debug";
+\t\t\t\tCODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/ProvenanceCompanion.entitlements";
 \t\t\t\tDEBUG_INFORMATION_FORMAT = dwarf;
 \t\t\t\tSWIFT_COMPILATION_MODE = singlefile;
 \t\t\t\tSWIFT_OPTIMIZATION_LEVEL = "-Onone";
