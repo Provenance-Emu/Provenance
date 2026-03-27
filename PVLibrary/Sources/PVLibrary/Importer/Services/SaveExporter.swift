@@ -116,16 +116,43 @@ public final class SaveExporter: @unchecked Sendable {
 
         try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
 
-        // Write manifest.json
+        // Build per-save-state index for the v2 manifest
+        let stateEntries: [SaveBundleManifestV2.SaveStateEntry] = frozenGame.saveStates.compactMap { state in
+            guard let fileURL = state.file?.url,
+                  FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+            let isoFormatter = ISO8601DateFormatter()
+            return SaveBundleManifestV2.SaveStateEntry(
+                filename: fileURL.lastPathComponent,
+                screenshotFilename: state.image?.url?.lastPathComponent,
+                date: isoFormatter.string(from: state.date),
+                isAutosave: state.isAutosave,
+                userDescription: state.userDescription,
+                coreIdentifier: state.core?.identifier
+            )
+        }
+
+        // Build battery saves index
+        let batteryEntries: [SaveBundleManifestV2.BatterySaveEntry]? = {
+            guard let dir = batterySavesDir,
+                  let files = try? fm.contentsOfDirectory(atPath: dir.path) else { return nil }
+            return files.map { filename in
+                let fileURL = dir.appendingPathComponent(filename)
+                let size = (try? FileManager.default.attributesOfItem(atPath: fileURL.path))?[.size] as? Int
+                return SaveBundleManifestV2.BatterySaveEntry(filename: filename, sizeBytes: size)
+            }
+        }()
+
+        // Write manifest.json using schema v2
         let isoDate = ISO8601DateFormatter().string(from: Date())
-        let manifestDict: [String: String] = [
-            "schemaVersion": "1",
-            "game": md5,
-            "title": gameTitle,
-            "system": systemID,
-            "exportDate": isoDate
-        ]
-        let manifestData = try JSONSerialization.data(withJSONObject: manifestDict, options: [.prettyPrinted, .sortedKeys])
+        let manifest = SaveBundleManifestV2(
+            gameMD5: md5,
+            gameTitle: gameTitle,
+            systemIdentifier: systemID,
+            exportDate: isoDate,
+            batterySaves: batteryEntries,
+            saveStates: stateEntries.isEmpty ? nil : stateEntries
+        )
+        let manifestData = try manifest.jsonData()
         try manifestData.write(to: stagingDir.appendingPathComponent("manifest.json"))
 
         // Track how many save files are actually copied so we can error if nothing ends up in the zip.
@@ -248,39 +275,19 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         let manifestData = try Data(contentsOf: manifestURL)
-        // Parse as [String: Any] so additional typed fields (e.g. numeric schemaVersion) don't cause a nil cast.
-        guard let manifestDict = try JSONSerialization.jsonObject(with: manifestData) as? [String: Any] else {
-            throw SaveExportError.invalidBundle("manifest.json has unexpected format.")
+        let manifest: SaveBundleManifestV2
+        do {
+            manifest = try SaveBundleManifestV2.parse(from: manifestData)
+        } catch let parseError as SaveBundleManifestParseError {
+            throw SaveExportError.invalidBundle(parseError.localizedDescription ?? "Invalid manifest.")
         }
 
-        // Validate schema version for forward/backward compatibility
-        let rawSchemaVersion = manifestDict["schemaVersion"]
-
-        let schemaVersionInt: Int?
-        switch rawSchemaVersion {
-        case let s as String:
-            schemaVersionInt = Int(s.trimmingCharacters(in: .whitespacesAndNewlines))
-        case let i as Int:
-            schemaVersionInt = i
-        case let n as NSNumber:
-            schemaVersionInt = n.intValue
-        default:
-            schemaVersionInt = nil
+        guard !manifest.gameMD5.isEmpty else {
+            throw SaveExportError.invalidBundle("manifest.json missing game MD5.")
         }
 
-        guard let schemaVersionIntUnwrapped = schemaVersionInt else {
-            throw SaveExportError.invalidBundle("manifest.json missing 'schemaVersion' field.")
-        }
-        guard schemaVersionIntUnwrapped == 1 else {
-            throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersionIntUnwrapped)'.")
-        }
-
-        guard let bundleMD5 = manifestDict["game"] as? String, !bundleMD5.isEmpty else {
-            throw SaveExportError.invalidBundle("manifest.json missing 'game' field.")
-        }
-
-        guard bundleMD5.lowercased() == frozenGame.md5Hash.lowercased() else {
-            WLOG("SaveExporter: MD5 mismatch — bundle '\(bundleMD5)' != game '\(frozenGame.md5Hash)'")
+        guard manifest.gameMD5.lowercased() == frozenGame.md5Hash.lowercased() else {
+            WLOG("SaveExporter: MD5 mismatch — bundle '\(manifest.gameMD5)' != game '\(frozenGame.md5Hash)'")
             throw SaveExportError.gameMismatch
         }
 
@@ -356,12 +363,11 @@ public final class SaveExporter: @unchecked Sendable {
             guard manifestURL.resolvingSymlinksInPath().path.hasPrefix(tempDirResolved),
                   fm.fileExists(atPath: manifestURL.path),
                   let data = try? Data(contentsOf: manifestURL),
-                  // Parse as [String: Any] so additional typed fields don't cause nil cast.
-                  let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let md5 = manifest["game"] as? String, !md5.isEmpty else {
+                  let parsed = try? SaveBundleManifestV2.parse(from: data),
+                  !parsed.gameMD5.isEmpty else {
                 return nil
             }
-            return md5.lowercased()
+            return parsed.gameMD5.lowercased()
         } catch {
             WLOG("SaveExporter: failed to read bundle manifest: \(error)")
             return nil
@@ -386,6 +392,119 @@ public final class SaveExporter: @unchecked Sendable {
                 throw SaveExportError.invalidBundle("Archive contains a path traversal entry: \(fileURL.lastPathComponent)")
             }
         }
+    }
+
+    // MARK: - SRAM-Only Export
+
+    /// Exports only the battery/SRAM save file(s) for a game.
+    ///
+    /// Produces a single bare `.srm` file if exactly one battery save exists,
+    /// or a `.zip` archive containing all battery files (e.g. `.sav` + `.rtc`) if multiple.
+    ///
+    /// - Parameter game: A `PVGame` object (frozen or live).
+    /// - Returns: URL of the exported file (temporary — caller must clean up).
+    /// - Throws: `SaveExportError.noSavesFound` if no battery saves exist,
+    ///   `SaveExportError.invalidBundle` if the game has no ROM path.
+    public func exportSRAM(for game: PVGame) async throws -> URL {
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        return try await Task.detached(priority: .userInitiated) {
+            try self.performSRAMExport(frozenGame: frozenGame)
+        }.value
+    }
+
+    private func performSRAMExport(frozenGame: PVGame) throws -> URL {
+        guard !frozenGame.isInvalidated else {
+            throw SaveExportError.invalidBundle("Game object is no longer valid.")
+        }
+        guard let romURL = frozenGame.file?.url else {
+            throw SaveExportError.invalidBundle("Game has no associated ROM file — cannot locate battery saves.")
+        }
+
+        let fm = FileManager.default
+        let batteryDir = Paths.batterySavesPath(forROM: romURL)
+        guard fm.fileExists(atPath: batteryDir.path),
+              let items = try? fm.contentsOfDirectory(atPath: batteryDir.path),
+              !items.isEmpty else {
+            throw SaveExportError.noSavesFound
+        }
+
+        let gameTitle = frozenGame.title
+        let sanitized = gameTitle
+            .components(separatedBy: CharacterSet.alphanumerics.union(.init(charactersIn: "-_ ")).inverted)
+            .joined()
+            .trimmingCharacters(in: .whitespaces)
+        let safeTitle = sanitized.isEmpty ? frozenGame.md5Hash : sanitized
+        let timestamp = Int(Date().timeIntervalSince1970)
+
+        // Single file — export bare (no zip wrapper)
+        if items.count == 1, let filename = items.first {
+            let srcURL = batteryDir.appendingPathComponent(filename)
+            let ext = srcURL.pathExtension
+            let destURL = fm.temporaryDirectory
+                .appendingPathComponent("\(safeTitle)-battery-\(timestamp).\(ext)")
+            try? fm.removeItem(at: destURL)
+            try fm.copyItem(at: srcURL, to: destURL)
+            ILOG("SaveExporter: SRAM export (single) → \(destURL.lastPathComponent)")
+            return destURL
+        }
+
+        // Multiple files — zip them together
+        let stagingDir = fm.temporaryDirectory
+            .appendingPathComponent("PVSRAMExport_\(timestamp)_\(UUID().uuidString)", isDirectory: true)
+        defer { try? fm.removeItem(at: stagingDir) }
+        try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+
+        for item in items {
+            let src = batteryDir.appendingPathComponent(item)
+            let dest = stagingDir.appendingPathComponent(item)
+            try fm.copyItem(at: src, to: dest)
+        }
+
+        let zipURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-battery-\(timestamp).zip")
+        try? fm.removeItem(at: zipURL)
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        ILOG("SaveExporter: SRAM export (multi) → \(zipURL.lastPathComponent)")
+        return zipURL
+    }
+
+    // MARK: - SRAM-Only Import
+
+    /// Imports a raw battery/SRAM file (`.sav`, `.srm`, `.ram`, `.rtc`) for a game.
+    ///
+    /// Copies the file to the game's battery saves directory.
+    /// Does not modify Realm — battery saves are picked up automatically at next emulator launch.
+    ///
+    /// - Parameters:
+    ///   - sramURL: URL of the SRAM file to import.
+    ///   - game: The game to associate the save with. Must have an associated ROM file.
+    /// - Throws: `SaveExportError.invalidBundle` if the game has no ROM path.
+    public func importSRAM(from sramURL: URL, for game: PVGame) async throws {
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        try await Task.detached(priority: .userInitiated) {
+            try self.performSRAMImport(sramURL: sramURL, frozenGame: frozenGame)
+        }.value
+    }
+
+    private func performSRAMImport(sramURL: URL, frozenGame: PVGame) throws {
+        guard !frozenGame.isInvalidated else {
+            throw SaveExportError.invalidBundle("Game object is no longer valid.")
+        }
+        guard let romURL = frozenGame.file?.url else {
+            throw SaveExportError.invalidBundle("Cannot import battery save — game has no associated ROM file path.")
+        }
+
+        let fm = FileManager.default
+        let destDir = Paths.batterySavesPath(forROM: romURL)
+        try fm.createDirectory(at: destDir, withIntermediateDirectories: true)
+
+        let destURL = destDir.appendingPathComponent(sramURL.lastPathComponent)
+        if fm.fileExists(atPath: destURL.path) {
+            try fm.removeItem(at: destURL)
+        }
+        try fm.copyItem(at: sramURL, to: destURL)
+        ILOG("SaveExporter: SRAM import → \(destURL.path)")
     }
 
     private func restoreDirectory(from source: URL, to destination: URL) throws {
