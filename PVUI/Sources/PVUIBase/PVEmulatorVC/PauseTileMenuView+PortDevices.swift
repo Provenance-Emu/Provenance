@@ -48,7 +48,9 @@ struct PortDevicesPauseSheet: View {
             }
             .background(Color(palette.gameLibraryBackground).ignoresSafeArea())
             .navigationTitle(String(localized: "Port Devices"))
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
         #if os(tvOS)
         // On tvOS the hardware Menu button is the standard way to dismiss sheets.
