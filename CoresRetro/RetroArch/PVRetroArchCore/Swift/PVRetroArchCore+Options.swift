@@ -721,31 +721,51 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 #endif
                 optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
                 #if os(iOS) || os(tvOS)
-                // Read the existing .opt file so we can preserve pak settings.
+                // Read the existing .opt file so we can do targeted in-place updates.
                 let mupenOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
                 let existingMupenOpt = (try? String(contentsOfFile: mupenOptPath, encoding: .utf8)) ?? ""
                 if #available(iOS 26, tvOS 26, *) {
-                    // iOS 26+: must overwrite so "parallel" RSP is replaced by "cxd4".
-                    // Preserve any pak settings from the previous session — without this,
-                    // every launch wipes mupen64plus-pak* back to the "memory" default,
-                    // silencing rumble-pak games (GoldenEye, Star Fox 64, etc.).
-                    // If no prior pak settings exist (fresh install), default pak1 to
-                    // "rumble" so rumble-pak games work out of the box.
-                    // Full per-game auto-detection is tracked in #3129.
-                    let preservedPakLines = existingMupenOpt.components(separatedBy: "\n")
-                        .filter { line in !line.hasPrefix("#") && line.hasPrefix("mupen64plus-pak") }
-                    if preservedPakLines.isEmpty {
-                        ILOG("Mupen64Plus-Next: fresh install or no pak settings found — defaulting pak1 = rumble")
+                    // iOS 26+: MUST overwrite so a stale "parallel" RSP value is replaced
+                    // with "cxd4". ParallelRSP's JIT crashes on iOS 26+ W×X enforcement.
+                    //
+                    // Strategy: start from the full existing .opt content (preserving ALL
+                    // user settings — audio, video, gameplay, pak, etc.), then patch only
+                    // the rsp-plugin line. Fall back to writing our defaults on fresh install.
+                    //
+                    // Note: the pak/rumble regression was introduced by commit efe5e0d36
+                    // which set optionOverwrite=true without preserving other settings.
+                    // Rumble worked on iOS 26 before that commit. This is NOT an inherent
+                    // iOS 26 limitation — it was a regression from the CXD4 RSP fix.
+                    if existingMupenOpt.isEmpty {
+                        // Fresh install: optionValues already has rdp + rsp, add pak default.
+                        ILOG("Mupen64Plus-Next: fresh install — writing defaults with pak1 = rumble")
                         optionValues += "mupen64plus-pak1 = \"rumble\"\n"
                     } else {
-                        ILOG("Mupen64Plus-Next: preserving pak settings from previous session: \(preservedPakLines)")
-                        optionValues += preservedPakLines.joined(separator: "\n") + "\n"
+                        // Existing file: rebuild from full content, patching only what we must.
+                        // This preserves user-configured audio, video, gameplay, and pak options.
+                        var mergedLines = existingMupenOpt.components(separatedBy: "\n")
+                            .filter { line in
+                                // Strip the old rsp-plugin line; we'll re-add with correct value.
+                                !(!line.hasPrefix("#") && line.hasPrefix("mupen64plus-rsp-plugin"))
+                            }
+                        mergedLines.append("mupen64plus-rsp-plugin = \"cxd4\"")
+                        ILOG("Mupen64Plus-Next: patched rsp-plugin = cxd4 in existing .opt")
+                        // Add pak1 default only if absent (honour user-configured pak type).
+                        let hasPak1 = mergedLines.contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-pak1") }
+                        if !hasPak1 {
+                            mergedLines.append("mupen64plus-pak1 = \"rumble\"")
+                            ILOG("Mupen64Plus-Next: no pak1 setting found — defaulting pak1 = rumble")
+                        } else {
+                            ILOG("Mupen64Plus-Next: preserving existing pak1 setting in .opt")
+                        }
+                        let merged = mergedLines.joined(separator: "\n")
+                        optionValues = merged.hasSuffix("\n") ? merged : merged + "\n"
                     }
                     optionOverwrite = true
                 } else {
-                    // iOS < 26: append-only. Only write pak1 default on fresh install
-                    // (file absent). Active comment lines are excluded so a commented-out
-                    // pak1 key is not mistaken for an existing setting.
+                    // iOS < 26: append-only (optionOverwrite = false means the file is only
+                    // written on first launch when it doesn't exist yet). Add pak1 default
+                    // if the key is absent so rumble-pak games work out of the box.
                     let hasPak1 = existingMupenOpt.components(separatedBy: "\n")
                         .contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-pak1") }
                     if !hasPak1 {
