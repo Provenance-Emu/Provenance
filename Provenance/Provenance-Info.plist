@@ -314,6 +314,7 @@
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>PVOpenIntent</string>
+		<string>INPlayMediaIntent</string>
 		<string>$(ORG_PREFIX).game.play</string>
 		<string>$(ORG_PREFIX).webserver</string>
 		<string>com.apple.corespotlight.search</string>
