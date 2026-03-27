@@ -33,6 +33,16 @@
 	<string>https://mednafen.github.io</string>
 	<key>PVProjectVersion</key>
 	<string>1.32.1</string>
+	<key>PVCapabilities</key>
+	<array>
+		<string>highAccuracy</string>
+		<string>cdAudio</string>
+		<string>subChannelAudio</string>
+		<string>multitapSupport</string>
+		<string>lightgunSupport</string>
+		<string>cheats</string>
+		<string>retroAchievements</string>
+	</array>
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
