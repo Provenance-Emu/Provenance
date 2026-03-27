@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PVPrimitives
-import Perception
 import PVSystems
 import PVHashing
 

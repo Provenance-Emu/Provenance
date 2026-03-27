@@ -20,7 +20,7 @@ let package = Package(
 
     dependencies: [
         .package(path: "../PVLogging"),
-        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "8.2.0"),
+        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
     ],
 
     // MARK: - Targets

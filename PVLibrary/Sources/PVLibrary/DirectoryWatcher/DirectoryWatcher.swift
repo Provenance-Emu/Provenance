@@ -65,7 +65,6 @@ public extension NSNotification.Name {
     static let archiveExtractionFailed = Notification.Name("archiveExtractionFailed")
 }
 
-import Perception
 
 /// Options for configuring the DirectoryWatcher
 public struct DirectoryWatcherOptions {
