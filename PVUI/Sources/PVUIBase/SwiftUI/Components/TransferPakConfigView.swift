@@ -204,11 +204,10 @@ public struct TransferPakConfigView: View {
                         headerSection
                         if noGBGamesInLibrary {
                             noGamesWarning
-                        }
-                        if !noGBGamesInLibrary {
+                        } else {
                             slotsCard
+                            clearButton
                         }
-                        clearButton
                     }
                     .padding()
                 }
@@ -399,7 +398,7 @@ public struct TransferPakConfigView: View {
             }
 
             // Footer note
-            Text("Only ports configured to \"Transfer Pak\" in Core Settings will use these ROMs. Assigning a game here sets the pak type automatically.")
+            Text("Assigning a game automatically sets that port to Transfer Pak mode. You can also adjust pak types manually via Core Settings.")
                 .font(.caption2)
                 .foregroundStyle(Color.retroBlue.opacity(0.7))
                 .padding(.horizontal, 14)
@@ -580,6 +579,9 @@ public struct TransferPakConfigView: View {
         selectedPaths[port] = url
         if launchAction != nil {
             // Pre-launch mode: buffer the change without persisting to UserDefaults.
+            // Pak type is also deferred — it will be committed in commitStagedSlots() so
+            // that tapping "Skip & Launch" does not leave ports in Transfer Pak mode with
+            // no ROM configured.
             stagedMD5s[port] = gbGame?.md5Hash
             slotIsStaged[port] = true
         } else {
@@ -589,9 +591,9 @@ public struct TransferPakConfigView: View {
                 apply(port, rom)
                 DLOG("TransferPak: live-applied port \(port) → \(url?.lastPathComponent ?? "nil")")
             }
+            // Auto-set or clear pak type immediately in live/done modes.
+            autoUpdatePakType(port: port + 1, assignedGame: gbGame)
         }
-        // Auto-set or clear pak type so the user doesn't need a separate Core Settings step.
-        autoUpdatePakType(port: port + 1, assignedGame: gbGame)
         // If the user is actively configuring a slot, clear the "skipped" flag so future
         // launches can offer the prompt again if they later clear all slots.
         if gbGame != nil {
@@ -613,9 +615,15 @@ public struct TransferPakConfigView: View {
     }
 
     /// Persists staged slot changes to UserDefaults. Called when user taps "Launch Game".
+    /// Also commits pak type changes so that ports are only set to Transfer Pak mode
+    /// when the user actually confirms via "Launch Game" (not on "Skip & Launch").
     private func commitStagedSlots() {
+        let gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
         for port in 0..<slotCount where slotIsStaged[port] {
             TransferPakStore.setGBGame(stagedMD5s[port], forGameMD5: game.md5Hash, port: port)
+            let newType: N64PakType = stagedMD5s[port] != nil ? .transferPak : .auto
+            N64PakStore.setPakType(newType, forPort: port + 1, gameMD5: gameMD5)
+            DLOG("TransferPak: committed port \(port + 1) → \(newType.title)")
         }
     }
 
@@ -681,7 +689,6 @@ public enum TransferPakCompatibleGames {
         ("pokémon snap",       "Unlock GB Pokémon Printer functionality."),
         ("pokemon snap",       "Unlock GB Pokémon Printer functionality."),
         ("kirby tilt",         "Required: reads the Kirby Tilt 'n' Tumble cartridge for its built-in tilt sensor."),
-        ("hey you, pikachu",   "Transfer Pokémon to Pokémon Stadium 2 via GB Printer simulation."),
         ("perfect dark",       "Download and play the GBC version of Perfect Dark via Transfer Pak."),
     ]
 
