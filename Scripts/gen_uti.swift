@@ -85,7 +85,7 @@ let systemUTIMap: [String: (String, String)] = [
 let archiveExts: Set<String> = ["7z", "rar", "zip", "iso"]
 
 let baseRomExtensions: Set<String> = [
-    "rom", "ROM",
+    "rom",
     "bin",
     "cue", "toc", "ccd",
     "chd",
@@ -98,6 +98,7 @@ let baseRomExtensions: Set<String> = [
     "nrg",
     "ciso",
     "gcz",
+    "rvz",   // GameCube/Wii compressed format — also in base so ThumbnailExtension handles it
     "isz",
     "gz",
     "lzh",
@@ -189,6 +190,8 @@ var exported: [[String: Any]] = [baseRomEntry]
 exported.append(contentsOf: perSystemEntries)
 
 // Save State
+// .svs  = raw emulator save-state slot file (PVEmulatorViewController naming convention)
+// .pvsav = Provenance Save State bundle (canonical extension per SpotlightImportExtension)
 exported.append([
     "UTTypeConformsTo": ["public.data"],
     "UTTypeDescription": "Provenance Save State",
@@ -196,7 +199,7 @@ exported.append([
     "UTTypeIdentifier": "com.provenance.savestate",
     "UTTypeReferenceURL": referenceURL,
     "UTTypeTagSpecification": [
-        "public.filename-extension": ["svs"],
+        "public.filename-extension": ["svs", "pvsav"],
         "public.mime-type": ["\(mimeBase)savestate"],
     ] as [String: Any],
 ])
@@ -263,18 +266,27 @@ let imported: [[String: Any]] = [
     ],
 ]
 
+// Build the ROM LSItemContentTypes: base + all per-system UTIs (explicit listing
+// ensures correct UTI dispatch even when conformance inference is incomplete).
+var romContentTypes: [String] = ["com.provenance.rom"]
+for e in perSystemEntries {
+    if let utiID = e["UTTypeIdentifier"] as? String {
+        romContentTypes.append(utiID)
+    }
+}
+romContentTypes += [
+    "org.7-zip.7-zip-archive",
+    "com.rarlab.rar-archive",
+    "public.zip-archive",
+    "public.iso-image",
+]
+
 let documentTypes: [[String: Any]] = [
     [
         "CFBundleTypeIconFiles": [] as [String],
         "CFBundleTypeName": "ROM",
         "LSHandlerRank": "Owner",
-        "LSItemContentTypes": [
-            "com.provenance.rom",
-            "org.7-zip.7-zip-archive",
-            "com.rarlab.rar-archive",
-            "public.zip-archive",
-            "public.iso-image",
-        ],
+        "LSItemContentTypes": romContentTypes,
     ],
     [
         "CFBundleTypeIconFiles": [] as [String],

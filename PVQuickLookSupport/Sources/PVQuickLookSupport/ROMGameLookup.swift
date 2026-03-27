@@ -57,6 +57,30 @@ public struct ROMGameLookup {
         dataSource.saveStateImageURL(forPath: saveStatePath)
     }
 
+    // MARK: - iCloud placeholder helpers
+
+    /// Recovers the real filename from an iCloud placeholder URL.
+    ///
+    /// iCloud evicts locally-stored files and replaces them with hidden placeholder
+    /// files named `.<OriginalName>.<ext>.icloud`.  QuickLook is invoked with the
+    /// placeholder URL, so we strip the `.icloud` suffix (and the leading `.`)
+    /// to recover the original filename for Realm lookups — no download required.
+    ///
+    /// Examples:
+    /// - `SuperMario64.n64`        → `SuperMario64.n64`   (unchanged)
+    /// - `.SuperMario64.n64.icloud` → `SuperMario64.n64`  (placeholder stripped)
+    /// - `SuperMario64.n64.icloud`  → `SuperMario64.n64`  (suffix only stripped)
+    public static func realFilename(from url: URL) -> String {
+        var name = url.lastPathComponent
+        if name.hasSuffix(".icloud") {
+            name = String(name.dropLast(".icloud".count))
+            if name.hasPrefix(".") {
+                name = String(name.dropFirst())
+            }
+        }
+        return name
+    }
+
     // MARK: - Internal (for testability via @testable import)
 
     /// Returns `true` when `romPath` ends with `"/\(filename)"` or equals `filename`.
@@ -158,29 +182,43 @@ public struct RealmGamePreviewDataSource: GamePreviewDataSource {
 
 /// Opens the shared App Group Realm in read-only mode.
 ///
-/// Uses `PVAppGroupId` from PVLibrary as the canonical app group constant —
-/// never hardcode the group ID string outside of that one definition.
+/// Tries the App Group container first (preferred), then falls back to the
+/// app's sandboxed Documents directory for configurations where App Groups
+/// are not provisioned.  Both paths are opened read-only so the extension
+/// process never migrates or writes to the database.
 private func openReadOnlyGroupRealm() throws -> Realm? {
-    guard let groupURL = FileManager.default
+    // Build the ordered list of candidate Realm URLs to try.
+    var candidates: [URL] = []
+
+    if let groupURL = FileManager.default
         .containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId),
-          FileManager.default.isReadableFile(atPath: groupURL.path) else {
-        WLOG("[PVQuickLookSupport] App Group container unavailable for: \(PVAppGroupId)")
-        return nil
-    }
+       FileManager.default.isReadableFile(atPath: groupURL.path) {
 #if os(tvOS)
-    // On tvOS, the App Group container's documents path maps to Library/Caches/.
-    let realmURL = groupURL.appendingPathComponent("Library/Caches/default.realm", isDirectory: false)
+        // On tvOS the App Group documents path maps to Library/Caches/.
+        candidates.append(groupURL.appendingPathComponent("Library/Caches/default.realm", isDirectory: false))
 #else
-    let realmURL = groupURL.appendingPathComponent("default.realm", isDirectory: false)
+        candidates.append(groupURL.appendingPathComponent("default.realm", isDirectory: false))
 #endif
-    guard FileManager.default.fileExists(atPath: realmURL.path) else {
-        WLOG("[PVQuickLookSupport] Realm not found at \(realmURL.path)")
+    } else {
+        WLOG("[PVQuickLookSupport] App Group container unavailable for: \(PVAppGroupId)")
+    }
+
+    // Find the first candidate that actually exists on disk.
+    guard let realmURL = candidates.first(where: { FileManager.default.fileExists(atPath: $0.path) }) else {
+        WLOG("[PVQuickLookSupport] Realm database not found. Checked: \(candidates.map(\.path))")
         return nil
     }
+
+    DLOG("[PVQuickLookSupport] Opening Realm read-only at \(realmURL.path) (schemaVersion=\(schemaVersion))")
     let config = Realm.Configuration(
         fileURL: realmURL,
         readOnly: true,
         schemaVersion: schemaVersion
     )
-    return try Realm(configuration: config)
+    do {
+        return try Realm(configuration: config)
+    } catch {
+        ELOG("[PVQuickLookSupport] Failed to open Realm at \(realmURL.path): \(error.localizedDescription)")
+        throw error
+    }
 }
