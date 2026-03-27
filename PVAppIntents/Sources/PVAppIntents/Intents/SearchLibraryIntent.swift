@@ -63,6 +63,9 @@ public struct SearchLibraryIntent: AppIntent {
             results = results.filter { $0.title.lowercased().contains(lowercasedQuery) }
         }
 
+        // Return results sorted by title for consistent ordering.
+        results.sort { $0.title.localizedCompare($1.title) == .orderedAscending }
+
         let count = results.count
         let dialog: IntentDialog
         if count == 0 {

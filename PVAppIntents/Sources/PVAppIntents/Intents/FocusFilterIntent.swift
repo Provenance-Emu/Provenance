@@ -9,7 +9,7 @@
 //  the user activates a Focus that includes Provenance as a "Customize App" entry.
 //
 
-#if canImport(AppIntents) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))
+#if canImport(AppIntents) && (os(iOS) || os(macOS))
 import AppIntents
 
 /// Configures Provenance behaviour when a Focus mode is active.
