@@ -202,3 +202,6 @@
 [submodule "Cores/Mednafen/ThirdParty/libchdr"]
 	path = Cores/Mednafen/ThirdParty/libchdr
 	url = https://github.com/rtissera/libchdr
+[submodule "PVRcheevos/rcheevos"]
+	path = PVRcheevos/rcheevos
+	url = https://github.com/RetroAchievements/rcheevos.git
