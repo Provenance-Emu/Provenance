@@ -2510,23 +2510,27 @@ static int16_t cocoa_input_state(
          }
          break;
       case RETRO_DEVICE_LIGHTGUN:
+         /* Only port 0 is supported for light gun input. */
          switch (id)
          {
             case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X:    return s_lightgun_x;
             case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y:    return s_lightgun_y;
-            case RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN: return s_lightgun_offscreen ? 1 : 0;
+            /* IS_OFFSCREEN is true when aimed off-screen OR when reload is held,
+             * matching the thin-wrapper behaviour (PVThinLibretroCore) and libretro
+             * convention (cores expect offscreen=1 during a reload event). */
+            case RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN: return (s_lightgun_offscreen || s_lightgun_reload) ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_TRIGGER:     return s_lightgun_trigger    ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_RELOAD:      return s_lightgun_reload     ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_AUX_A:       return s_lightgun_aux_a      ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_AUX_B:       return s_lightgun_aux_b      ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_START:       return s_lightgun_start      ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_SELECT:      return s_lightgun_select     ? 1 : 0;
-            /* D-pad: relay through joypad button state (player 0) */
+            /* D-pad: not mapped to light gun device; joypad handles directional input. */
             case RETRO_DEVICE_ID_LIGHTGUN_DPAD_UP:
             case RETRO_DEVICE_ID_LIGHTGUN_DPAD_DOWN:
             case RETRO_DEVICE_ID_LIGHTGUN_DPAD_LEFT:
             case RETRO_DEVICE_ID_LIGHTGUN_DPAD_RIGHT:
-               return 0; /* joypad handles directional input separately */
+               return 0;
             default:
                return 0;
          }
@@ -2739,7 +2743,11 @@ input_driver_t input_cocoa = {
 
 // ---------------------------------------------------------------------------
 // Light Gun setter — called from ObjC bridge on the main thread.
-// Writes are atomic; reads in cocoa_input_state see them without a lock.
+// Each field is written atomically; reads in cocoa_input_state see them
+// without a lock.  The three stores in pv_lightgun_set_position are NOT a
+// single atomic triple — the emulation thread could theoretically observe a
+// partially-updated pair on a given frame.  In practice this causes at most
+// a one-frame position blip, which is imperceptible for light gun gameplay.
 // ---------------------------------------------------------------------------
 void pv_lightgun_set_position(int16_t x, int16_t y, bool offscreen) {
     s_lightgun_x          = x;

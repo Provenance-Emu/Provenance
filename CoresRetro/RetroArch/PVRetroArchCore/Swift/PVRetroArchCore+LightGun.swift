@@ -17,7 +17,6 @@
 
 import Foundation
 import PVCoreBridge
-import PVLogging
 import PVSystems
 
 // MARK: - LightGunResponder
@@ -67,47 +66,47 @@ extension PVRetroArchCoreCore: LightGunResponder {
 
     // MARK: - Reload (off-screen shot)
 
-    @objc public func lightGunReloadDown() {
+    public func lightGunReloadDown() {
         _bridge.setLightGunReload(true)
     }
 
-    @objc public func lightGunReloadUp() {
+    public func lightGunReloadUp() {
         _bridge.setLightGunReload(false)
     }
 
     // MARK: - Aux buttons
 
-    @objc public func lightGunAuxADown() {
+    public func lightGunAuxADown() {
         _bridge.setLightGunAuxA(true)
     }
 
-    @objc public func lightGunAuxAUp() {
+    public func lightGunAuxAUp() {
         _bridge.setLightGunAuxA(false)
     }
 
-    @objc public func lightGunAuxBDown() {
+    public func lightGunAuxBDown() {
         _bridge.setLightGunAuxB(true)
     }
 
-    @objc public func lightGunAuxBUp() {
+    public func lightGunAuxBUp() {
         _bridge.setLightGunAuxB(false)
     }
 
     // MARK: - Start / Select
 
-    @objc public func lightGunStartDown() {
+    public func lightGunStartDown() {
         _bridge.setLightGunStart(true)
     }
 
-    @objc public func lightGunStartUp() {
+    public func lightGunStartUp() {
         _bridge.setLightGunStart(false)
     }
 
-    @objc public func lightGunSelectDown() {
+    public func lightGunSelectDown() {
         _bridge.setLightGunSelect(true)
     }
 
-    @objc public func lightGunSelectUp() {
+    public func lightGunSelectUp() {
         _bridge.setLightGunSelect(false)
     }
 }
