@@ -39,19 +39,21 @@ public struct BinCueDiscSerialPlugin: DiscSerialExtractorPlugin {
         VLOG("BinCueDiscSerialPlugin: resolved data track → \(dataTrackURL.lastPathComponent)")
 
         // Try format-specific extractors in priority order.
-        // SegaDiscSerialPlugin first (header at byte 0 or 16 — cheaper than ISO walk).
+        // Extension checks are intentionally omitted here: we already know the
+        // file is the data track of a CUE sheet, so we try each extractor
+        // regardless of extension (e.g. PSX/PS2 data tracks are .bin files
+        // which are not in ISODiscSerialPlugin.supportedExtensions).
+
+        // SegaDiscSerialPlugin first (magic-byte check at byte 0/16 — cheap).
         let segaPlugin = SegaDiscSerialPlugin()
-        if segaPlugin.supportedExtensions.contains(dataTrackURL.pathExtension.lowercased()) {
-            if let result = await segaPlugin.extractSerial(from: dataTrackURL, systemHint: systemHint) {
-                return result
-            }
+        if let result = await segaPlugin.extractSerial(from: dataTrackURL, systemHint: systemHint) {
+            return result
         }
 
+        // ISODiscSerialPlugin handles PSX, PS2, and plain ISO 9660 discs.
         let isoPlugin = ISODiscSerialPlugin()
-        if isoPlugin.supportedExtensions.contains(dataTrackURL.pathExtension.lowercased()) {
-            if let result = await isoPlugin.extractSerial(from: dataTrackURL, systemHint: systemHint) {
-                return result
-            }
+        if let result = await isoPlugin.extractSerial(from: dataTrackURL, systemHint: systemHint) {
+            return result
         }
 
         return nil

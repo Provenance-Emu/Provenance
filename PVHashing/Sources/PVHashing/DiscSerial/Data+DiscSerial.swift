@@ -27,6 +27,24 @@ extension Data {
         }
     }
 
+    /// Reads a 4-byte big-endian `UInt32` from `offset`.
+    /// Returns `0` if there are not enough bytes.
+    func loadBE32(at offset: Int) -> UInt32 {
+        guard offset + 4 <= count else { return 0 }
+        return self[offset..<(offset + 4)].withUnsafeBytes {
+            $0.loadUnaligned(as: UInt32.self).bigEndian
+        }
+    }
+
+    /// Reads an 8-byte big-endian `UInt64` from `offset`.
+    /// Returns `0` if there are not enough bytes.
+    func loadBE64(at offset: Int) -> UInt64 {
+        guard offset + 8 <= count else { return 0 }
+        return self[offset..<(offset + 8)].withUnsafeBytes {
+            $0.loadUnaligned(as: UInt64.self).bigEndian
+        }
+    }
+
     /// Returns an ASCII string trimmed of whitespace from `offset` with `length`.
     /// Returns `nil` if the bytes are not valid ASCII or fall outside `count`.
     func asciiString(at offset: Int, length: Int) -> String? {

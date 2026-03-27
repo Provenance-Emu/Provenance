@@ -79,14 +79,20 @@ public final class DiscSerialExtractorRegistry: Sendable {
     /// Registers all built-in plugins in priority order (idempotent).
     ///
     /// Order (highest to lowest priority):
-    /// 1. ``BinCueDiscSerialPlugin`` — CUE sheet dispatcher
-    /// 2. ``SegaDiscSerialPlugin`` — Saturn / SegaCD / Dreamcast header
-    /// 3. ``GameCubeDiscSerialPlugin`` — GameCube / Wii disc ID
-    /// 4. ``ISODiscSerialPlugin`` — ISO 9660 + PSX/PS2 SYSTEM.CNF
-    /// 5. ``NDSDiscSerialPlugin`` — Nintendo DS ROM header
+    /// 1. ``M3UDiscSerialPlugin``    — Multi-disc playlist dispatcher
+    /// 2. ``BinCueDiscSerialPlugin`` — CUE sheet dispatcher
+    /// 3. ``GdiDiscSerialPlugin``    — Dreamcast GDI format
+    /// 4. ``ChdDiscSerialPlugin``    — MAME CHD archive
+    /// 5. ``SegaDiscSerialPlugin``   — Saturn / SegaCD / Dreamcast header
+    /// 6. ``GameCubeDiscSerialPlugin`` — GameCube / Wii disc ID
+    /// 7. ``ISODiscSerialPlugin``    — ISO 9660 + PSX/PS2 SYSTEM.CNF
+    /// 8. ``NDSDiscSerialPlugin``    — Nintendo DS ROM header
     public func registerDefaults() async {
         guard await store.markDefaultsRegistered() else { return }
+        await store.append(M3UDiscSerialPlugin())
         await store.append(BinCueDiscSerialPlugin())
+        await store.append(GdiDiscSerialPlugin())
+        await store.append(ChdDiscSerialPlugin())
         await store.append(SegaDiscSerialPlugin())
         await store.append(GameCubeDiscSerialPlugin())
         await store.append(ISODiscSerialPlugin())
@@ -151,8 +157,7 @@ public final class DiscSerialExtractorRegistry: Sendable {
         guard let handle = try? FileHandle(forReadingFrom: url) else { return Data() }
         defer { try? handle.close() }
         do {
-            let data = try handle.read(upToCount: maxBytes)
-            return data ?? Data()
+            return try handle.read(upToCount: maxBytes) ?? Data()
         } catch {
             return Data()
         }
