@@ -152,7 +152,7 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 - **Submodule source** — `Cores/<name>/<upstream-dir>/` contents are upstream code
 - **Generated files** — `Version.h`, `Version.swift`, files in `cmake/` build dirs
 - **CodeSigning.xcconfig** — contains developer-specific credentials
-- **project.pbxproj** — avoid when possible; prefer SPM Package.swift changes
+- **project.pbxproj** — editing is permitted and sometimes required (e.g., adding new app targets). When you add a new target, use deterministic UUID prefixes (e.g. `C0C0CAFE...`) to make additions easy to identify. Use `PBXFileSystemSynchronizedRootGroup` for source directories (Xcode 16+). Prefer minimal diffs — only touch the sections that need changing.
 - **Upstream RetroArch** — `CoresRetro/RetroArch/RetroArch/` is a submodule
 
 ### Pre-PR Validation (MANDATORY)
