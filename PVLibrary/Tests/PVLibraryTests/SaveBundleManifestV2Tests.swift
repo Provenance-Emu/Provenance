@@ -153,7 +153,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertEqual(KnownEmulator.delta.displayName, "Delta")
         XCTAssertEqual(KnownEmulator.deltaLite.displayName, "Delta")
         XCTAssertEqual(KnownEmulator.retroArch.displayName, "RetroArch")
-        XCTAssertEqual(KnownEmulator.manticEmu.displayName, "Manic Emu")
+        XCTAssertEqual(KnownEmulator.manticEmu.displayName, "Mantic Emu")
         XCTAssertEqual(KnownEmulator.ppsspp.displayName, "PPSSPP")
 
         XCTAssertEqual(KnownEmulator.delta.urlScheme, "delta")
@@ -169,5 +169,146 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertNotNil(KnownEmulator.retroArch.exportDeepLinkURL)
         XCTAssertNil(KnownEmulator.manticEmu.exportDeepLinkURL)
         XCTAssertNil(KnownEmulator.ppsspp.exportDeepLinkURL)
+    }
+
+    func testKnownEmulatorStateExtensions() {
+        XCTAssertTrue(KnownEmulator.delta.stateFileExtensions.contains("dvsave"))
+        XCTAssertTrue(KnownEmulator.retroArch.stateFileExtensions.contains("state"))
+        XCTAssertTrue(KnownEmulator.retroArch.stateFileExtensions.contains("state0"))
+        XCTAssertTrue(KnownEmulator.ppsspp.stateFileExtensions.contains("ppst"))
+        XCTAssertTrue(KnownEmulator.gamma.stateFileExtensions.isEmpty)
+        XCTAssertTrue(KnownEmulator.manticEmu.stateFileExtensions.isEmpty)
+    }
+
+    func testKnownEmulatorBundleIDs() {
+        XCTAssertEqual(KnownEmulator.delta.bundleID, "com.rileytestut.Delta")
+        XCTAssertEqual(KnownEmulator.retroArch.bundleID, "com.libretro.RetroArch")
+        XCTAssertEqual(KnownEmulator.ppsspp.bundleID, "org.ppsspp.ppsspp")
+    }
+
+    // MARK: - V2 parse with integer schemaVersion
+
+    func testV2ParseWithIntegerSchemaVersion() throws {
+        let json = """
+        {
+            "schemaVersion": 2,
+            "game": "inttest123",
+            "title": "Integer Version Game",
+            "system": "com.provenance.nes",
+            "exportDate": "2026-01-01T00:00:00Z"
+        }
+        """.data(using: .utf8)!
+
+        let manifest = try SaveBundleManifestV2.parse(from: json)
+        XCTAssertEqual(manifest.schemaVersion, 2)
+        XCTAssertEqual(manifest.gameMD5, "inttest123")
+        XCTAssertEqual(manifest.systemIdentifier, "com.provenance.nes")
+    }
+
+    // MARK: - V1 missing optional fields
+
+    func testV1ParseMissingExportDate() throws {
+        let json = """
+        {
+            "game": "nodatehash",
+            "title": "No Date Game",
+            "system": "com.provenance.nes"
+        }
+        """.data(using: .utf8)!
+
+        let manifest = try SaveBundleManifestV2.parse(from: json)
+        XCTAssertEqual(manifest.gameMD5, "nodatehash")
+        XCTAssertEqual(manifest.exportDate, "")
+    }
+
+    func testParseThrowsOnMissingTitleField() {
+        let json = """
+        { "game": "abc123", "system": "com.provenance.nes", "exportDate": "" }
+        """.data(using: .utf8)!
+        XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json))
+    }
+
+    func testParseThrowsOnMissingSystemField() {
+        let json = """
+        { "game": "abc123", "title": "Test", "exportDate": "" }
+        """.data(using: .utf8)!
+        XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json))
+    }
+
+    func testParseThrowsOnEmptyGameMD5() {
+        let json = """
+        { "game": "", "title": "Test", "system": "com.provenance.nes", "exportDate": "" }
+        """.data(using: .utf8)!
+        XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json))
+    }
+
+    // MARK: - Error descriptions
+
+    func testParseErrorDescriptions() {
+        let invalidError = SaveBundleManifestParseError.invalidManifest("some reason")
+        XCTAssertTrue(invalidError.errorDescription?.contains("some reason") == true)
+
+        let versionError = SaveBundleManifestParseError.unsupportedSchemaVersion(42)
+        XCTAssertTrue(versionError.errorDescription?.contains("42") == true)
+    }
+
+    // MARK: - SaveMatchConfidence ordering
+
+    func testSaveMatchConfidenceOrdering() {
+        XCTAssertLessThan(SaveMatchConfidence.manual, SaveMatchConfidence.probable)
+        XCTAssertLessThan(SaveMatchConfidence.probable, SaveMatchConfidence.exact)
+        XCTAssertGreaterThan(SaveMatchConfidence.exact, SaveMatchConfidence.manual)
+    }
+
+    func testSaveMatchConfidenceRawValues() {
+        XCTAssertEqual(SaveMatchConfidence.exact.rawValue, 3)
+        XCTAssertEqual(SaveMatchConfidence.probable.rawValue, 2)
+        XCTAssertEqual(SaveMatchConfidence.manual.rawValue, 1)
+    }
+
+    // MARK: - SaveGameMatch
+
+    func testSaveGameMatchInit() {
+        let match = SaveGameMatch(gameID: "abc123", gameTitle: "Sonic", confidence: .exact)
+        XCTAssertEqual(match.gameID, "abc123")
+        XCTAssertEqual(match.gameTitle, "Sonic")
+        XCTAssertEqual(match.confidence, .exact)
+    }
+
+    // MARK: - SaveImportResult / SaveExportResult
+
+    func testSaveImportResultDefaults() {
+        let result = SaveImportResult(sramRestored: true, statesRestored: 3)
+        XCTAssertTrue(result.sramRestored)
+        XCTAssertEqual(result.statesRestored, 3)
+        XCTAssertTrue(result.warnings.isEmpty)
+    }
+
+    func testSaveImportResultWithWarnings() {
+        let result = SaveImportResult(sramRestored: false, statesRestored: 0, warnings: ["File skipped"])
+        XCTAssertFalse(result.sramRestored)
+        XCTAssertEqual(result.warnings.count, 1)
+        XCTAssertEqual(result.warnings.first, "File skipped")
+    }
+
+    func testSaveExportResultInit() {
+        let url = URL(fileURLWithPath: "/tmp/test.zip")
+        let result = SaveExportResult(bundleURL: url, sramIncluded: true, statesIncluded: 5)
+        XCTAssertEqual(result.bundleURL, url)
+        XCTAssertTrue(result.sramIncluded)
+        XCTAssertEqual(result.statesIncluded, 5)
+    }
+
+    // MARK: - SaveFileCategory CaseIterable
+
+    func testSaveFileCategoryAllCases() {
+        XCTAssertEqual(SaveFileCategory.allCases.count, 3)
+        XCTAssertTrue(SaveFileCategory.allCases.contains(.sram))
+        XCTAssertTrue(SaveFileCategory.allCases.contains(.saveState))
+        XCTAssertTrue(SaveFileCategory.allCases.contains(.rtc))
+    }
+
+    func testSaveFileCategoryPPSTIsState() {
+        XCTAssertEqual(SaveFileCategory.infer(fromExtension: "ppst"), .saveState)
     }
 }

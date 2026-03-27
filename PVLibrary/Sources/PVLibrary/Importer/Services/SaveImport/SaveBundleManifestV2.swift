@@ -179,24 +179,24 @@ public struct SaveBundleManifestV2: Codable, Sendable {
     public static func parse(from data: Data) throws -> SaveBundleManifestV2 {
         let decoder = JSONDecoder()
 
-        // First extract the schema version without full decode to decide path.
-        if let raw = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let version = rawSchemaVersion(from: raw) {
-            if version == 1 {
-                return try parseV1(from: raw)
-            } else if version == 2 {
-                return try decoder.decode(SaveBundleManifestV2.self, from: data)
-            } else {
-                throw SaveBundleManifestParseError.unsupportedSchemaVersion(version)
-            }
+        // Parse JSON once; route based on schemaVersion.
+        guard let raw = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw SaveBundleManifestParseError.invalidManifest("Could not parse JSON.")
         }
 
-        // No schemaVersion key — assume v1 (earliest bundles omitted the key).
-        if let raw = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+        guard let version = rawSchemaVersion(from: raw) else {
+            // No schemaVersion key — assume v1 (earliest bundles omitted the key).
             return try parseV1(from: raw)
         }
 
-        throw SaveBundleManifestParseError.invalidManifest("Could not parse JSON.")
+        switch version {
+        case 1:
+            return try parseV1(from: raw)
+        case 2:
+            return try decoder.decode(SaveBundleManifestV2.self, from: data)
+        default:
+            throw SaveBundleManifestParseError.unsupportedSchemaVersion(version)
+        }
     }
 
     /// JSON-encode this manifest with pretty-printing and sorted keys for reproducible output.

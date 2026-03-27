@@ -44,7 +44,7 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
         case .delta, .deltaLite: return "Delta"
         case .gamma:             return "Gamma"
         case .retroArch:         return "RetroArch"
-        case .manticEmu:         return "Manic Emu"
+        case .manticEmu:         return "Mantic Emu"
         case .ppsspp:            return "PPSSPP"
         }
     }
@@ -73,7 +73,7 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
                                          "state3", "state4", "state5", "state6",
                                          "state7", "state8", "state9"]
         case .ppsspp:            return ["ppst"]
-        default:                 return []
+        case .gamma, .manticEmu: return []
         }
     }
 
@@ -82,10 +82,10 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
     /// URL scheme used to probe whether this emulator is installed.
     public var urlScheme: String? {
         switch self {
-        case .delta, .deltaLite: return "delta"
-        case .retroArch:         return "retroarch"
-        case .ppsspp:            return "ppsspp"
-        default:                 return nil
+        case .delta, .deltaLite:      return "delta"
+        case .retroArch:              return "retroarch"
+        case .ppsspp:                 return "ppsspp"
+        case .gamma, .manticEmu:      return nil
         }
     }
 
@@ -114,7 +114,7 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
         switch self {
         case .delta, .deltaLite: return URL(string: "delta://")
         case .retroArch:         return URL(string: "retroarch://")
-        default:                 return nil
+        case .gamma, .manticEmu, .ppsspp: return nil
         }
     }
 }

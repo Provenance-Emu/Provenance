@@ -57,6 +57,10 @@ public enum SaveExportError: LocalizedError {
 /// ```
 /// `@unchecked Sendable` is safe here: `SaveExporter` has no mutable stored properties —
 /// it is a stateless singleton whose methods operate only on task-local values and parameters.
+///
+/// - TODO: Conform to `SaveBundleExporting` and `SaveBundleImporting` (defined in
+///   `SaveImportExportProtocols.swift`) once a Realm lookup helper is available to resolve
+///   a game MD5 to a `PVGame` without caller-side Realm access. See issue #3552.
 public final class SaveExporter: @unchecked Sendable {
 
     public static let shared = SaveExporter()
@@ -380,7 +384,7 @@ public final class SaveExporter: @unchecked Sendable {
     /// within that directory, guarding against Zip Slip / path traversal in untrusted archives.
     ///
     /// - Throws: `SaveExportError.invalidBundle` if any entry resolves outside `directory`.
-    func validateNoBundleEscape(in directory: URL) throws {
+    private func validateNoBundleEscape(in directory: URL) throws {
         let resolvedBase = directory.resolvingSymlinksInPath().path
         let fm = FileManager.default
         guard let enumerator = fm.enumerator(at: directory,
