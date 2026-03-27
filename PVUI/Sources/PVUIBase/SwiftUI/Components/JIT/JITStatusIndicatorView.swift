@@ -189,14 +189,26 @@ public final class JITStatusViewModel: ObservableObject {
                 return "JIT is managed automatically by this core. Performance adjusts based on JIT availability — no action required."
             case .recommended(let fallbackMode):
                 // JIT improves performance but core has a working fallback
+                #if APP_STORE
+                return "Running in \(fallbackMode) mode — JIT is recommended for better performance."
+                #else
                 return "Running in \(fallbackMode) mode — JIT is recommended for better performance. Enable JIT via SideJITServer, AltStore, or StikDebug to improve emulation speed."
+                #endif
             default:
+                #if APP_STORE
+                return "JIT unavailable — running in compatibility mode."
+                #else
                 return "JIT unavailable — running in compatibility mode. Enable JIT via SideJITServer, AltStore, or StikDebug for better performance."
+                #endif
             }
 
         case .unavailable:
             // JIT is strictly required — strong call to action
+            #if APP_STORE
+            return "JIT is required for this game and is not currently active. Without JIT this core may crash, freeze, or run incorrectly."
+            #else
             return "JIT is required for this game and is not currently active. Without JIT this core may crash, freeze, or run incorrectly. Enable JIT via SideJITServer, AltStore, or StikDebug."
+            #endif
 
         case .notApplicable:
             return ""

@@ -70,11 +70,18 @@ public final class JITOnboardingManager {
                 + "On this OS version, Performance Mode is not available without a special "
                 + "developer entitlement — emulation may run slower than expected."
         } else {
+            #if APP_STORE
+            // In App Store builds, avoid mentioning sideloading tools per App Store guidelines.
+            message = "This core performs best with Performance Mode (JIT) enabled. "
+                + "Performance Mode has not been acquired for this session — you can continue playing, "
+                + "but emulation speed may be reduced."
+            #else
             message = "This core performs best with Performance Mode (JIT) enabled. "
                 + "Performance Mode has not been acquired for this session — you can continue playing, "
                 + "but emulation speed may be reduced.\n\n"
                 + "To enable Performance Mode, use AltStore, SideStore, StikDebug, JITStreamer, or "
                 + "developer tools (for example, the Xcode debugger) before launching."
+            #endif
         }
 
         let alert = UIAlertController(
@@ -85,7 +92,9 @@ public final class JITOnboardingManager {
 
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: nil))
 
-        // Only offer sideloading-based retry options when JIT is actually acquirable.
+        // Only offer sideloading-based retry options when JIT is actually acquirable
+        // and when not running in an App Store distribution (to avoid review rejections).
+        #if !APP_STORE
         if !isWXEnforced {
             // Offer StikDebug as the first retry option (VPN-based, no macOS required).
             if jitType == .debugger || jitType == .stikDebug {
@@ -109,6 +118,7 @@ public final class JITOnboardingManager {
                 }
             })
         }
+        #endif
 
         // Ensure we can actually present before marking the onboarding as shown
         guard viewController.viewIfLoaded?.window != nil,

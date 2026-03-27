@@ -104,12 +104,16 @@ public final class JITStatusIndicatorViewController: UIViewController {
         // When JIT is inactive and the user should take action, add a second button
         // that opens the app's JIT settings (if available via PVSettings) or shows
         // the in-app guide for enabling JIT.
+        // In App Store builds, omit this button — the guide lists sideloading tools
+        // (AltStore, SideStore) that may trigger App Store review rejections.
+        #if !APP_STORE
         if viewModel.coreSupportLevel.requiresUserAction && viewModel.status != .active {
             let settingsAction = UIAlertAction(title: "How to Enable JIT", style: .default) { [weak self] _ in
                 self?.presentJITEnableGuide()
             }
             alert.addAction(settingsAction)
         }
+        #endif
 
         // Present from the parent (emulator) VC so the alert sits above the game view
         let presenter = parent ?? self
