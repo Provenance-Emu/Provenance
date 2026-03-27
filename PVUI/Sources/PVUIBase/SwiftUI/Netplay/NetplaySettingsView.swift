@@ -36,7 +36,7 @@ public struct NetplaySettingsView: View {
 
     @AppStorage(NetplayDefaultsKey.nickname)        private var nickname: String = ""
     @AppStorage(NetplayDefaultsKey.port)            private var port: Int = 55435
-    @AppStorage(NetplayDefaultsKey.relayServer)     private var relayServer: String = ""
+    @AppStorage(NetplayDefaultsKey.relayServer)     private var relayServer: String = "ra.me"
     @AppStorage(NetplayDefaultsKey.frameDelay)      private var frameDelay: Int = 0
     @AppStorage(NetplayDefaultsKey.maxPlayers)      private var maxPlayers: Int = 2
     @AppStorage(NetplayDefaultsKey.allowSpectators) private var allowSpectators: Bool = true
@@ -196,7 +196,7 @@ extension NetplaySettings {
             storedPort = defaults.integer(forKey: NetplayDefaultsKey.port)
         }
         let clampedPort   = UInt16(clamping: max(0, min(65535, storedPort)))
-        let relayRaw      = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? ""
+        let relayRaw      = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? "ra.me"
         let storedPlayers = defaults.integer(forKey: NetplayDefaultsKey.maxPlayers)
 
         return NetplaySettings(

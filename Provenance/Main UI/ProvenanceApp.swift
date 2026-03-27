@@ -52,6 +52,7 @@ struct ProvenanceApp: App {
     var body: some Scene {
         WindowGroup(id: "main") {
             ContentView()
+                .netplayJoinHandler()
                 .environmentObject(appState)
                 .environmentObject(PVFeatureFlagsManager.shared)
                 .environmentObject(appDelegate)

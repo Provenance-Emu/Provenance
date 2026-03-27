@@ -10,6 +10,9 @@
 import SwiftUI
 import PVNetplay
 import PVFeatureFlags
+#if canImport(GameKit)
+import GameKit
+#endif
 
 /// The top-level netplay entry view shown from the pause menu or game library.
 ///
@@ -32,6 +35,7 @@ public struct NetplayLobbyView: View {
     @State private var showSpectate = false
     @State private var showCreateRoom = false
     @State private var showSettings = false
+    @State private var showGameCenter = false
 
     private var isNetplayEnabled: Bool {
         PVFeatureFlagsManager.shared.netplayEnabled
@@ -91,6 +95,18 @@ public struct NetplayLobbyView: View {
                             showSpectate = true
                         }
                         .disabled(!isNetplayEnabled)
+
+#if canImport(GameKit)
+                        actionTile(
+                            icon: "person.2.wave.2",
+                            title: "Game Center Match",
+                            subtitle: "Find opponents via Apple Game Center",
+                            color: .purple
+                        ) {
+                            showGameCenter = true
+                        }
+                        .disabled(!isNetplayEnabled)
+#endif
                     }
                     .padding()
                 }
@@ -127,6 +143,11 @@ public struct NetplayLobbyView: View {
             .sheet(isPresented: $showSettings) {
                 NetplaySettingsView()
             }
+#if canImport(GameKit)
+            .sheet(isPresented: $showGameCenter) {
+                NetplayGameCenterView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash)
+            }
+#endif
         }
     }
 
