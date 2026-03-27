@@ -66,6 +66,12 @@ public struct DeltaSkinView: View {
     let inputHandler: DeltaSkinInputHandler
     let core: PVEmulatorCore?  // Core for protocol-based viewport updates
 
+    /// When `true`, button input is suspended and each button shows a drag handle.
+    @Binding var isEditMode: Bool
+
+    /// Per-button position offsets managed by the user via drag-to-reposition.
+    @ObservedObject var buttonOffsets: DeltaSkinButtonOffsets
+
     /// Observed so the view re-renders when turbo buttons change.
     @ObservedObject var turboManager: TurboManager
 
@@ -283,7 +289,9 @@ public struct DeltaSkinView: View {
         screenAspectRatio: CGFloat? = nil,
         isInEmulator: Bool = false,
         inputHandler: DeltaSkinInputHandler,
-        core: PVEmulatorCore? = nil
+        core: PVEmulatorCore? = nil,
+        isEditMode: Binding<Bool> = .constant(false),
+        buttonOffsets: DeltaSkinButtonOffsets = .shared
     ) {
         self.skin = skin
         self.traits = traits
@@ -294,6 +302,8 @@ public struct DeltaSkinView: View {
         self.core = core
         self.isInEmulator = isInEmulator
         self.inputHandler = inputHandler
+        self._isEditMode = isEditMode
+        self._buttonOffsets = ObservedObject(wrappedValue: buttonOffsets)
         self._turboManager = ObservedObject(wrappedValue: inputHandler.turboManager)
 
         ILOG("skins: DeltaSkinView init - skin: \(skin.name), device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue), iPadModel: \(traits.iPadModel?.rawValue ?? "nil")")
@@ -565,16 +575,18 @@ public struct DeltaSkinView: View {
                                             }
                                         }()
                                         let imageToUse = (isPressed ? (assets.pressed ?? assets.normal) : assets.normal)
+                                        // Apply user-saved position offset for this button
+                                        let effective = buttonWithEffectiveFrame(button)
 
                                         Image(uiImage: imageToUse)
                                             .resizable()
                                             .frame(
-                                                width: button.frame.width * scaleX,
-                                                height: button.frame.height * scaleY
+                                                width: effective.frame.width * scaleX,
+                                                height: effective.frame.height * scaleY
                                             )
                                             .position(
-                                                x: button.frame.midX * scaleX,
-                                                y: button.frame.midY * scaleY
+                                                x: effective.frame.midX * scaleX,
+                                                y: effective.frame.midY * scaleY
                                             )
                                             .allowsHitTesting(false)
                                     }
@@ -667,11 +679,12 @@ public struct DeltaSkinView: View {
                                 let yOff = (geometry.size.height - scaledSkinHeight) / 2
 
                                 ForEach(buttons.filter { turboButtons.contains($0.id) }) { button in
+                                    let effective = buttonWithEffectiveFrame(button)
                                     let scaledFrame = CGRect(
-                                        x: button.frame.minX * scaledSkinWidth + xOff,
-                                        y: button.frame.minY * scaledSkinHeight + yOff,
-                                        width: button.frame.width * scaledSkinWidth,
-                                        height: button.frame.height * scaledSkinHeight
+                                        x: effective.frame.minX * scaledSkinWidth + xOff,
+                                        y: effective.frame.minY * scaledSkinHeight + yOff,
+                                        width: effective.frame.width * scaledSkinWidth,
+                                        height: effective.frame.height * scaledSkinHeight
                                     )
                                     DeltaSkinTurboBadge(
                                         buttonFrame: scaledFrame
@@ -688,7 +701,7 @@ public struct DeltaSkinView: View {
                            let mappingSize = skin.mappingSize(for: traits) {
                             ForEach(buttons.filter { stickyButtonIds.contains($0.id) }, id: \.id) { button in
                                 DeltaSkinStickyIndicator(
-                                    frame: button.frame,
+                                    frame: buttonWithEffectiveFrame(button).frame,
                                     mappingSize: mappingSize
                                 )
                                 .zIndex(3.5)
@@ -717,6 +730,23 @@ public struct DeltaSkinView: View {
                             DeltaSkinTouchIndicator(at: location)
                                 .zIndex(5)
                                 .allowsHitTesting(false)
+                        }
+
+                        // Edit mode overlay — drag handles for repositioning buttons
+                        if isEditMode, let mappingSize = skin.mappingSize(for: traits) {
+                            DeltaSkinEditModeOverlay(
+                                skin: skin,
+                                traits: traits,
+                                mappingSize: mappingSize,
+                                containerSize: CGSize(width: layout.width, height: layout.height),
+                                buttonOffsets: buttonOffsets,
+                                onOffsetChanged: { buttonId, newOffset in
+                                    Task { @MainActor in
+                                        buttonOffsets.setOffset(newOffset, for: buttonId, skinIdentifier: skin.identifier)
+                                    }
+                                }
+                            )
+                            .zIndex(10)
                         }
                     }
                     .frame(width: layout.width, height: layout.height)
@@ -807,6 +837,9 @@ public struct DeltaSkinView: View {
             .overlay(
                 MultiTouchView(
                     touchHandler: { touchPhase, touches in
+                        // In edit mode, touches are handled by the drag handles — ignore them here.
+                        guard !isEditMode else { return }
+
                         VLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
 
                         switch touchPhase {
@@ -964,8 +997,10 @@ public struct DeltaSkinView: View {
                         }
                     }
                     , ignoredRects: thumbstickIgnoredRects(in: geometry)
+                    , isEditMode: isEditMode
                 )
                 .frame(width: geometry.size.width, height: geometry.size.height)
+                .allowsHitTesting(!isEditMode)
             )
             #endif
         }
@@ -979,7 +1014,8 @@ public struct DeltaSkinView: View {
         let margin: CGFloat = 12
         return buttons.compactMap { button in
             guard isThumbstick(button) else { return nil }
-            let scaled = transformFrame(button.frame, in: geometry, mappingSize: mappingSize)
+            let effective = buttonWithEffectiveFrame(button)
+            let scaled = transformFrame(effective.frame, in: geometry, mappingSize: mappingSize)
             return scaled.insetBy(dx: -margin, dy: -margin)
         }
     }
@@ -1252,10 +1288,11 @@ public struct DeltaSkinView: View {
         // Check if THIS specific touch is already associated with a D-pad button
         // Only check and update if this touch was previously on a D-pad
         if let existingDPadButton = touchToDPadMap[touchId], case .directional = existingDPadButton.input {
+            let effectiveDPad = buttonWithEffectiveFrame(existingDPadButton)
             // This touch is already on a D-pad - check if it's still within the hit area
-            if isLocationInDPadDirection(location, button: existingDPadButton, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
+            if isLocationInDPadDirection(location, button: effectiveDPad, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
                 // Still within D-pad hit area, update D-pad input for this touch
-                handleDPadInput(existingDPadButton, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
+                handleDPadInput(effectiveDPad, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
                 return
             } else {
                 // This touch moved outside the D-pad hit area, release directions for THIS touch only
@@ -1277,7 +1314,8 @@ public struct DeltaSkinView: View {
                 }
 
                 if let button = existingButton {
-                    let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+                    let effective = buttonWithEffectiveFrame(button)
+                    let hitFrame = effective.frame.insetBy(dx: -20, dy: -20)
                     let scaledFrame = CGRect(
                         x: hitFrame.minX * buttonScaleX + xOffset,
                         y: yOffset + (hitFrame.minY * buttonScaleY),
@@ -1311,6 +1349,7 @@ public struct DeltaSkinView: View {
         var candidates: [ButtonCandidate] = []
 
         for button in buttons {
+            let effective = buttonWithEffectiveFrame(button)
             // Check if button is a D-pad by examining its input type
             let isDPad: Bool
             switch button.input {
@@ -1322,13 +1361,13 @@ public struct DeltaSkinView: View {
 
             if isDPad {
                 // For D-pad, check if location is in any direction's hit area
-                if isLocationInDPadDirection(location, button: button, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
-                    let distance = distanceToButtonCenter(location, button: button, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
+                if isLocationInDPadDirection(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
+                    let distance = distanceToButtonCenter(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
                     candidates.append(ButtonCandidate(button: button, distance: distance, isDPad: true))
                 }
             } else {
                 // For regular buttons, use standard hit area with extension
-                let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+                let hitFrame = effective.frame.insetBy(dx: -20, dy: -20)
                 let scaledFrame = CGRect(
                     x: hitFrame.minX * buttonScaleX + xOffset,
                     y: yOffset + (hitFrame.minY * buttonScaleY),
@@ -1337,7 +1376,7 @@ public struct DeltaSkinView: View {
                 )
 
                 if scaledFrame.contains(location) {
-                    let distance = distanceToButtonCenter(location, button: button, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
+                    let distance = distanceToButtonCenter(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
                     candidates.append(ButtonCandidate(button: button, distance: distance, isDPad: false))
                 }
             }
@@ -1376,14 +1415,16 @@ public struct DeltaSkinView: View {
                     if let (image, size) = await loadThumbstickImage(for: button) {
                         // Determine stick ID based on button ID (check for "left" or "right" in button ID)
                         let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
-                        activeThumbsticks.append(ActiveThumbstickInfo(frame: button.frame, image: image, size: size, buttonId: stickId))
+                        let effectiveThumbstick = buttonWithEffectiveFrame(button)
+                        activeThumbsticks.append(ActiveThumbstickInfo(frame: effectiveThumbstick.frame, image: image, size: size, buttonId: stickId))
                     }
                 }
             } else if isDPadButton, case .directional = button.input {
                 // Special handling for D-pad buttons to allow direction changes
                 // Track this touch as being on the D-pad
                 touchToDPadMap[touchId] = button
-                handleDPadInput(button, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
+                let effectiveButton = buttonWithEffectiveFrame(button)
+                handleDPadInput(effectiveButton, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
             } else {
                 // For non-D-pad buttons, use our multi-button press system
                 // If this touch was previously on the D-pad, release D-pad directions for it
@@ -1415,7 +1456,7 @@ public struct DeltaSkinView: View {
                 let highlightButtonId = button.id
 
                 let newButton = ActiveButtonInfo(
-                    frame: button.frame,
+                    frame: buttonWithEffectiveFrame(button).frame,
                     mappingSize: mappingSize,
                     buttonId: highlightButtonId
                 )
@@ -1522,6 +1563,19 @@ public struct DeltaSkinView: View {
         let buttonScaleY = scaledSkinHeight / mappingSize.height
 
         return (buttonScaleX, buttonScaleY, xOffset, yOffset)
+    }
+
+    /// Returns a copy of the button with its frame shifted by any saved user offset.
+    /// When there is no saved offset the original button is returned unchanged.
+    private func buttonWithEffectiveFrame(_ button: DeltaSkinButton) -> DeltaSkinButton {
+        let offset = buttonOffsets.offset(for: button.id, skinIdentifier: skin.identifier)
+        guard offset != .zero else { return button }
+        return button.withFrame(CGRect(
+            x: button.frame.minX + offset.x,
+            y: button.frame.minY + offset.y,
+            width: button.frame.width,
+            height: button.frame.height
+        ))
     }
 
     private func transformFrame(_ frame: CGRect, in geometry: GeometryProxy, mappingSize: CGSize) -> CGRect {
@@ -1817,7 +1871,8 @@ public struct DeltaSkinView: View {
         }
 
         return buttons.first { button in
-            let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+            let effective = buttonWithEffectiveFrame(button)
+            let hitFrame = effective.frame.insetBy(dx: -20, dy: -20)
             let scaledFrame = transformFrame(hitFrame, in: geometry, mappingSize: mappingSize)
             return scaledFrame.contains(point)
         }
@@ -1856,7 +1911,7 @@ public struct DeltaSkinView: View {
                let (image, size) = await loadThumbstickImage(for: button) {
                 // Determine stick ID based on button ID (check for "right" or "right" in button ID)
                 let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
-                activeThumbsticks.append(ActiveThumbstickInfo(frame: button.frame, image: image, size: size, buttonId: stickId))
+                activeThumbsticks.append(ActiveThumbstickInfo(frame: buttonWithEffectiveFrame(button).frame, image: image, size: size, buttonId: stickId))
             }
         }
     }
@@ -2240,8 +2295,8 @@ public struct DeltaSkinView: View {
             }
             #endif
 
-            // Play sound with current position (only once)
-            playClickSound(for: button)
+            // Play sound using the button's effective (possibly offset) position
+            playClickSound(for: buttonWithEffectiveFrame(button))
 
         }
 

@@ -75,6 +75,12 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// is shown regardless of the `lightGunCrosshairStyle` setting.
     /// Disabled by default; enable in Settings > Advanced > Feature Flags.
     case lightGunCrosshair = "lightGunCrosshair"
+    /// Enables the drag-to-reposition button layout editor for custom skins.
+    /// When active, an "Edit Layout" toolbar appears over the skin view; users can drag
+    /// individual buttons to new positions. Offsets are persisted per skin in UserDefaults.
+    /// iOS only (tvOS lacks DragGesture). Disabled by default; enable in
+    /// Settings > Advanced > Feature Flags.
+    case skinButtonReposition = "skinButtonReposition"
     /// Enables multi-source artwork matching at ROM import time: queries TheGamesDB,
     /// LibretroDB, and OpenVGDB in parallel and selects the best result by artwork type priority.
     /// A background `ArtworkSearchQueue` retries games that were not matched
@@ -206,6 +212,9 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations. Disabled until core capability data is fully audited."
     )
 
+    public static let skinButtonReposition = FeatureFlag(
+        enabled: false,
+        description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
     public static let enhancedArtworkSearch = FeatureFlag(
         enabled: true,
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
@@ -613,6 +622,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var companionController: Bool { featureStates[.companionController] ?? false }
     public var smartCoreSelection: Bool { featureStates[.smartCoreSelection] ?? false }
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
+    public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
 
     // MARK: - Feature Queries
