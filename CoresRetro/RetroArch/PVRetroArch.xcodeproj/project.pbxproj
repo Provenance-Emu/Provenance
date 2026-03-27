@@ -254,6 +254,9 @@
 		B3FD96922D613FD700397643 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96832D613FD600397643 /* libswscale.xcframework */; };
 		CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */; };
 		CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */; };
+		CC001235ABCD000000000003 /* PVRetroArchCoreBridge+LightGun.m in Sources */ = {isa = PBXBuildFile; fileRef = CC001235ABCD000000000002 /* PVRetroArchCoreBridge+LightGun.m */; };
+		CC001235ABCD000000000004 /* PVRetroArchCoreBridge+LightGun.h in Headers */ = {isa = PBXBuildFile; fileRef = CC001235ABCD000000000001 /* PVRetroArchCoreBridge+LightGun.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC001235ABCD000000000006 /* PVRetroArchCore+LightGun.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001235ABCD000000000005 /* PVRetroArchCore+LightGun.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -559,6 +562,9 @@
 		B3FD96832D613FD600397643 /* libswscale.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswscale.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libswscale.xcframework; sourceTree = "<group>"; };
 		CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCoreCapabilities.h; sourceTree = "<group>"; };
 		CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchCoreCapabilities.m; sourceTree = "<group>"; };
+		CC001235ABCD000000000001 /* PVRetroArchCoreBridge+LightGun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+LightGun.h"; sourceTree = "<group>"; };
+		CC001235ABCD000000000002 /* PVRetroArchCoreBridge+LightGun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCoreBridge+LightGun.m"; sourceTree = "<group>"; };
+		CC001235ABCD000000000005 /* PVRetroArchCore+LightGun.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+LightGun.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -865,6 +871,7 @@
 				B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */,
 				B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */,
 				B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */,
+				CC001235ABCD000000000005 /* PVRetroArchCore+LightGun.swift */,
 				B3F0001D2F91AB2300CAFE04 /* PVRetroArchCore+Netplay.swift */,
 				B3F0001E2F91AB2300CAFE05 /* PVRetroArchCoreBridge+PVNetplayCapable.swift */,
 				B3F0002B2F91AB2300CAFE09 /* PVRetroArchCoreCore+PVNetplayCapable.swift */,
@@ -894,6 +901,8 @@
 				29E408A962408758D92289AF /* PVRetroArchOSD.m */,
 				CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */,
 				CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */,
+				CC001235ABCD000000000001 /* PVRetroArchCoreBridge+LightGun.h */,
+				CC001235ABCD000000000002 /* PVRetroArchCoreBridge+LightGun.m */,
 				B3447EA0218B881000557ACE /* PVRetroArch.mm */,
 				B3C76224207833DE009950E4 /* PVRetroArchCoreBridge.mm */,
 				93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */,
@@ -1131,6 +1140,7 @@
 				B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */,
 				039F981B1E6C203CC74BC408 /* PVRetroArchOSD.h in Headers */,
 				CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */,
+				CC001235ABCD000000000004 /* PVRetroArchCoreBridge+LightGun.h in Headers */,
 				AF3BC001029A000000000004 /* PVRetroArchCoreBridge+BIOSAtariST.h in Headers */,
 				93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */,
 			);
@@ -1426,6 +1436,8 @@
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
 				2E434850122D7261A75CF7FE /* PVRetroArchOSD.m in Sources */,
 				CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */,
+				CC001235ABCD000000000003 /* PVRetroArchCoreBridge+LightGun.m in Sources */,
+				CC001235ABCD000000000006 /* PVRetroArchCore+LightGun.swift in Sources */,
 				B33CFF0A2ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,

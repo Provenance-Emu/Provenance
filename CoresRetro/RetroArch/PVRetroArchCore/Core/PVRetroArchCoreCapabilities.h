@@ -63,6 +63,30 @@ bool pv_core_declares_l2r2_triggers(void);
 bool pv_core_declares_keyboard_device(void);
 
 // ---------------------------------------------------------------------------
+// RETRO_DEVICE_LIGHTGUN detection
+// ---------------------------------------------------------------------------
+// Returns true if the loaded core declared RETRO_DEVICE_LIGHTGUN (id == 4)
+// as a supported device type on ANY controller port via
+// RETRO_ENVIRONMENT_SET_CONTROLLER_INFO.
+bool pv_core_declares_lightgun_device(void);
+
+// ---------------------------------------------------------------------------
+// Light Gun setters — write normalised state that cocoa_input_state serves
+// to the libretro core via RETRO_DEVICE_LIGHTGUN queries.
+//
+// x, y: screen-space coordinates in the range [-0x7FFF, +0x7FFF]
+//       (same scale as RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X/Y).
+// offscreen: true when the gun is pointed away from the screen.
+// ---------------------------------------------------------------------------
+void pv_lightgun_set_position(int16_t x, int16_t y, bool offscreen);
+void pv_lightgun_set_trigger(bool down);
+void pv_lightgun_set_reload(bool down);
+void pv_lightgun_set_aux_a(bool down);
+void pv_lightgun_set_aux_b(bool down);
+void pv_lightgun_set_start(bool down);
+void pv_lightgun_set_select(bool down);
+
+// ---------------------------------------------------------------------------
 // Port device type configuration
 // ---------------------------------------------------------------------------
 // Calls RetroArch's core_set_controller_port_device() to set the libretro
