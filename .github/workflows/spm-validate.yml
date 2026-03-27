@@ -1,0 +1,48 @@
+name: SPM Module Validation
+
+on:
+  push:
+    branches: [develop, master]
+    paths:
+      - 'PVLogging/**'
+      - 'PVPlists/**'
+      - 'PVHashing/**'
+      - 'PVSettings/**'
+      - 'PVFeatureFlags/**'
+  pull_request:
+    branches: [develop, master]
+    paths:
+      - 'PVLogging/**'
+      - 'PVPlists/**'
+      - 'PVHashing/**'
+      - 'PVSettings/**'
+      - 'PVFeatureFlags/**'
+  workflow_dispatch:
+    inputs:
+      module:
+        description: 'Specific module to validate (empty = all)'
+        required: false
+        default: ''
+
+jobs:
+  validate:
+    name: Build & test SPM leaf modules
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+
+      - name: Validate modules
+        run: |
+          MODULE="${{ inputs.module }}"
+          if [ -n "$MODULE" ]; then
+            bash Scripts/spm-validate.sh "$MODULE"
+          else
+            bash Scripts/spm-validate.sh
+          fi
