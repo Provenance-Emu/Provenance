@@ -981,12 +981,15 @@ public class SceneCoordinator: ObservableObject {
               TransferPakCompatibleGames.isKnownTransferPakGame(game.title)
         else { return }
 
-        // Don't re-prompt once the user has configured at least one slot.
         let md5 = game.md5Hash
-        let alreadyConfigured = await Task.detached(priority: .userInitiated) {
-            (0..<4).contains { TransferPakStore.romPath(forGameMD5: md5, port: $0) != nil }
+        // Don't re-prompt if the user has configured at least one slot, or if they explicitly
+        // skipped the prompt on a previous launch (prevents nagging on every launch).
+        let shouldSkip = await Task.detached(priority: .userInitiated) {
+            let alreadyConfigured = (0..<4).contains { TransferPakStore.romPath(forGameMD5: md5, port: $0) != nil }
+            let userSkipped = TransferPakStore.wasPromptSkipped(forGameMD5: md5)
+            return alreadyConfigured || userSkipped
         }.value
-        guard !alreadyConfigured else { return }
+        guard !shouldSkip else { return }
 
         ILOG("SceneCoordinator: Showing pre-launch Transfer Pak setup for \(game.title)")
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in

@@ -76,6 +76,18 @@ public enum N64PakType: Int, CaseIterable, Identifiable {
         case .smartPak:    return "star.fill"
         }
     }
+
+    /// Retrowave accent color for this pak type.
+    public var accentColor: Color {
+        switch self {
+        case .auto:        return Color.retroBlue
+        case .none:        return Color.white.opacity(0.3)
+        case .memoryPak:   return Color.retroCyan
+        case .rumblePak:   return Color.retroOrange
+        case .transferPak: return Color.retroPink
+        case .smartPak:    return Color.retroYellow
+        }
+    }
 }
 
 // MARK: - N64 Pak Store
@@ -146,58 +158,113 @@ public struct N64ControllerPakView: View {
 
     public var body: some View {
         NavigationStack {
-            List {
-                infoSection
-                portsSection
+            ZStack {
+                Color.retroBlack.ignoresSafeArea()
+                RetroGrid(lineSpacing: 28, lineColor: Color.retroPurple.opacity(0.22))
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        infoCard
+                        portsCard
+                        restartNote
+                    }
+                    .padding()
+                }
             }
-            #if os(tvOS)
-            .listStyle(.plain)
-            #else
-            .listStyle(.insetGrouped)
-            #endif
-            .navigationTitle("Controller Paks")
+            .navigationTitle("")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    RetroGlowText("CONTROLLER PAKS", fontSize: 15)
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { onDismiss?() }
+                        .foregroundStyle(Color.retroPink)
                 }
             }
+            .toolbarBackground(Color.retroBlack.opacity(0.9), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .onAppear { loadSelections() }
         }
     }
 
-    // MARK: - Sections
+    // MARK: - Info Card
 
-    private var infoSection: some View {
-        SwiftUI.Section(header: Text("Info")) {
-            VStack(alignment: .leading, spacing: 8) {
-                Label("N64 Controller Paks", systemImage: "gamecontroller.fill")
-                    .font(.headline)
-                Text("""
-Each N64 controller port supports a different accessory. \
-Choose the pak type for each port below. \
-Changes take effect the next time the game is loaded.
-""")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+    private var infoCard: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: "gamecontroller.fill")
+                .font(.title2)
+                .foregroundStyle(Color.retroPink)
+                .shadow(color: Color.retroPink.opacity(0.7), radius: 6)
+
+            VStack(alignment: .leading, spacing: 6) {
                 if let title = gameTitle {
-                    Text("Game: \(title)")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                    Text(title)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Color.retroYellow)
                 }
+                Text("Choose the pak type for each controller port. Most games need a **Memory Pak** to save. Pokémon Stadium needs a **Transfer Pak**.")
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.85))
             }
-            .padding(.vertical, 4)
         }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroDarkBlue.opacity(0.8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.retroPink.opacity(0.35), lineWidth: 1.5)
+                )
+        )
+        .shadow(color: Color.retroPink.opacity(0.15), radius: 8)
     }
 
-    private var portsSection: some View {
-        SwiftUI.Section(header: Text("Controller Ports")) {
+    // MARK: - Ports Card
+
+    private var portsCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Image(systemName: "slider.horizontal.3")
+                    .foregroundStyle(Color.retroBlue)
+                Text("CONTROLLER PORTS")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.retroBlue)
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 12)
+            .padding(.bottom, 10)
+
+            Divider().background(Color.retroPurple.opacity(0.4))
+
             ForEach(0..<4, id: \.self) { index in
                 portRow(index: index)
+                if index < 3 {
+                    Divider()
+                        .background(Color.retroPurple.opacity(0.2))
+                        .padding(.horizontal, 14)
+                }
             }
         }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroDarkBlue.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.4)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: Color.retroBlue.opacity(0.2), radius: 10)
     }
 
     // MARK: - Port Row
@@ -207,42 +274,95 @@ Changes take effect the next time the game is loaded.
         let port = index + 1
         let selected = selectedTypes[index]
 
-        Picker(selection: Binding(
-            get: { selectedTypes[index] },
-            set: { newValue in
-                selectedTypes[index] = newValue
-                N64PakStore.setPakType(newValue, forPort: port, gameMD5: gameMD5)
+        HStack(spacing: 12) {
+            // Port number badge
+            ZStack {
+                Circle()
+                    .fill(selected.accentColor.opacity(0.18))
+                    .overlay(Circle().strokeBorder(selected.accentColor.opacity(0.5), lineWidth: 1.5))
+                    .frame(width: 36, height: 36)
+                Image(systemName: selected.systemImage)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(selected.accentColor)
             }
-        )) {
-            ForEach(N64PakType.allCases) { pakType in
-                HStack {
-                    Image(systemName: pakType.systemImage)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(pakType.title)
-                        Text(pakType.subtitle)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Controller \(port)")
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(.white)
+                Text(selected.subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(selected.accentColor.opacity(0.8))
+                    .lineLimit(2)
+            }
+
+            Spacer()
+
+            // Pak type picker
+            Menu {
+                ForEach(N64PakType.allCases) { pakType in
+                    Button {
+                        selectedTypes[index] = pakType
+                        N64PakStore.setPakType(pakType, forPort: port, gameMD5: gameMD5)
+                    } label: {
+                        HStack {
+                            Image(systemName: pakType.systemImage)
+                            VStack(alignment: .leading) {
+                                Text(pakType.title)
+                                Text(pakType.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            if selectedTypes[index] == pakType {
+                                Spacer()
+                                Image(systemName: "checkmark")
+                            }
+                        }
                     }
                 }
-                .tag(pakType)
-            }
-        } label: {
-            HStack {
-                Image(systemName: "gamecontroller")
-                    .foregroundStyle(.secondary)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Controller \(port)")
-                        .font(.body.weight(.medium))
+            } label: {
+                HStack(spacing: 4) {
                     Text(selected.title)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.caption.weight(.semibold))
+                        .lineLimit(1)
+                    Image(systemName: "chevron.down")
+                        .font(.caption2)
                 }
+                .foregroundStyle(selected.accentColor)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(selected.accentColor.opacity(0.1))
+                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(selected.accentColor.opacity(0.4), lineWidth: 1))
+                )
             }
         }
-        #if !os(tvOS)
-        .pickerStyle(.navigationLink)
-        #endif
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+    }
+
+    // MARK: - Restart Note
+
+    private var restartNote: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "arrow.clockwise.circle")
+                .foregroundStyle(Color.retroYellow)
+                .font(.caption)
+            Text("Changes take effect the next time the game loads.")
+                .font(.caption)
+                .foregroundStyle(Color.retroYellow.opacity(0.75))
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.retroYellow.opacity(0.06))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(Color.retroYellow.opacity(0.25), lineWidth: 1)
+                )
+        )
     }
 
     // MARK: - Data

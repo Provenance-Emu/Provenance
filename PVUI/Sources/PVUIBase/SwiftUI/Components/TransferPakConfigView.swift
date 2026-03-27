@@ -82,6 +82,30 @@ public enum TransferPakStore {
         }
     }
 
+    // MARK: - Skip tracking
+
+    /// Marks that the user has explicitly dismissed the pre-launch Transfer Pak prompt
+    /// for this game without configuring any slots (tapped "Skip & Launch").
+    /// The prompt is then suppressed on future launches so it doesn't nag the user.
+    public static func markPromptSkipped(forGameMD5 md5: String) {
+        UserDefaults.standard.set(true, forKey: skipKey(md5: md5))
+    }
+
+    /// Returns `true` if the user has previously skipped the pre-launch Transfer Pak
+    /// prompt for this game and no slots are currently configured.
+    public static func wasPromptSkipped(forGameMD5 md5: String) -> Bool {
+        UserDefaults.standard.bool(forKey: skipKey(md5: md5))
+    }
+
+    /// Clears the skip flag — e.g. when the user later configures a slot via the pause menu.
+    public static func clearSkipFlag(forGameMD5 md5: String) {
+        UserDefaults.standard.removeObject(forKey: skipKey(md5: md5))
+    }
+
+    private static func skipKey(md5: String) -> String {
+        "\(keyPrefix).\(md5).skippedPrompt"
+    }
+
     private static func udKey(md5: String, port: Int) -> String {
         "\(keyPrefix).\(md5).port\(port)"
     }
@@ -121,6 +145,7 @@ public struct TransferPakConfigView: View {
     /// Tracks which ports the user has explicitly modified during this pre-launch session.
     @State private var slotIsStaged: [Bool]
     @State private var gbAndGbcGames: [PVGame] = []
+    @State private var noGBGamesInLibrary: Bool = false
 
     public init(game: PVGame,
                 slotCount: Int = 4,
@@ -140,32 +165,73 @@ public struct TransferPakConfigView: View {
         _slotIsStaged = State(initialValue: Array(repeating: false, count: self.slotCount))
     }
 
+    // MARK: - Computed Helpers
+
+    private var n64Title: String { game.title }
+
+    /// Games from the library that are suggested for this particular N64 title.
+    private var suggestedGames: [PVGame] {
+        guard !gbAndGbcGames.isEmpty else { return [] }
+        let fragments = TransferPakCompatibleGames.suggestedGBTitleFragments(forN64Title: n64Title)
+        guard !fragments.isEmpty else { return [] }
+        return gbAndGbcGames.filter { gbGame in
+            let lower = gbGame.title.lowercased()
+            return fragments.contains { lower.contains($0) }
+        }
+    }
+
+    private var otherGames: [PVGame] {
+        let suggestedMD5s = Set(suggestedGames.map { $0.md5Hash })
+        return gbAndGbcGames.filter { !suggestedMD5s.contains($0.md5Hash) }
+    }
+
+    private var configuredSlotCount: Int {
+        selectedPaths.filter { $0 != nil }.count
+    }
+
     // MARK: - Body
 
     public var body: some View {
         NavigationStack {
-            List {
-                infoSection
-                slotsSection
-                clearSection
+            ZStack {
+                // Retrowave background
+                Color.retroBlack.ignoresSafeArea()
+                RetroGrid(lineSpacing: 28, lineColor: Color.retroPurple.opacity(0.25))
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        headerSection
+                        if noGBGamesInLibrary {
+                            noGamesWarning
+                        }
+                        if !noGBGamesInLibrary {
+                            slotsCard
+                        }
+                        clearButton
+                    }
+                    .padding()
+                }
             }
+            .navigationTitle("")
             #if !os(tvOS)
-            .listStyle(.insetGrouped)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .navigationTitle("Transfer Pak")
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    RetroGlowText("TRANSFER PAK", fontSize: 16)
+                }
                 if let launchAction {
-                    // Pre-launch mode: "Skip & Launch" on leading, "Launch Game" on trailing.
-                    // Slot edits are buffered until "Launch Game" is tapped; tapping
-                    // "Skip & Launch" discards any in-progress changes without persisting them.
-                    // launchAction is the single callback — it dismisses the sheet and resumes
-                    // the launch continuation. onDismiss is not called here to avoid redundant
-                    // invocations (the enclosing .sheet(onDismiss:) handles swipe-to-dismiss).
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Skip & Launch") {
+                            // Record that the user deliberately skipped so we don't nag again.
+                            let md5 = game.md5Hash
+                            Task.detached(priority: .utility) {
+                                TransferPakStore.markPromptSkipped(forGameMD5: md5)
+                            }
                             launchAction()
                         }
+                        .foregroundStyle(Color.retroBlue)
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Launch Game") {
@@ -173,15 +239,19 @@ public struct TransferPakConfigView: View {
                             launchAction()
                         }
                         .bold()
+                        .foregroundStyle(Color.retroPink)
                     }
                 } else {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             applyAndDismiss()
                         }
+                        .foregroundStyle(Color.retroPink)
                     }
                 }
             }
+            .toolbarBackground(Color.retroBlack.opacity(0.9), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .onAppear {
                 loadSelectedPaths()
                 loadGBAndGbcGames()
@@ -189,53 +259,168 @@ public struct TransferPakConfigView: View {
         }
     }
 
-    // MARK: - Sections
+    // MARK: - Header
 
-    private var infoSection: some View {
-        SwiftUI.Section {
-            VStack(alignment: .leading, spacing: 10) {
-                Label("What is the Transfer Pak?", systemImage: "info.circle.fill")
-                    .font(.headline)
-                Text("""
-The Transfer Pak is an N64 controller accessory that lets you insert a \
-Game Boy or Game Boy Color cartridge so the N64 game can read its save \
-data or ROM.
-
-Games like **Pokémon Stadium** and **Pokémon Stadium 2** use it to unlock \
-Pokémon from your Game Boy save file. **Mario Tennis** uses it to transfer \
-your Game Boy character.
-
-Select the matching GB/GBC ROM for each controller port below. Only ports \
-set to "Transfer Pak" in Core Settings will use these ROMs.
-""")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+    private var headerSection: some View {
+        VStack(spacing: 12) {
+            // Game-specific Transfer Pak description
+            if let desc = TransferPakCompatibleGames.transferPakDescription(forTitle: n64Title) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundStyle(Color.retroBlue)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(n64Title)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.retroYellow)
+                        Text(desc)
+                            .font(.footnote)
+                            .foregroundStyle(.white.opacity(0.85))
+                    }
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.retroDarkBlue.opacity(0.8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(Color.retroBlue.opacity(0.5), lineWidth: 1)
+                        )
+                )
+            } else {
+                // Generic info for unlisted games
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundStyle(Color.retroBlue)
+                        .font(.title3)
+                    Text("Select which Game Boy or Game Boy Color cartridge to insert into each controller's Transfer Pak slot.")
+                        .font(.footnote)
+                        .foregroundStyle(.white.opacity(0.85))
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.retroDarkBlue.opacity(0.8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(Color.retroBlue.opacity(0.5), lineWidth: 1)
+                        )
+                )
             }
-            .padding(.vertical, 6)
+
+            // "Auto-configure pak type" tip — shown only in pre-launch & pause modes
+            HStack(spacing: 8) {
+                Image(systemName: "lightbulb.fill")
+                    .foregroundStyle(Color.retroYellow)
+                    .font(.caption)
+                Text("Assigning a game below automatically sets that port to Transfer Pak mode.")
+                    .font(.caption)
+                    .foregroundStyle(Color.retroYellow.opacity(0.8))
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.retroYellow.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(Color.retroYellow.opacity(0.3), lineWidth: 1)
+                    )
+            )
         }
     }
 
-    private var slotsSection: some View {
-        SwiftUI.Section {
+    // MARK: - No GB Games Warning
+
+    private var noGamesWarning: some View {
+        VStack(spacing: 14) {
+            Image(systemName: "cart.badge.questionmark")
+                .font(.system(size: 44))
+                .foregroundStyle(Color.retroPink)
+                .shadow(color: Color.retroPink.opacity(0.6), radius: 8)
+
+            Text("No Game Boy ROMs Found")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(.white)
+
+            Text("Import your Game Boy or Game Boy Color ROMs into the Provenance library first. Once imported, return here to configure the Transfer Pak.")
+                .font(.footnote)
+                .foregroundStyle(.white.opacity(0.75))
+                .multilineTextAlignment(.center)
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroDarkBlue.opacity(0.85))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.retroPink.opacity(0.4), lineWidth: 1.5)
+                )
+        )
+        .shadow(color: Color.retroPink.opacity(0.2), radius: 12)
+    }
+
+    // MARK: - Slots Card
+
+    private var slotsCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Card header
+            HStack {
+                Image(systemName: "gamecontroller.fill")
+                    .foregroundStyle(Color.retroPink)
+                Text("CONTROLLER PORTS")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.retroPink)
+                Spacer()
+                if configuredSlotCount > 0 {
+                    Text("\(configuredSlotCount) configured")
+                        .font(.caption2)
+                        .foregroundStyle(Color.retroGreen)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Color.retroGreen.opacity(0.15)))
+                        .overlay(Capsule().strokeBorder(Color.retroGreen.opacity(0.4), lineWidth: 1))
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 12)
+            .padding(.bottom, 10)
+
+            Divider()
+                .background(Color.retroPurple.opacity(0.4))
+
             ForEach(0..<slotCount, id: \.self) { port in
                 portRow(port: port)
+                if port < slotCount - 1 {
+                    Divider()
+                        .background(Color.retroPurple.opacity(0.2))
+                        .padding(.horizontal, 14)
+                }
             }
-        } header: {
-            Text("Controller Ports")
-        } footer: {
-            Text("To enable Transfer Pak on a port, open Core Settings and set that port\u{2019}s Controller Pak to \u{201C}Transfer Pak\u{201D}.")
-                .font(.footnote)
-        }
-    }
 
-    private var clearSection: some View {
-        SwiftUI.Section {
-            Button(role: .destructive) {
-                clearAll()
-            } label: {
-                Label("Clear All Transfer Pak Slots", systemImage: "xmark.circle")
-            }
+            // Footer note
+            Text("Only ports configured to \"Transfer Pak\" in Core Settings will use these ROMs. Assigning a game here sets the pak type automatically.")
+                .font(.caption2)
+                .foregroundStyle(Color.retroBlue.opacity(0.7))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
         }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.retroDarkBlue.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color.retroPurple.opacity(0.6), Color.retroBlue.opacity(0.4)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+        )
+        .shadow(color: Color.retroPurple.opacity(0.3), radius: 10, x: 0, y: 4)
     }
 
     // MARK: - Port Row
@@ -243,34 +428,95 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
     @ViewBuilder
     private func portRow(port: Int) -> some View {
         let selectedPath = selectedPaths[port]
-        let romName = selectedPath.map { $0.deletingPathExtension().lastPathComponent } ?? "Not configured"
+        let romName = selectedPath.map { $0.deletingPathExtension().lastPathComponent } ?? "Empty"
+        let isConfigured = selectedPath != nil
 
-        VStack(alignment: .leading, spacing: 2) {
-            HStack {
-                Label("Port \(port + 1)", systemImage: "gamecontroller")
+        HStack(spacing: 12) {
+            // Port indicator
+            ZStack {
+                Circle()
+                    .fill(isConfigured ? Color.retroPink.opacity(0.2) : Color.retroDarkBlue.opacity(0.5))
+                    .overlay(Circle().strokeBorder(isConfigured ? Color.retroPink : Color.retroPurple.opacity(0.4), lineWidth: 1.5))
+                    .frame(width: 36, height: 36)
+                Text("\(port + 1)")
+                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .foregroundStyle(isConfigured ? Color.retroPink : Color.white.opacity(0.5))
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Controller \(port + 1)")
                     .font(.body.weight(.medium))
-                Spacer()
-                Menu {
-                    Button {
-                        updateSlot(port: port, gbGame: nil)
-                    } label: {
-                        if selectedPath == nil {
-                            Label("None (selected)", systemImage: "checkmark")
-                        } else {
-                            Text("None")
-                        }
+                    .foregroundStyle(.white)
+                HStack(spacing: 4) {
+                    if isConfigured {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption2)
+                            .foregroundStyle(Color.retroGreen)
                     }
-                    Divider()
-                    if gbAndGbcGames.isEmpty {
-                        Text("No GB/GBC games found in library")
-                            .foregroundStyle(.secondary)
+                    Text(romName)
+                        .font(.caption)
+                        .foregroundStyle(isConfigured ? Color.retroGreen : Color.white.opacity(0.4))
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+            }
+
+            Spacer()
+
+            // Game picker menu
+            Menu {
+                Button {
+                    updateSlot(port: port, gbGame: nil)
+                } label: {
+                    if selectedPath == nil {
+                        Label("Empty (current)", systemImage: "checkmark")
                     } else {
-                        ForEach(gbAndGbcGames, id: \.md5Hash) { gbGame in
+                        Label("Clear Slot", systemImage: "xmark")
+                    }
+                }
+
+                if !suggestedGames.isEmpty {
+                    Divider()
+                    Section("Suggested for \(n64Title)") {
+                        ForEach(suggestedGames, id: \.md5Hash) { gbGame in
                             Button {
                                 updateSlot(port: port, gbGame: gbGame)
                             } label: {
-                                let isSelected = selectedPath != nil && selectedPath == gbGame.file?.url
-                                if isSelected {
+                                let isSel = selectedPath != nil && selectedPath == gbGame.file?.url
+                                if isSel {
+                                    Label(gbGame.title, systemImage: "checkmark")
+                                } else {
+                                    Label(gbGame.title, systemImage: "star.fill")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if !otherGames.isEmpty {
+                    Divider()
+                    if !suggestedGames.isEmpty {
+                        Section("Other GB/GBC Games") {
+                            ForEach(otherGames, id: \.md5Hash) { gbGame in
+                                Button {
+                                    updateSlot(port: port, gbGame: gbGame)
+                                } label: {
+                                    let isSel = selectedPath != nil && selectedPath == gbGame.file?.url
+                                    if isSel {
+                                        Label(gbGame.title, systemImage: "checkmark")
+                                    } else {
+                                        Text(gbGame.title)
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        ForEach(otherGames, id: \.md5Hash) { gbGame in
+                            Button {
+                                updateSlot(port: port, gbGame: gbGame)
+                            } label: {
+                                let isSel = selectedPath != nil && selectedPath == gbGame.file?.url
+                                if isSel {
                                     Label(gbGame.title, systemImage: "checkmark")
                                 } else {
                                     Text(gbGame.title)
@@ -278,20 +524,53 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                             }
                         }
                     }
-                } label: {
-                    Image(systemName: "chevron.up.chevron.down")
-                        .foregroundStyle(.secondary)
                 }
-                .accessibilityLabel("Select Transfer Pak cartridge for port \(port + 1)")
+            } label: {
+                HStack(spacing: 4) {
+                    Text(isConfigured ? "Change" : "Select")
+                        .font(.caption.weight(.semibold))
+                    Image(systemName: "chevron.down")
+                        .font(.caption2)
+                }
+                .foregroundStyle(Color.retroBlue)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.retroBlue.opacity(0.1))
+                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color.retroBlue.opacity(0.4), lineWidth: 1))
+                )
             }
-
-            Text(romName)
-                .font(.caption)
-                .foregroundStyle(selectedPath == nil ? .tertiary : .secondary)
-                .lineLimit(1)
-                .truncationMode(.middle)
+            .accessibilityLabel("Select Transfer Pak cartridge for port \(port + 1)")
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+    }
+
+    // MARK: - Clear Button
+
+    private var clearButton: some View {
+        Button(role: .destructive) {
+            clearAll()
+        } label: {
+            HStack {
+                Image(systemName: "xmark.circle")
+                    .font(.body)
+                Text("Clear All Transfer Pak Slots")
+                    .font(.body.weight(.medium))
+            }
+            .foregroundStyle(Color.retroPink)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.retroPink.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(Color.retroPink.opacity(0.35), lineWidth: 1)
+                    )
+            )
+        }
     }
 
     // MARK: - Actions
@@ -301,7 +580,6 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
         selectedPaths[port] = url
         if launchAction != nil {
             // Pre-launch mode: buffer the change without persisting to UserDefaults.
-            // Changes are committed only when the user taps "Launch Game".
             stagedMD5s[port] = gbGame?.md5Hash
             slotIsStaged[port] = true
         } else {
@@ -312,10 +590,29 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
                 DLOG("TransferPak: live-applied port \(port) → \(url?.lastPathComponent ?? "nil")")
             }
         }
+        // Auto-set or clear pak type so the user doesn't need a separate Core Settings step.
+        autoUpdatePakType(port: port + 1, assignedGame: gbGame)
+        // If the user is actively configuring a slot, clear the "skipped" flag so future
+        // launches can offer the prompt again if they later clear all slots.
+        if gbGame != nil {
+            let md5 = game.md5Hash
+            Task.detached(priority: .utility) {
+                TransferPakStore.clearSkipFlag(forGameMD5: md5)
+            }
+        }
+    }
+
+    /// Automatically switches the controller pak setting so the user doesn't have to visit
+    /// Core Settings separately. When a GB game is assigned, the port is switched to Transfer Pak.
+    /// When cleared, the port falls back to Auto (ROM database default).
+    private func autoUpdatePakType(port: Int, assignedGame: PVGame?) {
+        let gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+        let newType: N64PakType = assignedGame != nil ? .transferPak : .auto
+        N64PakStore.setPakType(newType, forPort: port, gameMD5: gameMD5)
+        DLOG("TransferPak: auto-set port \(port) pak type → \(newType.title)")
     }
 
     /// Persists staged slot changes to UserDefaults. Called when user taps "Launch Game".
-    /// Only ports the user explicitly modified (`slotIsStaged`) are written.
     private func commitStagedSlots() {
         for port in 0..<slotCount where slotIsStaged[port] {
             TransferPakStore.setGBGame(stagedMD5s[port], forGameMD5: game.md5Hash, port: port)
@@ -334,9 +631,6 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
 
     // MARK: - Data Loading
 
-    /// Resolve persisted md5 hashes → on-disk URLs. Uses a detached task so
-    /// the synchronous Realm lookup in `TransferPakStore.romPath` never blocks
-    /// the main thread (avoids holding the main run loop during view appear).
     private func loadSelectedPaths() {
         let md5 = game.md5Hash
         let slots = slotCount
@@ -349,24 +643,18 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
         }
     }
 
-    /// Fetches GB and GBC games on a detached background task, then publishes the
-    /// frozen results to the main actor so the List can render without stalling.
-    /// Realm is opened and queried through `readGBAndGbcGamesFromCurrentThreadRealm()`
-    /// so thread-confined Realm objects are never used across suspension points.
     private func loadGBAndGbcGames() {
         Task.detached(priority: .userInitiated) {
             let frozen = Self.readGBAndGbcGamesFromCurrentThreadRealm()
-            await MainActor.run { gbAndGbcGames = frozen }
+            await MainActor.run {
+                gbAndGbcGames = frozen
+                noGBGamesInLibrary = frozen.isEmpty
+            }
         }
     }
 
-    /// Reads GB/GBC library entries from a Realm opened on the caller's current thread.
-    /// The returned values are frozen snapshots so they can be safely consumed on the main actor.
     private static func readGBAndGbcGamesFromCurrentThreadRealm() -> [PVGame] {
         guard let realm = try? Realm() else { return [] }
-        // Use `systemIdentifier` (a direct Realm-indexed property) rather than
-        // traversing the optional `system` relationship, which is faster and
-        // avoids predicate failures when `system` is nil.
         let gbSystemIDs = [SystemIdentifier.GB.rawValue, SystemIdentifier.GBC.rawValue]
         let games = realm.objects(PVGame.self)
             .filter("systemIdentifier IN %@ AND file != nil AND isDownloaded == true", gbSystemIDs)
@@ -383,22 +671,32 @@ set to "Transfer Pak" in Core Settings will use these ROMs.
 public enum TransferPakCompatibleGames {
     /// Known Transfer Pak titles keyed by common title substring (case-insensitive).
     /// Values describe the Transfer Pak feature in the game.
-    ///
-    /// `transferPakDescription(forTitle:)` collects all matching fragments with `filter`,
-    /// then returns the one with the longest fragment (via `max(by:)`) so that more specific
-    /// titles like "stadium 2" beat shorter "stadium" entries.
     public static let knownTitles: [(titleFragment: String, description: String)] = [
-        ("pokémon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
-        ("pokemon stadium 2",  "Supports GB/GBC Pokémon saves from Gold, Silver, Crystal, and Gen 1 games."),
-        ("pokémon stadium",    "Transfer Pokémon from your Game Boy game to compete in stadium battles."),
-        ("pokemon stadium",    "Transfer Pokémon from your Game Boy game to compete in stadium battles."),
+        ("pokémon stadium 2",  "Transfer Pokémon from Gold, Silver, Crystal, Red, Blue, or Yellow via Transfer Pak."),
+        ("pokemon stadium 2",  "Transfer Pokémon from Gold, Silver, Crystal, Red, Blue, or Yellow via Transfer Pak."),
+        ("pokémon stadium",    "Insert your Pokémon Red, Blue, or Yellow cartridge to use your own Pokémon in stadium battles."),
+        ("pokemon stadium",    "Insert your Pokémon Red, Blue, or Yellow cartridge to use your own Pokémon in stadium battles."),
         ("mario tennis",       "Transfer your character from the Game Boy Color Mario Tennis game."),
         ("mario golf",         "Transfer your character from the Game Boy Color Mario Golf game."),
         ("pokémon snap",       "Unlock GB Pokémon Printer functionality."),
         ("pokemon snap",       "Unlock GB Pokémon Printer functionality."),
-        ("kirby tilt",         "Required: reads Kirby Tilt 'n' Tumble cartridge for GB sensor data."),
+        ("kirby tilt",         "Required: reads the Kirby Tilt 'n' Tumble cartridge for its built-in tilt sensor."),
         ("hey you, pikachu",   "Transfer Pokémon to Pokémon Stadium 2 via GB Printer simulation."),
-        ("perfect dark",       "Download and play GBC Perfect Dark via Transfer Pak."),
+        ("perfect dark",       "Download and play the GBC version of Perfect Dark via Transfer Pak."),
+    ]
+
+    /// Maps N64 title fragments to expected Game Boy game title substrings for smart suggestions.
+    public static let suggestedGBTitles: [(n64Fragment: String, gbFragments: [String])] = [
+        ("pokemon stadium 2",  ["pokemon gold", "pokemon silver", "pokemon crystal", "pokemon red", "pokemon blue", "pokemon yellow", "pokémon gold", "pokémon silver", "pokémon crystal", "pokémon red", "pokémon blue", "pokémon yellow"]),
+        ("pokémon stadium 2",  ["pokemon gold", "pokemon silver", "pokemon crystal", "pokemon red", "pokemon blue", "pokemon yellow", "pokémon gold", "pokémon silver", "pokémon crystal", "pokémon red", "pokémon blue", "pokémon yellow"]),
+        ("pokemon stadium",    ["pokemon red", "pokemon blue", "pokemon yellow", "pokémon red", "pokémon blue", "pokémon yellow"]),
+        ("pokémon stadium",    ["pokemon red", "pokemon blue", "pokemon yellow", "pokémon red", "pokémon blue", "pokémon yellow"]),
+        ("mario tennis",       ["mario tennis"]),
+        ("mario golf",         ["mario golf"]),
+        ("pokemon snap",       ["pokemon", "pokémon"]),
+        ("pokémon snap",       ["pokemon", "pokémon"]),
+        ("kirby tilt",         ["kirby tilt"]),
+        ("perfect dark",       ["perfect dark"]),
     ]
 
     /// Returns the Transfer Pak description if the game title is a known Transfer Pak title.
@@ -412,5 +710,15 @@ public enum TransferPakCompatibleGames {
     /// Returns `true` when the game is a known Transfer Pak title.
     public static func isKnownTransferPakGame(_ title: String) -> Bool {
         transferPakDescription(forTitle: title) != nil
+    }
+
+    /// Returns GB game title substrings to suggest for a given N64 game title.
+    /// Used to highlight matching GB library games in the picker.
+    public static func suggestedGBTitleFragments(forN64Title title: String) -> [String] {
+        let lower = title.lowercased()
+        for entry in suggestedGBTitles where lower.contains(entry.n64Fragment) {
+            return entry.gbFragments
+        }
+        return []
     }
 }
