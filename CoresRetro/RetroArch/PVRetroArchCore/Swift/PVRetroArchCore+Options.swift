@@ -720,12 +720,32 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValues += "mupen64plus-rsp-plugin = \"hle\"\n"
                 #endif
                 optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
-                // On iOS 26+ we must overwrite any existing .opt that may already contain
-                // mupen64plus-rsp-plugin = "parallel" from a previous session.
                 #if os(iOS) || os(tvOS)
+                // Read the existing .opt file so we can preserve pak settings.
+                let mupenOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
+                let existingMupenOpt = (try? String(contentsOfFile: mupenOptPath, encoding: .utf8)) ?? ""
                 if #available(iOS 26, tvOS 26, *) {
+                    // iOS 26+: must overwrite so "parallel" RSP is replaced by "cxd4".
+                    // Preserve any pak settings from the previous session — without this,
+                    // every launch wipes mupen64plus-pak* back to the "memory" default,
+                    // silencing rumble-pak games (GoldenEye, Star Fox 64, etc.).
+                    // If no prior pak settings exist (fresh install), default pak1 to
+                    // "rumble" so rumble-pak games work out of the box.
+                    // Full per-game auto-detection is tracked in #3129.
+                    let preservedPakLines = existingMupenOpt.components(separatedBy: "\n")
+                        .filter { line in !line.hasPrefix("#") && line.hasPrefix("mupen64plus-pak") }
+                    if preservedPakLines.isEmpty {
+                        optionValues += "mupen64plus-pak1 = \"rumble\"\n"
+                    } else {
+                        optionValues += preservedPakLines.joined(separator: "\n") + "\n"
+                    }
                     optionOverwrite = true
                 } else {
+                    // iOS < 26: append-only. Only write pak1 default if not already set,
+                    // so user-configured or previously auto-detected values are respected.
+                    if !existingMupenOpt.contains("mupen64plus-pak1") {
+                        optionValues += "mupen64plus-pak1 = \"rumble\"\n"
+                    }
                     optionOverwrite = false
                 }
                 #else
