@@ -36,15 +36,19 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
     private static let iso9660Magic: [UInt8] = [0x43, 0x44, 0x30, 0x30, 0x31]
 
     public func matchesMagicBytes(_ headerBytes: Data) -> Bool {
-        // Cooked ISO: PVD at offset 32768; magic at 32769.
+        // Cooked ISO: PVD at LBA 16 = offset 32768; magic at +1 = 32769.
         if headerBytes.count > 32_773 &&
             headerBytes[32769..<32774].elementsEqual(Self.iso9660Magic) {
             return true
         }
-        // Raw-sector (2352 bytes/sector) BIN: sector 0 data starts at byte 16;
-        // LBA 16 data therefore starts at offset 16*2352+16 = 37_648.
-        if headerBytes.count > 37_652 &&
+        // Raw 2352-byte/sector BIN: LBA 16 at 16*2352 = 37632; data at +16 = 37648; magic at +1 = 37649.
+        if headerBytes.count > 37_653 &&
             headerBytes[37649..<37654].elementsEqual(Self.iso9660Magic) {
+            return true
+        }
+        // Raw 2336-byte/sector (Mode 2 without sync): LBA 16 at 16*2336 = 37376; data at +8 = 37384; magic at +1 = 37385.
+        if headerBytes.count > 37_389 &&
+            headerBytes[37385..<37390].elementsEqual(Self.iso9660Magic) {
             return true
         }
         // If we couldn't read enough bytes, let extractSerial try anyway.
@@ -279,25 +283,28 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
     /// Normalises a PSX/PS2 game ID to the standard `XXXX-NNNNN` format.
     ///
     /// Input examples:
-    /// - `SLUS_01234` → `SLUS-01234`
-    /// - `SCES_123.45` → `SCES-12345`
-    /// - `SLUS_012.34` → `SLUS-01234`
+    /// - `SLUS_01234`    → `SLUS-01234`
+    /// - `SLUS_01234.EXE` → `SLUS-01234`  (strips alphabetic extension)
+    /// - `SCES_533.45`   → `SCES-53345`   (combines digit halves, no extension to strip)
+    /// - `SCES_123.45`   → `SCES-12345`
     private func normalizeSerial(_ raw: String) -> String {
-        // Remove file extension if present.
-        let withoutExt = raw.components(separatedBy: ".").count > 1
-            ? raw.components(separatedBy: ".").dropLast().joined(separator: ".")
-            : raw
-
         // Strip trailing version markers like ";1".
-        let clean = withoutExt.components(separatedBy: ";").first ?? withoutExt
+        let clean = (raw.components(separatedBy: ";").first ?? raw)
+            .trimmingCharacters(in: .whitespaces)
 
-        // Replace underscores used as the separator with dashes.
-        // Also remove any remaining dots (period in ID numbers).
         let parts = clean.components(separatedBy: "_")
         guard parts.count >= 2 else { return clean.uppercased() }
 
         let prefix = parts[0].uppercased()
-        let digits = parts[1...].joined().replacingOccurrences(of: ".", with: "")
+
+        // Collect everything after the first underscore.
+        // For `SLUS_01234.EXE` that is `"01234.EXE"`.
+        // For `SCES_533.45`   that is `"533.45"`.
+        // We take only leading digits and dots, stopping at the first alphabetic
+        // character (the start of a file extension like `.EXE`), then strip dots.
+        let afterUnderscore = parts[1...].joined(separator: "_")
+        let digitDotPart = afterUnderscore.prefix(while: { $0.isNumber || $0 == "." })
+        let digits = String(digitDotPart).replacingOccurrences(of: ".", with: "")
 
         let result = "\(prefix)-\(digits)"
         // Sanity: must look like a product code (letters dash digits).

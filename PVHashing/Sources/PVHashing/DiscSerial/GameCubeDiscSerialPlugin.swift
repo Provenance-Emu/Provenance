@@ -86,7 +86,7 @@ public struct GameCubeDiscSerialPlugin: DiscSerialExtractorPlugin {
         let idBytes = header[0..<6]
         guard let discID = String(bytes: idBytes, encoding: .ascii),
               discID.count == 6,
-              discID.allSatisfy({ $0.isLetter || $0.isNumber }) else {
+              discID.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber) }) else {
             WLOG("GameCubeDiscSerialPlugin: invalid disc ID bytes in \(url.lastPathComponent)")
             return nil
         }

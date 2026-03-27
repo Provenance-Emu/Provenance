@@ -83,12 +83,14 @@ public final class DiscSerialExtractorRegistry: Sendable {
     /// 2. ``SegaDiscSerialPlugin`` — Saturn / SegaCD / Dreamcast header
     /// 3. ``GameCubeDiscSerialPlugin`` — GameCube / Wii disc ID
     /// 4. ``ISODiscSerialPlugin`` — ISO 9660 + PSX/PS2 SYSTEM.CNF
+    /// 5. ``NDSDiscSerialPlugin`` — Nintendo DS ROM header
     public func registerDefaults() async {
         guard await store.markDefaultsRegistered() else { return }
         await store.append(BinCueDiscSerialPlugin())
         await store.append(SegaDiscSerialPlugin())
         await store.append(GameCubeDiscSerialPlugin())
         await store.append(ISODiscSerialPlugin())
+        await store.append(NDSDiscSerialPlugin())
     }
 
     /// Synchronous convenience wrapper for call sites that cannot be async
