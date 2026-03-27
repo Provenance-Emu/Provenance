@@ -369,8 +369,11 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
+        /// Rehydrate the game after async sync work so launch does not use stale/frozen snapshots.
+        let gameForLaunch = refreshedGameForLaunch(from: game)
+
         // Set the current game and core in EmulationUIState
-        AppState.shared.emulationUIState.currentGame = game
+        AppState.shared.emulationUIState.currentGame = gameForLaunch
         if let core = core {
             AppState.shared.emulationUIState.currentCore = core
         }
@@ -383,11 +386,11 @@ public class SceneCoordinator: ObservableObject {
             }
 
             // Load per-game / per-system controller profiles for all connected controllers.
-            loadControllerProfiles(for: currentGame, core: core)
+            loadControllerProfiles(for: gameForLaunch, core: core)
 
             // Show pre-launch Transfer Pak setup sheet for known N64 Transfer Pak titles
             // when the feature is enabled and no slots have been configured yet.
-            await maybePromptTransferPakSetup(for: currentGame)
+            await maybePromptTransferPakSetup(for: gameForLaunch)
 
             // Open the emulator scene - errors will be handled by PVEmulatorViewController
             openEmulatorScene()
@@ -415,6 +418,14 @@ public class SceneCoordinator: ObservableObject {
             wrapper.loadActiveProfile(systemIdentifier: systemIdentifier, coreIdentifier: coreIdentifier, gameID: gameID)
         }
         ILOG("SceneCoordinator: Loaded controller profiles for \(PVControllerManager.shared.controllers.count) controller(s)")
+    }
+
+    /// Returns the freshest game row for launch, falling back to the provided object.
+    private func refreshedGameForLaunch(from game: PVGame) -> PVGame {
+        guard !game.md5Hash.isEmpty else {
+            return game
+        }
+        return RomDatabase.sharedInstance.game(withMD5: game.md5Hash) ?? game
     }
 
     // MARK: - Pre-Download Validation
@@ -936,8 +947,11 @@ public class SceneCoordinator: ObservableObject {
             AppState.shared.emulationUIState.confirmedMismatchSaveStateID = stateToCheck.id
         }
 
+        /// Rehydrate the game after async sync work so launch does not use stale/frozen snapshots.
+        let gameForLaunch = refreshedGameForLaunch(from: game)
+
         // Set the current game, save state, and core in EmulationUIState
-        AppState.shared.emulationUIState.currentGame = game
+        AppState.shared.emulationUIState.currentGame = gameForLaunch
         AppState.shared.emulationUIState.currentSaveState = preparedSaveState
         if let coreToUse = coreToUse {
             AppState.shared.emulationUIState.currentCore = coreToUse
@@ -954,7 +968,7 @@ public class SceneCoordinator: ObservableObject {
             }
 
             // Load per-game / per-system controller profiles for all connected controllers.
-            loadControllerProfiles(for: currentGame, core: coreToUse)
+            loadControllerProfiles(for: gameForLaunch, core: coreToUse)
 
             // Open the emulator scene - the emulator will handle loading the game with save state
             openEmulatorScene()

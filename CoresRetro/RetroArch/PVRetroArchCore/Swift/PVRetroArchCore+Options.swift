@@ -580,10 +580,26 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 
         if let systemIdentifier = self.systemIdentifier?.lowercased() {
             if (systemIdentifier.contains("psp")) {
-                self.gsPreference = 2; // Use Vulkan PSP
+                /// PPSSPP fast-memory + Vulkan worked on older iOS/tvOS builds, but
+                /// iOS/tvOS 26+ can fail MemoryMap_Setup with vm_remap errors.
+                /// Keep fast path on older OSes and apply a stability fallback on 26+.
+                #if os(iOS) || os(tvOS)
+                if #available(iOS 26, tvOS 26, *) {
+                    self.gsPreference = 1 // OpenGL ES fallback on 26+
+                    ILOG("PPSSPP fallback: iOS/tvOS 26+ detected, forcing OpenGL ES and disabling fast memory to avoid MemoryMap vm_remap boot failures")
+                    optionValues += "ppsspp_fast_memory = \"disabled\"\n";
+                } else {
+                    self.gsPreference = 2 // Preserve historical Vulkan path.
+                    ILOG("PPSSPP config: preserving Vulkan + fast memory on pre-iOS/tvOS 26")
+                    optionValues += "ppsspp_fast_memory = \"enabled\"\n";
+                }
+                #else
+                self.gsPreference = 2 // Preserve historical Vulkan path.
+                ILOG("PPSSPP config: non-iOS/tvOS platform, preserving Vulkan + fast memory")
+                optionValues += "ppsspp_fast_memory = \"enabled\"\n";
+                #endif
 
                 optionValues += "ppsspp_ignore_bad_memory_access = \"enabled\"\n";
-                optionValues += "ppsspp_fast_memory = \"enabled\"\n";
 
                 optionValuesFile = "PPSSPP/PPSSPP.opt"
                 optionOverwrite = false

@@ -8,6 +8,7 @@ import SafariServices
 #endif
 
 /// View for selecting a skin for a specific system with retrowave styling
+// swiftlint:disable type_body_length
 public struct SystemSkinSelectionView: View {
     // MARK: - Properties
 
@@ -24,7 +25,8 @@ public struct SystemSkinSelectionView: View {
     @State private var selectedSkinId: String?
     @State private var selectedPortraitSkinId: String?
     @State private var selectedLandscapeSkinId: String?
-    @State private var selectedOrientation: SkinOrientation = .portrait
+    @State private var selectedOrientation: SkinOrientation
+    @State private var selectedScope: SkinScope
 
     // UI state
     @State private var isLoading = true
@@ -41,9 +43,16 @@ public struct SystemSkinSelectionView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(system: SystemIdentifier, game: PVGame? = nil) {
+    public init(
+        system: SystemIdentifier,
+        game: PVGame? = nil,
+        preferredScope: SkinScope? = nil,
+        preferredOrientation: SkinOrientation = .portrait
+    ) {
         self.system = system
         self.game = game
+        _selectedOrientation = State(initialValue: preferredOrientation)
+        _selectedScope = State(initialValue: preferredScope ?? (game != nil ? .game : .system))
     }
 
     /// Whether this is a per-game skin selection
@@ -51,9 +60,27 @@ public struct SystemSkinSelectionView: View {
         game != nil
     }
 
-    /// The game ID for per-game preferences
+    /// The game ID for per-game/session preferences
     private var gameId: String? {
         game?.id
+    }
+
+    /// Current scope with safety fallback when game scope is unavailable.
+    private var effectiveScope: SkinScope {
+        if selectedScope == .game, gameId == nil {
+            return .system
+        }
+        return selectedScope
+    }
+
+    /// Game ID used for writes/reads at the current scope.
+    private var scopedGameId: String? {
+        switch effectiveScope {
+        case .system:
+            return nil
+        case .session, .game:
+            return gameId
+        }
     }
 
     /// System short code for skin catalog filter (e.g. "nes", "snes")
@@ -285,6 +312,35 @@ public struct SystemSkinSelectionView: View {
 
     private var orientationPickerView: some View {
         VStack(spacing: 8) {
+            HStack(spacing: 0) {
+                ForEach(SkinScope.allCases) { scope in
+                    let enabled = scope != .game || gameId != nil
+                    Button {
+                        guard enabled else { return }
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            selectedScope = scope
+                        }
+                    } label: {
+                        Text(scope.rawValue.uppercased())
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .tracking(1)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(effectiveScope == scope ? Color.black.opacity(0.6) : Color.black.opacity(0.3))
+                            .foregroundColor(enabled ? (effectiveScope == scope ? .white : .white.opacity(0.7)) : .white.opacity(0.35))
+                    }
+                    .disabled(!enabled)
+                }
+            }
+            .background(Color.black.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
+            )
+            .padding(.horizontal)
+            .padding(.top, 12)
+
             // Custom segmented control with retrowave styling
             HStack(spacing: 0) {
                 ForEach(SkinOrientation.allCases, id: \.self) { orientation in
@@ -700,13 +756,8 @@ public struct SystemSkinSelectionView: View {
             Button {
                 // Select for both orientations
                 Task {
-                    if isPerGameSelection, let gameId = gameId {
-                        await selectionManager.setSkin(skin.identifier, for: system, gameId: gameId, orientation: .portrait, scope: .game)
-                        await selectionManager.setSkin(skin.identifier, for: system, gameId: gameId, orientation: .landscape, scope: .game)
-                    } else {
-                        await selectionManager.setSkin(skin.identifier, for: system, gameId: nil, orientation: .portrait, scope: .system)
-                        await selectionManager.setSkin(skin.identifier, for: system, gameId: nil, orientation: .landscape, scope: .system)
-                    }
+                    await selectionManager.setSkin(skin.identifier, for: system, gameId: scopedGameId, orientation: .portrait, scope: effectiveScope)
+                    await selectionManager.setSkin(skin.identifier, for: system, gameId: scopedGameId, orientation: .landscape, scope: effectiveScope)
                     await MainActor.run {
                         self.selectedPortraitSkinId = skin.identifier
                         self.selectedLandscapeSkinId = skin.identifier
@@ -838,15 +889,8 @@ public struct SystemSkinSelectionView: View {
         let portraitSelection: String?
         let landscapeSelection: String?
 
-        if isPerGameSelection, let gameId = gameId {
-            // Load per-game preferences (includes session overrides)
-            portraitSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: gameId, orientation: .portrait)
-            landscapeSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: gameId, orientation: .landscape)
-        } else {
-            // Load system preferences (includes session overrides)
-            portraitSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: nil, orientation: .portrait)
-            landscapeSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: nil, orientation: .landscape)
-        }
+        portraitSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: scopedGameId, orientation: .portrait)
+        landscapeSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: scopedGameId, orientation: .landscape)
 
         // Update UI on main thread
         await MainActor.run {
@@ -910,12 +954,11 @@ public struct SystemSkinSelectionView: View {
 
     private func selectSkin(_ identifier: String?) {
         Task {
-            let scope: SkinScope = isPerGameSelection ? .game : .system
             if identifier == nil {
                 // Reverting to default: clear both orientations so the emulator
                 // uses the built-in skin regardless of device orientation.
                 for orientation in SkinOrientation.allCases {
-                    await selectionManager.setSkin(nil, for: system, gameId: gameId, orientation: orientation, scope: scope)
+                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: orientation, scope: effectiveScope)
                 }
                 await MainActor.run {
                     self.selectedPortraitSkinId = nil
@@ -925,9 +968,9 @@ public struct SystemSkinSelectionView: View {
                 await selectionManager.setSkin(
                     identifier,
                     for: system,
-                    gameId: gameId,
+                    gameId: scopedGameId,
                     orientation: selectedOrientation,
-                    scope: scope
+                    scope: effectiveScope
                 )
 
                 // Update the appropriate state variable
@@ -955,13 +998,12 @@ public struct SystemSkinSelectionView: View {
         // Check if the selected skin supports this orientation for the current device
         if !skinSupportsOrientation(selectedSkin, orientation: orientation) {
             // Selection doesn't support this orientation, clear it
-            let scope: SkinScope = isPerGameSelection ? .game : .system
             await selectionManager.setSkin(
                 nil,
                 for: system,
-                gameId: gameId,
+                gameId: scopedGameId,
                 orientation: orientation,
-                scope: scope
+                scope: effectiveScope
             )
 
             // Update UI state
@@ -981,13 +1023,12 @@ public struct SystemSkinSelectionView: View {
                 try await skinManager.deleteSkin(skin.identifier)
 
                 // If we deleted a selected skin, reset the appropriate selection(s)
-                let scope: SkinScope = isPerGameSelection ? .game : .system
                 if selectedPortraitSkinId == skin.identifier {
-                    await selectionManager.setSkin(nil, for: system, gameId: gameId, orientation: .portrait, scope: scope)
+                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: .portrait, scope: effectiveScope)
                 }
 
                 if selectedLandscapeSkinId == skin.identifier {
-                    await selectionManager.setSkin(nil, for: system, gameId: gameId, orientation: .landscape, scope: scope)
+                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: .landscape, scope: effectiveScope)
                 }
 
                 // Reload skins
@@ -998,6 +1039,7 @@ public struct SystemSkinSelectionView: View {
         }
     }
 }
+// swiftlint:enable type_body_length
 
 /// View component for linking to DeltaStyles website
 private struct DeltaStylesLinkView: View {

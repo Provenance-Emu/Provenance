@@ -738,6 +738,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
         }
 
+        /// Rehydrate game from Realm to avoid stale/frozen file metadata after async sync/download work.
+        if let refreshedGame = refreshedGameForROMResolution() {
+            self.game = refreshedGame
+            if romPathMaybe == nil {
+                romPathMaybe = refreshedGame.file?.url
+                romPathMaybe = handleArchives(atPath: romPathMaybe)
+            }
+        }
+
         /// Ensure we have a valid ROM URL before attempting to load
         guard let romURL = romPathMaybe, !romURL.path.isEmpty else {
             ELOG("Cannot create emulator: ROM path is nil or empty for \(game.title)")
@@ -1138,6 +1147,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     // MARK: - CloudKit Download Handling
+
+    /// Resolves the latest Realm-backed game row before final ROM URL resolution.
+    /// This prevents stale snapshots from carrying pre-download file metadata.
+    private func refreshedGameForROMResolution() -> PVGame? {
+        let md5 = game.md5Hash
+        guard !md5.isEmpty else {
+            return nil
+        }
+        return RomDatabase.sharedInstance.game(withMD5: md5)
+    }
 
     /// Check if a game needs CloudKit download
     /// - Parameter game: The game to check

@@ -24,7 +24,7 @@ public struct NetplayInviteView: View {
     @State private var hostAddress: String = ""
     @State private var port: String = "55435"
     @State private var useRelay: Bool = false
-    @State private var relayServer: String = "relay.retroarch.com"
+    @State private var relayServer: String = "ra.me"
     @State private var showShareSheet = false
     @State private var inviteURL: URL?
 
@@ -94,7 +94,7 @@ public struct NetplayInviteView: View {
         } header: {
             Text("Relay")
         } footer: {
-            Text("The RA.ME relay (relay.retroarch.com) lets friends connect without port forwarding.")
+            Text("The RA.ME relay (ra.me) lets friends connect without port forwarding.")
         }
     }
 

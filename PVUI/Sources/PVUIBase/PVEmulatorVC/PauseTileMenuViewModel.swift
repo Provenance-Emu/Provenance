@@ -35,6 +35,7 @@ struct PauseMenuSearchResult: Identifiable, Hashable {
 /// Sections are rebuilt only when ``rebuild`` is called explicitly,
 /// avoiding the costly per-render recomputation of `gameSections`.
 @MainActor
+// swiftlint:disable type_body_length
 final class PauseTileMenuViewModel: ObservableObject {
 
     @Published private(set) var sections: [PauseMenuTileSection] = []
@@ -76,6 +77,8 @@ final class PauseTileMenuViewModel: ObservableObject {
             guard let game = emulatorVC.game, !game.isInvalidated else { return false }
             return !game.saveStates.isEmpty
         }()
+        let n64ID = SystemIdentifier.N64.rawValue
+        let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier
         let supportsCheatCodes = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
         let shouldSave = Self.shouldSaveOnQuit(emulatorVC: emulatorVC)
 
@@ -100,14 +103,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 colorKey: .purple,
                 dismissOnTap: false
             ),
-            PauseMenuTile(
-                id: "autoSaveState",
-                icon: "clock.arrow.circlepath",
-                label: String(localized: "Auto Save"),
-                isEnabled: supportsSaveStates,
-                colorKey: .teal,
-                dismissOnTap: false
-            )
+            Self.timedAutoSaveTile(isEnabled: supportsSaveStates)
         ]
 
         gameTiles.append(PauseMenuTile(id: "reset", icon: "arrow.counterclockwise", label: String(localized: "Reset"), colorKey: .orange))
@@ -123,7 +119,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Broadcast — feature-flagged, iOS + tvOS
         var recordingTiles: [PauseMenuTile] = []
         #if os(iOS) || os(tvOS)
-        if featureFlags.liveBroadcast {
+        if featureFlags.liveBroadcast || PVFeatureFlagsManager.shared.liveBroadcast {
             let isBcast = emulatorVC.isBroadcasting
             recordingTiles.append(PauseMenuTile(
                 id: "broadcast",
@@ -135,7 +131,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         // Save Clip — feature-flagged, only visible when clip buffering is active
-        if featureFlags.clipBuffering && emulatorVC.isClipBufferingActive {
+        if (featureFlags.clipBuffering || PVFeatureFlagsManager.shared.clipBuffering) && emulatorVC.isClipBufferingActive {
             recordingTiles.append(PauseMenuTile(
                 id: "saveClip",
                 icon: "scissors.badge.ellipsis",
@@ -193,18 +189,19 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
-        if featureFlags.netplayEnabled && Self.coreSupportsNetplay(emulatorVC) {
+        if (featureFlags.netplayEnabled || PVFeatureFlagsManager.shared.netplayEnabled) && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
                 id: "networkPlay",
                 icon: "antenna.radiowaves.left.and.right",
                 label: String(localized: "Network Play"),
+                description: String(localized: "Host, browse, or spectate netplay rooms"),
                 colorKey: .blue,
                 dismissOnTap: false
             ))
         }
 
         #if os(iOS) || targetEnvironment(macCatalyst)
-        if featureFlags.companionController {
+        if featureFlags.companionController || PVFeatureFlagsManager.shared.companionController {
             gameTiles.append(PauseMenuTile(
                 id: "companionController",
                 icon: "iphone.and.arrow.forward",
@@ -214,6 +211,48 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         #endif
+        let wantsStartSelectInMenu = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(
+            emulatorVC.game?.system?.identifier ?? SystemIdentifier.RetroArch.rawValue
+        )
+        if let player1 = PVControllerManager.shared.player1 {
+#if os(iOS)
+            if Defaults[.missingButtonsAlwaysOn] || player1.extendedGamepad != nil || wantsStartSelectInMenu {
+                gameTiles.append(PauseMenuTile(
+                    id: "p1Controls",
+                    icon: "gamecontroller",
+                    label: String(localized: "P1 Controls"),
+                    colorKey: .blue
+                ))
+            }
+#else
+            if player1.extendedGamepad != nil || wantsStartSelectInMenu {
+                gameTiles.append(PauseMenuTile(
+                    id: "p1Controls",
+                    icon: "gamecontroller",
+                    label: String(localized: "P1 Controls"),
+                    colorKey: .blue
+                ))
+            }
+#endif
+        }
+        if let player2 = PVControllerManager.shared.player2,
+           player2.extendedGamepad != nil || wantsStartSelectInMenu {
+            gameTiles.append(PauseMenuTile(
+                id: "p2Controls",
+                icon: "gamecontroller",
+                label: String(localized: "P2 Controls"),
+                colorKey: .purple
+            ))
+        }
+        if gameSystemID == n64ID {
+            gameTiles.append(PauseMenuTile(
+                id: "n64PakSlots",
+                icon: "gamecontroller.fill",
+                label: String(localized: "Pak Slots"),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
+        }
 
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
         built.append(PauseMenuTileSection(id: "statesData", title: String(localized: "STATES"), tiles: stateTiles))
@@ -279,6 +318,10 @@ final class PauseTileMenuViewModel: ObservableObject {
         if let rumbleTile = Self.rumbleToggleTile(core: emulatorVC.core, hapticFeedbackEnabled: hapticFeedbackEnabled) {
             displayTiles.append(rumbleTile)
         }
+        if emulatorVC.virtualInputState.supportsMouse {
+            displayTiles.append(Self.mouseInputSourceTile(source: Defaults[.mouseInputSource]))
+            displayTiles.append(Self.mouseSensitivityTile(sensitivity: Defaults[.mouseSensitivity]))
+        }
         if let jitTile = Self.jitStatusTile(core: emulatorVC.core, indicatorRegistry: indicatorRegistry) {
             displayTiles.append(jitTile)
         }
@@ -309,7 +352,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Showing it for all N64 games is misleading — most games don't use the Transfer Pak.
         let gameTitle = emulatorVC.game?.title ?? ""
         if let transferCore = emulatorVC.core as? TransferPakSupport,
-           featureFlags.mupenTransferPak,
+           featureFlags.mupenTransferPak || PVFeatureFlagsManager.shared.mupenTransferPak,
            transferCore.transferPakSlotCount > 0 {
             // Count configured slots in one pass; reuse for both the visibility guard and
             // the badge label to avoid calling transferPakROM(forPort:) more than once per slot.
@@ -330,18 +373,6 @@ final class PauseTileMenuViewModel: ObservableObject {
                     dismissOnTap: false
                 ))
             }
-        }
-
-        let n64ID = SystemIdentifier.N64.rawValue
-        let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier
-        if gameSystemID == n64ID {
-            coreTiles.append(PauseMenuTile(
-                id: "n64PakSlots",
-                icon: "gamecontroller.fill",
-                label: String(localized: "Pak Slots"),
-                colorKey: .blue,
-                dismissOnTap: false
-            ))
         }
 
         if let paletteCore = emulatorVC.core as? PaletteProviding,
@@ -385,6 +416,27 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         #endif
+
+        if Self.isRetroArchMIDICapable(emulatorVC: emulatorVC) {
+            coreTiles.append(PauseMenuTile(
+                id: "retroArchMIDIToggle",
+                icon: Defaults[.retroArchMIDIEnabled] ? "pianokeys" : "pianokeys.inverse",
+                label: String(localized: "RetroArch MIDI"),
+                badge: Defaults[.retroArchMIDIEnabled] ? "ON" : "OFF",
+                colorKey: Defaults[.retroArchMIDIEnabled] ? .green : .gray,
+                dismissOnTap: false
+            ))
+        }
+        if Self.hasLegacyPortDeviceOptions(core: emulatorVC.core) {
+            coreTiles.append(PauseMenuTile(
+                id: "legacyPortDevices",
+                icon: "gamecontroller",
+                label: String(localized: "Port Devices (Legacy)"),
+                description: String(localized: "Configure core-reported controller port device types"),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
+        }
 
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
             let isPaletteProviding = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
@@ -472,7 +524,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             let optionIDs: Set<String> = [
                 "fastForwardToggle", "gameSpeedCycle", "fpsCounterToggle", "rewindToggle",
                 "filterCycle", "shaderSettings", "rumbleToggle", "airPlay", "keyboardToggle", "mouseToggle",
-                "retroArchSettings", "audioVisualizer"
+                "retroArchSettings", "audioVisualizer", "mouseInputSource", "mouseSensitivity"
             ]
             let tiles = tiles(matching: optionIDs, from: rootSections)
             return [PauseMenuTileSection(id: "options_route", title: String(localized: "OPTIONS"), tiles: tiles)]
@@ -484,10 +536,40 @@ final class PauseTileMenuViewModel: ObservableObject {
             let core = rootSections.first(where: { $0.id == "core" })
             return core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? []
         case .skins:
+            if !emulatorVC.core.supportsSkins {
+                let tiles: [PauseMenuTile] = [
+                    PauseMenuTile(
+                        id: "skins_unsupported_info",
+                        icon: "exclamationmark.triangle.fill",
+                        label: String(localized: "Skins Unsupported"),
+                        description: String(localized: "Skins are not supported by this core yet."),
+                        isEnabled: false,
+                        colorKey: .gray,
+                        dismissOnTap: false
+                    )
+                ]
+                return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
+            }
             let systemIdentifier = SystemIdentifier(rawValue: emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier ?? "")
             let systemLabel = systemIdentifier?.fullName ?? String(localized: "Current System")
+            let savedScopeRaw = UserDefaults.standard.string(forKey: "PauseTileMenu.skinScope") ?? SkinScope.game.rawValue
+            let skinScope = SkinScope(rawValue: savedScopeRaw) ?? .game
+            let scopeLabel = skinScope.rawValue
             var tiles: [PauseMenuTile] = [
-                PauseMenuTile(id: "skins_pick_for_system", icon: "paintpalette", label: String(localized: "Choose Skin"), badge: systemLabel, colorKey: .orange, dismissOnTap: false),
+                PauseMenuTile(
+                    id: "skins_scope",
+                    icon: "line.3.horizontal.decrease.circle",
+                    label: String(localized: "Skin Scope"),
+                    badge: scopeLabel,
+                    description: String(localized: "Choose Session, Game, or System scope"),
+                    colorKey: .teal,
+                    dismissOnTap: false,
+                    longPressOptions: SkinScope.allCases.map {
+                        PauseMenuTileLongPressOption(id: "skinScope_\($0.rawValue)", title: $0.rawValue, isSelected: $0 == skinScope)
+                    }
+                ),
+                PauseMenuTile(id: "skins_pick_portrait", icon: "rectangle.portrait", label: String(localized: "Choose Portrait Skin"), badge: systemLabel, colorKey: .orange, dismissOnTap: false),
+                PauseMenuTile(id: "skins_pick_landscape", icon: "rectangle.landscape", label: String(localized: "Choose Landscape Skin"), badge: systemLabel, colorKey: .purple, dismissOnTap: false),
                 PauseMenuTile(id: "skins_button_effect", icon: "wand.and.sparkles", label: String(localized: "Button Effect"), badge: Defaults[.buttonPressEffect].description, colorKey: .purple, dismissOnTap: false),
                 PauseMenuTile(id: "skins_button_sound", icon: "speaker.wave.2", label: String(localized: "Button Sound"), badge: Defaults[.buttonSound].description, colorKey: .blue, dismissOnTap: false),
                 PauseMenuTile(id: "skins_browse_catalog", icon: "arrow.down.circle.fill", label: String(localized: "Browse Catalog"), colorKey: .orange, dismissOnTap: false)
@@ -655,8 +737,14 @@ final class PauseTileMenuViewModel: ObservableObject {
     /// not linked (e.g. stripped builds) so the tile is never shown unnecessarily.
     private static func coreSupportsNetplay(_ emulatorVC: PVEmulatorViewController) -> Bool {
 #if canImport(PVNetplay)
-        guard let bridge = emulatorVC.core as? any PVNetplayCapable else { return false }
-        return bridge.supportsNetplay
+        if let bridge = emulatorVC.core as? any PVNetplayCapable, bridge.supportsNetplay {
+            return true
+        }
+        // Fallback for bridge/type-erasure edge cases where protocol conformance isn't visible
+        // from this module even though the runtime core supports netplay.
+        let coreID = (emulatorVC.core.coreIdentifier ?? "").lowercased()
+        let knownNetplayCoreHints = ["libretro", "dolphin", "ppsspp", "mgba", "melonds", "mednafen"]
+        return knownNetplayCoreHints.contains { coreID.contains($0) }
 #else
         return false
 #endif
@@ -689,7 +777,31 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         return parsed.first(where: { $0 != .RetroArch }) ?? parsed.first
     }
+
+    private static func isRetroArchMIDICapable(emulatorVC: PVEmulatorViewController) -> Bool {
+#if canImport(CoreMIDI) && !os(tvOS)
+        let coreID = (emulatorVC.core.coreIdentifier ?? "").lowercased()
+        let isLibretroCore = coreID.contains("libretro") || coreID.contains("retroarch")
+        guard isLibretroCore else { return false }
+        guard let game = emulatorVC.game,
+              let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return false }
+        return MIDISystemRegistry.shared.supportsMIDI(sysID)
+#else
+        return false
+#endif
+    }
+
+    private static func hasLegacyPortDeviceOptions(core: PVEmulatorCore) -> Bool {
+        guard core as? PortDeviceConfigurable == nil else { return false }
+        guard let coreObject = core as? NSObject,
+              let bridge = coreObject.value(forKey: "_bridge") as? NSObject else { return false }
+        let selector = Selector(("controllerPortInfo"))
+        guard bridge.responds(to: selector),
+              let info = bridge.value(forKey: "controllerPortInfo") as? [[NSDictionary]] else { return false }
+        return info.contains { $0.count > 1 }
+    }
 }
+// swiftlint:enable type_body_length
 
 // MARK: - MetalFilterModeOption extension
 
@@ -750,6 +862,86 @@ private extension PauseTileMenuViewModel {
             badge: showFPSCount ? "ON" : "OFF",
             colorKey: showFPSCount ? .green : .gray,
             dismissOnTap: false
+        )
+    }
+
+    static func mouseInputSourceTile(source: MouseInputSource) -> PauseMenuTile {
+        let availableSources = MouseInputSource.allCases.filter { sourceOption in
+            #if os(tvOS)
+            return sourceOption != .touchscreen
+            #else
+            return true
+            #endif
+        }
+        let options = availableSources.map {
+            PauseMenuTileLongPressOption(
+                id: "mouseSource_\($0.rawValue)",
+                title: $0.displayName,
+                isSelected: $0 == source
+            )
+        }
+        return PauseMenuTile(
+            id: "mouseInputSource",
+            icon: source.symbolName,
+            label: String(localized: "Mouse Input Source"),
+            badge: source.displayName,
+            description: String(localized: "Tap to cycle source. Long-press to choose exact source."),
+            colorKey: .blue,
+            dismissOnTap: false,
+            longPressOptions: options
+        )
+    }
+
+    static func mouseSensitivityTile(sensitivity: Double) -> PauseMenuTile {
+        let presets: [Double] = [0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0]
+        let options = presets.map { preset in
+            PauseMenuTileLongPressOption(
+                id: "mouseSensitivity_\(Int((preset * 100).rounded()))",
+                title: String(format: "%.2gx", preset),
+                isSelected: abs(preset - sensitivity) < 0.01
+            )
+        }
+        return PauseMenuTile(
+            id: "mouseSensitivity",
+            icon: "slider.horizontal.3",
+            label: String(localized: "Mouse Sensitivity"),
+            badge: String(format: "%.2gx", sensitivity),
+            description: String(localized: "Tap to cycle sensitivity. Long-press for exact value presets."),
+            colorKey: .purple,
+            dismissOnTap: false,
+            longPressOptions: options
+        )
+    }
+
+    /// Builds the timed auto-save control tile with quick interval/off choices.
+    static func timedAutoSaveTile(isEnabled: Bool) -> PauseMenuTile {
+        let timedEnabled = Defaults[.timedAutoSaves]
+        let interval = Defaults[.timedAutoSaveInterval]
+        let intervalMinutes = max(1, Int((interval / 60.0).rounded()))
+        let quickIntervals: [Int] = [2, 5, 10, 15, 30]
+        let lpOptions: [PauseMenuTileLongPressOption] = [
+            PauseMenuTileLongPressOption(
+                id: "autosave_off",
+                title: String(localized: "Off"),
+                isSelected: !timedEnabled
+            )
+        ] + quickIntervals.map { minutes in
+            PauseMenuTileLongPressOption(
+                id: "autosave_interval_\(minutes * 60)",
+                title: "\(minutes)m",
+                isSelected: timedEnabled && intervalMinutes == minutes
+            )
+        }
+        return PauseMenuTile(
+            id: "autoSaveState",
+            icon: timedEnabled ? "clock.arrow.circlepath" : "clock.badge.xmark",
+            label: String(localized: "Timed Auto Save"),
+            badge: timedEnabled ? "\(intervalMinutes)m" : "OFF",
+            description: String(localized: "Tap to toggle timed auto saves. Long-press to set interval or turn off."),
+            isEnabled: isEnabled,
+            colorKey: timedEnabled ? .teal : .gray,
+            dismissOnTap: false,
+            longPressOptions: lpOptions
         )
     }
 

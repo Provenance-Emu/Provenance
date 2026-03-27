@@ -66,6 +66,7 @@ struct PauseTileMenuView: View {
     @State private var showingPortDevices = false
     @State private var showingMIDIPicker = false
     @State private var showingSystemSkinSelection = false
+    @State private var showingLegacyPortDevices = false
     @State private var showingSkinCatalog = false
     @State private var showingButtonEffectPicker = false
     @State private var showingButtonSoundPicker = false
@@ -114,10 +115,14 @@ struct PauseTileMenuView: View {
     @Default(.showFPSCount) private var showFPSCount
     @Default(.buttonPressEffect) private var buttonPressEffect
     @Default(.buttonSound) private var buttonSound
+    @Default(.mouseInputSource) private var mouseInputSource
+    @Default(.mouseSensitivity) private var mouseSensitivity
     /// Whether core option writes should be scoped to the current game hash (if available).
     @AppStorage("PauseTileMenu.coreOptionsPerGame") private var coreOptionsPerGame = true
     /// Easy kill-switch for the deferred restart workflow.
     @AppStorage("PauseTileMenu.deferredRestartPromptEnabled") private var deferredRestartPromptEnabled = true
+    @AppStorage("PauseTileMenu.skinScope") private var skinScopeRaw = SkinScope.game.rawValue
+    @State private var selectedSkinOrientation: SkinOrientation = .portrait
 
     // Camera position for recording overlay — iOS only
     #if os(iOS)
@@ -283,15 +288,8 @@ struct PauseTileMenuView: View {
         case "browseSaves":
             showingSaveStateBrowser = true
         case "autoSaveState":
-            let screenshot = emulatorVC.captureScreenshot()
-            Task { @MainActor in
-                do {
-                    try await emulatorVC.createNewSaveState(auto: true, screenshot: screenshot)
-                } catch {
-                    ELOG("Tile menu autosave error: \(error.localizedDescription)")
-                }
-                rebuildSections()
-            }
+            Defaults[.timedAutoSaves].toggle()
+            rebuildSections()
         case "reset":
             dismissAction(true)
             emulatorVC.core.resetEmulation()
@@ -303,6 +301,8 @@ struct PauseTileMenuView: View {
             showingNetworkPlay = true
         case "controllerProfile":
             showingControllerProfiles = true
+        case "p1Controls", "p2Controls":
+            dismissAction(true)
         case "screenshot":
             dismissAction(true)
             emulatorVC.takeScreenshot()
@@ -358,6 +358,15 @@ struct PauseTileMenuView: View {
         // MARK: Quick-settings tiles
         case "filterCycle":
             cycleFilter()
+        case "mouseInputSource":
+            let sources = availableMouseInputSources()
+            guard !sources.isEmpty else { return }
+            let currentIndex = sources.firstIndex(of: mouseInputSource) ?? 0
+            let next = sources[(currentIndex + 1) % sources.count]
+            mouseInputSource = next
+            rebuildSections()
+        case "mouseSensitivity":
+            cycleMouseSensitivity()
         case "fastForwardToggle":
             let isFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
             applyGameSpeed(isFastForwarding ? .normal : .fast)
@@ -405,13 +414,31 @@ struct PauseTileMenuView: View {
         // MARK: Port device type picker
         case "portDevices":
             showingPortDevices = true
+        case "legacyPortDevices":
+            showingLegacyPortDevices = true
 
         // MARK: MIDI device picker
         case "midiDevice":
             showingMIDIPicker = true
+        case "retroArchMIDIToggle":
+            Defaults[.retroArchMIDIEnabled].toggle()
+            rebuildSections()
 
         // MARK: Skins submenu actions
         case "skins_pick_for_system":
+            showingSystemSkinSelection = true
+        case "skins_scope":
+            let allScopes = SkinScope.allCases
+            let currentScope = SkinScope(rawValue: skinScopeRaw) ?? .game
+            let currentIndex = allScopes.firstIndex(of: currentScope) ?? 0
+            let nextScope = allScopes[(currentIndex + 1) % allScopes.count]
+            skinScopeRaw = nextScope.rawValue
+            rebuildSections()
+        case "skins_pick_portrait":
+            selectedSkinOrientation = .portrait
+            showingSystemSkinSelection = true
+        case "skins_pick_landscape":
+            selectedSkinOrientation = .landscape
             showingSystemSkinSelection = true
         case "skins_button_effect":
             showingButtonEffectPicker = true
@@ -566,6 +593,52 @@ struct PauseTileMenuView: View {
                 rebuildSections()
             }
             #endif
+            return
+        }
+
+        if tile.id == "mouseInputSource" {
+            if lpOption.id.hasPrefix("mouseSource_") {
+                let raw = lpOption.id.replacingOccurrences(of: "mouseSource_", with: "")
+                if let source = MouseInputSource(rawValue: raw) {
+                    mouseInputSource = source
+                    rebuildSections()
+                }
+            }
+            return
+        }
+
+        if tile.id == "mouseSensitivity" {
+            if lpOption.id.hasPrefix("mouseSensitivity_"),
+               let hundredths = Double(lpOption.id.replacingOccurrences(of: "mouseSensitivity_", with: "")) {
+                mouseSensitivity = hundredths / 100.0
+                rebuildSections()
+            }
+            return
+        }
+
+        if tile.id == "skins_scope" {
+            if lpOption.id.hasPrefix("skinScope_") {
+                let raw = lpOption.id.replacingOccurrences(of: "skinScope_", with: "")
+                if let scope = SkinScope(rawValue: raw) {
+                    skinScopeRaw = scope.rawValue
+                    rebuildSections()
+                }
+            }
+            return
+        }
+
+        if tile.id == "autoSaveState" {
+            if lpOption.id == "autosave_off" {
+                Defaults[.timedAutoSaves] = false
+                rebuildSections()
+                return
+            }
+            if lpOption.id.hasPrefix("autosave_interval_"),
+               let seconds = TimeInterval(lpOption.id.replacingOccurrences(of: "autosave_interval_", with: "")) {
+                Defaults[.timedAutoSaveInterval] = seconds
+                Defaults[.timedAutoSaves] = true
+                rebuildSections()
+            }
             return
         }
 
@@ -1218,7 +1291,45 @@ struct PauseTileMenuView: View {
         }
         .sheet(isPresented: $showingSystemSkinSelection) {
             NavigationStack {
-                SystemSkinSelectionView(system: activeSystemIdentifier, game: emulatorVC.game)
+                SystemSkinSelectionView(
+                    system: activeSystemIdentifier,
+                    game: emulatorVC.game,
+                    preferredScope: SkinScope(rawValue: skinScopeRaw) ?? .game,
+                    preferredOrientation: selectedSkinOrientation
+                )
+            }
+        }
+        .sheet(isPresented: $showingLegacyPortDevices) {
+            NavigationStack {
+                List {
+                    if legacyPortDeviceInfo.isEmpty {
+                        Text(String(localized: "No legacy port devices available."))
+                    } else {
+                        ForEach(Array(legacyPortDeviceInfo.enumerated()), id: \.offset) { portIndex, devices in
+                            if devices.count > 1 {
+                                Section(String(format: String(localized: "Port %d"), portIndex + 1)) {
+                                    ForEach(Array(devices.indices), id: \.self) { deviceIndex in
+                                        let device = devices[deviceIndex]
+                                        let title = (device["desc"] as? String) ?? String(localized: "Unknown Device")
+                                        Button(title) {
+                                            if let deviceId = (device["id"] as? NSNumber)?.uint32Value {
+                                                setLegacyPortDevice(deviceId, forPort: portIndex)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .navigationTitle(String(localized: "Port Devices"))
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(String(localized: "Done")) {
+                            showingLegacyPortDevices = false
+                        }
+                    }
+                }
             }
         }
         .sheet(isPresented: $showingSkinCatalog) {
@@ -1538,6 +1649,44 @@ struct PauseTileMenuView: View {
         #else
         return standard
         #endif
+    }
+
+    private func availableMouseInputSources() -> [MouseInputSource] {
+        MouseInputSource.allCases.filter { source in
+            #if os(tvOS)
+            return source != .touchscreen
+            #else
+            return true
+            #endif
+        }
+    }
+
+    private func cycleMouseSensitivity() {
+        let presets: [Double] = [0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0]
+        let nearestIndex = presets.enumerated().min {
+            abs($0.element - mouseSensitivity) < abs($1.element - mouseSensitivity)
+        }?.offset ?? 0
+        let next = presets[(nearestIndex + 1) % presets.count]
+        mouseSensitivity = next
+        rebuildSections()
+    }
+
+    private var legacyPortDeviceInfo: [[NSDictionary]] {
+        guard let coreObject = emulatorVC.core as? NSObject,
+              let bridge = coreObject.value(forKey: "_bridge") as? NSObject else { return [] }
+        let selector = Selector(("controllerPortInfo"))
+        guard bridge.responds(to: selector),
+              let info = bridge.value(forKey: "controllerPortInfo") as? [[NSDictionary]] else { return [] }
+        return info
+    }
+
+    private func setLegacyPortDevice(_ deviceID: UInt32, forPort portIndex: Int) {
+        guard let coreObject = emulatorVC.core as? NSObject,
+              let bridge = coreObject.value(forKey: "_bridge") as? NSObject else { return }
+        let selector = Selector(("setControllerPortDevice:forPort:"))
+        guard bridge.responds(to: selector) else { return }
+        bridge.perform(selector, with: NSNumber(value: deviceID), with: NSNumber(value: UInt32(portIndex)))
+        rebuildSections()
     }
 
     // MARK: - Info shelf

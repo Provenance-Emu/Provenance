@@ -4,7 +4,11 @@
 MARKETING_VERSION = 3.4.0
 CURRENT_PROJECT_VERSION = 2900
 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1  NONJAILBROKEN=1 HAVE_DYNAMIC=1 HAVE_CHEEVOS=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NONJAILBROKEN=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_DYNAMIC=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_CHEEVOS=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_VULKAN=1
 OTHER_CFLAGS = $(inherited) -mcpu=apple-a10 -mtune=apple-a12 -march=armv8-a+simd+crc+crypto -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC -fmodules -fcxx-modules
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
