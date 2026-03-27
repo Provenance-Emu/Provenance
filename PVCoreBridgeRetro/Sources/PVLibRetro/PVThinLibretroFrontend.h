@@ -257,6 +257,18 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Update a core option at runtime.
 - (void)setCoreOption:(NSString *)key value:(NSString *)value;
 
+// MARK: MIDI routing
+
+/// Update the cached list of MIDI output destination endpoint refs.
+/// Call this whenever the user's `MIDIDeviceManager` selection changes
+/// (driven by the Swift observer in `PVThinLibretroCore+MIDI.swift`).
+/// Thread-safe; may be called from any thread.
+///
+/// @param endpointRefs  Array of `NSNumber` wrapping `MIDIEndpointRef` (UInt32) values.
+///                      Pass an empty array when the user selects "None" — `thin_midi_write`
+///                      becomes a no-op until a destination is selected.
++ (void)setMIDIOutputEndpoints:(NSArray<NSNumber *> *)endpointRefs;
+
 // MARK: Utility
 
 /// Probe a core dylib without fully loading it — reads retro_get_system_info.

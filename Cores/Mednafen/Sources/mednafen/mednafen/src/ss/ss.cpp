@@ -2593,3 +2593,20 @@ using namespace MDFN_IEN_SS;
  2,     // Number of output sound channels
 };
 
+// ---- Provenance RetroAchievements RAM accessors ----
+//
+// NOTE: WorkRAML / WorkRAMH are uint16_t arrays that Mednafen accesses through
+// ne16_rbo_be / ne16_wbo_be helpers which swap byte lanes on little-endian hosts
+// (byte_offset ^ 1 for 8-bit reads).  The reinterpret_cast<uint8_t*> below
+// exposes raw host memory layout — byte-wise readers see scrambled byte order.
+//
+// The Swift bridge corrects this via MednafenRcheevosByteSwapModeWord16:
+// the read-memory callback XORs each logical offset by 1 before reading, which
+// reverses the ne16_rbo_be swap.  Callers that do NOT apply this correction will
+// read garbled bytes.  See MednafenRcheevosObjC.h for the byteSwapMode field.
+extern "C" {
+    uint8_t* mdfn_ss_workraml_ptr(void) { return reinterpret_cast<uint8_t*>(WorkRAML); }
+    size_t   mdfn_ss_workraml_size(void) { return sizeof(WorkRAML); }
+    uint8_t* mdfn_ss_workramh_ptr(void) { return reinterpret_cast<uint8_t*>(WorkRAMH); }
+    size_t   mdfn_ss_workramh_size(void) { return sizeof(WorkRAMH); }
+}

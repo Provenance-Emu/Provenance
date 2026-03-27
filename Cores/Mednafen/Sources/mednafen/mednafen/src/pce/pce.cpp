@@ -1265,3 +1265,8 @@ using namespace MDFN_IEN_PCE;
  2,     // Number of output sound channels
 };
 
+// ---- Provenance RetroAchievements RAM accessors ----
+extern "C" {
+    uint8_t* mdfn_pce_baseram_ptr(void) { return BaseRAM; }
+    size_t   mdfn_pce_baseram_size(void) { return IsSGX ? 32768 : 8192; } // 32 KB for SuperGrafx, 8 KB for PCE
+}

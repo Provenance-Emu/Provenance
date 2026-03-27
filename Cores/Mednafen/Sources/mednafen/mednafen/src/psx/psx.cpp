@@ -2474,3 +2474,9 @@ static const MDFNSetting PSXSettings[] =
  2,     // Number of output sound channels
 
 };
+
+// ---- Provenance RetroAchievements RAM accessors ----
+extern "C" {
+    uint8_t* mdfn_psx_mainram_ptr(void) { return MainRAM.data8; }
+    size_t   mdfn_psx_mainram_size(void) { return 2 * 1024 * 1024; }
+}

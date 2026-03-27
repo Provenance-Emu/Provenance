@@ -9,7 +9,6 @@
 //  
 
 #import <Foundation/Foundation.h>
-
 #import "JITSupport.h"
 
 #include <dlfcn.h>
@@ -94,8 +93,64 @@ bool jb_enable_ptrace_hack(void) {
     return true;
 }
 
+// Delegate to PVJIT's DOLJitManager for authoritative JIT acquisition state.
+// DOLJitManager.attemptToAcquireJitOnStartup() runs at app launch and handles
+// all platform-specific detection (iOS 26 JITAuthorizer/native entitlement,
+// TrollStore, jailbreak daemons, debugger attachment, etc.).
+// Declared weak so that if PVJIT is not linked the call simply returns false
+// and the fallback detection below takes over.
+extern bool PVJITManagerIsAcquired(void) __attribute__((weak));
+
+// Checks com.apple.developer.kernel.allow-jit in the binary code signature.
+// Implemented in PVJIT (JITManager.swift) using binary-level entitlement parsing
+// so no Security.framework link dependency is introduced here.
+extern bool PVJITHasNativeJITEntitlement(void) __attribute__((weak));
+
+// Returns true only when TrollStore is installed AND this binary carries
+// get-task-allow — avoids false-positives on non-TrollStore builds on
+// TrollStore devices. Implemented in PVJIT (JITManager.swift).
+extern bool PVJITIsInstalledViaTrollStore(void) __attribute__((weak));
+
 bool jit_available(void)
 {
+   // Primary path: ask DOLJitManager (PVJIT) whether JIT was already acquired.
+   // This avoids duplicating the iOS 26 JITAuthorizer / TrollStore / debugger
+   // checks that DOLJitManager already performs at startup.
+   if (PVJITManagerIsAcquired != NULL && PVJITManagerIsAcquired())
+      return true;
+
+   // Fallback: DOLJitManager not linked or has not yet acquired JIT.
+   // Run platform-specific detection directly so cores can load even if
+   // attemptToAcquireJitOnStartup() hasn't been called yet.
+
+   // iOS 26+ native JIT: JITAuthorizer class present AND allow-jit entitlement set.
+   // PVJITHasNativeJITEntitlement() verifies the entitlement via binary code-signature
+   // parsing (no Security.framework link required) to avoid false-positives on
+   // iOS 26 builds that lack the entitlement.
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
+   static bool hasNativeJIT = false;
+   static dispatch_once_t nativeJITOnce = 0;
+   dispatch_once(&nativeJITOnce, ^{
+      if (NSClassFromString(@"JITAuthorizer") != nil) {
+         hasNativeJIT = (PVJITHasNativeJITEntitlement != NULL &&
+                         PVJITHasNativeJITEntitlement());
+      }
+   });
+   if (hasNativeJIT) return true;
+
+   // TrollStore: combines file-system markers with a get-task-allow entitlement
+   // check to avoid false-positives when TrollStore is on the device but this app
+   // was not installed via TrollStore.
+   static bool hasTrollStore = false;
+   static dispatch_once_t trollStoreOnce = 0;
+   dispatch_once(&trollStoreOnce, ^{
+      hasTrollStore = (PVJITIsInstalledViaTrollStore != NULL &&
+                       PVJITIsInstalledViaTrollStore());
+   });
+   if (hasTrollStore) return true;
+#endif
+
+   // Legacy jailbreak markers + CS_DEBUGGED (older jailbreaks / debugger-attached).
    static bool canOpenApps = false;
    static dispatch_once_t appsOnce = 0;
    dispatch_once(&appsOnce, ^{

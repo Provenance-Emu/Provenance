@@ -296,7 +296,7 @@ public struct RetroSaveSelectionAlertView: View {
                 .foregroundColor(.white.opacity(0.7))
 
             if viewModel.hasSaves {
-                Text("\(viewModel.saves.count) save\(viewModel.saves.count == 1 ? "" : "s") available")
+                Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("retro_save.saves_available", bundle: .module, comment: ""), viewModel.saves.count))
                     .font(.system(size: 12))
                     .foregroundColor(.retroBlue)
             }
@@ -354,7 +354,7 @@ public struct RetroSaveSelectionAlertView: View {
                 Text("Other Saves")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white.opacity(0.8))
-                Text("(\(viewModel.saves.count - 1) more)")
+                Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("retro_save.more_saves", bundle: .module, comment: ""), viewModel.saves.count - 1))
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.5))
                 Spacer()

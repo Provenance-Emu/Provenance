@@ -1296,7 +1296,7 @@ struct TVMediaEmptyStateView: View {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.circle")
                     .font(.caption)
-                Text("Swipe left or press Menu for navigation")
+                Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
             .foregroundStyle(.white.opacity(0.35))
@@ -1374,7 +1374,7 @@ struct TVMediaEmptyLibraryActionButtons: View {
                 HStack(spacing: 10) {
                     Image(systemName: "books.vertical.fill")
                         .font(.system(size: 18, weight: focusedButton == .helpWiki ? .semibold : .regular))
-                    Text("HELP & WIKI")
+                    Text("tv_media.help_wiki", bundle: .module)
                         .font(.system(size: 14, weight: .semibold))
                         .tracking(1)
                 }
@@ -1894,7 +1894,7 @@ struct TVMediaSavesView: View {
                 Button {
                     selectedSystems = []
                 } label: {
-                    Text("CLEAR FILTER")
+                    Text("tv_media.filter.clear", bundle: .module)
                         .font(.system(size: 13, weight: .bold))
                         .tracking(1)
                         .foregroundStyle(Color.retroBlue)
@@ -1913,7 +1913,7 @@ struct TVMediaSavesView: View {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.circle")
                     .font(.caption)
-                Text("Swipe left or press Menu for navigation")
+                Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
             .foregroundStyle(.white.opacity(0.35))
@@ -2105,13 +2105,13 @@ struct TVMediaSystemFilterPicker: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
-                Text("FILTER BY SYSTEM")
+                Text("tv_media.filter.by_system", bundle: .module)
                     .font(.system(size: 28, weight: .bold, design: .default))
                     .tracking(2)
                     .foregroundStyle(.white)
                     .shadow(color: Color.retroPink.opacity(0.4), radius: 8)
 
-                Text("Select systems to show saves from")
+                Text("tv_media.filter.select_systems", bundle: .module)
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(.white.opacity(0.6))
             }
@@ -2563,7 +2563,7 @@ struct TVMediaHomeView: View {
             ProgressView()
                 .scaleEffect(1.5)
 
-            Text("LOADING LIBRARY")
+            Text("tv_media.library.loading", bundle: .module)
                 .font(.system(size: 14, weight: .semibold, design: .default))
                 .tracking(2)
                 .foregroundStyle(.white.opacity(0.6))
@@ -2600,13 +2600,13 @@ struct TVMediaHomeView: View {
             }
 
             VStack(spacing: 12) {
-                Text("NO GAMES YET")
+                Text("tv_media.library.no_games", bundle: .module)
                     .font(.system(size: 24, weight: .bold, design: .default))
                     .tracking(2)
                     .foregroundStyle(.white)
                     .shadow(color: Color.retroPink.opacity(0.4), radius: 8)
 
-                Text("Add ROMs via Web Server or CloudKit sync from an iPhone, iPad or Macintosh")
+                Text("tv_media.library.add_roms_hint", bundle: .module)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(.white.opacity(0.6))
                     .multilineTextAlignment(.center)
@@ -2636,7 +2636,7 @@ struct TVMediaHomeView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "icloud.and.arrow.down")
                         .font(.system(size: 14))
-                    Text("iCloud sync may be in progress")
+                    Text("tv_media.library.icloud_in_progress", bundle: .module)
                         .font(.system(size: 13, weight: .medium))
                 }
                 .foregroundStyle(Color.retroBlue.opacity(0.7))
@@ -3021,10 +3021,10 @@ struct TVMediaSystemCard: View {
 
                             // Game count with subtle styling
                             HStack(spacing: 6) {
-                                Text("\(gameCount)")
+                                Text(verbatim: "\(gameCount)")
                                     .font(.system(size: 15, weight: .semibold, design: .monospaced))
                                     .foregroundStyle(isFocused ? Color.retroBlue : .white.opacity(0.6))
-                                Text("GAMES")
+                                Text("tv_media.games", bundle: .module)
                                     .font(.system(size: 11, weight: .medium, design: .default))
                                     .tracking(1)
                                     .foregroundStyle(.white.opacity(0.45))
@@ -3305,12 +3305,12 @@ struct TVMediaSaveStatesViewAllCard: View {
                 }
 
                 VStack(spacing: 4) {
-                    Text("VIEW ALL")
+                    Text("tv_media.saves.view_all", bundle: .module)
                         .font(.system(size: 13, weight: .semibold, design: .default))
                         .tracking(1)
                         .foregroundStyle(isFocused ? .white : .white.opacity(0.8))
 
-                    Text("\(count) saves")
+                    Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.saves.count", bundle: .module, comment: ""), count))
                         .font(.system(size: 11, weight: .medium, design: .default))
                         .foregroundStyle(.white.opacity(0.5))
                 }
@@ -3427,7 +3427,7 @@ struct TVMediaSystemGamesView: View {
                                         .frame(width: 3, height: 26)
                                 }
 
-                                Text("ALL \(system.shortName.uppercased()) GAMES")
+                                Text("tv_media.all_system_games \(system.shortName.uppercased())", bundle: .module)
                                     .font(.system(size: 18, weight: .semibold, design: .default))
                                     .tracking(1.2)
                                     .foregroundStyle(.white.opacity(0.95))
@@ -3435,7 +3435,7 @@ struct TVMediaSystemGamesView: View {
                                 Spacer()
 
                                 let gameCount = model.gamesBySystemIdentifier[system.identifier]?.count ?? 0
-                                Text("\(gameCount) GAMES")
+                                Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.games_count", bundle: .module, comment: ""), gameCount))
                                     .font(.system(size: 13, weight: .medium, design: .default))
                                     .tracking(0.8)
                                     .foregroundStyle(.white.opacity(0.4))
@@ -3821,7 +3821,7 @@ struct TVMediaSearchView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "clock.arrow.circlepath")
                             .font(.system(size: 16, weight: .medium))
-                        Text("RECENT")
+                        Text("tv_media.search.recent", bundle: .module)
                             .font(.system(size: 12, weight: .bold))
                             .tracking(0.8)
                     }
@@ -3945,7 +3945,7 @@ struct TVMediaSearchView: View {
                         .frame(width: 2, height: 18)
                 }
 
-                Text("RECENT SEARCHES")
+                Text("tv_media.search.recent_searches", bundle: .module)
                     .font(.system(size: 13, weight: .semibold, design: .default))
                     .tracking(1.2)
                     .foregroundStyle(.white.opacity(0.7))
@@ -3961,7 +3961,7 @@ struct TVMediaSearchView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "trash")
                             .font(.system(size: 11, weight: .medium))
-                        Text("CLEAR ALL")
+                        Text("tv_media.search.clear_all", bundle: .module)
                             .font(.system(size: 10, weight: .bold))
                             .tracking(0.8)
                     }
@@ -4091,7 +4091,7 @@ struct TVMediaSearchView: View {
                     .scaleEffect(1.5)
             }
 
-            Text("SEARCHING...")
+            Text("tv_media.search.searching", bundle: .module)
                 .font(.system(size: 14, weight: .bold, design: .default))
                 .tracking(2)
                 .foregroundStyle(
@@ -4134,13 +4134,13 @@ struct TVMediaSearchView: View {
             }
 
             VStack(spacing: 8) {
-                Text("SEARCH YOUR LIBRARY")
+                Text("tv_media.search.prompt", bundle: .module)
                     .font(.system(size: 18, weight: .bold, design: .default))
                     .tracking(1.5)
                     .foregroundStyle(.white)
                     .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
 
-                Text("Type to find games by title")
+                Text("tv_media.search.type_hint", bundle: .module)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.white.opacity(0.5))
             }
@@ -4149,7 +4149,7 @@ struct TVMediaSearchView: View {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.circle")
                     .font(.caption)
-                Text("Swipe left or press Menu for navigation")
+                Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
             .foregroundStyle(.white.opacity(0.35))
@@ -4185,7 +4185,7 @@ struct TVMediaSearchView: View {
             }
 
             VStack(spacing: 8) {
-                Text("NO RESULTS")
+                Text("tv_media.search.no_results", bundle: .module)
                     .font(.system(size: 18, weight: .bold, design: .default))
                     .tracking(1.5)
                     .foregroundStyle(.white)
@@ -4197,7 +4197,7 @@ struct TVMediaSearchView: View {
 
             // Suggestion to try different search
             if !recentSearches.isEmpty {
-                Text("Try one of your recent searches above")
+                Text("tv_media.search.try_recent", bundle: .module)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(Color.retroBlue.opacity(0.7))
                     .padding(.top, 8)
@@ -4282,11 +4282,11 @@ struct TVMediaFavoritesView: View {
                 .font(.system(size: 44, weight: .light))
                 .foregroundStyle(.white.opacity(0.4))
 
-            Text("No Favorites")
+            Text("tv_media.favorites.no_favorites", bundle: .module)
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white)
 
-            Text("Mark games as favorites to see them here.")
+            Text("tv_media.favorites.mark_hint", bundle: .module)
                 .font(.callout)
                 .foregroundStyle(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -4296,7 +4296,7 @@ struct TVMediaFavoritesView: View {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.circle")
                     .font(.caption)
-                Text("Swipe left or press Menu for navigation")
+                Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
             .foregroundStyle(.white.opacity(0.35))
@@ -4518,7 +4518,7 @@ struct TVMediaSystemShelfRow: View {
                 Spacer()
 
                 // Game count indicator
-                Text("\(games.count) GAMES")
+                Text(verbatim: "\(games.count) GAMES")
                     .font(.system(size: 12, weight: .medium, design: .default))
                     .tracking(0.8)
                     .foregroundStyle(.white.opacity(0.4))
@@ -5149,17 +5149,17 @@ struct TVMediaImportStatusToaster: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     if !viewModel.importQueueItems.isEmpty {
-                        Text("IMPORTING")
+                        Text("tv_media.status.importing", bundle: .module)
                             .font(.system(size: 11, weight: .bold, design: .default))
                             .tracking(1.5)
                             .foregroundStyle(Color.retroPink)
                     } else if viewModel.isSyncing {
-                        Text("SYNCING")
+                        Text("tv_media.status.syncing", bundle: .module)
                             .font(.system(size: 11, weight: .bold, design: .default))
                             .tracking(1.5)
                             .foregroundStyle(Color.retroBlue)
                     } else {
-                        Text("PROCESSING")
+                        Text("tv_media.status.processing", bundle: .module)
                             .font(.system(size: 11, weight: .bold, design: .default))
                             .tracking(1.5)
                             .foregroundStyle(Color.retroPink)
@@ -5439,12 +5439,12 @@ struct TVMediaROMInstructionsView: View {
                 )
                 .shadow(color: .retroPink.opacity(0.6), radius: 12)
 
-            Text("ADDING ROMS")
+            Text("tv_media.roms.adding", bundle: .module)
                 .font(.system(size: titleFontSize, weight: .bold))
                 .foregroundStyle(.white)
                 .shadow(color: .retroBlue.opacity(0.6), radius: 8)
 
-            Text("There are several ways to add ROMs to Provenance")
+            Text("tv_media.roms.several_ways", bundle: .module)
                 .font(.system(size: subtitleFontSize))
                 .foregroundStyle(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -5477,7 +5477,7 @@ struct TVMediaROMInstructionsView: View {
                             )
                     )
             } else {
-                Text("Start the web server from Settings to see the URL")
+                Text("tv_media.roms.start_web_server", bundle: .module)
                     .font(.system(size: cardSubtitleFontSize))
                     .foregroundStyle(.white.opacity(0.5))
                     .italic()
@@ -5547,7 +5547,7 @@ struct TVMediaROMInstructionsView: View {
                     .foregroundStyle(Color.retroBlue)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("FULL DOCUMENTATION")
+                    Text("tv_media.roms.full_documentation", bundle: .module)
                         .font(.system(size: cardTitleFontSize, weight: .bold))
                         .foregroundStyle(.white)
 
@@ -5738,7 +5738,7 @@ struct TVMediaImportStatusSheet: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
-                Text("IMPORT QUEUE")
+                Text("tv_media.import_queue.title", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .default))
                     .tracking(2)
                     .foregroundStyle(
@@ -5751,7 +5751,7 @@ struct TVMediaImportStatusSheet: View {
                     .shadow(color: Color.retroPink.opacity(0.5), radius: 10)
 
                 if !viewModel.importQueueItems.isEmpty {
-                    Text("\(viewModel.importQueueItems.count) files in queue")
+                    Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.import_queue.files_in_queue", bundle: .module, comment: ""), viewModel.importQueueItems.count))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.white.opacity(0.6))
                 }
@@ -5764,7 +5764,7 @@ struct TVMediaImportStatusSheet: View {
                 HStack(spacing: 8) {
                     Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .semibold))
-                    Text("CLOSE")
+                    Text("tv_media.import_queue.close", bundle: .module)
                         .font(.system(size: 14, weight: .bold))
                         .tracking(1)
                 }
@@ -5797,12 +5797,12 @@ struct TVMediaImportStatusSheet: View {
                 .foregroundStyle(Color.retroBlue.opacity(0.6))
                 .shadow(color: Color.retroBlue.opacity(0.4), radius: 12)
 
-            Text("NO PENDING IMPORTS")
+            Text("tv_media.import_queue.no_pending", bundle: .module)
                 .font(.system(size: 22, weight: .bold, design: .default))
                 .tracking(2)
                 .foregroundStyle(.white)
 
-            Text("All files have been processed")
+            Text("tv_media.import_queue.all_processed", bundle: .module)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundStyle(.white.opacity(0.5))
 
@@ -5820,7 +5820,7 @@ struct TVMediaImportStatusSheet: View {
                     .shadow(color: Color.retroBlue.opacity(0.5), radius: 6)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("iCLOUD SYNC")
+                    Text("tv_media.icloud_sync.title", bundle: .module)
                         .font(.system(size: 15, weight: .bold, design: .default))
                         .tracking(1.5)
                         .foregroundStyle(.white)
@@ -5899,7 +5899,7 @@ struct TVMediaImportStatusSheet: View {
                         .foregroundStyle(statusColor(for: item.status).opacity(0.9))
 
                     if let system = item.targetSystem() {
-                        Text("→ \(system.rawValue)")
+                        Text(verbatim: "→ \(system.rawValue)")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(.white.opacity(0.5))
                     }

@@ -1,0 +1,14 @@
+// MARK: - Retro Menu View (RetroMenuView.swift)
+// Note: These strings are duplicated from PVSwiftUI to ensure they resolve
+// correctly when looked up via Bundle.module from the PVUIBase target.
+"retro_menu.plus.badge" = "PLUS";
+"retro_menu.filter.done" = "DONE";
+"retro_menu.filter.screen_filters" = "SCREEN FILTERS";
+"retro_menu.saves.no_screenshots" = "No Screenshots";
+"retro_menu.saves.screenshots_hint" = "Use \"Save Screenshot\" from the pause menu to capture screenshots.";
+"retro_menu.saves.no_save_states" = "No Save States";
+"retro_menu.saves.save_states_hint" = "Use \"Save State\" from the pause menu to create saves.";
+"retro_menu.saves.auto_save_to_photos" = "Auto-Save to Photos";
+"retro_menu.skins.session" = "Session";
+"retro_menu.skins.this_game" = "This Game";
+"retro_menu.skins.system" = "System";

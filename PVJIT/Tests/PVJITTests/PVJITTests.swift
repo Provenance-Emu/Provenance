@@ -112,6 +112,42 @@ final class WXEnforcementTests: XCTestCase {
     }
 }
 
+// MARK: - C-callable bridge tests
+
+final class CCallableBridgeTests: XCTestCase {
+
+    /// Verifies that `PVJITManagerIsAcquired()` stays in sync with
+    /// `DOLJitManager.acquired` so that changes to the acquisition state
+    /// are always reflected through the C bridge used by the RetroArch core.
+    func testPVJITManagerIsAcquiredMatchesDOLJitManagerAcquired() {
+        XCTAssertEqual(PVJITManagerIsAcquired(), DOLJitManager.acquired,
+                       "PVJITManagerIsAcquired() must mirror DOLJitManager.acquired")
+    }
+
+    /// Verifies that `PVJITHasNativeJITEntitlement()` is callable and returns a Bool.
+    /// The actual value depends on the build's code signature; we just verify it
+    /// doesn't crash and returns consistently across two calls.
+    func testPVJITHasNativeJITEntitlementIsStable() {
+        let first = PVJITHasNativeJITEntitlement()
+        let second = PVJITHasNativeJITEntitlement()
+        XCTAssertEqual(first, second,
+                       "PVJITHasNativeJITEntitlement() must return a consistent value")
+    }
+
+    /// Verifies that `PVJITIsInstalledViaTrollStore()` is callable and returns false
+    /// in the test environment (no TrollStore markers present on CI runners or simulators).
+    func testPVJITIsInstalledViaTrollStoreReturnsFalseInTestEnvironment() {
+        // TrollStore markers won't be present on simulators or CI runners,
+        // so this should always be false in those environments.
+        #if targetEnvironment(simulator)
+        XCTAssertFalse(PVJITIsInstalledViaTrollStore(),
+                       "TrollStore detection must return false on the simulator")
+        #endif
+        // On real devices we only verify the call doesn't crash.
+        _ = PVJITIsInstalledViaTrollStore()
+    }
+}
+
 // MARK: - DOLJitType tests
 
 final class DOLJitTypeTests: XCTestCase {

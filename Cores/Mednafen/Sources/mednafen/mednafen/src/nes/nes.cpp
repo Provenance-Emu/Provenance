@@ -792,3 +792,9 @@ static const CheatInfoStruct CheatInfo =
 
  1,     // Number of output sound channels
 };
+
+// ---- Provenance RetroAchievements RAM accessors ----
+extern "C" {
+    uint8_t* mdfn_nes_ram_ptr(void) { return MDFN_IEN_NES::RAM; }
+    size_t   mdfn_nes_ram_size(void) { return 0x800; }
+}

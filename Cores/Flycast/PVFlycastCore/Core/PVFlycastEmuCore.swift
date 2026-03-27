@@ -19,9 +19,24 @@ open class PVFlycastEmuCore: PVEmulatorCore {
 
     let _bridge: PVFlycastCoreBridge = .init()
 
-    /// Flycast supports a pure-interpreter path when JIT is unavailable.
-    /// JIT recompiler gives a significant performance boost but is not required.
-    open override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
+    /// On iOS and tvOS builds where the libretro core is compiled with `#if defined(IOS)`,
+    /// `retro_load_game` calls `RETRO_ENVIRONMENT_GET_JIT_CAPABLE` and returns `false`
+    /// with "Cannot run without JIT" if JIT is unavailable. JIT is therefore hard-required
+    /// on those platforms.
+    ///
+    /// Mac Catalyst builds have `TARGET_OS_IPHONE` set, but the Flycast Xcode project does
+    /// not define `IOS` for Catalyst targets, so the JIT gate is not compiled in and JIT
+    /// is optional there.
+    ///
+    /// On native macOS (non-Catalyst), the `IOS` macro is not defined and the Flycast core
+    /// does not perform the JIT capability check, so JIT is treated as optional.
+    open override var jitRequirement: PVJITRequirement {
+        #if (os(iOS) || os(tvOS)) && !targetEnvironment(macCatalyst)
+        return .requiredOrCrash
+        #else
+        return .optional(fallback: "Interpreter")
+        #endif
+    }
 
     /// Tracks whether the Dreamcast mouse port has been configured this session.
     /// Ensures the retro_set_controller_port_device call is issued only once.

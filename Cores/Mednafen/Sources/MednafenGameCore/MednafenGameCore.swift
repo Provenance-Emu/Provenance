@@ -18,6 +18,7 @@ import PVAudio
 import MednafenGameCoreC
 import MednafenGameCoreBridge
 import MednafenGameCoreOptions
+import MednafenRcheevosObjC
 public import PVEmulatorCore
 
 import Foundation
@@ -138,6 +139,35 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
 
     /// Hardcore mode flag.
     var _hardcoreMode: Bool = false
+
+    /// Set to true once a real rcheevos session is active.
+    ///
+    /// Guards `achievementsActive` so that hardcore restrictions in PVUI are not
+    /// triggered before a game has successfully loaded an achievement session.
+    ///
+    /// Thread-safety note: `_achievementsSessionActive` is written from the main
+    /// queue (inside the loginAndLoadGame completion block dispatched to main) and
+    /// read on the emulator thread inside `executeFrame`.  The one-way transition
+    /// false→true before first frame access, and true→false after emulation stops,
+    /// makes this safe in practice on Apple Silicon (TSO memory ordering).
+    var _achievementsSessionActive: Bool = false
+
+    /// The rcheevos client instance.  Created in prepareAchievements, released in stopAchievements.
+    var _rcheevosClient: MednafenRcheevosClient?
+
+    // MARK: - executeFrame hook
+
+    /// Tick the achievement runtime after each emulated frame.
+    ///
+    /// Must live in the class body (not an extension) so Swift accepts the override.
+    /// `achievementsActive` is gated on `_achievementsSessionActive` (default false)
+    /// so the tick is a no-op during Phase 1.
+    open override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
 }
 
 @objc extension MednafenGameCore: PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient {

@@ -835,7 +835,7 @@ struct RetroMenuView: View {
                                     .foregroundColor(.retroBlue)
                                     .frame(width: 30)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("PORT \(portIndex + 1)")
+                                    Text(verbatim: "PORT \(portIndex + 1)")
                                         .font(.system(size: 10, weight: .bold, design: .monospaced))
                                         .foregroundColor(.retroBlue.opacity(0.8))
                                     Text(deviceNames.joined(separator: " / "))
@@ -922,7 +922,7 @@ struct RetroMenuView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 10, weight: .semibold))
-                        Text("PLUS")
+                        Text(String(localized: "retro_menu.plus.badge", bundle: .module))
                             .font(.system(size: 9, weight: .heavy))
                     }
                     .foregroundStyle(
@@ -1004,7 +1004,7 @@ struct RetroMenuView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 10, weight: .semibold))
-                        Text("PLUS")
+                        Text(String(localized: "retro_menu.plus.badge", bundle: .module))
                             .font(.system(size: 9, weight: .heavy))
                     }
                     .foregroundStyle(
@@ -1075,7 +1075,7 @@ struct RetroMenuView: View {
                         HStack(spacing: 3) {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 10, weight: .semibold))
-                            Text("PLUS")
+                            Text(String(localized: "retro_menu.plus.badge", bundle: .module))
                                 .font(.system(size: 9, weight: .heavy))
                         }
                         .foregroundStyle(
@@ -1518,9 +1518,9 @@ struct RetroMenuView: View {
                         .tracking(1.5)
 
                     Picker("Scope", selection: $selectedSkinScope) {
-                        Text("Session").tag(SkinScope.session)
-                        Text("This Game").tag(SkinScope.game)
-                        Text("System").tag(SkinScope.system)
+                        Text(String(localized: "retro_menu.skins.session", bundle: .module)).tag(SkinScope.session)
+                        Text(String(localized: "retro_menu.skins.this_game", bundle: .module)).tag(SkinScope.game)
+                        Text(String(localized: "retro_menu.skins.system", bundle: .module)).tag(SkinScope.system)
                     }
                     .pickerStyle(.segmented)
                 }
@@ -2280,7 +2280,7 @@ struct RetroMenuView: View {
         let shadowColor = (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(0.5)
 
         Button(action: { showingFilterPicker = false }) {
-            Text("DONE")
+            Text(String(localized: "retro_menu.filter.done", bundle: .module))
                 #if os(tvOS)
                 .font(.system(size: 28, weight: .bold))
                 .padding(.vertical, 24)
@@ -2438,7 +2438,7 @@ struct RetroMenuView: View {
 
         VStack(spacing: 0) {
             // Header
-            Text("SCREEN FILTERS")
+            Text(String(localized: "retro_menu.filter.screen_filters", bundle: .module))
                 .font(.system(size: isCompact ? 24 : 28, weight: .bold, design: .rounded))
                 .padding(.top, 30)
                 .padding(.bottom, 20)
@@ -3315,10 +3315,10 @@ struct PauseMenuScreenshotBrowserView: View {
                         Image(systemName: "photo.on.rectangle.angled")
                             .font(.system(size: 48))
                             .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
-                        Text("No Screenshots")
+                        Text(String(localized: "retro_menu.saves.no_screenshots", bundle: .module))
                             .font(.system(size: 20, weight: .semibold, design: .monospaced))
                             .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.6))
-                        Text("Use \"Save Screenshot\" from the pause menu to capture screenshots.")
+                        Text(String(localized: "retro_menu.saves.screenshots_hint", bundle: .module))
                             .font(.caption)
                             .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.4))
                             .multilineTextAlignment(.center)
@@ -3329,7 +3329,7 @@ struct PauseMenuScreenshotBrowserView: View {
                     List {
                         // Auto-save toggle at the top
                         Toggle(isOn: $saveToPhotos) {
-                            Label("Auto-Save to Photos", systemImage: "photo.badge.plus")
+                            Label(String(localized: "retro_menu.saves.auto_save_to_photos", bundle: .module), systemImage: "photo.badge.plus")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(palette.gameLibraryText.swiftUIColor)
                         }
@@ -3470,10 +3470,10 @@ struct PauseMenuSaveStateBrowserView: View {
                         Image(systemName: "internaldrive")
                             .font(.system(size: 48))
                             .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
-                        Text("No Save States")
+                        Text(String(localized: "retro_menu.saves.no_save_states", bundle: .module))
                             .font(.system(size: 20, weight: .semibold, design: .monospaced))
                             .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.6))
-                        Text("Use \"Save State\" from the pause menu to create saves.")
+                        Text(String(localized: "retro_menu.saves.save_states_hint", bundle: .module))
                             .font(.caption)
                             .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.4))
                             .multilineTextAlignment(.center)

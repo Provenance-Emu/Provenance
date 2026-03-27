@@ -83,9 +83,10 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     #expect(standardAppStoreType.isLite == false)
 }
 
-// MARK: - PVFeatureFlags (isEnabled)
+// MARK: - PVFeatureFlags (isEnabled — no actor isolation required)
 
-@MainActor @Test func testIsEnabledByEnum() throws {
+/// isEnabled is now synchronous and nonisolated — no @MainActor needed.
+@Test func testIsEnabledByEnum() throws {
     let config = try makeConfig()
     let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
     #expect(flags.isEnabled(.inAppFreeROMs) == true)
@@ -93,7 +94,7 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     #expect(flags.isEnabled(.cheatsUseSwiftUI) == false)
 }
 
-@MainActor @Test func testIsEnabledByString() throws {
+@Test func testIsEnabledByString() throws {
     let config = try makeConfig()
     let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
     #expect(flags.isEnabled("inAppFreeROMs") == true)
@@ -102,7 +103,15 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     #expect(flags.isEnabled("unknownFeature") == false)
 }
 
-@MainActor @Test func testAppTypeRestriction() throws {
+/// Subscript convenience: flags[.feature]
+@Test func testSubscriptAccess() throws {
+    let config = try makeConfig()
+    let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
+    #expect(flags[.inAppFreeROMs] == true)
+    #expect(flags[.cheatsUseSwiftUI] == false)
+}
+
+@Test func testAppTypeRestriction() throws {
     let config = try makeConfig()
 
     // standard.appstore is NOT in allowedAppTypes for retroarchBuiltinEditor
@@ -118,7 +127,7 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     #expect(liteFlags.isEnabled(.retroarchBuiltinEditor) == false)
 }
 
-@MainActor @Test func testVersionRestriction() throws {
+@Test func testVersionRestriction() throws {
     let config = try makeConfig()
 
     // version below minVersion — retroarchBuiltinEditor requires 3.0.5
@@ -128,7 +137,7 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     #expect(oldFlags.isEnabled(.retroarchBuiltinEditor) == false)
 }
 
-@MainActor @Test func testBuildNumberRestriction() throws {
+@Test func testBuildNumberRestriction() throws {
     let config = try makeConfig()
 
     // build number below minimum for inAppFreeROMs (minBuildNumber: "100")
@@ -138,7 +147,7 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     #expect(lowBuildFlags.isEnabled(.inAppFreeROMs) == false)
 }
 
-@MainActor @Test func testLiteAppTypeIsBlocked() throws {
+@Test func testLiteAppTypeIsBlocked() throws {
     let config = try makeConfig()
     // inAppFreeROMs only allows "standard" and "standard.appstore"
     let liteFlags = PVFeatureFlags(
@@ -149,7 +158,7 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
 
 // MARK: - Debug Overrides
 
-@MainActor @Test func testDebugOverrides() throws {
+@Test func testDebugOverrides() throws {
     let config = try makeConfig()
     let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
     flags.clearDebugOverrides()
@@ -158,25 +167,54 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     flags.setDebugOverride(for: .cheatsUseSwiftUI, enabled: true)
     #expect(flags.isEnabled(.cheatsUseSwiftUI) == true)
 
-    // Clear all overrides — should revert to config value (false)
+    // nil clears the per-feature override — should revert to config value (false)
+    flags.setDebugOverride(for: .cheatsUseSwiftUI, enabled: nil)
+    #expect(flags.isEnabled(.cheatsUseSwiftUI) == false)
+
+    // Clear all overrides
     flags.clearDebugOverrides()
     #expect(flags.isEnabled(.cheatsUseSwiftUI) == false)
 }
 
+// MARK: - Nonisolated reads from a background actor
+
+@Test func testIsEnabledFromBackgroundActor() async throws {
+    let config = try makeConfig()
+    let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
+
+    // Detached task runs on a background thread (not @MainActor).
+    // isEnabled must be callable without await.
+    let result = await Task.detached {
+        // No await needed — isEnabled is synchronous
+        flags.isEnabled(.inAppFreeROMs)
+    }.value
+
+    #expect(result == true)
+}
+
+@Test func testSubscriptFromBackgroundActor() async throws {
+    let config = try makeConfig()
+    let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
+
+    let result = await Task.detached {
+        flags[.romPathMigrator]
+    }.value
+
+    #expect(result == true)
+}
+
 // MARK: - Bundled Configuration
 
-@MainActor @Test func testBundledConfigurationLoads() {
+@Test func testBundledConfigurationLoads() {
     let flags = PVFeatureFlags(appType: .standard, buildNumber: "200", appVersion: "3.0.5")
     let loaded = flags.loadBundledConfiguration()
     #expect(loaded == true)
-    // bundled features.json should define at least inAppFreeROMs
     #expect(flags.configuration?.features["inAppFreeROMs"] != nil)
 }
 
 // MARK: - Local File Configuration Loading
 
-@MainActor @Test func testLoadConfigurationFromJSON() throws {
-    // Test that setting a parsed configuration works end-to-end (avoids URLSession file:// on Linux)
+@Test func testLoadConfigurationFromJSON() throws {
     let config = try makeConfig()
     let flags = PVFeatureFlags(appType: .standard, buildNumber: "101", appVersion: "1.1.0")
     flags.setConfiguration(config)
@@ -190,18 +228,15 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     let url = URL(string: "https://example.com/features.json")!
     let fetcher = PVFeatureFlagsFetcher(url: url, maxRetries: 1, cacheDuration: 3600)
 
-    // Initially cache should not be valid (clean state for test)
     fetcher.clearCache()
     #expect(fetcher.isCacheValid() == false)
     #expect(fetcher.loadCached() == nil)
 
-    // Save a config to cache and verify it's retrievable
     let config = try makeConfig()
     fetcher.saveToCache(config)
     #expect(fetcher.isCacheValid() == true)
     #expect(fetcher.loadCached()?.features["inAppFreeROMs"] != nil)
 
-    // Clear cache
     fetcher.clearCache()
     #expect(fetcher.isCacheValid() == false)
     #expect(fetcher.loadCached() == nil)
@@ -209,20 +244,17 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
 
 @Test func testFetcherExpiredCacheIsInvalid() throws {
     let url = URL(string: "https://example.com/expired-test-features.json")!
-    // Use 0-second cache duration to immediately expire
     let fetcher = PVFeatureFlagsFetcher(url: url, maxRetries: 0, cacheDuration: 0)
     fetcher.clearCache()
 
     let config = try makeConfig()
     fetcher.saveToCache(config)
-    // With 0s duration the cache should be immediately invalid
     #expect(fetcher.isCacheValid() == false)
 
     fetcher.clearCache()
 }
 
 @Test func testFetcherSaveAndReloadCycle() throws {
-    // Verify a full save-to-cache / load-from-cache cycle using a unique URL key
     let url = URL(string: "https://example.com/cycle-test-features.json")!
     let fetcher = PVFeatureFlagsFetcher(url: url, maxRetries: 0, cacheDuration: 3600)
     fetcher.clearCache()
@@ -269,18 +301,20 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     flags.clearDebugOverrides()
     let manager = PVFeatureFlagsManager(featureFlags: flags)
 
-    // cheatsUseSwiftUI is false in config
     #expect(manager.cheatsUseSwiftUI == false)
 
     manager.setDebugOverride(for: .cheatsUseSwiftUI, enabled: true)
+    // stateDidChange fires and manager updates via Combine on main queue;
+    // since we are already on main actor, spin the run loop briefly.
+    RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
     #expect(manager.cheatsUseSwiftUI == true)
 
     manager.clearDebugOverrides()
+    RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
     #expect(manager.cheatsUseSwiftUI == false)
 }
 
 @MainActor @Test func testManagerLoadFromCachedConfig() throws {
-    // Simulate loading from a pre-cached config (avoids URLSession file:// on Linux)
     let config = try makeConfig()
     let cacheURL = URL(string: "https://example.com/manager-cached-features.json")!
     let fetcher = PVFeatureFlagsFetcher(url: cacheURL, maxRetries: 0, cacheDuration: 3600)
@@ -290,11 +324,10 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     let flags = PVFeatureFlags(appType: .standard, buildNumber: "101", appVersion: "1.1.0")
     let manager = PVFeatureFlagsManager(featureFlags: flags)
 
-    // Initially no config loaded
     #expect(manager.inAppFreeROMs == false)
 
-    // Inject config via debug API (simulating what loadRemoteConfiguration would do after cache hit)
     manager.setDebugConfiguration(features: config.features)
+    RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
     #expect(manager.inAppFreeROMs == true)
     #expect(manager.romPathMigrator == true)
 
@@ -302,7 +335,6 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
 }
 
 @MainActor @Test func testManagerLoadRemoteFromValidCache() async throws {
-    // Pre-seed the cache via a temporary fetcher, then verify the manager hits it
     let cacheURL = URL(string: "https://example.com/manager-valid-cache-hit.json")!
     let config = try makeConfig()
 
@@ -314,7 +346,6 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     let manager = PVFeatureFlagsManager(featureFlags: flags)
     manager.configureRemote(url: cacheURL, cacheDuration: 3600, maxRetries: 0)
 
-    // Cache is valid — no network call is made; config should be applied from cache
     try await manager.loadRemoteConfiguration()
 
     #expect(manager.inAppFreeROMs == true)
@@ -324,11 +355,9 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
 }
 
 @MainActor @Test func testManagerLoadRemoteStaleCacheFallback() async throws {
-    // Use a file:// URL that doesn't exist so the remote fetch fails immediately
     let failURL = URL(string: "file:///nonexistent/stale-cache-fallback-test.json")!
     let config = try makeConfig()
 
-    // Pre-seed cache with 0-duration (immediately stale)
     let seedFetcher = PVFeatureFlagsFetcher(url: failURL, maxRetries: 0, cacheDuration: 0)
     seedFetcher.clearCache()
     seedFetcher.saveToCache(config)
@@ -338,7 +367,6 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     let manager = PVFeatureFlagsManager(featureFlags: flags)
     manager.configureRemote(url: failURL, cacheDuration: 0, maxRetries: 0)
 
-    // Stale cache → remote fails → falls back to stale cache data
     try await manager.loadRemoteConfiguration()
 
     #expect(manager.inAppFreeROMs == true)
@@ -347,10 +375,8 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
 }
 
 @MainActor @Test func testManagerLoadRemoteBundledFallback() async throws {
-    // Use a file:// URL that doesn't exist so the remote fetch fails
     let failURL = URL(string: "file:///nonexistent/bundled-fallback-test.json")!
 
-    // Ensure no cache for this URL
     let tempFetcher = PVFeatureFlagsFetcher(url: failURL, maxRetries: 0, cacheDuration: 3600)
     tempFetcher.clearCache()
 
@@ -358,10 +384,8 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     let manager = PVFeatureFlagsManager(featureFlags: flags)
     manager.configureRemote(url: failURL, cacheDuration: 3600, maxRetries: 0)
 
-    // No cache, remote fails → falls back to bundled features.json
     try await manager.loadRemoteConfiguration()
 
-    // Bundled config should define inAppFreeROMs
     #expect(flags.configuration?.features["inAppFreeROMs"] != nil)
 }
 

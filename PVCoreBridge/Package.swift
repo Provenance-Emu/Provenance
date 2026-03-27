@@ -32,6 +32,7 @@ let package = Package(
         .package(name: "PVPlists", path: "../PVPlists/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
         .package(name: "PVPrimitives", path: "../PVPrimitives/"),
+        .package(name: "PVSettings", path: "../PVSettings/"),
         
         // MARK: Macros
 
@@ -50,6 +51,7 @@ let package = Package(
                 "PVPlists",
                 "PVObjCUtils",
                 "PVPrimitives",
+                "PVSettings",
         //                "SwiftMacros"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")],
