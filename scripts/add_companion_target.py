@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """
-Add ProvenanceCompanion app target to Provenance.xcodeproj/project.pbxproj
+Add ProvenanceCompanion app target + ProvenanceCompanionTests unit-test target
+to Provenance.xcodeproj/project.pbxproj
 
-This script adds a minimal iOS app target for the Provenance Companion app.
+This script adds:
+  - ProvenanceCompanion: a minimal iOS 17+ app target for the Companion app
+  - ProvenanceCompanionTests: a unit-test target hosted by ProvenanceCompanion
+
 All UUIDs use the C0C0CAFE prefix for easy identification.
+  C0C0CAFE0…  → ProvenanceCompanion app target
+  C0C0CAFE1…  → ProvenanceCompanionTests unit-test target
 
 Usage: python3 scripts/add_companion_target.py
 """
@@ -42,6 +48,21 @@ SRC_PVUI           = "B3952F542C697A02000B0308"
 SRC_PVTHEMES       = "B34969562C4E64AD00D37F79"
 
 XCCONFIG_REF       = "B326758527B1E0BB0033C5D1"   # Build-iOS.xcconfig
+PROJECT_OBJECT     = "1A3D408C17B2DCE4004DFFFC"   # PBXProject root
+
+# ── Test target UUIDs (C0C0CAFE1… prefix) ──────────────────────────────────────
+TEST_TARGET        = "C0C0CAFE1000000000000001"
+TEST_CFGLIST       = "C0C0CAFE1000000000000002"
+TEST_CFG_DEBUG     = "C0C0CAFE1000000000000003"
+TEST_CFG_RELEASE   = "C0C0CAFE1000000000000004"
+TEST_CFG_ARCHIVE   = "C0C0CAFE1000000000000005"
+TEST_SOURCES       = "C0C0CAFE1000000000000006"
+TEST_FRAMEWORKS    = "C0C0CAFE1000000000000007"
+TEST_RESOURCES     = "C0C0CAFE1000000000000008"
+TEST_PRODUCT       = "C0C0CAFE1000000000000009"
+TEST_FSGROUP       = "C0C0CAFE100000000000000A"
+TEST_PROXY         = "C0C0CAFE100000000000000B"
+TEST_DEP           = "C0C0CAFE100000000000000C"
 
 # ── Guards ─────────────────────────────────────────────────────────────────────
 def already_added(content):
@@ -352,6 +373,257 @@ def patch(content):
     return content
 
 
+# ── Test target patches ─────────────────────────────────────────────────────────
+
+def test_already_added(content):
+    return TEST_TARGET in content
+
+
+def test_file_ref():
+    return f'\t\t{TEST_PRODUCT} /* ProvenanceCompanionTests.xctest */ = {{isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProvenanceCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; }};\n'
+
+
+def test_fs_sync_group():
+    return (
+        f'\t\t{TEST_FSGROUP} /* ProvenanceCompanionTests */ = {{'
+        f'isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {{}}; explicitFolders = (); '
+        f'path = ProvenanceCompanionTests; sourceTree = "<group>"; }};\n'
+    )
+
+
+def test_container_proxy():
+    return f"""
+\t\t{TEST_PROXY} /* PBXContainerItemProxy */ = {{
+\t\t\tisa = PBXContainerItemProxy;
+\t\t\tcontainerPortal = {PROJECT_OBJECT} /* Project object */;
+\t\t\tproxyType = 1;
+\t\t\tremoteGlobalIDString = {TARGET};
+\t\t\tremoteInfo = ProvenanceCompanion;
+\t\t}};
+"""
+
+
+def test_native_target():
+    return f"""
+\t\t{TEST_TARGET} /* ProvenanceCompanionTests */ = {{
+\t\t\tisa = PBXNativeTarget;
+\t\t\tbuildConfigurationList = {TEST_CFGLIST} /* Build configuration list for PBXNativeTarget "ProvenanceCompanionTests" */;
+\t\t\tbuildPhases = (
+\t\t\t\t{TEST_SOURCES} /* Sources */,
+\t\t\t\t{TEST_FRAMEWORKS} /* Frameworks */,
+\t\t\t\t{TEST_RESOURCES} /* Resources */,
+\t\t\t);
+\t\t\tbuildRules = (
+\t\t\t);
+\t\t\tdependencies = (
+\t\t\t\t{TEST_DEP} /* PBXTargetDependency */,
+\t\t\t);
+\t\t\tfileSystemSynchronizedGroups = (
+\t\t\t\t{TEST_FSGROUP} /* ProvenanceCompanionTests */,
+\t\t\t);
+\t\t\tname = ProvenanceCompanionTests;
+\t\t\tproductName = ProvenanceCompanionTests;
+\t\t\tproductReference = {TEST_PRODUCT} /* ProvenanceCompanionTests.xctest */;
+\t\t\tproductType = "com.apple.product-type.bundle.unit-test";
+\t\t}};
+"""
+
+
+def test_build_phases():
+    sources = f"""
+\t\t{TEST_SOURCES} /* Sources */ = {{
+\t\t\tisa = PBXSourcesBuildPhase;
+\t\t\tbuildActionMask = 2147483647;
+\t\t\tfiles = (
+\t\t\t);
+\t\t\trunOnlyForDeploymentPostprocessing = 0;
+\t\t}};
+"""
+    frameworks = f"""
+\t\t{TEST_FRAMEWORKS} /* Frameworks */ = {{
+\t\t\tisa = PBXFrameworksBuildPhase;
+\t\t\tbuildActionMask = 2147483647;
+\t\t\tfiles = (
+\t\t\t);
+\t\t\trunOnlyForDeploymentPostprocessing = 0;
+\t\t}};
+"""
+    resources = f"""
+\t\t{TEST_RESOURCES} /* Resources */ = {{
+\t\t\tisa = PBXResourcesBuildPhase;
+\t\t\tbuildActionMask = 2147483647;
+\t\t\tfiles = (
+\t\t\t);
+\t\t\trunOnlyForDeploymentPostprocessing = 0;
+\t\t}};
+"""
+    return sources, frameworks, resources
+
+
+def test_target_dependency():
+    return f"""
+\t\t{TEST_DEP} /* PBXTargetDependency */ = {{
+\t\t\tisa = PBXTargetDependency;
+\t\t\ttarget = {TARGET} /* ProvenanceCompanion */;
+\t\t\ttargetProxy = {TEST_PROXY} /* PBXContainerItemProxy */;
+\t\t}};
+"""
+
+
+def test_build_configs():
+    shared = f"""
+\t\t\t\tBUNDLE_LOADER = "$(TEST_HOST)";
+\t\t\t\tCLANG_ENABLE_MODULES = YES;
+\t\t\t\tCLANG_ENABLE_OBJC_ARC = YES;
+\t\t\t\tCODE_SIGN_STYLE = Automatic;
+\t\t\t\tDEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+\t\t\t\tGENERATE_INFOPLIST_FILE = YES;
+\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 17.0;
+\t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanionTests";
+\t\t\t\tPRODUCT_NAME = "$(TARGET_NAME)";
+\t\t\t\tSDKROOT = iphoneos;
+\t\t\t\tSUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+\t\t\t\tSWIFT_VERSION = 5.0;
+\t\t\t\tTARGETED_DEVICE_FAMILY = "1,2";
+\t\t\t\tTEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Companion.app/Provenance Companion";"""
+
+    debug = f"""
+\t\t{TEST_CFG_DEBUG} /* Debug */ = {{
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbaseConfigurationReference = {XCCONFIG_REF} /* Build-iOS.xcconfig */;
+\t\t\tbuildSettings = {{{shared}
+\t\t\t\tDEBUG_INFORMATION_FORMAT = dwarf;
+\t\t\t\tSWIFT_OPTIMIZATION_LEVEL = "-Onone";
+\t\t\t}};
+\t\t\tname = Debug;
+\t\t}};
+"""
+    release = f"""
+\t\t{TEST_CFG_RELEASE} /* Release */ = {{
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbaseConfigurationReference = {XCCONFIG_REF} /* Build-iOS.xcconfig */;
+\t\t\tbuildSettings = {{{shared}
+\t\t\t\tCOPY_PHASE_STRIP = NO;
+\t\t\t\tDEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+\t\t\t\tVALIDATE_PRODUCT = YES;
+\t\t\t}};
+\t\t\tname = Release;
+\t\t}};
+"""
+    archive = f"""
+\t\t{TEST_CFG_ARCHIVE} /* Archive */ = {{
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbaseConfigurationReference = {XCCONFIG_REF} /* Build-iOS.xcconfig */;
+\t\t\tbuildSettings = {{{shared}
+\t\t\t\tCOPY_PHASE_STRIP = NO;
+\t\t\t\tDEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+\t\t\t\tVALIDATE_PRODUCT = YES;
+\t\t\t}};
+\t\t\tname = Archive;
+\t\t}};
+"""
+    return debug, release, archive
+
+
+def test_config_list():
+    return f"""
+\t\t{TEST_CFGLIST} /* Build configuration list for PBXNativeTarget "ProvenanceCompanionTests" */ = {{
+\t\t\tisa = XCConfigurationList;
+\t\t\tbuildConfigurations = (
+\t\t\t\t{TEST_CFG_DEBUG} /* Debug */,
+\t\t\t\t{TEST_CFG_RELEASE} /* Release */,
+\t\t\t\t{TEST_CFG_ARCHIVE} /* Archive */,
+\t\t\t);
+\t\t\tdefaultConfigurationIsVisible = 0;
+\t\t\tdefaultConfigurationName = Release;
+\t\t}};
+"""
+
+
+def patch_tests(content):
+    # 1. PBXFileReference — add .xctest product ref
+    content = content.replace(
+        "/* End PBXFileReference section */",
+        test_file_ref() + "\t\t/* End PBXFileReference section */"
+    )
+
+    # 2. PBXFileSystemSynchronizedRootGroup — add test sync group
+    content = content.replace(
+        "/* End PBXFileSystemSynchronizedRootGroup section */",
+        test_fs_sync_group() + "\t\t/* End PBXFileSystemSynchronizedRootGroup section */"
+    )
+
+    # 3. PBXContainerItemProxy — add proxy for dependency
+    content = content.replace(
+        "/* End PBXContainerItemProxy section */",
+        test_container_proxy() + "\t\t/* End PBXContainerItemProxy section */"
+    )
+
+    # 4. PBXNativeTarget — add test target
+    content = content.replace(
+        "/* End PBXNativeTarget section */",
+        test_native_target() + "\t\t/* End PBXNativeTarget section */"
+    )
+
+    # 5. PBXProject targets list — append test target after ProvenanceCompanion
+    content = content.replace(
+        f"\t\t\t\t{TARGET} /* ProvenanceCompanion */,\n\t\t\t);",
+        f"\t\t\t\t{TARGET} /* ProvenanceCompanion */,\n\t\t\t\t{TEST_TARGET} /* ProvenanceCompanionTests */,\n\t\t\t);"
+    )
+
+    # 6. PBXProject main group — add test FS sync group after app group
+    content = content.replace(
+        f"\t\t\t\t{FS_SYNC_GROUP} /* ProvenanceCompanion */,",
+        f"\t\t\t\t{FS_SYNC_GROUP} /* ProvenanceCompanion */,\n\t\t\t\t{TEST_FSGROUP} /* ProvenanceCompanionTests */,"
+    )
+
+    # 7. Products group — add .xctest product ref after .app
+    content = content.replace(
+        f"\t\t\t\t{PRODUCT_REF} /* ProvenanceCompanion.app */,",
+        f"\t\t\t\t{PRODUCT_REF} /* ProvenanceCompanion.app */,\n\t\t\t\t{TEST_PRODUCT} /* ProvenanceCompanionTests.xctest */,"
+    )
+
+    # 8. PBXSourcesBuildPhase — add phase
+    sources, frameworks, resources = test_build_phases()
+    content = content.replace(
+        "/* End PBXSourcesBuildPhase section */",
+        sources + "\t\t/* End PBXSourcesBuildPhase section */"
+    )
+
+    # 9. PBXFrameworksBuildPhase — add phase
+    content = content.replace(
+        "/* End PBXFrameworksBuildPhase section */",
+        frameworks + "\t\t/* End PBXFrameworksBuildPhase section */"
+    )
+
+    # 10. PBXResourcesBuildPhase — add phase
+    content = content.replace(
+        "/* End PBXResourcesBuildPhase section */",
+        resources + "\t\t/* End PBXResourcesBuildPhase section */"
+    )
+
+    # 11. PBXTargetDependency — add dependency
+    content = content.replace(
+        "/* End PBXTargetDependency section */",
+        test_target_dependency() + "\t\t/* End PBXTargetDependency section */"
+    )
+
+    # 12. XCBuildConfiguration — add Debug/Release/Archive
+    debug_cfg, release_cfg, archive_cfg = test_build_configs()
+    content = content.replace(
+        "/* End XCBuildConfiguration section */",
+        debug_cfg + release_cfg + archive_cfg + "\t\t/* End XCBuildConfiguration section */"
+    )
+
+    # 13. XCConfigurationList — add config list
+    content = content.replace(
+        "/* End XCConfigurationList section */",
+        test_config_list() + "\t\t/* End XCConfigurationList section */"
+    )
+
+    return content
+
+
 def main():
     with open(PBXPROJ, "r", encoding="utf-8") as f:
         content = f.read()
@@ -388,6 +660,12 @@ def main():
         print("Note: PBXFileSystemSynchronizedRootGroup section not found; will insert FS sync group inline.")
 
     patched = patch(content)
+
+    if not test_already_added(patched):
+        patched = patch_tests(patched)
+        print("✅ ProvenanceCompanionTests unit-test target added to project.pbxproj")
+    else:
+        print("ProvenanceCompanionTests target already present — skipping test target.")
 
     with open(PBXPROJ, "w", encoding="utf-8") as f:
         f.write(patched)

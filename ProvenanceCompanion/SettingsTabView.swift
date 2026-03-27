@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SettingsTabView: View {
+    @Environment(\.openURL) private var openURL
+
     var body: some View {
         NavigationStack {
             List {
@@ -12,7 +14,7 @@ struct SettingsTabView: View {
                 Section("Main App") {
                     Button("Open Provenance") {
                         if let url = URL(string: "provenance://") {
-                            UIApplication.shared.open(url)
+                            openURL(url)
                         }
                     }
                 }

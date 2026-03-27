@@ -1091,6 +1091,13 @@
 			remoteGlobalIDString = B3E21D6A203211BE009939D3;
 			remoteInfo = Spotlight;
 		};
+		C0C0CAFE100000000000000B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0C0CAFE000000000000001A;
+			remoteInfo = ProvenanceCompanion;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2458,6 +2465,7 @@
 		EC51A109C1C4AE07721D70ED /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0C0CAFE00000000000000AA /* ProvenanceCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProvenanceCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProvenanceCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		/* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -2888,6 +2896,7 @@
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
 		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98502D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98D22D615D5000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98512D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98522D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
 		C0C0CAFE00000000000000BA /* ProvenanceCompanion */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanion; sourceTree = "<group>"; };
+		C0C0CAFE100000000000000A /* ProvenanceCompanionTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanionTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3596,6 +3605,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C0CAFE1000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -3656,6 +3672,7 @@
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				C0C0CAFE00000000000000BA /* ProvenanceCompanion */,
+				C0C0CAFE100000000000000A /* ProvenanceCompanionTests */,
 				B355E0512920AC7600E4C858 /* Extensions */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				B3BD95EA2C1AD22F00B92276 /* xconfig's */,
@@ -3699,6 +3716,7 @@
 				B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */,
 				B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */,
 				C0C0CAFE00000000000000AA /* ProvenanceCompanion.app */,
+				C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */,
 				FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */,
 				61D0A2BEE5E0D601A0F11C55 /* Provenance-CI.app */,
 				EC51A109C1C4AE07721D70ED /* Provenance-CI.app */,
@@ -7672,6 +7690,27 @@
 			productReference = C0C0CAFE00000000000000AA /* ProvenanceCompanion.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C0C0CAFE1000000000000001 /* ProvenanceCompanionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0C0CAFE1000000000000002 /* Build configuration list for PBXNativeTarget "ProvenanceCompanionTests" */;
+			buildPhases = (
+				C0C0CAFE1000000000000006 /* Sources */,
+				C0C0CAFE1000000000000007 /* Frameworks */,
+				C0C0CAFE1000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C0C0CAFE100000000000000C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C0C0CAFE100000000000000A /* ProvenanceCompanionTests */,
+			);
+			name = ProvenanceCompanionTests;
+			productName = ProvenanceCompanionTests;
+			productReference = C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		/* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -9267,6 +9306,7 @@
 				B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */,
 				B3BE9FCF2C7988BD006D989E /* Provenance Stickers */,
 				C0C0CAFE000000000000001A /* ProvenanceCompanion */,
+				C0C0CAFE1000000000000001 /* ProvenanceCompanionTests */,
 			);
 		};
 /* End PBXProject section */
@@ -9527,6 +9567,13 @@
 		};
 
 		C0C0CAFE000000000000008A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0C0CAFE1000000000000008 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -10169,6 +10216,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C0CAFE1000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		/* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -10360,6 +10414,11 @@
 			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B3F7E428297736C200362B92 /* PBXContainerItemProxy */;
+		};
+		C0C0CAFE100000000000000C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0C0CAFE000000000000001A /* ProvenanceCompanion */;
+			targetProxy = C0C0CAFE100000000000000B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -14997,6 +15056,77 @@
 			};
 			name = Archive;
 		};
+		C0C0CAFE1000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanionTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Companion.app/Provenance Companion";
+			};
+			name = Debug;
+		};
+		C0C0CAFE1000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanionTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Companion.app/Provenance Companion";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C0C0CAFE1000000000000005 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanionTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Companion.app/Provenance Companion";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
 		/* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -15277,6 +15407,16 @@
 				C0C0CAFE000000000000003A /* Debug */,
 				C0C0CAFE000000000000004A /* Release */,
 				C0C0CAFE000000000000005A /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0C0CAFE1000000000000002 /* Build configuration list for PBXNativeTarget "ProvenanceCompanionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0C0CAFE1000000000000003 /* Debug */,
+				C0C0CAFE1000000000000004 /* Release */,
+				C0C0CAFE1000000000000005 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
