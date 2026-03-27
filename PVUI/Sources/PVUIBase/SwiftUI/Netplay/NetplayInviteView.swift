@@ -22,11 +22,9 @@ public struct NetplayInviteView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var hostAddress: String = ""
-    @State private var port: String = "55435"
+    @State private var port: String = String(NetplayJoinRequest.defaultPort)
     @State private var useRelay: Bool = false
     @State private var relayServer: String = "ra.me"
-    @State private var showShareSheet = false
-    @State private var inviteURL: URL?
 
     public init(gameName: String) {
         self.gameName = gameName
@@ -49,13 +47,6 @@ public struct NetplayInviteView: View {
                 }
             }
             .onAppear { prefillFromActiveSession() }
-            #if canImport(UIKit) && !os(tvOS)
-            .sheet(isPresented: $showShareSheet) {
-                if let url = inviteURL {
-                    ActivityView(items: [url, "Join me in \(gameName) on Provenance!"])
-                }
-            }
-            #endif
         }
     }
 
@@ -110,7 +101,7 @@ public struct NetplayInviteView: View {
                     #endif
 
                     #if os(tvOS)
-                    // tvOS has no clipboard or share sheet — show a QR code instead.
+                    // tvOS has no share sheet — show a QR code instead.
                     // Viewers can scan this with any phone camera to open the invite.
                     PVQRCodeView(
                         url.absoluteString,
@@ -120,10 +111,11 @@ public struct NetplayInviteView: View {
                     .frame(width: 180, height: 200)
                     .padding(.top, 8)
                     #else
-                    Button {
-                        inviteURL = url
-                        showShareSheet = true
-                    } label: {
+                    ShareLink(
+                        item: url,
+                        subject: Text("Netplay Invite"),
+                        message: Text("Join me in \(gameName) on Provenance!")
+                    ) {
                         Label("Share Link", systemImage: "square.and.arrow.up")
                             .frame(maxWidth: .infinity)
                     }
@@ -145,8 +137,8 @@ public struct NetplayInviteView: View {
 
     private func buildInviteURL() -> URL? {
         guard !hostAddress.isEmpty else { return nil }
-        // Treat empty port as the default (55435). Port 0 is not a valid connection target.
-        let resolvedPort = port.isEmpty ? 55435 : (Int(port) ?? -1)
+        // Treat empty port as the default. Port 0 is not a valid connection target.
+        let resolvedPort = port.isEmpty ? Int(NetplayJoinRequest.defaultPort) : (Int(port) ?? -1)
         guard resolvedPort >= 1, resolvedPort <= 65535 else { return nil }
         var components = URLComponents()
         components.scheme = "provenance"
@@ -177,25 +169,6 @@ public struct NetplayInviteView: View {
         }
     }
 }
-
-// MARK: - UIKit helpers
-
-#if canImport(UIKit)
-import UIKit
-
-#if !os(tvOS)
-private struct ActivityView: UIViewControllerRepresentable {
-    let items: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-#endif // !os(tvOS)
-
-#endif // canImport(UIKit)
 
 #if DEBUG
 #Preview {

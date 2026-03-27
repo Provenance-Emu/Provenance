@@ -30,7 +30,6 @@ public struct NetplayLobbyView: View {
     /// Pass an empty string if unknown (verification will show "unknown" state).
     let localGameHash: String
 
-    @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var showRoomBrowser = false
     @State private var showSpectate = false
     @State private var showCreateRoom = false

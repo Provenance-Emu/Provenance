@@ -155,6 +155,25 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 - **project.pbxproj** — editing is permitted and sometimes required (e.g., adding new app targets). When you add a new target, use deterministic UUID prefixes (e.g. `C0C0CAFE...`) to make additions easy to identify. Use `PBXFileSystemSynchronizedRootGroup` for source directories (Xcode 16+). Prefer minimal diffs — only touch the sections that need changing.
 - **Upstream RetroArch** — `CoresRetro/RetroArch/RetroArch/` is a submodule
 
+### Minimum Deployment Targets
+
+Provenance targets **iOS 17+, tvOS 17+, macOS 14+ (Catalyst), visionOS 1+**. All new code MUST be written against these minimum versions — do **not** add availability guards or fallbacks for APIs available since iOS 17 or earlier.
+
+**Prefer modern Swift/SwiftUI APIs** when the minimum deployment target supports them:
+
+| Prefer (iOS 16+/17+) | Over (older) |
+|---|---|
+| `ShareLink` | `UIActivityViewController` wrapped in `UIViewControllerRepresentable` |
+| `@Observable` macro (iOS 17+) | `@ObservableObject` + `@Published` |
+| `NavigationStack` | `NavigationView` |
+| `.navigationBarTitleDisplayMode(.inline)` on non-tvOS | conditional guard |
+| `UIWindowScene.keyWindow` | `UIApplication.shared.keyWindow` (deprecated iOS 13) |
+
+**`@StateObject` vs `@ObservedObject` rule:**
+- `@StateObject` — use only when the view **creates and owns** the object's lifetime (new instances).
+- `@ObservedObject` — use for **singletons** (e.g. `Foo.shared`) and objects passed in from outside.
+  Using `@StateObject` with a singleton is semantically wrong even though it compiles.
+
 ### Pre-PR Validation (MANDATORY)
 Agents MUST run these checks before creating a PR. Do NOT skip any step.
 
