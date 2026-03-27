@@ -190,7 +190,6 @@ let package = Package(
 //                "PVPrimitives",
 //                "Extractor",
 //                "PVFileSystem",
-//                .product(name: "Perception", package: "swift-perception"),
 //                .product(name: "RxCocoa", package: "RxSwift"),
 //                .product(name: "RxSwift", package: "RxSwift"),
 //                .product(name: "RxRealm", package: "RxRealm"),
