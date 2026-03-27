@@ -596,15 +596,6 @@
         }
       },
       {
-        "package": "swift-perception",
-        "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
-        "state": {
-          "branch": null,
-          "revision": "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
-          "version": "2.0.9"
-        }
-      },
-      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
