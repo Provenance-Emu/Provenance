@@ -182,10 +182,10 @@ public struct RealmGamePreviewDataSource: GamePreviewDataSource {
 
 /// Opens the shared App Group Realm in read-only mode.
 ///
-/// Tries the App Group container first (preferred), then falls back to the
-/// app's sandboxed Documents directory for configurations where App Groups
-/// are not provisioned.  Both paths are opened read-only so the extension
-/// process never migrates or writes to the database.
+/// Uses the App Group container identified by `PVAppGroupId`. Returns `nil`
+/// when the container is unavailable or the Realm file does not exist yet.
+/// The database is opened read-only so the extension process never triggers
+/// a migration or writes to the live database.
 private func openReadOnlyGroupRealm() throws -> Realm? {
     // Build the ordered list of candidate Realm URLs to try.
     var candidates: [URL] = []

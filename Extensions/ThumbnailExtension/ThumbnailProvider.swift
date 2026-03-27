@@ -27,9 +27,14 @@ class ThumbnailProvider: QLThumbnailProvider {
         // to recover the real filename so Realm lookups succeed without downloading the file.
         let effectiveFilename = ROMGameLookup.realFilename(from: fileURL)
 
+        // Reconstruct an effective path that replaces the iCloud placeholder filename
+        // with the real filename, preserving the directory so Realm path queries work.
+        let effectivePath = fileURL.deletingLastPathComponent()
+            .appendingPathComponent(effectiveFilename).path
+
         // Route to save-state or ROM artwork lookup based on UTI / path conventions.
         if isSaveState(fileURL, filename: effectiveFilename) {
-            if let imageURL = artworkDriver.saveStateImageFileURL(forSaveStatePath: fileURL.path) {
+            if let imageURL = artworkDriver.saveStateImageFileURL(forSaveStatePath: effectivePath) {
                 handler(QLThumbnailReply(imageFileURL: imageURL), nil)
                 return
             }

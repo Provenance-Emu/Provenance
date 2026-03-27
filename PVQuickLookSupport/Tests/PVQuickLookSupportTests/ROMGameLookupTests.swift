@@ -70,6 +70,25 @@ final class ROMGameLookupTests: XCTestCase {
         )
     }
 
+    // MARK: - realFilename(from:)
+
+    func testRealFilenamePassthrough() {
+        let url = URL(fileURLWithPath: "/ROMs/SuperMario64.n64")
+        XCTAssertEqual(ROMGameLookup.realFilename(from: url), "SuperMario64.n64")
+    }
+
+    func testRealFilenameStripsIcloudSuffix() {
+        // Evicted file without leading dot (edge case)
+        let url = URL(fileURLWithPath: "/ROMs/SuperMario64.n64.icloud")
+        XCTAssertEqual(ROMGameLookup.realFilename(from: url), "SuperMario64.n64")
+    }
+
+    func testRealFilenameStripsLeadingDotAndIcloudSuffix() {
+        // Standard iCloud placeholder: hidden file with leading dot
+        let url = URL(fileURLWithPath: "/ROMs/.SuperMario64.n64.icloud")
+        XCTAssertEqual(ROMGameLookup.realFilename(from: url), "SuperMario64.n64")
+    }
+
     // MARK: - lookup (no-database branch)
 
     func testLookupReturnsNilWhenAppGroupsUnavailable() {
