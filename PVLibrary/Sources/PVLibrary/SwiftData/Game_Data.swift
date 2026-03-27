@@ -223,6 +223,18 @@ public extension Game_Data {
         matchSource == .none || requiresSync
     }
 
+    /// Returns true if the game is missing key metadata fields
+    var hasMissingMetadata: Bool {
+        let missingFields = [gameDescription, developer, publisher, originalArtworkURL.nilIfEmpty]
+            .filter { $0 == nil || $0?.isEmpty == true }
+        return missingFields.count >= 2
+    }
+
+    /// Returns true if a name-based metadata re-lookup should be triggered
+    var shouldTriggerMetadataLookup: Bool {
+        isUnmatched || hasMissingMetadata
+    }
+
     var genresArray: [String] {
         genres?.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
     }
@@ -243,4 +255,8 @@ public extension Game_Data {
             )
         }
     }
+}
+
+private extension String {
+    var nilIfEmpty: String? { isEmpty ? nil : self }
 }
