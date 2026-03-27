@@ -59,39 +59,56 @@ public final class JITOnboardingManager {
 
         ILOG("JITOnboarding: Preparing JIT onboarding alert")
 
-        let alert = UIAlertController(
-            title: "Performance Mode Unavailable",
-            message: "This core performs best with Performance Mode (JIT) enabled. "
+        // On iOS 26+, W×X enforcement means JIT cannot be acquired via sideloading tools;
+        // only the native `allow-jit` entitlement (not available in App Store builds) works.
+        // Avoid suggesting tools that cannot help — just set performance expectations.
+        let isWXEnforced = DOLJitManager.isWXEnforced
+
+        let message: String
+        if isWXEnforced {
+            message = "This core performs best with Performance Mode (JIT). "
+                + "On this OS version, Performance Mode is not available without a special "
+                + "developer entitlement — emulation may run slower than expected."
+        } else {
+            message = "This core performs best with Performance Mode (JIT) enabled. "
                 + "Performance Mode has not been acquired for this session — you can continue playing, "
                 + "but emulation speed may be reduced.\n\n"
                 + "To enable Performance Mode, use AltStore, SideStore, StikDebug, JITStreamer, or "
-                + "developer tools (for example, the Xcode debugger) before launching.",
+                + "developer tools (for example, the Xcode debugger) before launching."
+        }
+
+        let alert = UIAlertController(
+            title: "Performance Mode Unavailable",
+            message: message,
             preferredStyle: .alert
         )
 
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: nil))
 
-        // Offer StikDebug as the first retry option (VPN-based, no macOS required).
-        if jitType == .debugger || jitType == .stikDebug {
-            alert.addAction(UIAlertAction(title: "Try StikDebug", style: .default) { _ in
-                ILOG("JITOnboarding: User chose to retry via StikDebug")
-                jitManager.attemptToAcquireJitByStikDebug()
-            })
-        }
-
-        // JITStreamer as an alternative for desktop-based attach.
-        if jitType == .debugger {
-            alert.addAction(UIAlertAction(title: "Try JITStreamer", style: .default) { _ in
-                ILOG("JITOnboarding: User chose to retry via JITStreamer")
-                jitManager.attemptToAcquireJitByJitStreamer()
-            })
-        }
-
-        alert.addAction(UIAlertAction(title: "Learn More", style: .default) { _ in
-            if let url = URL(string: "https://wiki.provenance-emu.com/jit-help") {
-                UIApplication.shared.open(url)
+        // Only offer sideloading-based retry options when JIT is actually acquirable.
+        if !isWXEnforced {
+            // Offer StikDebug as the first retry option (VPN-based, no macOS required).
+            if jitType == .debugger || jitType == .stikDebug {
+                alert.addAction(UIAlertAction(title: "Try StikDebug", style: .default) { _ in
+                    ILOG("JITOnboarding: User chose to retry via StikDebug")
+                    jitManager.attemptToAcquireJitByStikDebug()
+                })
             }
-        })
+
+            // JITStreamer as an alternative for desktop-based attach.
+            if jitType == .debugger {
+                alert.addAction(UIAlertAction(title: "Try JITStreamer", style: .default) { _ in
+                    ILOG("JITOnboarding: User chose to retry via JITStreamer")
+                    jitManager.attemptToAcquireJitByJitStreamer()
+                })
+            }
+
+            alert.addAction(UIAlertAction(title: "Learn More", style: .default) { _ in
+                if let url = URL(string: "https://wiki.provenance-emu.com/jit-help") {
+                    UIApplication.shared.open(url)
+                }
+            })
+        }
 
         // Ensure we can actually present before marking the onboarding as shown
         guard viewController.viewIfLoaded?.window != nil,

@@ -179,9 +179,15 @@ public final class JITStatusIndicatorViewController: UIViewController {
             PVToastManager.shared.show("JIT active — \(label)", type: .jit, duration: 4.0)
 
         case .unavailable:
-            // Persistent toast so the user always sees the guidance
+            // Persistent toast so the user always sees the guidance.
+            // In App Store builds, avoid mentioning sideloading tools per App Store guidelines.
+            #if APP_STORE
+            let unavailableMessage = "JIT required — performance or stability may be affected"
+            #else
+            let unavailableMessage = "JIT required — enable via AltStore, SideJITServer, or StikDebug"
+            #endif
             PVToastManager.shared.showPersistent(
-                "JIT required — enable via AltStore, SideJITServer, or StikDebug",
+                unavailableMessage,
                 id: jitUnavailableToastID,
                 type: .error,
                 icon: "bolt.slash.fill"

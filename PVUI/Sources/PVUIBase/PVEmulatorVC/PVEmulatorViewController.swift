@@ -849,22 +849,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// Pause all background services during gameplay via the central registry
         BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
 
-        // Present JIT onboarding only for cores that actually use JIT
-        #if canImport(PVJIT) && os(iOS)
-        if core.jitRequirement.hasJIT {
-            func presentJITOnboardingWhenReady() {
-                guard view.window != nil else {
-                    DispatchQueue.main.async { [weak self] in
-                        guard let self else { return }
-                        presentJITOnboardingWhenReady()
-                    }
-                    return
-                }
-                JITOnboardingManager.shared.presentOnboardingIfNeeded(from: self)
-            }
-            presentJITOnboardingWhenReady()
-        }
-        #endif
+        // Note: pre-launch JIT education (contextual prompt + performance notice) is handled
+        // by JITContextualPromptManager in GameLaunchingViewController before presentEMU is
+        // called. A second in-emulator modal here would produce a double-alert for the user.
+        // In-game JIT status is shown by JITStatusIndicatorViewController (HUD pill + toasts).
 
         // Apply any persisted Transfer Pak slot selections for this game before the core starts.
         await applyPersistedTransferPakIfNeeded()

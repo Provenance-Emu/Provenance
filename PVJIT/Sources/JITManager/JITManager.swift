@@ -125,6 +125,20 @@ public final class DOLJitManager {
         switch jitType {
         case .debugger:
 #if NONJAILBROKEN
+            // On iOS 26+, JITAuthorizer is the preferred JIT path but requires the
+            // `com.apple.developer.kernel.allow-jit` entitlement. If that entitlement
+            // is absent (App Store builds, developer builds without it), we fall back
+            // to checking CS_DEBUGGED via csops. Xcode's debugger still sets CS_DEBUGGED
+            // on iOS 26 for development-signed builds, so this may succeed when running
+            // from Xcode. Note: even with JIT acquired, dynarec cores must use the
+            // dual-mapping (shadow-page) pattern on iOS 26 due to W×X enforcement.
+            // For production App Store builds on iOS 26, JIT is structurally unavailable;
+            // performance-sensitive cores (Dolphin, 3DS, Flycast) will run in fallback mode.
+            if #available(iOS 26, tvOS 26, *), NSClassFromString("JITAuthorizer") != nil {
+                WLOG("JIT: iOS 26 — JITAuthorizer present but 'allow-jit' entitlement absent. "
+                    + "Checking CS_DEBUGGED for Xcode/debugger-based JIT. "
+                    + "Add com.apple.developer.kernel.allow-jit for reliable iOS 26 JIT.")
+            }
             hasAcquiredJit = IsProcessDebugged()
 #else
             if FileManager.default.fileExists(atPath: "/var/run/jailbreakd.pid") {

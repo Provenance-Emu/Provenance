@@ -352,13 +352,21 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     // TODO: This is not called from the ContentView
     @MainActor
     private func setupJITIfNeeded() {
-#if (os(iOS) || os(tvOS)) && !APP_STORE
+#if os(iOS) || os(tvOS)
+        // Always attempt JIT acquisition so developer builds running from Xcode with the
+        // debugger attached can acquire JIT even when built against the App Store scheme.
+        // The acquisition itself is safe in App Store builds — it only reads CS_DEBUGGED /
+        // checks entitlements; it never shows UI or suggests sideloading.
         if Defaults[.autoJIT] {
             DOLJitManager.shared.attemptToAcquireJitOnStartup()
         }
+#if !APP_STORE
+        // The wait screen may suggest third-party JIT tools (AltStore, StikDebug, etc.)
+        // which could trigger App Store review rejections — only show it in non-App Store builds.
         DispatchQueue.main.async { [unowned self] in
             self.showJITWaitScreen()
         }
+#endif
 #endif
     }
 

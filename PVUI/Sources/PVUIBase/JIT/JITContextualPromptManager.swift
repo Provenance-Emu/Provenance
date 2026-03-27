@@ -87,10 +87,27 @@ public final class JITContextualPromptManager {
         #if canImport(JITManager)
         guard !DOLJitManager.acquired else { return .proceed }
 
+        // Determine whether JIT can be acquired on this device/build.
+        //
+        // • Non-App Store builds: JIT is acquirable on iOS < 26 where sideloading tools
+        //   (AltStore, StikDebug, JITStreamer) can enable the debugger JIT path.
+        //   On iOS 26+ without the native entitlement, W×X enforcement makes it unavailable.
+        //
+        // • App Store builds: We should never prompt users to use sideloading tools —
+        //   that may violate App Store guidelines. JIT is only "acquirable" if it is
+        //   already active (e.g. the user has StikDebug running in the background, which
+        //   attaches the debugger and sets CS_DEBUGGED before the app starts).
+        //   In this case `DOLJitManager.acquired` is already `true` and we would have
+        //   returned `.proceed` above. So for App Store builds treat JIT as not acquirable
+        //   when not already acquired — show performance notices only.
+        #if APP_STORE
+        let jitAcquirable = DOLJitManager.acquired  // always false here (guard above)
+        #else
         // JIT is structurally unavailable when W×X is enforced (iOS 26+ without the
         // native JIT entitlement). In that case acquired is false and there's no path
         // to enable JIT — prompting "use AltStore" would be pointless noise.
         let jitAcquirable = DOLJitManager.acquired || !DOLJitManager.isWXEnforced
+        #endif
 
         // 3. JIT cannot be acquired on this device/OS (e.g. iOS 26 App Store build).
         //    Prompting to "enable via AltStore" would be useless noise.
@@ -190,11 +207,17 @@ public final class JITContextualPromptManager {
         var message = "\(coreName) requires JIT (Performance Mode) to run correctly."
             + " Without it the game may crash or produce incorrect output."
         #if canImport(JITManager)
+        #if APP_STORE
+        // In App Store builds, avoid suggesting sideloading tools per App Store guidelines.
+        // Users who need JIT should activate StikDebug separately before launch.
+        message += "\n\nJIT is not currently enabled. Performance may be significantly reduced or the game may not work correctly."
+        #else
         if DOLJitManager.acquired || !DOLJitManager.isWXEnforced {
             message += "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
         } else {
             message += "\n\nJIT is not available on this device."
         }
+        #endif
         #else
         message += "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
         #endif
@@ -240,9 +263,15 @@ public final class JITContextualPromptManager {
         from viewController: UIViewController,
         completion: @escaping @Sendable (Bool) -> Void
     ) {
+        #if APP_STORE
+        let message = "\(coreName) runs faster with JIT (Performance Mode)."
+            + "\n\nJIT is not currently enabled. Enable a JIT tool such as StikDebug before launching for the best experience."
+            + " You can also set a per-game preference in Game Info."
+        #else
         let message = "\(coreName) runs faster with JIT (Performance Mode)."
             + "\n\nEnable via AltStore, SideStore, or StikDebug for the best experience."
             + " You can also set a per-game preference in Game Info."
+        #endif
         let alert = UIAlertController(
             title: "Performance Mode Available",
             message: message,
