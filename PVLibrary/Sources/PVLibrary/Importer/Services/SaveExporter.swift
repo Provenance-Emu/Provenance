@@ -532,7 +532,7 @@ public final class SaveExporter: @unchecked Sendable {
     /// within that directory, guarding against Zip Slip / path traversal in untrusted archives.
     ///
     /// - Throws: `SaveExportError.invalidBundle` if any entry resolves outside `directory`.
-    func validateNoBundleEscape(in directory: URL) throws {
+    private func validateNoBundleEscape(in directory: URL) throws {
         let resolvedBase = directory.resolvingSymlinksInPath().path
         let fm = FileManager.default
         guard let enumerator = fm.enumerator(at: directory,

@@ -330,6 +330,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json))
     }
 
+
     // MARK: - Error descriptions
 
     func testParseErrorDescriptions() {
@@ -403,6 +404,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertEqual(r1, r2)
         XCTAssertNotEqual(r1, r3)
     }
+
 
     // MARK: - SaveFileCategory CaseIterable
 
