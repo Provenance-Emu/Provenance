@@ -1,5 +1,5 @@
 {
-  "originHash": "bc566d21e494130d0c3d45563599dab4f92776f18a2fcea59615f10dfc860659",
+  "originHash": "57ee84b9a8a7a7268f10ef762628fdcacfcfc03dfbbf9e29eb118a74b1285cd3",
   "pins": [
     {
       "identity": "bitbytedata",
@@ -24,8 +24,9 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/sindresorhus/Defaults.git",
       "state": {
-        "revision": "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
-        "version": "9.0.2"
+        "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+        "version": "9.0.8",
+        "branch": null
       }
     },
     {
@@ -69,7 +70,6 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/RxSwiftCommunity/RxRealm.git",
       "state": {
-        "branch": "main",
         "revision": "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69"
       }
     },
@@ -177,8 +177,8 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/swiftlang/swift-syntax.git",
       "state": {
-        "revision": "0687f71944021d616d34d922343dcef086855920",
-        "version": "600.0.1"
+        "revision": "4799286537280063c85a32f09884cfbca301b1a1",
+        "version": "602.0.0"
       }
     },
     {
@@ -186,8 +186,7 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state": {
-        "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
-        "version": "1.0.0"
+        "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
       }
     },
     {
@@ -195,8 +194,8 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/JoeMatt/SwiftMacros.git",
       "state": {
-        "revision": "cb30be65a3f121d756c98d442194c41eb24e9f09",
-        "version": "1.0.0"
+        "revision": "d7d0fb37a560420af824e90db8a645444f727328",
+        "version": "1.0.3"
       }
     },
     {
@@ -206,15 +205,6 @@
       "state": {
         "revision": "510d61c954f27b196bef732b06125e29a619ebe6",
         "version": "0.3.16"
-      }
-    },
-    {
-      "identity": "xctest-dynamic-overlay",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-      "state": {
-        "revision": "dfd70507def84cb5fb821278448a262c6ff2bbad",
-        "version": "1.9.0"
       }
     },
     {
