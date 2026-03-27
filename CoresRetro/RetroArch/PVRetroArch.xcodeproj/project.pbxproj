@@ -1303,7 +1303,7 @@
 				B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */,
-				B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */,
+				C86389E3F1804938B127381A /* XCLocalSwiftPackageReference "../../Dependencies/LzhArchive" */,
 				B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */,
 				B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */,
 				B3DD7A6B2ECBFA220022FF70 /* XCLocalSwiftPackageReference "../../PVSettings" */,
@@ -2403,6 +2403,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Dependencies/ZipArchive;
 		};
+		C86389E3F1804938B127381A /* XCLocalSwiftPackageReference "../../Dependencies/LzhArchive" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Dependencies/LzhArchive;
+		};
 		B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVWebServer;
@@ -2432,14 +2436,6 @@
 			requirement = {
 				branch = main;
 				kind = branch;
-			};
-		};
-		B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ctreffs/SwiftSDL2.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -2484,7 +2480,7 @@
 		};
 		B3EEF5DF2D66B0850080CA51 /* LzhArchive */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */;
+			package = C86389E3F1804938B127381A /* XCLocalSwiftPackageReference "../../Dependencies/LzhArchive" */;
 			productName = LzhArchive;
 		};
 		B3EEF5E22D66B0D00080CA51 /* ZipArchive */ = {

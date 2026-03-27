@@ -42,12 +42,6 @@ let package = Package(
         // SwiftGenPlugin
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
 
-        // MARK: Macros
-
-        // SwiftMacros
-        // https://github.com/ShenghaiWang/SwiftMacros?tab=readme-ov-file
-        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", from: "1.0.3"),
-
         // swift-macro-toolkit
         // https://github.com/stackotter/swift-macro-toolkit
 //        .package(url: "https://github.com/stackotter/swift-macro-toolkit.git", from: "510.0.0"),
@@ -77,7 +71,6 @@ let package = Package(
         .target(
             name: "PVCoreLoader",
             dependencies: [
-                "SwiftMacros",
                 "PVCoreBridge",
                 .product(name: "PVPrimitives", package: "PVPrimitives"),
                 "PVEmulatorCore",

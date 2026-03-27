@@ -95,9 +95,9 @@
         "package": "Defaults",
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
-          "branch": null,
+          "branch": "main",
           "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
-          "version": "9.0.8"
+          "version": null
         }
       },
       {
@@ -627,8 +627,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
-          "revision": "4799286537280063c85a32f09884cfbca301b1a1",
-          "version": "602.0.0"
+          "revision": "2b59c0c741e9184ab057fd22950b491076d42e91",
+          "version": "603.0.0"
         }
       },
       {
@@ -647,15 +647,6 @@
           "branch": null,
           "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
           "version": null
-        }
-      },
-      {
-        "package": "SwiftMacros",
-        "repositoryURL": "https://github.com/JoeMatt/SwiftMacros.git",
-        "state": {
-          "branch": null,
-          "revision": "d7d0fb37a560420af824e90db8a645444f727328",
-          "version": "1.0.3"
         }
       },
       {
@@ -692,15 +683,6 @@
           "branch": null,
           "revision": "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
           "version": "2.2.1"
-        }
-      },
-      {
-        "package": "xctest-dynamic-overlay",
-        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-        "state": {
-          "branch": null,
-          "revision": "dfd70507def84cb5fb821278448a262c6ff2bbad",
-          "version": "1.9.0"
         }
       },
       {

@@ -34,7 +34,6 @@ let package = Package(
 
         /// Local fork aligned with swift-syntax 600.x
         .package(path: "../Dependencies/HexColors"),
-        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", from: "1.0.1"),
     ],
 
     // MARK: - Targets
@@ -46,7 +45,6 @@ let package = Package(
                 "PVLogging",
                 "PVSettings",
                 "HexColors",
-                "SwiftMacros",
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")],
             linkerSettings: [

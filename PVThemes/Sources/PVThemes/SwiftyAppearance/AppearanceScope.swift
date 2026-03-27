@@ -8,12 +8,10 @@
 
 #if canImport(UIKit)
 import UIKit
-import SwiftMacros
 
 internal struct AppearanceScope: Sendable {
     @MainActor internal static var main = AppearanceScope()
 
-    @AddAssociatedValueVariable
     private enum StackElement: Sendable {
         case nothing
         case traitCollection(UITraitCollection)

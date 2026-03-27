@@ -21,15 +21,6 @@
       }
     },
     {
-      "identity": "swiftmacros",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/JoeMatt/SwiftMacros.git",
-      "state": {
-        "branch": "main",
-        "revision": "cb30be65a3f121d756c98d442194c41eb24e9f09"
-      }
-    },
-    {
       "identity": "xctest-dynamic-overlay",
       "kind": "remoteSourceControl",
       "location": "https://github.com/pointfreeco/xctest-dynamic-overlay",

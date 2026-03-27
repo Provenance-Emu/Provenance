@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftMacros
 import Observation
 import Combine
 #if canImport(UIKit)

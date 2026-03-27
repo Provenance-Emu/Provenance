@@ -190,15 +190,6 @@
       }
     },
     {
-      "identity": "swiftmacros",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/JoeMatt/SwiftMacros.git",
-      "state": {
-        "revision": "d7d0fb37a560420af824e90db8a645444f727328",
-        "version": "1.0.3"
-      }
-    },
-    {
       "identity": "unrar.swift",
       "kind": "remoteSourceControl",
       "location": "https://github.com/mtgto/Unrar.swift.git",

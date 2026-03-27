@@ -37,15 +37,6 @@
         "branch": "develop",
         "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
       }
-    },
-    {
-      "identity": "swiftmacros",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/JoeMatt/SwiftMacros.git",
-      "state": {
-        "branch": "main",
-        "revision": "c7430902f056432a07803f8580263b4acd7753f1"
-      }
     }
   ],
   "version": 3

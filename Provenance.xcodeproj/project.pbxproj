@@ -660,7 +660,6 @@
 		B396209C2C66E1F30094F6F0 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B396209B2C66E1F30094F6F0 /* PVSupport */; };
 		B396209E2C66E1FC0094F6F0 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B396209D2C66E1FC0094F6F0 /* PVLogging */; };
 		B39620A02C66E20B0094F6F0 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B396209F2C66E20B0094F6F0 /* PVCoreBridge */; };
-		B39680492CE720E300E1AB6D /* Perception in Frameworks */ = {isa = PBXBuildFile; productRef = B39680482CE720E300E1AB6D /* Perception */; };
 		B39B10AD2DAF3D16004EEF79 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39B10AC2DAF3D16004EEF79 /* TVServices.framework */; };
 		B39B10BC2DAF3FF8004EEF79 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BB2DAF3FF8004EEF79 /* Defaults */; };
 		B39B10BE2DAF4000004EEF79 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BD2DAF4000004EEF79 /* PVLibrary */; };
@@ -739,7 +738,6 @@
 		B3A47B282F5677C9004A995B /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = FF0F320B7D5932470770B65E /* Defaults */; };
 		B3A47B292F5677C9004A995B /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; productRef = 4D15F087BB2592ED2DD7EE8D /* SiriusRating */; };
 		B3A47B2A2F5677C9004A995B /* FreemiumKit in Frameworks */ = {isa = PBXBuildFile; productRef = BF22FE93F78CC6239039CD8F /* FreemiumKit */; };
-		B3A47B2B2F5677C9004A995B /* Perception in Frameworks */ = {isa = PBXBuildFile; productRef = 8D5923F5D6B5F80152BC7B4C /* Perception */; };
 		B3A47B2C2F5677C9004A995B /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4E9B7E289A972E85DD3226 /* PVFeatureFlags */; };
 		B3A47B2D2F5677C9004A995B /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */; };
 		B3A47B2E2F5677C9004A995B /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 53040F2E23B73F97BE1CAB5D /* OpenSSL */; };
@@ -2193,6 +2191,9 @@
 		B327719A2D6816D2009C728C /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
 		B32771B82D6816D2009C728C /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
 		B32771BC2D6816D2009C728C /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
+		B3287500AA001100BB000001 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3287500AA001100BB000002 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3287500AA001100BB000003 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B328A4342D695BB0005ABA6F /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
 		B328A4D02D695BB0005ABA6F /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
 		B328A4EE2D695BB0005ABA6F /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
@@ -2658,9 +2659,6 @@
 		B3CE7FFF2873FB7600B6BB5A /* PVVecXGL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecXGL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CEC5A62794CD8C004A7CC1 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Strings.strings; sourceTree = "<group>"; };
 		B3CEC5A72794CD8D004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B3287500AA001100BB000001 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B3287500AA001100BB000002 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B3287500AA001100BB000003 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B3D1800828963AD3001207AF /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D1800D28963E80001207AF /* PVBliss-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVBliss-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D180892896437C001207AF /* PVBliss-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVBliss-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3863,7 +3861,6 @@
 				B35EEFD42C6C6D1A00EBD1A8 /* PVThemes in Frameworks */,
 				B35EEFD52C6C6D1A00EBD1A8 /* Reachability in Frameworks */,
 				B35EEFD62C6C6D1A00EBD1A8 /* SteamController in Frameworks */,
-				B39680492CE720E300E1AB6D /* Perception in Frameworks */,
 				B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */,
 				B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */,
 				B31553622CC2FD5500C472CA /* PVPPSSPP.framework in Frameworks */,
@@ -4200,7 +4197,6 @@
 				B3A47B2D2F5677C9004A995B /* WhatsNewKit in Frameworks */,
 				B3A47B2C2F5677C9004A995B /* PVFeatureFlags in Frameworks */,
 				B336F3172F6E862E004ABEE6 /* PVCheevos in Frameworks */,
-				B3A47B2B2F5677C9004A995B /* Perception in Frameworks */,
 				B3A47B2A2F5677C9004A995B /* FreemiumKit in Frameworks */,
 				B3A47B292F5677C9004A995B /* SiriusRating in Frameworks */,
 				B3A47B282F5677C9004A995B /* Defaults in Frameworks */,
@@ -7712,7 +7708,6 @@
 				FF0F320B7D5932470770B65E /* Defaults */,
 				4D15F087BB2592ED2DD7EE8D /* SiriusRating */,
 				BF22FE93F78CC6239039CD8F /* FreemiumKit */,
-				8D5923F5D6B5F80152BC7B4C /* Perception */,
 				9C4E9B7E289A972E85DD3226 /* PVFeatureFlags */,
 				7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */,
 				53040F2E23B73F97BE1CAB5D /* OpenSSL */,
@@ -8058,7 +8053,6 @@
 				B39342132CC57837008AA673 /* MoltenVK */,
 				B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */,
 				B37228CB2CCDC7D300E6F627 /* FreemiumKit */,
-				B39680482CE720E300E1AB6D /* Perception */,
 				B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */,
 				B3E77F8B2D1F5819004A3AD2 /* PVFeatureFlags */,
 				B35F93E22D2F811B0016E633 /* WhatsNewKit */,
@@ -8609,7 +8603,6 @@
 				B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */,
 				B37228C82CCDC7A700E6F627 /* XCRemoteSwiftPackageReference "FreemiumKit" */,
 				B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
-				B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */,
 				B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */,
 				B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 				F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
@@ -17031,14 +17024,6 @@
 				minimumVersion = 5.0.2;
 			};
 		};
-		B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-perception.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.9;
-			};
-		};
 		B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
@@ -17189,11 +17174,6 @@
 		855FAFEACE11956CEF62A156 /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
-		};
-		8D5923F5D6B5F80152BC7B4C /* Perception */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */;
-			productName = Perception;
 		};
 		930498C52A93073800BF257F /* AltKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -18061,11 +18041,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */;
 			productName = PVCoreBridge;
-		};
-		B39680482CE720E300E1AB6D /* Perception */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */;
-			productName = Perception;
 		};
 		B39B10BB2DAF3FF8004EEF79 /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
