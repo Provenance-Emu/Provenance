@@ -412,13 +412,11 @@ typedef struct PVThinLibretroSymbols {
     // _vulkanFrameIndex alternates 0↔1 every frame; get_sync_index_mask returns 3 (both slots valid).
     VkFence  _vulkanFrameFences[2];
     uint32_t _vulkanFrameIndex;
-    // Fence lifecycle functions
-    VkResult (*_vkCreateFence)(VkDevice device, const void *pCreateInfo,
-                               const void *pAllocator, VkFence *pFence);
-    void     (*_vkDestroyFence)(VkDevice device, VkFence fence, const void *pAllocator);
-    VkResult (*_vkWaitForFences)(VkDevice device, uint32_t fenceCount, const VkFence *pFences,
-                                 uint32_t waitAll, uint64_t timeout);
-    VkResult (*_vkResetFences)(VkDevice device, uint32_t fenceCount, const VkFence *pFences);
+    // Fence lifecycle functions (use PFN_ typedefs for full type safety)
+    PFN_vkCreateFence  _vkCreateFence;
+    PFN_vkDestroyFence _vkDestroyFence;
+    PFN_vkWaitForFences _vkWaitForFences;
+    PFN_vkResetFences  _vkResetFences;
 #endif
 
     // Serialization quirks bitmask
@@ -4916,19 +4914,18 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     // Load fence functions for double-buffer synchronisation (non-fatal if unavailable;
     // the code falls back to vkQueueWaitIdle when any fence function is missing).
-    _vkCreateFence = (VkResult (*)(VkDevice, const void *, const void *, VkFence *))
-        _vkGetDeviceProcAddr(_vulkanDevice, "vkCreateFence");
-    _vkDestroyFence = (void (*)(VkDevice, VkFence, const void *))
-        _vkGetDeviceProcAddr(_vulkanDevice, "vkDestroyFence");
-    _vkWaitForFences = (VkResult (*)(VkDevice, uint32_t, const VkFence *, uint32_t, uint64_t))
-        _vkGetDeviceProcAddr(_vulkanDevice, "vkWaitForFences");
-    _vkResetFences = (VkResult (*)(VkDevice, uint32_t, const VkFence *))
-        _vkGetDeviceProcAddr(_vulkanDevice, "vkResetFences");
+    _vkCreateFence  = (PFN_vkCreateFence) _vkGetDeviceProcAddr(_vulkanDevice, "vkCreateFence");
+    _vkDestroyFence = (PFN_vkDestroyFence)_vkGetDeviceProcAddr(_vulkanDevice, "vkDestroyFence");
+    _vkWaitForFences = (PFN_vkWaitForFences)_vkGetDeviceProcAddr(_vulkanDevice, "vkWaitForFences");
+    _vkResetFences  = (PFN_vkResetFences) _vkGetDeviceProcAddr(_vulkanDevice, "vkResetFences");
 
     if (_vkCreateFence && _vkDestroyFence && _vkWaitForFences && _vkResetFences) {
-        // VK_STRUCTURE_TYPE_FENCE_CREATE_INFO = 8, VK_FENCE_CREATE_SIGNALED_BIT = 0x00000001.
         // Pre-signaled so the very first thin_vulkan_wait_sync_index returns immediately.
-        struct { int sType; const void *pNext; uint32_t flags; } fenceCI = { 8, NULL, 1 };
+        VkFenceCreateInfo fenceCI = {
+            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+            .pNext = NULL,
+            .flags = VK_FENCE_CREATE_SIGNALED_BIT,
+        };
         _vulkanFrameIndex = 0;
         BOOL fencesOK = YES;
         for (int i = 0; i < 2; i++) {
