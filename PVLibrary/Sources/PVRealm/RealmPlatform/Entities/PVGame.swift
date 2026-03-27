@@ -38,6 +38,12 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     }
 
     @Persisted public var requiresSync: Bool = true
+    /// Raw integer stored in Realm; use `matchSource` computed property for type-safe access
+    @Persisted public var matchSourceRaw: Int = GameMatchSource.none.rawValue
+    /// Bitmask of fields the user has explicitly customized; use `userCustomizedFields` for type-safe access
+    @Persisted public var userCustomizedFieldsMask: Int = 0
+    /// Date of the last metadata lookup attempt (nil = never looked up)
+    @Persisted public var lastMetadataLookupDate: Date? = nil
     @Persisted(indexed: true) public var isFavorite: Bool = false
 
     // CloudKit sync properties
@@ -323,3 +329,40 @@ public extension Realm {
 //        return Predicate(\.date, .greaterThanOrEqualTo, Date().addingTimeInterval(-TimeInterval(days) * 24 * 60 * 60))
 //    }
 //}
+
+// MARK: - Metadata tracking
+
+public extension PVGame {
+    /// Type-safe access to how this game's metadata was sourced
+    var matchSource: GameMatchSource {
+        get { GameMatchSource(rawValue: matchSourceRaw) ?? .none }
+        set { matchSourceRaw = newValue.rawValue }
+    }
+
+    /// Type-safe access to the set of fields the user has customized
+    var userCustomizedFields: GameCustomizedFields {
+        get { GameCustomizedFields(rawValue: userCustomizedFieldsMask) }
+        set { userCustomizedFieldsMask = newValue.rawValue }
+    }
+
+    /// Returns true if the game has never been successfully matched against a database
+    var isUnmatched: Bool {
+        matchSource == .none || requiresSync
+    }
+
+    /// Returns true if the game is missing key metadata fields
+    var hasMissingMetadata: Bool {
+        let missingFields = [gameDescription, developer, publisher, originalArtworkURL.nilIfEmpty]
+            .filter { $0 == nil || $0?.isEmpty == true }
+        return missingFields.count >= 2
+    }
+
+    /// Returns true if a name-based metadata re-lookup should be triggered
+    var shouldTriggerMetadataLookup: Bool {
+        isUnmatched || hasMissingMetadata
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? { isEmpty ? nil : self }
+}
