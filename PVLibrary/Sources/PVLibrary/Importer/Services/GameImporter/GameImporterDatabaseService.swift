@@ -61,6 +61,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
          gameImporterFileService: GameImporterFileServicing = GameImporterFileService()) {
         self.lookup = lookup
         self.gameImporterFileService = gameImporterFileService
+        DiscSerialExtractorRegistry.shared.registerDefaultsSync()
     }
 
     func setRomsPath(url: URL) {
@@ -237,6 +238,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent))) //, relativeRoot: .iCloud))
             }
         }
+
+        // Attempt disc serial extraction for CD-ROM items before computing MD5.
+        // Serial lookups read only ~32–512 KB vs. a full MD5 over 650 MB, saving
+        // several seconds per PSX/Saturn/Dreamcast/GameCube disc import.
+        //
+        // We do NOT return early on a serial hit: the MD5 is still required for
+        // Realm dedup checks and as the Realm primary key.
+        await trySerialMetadataLookup(for: queueItem, game: game, systemID: systemID)
 
         DLOG("About to calculate MD5 for game: \(partialPath)")
         let md5StartTime = Date()
@@ -1074,5 +1083,62 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     func getArtworkMappings() async throws -> ArtworkMapping {
         return try await lookup.getArtworkMappings()
+    }
+
+    // MARK: - Disc Serial Extraction
+
+    /// Attempts to extract a disc serial from the queue item's file, look it up
+    /// in the ROM database, and apply the resulting metadata to `game` in-place.
+    ///
+    /// This is a best-effort step: failures are logged but do not abort import.
+    ///
+    /// - Parameters:
+    ///   - queueItem: The import queue item whose URL will be inspected.
+    ///   - game: The `PVGame` to update if a serial match is found.
+    ///   - systemID: The already-resolved `SystemIdentifier` for the item.
+    private func trySerialMetadataLookup(
+        for queueItem: ImportQueueItem,
+        game: PVGame,
+        systemID: SystemIdentifier
+    ) async {
+        let serialStart = Date()
+        guard let serialResult = await DiscSerialExtractorRegistry.shared
+                .extractSerial(from: queueItem.url, systemHint: systemID.rawValue) else {
+            VLOG("Serial extraction: no serial found for \(queueItem.url.lastPathComponent)")
+            return
+        }
+
+        // Store the extracted serial on the game so it is persisted even if the
+        // DB lookup fails (useful for manual matching later).
+        game.romSerial = serialResult.serial
+
+        // Resolve the system hint, falling back to the already-resolved systemID.
+        let lookupSystemID: SystemIdentifier
+        if let hint = serialResult.systemIdentifierHint,
+           let hinted = SystemIdentifier(rawValue: hint) {
+            lookupSystemID = hinted
+        } else {
+            lookupSystemID = systemID
+        }
+
+        do {
+            guard let metadata = try await lookup.searchROM(
+                bySerial: serialResult.serial,
+                systemID: lookupSystemID
+            ) else {
+                let elapsed = Date().timeIntervalSince(serialStart)
+                ILOG("Serial lookup: no DB match for '\(serialResult.serial)' (\(String(format: "%.2f", elapsed))s)")
+                return
+            }
+
+            let elapsed = Date().timeIntervalSince(serialStart)
+            ILOG("Serial lookup: matched '\(serialResult.serial)' → '\(metadata.gameTitle)' in \(String(format: "%.2f", elapsed))s")
+
+            // Apply metadata early — overrides the filename-derived title when
+            // the serial lookup finds a confident match.
+            _ = updateGameFields(game, metadata: metadata, forceRefresh: false)
+        } catch {
+            WLOG("Serial lookup: error for '\(serialResult.serial)': \(error)")
+        }
     }
 }
