@@ -143,6 +143,11 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
     fileprivate func receiveHostPort(_ port: UInt16, from hostPlayer: GKPlayer) {
         ILOG("[GameKit] Received host port: \(port)")
         let hostDisplayName = hostPlayer.displayName
+        // TODO: GKMatch does not expose raw IP addresses — all traffic is routed through
+        // Apple's Game Center relay. The RA.ME relay (set below) will handle the actual
+        // TCP routing using the relay traversal code rather than a direct IP connection.
+        // A future phase should exchange a relay traversal code (e.g. RA.ME session token)
+        // instead of relying on the display name as a placeholder hostAddress.
         let room = NetplayRoom(
             hostName: hostDisplayName,
             gameName: gameName,
@@ -200,7 +205,15 @@ struct GKMatchmakerRepresentable: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> GKMatchmakerViewController {
-        let vc = GKMatchmakerViewController(matchRequest: request)!
+        guard let vc = GKMatchmakerViewController(matchRequest: request) else {
+            // GKMatchmakerViewController(matchRequest:) returns nil for invalid requests
+            // (e.g. minPlayers < 2). Fire the cancel callback so the sheet is dismissed.
+            ELOG("[GameKit] GKMatchmakerViewController init returned nil — invalid GKMatchRequest")
+            onCancelled()
+            // Return a throw-away instance so the non-optional return type is satisfied;
+            // it will be dismissed immediately via onCancelled above.
+            return GKMatchmakerViewController(matchRequest: GKMatchRequest())!
+        }
         vc.matchmakerDelegate = context.coordinator
         return vc
     }

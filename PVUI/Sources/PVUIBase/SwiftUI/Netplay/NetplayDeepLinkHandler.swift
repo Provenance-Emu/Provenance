@@ -11,14 +11,6 @@ import SwiftUI
 import PVNetplay
 import PVLogging
 
-/// Parsed representation of a `provenance://netplay/join` deep link.
-public struct NetplayJoinRequest: Equatable {
-    public let host: String
-    public let port: UInt16
-    public let relay: String?
-    public let gameName: String?
-}
-
 /// View modifier that listens for `Notification.Name.netplayJoinRequest` and
 /// presents a confirmation alert so the user can accept or decline the invite.
 ///
@@ -72,24 +64,15 @@ public struct NetplayDeepLinkHandlerModifier: ViewModifier {
     // MARK: - Helpers
 
     private func parseNotification(_ notification: Notification) -> NetplayJoinRequest? {
-        guard let info = notification.userInfo,
-              let host = info["host"] as? String, !host.isEmpty else {
-            WLOG("[NetplayDeepLink] Received malformed netplayJoinRequest — missing host")
+        guard let info = notification.userInfo else {
+            WLOG("[NetplayDeepLink] Received netplayJoinRequest with no userInfo")
             return nil
         }
-
-        let portValue: UInt16
-        if let portRaw = info["port"] as? String, let parsed = UInt16(portRaw), parsed >= 1 {
-            portValue = parsed
-        } else if let portInt = info["port"] as? Int, portInt >= 1, portInt <= 65535 {
-            portValue = UInt16(portInt)
-        } else {
-            portValue = 55435
+        let request = NetplayJoinRequest.from(notificationUserInfo: info)
+        if request == nil {
+            WLOG("[NetplayDeepLink] Received malformed netplayJoinRequest — missing host")
         }
-
-        let relay = info["relay"] as? String
-        let gameName = info["game"] as? String
-        return NetplayJoinRequest(host: host, port: portValue, relay: relay, gameName: gameName)
+        return request
     }
 
     @MainActor

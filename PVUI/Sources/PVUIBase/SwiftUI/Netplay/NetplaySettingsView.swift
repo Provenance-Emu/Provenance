@@ -12,7 +12,9 @@ import PVNetplay
 import PVFeatureFlags
 
 /// Persistent keys for netplay user defaults.
-private enum NetplayDefaultsKey {
+/// Declared `internal` (not `private`) so sibling views in the same module
+/// (e.g. `NetplayInviteView`) can read relay/port values without duplicating key strings.
+enum NetplayDefaultsKey {
     static let nickname         = "netplay.nickname"
     static let port             = "netplay.port"
     static let relayServer      = "netplay.relayServer"

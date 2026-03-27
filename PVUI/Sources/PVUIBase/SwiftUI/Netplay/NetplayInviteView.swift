@@ -169,8 +169,8 @@ public struct NetplayInviteView: View {
             hostAddress = room.hostAddress == "0.0.0.0" ? "" : room.hostAddress
             port = String(room.port)
         }
-        // Pre-fill relay from stored defaults
-        let stored = UserDefaults.standard.string(forKey: "netplay.relayServer") ?? ""
+        // Pre-fill relay from stored defaults (key shared with NetplaySettingsView)
+        let stored = UserDefaults.standard.string(forKey: NetplayDefaultsKey.relayServer) ?? ""
         if !stored.isEmpty {
             useRelay = true
             relayServer = stored
