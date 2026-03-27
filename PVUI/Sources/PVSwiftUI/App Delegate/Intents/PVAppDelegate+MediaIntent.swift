@@ -134,8 +134,11 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
         completion: @escaping (INPlayMediaIntentResponse) -> Void
     ) {
         ILOG("PVAppDelegate+MediaIntent: launching '\(game.title)'")
+        // Pass the MD5 string (Sendable) rather than the Realm object so we don't
+        // cross thread boundaries with a live, thread-confined PVGame instance.
+        // prepareGameForEmulatorScene() will re-fetch the game on the main thread.
         Task { @MainActor in
-            AppState.shared.appOpenAction = .openGame(game)
+            AppState.shared.appOpenAction = .openMD5(md5)
         }
         let activity = NSUserActivity(activityType: "com.provenance.open-game")
         activity.userInfo = ["md5": md5]

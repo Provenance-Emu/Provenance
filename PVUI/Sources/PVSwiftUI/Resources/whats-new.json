@@ -588,24 +588,6 @@
     ]
   },
   {
-    "version": "3.9.0",
-    "title": "Siri Media Integration",
-    "features": [
-      {
-        "symbolName": "waveform",
-        "symbolColor": "purple",
-        "title": "\"Hey Siri, play …\" Support",
-        "subtitle": "Ask Siri to launch any game — \"Hey Siri, play Donkey Kong Country on Provenance\" opens it instantly, no Shortcuts setup required."
-      },
-      {
-        "symbolName": "brain.head.profile",
-        "symbolColor": "blue",
-        "title": "Siri Learns Your Library",
-        "subtitle": "Every game launch teaches Siri your habits so suggestions get smarter over time."
-      }
-    ]
-  },
-  {
     "version": "3.8.1",
     "title": "DualSense & DS4 Enhancements",
     "features": [
@@ -632,6 +614,24 @@
         "symbolColor": "green",
         "title": "Share / Create Button",
         "subtitle": "The Share (DS4) and Create (DualSense) buttons are now exposed as bindable actions in controller settings."
+      }
+    ]
+  },
+  {
+    "version": "3.9.0",
+    "title": "Siri Media Integration",
+    "features": [
+      {
+        "symbolName": "waveform",
+        "symbolColor": "purple",
+        "title": "\"Hey Siri, play …\" Support",
+        "subtitle": "Ask Siri to launch any game — \"Hey Siri, play Donkey Kong Country on Provenance\" opens it instantly, no Shortcuts setup required."
+      },
+      {
+        "symbolName": "brain.head.profile",
+        "symbolColor": "blue",
+        "title": "Siri Learns Your Library",
+        "subtitle": "Every game launch teaches Siri your habits so suggestions get smarter over time."
       }
     ]
   }

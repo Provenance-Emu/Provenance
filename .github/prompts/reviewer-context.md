@@ -108,6 +108,16 @@ Higher tiers may import lower tiers. **Never the reverse.**
 
 ## New Patterns (March 2026)
 
+### SiriKit INPlayMediaIntent — In-App Handler Pattern (added in #3550)
+- `PVAppDelegate` conforms to `INPlayMediaIntentHandling` in `PVAppDelegate+MediaIntent.swift`.
+- `application(_:handlerFor:)` returns `self` for `INPlayMediaIntent` — **no separate Intents Extension needed**.
+- All Realm lookups in the handler run on SiriKit's background thread using a fresh
+  `Realm(configuration: RealmConfiguration.realmConfig)` instance.
+- **Never** pass a `PVGame` object from the background-thread Realm to `Task { @MainActor in }`.
+  Use `.openMD5(md5)` (a Sendable String) instead and let `prepareGameForEmulatorScene()` re-fetch on main.
+- `INInteraction` donations are fire-and-forget; errors are logged but do not affect UX.
+- The `donateMediaIntent(for:)` call site in `ProvenanceApp.swift` is iOS-only and `@available(iOS 14.0, *)`.
+
 ### PVRumbleProtocol / Haptics
 - `PVRumbleProtocol` in `PVCoreBridge/Features/` — cores that support rumble conform to this.
 - `PVHapticsManager` manages device and controller haptics; guard tvOS paths with `#if !os(tvOS)`.
