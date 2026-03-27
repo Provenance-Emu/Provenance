@@ -58,7 +58,9 @@ class ThumbnailProvider: QLThumbnailProvider {
         let ext = (filename as NSString).pathExtension.lowercased()
         // .pvsav = Provenance Save State bundle (canonical extension for SpotlightImportExtension)
         // .svs   = raw emulator save state slot file (used by PVEmulatorViewController)
-        return ext == "pvsav" || ext == "svs" || fileURL.path.contains("Save States")
+        // pathComponents check ensures "Save States" matches an exact directory component,
+        // not a substring (avoids false positives like "My Save States Collection/game.rom").
+        return ext == "pvsav" || ext == "svs" || fileURL.pathComponents.contains("Save States")
     }
 
     /// Draws a Provenance-branded placeholder when no artwork is available.

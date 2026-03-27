@@ -37,8 +37,11 @@ public struct SystemIconProvider {
         // Handhelds — Sony
         case id.contains("psp") || id.contains("psv") || id.contains("vita"):
             return "handheld.fill"
-        // Handhelds — Sega
-        case id.contains("gamegear") || id.contains("lynx") || id.contains("wonderswan"):
+        // Handhelds — Sega / Other
+        // Note: WonderSwan uses short identifiers ".ws" / ".wsc" so we match by suffix
+        // as well as the full "wonderswan" name.
+        case id.contains("gamegear") || id.contains("lynx")
+             || id.contains("wonderswan") || id.hasSuffix(".ws") || id.hasSuffix(".wsc"):
             return "handheld.fill"
         // Handhelds — generic
         case id.contains("portable") || id.contains("handheld") || id.contains("pocket"):

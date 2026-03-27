@@ -81,4 +81,50 @@ final class SystemIconProviderTests: XCTestCase {
         let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.colecovision")
         XCTAssertEqual(icon, "gamecontroller.fill")
     }
+
+    func testMAMEReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.mame")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testNeoGeoReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.neogeo")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testCPS1ReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.cps1")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testAtariSTReturnsDesktop() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.atarist")
+        XCTAssertEqual(icon, "desktopcomputer")
+    }
+
+    func testSegaGenesisReturnsGameController() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.genesis")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
+
+    func testPlayStationReturnsGameController() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.psx")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
+
+    func testGameGearReturnsHandheld() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.gamegear")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
+
+    func testWonderSwanReturnsHandheld() {
+        // WonderSwan uses short-form ".ws" identifier — verify the suffix match works.
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.ws")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
+
+    func testWonderSwanColorReturnsHandheld() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.wsc")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
 }
