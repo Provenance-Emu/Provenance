@@ -76,8 +76,15 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
         for item in mediaItems {
             // If we have an MD5 identifier, validate it exists.
             if let md5 = item.identifier, !md5.isEmpty {
-                if fetchMediaGame(byMD5: md5) != nil {
-                    results.append(.success(with: item))
+                if let game = fetchMediaGame(byMD5: md5) {
+                    // Return a resolved item with the game's title so Siri can display it.
+                    let resolved = INMediaItem(
+                        identifier: md5,
+                        title: game.title,
+                        type: .game,
+                        artwork: nil
+                    )
+                    results.append(.success(with: resolved))
                 } else {
                     results.append(.unsupported())
                 }

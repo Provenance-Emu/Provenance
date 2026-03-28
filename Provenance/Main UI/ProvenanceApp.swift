@@ -333,7 +333,7 @@ extension ProvenanceApp {
             appState.emulationUIState.currentSaveState = frozen
             appState.emulationUIState.currentCore = frozen.core?.freeze()
             #if os(iOS)
-            if #available(iOS 14.0, *), let game = saveState.game {
+            if #available(iOS 14.0, *), let game = frozen.game {
                 appDelegate.donateMediaIntent(for: game)
             }
             #endif
