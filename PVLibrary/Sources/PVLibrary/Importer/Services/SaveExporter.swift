@@ -259,6 +259,152 @@ public final class SaveExporter: @unchecked Sendable {
         try? FileManager.default.removeItem(at: url)
     }
 
+    // MARK: - SRAM Export
+
+    /// Exports only battery saves (SRAM) for a game.
+    ///
+    /// - If the battery saves directory contains a single `.srm`/`.sav`/`.ram` file, it is
+    ///   returned directly (copied to a temp location so the caller can share it).
+    /// - If there are multiple files (e.g. a paired `.rtc` clock file), they are bundled into
+    ///   a `.zip` for convenience.
+    ///
+    /// - Parameter game: A `PVGame` object (frozen or live).
+    /// - Returns: URL of the exported file (raw save file or zip). Caller must call
+    ///   `cleanupExport(at:)` when done.
+    /// - Throws: `SaveExportError.noSavesFound` if no battery saves exist on disk,
+    ///   `SaveExportError.invalidBundle` if the game has no ROM file path.
+    public func exportSRAM(for game: PVGame) async throws -> URL {
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        return try await Task.detached(priority: .userInitiated) {
+            try self.performSRAMExport(frozenGame: frozenGame)
+        }.value
+    }
+
+    private func performSRAMExport(frozenGame: PVGame) throws -> URL {
+        guard !frozenGame.isInvalidated else {
+            throw SaveExportError.invalidBundle("Game object is no longer valid.")
+        }
+        guard let romURL = frozenGame.file?.url else {
+            throw SaveExportError.invalidBundle("Cannot export battery save — game has no associated ROM file path.")
+        }
+
+        let fm = FileManager.default
+        let batterySavesDir = Paths.batterySavesPath(forROM: romURL)
+
+        guard fm.fileExists(atPath: batterySavesDir.path),
+              let files = try? fm.contentsOfDirectory(atPath: batterySavesDir.path),
+              !files.isEmpty else {
+            throw SaveExportError.noSavesFound
+        }
+
+        let sanitizedTitle = frozenGame.title
+            .components(separatedBy: CharacterSet.alphanumerics.union(.init(charactersIn: "-_ ")).inverted)
+            .joined()
+            .trimmingCharacters(in: .whitespaces)
+        let safeTitle = sanitizedTitle.isEmpty ? frozenGame.md5Hash : sanitizedTitle
+
+        if files.count == 1, let fileName = files.first {
+            // Single file: copy directly to temp, preserving the extension
+            let srcURL = batterySavesDir.appendingPathComponent(fileName)
+            let ext = srcURL.pathExtension.isEmpty ? "srm" : srcURL.pathExtension
+            let destURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle).\(ext)")
+            try? fm.removeItem(at: destURL)
+            try fm.copyItem(at: srcURL, to: destURL)
+            ILOG("SaveExporter: SRAM export (single file) at \(destURL.path)")
+            return destURL
+        }
+
+        // Multiple files (e.g. .srm + .rtc): bundle into a zip
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let uuidFragment = UUID().uuidString.prefix(8)
+        let zipURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-sram-\(timestamp)-\(uuidFragment).zip")
+        try? fm.removeItem(at: zipURL)
+
+        let success = SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: batterySavesDir.path)
+        guard success else {
+            throw SaveExportError.zipCreationFailed
+        }
+        ILOG("SaveExporter: SRAM export (zip) at \(zipURL.path)")
+        return zipURL
+    }
+
+    // MARK: - SRAM Import
+
+    /// Imports a battery save (SRAM) file for a game.
+    ///
+    /// Accepts `.sav`, `.srm`, `.ram` files or a `.zip` archive containing them.
+    /// The file is copied into the game's battery saves directory, replacing any
+    /// existing file of the same name. No manifest validation is performed — these
+    /// files are cross-emulator compatible by design.
+    ///
+    /// If a `.rtc` (real-time clock) file with the same base name exists alongside
+    /// the source URL, it is also imported automatically.
+    ///
+    /// - Parameters:
+    ///   - fileURL: URL of the `.sav`, `.srm`, `.ram`, or `.zip` file to import.
+    ///   - game: The game to import battery saves for. Must have an associated ROM file URL.
+    /// - Throws: `SaveExportError.invalidBundle` if the game has no ROM file path,
+    ///   or if archive extraction fails.
+    public func importSRAM(from fileURL: URL, for game: PVGame) async throws {
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        try await Task.detached(priority: .userInitiated) {
+            try self.performSRAMImport(fileURL: fileURL, frozenGame: frozenGame)
+        }.value
+    }
+
+    private func performSRAMImport(fileURL: URL, frozenGame: PVGame) throws {
+        guard !frozenGame.isInvalidated else {
+            throw SaveExportError.invalidBundle("Game object is no longer valid.")
+        }
+        guard let romURL = frozenGame.file?.url else {
+            throw SaveExportError.invalidBundle("Cannot import battery save — game has no associated ROM file path.")
+        }
+
+        let fm = FileManager.default
+        let destDir = Paths.batterySavesPath(forROM: romURL)
+        try fm.createDirectory(at: destDir, withIntermediateDirectories: true)
+
+        let ext = fileURL.pathExtension.lowercased()
+
+        if ext == "zip" {
+            // Extract zip contents directly into battery saves directory
+            let tempDir = fm.temporaryDirectory
+                .appendingPathComponent("PVSRAMImport_\(Int(Date().timeIntervalSince1970))_\(UUID().uuidString)", isDirectory: true)
+            defer { try? fm.removeItem(at: tempDir) }
+            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+            guard SSZipArchive.unzipFile(atPath: fileURL.path, toDestination: tempDir.path) else {
+                throw SaveExportError.invalidBundle("Failed to extract SRAM archive.")
+            }
+            try validateNoBundleEscape(in: tempDir)
+
+            let extractedFiles = (try? fm.contentsOfDirectory(atPath: tempDir.path)) ?? []
+            for fileName in extractedFiles {
+                let src = tempDir.appendingPathComponent(fileName)
+                let dest = destDir.appendingPathComponent(fileName)
+                try? fm.removeItem(at: dest)
+                try fm.copyItem(at: src, to: dest)
+            }
+            ILOG("SaveExporter: SRAM import from zip for '\(frozenGame.title)' — \(extractedFiles.count) file(s)")
+        } else {
+            // Single file: copy directly
+            let dest = destDir.appendingPathComponent(fileURL.lastPathComponent)
+            try? fm.removeItem(at: dest)
+            try fm.copyItem(at: fileURL, to: dest)
+
+            // Also import a paired .rtc file if present alongside the source
+            let rtcURL = fileURL.deletingPathExtension().appendingPathExtension("rtc")
+            if fm.fileExists(atPath: rtcURL.path) {
+                let rtcDest = destDir.appendingPathComponent(rtcURL.lastPathComponent)
+                try? fm.removeItem(at: rtcDest)
+                do { try fm.copyItem(at: rtcURL, to: rtcDest) } catch {
+                    WLOG("SaveExporter: could not copy paired .rtc file: \(error.localizedDescription)")
+                }
+            }
+            ILOG("SaveExporter: SRAM import for '\(frozenGame.title)' from \(fileURL.lastPathComponent)")
+        }
+    }
+
     // MARK: - Import
 
     /// Imports saves from a `.pvsave` bundle (or legacy `.zip` v1 bundle) and registers

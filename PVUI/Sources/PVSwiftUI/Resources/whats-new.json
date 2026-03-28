@@ -666,6 +666,24 @@
     ]
   },
   {
+    "version": "3.9.2",
+    "title": "Battery Save Management",
+    "features": [
+      {
+        "symbolName": "memorychip",
+        "symbolColor": "green",
+        "title": "Export Battery Save",
+        "subtitle": "Long-press any game to export its SRAM/battery save file — compatible with Delta, RetroArch, PPSSPP, and other emulators."
+      },
+      {
+        "symbolName": "square.and.arrow.down",
+        "symbolColor": "blue",
+        "title": "Import Battery Save",
+        "subtitle": "Bring in a .sav/.srm/.ram file from any emulator. Paired RTC clock files are imported automatically."
+      }
+    ]
+  },
+  {
     "version": "3.9.1",
     "title": "Netplay Evolution",
     "features": [

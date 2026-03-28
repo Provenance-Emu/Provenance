@@ -176,6 +176,18 @@ public struct GameContextMenu: View {
                     Label("Export Saves", systemImage: "square.and.arrow.up")
                 }
                 .disabled(!hasSaveStates && !hasBatterySaves)
+                if hasBatterySaves {
+                    Button {
+                        contextMenuDelegate?.gameContextMenu(self, didRequestExportSRAMFor: game)
+                    } label: {
+                        Label("Export Battery Save", systemImage: "memorychip")
+                    }
+                }
+                Button {
+                    contextMenuDelegate?.gameContextMenu(self, didRequestImportSRAMFor: game)
+                } label: {
+                    Label("Import Battery Save", systemImage: "square.and.arrow.down")
+                }
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {
