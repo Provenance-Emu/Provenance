@@ -224,8 +224,9 @@ public struct SaveBundleDropModifier: ViewModifier {
                     return
                 }
 
-                try await SaveExporter.shared.importSaves(from: stableURL, for: game)
+                let importResult = try await SaveExporter.shared.importSaves(from: stableURL, for: game)
                 let title = game.title  // frozen objects are immutable and thread-safe
+                ILOG("SaveBundleDropModifier: import ok — sram=\(importResult.sramRestored) states=\(importResult.statesRestored)")
                 await MainActor.run { onResult(.success(gameTitle: title)) }
             } catch {
                 ELOG("SaveBundleDropModifier: import failed: \(error)")

@@ -70,7 +70,7 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "Other", md5: gameMD5, romURL: nil)
 
         do {
-            try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+            _ = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
             XCTFail("Expected gameMismatch to be thrown")
         } catch SaveExportError.gameMismatch {
             // expected
@@ -89,7 +89,9 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "MatchGame", md5: md5, romURL: romFile)
 
         // Should not throw — manifest matches and the zip has no battery/states to restore.
-        try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+        let result = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+        XCTAssertFalse(result.sramRestored, "No battery saves in minimal bundle")
+        XCTAssertEqual(result.statesRestored, 0, "No save states in minimal bundle")
     }
 
     // MARK: - nil ROM URL guard
@@ -102,7 +104,7 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "NoROM", md5: md5, romURL: nil)
 
         do {
-            try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+            _ = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
             XCTFail("Expected invalidBundle to be thrown when romURL is nil")
         } catch SaveExportError.invalidBundle {
             // expected — prevents importing into the shared NULL directory
@@ -375,7 +377,7 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "V2Game", md5: md5, romURL: romFile)
 
         // Should not throw — v2 manifest is valid and MD5 matches.
-        try await SaveExporter.shared.importSaves(from: pvsaveURL, for: game)
+        _ = try await SaveExporter.shared.importSaves(from: pvsaveURL, for: game)
     }
 
     func testImportThrowsGameMismatchForV2BundleWrongMD5() async throws {
@@ -387,11 +389,41 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "V2Other", md5: gameMD5, romURL: nil)
 
         do {
-            try await SaveExporter.shared.importSaves(from: pvsaveURL, for: game)
+            _ = try await SaveExporter.shared.importSaves(from: pvsaveURL, for: game)
             XCTFail("Expected gameMismatch to be thrown")
         } catch SaveExportError.gameMismatch {
             // expected
         }
+    }
+
+    // MARK: - SaveImportResult
+
+    func testImportResultReportsBatterySaveRestored() async throws {
+        let md5 = "batterysram1"
+        let romFile = tempDir.appendingPathComponent("battgame.sfc")
+        try Data().write(to: romFile)
+        let game = makeGame(title: "BattGame", md5: md5, romURL: romFile)
+
+        let zipURL = try makeBundleWithBattery(gameMD5: md5, batteryFilename: "battgame.srm")
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+        XCTAssertTrue(result.sramRestored, "Bundle with battery/ directory should report sramRestored=true")
+    }
+
+    func testImportResultCountsSaveStatesRestored() async throws {
+        let md5 = "statescount1"
+        let romFile = tempDir.appendingPathComponent("stategame.sfc")
+        try Data().write(to: romFile)
+        let game = makeGame(title: "StateGame", md5: md5, romURL: romFile)
+
+        let stateNames = ["AABB1122.00001.svs", "AABB1122.00002.svs"]
+        let zipURL = try makeBundleWithStates(gameMD5: md5, stateFilenames: stateNames)
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let result = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+        XCTAssertFalse(result.sramRestored, "No battery directory in this bundle")
+        XCTAssertEqual(result.statesRestored, stateNames.count, "statesRestored should equal the number of .svs entries in the manifest")
     }
 
     func testGameMD5ReturnsMD5ForV2Bundle() throws {
@@ -430,7 +462,7 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "FutureGame", md5: md5, romURL: romFile)
 
         do {
-            try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+            _ = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
             XCTFail("Expected invalidBundle to be thrown for unsupported schemaVersion 99")
         } catch SaveExportError.invalidBundle {
             // expected
@@ -465,6 +497,51 @@ final class SaveExporterTests: XCTestCase {
         XCTAssertEqual(decoded.saveStates?[0].isAutosave, false)
         XCTAssertEqual(decoded.saveStates?[0].coreIdentifier, "com.provenance.core.snes")
         XCTAssertEqual(decoded.saveStates?[0].userDescription, "Boss fight save")
+    }
+
+    // MARK: - Sidecar copying in export
+
+    func testExportIncludesSVSJsonSidecar() async throws {
+        let md5 = "sidecar123"
+        let romFile = tempDir.appendingPathComponent("sidecar.sfc")
+        try Data().write(to: romFile)
+
+        // Create a save state directory with .svs and its .svs.json sidecar
+        let svsDir = Paths.saveStatePath(forROM: romFile)
+        try FileManager.default.createDirectory(at: svsDir, withIntermediateDirectories: true)
+        let svsFile = svsDir.appendingPathComponent("F7B81E3F.12345.svs")
+        let sidecarFile = svsDir.appendingPathComponent("F7B81E3F.12345.svs.json")
+        try "state data".data(using: .utf8)!.write(to: svsFile)
+        try "{\"id\":\"test\"}".data(using: .utf8)!.write(to: sidecarFile)
+        defer { try? FileManager.default.removeItem(at: svsDir) }
+
+        // Build a game that has the save state referenced
+        let game = makeGame(title: "SidecarGame", md5: md5, romURL: romFile)
+        try realm.write {
+            let thawedGame = game.thaw() ?? realm.objects(PVGame.self).first!
+            let pvFile = PVFile(withURL: svsFile)
+            let saveState = PVSaveState(withGame: thawedGame, core: PVCore(), file: pvFile, image: nil, isAutosave: false)
+            realm.add(saveState)
+        }
+
+        let frozenGame = realm.objects(PVGame.self).first!.freeze()
+        let zipURL = try await SaveExporter.shared.exportSaves(for: frozenGame)
+        defer { SaveExporter.shared.cleanupExport(at: zipURL) }
+
+        // Extract the zip and verify the sidecar is included
+        let extractDir = tempDir.appendingPathComponent("extract-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: extractDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: extractDir) }
+
+        guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: extractDir.path) else {
+            XCTFail("Failed to extract export bundle")
+            return
+        }
+
+        let statesDirExtracted = extractDir.appendingPathComponent("states")
+        let files = (try? FileManager.default.contentsOfDirectory(atPath: statesDirExtracted.path)) ?? []
+        XCTAssertTrue(files.contains("F7B81E3F.12345.svs"), "Export must contain the .svs file")
+        XCTAssertTrue(files.contains("F7B81E3F.12345.svs.json"), "Export must contain the .svs.json sidecar")
     }
 
     // MARK: - Helpers
@@ -502,6 +579,69 @@ final class SaveExporterTests: XCTestCase {
         try data.write(to: stagingDir.appendingPathComponent("manifest.json"))
 
         let zipURL = tempDir.appendingPathComponent("test-export-\(gameMD5).zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        return zipURL
+    }
+
+    /// Creates a `.zip` bundle with a `battery/` directory containing one battery save file.
+    private func makeBundleWithBattery(gameMD5: String, batteryFilename: String) throws -> URL {
+        let stagingDir = tempDir.appendingPathComponent("staging-batt-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        // Write manifest
+        let manifest: [String: String] = [
+            "schemaVersion": "1",
+            "game": gameMD5,
+            "title": "BattGame",
+            "system": "com.provenance.snes",
+            "exportDate": ISO8601DateFormatter().string(from: Date())
+        ]
+        let data = try JSONSerialization.data(withJSONObject: manifest, options: .prettyPrinted)
+        try data.write(to: stagingDir.appendingPathComponent("manifest.json"))
+
+        // Write battery save
+        let batteryDir = stagingDir.appendingPathComponent("battery", isDirectory: true)
+        try FileManager.default.createDirectory(at: batteryDir, withIntermediateDirectories: true)
+        try Data(repeating: 0xAB, count: 64).write(to: batteryDir.appendingPathComponent(batteryFilename))
+
+        let zipURL = tempDir.appendingPathComponent("test-battery-\(gameMD5).zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        return zipURL
+    }
+
+    /// Creates a v2 `.pvsave` bundle with a `states/` directory containing the given `.svs` files.
+    private func makeBundleWithStates(gameMD5: String, stateFilenames: [String]) throws -> URL {
+        let stagingDir = tempDir.appendingPathComponent("staging-states-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        let iso8601 = ISO8601DateFormatter()
+        let stateEntries: [SaveBundleManifestV2.SaveStateEntry] = stateFilenames.map { name in
+            .init(filename: name, date: iso8601.string(from: Date()), isAutosave: false)
+        }
+        let manifest = SaveBundleManifestV2(
+            gameMD5: gameMD5,
+            gameTitle: "StateGame",
+            systemIdentifier: "com.provenance.snes",
+            exportDate: iso8601.string(from: Date()),
+            saveStates: stateEntries
+        )
+        let data = try manifest.jsonData()
+        try data.write(to: stagingDir.appendingPathComponent("manifest.json"))
+
+        // Write state files
+        let statesDir = stagingDir.appendingPathComponent("states", isDirectory: true)
+        try FileManager.default.createDirectory(at: statesDir, withIntermediateDirectories: true)
+        for name in stateFilenames {
+            try Data(repeating: 0xCD, count: 128).write(to: statesDir.appendingPathComponent(name))
+        }
+
+        let zipURL = tempDir.appendingPathComponent("test-states-\(gameMD5).pvsave")
         guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
             throw SaveExportError.zipCreationFailed
         }

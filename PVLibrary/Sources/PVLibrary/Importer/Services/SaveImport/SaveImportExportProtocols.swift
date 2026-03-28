@@ -87,7 +87,8 @@ public struct ExternalSaveFile: Sendable {
 public struct SaveImportResult: Equatable, Sendable {
     /// Whether a battery/SRAM file was restored.
     public let sramRestored: Bool
-    /// Number of save-state files registered in the library.
+    /// Number of save-state entries found in the import bundle manifest.
+    /// Note: some entries may not register in Realm if the originating core is not installed.
     public let statesRestored: Int
     /// Non-fatal warnings encountered during import (e.g. a file that could not be restored).
     public let warnings: [String]
