@@ -28,8 +28,6 @@
 import HIDDriverKit
 import DriverKit
 
-// swiftlint:disable identifier_name
-
 /// USB matching tables for devices this dext claims.
 /// Each dictionary maps kIOHIDVendorIDKey + kIOHIDProductIDKey to a device entry.
 /// Add new devices here to expand the driver's scope.
@@ -45,8 +43,6 @@ let kUSBMatchingCriteria: [[String: Any]] = [
     // Logitech G923 (PS)
     [kIOHIDVendorIDKey: 0x046D, kIOHIDProductIDKey: 0xC266],
 ]
-
-// swiftlint:enable identifier_name
 
 final class ProvenanceHIDDriver: IOUserHIDEventDriver {
 

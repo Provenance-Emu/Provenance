@@ -110,7 +110,7 @@ public final class DriverStoreManager {
         }
     }
 
-    nonisolated private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+    private nonisolated func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
         case .unverified(_, let error):
             throw error
@@ -134,13 +134,11 @@ public final class DriverStoreManager {
         }
     }
 
-    @MainActor
     private func updatePurchasedProducts(for transaction: Transaction) async {
         guard let idx = products.firstIndex(where: { $0.product.id == transaction.productID }) else { return }
         products[idx].isPurchased = transaction.revocationDate == nil
     }
 
-    @MainActor
     private func refreshPurchaseStates() async {
         var updated: [DriverStoreProduct] = []
         for product in products {
