@@ -203,7 +203,15 @@
 	<string>public.app-category.games</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>atariemulator</string>
+		<string>consolesapp</string>
+		<string>delta</string>
+		<string>manicemu</string>
+		<string>melocafe</string>
+		<string>ppsspp</string>
 		<string>provenance</string>
+		<string>retroarch</string>
+		<string>xenios</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

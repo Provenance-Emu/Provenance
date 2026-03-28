@@ -2451,6 +2451,21 @@ private struct LibrarySection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
+
+            NavigationLink(destination: ExternalEmulatorMigrationView()) {
+                #if os(tvOS)
+                SettingsRow(title: NSLocalizedString("migration.settings.nav_title", bundle: .module, comment: ""),
+                            subtitle: NSLocalizedString("migration.settings.row.subtitle.tvos", bundle: .module, comment: ""),
+                            icon: .sfSymbol("arrow.triangle.2.circlepath"))
+                #else
+                SettingsRow(title: NSLocalizedString("migration.settings.nav_title", bundle: .module, comment: ""),
+                            subtitle: NSLocalizedString("migration.settings.row.subtitle.ios", bundle: .module, comment: ""),
+                            icon: .sfSymbol("arrow.triangle.2.circlepath"))
+                #endif
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
         }
     }
 }

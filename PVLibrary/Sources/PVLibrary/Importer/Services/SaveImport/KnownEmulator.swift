@@ -34,8 +34,13 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
     // Multi-system / libretro
     case retroArch  = "com.libretro.RetroArch"
 
-    // Multi-system (commercial)
-    case manticEmu  = "com.manticstudios.ManticEmu"
+    // Manic EMU (by aoshuang) — GBA, NES, SNES, Genesis, N64, and more.
+    // URL scheme: manicemu   App Group: group.aoshuang.manicemu
+    case manicEmu   = "com.aoshuang.manicemu"
+
+    // Consoles — iOS/tvOS multi-system emulator.
+    // TODO: Verify bundle ID and URL scheme once publicly available.
+    case consoles   = "com.consoles.emulator"
 
     // PSP
     case ppsspp     = "org.ppsspp.ppsspp"
@@ -48,7 +53,8 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
         case .delta, .deltaLite: return "Delta"
         case .gamma:             return "Gamma"
         case .retroArch:         return "RetroArch"
-        case .manticEmu:         return "Mantic Emu"
+        case .manicEmu:          return "Manic EMU"
+        case .consoles:          return "Consoles"
         case .ppsspp:            return "PPSSPP"
         }
     }
@@ -64,7 +70,8 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
         case .delta, .deltaLite: return ["dsv", "sav", "srm"]
         case .gamma:             return ["sav", "srm"]
         case .retroArch:         return ["srm", "rtc"]
-        case .manticEmu:         return ["sav", "srm"]
+        case .manicEmu:          return ["sav", "srm"]
+        case .consoles:          return ["sav", "srm"]
         case .ppsspp:            return ["sav"]
         }
     }
@@ -78,7 +85,20 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
                                          "state3", "state4", "state5", "state6",
                                          "state7", "state8", "state9"]
         case .ppsspp:            return ["ppst"]
-        case .gamma, .manticEmu: return []
+        case .gamma, .manicEmu, .consoles: return []
+        }
+    }
+
+    // MARK: - App Group
+
+    /// Shared app group container identifier, if any.
+    ///
+    /// When non-nil, Provenance can use `FileManager.containerURL(forSecurityApplicationGroupIdentifier:)`
+    /// to access shared storage — enabling future direct save-file import without the export flow.
+    public var appGroupIdentifier: String? {
+        switch self {
+        case .manicEmu:  return "group.aoshuang.manicemu"
+        default:         return nil
         }
     }
 
@@ -87,10 +107,12 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
     /// URL scheme used to probe whether this emulator is installed.
     public var urlScheme: String? {
         switch self {
-        case .delta, .deltaLite:      return "delta"
-        case .retroArch:              return "retroarch"
-        case .ppsspp:                 return "ppsspp"
-        case .gamma, .manticEmu:      return nil
+        case .delta, .deltaLite: return "delta"
+        case .retroArch:         return "retroarch"
+        case .ppsspp:            return "ppsspp"
+        case .manicEmu:          return "manicemu"
+        case .consoles:          return "consolesapp" // TODO: confirm scheme
+        case .gamma:             return nil
         }
     }
 
@@ -119,7 +141,19 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
         switch self {
         case .delta, .deltaLite: return URL(string: "delta://")
         case .retroArch:         return URL(string: "retroarch://")
-        case .gamma, .manticEmu, .ppsspp: return nil
+        case .manicEmu:          return URL(string: "manicemu://")
+        case .gamma, .consoles, .ppsspp: return nil
         }
+    }
+
+    // MARK: - App Group Shared Container
+
+    /// Returns the shared container URL for this emulator's app group, if available and accessible.
+    ///
+    /// Returns `nil` on tvOS, macOS, and simulator builds — and when the group identifier is
+    /// not configured in the host app's entitlements.
+    public var sharedContainerURL: URL? {
+        guard let groupID = appGroupIdentifier else { return nil }
+        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID)
     }
 }
