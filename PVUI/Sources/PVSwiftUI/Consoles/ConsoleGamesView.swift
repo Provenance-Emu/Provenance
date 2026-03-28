@@ -813,6 +813,33 @@ struct ConsoleGamesView: SwiftUI.View {
                         Color.clear.onAppear { gamesViewModel.showSaveExportShareSheet = false }
                     }
                 }
+                .sheet(isPresented: $gamesViewModel.showSRAMExportShareSheet, onDismiss: {
+                    if let url = gamesViewModel.sramExportURL {
+                        SaveExporter.shared.cleanupExport(at: url)
+                        gamesViewModel.sramExportURL = nil
+                    }
+                }) {
+                    if let url = gamesViewModel.sramExportURL {
+                        ActivityViewController(activityItems: [url])
+                    } else {
+                        Color.clear.onAppear { gamesViewModel.showSRAMExportShareSheet = false }
+                    }
+                }
+                .sheet(isPresented: $gamesViewModel.showSRAMImportPicker, onDismiss: {
+                    gamesViewModel.sramImportGame = nil
+                }) {
+                    if let game = gamesViewModel.sramImportGame {
+                        SRAMImportDocumentPicker { urls in
+                            gamesViewModel.showSRAMImportPicker = false
+                            guard !urls.isEmpty else { return }
+                            Task { @MainActor in
+                                await handleSRAMImport(urls: urls, for: game)
+                            }
+                        }
+                    } else {
+                        Color.clear.onAppear { gamesViewModel.showSRAMImportPicker = false }
+                    }
+                }
                 #endif
 
                 .task(priority: .background) {
