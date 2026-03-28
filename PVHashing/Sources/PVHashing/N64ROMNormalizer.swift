@@ -1,5 +1,9 @@
-import CryptoKit
 import Foundation
+#if canImport(CryptoKit)
+import CryptoKit
+#else
+import Crypto
+#endif
 
 /// N64 ROM byte-order formats
 public enum N64ROMFormat: Equatable {
@@ -209,12 +213,7 @@ public extension N64ROMNormalizer {
 
         // Validate offset alignment for swap-based formats
         let alignment = format.swapAlignment
-        assert(offset % alignment == 0,
-               "Offset \(offset) must be \(alignment)-byte aligned for \(format) format")
-        
         guard offset % alignment == 0 else {
-            // TODO: Should throw from this function maybe
-            // ELOG("Offset \(offset) must be \(alignment)-byte aligned for \(format) format")
             return nil
         }
 
@@ -251,7 +250,7 @@ public extension N64ROMNormalizer {
         }
 
         let result = hasher.finalize()
-        return result.map { String(format: "%02x", $0) }.joined().uppercased()
+        return result.map { String(format: "%02X", $0) }.joined()
     }
 
     /// Async version of MD5 calculation for N64 ROMs.
