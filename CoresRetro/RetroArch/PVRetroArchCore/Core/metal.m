@@ -71,6 +71,16 @@
 //#include "../../ui/drivers/cocoa/apple_platform.h"
 //#include "../../ui/drivers/cocoa/cocoa_common.h"
 
+#ifdef HAVE_VULKAN
+/* vulkan_common.h pulls in vksym.h which sets VK_USE_PLATFORM_METAL_EXT,
+ * includes vulkan_symbol_wrapper.h → vulkan.h, and libretro_vulkan.h. */
+#include "../common/vulkan_common.h"
+/* Function pointer for MoltenVK's Metal-texture-from-VkImage interop.
+ * Obtained at runtime via vkGetDeviceProcAddr(device, "vkGetMTLTextureMVK"). */
+typedef void (VKAPI_PTR *PFN_vkGetMTLTextureMVK_t)(VkImage image,
+                                                    id<MTLTexture> *pMTLTexture);
+#endif
+
 #import "./apple_platform.h"
 #import "./cocoa_common.h"
 
@@ -776,6 +786,9 @@ font_renderer_t metal_raster_font = {
 - (void)drawWithEncoder:(id<MTLRenderCommandEncoder>)rce;
 - (id<MTLTexture>)currentTexture;
 - (CGSize)size;
+/* Allow MetalDriver to substitute a HW-rendered texture (e.g. from MoltenVK)
+ * directly, bypassing the CPU-upload path. */
+- (void)setHWTexture:(id<MTLTexture>)tex;
 
 @end
 
@@ -815,6 +828,27 @@ font_renderer_t metal_raster_font = {
 
    PVMetalFilterRenderer *_pvFilterRenderer;
    MTLPixelFormat _currentPixelFormat;
+
+#ifdef HAVE_VULKAN
+   /* Vulkan HW render context (MoltenVK) for cores like flycast-jitless.
+    * vulkan_context_init + vulkan_surface_create populate _vkCtx.context
+    * with the VkInstance/VkPhysicalDevice/VkDevice/VkQueue that we hand to
+    * the core via retro_hw_render_interface_vulkan. */
+   gfx_ctx_vulkan_data_t   _vkCtx;
+   CAMetalLayer           *_dummyVkLayer;  /* offscreen layer for MoltenVK surface */
+   bool                    _hwVulkanEnabled;
+   PFN_vkGetMTLTextureMVK_t _pfnGetMTLTexture; /* loaded via vkGetDeviceProcAddr */
+   struct retro_hw_render_interface_vulkan _hw_iface;
+   struct {
+      const struct retro_vulkan_image *image;
+      VkCommandBuffer *cmd;
+      unsigned         num_cmd;
+      unsigned         capacity_cmd;
+      VkSemaphore      signal_semaphore;
+      uint32_t         sync_index;
+      id<MTLTexture>   currentMTLTexture;
+   } _hw;
+#endif
 }
 
 - (instancetype)initWithVideo:(const video_info_t *)video
@@ -898,6 +932,9 @@ font_renderer_t metal_raster_font = {
 
 - (void)dealloc
 {
+#ifdef HAVE_VULKAN
+   [self termVulkanHWContext];
+#endif
    MetalView *view = (MetalView *)apple_platform.renderView;
    if ([view respondsToSelector:@selector(setDelegate:)])
       view.delegate = nil;
@@ -1019,7 +1056,18 @@ font_renderer_t metal_raster_font = {
       [self _beginFrame];
 
       _frameView.frameCount = frameCount;
-      if (frame && width && height)
+
+#ifdef HAVE_VULKAN
+      /* RETRO_HW_FRAME_BUFFER_VALID ((void*)-1) signals a HW-rendered frame.
+       * Never pass this sentinel pointer into updateFrame: — only update the
+       * CPU-side texture for real software frames. */
+      const bool isHWFrame = _hwVulkanEnabled
+                           && (frame == RETRO_HW_FRAME_BUFFER_VALID);
+#else
+      const bool isHWFrame = false;
+#endif
+
+      if (!isHWFrame && frame && width && height)
       {
          _frameView.size = CGSizeMake(width, height);
          [_frameView updateFrame:frame pitch:pitch];
@@ -1057,6 +1105,13 @@ font_renderer_t metal_raster_font = {
       if (msg && *msg)
          [self _renderMessage:msg data:data];
       [self _endFrame];
+
+#ifdef HAVE_VULKAN
+      /* Advance the sync index so the core can safely recycle per-frame
+       * resources after wait_sync_index returns for the old slot. */
+      if (_hwVulkanEnabled)
+         _hw.sync_index = (_hw.sync_index + 1) % 3;
+#endif
    }
 
    return YES;
@@ -1121,6 +1176,15 @@ font_renderer_t metal_raster_font = {
 
 - (void)_drawCore
 {
+#ifdef HAVE_VULKAN
+   /* When a Vulkan HW core has called set_image, render via MoltenVK interop. */
+   if (_hwVulkanEnabled && _hw.image)
+   {
+      [self _drawCoreHW];
+      return;
+   }
+#endif
+
    id<MTLRenderCommandEncoder> rce = _context.rce;
 
    /* draw back buffer */
@@ -1197,6 +1261,286 @@ font_renderer_t metal_raster_font = {
 - (void)setNeedsResize { }
 - (void)setRotation:(unsigned)rotation { [_context setRotation:rotation]; }
 - (Uniforms *)viewportMVP { return &_viewportMVP; }
+
+#ifdef HAVE_VULKAN
+
+#pragma mark - Vulkan HW render interface (MoltenVK)
+
+/*
+ * Static C callbacks that implement retro_hw_render_interface_vulkan.
+ * Each receives the MetalDriver* as `handle` (a __bridge void*).
+ */
+
+static void metal_hw_set_image(void *handle,
+      const struct retro_vulkan_image *image,
+      uint32_t num_semaphores,
+      const VkSemaphore *semaphores,
+      uint32_t src_queue_family)
+{
+   MetalDriver *md = (__bridge MetalDriver *)handle;
+   if (!md)
+      return;
+   /* Store image pointer; MTLTexture extraction happens in _drawCoreHW after
+    * the core's GPU work has been submitted and completed. */
+   md->_hw.image             = image;
+   md->_hw.signal_semaphore  = VK_NULL_HANDLE;
+   md->_hw.currentMTLTexture = nil;
+}
+
+static uint32_t metal_hw_get_sync_index(void *handle)
+{
+   MetalDriver *md = (__bridge MetalDriver *)handle;
+   if (!md)
+      return 0;
+   return md->_hw.sync_index;
+}
+
+static uint32_t metal_hw_get_sync_index_mask(void *handle)
+{
+   /* Signal that we rotate through 3 sync slots (indices 0, 1, 2). */
+   return (1u << 3u) - 1u;
+}
+
+static void metal_hw_wait_sync_index(void *handle)
+{
+   /* No-op: we perform the GPU wait inside _drawCoreHW, which is called
+    * from renderFrame: before the core recycles any per-frame resources. */
+}
+
+static void metal_hw_set_command_buffers(void *handle,
+      uint32_t num_cmd,
+      const VkCommandBuffer *cmd)
+{
+   MetalDriver *md = (__bridge MetalDriver *)handle;
+   if (!md || num_cmd == 0)
+      return;
+
+   unsigned required = num_cmd + 1;
+   if (required > md->_hw.capacity_cmd)
+   {
+      VkCommandBuffer *new_cmd = (VkCommandBuffer *)realloc(
+            md->_hw.cmd, sizeof(VkCommandBuffer) * required);
+      if (!new_cmd)
+         return;
+      md->_hw.cmd          = new_cmd;
+      md->_hw.capacity_cmd = required;
+   }
+   md->_hw.num_cmd = num_cmd;
+   memcpy(md->_hw.cmd, cmd, sizeof(VkCommandBuffer) * num_cmd);
+}
+
+static void metal_hw_lock_queue(void *handle)
+{
+#ifdef HAVE_THREADS
+   MetalDriver *md = (__bridge MetalDriver *)handle;
+   if (md && md->_vkCtx.context.queue_lock)
+      slock_lock(md->_vkCtx.context.queue_lock);
+#endif
+}
+
+static void metal_hw_unlock_queue(void *handle)
+{
+#ifdef HAVE_THREADS
+   MetalDriver *md = (__bridge MetalDriver *)handle;
+   if (md && md->_vkCtx.context.queue_lock)
+      slock_unlock(md->_vkCtx.context.queue_lock);
+#endif
+}
+
+static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
+{
+   MetalDriver *md = (__bridge MetalDriver *)handle;
+   if (md)
+      md->_hw.signal_semaphore = semaphore;
+}
+
+/* Draw a frame that was rendered by a Vulkan HW core (e.g. flycast-jitless). */
+- (void)_drawCoreHW
+{
+   if (!_hw.image || _hw.image->create_info.image == VK_NULL_HANDLE)
+      return;
+
+   /* Submit any command buffers the core handed us via set_command_buffers. */
+   if (_hw.num_cmd > 0)
+   {
+      VkSubmitInfo submit_info;
+      memset(&submit_info, 0, sizeof(submit_info));
+      submit_info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+      submit_info.commandBufferCount = _hw.num_cmd;
+      submit_info.pCommandBuffers    = _hw.cmd;
+
+      if (_hw.signal_semaphore != VK_NULL_HANDLE)
+      {
+         submit_info.signalSemaphoreCount = 1;
+         submit_info.pSignalSemaphores    = &_hw.signal_semaphore;
+      }
+
+      metal_hw_lock_queue((__bridge void *)self);
+      vkQueueSubmit(_vkCtx.context.queue, 1, &submit_info, VK_NULL_HANDLE);
+      metal_hw_unlock_queue((__bridge void *)self);
+      _hw.num_cmd          = 0;
+      _hw.signal_semaphore = VK_NULL_HANDLE;
+   }
+
+   /* Wait for all GPU work to complete so the MTLTexture is safe to read. */
+   vkQueueWaitIdle(_vkCtx.context.queue);
+
+   /* Retrieve the MTLTexture backing the rendered VkImage via MoltenVK. */
+   id<MTLTexture> hwTex = nil;
+   if (_pfnGetMTLTexture)
+      _pfnGetMTLTexture(_hw.image->create_info.image, &hwTex);
+
+   if (!hwTex)
+   {
+      RARCH_WARN("[MetalHW] vkGetMTLTextureMVK returned nil for frame.\n");
+      return;
+   }
+   _hw.currentMTLTexture = hwTex;
+
+   id<MTLRenderCommandEncoder> rce = _context.rce;
+   if (!rce)
+      return;
+
+   /* Re-configure filter renderer if pixel format changed. */
+   if (_pvFilterRenderer && _layer.pixelFormat != _currentPixelFormat)
+   {
+      _currentPixelFormat = _layer.pixelFormat;
+      [_pvFilterRenderer configureWithDevice:_device
+                                 pixelFormat:_currentPixelFormat
+                                   flipYAxis:NO];
+   }
+
+   BOOL filterApplied = NO;
+   if (_pvFilterRenderer)
+   {
+      CGSize drawableSize = _layer.drawableSize;
+      CGSize sourceSize   = CGSizeMake(hwTex.width, hwTex.height);
+      [_context resetRenderViewport:kFullscreenViewport];
+      filterApplied = [_pvFilterRenderer encodeWith:rce
+                                            texture:hwTex
+                                       drawableSize:drawableSize
+                                         sourceSize:sourceSize
+                                         screenType:ScreenTypeObjCCrt
+                                   smoothingEnabled:PVSettingsWrapper.imageSmoothing
+                                        setViewport:NO];
+   }
+
+   if (!filterApplied)
+   {
+      /* _pvFilterRenderer is always configured, so reaching here is unexpected.
+       * Skip the frame rather than risk drawing stale FrameView texture data. */
+      RARCH_WARN("[MetalHW] PVMetalFilterRenderer declined HW frame; skipping.\n");
+   }
+}
+
+/* Initialize a MoltenVK Vulkan context for serving Vulkan HW render cores.
+ * Creates VkInstance + VkDevice + VkQueue via vulkan_context_init/surface_create.
+ * A small off-screen CAMetalLayer is used as a dummy surface so that
+ * vulkan_context_init_device can verify queue-family surface support without
+ * interfering with the main Metal rendering layer. */
+- (bool)initVulkanHWContext
+{
+   if (_hwVulkanEnabled)
+      return true;
+
+   memset(&_vkCtx, 0, sizeof(_vkCtx));
+
+   /* Create an off-screen layer so MoltenVK's surface/device init succeeds
+    * without touching the view layer that Metal is already rendering to. */
+   if (!_dummyVkLayer)
+   {
+      _dummyVkLayer             = [CAMetalLayer layer];
+      _dummyVkLayer.device      = _device;
+      _dummyVkLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+      _dummyVkLayer.drawableSize = CGSizeMake(64, 64);
+   }
+
+   /* Phase 1: create VkInstance and load instance-level Vulkan symbols. */
+   if (!vulkan_context_init(&_vkCtx, VULKAN_WSI_MVK_IOS))
+   {
+      RARCH_ERR("[MetalHW] vulkan_context_init failed.\n");
+      return false;
+   }
+
+   /* Phase 2: create VkSurface + VkDevice + dummy swapchain.
+    * vulkan_context_init_device uses the surface only for queue-family lookup;
+    * we never present from this swapchain. */
+   if (!vulkan_surface_create(&_vkCtx, VULKAN_WSI_MVK_IOS,
+                              NULL, (__bridge void *)_dummyVkLayer,
+                              64, 64, 0))
+   {
+      RARCH_ERR("[MetalHW] vulkan_surface_create failed.\n");
+      vulkan_context_destroy(&_vkCtx, false);
+      return false;
+   }
+
+   /* Load MoltenVK's MTLTexture extraction function from the device. */
+   _pfnGetMTLTexture = (PFN_vkGetMTLTextureMVK_t)
+      vkGetDeviceProcAddr(_vkCtx.context.device, "vkGetMTLTextureMVK");
+
+   if (!_pfnGetMTLTexture)
+      RARCH_WARN("[MetalHW] vkGetMTLTextureMVK not found; HW frames will be blank.\n");
+
+   /* Populate the retro_hw_render_interface_vulkan for the core. */
+   struct retro_hw_render_interface_vulkan *iface = &_hw_iface;
+   iface->interface_type         = RETRO_HW_RENDER_INTERFACE_VULKAN;
+   iface->interface_version      = RETRO_HW_RENDER_INTERFACE_VULKAN_VERSION;
+   iface->instance               = _vkCtx.context.instance;
+   iface->gpu                    = _vkCtx.context.gpu;
+   iface->device                 = _vkCtx.context.device;
+   iface->queue                  = _vkCtx.context.queue;
+   iface->queue_index            = _vkCtx.context.graphics_queue_index;
+   iface->handle                 = (__bridge void *)self;
+   iface->set_image              = metal_hw_set_image;
+   iface->get_sync_index         = metal_hw_get_sync_index;
+   iface->get_sync_index_mask    = metal_hw_get_sync_index_mask;
+   iface->wait_sync_index        = metal_hw_wait_sync_index;
+   iface->set_command_buffers    = metal_hw_set_command_buffers;
+   iface->lock_queue             = metal_hw_lock_queue;
+   iface->unlock_queue           = metal_hw_unlock_queue;
+   iface->set_signal_semaphore   = metal_hw_set_signal_semaphore;
+   iface->get_device_proc_addr   = vkGetDeviceProcAddr;
+   iface->get_instance_proc_addr = vulkan_symbol_wrapper_instance_proc_addr();
+
+   _hwVulkanEnabled = true;
+   RARCH_LOG("[MetalHW] MoltenVK Vulkan HW context initialized (device: %p).\n",
+             (void *)_vkCtx.context.device);
+   return true;
+}
+
+- (void)termVulkanHWContext
+{
+   if (!_hwVulkanEnabled)
+      return;
+   if (_vkCtx.context.device != VK_NULL_HANDLE)
+      vkDeviceWaitIdle(_vkCtx.context.device);
+   vulkan_context_destroy(&_vkCtx, true);
+   memset(&_vkCtx, 0, sizeof(_vkCtx));
+   if (_hw.cmd)
+   {
+      free(_hw.cmd);
+      _hw.cmd          = NULL;
+      _hw.capacity_cmd = 0;
+      _hw.num_cmd      = 0;
+   }
+   _hw.image             = NULL;
+   _hw.currentMTLTexture = nil;
+   _pfnGetMTLTexture     = NULL;
+   _hwVulkanEnabled      = false;
+}
+
+- (bool)getHWRenderInterface:(const struct retro_hw_render_interface **)iface
+{
+   if (!_hwVulkanEnabled)
+   {
+      if (![self initVulkanHWContext])
+         return false;
+   }
+   *iface = (const struct retro_hw_render_interface *)&_hw_iface;
+   return true;
+}
+
+#endif /* HAVE_VULKAN */
 
 #pragma mark - MTKViewDelegate
 
@@ -1642,6 +1986,13 @@ typedef struct MTLALIGN(16)
 - (id<MTLTexture>)currentTexture
 {
    return _texture;
+}
+
+- (void)setHWTexture:(id<MTLTexture>)tex
+{
+   /* No-op: MetalDriver._drawCoreHW reads _hw.currentMTLTexture directly,
+    * bypassing FrameView for the HW render path. */
+   (void)tex;
 }
 
 - (void)drawWithContext:(Context *)ctx
@@ -2694,6 +3045,17 @@ static struct video_shader *metal_get_current_shader(void *data)
    return md.frameView.shader;
 }
 
+#ifdef HAVE_VULKAN
+static bool metal_get_hw_render_interface(void *data,
+      const struct retro_hw_render_interface **iface)
+{
+   MetalDriver *md = (__bridge MetalDriver *)data;
+   if (!md)
+      return false;
+   return [md getHWRenderInterface:iface];
+}
+#endif
+
 static uint32_t metal_get_flags(void *data)
 {
    uint32_t flags = 0;
@@ -2730,7 +3092,11 @@ static const video_poke_interface_t metal_poke_interface = {
    NULL, /* grab_mouse_toggle */
    metal_get_current_shader,
    NULL, /* get_current_software_framebuffer */
+#ifdef HAVE_VULKAN
+   metal_get_hw_render_interface,
+#else
    NULL, /* get_hw_render_interface */
+#endif
    NULL, /* set_hdr_max_nits */
    NULL, /* set_hdr_paper_white_nits */
    NULL, /* set_hdr_contrast */

@@ -2313,10 +2313,11 @@ bool runloop_environment_cb(unsigned cmd, void *data)
          }
          else if (string_is_equal(video_driver_name, "metal"))
          {
-             /* Metal driver on Apple platforms: Vulkan cores run via MoltenVK,
-              * so we report RETRO_HW_CONTEXT_VULKAN as preferred. GLES cores
-              * request their context type directly via SET_HW_RENDER and driver
-              * switching will handle the rest. */
+             /* Metal driver on Apple platforms: Vulkan cores run via MoltenVK.
+              * metal.m implements get_hw_render_interface to provide a real
+              * MoltenVK VkInstance/VkDevice/VkQueue to Vulkan cores (e.g. flycast).
+              * GLES cores are accepted via dynamic_verify_hw_context and handled
+              * by the Metal-to-GLES translation layer. */
              *cb = RETRO_HW_CONTEXT_VULKAN;
              RARCH_LOG("[Environ]: GET_PREFERRED_HW_RENDER - Metal driver: Context callback set to RETRO_HW_CONTEXT_VULKAN (MoltenVK).\n");
          }
