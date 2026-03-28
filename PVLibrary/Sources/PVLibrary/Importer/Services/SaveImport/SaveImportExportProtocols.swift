@@ -26,7 +26,8 @@ public enum SaveFileCategory: String, CaseIterable, Codable, Sendable {
     public static let sramExtensions: Set<String>      = ["sav", "srm", "ram", "dsv"]
     public static let saveStateExtensions: Set<String> = [
         "svs", "state", "dvsave", "ppst",
-        // RetroArch numbered save slots (state0–state9)
+        // RetroArch autosave (`game.state.auto`) and numbered slots (state0–state9)
+        "auto",
         "state0", "state1", "state2", "state3", "state4",
         "state5", "state6", "state7", "state8", "state9"
     ]

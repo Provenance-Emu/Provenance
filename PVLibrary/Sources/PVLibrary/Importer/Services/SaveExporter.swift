@@ -372,11 +372,7 @@ public final class SaveExporter: @unchecked Sendable {
             // Defense-in-depth: verify no extracted entry escaped tempDir via symlinks or traversal paths.
             try validateNoBundleEscape(in: tempDir)
             let manifestURL = tempDir.appendingPathComponent("manifest.json")
-            // Guard against path traversal: ensure the manifest URL resolves inside tempDir.
-            let tempDirResolved = tempDir.resolvingSymlinksInPath().path
-            let manifestResolved = manifestURL.resolvingSymlinksInPath().path
-            guard manifestResolved.hasPrefix(tempDirResolved + "/"),
-                  fm.fileExists(atPath: manifestURL.path),
+            guard fm.fileExists(atPath: manifestURL.path),
                   let data = try? Data(contentsOf: manifestURL),
                   let parsed = try? SaveBundleManifestV2.parse(from: data),
                   !parsed.gameMD5.isEmpty else {

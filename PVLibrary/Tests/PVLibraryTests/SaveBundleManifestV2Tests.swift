@@ -70,6 +70,9 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         """.data(using: .utf8)!
 
         let manifest = try SaveBundleManifestV2.parse(from: json)
+        // v1 parse always upgrades the struct to schemaVersion 2 — caller distinguishes
+        // "was a v1 bundle" by batterySaves/saveStates being nil.
+        XCTAssertEqual(manifest.schemaVersion, 2)
         XCTAssertEqual(manifest.gameMD5, "deadbeef1234")
         XCTAssertEqual(manifest.gameTitle, "Sonic the Hedgehog")
         XCTAssertEqual(manifest.systemIdentifier, "com.provenance.genesis")
@@ -90,9 +93,31 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         """.data(using: .utf8)!
 
         let manifest = try SaveBundleManifestV2.parse(from: json)
+        XCTAssertEqual(manifest.schemaVersion, 2)
         XCTAssertEqual(manifest.gameMD5, "aabbccdd")
         XCTAssertEqual(manifest.gameTitle, "Zelda")
         XCTAssertNil(manifest.batterySaves)
+    }
+
+    func testV1ParseReencodesAsV2() throws {
+        // Parsing v1 then re-encoding should produce valid v2 JSON (schemaVersion: 2).
+        let json = """
+        {
+            "game": "reencode123",
+            "title": "Re-encode Test",
+            "system": "com.provenance.gb",
+            "exportDate": "2025-06-01T00:00:00Z"
+        }
+        """.data(using: .utf8)!
+
+        let manifest = try SaveBundleManifestV2.parse(from: json)
+        let reencoded = try manifest.jsonData()
+        let dict = try XCTUnwrap(JSONSerialization.jsonObject(with: reencoded) as? [String: Any])
+        // schemaVersion must be 2 in the re-encoded output
+        XCTAssertEqual(dict["schemaVersion"] as? Int, 2)
+        // Core fields must survive the round-trip
+        XCTAssertEqual(dict["game"] as? String, "reencode123")
+        XCTAssertEqual(dict["title"] as? String, "Re-encode Test")
     }
 
     // MARK: - JSON key compatibility
@@ -167,10 +192,11 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "dvsave"), .saveState)
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "rtc"), .rtc)
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "SRM"), .sram) // case-insensitive
-        // RetroArch numbered save slots
+        // RetroArch numbered save slots and autosave
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "state0"), .saveState)
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "state5"), .saveState)
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "state9"), .saveState)
+        XCTAssertEqual(SaveFileCategory.infer(fromExtension: "auto"), .saveState) // game.state.auto
     }
 
     // MARK: - KnownEmulator
@@ -201,6 +227,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertTrue(KnownEmulator.delta.stateFileExtensions.contains("dvsave"))
         XCTAssertTrue(KnownEmulator.retroArch.stateFileExtensions.contains("state"))
         XCTAssertTrue(KnownEmulator.retroArch.stateFileExtensions.contains("state0"))
+        XCTAssertTrue(KnownEmulator.retroArch.stateFileExtensions.contains("auto")) // game.state.auto
         XCTAssertTrue(KnownEmulator.ppsspp.stateFileExtensions.contains("ppst"))
         XCTAssertTrue(KnownEmulator.gamma.stateFileExtensions.isEmpty)
         XCTAssertTrue(KnownEmulator.manticEmu.stateFileExtensions.isEmpty)

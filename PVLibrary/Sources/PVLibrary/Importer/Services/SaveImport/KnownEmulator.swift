@@ -69,7 +69,8 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
     public var stateFileExtensions: [String] {
         switch self {
         case .delta, .deltaLite: return ["dvsave"]
-        case .retroArch:         return ["state", "state0", "state1", "state2",
+        case .retroArch:         return ["state", "auto",
+                                         "state0", "state1", "state2",
                                          "state3", "state4", "state5", "state6",
                                          "state7", "state8", "state9"]
         case .ppsspp:            return ["ppst"]
