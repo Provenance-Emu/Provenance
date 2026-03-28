@@ -12,7 +12,6 @@
 import SwiftUI
 import PVLibrary
 import PVUIBase
-import PVThemes
 
 // MARK: - KnownEmulator UI extensions
 
@@ -90,7 +89,9 @@ public struct ExternalEmulatorMigrationView: View {
             }
         }
         .navigationTitle("Import from Another Emulator")
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .sheet(item: $selectedEmulator) { emulator in
             NavigationStack {
                 EmulatorMigrationGuideView(emulator: emulator)
@@ -384,12 +385,14 @@ struct EmulatorMigrationGuideView: View {
             }
         }
         .navigationTitle(emulator.displayName)
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Done") { dismiss() }
             }
         }
+        #endif
     }
 
     // MARK: Steps content
@@ -568,7 +571,9 @@ struct ManualFileImportGuideView: View {
             }
         }
         .navigationTitle("Manual Import")
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     private func methodSection(title: String, icon: String, steps: [String]) -> some View {
