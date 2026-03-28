@@ -2454,12 +2454,12 @@ private struct LibrarySection: View {
 
             NavigationLink(destination: ExternalEmulatorMigrationView()) {
                 #if os(tvOS)
-                SettingsRow(title: "Import from Another Emulator",
-                            subtitle: "Transfer save files to Provenance using the built-in web server.",
+                SettingsRow(title: NSLocalizedString("migration.settings.nav_title", bundle: .module, comment: ""),
+                            subtitle: NSLocalizedString("migration.settings.row.subtitle.tvos", bundle: .module, comment: ""),
                             icon: .sfSymbol("arrow.triangle.2.circlepath"))
                 #else
-                SettingsRow(title: "Import from Another Emulator",
-                            subtitle: "Step-by-step guide to migrate saves from Delta, RetroArch, Mantic Emu, PPSSPP, or Gamma.",
+                SettingsRow(title: NSLocalizedString("migration.settings.nav_title", bundle: .module, comment: ""),
+                            subtitle: NSLocalizedString("migration.settings.row.subtitle.ios", bundle: .module, comment: ""),
                             icon: .sfSymbol("arrow.triangle.2.circlepath"))
                 #endif
             }

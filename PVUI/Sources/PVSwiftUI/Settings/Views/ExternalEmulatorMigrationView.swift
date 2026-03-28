@@ -5,13 +5,14 @@
 //  Created by Joseph Mattiello on 3/28/26.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Guides users through importing saves from Delta, RetroArch, Mantic Emu,
-//  PPSSPP, and Gamma into Provenance.
+//  Guides users through importing saves from Delta, RetroArch, Manic EMU,
+//  Consoles, PPSSPP, and Gamma into Provenance.
 //
 
 import SwiftUI
 import PVLibrary
 import PVUIBase
+import PVFeatureFlags
 
 // MARK: - KnownEmulator UI extensions
 
@@ -22,7 +23,8 @@ private extension KnownEmulator {
     var symbolName: String {
         switch self {
         case .delta, .deltaLite: return "gamecontroller.fill"
-        case .manticEmu:         return "bolt.fill"
+        case .manicEmu:          return "bolt.fill"
+        case .consoles:          return "tv.and.hifispeaker.fill"
         case .retroArch:         return "cpu.fill"
         case .ppsspp:            return "memorychip"
         case .gamma:             return "squareshape.dotted.squareshape"
@@ -33,7 +35,8 @@ private extension KnownEmulator {
     var systemSummary: String {
         switch self {
         case .delta, .deltaLite: return "NES, SNES, N64, GBA, GBC, DS"
-        case .manticEmu:         return "GBA, NES, SNES, Genesis"
+        case .manicEmu:          return "GBA, NES, SNES, Genesis, N64, and more"
+        case .consoles:          return "Multi-system iOS/tvOS emulator"
         case .retroArch:         return "60+ systems"
         case .ppsspp:            return "PlayStation Portable (PSP)"
         case .gamma:             return "Game Boy, Game Boy Color"
@@ -63,10 +66,14 @@ extension KnownEmulator: @retroactive Identifiable {
 /// Shows a list of detected third-party emulators and a step-by-step
 /// export guide for each one. Because iOS sandboxing prevents direct
 /// file access, the flow is fully manual/instructional.
+///
+/// The Ecosystem Integration section (XeniOS, MeloNX, MeloCafe) is gated
+/// behind the `thirdPartyEcosystemIntegration` feature flag and hidden by default.
 public struct ExternalEmulatorMigrationView: View {
     @State private var installedEmulators: [KnownEmulator] = []
     @State private var selectedEmulator: KnownEmulator?
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
     public init() {}
 
@@ -86,12 +93,18 @@ public struct ExternalEmulatorMigrationView: View {
                     }
 
                     manualImportSection
+
+                    #if !os(tvOS)
+                    if featureFlags.thirdPartyEcosystemIntegration {
+                        ecosystemSection
+                    }
+                    #endif
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 24)
             }
         }
-        .navigationTitle("Import from Another Emulator")
+        .navigationTitle(Text("migration.nav.title", bundle: .module))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -125,7 +138,7 @@ public struct ExternalEmulatorMigrationView: View {
                 )
                 .shadow(color: .retroBlue.opacity(0.4), radius: 8)
 
-            Text("Bring Your Saves Over")
+            Text("migration.header.title", bundle: .module)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(
@@ -136,9 +149,9 @@ public struct ExternalEmulatorMigrationView: View {
                 )
 
             #if os(tvOS)
-            Text("Transfer save files to Provenance from another device using the web server.")
+            Text("migration.header.subtitle.tvos", bundle: .module)
             #else
-            Text("Tap an emulator below for step-by-step instructions to export and import your saves.")
+            Text("migration.header.subtitle.ios", bundle: .module)
             #endif
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -152,7 +165,7 @@ public struct ExternalEmulatorMigrationView: View {
 
     private var detectedSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "Detected Emulators", icon: "checkmark.circle.fill", color: .green)
+            sectionHeader(title: Text("migration.section.detected", bundle: .module), icon: "checkmark.circle.fill", color: .green)
 
             ForEach(installedEmulators) { emulator in
                 EmulatorRowView(emulator: emulator) {
@@ -167,9 +180,9 @@ public struct ExternalEmulatorMigrationView: View {
     private var emptyStateSection: some View {
         VStack(spacing: 12) {
             #if os(tvOS)
-            sectionHeader(title: "Third-Party Emulators", icon: "info.circle", color: .orange)
+            sectionHeader(title: Text("migration.section.not_detected.tvos", bundle: .module), icon: "info.circle", color: .orange)
             #else
-            sectionHeader(title: "No Emulators Detected", icon: "magnifyingglass", color: .orange)
+            sectionHeader(title: Text("migration.section.not_detected.ios", bundle: .module), icon: "magnifyingglass", color: .orange)
             #endif
 
             RoundedRectangle(cornerRadius: 12)
@@ -180,18 +193,18 @@ public struct ExternalEmulatorMigrationView: View {
                             .font(.system(size: 32))
                             .foregroundStyle(.secondary)
                         #if os(tvOS)
-                        Text("Third-party emulators (Delta, RetroArch, PPSSPP, Mantic Emu, Gamma) are not available on Apple TV.")
+                        Text("migration.empty.body.tvos", bundle: .module)
                         #else
-                        Text("Delta, RetroArch, PPSSPP, Mantic Emu, and Gamma were not found on this device.")
+                        Text("migration.empty.body.ios", bundle: .module)
                         #endif
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                         #if os(tvOS)
-                        Text("Use the Web Server to transfer save files from another device.")
+                        Text("migration.empty.footer.tvos", bundle: .module)
                         #else
-                        Text("You can still import save files manually using Files.app.")
+                        Text("migration.empty.footer.ios", bundle: .module)
                         #endif
                             .font(.caption)
                             .foregroundStyle(.secondary.opacity(0.7))
@@ -205,7 +218,7 @@ public struct ExternalEmulatorMigrationView: View {
             #if !os(tvOS)
             // iOS/macOS only — these emulators don't run on Apple TV
             VStack(alignment: .leading, spacing: 8) {
-                Text("Want step-by-step instructions anyway?")
+                Text("migration.empty.want_instructions", bundle: .module)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -241,7 +254,7 @@ public struct ExternalEmulatorMigrationView: View {
 
     private var manualImportSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "Manual Import", icon: "folder.fill", color: .blue)
+            sectionHeader(title: Text("migration.section.manual", bundle: .module), icon: "folder.fill", color: .blue)
 
             NavigationLink(destination: ManualFileImportGuideView()) {
                 HStack(spacing: 14) {
@@ -259,16 +272,16 @@ public struct ExternalEmulatorMigrationView: View {
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         #if os(tvOS)
-                        Text("Import via Web Server")
+                        Text("migration.manual.title.tvos", bundle: .module)
                         #else
-                        Text("Import via Files.app")
+                        Text("migration.manual.title.ios", bundle: .module)
                         #endif
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.primary)
                         #if os(tvOS)
-                        Text("Transfer .sav / .srm / .state files into Provenance using the Web Server")
+                        Text("migration.manual.subtitle.tvos", bundle: .module)
                         #else
-                        Text("Copy .sav / .srm / .state files into Provenance's folder using the Files app")
+                        Text("migration.manual.subtitle.ios", bundle: .module)
                         #endif
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -292,14 +305,59 @@ public struct ExternalEmulatorMigrationView: View {
         }
     }
 
+    // MARK: Ecosystem section (feature-flagged, iOS only)
+
+    #if !os(tvOS)
+    private var ecosystemSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader(title: Text("migration.section.ecosystem", bundle: .module), icon: "link.circle.fill", color: .purple)
+
+            NavigationLink(destination: EcosystemIntegrationView()) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.purple.opacity(0.15))
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "link.circle.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.purple)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("ecosystem.nav.title", bundle: .module)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Text("ecosystem.header.subtitle", bundle: .module)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(Color.white.opacity(0.06))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.purple.opacity(0.2), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+    #endif
+
     // MARK: Section header helper
 
-    private func sectionHeader(title: String, icon: String, color: Color) -> some View {
+    private func sectionHeader(title: Text, icon: String, color: Color) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .foregroundStyle(color)
                 .font(.subheadline.weight(.semibold))
-            Text(title)
+            title
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.primary)
             Spacer()
@@ -387,7 +445,7 @@ struct EmulatorMigrationGuideView: View {
                                 )
                             )
 
-                        Text("Export from \(emulator.displayName)")
+                        Text(String(format: NSLocalizedString("migration.guide.export_from", bundle: .module, comment: ""), emulator.displayName))
                             .font(.title2.bold())
                             .foregroundStyle(.primary)
                             .multilineTextAlignment(.center)
@@ -417,7 +475,7 @@ struct EmulatorMigrationGuideView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Done") { dismiss() }
+                Button(NSLocalizedString("migration.guide.done", bundle: .module, comment: "")) { dismiss() }
             }
         }
         #endif
@@ -431,7 +489,7 @@ struct EmulatorMigrationGuideView: View {
 
     private var stepsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Step 1 — Export from \(emulator.displayName)")
+            Text(String(format: NSLocalizedString("migration.guide.export_step1_title", bundle: .module, comment: ""), emulator.displayName))
                 .font(.headline)
                 .foregroundStyle(.primary)
 
@@ -443,7 +501,7 @@ struct EmulatorMigrationGuideView: View {
 
     private var provenanceImportSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Step 2 — Import into Provenance")
+            Text("migration.guide.import_step2_title", bundle: .module)
                 .font(.headline)
                 .foregroundStyle(.primary)
 
@@ -459,19 +517,21 @@ struct EmulatorMigrationGuideView: View {
                 .foregroundStyle(.retroBlue)
                 .font(.subheadline)
             VStack(alignment: .leading, spacing: 4) {
-                Text("Save & State Extensions")
+                Text("migration.save_formats.title", bundle: .module)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.primary)
-                Text("Battery saves: \(emulator.saveFileExtensions.map { ".\($0)" }.joined(separator: ", "))")
+                Text(String(format: NSLocalizedString("migration.save_formats.battery", bundle: .module, comment: ""),
+                            emulator.saveFileExtensions.map { ".\($0)" }.joined(separator: ", ")))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 if !emulator.stateFileExtensions.isEmpty && emulator != .retroArch {
-                    Text("Save states: \(emulator.stateFileExtensions.map { ".\($0)" }.joined(separator: ", "))")
+                    Text(String(format: NSLocalizedString("migration.save_formats.states", bundle: .module, comment: ""),
+                                emulator.stateFileExtensions.map { ".\($0)" }.joined(separator: ", ")))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 if emulator == .retroArch {
-                    Text("Save states use numbered extensions (.state0, .state1…). Battery saves use .srm.")
+                    Text("migration.save_formats.retroarch_note", bundle: .module)
                         .font(.caption)
                         .foregroundStyle(.secondary.opacity(0.8))
                 }
@@ -488,63 +548,73 @@ struct EmulatorMigrationGuideView: View {
         switch emulator {
         case .delta, .deltaLite:
             return [
-                "Open Delta and go to the game you want to export.",
-                "Long-press the game thumbnail to reveal the context menu.",
-                "Tap 'Save States' to see your saves.",
-                "Tap the share icon (square with arrow) on the save you want.",
-                "Use the share sheet to send the file to Files.app or AirDrop to your Mac.",
-                "Repeat for each game you want to migrate."
+                NSLocalizedString("migration.delta.export.step1", bundle: .module, comment: "Open Delta and go to the game you want to export."),
+                NSLocalizedString("migration.delta.export.step2", bundle: .module, comment: "Long-press the game thumbnail to reveal the context menu."),
+                NSLocalizedString("migration.delta.export.step3", bundle: .module, comment: "Tap 'Save States' to see your saves."),
+                NSLocalizedString("migration.delta.export.step4", bundle: .module, comment: "Tap the share icon (square with arrow) on the save you want."),
+                NSLocalizedString("migration.delta.export.step5", bundle: .module, comment: "Use the share sheet to send the file to Files.app or AirDrop to your Mac."),
+                NSLocalizedString("migration.delta.export.step6", bundle: .module, comment: "Repeat for each game you want to migrate.")
             ]
-        case .manticEmu:
+        case .manicEmu:
             return [
-                "Open Mantic Emu and navigate to your game library.",
-                "Long-press a game to bring up options.",
-                "Tap 'Export Save' or 'Share Save'.",
-                "Save the .sav file to the Files app (iCloud Drive or local storage).",
-                "Repeat for each game."
+                NSLocalizedString("migration.manicemu.export.step1", bundle: .module, comment: "Open Manic EMU and navigate to your game library."),
+                NSLocalizedString("migration.manicemu.export.step2", bundle: .module, comment: "Long-press a game to bring up options."),
+                NSLocalizedString("migration.manicemu.export.step3", bundle: .module, comment: "Tap 'Export Save' or 'Share Save'."),
+                NSLocalizedString("migration.manicemu.export.step4", bundle: .module, comment: "Save the .sav file to the Files app (iCloud Drive or local storage)."),
+                NSLocalizedString("migration.manicemu.export.step5", bundle: .module, comment: "Repeat for each game.")
+            ]
+        case .consoles:
+            return [
+                NSLocalizedString("migration.consoles.export.step1", bundle: .module, comment: "Open Consoles and navigate to your game library."),
+                NSLocalizedString("migration.consoles.export.step2", bundle: .module, comment: "Long-press a game to bring up options."),
+                NSLocalizedString("migration.consoles.export.step3", bundle: .module, comment: "Tap 'Export Save' or 'Share Save'."),
+                NSLocalizedString("migration.consoles.export.step4", bundle: .module, comment: "Save the .sav file to the Files app (iCloud Drive or local storage)."),
+                NSLocalizedString("migration.consoles.export.step5", bundle: .module, comment: "Repeat for each game.")
             ]
         case .retroArch:
             return [
-                "Open RetroArch and go to Main Menu → Load Content, then load your game.",
-                "Open the Quick Menu (tap the screen or press the menu button).",
-                "Tap 'Save State' to ensure a state is saved, then return to Quick Menu.",
-                "Go to Quick Menu → Close Content to return to the main menu.",
-                "In the main menu, navigate to 'Load Content' path to find your saves folder.",
-                "Use the RetroArch file browser or Files.app to locate the 'saves' folder inside the RetroArch app group.",
-                "Copy the .srm (battery save) or .state files to a location accessible to Provenance."
+                NSLocalizedString("migration.retroarch.export.step1", bundle: .module, comment: "Open RetroArch and go to Main Menu → Load Content, then load your game."),
+                NSLocalizedString("migration.retroarch.export.step2", bundle: .module, comment: "Open the Quick Menu (tap the screen or press the menu button)."),
+                NSLocalizedString("migration.retroarch.export.step3", bundle: .module, comment: "Tap 'Save State' to ensure a state is saved, then return to Quick Menu."),
+                NSLocalizedString("migration.retroarch.export.step4", bundle: .module, comment: "Go to Quick Menu → Close Content to return to the main menu."),
+                NSLocalizedString("migration.retroarch.export.step5", bundle: .module, comment: "In the main menu, navigate to 'Load Content' path to find your saves folder."),
+                NSLocalizedString("migration.retroarch.export.step6", bundle: .module, comment: "Use the RetroArch file browser or Files.app to locate the 'saves' folder inside the RetroArch app group."),
+                NSLocalizedString("migration.retroarch.export.step7", bundle: .module, comment: "Copy the .srm (battery save) or .state files to a location accessible to Provenance.")
             ]
         case .ppsspp:
             return [
-                "Open PPSSPP and navigate to your UMD images.",
-                "Tap the game to open its settings page.",
-                "Look for 'Save State' or check PPSSPP's memstick/PSP/SAVEDATA folder.",
-                "Use Files.app to navigate to PPSSPP's folder and copy .ppst files.",
-                "Note: PSP save data (.VMP files) may need conversion — standard .ppst states import directly."
+                NSLocalizedString("migration.ppsspp.export.step1", bundle: .module, comment: "Open PPSSPP and navigate to your UMD images."),
+                NSLocalizedString("migration.ppsspp.export.step2", bundle: .module, comment: "Tap the game to open its settings page."),
+                NSLocalizedString("migration.ppsspp.export.step3", bundle: .module, comment: "Look for 'Save State' or check PPSSPP's memstick/PSP/SAVEDATA folder."),
+                NSLocalizedString("migration.ppsspp.export.step4", bundle: .module, comment: "Use Files.app to navigate to PPSSPP's folder and copy .ppst files."),
+                NSLocalizedString("migration.ppsspp.export.step5", bundle: .module, comment: "Note: PSP save data (.VMP files) may need conversion — standard .ppst states import directly.")
             ]
         case .gamma:
             return [
-                "Open Gamma and go to your game library.",
-                "Long-press a game to see options.",
-                "Tap 'Share Save' to export the .sav file.",
-                "Save it to Files.app (iCloud Drive recommended for easy access).",
-                "Repeat for each GB/GBC game."
+                NSLocalizedString("migration.gamma.export.step1", bundle: .module, comment: "Open Gamma and go to your game library."),
+                NSLocalizedString("migration.gamma.export.step2", bundle: .module, comment: "Long-press a game to see options."),
+                NSLocalizedString("migration.gamma.export.step3", bundle: .module, comment: "Tap 'Share Save' to export the .sav file."),
+                NSLocalizedString("migration.gamma.export.step4", bundle: .module, comment: "Save it to Files.app (iCloud Drive recommended for easy access)."),
+                NSLocalizedString("migration.gamma.export.step5", bundle: .module, comment: "Repeat for each GB/GBC game.")
             ]
         }
     }
 
     private var importSteps: [String] {
         #if os(tvOS)
-        let step1 = "Open Provenance and launch the web server via Settings → Library → Web Server."
+        let step1 = NSLocalizedString("migration.import.step1.tvos", bundle: .module,
+                                      comment: "Open Provenance and launch the web server via Settings → Library → Web Server.")
         #else
-        let step1 = "Open Provenance and launch the web server via Settings → Library → Web Server, or use Files.app."
+        let step1 = NSLocalizedString("migration.import.step1.ios", bundle: .module,
+                                      comment: "Open Provenance and launch the web server via Settings → Library → Web Server, or use Files.app.")
         #endif
         return [
             step1,
-            "Navigate to the ROM directory for the matching system (e.g. ROMs/GBA/).",
-            "Place the save file in the same folder as the ROM, with the same filename (only the extension differs).",
-            "For example: 'MyGame.gba' needs 'MyGame.srm' or 'MyGame.sav' alongside it.",
-            "Launch the game in Provenance — it will automatically detect and load the save.",
-            "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems)."
+            NSLocalizedString("migration.import.step2", bundle: .module, comment: "Navigate to the ROM directory for the matching system (e.g. ROMs/GBA/)."),
+            NSLocalizedString("migration.import.step3", bundle: .module, comment: "Place the save file in the same folder as the ROM, with the same filename (only the extension differs)."),
+            NSLocalizedString("migration.import.step4", bundle: .module, comment: "For example: 'MyGame.gba' needs 'MyGame.srm' or 'MyGame.sav' alongside it."),
+            NSLocalizedString("migration.import.step5", bundle: .module, comment: "Launch the game in Provenance — it will automatically detect and load the save."),
+            NSLocalizedString("migration.import.step6", bundle: .module, comment: "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems).")
         ]
     }
 }

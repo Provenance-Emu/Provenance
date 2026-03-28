@@ -220,3 +220,93 @@
 "retro_menu.saves.save_states_hint" = "Use \"Save State\" from the pause menu to create saves.";
 "retro_menu.saves.auto_save_to_photos" = "Auto-Save to Photos";
 "retro_menu.plus.badge" = "PLUS";
+
+// MARK: - External Emulator Migration (ExternalEmulatorMigrationView.swift)
+"migration.nav.title" = "Import from Another Emulator";
+"migration.header.title" = "Bring Your Saves Over";
+"migration.header.subtitle.ios" = "Tap an emulator below for step-by-step instructions to export and import your saves.";
+"migration.header.subtitle.tvos" = "Transfer save files to Provenance from another device using the web server.";
+"migration.section.detected" = "Detected Emulators";
+"migration.section.not_detected.ios" = "No Emulators Detected";
+"migration.section.not_detected.tvos" = "Third-Party Emulators";
+"migration.section.manual" = "Manual Import";
+"migration.section.ecosystem" = "Ecosystem Apps";
+"migration.empty.body.ios" = "Delta, RetroArch, PPSSPP, Manic EMU, Consoles, and Gamma were not found on this device.";
+"migration.empty.body.tvos" = "Third-party emulators are not available on Apple TV.";
+"migration.empty.footer.ios" = "You can still import save files manually using Files.app.";
+"migration.empty.footer.tvos" = "Use the Web Server to transfer save files from another device.";
+"migration.empty.want_instructions" = "Want step-by-step instructions anyway?";
+"migration.manual.title.ios" = "Import via Files.app";
+"migration.manual.title.tvos" = "Import via Web Server";
+"migration.manual.subtitle.ios" = "Copy .sav / .srm / .state files into Provenance's folder using the Files app";
+"migration.manual.subtitle.tvos" = "Transfer .sav / .srm / .state files into Provenance using the Web Server";
+"migration.save_formats.title" = "Save & State Extensions";
+"migration.save_formats.battery" = "Battery saves: %@";
+"migration.save_formats.states" = "Save states: %@";
+"migration.save_formats.retroarch_note" = "Save states use numbered extensions (.state0, .state1…). Battery saves use .srm.";
+"migration.guide.export_step1_title" = "Step 1 — Export from %@";
+"migration.guide.import_step2_title" = "Step 2 — Import into Provenance";
+"migration.guide.export_from" = "Export from %@";
+"migration.guide.done" = "Done";
+"migration.settings.nav_title" = "Import from Another Emulator";
+"migration.settings.row.subtitle.ios" = "Step-by-step guide to migrate saves from Delta, RetroArch, Manic EMU, Consoles, PPSSPP, or Gamma.";
+"migration.settings.row.subtitle.tvos" = "Transfer save files to Provenance using the built-in web server.";
+
+// MARK: - Ecosystem Integration (EcosystemIntegrationView.swift)
+"ecosystem.nav.title" = "Ecosystem Apps";
+"ecosystem.header.title" = "Launch via Ecosystem Apps";
+"ecosystem.header.subtitle" = "Open games directly in XeniOS, MeloNX, or MeloCafe from your Manic EMU library.";
+"ecosystem.section.detected" = "Available Apps";
+"ecosystem.section.not_detected" = "No Ecosystem Apps Found";
+"ecosystem.empty.body" = "XeniOS, MeloNX, and MeloCafe were not found on this device.";
+"ecosystem.empty.footer" = "Install these apps to enable cross-app game launching.";
+"ecosystem.action.open" = "Open %@";
+"ecosystem.action.query_library" = "Browse %@ Library";
+"ecosystem.app.xenios.description" = "Launch Xbox 360 games directly in XeniOS";
+"ecosystem.app.melonx.description" = "Launch Switch games directly in MeloNX";
+"ecosystem.app.melocafe.description" = "Launch Wii U games directly in MeloCafe";
+"ecosystem.feature_flag.note" = "This feature is experimental. Enable or disable it in Settings → Advanced → Feature Flags.";
+
+// MARK: - Migration export steps (per-emulator)
+"migration.delta.export.step1" = "Open Delta and go to the game you want to export.";
+"migration.delta.export.step2" = "Long-press the game thumbnail to reveal the context menu.";
+"migration.delta.export.step3" = "Tap 'Save States' to see your saves.";
+"migration.delta.export.step4" = "Tap the share icon (square with arrow) on the save you want.";
+"migration.delta.export.step5" = "Use the share sheet to send the file to Files.app or AirDrop to your Mac.";
+"migration.delta.export.step6" = "Repeat for each game you want to migrate.";
+"migration.manicemu.export.step1" = "Open Manic EMU and navigate to your game library.";
+"migration.manicemu.export.step2" = "Long-press a game to bring up options.";
+"migration.manicemu.export.step3" = "Tap 'Export Save' or 'Share Save'.";
+"migration.manicemu.export.step4" = "Save the .sav file to the Files app (iCloud Drive or local storage).";
+"migration.manicemu.export.step5" = "Repeat for each game.";
+"migration.consoles.export.step1" = "Open Consoles and navigate to your game library.";
+"migration.consoles.export.step2" = "Long-press a game to bring up options.";
+"migration.consoles.export.step3" = "Tap 'Export Save' or 'Share Save'.";
+"migration.consoles.export.step4" = "Save the .sav file to the Files app (iCloud Drive or local storage).";
+"migration.consoles.export.step5" = "Repeat for each game.";
+"migration.retroarch.export.step1" = "Open RetroArch and go to Main Menu → Load Content, then load your game.";
+"migration.retroarch.export.step2" = "Open the Quick Menu (tap the screen or press the menu button).";
+"migration.retroarch.export.step3" = "Tap 'Save State' to ensure a state is saved, then return to Quick Menu.";
+"migration.retroarch.export.step4" = "Go to Quick Menu → Close Content to return to the main menu.";
+"migration.retroarch.export.step5" = "In the main menu, navigate to 'Load Content' path to find your saves folder.";
+"migration.retroarch.export.step6" = "Use the RetroArch file browser or Files.app to locate the 'saves' folder inside the RetroArch app group.";
+"migration.retroarch.export.step7" = "Copy the .srm (battery save) or .state files to a location accessible to Provenance.";
+"migration.ppsspp.export.step1" = "Open PPSSPP and navigate to your UMD images.";
+"migration.ppsspp.export.step2" = "Tap the game to open its settings page.";
+"migration.ppsspp.export.step3" = "Look for 'Save State' or check PPSSPP's memstick/PSP/SAVEDATA folder.";
+"migration.ppsspp.export.step4" = "Use Files.app to navigate to PPSSPP's folder and copy .ppst files.";
+"migration.ppsspp.export.step5" = "Note: PSP save data (.VMP files) may need conversion — standard .ppst states import directly.";
+"migration.gamma.export.step1" = "Open Gamma and go to your game library.";
+"migration.gamma.export.step2" = "Long-press a game to see options.";
+"migration.gamma.export.step3" = "Tap 'Share Save' to export the .sav file.";
+"migration.gamma.export.step4" = "Save it to Files.app (iCloud Drive recommended for easy access).";
+"migration.gamma.export.step5" = "Repeat for each GB/GBC game.";
+
+// MARK: - Migration import steps (shared)
+"migration.import.step1.ios" = "Open Provenance and launch the web server via Settings → Library → Web Server, or use Files.app.";
+"migration.import.step1.tvos" = "Open Provenance and launch the web server via Settings → Library → Web Server.";
+"migration.import.step2" = "Navigate to the ROM directory for the matching system (e.g. ROMs/GBA/).";
+"migration.import.step3" = "Place the save file in the same folder as the ROM, with the same filename (only the extension differs).";
+"migration.import.step4" = "For example: 'MyGame.gba' needs 'MyGame.srm' or 'MyGame.sav' alongside it.";
+"migration.import.step5" = "Launch the game in Provenance — it will automatically detect and load the save.";
+"migration.import.step6" = "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems).";
