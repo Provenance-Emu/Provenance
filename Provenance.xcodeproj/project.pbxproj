@@ -542,6 +542,16 @@
 		B3A3D0312CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		B3A450DE2F7782F000B6449F /* PVRcheevosCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3A450DD2F7782F000B6449F /* PVRcheevosCore */; };
 		B3A450FE2F77832100B6449F /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3A450FD2F77832100B6449F /* PVNetplay */; };
+		B3A455612F77941000B6449F /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001A0 /* PVLibrary */; };
+		B3A455622F77941000B6449F /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001B0 /* PVSupport */; };
+		B3A455632F77941000B6449F /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001C0 /* PVSettings */; };
+		B3A455642F77941000B6449F /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001D0 /* PVLogging */; };
+		B3A455652F77941000B6449F /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001E0 /* PVFeatureFlags */; };
+		B3A455662F77941000B6449F /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001F0 /* PVUI */; };
+		B3A455672F77941000B6449F /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0000000000000200 /* PVThemes */; };
+		B3A457282F77950300B6449F /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3A457272F77950300B6449F /* WhatsNewKit */; };
+		B3A457472F77955500B6449F /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3A457462F77955500B6449F /* Introspect */; };
+		B3A457492F77955500B6449F /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = B3A457482F77955500B6449F /* SwiftUIIntrospect */; };
 		B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; };
 		B3A477C62C941F120052500A /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A479CE2C96507A0052500A /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A479CD2C96507A0052500A /* PVSNES.framework */; };
@@ -2463,14 +2473,14 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* ProvenanceTV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProvenanceTV.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		C0C0CAFE00000000000000AA /* Provenance Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Companion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProvenanceCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C13CC82823CABE2800463EDD /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC51A109C1C4AE07721D70ED /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0C0CAFE00000000000000AA /* ProvenanceCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProvenanceCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProvenanceCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		/* End PBXFileReference section */
+/* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
@@ -2898,7 +2908,7 @@
 		B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TopShelfv2; sourceTree = "<group>"; };
 		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
-		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98502D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98D22D615D5000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98512D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98522D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
+		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
 		C0C0CAFE00000000000000BA /* ProvenanceCompanion */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanion; sourceTree = "<group>"; };
 		C0C0CAFE100000000000000A /* ProvenanceCompanionTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanionTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -3604,11 +3614,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-
 		C0C0CAFE000000000000007A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A455672F77941000B6449F /* PVThemes in Frameworks */,
+				B3A457472F77955500B6449F /* Introspect in Frameworks */,
+				B3A455662F77941000B6449F /* PVUI in Frameworks */,
+				B3A457492F77955500B6449F /* SwiftUIIntrospect in Frameworks */,
+				B3A455652F77941000B6449F /* PVFeatureFlags in Frameworks */,
+				B3A455642F77941000B6449F /* PVLogging in Frameworks */,
+				B3A457282F77950300B6449F /* WhatsNewKit in Frameworks */,
+				B3A455632F77941000B6449F /* PVSettings in Frameworks */,
+				B3A455622F77941000B6449F /* PVSupport in Frameworks */,
+				B3A455612F77941000B6449F /* PVLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3619,7 +3638,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		/* End PBXFrameworksBuildPhase section */
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		1A0A6E442D72BC7600535498 /* Products */ = {
@@ -3723,7 +3742,7 @@
 				B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */,
 				B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */,
 				B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */,
-				C0C0CAFE00000000000000AA /* ProvenanceCompanion.app */,
+				C0C0CAFE00000000000000AA /* Provenance Companion.app */,
 				C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */,
 				FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */,
 				61D0A2BEE5E0D601A0F11C55 /* Provenance-CI.app */,
@@ -7670,7 +7689,6 @@
 			productReference = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */;
 			productType = "com.apple.product-type.tv-app-extension";
 		};
-
 		C0C0CAFE000000000000001A /* ProvenanceCompanion */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C0C0CAFE000000000000002A /* Build configuration list for PBXNativeTarget "ProvenanceCompanion" */;
@@ -7696,9 +7714,12 @@
 				C0C0CAFE00000000000001E0 /* PVFeatureFlags */,
 				C0C0CAFE00000000000001F0 /* PVUI */,
 				C0C0CAFE0000000000000200 /* PVThemes */,
+				B3A457272F77950300B6449F /* WhatsNewKit */,
+				B3A457462F77955500B6449F /* Introspect */,
+				B3A457482F77955500B6449F /* SwiftUIIntrospect */,
 			);
 			productName = ProvenanceCompanion;
-			productReference = C0C0CAFE00000000000000AA /* ProvenanceCompanion.app */;
+			productReference = C0C0CAFE00000000000000AA /* Provenance Companion.app */;
 			productType = "com.apple.product-type.application";
 		};
 		C0C0CAFE1000000000000001 /* ProvenanceCompanionTests */ = {
@@ -7722,7 +7743,7 @@
 			productReference = C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		/* End PBXNativeTarget section */
+/* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		1A3D408C17B2DCE4004DFFFC /* Project object */ = {
@@ -9562,6 +9583,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C0CAFE000000000000008A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0C0CAFE1000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C74572EB402077EE80053A9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9579,22 +9614,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-
-		C0C0CAFE000000000000008A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C0C0CAFE1000000000000008 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		/* End PBXResourcesBuildPhase section */
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */ = {
@@ -10024,7 +10044,6 @@
 			shellPath = /bin/bash;
 			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
 		};
-
 		C0C0CAFE000000000000009A /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10048,7 +10067,7 @@
 			shellPath = /bin/bash;
 			shellScript = ". Scripts/set_bundle_build_number.sh ProvenanceCompanion\n";
 		};
-		/* End PBXShellScriptBuildPhase section */
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1A3D409017B2DCE4004DFFFC /* Sources */ = {
@@ -10222,7 +10241,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-
 		C0C0CAFE000000000000006A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10237,7 +10255,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		/* End PBXSourcesBuildPhase section */
+/* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		1AD9AA521ACC9FA800EC87A0 /* PBXTargetDependency */ = {
@@ -14936,21 +14954,22 @@
 			};
 			name = Release;
 		};
-
 		C0C0CAFE000000000000003A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				APP_DISPLAY_NAME = "Companion Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/ProvenanceCompanion.entitlements";
+				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/ProvenanceCompanion.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -14970,32 +14989,32 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
-				APP_DISPLAY_NAME = "Companion Debug";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALIDATE_PRODUCT = NO;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
-
 		C0C0CAFE000000000000004A /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				APP_DISPLAY_NAME = "Provenance Companion";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/ProvenanceCompanion-AppStore.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -15018,28 +15037,27 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
-				APP_DISPLAY_NAME = "Provenance Companion";
-				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/ProvenanceCompanion-AppStore.entitlements";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
-
 		C0C0CAFE000000000000005A /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				APP_DISPLAY_NAME = "Provenance Companion";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/ProvenanceCompanion-AppStore.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -15062,11 +15080,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
-				APP_DISPLAY_NAME = "Provenance Companion";
-				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/ProvenanceCompanion-AppStore.entitlements";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Archive;
 		};
@@ -15141,7 +15156,7 @@
 			};
 			name = Archive;
 		};
-		/* End XCBuildConfiguration section */
+/* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
 		1A3D408F17B2DCE4004DFFFC /* Build configuration list for PBXProject "Provenance" */ = {
@@ -15404,17 +15419,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D8D55B489DF10CE467B98FE7 /* Build configuration list for PBXNativeTarget "Provenance-CI" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				68924679E576F1D2FA3C72C5 /* Debug */,
-				5BCF70194B858F1D6129D28E /* Release */,
-				62ACB4A07CDD0A7012A48AE7 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-
 		C0C0CAFE000000000000002A /* Build configuration list for PBXNativeTarget "ProvenanceCompanion" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -15435,7 +15439,17 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		/* End XCConfigurationList section */
+		D8D55B489DF10CE467B98FE7 /* Build configuration list for PBXNativeTarget "Provenance-CI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68924679E576F1D2FA3C72C5 /* Debug */,
+				5BCF70194B858F1D6129D28E /* Release */,
+				62ACB4A07CDD0A7012A48AE7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
 		3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */ = {
@@ -16727,6 +16741,21 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVNetplay;
 		};
+		B3A457272F77950300B6449F /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
+		B3A457462F77955500B6449F /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
+		B3A457482F77955500B6449F /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = SwiftUIIntrospect;
+		};
 		B3A60FFE2CB880BE001D99C2 /* PVUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */;
@@ -17028,6 +17057,41 @@
 			package = B35EEF642C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Reachability" */;
 			productName = Reachability;
 		};
+		C0C0CAFE00000000000001A0 /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		C0C0CAFE00000000000001B0 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
+			productName = PVSupport;
+		};
+		C0C0CAFE00000000000001C0 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */;
+			productName = PVSettings;
+		};
+		C0C0CAFE00000000000001D0 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */;
+			productName = PVLogging;
+		};
+		C0C0CAFE00000000000001E0 /* PVFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */;
+			productName = PVFeatureFlags;
+		};
+		C0C0CAFE00000000000001F0 /* PVUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */;
+			productName = PVUI;
+		};
+		C0C0CAFE0000000000000200 /* PVThemes */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */;
+			productName = PVThemes;
+		};
 		EC3973475423A71BFE0C679F /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSettings;
@@ -17056,49 +17120,7 @@
 			package = B35EEF792C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
-
-		C0C0CAFE00000000000001A0 /* PVLibrary */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
-			productName = PVLibrary;
-		};
-
-		C0C0CAFE00000000000001B0 /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
-			productName = PVSupport;
-		};
-
-		C0C0CAFE00000000000001C0 /* PVSettings */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */;
-			productName = PVSettings;
-		};
-
-		C0C0CAFE00000000000001D0 /* PVLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */;
-			productName = PVLogging;
-		};
-
-		C0C0CAFE00000000000001E0 /* PVFeatureFlags */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */;
-			productName = PVFeatureFlags;
-		};
-
-		C0C0CAFE00000000000001F0 /* PVUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */;
-			productName = PVUI;
-		};
-
-		C0C0CAFE0000000000000200 /* PVThemes */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */;
-			productName = PVThemes;
-		};
-		/* End XCSwiftPackageProductDependency section */
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 }
