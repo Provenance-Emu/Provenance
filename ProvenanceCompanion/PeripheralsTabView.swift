@@ -14,13 +14,16 @@ struct PeripheralsTabView: View {
                 connectedDevicesSection
                 supportedDevicesSection
             }
-            .navigationTitle("Peripherals")
+            .navigationTitle(String(localized: "peripherals.nav_title"))
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showDriverStore = true
                     } label: {
-                        Label("Driver Store", systemImage: "cart.badge.plus")
+                        Label(
+                            String(localized: "store.driver_store_toolbar_label"),
+                            systemImage: "cart.badge.plus"
+                        )
                     }
                 }
             }
@@ -45,9 +48,9 @@ struct PeripheralsTabView: View {
                     .frame(width: 36)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("USB DriverKit Extension")
+                    Text("peripherals.driverkit.title")
                         .font(.headline)
-                    Text(driverKitStatusLabel)
+                    Text(driverKitStatusKey)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -55,7 +58,7 @@ struct PeripheralsTabView: View {
                 Spacer()
 
                 if driverExtManager.canEnable {
-                    Button("Enable") {
+                    Button(String(localized: "peripherals.driverkit.enable_button")) {
                         driverExtManager.activateExtension()
                     }
                     .buttonStyle(.borderedProminent)
@@ -68,14 +71,17 @@ struct PeripheralsTabView: View {
             .padding(.vertical, 4)
 
             if case .failed(let msg) = driverExtManager.activationState {
-                Label(msg, systemImage: "exclamationmark.triangle")
-                    .font(.caption)
-                    .foregroundStyle(.red)
+                Label(
+                    String(localized: "peripherals.driverkit.status.failed \(msg)"),
+                    systemImage: "exclamationmark.triangle"
+                )
+                .font(.caption)
+                .foregroundStyle(.red)
             }
         } header: {
-            Text("Driver Status")
+            Text("peripherals.driverkit.section_header")
         } footer: {
-            Text("The DriverKit extension enables USB gamepads and peripherals not natively supported by iPadOS, including DualShock 3 and GameCube adapters. Once active, all apps on your device benefit.")
+            Text("peripherals.driverkit.description")
         }
     }
 
@@ -86,9 +92,9 @@ struct PeripheralsTabView: View {
         Section {
             if peripheralManager.connectedDevices.isEmpty {
                 ContentUnavailableView(
-                    "No Devices Connected",
+                    String(localized: "peripherals.empty.title"),
                     systemImage: "cable.connector.slash",
-                    description: Text("Connect a USB or Bluetooth controller to get started.")
+                    description: Text("peripherals.empty.description")
                 )
                 .listRowBackground(Color.clear)
             } else {
@@ -98,7 +104,7 @@ struct PeripheralsTabView: View {
             }
         } header: {
             HStack {
-                Text("Connected")
+                Text("peripherals.section.connected")
                 Spacer()
                 if !peripheralManager.connectedDevices.isEmpty {
                     Text("\(peripheralManager.connectedDevices.count)")
@@ -114,11 +120,11 @@ struct PeripheralsTabView: View {
     @ViewBuilder
     private var supportedDevicesSection: some View {
         Section {
-            NavigationLink("View All Supported Devices") {
+            NavigationLink(String(localized: "peripherals.supported_devices.view_all")) {
                 SupportedDevicesListView()
             }
         } header: {
-            Text("Compatibility")
+            Text("peripherals.section.compatibility")
         }
     }
 
@@ -145,14 +151,16 @@ struct PeripheralsTabView: View {
         }
     }
 
-    private var driverKitStatusLabel: String {
+    /// Returns the `LocalizedStringKey` for static status labels.
+    /// Dynamic cases (`.failed`) are rendered inline via their own view branch above.
+    private var driverKitStatusKey: LocalizedStringKey {
         switch driverExtManager.activationState {
-        case .unknown:         return "Checking status..."
-        case .notInstalled:    return "Not active — tap Enable to load"
-        case .activating:      return "Activating — user approval may be required"
-        case .active:          return "Active — USB HID devices are fully supported"
-        case .deactivating:    return "Deactivating..."
-        case .failed(let msg): return "Failed: \(msg)"
+        case .unknown:         return "peripherals.driverkit.status.unknown"
+        case .notInstalled:    return "peripherals.driverkit.status.not_installed"
+        case .activating:      return "peripherals.driverkit.status.activating"
+        case .active:          return "peripherals.driverkit.status.active"
+        case .deactivating:    return "peripherals.driverkit.status.deactivating"
+        case .failed:          return "peripherals.driverkit.status.active" // fallback; error shown below
         }
     }
 }
@@ -190,7 +198,7 @@ private struct DeviceRowView: View {
             VStack(alignment: .trailing, spacing: 4) {
                 transportBadge
                 if device.driverKitActive {
-                    Label("Driver", systemImage: "bolt.fill")
+                    Label(String(localized: "peripherals.driverkit.driver_badge"), systemImage: "bolt.fill")
                         .font(.caption2)
                         .foregroundStyle(.purple)
                 }
@@ -263,7 +271,7 @@ private struct SupportedDevicesListView: View {
     var body: some View {
         List {
             ForEach(grouped, id: \.0) { category, profiles in
-                Section(category.rawValue) {
+                Section(category.localizedName) {
                     ForEach(profiles, id: \.productName) { profile in
                         HStack {
                             VStack(alignment: .leading) {
@@ -274,7 +282,7 @@ private struct SupportedDevicesListView: View {
                             }
                             Spacer()
                             if profile.requiresDriverKit {
-                                Label("Driver", systemImage: "bolt")
+                                Label(String(localized: "store.driver_badge"), systemImage: "bolt")
                                     .font(.caption2)
                                     .foregroundStyle(.purple)
                             }
@@ -283,7 +291,7 @@ private struct SupportedDevicesListView: View {
                 }
             }
         }
-        .navigationTitle("Supported Devices")
+        .navigationTitle(String(localized: "peripherals.supported_devices.nav_title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

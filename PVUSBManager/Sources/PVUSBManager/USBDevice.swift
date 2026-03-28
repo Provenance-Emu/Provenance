@@ -13,6 +13,26 @@ public enum PeripheralCategory: String, Sendable, CaseIterable {
     case massStorage    = "Mass Storage"
     case serialAdapter  = "Serial Adapter"
     case unknown        = "Unknown"
+
+    /// Localization key used by host apps to look up a translated display name.
+    /// Format: `"peripheral.category.<snake_case_name>"`.
+    /// Host app is responsible for providing a `Localizable.xcstrings` / `.strings`
+    /// entry for this key; `rawValue` is the English fallback.
+    public var localizationKey: String {
+        switch self {
+        case .gamepad:         return "peripheral.category.gamepad"
+        case .lightGun:        return "peripheral.category.light_gun"
+        case .steeringWheel:   return "peripheral.category.steering_wheel"
+        case .flightStick:     return "peripheral.category.flight_stick"
+        case .mouse:           return "peripheral.category.mouse"
+        case .keyboard:        return "peripheral.category.keyboard"
+        case .memoryCard:      return "peripheral.category.memory_card"
+        case .cartridgeReader: return "peripheral.category.cartridge_reader"
+        case .massStorage:     return "peripheral.category.mass_storage"
+        case .serialAdapter:   return "peripheral.category.serial_adapter"
+        case .unknown:         return "peripheral.category.unknown"
+        }
+    }
 }
 
 /// Connection transport for a peripheral.

@@ -26,14 +26,15 @@ public enum DriverProductID: String, CaseIterable, Sendable {
     /// All-access bundle (all driver packs + future packs).
     case allAccessBundle        = "org.provenance-emu.companion.iap.bundle.all"
 
+    /// Localized display name sourced from `Localizable.xcstrings`.
     public var displayName: String {
         switch self {
-        case .ds3Driver:        return "DualShock 3 Driver"
-        case .gamecubeAdapter:  return "GameCube Adapter Driver"
-        case .steeringWheelPack: return "Steering Wheel Pack"
-        case .legacyHIDPack:    return "Legacy HID Pack"
-        case .memoryCardPack:   return "Memory Card Reader Pack"
-        case .allAccessBundle:  return "All Drivers Bundle"
+        case .ds3Driver:        return String(localized: "store.product.ds3.name")
+        case .gamecubeAdapter:  return String(localized: "store.product.gamecube.name")
+        case .steeringWheelPack: return String(localized: "store.product.steering_wheel.name")
+        case .legacyHIDPack:    return String(localized: "store.product.legacy_hid.name")
+        case .memoryCardPack:   return String(localized: "store.product.memory_card.name")
+        case .allAccessBundle:  return String(localized: "store.product.all_access.name")
         }
     }
 
@@ -48,26 +49,15 @@ public enum DriverProductID: String, CaseIterable, Sendable {
         }
     }
 
-    public var description: String {
+    /// Localized short description sourced from `Localizable.xcstrings`.
+    public var localizedDescription: String {
         switch self {
-        case .ds3Driver:
-            return "Enables DualShock 3 controllers over USB on iPadOS. " +
-                   "Works system-wide — other games and emulators benefit too."
-        case .gamecubeAdapter:
-            return "Official Nintendo and Mayflash GameCube USB adapters. " +
-                   "Supports all 4 ports."
-        case .steeringWheelPack:
-            return "Logitech G920/G923, Thrustmaster T300RS, and compatible " +
-                   "USB force-feedback wheels."
-        case .legacyHIDPack:
-            return "Generic DirectInput USB HID devices: arcade sticks, " +
-                   "older flight sticks, and budget gamepads."
-        case .memoryCardPack:
-            return "Import and export saves via USB memory card readers. " +
-                   "Supports GameShark/Max Drive adapters."
-        case .allAccessBundle:
-            return "All current driver packs plus any future drivers we ship. " +
-                   "Best value."
+        case .ds3Driver:        return String(localized: "store.product.ds3.description")
+        case .gamecubeAdapter:  return String(localized: "store.product.gamecube.description")
+        case .steeringWheelPack: return String(localized: "store.product.steering_wheel.description")
+        case .legacyHIDPack:    return String(localized: "store.product.legacy_hid.description")
+        case .memoryCardPack:   return String(localized: "store.product.memory_card.description")
+        case .allAccessBundle:  return String(localized: "store.product.all_access.description")
         }
     }
 }

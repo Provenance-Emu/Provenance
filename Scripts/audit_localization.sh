@@ -25,11 +25,42 @@ strings_key_count() {
     grep -c '^"' "$f" 2>/dev/null || true
 }
 
+xcstrings_key_count() {
+    # Count string keys in an Xcode String Catalog (.xcstrings, JSON format).
+    # Keys live under .strings.<key> — count them with a simple grep.
+    local f="$1"
+    [ -f "$f" ] || { echo 0; return; }
+    # Each key appears as: "key" : {
+    grep -c '"[^"]\+" : {' "$f" 2>/dev/null || true
+}
+
+# Collect all .xcstrings catalogs under a directory, report key counts
+xcstrings_summary() {
+    local base="$1"
+    [ -d "$base" ] || return 0
+    local total=0
+    local found=0
+    while IFS= read -r -d '' f; do
+        local keys
+        keys=$(xcstrings_key_count "$f")
+        if [ "$keys" -gt 0 ]; then
+            found=$((found + 1))
+            total=$((total + keys))
+            printf "    %-60s  %3d keys\n" "${f#"$REPO_ROOT/"}" "$keys"
+        fi
+    done < <(find "$base" -name '*.xcstrings' -print0 2>/dev/null)
+    if [ "$found" -gt 0 ]; then
+        printf "    → %d catalog(s), %d total keys\n" "$found" "$total"
+    fi
+    echo "$total"
+}
+
 # ─── Source tree roots ───────────────────────────────────────────────────────
 
 PVUI_DIR="$REPO_ROOT/PVUI"
 PROVENANCE_DIR="$REPO_ROOT/Provenance"
 PROVENANCETV_DIR="$REPO_ROOT/ProvenanceTV"
+COMPANION_DIR="$REPO_ROOT/ProvenanceCompanion"
 EXTENSIONS_DIR="$REPO_ROOT/Extensions"
 WATCHAPP_DIR="$REPO_ROOT/Provenance Mini Watch App"
 
@@ -58,6 +89,7 @@ add_pv_dir() {
 add_pv_dir "$PVUI_DIR"
 add_pv_dir "$PROVENANCE_DIR"
 add_pv_dir "$PROVENANCETV_DIR"
+add_pv_dir "$COMPANION_DIR"
 add_pv_dir "$EXTENSIONS_DIR"
 add_pv_dir "$WATCHAPP_DIR"
 
@@ -190,6 +222,31 @@ for lang in "${LANGS[@]}"; do
     printf "  %-10s  %-12d  %-12s  %-12s\n" "$lang" "$key_count" "$same" "$translated"
 done
 
+echo ""
+
+# ─── 3b. String Catalog (.xcstrings) coverage ────────────────────────────────
+
+echo "=== 3b. String Catalogs (.xcstrings) ==="
+echo ""
+echo "  These use the modern Xcode 15+ String Catalog format (per-locale JSON)."
+echo ""
+
+XCSTRINGS_TOTAL=0
+for d in "${PV_DIRS[@]}" "$COMPANION_DIR"; do
+    [ -d "$d" ] || continue
+    module="$(basename "$d")"
+    # xcstrings_summary prints per-file details and echoes the total on stdout
+    output=$(xcstrings_summary "$d")
+    if echo "$output" | grep -q "catalog"; then
+        echo "  Module: $module"
+        echo "$output" | grep -v '^[0-9]*$' | sed 's/^/  /'
+        keys=$(echo "$output" | tail -1)
+        XCSTRINGS_TOTAL=$((XCSTRINGS_TOTAL + keys))
+        echo ""
+    fi
+done
+
+printf "  TOTAL .xcstrings keys: %d\n" "$XCSTRINGS_TOTAL"
 echo ""
 
 # ─── 5. Gap analysis ─────────────────────────────────────────────────────────

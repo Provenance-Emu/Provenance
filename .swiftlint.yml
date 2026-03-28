@@ -132,3 +132,23 @@ custom_rules:
     regex: "\\b[Tt]iles?\\b"
     message: "Tiles are deprecated in favor of Frame"
     severity: warning
+  unlocalized_text_init:
+    # Warn when Text() is called with a String variable/expression rather than a literal
+    # LocalizedStringKey. `Text(someVar)` bypasses localization; prefer
+    # `Text(verbatim: someVar)` (explicit non-localized) or change the property to
+    # return `LocalizedStringKey` / use `String(localized:)` at the call site.
+    #
+    # Pattern explanation:
+    #   Text\(           — SwiftUI Text initialiser
+    #   (?!\"            — NOT followed by a string literal (those are LocalizedStringKey)
+    #   (?!verbatim:     — NOT the explicit verbatim: label (intentionally non-localized)
+    #   (?!String\(      — NOT String(...) which may itself contain String(localized:)
+    #   (?!Image         — NOT Image(...) mistakenly flagged
+    #
+    # Scope: ProvenanceCompanion only (companion app owns its own localization).
+    included: ".*/ProvenanceCompanion/.*\\.swift"
+    excluded: ".*/Preview Content/.*"
+    name: "Potentially Unlocalized Text"
+    regex: "Text\\((?!\"|verbatim:|String\\(|Image)"
+    message: "Text() called with a non-literal argument — use Text(\"key\") (LocalizedStringKey) or Text(verbatim:) if intentionally unlocalized."
+    severity: warning

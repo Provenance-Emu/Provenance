@@ -10,31 +10,31 @@ struct DriverStoreView: View {
         NavigationStack {
             Group {
                 if storeManager.isLoading {
-                    ProgressView("Loading…")
+                    ProgressView(String(localized: "store.loading"))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if storeManager.products.isEmpty {
                     ContentUnavailableView(
-                        "Store Unavailable",
+                        String(localized: "store.empty.title"),
                         systemImage: "exclamationmark.icloud",
-                        description: Text("Could not connect to the App Store. Check your connection and try again.")
+                        description: Text("store.empty.description")
                     )
                 } else {
                     productList
                 }
             }
-            .navigationTitle("Driver Store")
+            .navigationTitle(String(localized: "store.nav_title"))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
+                    Button(String(localized: "store.done_button")) { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Restore") {
+                    Button(String(localized: "store.restore_button")) {
                         Task { await storeManager.restorePurchases() }
                     }
                 }
             }
-            .alert("Purchase Error", isPresented: Binding(
+            .alert(String(localized: "store.error.purchase_failed_title"), isPresented: Binding(
                 get: { storeManager.purchaseError != nil },
                 set: { if !$0 { storeManager.purchaseError = nil } }
             )) {
@@ -76,9 +76,9 @@ struct DriverStoreView: View {
                 .foregroundStyle(.purple)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Works System-Wide")
+                Text("store.reusability.title")
                     .font(.headline)
-                Text("Purchased drivers activate at the OS level — every emulator and game on your iPad benefits, not just Provenance.")
+                Text("store.reusability.description")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -105,7 +105,7 @@ private struct DriverProductCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.id.displayName)
                     .font(.headline)
-                Text(product.id.description)
+                Text(product.id.localizedDescription)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

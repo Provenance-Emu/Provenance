@@ -32,7 +32,7 @@ public protocol USBPeripheralManagerDelegate: AnyObject, Sendable {
 /// the OS dext has claimed, identified via `USBDevice.driverKitActive == true`.
 @MainActor
 @Observable
-public final class USBPeripheralManager: NSObject {
+public final class USBPeripheralManager {
 
     // MARK: - Public State
 
@@ -51,12 +51,11 @@ public final class USBPeripheralManager: NSObject {
 
     // MARK: - Lifecycle
 
-    public override init() {
-        super.init()
-    }
+    public init() {}
 
     deinit {
-        stopScanning()
+        // `@MainActor` objects are deinitialized on the main actor; assert and clean up.
+        MainActor.assumeIsolated { stopScanning() }
     }
 
     // MARK: - Public API
@@ -123,7 +122,9 @@ public final class USBPeripheralManager: NSObject {
             requiresDriverKit: false,
             driverKitActive: false
         )
-        guard !connectedDevices.contains(device) else { return }
+        guard !connectedDevices.contains(where: {
+            $0.vendorID == device.vendorID && $0.productID == device.productID && $0.transport == device.transport
+        }) else { return }
         connectedDevices.append(device)
         delegate?.peripheralManager(self, didConnect: device)
     }
@@ -203,7 +204,9 @@ public final class USBPeripheralManager: NSObject {
             transport: .mfi,
             category: .gamepad
         )
-        guard !connectedDevices.contains(device) else { return }
+        guard !connectedDevices.contains(where: {
+            $0.transport == .mfi && $0.vendorID == Int(accessory.connectionID)
+        }) else { return }
         connectedDevices.append(device)
         delegate?.peripheralManager(self, didConnect: device)
     }
@@ -261,7 +264,10 @@ private func hidDeviceAdded(
     )
 
     Task { @MainActor in
-        guard !manager.connectedDevices.contains(usbDevice) else { return }
+        guard !manager.connectedDevices.contains(where: {
+            $0.vendorID == vid && $0.productID == pid &&
+            ($0.locationID == locationID || locationID == 0)
+        }) else { return }
         manager.connectedDevices.append(usbDevice)
         manager.delegate?.peripheralManager(manager, didConnect: usbDevice)
     }

@@ -12,14 +12,17 @@ struct SettingsTabView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("About") {
-                    LabeledContent("App", value: "Provenance Companion")
-                    LabeledContent("Version", value: appVersion)
-                    LabeledContent("Purpose", value: "DriverKit host & upsell companion")
+                Section(String(localized: "settings.about.section")) {
+                    LabeledContent(String(localized: "settings.about.app"),
+                                   value: "Provenance Companion")
+                    LabeledContent(String(localized: "settings.about.version"),
+                                   value: appVersion)
+                    LabeledContent(String(localized: "settings.about.purpose"),
+                                   value: String(localized: "settings.about.purpose_value"))
                 }
 
-                Section("Main App") {
-                    Button("Open Provenance") {
+                Section(String(localized: "settings.main_app.section")) {
+                    Button(String(localized: "settings.main_app.open_provenance")) {
                         if let url = URL(string: "provenance://") {
                             openURL(url)
                         }
@@ -27,21 +30,23 @@ struct SettingsTabView: View {
                 }
 
                 Section {
-                    NavigationLink("Driver Store") {
+                    NavigationLink(String(localized: "store.nav_title")) {
                         DriverStoreView()
                     }
                 } header: {
-                    Text("Drivers")
+                    Text("settings.drivers.section")
                 } footer: {
-                    Text("Purchased drivers are system-wide — they benefit every emulator and game on your iPad.")
+                    Text("settings.drivers.footer")
                 }
 
-                Section("Support") {
-                    Link("Provenance on GitHub", destination: URL(string: "https://github.com/Provenance-Emu/Provenance")!)
-                    Link("DriverKit Entitlement Request", destination: URL(string: "https://developer.apple.com/contact/request/driverkit/")!)
+                Section(String(localized: "settings.support.section")) {
+                    Link(String(localized: "settings.support.github"),
+                         destination: URL(string: "https://github.com/Provenance-Emu/Provenance")!)
+                    Link(String(localized: "settings.support.driverkit_entitlement"),
+                         destination: URL(string: "https://developer.apple.com/contact/request/driverkit/")!)
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle(String(localized: "settings.nav_title"))
         }
     }
 }

@@ -31,6 +31,10 @@ public final class DriverExtensionManager: NSObject {
     public private(set) var activationState: ActivationState = .unknown
     public private(set) var isActivating = false
 
+    // Tracks whether the in-flight request is a deactivation so that
+    // `didFinishWithResult` can transition to the correct terminal state.
+    private var pendingDeactivation = false
+
     /// True when the extension can be activated (state is unknown or not installed).
     public var canEnable: Bool {
         switch activationState {
@@ -65,6 +69,7 @@ public final class DriverExtensionManager: NSObject {
     public func deactivateExtension() {
         guard case .active = activationState else { return }
         activationState = .deactivating
+        pendingDeactivation = true
 
         let request = OSSystemExtensionRequest.deactivationRequest(
             forExtensionWithIdentifier: Self.dextBundleID,
@@ -107,12 +112,11 @@ extension DriverExtensionManager: OSSystemExtensionRequestDelegate {
     ) {
         Task { @MainActor in
             isActivating = false
+            let wasDeactivation = pendingDeactivation
+            pendingDeactivation = false
             switch result {
-            case .completed:
-                activationState = .active
-            case .willCompleteAfterReboot:
-                // Rare on iPadOS; driver activates after restart.
-                activationState = .active
+            case .completed, .willCompleteAfterReboot:
+                activationState = wasDeactivation ? .notInstalled : .active
             @unknown default:
                 activationState = .failed("Unknown result")
             }
@@ -125,6 +129,7 @@ extension DriverExtensionManager: OSSystemExtensionRequestDelegate {
     ) {
         Task { @MainActor in
             isActivating = false
+            pendingDeactivation = false
             activationState = .failed(error.localizedDescription)
         }
     }
