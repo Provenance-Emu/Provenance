@@ -1,6 +1,5 @@
 import SwiftUI
 import PVControllerDSU
-import Network
 
 /// Interactive virtual controller view backed by a live DSU server.
 ///

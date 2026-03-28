@@ -81,7 +81,7 @@ public actor DSUSkinServer {
     private var packetNumber: UInt32 = 0
 
     /// Shared server UID used in all response headers.
-    private let serverUID: UInt32 = UInt32.random(in: 0..<UInt32.max)
+    private let serverUID: UInt32 = UInt32.random(in: 0...UInt32.max)
 
     // MARK: - Init
 
