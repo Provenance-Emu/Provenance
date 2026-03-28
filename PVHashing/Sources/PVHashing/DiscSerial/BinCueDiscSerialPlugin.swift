@@ -72,7 +72,7 @@ public struct BinCueDiscSerialPlugin: DiscSerialExtractorPlugin {
         }
 
         let cueDir = cueURL.deletingLastPathComponent()
-        var currentFile: String? = nil
+        var currentFile: String?
         var foundDataTrack = false
 
         for line in content.components(separatedBy: .newlines) {

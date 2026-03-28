@@ -816,6 +816,30 @@ final class ChdDiscSerialPluginTests: XCTestCase {
         let result = await plugin.extractSerial(from: chdURL, systemHint: nil)
         XCTAssertNil(result, "Compressed CHD should return nil (decompression not supported yet)")
     }
+
+    func testExtractSerialNilForPartiallyCompressedCHD() async throws {
+        // A CHD where compressor[0]==0 but compressor[1] is non-zero is still
+        // compressed and must not be processed as uncompressed.
+        let tmpDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmpDir) }
+
+        var header = Data(repeating: 0, count: 124)
+        let magic: [UInt8] = [0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44]
+        header.replaceSubrange(0..<8, with: magic)
+        withUnsafeBytes(of: UInt32(124).bigEndian) { header.replaceSubrange(8..<12, with: $0) }
+        withUnsafeBytes(of: UInt32(5).bigEndian) { header.replaceSubrange(12..<16, with: $0) }
+        // compressor[0] = 0 (looks uncompressed), compressor[1] = 0x6364666C (compressed)
+        withUnsafeBytes(of: UInt32(0).bigEndian) { header.replaceSubrange(16..<20, with: $0) }
+        withUnsafeBytes(of: UInt32(0x6364666C).bigEndian) { header.replaceSubrange(20..<24, with: $0) }
+
+        let chdURL = tmpDir.appendingPathComponent("partial.chd")
+        try header.write(to: chdURL)
+
+        let result = await plugin.extractSerial(from: chdURL, systemHint: nil)
+        XCTAssertNil(result, "Partially-compressed CHD (compressor[1] non-zero) must return nil")
+    }
 }
 
 // MARK: - DiscSerialResult tests

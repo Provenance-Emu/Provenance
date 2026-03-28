@@ -92,10 +92,16 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
             return nil
         }
 
-        // Check compression — we only handle uncompressed CHDs.
+        // Check compression — we only handle truly uncompressed CHDs (all 4 compressor
+        // slots must be zero).  Checking only compressor[0] is insufficient: a CHD
+        // with compressor[0]=0 but non-zero compressor[1-3] is still compressed and
+        // the map-entry format differs from the simple sequential uncompressed layout.
         let compressor0 = headerData.loadBE32(at: CHDv5.compressorsOffset)
-        guard compressor0 == 0 else {
-            ILOG("ChdDiscSerialPlugin: compressed CHD (codec 0x\(String(compressor0, radix: 16))) — serial extraction requires libchdr; skipping \(url.lastPathComponent)")
+        let compressor1 = headerData.loadBE32(at: CHDv5.compressorsOffset + 4)
+        let compressor2 = headerData.loadBE32(at: CHDv5.compressorsOffset + 8)
+        let compressor3 = headerData.loadBE32(at: CHDv5.compressorsOffset + 12)
+        guard compressor0 == 0 && compressor1 == 0 && compressor2 == 0 && compressor3 == 0 else {
+            ILOG("ChdDiscSerialPlugin: compressed CHD (codecs 0x\(String(compressor0, radix: 16))/0x\(String(compressor1, radix: 16))/0x\(String(compressor2, radix: 16))/0x\(String(compressor3, radix: 16))) — serial extraction requires libchdr; skipping \(url.lastPathComponent)")
             return nil
         }
 
