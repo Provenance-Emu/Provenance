@@ -2451,6 +2451,15 @@ private struct LibrarySection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
+
+            NavigationLink(destination: ExternalEmulatorMigrationView()) {
+                SettingsRow(title: "Import from Another Emulator",
+                            subtitle: "Step-by-step guide to migrate saves from Delta, RetroArch, Manic, PPSSPP, or Gamma.",
+                            icon: .sfSymbol("arrow.triangle.2.circlepath"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
         }
     }
 }
