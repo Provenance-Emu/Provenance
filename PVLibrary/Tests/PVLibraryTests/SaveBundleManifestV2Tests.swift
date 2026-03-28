@@ -133,6 +133,24 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: notJSON))
     }
 
+    func testV2MalformedFieldsThrowsSaveBundleError() throws {
+        // schemaVersion==2 but gameMD5 ("game") is an int instead of String — DecodingError
+        // must be wrapped into SaveBundleManifestParseError, not escape as DecodingError.
+        let json = """
+        {
+            "schemaVersion": 2,
+            "game": 12345,
+            "title": "Malformed",
+            "system": "com.provenance.nes",
+            "exportDate": "2026-01-01T00:00:00Z"
+        }
+        """.data(using: .utf8)!
+        XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json)) { error in
+            XCTAssertTrue(error is SaveBundleManifestParseError,
+                          "Expected SaveBundleManifestParseError, got \(type(of: error))")
+        }
+    }
+
     // MARK: - SaveFileCategory helpers
 
     func testSaveFileCategoryInference() {

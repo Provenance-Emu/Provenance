@@ -193,7 +193,11 @@ public struct SaveBundleManifestV2: Codable, Sendable {
         case 1:
             return try parseV1(from: raw)
         case 2:
-            return try decoder.decode(SaveBundleManifestV2.self, from: data)
+            do {
+                return try decoder.decode(SaveBundleManifestV2.self, from: data)
+            } catch {
+                throw SaveBundleManifestParseError.invalidManifest(error.localizedDescription)
+            }
         default:
             throw SaveBundleManifestParseError.unsupportedSchemaVersion(version)
         }

@@ -60,7 +60,7 @@ public enum SaveExportError: LocalizedError {
 ///
 /// - TODO: Conform to `SaveBundleExporting` and `SaveBundleImporting` (defined in
 ///   `SaveImportExportProtocols.swift`) once a Realm lookup helper is available to resolve
-///   a game MD5 to a `PVGame` without caller-side Realm access. See issue #3552.
+///   a game MD5 to a `PVGame` without caller-side Realm access.
 public final class SaveExporter: @unchecked Sendable {
 
     public static let shared = SaveExporter()
@@ -121,14 +121,14 @@ public final class SaveExporter: @unchecked Sendable {
         try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
 
         // Build per-save-state index for the v2 manifest
-        let stateISO = ISO8601DateFormatter()
+        let iso8601 = ISO8601DateFormatter()
         let stateEntries: [SaveBundleManifestV2.SaveStateEntry] = frozenGame.saveStates.compactMap { state in
             guard let fileURL = state.file?.url,
                   fm.fileExists(atPath: fileURL.path) else { return nil }
             return SaveBundleManifestV2.SaveStateEntry(
                 filename: fileURL.lastPathComponent,
                 screenshotFilename: state.image?.url?.lastPathComponent,
-                date: stateISO.string(from: state.date),
+                date: iso8601.string(from: state.date),
                 isAutosave: state.isAutosave,
                 userDescription: state.userDescription,
                 coreIdentifier: state.core?.identifier
@@ -147,7 +147,7 @@ public final class SaveExporter: @unchecked Sendable {
         }()
 
         // Write manifest.json using schema v2
-        let isoDate = ISO8601DateFormatter().string(from: Date())
+        let isoDate = iso8601.string(from: Date())
         let manifest = SaveBundleManifestV2(
             gameMD5: md5,
             gameTitle: gameTitle,
