@@ -78,11 +78,19 @@ public struct PlayRandomGameIntent: AppIntent {
 /// Typed errors thrown by PVAppIntents intents.
 public enum AppIntentError: LocalizedError {
     case noGamesFound(in: String)
+    /// No emulation session is currently active (no game is running).
+    case noActiveSession
+    /// The supplied cheat code string is empty or malformed.
+    case invalidCheatCode(String)
 
     public var errorDescription: String? {
         switch self {
         case .noGamesFound(let source):
             return "No games found in \(source)."
+        case .noActiveSession:
+            return "No game is currently running in Provenance."
+        case .invalidCheatCode(let code):
+            return "The cheat code \"\(code)\" is invalid or empty."
         }
     }
 }
