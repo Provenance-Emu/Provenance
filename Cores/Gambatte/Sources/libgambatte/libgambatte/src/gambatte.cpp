@@ -209,4 +209,33 @@ void GB::setGameShark(std::string const &codes) {
 	p_->cpu.setGameShark(codes);
 }
 
+// MARK: - RetroAchievements memory accessors
+
+const unsigned char * GB::wramData(unsigned area) const {
+	if (area > 1)
+		return nullptr;
+	if (!p_->cpu.loaded())
+		return nullptr;
+	return p_->cpu.wramdata(area);
+}
+
+const unsigned char * GB::vramData() const {
+	if (!p_->cpu.loaded())
+		return nullptr;
+	return p_->cpu.vramdata();
+}
+
+const unsigned char * GB::vramBankPtr() const {
+	if (!p_->cpu.loaded())
+		return nullptr;
+	return p_->cpu.vrambankptr();
+}
+
+std::size_t GB::wramSize() const {
+	if (!p_->cpu.loaded())
+		return 0;
+	// CGB has 8 banks × 4 KiB = 32 KiB; DMG has 2 banks × 4 KiB = 8 KiB.
+	return p_->cpu.isCgb() ? 0x8000u : 0x2000u;
+}
+
 }

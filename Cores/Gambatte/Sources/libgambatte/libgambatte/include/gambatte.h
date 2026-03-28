@@ -180,6 +180,43 @@ public:
 	  */
 	void setGameShark(std::string const &codes);
 
+	// MARK: - RetroAchievements memory accessors
+
+	/**
+	  * Returns a pointer to the WRAM mapped area selected by @a area.
+	  * area 0 = fixed bank region (bus address 0xC000–0xCFFF, always bank 0).
+	  * area 1 = switchable bank region (bus address 0xD000–0xDFFF, reflects the
+	  *          currently active bank; may change during emulation on CGB).
+	  * Only area 0 and 1 are valid; each covers 4 KiB.
+	  * The pointer for area 0 is stable for the lifetime of the loaded ROM.
+	  * Returns nullptr if no ROM is loaded.
+	  */
+	const unsigned char * wramData(unsigned area) const;
+
+	/**
+	  * Returns a pointer to the physical start of the VRAM allocation.
+	  * Index 0 corresponds to GB bus address 0x8000.
+	  * Both DMG and CGB allocate 16 KiB (two 8-KiB banks); DMG uses only bank 0.
+	  * Returns nullptr if no ROM is loaded.
+	  */
+	const unsigned char * vramData() const;
+
+	/**
+	  * Returns a pre-adjusted pointer for direct VRAM address indexing.
+	  * vrambankptr[addr] for addr in [0x8000, 0x9FFF] returns the correct byte
+	  * for the currently active VRAM bank on CGB (bank register FF4F).
+	  * On DMG this always refers to bank 0. Updated in real time during emulation.
+	  * Returns nullptr if no ROM is loaded.
+	  */
+	const unsigned char * vramBankPtr() const;
+
+	/**
+	  * Returns the total WRAM size in bytes.
+	  * DMG: 8192 (8 KiB), CGB: 32768 (32 KiB).
+	  * Returns 0 if no ROM is loaded.
+	  */
+	std::size_t wramSize() const;
+
 private:
 	struct Priv;
 	Priv *const p_;

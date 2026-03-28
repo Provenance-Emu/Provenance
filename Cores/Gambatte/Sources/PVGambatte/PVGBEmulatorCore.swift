@@ -23,13 +23,14 @@ public class PVGBEmulatorCore: PVEmulatorCore {
             _bridge.changeDisplayMode(displayMode.rawValue)
         }
     }
-    public var isGameboyColor: Bool = false
+    public var isGameboyColor: Bool { _bridge.isGameboyColor }
 
     var _bridge: PVGBEmulatorCoreBridge = .init()
 
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+        _bridge.achievementsEventOwner = self
     }
 
     // MARK: - RetroAchievements backing storage

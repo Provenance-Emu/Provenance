@@ -36,10 +36,8 @@ struct ProvenanceApp: App {
     /// Register a background task for Spotlight indexing
     private func registerSpotlightBackgroundTask() {
         // Register a background task identifier for Spotlight indexing
-        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier
+        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
         backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "SpotlightIndexing") {
-            // Called by the OS when the background task time is about to expire.
-            // Must call endBackgroundTask to avoid being force-killed.
             WLOG("Spotlight indexing background task expired")
             UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
         }
