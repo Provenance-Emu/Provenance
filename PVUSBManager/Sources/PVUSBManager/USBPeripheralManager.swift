@@ -66,10 +66,10 @@ public final class USBPeripheralManager {
     /// go to the Caches directory. iOS/macOS prefer Documents for user-visible data
     /// but Caches is acceptable for internal state like remembered device profiles.
     /// Using `.cachesDirectory` on all platforms is the safe cross-platform choice.
-    static var storageDirectory: URL {
+    static let storageDirectory: URL = {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("PVUSBManager", isDirectory: true)
-    }
+    }()
 
     // MARK: - Public API
 

@@ -200,7 +200,7 @@ private struct DeviceRowView: View {
                     Text(verbatim: device.manufacturerName)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    if device.transport != .gcController {
+                    if device.transport == .usb {
                         Text(verbatim: device.usbID)
                             .font(.caption)
                             .foregroundStyle(.tertiary)

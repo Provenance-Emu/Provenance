@@ -41,7 +41,7 @@ public enum DriverProductID: String, CaseIterable, Sendable {
     public var systemImageName: String {
         switch self {
         case .ds3Driver:        return "gamecontroller"
-        case .gamecubeAdapter:  return "gamecenter"
+        case .gamecubeAdapter:  return "gamecontroller"
         case .steeringWheelPack: return "steeringwheel"
         case .legacyHIDPack:    return "cable.connector"
         case .memoryCardPack:   return "memorychip"
