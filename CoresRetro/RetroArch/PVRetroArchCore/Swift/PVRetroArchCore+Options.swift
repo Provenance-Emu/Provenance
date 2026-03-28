@@ -726,7 +726,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 #if os(iOS) || os(tvOS)
                 // Read the existing .opt file so we can do targeted in-place updates.
                 let mupenOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
-                let existingMupenOpt = (try? String(contentsOfFile: mupenOptPath, encoding: .utf8)) ?? ""
+                DLOG("Mupen64Plus-Next: opt file path: \(mupenOptPath)")
+                // Use fileExists to distinguish "no file" (fresh install) from "empty file"
+                // (needs migration). String(contentsOfFile:) returns nil for both, so relying
+                // solely on .isEmpty would cause iOS<26 to skip writing an empty file because
+                // optionOverwrite=false only writes when the file is ABSENT from disk.
+                let mupenOptFileExists = FileManager.default.fileExists(atPath: mupenOptPath)
+                let existingMupenOpt = mupenOptFileExists ? ((try? String(contentsOfFile: mupenOptPath, encoding: .utf8)) ?? "") : ""
                 // Must patch RSP when JIT is unavailable for standard builds:
                 // tvOS (JIT is only reachable via Xcode debugger or special entitlements
                 // — not typical for end users), or iOS 26+ (W×X enforcement).
@@ -746,7 +752,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                     // Note: the pak/rumble regression was introduced by commit efe5e0d36
                     // which set optionOverwrite=true and wiped the whole file. This is NOT
                     // an inherent iOS 26 / tvOS limitation — it was a regression from that fix.
-                    if existingMupenOpt.isEmpty {
+                    if !mupenOptFileExists {
                         // Fresh install: optionValues already has rdp + rsp, add pak default.
                         ILOG("Mupen64Plus-Next: fresh install — writing defaults with pak1 = rumble")
                         optionValues += "mupen64plus-pak1 = \"rumble\"\n"
@@ -781,7 +787,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                     // iOS < 26 only (tvOS is handled above via mustPatchRSP=true).
                     // write-only-if-not-exists: optionOverwrite=false means the Obj-C layer
                     // skips the write when the file is already present.
-                    if existingMupenOpt.isEmpty {
+                    if !mupenOptFileExists {
                         // Fresh install: write defaults including pak1=rumble.
                         ILOG("Mupen64Plus-Next: iOS<26 fresh install — writing defaults with pak1 = rumble")
                         optionValues += "mupen64plus-pak1 = \"rumble\"\n"
@@ -790,13 +796,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                         // Existing file: check for pak1 and add via targeted merge if missing.
                         // optionOverwrite=false would skip the write entirely, so we must switch
                         // to a merge+overwrite when the only missing piece is pak1.
-                        let hasPak1 = existingMupenOpt.components(separatedBy: "\n")
-                            .contains { $0.hasPrefix("mupen64plus-pak1 ") }
+                        // Build lines array once — reused for both the hasPak1 check and the merge.
+                        var mergedLines = existingMupenOpt.components(separatedBy: "\n")
+                        let hasPak1 = mergedLines.contains { $0.hasPrefix("mupen64plus-pak1 ") }
                         if hasPak1 {
                             ILOG("Mupen64Plus-Next: iOS<26 pak1 already set — preserving existing .opt")
                             optionOverwrite = false
                         } else {
-                            var mergedLines = existingMupenOpt.components(separatedBy: "\n")
                             while mergedLines.last == "" { mergedLines.removeLast() }
                             // Defensive: ensure rdp-plugin is present (matches iOS 26+ merge behaviour).
                             if !mergedLines.contains(where: { $0.hasPrefix("mupen64plus-rdp-plugin") }) {
