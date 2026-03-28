@@ -127,6 +127,7 @@ public struct SaveImportWizardView: View {
 
     // MARK: - Setup
 
+    @MainActor
     private func setup() {
         if let pre = preSelectedGame {
             let frozen = pre.isFrozen ? pre : pre.freeze()
