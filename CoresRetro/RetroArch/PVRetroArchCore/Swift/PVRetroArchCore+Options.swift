@@ -705,13 +705,16 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 //                } else {
 //                    optionValues += "mupen64plus-rdp-plugin = \"gliden64\"\n";
 //                }
-                // ParallelRSP uses a JIT compiler; on iOS 26+ W×X enforcement prevents
-                // JIT pages from being mapped writable+executable, causing a crash.
-                // Fall back to the CXD4 interpreted RSP on iOS 26+ unless JIT is known
-                // to be active (in which case the user would have JIT available).
-                // On older iOS, ParallelRSP is the best choice.
-                #if os(iOS) || os(tvOS)
-                if #available(iOS 26, tvOS 26, *) {
+                // ParallelRSP requires JIT. tvOS does not expose JIT to regular
+                // (non-debug) builds; Xcode-attached or other privileged debug
+                // sessions can enable it, but this is uncommon for end-user builds.
+                // On iOS 26+ the W×X enforcement also prevents JIT for standard
+                // builds. Use the interpreted CXD4 RSP in both cases.
+                // On iOS < 26, ParallelRSP is the better-performing choice.
+                #if os(tvOS)
+                optionValues += "mupen64plus-rsp-plugin = \"cxd4\"\n"
+                #elseif os(iOS)
+                if #available(iOS 26, *) {
                     optionValues += "mupen64plus-rsp-plugin = \"cxd4\"\n"
                 } else {
                     optionValues += "mupen64plus-rsp-plugin = \"parallel\"\n"
@@ -720,13 +723,113 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValues += "mupen64plus-rsp-plugin = \"hle\"\n"
                 #endif
                 optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
-                // On iOS 26+ we must overwrite any existing .opt that may already contain
-                // mupen64plus-rsp-plugin = "parallel" from a previous session.
                 #if os(iOS) || os(tvOS)
-                if #available(iOS 26, tvOS 26, *) {
+                // Read the existing .opt file so we can do targeted in-place updates.
+                let mupenOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
+                DLOG("Mupen64Plus-Next: opt file path: \(mupenOptPath)")
+                // Use fileExists to distinguish "no file" (fresh install) from "empty file"
+                // (needs migration). String(contentsOfFile:) returns nil for both, so relying
+                // solely on .isEmpty would cause iOS<26 to skip writing an empty file because
+                // optionOverwrite=false only writes when the file is ABSENT from disk.
+                let mupenOptFileExists = FileManager.default.fileExists(atPath: mupenOptPath)
+                let existingMupenOpt = mupenOptFileExists ? ((try? String(contentsOfFile: mupenOptPath, encoding: .utf8)) ?? "") : ""
+                // Must patch RSP when JIT is unavailable for standard builds:
+                // tvOS (JIT is only reachable via Xcode debugger or special entitlements
+                // — not typical for end users), or iOS 26+ (W×X enforcement).
+                let mustPatchRSP: Bool = {
+                    #if os(tvOS)
+                    return true
+                    #else
+                    if #available(iOS 26, *) { return true }
+                    return false
+                    #endif
+                }()
+                if mustPatchRSP {
+                    // Must overwrite so any stale "parallel" RSP line is replaced with "cxd4".
+                    // Strategy: preserve ALL user settings from the existing file, patching
+                    // only the rsp-plugin line. Fall back to defaults on a fresh install.
+                    //
+                    // Note: the pak/rumble regression was introduced by commit efe5e0d36
+                    // which set optionOverwrite=true and wiped the whole file. This is NOT
+                    // an inherent iOS 26 / tvOS limitation — it was a regression from that fix.
+                    if !mupenOptFileExists {
+                        // Fresh install: optionValues already has rdp + rsp, add pak default.
+                        ILOG("Mupen64Plus-Next: fresh install — writing defaults with pak1 = rumble")
+                        optionValues += "mupen64plus-pak1 = \"rumble\"\n"
+                    } else {
+                        // Existing file: rebuild from full content, patching only what we must.
+                        // This preserves user-configured audio, video, gameplay, and pak options.
+                        // Strip the old rsp-plugin line; we'll re-append with the correct value.
+                        var mergedLines = existingMupenOpt.components(separatedBy: "\n")
+                            .filter { !$0.hasPrefix("mupen64plus-rsp-plugin") }
+                        // Drop trailing empty strings so appended lines don't produce blank-line gaps.
+                        while mergedLines.last == "" { mergedLines.removeLast() }
+                        mergedLines.append("mupen64plus-rsp-plugin = \"cxd4\"")
+                        ILOG("Mupen64Plus-Next: patched rsp-plugin = cxd4 in existing .opt")
+                        // Ensure rdp-plugin is present (defensive: existing file may predate our defaults).
+                        let hasRdpPlugin = mergedLines.contains { $0.hasPrefix("mupen64plus-rdp-plugin") }
+                        if !hasRdpPlugin {
+                            mergedLines.insert("mupen64plus-rdp-plugin = \"angrylion\"", at: 0)
+                            ILOG("Mupen64Plus-Next: rdp-plugin missing from existing .opt — adding angrylion default")
+                        }
+                        // Add pak1 default only if absent (honour user-configured pak type).
+                        let hasPak1 = mergedLines.contains { $0.hasPrefix("mupen64plus-pak1 ") }
+                        if !hasPak1 {
+                            mergedLines.append("mupen64plus-pak1 = \"rumble\"")
+                            ILOG("Mupen64Plus-Next: no pak1 setting found — defaulting pak1 = rumble")
+                        } else {
+                            ILOG("Mupen64Plus-Next: preserving existing pak1 setting in .opt")
+                        }
+                        optionValues = mergedLines.joined(separator: "\n") + "\n"
+                    }
                     optionOverwrite = true
                 } else {
-                    optionOverwrite = false
+                    // iOS < 26 only (tvOS is handled above via mustPatchRSP=true).
+                    // write-only-if-not-exists: optionOverwrite=false means the Obj-C layer
+                    // skips the write when the file is already present.
+                    if !mupenOptFileExists {
+                        // Fresh install: write defaults including pak1=rumble.
+                        ILOG("Mupen64Plus-Next: iOS<26 fresh install — writing defaults with pak1 = rumble")
+                        optionValues += "mupen64plus-pak1 = \"rumble\"\n"
+                        optionOverwrite = false
+                    } else {
+                        // Existing file: check for all required settings and add any that are missing.
+                        // optionOverwrite=false would skip the write entirely, so we must switch
+                        // to a merge+overwrite when any required setting is absent.
+                        // Build lines array once — reused for both the presence checks and the merge.
+                        var mergedLines = existingMupenOpt.components(separatedBy: "\n")
+                        let hasPak1 = mergedLines.contains { $0.hasPrefix("mupen64plus-pak1 ") }
+                        let hasRdpPlugin = mergedLines.contains { $0.hasPrefix("mupen64plus-rdp-plugin") }
+                        let hasRspPlugin = mergedLines.contains { $0.hasPrefix("mupen64plus-rsp-plugin") }
+                        if hasPak1 && hasRdpPlugin && hasRspPlugin {
+                            ILOG("Mupen64Plus-Next: iOS<26 all required settings present — preserving existing .opt")
+                            // Clear stale optionValues so the Obj-C layer does not receive the
+                            // rdp/rsp defaults set earlier; those are already in the file.
+                            optionValues = ""
+                            optionValuesFile = ""
+                            optionOverwrite = false
+                        } else {
+                            while mergedLines.last == "" { mergedLines.removeLast() }
+                            // Defensive: ensure rdp-plugin is present (matches iOS 26+ merge behaviour).
+                            if !hasRdpPlugin {
+                                mergedLines.insert("mupen64plus-rdp-plugin = \"angrylion\"", at: 0)
+                                ILOG("Mupen64Plus-Next: iOS<26 rdp-plugin missing — adding angrylion default")
+                            }
+                            // Defensive: ensure rsp-plugin is present (matches iOS 26+ merge behaviour).
+                            // Without this, files predating the rsp-plugin feature lose the parallel default
+                            // when optionValues is replaced entirely by the merged content below.
+                            if !hasRspPlugin {
+                                mergedLines.append("mupen64plus-rsp-plugin = \"parallel\"")
+                                ILOG("Mupen64Plus-Next: iOS<26 rsp-plugin missing — adding parallel default")
+                            }
+                            if !hasPak1 {
+                                mergedLines.append("mupen64plus-pak1 = \"rumble\"")
+                                ILOG("Mupen64Plus-Next: iOS<26 adding missing pak1 = rumble to existing .opt")
+                            }
+                            optionValues = mergedLines.joined(separator: "\n") + "\n"
+                            optionOverwrite = true
+                        }
+                    }
                 }
                 #else
                 optionOverwrite = false
