@@ -30,6 +30,16 @@
 #include <stdint.h>
 #include <string.h>
 
+@interface MednafenRcheevosClient (PrivateMethods)
+- (uint32_t)_readAddress:(uint32_t)address
+              intoBuffer:(uint8_t *)buffer
+               numBytes:(uint32_t)numBytes;
+- (void)_performServerRequest:(const rc_api_request_t *)request
+                     callback:(rc_client_server_callback_t)callback
+                 callbackData:(void *)callbackData;
+- (void)_handleEvent:(const rc_client_event_t *)event;
+@end
+
 // ---------------------------------------------------------------------------
 // MARK: - C trampolines
 // ---------------------------------------------------------------------------
@@ -190,7 +200,7 @@ static const NSUInteger kMaxRegions = 8;
     }
     [urlRequest setValue:@"Provenance/PVRcheevos" forHTTPHeaderField:@"User-Agent"];
 
-    [[NSURLSession sharedSession]
+    [[[NSURLSession sharedSession]
         dataTaskWithRequest:urlRequest
           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
               rc_api_server_response_t serverResponse = {};
