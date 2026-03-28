@@ -82,9 +82,9 @@ public struct NetplayDeepLinkHandlerModifier: ViewModifier {
             WLOG("[NetplayDeepLink] Received netplayJoinRequest with no userInfo")
             return nil
         }
-        let request = NetplayJoinRequest.from(notificationUserInfo: info)
-        if request == nil {
+        guard let request = NetplayJoinRequest.from(notificationUserInfo: info) else {
             WLOG("[NetplayDeepLink] Received malformed netplayJoinRequest — missing host")
+            return nil
         }
         return request
     }

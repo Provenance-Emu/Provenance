@@ -24,7 +24,7 @@ public struct NetplayInviteView: View {
     @State private var hostAddress: String = ""
     @State private var port: String = String(NetplayJoinRequest.defaultPort)
     @State private var useRelay: Bool = false
-    @State private var relayServer: String = "ra.me"
+    @State private var relayServer: String = NetplayDefaultsKey.defaultRelayHostname
 
     public init(gameName: String) {
         self.gameName = gameName
@@ -164,7 +164,7 @@ public struct NetplayInviteView: View {
         // Pre-fill relay from stored defaults (key shared with NetplaySettingsView).
         // Fall back to "ra.me" (matching the SettingsView @AppStorage default) so that
         // relay is pre-checked on a fresh install before the user has opened Settings.
-        let stored = UserDefaults.standard.string(forKey: NetplayDefaultsKey.relayServer) ?? "ra.me"
+        let stored = UserDefaults.standard.string(forKey: NetplayDefaultsKey.relayServer) ?? NetplayDefaultsKey.defaultRelayHostname
         if !stored.isEmpty {
             useRelay = true
             relayServer = stored

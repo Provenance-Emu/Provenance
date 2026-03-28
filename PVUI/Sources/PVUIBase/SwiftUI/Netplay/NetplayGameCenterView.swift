@@ -21,7 +21,8 @@ import PVLogging
 /// Default RetroArch relay server used for Game Center-brokered sessions.
 /// GKMatch does not expose raw IP addresses, so all traffic is routed through
 /// a relay rather than direct P2P.
-private let netplayDefaultRelayServer = "ra.me"
+/// Uses `NetplayDefaultsKey.defaultRelayHostname` as the single source of truth.
+private let netplayDefaultRelayServer = NetplayDefaultsKey.defaultRelayHostname
 
 // MARK: - GameKit Authenticator
 
@@ -192,7 +193,10 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
 
 extension NetplayGKMatchCoordinator: GKMatchDelegate {
     nonisolated func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        guard data.count == 2 else { return }
+        guard data.count == 2 else {
+            WLOG("[GameKit] Received unexpected data length \(data.count) from \(player.displayName); expected 2 bytes (port)")
+            return
+        }
         // Byte-by-byte construction avoids any alignment assumption on the Data buffer.
         let port = UInt16(data[0]) << 8 | UInt16(data[1])
         Task { @MainActor in
