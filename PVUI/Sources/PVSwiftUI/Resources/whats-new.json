@@ -498,6 +498,32 @@
     ]
   },
   {
+    "version": "3.1.0",
+    "title": "USB Peripherals & DriverKit",
+    "features": [
+      {
+        "symbolName": "cable.connector",
+        "symbolColor": "blue",
+        "title": "USB HID Peripheral Support",
+        "subtitle": "Connect USB gamepads, steering wheels, memory card readers, and more via the Provenance Companion app."
+      },
+      {
+        "symbolName": "bolt.fill",
+        "symbolColor": "purple",
+        "title": "DriverKit Extension",
+        "subtitle": "The Companion app hosts a DriverKit system extension that enables devices not natively supported by iPadOS — including DualShock 3 and GameCube adapters."
+      },
+      {
+        "symbolName": "arrow.triangle.2.circlepath.circle.fill",
+        "symbolColor": "green",
+        "title": "System-Wide Drivers",
+        "subtitle": "Once activated, Provenance drivers work for every emulator and game on your iPad — not just Provenance."
+      },
+      {
+        "symbolName": "cart.badge.plus",
+        "symbolColor": "orange",
+        "title": "Driver Store",
+        "subtitle": "Unlock premium driver packs — DualShock 3, GameCube adapter, steering wheels, and more — with one-time in-app purchases."
     "version": "3.9.2",
     "title": "Battery Save Management",
     "features": [

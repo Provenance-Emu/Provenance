@@ -1,0 +1,744 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "peripheral.category.cartridge_reader" : {
+      "comment" : "Peripheral category label for cartridge readers",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartridge Reader"
+          }
+        }
+      }
+    },
+    "peripheral.category.flight_stick" : {
+      "comment" : "Peripheral category label for flight sticks / joysticks",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flight Stick"
+          }
+        }
+      }
+    },
+    "peripheral.category.gamepad" : {
+      "comment" : "Peripheral category label for gamepads and game controllers",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gamepad"
+          }
+        }
+      }
+    },
+    "peripheral.category.keyboard" : {
+      "comment" : "Peripheral category label for keyboards",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keyboard"
+          }
+        }
+      }
+    },
+    "peripheral.category.light_gun" : {
+      "comment" : "Peripheral category label for light guns",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Gun"
+          }
+        }
+      }
+    },
+    "peripheral.category.mass_storage" : {
+      "comment" : "Peripheral category label for mass storage / USB drives",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mass Storage"
+          }
+        }
+      }
+    },
+    "peripheral.category.memory_card" : {
+      "comment" : "Peripheral category label for memory card readers",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memory Card Reader"
+          }
+        }
+      }
+    },
+    "peripheral.category.serial_adapter" : {
+      "comment" : "Peripheral category label for serial adapters",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serial Adapter"
+          }
+        }
+      }
+    },
+    "peripheral.category.steering_wheel" : {
+      "comment" : "Peripheral category label for steering wheels / racing wheels",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steering Wheel"
+          }
+        }
+      }
+    },
+    "peripheral.category.unknown" : {
+      "comment" : "Peripheral category label for unrecognized devices",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        }
+      }
+    },
+    "peripherals.connected.count %lld" : {
+      "comment" : "Connected devices count in peripherals section header",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld device"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld devices"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.description" : {
+      "comment" : "Footer describing what the DriverKit extension does",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The DriverKit extension enables USB gamepads and peripherals not natively supported by iPadOS, including DualShock 3 and GameCube adapters. Once active, all apps on your device benefit."
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.driver_badge" : {
+      "comment" : "Short badge label shown next to devices that have an active DriverKit driver",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Driver"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.enable_button" : {
+      "comment" : "Button to enable / activate the DriverKit system extension",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.section_header" : {
+      "comment" : "Section header for the DriverKit extension status row",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Driver Status"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.status.activating" : {
+      "comment" : "DriverKit status label while activation is in progress",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activating — user approval may be required"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.status.active" : {
+      "comment" : "DriverKit status label when the extension is active",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active — USB HID devices are fully supported"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.status.deactivating" : {
+      "comment" : "DriverKit status label while deactivation is in progress",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deactivating…"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.status.failed %@" : {
+      "comment" : "DriverKit status label when activation/deactivation failed. %@ is the error message.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed: %@"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.status.failed_short" : {
+      "comment" : "Short DriverKit status caption shown next to icon when activation failed (full error appears below)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.status.not_installed" : {
+      "comment" : "DriverKit status label when the extension is not yet active",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not active — tap Enable to load"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.status.unknown" : {
+      "comment" : "DriverKit status label while status is being determined",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking status…"
+          }
+        }
+      }
+    },
+    "peripherals.driverkit.title" : {
+      "comment" : "Title label for the USB DriverKit extension row",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB DriverKit Extension"
+          }
+        }
+      }
+    },
+    "peripherals.empty.description" : {
+      "comment" : "Description shown when no peripherals are connected",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect a USB or Bluetooth controller to get started."
+          }
+        }
+      }
+    },
+    "peripherals.empty.title" : {
+      "comment" : "Title shown when no peripherals are connected",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Devices Connected"
+          }
+        }
+      }
+    },
+    "peripherals.nav_title" : {
+      "comment" : "Navigation title for the Peripherals tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peripherals"
+          }
+        }
+      }
+    },
+    "peripherals.section.compatibility" : {
+      "comment" : "Section header for the compatibility / supported devices section",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compatibility"
+          }
+        }
+      }
+    },
+    "peripherals.section.connected" : {
+      "comment" : "Section header for the connected devices list",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        }
+      }
+    },
+    "peripherals.supported_devices.nav_title" : {
+      "comment" : "Navigation title for the Supported Devices list screen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supported Devices"
+          }
+        }
+      }
+    },
+    "peripherals.supported_devices.view_all" : {
+      "comment" : "Navigation link label to view the full supported-devices list",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View All Supported Devices"
+          }
+        }
+      }
+    },
+    "store.driver_badge" : {
+      "comment" : "Short badge label for devices that require a purchased driver pack",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Driver"
+          }
+        }
+      }
+    },
+    "store.driver_store_toolbar_label" : {
+      "comment" : "Toolbar button label that opens the Driver Store sheet",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Driver Store"
+          }
+        }
+      }
+    },
+    "store.done_button" : {
+      "comment" : "Button label to dismiss the Driver Store sheet",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "store.empty.description" : {
+      "comment" : "Description shown when the Driver Store cannot connect to the App Store",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not connect to the App Store. Check your connection and try again."
+          }
+        }
+      }
+    },
+    "store.empty.title" : {
+      "comment" : "Title shown when the Driver Store is unavailable",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Store Unavailable"
+          }
+        }
+      }
+    },
+    "store.error.purchase_failed_title" : {
+      "comment" : "Alert title when a StoreKit purchase fails",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchase Error"
+          }
+        }
+      }
+    },
+    "store.loading" : {
+      "comment" : "Progress indicator label while the Driver Store products are loading",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading…"
+          }
+        }
+      }
+    },
+    "store.nav_title" : {
+      "comment" : "Navigation title for the Driver Store sheet",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Driver Store"
+          }
+        }
+      }
+    },
+    "store.reusability.description" : {
+      "comment" : "Banner description explaining that purchased drivers work system-wide",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchased drivers activate at the OS level — every emulator and game on your iPad benefits, not just Provenance."
+          }
+        }
+      }
+    },
+    "store.reusability.title" : {
+      "comment" : "Banner headline explaining that purchased drivers work system-wide",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Works System-Wide"
+          }
+        }
+      }
+    },
+    "store.restore_button" : {
+      "comment" : "Toolbar button label to restore previously purchased driver packs",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
+    "store.product.all_access.description" : {
+      "comment" : "Description for the all-access driver bundle IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All current driver packs plus any future drivers we ship. Best value."
+          }
+        }
+      }
+    },
+    "store.product.all_access.name" : {
+      "comment" : "Display name for the all-access driver bundle IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Drivers Bundle"
+          }
+        }
+      }
+    },
+    "store.product.ds3.description" : {
+      "comment" : "Description for the DualShock 3 driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enables DualShock 3 controllers over USB on iPadOS. Works system-wide — other games and emulators benefit too."
+          }
+        }
+      }
+    },
+    "store.product.ds3.name" : {
+      "comment" : "Display name for the DualShock 3 driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DualShock 3 Driver"
+          }
+        }
+      }
+    },
+    "store.product.gamecube.description" : {
+      "comment" : "Description for the GameCube adapter driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Official Nintendo and Mayflash GameCube USB adapters. Supports all 4 ports."
+          }
+        }
+      }
+    },
+    "store.product.gamecube.name" : {
+      "comment" : "Display name for the GameCube adapter driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GameCube Adapter Driver"
+          }
+        }
+      }
+    },
+    "store.product.legacy_hid.description" : {
+      "comment" : "Description for the Legacy HID driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generic DirectInput USB HID devices: arcade sticks, older flight sticks, and budget gamepads."
+          }
+        }
+      }
+    },
+    "store.product.legacy_hid.name" : {
+      "comment" : "Display name for the Legacy HID driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legacy HID Pack"
+          }
+        }
+      }
+    },
+    "store.product.memory_card.description" : {
+      "comment" : "Description for the memory card reader driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import and export saves via USB memory card readers. Supports GameShark/Max Drive adapters."
+          }
+        }
+      }
+    },
+    "store.product.memory_card.name" : {
+      "comment" : "Display name for the memory card reader driver IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memory Card Reader Pack"
+          }
+        }
+      }
+    },
+    "store.product.steering_wheel.description" : {
+      "comment" : "Description for the steering wheel driver pack IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logitech G920/G923, Thrustmaster T300RS, and compatible USB force-feedback wheels."
+          }
+        }
+      }
+    },
+    "store.product.steering_wheel.name" : {
+      "comment" : "Display name for the steering wheel driver pack IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steering Wheel Pack"
+          }
+        }
+      }
+    },
+    "settings.about.app" : {
+      "comment" : "Label for the app name in Settings > About",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App"
+          }
+        }
+      }
+    },
+    "settings.about.purpose" : {
+      "comment" : "Label for the app purpose in Settings > About",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purpose"
+          }
+        }
+      }
+    },
+    "settings.about.purpose_value" : {
+      "comment" : "Value describing the companion app's purpose",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DriverKit host & upsell companion"
+          }
+        }
+      }
+    },
+    "settings.about.section" : {
+      "comment" : "Section header for the About section in Settings",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        }
+      }
+    },
+    "settings.about.version" : {
+      "comment" : "Label for the version row in Settings > About",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
+    "settings.drivers.footer" : {
+      "comment" : "Footer for the Drivers section in Settings, explaining system-wide benefit",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchased drivers are system-wide — they benefit every emulator and game on your iPad."
+          }
+        }
+      }
+    },
+    "settings.drivers.section" : {
+      "comment" : "Section header for the Drivers section in Settings",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drivers"
+          }
+        }
+      }
+    },
+    "settings.main_app.open_provenance" : {
+      "comment" : "Button label to open the main Provenance app via deep link",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Provenance"
+          }
+        }
+      }
+    },
+    "settings.main_app.section" : {
+      "comment" : "Section header for the Main App section in Settings",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Main App"
+          }
+        }
+      }
+    },
+    "settings.nav_title" : {
+      "comment" : "Navigation title for the Settings tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "settings.support.driverkit_entitlement" : {
+      "comment" : "Link label to the Apple DriverKit entitlement request page",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DriverKit Entitlement Request"
+          }
+        }
+      }
+    },
+    "settings.support.github" : {
+      "comment" : "Link label to the Provenance GitHub repository",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provenance on GitHub"
+          }
+        }
+      }
+    },
+    "settings.support.section" : {
+      "comment" : "Section header for the Support section in Settings",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
