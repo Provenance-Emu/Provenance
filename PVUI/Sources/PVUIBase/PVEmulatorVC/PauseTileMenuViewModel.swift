@@ -257,14 +257,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             if isKnown || configuredCount > 0 {
                 // Show "!" badge when this is a known Transfer Pak game but nothing is configured —
                 // this nudges the user to set it up without blocking launch.
-                let badge: String?
-                if configuredCount > 0 {
-                    badge = "\(configuredCount)"
-                } else if isKnown {
-                    badge = "!"
-                } else {
-                    badge = nil
-                }
+                let badge: String? = configuredCount > 0 ? "\(configuredCount)" : "!"
                 coreTiles.append(PauseMenuTile(
                     id: "transferPak",
                     icon: "arrow.triangle.2.circlepath",

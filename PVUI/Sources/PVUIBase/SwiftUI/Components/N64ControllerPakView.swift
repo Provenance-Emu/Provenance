@@ -337,6 +337,7 @@ public struct N64ControllerPakView: View {
                         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(selected.accentColor.opacity(0.4), lineWidth: 1))
                 )
             }
+            .accessibilityLabel("Select pak type for Controller \(port)")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)

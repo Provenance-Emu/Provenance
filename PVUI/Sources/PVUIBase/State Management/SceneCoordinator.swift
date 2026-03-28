@@ -1021,12 +1021,6 @@ public class SceneCoordinator: ObservableObject {
         DispatchQueue.main.async { cont?.resume() }
     }
 
-    /// Deprecated: use `confirmAndDismissPreLaunchTransferPak()` instead.
-    /// This wrapper is kept for source compatibility with existing callers.
-    @available(*, deprecated, message: "Use confirmAndDismissPreLaunchTransferPak() instead.")
-    public func dismissPreLaunchTransferPakSheet() {
-        confirmAndDismissPreLaunchTransferPak()
-    }
     /// Called by the sheet's `onDismiss` callback after the dismissal animation finishes.
     /// Resumes the launch continuation if it has not already been resumed by
     /// `confirmAndDismissPreLaunchTransferPak()`. Safe to call multiple times — second call is
