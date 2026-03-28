@@ -364,6 +364,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     ///
     /// - Note: These names follow conventions used by the wider emulation community.
     ///   Part of Epic #2725 — future UI will let users manage these directories.
+    ///   ObjC callers should use `PVSystemDirectoryHelper.systemDirectoryName(forIdentifier:)`
+    ///   in `PVCoreBridgeRetro` rather than duplicating this table.
     public var systemDirectoryName: String? {
         switch self {
         case .PSP:           return "PSP"
