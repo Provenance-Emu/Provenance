@@ -200,6 +200,10 @@
 	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.games</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>provenance</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

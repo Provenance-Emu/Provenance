@@ -101,6 +101,12 @@
         "airPlayMenu": {
             "enabled": false,
             "description": "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
+        },
+        "thirdPartyEcosystemIntegration": {
+            "enabled": false,
+            "allowedPlatforms": ["ios"],
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Ecosystem Integration section in Settings → Library. Shows XeniOS (Xbox 360), MeloNX (Switch), and MeloCafe (Wii U) when installed, and enables deep-link game launching between Manic EMU and these apps. iOS only. Disabled by default while URL schemes are being validated."
         }
     }
 }

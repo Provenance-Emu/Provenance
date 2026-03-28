@@ -524,6 +524,10 @@
         "symbolColor": "orange",
         "title": "Driver Store",
         "subtitle": "Unlock premium driver packs — DualShock 3, GameCube adapter, steering wheels, and more — with one-time in-app purchases."
+      }
+    ]
+  },
+  {
     "version": "3.9.2",
     "title": "Battery Save Management",
     "features": [
@@ -538,6 +542,30 @@
         "symbolColor": "blue",
         "title": "Import Battery Save",
         "subtitle": "Bring in a .sav/.srm/.ram file from any emulator. Paired RTC clock files are imported automatically."
+      }
+    ]
+  },
+  {
+    "version": "3.9.3",
+    "title": "Save Migration Guide",
+    "features": [
+      {
+        "symbolName": "arrow.triangle.2.circlepath",
+        "symbolColor": "blue",
+        "title": "Import from Other Emulators",
+        "subtitle": "New step-by-step guide to migrate your saves from Delta, RetroArch, Mantic Emu, PPSSPP, and Gamma. Find it in Settings → Library."
+      },
+      {
+        "symbolName": "checkmark.circle.fill",
+        "symbolColor": "green",
+        "title": "Automatic Detection",
+        "subtitle": "Provenance now detects which emulators are installed and surfaces tailored export instructions for each one."
+      },
+      {
+        "symbolName": "folder.badge.plus",
+        "symbolColor": "purple",
+        "title": "Manual Import Guide",
+        "subtitle": "Not migrating from a specific app? A general guide covers .sav/.srm/.state imports via Files.app and the built-in web server."
       }
     ]
   }
