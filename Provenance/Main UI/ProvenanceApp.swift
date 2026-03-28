@@ -332,6 +332,11 @@ extension ProvenanceApp {
             appState.emulationUIState.currentGame = frozen.game?.freeze()
             appState.emulationUIState.currentSaveState = frozen
             appState.emulationUIState.currentCore = frozen.core?.freeze()
+            #if os(iOS)
+            if #available(iOS 14.0, *), let game = saveState.game {
+                appDelegate.donateMediaIntent(for: game)
+            }
+            #endif
         case .openFile(let url):
             ILOG("ProvenanceApp: Opening file '\(url.lastPathComponent)' - emulator scene will handle import")
         case .none:

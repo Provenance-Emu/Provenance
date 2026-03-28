@@ -103,12 +103,12 @@ extension PVAppDelegate {
     public func application(_ application: UIApplication, handle intent: INIntent, completionHandler: @escaping (INIntentResponse) -> Void) {
         ILOG("PVAppDelegate: Handling intent: \(intent)")
 
-        if #available(iOS 14.0, *), let openIntent = intent as? PVOpenIntent {
+        if let openIntent = intent as? PVOpenIntent {
             let intentHandler = PVIntentHandler()
             intentHandler.handle(intent: openIntent) { response in
                 completionHandler(response)
             }
-        } else if #available(iOS 14.0, *), let mediaIntent = intent as? INPlayMediaIntent {
+        } else if let mediaIntent = intent as? INPlayMediaIntent {
             // In-app foreground handling: delegate to our INPlayMediaIntentHandling conformance.
             handle(intent: mediaIntent) { response in
                 completionHandler(response)
@@ -175,7 +175,7 @@ extension PVAppDelegate {
             return PVIntentHandler()
         }
 
-        if #available(iOS 14.0, *), intent is INPlayMediaIntent {
+        if intent is INPlayMediaIntent {
             ILOG("PVAppDelegate: Providing in-app handler for INPlayMediaIntent")
             return self
         }
