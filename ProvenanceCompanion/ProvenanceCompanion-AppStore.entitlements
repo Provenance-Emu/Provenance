@@ -49,6 +49,7 @@
 		<string>org.provenance-emu.companion.iap.driver.legacy-hid</string>
 		<string>org.provenance-emu.companion.iap.driver.memcard</string>
 		<string>org.provenance-emu.companion.iap.bundle.all</string>
+		<string>org.provenance-emu.companion.iap.cheat-library</string>
 	</array>
 </dict>
 </plist>

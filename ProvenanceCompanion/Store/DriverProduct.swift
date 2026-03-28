@@ -25,39 +25,44 @@ public enum DriverProductID: String, CaseIterable, Sendable {
     case memoryCardPack         = "org.provenance-emu.companion.iap.driver.memcard"
     /// All-access bundle (all driver packs + future packs).
     case allAccessBundle        = "org.provenance-emu.companion.iap.bundle.all"
+    /// Cheat code library — export, QR share, and App Group sync of cheat codes.
+    case cheatLibrary           = "org.provenance-emu.companion.iap.cheat-library"
 
     /// Localized display name sourced from `Localizable.xcstrings`.
     public var displayName: String {
         switch self {
-        case .ds3Driver:        return String(localized: "store.product.ds3.name")
-        case .gamecubeAdapter:  return String(localized: "store.product.gamecube.name")
+        case .ds3Driver:         return String(localized: "store.product.ds3.name")
+        case .gamecubeAdapter:   return String(localized: "store.product.gamecube.name")
         case .steeringWheelPack: return String(localized: "store.product.steering_wheel.name")
-        case .legacyHIDPack:    return String(localized: "store.product.legacy_hid.name")
-        case .memoryCardPack:   return String(localized: "store.product.memory_card.name")
-        case .allAccessBundle:  return String(localized: "store.product.all_access.name")
+        case .legacyHIDPack:     return String(localized: "store.product.legacy_hid.name")
+        case .memoryCardPack:    return String(localized: "store.product.memory_card.name")
+        case .allAccessBundle:   return String(localized: "store.product.all_access.name")
+        case .cheatLibrary:      return String(localized: "store.product.cheat_library.name")
         }
     }
 
     public var systemImageName: String {
         switch self {
-        case .ds3Driver:        return "gamecontroller"
-        case .gamecubeAdapter:  return "gamecontroller"
+        case .ds3Driver:         return "gamecontroller"
+        case .gamecubeAdapter:   return "gamecontroller"
         case .steeringWheelPack: return "steeringwheel"
-        case .legacyHIDPack:    return "cable.connector"
-        case .memoryCardPack:   return "memorychip"
-        case .allAccessBundle:  return "star.circle.fill"
+        case .legacyHIDPack:     return "cable.connector"
+        case .memoryCardPack:    return "memorychip"
+        case .allAccessBundle:   return "star.circle.fill"
+        case .cheatLibrary:      return "doc.on.clipboard.fill"
         }
     }
 
     /// Localized short description sourced from `Localizable.xcstrings`.
     public var localizedDescription: String {
         switch self {
-        case .ds3Driver:        return String(localized: "store.product.ds3.description")
-        case .gamecubeAdapter:  return String(localized: "store.product.gamecube.description")
+        case .ds3Driver:         return String(localized: "store.product.ds3.description")
+        case .gamecubeAdapter:   return String(localized: "store.product.gamecube.description")
         case .steeringWheelPack: return String(localized: "store.product.steering_wheel.description")
-        case .legacyHIDPack:    return String(localized: "store.product.legacy_hid.description")
-        case .memoryCardPack:   return String(localized: "store.product.memory_card.description")
-        case .allAccessBundle:  return String(localized: "store.product.all_access.description")
+        case .legacyHIDPack:     return String(localized: "store.product.legacy_hid.description")
+        case .memoryCardPack:    return String(localized: "store.product.memory_card.description")
+        case .allAccessBundle:   return String(localized: "store.product.all_access.description")
+        case .cheatLibrary:      return String(localized: "store.product.cheat_library.description")
         }
     }
 }
