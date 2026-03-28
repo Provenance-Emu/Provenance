@@ -98,7 +98,7 @@ public final class SaveExporter: @unchecked Sendable {
 
         let hasAnySave = saveStateSnapshots.contains(where: {
             guard let url = $0.fileURL else { return false }
-            return FileManager.default.fileExists(atPath: url.path)
+            return fm.fileExists(atPath: url.path)
         })
         // Guard against nil romURL: Paths.batterySavesPath(forROM: nil) falls back to a shared
         // ".../Battery States/NULL" directory that could contain unrelated games' saves.

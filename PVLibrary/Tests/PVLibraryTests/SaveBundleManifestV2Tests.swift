@@ -46,10 +46,14 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertEqual(parsed.batterySaves?.count, 1)
         XCTAssertEqual(parsed.batterySaves?.first?.filename, "Mario.srm")
         XCTAssertEqual(parsed.batterySaves?.first?.sizeBytes, 8192)
+        XCTAssertEqual(parsed.batterySaves?.first?.md5, "deadbeef")
         XCTAssertEqual(parsed.saveStates?.count, 1)
         XCTAssertEqual(parsed.saveStates?.first?.filename, "abc.svs")
+        XCTAssertEqual(parsed.saveStates?.first?.screenshotFilename, "abc.jpg")
+        XCTAssertEqual(parsed.saveStates?.first?.date, now)
         XCTAssertEqual(parsed.saveStates?.first?.isAutosave, false)
         XCTAssertEqual(parsed.saveStates?.first?.userDescription, "World 3")
+        XCTAssertEqual(parsed.saveStates?.first?.coreIdentifier, "com.provenance.snes9x")
     }
 
     // MARK: - V1 backward compatibility
