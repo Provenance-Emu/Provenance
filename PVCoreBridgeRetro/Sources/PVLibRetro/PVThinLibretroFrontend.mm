@@ -1916,12 +1916,9 @@ static bool thin_environment(unsigned cmd, void *data) {
     NSString *biosPath = self.BIOSPath ?: _biosPath;
     NSString *baseDir = biosPath ? biosPath.stringByDeletingLastPathComponent : nil;
     if (!baseDir) {
-        // BIOSPath unavailable (shouldn't happen in normal operation); fall back to raw search.
-#if TARGET_OS_TV
-        baseDir = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
-#else
-        baseDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-#endif
+        // BIOSPath unavailable (shouldn't happen in normal operation); use [NSURL documentsPath]
+        // which already handles tvOS→Caches redirect and app-group containers.
+        baseDir = [NSURL documentsPath].path;
     }
     NSString *systemDir = [baseDir stringByAppendingPathComponent:
                            [NSString stringWithFormat:@"System/%@", shortName]];

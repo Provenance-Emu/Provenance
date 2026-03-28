@@ -174,7 +174,7 @@ private:
     g_Config.Load("");
 
     NSString *directoryString      = [supportDirectoryPath stringByAppendingString:@"/"];
-    g_Config.currentDirectory      = Path([directoryString cStringUsingEncoding:kCFStringEncodingUTF8]);
+    g_Config.currentDirectory      = Path(directoryString.fileSystemRepresentation);
     g_Config.defaultCurrentDirectory = Path(directoryString.fileSystemRepresentation);
     g_Config.memStickDirectory     = Path(directoryString.fileSystemRepresentation);
     g_Config.flash0Directory       = Path(directoryString.fileSystemRepresentation);
