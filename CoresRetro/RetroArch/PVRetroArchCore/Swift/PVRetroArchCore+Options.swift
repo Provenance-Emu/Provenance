@@ -705,9 +705,11 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 //                } else {
 //                    optionValues += "mupen64plus-rdp-plugin = \"gliden64\"\n";
 //                }
-                // ParallelRSP requires JIT. tvOS never exposes JIT to apps (no
-                // entitlement at any OS version). On iOS 26+ the W×X enforcement
-                // also prevents JIT. Use the interpreted CXD4 RSP in both cases.
+                // ParallelRSP requires JIT. tvOS does not expose JIT to regular
+                // (non-debug) builds; Xcode-attached or other privileged debug
+                // sessions can enable it, but this is uncommon for end-user builds.
+                // On iOS 26+ the W×X enforcement also prevents JIT for standard
+                // builds. Use the interpreted CXD4 RSP in both cases.
                 // On iOS < 26, ParallelRSP is the better-performing choice.
                 #if os(tvOS)
                 optionValues += "mupen64plus-rsp-plugin = \"cxd4\"\n"
@@ -725,8 +727,9 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 // Read the existing .opt file so we can do targeted in-place updates.
                 let mupenOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
                 let existingMupenOpt = (try? String(contentsOfFile: mupenOptPath, encoding: .utf8)) ?? ""
-                // Must patch RSP when JIT is unavailable: tvOS at any version (no JIT
-                // entitlement), or iOS 26+ (W×X enforcement prevents JIT pages).
+                // Must patch RSP when JIT is unavailable for standard builds:
+                // tvOS (JIT is only reachable via Xcode debugger or special entitlements
+                // — not typical for end users), or iOS 26+ (W×X enforcement).
                 let mustPatchRSP: Bool = {
                     #if os(tvOS)
                     return true
@@ -764,7 +767,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                             ILOG("Mupen64Plus-Next: rdp-plugin missing from existing .opt — adding angrylion default")
                         }
                         // Add pak1 default only if absent (honour user-configured pak type).
-                        let hasPak1 = mergedLines.contains { $0.hasPrefix("mupen64plus-pak1") }
+                        let hasPak1 = mergedLines.contains { $0.hasPrefix("mupen64plus-pak1 ") }
                         if !hasPak1 {
                             mergedLines.append("mupen64plus-pak1 = \"rumble\"")
                             ILOG("Mupen64Plus-Next: no pak1 setting found — defaulting pak1 = rumble")
@@ -788,7 +791,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                         // optionOverwrite=false would skip the write entirely, so we must switch
                         // to a merge+overwrite when the only missing piece is pak1.
                         let hasPak1 = existingMupenOpt.components(separatedBy: "\n")
-                            .contains { $0.hasPrefix("mupen64plus-pak1") }
+                            .contains { $0.hasPrefix("mupen64plus-pak1 ") }
                         if hasPak1 {
                             ILOG("Mupen64Plus-Next: iOS<26 pak1 already set — preserving existing .opt")
                             optionOverwrite = false
