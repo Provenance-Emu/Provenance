@@ -1,6 +1,14 @@
+// USBPeripheralManager is only functional on Apple platforms.
+// The guard ensures the package compiles on Linux for CI test runs of
+// KnownDeviceProfiles / USBDevice without requiring unavailable frameworks.
+#if canImport(GameController)
+
 import Foundation
 import GameController
+
+#if !os(tvOS)
 import ExternalAccessory
+#endif
 
 #if canImport(IOKit)
 import IOKit
@@ -16,9 +24,9 @@ public protocol USBPeripheralManagerDelegate: AnyObject, Sendable {
 /// Central manager for USB/HID peripheral discovery across all available transport layers.
 ///
 /// On iPadOS without DriverKit, enumeration uses:
-/// - `IOHIDManager` for raw HID devices (iPadOS 16+)
+/// - `IOHIDManager` for raw HID devices (macOS / Catalyst)
 /// - `GCController` for recognised gaming controllers
-/// - `EAAccessoryManager` for MFi accessories
+/// - `EAAccessoryManager` for MFi accessories (iOS / macOS only, not tvOS)
 ///
 /// With a DriverKit extension active, the manager additionally surfaces devices that
 /// the OS dext has claimed, identified via `USBDevice.driverKitActive == true`.
@@ -30,9 +38,6 @@ public final class USBPeripheralManager: NSObject {
 
     /// Currently connected peripherals.
     public private(set) var connectedDevices: [USBDevice] = []
-
-    /// Whether a DriverKit extension is currently loaded in this process's host app.
-    public private(set) var driverKitAvailable: Bool = false
 
     public weak var delegate: (any USBPeripheralManagerDelegate)?
 
@@ -62,7 +67,9 @@ public final class USBPeripheralManager: NSObject {
         #if canImport(IOKit)
         startHIDManager()
         #endif
+        #if !os(tvOS)
         registerEAObservers()
+        #endif
         // Snapshot already-connected controllers.
         for controller in GCController.controllers() {
             addGCController(controller)
@@ -131,13 +138,7 @@ public final class USBPeripheralManager: NSObject {
     }
 
     private func gcControllerVIDPID(_ controller: GCController) -> (Int, Int) {
-        // GCController doesn't expose VID/PID directly; use productCategory hint + fallback.
-        if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
-            if let physicalInput = controller.physicalInputProfile as? GCExtendedGamepad {
-                _ = physicalInput // reserved for future USB ID extraction
-            }
-        }
-        // Best-effort: match known controller names
+        // GCController doesn't expose VID/PID directly — best-effort match on vendor name.
         let name = controller.vendorName?.lowercased() ?? ""
         switch true {
         case name.contains("dualshock 4") || name.contains("dual shock 4"):
@@ -157,7 +158,7 @@ public final class USBPeripheralManager: NSObject {
         }
     }
 
-    // MARK: - IOHIDManager (iOS 16+ / macOS / Catalyst)
+    // MARK: - IOHIDManager (macOS / Catalyst)
 
     #if canImport(IOKit)
     private func startHIDManager() {
@@ -172,8 +173,9 @@ public final class USBPeripheralManager: NSObject {
     }
     #endif
 
-    // MARK: - ExternalAccessory
+    // MARK: - ExternalAccessory (iOS / macOS only — not available on tvOS)
 
+    #if !os(tvOS)
     private func registerEAObservers() {
         let nc = NotificationCenter.default
         gcObservers.append(nc.addObserver(
@@ -215,6 +217,7 @@ public final class USBPeripheralManager: NSObject {
         let device = connectedDevices.remove(at: idx)
         delegate?.peripheralManager(self, didDisconnect: device)
     }
+    #endif
 }
 
 // MARK: - IOHIDManager C Callbacks
@@ -304,3 +307,5 @@ private func inferCategory(usagePage: Int, usage: Int, profile: DeviceProfile?) 
     }
 }
 #endif
+
+#endif // canImport(GameController)

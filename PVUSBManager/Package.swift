@@ -16,17 +16,11 @@ let package = Package(
             targets: ["PVUSBManager"]
         ),
     ],
-    dependencies: [
-        .package(path: "../PVLogging"),
-        .package(path: "../PVPrimitives"),
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "PVUSBManager",
-            dependencies: [
-                "PVLogging",
-                "PVPrimitives",
-            ],
+            dependencies: [],
             swiftSettings: [
                 .swiftLanguageMode(.v5)
             ]
