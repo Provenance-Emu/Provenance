@@ -26,10 +26,11 @@ import PVLogging
 /// The ISO 9660 PVD lives at sector 16 (LBA 16).
 ///
 /// ## Extraction strategy
-/// - **Uncompressed CHD** (`compressors[0] == 0`): The hunk map lists each
+/// - **Uncompressed CHD** (`compressors[0..3] == 0`): The hunk map lists each
 ///   hunk's file offset as a `uint32_t` multiple of `hunkbytes`.  We locate
-///   the hunks that contain sectors 0 and 16 and read the raw data directly.
-/// - **Compressed CHD**: Returning `nil`; decompression requires codec
+///   the hunks that contain sectors 0 and 16, read the raw data, and then
+///   perform full ISO 9660 directory walking to find `SYSTEM.CNF` for PSX/PS2.
+/// - **Compressed CHD**: Returns `nil`; decompression requires codec
 ///   libraries (zlib/LZMA/FLAC) that are not bundled with this module.
 ///
 /// - Note: Compressed CHD support is a future enhancement.  The open-source
@@ -61,20 +62,76 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
     private static let cdRawSectorBytes = 2448
     /// Byte offset of user data within a raw CD sector (after 12-byte sync + 4-byte header).
     private static let cdDataOffset = 16
+    /// ISO 9660 magic: "CD001"
+    private static let iso9660Magic: [UInt8] = [0x43, 0x44, 0x30, 0x30, 0x31]
 
     public func matchesMagicBytes(_ headerBytes: Data) -> Bool {
         guard headerBytes.count >= 8 else { return false }
         return Array(headerBytes[0..<8]) == Self.chdMagic
     }
 
+    // MARK: - Pre-read sector data (Sendable result from sync I/O phase)
+
+    /// Holds all sector data pre-read from the CHD on a utility thread.
+    private struct CHDSectors: Sendable {
+        let sector0: Data?    // Sega IP.BIN (Saturn / SegaCD / Dreamcast)
+        let pvd: Data?        // ISO 9660 Primary Volume Descriptor (sector 16)
+        let systemCNF: Data?  // SYSTEM.CNF content, if found via ISO directory walk
+    }
+
+    // MARK: - Public entry point
+
     public func extractSerial(from url: URL, systemHint: String?) async -> DiscSerialResult? {
+        // Phase 1: all synchronous file I/O on a utility thread.
+        let sectors = await Task.detached(priority: .utility) {
+            self.readCHDSectors(from: url)
+        }.value
+
+        guard let sectors = sectors else {
+            VLOG("ChdDiscSerialPlugin: no usable data from \(url.lastPathComponent)")
+            return nil
+        }
+
+        // Phase 2: async dispatch to sub-plugins.
+
+        // Sector 0 → Sega IP.BIN (Saturn / SegaCD / Dreamcast)
+        if let sector0 = sectors.sector0,
+           let result = await trySegaExtraction(sectorData: sector0, url: url,
+                                                systemHint: systemHint) {
+            return result
+        }
+
+        // SYSTEM.CNF found via ISO directory walk → PSX / PS2 product code
+        if let cnfData = sectors.systemCNF,
+           let result = parseSystemCNFData(cnfData, systemHint: systemHint) {
+            ILOG("ChdDiscSerialPlugin: extracted serial via SYSTEM.CNF from \(url.lastPathComponent)")
+            return result
+        }
+
+        // Fallback: ISO volume identifier from PVD (non-Sega discs without SYSTEM.CNF)
+        if let pvdData = sectors.pvd,
+           let volID = pvdData.asciiString(at: 40, length: 32),
+           !volID.isEmpty {
+            VLOG("ChdDiscSerialPlugin: using volume ID '\(volID)' as serial for \(url.lastPathComponent)")
+            return DiscSerialResult(serial: volID)
+        }
+
+        VLOG("ChdDiscSerialPlugin: no serial found in uncompressed CHD \(url.lastPathComponent)")
+        return nil
+    }
+
+    // MARK: - Synchronous CHD sector reader
+
+    /// Reads all sectors needed for serial extraction.
+    /// **Must be called from a non-cooperative thread** (e.g. via `Task.detached`).
+    private func readCHDSectors(from url: URL) -> CHDSectors? {
         guard let handle = try? FileHandle(forReadingFrom: url) else {
             WLOG("ChdDiscSerialPlugin: cannot open \(url.lastPathComponent)")
             return nil
         }
         defer { try? handle.close() }
 
-        // Read and validate the CHD header.
+        // Read and validate the CHD v5 header.
         guard (try? handle.seek(toOffset: 0)) != nil,
               let headerData = try? handle.read(upToCount: CHDv5.headerLength),
               headerData.count >= CHDv5.headerLength else {
@@ -82,20 +139,15 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
             return nil
         }
 
-        // Verify magic.
         guard Array(headerData[0..<8]) == Self.chdMagic else { return nil }
 
-        // Only handle v5.
         let version = headerData.loadBE32(at: CHDv5.versionOffset)
         guard version == 5 else {
             VLOG("ChdDiscSerialPlugin: unsupported CHD version \(version) in \(url.lastPathComponent)")
             return nil
         }
 
-        // Check compression — we only handle truly uncompressed CHDs (all 4 compressor
-        // slots must be zero).  Checking only compressor[0] is insufficient: a CHD
-        // with compressor[0]=0 but non-zero compressor[1-3] is still compressed and
-        // the map-entry format differs from the simple sequential uncompressed layout.
+        // All 4 compressor slots must be zero for a truly uncompressed CHD.
         let compressor0 = headerData.loadBE32(at: CHDv5.compressorsOffset)
         let compressor1 = headerData.loadBE32(at: CHDv5.compressorsOffset + 4)
         let compressor2 = headerData.loadBE32(at: CHDv5.compressorsOffset + 8)
@@ -114,47 +166,49 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
             return nil
         }
 
+        // Sanity-check unit size before any Int cast to avoid overflow.
+        // CD-ROM units are 2448 bytes; cap at 1 MiB to reject corrupt/malformed CHDs.
+        guard unitBytes <= 1_048_576 else {
+            VLOG("ChdDiscSerialPlugin: unreasonably large unit size \(unitBytes) in \(url.lastPathComponent)")
+            return nil
+        }
+
         let unitsPerHunk = hunkBytes / unitBytes
 
-        // Try to read raw sector data from the CHD and extract serial.
-        // Sector 0 → Sega IP.BIN (Saturn / SegaCD / Dreamcast)
-        if let sector0Data = readCHDSector(
-            handle: handle, sectorIndex: 0,
-            hunkBytes: hunkBytes, unitsPerHunk: unitsPerHunk,
-            unitBytes: unitBytes, mapOffset: mapOffset) {
+        // Convenience wrapper for reading a single sector from this CHD.
+        func readSector(_ index: UInt64) -> Data? {
+            readCHDSector(handle: handle, sectorIndex: index,
+                          hunkBytes: hunkBytes, unitsPerHunk: unitsPerHunk,
+                          unitBytes: unitBytes, mapOffset: mapOffset)
+        }
 
-            if let result = await trySegaExtraction(sectorData: sector0Data, url: url,
-                                                     systemHint: systemHint) {
-                return result
+        // Sector 0: Sega IP.BIN header.
+        let sector0 = readSector(0)
+
+        // Sector 16: ISO 9660 Primary Volume Descriptor.
+        let pvd = readSector(16)
+
+        // ISO 9660 directory walk to find SYSTEM.CNF (PSX / PS2).
+        var systemCNF: Data?
+        if let pvdData = pvd, pvdData.count >= 6,
+           pvdData[1..<6].elementsEqual(Self.iso9660Magic) {
+            let rootLBA = pvdData.loadLE32(at: 156 + 2)
+            if rootLBA > 0, let dirData = readSector(UInt64(rootLBA)),
+               let cnfLBA = ISODiscSerialPlugin().findFile(in: dirData, named: "SYSTEM.CNF") {
+                systemCNF = readSector(UInt64(cnfLBA))
             }
         }
 
-        // Sector 16 → ISO 9660 PVD (PSX / PS2 / generic CD-ROM)
-        if let sector16Data = readCHDSector(
-            handle: handle, sectorIndex: 16,
-            hunkBytes: hunkBytes, unitsPerHunk: unitsPerHunk,
-            unitBytes: unitBytes, mapOffset: mapOffset) {
-
-            if let result = await tryISOExtraction(sectorData: sector16Data, url: url,
-                                                    systemHint: systemHint) {
-                return result
-            }
-        }
-
-        VLOG("ChdDiscSerialPlugin: no serial found in uncompressed CHD \(url.lastPathComponent)")
-        return nil
+        return CHDSectors(sector0: sector0, pvd: pvd, systemCNF: systemCNF)
     }
 
-    // MARK: - Per-format extraction helpers
+    // MARK: - Sega extraction helper
 
     /// Tries to extract a Sega product code from the raw user-data bytes of
     /// sector 0, writing a temp file the SegaDiscSerialPlugin can open.
     private func trySegaExtraction(sectorData: Data, url: URL,
                                    systemHint: String?) async -> DiscSerialResult? {
         let plugin = SegaDiscSerialPlugin()
-        // The sectorData is the 2048-byte user payload; the Sega plugin expects
-        // either a cooked ISO (data at offset 0) or a raw sector (data at offset 16).
-        // Here data is already the payload, so we treat it as a cooked ISO image.
         guard plugin.matchesMagicBytes(sectorData) else { return nil }
 
         return await withTempFile(data: sectorData, stem: url.deletingPathExtension().lastPathComponent,
@@ -163,22 +217,38 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
         }
     }
 
-    /// Tries to extract an ISO 9660 serial by constructing a minimal fake ISO
-    /// image with the PVD sector at the correct offset and writing it to disk.
-    private func tryISOExtraction(sectorData: Data, url: URL,
-                                  systemHint: String?) async -> DiscSerialResult? {
-        // Build a minimal fake cooked ISO: sector 16 at byte offset 32768.
-        let pvdFileOffset = 16 * 2048
-        var fakeISO = Data(repeating: 0, count: pvdFileOffset + sectorData.count)
-        fakeISO.replaceSubrange(pvdFileOffset..<(pvdFileOffset + sectorData.count), with: sectorData)
+    // MARK: - SYSTEM.CNF parsing
+
+    /// Parses a SYSTEM.CNF data buffer and returns a PSX/PS2 serial result.
+    /// Reuses `ISODiscSerialPlugin.normalizeSerial` for consistent normalisation.
+    private func parseSystemCNFData(_ data: Data, systemHint: String?) -> DiscSerialResult? {
+        guard let text = String(data: data, encoding: .ascii)
+                      ?? String(data: data, encoding: .isoLatin1) else { return nil }
 
         let isoPlugin = ISODiscSerialPlugin()
-        guard isoPlugin.matchesMagicBytes(fakeISO) else { return nil }
 
-        return await withTempFile(data: fakeISO, stem: url.deletingPathExtension().lastPathComponent,
-                                  ext: "iso") { tmpURL in
-            await isoPlugin.extractSerial(from: tmpURL, systemHint: systemHint)
+        for line in text.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            let upper = trimmed.uppercased()
+            let isPS2 = upper.hasPrefix("BOOT2")
+            let isPSX = !isPS2 && upper.hasPrefix("BOOT")
+            guard isPS2 || isPSX else { continue }
+
+            guard let eqRange = trimmed.range(of: "=") else { continue }
+            let value = String(trimmed[eqRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+
+            let pathPart = value
+                .replacingOccurrences(of: "\\", with: "/")
+                .components(separatedBy: "/").last?
+                .components(separatedBy: ";").first ?? ""
+
+            let normalized = isoPlugin.normalizeSerial(pathPart)
+            guard !normalized.isEmpty else { continue }
+
+            let hint = isPS2 ? "com.provenance.ps2" : "com.provenance.psx"
+            return DiscSerialResult(serial: normalized, systemIdentifierHint: hint)
         }
+        return nil
     }
 
     // MARK: - CHD sector reading
@@ -212,6 +282,7 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
         let hunkFilePosition = UInt64(mapEntryData.loadBE32(at: 0)) * hunkBytes
         let unitFilePosition = hunkFilePosition + unitInHunk * unitBytes
 
+        // unitBytes was already validated to be <= 1_048_576 by the caller.
         guard (try? handle.seek(toOffset: unitFilePosition)) != nil,
               let unitData = try? handle.read(upToCount: Int(unitBytes)),
               !unitData.isEmpty else { return nil }

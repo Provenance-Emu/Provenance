@@ -206,7 +206,7 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
     /// Byte 32:    File identifier length
     /// Bytes 33+:  File identifier (uppercased ASCII, no null terminator)
     /// ```
-    private func findFile(in dirData: Data, named name: String) -> UInt32? {
+    func findFile(in dirData: Data, named name: String) -> UInt32? {
         let target = name.uppercased()
         var offset = 0
 
@@ -214,6 +214,9 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
             let recordLength = Int(dirData[offset])
             guard recordLength > 0 else { break }
             guard offset + recordLength <= dirData.count else { break }
+            // ISO 9660 directory records are at minimum 34 bytes. A shorter record
+            // would make the identifier-length field at byte 32 inaccessible.
+            guard recordLength >= 34 else { offset += recordLength; continue }
 
             let idLength = Int(dirData[offset + 32])
             guard idLength > 0, offset + 33 + idLength <= dirData.count else {
@@ -288,7 +291,7 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
     /// - `SLUS_01234.EXE` → `SLUS-01234`  (strips alphabetic extension)
     /// - `SCES_533.45`   → `SCES-53345`   (combines digit halves, no extension to strip)
     /// - `SCES_123.45`   → `SCES-12345`
-    private func normalizeSerial(_ raw: String) -> String {
+    func normalizeSerial(_ raw: String) -> String {
         // Strip trailing version markers like ";1".
         let clean = (raw.components(separatedBy: ";").first ?? raw)
             .trimmingCharacters(in: .whitespaces)
