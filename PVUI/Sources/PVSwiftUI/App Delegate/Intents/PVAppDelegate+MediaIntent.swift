@@ -118,10 +118,11 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
 
     /// Thread-safe Realm lookup by MD5.
     /// Uses a fresh Realm instance (not @MainActor) so it is safe to call from SiriKit's background queue.
+    /// Returns a frozen snapshot so callers can safely access properties after this function returns.
     private func fetchMediaGame(byMD5 md5: String) -> PVGame? {
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
-            return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
+            return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze()
         } catch {
             ELOG("PVAppDelegate+MediaIntent: Realm error fetching by MD5: \(error)")
             return nil
@@ -160,16 +161,17 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
 
     /// Returns games whose title matches `query` (exact first, then fuzzy).
     /// Uses a fresh Realm instance so it is safe to call from any thread.
+    /// Returns frozen snapshots so callers can safely access properties after this function returns.
     private func searchMediaGames(matchingTitle query: String) -> [PVGame] {
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
 
             // Exact match first.
-            let exact = Array(realm.objects(PVGame.self).filter("title ==[c] %@", query))
+            let exact = Array(realm.objects(PVGame.self).filter("title ==[c] %@", query).map { $0.freeze() })
             if !exact.isEmpty { return exact }
 
             // Fuzzy fallback.
-            return Array(realm.objects(PVGame.self).filter("title CONTAINS[c] %@", query))
+            return Array(realm.objects(PVGame.self).filter("title CONTAINS[c] %@", query).map { $0.freeze() })
         } catch {
             ELOG("PVAppDelegate+MediaIntent: Realm error: \(error)")
             return []

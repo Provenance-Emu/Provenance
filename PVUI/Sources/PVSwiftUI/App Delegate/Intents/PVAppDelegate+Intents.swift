@@ -69,7 +69,14 @@ extension PVAppDelegate {
             type: .game,
             artwork: nil
         )
-        let intent = INPlayMediaIntent(mediaItems: [mediaItem])
+        let intent = INPlayMediaIntent(mediaItems: [mediaItem],
+                                       mediaContainer: nil,
+                                       playShuffled: nil,
+                                       playbackRepeatMode: .unknown,
+                                       resumePlayback: nil,
+                                       playbackQueueLocation: .unknown,
+                                       playbackSpeed: nil,
+                                       mediaSearch: nil)
         intent.suggestedInvocationPhrase = "Play \(title)"
         let interaction = INInteraction(intent: intent, response: nil)
         interaction.donate { error in
