@@ -47,7 +47,7 @@ extension PVGBEmulatorCore: CoreRetroAchievements {
 
     public func prepareAchievements(gameHash: String) async {
         await withCheckedContinuation { continuation in
-            _bridge.loadAchievementsForGameHash(gameHash) { _ in
+            _bridge.loadAchievements(forGameHash: gameHash) { _ in
                 continuation.resume()
             }
         }
@@ -115,11 +115,20 @@ extension PVGBEmulatorCore: CoreRetroAchievements {
 // provided here in Swift on PVGBEmulatorCoreBridge.
 // When pvgb_event_handler calls the method on the bridge instance, we route
 // the event through achievementsEventOwner → PVGBEmulatorCore → _achievementsDelegate.
-
+import PVGambatteBridge
 extension PVGBEmulatorCoreBridge {
 
     private var _ownerCore: PVGBEmulatorCore? {
         return achievementsEventOwner as? PVGBEmulatorCore
+    }
+
+    /// Snapshots the delegate into a `nonisolated(unsafe)` local so it can be
+    /// captured by `DispatchQueue.main.async` without a `Sendable` warning.
+    /// Safe because the delegate is only invoked on the main queue.
+    private func withMainActorDelegate(_ work: @Sendable @escaping (RetroAchievementsOSDDelegate) -> Void) {
+        guard let delegate = _ownerCore?._achievementsDelegate else { return }
+        nonisolated(unsafe) let unsafeDelegate = delegate
+        DispatchQueue.main.async { work(unsafeDelegate) }
     }
 
     @objc
@@ -131,7 +140,6 @@ extension PVGBEmulatorCoreBridge {
         badgeURL: URL?,
         isHardcore: Bool
     ) {
-        guard let delegate = _ownerCore?._achievementsDelegate else { return }
         let notification = AchievementUnlockNotification(
             id: achievementID,
             title: title ?? "",
@@ -140,7 +148,7 @@ extension PVGBEmulatorCoreBridge {
             badgeURL: badgeURL,
             isHardcore: isHardcore
         )
-        DispatchQueue.main.async { delegate.achievementUnlocked(notification) }
+        withMainActorDelegate { $0.achievementUnlocked(notification) }
     }
 
     @objc
@@ -149,13 +157,12 @@ extension PVGBEmulatorCoreBridge {
         title: String?,
         progressText: String?
     ) {
-        guard let delegate = _ownerCore?._achievementsDelegate else { return }
         let notification = AchievementProgressNotification(
             achievementID: achievementID,
             title: title ?? "",
             progressText: progressText ?? ""
         )
-        DispatchQueue.main.async { delegate.achievementProgress(notification) }
+        withMainActorDelegate { $0.achievementProgress(notification) }
     }
 
     @objc
@@ -165,20 +172,18 @@ extension PVGBEmulatorCoreBridge {
         description: String?,
         scoreText: String?
     ) {
-        guard let delegate = _ownerCore?._achievementsDelegate else { return }
         let notification = AchievementLeaderboardNotification(
             leaderboardID: leaderboardID,
             title: title ?? "",
             description: description ?? "",
             scoreText: scoreText ?? ""
         )
-        DispatchQueue.main.async { delegate.leaderboardStarted(notification) }
+        withMainActorDelegate { $0.leaderboardStarted(notification) }
     }
 
     @objc
     public func rcLeaderboardFailedWithID(_ leaderboardID: UInt32) {
-        guard let delegate = _ownerCore?._achievementsDelegate else { return }
-        DispatchQueue.main.async { delegate.leaderboardFailed(leaderboardID: leaderboardID) }
+        withMainActorDelegate { $0.leaderboardFailed(leaderboardID: leaderboardID) }
     }
 
     @objc
@@ -188,13 +193,12 @@ extension PVGBEmulatorCoreBridge {
         description: String?,
         scoreText: String?
     ) {
-        guard let delegate = _ownerCore?._achievementsDelegate else { return }
         let notification = AchievementLeaderboardNotification(
             leaderboardID: leaderboardID,
             title: title ?? "",
             description: description ?? "",
             scoreText: scoreText ?? ""
         )
-        DispatchQueue.main.async { delegate.leaderboardSubmitted(notification) }
+        withMainActorDelegate { $0.leaderboardSubmitted(notification) }
     }
 }
