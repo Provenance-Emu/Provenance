@@ -189,7 +189,7 @@ public enum EcosystemCallbackParser {
     /// - Returns: The source `EcosystemApp` and decoded game list, or `nil` if the URL
     ///   doesn't match the expected format.
     public static func parse(url: URL) -> (source: EcosystemApp, games: [EcosystemGameScheme])? {
-        guard let scheme = url.host,
+        guard let scheme = url.host(percentEncoded: false),
               let source = EcosystemApp(rawValue: scheme),
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
               let gamesParam = components.queryItems?.first(where: { $0.name == "games" })?.value
