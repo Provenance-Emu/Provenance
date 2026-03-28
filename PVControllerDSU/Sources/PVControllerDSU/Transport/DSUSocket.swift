@@ -141,6 +141,7 @@ public actor DSUSocket {
             conn.cancel()
         }
         connections.removeAll()
+        receiveQueue.removeAll()
         // Resume any pending waiters with an error
         for waiter in waiters {
             waiter.resume(throwing: DSUSocketError.closed)
@@ -176,6 +177,7 @@ public actor DSUSocket {
     }
 
     private func deliverData(_ data: Data, from endpoint: NWEndpoint) {
+        guard !isClosed else { return }
         if waiters.isEmpty {
             receiveQueue.append((data, endpoint))
         } else {

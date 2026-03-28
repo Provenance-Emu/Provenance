@@ -15,6 +15,8 @@ public let DSUBonjourServiceType = "_provenance-dsu._udp."
 
 /// Advertises a Provenance DSU server over mDNS/Bonjour.
 ///
+/// Thread-safe: `start()` and `stop()` may be called from any thread.
+///
 /// ```swift
 /// let advertiser = DSUServiceAdvertiser(port: 26760, name: "My Provenance")
 /// advertiser.start()
@@ -27,8 +29,10 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
 
     private let port: UInt16
     private let serviceName: String
-    private var listener: NWListener?
+    /// Serialises all reads/writes of `listener` and `isStopped`.
     private let queue = DispatchQueue(label: "com.provenance.dsu.advertiser", qos: .utility)
+    private var listener: NWListener?
+    private var isStopped = false
 
     // MARK: - Init
 
@@ -45,7 +49,30 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
     // MARK: - Public API
 
     /// Begin advertising the DSU service via Bonjour.
+    ///
+    /// Safe to call from any thread. A no-op if already started.
     public func start() {
+        queue.async { [weak self] in
+            guard let self, !self.isStopped else { return }
+            self.startOnQueue()
+        }
+    }
+
+    /// Stop advertising the DSU service.
+    ///
+    /// Safe to call from any thread. Cancels any pending retry.
+    public func stop() {
+        queue.async { [weak self] in
+            guard let self else { return }
+            self.isStopped = true
+            self.listener?.cancel()
+            self.listener = nil
+        }
+    }
+
+    // MARK: - Private (called only from self.queue)
+
+    private func startOnQueue() {
         let params = NWParameters.udp
         params.includePeerToPeer = true
 
@@ -57,14 +84,12 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
 
             listener.stateUpdateHandler = { [weak self] state in
                 guard let self else { return }
-                switch state {
-                case .failed:
-                    // Retry after a short delay on transient failures
-                    self.queue.asyncAfter(deadline: .now() + 2) {
-                        self.start()
+                if case .failed = state {
+                    // Retry after a short delay, but only if not stopped.
+                    self.queue.asyncAfter(deadline: .now() + 2) { [weak self] in
+                        guard let self, !self.isStopped else { return }
+                        self.startOnQueue()
                     }
-                default:
-                    break
                 }
             }
 
@@ -79,17 +104,13 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
             // Listener creation can fail if the port is already in use; silently ignore.
         }
     }
-
-    /// Stop advertising the DSU service.
-    public func stop() {
-        listener?.cancel()
-        listener = nil
-    }
 }
 
 // MARK: - DSUServiceBrowser
 
 /// Browses for Provenance DSU servers on the local network using Bonjour/mDNS.
+///
+/// Thread-safe: `start()` and `stop()` may be called from any thread.
 ///
 /// ```swift
 /// let browser = DSUServiceBrowser { result in
@@ -108,9 +129,11 @@ public final class DSUServiceBrowser: @unchecked Sendable {
 
     // MARK: - Private state
 
+    /// Serialises all reads/writes of `browser` and `isStopped`.
+    private let queue = DispatchQueue(label: "com.provenance.dsu.browser", qos: .utility)
     private var browser: NWBrowser?
     private let foundHandler: FoundHandler
-    private let queue = DispatchQueue(label: "com.provenance.dsu.browser", qos: .utility)
+    private var isStopped = false
 
     // MARK: - Init
 
@@ -125,48 +148,58 @@ public final class DSUServiceBrowser: @unchecked Sendable {
     // MARK: - Public API
 
     /// Start browsing for DSU servers on the local network.
+    ///
+    /// Safe to call from any thread. A no-op if already started.
     public func start() {
+        queue.async { [weak self] in
+            guard let self, !self.isStopped else { return }
+            self.startOnQueue()
+        }
+    }
+
+    /// Stop browsing for DSU servers.
+    ///
+    /// Safe to call from any thread. Cancels any pending retry.
+    public func stop() {
+        queue.async { [weak self] in
+            guard let self else { return }
+            self.isStopped = true
+            self.browser?.cancel()
+            self.browser = nil
+        }
+    }
+
+    // MARK: - Private (called only from self.queue)
+
+    private func startOnQueue() {
         let descriptor = NWBrowser.Descriptor.bonjour(type: DSUBonjourServiceType, domain: "local.")
         let params = NWParameters.udp
         params.includePeerToPeer = true
 
         let browser = NWBrowser(for: descriptor, using: params)
 
-        browser.browseResultsChangedHandler = { [weak self] results, changes in
+        browser.browseResultsChangedHandler = { [weak self] _, changes in
             guard let self else { return }
             for change in changes {
-                switch change {
-                case .added(let result):
+                if case .added(let result) = change {
                     self.foundHandler(result)
-                case .removed, .changed, .identical:
-                    break
-                @unknown default:
-                    break
                 }
             }
         }
 
         browser.stateUpdateHandler = { [weak self] state in
             guard let self else { return }
-            switch state {
-            case .failed:
-                // Retry browsing after a delay
-                self.queue.asyncAfter(deadline: .now() + 2) {
-                    self.start()
+            if case .failed = state {
+                // Retry browsing after a delay, but only if not stopped.
+                self.queue.asyncAfter(deadline: .now() + 2) { [weak self] in
+                    guard let self, !self.isStopped else { return }
+                    self.startOnQueue()
                 }
-            default:
-                break
             }
         }
 
         browser.start(queue: queue)
         self.browser = browser
-    }
-
-    /// Stop browsing for DSU servers.
-    public func stop() {
-        browser?.cancel()
-        browser = nil
     }
 }
 

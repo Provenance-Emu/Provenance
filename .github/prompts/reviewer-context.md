@@ -386,6 +386,15 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - **Flag 🔴 CRITICAL** if any code changes the `gameMD5 = "game"` CodingKey in `SaveBundleManifestV2` — v1 readers depend on this key name.
 - **Flag 🟠 MAJOR** if `SaveExporter` writes the old flat `[String: String]` manifest — it must use `SaveBundleManifestV2.jsonData()`.
 
+### PVControllerDSU — DSU/CemuHook Protocol Module (added in #3569)
+- `PVControllerDSU` is a **Tier 0** standalone Swift Package — zero external dependencies, Linux-compatible pure-Swift protocol layer.
+- `DSUPacket` — typed packet enum; always encode via `.encode()` which auto-stamps CRC32. Never construct raw `Data` buffers manually for DSU packets.
+- `DSUCRC32` — pure-Swift CRC-32/ISO-HDLC; CRC field is at bytes 8-11 in every packet header (zeroed before computing, written LE). Verify incoming packets with `DSUCRC32.verify(_:)` before parsing.
+- `DSUSocket` — `actor DSUSocket`; call `startListening()` **after** init (two-step init is intentional — avoids race where early datagrams arrive before the `newConnectionHandler` is installed). Callers must `await` all actor methods. `close()` clears both the pending-receive queue and all waiters.
+- `DSUServiceAdvertiser` / `DSUServiceBrowser` — thread-safe (`@unchecked Sendable`): all state is serialised on an internal `DispatchQueue`. `start()`/`stop()` are safe to call from any thread; retry-after-failure checks `isStopped` to prevent inadvertent restart after `stop()`. Not available on Linux (`#if canImport(Network)`).
+- **Flag 🟠 MAJOR** if new DSU code modifies `listener`/`browser` state outside the `self.queue` serial queue in the Discovery classes.
+- **Flag 🟠 MAJOR** if `DSUSocket.startListening()` is inlined into `init` — the two-step design is load-bearing.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:
