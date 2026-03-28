@@ -181,10 +181,24 @@ public final class SaveExporter: @unchecked Sendable {
                 do {
                     try fm.copyItem(at: src, to: dest)
                     filesCopied += 1
+
+                    // Attempt screenshot copy first so screenshotFilename in the manifest only
+                    // references a file that was actually placed in the bundle.
+                    var copiedScreenshotFilename: String? = nil
+                    if let imgSrc = snapshot.imageURL, fm.fileExists(atPath: imgSrc.path) {
+                        let imgDest = statesDir.appendingPathComponent(imgSrc.lastPathComponent)
+                        do {
+                            try fm.copyItem(at: imgSrc, to: imgDest)
+                            copiedScreenshotFilename = imgSrc.lastPathComponent
+                        } catch {
+                            WLOG("SaveExporter: failed to copy save state screenshot \(imgSrc.lastPathComponent): \(error.localizedDescription)")
+                        }
+                    }
+
                     // Only add a manifest entry for successfully copied states.
                     stateEntries.append(SaveBundleManifestV2.SaveStateEntry(
                         filename: src.lastPathComponent,
-                        screenshotFilename: snapshot.imageURL?.lastPathComponent,
+                        screenshotFilename: copiedScreenshotFilename,
                         date: iso8601.string(from: snapshot.date),
                         isAutosave: snapshot.isAutosave,
                         userDescription: snapshot.userDescription,
@@ -192,15 +206,6 @@ public final class SaveExporter: @unchecked Sendable {
                     ))
                 } catch {
                     WLOG("SaveExporter: failed to copy save state \(src.lastPathComponent): \(error.localizedDescription)")
-                }
-
-                if let imgSrc = snapshot.imageURL, fm.fileExists(atPath: imgSrc.path) {
-                    let imgDest = statesDir.appendingPathComponent(imgSrc.lastPathComponent)
-                    do {
-                        try fm.copyItem(at: imgSrc, to: imgDest)
-                    } catch {
-                        WLOG("SaveExporter: failed to copy save state screenshot \(imgSrc.lastPathComponent): \(error.localizedDescription)")
-                    }
                 }
             }
         }
