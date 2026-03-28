@@ -148,6 +148,13 @@ public struct Paths {
     /// - `System/NDS/`   — Nintendo DS firmware (nds_bios_arm7.bin, etc.)
     /// - `System/3DS/`   — Citra/Lime3DS system files
     ///
+    /// **tvOS note:** On tvOS `URL.documentsPath` redirects to the Caches directory, so this
+    /// path lives under `Library/Caches/System/`. The OS may purge Caches at any time.
+    /// - Bundle-derived assets (e.g. PPSSPP flash0 fonts) are re-seeded from the app bundle
+    ///   on every core launch — no special recovery needed for those.
+    /// - User-placed firmware/BIOS files are at risk of loss. TODO(#2725): extend the CloudKit
+    ///   BIOS syncer to cover `System/` subdirectories so they can be restored after a purge.
+    ///
     /// Part of Epic #2725 — future UI will let users manage these directories.
     ///
     /// Should be called on BG Thread (iCloud blocks).

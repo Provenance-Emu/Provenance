@@ -94,13 +94,17 @@ private:
 
 /// Returns the PSP system directory (Documents/System/PSP on iOS, Caches/System/PSP on tvOS).
 /// Creates the directory if needed.
+///
+/// Uses `[NSURL documentsPath]` (from PVLibrary) which already applies the tvOS
+/// Caches redirect and app-group container logic, so no platform branching is needed here.
+///
+/// On tvOS the Caches directory can be purged by the OS at any time. All bundle-derived
+/// assets placed here (e.g. flash0 fonts) must be re-seeded on every core launch, which
+/// `loadFileAtPath:` already does via the font copy loop.
 - (NSString *)pspSystemDirectory {
-#if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-#else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-#endif
-    NSString *docsPath = paths.firstObject;
+    // [NSURL documentsPath] resolves to Caches on tvOS and to the app-group Documents
+    // container when app groups are enabled — no #if TARGET_OS_TV needed here.
+    NSString *docsPath = [NSURL documentsPath].path;
     NSString *pspDir = [docsPath stringByAppendingPathComponent:@"System/PSP"];
     NSError *error = nil;
     [[NSFileManager defaultManager] createDirectoryAtPath:pspDir
@@ -139,16 +143,29 @@ private:
     NSString *resourcePath = [coreBundle resourcePath];
     NSString *supportDirectoryPath = [self pspSystemDirectory];
 
-    // Copy over font files if needed
+    // Copy over font files if needed.
+    // The font destination directory (System/PSP/font/) must be created explicitly before
+    // copying — pspSystemDirectory only creates System/PSP/. This also serves as tvOS cache
+    // recovery: if the OS purges Caches, pspSystemDirectory recreates System/PSP/ and this
+    // block recreates System/PSP/font/ and re-seeds the fonts from the bundle every launch.
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *fontSourceDirectory = [resourcePath stringByAppendingString:@"/flash0/font/"];
-    NSString *fontDestinationDirectory = [supportDirectoryPath stringByAppendingString:@"/font/"];
+    NSString *fontSourceDirectory = [resourcePath stringByAppendingPathComponent:@"flash0/font"];
+    NSString *fontDestinationDirectory = [supportDirectoryPath stringByAppendingPathComponent:@"font"];
+    NSError *fontDirError = nil;
+    [fileManager createDirectoryAtPath:fontDestinationDirectory
+           withIntermediateDirectories:YES
+                            attributes:nil
+                                 error:&fontDirError];
+    if (fontDirError) {
+        NSLog(@"[PPSSPP] Error creating font directory: %@", fontDirError.localizedDescription);
+    }
     NSArray *fontFiles = [fileManager contentsOfDirectoryAtPath:fontSourceDirectory error:nil];
     for(NSString *font in fontFiles)
     {
-        NSString *fontSource = [fontSourceDirectory stringByAppendingString:font];
-        NSString *fontDestination = [fontDestinationDirectory stringByAppendingString:font];
-
+        NSString *fontSource = [fontSourceDirectory stringByAppendingPathComponent:font];
+        NSString *fontDestination = [fontDestinationDirectory stringByAppendingPathComponent:font];
+        // copyItemAtPath silently fails if destination already exists — that's intentional;
+        // we only need to seed missing fonts (e.g. first launch or after tvOS cache purge).
         [fileManager copyItemAtPath:fontSource toPath:fontDestination error:nil];
     }
 

@@ -1883,6 +1883,13 @@ static bool thin_environment(unsigned cmd, void *data) {
 /// Returns the system-specific path for this core (e.g. Documents/System/PSP for PPSSPP).
 /// Falls back to BIOSPath if no system-specific directory is defined.
 /// Also ensures the directory exists.
+///
+/// Base directory is derived from the already-correct `BIOSPath` (set by PVEmulatorCore before
+/// core start) so that app-group containers and tvOS Caches→Documents redirect are handled
+/// automatically — no need for raw NSSearchPathForDirectoriesInDomains calls here.
+///
+/// On tvOS the OS may purge Caches at any time; callers that place bundle-derived assets here
+/// (e.g. PPSSPP fonts) must re-seed them on every core launch so the directory is always valid.
 - (NSString *)_systemSpecificDirectory {
     NSDictionary<NSString *, NSString *> *systemDirMap = @{
         @"com.provenance.psp":       @"PSP",
@@ -1893,6 +1900,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         @"com.provenance.saturn":    @"Saturn",
         @"com.provenance.n64":       @"N64",
         @"com.provenance.gamecube":  @"GC",
+        @"com.provenance.wii":       @"Wii",
         @"com.provenance.atarist":   @"AtariST",
         @"com.provenance.dos":       @"DOS",
     };
@@ -1902,13 +1910,20 @@ static bool thin_environment(unsigned cmd, void *data) {
         // No dedicated system dir for this system — fall back to BIOSPath
         return self.BIOSPath ?: _biosPath;
     }
+    // Derive the base directory from BIOSPath (e.g. ".../Documents/BIOS" → ".../Documents").
+    // This correctly handles tvOS (BIOSPath is already under Caches), app-group containers,
+    // and iCloud Drive paths without any platform-specific branching here.
+    NSString *biosPath = self.BIOSPath ?: _biosPath;
+    NSString *baseDir = biosPath ? biosPath.stringByDeletingLastPathComponent : nil;
+    if (!baseDir) {
+        // BIOSPath unavailable (shouldn't happen in normal operation); fall back to raw search.
 #if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        baseDir = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
 #else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        baseDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
 #endif
-    NSString *docsPath = paths.firstObject;
-    NSString *systemDir = [docsPath stringByAppendingPathComponent:
+    }
+    NSString *systemDir = [baseDir stringByAppendingPathComponent:
                            [NSString stringWithFormat:@"System/%@", shortName]];
     NSError *error = nil;
     [[NSFileManager defaultManager] createDirectoryAtPath:systemDir
