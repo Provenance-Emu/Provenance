@@ -111,6 +111,7 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/stella_libretro_tv
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/stella2014_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/stella2023_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/theodore_libretro_tvos.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/tic80_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/tyrquake_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vba_next_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vbam_libretro_tvos.dylib.zip
