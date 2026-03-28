@@ -59,20 +59,24 @@ extension PVAppDelegate {
     /// Call this whenever a game is launched by the user.
     /// - Parameter game: The game that was launched.
     public func donateMediaIntent(for game: PVGame) {
+        // Capture value-type copies before the closure to avoid accessing the
+        // thread-confined Realm object from the Intents framework callback thread.
+        let md5 = game.md5Hash
+        let title = game.title
         let mediaItem = INMediaItem(
-            identifier: game.md5Hash,
-            title: game.title,
+            identifier: md5,
+            title: title,
             type: .game,
             artwork: nil
         )
         let intent = INPlayMediaIntent(mediaItems: [mediaItem])
-        intent.suggestedInvocationPhrase = "Play \(game.title)"
+        intent.suggestedInvocationPhrase = "Play \(title)"
         let interaction = INInteraction(intent: intent, response: nil)
         interaction.donate { error in
             if let error = error {
-                ELOG("PVAppDelegate: Failed to donate INPlayMediaIntent for '\(game.title)': \(error.localizedDescription)")
+                ELOG("PVAppDelegate: Failed to donate INPlayMediaIntent for '\(title)': \(error.localizedDescription)")
             } else {
-                ILOG("PVAppDelegate: Donated INPlayMediaIntent for '\(game.title)'")
+                ILOG("PVAppDelegate: Donated INPlayMediaIntent for '\(title)'")
             }
         }
     }
