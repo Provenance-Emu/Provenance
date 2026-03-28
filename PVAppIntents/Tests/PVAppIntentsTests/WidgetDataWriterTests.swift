@@ -79,6 +79,40 @@ final class WidgetDataWriterTests: XCTestCase {
         )
     }
 
+    func testWidgetPlayActivityTimestampPrefersRecentWhenNewer() {
+        let recent = Date(timeIntervalSince1970: 1_900_000_000)
+        let gamePlayed = Date(timeIntervalSince1970: 1_800_000_000)
+        let importDate = Date(timeIntervalSince1970: 1_000_000_000)
+        XCTAssertEqual(
+            WidgetPlayActivityTimestamp.best(recentLastPlayed: recent, gameLastPlayed: gamePlayed, importDate: importDate),
+            recent,
+            "Should return recentLastPlayed when it is later than gameLastPlayed"
+        )
+    }
+
+    func testWidgetPlayActivityTimestampUsesRecentWhenGameNil() {
+        let recent = Date(timeIntervalSince1970: 1_750_000_000)
+        let importDate = Date(timeIntervalSince1970: 1_000_000_000)
+        XCTAssertEqual(
+            WidgetPlayActivityTimestamp.best(recentLastPlayed: recent, gameLastPlayed: nil, importDate: importDate),
+            recent,
+            "Should return recentLastPlayed when gameLastPlayed is nil"
+        )
+    }
+
+    func testWidgetPlayActivityTimestampIgnoresImportWhenPlayDatesExist() {
+        let recent = Date(timeIntervalSince1970: 1_100_000_000)
+        let gamePlayed = Date(timeIntervalSince1970: 1_200_000_000)
+        let importDate = Date(timeIntervalSince1970: 1_500_000_000)
+        let result = WidgetPlayActivityTimestamp.best(
+            recentLastPlayed: recent,
+            gameLastPlayed: gamePlayed,
+            importDate: importDate
+        )
+        XCTAssertEqual(result, gamePlayed,
+                       "Should return the later play date even when importDate is newer")
+    }
+
     // MARK: - WidgetNowPlayingData
 
     func testWidgetNowPlayingDataRoundTripsJSON() throws {
@@ -144,5 +178,66 @@ final class WidgetDataWriterTests: XCTestCase {
             galleryGames: games,
             totalCount: games.count
         )
+    }
+
+    func testWriterAcceptsAllStatsParameters() {
+        let games = [
+            WidgetGameData(id: "g1", title: "Game 1", systemName: "NES",
+                           lastPlayedDate: Date())
+        ]
+        let favorites = [
+            WidgetGameData(id: "g2", title: "Fav Game", systemName: "SNES")
+        ]
+        WidgetDataWriter.shared.writeGameData(
+            recentGames: games,
+            galleryGames: games,
+            favoriteGames: favorites,
+            totalCount: 42,
+            systemCount: 5,
+            totalPlayTimeSeconds: 7200,
+            favoritesCount: 3
+        )
+    }
+
+    func testWriterCapsFavoritesToSixteen() {
+        let favorites = (0..<25).map { i in
+            WidgetGameData(id: "fav-\(i)", title: "Fav \(i)", systemName: "SNES")
+        }
+        WidgetDataWriter.shared.writeGameData(
+            recentGames: [],
+            galleryGames: [],
+            favoriteGames: favorites,
+            totalCount: 25
+        )
+    }
+
+    func testWriterHandlesEmptyArrays() {
+        WidgetDataWriter.shared.writeGameData(
+            recentGames: [],
+            galleryGames: [],
+            favoriteGames: [],
+            totalCount: 0,
+            systemCount: 0,
+            totalPlayTimeSeconds: 0,
+            favoritesCount: 0
+        )
+    }
+
+    func testWidgetGameDataLastPlayedDatePreservesISOPrecision() throws {
+        let now = Date()
+        let game = WidgetGameData(id: "t1", title: "Timing Test", systemName: "NES",
+                                  lastPlayedDate: now)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(game)
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let decoded = try decoder.decode(WidgetGameData.self, from: data)
+
+        let decodedDate = try XCTUnwrap(decoded.lastPlayedDate)
+        let delta = abs(decodedDate.timeIntervalSince(now))
+        XCTAssertLessThan(delta, 1.0,
+                          "ISO 8601 round-trip should preserve date within 1 second")
     }
 }

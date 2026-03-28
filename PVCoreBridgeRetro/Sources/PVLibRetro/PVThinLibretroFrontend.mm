@@ -18,7 +18,7 @@
 //
 
 #import "PVThinLibretroFrontend.h"
-#import <PVLibRetro/PVLibRetro-Swift.h>
+#import <PVCoreBridgeRetro/PVCoreBridgeRetro-Swift.h>
 
 @import Foundation;
 @import QuartzCore;   // CACurrentMediaTime
@@ -30,6 +30,8 @@
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 @import PVAudio;
+@import PVSettings;
+@import PVSupport;
 
 // Peripheral hardware frameworks
 #if __has_include(<AVFoundation/AVFoundation.h>)
@@ -65,7 +67,12 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <mach/mach_time.h>
 #import <objc/message.h>
+
+#if DEBUG
+#include <os/signpost.h>
+#endif
 
 /// Returns true if Provenance has acquired JIT at runtime (bridged from DOLJitManager).
 /// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
@@ -106,6 +113,113 @@ static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect eff
 #include <os/lock.h>
 #include <pthread.h>
 #include <stdatomic.h>
+
+// ---------------------------------------------------------------------------
+// MARK: - libretro Performance Interface
+// ---------------------------------------------------------------------------
+
+#define PV_PERF_MAX_COUNTERS 256
+
+/// Mach timebase ratio cached once for mach_absolute_time -> microsecond conversion.
+static double pv_perf_timebase_ratio = 0.0;
+
+static void pv_perf_ensure_timebase(void) {
+    if (pv_perf_timebase_ratio == 0.0) {
+        mach_timebase_info_data_t info;
+        mach_timebase_info(&info);
+        pv_perf_timebase_ratio = (double)info.numer / (double)info.denom;
+    }
+}
+
+/// Registered perf counters from cores.
+static struct retro_perf_counter *pv_perf_counters[PV_PERF_MAX_COUNTERS];
+static unsigned pv_perf_counter_count = 0;
+
+#if DEBUG
+/// Signpost log handle for Instruments profiling of libretro perf counters.
+static os_log_t pv_perf_signpost_log(void) {
+    static os_log_t log;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        log = os_log_create("org.provenance-emu.PVCoreBridgeRetro", "libretro-perf");
+    });
+    return log;
+}
+#endif
+
+/// Returns current time in microseconds (retro_perf_get_time_usec_t).
+retro_time_t pv_perf_get_time_usec(void) {
+    pv_perf_ensure_timebase();
+    return (retro_time_t)(mach_absolute_time() * pv_perf_timebase_ratio / 1000.0);
+}
+
+/// Returns a raw performance tick (retro_perf_get_counter_t).
+retro_perf_tick_t pv_perf_get_counter(void) {
+    return (retro_perf_tick_t)mach_absolute_time();
+}
+
+/// Returns a bitmask of detected SIMD CPU features (retro_get_cpu_features_t).
+uint64_t pv_perf_get_cpu_features(void) {
+#if defined(__aarch64__) || defined(__arm64__)
+    return RETRO_SIMD_NEON | RETRO_SIMD_ASIMD;
+#elif defined(__x86_64__)
+    return RETRO_SIMD_SSE | RETRO_SIMD_SSE2;
+#else
+    return 0;
+#endif
+}
+
+/// Register a performance counter (retro_perf_register_t).
+void pv_perf_register(struct retro_perf_counter *counter) {
+    if (!counter || counter->registered || pv_perf_counter_count >= PV_PERF_MAX_COUNTERS)
+        return;
+    pv_perf_counters[pv_perf_counter_count++] = counter;
+    counter->registered = true;
+}
+
+/// Start a registered counter (retro_perf_start_t).
+void pv_perf_start(struct retro_perf_counter *counter) {
+    if (!counter) return;
+    counter->call_cnt++;
+    counter->start = mach_absolute_time();
+#if DEBUG
+    if (counter->ident) {
+        os_signpost_interval_begin(pv_perf_signpost_log(),
+            (os_signpost_id_t)(uintptr_t)counter,
+            "perf_counter", "%s", counter->ident);
+    }
+#endif
+}
+
+/// Stop a registered counter (retro_perf_stop_t).
+void pv_perf_stop(struct retro_perf_counter *counter) {
+    if (!counter) return;
+    counter->total += mach_absolute_time() - counter->start;
+#if DEBUG
+    if (counter->ident) {
+        os_signpost_interval_end(pv_perf_signpost_log(),
+            (os_signpost_id_t)(uintptr_t)counter,
+            "perf_counter", "%s", counter->ident);
+    }
+#endif
+}
+
+/// Log all registered perf counters (retro_perf_log_t).
+void pv_perf_log(void) {
+    pv_perf_ensure_timebase();
+    double ns_ratio = pv_perf_timebase_ratio;
+    for (unsigned i = 0; i < pv_perf_counter_count; i++) {
+        struct retro_perf_counter *c = pv_perf_counters[i];
+        if (!c) continue;
+        double total_ms = (double)c->total * ns_ratio / 1e6;
+        ILOG(@"[PERF] %s: %.3f ms (%llu calls)",
+             c->ident ? c->ident : "(null)", total_ms, (unsigned long long)c->call_cnt);
+    }
+#if DEBUG
+    os_signpost_event_emit(pv_perf_signpost_log(), OS_SIGNPOST_ID_EXCLUSIVE,
+                           "perf_log", "dumped %u counters", pv_perf_counter_count);
+#endif
+}
 
 // Vulkan support via MoltenVK (loaded at runtime via dlopen)
 #if HAVE_VULKAN
@@ -453,6 +567,19 @@ typedef struct PVThinLibretroSymbols {
     // Current device type selected per port (default RETRO_DEVICE_JOYPAD = 1)
     unsigned _portDeviceTypes[THIN_MAX_PLAYERS];
 
+    // Core capability flags set via environment callbacks
+    bool _coreSupportsNoGame;
+    bool _coreSupportsAchievements;
+
+    // Input descriptors from RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS
+    NSArray<NSDictionary<NSString *, id> *> *_inputDescriptors;
+
+    // Subsystem info from RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO
+    NSArray<NSDictionary<NSString *, id> *> *_subsystemInfo;
+
+    // Content info overrides from RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE
+    NSArray<NSDictionary<NSString *, id> *> *_contentInfoOverrides;
+
     // Stable C-string storage for directory paths returned via environment callbacks.
     // Cores may cache the returned pointer, so we must keep the backing char* alive
     // for the entire core lifetime. Using strdup + free rather than NSString.UTF8String
@@ -565,6 +692,13 @@ typedef struct PVThinLibretroSymbols {
 
     // Guard against double retro_deinit (dealloc can re-enter stopEmulation)
     BOOL _coreDeinited;
+
+    // ---- Netpacket interface (env 78) ----
+    struct retro_netpacket_callback *_netpacketCallback;
+    BOOL _netpacketSessionActive;
+    NSMutableArray<NSData *> *_netpacketIncomingQueue;
+    NSMutableArray<NSNumber *> *_netpacketIncomingClientIDs;
+    os_unfair_lock _netpacketQueueLock;
 }
 
 /// Internal callback methods invoked by the static C trampolines.
@@ -639,6 +773,43 @@ static int16_t thin_input_state(unsigned port, unsigned device, unsigned index, 
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return 0;
     return [self _thinInputStatePort:port device:device index:index id:id];
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - Netpacket static C callbacks (env 78)
+// ---------------------------------------------------------------------------
+
+/// Called by the core to send a packet to a peer or broadcast.
+/// Forwards to the Swift transport via the netpacketSendBlock.
+static void thin_netpacket_send(int flags, const void *buf, size_t len, uint16_t client_id) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self || !self->_netpacketSessionActive) return;
+    if (self.netpacketSendBlock) {
+        self.netpacketSendBlock(flags, buf, len, client_id);
+    }
+}
+
+/// Called by the core to receive all queued incoming packets.
+/// Drains the incoming queue and delivers each packet via the core's receive callback.
+static void thin_netpacket_poll_receive(void) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self || !self->_netpacketCallback) return;
+
+    os_unfair_lock_lock(&self->_netpacketQueueLock);
+    NSArray<NSData *> *packets = [self->_netpacketIncomingQueue copy];
+    NSArray<NSNumber *> *clientIDs = [self->_netpacketIncomingClientIDs copy];
+    [self->_netpacketIncomingQueue removeAllObjects];
+    [self->_netpacketIncomingClientIDs removeAllObjects];
+    os_unfair_lock_unlock(&self->_netpacketQueueLock);
+
+    retro_netpacket_receive_t receiveFn = self->_netpacketCallback->receive;
+    if (!receiveFn) return;
+
+    for (NSUInteger i = 0; i < packets.count; i++) {
+        NSData *pkt = packets[i];
+        uint16_t fromClient = clientIDs[i].unsignedShortValue;
+        receiveFn(pkt.bytes, pkt.length, fromClient);
+    }
 }
 
 /// libretro logging bridge.
@@ -2365,6 +2536,26 @@ static bool thin_environment(unsigned cmd, void *data) {
     return _portDeviceTypes[port];
 }
 
+- (BOOL)coreSupportsNoGame {
+    return _coreSupportsNoGame ? YES : NO;
+}
+
+- (BOOL)coreSupportsAchievements {
+    return _coreSupportsAchievements ? YES : NO;
+}
+
+- (NSArray<NSDictionary<NSString *, id> *> *)inputDescriptors {
+    return _inputDescriptors ?: @[];
+}
+
+- (NSArray<NSDictionary<NSString *, id> *> *)subsystemInfo {
+    return _subsystemInfo ?: @[];
+}
+
+- (NSArray<NSDictionary<NSString *, id> *> *)contentInfoOverrides {
+    return _contentInfoOverrides ?: @[];
+}
+
 - (void)resetEmulation {
     if (_sym.retro_reset) {
         ILOG(@"ThinFrontend: retro_reset");
@@ -2427,6 +2618,9 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
         _blockingCoreThread = nil;
     }
+    // Stop netpacket session if active
+    [self stopNetpacketSession];
+
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
     if (_sym.retro_unload_game) {
@@ -2436,6 +2630,11 @@ static bool thin_environment(unsigned cmd, void *data) {
         _sym.retro_deinit();
     }
     _coreDeinited = YES;
+    // Free netpacket callback
+    if (_netpacketCallback) {
+        free(_netpacketCallback);
+        _netpacketCallback = NULL;
+    }
     [self teardownHardwareContext];
     _thinCurrentTLS = nil;
 }
@@ -2678,6 +2877,68 @@ static bool thin_environment(unsigned cmd, void *data) {
     memcpy(data, srmData.bytes, copySize);
     ILOG(@"ThinFrontend: loaded SRAM (%zu bytes) from %@", copySize, srmPath.lastPathComponent);
     return YES;
+}
+
+// MARK: - Netpacket interface (env 78) session lifecycle
+
+- (BOOL)hasNetpacketInterface {
+    return _netpacketCallback != NULL;
+}
+
+- (nullable NSString *)netpacketProtocolVersion {
+    if (!_netpacketCallback || !_netpacketCallback->protocol_version) return nil;
+    return [NSString stringWithUTF8String:_netpacketCallback->protocol_version];
+}
+
+/// Start a netpacket session: invokes the core's start callback with the
+/// assigned client ID and the static send/poll_receive function pointers.
+- (void)startNetpacketSessionWithClientID:(uint16_t)clientID {
+    if (!_netpacketCallback || !_netpacketCallback->start) {
+        WLOG(@"ThinFrontend: startNetpacketSession called without registered callback");
+        return;
+    }
+    _netpacketSessionActive = YES;
+    ILOG(@"ThinFrontend: starting netpacket session (clientID=%u)", clientID);
+    _netpacketCallback->start(clientID, thin_netpacket_send, thin_netpacket_poll_receive);
+}
+
+/// Stop the active netpacket session: invokes the core's stop callback.
+- (void)stopNetpacketSession {
+    if (!_netpacketSessionActive) return;
+    _netpacketSessionActive = NO;
+    if (_netpacketCallback && _netpacketCallback->stop) {
+        _netpacketCallback->stop();
+    }
+    os_unfair_lock_lock(&_netpacketQueueLock);
+    [_netpacketIncomingQueue removeAllObjects];
+    [_netpacketIncomingClientIDs removeAllObjects];
+    os_unfair_lock_unlock(&_netpacketQueueLock);
+    ILOG(@"ThinFrontend: netpacket session stopped");
+}
+
+/// Enqueue a packet received from the network for delivery to the core
+/// during the next poll_receive call.
+- (void)enqueueNetpacketData:(NSData *)data fromClient:(uint16_t)clientID {
+    os_unfair_lock_lock(&_netpacketQueueLock);
+    [_netpacketIncomingQueue addObject:data];
+    [_netpacketIncomingClientIDs addObject:@(clientID)];
+    os_unfair_lock_unlock(&_netpacketQueueLock);
+}
+
+/// Notify the core that a peer has connected.
+/// Called from the network queue. The libretro API does not mandate a specific
+/// thread for connected/disconnected — RetroArch calls them from its netplay
+/// thread, so direct invocation is consistent with upstream behavior.
+- (void)netpacketPeerConnected:(uint16_t)clientID {
+    if (!_netpacketCallback || !_netpacketCallback->connected) return;
+    _netpacketCallback->connected(clientID);
+}
+
+/// Notify the core that a peer has disconnected.
+/// Same threading model as netpacketPeerConnected — called from network queue.
+- (void)netpacketPeerDisconnected:(uint16_t)clientID {
+    if (!_netpacketCallback || !_netpacketCallback->disconnected) return;
+    _netpacketCallback->disconnected(clientID);
 }
 
 // MARK: - Disc control
@@ -3888,11 +4149,17 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Performance ----
         case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: {
-            // Return false (not supported). Returning true with NULL function pointers
-            // would allow cores to call them and crash. Cores that query this interface
-            // should fall back to their own timing/perf paths when the frontend returns false.
-            DLOG(@"ThinEnv GET_PERF_INTERFACE — not supported, returning false");
-            return false;
+            struct retro_perf_callback *cb = (struct retro_perf_callback *)data;
+            if (!cb) return false;
+            cb->get_time_usec    = pv_perf_get_time_usec;
+            cb->get_cpu_features = pv_perf_get_cpu_features;
+            cb->get_perf_counter = pv_perf_get_counter;
+            cb->perf_register    = pv_perf_register;
+            cb->perf_start       = pv_perf_start;
+            cb->perf_stop        = pv_perf_stop;
+            cb->perf_log         = pv_perf_log;
+            DLOG(@"ThinEnv GET_PERF_INTERFACE — wired up");
+            return true;
         }
         case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
             return true;
@@ -3913,14 +4180,31 @@ static bool thin_environment(unsigned cmd, void *data) {
                                         | (1ULL << RETRO_DEVICE_KEYBOARD);
             return true;
         case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS:
-            if (data) *(unsigned *)data = 8;
+            if (data) *(unsigned *)data = THIN_MAX_PLAYERS;
             return true;
         case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:
+            if (data) _coreSupportsNoGame = *(const bool *)data;
             return true;
         case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:
+            if (data) _coreSupportsAchievements = *(const bool *)data;
             return true;
-        case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
+        case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: {
+            const struct retro_input_descriptor *desc = (const struct retro_input_descriptor *)data;
+            if (!desc) return true;
+            NSMutableArray *descriptors = [NSMutableArray array];
+            for (; desc->description; desc++) {
+                [descriptors addObject:@{
+                    @"port": @(desc->port),
+                    @"device": @(desc->device),
+                    @"index": @(desc->index),
+                    @"id": @(desc->id),
+                    @"desc": [NSString stringWithUTF8String:desc->description]
+                }];
+            }
+            _inputDescriptors = [descriptors copy];
+            ILOG(@"ThinEnv SET_INPUT_DESCRIPTORS: %lu descriptors", (unsigned long)descriptors.count);
             return true;
+        }
         case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO: {
             const struct retro_controller_info *info = (const struct retro_controller_info *)data;
             if (!info) return true;
@@ -3943,23 +4227,80 @@ static bool thin_environment(unsigned cmd, void *data) {
             ILOG(@"ThinEnv SET_CONTROLLER_INFO: %lu ports (clamped to THIN_MAX_PLAYERS=%u)", (unsigned long)portsArray.count, THIN_MAX_PLAYERS);
             return true;
         }
-        case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
+        case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO: {
+            const struct retro_subsystem_info *info = (const struct retro_subsystem_info *)data;
+            if (!info) return true;
+            NSMutableArray *subsystems = [NSMutableArray array];
+            for (unsigned i = 0; info[i].ident; i++) {
+                NSMutableArray *roms = [NSMutableArray array];
+                for (unsigned r = 0; r < info[i].num_roms; r++) {
+                    const struct retro_subsystem_rom_info *rom = &info[i].roms[r];
+                    [roms addObject:@{
+                        @"desc": rom->desc ? [NSString stringWithUTF8String:rom->desc] : @"",
+                        @"valid_extensions": rom->valid_extensions ? [NSString stringWithUTF8String:rom->valid_extensions] : @"",
+                        @"need_fullpath": @(rom->need_fullpath),
+                        @"block_extract": @(rom->block_extract),
+                        @"required": @(rom->required)
+                    }];
+                }
+                NSString *desc = info[i].desc ? [NSString stringWithUTF8String:info[i].desc] : @"";
+                NSString *ident = info[i].ident ? [NSString stringWithUTF8String:info[i].ident] : @"";
+                [subsystems addObject:@{
+                    @"desc": desc,
+                    @"ident": ident,
+                    @"id": @(info[i].id),
+                    @"roms": [roms copy]
+                }];
+            }
+            _subsystemInfo = [subsystems copy];
+            ILOG(@"ThinEnv SET_SUBSYSTEM_INFO: %lu subsystems", (unsigned long)subsystems.count);
             return true;
-        case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE:
+        }
+        case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE: {
+            const struct retro_system_content_info_override *overrides =
+                (const struct retro_system_content_info_override *)data;
+            if (!overrides) return true;
+            NSMutableArray *entries = [NSMutableArray array];
+            for (unsigned i = 0; overrides[i].extensions; i++) {
+                [entries addObject:@{
+                    @"extensions": [NSString stringWithUTF8String:overrides[i].extensions],
+                    @"need_fullpath": @(overrides[i].need_fullpath),
+                    @"persistent_data": @(overrides[i].persistent_data)
+                }];
+            }
+            _contentInfoOverrides = [entries copy];
+            ILOG(@"ThinEnv SET_CONTENT_INFO_OVERRIDE: %lu entries", (unsigned long)entries.count);
             return true;
+        }
 
         // ---- Username / Language ----
         case RETRO_ENVIRONMENT_GET_USERNAME: {
-            // Retain the NSString in an ivar so the UTF8String pointer stays
-            // valid for the entire lifetime of the loaded core.
+            // Resolve username with fallback chain:
+            // 1. PVSettings playerUsername (user-configured)
+            // 2. OS username
+            // 3. "Provenance" fallback
             if (!_usernameString) {
-                _usernameString = NSUserName() ?: @"Provenance";
+                NSString *configured = PVSettingsWrapper.playerUsername;
+                if (configured.length > 0) {
+                    _usernameString = configured;
+                } else {
+                    _usernameString = NSUserName() ?: @"Provenance";
+                }
             }
             if (data) *(const char **)data = _usernameString.UTF8String;
             return true;
         }
         case RETRO_ENVIRONMENT_GET_LANGUAGE: {
-            if (data) *(unsigned *)data = RETRO_LANGUAGE_ENGLISH;
+            // Resolve from PVSettings coreLanguage override, falling back to
+            // device locale via CoreLocaleMapper when set to systemLocale (-1).
+            if (data) {
+                int langRaw = PVSettingsWrapper.coreLanguageRawValue;
+                if (langRaw < 0) {
+                    *(unsigned *)data = (unsigned)CoreLocaleMapper.currentRetroArchLanguageID;
+                } else {
+                    *(unsigned *)data = (unsigned)langRaw;
+                }
+            }
             return true;
         }
 
@@ -4365,17 +4706,32 @@ static bool thin_environment(unsigned cmd, void *data) {
 #else
             // tvOS has no battery API — report plugged-in with unknown percentage.
             pwr->state   = RETRO_POWERSTATE_PLUGGED_IN;
-            pwr->percent = -1;
+            pwr->percent = RETRO_POWERSTATE_NO_ESTIMATE;
             pwr->seconds = RETRO_POWERSTATE_NO_ESTIMATE;
 #endif
             return true;
         }
 
         // ---- Netpacket interface (env 78) ----
-        // Network multiplayer via custom packet routing — not supported.
-        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE:
-            DLOG(@"ThinEnv SET_NETPACKET_INTERFACE: not supported");
+        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE: {
+            const struct retro_netpacket_callback *cb =
+                (const struct retro_netpacket_callback *)data;
+            if (cb && cb->start && cb->receive) {
+                if (_netpacketCallback) {
+                    free(_netpacketCallback);
+                }
+                _netpacketCallback = (struct retro_netpacket_callback *)malloc(sizeof(*_netpacketCallback));
+                memcpy(_netpacketCallback, cb, sizeof(*_netpacketCallback));
+                _netpacketIncomingQueue = [NSMutableArray new];
+                _netpacketIncomingClientIDs = [NSMutableArray new];
+                _netpacketQueueLock = OS_UNFAIR_LOCK_INIT;
+                ILOG(@"ThinEnv SET_NETPACKET_INTERFACE: registered (protocol_version=%s)",
+                     cb->protocol_version ?: "(none)");
+                return true;
+            }
+            WLOG(@"ThinEnv SET_NETPACKET_INTERFACE: rejected (missing start/receive)");
             return false;
+        }
 
         default:
             DLOG(@"ThinEnv UNSUPPORTED cmd=%u", cmd);

@@ -20,7 +20,6 @@ import PVAudio
 import PVCoreAudio
 import PVCoreBridge
 import PVEmulatorCore
-import PVLibrary
 import PVLogging
 import PVRealm
 import PVSettings
@@ -29,6 +28,9 @@ import SwiftUI
 import ZipArchive
 #if canImport(PVJIT)
 import JITManager
+#endif
+#if canImport(PVAppIntents)
+import PVAppIntents
 #endif
 
 private weak var staticSelf: PVEmualatorControllerProtocol?
@@ -1553,6 +1555,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         #endif
         playTimeTracker?.didPause()
+
+        #if canImport(PVAppIntents)
+        Task { @MainActor in
+            WidgetDataWriter.shared.writeFromRealm()
+        }
+        #endif
+
         destroyAutosaveTimer()
         // Remove all menu-related gesture recognizers
         #if os(tvOS)

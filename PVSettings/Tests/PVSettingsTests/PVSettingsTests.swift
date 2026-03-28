@@ -1585,14 +1585,19 @@ struct CoreLanguageSettingTests {
         #expect(CoreLanguageSetting.english.retroArchLanguageID == 0)
         #expect(CoreLanguageSetting.japanese.retroArchLanguageID == 1)
         #expect(CoreLanguageSetting.french.retroArchLanguageID == 2)
-        #expect(CoreLanguageSetting.chineseSimplified.retroArchLanguageID == 11)
-        #expect(CoreLanguageSetting.russian.retroArchLanguageID == 16)
+        #expect(CoreLanguageSetting.spanish.retroArchLanguageID == 3)
+        #expect(CoreLanguageSetting.german.retroArchLanguageID == 4)
+        #expect(CoreLanguageSetting.russian.retroArchLanguageID == 9)
+        #expect(CoreLanguageSetting.chineseTraditional.retroArchLanguageID == 11)
+        #expect(CoreLanguageSetting.chineseSimplified.retroArchLanguageID == 12)
+        #expect(CoreLanguageSetting.arabic.retroArchLanguageID == 16)
+        #expect(CoreLanguageSetting.greek.retroArchLanguageID == 17)
     }
 
     @Test("allCases contains systemLocale and all explicit languages")
     func allCasesCount() {
         #expect(CoreLanguageSetting.allCases.contains(.systemLocale))
-        #expect(CoreLanguageSetting.allCases.count >= 17)
+        #expect(CoreLanguageSetting.allCases.count >= 25)
     }
 }
 

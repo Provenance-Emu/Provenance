@@ -55,7 +55,7 @@ final class ContinueMostRecentGameIntentTests: XCTestCase {
 
         let intent = ContinueMostRecentGameIntent()
         let result = try await intent.perform()
-        XCTAssertEqual(result.value.id, game.id, "Should return the seeded game")
+        XCTAssertEqual(result.value?.id, game.id, "Should return the seeded game")
     }
 
     func testPerformPicksMostRecentGame() async throws {
@@ -85,7 +85,7 @@ final class ContinueMostRecentGameIntentTests: XCTestCase {
         XCTAssertEqual(topRecent?.id, "md5-newer")
 
         let result = try await ContinueMostRecentGameIntent().perform()
-        XCTAssertEqual(result.value.id, "md5-newer", "Should resume the most recently played game")
+        XCTAssertEqual(result.value?.id, "md5-newer", "Should resume the most recently played game")
     }
 }
 
@@ -136,9 +136,10 @@ final class SearchLibraryIntentTests: XCTestCase {
         intent.query = "mario"
         intent.system = nil
         let result = try await intent.perform()
-        XCTAssertFalse(result.value.isEmpty, "Should find games matching 'mario'")
+        let games = try XCTUnwrap(result.value, "perform() should return a value")
+        XCTAssertFalse(games.isEmpty, "Should find games matching 'mario'")
         XCTAssertTrue(
-            result.value.allSatisfy { $0.title.lowercased().contains("mario") },
+            games.allSatisfy { $0.title.lowercased().contains("mario") },
             "Every returned game title should contain 'mario'"
         )
     }
@@ -172,7 +173,8 @@ final class SearchLibraryIntentTests: XCTestCase {
         intent.query = "zzz-no-match-xyz"
         intent.system = nil
         let result = try await intent.perform()
-        XCTAssertTrue(result.value.isEmpty, "Should return empty array for unmatched query")
+        let games = try XCTUnwrap(result.value, "perform() should return a value")
+        XCTAssertTrue(games.isEmpty, "Should return empty array for unmatched query")
     }
 
     func testSearchCaseInsensitive() async throws {
@@ -184,7 +186,9 @@ final class SearchLibraryIntentTests: XCTestCase {
         lowerIntent.query = "mario"
         let lowerResult = try await lowerIntent.perform()
 
-        XCTAssertEqual(upperResult.value.count, lowerResult.value.count,
+        let upperGames = try XCTUnwrap(upperResult.value)
+        let lowerGames = try XCTUnwrap(lowerResult.value)
+        XCTAssertEqual(upperGames.count, lowerGames.count,
                        "Uppercase and lowercase queries must return the same number of results")
     }
 
