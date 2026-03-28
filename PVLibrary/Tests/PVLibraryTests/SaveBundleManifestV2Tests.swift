@@ -296,6 +296,20 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json))
     }
 
+    func testV2ParseThrowsOnEmptyGameMD5() {
+        // v2 schemaVersion with empty game field — must throw, not silently succeed
+        let json = """
+        {
+            "schemaVersion": 2,
+            "game": "",
+            "title": "Test",
+            "system": "com.provenance.nes",
+            "exportDate": "2026-01-01T00:00:00Z"
+        }
+        """.data(using: .utf8)!
+        XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json))
+    }
+
     // MARK: - Error descriptions
 
     func testParseErrorDescriptions() {
@@ -353,6 +367,23 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertEqual(result.statesIncluded, 5)
     }
 
+    func testSaveImportResultEquatable() {
+        let r1 = SaveImportResult(sramRestored: true, statesRestored: 2, warnings: ["w1"])
+        let r2 = SaveImportResult(sramRestored: true, statesRestored: 2, warnings: ["w1"])
+        let r3 = SaveImportResult(sramRestored: false, statesRestored: 0)
+        XCTAssertEqual(r1, r2)
+        XCTAssertNotEqual(r1, r3)
+    }
+
+    func testSaveExportResultEquatable() {
+        let url = URL(fileURLWithPath: "/tmp/test.zip")
+        let r1 = SaveExportResult(bundleURL: url, sramIncluded: true, statesIncluded: 5)
+        let r2 = SaveExportResult(bundleURL: url, sramIncluded: true, statesIncluded: 5)
+        let r3 = SaveExportResult(bundleURL: url, sramIncluded: false, statesIncluded: 0)
+        XCTAssertEqual(r1, r2)
+        XCTAssertNotEqual(r1, r3)
+    }
+
     // MARK: - SaveFileCategory CaseIterable
 
     func testSaveFileCategoryAllCases() {
@@ -360,6 +391,15 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertTrue(SaveFileCategory.allCases.contains(.sram))
         XCTAssertTrue(SaveFileCategory.allCases.contains(.saveState))
         XCTAssertTrue(SaveFileCategory.allCases.contains(.rtc))
+    }
+
+    func testSaveFileCategoryExtensionsProperty() {
+        XCTAssertEqual(SaveFileCategory.sram.extensions, SaveFileCategory.sramExtensions)
+        XCTAssertEqual(SaveFileCategory.saveState.extensions, SaveFileCategory.saveStateExtensions)
+        XCTAssertEqual(SaveFileCategory.rtc.extensions, SaveFileCategory.rtcExtensions)
+        XCTAssertTrue(SaveFileCategory.sram.extensions.contains("sav"))
+        XCTAssertTrue(SaveFileCategory.saveState.extensions.contains("state"))
+        XCTAssertTrue(SaveFileCategory.rtc.extensions.contains("rtc"))
     }
 
     func testSaveFileCategoryPPSTIsState() {
@@ -395,6 +435,11 @@ final class SaveBundleManifestV2Tests: XCTestCase {
     func testIsSafeFilename_rejectsBackslash() {
         XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("foo\\bar.srm"))
         XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("..\\passwd"))
+    }
+
+    func testIsSafeFilename_rejectsNullByte() {
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("foo\0bar.srm"))
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("\0hidden"))
     }
 
     func testBatterySaveEntry_isSafeFilename() {

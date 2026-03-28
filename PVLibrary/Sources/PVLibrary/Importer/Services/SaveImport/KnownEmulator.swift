@@ -25,6 +25,7 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
     // Nintendo / multi-system
     case delta      = "com.rileytestut.Delta"
     case deltaLite  = "com.rileytestut.Delta-Lite"
+    // FIXME: Verify bundle ID — "com.littleredgames.GambatteGB" may be incorrect for the Gamma app.
     case gamma      = "com.littleredgames.GambatteGB"
 
     // Multi-system / libretro

@@ -33,6 +33,15 @@ public enum SaveFileCategory: String, CaseIterable, Codable, Sendable {
     ]
     public static let rtcExtensions: Set<String>       = ["rtc"]
 
+    /// The file extensions associated with this category.
+    public var extensions: Set<String> {
+        switch self {
+        case .sram:      return Self.sramExtensions
+        case .saveState: return Self.saveStateExtensions
+        case .rtc:       return Self.rtcExtensions
+        }
+    }
+
     /// Infer the category from a file extension.
     public static func infer(fromExtension ext: String) -> SaveFileCategory {
         let lower = ext.lowercased()
@@ -75,7 +84,7 @@ public struct ExternalSaveFile: Sendable {
 // MARK: - SaveImportResult
 
 /// Result returned after a successful save import operation.
-public struct SaveImportResult: Sendable {
+public struct SaveImportResult: Equatable, Sendable {
     /// Whether a battery/SRAM file was restored.
     public let sramRestored: Bool
     /// Number of save-state files registered in the library.
@@ -93,7 +102,7 @@ public struct SaveImportResult: Sendable {
 // MARK: - SaveExportResult
 
 /// Result returned after a successful save export operation.
-public struct SaveExportResult: Sendable {
+public struct SaveExportResult: Equatable, Sendable {
     /// URL of the exported bundle (temporary — caller must share before app terminates or call `cleanupExport(at:)`).
     public let bundleURL: URL
     /// Whether battery/SRAM files were included.
@@ -171,7 +180,7 @@ public enum SaveMatchConfidence: Int, Comparable, Sendable {
 // MARK: - SaveGameMatch
 
 /// A candidate game match for an imported save file.
-public struct SaveGameMatch: Sendable {
+public struct SaveGameMatch: Equatable, Sendable {
     /// MD5 of the matched game (Realm primary key).
     public let gameID: String
     /// Display title of the matched game.

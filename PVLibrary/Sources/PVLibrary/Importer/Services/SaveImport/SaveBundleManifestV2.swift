@@ -143,9 +143,10 @@ public struct SaveBundleManifestV2: Codable, Sendable {
     /// no traversal sequences, and non-empty.
     public static func isSafeFilename(_ name: String) -> Bool {
         guard !name.isEmpty,
-              !name.hasPrefix("."),   // rejects hidden files, ".", and ".."
-              !name.contains("/"),    // rejects any path with a forward-slash component
-              !name.contains("\\")   // rejects Windows-style backslash paths
+              !name.hasPrefix("."),    // rejects hidden files, ".", and ".."
+              !name.contains("/"),     // rejects any path with a forward-slash component
+              !name.contains("\\"),    // rejects Windows-style backslash paths
+              !name.contains("\0")     // rejects null-byte injection
         else { return false }
         return true
     }
@@ -212,7 +213,13 @@ public struct SaveBundleManifestV2: Codable, Sendable {
             return try parseV1(from: raw)
         case 2:
             do {
-                return try decoder.decode(SaveBundleManifestV2.self, from: data)
+                let manifest = try decoder.decode(SaveBundleManifestV2.self, from: data)
+                guard !manifest.gameMD5.isEmpty else {
+                    throw SaveBundleManifestParseError.invalidManifest("Missing 'game' field.")
+                }
+                return manifest
+            } catch let parseError as SaveBundleManifestParseError {
+                throw parseError
             } catch {
                 throw SaveBundleManifestParseError.invalidManifest(error.localizedDescription)
             }
