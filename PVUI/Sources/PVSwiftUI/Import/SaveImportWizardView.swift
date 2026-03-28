@@ -14,7 +14,6 @@ import UniformTypeIdentifiers
 import PVLibrary
 import PVRealm
 import PVLogging
-import PVFileSystem
 import PVUIBase
 
 // MARK: - WizardStep
@@ -643,7 +642,7 @@ public struct SaveImportWizardView: View {
                     try await SaveExporter.shared.importSaves(from: url, for: frozenGame)
                 } else {
                     importProgress = 0.5
-                    try await importBatterySave(fileURL: url, game: frozenGame)
+                    try await SaveExporter.shared.importSRAM(from: url, for: frozenGame)
                 }
                 importProgress = 1.0
                 try? await Task.sleep(nanoseconds: 400_000_000)
@@ -655,21 +654,6 @@ public struct SaveImportWizardView: View {
             step = .done
             cleanupTempFile(url)
         }
-    }
-
-    private func importBatterySave(fileURL: URL, game: PVGame) async throws {
-        guard let romURL = game.file?.url else {
-            throw SaveExportError.invalidBundle("Game has no associated ROM file.")
-        }
-        // game is frozen — safe to capture for background use
-        let destDir = Paths.batterySavesPath(forROM: romURL)
-        let destURL = destDir.appendingPathComponent(fileURL.lastPathComponent)
-        try await Task.detached(priority: .userInitiated) {
-            let fm = FileManager.default
-            try fm.createDirectory(at: destDir, withIntermediateDirectories: true)
-            if fm.fileExists(atPath: destURL.path) { try fm.removeItem(at: destURL) }
-            try fm.copyItem(at: fileURL, to: destURL)
-        }.value
     }
 
     private func cleanupTempFile(_ url: URL) {

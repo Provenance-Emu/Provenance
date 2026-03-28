@@ -13,7 +13,6 @@ import Foundation
 import PVLibrary
 import PVRealm
 import RealmSwift
-import PVLogging
 
 // MARK: - MatchConfidence
 
