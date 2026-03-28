@@ -138,7 +138,7 @@
     {
       "coreIdentifier": "com.provenance.core.mednafen",
       "summary": "Mednafen multi-system emulator. High-accuracy with native RetroAchievements support.",
-      "capabilities": ["retroAchievements"],
+      "capabilities": ["highAccuracy", "cdAudio", "subChannelAudio", "multitapSupport", "lightgunSupport", "cheats", "retroAchievements"],
       "notes": ["RetroAchievements supported for: PSX, NES/FDS, SNES (snes_faust), PCE/PCE-CD/SuperGrafx, Saturn (experimental)"],
       "qualityRank": 92
     },
@@ -256,6 +256,36 @@
       "matchValue": "com.provenance.gba",
       "preferredCapabilities": ["highAccuracy"],
       "tip": "mGBA provides the most accurate GBA emulation and is recommended for all GBA titles."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.nes",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for NES trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.fds",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for FDS trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.snes",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for SNES trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.pce",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for PC Engine trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.pcecd",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for PC Engine CD trophy tracking."
     }
   ]
 }

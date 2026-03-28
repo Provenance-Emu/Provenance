@@ -279,6 +279,42 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertTrue(recs.first?.highlightedCapabilities.contains(.retroAchievements) == true)
     }
 
+    /// Verifies NES system requirement prefers a core with retroAchievements over one without.
+    func testNESSystemRequirementPrefersRetroAchievements() {
+        let recs = engine.recommendations(
+            gameTitle: "Mega Man 2",
+            systemIdentifier: "com.provenance.nes",
+            availableCoreIdentifiers: [
+                "com.provenance.core.fceu",      // no retroAchievements
+                "com.provenance.core.mednafen"   // has retroAchievements
+            ]
+        )
+
+        XCTAssertEqual(recs.count, 2)
+        XCTAssertEqual(recs.first?.coreIdentifier, "com.provenance.core.mednafen",
+                       "Mednafen (native RC) should rank above FCEU for NES when retroAchievements is preferred")
+        XCTAssertTrue(recs.first?.highlightedCapabilities.contains(.retroAchievements) == true)
+        XCTAssertNotNil(recs.first?.recommendationTip, "NES system requirement tip should surface")
+    }
+
+    /// Verifies SNES system requirement prefers a core with retroAchievements over one without.
+    func testSNESSystemRequirementPrefersRetroAchievements() {
+        let recs = engine.recommendations(
+            gameTitle: "Super Metroid",
+            systemIdentifier: "com.provenance.snes",
+            availableCoreIdentifiers: [
+                "com.provenance.core.snes9x",          // no retroAchievements
+                "snes9x.libretro.framework"            // has retroAchievements
+            ]
+        )
+
+        XCTAssertEqual(recs.count, 2)
+        XCTAssertEqual(recs.first?.coreIdentifier, "snes9x.libretro.framework",
+                       "libretro Snes9x should rank above native Snes9x for SNES when retroAchievements is preferred")
+        XCTAssertTrue(recs.first?.highlightedCapabilities.contains(.retroAchievements) == true)
+        XCTAssertNotNil(recs.first?.recommendationTip, "SNES system requirement tip should surface")
+    }
+
     /// Verifies that the native Mednafen core (com.provenance.core.mednafen) advertises
     /// retroAchievements in the bundle JSON — critical for the fallback path used in tests.
     func testNativeMednafenAdvertisesRetroAchievementsInJSON() {
@@ -286,6 +322,18 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertNotNil(meta, "Native Mednafen should have an entry in CoreCapabilities.json")
         XCTAssertTrue(meta?.capabilities.contains(.retroAchievements) == true,
                       "Mednafen native rc_client integration must surface retroAchievements capability")
+    }
+
+    /// Verifies the full Mednafen capability profile visible via the JSON (Layer 3 test fallback).
+    func testNativeMednafenFullCapabilityProfileInJSON() {
+        let meta = engine.capabilityMetadata(for: "com.provenance.core.mednafen")
+        XCTAssertNotNil(meta)
+        let caps = meta?.capabilities ?? []
+        XCTAssertTrue(caps.contains(.highAccuracy), "Mednafen JSON entry should declare highAccuracy")
+        XCTAssertTrue(caps.contains(.cdAudio), "Mednafen JSON entry should declare cdAudio")
+        XCTAssertTrue(caps.contains(.cheats), "Mednafen JSON entry should declare cheats")
+        XCTAssertTrue(caps.contains(.retroAchievements), "Mednafen JSON entry should declare retroAchievements")
+        XCTAssertEqual(meta?.qualityRank, 92)
     }
 
     /// Verifies the retroAchievements raw value parses from a JSON capability string.
