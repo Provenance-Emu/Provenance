@@ -31,6 +31,9 @@ static bool _isOff = false;
 
 #pragma mark - PVEmuThreeCoreBridge Begin
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wprotocol"
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation PVEmuThreeCoreBridge
 {
     uint16_t *_soundBuffer;
@@ -43,6 +46,8 @@ static bool _isOff = false;
 }
 
 @synthesize valueChangedHandler;
+@dynamic ringBuffers;
+@dynamic discCount;
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -95,17 +100,15 @@ static bool _isOff = false;
     if ([path.pathExtension.lowercaseString isEqualToString:@"nds"]) {
         _emuThreeCoreModule = @"NDS";
     } else if ([path.pathExtension.lowercaseString isEqualToString:@"cia"]) {
-        Service::AM::InstallStatus success = Service::AM::InstallCIA([path UTF8String], [](std::size_t total_bytes_read, std::size_t file_size) {});
-//        return success == Service::AM::InstallStatus::Success;
+        (void)Service::AM::InstallCIA([path UTF8String], [](std::size_t total_bytes_read, std::size_t file_size) {});
     }
 
     return YES;
 }
 
 - (void)setOptionValues {
-#warning("TODO: I don't think these Keys are correct.")
-    // TODO: I don't think this is correct and should either use a custom default domain or needs
-    // to prepend something to the key names to match what CoreOption's encoder does
+    // TODO: I don't think these Keys are correct — should either use a custom default domain
+    // or prepend something to the key names to match what CoreOption's encoder does
     [self parseOptions];
     [[NSUserDefaults standardUserDefaults] setInteger:self.portraitType forKey:@"portrait_layout_option"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.landscapeType forKey:@"landscape_layout_option"];
@@ -140,9 +143,11 @@ static bool _isOff = false;
 
 #pragma mark - Running
 - (void)setupEmulation {
-    NSError *error;
-    NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../EmuThreeData" ];
+    NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../EmuThreeData"];
+    [[NSFileManager defaultManager] createDirectoryAtPath:saveDirectory
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:nil];
 }
 
 - (void)startVM:(UIView *)view {
@@ -206,7 +211,7 @@ static bool _isOff = false;
 #if !TARGET_OS_TV
     }
 #endif
-    [CitraWrapper.sharedInstance refreshSize:m_view.layer];
+    [CitraWrapper.sharedInstance refreshSize:(CAMetalLayer *)m_view.layer];
 }
 
 - (void)stopEmulation {
@@ -221,8 +226,6 @@ static bool _isOff = false;
 
 - (void)setupView {
     if (self.touchViewController) {
-        UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
-        CGRect screenBounds = [[UIScreen mainScreen] bounds];
         m_view_controller=[[EmuThreeVulkanViewController alloc]
                            initWithResFactor:self.resFactor
                            videoWidth: self.videoWidth
@@ -252,7 +255,6 @@ static bool _isOff = false;
 #endif
     } else {
         UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
-        auto screenBounds = [[UIScreen mainScreen] bounds];
         if(self.gsPreference == 0)
         {
             EmuThreeVulkanViewController *cgsh_view_controller=[[EmuThreeVulkanViewController alloc]
@@ -309,6 +311,9 @@ static bool _isOff = false;
 
 -(void)startHaptic { }
 -(void)stopHaptic { }
+
+- (void)pollControllers { }
+- (void)gamepadEventIrRecenter:(int)action { }
 
 -(void)optionUpdated:(NSNotification *)notification {
     NSDictionary *info = notification.userInfo;
@@ -394,4 +399,5 @@ static bool _isOff = false;
         [CitraWrapper.sharedInstance setOptions:false];
     }
 }
+#pragma clang diagnostic pop
 @end

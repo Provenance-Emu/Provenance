@@ -137,7 +137,7 @@ __attribute__((visibility("default")))
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface MednafenGameCoreBridge (Controls) <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient, LightGunResponder>
+@interface MednafenGameCoreBridge (Controls) <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient>
 #pragma clang diagnostic pop
 
 - (void)didPushLynxButton:(PVLynxButton)lynxButton forPlayer:(NSInteger)player;
@@ -175,16 +175,6 @@ __attribute__((visibility("default")))
 #pragma mark SS Sega Saturn
 - (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
-#pragma mark SS Light Gun (LightGunResponder)
-@property (nonatomic, readonly) BOOL gameSupportsLightGun;
-@property (nonatomic, readonly) BOOL requiresLightGun;
-- (void)lightGunMovedToPoint:(CGPoint)point isOffscreen:(BOOL)isOffscreen;
-- (void)lightGunTriggerDown;
-- (void)lightGunTriggerUp;
-- (void)lightGunStartDown;
-- (void)lightGunStartUp;
-- (void)lightGunReloadDown;
-- (void)lightGunReloadUp;
 #pragma mark PSX
 - (void)didPushPSXButton:(enum PVPSXButton)button forPlayer:(NSInteger)player;
 - (void)didReleasePSXButton:(enum PVPSXButton)button forPlayer:(NSInteger)player;

@@ -36,10 +36,12 @@ public final class CaseControllerSkinCoordinator {
 
     // MARK: - Init / deinit
 
-    public init() {}
+    nonisolated public init() {}
 
     deinit {
-        stop()
+        if let token = observerToken {
+            NotificationCenter.default.removeObserver(token)
+        }
     }
 
     // MARK: - Public API
@@ -101,7 +103,7 @@ public final class CaseControllerSkinCoordinator {
 
                 // Resolve the system this skin targets.
                 guard let systemId = skin.gameType.systemIdentifier else {
-                    WLOG("CaseControllerSkinCoordinator: skin '\(skinIdentifier)' has unmapped gameType \(skin.gameType.rawValue)")
+                    WLOG("CaseControllerSkinCoordinator: skin '\(skinIdentifier)' has unmapped gameType \(skin.gameType)")
                     continue
                 }
 

@@ -20,7 +20,6 @@ import PVLogging
 import PVFileSystem
 import Combine
 import Observation
-import Perception
 #if canImport(PVAppIntents)
 import PVAppIntents
 #endif

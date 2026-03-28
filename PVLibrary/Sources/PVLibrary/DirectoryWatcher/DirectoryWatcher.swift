@@ -67,7 +67,7 @@ public extension NSNotification.Name {
 
 
 /// Options for configuring the DirectoryWatcher
-public struct DirectoryWatcherOptions {
+public struct DirectoryWatcherOptions: Sendable {
     /// Whether to scan subdirectories for changes
     public let includeSubdirectories: Bool
     let allowedPaths: [URL]      // Only watch these paths and their subdirectories (if enabled)
@@ -88,7 +88,7 @@ public struct DirectoryWatcherOptions {
 ///
 /// The DirectoryWatcher monitors a specified directory for new files and changes,
 /// handling archive extraction and file processing automatically.
-@Perceptible
+//@Observable
 public final class DirectoryWatcher: ObservableObject {
 
     private let watcherManager: FileWatcherManager
@@ -1355,8 +1355,8 @@ func delay(_ duration: TimeInterval, operation: @escaping () async throws -> Voi
     ILOG("Delayed operation completed")
 }
 
-private actor FileWatcherManager {
-    private struct FileStatus {
+private actor FileWatcherManager: Sendable {
+    private struct FileStatus: Sendable {
         var watcher: DispatchSourceFileSystemObject
         var size: Int64
         var modificationDate: Date

@@ -13,7 +13,6 @@ import PVUIKit
 import RxRealm
 import RxSwift
 import RealmSwift
-import Perception
 import PVFeatureFlags
 import Defaults
 import AudioToolbox

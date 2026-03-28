@@ -6,7 +6,7 @@ import PVCoreBridge
 
 extension PVRetroArchCoreOptions: SubCoreOptional {
 
-    nonisolated(unsafe) public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
+    nonisolated public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
         var subCoreOptions: [CoreOption] = []
         var isDOS = false
 
@@ -81,8 +81,16 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 
         coreOptions.append(retroArchControllerOption)
 
-        if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
-            coreOptions.append(secondScreenOption)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let hasMultipleScreens: Bool
+            if #available(iOS 16.0, tvOS 16.0, *) {
+                hasMultipleScreens = UIApplication.shared.openSessions.contains { $0.scene?.session.role == .windowExternalDisplayNonInteractive }
+            } else {
+                hasMultipleScreens = UIScreen.screens.count > 1
+            }
+            if hasMultipleScreens {
+                coreOptions.append(secondScreenOption)
+            }
         }
         coreOptions.append(volumeOption)
         coreOptions.append(ffOption)
@@ -229,7 +237,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
 }
 
 // MARK: - PVRetroArchCoreCore
-extension PVRetroArchCoreCore: @preconcurrency CoreOptional, SubCoreOptional {
+extension PVRetroArchCoreCore: CoreOptional, SubCoreOptional {
     public static var options: [PVCoreBridge.CoreOption] {
         return PVRetroArchCoreOptions.options + (options(forSubcoreIdentifier: identifier, systemName: systemName) ?? [])
     }
@@ -338,7 +346,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
             )
 
             /// Create a value handler closure that will update the RetroArch option
-            let valueHandler: (OptionValueRepresentable) -> Void = { newValue in
+            let valueHandler: @Sendable (OptionValueRepresentable) -> Void = { newValue in
                 var valIdx: size_t = 0
 
                 // Find the option index
@@ -574,8 +582,16 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         self.hasTouchControls=false
         self.extractArchive=true
 
-        if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
-            self.hasSecondScreen = secondScreen;
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let hasMultiple: Bool
+            if #available(iOS 16.0, tvOS 16.0, *) {
+                hasMultiple = UIApplication.shared.openSessions.contains { $0.scene?.session.role == .windowExternalDisplayNonInteractive }
+            } else {
+                hasMultiple = UIScreen.screens.count > 1
+            }
+            if hasMultiple {
+                self.hasSecondScreen = secondScreen
+            }
         }
 
         if let systemIdentifier = self.systemIdentifier?.lowercased() {
@@ -801,94 +817,42 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
     }
 }
 
-extension PVRetroArchCoreCore: GameWithCheat {
-	@objc public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
-		do {
-			ILOG("Calling setCheat \(code) \(type) \(codeType)")
-            try self._bridge.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
-			return true
-		} catch let error {
-            ILOG("Error setCheat \(error)")
-			return false
-		}
-	}
-
-    @objc public func resetCheatCodes() {
-        _bridge.resetCheatCodes()
-    }
-
-    @objc
-    public var supportsCheatCode: Bool { return true }
-
-    @objc
-    public var cheatCodeTypes: [String] {
-        let coreID = (coreIdentifier ?? "").lowercased()
-        let sysID  = (systemIdentifier ?? "").lowercased()
-
-        // SNES – snes9x / bsnes  (must precede NES: "snes" contains "nes")
-        if coreID.contains("snes9x") || coreID.contains("bsnes") || sysID.contains("snes") {
-            return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
-        }
-        // Genesis / Mega Drive / SMS / Game Gear  (must precede NES: "genesis" contains "nes")
-        if coreID.contains("genesis_plus") || coreID.contains("picodrive") ||
-           sysID.contains("genesis") || sysID.contains("megadrive") ||
-           sysID.contains("gamegear") || sysID.contains("mastersystem") {
-            return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
-        }
-        // NES – fceumm / nestopia
-        if coreID.contains("fceumm") || coreID.contains("nestopia") || sysID.contains("nes") {
-            return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
-        }
-        // Game Boy / Game Boy Color – gambatte / sameboy
-        if coreID.contains("gambatte") || coreID.contains("sameboy") ||
-           (sysID.contains("gb") && !sysID.contains("gba")) {
-            return CheatCodeTypesMakeStringArray([.gameGenie, .gameShark])
-        }
-        // Game Boy Advance – mgba / vba_next
-        if coreID.contains("mgba") || coreID.contains("vba") || sysID.contains("gba") {
-            return CheatCodeTypesMakeStringArray([.gameShark, .codeBreaker, .proActionReplay])
-        }
-        // Nintendo 64 – mupen64plus
-        if coreID.contains("mupen") || sysID.contains("n64") || sysID.contains("nintendo64") {
-            return CheatCodeTypesMakeStringArray([.gameSharkV2, .gameSharkV3])
-        }
-        // PlayStation – beetle_psx / mednafen_psx / pcsx_rearmed
-        if coreID.contains("beetle_psx") || coreID.contains("mednafen_psx") ||
-           coreID.contains("pcsx") || sysID.contains("psx") || sysID.contains("ps1") {
-            return CheatCodeTypesMakeStringArray([.gameShark, .codeBreaker, .proActionReplay])
-        }
-        // MAME / arcade – raw codes only
-        if coreID.contains("mame") || sysID.contains("mame") || sysID.contains("arcade") {
-            return CheatCodeTypesMakeStringArray([.rawCode])
-        }
-        // Fallback: raw code works for any core that implements retro_cheat_set
-        return CheatCodeTypesMakeStringArray([.rawCode])
-    }
-}
-
 @objc public extension PVRetroArchCoreBridge {
-    @objc func useSecondaryScreen() {
-        if UIScreen.screens.count > 1 {
-            let secondaryScreen:UIScreen = UIScreen.screens[1]
-            if (self.window == nil) {
-                let secondaryWindow = UIWindow(frame: secondaryScreen.bounds)
-                self.window = secondaryWindow
-                self.window.screen = UIScreen.main
-                if let touchController = CocoaView.get().parent, let emuController = touchController.parent {
-                    emuController.removeFromParent()
-                    secondaryWindow.rootViewController = emuController
-                }
-                self.window.isHidden=false
-            }
-            self.window.screen = secondaryScreen
-        }
+    /// Finds the first external-display window scene, if any.
+    private static var externalWindowScene: UIWindowScene? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.session.role == .windowExternalDisplayNonInteractive }
     }
-    @objc func usePrimaryScreen() {
-        if UIScreen.screens.count > 1 && self.window != nil && self.window != UIApplication.shared.keyWindow {
-            self.window.screen = UIScreen.main
+
+    /// Finds the primary app window scene.
+    private static var primaryWindowScene: UIWindowScene? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.session.role == .windowApplication }
+    }
+
+    @objc func useSecondaryScreen() {
+        guard let externalScene = Self.externalWindowScene else { return }
+        if self.window == nil {
+            let secondaryWindow = UIWindow(windowScene: externalScene)
+            self.window = secondaryWindow
+            if let touchController = CocoaView.get().parent, let emuController = touchController.parent {
+                emuController.removeFromParent()
+                secondaryWindow.rootViewController = emuController
+            }
+            self.window.isHidden = false
+        } else {
+            self.window.windowScene = externalScene
         }
     }
 
+    @objc func usePrimaryScreen() {
+        guard Self.externalWindowScene != nil,
+              let win = self.window,
+              let primaryScene = Self.primaryWindowScene else { return }
+        win.windowScene = primaryScene
+    }
 }
 
 /// User-facing labels for pause-menu quick actions.

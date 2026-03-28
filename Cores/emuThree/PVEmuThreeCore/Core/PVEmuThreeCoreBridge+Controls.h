@@ -4,7 +4,10 @@
 #import <PVEmuThree/PVEmuThreeCoreBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
 @interface PVEmuThreeCoreBridge (Controls) <PV3DSSystemResponderClient>
+#pragma clang diagnostic pop
 #pragma mark - Control
 - (void)initControllBuffers;
 - (void)pollControllers;

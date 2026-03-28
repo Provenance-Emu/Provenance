@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import Perception
 
 /// RetroViewModifiers provides reusable view modifiers for RetroWave styling
 public struct RetroViewModifiers {

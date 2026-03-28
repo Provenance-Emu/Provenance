@@ -15,7 +15,6 @@ import PVLogging
 import PVSystems
 import Combine
 import Dispatch
-import Perception
 
 /// ViewModel for RetroGameLibraryView to manage state and business logic
 public class RetroGameLibraryViewModel: ObservableObject {

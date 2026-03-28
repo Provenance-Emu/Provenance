@@ -21,13 +21,7 @@ public extension Notification.Name {
     static let themeDidChange = Notification.Name("com.provenance-emu.themeDidChange")
 }
 
-//import Perception
-//
-//#if !os(tvOS)
-//@Observable
-//#else
-//@Perceptible
-//#endif
+// @Observable
 public final class ThemeManager: ObservableObject {
 
     nonisolated(unsafe) public static let shared: ThemeManager = .init()

@@ -43,8 +43,8 @@ let package = Package(
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
-        .package(name: "PVPrimitives", path: "../PVPrimitives/"),
-
+        .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
+        .package(name: "PVNetplay", path: "../../PVNetplay"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
     ],
     targets: [

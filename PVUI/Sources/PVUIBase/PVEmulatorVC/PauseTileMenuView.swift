@@ -1307,7 +1307,7 @@ struct PauseTileMenuView: View {
                     } else {
                         ForEach(Array(legacyPortDeviceInfo.enumerated()), id: \.offset) { portIndex, devices in
                             if devices.count > 1 {
-                                Section(String(format: String(localized: "Port %d"), portIndex + 1)) {
+                                SwiftUI.Section(String(format: String(localized: "Port %d"), portIndex + 1)) {
                                     ForEach(Array(devices.indices), id: \.self) { deviceIndex in
                                         let device = devices[deviceIndex]
                                         let title = (device["desc"] as? String) ?? String(localized: "Unknown Device")

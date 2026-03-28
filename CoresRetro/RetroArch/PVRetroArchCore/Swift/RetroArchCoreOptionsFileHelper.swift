@@ -176,7 +176,7 @@ import PVLogging
     @objc public static func allGameSpecificOptFiles(forCoreName coreName: String,
                                                       configDirectory: String) -> [String] {
         let coreConfigDir = (configDirectory as NSString).appendingPathComponent(coreName)
-        let coreOptFile = (coreConfigDir as NSString).appendingPathComponent("\(coreName).opt")
+        let _ = (coreConfigDir as NSString).appendingPathComponent("\(coreName).opt")
 
         guard let files = try? FileManager.default.contentsOfDirectory(atPath: coreConfigDir) else {
             return []

@@ -27,7 +27,6 @@ import CloudKit
 import PVUIBase
 import PVFileSystem
 import Foundation
-import Perception
 
 /// A view that displays unified cloud sync settings with tabs for CloudKit and iCloud Drive.
 /// This view combines functionality from both CloudKit and iCloud Drive sync views into a single

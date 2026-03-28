@@ -8,7 +8,6 @@
 
 import UIKit
 import PVThemes
-import Perception
 import SwiftUI
 
 /// Custom themed `UINavigationController` for the main center view

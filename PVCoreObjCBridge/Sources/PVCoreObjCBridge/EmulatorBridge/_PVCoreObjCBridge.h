@@ -184,7 +184,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
 - (void)stopEmulationWithMessage:(NSString * _Nullable) message NS_REQUIRES_SUPER;
 - (void)stopEmulation NS_REQUIRES_SUPER;
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString * _Nonnull)path
                  error:(NSError * __nullable __autoreleasing * __nullable) error;
 
 //@end
@@ -266,7 +266,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
 - (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
-- (id<RingBufferProtocol>)ringBufferAtIndex:(NSUInteger)index;
+- (id<RingBufferProtocol> _Nonnull)ringBufferAtIndex:(NSUInteger)index;
 //@end
 
 //@interface PVCoreObjCBridge (Saves) // <EmulatorCoreSavesDataSource>

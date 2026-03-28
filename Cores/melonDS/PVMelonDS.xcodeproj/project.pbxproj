@@ -5269,6 +5269,7 @@
 				B3F8E1112CB3CC4B00017D1B /* PVEmulatorCore */,
 				B3A483442F569C08004A995B /* PVPrimitives */,
 				B3A1B0082F6AB000004A9956 /* PVNetplay */,
+				B30E98B52C6EEF6600C1431E /* PVSupport */,
 			);
 			productName = PVMelonDS;
 			productReference = B3C7621020783162009950E4 /* PVMelonDS.framework */;
@@ -6109,6 +6110,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3A1B0072F6AB000004A9956 /* XCLocalSwiftPackageReference "../../PVNetplay" */;
 			productName = PVNetplay;
+		};
+		B30E98B52C6EEF6600C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30E98B42C6EEF6600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */;
+			productName = PVSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

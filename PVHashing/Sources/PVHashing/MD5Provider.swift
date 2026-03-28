@@ -1,7 +1,7 @@
 import Foundation
 
 /// Protocol for MD5 computation.
-public protocol MD5Provider {
+public protocol MD5Provider: Sendable {
     /// Synchronously compute the MD5 hash of a file, returning `nil` on failure.
     func md5ForFile(at url: URL, fromOffset offset: UInt) -> String?
 

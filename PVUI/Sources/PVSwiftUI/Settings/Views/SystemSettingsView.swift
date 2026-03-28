@@ -223,80 +223,173 @@ struct SystemSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Header with system icon and name
-            HStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(Color.black.opacity(0.6))
-                        .frame(width: 48, height: 48)
-                        .overlay(
-                            Circle()
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1.5
-                                )
+            headerView
+            coresSection
+            biosesSection
+            controllerVariantSection
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.3))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink.opacity(0.5), .retroBlue.opacity(0.5)]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
                         )
-                        .shadow(color: .retroPink.opacity(0.3), radius: 5)
+                )
+        )
+        .shadow(color: .retroPink.opacity(0.2), radius: 8, x: 0, y: 4)
+    }
 
-                    Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 30, height: 30)
+    /// System icon, name, game count, and support-level badge
+    private var headerView: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color.black.opacity(0.6))
+                    .frame(width: 48, height: 48)
+                    .overlay(
+                        Circle()
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .shadow(color: .retroPink.opacity(0.3), radius: 5)
+
+                Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30, height: 30)
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.white, .retroBlue.opacity(0.8)]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    Text(system.name)
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(
                             LinearGradient(
-                                gradient: Gradient(colors: [.white, .retroBlue.opacity(0.8)]),
+                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    if supportLevel != .fullySupported {
+                        CoreSupportLevelBadge(level: supportLevel)
+                    }
+                }
+
+                HStack(spacing: 6) {
+                    Image(systemName: "gamecontroller.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(.retroBlue)
+
+                    Text("\(system.games.count) Games")
+                        .font(.system(size: 14))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+
+                if supportLevel != .fullySupported {
+                    Text(supportLevel.explanation)
+                        .font(.system(size: 11))
+                        .foregroundColor(.white.opacity(0.6))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    /// Expandable cores list
+    private var coresSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button(action: { withAnimation { isCoresExpanded.toggle() } }) {
+                HStack {
+                    Text("CORES")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Spacer()
+
+                    Image(systemName: isCoresExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroBlue, .retroPink]),
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
                         )
+                        .font(.system(size: 12))
                 }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 8) {
-                        Text(system.name)
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-
-                        if supportLevel != .fullySupported {
-                            CoreSupportLevelBadge(level: supportLevel)
-                        }
-                    }
-
-                    // Games count with retrowave styling
-                    HStack(spacing: 6) {
-                        Image(systemName: "gamecontroller.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(.retroBlue)
-
-                        Text("\(system.games.count) Games")
-                            .font(.system(size: 14))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-
-                    if supportLevel != .fullySupported {
-                        Text(supportLevel.explanation)
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.6))
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.black.opacity(0.4))
+                )
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
 
-            // Cores section with retrowave styling
+            if isCoresExpanded {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(system.cores.filter { core in
+                        !(AppState.shared.isAppStore && core.appStoreDisabled)
+                    }, id: \.identifier) { core in
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(Color.retroBlue.opacity(0.7))
+                                .frame(width: 6, height: 6)
+
+                            Text(core.projectName)
+                                .font(.system(size: 14))
+                                .foregroundColor(.white.opacity(0.9))
+                        }
+                        .padding(.leading, 12)
+                        .padding(.vertical, 4)
+                    }
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 4)
+                .background(Color.black.opacity(0.2))
+                .cornerRadius(6)
+                .transition(.opacity)
+            }
+        }
+    }
+
+    /// Expandable BIOSes list
+    @ViewBuilder
+    private var biosesSection: some View {
+        if let bioses = system.BIOSes, !bioses.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                Button(action: { withAnimation { isCoresExpanded.toggle() } }) {
+                Button(action: { withAnimation { isBiosesExpanded.toggle() } }) {
                     HStack {
-                        Text("CORES")
+                        Text("BIOSES")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(
                                 LinearGradient(
@@ -308,7 +401,7 @@ struct SystemSection: View {
 
                         Spacer()
 
-                        Image(systemName: isCoresExpanded ? "chevron.up" : "chevron.down")
+                        Image(systemName: isBiosesExpanded ? "chevron.up" : "chevron.down")
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [.retroBlue, .retroPink]),
@@ -329,22 +422,12 @@ struct SystemSection: View {
                 .retroFocusButtonStyle(showBorder: false)
                 #endif
 
-                if isCoresExpanded {
+                if isBiosesExpanded {
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(system.cores.filter { core in
-                            !(AppState.shared.isAppStore && core.appStoreDisabled)
-                        }, id: \.identifier) { core in
-                            HStack(spacing: 8) {
-                                Circle()
-                                    .fill(Color.retroBlue.opacity(0.7))
-                                    .frame(width: 6, height: 6)
-
-                                Text(core.projectName)
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.white.opacity(0.9))
-                            }
-                            .padding(.leading, 12)
-                            .padding(.vertical, 4)
+                        ForEach(bioses) { bios in
+                            BIOSRow(bios: bios)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 4)
                         }
                     }
                     .padding(.vertical, 8)
@@ -354,115 +437,40 @@ struct SystemSection: View {
                     .transition(.opacity)
                 }
             }
+        }
+    }
 
-            // BIOSes section with retrowave styling
-            if let bioses = system.BIOSes, !bioses.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Button(action: { withAnimation { isBiosesExpanded.toggle() } }) {
-                        HStack {
-                            Text("BIOSES")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
+    /// Controller layout variant picker — only shown for systems with multiple layouts
+    @ViewBuilder
+    private var controllerVariantSection: some View {
+        if let sysID = SystemIdentifier(rawValue: system.identifier),
+           let variants = sysID.availableControllerLayoutVariants,
+           variants.count > 1 {
+            let storedVariantID = variantsBySystem[system.identifier]
+            let normalizedVariantID: String = {
+                if let storedVariantID, variants.contains(where: { $0.id == storedVariantID }) {
+                    return storedVariantID
+                }
+                return variants[0].id
+            }()
 
-                            Spacer()
-
-                            Image(systemName: isBiosesExpanded ? "chevron.up" : "chevron.down")
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroBlue, .retroPink]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                )
-                                .font(.system(size: 12))
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.black.opacity(0.4))
-                        )
-                    }
-                    #if os(tvOS)
-                    .retroFocusButtonStyle(showBorder: false)
-                    #endif
-
-                    if isBiosesExpanded {
-                        VStack(alignment: .leading, spacing: 8) {
-                            ForEach(bioses) { bios in
-                                BIOSRow(bios: bios)
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 4)
-                            }
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 4)
-                        .background(Color.black.opacity(0.2))
-                        .cornerRadius(6)
-                        .transition(.opacity)
-                    }
+            ControllerLayoutVariantPicker(
+                variants: variants,
+                selectedVariantID: normalizedVariantID
+            ) { newVariantID in
+                if newVariantID == variants[0].id {
+                    Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
+                } else {
+                    Defaults.setControllerLayoutVariant(newVariantID, forSystemID: system.identifier)
                 }
             }
-
-            // Controller layout variant picker — only shown for systems with multiple layouts
-            if let sysID = SystemIdentifier(rawValue: system.identifier),
-               let variants = sysID.availableControllerLayoutVariants,
-               variants.count > 1 {
-                // Normalize stored ID: fall back to the default if the stored ID is stale/invalid.
-                let storedVariantID = variantsBySystem[system.identifier]
-                let normalizedVariantID: String
-                if let storedVariantID, variants.contains(where: { $0.id == storedVariantID }) {
-                    normalizedVariantID = storedVariantID
-                } else {
-                    normalizedVariantID = variants[0].id
-                }
-
-                ControllerLayoutVariantPicker(
-                    variants: variants,
-                    selectedVariantID: normalizedVariantID
-                ) { newVariantID in
-                    // Clear the override when the user selects the default variant so storage
-                    // stays minimal (only non-default selections are persisted).
-                    if newVariantID == variants[0].id {
-                        Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
-                    } else {
-                        Defaults.setControllerLayoutVariant(newVariantID, forSystemID: system.identifier)
-                    }
-                }
-                .task(id: storedVariantID) {
-                    // If the persisted variant ID is stale (no longer a valid variant),
-                    // remove it so Defaults stays in sync with the displayed default.
-                    if let stale = storedVariantID,
-                       !variants.contains(where: { $0.id == stale }) {
-                        Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
-                    }
+            .task(id: storedVariantID) {
+                if let stale = storedVariantID,
+                   !variants.contains(where: { $0.id == stale }) {
+                    Defaults.setControllerLayoutVariant(nil, forSystemID: system.identifier)
                 }
             }
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.3))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink.opacity(0.5), .retroBlue.opacity(0.5)]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
-        )
-        .shadow(color: .retroPink.opacity(0.2), radius: 8, x: 0, y: 4)
-        // .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
     }
 }
 

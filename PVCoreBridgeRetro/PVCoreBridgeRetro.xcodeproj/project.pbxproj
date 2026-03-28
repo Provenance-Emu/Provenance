@@ -19,6 +19,7 @@
 		B32299512878D46F00585AD8 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
 		B322996C28792B4000585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
+		B330D5452F7731A200440DFA /* PVThinLibretroCore+MIDI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B330D5442F7731A200440DFA /* PVThinLibretroCore+MIDI.swift */; };
 		B336F2E92F6E843C004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F2E82F6E843C004ABEE6 /* PVCheevos */; };
 		B341AD952E2BF5BE00B18E76 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B341AD942E2BF5BE00B18E76 /* PVSupport */; };
 		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
@@ -171,6 +172,7 @@
 		B32251B7286C827E001FDF42 /* task_patch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = task_patch.c; sourceTree = "<group>"; };
 		B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "PVLibRetro-Build.xcconfig"; sourceTree = "<group>"; };
 		B324C3152191963B009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B330D5442F7731A200440DFA /* PVThinLibretroCore+MIDI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+MIDI.swift"; sourceTree = "<group>"; };
 		B34DC364286717AD00B60497 /* core_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core_info.h; sourceTree = "<group>"; };
 		B34DC365286717AD00B60497 /* driver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = driver.c; sourceTree = "<group>"; };
 		B34DC366286717AD00B60497 /* defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defaults.h; sourceTree = "<group>"; };
@@ -2839,6 +2841,7 @@
 				B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */,
 				B4F1A2B3C4D5E60011223341 /* PVThinLibretroFrontend.h */,
 				B4F1A2B3C4D5E60011223342 /* PVThinLibretroFrontend.mm */,
+				B330D5442F7731A200440DFA /* PVThinLibretroCore+MIDI.swift */,
 				B4F1A2B3C4D5E60011223343 /* PVThinLibretroCore.swift */,
 				B4F1A2B3C4D5E60011223348 /* PVThinLibretroCore+Controls.swift */,
 				B4F1A2B3C4D5E6001122334A /* PVThinLibretroCore+Features.swift */,
@@ -3065,6 +3068,7 @@
 				B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
 				B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
 				B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */,
+				B330D5452F7731A200440DFA /* PVThinLibretroCore+MIDI.swift in Sources */,
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
 				B4F1A2B3C4D5E60011223345 /* PVThinLibretroFrontend.mm in Sources */,
 				B4F1A2B3C4D5E60011223346 /* PVThinLibretroCore.swift in Sources */,

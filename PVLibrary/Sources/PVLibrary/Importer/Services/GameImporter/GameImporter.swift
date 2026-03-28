@@ -362,12 +362,7 @@ public protocol GameImporting {
     var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? { get set }
 }
 
-
-//#if !os(tvOS)
 //@Observable
-//#els
-@Perceptible
-//#endif
 public final class GameImporter: GameImporting, ObservableObject {
 
     /// Publisher that emits the current import queue whenever it changes

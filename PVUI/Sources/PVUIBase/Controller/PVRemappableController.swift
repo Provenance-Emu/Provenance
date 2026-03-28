@@ -159,9 +159,13 @@ public final class PVRemappableController: NSObject {
             }
 
             // Microphone button — posts a notification so the emulator VC can toggle audio mute.
-            dualSense.buttonMicrophone.pressedChangedHandler = { [weak self] (_, _, pressed) in
-                guard pressed else { return }
-                self?.handleMicButtonPressed()
+            // Apple does not expose a typed property for the DualSense mute button;
+            // access it by name from the physical input profile.
+            if let micButton = dualSense.buttons["Button Mute"] {
+                micButton.pressedChangedHandler = { [weak self] (_: GCControllerButtonInput, _: Float, pressed: Bool) in
+                    guard pressed else { return }
+                    self?.handleMicButtonPressed()
+                }
             }
 
             // Note: DualSense buttonOptions (Create button) is handled by the remapping pipeline
@@ -374,7 +378,7 @@ public final class PVRemappableController: NSObject {
                 switch id {
                 case .touchpad: return nil // Touchpad surface is not a GCControllerButtonInput
                 case .touchpadButton: return dualSense.touchpadButton
-                case .micButton: return dualSense.buttonMicrophone // Not buttonOptions
+                case .micButton: return dualSense.buttons["Button Mute"]
                 case .createButton: return dualSense.buttonOptions
                 default: return nil
                 }

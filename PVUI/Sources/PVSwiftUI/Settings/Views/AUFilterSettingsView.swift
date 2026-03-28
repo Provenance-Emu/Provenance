@@ -136,12 +136,12 @@ struct AUFilterSettingsView: View {
     }
 
     private var presetsSection: some View {
-        Section {
+        SwiftUI.Section {
             // Built-in presets
             ForEach(AUEffectsPreset.builtinPresets) { preset in
                 PresetRow(preset: preset, isBuiltin: true) {
                     loadPreset(preset)
-                } onDelete: nil
+                }
             }
 
             // User-saved presets
@@ -302,6 +302,18 @@ private struct PresetRow: View {
     let isBuiltin: Bool
     let onLoad: () -> Void
     let onDelete: (() -> Void)?
+    
+    init(
+        preset: AUEffectsPreset,
+        isBuiltin: Bool,
+        onLoad: @escaping () -> Void,
+        onDelete: (() -> Void)? = nil
+    ) {
+        self.preset = preset
+        self.isBuiltin = isBuiltin
+        self.onLoad = onLoad
+        self.onDelete = onDelete
+    }
 
     var body: some View {
         HStack {

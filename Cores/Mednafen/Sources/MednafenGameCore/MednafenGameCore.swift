@@ -383,7 +383,7 @@ extension MednafenGameCore: LightGunResponder {
     }
 
     public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
-        _bridge.lightGunMovedToPoint(point, isOffscreen: isOffscreen)
+        _bridge.lightGunMoved(to: point, isOffscreen: isOffscreen)
     }
 
     public func lightGunTriggerDown() {

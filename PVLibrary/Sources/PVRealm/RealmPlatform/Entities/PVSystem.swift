@@ -361,7 +361,7 @@ public extension PVSystem {
 }
 
 /// Describes how well a system is supported given the current build context.
-public enum CoreSupportLevel: Equatable {
+public enum CoreSupportLevel: Equatable, Sendable {
     /// At least one enabled core with a loaded class is available.
     case fullySupported
     /// Cores exist but all require sideloading or JIT (App Store disabled).
