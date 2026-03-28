@@ -23,7 +23,7 @@ public class PVGBEmulatorCore: PVEmulatorCore {
             _bridge.changeDisplayMode(displayMode.rawValue)
         }
     }
-    public var isGameboyColor: Bool = false
+    public var isGameboyColor: Bool { _bridge.isGameboyColor }
 
     var _bridge: PVGBEmulatorCoreBridge = .init()
 

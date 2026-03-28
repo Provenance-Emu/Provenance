@@ -303,6 +303,12 @@ public:
     free(videoBuffer);
     free(inSoundBuffer);
     free(outSoundBuffer);
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
+    }
+#endif
 }
 
 # pragma mark - Execution
