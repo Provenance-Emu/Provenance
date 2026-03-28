@@ -43,8 +43,6 @@ public struct GameContextMenu: View {
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
 
-    @State private var showArtworkSearch = false
-    @State private var showImagePicker = false
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
     @Environment(\.featureFlags) private var featureFlags

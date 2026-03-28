@@ -271,7 +271,8 @@ extension ConsoleGamesView: GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
-        gamesViewModel.continuesManagementState = ContinuesManagementState(game: game)
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.continuesManagementState = ContinuesManagementState(game: frozenGame)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
@@ -280,18 +281,18 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
-        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.gameToUpdateCover = game.isFrozen ? game : game.freeze()
         gamesViewModel.showImagePicker = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
-        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.gameToUpdateCover = game.isFrozen ? game : game.freeze()
         gamesViewModel.showArtworkSearch = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to choose artwork source")
-        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.gameToUpdateCover = game.isFrozen ? game : game.freeze()
         // The following now calls the async function on the ViewModel
         Task {
             await gamesViewModel.prepareArtworkSourceAlert(for: game)

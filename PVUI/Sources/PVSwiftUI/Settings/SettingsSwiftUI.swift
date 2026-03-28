@@ -2508,7 +2508,11 @@ private struct LibrarySection2: View {
                 showSaveImportWizard = true
             } label: {
                 SettingsRow(title: "Import Saves",
+                            #if os(tvOS)
+                            subtitle: "Saves sync automatically via iCloud. Tap to view guidance.",
+                            #else
                             subtitle: "Import a save bundle or battery save from a .zip, .sav, .srm, or .ram file.",
+                            #endif
                             icon: .sfSymbol("square.and.arrow.down"))
             }
             #if os(tvOS)
