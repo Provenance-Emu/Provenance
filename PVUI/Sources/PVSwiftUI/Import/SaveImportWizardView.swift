@@ -86,7 +86,9 @@ public struct SaveImportWizardView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .navigationTitle(navigationTitle)
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     if step != .progress {
@@ -752,7 +754,9 @@ private struct GamePickerView: View {
             }
             .searchable(text: $searchText, prompt: "Search games…")
             .navigationTitle("Select Game")
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
