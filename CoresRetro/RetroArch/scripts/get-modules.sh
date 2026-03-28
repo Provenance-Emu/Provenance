@@ -9,6 +9,10 @@ INTERVAL=3600*168
 CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules"
 SCRIPTS_DIR="${SRCROOT}/CoresRetro/RetroArch/scripts"
 
+# Dylibs matching these patterns are locally built and must never be deleted
+# by platform-switch or pin-change purges.  Add new patterns as needed.
+LOCAL_DYLIB_PATTERNS=( "*-jitless*" )
+
 # Add parameter check
 URL_SUFFIX=""
 if [ "$1" = "-appstore" ]; then
@@ -173,8 +177,13 @@ if [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
 	fi
 	# Remove platform-neutral dylibs so they are not silently reused from the
 	# previous platform build (unzip -o below will re-extract the correct versions).
+	# Preserve locally-built dylibs matching LOCAL_DYLIB_PATTERNS.
+	LOCAL_EXCLUDES=()
+	for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+		LOCAL_EXCLUDES+=( -not -name "${pat}.dylib" -not -name "${pat}" )
+	done
 	find "${CORES_DIR}" -maxdepth 1 -name "*.dylib" \
-		-not -name "*ios*" -not -name "*tvos*" -type f -delete 2>/dev/null || true
+		-not -name "*ios*" -not -name "*tvos*" "${LOCAL_EXCLUDES[@]}" -type f -delete 2>/dev/null || true
 fi
 
 if (( TIMESTAMP > LAST_TIMESTAMP )); then
@@ -250,7 +259,15 @@ fi
 # When the platform changed, platform-specific and neutral dylibs were already
 # purged above; -o ensures any remaining shared names are overwritten correctly.
 if [ "${PIN_CHANGED}" = "1" ]; then
-	rm -f "${CORES_DIR}/"*.dylib
+	# Purge all downloaded dylibs but preserve locally-built ones.
+	for dylib in "${CORES_DIR}/"*.dylib; do
+		[ -f "$dylib" ] || continue
+		KEEP=0
+		for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+			case "$(basename "$dylib")" in ${pat}*) KEEP=1; break ;; esac
+		done
+		[ "${KEEP}" = "0" ] && rm -f "$dylib"
+	done
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
 elif [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
 	# Platform changed (or first run): stale dylibs purged above; overwrite to be safe.
