@@ -133,9 +133,12 @@ public final class DiscSerialExtractorRegistry: Sendable {
             return nil
         }
 
-        // Read header bytes once; each plugin only needs a prefix of this data.
+        // Read header bytes once on a utility thread — synchronous file I/O must
+        // not block the cooperative thread pool.
         let maxMagic = candidates.map(\.magicByteCount).max() ?? 0
-        let headerData = readHeader(from: url, maxBytes: maxMagic)
+        let headerData = await Task.detached(priority: .utility) { [self] in
+            self.readHeader(from: url, maxBytes: maxMagic)
+        }.value
 
         for plugin in candidates {
             let pluginHeader = Data(headerData.prefix(plugin.magicByteCount))

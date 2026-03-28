@@ -404,7 +404,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     internal func finishUpdateOrImport(ofGame game: PVGame) async throws {
         DLOG("finishUpdateOrImport: Starting for game: \(game.romPath)")
 
-        // Only process if rom doensn't exist in DB
+        // Only process if rom doesn't exist in DB
         DLOG("finishUpdateOrImport: Checking if game already exists in cache")
         if RomDatabase.gamesCache[game.romPath] != nil {
             DLOG("finishUpdateOrImport: Game already exists in database cache: \(game.romPath)")

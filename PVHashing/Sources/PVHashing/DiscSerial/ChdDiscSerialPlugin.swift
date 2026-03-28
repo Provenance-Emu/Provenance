@@ -166,10 +166,17 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
             return nil
         }
 
-        // Sanity-check unit size before any Int cast to avoid overflow.
+        // Sanity-check unit and hunk sizes before arithmetic to prevent overflow.
         // CD-ROM units are 2448 bytes; cap at 1 MiB to reject corrupt/malformed CHDs.
         guard unitBytes <= 1_048_576 else {
             VLOG("ChdDiscSerialPlugin: unreasonably large unit size \(unitBytes) in \(url.lastPathComponent)")
+            return nil
+        }
+        // Cap hunk size at 64 MiB. Without this guard, a crafted CHD with an extreme
+        // hunkBytes value could silently overflow the UInt64 multiplication in
+        // readCHDSector (hunkIndex * hunkBytes) and produce a garbage file offset.
+        guard hunkBytes <= 67_108_864 else {
+            VLOG("ChdDiscSerialPlugin: unreasonably large hunk size \(hunkBytes) in \(url.lastPathComponent)")
             return nil
         }
 
