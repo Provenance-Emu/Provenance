@@ -175,16 +175,18 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
-        // AirPlay — iOS / Catalyst only; lets users stream audio+video without leaving the game
+        // AirPlay — iOS / Catalyst only; hidden until video AirPlay is implemented
         #if os(iOS) || targetEnvironment(macCatalyst)
-        gameTiles.append(PauseMenuTile(
-            id: "airPlay",
-            icon: "airplayvideo",
-            label: String(localized: "AirPlay"),
-            description: String(localized: "Stream audio and video to AirPlay devices"),
-            colorKey: .cyan,
-            dismissOnTap: false
-        ))
+        if featureFlags.airPlayMenu || PVFeatureFlagsManager.shared.airPlayMenu {
+            gameTiles.append(PauseMenuTile(
+                id: "airPlay",
+                icon: "airplayaudio",
+                label: String(localized: "AirPlay"),
+                description: String(localized: "Stream audio to AirPlay devices"),
+                colorKey: .cyan,
+                dismissOnTap: false
+            ))
+        }
         #endif
 
         gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))

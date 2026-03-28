@@ -1200,9 +1200,10 @@ struct RetroMenuView: View {
             }
 
             #if os(iOS) || targetEnvironment(macCatalyst)
-            // AirPlay — lets users stream audio/video to nearby AirPlay devices
-            // without leaving the game session.
-            airPlaySection
+            // AirPlay — hidden until video AirPlay is implemented; audio-only for now
+            if PVFeatureFlagsManager.shared.airPlayMenu {
+                airPlaySection
+            }
             #endif
 
             #if os(iOS)
