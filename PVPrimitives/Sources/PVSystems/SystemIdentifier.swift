@@ -354,16 +354,32 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         return mfg.isEmpty ? systemName : "\(mfg) - \(systemName)"
     }
 
-    /// Short directory name used in the `System/` folder for system-specific files.
+    /// The conventional subdirectory name under `Documents/System/` (or `Caches/System/` on tvOS)
+    /// for this system's firmware, assets, and core data files.
     ///
-    /// Returns a conventional short name used by emulators to find BIOS and firmware files
-    /// (e.g. PPSSPP looks for `flash0/` here, melonDS for `nds/`, etc.).
-    /// Returns `nil` for systems that don't require a dedicated system directory.
+    /// Returns `nil` for systems that need no dedicated system directory.
+    ///
+    /// ## Thin wrapper behaviour
+    /// `PVThinLibretroFrontend._systemSpecificDirectory` returns `<docs>/System/<name>/` when this
+    /// is non-nil, or falls back to `BIOSPath` when nil. Returning the wrong name (or nil) means
+    /// the libretro core cannot find its system files via `RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY`.
+    ///
+    /// ## RetroArch conventions
+    /// Names follow the wider emulation community convention where possible (e.g. "PSP", "DC", "N64").
+    /// The RetroArch full-wrapper (`PVRetroArchCoreCore`) uses `<RetroArch>/system/<name>/` instead,
+    /// so its system files live under a separate `RetroArch/` prefix and don't share this table.
+    ///
+    /// ## Validated thin wrapper support
+    /// - **PSP**: `System/PSP/` — flash0/font seeded from bundle by `PVThinLibretroCore`
+    /// - **N64**: `System/N64/` — mupen64plus-next RetroArch core; INI files from bundle
+    /// - **Dreamcast**: `System/DC/` — Flycast jitless RetroArch; DC BIOS placed by user
+    /// - **Atari ST**: `System/AtariST/` — TOS path patched into hatari.cfg at launch
+    /// - **GameCube/Wii**: `System/GC/` + `System/Wii/` — Dolphin requires JIT (App Store restricted)
+    /// - **PS2**: `System/PS2/` — Play! requires JIT (App Store restricted)
     ///
     /// Example paths: `Documents/System/PSP`, `Documents/System/NDS`, `Documents/System/3DS`
     ///
-    /// - Note: These names follow conventions used by the wider emulation community.
-    ///   Part of Epic #2725 — future UI will let users manage these directories.
+    /// - Note: Part of Epic #3577 — future UI will let users manage these directories.
     ///   ObjC callers should use `PVSystemDirectoryHelper.systemDirectoryName(forIdentifier:)`
     ///   in `PVCoreBridgeRetro` rather than duplicating this table.
     public var systemDirectoryName: String? {
@@ -379,6 +395,16 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .Wii:           return "Wii"
         case .AtariST:       return "AtariST"
         case .DOS:           return "DOS"
+        case .MAME:          return "MAME"
+        case .NeoGeo:        return "NeoGeo"
+        case .NeoGeoCD:      return "NeoGeoCD"
+        case .CDi:           return "CDi"
+        case .Macintosh:     return "Mac"
+        case .PC98:          return "PC98"
+        case .MSX:           return "MSX"
+        case .MSX2:          return "MSX"
+        case .C64:           return "C64"
+        case .EP128:         return "EP128"
         default:             return nil
         }
     }
