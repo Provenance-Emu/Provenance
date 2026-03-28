@@ -1890,7 +1890,8 @@ static bool thin_environment(unsigned cmd, void *data) {
 ///
 /// Base directory is derived from the already-correct `BIOSPath` (set by PVEmulatorCore before
 /// core start) so that app-group containers and tvOS Caches→Documents redirect are handled
-/// automatically — no need for raw NSSearchPathForDirectoriesInDomains calls here.
+/// automatically. Falls back to `NSSearchPathForDirectoriesInDomains` (Caches on tvOS,
+/// Documents on iOS/macOS) when BIOSPath is unavailable, which shouldn't happen in practice.
 ///
 /// On tvOS the OS may purge Caches at any time; callers that place bundle-derived assets here
 /// (e.g. PPSSPP fonts) must re-seed them on every core launch so the directory is always valid.
@@ -1910,9 +1911,13 @@ static bool thin_environment(unsigned cmd, void *data) {
     NSString *biosPath = self.BIOSPath ?: _biosPath;
     NSString *baseDir = biosPath ? biosPath.stringByDeletingLastPathComponent : nil;
     if (!baseDir) {
-        // BIOSPath unavailable (shouldn't happen in normal operation); use [NSURL documentsPath]
-        // which already handles tvOS→Caches redirect and app-group containers.
-        baseDir = [NSURL documentsPath].path;
+        // BIOSPath unavailable (shouldn't happen in normal operation).
+        // Use platform-appropriate base directory without depending on PVLibrary.
+#if TARGET_OS_TV
+        baseDir = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
+#else
+        baseDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+#endif
     }
     NSString *systemDir = [baseDir stringByAppendingPathComponent:
                            [NSString stringWithFormat:@"System/%@", shortName]];
