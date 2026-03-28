@@ -1878,6 +1878,50 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize frontendDelegate = _frontendDelegate;
 // Note: controllerPortInfo is a readonly property with an explicit getter below; no @synthesize needed.
 
+// MARK: - System directory helpers
+
+/// Returns the system-specific path for this core (e.g. Documents/System/PSP for PPSSPP).
+/// Falls back to BIOSPath if no system-specific directory is defined.
+/// Also ensures the directory exists.
+- (NSString *)_systemSpecificDirectory {
+    NSDictionary<NSString *, NSString *> *systemDirMap = @{
+        @"com.provenance.psp":       @"PSP",
+        @"com.provenance.ds":        @"NDS",
+        @"com.provenance.3ds":       @"3DS",
+        @"com.provenance.ps2":       @"PS2",
+        @"com.provenance.dreamcast": @"DC",
+        @"com.provenance.saturn":    @"Saturn",
+        @"com.provenance.n64":       @"N64",
+        @"com.provenance.gamecube":  @"GC",
+        @"com.provenance.atarist":   @"AtariST",
+        @"com.provenance.dos":       @"DOS",
+    };
+    NSString *sysID = self.systemIdentifier;
+    NSString *shortName = sysID ? systemDirMap[sysID] : nil;
+    if (!shortName) {
+        // No dedicated system dir for this system — fall back to BIOSPath
+        return self.BIOSPath ?: _biosPath;
+    }
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    NSString *docsPath = paths.firstObject;
+    NSString *systemDir = [docsPath stringByAppendingPathComponent:
+                           [NSString stringWithFormat:@"System/%@", shortName]];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] createDirectoryAtPath:systemDir
+                                 withIntermediateDirectories:YES
+                                                  attributes:nil
+                                                       error:&error];
+    if (error) {
+        ELOG(@"ThinFrontend: could not create system dir %@: %@", systemDir, error.localizedDescription);
+    }
+    DLOG(@"ThinFrontend: system dir for %@ → %@", sysID, systemDir);
+    return systemDir;
+}
+
 // MARK: - MIDI routing (class-level, called from Swift MIDIDeviceManager observation)
 
 /// Update the cached list of MIDI output destination endpoint refs.
@@ -3584,9 +3628,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         // Use inherited BIOSPath/saveStatePath from PVCoreObjCBridge (set by PVEmulatorCore)
         // rather than the local _biosPath/_savePath which may not be set.
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
-            NSString *sysDir = self.BIOSPath ?: _biosPath;
+            NSString *sysDir = [self _systemSpecificDirectory];
             if (!sysDir) return false;
-            // Cache the C string so the pointer stays valid for the core's lifetime.
             if (_systemDirCString) free(_systemDirCString);
             _systemDirCString = strdup(sysDir.UTF8String);
             if (data) *(const char **)data = _systemDirCString;

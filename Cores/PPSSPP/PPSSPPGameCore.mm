@@ -92,6 +92,27 @@ private:
 
 @implementation PVPPSSPPGameCore
 
+/// Returns the PSP system directory (Documents/System/PSP on iOS, Caches/System/PSP on tvOS).
+/// Creates the directory if needed.
+- (NSString *)pspSystemDirectory {
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    NSString *docsPath = paths.firstObject;
+    NSString *pspDir = [docsPath stringByAppendingPathComponent:@"System/PSP"];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] createDirectoryAtPath:pspDir
+                                 withIntermediateDirectories:YES
+                                                  attributes:nil
+                                                       error:&error];
+    if (error) {
+        NSLog(@"[PPSSPP] Error creating PSP system directory: %@", error.localizedDescription);
+    }
+    return pspDir;
+}
+
 - (id)init
 {
     self = [super init];
@@ -116,7 +137,7 @@ private:
 {
     NSBundle *coreBundle = [NSBundle mainBundle];
     NSString *resourcePath = [coreBundle resourcePath];
-    NSString *supportDirectoryPath = self.batterySavesPath;
+    NSString *supportDirectoryPath = [self pspSystemDirectory];
 
     // Copy over font files if needed
     NSFileManager *fileManager = [NSFileManager defaultManager];
