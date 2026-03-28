@@ -40,7 +40,7 @@ struct DriverStoreView: View {
             )) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(storeManager.purchaseError ?? "")
+                Text(verbatim: storeManager.purchaseError ?? "")
             }
         }
         .task { await storeManager.loadProducts() }

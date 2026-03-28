@@ -109,7 +109,7 @@ public final class DriverStoreManager {
         }
     }
 
-    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+    nonisolated private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
         case .unverified(_, let error):
             throw error
@@ -123,7 +123,7 @@ public final class DriverStoreManager {
             for await result in Transaction.updates {
                 guard let self else { return }
                 do {
-                    let transaction = try await self.checkVerified(result)
+                    let transaction = try self.checkVerified(result)
                     await self.updatePurchasedProducts(for: transaction)
                     await transaction.finish()
                 } catch {

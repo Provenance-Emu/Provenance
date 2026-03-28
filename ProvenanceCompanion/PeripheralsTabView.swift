@@ -53,6 +53,7 @@ struct PeripheralsTabView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("peripherals.driverkit.title")
                         .font(.headline)
+                    // swiftlint:disable:next unlocalized_text_init
                     Text(driverKitStatusKey)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -188,7 +189,7 @@ private struct DeviceRowView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     if device.transport != .gcController {
-                        Text(device.usbID)
+                        Text(verbatim: device.usbID)
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                             .monospaced()
@@ -248,7 +249,7 @@ private struct DeviceRowView: View {
             case .gcController: return ("HID", .purple)
             }
         }()
-        Text(label)
+        Text(verbatim: label)
             .font(.caption2)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
