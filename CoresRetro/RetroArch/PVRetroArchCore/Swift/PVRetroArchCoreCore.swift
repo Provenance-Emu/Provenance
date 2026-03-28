@@ -890,12 +890,14 @@ extension PVRetroArchCoreCore: PortDeviceConfigurable {
 
     /// Returns a platform-specific default device type for a port, or nil to leave at core default.
     private func platformDefaultPortDevice(forPort port: Int) -> UInt? {
-        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return nil }
-        // Port 0: if the core declared RETRO_DEVICE_LIGHTGUN at load time, configure it so
-        // the core receives light gun queries from cocoa_input_state.
+        // Check lightgun BEFORE the sysID guard: if the core declared RETRO_DEVICE_LIGHTGUN
+        // we want to configure port 0 regardless of whether systemIdentifier is a known enum value.
+        // (The guard below returns nil for unrecognized identifiers, which would silently skip
+        // lightgun auto-config for any system not yet in the SystemIdentifier enum.)
         if port == 0 && _bridge.coreDeclaresLightGunDevice {
             return LibretroDeviceType.lightgun.rawValue
         }
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return nil }
         // SNES: port 2 (index 1) defaults to RETRO_DEVICE_MOUSE for known SNES Mouse games.
         if sysID == .SNES && port == 1 {
             if MouseGameRegistry.shared.gameSupportsMouse(
