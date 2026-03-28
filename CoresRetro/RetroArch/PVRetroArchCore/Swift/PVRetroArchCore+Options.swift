@@ -793,31 +793,39 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                         optionValues += "mupen64plus-pak1 = \"rumble\"\n"
                         optionOverwrite = false
                     } else {
-                        // Existing file: check for pak1 and add via targeted merge if missing.
+                        // Existing file: check for all required settings and add any that are missing.
                         // optionOverwrite=false would skip the write entirely, so we must switch
-                        // to a merge+overwrite when the only missing piece is pak1.
-                        // Build lines array once — reused for both the hasPak1 check and the merge.
+                        // to a merge+overwrite when any required setting is absent.
+                        // Build lines array once — reused for both the presence checks and the merge.
                         var mergedLines = existingMupenOpt.components(separatedBy: "\n")
                         let hasPak1 = mergedLines.contains { $0.hasPrefix("mupen64plus-pak1 ") }
-                        if hasPak1 {
-                            ILOG("Mupen64Plus-Next: iOS<26 pak1 already set — preserving existing .opt")
+                        let hasRdpPlugin = mergedLines.contains { $0.hasPrefix("mupen64plus-rdp-plugin") }
+                        let hasRspPlugin = mergedLines.contains { $0.hasPrefix("mupen64plus-rsp-plugin") }
+                        if hasPak1 && hasRdpPlugin && hasRspPlugin {
+                            ILOG("Mupen64Plus-Next: iOS<26 all required settings present — preserving existing .opt")
+                            // Clear stale optionValues so the Obj-C layer does not receive the
+                            // rdp/rsp defaults set earlier; those are already in the file.
+                            optionValues = ""
+                            optionValuesFile = ""
                             optionOverwrite = false
                         } else {
                             while mergedLines.last == "" { mergedLines.removeLast() }
                             // Defensive: ensure rdp-plugin is present (matches iOS 26+ merge behaviour).
-                            if !mergedLines.contains(where: { $0.hasPrefix("mupen64plus-rdp-plugin") }) {
+                            if !hasRdpPlugin {
                                 mergedLines.insert("mupen64plus-rdp-plugin = \"angrylion\"", at: 0)
                                 ILOG("Mupen64Plus-Next: iOS<26 rdp-plugin missing — adding angrylion default")
                             }
                             // Defensive: ensure rsp-plugin is present (matches iOS 26+ merge behaviour).
                             // Without this, files predating the rsp-plugin feature lose the parallel default
                             // when optionValues is replaced entirely by the merged content below.
-                            if !mergedLines.contains(where: { $0.hasPrefix("mupen64plus-rsp-plugin") }) {
+                            if !hasRspPlugin {
                                 mergedLines.append("mupen64plus-rsp-plugin = \"parallel\"")
                                 ILOG("Mupen64Plus-Next: iOS<26 rsp-plugin missing — adding parallel default")
                             }
-                            mergedLines.append("mupen64plus-pak1 = \"rumble\"")
-                            ILOG("Mupen64Plus-Next: iOS<26 adding missing pak1 = rumble to existing .opt")
+                            if !hasPak1 {
+                                mergedLines.append("mupen64plus-pak1 = \"rumble\"")
+                                ILOG("Mupen64Plus-Next: iOS<26 adding missing pak1 = rumble to existing .opt")
+                            }
                             optionValues = mergedLines.joined(separator: "\n") + "\n"
                             optionOverwrite = true
                         }
