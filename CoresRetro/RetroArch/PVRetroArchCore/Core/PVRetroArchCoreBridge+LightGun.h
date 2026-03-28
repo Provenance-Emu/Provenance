@@ -37,6 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Select button state.
 - (void)setLightGunSelect:(BOOL)down;
 
+/// Reset all light-gun state to its safe default (position centred, all buttons up).
+/// Call before or after emulation to avoid stuck inputs across game sessions.
+- (void)resetLightGunState;
+
 /// Returns YES if the currently-loaded libretro core declared
 /// RETRO_DEVICE_LIGHTGUN as a supported device type on any controller port.
 @property (nonatomic, readonly) BOOL coreDeclaresLightGunDevice;

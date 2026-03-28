@@ -1,6 +1,6 @@
 //
 //  PVRetroArchCore+LightGun.swift
-//  PVRetroArch
+//  PVRetroArchCore
 //
 //  Created by Claude (Agent) on 2026-03-27.
 //  Copyright © 2026 Provenance Emu. All rights reserved.

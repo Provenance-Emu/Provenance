@@ -144,6 +144,8 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
 
     /// Reset the haptic profile so the next core starts with neutral tuning.
     public override func stopEmulation() {
+        // Clear any held light-gun buttons so the next session starts clean.
+        _bridge.resetLightGunState()
 #if canImport(GameController) && canImport(CoreHaptics)
         if #available(iOS 14.0, tvOS 14.0, *) {
             GCControllerHapticsManager.shared.resetSystemProfile()

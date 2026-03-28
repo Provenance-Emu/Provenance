@@ -39,6 +39,16 @@
     pv_lightgun_set_select((bool)down);
 }
 
+- (void)resetLightGunState {
+    pv_lightgun_set_position(0, 0, true);
+    pv_lightgun_set_trigger(false);
+    pv_lightgun_set_reload(false);
+    pv_lightgun_set_aux_a(false);
+    pv_lightgun_set_aux_b(false);
+    pv_lightgun_set_start(false);
+    pv_lightgun_set_select(false);
+}
+
 - (BOOL)coreDeclaresLightGunDevice {
     return pv_core_declares_lightgun_device() ? YES : NO;
 }
