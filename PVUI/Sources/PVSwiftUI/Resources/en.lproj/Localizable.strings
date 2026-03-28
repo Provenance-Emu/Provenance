@@ -260,6 +260,7 @@
 "ecosystem.section.not_detected" = "No Ecosystem Apps Found";
 "ecosystem.empty.body" = "XeniOS, MeloNX, and MeloCafe were not found on this device.";
 "ecosystem.empty.footer" = "Install these apps to enable cross-app game launching.";
+"ecosystem.section.not_installed" = "Not Installed";
 "ecosystem.action.open" = "Open %@";
 "ecosystem.action.query_library" = "Browse %@ Library";
 "ecosystem.app.xenios.description" = "Launch Xbox 360 games directly in XeniOS";
@@ -310,3 +311,26 @@
 "migration.import.step4" = "For example: 'MyGame.gba' needs 'MyGame.srm' or 'MyGame.sav' alongside it.";
 "migration.import.step5" = "Launch the game in Provenance — it will automatically detect and load the save.";
 "migration.import.step6" = "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems).";
+
+// MARK: - Manual file import guide
+"manual.nav.title" = "Manual Import";
+"manual.header.title" = "Manual Save Import";
+"manual.header.subtitle" = "Import .sav, .srm, or .state files from any source";
+"manual.method.webserver.title" = "Via Web Server (recommended)";
+"manual.method.webserver.step1" = "Open Provenance and go to Settings → Library.";
+"manual.method.webserver.step2" = "Select 'Launch Web Server' and note the IP address shown.";
+"manual.method.webserver.step3" = "On your computer, open a browser and go to that address.";
+"manual.method.webserver.step4" = "Upload your save files through the web interface.";
+"manual.method.webserver.step5" = "Place each file in the same ROM directory as the matching game.";
+"manual.method.webserver.step6" = "Ensure the save filename matches the ROM filename (different extension only).";
+"manual.method.filesapp.title" = "Via Files.app (iPhone/iPad)";
+"manual.method.filesapp.step1" = "Open the Files app on your iPhone or iPad.";
+"manual.method.filesapp.step2" = "Navigate to 'On My iPhone' (or iPad) → Provenance.";
+"manual.method.filesapp.step3" = "Find the ROMs folder for the relevant system.";
+"manual.method.filesapp.step4" = "Copy or move your .sav / .srm / .state file here.";
+"manual.method.filesapp.step5" = "Name the file to match the ROM exactly (same base name, different extension).";
+"manual.method.filesapp.step6" = "Launch the game in Provenance — the save loads automatically.";
+"manual.tip.title" = "Naming Convention";
+"manual.tip.rom_example" = "ROM: Super Mario World (USA).sfc";
+"manual.tip.save_example" = "Save: Super Mario World (USA).srm";
+"manual.tip.note" = "Only the file extension changes — the base name must match exactly.";

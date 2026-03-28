@@ -643,39 +643,39 @@ struct ManualFileImportGuideView: View {
                                     endPoint: .bottomTrailing
                                 )
                             )
-                        Text("Manual Save Import")
+                        Text("manual.header.title", bundle: .module)
                             .font(.title2.bold())
                             .multilineTextAlignment(.center)
-                        Text("Import .sav, .srm, or .state files from any source")
+                        Text("manual.header.subtitle", bundle: .module)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
 
                     methodSection(
-                        title: "Via Web Server (recommended)",
+                        title: NSLocalizedString("manual.method.webserver.title", bundle: .module, comment: ""),
                         icon: "wifi",
                         steps: [
-                            "Open Provenance and go to Settings → Library.",
-                            "Select 'Launch Web Server' and note the IP address shown.",
-                            "On your computer, open a browser and go to that address.",
-                            "Upload your save files through the web interface.",
-                            "Place each file in the same ROM directory as the matching game.",
-                            "Ensure the save filename matches the ROM filename (different extension only)."
+                            NSLocalizedString("manual.method.webserver.step1", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.webserver.step2", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.webserver.step3", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.webserver.step4", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.webserver.step5", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.webserver.step6", bundle: .module, comment: "")
                         ]
                     )
 
                     #if !os(tvOS)
                     methodSection(
-                        title: "Via Files.app (iPhone/iPad)",
+                        title: NSLocalizedString("manual.method.filesapp.title", bundle: .module, comment: ""),
                         icon: "folder",
                         steps: [
-                            "Open the Files app on your iPhone or iPad.",
-                            "Navigate to 'On My iPhone' (or iPad) → Provenance.",
-                            "Find the ROMs folder for the relevant system.",
-                            "Copy or move your .sav / .srm / .state file here.",
-                            "Name the file to match the ROM exactly (same base name, different extension).",
-                            "Launch the game in Provenance — the save loads automatically."
+                            NSLocalizedString("manual.method.filesapp.step1", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.filesapp.step2", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.filesapp.step3", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.filesapp.step4", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.filesapp.step5", bundle: .module, comment: ""),
+                            NSLocalizedString("manual.method.filesapp.step6", bundle: .module, comment: "")
                         ]
                     )
                     #endif
@@ -686,7 +686,7 @@ struct ManualFileImportGuideView: View {
                 .padding(.vertical, 24)
             }
         }
-        .navigationTitle("Manual Import")
+        .navigationTitle(Text("manual.nav.title", bundle: .module))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -717,15 +717,15 @@ struct ManualFileImportGuideView: View {
                 .foregroundStyle(.yellow)
                 .font(.subheadline)
             VStack(alignment: .leading, spacing: 4) {
-                Text("Naming Convention")
+                Text("manual.tip.title", bundle: .module)
                     .font(.subheadline.weight(.semibold))
-                Text("ROM: Super Mario World (USA).sfc")
+                Text("manual.tip.rom_example", bundle: .module)
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
-                Text("Save: Super Mario World (USA).srm")
+                Text("manual.tip.save_example", bundle: .module)
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
-                Text("Only the file extension changes — the base name must match exactly.")
+                Text("manual.tip.note", bundle: .module)
                     .font(.caption)
                     .foregroundStyle(.secondary.opacity(0.8))
                     .padding(.top, 2)

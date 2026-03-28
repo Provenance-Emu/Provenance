@@ -146,15 +146,15 @@ public struct EcosystemIntegrationView: View {
 
     // MARK: - All apps (not yet installed or combined list)
 
+    @ViewBuilder
     private var allAppsSection: some View {
         let notInstalled = EcosystemApp.allCases.filter { app in
             !installedApps.contains(where: { $0.rawValue == app.rawValue })
         }
-        guard !notInstalled.isEmpty else { return AnyView(EmptyView()) }
-        return AnyView(
+        if !notInstalled.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
                 sectionHeader(
-                    title: Text("Not Installed", bundle: .module),
+                    title: Text("ecosystem.section.not_installed", bundle: .module),
                     icon: "square.and.arrow.down",
                     color: .secondary
                 )
@@ -162,7 +162,7 @@ public struct EcosystemIntegrationView: View {
                     EcosystemAppRowView(app: app, isInstalled: false)
                 }
             }
-        )
+        }
     }
 
     // MARK: - Feature flag note
