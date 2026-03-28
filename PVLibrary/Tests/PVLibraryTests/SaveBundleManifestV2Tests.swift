@@ -163,6 +163,10 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "dvsave"), .saveState)
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "rtc"), .rtc)
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "SRM"), .sram) // case-insensitive
+        // RetroArch numbered save slots
+        XCTAssertEqual(SaveFileCategory.infer(fromExtension: "state0"), .saveState)
+        XCTAssertEqual(SaveFileCategory.infer(fromExtension: "state5"), .saveState)
+        XCTAssertEqual(SaveFileCategory.infer(fromExtension: "state9"), .saveState)
     }
 
     // MARK: - KnownEmulator

@@ -140,15 +140,13 @@ public struct SaveBundleManifestV2: Codable, Sendable {
     }
 
     /// Returns `true` if `name` is a safe bare filename: no path separators, no leading dot,
-    /// no traversal sequences (`..`), and non-empty.
+    /// no traversal sequences, and non-empty.
     public static func isSafeFilename(_ name: String) -> Bool {
         guard !name.isEmpty,
-              !name.hasPrefix("."),
-              !name.contains("/"),
-              !name.contains("\\"),
-              name != "..",
-              !name.contains("../"),
-              !name.contains("..\\") else { return false }
+              !name.hasPrefix("."),   // rejects hidden files, ".", and ".."
+              !name.contains("/"),    // rejects any path with a forward-slash component
+              !name.contains("\\")   // rejects Windows-style backslash paths
+        else { return false }
         return true
     }
 

@@ -24,7 +24,12 @@ public enum SaveFileCategory: String, CaseIterable, Codable, Sendable {
 
     /// File extensions that map to this category (across all known emulators).
     public static let sramExtensions: Set<String>      = ["sav", "srm", "ram", "dsv"]
-    public static let saveStateExtensions: Set<String> = ["svs", "state", "dvsave", "ppst"]
+    public static let saveStateExtensions: Set<String> = [
+        "svs", "state", "dvsave", "ppst",
+        // RetroArch numbered save slots (state0–state9)
+        "state0", "state1", "state2", "state3", "state4",
+        "state5", "state6", "state7", "state8", "state9"
+    ]
     public static let rtcExtensions: Set<String>       = ["rtc"]
 
     /// Infer the category from a file extension.
