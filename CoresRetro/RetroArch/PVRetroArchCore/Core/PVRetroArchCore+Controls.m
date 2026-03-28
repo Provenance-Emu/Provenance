@@ -2526,7 +2526,11 @@ static int16_t cocoa_input_state(
             case RETRO_DEVICE_ID_LIGHTGUN_AUX_A:       return s_lightgun_aux_a      ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_AUX_B:       return s_lightgun_aux_b      ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_START:       return s_lightgun_start      ? 1 : 0;
+            /* PAUSE (id 5) is a legacy alias for START per libretro.h "Use Start". */
+            case RETRO_DEVICE_ID_LIGHTGUN_PAUSE:       return s_lightgun_start      ? 1 : 0;
             case RETRO_DEVICE_ID_LIGHTGUN_SELECT:      return s_lightgun_select     ? 1 : 0;
+            /* AUX_C (id 8): not exposed by LightGunResponder protocol; return not-pressed. */
+            case RETRO_DEVICE_ID_LIGHTGUN_AUX_C:       return 0;
             /* D-pad: not mapped to light gun device; joypad handles directional input. */
             case RETRO_DEVICE_ID_LIGHTGUN_DPAD_UP:
             case RETRO_DEVICE_ID_LIGHTGUN_DPAD_DOWN:
