@@ -387,7 +387,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
 #if os(tvOS)
             let rootDelegate = self.rootDelegate
             Task.detached(priority: .userInitiated) {
-                let exportsDir = URL.documentsPath.appendingPathComponent("Exports", isDirectory: true)
+                let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
                 do {
                     try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
                     let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
@@ -396,7 +396,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                     }
                     try FileManager.default.moveItem(at: url, to: destURL)
                     await MainActor.run {
-                        rootDelegate?.showMessage("Battery save exported to Documents/Exports/\(url.lastPathComponent)", title: "Export Complete")
+                        rootDelegate?.showMessage("Battery save exported to Exports/\(url.lastPathComponent)", title: "Export Complete")
                     }
                 } catch {
                     SaveExporter.shared.cleanupExport(at: url)
@@ -430,11 +430,11 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         do {
             let url = try await SaveExporter.shared.exportSaves(for: game)
 #if os(tvOS)
-            // tvOS: move zip to Documents/Exports on a background thread to avoid blocking the
+            // tvOS: move zip to Caches/Exports on a background thread to avoid blocking the
             // main actor; only the showMessage calls return to the main actor.
             let rootDelegate = self.rootDelegate
             Task.detached(priority: .userInitiated) {
-                let exportsDir = URL.documentsPath.appendingPathComponent("Exports", isDirectory: true)
+                let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
                 do {
                     try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
                     let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
@@ -443,7 +443,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                     }
                     try FileManager.default.moveItem(at: url, to: destURL)
                     await MainActor.run {
-                        rootDelegate?.showMessage("Saves exported to Documents/Exports/\(url.lastPathComponent)", title: "Export Complete")
+                        rootDelegate?.showMessage("Saves exported to Exports/\(url.lastPathComponent)", title: "Export Complete")
                     }
                 } catch {
                     SaveExporter.shared.cleanupExport(at: url)
