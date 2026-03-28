@@ -608,6 +608,16 @@ extension PVRetroArchCoreCore: PVSupervisionSystemResponderClient {
     }
 }
 
+// MARK: TIC-80
+extension PVRetroArchCoreCore: PVTIC80SystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PVTIC80Button, forPlayer player: Int) {
+        (_bridge as! PVTIC80SystemResponderClient).didPush(button, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVTIC80Button, forPlayer player: Int) {
+        (_bridge as! PVTIC80SystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
 // MARK: Doom (PrBoom)
 // PVDoomSystemResponderClient forwards directly to the ObjC Doom bridge
 // (PVRetroArchCoreBridge (DoomControls)) which has correct PrBoom button mappings.

@@ -138,6 +138,7 @@
 		B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVRetroArch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B318FF372EC0130B00CF6FBC /* PVRetroArchCore+Controls+Vectrex.m in Sources */ = {isa = PBXBuildFile; fileRef = B318FF362EC0130B00CF6FBC /* PVRetroArchCore+Controls+Vectrex.m */; };
 		B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */ = {isa = PBXBuildFile; fileRef = B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */; };
+		B3A80C5B2EDA001500000002 /* PVRetroArchCore+Controls+TIC80.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A80C5A2EDA001500000001 /* PVRetroArchCore+Controls+TIC80.m */; };
 		B322019B2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = B32201992D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h */; };
 		B322019C2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = B322019A2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
@@ -453,6 +454,7 @@
 		B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Controls.swift"; sourceTree = "<group>"; };
 		B318FF362EC0130B00CF6FBC /* PVRetroArchCore+Controls+Vectrex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Vectrex.m"; sourceTree = "<group>"; };
 		B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Supervision.m"; sourceTree = "<group>"; };
+		B3A80C5A2EDA001500000001 /* PVRetroArchCore+Controls+TIC80.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+TIC80.m"; sourceTree = "<group>"; };
 		B32201992D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vulkan_ios_tvos_helpers.h; sourceTree = "<group>"; };
 		B322019A2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vulkan_ios_tvos_helpers.c; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
@@ -958,6 +960,7 @@
 				B3061F8A2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m */,
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
 				B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */,
+				B3A80C5A2EDA001500000001 /* PVRetroArchCore+Controls+TIC80.m */,
 				B3A6C0EA2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m */,
 				B318FF362EC0130B00CF6FBC /* PVRetroArchCore+Controls+Vectrex.m */,
 				93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */,
@@ -1525,6 +1528,7 @@
 				B3B377A62E44373200DBE2E0 /* PVRetroArchCore+Controls+EP128.m in Sources */,
 				93A7278B2AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m in Sources */,
 				B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */,
+				B3A80C5B2EDA001500000002 /* PVRetroArchCore+Controls+TIC80.m in Sources */,
 				9328B14F2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
