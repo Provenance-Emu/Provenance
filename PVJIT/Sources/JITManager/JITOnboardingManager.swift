@@ -129,9 +129,13 @@ public final class JITOnboardingManager {
 
         ILOG("JITOnboarding: Presenting JIT onboarding alert")
 
-        viewController.present(alert, animated: true) { [weak self] in
-            self?.hasShownThisSession = true
-        }
+        // Set the flag before calling present() to prevent a race condition where
+        // a second call arrives between viewController.present() and its completion
+        // handler. UIKit sets presentedViewController synchronously on present(),
+        // so the guard above provides a second safety net, but flagging here is
+        // the authoritative "shown this session" marker.
+        hasShownThisSession = true
+        viewController.present(alert, animated: true)
 
         return true
     }

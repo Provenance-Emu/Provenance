@@ -346,27 +346,23 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         return sideNav
     }
 
-    /// Setup JIT if needed
+    /// Setup JIT wait screen if needed — call after the root view controller is established.
     ///
-    /// This is called from the ContentView
-    // TODO: This is not called from the ContentView
+    /// JIT acquisition (attemptToAcquireJitOnStartup) is now called directly from
+    /// application(_:didFinishLaunchingWithOptions:) so it runs as early as possible.
+    /// This helper only handles the wait-screen UI which requires a root view controller.
     @MainActor
     private func setupJITIfNeeded() {
-#if os(iOS) || os(tvOS)
-        // Always attempt JIT acquisition so developer builds running from Xcode with the
-        // debugger attached can acquire JIT even when built against the App Store scheme.
-        // The acquisition itself is safe in App Store builds — it only reads CS_DEBUGGED /
-        // checks entitlements; it never shows UI or suggests sideloading.
-        if Defaults[.autoJIT] {
-            DOLJitManager.shared.attemptToAcquireJitOnStartup()
+        // JIT acquisition (attemptToAcquireJitOnStartup) is called earlier in
+        // application(_:didFinishLaunchingWithOptions:) so it runs before any core is loaded.
+        // This method only handles the wait-screen UI, which must be called after the
+        // root view controller is established (it presents a modal view controller).
+#if (os(iOS) || os(tvOS)) && !APP_STORE && canImport(PVJIT)
+        // The wait screen suggests third-party JIT tools (AltStore, StikDebug, etc.)
+        // which could trigger App Store review rejections — only show in non-App Store builds.
+        DispatchQueue.main.async { [weak self] in
+            self?.showJITWaitScreen()
         }
-#if !APP_STORE
-        // The wait screen may suggest third-party JIT tools (AltStore, StikDebug, etc.)
-        // which could trigger App Store review rejections — only show it in non-App Store builds.
-        DispatchQueue.main.async { [unowned self] in
-            self.showJITWaitScreen()
-        }
-#endif
 #endif
     }
 
@@ -380,6 +376,18 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         #if !os(tvOS)
         if #available(iOS 14.0, *) {
             registerMetricKitSubscriber()
+        }
+        #endif
+
+        // Attempt JIT acquisition as early as possible so that cores queried later
+        // see the correct `DOLJitManager.acquired` state.  This is safe in App Store
+        // builds — it only reads CS_DEBUGGED / entitlements; it never shows UI or
+        // suggests sideloading.  The JIT wait-screen (which references sideloading
+        // tools and requires a root view controller) is handled in setupJITIfNeeded()
+        // which must be called after the root VC is established.
+        #if (os(iOS) || os(tvOS)) && canImport(PVJIT)
+        if Defaults[.autoJIT] {
+            DOLJitManager.shared.attemptToAcquireJitOnStartup()
         }
         #endif
 
