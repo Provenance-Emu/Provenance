@@ -73,6 +73,44 @@ struct DSUPacketTests {
 
     // MARK: - ListPortsRequest round-trip
 
+    // MARK: - ListPortsResponse round-trip
+
+    @Test("ListPortsResponse encodes slot info, decodes back")
+    func testListPortsResponseRoundTrip() throws {
+        let uid: UInt32 = 0x11223344
+        let mac: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF)
+        let packet = DSUPacket.listPortsResponse(
+            clientUID: uid,
+            slotIndex: 1,
+            slotState: .connected,
+            deviceModel: .full,
+            connectionType: .bluetooth,
+            macAddress: mac,
+            batteryStatus: .high
+        )
+        let data = packet.encode()
+
+        #expect(Array(data[0..<4]) == DSUConstants.serverMagic)
+        #expect(DSUCRC32.verify(data))
+
+        let decoded = try #require(DSUPacket.decode(data))
+        guard case .listPortsResponse(
+            let dUID, let dSlot, let dState, let dModel, let dConn, let dMac, let dBattery
+        ) = decoded else {
+            Issue.record("Expected .listPortsResponse")
+            return
+        }
+        #expect(dUID == uid)
+        #expect(dSlot == 1)
+        #expect(dState == .connected)
+        #expect(dModel == .full)
+        #expect(dConn == .bluetooth)
+        #expect(dMac == mac)
+        #expect(dBattery == .high)
+    }
+
+    // MARK: - ListPortsRequest round-trip
+
     @Test("ListPortsRequest encodes port list, decodes back")
     func testListPortsRequestRoundTrip() throws {
         let uid: UInt32 = 0xAABBCCDD
@@ -248,32 +286,34 @@ struct DSUPacketTests {
 
     // MARK: - Payload length field
 
-    @Test("Encoded VersionRequest has payloadLength == 0")
+    @Test("Encoded VersionRequest data_length == 4 (messageType only, no extra payload)")
     func testVersionRequestPayloadLength() {
         let data = DSUPacket.versionRequest(clientUID: 0).encode()
-        let payloadLength = UInt16(data[6]) | (UInt16(data[7]) << 8)
-        #expect(payloadLength == 0)
-        // Total size should be exactly the header
+        // data_length at bytes 6-7 = total_size - 16.
+        // For a versionRequest with no extra payload: 20 - 16 = 4 (messageType field only).
+        let dataLength = UInt16(data[6]) | (UInt16(data[7]) << 8)
+        #expect(dataLength == 4)
+        // Total size should be exactly the 20-byte header
         #expect(data.count == DSUHeader.size)
     }
 
-    @Test("Encoded VersionResponse payloadLength matches actual payload")
+    @Test("Encoded VersionResponse data_length == total - 16")
     func testVersionResponsePayloadLength() {
         let data = DSUPacket.versionResponse(clientUID: 0, version: DSUConstants.protocolVersion).encode()
-        let payloadLength = UInt16(data[6]) | (UInt16(data[7]) << 8)
-        let actualPayload = data.count - DSUHeader.size
-        #expect(Int(payloadLength) == actualPayload)
+        let dataLength = UInt16(data[6]) | (UInt16(data[7]) << 8)
+        // data_length = total - 16
+        #expect(Int(dataLength) == data.count - 16)
     }
 
-    @Test("Encoded ControllerData payloadLength matches actual payload")
+    @Test("Encoded ControllerData data_length == total - 16")
     func testControllerDataPayloadLength() {
         let ctrlData = DSUControllerData()
         let data = DSUPacket.controllerData(clientUID: 0, data: ctrlData).encode()
-        let payloadLength = UInt16(data[6]) | (UInt16(data[7]) << 8)
-        let actualPayload = data.count - DSUHeader.size
-        #expect(Int(payloadLength) == actualPayload)
-        // Sanity check: payload must be at least minControllerPayloadSize
-        #expect(actualPayload >= 74)
+        let dataLength = UInt16(data[6]) | (UInt16(data[7]) << 8)
+        // data_length = total - 16
+        #expect(Int(dataLength) == data.count - 16)
+        // Sanity check: extra payload (after the 20-byte header) must be at least 74 bytes
+        #expect(data.count - DSUHeader.size >= 74)
     }
 
     // MARK: - Decode failures

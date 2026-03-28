@@ -94,7 +94,7 @@ public struct DSUTouchContact: Sendable, Equatable {
 /// Offset  Size  Field
 ///  0       4    Magic ("DSUS" or "DSUC")
 ///  4       2    Protocol version
-///  6       2    Payload length (bytes after the header)
+///  6       2    Data length (total packet bytes minus 16; equals messageType(4) + extra payload)
 ///  8       4    CRC32
 /// 12       4    Client UID
 /// 16       4    Message type
@@ -502,7 +502,9 @@ extension DSUPacket {
 private func appendHeader(to buffer: inout Data, magic: [UInt8], uid: UInt32, type msgType: UInt32, payloadLength: UInt16) {
     buffer.append(contentsOf: magic)
     appendUInt16LE(DSUConstants.protocolVersion, to: &buffer)
-    appendUInt16LE(payloadLength, to: &buffer)
+    // data_length = bytes after the first 16 bytes of the packet (= msgType(4) + extra payload).
+    // The first 16 bytes are: magic(4) + version(2) + data_length(2) + crc32(4) + clientUID(4).
+    appendUInt16LE(payloadLength + 4, to: &buffer)
     appendUInt32LE(0, to: &buffer) // CRC placeholder
     appendUInt32LE(uid, to: &buffer)
     appendUInt32LE(msgType, to: &buffer)

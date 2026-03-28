@@ -41,6 +41,7 @@ public actor DSUSocket {
     private var receiveQueue: [ReceiveItem] = []
     private var waiters: [CheckedContinuation<ReceiveItem, Error>] = []
     private var isClosed: Bool = false
+    private var isListening: Bool = false
 
     private typealias ReceiveItem = (Data, NWEndpoint)
 
@@ -70,7 +71,10 @@ public actor DSUSocket {
     ///
     /// Call this once after initialisation. Sets the new-connection handler and
     /// then starts the listener so no connections are missed.
+    /// Calling this more than once is a no-op.
     public func startListening() {
+        guard !isListening, !isClosed else { return }
+        isListening = true
         listener.newConnectionHandler = { [weak self] connection in
             guard let self else { return }
             Task {
@@ -137,6 +141,7 @@ public actor DSUSocket {
     /// Cancel the listener and all managed connections.
     public func close() {
         isClosed = true
+        isListening = false
         listener.cancel()
         for conn in connections.values {
             conn.cancel()
