@@ -18,6 +18,8 @@ public enum DSUConstants: Sendable {
     public static let serverMagic: [UInt8] = [0x44, 0x53, 0x55, 0x53]
     /// Magic bytes for client → server packets ("DSUC").
     public static let clientMagic: [UInt8] = [0x44, 0x53, 0x55, 0x43]
+    /// Bonjour/mDNS service type for the Provenance DSU server.
+    public static let bonjourServiceType = "_provenance-dsu._udp."
 }
 
 // MARK: - Message Type

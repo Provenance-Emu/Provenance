@@ -172,8 +172,18 @@ public actor DSUSocket {
                 Task { [weak self] in
                     await self?.scheduleReceive(on: connection)
                 }
+            } else {
+                // Connection errored or was cancelled — evict it from the tracking dict.
+                let endpoint = connection.endpoint
+                Task { [weak self] in
+                    await self?.removeConnection(for: endpoint)
+                }
             }
         }
+    }
+
+    private func removeConnection(for endpoint: NWEndpoint) {
+        connections.removeValue(forKey: endpoint)
     }
 
     private func deliverData(_ data: Data, from endpoint: NWEndpoint) {

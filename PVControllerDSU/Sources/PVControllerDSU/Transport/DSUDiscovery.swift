@@ -8,9 +8,6 @@
 import Network
 import Foundation
 
-/// Bonjour service type for the Provenance DSU server.
-public let DSUBonjourServiceType = "_provenance-dsu._udp."
-
 // MARK: - DSUServiceAdvertiser
 
 /// Advertises a Provenance DSU server over mDNS/Bonjour.
@@ -80,7 +77,7 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
 
         do {
             let listener = try NWListener(using: params, on: nwPort)
-            listener.service = NWListener.Service(name: serviceName, type: DSUBonjourServiceType)
+            listener.service = NWListener.Service(name: serviceName, type: DSUConstants.bonjourServiceType)
 
             listener.stateUpdateHandler = { [weak self] state in
                 guard let self else { return }
@@ -106,15 +103,31 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
     }
 }
 
+// MARK: - DSUBrowserChange
+
+/// Describes a change to the set of discovered DSU servers.
+public enum DSUBrowserChange: Sendable {
+    /// A new DSU server appeared on the network.
+    case added(NWBrowser.Result)
+    /// A previously discovered DSU server is no longer reachable.
+    case removed(NWBrowser.Result)
+}
+
 // MARK: - DSUServiceBrowser
 
 /// Browses for Provenance DSU servers on the local network using Bonjour/mDNS.
 ///
 /// Thread-safe: `start()` and `stop()` may be called from any thread.
 ///
+/// The `changeHandler` is called for both `.added` (server appeared) and
+/// `.removed` (server went offline) events.
+///
 /// ```swift
-/// let browser = DSUServiceBrowser { result in
-///     print("Found: \(result)")
+/// let browser = DSUServiceBrowser { change in
+///     switch change {
+///     case .added(let result):   print("Found: \(result)")
+///     case .removed(let result): print("Lost: \(result)")
+///     }
 /// }
 /// browser.start()
 /// // …
@@ -124,25 +137,26 @@ public final class DSUServiceBrowser: @unchecked Sendable {
 
     // MARK: - Public typealiases
 
-    /// Called whenever a browse result is added or removed.
-    public typealias FoundHandler = @Sendable (NWBrowser.Result) -> Void
+    /// Called whenever a DSU server is added to or removed from the local network.
+    /// Invoked on an internal serial queue; dispatch to main if needed for UI updates.
+    public typealias ChangeHandler = @Sendable (DSUBrowserChange) -> Void
 
     // MARK: - Private state
 
     /// Serialises all reads/writes of `browser` and `isStopped`.
     private let queue = DispatchQueue(label: "com.provenance.dsu.browser", qos: .utility)
     private var browser: NWBrowser?
-    private let foundHandler: FoundHandler
+    private let changeHandler: ChangeHandler
     private var isStopped = false
 
     // MARK: - Init
 
-    /// Create a browser that notifies the caller about discovered services.
+    /// Create a browser that notifies the caller about discovered and removed services.
     ///
-    /// - Parameter found: A closure called on each browse result (add/remove/change).
-    ///   The closure is invoked on an internal serial queue; dispatch to main if needed.
-    public init(found: @escaping FoundHandler) {
-        self.foundHandler = found
+    /// - Parameter change: A closure called for each `.added` or `.removed` event.
+    ///   Invoked on an internal serial queue; dispatch to main for UI updates.
+    public init(change: @escaping ChangeHandler) {
+        self.changeHandler = change
     }
 
     // MARK: - Public API
@@ -172,7 +186,7 @@ public final class DSUServiceBrowser: @unchecked Sendable {
     // MARK: - Private (called only from self.queue)
 
     private func startOnQueue() {
-        let descriptor = NWBrowser.Descriptor.bonjour(type: DSUBonjourServiceType, domain: "local.")
+        let descriptor = NWBrowser.Descriptor.bonjour(type: DSUConstants.bonjourServiceType, domain: "local.")
         let params = NWParameters.udp
         params.includePeerToPeer = true
 
@@ -181,8 +195,13 @@ public final class DSUServiceBrowser: @unchecked Sendable {
         browser.browseResultsChangedHandler = { [weak self] _, changes in
             guard let self else { return }
             for change in changes {
-                if case .added(let result) = change {
-                    self.foundHandler(result)
+                switch change {
+                case .added(let result):
+                    self.changeHandler(.added(result))
+                case .removed(let result):
+                    self.changeHandler(.removed(result))
+                default:
+                    break
                 }
             }
         }
