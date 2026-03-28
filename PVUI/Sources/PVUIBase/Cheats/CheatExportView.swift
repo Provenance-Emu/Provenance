@@ -130,7 +130,7 @@ public struct CheatExportView: View {
         }
     }
 
-    private func labeledRow(label: String, value: String) -> some View {
+    private func labeledRow(label: LocalizedStringKey, value: String) -> some View {
         HStack(alignment: .top) {
             Text(label)
                 .font(.caption.weight(.semibold))
@@ -154,9 +154,11 @@ public struct CheatExportView: View {
 
     private func generateQR() {
         let urlString = entry.qrURLString
-        Task.detached(priority: .userInitiated) {
-            let image = CheatQRCodeGenerator.qrCode(for: urlString)
-            await MainActor.run { self.qrImage = image }
+        Task {
+            let image = await Task.detached(priority: .userInitiated) {
+                CheatQRCodeGenerator.qrCode(for: urlString)
+            }.value
+            qrImage = image
         }
     }
 }

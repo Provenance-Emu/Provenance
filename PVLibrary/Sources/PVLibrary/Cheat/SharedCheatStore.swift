@@ -1,8 +1,9 @@
 /// App Group-backed persistent store for shared cheat codes.
 ///
-/// Writes a JSON file into the `group.org.provenance-emu.provenance` App Group
-/// container so that cheat codes saved in the main Provenance app can be read
-/// by the companion app, extensions, and vice-versa.
+/// Writes a JSON file into the App Group container (resolved via `PVAppGroupId`,
+/// which reads `APP_GROUP_IDENTIFIER` from Info.plist and falls back to
+/// `group.org.provenance-emu.provenance`) so that cheat codes saved in the
+/// main Provenance app can be read by the companion app, extensions, and vice-versa.
 ///
 /// All reads and writes are serialised through the actor to prevent data races
 /// when multiple targets access the store concurrently.
@@ -21,6 +22,8 @@
 /// ```
 
 import Foundation
+import PVFileSystem
+import PVPrimitives
 
 // MARK: - SharedCheatEntry
 
@@ -122,7 +125,9 @@ public actor SharedCheatStore {
     // MARK: - Constants
 
     /// The primary App Group shared by all Provenance targets.
-    public static let appGroupIdentifier = "group.org.provenance-emu.provenance"
+    /// Reads the `APP_GROUP_IDENTIFIER` build-setting injected via Info.plist, falling
+    /// back to the canonical literal for tests and custom builds.
+    public static let appGroupIdentifier = PVAppGroupId
 
     /// JSON file name within the App Group container.
     static let fileName = "shared-cheats.json"
@@ -208,5 +213,50 @@ public actor SharedCheatStore {
         guard let url = fileURL else { return }
         let data = try encoder.encode(entries)
         try data.write(to: url, options: .atomic)
+    }
+}
+
+// MARK: - CPDI bridge (Cheats domain → SharedCheatEntry)
+
+public extension SharedCheatEntry {
+    /// Creates a `SharedCheatEntry` from a `Cheats` domain entity.
+    ///
+    /// `systemName` defaults to the raw system identifier (e.g. `"com.provenance.snes"`);
+    /// callers with access to `PVEmulatorConfiguration` can supply a friendlier display name.
+    ///
+    /// - Parameters:
+    ///   - cheat: The domain entity to convert.
+    ///   - systemName: Optional human-readable system name override.
+    init(cheat: Cheats, systemName: String? = nil) {
+        self.init(
+            id: UUID(uuidString: cheat.id) ?? UUID(),
+            name: cheat.type,
+            code: cheat.code,
+            format: cheat.codeType.isEmpty ? cheat.type : cheat.codeType,
+            systemName: systemName ?? cheat.game.systemIdentifier,
+            gameName: cheat.game.title,
+            addedDate: cheat.date
+        )
+    }
+
+    /// Converts this entry back to a `Cheats` domain entity.
+    ///
+    /// - Parameters:
+    ///   - game: The `Game` this cheat belongs to.
+    ///   - core: The `Core` that handles the cheat.
+    ///   - file: The `FileInfo` for the cheat file on disk.
+    func asDomainCheat(game: Game, core: Core, file: FileInfo) -> Cheats {
+        Cheats(
+            id: id.uuidString,
+            game: game,
+            core: core,
+            code: code,
+            type: name,
+            codeType: format,
+            date: addedDate,
+            lastOpened: nil,
+            enabled: false,
+            file: file
+        )
     }
 }

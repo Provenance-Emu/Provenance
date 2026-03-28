@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import PVPrimitives
 @testable import PVLibrary
 
 // MARK: - SharedCheatEntry URL encoding tests
@@ -134,5 +135,76 @@ struct SharedCheatStoreTests {
         let loaded = try await store.loadAll()
         #expect(loaded.count == 1)
         #expect(loaded[0].id == id2)
+    }
+}
+
+// MARK: - CPDI bridge tests
+
+@Suite("SharedCheatEntry CPDI bridge")
+struct SharedCheatEntryCPDITests {
+
+    private func makeGame(title: String, systemID: String) -> Game {
+        Game(
+            id: UUID().uuidString,
+            title: title,
+            file: FileInfo(fileName: "rom.bin", size: 0, md5: "", online: false, local: true),
+            systemIdentifier: systemID,
+            md5: "", crc: "", isFavorite: false, playCount: 0, lastPlayed: nil,
+            gameDescription: nil, boxBackArtworkURL: nil, developer: nil, publisher: nil,
+            publishDate: nil, genres: nil, referenceURL: nil, releaseID: nil,
+            regionName: nil, regionID: nil, systemShortName: nil, language: nil
+        )
+    }
+
+    private func makeCore() -> Core {
+        Core(
+            identifier: "com.provenance.nestopia",
+            principleClass: "NEScore",
+            systems: [],
+            project: CoreProject(name: "Test", url: URL(string: "https://example.com")!, version: "1.0")
+        )
+    }
+
+    @Test("init(cheat:) maps code and format correctly")
+    func initFromCheatsDomain() {
+        let cheat = Cheats(
+            id: UUID().uuidString,
+            game: makeGame(title: "Mega Man 2", systemID: "com.provenance.nes"),
+            core: makeCore(),
+            code: "AAAA-BBBB",
+            type: "Infinite Health",
+            codeType: "Game Genie",
+            date: Date(),
+            lastOpened: nil,
+            enabled: true,
+            file: FileInfo(fileName: "cheat.cht", size: 0, md5: "", online: false, local: true)
+        )
+
+        let entry = SharedCheatEntry(cheat: cheat)
+        #expect(entry.code == "AAAA-BBBB")
+        #expect(entry.format == "Game Genie")
+        #expect(entry.name == "Infinite Health")
+        #expect(entry.gameName == "Mega Man 2")
+        #expect(entry.systemName == "com.provenance.nes")
+    }
+
+    @Test("init(cheat:systemName:) uses provided friendly system name")
+    func initFromCheatsDomainWithSystemName() {
+        let cheat = Cheats(
+            id: UUID().uuidString,
+            game: makeGame(title: "Street Fighter II", systemID: "com.provenance.snes"),
+            core: makeCore(),
+            code: "7E09C2:09",
+            type: "Max Health",
+            codeType: "Game Shark",
+            date: Date(),
+            lastOpened: nil,
+            enabled: false,
+            file: FileInfo(fileName: "cheat.cht", size: 0, md5: "", online: false, local: true)
+        )
+
+        let entry = SharedCheatEntry(cheat: cheat, systemName: "Super Nintendo")
+        #expect(entry.systemName == "Super Nintendo")
+        #expect(entry.format == "Game Shark")
     }
 }
