@@ -375,6 +375,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     /// - **Dreamcast**: `System/DC/` — Flycast jitless RetroArch; DC BIOS placed by user
     /// - **Atari ST**: `System/AtariST/` — TOS path patched into hatari.cfg at launch
     /// - **GameCube/Wii**: `System/GC/` + `System/Wii/` — Dolphin requires JIT (App Store restricted)
+    /// - **PS2**: `System/PS2/` — Play! requires JIT (App Store restricted)
     ///
     /// Example paths: `Documents/System/PSP`, `Documents/System/NDS`, `Documents/System/3DS`
     ///
