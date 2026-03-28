@@ -130,6 +130,15 @@ public class AppState: ObservableObject {
     /// Coordinator for Scene management
     @Published public var sceneCoordinator: SceneCoordinator?
 
+    /// Strong reference to the current game's NSUserActivity prediction donation.
+    /// Must be kept alive while a game is running so Siri can learn time-of-day patterns.
+    /// Set to nil when the game exits to call resignCurrent() on the activity.
+    public var currentPlayActivity: NSUserActivity? {
+        didSet {
+            oldValue?.resignCurrent()
+        }
+    }
+
     /// Whether the app has been initialized
     @Published public var isInitialized = false {
         willSet {
