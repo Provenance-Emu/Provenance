@@ -281,11 +281,12 @@ struct DeltaSkinScreenPositionWrapper: View {
                 screenFrame = scaledFrame
             }
         }
-        // For simple skins, prioritize button-based calculation over gameScreenFrame
-        // This ensures simple skins scale from bottom center with screen above buttons
-        // Try gameScreenFrame dictionary (only for complex skins or if no buttons available)
-        else if !isSimpleSkin, let gameScreenFrame = getGameScreenFrame(traits: traits) {
-            DLOG("🎮 SKIN: Found gameScreenFrame (complex skin): \(gameScreenFrame)")
+        // Try gameScreenFrame dictionary — used by legacy skins (VB, GameGear, etc.) that define
+        // the game screen position explicitly without a modern "screens" array.  Previously this
+        // was skipped for simple skins, but that caused incorrect game screen placement for legacy
+        // skins that only carry gameScreenFrame with no screens/screenGroups.
+        else if let gameScreenFrame = getGameScreenFrame(traits: traits) {
+            DLOG("🎮 SKIN: Found gameScreenFrame (isSimpleSkin=\(isSimpleSkin)): \(gameScreenFrame)")
             DLOG("🎮 SKIN:   mappingSize: \(mappingSize)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
             DLOG("🎮 SKIN:   layout.scale: \(layout.scale)")
