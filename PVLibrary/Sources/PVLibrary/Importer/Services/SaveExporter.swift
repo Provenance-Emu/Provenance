@@ -364,7 +364,8 @@ public final class SaveExporter: @unchecked Sendable {
             let manifestURL = tempDir.appendingPathComponent("manifest.json")
             // Guard against path traversal: ensure the manifest URL resolves inside tempDir.
             let tempDirResolved = tempDir.resolvingSymlinksInPath().path
-            guard manifestURL.resolvingSymlinksInPath().path.hasPrefix(tempDirResolved),
+            let manifestResolved = manifestURL.resolvingSymlinksInPath().path
+            guard manifestResolved.hasPrefix(tempDirResolved + "/"),
                   fm.fileExists(atPath: manifestURL.path),
                   let data = try? Data(contentsOf: manifestURL),
                   let parsed = try? SaveBundleManifestV2.parse(from: data),
@@ -392,7 +393,7 @@ public final class SaveExporter: @unchecked Sendable {
                                               options: [.skipsPackageDescendants]) else { return }
         for case let fileURL as URL in enumerator {
             let realPath = fileURL.resolvingSymlinksInPath().path
-            guard realPath.hasPrefix(resolvedBase) else {
+            guard realPath == resolvedBase || realPath.hasPrefix(resolvedBase + "/") else {
                 throw SaveExportError.invalidBundle("Archive contains a path traversal entry: \(fileURL.lastPathComponent)")
             }
         }

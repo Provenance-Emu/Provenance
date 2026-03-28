@@ -15,9 +15,9 @@ import Foundation
 
 /// Categories of save files that can be imported or exported.
 public enum SaveFileCategory: String, CaseIterable, Codable, Sendable {
-    /// Battery-backed SRAM — persistent in-game memory (`.sav`, `.srm`, `.ram`).
+    /// Battery-backed SRAM — persistent in-game memory (`.sav`, `.srm`, `.ram`, `.dsv`).
     case sram
-    /// Emulator save state — full CPU/RAM snapshot (`.svs`, `.state`, `.dvsave`).
+    /// Emulator save state — full CPU/RAM snapshot (`.svs`, `.state`, `.dvsave`, `.ppst`).
     case saveState
     /// Real-time clock data (`.rtc`).
     case rtc
@@ -115,8 +115,8 @@ public protocol SaveBundleExporting: Sendable {
 
     /// Export only the battery/SRAM save file(s) for a game.
     ///
-    /// Produces a single `.srm` file if there is exactly one battery save,
-    /// or a `.zip` archive if there are multiple (e.g. a `.sav` and a `.rtc`).
+    /// Produces a single file (preserving the original extension) if there is exactly one
+    /// battery save, or a `.zip` archive if there are multiple (e.g. a `.sav` and a `.rtc`).
     ///
     /// - Parameter gameID: The ROM MD5 hash.
     /// - Returns: URL of the exported file (temporary — caller must clean up).
