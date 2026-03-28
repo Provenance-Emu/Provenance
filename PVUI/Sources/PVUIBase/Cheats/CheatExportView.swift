@@ -61,7 +61,7 @@ public struct CheatExportView: View {
                 }
             }
         }
-        .task { generateQR() }
+        .task { await generateQR() }
     }
 
     // MARK: - Subviews
@@ -152,14 +152,13 @@ public struct CheatExportView: View {
         }
     }
 
-    private func generateQR() {
+    @MainActor
+    private func generateQR() async {
         let urlString = entry.qrURLString
-        Task {
-            let image = await Task.detached(priority: .userInitiated) {
-                CheatQRCodeGenerator.qrCode(for: urlString)
-            }.value
-            qrImage = image
-        }
+        let image = await Task.detached(priority: .userInitiated) {
+            CheatQRCodeGenerator.qrCode(for: urlString)
+        }.value
+        qrImage = image
     }
 }
 

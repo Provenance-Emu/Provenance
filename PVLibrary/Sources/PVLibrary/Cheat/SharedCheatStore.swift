@@ -80,7 +80,8 @@ extension SharedCheatEntry {
             URLQueryItem(name: "system", value: systemName),
             URLQueryItem(name: "game",   value: gameName),
         ]
-        return comps.url?.absoluteString ?? "provenance-cheat://v1?code=\(code)"
+        let encodedCode = code.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? code
+        return comps.url?.absoluteString ?? "provenance-cheat://v1?code=\(encodedCode)"
     }
 
     /// Attempts to parse a `provenance-cheat://v1` URL back into a `SharedCheatEntry`.
@@ -227,7 +228,7 @@ public extension SharedCheatEntry {
     /// - Parameters:
     ///   - cheat: The domain entity to convert.
     ///   - systemName: Optional human-readable system name override.
-    init(cheat: Cheats, systemName: String? = nil) {
+    public init(cheat: Cheats, systemName: String? = nil) {
         self.init(
             id: UUID(uuidString: cheat.id) ?? UUID(),
             name: cheat.type,
@@ -245,7 +246,7 @@ public extension SharedCheatEntry {
     ///   - game: The `Game` this cheat belongs to.
     ///   - core: The `Core` that handles the cheat.
     ///   - file: The `FileInfo` for the cheat file on disk.
-    func asDomainCheat(game: Game, core: Core, file: FileInfo) -> Cheats {
+    public func asDomainCheat(game: Game, core: Core, file: FileInfo) -> Cheats {
         Cheats(
             id: id.uuidString,
             game: game,
