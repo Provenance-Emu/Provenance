@@ -50,22 +50,27 @@ public enum DSUCRC32: Sendable {
     /// 3. Writes the result back as a little-endian UInt32 at bytes 8-11.
     ///
     /// - Parameter buffer: The packet buffer to stamp. Must be at least 12 bytes.
+    ///
+    /// - Note: Uses `startIndex`-relative addressing so the function is safe to call
+    ///   with `Data` slices as well as freshly-allocated buffers.
     public static func stamp(into buffer: inout Data) {
         guard buffer.count >= 12 else { return }
 
+        let base = buffer.startIndex
+
         // Zero the CRC field
-        buffer[8] = 0
-        buffer[9] = 0
-        buffer[10] = 0
-        buffer[11] = 0
+        buffer[base + 8]  = 0
+        buffer[base + 9]  = 0
+        buffer[base + 10] = 0
+        buffer[base + 11] = 0
 
         let crc = compute(buffer)
 
         // Write as little-endian
-        buffer[8]  = UInt8(crc & 0xFF)
-        buffer[9]  = UInt8((crc >> 8)  & 0xFF)
-        buffer[10] = UInt8((crc >> 16) & 0xFF)
-        buffer[11] = UInt8((crc >> 24) & 0xFF)
+        buffer[base + 8]  = UInt8(crc & 0xFF)
+        buffer[base + 9]  = UInt8((crc >> 8)  & 0xFF)
+        buffer[base + 10] = UInt8((crc >> 16) & 0xFF)
+        buffer[base + 11] = UInt8((crc >> 24) & 0xFF)
     }
 
     /// Verify the CRC32 of a received packet.
@@ -75,21 +80,26 @@ public enum DSUCRC32: Sendable {
     ///
     /// - Parameter data: The raw packet bytes. Must be at least 12 bytes.
     /// - Returns: `true` if CRC is valid.
+    ///
+    /// - Note: Uses `startIndex`-relative addressing so the function is safe to call
+    ///   with `Data` slices as well as freshly-allocated buffers.
     public static func verify(_ data: Data) -> Bool {
         guard data.count >= 12 else { return false }
 
+        let base = data.startIndex
+
         // Read stored CRC (little-endian)
-        let stored = UInt32(data[8])
-            | (UInt32(data[9])  << 8)
-            | (UInt32(data[10]) << 16)
-            | (UInt32(data[11]) << 24)
+        let stored = UInt32(data[base + 8])
+            | (UInt32(data[base + 9])  << 8)
+            | (UInt32(data[base + 10]) << 16)
+            | (UInt32(data[base + 11]) << 24)
 
         // Build a copy with CRC field zeroed
         var copy = data
-        copy[8]  = 0
-        copy[9]  = 0
-        copy[10] = 0
-        copy[11] = 0
+        copy[base + 8]  = 0
+        copy[base + 9]  = 0
+        copy[base + 10] = 0
+        copy[base + 11] = 0
 
         let computed = compute(copy)
         return computed == stored

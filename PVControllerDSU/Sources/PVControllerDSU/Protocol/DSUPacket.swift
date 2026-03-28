@@ -440,7 +440,8 @@ extension DSUPacket {
         guard data.count >= DSUHeader.size else { return nil }
         guard DSUCRC32.verify(data) else { return nil }
 
-        let magic = Array(data[0..<4])
+        let base = data.startIndex
+        let magic = Array(data[base..<base + 4])
         let isServer = magic == DSUConstants.serverMagic
         let isClient = magic == DSUConstants.clientMagic
         guard isServer || isClient else { return nil }

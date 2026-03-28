@@ -19,5 +19,5 @@ let package = Package(
         .target(name: "PVControllerDSU"),
         .testTarget(name: "PVControllerDSUTests", dependencies: ["PVControllerDSU"])
     ],
-    swiftLanguageModes: [.v5, .v6]
+    swiftLanguageModes: [.v6]
 )

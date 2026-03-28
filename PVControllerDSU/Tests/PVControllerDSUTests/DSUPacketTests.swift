@@ -380,6 +380,47 @@ struct DSUPacketTests {
     }
 }
 
+    // MARK: - Truncated payload
+
+    @Test("Decode returns nil for controllerData packet with truncated payload")
+    func testControllerDataTruncatedPayload() {
+        // Encode a valid controllerData packet then strip bytes from the end.
+        let valid = DSUPacket.controllerData(clientUID: 0, data: DSUControllerData()).encode()
+        // Keep only the header (20 bytes) — payload is completely missing.
+        let truncated = valid.prefix(DSUHeader.size)
+        #expect(DSUPacket.decode(Data(truncated)) == nil)
+    }
+
+    @Test("Decode returns nil for listPortsResponse with truncated payload")
+    func testListPortsResponseTruncatedPayload() {
+        let valid = DSUPacket.listPortsResponse(
+            clientUID: 0, slotIndex: 0, slotState: .connected,
+            deviceModel: .full, connectionType: .bluetooth,
+            macAddress: (0, 0, 0, 0, 0, 0), batteryStatus: .full
+        ).encode()
+        // Strip all but the header — the 12-byte slot-info payload is gone.
+        let truncated = valid.prefix(DSUHeader.size)
+        #expect(DSUPacket.decode(Data(truncated)) == nil)
+    }
+
+    // MARK: - Decode from Data slice
+
+    @Test("Decode works correctly when given a Data slice with non-zero startIndex")
+    func testDecodeFromDataSlice() throws {
+        // Prepend 8 junk bytes so that the real packet lives at a non-zero offset.
+        let packet = DSUPacket.versionRequest(clientUID: 0xABCD1234)
+        let raw = packet.encode()
+        let prefixed = Data(repeating: 0xFF, count: 8) + raw
+        let slice = prefixed[8...]   // Data slice: startIndex == 8
+
+        let decoded = try #require(DSUPacket.decode(slice))
+        guard case .versionRequest(let uid) = decoded else {
+            Issue.record("Expected .versionRequest")
+            return
+        }
+        #expect(uid == 0xABCD1234)
+    }
+
 // MARK: - Tuple equality helpers (Swift tuples are not Equatable by default in all contexts)
 
 private func == (

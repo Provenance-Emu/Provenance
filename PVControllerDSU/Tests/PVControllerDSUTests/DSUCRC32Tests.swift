@@ -119,4 +119,48 @@ struct DSUCRC32Tests {
         let b = Data([0x01, 0x02, 0x03, 0x05])
         #expect(DSUCRC32.compute(a) != DSUCRC32.compute(b))
     }
+
+    // MARK: - Data slice safety
+
+    @Test("Stamp+Verify works correctly on a Data slice (non-zero startIndex)")
+    func testStampVerifyOnDataSlice() {
+        // Build a 40-byte buffer; our "packet" lives at bytes 10..<30 (a slice).
+        var outer = Data(repeating: 0xAA, count: 40)
+        // Write recognisable non-zero values into the packet region.
+        for i in 10..<30 { outer[i] = UInt8(i) }
+        // Zero out the CRC field (bytes 8-11 relative to the slice start = outer[18..<22]).
+        for i in 18..<22 { outer[i] = 0 }
+
+        var slice = outer[10..<30]     // Data slice: startIndex == 10, count == 20
+
+        DSUCRC32.stamp(into: &slice)
+
+        // The stamped CRC in the slice must be non-zero.
+        let storedCRC = UInt32(slice[slice.startIndex + 8])
+            | (UInt32(slice[slice.startIndex + 9]) << 8)
+            | (UInt32(slice[slice.startIndex + 10]) << 16)
+            | (UInt32(slice[slice.startIndex + 11]) << 24)
+        #expect(storedCRC != 0)
+
+        // verify() must succeed on the same slice.
+        #expect(DSUCRC32.verify(slice) == true)
+
+        // Stamping again must be idempotent.
+        var sliceCopy = slice
+        DSUCRC32.stamp(into: &sliceCopy)
+        #expect(sliceCopy == slice)
+    }
+
+    @Test("Verify rejects a corrupted Data slice")
+    func testVerifyRejectsCorruptedSlice() {
+        var outer = Data(repeating: 0xBB, count: 40)
+        for i in 8..<12 { outer[i + 10] = 0 }   // zero CRC region in slice
+        var slice = outer[10..<30]
+        DSUCRC32.stamp(into: &slice)
+        #expect(DSUCRC32.verify(slice) == true)
+
+        // Corrupt a non-CRC byte
+        slice[slice.startIndex + 5] ^= 0xFF
+        #expect(DSUCRC32.verify(slice) == false)
+    }
 }
