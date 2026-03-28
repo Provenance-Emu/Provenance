@@ -211,9 +211,10 @@ final class SaveExporterTests: XCTestCase {
         let expectedMD5 = "cafebabe0123"
         // Use an integer schemaVersion — this would break [String: String] parsing.
         let manifest: [String: Any] = [
-            "schemaVersion": 1,   // Int, not String
+            "schemaVersion": 1,   // Int, not String — parseV1 requires "system" field
             "game": expectedMD5,
-            "title": "TestGame"
+            "title": "TestGame",
+            "system": "com.provenance.snes"
         ]
         let data = try JSONSerialization.data(withJSONObject: manifest)
         try data.write(to: stagingDir.appendingPathComponent("manifest.json"))

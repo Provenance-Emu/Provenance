@@ -57,6 +57,11 @@ public enum SaveExportError: LocalizedError {
 /// ```
 /// `@unchecked Sendable` is safe here: `SaveExporter` has no mutable stored properties —
 /// it is a stateless singleton whose methods operate only on task-local values and parameters.
+///
+/// - TODO: Conform to `SaveBundleExporting` and `SaveBundleImporting` (defined in
+///   `SaveImportExportProtocols.swift`) once a Realm lookup helper is available to resolve
+///   a game MD5 to a `PVGame` without caller-side Realm access.
+///   Tracked in: https://github.com/Provenance-Emu/Provenance/issues/3409
 public final class SaveExporter: @unchecked Sendable {
 
     public static let shared = SaveExporter()
@@ -87,22 +92,40 @@ public final class SaveExporter: @unchecked Sendable {
         let systemID = frozenGame.systemIdentifier
         let romURL = frozenGame.file?.url
 
-        // Collect save states snapshot before we leave Realm context
-        let saveStateSnapshots: [(fileURL: URL?, imageURL: URL?)] = frozenGame.saveStates.map { state in
-            (fileURL: state.file?.url, imageURL: state.image?.url)
+        // Snapshot save-state URLs before leaving Realm context (frozen object access is safe
+        // across threads, but iterating the live List is not).
+        struct SaveStateSnapshot {
+            let fileURL: URL?
+            let imageURL: URL?
+            let date: Date
+            let isAutosave: Bool
+            let userDescription: String?
+            let coreIdentifier: String?
+        }
+        let saveStateSnapshots: [SaveStateSnapshot] = frozenGame.saveStates.map { state in
+            SaveStateSnapshot(
+                fileURL: state.file?.url,
+                imageURL: state.image?.url,
+                date: state.date,
+                isAutosave: state.isAutosave,
+                userDescription: state.userDescription,
+                coreIdentifier: state.core?.identifier
+            )
         }
 
         let hasAnySave = saveStateSnapshots.contains(where: {
             guard let url = $0.fileURL else { return false }
-            return FileManager.default.fileExists(atPath: url.path)
+            return fm.fileExists(atPath: url.path)
         })
         // Guard against nil romURL: Paths.batterySavesPath(forROM: nil) falls back to a shared
         // ".../Battery States/NULL" directory that could contain unrelated games' saves.
         let batterySavesDir: URL? = romURL.map { Paths.batterySavesPath(forROM: $0) }
         let hasBatterySaves: Bool = {
             guard let dir = batterySavesDir else { return false }
-            return fm.fileExists(atPath: dir.path)
-                && ((try? fm.contentsOfDirectory(atPath: dir.path))?.isEmpty == false)
+            guard fm.fileExists(atPath: dir.path) else { return false }
+            let visibleFiles = try? fm.contentsOfDirectory(
+                at: dir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            return visibleFiles?.isEmpty == false
         }()
 
         guard hasAnySave || hasBatterySaves else {
@@ -116,17 +139,20 @@ public final class SaveExporter: @unchecked Sendable {
 
         try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
 
-        // Write manifest.json
-        let isoDate = ISO8601DateFormatter().string(from: Date())
-        let manifestDict: [String: String] = [
-            "schemaVersion": "1",
-            "game": md5,
-            "title": gameTitle,
-            "system": systemID,
-            "exportDate": isoDate
-        ]
-        let manifestData = try JSONSerialization.data(withJSONObject: manifestDict, options: [.prettyPrinted, .sortedKeys])
-        try manifestData.write(to: stagingDir.appendingPathComponent("manifest.json"))
+        let iso8601 = ISO8601DateFormatter()
+
+        // Build battery saves index (skip hidden files such as .DS_Store)
+        let batteryEntries: [SaveBundleManifestV2.BatterySaveEntry]? = {
+            guard let dir = batterySavesDir,
+                  let fileURLs = try? fm.contentsOfDirectory(
+                      at: dir, includingPropertiesForKeys: [.fileSizeKey],
+                      options: .skipsHiddenFiles) else { return nil }
+            return fileURLs.map { fileURL in
+                let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]))?.fileSize
+                return SaveBundleManifestV2.BatterySaveEntry(
+                    filename: fileURL.lastPathComponent, sizeBytes: size)
+            }
+        }()
 
         // Track how many save files are actually copied so we can error if nothing ends up in the zip.
         var filesCopied = 0
@@ -142,31 +168,60 @@ public final class SaveExporter: @unchecked Sendable {
             }
         }
 
-        // Copy save state files
+        // Copy save state files and build the v2 manifest index in a single pass.
+        var stateEntries: [SaveBundleManifestV2.SaveStateEntry] = []
         if hasAnySave {
             let statesDir = stagingDir.appendingPathComponent("states", isDirectory: true)
             try fm.createDirectory(at: statesDir, withIntermediateDirectories: true)
 
             for snapshot in saveStateSnapshots {
-                if let src = snapshot.fileURL, fm.fileExists(atPath: src.path) {
-                    let dest = statesDir.appendingPathComponent(src.lastPathComponent)
-                    do {
-                        try fm.copyItem(at: src, to: dest)
-                        filesCopied += 1
-                    } catch {
-                        WLOG("SaveExporter: failed to copy save state \(src.lastPathComponent): \(error.localizedDescription)")
+                guard let src = snapshot.fileURL, fm.fileExists(atPath: src.path) else { continue }
+
+                let dest = statesDir.appendingPathComponent(src.lastPathComponent)
+                do {
+                    try fm.copyItem(at: src, to: dest)
+                    filesCopied += 1
+
+                    // Attempt screenshot copy first so screenshotFilename in the manifest only
+                    // references a file that was actually placed in the bundle.
+                    var copiedScreenshotFilename: String? = nil
+                    if let imgSrc = snapshot.imageURL, fm.fileExists(atPath: imgSrc.path) {
+                        let imgDest = statesDir.appendingPathComponent(imgSrc.lastPathComponent)
+                        do {
+                            try fm.copyItem(at: imgSrc, to: imgDest)
+                            copiedScreenshotFilename = imgSrc.lastPathComponent
+                        } catch {
+                            WLOG("SaveExporter: failed to copy save state screenshot \(imgSrc.lastPathComponent): \(error.localizedDescription)")
+                        }
                     }
-                }
-                if let imgSrc = snapshot.imageURL, fm.fileExists(atPath: imgSrc.path) {
-                    let imgDest = statesDir.appendingPathComponent(imgSrc.lastPathComponent)
-                    do {
-                        try fm.copyItem(at: imgSrc, to: imgDest)
-                    } catch {
-                        WLOG("SaveExporter: failed to copy save state screenshot \(imgSrc.lastPathComponent): \(error.localizedDescription)")
-                    }
+
+                    // Only add a manifest entry for successfully copied states.
+                    stateEntries.append(SaveBundleManifestV2.SaveStateEntry(
+                        filename: src.lastPathComponent,
+                        screenshotFilename: copiedScreenshotFilename,
+                        date: iso8601.string(from: snapshot.date),
+                        isAutosave: snapshot.isAutosave,
+                        userDescription: snapshot.userDescription,
+                        coreIdentifier: snapshot.coreIdentifier
+                    ))
+                } catch {
+                    WLOG("SaveExporter: failed to copy save state \(src.lastPathComponent): \(error.localizedDescription)")
                 }
             }
         }
+
+        // Write manifest.json using schema v2
+        let isoDate = iso8601.string(from: Date())
+        let manifest = SaveBundleManifestV2(
+            gameMD5: md5,
+            gameTitle: gameTitle,
+            systemIdentifier: systemID,
+            exportDate: isoDate,
+            batterySaves: batteryEntries,
+            saveStates: stateEntries.isEmpty ? nil : stateEntries
+        )
+        let manifestData = try manifest.jsonData()
+        try manifestData.write(to: stagingDir.appendingPathComponent("manifest.json"))
 
         // If every copy failed the zip would contain only manifest.json — treat as no saves
         guard filesCopied > 0 else {
@@ -248,39 +303,15 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         let manifestData = try Data(contentsOf: manifestURL)
-        // Parse as [String: Any] so additional typed fields (e.g. numeric schemaVersion) don't cause a nil cast.
-        guard let manifestDict = try JSONSerialization.jsonObject(with: manifestData) as? [String: Any] else {
-            throw SaveExportError.invalidBundle("manifest.json has unexpected format.")
+        let manifest: SaveBundleManifestV2
+        do {
+            manifest = try SaveBundleManifestV2.parse(from: manifestData)
+        } catch let parseError as SaveBundleManifestParseError {
+            throw SaveExportError.invalidBundle(parseError.localizedDescription)
         }
 
-        // Validate schema version for forward/backward compatibility
-        let rawSchemaVersion = manifestDict["schemaVersion"]
-
-        let schemaVersionInt: Int?
-        switch rawSchemaVersion {
-        case let s as String:
-            schemaVersionInt = Int(s.trimmingCharacters(in: .whitespacesAndNewlines))
-        case let i as Int:
-            schemaVersionInt = i
-        case let n as NSNumber:
-            schemaVersionInt = n.intValue
-        default:
-            schemaVersionInt = nil
-        }
-
-        guard let schemaVersionIntUnwrapped = schemaVersionInt else {
-            throw SaveExportError.invalidBundle("manifest.json missing 'schemaVersion' field.")
-        }
-        guard schemaVersionIntUnwrapped == 1 else {
-            throw SaveExportError.invalidBundle("Unsupported manifest schemaVersion '\(schemaVersionIntUnwrapped)'.")
-        }
-
-        guard let bundleMD5 = manifestDict["game"] as? String, !bundleMD5.isEmpty else {
-            throw SaveExportError.invalidBundle("manifest.json missing 'game' field.")
-        }
-
-        guard bundleMD5.lowercased() == frozenGame.md5Hash.lowercased() else {
-            WLOG("SaveExporter: MD5 mismatch — bundle '\(bundleMD5)' != game '\(frozenGame.md5Hash)'")
+        guard manifest.gameMD5.lowercased() == frozenGame.md5Hash.lowercased() else {
+            WLOG("SaveExporter: MD5 mismatch — bundle '\(manifest.gameMD5)' != game '\(frozenGame.md5Hash)'")
             throw SaveExportError.gameMismatch
         }
 
@@ -307,8 +338,14 @@ public final class SaveExporter: @unchecked Sendable {
             let destStates = Paths.saveStatePath(forROM: romURL)
             // Ensure destination directory exists before copying individual files
             try fm.createDirectory(at: destStates, withIntermediateDirectories: true)
-            let stateFiles = (try? fm.contentsOfDirectory(atPath: srcStates.path)) ?? []
+            let stateFiles = (try? fm.contentsOfDirectory(
+                at: srcStates, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                .map(\.lastPathComponent)) ?? []
             for fileName in stateFiles {
+                guard SaveBundleManifestV2.isSafeFilename(fileName) else {
+                    WLOG("SaveExporter: skipping unsafe filename in states/: \(fileName)")
+                    continue
+                }
                 let src = srcStates.appendingPathComponent(fileName)
                 let dest = destStates.appendingPathComponent(fileName)
                 if fm.fileExists(atPath: dest.path) {
@@ -351,17 +388,13 @@ public final class SaveExporter: @unchecked Sendable {
             // Defense-in-depth: verify no extracted entry escaped tempDir via symlinks or traversal paths.
             try validateNoBundleEscape(in: tempDir)
             let manifestURL = tempDir.appendingPathComponent("manifest.json")
-            // Guard against path traversal: ensure the manifest URL resolves inside tempDir.
-            let tempDirResolved = tempDir.resolvingSymlinksInPath().path
-            guard manifestURL.resolvingSymlinksInPath().path.hasPrefix(tempDirResolved),
-                  fm.fileExists(atPath: manifestURL.path),
+            guard fm.fileExists(atPath: manifestURL.path),
                   let data = try? Data(contentsOf: manifestURL),
-                  // Parse as [String: Any] so additional typed fields don't cause nil cast.
-                  let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let md5 = manifest["game"] as? String, !md5.isEmpty else {
+                  let parsed = try? SaveBundleManifestV2.parse(from: data),
+                  !parsed.gameMD5.isEmpty else {
                 return nil
             }
-            return md5.lowercased()
+            return parsed.gameMD5.lowercased()
         } catch {
             WLOG("SaveExporter: failed to read bundle manifest: \(error)")
             return nil
@@ -382,27 +415,155 @@ public final class SaveExporter: @unchecked Sendable {
                                               options: [.skipsPackageDescendants]) else { return }
         for case let fileURL as URL in enumerator {
             let realPath = fileURL.resolvingSymlinksInPath().path
-            guard realPath.hasPrefix(resolvedBase) else {
+            guard realPath == resolvedBase || realPath.hasPrefix(resolvedBase + "/") else {
                 throw SaveExportError.invalidBundle("Archive contains a path traversal entry: \(fileURL.lastPathComponent)")
             }
         }
     }
 
+    // MARK: - SRAM-Only Export
+
+    /// Exports only the battery/SRAM save file(s) for a game.
+    ///
+    /// Produces a single bare `.srm` file if exactly one battery save exists,
+    /// or a `.zip` archive containing all battery files (e.g. `.sav` + `.rtc`) if multiple.
+    ///
+    /// - Parameter game: A `PVGame` object (frozen or live).
+    /// - Returns: URL of the exported file (temporary — caller must clean up).
+    /// - Throws: `SaveExportError.noSavesFound` if no battery saves exist,
+    ///   `SaveExportError.invalidBundle` if the game has no ROM path.
+    public func exportSRAM(for game: PVGame) async throws -> URL {
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        return try await Task.detached(priority: .userInitiated) {
+            try self.performSRAMExport(frozenGame: frozenGame)
+        }.value
+    }
+
+    private func performSRAMExport(frozenGame: PVGame) throws -> URL {
+        guard !frozenGame.isInvalidated else {
+            throw SaveExportError.invalidBundle("Game object is no longer valid.")
+        }
+        guard let romURL = frozenGame.file?.url else {
+            throw SaveExportError.invalidBundle("Game has no associated ROM file — cannot locate battery saves.")
+        }
+
+        let fm = FileManager.default
+        let batteryDir = Paths.batterySavesPath(forROM: romURL)
+        guard fm.fileExists(atPath: batteryDir.path),
+              let items = try? fm.contentsOfDirectory(
+                  at: batteryDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                  .map(\.lastPathComponent),
+              !items.isEmpty else {
+            throw SaveExportError.noSavesFound
+        }
+
+        let gameTitle = frozenGame.title
+        let sanitized = gameTitle
+            .components(separatedBy: CharacterSet.alphanumerics.union(.init(charactersIn: "-_ ")).inverted)
+            .joined()
+            .trimmingCharacters(in: .whitespaces)
+        let safeTitle = sanitized.isEmpty ? frozenGame.md5Hash : sanitized
+        let timestamp = Int(Date().timeIntervalSince1970)
+
+        // Single file — export bare (no zip wrapper)
+        if items.count == 1, let filename = items.first {
+            let srcURL = batteryDir.appendingPathComponent(filename)
+            let ext = srcURL.pathExtension
+            let destURL = fm.temporaryDirectory
+                .appendingPathComponent("\(safeTitle)-battery-\(timestamp).\(ext)")
+            try? fm.removeItem(at: destURL)
+            try fm.copyItem(at: srcURL, to: destURL)
+            ILOG("SaveExporter: SRAM export (single) → \(destURL.lastPathComponent)")
+            return destURL
+        }
+
+        // Multiple files — zip them together
+        let stagingDir = fm.temporaryDirectory
+            .appendingPathComponent("PVSRAMExport_\(timestamp)_\(UUID().uuidString)", isDirectory: true)
+        defer { try? fm.removeItem(at: stagingDir) }
+        try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+
+        for item in items {
+            let src = batteryDir.appendingPathComponent(item)
+            let dest = stagingDir.appendingPathComponent(item)
+            try fm.copyItem(at: src, to: dest)
+        }
+
+        let zipURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-battery-\(timestamp).zip")
+        try? fm.removeItem(at: zipURL)
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        ILOG("SaveExporter: SRAM export (multi) → \(zipURL.lastPathComponent)")
+        return zipURL
+    }
+
+    // MARK: - SRAM-Only Import
+
+    /// Imports a raw battery/SRAM file (`.sav`, `.srm`, `.ram`, `.rtc`) for a game.
+    ///
+    /// Copies the file to the game's battery saves directory.
+    /// Does not modify Realm — battery saves are picked up automatically at next emulator launch.
+    ///
+    /// - Parameters:
+    ///   - sramURL: URL of the SRAM file to import.
+    ///   - game: The game to associate the save with. Must have an associated ROM file.
+    /// - Throws: `SaveExportError.invalidBundle` if the game has no ROM path.
+    public func importSRAM(from sramURL: URL, for game: PVGame) async throws {
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        try await Task.detached(priority: .userInitiated) {
+            try self.performSRAMImport(sramURL: sramURL, frozenGame: frozenGame)
+        }.value
+    }
+
+    private func performSRAMImport(sramURL: URL, frozenGame: PVGame) throws {
+        guard !frozenGame.isInvalidated else {
+            throw SaveExportError.invalidBundle("Game object is no longer valid.")
+        }
+        guard let romURL = frozenGame.file?.url else {
+            throw SaveExportError.invalidBundle("Cannot import battery save — game has no associated ROM file path.")
+        }
+
+        let fm = FileManager.default
+        let destDir = Paths.batterySavesPath(forROM: romURL)
+        try fm.createDirectory(at: destDir, withIntermediateDirectories: true)
+
+        let destURL = destDir.appendingPathComponent(sramURL.lastPathComponent)
+        if fm.fileExists(atPath: destURL.path) {
+            try fm.removeItem(at: destURL)
+        }
+        try fm.copyItem(at: sramURL, to: destURL)
+        ILOG("SaveExporter: SRAM import → \(destURL.path)")
+    }
+
     private func restoreDirectory(from source: URL, to destination: URL) throws {
         let fm = FileManager.default
+        // Directory creation failure is fatal — we cannot restore without a destination.
         do {
             try fm.createDirectory(at: destination, withIntermediateDirectories: true)
-            let items = (try? fm.contentsOfDirectory(atPath: source.path)) ?? []
-            for item in items {
-                let src = source.appendingPathComponent(item)
-                let dest = destination.appendingPathComponent(item)
-                if fm.fileExists(atPath: dest.path) {
-                    try? fm.removeItem(at: dest)
-                }
-                try fm.copyItem(at: src, to: dest)
-            }
         } catch {
-            throw SaveExportError.invalidBundle("Failed to restore directory: \(error.localizedDescription)")
+            throw SaveExportError.invalidBundle("Failed to create restore directory: \(error.localizedDescription)")
+        }
+
+        // Skip hidden files (e.g. .DS_Store) when restoring
+        let items = (try? fm.contentsOfDirectory(
+            at: source, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            .map(\.lastPathComponent)) ?? []
+        for item in items {
+            guard SaveBundleManifestV2.isSafeFilename(item) else {
+                WLOG("SaveExporter: skipping unsafe filename in battery/: \(item)")
+                continue
+            }
+            let src = source.appendingPathComponent(item)
+            let dest = destination.appendingPathComponent(item)
+            if fm.fileExists(atPath: dest.path) {
+                try? fm.removeItem(at: dest)
+            }
+            do {
+                try fm.copyItem(at: src, to: dest)
+            } catch {
+                WLOG("SaveExporter: failed to restore \(item): \(error.localizedDescription)")
+            }
         }
     }
 }
