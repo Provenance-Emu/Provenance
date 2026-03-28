@@ -17,6 +17,7 @@ FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 #import <PVRetroArch/PVRetroArchCoreBridge.h>
 #import <PVRetroArch/PVRetroArchCoreBridge+Netplay.h>
 #import <PVRetroArch/PVRetroArchCoreBridge+Controls.h>
+#import <PVRetroArch/PVRetroArchCoreBridge+LightGun.h>
 //#import <PVRetroArch/PVRetroArchCoreBridge+Audio.h>
 //#import <PVRetroArch/PVRetroArchCoreBridge+Video.h>
 #pragma clang diagnostic push

@@ -2219,6 +2219,21 @@ void apple_input_keyboard_event(bool down,
 }
 #endif
 
+// ---------------------------------------------------------------------------
+// Light Gun input state — written from ObjC/Swift via setLightGun* methods,
+// read from cocoa_input_state on the emulation thread.
+// Using _Atomic for lock-free, thread-safe reads/writes without a mutex.
+// ---------------------------------------------------------------------------
+static _Atomic int16_t s_lightgun_x           = 0;   // RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X (-0x7FFF..+0x7FFF)
+static _Atomic int16_t s_lightgun_y           = 0;   // RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y
+static _Atomic bool    s_lightgun_offscreen   = false;
+static _Atomic bool    s_lightgun_trigger     = false;
+static _Atomic bool    s_lightgun_reload      = false;
+static _Atomic bool    s_lightgun_aux_a       = false;
+static _Atomic bool    s_lightgun_aux_b       = false;
+static _Atomic bool    s_lightgun_start       = false;
+static _Atomic bool    s_lightgun_select      = false;
+
 static void *cocoa_input_init(const char *joypad_driver)
 {
    cocoa_input_data_t *apple = NULL;
@@ -2494,6 +2509,38 @@ static int16_t cocoa_input_state(
             }
          }
          break;
+      case RETRO_DEVICE_LIGHTGUN:
+         /* Only port 0 is supported for light gun input. */
+         if (port != 0)
+            return 0;
+         switch (id)
+         {
+            case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X:    return s_lightgun_x;
+            case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y:    return s_lightgun_y;
+            /* IS_OFFSCREEN is true when aimed off-screen OR when reload is held,
+             * matching the thin-wrapper behaviour (PVThinLibretroCore) and libretro
+             * convention (cores expect offscreen=1 during a reload event). */
+            case RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN: return (s_lightgun_offscreen || s_lightgun_reload) ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_TRIGGER:     return s_lightgun_trigger    ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_RELOAD:      return s_lightgun_reload     ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_AUX_A:       return s_lightgun_aux_a      ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_AUX_B:       return s_lightgun_aux_b      ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_START:       return s_lightgun_start      ? 1 : 0;
+            /* PAUSE (id 5) is a legacy alias for START per libretro.h "Use Start". */
+            case RETRO_DEVICE_ID_LIGHTGUN_PAUSE:       return s_lightgun_start      ? 1 : 0;
+            case RETRO_DEVICE_ID_LIGHTGUN_SELECT:      return s_lightgun_select     ? 1 : 0;
+            /* AUX_C (id 8): not exposed by LightGunResponder protocol; return not-pressed. */
+            case RETRO_DEVICE_ID_LIGHTGUN_AUX_C:       return 0;
+            /* D-pad: not mapped to light gun device; joypad handles directional input. */
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_UP:
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_DOWN:
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_LEFT:
+            case RETRO_DEVICE_ID_LIGHTGUN_DPAD_RIGHT:
+               return 0;
+            default:
+               return 0;
+         }
+         break;
    }
 
    return 0;
@@ -2520,7 +2567,8 @@ static uint64_t cocoa_input_get_capabilities(void *data)
       | (1 << RETRO_DEVICE_MOUSE)
       | (1 << RETRO_DEVICE_KEYBOARD)
       | (1 << RETRO_DEVICE_POINTER)
-      | (1 << RETRO_DEVICE_ANALOG);
+      | (1 << RETRO_DEVICE_ANALOG)
+      | (1 << RETRO_DEVICE_LIGHTGUN);
 }
 
 static bool cocoa_input_set_sensor_state(void *data, unsigned port,
@@ -2698,3 +2746,24 @@ input_driver_t input_cocoa = {
    NULL                          /* vibrate */
 #endif
 };
+
+// ---------------------------------------------------------------------------
+// Light Gun setter — called from ObjC bridge on the main thread.
+// Each field is written atomically; reads in cocoa_input_state see them
+// without a lock.  The three stores in pv_lightgun_set_position are NOT a
+// single atomic triple — the emulation thread could theoretically observe a
+// partially-updated pair on a given frame.  In practice this causes at most
+// a one-frame position blip, which is imperceptible for light gun gameplay.
+// ---------------------------------------------------------------------------
+void pv_lightgun_set_position(int16_t x, int16_t y, bool offscreen) {
+    s_lightgun_x          = x;
+    s_lightgun_y          = y;
+    s_lightgun_offscreen  = offscreen;
+}
+
+void pv_lightgun_set_trigger(bool down)  { s_lightgun_trigger = down; }
+void pv_lightgun_set_reload(bool down)   { s_lightgun_reload  = down; }
+void pv_lightgun_set_aux_a(bool down)    { s_lightgun_aux_a   = down; }
+void pv_lightgun_set_aux_b(bool down)    { s_lightgun_aux_b   = down; }
+void pv_lightgun_set_start(bool down)    { s_lightgun_start   = down; }
+void pv_lightgun_set_select(bool down)   { s_lightgun_select  = down; }

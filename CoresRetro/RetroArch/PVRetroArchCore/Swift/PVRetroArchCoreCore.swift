@@ -134,10 +134,18 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
         // bridge's startEmulation), so by the time super.startEmulation() returns the
         // core's retro_load_game has already run and port device types can be configured.
         restorePortDeviceTypes()
+        // Cache light gun capability into the shared registry so that future queries
+        // (before a core is loaded) return the correct answer for this system.
+        if _bridge.coreDeclaresLightGunDevice,
+           let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") {
+            LightGunSystemRegistry.shared.register(system: sysID)
+        }
     }
 
     /// Reset the haptic profile so the next core starts with neutral tuning.
     public override func stopEmulation() {
+        // Clear any held light-gun buttons so the next session starts clean.
+        _bridge.resetLightGunState()
 #if canImport(GameController) && canImport(CoreHaptics)
         if #available(iOS 14.0, tvOS 14.0, *) {
             GCControllerHapticsManager.shared.resetSystemProfile()
@@ -884,6 +892,13 @@ extension PVRetroArchCoreCore: PortDeviceConfigurable {
 
     /// Returns a platform-specific default device type for a port, or nil to leave at core default.
     private func platformDefaultPortDevice(forPort port: Int) -> UInt? {
+        // Check lightgun BEFORE the sysID guard: if the core declared RETRO_DEVICE_LIGHTGUN
+        // we want to configure port 0 regardless of whether systemIdentifier is a known enum value.
+        // (The guard below returns nil for unrecognized identifiers, which would silently skip
+        // lightgun auto-config for any system not yet in the SystemIdentifier enum.)
+        if port == 0 && _bridge.coreDeclaresLightGunDevice {
+            return LibretroDeviceType.lightgun.rawValue
+        }
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return nil }
         // SNES: port 2 (index 1) defaults to RETRO_DEVICE_MOUSE for known SNES Mouse games.
         if sysID == .SNES && port == 1 {
