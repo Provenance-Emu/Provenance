@@ -540,6 +540,8 @@
 		B3A3D02F2CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		B3A3D0312CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
+		B3A450DE2F7782F000B6449F /* PVRcheevosCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3A450DD2F7782F000B6449F /* PVRcheevosCore */; };
+		B3A450FE2F77832100B6449F /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3A450FD2F77832100B6449F /* PVNetplay */; };
 		B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; };
 		B3A477C62C941F120052500A /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A479CE2C96507A0052500A /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A479CD2C96507A0052500A /* PVSNES.framework */; };
@@ -652,6 +654,7 @@
 		B3C65E612CA53668000E37B0 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C65E582CA53666000E37B0 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C65E622CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C65E592CA53666000E37B0 /* PVMupen64PlusVideoRice.framework */; };
 		B3C65E632CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C65E592CA53666000E37B0 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3CBD4512F778106009327EB /* PVAppIntents in Frameworks */ = {isa = PBXBuildFile; productRef = B3CBD4502F778106009327EB /* PVAppIntents */; };
 		B3CC22000000000100000002 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9D29209B6700E4C858 /* PreviewProvider.swift */; };
 		B3CC22000000000100000003 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9B29209B6700E4C858 /* PreviewViewController.swift */; };
 		B3CC22000000000100000004 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DF9829209B6300E4C858 /* QuickLook.framework */; };
@@ -3247,6 +3250,8 @@
 				B318E27D2CAB4C4200D0E599 /* PVSNES.framework in Frameworks */,
 				B3EF26EA2BE7F8BD0066D4B6 /* libz.tbd in Frameworks */,
 				B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */,
+				B3A450FE2F77832100B6449F /* PVNetplay in Frameworks */,
+				B3A450DE2F7782F000B6449F /* PVRcheevosCore in Frameworks */,
 				B382362C2CC4623100DCE080 /* SiriusRating in Frameworks */,
 				B3636EF72F087C6500C64AAD /* PVlibDolphin.xcframework in Frameworks */,
 				B318E2A02CAB5A2600D0E599 /* PVProSystem-Dynamic in Frameworks */,
@@ -3282,6 +3287,7 @@
 				B318E2802CAB4C6400D0E599 /* PVFCEU.framework in Frameworks */,
 				B318E28A2CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B394CD942BDEE53A006B63E8 /* SystemConfiguration.framework in Frameworks */,
+				B3CBD4512F778106009327EB /* PVAppIntents in Frameworks */,
 				B33BD1C52C6A622A001E933A /* PVTGBDual-Dynamic in Frameworks */,
 				B3E2AA252CB6328100E2636D /* PVVecX.framework in Frameworks */,
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
@@ -7378,6 +7384,9 @@
 				B3D58F4D2E30194000E130BC /* MoltenVK-1.2.8 */,
 				B336F2EB2F6E85FD004ABEE6 /* PVCheevos */,
 				B3061F912F776FBD000F8839 /* JITManager */,
+				B3CBD4502F778106009327EB /* PVAppIntents */,
+				B3A450DD2F7782F000B6449F /* PVRcheevosCore */,
+				B3A450FD2F77832100B6449F /* PVNetplay */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -7887,6 +7896,9 @@
 				B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */,
 				3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */,
 				B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */,
+				B3CBD44F2F778106009327EB /* XCLocalSwiftPackageReference "PVAppIntents" */,
+				B3A450DC2F7782F000B6449F /* XCLocalSwiftPackageReference "PVRcheevosCore" */,
+				B3A450FC2F77832100B6449F /* XCLocalSwiftPackageReference "PVNetplay" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -15496,6 +15508,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVSettings;
 		};
+		B3A450DC2F7782F000B6449F /* XCLocalSwiftPackageReference "PVRcheevosCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVRcheevosCore;
+		};
+		B3A450FC2F77832100B6449F /* XCLocalSwiftPackageReference "PVNetplay" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVNetplay;
+		};
 		B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Atari800;
@@ -15511,6 +15531,10 @@
 		B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Mednafen;
+		};
+		B3CBD44F2F778106009327EB /* XCLocalSwiftPackageReference "PVAppIntents" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVAppIntents;
 		};
 		B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -16693,6 +16717,14 @@
 			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
 			productName = PVLibrary;
 		};
+		B3A450DD2F7782F000B6449F /* PVRcheevosCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVRcheevosCore;
+		};
+		B3A450FD2F77832100B6449F /* PVNetplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVNetplay;
+		};
 		B3A60FFE2CB880BE001D99C2 /* PVUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */;
@@ -16804,6 +16836,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B34A20132C62F96100E34059 /* XCLocalSwiftPackageReference "PVPlists" */;
 			productName = PVPlists;
+		};
+		B3CBD4502F778106009327EB /* PVAppIntents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVAppIntents;
 		};
 		B3CC2200000000010000000F /* PVLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
