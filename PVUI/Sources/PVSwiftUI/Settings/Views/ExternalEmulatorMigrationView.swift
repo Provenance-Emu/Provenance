@@ -150,7 +150,7 @@ public struct ExternalEmulatorMigrationView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(title: "Detected Emulators", icon: "checkmark.circle.fill", color: .green)
 
-            ForEach(installedEmulators, id: \.rawValue) { emulator in
+            ForEach(installedEmulators) { emulator in
                 EmulatorRowView(emulator: emulator) {
                     selectedEmulator = emulator
                 }
@@ -206,7 +206,7 @@ public struct ExternalEmulatorMigrationView: View {
                     .foregroundStyle(.secondary)
 
                 // Show one entry per distinct app (skip deltaLite — same steps as delta)
-                ForEach(KnownEmulator.allCases.filter { $0 != .deltaLite }, id: \.rawValue) { emulator in
+                ForEach(KnownEmulator.allCases.filter { $0 != .deltaLite }) { emulator in
                     Button {
                         selectedEmulator = emulator
                     } label: {

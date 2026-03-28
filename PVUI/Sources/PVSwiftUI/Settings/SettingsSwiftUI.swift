@@ -2453,9 +2453,15 @@ private struct LibrarySection: View {
             #endif
 
             NavigationLink(destination: ExternalEmulatorMigrationView()) {
+                #if os(tvOS)
+                SettingsRow(title: "Import from Another Emulator",
+                            subtitle: "Transfer save files to Provenance using the built-in web server.",
+                            icon: .sfSymbol("arrow.triangle.2.circlepath"))
+                #else
                 SettingsRow(title: "Import from Another Emulator",
                             subtitle: "Step-by-step guide to migrate saves from Delta, RetroArch, Mantic Emu, PPSSPP, or Gamma.",
                             icon: .sfSymbol("arrow.triangle.2.circlepath"))
+                #endif
             }
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
