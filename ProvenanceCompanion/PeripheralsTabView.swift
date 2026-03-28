@@ -76,7 +76,7 @@ struct PeripheralsTabView: View {
 
             if case .failed(let msg) = driverExtManager.activationState {
                 Label(
-                    String(localized: "peripherals.driverkit.status.failed \(msg)"),
+                    "\(String(localized: "peripherals.driverkit.status.failed")): \(msg)",
                     systemImage: "exclamationmark.triangle"
                 )
                 .font(.caption)

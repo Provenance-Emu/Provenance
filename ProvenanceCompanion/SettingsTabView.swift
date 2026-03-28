@@ -40,10 +40,12 @@ struct SettingsTabView: View {
                 }
 
                 Section(String(localized: "settings.support.section")) {
-                    Link(String(localized: "settings.support.github"),
-                         destination: URL(string: "https://github.com/Provenance-Emu/Provenance")!)
-                    Link(String(localized: "settings.support.driverkit_entitlement"),
-                         destination: URL(string: "https://developer.apple.com/contact/request/driverkit/")!)
+                    if let githubURL = URL(string: "https://github.com/Provenance-Emu/Provenance") {
+                        Link(String(localized: "settings.support.github"), destination: githubURL)
+                    }
+                    if let driverKitURL = URL(string: "https://developer.apple.com/contact/request/driverkit/") {
+                        Link(String(localized: "settings.support.driverkit_entitlement"), destination: driverKitURL)
+                    }
                 }
             }
             .navigationTitle(String(localized: "settings.nav_title"))

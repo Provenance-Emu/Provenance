@@ -13,7 +13,7 @@ public final class DriverStoreManager {
 
     public private(set) var products: [DriverStoreProduct] = []
     public private(set) var isLoading = false
-    public private(set) var purchaseError: String?
+    public var purchaseError: String?
 
     // MARK: - Private
 
@@ -79,6 +79,7 @@ public final class DriverStoreManager {
 
     /// Restore completed transactions (required for non-consumable IAP).
     public func restorePurchases() async {
+        purchaseError = nil
         do {
             try await AppStore.sync()
             await refreshPurchaseStates()

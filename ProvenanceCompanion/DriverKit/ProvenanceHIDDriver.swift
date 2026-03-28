@@ -8,7 +8,7 @@
 /// XCODE SETUP REQUIRED:
 /// 1. File > New > Target > DriverKit Extension
 /// 2. Name: "ProvenanceCompanionDriverKit"
-/// 3. Bundle ID: "org.provenance-emu.companion.driverkit"
+/// 3. Bundle ID: "org.provenance-emu.ProvenanceCompanion.driverkit"
 /// 4. Set DRIVERKIT_DEPLOYMENT_TARGET = 21.0 (iPadOS 16+ / macOS 13+)
 /// 5. Embed in: ProvenanceCompanion app target
 /// 6. Add entitlements (see ProvenanceHIDDriver.entitlements)

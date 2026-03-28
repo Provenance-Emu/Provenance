@@ -101,9 +101,7 @@ extension DriverExtensionManager: OSSystemExtensionRequestDelegate {
     }
 
     public nonisolated func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        Task { @MainActor in
-            // State stays .activating — the OS presents its own approval UI.
-        }
+        // State stays .activating — the OS presents its own approval UI; no action needed.
     }
 
     public nonisolated func request(
