@@ -108,6 +108,14 @@ Higher tiers may import lower tiers. **Never the reverse.**
 
 ## New Patterns (March 2026)
 
+### Feature Flag `allowedPlatforms` — Per-OS Feature Gating (added in #3562)
+- `FeatureFlag.allowedPlatforms: [String]?` — optional whitelist of OS platform raw values (`"ios"`, `"tvos"`, `"macos"`, `"visionos"`). `nil` means all platforms allowed (backwards-compatible default).
+- `PVPlatform` enum in `PVFeatureFlags` — `ios`, `tvos`, `macos`, `visionos`; `PVPlatform.current` is a compile-time constant backed by `#if os(...)` directives.
+- Platform check runs first in `_evaluate()` before app-type/version gates. Platform gate is respected in `getFeatureRestrictions()` too.
+- Debug overrides bypass the platform gate (intentional — lets developers test platform-specific features on the wrong simulator).
+- Always add `allowedPlatforms` to `features.json` AND to the `FeatureFlag` Swift static definition when a flag is OS-specific.
+- **Flag 🟠 MAJOR** if platform-restricted features use raw `#if os(...)` guards at call sites instead of `PVFeatureFlags.shared.isEnabled(.)`. The flag system is the single source of truth and supports debug overrides; inline `#if` guards do not.
+
 ### SiriKit INPlayMediaIntent — In-App Handler Pattern (added in #3550)
 - `PVAppDelegate` conforms to `INPlayMediaIntentHandling` in `PVAppDelegate+MediaIntent.swift`.
 - `application(_:handlerFor:)` returns `self` for `INPlayMediaIntent` — **no separate Intents Extension needed**.

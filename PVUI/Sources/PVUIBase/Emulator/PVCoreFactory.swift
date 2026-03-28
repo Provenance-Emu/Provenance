@@ -12,6 +12,7 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVRealm
 import PVLogging
+import PVFeatureFlags
 
 // extension PVSystem {
 //    var responderClassType : AnyClass {
@@ -32,11 +33,8 @@ public extension PVCore {
         // with existing ROM/core associations without removing the RA backend.
         ILOG("createInstance: principleClass=\(className) for \(identifier)")
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
-            let directFlag = UserDefaults.standard.bool(forKey: "dynamicLibretroScanner")
-            let overrideDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides")
-            let overrideFlag = overrideDict?["dynamicLibretroScanner"] as? Bool
-            let featureEnabled = directFlag || (overrideFlag == true)
-            ILOG("ThinLibretro: directFlag=\(directFlag) overrideFlag=\(String(describing: overrideFlag)) featureEnabled=\(featureEnabled)")
+            let featureEnabled = PVFeatureFlags.shared.isEnabled(.dynamicLibretroScanner)
+            ILOG("ThinLibretro: featureEnabled=\(featureEnabled)")
             if featureEnabled {
                 // Force-load PVCoreBridgeRetro framework so the ObjC runtime has
                 // PVThinLibretroCore registered. Frameworks are lazily loaded and
