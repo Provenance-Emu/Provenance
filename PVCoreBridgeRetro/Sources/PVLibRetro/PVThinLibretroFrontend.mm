@@ -405,6 +405,18 @@ typedef struct PVThinLibretroSymbols {
     // Return type is VkResult per spec; pMetalObjectsInfo uses void* to avoid needing
     // VkExportMetalObjectsInfoEXT from the bundled vulkan.h (v17 predates this extension).
     VkResult (*_vkExportMetalObjectsEXT)(VkDevice device, void *pMetalObjectsInfo);
+
+    // Double-buffer synchronisation via per-frame fences.
+    // Replaces the vkQueueWaitIdle full-queue stall with narrower per-submission waits.
+    // _vulkanFrameFences[0/1] are created SIGNALED so the first wait_sync_index is a no-op.
+    // _vulkanFrameIndex alternates 0↔1 every frame; get_sync_index_mask returns 3 (both slots valid).
+    VkFence  _vulkanFrameFences[2];
+    uint32_t _vulkanFrameIndex;
+    // Fence lifecycle functions (use PFN_ typedefs for full type safety)
+    PFN_vkCreateFence  _vkCreateFence;
+    PFN_vkDestroyFence _vkDestroyFence;
+    PFN_vkWaitForFences _vkWaitForFences;
+    PFN_vkResetFences  _vkResetFences;
 #endif
 
     // Serialization quirks bitmask
@@ -746,13 +758,16 @@ static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image 
 }
 
 static uint32_t thin_vulkan_get_sync_index(void *handle) {
-    (void)handle;
-    return 0; // Single-buffer: always slot 0
+    PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
+    // Return the current frame slot so the core knows which buffer to write into.
+    // _vulkanFrameIndex alternates 0↔1 each frame (double-buffer).
+    return bridge ? bridge->_vulkanFrameIndex : 0;
 }
 
 static uint32_t thin_vulkan_get_sync_index_mask(void *handle) {
     (void)handle;
-    return 1; // Single-buffer: only slot 0 is valid
+    // Bitmask of valid sync indices: 3 = 0b11 → slots 0 and 1 are available (double-buffer).
+    return 3;
 }
 
 static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
@@ -773,13 +788,21 @@ static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
 static void thin_vulkan_wait_sync_index(void *handle) {
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge) return;
-    // Wait for the queue to drain so the core can safely reuse its resources.
-    // Hold _vulkanQueueLock to serialize with any concurrent vkQueueSubmit calls.
-    if (bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
-        os_unfair_lock_lock(&bridge->_vulkanQueueLock);
+    // Wait for the previous submission on this slot to complete so the core can safely
+    // reuse its per-frame resources (command pools, descriptor sets, etc.).
+    // Prefer the per-frame fence (narrower than vkQueueWaitIdle which stalls the entire queue).
+    os_unfair_lock_lock(&bridge->_vulkanQueueLock);
+    uint32_t slot = bridge->_vulkanFrameIndex;
+    VkFence fence = bridge->_vulkanFrameFences[slot];
+    if (fence && bridge->_vkWaitForFences && bridge->_vulkanDevice) {
+        // UINT64_MAX = wait indefinitely; the fence is always signaled within one frame.
+        bridge->_vkWaitForFences(bridge->_vulkanDevice, 1, &fence, 1 /* VK_TRUE */, UINT64_MAX);
+        // Leave fence signaled — submitVulkanCommandBuffers resets it right before the next submit.
+    } else if (bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
+        // Fallback: full-queue stall when fences are unavailable.
         bridge->_vkQueueWaitIdle(bridge->_vulkanQueue);
-        os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
     }
+    os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
 }
 
 static void thin_vulkan_lock_queue(void *handle) {
@@ -4889,6 +4912,48 @@ static bool thin_environment(unsigned cmd, void *data) {
         return NO;
     }
 
+    // Load fence functions for double-buffer synchronisation (non-fatal if unavailable;
+    // the code falls back to vkQueueWaitIdle when any fence function is missing).
+    _vkCreateFence  = (PFN_vkCreateFence) _vkGetDeviceProcAddr(_vulkanDevice, "vkCreateFence");
+    _vkDestroyFence = (PFN_vkDestroyFence)_vkGetDeviceProcAddr(_vulkanDevice, "vkDestroyFence");
+    _vkWaitForFences = (PFN_vkWaitForFences)_vkGetDeviceProcAddr(_vulkanDevice, "vkWaitForFences");
+    _vkResetFences  = (PFN_vkResetFences) _vkGetDeviceProcAddr(_vulkanDevice, "vkResetFences");
+
+    if (_vkCreateFence && _vkDestroyFence && _vkWaitForFences && _vkResetFences) {
+        // Pre-signaled so the very first thin_vulkan_wait_sync_index returns immediately.
+        VkFenceCreateInfo fenceCI = {
+            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+            .pNext = NULL,
+            .flags = VK_FENCE_CREATE_SIGNALED_BIT,
+        };
+        _vulkanFrameIndex = 0;
+        BOOL fencesOK = YES;
+        for (int i = 0; i < 2; i++) {
+            VkResult fr = _vkCreateFence(_vulkanDevice, &fenceCI, NULL, &_vulkanFrameFences[i]);
+            if (fr != VK_SUCCESS) {
+                WLOG(@"ThinFrontend: vkCreateFence[%d] failed (result=%d) — will use vkQueueWaitIdle", i, fr);
+                _vulkanFrameFences[i] = VK_NULL_HANDLE;
+                fencesOK = NO;
+                break;
+            }
+        }
+        if (fencesOK) {
+            ILOG(@"ThinFrontend: double-buffer frame fences created");
+        } else {
+            // Destroy any partially-created fences
+            for (int i = 0; i < 2; i++) {
+                if (_vulkanFrameFences[i]) {
+                    _vkDestroyFence(_vulkanDevice, _vulkanFrameFences[i], NULL);
+                    _vulkanFrameFences[i] = VK_NULL_HANDLE;
+                }
+            }
+        }
+    } else {
+        WLOG(@"ThinFrontend: fence functions unavailable — falling back to vkQueueWaitIdle");
+        _vulkanFrameFences[0] = VK_NULL_HANDLE;
+        _vulkanFrameFences[1] = VK_NULL_HANDLE;
+    }
+
     // Load Metal interop functions (MoltenVK-specific; non-fatal if unavailable)
     // Primary: VK_EXT_metal_objects (MoltenVK >= 1.2)
     _vkExportMetalObjectsEXT = (VkResult (*)(VkDevice, void *))
@@ -4920,6 +4985,24 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (void)destroyVulkanDevice {
     if (_vulkanDevice && _vkDestroyDevice) {
+        // Drain the queue before tearing down fences to ensure no fence is still in-flight.
+        if (_vkQueueWaitIdle && _vulkanQueue) {
+            _vkQueueWaitIdle(_vulkanQueue);
+        }
+        // Destroy double-buffer frame fences.
+        if (_vkDestroyFence) {
+            for (int i = 0; i < 2; i++) {
+                if (_vulkanFrameFences[i]) {
+                    _vkDestroyFence(_vulkanDevice, _vulkanFrameFences[i], NULL);
+                    _vulkanFrameFences[i] = VK_NULL_HANDLE;
+                }
+            }
+        }
+        _vulkanFrameIndex = 0;
+        _vkCreateFence  = NULL;
+        _vkDestroyFence = NULL;
+        _vkWaitForFences = NULL;
+        _vkResetFences  = NULL;
         _vkDestroyDevice(_vulkanDevice, NULL);
         _vulkanDevice = NULL;
         _vulkanQueue = NULL;
@@ -4983,6 +5066,15 @@ static bool thin_environment(unsigned cmd, void *data) {
     // Discard set_image semaphores — not valid in set_command_buffers mode.
     _vulkanWaitSemaphoreCount = 0;
 
+    // Use the per-frame fence for this slot, resetting it right before submit so it
+    // transitions SIGNALED→UNSIGNALED and will be re-signaled when the GPU finishes.
+    VkFence frameFence = (_vulkanFrameFences[0] && _vkResetFences && _vkWaitForFences)
+        ? _vulkanFrameFences[_vulkanFrameIndex]
+        : VK_NULL_HANDLE;
+    if (frameFence) {
+        _vkResetFences(_vulkanDevice, 1, &frameFence);
+    }
+
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
@@ -4995,19 +5087,23 @@ static bool thin_environment(unsigned cmd, void *data) {
         .pSignalSemaphores = (signalSem != VK_NULL_HANDLE) ? &signalSem : NULL,
     };
 
-    VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, VK_NULL_HANDLE);
+    VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, frameFence);
 
-    // Wait for GPU completion while still holding _vulkanQueueLock so no concurrent
-    // submissions can interleave between vkQueueSubmit and vkQueueWaitIdle. Releasing
-    // the lock between them would allow another thread's submit to stall on the wait.
-    // NOTE: vkQueueWaitIdle introduces a full CPU/GPU sync every frame. This guarantees
-    // the VkImage is safe to export before vkGetMTLTextureMVK/vkExportMetalObjectsEXT,
-    // but limits throughput. A future improvement would use a VkFence created at setup
-    // time, passed to vkQueueSubmit, and waited with vkWaitForFences — allowing pipelined
-    // rendering without stalling the full queue. Filed as technical debt.
-    if (result == VK_SUCCESS && _vkQueueWaitIdle) {
-        _vkQueueWaitIdle(_vulkanQueue);
+    // Wait for GPU completion before extracting the MTLTexture.
+    // Per-frame fence (preferred): waits only on this specific submission, leaving other
+    // queue work unaffected.  Falls back to vkQueueWaitIdle when fences are unavailable.
+    // The fence is left SIGNALED after the wait; wait_sync_index reads it at the start
+    // of the next iteration of this slot to confirm the slot is free.
+    if (result == VK_SUCCESS) {
+        if (frameFence && _vkWaitForFences) {
+            _vkWaitForFences(_vulkanDevice, 1, &frameFence, 1 /* VK_TRUE */, UINT64_MAX);
+        } else if (_vkQueueWaitIdle) {
+            _vkQueueWaitIdle(_vulkanQueue);
+        }
     }
+
+    // Advance the frame slot so the next frame uses the other buffer.
+    _vulkanFrameIndex = (_vulkanFrameIndex + 1) % 2;
     os_unfair_lock_unlock(&_vulkanQueueLock);
 
     if (result != VK_SUCCESS) {

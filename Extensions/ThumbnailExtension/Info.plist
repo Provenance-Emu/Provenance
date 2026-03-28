@@ -9,6 +9,76 @@
 			<key>QLSupportedContentTypes</key>
 			<array>
 				<string>com.provenance.rom</string>
+				<string>com.provenance.rom.atari2600</string>
+				<string>com.provenance.rom.sega32x</string>
+				<string>com.provenance.rom.3do</string>
+				<string>com.provenance.rom.3ds</string>
+				<string>com.provenance.rom.atari5200</string>
+				<string>com.provenance.rom.atari7800</string>
+				<string>com.provenance.rom.appleii</string>
+				<string>com.provenance.rom.atari8bit</string>
+				<string>com.provenance.rom.atarist</string>
+				<string>com.provenance.rom.c64</string>
+				<string>com.provenance.rom.cdi</string>
+				<string>com.provenance.rom.colecovision</string>
+				<string>com.provenance.rom.cps1</string>
+				<string>com.provenance.rom.cps2</string>
+				<string>com.provenance.rom.cps3</string>
+				<string>com.provenance.rom.doom</string>
+				<string>com.provenance.rom.dos</string>
+				<string>com.provenance.rom.dreamcast</string>
+				<string>com.provenance.rom.ds</string>
+				<string>com.provenance.rom.ep128</string>
+				<string>com.provenance.rom.fds</string>
+				<string>com.provenance.rom.gamecube</string>
+				<string>com.provenance.rom.gamegear</string>
+				<string>com.provenance.rom.gb</string>
+				<string>com.provenance.rom.gba</string>
+				<string>com.provenance.rom.gbc</string>
+				<string>com.provenance.rom.genesis</string>
+				<string>com.provenance.rom.intellivision</string>
+				<string>com.provenance.rom.jaguar</string>
+				<string>com.provenance.rom.jaguarcd</string>
+				<string>com.provenance.rom.lynx</string>
+				<string>com.provenance.rom.macintosh</string>
+				<string>com.provenance.rom.mame</string>
+				<string>com.provenance.rom.mastersystem</string>
+				<string>com.provenance.rom.msx</string>
+				<string>com.provenance.rom.msx2</string>
+				<string>com.provenance.rom.music</string>
+				<string>com.provenance.rom.n64</string>
+				<string>com.provenance.rom.neogeo</string>
+				<string>com.provenance.rom.nes</string>
+				<string>com.provenance.rom.ngp</string>
+				<string>com.provenance.rom.ngpc</string>
+				<string>com.provenance.rom.odyssey2</string>
+				<string>com.provenance.rom.palmos</string>
+				<string>com.provenance.rom.pc98</string>
+				<string>com.provenance.rom.pce</string>
+				<string>com.provenance.rom.pcecd</string>
+				<string>com.provenance.rom.pcfx</string>
+				<string>com.provenance.rom.pokemonmini</string>
+				<string>com.provenance.rom.ps2</string>
+				<string>com.provenance.rom.ps3</string>
+				<string>com.provenance.rom.psp</string>
+				<string>com.provenance.rom.psx</string>
+				<string>com.provenance.rom.quake</string>
+				<string>com.provenance.rom.quake2</string>
+				<string>com.provenance.rom.retroarch</string>
+				<string>com.provenance.rom.saturn</string>
+				<string>com.provenance.rom.segacd</string>
+				<string>com.provenance.rom.sg1000</string>
+				<string>com.provenance.rom.sgfx</string>
+				<string>com.provenance.rom.snes</string>
+				<string>com.provenance.rom.supervision</string>
+				<string>com.provenance.rom.tic80</string>
+				<string>com.provenance.rom.vb</string>
+				<string>com.provenance.rom.vectrex</string>
+				<string>com.provenance.rom.wii</string>
+				<string>com.provenance.rom.wolf3d</string>
+				<string>com.provenance.rom.ws</string>
+				<string>com.provenance.rom.wsc</string>
+				<string>com.provenance.rom.zxspectrum</string>
 				<string>com.provenance.savestate</string>
 				<string>org.7-zip.7-zip-archive</string>
 				<string>com.rarlab.rar-archive</string>

@@ -171,6 +171,9 @@ public final class GameImporterSwiftDataBridge {
             originalArtworkURL: pvGame.originalArtworkURL,
             originalArtworkFile: artworkFile,
             requiresSync: pvGame.requiresSync,
+            matchSourceRaw: pvGame.matchSourceRaw,
+            userCustomizedFieldsMask: pvGame.userCustomizedFieldsMask,
+            lastMetadataLookupDate: pvGame.lastMetadataLookupDate,
             isFavorite: pvGame.isFavorite,
             romSerial: pvGame.romSerial,
             romHeader: pvGame.romHeader, importDate: pvGame.importDate,
@@ -204,10 +207,13 @@ public final class GameImporterSwiftDataBridge {
     /// including nil/empty values, so SwiftData never retains stale data after Realm clears a field.
     private func applyFields(of pvGame: PVGame, to record: Game_Data, context: ModelContext) {
         // Always overwrite all scalar fields to stay in sync with Realm (true mirror semantics).
-        record.title           = pvGame.title
-        record.romPath         = pvGame.romPath
-        record.requiresSync    = pvGame.requiresSync
-        record.lastPlayed      = pvGame.lastPlayed
+        record.title                     = pvGame.title
+        record.romPath                   = pvGame.romPath
+        record.requiresSync              = pvGame.requiresSync
+        record.matchSourceRaw            = pvGame.matchSourceRaw
+        record.userCustomizedFieldsMask  = pvGame.userCustomizedFieldsMask
+        record.lastMetadataLookupDate    = pvGame.lastMetadataLookupDate
+        record.lastPlayed                = pvGame.lastPlayed
         record.playCount       = pvGame.playCount
         record.timeSpentInGame = pvGame.timeSpentInGame
         record.rating          = pvGame.rating

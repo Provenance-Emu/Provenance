@@ -169,11 +169,8 @@ public final class WidgetDataWriter: Sendable {
             .prefix(12)
             .map { $0.asWidgetGameData }
 
-        // Gallery: sample up to 12 random games from the same snapshot.
-        let gallerySlice: [GameEntity] = all.count <= 12
-            ? Array(all)
-            : (0..<12).map { _ in all[Int.random(in: 0..<all.count)] }
-        let gallery = gallerySlice.map { $0.asWidgetGameData }
+        // Gallery: sample up to 12 random games from the same snapshot (no intra-gallery duplicates; may overlap with recents).
+        let gallery = all.shuffled().prefix(12).map { $0.asWidgetGameData }
 
         writeGameData(recentGames: recents, galleryGames: gallery, totalCount: totalCount)
     }

@@ -253,13 +253,17 @@ final class PauseTileMenuViewModel: ObservableObject {
             let configuredCount = (0..<transferCore.transferPakSlotCount).reduce(0) { count, port in
                 count + (transferCore.transferPakROM(forPort: port) != nil ? 1 : 0)
             }
-            if TransferPakCompatibleGames.isKnownTransferPakGame(gameTitle) || configuredCount > 0 {
+            let isKnown = TransferPakCompatibleGames.isKnownTransferPakGame(gameTitle)
+            if isKnown || configuredCount > 0 {
+                // Show "!" badge when this is a known Transfer Pak game but nothing is configured —
+                // this nudges the user to set it up without blocking launch.
+                let badge: String? = configuredCount > 0 ? "\(configuredCount)" : "!"
                 coreTiles.append(PauseMenuTile(
                     id: "transferPak",
-                    icon: "memorychip",
+                    icon: "arrow.triangle.2.circlepath",
                     label: String(localized: "Transfer Pak"),
-                    badge: configuredCount > 0 ? "\(configuredCount)" : nil,
-                    colorKey: .green,
+                    badge: badge,
+                    colorKey: .pink,
                     dismissOnTap: false
                 ))
             }

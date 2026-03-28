@@ -92,6 +92,62 @@ final class GameMetadataCardTests: XCTestCase {
         XCTAssertTrue(html.contains("art-placeholder"))
     }
 
+    func testHTMLContainsPlaceholderForUnrecognizedImageFormat() {
+        // Non-JPEG/PNG data (e.g. WebP) falls back to placeholder.
+        let fakeData = Data([0x52, 0x49, 0x46, 0x46]) // RIFF header (WebP)
+        let info = makeGameInfo()
+        let html = GameMetadataCard.html(for: info, filename: "test.rom", artworkData: fakeData)
+        XCTAssertTrue(html.contains("art-placeholder"))
+        XCTAssertFalse(html.contains("data:image/"))
+    }
+
+    func testHTMLNoPlaysBadgeWhenZeroPlayCount() {
+        let info = makeGameInfo(playCount: 0)
+        let html = GameMetadataCard.html(for: info, filename: "test.rom")
+        XCTAssertFalse(html.contains("class=\"badge plays\""))
+    }
+
+    func testHTMLContainsDescriptionWhenProvided() {
+        let desc = "A legendary adventure across time."
+        let info = makeGameInfo(gameDescription: desc)
+        let html = GameMetadataCard.html(for: info, filename: "test.rom")
+        XCTAssertTrue(html.contains(desc))
+        XCTAssertTrue(html.contains("class=\"description\""))
+    }
+
+    func testHTMLNoDescriptionBlockWhenNil() {
+        let info = makeGameInfo(gameDescription: nil)
+        let html = GameMetadataCard.html(for: info, filename: "test.rom")
+        XCTAssertFalse(html.contains("class=\"description\""))
+    }
+
+    func testHTMLUsesFilenameAsTitleWhenGameInfoNil() {
+        // When no GameInfo is available, the filename (minus extension) is the title.
+        let html = GameMetadataCard.html(for: nil, filename: "Zelda_OOT.n64")
+        XCTAssertTrue(html.contains("Zelda OOT"))
+    }
+
+    func testHTMLEscapesDescriptionSpecialCharacters() {
+        let info = makeGameInfo(gameDescription: "A & B < C > D")
+        let html = GameMetadataCard.html(for: info, filename: "test.rom")
+        XCTAssertTrue(html.contains("A &amp; B &lt; C &gt; D"))
+        XCTAssertFalse(html.contains("A & B < C"))
+    }
+
+    func testHTMLContainsDeveloperAndYear() {
+        let info = makeGameInfo(developer: "Konami", publishDate: "1987")
+        let html = GameMetadataCard.html(for: info, filename: "test.rom")
+        XCTAssertTrue(html.contains("Konami"))
+        XCTAssertTrue(html.contains("1987"))
+    }
+
+    func testHTMLOmitsMetaRowWhenDeveloperAndYearNil() {
+        let info = makeGameInfo(developer: nil, publishDate: nil, genre: nil)
+        let html = GameMetadataCard.html(for: info, filename: "test.rom")
+        // Meta div should be present but empty
+        XCTAssertTrue(html.contains("class=\"meta\""))
+    }
+
     // MARK: - Helpers
 
     private func makeGameInfo(

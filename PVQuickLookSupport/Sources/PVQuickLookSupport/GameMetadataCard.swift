@@ -133,7 +133,7 @@ public struct GameMetadataCard {
 
 // MARK: - String+HTML
 
-extension String {
+fileprivate extension String {
     /// Escapes `&`, `<`, `>`, and `"` for safe HTML embedding.
     var htmlEscaped: String {
         self

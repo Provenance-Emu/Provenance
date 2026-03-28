@@ -422,6 +422,7 @@
 					<string>mds</string>
 					<string>nrg</string>
 					<string>rom</string>
+					<string>rvz</string>
 					<string>toc</string>
 				</array>
 				<key>public.mime-type</key>
@@ -2305,6 +2306,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>svs</string>
+					<string>pvsav</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
