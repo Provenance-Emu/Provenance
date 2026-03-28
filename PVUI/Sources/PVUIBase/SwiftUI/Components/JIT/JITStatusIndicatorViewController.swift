@@ -11,6 +11,9 @@ import Combine
 #if canImport(PVJIT)
 import PVJIT
 #endif
+#if canImport(JITManager)
+import JITManager
+#endif
 
 // MARK: - PassthroughView
 

@@ -104,15 +104,12 @@ public final class JITContextualPromptManager {
         // the IPA. `isGenuinelyAppStoreDistributed()` detects at runtime whether the
         // build is still a genuine App Store install or has been modified.
         let isGenuineAppStore = DOLJitManager.isGenuinelyAppStoreDistributed()
-        // JIT is structurally unavailable when W×X is enforced (iOS 26+ without the
-        // native JIT entitlement). In that case acquired is false and there's no path
-        // to enable JIT — prompting "use AltStore" would be pointless noise.
-        let jitAcquirable: Bool
-        if isGenuineAppStore {
-            jitAcquirable = DOLJitManager.acquired  // always false here (guard above)
-        } else {
-            jitAcquirable = DOLJitManager.acquired || !DOLJitManager.isWXEnforced
-        }
+        // Genuine App Store installs cannot acquire JIT through any UI-visible path:
+        // DOLJitManager.acquired is always false here (guard above returned .proceed if true),
+        // and sideloading tools are off the table per App Store guidelines.
+        // For non-App Store / sideloaded builds, JIT is acquirable on iOS < 26 via sideloading
+        // tools; W×X enforcement on iOS 26+ makes it structurally unavailable.
+        let jitAcquirable = isGenuineAppStore ? false : !DOLJitManager.isWXEnforced
 
         // 3. JIT cannot be acquired on this device/OS (e.g. iOS 26 App Store build).
         //    Prompting to "enable via AltStore" would be useless noise.
