@@ -33,6 +33,9 @@ struct PeripheralsTabView: View {
             .task {
                 peripheralManager.startScanning()
             }
+            .onDisappear {
+                peripheralManager.stopScanning()
+            }
         }
     }
 
@@ -160,7 +163,7 @@ struct PeripheralsTabView: View {
         case .activating:      return "peripherals.driverkit.status.activating"
         case .active:          return "peripherals.driverkit.status.active"
         case .deactivating:    return "peripherals.driverkit.status.deactivating"
-        case .failed:          return "peripherals.driverkit.status.active" // fallback; error shown below
+        case .failed:          return "peripherals.driverkit.status.failed_short"
         }
     }
 }
@@ -178,10 +181,10 @@ private struct DeviceRowView: View {
                 .frame(width: 32)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(device.productName)
+                Text(verbatim: device.productName)
                     .font(.body)
                 HStack(spacing: 8) {
-                    Text(device.manufacturerName)
+                    Text(verbatim: device.manufacturerName)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     if device.transport != .gcController {
@@ -275,8 +278,8 @@ private struct SupportedDevicesListView: View {
                     ForEach(profiles, id: \.productName) { profile in
                         HStack {
                             VStack(alignment: .leading) {
-                                Text(profile.productName)
-                                Text(profile.manufacturerName)
+                                Text(verbatim: profile.productName)
+                                Text(verbatim: profile.manufacturerName)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }

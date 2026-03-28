@@ -222,6 +222,17 @@
         }
       }
     },
+    "peripherals.driverkit.status.failed_short" : {
+      "comment" : "Short DriverKit status caption shown next to icon when activation failed (full error appears below)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed"
+          }
+        }
+      }
+    },
     "peripherals.driverkit.status.not_installed" : {
       "comment" : "DriverKit status label when the extension is not yet active",
       "localizations" : {

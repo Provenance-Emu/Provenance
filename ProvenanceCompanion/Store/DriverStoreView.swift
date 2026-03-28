@@ -103,9 +103,9 @@ private struct DriverProductCard: View {
                 .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 10))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(product.id.displayName)
+                Text(verbatim: product.id.displayName)
                     .font(.headline)
-                Text(product.id.localizedDescription)
+                Text(verbatim: product.id.localizedDescription)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

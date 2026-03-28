@@ -196,24 +196,30 @@ public final class USBPeripheralManager {
     }
 
     private func addEAAccessory(_ accessory: EAAccessory) {
+        // EAAccessory.connectionID is an opaque session handle, not a USB VID.
+        // MFi accessories do not expose USB Vendor/Product IDs; use 0 with the
+        // connection ID stored in locationID for deduplication.
+        let sessionID = UInt32(accessory.connectionID & 0xFFFF_FFFF)
         let device = USBDevice(
-            vendorID: Int(accessory.connectionID),
+            vendorID: 0,
             productID: 0,
             productName: accessory.name,
             manufacturerName: accessory.manufacturer,
             transport: .mfi,
-            category: .gamepad
+            category: .gamepad,
+            locationID: sessionID
         )
         guard !connectedDevices.contains(where: {
-            $0.transport == .mfi && $0.vendorID == Int(accessory.connectionID)
+            $0.transport == .mfi && $0.locationID == sessionID
         }) else { return }
         connectedDevices.append(device)
         delegate?.peripheralManager(self, didConnect: device)
     }
 
     private func removeEAAccessory(_ accessory: EAAccessory) {
+        let sessionID = UInt32(accessory.connectionID & 0xFFFF_FFFF)
         guard let idx = connectedDevices.firstIndex(where: {
-            $0.transport == .mfi && $0.vendorID == Int(accessory.connectionID)
+            $0.transport == .mfi && $0.locationID == sessionID
         }) else { return }
         let device = connectedDevices.remove(at: idx)
         delegate?.peripheralManager(self, didDisconnect: device)

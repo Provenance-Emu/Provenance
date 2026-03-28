@@ -75,7 +75,10 @@ included:
   - PVSupport
   - PVThemes
   - PVUI
+  - PVUSBManager
   - PVWebServer
+  # Companion app
+  - ProvenanceCompanion
   # Extensions (all first-party)
   - Extensions/ActivityMonitorExtension
   - Extensions/ActivityReportExtension
