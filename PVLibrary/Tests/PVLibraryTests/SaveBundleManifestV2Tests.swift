@@ -465,6 +465,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("\0hidden"))
     }
 
+
     func testBatterySaveEntry_isSafeFilename() {
         let safe = SaveBundleManifestV2.BatterySaveEntry(filename: "Mario.srm")
         XCTAssertTrue(safe.isSafeFilename)
