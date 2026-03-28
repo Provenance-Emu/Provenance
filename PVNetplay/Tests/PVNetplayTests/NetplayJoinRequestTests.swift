@@ -108,6 +108,13 @@ struct NetplayJoinRequestURLTests {
         #expect(request.port == NetplayJoinRequest.defaultPort)
     }
 
+    @Test("Minimum valid port 1 is accepted")
+    func minPortAccepted() throws {
+        let url = URL(string: "provenance://netplay/join?host=10.0.0.1&port=1")!
+        let request = try #require(NetplayJoinRequest.from(url: url))
+        #expect(request.port == 1)
+    }
+
     @Test("defaultPort is 55435")
     func defaultPortValue() {
         #expect(NetplayJoinRequest.defaultPort == 55435)
@@ -234,6 +241,20 @@ struct NetplayJoinRequestEquatableTests {
     func relayNilVsNonNilNotEqual() {
         let a = NetplayJoinRequest(host: "1.2.3.4", port: 55435, relay: nil)
         let b = NetplayJoinRequest(host: "1.2.3.4", port: 55435, relay: "ra.me")
+        #expect(a != b)
+    }
+
+    @Test("Requests with different game names are not equal")
+    func differentGameNamesNotEqual() {
+        let a = NetplayJoinRequest(host: "1.2.3.4", port: 55435, gameName: "Sonic")
+        let b = NetplayJoinRequest(host: "1.2.3.4", port: 55435, gameName: "Mario")
+        #expect(a != b)
+    }
+
+    @Test("gameName nil vs non-nil are not equal")
+    func gameNameNilVsNonNilNotEqual() {
+        let a = NetplayJoinRequest(host: "1.2.3.4", port: 55435, gameName: nil)
+        let b = NetplayJoinRequest(host: "1.2.3.4", port: 55435, gameName: "Sonic")
         #expect(a != b)
     }
 }

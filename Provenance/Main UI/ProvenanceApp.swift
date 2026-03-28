@@ -38,9 +38,10 @@ struct ProvenanceApp: App {
         // Register a background task identifier for Spotlight indexing
         var backgroundTaskIdentifier: UIBackgroundTaskIdentifier
         backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "SpotlightIndexing") {
-            // This will be called if the background task expires
+            // Called by the OS when the background task time is about to expire.
+            // Must call endBackgroundTask to avoid being force-killed.
             WLOG("Spotlight indexing background task expired")
-//            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
         }
 
         // Store the background task identifier for later use
