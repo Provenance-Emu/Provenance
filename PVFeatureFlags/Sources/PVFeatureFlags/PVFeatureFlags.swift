@@ -252,6 +252,7 @@ public struct FeatureFlag: Codable, Sendable {
         allowedPlatforms: ["ios"],
         description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
     )
+
     public static let enhancedArtworkSearch = FeatureFlag(
         enabled: true,
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
@@ -360,6 +361,10 @@ public final class PVFeatureFlags: @unchecked Sendable {
         _appType = appType ?? PVFeatureFlags.getCurrentAppType()
         _buildNumber = buildNumber ?? PVFeatureFlags.getCurrentBuildNumber()
         _appVersion = appVersion ?? PVFeatureFlags.getCurrentAppVersion()
+        // Eagerly load the bundled features.json so flags like dynamicLibretroScanner
+        // reflect their correct defaults (including allowedPlatforms) from the very
+        // first isEnabled(_:) call, before any remote config has been fetched.
+        _ = loadBundledConfiguration()
     }
 
     /// Convenience initializer with a pre-loaded configuration (for testing).

@@ -232,6 +232,33 @@ struct PVFeatureFlagsTests {
         #expect(restrictions.contains { $0.contains("not allowed") })
     }
 
+    @Test func testDebugOverrideBypassesPlatformRestriction() throws {
+        // A platform-gated flag that is blocked on the current platform can still be
+        // force-enabled via a debug override — the override takes precedence over all
+        // other restrictions (platform, app-type, version).
+        let nonCurrentPlatform = PVPlatform.allCases.first { $0 != PVPlatform.current }!.rawValue
+        let json = """
+        {"features": {"romPathMigrator": {"enabled": true, "allowedPlatforms": ["\(nonCurrentPlatform)"], "description": "Other platform only"}}}
+        """
+        let data = json.data(using: .utf8)!
+        let config = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+        let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "1", appVersion: "1.0.0")
+        flags.clearDebugOverrides()
+
+        // Without override: blocked by platform gate
+        #expect(flags.isEnabled(.romPathMigrator) == false)
+
+        // Debug override enabled: bypasses platform gate
+        flags.setDebugOverride(for: .romPathMigrator, enabled: true)
+        #expect(flags.isEnabled(.romPathMigrator) == true)
+
+        // Clear the override: platform gate re-applies
+        flags.setDebugOverride(for: .romPathMigrator, enabled: nil)
+        #expect(flags.isEnabled(.romPathMigrator) == false)
+
+        flags.clearDebugOverrides()
+    }
+
     @Test func testLiteAppTypeIsBlocked() throws {
         let config = try makeConfig()
         // inAppFreeROMs only allows "standard" and "standard.appstore"
