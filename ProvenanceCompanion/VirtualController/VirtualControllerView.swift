@@ -32,7 +32,9 @@ struct VirtualControllerView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationTitle(String(localized: "virtual_controller.nav_title"))
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 toggleButton
@@ -159,47 +161,85 @@ struct VirtualControllerView: View {
     }
 
     private func buttonShape<Content: View>(id: String, size: CGFloat, @ViewBuilder content: () -> Content) -> some View {
-        content()
+        let isActive = activeButtons.contains(id)
+        #if !os(tvOS)
+        return content()
             .frame(width: size, height: size)
             .background(
                 Circle()
-                    .fill(activeButtons.contains(id) ? Color.accentColor : Color(uiColor: .systemFill))
+                    .fill(isActive ? Color.accentColor : Color(uiColor: .systemFill))
             )
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in press(id) }
                     .onEnded   { _ in release(id) }
             )
+        #else
+        return Button { tap(id) } label: {
+            content()
+                .frame(width: size, height: size)
+                .background(
+                    Circle().fill(isActive ? Color.accentColor : Color(.systemFill))
+                )
+        }
+        .buttonStyle(.plain)
+        #endif
     }
 
     private func shoulderButton(_ id: String, label: String, size: CGFloat) -> some View {
-        Text(verbatim: label)
+        let isActive = activeButtons.contains(id)
+        #if !os(tvOS)
+        return Text(verbatim: label)
             .font(.system(size: size * 0.3, weight: .semibold))
             .frame(width: size * 1.6, height: size)
             .background(
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(activeButtons.contains(id) ? Color.accentColor : Color(uiColor: .systemFill))
+                    .fill(isActive ? Color.accentColor : Color(uiColor: .systemFill))
             )
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in press(id) }
                     .onEnded   { _ in release(id) }
             )
+        #else
+        return Button { tap(id) } label: {
+            Text(verbatim: label)
+                .font(.system(size: size * 0.3, weight: .semibold))
+                .frame(width: size * 1.6, height: size)
+                .background(
+                    RoundedRectangle(cornerRadius: 6).fill(isActive ? Color.accentColor : Color(.systemFill))
+                )
+        }
+        .buttonStyle(.plain)
+        #endif
     }
 
     private func metaButton(_ id: String, label: String, size: CGFloat) -> some View {
-        Text(verbatim: label)
+        let isActive = activeButtons.contains(id)
+        #if !os(tvOS)
+        return Text(verbatim: label)
             .font(.system(size: size * 0.45, weight: .medium))
             .frame(width: size * 1.4, height: size * 0.7)
             .background(
                 Capsule()
-                    .fill(activeButtons.contains(id) ? Color.accentColor : Color(uiColor: .systemFill))
+                    .fill(isActive ? Color.accentColor : Color(uiColor: .systemFill))
             )
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in press(id) }
                     .onEnded   { _ in release(id) }
             )
+        #else
+        return Button { tap(id) } label: {
+            Text(verbatim: label)
+                .font(.system(size: size * 0.45, weight: .medium))
+                .frame(width: size * 1.4, height: size * 0.7)
+                .background(
+                    Capsule().fill(isActive ? Color.accentColor : Color(.systemFill))
+                )
+        }
+        .buttonStyle(.plain)
+        #endif
     }
 
     // MARK: - Server control
@@ -230,6 +270,17 @@ struct VirtualControllerView: View {
         activeButtons.remove(id)
         Task { await server.updateButtonState(inputID: id, pressed: false) }
     }
+
+    #if os(tvOS)
+    /// Simulates a discrete tap (press + release) for focus-based interaction on tvOS.
+    private func tap(_ id: String) {
+        press(id)
+        Task {
+            try? await Task.sleep(for: .milliseconds(100))
+            release(id)
+        }
+    }
+    #endif
 }
 
 #Preview {

@@ -41,6 +41,8 @@ private struct DSUSubscriber: Hashable, Sendable {
     let host: String
     let port: UInt16
     let clientUID: UInt32
+    /// Last time this subscriber sent a padDataRequest (used for expiry).
+    var lastSeen: ContinuousClock.Instant
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(host)
@@ -186,8 +188,11 @@ public actor DSUSkinServer {
             await sendPacket(response, to: host, port: port)
 
         case .padDataRequest(let uid, _, _, _):
-            // Register this client as a subscriber if not already known.
-            let subscriber = DSUSubscriber(host: host, port: port, clientUID: uid)
+            // Register (or refresh) this client as a subscriber.
+            let subscriber = DSUSubscriber(host: host, port: port, clientUID: uid, lastSeen: .now)
+            // Remove any existing entry first (Set.insert is a no-op if an equal element exists,
+            // so we must remove to update the mutable lastSeen field).
+            subscribers.remove(subscriber)
             subscribers.insert(subscriber)
 
         default:
@@ -206,8 +211,17 @@ public actor DSUSkinServer {
         }
     }
 
+    /// Subscribers that have not sent a padDataRequest within this interval are dropped.
+    private static let subscriberTTL: Duration = .seconds(10)
+
     private func broadcast() async {
         guard !subscribers.isEmpty, let socket else { return }
+
+        // Expire stale subscribers — DSU clients must re-register periodically.
+        let expiryCutoff = ContinuousClock.now - DSUSkinServer.subscriberTTL
+        subscribers = subscribers.filter { $0.lastSeen >= expiryCutoff }
+
+        guard !subscribers.isEmpty else { return }
         packetNumber &+= 1
         var snapshot = controllerData
         snapshot.packetNumber = packetNumber
