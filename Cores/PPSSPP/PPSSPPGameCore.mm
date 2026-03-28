@@ -95,16 +95,20 @@ private:
 /// Returns the PSP system directory (Documents/System/PSP on iOS, Caches/System/PSP on tvOS).
 /// Creates the directory if needed.
 ///
-/// Uses `[NSURL documentsPath]` (from PVLibrary) which already applies the tvOS
-/// Caches redirect and app-group container logic, so no platform branching is needed here.
+/// tvOS App Store guidelines forbid using the Documents directory; Caches must be used instead.
+/// Mirrors the `#if TARGET_OS_TV` pattern used throughout the PPSSPP codebase
+/// (see `DarwinFileSystemServices.mm` and `PVPPSSPPCore.mm`).
 ///
 /// On tvOS the Caches directory can be purged by the OS at any time. All bundle-derived
 /// assets placed here (e.g. flash0 fonts) must be re-seeded on every core launch, which
 /// `loadFileAtPath:` already does via the font copy loop.
 - (NSString *)pspSystemDirectory {
-    // [NSURL documentsPath] resolves to Caches on tvOS and to the app-group Documents
-    // container when app groups are enabled — no #if TARGET_OS_TV needed here.
-    NSString *docsPath = [NSURL documentsPath].path;
+#if TARGET_OS_TV
+    // tvOS must use Caches — Documents is not permitted by App Store guidelines.
+    NSString *docsPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+#else
+    NSString *docsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+#endif
     NSString *pspDir = [docsPath stringByAppendingPathComponent:@"System/PSP"];
     NSError *error = nil;
     [[NSFileManager defaultManager] createDirectoryAtPath:pspDir

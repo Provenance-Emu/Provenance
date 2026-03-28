@@ -139,17 +139,16 @@ public struct Paths {
 
     /// Root `System/` directory for per-console system files (BIOS, firmware, fonts, etc.)
     ///
-    /// Structured as `Documents/System/<SystemName>/` following the conventions used by
-    /// popular emulators. Replaces ad-hoc BIOS path usage for cores that need a richer
-    /// system directory layout.
+    /// Structured as `Documents/System/<SystemName>/` on iOS/macOS and
+    /// `Library/Caches/System/<SystemName>/` on tvOS (App Store guidelines prohibit
+    /// using `Documents` on tvOS).
     ///
     /// Example children:
     /// - `System/PSP/`   — PPSSPP flash0 fonts and MemStick data
     /// - `System/NDS/`   — Nintendo DS firmware (nds_bios_arm7.bin, etc.)
     /// - `System/3DS/`   — Citra/Lime3DS system files
     ///
-    /// **tvOS note:** On tvOS `URL.documentsPath` redirects to the Caches directory, so this
-    /// path lives under `Library/Caches/System/`. The OS may purge Caches at any time.
+    /// **tvOS note:** The OS may purge `Caches` at any time.
     /// - Bundle-derived assets (e.g. PPSSPP flash0 fonts) are re-seeded from the app bundle
     ///   on every core launch — no special recovery needed for those.
     /// - User-placed firmware/BIOS files are at risk of loss. TODO(#2725): extend the CloudKit
@@ -159,7 +158,12 @@ public struct Paths {
     ///
     /// Should be called on BG Thread (iCloud blocks).
     public static var systemPath: URL { get {
+#if os(tvOS)
+        // tvOS must use Caches — Documents is not permitted by App Store guidelines.
+        return URL.cachesPath.appendingPathComponent("System", isDirectory: true)
+#else
         return URL.documentsiCloudOrLocalPath.appendingPathComponent("System", isDirectory: true)
+#endif
     }}
 
     /// Returns the system-specific path for a given short name (e.g. "PSP", "NDS").
