@@ -265,6 +265,109 @@ final class SaveExporterTests: XCTestCase {
         }
     }
 
+    // MARK: - Schema V2 manifest tests
+
+    func testImportSucceedsForV2PvsaveBundle() async throws {
+        let md5 = "v2match9999"
+        let pvsaveURL = try makeMinimalExportPvsave(gameMD5: md5)
+        defer { try? FileManager.default.removeItem(at: pvsaveURL) }
+
+        let romFile = tempDir.appendingPathComponent("v2game.sfc")
+        let game = makeGame(title: "V2Game", md5: md5, romURL: romFile)
+
+        // Should not throw — v2 manifest is valid and MD5 matches.
+        try await SaveExporter.shared.importSaves(from: pvsaveURL, for: game)
+    }
+
+    func testImportThrowsGameMismatchForV2BundleWrongMD5() async throws {
+        let bundleMD5 = "v2bundle111"
+        let gameMD5 = "v2game22222"
+        let pvsaveURL = try makeMinimalExportPvsave(gameMD5: bundleMD5)
+        defer { try? FileManager.default.removeItem(at: pvsaveURL) }
+
+        let game = makeGame(title: "V2Other", md5: gameMD5, romURL: nil)
+
+        do {
+            try await SaveExporter.shared.importSaves(from: pvsaveURL, for: game)
+            XCTFail("Expected gameMismatch to be thrown")
+        } catch SaveExportError.gameMismatch {
+            // expected
+        }
+    }
+
+    func testGameMD5ReturnsMD5ForV2Bundle() throws {
+        let expectedMD5 = "v2manifest5678"
+        let pvsaveURL = try makeMinimalExportPvsave(gameMD5: expectedMD5)
+        defer { try? FileManager.default.removeItem(at: pvsaveURL) }
+
+        let result = SaveExporter.shared.gameMD5(inBundleAt: pvsaveURL)
+        XCTAssertEqual(result, expectedMD5, "gameMD5(inBundleAt:) should return MD5 from v2 manifest")
+    }
+
+    func testImportRejectsUnsupportedSchemaVersion() async throws {
+        let md5 = "v99game111"
+        let stagingDir = tempDir.appendingPathComponent("staging-v99-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        let manifest: [String: Any] = [
+            "schemaVersion": 99,
+            "game": md5,
+            "title": "FutureGame",
+            "system": "com.provenance.snes",
+            "exportDate": ISO8601DateFormatter().string(from: Date()),
+            "saves": []
+        ]
+        let data = try JSONSerialization.data(withJSONObject: manifest, options: .prettyPrinted)
+        try data.write(to: stagingDir.appendingPathComponent("manifest.json"))
+
+        let zipURL = tempDir.appendingPathComponent("test-v99-\(md5).zip")
+        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        defer { try? FileManager.default.removeItem(at: zipURL) }
+
+        let romFile = tempDir.appendingPathComponent("v99game.sfc")
+        let game = makeGame(title: "FutureGame", md5: md5, romURL: romFile)
+
+        do {
+            try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+            XCTFail("Expected invalidBundle to be thrown for unsupported schemaVersion 99")
+        } catch SaveExportError.invalidBundle {
+            // expected
+        }
+    }
+
+    func testSaveManifestV2EncodesAndDecodes() throws {
+        let entry = SaveBundleManifestV2.SaveStateEntry(
+            filename: "TEST.12345.svs",
+            screenshotFilename: "TEST.12345.jpg",
+            date: ISO8601DateFormatter().string(from: Date()),
+            isAutosave: false,
+            userDescription: "Boss fight save",
+            coreIdentifier: "com.provenance.core.snes"
+        )
+        let manifest = SaveBundleManifestV2(
+            gameMD5: "abcdef123456",
+            gameTitle: "Test Game",
+            systemIdentifier: "com.provenance.snes",
+            exportDate: ISO8601DateFormatter().string(from: Date()),
+            saveStates: [entry]
+        )
+
+        let data = try manifest.jsonData()
+        XCTAssertFalse(data.isEmpty, "Encoded manifest should not be empty")
+
+        let decoded = try JSONDecoder().decode(SaveBundleManifestV2.self, from: data)
+        XCTAssertEqual(decoded.schemaVersion, 2)
+        XCTAssertEqual(decoded.gameMD5, "abcdef123456")
+        XCTAssertEqual(decoded.saveStates?.count, 1)
+        XCTAssertEqual(decoded.saveStates?[0].filename, "TEST.12345.svs")
+        XCTAssertEqual(decoded.saveStates?[0].isAutosave, false)
+        XCTAssertEqual(decoded.saveStates?[0].coreIdentifier, "com.provenance.core.snes")
+        XCTAssertEqual(decoded.saveStates?[0].userDescription, "Boss fight save")
+    }
+
     // MARK: - Helpers
 
     private func makeGame(title: String, md5: String, romURL: URL?) -> PVGame {
@@ -283,7 +386,7 @@ final class SaveExporterTests: XCTestCase {
         return frozen
     }
 
-    /// Creates a minimal valid export zip with only a `manifest.json` inside.
+    /// Creates a minimal valid export zip with only a `manifest.json` inside (schema v1).
     private func makeMinimalExportZip(gameMD5: String) throws -> URL {
         let stagingDir = tempDir.appendingPathComponent("staging-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
@@ -304,5 +407,28 @@ final class SaveExporterTests: XCTestCase {
             throw SaveExportError.zipCreationFailed
         }
         return zipURL
+    }
+
+    /// Creates a minimal valid `.pvsave` bundle with a schema v2 `manifest.json` inside.
+    private func makeMinimalExportPvsave(gameMD5: String) throws -> URL {
+        let stagingDir = tempDir.appendingPathComponent("staging-v2-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: stagingDir) }
+
+        let manifest = SaveBundleManifestV2(
+            gameMD5: gameMD5,
+            gameTitle: "TestGame",
+            systemIdentifier: "com.provenance.snes",
+            exportDate: ISO8601DateFormatter().string(from: Date()),
+            saveStates: []
+        )
+        let data = try manifest.jsonData()
+        try data.write(to: stagingDir.appendingPathComponent("manifest.json"))
+
+        let pvsaveURL = tempDir.appendingPathComponent("test-export-\(gameMD5).pvsave")
+        guard SSZipArchive.createZipFile(atPath: pvsaveURL.path, withContentsOfDirectory: stagingDir.path) else {
+            throw SaveExportError.zipCreationFailed
+        }
+        return pvsaveURL
     }
 }

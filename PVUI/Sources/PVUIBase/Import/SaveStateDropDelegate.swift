@@ -23,8 +23,9 @@ import PVFileSystem
 // MARK: - Accepted types
 
 /// UTTypes accepted by the save-state drop target.
-/// Covers our zip bundles and explicit file URLs dragged from Files.app (e.g. `.sav`/`.srm` files).
+/// Covers .pvsave bundles, legacy .zip bundles, and file URLs dragged from Files.app.
 private let saveDropAcceptedTypes: [UTType] = [
+    UTType(exportedAs: "com.provenance.pvsave", conformingTo: .zip),
     .zip,
     .fileURL,
 ]
@@ -107,7 +108,7 @@ public struct SaveStateDropTargetModifier: ViewModifier {
     private func processDroppedFile(_ url: URL) {
         let ext = url.pathExtension.lowercased()
         switch ext {
-        case "zip":
+        case "zip", "pvsave":
             importBundle(zipURL: url)
         case "sav", "srm", "ram":
             importBatterySave(fileURL: url)

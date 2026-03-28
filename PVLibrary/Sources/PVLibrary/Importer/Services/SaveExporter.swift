@@ -5,14 +5,16 @@
 //  Created by Agent on 2026-03-21.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Exports and imports per-game saves (battery saves + save states) as a zip bundle.
-//  Part of issue #3409 (per-game save export/import).
+//  Exports and imports per-game saves (battery saves + save states) as a .pvsave bundle.
+//  Schema v2 adds per-save metadata and Realm registration on import.
+//  Part of issue #3554 (enhanced .pvsave bundle format + Realm registration on import).
 //
 
 import Foundation
 import ZipArchive
 import PVFileSystem
 import PVLogging
+import PVRealm
 import RealmSwift
 
 // MARK: - SaveExportError
@@ -39,15 +41,17 @@ public enum SaveExportError: LocalizedError {
 
 // MARK: - SaveExporter
 
-/// Exports and imports per-game saves (battery saves + save states) as a zip bundle.
+/// Exports and imports per-game saves (battery saves + save states) as a `.pvsave` bundle.
 ///
 /// Export bundles have the layout:
 /// ```
-/// <Title>-saves.zip
-///   manifest.json
+/// <Title>-saves.pvsave          (zip-format archive with .pvsave extension)
+///   manifest.json               (schema v2)
 ///   battery/  — battery save files for this ROM
-///   states/   — save state files (and screenshots)
+///   states/   — .svs save state files (and .jpg screenshots)
 /// ```
+///
+/// Backward compatibility: import also accepts old `.zip` schema v1 bundles.
 ///
 /// Usage:
 /// ```swift
@@ -69,10 +73,10 @@ public final class SaveExporter: @unchecked Sendable {
 
     // MARK: - Export
 
-    /// Exports saves for a game to a zip archive in the temp directory.
+    /// Exports saves for a game to a `.pvsave` archive in the temp directory.
     ///
     /// - Parameter game: A `PVGame` object (frozen or live; frozen internally if not already).
-    /// - Returns: URL of the created zip file. Caller is responsible for sharing and then calling `cleanupExport(at:)`.
+    /// - Returns: URL of the created `.pvsave` file. Caller is responsible for sharing and then calling `cleanupExport(at:)`.
     public func exportSaves(for game: PVGame) async throws -> URL {
         let frozenGame = game.isFrozen ? game : game.freeze()
 
@@ -156,6 +160,7 @@ public final class SaveExporter: @unchecked Sendable {
 
         // Track how many save files are actually copied so we can error if nothing ends up in the zip.
         var filesCopied = 0
+        var stateEntries: [SaveBundleManifestV2.SaveStateEntry] = []
 
         // Copy battery saves (batterySavesDir is non-nil only when romURL was valid)
         if let srcBatteryDir = batterySavesDir, hasBatterySaves {
@@ -169,7 +174,6 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         // Copy save state files and build the v2 manifest index in a single pass.
-        var stateEntries: [SaveBundleManifestV2.SaveStateEntry] = []
         if hasAnySave {
             let statesDir = stagingDir.appendingPathComponent("states", isDirectory: true)
             try fm.createDirectory(at: statesDir, withIntermediateDirectories: true)
@@ -184,7 +188,7 @@ public final class SaveExporter: @unchecked Sendable {
 
                     // Attempt screenshot copy first so screenshotFilename in the manifest only
                     // references a file that was actually placed in the bundle.
-                    var copiedScreenshotFilename: String? = nil
+                    var copiedScreenshotFilename: String?
                     if let imgSrc = snapshot.imageURL, fm.fileExists(atPath: imgSrc.path) {
                         let imgDest = statesDir.appendingPathComponent(imgSrc.lastPathComponent)
                         do {
@@ -228,7 +232,7 @@ public final class SaveExporter: @unchecked Sendable {
             throw SaveExportError.noSavesFound
         }
 
-        // Create zip
+        // Create .pvsave archive (zip format, .pvsave extension)
         let sanitizedTitle = gameTitle
             .components(separatedBy: CharacterSet.alphanumerics.union(.init(charactersIn: "-_ ")).inverted)
             .joined()
@@ -236,45 +240,55 @@ public final class SaveExporter: @unchecked Sendable {
         let safeTitle = sanitizedTitle.isEmpty ? md5 : sanitizedTitle
         let timestamp = Int(Date().timeIntervalSince1970)
         let uuidFragment = UUID().uuidString.prefix(8)
-        let zipURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-saves-\(timestamp)-\(uuidFragment).zip")
+        let pvsaveURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-saves-\(timestamp)-\(uuidFragment).pvsave")
 
-        // Remove stale zip if present
-        try? fm.removeItem(at: zipURL)
+        // Remove stale file if present
+        try? fm.removeItem(at: pvsaveURL)
 
-        let success = SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path)
+        let success = SSZipArchive.createZipFile(atPath: pvsaveURL.path, withContentsOfDirectory: stagingDir.path)
         guard success else {
             throw SaveExportError.zipCreationFailed
         }
 
-        ILOG("SaveExporter: created export at \(zipURL.path)")
-        return zipURL
+        ILOG("SaveExporter: created export at \(pvsaveURL.path)")
+        return pvsaveURL
     }
 
-    /// Removes a previously created export zip from the temporary directory.
+    /// Removes a previously created export bundle from the temporary directory.
     public func cleanupExport(at url: URL) {
         try? FileManager.default.removeItem(at: url)
     }
 
     // MARK: - Import
 
-    /// Imports saves from a zip bundle previously created by `exportSaves(for:)`.
+    /// Imports saves from a `.pvsave` bundle (or legacy `.zip` v1 bundle) and registers
+    /// imported save states in Realm so they appear in the UI immediately.
     ///
-    /// **File-restore only:** This method copies save files to their expected locations on disk
-    /// but does **not** register `PVSaveState` objects in Realm. Imported save states will not
-    /// appear in the UI until a library re-scan or app relaunch. See issue #3409 for follow-up.
+    /// Accepts:
+    /// - Schema v2 `.pvsave` bundles (produced by this exporter)
+    /// - Schema v1 `.zip` bundles (backward compatibility)
+    ///
+    /// For v2 bundles each `.svs` file is registered as a `PVSaveState` in Realm using
+    /// per-save metadata from the manifest.  For v1 bundles, files are restored to disk
+    /// only (no Realm registration — requires a library re-scan to surface in UI).
     ///
     /// - Parameters:
-    ///   - zipURL: URL of the `.zip` export bundle.
+    ///   - zipURL: URL of the `.pvsave` or `.zip` export bundle.
     ///   - game: The game to restore saves for. Must have an associated ROM file URL, and the
     ///     bundle's manifest MD5 must match `game.md5Hash`.
     /// - Throws: `SaveExportError.gameMismatch` if the MD5 doesn't match,
     ///   or `SaveExportError.invalidBundle` if the game has no ROM file path.
     public func importSaves(from zipURL: URL, for game: PVGame) async throws {
         let frozenGame = game.isFrozen ? game : game.freeze()
+        let gameID = frozenGame.md5Hash
 
         try await Task.detached(priority: .userInitiated) {
             try self.performImport(zipURL: zipURL, frozenGame: frozenGame)
         }.value
+
+        // Realm registration is performed on the main actor after files are restored.
+        // We re-fetch the game from Realm (thawed) to ensure a live reference.
+        await registerImportedSaveStates(for: gameID, bundleURL: zipURL)
     }
 
     private func performImport(zipURL: URL, frozenGame: PVGame) throws {
@@ -328,15 +342,10 @@ public final class SaveExporter: @unchecked Sendable {
             try restoreDirectory(from: srcBattery, to: destBattery)
         }
 
-        // Restore save state files to disk.
-        // NOTE: This does not register PVSaveState objects in Realm. Imported states will
-        // only appear in the UI after a full library re-scan or app relaunch. A future
-        // follow-up should call RomDatabase save-state registration helpers here.
-        // See: https://github.com/Provenance-Emu/Provenance/issues/3409
+        // Restore save state files to disk
         let srcStates = tempDir.appendingPathComponent("states", isDirectory: true)
         if fm.fileExists(atPath: srcStates.path) {
             let destStates = Paths.saveStatePath(forROM: romURL)
-            // Ensure destination directory exists before copying individual files
             try fm.createDirectory(at: destStates, withIntermediateDirectories: true)
             let stateFiles = (try? fm.contentsOfDirectory(
                 at: srcStates, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
@@ -359,7 +368,140 @@ public final class SaveExporter: @unchecked Sendable {
             }
         }
 
-        ILOG("SaveExporter: import complete for game '\(frozenGame.title)'")
+        ILOG("SaveExporter: file restore complete for game '\(frozenGame.title)'")
+    }
+
+    // MARK: - Realm Registration on Import
+
+    /// Registers imported `.svs` files as `PVSaveState` objects in Realm.
+    ///
+    /// For v2 bundles, uses per-save metadata from the manifest.
+    /// For v1 bundles or when the manifest is unavailable, falls back to a
+    /// filesystem scan via `RomDatabase.recoverSaveStates(forPath:)`.
+    @MainActor
+    private func registerImportedSaveStates(for gameMD5: String, bundleURL: URL) async {
+        do {
+            let realm = try await Realm(configuration: RealmConfiguration.realmConfig)
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
+                WLOG("SaveExporter: cannot register imported saves — game not found for MD5 \(gameMD5)")
+                return
+            }
+
+            // Attempt to peek at the bundle manifest for v2 per-save entries
+            let entries = savedEntriesFromBundle(at: bundleURL)
+
+            if !entries.isEmpty {
+                let romURL: URL? = game.file?.url
+                guard let romURL else {
+                    WLOG("SaveExporter: cannot register imported saves — game has no ROM URL")
+                    return
+                }
+                let destStates = Paths.saveStatePath(forROM: romURL)
+                let fm = FileManager.default
+
+                for entry in entries {
+                    let svsURL = destStates.appendingPathComponent(entry.filename)
+                    guard fm.fileExists(atPath: svsURL.path) else {
+                        WLOG("SaveExporter: imported .svs not found at \(svsURL.path), skipping registration")
+                        continue
+                    }
+
+                    guard let coreID = entry.coreIdentifier,
+                          let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreID) else {
+                        WLOG("SaveExporter: core '\(entry.coreIdentifier ?? "nil")' not installed, skipping Realm registration for \(entry.filename)")
+                        continue
+                    }
+
+                    // Skip if already registered (same file path)
+                    let alreadyRegistered = game.saveStates.contains(where: {
+                        $0.file?.url?.lastPathComponent == entry.filename
+                    })
+                    if alreadyRegistered {
+                        DLOG("SaveExporter: save '\(entry.filename)' already in Realm, skipping")
+                        continue
+                    }
+
+                    let saveFile = PVFile(withURL: svsURL, relativeRoot: .iCloud)
+
+                    var imageFile: PVImageFile?
+                    if let imgName = entry.screenshotFilename {
+                        let imgURL = destStates.appendingPathComponent(imgName)
+                        if fm.fileExists(atPath: imgURL.path) {
+                            imageFile = PVImageFile(withURL: imgURL)
+                        }
+                    }
+
+                    let date: Date
+                    if let dateStr = entry.date, let parsed = ISO8601DateFormatter().date(from: dateStr) {
+                        date = parsed
+                    } else {
+                        date = Date()
+                    }
+
+                    let saveState = PVSaveState(
+                        withGame: game,
+                        core: core,
+                        file: saveFile,
+                        date: date,
+                        image: imageFile,
+                        isAutosave: entry.isAutosave ?? false,
+                        userDescription: entry.userDescription
+                    )
+
+                    try realm.write {
+                        realm.add(saveState)
+                    }
+                    NotificationCenter.default.post(
+                        name: .PVSaveStateSaved,
+                        object: nil,
+                        userInfo: ["saveStateID": saveState.id]
+                    )
+                    ILOG("SaveExporter: registered imported save '\(entry.filename)' in Realm as \(saveState.id)")
+                }
+            } else {
+                // v1 bundle or empty saves array — fall back to filesystem scan
+                if let romFileURL = game.file?.url {
+                    let saveStatePath = Paths.saveStatePath(forROM: romFileURL)
+                    ILOG("SaveExporter: v1 bundle — triggering save state recovery for \(saveStatePath.path)")
+                    RomDatabase.sharedInstance.recoverSaveStates(forPath: saveStatePath)
+                }
+            }
+        } catch {
+            ELOG("SaveExporter: Realm registration failed — \(error.localizedDescription)")
+        }
+    }
+
+    /// Extracts `SaveBundleManifestV2.SaveStateEntry` records from a v2 bundle manifest
+    /// without fully extracting the archive.
+    ///
+    /// Returns an empty array if the bundle is v1 or lacks a `saveStates` array.
+    private func savedEntriesFromBundle(at url: URL) -> [SaveBundleManifestV2.SaveStateEntry] {
+        let fm = FileManager.default
+        let tempDir = fm.temporaryDirectory
+            .appendingPathComponent("PVManifestPeek_\(UUID().uuidString)", isDirectory: true)
+        defer { try? fm.removeItem(at: tempDir) }
+
+        do {
+            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
+            guard SSZipArchive.unzipFile(atPath: url.path, toDestination: tempDir.path) else {
+                return []
+            }
+            try validateNoBundleEscape(in: tempDir)
+
+            let manifestURL = tempDir.appendingPathComponent("manifest.json")
+            guard fm.fileExists(atPath: manifestURL.path),
+                  let data = try? Data(contentsOf: manifestURL) else {
+                return []
+            }
+
+            if let v2 = try? SaveBundleManifestV2.parse(from: data), v2.schemaVersion == 2 {
+                return v2.saveStates ?? []
+            }
+            return []
+        } catch {
+            WLOG("SaveExporter: failed to peek bundle manifest: \(error)")
+            return []
+        }
     }
 
     // MARK: - Manifest Inspection
@@ -367,11 +509,9 @@ public final class SaveExporter: @unchecked Sendable {
     /// Reads the `manifest.json` embedded in a save-export bundle and returns
     /// the MD5 hash of the game the bundle belongs to.
     ///
-    /// Implementation note: the entire zip archive is extracted to a temporary directory,
-    /// `manifest.json` is read and parsed, and then the temporary directory is removed.
-    /// For large save bundles this may be relatively expensive in terms of I/O and disk space.
+    /// Accepts both v1 `.zip` and v2 `.pvsave` bundles.
     ///
-    /// - Parameter zipURL: URL of the `.zip` save-export bundle.
+    /// - Parameter zipURL: URL of the `.pvsave` or `.zip` save-export bundle.
     /// - Returns: The lowercase MD5 hash string from the manifest, or `nil` if the
     ///   archive is not a valid save-export bundle (e.g. missing manifest, wrong format).
     public func gameMD5(inBundleAt zipURL: URL) -> String? {
