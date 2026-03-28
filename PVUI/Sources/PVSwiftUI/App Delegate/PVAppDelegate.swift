@@ -70,7 +70,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     // Check if the app is running in App Store mode
     public var isAppStore: Bool {
-        guard Bundle.main.bundleIdentifier!.hasPrefix("org.provenance-emu.provenance") else {
+        guard Bundle.main.bundleIdentifier?.hasPrefix("org.provenance-emu.provenance") == true else {
             ILOG("Bundle id \(Bundle.main.bundleIdentifier ?? "null") is NOT official. Disabling Provenance Plus checks.")
             return false
         }
