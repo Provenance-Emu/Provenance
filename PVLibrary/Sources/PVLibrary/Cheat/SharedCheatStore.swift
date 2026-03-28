@@ -80,8 +80,7 @@ extension SharedCheatEntry {
             URLQueryItem(name: "system", value: systemName),
             URLQueryItem(name: "game",   value: gameName),
         ]
-        let encodedCode = code.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? code
-        return comps.url?.absoluteString ?? "provenance-cheat://v1?code=\(encodedCode)"
+        return comps.url?.absoluteString ?? ""
     }
 
     /// Attempts to parse a `provenance-cheat://v1` URL back into a `SharedCheatEntry`.
@@ -90,10 +89,9 @@ extension SharedCheatEntry {
     /// - Returns: A new entry, or `nil` if the URL is malformed or missing required fields.
     public static func from(qrURLString urlString: String) -> SharedCheatEntry? {
         guard
-            let url = URL(string: urlString),
-            url.scheme == "provenance-cheat",
-            url.host == "v1",
-            let comps = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            let comps = URLComponents(string: urlString),
+            comps.scheme == "provenance-cheat",
+            comps.host == "v1",
             let items = comps.queryItems
         else { return nil }
 
