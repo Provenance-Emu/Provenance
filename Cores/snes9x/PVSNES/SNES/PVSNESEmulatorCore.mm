@@ -743,6 +743,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		else if([superscopeGames containsObject:cartCRC32])
 		{
 			S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
+			S9xSetController(0, CTL_JOYPAD,     0, 0, 0, 0); // Ensure port 0 is a standard joypad (not stale CTL_MOUSE, etc.)
             [self setupSuperScopeMappings];
 		}
 		else if([snesMouseGames containsObject:cartCRC32])
