@@ -27,9 +27,10 @@ public enum PVFeature: String, CaseIterable, Sendable {
     case advancedSkinFeatures = "advancedSkinFeatures"
     case contentlessCores = "contentlessCores"
     /// Enables runtime scanning of Frameworks/ for bare libretro dylibs/frameworks
-    /// and registers them through the thin PVThinLibretroFrontend. Disabled by default;
-    /// enable via the PVFeatureFlags debug-override UI (accessible on all build types;
-    /// hidden behind a cheat code on App Store builds).
+    /// and registers them through the thin PVThinLibretroFrontend.
+    /// Platform-gated: enabled by default on tvOS; blocked on iOS by `allowedPlatforms`.
+    /// On iOS, enable via the PVFeatureFlags debug-override UI (accessible on all build
+    /// types; hidden behind a cheat code on App Store builds).
     case dynamicLibretroScanner = "dynamicLibretroScanner"
     /// Enables the experimental tile/grid based pause menu overlay that floats over the
     /// game screen instead of the classic full-panel tab/list menu. Disabled by default.
@@ -93,6 +94,31 @@ public enum PVFeature: String, CaseIterable, Sendable {
     case airPlayMenu = "airPlayMenu"
 }
 
+/// Enum representing supported OS platforms for feature flag filtering
+public enum PVPlatform: String, CaseIterable, Sendable {
+    /// Apple iOS
+    case ios = "ios"
+    /// Apple tvOS
+    case tvos = "tvos"
+    /// Apple macOS / Mac Catalyst
+    case macos = "macos"
+    /// Apple visionOS
+    case visionos = "visionos"
+
+    /// The current platform at compile time
+    public static var current: PVPlatform {
+#if os(tvOS)
+        return .tvos
+#elseif os(macOS)
+        return .macos
+#elseif os(visionOS)
+        return .visionos
+#else
+        return .ios
+#endif
+    }
+}
+
 /// Represents the type of app installation
 public enum PVAppType: String, CaseIterable, Sendable {
     /// Standard non-App Store version
@@ -125,6 +151,8 @@ public struct FeatureFlag: Codable, Sendable {
     public let minBuildNumber: String?
     /// List of app types where this feature is allowed
     public let allowedAppTypes: [String]?
+    /// List of OS platforms where this feature is allowed (nil = all platforms)
+    public let allowedPlatforms: [String]?
     /// Description of the feature
     public let description: String?
 
@@ -133,12 +161,14 @@ public struct FeatureFlag: Codable, Sendable {
         minVersion: String? = nil,
         minBuildNumber: String? = nil,
         allowedAppTypes: [String]? = nil,
+        allowedPlatforms: [String]? = nil,
         description: String? = nil
     ) {
         self.enabled = enabled
         self.minVersion = minVersion
         self.minBuildNumber = minBuildNumber
         self.allowedAppTypes = allowedAppTypes
+        self.allowedPlatforms = allowedPlatforms
         self.description = description
     }
 
@@ -162,9 +192,11 @@ public struct FeatureFlag: Codable, Sendable {
     )
 
     public static let dynamicLibretroScanner = FeatureFlag(
-        enabled: false,
+        enabled: true,
+        minVersion: "3.3.0",
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. Disabled by default; enable via debug override UI (hidden behind cheat code on App Store builds)."
+        allowedPlatforms: ["tvos"],
+        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
     )
 
     public static let pauseTileMenu = FeatureFlag(
@@ -218,9 +250,10 @@ public struct FeatureFlag: Codable, Sendable {
 
     public static let skinButtonReposition = FeatureFlag(
         enabled: false,
+        allowedPlatforms: ["ios"],
         description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
-        )
-    
+    )
+
     public static let enhancedArtworkSearch = FeatureFlag(
         enabled: true,
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
@@ -329,6 +362,10 @@ public final class PVFeatureFlags: @unchecked Sendable {
         _appType = appType ?? PVFeatureFlags.getCurrentAppType()
         _buildNumber = buildNumber ?? PVFeatureFlags.getCurrentBuildNumber()
         _appVersion = appVersion ?? PVFeatureFlags.getCurrentAppVersion()
+        // Eagerly load the bundled features.json so flags like dynamicLibretroScanner
+        // reflect their correct defaults (including allowedPlatforms) from the very
+        // first isEnabled(_:) call, before any remote config has been fetched.
+        _ = loadBundledConfiguration()
     }
 
     /// Convenience initializer with a pre-loaded configuration (for testing).
@@ -479,6 +516,9 @@ public final class PVFeatureFlags: @unchecked Sendable {
         _withState { state -> [String] in
             guard let feature = state.configuration?.features[featureKey] else { return ["Feature not found"] }
             var restrictions: [String] = []
+            if let allowedPlatforms = feature.allowedPlatforms, !allowedPlatforms.contains(PVPlatform.current.rawValue) {
+                restrictions.append("Platform \(PVPlatform.current.rawValue) not allowed")
+            }
             if let allowed = feature.allowedAppTypes, !allowed.contains(_appType.rawValue) {
                 restrictions.append("App type \(_appType.rawValue) not allowed")
             }
@@ -531,6 +571,10 @@ public final class PVFeatureFlags: @unchecked Sendable {
     /// Safe to call from inside or outside the lock — only reads `_appType`, `_buildNumber`,
     /// and `_appVersion`, which are set once at init and never mutated.
     private func _evaluate(_ featureConfig: FeatureFlag) -> Bool {
+        if let allowedPlatforms = featureConfig.allowedPlatforms,
+           !allowedPlatforms.contains(PVPlatform.current.rawValue) {
+            return false
+        }
         if let allowedTypes = featureConfig.allowedAppTypes,
            !allowedTypes.contains(_appType.rawValue) {
             return false

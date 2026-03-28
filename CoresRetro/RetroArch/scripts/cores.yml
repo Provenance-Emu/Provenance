@@ -719,6 +719,13 @@ cores:
     appstore: true
     enabled: true
 
+  # TIC-80 — not yet available on the buildbot (2026-03); enable when added
+  - name: tic80
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+
   - name: tyrquake
     ios: true
     tvos: true
