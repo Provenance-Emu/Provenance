@@ -421,19 +421,25 @@
   },
   {
     "version": "3.4.0",
-    "title": "Skins, Cheats & Stability",
+    "title": "Cheats, Skins & Controls",
     "features": [
+      {
+        "symbolName": "square.grid.2x2.fill",
+        "symbolColor": "cyan",
+        "title": "New Pause Menu",
+        "subtitle": "A redesigned tile-based pause menu gives you quick access to saves, cheats, shaders, and settings — all from a floating overlay that keeps your game in view."
+      },
       {
         "symbolName": "list.bullet.clipboard.fill",
         "symbolColor": "orange",
         "title": "Cheat Code Library",
-        "subtitle": "Search over 1.2 million cheat codes from the libretro database covering 44 systems. Online lookup from GameHacking.org and GeckoCodes."
+        "subtitle": "Search over 1.2 million cheat codes covering 44 systems. Online lookup from GameHacking.org and GeckoCodes included."
       },
       {
         "symbolName": "paintpalette.fill",
         "symbolColor": "pink",
         "title": "Advanced Skin Features",
-        "subtitle": "Animated backgrounds, per-button haptics, multi-theme variants, animated button sprites, PDF rendering, and a skin validator for quality checking."
+        "subtitle": "Animated backgrounds, per-button haptics, multi-theme variants, animated button sprites, and PDF rendering. Enable via Settings > Feature Flags."
       },
       {
         "symbolName": "slider.horizontal.3",
@@ -445,247 +451,49 @@
         "symbolName": "wave.3.right",
         "symbolColor": "cyan",
         "title": "Haptic Feedback & Rumble",
-        "subtitle": "Controller rumble support with configurable intensity. On-screen buttons now have haptic feedback. Custom per-system and per-controller rumble profiles."
+        "subtitle": "Controller rumble support with configurable intensity. On-screen buttons now have haptic feedback with custom per-system profiles."
       },
       {
-        "symbolName": "bell.badge.fill",
+        "symbolName": "light.beacon.max.fill",
         "symbolColor": "blue",
-        "title": "In-Game Toast Notifications",
-        "subtitle": "Save states, JIT status, and controller events now appear as unobtrusive toast overlays. Core OSD messages bridged for 60+ RetroArch cores."
+        "title": "DualSense & DS4 Enhancements",
+        "subtitle": "Light bars glow with per-system colors. Mic button mutes audio. Touchpad click and Share/Create buttons are now fully bindable."
+      },
+      {
+        "symbolName": "lock.fill",
+        "symbolColor": "indigo",
+        "title": "Lock Screen & StandBy Widgets",
+        "subtitle": "Quick Launch lock screen widgets jump straight into your last-played game. StandBy shows rotating box art and now-playing info."
+      },
+      {
+        "symbolName": "globe",
+        "symbolColor": "blue",
+        "title": "Core Language Sync",
+        "subtitle": "Emulator cores now default to your device language. Override globally under Settings → Core Options → Core Language."
       },
       {
         "symbolName": "bolt.fill",
         "symbolColor": "green",
         "title": "JIT Detection & Status",
-        "subtitle": "Smart JIT indicator shows active source (AltStore, TrollStore, etc.) for cores that need it. Auto-hides after 5 seconds."
-      },
-      {
-        "symbolName": "forward.fill",
-        "symbolColor": "orange",
-        "title": "Turbo & Quick Controls",
-        "subtitle": "Autofire/turbo button support, Quick Save, Quick Load, and Fast Forward buttons on the controller overlay."
+        "subtitle": "Smart JIT indicator shows the active source (AltStore, TrollStore, etc.) for cores that need it. Auto-hides after 5 seconds."
       },
       {
         "symbolName": "headphones",
-        "symbolColor": "green",
+        "symbolColor": "teal",
         "title": "Smart Auto-Pause",
         "subtitle": "Game pauses automatically when AirPods or Bluetooth headphones disconnect."
       },
       {
+        "symbolName": "bell.badge.fill",
+        "symbolColor": "orange",
+        "title": "In-Game Toast Notifications",
+        "subtitle": "Save states, JIT status, and controller events appear as unobtrusive overlays. OSD messages bridged for all 60+ RetroArch cores."
+      },
+      {
         "symbolName": "magnifyingglass",
         "symbolColor": "yellow",
-        "title": "Spotlight & Siri",
-        "subtitle": "Games indexed in Spotlight search immediately on import. Siri Suggestions for recently played games."
-      }
-    ]
-  },
-  {
-    "version": "3.5.0",
-    "title": "Netplay HUD",
-    "features": [
-      {
-        "symbolName": "wifi",
-        "symbolColor": "blue",
-        "title": "In-Game Netplay HUD",
-        "subtitle": "A compact corner overlay shows ping bars, player count, and connection health during active netplay sessions."
-      },
-      {
-        "symbolName": "person.2.fill",
-        "symbolColor": "green",
-        "title": "Per-Peer Stats",
-        "subtitle": "On iPhone, tap the HUD to expand detailed per-player latency, frame delay, rollback status, and a quick disconnect button."
-      }
-    ]
-  },
-  {
-    "version": "3.6.0",
-    "title": "Lock Screen & StandBy Widgets",
-    "features": [
-      {
-        "symbolName": "lock.fill",
-        "symbolColor": "blue",
-        "title": "Lock Screen Widgets",
-        "subtitle": "Quick Launch circular, rectangular, and inline lock screen widgets let you jump straight into your last-played game from the lock screen."
-      },
-      {
-        "symbolName": "music.note",
-        "symbolColor": "pink",
-        "title": "Now Playing Lock Screen Widget",
-        "subtitle": "See the current game music track and artist on your lock screen at a glance."
-      },
-      {
-        "symbolName": "photo.stack",
-        "symbolColor": "purple",
-        "title": "StandBy Game Art Gallery",
-        "subtitle": "A rotating gallery of game box art fills your screen in iOS 17 StandBy mode, cycling every 5 minutes."
-      },
-      {
-        "symbolName": "moon.stars.fill",
-        "symbolColor": "purple",
-        "title": "StandBy Now Playing",
-        "subtitle": "Full-screen album art, track name, and artist shown in StandBy mode while game music plays — perfect for the nightstand."
-      }
-    ]
-  },
-  {
-    "version": "3.7.0",
-    "title": "Mouse Input, Netplay & Drag & Drop",
-    "features": [
-      {
-        "symbolName": "network",
-        "symbolColor": "blue",
-        "title": "Dolphin Netplay",
-        "subtitle": "Play GameCube and Wii games online with friends using Dolphin's built-in netplay with direct IP and traversal relay support."
-      },
-      {
-        "symbolName": "square.and.arrow.up",
-        "symbolColor": "orange",
-        "title": "Export Game Saves",
-        "subtitle": "Long-press any game and choose \"Export Saves\" to share all save states and battery saves as a zip via AirDrop, Mail, or Files."
-      },
-      {
-        "symbolName": "arrow.down.doc.fill",
-        "symbolColor": "green",
-        "title": "Drop to Import",
-        "subtitle": "Drop a save export zip or a .sav battery save file onto a game card to instantly import it."
-      },
-      {
-        "symbolName": "tray.and.arrow.down.fill",
-        "symbolColor": "blue",
-        "title": "Drop ROMs to Import",
-        "subtitle": "Drag ROM files and zip archives from the Files app or AirDrop directly into the game library — no file picker needed."
-      },
-      {
-        "symbolName": "square.and.arrow.up.fill",
-        "symbolColor": "purple",
-        "title": "Drag Games to Export",
-        "subtitle": "Long-press any game in your library and drag it out to the Files app, AirDrop, or any compatible destination."
-      },
-      {
-        "symbolName": "folder.fill",
-        "symbolColor": "blue",
-        "title": "DOSBox Folder Import",
-        "subtitle": "Drop an unzipped DOSBox game folder into the Imports directory. Any folder with .exe, .com, .bat, or .conf files is recognised automatically as a DOS game."
-      }
-    ]
-  },
-  {
-    "version": "3.8.0",
-    "title": "Your Language, Your Games",
-    "features": [
-      {
-        "symbolName": "globe",
-        "symbolColor": "blue",
-        "title": "Core Language Sync",
-        "subtitle": "Emulator cores now default to your device's language — no more English-only menus on a Japanese device."
-      },
-      {
-        "symbolName": "textformat.abc",
-        "symbolColor": "purple",
-        "title": "Language Override",
-        "subtitle": "Pick a specific language for all cores under Settings → Core Options → Core Language, independent of your device locale."
-      }
-    ]
-  },
-  {
-    "version": "3.8.1",
-    "title": "DualSense & DS4 Enhancements",
-    "features": [
-      {
-        "symbolName": "light.beacon.max.fill",
-        "symbolColor": "blue",
-        "title": "Controller Light Bar",
-        "subtitle": "DualSense and DS4 light bars now glow with a per-system color — PlayStation blue for PSX, SNES purple, GBA violet, and more."
-      },
-      {
-        "symbolName": "mic.fill",
-        "symbolColor": "orange",
-        "title": "DualSense Mic Button → Mute",
-        "subtitle": "Press the DualSense microphone button during gameplay to instantly mute or unmute game audio."
-      },
-      {
-        "symbolName": "hand.tap.fill",
-        "symbolColor": "purple",
-        "title": "Touchpad Click Binding",
-        "subtitle": "The DS4/DualSense touchpad click is now bindable in controller settings — assign it to any button action."
-      },
-      {
-        "symbolName": "square.and.arrow.up",
-        "symbolColor": "green",
-        "title": "Share / Create Button",
-        "subtitle": "The Share (DS4) and Create (DualSense) buttons are now exposed as bindable actions in controller settings."
-      }
-    ]
-  },
-  {
-    "version": "3.8.3",
-    "title": "N64 Transfer Pak — Smarter Setup",
-    "features": [
-      {
-        "symbolName": "arrow.triangle.2.circlepath",
-        "symbolColor": "pink",
-        "title": "Transfer Pak — Retrowave UI",
-        "subtitle": "The Transfer Pak configuration screen now uses the full retrowave design system with neon glows, grid backgrounds, and colour-coded controller ports."
-      },
-      {
-        "symbolName": "star.fill",
-        "symbolColor": "yellow",
-        "title": "Smart Game Suggestions",
-        "subtitle": "When setting up Pokémon Stadium, Mario Tennis, and other Transfer Pak titles, Provenance now highlights the specific Game Boy cartridges that go with that game."
-      },
-      {
-        "symbolName": "wand.and.stars",
-        "symbolColor": "purple",
-        "title": "One-Step Transfer Pak Setup",
-        "subtitle": "Picking a Game Boy ROM now automatically sets that controller port to Transfer Pak mode — no need to visit Core Settings separately."
-      },
-      {
-        "symbolName": "cart.badge.questionmark",
-        "symbolColor": "orange",
-        "title": "Missing ROM Detection",
-        "subtitle": "If you haven't imported any Game Boy ROMs yet, the Transfer Pak screen now shows a clear prompt explaining what to do next."
-      }
-    ]
-  },
-  {
-    "version": "3.9.0",
-    "title": "Siri Media Integration",
-    "features": [
-      {
-        "symbolName": "waveform",
-        "symbolColor": "purple",
-        "title": "\"Hey Siri, play …\" Support",
-        "subtitle": "Ask Siri to launch any game — \"Hey Siri, play Donkey Kong Country on Provenance\" opens it instantly, no Shortcuts setup required."
-      },
-      {
-        "symbolName": "brain.head.profile",
-        "symbolColor": "blue",
-        "title": "Siri Learns Your Library",
-        "subtitle": "Every game launch teaches Siri your habits so suggestions get smarter over time."
-      }
-    ]
-  },
-  {
-    "version": "3.9.1",
-    "title": "Netplay Evolution",
-    "features": [
-      {
-        "symbolName": "gamecontroller.fill",
-        "symbolColor": "blue",
-        "title": "Game Center Matchmaking",
-        "subtitle": "Find a netplay partner via Apple Game Center — tap \"Game Center Match\" in the lobby and Provenance connects you automatically."
-      },
-      {
-        "symbolName": "link",
-        "symbolColor": "green",
-        "title": "Netplay Invite Links",
-        "subtitle": "Share a provenance://netplay/join link — tapping it shows a confirmation alert and connects automatically."
-      },
-      {
-        "symbolName": "antenna.radiowaves.left.and.right",
-        "symbolColor": "orange",
-        "title": "RA.ME Relay Pre-Configured",
-        "subtitle": "The ra.me relay is pre-filled out of the box so online play works without any manual setup on a fresh install."
+        "title": "Spotlight & Siri Shortcuts",
+        "subtitle": "Games are indexed in Spotlight on import. Ask Siri to launch any game by name — no Shortcuts setup required."
       }
     ]
   }
