@@ -21,23 +21,31 @@ import Foundation
 /// ```
 public enum CoreLocaleMapper {
 
-    // MARK: - RetroArch language IDs (RETRO_LANGUAGE_*)
+    // MARK: - RetroArch language IDs (RETRO_LANGUAGE_* from libretro.h)
     public static let retroArchEnglish              = 0
     public static let retroArchJapanese             = 1
     public static let retroArchFrench               = 2
-    public static let retroArchGerman               = 3
-    public static let retroArchSpanish              = 4
+    public static let retroArchSpanish              = 3
+    public static let retroArchGerman               = 4
     public static let retroArchItalian              = 5
-    public static let retroArchPortuguese           = 6
-    public static let retroArchDutch                = 7
-    public static let retroArchEsperanto            = 8  // also mapped for Swedish
-    public static let retroArchPolish               = 9
-    public static let retroArchChineseSimplified    = 11
-    public static let retroArchKorean               = 12
-    public static let retroArchChineseTraditional   = 13
-    public static let retroArchArabic               = 14
-    public static let retroArchGreek                = 15
-    public static let retroArchRussian              = 16
+    public static let retroArchDutch                = 6
+    public static let retroArchPortugueseBrazil     = 7
+    public static let retroArchPortuguesePortugal   = 8
+    public static let retroArchRussian              = 9
+    public static let retroArchKorean               = 10
+    public static let retroArchChineseTraditional   = 11
+    public static let retroArchChineseSimplified    = 12
+    public static let retroArchEsperanto            = 13
+    public static let retroArchPolish               = 14
+    public static let retroArchVietnamese           = 15
+    public static let retroArchArabic               = 16
+    public static let retroArchGreek                = 17
+    public static let retroArchTurkish              = 18
+    public static let retroArchSlovak               = 19
+    public static let retroArchPersian              = 20
+    public static let retroArchHebrew               = 21
+    public static let retroArchAsturian             = 22
+    public static let retroArchFinnish              = 23
 
     // MARK: - Mapping
 
@@ -64,23 +72,34 @@ public enum CoreLocaleMapper {
         switch languageCode {
         case "ja":                          return retroArchJapanese
         case "fr":                          return retroArchFrench
-        case "de":                          return retroArchGerman
         case "es":                          return retroArchSpanish
+        case "de":                          return retroArchGerman
         case "it":                          return retroArchItalian
-        case "pt":                          return retroArchPortuguese
         case "nl":                          return retroArchDutch
-        case "sv", "eo":                    return retroArchEsperanto
-        case "pl":                          return retroArchPolish
+        case "pt":
+            let regionCode: String?
+            if #available(iOS 16, tvOS 16, macOS 13, *) {
+                regionCode = locale.region?.identifier
+            } else {
+                regionCode = locale.regionCode
+            }
+            return regionCode == "PT" ? retroArchPortuguesePortugal : retroArchPortugueseBrazil
+        case "ru":                          return retroArchRussian
         case "ko":                          return retroArchKorean
+        case "eo":                          return retroArchEsperanto
+        case "pl":                          return retroArchPolish
+        case "vi":                          return retroArchVietnamese
         case "ar":                          return retroArchArabic
         case "el":                          return retroArchGreek
-        case "ru":                          return retroArchRussian
+        case "tr":                          return retroArchTurkish
+        case "sk":                          return retroArchSlovak
+        case "fa":                          return retroArchPersian
+        case "he":                          return retroArchHebrew
+        case "fi":                          return retroArchFinnish
         case "zh":
-            // zh-Hans → Simplified, zh-Hant → Traditional
             if let script = scriptCode {
                 return script == "Hans" ? retroArchChineseSimplified : retroArchChineseTraditional
             }
-            // Region heuristic: Mainland China / Singapore → Simplified
             let regionCode: String?
             if #available(iOS 16, tvOS 16, macOS 13, *) {
                 regionCode = locale.region?.identifier
@@ -183,5 +202,17 @@ public enum CoreLocaleMapper {
     /// Convenience: resolve NDS language string from `Locale.current`.
     public static var currentNDSLanguageString: String {
         ndsLanguageString(for: .current)
+    }
+}
+
+/// ObjC-visible bridge for `CoreLocaleMapper` so Objective-C / Objective-C++
+/// callers (e.g. PVThinLibretroFrontend) can resolve the device locale to a
+/// `RETRO_LANGUAGE_*` integer without importing Swift generics.
+@objc(CoreLocaleMapper)
+@objcMembers
+public final class CoreLocaleMapperObjC: NSObject {
+    /// `RETRO_LANGUAGE_*` integer matching the device's current locale.
+    @objc public static var currentRetroArchLanguageID: Int {
+        CoreLocaleMapper.currentRetroArchLanguageID
     }
 }

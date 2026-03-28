@@ -1526,6 +1526,8 @@ extension GameLaunchingViewController where Self: UIViewController {
         } catch {
             ELOG("\(error.localizedDescription)")
         }
+
+        updateRecentGames(game)
     }
 
     @MainActor

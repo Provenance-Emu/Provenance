@@ -31,8 +31,38 @@
 #import <PVCoreBridgeRetro/libretro.h>
 #import <dlfcn.h>
 
+// ---------------------------------------------------------------------------
+// MARK: - libretro Performance Interface (C functions)
+// ---------------------------------------------------------------------------
+// Implementations live in PVThinLibretroFrontend.mm.
+// Wired into RETRO_ENVIRONMENT_GET_PERF_INTERFACE in both frontend paths.
+// In DEBUG builds, perf_start/perf_stop emit os_signpost intervals visible
+// in Xcode Instruments under "org.provenance-emu.PVCoreBridgeRetro / libretro-perf".
+
+/// Returns current time in microseconds via mach_absolute_time.
+retro_time_t pv_perf_get_time_usec(void);
+
+/// Returns a raw performance tick (mach_absolute_time).
+retro_perf_tick_t pv_perf_get_counter(void);
+
+/// Returns a bitmask of detected SIMD CPU features (RETRO_SIMD_*).
+uint64_t pv_perf_get_cpu_features(void);
+
+/// Register a named performance counter for tracking.
+void pv_perf_register(struct retro_perf_counter *counter);
+
+/// Start a registered counter (records start tick, emits signpost in debug).
+void pv_perf_start(struct retro_perf_counter *counter);
+
+/// Stop a registered counter (accumulates elapsed ticks, emits signpost in debug).
+void pv_perf_stop(struct retro_perf_counter *counter);
+
+/// Log all registered counters to the Provenance log.
+void pv_perf_log(void);
+
 /// Maximum number of players supported for input.
-#define THIN_MAX_PLAYERS 4
+/// Matches RetroArch's DEFAULT_INPUT_MAX_USERS so GET_INPUT_MAX_USERS stays consistent.
+#define THIN_MAX_PLAYERS 8
 
 /// Maximum number of analog axes tracked (2 sticks x 2 axes = 4 per player).
 #define THIN_MAX_ANALOG_AXES 4
@@ -269,6 +299,35 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 ///                      becomes a no-op until a destination is selected.
 + (void)setMIDIOutputEndpoints:(NSArray<NSNumber *> *)endpointRefs;
 
+// MARK: Netpacket interface (env 78)
+
+/// Whether the loaded core registered a netpacket callback via env 78.
+@property (nonatomic, readonly) BOOL hasNetpacketInterface;
+
+/// The protocol_version string from the core's netpacket callback, or nil.
+@property (nonatomic, readonly, nullable) NSString *netpacketProtocolVersion;
+
+/// Block invoked from the emulation thread when the core calls send_fn.
+/// The Swift transport layer sets this to forward packets over the network.
+@property (nonatomic, copy, nullable) void (^netpacketSendBlock)(int flags,
+    const void *buf, size_t len, uint16_t clientID);
+
+/// Start a netpacket session with the given client ID.
+/// Calls the core's start callback with send_fn and poll_receive_fn.
+- (void)startNetpacketSessionWithClientID:(uint16_t)clientID;
+
+/// Stop the active netpacket session.
+- (void)stopNetpacketSession;
+
+/// Enqueue a received network packet for delivery to the core.
+- (void)enqueueNetpacketData:(NSData *)data fromClient:(uint16_t)clientID;
+
+/// Notify the core that a remote peer connected.
+- (void)netpacketPeerConnected:(uint16_t)clientID;
+
+/// Notify the core that a remote peer disconnected.
+- (void)netpacketPeerDisconnected:(uint16_t)clientID;
+
 // MARK: Utility
 
 /// Probe a core dylib without fully loading it — reads retro_get_system_info.
@@ -302,6 +361,50 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Returns the currently-selected device type for the given port (0-based).
 /// Defaults to RETRO_DEVICE_JOYPAD (1) unless changed via setControllerPortDevice:forPort:.
 - (unsigned)currentDeviceTypeForPort:(unsigned)port NS_SWIFT_NAME(currentDeviceType(forPort:));
+
+// MARK: Core capability flags
+
+/// YES when the core declared support for running without game content
+/// via RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME.
+@property (nonatomic, readonly) BOOL coreSupportsNoGame;
+
+/// YES when the core declared achievement support via
+/// RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS.
+@property (nonatomic, readonly) BOOL coreSupportsAchievements;
+
+// MARK: Input descriptors
+
+/// Per-button / per-axis descriptors reported by the core via
+/// RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS.
+/// Each dictionary contains:
+///   @"port"   : NSNumber (unsigned) — player port
+///   @"device" : NSNumber (unsigned) — RETRO_DEVICE_* type
+///   @"index"  : NSNumber (unsigned) — sub-device index
+///   @"id"     : NSNumber (unsigned) — button / axis id
+///   @"desc"   : NSString — human-readable description
+/// Returns an empty array if the core did not call SET_INPUT_DESCRIPTORS.
+@property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *inputDescriptors;
+
+// MARK: Subsystem info
+
+/// Subsystems declared by the core via RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO.
+/// Each dictionary contains:
+///   @"desc"  : NSString — human-readable name (e.g. "Super GameBoy")
+///   @"ident" : NSString — short [a-z] identifier (e.g. "sgb")
+///   @"id"    : NSNumber (unsigned) — type passed to retro_load_game_special()
+///   @"roms"  : NSArray of NSDictionary with keys:
+///       @"desc", @"valid_extensions", @"need_fullpath", @"block_extract", @"required"
+/// Returns an empty array if the core did not call SET_SUBSYSTEM_INFO.
+@property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *subsystemInfo;
+
+/// Per-extension content loading overrides declared by the core via
+/// RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE.
+/// Each dictionary contains:
+///   @"extensions"     : NSString — pipe-separated extensions (e.g. "md|sms|gg")
+///   @"need_fullpath"  : NSNumber (BOOL)
+///   @"persistent_data": NSNumber (BOOL)
+/// Returns an empty array if the core did not call SET_CONTENT_INFO_OVERRIDE.
+@property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *contentInfoOverrides;
 
 // MARK: Input state
 

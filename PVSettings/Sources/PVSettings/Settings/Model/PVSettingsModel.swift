@@ -299,6 +299,11 @@ public extension Defaults.Keys {
     /// Language used by emulator cores (RetroArch `user_language` and native core equivalents).
     /// Defaults to `.systemLocale` so cores follow the device's preferred language.
     static let coreLanguage = Key<CoreLanguageSetting>("coreLanguage", default: .systemLocale)
+
+    /// Player display name reported to emulator cores via `RETRO_ENVIRONMENT_GET_USERNAME`
+    /// and used by native cores (Dolphin netplay, PPSSPP, etc.).
+    /// Empty string means "use system username fallback".
+    static let playerUsername = Key<String>("playerUsername", default: "")
 }
 
 public enum ButtonPressEffect: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {
@@ -927,6 +932,19 @@ public final class PVSettingsWrapper: NSObject {
     public static var showFPS: Bool {
         get { Defaults[.showFPSCount] }
         set { Defaults[.showFPSCount] = newValue }}
+
+    /// Player display name for emulator cores. Empty string means "use fallback".
+    @objc
+    public static var playerUsername: String {
+        get { Defaults[.playerUsername] }
+        set { Defaults[.playerUsername] = newValue }}
+
+    /// The raw `CoreLanguageSetting` integer for the user's language override.
+    /// -1 means "system locale" (caller resolves via `CoreLocaleMapper`).
+    @objc
+    public static var coreLanguageRawValue: Int {
+        Defaults[.coreLanguage].rawValue
+    }
 }
 
 // MARK: - RetroAchievements Settings

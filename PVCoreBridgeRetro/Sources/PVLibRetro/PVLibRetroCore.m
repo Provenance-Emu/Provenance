@@ -33,6 +33,16 @@ extern struct retro_midi_interface *pv_libretro_midi_interface(void);
 /// Used by MIDIResponder implementations to forward decoded MIDI events from MIDIDeviceManager.
 extern void pv_libretro_midi_inject_byte(uint8_t byte);
 
+/// Performance interface callbacks defined in PVThinLibretroFrontend.mm.
+/// Shared so both frontend paths use the same counter storage and signpost instrumentation.
+extern retro_time_t pv_perf_get_time_usec(void);
+extern retro_perf_tick_t pv_perf_get_counter(void);
+extern uint64_t pv_perf_get_cpu_features(void);
+extern void pv_perf_register(struct retro_perf_counter *counter);
+extern void pv_perf_start(struct retro_perf_counter *counter);
+extern void pv_perf_stop(struct retro_perf_counter *counter);
+extern void pv_perf_log(void);
+
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
@@ -168,6 +178,44 @@ static bool runloop_game_options_active          = false;
 static slock_t *_runloop_msg_queue_lock           = NULL;
 #endif
 //static msg_queue_t *runloop_msg_queue            = NULL;
+
+// MARK: - Netpacket interface (env 78)
+
+static struct retro_netpacket_callback *s_netpacketCallback = NULL;
+static BOOL s_netpacketSessionActive = NO;
+static NSMutableArray<NSData *> *s_netpacketIncomingQueue = nil;
+static NSMutableArray<NSNumber *> *s_netpacketIncomingClientIDs = nil;
+static os_unfair_lock s_netpacketQueueLock = OS_UNFAIR_LOCK_INIT;
+
+/// Block invoked when the core calls send_fn to send a packet over the network.
+static void (^s_netpacketSendBlock)(int flags, const void *buf, size_t len, uint16_t clientID) = nil;
+
+static void legacy_netpacket_send(int flags, const void *buf, size_t len, uint16_t client_id) {
+    if (!s_netpacketSessionActive) return;
+    if (s_netpacketSendBlock) {
+        s_netpacketSendBlock(flags, buf, len, client_id);
+    }
+}
+
+static void legacy_netpacket_poll_receive(void) {
+    if (!s_netpacketCallback) return;
+
+    os_unfair_lock_lock(&s_netpacketQueueLock);
+    NSArray<NSData *> *packets = [s_netpacketIncomingQueue copy];
+    NSArray<NSNumber *> *clientIDs = [s_netpacketIncomingClientIDs copy];
+    [s_netpacketIncomingQueue removeAllObjects];
+    [s_netpacketIncomingClientIDs removeAllObjects];
+    os_unfair_lock_unlock(&s_netpacketQueueLock);
+
+    retro_netpacket_receive_t receiveFn = s_netpacketCallback->receive;
+    if (!receiveFn) return;
+
+    for (NSUInteger i = 0; i < packets.count; i++) {
+        NSData *pkt = packets[i];
+        uint16_t fromClient = clientIDs[i].unsignedShortValue;
+        receiveFn(pkt.bytes, pkt.length, fromClient);
+    }
+}
 
 // MARK: - Config
 
@@ -1979,8 +2027,17 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: {
-            DLOG(@"Environ GET_PERF_INTERFACE");
-            return false;
+            struct retro_perf_callback *cb = (struct retro_perf_callback *)data;
+            if (!cb) return false;
+            cb->get_time_usec    = pv_perf_get_time_usec;
+            cb->get_cpu_features = pv_perf_get_cpu_features;
+            cb->get_perf_counter = pv_perf_get_counter;
+            cb->perf_register    = pv_perf_register;
+            cb->perf_start       = pv_perf_start;
+            cb->perf_stop        = pv_perf_stop;
+            cb->perf_log         = pv_perf_log;
+            DLOG(@"Environ GET_PERF_INTERFACE — wired up");
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION: {
             *(unsigned *)data = 2;
@@ -2171,10 +2228,25 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
 
         // MARK: - Netpacket interface — env 78
-        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE:
-            // Network multiplayer packet routing — not supported.
-            DLOG(@"Environ SET_NETPACKET_INTERFACE — not supported");
+        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE: {
+            const struct retro_netpacket_callback *cb =
+                (const struct retro_netpacket_callback *)data;
+            if (cb && cb->start && cb->receive) {
+                if (s_netpacketCallback) {
+                    free(s_netpacketCallback);
+                }
+                s_netpacketCallback = (struct retro_netpacket_callback *)malloc(sizeof(*s_netpacketCallback));
+                memcpy(s_netpacketCallback, cb, sizeof(*s_netpacketCallback));
+                s_netpacketIncomingQueue = [NSMutableArray new];
+                s_netpacketIncomingClientIDs = [NSMutableArray new];
+                s_netpacketQueueLock = OS_UNFAIR_LOCK_INIT;
+                ILOG(@"Environ SET_NETPACKET_INTERFACE: registered (protocol_version=%s)",
+                     cb->protocol_version ?: "(none)");
+                return true;
+            }
+            WLOG(@"Environ SET_NETPACKET_INTERFACE: rejected (missing start/receive)");
             return false;
+        }
 
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
@@ -2665,6 +2737,19 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 }
 
 - (void)dealloc {
+    // Clean up netpacket state
+    if (s_netpacketCallback) {
+        if (s_netpacketSessionActive && s_netpacketCallback->stop) {
+            s_netpacketCallback->stop();
+        }
+        free(s_netpacketCallback);
+        s_netpacketCallback = NULL;
+    }
+    s_netpacketSessionActive = NO;
+    s_netpacketSendBlock = nil;
+    s_netpacketIncomingQueue = nil;
+    s_netpacketIncomingClientIDs = nil;
+
     core_unload();
 }
 

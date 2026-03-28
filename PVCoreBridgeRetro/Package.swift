@@ -36,6 +36,7 @@ let package = Package(
         .package(path: "../PVJIT"),
         .package(path: "../PVLogging"),
         .package(path: "../MoltenVK"),
+        .package(path: "../PVNetplay"),
         .package(path: "../PVObjCUtils"),
         .package(path: "../PVPlists"),
         .package(path: "../PVPrimitives"),
@@ -57,6 +58,7 @@ let package = Package(
                 .product(name: "JITManager", package: "PVJIT"),
                 "PVLogging",
                 .product(name: "MoltenVK-1.2.8", package: "MoltenVK", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst])),
+                "PVNetplay",
                 "PVObjCUtils",
                 "PVPlists",
                 .product(name: "PVSystems", package: "PVPrimitives"),
@@ -99,7 +101,8 @@ let package = Package(
                 .linkedFramework("AVFoundation"),
                 .linkedFramework("AudioToolbox"),
                 .linkedFramework("Accelerate"),
-                .linkedFramework("CoreMIDI", .when(platforms: [.iOS, .macOS, .macCatalyst, .visionOS]))
+                .linkedFramework("CoreMIDI", .when(platforms: [.iOS, .macOS, .macCatalyst, .visionOS])),
+                .linkedFramework("Network")
             ]
         ),
         // ------------------- libretro -------------------

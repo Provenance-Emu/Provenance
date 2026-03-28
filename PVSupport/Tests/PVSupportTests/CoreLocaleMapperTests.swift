@@ -33,48 +33,64 @@ struct CoreLocaleMapperTests {
         #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("fr-FR")) == 2)
     }
 
-    @Test("German maps to 3")
-    func germanMapsToThree() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("de")) == 3)
+    @Test("Spanish maps to 3")
+    func spanishMapsToThree() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("es")) == 3)
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("es-MX")) == 3)
     }
 
-    @Test("Spanish maps to 4")
-    func spanishMapsToFour() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("es")) == 4)
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("es-MX")) == 4)
+    @Test("German maps to 4")
+    func germanMapsToFour() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("de")) == 4)
     }
 
-    @Test("Portuguese maps to 6")
-    func portugueseMapsToSix() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("pt")) == 6)
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("pt-BR")) == 6)
+    @Test("Portuguese (Brazil) maps to 7, Portugal maps to 8")
+    func portugueseRegionSplit() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("pt")) == 7)
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("pt-BR")) == 7)
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("pt-PT")) == 8)
     }
 
-    @Test("Russian maps to 16")
-    func russianMapsToSixteen() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("ru")) == 16)
+    @Test("Russian maps to 9")
+    func russianMapsToNine() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("ru")) == 9)
     }
 
-    @Test("Korean maps to 12")
-    func koreanMapsToTwelve() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("ko")) == 12)
+    @Test("Korean maps to 10")
+    func koreanMapsToTen() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("ko")) == 10)
     }
 
-    @Test("Chinese Simplified maps to 11 for CN region")
+    @Test("Chinese Simplified maps to 12 for CN region")
     func chineseSimplifiedForChinaRegion() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-CN")) == 11)
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-SG")) == 11)
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-CN")) == 12)
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-SG")) == 12)
     }
 
-    @Test("Chinese Traditional maps to 13 for TW region")
+    @Test("Chinese Traditional maps to 11 for TW region")
     func chineseTraditionalForTaiwanRegion() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-TW")) == 13)
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-HK")) == 13)
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-TW")) == 11)
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("zh-HK")) == 11)
     }
 
-    @Test("Arabic maps to 14")
-    func arabicMapsToFourteen() {
-        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("ar")) == 14)
+    @Test("Arabic maps to 16")
+    func arabicMapsToSixteen() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("ar")) == 16)
+    }
+
+    @Test("Greek maps to 17")
+    func greekMapsToSeventeen() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("el")) == 17)
+    }
+
+    @Test("Turkish maps to 18")
+    func turkishMapsToEighteen() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("tr")) == 18)
+    }
+
+    @Test("Finnish maps to 23")
+    func finnishMapsToTwentyThree() {
+        #expect(CoreLocaleMapper.retroArchLanguageID(for: locale("fi")) == 23)
     }
 
     @Test("Unknown locale falls back to English (0)")
@@ -147,6 +163,6 @@ struct CoreLocaleMapperTests {
     @Test("NDS: Unknown locale falls back to 'English'")
     func ndsUnknownFallsBackToEnglish() {
         #expect(CoreLocaleMapper.ndsLanguageString(for: locale("xx")) == "English")
-        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("ko")) == "English") // Korean not in NDS set
+        #expect(CoreLocaleMapper.ndsLanguageString(for: locale("ko")) == "English")
     }
 }

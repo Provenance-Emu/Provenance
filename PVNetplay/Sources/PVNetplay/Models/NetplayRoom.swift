@@ -118,4 +118,6 @@ public enum DiscoverySource: String, Sendable, Codable {
     case manual = "manual"
     /// Fetched from the RetroArch public lobby REST API
     case lobbyAPI = "lobbyAPI"
+    /// Discovered via libretro netpacket Bonjour advertisement
+    case netpacket = "netpacket"
 }
