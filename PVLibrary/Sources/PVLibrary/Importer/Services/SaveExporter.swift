@@ -92,9 +92,25 @@ public final class SaveExporter: @unchecked Sendable {
         let systemID = frozenGame.systemIdentifier
         let romURL = frozenGame.file?.url
 
-        // Collect save states snapshot before we leave Realm context
-        let saveStateSnapshots: [(fileURL: URL?, imageURL: URL?)] = frozenGame.saveStates.map { state in
-            (fileURL: state.file?.url, imageURL: state.image?.url)
+        // Snapshot save-state URLs before leaving Realm context (frozen object access is safe
+        // across threads, but iterating the live List is not).
+        struct SaveStateSnapshot {
+            let fileURL: URL?
+            let imageURL: URL?
+            let date: Date
+            let isAutosave: Bool
+            let userDescription: String?
+            let coreIdentifier: String?
+        }
+        let saveStateSnapshots: [SaveStateSnapshot] = frozenGame.saveStates.map { state in
+            SaveStateSnapshot(
+                fileURL: state.file?.url,
+                imageURL: state.image?.url,
+                date: state.date,
+                isAutosave: state.isAutosave,
+                userDescription: state.userDescription,
+                coreIdentifier: state.core?.identifier
+            )
         }
 
         let hasAnySave = saveStateSnapshots.contains(where: {
@@ -123,20 +139,7 @@ public final class SaveExporter: @unchecked Sendable {
 
         try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
 
-        // Build per-save-state index for the v2 manifest
         let iso8601 = ISO8601DateFormatter()
-        let stateEntries: [SaveBundleManifestV2.SaveStateEntry] = frozenGame.saveStates.compactMap { state in
-            guard let fileURL = state.file?.url,
-                  fm.fileExists(atPath: fileURL.path) else { return nil }
-            return SaveBundleManifestV2.SaveStateEntry(
-                filename: fileURL.lastPathComponent,
-                screenshotFilename: state.image?.url?.lastPathComponent,
-                date: iso8601.string(from: state.date),
-                isAutosave: state.isAutosave,
-                userDescription: state.userDescription,
-                coreIdentifier: state.core?.identifier
-            )
-        }
 
         // Build battery saves index (skip hidden files such as .DS_Store)
         let batteryEntries: [SaveBundleManifestV2.BatterySaveEntry]? = {
@@ -150,19 +153,6 @@ public final class SaveExporter: @unchecked Sendable {
                     filename: fileURL.lastPathComponent, sizeBytes: size)
             }
         }()
-
-        // Write manifest.json using schema v2
-        let isoDate = iso8601.string(from: Date())
-        let manifest = SaveBundleManifestV2(
-            gameMD5: md5,
-            gameTitle: gameTitle,
-            systemIdentifier: systemID,
-            exportDate: isoDate,
-            batterySaves: batteryEntries,
-            saveStates: stateEntries.isEmpty ? nil : stateEntries
-        )
-        let manifestData = try manifest.jsonData()
-        try manifestData.write(to: stagingDir.appendingPathComponent("manifest.json"))
 
         // Track how many save files are actually copied so we can error if nothing ends up in the zip.
         var filesCopied = 0
@@ -178,21 +168,32 @@ public final class SaveExporter: @unchecked Sendable {
             }
         }
 
-        // Copy save state files
+        // Copy save state files and build the v2 manifest index in a single pass.
+        var stateEntries: [SaveBundleManifestV2.SaveStateEntry] = []
         if hasAnySave {
             let statesDir = stagingDir.appendingPathComponent("states", isDirectory: true)
             try fm.createDirectory(at: statesDir, withIntermediateDirectories: true)
 
             for snapshot in saveStateSnapshots {
-                if let src = snapshot.fileURL, fm.fileExists(atPath: src.path) {
-                    let dest = statesDir.appendingPathComponent(src.lastPathComponent)
-                    do {
-                        try fm.copyItem(at: src, to: dest)
-                        filesCopied += 1
-                    } catch {
-                        WLOG("SaveExporter: failed to copy save state \(src.lastPathComponent): \(error.localizedDescription)")
-                    }
+                guard let src = snapshot.fileURL, fm.fileExists(atPath: src.path) else { continue }
+
+                let dest = statesDir.appendingPathComponent(src.lastPathComponent)
+                do {
+                    try fm.copyItem(at: src, to: dest)
+                    filesCopied += 1
+                    // Only add a manifest entry for successfully copied states.
+                    stateEntries.append(SaveBundleManifestV2.SaveStateEntry(
+                        filename: src.lastPathComponent,
+                        screenshotFilename: snapshot.imageURL?.lastPathComponent,
+                        date: iso8601.string(from: snapshot.date),
+                        isAutosave: snapshot.isAutosave,
+                        userDescription: snapshot.userDescription,
+                        coreIdentifier: snapshot.coreIdentifier
+                    ))
+                } catch {
+                    WLOG("SaveExporter: failed to copy save state \(src.lastPathComponent): \(error.localizedDescription)")
                 }
+
                 if let imgSrc = snapshot.imageURL, fm.fileExists(atPath: imgSrc.path) {
                     let imgDest = statesDir.appendingPathComponent(imgSrc.lastPathComponent)
                     do {
@@ -203,6 +204,19 @@ public final class SaveExporter: @unchecked Sendable {
                 }
             }
         }
+
+        // Write manifest.json using schema v2
+        let isoDate = iso8601.string(from: Date())
+        let manifest = SaveBundleManifestV2(
+            gameMD5: md5,
+            gameTitle: gameTitle,
+            systemIdentifier: systemID,
+            exportDate: isoDate,
+            batterySaves: batteryEntries,
+            saveStates: stateEntries.isEmpty ? nil : stateEntries
+        )
+        let manifestData = try manifest.jsonData()
+        try manifestData.write(to: stagingDir.appendingPathComponent("manifest.json"))
 
         // If every copy failed the zip would contain only manifest.json — treat as no saves
         guard filesCopied > 0 else {

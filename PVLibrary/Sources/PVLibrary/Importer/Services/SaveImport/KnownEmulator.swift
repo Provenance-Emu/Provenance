@@ -10,7 +10,7 @@
 //
 
 import Foundation
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(tvOS)
 import UIKit
 #endif
 

@@ -217,6 +217,9 @@ public struct SaveBundleManifestV2: Codable, Sendable {
                 guard !manifest.gameMD5.isEmpty else {
                     throw SaveBundleManifestParseError.invalidManifest("Missing 'game' field.")
                 }
+                guard !manifest.systemIdentifier.isEmpty else {
+                    throw SaveBundleManifestParseError.invalidManifest("Missing 'system' field.")
+                }
                 return manifest
             } catch let parseError as SaveBundleManifestParseError {
                 throw parseError

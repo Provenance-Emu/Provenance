@@ -180,6 +180,26 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         }
     }
 
+    func testV2ParseThrowsOnEmptySystemIdentifier() {
+        // v2 schemaVersion with empty "system" field — must throw, matching the v1 validation.
+        let json = """
+        {
+            "schemaVersion": 2,
+            "game": "abc123",
+            "title": "Test",
+            "system": "",
+            "exportDate": "2026-01-01T00:00:00Z"
+        }
+        """.data(using: .utf8)!
+        XCTAssertThrowsError(try SaveBundleManifestV2.parse(from: json)) { error in
+            guard case SaveBundleManifestParseError.invalidManifest(let reason) = error else {
+                XCTFail("Expected invalidManifest, got \(error)")
+                return
+            }
+            XCTAssertTrue(reason.contains("system"), "Error message should mention 'system', got: \(reason)")
+        }
+    }
+
     // MARK: - SaveFileCategory helpers
 
     func testSaveFileCategoryInference() {
