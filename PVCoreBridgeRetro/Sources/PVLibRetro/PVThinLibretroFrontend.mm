@@ -1889,7 +1889,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 /// `PVPrimitives` — add new systems there; no changes needed here.
 ///
 /// Base directory is derived from the already-correct `BIOSPath` (set by PVEmulatorCore before
-/// core start) so that app-group containers and tvOS Caches→Documents redirect are handled
+/// core start) so that app-group containers and tvOS Documents→Caches substitution are handled
 /// automatically. Falls back to `NSSearchPathForDirectoriesInDomains` (Caches on tvOS,
 /// Documents on iOS/macOS) when BIOSPath is unavailable, which shouldn't happen in practice.
 ///

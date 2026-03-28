@@ -105,11 +105,11 @@ private:
 - (NSString *)pspSystemDirectory {
 #if TARGET_OS_TV
     // tvOS must use Caches — Documents is not permitted by App Store guidelines.
-    NSString *docsPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
 #else
-    NSString *docsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
 #endif
-    NSString *pspDir = [docsPath stringByAppendingPathComponent:@"System/PSP"];
+    NSString *pspDir = [basePath stringByAppendingPathComponent:@"System/PSP"];
     NSError *error = nil;
     [[NSFileManager defaultManager] createDirectoryAtPath:pspDir
                                  withIntermediateDirectories:YES
