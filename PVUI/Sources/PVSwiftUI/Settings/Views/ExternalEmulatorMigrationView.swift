@@ -162,7 +162,11 @@ public struct ExternalEmulatorMigrationView: View {
 
     private var emptyStateSection: some View {
         VStack(spacing: 12) {
+            #if os(tvOS)
+            sectionHeader(title: "Third-Party Emulators", icon: "info.circle", color: .orange)
+            #else
             sectionHeader(title: "No Emulators Detected", icon: "magnifyingglass", color: .orange)
+            #endif
 
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white.opacity(0.05))
@@ -171,13 +175,17 @@ public struct ExternalEmulatorMigrationView: View {
                         Image(systemName: "app.badge.questionmark")
                             .font(.system(size: 32))
                             .foregroundStyle(.secondary)
+                        #if os(tvOS)
+                        Text("Third-party emulators (Delta, RetroArch, PPSSPP, Mantic Emu, Gamma) are not available on Apple TV.")
+                        #else
                         Text("Delta, RetroArch, PPSSPP, Mantic Emu, and Gamma were not found on this device.")
+                        #endif
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                         #if os(tvOS)
-                        Text("You can still import save files manually via the Web Server.")
+                        Text("Use the Web Server to transfer save files from another device.")
                         #else
                         Text("You can still import save files manually using Files.app.")
                         #endif
@@ -533,24 +541,18 @@ struct EmulatorMigrationGuideView: View {
 
     private var importSteps: [String] {
         #if os(tvOS)
-        return [
-            "Open Provenance and launch the web server via Settings → Library → Web Server.",
-            "Navigate to the ROM directory for the matching system (e.g. /ROMS/GBA/).",
-            "Place the save file in the same folder as the ROM, with the same filename (only the extension differs).",
-            "For example: 'MyGame.gba' needs 'MyGame.srm' or 'MyGame.sav' alongside it.",
-            "Launch the game in Provenance — it will automatically detect and load the save.",
-            "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems)."
-        ]
+        let step1 = "Open Provenance and launch the web server via Settings → Library → Web Server."
         #else
+        let step1 = "Open Provenance and launch the web server via Settings → Library → Web Server, or use Files.app."
+        #endif
         return [
-            "Open Provenance and launch the web server via Settings → Library → Web Server, or use Files.app.",
-            "Navigate to the ROM directory for the matching system (e.g. /ROMS/GBA/).",
+            step1,
+            "Navigate to the ROM directory for the matching system (e.g. ROMs/GBA/).",
             "Place the save file in the same folder as the ROM, with the same filename (only the extension differs).",
             "For example: 'MyGame.gba' needs 'MyGame.srm' or 'MyGame.sav' alongside it.",
             "Launch the game in Provenance — it will automatically detect and load the save.",
             "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems)."
         ]
-        #endif
     }
 }
 
@@ -592,7 +594,7 @@ struct ManualFileImportGuideView: View {
                         icon: "wifi",
                         steps: [
                             "Open Provenance and go to Settings → Library.",
-                            "Tap 'Launch Web Server' and note the IP address shown.",
+                            "Select 'Launch Web Server' and note the IP address shown.",
                             "On your computer, open a browser and go to that address.",
                             "Upload your save files through the web interface.",
                             "Place each file in the same ROM directory as the matching game.",
