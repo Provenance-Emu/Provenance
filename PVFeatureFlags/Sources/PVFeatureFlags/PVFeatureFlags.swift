@@ -27,9 +27,10 @@ public enum PVFeature: String, CaseIterable, Sendable {
     case advancedSkinFeatures = "advancedSkinFeatures"
     case contentlessCores = "contentlessCores"
     /// Enables runtime scanning of Frameworks/ for bare libretro dylibs/frameworks
-    /// and registers them through the thin PVThinLibretroFrontend. Disabled by default;
-    /// enable via the PVFeatureFlags debug-override UI (accessible on all build types;
-    /// hidden behind a cheat code on App Store builds).
+    /// and registers them through the thin PVThinLibretroFrontend.
+    /// Platform-gated: enabled by default on tvOS; blocked on iOS by `allowedPlatforms`.
+    /// On iOS, enable via the PVFeatureFlags debug-override UI (accessible on all build
+    /// types; hidden behind a cheat code on App Store builds).
     case dynamicLibretroScanner = "dynamicLibretroScanner"
     /// Enables the experimental tile/grid based pause menu overlay that floats over the
     /// game screen instead of the classic full-panel tab/list menu. Disabled by default.

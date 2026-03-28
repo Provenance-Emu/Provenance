@@ -444,12 +444,20 @@ struct PVFeatureFlagsTests {
         flags.clearDebugOverrides()
         let manager = PVFeatureFlagsManager(featureFlags: flags)
 
-        #expect(manager.inAppFreeROMs == false)
+        // PVFeatureFlags.init() eagerly loads the bundled features.json, so
+        // inAppFreeROMs is already enabled for the "standard" app type (minBuild 100,
+        // minVersion 1.0.0 satisfied). cheatsUseSwiftUI is enabled: true in the
+        // bundled config but enabled: false in sampleJSON — use it to verify the
+        // setDebugConfiguration override actually takes effect.
+        #expect(manager.inAppFreeROMs == true)   // enabled in bundled features.json
+        #expect(manager.cheatsUseSwiftUI == true) // enabled: true in bundled features.json
 
         manager.setDebugConfiguration(features: config.features)
         RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
         #expect(manager.inAppFreeROMs == true)
         #expect(manager.romPathMigrator == true)
+        // sampleJSON sets cheatsUseSwiftUI to enabled: false — confirms override applied
+        #expect(manager.cheatsUseSwiftUI == false)
 
         fetcher.clearCache()
     }
@@ -543,7 +551,9 @@ struct PVFeatureFlagsTests {
 import SwiftUI
 
 struct ExampleView: View {
-    @StateObject private var featureFlags = PVFeatureFlagsManager.shared
+    // Use @ObservedObject (not @StateObject) for singletons — the view does not own
+    // the object's lifetime. @StateObject is only correct for locally-created instances.
+    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
     var body: some View {
         VStack {
