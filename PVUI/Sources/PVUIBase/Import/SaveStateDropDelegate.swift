@@ -35,12 +35,10 @@ private let saveDropAcceptedTypes: [UTType] = [
 /// Attaches a save-state/bundle drop target to a game card.
 ///
 /// Accepted payloads:
-/// - **`.zip`** export bundles created by `SaveExporter` — imported via `SaveExporter.importSaves(from:for:)`,
-///   which validates the MD5 manifest before restoring files.
+/// - **`.zip` / `.pvsave`** export bundles created by `SaveExporter` — imported via
+///   `SaveExporter.importSaves(from:for:)`, which validates the MD5 manifest, restores
+///   files to disk, and registers v2 save states in Realm so they appear in the UI immediately.
 /// - **`.sav` / `.srm`** battery save files — copied directly to the game's battery saves directory.
-///
-/// Neither path registers new `PVSaveState` objects in Realm; a library re-scan or relaunch
-/// will surface the restored states in the UI. See issue #3409 for the Realm registration follow-up.
 public struct SaveStateDropTargetModifier: ViewModifier {
     /// The Realm primary key of the game this drop target belongs to.
     /// This is `PVGame.md5Hash` — **not** `PVGame.id` (UUID-formatted string).

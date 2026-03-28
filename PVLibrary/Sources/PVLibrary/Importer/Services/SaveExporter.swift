@@ -269,6 +269,16 @@ public final class SaveExporter: @unchecked Sendable {
 
     // MARK: - Import
 
+    // MARK: - Import Phase Result
+
+    /// Internal result from the file-restoration phase of `importSaves`.
+    private struct ImportPhaseResult {
+        /// Parsed save-state entries from the manifest (may be empty for v1 bundles).
+        let stateEntries: [SaveBundleManifestV2.SaveStateEntry]
+        /// Whether a `battery/` directory was present in the bundle and processed.
+        let sramRestored: Bool
+    }
+
     /// Imports saves from a `.pvsave` bundle (or legacy `.zip` v1 bundle) and registers
     /// imported save states in Realm so they appear in the UI immediately.
     ///
@@ -284,26 +294,34 @@ public final class SaveExporter: @unchecked Sendable {
     ///   - zipURL: URL of the `.pvsave` or `.zip` export bundle.
     ///   - game: The game to restore saves for. Must have an associated ROM file URL, and the
     ///     bundle's manifest MD5 must match `game.md5Hash`.
+    /// - Returns: A `SaveImportResult` summarising what was restored.
     /// - Throws: `SaveExportError.gameMismatch` if the MD5 doesn't match,
     ///   or `SaveExportError.invalidBundle` if the game has no ROM file path.
-    public func importSaves(from zipURL: URL, for game: PVGame) async throws {
+    @discardableResult
+    public func importSaves(from zipURL: URL, for game: PVGame) async throws -> SaveImportResult {
         let frozenGame = game.isFrozen ? game : game.freeze()
         let gameID = frozenGame.md5Hash
 
-        // performImport returns the parsed save-state entries from the manifest so that
-        // registerImportedSaveStates can use them directly without re-extracting the archive.
-        let stateEntries = try await Task.detached(priority: .userInitiated) {
+        // performImport returns the parsed save-state entries and sramRestored flag so that
+        // registerImportedSaveStates can use entries directly without re-extracting the archive.
+        let phaseResult = try await Task.detached(priority: .userInitiated) {
             try self.performImport(zipURL: zipURL, frozenGame: frozenGame)
         }.value
 
         // Realm registration is performed on the main actor after files are restored.
         // We re-fetch the game from Realm (thawed) to ensure a live reference.
-        await registerImportedSaveStates(for: gameID, entries: stateEntries)
+        await registerImportedSaveStates(for: gameID, entries: phaseResult.stateEntries)
+
+        return SaveImportResult(
+            sramRestored: phaseResult.sramRestored,
+            statesRestored: phaseResult.stateEntries.count
+        )
     }
 
-    /// Returns the manifest's `saveStates` array so the caller can pass entries
-    /// directly to `registerImportedSaveStates` without re-extracting the archive.
-    private func performImport(zipURL: URL, frozenGame: PVGame) throws -> [SaveBundleManifestV2.SaveStateEntry] {
+    /// Restores files from the bundle to disk and returns an `ImportPhaseResult` so the
+    /// caller can pass state entries directly to `registerImportedSaveStates` without
+    /// re-extracting the archive.
+    private func performImport(zipURL: URL, frozenGame: PVGame) throws -> ImportPhaseResult {
         guard !frozenGame.isInvalidated else {
             throw SaveExportError.invalidBundle("Game object is no longer valid.")
         }
@@ -351,11 +369,13 @@ public final class SaveExporter: @unchecked Sendable {
             throw SaveExportError.invalidBundle("Cannot import saves — game has no associated ROM file path.")
         }
 
-        // Restore battery saves
+        // Restore battery saves; track whether the bundle contained a battery directory.
+        var sramRestored = false
         let srcBattery = tempDir.appendingPathComponent("battery", isDirectory: true)
         if fm.fileExists(atPath: srcBattery.path) {
             let destBattery = Paths.batterySavesPath(forROM: romURL)
             try restoreDirectory(from: srcBattery, to: destBattery)
+            sramRestored = true
         }
 
         // Restore save state files to disk
@@ -385,7 +405,7 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         ILOG("SaveExporter: file restore complete for game '\(frozenGame.title)'")
-        return manifest.saveStates ?? []
+        return ImportPhaseResult(stateEntries: manifest.saveStates ?? [], sramRestored: sramRestored)
     }
 
     // MARK: - Realm Registration on Import
