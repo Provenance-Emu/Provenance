@@ -104,6 +104,61 @@ extension PVSNES9xEmulatorCore: MouseResponder {
     }
 }
 
+// MARK: - LightGunResponder
+
+extension PVSNES9xEmulatorCore: LightGunResponder {
+
+    public var gameSupportsLightGun: Bool {
+        return (bridge as! PVSNESEmulatorCoreBridge).isSNESLightGunGame
+    }
+
+    public var requiresLightGun: Bool { false }
+
+    public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunMovedToPoint(point, isOffscreen: isOffscreen)
+    }
+
+    public func lightGunTriggerDown() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunTriggerDown()
+    }
+
+    public func lightGunTriggerUp() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunTriggerUp()
+    }
+
+    public func lightGunAuxADown() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunAuxADown()
+    }
+
+    public func lightGunAuxAUp() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunAuxAUp()
+    }
+
+    public func lightGunAuxBDown() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunAuxBDown()
+    }
+
+    public func lightGunAuxBUp() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunAuxBUp()
+    }
+
+    public func lightGunStartDown() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunStartDown()
+    }
+
+    public func lightGunStartUp() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunStartUp()
+    }
+
+    public func lightGunReloadDown() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunReloadDown()
+    }
+
+    public func lightGunReloadUp() {
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunReloadUp()
+    }
+}
+
 extension PVSNESEmulatorCoreBridge: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
         do {

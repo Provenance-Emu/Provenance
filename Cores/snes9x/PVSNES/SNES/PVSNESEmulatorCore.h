@@ -60,6 +60,32 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)snesRightMouseUp;
 - (void)resetSNESMouseTracking;
 
+# pragma mark - Light Gun Support
+/// YES when the loaded ROM requires the Super Scope or Konami Justifier.
+@property (nonatomic, readonly) BOOL isSNESLightGunGame;
+/// Move the light gun aim point. @c normalizedPoint is in [0,1]×[0,1] screen space.
+/// @c isOffscreen=YES simulates pointing the gun away from the screen (reload gesture).
+- (void)snesLightGunMovedToPoint:(CGPoint)normalizedPoint isOffscreen:(BOOL)isOffscreen;
+/// Primary trigger press / release.
+- (void)snesLightGunTriggerDown;
+- (void)snesLightGunTriggerUp;
+/// Super Scope "Cursor" button (also used as AuxA for Super Scope games).
+- (void)snesLightGunAuxADown;
+- (void)snesLightGunAuxAUp;
+/// Super Scope "ToggleTurbo" button (AuxB).
+- (void)snesLightGunAuxBDown;
+- (void)snesLightGunAuxBUp;
+/// Super Scope "Pause" / Justifier "Start" button.
+- (void)snesLightGunStartDown;
+- (void)snesLightGunStartUp;
+/// Aim-offscreen + trigger simultaneously (reload gesture for both Super Scope and Justifier).
+- (void)snesLightGunReloadDown;
+- (void)snesLightGunReloadUp;
+/// Called by the Swift bridge on ROM load; do not call directly.
+- (void)setupSuperScopeMappings;
+- (void)setupJustifierMappings;
+- (void)resetSNESLightGunState;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)
