@@ -130,7 +130,10 @@ public final class DriverStoreManager {
                     await self.updatePurchasedProducts(for: transaction)
                     await transaction.finish()
                 } catch {
-                    // Ignore unverified transactions
+                    // Unverified transactions are expected (e.g. partial/jailbreak) — skip them.
+#if DEBUG
+                    print("[DriverStoreManager] Skipping unverified transaction: \(error)")
+#endif
                 }
             }
         }

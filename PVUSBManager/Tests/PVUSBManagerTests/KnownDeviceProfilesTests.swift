@@ -169,6 +169,18 @@ final class KnownDeviceProfilesTests: XCTestCase {
         }
     }
 
+    /// Profiles with explicit productIDs must not collide — duplicate VID:PID entries
+    /// would cause `profile(vendorID:productID:)` to silently return the wrong entry.
+    func testNoDuplicateVIDPIDInDatabase() {
+        let explicit = KnownDeviceProfiles.all.filter { $0.productID != nil }
+        var seen: Set<String> = []
+        for profile in explicit {
+            let key = "\(profile.vendorID):\(profile.productID!)"
+            XCTAssertTrue(seen.insert(key).inserted,
+                "Duplicate VID:PID \(key) found for '\(profile.productName)'")
+        }
+    }
+
     // MARK: - USBDevice
 
     func testUSBDeviceUsbID() {

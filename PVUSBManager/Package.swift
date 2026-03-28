@@ -27,7 +27,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PVUSBManagerTests",
-            dependencies: ["PVUSBManager"]
+            dependencies: ["PVUSBManager"],
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         )
     ],
     swiftLanguageModes: [.v5, .v6],
