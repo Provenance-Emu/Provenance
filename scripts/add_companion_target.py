@@ -4,7 +4,7 @@ Add ProvenanceCompanion app target + ProvenanceCompanionTests unit-test target
 to Provenance.xcodeproj/project.pbxproj
 
 This script adds:
-  - ProvenanceCompanion: a minimal iOS 17+ app target for the Companion app
+  - ProvenanceCompanion: a minimal iOS 18+ app target for the Companion app
   - ProvenanceCompanionTests: a unit-test target hosted by ProvenanceCompanion
 
 All UUIDs use the C0C0CAFE prefix for easy identification.
@@ -204,6 +204,7 @@ def build_configs():
 \t\t\t\tSWIFT_EMIT_LOC_STRINGS = YES;
 \t\t\t\tSWIFT_VERSION = 5.0;
 \t\t\t\tTARGETED_DEVICE_FAMILY = "1,2";
+\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 18.0;
 \t\t\t\tWRAPPER_EXTENSION = app;"""
 
     debug = f"""
@@ -478,7 +479,7 @@ def test_build_configs():
 \t\t\t\tCODE_SIGN_STYLE = Automatic;
 \t\t\t\tDEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 \t\t\t\tGENERATE_INFOPLIST_FILE = YES;
-\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 17.0;
+\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 18.0;
 \t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanionTests";
 \t\t\t\tPRODUCT_NAME = "$(TARGET_NAME)";
 \t\t\t\tSDKROOT = iphoneos;
