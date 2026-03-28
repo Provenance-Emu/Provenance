@@ -74,8 +74,9 @@ public final class SaveImportMatchingService: @unchecked Sendable {
     /// - Returns: The best `SaveImportMatchResult` found.
     @MainActor
     public func match(bundleURL url: URL) async -> SaveImportMatchResult {
-        // Step 1: MD5 exact match (meaningful only for zip bundles with a manifest)
-        if url.pathExtension.lowercased() == "zip" {
+        // Step 1: MD5 exact match (meaningful only for .zip/.pvsave bundles with a manifest)
+        let ext = url.pathExtension.lowercased()
+        if ext == "zip" || ext == "pvsave" {
             let md5 = await Task.detached(priority: .userInitiated) {
                 SaveExporter.shared.gameMD5(inBundleAt: url)
             }.value
@@ -83,7 +84,7 @@ public final class SaveImportMatchingService: @unchecked Sendable {
             if let md5,
                let game = RomDatabase.sharedInstance.object(
                    ofType: PVGame.self,
-                   wherePrimaryKeyEquals: md5.lowercased()
+                   wherePrimaryKeyEquals: md5.uppercased()
                ) {
                 let frozen = game.isFrozen ? game : game.freeze()
                 return SaveImportMatchResult(game: frozen, confidence: .exact)

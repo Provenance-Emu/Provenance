@@ -115,6 +115,12 @@ public struct SaveImportWizardView: View {
             }
         }
         .onAppear(perform: setup)
+        .onDisappear {
+            // Clean up any copied temp file if the import didn't complete.
+            if let url = selectedURL, step != .done {
+                cleanupTempFile(url)
+            }
+        }
     }
 
     // MARK: - Setup
@@ -294,7 +300,7 @@ public struct SaveImportWizardView: View {
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .shadow(color: .retroPink, radius: 5)
-                    Text(game.systemIdentifier)
+                    Text(game.system?.name ?? game.systemIdentifier)
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.5))
                 } else {
@@ -722,13 +728,12 @@ private struct GamePickerView: View {
                 ForEach(filtered, id: \.md5Hash) { game in
                     Button {
                         onSelect(game)
-                        dismiss()
                     } label: {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(game.title)
                                 .foregroundColor(.primary)
                                 .font(.body)
-                            Text(game.systemIdentifier)
+                            Text(game.system?.name ?? game.systemIdentifier)
                                 .foregroundColor(.secondary)
                                 .font(.caption)
                         }
