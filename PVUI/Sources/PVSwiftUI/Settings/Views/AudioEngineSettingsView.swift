@@ -74,7 +74,6 @@ struct AudioEngineSettingsView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            #endif
             if audioEngine == .avAudioEngineGameAudioEngine {
                 Section(header: Text("Effects")) {
                     NavigationLink(destination: AUFilterSettingsView()) {
@@ -98,6 +97,7 @@ struct AudioEngineSettingsView: View {
                     }
                 }
             }
+            #endif
             #if DEBUG
             Section(header: Text("Debug Options")) {
                 ThemedToggle(isOn: $monoAudio) {
