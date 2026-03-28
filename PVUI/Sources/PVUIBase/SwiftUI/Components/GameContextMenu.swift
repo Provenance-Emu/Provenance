@@ -176,6 +176,22 @@ public struct GameContextMenu: View {
                     Label("Export Saves", systemImage: "square.and.arrow.up")
                 }
                 .disabled(!hasSaveStates && !hasBatterySaves)
+                if featureFlags.sramImportExport {
+                    if hasBatterySaves {
+                        Button {
+                            contextMenuDelegate?.gameContextMenu(self, didRequestExportSRAMFor: game)
+                        } label: {
+                            Label("Export Battery Save", systemImage: "memorychip")
+                        }
+                    }
+                    #if !os(tvOS)
+                    Button {
+                        contextMenuDelegate?.gameContextMenu(self, didRequestImportSRAMFor: game)
+                    } label: {
+                        Label("Import Battery Save", systemImage: "square.and.arrow.down")
+                    }
+                    #endif
+                }
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {
@@ -272,7 +288,7 @@ public struct GameContextMenu: View {
                 let dir = Paths.batterySavesPath(forROM: romURL)
                 let fm = FileManager.default
                 return fm.fileExists(atPath: dir.path)
-                    && ((try? fm.contentsOfDirectory(atPath: dir.path))?.isEmpty == false)
+                    && ((try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles))?.isEmpty == false)
             }.value
             hasBatterySaves = result
         }

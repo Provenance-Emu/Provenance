@@ -229,6 +229,105 @@ final class SaveExporterTests: XCTestCase {
         XCTAssertEqual(result, expectedMD5, "gameMD5(inBundleAt:) should handle manifests with non-string typed fields")
     }
 
+    // MARK: - exportSRAM
+
+    func testExportSRAMThrowsNoSavesFoundWhenNoROMURL() async throws {
+        let game = makeGame(title: "BatteryGame", md5: "batt0001", romURL: nil)
+
+        do {
+            _ = try await SaveExporter.shared.exportSRAM(for: game)
+            XCTFail("Expected invalidBundle to be thrown when romURL is nil")
+        } catch SaveExportError.invalidBundle {
+            // expected
+        }
+    }
+
+    func testExportSRAMThrowsNoSavesFoundWhenDirectoryEmpty() async throws {
+        let romURL = tempDir.appendingPathComponent("game.sfc")
+        try "rom".data(using: .utf8)!.write(to: romURL)
+        let game = makeGame(title: "BatteryGame", md5: "batt0002", romURL: romURL)
+
+        // Ensure no battery saves directory or it's empty — Paths will compute the dir from romURL
+        do {
+            _ = try await SaveExporter.shared.exportSRAM(for: game)
+            XCTFail("Expected noSavesFound when battery saves directory is empty")
+        } catch SaveExportError.noSavesFound {
+            // expected
+        } catch SaveExportError.invalidBundle {
+            // also acceptable if romURL isn't found via Paths
+        }
+    }
+
+    func testExportSRAMReturnsSingleFileForOneFile() async throws {
+        let romURL = tempDir.appendingPathComponent("mygame.sfc")
+        try "rom".data(using: .utf8)!.write(to: romURL)
+        let game = makeGame(title: "My Game", md5: "batt0003", romURL: romURL)
+
+        // Populate a battery saves directory
+        let batterySavesDir = Paths.batterySavesPath(forROM: romURL)
+        try FileManager.default.createDirectory(at: batterySavesDir, withIntermediateDirectories: true)
+        let srmFile = batterySavesDir.appendingPathComponent("mygame.srm")
+        try Data(repeating: 0xFF, count: 32).write(to: srmFile)
+
+        let exportURL = try await SaveExporter.shared.exportSRAM(for: game)
+        defer { SaveExporter.shared.cleanupExport(at: exportURL) }
+
+        // Single file should be returned directly (not zipped)
+        XCTAssertFalse(exportURL.pathExtension.lowercased() == "zip", "Single SRAM file should not be zipped")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: exportURL.path), "Exported file should exist")
+        XCTAssertEqual(exportURL.pathExtension.lowercased(), "srm")
+    }
+
+    func testExportSRAMReturnsZipForMultipleFiles() async throws {
+        let romURL = tempDir.appendingPathComponent("clockgame.sfc")
+        try "rom".data(using: .utf8)!.write(to: romURL)
+        let game = makeGame(title: "Clock Game", md5: "batt0004", romURL: romURL)
+
+        let batterySavesDir = Paths.batterySavesPath(forROM: romURL)
+        try FileManager.default.createDirectory(at: batterySavesDir, withIntermediateDirectories: true)
+        try Data(repeating: 0xAA, count: 32).write(to: batterySavesDir.appendingPathComponent("clockgame.srm"))
+        try Data(repeating: 0xBB, count: 8).write(to: batterySavesDir.appendingPathComponent("clockgame.rtc"))
+
+        let exportURL = try await SaveExporter.shared.exportSRAM(for: game)
+        defer { SaveExporter.shared.cleanupExport(at: exportURL) }
+
+        XCTAssertEqual(exportURL.pathExtension.lowercased(), "zip", "Multiple files should be bundled as zip")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: exportURL.path))
+    }
+
+    // MARK: - importSRAM
+
+    func testImportSRAMThrowsInvalidBundleWhenNoROMURL() async throws {
+        let game = makeGame(title: "ImportGame", md5: "imp0001", romURL: nil)
+        let fakeFile = tempDir.appendingPathComponent("save.srm")
+        try Data(repeating: 0x00, count: 16).write(to: fakeFile)
+
+        do {
+            try await SaveExporter.shared.importSRAM(from: fakeFile, for: game)
+            XCTFail("Expected invalidBundle when romURL is nil")
+        } catch SaveExportError.invalidBundle {
+            // expected
+        }
+    }
+
+    func testImportSRAMCopiesFileToDestination() async throws {
+        let romURL = tempDir.appendingPathComponent("importgame.sfc")
+        try "rom".data(using: .utf8)!.write(to: romURL)
+        let game = makeGame(title: "Import Game", md5: "imp0002", romURL: romURL)
+
+        let srcFile = tempDir.appendingPathComponent("importgame.srm")
+        let srmData = Data(repeating: 0xDE, count: 64)
+        try srmData.write(to: srcFile)
+
+        try await SaveExporter.shared.importSRAM(from: srcFile, for: game)
+
+        let destDir = Paths.batterySavesPath(forROM: romURL)
+        let destFile = destDir.appendingPathComponent("importgame.srm")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: destFile.path), "Imported SRAM should exist at battery saves path")
+        let importedData = try Data(contentsOf: destFile)
+        XCTAssertEqual(importedData, srmData, "Imported SRAM data should match source")
+    }
+
     // MARK: - validateNoBundleEscape
 
     func testValidateNoBundleEscapePassesForLegitimateDirectory() throws {

@@ -363,16 +363,31 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         }
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestExportSRAMFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        Task { @MainActor in
+            await exportSRAM(for: frozenGame)
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestImportSRAMFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        Task { @MainActor in
+            gamesViewModel.sramImportGame = frozenGame
+            gamesViewModel.showSRAMImportPicker = true
+        }
+    }
+
     @MainActor
-    private func exportSaves(for game: PVGame) async {
+    private func exportSRAM(for game: PVGame) async {
         do {
-            let url = try await SaveExporter.shared.exportSaves(for: game)
+            let url = try await SaveExporter.shared.exportSRAM(for: game)
 #if os(tvOS)
-            // tvOS: move zip to Documents/Exports on a background thread to avoid blocking the
-            // main actor; only the showMessage calls return to the main actor.
             let rootDelegate = self.rootDelegate
             Task.detached(priority: .userInitiated) {
-                let exportsDir = URL.documentsPath.appendingPathComponent("Exports", isDirectory: true)
+                let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
                 do {
                     try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
                     let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
@@ -381,7 +396,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                     }
                     try FileManager.default.moveItem(at: url, to: destURL)
                     await MainActor.run {
-                        rootDelegate?.showMessage("Saves exported to Documents/Exports/\(url.lastPathComponent)", title: "Export Complete")
+                        rootDelegate?.showMessage("Battery save exported to Exports/\(url.lastPathComponent)", title: "Export Complete")
                     }
                 } catch {
                     SaveExporter.shared.cleanupExport(at: url)
@@ -391,10 +406,55 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                 }
             }
 #else
-            await MainActor.run {
-                gamesViewModel.saveExportURL = url
-                gamesViewModel.showSaveExportShareSheet = true
+            gamesViewModel.sramExportURL = url
+            gamesViewModel.showSRAMExportShareSheet = true
+#endif
+        } catch {
+            rootDelegate?.showMessage("Battery save export failed: \(error.localizedDescription)", title: "Export Error")
+        }
+    }
+
+    @MainActor
+    func handleSRAMImport(urls: [URL], for game: PVGame) async {
+        guard let fileURL = urls.first else { return }
+        do {
+            try await SaveExporter.shared.importSRAM(from: fileURL, for: game)
+            rootDelegate?.showMessage("Battery save imported successfully for \(game.title).", title: "Import Complete")
+        } catch {
+            rootDelegate?.showMessage("Battery save import failed: \(error.localizedDescription)", title: "Import Error")
+        }
+    }
+
+    @MainActor
+    private func exportSaves(for game: PVGame) async {
+        do {
+            let url = try await SaveExporter.shared.exportSaves(for: game)
+#if os(tvOS)
+            // tvOS: move zip to Caches/Exports on a background thread to avoid blocking the
+            // main actor; only the showMessage calls return to the main actor.
+            let rootDelegate = self.rootDelegate
+            Task.detached(priority: .userInitiated) {
+                let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
+                do {
+                    try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
+                    let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
+                    if FileManager.default.fileExists(atPath: destURL.path) {
+                        try FileManager.default.removeItem(at: destURL)
+                    }
+                    try FileManager.default.moveItem(at: url, to: destURL)
+                    await MainActor.run {
+                        rootDelegate?.showMessage("Saves exported to Exports/\(url.lastPathComponent)", title: "Export Complete")
+                    }
+                } catch {
+                    SaveExporter.shared.cleanupExport(at: url)
+                    await MainActor.run {
+                        rootDelegate?.showMessage("Export failed: \(error.localizedDescription)", title: "Error")
+                    }
+                }
             }
+#else
+            gamesViewModel.saveExportURL = url
+            gamesViewModel.showSaveExportShareSheet = true
 #endif
         } catch {
             rootDelegate?.showMessage("Export failed: \(error.localizedDescription)", title: "Export Error")

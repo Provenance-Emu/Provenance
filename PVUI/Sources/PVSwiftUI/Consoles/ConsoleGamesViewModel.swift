@@ -78,6 +78,14 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var showSaveExportShareSheet = false
     @Published var saveExportURL: URL? = nil
 
+    /// SRAM Export share sheet state
+    @Published var showSRAMExportShareSheet = false
+    @Published var sramExportURL: URL? = nil
+
+    /// SRAM Import document picker state
+    @Published var showSRAMImportPicker = false
+    @Published var sramImportGame: PVGame? = nil
+
     // MARK: - Multi-Select State
 
     /// Whether the library is in multi-select (batch-edit) mode.
