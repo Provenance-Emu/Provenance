@@ -3,7 +3,12 @@
 ///
 /// Manages system extension lifecycle for the embedded DriverKit HID driver.
 /// Handles activation, deactivation, and status reporting.
+///
+/// SystemExtensions is available on iPadOS 16+ and macOS 10.15+.
+/// It is NOT available on tvOS or watchOS — all code in this file is guarded
+/// with `#if !os(tvOS)` so the companion app can compile for any Apple platform.
 
+#if !os(tvOS)
 import Foundation
 import SystemExtensions
 
@@ -128,3 +133,5 @@ extension DriverExtensionManager: OSSystemExtensionRequestDelegate {
         }
     }
 }
+
+#endif // !os(tvOS)

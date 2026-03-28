@@ -4,17 +4,22 @@ import PVUSBManager
 struct PeripheralsTabView: View {
 
     @State private var peripheralManager = USBPeripheralManager()
+    #if !os(tvOS)
     @State private var driverExtManager = DriverExtensionManager()
     @State private var showDriverStore = false
+    #endif
 
     var body: some View {
         NavigationStack {
             List {
+                #if !os(tvOS)
                 driverKitSection
+                #endif
                 connectedDevicesSection
                 supportedDevicesSection
             }
             .navigationTitle(String(localized: "peripherals.nav_title"))
+            #if !os(tvOS)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -30,6 +35,7 @@ struct PeripheralsTabView: View {
             .sheet(isPresented: $showDriverStore) {
                 DriverStoreView()
             }
+            #endif
             .task {
                 peripheralManager.startScanning()
             }
@@ -40,7 +46,9 @@ struct PeripheralsTabView: View {
     }
 
     // MARK: - DriverKit Status Section
+    // DriverKit and SystemExtensions are not available on tvOS.
 
+    #if !os(tvOS)
     @ViewBuilder
     private var driverKitSection: some View {
         Section {
@@ -88,6 +96,7 @@ struct PeripheralsTabView: View {
             Text("peripherals.driverkit.description")
         }
     }
+    #endif // !os(tvOS)
 
     // MARK: - Connected Devices Section
 
@@ -133,7 +142,9 @@ struct PeripheralsTabView: View {
     }
 
     // MARK: - DriverKit Status Helpers
+    // These helpers reference `driverExtManager` which is only available on non-tvOS.
 
+    #if !os(tvOS)
     private var driverKitStatusIcon: String {
         switch driverExtManager.activationState {
         case .unknown:         return "questionmark.circle"
@@ -167,6 +178,7 @@ struct PeripheralsTabView: View {
         case .failed:          return "peripherals.driverkit.status.failed_short"
         }
     }
+    #endif // !os(tvOS)
 }
 
 // MARK: - Device Row
@@ -296,7 +308,9 @@ private struct SupportedDevicesListView: View {
             }
         }
         .navigationTitle(String(localized: "peripherals.supported_devices.nav_title"))
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 

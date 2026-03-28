@@ -58,6 +58,19 @@ public final class USBPeripheralManager {
         MainActor.assumeIsolated { stopScanning() }
     }
 
+    // MARK: - Storage
+
+    /// Platform-aware base directory for any persistent state this manager writes.
+    ///
+    /// tvOS does not have a writable Documents directory — all persistent data MUST
+    /// go to the Caches directory. iOS/macOS prefer Documents for user-visible data
+    /// but Caches is acceptable for internal state like remembered device profiles.
+    /// Using `.cachesDirectory` on all platforms is the safe cross-platform choice.
+    static var storageDirectory: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("PVUSBManager", isDirectory: true)
+    }
+
     // MARK: - Public API
 
     /// Begin scanning for connected peripherals.

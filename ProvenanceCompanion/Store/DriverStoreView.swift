@@ -23,7 +23,9 @@ struct DriverStoreView: View {
                 }
             }
             .navigationTitle(String(localized: "store.nav_title"))
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.large)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "store.done_button")) { dismiss() }
