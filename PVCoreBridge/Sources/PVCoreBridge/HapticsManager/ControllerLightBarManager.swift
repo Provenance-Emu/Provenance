@@ -17,7 +17,6 @@ import Foundation
 import GameController
 import PVPrimitives
 import PVSettings
-import PVSystems
 
 /// Manages light bar color output for DualSense and DualShock 4 controllers.
 /// One shared instance applies per-system colors to all registered controllers.
@@ -32,7 +31,7 @@ public final class ControllerLightBarManager {
     // MARK: - Types
 
     /// An RGB color for the controller light bar. Each component is in [0, 1].
-    public struct LightBarColor: Codable, Equatable, Sendable {
+    public struct LightBarColor: Codable, Equatable {
         public var red: Float
         public var green: Float
         public var blue: Float
@@ -107,21 +106,17 @@ public final class ControllerLightBarManager {
         registerNotifications()
     }
 
-    /// Registers main-queue notification handlers without creating Task send boundaries.
     private func registerNotifications() {
         let nc = NotificationCenter.default
 
-        let connectObs = nc.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated {
-                self?.reapplyCurrentSystemColor()
-            }
+        let connectObs = nc.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] note in
+            guard let gc = note.object as? GCController else { return }
+            Task { @MainActor in self?.controllerConnected(gc) }
         }
         notificationObservers.append(connectObs)
 
         let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated {
-                self?.reapplyCurrentSystemColor()
-            }
+            Task { @MainActor in self?.reapplyCurrentSystemColor() }
         }
         notificationObservers.append(udObs)
     }
@@ -181,6 +176,13 @@ public final class ControllerLightBarManager {
         if #available(iOS 14.0, tvOS 14.0, *) {
             controller.light?.color = GCColor(red: color.red, green: color.green, blue: color.blue)
         }
+    }
+
+    private func controllerConnected(_ controller: GCController) {
+        // Only apply colors to controllers that are registered for this session.
+        guard let sysId = currentSystemIdentifier else { return }
+        guard playerControllers.values.contains(where: { $0 === controller }) else { return }
+        applyColor(forSystemIdentifier: sysId, to: controller)
     }
 
     // MARK: - Color Resolution

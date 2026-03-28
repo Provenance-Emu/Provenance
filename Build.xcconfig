@@ -9,24 +9,7 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NONJAILBROKEN=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_DYNAMIC=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_CHEEVOS=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_VULKAN=1
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENAL=1
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_SDL2=1
-//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CITRA_ARCH_arm64 // Overrides boost
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_COREAUDIO=1
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_VULKAN=1
-
-OTHER_CFLAGS = $(inherited) -mcpu=apple-a10
-OTHER_CFLAGS = $(inherited) -mtune=apple-a12
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd+crc+crypto
-OTHER_CFLAGS = $(inherited) -ffast-math
-OTHER_CFLAGS = $(inherited) -ftree-vectorize
-OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
-OTHER_CFLAGS = $(inherited) -fpermissive
-OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
-OTHER_CFLAGS = $(inherited) -fPIC
-OTHER_CFLAGS = $(inherited) -fmodules
-OTHER_CFLAGS = $(inherited) -fcxx-modules
-OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
+OTHER_CFLAGS = $(inherited) -mcpu=apple-a10 -mtune=apple-a12 -march=armv8-a+simd+crc+crypto -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC -fmodules -fcxx-modules
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
 DEVELOPMENT_TEAM = S32Z3HMYVQ

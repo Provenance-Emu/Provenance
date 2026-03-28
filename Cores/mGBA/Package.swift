@@ -65,7 +65,7 @@ let package = Package(
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
-        .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
+        .package(name: "PVPrimitives", path: "../PVPrimitives/"),
         .package(path: "../../PVNetplay"),
         .package(path: "../../PVPatching"),
 

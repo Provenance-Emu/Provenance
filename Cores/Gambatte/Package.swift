@@ -36,9 +36,7 @@ let package = Package(
         .package(path: "../../PVLogging"),
         .package(path: "../../PVPlists"),
         .package(path: "../../PVObjCUtils"),
-        .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
-        .package(name: "PVNetplay", path: "../../PVNetplay"),
-
+        .package(name: "PVPrimitives", path: "../PVPrimitives/"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
     ],
     targets: [
@@ -55,7 +53,6 @@ let package = Package(
                 "PVGambatteBridge",
                 "PVPrimitives",
                 "PVGambatteOptions",
-                "PVNetplay",
                 "libgambatte",
                 "libresample"
             ],

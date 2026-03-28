@@ -25,6 +25,7 @@ import CoreMIDI
 
 // MARK: - MIDI destination routing for thin libretro cores
 
+@available(iOS 14.0, macOS 11.0, macCatalyst 14.0, *)
 extension PVThinLibretroCore {
 
     // MARK: Internal — called from PVThinLibretroCore.swift

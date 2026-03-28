@@ -124,9 +124,10 @@ class PVThinLibretroCore: PVEmulatorCore {
         }
         // Start observing MIDIDeviceManager so MIDI output goes to the user-selected device.
 #if canImport(CoreMIDI) && !os(tvOS)
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            self.startMIDIDestinationObservation()
+        if #available(iOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
+            Task { @MainActor [weak self] in
+                self?.startMIDIDestinationObservation()
+            }
         }
 #endif
         ILOG("ThinCore: startEmulation — inputPollBlock wired, sysId=\(systemIdentifier ?? "nil")")
@@ -144,9 +145,10 @@ class PVThinLibretroCore: PVEmulatorCore {
         // the shared retro_midi_interface is also used by PVLibRetroCore, which
         // relies on the -1 legacy fallback if it never wired its own observer).
 #if canImport(CoreMIDI) && !os(tvOS)
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            self.stopMIDIDestinationObservation()
+        if #available(iOS 14.0, macOS 11.0, macCatalyst 14.0, *) {
+            Task { @MainActor [weak self] in
+                self?.stopMIDIDestinationObservation()
+            }
         }
 #endif
         super.stopEmulation()

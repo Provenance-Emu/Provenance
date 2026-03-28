@@ -2,7 +2,6 @@
 
 import Foundation
 import PVPrimitives
-import PVSystems
 
 /// A named layout variant for a specific console's controller configuration.
 ///

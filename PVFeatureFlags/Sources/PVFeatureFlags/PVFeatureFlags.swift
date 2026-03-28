@@ -215,8 +215,6 @@ public struct FeatureFlag: Codable, Sendable {
     public static let skinButtonReposition = FeatureFlag(
         enabled: false,
         description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
-        )
-    
     public static let enhancedArtworkSearch = FeatureFlag(
         enabled: true,
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
@@ -272,7 +270,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     // MARK: - Mutable State (lock-protected)
 
-    private struct _State: Sendable {
+    private struct _State {
         var configuration: FeatureFlagsConfiguration?
         /// Pre-computed flag states keyed by `PVFeature.rawValue`.
         /// Rebuilt whenever configuration or debug overrides change.
@@ -285,7 +283,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     private let _storage = OSAllocatedUnfairLock(initialState: _State())
 
     private func _withState<T>(_ body: (inout _State) -> T) -> T {
-        _storage.withLockUnchecked(body)
+        _storage.withLock { body(&$0) }
     }
 #else
     private let _lock = NSLock()

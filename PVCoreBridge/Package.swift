@@ -33,8 +33,7 @@ let package = Package(
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
         .package(name: "PVPrimitives", path: "../PVPrimitives/"),
         .package(name: "PVSettings", path: "../PVSettings/"),
-        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
-
+        
         // MARK: Macros
 
         // SwiftMacros
@@ -53,7 +52,6 @@ let package = Package(
                 "PVObjCUtils",
                 "PVPrimitives",
                 "PVSettings",
-                "Defaults"
         //                "SwiftMacros"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")],

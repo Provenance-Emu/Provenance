@@ -44,6 +44,7 @@
 import Foundation
 import PVCoreBridge
 import PVPrimitives
+import PVSystems
 import PVLogging
 import MednafenGameCoreC
 import MednafenGameCoreOptions
@@ -81,7 +82,8 @@ extension MednafenGameCore: CoreRetroAchievements {
         client.delegate = self
 
         regions.withUnsafeBufferPointer { buf in
-            client.setRegions(buf.baseAddress, count: UInt(buf.count))
+            guard let base = buf.baseAddress else { return }
+            client.setRegions(base, count: UInt(buf.count))
         }
 
         _rcheevosClient = client
@@ -128,11 +130,10 @@ extension MednafenGameCore: CoreRetroAchievements {
     /// Pointers come from the `mdfn_*_ptr()` C accessors appended to each system's
     /// mednafen .cpp file.  They are valid for the lifetime of the loaded game.
     public func achievementMemoryRegions() -> [AchievementMemoryRegion] {
-        _rcheevosRegions().compactMap { r in
-            guard let ptr = r.ptr else { return nil }
-            return AchievementMemoryRegion(base: UnsafeMutableRawPointer(ptr),
-                                           size: Int(r.size),
-                                           kind: .systemRAM)
+        _rcheevosRegions().map { r in
+            AchievementMemoryRegion(base: UnsafeMutableRawPointer(r.ptr),
+                                    size: Int(r.size),
+                                    kind: .systemRAM)
         }
     }
 
