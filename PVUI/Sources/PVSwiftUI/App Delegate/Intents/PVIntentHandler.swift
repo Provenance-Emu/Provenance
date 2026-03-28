@@ -14,9 +14,13 @@ import PVRealm
 import RealmSwift
 import PVUIBase
 
-/// Handler for Siri intents related to Provenance
+/// Handler for Siri intents related to Provenance.
+///
+/// - Important: Deprecated. Intent handling is now performed by `LaunchGameIntent`
+///   in `PVAppIntents`. This class is retained only to satisfy any in-flight
+///   `PVOpenIntent` migrations.
 #if os(iOS)
-@available(iOS 14.0, *)
+@available(*, deprecated, message: "Use LaunchGameIntent from PVAppIntents instead.")
 class PVIntentHandler: NSObject, PVOpenIntentHandling {
 
     /// Handles the intent to open a game by MD5 hash, name, or name+system combination
@@ -144,7 +148,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
             let systemIdentifiers = systemMatches.map { $0.identifier }
 
             // Try to find a game that matches both the name and one of the systems
-            var bestMatch: PVGame? = nil
+            var bestMatch: PVGame?
 
             // First try exact match on title with any matching system
             for systemId in systemIdentifiers {
@@ -202,7 +206,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
             return
         }
 
-        if let _ = fetchGame(byMD5: md5) {
+        if fetchGame(byMD5: md5) != nil {
             ILOG("PVIntentHandler: Resolved MD5: \(md5)")
             completion(INStringResolutionResult.success(with: md5))
         } else {
@@ -269,7 +273,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
 
         // Check for MD5 parameter first (most specific)
         if let md5 = intent.md5, !md5.isEmpty {
-            if let _ = fetchGame(byMD5: md5) {
+            if fetchGame(byMD5: md5) != nil {
                 ILOG("PVIntentHandler: Confirmed intent to open game with MD5: \(md5)")
                 completion(PVOpenIntentResponse(code: .success, userActivity: nil))
             } else {

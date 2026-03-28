@@ -10,7 +10,10 @@ import Foundation
 import Intents
 
 #if os(iOS)
-@available(iOS 14.0, *)
+/// Legacy handling protocol for `PVOpenIntent`.
+///
+/// - Important: Deprecated. Handling is now performed by `LaunchGameIntent` from `PVAppIntents`.
+@available(*, deprecated, message: "Use LaunchGameIntent from PVAppIntents instead.")
 @objc(PVOpenIntentHandling)
 protocol PVOpenIntentHandling: NSObjectProtocol {
     func handle(intent: PVOpenIntent, completion: @escaping (PVOpenIntentResponse) -> Void)
@@ -28,4 +31,3 @@ protocol PVOpenIntentHandling: NSObjectProtocol {
     func resolveSystemName(for intent: PVOpenIntent, with completion: @escaping (INStringResolutionResult) -> Void)
 }
 #endif
-

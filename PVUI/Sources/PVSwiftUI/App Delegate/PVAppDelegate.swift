@@ -471,12 +471,8 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         _initThemeListener()
 
-        // Register intent handler for Siri shortcuts
-        #if os(iOS)
-        if #available(iOS 14.0, *) {
-            registerIntentHandler()
-        }
-        #endif
+        // Legacy PVOpenIntent donation removed — Siri shortcuts are now handled
+        // by LaunchGameIntent in PVAppIntents via processPendingAppIntents().
 
         // Register the ROM File Provider domain so Files.app shows Provenance as a location.
         // Supported on iOS, Mac Catalyst, and visionOS (FileProvider is unavailable on tvOS).
