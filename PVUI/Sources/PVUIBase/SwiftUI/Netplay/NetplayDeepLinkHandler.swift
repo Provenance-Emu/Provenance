@@ -12,7 +12,9 @@ import Foundation
 
 public extension Notification.Name {
     /// Posted when a `provenance://netplay/join` deep link is received.
-    /// userInfo keys: "host" (String), "port" (UInt16), "relay" (String?), "game" (String?).
+    /// userInfo keys: "host" (String), "port" (UInt16 | Int | String), "relay" (String?), "game" (String?).
+    /// Port type varies by sender: PVAppDelegate sends UInt16; the SwiftUI onOpenURL handler sends String.
+    /// Use `NetplayJoinRequest.from(notificationUserInfo:)` to parse — it handles all three types.
     static let netplayJoinRequest = Notification.Name("PVNetplayJoinRequest")
 }
 

@@ -222,8 +222,10 @@ struct GKMatchmakerRepresentable: UIViewControllerRepresentable {
             // GKMatchmakerViewController(matchRequest:) returns nil for invalid requests
             // (e.g. minPlayers < 2). Fire the cancel callback so the sheet is dismissed,
             // then return a valid placeholder — it will never be shown.
+            // Deferred via Task to avoid mutating @State during a SwiftUI rendering pass.
             ELOG("[GameKit] GKMatchmakerViewController init returned nil — invalid GKMatchRequest")
-            onCancelled()
+            let cancel = onCancelled
+            Task { @MainActor in cancel() }
             let fallbackRequest = GKMatchRequest()
             fallbackRequest.minPlayers = 2
             fallbackRequest.maxPlayers = 4
