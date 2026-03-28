@@ -247,7 +247,7 @@ struct VirtualControllerView: View {
     private func startServer() async {
         do {
             try await server.start()
-            isServerRunning = await server.isRunning
+            isServerRunning = true
         } catch {
             serverError = error.localizedDescription
         }

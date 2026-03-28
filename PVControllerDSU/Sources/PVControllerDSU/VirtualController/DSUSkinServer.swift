@@ -98,10 +98,14 @@ public actor DSUSkinServer {
     /// - Throws: ``DSUSocketError`` if the listener cannot be opened.
     public func start() async throws {
         guard !isRunning else { return }
+        // Initialise the socket synchronously so we can set isRunning = true before
+        // the first await.  This prevents actor re-entrancy: a second concurrent
+        // start() arriving while startListening() is awaited would otherwise see
+        // isRunning == false and open a second socket on the same port.
         let sock = try DSUSocket(port: port)
+        isRunning = true   // claim the slot before the first await
         await sock.startListening()
         self.socket = sock
-        isRunning = true
 
         receiveTask = Task { [weak self] in
             guard let self else { return }
@@ -121,10 +125,13 @@ public actor DSUSkinServer {
         broadcastTask?.cancel()
         receiveTask = nil
         broadcastTask = nil
-        await socket?.close()
+        // Capture and nil out socket before the await so that isRunning is false
+        // and socket is cleared before any potential re-entrant start() can run.
+        let socketToClose = socket
         socket = nil
         isRunning = false
         subscribers.removeAll()
+        await socketToClose?.close()
     }
 
     // MARK: - Input API
