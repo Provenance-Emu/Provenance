@@ -10,7 +10,7 @@ Higher tiers may import lower tiers. **Never the reverse.**
 
 | Tier | Modules |
 |------|---------|
-| 0 | PVObjCUtils, PVFeatureFlags, PVCheevos |
+| 0 | PVObjCUtils, PVFeatureFlags, PVCheevos, PVControllerDSU |
 | 1 | PVLogging, PVPlists, PVHashing |
 | 2 | PVSettings, PVPrimitives |
 | 3 | PVSupport, PVAudio, PVCoreAudio |
@@ -276,7 +276,7 @@ Higher tiers may import lower tiers. **Never the reverse.**
 
 | Tier | Modules |
 |------|---------|
-| 0 | PVObjCUtils, PVFeatureFlags, PVCheevos |
+| 0 | PVObjCUtils, PVFeatureFlags, PVCheevos, PVControllerDSU |
 | 1 | PVLogging, PVPlists, PVHashing |
 | 2 | PVSettings, PVPrimitives |
 | 3 | PVSupport, PVAudio, PVCoreAudio |

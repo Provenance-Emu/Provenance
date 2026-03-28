@@ -43,6 +43,12 @@ public actor DSUSocket {
     private var isClosed: Bool = false
     private var isListening: Bool = false
 
+    /// Maximum number of received datagrams buffered before the oldest is dropped.
+    ///
+    /// Protects against unbounded memory growth when the consumer calls `receive()`
+    /// slower than datagrams arrive (e.g. during a burst of client requests).
+    private let maxReceiveQueueDepth = 128
+
     private typealias ReceiveItem = (Data, NWEndpoint)
 
     // MARK: - Init
@@ -158,6 +164,11 @@ public actor DSUSocket {
     // MARK: - Private helpers
 
     private func handleNewConnection(_ connection: NWConnection) {
+        // Guard against Tasks dispatched before close() ran on the listener.
+        guard !isClosed else {
+            connection.cancel()
+            return
+        }
         let endpoint = connection.endpoint
         connections[endpoint] = connection
         connection.start(queue: .global(qos: .userInitiated))
@@ -195,6 +206,9 @@ public actor DSUSocket {
     private func deliverData(_ data: Data, from endpoint: NWEndpoint) {
         guard !isClosed else { return }
         if waiters.isEmpty {
+            if receiveQueue.count >= maxReceiveQueueDepth {
+                receiveQueue.removeFirst() // drop oldest to make room
+            }
             receiveQueue.append((data, endpoint))
         } else {
             let waiter = waiters.removeFirst()
