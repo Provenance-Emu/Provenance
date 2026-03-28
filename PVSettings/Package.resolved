@@ -1,25 +1,33 @@
 {
-  "originHash": "226b65e2173fc17b9ab0ba2cd9b05848d66212c1106b177626e9e1314526c806",
-  "pins": [
+  "originHash" : "d3ead0efe38eca435cffb70753d0d4483c7b1fd6e699c0e67fc69155c8cbc026",
+  "pins" : [
     {
-      "identity": "defaults",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/sindresorhus/Defaults.git",
-      "state": {
-        "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
-        "version": "9.0.8",
-        "branch": null
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+        "version" : "9.0.8"
       }
     },
     {
-      "identity": "swift-log",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-log.git",
-      "state": {
-        "revision": "bbd81b6725ae874c69e9b8c8804d462356b55523",
-        "version": "1.10.1"
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "2b59c0c741e9184ab057fd22950b491076d42e91",
+        "version" : "603.0.0"
       }
     }
   ],
-  "version": 3
+  "version" : 3
 }
