@@ -25,7 +25,10 @@ public enum KnownEmulator: String, CaseIterable, Codable, Sendable {
     // Nintendo / multi-system
     case delta      = "com.rileytestut.Delta"
     case deltaLite  = "com.rileytestut.Delta-Lite"
-    // FIXME: Verify bundle ID — "com.littleredgames.GambatteGB" may be incorrect for the Gamma app.
+    // TODO: Verify Gamma's bundle ID before the save-migration feature ships.
+    // "com.littleredgames.GambatteGB" is unconfirmed; Gamma (by Riley Testut) may use
+    // a different bundle ID. isInstalled / exportDeepLinkURL will silently no-op until
+    // the URL scheme is also added to LSApplicationQueriesSchemes in Info.plist.
     case gamma      = "com.littleredgames.GambatteGB"
 
     // Multi-system / libretro

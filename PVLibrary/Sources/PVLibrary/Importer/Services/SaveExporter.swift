@@ -305,10 +305,6 @@ public final class SaveExporter: @unchecked Sendable {
             throw SaveExportError.invalidBundle(parseError.localizedDescription)
         }
 
-        guard !manifest.gameMD5.isEmpty else {
-            throw SaveExportError.invalidBundle("manifest.json missing game MD5.")
-        }
-
         guard manifest.gameMD5.lowercased() == frozenGame.md5Hash.lowercased() else {
             WLOG("SaveExporter: MD5 mismatch — bundle '\(manifest.gameMD5)' != game '\(frozenGame.md5Hash)'")
             throw SaveExportError.gameMismatch
@@ -537,26 +533,32 @@ public final class SaveExporter: @unchecked Sendable {
 
     private func restoreDirectory(from source: URL, to destination: URL) throws {
         let fm = FileManager.default
+        // Directory creation failure is fatal — we cannot restore without a destination.
         do {
             try fm.createDirectory(at: destination, withIntermediateDirectories: true)
-            // Skip hidden files (e.g. .DS_Store) when restoring
-            let items = (try? fm.contentsOfDirectory(
-                at: source, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                .map(\.lastPathComponent)) ?? []
-            for item in items {
-                guard SaveBundleManifestV2.isSafeFilename(item) else {
-                    WLOG("SaveExporter: skipping unsafe filename in battery/: \(item)")
-                    continue
-                }
-                let src = source.appendingPathComponent(item)
-                let dest = destination.appendingPathComponent(item)
-                if fm.fileExists(atPath: dest.path) {
-                    try? fm.removeItem(at: dest)
-                }
-                try fm.copyItem(at: src, to: dest)
-            }
         } catch {
-            throw SaveExportError.invalidBundle("Failed to restore directory: \(error.localizedDescription)")
+            throw SaveExportError.invalidBundle("Failed to create restore directory: \(error.localizedDescription)")
+        }
+
+        // Skip hidden files (e.g. .DS_Store) when restoring
+        let items = (try? fm.contentsOfDirectory(
+            at: source, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            .map(\.lastPathComponent)) ?? []
+        for item in items {
+            guard SaveBundleManifestV2.isSafeFilename(item) else {
+                WLOG("SaveExporter: skipping unsafe filename in battery/: \(item)")
+                continue
+            }
+            let src = source.appendingPathComponent(item)
+            let dest = destination.appendingPathComponent(item)
+            if fm.fileExists(atPath: dest.path) {
+                try? fm.removeItem(at: dest)
+            }
+            do {
+                try fm.copyItem(at: src, to: dest)
+            } catch {
+                WLOG("SaveExporter: failed to restore \(item): \(error.localizedDescription)")
+            }
         }
     }
 }
