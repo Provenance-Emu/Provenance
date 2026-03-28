@@ -13,6 +13,13 @@ struct ContentView: View {
                     Label("Peripherals", systemImage: "gamecontroller")
                 }
 
+            NavigationStack {
+                VirtualControllerTabView()
+            }
+            .tabItem {
+                Label("Controller", systemImage: "iphone.radiowaves.left.and.right")
+            }
+
             SettingsTabView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
