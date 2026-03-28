@@ -380,6 +380,12 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         }
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestImportSaveFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        gamesViewModel.saveImportPreSelectedGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.showSaveImportWizard = true
+    }
+
     @MainActor
     private func exportSRAM(for game: PVGame) async {
         do {

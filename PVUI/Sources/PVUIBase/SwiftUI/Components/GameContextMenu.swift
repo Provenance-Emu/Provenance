@@ -192,6 +192,11 @@ public struct GameContextMenu: View {
                     }
                     #endif
                 }
+                Button {
+                    contextMenuDelegate?.gameContextMenu(self, didRequestImportSaveFor: game)
+                } label: {
+                    Label("Import Save", systemImage: "square.and.arrow.down")
+                }
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {

@@ -540,5 +540,29 @@
         "subtitle": "Bring in a .sav/.srm/.ram file from any emulator. Paired RTC clock files are imported automatically."
       }
     ]
+  },
+  {
+    "version": "3.9.3",
+    "title": "Save Import Wizard",
+    "features": [
+      {
+        "symbolName": "square.and.arrow.down",
+        "symbolColor": "pink",
+        "title": "Save Import Wizard",
+        "subtitle": "A polished multi-step import wizard lets you bring in save bundles (.zip), battery saves (.sav/.srm/.ram), and .pvsave files from Settings → Library or via any game's context menu."
+      },
+      {
+        "symbolName": "checkmark.seal.fill",
+        "symbolColor": "green",
+        "title": "Automatic Game Matching",
+        "subtitle": "The import wizard automatically matches your save bundle to the correct game using MD5 manifest verification or filename heuristics, with a manual picker as fallback."
+      },
+      {
+        "symbolName": "arrow.down.circle.fill",
+        "symbolColor": "purple",
+        "title": "Retrowave Import UI",
+        "subtitle": "The wizard uses Provenance's full retrowave design system — neon glows, grid backgrounds, and animated progress tracking throughout the import flow."
+      }
+    ]
   }
 ]

@@ -86,6 +86,10 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var showSRAMImportPicker = false
     @Published var sramImportGame: PVGame? = nil
 
+    /// Save Import wizard state
+    @Published var showSaveImportWizard = false
+    @Published var saveImportPreSelectedGame: PVGame?
+
     // MARK: - Multi-Select State
 
     /// Whether the library is in multi-select (batch-edit) mode.
