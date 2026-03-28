@@ -9,12 +9,10 @@ import PVEmulatorCore
 import PVCoreBridge
 import SwiftUI
 import PVLogging
-import Perception
 import PVLibrary
 
 @MainActor
-//@Observable
-@Perceptible
+@Observable
 public final class EmulationUIState : ObservableObject {
     public var core: PVEmulatorCore? {
         didSet {
@@ -32,7 +30,6 @@ public final class EmulationUIState : ObservableObject {
 
     /// Whether always-on clip buffering is active (iOS/tvOS 15+).
     ///
-    /// `@Perceptible` (like `@Observable`) synthesises `willSet`/`didSet`
     /// accessors that call `objectWillChange.send()`, so SwiftUI views
     /// observing this class via `@ObservedObject` / `@EnvironmentObject`
     /// will re-render automatically — no `@Published` wrapper is needed.

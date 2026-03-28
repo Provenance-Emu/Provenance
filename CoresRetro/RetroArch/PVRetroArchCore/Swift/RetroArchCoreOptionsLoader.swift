@@ -249,7 +249,7 @@ class RetroArchCoreOptionsLoader {
 
     private static func createCoreOption(from def: retro_core_option_v2_definition) -> CoreOption? {
         /// Convert a single core option definition to Swift format
-        guard let key = def.key, let desc = def.desc else {
+        guard let _ = def.key, let desc = def.desc else {
             return nil
         }
 

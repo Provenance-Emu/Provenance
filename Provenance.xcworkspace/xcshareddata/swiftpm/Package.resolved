@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/swift-server/async-http-client.git",
         "state": {
           "branch": null,
-          "revision": "3b57e00556515b126ad74455de1e6fa456856391",
-          "version": "1.33.0"
+          "revision": "3a5b74a58782c3b4c1f0bc75e9b67b10c2494e8f",
+          "version": "1.33.1"
         }
       },
       {
@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
           "branch": "main",
-          "revision": "d9406c926b86a1ea642cab375b4745c5e15cc808",
+          "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
           "version": null
         }
       },
@@ -537,8 +537,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "bdf004b44f77c56fca752cd1cf243c802f8469c9",
-          "version": "2.97.0"
+          "revision": "558f24a4647193b5a0e2104031b71c55d31ff83a",
+          "version": "2.97.1"
         }
       },
       {
@@ -596,15 +596,6 @@
         }
       },
       {
-        "package": "swift-perception",
-        "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
-        "state": {
-          "branch": null,
-          "revision": "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
-          "version": "2.0.9"
-        }
-      },
-      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
@@ -636,8 +627,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
-          "revision": "4799286537280063c85a32f09884cfbca301b1a1",
-          "version": "602.0.0"
+          "revision": "2b59c0c741e9184ab057fd22950b491076d42e91",
+          "version": "603.0.0"
         }
       },
       {
@@ -656,15 +647,6 @@
           "branch": null,
           "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
           "version": null
-        }
-      },
-      {
-        "package": "SwiftMacros",
-        "repositoryURL": "https://github.com/JoeMatt/SwiftMacros.git",
-        "state": {
-          "branch": null,
-          "revision": "d7d0fb37a560420af824e90db8a645444f727328",
-          "version": "1.0.3"
         }
       },
       {
@@ -701,15 +683,6 @@
           "branch": null,
           "revision": "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
           "version": "2.2.1"
-        }
-      },
-      {
-        "package": "xctest-dynamic-overlay",
-        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-        "state": {
-          "branch": null,
-          "revision": "dfd70507def84cb5fb821278448a262c6ff2bbad",
-          "version": "1.9.0"
         }
       },
       {

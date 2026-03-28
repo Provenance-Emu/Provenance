@@ -15,7 +15,6 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import Combine
-import Perception
 import PVRealm
 
 /// Snapshot used by HomeContinueSection, decoupled from Realm types.
@@ -31,12 +30,12 @@ struct ContinueItemModel: Identifiable, Hashable {
     /// Sorted newest → oldest. Empty for non-autosaves or when showAllAutosaves is on.
     var stackedSaves: [ContinueItemModel]
     let resolver: () -> PVSaveState?
-
+    
     /// Total number of saves represented by this card (1 + stacked).
     var stackDepth: Int { 1 + stackedSaves.count }
     /// True when there are hidden autosaves stacked behind this card.
     var isStacked: Bool { !stackedSaves.isEmpty }
-
+    
     init(id: String,
          gameTitle: String?,
          imageURL: URL?,
@@ -54,7 +53,7 @@ struct ContinueItemModel: Identifiable, Hashable {
         self.stackedSaves = stackedSaves
         self.resolver = resolver
     }
-
+    
     init(saveState: PVSaveState, stackedSaves: [ContinueItemModel] = []) {
         // Freeze for thread safety but keep resolver for context actions.
         let snapshot = saveState.isFrozen ? saveState : saveState.freeze()
@@ -70,11 +69,11 @@ struct ContinueItemModel: Identifiable, Hashable {
             RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: primaryKey)
         }
     }
-
+    
     static func == (lhs: ContinueItemModel, rhs: ContinueItemModel) -> Bool {
         lhs.id == rhs.id
     }
-
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -94,7 +93,7 @@ protocol ContinuesDataDriver {
 ///   a SwiftData-equivalent lookup path.
 final class RealmContinuesDataDriver: ContinuesDataDriver {
     private let queue = DispatchQueue(label: "org.provenance.realm.continues.driver", qos: .userInitiated)
-
+    
     /// Threshold used by `AutoSaveFilmstripView` to display a prominent "session break" divider
     /// between two saves with a large time gap. Does **not** affect stacking logic in `buildModels`
     /// (all autosaves for a game are folded into a single card regardless of session gap).
@@ -102,7 +101,7 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
     /// Future: `PVRecentGame.lastPlayedDate` could serve as a more precise session anchor so that
     /// autosaves are grouped per actual play session rather than by a fixed time window.
     static let sessionBoundaryInterval: TimeInterval = 2 * 3600  // 2 hours
-
+    
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
         // Capture setting at stream-start time. The view will restart the stream on change.
         let showAllAutosaves = Defaults[.showAutoSavesInRecents]
@@ -118,11 +117,11 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                     } else {
                         results = results.filter("game != nil")
                     }
-
+                    
                     let token = results.observe(on: queue) { change in
                         switch change {
                         case .initial(let collection),
-                             .update(let collection, _, _, _):
+                                .update(let collection, _, _, _):
                             let models = Self.buildModels(
                                 from: collection,
                                 showAllAutosaves: showAllAutosaves
@@ -132,7 +131,7 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                             ELOG("RealmContinuesDataDriver observe error: \(error.localizedDescription)")
                         }
                     }
-
+                    
                     continuation.onTermination = { _ in
                         token.invalidate()
                     }
@@ -142,7 +141,7 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
             }
         }
     }
-
+    
     /// Converts a Realm collection into display models.
     ///
     /// When `showAllAutosaves` is false (default):
@@ -164,14 +163,14 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
         // autosaves for that game are appended to the representative's filmstrip stack.
         var gameRepIndex: [String: Int] = [:]
         var resultModels: [ContinueItemModel] = []
-
+        
         for state in collection.prefix(500) {
             guard !state.isInvalidated else { continue }
-
+            
             if !showAllAutosaves, state.isAutosave {
                 let gameID = state.game?.id ?? ""
                 guard !gameID.isEmpty else { continue }
-
+                
                 if let existingIndex = gameRepIndex[gameID] {
                     // A representative already exists for this game — fold this older autosave
                     // into its filmstrip regardless of session boundary. This enforces the
@@ -188,7 +187,7 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                 resultModels.append(ContinueItemModel(saveState: state))
             }
         }
-
+        
         // Re-sort by date descending so manual saves and autosave representatives interleave
         // correctly. Secondary sort by ID provides a deterministic tie-break for saves with
         // identical timestamps (prevents focus/signature churn in the carousel).
@@ -204,55 +203,55 @@ class ContinuesSectionViewModel: ObservableObject {
     /// Maximum number of save states to load initially
     /// This can be adjusted or made into a user setting later
     static let initialSaveStateLimit: Int = 20
-
+    
     /// Number of additional save states to load when approaching the end
     static let additionalSaveStateLoadCount: Int = 10
-
+    
     /// Threshold for when to load more save states (when user is this many pages from the end)
     static let loadMoreThreshold: Int = 2
-
+    
     @Published var currentPage: Int = 0
     @Published var selectedItemId: String?
     @Published var hasFocus: Bool = false
     @Published var isControllerConnected: Bool = GamepadManager.shared.isControllerConnected
-
+    
     // Reduce @Published properties to minimize re-renders
     var currentItem: ContinueItemModel?
     var totalSaveStatesCount: Int = 0
     var currentLimit: Int = initialSaveStateLimit
     var hasLoadedAllSaveStates: Bool = false
-
+    
     /// Filtered save states from parent
     private var items: [ContinueItemModel] = []
     private var isLandscapePhone: Bool = false
-
+    
     var itemsPerPage: Int {
         isLandscapePhone ? 2 : 1
     }
-
+    
     /// Calculate the number of pages based on currently loaded save states
     var pageCount: Int {
         max(1, Int(ceil(Double(items.count) / Double(itemsPerPage))))
     }
-
+    
     /// Check if we should load more save states based on current page
     var shouldLoadMoreSaveStates: Bool {
         guard !hasLoadedAllSaveStates else { return false }
-
+        
         let pagesRemaining = pageCount - currentPage
         return pagesRemaining <= Self.loadMoreThreshold
     }
-
+    
     func updateItems(_ models: [ContinueItemModel], isLandscape: Bool, totalCount: Int) {
         items = models
         isLandscapePhone = isLandscape
         totalSaveStatesCount = totalCount
-
+        
         hasLoadedAllSaveStates = models.count >= totalCount
-
+        
         updateCurrentSaveState(selectedItemId: selectedItemId, page: currentPage)
     }
-
+    
     /// Syncs `currentSaveState` to the focused item when possible, otherwise the page-start item.
     func updateCurrentSaveState(selectedItemId: String?, page: Int) {
         // Avoid redundant assignments; even non-@Published mutations can still trigger SwiftUI work
@@ -262,13 +261,13 @@ class ContinuesSectionViewModel: ObservableObject {
             if currentItem?.id == newId { return }
             currentItem = newItem
         }
-
+        
         if let selectedItemId,
            let focused = items.first(where: { $0.id == selectedItemId }) {
             setIfNeeded(focused)
             return
         }
-
+        
         let startIndex = page * itemsPerPage
         if startIndex >= 0, startIndex < items.count {
             setIfNeeded(items[startIndex])
@@ -276,17 +275,17 @@ class ContinuesSectionViewModel: ObservableObject {
             setIfNeeded(items.first)
         }
     }
-
+    
     /// Increase the limit to load more save states
     func loadMoreSaveStates() {
         guard !hasLoadedAllSaveStates else {
             DLOG("ContinuesSectionViewModel: Already loaded all save states")
             return
         }
-
+        
         let oldLimit = currentLimit
         let newLimit = min(currentLimit + Self.additionalSaveStateLoadCount, totalSaveStatesCount)
-
+        
         if newLimit > currentLimit {
             currentLimit = newLimit
             DLOG("ContinuesSectionViewModel: Increasing save state limit from \(oldLimit) to \(newLimit) (total: \(totalSaveStatesCount))")
@@ -294,19 +293,19 @@ class ContinuesSectionViewModel: ObservableObject {
             DLOG("ContinuesSectionViewModel: No need to increase limit, already at \(currentLimit) of \(totalSaveStatesCount)")
         }
     }
-
+    
     func updateCurrentSaveState(forPage page: Int) {
         let startIndex = page * itemsPerPage
         guard startIndex < items.count else { return }
         currentItem = items[startIndex]
     }
-
+    
     func handleHorizontalNavigation(_ value: Float) -> (nextItemId: String?, nextPage: Int)? {
         guard !items.isEmpty else {
             DLOG("ContinuesSectionViewModel: No items available")
             return nil
         }
-
+        
         let currentIndex: Int
         if let selectedId = selectedItemId,
            let index = items.firstIndex(where: { $0.id == selectedId }) {
@@ -314,7 +313,7 @@ class ContinuesSectionViewModel: ObservableObject {
         } else {
             currentIndex = 0
         }
-
+        
         // Calculate next index
         let nextIndex: Int
         if value < 0 {
@@ -322,9 +321,9 @@ class ContinuesSectionViewModel: ObservableObject {
         } else {
             nextIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
         }
-
+        
         guard nextIndex >= 0 && nextIndex < items.count else { return nil }
-
+        
         let nextPage = nextIndex / itemsPerPage
         return (items[nextIndex].id, nextPage)
     }
@@ -335,13 +334,13 @@ private struct ContinuesFooterView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let saveState: PVSaveState?
     let hideSystemLabel: Bool
-
+    
     /// Constants for styling
     private enum Constants {
         static let overlayHeight: CGFloat = 60
         static let bottomPadding: CGFloat = 0 // Removed bottom padding
     }
-
+    
     var body: some View {
         if let continueState = saveState, !continueState.isInvalidated {
             VStack(spacing: 0) {
@@ -376,13 +375,13 @@ private struct ContinuesFooterView: View {
                                     )
                                 )
                         }
-
+                        
                         // Retrowave-styled game title
                         Text(continueState.game?.isInvalidated == true ? "Deleted" : (continueState.game?.title ?? "Deleted"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5), radius: 1)
-
+                        
                         HStack(spacing: 6) {
                             Image(systemName: "clock")
                                 .font(.system(size: 9, weight: .semibold))
@@ -434,11 +433,11 @@ private struct ContinuesFooterView: View {
                 ZStack {
                     // Blurred background adapts to theme
                     Color(themeManager.currentPalette.dark
-                        ? UIColor.black.withAlphaComponent(0.7)
-                        : UIColor.white.withAlphaComponent(0.9)
+                          ? UIColor.black.withAlphaComponent(0.7)
+                          : UIColor.white.withAlphaComponent(0.9)
                     )
                     .blur(radius: 3)
-
+                    
                     // Grid overlay for retrowave effect (subtle)
                     RetroTheme.RetroGridView()
                         .opacity(themeManager.currentPalette.dark ? 0.1 : 0.05)
@@ -474,7 +473,7 @@ private struct CustomPageIndicator: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let numberOfPages: Int
     let currentPage: Int
-
+    
     internal enum Constants {
         static let indicatorHeight: CGFloat = 4
         static let spacing: CGFloat = 8
@@ -484,7 +483,7 @@ private struct CustomPageIndicator: View {
         static let bottomOffset: CGFloat = 100
         static let maxVisibleIndicators = 7 // Maximum number of indicators to show at once
     }
-
+    
     /// Pill indicators for the given indices.
     private var indicatorPills: some View {
         HStack(spacing: Constants.spacing) {
@@ -500,7 +499,7 @@ private struct CustomPageIndicator: View {
                             startPoint: .leading,
                             endPoint: .trailing
                         )) :
-                        AnyShapeStyle((themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5))
+                            AnyShapeStyle((themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5))
                     )
                     .frame(
                         width: currentPage == index ? Constants.selectedWidth : Constants.defaultWidth,
@@ -508,7 +507,7 @@ private struct CustomPageIndicator: View {
                     )
                     .shadow(color: currentPage == index ?
                             (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.8) :
-                            Color.clear,
+                                Color.clear,
                             radius: 3)
                     .id(index)
                     .animation(.spring(response: 0.3), value: currentPage)
@@ -516,7 +515,7 @@ private struct CustomPageIndicator: View {
         }
         .frame(height: Constants.indicatorHeight + 16)
     }
-
+    
     var body: some View {
         if numberOfPages <= Constants.maxVisibleIndicators {
             // All indicators fit without scrolling — centre them directly.
@@ -557,114 +556,114 @@ struct HomeContinueSection: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
-
+    
     @Default(.showAutoSavesInRecents) private var showAutoSavesInRecents
-
+    
     /// Filtered save states based on console identifier
     /// Data driver to allow different persistence backends.
     var dataDriver: ContinuesDataDriver = RealmContinuesDataDriver()
-
+    
     /// Total count of save states (without limit)
     @State private var totalSaveStatesCount: Int = 0
-
+    
     /// All items provided by the driver, ordered by date desc.
     @State private var allItems: [ContinueItemModel] = []
     /// Currently loaded save states (limited subset)
     @State private var limitedItems: [ContinueItemModel] = []
     /// Pre-chunked pages to avoid recomputing slices during layout
     @State private var pagedItems: [[ContinueItemModel]] = []
-
+    
     /// Coalesce change storms (e.g. CloudKit metadata updates) to avoid repeated recomputation on main.
     @State private var filteredSaveStatesUpdateTask: Task<Void, Never>? = nil
     @State private var lastAppliedFilteredSignature: Int = 0
     @State private var lastAppliedTotalCount: Int = 0
-
+    
     /// Flag to track if the view has appeared
     @State private var hasAppeared: Bool = false
     @State private var driverTask: Task<Void, Never>? = nil
-
+    
     /// Cached result of `resolveCurrentSaveState()` — avoids a live Realm lookup on every body render.
     /// Updated via onChange when page or focused item changes.
     @State private var cachedCurrentSaveState: PVSaveState? = nil
-
+    
     weak var rootDelegate: PVRootDelegate?
     let defaultHeight: CGFloat = 260
     var consoleIdentifier: String?
-
+    
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
-
+    
     @StateObject private var viewModel = ContinuesSectionViewModel()
-
-    #if !os(tvOS)
+    
+#if !os(tvOS)
     @State private var hapticGenerator = UIImpactFeedbackGenerator(style: .light)
-    #endif
-
+#endif
+    
     /// Constants for styling
     private enum Constants {
         static let cornerRadius: CGFloat = 16
         static let borderWidth: CGFloat = 1.5
         static let containerPadding: CGFloat = 16
     }
-
+    
     init(rootDelegate: PVRootDelegate?, consoleIdentifier: String?, parentFocusedSection: Binding<HomeSectionType?>, parentFocusedItem: Binding<String?>, dataDriver: ContinuesDataDriver = RealmContinuesDataDriver()) {
         self.rootDelegate = rootDelegate
         self.consoleIdentifier = consoleIdentifier
         self._parentFocusedSection = parentFocusedSection
         self._parentFocusedItem = parentFocusedItem
         self.dataDriver = dataDriver
-
+        
         // Create the filter predicate based on console identifier
         let baseFilter = NSPredicate(format: "game != nil")
         let finalFilter: NSPredicate
-
+        
         if let consoleId = consoleIdentifier {
             let consoleFilter = NSPredicate(format: "game.systemIdentifier == %@", consoleId)
             finalFilter = NSCompoundPredicate(andPredicateWithSubpredicates: [baseFilter, consoleFilter])
         } else {
             finalFilter = baseFilter
         }
-
+        
         // Initialize with the filter but no limit
         // Data driver handles filtering; keep consoleIdentifier for the stream.
-
+        
         // We'll set the total count when the view appears
         _totalSaveStatesCount = State(initialValue: 0)
     }
-
+    
     var isLandscapePhone: Bool {
-        #if os(iOS)
+#if os(iOS)
         return UIDevice.current.userInterfaceIdiom == .phone &&
-               verticalSizeClass == .compact
-        #else
+        verticalSizeClass == .compact
+#else
         return false
-        #endif
+#endif
     }
-
+    
     var adjustedHeight: CGFloat {
         isLandscapePhone ? defaultHeight / 2 : defaultHeight
     }
-
+    
     var columns: Int {
         isLandscapePhone ? 2 : 1
     }
-
+    
     /// Number of pages based on number of save states and items per page
     private var pageCount: Int {
         max(1, pagedItems.count)
     }
-
+    
     /// Grid columns configuration
     private var gridColumns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 16), count: columns)
     }
-
+    
     // Add properties for navigation
     @State private var continuousNavigationTask: Task<Void, Never>?
     @State private var delayTask: Task<Void, Never>?
     @State private var gamepadCancellable: AnyCancellable?
     @State private var selectedPage = 0
-
+    
     /// Keeps `viewModel.selectedItemId` and the footer selection in sync with focus and paging.
     private func syncSelectionState() {
         if viewModel.selectedItemId != parentFocusedItem {
@@ -672,7 +671,7 @@ struct HomeContinueSection: SwiftUI.View {
         }
         viewModel.updateCurrentSaveState(selectedItemId: parentFocusedItem, page: viewModel.currentPage)
     }
-
+    
     var body: some SwiftUI.View {
         // Main container
         ZStack(alignment: .bottom) {
@@ -706,7 +705,7 @@ struct HomeContinueSection: SwiftUI.View {
                     .tabViewStyle(.page(indexDisplayMode: .never))
                 }
                 .frame(height: adjustedHeight)
-
+                
                 // Footer and page indicator overlay
                 ZStack {
                     // Footer at bottom — use cachedCurrentSaveState to avoid a live Realm
@@ -716,7 +715,7 @@ struct HomeContinueSection: SwiftUI.View {
                         hideSystemLabel: consoleIdentifier != nil
                     )
                     .zIndex(0) // Ensure footer is behind
-
+                    
                     // Page Indicator floating over footer
                     if pageCount > 1 {
                         CustomPageIndicator(
@@ -734,10 +733,10 @@ struct HomeContinueSection: SwiftUI.View {
                 ZStack {
                     // Background adapts to theme
                     Color(themeManager.currentPalette.dark
-                        ? UIColor.black.withAlphaComponent(0.8)
-                        : UIColor.white.withAlphaComponent(0.9)
+                          ? UIColor.black.withAlphaComponent(0.8)
+                          : UIColor.white.withAlphaComponent(0.9)
                     )
-
+                    
                     // Grid overlay for retrowave effect
                     RetroTheme.RetroGridView()
                         .opacity(themeManager.currentPalette.dark ? 0.15 : 0.1)
@@ -766,19 +765,19 @@ struct HomeContinueSection: SwiftUI.View {
         }
         .onAppear {
             setupGamepadHandling()
-            #if !os(tvOS)
+#if !os(tvOS)
             hapticGenerator.prepare()
-            #endif
+#endif
             restartDriverTask()
-
+            
             // Only update the limit when the view first appears
             if !hasAppeared {
                 hasAppeared = true
-
+                
                 // Set the total count from initial driver state (may be empty until stream arrives)
                 totalSaveStatesCount = allItems.count
                 DLOG("HomeContinueSection: Total save states count: \(totalSaveStatesCount)")
-
+                
                 // Initialize with the initial limit
                 updateSaveStateLimit(ContinuesSectionViewModel.initialSaveStateLimit)
                 syncSelectionState()
@@ -812,24 +811,24 @@ struct HomeContinueSection: SwiftUI.View {
             }
             syncSelectionState()
             cachedCurrentSaveState = resolveCurrentSaveState()
-
+            
             // Check if we need to load more save states
             if viewModel.shouldLoadMoreSaveStates {
                 viewModel.loadMoreSaveStates()
                 updateSaveStateLimit(viewModel.currentLimit)
                 syncSelectionState()
             }
-
-            #if !os(tvOS)
+            
+#if !os(tvOS)
             hapticGenerator.impactOccurred()
-            #endif
+#endif
         }
         // Coalesce Results changes via task to avoid multi-writes per frame
         .task(id: filteredItemsSignature(limit: viewModel.currentLimit)) {
             await applyFilteredItemsIfNeeded()
         }
     }
-
+    
     /// Updates the limit on the save states by manually filtering the results
     private func updateSaveStateLimit(_ newLimit: Int) {
         // Avoid work if we have no items.
@@ -840,9 +839,9 @@ struct HomeContinueSection: SwiftUI.View {
             }
             return
         }
-
+        
         let limitedCount = min(newLimit, allItems.count)
-
+        
         // Only materialize a small window from Realm to keep this cheap for large libraries.
         // Add a cushion to keep stable ordering correct when many items share the same date.
         let window = min(allItems.count, limitedCount + 50)
@@ -850,50 +849,50 @@ struct HomeContinueSection: SwiftUI.View {
             if lhs.date != rhs.date { return lhs.date > rhs.date }
             return lhs.id > rhs.id
         }
-
+        
         // Update the limited save states
         let nextLimited = Array(candidates.prefix(limitedCount))
-
+        
         // If the visible IDs didn't change, don't churn the view model / selection state.
         let currentIDs = limitedItems.map { $0.id }
         let nextIDs = nextLimited.map { $0.id }
         guard currentIDs != nextIDs else { return }
-
+        
         limitedItems = nextLimited
-
+        
         // Update the view model with the limited save states
         viewModel.updateItems(limitedItems, isLandscape: isLandscapePhone, totalCount: totalSaveStatesCount)
         rebuildPagedItems()
         syncSelectionState()
     }
-
+    
     @MainActor
     private func applyFilteredItemsIfNeeded() async {
         filteredSaveStatesUpdateTask?.cancel()
         filteredSaveStatesUpdateTask = Task { @MainActor in
             // Debounce to coalesce CloudKit write storms.
             try? await Task.sleep(nanoseconds: 200_000_000) // 200ms
-
+            
             let count = allItems.count
             let signature = filteredItemsSignature(limit: viewModel.currentLimit)
-
+            
             // Skip if nothing relevant to ordering/display changed.
             if count == lastAppliedTotalCount && signature == lastAppliedFilteredSignature {
                 return
             }
-
+            
             if count != totalSaveStatesCount {
                 totalSaveStatesCount = count
             }
-
+            
             lastAppliedTotalCount = count
             lastAppliedFilteredSignature = signature
-
+            
             updateSaveStateLimit(viewModel.currentLimit)
             syncSelectionState()
         }
     }
-
+    
     /// A lightweight signature representing what this view actually cares about:
     /// count + (id, date, stackDepth) for the first N items in the current sort order.
     private func filteredItemsSignature(limit: Int) -> Int {
@@ -910,7 +909,7 @@ struct HomeContinueSection: SwiftUI.View {
         }
         return hasher.finalize()
     }
-
+    
     /// Cancels any running driver task and starts a fresh one.
     /// Call from `.onAppear` and whenever a setting that affects the query changes.
     private func restartDriverTask() {
@@ -927,11 +926,11 @@ struct HomeContinueSection: SwiftUI.View {
             }
         }
     }
-
+    
     private func setupGamepadHandling() {
         // Cancel existing handler if it exists
         gamepadCancellable?.cancel()
-
+        
         // Use weak self to prevent retain cycles
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
@@ -939,7 +938,7 @@ struct HomeContinueSection: SwiftUI.View {
                 // Only handle events when a controller is actually connected.
                 // Handling events while disconnected can create a hot loop of focus/page updates on iOS.
                 guard viewModel.isControllerConnected else { return }
-
+                
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
@@ -954,7 +953,7 @@ struct HomeContinueSection: SwiftUI.View {
                 }
             }
     }
-
+    
     private func handleButtonPress() {
         if let focused = parentFocusedItem,
            let item = limitedItems.first(where: { $0.id == focused }),
@@ -964,18 +963,18 @@ struct HomeContinueSection: SwiftUI.View {
             }
         }
     }
-
+    
     private func handleHorizontalNavigation(_ value: Float) {
         guard parentFocusedSection == .recentSaveStates else { return }
-
+        
         let items = limitedItems.map { $0.id }
         DLOG("HomeContinueSection: Navigation - Total items: \(items.count)")
-
+        
         guard !items.isEmpty else {
             DLOG("HomeContinueSection: No items available")
             return
         }
-
+        
         // Get current index
         let currentIndex: Int
         if let currentItem = parentFocusedItem,
@@ -986,7 +985,7 @@ struct HomeContinueSection: SwiftUI.View {
             currentIndex = 0
             DLOG("HomeContinueSection: No current selection, starting at 0")
         }
-
+        
         // Calculate next index
         let nextIndex: Int
         if value < 0 {
@@ -996,43 +995,43 @@ struct HomeContinueSection: SwiftUI.View {
             nextIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
             DLOG("HomeContinueSection: Moving right to index: \(nextIndex)")
         }
-
+        
         // Update selection
         parentFocusedItem = items[nextIndex]
-
+        
         // Calculate and update page based on items per page
         let itemsPerPage = isLandscapePhone ? 2 : 1
         let newPage = nextIndex / itemsPerPage
-
+        
         DLOG("HomeContinueSection: Items per page: \(itemsPerPage), New page: \(newPage)")
-
+        
         // Ensure TabView updates with animation
         withAnimation {
             viewModel.currentPage = newPage
         }
-
+        
         // Check if we need to load more save states
         if newPage >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {
             viewModel.loadMoreSaveStates()
             updateSaveStateLimit(viewModel.currentLimit)
         }
-
+        
         DLOG("HomeContinueSection: Final state - Page: \(newPage), Item: \(items[nextIndex]), Items per page: \(itemsPerPage)")
     }
-
+    
     private func handlePageChange(_ newPage: Int) {
         let itemsPerPage = isLandscapePhone ? 2 : 1
         let items = limitedItems.map { $0.id }
-
+        
         DLOG("HomeContinueSection: Page changed to \(newPage)")
-
+        
         // Calculate the first item index for this page
         let firstItemIndex = newPage * itemsPerPage
         guard firstItemIndex < items.count else {
             DLOG("HomeContinueSection: Invalid page index")
             return
         }
-
+        
         // If we're not already focused on an item on this page, update focus
         if let currentItem = parentFocusedItem,
            let currentIndex = items.firstIndex(of: currentItem) {
@@ -1048,39 +1047,39 @@ struct HomeContinueSection: SwiftUI.View {
             parentFocusedSection = .recentSaveStates
             parentFocusedItem = items[firstItemIndex]
         }
-
+        
         // Ensure footer metadata stays in sync with the newly visible page.
         viewModel.updateCurrentSaveState(selectedItemId: parentFocusedItem, page: newPage)
     }
-
+    
     private func resolveCurrentSaveState() -> PVSaveState? {
         currentDisplayItem()?.resolver()
     }
-
+    
     /// Derive the display item directly from focus/page to avoid stale cached selections.
     private func currentDisplayItem() -> ContinueItemModel? {
         if let focusedId = parentFocusedItem,
            let focused = limitedItems.first(where: { $0.id == focusedId }) {
             return focused
         }
-
+        
         let page = viewModel.currentPage
         guard page >= 0, page < pagedItems.count else {
             return limitedItems.first
         }
         return pagedItems[page].first ?? limitedItems.first
     }
-
+    
     private func rebuildPagedItems() {
         let itemsPerPage = max(1, viewModel.itemsPerPage)
         guard !limitedItems.isEmpty else {
             pagedItems = []
             return
         }
-
+        
         var pages: [[ContinueItemModel]] = []
         pages.reserveCapacity(Int(ceil(Double(limitedItems.count) / Double(itemsPerPage))))
-
+        
         var index = 0
         while index < limitedItems.count {
             let end = min(index + itemsPerPage, limitedItems.count)
@@ -1101,48 +1100,46 @@ private struct SaveStatesGridView: View {
     let adjustedHeight: CGFloat
     let hideSystemLabel: Bool
     weak var rootDelegate: PVRootDelegate?
-
+    
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
     @ObservedObject var viewModel: ContinuesSectionViewModel
-
+    
     var body: some View {
-        WithPerceptionTracking {
-            LazyVGrid(columns: gridColumns, spacing: 16) {
-                ForEach(pageSaveStates, id: \.id) { saveState in
-                    // Use optimized HomeContinueItemView with extracted data
-                    HomeContinueItemView(
-                        model: saveState,
-                        height: adjustedHeight,
-                        hideSystemLabel: hideSystemLabel,
-                        action: {
-                            if let resolved = saveState.resolver() {
-                                Task.detached { @MainActor in
-                                    SceneCoordinator.shared.launchSaveState(resolved.freeze(), core: resolved.core?.freeze())
-                                }
+        LazyVGrid(columns: gridColumns, spacing: 16) {
+            ForEach(pageSaveStates, id: \.id) { saveState in
+                // Use optimized HomeContinueItemView with extracted data
+                HomeContinueItemView(
+                    model: saveState,
+                    height: adjustedHeight,
+                    hideSystemLabel: hideSystemLabel,
+                    action: {
+                        if let resolved = saveState.resolver() {
+                            Task.detached { @MainActor in
+                                SceneCoordinator.shared.launchSaveState(resolved.freeze(), core: resolved.core?.freeze())
                             }
-                        },
-                        isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
-                        rootDelegate: rootDelegate
-                    )
-                    .id(saveState.id) // Stable identity for better performance
-                    .focusableIfAvailable()
-                    .onChange(of: parentFocusedItem) { newValue in
-                        if newValue == saveState.id {
-                            // Avoid redundant state writes; they trigger extra graph transactions.
-                            if parentFocusedSection != .recentSaveStates {
-                                parentFocusedSection = .recentSaveStates
-                            }
+                        }
+                    },
+                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
+                    rootDelegate: rootDelegate
+                )
+                .id(saveState.id) // Stable identity for better performance
+                .focusableIfAvailable()
+                .onChange(of: parentFocusedItem) { newValue in
+                    if newValue == saveState.id {
+                        // Avoid redundant state writes; they trigger extra graph transactions.
+                        if parentFocusedSection != .recentSaveStates {
+                            parentFocusedSection = .recentSaveStates
                         }
                     }
                 }
             }
-            .padding(.horizontal) // Add padding inside the container
-            .onAppear {
-                // Check if we need to load more save states when this page appears
-                if pageIndex >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {
-                    viewModel.loadMoreSaveStates()
-                }
+        }
+        .padding(.horizontal) // Add padding inside the container
+        .onAppear {
+            // Check if we need to load more save states when this page appears
+            if pageIndex >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {
+                viewModel.loadMoreSaveStates()
             }
         }
     }
@@ -1150,7 +1147,7 @@ private struct SaveStatesGridView: View {
 
 private struct EmptyContinuesView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
-
+    
     var body: some View {
         Text("No Continues")
             .tag("no continues")
@@ -1173,7 +1170,7 @@ extension ContinueItemModel {
         let gameTitle = state.game?.title
         let date = state.date
         let systemIdentifier = state.game?.systemIdentifier
-
+        
         // Resolve the artwork URL from the partial path stored in ImageFile_Data.
         // The full URL is constructed by appending the partial path to the shared save‑states directory.
         let imageURL: URL? = state.image.flatMap { img -> URL? in
@@ -1181,7 +1178,7 @@ extension ContinueItemModel {
             let savesDir = Paths.saveSavesPath
             return savesDir.appendingPathComponent(img.partialPath)
         }
-
+        
         self.init(
             id: saveId,
             gameTitle: gameTitle,
@@ -1211,11 +1208,11 @@ extension ContinueItemModel {
 @available(iOS 17, tvOS 17, *)
 final class SwiftDataContinuesDataDriver: ContinuesDataDriver, @unchecked Sendable {
     private let modelContainer: ModelContainer
-
+    
     init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
     }
-
+    
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
         AsyncStream { continuation in
             let container = modelContainer

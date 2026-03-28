@@ -25,7 +25,7 @@ import Unrar
 import Combine
 
 
-public enum ArchiveError: Error, LocalizedError {
+public enum ArchiveError: Error, LocalizedError, Sendable {
     case invalidArchive
     case fileTooLarge
     case extractionFailed(String)
@@ -51,7 +51,7 @@ public enum ArchiveError: Error, LocalizedError {
     }
 }
 
-public enum ArchiveType: String, CaseIterable {
+public enum ArchiveType: String, CaseIterable, Sendable {
     case zip
     case sevenZip = "7z"
     case bzip2 = "bz2"
@@ -80,7 +80,7 @@ public enum ArchiveType: String, CaseIterable {
 }
 
 /// Backend selection for 7z archive extraction
-public enum SevenZipBackend {
+public enum SevenZipBackend: Sendable {
     case swCompression
     case plzmaSDK
 }

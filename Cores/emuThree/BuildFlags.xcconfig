@@ -6,13 +6,14 @@ OTHER_CFLAGS = $(inherited) -DTARGET_NO_NIXPROF
 OTHER_CFLAGS = $(inherited) -ffast-math
 OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
 OTHER_CFLAGS = $(inherited) -fpermissive
-OTHER_CFLAGS = $(inherited) -frename-registers
-OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
+// -frename-registers and -fsingle-precision-constant are not supported by Apple Clang
+//OTHER_CFLAGS = $(inherited) -frename-registers
+//OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
 OTHER_CFLAGS = $(inherited) -fvisibility=hidden
 OTHER_CFLAGS = $(inherited) -fvisibility-inlines-hidden
-// Experimental
-OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
+// -Wl,--gc-sections is a GNU ld flag, not supported by Apple's linker
+//OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
 //OTHER_CFLAGS = $(inherited) -fdata-sections
 //OTHER_CFLAGS = $(inherited) -ffunction-sections
 //OTHER_CFLAGS = $(inherited) -finline-functions
@@ -40,6 +41,8 @@ OTHER_CFLAGS = $(inherited) -mtune=apple-a15  // iPhone 13 series, iPhone 14/14+
 //OTHER_CFLAGS = $(inherited) -mtune=apple-a18   // iPhone 16/16+, iPhone 16 Pro/Pro Max
 OTHER_CFLAGS = $(inherited) -march=armv8-a+simd+crc+crypto // 34-36fps kirby top screen level 1
 
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CPPHTTPLIB_OPENSSL_SUPPORT
 //GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_WEB_SERVICE

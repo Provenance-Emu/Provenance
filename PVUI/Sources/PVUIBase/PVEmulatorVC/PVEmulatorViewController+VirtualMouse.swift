@@ -23,6 +23,7 @@ private enum VMKeys {
     static var cursorHostKey: UInt8 = 0
     static var trackpadViewKey: UInt8 = 0
     static var gcMouseDriverKey: UInt8 = 0
+    static var lastValidViewportFrameKey: UInt8 = 0
 }
 
 // MARK: - Extension
@@ -48,6 +49,20 @@ extension PVEmulatorViewController {
     var gcMouseDriver: GCMouseMouseResponderDriver? {
         get { objc_getAssociatedObject(self, &VMKeys.gcMouseDriverKey) as? GCMouseMouseResponderDriver }
         set { objc_setAssociatedObject(self, &VMKeys.gcMouseDriverKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// Last validated viewport frame used by virtual mouse gating.
+    ///
+    /// Cached to survive transient rotation states where viewport providers briefly
+    /// clear their frame and GPU layout can momentarily report full-screen bounds.
+    private var lastValidMouseViewportFrame: CGRect? {
+        get {
+            (objc_getAssociatedObject(self, &VMKeys.lastValidViewportFrameKey) as? NSValue)?.cgRectValue
+        }
+        set {
+            let boxed = newValue.map { NSValue(cgRect: $0) }
+            objc_setAssociatedObject(self, &VMKeys.lastValidViewportFrameKey, boxed, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 
     // MARK: - Capability Checks
@@ -89,6 +104,14 @@ extension PVEmulatorViewController {
 
         /// Constrain trackpad and cursor overlay to the game viewport immediately.
         refreshVirtualMouseLayout()
+
+        /// During toggle-on, viewport sources can lag one run-loop behind.
+        /// Retry shortly so mouse interaction recovers without requiring rotation.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
+            guard let self = self, self.isVirtualMouseVisible else { return }
+            self.refreshVirtualMouseLayout()
+            self.bringVirtualInputOverlaysToFront()
+        }
 
         /// Fix z-order so controller buttons, menu, and skin controls remain
         /// interactive above the trackpad from the very first frame.
@@ -173,19 +196,85 @@ extension PVEmulatorViewController {
     func refreshVirtualMouseLayout() {
         guard let trackpad = touchTrackpadView else { return }
 
-        /// Resolve the authoritative viewport rect: prefer the skin-supplied
-        /// target frame, fall back to the GPU view's live frame, then full view.
-        let viewportFrame: CGRect
-        if let targetFrame = currentTargetFrame, !targetFrame.isEmpty {
-            viewportFrame = targetFrame
-        } else {
-            let gpuFrame = gpuViewController.view.frame
-            viewportFrame = gpuFrame.isEmpty ? view.bounds : gpuFrame
+        /// Resolve a trustworthy viewport for touch capture.
+        if let viewportFrame = resolvedVirtualMouseViewportFrame() {
+            trackpad.isUserInteractionEnabled = true
+            trackpad.frame = viewportFrame
+            trackpad.explicitGameViewRect = viewportFrame
+            cursorHostingController?.view.frame = viewportFrame
+            lastValidMouseViewportFrame = viewportFrame
+            return
         }
 
-        trackpad.frame = viewportFrame
-        trackpad.explicitGameViewRect = viewportFrame
-        cursorHostingController?.view.frame = viewportFrame
+        /// No trustworthy viewport yet (common during rotation): disable capture
+        /// so menu/controller/skin buttons remain interactive until frame recovery.
+        trackpad.isUserInteractionEnabled = false
+        trackpad.explicitGameViewRect = nil
+    }
+
+    /// Resolves the best viewport candidate for virtual mouse capture.
+    ///
+    /// Priority order:
+    /// 1) Skin/viewport delegate frame (`currentTargetFrame`)
+    /// 2) Live GPU frame
+    /// 3) Last known valid viewport cache
+    /// 4) Full view fallback only for non-DeltaSkin layouts
+    private func resolvedVirtualMouseViewportFrame() -> CGRect? {
+        if let targetFrame = currentTargetFrame, isTrustedVirtualMouseViewportFrame(targetFrame) {
+            return targetFrame
+        }
+
+        let gpuFrame = gpuViewController.view.frame
+        if isTrustedVirtualMouseViewportFrame(gpuFrame) {
+            return gpuFrame
+        }
+
+        if let cachedFrame = lastValidMouseViewportFrame, isTrustedVirtualMouseViewportFrame(cachedFrame) {
+            return cachedFrame
+        }
+
+        if !isDeltaSkinEnabled, isTrustedVirtualMouseViewportFrame(view.bounds) {
+            return view.bounds
+        }
+
+        return nil
+    }
+
+    /// Validates viewport frames used by the touch trackpad.
+    ///
+    /// In DeltaSkin mode, a near full-screen frame is rejected to prevent stale
+    /// rotation fallback from turning the trackpad into a global touch interceptor.
+    private func isTrustedVirtualMouseViewportFrame(_ frame: CGRect) -> Bool {
+        guard !frame.isEmpty,
+              frame.width > 0,
+              frame.height > 0,
+              frame.origin.x.isFinite,
+              frame.origin.y.isFinite,
+              frame.width.isFinite,
+              frame.height.isFinite else {
+            return false
+        }
+
+        let fullBounds = view.bounds
+        guard !fullBounds.isEmpty else { return true }
+
+        let maxWidth = fullBounds.width + 2
+        let maxHeight = fullBounds.height + 2
+        guard frame.width <= maxWidth, frame.height <= maxHeight else { return false }
+
+        if isDeltaSkinEnabled {
+            let epsilon: CGFloat = 1.0
+            let isNearFullscreen =
+                abs(frame.minX - fullBounds.minX) <= epsilon &&
+                abs(frame.minY - fullBounds.minY) <= epsilon &&
+                abs(frame.width - fullBounds.width) <= epsilon &&
+                abs(frame.height - fullBounds.height) <= epsilon
+            if isNearFullscreen {
+                return false
+            }
+        }
+
+        return true
     }
 }
 

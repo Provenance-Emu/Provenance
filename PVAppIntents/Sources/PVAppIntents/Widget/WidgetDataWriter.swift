@@ -31,6 +31,8 @@ public struct WidgetGameData: Codable, Sendable {
     public let id: String
     public let title: String
     public let systemName: String
+    /// Reverse-DNS system id (e.g. `com.provenance.snes`) when known; used by widgets for per-system glyphs.
+    public let systemIdentifier: String?
     /// Path relative to the App Group container root where artwork is cached.
     public let artworkPath: String?
     public let lastPlayedDate: Date?
@@ -39,14 +41,25 @@ public struct WidgetGameData: Codable, Sendable {
         id: String,
         title: String,
         systemName: String,
+        systemIdentifier: String? = nil,
         artworkPath: String? = nil,
         lastPlayedDate: Date? = nil
     ) {
         self.id = id
         self.title = title
         self.systemName = systemName
+        self.systemIdentifier = systemIdentifier
         self.artworkPath = artworkPath
         self.lastPlayedDate = lastPlayedDate
+    }
+}
+
+/// Resolves a single activity timestamp for `WidgetGameData.lastPlayedDate` from Realm fields that can diverge:
+/// `PVRecentGame.lastPlayedDate` (updated when a session is queued) and `PVGame.lastPlayed` (session / play tracking).
+public enum WidgetPlayActivityTimestamp {
+    /// Returns the latest play-related timestamp, or `importDate` when neither play field is set.
+    public static func best(recentLastPlayed: Date?, gameLastPlayed: Date?, importDate: Date) -> Date {
+        [recentLastPlayed, gameLastPlayed].compactMap { $0 }.max() ?? importDate
     }
 }
 
@@ -169,11 +182,8 @@ public final class WidgetDataWriter: Sendable {
             .prefix(12)
             .map { $0.asWidgetGameData }
 
-        // Gallery: sample up to 12 random games from the same snapshot.
-        let gallerySlice: [GameEntity] = all.count <= 12
-            ? Array(all)
-            : (0..<12).map { _ in all[Int.random(in: 0..<all.count)] }
-        let gallery = gallerySlice.map { $0.asWidgetGameData }
+        // Gallery: sample up to 12 random games from the same snapshot (no intra-gallery duplicates; may overlap with recents).
+        let gallery = all.shuffled().prefix(12).map { $0.asWidgetGameData }
 
         writeGameData(recentGames: recents, galleryGames: gallery, totalCount: totalCount)
     }
@@ -229,6 +239,7 @@ private extension GameEntity {
             id: id,
             title: title,
             systemName: systemName,
+            systemIdentifier: systemIdentifier.isEmpty ? nil : systemIdentifier,
             artworkPath: artworkURL.flatMap { Self.relativePath(for: $0) },
             lastPlayedDate: lastPlayedDate
         )

@@ -81,4 +81,78 @@ final class SystemIconProviderTests: XCTestCase {
         let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.colecovision")
         XCTAssertEqual(icon, "gamecontroller.fill")
     }
+
+    func testMAMEReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.mame")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testNeoGeoReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.neogeo")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testCPS1ReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.cps1")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testAtariSTReturnsDesktop() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.atarist")
+        XCTAssertEqual(icon, "desktopcomputer")
+    }
+
+    func testSegaGenesisReturnsGameController() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.genesis")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
+
+    func testPlayStationReturnsGameController() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.psx")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
+
+    func testGameGearReturnsHandheld() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.gamegear")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
+
+    func testWonderSwanReturnsHandheld() {
+        // WonderSwan uses short-form ".ws" identifier — verify the suffix match works.
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.ws")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
+
+    func testWonderSwanColorReturnsHandheld() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.wsc")
+        XCTAssertEqual(icon, "handheld.fill")
+    }
+
+    func testPS3ReturnsGameController() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.ps3")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
+
+    func testCPS2ReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.cps2")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testCPS3ReturnsArcade() {
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.cps3")
+        XCTAssertEqual(icon, "arcade.stick.console.fill")
+    }
+
+    func testGenesisDoesNotMatchNESCase() {
+        // "genesis" contains "nes" as a substring (g-e-n-e-s-i-s); ensure it
+        // resolves to a game-controller icon via the Genesis case, not NES.
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.genesis")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
+
+    func testTIC80ReturnsDefault() {
+        // TIC-80 is a fantasy computer — falls back to the generic game-controller icon.
+        let icon = SystemIconProvider.sfSymbolName(forSystemIdentifier: "com.provenance.tic80")
+        XCTAssertEqual(icon, "gamecontroller.fill")
+    }
 }

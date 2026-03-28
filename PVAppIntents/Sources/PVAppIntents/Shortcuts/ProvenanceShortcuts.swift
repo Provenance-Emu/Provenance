@@ -76,6 +76,29 @@ public struct ProvenanceShortcuts: AppShortcutsProvider {
                 ],
                 shortTitle: "Toggle Favourite",
                 systemImageName: "star.fill"
+            ),
+
+            // MARK: Continue Most Recent
+            AppShortcut(
+                intent: ContinueMostRecentGameIntent(),
+                phrases: [
+                    "Continue my last game on \(.applicationName)",
+                    "Resume \(.applicationName)",
+                    "Keep playing on \(.applicationName)"
+                ],
+                shortTitle: "Continue Last Game",
+                systemImageName: "play.fill"
+            ),
+
+            // MARK: Search Library
+            AppShortcut(
+                intent: SearchLibraryIntent(),
+                phrases: [
+                    "Search \(.applicationName) for \(\.$query)",
+                    "Find \(\.$query) in \(.applicationName)"
+                ],
+                shortTitle: "Search Games",
+                systemImageName: "magnifyingglass"
             )
         ]
     }

@@ -167,7 +167,7 @@ struct LightGunGameSettingsView: View {
                     .foregroundColor(.secondary)
             }
 
-            Slider(
+            RetroWaveSlider(
                 value: Binding(
                     get: { current.sensitivityOverride ?? globalSensitivity },
                     set: { saveSensitivity($0) }

@@ -36,52 +36,65 @@ public extension WidgetDataWriter {
     func writeFromRealm() {
         let database = RomDatabase.sharedInstance
         let allGames = database.all(PVGame.self)
-        let totalCount = allGames.count
+        /// Exclude contentless pseudo-games (cores with no ROM) from widget data
+        let realGames = allGames.filter("contentless == false")
+        let totalCount = realGames.count
         guard totalCount > 0 else { return }
 
         let systemCount = database.all(PVSystem.self).count
-        let totalPlayTime = allGames.sum(ofProperty: "timeSpentInGame") as Int
-        let favoritesCount = allGames.filter("isFavorite == true").count
+        let totalPlayTime = realGames.sum(ofProperty: "timeSpentInGame") as Int
+        let favoritesCount = realGames.filter("isFavorite == true").count
 
         var recentGames: [WidgetGameData] = Array(
             database.all(PVRecentGame.self)
                 .sorted(byKeyPath: "lastPlayedDate", ascending: false)
-                .prefix(12)
+                .prefix(24)
         ).compactMap { recent in
-            guard let game = recent.game, !game.isInvalidated else { return nil }
+            guard let game = recent.game, !game.isInvalidated, !game.contentless else { return nil }
             return WidgetGameData(
                 id: game.md5Hash,
                 title: game.title,
                 systemName: game.system?.shortName ?? game.system?.name ?? "",
+                systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
                 artworkPath: widgetArtworkPath(for: game),
-                lastPlayedDate: recent.lastPlayedDate
+                lastPlayedDate: WidgetPlayActivityTimestamp.best(
+                    recentLastPlayed: recent.lastPlayedDate,
+                    gameLastPlayed: game.lastPlayed,
+                    importDate: game.importDate
+                )
             )
         }
 
         // Fall back to recently imported games when no games have been played yet.
         if recentGames.isEmpty {
             recentGames = Array(
-                allGames.sorted(byKeyPath: "importDate", ascending: false)
+                realGames.sorted(byKeyPath: "importDate", ascending: false)
                     .prefix(12)
             ).map { game in
                 WidgetGameData(
                     id: game.md5Hash,
                     title: game.title,
                     systemName: game.system?.shortName ?? game.system?.name ?? "",
+                    systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
                     artworkPath: widgetArtworkPath(for: game),
-                    lastPlayedDate: nil
+                    lastPlayedDate: WidgetPlayActivityTimestamp.best(
+                        recentLastPlayed: nil,
+                        gameLastPlayed: game.lastPlayed,
+                        importDate: game.importDate
+                    )
                 )
             }
         }
 
         // Favorites: up to 16 to cover the systemExtraLarge 4×4 grid.
         let favorites: [WidgetGameData] = Array(
-            allGames.filter("isFavorite == true")
+            realGames.filter("isFavorite == true")
                 .sorted(byKeyPath: "title", ascending: true)
                 .prefix(16)
         ).map {
             WidgetGameData(id: $0.md5Hash, title: $0.title,
                            systemName: $0.system?.shortName ?? "",
+                           systemIdentifier: $0.systemIdentifier.isEmpty ? nil : $0.systemIdentifier,
                            artworkPath: widgetArtworkPath(for: $0))
         }
 
@@ -89,9 +102,10 @@ public extension WidgetDataWriter {
         let galleryCount = min(12, totalCount)
         let gallery: [WidgetGameData]
         if totalCount <= galleryCount {
-            gallery = Array(allGames.prefix(galleryCount)).map {
+            gallery = Array(realGames.prefix(galleryCount)).map {
                 WidgetGameData(id: $0.md5Hash, title: $0.title,
                                systemName: $0.system?.shortName ?? "",
+                               systemIdentifier: $0.systemIdentifier.isEmpty ? nil : $0.systemIdentifier,
                                artworkPath: widgetArtworkPath(for: $0))
             }
         } else {
@@ -101,9 +115,10 @@ public extension WidgetDataWriter {
                 indices.insert(Int.random(in: 0..<totalCount))
             }
             gallery = indices.sorted().map { idx in
-                let g = allGames[idx]
+                let g = realGames[idx]
                 return WidgetGameData(id: g.md5Hash, title: g.title,
                                      systemName: g.system?.shortName ?? "",
+                                     systemIdentifier: g.systemIdentifier.isEmpty ? nil : g.systemIdentifier,
                                      artworkPath: widgetArtworkPath(for: g))
             }
         }

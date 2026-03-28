@@ -60,6 +60,26 @@ void pv_core_set_controller_port_device(unsigned port, unsigned device) {
 }
 
 // ---------------------------------------------------------------------------
+// RETRO_DEVICE_LIGHTGUN detection
+// ---------------------------------------------------------------------------
+bool pv_core_declares_lightgun_device(void) {
+    rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+    if (!sys_info || !sys_info->ports.data || sys_info->ports.size == 0)
+        return false;
+
+    for (unsigned port = 0; port < sys_info->ports.size; port++) {
+        const struct retro_controller_info *info = &sys_info->ports.data[port];
+        if (!info->types)
+            continue;
+        for (unsigned j = 0; j < info->num_types; j++) {
+            if ((info->types[j].id & RETRO_DEVICE_MASK) == RETRO_DEVICE_LIGHTGUN)
+                return true;
+        }
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------------
 // RETRO_DEVICE_KEYBOARD detection
 // ---------------------------------------------------------------------------
 bool pv_core_declares_keyboard_device(void) {

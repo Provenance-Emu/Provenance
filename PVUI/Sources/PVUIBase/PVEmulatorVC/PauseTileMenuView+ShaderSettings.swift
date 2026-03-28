@@ -51,7 +51,9 @@ struct ShaderSettingsPauseSheet: View {
             }
             .background(Color(palette.gameLibraryBackground).ignoresSafeArea())
             .navigationTitle(currentFilter == .none ? String(localized: "Shader Settings") : currentFilter.description)
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
         #if os(tvOS)
         // On tvOS the hardware Menu button is the standard way to dismiss sheets.

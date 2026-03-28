@@ -13,7 +13,6 @@ import PVUIKit
 import RxRealm
 import RxSwift
 import RealmSwift
-import Perception
 import PVFeatureFlags
 import Defaults
 import AudioToolbox
@@ -1219,6 +1218,36 @@ private struct CoreOptionsSection: View {
     var body: some View {
         Section(header: Text("settings.section.core_options", bundle: .module)) {
 
+            #if os(tvOS)
+            NavigationLink(destination: CoreLanguageSelectionView(selection: $coreLanguage)) {
+                HStack {
+                    SettingsRow(title: "Core Language",
+                                subtitle: "Language used by emulator cores. Default follows device locale.",
+                                icon: .sfSymbol("globe"))
+                    Spacer()
+                    Text(coreLanguage.description)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.retroBlue, .retroPurple], startPoint: .leading, endPoint: .trailing)
+                        )
+                        .lineLimit(1)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.white.opacity(0.05))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(
+                                            LinearGradient(colors: [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
+                                            lineWidth: 1
+                                        )
+                                )
+                        )
+                }
+            }
+            .retroFocusButtonStyle(showBorder: false)
+            #else
             Picker(selection: $coreLanguage) {
                 ForEach(CoreLanguageSetting.allCases, id: \.self) { lang in
                     Text(lang.description).tag(lang)
@@ -1228,8 +1257,6 @@ private struct CoreOptionsSection: View {
                             subtitle: "Language used by emulator cores. Default follows device locale.",
                             icon: .sfSymbol("globe"))
             }
-            #if os(tvOS)
-            .retroFocusButtonStyle(showBorder: false)
             #endif
 
             NavigationLink(destination: CoreOptionsView()) {
@@ -1306,6 +1333,112 @@ private struct CoreOptionsSection: View {
         }
     }
 }
+
+// MARK: - tvOS Core Language Selection
+
+#if os(tvOS)
+/// RetroWave-styled language selection list for tvOS, replacing the clipped default Picker
+private struct CoreLanguageSelectionView: View {
+    @Binding var selection: CoreLanguageSetting
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                headerView
+                languageList
+            }
+            .padding(.horizontal, 48)
+            .padding(.vertical, 24)
+        }
+        .background(Color.black)
+        .focusSection()
+        .onExitCommand { dismiss() }
+    }
+
+    private var headerView: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "globe")
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundStyle(
+                    LinearGradient(colors: [.retroPink, .retroPurple], startPoint: .leading, endPoint: .trailing)
+                )
+            Text("Core Language")
+                .font(.system(size: 32, weight: .bold))
+                .foregroundStyle(
+                    LinearGradient(colors: [.retroBlue, .retroPurple], startPoint: .leading, endPoint: .trailing)
+                )
+            Spacer()
+        }
+        .padding(.bottom, 24)
+    }
+
+    private var languageList: some View {
+        VStack(spacing: 4) {
+            ForEach(CoreLanguageSetting.allCases, id: \.self) { lang in
+                LanguageSelectionRow(
+                    language: lang,
+                    isSelected: selection == lang
+                ) {
+                    selection = lang
+                    dismiss()
+                }
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white.opacity(0.03))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.retroPurple.opacity(0.15), lineWidth: 1)
+                )
+        )
+    }
+}
+
+/// Individual row in the language selection list with RetroWave focus styling
+private struct LanguageSelectionRow: View {
+    let language: CoreLanguageSetting
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Text(language.description)
+                    .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
+                    .foregroundColor(isSelected ? .white : .white.opacity(0.75))
+                    .lineLimit(1)
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.retroPink, .retroPurple], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                }
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isSelected ? Color.retroPink.opacity(0.1) : Color.clear)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                isSelected ? Color.retroPink.opacity(0.35) : Color.clear,
+                                lineWidth: 1
+                            )
+                    )
+            )
+        }
+        .retroFocusButtonStyle(showBorder: true)
+    }
+}
+#endif
 
 private struct SavesSection: View {
 
@@ -1669,11 +1802,13 @@ private struct VideoSection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
+            #if os(iOS)
             NavigationLink(destination: ExternalDisplaySettingsView()) {
                 SettingsRow(title: "External Display",
                             subtitle: "Configure how the game appears on a connected TV or monitor.",
                             icon: .sfSymbol("tv.and.hifispeaker.fill"))
             }
+            #endif
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif

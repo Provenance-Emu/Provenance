@@ -24,7 +24,6 @@ import PVLibrary
 import PVLogging
 import Combine
 import Observation
-import Perception
 import SwiftUI
 import Defaults
 import PVFeatureFlags
@@ -52,14 +51,11 @@ import SteamController
 import FreemiumKit
 #endif
 
-//#if os(tvOS)
-//@Perceptible
-//#else
 //@Observable
-//#endif
 public final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject {
     /// This is set by the UIApplicationDelegateAdaptor
     public var window: UIWindow? = nil
+    private let pauseMenuSettingsDelegate = MockPVMenuDelegate()
 
     static func main() {
         UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, NSStringFromClass(PVApplication.self), NSStringFromClass(PVAppDelegate.self))
@@ -459,6 +455,19 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         PauseMenuViewRegistry.registerRetroArchSettingsView {
             AnyView(NavigationStack { RetroArchQuickSettingsView() })
         }
+        PauseMenuViewRegistry.registerAppSettingsView { dismissAction in
+            let conflictsController = AppState.shared.libraryUpdatesController
+                ?? PVGameLibraryUpdatesController(gameImporter: GameImporter.shared)
+            return AnyView(
+                NavigationStack {
+                    PVSettingsView(
+                        conflictsController: conflictsController,
+                        menuDelegate: self.pauseMenuSettingsDelegate,
+                        dismissAction: { dismissAction?() }
+                    )
+                }
+            )
+        }
 
         _initThemeListener()
 
@@ -532,73 +541,36 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     @MainActor
     func _initThemeListener() {
-        if #available(iOS 17.0, tvOS 17.0, *) {
-            userInterfaceStyleObservation = withObservationTracking {
-                _ = UITraitCollection.current.userInterfaceStyle
-            } onChange: { [unowned self] in
-                ILOG("changed: \(UITraitCollection.current.userInterfaceStyle)")
-                Task.detached { @MainActor in
-                    self._initUITheme()
-                    if self.isAppStore {
+        userInterfaceStyleObservation = withObservationTracking {
+            _ = UITraitCollection.current.userInterfaceStyle
+        } onChange: { [unowned self] in
+            ILOG("changed: \(UITraitCollection.current.userInterfaceStyle)")
+            Task.detached { @MainActor in
+                self._initUITheme()
+                if self.isAppStore {
 #if !os(tvOS)
-                        self.appRatingSignifigantEvent()
+                    self.appRatingSignifigantEvent()
 #endif
-                    }
                 }
             }
-
-            currentThemeObservation = ThemeManager.shared.$currentPalette
-                .dropFirst() // Skip the initial value
-                .sink { [weak self] newPalette in
-                    ILOG("Theme changed to: \(newPalette.name)")
-                    if newPalette.name != self?.oldPalette?.name {
-                        self?.oldPalette = newPalette
-                        Task { @MainActor in
-                            self?._initUITheme()
-                            if self?.isAppStore == true {
-#if !os(tvOS)
-                                self?.appRatingSignifigantEvent()
-#endif
-                            }
-                        }
-                    }
-                }
         }
-        else {
-            userInterfaceStyleObservation = withPerceptionTracking {
-                _ = UITraitCollection.current.userInterfaceStyle
-            } onChange: { [unowned self] in
-                ILOG("changed: \(UITraitCollection.current.userInterfaceStyle)")
-                Task.detached { @MainActor in
-                    self._initUITheme()
-                    if self.isAppStore {
-#if !os(tvOS)
-                        self.appRatingSignifigantEvent()
-#endif
-                    }
-                }
-            }
 
-            currentThemeObservation =   withPerceptionTracking {
-                _ = ThemeManager.shared.currentPalette
-            } onChange: { [unowned self] in
-                Task { @MainActor in
-                    let newPaletteName = ThemeManager.shared.currentPalette.name
-                    ILOG("Theme changed to: \(newPaletteName)")
-                    if newPaletteName != oldPalette?.name {
-                        oldPalette = ThemeManager.shared.currentPalette
-                        Task { @MainActor in
-                            self._initUITheme()
-                            if self.isAppStore == true {
-    #if !os(tvOS)
-                                self.appRatingSignifigantEvent()
-    #endif
-                            }
+        currentThemeObservation = ThemeManager.shared.$currentPalette
+            .dropFirst()
+            .sink { [weak self] newPalette in
+                ILOG("Theme changed to: \(newPalette.name)")
+                if newPalette.name != self?.oldPalette?.name {
+                    self?.oldPalette = newPalette
+                    Task { @MainActor in
+                        self?._initUITheme()
+                        if self?.isAppStore == true {
+#if !os(tvOS)
+                            self?.appRatingSignifigantEvent()
+#endif
                         }
                     }
                 }
             }
-        }
     }
 
     // TODO: Move to ProvenanceApp

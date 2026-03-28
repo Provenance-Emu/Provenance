@@ -30,9 +30,6 @@ let libmGBACSettings: [PackageDescription.CSetting] = [
 //    .define("ENABLE_VFS_FILE", to: "1"),
 
     // Fix weird underflow/overflow issues
-
-    .define("_SIZE_T", to: "int"),
-    .define("size_t", to: "int"),
 ]
 
 let package = Package(
@@ -68,7 +65,7 @@ let package = Package(
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
-        .package(name: "PVPrimitives", path: "../PVPrimitives/"),
+        .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
         .package(path: "../../PVNetplay"),
         .package(path: "../../PVPatching"),
 

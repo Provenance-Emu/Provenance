@@ -1,69 +1,70 @@
 {
-  "originHash" : "070014278b67ad7aad1039e74f7afd00bec931b802f43d372673c81386e0ba64",
-  "pins" : [
+  "originHash": "070014278b67ad7aad1039e74f7afd00bec931b802f43d372673c81386e0ba64",
+  "pins": [
     {
-      "identity" : "checksum",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Checksum.git",
-      "state" : {
-        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
-        "version" : "1.1.1"
+      "identity": "checksum",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/JoeMatt/Checksum.git",
+      "state": {
+        "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version": "1.1.1"
       }
     },
     {
-      "identity" : "defaults",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sindresorhus/Defaults.git",
-      "state" : {
-        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
-        "version" : "9.0.2"
+      "identity": "defaults",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/sindresorhus/Defaults.git",
+      "state": {
+        "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+        "version": "9.0.8",
+        "branch": null
       }
     },
     {
-      "identity" : "swift-asn1",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-asn1.git",
-      "state" : {
-        "revision" : "810496cf121e525d660cd0ea89a758740476b85f",
-        "version" : "1.5.1"
+      "identity": "swift-asn1",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/apple/swift-asn1.git",
+      "state": {
+        "revision": "810496cf121e525d660cd0ea89a758740476b85f",
+        "version": "1.5.1"
       }
     },
     {
-      "identity" : "swift-atomics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-atomics.git",
-      "state" : {
-        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
-        "version" : "1.2.0"
+      "identity": "swift-atomics",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/apple/swift-atomics.git",
+      "state": {
+        "revision": "cd142fd2f64be2100422d658e7411e39489da985",
+        "version": "1.2.0"
       }
     },
     {
-      "identity" : "swift-crypto",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-crypto.git",
-      "state" : {
-        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
-        "version" : "3.15.1"
+      "identity": "swift-crypto",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/apple/swift-crypto.git",
+      "state": {
+        "revision": "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version": "3.15.1"
       }
     },
     {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log.git",
-      "state" : {
-        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
-        "version" : "1.10.1"
+      "identity": "swift-log",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/apple/swift-log.git",
+      "state": {
+        "revision": "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version": "1.10.1"
       }
     },
     {
-      "identity" : "swift-syntax",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax",
-      "state" : {
-        "revision" : "0687f71944021d616d34d922343dcef086855920",
-        "version" : "600.0.1"
+      "identity": "swift-syntax",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/swiftlang/swift-syntax",
+      "state": {
+        "revision": "0687f71944021d616d34d922343dcef086855920",
+        "version": "600.0.1"
       }
     }
   ],
-  "version" : 3
+  "version": 3
 }

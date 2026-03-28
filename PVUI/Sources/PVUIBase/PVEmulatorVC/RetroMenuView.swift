@@ -58,6 +58,17 @@ struct RetroMenuView: View {
         })
     }
 
+    /// Dismisses the pause menu and resumes emulation before running follow-up UI work.
+    /// Use this for actions (like starting ReplayKit capture) that are sensitive to
+    /// UIKit presentation timing during modal dismissal transitions.
+    private func dismissMenuThenResumeAndRun(_ action: @escaping () -> Void) {
+        emulatorVC.dismissNav(resumeEmulation: true, completion: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                action()
+            }
+        })
+    }
+
     /// Environment value to detect screen size
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -907,8 +918,9 @@ struct RetroMenuView: View {
                     }
                     #endif
                 } else {
-                    dismissAction(true)
-                    emulatorVC.startScreenRecording()
+                    dismissMenuThenResumeAndRun {
+                        emulatorVC.startScreenRecording()
+                    }
                 }
             }
 #if canImport(FreemiumKit)
@@ -1188,9 +1200,10 @@ struct RetroMenuView: View {
             }
 
             #if os(iOS) || targetEnvironment(macCatalyst)
-            // AirPlay — lets users stream audio/video to nearby AirPlay devices
-            // without leaving the game session.
-            airPlaySection
+            // AirPlay — hidden until video AirPlay is implemented; audio-only for now
+            if PVFeatureFlagsManager.shared.airPlayMenu {
+                airPlaySection
+            }
             #endif
 
             #if os(iOS)

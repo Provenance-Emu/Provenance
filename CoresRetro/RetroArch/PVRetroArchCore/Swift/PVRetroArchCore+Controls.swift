@@ -1119,7 +1119,7 @@ class EmulatorKeyboardView: UIView {
     }
 
     func toggleKeysStackView() {
-        if viewModel.keys != nil {
+        if !viewModel.keys.isEmpty {
             keyRowsStackView.isHidden = false;
             alternateKeyRowsStackView.isHidden = true
             numKeyRowsStackView.isHidden = true

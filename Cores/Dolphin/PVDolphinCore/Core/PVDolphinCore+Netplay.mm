@@ -15,7 +15,7 @@
 //
 
 #import "PVDolphinCore+Netplay.h"
-@import PVLoggingObjC;
+#import <PVLogging/PVLoggingObjC.h>
 #import <objc/runtime.h>
 
 // ---------------------------------------------------------------------------

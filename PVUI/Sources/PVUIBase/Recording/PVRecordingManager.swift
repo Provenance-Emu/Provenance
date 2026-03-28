@@ -114,8 +114,12 @@ import PVSettings
         }
 
         let recorder = RPScreenRecorder.shared()
+        #if !os(tvOS)
         recorder.isMicrophoneEnabled = Defaults[.recordingMicEnabled]
+        #endif
+        
         #if os(iOS)
+
         // Camera overlay is iOS-only: tvOS has no built-in camera and
         // `RPScreenRecorder.cameraPreviewLayer` is unavailable on tvOS.
         // NOTE: tvOS 17+ supports iPhone as a Continuity Camera for FaceTime, but

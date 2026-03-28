@@ -1,42 +1,43 @@
 {
-  "originHash" : "994ff772d309cf3020fcb90205f53e6d84cb8da1fd6cb816d79057dd7138c769",
-  "pins" : [
+  "originHash": "994ff772d309cf3020fcb90205f53e6d84cb8da1fd6cb816d79057dd7138c769",
+  "pins": [
     {
-      "identity" : "checksum",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Checksum.git",
-      "state" : {
-        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
-        "version" : "1.1.1"
+      "identity": "checksum",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/JoeMatt/Checksum.git",
+      "state": {
+        "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version": "1.1.1"
       }
     },
     {
-      "identity" : "defaults",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sindresorhus/Defaults.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "4c009d5c2496e7aa126e922c94dd3d6ae049efa2"
+      "identity": "defaults",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/sindresorhus/Defaults.git",
+      "state": {
+        "branch": null,
+        "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+        "version": "9.0.8"
       }
     },
     {
-      "identity" : "swift-atomics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-atomics.git",
-      "state" : {
-        "revision" : "b601256eab081c0f92f059e12818ac1d4f178ff7",
-        "version" : "1.3.0"
+      "identity": "swift-atomics",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/apple/swift-atomics.git",
+      "state": {
+        "revision": "b601256eab081c0f92f059e12818ac1d4f178ff7",
+        "version": "1.3.0"
       }
     },
     {
-      "identity" : "swiftgenplugin",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
-      "state" : {
-        "branch" : "develop",
-        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+      "identity": "swiftgenplugin",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+      "state": {
+        "branch": "develop",
+        "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
       }
     }
   ],
-  "version" : 3
+  "version": 3
 }

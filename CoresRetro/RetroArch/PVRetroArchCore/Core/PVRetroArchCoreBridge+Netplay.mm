@@ -211,7 +211,11 @@ NSErrorDomain const PVRetroArchNetplayErrorDomain = @"com.provenance.retroarch.n
 - (void)netplayStop {
 #ifdef HAVE_NETPLAY
     ILOG(@"[Netplay] Stopping session");
-    command_event(CMD_EVENT_NETPLAY_DEINIT, NULL);
+    const bool isEnabled = netplay_driver_ctl(RARCH_NETPLAY_CTL_IS_ENABLED, NULL);
+    const bool hasData = netplay_driver_ctl(RARCH_NETPLAY_CTL_IS_DATA_INITED, NULL);
+    if (isEnabled || hasData) {
+        netplay_driver_ctl(RARCH_NETPLAY_CTL_DISCONNECT, NULL);
+    }
     netplay_driver_ctl(RARCH_NETPLAY_CTL_DISABLE, NULL);
 #endif
 }

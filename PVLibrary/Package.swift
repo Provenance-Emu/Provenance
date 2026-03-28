@@ -70,8 +70,6 @@ let package = Package(
                  revision: "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"),
         .package(url: "https://github.com/stephencelis/SQLite.swift.git",
                  .upToNextMajor(from: "0.15.3")),
-        .package(url: "https://github.com/pointfreeco/swift-perception.git",
-                 from: "2.0.9"),
         /// https://github.com/mtgto/Unrar.swift
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),
@@ -117,7 +115,6 @@ let package = Package(
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-                .product(name: "Perception", package: "swift-perception"),
             ],
             resources: [
                 // TODO: Move Cheats to PVLookup
@@ -193,7 +190,6 @@ let package = Package(
 //                "PVPrimitives",
 //                "Extractor",
 //                "PVFileSystem",
-//                .product(name: "Perception", package: "swift-perception"),
 //                .product(name: "RxCocoa", package: "RxSwift"),
 //                .product(name: "RxSwift", package: "RxSwift"),
 //                .product(name: "RxRealm", package: "RxRealm"),

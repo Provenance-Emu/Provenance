@@ -15,6 +15,7 @@
 import SwiftUI
 import UIKit
 import WidgetKit
+import PVLibrary
 
 // MARK: - Timeline Entry
 
@@ -82,7 +83,7 @@ struct NowPlayingStandByView: View {
             contentOverlay
         }
         .containerBackground(.black, for: .widget)
-        .widgetURL(URL(string: "provenance://screen/library"))
+        .widgetURL(PVLibraryScreenURL)
     }
 
     @ViewBuilder
@@ -155,7 +156,7 @@ struct NowPlayingStandByView: View {
                 Image(systemName: "gamecontroller.fill")
                     .font(.system(size: 20))
                     .foregroundStyle(.white.opacity(0.6))
-                Text("Provenance")
+                Text(WidgetLocalizedStrings.brandName)
                     .font(.caption2)
                     .foregroundStyle(.white.opacity(0.6))
             }
@@ -172,8 +173,14 @@ struct NowPlayingStandByWidget: Widget {
         StaticConfiguration(kind: Self.kind, provider: NowPlayingStandByProvider()) { entry in
             NowPlayingStandByView(entry: entry)
         }
-        .configurationDisplayName("Now Playing — StandBy")
-        .description("Shows album art and track info while game music plays. Designed for nightstand use in StandBy mode.")
+        .configurationDisplayName(String(localized: "widget.now-playing-standby.display-name", defaultValue: "Now Playing — StandBy", comment: "Now Playing StandBy widget display name"))
+        .description(
+            String(
+                localized: "widget.now-playing-standby.description",
+                defaultValue: "Shows album art and track info while game music plays. Designed for nightstand use in StandBy mode.",
+                comment: "Now Playing StandBy widget description"
+            )
+        )
         .supportedFamilies([.systemSmall])
     }
 }

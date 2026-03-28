@@ -51,6 +51,43 @@ extension PVAppDelegate {
         donateIntent(openByNameAndSystemIntent)
     }
 
+    // MARK: - INPlayMediaIntent donation
+
+    /// Donates an `INPlayMediaIntent` interaction for a specific game so Siri
+    /// learns the pattern and can suggest "play <game> on Provenance".
+    ///
+    /// Call this whenever a game is launched by the user.
+    /// - Parameter game: The game that was launched.
+    public func donateMediaIntent(for game: PVGame) {
+        // Capture value-type copies before the closure to avoid accessing the
+        // thread-confined Realm object from the Intents framework callback thread.
+        let md5 = game.md5Hash
+        let title = game.title
+        let mediaItem = INMediaItem(
+            identifier: md5,
+            title: title,
+            type: .game,
+            artwork: nil
+        )
+        let intent = INPlayMediaIntent(mediaItems: [mediaItem],
+                                       mediaContainer: nil,
+                                       playShuffled: nil,
+                                       playbackRepeatMode: .unknown,
+                                       resumePlayback: nil,
+                                       playbackQueueLocation: .unknown,
+                                       playbackSpeed: nil,
+                                       mediaSearch: nil)
+        intent.suggestedInvocationPhrase = "Play \(title)"
+        let interaction = INInteraction(intent: intent, response: nil)
+        interaction.donate { error in
+            if let error = error {
+                ELOG("PVAppDelegate: Failed to donate INPlayMediaIntent for '\(title)': \(error.localizedDescription)")
+            } else {
+                ILOG("PVAppDelegate: Donated INPlayMediaIntent for '\(title)'")
+            }
+        }
+    }
+
     /// Donates an intent to Siri
     /// - Parameter intent: The intent to donate
     private func donateIntent(_ intent: INIntent) {
@@ -73,10 +110,14 @@ extension PVAppDelegate {
     public func application(_ application: UIApplication, handle intent: INIntent, completionHandler: @escaping (INIntentResponse) -> Void) {
         ILOG("PVAppDelegate: Handling intent: \(intent)")
 
-        // Handle the Open intent
-        if #available(iOS 14.0, *), let openIntent = intent as? PVOpenIntent {
+        if let openIntent = intent as? PVOpenIntent {
             let intentHandler = PVIntentHandler()
             intentHandler.handle(intent: openIntent) { response in
+                completionHandler(response)
+            }
+        } else if let mediaIntent = intent as? INPlayMediaIntent {
+            // In-app foreground handling: delegate to our INPlayMediaIntentHandling conformance.
+            handle(intent: mediaIntent) { response in
                 completionHandler(response)
             }
         } else {
@@ -136,10 +177,14 @@ extension PVAppDelegate {
     ///   - intent: The intent to handle
     /// - Returns: The intent handler for the given intent
     public func application(_ application: UIApplication, handlerFor intent: INIntent) -> Any? {
-        // Create and return a new instance of our intent handler
         if intent is PVOpenIntent {
             ILOG("PVAppDelegate: Providing handler for PVOpenIntent")
             return PVIntentHandler()
+        }
+
+        if intent is INPlayMediaIntent {
+            ILOG("PVAppDelegate: Providing in-app handler for INPlayMediaIntent")
+            return self
         }
 
         WLOG("PVAppDelegate: No handler available for intent type: \(type(of: intent))")

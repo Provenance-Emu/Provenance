@@ -425,12 +425,14 @@ public actor ArtworkSearchQueue {
         guard let first = results.first else { return }
         let urlString = first.url.absoluteString
 
-        guard let realm = try? Realm(),
-              let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
-                         (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
-        else { return }
-        ILOG("ArtworkSearchQueue: Background artwork URL available for \(game.title): \(urlString)")
-        // TODO: Persist to game.screenShots once a PVImageFile download helper exists (#3470)
+        await Task.detached(priority: .utility) {
+            guard let realm = try? Realm(),
+                  let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5Hash) ??
+                             (!gameID.isEmpty ? realm.objects(PVGame.self).filter("id == %@", gameID).first : nil)
+            else { return }
+            ILOG("ArtworkSearchQueue: Background artwork URL available for \(game.title): \(urlString)")
+            // TODO: Persist to game.screenShots once a PVImageFile download helper exists (#3470)
+        }.value
     }
 
     // MARK: - Image caching helpers

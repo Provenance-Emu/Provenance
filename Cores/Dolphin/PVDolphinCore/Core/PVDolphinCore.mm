@@ -10,12 +10,9 @@
 #import "PVDolphinCore+Controls.h"
 #import "PVDolphinCore+Audio.h"
 #import "PVDolphinCore+Video.h"
-#import <PVDolphin/PVDolphin-Swift.h>
-
 #import <Foundation/Foundation.h>
 #import <PVDolphin/PVDolphin-Swift.h>
-@import PVCoreBridge;
-@import PVCoreObjCBridge;
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 @import PVEmulatorCore;
 
 #import <AudioToolbox/AudioToolbox.h>
@@ -25,6 +22,10 @@
 #import <sys/types.h>
 #import <sys/sysctl.h>
 #import <sys/mman.h>
+#import <signal.h>
+#import <setjmp.h>
+#import <pthread.h>
+#import <libkern/OSCacheControl.h>
 #import <assert.h>
 
 /* Dolphin Includes */
@@ -503,6 +504,24 @@ static void ResetDolphinStaticState() {
     // Write-Back Cache (inverted: enableWriteBackCache=true means accurate NANs=true, which is slower)
     Config::SetBase(Config::MAIN_ACCURATE_NANS, self.enableWriteBackCache);
 
+    // Accurate CPU Cache (slower but more compatible)
+    Config::SetBase(Config::MAIN_ACCURATE_CPU_CACHE, self.accurateCPUCache);
+
+    // Bypass Instruction Cache
+    Config::SetBase(Config::MAIN_DISABLE_ICACHE, self.disableICache);
+
+    // Fast Floating Point (Cached Interpreter optimization)
+    Config::SetBase(Config::MAIN_FP_FAST, self.fastFP);
+
+    // DCBZ Hack (skip data cache block zero for performance)
+    Config::SetBase(Config::MAIN_LOW_DCBZ_HACK, self.dcbzHack);
+
+    // Relaxed Idle Loop Detection (better performance without JIT)
+    Config::SetBase(Config::MAIN_RELAXED_IDLE_DETECTION, self.relaxedIdleDetection);
+
+    // Fast-Forward CTR Idle Loops (better performance without JIT)
+    Config::SetBase(Config::MAIN_FAST_FORWARD_CTR_IDLE, self.fastForwardCTRIdle);
+
     // GPU Sync with CPU - user-configurable (disabled by default for performance)
     Config::SetBase(Config::MAIN_SYNC_GPU, self.syncGPU);
 
@@ -903,41 +922,93 @@ static void ResetDolphinStaticState() {
     // JIT is always available on iOS Simulator
     return YES;
 #else
-    // Method 1: Check if process is being debugged (AltStore, SideStore, Xcode, etc.)
-    if ([self isProcessDebugged]) {
-        NSLog(@"✅ JIT: Available via debugger attach (AltStore/Xcode/SideStore)");
-        return YES;
-    }
+    // Robust JIT check: actually try to write and execute code in a MAP_JIT page.
+    // This catches cases where MAP_JIT allocation succeeds but execution fails
+    // (e.g., iOS 26 TXM devices without StikDebug, missing entitlements, etc.)
 
-    // Method 2: Try MAP_JIT to detect if the entitlement allows JIT directly.
-    // On iOS/tvOS 14.2+ with com.apple.security.cs.allow-jit entitlement,
-    // and on iOS/tvOS 17+ / tvOS 26+ with improved JIT support,
-    // mmap with MAP_JIT succeeds without needing a debugger.
-    void *testPage = mmap(nullptr, PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
+    void *testPage = mmap(nullptr, PAGE_SIZE, PROT_READ | PROT_WRITE,
                           MAP_PRIVATE | MAP_ANONYMOUS | MAP_JIT, -1, 0);
-    if (testPage != MAP_FAILED) {
+    if (testPage == MAP_FAILED) {
+        NSLog(@"⚠️ JIT: MAP_JIT allocation failed — no JIT support");
+        return NO;
+    }
+
+    // Write a minimal ARM64 function: "mov w0, #1; ret" (returns 1)
+    // 0x52800020 = mov w0, #1
+    // 0xD65F03C0 = ret
+    uint32_t code[] = { 0x52800020, 0xD65F03C0 };
+
+    // Switch to write mode, write code, switch to execute mode
+#if !TARGET_OS_TV
+    if (__builtin_available(iOS 14.0, *)) {
+        pthread_jit_write_protect_np(false);  // writable
+    }
+#endif
+    memcpy(testPage, code, sizeof(code));
+#if !TARGET_OS_TV
+    if (__builtin_available(iOS 14.0, *)) {
+        pthread_jit_write_protect_np(true);   // executable
+    }
+#endif
+
+    // Make the page executable
+    if (mprotect(testPage, PAGE_SIZE, PROT_READ | PROT_EXEC) != 0) {
+        NSLog(@"⚠️ JIT: mprotect to RX failed — no JIT execution support");
         munmap(testPage, PAGE_SIZE);
-        NSLog(@"✅ JIT: Available via MAP_JIT entitlement (iOS/tvOS 14.2+ JIT entitlement)");
-        return YES;
+        return NO;
     }
 
-    // Method 3: Check for pthread_jit_write_protect_np availability
-    // This function was introduced alongside Apple Silicon JIT support
-    // and indicates the platform supports hardware-enforced JIT protection
-#if __has_builtin(__builtin_available)
-    if (@available(iOS 14.2, tvOS 14.2, *)) {
-        // On Apple Silicon devices with proper entitlements, write protection
-        // can be toggled — check if the symbol is available (non-simulator ARM64)
-#if defined(__aarch64__)
-        // pthread_jit_write_protect_np is available on Apple Silicon
-        // If we reach here and MAP_JIT failed, JIT is not available via entitlement
-        NSLog(@"⚠️ JIT: MAP_JIT failed on Apple Silicon device — entitlement not present");
-#endif
-    }
-#endif
+    // Clear instruction cache
+    sys_icache_invalidate(testPage, sizeof(code));
 
-    NSLog(@"⚠️ JIT: Not available — falling back to Cached Interpreter for best JITless performance");
-    return NO;
+    // Try to actually execute the JIT code using signal handling to catch crashes.
+    // Hardware JIT failures produce SIGTRAP (brk), SIGBUS, or SIGSEGV — not ObjC exceptions.
+    typedef int (*JITTestFunc)(void);
+    JITTestFunc testFunc = (JITTestFunc)testPage;
+
+    // Save old signal handlers
+    struct sigaction oldTrap, oldBus, oldSegv;
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sigemptyset(&sa.sa_mask);
+
+    // Use a volatile flag — signal handler sets it, main code checks it
+    static volatile sig_atomic_t s_jit_signal_caught = 0;
+    s_jit_signal_caught = 0;
+
+    static jmp_buf s_jit_test_jmpbuf;
+
+    sa.sa_handler = [](int sig) {
+        s_jit_signal_caught = sig;
+        longjmp(s_jit_test_jmpbuf, 1);
+    };
+    sa.sa_flags = 0; // No SA_RESTART — we want longjmp
+
+    sigaction(SIGTRAP, &sa, &oldTrap);
+    sigaction(SIGBUS, &sa, &oldBus);
+    sigaction(SIGSEGV, &sa, &oldSegv);
+
+    BOOL jitWorks = NO;
+    if (setjmp(s_jit_test_jmpbuf) == 0) {
+        int result = testFunc();
+        jitWorks = (result == 1);
+        if (jitWorks) {
+            NSLog(@"✅ JIT: Verified — test code execution succeeded");
+        } else {
+            NSLog(@"⚠️ JIT: Test code returned unexpected result %d", result);
+        }
+    } else {
+        NSLog(@"⚠️ JIT: Test code execution crashed with signal %d — JIT not usable", (int)s_jit_signal_caught);
+        jitWorks = NO;
+    }
+
+    // Restore original signal handlers
+    sigaction(SIGTRAP, &oldTrap, NULL);
+    sigaction(SIGBUS, &oldBus, NULL);
+    sigaction(SIGSEGV, &oldSegv, NULL);
+
+    munmap(testPage, PAGE_SIZE);
+    return jitWorks;
 #endif
 }
 
@@ -1082,14 +1153,15 @@ static void ResetDolphinStaticState() {
             [gl_view_controller addChildViewController:cgsh_view_controller];
             [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         }
-        if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
-            self.renderDelegate.mtlView.autoresizesSubviews=true;
-            self.renderDelegate.mtlView.clipsToBounds=true;
-            [self.renderDelegate.mtlView addSubview:m_view];
-            [m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.bottomAnchor constant:0].active = true;
+        UIView *mtlView = [self.renderDelegate respondsToSelector:@selector(mtlView)] ? [(id)self.renderDelegate mtlView] : nil;
+        if (mtlView) {
+            mtlView.autoresizesSubviews=true;
+            mtlView.clipsToBounds=true;
+            [mtlView addSubview:m_view];
+            [m_view.topAnchor constraintEqualToAnchor:mtlView.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:mtlView.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:mtlView.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:mtlView.bottomAnchor constant:0].active = true;
         } else {
             gl_view_controller.view.autoresizesSubviews=true;
             gl_view_controller.view.clipsToBounds=true;

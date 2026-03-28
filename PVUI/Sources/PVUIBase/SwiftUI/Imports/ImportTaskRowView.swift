@@ -10,7 +10,6 @@ import PVLibrary
 import PVRealm
 import PVSettings
 import PVThemes
-import Perception
 
 func iconNameForStatus(_ status: ImportQueueItem.ImportStatus) -> String {
     switch status {
@@ -295,9 +294,7 @@ struct ImportTaskRowView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            mainView
-        }
+        mainView
     }
 }
 

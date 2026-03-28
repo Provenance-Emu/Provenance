@@ -38,7 +38,7 @@ PV_DIRS=()
 PV_DIR_REALPATHS=()
 
 add_pv_dir() {
-    local dir="$1"
+    local dir="${1%/}"   # strip trailing slash for consistent comparison
     [ -d "$dir" ] || return 0
 
     local real
@@ -231,8 +231,8 @@ ALL_UNIQUE_KEYS=$(wc -l < "$OUT_DIR/all_used_keys.txt")
 
 # Extract keys defined in EN strings files
 {
-  grep -h '^"' "$EN_STRINGS" 2>/dev/null | grep -oE '^"[^"]+"' | tr -d '"'
-  grep -h '^"' "$EN_LOCALIZABLE" 2>/dev/null | grep -oE '^"[^"]+"' | tr -d '"'
+  grep -h '^"' "$EN_STRINGS" 2>/dev/null | grep -oE '^"[^"]+"' | tr -d '"' || true
+  grep -h '^"' "$EN_LOCALIZABLE" 2>/dev/null | grep -oE '^"[^"]+"' | tr -d '"' || true
 } | sort -u > "$OUT_DIR/defined_en_keys.txt" || true
 
 DEFINED_EN_KEYS=$(wc -l < "$OUT_DIR/defined_en_keys.txt")

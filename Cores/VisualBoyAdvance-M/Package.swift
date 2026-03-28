@@ -42,6 +42,7 @@ let package = Package(
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
         .package(path: "../../PVPrimitives"),
+        .package(path: "../../PVRcheevos"),
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
     ],

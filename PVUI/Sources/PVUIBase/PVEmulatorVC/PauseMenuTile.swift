@@ -11,15 +11,13 @@ import Foundation
 // MARK: - Tile Data Model
 
 /// Route identifiers for nested tile-menu navigation.
-public enum PauseTileMenuRoute: String, Sendable, Hashable {
+public enum PauseTileMenuRoute: String, Sendable, Hashable, CaseIterable {
     case root
     case states
     case options
+    case recording
     case core
     case skins
-    case skinsSelection
-    case skinsButtons
-    case skinsTools
 }
 
 /// A single action tile in the tile-based pause menu grid.

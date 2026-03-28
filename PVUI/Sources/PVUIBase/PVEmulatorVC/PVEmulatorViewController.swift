@@ -738,6 +738,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
         }
 
+        /// Rehydrate game from Realm to avoid stale/frozen file metadata after async sync/download work.
+        if let refreshedGame = refreshedGameForROMResolution() {
+            self.game = refreshedGame
+            if romPathMaybe == nil {
+                romPathMaybe = refreshedGame.file?.url
+                romPathMaybe = handleArchives(atPath: romPathMaybe)
+            }
+        }
+
         /// Ensure we have a valid ROM URL before attempting to load
         guard let romURL = romPathMaybe, !romURL.path.isEmpty else {
             ELOG("Cannot create emulator: ROM path is nil or empty for \(game.title)")
@@ -1116,10 +1125,26 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     hostView.frame = skinContainer.bounds
                 }
             }
+            #if !os(tvOS)
+            /// Final post-rotation sync: ensures virtual mouse gating and overlay
+            /// stacking use the latest viewport after transition settles.
+            self.refreshVirtualMouseLayout()
+            self.bringVirtualInputOverlaysToFront()
+            #endif
         })
     }
 
     // MARK: - CloudKit Download Handling
+
+    /// Resolves the latest Realm-backed game row before final ROM URL resolution.
+    /// This prevents stale snapshots from carrying pre-download file metadata.
+    private func refreshedGameForROMResolution() -> PVGame? {
+        let md5 = game.md5Hash
+        guard !md5.isEmpty else {
+            return nil
+        }
+        return RomDatabase.sharedInstance.game(withMD5: md5)
+    }
 
     /// Check if a game needs CloudKit download
     /// - Parameter game: The game to check
@@ -2825,6 +2850,19 @@ extension PVEmulatorViewController {
             return
         }
 
+        #if os(iOS)
+        /// ReplayKit start/stop may transiently resign active while presenting
+        /// system UI. In that window, forcing our own pause menu can leave the
+        /// emulator in a wedged modal/input state after returning to foreground.
+        let replayKitTransitionActive = PVRecordingManager.shared.isPreparingRecording
+                                    || PVRecordingManager.shared.isRecording
+        if replayKitTransitionActive {
+            ILOG("appWillResignActive: Skipping pause-menu presentation — ReplayKit transition in progress")
+            gameAudio.pauseAudio()
+            return
+        }
+        #endif
+
         Task { [weak self] in
             guard let self = self else { return }
             if Defaults[.autoSave], self.core.supportsSaveStates {
@@ -2862,10 +2900,10 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
-        if !isShowingMenu {
-            core.setPauseEmulation(false)
-        }
-        core.setPauseEmulation(true)
+        /// Match pause state to the actual menu visibility instead of always forcing
+        /// pause. This prevents returning from transient ReplayKit UI in a permanently
+        /// paused-looking state with no visible pause menu.
+        core.setPauseEmulation(isShowingMenu)
 
         do {
             // TODO: Test if we need to recreate the audio graph

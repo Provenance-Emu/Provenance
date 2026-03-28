@@ -155,12 +155,15 @@ public final class TouchTrackpadView: UIView {
         if let gameView = gameViewRef {
             let converted = gameView.convert(gameView.bounds, to: self)
             if !converted.isEmpty {
+                /// GPU view is laid out — reject invalid viewport rectangles and gate strictly.
+                guard isUsableViewportRect(converted) else { return nil }
                 // GPU view is laid out — gate strictly to its rect.
                 guard converted.contains(point) else { return nil }
             } else {
                 // GPU view not yet laid out — fall back to explicit rect or pass through.
                 if let explicit = explicitGameViewRect, !explicit.isEmpty {
                     let pointInSuperview = convert(point, to: superview)
+                    guard isUsableViewportRect(explicit) else { return nil }
                     guard explicit.contains(pointInSuperview) else { return nil }
                 } else {
                     return nil
@@ -168,6 +171,7 @@ public final class TouchTrackpadView: UIView {
             }
         } else if let explicit = explicitGameViewRect, !explicit.isEmpty {
             let pointInSuperview = convert(point, to: superview)
+            guard isUsableViewportRect(explicit) else { return nil }
             guard explicit.contains(pointInSuperview) else { return nil }
         } else {
             return nil
@@ -289,6 +293,19 @@ public final class TouchTrackpadView: UIView {
             x: max(0, min(1, point.x / bounds.width)),
             y: max(0, min(1, point.y / bounds.height))
         )
+    }
+
+    /// Returns true only for finite, positive viewport rectangles.
+    ///
+    /// Defensive guard: if rotation/layout produces an invalid viewport, the
+    /// trackpad must pass touches through rather than intercepting the screen.
+    private func isUsableViewportRect(_ rect: CGRect) -> Bool {
+        rect.origin.x.isFinite &&
+        rect.origin.y.isFinite &&
+        rect.width.isFinite &&
+        rect.height.isFinite &&
+        rect.width > 0 &&
+        rect.height > 0
     }
 
     /// Update the tracked cursor position, notify the core and post the overlay notification.

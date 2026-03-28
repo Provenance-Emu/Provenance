@@ -9,6 +9,7 @@
 import SwiftUI
 import Defaults
 import PVCoreAudio
+import PVUIBase
 
 // MARK: - AUFilterSettingsView
 
@@ -136,12 +137,12 @@ struct AUFilterSettingsView: View {
     }
 
     private var presetsSection: some View {
-        Section {
+        SwiftUI.Section {
             // Built-in presets
             ForEach(AUEffectsPreset.builtinPresets) { preset in
                 PresetRow(preset: preset, isBuiltin: true) {
                     loadPreset(preset)
-                } onDelete: nil
+                }
             }
 
             // User-saved presets
@@ -289,7 +290,7 @@ private struct ParameterSliderRow: View {
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.primary)
             }
-            Slider(value: $value, in: param.min...param.max)
+            RetroWaveSlider(value: $value, in: param.min...param.max)
                 .tint(.blue)
         }
     }
@@ -302,6 +303,18 @@ private struct PresetRow: View {
     let isBuiltin: Bool
     let onLoad: () -> Void
     let onDelete: (() -> Void)?
+    
+    init(
+        preset: AUEffectsPreset,
+        isBuiltin: Bool,
+        onLoad: @escaping () -> Void,
+        onDelete: (() -> Void)? = nil
+    ) {
+        self.preset = preset
+        self.isBuiltin = isBuiltin
+        self.onLoad = onLoad
+        self.onDelete = onDelete
+    }
 
     var body: some View {
         HStack {
@@ -372,7 +385,9 @@ private struct AddEffectSheet: View {
                 .foregroundStyle(.primary)
             }
             .navigationTitle("Add Effect")
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -392,13 +407,15 @@ private struct SavePresetSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Preset Name") {
+                SwiftUI.Section("Preset Name") {
                     TextField("e.g. My Retro Mix", text: $presetName)
                         .autocorrectionDisabled()
                 }
             }
             .navigationTitle("Save Preset")
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

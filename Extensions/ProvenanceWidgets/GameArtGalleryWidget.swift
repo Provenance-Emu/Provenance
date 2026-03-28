@@ -15,6 +15,7 @@
 import SwiftUI
 import UIKit
 import WidgetKit
+import PVLibrary
 
 // MARK: - Timeline Entry
 
@@ -95,7 +96,7 @@ struct GameArtGalleryView: View {
             titleOverlay
         }
         .containerBackground(.black, for: .widget)
-        .widgetURL(URL(string: "provenance://screen/library"))
+        .widgetURL(PVLibraryScreenURL)
     }
 
     @ViewBuilder
@@ -112,7 +113,7 @@ struct GameArtGalleryView: View {
                     Image(systemName: "gamecontroller.fill")
                         .font(.system(size: 48))
                         .foregroundStyle(.white.opacity(0.6))
-                    Text("Provenance")
+                    Text(WidgetLocalizedStrings.brandName)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
@@ -152,8 +153,8 @@ struct GameArtGalleryWidget: Widget {
         StaticConfiguration(kind: Self.kind, provider: GameArtGalleryProvider()) { entry in
             GameArtGalleryView(entry: entry)
         }
-        .configurationDisplayName("Game Art Gallery")
-        .description("Rotates through your game library art in StandBy mode.")
+        .configurationDisplayName(String(localized: "widget.game-art-gallery.display-name", defaultValue: "Game Art Gallery", comment: "Game Art Gallery widget display name"))
+        .description(String(localized: "widget.game-art-gallery.description", defaultValue: "Rotates through your game library art in StandBy mode.", comment: "Game Art Gallery widget description"))
         .supportedFamilies([.systemSmall])
     }
 }

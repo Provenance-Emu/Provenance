@@ -13,7 +13,6 @@ import AsyncAlgorithms
 import Combine
 import Foundation
 import os
-import Perception
 import PVCoreLoader
 import PVFileSystem
 import PVLogging
@@ -27,7 +26,6 @@ import PVSupport
 import PVSystems
 import RealmSwift
 import SwiftUI
-import Perception
 
 #if canImport(UIKit)
 import UIKit
@@ -364,12 +362,7 @@ public protocol GameImporting {
     var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? { get set }
 }
 
-
-//#if !os(tvOS)
 //@Observable
-//#els
-@Perceptible
-//#endif
 public final class GameImporter: GameImporting, ObservableObject {
 
     /// Publisher that emits the current import queue whenever it changes

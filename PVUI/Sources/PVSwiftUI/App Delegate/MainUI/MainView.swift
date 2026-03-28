@@ -12,83 +12,80 @@ import PVLibrary
 import PVUIBase
 import PVSwiftUI
 import PVThemes
-import Perception
 
 struct MainView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var appDelegate: PVAppDelegate
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
-
-    #if os(iOS)
+    
+#if os(iOS)
     @StateObject private var gamepadManager = GamepadManager.shared
     @State private var effectiveUseTVMedia: Bool = false
     @State private var disconnectTask: Task<Void, Never>?
-    #endif
-
+#endif
+    
     var body: some View {
-        WithPerceptionTracking {
-            GeometryReader { proxy in
-                let isLandscape = proxy.size.width > proxy.size.height
-                #if os(iOS)
-                let rawUseTVMedia = shouldUseTVMediaUI(isLandscape: isLandscape)
-                let useTVMedia = effectiveUseTVMedia
-                #endif
-                Group {
-                    if isEmulatorActive {
-                        emulatorView
-                    } else {
-                        #if os(iOS)
-                        iOSContentView(useTVMedia: useTVMedia)
-                            .animation(.easeInOut(duration: 0.32), value: useTVMedia)
-                            .onAppear { effectiveUseTVMedia = rawUseTVMedia }
-                            .onChange(of: rawUseTVMedia) { newValue in
-                                handleTVMediaChange(newValue)
-                            }
-                        #else
-                        tvOSContentView
-                        #endif
-                    }
+        GeometryReader { proxy in
+            let isLandscape = proxy.size.width > proxy.size.height
+#if os(iOS)
+            let rawUseTVMedia = shouldUseTVMediaUI(isLandscape: isLandscape)
+            let useTVMedia = effectiveUseTVMedia
+#endif
+            Group {
+                if isEmulatorActive {
+                    emulatorView
+                } else {
+#if os(iOS)
+                    iOSContentView(useTVMedia: useTVMedia)
+                        .animation(.easeInOut(duration: 0.32), value: useTVMedia)
+                        .onAppear { effectiveUseTVMedia = rawUseTVMedia }
+                        .onChange(of: rawUseTVMedia) { newValue in
+                            handleTVMediaChange(newValue)
+                        }
+#else
+                    tvOSContentView
+#endif
                 }
             }
-            .onAppear {
-                ILOG("MainView: Appeared")
-            }
-            .edgesIgnoringSafeArea(.all)
-            // Pre-launch Transfer Pak setup sheet — covers all UI modes (RetroMainView,
-            // TVMediaMainView, UIKit) so the launch continuation is never left pending.
-            // Presentation is derived from preLaunchTransferPakGame (single source of truth).
-            // launchAction is the single callback for button taps; the sheet's own onDismiss
-            // handles swipe-to-dismiss so no duplicate closures are needed.
-            .sheet(item: $sceneCoordinator.preLaunchTransferPakGame, onDismiss: {
-                // onDismiss fires after the sheet animation fully completes.
-                // Resume the launch continuation here (not in launchAction) so that
-                // openEmulatorScene() is called only after the sheet is fully gone,
-                // preventing a SwiftUI freeze from racing sheet dismissal with root-view replacement.
-                SceneCoordinator.shared.dismissPreLaunchTransferPak()
-            }) { game in
-                TransferPakConfigView(
-                    game: game,
-                    launchAction: {
-                        // Dismiss the sheet and resume the launch continuation (deferred to
-                        // next run-loop turn). onDismiss calls dismissPreLaunchTransferPak()
-                        // as a safe no-op fallback for swipe-to-dismiss.
-                        SceneCoordinator.shared.confirmAndDismissPreLaunchTransferPak()
-                    }
-                )
-            }
+        }
+        .onAppear {
+            ILOG("MainView: Appeared")
+        }
+        .edgesIgnoringSafeArea(.all)
+        // Pre-launch Transfer Pak setup sheet — covers all UI modes (RetroMainView,
+        // TVMediaMainView, UIKit) so the launch continuation is never left pending.
+        // Presentation is derived from preLaunchTransferPakGame (single source of truth).
+        // launchAction is the single callback for button taps; the sheet's own onDismiss
+        // handles swipe-to-dismiss so no duplicate closures are needed.
+        .sheet(item: $sceneCoordinator.preLaunchTransferPakGame, onDismiss: {
+            // onDismiss fires after the sheet animation fully completes.
+            // Resume the launch continuation here (not in launchAction) so that
+            // openEmulatorScene() is called only after the sheet is fully gone,
+            // preventing a SwiftUI freeze from racing sheet dismissal with root-view replacement.
+            SceneCoordinator.shared.dismissPreLaunchTransferPak()
+        }) { game in
+            TransferPakConfigView(
+                game: game,
+                launchAction: {
+                    // Dismiss the sheet and resume the launch continuation (deferred to
+                    // next run-loop turn). onDismiss calls dismissPreLaunchTransferPak()
+                    // as a safe no-op fallback for swipe-to-dismiss.
+                    SceneCoordinator.shared.confirmAndDismissPreLaunchTransferPak()
+                }
+            )
         }
     }
-
+    
     // MARK: - State Checks
-
+    
     private var isEmulatorActive: Bool {
         sceneCoordinator.currentScene == .emulator
-            && sceneCoordinator.showEmulator
-            && appState.emulationUIState.currentGame != nil
+        && sceneCoordinator.showEmulator
+        && appState.emulationUIState.currentGame != nil
     }
-
+    
     // MARK: - Emulator
-
+    
     @ViewBuilder
     private var emulatorView: some View {
         ZStack {
@@ -101,41 +98,41 @@ struct MainView: View {
         .animation(.easeInOut, value: sceneCoordinator.currentScene)
         .hideHomeIndicator()
     }
-
+    
     // MARK: - Main UI Mode
-
+    
     /// Resolves the current main UI mode into the appropriate root view
     @ViewBuilder
     private var mainUIForCurrentMode: some View {
         switch appState.mainUIMode {
-        #if !os(tvOS)
+#if !os(tvOS)
         case .paged:
             SwiftUIHostedProvenanceMainView()
                 .environmentObject(appDelegate)
                 .edgesIgnoringSafeArea(.all)
-        #endif
+#endif
         case .singlePage:
             RetroMainView()
                 .environmentObject(appDelegate)
                 .environmentObject(ThemeManager.shared)
                 .edgesIgnoringSafeArea(.all)
-        #if os(tvOS)
+#if os(tvOS)
         case .tvosMedia:
             TVMediaMainView()
                 .environmentObject(appDelegate)
                 .environmentObject(ThemeManager.shared)
                 .edgesIgnoringSafeArea(.all)
-        #endif
+#endif
         case .uikit:
             UIKitHostedProvenanceMainView(appDelegate: appDelegate)
                 .environmentObject(appDelegate)
                 .edgesIgnoringSafeArea(.all)
         }
     }
-
+    
     // MARK: - Platform Content
-
-    #if os(iOS)
+    
+#if os(iOS)
     @ViewBuilder
     private func iOSContentView(useTVMedia: Bool) -> some View {
         Group {
@@ -151,7 +148,7 @@ struct MainView: View {
             }
         }
     }
-
+    
     private func handleTVMediaChange(_ newValue: Bool) {
         if newValue {
             disconnectTask?.cancel()
@@ -166,7 +163,7 @@ struct MainView: View {
             }
         }
     }
-
+    
     private func shouldUseTVMediaUI(isLandscape: Bool) -> Bool {
         guard isLandscape, gamepadManager.isControllerConnected else { return false }
         if #available(iOS 18.0, *) {
@@ -174,10 +171,10 @@ struct MainView: View {
         }
         return false
     }
-    #else
+#else
     @ViewBuilder
     private var tvOSContentView: some View {
         mainUIForCurrentMode
     }
-    #endif
+#endif
 }

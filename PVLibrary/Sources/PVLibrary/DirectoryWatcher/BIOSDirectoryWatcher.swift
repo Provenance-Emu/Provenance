@@ -10,11 +10,10 @@ import Foundation
 import PVSupport
 import Combine
 import PVLogging
-import Perception
 import PVFileSystem
 import RealmSwift
 
-@Perceptible
+@Observable
 public final class BIOSWatcher: ObservableObject {
     public static let shared = BIOSWatcher()
 

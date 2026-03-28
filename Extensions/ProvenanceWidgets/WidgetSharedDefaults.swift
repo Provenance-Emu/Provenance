@@ -8,6 +8,7 @@
 
 #if os(iOS)
 import Foundation
+import PVLibrary
 
 // MARK: - Shared UserDefaults Keys
 
@@ -16,7 +17,9 @@ import Foundation
 ///
 /// **App Group ID note:** `appGroupID` here reads the `APP_GROUP_IDENTIFIER` build
 /// setting from Info.plist at runtime (with fallback for dev/CI builds).  This is a
-/// *necessary local copy* — the widget extension cannot import PVLibrary or PVAppIntents.
+/// *necessary local copy* — the widget extension cannot import PVAppIntents.
+/// Deep-link URL helpers use `PVLibrary` (`PVAppConstants`), which wraps primitives.
+
 /// The canonical sources are:
 ///   - PVLibrary: `PVLibrary/Sources/PVFileSystem/Paths.swift` → `public let PVAppGroupId`
 ///   - PVAppIntents: `PVAppIntents/Sources/PVAppIntents/AppGroupID.swift` → `internal let pvAppGroupID`
@@ -64,6 +67,8 @@ public struct WidgetGameEntry: Codable, Identifiable {
     public let id: String
     public let title: String
     public let systemName: String
+    /// Reverse-DNS system id (e.g. `com.provenance.snes`) when present in shared JSON; drives per-system SF Symbols in widgets.
+    public let systemIdentifier: String?
     /// Relative path inside the App Group container where box art is cached.
     public let artworkPath: String?
     public let lastPlayedDate: Date?
@@ -84,19 +89,21 @@ public struct WidgetGameEntry: Codable, Identifiable {
     /// Deep-link URL for launching the game from a widget tap.
     public var launchURL: URL? {
         guard !id.isEmpty else { return nil }
-        return URL(string: "provenance://open?md5=\(id)")
+        return URL(string: PVOpenGameMD5URI(id))
     }
 
     public init(
         id: String,
         title: String,
         systemName: String,
+        systemIdentifier: String? = nil,
         artworkPath: String? = nil,
         lastPlayedDate: Date? = nil
     ) {
         self.id = id
         self.title = title
         self.systemName = systemName
+        self.systemIdentifier = systemIdentifier
         self.artworkPath = artworkPath
         self.lastPlayedDate = lastPlayedDate
         self.artworkData = nil
@@ -104,7 +111,7 @@ public struct WidgetGameEntry: Codable, Identifiable {
 
     // MARK: Codable — exclude artworkData from JSON
     enum CodingKeys: String, CodingKey {
-        case id, title, systemName, artworkPath, lastPlayedDate
+        case id, title, systemName, systemIdentifier, artworkPath, lastPlayedDate
     }
 }
 
@@ -118,9 +125,27 @@ public struct WidgetLibraryStats: Sendable {
     public var totalPlayTimeFormatted: String {
         let hours = totalPlayTimeSeconds / 3600
         let minutes = (totalPlayTimeSeconds % 3600) / 60
-        if hours > 0 { return "\(hours)h \(minutes)m" }
-        if minutes > 0 { return "\(minutes)m" }
-        return "<1m"
+        if hours > 0 {
+            let format = NSLocalizedString(
+                "widget.common.playtime-hours-minutes %lld %lld",
+                bundle: .main,
+                comment: "Library Stats total play time formatted as hours and minutes"
+            )
+            return String(format: format, locale: Locale.current, hours, minutes)
+        }
+        if minutes > 0 {
+            let format = NSLocalizedString(
+                "widget.common.playtime-minutes %lld",
+                bundle: .main,
+                comment: "Library Stats total play time formatted as minutes only"
+            )
+            return String(format: format, locale: Locale.current, minutes)
+        }
+        return String(
+            localized: "widget.common.playtime-under-one-minute",
+            defaultValue: "<1m",
+            comment: "Library Stats total play time under one minute"
+        )
     }
 }
 

@@ -71,9 +71,11 @@ struct NormalizeTitlePreviewSheet: View {
                     }
                 }
             }
-            .listStyle(.insetGrouped)
             .navigationTitle("Normalize Titles")
+            #if !os(tvOS)
+            .listStyle(.insetGrouped)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { onCancel() }

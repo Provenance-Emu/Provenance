@@ -36,7 +36,7 @@ public protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDeleg
 
 	func layoutViews()
 	func vibrate()
-    
+
     func pressStart(forPlayer _: Int)
     func releaseStart(forPlayer _: Int)
 
@@ -64,7 +64,13 @@ public protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDeleg
     func dPad(_: JSDPad, didRelease _: JSDPadDirection)
     func dPad(_: JSDPad, joystick _: JoystickValue)
     func dPad(_: JSDPad, joystick2 _: JoystickValue)
+    /// Routes a hardware-switch button event (Atari difficulty/TV type, etc.) to the active controller responder.
+    func didReceiveHardwareSwitchInput(buttonId: String, player: Int)
 
+}
+
+public extension ControllerVC {
+    func didReceiveHardwareSwitchInput(buttonId _: String, player _: Int) {}
 }
 
 /// Optional protocol adopted by OSD controller VCs that display a recording indicator.

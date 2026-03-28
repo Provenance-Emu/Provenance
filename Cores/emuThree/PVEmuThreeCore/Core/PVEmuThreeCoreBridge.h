@@ -4,6 +4,9 @@
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 #import <UIKit/UIKit.h>
+#ifndef GLES_SILENCE_DEPRECATION
+#define GLES_SILENCE_DEPRECATION 1
+#endif
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
@@ -63,8 +66,8 @@ typedef enum PV3DSButton: NSInteger PV3DSButton;
 - (void) setupControllers;
 - (void) pollControllers;
 - (void) setupView;
-- (void) swap;
-- (void) rotate;
+- (void) swap:(BOOL)pressed;
+- (void) rotate:(BOOL)pressed;
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;

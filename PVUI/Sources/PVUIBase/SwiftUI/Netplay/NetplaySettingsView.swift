@@ -97,7 +97,7 @@ public struct NetplaySettingsView: View {
     private var connectionSection: some View {
         SwiftUI.Section {
             portRow
-            TextField("e.g. relay.retroarch.com (empty = LAN only)", text: $relayServer)
+            TextField("e.g. ra.me (empty = LAN only)", text: $relayServer)
                 .autocorrectionDisabled()
                 #if canImport(UIKit)
                 .keyboardType(.URL)

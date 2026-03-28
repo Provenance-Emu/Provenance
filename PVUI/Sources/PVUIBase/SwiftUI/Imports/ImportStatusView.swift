@@ -8,7 +8,6 @@
 import SwiftUI
 import PVLibrary
 import PVThemes
-import Perception
 import PVSystems
 import Combine
 
@@ -74,7 +73,6 @@ public struct ImportStatusView: View {
     }
 
     public var body: some View {
-        WithPerceptionTracking {
 //            Group {
 //                if shouldShowFullView {
                     fullImportView
@@ -84,7 +82,6 @@ public struct ImportStatusView: View {
 //                        .padding(.vertical, 8)
 //                }
 //            }
-        }
         .onAppear {
             // Start retrowave animations
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {

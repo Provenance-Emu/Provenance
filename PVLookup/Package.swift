@@ -220,7 +220,7 @@ let package = Package(
 
         .testTarget(
             name: "PVLookupTests",
-            dependencies: ["PVLookup", "PVLogging"]
+            dependencies: ["PVLookup", "PVLogging", "PVPrimitives"]
         ),
         
         .testTarget(

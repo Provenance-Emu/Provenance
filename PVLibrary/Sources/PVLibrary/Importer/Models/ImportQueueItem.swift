@@ -7,22 +7,21 @@
 
 import SwiftUI
 import PVPrimitives
-import Perception
 import PVSystems
 import PVHashing
 
 
 // ImportItem model to hold each file's metadata and progress
-@Perceptible
-public class ImportQueueItem: Identifiable, ObservableObject {
+//@Observable
+public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
     // Enum to track processing state
-    public enum ProcessingState {
+    public enum ProcessingState: Sendable {
         case idle
         case processing
     }
 
     // Enum to define file types for each import
-    public enum FileType {
+    public enum FileType: Sendable {
         case bios, artwork, game, cdRom, unknown, skin, zip, folder, patch
     }
 
@@ -38,7 +37,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     /// the filesystem entry.
     public var md5Override: String?
     // Enum to define the possible statuses of each import
-    public enum ImportStatus: CustomStringConvertible {
+    public enum ImportStatus: CustomStringConvertible, Sendable {
         case conflict  // Indicates additional action needed by user after successful import
 
         case partial(expectedFiles: [String]) //indicates the item is waiting for associated files before it could be processed

@@ -2269,6 +2269,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             if s == "select" { return "select" }
             // Difficulty switches
             if ["leftdiffa", "leftdiffb", "rightdiffa", "rightdiffb"].contains(s) { return s }
+            // TV type switch
+            if ["colorbw", "color", "bw", "tvtype"].contains(s) { return "colorbw" }
         case .Vectrex:
             /// Vectrex uses analog directions and numbered buttons
             /// D-pad directions map to analog directions
@@ -2587,6 +2589,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["start", "s"].contains(s) { return "start" }
             if ["pause", "p", "select"].contains(s) { return "pause" }
             if ["reset", "r"].contains(s) { return "reset" }
+            if ["colorbw", "color", "bw", "tvtype"].contains(s) { return "colorbw" }
             if ["number1", "1"].contains(s) { return "number1" }
             if ["number2", "2"].contains(s) { return "number2" }
             if ["number3", "3"].contains(s) { return "number3" }
@@ -2608,8 +2611,9 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["select", "s"].contains(s) { return "select" }
             if ["pause", "p", "start"].contains(s) { return "pause" }
             if ["reset", "r"].contains(s) { return "reset" }
-            if ["leftdiff", "l", "l1"].contains(s) { return "leftDiff" }
-            if ["rightdiff", "r", "r1"].contains(s) { return "rightDiff" }
+            if ["leftdiff", "l", "l1"].contains(s) { return "leftdiff" }
+            if ["rightdiff", "r", "r1"].contains(s) { return "rightdiff" }
+            if ["colorbw", "color", "bw", "tvtype"].contains(s) { return "colorbw" }
             return s
         default:
             break

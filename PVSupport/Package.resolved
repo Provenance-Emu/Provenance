@@ -1,42 +1,43 @@
 {
-  "originHash" : "c13bce81caee2a90ace5df809e0c2f2e56c7f182b478e2649d8b130114100fcc",
-  "pins" : [
+  "originHash": "c13bce81caee2a90ace5df809e0c2f2e56c7f182b478e2649d8b130114100fcc",
+  "pins": [
     {
-      "identity" : "defaults",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sindresorhus/Defaults.git",
-      "state" : {
-        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
-        "version" : "9.0.2"
+      "identity": "defaults",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/sindresorhus/Defaults.git",
+      "state": {
+        "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+        "version": "9.0.8",
+        "branch": null
       }
     },
     {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log.git",
-      "state" : {
-        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
-        "version" : "1.10.1"
+      "identity": "swift-log",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/apple/swift-log.git",
+      "state": {
+        "revision": "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version": "1.10.1"
       }
     },
     {
-      "identity" : "swift-syntax",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax",
-      "state" : {
-        "revision" : "0687f71944021d616d34d922343dcef086855920",
-        "version" : "600.0.1"
+      "identity": "swift-syntax",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/swiftlang/swift-syntax",
+      "state": {
+        "revision": "0687f71944021d616d34d922343dcef086855920",
+        "version": "600.0.1"
       }
     },
     {
-      "identity" : "swiftgenplugin",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
-      "state" : {
-        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
-        "version" : "1.0.0"
+      "identity": "swiftgenplugin",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+      "state": {
+        "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
+        "version": "1.0.0"
       }
     }
   ],
-  "version" : 3
+  "version": 3
 }

@@ -1,0 +1,53 @@
+/* Provenance Widget Extension — English (keys align with String(localized:defaultValue:comment:) in Swift). */
+
+/* Common */
+"widget.common.brand-name" = "Provenance";
+"widget.common.unknown-system" = "???";
+"widget.common.games" = "Games";
+"widget.common.systems" = "Systems";
+"widget.common.played" = "Played";
+"widget.common.favorites" = "Favorites";
+"widget.common.playtime-hours-minutes %lld %lld" = "%1$lldh %2$lldm";
+"widget.common.playtime-minutes %lld" = "%lldm";
+"widget.common.playtime-under-one-minute" = "<1m";
+
+/* Game Art Gallery */
+"widget.game-art-gallery.display-name" = "Game Art Gallery";
+"widget.game-art-gallery.description" = "Rotates through your game library art in StandBy mode.";
+
+/* Now Playing (Lock Screen) */
+"widget.now-playing.display-name" = "Now Playing";
+"widget.now-playing.description" = "Shows the current game music track, or your library count when nothing is playing.";
+"widget.now-playing.track-line %@ — %@" = "%1$@ — %2$@";
+"widget.now-playing.brand-games-count %lld" = "Provenance — %lld games";
+"widget.now-playing.nothing-playing" = "Nothing Playing";
+
+/* Now Playing StandBy */
+"widget.now-playing-standby.display-name" = "Now Playing — StandBy";
+"widget.now-playing-standby.description" = "Shows album art and track info while game music plays. Designed for nightstand use in StandBy mode.";
+
+/* Quick Launch */
+"widget.quick-launch.display-name" = "Quick Launch";
+"widget.quick-launch.description" = "Tap to launch your last-played game.";
+"widget.quick-launch.games-count %lld" = "%lld games";
+"widget.quick-launch.brand-games-count %lld" = "Provenance — %lld games";
+
+/* Favorites */
+"widget.favorites.display-name" = "Favorites";
+"widget.favorites.description" = "Quick access to your favourite games.";
+"widget.favorites.empty-title" = "No Favorites";
+"widget.favorites.empty-message" = "Mark games as\nfavorites to see them here";
+
+/* Library Stats */
+"widget.library-stats.display-name" = "Library Stats";
+"widget.library-stats.description" = "An overview of your game library.";
+"widget.library-stats.title.library" = "Library";
+"widget.library-stats.title.stats" = "Stats";
+"widget.library-stats.header" = "Library Stats";
+"widget.library-stats.recent-activity" = "Recent Activity";
+
+/* Recently Played */
+"widget.recent.display-name" = "Recently Played";
+"widget.recent.description" = "See the games you've played most recently.";
+"widget.recent.empty-title" = "No Recent Games";
+"widget.recent.empty-message" = "Play a game\nto see it here";

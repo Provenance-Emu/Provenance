@@ -10,6 +10,7 @@
 import SwiftUI
 import UIKit
 import WidgetKit
+import PVLibrary
 
 // MARK: - Timeline Entry
 
@@ -80,7 +81,7 @@ struct QuickLaunchCircularView: View {
             }
         }
         .widgetLabel {
-            Text(entry.game?.title ?? "Provenance")
+            Text(entry.game?.title ?? WidgetLocalizedStrings.brandName)
                 .truncationMode(.tail)
         }
     }
@@ -104,7 +105,7 @@ struct QuickLaunchRectangularView: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(entry.game?.title ?? "Provenance")
+                Text(entry.game?.title ?? WidgetLocalizedStrings.brandName)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .lineLimit(1)
@@ -119,7 +120,17 @@ struct QuickLaunchRectangularView: View {
                             .foregroundStyle(.tertiary)
                     }
                 } else {
-                    Text("\(entry.gameCount) games")
+                    Text(
+                        String(
+                            format: NSLocalizedString(
+                                "widget.quick-launch.games-count %lld",
+                                bundle: .main,
+                                comment: "Quick Launch game count"
+                            ),
+                            locale: Locale.current,
+                            entry.gameCount
+                        )
+                    )
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -141,7 +152,17 @@ struct QuickLaunchInlineView: View {
             }
         } else {
             Label {
-                Text("Provenance — \(entry.gameCount) games")
+                Text(
+                    String(
+                        format: NSLocalizedString(
+                            "widget.quick-launch.brand-games-count %lld",
+                            bundle: .main,
+                            comment: "Quick Launch branded game count"
+                        ),
+                        locale: Locale.current,
+                        entry.gameCount
+                    )
+                )
             } icon: {
                 Image(systemName: "gamecontroller.fill")
             }
@@ -155,13 +176,9 @@ struct QuickLaunchEntryView: View {
 
     var deepLinkURL: URL? {
         if let game = entry.game {
-            var components = URLComponents()
-            components.scheme = "provenance"
-            components.host = "open"
-            components.queryItems = [URLQueryItem(name: "md5", value: game.id)]
-            return components.url ?? URL(string: "provenance://")
+            return URL(string: PVOpenGameMD5URI(game.id)) ?? URL(string: "\(PVAppURLKey)://")
         }
-        return URL(string: "provenance://")
+        return URL(string: "\(PVAppURLKey)://")
     }
 
     var body: some View {
@@ -191,8 +208,8 @@ struct QuickLaunchWidget: Widget {
         StaticConfiguration(kind: Self.kind, provider: QuickLaunchProvider()) { entry in
             QuickLaunchEntryView(entry: entry)
         }
-        .configurationDisplayName("Quick Launch")
-        .description("Tap to launch your last-played game.")
+        .configurationDisplayName(String(localized: "widget.quick-launch.display-name", defaultValue: "Quick Launch", comment: "Quick Launch widget display name"))
+        .description(String(localized: "widget.quick-launch.description", defaultValue: "Tap to launch your last-played game.", comment: "Quick Launch widget description"))
         .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
     }
 }

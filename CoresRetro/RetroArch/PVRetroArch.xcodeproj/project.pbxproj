@@ -122,6 +122,13 @@
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
 		AF3BC001029A000000000002 /* PVRetroArchCore+BIOS+AtariST.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */; };
 		AF3BC001029A000000000004 /* PVRetroArchCoreBridge+BIOSAtariST.h in Headers */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */; };
+		B3061F862F7768AC000F8839 /* PVRetroArchCore+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */; };
+		B3061F872F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F832F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift */; };
+		B3061F882F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F842F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift */; };
+		B3061F892F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F852F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift */; };
+		B3061F8B2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m in Sources */ = {isa = PBXBuildFile; fileRef = B3061F8A2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m */; };
+		B3061F8E2F776FA3000F8839 /* JITManager in Frameworks */ = {isa = PBXBuildFile; productRef = B3061F8D2F776FA3000F8839 /* JITManager */; };
+		B3061F902F776FA3000F8839 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B3061F8F2F776FA3000F8839 /* PVJIT */; };
 		B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */; };
 		B30C8C832BF45AE200C91991 /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7E2BF45AE200C91991 /* griffin.c */; };
 		B30C8C842BF45AE200C91991 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7F2BF45AE200C91991 /* griffin.m */; };
@@ -254,6 +261,9 @@
 		B3FD96922D613FD700397643 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD96832D613FD600397643 /* libswscale.xcframework */; };
 		CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */; };
 		CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */; };
+		CC001235ABCD000000000003 /* PVRetroArchCoreBridge+LightGun.m in Sources */ = {isa = PBXBuildFile; fileRef = CC001235ABCD000000000002 /* PVRetroArchCoreBridge+LightGun.m */; };
+		CC001235ABCD000000000004 /* PVRetroArchCoreBridge+LightGun.h in Headers */ = {isa = PBXBuildFile; fileRef = CC001235ABCD000000000001 /* PVRetroArchCoreBridge+LightGun.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC001235ABCD000000000006 /* PVRetroArchCore+LightGun.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001235ABCD000000000005 /* PVRetroArchCore+LightGun.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -430,6 +440,11 @@
 		A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchOSD.h; sourceTree = "<group>"; };
 		AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+BIOS+AtariST.m"; sourceTree = "<group>"; };
 		AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+BIOSAtariST.h"; sourceTree = "<group>"; };
+		B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Cheats.swift"; sourceTree = "<group>"; };
+		B3061F832F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCoreBridge+Language.swift"; sourceTree = "<group>"; };
+		B3061F842F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCoreCore+RetroAchievements.swift"; sourceTree = "<group>"; };
+		B3061F852F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsFileHelper.swift; sourceTree = "<group>"; };
+		B3061F8A2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+SG1000.m"; sourceTree = "<group>"; };
 		B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
 		B30C8C7E2BF45AE200C91991 /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
 		B30C8C7F2BF45AE200C91991 /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
@@ -559,6 +574,9 @@
 		B3FD96832D613FD600397643 /* libswscale.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswscale.xcframework; path = ../../Dependencies/FFMpeg/xcframeworks/libswscale.xcframework; sourceTree = "<group>"; };
 		CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCoreCapabilities.h; sourceTree = "<group>"; };
 		CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchCoreCapabilities.m; sourceTree = "<group>"; };
+		CC001235ABCD000000000001 /* PVRetroArchCoreBridge+LightGun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+LightGun.h"; sourceTree = "<group>"; };
+		CC001235ABCD000000000002 /* PVRetroArchCoreBridge+LightGun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCoreBridge+LightGun.m"; sourceTree = "<group>"; };
+		CC001235ABCD000000000005 /* PVRetroArchCore+LightGun.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+LightGun.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -659,6 +677,7 @@
 				B3FD96902D613FD600397643 /* libswresample.xcframework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */,
+				B3061F8E2F776FA3000F8839 /* JITManager in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3EEFB8C2D66C8B00080CA51 /* CoreHaptics.framework in Frameworks */,
 				B3EEFB682D66C3250080CA51 /* PVCoreBridge in Frameworks */,
@@ -673,6 +692,7 @@
 				B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */,
 				B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */,
 				B3EEFBA22D66C9A80080CA51 /* QuartzCore.framework in Frameworks */,
+				B3061F902F776FA3000F8839 /* PVJIT in Frameworks */,
 				B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */,
 				93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */,
 				B39D853C2ED67EC500896E92 /* PVShaders in Frameworks */,
@@ -859,15 +879,20 @@
 		B30C8C872BF45AFA00C91991 /* Swift */ = {
 			isa = PBXGroup;
 			children = (
-				B3EEF06F2D66AF400080CA51 /* PVRetroArchCoreBridge.swift */,
-				B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */,
 				B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */,
-				B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */,
-				B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */,
 				B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */,
+				CC001235ABCD000000000005 /* PVRetroArchCore+LightGun.swift */,
 				B3F0001D2F91AB2300CAFE04 /* PVRetroArchCore+Netplay.swift */,
+				B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */,
+				B3EEF06F2D66AF400080CA51 /* PVRetroArchCoreBridge.swift */,
 				B3F0001E2F91AB2300CAFE05 /* PVRetroArchCoreBridge+PVNetplayCapable.swift */,
+				B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */,
 				B3F0002B2F91AB2300CAFE09 /* PVRetroArchCoreCore+PVNetplayCapable.swift */,
+				B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */,
+				B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */,
+				B3061F832F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift */,
+				B3061F842F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift */,
+				B3061F852F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift */,
 			);
 			path = Swift;
 			sourceTree = "<group>";
@@ -875,8 +900,6 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				B32201992D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h */,
-				B322019A2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c */,
 				93FF383A2966337100772659 /* apple_platform.h */,
 				93FF38392966337100772659 /* cocoa_common.h */,
 				93835810296CFAA600A23231 /* cocoa_common.m */,
@@ -894,30 +917,31 @@
 				29E408A962408758D92289AF /* PVRetroArchOSD.m */,
 				CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */,
 				CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */,
+				CC001235ABCD000000000001 /* PVRetroArchCoreBridge+LightGun.h */,
+				CC001235ABCD000000000002 /* PVRetroArchCoreBridge+LightGun.m */,
 				B3447EA0218B881000557ACE /* PVRetroArch.mm */,
-				B3C76224207833DE009950E4 /* PVRetroArchCoreBridge.mm */,
 				93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */,
 				93814F8B2AAA9E9800DEB9B9 /* PVRetroArchCore+Archive+AppleII.m */,
 				93814F912AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m */,
 				93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */,
-				AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */,
 				B3447EB2218BC69700557ACE /* PVRetroArchCore+Audio.mm */,
+				AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */,
 				9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */,
 				B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */,
+				93C372622A8B68000007671D /* PVRetroArchCore+Controls+3DO.m */,
 				B353DCA92E43018C00DA569C /* PVRetroArchCore+Controls+2600.m */,
 				B3B3779D2E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m */,
 				B3B3779E2E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m */,
 				B3B3779F2E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m */,
-				93C372622A8B68000007671D /* PVRetroArchCore+Controls+3DO.m */,
 				B3DD7A6E2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m */,
 				B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */,
 				B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */,
 				93C372612A8B67FF0007671D /* PVRetroArchCore+Controls+Dreamcast.m */,
 				93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */,
 				B3B377A52E44373200DBE2E0 /* PVRetroArchCore+Controls+EP128.m */,
+				B364588B2EDBC3080020354E /* PVRetroArchCore+Controls+Gamecube.m */,
 				93C372642A8B68000007671D /* PVRetroArchCore+Controls+GB.m */,
 				93C372652A8B68000007671D /* PVRetroArchCore+Controls+GBA.m */,
-				B364588B2EDBC3080020354E /* PVRetroArchCore+Controls+Gamecube.m */,
 				93C372602A8B67FF0007671D /* PVRetroArchCore+Controls+Genesis.m */,
 				B3EEFBB32D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m */,
 				B33CFF092ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m */,
@@ -925,32 +949,40 @@
 				93C372632A8B68000007671D /* PVRetroArchCore+Controls+N64.m */,
 				93A727892AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m */,
 				93C372662A8B68000007671D /* PVRetroArchCore+Controls+NES.m */,
-				B3DD7A742ECE6D5E0022FF70 /* PVRetroArchCore+Controls+PCECD.m */,
 				93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */,
+				B3DD7A742ECE6D5E0022FF70 /* PVRetroArchCore+Controls+PCECD.m */,
 				B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */,
 				9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */,
 				93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */,
 				93C3726E2A8B80090007671D /* PVRetroArchCore+Controls+Saturn.m */,
+				B3061F8A2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m */,
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
 				B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */,
-				B318FF362EC0130B00CF6FBC /* PVRetroArchCore+Controls+Vectrex.m */,
 				B3A6C0EA2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m */,
+				B318FF362EC0130B00CF6FBC /* PVRetroArchCore+Controls+Vectrex.m */,
 				93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */,
 				B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */,
 				B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */,
 				B3C76223207833DE009950E4 /* PVRetroArchCoreBridge.h */,
-				AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */,
+				B3C76224207833DE009950E4 /* PVRetroArchCoreBridge.mm */,
 				93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */,
 				B3447EB1218BC69700557ACE /* PVRetroArchCoreBridge+Audio.h */,
+				AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */,
 				B3447E96218B809200557ACE /* PVRetroArchCoreBridge+Controls.h */,
-				B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */,
 				B3F0002C2F91AB2300CAFE0A /* PVRetroArchCoreBridge+Netplay.h */,
 				B3F0002D2F91AB2300CAFE0B /* PVRetroArchCoreBridge+Netplay.mm */,
+				B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */,
 				B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */,
+				CC001234ABCD000000000001 /* PVRetroArchCoreCapabilities.h */,
+				CC001234ABCD000000000002 /* PVRetroArchCoreCapabilities.m */,
+				A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */,
+				29E408A962408758D92289AF /* PVRetroArchOSD.m */,
 				93AC9F662A48952700D3F4D6 /* runloop.c */,
 				93B66B982967C64300A621DD /* Shaders.metal */,
 				93B66BA72967EFC900A621DD /* vulkan_common.h */,
 				93B66BA82967EFCA00A621DD /* vulkan_common.c */,
+				B32201992D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h */,
+				B322019A2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.c */,
 				93B66BCC2968004900A621DD /* vulkan_metal.h */,
 			);
 			path = Core;
@@ -1131,6 +1163,7 @@
 				B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */,
 				039F981B1E6C203CC74BC408 /* PVRetroArchOSD.h in Headers */,
 				CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */,
+				CC001235ABCD000000000004 /* PVRetroArchCoreBridge+LightGun.h in Headers */,
 				AF3BC001029A000000000004 /* PVRetroArchCoreBridge+BIOSAtariST.h in Headers */,
 				93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */,
 			);
@@ -1232,6 +1265,8 @@
 				B39D853B2ED67EC500896E92 /* PVShaders */,
 				B39D855B2ED6801300896E92 /* Defaults */,
 				B3740A722F580F1D00BCD1E2 /* PVPrimitives */,
+				B3061F8D2F776FA3000F8839 /* JITManager */,
+				B3061F8F2F776FA3000F8839 /* PVJIT */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -1293,7 +1328,7 @@
 				B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */,
-				B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */,
+				C86389E3F1804938B127381A /* XCLocalSwiftPackageReference "../../Dependencies/LzhArchive" */,
 				B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */,
 				B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */,
 				B3DD7A6B2ECBFA220022FF70 /* XCLocalSwiftPackageReference "../../PVSettings" */,
@@ -1301,6 +1336,7 @@
 				B39D853A2ED67EC500896E92 /* XCLocalSwiftPackageReference "../../PVShaders" */,
 				B39D855A2ED6801300896E92 /* XCRemoteSwiftPackageReference "Defaults" */,
 				B3740A712F580F1D00BCD1E2 /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
+				B3061F8C2F776FA3000F8839 /* XCLocalSwiftPackageReference "../../PVJIT" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1426,6 +1462,8 @@
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
 				2E434850122D7261A75CF7FE /* PVRetroArchOSD.m in Sources */,
 				CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */,
+				CC001235ABCD000000000003 /* PVRetroArchCoreBridge+LightGun.m in Sources */,
+				CC001235ABCD000000000006 /* PVRetroArchCore+LightGun.swift in Sources */,
 				B33CFF0A2ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
@@ -1471,6 +1509,11 @@
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,
 				B3F000322F91AB2300CAFE0D /* PVRetroArchCoreBridge+Netplay.mm in Sources */,
 				93C372682A8B68000007671D /* PVRetroArchCore+Controls+Dreamcast.m in Sources */,
+				B3061F862F7768AC000F8839 /* PVRetroArchCore+Cheats.swift in Sources */,
+				B3061F872F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift in Sources */,
+				B3061F882F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift in Sources */,
+				B3061F892F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift in Sources */,
+				B3061F8B2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m in Sources */,
 				93C3726C2A8B68000007671D /* PVRetroArchCore+Controls+GBA.m in Sources */,
 				93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */,
 				93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */,
@@ -2363,6 +2406,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		B3061F8C2F776FA3000F8839 /* XCLocalSwiftPackageReference "../../PVJIT" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVJIT;
+		};
 		B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVEmulatorCore;
@@ -2403,6 +2450,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreObjCBridge;
 		};
+		C86389E3F1804938B127381A /* XCLocalSwiftPackageReference "../../Dependencies/LzhArchive" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Dependencies/LzhArchive;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -2422,20 +2473,20 @@
 				kind = branch;
 			};
 		};
-		B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ctreffs/SwiftSDL2.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		936E99EB2A35A94900B1D0F8 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3061F8D2F776FA3000F8839 /* JITManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = JITManager;
+		};
+		B3061F8F2F776FA3000F8839 /* PVJIT */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVJIT;
 		};
 		B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2472,7 +2523,7 @@
 		};
 		B3EEF5DF2D66B0850080CA51 /* LzhArchive */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */;
+			package = C86389E3F1804938B127381A /* XCLocalSwiftPackageReference "../../Dependencies/LzhArchive" */;
 			productName = LzhArchive;
 		};
 		B3EEF5E22D66B0D00080CA51 /* ZipArchive */ = {

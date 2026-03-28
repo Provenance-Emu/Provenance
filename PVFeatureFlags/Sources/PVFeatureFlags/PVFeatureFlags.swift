@@ -87,6 +87,10 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// during import. Enabled by default; disable via Settings > Advanced > Feature Flags
     /// if regressions are found.
     case enhancedArtworkSearch = "enhancedArtworkSearch"
+    /// Shows the AirPlay route-picker button in the pause menu (both tile and retro-menu styles).
+    /// Currently only audio AirPlay is supported; video mirroring to Apple TV is not yet
+    /// implemented. Disabled by default until full video AirPlay support lands.
+    case airPlayMenu = "airPlayMenu"
 }
 
 /// Represents the type of app installation
@@ -215,10 +219,17 @@ public struct FeatureFlag: Codable, Sendable {
     public static let skinButtonReposition = FeatureFlag(
         enabled: false,
         description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
+        )
+    
     public static let enhancedArtworkSearch = FeatureFlag(
         enabled: true,
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         description: "Multi-source artwork matching at import time (TheGamesDB, LibretroDB, OpenVGDB). Background ArtworkSearchQueue retries unmatched games. Enabled by default — disable in Settings > Advanced > Feature Flags if regressions are found."
+    )
+
+    public static let airPlayMenu = FeatureFlag(
+        enabled: false,
+        description: "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
     )
 }
 
@@ -270,7 +281,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     // MARK: - Mutable State (lock-protected)
 
-    private struct _State {
+    private struct _State: Sendable {
         var configuration: FeatureFlagsConfiguration?
         /// Pre-computed flag states keyed by `PVFeature.rawValue`.
         /// Rebuilt whenever configuration or debug overrides change.
@@ -283,7 +294,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     private let _storage = OSAllocatedUnfairLock(initialState: _State())
 
     private func _withState<T>(_ body: (inout _State) -> T) -> T {
-        _storage.withLock { body(&$0) }
+        _storage.withLockUnchecked(body)
     }
 #else
     private let _lock = NSLock()
@@ -624,6 +635,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
+    public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
 
     // MARK: - Feature Queries
 

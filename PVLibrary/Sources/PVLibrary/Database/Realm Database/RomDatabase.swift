@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 26
+public let schemaVersion: UInt64 = 27
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -310,6 +310,15 @@ public final class RealmConfiguration {
                 // PVPatch added as a new top-level Realm object.
                 // Realm handles new object types automatically; no field migration needed.
                 ILOG("Migration to version 26 complete. (Added PVPatch)")
+            }
+            if oldSchemaVersion < 27 {
+                // Add matchSourceRaw, userCustomizedFieldsMask, lastMetadataLookupDate to PVGame
+                migration.enumerateObjects(ofType: PVGame.className()) { _, newObject in
+                    newObject?["matchSourceRaw"] = 0 // GameMatchSource.none
+                    newObject?["userCustomizedFieldsMask"] = 0
+                    newObject?["lastMetadataLookupDate"] = nil
+                }
+                ILOG("Migration to version 27 complete. (Added PVGame.matchSourceRaw/userCustomizedFieldsMask/lastMetadataLookupDate)")
             }
         }
 

@@ -58,7 +58,7 @@ public enum AUEffectType: String, Codable, CaseIterable, CustomStringConvertible
         case .reverb:
             return AudioComponentDescription(
                 componentType: kAudioUnitType_Effect,
-                componentSubType: kAudioUnitSubType_MatrixReverb,
+                componentSubType: kAudioUnitSubType_Reverb2,
                 componentManufacturer: kAudioUnitManufacturer_Apple,
                 componentFlags: 0,
                 componentFlagsMask: 0

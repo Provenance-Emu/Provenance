@@ -15,9 +15,8 @@ import PVPrimitives
 import PVSettings
 import PVThemes
 import SwiftUI
-import Perception
 
-public struct CloudKitInitialSyncProgress: Equatable { // Renamed from InitialSyncProgress for clarity if needed
+public struct CloudKitInitialSyncProgress: Equatable, Sendable { // Renamed from InitialSyncProgress for clarity if needed
     public var romsCompleted: Int
     public var romsTotal: Int
     public var saveStatesCompleted: Int

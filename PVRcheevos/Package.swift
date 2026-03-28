@@ -28,16 +28,27 @@ import PackageDescription
 
 // rcheevos C source files (relative to the rcheevos/ submodule root)
 let rcheevosSources: [String] = [
+    // Top-level client
     "src/rc_client.c",
     "src/rc_client_external.c",
-    "src/rc_api_common.c",
-    "src/rc_api_runtime.c",
-    "src/rc_api_user.c",
-    "src/rc_url.c",
+    // Utilities
+    "src/rc_compat.c",
     "src/rc_util.c",
+    "src/rc_version.c",
+    // REST API helpers (in rapi/ subdirectory)
+    "src/rapi/rc_api_common.c",
+    "src/rapi/rc_api_editor.c",
+    "src/rapi/rc_api_info.c",
+    "src/rapi/rc_api_runtime.c",
+    "src/rapi/rc_api_user.c",
+    // Core evaluation engine
     "src/rcheevos/alloc.c",
+    "src/rcheevos/condition.c",
+    "src/rcheevos/condset.c",
+    "src/rcheevos/consoleinfo.c",
     "src/rcheevos/format.c",
     "src/rcheevos/lboard.c",
+    "src/rcheevos/memref.c",
     "src/rcheevos/operand.c",
     "src/rcheevos/rc_validate.c",
     "src/rcheevos/richpresence.c",
@@ -45,6 +56,15 @@ let rcheevosSources: [String] = [
     "src/rcheevos/runtime_progress.c",
     "src/rcheevos/trigger.c",
     "src/rcheevos/value.c",
+    // ROM hashing
+    "src/rhash/aes.c",
+    "src/rhash/cdreader.c",
+    "src/rhash/hash.c",
+    "src/rhash/hash_disc.c",
+    "src/rhash/hash_encrypted.c",
+    "src/rhash/hash_rom.c",
+    "src/rhash/hash_zip.c",
+    "src/rhash/md5.c",
 ]
 
 let package = Package(

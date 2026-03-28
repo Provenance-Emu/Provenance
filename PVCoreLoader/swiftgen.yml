@@ -6,5 +6,5 @@ plist:
   inputs: systems.plist
   outputs:
 #    templateName: inline-swift6
-    templatePath: ../Stencils/Plists/inline-swift6.stencil
+    templatePath: ../Stencils/Plists/bundle-loader-swift6.stencil
     output: Systems-Generated.swift

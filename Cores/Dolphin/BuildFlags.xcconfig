@@ -10,7 +10,22 @@
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATIONS=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) _ARCH_64=1 _M_ARM_64=1 IPHONEOS=1
-OTHER_CFLAGS = $(inherited) -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fsingle-precision-constant -DTARGET_NO_NIXPROF -fmodules -fcxx-modules -Wno-module-import-in-extern-c
+OTHER_CFLAGS = $(inherited) -fno-operator-names
+OTHER_CFLAGS = $(inherited) -fno-rtti
+OTHER_CFLAGS = $(inherited) -ffast-math
+OTHER_CFLAGS = $(inherited) -ftree-vectorize
+OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
+OTHER_CFLAGS = $(inherited) -frename-registers
+OTHER_CFLAGS = $(inherited) -fno-rtti
+OTHER_CFLAGS = $(inherited) -fpermissive
+OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
+OTHER_CFLAGS = $(inherited) -DTARGET_NO_NIXPROF
+OTHER_CFLAGS = $(inherited) -fmodules
+OTHER_CFLAGS = $(inherited) -fcxx-modules
+OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
+// Force-include C++ stdlib compat header to fix -fcxx-modules visibility issues
+// (e.g. <chrono> not transitively exposing <ratio>, <mutex> needing explicit import)
+OTHER_CFLAGS = $(inherited) -include "$(SRCROOT)/PVDolphinCore/Core/DolphinCxxCompat.h"
 
 OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
 OTHER_CFLAGS = $(inherited) -mcpu=apple-a10
