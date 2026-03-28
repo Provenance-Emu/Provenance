@@ -1095,6 +1095,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Remove the JIT indicator view controller on the main actor (#2796).
         // The Combine subscription is cancelled earlier in deinit via cancelJITIndicatorSubscription().
         removeJITIndicator()
+        // Resign the Siri prediction activity when the game session ends so the OS
+        // records a clean end-time for time-of-day learning. Setting to nil triggers
+        // AppState.currentPlayActivity.didSet which calls resignCurrent().
+        if isMovingFromParent || isBeingDismissed {
+            AppState.shared.currentPlayActivity = nil
+        }
     }
 
     override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

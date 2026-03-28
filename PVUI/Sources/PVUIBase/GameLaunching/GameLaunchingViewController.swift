@@ -940,26 +940,39 @@ public extension GameLaunchingViewController {
 
 import Intents
 
+/// Registered in all `NSUserActivityTypes` plists and handled by `PVAppDelegate+Intents.swift`.
+private let kGamePlayActivityType = "org.provenance-emu.game.play"
+
 public
 extension GameLaunchingViewController where Self: UIViewController {
 
 
     func donateShortcut(forGame game: PVGame) {
-        let activity = NSUserActivity(activityType: "com.provenance-emu.provenance.openMD5")
-        activity.title = "Open \(game.title) in Provenance"
-        activity.userInfo = ["url": "provenance://open?md5=\(game.md5Hash)"]
+        let md5 = game.md5Hash
+        let title = game.title
+
+        // Primary prediction activity — teaches Siri time-of-day patterns.
+        let activity = NSUserActivity(activityType: kGamePlayActivityType)
+        activity.title = "Play \(title)"
+        activity.userInfo = ["md5": md5, "url": "provenance://open?md5=\(md5)"]
         activity.isEligibleForSearch = false
-        activity.isEligibleForPublicIndexing = true
+        activity.isEligibleForPublicIndexing = false
         activity.isEligibleForHandoff = true
+        // persistentIdentifier is per-game so the OS tracks play patterns individually.
+        activity.persistentIdentifier = NSUserActivityPersistentIdentifier("\(kGamePlayActivityType).\(md5)")
 
         #if !os(tvOS)
+        // isEligibleForPrediction is iOS/macOS only; tvOS does not support Siri Predictions.
         activity.isEligibleForPrediction = true
-        activity.persistentIdentifier = NSUserActivityPersistentIdentifier("com.provenance-emu.provenance.openMD5")
+        activity.suggestedInvocationPhrase = "Play \(title)"
         #endif
 
         Task { @MainActor in
-            self.userActivity = activity
-            self.userActivity?.becomeCurrent()
+            // Hold a strong reference in AppState so the activity survives VC transitions
+            // and Siri can observe the full play session for time-of-day learning.
+            // AppState.currentPlayActivity.didSet calls resignCurrent() on the old value.
+            AppState.shared.currentPlayActivity = activity
+            activity.becomeCurrent()
         }
     }
 
