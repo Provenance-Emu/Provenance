@@ -186,9 +186,8 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
             result.append(chunk)
             remaining -= chunk.count
             currentLBA += 1
-            // A short read means we hit EOF before reading a full sector worth of
-            // user data.  Do not attempt to advance to the next LBA — the data is
-            // incomplete and any further seek would produce garbage output.
+            // A short read means we hit EOF inside this sector — break immediately
+            // rather than seeking into the next LBA, which would produce garbage.
             if chunk.count < toRead { break }
         }
 

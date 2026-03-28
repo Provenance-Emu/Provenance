@@ -161,7 +161,10 @@ public final class DiscSerialExtractorRegistry: Sendable {
         guard let handle = try? FileHandle(forReadingFrom: url) else { return Data() }
         defer { try? handle.close() }
         do {
-            return try handle.read(upToCount: maxBytes) ?? Data()
+            // read(upToCount:) returns Data on Apple platforms and Data? on Linux.
+            // Assigning to Data? first avoids a "non-optional ?? Data()" warning on Apple.
+            let result: Data? = try handle.read(upToCount: maxBytes)
+            return result ?? Data()
         } catch {
             return Data()
         }

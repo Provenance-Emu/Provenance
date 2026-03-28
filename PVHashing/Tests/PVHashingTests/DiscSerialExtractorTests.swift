@@ -472,7 +472,7 @@ final class BinCueDiscSerialPluginTests: XCTestCase {
         // Directory entry for SYSTEM.CNF → sector 23.
         let dirOffset = 22 * sectorSize
         let cnfName = Array("SYSTEM.CNF".utf8)
-        binData[dirOffset] = UInt8(33 + cnfName.count + (cnfName.count % 2 == 0 ? 0 : 1))
+        binData[dirOffset] = UInt8(33 + cnfName.count + (cnfName.count % 2 == 0 ? 1 : 0))
         let cnfLBA: UInt32 = 23
         withUnsafeBytes(of: cnfLBA.littleEndian) { bytes in
             binData.replaceSubrange((dirOffset + 2)..<(dirOffset + 6), with: bytes)
