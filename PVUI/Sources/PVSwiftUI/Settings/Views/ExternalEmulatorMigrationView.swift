@@ -41,9 +41,12 @@ private extension KnownEmulator {
     }
 
     /// Returns all emulators detected as installed on the current device.
+    ///
+    /// `deltaLite` is excluded because it shares the same URL scheme and guide
+    /// steps as `delta`; only one "Delta" row should appear in the UI.
     @MainActor
     static var installedEmulators: [KnownEmulator] {
-        KnownEmulator.allCases.filter { $0.isInstalled }
+        KnownEmulator.allCases.filter { $0 != .deltaLite && $0.isInstalled }
     }
 }
 
@@ -397,6 +400,10 @@ struct EmulatorMigrationGuideView: View {
                 Button("Done") { dismiss() }
             }
         }
+        #endif
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
         #endif
     }
 
