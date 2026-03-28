@@ -422,17 +422,6 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 
     @MainActor
-    func handleSRAMImport(urls: [URL], for game: PVGame) async {
-        guard let fileURL = urls.first else { return }
-        do {
-            try await SaveExporter.shared.importSRAM(from: fileURL, for: game)
-            rootDelegate?.showMessage("Battery save imported successfully for \(game.title).", title: "Import Complete")
-        } catch {
-            rootDelegate?.showMessage("Battery save import failed: \(error.localizedDescription)", title: "Import Error")
-        }
-    }
-
-    @MainActor
     private func exportSRAM(for game: PVGame) async {
         do {
             let url = try await SaveExporter.shared.exportSRAM(for: game)
