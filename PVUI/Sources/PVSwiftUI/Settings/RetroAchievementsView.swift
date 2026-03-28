@@ -102,6 +102,7 @@ public struct RetroAchievementsView: View {
         }
         .navigationTitle("RetroAchievements")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         #if !os(tvOS)

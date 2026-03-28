@@ -57,6 +57,7 @@ public struct ROMTitleNormalizationView: View {
         }
         .navigationTitle("Normalize ROM Titles")
 #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
 #endif
 #if !os(tvOS)

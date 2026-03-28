@@ -456,6 +456,7 @@ struct ControllerSettingsView: View {
         #endif
         .navigationTitle("Controller Settings")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         .confirmationDialog(
@@ -908,6 +909,7 @@ struct ButtonRemappingView: View {
         }
         .navigationTitle(controller.vendorName ?? "Remap Buttons")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         #if !os(tvOS)
@@ -1086,6 +1088,7 @@ private struct KeyboardControlsGuideView: View {
         }
         .navigationTitle("Keyboard Controls")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         #if !os(tvOS)

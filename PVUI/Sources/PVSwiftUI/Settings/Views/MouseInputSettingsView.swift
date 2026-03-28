@@ -19,12 +19,18 @@ import PVUIBase
 
 /// Full-page settings view for mouse input, suitable as a `NavigationLink` destination.
 struct MouseInputSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         ScrollView {
             MouseSection()
                 .padding()
         }
         .navigationTitle("Mouse Input")
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
     }
 }
 

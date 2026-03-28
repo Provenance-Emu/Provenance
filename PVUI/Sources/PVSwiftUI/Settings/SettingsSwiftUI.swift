@@ -928,6 +928,8 @@ struct SettingsRow: View {
     var subtitle: String? = nil
     var value: String? = nil
     var icon: SettingsIcon? = nil
+    /// Controls the trailing chevron on tvOS. Set `false` for non-navigation rows (toggles, sliders, static info).
+    var showChevron: Bool = true
 
     @State private var isHovered = false
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -1087,10 +1089,11 @@ struct SettingsRow: View {
             }
 
             #if os(tvOS)
-            // Chevron for navigation items
-            Image(systemName: "chevron.right")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(isFocused ? Color.retroPink : Color.white.opacity(0.3))
+            if showChevron {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(isFocused ? Color.retroPink : Color.white.opacity(0.3))
+            }
             #endif
         }
         #if os(tvOS)
@@ -1471,22 +1474,26 @@ private struct SavesSection: View {
         ThemedToggle(isOn: $autoSave) {
             SettingsRow(title: "Auto Save",
                         subtitle: "Auto-save game state on close. Must be playing for 30 seconds more.",
-                        icon: .sfSymbol("autostartstop"))
+                        icon: .sfSymbol("autostartstop"),
+                        showChevron: false)
         }
         ThemedToggle(isOn: $timedAutoSaves) {
             SettingsRow(title: "Timed Auto Saves",
                         subtitle: "Periodically create save states while you play.",
-                        icon: .sfSymbol("clock.badge"))
+                        icon: .sfSymbol("clock.badge"),
+                        showChevron: false)
         }
         ThemedToggle(isOn: $autoLoadSaves) {
             SettingsRow(title: "Auto Load Saves",
                         subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.",
-                        icon: .sfSymbol("autostartstop"))
+                        icon: .sfSymbol("autostartstop"),
+                        showChevron: false)
         }
         ThemedToggle(isOn: $askToAutoLoad) {
             SettingsRow(title: "Ask to Load Saves",
                         subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.",
-                        icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
+                        icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"),
+                        showChevron: false)
         }
     }
 
@@ -1584,23 +1591,28 @@ private struct BuildSection: View {
             SettingsRow(title: "Version",
                         subtitle: "Current app version.",
                         value: viewModel.versionText,
-                        icon: .sfSymbol("info.circle"))
+                        icon: .sfSymbol("info.circle"),
+                        showChevron: false)
             SettingsRow(title: "Build",
                         subtitle: "Internal build number.",
                         value: viewModel.buildVersion,
-                        icon: .sfSymbol("hammer"))
+                        icon: .sfSymbol("hammer"),
+                        showChevron: false)
             SettingsRow(title: "Git Revision",
                         subtitle: "Source code version.",
                         value: viewModel.gitRevision,
-                        icon: .sfSymbol("chevron.left.forwardslash.chevron.right"))
+                        icon: .sfSymbol("chevron.left.forwardslash.chevron.right"),
+                        showChevron: false)
             SettingsRow(title: "Built By",
                         subtitle: "Developer who built this version.",
                         value: viewModel.buildUser,
-                        icon: .sfSymbol("person"))
+                        icon: .sfSymbol("person"),
+                        showChevron: false)
             SettingsRow(title: "Build Date",
                         subtitle: "When this version was compiled.",
                         value: viewModel.buildDate,
-                        icon: .sfSymbol("calendar"))
+                        icon: .sfSymbol("calendar"),
+                        showChevron: false)
         }
     }
 }
@@ -1693,7 +1705,8 @@ private struct AudioSection: View {
             ThemedToggle(isOn: $pauseOnHeadphonesDisconnect) {
                 SettingsRow(title: "Pause on Headphones Disconnect",
                             subtitle: "Auto-pause emulation when AirPods or Bluetooth headphones disconnect.",
-                            icon: .sfSymbol("headphones"))
+                            icon: .sfSymbol("headphones"),
+                            showChevron: false)
             }
             #if !os(tvOS)
             ThemedToggle(isOn: $respectMuteSwitch) {
@@ -1741,7 +1754,8 @@ private struct AudioSection: View {
             } lockedView: {
                 SettingsRow(title: "Audio Engine",
                             subtitle: "Unlock to configure advanced audio settings.",
-                            icon: .sfSymbol("lock.fill"))
+                            icon: .sfSymbol("lock.fill"),
+                            showChevron: false)
             }
             .freemiumKitColorReset()
         }
@@ -1762,37 +1776,44 @@ private struct VideoSection: View {
             ThemedToggle(isOn: $vsyncEnabled) {
                 SettingsRow(title: "V-Sync",
                             subtitle: "Synchronizes the rendering frame rate with the monitor refresh rate.",
-                            icon: vsyncEnabled ? .sfSymbol("tv.fill") : .sfSymbol("tv"))
+                            icon: vsyncEnabled ? .sfSymbol("tv.fill") : .sfSymbol("tv"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $multiThreadedGL) {
                 SettingsRow(title: "Multi-threaded Rendering",
                             subtitle: "Improves performance but may cause graphical glitches.",
-                            icon: .sfSymbol("cpu"))
+                            icon: .sfSymbol("cpu"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $multiSampling) {
                 SettingsRow(title: "4X Multisampling GL",
                             subtitle: "Smoother graphics at the cost of performance.",
-                            icon: .sfSymbol("square.stack.3d.up"))
+                            icon: .sfSymbol("square.stack.3d.up"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $nativeScaleEnabled) {
                 SettingsRow(title: "Native Resolution",
                             subtitle: nativeScaleEnabled ? "Use the original console's resolution." : "Scale to fit the window.",
-                            icon: .sfSymbol("arrow.up.left.and.arrow.down.right"))
+                            icon: .sfSymbol("arrow.up.left.and.arrow.down.right"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $integerScaleEnabled) {
                 SettingsRow(title: "Integer Scaling",
                             subtitle: "Scale by whole numbers only for pixel-perfect display.",
-                            icon: .sfSymbol("square.grid.4x3.fill"))
+                            icon: .sfSymbol("square.grid.4x3.fill"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $imageSmoothing) {
                 SettingsRow(title: "Image Smoothing",
                             subtitle: "Smooth scaled graphics. Off for sharp pixels.",
-                            icon: .sfSymbol("paintbrush.pointed"))
+                            icon: .sfSymbol("paintbrush.pointed"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $showFPSCount) {
                 SettingsRow(title: "FPS Counter",
                             subtitle: "Show frames per second counter.",
-                            icon: .sfSymbol("speedometer"))
+                            icon: .sfSymbol("speedometer"),
+                            showChevron: false)
             }
             NavigationLink(destination: FilterSettingsView()) {
                 SettingsRow(title: "Display Filters",
@@ -1863,7 +1884,7 @@ private struct ControllerSection: View {
                 #if os(tvOS)
                 .retroFocusButtonStyle(showBorder: false)
                 #endif
-                NavigationLink(destination: ICadeControllerView()) {
+                NavigationLink(destination: ICadeControllerView().tvOSSubpageFocusContainment()) {
                     SettingsRow(title: "iCade / 8Bitdo",
                                 subtitle: "Configure iCade and 8Bitdo controller settings.",
                                 icon: .sfSymbol("keyboard"))
@@ -1874,12 +1895,14 @@ private struct ControllerSection: View {
                 ThemedToggle(isOn: $use8BitdoM30) {
                     SettingsRow(title: "Use 8BitDo M30 Mapping",
                                 subtitle: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine",
-                                icon: .sfSymbol("arrow.triangle.swap"))
+                                icon: .sfSymbol("arrow.triangle.swap"),
+                                showChevron: false)
                 }
                 ThemedToggle(isOn: $pauseButtonIsMenuButton) {
                     SettingsRow(title: "Pause/Menu button opens pause menu",
                                 subtitle: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game",
-                                icon: .sfSymbol("pause.rectangle"))
+                                icon: .sfSymbol("pause.rectangle"),
+                                showChevron: false)
                 }
                 NavigationLink(destination: MouseInputSettingsView()) {
                     SettingsRow(title: "Mouse Input",
@@ -1925,7 +1948,8 @@ private struct AnalogDeadzoneSection: View {
             VStack(alignment: .leading, spacing: 4) {
                 SettingsRow(title: "Universal Deadzone",
                             subtitle: "Dead region at center of analog sticks (0 = off). Applied on top of hardware deadzoning.",
-                            icon: .sfSymbol("circle.dashed"))
+                            icon: .sfSymbol("circle.dashed"),
+                            showChevron: false)
                 RetroWaveSlider(value: $analogDeadzone, in: 0.0...0.5, step: 0.01) {
                     Text("settings.controller.deadzone", bundle: .module)
                 } minimumValueLabel: {
@@ -2077,33 +2101,39 @@ private struct HapticsRumbleSection: View {
             ThemedToggle(isOn: $hapticFeedback) {
                 SettingsRow(title: "Haptic Feedback",
                             subtitle: "Vibrate when pressing on-screen buttons.",
-                            icon: .sfSymbol("iphone.radiowaves.left.and.right"))
+                            icon: .sfSymbol("iphone.radiowaves.left.and.right"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $rumbleEnabled) {
                 SettingsRow(title: "Game Rumble",
                             subtitle: "Master on/off for all in-game rumble events from emulator cores.",
-                            icon: .sfSymbol("gamecontroller.fill"))
+                            icon: .sfSymbol("gamecontroller.fill"),
+                            showChevron: false)
             }
             if rumbleEnabled {
                 ThemedToggle(isOn: $rumbleDeviceEnabled) {
                     SettingsRow(title: "Device Taptic Engine",
                                 subtitle: "Use the iPhone/iPad Taptic Engine for in-game rumble when no controller is connected.",
-                                icon: .sfSymbol("iphone"))
+                                icon: .sfSymbol("iphone"),
+                                showChevron: false)
                 }
                 ThemedToggle(isOn: $rumbleControllerEnabled) {
                     SettingsRow(title: "Controller Motors",
                                 subtitle: "Fire rumble motors on DualSense, Xbox, Switch Pro, and DualShock 4 controllers.",
-                                icon: .sfSymbol("dot.radiowaves.right"))
+                                icon: .sfSymbol("dot.radiowaves.right"),
+                                showChevron: false)
                 }
                 ThemedToggle(isOn: $dualSenseAdaptiveTriggersEnabled) {
                     SettingsRow(title: "DualSense Adaptive Triggers",
                                 subtitle: "Apply per-system trigger resistance profiles on PS5 DualSense controllers.",
-                                icon: .sfSymbol("l2.button.roundedtop.horizontal.fill"))
+                                icon: .sfSymbol("l2.button.roundedtop.horizontal.fill"),
+                                showChevron: false)
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     SettingsRow(title: "Controller Rumble Intensity",
                                 subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
-                                icon: .sfSymbol("waveform.path"))
+                                icon: .sfSymbol("waveform.path"),
+                                showChevron: false)
                     RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
                         Text("settings.controller.intensity", bundle: .module)
                     } minimumValueLabel: {
@@ -2127,23 +2157,27 @@ private struct HapticsRumbleSection: View {
             ThemedToggle(isOn: $rumbleEnabled) {
                 SettingsRow(title: "Game Rumble",
                             subtitle: "Master on/off for all in-game rumble events from emulator cores.",
-                            icon: .sfSymbol("gamecontroller.fill"))
+                            icon: .sfSymbol("gamecontroller.fill"),
+                            showChevron: false)
             }
             if rumbleEnabled {
                 ThemedToggle(isOn: $rumbleControllerEnabled) {
                     SettingsRow(title: "Controller Motors",
                                 subtitle: "Fire rumble motors on connected controllers.",
-                                icon: .sfSymbol("dot.radiowaves.right"))
+                                icon: .sfSymbol("dot.radiowaves.right"),
+                                showChevron: false)
                 }
                 ThemedToggle(isOn: $dualSenseAdaptiveTriggersEnabled) {
                     SettingsRow(title: "DualSense Adaptive Triggers",
                                 subtitle: "Apply per-system trigger resistance profiles on PS5 DualSense controllers.",
-                                icon: .sfSymbol("l2.button.roundedtop.horizontal.fill"))
+                                icon: .sfSymbol("l2.button.roundedtop.horizontal.fill"),
+                                showChevron: false)
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     SettingsRow(title: "Controller Rumble Intensity",
                                 subtitle: "Motor strength for connected controllers.",
-                                icon: .sfSymbol("waveform.path"))
+                                icon: .sfSymbol("waveform.path"),
+                                showChevron: false)
                     RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
                         Text("settings.controller.intensity", bundle: .module)
                     } minimumValueLabel: {
@@ -2176,12 +2210,14 @@ private struct DualSenseExtrasSection: View {
             ThemedToggle(isOn: $lightBarEnabled) {
                 SettingsRow(title: "Controller Light Bar",
                             subtitle: "Show a per-system color on the DualSense / DS4 light bar.",
-                            icon: .sfSymbol("light.beacon.max.fill"))
+                            icon: .sfSymbol("light.beacon.max.fill"),
+                            showChevron: false)
             }
             Picker(selection: $micButtonAction,
                    label: SettingsRow(title: "Mic Button Action",
                                       subtitle: "Action performed when the DualSense microphone button is pressed.",
-                                      icon: .sfSymbol("mic.fill"))) {
+                                      icon: .sfSymbol("mic.fill"),
+                                      showChevron: false)) {
                 Text("Mute Audio").tag("muteAudio")
                 Text("None").tag("none")
             }
@@ -2383,7 +2419,8 @@ private struct LibrarySection2: View {
                 }  lockedView: {
                     SettingsRow(title: "Cloud Sync Settings",
                               subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
-                              icon: .sfSymbol("lock.fill"))
+                              icon: .sfSymbol("lock.fill"),
+                              showChevron: false)
                 }
                 .freemiumKitColorReset()
 //            }
@@ -2409,7 +2446,8 @@ private struct LibrarySection2: View {
             ThemedToggle(isOn: $autoNormalizeROMTitles) {
                 SettingsRow(title: "Auto-Normalize Titles on Import",
                             subtitle: "Strip region/revision tags from ROM filenames (e.g. '(USA)', '[!]') when importing.",
-                            icon: .sfSymbol("textformat.abc"))
+                            icon: .sfSymbol("textformat.abc"),
+                            showChevron: false)
             }
 
             NavigationLink(destination: ROMTitleNormalizationView()) {
@@ -2512,7 +2550,7 @@ private struct AdvancedSection: View {
                 #endif
 
                 // Log view
-                NavigationLink(destination: RetroLogView()) {
+                NavigationLink(destination: RetroLogView().tvOSSubpageFocusContainment()) {
                     SettingsRow(title: "Logs",
                                 subtitle: "View logs for debugging.",
                                 icon: .sfSymbol("doc.text.magnifyingglass"))

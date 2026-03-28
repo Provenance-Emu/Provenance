@@ -121,6 +121,7 @@ public struct ControllerGuideView: View {
         #endif
         .navigationTitle("Controller Guide")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         #if !os(tvOS)

@@ -73,56 +73,64 @@ struct AppearanceView: View {
                             ThemedToggle(isOn: $showGameTitles) {
                                 SettingsRow(title: "Show Game Titles",
                                             subtitle: "Display game titles under artwork.",
-                                            icon: .sfSymbol("textformat"))
+                                            icon: .sfSymbol("textformat"),
+                                            showChevron: false)
                             }
                             .padding(.vertical, 4)
 
                             ThemedToggle(isOn: $showGameTitles) {
                                 SettingsRow(title: "Show Search Bar",
                                             subtitle: "Show searcbar for quick game searching.",
-                                            icon: .sfSymbol("magnifyingglass"))
+                                            icon: .sfSymbol("magnifyingglass"),
+                                            showChevron: false)
                             }
                             .padding(.vertical, 4)
 
                             ThemedToggle(isOn: $showRecentGames) {
                                 SettingsRow(title: "Show Recently Played Games",
                                             subtitle: "Display recently played games section.",
-                                            icon: .sfSymbol("clock"))
+                                            icon: .sfSymbol("clock"),
+                                            showChevron: false)
                             }
                             .padding(.vertical, 4)
 
                             ThemedToggle(isOn: $showRecentSaveStates) {
                                 SettingsRow(title: "Show Recent Save States",
                                             subtitle: "Display recent save states section.",
-                                            icon: .sfSymbol("bookmark"))
+                                            icon: .sfSymbol("bookmark"),
+                                            showChevron: false)
                             }
                             .padding(.vertical, 4)
 
                             ThemedToggle(isOn: $showAutoSavesInRecents) {
                                 SettingsRow(title: "Show All Auto-Saves in Recent Saves",
                                             subtitle: "When off, only the latest auto-save per game is shown to reduce clutter.",
-                                            icon: .sfSymbol("clock.badge.checkmark"))
+                                            icon: .sfSymbol("clock.badge.checkmark"),
+                                            showChevron: false)
                             }
                             .padding(.vertical, 4)
 
                             ThemedToggle(isOn: $showFavorites) {
                                 SettingsRow(title: "Show Favorites",
                                             subtitle: "Display favorites section.",
-                                            icon: .sfSymbol("star"))
+                                            icon: .sfSymbol("star"),
+                                            showChevron: false)
                             }
                             .padding(.vertical, 4)
 
                             ThemedToggle(isOn: $showGameBadges) {
                                 SettingsRow(title: "Show Game Badges",
                                             subtitle: "Display badges on game artwork.",
-                                            icon: .sfSymbol("rosette"))
+                                            icon: .sfSymbol("rosette"),
+                                            showChevron: false)
                             }
 
 #if os(tvOS) || targetEnvironment(macCatalyst)
                             ThemedToggle(isOn: $largeGameArt) {
                                 SettingsRow(title: "Show Large Game Artwork",
                                             subtitle: "Use larger artwork in game grid.",
-                                            icon: .sfSymbol("rectangle.expand.vertical"))
+                                            icon: .sfSymbol("rectangle.expand.vertical"),
+                                            showChevron: false)
                             }
 #endif
                         }
@@ -144,7 +152,8 @@ struct AppearanceView: View {
                                 SettingsRow(
                                     title: "Missing Artwork Style",
                                     subtitle: "Unlock to customize missing artwork style",
-                                    icon: .sfSymbol("lock.fill")
+                                    icon: .sfSymbol("lock.fill"),
+                                    showChevron: false
                                 )
                             }
                             .freemiumKitColorReset()
@@ -172,6 +181,7 @@ struct AppearanceView: View {
                 }
                 #if os(tvOS)
                 .padding(.horizontal, 80)
+                .focusSection()
                 .onExitCommand { dismiss() }
                 #endif
             }
@@ -193,37 +203,44 @@ internal struct AppearanceSection: View {
             ThemedToggle(isOn: $showGameTitles) {
                 SettingsRow(title: "Show Game Titles",
                             subtitle: "Display game titles under artwork.",
-                            icon: .sfSymbol("text.below.photo"))
+                            icon: .sfSymbol("text.below.photo"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $showSearchbar) {
                 SettingsRow(title: "Show Search Bar",
                             subtitle: "Show searcbar for quick game searching.",
-                            icon: .sfSymbol("magnifyingglass"))
+                            icon: .sfSymbol("magnifyingglass"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $showRecentGames) {
                 SettingsRow(title: "Show Recent Games",
                             subtitle: "Display recently played games section.",
-                            icon: .sfSymbol("clock"))
+                            icon: .sfSymbol("clock"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $showRecentSaveStates) {
                 SettingsRow(title: "Show Recent Saves",
                             subtitle: "Display recent save states section.",
-                            icon: .sfSymbol("clock.badge.checkmark"))
+                            icon: .sfSymbol("clock.badge.checkmark"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $showAutoSavesInRecents) {
                 SettingsRow(title: "Show All Auto-Saves in Recent Saves",
                             subtitle: "When off, only the latest auto-save per game is shown.",
-                            icon: .sfSymbol("clock.arrow.circlepath"))
+                            icon: .sfSymbol("clock.arrow.circlepath"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $showGameBadges) {
                 SettingsRow(title: "Show Game Badges",
                             subtitle: "Display badges for favorite and recent games.",
-                            icon: .sfSymbol("star.circle"))
+                            icon: .sfSymbol("star.circle"),
+                            showChevron: false)
             }
             ThemedToggle(isOn: $showFavorites) {
                 SettingsRow(title: "Show Favorites",
                             subtitle: "Display favorites section.",
-                            icon: .sfSymbol("star"))
+                            icon: .sfSymbol("star"),
+                            showChevron: false)
             }
 
             // Add the new navigation link wrapped in PaidFeatureView
@@ -236,7 +253,8 @@ internal struct AppearanceSection: View {
             } lockedView: {
                 SettingsRow(title: "Missing Artwork Style",
                             subtitle: "Unlock to customize missing artwork style.",
-                            icon: .sfSymbol("lock.fill"))
+                            icon: .sfSymbol("lock.fill"),
+                            showChevron: false)
             }
             .freemiumKitColorReset()
         }
@@ -343,6 +361,7 @@ fileprivate struct MissingArtworkStyleView: View {
         }
         .navigationTitle("Missing Artwork Style")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         .sheet(isPresented: $showingFullScreenPreview) {

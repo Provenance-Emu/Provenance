@@ -263,6 +263,7 @@ public struct AppGroupFileBrowserView: View {
         }
         .navigationTitle("App Group Files")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         .sheet(isPresented: $showingFileContents) {

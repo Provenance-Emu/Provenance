@@ -103,13 +103,15 @@ struct AudioEngineSettingsView: View {
                 ThemedToggle(isOn: $monoAudio) {
                     SettingsRow(title: "Mono Audio",
                                subtitle: "Combine left and right audio channels.",
-                               icon: .sfSymbol("speaker.wave.1"))
+                               icon: .sfSymbol("speaker.wave.1"),
+                               showChevron: false)
                 }
             }
             #endif
         }
         .navigationTitle("Audio Engine")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
     }

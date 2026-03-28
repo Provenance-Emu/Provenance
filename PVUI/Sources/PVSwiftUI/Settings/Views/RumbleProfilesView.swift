@@ -81,6 +81,7 @@ struct RumbleProfilesView: View {
         #endif
         .navigationTitle("Rumble Profiles")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         #if !os(tvOS)
@@ -695,6 +696,7 @@ struct RumblePresetEditorView: View {
         #endif
         .navigationTitle(name.isEmpty ? "Edit Preset" : name)
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { save(); dismiss() }
         #endif
         #if !os(tvOS)

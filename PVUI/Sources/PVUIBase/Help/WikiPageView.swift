@@ -9,6 +9,7 @@ public struct WikiPageView: View {
     let fragment: String?
 
     @StateObject private var viewModel = WikiHelpViewModel()
+    @Environment(\.dismiss) private var dismiss
 
     public init(path: String, title: String, fragment: String? = nil) {
         self.path = path
@@ -27,6 +28,10 @@ public struct WikiPageView: View {
             }
         }
         .navigationTitle(title)
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
         #if !os(tvOS)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

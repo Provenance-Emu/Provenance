@@ -31,6 +31,7 @@ struct FilterSettingsView: View {
         #endif
         .navigationTitle("Display Filters")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
 

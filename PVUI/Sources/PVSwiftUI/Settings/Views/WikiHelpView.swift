@@ -24,6 +24,7 @@ public struct WikiHelpView: View {
         }
         .navigationTitle("Help & Wiki")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
         .task {
