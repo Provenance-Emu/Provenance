@@ -59,39 +59,69 @@ public final class JITOnboardingManager {
 
         ILOG("JITOnboarding: Preparing JIT onboarding alert")
 
-        let alert = UIAlertController(
-            title: "Performance Mode Unavailable",
-            message: "This core performs best with Performance Mode (JIT) enabled. "
+        // On iOS 26+, W×X enforcement means JIT cannot be acquired via sideloading tools;
+        // only the native `allow-jit` entitlement (not available in App Store builds) works.
+        // Avoid suggesting tools that cannot help — just set performance expectations.
+        let isWXEnforced = DOLJitManager.isWXEnforced
+
+        // Detect whether this App Store–compiled build is genuinely from the App Store
+        // or has been sideloaded (e.g. resigned IPA with changed bundle ID or JIT entitlement).
+        // Sideloaded builds should still show the full sideloading-tool suggestions.
+        let isGenuineAppStore = DOLJitManager.isGenuinelyAppStoreDistributed()
+
+        let message: String
+        if isWXEnforced {
+            message = "This core performs best with Performance Mode (JIT). "
+                + "On this OS version, Performance Mode is not available without a special "
+                + "developer entitlement — emulation may run slower than expected."
+        } else if isGenuineAppStore {
+            // Genuine App Store installs: don't mention sideloading tools per App Store guidelines.
+            message = "This core performs best with Performance Mode (JIT) enabled. "
+                + "Performance Mode has not been acquired for this session — you can continue playing, "
+                + "but emulation speed may be reduced."
+        } else {
+            message = "This core performs best with Performance Mode (JIT) enabled. "
                 + "Performance Mode has not been acquired for this session — you can continue playing, "
                 + "but emulation speed may be reduced.\n\n"
                 + "To enable Performance Mode, use AltStore, SideStore, StikDebug, JITStreamer, or "
-                + "developer tools (for example, the Xcode debugger) before launching.",
+                + "developer tools (for example, the Xcode debugger) before launching."
+        }
+
+        let alert = UIAlertController(
+            title: "Performance Mode Unavailable",
+            message: message,
             preferredStyle: .alert
         )
 
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: nil))
 
-        // Offer StikDebug as the first retry option (VPN-based, no macOS required).
-        if jitType == .debugger || jitType == .stikDebug {
-            alert.addAction(UIAlertAction(title: "Try StikDebug", style: .default) { _ in
-                ILOG("JITOnboarding: User chose to retry via StikDebug")
-                jitManager.attemptToAcquireJitByStikDebug()
-            })
-        }
-
-        // JITStreamer as an alternative for desktop-based attach.
-        if jitType == .debugger {
-            alert.addAction(UIAlertAction(title: "Try JITStreamer", style: .default) { _ in
-                ILOG("JITOnboarding: User chose to retry via JITStreamer")
-                jitManager.attemptToAcquireJitByJitStreamer()
-            })
-        }
-
-        alert.addAction(UIAlertAction(title: "Learn More", style: .default) { _ in
-            if let url = URL(string: "https://wiki.provenance-emu.com/jit-help") {
-                UIApplication.shared.open(url)
+        // Only offer sideloading-based retry options when JIT is actually acquirable
+        // and when not running in a genuine App Store distribution (to avoid review rejections).
+        // Sideloaded App Store builds (detected via bundle ID / entitlement / provisioning checks)
+        // are treated the same as developer builds.
+        if !isGenuineAppStore && !isWXEnforced {
+            // Offer StikDebug as the first retry option (VPN-based, no macOS required).
+            if jitType == .debugger || jitType == .stikDebug {
+                alert.addAction(UIAlertAction(title: "Try StikDebug", style: .default) { _ in
+                    ILOG("JITOnboarding: User chose to retry via StikDebug")
+                    jitManager.attemptToAcquireJitByStikDebug()
+                })
             }
-        })
+
+            // JITStreamer as an alternative for desktop-based attach.
+            if jitType == .debugger {
+                alert.addAction(UIAlertAction(title: "Try JITStreamer", style: .default) { _ in
+                    ILOG("JITOnboarding: User chose to retry via JITStreamer")
+                    jitManager.attemptToAcquireJitByJitStreamer()
+                })
+            }
+
+            alert.addAction(UIAlertAction(title: "Learn More", style: .default) { _ in
+                if let url = URL(string: "https://wiki.provenance-emu.com/jit-help") {
+                    UIApplication.shared.open(url)
+                }
+            })
+        }
 
         // Ensure we can actually present before marking the onboarding as shown
         guard viewController.viewIfLoaded?.window != nil,
@@ -102,9 +132,13 @@ public final class JITOnboardingManager {
 
         ILOG("JITOnboarding: Presenting JIT onboarding alert")
 
-        viewController.present(alert, animated: true) { [weak self] in
-            self?.hasShownThisSession = true
-        }
+        // Set the flag before calling present() to prevent a race condition where
+        // a second call arrives between viewController.present() and its completion
+        // handler. UIKit sets presentedViewController synchronously on present(),
+        // so the guard above provides a second safety net, but flagging here is
+        // the authoritative "shown this session" marker.
+        hasShownThisSession = true
+        viewController.present(alert, animated: true)
 
         return true
     }

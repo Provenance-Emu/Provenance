@@ -125,6 +125,20 @@ public final class DOLJitManager {
         switch jitType {
         case .debugger:
 #if NONJAILBROKEN
+            // On iOS 26+, JITAuthorizer is the preferred JIT path but requires the
+            // `com.apple.developer.kernel.allow-jit` entitlement. If that entitlement
+            // is absent (App Store builds, developer builds without it), we fall back
+            // to checking CS_DEBUGGED via csops. Xcode's debugger still sets CS_DEBUGGED
+            // on iOS 26 for development-signed builds, so this may succeed when running
+            // from Xcode. Note: even with JIT acquired, dynarec cores must use the
+            // dual-mapping (shadow-page) pattern on iOS 26 due to W×X enforcement.
+            // For production App Store builds on iOS 26, JIT is structurally unavailable;
+            // performance-sensitive cores (Dolphin, 3DS, Flycast) will run in fallback mode.
+            if #available(iOS 26, tvOS 26, *), NSClassFromString("JITAuthorizer") != nil {
+                WLOG("JIT: iOS 26 — JITAuthorizer present but 'allow-jit' entitlement absent. "
+                    + "Checking CS_DEBUGGED for Xcode/debugger-based JIT. "
+                    + "Add com.apple.developer.kernel.allow-jit for reliable iOS 26 JIT.")
+            }
             hasAcquiredJit = IsProcessDebugged()
 #else
             if FileManager.default.fileExists(atPath: "/var/run/jailbreakd.pid") {
@@ -357,6 +371,48 @@ public final class DOLJitManager {
     /// detected source after URL-scheme checks complete.
     public func setJITSource(_ source: JITSource) {
         jitSource = source
+    }
+
+    // MARK: - Distribution Detection
+
+    /// Returns `true` only when the build was compiled for App Store distribution
+    /// **and** is genuinely running as an official App Store install (not sideloaded or resigned).
+    ///
+    /// GitHub CI produces App Store–flavored builds (`APP_STORE` define) that users can
+    /// sideload by resigning the IPA — changing the bundle ID or injecting the
+    /// `com.apple.developer.kernel.allow-jit` entitlement in the process.  This function
+    /// detects that at runtime so the JIT UI can show sideloading-tool suggestions even
+    /// in App Store–compiled builds when the build has clearly been modified.
+    ///
+    /// Detection heuristics (all must pass to return `true`):
+    /// - Compiled with `APP_STORE` define (compile-time guard)
+    /// - Bundle ID still has the official `org.provenance-emu.provenance` prefix
+    /// - The `com.apple.developer.kernel.allow-jit` entitlement is **absent** (a resigned
+    ///   IPA would have added it)
+    /// - No `embedded.mobileprovision` present (App Store strips this; sideloaders keep it)
+    ///
+    /// - Returns: `true` for a genuine App Store install, `false` for any dev / sideload build.
+    public static func isGenuinelyAppStoreDistributed() -> Bool {
+        #if !APP_STORE
+        return false
+        #else
+        // 1. Bundle ID must be the official one — sideloaders commonly change this.
+        guard let bundleID = Bundle.main.bundleIdentifier,
+              bundleID.hasPrefix("org.provenance-emu.provenance") else {
+            return false
+        }
+        // 2. JIT entitlement being present means the IPA was re-signed with it injected.
+        if #available(iOS 13.4, tvOS 13.4, *) {
+            if HasBooleanEntitlement("com.apple.developer.kernel.allow-jit") {
+                return false
+            }
+        }
+        // 3. App Store strips embedded.mobileprovision; its presence means sideload/TestFlight.
+        if Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") != nil {
+            return false
+        }
+        return true
+        #endif
     }
 
     // MARK: - iOS 26 W×X Detection

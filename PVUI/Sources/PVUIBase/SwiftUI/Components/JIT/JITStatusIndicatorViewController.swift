@@ -11,6 +11,9 @@ import Combine
 #if canImport(PVJIT)
 import PVJIT
 #endif
+#if canImport(JITManager)
+import JITManager
+#endif
 
 // MARK: - PassthroughView
 
@@ -102,9 +105,16 @@ public final class JITStatusIndicatorViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
 
         // When JIT is inactive and the user should take action, add a second button
-        // that opens the app's JIT settings (if available via PVSettings) or shows
-        // the in-app guide for enabling JIT.
-        if viewModel.coreSupportLevel.requiresUserAction && viewModel.status != .active {
+        // that opens the in-app guide for enabling JIT.
+        // Omit in genuine App Store installs — the guide lists sideloading tools
+        // (AltStore, SideStore) that may trigger App Store review rejections.
+        // Sideloaded App Store builds (detected at runtime) still show the guide.
+        #if canImport(JITManager)
+        let showJITGuide = !DOLJitManager.isGenuinelyAppStoreDistributed()
+        #else
+        let showJITGuide = true
+        #endif
+        if showJITGuide && viewModel.coreSupportLevel.requiresUserAction && viewModel.status != .active {
             let settingsAction = UIAlertAction(title: "How to Enable JIT", style: .default) { [weak self] _ in
                 self?.presentJITEnableGuide()
             }
@@ -179,9 +189,18 @@ public final class JITStatusIndicatorViewController: UIViewController {
             PVToastManager.shared.show("JIT active — \(label)", type: .jit, duration: 4.0)
 
         case .unavailable:
-            // Persistent toast so the user always sees the guidance
+            // Persistent toast so the user always sees the guidance.
+            // In genuine App Store installs, avoid mentioning sideloading tools per guidelines.
+            // Sideloaded App Store builds (detected via bundle ID / entitlement checks) show the full message.
+            #if canImport(JITManager)
+            let unavailableMessage = DOLJitManager.isGenuinelyAppStoreDistributed()
+                ? "JIT required — performance or stability may be affected"
+                : "JIT required — enable via AltStore, SideJITServer, or StikDebug"
+            #else
+            let unavailableMessage = "JIT required — enable via AltStore, SideJITServer, or StikDebug"
+            #endif
             PVToastManager.shared.showPersistent(
-                "JIT required — enable via AltStore, SideJITServer, or StikDebug",
+                unavailableMessage,
                 id: jitUnavailableToastID,
                 type: .error,
                 icon: "bolt.slash.fill"
