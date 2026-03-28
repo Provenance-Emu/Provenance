@@ -641,7 +641,7 @@ public struct SaveImportWizardView: View {
                     try await SaveExporter.shared.importSaves(from: url, for: frozenGame)
                 } else {
                     importProgress = 0.5
-                    try importBatterySave(fileURL: url, game: frozenGame)
+                    try await importBatterySave(fileURL: url, game: frozenGame)
                 }
                 importProgress = 1.0
                 try? await Task.sleep(nanoseconds: 400_000_000)
@@ -655,16 +655,19 @@ public struct SaveImportWizardView: View {
         }
     }
 
-    private func importBatterySave(fileURL: URL, game: PVGame) throws {
+    private func importBatterySave(fileURL: URL, game: PVGame) async throws {
         guard let romURL = game.file?.url else {
             throw SaveExportError.invalidBundle("Game has no associated ROM file.")
         }
+        // game is frozen — safe to capture for background use
         let destDir = Paths.batterySavesPath(forROM: romURL)
         let destURL = destDir.appendingPathComponent(fileURL.lastPathComponent)
-        let fm = FileManager.default
-        try fm.createDirectory(at: destDir, withIntermediateDirectories: true)
-        if fm.fileExists(atPath: destURL.path) { try fm.removeItem(at: destURL) }
-        try fm.copyItem(at: fileURL, to: destURL)
+        try await Task.detached(priority: .userInitiated) {
+            let fm = FileManager.default
+            try fm.createDirectory(at: destDir, withIntermediateDirectories: true)
+            if fm.fileExists(atPath: destURL.path) { try fm.removeItem(at: destURL) }
+            try fm.copyItem(at: fileURL, to: destURL)
+        }.value
     }
 
     private func cleanupTempFile(_ url: URL) {
@@ -676,10 +679,9 @@ public struct SaveImportWizardView: View {
     // MARK: - Data loading
 
     private func loadAllGames() {
+        // Realm access must happen on the main thread; freeze objects for safe cross-thread use.
         Task { @MainActor in
-            allGames = await Task.detached(priority: .utility) {
-                PVGame.all.toArray().map { $0.isFrozen ? $0 : $0.freeze() }
-            }.value
+            allGames = PVGame.all.toArray().map { $0.isFrozen ? $0 : $0.freeze() }
         }
     }
 }

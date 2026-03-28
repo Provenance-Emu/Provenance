@@ -94,20 +94,23 @@ public final class SaveImportMatchingService: @unchecked Sendable {
         // Step 2: Filename heuristic across all library games
         let normalizedBundle = Self.normalize(url.deletingPathExtension().lastPathComponent)
 
-        let frozenGames: [PVGame] = await Task.detached(priority: .userInitiated) {
-            PVGame.all.toArray().map { $0.isFrozen ? $0 : $0.freeze() }
-        }.value
+        // Realm access must happen on the main thread (we are @MainActor here).
+        // Freeze objects before handing off to the background matching task.
+        let frozenGames: [PVGame] = PVGame.all.toArray().map { $0.isFrozen ? $0 : $0.freeze() }
 
-        var bestGame: PVGame?
-        var bestScore = 0
-
-        for game in frozenGames {
-            let score = Self.similarity(normalizedBundle, Self.normalize(game.title))
-            if score > bestScore {
-                bestScore = score
-                bestGame = game
+        // CPU-intensive scoring is safe to run on a background thread with frozen objects.
+        let (bestGame, bestScore) = await Task.detached(priority: .userInitiated) {
+            var best: PVGame?
+            var topScore = 0
+            for game in frozenGames {
+                let score = Self.similarity(normalizedBundle, Self.normalize(game.title))
+                if score > topScore {
+                    topScore = score
+                    best = game
+                }
             }
-        }
+            return (best, topScore)
+        }.value
 
         // Require ≥60% Jaccard token-overlap for a "probable" match
         if bestScore >= 60, let game = bestGame {
