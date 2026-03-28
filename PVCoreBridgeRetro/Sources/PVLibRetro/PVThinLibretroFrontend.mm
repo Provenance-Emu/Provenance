@@ -580,6 +580,11 @@ typedef struct PVThinLibretroSymbols {
     // Content info overrides from RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE
     NSArray<NSDictionary<NSString *, id> *> *_contentInfoOverrides;
 
+    // Memory map descriptors from RETRO_ENVIRONMENT_SET_MEMORY_MAPS (env 36).
+    // Stored as a deep copy so cheats/rcheevos can resolve emulated addresses.
+    struct retro_memory_descriptor *_memoryMapDescriptors;
+    unsigned _memoryMapCount;
+
     // Stable C-string storage for directory paths returned via environment callbacks.
     // Cores may cache the returned pointer, so we must keep the backing char* alive
     // for the entire core lifetime. Using strdup + free rather than NSString.UTF8String
@@ -2556,6 +2561,30 @@ static bool thin_environment(unsigned cmd, void *data) {
     return _contentInfoOverrides ?: @[];
 }
 
+- (unsigned)memoryMapCount {
+    return _memoryMapCount;
+}
+
+- (NSArray<NSDictionary<NSString *, id> *> *)memoryMapDescriptors {
+    if (!_memoryMapDescriptors || _memoryMapCount == 0) return @[];
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:_memoryMapCount];
+    for (unsigned i = 0; i < _memoryMapCount; i++) {
+        const struct retro_memory_descriptor *d = &_memoryMapDescriptors[i];
+        id ptrValue = d->ptr ? [NSValue valueWithPointer:d->ptr] : [NSNull null];
+        [result addObject:@{
+            @"flags": @(d->flags),
+            @"ptr": ptrValue,
+            @"offset": @(d->offset),
+            @"start": @((uint64_t)d->start),
+            @"select": @((uint64_t)d->select),
+            @"disconnect": @((uint64_t)d->disconnect),
+            @"len": @(d->len),
+            @"addrspace": d->addrspace ? [NSString stringWithUTF8String:d->addrspace] : @""
+        }];
+    }
+    return [result copy];
+}
+
 - (void)resetEmulation {
     if (_sym.retro_reset) {
         ILOG(@"ThinFrontend: retro_reset");
@@ -2634,6 +2663,12 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_netpacketCallback) {
         free(_netpacketCallback);
         _netpacketCallback = NULL;
+    }
+    // Free memory map descriptors
+    if (_memoryMapDescriptors) {
+        free(_memoryMapDescriptors);
+        _memoryMapDescriptors = NULL;
+        _memoryMapCount = 0;
     }
     [self teardownHardwareContext];
     _thinCurrentTLS = nil;
@@ -4532,15 +4567,38 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
 
         // ---- Memory maps ----
-        case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
+        case RETRO_ENVIRONMENT_SET_MEMORY_MAPS: {
+            const struct retro_memory_map *map = (const struct retro_memory_map *)data;
+            if (!map || !map->descriptors || map->num_descriptors == 0) return true;
+            if (_memoryMapDescriptors) {
+                free(_memoryMapDescriptors);
+            }
+            _memoryMapCount = map->num_descriptors;
+            size_t sz = _memoryMapCount * sizeof(struct retro_memory_descriptor);
+            _memoryMapDescriptors = (struct retro_memory_descriptor *)malloc(sz);
+            memcpy(_memoryMapDescriptors, map->descriptors, sz);
+            ILOG(@"ThinEnv SET_MEMORY_MAPS: %u descriptors", _memoryMapCount);
             return true;
+        }
 
         // ---- Fast-forward / throttle ----
         case RETRO_ENVIRONMENT_GET_FASTFORWARDING:
             if (data) *(bool *)data = (_speedMultiplier > 1.5);
             return true;
-        case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE:
+        case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE: {
+            if (!data) return true;
+            const struct retro_fastforwarding_override *ff =
+                (const struct retro_fastforwarding_override *)data;
+            if (ff->fastforward) {
+                double ratio = (ff->ratio > 1.0f) ? (double)ff->ratio : 0.0;
+                self.speedMultiplier = (ratio > 0.0) ? ratio : 5.0;
+                DLOG(@"ThinEnv SET_FASTFORWARDING_OVERRIDE: fast-forward ON (ratio=%.1f)", self.speedMultiplier);
+            } else {
+                self.speedMultiplier = 1.0;
+                DLOG(@"ThinEnv SET_FASTFORWARDING_OVERRIDE: fast-forward OFF");
+            }
             return true;
+        }
         case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE:
             if (data) *(float *)data = (float)_rawAVInfo.timing.fps;
             return true;

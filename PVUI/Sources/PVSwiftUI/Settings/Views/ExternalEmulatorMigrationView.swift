@@ -150,13 +150,17 @@ public struct ExternalEmulatorMigrationView: View {
 
             #if os(tvOS)
             Text("migration.header.subtitle.tvos", bundle: .module)
-            #else
-            Text("migration.header.subtitle.ios", bundle: .module)
-            #endif
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 8)
+            #else
+            Text("migration.header.subtitle.ios", bundle: .module)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
+            #endif
         }
         .padding(.bottom, 8)
     }
@@ -194,22 +198,27 @@ public struct ExternalEmulatorMigrationView: View {
                             .foregroundStyle(.secondary)
                         #if os(tvOS)
                         Text("migration.empty.body.tvos", bundle: .module)
-                        #else
-                        Text("migration.empty.body.ios", bundle: .module)
-                        #endif
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
-                        #if os(tvOS)
                         Text("migration.empty.footer.tvos", bundle: .module)
-                        #else
-                        Text("migration.empty.footer.ios", bundle: .module)
-                        #endif
                             .font(.caption)
                             .foregroundStyle(.secondary.opacity(0.7))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
+                        #else
+                        Text("migration.empty.body.ios", bundle: .module)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                        Text("migration.empty.footer.ios", bundle: .module)
+                            .font(.caption)
+                            .foregroundStyle(.secondary.opacity(0.7))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                        #endif
                     }
                     .padding(.vertical, 20)
                 )
@@ -230,7 +239,7 @@ public struct ExternalEmulatorMigrationView: View {
                         HStack {
                             Image(systemName: emulator.symbolName)
                                 .frame(width: 24)
-                                .foregroundStyle(.retroBlue)
+                                .foregroundStyle(Color.retroBlue)
                             Text(emulator.displayName)
                                 .font(.subheadline)
                                 .foregroundStyle(.primary)
@@ -264,28 +273,32 @@ public struct ExternalEmulatorMigrationView: View {
                             .frame(width: 44, height: 44)
                         #if os(tvOS)
                         Image(systemName: "wifi")
-                        #else
-                        Image(systemName: "folder.badge.plus")
-                        #endif
                             .font(.system(size: 18))
                             .foregroundStyle(.blue)
+                        #else
+                        Image(systemName: "folder.badge.plus")
+                            .font(.system(size: 18))
+                            .foregroundStyle(.blue)
+                        #endif
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         #if os(tvOS)
                         Text("migration.manual.title.tvos", bundle: .module)
-                        #else
-                        Text("migration.manual.title.ios", bundle: .module)
-                        #endif
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.primary)
-                        #if os(tvOS)
                         Text("migration.manual.subtitle.tvos", bundle: .module)
-                        #else
-                        Text("migration.manual.subtitle.ios", bundle: .module)
-                        #endif
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
+                        #else
+                        Text("migration.manual.title.ios", bundle: .module)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Text("migration.manual.subtitle.ios", bundle: .module)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                        #endif
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -514,7 +527,7 @@ struct EmulatorMigrationGuideView: View {
     private var saveFormatNote: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "info.circle.fill")
-                .foregroundStyle(.retroBlue)
+                .foregroundStyle(Color.retroBlue)
                 .font(.subheadline)
             VStack(alignment: .leading, spacing: 4) {
                 Text("migration.save_formats.title", bundle: .module)
@@ -701,7 +714,7 @@ struct ManualFileImportGuideView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .foregroundStyle(.retroBlue)
+                    .foregroundStyle(Color.retroBlue)
                 Text(title)
                     .font(.headline)
             }
@@ -751,7 +764,7 @@ private struct StepRowView: View {
                     .frame(width: 28, height: 28)
                 Text("\(number)")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.retroBlue)
+                    .foregroundStyle(Color.retroBlue)
             }
             Text(text)
                 .font(.subheadline)
