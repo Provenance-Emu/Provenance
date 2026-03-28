@@ -18,6 +18,7 @@ public extension UTI {
     nonisolated(unsafe) static let cheat = UTI(rawValue: "com.provenance.cheat")
     nonisolated(unsafe) static let artwork = UTI(rawValue: "com.provenance.artwork")
     nonisolated(unsafe) static let savestate = UTI(rawValue: "com.provenance.savestate")
+    nonisolated(unsafe) static let pvsave = UTI(rawValue: "com.provenance.pvsave")
     nonisolated(unsafe) static let sevenZipArchive = UTI(rawValue: "org.7-zip.7-zip-archive")
     nonisolated(unsafe) static let rar = UTI(rawValue: "com.rarlab.rar-archive")
 
@@ -106,6 +107,8 @@ public extension UTType {
     static let cheat: UTType = UTType(exportedAs: "com.provenance.cheat", conformingTo: .data)
     static let artwork: UTType = UTType(exportedAs: "com.provenance.artwork", conformingTo: .image)
     static let savestate: UTType = UTType(exportedAs: "com.provenance.savestate", conformingTo: .data)
+    /// `.pvsave` bundle format — a zip archive containing a v2 manifest + save state files.
+    static let pvsave: UTType = UTType(exportedAs: "com.provenance.pvsave", conformingTo: .zip)
     // Archive types — imported (owned by the archive format standards)
     static let sevenZipArchive: UTType = UTType(importedAs: "org.7-zip.7-zip-archive", conformingTo: .archive)
     static let rar: UTType = UTType(importedAs: "com.rarlab.rar-archive", conformingTo: .archive)

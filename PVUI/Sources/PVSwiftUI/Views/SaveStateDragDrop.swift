@@ -73,8 +73,10 @@ public struct SaveStateDragModifier: ViewModifier {
 // MARK: - Save Bundle Drop Target
 
 /// Accepted UTTypes for save-bundle drop target.
-/// We accept general zip archives (public.zip-archive) and explicit file URLs.
+/// We accept .pvsave bundles (v2), legacy .zip bundles (v1), and explicit file URLs.
 private let saveBundleAcceptedTypes: [UTType] = [
+    UTType(exportedAs: "com.provenance.pvsave", conformingTo: .zip),
+    UTType(filenameExtension: "pvsave") ?? .data,
     UTType(filenameExtension: "zip") ?? .data,
     .fileURL,
     .data,
@@ -199,10 +201,11 @@ public struct SaveBundleDropModifier: ViewModifier {
                 let stableURL = try stableCopy(of: sourceURL)
                 defer { try? FileManager.default.removeItem(at: stableURL.deletingLastPathComponent()) }
 
-                guard stableURL.pathExtension.lowercased() == "zip" else {
-                    WLOG("SaveBundleDropModifier: dropped file is not a zip: \(stableURL.lastPathComponent)")
+                let ext = stableURL.pathExtension.lowercased()
+                guard ext == "zip" || ext == "pvsave" else {
+                    WLOG("SaveBundleDropModifier: dropped file is not a save bundle: \(stableURL.lastPathComponent)")
                     await MainActor.run {
-                        onResult(.failure(SaveExportError.invalidBundle("Dropped file is not a .zip save-export bundle.")))
+                        onResult(.failure(SaveExportError.invalidBundle("Dropped file is not a .pvsave or .zip save-export bundle.")))
                     }
                     return
                 }
