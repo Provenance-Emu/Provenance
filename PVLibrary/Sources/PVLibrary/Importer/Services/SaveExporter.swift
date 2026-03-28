@@ -158,6 +158,8 @@ public final class SaveExporter: @unchecked Sendable {
             }
         }()
 
+
+
         // Track how many save files are actually copied so we can error if nothing ends up in the zip.
         var filesCopied = 0
         var stateEntries: [SaveBundleManifestV2.SaveStateEntry] = []
