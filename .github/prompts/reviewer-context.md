@@ -378,6 +378,14 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - **Flag 🟠 MAJOR** if `RomDatabase.sharedInstance.realm` is accessed from a non-main-actor context (e.g. `Task.detached`).
 - **Flag 🟡 MINOR** if new batch operations are added without a `NormalizeTitlePreviewRow`-style preview step for destructive changes.
 
+### Save Import/Export Protocol Pattern (added in #3557)
+- `SaveBundleExporting` and `SaveBundleImporting` protocols in `PVLibrary/Sources/PVLibrary/Importer/Services/SaveImport/SaveImportExportProtocols.swift` — use `gameID: String` (ROM MD5) as game identifier, not a `PVGame` object.
+- `SaveExporter` does **not** yet conform to these protocols (pending a Realm lookup helper in #3552). The TODO comment on `SaveExporter` is intentional — do not flag it.
+- `KnownEmulator` enum in `SaveImport/KnownEmulator.swift` — registry of third-party emulators. `isInstalled` is `@MainActor` and returns `false` on tvOS/macOS/Linux (URL-scheme probing requires UIKit + iOS). Always guard with `#if canImport(UIKit) && !os(tvOS)`.
+- `SaveBundleManifestV2` — schema v2 encodes `gameMD5` under the JSON key `"game"` (not `"gameMD5"`) for v1 backward compatibility. Do NOT rename this CodingKey.
+- **Flag 🔴 CRITICAL** if any code changes the `gameMD5 = "game"` CodingKey in `SaveBundleManifestV2` — v1 readers depend on this key name.
+- **Flag 🟠 MAJOR** if `SaveExporter` writes the old flat `[String: String]` manifest — it must use `SaveBundleManifestV2.jsonData()`.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:

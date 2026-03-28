@@ -121,14 +121,14 @@ public final class SaveExporter: @unchecked Sendable {
         try fm.createDirectory(at: stagingDir, withIntermediateDirectories: true)
 
         // Build per-save-state index for the v2 manifest
+        let stateISO = ISO8601DateFormatter()
         let stateEntries: [SaveBundleManifestV2.SaveStateEntry] = frozenGame.saveStates.compactMap { state in
             guard let fileURL = state.file?.url,
-                  FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
-            let isoFormatter = ISO8601DateFormatter()
+                  fm.fileExists(atPath: fileURL.path) else { return nil }
             return SaveBundleManifestV2.SaveStateEntry(
                 filename: fileURL.lastPathComponent,
                 screenshotFilename: state.image?.url?.lastPathComponent,
-                date: isoFormatter.string(from: state.date),
+                date: stateISO.string(from: state.date),
                 isAutosave: state.isAutosave,
                 userDescription: state.userDescription,
                 coreIdentifier: state.core?.identifier
@@ -141,7 +141,7 @@ public final class SaveExporter: @unchecked Sendable {
                   let files = try? fm.contentsOfDirectory(atPath: dir.path) else { return nil }
             return files.map { filename in
                 let fileURL = dir.appendingPathComponent(filename)
-                let size = (try? FileManager.default.attributesOfItem(atPath: fileURL.path))?[.size] as? Int
+                let size = (try? fm.attributesOfItem(atPath: fileURL.path))?[.size] as? Int
                 return SaveBundleManifestV2.BatterySaveEntry(filename: filename, sizeBytes: size)
             }
         }()
@@ -283,7 +283,7 @@ public final class SaveExporter: @unchecked Sendable {
         do {
             manifest = try SaveBundleManifestV2.parse(from: manifestData)
         } catch let parseError as SaveBundleManifestParseError {
-            throw SaveExportError.invalidBundle(parseError.localizedDescription ?? "Invalid manifest.")
+            throw SaveExportError.invalidBundle(parseError.localizedDescription)
         }
 
         guard !manifest.gameMD5.isEmpty else {
