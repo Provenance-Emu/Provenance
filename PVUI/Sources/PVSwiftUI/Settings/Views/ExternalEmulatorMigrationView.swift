@@ -5,13 +5,54 @@
 //  Created by Joseph Mattiello on 3/28/26.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Guides users through importing saves from Delta, RetroArch, Manic Emu,
+//  Guides users through importing saves from Delta, RetroArch, Mantic Emu,
 //  PPSSPP, and Gamma into Provenance.
 //
 
 import SwiftUI
-import PVPrimitives
+import PVLibrary
+import PVUIBase
 import PVThemes
+
+// MARK: - KnownEmulator UI extensions
+
+/// UI-layer properties for the migration guide.
+/// These belong in PVUI, not in PVLibrary, to keep PVLibrary free of SwiftUI/UIKit display concerns.
+private extension KnownEmulator {
+    /// SF Symbol name that best represents this emulator's primary platform(s).
+    var symbolName: String {
+        switch self {
+        case .delta, .deltaLite: return "gamecontroller.fill"
+        case .manticEmu:         return "bolt.fill"
+        case .retroArch:         return "cpu.fill"
+        case .ppsspp:            return "memorychip"
+        case .gamma:             return "squareshape.dotted.squareshape"
+        }
+    }
+
+    /// Short description of which systems/games this emulator handles.
+    var systemSummary: String {
+        switch self {
+        case .delta, .deltaLite: return "NES, SNES, N64, GBA, GBC, DS"
+        case .manticEmu:         return "GBA, NES, SNES, Genesis"
+        case .retroArch:         return "60+ systems"
+        case .ppsspp:            return "PlayStation Portable (PSP)"
+        case .gamma:             return "Game Boy, Game Boy Color"
+        }
+    }
+
+    /// Returns all emulators detected as installed on the current device.
+    @MainActor
+    static var installedEmulators: [KnownEmulator] {
+        KnownEmulator.allCases.filter { $0.isInstalled }
+    }
+}
+
+// MARK: - KnownEmulator + Identifiable (for sheet(item:))
+
+extension KnownEmulator: Identifiable {
+    public var id: String { rawValue }
+}
 
 // MARK: - Root view
 
@@ -30,7 +71,7 @@ public struct ExternalEmulatorMigrationView: View {
     public var body: some View {
         ZStack {
             RetroTheme.retroBackground
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 20) {
@@ -121,7 +162,7 @@ public struct ExternalEmulatorMigrationView: View {
                         Image(systemName: "app.badge.questionmark")
                             .font(.system(size: 32))
                             .foregroundColor(.secondary)
-                        Text("Delta, RetroArch, PPSSPP, Manic Emu, and Gamma were not found on this device.")
+                        Text("Delta, RetroArch, PPSSPP, Mantic Emu, and Gamma were not found on this device.")
                             .font(.footnote)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -141,7 +182,8 @@ public struct ExternalEmulatorMigrationView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                ForEach(KnownEmulator.allCases, id: \.rawValue) { emulator in
+                // Show one entry per distinct app (skip deltaLite — same steps as delta)
+                ForEach(KnownEmulator.allCases.filter { $0 != .deltaLite }, id: \.rawValue) { emulator in
                     Button {
                         selectedEmulator = emulator
                     } label: {
@@ -173,19 +215,40 @@ public struct ExternalEmulatorMigrationView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(title: "Manual Import", icon: "folder.fill", color: .blue)
 
-            EmulatorRowView(
-                icon: "folder.badge.plus",
-                iconColor: .blue,
-                title: "Import via Files.app",
-                subtitle: "Copy .sav / .srm / .state files into Provenance's folder using the Files app",
-                action: { selectedEmulator = nil }
-            )
-            .overlay(
-                NavigationLink(destination: ManualFileImportGuideView()) {
-                    EmptyView()
+            NavigationLink(destination: ManualFileImportGuideView()) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.blue.opacity(0.15))
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "folder.badge.plus")
+                            .font(.system(size: 18))
+                            .foregroundColor(.blue)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Import via Files.app")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.primary)
+                        Text("Copy .sav / .srm / .state files into Provenance's folder using the Files app")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.secondary)
                 }
-                .opacity(0)
-            )
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(Color.white.opacity(0.06))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.blue.opacity(0.2), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -211,12 +274,6 @@ public struct ExternalEmulatorMigrationView: View {
     }
 }
 
-// MARK: - KnownEmulator + Identifiable (for sheet(item:))
-
-extension KnownEmulator: Identifiable {
-    public var id: String { rawValue }
-}
-
 // MARK: - Emulator row
 
 private struct EmulatorRowView: View {
@@ -231,14 +288,6 @@ private struct EmulatorRowView: View {
         self.iconColor = .retroBlue
         self.title = emulator.displayName
         self.subtitle = emulator.systemSummary
-        self.action = action
-    }
-
-    init(icon: String, iconColor: Color, title: String, subtitle: String, action: @escaping () -> Void) {
-        self.icon = icon
-        self.iconColor = iconColor
-        self.title = title
-        self.subtitle = subtitle
         self.action = action
     }
 
@@ -293,7 +342,7 @@ struct EmulatorMigrationGuideView: View {
     var body: some View {
         ZStack {
             RetroTheme.retroBackground
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
@@ -378,7 +427,7 @@ struct EmulatorMigrationGuideView: View {
                 Text("Save File Extensions")
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(.primary)
-                Text("Look for files ending in: \(emulator.saveExtensions.map { ".\($0)" }.joined(separator: ", "))")
+                Text("Look for files ending in: \(emulator.saveFileExtensions.map { ".\($0)" }.joined(separator: ", "))")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 if emulator == .retroArch {
@@ -397,7 +446,7 @@ struct EmulatorMigrationGuideView: View {
 
     private var exportSteps: [String] {
         switch emulator {
-        case .delta:
+        case .delta, .deltaLite:
             return [
                 "Open Delta and go to the game you want to export.",
                 "Long-press the game thumbnail to reveal the context menu.",
@@ -406,9 +455,9 @@ struct EmulatorMigrationGuideView: View {
                 "Use the share sheet to send the file to Files.app or AirDrop to your Mac.",
                 "Repeat for each game you want to migrate."
             ]
-        case .manic:
+        case .manticEmu:
             return [
-                "Open Manic Emu and navigate to your game library.",
+                "Open Mantic Emu and navigate to your game library.",
                 "Long-press a game to bring up options.",
                 "Tap 'Export Save' or 'Share Save'.",
                 "Save the .sav file to the Files app (iCloud Drive or local storage).",
@@ -462,7 +511,7 @@ struct ManualFileImportGuideView: View {
     var body: some View {
         ZStack {
             RetroTheme.retroBackground
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
@@ -586,10 +635,4 @@ private struct StepRowView: View {
         }
         .padding(.vertical, 2)
     }
-}
-
-// MARK: - RetroTheme helper (matches existing pattern)
-
-private enum RetroTheme {
-    static var retroBackground: Color { Color.black }
 }

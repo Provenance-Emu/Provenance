@@ -2454,7 +2454,7 @@ private struct LibrarySection: View {
 
             NavigationLink(destination: ExternalEmulatorMigrationView()) {
                 SettingsRow(title: "Import from Another Emulator",
-                            subtitle: "Step-by-step guide to migrate saves from Delta, RetroArch, Manic, PPSSPP, or Gamma.",
+                            subtitle: "Step-by-step guide to migrate saves from Delta, RetroArch, Mantic Emu, PPSSPP, or Gamma.",
                             icon: .sfSymbol("arrow.triangle.2.circlepath"))
             }
             #if os(tvOS)
