@@ -203,6 +203,32 @@ extension NetplayGKMatchCoordinator: GKMatchDelegate {
             self.receiveHostPort(port, from: player)
         }
     }
+
+    nonisolated func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
+        switch state {
+        case .disconnected:
+            WLOG("[GameKit] Player '\(player.displayName)' disconnected from match")
+            Task { @MainActor in
+                self.connectionError = "\(player.displayName) disconnected"
+                self.isExchangingAddresses = false
+            }
+        case .connected:
+            ILOG("[GameKit] Player '\(player.displayName)' connected to match")
+        case .unknown:
+            WLOG("[GameKit] Player '\(player.displayName)' connection state unknown")
+        @unknown default:
+            break
+        }
+    }
+
+    nonisolated func match(_ match: GKMatch, didFailWithError error: Error?) {
+        let message = error?.localizedDescription ?? "Unknown match error"
+        ELOG("[GameKit] Match failed: \(message)")
+        Task { @MainActor in
+            self.connectionError = message
+            self.isExchangingAddresses = false
+        }
+    }
 }
 
 // MARK: - GKMatchmakerViewController wrapper

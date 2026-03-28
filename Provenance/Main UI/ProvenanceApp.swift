@@ -517,7 +517,7 @@ extension ProvenanceApp {
                 ELOG("netplay: unrecognised path '\(components.path)' in \(url.absoluteString)")
                 return false
             }
-            guard let hostValue = components.queryItems?.first(where: { $0.name == "host" })?.value,
+            guard let hostValue = components.queryItems?.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.host.rawValue })?.value,
                   !hostValue.isEmpty else {
                 ELOG("netplay/join: missing required 'host' parameter in \(url.absoluteString)")
                 return false
