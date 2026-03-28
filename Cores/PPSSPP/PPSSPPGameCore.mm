@@ -92,6 +92,35 @@ private:
 
 @implementation PVPPSSPPGameCore
 
+/// Returns the PSP system directory (Documents/System/PSP on iOS, Caches/System/PSP on tvOS).
+/// Creates the directory if needed.
+///
+/// tvOS App Store guidelines forbid using the Documents directory; Caches must be used instead.
+/// Mirrors the `#if TARGET_OS_TV` pattern used throughout the PPSSPP codebase
+/// (see `DarwinFileSystemServices.mm` and `PVPPSSPPCore.mm`).
+///
+/// On tvOS the Caches directory can be purged by the OS at any time. All bundle-derived
+/// assets placed here (e.g. flash0 fonts) must be re-seeded on every core launch, which
+/// `loadFileAtPath:` already does via the font copy loop.
+- (NSString *)pspSystemDirectory {
+#if TARGET_OS_TV
+    // tvOS must use Caches — Documents is not permitted by App Store guidelines.
+    NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+#else
+    NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+#endif
+    NSString *pspDir = [basePath stringByAppendingPathComponent:@"System/PSP"];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] createDirectoryAtPath:pspDir
+                                 withIntermediateDirectories:YES
+                                                  attributes:nil
+                                                       error:&error];
+    if (error) {
+        NSLog(@"[PPSSPP] Error creating PSP system directory: %@", error.localizedDescription);
+    }
+    return pspDir;
+}
+
 - (id)init
 {
     self = [super init];
@@ -116,18 +145,31 @@ private:
 {
     NSBundle *coreBundle = [NSBundle mainBundle];
     NSString *resourcePath = [coreBundle resourcePath];
-    NSString *supportDirectoryPath = self.batterySavesPath;
+    NSString *supportDirectoryPath = [self pspSystemDirectory];
 
-    // Copy over font files if needed
+    // Copy over font files if needed.
+    // The font destination directory (System/PSP/font/) must be created explicitly before
+    // copying — pspSystemDirectory only creates System/PSP/. This also serves as tvOS cache
+    // recovery: if the OS purges Caches, pspSystemDirectory recreates System/PSP/ and this
+    // block recreates System/PSP/font/ and re-seeds the fonts from the bundle every launch.
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *fontSourceDirectory = [resourcePath stringByAppendingString:@"/flash0/font/"];
-    NSString *fontDestinationDirectory = [supportDirectoryPath stringByAppendingString:@"/font/"];
+    NSString *fontSourceDirectory = [resourcePath stringByAppendingPathComponent:@"flash0/font"];
+    NSString *fontDestinationDirectory = [supportDirectoryPath stringByAppendingPathComponent:@"font"];
+    NSError *fontDirError = nil;
+    [fileManager createDirectoryAtPath:fontDestinationDirectory
+           withIntermediateDirectories:YES
+                            attributes:nil
+                                 error:&fontDirError];
+    if (fontDirError) {
+        NSLog(@"[PPSSPP] Error creating font directory: %@", fontDirError.localizedDescription);
+    }
     NSArray *fontFiles = [fileManager contentsOfDirectoryAtPath:fontSourceDirectory error:nil];
     for(NSString *font in fontFiles)
     {
-        NSString *fontSource = [fontSourceDirectory stringByAppendingString:font];
-        NSString *fontDestination = [fontDestinationDirectory stringByAppendingString:font];
-
+        NSString *fontSource = [fontSourceDirectory stringByAppendingPathComponent:font];
+        NSString *fontDestination = [fontDestinationDirectory stringByAppendingPathComponent:font];
+        // copyItemAtPath silently fails if destination already exists — that's intentional;
+        // we only need to seed missing fonts (e.g. first launch or after tvOS cache purge).
         [fileManager copyItemAtPath:fontSource toPath:fontDestination error:nil];
     }
 
@@ -136,7 +178,7 @@ private:
     g_Config.Load("");
 
     NSString *directoryString      = [supportDirectoryPath stringByAppendingString:@"/"];
-    g_Config.currentDirectory      = Path([directoryString cStringUsingEncoding:kCFStringEncodingUTF8]);
+    g_Config.currentDirectory      = Path(directoryString.fileSystemRepresentation);
     g_Config.defaultCurrentDirectory = Path(directoryString.fileSystemRepresentation);
     g_Config.memStickDirectory     = Path(directoryString.fileSystemRepresentation);
     g_Config.flash0Directory       = Path(directoryString.fileSystemRepresentation);

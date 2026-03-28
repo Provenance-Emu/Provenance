@@ -18,6 +18,7 @@
 //
 
 #import "PVThinLibretroFrontend.h"
+#import <PVLibRetro/PVLibRetro-Swift.h>
 
 @import Foundation;
 @import QuartzCore;   // CACurrentMediaTime
@@ -1878,6 +1879,67 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize frontendDelegate = _frontendDelegate;
 // Note: controllerPortInfo is a readonly property with an explicit getter below; no @synthesize needed.
 
+// MARK: - System directory helpers
+
+/// Returns the system-specific path for this core (e.g. Documents/System/PSP for PPSSPP).
+/// Falls back to BIOSPath if no system-specific directory is defined.
+/// Also ensures the directory exists.
+///
+/// The short directory names come from `SystemIdentifier.systemDirectoryName` in
+/// `PVPrimitives` — add new systems there; no changes needed here.
+///
+/// Base directory is derived from the already-correct `BIOSPath` (set by PVEmulatorCore before
+/// core start) so that app-group containers and tvOS Documents→Caches substitution are handled
+/// automatically. Falls back to `NSSearchPathForDirectoriesInDomains` (Caches on tvOS,
+/// Documents on iOS/macOS) when BIOSPath is unavailable, which shouldn't happen in practice.
+///
+/// On tvOS the OS may purge Caches at any time; callers that place bundle-derived assets here
+/// (e.g. PPSSPP fonts) must re-seed them on every core launch so the directory is always valid.
+- (NSString *)_systemSpecificDirectory {
+    // Delegate to the Swift SystemIdentifier enum — single source of truth.
+    // PVSystemDirectoryHelper wraps SystemIdentifier.systemDirectoryName and is
+    // exposed to ObjC via PVLibRetro-Swift.h.
+    NSString *sysID = self.systemIdentifier;
+    NSString *shortName = [PVSystemDirectoryHelper systemDirectoryNameForIdentifier:sysID];
+    if (!shortName) {
+        // No dedicated system dir for this system — fall back to BIOSPath
+        return self.BIOSPath ?: _biosPath;
+    }
+    // Derive the base documents directory from BIOSPath.
+    // BIOSPath is set by PVEmulatorCore to "<docs>/BIOS/<systemIdentifier>" (e.g.
+    // ".../Documents/BIOS/com.provenance.psp"), so we strip two path components to
+    // reach the documents root ("<docs>"), then append "System/<Name>".
+    // This handles tvOS (BIOSPath is under Caches), app-group containers, and iCloud
+    // Drive paths without any platform-specific branching here.
+    NSString *biosPath = self.BIOSPath ?: _biosPath;
+    // Strip "<systemIdentifier>" then "BIOS" to reach the documents root.
+    NSString *baseDir = biosPath
+        ? biosPath.stringByDeletingLastPathComponent.stringByDeletingLastPathComponent
+        : nil;
+    if (!baseDir || baseDir.length == 0 || [baseDir isEqualToString:@"/"]) {
+        // BIOSPath unavailable (shouldn't happen in normal operation).
+        // Use the platform-appropriate standard directory. Note: this does NOT account for
+        // app-group containers, but BIOSPath should always be set in practice.
+#if TARGET_OS_TV
+        baseDir = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
+#else
+        baseDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+#endif
+    }
+    NSString *systemDir = [baseDir stringByAppendingPathComponent:
+                           [NSString stringWithFormat:@"System/%@", shortName]];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] createDirectoryAtPath:systemDir
+                                 withIntermediateDirectories:YES
+                                                  attributes:nil
+                                                       error:&error];
+    if (error) {
+        ELOG(@"ThinFrontend: could not create system dir %@: %@", systemDir, error.localizedDescription);
+    }
+    DLOG(@"ThinFrontend: system dir for %@ → %@", sysID, systemDir);
+    return systemDir;
+}
+
 // MARK: - MIDI routing (class-level, called from Swift MIDIDeviceManager observation)
 
 /// Update the cached list of MIDI output destination endpoint refs.
@@ -3584,7 +3646,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         // Use inherited BIOSPath/saveStatePath from PVCoreObjCBridge (set by PVEmulatorCore)
         // rather than the local _biosPath/_savePath which may not be set.
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
-            NSString *sysDir = self.BIOSPath ?: _biosPath;
+            NSString *sysDir = [self _systemSpecificDirectory];
             if (!sysDir) return false;
             // Cache the C string so the pointer stays valid for the core's lifetime.
             if (_systemDirCString) free(_systemDirCString);

@@ -354,6 +354,35 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         return mfg.isEmpty ? systemName : "\(mfg) - \(systemName)"
     }
 
+    /// Short directory name used in the `System/` folder for system-specific files.
+    ///
+    /// Returns a conventional short name used by emulators to find BIOS and firmware files
+    /// (e.g. PPSSPP looks for `flash0/` here, melonDS for `nds/`, etc.).
+    /// Returns `nil` for systems that don't require a dedicated system directory.
+    ///
+    /// Example paths: `Documents/System/PSP`, `Documents/System/NDS`, `Documents/System/3DS`
+    ///
+    /// - Note: These names follow conventions used by the wider emulation community.
+    ///   Part of Epic #2725 — future UI will let users manage these directories.
+    ///   ObjC callers should use `PVSystemDirectoryHelper.systemDirectoryName(forIdentifier:)`
+    ///   in `PVCoreBridgeRetro` rather than duplicating this table.
+    public var systemDirectoryName: String? {
+        switch self {
+        case .PSP:           return "PSP"
+        case .DS:            return "NDS"
+        case ._3DS:          return "3DS"
+        case .PS2:           return "PS2"
+        case .Dreamcast:     return "DC"
+        case .Saturn:        return "Saturn"
+        case .N64:           return "N64"
+        case .GameCube:      return "GC"
+        case .Wii:           return "Wii"
+        case .AtariST:       return "AtariST"
+        case .DOS:           return "DOS"
+        default:             return nil
+        }
+    }
+
     // Add Comparable implementation
     public static func < (lhs: SystemIdentifier, rhs: SystemIdentifier) -> Bool {
         lhs.fullName < rhs.fullName

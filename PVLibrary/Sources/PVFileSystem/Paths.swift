@@ -136,6 +136,64 @@ public struct Paths {
     public static var patchesPath: URL { get {
         return URL.documentsiCloudOrLocalPath.appendingPathComponent("Patches", isDirectory: true)
     }}
+
+    /// Root `System/` directory for per-console system files (BIOS, firmware, fonts, etc.)
+    ///
+    /// Structured as `Documents/System/<SystemName>/` on iOS/macOS and
+    /// `Library/Caches/System/<SystemName>/` on tvOS (App Store guidelines prohibit
+    /// using `Documents` on tvOS).
+    ///
+    /// Example children:
+    /// - `System/PSP/`   — PPSSPP flash0 fonts and MemStick data
+    /// - `System/NDS/`   — Nintendo DS firmware (nds_bios_arm7.bin, etc.)
+    /// - `System/3DS/`   — Citra/Lime3DS system files
+    ///
+    /// **tvOS note:** The OS may purge `Caches` at any time.
+    /// - Bundle-derived assets (e.g. PPSSPP flash0 fonts) are re-seeded from the app bundle
+    ///   on every core launch — no special recovery needed for those.
+    /// - User-placed firmware/BIOS files are at risk of loss. TODO(#2725): extend the CloudKit
+    ///   BIOS syncer to cover `System/` subdirectories so they can be restored after a purge.
+    ///
+    /// Part of Epic #2725 — future UI will let users manage these directories.
+    ///
+    /// Should be called on BG Thread (iCloud blocks).
+    public static var systemPath: URL { get {
+#if os(tvOS)
+        // tvOS must use Caches — Documents is not permitted by App Store guidelines.
+        return URL.cachesPath.appendingPathComponent("System", isDirectory: true)
+#else
+        return URL.documentsiCloudOrLocalPath.appendingPathComponent("System", isDirectory: true)
+#endif
+    }}
+
+    /// Returns the system-specific path for a given short name (e.g. "PSP", "NDS").
+    /// Creates the directory if it does not exist.
+    /// Should be called on BG Thread (iCloud blocks).
+    public static func systemPath(forSystemName name: String) -> URL {
+        let path = systemPath.appendingPathComponent(name, isDirectory: true)
+        do {
+            try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            ELOG("Error creating system directory at \(path.path): \(error.localizedDescription)")
+        }
+        return path
+    }
+
+    /// Returns the system-specific path for a `SystemIdentifier`, or `nil` if none is defined.
+    /// Creates the directory if it does not exist.
+    /// Should be called on BG Thread (iCloud blocks).
+    public static func systemPath(forSystem system: SystemIdentifier) -> URL? {
+        guard let name = system.systemDirectoryName else { return nil }
+        return systemPath(forSystemName: name)
+    }
+
+    /// Returns the system-specific path for a system identifier string, or `nil` if none is defined.
+    /// Creates the directory if it does not exist.
+    /// Should be called on BG Thread (iCloud blocks).
+    public static func systemPath(forSystemIdentifier identifier: String) -> URL? {
+        guard let system = SystemIdentifier(rawValue: identifier) else { return nil }
+        return systemPath(forSystem: system)
+    }
 }
 
 public extension Paths {
