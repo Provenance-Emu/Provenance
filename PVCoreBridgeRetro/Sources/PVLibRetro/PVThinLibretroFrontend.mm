@@ -3642,6 +3642,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
             NSString *sysDir = [self _systemSpecificDirectory];
             if (!sysDir) return false;
+            // Cache the C string so the pointer stays valid for the core's lifetime.
             if (_systemDirCString) free(_systemDirCString);
             _systemDirCString = strdup(sysDir.UTF8String);
             if (data) *(const char **)data = _systemDirCString;
