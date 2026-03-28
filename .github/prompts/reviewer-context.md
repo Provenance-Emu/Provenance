@@ -329,6 +329,17 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - `LightGunCrosshairStyle` enum in `PVSettings/Settings/Model/LightGunCrosshairStyle.swift` — persisted via `Defaults.Keys.lightGunCrosshairStyle` (default `.crosshair`).
 - `EmulatorWithSkinView` gates the overlay on `coreSupportsLightGun` — a `@State` Bool set on `.onAppear` by casting `coreInstance` to `LightGunResponder`. The overlay has `.allowsHitTesting(false)` so it never intercepts touch input.
 - **Do not** remove the `.allowsHitTesting(false)` modifier — without it the overlay will block all touch input to the game screen.
+
+### RetroArch Thick Wrapper Light Gun Pattern (added in #3536)
+- `PVRetroArchCoreCore` (thick RetroArch wrapper) conforms to `LightGunResponder` via `PVRetroArchCore+LightGun.swift`. Light gun state flows: Swift `lightGunMovedToPoint` → ObjC `setLightGunX:y:offscreen:` (bridge category) → C `pv_lightgun_set_position()` → `_Atomic` globals → `cocoa_input_state(RETRO_DEVICE_LIGHTGUN, ...)`.
+- `_Atomic` globals (`s_lightgun_x/y`, `s_lightgun_offscreen`, etc.) in `PVRetroArchCore+Controls.m` provide lock-free thread safety. The three stores in `pv_lightgun_set_position` are NOT an atomic triple — at most a one-frame position blip, which is acceptable for lightgun gameplay.
+- `pv_core_declares_lightgun_device()` in `PVRetroArchCoreCapabilities.m` walks `runloop_state_get_ptr()->system.ports` to detect `RETRO_DEVICE_LIGHTGUN` (id=4) in the core's `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO` data. Call only AFTER `retro_load_game`.
+- `IS_OFFSCREEN` returns `(s_lightgun_offscreen || s_lightgun_reload)` — reload forces offscreen=1 to match libretro convention (cores expect offscreen=1 during a reload event).
+- Port 0 is auto-configured to `RETRO_DEVICE_LIGHTGUN` (via `platformDefaultPortDevice`) when the core declares it. This check runs BEFORE the `SystemIdentifier` guard so it works even for systems not yet in the enum.
+- `LightGunSystemRegistry.shared.register(system:)` is called in `startEmulation()` after the core loads so future queries before the next game loads return the correct answer.
+- Only port 0 is supported. `AUX_C` (id 8) always returns 0 — not exposed in `LightGunResponder` protocol.
+- **Flag 🟠 MAJOR** if new lightgun cores use raw string `systemIdentifier` comparison instead of `pv_core_declares_lightgun_device()` or `LightGunSystemRegistry`.
+
 ### Multi-Select / Batch Operations Pattern (added in #2821)
 - `ConsoleGamesViewModel.isMultiSelectMode` — Bool flag; toggled via `enterMultiSelectMode()` / `exitMultiSelectMode()`.
 - `ConsoleGamesViewModel.selectedGameMD5s` — `Set<String>` of selected game MD5 hashes (never Realm objects). All batch operations consume this set.
