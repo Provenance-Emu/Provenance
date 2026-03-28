@@ -940,6 +940,9 @@ public extension GameLaunchingViewController {
 
 import Intents
 
+/// Registered in all `NSUserActivityTypes` plists and handled by `PVAppDelegate+Intents.swift`.
+private let kGamePlayActivityType = "org.provenance-emu.game.play"
+
 public
 extension GameLaunchingViewController where Self: UIViewController {
 
@@ -949,16 +952,14 @@ extension GameLaunchingViewController where Self: UIViewController {
         let title = game.title
 
         // Primary prediction activity — teaches Siri time-of-day patterns.
-        // Uses "org.provenance-emu.game.play" which is registered in all Info.plist
-        // NSUserActivityTypes arrays and handled by PVAppDelegate+Intents.swift.
-        let activity = NSUserActivity(activityType: "org.provenance-emu.game.play")
+        let activity = NSUserActivity(activityType: kGamePlayActivityType)
         activity.title = "Play \(title)"
         activity.userInfo = ["md5": md5, "url": "provenance://open?md5=\(md5)"]
         activity.isEligibleForSearch = false
         activity.isEligibleForPublicIndexing = false
         activity.isEligibleForHandoff = true
         // persistentIdentifier is per-game so the OS tracks play patterns individually.
-        activity.persistentIdentifier = NSUserActivityPersistentIdentifier("org.provenance-emu.game.play.\(md5)")
+        activity.persistentIdentifier = NSUserActivityPersistentIdentifier("\(kGamePlayActivityType).\(md5)")
 
         #if !os(tvOS)
         // isEligibleForPrediction is iOS/macOS only; tvOS does not support Siri Predictions.
