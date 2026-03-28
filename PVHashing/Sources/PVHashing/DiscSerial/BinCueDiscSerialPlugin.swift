@@ -31,7 +31,13 @@ public struct BinCueDiscSerialPlugin: DiscSerialExtractorPlugin {
     public let supportedExtensions: Set<String> = ["cue"]
 
     public func extractSerial(from url: URL, systemHint: String?) async -> DiscSerialResult? {
-        guard let dataTrackURL = resolveDataTrack(cueURL: url) else {
+        // Parsing the CUE sheet involves synchronous file I/O; dispatch to a
+        // utility thread as required by the DiscSerialExtractorPlugin contract.
+        let dataTrackURL = await Task.detached(priority: .utility) {
+            self.resolveDataTrack(cueURL: url)
+        }.value
+
+        guard let dataTrackURL else {
             VLOG("BinCueDiscSerialPlugin: no data track found in \(url.lastPathComponent)")
             return nil
         }

@@ -34,7 +34,13 @@ public struct GdiDiscSerialPlugin: DiscSerialExtractorPlugin {
     public let supportedExtensions: Set<String> = ["gdi"]
 
     public func extractSerial(from url: URL, systemHint: String?) async -> DiscSerialResult? {
-        guard let trackURL = resolveHighDensityTrack(gdiURL: url) else {
+        // Parsing the GDI text file involves synchronous I/O; dispatch to a
+        // utility thread as required by the DiscSerialExtractorPlugin contract.
+        let trackURL = await Task.detached(priority: .utility) {
+            self.resolveHighDensityTrack(gdiURL: url)
+        }.value
+
+        guard let trackURL else {
             VLOG("GdiDiscSerialPlugin: no data track found in \(url.lastPathComponent)")
             return nil
         }

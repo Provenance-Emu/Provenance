@@ -50,7 +50,10 @@ extension Data {
     func asciiString(at offset: Int, length: Int) -> String? {
         guard offset + length <= count, length > 0 else { return nil }
         let slice = self[offset..<(offset + length)]
+        // Trim both whitespace and null bytes (0x00), which some mastering
+        // tools use for padding instead of spaces.
+        let trimSet = CharacterSet.whitespaces.union(CharacterSet(charactersIn: "\0"))
         return String(bytes: slice, encoding: .ascii)?
-            .trimmingCharacters(in: .whitespaces)
+            .trimmingCharacters(in: trimSet)
     }
 }

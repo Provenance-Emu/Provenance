@@ -32,7 +32,13 @@ public struct M3UDiscSerialPlugin: DiscSerialExtractorPlugin {
     public let supportedExtensions: Set<String> = ["m3u"]
 
     public func extractSerial(from url: URL, systemHint: String?) async -> DiscSerialResult? {
-        guard let firstDiscURL = resolveFirstDisc(m3uURL: url) else {
+        // Parsing the M3U playlist involves synchronous file I/O; dispatch to a
+        // utility thread as required by the DiscSerialExtractorPlugin contract.
+        let firstDiscURL = await Task.detached(priority: .utility) {
+            self.resolveFirstDisc(m3uURL: url)
+        }.value
+
+        guard let firstDiscURL else {
             VLOG("M3UDiscSerialPlugin: no valid disc entry in \(url.lastPathComponent)")
             return nil
         }

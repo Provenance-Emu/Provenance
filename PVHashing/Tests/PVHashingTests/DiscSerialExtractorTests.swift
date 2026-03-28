@@ -896,6 +896,39 @@ final class ChdDiscSerialPluginTests: XCTestCase {
     }
 }
 
+// MARK: - Data+DiscSerial null-padding regression tests
+
+final class DataDiscSerialHelpersTests: XCTestCase {
+
+    /// Null-padded Sega product code fields (e.g. from some mastering tools)
+    /// must be stripped of null bytes so the serial is clean.
+    func testAsciiStringStripsNullPadding() async throws {
+        let tmpDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmpDir) }
+
+        // Build a minimal Saturn BIN with a null-padded product code "T-12345H\0\0"
+        // instead of the normal space-padded "T-12345H  ".
+        var binData = Data(repeating: 0, count: 2048)
+        let saturnMagic = Array("SEGA SATURN     ".utf8)
+        binData.replaceSubrange(0..<16, with: saturnMagic)
+        // Null-padded product code: 8 meaningful bytes + 2 null bytes.
+        let code: [UInt8] = [0x54, 0x2D, 0x31, 0x32, 0x33, 0x34, 0x35, 0x48, 0x00, 0x00]
+        binData.replaceSubrange(0x20..<(0x20 + 10), with: code)
+
+        let binURL = tmpDir.appendingPathComponent("game.bin")
+        try binData.write(to: binURL)
+
+        let result = await SegaDiscSerialPlugin().extractSerial(from: binURL, systemHint: nil)
+        XCTAssertNotNil(result, "Null-padded product code must still extract")
+        // Must not contain trailing null bytes.
+        XCTAssertEqual(result?.serial, "T-12345H")
+        XCTAssertFalse(result?.serial.contains("\0") ?? false,
+                       "Serial must not contain embedded null bytes")
+    }
+}
+
 // MARK: - DiscSerialResult tests
 
 final class DiscSerialResultTests: XCTestCase {
