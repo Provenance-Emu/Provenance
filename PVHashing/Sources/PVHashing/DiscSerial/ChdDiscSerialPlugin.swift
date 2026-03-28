@@ -230,7 +230,7 @@ public struct ChdDiscSerialPlugin: DiscSerialExtractorPlugin {
     ) async -> DiscSerialResult? {
         let tmpDir = FileManager.default.temporaryDirectory
         let tmpURL = tmpDir.appendingPathComponent(
-            "\(stem)_chd_\(UInt32.random(in: 0..<UInt32.max)).\(ext)")
+            "\(stem)_chd_\(UUID().uuidString).\(ext)")
         do {
             try data.write(to: tmpURL)
         } catch {

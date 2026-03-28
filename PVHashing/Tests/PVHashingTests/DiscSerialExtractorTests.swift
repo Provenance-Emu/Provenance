@@ -138,7 +138,9 @@ final class ISONormalizeSerialTests: XCTestCase {
         // Directory sector at sector 22.
         let dirOffset = 22 * sectorSize
         let cnfName = Array("SYSTEM.CNF".utf8)
-        let recLen = UInt8(33 + cnfName.count + (cnfName.count % 2 == 0 ? 0 : 1))
+        // ISO 9660 §9.1: a zero-byte is appended when the file identifier length
+        // is even, so that the total Directory Record length is always even.
+        let recLen = UInt8(33 + cnfName.count + (cnfName.count % 2 == 0 ? 1 : 0))
         image[dirOffset] = recLen
         let cnfLBA: UInt32 = 23
         withUnsafeBytes(of: cnfLBA.littleEndian) { bytes in
