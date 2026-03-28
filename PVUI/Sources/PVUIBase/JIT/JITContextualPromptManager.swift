@@ -103,7 +103,7 @@ public final class JITContextualPromptManager {
         // GitHub CI produces APP_STORE–compiled builds that users sideload by resigning
         // the IPA. `isGenuinelyAppStoreDistributed()` detects at runtime whether the
         // build is still a genuine App Store install or has been modified.
-        let isGenuineAppStore = DOLJitManager.isGenuinelyAppStoreDistributed()
+        let isGenuineAppStore = JITManager.DOLJitManager.isGenuinelyAppStoreDistributed()
         // Genuine App Store installs cannot acquire JIT through any UI-visible path:
         // DOLJitManager.acquired is always false here (guard above returned .proceed if true),
         // and sideloading tools are off the table per App Store guidelines.
@@ -209,7 +209,7 @@ public final class JITContextualPromptManager {
         var message = "\(coreName) requires JIT (Performance Mode) to run correctly."
             + " Without it the game may crash or produce incorrect output."
         #if canImport(JITManager)
-        let isGenuineAS = DOLJitManager.isGenuinelyAppStoreDistributed()
+        let isGenuineAS = JITManager.DOLJitManager.isGenuinelyAppStoreDistributed()
         if isGenuineAS {
             // Genuine App Store: avoid suggesting sideloading tools per App Store guidelines.
             message += "\n\nJIT is not currently enabled. Performance may be significantly reduced or the game may not work correctly."
@@ -265,7 +265,7 @@ public final class JITContextualPromptManager {
     ) {
         #if canImport(JITManager)
         let message: String
-        if DOLJitManager.isGenuinelyAppStoreDistributed() {
+        if JITManager.DOLJitManager.isGenuinelyAppStoreDistributed() {
             // Genuine App Store installs: avoid mentioning sideloading tools per App Store guidelines.
             message = "\(coreName) runs faster with JIT (Performance Mode)."
                 + "\n\nJIT is not currently enabled — emulation speed may be reduced."

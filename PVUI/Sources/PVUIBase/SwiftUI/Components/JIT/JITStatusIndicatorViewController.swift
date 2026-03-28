@@ -110,7 +110,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
         // (AltStore, SideStore) that may trigger App Store review rejections.
         // Sideloaded App Store builds (detected at runtime) still show the guide.
         #if canImport(JITManager)
-        let showJITGuide = !DOLJitManager.isGenuinelyAppStoreDistributed()
+        let showJITGuide = !JITManager.DOLJitManager.isGenuinelyAppStoreDistributed()
         #else
         let showJITGuide = true
         #endif
@@ -193,7 +193,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
             // In genuine App Store installs, avoid mentioning sideloading tools per guidelines.
             // Sideloaded App Store builds (detected via bundle ID / entitlement checks) show the full message.
             #if canImport(JITManager)
-            let unavailableMessage = DOLJitManager.isGenuinelyAppStoreDistributed()
+            let unavailableMessage = JITManager.DOLJitManager.isGenuinelyAppStoreDistributed()
                 ? "JIT required — performance or stability may be affected"
                 : "JIT required — enable via AltStore, SideJITServer, or StikDebug"
             #else
