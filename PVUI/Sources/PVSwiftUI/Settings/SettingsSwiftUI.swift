@@ -1337,16 +1337,18 @@ private struct CoreOptionsSection: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
 
-            NavigationLink(destination: RetroArchQuickSettingsView()) {
-                SettingsRow(
-                    title: "RetroArch Settings",
-                    subtitle: "Video, audio, notifications, performance, and more.",
-                    icon: .sfSymbol("gearshape.2.fill")
-                )
+            if PVRetroArchCoreManager.shared.isRetroArchInstalled {
+                NavigationLink(destination: RetroArchQuickSettingsView()) {
+                    SettingsRow(
+                        title: "RetroArch Settings",
+                        subtitle: "Video, audio, notifications, performance, and more.",
+                        icon: .sfSymbol("gearshape.2.fill")
+                    )
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
             }
-            #if os(tvOS)
-            .retroFocusButtonStyle(showBorder: false)
-            #endif
 
             if shouldShowResetButton {
                 Button(action: { showResetConfirmation = true }) {

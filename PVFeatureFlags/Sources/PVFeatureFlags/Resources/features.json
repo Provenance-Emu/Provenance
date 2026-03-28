@@ -38,10 +38,11 @@
             "description": "Enables online lookup for cheat codes via GitHub API with 24h disk cache."
         },
         "dynamicLibretroScanner": {
-            "enabled": false,
+            "enabled": true,
             "minVersion": "3.3.0",
+            "allowedPlatforms": ["tvos"],
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
-            "description": "Scans Frameworks/ at startup for bare .libretro.framework dylibs and registers them as thin-wrapper cores (no RetroArch binary required). Off by default — enable in Settings > Advanced > Feature Flags to test."
+            "description": "Scans Frameworks/ at startup for bare .libretro.framework dylibs and registers them as thin-wrapper cores (no RetroArch binary required). On tvOS: enabled by default. On iOS: disable by default but can be enabled in Settings > Advanced > Feature Flags."
         },
         "pauseTileMenu": {
             "enabled": false,
@@ -74,6 +75,11 @@
         "smartCoreSelection": {
             "enabled": false,
             "description": "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations when multiple cores are available. Disabled until core capability data is fully audited — enable in Settings > Advanced > Feature Flags."
+        },
+        "skinButtonReposition": {
+            "enabled": false,
+            "allowedPlatforms": ["ios"],
+            "description": "Drag-to-reposition button layout editor for custom skins. iOS only (DragGesture unavailable on tvOS). Disabled by default — enable in Settings > Advanced > Feature Flags."
         },
         "enhancedArtworkSearch": {
             "enabled": true,
