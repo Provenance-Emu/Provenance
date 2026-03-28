@@ -6,6 +6,16 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 
+import Foundation
+
+// MARK: - Notification name
+
+public extension Notification.Name {
+    /// Posted when a `provenance://netplay/join` deep link is received.
+    /// userInfo keys: "host" (String), "port" (UInt16), "relay" (String?), "game" (String?).
+    static let netplayJoinRequest = Notification.Name("PVNetplayJoinRequest")
+}
+
 #if !os(watchOS)
 import SwiftUI
 import PVNetplay

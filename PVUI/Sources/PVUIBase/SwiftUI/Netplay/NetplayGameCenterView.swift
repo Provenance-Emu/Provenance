@@ -410,6 +410,7 @@ public struct NetplayGameCenterView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
+                #if !os(tvOS)
                 Button {
                     showMatchmaker = true
                 } label: {
@@ -418,6 +419,11 @@ public struct NetplayGameCenterView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!gkManager.isAuthenticated || coordinator.isExchangingAddresses)
+                #else
+                Text("Game Center matchmaking requires the iOS or visionOS version of Provenance.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                #endif
 
                 if coordinator.isExchangingAddresses {
                     HStack(spacing: 8) {
