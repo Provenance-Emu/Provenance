@@ -513,6 +513,15 @@ extension ProvenanceApp {
             }
 
         case .netplay:
+            guard components.path == "/join" else {
+                ELOG("netplay: unrecognised path '\(components.path)' in \(url.absoluteString)")
+                return false
+            }
+            guard let hostValue = components.queryItems?.first(where: { $0.name == "host" })?.value,
+                  !hostValue.isEmpty else {
+                ELOG("netplay/join: missing required 'host' parameter in \(url.absoluteString)")
+                return false
+            }
             NotificationCenter.default.post(
                 name: .netplayJoinRequest,
                 object: nil,

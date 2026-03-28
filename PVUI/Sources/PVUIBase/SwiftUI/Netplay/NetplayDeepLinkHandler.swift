@@ -33,7 +33,7 @@ import PVLogging
 /// ```
 public struct NetplayDeepLinkHandlerModifier: ViewModifier {
 
-    @ObservedObject private var netplay = ObservableNetplayManager.shared
+    private let netplay = ObservableNetplayManager.shared
     @State private var pendingRequest: NetplayJoinRequest?
     @State private var showConfirmAlert = false
     @State private var joinError: String?
