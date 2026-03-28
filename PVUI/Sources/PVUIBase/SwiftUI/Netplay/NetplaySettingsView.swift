@@ -12,13 +12,18 @@ import PVNetplay
 import PVFeatureFlags
 
 /// Persistent keys for netplay user defaults.
-private enum NetplayDefaultsKey {
-    static let nickname         = "netplay.nickname"
-    static let port             = "netplay.port"
-    static let relayServer      = "netplay.relayServer"
-    static let frameDelay       = "netplay.frameDelay"
-    static let maxPlayers       = "netplay.maxPlayers"
-    static let allowSpectators  = "netplay.allowSpectators"
+/// Declared `internal` (not `private`) so sibling views in the same module
+/// (e.g. `NetplayInviteView`) can read relay/port values without duplicating key strings.
+enum NetplayDefaultsKey {
+    static let nickname            = "netplay.nickname"
+    static let port                = "netplay.port"
+    static let relayServer         = "netplay.relayServer"
+    static let frameDelay          = "netplay.frameDelay"
+    static let maxPlayers          = "netplay.maxPlayers"
+    static let allowSpectators     = "netplay.allowSpectators"
+    /// Default relay hostname used when no custom relay has been configured.
+    /// Single source of truth shared by settings, invite, and Game Center views.
+    static let defaultRelayHostname = "ra.me"
 }
 
 /// Valid port range: 0 = OS-assigned, 1–65535 = explicit port.
@@ -36,7 +41,7 @@ public struct NetplaySettingsView: View {
 
     @AppStorage(NetplayDefaultsKey.nickname)        private var nickname: String = ""
     @AppStorage(NetplayDefaultsKey.port)            private var port: Int = 55435
-    @AppStorage(NetplayDefaultsKey.relayServer)     private var relayServer: String = ""
+    @AppStorage(NetplayDefaultsKey.relayServer)     private var relayServer: String = NetplayDefaultsKey.defaultRelayHostname
     @AppStorage(NetplayDefaultsKey.frameDelay)      private var frameDelay: Int = 0
     @AppStorage(NetplayDefaultsKey.maxPlayers)      private var maxPlayers: Int = 2
     @AppStorage(NetplayDefaultsKey.allowSpectators) private var allowSpectators: Bool = true
@@ -196,7 +201,7 @@ extension NetplaySettings {
             storedPort = defaults.integer(forKey: NetplayDefaultsKey.port)
         }
         let clampedPort   = UInt16(clamping: max(0, min(65535, storedPort)))
-        let relayRaw      = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? ""
+        let relayRaw      = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? NetplayDefaultsKey.defaultRelayHostname
         let storedPlayers = defaults.integer(forKey: NetplayDefaultsKey.maxPlayers)
 
         return NetplaySettings(

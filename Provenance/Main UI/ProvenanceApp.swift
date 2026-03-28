@@ -38,9 +38,10 @@ struct ProvenanceApp: App {
         // Register a background task identifier for Spotlight indexing
         var backgroundTaskIdentifier: UIBackgroundTaskIdentifier
         backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "SpotlightIndexing") {
-            // This will be called if the background task expires
+            // Called by the OS when the background task time is about to expire.
+            // Must call endBackgroundTask to avoid being force-killed.
             WLOG("Spotlight indexing background task expired")
-//            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
         }
 
         // Store the background task identifier for later use
@@ -52,6 +53,7 @@ struct ProvenanceApp: App {
     var body: some Scene {
         WindowGroup(id: "main") {
             ContentView()
+                .netplayJoinHandler()
                 .environmentObject(appState)
                 .environmentObject(PVFeatureFlagsManager.shared)
                 .environmentObject(appDelegate)
@@ -511,6 +513,15 @@ extension ProvenanceApp {
             }
 
         case .netplay:
+            guard components.path == "/join" else {
+                ELOG("netplay: unrecognised path '\(components.path)' in \(url.absoluteString)")
+                return false
+            }
+            guard let hostValue = components.queryItems?.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.host.rawValue })?.value,
+                  !hostValue.isEmpty else {
+                ELOG("netplay/join: missing required 'host' parameter in \(url.absoluteString)")
+                return false
+            }
             NotificationCenter.default.post(
                 name: .netplayJoinRequest,
                 object: nil,

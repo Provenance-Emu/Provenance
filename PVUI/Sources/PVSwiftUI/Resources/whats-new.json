@@ -588,30 +588,6 @@
     ]
   },
   {
-    "version": "3.8.2",
-    "title": "Siri Shortcuts & Focus Filter",
-    "features": [
-      {
-        "symbolName": "mic.circle.fill",
-        "symbolColor": "orange",
-        "title": "Continue Last Game",
-        "subtitle": "Say \"Continue my last game on Provenance\" to instantly resume where you left off — hands-free via Siri."
-      },
-      {
-        "symbolName": "magnifyingglass.circle.fill",
-        "symbolColor": "blue",
-        "title": "Search Library via Shortcuts",
-        "subtitle": "New Search Library intent lets Shortcuts automations filter your game library by title and system."
-      },
-      {
-        "symbolName": "moon.circle.fill",
-        "symbolColor": "purple",
-        "title": "Gaming Focus Filter",
-        "subtitle": "Add Provenance to any Focus mode to suppress in-app notifications during distraction-free gaming sessions."
-      }
-    ]
-  },
-  {
     "version": "3.8.1",
     "title": "DualSense & DS4 Enhancements",
     "features": [
@@ -642,21 +618,7 @@
     ]
   },
   {
-    "version": "3.9.0",
-    "title": "Siri Media Integration",
-    "features": [
-      {
-        "symbolName": "waveform",
-        "symbolColor": "purple",
-        "title": "\"Hey Siri, play …\" Support",
-        "subtitle": "Ask Siri to launch any game — \"Hey Siri, play Donkey Kong Country on Provenance\" opens it instantly, no Shortcuts setup required."
-      },
-      {
-        "symbolName": "brain.head.profile",
-        "symbolColor": "blue",
-        "title": "Siri Learns Your Library",
-        "subtitle": "Every game launch teaches Siri your habits so suggestions get smarter over time."
-    "version": "3.8.2",
+    "version": "3.8.3",
     "title": "N64 Transfer Pak — Smarter Setup",
     "features": [
       {
@@ -682,6 +644,48 @@
         "symbolColor": "orange",
         "title": "Missing ROM Detection",
         "subtitle": "If you haven't imported any Game Boy ROMs yet, the Transfer Pak screen now shows a clear prompt explaining what to do next."
+      }
+    ]
+  },
+  {
+    "version": "3.9.0",
+    "title": "Siri Media Integration",
+    "features": [
+      {
+        "symbolName": "waveform",
+        "symbolColor": "purple",
+        "title": "\"Hey Siri, play …\" Support",
+        "subtitle": "Ask Siri to launch any game — \"Hey Siri, play Donkey Kong Country on Provenance\" opens it instantly, no Shortcuts setup required."
+      },
+      {
+        "symbolName": "brain.head.profile",
+        "symbolColor": "blue",
+        "title": "Siri Learns Your Library",
+        "subtitle": "Every game launch teaches Siri your habits so suggestions get smarter over time."
+      }
+    ]
+  },
+  {
+    "version": "3.9.1",
+    "title": "Netplay Evolution",
+    "features": [
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "blue",
+        "title": "Game Center Matchmaking",
+        "subtitle": "Find a netplay partner via Apple Game Center — tap \"Game Center Match\" in the lobby and Provenance connects you automatically."
+      },
+      {
+        "symbolName": "link",
+        "symbolColor": "green",
+        "title": "Netplay Invite Links",
+        "subtitle": "Share a provenance://netplay/join link — tapping it shows a confirmation alert and connects automatically."
+      },
+      {
+        "symbolName": "antenna.radiowaves.left.and.right",
+        "symbolColor": "orange",
+        "title": "RA.ME Relay Pre-Configured",
+        "subtitle": "The ra.me relay is pre-filled out of the box so online play works without any manual setup on a fresh install."
       }
     ]
   }
