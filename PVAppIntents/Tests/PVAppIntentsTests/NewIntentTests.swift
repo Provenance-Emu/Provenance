@@ -26,13 +26,21 @@ final class ContinueMostRecentGameIntentTests: XCTestCase {
         super.tearDown()
     }
 
-    func testPerformReturnsDialogWhenNoRecentGames() async throws {
-        // Store is empty — intent should return a "no games" dialog without crashing.
+    func testPerformThrowsWhenNoRecentGames() async {
+        // Store is empty — intent should throw AppIntentError.noGamesFound.
         let intent = ContinueMostRecentGameIntent()
-        let result = try await intent.perform()
-        // We can't inspect the dialog value directly (opaque return), but
-        // reaching here without throwing is itself the success assertion.
-        _ = result
+        do {
+            _ = try await intent.perform()
+            XCTFail("Expected AppIntentError.noGamesFound to be thrown")
+        } catch let error as AppIntentError {
+            if case .noGamesFound = error {
+                // expected
+            } else {
+                XCTFail("Unexpected AppIntentError case: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
     }
 
     func testPerformWithOneRecentGame() async throws {

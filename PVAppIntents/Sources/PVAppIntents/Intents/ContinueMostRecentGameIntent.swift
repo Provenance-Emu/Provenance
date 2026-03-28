@@ -31,12 +31,12 @@ public struct ContinueMostRecentGameIntent: AppIntent {
 
     public init() {}
 
-    public func perform() async throws -> some IntentResult & ProvidesDialog {
+    public func perform() async throws -> some IntentResult & ProvidesDialog & ReturnsValue<GameEntity> {
         guard let game = GameEntityStore.shared.recentEntities(limit: 1).first else {
-            return .result(dialog: "No recently played games found in Provenance.")
+            throw AppIntentError.noGamesFound(in: "your library")
         }
         pvAppGroupDefaults?.set(game.id, forKey: "pendingLaunchGameID")
-        return .result(dialog: "Resuming \(game.title).")
+        return .result(value: game, dialog: "Resuming \(game.title).")
     }
 
     public static var parameterSummary: some ParameterSummary {

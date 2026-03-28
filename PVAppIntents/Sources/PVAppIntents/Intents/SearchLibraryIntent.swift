@@ -31,7 +31,11 @@ public struct SearchLibraryIntent: AppIntent {
 
     // MARK: - Parameters
 
-    @Parameter(title: "Search Query", description: "Case-insensitive substring of the game title.")
+    @Parameter(
+        title: "Search Query",
+        description: "Case-insensitive substring of the game title.",
+        requestValueDialog: "What game title would you like to search for?"
+    )
     public var query: String
 
     @Parameter(title: "System", description: "Restrict results to this system. Leave empty for all systems.")
