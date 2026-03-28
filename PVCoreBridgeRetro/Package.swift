@@ -43,6 +43,7 @@ let package = Package(
         .package(path: "../PVSettings"),
         .package(path: "../PVSupport"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
+        .package(url: "https://github.com/ZipArchive/ZipArchive.git", exact: "2.4.3"),
     ],
 
     // MARK: - Targets
@@ -64,6 +65,7 @@ let package = Package(
                 .product(name: "PVSystems", package: "PVPrimitives"),
                 "PVSettings",
                 "PVSupport",
+                .product(name: "ZipArchive", package: "ZipArchive"),
                 "libretro",
             ],
             cSettings: [

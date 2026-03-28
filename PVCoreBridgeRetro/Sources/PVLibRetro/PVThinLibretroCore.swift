@@ -188,6 +188,13 @@ class PVThinLibretroCore: PVEmulatorCore {
             seedPSPFlash0Assets()
         }
 
+        // For cores that need system files from the libretro buildbot,
+        // migrate from the legacy RetroArch/system/ directory first (if it exists),
+        // then download anything still missing from the buildbot.
+        // Both operations are idempotent and the download is async (non-blocking).
+        migrateRetroArchSystemDirectoryIfNeeded()
+        downloadBuildBotSystemFilesIfNeeded()
+
         // Mupen64Plus-Next: use angrylion RDP + apply any persisted Transfer Pak slots.
         if coreId.contains("mupen") {
             setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")
