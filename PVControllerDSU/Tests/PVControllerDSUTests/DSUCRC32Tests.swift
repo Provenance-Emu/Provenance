@@ -30,17 +30,14 @@ struct DSUCRC32Tests {
         #expect(result == 0xD202EF8D)
     }
 
-    @Test("CRC32 of 0xFF byte")
+    @Test("CRC32 of 0xFF byte matches reference value 0xFF000000")
     func testSingleFFByte() {
         let result = DSUCRC32.compute(Data([0xFF]))
-        // Known value: crc32 of [0xFF] = 0xFF000000 — actually 0xFF000000 is wrong;
-        // correct: zlib crc32([0xFF]) = 0xFF00FF00 is also wrong.
-        // Real value: zlib crc32 of 0xFF = 0xFF000000 is still wrong.
-        // Let's use a value we can compute from the implementation itself by
-        // checking against the other known value to ensure self-consistency.
-        // We'll just verify it is non-zero and differs from the empty value.
-        #expect(result != 0)
-        #expect(result != DSUCRC32.compute(Data()))
+        // CRC-32/ISO-HDLC of a single 0xFF byte:
+        //   crc = 0xFFFFFFFF; index = (0xFFFFFFFF ^ 0xFF) & 0xFF = 0x00
+        //   crc = (0xFFFFFFFF >> 8) ^ table[0] = 0x00FFFFFF ^ 0 = 0x00FFFFFF
+        //   return 0x00FFFFFF ^ 0xFFFFFFFF = 0xFF000000
+        #expect(result == 0xFF000000)
     }
 
     // MARK: - Stamp and verify round-trip

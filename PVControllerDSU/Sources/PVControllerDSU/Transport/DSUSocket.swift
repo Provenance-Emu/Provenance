@@ -58,16 +58,18 @@ public actor DSUSocket {
             throw DSUSocketError.listenerFailed("Invalid port: \(port)")
         }
 
-        let listener = try NWListener(using: params, on: nwPort)
-        self.listener = listener
-        listener.start(queue: .global(qos: .userInitiated))
+        self.listener = try NWListener(using: params, on: nwPort)
+        // Note: listener.start() is deferred to startListening() so that the
+        // newConnectionHandler is always installed before the listener begins
+        // accepting connections — avoids a race where early datagrams are dropped.
     }
 
     // MARK: - Start (must be called after init, from within actor context)
 
     /// Begin accepting incoming UDP connections/datagrams.
     ///
-    /// Call this once after initialisation to wire up the new-connection handler.
+    /// Call this once after initialisation. Sets the new-connection handler and
+    /// then starts the listener so no connections are missed.
     public func startListening() {
         listener.newConnectionHandler = { [weak self] connection in
             guard let self else { return }
@@ -75,6 +77,7 @@ public actor DSUSocket {
                 await self.handleNewConnection(connection)
             }
         }
+        listener.start(queue: .global(qos: .userInitiated))
     }
 
     // MARK: - Send
@@ -155,7 +158,7 @@ public actor DSUSocket {
     }
 
     private func scheduleReceive(on connection: NWConnection) {
-        connection.receiveMessage { [weak self] data, _, isComplete, error in
+        connection.receiveMessage { [weak self] data, _, _, error in
             guard let self else { return }
             if let data, !data.isEmpty {
                 let endpoint = connection.endpoint
@@ -164,7 +167,10 @@ public actor DSUSocket {
                 }
             }
             if error == nil {
-                self.scheduleReceive(on: connection)
+                // Re-schedule from the actor context to satisfy Swift 6 isolation.
+                Task { [weak self] in
+                    await self?.scheduleReceive(on: connection)
+                }
             }
         }
     }

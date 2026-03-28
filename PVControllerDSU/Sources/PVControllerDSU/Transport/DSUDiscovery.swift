@@ -58,12 +58,11 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
             listener.stateUpdateHandler = { [weak self] state in
                 guard let self else { return }
                 switch state {
-                case .failed(let error):
+                case .failed:
                     // Retry after a short delay on transient failures
                     self.queue.asyncAfter(deadline: .now() + 2) {
                         self.start()
                     }
-                    _ = error
                 default:
                     break
                 }
