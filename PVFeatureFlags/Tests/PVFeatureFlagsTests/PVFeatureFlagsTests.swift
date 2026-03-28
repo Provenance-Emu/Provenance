@@ -147,6 +147,72 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     #expect(lowBuildFlags.isEnabled(.inAppFreeROMs) == false)
 }
 
+// MARK: - PVPlatform
+
+@Test func testPVPlatformRawValues() {
+    #expect(PVPlatform.ios.rawValue == "ios")
+    #expect(PVPlatform.tvos.rawValue == "tvos")
+    #expect(PVPlatform.macos.rawValue == "macos")
+    #expect(PVPlatform.visionos.rawValue == "visionos")
+}
+
+@Test func testPVPlatformCurrentIsNonNil() {
+    // current must resolve to one of the four known platforms
+    let platform = PVPlatform.current
+    #expect(PVPlatform.allCases.contains(platform))
+}
+
+// MARK: - allowedPlatforms
+
+@Test func testAllowedPlatformsNilMeansAllPlatformsAllowed() throws {
+    // A flag with no allowedPlatforms restriction should be enabled on every platform.
+    let data = """
+    {"features": {"romPathMigrator": {"enabled": true, "description": "No platform restriction"}}}
+    """.data(using: .utf8)!
+    let config = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+    let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "1", appVersion: "1.0.0")
+    #expect(flags.isEnabled(.romPathMigrator) == true)
+}
+
+@Test func testAllowedPlatformsCurrentPlatformAllowed() throws {
+    // A flag that lists the current platform should be allowed.
+    let currentPlatform = PVPlatform.current.rawValue
+    let json = """
+    {"features": {"romPathMigrator": {"enabled": true, "allowedPlatforms": ["\(currentPlatform)"], "description": "Current platform allowed"}}}
+    """
+    let data = json.data(using: .utf8)!
+    let config = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+    let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "1", appVersion: "1.0.0")
+    #expect(flags.isEnabled(.romPathMigrator) == true)
+}
+
+@Test func testAllowedPlatformsOtherPlatformBlocked() throws {
+    // A flag whose allowedPlatforms does NOT include the current platform must be disabled.
+    // Pick a platform that is NOT the current one.
+    let nonCurrentPlatform = PVPlatform.allCases.first { $0 != PVPlatform.current }!.rawValue
+    let json = """
+    {"features": {"romPathMigrator": {"enabled": true, "allowedPlatforms": ["\(nonCurrentPlatform)"], "description": "Other platform only"}}}
+    """
+    let data = json.data(using: .utf8)!
+    let config = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+    let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "1", appVersion: "1.0.0")
+    #expect(flags.isEnabled(.romPathMigrator) == false)
+}
+
+@Test func testAllowedPlatformsAppearsInRestrictions() throws {
+    // getFeatureRestrictions should report a platform restriction when the current platform is excluded.
+    let nonCurrentPlatform = PVPlatform.allCases.first { $0 != PVPlatform.current }!.rawValue
+    let json = """
+    {"features": {"romPathMigrator": {"enabled": true, "allowedPlatforms": ["\(nonCurrentPlatform)"], "description": "Other platform only"}}}
+    """
+    let data = json.data(using: .utf8)!
+    let config = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+    let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "1", appVersion: "1.0.0")
+    let restrictions = flags.getFeatureRestrictions("romPathMigrator")
+    #expect(restrictions.contains { $0.contains("not allowed") })
+}
+
+
 @Test func testLiteAppTypeIsBlocked() throws {
     let config = try makeConfig()
     // inAppFreeROMs only allows "standard" and "standard.appstore"

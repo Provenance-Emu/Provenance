@@ -68,6 +68,18 @@
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Replaces the vendored 2015 ObjC GCDWebServer with a Swift-native Hummingbird HTTP/WebDAV server via PVWebServerManager. Both implementations fire the same PVWebServer*Notification constants. Disabled by default during Epic #2758 stabilisation — enable in Settings > Advanced > Feature Flags."
         },
+        "clipBuffering": {
+            "enabled": false,
+            "description": "Always-on ReplayKit clip buffering. Keeps a rolling recording buffer so users can save recent gameplay clips at any time. Disabled until stable — enable in Settings > Advanced > Feature Flags."
+        },
+        "liveBroadcast": {
+            "enabled": false,
+            "description": "ReplayKit Go Live broadcast button in the pause menu. Disabled until stable — enable in Settings > Advanced > Feature Flags."
+        },
+        "lightGunCrosshair": {
+            "enabled": false,
+            "description": "Renders a configurable crosshair overlay at the cursor position during light-gun gameplay. Disabled by default — enable in Settings > Advanced > Feature Flags."
+        },
         "companionController": {
             "enabled": false,
             "description": "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete — enable in Settings > Advanced > Feature Flags."

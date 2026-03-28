@@ -191,9 +191,11 @@ public struct FeatureFlag: Codable, Sendable {
     )
 
     public static let dynamicLibretroScanner = FeatureFlag(
-        enabled: false,
+        enabled: true,
+        minVersion: "3.3.0",
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. Disabled by default; enable via debug override UI (hidden behind cheat code on App Store builds)."
+        allowedPlatforms: ["tvos"],
+        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
     )
 
     public static let pauseTileMenu = FeatureFlag(
