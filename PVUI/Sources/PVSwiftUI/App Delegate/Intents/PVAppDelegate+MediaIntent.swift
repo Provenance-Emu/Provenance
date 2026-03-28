@@ -123,9 +123,9 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
 
     // MARK: - Private helpers
 
-    /// Thread-safe Realm lookup by MD5.
-    /// Uses a fresh Realm instance (not @MainActor) so it is safe to call from SiriKit's background queue.
-    /// Returns a frozen snapshot so callers can safely access properties after this function returns.
+    /// Realm lookup by MD5.
+    /// Uses a fresh Realm instance and returns a frozen snapshot so callers can safely retain
+    /// the result after the Realm instance goes out of scope (e.g. passed into a Task or closure).
     private func fetchMediaGame(byMD5 md5: String) -> PVGame? {
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
@@ -167,8 +167,8 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
     }
 
     /// Returns games whose title matches `query` (exact first, then fuzzy).
-    /// Uses a fresh Realm instance so it is safe to call from any thread.
-    /// Returns frozen snapshots so callers can safely access properties after this function returns.
+    /// Uses a fresh Realm instance and returns frozen snapshots so callers can safely retain
+    /// results after the Realm instance goes out of scope.
     private func searchMediaGames(matchingTitle query: String) -> [PVGame] {
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
