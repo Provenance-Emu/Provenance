@@ -39,6 +39,8 @@ public struct GameCustomizedFields: OptionSet, Sendable, Codable {
     public static let publisher     = GameCustomizedFields(rawValue: 1 << 4)
     public static let genres        = GameCustomizedFields(rawValue: 1 << 5)
     public static let releaseDate   = GameCustomizedFields(rawValue: 1 << 6)
+    /// Note: `ROMMetadata` does not carry a rating field; this bit is preserved only
+    /// in `PVGame`/`Game_Data` and has no effect on `ROMMetadata.merged(with:preserving:)`.
     public static let rating        = GameCustomizedFields(rawValue: 1 << 7)
     public static let boxBackArt    = GameCustomizedFields(rawValue: 1 << 8)
     public static let referenceURL  = GameCustomizedFields(rawValue: 1 << 9)

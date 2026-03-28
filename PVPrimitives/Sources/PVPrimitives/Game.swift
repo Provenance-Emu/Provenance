@@ -114,8 +114,7 @@ public struct Game: Codable, Sendable {
         self.userCustomizedFieldsMask = userCustomizedFieldsMask
         self.lastMetadataLookupDate = lastMetadataLookupDate
     }
-    
-    
+
     // Convenience since PVGame uses md5Hash not md5
     public var md5Hash: String { md5 }
 
