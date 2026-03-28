@@ -80,8 +80,9 @@ public enum DSUSkinButtonMapper {
         let clampedX = max(-1.0, min(1.0, x))
         // DSU Y axis: 0 = up, 255 = down; skin Y is typically positive-up, so we invert.
         let clampedY = max(-1.0, min(1.0, -y))
-        let byteX = UInt8((clampedX + 1.0) * 127.5)
-        let byteY = UInt8((clampedY + 1.0) * 127.5)
+        // Round so that the neutral position (0,0) maps to the DSU centre value of 128.
+        let byteX = UInt8(min(255.0, max(0.0, (clampedX + 1.0) * 127.5)).rounded())
+        let byteY = UInt8(min(255.0, max(0.0, (clampedY + 1.0) * 127.5)).rounded())
 
         switch normalize(inputID) {
         case "leftthumbstick", "leftstick", "thumbstickleft", "leftthumstick", "l3stick":

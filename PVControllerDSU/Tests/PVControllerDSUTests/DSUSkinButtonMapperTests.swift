@@ -148,16 +148,17 @@ struct DSUSkinButtonMapperTests {
         var data = DSUControllerData()
         DSUSkinButtonMapper.applyAnalogStick(inputID: "leftthumbstick", x: 1.0, y: 0.0, to: &data)
         #expect(data.leftStickX == 255)
-        // y=0 in skin space → inverted → byteY = 127
-        #expect(data.leftStickY == 127)
+        // y=0 in skin space → inverted → (0+1)*127.5 = 127.5 → rounded = 128 (DSU centre)
+        #expect(data.leftStickY == 128)
     }
 
     @Test("right stick recognised by alias")
     func rightStickAlias() {
         var data = DSUControllerData()
         DSUSkinButtonMapper.applyAnalogStick(inputID: "rightstick", x: 0.0, y: -1.0, to: &data)
-        // x=0 → 127, y=-1 skin → inverted to +1 → byteY=255
-        #expect(data.rightStickX == 127)
+        // x=0 → (0+1)*127.5 = 127.5 → rounded = 128
+        // y=-1 skin → inverted to +1 → (1+1)*127.5 = 255.0 → 255
+        #expect(data.rightStickX == 128)
         #expect(data.rightStickY == 255)
     }
 
@@ -165,9 +166,9 @@ struct DSUSkinButtonMapperTests {
     func stickNeutral() {
         var data = DSUControllerData()
         DSUSkinButtonMapper.applyAnalogStick(inputID: "leftthumbstick", x: 0, y: 0, to: &data)
-        // (0 + 1) * 127.5 = 127 (UInt8 truncation)
-        #expect(data.leftStickX == 127)
-        #expect(data.leftStickY == 127)
+        // (0 + 1) * 127.5 = 127.5 → rounded = 128 (DSU centre value)
+        #expect(data.leftStickX == 128)
+        #expect(data.leftStickY == 128)
     }
 
     // MARK: - Unknown ID

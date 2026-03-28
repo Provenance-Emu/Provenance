@@ -82,9 +82,6 @@ public actor DSUSkinServer {
     /// Monotonically-incrementing packet number stamped on every broadcast.
     private var packetNumber: UInt32 = 0
 
-    /// Shared server UID used in all response headers.
-    private let serverUID: UInt32 = UInt32.random(in: 0...UInt32.max)
-
     // MARK: - Init
 
     public init(port: UInt16 = DSUConstants.defaultPort) {
@@ -163,16 +160,16 @@ public actor DSUSkinServer {
         while !Task.isCancelled {
             guard let (data, endpoint) = try? await socket.receive() else { continue }
             guard let packet = DSUPacket.decode(data) else { continue }
-            guard let (host, port) = endpoint.hostAndPort else { continue }
-            await handlePacket(packet, from: host, port: port)
+            guard let (host, clientPort) = endpoint.hostAndPort else { continue }
+            await handlePacket(packet, from: host, clientPort: clientPort)
         }
     }
 
-    private func handlePacket(_ packet: DSUPacket, from host: String, port: UInt16) async {
+    private func handlePacket(_ packet: DSUPacket, from host: String, clientPort: UInt16) async {
         switch packet {
         case .versionRequest(let uid):
             let response = DSUPacket.versionResponse(clientUID: uid, version: DSUConstants.protocolVersion)
-            await sendPacket(response, to: host, port: port)
+            await sendPacket(response, to: host, port: clientPort)
 
         case .listPortsRequest(let uid, _):
             // We advertise one virtual controller in slot 0.
@@ -185,11 +182,11 @@ public actor DSUSkinServer {
                 macAddress: virtualMAC,
                 batteryStatus: .full
             )
-            await sendPacket(response, to: host, port: port)
+            await sendPacket(response, to: host, port: clientPort)
 
         case .padDataRequest(let uid, _, _, _):
             // Register (or refresh) this client as a subscriber.
-            let subscriber = DSUSubscriber(host: host, port: port, clientUID: uid, lastSeen: .now)
+            let subscriber = DSUSubscriber(host: host, port: clientPort, clientUID: uid, lastSeen: .now)
             // Remove any existing entry first (Set.insert is a no-op if an equal element exists,
             // so we must remove to update the mutable lastSeen field).
             subscribers.remove(subscriber)
@@ -204,10 +201,9 @@ public actor DSUSkinServer {
 
     private func broadcastLoop() async {
         // Target: 60 Hz = ~16.67 ms per frame.
-        let interval: UInt64 = 16_666_667  // nanoseconds
         while !Task.isCancelled {
             await broadcast()
-            try? await Task.sleep(nanoseconds: interval)
+            try? await Task.sleep(for: .microseconds(16_667))
         }
     }
 
