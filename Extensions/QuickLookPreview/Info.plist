@@ -22,6 +22,9 @@
 				<string>com.provenance.rom.atarist</string>
 				<string>com.provenance.rom.c64</string>
 				<string>com.provenance.rom.cdi</string>
+				<string>com.provenance.rom.cps1</string>
+				<string>com.provenance.rom.cps2</string>
+				<string>com.provenance.rom.cps3</string>
 				<string>com.provenance.rom.colecovision</string>
 				<string>com.provenance.rom.doom</string>
 				<string>com.provenance.rom.dos</string>
@@ -58,6 +61,7 @@
 				<string>com.provenance.rom.pcfx</string>
 				<string>com.provenance.rom.pokemonmini</string>
 				<string>com.provenance.rom.ps2</string>
+				<string>com.provenance.rom.ps3</string>
 				<string>com.provenance.rom.psp</string>
 				<string>com.provenance.rom.psx</string>
 				<string>com.provenance.rom.quake</string>
@@ -69,6 +73,7 @@
 				<string>com.provenance.rom.sgfx</string>
 				<string>com.provenance.rom.snes</string>
 				<string>com.provenance.rom.supervision</string>
+				<string>com.provenance.rom.tic80</string>
 				<string>com.provenance.rom.vb</string>
 				<string>com.provenance.rom.vectrex</string>
 				<string>com.provenance.rom.wii</string>

@@ -48,7 +48,9 @@ public struct SystemIconProvider {
             return "handheld.fill"
 
         // Home consoles — Nintendo
-        case id.contains("nes") && !id.contains("snes"):
+        // Use hasSuffix(".nes") rather than contains("nes") to avoid false-positive on
+        // "genesis" (g-e-n-e-s-i-s contains "nes" as a substring at positions 2–4).
+        case id.hasSuffix(".nes"):
             return "gamecontroller.fill"
         case id.contains("snes") || id.contains("famicom"):
             return "gamecontroller.fill"
