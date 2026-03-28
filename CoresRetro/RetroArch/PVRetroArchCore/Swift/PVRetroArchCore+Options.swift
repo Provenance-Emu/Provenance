@@ -705,13 +705,14 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 //                } else {
 //                    optionValues += "mupen64plus-rdp-plugin = \"gliden64\"\n";
 //                }
-                // ParallelRSP uses a JIT compiler; on iOS 26+ W×X enforcement prevents
-                // JIT pages from being mapped writable+executable, causing a crash.
-                // Fall back to the CXD4 interpreted RSP on iOS 26+ unless JIT is known
-                // to be active (in which case the user would have JIT available).
-                // On older iOS, ParallelRSP is the best choice.
-                #if os(iOS) || os(tvOS)
-                if #available(iOS 26, tvOS 26, *) {
+                // ParallelRSP requires JIT. tvOS never exposes JIT to apps (no
+                // entitlement at any OS version). On iOS 26+ the W×X enforcement
+                // also prevents JIT. Use the interpreted CXD4 RSP in both cases.
+                // On iOS < 26, ParallelRSP is the better-performing choice.
+                #if os(tvOS)
+                optionValues += "mupen64plus-rsp-plugin = \"cxd4\"\n"
+                #elseif os(iOS)
+                if #available(iOS 26, *) {
                     optionValues += "mupen64plus-rsp-plugin = \"cxd4\"\n"
                 } else {
                     optionValues += "mupen64plus-rsp-plugin = \"parallel\"\n"
@@ -724,18 +725,24 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 // Read the existing .opt file so we can do targeted in-place updates.
                 let mupenOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
                 let existingMupenOpt = (try? String(contentsOfFile: mupenOptPath, encoding: .utf8)) ?? ""
-                if #available(iOS 26, tvOS 26, *) {
-                    // iOS 26+: MUST overwrite so a stale "parallel" RSP value is replaced
-                    // with "cxd4". ParallelRSP's JIT crashes on iOS 26+ W×X enforcement.
-                    //
-                    // Strategy: start from the full existing .opt content (preserving ALL
-                    // user settings — audio, video, gameplay, pak, etc.), then patch only
-                    // the rsp-plugin line. Fall back to writing our defaults on fresh install.
+                // Must patch RSP when JIT is unavailable: tvOS at any version (no JIT
+                // entitlement), or iOS 26+ (W×X enforcement prevents JIT pages).
+                let mustPatchRSP: Bool = {
+                    #if os(tvOS)
+                    return true
+                    #else
+                    if #available(iOS 26, *) { return true }
+                    return false
+                    #endif
+                }()
+                if mustPatchRSP {
+                    // Must overwrite so any stale "parallel" RSP line is replaced with "cxd4".
+                    // Strategy: preserve ALL user settings from the existing file, patching
+                    // only the rsp-plugin line. Fall back to defaults on a fresh install.
                     //
                     // Note: the pak/rumble regression was introduced by commit efe5e0d36
-                    // which set optionOverwrite=true without preserving other settings.
-                    // Rumble worked on iOS 26 before that commit. This is NOT an inherent
-                    // iOS 26 limitation — it was a regression from the CXD4 RSP fix.
+                    // which set optionOverwrite=true and wiped the whole file. This is NOT
+                    // an inherent iOS 26 / tvOS limitation — it was a regression from that fix.
                     if existingMupenOpt.isEmpty {
                         // Fresh install: optionValues already has rdp + rsp, add pak default.
                         ILOG("Mupen64Plus-Next: fresh install — writing defaults with pak1 = rumble")
@@ -768,8 +775,9 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                     }
                     optionOverwrite = true
                 } else {
-                    // iOS < 26: write-only-if-not-exists (optionOverwrite = false means the
-                    // Obj-C layer skips the write when the file is already present).
+                    // iOS < 26 only (tvOS is handled above via mustPatchRSP=true).
+                    // write-only-if-not-exists: optionOverwrite=false means the Obj-C layer
+                    // skips the write when the file is already present.
                     if existingMupenOpt.isEmpty {
                         // Fresh install: write defaults including pak1=rumble.
                         ILOG("Mupen64Plus-Next: iOS<26 fresh install — writing defaults with pak1 = rumble")
