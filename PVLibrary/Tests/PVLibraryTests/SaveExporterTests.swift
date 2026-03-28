@@ -77,7 +77,6 @@ final class SaveExporterTests: XCTestCase {
         }
     }
 
-
     // MARK: - Import happy path
 
     func testImportSucceedsForMatchingMD5() async throws {
@@ -111,7 +110,6 @@ final class SaveExporterTests: XCTestCase {
             // expected — prevents importing into the shared NULL directory
         }
     }
-
 
     // MARK: - Staging dir uniqueness
 

@@ -200,7 +200,6 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         }
     }
 
-
     // MARK: - SaveFileCategory helpers
 
     func testSaveFileCategoryInference() {

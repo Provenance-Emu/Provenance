@@ -204,7 +204,11 @@ public final class SaveExporter: @unchecked Sendable {
                     let sidecarSrc = src.appendingPathExtension("json")
                     if fm.fileExists(atPath: sidecarSrc.path) {
                         let sidecarDest = dest.appendingPathExtension("json")
-                        try? fm.copyItem(at: sidecarSrc, to: sidecarDest)
+                        do {
+                            try fm.copyItem(at: sidecarSrc, to: sidecarDest)
+                        } catch {
+                            WLOG("SaveExporter: failed to copy sidecar \(sidecarSrc.lastPathComponent): \(error.localizedDescription)")
+                        }
                     }
 
                     // Only add a manifest entry for successfully copied states.
@@ -268,8 +272,6 @@ public final class SaveExporter: @unchecked Sendable {
     }
 
     // MARK: - Import
-
-    // MARK: - Import Phase Result
 
     /// Internal result from the file-restoration phase of `importSaves`.
     private struct ImportPhaseResult {
