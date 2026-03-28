@@ -792,6 +792,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                                 mergedLines.insert("mupen64plus-rdp-plugin = \"angrylion\"", at: 0)
                                 ILOG("Mupen64Plus-Next: iOS<26 rdp-plugin missing — adding angrylion default")
                             }
+                            // Defensive: ensure rsp-plugin is present (matches iOS 26+ merge behaviour).
+                            // Without this, files predating the rsp-plugin feature lose the parallel default
+                            // when optionValues is replaced entirely by the merged content below.
+                            if !mergedLines.contains(where: { $0.hasPrefix("mupen64plus-rsp-plugin") }) {
+                                mergedLines.append("mupen64plus-rsp-plugin = \"parallel\"")
+                                ILOG("Mupen64Plus-Next: iOS<26 rsp-plugin missing — adding parallel default")
+                            }
                             mergedLines.append("mupen64plus-pak1 = \"rumble\"")
                             ILOG("Mupen64Plus-Next: iOS<26 adding missing pak1 = rumble to existing .opt")
                             optionValues = mergedLines.joined(separator: "\n") + "\n"
