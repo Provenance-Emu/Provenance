@@ -430,14 +430,21 @@ static void ResetDolphinStaticState() {
     int8_t effectiveCpuType = self.cpuType;
 
     // JIT availability check - if user wants JIT but it's not available, fall back
+    bool jitAvailable = [self checkJITAvailable];
     if (self.cpuType == 2) {
-        bool jitAvailable = [self checkJITAvailable];
         if (!jitAvailable) {
             NSLog(@"⚠️ JIT requested but not available. Falling back to Cached Interpreter for better performance than Interpreter.");
             effectiveCpuType = 1; // Fall back to CachedInterpreter
         } else {
             NSLog(@"✅ JIT is available and will be used for maximum performance.");
         }
+    }
+
+    // Force software vertex loader when JIT is unavailable — the ARM64 vertex loader
+    // also uses JIT code generation and will crash on jitless devices
+    if (!jitAvailable) {
+        Config::SetBase(Config::GFX_VERTEX_LOADER_TYPE, VertexLoaderType::Software);
+        NSLog(@"⚠️ Vertex Loader: Using software fallback (no JIT)");
     }
 
     if (effectiveCpuType == 0) {
