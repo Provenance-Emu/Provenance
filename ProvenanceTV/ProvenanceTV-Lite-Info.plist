@@ -202,10 +202,7 @@
 	<string>public.app-category.games</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>delta</string>
-		<string>ppsspp</string>
 		<string>provenance</string>
-		<string>retroarch</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

@@ -176,7 +176,11 @@ public struct ExternalEmulatorMigrationView: View {
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
+                        #if os(tvOS)
+                        Text("You can still import save files manually via the Web Server.")
+                        #else
                         Text("You can still import save files manually using Files.app.")
+                        #endif
                             .font(.caption)
                             .foregroundStyle(.secondary.opacity(0.7))
                             .multilineTextAlignment(.center)
@@ -186,6 +190,8 @@ public struct ExternalEmulatorMigrationView: View {
                 )
                 .frame(minHeight: 120)
 
+            #if !os(tvOS)
+            // iOS/macOS only — these emulators don't run on Apple TV
             VStack(alignment: .leading, spacing: 8) {
                 Text("Want step-by-step instructions anyway?")
                     .font(.caption)
@@ -215,6 +221,7 @@ public struct ExternalEmulatorMigrationView: View {
                     }
                 }
             }
+            #endif
         }
     }
 
@@ -230,15 +237,27 @@ public struct ExternalEmulatorMigrationView: View {
                         Circle()
                             .fill(Color.blue.opacity(0.15))
                             .frame(width: 44, height: 44)
+                        #if os(tvOS)
+                        Image(systemName: "wifi")
+                        #else
                         Image(systemName: "folder.badge.plus")
+                        #endif
                             .font(.system(size: 18))
                             .foregroundStyle(.blue)
                     }
                     VStack(alignment: .leading, spacing: 2) {
+                        #if os(tvOS)
+                        Text("Import via Web Server")
+                        #else
                         Text("Import via Files.app")
+                        #endif
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.primary)
+                        #if os(tvOS)
+                        Text("Transfer .sav / .srm / .state files into Provenance using the Web Server")
+                        #else
                         Text("Copy .sav / .srm / .state files into Provenance's folder using the Files app")
+                        #endif
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
@@ -513,7 +532,17 @@ struct EmulatorMigrationGuideView: View {
     }
 
     private var importSteps: [String] {
-        [
+        #if os(tvOS)
+        return [
+            "Open Provenance and launch the web server via Settings → Library → Web Server.",
+            "Navigate to the ROM directory for the matching system (e.g. /ROMS/GBA/).",
+            "Place the save file in the same folder as the ROM, with the same filename (only the extension differs).",
+            "For example: 'MyGame.gba' needs 'MyGame.srm' or 'MyGame.sav' alongside it.",
+            "Launch the game in Provenance — it will automatically detect and load the save.",
+            "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems)."
+        ]
+        #else
+        return [
             "Open Provenance and launch the web server via Settings → Library → Web Server, or use Files.app.",
             "Navigate to the ROM directory for the matching system (e.g. /ROMS/GBA/).",
             "Place the save file in the same folder as the ROM, with the same filename (only the extension differs).",
@@ -521,6 +550,7 @@ struct EmulatorMigrationGuideView: View {
             "Launch the game in Provenance — it will automatically detect and load the save.",
             "If the save does not load, verify the filename matches the ROM exactly (case-sensitive on some systems)."
         ]
+        #endif
     }
 }
 
@@ -570,6 +600,7 @@ struct ManualFileImportGuideView: View {
                         ]
                     )
 
+                    #if !os(tvOS)
                     methodSection(
                         title: "Via Files.app (iPhone/iPad)",
                         icon: "folder",
@@ -582,6 +613,7 @@ struct ManualFileImportGuideView: View {
                             "Launch the game in Provenance — the save loads automatically."
                         ]
                     )
+                    #endif
 
                     namingTipBox
                 }
