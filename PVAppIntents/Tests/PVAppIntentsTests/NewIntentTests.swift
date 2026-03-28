@@ -54,8 +54,8 @@ final class ContinueMostRecentGameIntentTests: XCTestCase {
         GameEntityStore.shared.update(all: [game], recents: [game])
 
         let intent = ContinueMostRecentGameIntent()
-        // Should complete without throwing.
-        _ = try await intent.perform()
+        let result = try await intent.perform()
+        XCTAssertEqual(result.value.id, game.id, "Should return the seeded game")
     }
 
     func testPerformPicksMostRecentGame() async throws {
@@ -84,7 +84,8 @@ final class ContinueMostRecentGameIntentTests: XCTestCase {
         let topRecent = GameEntityStore.shared.recentEntities(limit: 1).first
         XCTAssertEqual(topRecent?.id, "md5-newer")
 
-        _ = try await ContinueMostRecentGameIntent().perform()
+        let result = try await ContinueMostRecentGameIntent().perform()
+        XCTAssertEqual(result.value.id, "md5-newer", "Should resume the most recently played game")
     }
 }
 
@@ -134,7 +135,12 @@ final class SearchLibraryIntentTests: XCTestCase {
         var intent = SearchLibraryIntent()
         intent.query = "mario"
         intent.system = nil
-        _ = try await intent.perform()
+        let result = try await intent.perform()
+        XCTAssertFalse(result.value.isEmpty, "Should find games matching 'mario'")
+        XCTAssertTrue(
+            result.value.allSatisfy { $0.title.lowercased().contains("mario") },
+            "Every returned game title should contain 'mario'"
+        )
     }
 
     func testSearchResultsAreSortedByTitle() async throws {
@@ -165,14 +171,21 @@ final class SearchLibraryIntentTests: XCTestCase {
         var intent = SearchLibraryIntent()
         intent.query = "zzz-no-match-xyz"
         intent.system = nil
-        _ = try await intent.perform()
+        let result = try await intent.perform()
+        XCTAssertTrue(result.value.isEmpty, "Should return empty array for unmatched query")
     }
 
-    func testSearchCaseInsensitive() {
-        let games = GameEntityStore.shared.allEntities()
-        let upper = games.filter { $0.title.lowercased().contains("MARIO".lowercased()) }
-        let lower = games.filter { $0.title.lowercased().contains("mario") }
-        XCTAssertEqual(upper.count, lower.count, "Search must be case-insensitive")
+    func testSearchCaseInsensitive() async throws {
+        var upperIntent = SearchLibraryIntent()
+        upperIntent.query = "MARIO"
+        let upperResult = try await upperIntent.perform()
+
+        var lowerIntent = SearchLibraryIntent()
+        lowerIntent.query = "mario"
+        let lowerResult = try await lowerIntent.perform()
+
+        XCTAssertEqual(upperResult.value.count, lowerResult.value.count,
+                       "Uppercase and lowercase queries must return the same number of results")
     }
 
     func testSearchResultsFromAllEntitiesAreSorted() {
@@ -197,11 +210,16 @@ final class SearchLibraryIntentTests: XCTestCase {
 final class FocusFilterIntentTests: XCTestCase {
 
     func testInitDefaultsToSuppressNotificationsTrue() {
-        // The intent should have `suppressNotifications` default true per @Parameter(default: true).
-        let intent = ProvenanceFocusFilterIntent()
-        // default is declared on the @Parameter; the struct itself initialises to Swift default.
-        // Just verify the struct initialises without crashing.
-        _ = intent
+        // @Parameter(default: true) is the AppIntents system default shown to users;
+        // direct Swift init uses Bool's zero value (false). The intent is configurable
+        // via the system, not the init, so we only verify the struct initialises
+        // and that the parameter can be set to either state.
+        var intent = ProvenanceFocusFilterIntent()
+        intent.suppressNotifications = true
+        XCTAssertTrue(intent.suppressNotifications)
+
+        intent.suppressNotifications = false
+        XCTAssertFalse(intent.suppressNotifications)
     }
 
     func testPerformDoesNotThrow() async throws {
