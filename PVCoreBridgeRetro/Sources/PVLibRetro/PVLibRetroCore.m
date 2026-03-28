@@ -1999,7 +1999,20 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_GET_USERNAME: {
-            *(const char **)data = "Provenance";
+            // Resolve username with fallback chain:
+            // 1. PVSettings playerUsername (user-configured)
+            // 2. OS username
+            // 3. "Provenance" fallback
+            static NSString *s_usernameString = nil;
+            if (!s_usernameString) {
+                NSString *configured = PVSettingsWrapper.playerUsername;
+                if (configured.length > 0) {
+                    s_usernameString = configured;
+                } else {
+                    s_usernameString = NSUserName() ?: @"Provenance";
+                }
+            }
+            if (data) *(const char **)data = s_usernameString.UTF8String;
             return true;
         }
         case RETRO_ENVIRONMENT_GET_LANGUAGE: {

@@ -11,6 +11,7 @@
 
 import Foundation
 import Combine
+import PVSettings
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -33,7 +34,7 @@ public extension PVRetroArchCoreBridge {
 
     /// Start hosting a RetroArch netplay room.
     /// - Parameters:
-    ///   - nickname: Display name shown to peers (defaults to device name).
+    ///   - nickname: Display name shown to peers (defaults to PVSettings playerUsername).
     ///   - port: UDP port to listen on (default 55435).
     ///   - frameDelay: Input delay frames (0 = rollback only).
     /// - Throws: `NSError` with `PVRetroArchNetplayErrorDomain` on failure.
@@ -42,14 +43,7 @@ public extension PVRetroArchCoreBridge {
         port: UInt16 = 55435,
         frameDelay: Int = 0
     ) throws {
-        #if os(tvOS)
-        let name = nickname ?? "Provenance TV"
-        #elseif canImport(UIKit)
-        let name = nickname ?? UIDevice.current.name
-        #else
-        let name = nickname ?? "Provenance"
-        #endif
-        // ObjC method with NSError** parameter is bridged as a throwing Swift function
+        let name = Self.resolveNetplayNickname(nickname)
         try netplayStartHosting(
             withNickname: name,
             port: port,
@@ -72,13 +66,7 @@ public extension PVRetroArchCoreBridge {
         frameDelay: Int = 0,
         spectate: Bool = false
     ) throws {
-        #if os(tvOS)
-        let name = nickname ?? "Provenance TV"
-        #elseif canImport(UIKit)
-        let name = nickname ?? UIDevice.current.name
-        #else
-        let name = nickname ?? "Provenance"
-        #endif
+        let name = Self.resolveNetplayNickname(nickname)
         try netplayConnect(
             toHost: host,
             port: port,
@@ -96,5 +84,25 @@ public extension PVRetroArchCoreBridge {
     /// Whether a netplay session is currently active.
     var isNetplayActive: Bool {
         netplayStatus != .idle
+    }
+
+    /// Resolve the display nickname for netplay using the same fallback chain
+    /// as `PVThinLibretroFrontend` `GET_USERNAME`:
+    /// 1. Explicit `nickname` parameter (from `NetplaySettings.nickname`)
+    /// 2. `PVSettingsWrapper.playerUsername` (user-configured in Settings)
+    /// 3. Device name / OS username
+    /// 4. `"Provenance"` fallback
+    private static func resolveNetplayNickname(_ explicit: String?) -> String {
+        if let explicit, !explicit.isEmpty { return explicit }
+        let configured = PVSettingsWrapper.playerUsername
+        if !configured.isEmpty { return configured }
+        #if os(tvOS)
+        return "Provenance TV"
+        #elseif canImport(UIKit)
+        return UIDevice.current.name
+        #else
+        let user = NSUserName()
+        return user.isEmpty ? "Provenance" : user
+        #endif
     }
 }
