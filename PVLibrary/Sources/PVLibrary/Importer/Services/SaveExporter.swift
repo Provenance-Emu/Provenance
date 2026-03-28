@@ -485,42 +485,6 @@ public final class SaveExporter: @unchecked Sendable {
         }
     }
 
-    /// Extracts `SaveBundleManifestV2.SaveStateEntry` records from a v2 bundle manifest.
-    ///
-    /// Kept as a standalone utility for future callers (e.g. a pre-import preview UI).
-    /// The import pipeline uses entries returned directly by `performImport` to avoid
-    /// extracting the archive a second time.
-    ///
-    /// Returns an empty array if the bundle is v1 or lacks a `saveStates` array.
-    private func savedEntriesFromBundle(at url: URL) -> [SaveBundleManifestV2.SaveStateEntry] {
-        let fm = FileManager.default
-        let tempDir = fm.temporaryDirectory
-            .appendingPathComponent("PVManifestPeek_\(UUID().uuidString)", isDirectory: true)
-        defer { try? fm.removeItem(at: tempDir) }
-
-        do {
-            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
-            guard SSZipArchive.unzipFile(atPath: url.path, toDestination: tempDir.path) else {
-                return []
-            }
-            try validateNoBundleEscape(in: tempDir)
-
-            let manifestURL = tempDir.appendingPathComponent("manifest.json")
-            guard fm.fileExists(atPath: manifestURL.path),
-                  let data = try? Data(contentsOf: manifestURL) else {
-                return []
-            }
-
-            if let v2 = try? SaveBundleManifestV2.parse(from: data), v2.schemaVersion == 2 {
-                return v2.saveStates ?? []
-            }
-            return []
-        } catch {
-            WLOG("SaveExporter: failed to peek bundle manifest: \(error)")
-            return []
-        }
-    }
-
     // MARK: - Manifest Inspection
 
     /// Reads the `manifest.json` embedded in a save-export bundle and returns
