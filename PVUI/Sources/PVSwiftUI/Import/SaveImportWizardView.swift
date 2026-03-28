@@ -97,6 +97,7 @@ public struct SaveImportWizardView: View {
                 }
             }
         }
+        .interactiveDismissDisabled(step == .progress)
         #if !os(tvOS)
         .fileImporter(
             isPresented: $showFileImporter,
