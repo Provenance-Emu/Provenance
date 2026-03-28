@@ -6,7 +6,7 @@ import StoreKit
 /// Shows a paywall if the user has not purchased the virtual-controller IAP,
 /// then presents ``VirtualControllerView`` once unlocked.
 struct VirtualControllerTabView: View {
-    @State private var storeManager = DriverStoreManager()
+    @Environment(DriverStoreManager.self) private var storeManager
     @State private var showingStore = false
 
     var body: some View {
@@ -17,11 +17,10 @@ struct VirtualControllerTabView: View {
                 lockedView
             }
         }
-        .navigationTitle("Virtual Controller")
+        .navigationTitle(String(localized: "virtual_controller.nav_title"))
         .task { await storeManager.loadProducts() }
         .sheet(isPresented: $showingStore) {
             DriverStoreView()
-                .environment(storeManager)
         }
     }
 
@@ -32,9 +31,9 @@ struct VirtualControllerTabView: View {
                 .foregroundStyle(.secondary)
 
             VStack(spacing: 8) {
-                Text("Virtual Controller")
+                Text("virtual_controller.locked.title")
                     .font(.title2.bold())
-                Text("Turn your iPhone or iPad into a wireless DSU controller. Works with Cemu, Yuzu, Dolphin, and any app that supports the CemuHook DSU protocol.")
+                Text("virtual_controller.locked.description")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -42,16 +41,16 @@ struct VirtualControllerTabView: View {
             }
 
             VStack(alignment: .leading, spacing: 12) {
-                featureRow(icon: "gamecontroller.fill",   text: "Use Delta skins as your controller layout")
-                featureRow(icon: "wifi",                  text: "Streams over Wi-Fi via DSU / CemuHook protocol")
-                featureRow(icon: "apps.iphone",           text: "Works with any DSU-compatible emulator on your network")
-                featureRow(icon: "applewatch",            text: "Pairs with the main Provenance app's skin library")
+                featureRow(icon: "gamecontroller.fill",   key: "virtual_controller.locked.feature.skins")
+                featureRow(icon: "wifi",                  key: "virtual_controller.locked.feature.wifi")
+                featureRow(icon: "apps.iphone",           key: "virtual_controller.locked.feature.emulators")
+                featureRow(icon: "applewatch",            key: "virtual_controller.locked.feature.library")
             }
             .padding()
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal)
 
-            Button("Unlock Virtual Controller") {
+            Button(String(localized: "virtual_controller.locked.unlock_button")) {
                 showingStore = true
             }
             .buttonStyle(.borderedProminent)
@@ -59,12 +58,12 @@ struct VirtualControllerTabView: View {
         .padding()
     }
 
-    private func featureRow(icon: String, text: String) -> some View {
+    private func featureRow(icon: String, key: LocalizedStringKey) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .frame(width: 28)
                 .foregroundStyle(.accent)
-            Text(text)
+            Text(key)
                 .font(.subheadline)
         }
     }
@@ -74,4 +73,5 @@ struct VirtualControllerTabView: View {
     NavigationStack {
         VirtualControllerTabView()
     }
+    .environment(DriverStoreManager())
 }

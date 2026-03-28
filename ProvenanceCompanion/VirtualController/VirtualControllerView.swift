@@ -31,17 +31,18 @@ struct VirtualControllerView: View {
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .navigationTitle("Virtual Controller")
+        .navigationTitle(String(localized: "virtual_controller.nav_title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 toggleButton
             }
         }
-        .alert("Server Error", isPresented: Binding(get: { serverError != nil }, set: { if !$0 { serverError = nil } })) {
-            Button("OK", role: .cancel) { serverError = nil }
+        .alert(String(localized: "virtual_controller.error.server_title"),
+               isPresented: Binding(get: { serverError != nil }, set: { if !$0 { serverError = nil } })) {
+            Button(String(localized: "store.done_button"), role: .cancel) { serverError = nil }
         } message: {
-            if let msg = serverError { Text(msg) }
+            if let msg = serverError { Text(verbatim: msg) }
         }
         .task { await startServer() }
         .onDisappear { Task { await server.stop() } }
@@ -54,9 +55,15 @@ struct VirtualControllerView: View {
             Circle()
                 .fill(isServerRunning ? Color.green : Color.orange)
                 .frame(width: 10, height: 10)
-            Text(isServerRunning ? "Broadcasting on port \(DSUConstants.defaultPort)" : "Starting server…")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            if isServerRunning {
+                Text("virtual_controller.status.broadcasting \(Int(DSUConstants.defaultPort))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("virtual_controller.status.starting")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             Spacer()
             Image(systemName: "wifi")
                 .foregroundStyle(isServerRunning ? .green : .orange)
@@ -72,7 +79,11 @@ struct VirtualControllerView: View {
                 if isServerRunning { await stopServer() } else { await startServer() }
             }
         } label: {
-            Label(isServerRunning ? "Stop" : "Start", systemImage: isServerRunning ? "stop.circle" : "play.circle")
+            if isServerRunning {
+                Label(String(localized: "virtual_controller.server.stop"), systemImage: "stop.circle")
+            } else {
+                Label(String(localized: "virtual_controller.server.start"), systemImage: "play.circle")
+            }
         }
     }
 
@@ -141,7 +152,7 @@ struct VirtualControllerView: View {
 
     private func buttonShape(id: String, size: CGFloat, label: String) -> some View {
         buttonShape(id: id, size: size) {
-            Text(label)
+            Text(verbatim: label)
                 .font(.system(size: size * 0.35, weight: .bold))
                 .foregroundStyle(activeButtons.contains(id) ? .white : .primary)
         }
@@ -162,7 +173,7 @@ struct VirtualControllerView: View {
     }
 
     private func shoulderButton(_ id: String, label: String, size: CGFloat) -> some View {
-        Text(label)
+        Text(verbatim: label)
             .font(.system(size: size * 0.3, weight: .semibold))
             .frame(width: size * 1.6, height: size)
             .background(
@@ -177,7 +188,7 @@ struct VirtualControllerView: View {
     }
 
     private func metaButton(_ id: String, label: String, size: CGFloat) -> some View {
-        Text(label)
+        Text(verbatim: label)
             .font(.system(size: size * 0.45, weight: .medium))
             .frame(width: size * 1.4, height: size * 0.7)
             .background(

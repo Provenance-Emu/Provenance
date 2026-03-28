@@ -5,24 +5,24 @@ struct ContentView: View {
         TabView {
             LibraryTabView()
                 .tabItem {
-                    Label("Library", systemImage: "books.vertical")
+                    Label(String(localized: "tab.library"), systemImage: "books.vertical")
                 }
 
             PeripheralsTabView()
                 .tabItem {
-                    Label("Peripherals", systemImage: "gamecontroller")
+                    Label(String(localized: "tab.peripherals"), systemImage: "gamecontroller")
                 }
 
             NavigationStack {
                 VirtualControllerTabView()
             }
             .tabItem {
-                Label("Controller", systemImage: "iphone.radiowaves.left.and.right")
+                Label(String(localized: "tab.controller"), systemImage: "iphone.radiowaves.left.and.right")
             }
 
             SettingsTabView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label(String(localized: "tab.settings"), systemImage: "gear")
                 }
         }
     }
@@ -30,4 +30,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(DriverStoreManager())
 }
