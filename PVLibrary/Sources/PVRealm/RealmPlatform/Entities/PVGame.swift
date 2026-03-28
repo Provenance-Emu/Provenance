@@ -246,31 +246,6 @@ public extension Game {
         self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language, matchSourceRaw: matchSourceRaw, userCustomizedFieldsMask: userCustomizedFieldsMask, lastMetadataLookupDate: lastMetadataLookupDate)
     }
 
-//    init(withGame game: Game_Data) {
-//        let id = game.id
-//        let title = game.title
-//        let systemIdentifier = game.systemIdentifier
-//        let md5 = game.md5Hash
-//        let crc = game.crc
-//        let isFavorite = game.isFavorite
-//        let playCount = UInt(game.playCount)
-//        let lastPlayed = game.lastPlayed
-//        let boxBackArtworkURL = game.boxBackArtworkURL
-//        let developer = game.developer
-//        let publisher = game.publisher
-//        let genres = game.genres
-//        let referenceURL = game.referenceURL
-//        let releaseID = game.releaseID
-//        let regionID = game.regionID
-//        let regionName = game.regionName
-//        let systemShortName = game.systemShortName
-//        let language = game.language
-//        let file = FileInfo(fileName: game.file.partialPath, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
-//        let gameDescription = game.gameDescription
-//        let publishDate = game.publishDate
-//        // TODO: Screenshots
-//        self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language)
-//    }
 }
 
 extension PVGame: DomainConvertibleType {

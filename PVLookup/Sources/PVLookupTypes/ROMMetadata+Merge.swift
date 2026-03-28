@@ -101,7 +101,7 @@ public extension Array where Element == ROMMetadata {
     func merged(with other: [ROMMetadata]) -> [ROMMetadata] {
         var result: [ROMMetadata] = []
         var otherDict = Dictionary(grouping: other, by: { $0.romHashMD5 ?? "" })
-            .mapValues { $0.first! }
+            .compactMapValues { $0.first }
 
         // Process primary array
         for metadata in self {

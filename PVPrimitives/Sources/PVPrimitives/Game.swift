@@ -118,6 +118,18 @@ public struct Game: Codable, Sendable {
     
     // Convenience since PVGame uses md5Hash not md5
     public var md5Hash: String { md5 }
+
+    // MARK: - Metadata tracking (typed accessors)
+
+    /// Type-safe access to how this game's metadata was sourced
+    public var matchSource: GameMatchSource {
+        GameMatchSource(rawValue: matchSourceRaw) ?? .none
+    }
+
+    /// Type-safe access to the set of fields the user has customized
+    public var userCustomizedFields: GameCustomizedFields {
+        GameCustomizedFields(rawValue: userCustomizedFieldsMask)
+    }
 }
 
 // MARK: - Equatable
