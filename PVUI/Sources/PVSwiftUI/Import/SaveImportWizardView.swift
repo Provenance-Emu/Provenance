@@ -678,7 +678,10 @@ public struct SaveImportWizardView: View {
             selectedURL = dest
         } catch {
             ELOG("SaveImportWizard: failed to copy file: \(error.localizedDescription)")
-            selectedURL = url
+            // Do NOT fall back to the security-scoped URL. The scope is released by defer
+            // when this function returns, making url inaccessible to any subsequent read.
+            // The user remains on the file-selection step and can try again.
+            return
         }
 
         if preSelectedGame != nil {

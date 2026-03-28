@@ -546,11 +546,11 @@
     ]
   },
   {
-    "version": "3.9.3",
+    "version": "3.9.4",
     "title": "Save Import Wizard",
     "features": [
       {
-        "symbolName": "square.and.arrow.down",
+        "symbolName": "archivebox.fill",
         "symbolColor": "pink",
         "title": "Save Import Wizard",
         "subtitle": "A polished multi-step import wizard lets you bring in save bundles (.zip), battery saves (.sav/.srm/.ram), and .pvsave files from Settings → Library or via any game's context menu."
@@ -566,6 +566,11 @@
         "symbolColor": "purple",
         "title": "Retrowave Import UI",
         "subtitle": "The wizard uses Provenance's full retrowave design system — neon glows, grid backgrounds, and animated progress tracking throughout the import flow."
+      }
+    ]
+  },
+  {
+    "version": "3.9.3",
     "title": "Save Migration Guide",
     "features": [
       {
