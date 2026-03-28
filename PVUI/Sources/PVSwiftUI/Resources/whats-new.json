@@ -640,5 +640,35 @@
         "subtitle": "The Share (DS4) and Create (DualSense) buttons are now exposed as bindable actions in controller settings."
       }
     ]
+  },
+  {
+    "version": "3.8.2",
+    "title": "N64 Transfer Pak — Smarter Setup",
+    "features": [
+      {
+        "symbolName": "arrow.triangle.2.circlepath",
+        "symbolColor": "pink",
+        "title": "Transfer Pak — Retrowave UI",
+        "subtitle": "The Transfer Pak configuration screen now uses the full retrowave design system with neon glows, grid backgrounds, and colour-coded controller ports."
+      },
+      {
+        "symbolName": "star.fill",
+        "symbolColor": "yellow",
+        "title": "Smart Game Suggestions",
+        "subtitle": "When setting up Pokémon Stadium, Mario Tennis, and other Transfer Pak titles, Provenance now highlights the specific Game Boy cartridges that go with that game."
+      },
+      {
+        "symbolName": "wand.and.stars",
+        "symbolColor": "purple",
+        "title": "One-Step Transfer Pak Setup",
+        "subtitle": "Picking a Game Boy ROM now automatically sets that controller port to Transfer Pak mode — no need to visit Core Settings separately."
+      },
+      {
+        "symbolName": "cart.badge.questionmark",
+        "symbolColor": "orange",
+        "title": "Missing ROM Detection",
+        "subtitle": "If you haven't imported any Game Boy ROMs yet, the Transfer Pak screen now shows a clear prompt explaining what to do next."
+      }
+    ]
   }
 ]
