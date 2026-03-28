@@ -9,6 +9,7 @@
 import SwiftUI
 import Defaults
 import PVCoreAudio
+import PVUIBase
 
 // MARK: - AUFilterSettingsView
 
@@ -289,7 +290,7 @@ private struct ParameterSliderRow: View {
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.primary)
             }
-            Slider(value: $value, in: param.min...param.max)
+            RetroWaveSlider(value: $value, in: param.min...param.max)
                 .tint(.blue)
         }
     }
@@ -384,7 +385,9 @@ private struct AddEffectSheet: View {
                 .foregroundStyle(.primary)
             }
             .navigationTitle("Add Effect")
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -404,13 +407,15 @@ private struct SavePresetSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Preset Name") {
+                SwiftUI.Section("Preset Name") {
                     TextField("e.g. My Retro Mix", text: $presetName)
                         .autocorrectionDisabled()
                 }
             }
             .navigationTitle("Save Preset")
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
