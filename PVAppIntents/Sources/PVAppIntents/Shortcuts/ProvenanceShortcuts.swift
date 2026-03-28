@@ -94,8 +94,8 @@ public struct ProvenanceShortcuts: AppShortcutsProvider {
             AppShortcut(
                 intent: SearchLibraryIntent(),
                 phrases: [
-                    "Search \(.applicationName) for \(\.$query)",
-                    "Find \(\.$query) in \(.applicationName)"
+                    "Search \(.applicationName) library",
+                    "Find games in \(.applicationName)"
                 ],
                 shortTitle: "Search Games",
                 systemImageName: "magnifyingglass"

@@ -1809,9 +1809,6 @@ private struct VideoSection: View {
                             icon: .sfSymbol("tv.and.hifispeaker.fill"))
             }
             #endif
-            #if os(tvOS)
-            .retroFocusButtonStyle(showBorder: false)
-            #endif
         }
     }
 }

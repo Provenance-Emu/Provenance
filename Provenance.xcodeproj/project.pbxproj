@@ -2100,6 +2100,7 @@
 		B3A3CC142CCC6BC000589F82 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A450FF2F77854000B6449F /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 		B3A477C42C941F120052500A /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A479CD2C96507A0052500A /* PVSNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A485582F57DB93004A995B /* SwiftRefactorExtension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SwiftRefactorExtension.xcodeproj; sourceTree = "<group>"; };
@@ -3673,6 +3674,7 @@
 				B399119226C0F41300E54426 /* README.md */,
 				B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */,
 				B39FAC222D5E7F630065B66B /* SYSTEMS.md */,
+				B3A450FF2F77854000B6449F /* CLAUDE.md */,
 				B37769042CF6D47300A48B35 /* UITesting.xcodeproj */,
 				B3C2F23E2D711F9400BA7631 /* EmuSkins.xcodeproj */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,

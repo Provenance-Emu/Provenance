@@ -84,10 +84,10 @@ public struct SearchLibraryIntent: AppIntent {
     }
 
     public static var parameterSummary: some ParameterSummary {
-        When(\.$system, .hasAnyValue) {
-            Summary("Search \(.applicationName) for \(\.$query) on \(\.$system)")
+        When(\SearchLibraryIntent.$system, .hasAnyValue) {
+            Summary("Search Provenance for \(\.$query) on \(\.$system)")
         } otherwise: {
-            Summary("Search \(.applicationName) for \(\.$query)")
+            Summary("Search Provenance for \(\.$query)")
         }
     }
 }
