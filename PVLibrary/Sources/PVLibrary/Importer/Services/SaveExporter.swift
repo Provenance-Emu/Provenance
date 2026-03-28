@@ -282,16 +282,20 @@ public final class SaveExporter: @unchecked Sendable {
         let frozenGame = game.isFrozen ? game : game.freeze()
         let gameID = frozenGame.md5Hash
 
-        try await Task.detached(priority: .userInitiated) {
+        // performImport returns the parsed save-state entries from the manifest so that
+        // registerImportedSaveStates can use them directly without re-extracting the archive.
+        let stateEntries = try await Task.detached(priority: .userInitiated) {
             try self.performImport(zipURL: zipURL, frozenGame: frozenGame)
         }.value
 
         // Realm registration is performed on the main actor after files are restored.
         // We re-fetch the game from Realm (thawed) to ensure a live reference.
-        await registerImportedSaveStates(for: gameID, bundleURL: zipURL)
+        await registerImportedSaveStates(for: gameID, entries: stateEntries)
     }
 
-    private func performImport(zipURL: URL, frozenGame: PVGame) throws {
+    /// Returns the manifest's `saveStates` array so the caller can pass entries
+    /// directly to `registerImportedSaveStates` without re-extracting the archive.
+    private func performImport(zipURL: URL, frozenGame: PVGame) throws -> [SaveBundleManifestV2.SaveStateEntry] {
         guard !frozenGame.isInvalidated else {
             throw SaveExportError.invalidBundle("Game object is no longer valid.")
         }
@@ -369,26 +373,25 @@ public final class SaveExporter: @unchecked Sendable {
         }
 
         ILOG("SaveExporter: file restore complete for game '\(frozenGame.title)'")
+        return manifest.saveStates ?? []
     }
 
     // MARK: - Realm Registration on Import
 
     /// Registers imported `.svs` files as `PVSaveState` objects in Realm.
     ///
-    /// For v2 bundles, uses per-save metadata from the manifest.
-    /// For v1 bundles or when the manifest is unavailable, falls back to a
-    /// filesystem scan via `RomDatabase.recoverSaveStates(forPath:)`.
+    /// For v2 bundles, uses per-save metadata from the manifest (passed in directly as
+    /// `entries` — already parsed by `performImport` so the archive is not extracted twice).
+    /// For v1 bundles `entries` will be empty and this falls back to a filesystem scan
+    /// via `RomDatabase.recoverSaveStates(forPath:)`.
     @MainActor
-    private func registerImportedSaveStates(for gameMD5: String, bundleURL: URL) async {
+    private func registerImportedSaveStates(for gameMD5: String, entries: [SaveBundleManifestV2.SaveStateEntry]) async {
         do {
             let realm = try await Realm(configuration: RealmConfiguration.realmConfig)
             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
                 WLOG("SaveExporter: cannot register imported saves — game not found for MD5 \(gameMD5)")
                 return
             }
-
-            // Attempt to peek at the bundle manifest for v2 per-save entries
-            let entries = savedEntriesFromBundle(at: bundleURL)
 
             if !entries.isEmpty {
                 let romURL: URL? = game.file?.url
@@ -482,8 +485,11 @@ public final class SaveExporter: @unchecked Sendable {
         }
     }
 
-    /// Extracts `SaveBundleManifestV2.SaveStateEntry` records from a v2 bundle manifest
-    /// without fully extracting the archive.
+    /// Extracts `SaveBundleManifestV2.SaveStateEntry` records from a v2 bundle manifest.
+    ///
+    /// Kept as a standalone utility for future callers (e.g. a pre-import preview UI).
+    /// The import pipeline uses entries returned directly by `performImport` to avoid
+    /// extracting the archive a second time.
     ///
     /// Returns an empty array if the bundle is v1 or lacks a `saveStates` array.
     private func savedEntriesFromBundle(at url: URL) -> [SaveBundleManifestV2.SaveStateEntry] {
@@ -702,13 +708,19 @@ public final class SaveExporter: @unchecked Sendable {
             let extractedFiles = (try? fm.contentsOfDirectory(
                 at: tempDir, includingPropertiesForKeys: nil,
                 options: .skipsHiddenFiles).map(\.lastPathComponent)) ?? []
+            var copiedCount = 0
             for fileName in extractedFiles {
+                guard SaveBundleManifestV2.isSafeFilename(fileName) else {
+                    WLOG("SaveExporter: skipping unsafe filename in SRAM zip: \(fileName)")
+                    continue
+                }
                 let src = tempDir.appendingPathComponent(fileName)
                 let dest = destDir.appendingPathComponent(fileName)
                 try? fm.removeItem(at: dest)
                 try fm.copyItem(at: src, to: dest)
+                copiedCount += 1
             }
-            ILOG("SaveExporter: SRAM import from zip for '\(frozenGame.title)' — \(extractedFiles.count) file(s)")
+            ILOG("SaveExporter: SRAM import from zip for '\(frozenGame.title)' — \(copiedCount)/\(extractedFiles.count) file(s)")
         } else {
             // Single file: copy directly
             let dest = destDir.appendingPathComponent(fileURL.lastPathComponent)
