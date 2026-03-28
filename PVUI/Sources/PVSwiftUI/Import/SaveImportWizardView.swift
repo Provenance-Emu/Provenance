@@ -91,7 +91,7 @@ public struct SaveImportWizardView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     if step != .progress {
-                        Button("Cancel") { dismiss() }
+                        Button(NSLocalizedString("Cancel", bundle: .module, comment: "")) { dismiss() }
                             .foregroundColor(.retroPink)
                     }
                 }
@@ -150,11 +150,11 @@ public struct SaveImportWizardView: View {
 
     private var navigationTitle: String {
         switch step {
-        case .fileSelection: return "Import Save"
-        case .gameMatching:  return "Match Game"
-        case .summary:       return "Confirm Import"
-        case .progress:      return "Importing…"
-        case .done:          return "Done"
+        case .fileSelection: return NSLocalizedString("save_import.nav.file_selection", bundle: .module, comment: "")
+        case .gameMatching:  return NSLocalizedString("save_import.nav.game_matching", bundle: .module, comment: "")
+        case .summary:       return NSLocalizedString("save_import.nav.summary", bundle: .module, comment: "")
+        case .progress:      return NSLocalizedString("save_import.nav.progress", bundle: .module, comment: "")
+        case .done:          return NSLocalizedString("save_import.nav.done", bundle: .module, comment: "")
         }
     }
 
@@ -202,12 +202,12 @@ public struct SaveImportWizardView: View {
                 .shadow(color: .retroPink, radius: 14)
 
             VStack(spacing: 10) {
-                Text("IMPORT SAVE")
+                Text("save_import.step1.title", bundle: .module)
                     .font(.system(size: 22, weight: .black, design: .rounded))
                     .foregroundStyle(neonGradient)
 
                 if let game = confirmedGame {
-                    Text("Importing save for:")
+                    Text("save_import.step1.importing_for", bundle: .module)
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.55))
                     Text(game.title)
@@ -217,7 +217,7 @@ public struct SaveImportWizardView: View {
                         .shadow(color: .retroPink, radius: 4)
                         .padding(.horizontal, 12)
                 } else {
-                    Text("Choose a .zip save bundle or a battery save file (.sav, .srm, .ram) to import.")
+                    Text("save_import.step1.description", bundle: .module)
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
@@ -227,7 +227,8 @@ public struct SaveImportWizardView: View {
 
             #if !os(tvOS)
             Button { showFileImporter = true } label: {
-                Label("Choose File", systemImage: "folder.badge.plus")
+                Label(NSLocalizedString("save_import.step1.choose_file", bundle: .module, comment: ""),
+                      systemImage: "folder.badge.plus")
                     .font(.headline)
                     .frame(maxWidth: 280)
                     .padding(.vertical, 14)
@@ -249,7 +250,7 @@ public struct SaveImportWizardView: View {
                 .foregroundColor(.retroBlue)
                 .shadow(color: .retroBlue, radius: 10)
 
-            Text("On Apple TV, saves arrive via iCloud Drive sync. Enable iCloud sync in Cloud Settings and share a save bundle from another device to import it here.")
+            Text("save_import.tvos.icloud_hint", bundle: .module)
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
@@ -277,7 +278,7 @@ public struct SaveImportWizardView: View {
                         .tint(.retroPink)
                         .scaleEffect(1.6)
                         .shadow(color: .retroPink, radius: 10)
-                    Text("Finding matching game…")
+                    Text("save_import.matching.finding", bundle: .module)
                         .foregroundColor(.white.opacity(0.7))
                         .font(.subheadline)
                 }
@@ -320,7 +321,7 @@ public struct SaveImportWizardView: View {
                     Image(systemName: "questionmark.circle")
                         .font(.system(size: 36))
                         .foregroundColor(.white.opacity(0.4))
-                    Text("No matching game found")
+                    Text("save_import.matching.no_match", bundle: .module)
                         .font(.body)
                         .foregroundColor(.white.opacity(0.5))
                 }
@@ -341,7 +342,8 @@ public struct SaveImportWizardView: View {
                     Button {
                         step = .summary
                     } label: {
-                        Label("Use This Game", systemImage: "checkmark.circle")
+                        Label(NSLocalizedString("save_import.matching.use_this", bundle: .module, comment: ""),
+                              systemImage: "checkmark.circle")
                             .font(.headline)
                             .frame(maxWidth: 280)
                             .padding(.vertical, 12)
@@ -352,7 +354,10 @@ public struct SaveImportWizardView: View {
                 Button {
                     showGamePicker = true
                 } label: {
-                    Label(confirmedGame == nil && result.game == nil ? "Select Game" : "Choose Different Game",
+                    let key = confirmedGame == nil && result.game == nil
+                        ? "save_import.matching.select_game"
+                        : "save_import.matching.choose_different"
+                    Label(NSLocalizedString(key, bundle: .module, comment: ""),
                           systemImage: "list.bullet")
                         .font(.headline)
                         .frame(maxWidth: 280)
@@ -376,7 +381,7 @@ public struct SaveImportWizardView: View {
 
             if let game = confirmedGame {
                 VStack(spacing: 6) {
-                    Text("Ready to import saves for")
+                    Text("save_import.summary.ready_for", bundle: .module)
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.6))
                     Text(game.title)
@@ -398,7 +403,8 @@ public struct SaveImportWizardView: View {
             Button {
                 performImport()
             } label: {
-                Label("Import Now", systemImage: "square.and.arrow.down")
+                Label(NSLocalizedString("save_import.summary.import_now", bundle: .module, comment: ""),
+                      systemImage: "square.and.arrow.down")
                     .font(.headline)
                     .frame(maxWidth: 280)
                     .padding(.vertical, 14)
@@ -412,12 +418,17 @@ public struct SaveImportWizardView: View {
     private func summaryCard(url: URL) -> some View {
         let ext = url.pathExtension.lowercased()
         let isBundleType = ext == "zip" || ext == "pvsave"
-        let typeLabel = isBundleType ? "Save Bundle (.\(ext))" : "Battery Save (.\(ext))"
+        let typeFormatKey = isBundleType ? "save_import.summary.bundle_type" : "save_import.summary.battery_type"
+        let typeLabel = String(format: NSLocalizedString(typeFormatKey, bundle: .module, comment: ""), ext)
         let typeIcon = isBundleType ? "archivebox.fill" : "memorychip"
 
         return VStack(alignment: .leading, spacing: 12) {
-            summaryRow(icon: "doc.fill", label: "File", value: url.lastPathComponent)
-            summaryRow(icon: typeIcon, label: "Type", value: typeLabel)
+            summaryRow(icon: "doc.fill",
+                       label: NSLocalizedString("save_import.summary.file_label", bundle: .module, comment: ""),
+                       value: url.lastPathComponent)
+            summaryRow(icon: typeIcon,
+                       label: NSLocalizedString("save_import.summary.type_label", bundle: .module, comment: ""),
+                       value: typeLabel)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -447,10 +458,15 @@ public struct SaveImportWizardView: View {
     }
 
     private func overwriteWarning(count: Int) -> some View {
-        HStack(spacing: 10) {
+        let warningKey = count == 1
+            ? "save_import.summary.overwrite_singular"
+            : "save_import.summary.overwrite_plural"
+        let warningText = String(format: NSLocalizedString(warningKey, bundle: .module, comment: ""), count)
+
+        return HStack(spacing: 10) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundColor(.retroYellow)
-            Text("This game has \(count) existing save state\(count == 1 ? "" : "s"). Importing may overwrite matching files.")
+            Text(warningText)
                 .font(.caption)
                 .foregroundColor(.retroYellow)
                 .multilineTextAlignment(.leading)
@@ -475,7 +491,7 @@ public struct SaveImportWizardView: View {
                 .foregroundStyle(neonGradient)
                 .shadow(color: .retroPink, radius: 18)
 
-            Text("IMPORTING…")
+            Text("save_import.progress.title", bundle: .module)
                 .font(.system(size: 20, weight: .black, design: .rounded))
                 .foregroundStyle(neonGradient)
 
@@ -509,7 +525,7 @@ public struct SaveImportWizardView: View {
                 }
             }
 
-            Button("Done") { dismiss() }
+            Button(NSLocalizedString("save_import.done.button", bundle: .module, comment: "")) { dismiss() }
                 .font(.headline)
                 .frame(maxWidth: 200)
                 .padding(.vertical, 14)
@@ -523,11 +539,11 @@ public struct SaveImportWizardView: View {
         VStack(spacing: 18) {
             glowCircle(icon: "checkmark.circle.fill", color: .retroGreen)
 
-            Text("IMPORT COMPLETE")
+            Text("save_import.done.success_title", bundle: .module)
                 .font(.system(size: 20, weight: .black, design: .rounded))
                 .foregroundStyle(neonGradient)
 
-            Text("Saves restored successfully.\nThey will appear after a library refresh or app relaunch.")
+            Text("save_import.done.success_message", bundle: .module)
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
@@ -539,7 +555,7 @@ public struct SaveImportWizardView: View {
         VStack(spacing: 18) {
             glowCircle(icon: "xmark.circle.fill", color: .red)
 
-            Text("IMPORT FAILED")
+            Text("save_import.done.failure_title", bundle: .module)
                 .font(.system(size: 20, weight: .black, design: .rounded))
                 .foregroundColor(.red)
 
@@ -568,9 +584,9 @@ public struct SaveImportWizardView: View {
 
     private func confidenceText(_ c: MatchConfidence) -> String {
         switch c {
-        case .exact:    return "Exact Match"
-        case .probable: return "Probable Match"
-        case .manual:   return "Manual Selection"
+        case .exact:    return NSLocalizedString("save_import.matching.exact", bundle: .module, comment: "")
+        case .probable: return NSLocalizedString("save_import.matching.probable", bundle: .module, comment: "")
+        case .manual:   return NSLocalizedString("save_import.matching.manual", bundle: .module, comment: "")
         }
     }
 
@@ -752,14 +768,15 @@ private struct GamePickerView: View {
                     }
                 }
             }
-            .searchable(text: $searchText, prompt: "Search games…")
-            .navigationTitle("Select Game")
+            .searchable(text: $searchText,
+                        prompt: Text("save_import.picker.search_prompt", bundle: .module))
+            .navigationTitle(Text("save_import.picker.title", bundle: .module))
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(NSLocalizedString("Cancel", bundle: .module, comment: "")) { dismiss() }
                 }
             }
         }
