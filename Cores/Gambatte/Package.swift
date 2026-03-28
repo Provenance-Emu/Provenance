@@ -40,6 +40,7 @@ let package = Package(
         .package(name: "PVNetplay", path: "../../PVNetplay"),
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
+        .package(path: "../../PVRcheevos"),
     ],
     targets: [
         // MARK: ------- CORE --------
@@ -85,11 +86,14 @@ let package = Package(
                 "PVSupport",
                 "PVGambatteOptions",
                 "libgambatte",
-                "libresample"
+                "libresample",
+                // CRcheevos provides the rc_client C API from the shared PVRcheevos package.
+                .product(name: "CRcheevos", package: "PVRcheevos"),
             ],
             cSettings: [
                 .define("INT_LEAST_32"),
                 .define("HAVE_STDINT_H", to: "1"),
+                .define("HAVE_RCHEEVOS", to: "1"),
                 .headerSearchPath("../libgambatte/libgambatte/include"),
                 .headerSearchPath("../libresample/common/resample"),
                 .unsafeFlags([
