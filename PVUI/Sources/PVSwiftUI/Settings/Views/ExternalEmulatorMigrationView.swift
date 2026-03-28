@@ -135,7 +135,11 @@ public struct ExternalEmulatorMigrationView: View {
                     )
                 )
 
-            Text("iOS prevents apps from reading each other's files directly. Tap an emulator below to see step-by-step export instructions.")
+            #if os(tvOS)
+            Text("Transfer save files to Provenance from another device using the web server.")
+            #else
+            Text("Tap an emulator below for step-by-step instructions to export and import your saves.")
+            #endif
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -313,37 +317,26 @@ public struct ExternalEmulatorMigrationView: View {
 // MARK: - Emulator row
 
 private struct EmulatorRowView: View {
-    let icon: String
-    let iconColor: Color
-    let title: String
-    let subtitle: String
+    let emulator: KnownEmulator
     let action: () -> Void
-
-    init(emulator: KnownEmulator, action: @escaping () -> Void) {
-        self.icon = emulator.symbolName
-        self.iconColor = .retroBlue
-        self.title = emulator.displayName
-        self.subtitle = emulator.systemSummary
-        self.action = action
-    }
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(iconColor.opacity(0.15))
+                        .fill(Color.retroBlue.opacity(0.15))
                         .frame(width: 44, height: 44)
-                    Image(systemName: icon)
+                    Image(systemName: emulator.symbolName)
                         .font(.system(size: 18))
-                        .foregroundStyle(iconColor)
+                        .foregroundStyle(Color.retroBlue)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
+                    Text(emulator.displayName)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
-                    Text(subtitle)
+                    Text(emulator.systemSummary)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
@@ -361,7 +354,7 @@ private struct EmulatorRowView: View {
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(iconColor.opacity(0.2), lineWidth: 1)
+                    .stroke(Color.retroBlue.opacity(0.2), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
