@@ -14,26 +14,18 @@ import PVLibrary
 import PVRealm
 import RealmSwift
 
-// MARK: - MatchConfidence
-
-/// Confidence level of a game match for a save bundle.
-public enum MatchConfidence: Equatable, Sendable {
-    /// MD5 in the bundle manifest matched a game in the library exactly.
-    case exact
-    /// No MD5 match; filename heuristic found a probable game.
-    case probable
-    /// No automatic match found; the user must pick the game manually.
-    case manual
-}
-
 // MARK: - SaveImportMatchResult
 
 /// Result of a save bundle → game matching attempt.
+///
+/// Uses `SaveMatchConfidence` from `SaveImportExportProtocols` (shared with the
+/// drag-drop delegate and future import services).
 public struct SaveImportMatchResult {
     public let game: PVGame?
-    public let confidence: MatchConfidence
+    /// How well the bundle matched a game in the library.
+    public let confidence: SaveMatchConfidence
 
-    public init(game: PVGame?, confidence: MatchConfidence) {
+    public init(game: PVGame?, confidence: SaveMatchConfidence) {
         self.game = game
         self.confidence = confidence
     }

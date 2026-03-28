@@ -64,6 +64,7 @@ public struct SaveImportWizardView: View {
     @State private var isMatching = false
     @State private var importProgress: Double = 0
     @State private var outcome: ImportOutcome?
+    @State private var importResult: SaveImportResult?
     @State private var allGames: [PVGame] = []
     @State private var showGamePicker = false
 
@@ -138,12 +139,17 @@ public struct SaveImportWizardView: View {
     // MARK: - Allowed file types
 
     private var allowedContentTypes: [UTType] {
-        var types: [UTType] = [.zip, .data]
-        if let t = UTType(filenameExtension: "pvsave") { types.append(t) }
-        if let t = UTType(filenameExtension: "sav") { types.append(t) }
-        if let t = UTType(filenameExtension: "srm") { types.append(t) }
-        if let t = UTType(filenameExtension: "ram") { types.append(t) }
-        return types
+        [
+            // v2 .pvsave bundles — use the exported UTType for consistency with
+            // SaveStateDragDrop's saveBundleAcceptedTypes.
+            UTType(exportedAs: "com.provenance.pvsave", conformingTo: .zip),
+            .zip,
+            // Battery save files
+            UTType(filenameExtension: "sav") ?? .data,
+            UTType(filenameExtension: "srm") ?? .data,
+            UTType(filenameExtension: "ram") ?? .data,
+            .data,
+        ]
     }
 
     // MARK: - Navigation title
@@ -543,12 +549,49 @@ public struct SaveImportWizardView: View {
                 .font(.system(size: 20, weight: .black, design: .rounded))
                 .foregroundStyle(neonGradient)
 
-            Text("save_import.done.success_message", bundle: .module)
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.75))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+            if let result = importResult, result.sramRestored || result.statesRestored > 0 {
+                importSummaryPills(result: result)
+            } else {
+                Text("save_import.done.success_message", bundle: .module)
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.75))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
         }
+    }
+
+    private func importSummaryPills(result: SaveImportResult) -> some View {
+        HStack(spacing: 12) {
+            if result.statesRestored > 0 {
+                summaryPill(
+                    icon: "camera.fill",
+                    text: String(
+                        format: NSLocalizedString("save_import.done.states_restored", bundle: .module, comment: ""),
+                        result.statesRestored
+                    ),
+                    color: .retroPurple
+                )
+            }
+            if result.sramRestored {
+                summaryPill(
+                    icon: "memorychip",
+                    text: NSLocalizedString("save_import.done.sram_restored", bundle: .module, comment: ""),
+                    color: .retroGreen
+                )
+            }
+        }
+    }
+
+    private func summaryPill(icon: String, text: String, color: Color) -> some View {
+        Label(text, systemImage: icon)
+            .font(.caption.bold())
+            .foregroundColor(color)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+            .background(color.opacity(0.12))
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(color.opacity(0.4), lineWidth: 1))
     }
 
     private func failureView(message: String) -> some View {
@@ -582,7 +625,7 @@ public struct SaveImportWizardView: View {
 
     // MARK: - Confidence helpers
 
-    private func confidenceText(_ c: MatchConfidence) -> String {
+    private func confidenceText(_ c: SaveMatchConfidence) -> String {
         switch c {
         case .exact:    return NSLocalizedString("save_import.matching.exact", bundle: .module, comment: "")
         case .probable: return NSLocalizedString("save_import.matching.probable", bundle: .module, comment: "")
@@ -590,7 +633,7 @@ public struct SaveImportWizardView: View {
         }
     }
 
-    private func confidenceIcon(_ c: MatchConfidence) -> String {
+    private func confidenceIcon(_ c: SaveMatchConfidence) -> String {
         switch c {
         case .exact:    return "checkmark.seal.fill"
         case .probable: return "questionmark.circle.fill"
@@ -598,7 +641,7 @@ public struct SaveImportWizardView: View {
         }
     }
 
-    private func confidenceColor(_ c: MatchConfidence) -> Color {
+    private func confidenceColor(_ c: SaveMatchConfidence) -> Color {
         switch c {
         case .exact:    return .retroGreen
         case .probable: return .retroYellow
@@ -675,9 +718,11 @@ public struct SaveImportWizardView: View {
                 importProgress = 0.5
                 let ext = url.pathExtension.lowercased()
                 if ext == "zip" || ext == "pvsave" {
-                    try await SaveExporter.shared.importSaves(from: url, for: frozenGame)
+                    let result = try await SaveExporter.shared.importSaves(from: url, for: frozenGame)
+                    importResult = result
                 } else {
                     try await SaveExporter.shared.importSRAM(from: url, for: frozenGame)
+                    importResult = SaveImportResult(sramRestored: true, statesRestored: 0)
                 }
                 importProgress = 1.0
                 try? await Task.sleep(nanoseconds: 400_000_000)

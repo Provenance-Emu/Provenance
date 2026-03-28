@@ -265,6 +265,8 @@
 // Done step
 "save_import.done.success_title" = "IMPORT COMPLETE";
 "save_import.done.success_message" = "Saves restored successfully.\nThey will appear after a library refresh or app relaunch.";
+"save_import.done.states_restored" = "%d save state(s) restored";
+"save_import.done.sram_restored" = "Battery save restored";
 "save_import.done.failure_title" = "IMPORT FAILED";
 "save_import.done.button" = "Done";
 
