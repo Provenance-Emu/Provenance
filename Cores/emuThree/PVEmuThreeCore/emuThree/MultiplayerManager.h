@@ -58,6 +58,11 @@ typedef NS_ENUM(NSUInteger, StateChange) {
 
 -(void) connect:(NetworkRoom *)room withUsername:(NSString *)username andPassword:(NSString * _Nullable)password
       withErrorChange:(void(^)(ErrorChange error))errorChange withStateChange:(void(^)(StateChange state))stateChange;
+
+/// Convenience: connects using the Provenance-configured player username.
+-(void) connect:(NetworkRoom *)room andPassword:(NSString * _Nullable)password
+      withErrorChange:(void(^)(ErrorChange error))errorChange withStateChange:(void(^)(StateChange state))stateChange;
+
 -(void) disconnect;
 
 -(StateChange) state;

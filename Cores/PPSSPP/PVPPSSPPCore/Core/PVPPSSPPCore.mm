@@ -21,6 +21,7 @@
 @import PVEmulatorCore;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
+@import PVSettings;
 #import "OGLGraphicsContext.h"
 #import "VulkanGraphicsContext.h"
 
@@ -257,6 +258,19 @@
 	g_Config.bSeparateSASThread = self.separateSASThread;
 	g_Config.bPreloadFunctions = self.preloadFunctions;
 	g_Config.bCacheFullIsoInRam = self.cacheFullIsoInRam;
+
+	// User profile — set the PSP system nickname from Provenance settings
+	g_Config.sNickName = std::string([PVSettingsWrapper.resolvedPlayerUsername UTF8String]);
+
+	// System language — map from Provenance global setting to PSP language enum
+	{
+		NSInteger rawLang = PVSettingsWrapper.coreLanguageRawValue;
+		if (rawLang < 0) {
+			g_Config.iLanguage = (int)CoreLocaleMapperObjC.currentPSPLanguageID;
+		} else {
+			g_Config.iLanguage = (int)[CoreLocaleMapperObjC pspLanguageIDFromRetroArch:rawLang];
+		}
+	}
 
 	// Internal Options
 	g_Config.bEnableCheats = true;

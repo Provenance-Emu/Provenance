@@ -16,6 +16,7 @@
 
 #import "PVDolphinCore+Netplay.h"
 #import <PVLogging/PVLoggingObjC.h>
+@import PVSettings;
 #import <objc/runtime.h>
 
 // ---------------------------------------------------------------------------
@@ -343,11 +344,12 @@ static const char kClientBoxKey = 0;
         // replace the constructor call with:
         //   auto client = NetPlay::NetPlayClient::Create(connectAddress, resolvedPort,
         //                                               &s_netplayUI, "", traversalConfig);
+        std::string playerName{[PVSettingsWrapper.resolvedPlayerUsername UTF8String]};
         auto client = std::make_unique<NetPlay::NetPlayClient>(
             connectAddress,
             resolvedPort,
             &s_netplayUI,
-            /* player_name */ "",
+            playerName,
             traversalConfig
         );
 

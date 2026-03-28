@@ -415,11 +415,11 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Each dictionary contains:
 ///   @"flags"      : NSNumber (uint64_t)
 ///   @"ptr"        : NSValue wrapping the raw void* (or NSNull if NULL)
-///   @"offset"     : NSNumber (size_t)
+///   @"offset"     : NSNumber (uint64_t)
 ///   @"start"      : NSNumber (uint64_t) — emulated address
 ///   @"select"     : NSNumber (uint64_t)
 ///   @"disconnect" : NSNumber (uint64_t)
-///   @"len"        : NSNumber (size_t)
+///   @"len"        : NSNumber (uint64_t)
 ///   @"addrspace"  : NSString (or @"" if NULL)
 /// Returns an empty array if the core did not call SET_MEMORY_MAPS.
 @property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *memoryMapDescriptors;

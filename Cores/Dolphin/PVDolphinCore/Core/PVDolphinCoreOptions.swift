@@ -1,5 +1,6 @@
 import Foundation
 import PVSupport
+import PVSettings
 import PVCoreBridge
 import PVCoreObjCBridge
 import PVEmulatorCore
@@ -899,8 +900,20 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     @objc static var skipIPL: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.skipIPLOption).asBool
     }
-    @objc static var wiiLanguage: Int{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.wiiLanguageOption).asInt ?? 1
+    /// Resolved Wii language: per-core option takes priority, then global PVSettings,
+    /// then system locale.
+    @objc static var wiiLanguage: Int {
+        let perCoreValue = PVDolphinCore.valueForOption(PVDolphinCoreOptions.wiiLanguageOption).asInt ?? 1
+        let globalRaw = PVSettingsWrapper.coreLanguageRawValue
+        if globalRaw >= 0 {
+            let globalWii = CoreLocaleMapper.wiiLanguageID(fromRetroArch: globalRaw)
+            if perCoreValue == 1, globalWii != 1 {
+                return globalWii
+            }
+        } else if perCoreValue == 1 {
+            return CoreLocaleMapper.currentWiiLanguageID
+        }
+        return perCoreValue
     }
     @objc static var multiPlayer: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.multiPlayerOption).asBool

@@ -9,6 +9,9 @@
 
 import Foundation
 @_exported import Defaults
+#if canImport(UIKit)
+import UIKit
+#endif
 
 //public typealias Defaults = _Defaults
 //public typealias Default = _Default
@@ -938,6 +941,24 @@ public final class PVSettingsWrapper: NSObject {
     public static var playerUsername: String {
         get { Defaults[.playerUsername] }
         set { Defaults[.playerUsername] = newValue }}
+
+    /// Resolved player username with fallback chain:
+    /// 1. User-configured `playerUsername` (if non-empty)
+    /// 2. OS username (`NSUserName()` on macOS, device name on iOS)
+    /// 3. Platform-specific hardcoded fallback
+    @objc
+    public static var resolvedPlayerUsername: String {
+        let configured = playerUsername
+        if !configured.isEmpty { return configured }
+        #if os(tvOS)
+        return "Provenance TV"
+        #elseif canImport(UIKit)
+        return UIDevice.current.name
+        #else
+        let user = NSUserName()
+        return user.isEmpty ? "Provenance" : user
+        #endif
+    }
 
     /// The raw `CoreLanguageSetting` integer for the user's language override.
     /// -1 means "system locale" (caller resolves via `CoreLocaleMapper`).

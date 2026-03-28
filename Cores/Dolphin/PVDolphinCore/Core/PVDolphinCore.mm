@@ -1297,7 +1297,13 @@ void Host_TitleChanged()
 
 std::vector<std::string> Host_GetPreferredLocales()
 {
-  return {};
+  NSArray<NSString *> *preferredLanguages = [NSLocale preferredLanguages];
+  std::vector<std::string> locales;
+  locales.reserve(preferredLanguages.count);
+  for (NSString *lang in preferredLanguages) {
+    locales.emplace_back([lang UTF8String]);
+  }
+  return locales;
 }
 
 bool Host_RendererHasFullFocus()

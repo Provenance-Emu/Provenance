@@ -23,6 +23,7 @@
 import Foundation
 import Combine
 import PVNetplay
+import PVSettings
 import ObjectiveC
 
 // MARK: - Session context
@@ -185,9 +186,12 @@ extension PVDolphinCore: PVNetplayCapable {
             let traversalCode: String? = _netplayQueue.sync { [weak self] in
                 self?._bridge.queryDolphinTraversalCode()
             }
+            let displayName = ctx?.settings.nickname.isEmpty == false
+                ? ctx!.settings.nickname
+                : PVSettingsWrapper.resolvedPlayerUsername
             let room = NetplayRoom(
                 id: ctx?.sessionID ?? UUID(),
-                hostName: "Dolphin",
+                hostName: displayName,
                 gameName: "",
                 gameHash: "",
                 coreIdentifier: "com.provenance.dolphin",
@@ -204,9 +208,12 @@ extension PVDolphinCore: PVNetplayCapable {
             let ctx = _netplayContext
             let role = ctx?.role ?? .client(host: "0.0.0.0", port: 2626)
             let (hostAddr, port) = _resolvedHostPort(for: role, settings: ctx?.settings)
+            let connectedName = ctx?.settings.nickname.isEmpty == false
+                ? ctx!.settings.nickname
+                : PVSettingsWrapper.resolvedPlayerUsername
             let room = NetplayRoom(
                 id: ctx?.sessionID ?? UUID(),
-                hostName: "Dolphin",
+                hostName: connectedName,
                 gameName: "",
                 gameHash: "",
                 coreIdentifier: "com.provenance.dolphin",

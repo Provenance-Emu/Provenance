@@ -11,6 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
+@import PVSettings;
 #import <PVEmuThree/CitraWrapper.h>
 #import "InputFactory.h"
 #import <sys/utsname.h>
@@ -49,6 +50,7 @@
 #include "common/logging/log.h"
 #include "core/loader/loader.h"
 #include "core/memory.h"
+#include "core/hle/service/cfg/cfg.h"
 #include "core/hle/service/hid/hid.h"
 #include "core/hle/service/apt/applet_manager.h"
 #include "video_core/renderer_base.h"
@@ -406,6 +408,25 @@ static void InitializeLogging() {
     // Region
     int retionType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Region"]] intValue];
     Settings::values.region_value.SetValue(retionType);
+
+    // System Language & Username — applied via CFG service after core init
+    auto cfg = Service::CFG::GetModule(core);
+    if (cfg) {
+        int languageValue = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Language"]] intValue];
+        if (languageValue >= 0 && languageValue <= 11) {
+            cfg->SetSystemLanguage(static_cast<Service::CFG::SystemLanguage>(languageValue));
+        }
+
+        NSString *username = PVSettingsWrapper.resolvedPlayerUsername;
+        if (username.length > 0) {
+            NSString *truncated = username.length > 10 ? [username substringToIndex:10] : username;
+            std::u16string u16name;
+            for (NSUInteger i = 0; i < truncated.length; ++i) {
+                u16name.push_back(static_cast<char16_t>([truncated characterAtIndex:i]));
+            }
+            cfg->SetUsername(u16name);
+        }
+    }
 
     if (resetButtons)
         [CitraWrapper.sharedInstance setButtons];

@@ -712,6 +712,8 @@ typedef struct PVThinLibretroSymbols {
 - (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames;
 - (void)_thinInputPoll;
 - (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid;
+- (void)_thinNetpacketSendWithFlags:(int)flags buf:(const void *)buf len:(size_t)len clientID:(uint16_t)clientID;
+- (void)_thinNetpacketPollReceive;
 - (BOOL)handleEnvironmentCommand:(unsigned)cmd data:(void *)data;
 - (void)_parseV1OptionDefinition:(const struct retro_core_option_definition *)def;
 - (void)_parseCoreOptionsV2:(const struct retro_core_options_v2 *)opts;
@@ -788,33 +790,16 @@ static int16_t thin_input_state(unsigned port, unsigned device, unsigned index, 
 /// Forwards to the Swift transport via the netpacketSendBlock.
 static void thin_netpacket_send(int flags, const void *buf, size_t len, uint16_t client_id) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
-    if (!self || !self->_netpacketSessionActive) return;
-    if (self.netpacketSendBlock) {
-        self.netpacketSendBlock(flags, buf, len, client_id);
-    }
+    if (!self) return;
+    [self _thinNetpacketSendWithFlags:flags buf:buf len:len clientID:client_id];
 }
 
 /// Called by the core to receive all queued incoming packets.
 /// Drains the incoming queue and delivers each packet via the core's receive callback.
 static void thin_netpacket_poll_receive(void) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
-    if (!self || !self->_netpacketCallback) return;
-
-    os_unfair_lock_lock(&self->_netpacketQueueLock);
-    NSArray<NSData *> *packets = [self->_netpacketIncomingQueue copy];
-    NSArray<NSNumber *> *clientIDs = [self->_netpacketIncomingClientIDs copy];
-    [self->_netpacketIncomingQueue removeAllObjects];
-    [self->_netpacketIncomingClientIDs removeAllObjects];
-    os_unfair_lock_unlock(&self->_netpacketQueueLock);
-
-    retro_netpacket_receive_t receiveFn = self->_netpacketCallback->receive;
-    if (!receiveFn) return;
-
-    for (NSUInteger i = 0; i < packets.count; i++) {
-        NSData *pkt = packets[i];
-        uint16_t fromClient = clientIDs[i].unsignedShortValue;
-        receiveFn(pkt.bytes, pkt.length, fromClient);
-    }
+    if (!self) return;
+    [self _thinNetpacketPollReceive];
 }
 
 /// libretro logging bridge.
@@ -2574,11 +2559,11 @@ static bool thin_environment(unsigned cmd, void *data) {
         [result addObject:@{
             @"flags": @(d->flags),
             @"ptr": ptrValue,
-            @"offset": @(d->offset),
+            @"offset": @((uint64_t)d->offset),
             @"start": @((uint64_t)d->start),
             @"select": @((uint64_t)d->select),
             @"disconnect": @((uint64_t)d->disconnect),
-            @"len": @(d->len),
+            @"len": @((uint64_t)d->len),
             @"addrspace": d->addrspace ? [NSString stringWithUTF8String:d->addrspace] : @""
         }];
     }
@@ -2912,6 +2897,33 @@ static bool thin_environment(unsigned cmd, void *data) {
     memcpy(data, srmData.bytes, copySize);
     ILOG(@"ThinFrontend: loaded SRAM (%zu bytes) from %@", copySize, srmPath.lastPathComponent);
     return YES;
+}
+
+- (void)_thinNetpacketSendWithFlags:(int)flags buf:(const void *)buf len:(size_t)len clientID:(uint16_t)clientID {
+    if (!_netpacketSessionActive) return;
+    if (self.netpacketSendBlock) {
+        self.netpacketSendBlock(flags, buf, len, clientID);
+    }
+}
+
+- (void)_thinNetpacketPollReceive {
+    if (!_netpacketCallback) return;
+
+    os_unfair_lock_lock(&_netpacketQueueLock);
+    NSArray<NSData *> *packets = [_netpacketIncomingQueue copy];
+    NSArray<NSNumber *> *clientIDs = [_netpacketIncomingClientIDs copy];
+    [_netpacketIncomingQueue removeAllObjects];
+    [_netpacketIncomingClientIDs removeAllObjects];
+    os_unfair_lock_unlock(&_netpacketQueueLock);
+
+    retro_netpacket_receive_t receiveFn = _netpacketCallback->receive;
+    if (!receiveFn) return;
+
+    for (NSUInteger i = 0; i < packets.count; i++) {
+        NSData *pkt = packets[i];
+        uint16_t fromClient = clientIDs[i].unsignedShortValue;
+        receiveFn(pkt.bytes, pkt.length, fromClient);
+    }
 }
 
 // MARK: - Netpacket interface (env 78) session lifecycle

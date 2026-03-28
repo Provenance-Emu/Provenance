@@ -187,9 +187,10 @@ static NSMutableArray<NSData *> *s_netpacketIncomingQueue = nil;
 static NSMutableArray<NSNumber *> *s_netpacketIncomingClientIDs = nil;
 static os_unfair_lock s_netpacketQueueLock = OS_UNFAIR_LOCK_INIT;
 
-/// Block invoked when the core calls send_fn to send a packet over the network.
+/// Block set by the Swift transport layer to forward outgoing packets.
 static void (^s_netpacketSendBlock)(int flags, const void *buf, size_t len, uint16_t clientID) = nil;
 
+/// Called by the core to send a packet to a peer or broadcast.
 static void legacy_netpacket_send(int flags, const void *buf, size_t len, uint16_t client_id) {
     if (!s_netpacketSessionActive) return;
     if (s_netpacketSendBlock) {
@@ -197,9 +198,9 @@ static void legacy_netpacket_send(int flags, const void *buf, size_t len, uint16
     }
 }
 
+/// Called by the core to receive all queued incoming packets.
 static void legacy_netpacket_poll_receive(void) {
-    if (!s_netpacketCallback) return;
-
+    if (!s_netpacketCallback || !s_netpacketCallback->receive) return;
     os_unfair_lock_lock(&s_netpacketQueueLock);
     NSArray<NSData *> *packets = [s_netpacketIncomingQueue copy];
     NSArray<NSNumber *> *clientIDs = [s_netpacketIncomingClientIDs copy];
@@ -207,13 +208,10 @@ static void legacy_netpacket_poll_receive(void) {
     [s_netpacketIncomingClientIDs removeAllObjects];
     os_unfair_lock_unlock(&s_netpacketQueueLock);
 
-    retro_netpacket_receive_t receiveFn = s_netpacketCallback->receive;
-    if (!receiveFn) return;
-
     for (NSUInteger i = 0; i < packets.count; i++) {
         NSData *pkt = packets[i];
-        uint16_t fromClient = clientIDs[i].unsignedShortValue;
-        receiveFn(pkt.bytes, pkt.length, fromClient);
+        uint16_t cid = clientIDs[i].unsignedShortValue;
+        s_netpacketCallback->receive(pkt.bytes, pkt.length, cid);
     }
 }
 
@@ -2764,6 +2762,65 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     s_netpacketIncomingClientIDs = nil;
 
     core_unload();
+}
+
+// MARK: - Netpacket ObjC interface
+
+- (BOOL)hasNetpacketInterface {
+    return s_netpacketCallback != NULL;
+}
+
+- (nullable NSString *)netpacketProtocolVersion {
+    if (!s_netpacketCallback || !s_netpacketCallback->protocol_version) return nil;
+    return [NSString stringWithUTF8String:s_netpacketCallback->protocol_version];
+}
+
+- (void (^)(int, const void *, size_t, uint16_t))netpacketSendBlock {
+    return s_netpacketSendBlock;
+}
+
+- (void)setNetpacketSendBlock:(void (^)(int, const void *, size_t, uint16_t))block {
+    s_netpacketSendBlock = [block copy];
+}
+
+- (void)startNetpacketSessionWithClientID:(uint16_t)clientID {
+    if (!s_netpacketCallback || !s_netpacketCallback->start) {
+        WLOG(@"PVLibRetroCore: startNetpacketSession called without registered callback");
+        return;
+    }
+    s_netpacketSessionActive = YES;
+    ILOG(@"PVLibRetroCore: starting netpacket session (clientID=%u)", clientID);
+    s_netpacketCallback->start(clientID, legacy_netpacket_send, legacy_netpacket_poll_receive);
+}
+
+- (void)stopNetpacketSession {
+    if (!s_netpacketSessionActive) return;
+    s_netpacketSessionActive = NO;
+    if (s_netpacketCallback && s_netpacketCallback->stop) {
+        s_netpacketCallback->stop();
+    }
+    os_unfair_lock_lock(&s_netpacketQueueLock);
+    [s_netpacketIncomingQueue removeAllObjects];
+    [s_netpacketIncomingClientIDs removeAllObjects];
+    os_unfair_lock_unlock(&s_netpacketQueueLock);
+    ILOG(@"PVLibRetroCore: netpacket session stopped");
+}
+
+- (void)enqueueNetpacketData:(NSData *)data fromClient:(uint16_t)clientID {
+    os_unfair_lock_lock(&s_netpacketQueueLock);
+    [s_netpacketIncomingQueue addObject:data];
+    [s_netpacketIncomingClientIDs addObject:@(clientID)];
+    os_unfair_lock_unlock(&s_netpacketQueueLock);
+}
+
+- (void)netpacketPeerConnected:(uint16_t)clientID {
+    if (!s_netpacketCallback || !s_netpacketCallback->connected) return;
+    s_netpacketCallback->connected(clientID);
+}
+
+- (void)netpacketPeerDisconnected:(uint16_t)clientID {
+    if (!s_netpacketCallback || !s_netpacketCallback->disconnected) return;
+    s_netpacketCallback->disconnected(clientID);
 }
 
 -(void)coreInit {

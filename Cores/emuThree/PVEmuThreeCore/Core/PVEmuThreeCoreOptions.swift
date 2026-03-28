@@ -1,5 +1,6 @@
 import Foundation
 import PVSupport
+import PVSettings
 import PVCoreBridge
 
 @objc public final class PVEmuThreeCoreOptions: NSObject, CoreOptions {
@@ -146,7 +147,7 @@ import PVCoreBridge
     // # 0: Japanese, 1: English (default), 2: French, 3: German, 4: Italian, 5: Spanish,
     // # 6: Simplified Chinese, 7: Korean, 8: Dutch, 9: Portuguese, 10: Russian, 11: Traditional Chinese
     static var languageOption: CoreOption {
-        .enumeration(.init(title: "System Region",
+        .enumeration(.init(title: "System Language",
                            description: "The system language that 3DS will use during emulation.",
                            requiresRestart: true),
                      values: [
@@ -172,8 +173,8 @@ import PVCoreBridge
      eCubicEXT = VK_FILTER_CUBIC_EXT
      */
     static var filterModeOption: CoreOption {
-        .enumeration(.init(title: "System Region",
-                           description: "The preferred language for multi-language supported games.",
+        .enumeration(.init(title: "Filter Mode",
+                           description: "The texture filtering mode for rendering.",
                            requiresRestart: true),
                      values: [
                         .init(title: "None", description: " No filters will be applied.", value: -1),
@@ -365,7 +366,7 @@ import PVCoreBridge
         let coreOptions: [CoreOption] = [
             resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
             shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, inputTypeOption, volumeOption, realtimeAudioOption,
-            stretchAudioOption, swapScreenOption, uprightScreenOption, regionOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
+            stretchAudioOption, swapScreenOption, uprightScreenOption, regionOption, languageOption, filterModeOption, customTexturesOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
         let coreGroup:CoreOption = .group(.init(title: "EmuThreeds Core",
                                                 description: "Global options for EmuThreeds"),
@@ -388,7 +389,21 @@ extension PVEmuThreeCoreOptions {
     @objc public static var enableAsyncPresent: Int { valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption)  }
     @objc public static var shaderType: Int { valueForOption(PVEmuThreeCoreOptions.shaderTypeOption)  }
     @objc public static var region: Int { valueForOption(PVEmuThreeCoreOptions.regionOption)  }
-    @objc public static var language: Int { valueForOption(PVEmuThreeCoreOptions.languageOption)  }
+    /// Resolved 3DS language: per-core option takes priority, then global PVSettings,
+    /// then system locale.
+    @objc public static var language: Int {
+        let perCoreValue: Int = valueForOption(PVEmuThreeCoreOptions.languageOption)
+        let globalRaw = PVSettingsWrapper.coreLanguageRawValue
+        if globalRaw >= 0 {
+            let global3DS = CoreLocaleMapper.ctrLanguageID(fromRetroArch: globalRaw)
+            if perCoreValue == 1, global3DS != 1 {
+                return global3DS
+            }
+        } else if perCoreValue == 1 {
+            return CoreLocaleMapper.currentCTRLanguageID
+        }
+        return perCoreValue
+    }
     @objc public static var enableVSync: Bool { valueForOption(PVEmuThreeCoreOptions.enableVSyncOption) }
     @objc public static var realtimeAudio: Bool { valueForOption(PVEmuThreeCoreOptions.realtimeAudioOption) }
     @objc public static var enableShaderAccurateMul: Bool { valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption) }

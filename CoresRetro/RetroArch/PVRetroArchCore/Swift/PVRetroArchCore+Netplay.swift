@@ -86,23 +86,11 @@ public extension PVRetroArchCoreBridge {
         netplayStatus != .idle
     }
 
-    /// Resolve the display nickname for netplay using the same fallback chain
-    /// as `PVThinLibretroFrontend` `GET_USERNAME`:
+    /// Resolve the display nickname for netplay:
     /// 1. Explicit `nickname` parameter (from `NetplaySettings.nickname`)
-    /// 2. `PVSettingsWrapper.playerUsername` (user-configured in Settings)
-    /// 3. Device name / OS username
-    /// 4. `"Provenance"` fallback
+    /// 2. `PVSettingsWrapper.resolvedPlayerUsername` (user setting → OS name → fallback)
     private static func resolveNetplayNickname(_ explicit: String?) -> String {
         if let explicit, !explicit.isEmpty { return explicit }
-        let configured = PVSettingsWrapper.playerUsername
-        if !configured.isEmpty { return configured }
-        #if os(tvOS)
-        return "Provenance TV"
-        #elseif canImport(UIKit)
-        return UIDevice.current.name
-        #else
-        let user = NSUserName()
-        return user.isEmpty ? "Provenance" : user
-        #endif
+        return PVSettingsWrapper.resolvedPlayerUsername
     }
 }

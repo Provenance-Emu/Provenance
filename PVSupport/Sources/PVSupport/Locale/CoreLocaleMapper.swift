@@ -174,6 +174,174 @@ public enum CoreLocaleMapper {
         ctrLanguageID(for: .current)
     }
 
+    // MARK: - PSP language IDs
+    //
+    // PSP_SYSTEMPARAM_LANGUAGE_*:
+    //   0=Japanese 1=English 2=French 3=Spanish 4=German 5=Italian
+    //   6=Dutch 7=Portuguese 8=Russian 9=Korean 10=ChineseTraditional 11=ChineseSimplified
+
+    /// Returns the PSP system language integer that best matches `locale`.
+    /// Falls back to English (1) for unrecognised locales.
+    public static func pspLanguageID(for locale: Locale) -> Int {
+        let languageCode: String
+        if #available(iOS 16, tvOS 16, macOS 13, *) {
+            languageCode = locale.language.languageCode?.identifier ?? locale.languageCode ?? "en"
+        } else {
+            languageCode = locale.languageCode ?? "en"
+        }
+
+        let scriptCode: String?
+        if #available(iOS 16, tvOS 16, macOS 13, *) {
+            scriptCode = locale.language.script?.identifier
+        } else {
+            scriptCode = locale.scriptCode
+        }
+
+        switch languageCode {
+        case "ja": return 0
+        case "fr": return 2
+        case "es": return 3
+        case "de": return 4
+        case "it": return 5
+        case "nl": return 6
+        case "pt": return 7
+        case "ru": return 8
+        case "ko": return 9
+        case "zh":
+            if let script = scriptCode {
+                return script == "Hans" ? 11 : 10
+            }
+            let regionCode: String?
+            if #available(iOS 16, tvOS 16, macOS 13, *) {
+                regionCode = locale.region?.identifier
+            } else {
+                regionCode = locale.regionCode
+            }
+            return (regionCode == "CN" || regionCode == "SG") ? 11 : 10
+        default:
+            return 1 // English
+        }
+    }
+
+    /// Convenience: resolve PSP language ID from `Locale.current`.
+    public static var currentPSPLanguageID: Int {
+        pspLanguageID(for: .current)
+    }
+
+    // MARK: - Wii (Dolphin) language IDs
+    //
+    // SYSCONF_LANGUAGE (Wii firmware):
+    //   0=Japanese 1=English 2=German 3=French 4=Spanish 5=Italian
+    //   6=Dutch 7=SimplifiedChinese 8=TraditionalChinese 9=Korean
+
+    /// Returns the Wii system language integer that best matches `locale`.
+    /// Falls back to English (1) for unrecognised locales.
+    public static func wiiLanguageID(for locale: Locale) -> Int {
+        let languageCode: String
+        if #available(iOS 16, tvOS 16, macOS 13, *) {
+            languageCode = locale.language.languageCode?.identifier ?? locale.languageCode ?? "en"
+        } else {
+            languageCode = locale.languageCode ?? "en"
+        }
+
+        let scriptCode: String?
+        if #available(iOS 16, tvOS 16, macOS 13, *) {
+            scriptCode = locale.language.script?.identifier
+        } else {
+            scriptCode = locale.scriptCode
+        }
+
+        switch languageCode {
+        case "ja": return 0
+        case "de": return 2
+        case "fr": return 3
+        case "es": return 4
+        case "it": return 5
+        case "nl": return 6
+        case "ko": return 9
+        case "zh":
+            if let script = scriptCode {
+                return script == "Hans" ? 7 : 8
+            }
+            let regionCode: String?
+            if #available(iOS 16, tvOS 16, macOS 13, *) {
+                regionCode = locale.region?.identifier
+            } else {
+                regionCode = locale.regionCode
+            }
+            return (regionCode == "CN" || regionCode == "SG") ? 7 : 8
+        default:
+            return 1 // English
+        }
+    }
+
+    /// Convenience: resolve Wii language ID from `Locale.current`.
+    public static var currentWiiLanguageID: Int {
+        wiiLanguageID(for: .current)
+    }
+
+    // MARK: - RetroArch → system-specific converters
+
+    /// Converts a RETRO_LANGUAGE_* raw value to the equivalent PSP language ID.
+    /// Returns English (1) for unmapped values.
+    public static func pspLanguageID(fromRetroArch retroLang: Int) -> Int {
+        switch retroLang {
+        case retroArchJapanese:             return 0
+        case retroArchEnglish:              return 1
+        case retroArchFrench:               return 2
+        case retroArchSpanish:              return 3
+        case retroArchGerman:               return 4
+        case retroArchItalian:              return 5
+        case retroArchDutch:                return 6
+        case retroArchPortugueseBrazil,
+             retroArchPortuguesePortugal:   return 7
+        case retroArchRussian:              return 8
+        case retroArchKorean:               return 9
+        case retroArchChineseTraditional:   return 10
+        case retroArchChineseSimplified:    return 11
+        default:                            return 1
+        }
+    }
+
+    /// Converts a RETRO_LANGUAGE_* raw value to the equivalent Wii language ID.
+    /// Returns English (1) for unmapped values.
+    public static func wiiLanguageID(fromRetroArch retroLang: Int) -> Int {
+        switch retroLang {
+        case retroArchJapanese:             return 0
+        case retroArchEnglish:              return 1
+        case retroArchGerman:               return 2
+        case retroArchFrench:               return 3
+        case retroArchSpanish:              return 4
+        case retroArchItalian:              return 5
+        case retroArchDutch:                return 6
+        case retroArchChineseSimplified:    return 7
+        case retroArchChineseTraditional:   return 8
+        case retroArchKorean:               return 9
+        default:                            return 1
+        }
+    }
+
+    /// Converts a RETRO_LANGUAGE_* raw value to the equivalent CTR (3DS) language ID.
+    /// Returns English (1) for unmapped values.
+    public static func ctrLanguageID(fromRetroArch retroLang: Int) -> Int {
+        switch retroLang {
+        case retroArchJapanese:             return 0
+        case retroArchEnglish:              return 1
+        case retroArchFrench:               return 2
+        case retroArchGerman:               return 3
+        case retroArchItalian:              return 4
+        case retroArchSpanish:              return 5
+        case retroArchChineseSimplified:    return 6
+        case retroArchKorean:               return 7
+        case retroArchDutch:                return 8
+        case retroArchPortugueseBrazil,
+             retroArchPortuguesePortugal:   return 9
+        case retroArchRussian:              return 10
+        case retroArchChineseTraditional:   return 11
+        default:                            return 1
+        }
+    }
+
     // MARK: - NDS (DS) firmware language strings
     //
     // Used by melonDS (`melonds_language`) and Desmume2015 (`desmume_firmware_language`).
@@ -214,5 +382,35 @@ public final class CoreLocaleMapperObjC: NSObject {
     /// `RETRO_LANGUAGE_*` integer matching the device's current locale.
     @objc public static var currentRetroArchLanguageID: Int {
         CoreLocaleMapper.currentRetroArchLanguageID
+    }
+
+    /// PSP `iLanguage` integer matching the device's current locale.
+    @objc public static var currentPSPLanguageID: Int {
+        CoreLocaleMapper.currentPSPLanguageID
+    }
+
+    /// Wii `SYSCONF_LANGUAGE` integer matching the device's current locale.
+    @objc public static var currentWiiLanguageID: Int {
+        CoreLocaleMapper.currentWiiLanguageID
+    }
+
+    /// CTR (3DS) language integer matching the device's current locale.
+    @objc public static var currentCTRLanguageID: Int {
+        CoreLocaleMapper.currentCTRLanguageID
+    }
+
+    /// Converts a RETRO_LANGUAGE_* value to PSP language ID.
+    public static func pspLanguageID(fromRetroArch retroLang: Int) -> Int {
+        CoreLocaleMapper.pspLanguageID(fromRetroArch: retroLang)
+    }
+
+    /// Converts a RETRO_LANGUAGE_* value to Wii language ID.
+    public static func wiiLanguageID(fromRetroArch retroLang: Int) -> Int {
+        CoreLocaleMapper.wiiLanguageID(fromRetroArch: retroLang)
+    }
+
+    /// Converts a RETRO_LANGUAGE_* value to CTR (3DS) language ID.
+    public static func ctrLanguageID(fromRetroArch retroLang: Int) -> Int {
+        CoreLocaleMapper.ctrLanguageID(fromRetroArch: retroLang)
     }
 }

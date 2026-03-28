@@ -7,6 +7,7 @@
 //
 
 #import "MultiplayerManager.h"
+@import PVSettings;
 
 #include <iostream>
 #include <memory>
@@ -193,6 +194,12 @@ static void OnStatusMessageReceived(const Network::StatusMessageEntry& msg) {
                           Service::CFG::GetConsoleIdHash(Core::System::GetInstance()),
                           room.ip.UTF8String, room.port, 0, Network::NoPreferredMac, pwd);
     }
+}
+
+-(void) connect:(NetworkRoom *)room andPassword:(NSString * _Nullable)password
+      withErrorChange:(void(^)(ErrorChange error))errorChange withStateChange:(void(^)(StateChange state))stateChange {
+    [self connect:room withUsername:PVSettingsWrapper.resolvedPlayerUsername andPassword:password
+  withErrorChange:errorChange withStateChange:stateChange];
 }
 
 -(void) disconnect {

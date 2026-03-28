@@ -591,7 +591,11 @@ struct EmulatorMigrationGuideView: View {
                 NSLocalizedString("migration.retroarch.export.step3", bundle: .module, comment: "Tap 'Save State' to ensure a state is saved, then return to Quick Menu."),
                 NSLocalizedString("migration.retroarch.export.step4", bundle: .module, comment: "Go to Quick Menu → Close Content to return to the main menu."),
                 NSLocalizedString("migration.retroarch.export.step5", bundle: .module, comment: "In the main menu, navigate to 'Load Content' path to find your saves folder."),
-                NSLocalizedString("migration.retroarch.export.step6", bundle: .module, comment: "Use the RetroArch file browser or Files.app to locate the 'saves' folder inside the RetroArch app group."),
+                NSLocalizedString(
+                    "migration.retroarch.export.step6",
+                    bundle: .module,
+                    comment: "Use the RetroArch file browser or Files.app to locate the 'saves' folder inside the RetroArch app group."
+                ),
                 NSLocalizedString("migration.retroarch.export.step7", bundle: .module, comment: "Copy the .srm (battery save) or .state files to a location accessible to Provenance.")
             ]
         case .ppsspp:

@@ -137,6 +137,127 @@ struct CoreLocaleMapperTests {
         #expect(CoreLocaleMapper.ctrLanguageID(for: locale("xx")) == 1)
     }
 
+    // MARK: - PSP language IDs
+
+    @Test("PSP: English maps to 1")
+    func pspEnglish() {
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("en")) == 1)
+    }
+
+    @Test("PSP: Japanese maps to 0")
+    func pspJapanese() {
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("ja")) == 0)
+    }
+
+    @Test("PSP: French maps to 2, Spanish to 3, German to 4, Italian to 5")
+    func pspEuropeanLanguages() {
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("fr")) == 2)
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("es")) == 3)
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("de")) == 4)
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("it")) == 5)
+    }
+
+    @Test("PSP: Dutch maps to 6, Portuguese to 7, Russian to 8, Korean to 9")
+    func pspOtherLanguages() {
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("nl")) == 6)
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("pt")) == 7)
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("ru")) == 8)
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("ko")) == 9)
+    }
+
+    @Test("PSP: Chinese Traditional=10, Simplified=11")
+    func pspChinese() {
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("zh-TW")) == 10)
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("zh-CN")) == 11)
+    }
+
+    @Test("PSP: Unknown falls back to English (1)")
+    func pspUnknownFallback() {
+        #expect(CoreLocaleMapper.pspLanguageID(for: locale("xx")) == 1)
+    }
+
+    // MARK: - Wii language IDs
+
+    @Test("Wii: English maps to 1, Japanese to 0")
+    func wiiBasicLanguages() {
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("en")) == 1)
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("ja")) == 0)
+    }
+
+    @Test("Wii: German=2, French=3, Spanish=4, Italian=5, Dutch=6")
+    func wiiEuropeanLanguages() {
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("de")) == 2)
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("fr")) == 3)
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("es")) == 4)
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("it")) == 5)
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("nl")) == 6)
+    }
+
+    @Test("Wii: Chinese Simplified=7, Traditional=8, Korean=9")
+    func wiiAsianLanguages() {
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("zh-CN")) == 7)
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("zh-TW")) == 8)
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("ko")) == 9)
+    }
+
+    @Test("Wii: Unknown falls back to English (1)")
+    func wiiUnknownFallback() {
+        #expect(CoreLocaleMapper.wiiLanguageID(for: locale("xx")) == 1)
+    }
+
+    // MARK: - RetroArch → system-specific converters
+
+    @Test("PSP fromRetroArch: maps all supported languages correctly")
+    func pspFromRetroArch() {
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 0) == 1)   // EN→1
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 1) == 0)   // JA→0
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 2) == 2)   // FR→2
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 3) == 3)   // ES→3
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 4) == 4)   // DE→4
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 5) == 5)   // IT→5
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 6) == 6)   // NL→6
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 7) == 7)   // PT-BR→7
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 8) == 7)   // PT-PT→7
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 9) == 8)   // RU→8
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 10) == 9)  // KO→9
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 11) == 10) // ZH-TW→10
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 12) == 11) // ZH-CN→11
+        #expect(CoreLocaleMapper.pspLanguageID(fromRetroArch: 99) == 1)  // Unknown→EN
+    }
+
+    @Test("Wii fromRetroArch: maps all supported languages correctly")
+    func wiiFromRetroArch() {
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 0) == 1)   // EN→1
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 1) == 0)   // JA→0
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 2) == 3)   // FR→3
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 3) == 4)   // ES→4
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 4) == 2)   // DE→2
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 5) == 5)   // IT→5
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 6) == 6)   // NL→6
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 10) == 9)  // KO→9
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 11) == 8)  // ZH-TW→8
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 12) == 7)  // ZH-CN→7
+        #expect(CoreLocaleMapper.wiiLanguageID(fromRetroArch: 99) == 1)  // Unknown→EN
+    }
+
+    @Test("CTR fromRetroArch: maps all supported languages correctly")
+    func ctrFromRetroArch() {
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 0) == 1)   // EN→1
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 1) == 0)   // JA→0
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 2) == 2)   // FR→2
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 3) == 5)   // ES→5
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 4) == 3)   // DE→3
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 5) == 4)   // IT→4
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 6) == 8)   // NL→8
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 7) == 9)   // PT-BR→9
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 8) == 9)   // PT-PT→9
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 9) == 10)  // RU→10
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 10) == 7)  // KO→7
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 11) == 11) // ZH-TW→11
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 12) == 6)  // ZH-CN→6
+        #expect(CoreLocaleMapper.ctrLanguageID(fromRetroArch: 99) == 1)  // Unknown→EN
+    }
+
     // MARK: - NDS firmware language strings
 
     @Test("NDS: English maps to 'English'")

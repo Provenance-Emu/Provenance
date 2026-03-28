@@ -19,6 +19,7 @@
 import Foundation
 import Combine
 import PVNetplay
+import PVSettings
 import ObjectiveC
 
 // MARK: - Session context storage
@@ -201,6 +202,7 @@ private extension NetplayRoom {
     ) -> NetplayRoom {
         let settings = context?.settings
         let nickname = settings.flatMap { $0.nickname.isEmpty ? nil : $0.nickname }
+            ?? PVSettingsWrapper.resolvedPlayerUsername
         let isPasswordProtected = !(settings?.password?.isEmpty ?? true)
         // PPSSPP adhoc has no spectator concept — spectator falls back to joining
         // as a regular client.  Always advertise false so the UI does not offer
@@ -208,7 +210,7 @@ private extension NetplayRoom {
         let allowsSpectators = false
         return NetplayRoom(
             id: id,
-            hostName: nickname ?? "PPSSPP",
+            hostName: nickname,
             gameName: "",
             gameHash: "",
             coreIdentifier: CorePlist.pvCoreIdentifier,
