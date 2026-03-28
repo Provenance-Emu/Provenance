@@ -453,10 +453,8 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                 }
             }
 #else
-            await MainActor.run {
-                gamesViewModel.saveExportURL = url
-                gamesViewModel.showSaveExportShareSheet = true
-            }
+            gamesViewModel.saveExportURL = url
+            gamesViewModel.showSaveExportShareSheet = true
 #endif
         } catch {
             rootDelegate?.showMessage("Export failed: \(error.localizedDescription)", title: "Export Error")

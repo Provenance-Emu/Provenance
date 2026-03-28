@@ -286,7 +286,7 @@ public struct GameContextMenu: View {
                 let dir = Paths.batterySavesPath(forROM: romURL)
                 let fm = FileManager.default
                 return fm.fileExists(atPath: dir.path)
-                    && ((try? fm.contentsOfDirectory(atPath: dir.path))?.isEmpty == false)
+                    && ((try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles))?.isEmpty == false)
             }.value
             hasBatterySaves = result
         }

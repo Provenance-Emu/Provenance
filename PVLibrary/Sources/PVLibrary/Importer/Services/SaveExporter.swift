@@ -429,7 +429,7 @@ public final class SaveExporter: @unchecked Sendable {
                     if let imgName = entry.screenshotFilename {
                         let imgURL = destStates.appendingPathComponent(imgName)
                         if fm.fileExists(atPath: imgURL.path) {
-                            imageFile = PVImageFile(withURL: imgURL)
+                            imageFile = PVImageFile(withURL: imgURL, relativeRoot: .iCloud)
                         }
                     }
 
@@ -699,7 +699,9 @@ public final class SaveExporter: @unchecked Sendable {
             }
             try validateNoBundleEscape(in: tempDir)
 
-            let extractedFiles = (try? fm.contentsOfDirectory(atPath: tempDir.path)) ?? []
+            let extractedFiles = (try? fm.contentsOfDirectory(
+                at: tempDir, includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles).map(\.lastPathComponent)) ?? []
             for fileName in extractedFiles {
                 let src = tempDir.appendingPathComponent(fileName)
                 let dest = destDir.appendingPathComponent(fileName)
