@@ -9,19 +9,19 @@ import PackagePlugin
 struct PackageBuildInfoPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) throws -> [Command] {
         guard let target = target as? SourceModuleTarget else { return [] }
-        let outputFile = context.pluginWorkDirectory.appending("packageBuildInfo.swift")
+        let outputFile = context.pluginWorkDirectoryURL.appending(path: "packageBuildInfo.swift")
 
         // .buildCommand (not .prebuildCommand) is required because the tool is built
         // from source — Xcode 16+ forbids source-built executables in prebuild commands.
         // Declare .git/HEAD as input so the command reruns on each commit.
-        let gitHead = context.package.directory
-            .removingLastComponent()   // package dir → repo root
-            .appending(".git")
-            .appending("HEAD")
+        let gitHead = context.package.directoryURL
+            .deletingLastPathComponent()   // package dir → repo root
+            .appending(path: ".git")
+            .appending(path: "HEAD")
         let command: Command = .buildCommand(
-            displayName: "Generating \(outputFile.lastComponent) for \(target.directory)",
-            executable: try context.tool(named: "PackageBuildInfo").path,
-            arguments: ["\(target.directory)", "\(outputFile)"],
+            displayName: "Generating \(outputFile.lastPathComponent) for \(target.directory.string)",
+            executable: try context.tool(named: "PackageBuildInfo").url,
+            arguments: [target.directory.string, outputFile.path],
             inputFiles: [gitHead],
             outputFiles: [outputFile]
         )
@@ -33,14 +33,14 @@ struct PackageBuildInfoPlugin: BuildToolPlugin {
 import XcodeProjectPlugin
 extension PackageBuildInfoPlugin: XcodeBuildToolPlugin {
     func createBuildCommands(context: XcodeProjectPlugin.XcodePluginContext, target: XcodeProjectPlugin.XcodeTarget) throws -> [PackagePlugin.Command] {
-        let outputFile = context.pluginWorkDirectory.appending("packageBuildInfo.swift")
-        let gitHead = context.xcodeProject.directory
-            .appending(".git")
-            .appending("HEAD")
+        let outputFile = context.pluginWorkDirectoryURL.appending(path: "packageBuildInfo.swift")
+        let gitHead = context.xcodeProject.directoryURL
+            .appending(path: ".git")
+            .appending(path: "HEAD")
         let command: Command = .buildCommand(
-            displayName: "Generating \(outputFile.lastComponent) for \(context.xcodeProject.directory)",
-            executable: try context.tool(named: "PackageBuildInfo").path,
-            arguments: ["\(context.xcodeProject.directory)", "\(outputFile)"],
+            displayName: "Generating \(outputFile.lastPathComponent) for \(context.xcodeProject.directoryURL.path)",
+            executable: try context.tool(named: "PackageBuildInfo").url,
+            arguments: [context.xcodeProject.directoryURL.path, outputFile.path],
             inputFiles: [gitHead],
             outputFiles: [outputFile]
         )

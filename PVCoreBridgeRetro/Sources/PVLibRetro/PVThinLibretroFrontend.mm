@@ -337,7 +337,8 @@ typedef struct PVThinLibretroSymbols {
     // Keyboard callback
     retro_keyboard_event_t _keyboardEventCb;
 
-    // HW render state
+    // HW render state — @package so static C trampolines can access via ->
+    @package
     struct retro_hw_render_callback _hwRenderCallback;
     BOOL _hwRenderRequested;
 
@@ -419,6 +420,7 @@ typedef struct PVThinLibretroSymbols {
     PFN_vkResetFences  _vkResetFences;
 #endif
 
+    @private
     // Serialization quirks bitmask
     uint64_t _serializationQuirks;
 

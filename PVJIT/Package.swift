@@ -94,5 +94,5 @@ let package = Package(
             name: "PVJITTests",
             dependencies: ["PVJIT", "JITManager"])
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageModes: [.v5]
 )
