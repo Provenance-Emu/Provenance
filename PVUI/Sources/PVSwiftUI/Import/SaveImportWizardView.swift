@@ -655,12 +655,11 @@ public struct SaveImportWizardView: View {
             importProgress = 0.35
 
             do {
+                importProgress = 0.5
                 let ext = url.pathExtension.lowercased()
                 if ext == "zip" || ext == "pvsave" {
-                    importProgress = 0.5
                     try await SaveExporter.shared.importSaves(from: url, for: frozenGame)
                 } else {
-                    importProgress = 0.5
                     try await SaveExporter.shared.importSRAM(from: url, for: frozenGame)
                 }
                 importProgress = 1.0
@@ -683,8 +682,8 @@ public struct SaveImportWizardView: View {
 
     // MARK: - Data loading
 
+    @MainActor
     private func loadAllGames() {
-        // Already on MainActor (called from onAppear/setup which run on main thread).
         allGames = PVGame.all.toArray().map { $0.isFrozen ? $0 : $0.freeze() }
     }
 }
@@ -692,7 +691,7 @@ public struct SaveImportWizardView: View {
 // MARK: - SaveImportNeonButtonStyle
 
 /// Retrowave neon button: filled or outlined, with neon glow shadow.
-struct SaveImportNeonButtonStyle: ButtonStyle {
+private struct SaveImportNeonButtonStyle: ButtonStyle {
     let color: Color
     var filled: Bool = true
 
