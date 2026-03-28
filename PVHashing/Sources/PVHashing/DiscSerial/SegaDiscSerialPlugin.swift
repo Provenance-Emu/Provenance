@@ -57,23 +57,26 @@ public struct SegaDiscSerialPlugin: DiscSerialExtractorPlugin {
         }
         defer { try? handle.close() }
 
-        // Determine sector data offset (0 for cooked ISO, 16 for raw 2352-byte BIN).
-        let dataOffset = sectorDataOffset(for: url)
-
-        // Read the first 512 bytes of the IP.BIN / volume header.
-        guard (try? handle.seek(toOffset: UInt64(dataOffset))) != nil,
-              let headerBytes = try? handle.read(upToCount: 512),
-              headerBytes.count >= 256 else {
+        // Read from offset 0 and detect the sector layout by checking where the
+        // Sega magic appears. We need enough bytes to cover:
+        //   - cooked (2048-byte sectors): magic at byte 0, product code up to 0x183+8=0x18B
+        //   - raw (2352-byte sectors):    sync header at bytes 0–15, magic at byte 16,
+        //                                 product code up to 16+0x183+8=0x19B
+        // Reading 528 bytes covers both cases with margin.
+        guard (try? handle.seek(toOffset: 0)) != nil,
+              let headerBytes = try? handle.read(upToCount: 528),
+              headerBytes.count >= 32 else {
             VLOG("SegaDiscSerialPlugin: failed to read header from \(url.lastPathComponent)")
             return nil
         }
 
-        guard let format = detectFormat(in: headerBytes) else {
+        guard let (format, dataStart) = detectFormatWithOffset(in: headerBytes) else {
             VLOG("SegaDiscSerialPlugin: no Sega magic in \(url.lastPathComponent)")
             return nil
         }
 
-        guard let serial = productCode(from: headerBytes, format: format), !serial.isEmpty else {
+        guard let serial = productCode(from: headerBytes, format: format, dataStart: dataStart),
+              !serial.isEmpty else {
             WLOG("SegaDiscSerialPlugin: empty product code in \(url.lastPathComponent)")
             return nil
         }
@@ -91,51 +94,37 @@ public struct SegaDiscSerialPlugin: DiscSerialExtractorPlugin {
 
     // MARK: - Format detection
 
-    private func detectFormat(in bytes: Data) -> SegaFormat? {
-        // Check at offset 0 (cooked ISO) first, then offset 16 (raw BIN sector).
+    /// Returns the detected format and the byte offset within the buffer where
+    /// the IP.BIN / volume header data payload starts (0 for cooked, 16 for raw).
+    private func detectFormatWithOffset(in bytes: Data) -> (SegaFormat, Int)? {
+        // Check at offset 0 (cooked ISO) first, then offset 16 (raw 2352-byte BIN sector).
         for startOffset in [0, 16] {
             guard bytes.count >= startOffset + 16 else { continue }
             let head = Array(bytes[startOffset..<(startOffset + 16)])
-            if head == Self.saturnMagic    { return .saturn }
-            if head == Self.segaCDMagic   { return .segaCD }
-            if head == Self.dreamcastMagic { return .dreamcast }
+            if head == Self.saturnMagic    { return (.saturn,    startOffset) }
+            if head == Self.segaCDMagic   { return (.segaCD,    startOffset) }
+            if head == Self.dreamcastMagic { return (.dreamcast, startOffset) }
         }
         return nil
     }
 
-    // MARK: - Product code extraction
-
-    private func productCode(from bytes: Data, format: SegaFormat) -> String? {
-        let offset: Int
-        let length: Int
-        switch format {
-        case .segaCD:    (offset, length) = (0x183, 8)
-        case .saturn:    (offset, length) = (0x20,  10)
-        case .dreamcast: (offset, length) = (0x40,  10)
-        }
-
-        // For raw-sector BINs, the header is at byte 16 of the first sector,
-        // so we need to shift the offset by 16.
-        // We already seeked to the correct data start in _extractSerial, so the
-        // `bytes` buffer already has the data at the right position.
-        return bytes.asciiString(at: offset, length: length)
+    /// For `matchesMagicBytes` compatibility — returns format without offset.
+    private func detectFormat(in bytes: Data) -> SegaFormat? {
+        return detectFormatWithOffset(in: bytes).map { $0.0 }
     }
 
-    // MARK: - Sector size detection
+    // MARK: - Product code extraction
 
-    /// Returns the byte offset of the first sector's data payload.
-    ///
-    /// - 0  for cooked ISO / plain .iso files (2048-byte sectors)
-    /// - 16 for raw-sector BIN files (2352-byte sectors, data at byte 16)
-    ///
-    /// Detection is by file-size divisibility — not foolproof but correct
-    /// for the vast majority of disc images in the wild.
-    private func sectorDataOffset(for url: URL) -> Int {
-        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
-              let size = attrs[.size] as? UInt64, size > 0 else { return 0 }
-        if size % 2352 == 0 { return 16 }
-        if size % 2048 == 0 { return 0 }
-        // File size not evenly divisible — default to raw sector.
-        return 16
+    /// Extracts the product code from `bytes`, where `dataStart` is the offset
+    /// within `bytes` at which the IP.BIN / volume header data payload begins.
+    private func productCode(from bytes: Data, format: SegaFormat, dataStart: Int) -> String? {
+        let relativeOffset: Int
+        let length: Int
+        switch format {
+        case .segaCD:    (relativeOffset, length) = (0x183, 8)
+        case .saturn:    (relativeOffset, length) = (0x20,  10)
+        case .dreamcast: (relativeOffset, length) = (0x40,  10)
+        }
+        return bytes.asciiString(at: dataStart + relativeOffset, length: length)
     }
 }

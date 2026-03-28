@@ -36,10 +36,10 @@ public struct NDSDiscSerialPlugin: DiscSerialExtractorPlugin {
         // Game code: bytes 0x0C–0x0F must all be ASCII letters or digits.
         let gameCode = headerBytes[0x0C..<0x10]
         let makerCode = headerBytes[0x10..<0x12]
+        // NDS game codes and maker codes use uppercase ASCII only.
         let allValid = (gameCode + makerCode).allSatisfy {
             ($0 >= 0x30 && $0 <= 0x39) ||  // '0'–'9'
-            ($0 >= 0x41 && $0 <= 0x5A) ||  // 'A'–'Z'
-            ($0 >= 0x61 && $0 <= 0x7A)     // 'a'–'z'
+            ($0 >= 0x41 && $0 <= 0x5A)     // 'A'–'Z'
         }
         return allValid
     }

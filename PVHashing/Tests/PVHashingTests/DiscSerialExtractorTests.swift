@@ -236,6 +236,33 @@ final class SegaDiscSerialPluginTests: XCTestCase {
         let result = await plugin.extractSerial(from: url, systemHint: nil)
         XCTAssertNil(result)
     }
+
+    /// Regression: a cooked .iso whose byte count happens to be divisible by
+    /// 2352 (e.g., 4816896 = 2048 * 2352) must still be detected correctly.
+    /// The old file-size-divisibility approach would have returned offset 16,
+    /// causing the magic check to fail and extraction to return nil.
+    func testExtractSerialCookedISOWithSizeMultipleOf2352() async throws {
+        let tmpDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmpDir) }
+
+        // 2352 bytes total — divisible by both 2352 and 2048 would need lcm(2048,2352).
+        // Simplest: 4 * 2352 = 9408 bytes, NOT divisible by 2048 but divisible by 2352.
+        // With old code: sectorDataOffset returns 16 (wrong). New code: reads magic at byte 0.
+        var isoData = Data(repeating: 0, count: 4 * 2352)
+        let saturnMagic = Array("SEGA SATURN     ".utf8)
+        isoData.replaceSubrange(0..<16, with: saturnMagic)
+        let serial = Array("T-99999H  ".utf8)
+        isoData.replaceSubrange(0x20..<(0x20 + 10), with: serial)
+
+        let isoURL = tmpDir.appendingPathComponent("game.iso")
+        try isoData.write(to: isoURL)
+
+        let result = await plugin.extractSerial(from: isoURL, systemHint: nil)
+        XCTAssertNotNil(result, "Cooked ISO whose size is divisible by 2352 must still be extracted")
+        XCTAssertEqual(result?.serial, "T-99999H")
+    }
 }
 
 // MARK: - GameCubeDiscSerialPlugin unit tests
@@ -375,16 +402,14 @@ final class BinCueDiscSerialPluginTests: XCTestCase {
 
     /// Creates a minimal CUE+BIN pair in a temp dir, with a Saturn header.
     ///
-    /// The BIN is 2048 bytes (cooked ISO sector size) so `sectorDataOffset`
-    /// returns 0 and the header is read from the start of the file.
+    /// The BIN is 2048 bytes (cooked ISO sector layout, magic at byte 0).
     func testExtractSerialFromSaturnCueBin() async throws {
         let tmpDir = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: tmpDir) }
 
-        // 2048-byte "cooked ISO" sector — sectorDataOffset returns 0 for this size
-        // since 2048 % 2048 == 0.
+        // Cooked sector layout: magic starts at byte 0.
         var binData = Data(repeating: 0, count: 2048)
         let saturnMagic = Array("SEGA SATURN     ".utf8) // 16 bytes
         binData.replaceSubrange(0..<16, with: saturnMagic)

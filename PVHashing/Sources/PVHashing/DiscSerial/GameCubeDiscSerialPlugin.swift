@@ -120,7 +120,14 @@ public struct GameCubeDiscSerialPlugin: DiscSerialExtractorPlugin {
             if header.count >= 32 {
                 let wiiWord = Array(header[0x18..<0x1C])
                 let gcWord  = Array(header[0x1C..<0x20])
-                isWii = wiiWord == Self.wiiMagic || gcWord != Self.gcMagic
+                if wiiWord == Self.wiiMagic {
+                    isWii = true
+                } else if gcWord == Self.gcMagic {
+                    isWii = false
+                } else {
+                    // Neither magic recognised — WIA/RVZ are Wii-era formats, default to Wii.
+                    isWii = true
+                }
             } else {
                 // Default to Wii if we can't tell (WIA/RVZ are both Wii-era formats).
                 isWii = true

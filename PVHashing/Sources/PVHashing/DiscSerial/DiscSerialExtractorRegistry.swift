@@ -121,6 +121,10 @@ public final class DiscSerialExtractorRegistry: Sendable {
     ///     plugins that handle multiple systems with the same extension.
     /// - Returns: The first successful ``DiscSerialResult``, or `nil`.
     public func extractSerial(from url: URL, systemHint: String? = nil) async -> DiscSerialResult? {
+        // Ensure defaults are registered. This is a no-op after the first call
+        // and guards against callers that cannot await registerDefaults() themselves.
+        await registerDefaults()
+
         let ext = url.pathExtension.lowercased()
         let candidates = await store.candidates(forExtension: ext)
 
