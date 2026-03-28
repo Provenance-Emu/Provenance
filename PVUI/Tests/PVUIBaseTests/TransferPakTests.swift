@@ -384,10 +384,9 @@ struct N64PakStoreTests {
     @Test("Empty string gameMD5 behaves like nil (uses global key)")
     func emptyMD5UsesGlobal() {
         let port = 4
-        defer {
-            cleanup(port: port)
-            cleanup(port: port, gameMD5: "")
-        }
+        // Empty string is treated as nil (falls through to global key), so only the
+        // global cleanup is needed — cleanup(port:gameMD5:"") would target the wrong key.
+        defer { cleanup(port: port) }
 
         N64PakStore.setPakType(.rumblePak, forPort: port, gameMD5: "")
         // Empty MD5 should write to the global key
