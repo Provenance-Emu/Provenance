@@ -64,24 +64,27 @@ public final class JITOnboardingManager {
         // Avoid suggesting tools that cannot help — just set performance expectations.
         let isWXEnforced = DOLJitManager.isWXEnforced
 
+        // Detect whether this App Store–compiled build is genuinely from the App Store
+        // or has been sideloaded (e.g. resigned IPA with changed bundle ID or JIT entitlement).
+        // Sideloaded builds should still show the full sideloading-tool suggestions.
+        let isGenuineAppStore = DOLJitManager.isGenuinelyAppStoreDistributed()
+
         let message: String
         if isWXEnforced {
             message = "This core performs best with Performance Mode (JIT). "
                 + "On this OS version, Performance Mode is not available without a special "
                 + "developer entitlement — emulation may run slower than expected."
-        } else {
-            #if APP_STORE
-            // In App Store builds, avoid mentioning sideloading tools per App Store guidelines.
+        } else if isGenuineAppStore {
+            // Genuine App Store installs: don't mention sideloading tools per App Store guidelines.
             message = "This core performs best with Performance Mode (JIT) enabled. "
                 + "Performance Mode has not been acquired for this session — you can continue playing, "
                 + "but emulation speed may be reduced."
-            #else
+        } else {
             message = "This core performs best with Performance Mode (JIT) enabled. "
                 + "Performance Mode has not been acquired for this session — you can continue playing, "
                 + "but emulation speed may be reduced.\n\n"
                 + "To enable Performance Mode, use AltStore, SideStore, StikDebug, JITStreamer, or "
                 + "developer tools (for example, the Xcode debugger) before launching."
-            #endif
         }
 
         let alert = UIAlertController(
@@ -93,9 +96,10 @@ public final class JITOnboardingManager {
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: nil))
 
         // Only offer sideloading-based retry options when JIT is actually acquirable
-        // and when not running in an App Store distribution (to avoid review rejections).
-        #if !APP_STORE
-        if !isWXEnforced {
+        // and when not running in a genuine App Store distribution (to avoid review rejections).
+        // Sideloaded App Store builds (detected via bundle ID / entitlement / provisioning checks)
+        // are treated the same as developer builds.
+        if !isGenuineAppStore && !isWXEnforced {
             // Offer StikDebug as the first retry option (VPN-based, no macOS required).
             if jitType == .debugger || jitType == .stikDebug {
                 alert.addAction(UIAlertAction(title: "Try StikDebug", style: .default) { _ in
@@ -118,7 +122,6 @@ public final class JITOnboardingManager {
                 }
             })
         }
-        #endif
 
         // Ensure we can actually present before marking the onboarding as shown
         guard viewController.viewIfLoaded?.window != nil,
