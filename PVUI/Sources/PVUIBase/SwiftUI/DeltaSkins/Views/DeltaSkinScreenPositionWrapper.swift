@@ -42,8 +42,9 @@ struct DeltaSkinScreenPositionWrapper: View {
             return nil
         }
 
-        // Check if this is a simple skin (no screens or screenGroups)
-        // Simple skins should use button-based calculation even if gameScreenFrame exists
+        // Determine whether this is a simple skin (no screens or screenGroups).
+        // Simple skins that carry a `gameScreenFrame` use that frame for positioning;
+        // those without fall back to the button-based calculation below.
         let screens = skin.screens(for: traits)
         let screenGroups = skin.screenGroups(for: traits)
         let isSimpleSkin = screens == nil && screenGroups == nil
