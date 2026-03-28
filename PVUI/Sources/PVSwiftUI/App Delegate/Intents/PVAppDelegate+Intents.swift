@@ -25,7 +25,6 @@ import PVUIBase
 // this file's legacy sections and the Intents/PV* companion files.
 
 #if os(iOS)
-@available(iOS 14.0, *)
 extension PVAppDelegate {
 
     // MARK: - INPlayMediaIntent donation

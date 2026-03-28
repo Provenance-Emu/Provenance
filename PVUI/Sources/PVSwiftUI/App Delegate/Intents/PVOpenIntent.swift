@@ -17,7 +17,6 @@ import Intents
 ///   `intentClassName = "PVOpenIntent"`, which migrates existing user shortcuts
 ///   automatically. This stub must remain in the binary until all users have
 ///   migrated so that NSCoder-archived shortcuts can still be deserialised.
-@available(iOS 14.0, *)
 @available(*, deprecated, renamed: "LaunchGameIntent", message: "Use LaunchGameIntent from PVAppIntents. This stub is retained for Siri shortcut migration only.")
 @objc(PVOpenIntent)
 class PVOpenIntent: INIntent {

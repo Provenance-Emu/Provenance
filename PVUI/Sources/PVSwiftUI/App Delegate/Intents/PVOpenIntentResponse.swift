@@ -13,7 +13,6 @@ import Intents
 /// Legacy response code for `PVOpenIntent`.
 ///
 /// - Important: Deprecated. Use `LaunchGameIntent` from `PVAppIntents` instead.
-@available(iOS 14.0, *)
 @available(*, deprecated, message: "Use LaunchGameIntent from PVAppIntents instead.")
 @objc(PVOpenIntentResponseCode)
 enum PVOpenIntentResponseCode: Int {
@@ -22,7 +21,6 @@ enum PVOpenIntentResponseCode: Int {
     case failure = 2
 }
 
-@available(iOS 14.0, *)
 @available(*, deprecated, message: "Use LaunchGameIntent from PVAppIntents instead.")
 @objc(PVOpenIntentResponse)
 class PVOpenIntentResponse: INIntentResponse {
