@@ -209,7 +209,6 @@ public final class JITContextualPromptManager {
         #if canImport(JITManager)
         #if APP_STORE
         // In App Store builds, avoid suggesting sideloading tools per App Store guidelines.
-        // Users who need JIT should activate StikDebug separately before launch.
         message += "\n\nJIT is not currently enabled. Performance may be significantly reduced or the game may not work correctly."
         #else
         if DOLJitManager.acquired || !DOLJitManager.isWXEnforced {
@@ -219,7 +218,11 @@ public final class JITContextualPromptManager {
         }
         #endif
         #else
+        #if !APP_STORE
         message += "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
+        #else
+        message += "\n\nJIT is not currently enabled. Performance may be significantly reduced."
+        #endif
         #endif
         let alert = UIAlertController(
             title: "Performance Mode Required",
@@ -264,9 +267,10 @@ public final class JITContextualPromptManager {
         completion: @escaping @Sendable (Bool) -> Void
     ) {
         #if APP_STORE
+        // In App Store builds, avoid mentioning sideloading tools per App Store guidelines.
         let message = "\(coreName) runs faster with JIT (Performance Mode)."
-            + "\n\nJIT is not currently enabled. Enable a JIT tool such as StikDebug before launching for the best experience."
-            + " You can also set a per-game preference in Game Info."
+            + "\n\nJIT is not currently enabled — emulation speed may be reduced."
+            + " You can set a per-game preference in Game Info."
         #else
         let message = "\(coreName) runs faster with JIT (Performance Mode)."
             + "\n\nEnable via AltStore, SideStore, or StikDebug for the best experience."
