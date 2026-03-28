@@ -57,8 +57,8 @@ extension SaveImportMatchResult: Equatable {
 ///    token-similarity between the bundle filename and all game titles.
 /// 3. **Manual** — returned when both automated strategies find nothing good enough.
 ///
-/// `@unchecked Sendable` is safe: `SaveImportMatchingService` has no mutable stored
-/// properties. All Realm access is gated to `@MainActor`.
+/// `@unchecked Sendable` is safe: `SaveImportMatchingService` has no stored properties
+/// (only a static singleton). All Realm access is gated to `@MainActor`.
 public final class SaveImportMatchingService: @unchecked Sendable {
 
     public static let shared = SaveImportMatchingService()

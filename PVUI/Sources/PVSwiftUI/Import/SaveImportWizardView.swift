@@ -205,11 +205,23 @@ public struct SaveImportWizardView: View {
                     .font(.system(size: 22, weight: .black, design: .rounded))
                     .foregroundStyle(neonGradient)
 
-                Text("Choose a .zip save bundle or a battery save file (.sav, .srm, .ram) to import.")
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.75))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 12)
+                if let game = confirmedGame {
+                    Text("Importing save for:")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.55))
+                    Text(game.title)
+                        .font(.headline.bold())
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .shadow(color: .retroPink, radius: 4)
+                        .padding(.horizontal, 12)
+                } else {
+                    Text("Choose a .zip save bundle or a battery save file (.sav, .srm, .ram) to import.")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.75))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 12)
+                }
             }
 
             #if !os(tvOS)
@@ -398,8 +410,9 @@ public struct SaveImportWizardView: View {
 
     private func summaryCard(url: URL) -> some View {
         let ext = url.pathExtension.lowercased()
-        let typeLabel = (ext == "zip" || ext == "pvsave") ? "Save Bundle (.zip)" : "Battery Save (.\(ext))"
-        let typeIcon = (ext == "zip" || ext == "pvsave") ? "archivebox.fill" : "memorychip"
+        let isBundleType = ext == "zip" || ext == "pvsave"
+        let typeLabel = isBundleType ? "Save Bundle (.\(ext))" : "Battery Save (.\(ext))"
+        let typeIcon = isBundleType ? "archivebox.fill" : "memorychip"
 
         return VStack(alignment: .leading, spacing: 12) {
             summaryRow(icon: "doc.fill", label: "File", value: url.lastPathComponent)
@@ -671,10 +684,8 @@ public struct SaveImportWizardView: View {
     // MARK: - Data loading
 
     private func loadAllGames() {
-        // Realm access must happen on the main thread; freeze objects for safe cross-thread use.
-        Task { @MainActor in
-            allGames = PVGame.all.toArray().map { $0.isFrozen ? $0 : $0.freeze() }
-        }
+        // Already on MainActor (called from onAppear/setup which run on main thread).
+        allGames = PVGame.all.toArray().map { $0.isFrozen ? $0 : $0.freeze() }
     }
 }
 
