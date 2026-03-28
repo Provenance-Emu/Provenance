@@ -345,7 +345,15 @@ public enum DSUPacket: Sendable {
     case versionResponse(clientUID: UInt32, version: UInt16)
 
     /// Slot state info response (0x100002).
-    case listPortsResponse(clientUID: UInt32, slotIndex: UInt8, slotState: DSUSlotState, deviceModel: DSUDeviceModel, connectionType: DSUConnectionType, macAddress: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8), batteryStatus: DSUBatteryStatus)
+    case listPortsResponse(
+        clientUID: UInt32,
+        slotIndex: UInt8,
+        slotState: DSUSlotState,
+        deviceModel: DSUDeviceModel,
+        connectionType: DSUConnectionType,
+        macAddress: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8),
+        batteryStatus: DSUBatteryStatus
+    )
 
     /// Controller data packet (0x100003).
     case controllerData(clientUID: UInt32, data: DSUControllerData)

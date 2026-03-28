@@ -93,9 +93,10 @@ public actor DSUSocket {
     public func send(_ data: Data, to host: String, port: UInt16) async throws {
         guard !isClosed else { throw DSUSocketError.closed }
 
+        let resolvedPort = NWEndpoint.Port(rawValue: port) ?? .init(integerLiteral: DSUConstants.defaultPort)
         let endpoint = NWEndpoint.hostPort(
             host: NWEndpoint.Host(host),
-            port: NWEndpoint.Port(rawValue: port) ?? NWEndpoint.Port(rawValue: DSUConstants.defaultPort)!
+            port: resolvedPort
         )
 
         let connection = connectionForEndpoint(endpoint)

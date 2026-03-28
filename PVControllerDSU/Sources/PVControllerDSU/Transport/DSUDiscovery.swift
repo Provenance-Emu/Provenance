@@ -47,10 +47,10 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
 
     /// Begin advertising the DSU service via Bonjour.
     ///
-    /// Safe to call from any thread. A no-op if already started.
+    /// Safe to call from any thread. A no-op if already started or stopped.
     public func start() {
         queue.async { [weak self] in
-            guard let self, !self.isStopped else { return }
+            guard let self, !self.isStopped, self.listener == nil else { return }
             self.startOnQueue()
         }
     }
@@ -163,10 +163,10 @@ public final class DSUServiceBrowser: @unchecked Sendable {
 
     /// Start browsing for DSU servers on the local network.
     ///
-    /// Safe to call from any thread. A no-op if already started.
+    /// Safe to call from any thread. A no-op if already started or stopped.
     public func start() {
         queue.async { [weak self] in
-            guard let self, !self.isStopped else { return }
+            guard let self, !self.isStopped, self.browser == nil else { return }
             self.startOnQueue()
         }
     }
