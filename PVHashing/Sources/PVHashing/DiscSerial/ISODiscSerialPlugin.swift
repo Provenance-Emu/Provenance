@@ -23,7 +23,11 @@ import PVLogging
 ///
 /// ## Other ISO 9660 discs
 /// Returns the volume identifier string from the Primary Volume Descriptor
-/// as a best-effort serial when no SYSTEM.CNF is found.
+/// as a best-effort serial when no `SYSTEM.CNF` is found.
+///
+/// - Note: The earlier `PSX.EXE` presence check (returning `serial: "PSX.EXE"`)
+///   was removed because it stored a non-product-code string in `PVGame.romSerial`.
+///   Discs with `PSX.EXE` but no `SYSTEM.CNF` fall through to the volume-ID path.
 public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
 
     public let supportedExtensions: Set<String> = ["iso", "img"]
@@ -91,12 +95,6 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
         if let cnfLBA = findFile(in: dirData, named: "SYSTEM.CNF") {
             return readSystemCNF(handle: handle, lba: cnfLBA,
                                  layout: sectorLayout, systemHint: systemHint)
-        }
-
-        // Presence of PSX.EXE also identifies PSX discs.
-        if findFile(in: dirData, named: "PSX.EXE") != nil {
-            return DiscSerialResult(serial: "PSX.EXE",
-                                    systemIdentifierHint: "com.provenance.psx")
         }
 
         // Fall back to volume identifier from PVD (offset 40, length 32).

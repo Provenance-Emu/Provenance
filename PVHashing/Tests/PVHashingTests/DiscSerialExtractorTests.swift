@@ -189,6 +189,60 @@ final class ISONormalizeSerialTests: XCTestCase {
         let result = await extractFromCNF("BOOT2 = cdrom0:\\SLES_123.45;1\n")
         XCTAssertEqual(result?.serial, "SLES-12345")
     }
+
+    /// Regression: a PSX disc that has PSX.EXE but no SYSTEM.CNF must fall through
+    /// to the volume-identifier path and must NOT produce serial "PSX.EXE".
+    func testPSXEXEFallsBackToVolumeID() async throws {
+        let tmpDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmpDir) }
+
+        let sectorSize = 2048
+        var image = Data(repeating: 0, count: sectorSize * 24)
+
+        // PVD at sector 16 with volume ID "CRASH" and a directory entry for PSX.EXE only.
+        let pvdOffset = 16 * sectorSize
+        image[pvdOffset] = 0x01
+        let cd001: [UInt8] = [0x43, 0x44, 0x30, 0x30, 0x31]
+        image.replaceSubrange((pvdOffset + 1)..<(pvdOffset + 6), with: cd001)
+        image[pvdOffset + 6] = 0x01
+        // Volume identifier at PVD offset 40, length 32: "CRASH"
+        let volID = Array("CRASH                           ".utf8)  // 32 bytes, space-padded
+        image.replaceSubrange((pvdOffset + 40)..<(pvdOffset + 72), with: volID)
+
+        // Root directory at sector 22 pointing to PSX.EXE at sector 23.
+        let rootDirLBA: UInt32 = 22
+        let rootDirSize: UInt32 = UInt32(sectorSize)
+        withUnsafeBytes(of: rootDirLBA.littleEndian) { bytes in
+            image.replaceSubrange((pvdOffset + 158)..<(pvdOffset + 162), with: bytes)
+        }
+        withUnsafeBytes(of: rootDirSize.littleEndian) { bytes in
+            image.replaceSubrange((pvdOffset + 166)..<(pvdOffset + 170), with: bytes)
+        }
+        image[pvdOffset + 156] = 34
+
+        // Directory entry for PSX.EXE → sector 23.
+        let dirOffset = 22 * sectorSize
+        let exeName = Array("PSX.EXE".utf8)
+        let recLen = UInt8(33 + exeName.count + (exeName.count % 2 == 0 ? 1 : 0))
+        image[dirOffset] = recLen
+        let exeLBA: UInt32 = 23
+        withUnsafeBytes(of: exeLBA.littleEndian) { bytes in
+            image.replaceSubrange((dirOffset + 2)..<(dirOffset + 6), with: bytes)
+        }
+        image[dirOffset + 32] = UInt8(exeName.count)
+        image.replaceSubrange((dirOffset + 33)..<(dirOffset + 33 + exeName.count), with: exeName)
+
+        let isoURL = tmpDir.appendingPathComponent("psxexe_only.iso")
+        try image.write(to: isoURL)
+
+        let result = await plugin.extractSerial(from: isoURL, systemHint: nil)
+        // Must NOT be "PSX.EXE" — that's not a product code.
+        XCTAssertNotEqual(result?.serial, "PSX.EXE", "PSX.EXE is not a valid serial")
+        // Must fall back to volume identifier "CRASH".
+        XCTAssertEqual(result?.serial, "CRASH")
+    }
 }
 
 // MARK: - SegaDiscSerialPlugin unit tests
