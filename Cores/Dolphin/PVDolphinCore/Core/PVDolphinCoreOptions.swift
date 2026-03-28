@@ -391,6 +391,54 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         defaultValue: false)
     }()
 
+    static var accurateCPUCacheOption: CoreOption = {
+        .bool(.init(
+            title: "Accurate CPU Cache (slower)",
+            description: "Emulates the CPU instruction cache accurately. Required by a few games but significantly reduces performance.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    static var disableICacheOption: CoreOption = {
+        .bool(.init(
+            title: "Bypass Instruction Cache",
+            description: "Bypass the instruction cache. May improve compatibility in rare cases but can reduce performance.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    static var fastFPOption: CoreOption = {
+        .bool(.init(
+            title: "Fast FP (Cached Interpreter)",
+            description: "Use fast floating-point emulation in the Cached Interpreter. Experimental but can significantly improve performance in interpreter mode.",
+            requiresRestart: true),
+        defaultValue: true)
+    }()
+
+    static var dcbzHackOption: CoreOption = {
+        .bool(.init(
+            title: "DCBZ Hack",
+            description: "Skip data cache block zero operations for better performance. Safe for most games.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var relaxedIdleDetectionOption: CoreOption = {
+        .bool(.init(
+            title: "Relaxed Idle Loop Detection",
+            description: "Use relaxed heuristics to detect and skip CPU idle loops. Improves performance especially without JIT.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var fastForwardCTRIdleOption: CoreOption = {
+        .bool(.init(
+            title: "Fast-Forward CTR Idle Loops",
+            description: "Fast-forward through counter-based idle loops. Improves performance especially without JIT.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
     static var dspHLEOption: CoreOption = {
         .bool(.init(
             title: "DSP High Level Emulation (HLE)",
@@ -605,6 +653,8 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             cpuOption, cpuClockOption, dualCoreOption, idleSkippingOption,
             fastMemoryOption, enableCheatOption, enableVBIOverrideOption,
             vbiFrequencyRangeOption, enableMMUOption, pauseOnPanicOption,
+            accurateCPUCacheOption, disableICacheOption, fastFPOption,
+            dcbzHackOption, relaxedIdleDetectionOption, fastForwardCTRIdleOption,
             enableWriteBackCacheOption, speedLimitOption, fallbackRegionOption,
             dspHLEOption, dspThreadOption, syncGPUOption, fastDiscSpeedOption
         ]
@@ -795,6 +845,24 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     @objc static var enableWriteBackCache: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableWriteBackCacheOption).asBool
     }
+    @objc static var accurateCPUCache: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.accurateCPUCacheOption).asBool
+    }
+    @objc static var disableICache: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.disableICacheOption).asBool
+    }
+    @objc static var fastFP: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.fastFPOption).asBool
+    }
+    @objc static var dcbzHack: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.dcbzHackOption).asBool
+    }
+    @objc static var relaxedIdleDetection: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.relaxedIdleDetectionOption).asBool
+    }
+    @objc static var fastForwardCTRIdle: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.fastForwardCTRIdleOption).asBool
+    }
     @objc static var dspHLE: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.dspHLEOption).asBool
     }
@@ -896,6 +964,12 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.enableMMU = PVDolphinCoreOptions.enableMMU
         self.pauseOnPanic = PVDolphinCoreOptions.pauseOnPanic
         self.enableWriteBackCache = PVDolphinCoreOptions.enableWriteBackCache
+        self.accurateCPUCache = PVDolphinCoreOptions.accurateCPUCache
+        self.disableICache = PVDolphinCoreOptions.disableICache
+        self.fastFP = PVDolphinCoreOptions.fastFP
+        self.dcbzHack = PVDolphinCoreOptions.dcbzHack
+        self.relaxedIdleDetection = PVDolphinCoreOptions.relaxedIdleDetection
+        self.fastForwardCTRIdle = PVDolphinCoreOptions.fastForwardCTRIdle
         self.dspHLE = PVDolphinCoreOptions.dspHLE
         self.dspThread = PVDolphinCoreOptions.dspThread
         self.syncGPU = PVDolphinCoreOptions.syncGPU

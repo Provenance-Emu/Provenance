@@ -10,12 +10,9 @@
 #import "PVDolphinCore+Controls.h"
 #import "PVDolphinCore+Audio.h"
 #import "PVDolphinCore+Video.h"
-#import <PVDolphin/PVDolphin-Swift.h>
-
 #import <Foundation/Foundation.h>
 #import <PVDolphin/PVDolphin-Swift.h>
-@import PVCoreBridge;
-@import PVCoreObjCBridge;
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 @import PVEmulatorCore;
 
 #import <AudioToolbox/AudioToolbox.h>
@@ -502,6 +499,24 @@ static void ResetDolphinStaticState() {
 
     // Write-Back Cache (inverted: enableWriteBackCache=true means accurate NANs=true, which is slower)
     Config::SetBase(Config::MAIN_ACCURATE_NANS, self.enableWriteBackCache);
+
+    // Accurate CPU Cache (slower but more compatible)
+    Config::SetBase(Config::MAIN_ACCURATE_CPU_CACHE, self.accurateCPUCache);
+
+    // Bypass Instruction Cache
+    Config::SetBase(Config::MAIN_DISABLE_ICACHE, self.disableICache);
+
+    // Fast Floating Point (Cached Interpreter optimization)
+    Config::SetBase(Config::MAIN_FP_FAST, self.fastFP);
+
+    // DCBZ Hack (skip data cache block zero for performance)
+    Config::SetBase(Config::MAIN_LOW_DCBZ_HACK, self.dcbzHack);
+
+    // Relaxed Idle Loop Detection (better performance without JIT)
+    Config::SetBase(Config::MAIN_RELAXED_IDLE_DETECTION, self.relaxedIdleDetection);
+
+    // Fast-Forward CTR Idle Loops (better performance without JIT)
+    Config::SetBase(Config::MAIN_FAST_FORWARD_CTR_IDLE, self.fastForwardCTRIdle);
 
     // GPU Sync with CPU - user-configurable (disabled by default for performance)
     Config::SetBase(Config::MAIN_SYNC_GPU, self.syncGPU);
@@ -1082,14 +1097,15 @@ static void ResetDolphinStaticState() {
             [gl_view_controller addChildViewController:cgsh_view_controller];
             [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         }
-        if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
-            self.renderDelegate.mtlView.autoresizesSubviews=true;
-            self.renderDelegate.mtlView.clipsToBounds=true;
-            [self.renderDelegate.mtlView addSubview:m_view];
-            [m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.bottomAnchor constant:0].active = true;
+        UIView *mtlView = [self.renderDelegate respondsToSelector:@selector(mtlView)] ? [(id)self.renderDelegate mtlView] : nil;
+        if (mtlView) {
+            mtlView.autoresizesSubviews=true;
+            mtlView.clipsToBounds=true;
+            [mtlView addSubview:m_view];
+            [m_view.topAnchor constraintEqualToAnchor:mtlView.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:mtlView.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:mtlView.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:mtlView.bottomAnchor constant:0].active = true;
         } else {
             gl_view_controller.view.autoresizesSubviews=true;
             gl_view_controller.view.clipsToBounds=true;

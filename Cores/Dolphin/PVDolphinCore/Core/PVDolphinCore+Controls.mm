@@ -13,8 +13,8 @@
 #import <CoreMotion/CoreMotion.h>
 #endif
 #import <PVLogging/PVLoggingObjC.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 @import PVCoreBridge;
-@import PVCoreObjCBridge;
 
 /* Dolphin Includes */
 #include "Common/CPUDetect.h"

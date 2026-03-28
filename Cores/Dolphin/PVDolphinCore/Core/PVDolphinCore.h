@@ -7,7 +7,7 @@
 //
 #pragma once
 #import <Foundation/Foundation.h>
-@import PVCoreObjCBridge;
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
@@ -114,6 +114,12 @@
 @property (nonatomic, assign) bool enableMMU;
 @property (nonatomic, assign) bool pauseOnPanic;
 @property (nonatomic, assign) bool enableWriteBackCache;
+@property (nonatomic, assign) bool accurateCPUCache;
+@property (nonatomic, assign) bool disableICache;
+@property (nonatomic, assign) bool fastFP;
+@property (nonatomic, assign) bool dcbzHack;
+@property (nonatomic, assign) bool relaxedIdleDetection;
+@property (nonatomic, assign) bool fastForwardCTRIdle;
 @property (nonatomic, assign) bool dspHLE;
 @property (nonatomic, assign) bool dspThread;
 @property (nonatomic, assign) bool syncGPU;

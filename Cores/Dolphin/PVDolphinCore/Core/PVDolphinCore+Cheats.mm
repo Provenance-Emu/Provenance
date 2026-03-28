@@ -1,6 +1,5 @@
 #import <PVDolphin/PVDolphin.h>
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
 #import <PVLogging/PVLoggingObjC.h>
 
 /* Dolphin Includes */
@@ -105,7 +104,9 @@ std::map<int, ActionReplay::ARCode> arcodes{};
                 activate.push_back(value);
         }
         const std::string game_id = SConfig::GetInstance().GetGameID();
-        Gecko::SetActiveCodes(activate, game_id);
+        const u16 revision = SConfig::GetInstance().GetRevision();
+
+        Gecko::SetActiveCodes(activate, game_id, revision);
     }
     if ([codeType isEqualToString:@"Pro Action Replay"]) {
         if (arcode_encrypted_lines.size())
@@ -126,7 +127,9 @@ std::map<int, ActionReplay::ARCode> arcodes{};
                .size(), arcode.enabled);
         // They are auto applied when activated
         const std::string game_id = SConfig::GetInstance().GetGameID();
-        ActionReplay::ApplyCodes(activate, game_id);
+        const u16 revision = SConfig::GetInstance().GetRevision();
+
+        ActionReplay::ApplyCodes(activate, game_id, revision);
 
     }
     return true;
@@ -140,11 +143,13 @@ std::map<int, ActionReplay::ARCode> arcodes{};
     arcodes.clear();
 
     const std::string game_id = SConfig::GetInstance().GetGameID();
+    const u16 revision = SConfig::GetInstance().GetRevision();
+
     std::vector<Gecko::GeckoCode> emptyGecko;
-    Gecko::SetActiveCodes(emptyGecko, game_id);
+    Gecko::SetActiveCodes(emptyGecko, game_id, revision);
 
     std::vector<ActionReplay::ARCode> emptyAR;
-    ActionReplay::ApplyCodes(emptyAR, game_id);
+    ActionReplay::ApplyCodes(emptyAR, game_id, revision);
 
     ILOG(@"Dolphin resetCheatCodes: cleared %zu gecko + %zu AR codes", geckoCount, arCount);
 }
