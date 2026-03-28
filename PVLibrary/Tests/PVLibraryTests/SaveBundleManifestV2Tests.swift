@@ -210,6 +210,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
 
         XCTAssertEqual(KnownEmulator.delta.urlScheme, "delta")
         XCTAssertEqual(KnownEmulator.retroArch.urlScheme, "retroarch")
+        XCTAssertNil(KnownEmulator.gamma.urlScheme)
         XCTAssertNil(KnownEmulator.manticEmu.urlScheme)
 
         XCTAssertTrue(KnownEmulator.delta.saveFileExtensions.contains("sav"))
