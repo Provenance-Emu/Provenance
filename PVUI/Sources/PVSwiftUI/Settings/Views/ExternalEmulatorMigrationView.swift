@@ -100,6 +100,11 @@ public struct ExternalEmulatorMigrationView: View {
         .task {
             await loadInstalledEmulators()
         }
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
+        .settingsSubpageTracking()
     }
 
     // MARK: Header
@@ -129,7 +134,7 @@ public struct ExternalEmulatorMigrationView: View {
 
             Text("iOS prevents apps from reading each other's files directly. Tap an emulator below to see step-by-step export instructions.")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 8)
         }
@@ -162,15 +167,15 @@ public struct ExternalEmulatorMigrationView: View {
                     VStack(spacing: 8) {
                         Image(systemName: "app.badge.questionmark")
                             .font(.system(size: 32))
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text("Delta, RetroArch, PPSSPP, Mantic Emu, and Gamma were not found on this device.")
                             .font(.footnote)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                         Text("You can still import save files manually using Files.app.")
                             .font(.caption)
-                            .foregroundColor(.secondary.opacity(0.7))
+                            .foregroundStyle(.secondary.opacity(0.7))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                     }
@@ -181,7 +186,7 @@ public struct ExternalEmulatorMigrationView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Want step-by-step instructions anyway?")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
 
                 // Show one entry per distinct app (skip deltaLite — same steps as delta)
                 ForEach(KnownEmulator.allCases.filter { $0 != .deltaLite }, id: \.rawValue) { emulator in
@@ -191,14 +196,14 @@ public struct ExternalEmulatorMigrationView: View {
                         HStack {
                             Image(systemName: emulator.symbolName)
                                 .frame(width: 24)
-                                .foregroundColor(.retroBlue)
+                                .foregroundStyle(.retroBlue)
                             Text(emulator.displayName)
                                 .font(.subheadline)
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
@@ -224,21 +229,21 @@ public struct ExternalEmulatorMigrationView: View {
                             .frame(width: 44, height: 44)
                         Image(systemName: "folder.badge.plus")
                             .font(.system(size: 18))
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Import via Files.app")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                         Text("Copy .sav / .srm / .state files into Provenance's folder using the Files app")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                             .lineLimit(2)
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
@@ -258,11 +263,11 @@ public struct ExternalEmulatorMigrationView: View {
     private func sectionHeader(title: String, icon: String, color: Color) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .foregroundColor(color)
+                .foregroundStyle(color)
                 .font(.subheadline.weight(.semibold))
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
             Spacer()
         }
     }
@@ -301,16 +306,16 @@ private struct EmulatorRowView: View {
                         .frame(width: 44, height: 44)
                     Image(systemName: icon)
                         .font(.system(size: 18))
-                        .foregroundColor(iconColor)
+                        .foregroundStyle(iconColor)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .lineLimit(2)
                 }
 
@@ -318,7 +323,7 @@ private struct EmulatorRowView: View {
 
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -361,12 +366,12 @@ struct EmulatorMigrationGuideView: View {
 
                         Text("Export from \(emulator.displayName)")
                             .font(.title2.bold())
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                             .multilineTextAlignment(.center)
 
                         Text(emulator.systemSummary)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 4)
@@ -401,7 +406,7 @@ struct EmulatorMigrationGuideView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Step 1 — Export from \(emulator.displayName)")
                 .font(.headline)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
 
             ForEach(Array(exportSteps.enumerated()), id: \.offset) { index, step in
                 StepRowView(number: index + 1, text: step)
@@ -413,7 +418,7 @@ struct EmulatorMigrationGuideView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Step 2 — Import into Provenance")
                 .font(.headline)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
 
             ForEach(Array(importSteps.enumerated()), id: \.offset) { index, step in
                 StepRowView(number: index + 1, text: step)
@@ -424,19 +429,19 @@ struct EmulatorMigrationGuideView: View {
     private var saveFormatNote: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "info.circle.fill")
-                .foregroundColor(.retroBlue)
+                .foregroundStyle(.retroBlue)
                 .font(.subheadline)
             VStack(alignment: .leading, spacing: 4) {
                 Text("Save File Extensions")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                 Text("Look for files ending in: \(emulator.saveFileExtensions.map { ".\($0)" }.joined(separator: ", "))")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 if emulator == .retroArch {
                     Text("Save states use numbered extensions (.state0, .state1…). Battery saves use .srm.")
                         .font(.caption)
-                        .foregroundColor(.secondary.opacity(0.8))
+                        .foregroundStyle(.secondary.opacity(0.8))
                 }
             }
         }
@@ -511,6 +516,8 @@ struct EmulatorMigrationGuideView: View {
 
 /// Guide for users who want to import saves without a specific third-party app.
 struct ManualFileImportGuideView: View {
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         ZStack {
             RetroTheme.retroBackground
@@ -534,7 +541,7 @@ struct ManualFileImportGuideView: View {
                             .multilineTextAlignment(.center)
                         Text("Import .sav, .srm, or .state files from any source")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -574,13 +581,18 @@ struct ManualFileImportGuideView: View {
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
+        .settingsSubpageTracking()
     }
 
     private func methodSection(title: String, icon: String, steps: [String]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .foregroundColor(.retroBlue)
+                    .foregroundStyle(.retroBlue)
                 Text(title)
                     .font(.headline)
             }
@@ -593,20 +605,20 @@ struct ManualFileImportGuideView: View {
     private var namingTipBox: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "lightbulb.fill")
-                .foregroundColor(.yellow)
+                .foregroundStyle(.yellow)
                 .font(.subheadline)
             VStack(alignment: .leading, spacing: 4) {
                 Text("Naming Convention")
                     .font(.subheadline.weight(.semibold))
                 Text("ROM: Super Mario World (USA).sfc")
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 Text("Save: Super Mario World (USA).srm")
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 Text("Only the file extension changes — the base name must match exactly.")
                     .font(.caption)
-                    .foregroundColor(.secondary.opacity(0.8))
+                    .foregroundStyle(.secondary.opacity(0.8))
                     .padding(.top, 2)
             }
         }
@@ -630,11 +642,11 @@ private struct StepRowView: View {
                     .frame(width: 28, height: 28)
                 Text("\(number)")
                     .font(.caption.weight(.bold))
-                    .foregroundColor(.retroBlue)
+                    .foregroundStyle(.retroBlue)
             }
             Text(text)
                 .font(.subheadline)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer()
         }
