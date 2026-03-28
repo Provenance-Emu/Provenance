@@ -106,6 +106,11 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
         self.localGameHash = localGameHash
     }
 
+    deinit {
+        activeMatch?.delegate = nil
+        activeMatch?.disconnect()
+    }
+
     func handleMatch(_ match: GKMatch) {
         activeMatch = match
         match.delegate = self

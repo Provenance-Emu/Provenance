@@ -618,6 +618,30 @@
     ]
   },
   {
+    "version": "3.8.2",
+    "title": "Siri Shortcuts & Focus Filter",
+    "features": [
+      {
+        "symbolName": "mic.circle.fill",
+        "symbolColor": "orange",
+        "title": "Continue Last Game",
+        "subtitle": "Say \"Continue my last game on Provenance\" to instantly resume where you left off — hands-free via Siri."
+      },
+      {
+        "symbolName": "magnifyingglass.circle.fill",
+        "symbolColor": "blue",
+        "title": "Search Library via Shortcuts",
+        "subtitle": "New Search Library intent lets Shortcuts automations filter your game library by title and system."
+      },
+      {
+        "symbolName": "moon.circle.fill",
+        "symbolColor": "purple",
+        "title": "Gaming Focus Filter",
+        "subtitle": "Add Provenance to any Focus mode to suppress in-app notifications during distraction-free gaming sessions."
+      }
+    ]
+  },
+  {
     "version": "3.8.3",
     "title": "N64 Transfer Pak — Smarter Setup",
     "features": [
