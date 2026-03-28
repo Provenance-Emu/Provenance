@@ -278,7 +278,7 @@ public struct ExternalEmulatorMigrationView: View {
     // MARK: Detection
 
     @MainActor
-    private func loadInstalledEmulators() {
+    private func loadInstalledEmulators() async {
         installedEmulators = KnownEmulator.installedEmulators
     }
 }
@@ -439,12 +439,17 @@ struct EmulatorMigrationGuideView: View {
                 .foregroundStyle(.retroBlue)
                 .font(.subheadline)
             VStack(alignment: .leading, spacing: 4) {
-                Text("Save File Extensions")
+                Text("Save & State Extensions")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.primary)
-                Text("Look for files ending in: \(emulator.saveFileExtensions.map { ".\($0)" }.joined(separator: ", "))")
+                Text("Battery saves: \(emulator.saveFileExtensions.map { ".\($0)" }.joined(separator: ", "))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if !emulator.stateFileExtensions.isEmpty && emulator != .retroArch {
+                    Text("Save states: \(emulator.stateFileExtensions.map { ".\($0)" }.joined(separator: ", "))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 if emulator == .retroArch {
                     Text("Save states use numbered extensions (.state0, .state1…). Battery saves use .srm.")
                         .font(.caption)
