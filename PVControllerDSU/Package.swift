@@ -1,0 +1,25 @@
+// swift-tools-version:6.0
+import PackageDescription
+
+let package = Package(
+    name: "PVControllerDSU",
+    platforms: [
+        .iOS(.v17),
+        .tvOS(.v17),
+        .watchOS(.v9),
+        .macOS(.v11),
+        .macCatalyst(.v17),
+        .visionOS(.v1)
+    ],
+    products: [
+        .library(name: "PVControllerDSU", targets: ["PVControllerDSU"])
+    ],
+    dependencies: [],
+    targets: [
+        .target(name: "PVControllerDSU"),
+        .testTarget(name: "PVControllerDSUTests", dependencies: ["PVControllerDSU"])
+    ],
+    swiftLanguageModes: [.v5, .v6],
+    cLanguageStandard: .gnu17,
+    cxxLanguageStandard: .gnucxx20
+)
