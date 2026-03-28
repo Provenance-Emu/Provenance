@@ -477,6 +477,72 @@ final class BinCueDiscSerialPluginTests: XCTestCase {
         XCTAssertEqual(result?.serial, "SLUS-01234")
         XCTAssertEqual(result?.systemIdentifierHint, "com.provenance.psx")
     }
+
+    /// Regression: audio-only CUE must return nil (not the audio .bin file).
+    /// Before the fix, `foundDataTrack` was never reset per FILE, causing the
+    /// fallback to return any last-seen file even when no data track existed.
+    func testExtractSerialNilForAudioOnlyCue() async throws {
+        let tmpDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmpDir) }
+
+        // Create a dummy audio BIN.
+        let audioData = Data(repeating: 0xAA, count: 2352)
+        let binURL = tmpDir.appendingPathComponent("audio.bin")
+        try audioData.write(to: binURL)
+
+        // CUE with only an AUDIO track — no data track.
+        let cueContent = """
+            FILE "audio.bin" BINARY
+              TRACK 01 AUDIO
+                INDEX 01 00:00:00
+            """
+        let cueURL = tmpDir.appendingPathComponent("audio_only.cue")
+        try cueContent.write(to: cueURL, atomically: true, encoding: .utf8)
+
+        let result = await plugin.extractSerial(from: cueURL, systemHint: nil)
+        XCTAssertNil(result, "Audio-only CUE should return nil, not the audio BIN file")
+    }
+
+    /// Regression: data track following an audio track must be found correctly.
+    /// Before the fix, `foundDataTrack` was not reset on each new FILE directive,
+    /// causing an INDEX under an audio track to incorrectly match.
+    func testExtractSerialFromMixedCuePicksDataTrack() async throws {
+        let tmpDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tmpDir) }
+
+        // Audio track binary (no meaningful header).
+        let audioData = Data(repeating: 0xAA, count: 2352)
+        try audioData.write(to: tmpDir.appendingPathComponent("audio.bin"))
+
+        // Data track binary — Saturn header so SegaDiscSerialPlugin picks it up.
+        var dataTrack = Data(repeating: 0, count: 2048)
+        let saturnMagic = Array("SEGA SATURN     ".utf8)
+        dataTrack.replaceSubrange(0..<16, with: saturnMagic)
+        let serial = Array("T-12345H  ".utf8)
+        dataTrack.replaceSubrange(0x20..<(0x20 + 10), with: serial)
+        try dataTrack.write(to: tmpDir.appendingPathComponent("data.bin"))
+
+        // CUE: audio first, then data.
+        let cueContent = """
+            FILE "audio.bin" BINARY
+              TRACK 01 AUDIO
+                INDEX 01 00:00:00
+            FILE "data.bin" BINARY
+              TRACK 02 MODE1/2048
+                INDEX 01 00:02:00
+            """
+        let cueURL = tmpDir.appendingPathComponent("mixed.cue")
+        try cueContent.write(to: cueURL, atomically: true, encoding: .utf8)
+
+        let result = await plugin.extractSerial(from: cueURL, systemHint: nil)
+        XCTAssertNotNil(result, "Mixed CUE should find the data track")
+        XCTAssertEqual(result?.serial, "T-12345H")
+        XCTAssertEqual(result?.systemIdentifierHint, "com.provenance.saturn")
+    }
 }
 
 // MARK: - NDSDiscSerialPlugin unit tests

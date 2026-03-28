@@ -80,7 +80,7 @@ public struct ISODiscSerialPlugin: DiscSerialExtractorPlugin {
         // Root directory record is at PVD offset 156.
         let rootLBA  = pvd.loadLE32(at: 156 + 2)
         let rootSize = pvd.loadLE32(at: 156 + 10)
-        guard rootLBA > 0 else { return nil }
+        guard rootLBA > 0, rootSize > 0 else { return nil }
 
         guard let dirData = readSector(handle: handle, lba: rootLBA,
                                        size: Int(rootSize), layout: sectorLayout) else {

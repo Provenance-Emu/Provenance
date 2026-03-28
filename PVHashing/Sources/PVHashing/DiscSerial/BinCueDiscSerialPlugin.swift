@@ -80,6 +80,10 @@ public struct BinCueDiscSerialPlugin: DiscSerialExtractorPlugin {
             let upper = trimmed.uppercased()
 
             if upper.hasPrefix("FILE ") {
+                // Each new FILE directive starts a new track group; reset the
+                // data-track flag so that INDEX lines under audio tracks are
+                // not mistakenly treated as data tracks.
+                foundDataTrack = false
                 // Extract filename between double quotes.
                 // Handle both straight quotes " and some smart-quote variants.
                 let normalised = trimmed
@@ -103,12 +107,10 @@ public struct BinCueDiscSerialPlugin: DiscSerialExtractorPlugin {
         }
 
         // Fallback: if we found a data-track FILE directive but no INDEX line
-        // (malformed CUE), return the last seen FILE if it resolves.
-        if let filename = currentFile {
-            return resolveFile(filename, in: cueDir)
-        }
-
-        return nil
+        // (malformed CUE), return the last seen data-track FILE if it resolves.
+        // Guard ensures we don't return an audio-only file when no data track exists.
+        guard foundDataTrack, let filename = currentFile else { return nil }
+        return resolveFile(filename, in: cueDir)
     }
 
     /// Resolves a CUE-relative filename to an absolute URL, with a
