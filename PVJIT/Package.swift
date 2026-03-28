@@ -52,6 +52,10 @@ let package = Package(
                 "JITManager",
                 "FastmemUtil"
             ],
+            swiftSettings: [
+                .define("_USE_ALTKIT", .when(platforms: [.iOS])),
+                .define("APP_STORE"),
+            ],
             linkerSettings: [
                 .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
             ]),
@@ -81,6 +85,7 @@ let package = Package(
             ],
             swiftSettings: [
                 .define("_USE_ALTKIT", .when(platforms: [.iOS])),
+                .define("APP_STORE"),
             ]
         ),
 

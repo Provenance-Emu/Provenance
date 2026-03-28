@@ -157,13 +157,13 @@ private func parsedCodeSignature() -> ParsedCodeSignature? {
 
             if version < 0x20400 {
                 let error = "CodeDirectory version is 0x\(String(version, radix: 16)). Should be 0x20400 or higher."
-                DOLJitManager.shared.setAuxiliaryError(error)
+                DispatchQueue.main.async { DOLJitManager.shared.setAuxiliaryError(error) }
                 continue
             }
 
             if (execSegmentFlags & CS_EXECSEG_ALLOW_UNSIGNED) != CS_EXECSEG_ALLOW_UNSIGNED {
                 let error = "CS_EXECSEG_ALLOW_UNSIGNED is not set. The current executable segment flags are 0x\(String(execSegmentFlags, radix: 16))."
-                DOLJitManager.shared.setAuxiliaryError(error)
+                DispatchQueue.main.async { DOLJitManager.shared.setAuxiliaryError(error) }
                 continue
             }
 
@@ -172,12 +172,12 @@ private func parsedCodeSignature() -> ParsedCodeSignature? {
     }
 
     guard let entitlements = entitlementsData else {
-        DOLJitManager.shared.setAuxiliaryError("Could not find entitlements data within the code signature.")
+        DispatchQueue.main.async { DOLJitManager.shared.setAuxiliaryError("Could not find entitlements data within the code signature.") }
         return nil
     }
 
     guard let entitlementsDict = try? PropertyListSerialization.propertyList(from: entitlements, options: [], format: nil) as? [String: Any] else {
-        DOLJitManager.shared.setAuxiliaryError("Entitlement data parsing failed.")
+        DispatchQueue.main.async { DOLJitManager.shared.setAuxiliaryError("Entitlement data parsing failed.") }
         return nil
     }
 
@@ -191,7 +191,7 @@ func HasValidCodeSignature() -> Bool {
     }
 
     guard signature.entitlements["get-task-allow"] as? Bool == true else {
-        DOLJitManager.shared.setAuxiliaryError("get-task-allow entitlement is not set to true.")
+        DispatchQueue.main.async { DOLJitManager.shared.setAuxiliaryError("get-task-allow entitlement is not set to true.") }
         return false
     }
 

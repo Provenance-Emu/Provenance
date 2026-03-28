@@ -2,11 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>aps-environment</key>
+	<string>production</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:provenance-emu.com</string>
 		<string>applinks:provenance.app</string>
 	</array>
+	<key>com.apple.developer.game-center</key>
+	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
@@ -48,8 +52,6 @@
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
-	<key>aps-environment</key>
-	<string>production</string>
 	<key>keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>

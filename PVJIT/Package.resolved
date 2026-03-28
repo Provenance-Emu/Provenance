@@ -1,43 +1,41 @@
 {
-  "originHash": "67fd730e7c7a731b9f31120e58373afd5b5e4e567bea05de2606d7900ce39d2d",
-  "pins": [
+  "originHash" : "5a8c2a4cd1e600d11120093115751f14c86849e87e8bacc94e37b7b1ec1b0560",
+  "pins" : [
     {
-      "identity": "defaults",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/sindresorhus/Defaults.git",
-      "state": {
-        "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
-        "version": "9.0.8",
-        "branch": null
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+        "version" : "9.0.8"
       }
     },
     {
-      "identity": "sidekit",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/SideStore/SideKit.git",
-      "state": {
-        "branch": "main",
-        "revision": "ab959a54fc2217464ffabd09322ec3351e3ca456"
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit.git",
+      "state" : {
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
       }
     },
     {
-      "identity": "swift-log",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-log.git",
-      "state": {
-        "revision": "bbd81b6725ae874c69e9b8c8804d462356b55523",
-        "version": "1.10.1"
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
       }
     },
     {
-      "identity": "swift-syntax",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/swiftlang/swift-syntax",
-      "state": {
-        "revision": "0687f71944021d616d34d922343dcef086855920",
-        "version": "600.0.1"
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "2b59c0c741e9184ab057fd22950b491076d42e91",
+        "version" : "603.0.0"
       }
     }
   ],
-  "version": 3
+  "version" : 3
 }
