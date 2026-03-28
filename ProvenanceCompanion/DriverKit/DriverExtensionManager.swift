@@ -31,12 +31,25 @@ public final class DriverExtensionManager: NSObject {
     public private(set) var activationState: ActivationState = .unknown
     public private(set) var isActivating = false
 
+    /// True when the extension can be activated (state is unknown or not installed).
+    public var canEnable: Bool {
+        switch activationState {
+        case .unknown, .notInstalled: return true
+        default: return false
+        }
+    }
+
     // MARK: - Public API
 
     /// Request activation of the DriverKit extension.
     /// The user will see a system prompt asking for approval on first run.
+    /// Allowed from `.unknown` as well as `.notInstalled` — the OS deduplicates
+    /// activation requests if the dext is already active.
     public func activateExtension() {
-        guard case .notInstalled = activationState else { return }
+        switch activationState {
+        case .unknown, .notInstalled: break
+        default: return
+        }
         isActivating = true
         activationState = .activating
 

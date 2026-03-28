@@ -43,7 +43,7 @@ public final class USBPeripheralManager: NSObject {
 
     // MARK: - Private
 
-    private var gcObservers: [Any] = []
+    private var observers: [Any] = []  // GCController + ExternalAccessory notification tokens
 
     #if canImport(IOKit)
     private var hidManager: IOHIDManager?
@@ -78,8 +78,8 @@ public final class USBPeripheralManager: NSObject {
 
     /// Stop scanning and release all observers.
     public func stopScanning() {
-        for ob in gcObservers { NotificationCenter.default.removeObserver(ob) }
-        gcObservers = []
+        for ob in observers { NotificationCenter.default.removeObserver(ob) }
+        observers = []
         #if canImport(IOKit)
         if let m = hidManager {
             IOHIDManagerClose(m, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -100,11 +100,11 @@ public final class USBPeripheralManager: NSObject {
 
     private func registerGCControllerObservers() {
         let nc = NotificationCenter.default
-        gcObservers.append(nc.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] note in
+        observers.append(nc.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] note in
             guard let controller = note.object as? GCController else { return }
             self?.addGCController(controller)
         })
-        gcObservers.append(nc.addObserver(forName: .GCControllerDidDisconnect, object: nil, queue: .main) { [weak self] note in
+        observers.append(nc.addObserver(forName: .GCControllerDidDisconnect, object: nil, queue: .main) { [weak self] note in
             guard let controller = note.object as? GCController else { return }
             self?.removeGCController(controller)
         })
@@ -140,22 +140,20 @@ public final class USBPeripheralManager: NSObject {
     private func gcControllerVIDPID(_ controller: GCController) -> (Int, Int) {
         // GCController doesn't expose VID/PID directly — best-effort match on vendor name.
         let name = controller.vendorName?.lowercased() ?? ""
-        switch true {
-        case name.contains("dualshock 4") || name.contains("dual shock 4"):
+        if name.contains("dualshock 4") || name.contains("dual shock 4") {
             return (KnownDeviceProfiles.vendorSony, 0x09CC)
-        case name.contains("dualsense"):
+        } else if name.contains("dualsense") {
             return (KnownDeviceProfiles.vendorSony, 0x0CE6)
-        case name.contains("xbox") && name.contains("series"):
+        } else if name.contains("xbox") && name.contains("series") {
             return (KnownDeviceProfiles.vendorMicrosoft, 0x0B12)
-        case name.contains("xbox"):
+        } else if name.contains("xbox") {
             return (KnownDeviceProfiles.vendorMicrosoft, 0x02FD)
-        case name.contains("pro controller") || name.contains("nintendo"):
+        } else if name.contains("pro controller") || name.contains("nintendo") {
             return (KnownDeviceProfiles.vendorNintendo, 0x2009)
-        case name.contains("8bitdo"):
+        } else if name.contains("8bitdo") {
             return (KnownDeviceProfiles.vendor8BitDo, 0x0000)
-        default:
-            return (0x0000, 0x0000)
         }
+        return (0x0000, 0x0000)
     }
 
     // MARK: - IOHIDManager (macOS / Catalyst)
@@ -178,13 +176,13 @@ public final class USBPeripheralManager: NSObject {
     #if !os(tvOS)
     private func registerEAObservers() {
         let nc = NotificationCenter.default
-        gcObservers.append(nc.addObserver(
+        observers.append(nc.addObserver(
             forName: .EAAccessoryDidConnect, object: nil, queue: .main
         ) { [weak self] note in
             guard let accessory = note.userInfo?[EAAccessoryKey] as? EAAccessory else { return }
             self?.addEAAccessory(accessory)
         })
-        gcObservers.append(nc.addObserver(
+        observers.append(nc.addObserver(
             forName: .EAAccessoryDidDisconnect, object: nil, queue: .main
         ) { [weak self] note in
             guard let accessory = note.userInfo?[EAAccessoryKey] as? EAAccessory else { return }
@@ -300,7 +298,7 @@ private func inferCategory(usagePage: Int, usage: Int, profile: DeviceProfile?) 
     switch (usagePage, usage) {
     case (0x01, 0x04): return .gamepad        // Joystick
     case (0x01, 0x05): return .gamepad        // Gamepad
-    case (0x01, 0x08): return .steeringWheel  // Multi-axis Controller
+    case (0x01, 0x08): return .flightStick    // Multi-axis Controller (6DOF, flight sticks)
     case (0x01, 0x02): return .mouse
     case (0x01, 0x06): return .keyboard
     default:           return .unknown

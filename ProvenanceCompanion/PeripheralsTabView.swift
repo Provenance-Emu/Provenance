@@ -54,7 +54,7 @@ struct PeripheralsTabView: View {
 
                 Spacer()
 
-                if case .notInstalled = driverExtManager.activationState {
+                if driverExtManager.canEnable {
                     Button("Enable") {
                         driverExtManager.activateExtension()
                     }
