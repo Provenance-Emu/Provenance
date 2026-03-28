@@ -297,6 +297,13 @@ Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
 - New cores that support netplay should conform to `PVNetplayCapable`; PVUI will auto-detect via `core as? any PVNetplayCapable`.
 - **Dolphin** (`PVDolphinCore`) conforms via `PVDolphinCore+PVNetplayCapable.swift` (Swift) + `PVDolphinCore+Netplay.mm` (ObjC++ bridge). The C++ API calls are guarded with `#if __has_include("Core/NetPlayClient.h")` so the file compiles even when the `dolphin-ios` submodule is absent. When reviewing changes to the bridge, check that `NetTraversalConfig`, `NetPlayClient`, and `NetPlayServer` constructor signatures still match the dolphin-ios submodule revision.
 
+### CoreCapability / CoreCapabilities.json Pattern (added in #3541)
+- `CoreCapability` enum in `PVPrimitives` — single source of truth for capability flag names.
+- **Two-layer capability system**: Layer 1 = `Core.plist` `PVCapabilities` array (authoritative at runtime, auto-merged). Layer 2 = `CoreCapabilities.json` in `PVCoreLoader` (enrichment: summary, qualityRank, notes, and capability flags for cores without a `Core.plist`).
+- **New capability rule**: Add the new `CoreCapability` case with `displayName` and `sfSymbol`. For native cores (have `Core.plist`), add the raw string to `PVCapabilities` in the plist. For libretro/dynamic cores (no `Core.plist`), declare the capability only in `CoreCapabilities.json`. For unit-test discoverability, also add the key capability to the JSON entry even if the core has a plist (the merge takes a union — no harm in listing it in both places).
+- **Flag 🟡 MINOR** if a new core is added without either a `Core.plist` `PVCapabilities` entry or a `CoreCapabilities.json` entry.
+- **Flag 🟡 MINOR** if a capability raw string in `CoreCapabilities.json` is not declared as a case in `CoreCapability` — the resilient decoder silently drops unknown strings, which is hard to notice.
+
 ### PVToast In-Game Notification System
 - `PVToastManager.shared` (Tier 6, `PVUIBase`) is `@MainActor` — all calls must be on the main actor.
 - `PVToastHostingController.install(in:position:)` is the canonical way to embed the overlay into any `UIViewController`.

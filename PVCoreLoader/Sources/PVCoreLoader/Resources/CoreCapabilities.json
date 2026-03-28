@@ -25,36 +25,36 @@
     },
     {
       "coreIdentifier": "snes9x.libretro.framework",
-      "summary": "RetroArch-wrapped Snes9x. Adds run-ahead and widescreen options.",
-      "capabilities": ["mouseSupport", "multitapSupport", "lightgunSupport", "cheats", "rewind", "runAhead", "widescreenSupport"],
+      "summary": "RetroArch-wrapped Snes9x. Adds run-ahead, widescreen, and RetroAchievements support.",
+      "capabilities": ["mouseSupport", "multitapSupport", "lightgunSupport", "cheats", "rewind", "runAhead", "widescreenSupport", "retroAchievements"],
       "notes": ["RetroArch integration"],
       "qualityRank": 85
     },
     {
       "coreIdentifier": "bsnes.libretro.framework",
       "summary": "Cycle-accurate SNES emulation. Highest compatibility but CPU-intensive.",
-      "capabilities": ["mouseSupport", "multitapSupport", "lightgunSupport", "highAccuracy", "testRomAccurate"],
+      "capabilities": ["mouseSupport", "multitapSupport", "lightgunSupport", "highAccuracy", "testRomAccurate", "retroAchievements"],
       "notes": ["Highest accuracy SNES core", "May be slow on older devices"],
       "qualityRank": 95
     },
     {
       "coreIdentifier": "bsnes.hd.beta.libretro.framework",
       "summary": "BSNES with HD mode-7 rendering and widescreen support.",
-      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy", "enhancedResolution", "widescreenSupport"],
+      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy", "enhancedResolution", "widescreenSupport", "retroAchievements"],
       "notes": ["HD Mode-7 rendering", "Widescreen hacks for many games"],
       "qualityRank": 88
     },
     {
       "coreIdentifier": "bsnes.mercury.accuracy.libretro.framework",
       "summary": "BSNES Mercury — accuracy profile. Near-perfect emulation.",
-      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy", "testRomAccurate"],
+      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy", "testRomAccurate", "retroAchievements"],
       "notes": [],
       "qualityRank": 93
     },
     {
       "coreIdentifier": "bsnes.mercury.balanced.libretro.framework",
       "summary": "BSNES Mercury — balanced profile. Good accuracy with better performance.",
-      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy"],
+      "capabilities": ["mouseSupport", "multitapSupport", "highAccuracy", "retroAchievements"],
       "notes": [],
       "qualityRank": 87
     },
@@ -95,15 +95,15 @@
     },
     {
       "coreIdentifier": "mupen64plus.next.libretro.framework",
-      "summary": "Mupen64Plus-Next via RetroArch. Run-ahead and widescreen support.",
-      "capabilities": ["rumble", "transferPak", "cheats", "enhancedResolution", "runAhead"],
+      "summary": "Mupen64Plus-Next via RetroArch. Run-ahead, widescreen, and RetroAchievements support.",
+      "capabilities": ["rumble", "transferPak", "cheats", "enhancedResolution", "runAhead", "retroAchievements"],
       "notes": ["RetroArch integration with extra enhancements"],
       "qualityRank": 88
     },
     {
       "coreIdentifier": "parallel.n64.libretro.framework",
       "summary": "ParaLLEl-N64 — LLE GPU and RSP for near-perfect N64 accuracy.",
-      "capabilities": ["highAccuracy", "testRomAccurate", "requiresJIT"],
+      "capabilities": ["highAccuracy", "testRomAccurate", "requiresJIT", "retroAchievements"],
       "notes": ["Requires JIT for full speed", "Not available on App Store"],
       "qualityRank": 85
     },
@@ -123,16 +123,23 @@
     },
     {
       "coreIdentifier": "mednafen.psx.hw.libretro.framework",
-      "summary": "Beetle PSX with hardware renderer. Widescreen and enhanced resolution.",
-      "capabilities": ["highAccuracy", "enhancedResolution", "widescreenSupport", "cdAudio", "subChannelAudio"],
+      "summary": "Beetle PSX with hardware renderer. Widescreen, enhanced resolution, and RetroAchievements.",
+      "capabilities": ["highAccuracy", "enhancedResolution", "widescreenSupport", "cdAudio", "subChannelAudio", "retroAchievements"],
       "notes": ["Hardware (GPU) renderer for smoother visuals"],
       "qualityRank": 90
     },
     {
       "coreIdentifier": "mednafen.psx.libretro.framework",
-      "summary": "Beetle PSX software renderer. Most accurate PS1 emulation available.",
-      "capabilities": ["highAccuracy", "testRomAccurate", "cdAudio", "subChannelAudio"],
+      "summary": "Beetle PSX software renderer. Most accurate PS1 emulation with RetroAchievements.",
+      "capabilities": ["highAccuracy", "testRomAccurate", "cdAudio", "subChannelAudio", "retroAchievements"],
       "notes": ["Software renderer — highest accuracy", "CD sub-channel audio support"],
+      "qualityRank": 92
+    },
+    {
+      "coreIdentifier": "com.provenance.core.mednafen",
+      "summary": "Mednafen multi-system emulator. High-accuracy with native RetroAchievements support.",
+      "capabilities": ["highAccuracy", "cdAudio", "subChannelAudio", "multitapSupport", "lightgunSupport", "cheats", "retroAchievements"],
+      "notes": ["RetroAchievements supported for: PSX, NES/FDS, SNES (snes_faust), PCE/PCE-CD/SuperGrafx, Saturn (experimental)"],
       "qualityRank": 92
     },
     {
@@ -151,22 +158,22 @@
     },
     {
       "coreIdentifier": "flycast.libretro.framework",
-      "summary": "Flycast JIT — fast Dreamcast emulation with enhanced resolution.",
-      "capabilities": ["highPerformance", "enhancedResolution", "requiresJIT"],
+      "summary": "Flycast JIT — fast Dreamcast emulation with enhanced resolution and RetroAchievements.",
+      "capabilities": ["highPerformance", "enhancedResolution", "requiresJIT", "retroAchievements"],
       "notes": ["JIT required for full speed", "Not available on App Store"],
       "qualityRank": 90
     },
     {
       "coreIdentifier": "flycast-jitless.libretro.framework",
-      "summary": "Flycast without JIT — available on App Store, slightly slower.",
-      "capabilities": ["enhancedResolution"],
+      "summary": "Flycast without JIT — App Store compatible with RetroAchievements support.",
+      "capabilities": ["enhancedResolution", "retroAchievements"],
       "notes": ["App Store compatible", "Some games may run slowly without JIT"],
       "qualityRank": 75
     },
     {
       "coreIdentifier": "dolphin.libretro.framework",
-      "summary": "Dolphin via RetroArch. GameCube and Wii emulation.",
-      "capabilities": ["highAccuracy", "enhancedResolution", "requiresJIT"],
+      "summary": "Dolphin via RetroArch. GameCube and Wii emulation with RetroAchievements.",
+      "capabilities": ["highAccuracy", "enhancedResolution", "requiresJIT", "retroAchievements"],
       "notes": ["JIT recommended for playable speed"],
       "qualityRank": 85
     }
@@ -241,14 +248,44 @@
     {
       "matchStrategy": "systemIdentifier",
       "matchValue": "com.provenance.psx",
-      "preferredCapabilities": ["highAccuracy"],
-      "tip": "Choose a high-accuracy PS1 core for the best compatibility and visual quality."
+      "preferredCapabilities": ["highAccuracy", "retroAchievements"],
+      "tip": "Choose a high-accuracy PS1 core with RetroAchievements support for the best compatibility and trophy tracking."
     },
     {
       "matchStrategy": "systemIdentifier",
       "matchValue": "com.provenance.gba",
       "preferredCapabilities": ["highAccuracy"],
       "tip": "mGBA provides the most accurate GBA emulation and is recommended for all GBA titles."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.nes",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for NES trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.fds",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for FDS trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.snes",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for SNES trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.pce",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for PC Engine trophy tracking."
+    },
+    {
+      "matchStrategy": "systemIdentifier",
+      "matchValue": "com.provenance.pcecd",
+      "preferredCapabilities": ["retroAchievements"],
+      "tip": "Choose a core with RetroAchievements support for PC Engine CD trophy tracking."
     }
   ]
 }

@@ -89,6 +89,11 @@ public enum CoreCapability: String, Codable, CaseIterable, Sendable, Hashable {
     /// Core emulates the e-Reader / Barcode Boy accessory.
     case barcodeReader = "barcodeReader"
 
+    // MARK: - Achievement support
+
+    /// Core supports RetroAchievements live achievement tracking (rc_client integration).
+    case retroAchievements = "retroAchievements"
+
     // MARK: - Runtime requirements
 
     /// Core requires JIT compilation to run at acceptable speed.
@@ -126,6 +131,7 @@ public extension CoreCapability {
         case .transferPak:         return "Transfer Pak"
         case .gbPlayer:            return "GB Player"
         case .barcodeReader:       return "Barcode Reader"
+        case .retroAchievements:   return "RetroAchievements"
         case .requiresJIT:         return "Requires JIT"
         case .requiresBIOS:        return "Requires BIOS"
         }
@@ -155,6 +161,7 @@ public extension CoreCapability {
         case .transferPak:         return "arrow.triangle.2.circlepath"
         case .gbPlayer:            return "gamecontroller.fill"
         case .barcodeReader:       return "barcode"
+        case .retroAchievements:   return "trophy.fill"
         case .requiresJIT:         return "cpu"
         case .requiresBIOS:        return "doc.fill"
         }
