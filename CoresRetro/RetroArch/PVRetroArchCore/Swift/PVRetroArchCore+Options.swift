@@ -744,15 +744,18 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                         // Existing file: rebuild from full content, patching only what we must.
                         // This preserves user-configured audio, video, gameplay, and pak options.
                         // Strip the old rsp-plugin line; we'll re-append with the correct value.
-                        // Using De Morgan's form for clarity: keep comment lines OR non-rsp-plugin lines.
                         var mergedLines = existingMupenOpt.components(separatedBy: "\n")
-                            .filter { line in
-                                line.hasPrefix("#") || !line.hasPrefix("mupen64plus-rsp-plugin")
-                            }
+                            .filter { !$0.hasPrefix("mupen64plus-rsp-plugin") || $0.hasPrefix("#") }
                         // Drop trailing empty strings so appended lines don't produce blank-line gaps.
                         while mergedLines.last == "" { mergedLines.removeLast() }
                         mergedLines.append("mupen64plus-rsp-plugin = \"cxd4\"")
                         ILOG("Mupen64Plus-Next: patched rsp-plugin = cxd4 in existing .opt")
+                        // Ensure rdp-plugin is present (defensive: existing file may predate our defaults).
+                        let hasRdpPlugin = mergedLines.contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-rdp-plugin") }
+                        if !hasRdpPlugin {
+                            mergedLines.insert("mupen64plus-rdp-plugin = \"angrylion\"", at: 0)
+                            ILOG("Mupen64Plus-Next: rdp-plugin missing from existing .opt — adding angrylion default")
+                        }
                         // Add pak1 default only if absent (honour user-configured pak type).
                         let hasPak1 = mergedLines.contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-pak1") }
                         if !hasPak1 {
@@ -766,16 +769,30 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                     optionOverwrite = true
                 } else {
                     // iOS < 26: write-only-if-not-exists (optionOverwrite = false means the
-                    // Obj-C layer skips the write when the file is already present, preserving
-                    // all user-configured settings). Add pak1 default to optionValues so that
-                    // fresh installs default to rumble-pak out of the box.
-                    let hasPak1 = existingMupenOpt.components(separatedBy: "\n")
-                        .contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-pak1") }
-                    if !hasPak1 {
-                        ILOG("Mupen64Plus-Next: pak1 not set — defaulting pak1 = rumble")
+                    // Obj-C layer skips the write when the file is already present).
+                    if existingMupenOpt.isEmpty {
+                        // Fresh install: write defaults including pak1=rumble.
+                        ILOG("Mupen64Plus-Next: iOS<26 fresh install — writing defaults with pak1 = rumble")
                         optionValues += "mupen64plus-pak1 = \"rumble\"\n"
+                        optionOverwrite = false
+                    } else {
+                        // Existing file: check for pak1 and add via targeted merge if missing.
+                        // optionOverwrite=false would skip the write entirely, so we must switch
+                        // to a merge+overwrite when the only missing piece is pak1.
+                        let hasPak1 = existingMupenOpt.components(separatedBy: "\n")
+                            .contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-pak1") }
+                        if hasPak1 {
+                            ILOG("Mupen64Plus-Next: iOS<26 pak1 already set — preserving existing .opt")
+                            optionOverwrite = false
+                        } else {
+                            var mergedLines = existingMupenOpt.components(separatedBy: "\n")
+                            while mergedLines.last == "" { mergedLines.removeLast() }
+                            mergedLines.append("mupen64plus-pak1 = \"rumble\"")
+                            ILOG("Mupen64Plus-Next: iOS<26 adding missing pak1 = rumble to existing .opt")
+                            optionValues = mergedLines.joined(separator: "\n") + "\n"
+                            optionOverwrite = true
+                        }
                     }
-                    optionOverwrite = false
                 }
                 #else
                 optionOverwrite = false
