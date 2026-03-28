@@ -102,8 +102,8 @@ enum LibretroBuildbot {
             ))
         }
 
-        // Rick Dangerous — game data pack (ri-dangerous core uses a system wad)
-        if coreID.contains("rick") || coreID.contains("dangerous") {
+        // Rick Dangerous — game data pack
+        if coreID.contains("rick_dangerous") || coreID == "rick" {
             result.append(LibretroSystemFilePackage(
                 url: URL(string: "\(systemBaseURL)/rick.zip")!,
                 sentinelFile: "rick.pak"
@@ -196,12 +196,7 @@ extension PVThinLibretroCore {
 
     /// Asynchronously download a zip from `url` and extract it into `destDir`.
     private func downloadAndExtractPackage(from url: URL, toDirectory destDir: String) {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30.0
-        config.timeoutIntervalForResource = 300.0
-        let session = URLSession(configuration: config)
-
-        let downloadTask = session.downloadTask(with: url) { tempURL, _, error in
+        let downloadTask = URLSession.shared.downloadTask(with: url) { tempURL, _, error in
             if let error = error {
                 ELOG("ThinCore[SystemFiles]: download error (\(url.lastPathComponent)): \(error.localizedDescription)")
                 return
@@ -264,7 +259,7 @@ extension PVThinLibretroCore {
         guard let coreID = coreIdentifier?.lowercased(), !coreID.isEmpty,
               let destDir = thinSystemFilesDirectory else { return }
 
-        ILOG("ThinCore[SystemFiles]: checking legacy RetroArch/system for \(coreID)")
+        DLOG("ThinCore[SystemFiles]: checking legacy RetroArch/system for \(coreID)")
 
         // 1. Migrate whole subdirectories (e.g. PSP/, Sys/ for Dolphin, MSX/)
         for subDir in legacySubdirectories(forCoreID: coreID) {
@@ -344,7 +339,7 @@ extension PVThinLibretroCore {
             return ["MSX.ROM", "MSX2.ROM", "MSX2EXT.ROM", "MSX2P.ROM", "MSX2PEXT.ROM",
                     "DISK.ROM", "DOS1.ROM", "DOS2.ROM"]
         }
-        if coreID.contains("rick") || coreID.contains("dangerous") {
+        if coreID.contains("rick_dangerous") || coreID == "rick" {
             return ["rick.pak"]
         }
         return []

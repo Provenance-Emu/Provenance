@@ -311,7 +311,7 @@ class PVThinLibretroCore: PVEmulatorCore {
             let pgfFonts = fonts.filter { $0.lowercased().hasSuffix(".pgf") }
             guard !pgfFonts.isEmpty else {
                 WLOG("ThinCore: flash0/font bundle dir found but contains no .pgf files: \(fontSrc)")
-                return
+                continue
             }
             var seededCount = 0
             for font in pgfFonts {
